@@ -1,0 +1,5 @@
+resolver: nightly-2023-12-26
+packages:
+- .
+system-ghc: true
+install-ghc: false

@@ -1,0 +1,105 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           LordOfTheRings
+version:        0.0.0
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_LordOfTheRings
+  hs-source-dirs:
+      src
+  default-extensions:
+      DefaultSignatures
+      DerivingStrategies
+      OverloadedStrings
+      DataKinds
+      TypeFamilies
+      LambdaCase
+      DeriveAnyClass
+      RecordWildCards
+      PatternSynonyms
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      MonadRandom
+    , aeson
+    , base >=4.7 && <5
+    , containers
+    , extra
+    , mtl
+    , random-shuffle
+    , text
+    , uuid
+    , yesod-core
+  default-language: GHC2021
+
+executable LordOfTheRings-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_LordOfTheRings
+  hs-source-dirs:
+      app
+  default-extensions:
+      DefaultSignatures
+      DerivingStrategies
+      OverloadedStrings
+      DataKinds
+      TypeFamilies
+      LambdaCase
+      DeriveAnyClass
+      RecordWildCards
+      PatternSynonyms
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      LordOfTheRings
+    , MonadRandom
+    , aeson
+    , base >=4.7 && <5
+    , containers
+    , extra
+    , mtl
+    , random-shuffle
+    , text
+    , uuid
+    , yesod-core
+  default-language: GHC2021
+
+test-suite LordOfTheRings-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_LordOfTheRings
+  hs-source-dirs:
+      test
+  default-extensions:
+      DefaultSignatures
+      DerivingStrategies
+      OverloadedStrings
+      DataKinds
+      TypeFamilies
+      LambdaCase
+      DeriveAnyClass
+      RecordWildCards
+      PatternSynonyms
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      LordOfTheRings
+    , MonadRandom
+    , aeson
+    , base >=4.7 && <5
+    , containers
+    , extra
+    , mtl
+    , random-shuffle
+    , text
+    , uuid
+    , yesod-core
+  default-language: GHC2021

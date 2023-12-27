@@ -1,0 +1,59 @@
+name:                LordOfTheRings
+language: GHC2021
+default-extensions:
+- DefaultSignatures
+- DerivingStrategies
+- OverloadedStrings
+- DataKinds
+- TypeFamilies
+- LambdaCase
+- DeriveAnyClass
+- RecordWildCards
+- PatternSynonyms
+dependencies:
+- base >= 4.7 && < 5
+- aeson
+- containers
+- mtl
+- text
+- uuid
+- MonadRandom
+- extra
+- yesod-core
+- random-shuffle
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  LordOfTheRings-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - LordOfTheRings
+
+tests:
+  LordOfTheRings-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - LordOfTheRings
