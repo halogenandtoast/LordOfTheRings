@@ -6,6 +6,7 @@ module LordOfTheRings.Game.Base where
 
 import Data.Aeson
 import GHC.Generics
+import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
@@ -24,10 +25,15 @@ data CostTarget = CostCardTarget SomeCard
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 
+data Cost = ResourceCost Sphere ResourceCost | Free
+  deriving stock (Show, Generic)
+  deriving anyclass (ToJSON)
+
 data ActiveCost = ActiveCost
   { id :: CostId
   , cost :: Cost
   , target :: CostTarget
+  , player :: PlayerId
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
@@ -40,6 +46,7 @@ data Player = Player
   , threat :: Int
   , question :: Maybe (Question Message)
   , cost :: Maybe ActiveCost
+  , allies :: Map AllyId Ally
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)

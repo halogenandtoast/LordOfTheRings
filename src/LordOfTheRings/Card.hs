@@ -30,12 +30,15 @@ instance ToJSON (SCardKind k) where
     SEventKind -> "event"
 
 newtype CardCode = CardCode Text
-  deriving newtype (Ord, Eq, IsString, Show, ToJSON)
+  deriving newtype (Ord, Eq, IsString, Show, ToJSON, FromJSON)
 
 data Card (k :: CardKind) = Card
   { id :: CardId
   , def :: CardDef k
   }
+
+instance HasField "code" (Card k) CardCode where
+  getField card = card.def.code
 
 deriving stock instance (Show (CardDetails k)) => Show (Card k)
 
@@ -51,7 +54,7 @@ instance HasField "code" SomeCard CardCode where
 instance HasField "sphere" SomeCard Sphere where
   getField (SomeCard card) = card.def.sphere
 
-instance HasField "cost" SomeCard (Maybe Cost) where
+instance HasField "cost" SomeCard (Maybe ResourceCost) where
   getField = cardCost
 
 instance HasField "id" SomeCard CardId where
@@ -73,7 +76,7 @@ instance HasField "code" SomeCardDef CardCode where
 instance Show SomeCardDef where
   show (SomeCardDef def) = show def
 
-instance (HasField "cost" (CardDetails k) Cost) => HasField "cost" (CardDef k) Cost where
+instance (HasField "cost" (CardDetails k) ResourceCost) => HasField "cost" (CardDef k) ResourceCost where
   getField a = a.details.cost
 
 type family CardDetails (k :: CardKind) where
@@ -93,7 +96,7 @@ data HeroDetails = HeroDetails
   deriving anyclass (ToJSON)
 
 data AllyDetails = AllyDetails
-  { cost :: Cost
+  { cost :: ResourceCost
   , willpower :: Int
   , attack :: Int
   , defense :: Int
@@ -103,13 +106,13 @@ data AllyDetails = AllyDetails
   deriving anyclass (ToJSON)
 
 data AttachmentDetails = AttachmentDetails
-  { cost :: Cost
+  { cost :: ResourceCost
   , restricted :: Bool
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 
-newtype EventDetails = EventDetails {cost :: Cost}
+newtype EventDetails = EventDetails {cost :: ResourceCost}
   deriving newtype (Show, ToJSON)
 
 data CardDef (k :: CardKind) = CardDef
@@ -135,7 +138,7 @@ instance (ToJSON (CardDetails k)) => ToJSON (CardDef k) where
 
 data Sphere = Leadership | Tactics | Spirit | Lore | Neutral
   deriving stock (Eq, Show, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (FromJSON, ToJSON)
 
 data Name = Name Text (Maybe Text)
   deriving stock (Show, Generic)
@@ -144,18 +147,27 @@ data Name = Name Text (Maybe Text)
 instance IsString Name where
   fromString s = Name (fromString s) Nothing
 
-data Cost = StaticCost Int | DynamicCost
+data ResourceCost = StaticCost Int | DynamicCost
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 
-cardCost :: SomeCard -> Maybe Cost
+cardCost :: SomeCard -> Maybe ResourceCost
 cardCost (SomeCard (Card _ def)) = case def.kind of
   SHeroKind -> Nothing
   SAllyKind -> Just def.cost
   SAttachmentKind -> Just def.cost
   SEventKind -> Just def.cost
 
-costAsResources :: Cost -> Int
+costAsResources :: ResourceCost -> Int
 costAsResources = \case
   StaticCost n -> n
   DynamicCost -> 0
+
+unique :: CardDef k -> CardDef k
+unique def = def {unique = True}
+
+class CanBeDynamic a where
+  dynamic :: a -> a
+
+instance CanBeDynamic (CardDef 'EventKind) where
+  dynamic def = def {details = EventDetails DynamicCost}

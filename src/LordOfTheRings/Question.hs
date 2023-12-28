@@ -12,6 +12,7 @@ import LordOfTheRings.Prelude
 data Choice msg
   = Label {label :: Text, messages :: [msg]}
   | CardChoice {cardId :: CardId, messages :: [msg]}
+  | HeroChoice {heroId :: HeroId, messages :: [msg]}
   deriving stock (Show, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
@@ -23,3 +24,4 @@ choiceMessages :: Choice msg -> [msg]
 choiceMessages = \case
   Label _ msgs -> msgs
   CardChoice _ msgs -> msgs
+  HeroChoice _ msgs -> msgs

@@ -12,6 +12,7 @@ import Data.Maybe (fromMaybe)
 import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Hero.Type
+import LordOfTheRings.Id
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
@@ -23,10 +24,15 @@ instance Run HeroAttrs where
   run msg attrs = case msg of
     BeginPhase ResourcePhase -> do
       pure $ attrs {resources = attrs.resources + 1}
+    SpendHeroResources hId n | hId == attrs.id -> do
+      pure $ attrs {resources = max 0 (attrs.resources - n)}
     _ -> pure attrs
 
 instance HasField "threat" HeroAttrs Int where
   getField a = a.card.def.details.threat
+
+instance HasField "id" Hero HeroId where
+  getField (Hero a) = (heroAttrs a).id
 
 instance HasField "threat" Hero Int where
   getField (Hero a) = (heroAttrs a).threat

@@ -6,10 +6,13 @@ import Data.UUID (UUID)
 import LordOfTheRings.Prelude
 
 newtype HeroId = HeroId UUID
-  deriving newtype (Random, Show, ToJSON)
+  deriving newtype (Random, Show, ToJSON, FromJSON, Eq)
+
+newtype AllyId = AllyId UUID
+  deriving newtype (Random, Show, ToJSON, FromJSON, ToJSONKey, Eq, Ord)
 
 newtype PlayerId = PlayerId UUID
-  deriving newtype (Random, Show, ToJSON, FromJSON, ToJSONKey, Eq)
+  deriving newtype (Random, Show, ToJSON, FromJSON, ToJSONKey, Eq, Ord)
 
 newtype CardId = CardId UUID
   deriving newtype (Random, Show, ToJSON, FromJSON, Eq)

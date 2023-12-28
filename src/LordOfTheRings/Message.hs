@@ -2,6 +2,7 @@ module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
 import Data.Aeson
 import GHC.Generics
+import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 
@@ -23,6 +24,10 @@ data Message
   | EndRound
   | WithPlayer PlayerId Message
   | PlayCard PlayerId CardId
-  | PayCost PlayerId CostId
+  | PayCost CostId
+  | PaidCost CostId
+  | SpendResources PlayerId Sphere Int
+  | SpendHeroResources HeroId Int
+  | PlayAlly PlayerId CardId CardCode
   deriving stock (Show, Generic)
   deriving anyclass (FromJSON, ToJSON)

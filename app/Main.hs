@@ -23,6 +23,7 @@ import Data.IORef
 import Data.Map.Strict qualified as Map
 import Data.Text qualified as Text
 import GHC.Generics
+import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Game
 import LordOfTheRings.Hero
@@ -42,79 +43,6 @@ data GameData = GameData
 
 tshow :: (Show a) => a -> Text
 tshow = Text.pack . show
-
-allAllies :: Map CardCode (CardDef 'AllyKind)
-allAllies =
-  Map.fromList
-    [ ("01013", guardOfTheCitadel)
-    , ("01014", faramir)
-    , ("01015", sonOfArnor)
-    , ("01016", snowbournScout)
-    , ("01017", silverlodeArcher)
-    , ("01031", beorn)
-    , ("01045", northernTracker)
-    , ("01059", ereborHammersmith)
-    , ("01060", henamarthRiversong)
-    , ("01061", minerOfTheIronHills)
-    , ("01062", gleowine)
-    , ("01073", gandalf)
-    ]
-
-ally :: CardCode -> Name -> Sphere -> Int -> Int -> Int -> Int -> Int -> CardDef 'AllyKind
-ally code name sphere cost willpower attack defense hitPoints =
-  CardDef
-    { code
-    , name
-    , unique = False
-    , kind = SAllyKind
-    , details = AllyDetails (StaticCost cost) willpower attack defense hitPoints
-    , sphere
-    }
-
-unique :: CardDef k -> CardDef k
-unique def = def {unique = True}
-
-class CanBeDynamic a where
-  dynamic :: a -> a
-
-instance CanBeDynamic (CardDef 'EventKind) where
-  dynamic def = def {details = EventDetails DynamicCost}
-
-beorn :: CardDef 'AllyKind
-beorn = unique $ ally "01031" "Beorn" Tactics 6 1 3 3 6
-
-ereborHammersmith :: CardDef 'AllyKind
-ereborHammersmith = ally "01059" "Erebor Hammersmith" Lore 2 1 1 1 3
-
-faramir :: CardDef 'AllyKind
-faramir = unique $ ally "01014" "Faramir" Leadership 4 2 1 2 3
-
-gandalf :: CardDef 'AllyKind
-gandalf = unique $ ally "01073" "Gandalf" Neutral 5 4 4 4 4
-
-gleowine :: CardDef 'AllyKind
-gleowine = unique $ ally "01062" "Gleowine" Lore 2 1 0 0 2
-
-guardOfTheCitadel :: CardDef 'AllyKind
-guardOfTheCitadel = ally "01013" "Guard of the Citadel" Leadership 2 1 1 0 2
-
-henamarthRiversong :: CardDef 'AllyKind
-henamarthRiversong = unique $ ally "01060" "Henamarth Riversong" Lore 1 1 1 0 1
-
-minerOfTheIronHills :: CardDef 'AllyKind
-minerOfTheIronHills = ally "01061" "Miner of the Iron Hills" Lore 2 0 0 1 2
-
-northernTracker :: CardDef 'AllyKind
-northernTracker = ally "01045" "Nothern Tracker" Spirit 4 1 2 2 3
-
-silverlodeArcher :: CardDef 'AllyKind
-silverlodeArcher = ally "01017" "Silverload Archer" Leadership 3 1 2 0 1
-
-snowbournScout :: CardDef 'AllyKind
-snowbournScout = ally "01016" "Snowbourn Scout" Leadership 1 0 0 1 1
-
-sonOfArnor :: CardDef 'AllyKind
-sonOfArnor = ally "01015" "Son of Arnor" Leadership 3 0 2 0 2
 
 allAttachments :: Map CardCode (CardDef 'AttachmentKind)
 allAttachments =
@@ -276,6 +204,7 @@ loadPlayer dl = traverse go =<< loadDecklist dl
         , threat = 0
         , question = Nothing
         , cost = Nothing
+        , allies = mempty
         }
 
 missingCard :: CardCode -> DeckException
@@ -334,15 +263,27 @@ getGameR = do
   g <- liftIO $ runGameT mainLoop env
   pure $ GameData g g.activePlayer
 
+data Response = Response
+  { choice :: Choice Message
+  , player :: PlayerId
+  }
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
 postGameR :: Handler GameData
 postGameR = do
   App {env} <- getYesod
-  choice <- requireCheckJsonBody
-  liftIO $ do
-    g <- flip runGameT env $ do
-      pushAll $ choiceMessages choice
-      mainLoop
-    pure $ GameData g g.activePlayer
+  response <- requireCheckJsonBody @_ @Response
+  g <- liftIO $ flip runGameT env $ do
+    clearQuestion response.player
+    pushAll $ choiceMessages response.choice
+    mainLoop
+  pure $ GameData g g.activePlayer
+
+clearQuestion :: PlayerId -> GameT ()
+clearQuestion pid = do
+  g <- getGame
+  putGame $ g {players = Map.adjust (\p -> p {question = Nothing}) pid g.players}
 
 postResetR :: Handler GameData
 postResetR = do

@@ -10,8 +10,11 @@ import Data.IORef
 import Data.List (find)
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe, isJust)
+import Debug.Trace (traceShowId)
+import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
 import LordOfTheRings.Hero ()
 import LordOfTheRings.Message
@@ -28,7 +31,7 @@ mainLoop :: GameT Game
 mainLoop = do
   mmsg <- pop
   g <- getGame
-  case mmsg of
+  case traceShowId mmsg of
     Nothing -> pure g
     Just msg -> do
       liftIO $ print msg
@@ -125,14 +128,57 @@ runPlayerMessage msg player = case msg of
       Just playingCard -> do
         let hand = filter ((/= cid) . (.id)) player.hand
         costId <- getRandom
-        let cost = ActiveCost costId (fromMaybe (StaticCost 0) playingCard.cost) (CostCardTarget playingCard)
-        push $ PayCost player.id costId
+        let cost =
+              ActiveCost
+                { id = costId
+                , cost = ResourceCost playingCard.sphere (fromMaybe (StaticCost 0) playingCard.cost)
+                , target = CostCardTarget playingCard
+                , player = player.id
+                }
+        push $ PayCost costId
         pure $ player {hand, Player.cost = Just cost}
+  SpendResources pid sphere n | pid == player.id && n > 0 -> do
+    let sphereMatches h = sphere == Neutral || h.sphere == sphere
+    let heroesWithResources = filter (\h -> sphereMatches h && h.resources > 0) player.heroes
+    case heroesWithResources of
+      [x] -> do
+        push $ SpendHeroResources x.id n
+        pure player
+      xs ->
+        pure $
+          player
+            { question =
+                Just
+                  ( ChooseOne [HeroChoice x.id [SpendHeroResources x.id 1, SpendResources pid sphere (n - 1)] | x <- xs]
+                  )
+            }
+  PaidCost acId
+    | Just cost <- player.cost
+    , cost.id == acId -> do
+        pure $ player {Player.cost = Nothing}
+  PlayAlly pid cid code | pid == player.id -> do
+    let allyCard = Map.findWithDefault (error "no ally") code allAllies
+    thisAlly <- newAlly (Card cid allyCard)
+    pure $ player {allies = Map.insert thisAlly.id thisAlly player.allies}
   _ -> pure player
 
 instance Run ActiveCost where
   run msg ac = case msg of
-    PayCost _ acId | acId == ac.id -> do
+    PayCost acId | acId == ac.id -> do
+      case ac.cost of
+        Free -> do
+          push $ PaidCost ac.id
+          pure ac
+        ResourceCost sphere rCost -> case rCost of
+          DynamicCost -> pure ac
+          StaticCost n -> do
+            pushAll [SpendResources ac.player sphere n, PayCost ac.id]
+            pure ac {Cost.cost = Free}
+    PaidCost acId | acId == ac.id -> do
+      case ac.target of
+        CostCardTarget (SomeCard card@(Card _ def)) -> case def.kind of
+          SAllyKind -> push $ PlayAlly ac.player card.id card.code
+          _ -> pure ()
       pure ac
     _ -> pure ac
 

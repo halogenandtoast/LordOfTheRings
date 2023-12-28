@@ -16,6 +16,11 @@ type Player = {
   hand: Card[];
   deck: Card[];
   question: Question | null;
+  allies: Record<string, Ally>;
+}
+
+type Ally = {
+  card: Card;
 }
 
 type Game = {

@@ -12,6 +12,8 @@ build-type:     Simple
 
 library
   exposed-modules:
+      LordOfTheRings.Ally
+      LordOfTheRings.Ally.Type
       LordOfTheRings.Card
       LordOfTheRings.Game
       LordOfTheRings.Game.Base

@@ -7,6 +7,9 @@ const emit = defineEmits<{ choose: [Choice] }>()
 
 <template>
   <div class="player">
+    <div>
+      <Card v-for="ally in Object.values(player.allies)" :key="ally.id" :card="ally.card" :data="data" @choose="$emit('choose')" />
+    </div>
     <div class="heroes">
       <Card v-for="hero in player.heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose')" />
     </div>

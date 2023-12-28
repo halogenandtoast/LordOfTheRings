@@ -24,7 +24,7 @@ const choose = (e: Choice) => {
       "Content-Type": "application/json",
       // 'Content-Type': 'application/x-www-form-urlencoded',
     }
-    , body: JSON.stringify(e)
+    , body: JSON.stringify({choice: e, player: data.value.playerId})
   }).then((res) => res.json().then((newData) => data.value = newData))
 }
 </script>
