@@ -10,7 +10,6 @@ import Data.IORef
 import Data.List (find)
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe, isJust)
-import Debug.Trace (traceShowId)
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Game.Base
@@ -31,7 +30,7 @@ mainLoop :: GameT Game
 mainLoop = do
   mmsg <- pop
   g <- getGame
-  case traceShowId mmsg of
+  case mmsg of
     Nothing -> pure g
     Just msg -> do
       liftIO $ print msg
