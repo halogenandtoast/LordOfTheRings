@@ -1,14 +1,91 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Player, GameData, Choice } from '@/types/Game'
+import gsap from 'gsap'
 import Card from './Card.vue'
 defineProps<{ player: Player, data: GameData }>()
 const emit = defineEmits<{ choose: [Choice] }>()
+
+const animationMatrix = ref([])
+
+const nextId = ref(4)
+const above = ref([])
+const below = ref([{ id: 1, color: "#FF0000" }, { id: 2,  color: "#0000FF" }, { id: 3, color: "#00FF00" }])
+
+function onBeforeEnter(el) {
+  el.style.opacity = 0
+  el.style.width = 0
+}
+
+function onEnter(el, done) {
+  const index = el.dataset.index
+  const finalRect = el.getBoundingClientRect()
+
+  if(!index) {
+    const width = window.getComputedStyle(el).width
+    gsap.to(el, { opacity: 1, width, onComplete: done })
+    return
+  }
+
+  const data = animationMatrix.value.find(([idx,]) => idx === index)
+  animationMatrix.value = animationMatrix.value.filter(([idx,]) => idx !== index)
+
+  if (!data) {
+    gsap.to(el, { startAt: { height: 0, marginLeft: 50, marginTop: 70 }, ease: "power4.in", opacity: 1, width: 100, height: 140, marginLeft: 0, marginTop: 0, onComplete: done })
+    return
+  }
+
+  const [,rect] = data
+
+  const startX = rect.left - finalRect.left
+  const startY = rect.top - finalRect.top
+
+  const c = el.cloneNode(true)
+  c.style.position = "fixed"
+  c.style.width = rect.width + "px"
+  c.style.zIndex = "1000"
+  el.parentNode.insertBefore(c, el)
+
+  const tl = gsap.timeline()
+
+  tl.
+    add("start").
+    to(el, {
+      startAt: { opacity: 0, width: 0 },
+      width: rect.width,
+      duration: 0.3
+    }, "start").
+    to(c, {
+      startAt: { x: startX, y: startY, opacity: 1 },
+      y: 0,
+      x: 0,
+      onComplete: () => {
+        c.remove()
+        el.style.opacity = "1"
+        done()
+      },
+      duration: 0.3
+    }, "start")
+}
+
+function onLeave(el, done) {
+  animationMatrix.value = [...animationMatrix.value, [el.dataset.index, el.getBoundingClientRect()]]
+  gsap.to(el, {
+    startAt: { opacity: 0 },
+    width: 0,
+    margin: 0,
+    onComplete: done,
+    duration: 0.3
+  })
+}
 </script>
 
 <template>
   <div class="player">
     <div>
-      <Card v-for="ally in Object.values(player.allies)" :key="ally.id" :card="ally.card" :data="data" @choose="$emit('choose')" />
+      <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
+        <Card v-for="ally in Object.values(player.allies)" :key="ally.id" :card="ally.card" :data="data" @choose="$emit('choose')" :data-index="ally.card.id" />
+      </transition-group>
     </div>
     <div class="heroes">
       <Card v-for="hero in player.heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose')" />
@@ -20,7 +97,9 @@ const emit = defineEmits<{ choose: [Choice] }>()
         <div class="deck-size">{{player.deck.length}}</div>
       </div>
       <div class="hand">
-        <Card v-for="card in player.hand" :key="card.id" :card="card" :data="data" @choose="$emit('choose', $event)" />
+        <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
+          <Card v-for="card in player.hand" :key="card.id" :card="card" :data="data" @choose="$emit('choose', $event)" :data-index="card.id" />
+        </transition-group>
       </div>
       <div class="threat">
         <span>{{player.threat}}</span>

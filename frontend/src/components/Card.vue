@@ -57,11 +57,13 @@ watch(bigRef, () => {
 </script>
 
 <template>
-  <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ active }" @click="choose">
-    <img :src="`/images/cards/${card.def.code}.jpg`" />
-    <span v-if="resources" class="resources">{{resources}}</span>
+  <div>
+    <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ active }" @click="choose">
+      <img :src="`/images/cards/${card.def.code}.jpg`" />
+      <span v-if="resources" class="resources">{{resources}}</span>
+    </div>
+    <img ref="bigRef" class="big" v-if="showBig" :src="`/images/cards/${card.def.code}.jpg`" :anchor="card.id" />
   </div>
-  <img ref="bigRef" class="big" v-if="showBig" :src="`/images/cards/${card.def.code}.jpg`" :anchor="card.id" />
 </template>
 
 <style scoped lang="scss">
@@ -103,5 +105,6 @@ img.big {
 
 .active {
   border: 2px solid red;
+  box-sizing: border-box;
 }
 </style>
