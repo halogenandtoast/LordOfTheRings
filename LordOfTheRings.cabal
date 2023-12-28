@@ -13,6 +13,14 @@ build-type:     Simple
 library
   exposed-modules:
       Lib
+      LordOfTheRings.Card
+      LordOfTheRings.Game
+      LordOfTheRings.Hero
+      LordOfTheRings.Hero.Type
+      LordOfTheRings.Id
+      LordOfTheRings.Message
+      LordOfTheRings.Queue
+      LordOfTheRings.Run
   other-modules:
       Paths_LordOfTheRings
   hs-source-dirs:

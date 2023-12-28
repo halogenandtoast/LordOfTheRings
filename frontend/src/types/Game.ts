@@ -4,11 +4,14 @@ type Card = {
 
 type Hero = {
   card: Card
+  resources: number
 }
 
 type Player = {
   heroes: Hero[];
   threat: number;
+  hand: Card[];
+  deck: Card[];
 }
 
 type Game = {

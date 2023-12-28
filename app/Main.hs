@@ -4,13 +4,13 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE NoFieldSelectors #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Main (main) where
 
 import Control.Monad.Extra (concatMapM, liftM, replicateM)
 import Control.Monad.Random (
   MonadRandom (..),
-  Random,
   getRandom,
   newStdGen,
   randomIO,
@@ -20,24 +20,25 @@ import Control.Monad.Random (
  )
 import Control.Monad.Reader
 import Data.Aeson
-import Data.Coerce
 import Data.IORef
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe, mapMaybe)
-import Data.Sequence (Seq, (|>), pattern Empty, pattern (:<|))
-import Data.String (IsString (..))
+import Data.Maybe (fromMaybe)
+import Data.Sequence (pattern Empty)
 import Data.Text (Text)
 import Data.Text qualified as Text
-import Data.UUID (UUID)
-import GHC.Generics
-import GHC.Records
+import LordOfTheRings.Card
+import LordOfTheRings.Game
+import LordOfTheRings.Hero
+import LordOfTheRings.Message
+import LordOfTheRings.Queue
+import LordOfTheRings.Run
 import System.Random.Shuffle (shuffleM)
 import Yesod.Core
 
 data Env = Env
   { queue :: Queue
-  , game :: Game
+  , game :: IORef Game
   }
 
 newtype GameT a = GameT {unGameT :: ReaderT Env IO a}
@@ -46,143 +47,34 @@ newtype GameT a = GameT {unGameT :: ReaderT Env IO a}
 runGameT :: GameT a -> Env -> IO a
 runGameT body = runReaderT body.unGameT
 
+putGame :: Game -> GameT ()
+putGame game = do
+  ref <- asks (.game)
+  liftIO $ writeIORef ref game
+
 instance HasGame GameT where
-  getGame = asks (.game)
+  getGame = asks (.game) >>= liftIO . readIORef
 
 instance HasQueue GameT where
   getQueue = asks (.queue)
 
-data Message = Setup
-  deriving stock (Show)
-
-type Queue = (IORef (Seq Message), IORef (Seq Message))
-
-push :: (HasQueue m) => Message -> m ()
-push msg = do
-  (ref, _) <- getQueue
-  liftIO $ atomicModifyIORef' ref $ \inbox -> (inbox |> msg, ())
-
-pop :: (HasQueue m) => m (Maybe Message)
-pop = do
-  (readRef, writeRef) <- getQueue
-  liftIO $ do
-    newMsgs <- atomicModifyIORef' readRef $ \inbox -> (Empty, inbox)
-    atomicModifyIORef' writeRef $ \oldMsgs -> case newMsgs <> oldMsgs of
-      Empty -> (Empty, Nothing)
-      msg :<| msgs -> (msgs, Just msg)
-
-class HasGame m where
-  getGame :: m Game
-
-class (MonadIO m) => HasQueue m where
-  getQueue :: m Queue
-
-class Run a where
-  run :: (HasQueue m, HasGame m, MonadRandom m) => Message -> a -> m a
-
 instance Run Game where
-  run msg game = case msg of
-    Setup -> do
-      players' <- traverse (run Setup) game.players
-      pure $ game {players = players'}
+  run msg game = do
+    players' <- traverse (run msg) game.players
+    pure $ game {players = players'}
 
 instance Run Player where
   run msg player = case msg of
     Setup -> do
-      deck' <- shuffleM player.deck
+      (hand, deck) <- splitAt 6 <$> shuffleM player.deck
       let threat = sum $ map (.threat) player.heroes
-      pure $ player {deck = deck', threat}
-
-data Cost = StaticCost Int | DynamicCost
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-data CardKind = HeroKind | AllyKind | AttachmentKind | EventKind
-
-data SCardKind k where
-  SHeroKind :: SCardKind 'HeroKind
-  SAllyKind :: SCardKind 'AllyKind
-  SAttachmentKind :: SCardKind 'AttachmentKind
-  SEventKind :: SCardKind 'EventKind
-
-deriving stock instance Show (SCardKind k)
-
-instance ToJSON (SCardKind k) where
-  toJSON = \case
-    SHeroKind -> "hero"
-    SAllyKind -> "ally"
-    SAttachmentKind -> "attachment"
-    SEventKind -> "event"
+      pure $ player {hand, deck, threat}
+    _ -> do
+      heroes <- traverse (run msg) player.heroes
+      pure $ player {LordOfTheRings.Game.heroes = heroes}
 
 tshow :: (Show a) => a -> Text
 tshow = Text.pack . show
-
-newtype Game = Game {players :: Map PlayerId Player}
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-data Player = Player
-  { id :: PlayerId
-  , heroes :: [Hero]
-  , deck :: [SomeCard]
-  , threat :: Int
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-newtype CardCode = CardCode Text
-  deriving newtype (Ord, Eq, IsString, Show, ToJSON)
-
-newtype HeroId = HeroId UUID
-  deriving newtype (Random, Show, ToJSON)
-
-newtype PlayerId = PlayerId UUID
-  deriving newtype (Random, Show, ToJSON, ToJSONKey)
-
-newtype CardId = CardId UUID
-  deriving newtype (Random, Show, ToJSON)
-
-data Card (k :: CardKind) = Card
-  { id :: CardId
-  , def :: CardDef k
-  }
-
-deriving stock instance (Show (CardDetails k)) => Show (Card k)
-
-instance (ToJSON (CardDef k)) => ToJSON (Card k) where
-  toJSON (Card cid def) = object ["id" .= toJSON cid, "def" .= toJSON def]
-
-data SomeCard where
-  SomeCard :: (Show (CardDef k), Show (CardDetails k), ToJSON (Card k)) => Card k -> SomeCard
-
-instance HasField "code" SomeCard CardCode where
-  getField (SomeCard card) = card.def.code
-
-instance Show SomeCard where
-  show (SomeCard card) = show card
-
-instance ToJSON SomeCard where
-  toJSON (SomeCard card) = toJSON card
-
-data Name = Name Text (Maybe Text)
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-instance IsString Name where
-  fromString s = Name (fromString s) Nothing
-
-data SomeCardDef where
-  SomeCardDef
-    :: (Show (CardDef k), Show (CardDetails k), ToJSON (CardDetails k)) => CardDef k -> SomeCardDef
-
-instance HasField "code" SomeCardDef CardCode where
-  getField (SomeCardDef def) = def.code
-
-instance Show SomeCardDef where
-  show (SomeCardDef def) = show def
-
-instance (HasField "cost" (CardDetails k) Cost) => HasField "cost" (CardDef k) Cost where
-  getField a = a.details.cost
 
 getCost :: SomeCard -> Maybe Cost
 getCost (SomeCard (Card _ def)) = case def.kind of
@@ -191,104 +83,23 @@ getCost (SomeCard (Card _ def)) = case def.kind of
   SAttachmentKind -> Just def.cost
   SEventKind -> Just def.cost
 
-data HeroDetails = HeroDetails
-  { threat :: Int
-  , willpower :: Int
-  , attack :: Int
-  , defense :: Int
-  , hitPoints :: Int
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-data AllyDetails = AllyDetails
-  { cost :: Cost
-  , willpower :: Int
-  , attack :: Int
-  , defense :: Int
-  , hitPoints :: Int
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-data AttachmentDetails = AttachmentDetails
-  { cost :: Cost
-  , restricted :: Bool
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-newtype EventDetails = EventDetails {cost :: Cost}
-  deriving newtype (Show, ToJSON)
-
-type family CardDetails (k :: CardKind) where
-  CardDetails 'HeroKind = HeroDetails
-  CardDetails 'AllyKind = AllyDetails
-  CardDetails 'AttachmentKind = AttachmentDetails
-  CardDetails 'EventKind = EventDetails
-
-data Sphere = Leadership | Tactics | Spirit | Lore | Neutral
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
-data CardDef (k :: CardKind) = CardDef
-  { code :: CardCode
-  , name :: Name
-  , unique :: Bool
-  , kind :: SCardKind k
-  , details :: CardDetails k
-  , spheres :: [Sphere]
-  }
-
-deriving stock instance (Show (CardDetails k), Show (SCardKind k)) => Show (CardDef k)
-
-instance (ToJSON (CardDetails k)) => ToJSON (CardDef k) where
-  toJSON (CardDef {..}) =
-    object
-      [ "code" .= toJSON code
-      , "name" .= toJSON name
-      , "unique" .= toJSON unique
-      , "kind" .= toJSON kind
-      , "details" .= toJSON details
-      ]
-
-class (Show a, ToJSON a) => IsHero a where
-  heroAttrs :: a -> HeroAttrs
-  default heroAttrs :: (Coercible a HeroAttrs) => a -> HeroAttrs
-  heroAttrs = coerce
-
-instance HasField "threat" HeroAttrs Int where
-  getField a = a.card.def.details.threat
-
-data Hero where
-  Hero :: (IsHero a) => a -> Hero
-
-instance HasField "threat" Hero Int where
-  getField (Hero a) = (heroAttrs a).threat
-
-instance ToJSON Hero where
-  toJSON (Hero a) = toJSON a
-
-instance Show Hero where
-  show (Hero a) = show a
-
-data HeroAttrs = HeroAttrs
-  { id :: HeroId
-  , card :: Card 'HeroKind
-  , resources :: Int
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
-
 newtype Beravor = Beravor HeroAttrs
   deriving newtype (Show, ToJSON)
 instance IsHero Beravor
+instance Run Beravor where
+  run msg (Beravor a) = Beravor <$> run msg a
+
 newtype Eowyn = Eowyn HeroAttrs
   deriving newtype (Show, ToJSON)
 instance IsHero Eowyn
+instance Run Eowyn where
+  run msg (Eowyn a) = Eowyn <$> run msg a
+
 newtype Theodred = Theodred HeroAttrs
   deriving newtype (Show, ToJSON)
 instance IsHero Theodred
+instance Run Theodred where
+  run msg (Theodred a) = Theodred <$> run msg a
 
 lookupHero :: CardCode -> HeroAttrs -> Hero
 lookupHero cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData
@@ -544,6 +355,7 @@ loadPlayer dl = traverse go =<< loadDecklist dl
         { id = pid
         , heroes
         , deck = deck.cards
+        , hand = []
         , threat = 0
         }
 
@@ -609,18 +421,26 @@ getHomeR = do
     Left err -> error (show err)
     Right player -> do
       queue <- liftIO newQueue
-      liftIO $ runGameT gameMain (Env {queue, game = Game $ Map.singleton player.id player})
+      game <- liftIO $ newIORef $ Game $ Map.singleton player.id player
+      liftIO $ runGameT gameMain (Env {queue, game})
 
 gameMain :: GameT Game
 gameMain = do
   push Setup
+  pushAll [BeginPhase ResourcePhase, EndPhase ResourcePhase]
+  mainLoop
+
+mainLoop :: GameT Game
+mainLoop = do
   mmsg <- pop
   g <- getGame
   case mmsg of
     Nothing -> pure g
     Just msg -> do
       liftIO $ print msg
-      run msg g
+      g' <- run msg g
+      putGame g'
+      mainLoop
 
 newQueue :: (MonadIO m) => m Queue
 newQueue = liftIO $ do

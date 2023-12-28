@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
+import Game from './components/Game.vue'
+
+const game = ref(null)
+
+fetch('/api/data').then((res) => res.json().then((data) => game.value = data))
+
 </script>
 
 <template>
-  <HelloWorld msg="Vite + Vue" />
+  <Game v-if="game" :game="game" />
 </template>
 
 <style scoped lang="scss">
