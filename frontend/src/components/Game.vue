@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { Game } from '@/types/Game'
+import { computed } from 'vue'
+import { Game, Choice } from '@/types/Game'
 import Player from './Player.vue'
 
-defineProps<{ game: Game }>()
+const props = defineProps<{ data: GameData }>()
+const game = computed(() => props.data.game)
+const emit = defineEmits<{ reset: [], choose: [Choice] }>()
+
 </script>
 <template>
   <div class="game">
-    <Player v-for="player in game.players" :key="player.id" :player="player" />
+    <button @click="emit('reset')">Reset</button>
+    <Player v-for="player in game.players" :key="player.id" :player="player" :data="data" @choose="$emit('choose', $event)" />
   </div>
 </template>
 
@@ -21,5 +26,11 @@ defineProps<{ game: Game }>()
   height: 100%;
   padding: calc($gap * 2);
   box-sizing: border-box;
+}
+
+button {
+  display: block;
+  height: fit-content;
+  width: fit-content;
 }
 </style>

@@ -1,7 +1,7 @@
-module LordOfTheRings.Run where
+module LordOfTheRings.Run (module LordOfTheRings.Run) where
 
 import Control.Monad.Random (MonadRandom)
-import {-# SOURCE #-} LordOfTheRings.Game
+import {-# SOURCE #-} LordOfTheRings.Game.Base
 import LordOfTheRings.Message
 import LordOfTheRings.Queue
 

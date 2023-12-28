@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { Player } from '@/types/Game'
+import { Player, GameData, Choice } from '@/types/Game'
 import Card from './Card.vue'
-defineProps<{ player: Player }>()
+defineProps<{ player: Player, data: GameData }>()
+const emit = defineEmits<{ choose: [Choice] }>()
 </script>
 
 <template>
   <div class="player">
     <div class="heroes">
-      <Card v-for="hero in player.heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" />
+      <Card v-for="hero in player.heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose')" />
     </div>
     <div class="player-main">
       <div class="discard">
@@ -16,7 +17,7 @@ defineProps<{ player: Player }>()
         <div class="deck-size">{{player.deck.length}}</div>
       </div>
       <div class="hand">
-        <Card v-for="card in player.hand" :key="card.id" :card="card" />
+        <Card v-for="card in player.hand" :key="card.id" :card="card" :data="data" @choose="$emit('choose', $event)" />
       </div>
       <div class="threat">
         <span>{{player.threat}}</span>

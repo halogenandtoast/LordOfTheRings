@@ -5,6 +5,7 @@ import Data.Coerce
 import GHC.Generics
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 
 class (Run a, Show a, ToJSON a) => IsHero a where
@@ -19,6 +20,7 @@ data HeroAttrs = HeroAttrs
   { id :: HeroId
   , card :: Card 'HeroKind
   , resources :: Int
+  , sphere :: Sphere
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)

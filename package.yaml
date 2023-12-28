@@ -1,6 +1,8 @@
 name:                LordOfTheRings
 language: GHC2021
 default-extensions:
+- NoImplicitPrelude
+- BlockArguments
 - DefaultSignatures
 - DerivingStrategies
 - OverloadedStrings

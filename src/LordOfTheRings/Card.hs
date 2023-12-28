@@ -3,14 +3,14 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
-module LordOfTheRings.Card where
+module LordOfTheRings.Card (module LordOfTheRings.Card) where
 
 import Data.Aeson
 import Data.String (IsString (..))
-import Data.Text (Text)
 import GHC.Generics
 import GHC.Records
 import LordOfTheRings.Id
+import LordOfTheRings.Prelude
 
 data CardKind = HeroKind | AllyKind | AttachmentKind | EventKind
 
@@ -47,6 +47,15 @@ data SomeCard where
 
 instance HasField "code" SomeCard CardCode where
   getField (SomeCard card) = card.def.code
+
+instance HasField "sphere" SomeCard Sphere where
+  getField (SomeCard card) = card.def.sphere
+
+instance HasField "cost" SomeCard (Maybe Cost) where
+  getField = cardCost
+
+instance HasField "id" SomeCard CardId where
+  getField (SomeCard card) = card.id
 
 instance Show SomeCard where
   show (SomeCard card) = show card
@@ -109,7 +118,7 @@ data CardDef (k :: CardKind) = CardDef
   , unique :: Bool
   , kind :: SCardKind k
   , details :: CardDetails k
-  , spheres :: [Sphere]
+  , sphere :: Sphere
   }
 
 deriving stock instance (Show (CardDetails k), Show (SCardKind k)) => Show (CardDef k)
@@ -125,7 +134,7 @@ instance (ToJSON (CardDetails k)) => ToJSON (CardDef k) where
       ]
 
 data Sphere = Leadership | Tactics | Spirit | Lore | Neutral
-  deriving stock (Show, Generic)
+  deriving stock (Eq, Show, Generic)
   deriving anyclass (ToJSON)
 
 data Name = Name Text (Maybe Text)
@@ -138,3 +147,15 @@ instance IsString Name where
 data Cost = StaticCost Int | DynamicCost
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
+
+cardCost :: SomeCard -> Maybe Cost
+cardCost (SomeCard (Card _ def)) = case def.kind of
+  SHeroKind -> Nothing
+  SAllyKind -> Just def.cost
+  SAttachmentKind -> Just def.cost
+  SEventKind -> Just def.cost
+
+costAsResources :: Cost -> Int
+costAsResources = \case
+  StaticCost n -> n
+  DynamicCost -> 0

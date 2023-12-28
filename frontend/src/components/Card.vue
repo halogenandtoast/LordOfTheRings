@@ -1,11 +1,39 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { Card } from '@/types/Game'
-defineProps<{ card: Card, resources?: number }>()
+import { ref, watch, computed } from 'vue'
+import { Card, Question, Choice } from '@/types/Game'
+const props = defineProps<{ card: Card, resources?: number, data: GameData }>()
+const emit = defineEmits<{ choose: [string] }>()
 
 const showBig = ref(false)
 const bigRef = ref(null)
 const cardRef = ref(null)
+
+const question = computed(() => {
+  return props.data.game.players[props.data.playerId].question
+})
+
+const choose = () => {
+  if (choice.value) {
+    emit('choose', choice.value)
+  }
+}
+
+const choice = computed(() => {
+  const currentQuestion = question.value
+  if (!currentQuestion) return null
+
+  switch (currentQuestion.tag) {
+    case "ChooseOne":
+      return currentQuestion.contents.find((choice: Choice) => choice.cardId === props.card.id)
+    default:
+      return null
+  }
+})
+
+const active = computed(() => {
+  const currentChoice = choice.value
+  return currentChoice !== undefined && currentChoice !== null
+})
 
 watch(bigRef, () => {
   const card = cardRef.value
@@ -29,7 +57,7 @@ watch(bigRef, () => {
 </script>
 
 <template>
-  <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false">
+  <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ active }" @click="choose">
     <img :src="`/images/cards/${card.def.code}.jpg`" />
     <span v-if="resources" class="resources">{{resources}}</span>
   </div>
@@ -71,5 +99,9 @@ img.big {
   height: fit-content;
   aspect-ratio: 429/600;
   border-radius: 20px;
+}
+
+.active {
+  border: 2px solid red;
 }
 </style>

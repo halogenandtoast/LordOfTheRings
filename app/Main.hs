@@ -4,11 +4,10 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE NoFieldSelectors #-}
-{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Main (main) where
 
-import Control.Monad.Extra (concatMapM, liftM, replicateM)
+import Control.Monad.Extra (concatMapM, replicateM)
 import Control.Monad.Random (
   MonadRandom (..),
   getRandom,
@@ -21,110 +20,28 @@ import Control.Monad.Random (
 import Control.Monad.Reader
 import Data.Aeson
 import Data.IORef
-import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe)
-import Data.Sequence (pattern Empty)
-import Data.Text (Text)
 import Data.Text qualified as Text
+import GHC.Generics
 import LordOfTheRings.Card
 import LordOfTheRings.Game
 import LordOfTheRings.Hero
+import LordOfTheRings.Id
 import LordOfTheRings.Message
+import LordOfTheRings.Prelude
+import LordOfTheRings.Question
 import LordOfTheRings.Queue
-import LordOfTheRings.Run
-import System.Random.Shuffle (shuffleM)
 import Yesod.Core
 
-data Env = Env
-  { queue :: Queue
-  , game :: IORef Game
+data GameData = GameData
+  { game :: Game
+  , playerId :: PlayerId
   }
-
-newtype GameT a = GameT {unGameT :: ReaderT Env IO a}
-  deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader Env)
-
-runGameT :: GameT a -> Env -> IO a
-runGameT body = runReaderT body.unGameT
-
-putGame :: Game -> GameT ()
-putGame game = do
-  ref <- asks (.game)
-  liftIO $ writeIORef ref game
-
-instance HasGame GameT where
-  getGame = asks (.game) >>= liftIO . readIORef
-
-instance HasQueue GameT where
-  getQueue = asks (.queue)
-
-instance Run Game where
-  run msg game = do
-    players' <- traverse (run msg) game.players
-    pure $ game {players = players'}
-
-instance Run Player where
-  run msg player = case msg of
-    Setup -> do
-      (hand, deck) <- splitAt 6 <$> shuffleM player.deck
-      let threat = sum $ map (.threat) player.heroes
-      pure $ player {hand, deck, threat}
-    _ -> do
-      heroes <- traverse (run msg) player.heroes
-      pure $ player {LordOfTheRings.Game.heroes = heroes}
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
 
 tshow :: (Show a) => a -> Text
 tshow = Text.pack . show
-
-getCost :: SomeCard -> Maybe Cost
-getCost (SomeCard (Card _ def)) = case def.kind of
-  SHeroKind -> Nothing
-  SAllyKind -> Just def.cost
-  SAttachmentKind -> Just def.cost
-  SEventKind -> Just def.cost
-
-newtype Beravor = Beravor HeroAttrs
-  deriving newtype (Show, ToJSON)
-instance IsHero Beravor
-instance Run Beravor where
-  run msg (Beravor a) = Beravor <$> run msg a
-
-newtype Eowyn = Eowyn HeroAttrs
-  deriving newtype (Show, ToJSON)
-instance IsHero Eowyn
-instance Run Eowyn where
-  run msg (Eowyn a) = Eowyn <$> run msg a
-
-newtype Theodred = Theodred HeroAttrs
-  deriving newtype (Show, ToJSON)
-instance IsHero Theodred
-instance Run Theodred where
-  run msg (Theodred a) = Theodred <$> run msg a
-
-lookupHero :: CardCode -> HeroAttrs -> Hero
-lookupHero cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData
- where
-  allData = Map.fromList [("01012", Hero . Beravor), ("01007", Hero . Eowyn), ("01002", Hero . Theodred)]
-
-newHero :: (MonadRandom m) => Card 'HeroKind -> m Hero
-newHero card = do
-  heroId <- getRandom
-  pure $ lookupHero card.def.code (HeroAttrs heroId card 0)
-
-allHeroes :: Map CardCode (CardDef 'HeroKind)
-allHeroes = Map.fromList [("01012", beravor), ("01007", eowyn), ("01002", theodred)]
-
-hero :: CardCode -> Name -> Sphere -> HeroDetails -> CardDef 'HeroKind
-hero code name sphere details = CardDef {code, name, unique = True, kind = SHeroKind, details, spheres = [sphere]}
-
-beravor :: CardDef 'HeroKind
-beravor = hero "01012" "Beravor" Lore (HeroDetails 10 2 2 2 4)
-
-eowyn :: CardDef 'HeroKind
-eowyn = hero "01007" "Eowyn" Spirit (HeroDetails 9 4 1 1 3)
-
-theodred :: CardDef 'HeroKind
-theodred = hero "01002" "Theodred" Leadership (HeroDetails 8 1 2 1 4)
 
 allAllies :: Map CardCode (CardDef 'AllyKind)
 allAllies =
@@ -151,7 +68,7 @@ ally code name sphere cost willpower attack defense hitPoints =
     , unique = False
     , kind = SAllyKind
     , details = AllyDetails (StaticCost cost) willpower attack defense hitPoints
-    , spheres = [sphere]
+    , sphere
     }
 
 unique :: CardDef k -> CardDef k
@@ -218,7 +135,7 @@ attachment code name sphere cost =
     , unique = False
     , kind = SAttachmentKind
     , details = AttachmentDetails (StaticCost cost) False
-    , spheres = [sphere]
+    , sphere
     }
 
 restricted :: CardDef 'AttachmentKind -> CardDef 'AttachmentKind
@@ -264,7 +181,7 @@ event code name sphere cost =
     , unique = False
     , kind = SEventKind
     , details = EventDetails (StaticCost cost)
-    , spheres = [sphere]
+    , sphere
     }
 
 aTestOfWill :: CardDef 'EventKind
@@ -357,6 +274,8 @@ loadPlayer dl = traverse go =<< loadDecklist dl
         , deck = deck.cards
         , hand = []
         , threat = 0
+        , question = Nothing
+        , cost = Nothing
         }
 
 missingCard :: CardCode -> DeckException
@@ -385,68 +304,71 @@ loadDecklist DeckList {heroes, cards} = do
   loadedCards <- sequence <$> concatMapM (\(code, n) -> replicateM n (lookupCard code)) cards
   pure $ Deck <$> loadedHeroes <*> loadedCards
 
-data App = App
+data App = App {env :: Env}
 
 mkYesod
   "App"
   [parseRoutes|
 /api ApiP:
-  /data HomeR GET
+  /data GameR GET POST
+  /reset ResetR POST
 |]
 
 instance Yesod App
 
-instance ToTypedContent Game where
+instance ToTypedContent GameData where
   toTypedContent = toTypedContent . toJSON
 
-instance ToContent Game where
+instance ToContent GameData where
   toContent = toContent . toJSON
 
 instance MonadRandom (HandlerFor App) where
   getRandom = liftIO randomIO
   getRandomR = liftIO . randomRIO
-  getRandomRs lohi = liftM (randomRs lohi) newStdGen
-  getRandoms = liftM randoms newStdGen
+  getRandomRs lohi = fmap (randomRs lohi) newStdGen
+  getRandoms = fmap randoms newStdGen
 
-instance MonadRandom GameT where
-  getRandom = liftIO randomIO
-  getRandomR = liftIO . randomRIO
-  getRandomRs lohi = liftM (randomRs lohi) newStdGen
-  getRandoms = liftM randoms newStdGen
+getGameR :: Handler GameData
+getGameR = do
+  App {env} <- getYesod
+  g <- liftIO $ runGameT mainLoop env
+  pure $ GameData g g.activePlayer
 
-getHomeR :: Handler Game
-getHomeR = do
+postGameR :: Handler GameData
+postGameR = do
+  App {env} <- getYesod
+  choice <- requireCheckJsonBody
+  liftIO $ do
+    g <- flip runGameT env $ do
+      pushAll $ choiceMessages choice
+      mainLoop
+    pure $ GameData g g.activePlayer
+
+postResetR :: Handler GameData
+postResetR = do
+  App {env} <- getYesod
+  liftIO $ flip runGameT env $ do
+    clearQueue
+    resetGame
+    pushAll [Setup, BeginRound, EndRound]
+    g <- mainLoop
+    pure $ GameData g g.activePlayer
+
+resetGame :: GameT ()
+resetGame = do
   ePlayer <- loadPlayer testDeckList
   case ePlayer of
     Left err -> error (show err)
-    Right player -> do
-      queue <- liftIO newQueue
-      game <- liftIO $ newIORef $ Game $ Map.singleton player.id player
-      liftIO $ runGameT gameMain (Env {queue, game})
-
-gameMain :: GameT Game
-gameMain = do
-  push Setup
-  pushAll [BeginPhase ResourcePhase, EndPhase ResourcePhase]
-  mainLoop
-
-mainLoop :: GameT Game
-mainLoop = do
-  mmsg <- pop
-  g <- getGame
-  case mmsg of
-    Nothing -> pure g
-    Just msg -> do
-      liftIO $ print msg
-      g' <- run msg g
-      putGame g'
-      mainLoop
-
-newQueue :: (MonadIO m) => m Queue
-newQueue = liftIO $ do
-  inbox <- newIORef Empty
-  queue <- newIORef Empty
-  pure (inbox, queue)
+    Right player -> putGame $ Game (Map.singleton player.id player) player.id
 
 main :: IO ()
-main = warp 3000 App
+main = do
+  ePlayer <- loadPlayer testDeckList
+  case ePlayer of
+    Left err -> error (show err)
+    Right player -> liftIO $ do
+      queue <- newQueue
+      game <- newIORef $ Game (Map.singleton player.id player) player.id
+      let env = Env {queue, game}
+      runGameT (pushAll [Setup, BeginRound, EndRound]) env
+      warp 3000 (App env)

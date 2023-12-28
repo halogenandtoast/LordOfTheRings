@@ -12,13 +12,15 @@ build-type:     Simple
 
 library
   exposed-modules:
-      Lib
       LordOfTheRings.Card
       LordOfTheRings.Game
+      LordOfTheRings.Game.Base
       LordOfTheRings.Hero
       LordOfTheRings.Hero.Type
       LordOfTheRings.Id
       LordOfTheRings.Message
+      LordOfTheRings.Prelude
+      LordOfTheRings.Question
       LordOfTheRings.Queue
       LordOfTheRings.Run
   other-modules:
@@ -26,6 +28,8 @@ library
   hs-source-dirs:
       src
   default-extensions:
+      NoImplicitPrelude
+      BlockArguments
       DefaultSignatures
       DerivingStrategies
       OverloadedStrings
@@ -56,6 +60,8 @@ executable LordOfTheRings-exe
   hs-source-dirs:
       app
   default-extensions:
+      NoImplicitPrelude
+      BlockArguments
       DefaultSignatures
       DerivingStrategies
       OverloadedStrings
@@ -88,6 +94,8 @@ test-suite LordOfTheRings-test
   hs-source-dirs:
       test
   default-extensions:
+      NoImplicitPrelude
+      BlockArguments
       DefaultSignatures
       DerivingStrategies
       OverloadedStrings
