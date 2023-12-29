@@ -37,11 +37,12 @@ const questChoice = computed(() => {
 </script>
 
 <template>
-  <div>Scenario</div>
-  <div class="deck">
-    <div class="deck-size">{{scenario.encounterDeck.length}}</div>
+  <div class="scenario">
+    <div class="deck">
+      <div class="deck-size">{{scenario.encounterDeck.length}}</div>
+    </div>
+    <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" />
   </div>
-  <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" />
 
   <div class="staging">
     <Card v-for="enemy in enemies" :key="enemy.id" :card="enemy.card" :data="data" @choose="$emit('choose', $event)" />
@@ -53,7 +54,8 @@ const questChoice = computed(() => {
 <style scoped lang="scss">
 .deck {
   width: $card-width;
-  aspect-ratio: 756/1063;
+  aspect-ratio: $card-aspect;
+  height: fit-content;
   background-image: url('/images/player.jpg');
   background-size: cover;
   display: grid;
@@ -71,6 +73,11 @@ const questChoice = computed(() => {
 }
 
 .staging {
+  display: flex;
+  gap: $gap;
+}
+
+.scenario {
   display: flex;
   gap: $gap;
 }

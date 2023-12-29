@@ -59,7 +59,12 @@ watch(bigRef, () => {
       x = x - bigRect.width + cardRect.width
     }
 
-    const y = cardRect.y - bigRect.height
+    let y = cardRect.y - bigRect.height
+
+    if (y < 0) {
+      y = cardRect.y + cardRect.height
+    }
+
     big.style.left = `${x}px`
     big.style.top = `${y}px`
   }
@@ -120,6 +125,7 @@ img.big {
   width: calc($card-width * 4);
   aspect-ratio: $card-aspect;
   border-radius: 20px;
+  z-index: 100;
 
   &.rotated {
     width: calc($card-width * 4 / $card-aspect);
