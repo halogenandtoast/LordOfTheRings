@@ -62,6 +62,7 @@ data Player = Player
   , threat :: Int
   , question :: Maybe (Question Message)
   , cost :: Maybe ActiveCost
+  , name :: Text
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)

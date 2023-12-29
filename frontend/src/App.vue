@@ -33,7 +33,8 @@ watch(data, (message) => {
 fetch('/api/data').then((res) => res.json().then((newData) => gameData.value = newData))
 
 const reset = () => {
-  fetch('/api/reset', { method: "POST" }).then((res) => res.json().then((newData) => gameData.value = newData))
+  gameLog.value = []
+  fetch('/api/reset', { method: "POST" })
 }
 
 const question = computed(() => {

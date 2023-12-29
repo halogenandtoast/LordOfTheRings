@@ -93,6 +93,11 @@ instance Run Game where
     entities <- run msg game.entities
     runGameMessage msg (game {players, entities})
 
+getPlayer :: (HasGame m) => PlayerId -> m Player
+getPlayer pid = do
+  ps <- getsGame (.players)
+  pure $ Map.findWithDefault (error $ "Player not found: " <> show pid) pid ps
+
 runGameMessage :: (HasQueue m, HasGame m, MonadRandom m, Frontend m) => Message -> Game -> m Game
 runGameMessage msg g = case msg of
   BeginRound -> do
@@ -117,7 +122,8 @@ runGameMessage msg g = case msg of
       push $ WithPlayer player.id msg
     pure g
   PlayAlly pid card -> do
-    send $ Log $ "Player " <> tshow pid <> " plays " <> tshow card
+    player <- getPlayer pid
+    send $ Log $ player.name <> " plays " <> display card.name
     thisAlly <- newAlly card
     pure $
       g

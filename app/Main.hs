@@ -204,6 +204,7 @@ loadPlayer dl = traverse go =<< loadDecklist dl
           , threat = 0
           , question = Nothing
           , cost = Nothing
+          , name = "halogen64"
           }
       , heroes
       )
@@ -268,7 +269,6 @@ instance MonadRandom (HandlerFor App) where
 
 handleSocket :: Room -> WebSocketsT Handler ()
 handleSocket room = do
-  liftIO $ putStrLn "HERE"
   readChannel <- atomically $ dupTChan room.chan
   race_
     (forever $ atomically (readTChan readChannel) >>= sendTextData)
@@ -303,15 +303,13 @@ postGameR = do
         encode $
           toJSON $
             object ["contents" .= GameData g g.activePlayer, "tag" .= String "Update"]
-  -- pure $ GameData g g.activePlayer
-  pure ()
 
 clearQuestion :: PlayerId -> GameT ()
 clearQuestion pid = do
   g <- getGame
   putGame $ g {players = Map.adjust (\p -> p {question = Nothing}) pid g.players}
 
-postResetR :: Handler GameData
+postResetR :: Handler ()
 postResetR = do
   App {room} <- getYesod
   liftIO $ flip runGameT room.env $ do
@@ -319,7 +317,11 @@ postResetR = do
     resetGame
     pushAll [Setup, BeginRound, EndRound]
     g <- mainLoop
-    pure $ GameData g g.activePlayer
+    atomically $
+      writeTChan room.chan $
+        encode $
+          toJSON $
+            object ["contents" .= GameData g g.activePlayer, "tag" .= String "Update"]
 
 resetGame :: GameT ()
 resetGame = do

@@ -12,6 +12,14 @@ import GHC.Records
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 
+class Display a where
+  display :: a -> Text
+
+instance Display Name where
+  display (Name title mSubtitle) = case mSubtitle of
+    Nothing -> title
+    Just subtitle -> title <> ": " <> subtitle
+
 data CardKind = HeroKind | AllyKind | AttachmentKind | EventKind
 
 data SCardKind k where
@@ -50,6 +58,9 @@ deriving anyclass instance FromJSON (Card 'AllyKind)
 
 instance HasField "code" (Card k) CardCode where
   getField card = card.def.code
+
+instance HasField "name" (Card k) Name where
+  getField card = card.def.name
 
 deriving stock instance (Show (CardDetails k)) => Show (Card k)
 
