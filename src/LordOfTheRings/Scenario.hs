@@ -1,0 +1,117 @@
+{-# LANGUAGE OverloadedRecordDot #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+
+module LordOfTheRings.Scenario (module LordOfTheRings.Scenario, module LordOfTheRings.Scenario.Type) where
+
+import Control.Monad.Extra (concatMapM)
+import Control.Monad.Random
+import Data.Aeson
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Card
+import LordOfTheRings.EncounterSet (EncounterSet)
+import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Enemy.Cards (allEnemies)
+import LordOfTheRings.Location.Cards (allLocations)
+import LordOfTheRings.Message
+import LordOfTheRings.Prelude
+import LordOfTheRings.Quest
+import LordOfTheRings.Quest.Cards qualified as Quest
+import LordOfTheRings.Question
+import LordOfTheRings.Queue
+import LordOfTheRings.Run
+import LordOfTheRings.Scenario.Type
+import LordOfTheRings.Treachery.Cards (allTreacheries)
+import System.Random.Shuffle (shuffleM)
+
+newScenario :: (IsScenario a) => (ScenarioAttrs -> a) -> Scenario
+newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] Normal
+
+instance Run Scenario where
+  run msg (Scenario a) = Scenario <$> run msg a
+
+newtype PassageThroughMirkwood = PassageThroughMirkwood ScenarioAttrs
+  deriving newtype (Show, ToJSON)
+
+gatherEncounterSet :: (MonadRandom m) => Difficulty -> EncounterSet -> m [SomeEncounterCard]
+gatherEncounterSet difficulty encounterSet = do
+  enemies <-
+    concatMapM
+      (\e -> fmap SomeEncounterCard <$> replicateM (pickCount e.encounterSetCount) (genEncounterCard e))
+      $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allEnemies)
+  treacheries <-
+    concatMapM
+      (\e -> fmap SomeEncounterCard <$> replicateM (pickCount e.encounterSetCount) (genEncounterCard e))
+      $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allTreacheries)
+  locations <-
+    concatMapM
+      (\e -> fmap SomeEncounterCard <$> replicateM (pickCount e.encounterSetCount) (genEncounterCard e))
+      $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allLocations)
+  pure $ enemies <> treacheries <> locations
+ where
+  pickCount :: (Int, Int, Int) -> Int
+  pickCount (easy, normal, nightmare) = case difficulty of
+    Easy -> easy
+    Normal -> normal
+    Nightmare -> nightmare
+
+instance IsScenario PassageThroughMirkwood
+instance Run PassageThroughMirkwood where
+  run msg s@(PassageThroughMirkwood a) = case msg of
+    DoStep 1 Setup -> do
+      encounterDeck <-
+        concatMapM
+          (gatherEncounterSet a.difficulty)
+          [EncounterSet.DolGuldurOrcs, EncounterSet.PassageThroughMirkwood, EncounterSet.SpidersOfMirkwood]
+      pure $ PassageThroughMirkwood $ a {encounterDeck}
+    DoStep 6 Setup -> do
+      fliesAndSpiders <- genEncounterCard Quest.fliesAndSpiders
+      questDeck <-
+        (fliesAndSpiders :)
+          <$> traverse
+            genEncounterCard
+            [ Quest.aForkInTheRoad
+            , Quest.aChosenPathDontLeaveThePath
+            , Quest.aChosenPathBeornsPath
+            ]
+
+      quest <- Just <$> newQuest fliesAndSpiders
+
+      pure $ PassageThroughMirkwood $ a {questDeck, quest}
+    _ -> PassageThroughMirkwood <$> run msg a
+
+cardMatches :: CardMatcher -> SomeEncounterCard -> Bool
+cardMatches = \case
+  CardWithCode code -> \case
+    SomeEncounterCard (EncounterCard _ c) -> code == c.code
+
+runScenarioMessage :: (MonadRandom m, HasQueue m) => Message -> ScenarioAttrs -> m ScenarioAttrs
+runScenarioMessage msg attrs = case msg of
+  ShuffleDeck EncounterDeck -> do
+    encounterDeck <- shuffleM attrs.encounterDeck
+    pure $ attrs {encounterDeck}
+  Search pid EncounterDeck cardMatcher ToStaging Shuffle -> do
+    let matches = filter (cardMatches cardMatcher) attrs.encounterDeck
+    case matches of
+      [] -> pure attrs
+      (x : xs) -> do
+        let allSame = all ((== x.code) . (.code)) xs
+        if allSame
+          then do
+            encounterDeck <- shuffleM $ filter ((/= x.id) . (.id)) attrs.encounterDeck
+            push $ AddToStaging x
+            pure $ attrs {encounterDeck}
+          else do
+            push $
+              Ask
+                pid
+                ( ChooseOne $
+                    CardChoice x.id [AddToStaging x]
+                      : map (\y -> CardChoice y.id [AddToStaging y, ShuffleDeck EncounterDeck]) xs
+                )
+            pure attrs
+  _ -> pure attrs
+
+instance Run ScenarioAttrs where
+  run msg attrs = do
+    quest <- traverse (run msg) attrs.quest
+    runScenarioMessage msg $ attrs {quest}

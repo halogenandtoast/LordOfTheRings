@@ -1,5 +1,10 @@
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE NoFieldSelectors #-}
+
 module LordOfTheRings.Ally.Type (module LordOfTheRings.Ally.Type) where
 
+import Control.Lens
 import Data.Aeson
 import Data.Coerce
 import GHC.Generics
@@ -20,6 +25,12 @@ class (Run a, Show a, ToJSON a) => IsAlly a where
 data Ally where
   Ally :: (IsAlly a) => a -> Ally
 
+instance HasPlacement Ally where
+  placementL =
+    lens
+      (\(Ally a) -> (allyAttrs a) ^. placementL)
+      (\(Ally a) p -> Ally $ overAllyAttrs (placementL .~ p) a)
+
 data AllyAttrs = AllyAttrs
   { id :: AllyId
   , card :: Card 'AllyKind
@@ -28,6 +39,9 @@ data AllyAttrs = AllyAttrs
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
+
+instance HasPlacement AllyAttrs where
+  placementL = lens (.placement) (\x y -> x {placement = y})
 
 instance Show Ally where
   show (Ally a) = show a

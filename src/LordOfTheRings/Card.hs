@@ -5,10 +5,12 @@
 
 module LordOfTheRings.Card (module LordOfTheRings.Card) where
 
+import Control.Monad.Random
 import Data.Aeson
 import Data.String (IsString (..))
 import GHC.Generics
 import GHC.Records
+import LordOfTheRings.EncounterSet
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 
@@ -21,6 +23,7 @@ instance Display Name where
     Just subtitle -> title <> ": " <> subtitle
 
 data CardKind = HeroKind | AllyKind | AttachmentKind | EventKind
+data EncounterCardKind = QuestKind | EnemyKind | TreacheryKind | LocationKind
 
 data SCardKind k where
   SHeroKind :: SCardKind 'HeroKind
@@ -28,7 +31,17 @@ data SCardKind k where
   SAttachmentKind :: SCardKind 'AttachmentKind
   SEventKind :: SCardKind 'EventKind
 
+data SEncounterCardKind k where
+  SQuestKind :: SEncounterCardKind 'QuestKind
+  SEnemyKind :: SEncounterCardKind 'EnemyKind
+  STreacheryKind :: SEncounterCardKind 'TreacheryKind
+  SLocationKind :: SEncounterCardKind 'LocationKind
+
+data SomeSEncounterCardKind where
+  SomeSEncounterCardKind :: SEncounterCardKind k -> SomeSEncounterCardKind
+
 deriving stock instance Show (SCardKind k)
+deriving stock instance Show (SEncounterCardKind k)
 
 instance ToJSON (SCardKind k) where
   toJSON = \case
@@ -37,6 +50,21 @@ instance ToJSON (SCardKind k) where
     SAttachmentKind -> "attachment"
     SEventKind -> "event"
 
+instance ToJSON (SEncounterCardKind k) where
+  toJSON = \case
+    SQuestKind -> "quest"
+    SEnemyKind -> "enemy"
+    STreacheryKind -> "treachery"
+    SLocationKind -> "location"
+
+instance FromJSON SomeSEncounterCardKind where
+  parseJSON = withText "SomeSEncounterCardKind" $ \case
+    "quest" -> pure $ SomeSEncounterCardKind SQuestKind
+    "enemy" -> pure $ SomeSEncounterCardKind SEnemyKind
+    "treachery" -> pure $ SomeSEncounterCardKind STreacheryKind
+    "location" -> pure $ SomeSEncounterCardKind SLocationKind
+    _ -> fail "Invalid EncounterCardKind"
+
 newtype CardCode = CardCode Text
   deriving newtype (Ord, Eq, IsString, Show, ToJSON, FromJSON)
 
@@ -44,6 +72,11 @@ data Card (k :: CardKind) = Card
   { id :: CardId
   , def :: CardDef k
   , owner :: Maybe PlayerId
+  }
+
+data EncounterCard (k :: EncounterCardKind) = EncounterCard
+  { id :: CardId
+  , def :: EncounterCardDef k
   }
 
 instance FromJSON (SCardKind AllyKind) where
@@ -67,6 +100,18 @@ deriving stock instance (Show (CardDetails k)) => Show (Card k)
 instance (ToJSON (CardDef k)) => ToJSON (Card k) where
   toJSON (Card cid def owner) = object ["id" .= toJSON cid, "def" .= toJSON def, "owner" .= toJSON owner]
 
+data SomeEncounterCard where
+  SomeEncounterCard
+    :: (Show (EncounterCardDef k), Show (EncounterCardDetails k), ToJSON (EncounterCard k))
+    => EncounterCard k
+    -> SomeEncounterCard
+
+instance Show SomeEncounterCard where
+  show (SomeEncounterCard card) = show card
+
+instance ToJSON SomeEncounterCard where
+  toJSON (SomeEncounterCard card) = toJSON card
+
 data SomeCard where
   SomeCard :: (Show (CardDef k), Show (CardDetails k), ToJSON (Card k)) => Card k -> SomeCard
 
@@ -81,6 +126,12 @@ instance HasField "cost" SomeCard (Maybe ResourceCost) where
 
 instance HasField "id" SomeCard CardId where
   getField (SomeCard card) = card.id
+
+instance HasField "id" SomeEncounterCard CardId where
+  getField (SomeEncounterCard card) = card.id
+
+instance HasField "code" SomeEncounterCard CardCode where
+  getField (SomeEncounterCard card) = card.def.code
 
 instance Show SomeCard where
   show (SomeCard card) = show card
@@ -100,6 +151,28 @@ instance Show SomeCardDef where
 
 instance (HasField "cost" (CardDetails k) ResourceCost) => HasField "cost" (CardDef k) ResourceCost where
   getField a = a.details.cost
+
+type family EncounterCardDetails (k :: EncounterCardKind) where
+  EncounterCardDetails 'QuestKind = QuestDetails
+  EncounterCardDetails 'EnemyKind = EnemyDetails
+  EncounterCardDetails 'TreacheryKind = TreacheryDetails
+  EncounterCardDetails 'LocationKind = LocationDetails
+
+data QuestDetails = QuestDetails
+  deriving stock (Show, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data EnemyDetails = EnemyDetails
+  deriving stock (Show, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data TreacheryDetails = TreacheryDetails
+  deriving stock (Show, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data LocationDetails = LocationDetails
+  deriving stock (Show, Generic)
+  deriving anyclass (ToJSON, FromJSON)
 
 type family CardDetails (k :: CardKind) where
   CardDetails 'HeroKind = HeroDetails
@@ -137,6 +210,16 @@ data AttachmentDetails = AttachmentDetails
 newtype EventDetails = EventDetails {cost :: ResourceCost}
   deriving newtype (Show, ToJSON)
 
+data EncounterCardDef (k :: EncounterCardKind) = EncounterCardDef
+  { code :: CardCode
+  , name :: Name
+  , unique :: Bool
+  , kind :: SEncounterCardKind k
+  , details :: EncounterCardDetails k
+  , encounterSet :: EncounterSet
+  , encounterSetCount :: (Int, Int, Int)
+  }
+
 data CardDef (k :: CardKind) = CardDef
   { code :: CardCode
   , name :: Name
@@ -147,9 +230,22 @@ data CardDef (k :: CardKind) = CardDef
   }
 
 deriving stock instance (Show (CardDetails k), Show (SCardKind k)) => Show (CardDef k)
+deriving stock instance
+  (Show (EncounterCardDetails k), Show (SEncounterCardKind k)) => Show (EncounterCardDef k)
 
 instance (ToJSON (CardDetails k)) => ToJSON (CardDef k) where
   toJSON (CardDef {..}) =
+    object
+      [ "code" .= toJSON code
+      , "name" .= toJSON name
+      , "unique" .= toJSON unique
+      , "kind" .= toJSON kind
+      , "details" .= toJSON details
+      , "sphere" .= toJSON sphere
+      ]
+
+instance (ToJSON (EncounterCardDetails k)) => ToJSON (EncounterCardDef k) where
+  toJSON (EncounterCardDef {..}) =
     object
       [ "code" .= toJSON code
       , "name" .= toJSON name
@@ -193,3 +289,99 @@ class CanBeDynamic a where
 
 instance CanBeDynamic (CardDef 'EventKind) where
   dynamic def = def {details = EventDetails DynamicCost}
+
+deriving stock instance (Show (EncounterCardDetails k)) => Show (EncounterCard k)
+deriving stock instance Generic (EncounterCard k)
+deriving anyclass instance (ToJSON (EncounterCardDetails k)) => ToJSON (EncounterCard k)
+
+newCard :: (MonadRandom m) => CardDef k -> Maybe PlayerId -> m (Card k)
+newCard def pid = Card <$> getRandom <*> pure def <*> pure pid
+
+genEncounterCard :: (MonadRandom m) => EncounterCardDef k -> m (EncounterCard k)
+genEncounterCard def = EncounterCard <$> getRandom <*> pure def
+
+data SomeEncounterCardDef where
+  SomeEncounterCardDef
+    :: (Show (EncounterCardDef k), Show (EncounterCardDetails k), ToJSON (EncounterCardDetails k))
+    => EncounterCardDef k
+    -> SomeEncounterCardDef
+
+genSomeEncounterCard :: (MonadRandom m) => SomeEncounterCardDef -> m SomeEncounterCard
+genSomeEncounterCard (SomeEncounterCardDef def) = SomeEncounterCard <$> (EncounterCard <$> getRandom <*> pure def)
+
+instance FromJSON SomeEncounterCard where
+  parseJSON = withObject "SomeEncounterCard" $ \v -> do
+    kind <- v .: "kind"
+    case kind of
+      SomeSEncounterCardKind SQuestKind -> SomeEncounterCard <$> parseJSON @(EncounterCard 'QuestKind) (Object v)
+      SomeSEncounterCardKind SEnemyKind -> SomeEncounterCard <$> parseJSON @(EncounterCard 'EnemyKind) (Object v)
+      SomeSEncounterCardKind STreacheryKind -> SomeEncounterCard <$> parseJSON @(EncounterCard 'TreacheryKind) (Object v)
+      SomeSEncounterCardKind SLocationKind -> SomeEncounterCard <$> parseJSON @(EncounterCard 'LocationKind) (Object v)
+
+instance FromJSON (EncounterCard 'QuestKind) where
+  parseJSON = withObject "EncounterCard" $ \v -> do
+    k <- v .: "kind"
+    case k of
+      SomeSEncounterCardKind SQuestKind -> do
+        id <- v .: "id"
+        code <- v .: "code"
+        name <- v .: "name"
+        unique <- v .: "unique"
+        details <- v .: "details"
+        encounterSet <- v .: "encounterSet"
+        encounterSetCount <- v .: "encounterSetCount"
+        let kind = SQuestKind
+        let def = EncounterCardDef {..}
+        pure $ EncounterCard {..}
+      _ -> fail "Expected LocationKind"
+
+instance FromJSON (EncounterCard 'EnemyKind) where
+  parseJSON = withObject "EncounterCard" $ \v -> do
+    k <- v .: "kind"
+    case k of
+      SomeSEncounterCardKind SEnemyKind -> do
+        id <- v .: "id"
+        code <- v .: "code"
+        name <- v .: "name"
+        unique <- v .: "unique"
+        details <- v .: "details"
+        encounterSet <- v .: "encounterSet"
+        encounterSetCount <- v .: "encounterSetCount"
+        let kind = SEnemyKind
+        let def = EncounterCardDef {..}
+        pure $ EncounterCard {..}
+      _ -> fail "Expected LocationKind"
+
+instance FromJSON (EncounterCard 'TreacheryKind) where
+  parseJSON = withObject "EncounterCard" $ \v -> do
+    k <- v .: "kind"
+    case k of
+      SomeSEncounterCardKind STreacheryKind -> do
+        id <- v .: "id"
+        code <- v .: "code"
+        name <- v .: "name"
+        unique <- v .: "unique"
+        details <- v .: "details"
+        encounterSet <- v .: "encounterSet"
+        encounterSetCount <- v .: "encounterSetCount"
+        let kind = STreacheryKind
+        let def = EncounterCardDef {..}
+        pure $ EncounterCard {..}
+      _ -> fail "Expected LocationKind"
+
+instance FromJSON (EncounterCard 'LocationKind) where
+  parseJSON = withObject "EncounterCard" $ \v -> do
+    k <- v .: "kind"
+    case k of
+      SomeSEncounterCardKind SLocationKind -> do
+        id <- v .: "id"
+        code <- v .: "code"
+        name <- v .: "name"
+        unique <- v .: "unique"
+        details <- v .: "details"
+        encounterSet <- v .: "encounterSet"
+        encounterSetCount <- v .: "encounterSetCount"
+        let kind = SLocationKind
+        let def = EncounterCardDef {..}
+        pure $ EncounterCard {..}
+      _ -> fail "Expected LocationKind"

@@ -9,7 +9,6 @@ import Control.Monad.Random (MonadRandom (getRandom))
 import Data.Aeson (ToJSON)
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
-import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
@@ -27,24 +26,6 @@ instance Run HeroAttrs where
     SpendHeroResources hId n | hId == attrs.id -> do
       pure $ attrs {resources = max 0 (attrs.resources - n)}
     _ -> pure attrs
-
-instance HasField "threat" HeroAttrs Int where
-  getField a = a.card.def.details.threat
-
-instance HasField "player" Hero PlayerId where
-  getField (Hero a) = (heroAttrs a).player
-
-instance HasField "id" Hero HeroId where
-  getField (Hero a) = (heroAttrs a).id
-
-instance HasField "threat" Hero Int where
-  getField (Hero a) = (heroAttrs a).threat
-
-instance HasField "sphere" Hero Sphere where
-  getField (Hero a) = (heroAttrs a).sphere
-
-instance HasField "resources" Hero Int where
-  getField (Hero a) = (heroAttrs a).resources
 
 newtype Beravor = Beravor HeroAttrs
   deriving newtype (Show, ToJSON)

@@ -1,8 +1,11 @@
+{-# LANGUAGE OverloadedRecordDot #-}
+
 module LordOfTheRings.Hero.Type (module LordOfTheRings.Hero.Type) where
 
 import Data.Aeson
 import Data.Coerce
 import GHC.Generics
+import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -31,3 +34,21 @@ instance Show Hero where
 
 instance ToJSON Hero where
   toJSON (Hero a) = toJSON a
+
+instance HasField "threat" HeroAttrs Int where
+  getField a = a.card.def.details.threat
+
+instance HasField "player" Hero PlayerId where
+  getField (Hero a) = (heroAttrs a).player
+
+instance HasField "id" Hero HeroId where
+  getField (Hero a) = (heroAttrs a).id
+
+instance HasField "threat" Hero Int where
+  getField (Hero a) = (heroAttrs a).threat
+
+instance HasField "sphere" Hero Sphere where
+  getField (Hero a) = (heroAttrs a).sphere
+
+instance HasField "resources" Hero Int where
+  getField (Hero a) = (heroAttrs a).resources

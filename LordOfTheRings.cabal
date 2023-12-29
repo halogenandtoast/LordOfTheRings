@@ -15,18 +15,29 @@ library
       LordOfTheRings.Ally
       LordOfTheRings.Ally.Type
       LordOfTheRings.Card
+      LordOfTheRings.EncounterSet
+      LordOfTheRings.Enemy.Cards
+      LordOfTheRings.Entity
       LordOfTheRings.Frontend
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
       LordOfTheRings.Hero
       LordOfTheRings.Hero.Type
       LordOfTheRings.Id
+      LordOfTheRings.Location.Cards
+      LordOfTheRings.Matcher
       LordOfTheRings.Message
       LordOfTheRings.Placement
       LordOfTheRings.Prelude
+      LordOfTheRings.Quest
+      LordOfTheRings.Quest.Cards
+      LordOfTheRings.Quest.Type
       LordOfTheRings.Question
       LordOfTheRings.Queue
       LordOfTheRings.Run
+      LordOfTheRings.Scenario
+      LordOfTheRings.Scenario.Type
+      LordOfTheRings.Treachery.Cards
   other-modules:
       Paths_LordOfTheRings
   hs-source-dirs:
@@ -52,6 +63,7 @@ library
     , conduit
     , containers
     , extra
+    , lens
     , mtl
     , random-shuffle
     , text
@@ -89,6 +101,7 @@ executable LordOfTheRings-exe
     , conduit
     , containers
     , extra
+    , lens
     , mtl
     , random-shuffle
     , text
@@ -127,6 +140,7 @@ test-suite LordOfTheRings-test
     , conduit
     , containers
     , extra
+    , lens
     , mtl
     , random-shuffle
     , text

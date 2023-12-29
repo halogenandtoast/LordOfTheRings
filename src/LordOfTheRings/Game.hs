@@ -3,6 +3,7 @@
 
 module LordOfTheRings.Game (module LordOfTheRings.Game, module LordOfTheRings.Game.Base) where
 
+import Control.Lens ((%~), (&), (.~))
 import Control.Monad.Random
 import Control.Monad.Reader
 import Data.Foldable (for_)
@@ -12,18 +13,21 @@ import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe, isJust)
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
+import LordOfTheRings.Entity
 import LordOfTheRings.Frontend
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
 import LordOfTheRings.Hero
 import LordOfTheRings.Id
+import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Queue
 import LordOfTheRings.Run
+import LordOfTheRings.Scenario ()
 import System.Random.Shuffle (shuffleM)
 
 getHasQuestion :: GameT Bool
@@ -79,7 +83,7 @@ instance HasQueue GameT where
   getQueue = asks (.queue)
 
 getPlayers :: (HasGame m) => m [Player]
-getPlayers = Map.elems . (.players) <$> getGame
+getPlayers = Map.elems <$> getsGame (.players)
 
 instance Run Entities where
   run msg entities = do
@@ -91,15 +95,14 @@ instance Run Game where
   run msg game = do
     players <- traverse (run msg) game.players
     entities <- run msg game.entities
-    runGameMessage msg (game {players, entities})
-
-getPlayer :: (HasGame m) => PlayerId -> m Player
-getPlayer pid = do
-  ps <- getsGame (.players)
-  pure $ Map.findWithDefault (error $ "Player not found: " <> show pid) pid ps
+    scenario <- run msg game.scenario
+    runGameMessage msg (game {players, entities, scenario})
 
 runGameMessage :: (HasQueue m, HasGame m, MonadRandom m, Frontend m) => Message -> Game -> m Game
 runGameMessage msg g = case msg of
+  Setup -> do
+    pushAll [DoStep n Setup | n <- [1 .. 7]]
+    pure g
   BeginRound -> do
     pushAll
       [ BeginPhase ResourcePhase
@@ -123,36 +126,30 @@ runGameMessage msg g = case msg of
     pure g
   PlayAlly pid card -> do
     player <- getPlayer pid
-    send $ Log $ player.name <> " plays " <> display card.name
     thisAlly <- newAlly card
-    pure $
-      g
-        { entities =
-            g.entities
-              { allies =
-                  Map.insert
-                    thisAlly.id
-                    (overAttrs (\attrs -> attrs {placement = Controlled pid}) thisAlly)
-                    g.entities.allies
-              }
-        }
+    send $ Log $ player.name <> " plays " <> display card.name
+    pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ Controlled pid)
   _ -> pure g
 
-class Entity a where
-  type Attrs a
-  overAttrs :: (Attrs a -> Attrs a) -> a -> a
-
 instance Entity Ally where
+  type Id Ally = AllyId
   type Attrs Ally = AllyAttrs
   overAttrs f (Ally a) = Ally (overAllyAttrs f a)
 
 runPlayerMessage :: (MonadRandom m, HasQueue m, HasGame m) => Message -> Player -> m Player
 runPlayerMessage msg player = case msg of
-  Setup -> do
-    (hand, deck) <- splitAt 6 <$> shuffleM player.deck
+  Ask pid q | pid == player.id -> do
+    pure $ player {question = Just q}
+  DoStep 1 Setup -> do
+    deck <- shuffleM player.deck
+    pure $ player {deck}
+  DoStep 2 Setup -> do
     heroes <- select $ PlayerHero player.id
     let threat = sum $ map (.threat) heroes
-    pure $ player {hand, deck, LordOfTheRings.Game.Base.threat = threat}
+    pure $ player {LordOfTheRings.Game.Base.threat = threat}
+  DoStep 5 Setup -> do
+    let (hand, deck) = splitAt 6 player.deck
+    pure $ player {hand, deck}
   BeginPhase ResourcePhase -> do
     let (cards, deck) = splitAt 1 player.deck
     pure $ player {hand = player.hand <> cards, deck}
@@ -237,17 +234,3 @@ resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
 resourcesInSphere sphere player = do
   heroes <- select $ PlayerHero player.id
   pure $ sum . map (.resources) $ filter ((== sphere) . (.sphere)) heroes
-
-class Query a where
-  data Matcher a
-  select :: (HasGame m) => Matcher a -> m [a]
-
-instance Query Hero where
-  data Matcher Hero = PlayerHero PlayerId
-  select matcher = do
-    heroes <- Map.elems <$> getsGame (.entities.heroes)
-    case matcher of
-      PlayerHero pid -> pure $ filter ((== pid) . (.player)) heroes
-
-getsGame :: (HasGame m) => (Game -> a) -> m a
-getsGame f = f <$> getGame

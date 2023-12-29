@@ -27,6 +27,7 @@ dependencies:
 - yesod-websockets
 - conduit
 - bytestring
+- lens
 
 ghc-options:
 - -Wall

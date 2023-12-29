@@ -34,6 +34,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Queue
+import LordOfTheRings.Scenario
 import UnliftIO.STM
 import Yesod.Core
 import Yesod.WebSockets
@@ -187,9 +188,6 @@ data Deck = Deck
 newtype DeckException = DeckException Text
   deriving newtype (Show)
 
-newCard :: (MonadRandom m) => CardDef k -> Maybe PlayerId -> m (Card k)
-newCard def pid = Card <$> getRandom <*> pure def <*> pure pid
-
 loadPlayer :: (MonadRandom m) => DeckList -> m (Either DeckException (Player, [Hero]))
 loadPlayer dl = traverse go =<< loadDecklist dl
  where
@@ -334,6 +332,7 @@ resetGame = do
           { players = Map.singleton player.id player
           , activePlayer = player.id
           , entities = mempty {E.heroes = Map.fromList [(h.id, h) | h <- heroes]}
+          , scenario = newScenario PassageThroughMirkwood
           }
 
 main :: IO ()
@@ -349,6 +348,7 @@ main = do
             { players = Map.singleton player.id player
             , activePlayer = player.id
             , entities = mempty {E.heroes = Map.fromList [(h.id, h) | h <- heroes]}
+            , scenario = newScenario PassageThroughMirkwood
             }
       c <- atomically newTChan
       let

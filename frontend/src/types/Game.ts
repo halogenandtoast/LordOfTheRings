@@ -30,9 +30,15 @@ type Entities = {
   allies: Record<string, Ally>;
 }
 
+type Scenario = {
+  quest: Card[]
+  encounterDeck: Card[]
+}
+
 type Game = {
   players: Record<string, Player>;
   entities: Entities;
+  scenario: Scenario;
 }
 
 type GameData = {

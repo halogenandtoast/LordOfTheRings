@@ -1,7 +1,17 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { Card, Question, Choice } from '@/types/Game'
-const props = defineProps<{ card: Card, resources?: number, data: GameData }>()
+import { ref, watch, computed, withDefaults } from 'vue'
+import { Card, GameData, Choice } from '@/types/Game'
+
+export interface Props {
+  card: Card
+  resources?: number
+  data: GameData
+  rotated?: boolean
+  currentChoice?: Choice
+  side?: 'A' | 'B'
+}
+
+const props = withDefaults(defineProps<Props>(), { rotated: false })
 const emit = defineEmits<{ choose: [string] }>()
 
 const showBig = ref(false)
@@ -19,6 +29,7 @@ const choose = () => {
 }
 
 const choice = computed(() => {
+  if(props.currentChoice) { return props.currentChoice }
   const currentQuestion = question.value
   if (!currentQuestion) return null
 
@@ -54,26 +65,35 @@ watch(bigRef, () => {
   }
 })
 
+const src = computed(() => {
+  return `/images/cards/${props.card.def.code}${ props.side ? props.side.toLowerCase() : '' }.jpg`
+})
+
 </script>
 
 <template>
   <div>
-    <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ active }" @click="choose">
-      <img :src="`/images/cards/${card.def.code}.jpg`" />
+    <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ active, rotated }" @click="choose">
+      <img :src="src" />
       <span v-if="resources" class="resources">{{resources}}</span>
     </div>
-    <img ref="bigRef" class="big" v-if="showBig" :src="`/images/cards/${card.def.code}.jpg`" :anchor="card.id" />
+    <img ref="bigRef" class="big" :class="{ rotated }" v-if="showBig" :src="src" :anchor="card.id" />
   </div>
 </template>
 
 <style scoped lang="scss">
 .card {
   width: $card-width;
-  height: fit-content;
+  aspect-ratio: $card-aspect;
   line-height: 0;
   display: grid;
   position: relative;
   isolation: isolate;
+
+  &.rotated {
+    width: calc($card-width / $card-aspect);
+    aspect-ratio: calc(1 / $card-aspect);
+  }
 }
 
 .card img {
@@ -98,9 +118,13 @@ watch(bigRef, () => {
 img.big {
   position: absolute;
   width: calc($card-width * 4);
-  height: fit-content;
-  aspect-ratio: 429/600;
+  aspect-ratio: $card-aspect;
   border-radius: 20px;
+
+  &.rotated {
+    width: calc($card-width * 4 / $card-aspect);
+    aspect-ratio: calc(1 / $card-aspect);
+  }
 }
 
 .active {
