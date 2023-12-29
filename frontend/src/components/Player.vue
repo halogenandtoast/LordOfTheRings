@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Player, GameData, Choice } from '@/types/Game'
 import gsap from 'gsap'
 import Card from './Card.vue'
-defineProps<{ player: Player, data: GameData }>()
+const props = defineProps<{ player: Player, data: GameData }>()
 const emit = defineEmits<{ choose: [Choice] }>()
 
 const animationMatrix = ref([])
@@ -11,6 +11,14 @@ const animationMatrix = ref([])
 const nextId = ref(4)
 const above = ref([])
 const below = ref([{ id: 1, color: "#FF0000" }, { id: 2,  color: "#0000FF" }, { id: 3, color: "#00FF00" }])
+
+const allies = computed(() => {
+  return Object.values(props.data.game.entities.allies).filter((ally) => ally.placement.contents === props.player.id)
+})
+
+const heroes = computed(() => {
+  return Object.values(props.data.game.entities.heroes).filter((hero) => hero.player === props.player.id)
+})
 
 function onBeforeEnter(el) {
   el.style.opacity = 0
@@ -84,11 +92,11 @@ function onLeave(el, done) {
   <div class="player">
     <div>
       <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
-        <Card v-for="ally in Object.values(player.allies)" :key="ally.id" :card="ally.card" :data="data" @choose="$emit('choose')" :data-index="ally.card.id" />
+        <Card v-for="ally in allies" :key="ally.id" :card="ally.card" :data="data" @choose="$emit('choose')" :data-index="ally.card.id" />
       </transition-group>
     </div>
     <div class="heroes">
-      <Card v-for="hero in player.heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose')" />
+      <Card v-for="hero in heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose')" />
     </div>
     <div class="player-main">
       <div class="discard">

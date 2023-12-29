@@ -15,8 +15,10 @@ import LordOfTheRings.Card
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
-import LordOfTheRings.Hero ()
+import LordOfTheRings.Hero
+import LordOfTheRings.Id
 import LordOfTheRings.Message
+import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Queue
@@ -74,12 +76,19 @@ instance HasQueue GameT where
 getPlayers :: (HasGame m) => m [Player]
 getPlayers = Map.elems . (.players) <$> getGame
 
+instance Run Entities where
+  run msg entities = do
+    heroes <- traverse (run msg) entities.heroes
+    allies <- traverse (run msg) entities.allies
+    pure (entities {heroes, allies})
+
 instance Run Game where
   run msg game = do
-    players' <- traverse (run msg) game.players
-    runGameMessage msg (game {players = players'})
+    players <- traverse (run msg) game.players
+    entities <- run msg game.entities
+    runGameMessage msg (game {players, entities})
 
-runGameMessage :: (HasQueue m, HasGame m) => Message -> Game -> m Game
+runGameMessage :: (HasQueue m, HasGame m, MonadRandom m) => Message -> Game -> m Game
 runGameMessage msg g = case msg of
   BeginRound -> do
     pushAll
@@ -102,13 +111,36 @@ runGameMessage msg g = case msg of
     for_ players \player -> do
       push $ WithPlayer player.id msg
     pure g
+  PlayAlly pid cid code -> do
+    let allyCard = Map.findWithDefault (error "no ally") code allAllies
+    thisAlly <- newAlly (Card cid allyCard)
+    pure $
+      g
+        { entities =
+            g.entities
+              { allies =
+                  Map.insert
+                    thisAlly.id
+                    (overAttrs (\attrs -> attrs {placement = Controlled pid}) thisAlly)
+                    g.entities.allies
+              }
+        }
   _ -> pure g
 
-runPlayerMessage :: (MonadRandom m, HasQueue m) => Message -> Player -> m Player
+class Entity a where
+  type Attrs a
+  overAttrs :: (Attrs a -> Attrs a) -> a -> a
+
+instance Entity Ally where
+  type Attrs Ally = AllyAttrs
+  overAttrs f (Ally a) = Ally (overAllyAttrs f a)
+
+runPlayerMessage :: (MonadRandom m, HasQueue m, HasGame m) => Message -> Player -> m Player
 runPlayerMessage msg player = case msg of
   Setup -> do
     (hand, deck) <- splitAt 6 <$> shuffleM player.deck
-    let threat = sum $ map (.threat) player.heroes
+    heroes <- select $ PlayerHero player.id
+    let threat = sum $ map (.threat) heroes
     pure $ player {hand, deck, LordOfTheRings.Game.Base.threat = threat}
   BeginPhase ResourcePhase -> do
     let (cards, deck) = splitAt 1 player.deck
@@ -137,8 +169,9 @@ runPlayerMessage msg player = case msg of
         push $ PayCost costId
         pure $ player {hand, Player.cost = Just cost}
   SpendResources pid sphere n | pid == player.id && n > 0 -> do
+    heroes <- select $ PlayerHero player.id
     let sphereMatches h = sphere == Neutral || h.sphere == sphere
-    let heroesWithResources = filter (\h -> sphereMatches h && h.resources > 0) player.heroes
+    let heroesWithResources = filter (\h -> sphereMatches h && h.resources > 0) heroes
     case heroesWithResources of
       [x] -> do
         push $ SpendHeroResources x.id n
@@ -155,10 +188,6 @@ runPlayerMessage msg player = case msg of
     | Just cost <- player.cost
     , cost.id == acId -> do
         pure $ player {Player.cost = Nothing}
-  PlayAlly pid cid code | pid == player.id -> do
-    let allyCard = Map.findWithDefault (error "no ally") code allAllies
-    thisAlly <- newAlly (Card cid allyCard)
-    pure $ player {allies = Map.insert thisAlly.id thisAlly player.allies}
   _ -> pure player
 
 instance Run ActiveCost where
@@ -183,14 +212,31 @@ instance Run ActiveCost where
 
 instance Run Player where
   run msg player = do
-    heroes <- traverse (run msg) player.heroes
     cost <- traverse (run msg) player.cost
-    runPlayerMessage msg $ player {LordOfTheRings.Game.Base.heroes = heroes, Player.cost = cost}
+    runPlayerMessage msg $ player {Player.cost = cost}
 
-canPlay :: (Applicative m) => Player -> SomeCard -> m Bool
+canPlay :: (HasGame m) => Player -> SomeCard -> m Bool
 canPlay p c = case cardCost c of
   Nothing -> pure False
-  Just cost -> pure $ resourcesInSphere c.sphere p >= costAsResources cost
+  Just cost -> do
+    resources <- resourcesInSphere c.sphere p
+    pure $ resources >= costAsResources cost
 
-resourcesInSphere :: Sphere -> Player -> Int
-resourcesInSphere sphere player = sum . map (.resources) $ filter ((== sphere) . (.sphere)) player.heroes
+resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
+resourcesInSphere sphere player = do
+  heroes <- select $ PlayerHero player.id
+  pure $ sum . map (.resources) $ filter ((== sphere) . (.sphere)) heroes
+
+class Query a where
+  data Matcher a
+  select :: (HasGame m) => Matcher a -> m [a]
+
+instance Query Hero where
+  data Matcher Hero = PlayerHero PlayerId
+  select matcher = do
+    heroes <- Map.elems <$> getsGame (.entities.heroes)
+    case matcher of
+      PlayerHero pid -> pure $ filter ((== pid) . (.player)) heroes
+
+getsGame :: (HasGame m) => (Game -> a) -> m a
+getsGame f = f <$> getGame

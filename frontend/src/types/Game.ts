@@ -5,26 +5,34 @@ type Card = {
 type Hero = {
   card: Card
   resources: number
+  player: string
 }
 
 type Choice = { tag: "CardChoice", contents: string }
 type Question = { tag: "ChooseOne", contents: Choice[] }
 
 type Player = {
-  heroes: Hero[];
   threat: number;
   hand: Card[];
   deck: Card[];
   question: Question | null;
-  allies: Record<string, Ally>;
 }
+
+type Placement = { tag: "Controlled", contents: string }
 
 type Ally = {
   card: Card;
+  placement: Placement
+}
+
+type Entities = {
+  heroes: Record<string, Hero>;
+  allies: Record<string, Ally>;
 }
 
 type Game = {
   players: Record<string, Player>;
+  entities: Entities;
 }
 
 type GameData = {

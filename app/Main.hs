@@ -26,6 +26,7 @@ import GHC.Generics
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Game
+import LordOfTheRings.Game qualified as E
 import LordOfTheRings.Hero
 import LordOfTheRings.Id
 import LordOfTheRings.Message
@@ -189,23 +190,23 @@ newtype DeckException = DeckException Text
 newCard :: (MonadRandom m) => CardDef k -> m (Card k)
 newCard def = Card <$> getRandom <*> pure def
 
-loadPlayer :: (MonadRandom m) => DeckList -> m (Either DeckException Player)
+loadPlayer :: (MonadRandom m) => DeckList -> m (Either DeckException (Player, [Hero]))
 loadPlayer dl = traverse go =<< loadDecklist dl
  where
   go deck = do
     pid <- getRandom
-    heroes <- traverse newHero deck.heroes
+    heroes <- traverse (newHero pid) deck.heroes
     pure $
-      Player
-        { id = pid
-        , heroes
-        , deck = deck.cards
-        , hand = []
-        , threat = 0
-        , question = Nothing
-        , cost = Nothing
-        , allies = mempty
-        }
+      ( Player
+          { id = pid
+          , deck = deck.cards
+          , hand = []
+          , threat = 0
+          , question = Nothing
+          , cost = Nothing
+          }
+      , heroes
+      )
 
 missingCard :: CardCode -> DeckException
 missingCard code = DeckException $ "Missing card: " <> tshow code
@@ -300,16 +301,28 @@ resetGame = do
   ePlayer <- loadPlayer testDeckList
   case ePlayer of
     Left err -> error (show err)
-    Right player -> putGame $ Game (Map.singleton player.id player) player.id
+    Right (player, heroes) ->
+      putGame $
+        Game
+          { players = Map.singleton player.id player
+          , activePlayer = player.id
+          , entities = mempty {E.heroes = Map.fromList [(h.id, h) | h <- heroes]}
+          }
 
 main :: IO ()
 main = do
   ePlayer <- loadPlayer testDeckList
   case ePlayer of
     Left err -> error (show err)
-    Right player -> liftIO $ do
+    Right (player, heroes) -> liftIO $ do
       queue <- newQueue
-      game <- newIORef $ Game (Map.singleton player.id player) player.id
+      game <-
+        newIORef $
+          Game
+            { players = Map.singleton player.id player
+            , activePlayer = player.id
+            , entities = mempty {E.heroes = Map.fromList [(h.id, h) | h <- heroes]}
+            }
       let env = Env {queue, game}
       runGameT (pushAll [Setup, BeginRound, EndRound]) env
       warp 3000 (App env)

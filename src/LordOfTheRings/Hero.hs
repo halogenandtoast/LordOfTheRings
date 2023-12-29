@@ -31,6 +31,9 @@ instance Run HeroAttrs where
 instance HasField "threat" HeroAttrs Int where
   getField a = a.card.def.details.threat
 
+instance HasField "player" Hero PlayerId where
+  getField (Hero a) = (heroAttrs a).player
+
 instance HasField "id" Hero HeroId where
   getField (Hero a) = (heroAttrs a).id
 
@@ -66,10 +69,10 @@ lookupHero cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData
  where
   allData = Map.fromList [("01012", Hero . Beravor), ("01007", Hero . Eowyn), ("01002", Hero . Theodred)]
 
-newHero :: (MonadRandom m) => Card 'HeroKind -> m Hero
-newHero card = do
+newHero :: (MonadRandom m) => PlayerId -> Card 'HeroKind -> m Hero
+newHero player card = do
   heroId <- getRandom
-  let attrs = HeroAttrs {id = heroId, card, resources = 0, sphere = card.def.sphere}
+  let attrs = HeroAttrs {id = heroId, card, player, resources = 0, sphere = card.def.sphere}
   pure $ lookupHero card.def.code attrs
 
 allHeroes :: Map CardCode (CardDef 'HeroKind)

@@ -21,6 +21,7 @@ library
       LordOfTheRings.Hero.Type
       LordOfTheRings.Id
       LordOfTheRings.Message
+      LordOfTheRings.Placement
       LordOfTheRings.Prelude
       LordOfTheRings.Question
       LordOfTheRings.Queue

@@ -17,7 +17,24 @@ import LordOfTheRings.Question
 class (Monad m) => HasGame m where
   getGame :: m Game
 
-data Game = Game {players :: Map PlayerId Player, activePlayer :: PlayerId}
+data Entities = Entities
+  { allies :: Map AllyId Ally
+  , heroes :: Map HeroId Hero
+  }
+  deriving stock (Show, Generic)
+  deriving anyclass (ToJSON)
+
+instance Monoid Entities where
+  mempty = Entities mempty mempty
+
+instance Semigroup Entities where
+  (Entities a1 h1) <> (Entities a2 h2) = Entities (a1 <> a2) (h1 <> h2)
+
+data Game = Game
+  { players :: Map PlayerId Player
+  , activePlayer :: PlayerId
+  , entities :: Entities
+  }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 
@@ -40,13 +57,11 @@ data ActiveCost = ActiveCost
 
 data Player = Player
   { id :: PlayerId
-  , heroes :: [Hero]
   , hand :: [SomeCard]
   , deck :: [SomeCard]
   , threat :: Int
   , question :: Maybe (Question Message)
   , cost :: Maybe ActiveCost
-  , allies :: Map AllyId Ally
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)

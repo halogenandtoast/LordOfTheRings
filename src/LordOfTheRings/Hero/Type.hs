@@ -21,6 +21,7 @@ data HeroAttrs = HeroAttrs
   , card :: Card 'HeroKind
   , resources :: Int
   , sphere :: Sphere
+  , player :: PlayerId
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)

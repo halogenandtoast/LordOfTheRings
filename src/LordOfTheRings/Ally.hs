@@ -13,6 +13,7 @@ import GHC.Records
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 
@@ -24,10 +25,10 @@ instance Run AllyAttrs where
     _ -> pure attrs
 
 instance HasField "id" Ally AllyId where
-  getField (Ally a) = (heroAttrs a).id
+  getField (Ally a) = (allyAttrs a).id
 
 instance HasField "sphere" Ally Sphere where
-  getField (Ally a) = (heroAttrs a).sphere
+  getField (Ally a) = (allyAttrs a).sphere
 
 newtype Beorn = Beorn AllyAttrs
   deriving newtype (Show, ToJSON)
@@ -102,7 +103,7 @@ instance Run SonOfArnor where
   run msg (SonOfArnor a) = SonOfArnor <$> run msg a
 
 lookupAlly :: CardCode -> AllyAttrs -> Ally
-lookupAlly cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData
+lookupAlly cCode = fromMaybe (error "No such ally") $ Map.lookup cCode allData
  where
   allData =
     Map.fromList
@@ -123,7 +124,7 @@ lookupAlly cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData
 newAlly :: (MonadRandom m) => Card 'AllyKind -> m Ally
 newAlly card = do
   allyId <- getRandom
-  let attrs = AllyAttrs {id = allyId, card, sphere = card.def.sphere}
+  let attrs = AllyAttrs {id = allyId, card, sphere = card.def.sphere, placement = Unplaced}
   pure $ lookupAlly card.def.code attrs
 
 allAllies :: Map CardCode (CardDef 'AllyKind)
