@@ -5,6 +5,12 @@ import Data.Aeson
 import Data.UUID (UUID)
 import LordOfTheRings.Prelude
 
+newtype LocationId = LocationId UUID
+  deriving newtype (Random, Show, ToJSON, FromJSON, ToJSONKey, Eq, Ord)
+
+newtype EnemyId = EnemyId UUID
+  deriving newtype (Random, Show, ToJSON, FromJSON, ToJSONKey, Eq, Ord)
+
 newtype QuestId = QuestId UUID
   deriving newtype (Random, Show, ToJSON, FromJSON, ToJSONKey, Eq, Ord)
 

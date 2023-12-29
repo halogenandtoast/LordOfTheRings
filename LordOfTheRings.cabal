@@ -16,7 +16,9 @@ library
       LordOfTheRings.Ally.Type
       LordOfTheRings.Card
       LordOfTheRings.EncounterSet
+      LordOfTheRings.Enemy
       LordOfTheRings.Enemy.Cards
+      LordOfTheRings.Enemy.Type
       LordOfTheRings.Entity
       LordOfTheRings.Frontend
       LordOfTheRings.Game
@@ -24,7 +26,9 @@ library
       LordOfTheRings.Hero
       LordOfTheRings.Hero.Type
       LordOfTheRings.Id
+      LordOfTheRings.Location
       LordOfTheRings.Location.Cards
+      LordOfTheRings.Location.Type
       LordOfTheRings.Matcher
       LordOfTheRings.Message
       LordOfTheRings.Placement

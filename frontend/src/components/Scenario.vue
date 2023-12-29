@@ -14,6 +14,14 @@ const question = computed(() => {
   return props.data.game.players[props.data.playerId].question
 })
 
+const enemies = computed(() => {
+  return Object.values(props.data.game.entities.enemies).filter((enemy) => enemy.placement.tag === "Staging")
+})
+
+const locations = computed(() => {
+  return Object.values(props.data.game.entities.locations).filter((location) => location.placement.tag === "Staging")
+})
+
 const questChoice = computed(() => {
   const currentQuestion = question.value
   if (!currentQuestion) return null
@@ -34,6 +42,12 @@ const questChoice = computed(() => {
     <div class="deck-size">{{scenario.encounterDeck.length}}</div>
   </div>
   <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" />
+
+  <div class="staging">
+    <Card v-for="enemy in enemies" :key="enemy.id" :card="enemy.card" :data="data" @choose="$emit('choose', $event)" />
+    <Card v-for="location in locations" :key="location.id" :card="location.card" :data="data" @choose="$emit('choose', $event)" />
+  </div>
+
 </template>
 
 <style scoped lang="scss">
@@ -54,5 +68,10 @@ const questChoice = computed(() => {
   border-radius: calc($card-width / 5);
   border: 1px solid white;
   font-size: $font-small;
+}
+
+.staging {
+  display: flex;
+  gap: $gap;
 }
 </style>

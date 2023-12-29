@@ -13,6 +13,7 @@ import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe, isJust)
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
+import LordOfTheRings.Enemy
 import LordOfTheRings.Entity
 import LordOfTheRings.Frontend
 import LordOfTheRings.Game.Base
@@ -20,6 +21,7 @@ import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
 import LordOfTheRings.Hero
 import LordOfTheRings.Id
+import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Placement
@@ -129,12 +131,31 @@ runGameMessage msg g = case msg of
     thisAlly <- newAlly card
     send $ Log $ player.name <> " plays " <> display card.name
     pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ Controlled pid)
+  AddToStaging (SomeEncounterCard card) -> do
+    case card.def.kind of
+      SEnemyKind -> do
+        thisEnemy <- newEnemy card
+        pure $ g & entitiesL . enemiesL %~ insertEntity (thisEnemy & placementL .~ Staging)
+      SLocationKind -> do
+        thisLocation <- newLocation card
+        pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & placementL .~ Staging)
+      _ -> error "Unhandled"
   _ -> pure g
 
 instance Entity Ally where
   type Id Ally = AllyId
   type Attrs Ally = AllyAttrs
   overAttrs f (Ally a) = Ally (overAllyAttrs f a)
+
+instance Entity Enemy where
+  type Id Enemy = EnemyId
+  type Attrs Enemy = EnemyAttrs
+  overAttrs f (Enemy a) = Enemy (overEnemyAttrs f a)
+
+instance Entity Location where
+  type Id Location = LocationId
+  type Attrs Location = LocationAttrs
+  overAttrs f (Location a) = Location (overLocationAttrs f a)
 
 runPlayerMessage :: (MonadRandom m, HasQueue m, HasGame m) => Message -> Player -> m Player
 runPlayerMessage msg player = case msg of
