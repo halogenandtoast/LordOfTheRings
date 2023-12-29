@@ -23,6 +23,10 @@ dependencies:
 - extra
 - yesod-core
 - random-shuffle
+- unliftio
+- yesod-websockets
+- conduit
+- bytestring
 
 ghc-options:
 - -Wall

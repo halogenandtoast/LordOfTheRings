@@ -28,6 +28,6 @@ data Message
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int
   | SpendHeroResources HeroId Int
-  | PlayAlly PlayerId CardId CardCode
+  | PlayAlly PlayerId (Card 'AllyKind)
   deriving stock (Show, Generic)
   deriving anyclass (FromJSON, ToJSON)

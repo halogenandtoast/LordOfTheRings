@@ -12,6 +12,7 @@ import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe, isJust)
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
+import LordOfTheRings.Frontend
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
@@ -54,10 +55,14 @@ instance MonadRandom GameT where
 data Env = Env
   { queue :: Queue
   , game :: IORef Game
+  , handler :: FrontendMessage -> IO ()
   }
 
 newtype GameT a = GameT {unGameT :: ReaderT Env IO a}
   deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader Env)
+
+instance Frontend GameT where
+  send msg = asks (.handler) >>= \f -> liftIO (f msg)
 
 runGameT :: GameT a -> Env -> IO a
 runGameT body = runReaderT body.unGameT
@@ -88,7 +93,7 @@ instance Run Game where
     entities <- run msg game.entities
     runGameMessage msg (game {players, entities})
 
-runGameMessage :: (HasQueue m, HasGame m, MonadRandom m) => Message -> Game -> m Game
+runGameMessage :: (HasQueue m, HasGame m, MonadRandom m, Frontend m) => Message -> Game -> m Game
 runGameMessage msg g = case msg of
   BeginRound -> do
     pushAll
@@ -111,9 +116,9 @@ runGameMessage msg g = case msg of
     for_ players \player -> do
       push $ WithPlayer player.id msg
     pure g
-  PlayAlly pid cid code -> do
-    let allyCard = Map.findWithDefault (error "no ally") code allAllies
-    thisAlly <- newAlly (Card cid allyCard)
+  PlayAlly pid card -> do
+    send $ Log $ "Player " <> tshow pid <> " plays " <> tshow card
+    thisAlly <- newAlly card
     pure $
       g
         { entities =
@@ -204,8 +209,8 @@ instance Run ActiveCost where
             pure ac {Cost.cost = Free}
     PaidCost acId | acId == ac.id -> do
       case ac.target of
-        CostCardTarget (SomeCard card@(Card _ def)) -> case def.kind of
-          SAllyKind -> push $ PlayAlly ac.player card.id card.code
+        CostCardTarget (SomeCard card) -> case card.def.kind of
+          SAllyKind -> push $ PlayAlly ac.player card
           _ -> pure ()
       pure ac
     _ -> pure ac

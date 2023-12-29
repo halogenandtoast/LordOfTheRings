@@ -99,6 +99,9 @@ function onLeave(el, done) {
       <Card v-for="hero in heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose')" />
     </div>
     <div class="player-main">
+      <div class="threat">
+        <span>{{player.threat}}</span>
+      </div>
       <div class="discard">
       </div>
       <div class="deck">
@@ -108,9 +111,6 @@ function onLeave(el, done) {
         <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
           <Card v-for="card in player.hand" :key="card.id" :card="card" :data="data" @choose="$emit('choose', $event)" :data-index="card.id" />
         </transition-group>
-      </div>
-      <div class="threat">
-        <span>{{player.threat}}</span>
       </div>
     </div>
   </div>
@@ -150,8 +150,6 @@ function onLeave(el, done) {
   place-items: center;
   border-radius: 5px;
 }
-
-
 
 .deck-size {
   color: white;

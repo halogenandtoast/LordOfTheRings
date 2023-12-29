@@ -7,6 +7,8 @@
 
 module Main (main) where
 
+import Conduit
+import Control.Monad (forever)
 import Control.Monad.Extra (concatMapM, replicateM)
 import Control.Monad.Random (
   MonadRandom (..),
@@ -17,11 +19,10 @@ import Control.Monad.Random (
   randomRs,
   randoms,
  )
-import Control.Monad.Reader
 import Data.Aeson
+import Data.ByteString.Lazy (ByteString)
 import Data.IORef
 import Data.Map.Strict qualified as Map
-import Data.Text qualified as Text
 import GHC.Generics
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
@@ -33,7 +34,9 @@ import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Queue
+import UnliftIO.STM
 import Yesod.Core
+import Yesod.WebSockets
 
 data GameData = GameData
   { game :: Game
@@ -41,9 +44,6 @@ data GameData = GameData
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
-
-tshow :: (Show a) => a -> Text
-tshow = Text.pack . show
 
 allAttachments :: Map CardCode (CardDef 'AttachmentKind)
 allAttachments =
@@ -187,8 +187,8 @@ data Deck = Deck
 newtype DeckException = DeckException Text
   deriving newtype (Show)
 
-newCard :: (MonadRandom m) => CardDef k -> m (Card k)
-newCard def = Card <$> getRandom <*> pure def
+newCard :: (MonadRandom m) => CardDef k -> Maybe PlayerId -> m (Card k)
+newCard def pid = Card <$> getRandom <*> pure def <*> pure pid
 
 loadPlayer :: (MonadRandom m) => DeckList -> m (Either DeckException (Player, [Hero]))
 loadPlayer dl = traverse go =<< loadDecklist dl
@@ -199,7 +199,7 @@ loadPlayer dl = traverse go =<< loadDecklist dl
     pure $
       ( Player
           { id = pid
-          , deck = deck.cards
+          , deck = map (setCardOwner pid) deck.cards
           , hand = []
           , threat = 0
           , question = Nothing
@@ -207,6 +207,9 @@ loadPlayer dl = traverse go =<< loadDecklist dl
           }
       , heroes
       )
+
+setCardOwner :: PlayerId -> SomeCard -> SomeCard
+setCardOwner pid (SomeCard c) = SomeCard $ c {owner = Just pid}
 
 missingCard :: CardCode -> DeckException
 missingCard code = DeckException $ "Missing card: " <> tshow code
@@ -221,12 +224,12 @@ allCardDefs =
 lookupCard :: (MonadRandom m) => CardCode -> m (Either DeckException SomeCard)
 lookupCard code = case Map.lookup code allCardDefs of
   Nothing -> pure $ Left $ missingCard code
-  Just (SomeCardDef c) -> Right . SomeCard <$> newCard c
+  Just (SomeCardDef c) -> Right . SomeCard <$> newCard c Nothing
 
 lookupHeroCard :: (MonadRandom m) => CardCode -> m (Either DeckException (Card 'HeroKind))
 lookupHeroCard code = case Map.lookup code allHeroes of
   Nothing -> pure $ Left $ missingCard code
-  Just c -> Right <$> newCard c
+  Just c -> Right <$> newCard c Nothing
 
 loadDecklist :: (MonadRandom m) => DeckList -> m (Either DeckException Deck)
 loadDecklist DeckList {heroes, cards} = do
@@ -234,7 +237,12 @@ loadDecklist DeckList {heroes, cards} = do
   loadedCards <- sequence <$> concatMapM (\(code, n) -> replicateM n (lookupCard code)) cards
   pure $ Deck <$> loadedHeroes <*> loadedCards
 
-data App = App {env :: Env}
+data Room = Room
+  { env :: Env
+  , chan :: TChan ByteString
+  }
+
+data App = App {room :: Room}
 
 mkYesod
   "App"
@@ -258,10 +266,19 @@ instance MonadRandom (HandlerFor App) where
   getRandomRs lohi = fmap (randomRs lohi) newStdGen
   getRandoms = fmap randoms newStdGen
 
+handleSocket :: Room -> WebSocketsT Handler ()
+handleSocket room = do
+  liftIO $ putStrLn "HERE"
+  readChannel <- atomically $ dupTChan room.chan
+  race_
+    (forever $ atomically (readTChan readChannel) >>= sendTextData)
+    (runConduit $ sourceWS .| mapM_C (atomically . writeTChan room.chan))
+
 getGameR :: Handler GameData
 getGameR = do
-  App {env} <- getYesod
-  g <- liftIO $ runGameT mainLoop env
+  App {room} <- getYesod
+  webSockets (handleSocket room)
+  g <- liftIO $ runGameT mainLoop room.env
   pure $ GameData g g.activePlayer
 
 data Response = Response
@@ -271,15 +288,23 @@ data Response = Response
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
-postGameR :: Handler GameData
+postGameR :: Handler ()
 postGameR = do
-  App {env} <- getYesod
+  App {room} <- getYesod
   response <- requireCheckJsonBody @_ @Response
-  g <- liftIO $ flip runGameT env $ do
+  g <- liftIO $ flip runGameT room.env $ do
     clearQuestion response.player
     pushAll $ choiceMessages response.choice
     mainLoop
-  pure $ GameData g g.activePlayer
+
+  liftIO $
+    atomically $
+      writeTChan room.chan $
+        encode $
+          toJSON $
+            object ["contents" .= GameData g g.activePlayer, "tag" .= String "Update"]
+  -- pure $ GameData g g.activePlayer
+  pure ()
 
 clearQuestion :: PlayerId -> GameT ()
 clearQuestion pid = do
@@ -288,8 +313,8 @@ clearQuestion pid = do
 
 postResetR :: Handler GameData
 postResetR = do
-  App {env} <- getYesod
-  liftIO $ flip runGameT env $ do
+  App {room} <- getYesod
+  liftIO $ flip runGameT room.env $ do
     clearQueue
     resetGame
     pushAll [Setup, BeginRound, EndRound]
@@ -323,6 +348,10 @@ main = do
             , activePlayer = player.id
             , entities = mempty {E.heroes = Map.fromList [(h.id, h) | h <- heroes]}
             }
-      let env = Env {queue, game}
+      c <- atomically newTChan
+      let
+        handler msg = atomically $ writeTChan c (encode $ toJSON msg)
+      let env = Env {queue, game, handler}
+      let room = Room {env, chan = c}
       runGameT (pushAll [Setup, BeginRound, EndRound]) env
-      warp 3000 (App env)
+      warp 3000 (App room)

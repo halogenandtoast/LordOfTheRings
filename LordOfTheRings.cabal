@@ -15,6 +15,7 @@ library
       LordOfTheRings.Ally
       LordOfTheRings.Ally.Type
       LordOfTheRings.Card
+      LordOfTheRings.Frontend
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
       LordOfTheRings.Hero
@@ -47,13 +48,17 @@ library
       MonadRandom
     , aeson
     , base >=4.7 && <5
+    , bytestring
+    , conduit
     , containers
     , extra
     , mtl
     , random-shuffle
     , text
+    , unliftio
     , uuid
     , yesod-core
+    , yesod-websockets
   default-language: GHC2021
 
 executable LordOfTheRings-exe
@@ -80,13 +85,17 @@ executable LordOfTheRings-exe
     , MonadRandom
     , aeson
     , base >=4.7 && <5
+    , bytestring
+    , conduit
     , containers
     , extra
     , mtl
     , random-shuffle
     , text
+    , unliftio
     , uuid
     , yesod-core
+    , yesod-websockets
   default-language: GHC2021
 
 test-suite LordOfTheRings-test
@@ -114,11 +123,15 @@ test-suite LordOfTheRings-test
     , MonadRandom
     , aeson
     , base >=4.7 && <5
+    , bytestring
+    , conduit
     , containers
     , extra
     , mtl
     , random-shuffle
     , text
+    , unliftio
     , uuid
     , yesod-core
+    , yesod-websockets
   default-language: GHC2021

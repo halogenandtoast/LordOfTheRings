@@ -35,7 +35,18 @@ newtype CardCode = CardCode Text
 data Card (k :: CardKind) = Card
   { id :: CardId
   , def :: CardDef k
+  , owner :: Maybe PlayerId
   }
+
+instance FromJSON (SCardKind AllyKind) where
+  parseJSON = withText "CardKind" $ \case
+    "ally" -> pure SAllyKind
+    _ -> fail "Invalid CardKind"
+
+deriving stock instance Generic (Card 'AllyKind)
+deriving stock instance Generic (CardDef 'AllyKind)
+deriving anyclass instance FromJSON (CardDef 'AllyKind)
+deriving anyclass instance FromJSON (Card 'AllyKind)
 
 instance HasField "code" (Card k) CardCode where
   getField card = card.def.code
@@ -43,7 +54,7 @@ instance HasField "code" (Card k) CardCode where
 deriving stock instance (Show (CardDetails k)) => Show (Card k)
 
 instance (ToJSON (CardDef k)) => ToJSON (Card k) where
-  toJSON (Card cid def) = object ["id" .= toJSON cid, "def" .= toJSON def]
+  toJSON (Card cid def owner) = object ["id" .= toJSON cid, "def" .= toJSON def, "owner" .= toJSON owner]
 
 data SomeCard where
   SomeCard :: (Show (CardDef k), Show (CardDetails k), ToJSON (Card k)) => Card k -> SomeCard
@@ -103,7 +114,7 @@ data AllyDetails = AllyDetails
   , hitPoints :: Int
   }
   deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (FromJSON, ToJSON)
 
 data AttachmentDetails = AttachmentDetails
   { cost :: ResourceCost
@@ -142,21 +153,21 @@ data Sphere = Leadership | Tactics | Spirit | Lore | Neutral
 
 data Name = Name Text (Maybe Text)
   deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (ToJSON, FromJSON)
 
 instance IsString Name where
   fromString s = Name (fromString s) Nothing
 
 data ResourceCost = StaticCost Int | DynamicCost
   deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (FromJSON, ToJSON)
 
 cardCost :: SomeCard -> Maybe ResourceCost
-cardCost (SomeCard (Card _ def)) = case def.kind of
+cardCost (SomeCard card) = case card.def.kind of
   SHeroKind -> Nothing
-  SAllyKind -> Just def.cost
-  SAttachmentKind -> Just def.cost
-  SEventKind -> Just def.cost
+  SAllyKind -> Just card.def.cost
+  SAttachmentKind -> Just card.def.cost
+  SEventKind -> Just card.def.cost
 
 costAsResources :: ResourceCost -> Int
 costAsResources = \case

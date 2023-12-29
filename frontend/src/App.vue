@@ -1,18 +1,43 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useWebSocket } from '@vueuse/core'
 import Game from './components/Game.vue'
+import Log from './components/Log.vue'
 import { Choice } from './types/Game'
 
-const data = ref(null)
+const gameData = ref(null)
+const gameLog = ref([])
 
-fetch('/api/data').then((res) => res.json().then((newData) => data.value = newData))
+const onError = (e: Event) => {
+  console.log(e)
+}
+
+const { status, data, send, open, close } = useWebSocket(`ws://${location.host}/api/data`, { autoReconnect: true, onError })
+
+watch(status, (newStatus) => {
+  console.log(newStatus)
+})
+
+watch(data, (message) => {
+  const json = JSON.parse(message)
+  switch (json.tag) {
+    case "Update":
+      gameData.value = json.contents
+      break
+    case "Log":
+      gameLog.value.push(json.message)
+      break
+  }
+})
+
+fetch('/api/data').then((res) => res.json().then((newData) => gameData.value = newData))
 
 const reset = () => {
-  fetch('/api/reset', { method: "POST" }).then((res) => res.json().then((newData) => data.value = newData))
+  fetch('/api/reset', { method: "POST" }).then((res) => res.json().then((newData) => gameData.value = newData))
 }
 
 const question = computed(() => {
-  const current = data.value
+  const current = gameData.value
   if(!current) return null
 
   return current.game.players[current.playerId].question
@@ -24,14 +49,29 @@ const choose = (e: Choice) => {
       "Content-Type": "application/json",
       // 'Content-Type': 'application/x-www-form-urlencoded',
     }
-    , body: JSON.stringify({choice: e, player: data.value.playerId})
-  }).then((res) => res.json().then((newData) => data.value = newData))
+    , body: JSON.stringify({choice: e, player: gameData.value.playerId})
+  })
 }
 </script>
 
 <template>
-  <Game v-if="data" :data="data" @reset="reset" :question="question" @choose="choose" />
+  <div id="app">
+    <Game v-if="gameData" :data="gameData" @reset="reset" :question="question" @choose="choose" />
+    <Log :log="gameLog" />
+  </div>
 </template>
 
 <style scoped lang="scss">
+#app {
+  display: grid;
+  gap: $gap;
+  background: #000 url('/images/background.jpg');
+  background-size: auto 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  height: 100%;
+  padding: calc($gap * 2);
+  box-sizing: border-box;
+  grid-template-columns: 1fr 250px;
+}
 </style>

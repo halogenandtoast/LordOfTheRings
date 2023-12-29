@@ -19,10 +19,6 @@ const emit = defineEmits<{ reset: [], choose: [Choice] }>()
 .game {
   display: grid;
   gap: $gap;
-  background: #000 url('/images/background.jpg');
-  background-size: auto 100%;
-  background-position: center center;
-  background-repeat: no-repeat;
   height: 100%;
   padding: calc($gap * 2);
   box-sizing: border-box;
