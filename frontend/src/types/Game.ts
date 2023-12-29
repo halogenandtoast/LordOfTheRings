@@ -25,9 +25,21 @@ type Ally = {
   placement: Placement
 }
 
+type Enemy = {
+  card: Card;
+  placement: Placement
+}
+
+type Location = {
+  card: Card;
+  placement: Placement
+}
+
 type Entities = {
   heroes: Record<string, Hero>;
   allies: Record<string, Ally>;
+  enemies: Record<string, Enemy>;
+  locations: Record<string, Location>;
 }
 
 type Scenario = {
