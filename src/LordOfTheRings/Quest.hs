@@ -42,7 +42,7 @@ instance Run FliesAndSpiders where
         [ Search lead EncounterDeck (cardIs Enemies.forestSpider) ToStaging Shuffle
         , Search lead EncounterDeck (cardIs Locations.oldForestRoad) ToStaging Shuffle
         ]
-      pure s
+      pure $ FliesAndSpiders $ a {side = B}
     _ -> FliesAndSpiders <$> run msg a
 
 instance Run QuestAttrs where
