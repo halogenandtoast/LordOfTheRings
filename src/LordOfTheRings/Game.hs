@@ -25,6 +25,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Phase
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
@@ -252,6 +253,7 @@ canPlay p c = case cardCost c of
     andM
       [ (>= costAsResources cost) <$> resourcesInSphere c.sphere p
       , passesUnique c
+      , correctPhase c
       ]
 
 passesUnique :: (HasGame m) => SomeCard -> m Bool
@@ -259,6 +261,19 @@ passesUnique card = do
   if card.unique
     then andM [selectNone $ AllyWithName card.name, selectNone $ HeroWithName card.name]
     else pure True
+
+correctPhase :: (HasGame m) => SomeCard -> m Bool
+correctPhase (SomeCard card) = do
+  case card.def.kind of
+    SAllyKind -> isPhase PlanningPhase
+    SAttachmentKind -> isPhase PlanningPhase
+    _ -> pure True
+
+isPhase :: (HasGame m) => Phase -> m Bool
+isPhase phase = (== phase) <$> getPhase
+
+getPhase :: (HasGame m) => m Phase
+getPhase = getsGame (.scenario.phase)
 
 resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
 resourcesInSphere sphere player = do

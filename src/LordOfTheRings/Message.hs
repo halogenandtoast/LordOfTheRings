@@ -6,18 +6,9 @@ import Data.Aeson
 import GHC.Generics
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
-
-data Phase
-  = ResourcePhase
-  | PlanningPhase
-  | QuestPhase
-  | TravelPhase
-  | EncounterPhase
-  | CombatPhase
-  deriving stock (Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
 
 data DeckSignifier = EncounterDeck
   deriving stock (Show, Generic)

@@ -318,6 +318,12 @@ data SomeEncounterCardDef where
     => EncounterCardDef k
     -> SomeEncounterCardDef
 
+instance HasField "encounterSet" SomeEncounterCardDef EncounterSet where
+  getField (SomeEncounterCardDef def) = def.encounterSet
+
+instance HasField "encounterSetCount" SomeEncounterCardDef (Int, Int, Int) where
+  getField (SomeEncounterCardDef def) = def.encounterSetCount
+
 genSomeEncounterCard :: (MonadRandom m) => SomeEncounterCardDef -> m SomeEncounterCard
 genSomeEncounterCard (SomeEncounterCardDef def) = SomeEncounterCard <$> (EncounterCard <$> getRandom <*> pure def)
 

@@ -13,6 +13,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
 import LordOfTheRings.Message
+import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 

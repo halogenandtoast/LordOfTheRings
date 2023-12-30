@@ -13,6 +13,7 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.Cards (allEnemies)
 import LordOfTheRings.Location.Cards (allLocations)
 import LordOfTheRings.Message
+import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest
 import LordOfTheRings.Quest.Cards qualified as Quest
@@ -24,7 +25,7 @@ import LordOfTheRings.Treachery.Cards (allTreacheries)
 import System.Random.Shuffle (shuffleM)
 
 newScenario :: (IsScenario a) => (ScenarioAttrs -> a) -> Scenario
-newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] Normal
+newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] Normal ResourcePhase
 
 instance Run Scenario where
   run msg (Scenario a) = Scenario <$> run msg a
@@ -32,21 +33,19 @@ instance Run Scenario where
 newtype PassageThroughMirkwood = PassageThroughMirkwood ScenarioAttrs
   deriving newtype (Show, ToJSON)
 
+allEncounterCardDefs :: Map CardCode SomeEncounterCardDef
+allEncounterCardDefs =
+  Map.unions
+    [ Map.map SomeEncounterCardDef allEnemies
+    , Map.map SomeEncounterCardDef allTreacheries
+    , Map.map SomeEncounterCardDef allLocations
+    ]
+
 gatherEncounterSet :: (MonadRandom m) => Difficulty -> EncounterSet -> m [SomeEncounterCard]
 gatherEncounterSet difficulty encounterSet = do
-  enemies <-
-    concatMapM
-      (\e -> fmap SomeEncounterCard <$> replicateM (pickCount e.encounterSetCount) (genEncounterCard e))
-      $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allEnemies)
-  treacheries <-
-    concatMapM
-      (\e -> fmap SomeEncounterCard <$> replicateM (pickCount e.encounterSetCount) (genEncounterCard e))
-      $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allTreacheries)
-  locations <-
-    concatMapM
-      (\e -> fmap SomeEncounterCard <$> replicateM (pickCount e.encounterSetCount) (genEncounterCard e))
-      $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allLocations)
-  pure $ enemies <> treacheries <> locations
+  concatMapM
+    (\e -> replicateM (pickCount e.encounterSetCount) (genSomeEncounterCard e))
+    $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allEncounterCardDefs)
  where
   pickCount :: (Int, Int, Int) -> Int
   pickCount (easy, normal, nightmare) = case difficulty of
@@ -86,6 +85,7 @@ cardMatches = \case
 
 runScenarioMessage :: (MonadRandom m, HasQueue m) => Message -> ScenarioAttrs -> m ScenarioAttrs
 runScenarioMessage msg attrs = case msg of
+  BeginPhase p -> pure $ attrs {phase = p}
   ShuffleDeck EncounterDeck -> do
     encounterDeck <- shuffleM attrs.encounterDeck
     pure $ attrs {encounterDeck}
