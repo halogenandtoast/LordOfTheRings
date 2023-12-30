@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed, withDefaults } from 'vue'
+import { ref, watch, computed, withDefaults, inject } from 'vue'
 import { Card, GameData, Choice } from '@/types/Game'
 
 export interface Props {
@@ -17,6 +17,20 @@ const emit = defineEmits<{ choose: [string] }>()
 const showBig = ref(false)
 const bigRef = ref(null)
 const cardRef = ref(null)
+
+const emitter = inject('emitter')
+
+emitter.on('flip', ({ cardId, callback }) => {
+  if (cardId === props.card.id) {
+    flipped.value = true
+    setTimeout(() => {
+      flipped.value = false
+      callback()
+    }, 300)
+  }
+})
+
+
 
 const question = computed(() => {
   return props.data.game.players[props.data.playerId].question
@@ -74,12 +88,23 @@ const src = computed(() => {
   return `/images/cards/${props.card.def.code}${ props.side ? props.side.toLowerCase() : '' }.jpg`
 })
 
+const otherSide = computed(() => {
+  if (props.side?.toLowerCase() === 'a') {
+    return `/images/cards/${props.card.def.code}b.jpg`
+  }
+
+  return null
+})
+
+const flipped = ref(false)
+
 </script>
 
 <template>
   <div>
-    <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ active, rotated }" @click="choose">
-      <img :src="src" />
+    <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ rotated }" @click="choose">
+      <img class="front" :class="{flipped, active}" :src="src" />
+      <img class="back" :class="{flipped}" v-if="otherSide" :src="otherSide" />
       <span v-if="resources" class="resources">{{resources}}</span>
     </div>
     <img ref="bigRef" class="big" :class="{ rotated }" v-if="showBig" :src="src" :anchor="card.id" />
@@ -108,6 +133,7 @@ const src = computed(() => {
 }
 
 .resources {
+  z-index: 100;
   background-image: url('/images/tokens/resource.png');
   display: grid;
   place-items: center;
@@ -136,5 +162,68 @@ img.big {
 .active {
   border: 2px solid red;
   box-sizing: border-box;
+}
+
+.front {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform: rotateY(0deg);
+}
+
+.back {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform: rotateY(-180deg);
+}
+
+.front.flipped {
+  animation: flip-back 0.3s linear;
+  animation-fill-mode: forwards;
+}
+
+.back.flipped {
+  animation: flip-front 0.3s linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes flip-back {
+  0% {
+    opacity: 1;
+    transform: rotateY(0deg);
+  }
+
+  49% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: rotateY(-180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flip-front {
+  0% {
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+
+  49% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotateY(0deg);
+  }
+
 }
 </style>

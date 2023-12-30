@@ -37,18 +37,19 @@ const questChoice = computed(() => {
 </script>
 
 <template>
-  <div class="scenario">
-    <div class="deck">
-      <div class="deck-size">{{scenario.encounterDeck.length}}</div>
+  <div class="scenario-main">
+    <div class="scenario">
+      <div class="deck">
+        <div class="deck-size">{{scenario.encounterDeck.length}}</div>
+      </div>
+      <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" />
     </div>
-    <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" />
-  </div>
 
-  <div class="staging">
-    <Card v-for="enemy in enemies" :key="enemy.id" :card="enemy.card" :data="data" @choose="$emit('choose', $event)" />
-    <Card v-for="location in locations" :key="location.id" :card="location.card" :data="data" @choose="$emit('choose', $event)" />
+    <div class="staging">
+      <Card v-for="enemy in enemies" :key="enemy.id" :card="enemy.card" :data="data" @choose="$emit('choose', $event)" />
+      <Card v-for="location in locations" :key="location.id" :card="location.card" :data="data" @choose="$emit('choose', $event)" />
+    </div>
   </div>
-
 </template>
 
 <style scoped lang="scss">
@@ -80,5 +81,11 @@ const questChoice = computed(() => {
 .scenario {
   display: flex;
   gap: $gap;
+}
+
+.scenario-main {
+  display: flex;
+  gap: $gap;
+  flex-direction: column;
 }
 </style>

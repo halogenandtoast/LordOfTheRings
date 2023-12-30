@@ -1,9 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, inject } from 'vue'
 import { useWebSocket } from '@vueuse/core'
 import Game from './components/Game.vue'
 import Log from './components/Log.vue'
 import { Choice } from './types/Game'
+
+const uiLock = ref<boolean>(false)
+const resultQueue = ref<any>([])
+
+watch(uiLock, async () => {
+  if(!uiLock.value) {
+    const r = resultQueue.value.shift()
+    if (r) {
+      handleResult(r)
+    }
+  }
+})
 
 const gameData = ref(null)
 const gameLog = ref([])
@@ -14,21 +26,44 @@ const onError = (e: Event) => {
 
 const { status, data, send, open, close } = useWebSocket(`ws://${location.host}/api/data`, { autoReconnect: true, onError })
 
-watch(status, (newStatus) => {
-  console.log(newStatus)
-})
-
 watch(data, (message) => {
   const json = JSON.parse(message)
-  switch (json.tag) {
-    case "Update":
-      gameData.value = json.contents
-      break
-    case "Log":
-      gameLog.value.push(json.message)
-      break
+  handleResult(json)
+})
+
+watch(uiLock, async () => {
+  if(!uiLock.value) {
+    const r = resultQueue.value.shift()
+    if (r) {
+      handleResult(r)
+    }
   }
 })
+
+const emitter = inject('emitter')
+
+const handleResult = (result) => {
+  switch (result.tag) {
+    case "Update":
+      if (uiLock.value) {
+        resultQueue.value.push(result)
+      } else {
+        gameData.value = result.contents
+      }
+      break
+    case "FlipCard":
+      if (uiLock.value) {
+        resultQueue.value.push(result)
+      } else {
+        uiLock.value = true
+        emitter?.emit('flip', { cardId: result.cardId, callback: () => { uiLock.value = false } })
+      }
+      break
+    case "Log":
+      gameLog.value.push(result.message)
+      break
+  }
+}
 
 fetch('/api/data').then((res) => res.json().then((newData) => gameData.value = newData))
 

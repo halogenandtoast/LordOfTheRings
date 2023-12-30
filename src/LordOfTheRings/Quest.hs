@@ -9,6 +9,7 @@ import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Cards qualified as Enemies
+import LordOfTheRings.Frontend
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Cards qualified as Locations
@@ -38,6 +39,7 @@ instance Run FliesAndSpiders where
       pure s
     FlipQuest qId | a.id == qId -> do
       lead <- getLead
+      send $ FlipCard a.card.id
       pushAll
         [ Search lead EncounterDeck (cardIs Enemies.forestSpider) ToStaging Shuffle
         , Search lead EncounterDeck (cardIs Locations.oldForestRoad) ToStaging Shuffle

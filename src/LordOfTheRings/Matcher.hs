@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedRecordDot #-}
 
-module LordOfTheRings.Matcher where
+module LordOfTheRings.Matcher (module LordOfTheRings.Matcher) where
 
 import Data.Map.Strict qualified as Map
 import {-# SOURCE #-} LordOfTheRings.Game.Base
