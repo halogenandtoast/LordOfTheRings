@@ -16,32 +16,56 @@ allLocations =
     , ("01100", forestGate)
     ]
 
-location :: CardCode -> Name -> EncounterSet -> (Int, Int, Int) -> EncounterCardDef 'LocationKind
-location code name encounterSet encounterSetCount =
+location
+  :: CardCode
+  -> Name
+  -> EncounterSet
+  -> (Int, Int, Int)
+  -> LocationDetails
+  -> EncounterCardDef 'LocationKind
+location code name encounterSet encounterSetCount details =
   EncounterCardDef
     { code
     , name
     , unique = False
     , kind = SLocationKind
-    , details = LocationDetails
+    , details
     , encounterSet
     , encounterSetCount
     }
 
 greatForestWeb :: EncounterCardDef 'LocationKind
-greatForestWeb = location "01077" "Great Forest Web" SpidersOfMirkwood (2, 2, 2)
+greatForestWeb =
+  location "01077" "Great Forest Web" SpidersOfMirkwood (2, 2, 2) $
+    LocationDetails
+      { threat = 2
+      , questPoints = 2
+      }
 
 mountainsOfMirkwood :: EncounterCardDef 'LocationKind
-mountainsOfMirkwood = location "01078" "Mountains of Mirkwood" SpidersOfMirkwood (3, 3, 0)
+mountainsOfMirkwood =
+  location "01078" "Mountains of Mirkwood" SpidersOfMirkwood (3, 3, 0) $
+    LocationDetails
+      { threat = 2
+      , questPoints = 3
+      }
 
 necromancersPass :: EncounterCardDef 'LocationKind
-necromancersPass = location "01094" "Necromancer's Pass" DolGuldurOrcs (1, 2, 2)
+necromancersPass =
+  location "01094" "Necromancer's Pass" DolGuldurOrcs (1, 2, 2) $
+    LocationDetails {threat = 3, questPoints = 2}
 
 enchantedStream :: EncounterCardDef 'LocationKind
-enchantedStream = location "01095" "Enchanted Stream" DolGuldurOrcs (2, 2, 2)
+enchantedStream =
+  location "01095" "Enchanted Stream" DolGuldurOrcs (2, 2, 2) $
+    LocationDetails {threat = 2, questPoints = 2}
 
 oldForestRoad :: EncounterCardDef 'LocationKind
-oldForestRoad = location "01099" "Old Forest Road" PassageThroughMirkwood (1, 2, 2)
+oldForestRoad =
+  location "01099" "Old Forest Road" PassageThroughMirkwood (1, 2, 2) $
+    LocationDetails {threat = 1, questPoints = 3}
 
 forestGate :: EncounterCardDef 'LocationKind
-forestGate = location "01100" "Forest Gate" PassageThroughMirkwood (2, 2, 0)
+forestGate =
+  location "01100" "Forest Gate" PassageThroughMirkwood (2, 2, 0) $
+    LocationDetails {threat = 2, questPoints = 4}

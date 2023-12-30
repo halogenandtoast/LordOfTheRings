@@ -8,6 +8,7 @@ import Control.Lens
 import Data.Aeson
 import Data.Coerce
 import GHC.Generics
+import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Placement
@@ -24,6 +25,12 @@ class (Run a, Show a, ToJSON a) => IsAlly a where
 
 data Ally where
   Ally :: (IsAlly a) => a -> Ally
+
+instance HasField "name" Ally Name where
+  getField (Ally a) = (allyAttrs a).name
+
+instance HasField "name" AllyAttrs Name where
+  getField a = a.card.def.name
 
 instance HasPlacement Ally where
   placementL =

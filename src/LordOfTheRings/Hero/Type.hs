@@ -35,6 +35,12 @@ instance Show Hero where
 instance ToJSON Hero where
   toJSON (Hero a) = toJSON a
 
+instance HasField "name" Hero Name where
+  getField (Hero a) = (heroAttrs a).name
+
+instance HasField "name" HeroAttrs Name where
+  getField a = a.card.def.name
+
 instance HasField "threat" HeroAttrs Int where
   getField a = a.card.def.details.threat
 

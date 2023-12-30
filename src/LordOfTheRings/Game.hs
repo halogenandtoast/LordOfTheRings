@@ -4,6 +4,7 @@
 module LordOfTheRings.Game (module LordOfTheRings.Game, module LordOfTheRings.Game.Base) where
 
 import Control.Lens ((%~), (&), (.~))
+import Control.Monad.Extra (andM)
 import Control.Monad.Random
 import Control.Monad.Reader
 import Data.Foldable (for_)
@@ -248,8 +249,16 @@ canPlay :: (HasGame m) => Player -> SomeCard -> m Bool
 canPlay p c = case cardCost c of
   Nothing -> pure False
   Just cost -> do
-    resources <- resourcesInSphere c.sphere p
-    pure $ resources >= costAsResources cost
+    andM
+      [ (>= costAsResources cost) <$> resourcesInSphere c.sphere p
+      , passesUnique c
+      ]
+
+passesUnique :: (HasGame m) => SomeCard -> m Bool
+passesUnique card = do
+  if card.unique
+    then andM [selectNone $ AllyWithName card.name, selectNone $ HeroWithName card.name]
+    else pure True
 
 resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
 resourcesInSphere sphere player = do

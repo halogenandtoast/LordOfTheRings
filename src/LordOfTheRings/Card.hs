@@ -115,6 +115,12 @@ instance ToJSON SomeEncounterCard where
 data SomeCard where
   SomeCard :: (Show (CardDef k), Show (CardDetails k), ToJSON (Card k)) => Card k -> SomeCard
 
+instance HasField "unique" SomeCard Bool where
+  getField (SomeCard card) = card.def.unique
+
+instance HasField "name" SomeCard Name where
+  getField (SomeCard card) = card.def.name
+
 instance HasField "code" SomeCard CardCode where
   getField (SomeCard card) = card.def.code
 
@@ -163,6 +169,12 @@ data QuestDetails = QuestDetails
   deriving anyclass (ToJSON, FromJSON)
 
 data EnemyDetails = EnemyDetails
+  { engagementCost :: Int
+  , threat :: Int
+  , attack :: Int
+  , defense :: Int
+  , hitPoints :: Int
+  }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -170,7 +182,7 @@ data TreacheryDetails = TreacheryDetails
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
-data LocationDetails = LocationDetails
+data LocationDetails = LocationDetails {threat :: Int, questPoints :: Int}
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -259,7 +271,7 @@ data Sphere = Leadership | Tactics | Spirit | Lore | Neutral
   deriving anyclass (FromJSON, ToJSON)
 
 data Name = Name Text (Maybe Text)
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 instance IsString Name where
