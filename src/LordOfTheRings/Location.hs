@@ -6,8 +6,11 @@ import Control.Monad.Random
 import Data.Aeson
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
+import Debug.Trace
 import LordOfTheRings.Card
+import LordOfTheRings.Id
 import LordOfTheRings.Location.Type
+import LordOfTheRings.Message
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
@@ -24,7 +27,9 @@ instance Run OldForestRoad where
     _ -> OldForestRoad <$> run msg a
 
 instance Run LocationAttrs where
-  run msg attrs = case msg of
+  run msg attrs = case traceShowId msg of
+    PlaceProgress (isTarget attrs -> traceShowId -> True) n -> do
+      pure $ attrs {progress = attrs.progress + n}
     _ -> pure attrs
 
 lookupLocation :: CardCode -> LocationAttrs -> Location
@@ -38,5 +43,5 @@ lookupLocation cCode = fromMaybe (error "No such quest") $ Map.lookup cCode allD
 newLocation :: (MonadRandom m) => EncounterCard 'LocationKind -> m Location
 newLocation card = do
   locationId <- getRandom
-  let attrs = LocationAttrs {id = locationId, card, placement = Unplaced}
+  let attrs = LocationAttrs {id = locationId, card, placement = Unplaced, progress = 0}
   pure $ lookupLocation card.def.code attrs

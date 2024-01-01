@@ -52,6 +52,9 @@ data SomeEncounterCard where
     => EncounterCard k
     -> SomeEncounterCard
 
+instance Reference SomeEncounterCard where
+  toRef c = CardRef c.id
+
 instance Show SomeEncounterCard where
   show (SomeEncounterCard card) = show card
 

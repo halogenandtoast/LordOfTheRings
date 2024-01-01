@@ -5,6 +5,7 @@ import LordOfTheRings.Ally.Type
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
+import LordOfTheRings.Location.Type
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 
@@ -28,10 +29,20 @@ instance Query Ally where
       AllyWithName name -> pure $ filter ((== name) . (.name)) allies
 
 instance Query Player where
-  data Matcher Player = ActivePlayer
+  data Matcher Player = ActivePlayer | FirstPlayer
   select matcher = do
     case matcher of
       ActivePlayer -> (: []) <$> (getPlayer =<< getsGame (.activePlayer))
+      FirstPlayer -> (: []) <$> (getPlayer =<< getsGame (.firstPlayer))
+
+instance Query Location where
+  data Matcher Location = CanProgressLocation
+    deriving stock (Show, Generic)
+    deriving anyclass (ToJSON, FromJSON)
+  select matcher = do
+    locations <- Map.elems <$> getsGame (.entities.locations)
+    case matcher of
+      CanProgressLocation -> pure locations
 
 selectJust :: (HasGame m, Query a) => Matcher a -> m a
 selectJust matcher = do
@@ -49,3 +60,6 @@ selectOne matcher = do
 
 selectNone :: (HasGame m, Query a) => Matcher a -> m Bool
 selectNone matcher = null <$> select matcher
+
+selectAny :: (HasGame m, Query a) => Matcher a -> m Bool
+selectAny matcher = notNull <$> select matcher

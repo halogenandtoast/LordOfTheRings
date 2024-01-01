@@ -7,15 +7,16 @@ import Scenario from './Scenario.vue'
 const props = defineProps<{ data: GameData }>()
 const game = computed(() => props.data.game)
 const emit = defineEmits<{ reset: [], choose: [Choice] }>()
+const you = computed(() => props.data.game.players[props.data.game.activePlayer])
 
 </script>
 <template>
   <div class="game">
     <div>
       <button @click="emit('reset')">Reset</button>
-      <Scenario :data="data" :scenario="game.scenario" @choose="$emit('choose', $event)" />
+      <Scenario :data="data" :scenario="game.scenario" @choose="$emit('choose', $event)" :you="you" />
     </div>
-    <Player v-for="player in game.players" :key="player.id" :player="player" :data="data" @choose="$emit('choose', $event)" />
+    <Player v-for="player in game.players" :key="player.id" :player="player" :data="data" :you="you" @choose="$emit('choose', $event)" />
   </div>
 </template>
 

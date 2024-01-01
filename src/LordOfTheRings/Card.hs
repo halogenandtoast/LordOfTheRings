@@ -26,6 +26,11 @@ instance Display Name where
 data Card = PlayerCard SomePlayerCard | EncounterCard SomeEncounterCard
   deriving stock (Show, Generic)
 
+instance Reference Card where
+  toRef = \case
+    PlayerCard pc -> CardRef pc.id
+    EncounterCard ec -> CardRef ec.id
+
 instance ToJSON Card where
   toJSON = \case
     PlayerCard pc -> toJSON pc

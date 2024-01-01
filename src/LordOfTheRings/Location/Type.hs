@@ -26,6 +26,12 @@ class (Show a, ToJSON a, Run a) => IsLocation a where
 data Location where
   Location :: (IsLocation a) => a -> Location
 
+instance Reference Location where
+  toRef (Location a) = toRef $ locationAttrs a
+
+instance Reference LocationAttrs where
+  toRef a = LocationRef a.id
+
 instance HasField "id" Location LocationId where
   getField (Location a) = (locationAttrs a).id
 
@@ -46,6 +52,7 @@ data LocationAttrs = LocationAttrs
   { id :: LocationId
   , card :: EncounterCard 'LocationKind
   , placement :: Placement
+  , progress :: Int
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)

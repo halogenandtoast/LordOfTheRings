@@ -16,6 +16,12 @@ class (Run a, Show a, ToJSON a) => IsHero a where
 data Hero where
   Hero :: (IsHero a) => a -> Hero
 
+instance Reference Hero where
+  toRef (Hero a) = toRef (heroAttrs a)
+
+instance Reference HeroAttrs where
+  toRef a = HeroRef a.id
+
 data HeroAttrs = HeroAttrs
   { id :: HeroId
   , card :: PlayerCard 'HeroKind

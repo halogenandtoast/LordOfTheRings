@@ -11,3 +11,6 @@ import Data.Text qualified as T
 
 tshow :: (Show a) => a -> Text
 tshow = T.pack . show
+
+notNull :: [a] -> Bool
+notNull = not . null

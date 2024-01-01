@@ -56,6 +56,7 @@ instance Semigroup Entities where
 data Game = Game
   { players :: Map PlayerId Player
   , activePlayer :: PlayerId
+  , firstPlayer :: PlayerId
   , entities :: Entities
   , scenario :: Scenario
   }

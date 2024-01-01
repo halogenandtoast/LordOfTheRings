@@ -303,7 +303,7 @@ postGameR = do
   response <- requireCheckJsonBody @_ @Response
   g <- liftIO $ flip runGameT room.env $ do
     clearQuestion response.player
-    pushAll $ choiceMessages response.choice
+    pushAll $ choiceMessages response.player response.choice
     mainLoop
 
   liftIO $
@@ -342,6 +342,7 @@ resetGame = do
         Game
           { players = Map.singleton player.id player
           , activePlayer = player.id
+          , firstPlayer = player.id
           , entities = mempty {E.heroes = Map.fromList [(h.id, h) | h <- heroes]}
           , scenario = newScenario PassageThroughMirkwood
           }
@@ -358,6 +359,7 @@ main = do
           Game
             { players = Map.singleton player.id player
             , activePlayer = player.id
+            , firstPlayer = player.id
             , entities = mempty {E.heroes = Map.fromList [(h.id, h) | h <- heroes]}
             , scenario = newScenario PassageThroughMirkwood
             }

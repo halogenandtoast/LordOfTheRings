@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { GameData, Scenario, Choice } from './types/Game'
+import { GameData, Scenario, Choice, Quest, Player } from './types/Game'
 import Card from './Card.vue'
+import Location from './Location.vue'
 
 const emit = defineEmits<{ reset: [], choose: [Choice] }>()
-const props = defineProps<{ data: GameData, scenario: Scenario }>()
+const props = defineProps<{ you: Player, data: GameData, scenario: Scenario }>()
 
-const quest = computed(() => {
+const quest = computed<Quest>(() => {
   return props.scenario.quest
 })
 
 const question = computed(() => {
-  return props.data.game.players[props.data.playerId].question
+  return props.data.game.players[props.you.id].question
 })
 
 const enemies = computed(() => {
@@ -28,7 +29,9 @@ const questChoice = computed(() => {
 
   switch (currentQuestion.tag) {
     case "ChooseOne":
-      return currentQuestion.contents.find((choice: Choice) => choice.tag === "QuestChoice")
+      return currentQuestion.contents.find((choice: Choice) =>
+        choice.tag === "TargetChoice" && choice.target.contents === quest.value.id
+      )
     default:
       return null
   }
@@ -42,12 +45,12 @@ const questChoice = computed(() => {
       <div class="deck">
         <div class="deck-size">{{scenario.encounterDeck.length}}</div>
       </div>
-      <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" />
+      <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" :you="you" />
     </div>
 
     <div class="staging">
-      <Card v-for="enemy in enemies" :key="enemy.id" :card="enemy.card" :data="data" @choose="$emit('choose', $event)" />
-      <Card v-for="location in locations" :key="location.id" :card="location.card" :data="data" @choose="$emit('choose', $event)" />
+      <Card v-for="enemy in enemies" :key="enemy.id" :card="enemy.card" :data="data" @choose="$emit('choose', $event)" :you="you" />
+      <Location v-for="location in locations" :key="location.id" :location="location" :you="you" :data="data" @choose="$emit('choose', $event)" />
     </div>
   </div>
 </template>

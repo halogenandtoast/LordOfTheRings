@@ -34,7 +34,7 @@ instance Run FliesAndSpiders where
   run msg s@(FliesAndSpiders a) = case msg of
     DoStep 7 Setup -> do
       lead <- getLead
-      push $ Ask lead $ ChooseOne [QuestChoice a.id [Flip $ toRef a]]
+      push $ Ask lead $ ChooseOne [targetChoice a [Flip $ toRef a]]
       pure s
     Flip (isTarget a -> True) -> do
       lead <- getLead

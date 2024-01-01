@@ -8,9 +8,11 @@ import Control.Monad.Random
 import Control.Monad.Reader
 import Data.Foldable (for_)
 import Data.IORef
-import Data.List (find)
+import Data.List (find, partition)
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe, isJust)
+import Debug.Trace
+import LordOfTheRings.Ability
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy
@@ -31,6 +33,7 @@ import LordOfTheRings.Question
 import LordOfTheRings.Queue
 import LordOfTheRings.Run
 import LordOfTheRings.Scenario ()
+import LordOfTheRings.Window
 import System.Random.Shuffle (shuffleM)
 
 getHasQuestion :: GameT Bool
@@ -92,7 +95,9 @@ instance Run Entities where
   run msg entities = do
     heroes <- traverse (run msg) entities.heroes
     allies <- traverse (run msg) entities.allies
-    pure (entities {heroes, allies})
+    locations <- traverse (run msg) entities.locations
+    enemies <- traverse (run msg) entities.enemies
+    pure (entities {heroes, allies, locations, enemies})
 
 instance Run Game where
   run msg game = do
@@ -103,6 +108,9 @@ instance Run Game where
 
 runGameMessage :: (HasQueue m, HasGame m, MonadRandom m, Frontend m) => Message -> Game -> m Game
 runGameMessage msg g = case msg of
+  Run msgs -> do
+    pushAll msgs
+    pure g
   Setup -> do
     pushAll [DoStep n Setup | n <- [1 .. 7]]
     pure g
@@ -131,6 +139,7 @@ runGameMessage msg g = case msg of
     player <- getPlayer pid
     thisAlly <- newAlly card
     send $ Log $ player.name <> " plays " <> display card.name
+    pushAll [RunWindow $ Window After $ EnterPlay $ toRef thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ Controlled pid)
   AddToStaging (SomeEncounterCard card) -> do
     case card.def.kind of
@@ -158,8 +167,32 @@ instance Entity Location where
   type Attrs Location = LocationAttrs
   overAttrs f (Location a) = Location (overLocationAttrs f a)
 
+getWindowAbilities :: (HasGame m) => Window -> m [Ability]
+getWindowAbilities window = do
+  abilities <- concatMap getAbilities . Map.elems <$> getsGame (.entities.allies)
+  filterM
+    ( andM
+        . sequence
+          [ pure . maybe False (windowMatches window) . abilityWindow
+          , validCriteria . (.criteria)
+          ]
+    )
+    abilities
+
+validCriteria :: (HasGame m) => Criteria -> m Bool
+validCriteria = \case
+  LocationExists lMatcher -> selectAny lMatcher
+
 runPlayerMessage :: (MonadRandom m, HasQueue m, HasGame m) => Message -> Player -> m Player
 runPlayerMessage msg player = case msg of
+  RunWindow window -> do
+    abilities <- getWindowAbilities window
+    when (notNull abilities) $ do
+      let (forced, traceShowId -> nonForced) = partition isForcedAbility abilities
+      if null forced
+        then push $ Ask player.id $ ChooseOne $ map UseAbilityLabel nonForced
+        else push $ Ask player.id $ ChooseOneAtATime $ map UseAbilityLabel forced
+    pure player
   Ask pid q | pid == player.id -> do
     pure $ player {question = Just q}
   DoStep 1 Setup -> do
@@ -181,7 +214,7 @@ runPlayerMessage msg player = case msg of
       then pure player
       else
         pure $
-          player {question = Just (ChooseOne [CardChoice c.id [PlayCard player.id c.id] | c <- playable])}
+          player {question = Just (ChooseOne [targetChoice c [PlayCard player.id c.id] | c <- playable])}
   PlayCard pid cid | pid == player.id -> do
     let mcard = find ((== cid) . (.id)) player.hand
     case mcard of
@@ -212,7 +245,7 @@ runPlayerMessage msg player = case msg of
           player
             { question =
                 Just
-                  ( ChooseOne [HeroChoice x.id [SpendHeroResources x.id 1, SpendResources pid sphere (n - 1)] | x <- xs]
+                  ( ChooseOne [targetChoice x [SpendHeroResources x.id 1, SpendResources pid sphere (n - 1)] | x <- xs]
                   )
             }
   PaidCost acId

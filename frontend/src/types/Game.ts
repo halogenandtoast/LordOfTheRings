@@ -8,6 +8,10 @@ type Hero = {
   player: string
 }
 
+type Quest = {
+  id: string
+}
+
 type Choice = { tag: "CardChoice", contents: string }
 type Question = { tag: "ChooseOne", contents: Choice[] }
 
@@ -33,6 +37,7 @@ type Enemy = {
 type Location = {
   card: Card;
   placement: Placement
+  progress: number
 }
 
 type Entities = {

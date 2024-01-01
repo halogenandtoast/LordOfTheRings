@@ -5,10 +5,12 @@ import { Card, GameData, Choice } from '@/types/Game'
 export interface Props {
   card: Card
   resources?: number
+  progress?: number
   data: GameData
   rotated?: boolean
   currentChoice?: Choice
   side?: 'A' | 'B'
+  you: Player
 }
 
 const props = withDefaults(defineProps<Props>(), { rotated: false })
@@ -33,7 +35,7 @@ emitter.on('flip', ({ cardId, callback }) => {
 
 
 const question = computed(() => {
-  return props.data.game.players[props.data.playerId].question
+  return props.data.game.players[props.you.id].question
 })
 
 const choose = () => {
@@ -49,7 +51,7 @@ const choice = computed(() => {
 
   switch (currentQuestion.tag) {
     case "ChooseOne":
-      return currentQuestion.contents.find((choice: Choice) => choice.cardId === props.card.id)
+      return currentQuestion.contents.find((choice: Choice) => choice.tag === "TargetChoice" && choice.target.contents === props.card.id)
     default:
       return null
   }
@@ -106,6 +108,7 @@ const flipped = ref(false)
       <img class="front" :class="{flipped, active}" :src="src" />
       <img class="back" :class="{flipped}" v-if="otherSide" :src="otherSide" />
       <span v-if="resources" class="resources">{{resources}}</span>
+      <span v-if="progress" class="progress">{{progress}}</span>
     </div>
     <img ref="bigRef" class="big" :class="{ rotated }" v-if="showBig" :src="src" :anchor="card.id" />
   </div>
@@ -135,6 +138,20 @@ const flipped = ref(false)
 .resources {
   z-index: 100;
   background-image: url('/images/tokens/resource.png');
+  display: grid;
+  place-items: center;
+  background-size: cover;
+  width: calc($card-width / 4);
+  height: calc($card-width / 4);
+  color: black;
+  font-weight: bold;
+  grid-area: 1 / 1;
+  place-self: center;
+}
+
+.progress {
+  z-index: 100;
+  background-image: url('/images/tokens/progress.png');
   display: grid;
   place-items: center;
   background-size: cover;

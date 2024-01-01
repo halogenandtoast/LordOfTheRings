@@ -12,6 +12,7 @@ build-type:     Simple
 
 library
   exposed-modules:
+      LordOfTheRings.Ability
       LordOfTheRings.Ally
       LordOfTheRings.Ally.Type
       LordOfTheRings.Card
@@ -47,6 +48,7 @@ library
       LordOfTheRings.Scenario
       LordOfTheRings.Scenario.Type
       LordOfTheRings.Treachery.Cards
+      LordOfTheRings.Window
   other-modules:
       Paths_LordOfTheRings
   hs-source-dirs:

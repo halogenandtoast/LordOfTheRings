@@ -26,12 +26,19 @@ newtype PlayerId = PlayerId UUID
   deriving newtype (Random, Show, ToJSON, FromJSON, ToJSONKey, Eq, Ord)
 
 newtype CardId = CardId UUID
-  deriving newtype (Random, Show, ToJSON, FromJSON, Eq)
+  deriving newtype (Random, Show, ToJSON, FromJSON, Ord, Eq)
 
 newtype CostId = CostId UUID
   deriving newtype (Random, Show, ToJSON, FromJSON, Eq)
 
 data RefKind = TargetRef | SourceRef
+
+data AbilityRef = AbilityRef Target Int
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+isAbility :: (Reference a) => a -> Int -> AbilityRef -> Bool
+isAbility a n (AbilityRef t i) = isTarget a t && n == i
 
 data Ref (k :: RefKind)
   = EnemyRef EnemyId
@@ -40,6 +47,7 @@ data Ref (k :: RefKind)
   | HeroRef HeroId
   | AllyRef AllyId
   | PlayerRef PlayerId
+  | CardRef CardId
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

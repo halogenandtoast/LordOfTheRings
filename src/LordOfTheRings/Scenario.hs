@@ -102,8 +102,8 @@ runScenarioMessage msg attrs = case msg of
             push $
               Ask pid $
                 ChooseOne $
-                  CardChoice x.id [AddToStaging x]
-                    : map (\y -> CardChoice y.id [AddToStaging y, ShuffleDeck EncounterDeck]) xs
+                  targetChoice x [AddToStaging x]
+                    : map (\y -> targetChoice y [AddToStaging y, ShuffleDeck EncounterDeck]) xs
             pure attrs
   _ -> pure attrs
 

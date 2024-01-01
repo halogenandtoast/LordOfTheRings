@@ -6,6 +6,7 @@ module LordOfTheRings.Ally.Type (module LordOfTheRings.Ally.Type) where
 import Control.Lens
 import Data.Aeson
 import Data.Coerce
+import {-# SOURCE #-} LordOfTheRings.Ability
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Name
@@ -13,7 +14,7 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 
-class (Run a, Show a, ToJSON a) => IsAlly a where
+class (HasAbilities a, Run a, Show a, ToJSON a) => IsAlly a where
   allyAttrs :: a -> AllyAttrs
   default allyAttrs :: (Coercible a AllyAttrs) => a -> AllyAttrs
   allyAttrs = coerce
@@ -29,6 +30,9 @@ instance HasField "name" Ally Name where
 
 instance HasField "name" AllyAttrs Name where
   getField a = a.card.def.name
+
+instance HasAbilities Ally where
+  getAbilities (Ally a) = getAbilities a
 
 instance HasPlacement Ally where
   placementL =
@@ -53,3 +57,9 @@ instance Show Ally where
 
 instance ToJSON Ally where
   toJSON (Ally a) = toJSON a
+
+instance Reference Ally where
+  toRef (Ally a) = toRef (allyAttrs a)
+
+instance Reference AllyAttrs where
+  toRef a = AllyRef a.id

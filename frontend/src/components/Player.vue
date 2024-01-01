@@ -3,7 +3,8 @@ import { ref, computed } from 'vue'
 import { Player, GameData, Choice } from '@/types/Game'
 import gsap from 'gsap'
 import Card from './Card.vue'
-const props = defineProps<{ player: Player, data: GameData }>()
+import Ally from './Ally.vue'
+const props = defineProps<{ you: Player, player: Player, data: GameData }>()
 const emit = defineEmits<{ choose: [Choice] }>()
 
 const animationMatrix = ref([])
@@ -92,11 +93,11 @@ function onLeave(el, done) {
   <div class="player">
     <div>
       <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
-        <Card v-for="ally in allies" :key="ally.id" :card="ally.card" :data="data" @choose="$emit('choose')" :data-index="ally.card.id" />
+        <Ally v-for="ally in allies" :ally="ally" :key="ally.id" :you="you" :data="data" @choose="$emit('choose', $event)" />
       </transition-group>
     </div>
     <div class="heroes">
-      <Card v-for="hero in heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose')" />
+      <Card v-for="hero in heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose', $event)" :you="you" />
     </div>
     <div class="player-main">
       <div class="threat">
@@ -109,7 +110,7 @@ function onLeave(el, done) {
       </div>
       <div class="hand">
         <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
-          <Card v-for="card in player.hand" :key="card.id" :card="card" :data="data" @choose="$emit('choose', $event)" :data-index="card.id" />
+          <Card v-for="card in player.hand" :key="card.id" :card="card" :data="data" @choose="$emit('choose', $event)" :data-index="card.id" :you="you" />
         </transition-group>
       </div>
     </div>
