@@ -17,6 +17,8 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 
+type AllyCard = PlayerCardDef 'AllyKind
+
 instance Run Ally where
   run msg (Ally a) = Ally <$> run msg a
 
@@ -121,13 +123,13 @@ lookupAlly cCode = fromMaybe (error "No such ally") $ Map.lookup cCode allData
       , ("01015", Ally . SonOfArnor)
       ]
 
-newAlly :: (MonadRandom m) => Card 'AllyKind -> m Ally
+newAlly :: (MonadRandom m) => PlayerCard 'AllyKind -> m Ally
 newAlly card = do
   allyId <- getRandom
   let attrs = AllyAttrs {id = allyId, card, sphere = card.def.sphere, placement = Unplaced}
   pure $ lookupAlly card.def.code attrs
 
-allAllies :: Map CardCode (CardDef 'AllyKind)
+allAllies :: Map CardCode (AllyCard)
 allAllies =
   Map.fromList
     [ ("01013", guardOfTheCitadel)
@@ -144,9 +146,9 @@ allAllies =
     , ("01073", gandalf)
     ]
 
-ally :: CardCode -> Name -> Sphere -> Int -> Int -> Int -> Int -> Int -> CardDef 'AllyKind
+ally :: CardCode -> Name -> Sphere -> Int -> Int -> Int -> Int -> Int -> AllyCard
 ally code name sphere cost willpower attack defense hitPoints =
-  CardDef
+  PlayerCardDef
     { code
     , name
     , unique = False
@@ -155,38 +157,38 @@ ally code name sphere cost willpower attack defense hitPoints =
     , sphere
     }
 
-beorn :: CardDef 'AllyKind
+beorn :: AllyCard
 beorn = unique $ ally "01031" "Beorn" Tactics 6 1 3 3 6
 
-ereborHammersmith :: CardDef 'AllyKind
+ereborHammersmith :: AllyCard
 ereborHammersmith = ally "01059" "Erebor Hammersmith" Lore 2 1 1 1 3
 
-faramir :: CardDef 'AllyKind
+faramir :: AllyCard
 faramir = unique $ ally "01014" "Faramir" Leadership 4 2 1 2 3
 
-gandalf :: CardDef 'AllyKind
+gandalf :: AllyCard
 gandalf = unique $ ally "01073" "Gandalf" Neutral 5 4 4 4 4
 
-gleowine :: CardDef 'AllyKind
+gleowine :: AllyCard
 gleowine = unique $ ally "01062" "Gleowine" Lore 2 1 0 0 2
 
-guardOfTheCitadel :: CardDef 'AllyKind
+guardOfTheCitadel :: AllyCard
 guardOfTheCitadel = ally "01013" "Guard of the Citadel" Leadership 2 1 1 0 2
 
-henamarthRiversong :: CardDef 'AllyKind
+henamarthRiversong :: AllyCard
 henamarthRiversong = unique $ ally "01060" "Henamarth Riversong" Lore 1 1 1 0 1
 
-minerOfTheIronHills :: CardDef 'AllyKind
+minerOfTheIronHills :: AllyCard
 minerOfTheIronHills = ally "01061" "Miner of the Iron Hills" Lore 2 0 0 1 2
 
-northernTracker :: CardDef 'AllyKind
+northernTracker :: AllyCard
 northernTracker = ally "01045" "Nothern Tracker" Spirit 4 1 2 2 3
 
-silverlodeArcher :: CardDef 'AllyKind
+silverlodeArcher :: AllyCard
 silverlodeArcher = ally "01017" "Silverload Archer" Leadership 3 1 2 0 1
 
-snowbournScout :: CardDef 'AllyKind
+snowbournScout :: AllyCard
 snowbournScout = ally "01016" "Snowbourn Scout" Leadership 1 0 0 1 1
 
-sonOfArnor :: CardDef 'AllyKind
+sonOfArnor :: AllyCard
 sonOfArnor = ally "01015" "Son of Arnor" Leadership 3 0 2 0 2

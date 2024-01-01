@@ -193,7 +193,8 @@ runPlayerMessage msg player = case msg of
         let cost =
               ActiveCost
                 { id = costId
-                , cost = ResourceCost playingCard.sphere (fromMaybe (StaticCost 0) playingCard.cost)
+                , cost =
+                    ResourceCost (fromMaybe Neutral playingCard.sphere) (fromMaybe (StaticCost 0) playingCard.cost)
                 , target = CostCardTarget playingCard
                 , player = player.id
                 }
@@ -235,7 +236,7 @@ instance Run ActiveCost where
             pure ac {Cost.cost = Free}
     PaidCost acId | acId == ac.id -> do
       case ac.target of
-        CostCardTarget (SomeCard card) -> case card.def.kind of
+        CostCardTarget (PlayerCard (SomePlayerCard card)) -> case card.def.kind of
           SAllyKind -> push $ PlayAlly ac.player card
           _ -> pure ()
       pure ac
@@ -246,28 +247,30 @@ instance Run Player where
     cost <- traverse (run msg) player.cost
     runPlayerMessage msg $ player {Player.cost = cost}
 
-canPlay :: (HasGame m) => Player -> SomeCard -> m Bool
+canPlay :: (HasGame m) => Player -> Card -> m Bool
 canPlay p c = case cardCost c of
   Nothing -> pure False
   Just cost -> do
     andM
-      [ (>= costAsResources cost) <$> resourcesInSphere c.sphere p
+      [ maybe (pure False) (\s -> (>= costAsResources cost) <$> resourcesInSphere s p) c.sphere
       , passesUnique c
       , correctPhase c
       ]
+canPlay p (EncounterCard c) = pure False
 
-passesUnique :: (HasGame m) => SomeCard -> m Bool
+passesUnique :: (HasGame m) => Card -> m Bool
 passesUnique card = do
   if card.unique
     then andM [selectNone $ AllyWithName card.name, selectNone $ HeroWithName card.name]
     else pure True
 
-correctPhase :: (HasGame m) => SomeCard -> m Bool
-correctPhase (SomeCard card) = do
+correctPhase :: (HasGame m) => Card -> m Bool
+correctPhase (PlayerCard (SomePlayerCard card)) = do
   case card.def.kind of
     SAllyKind -> isPhase PlanningPhase
     SAttachmentKind -> isPhase PlanningPhase
     _ -> pure True
+correctPhase (EncounterCard card) = pure False
 
 isPhase :: (HasGame m) => Phase -> m Bool
 isPhase phase = (== phase) <$> getPhase

@@ -20,9 +20,11 @@ import Control.Monad.Random (
   randoms,
  )
 import Data.Aeson
+import Data.Bifunctor (second)
 import Data.ByteString.Lazy (ByteString)
 import Data.IORef
 import Data.Map.Strict qualified as Map
+import Data.Maybe (mapMaybe)
 import GHC.Generics
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
@@ -46,7 +48,9 @@ data GameData = GameData
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
-allAttachments :: Map CardCode (CardDef 'AttachmentKind)
+type AttachmentCard = PlayerCardDef 'AttachmentKind
+
+allAttachments :: Map CardCode AttachmentCard
 allAttachments =
   Map.fromList
     [ ("01026", stewardOfGondor)
@@ -57,9 +61,9 @@ allAttachments =
     , ("01072", selfPreservation)
     ]
 
-attachment :: CardCode -> Name -> Sphere -> Int -> CardDef 'AttachmentKind
+attachment :: CardCode -> Name -> Sphere -> Int -> AttachmentCard
 attachment code name sphere cost =
-  CardDef
+  PlayerCardDef
     { code
     , name
     , unique = False
@@ -68,28 +72,30 @@ attachment code name sphere cost =
     , sphere
     }
 
-restricted :: CardDef 'AttachmentKind -> CardDef 'AttachmentKind
+restricted :: AttachmentCard -> AttachmentCard
 restricted def = def {details = def.details {restricted = True}}
 
-stewardOfGondor :: CardDef 'AttachmentKind
+stewardOfGondor :: AttachmentCard
 stewardOfGondor = unique $ attachment "01026" "Steward of Gondor" Leadership 2
 
-celebriansStone :: CardDef 'AttachmentKind
+celebriansStone :: AttachmentCard
 celebriansStone = unique $ restricted $ attachment "01027" "Celebrian's Stone" Leadership 2
 
-unexpectedCourage :: CardDef 'AttachmentKind
+unexpectedCourage :: AttachmentCard
 unexpectedCourage = attachment "01057" "Unexpected Courage" Spirit 2
 
-forestSnare :: CardDef 'AttachmentKind
+forestSnare :: AttachmentCard
 forestSnare = attachment "01069" "Forest Snare" Lore 3
 
-protectorOfLorien :: CardDef 'AttachmentKind
+protectorOfLorien :: AttachmentCard
 protectorOfLorien = attachment "01070" "Protector of Lorien" Lore 1
 
-selfPreservation :: CardDef 'AttachmentKind
+selfPreservation :: AttachmentCard
 selfPreservation = attachment "01072" "Self Preservation" Lore 3
 
-allEvents :: Map CardCode (CardDef 'EventKind)
+type EventCard = PlayerCardDef 'EventKind
+
+allEvents :: Map CardCode EventCard
 allEvents =
   Map.fromList
     [ ("01050", aTestOfWill)
@@ -103,9 +109,9 @@ allEvents =
     , ("01046", theGaladhrimsGreeting)
     ]
 
-event :: CardCode -> Name -> Sphere -> Int -> CardDef 'EventKind
+event :: CardCode -> Name -> Sphere -> Int -> EventCard
 event code name sphere cost =
-  CardDef
+  PlayerCardDef
     { code
     , name
     , unique = False
@@ -114,31 +120,31 @@ event code name sphere cost =
     , sphere
     }
 
-aTestOfWill :: CardDef 'EventKind
+aTestOfWill :: EventCard
 aTestOfWill = event "01050" "A Test of Will" Spirit 1
 
-dwarvenTomb :: CardDef 'EventKind
+dwarvenTomb :: EventCard
 dwarvenTomb = event "01053" "Dwarven Tomb" Spirit 1
 
-everVigilant :: CardDef 'EventKind
+everVigilant :: EventCard
 everVigilant = event "01020" "Ever Vigilant" Leadership 1
 
-grimResolve :: CardDef 'EventKind
+grimResolve :: EventCard
 grimResolve = event "01025" "Grim Resolve" Leadership 5
 
-hastyStroke :: CardDef 'EventKind
+hastyStroke :: EventCard
 hastyStroke = event "01048" "Hasty Stroke" Spirit 1
 
-loriensWealth :: CardDef 'EventKind
+loriensWealth :: EventCard
 loriensWealth = event "01064" "Lorien's Wealth" Lore 3
 
-sneakAttack :: CardDef 'EventKind
+sneakAttack :: EventCard
 sneakAttack = event "01023" "Sneak Attack" Leadership 1
 
-standAndFight :: CardDef 'EventKind
+standAndFight :: EventCard
 standAndFight = dynamic $ event "01051" "Stand and Fight" Spirit 0
 
-theGaladhrimsGreeting :: CardDef 'EventKind
+theGaladhrimsGreeting :: EventCard
 theGaladhrimsGreeting = event "01046" "The Galadhrim's Greeting" Spirit 3
 
 data DeckList = DeckList
@@ -180,8 +186,8 @@ testDeckList =
     ]
 
 data Deck = Deck
-  { heroes :: [Card 'HeroKind]
-  , cards :: [SomeCard]
+  { heroes :: [PlayerCard 'HeroKind]
+  , cards :: [Card]
   }
   deriving stock (Show)
 
@@ -207,28 +213,34 @@ loadPlayer dl = traverse go =<< loadDecklist dl
       , heroes
       )
 
-setCardOwner :: PlayerId -> SomeCard -> SomeCard
-setCardOwner pid (SomeCard c) = SomeCard $ c {owner = Just pid}
+setCardOwner :: PlayerId -> Card -> Card
+setCardOwner pid (PlayerCard (SomePlayerCard c)) = PlayerCard . SomePlayerCard $ c {owner = Just pid}
+setCardOwner _ c = c
 
 missingCard :: CardCode -> DeckException
 missingCard code = DeckException $ "Missing card: " <> tshow code
 
 allCardDefs :: Map CardCode SomeCardDef
 allCardDefs =
-  Map.map SomeCardDef allHeroes
-    <> Map.map SomeCardDef allAllies
-    <> Map.map SomeCardDef allAttachments
-    <> Map.map SomeCardDef allEvents
+  Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allHeroes
+    <> Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allAllies
+    <> Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allAttachments
+    <> Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allEvents
 
-lookupCard :: (MonadRandom m) => CardCode -> m (Either DeckException SomeCard)
+lookupCard :: (MonadRandom m) => CardCode -> m (Either DeckException Card)
 lookupCard code = case Map.lookup code allCardDefs of
   Nothing -> pure $ Left $ missingCard code
-  Just (SomeCardDef c) -> Right . SomeCard <$> newCard c Nothing
+  Just (SomePlayerCardDef (MkSomePlayerCardDef c)) -> Right . PlayerCard . SomePlayerCard <$> newPlayerCard c Nothing
+  Just (SomeEncounterCardDef (MkSomeEncounterCardDef c)) -> Right . EncounterCard . SomeEncounterCard <$> newEncounterCard c
 
-lookupHeroCard :: (MonadRandom m) => CardCode -> m (Either DeckException (Card 'HeroKind))
+lookupHeroCard :: (MonadRandom m) => CardCode -> m (Either DeckException (PlayerCard 'HeroKind))
 lookupHeroCard code = case Map.lookup code allHeroes of
   Nothing -> pure $ Left $ missingCard code
-  Just c -> Right <$> newCard c Nothing
+  Just c -> Right <$> newPlayerCard c Nothing
+
+_PlayerCard :: Card -> Maybe SomePlayerCard
+_PlayerCard (PlayerCard c) = Just c
+_PlayerCard _ = Nothing
 
 loadDecklist :: (MonadRandom m) => DeckList -> m (Either DeckException Deck)
 loadDecklist DeckList {heroes, cards} = do

@@ -40,7 +40,7 @@ data Message
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int
   | SpendHeroResources HeroId Int
-  | PlayAlly PlayerId (Card 'AllyKind)
+  | PlayAlly PlayerId (PlayerCard 'AllyKind)
   | DoStep Int Message
   | Ask PlayerId (Question Message)
   | FlipQuest QuestId

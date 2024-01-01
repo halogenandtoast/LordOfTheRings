@@ -21,7 +21,7 @@ data Hero where
 
 data HeroAttrs = HeroAttrs
   { id :: HeroId
-  , card :: Card 'HeroKind
+  , card :: PlayerCard 'HeroKind
   , resources :: Int
   , sphere :: Sphere
   , player :: PlayerId

@@ -36,9 +36,9 @@ newtype PassageThroughMirkwood = PassageThroughMirkwood ScenarioAttrs
 allEncounterCardDefs :: Map CardCode SomeEncounterCardDef
 allEncounterCardDefs =
   Map.unions
-    [ Map.map SomeEncounterCardDef allEnemies
-    , Map.map SomeEncounterCardDef allTreacheries
-    , Map.map SomeEncounterCardDef allLocations
+    [ Map.map MkSomeEncounterCardDef allEnemies
+    , Map.map MkSomeEncounterCardDef allTreacheries
+    , Map.map MkSomeEncounterCardDef allLocations
     ]
 
 gatherEncounterSet :: (MonadRandom m) => Difficulty -> EncounterSet -> m [SomeEncounterCard]
@@ -81,7 +81,7 @@ instance Run PassageThroughMirkwood where
 cardMatches :: CardMatcher -> SomeEncounterCard -> Bool
 cardMatches = \case
   CardWithCode code -> \case
-    SomeEncounterCard (EncounterCard _ c) -> code == c.code
+    SomeEncounterCard (MkEncounterCard _ c) -> code == c.code
 
 runScenarioMessage :: (MonadRandom m, HasQueue m) => Message -> ScenarioAttrs -> m ScenarioAttrs
 runScenarioMessage msg attrs = case msg of
@@ -93,21 +93,18 @@ runScenarioMessage msg attrs = case msg of
     let matches = filter (cardMatches cardMatcher) attrs.encounterDeck
     case matches of
       [] -> pure attrs
-      (x : xs) -> do
-        let allSame = all ((== x.code) . (.code)) xs
-        if allSame
+      (x : xs) ->
+        if all ((== x.code) . (.code)) xs
           then do
             encounterDeck <- shuffleM $ filter ((/= x.id) . (.id)) attrs.encounterDeck
             push $ AddToStaging x
             pure $ attrs {encounterDeck}
           else do
             push $
-              Ask
-                pid
-                ( ChooseOne $
-                    CardChoice x.id [AddToStaging x]
-                      : map (\y -> CardChoice y.id [AddToStaging y, ShuffleDeck EncounterDeck]) xs
-                )
+              Ask pid $
+                ChooseOne $
+                  CardChoice x.id [AddToStaging x]
+                    : map (\y -> CardChoice y.id [AddToStaging y, ShuffleDeck EncounterDeck]) xs
             pure attrs
   _ -> pure attrs
 

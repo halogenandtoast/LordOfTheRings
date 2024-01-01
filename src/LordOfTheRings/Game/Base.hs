@@ -66,7 +66,7 @@ data Game = Game
 entitiesL :: Lens' Game Entities
 entitiesL = lens (.entities) (\g e -> g {entities = e})
 
-data CostTarget = CostCardTarget SomeCard
+data CostTarget = CostCardTarget Card
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 
@@ -85,8 +85,8 @@ data ActiveCost = ActiveCost
 
 data Player = Player
   { id :: PlayerId
-  , hand :: [SomeCard]
-  , deck :: [SomeCard]
+  , hand :: [Card]
+  , deck :: [Card]
   , threat :: Int
   , question :: Maybe (Question Message)
   , cost :: Maybe ActiveCost

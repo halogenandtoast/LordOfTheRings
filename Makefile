@@ -6,3 +6,8 @@ api.watch:
 		--file-watch \
 		$(EXTRA_STACK_FLAGS) \
 		--exec "bash -c \"pkill LordOfTheRings-exe; DEVELOPMENT=true stack exec LordOfTheRings-exe &\"" \
+
+## Generate a tags file for source-code navigation
+.PHONY: tags
+tags:
+	stack exec -- fast-tags --qualified -Rv --nomerge .

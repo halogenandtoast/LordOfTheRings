@@ -40,7 +40,7 @@ instance HasPlacement Ally where
 
 data AllyAttrs = AllyAttrs
   { id :: AllyId
-  , card :: Card 'AllyKind
+  , card :: PlayerCard 'AllyKind
   , sphere :: Sphere
   , placement :: Placement
   }
