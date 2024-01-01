@@ -1,18 +1,17 @@
 {-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE NoFieldSelectors #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Ally (module LordOfTheRings.Ally.Type, module LordOfTheRings.Ally) where
 
 import Control.Monad.Random (MonadRandom (getRandom))
-import Data.Aeson (ToJSON)
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
-import GHC.Records
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
+import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Id
+import LordOfTheRings.Name
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
@@ -151,7 +150,7 @@ ally code name sphere cost willpower attack defense hitPoints =
   PlayerCardDef
     { code
     , name
-    , unique = False
+    , PC.unique = False
     , kind = SAllyKind
     , details = AllyDetails (StaticCost cost) willpower attack defense hitPoints
     , sphere

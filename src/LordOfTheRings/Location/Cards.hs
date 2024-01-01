@@ -1,8 +1,10 @@
-module LordOfTheRings.Location.Cards where
+module LordOfTheRings.Location.Cards (module LordOfTheRings.Location.Cards) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Card.EncounterCard qualified as EC
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 
 allLocations :: Map CardCode (EncounterCardDef 'LocationKind)
@@ -27,7 +29,7 @@ location code name encounterSet encounterSetCount details =
   EncounterCardDef
     { code
     , name
-    , unique = False
+    , EC.unique = False
     , kind = SLocationKind
     , details
     , encounterSet

@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
-
 module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
 import Data.Aeson
@@ -34,7 +32,7 @@ data Message
   | EndPhase Phase
   | BeginRound
   | EndRound
-  | WithPlayer PlayerId Message
+  | WithTarget Target Message
   | PlayCard PlayerId CardId
   | PayCost CostId
   | PaidCost CostId
@@ -43,7 +41,7 @@ data Message
   | PlayAlly PlayerId (PlayerCard 'AllyKind)
   | DoStep Int Message
   | Ask PlayerId (Question Message)
-  | FlipQuest QuestId
+  | Flip Target
   | Search PlayerId DeckSignifier CardMatcher CardHandler DeckHandler
   | AddToStaging SomeEncounterCard
   | ShuffleDeck DeckSignifier

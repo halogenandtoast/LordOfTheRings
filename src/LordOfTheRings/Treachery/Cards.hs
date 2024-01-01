@@ -1,8 +1,10 @@
-module LordOfTheRings.Treachery.Cards where
+module LordOfTheRings.Treachery.Cards (module LordOfTheRings.Treachery.Cards) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Card.EncounterCard qualified as EC
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 
 allTreacheries :: Map CardCode (EncounterCardDef 'TreacheryKind)
@@ -19,7 +21,7 @@ treachery code name encounterSet encounterSetCount =
   EncounterCardDef
     { code
     , name
-    , unique = False
+    , EC.unique = False
     , kind = STreacheryKind
     , details = TreacheryDetails
     , encounterSet

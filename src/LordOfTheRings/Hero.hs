@@ -1,18 +1,18 @@
 {-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE NoFieldSelectors #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Hero (module LordOfTheRings.Hero.Type, module LordOfTheRings.Hero) where
 
 import Control.Monad.Random (MonadRandom (getRandom))
-import Data.Aeson (ToJSON)
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
 import LordOfTheRings.Card
+import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
 import LordOfTheRings.Message
+import LordOfTheRings.Name
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
@@ -63,7 +63,7 @@ allHeroes :: Map CardCode HeroCard
 allHeroes = Map.fromList [("01012", beravor), ("01007", eowyn), ("01002", theodred)]
 
 hero :: CardCode -> Name -> Sphere -> HeroDetails -> HeroCard
-hero code name sphere details = PlayerCardDef {code, name, unique = True, kind = SHeroKind, details, sphere}
+hero code name sphere details = PlayerCardDef {code, name, PC.unique = True, kind = SHeroKind, details, sphere}
 
 beravor :: HeroCard
 beravor = hero "01012" "Beravor" Lore (HeroDetails 10 2 2 2 4)

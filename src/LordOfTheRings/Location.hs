@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module LordOfTheRings.Location.Type) where
@@ -9,6 +8,7 @@ import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
 import LordOfTheRings.Card
 import LordOfTheRings.Location.Type
+import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 
@@ -38,5 +38,5 @@ lookupLocation cCode = fromMaybe (error "No such quest") $ Map.lookup cCode allD
 newLocation :: (MonadRandom m) => EncounterCard 'LocationKind -> m Location
 newLocation card = do
   locationId <- getRandom
-  let attrs = LocationAttrs {id = locationId, card}
+  let attrs = LocationAttrs {id = locationId, card, placement = Unplaced}
   pure $ lookupLocation card.def.code attrs

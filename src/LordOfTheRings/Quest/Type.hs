@@ -29,3 +29,6 @@ instance Show Quest where
 
 instance ToJSON Quest where
   toJSON (Quest a) = toJSON a
+
+instance Reference QuestAttrs where
+  toRef a = QuestRef a.id

@@ -1,9 +1,9 @@
 {-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE NoFieldSelectors #-}
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 
 module Main (main) where
 
@@ -20,19 +20,18 @@ import Control.Monad.Random (
   randoms,
  )
 import Data.Aeson
-import Data.Bifunctor (second)
 import Data.ByteString.Lazy (ByteString)
 import Data.IORef
 import Data.Map.Strict qualified as Map
-import Data.Maybe (mapMaybe)
-import GHC.Generics
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
+import LordOfTheRings.Card.PlayerCard as PC
 import LordOfTheRings.Game
 import LordOfTheRings.Game qualified as E
 import LordOfTheRings.Hero
 import LordOfTheRings.Id
 import LordOfTheRings.Message
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Queue
@@ -73,7 +72,7 @@ attachment code name sphere cost =
     }
 
 restricted :: AttachmentCard -> AttachmentCard
-restricted def = def {details = def.details {restricted = True}}
+restricted def = def {PC.details = def.details {restricted = True}}
 
 stewardOfGondor :: AttachmentCard
 stewardOfGondor = unique $ attachment "01026" "Steward of Gondor" Leadership 2

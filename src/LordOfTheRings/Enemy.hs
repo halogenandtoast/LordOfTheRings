@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module LordOfTheRings.Enemy.Type) where
@@ -9,6 +8,7 @@ import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Type
+import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 
@@ -20,7 +20,7 @@ newtype ForestSpider = ForestSpider EnemyAttrs
 
 instance IsEnemy ForestSpider
 instance Run ForestSpider where
-  run msg s@(ForestSpider a) = case msg of
+  run msg (ForestSpider a) = case msg of
     _ -> ForestSpider <$> run msg a
 
 instance Run EnemyAttrs where
@@ -38,5 +38,5 @@ lookupEnemy cCode = fromMaybe (error "No such enemy") $ Map.lookup cCode allData
 newEnemy :: (MonadRandom m) => EncounterCard 'EnemyKind -> m Enemy
 newEnemy card = do
   enemyId <- getRandom
-  let attrs = EnemyAttrs {id = enemyId, card}
+  let attrs = EnemyAttrs {id = enemyId, card, placement = Unplaced}
   pure $ lookupEnemy card.def.code attrs

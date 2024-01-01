@@ -7,6 +7,15 @@ api.watch:
 		$(EXTRA_STACK_FLAGS) \
 		--exec "bash -c \"pkill LordOfTheRings-exe; DEVELOPMENT=true stack exec LordOfTheRings-exe &\"" \
 
+.PHONY: pedantic.watch
+pedantic.watch:
+	stack build --no-run-tests --fast LordOfTheRings \
+		--ghc-options "-DDEVELOPMENT $(GHC_OPTIONS)" \
+		--interleaved-output \
+		--file-watch \
+		--pedantic \
+		$(EXTRA_STACK_FLAGS) \
+
 ## Generate a tags file for source-code navigation
 .PHONY: tags
 tags:

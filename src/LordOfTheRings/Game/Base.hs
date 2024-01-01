@@ -1,5 +1,4 @@
 {-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
 module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
@@ -94,6 +93,9 @@ data Player = Player
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
+
+instance Reference Player where
+  toRef p = PlayerRef p.id
 
 getsGame :: (HasGame m) => (Game -> a) -> m a
 getsGame f = f <$> getGame

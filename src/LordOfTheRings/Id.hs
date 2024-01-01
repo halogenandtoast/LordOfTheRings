@@ -2,7 +2,9 @@ module LordOfTheRings.Id (module LordOfTheRings.Id) where
 
 import Control.Monad.Random (Random)
 import Data.Aeson
+import Data.Coerce
 import Data.UUID (UUID)
+import GHC.Generics
 import LordOfTheRings.Prelude
 
 newtype LocationId = LocationId UUID
@@ -28,3 +30,30 @@ newtype CardId = CardId UUID
 
 newtype CostId = CostId UUID
   deriving newtype (Random, Show, ToJSON, FromJSON, Eq)
+
+data RefKind = TargetRef | SourceRef
+
+data Ref (k :: RefKind)
+  = EnemyRef EnemyId
+  | LocationRef LocationId
+  | QuestRef QuestId
+  | HeroRef HeroId
+  | AllyRef AllyId
+  | PlayerRef PlayerId
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+type Target = Ref 'TargetRef
+type Source = Ref 'SourceRef
+
+toTarget :: Source -> Target
+toTarget = coerce
+
+toSource :: Target -> Source
+toSource = coerce
+
+class Reference a where
+  toRef :: a -> Ref k
+
+isTarget :: (Reference a) => a -> Target -> Bool
+isTarget a t = toRef a == t

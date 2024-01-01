@@ -1,13 +1,10 @@
-{-# LANGUAGE OverloadedRecordDot #-}
-
 module LordOfTheRings.Hero.Type (module LordOfTheRings.Hero.Type) where
 
 import Data.Aeson
 import Data.Coerce
-import GHC.Generics
-import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 

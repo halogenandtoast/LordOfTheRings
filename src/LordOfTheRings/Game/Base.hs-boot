@@ -1,4 +1,4 @@
-module LordOfTheRings.Game.Base where
+module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude

@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
-
 module LordOfTheRings.Scenario.Type (module LordOfTheRings.Scenario.Type) where
 
 import Data.Aeson

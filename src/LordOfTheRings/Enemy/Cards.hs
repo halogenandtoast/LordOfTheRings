@@ -1,8 +1,10 @@
-module LordOfTheRings.Enemy.Cards where
+module LordOfTheRings.Enemy.Cards (module LordOfTheRings.Enemy.Cards) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Card.EncounterCard qualified as EC
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 
 allEnemies :: Map CardCode (EncounterCardDef 'EnemyKind)
@@ -25,7 +27,7 @@ enemy code name encounterSet encounterSetCount details =
   EncounterCardDef
     { code
     , name
-    , unique = False
+    , EC.unique = False
     , kind = SEnemyKind
     , details
     , encounterSet

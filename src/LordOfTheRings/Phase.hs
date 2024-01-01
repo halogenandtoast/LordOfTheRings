@@ -1,4 +1,4 @@
-module LordOfTheRings.Phase where
+module LordOfTheRings.Phase (Phase (..)) where
 
 import Data.Aeson
 import GHC.Generics

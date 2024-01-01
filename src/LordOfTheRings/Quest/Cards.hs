@@ -1,7 +1,9 @@
-module LordOfTheRings.Quest.Cards where
+module LordOfTheRings.Quest.Cards (module LordOfTheRings.Quest.Cards) where
 
 import LordOfTheRings.Card
+import LordOfTheRings.Card.EncounterCard qualified as EC
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 
 quest :: CardCode -> Name -> EncounterSet -> EncounterCardDef 'QuestKind
@@ -9,7 +11,7 @@ quest code name encounterSet =
   EncounterCardDef
     { code
     , name
-    , unique = False
+    , EC.unique = False
     , kind = SQuestKind
     , details = QuestDetails
     , encounterSet

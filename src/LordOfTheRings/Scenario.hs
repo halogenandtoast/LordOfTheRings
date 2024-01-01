@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Scenario (module LordOfTheRings.Scenario, module LordOfTheRings.Scenario.Type) where
@@ -55,7 +54,7 @@ gatherEncounterSet difficulty encounterSet = do
 
 instance IsScenario PassageThroughMirkwood
 instance Run PassageThroughMirkwood where
-  run msg s@(PassageThroughMirkwood a) = case msg of
+  run msg (PassageThroughMirkwood a) = case msg of
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM

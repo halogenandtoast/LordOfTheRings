@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module LordOfTheRings.Quest.Type) where
@@ -35,9 +34,9 @@ instance Run FliesAndSpiders where
   run msg s@(FliesAndSpiders a) = case msg of
     DoStep 7 Setup -> do
       lead <- getLead
-      push $ Ask lead $ ChooseOne [QuestChoice a.id [FlipQuest a.id]]
+      push $ Ask lead $ ChooseOne [QuestChoice a.id [Flip $ toRef a]]
       pure s
-    FlipQuest qId | a.id == qId -> do
+    Flip (isTarget a -> True) -> do
       lead <- getLead
       send $ FlipCard a.card.id
       pushAll

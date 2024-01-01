@@ -1,13 +1,11 @@
-{-# LANGUAGE OverloadedRecordDot #-}
-
 module LordOfTheRings.Matcher (module LordOfTheRings.Matcher) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Type
-import LordOfTheRings.Card
-import {-# SOURCE #-} LordOfTheRings.Game.Base
+import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 
 class Query a where

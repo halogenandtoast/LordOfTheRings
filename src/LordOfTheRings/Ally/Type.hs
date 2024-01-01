@@ -1,5 +1,4 @@
 {-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
 module LordOfTheRings.Ally.Type (module LordOfTheRings.Ally.Type) where
@@ -7,10 +6,9 @@ module LordOfTheRings.Ally.Type (module LordOfTheRings.Ally.Type) where
 import Control.Lens
 import Data.Aeson
 import Data.Coerce
-import GHC.Generics
-import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Name
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run

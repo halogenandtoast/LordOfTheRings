@@ -15,6 +15,9 @@ library
       LordOfTheRings.Ally
       LordOfTheRings.Ally.Type
       LordOfTheRings.Card
+      LordOfTheRings.Card.Code
+      LordOfTheRings.Card.EncounterCard
+      LordOfTheRings.Card.PlayerCard
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.Cards
@@ -31,6 +34,7 @@ library
       LordOfTheRings.Location.Type
       LordOfTheRings.Matcher
       LordOfTheRings.Message
+      LordOfTheRings.Name
       LordOfTheRings.Phase
       LordOfTheRings.Placement
       LordOfTheRings.Prelude
@@ -59,6 +63,8 @@ library
       DeriveAnyClass
       RecordWildCards
       PatternSynonyms
+      ViewPatterns
+      OverloadedRecordDot
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       MonadRandom
@@ -96,6 +102,8 @@ executable LordOfTheRings-exe
       DeriveAnyClass
       RecordWildCards
       PatternSynonyms
+      ViewPatterns
+      OverloadedRecordDot
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       LordOfTheRings
@@ -135,6 +143,8 @@ test-suite LordOfTheRings-test
       DeriveAnyClass
       RecordWildCards
       PatternSynonyms
+      ViewPatterns
+      OverloadedRecordDot
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       LordOfTheRings

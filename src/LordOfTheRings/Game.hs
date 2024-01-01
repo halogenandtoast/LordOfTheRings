@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Game (module LordOfTheRings.Game, module LordOfTheRings.Game.Base) where
@@ -20,7 +19,7 @@ import LordOfTheRings.Frontend
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
-import LordOfTheRings.Hero
+import LordOfTheRings.Hero ()
 import LordOfTheRings.Id
 import LordOfTheRings.Location
 import LordOfTheRings.Matcher
@@ -126,7 +125,7 @@ runGameMessage msg g = case msg of
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     for_ players \player -> do
-      push $ WithPlayer player.id msg
+      push $ WithTarget (toRef player) msg
     pure g
   PlayAlly pid card -> do
     player <- getPlayer pid
@@ -176,7 +175,7 @@ runPlayerMessage msg player = case msg of
   BeginPhase ResourcePhase -> do
     let (cards, deck) = splitAt 1 player.deck
     pure $ player {hand = player.hand <> cards, deck}
-  WithPlayer pid (BeginPhase PlanningPhase) | pid == player.id -> do
+  WithTarget (isTarget player -> True) (BeginPhase PlanningPhase) -> do
     playable <- filterM (canPlay player) player.hand
     if null playable
       then pure player
@@ -239,6 +238,7 @@ instance Run ActiveCost where
         CostCardTarget (PlayerCard (SomePlayerCard card)) -> case card.def.kind of
           SAllyKind -> push $ PlayAlly ac.player card
           _ -> pure ()
+        _ -> error "Unhandled cost target"
       pure ac
     _ -> pure ac
 
@@ -256,7 +256,6 @@ canPlay p c = case cardCost c of
       , passesUnique c
       , correctPhase c
       ]
-canPlay p (EncounterCard c) = pure False
 
 passesUnique :: (HasGame m) => Card -> m Bool
 passesUnique card = do
@@ -270,7 +269,7 @@ correctPhase (PlayerCard (SomePlayerCard card)) = do
     SAllyKind -> isPhase PlanningPhase
     SAttachmentKind -> isPhase PlanningPhase
     _ -> pure True
-correctPhase (EncounterCard card) = pure False
+correctPhase (EncounterCard _) = pure False
 
 isPhase :: (HasGame m) => Phase -> m Bool
 isPhase phase = (== phase) <$> getPhase
