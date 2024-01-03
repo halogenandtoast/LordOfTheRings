@@ -146,7 +146,7 @@ runGameMessage msg g = case msg of
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     for_ players \player -> do
-      push $ WithTarget (toRef player) msg
+      push $ WithTarget (toRef player) (DoPhase PlanningPhase)
     pure g
   PlayAlly pid card -> do
     player <- getPlayer pid
@@ -224,13 +224,21 @@ runPlayerMessage msg player = case msg of
   DrawCards drawing | drawing.player == player.id -> do
     let (cards, deck) = splitAt drawing.count player.deck
     pure $ player {hand = player.hand <> cards, deck}
-  WithTarget (isTarget player -> True) (BeginPhase PlanningPhase) -> do
+  WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
     playable <- filterM (canPlay player) player.hand
     if null playable
       then pure player
       else
         pure $
-          player {question = Just (ChooseOne [targetChoice c [PlayCard player.id c.id] | c <- playable])}
+          player
+            { question =
+                Just $
+                  ChooseOne $
+                    Label "Done Planning" []
+                      : [ targetChoice c [PlayCard player.id c.id, WithTarget (toRef player) (DoPhase PlanningPhase)]
+                        | c <- playable
+                        ]
+            }
   PlayCard pid cid | pid == player.id -> do
     let mcard = find ((== cid) . (.id)) player.hand
     case mcard of

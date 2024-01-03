@@ -37,6 +37,7 @@ function onEnter(el, done) {
   }
 
   const data = animationMatrix.value.find(([idx,]) => idx === index)
+  console.log(data)
   animationMatrix.value = animationMatrix.value.filter(([idx,]) => idx !== index)
 
   if (!data) {
@@ -91,7 +92,7 @@ function onLeave(el, done) {
 
 <template>
   <div class="player">
-    <div>
+    <div class="play-area">
       <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
         <Ally v-for="ally in allies" :ally="ally" :key="ally.id" :you="you" :data="data" @choose="$emit('choose', $event)" />
       </transition-group>
@@ -185,6 +186,13 @@ function onLeave(el, done) {
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+}
+
+.play-area {
+  display: flex;
+  flex-direction: row;
+  gap: $gap;
+  flex: 1;
 }
 
 </style>

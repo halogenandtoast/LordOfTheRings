@@ -38,6 +38,7 @@ data Drawing = Drawing
 data Message
   = Setup
   | BeginPhase Phase
+  | DoPhase Phase
   | EndPhase Phase
   | BeginRound
   | EndRound
