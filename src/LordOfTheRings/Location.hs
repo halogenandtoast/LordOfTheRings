@@ -6,7 +6,6 @@ import Control.Monad.Random
 import Data.Aeson
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe)
-import Debug.Trace
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Type
@@ -27,8 +26,8 @@ instance Run OldForestRoad where
     _ -> OldForestRoad <$> run msg a
 
 instance Run LocationAttrs where
-  run msg attrs = case traceShowId msg of
-    PlaceProgress (isTarget attrs -> traceShowId -> True) n -> do
+  run msg attrs = case msg of
+    PlaceProgress (isTarget attrs -> True) n -> do
       pure $ attrs {progress = attrs.progress + n}
     _ -> pure attrs
 

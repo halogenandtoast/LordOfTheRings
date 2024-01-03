@@ -28,6 +28,13 @@ data DeckHandler = Shuffle
   deriving stock (Show, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
+data Drawing = Drawing
+  { player :: PlayerId
+  , count :: Int
+  }
+  deriving stock (Show, Generic)
+  deriving anyclass (FromJSON, ToJSON)
+
 data Message
   = Setup
   | BeginPhase Phase
@@ -40,6 +47,7 @@ data Message
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int
   | SpendHeroResources HeroId Int
+  | GainHeroResources HeroId Int
   | PlayAlly PlayerId (PlayerCard 'AllyKind)
   | DoStep Int Message
   | Ask PlayerId (Question Message)
@@ -51,6 +59,7 @@ data Message
   | UseAbility PlayerId AbilityRef
   | PlaceProgress Target Int
   | Run [Message]
+  | DrawCards Drawing
   deriving stock (Show, Generic)
   deriving anyclass (FromJSON, ToJSON)
 

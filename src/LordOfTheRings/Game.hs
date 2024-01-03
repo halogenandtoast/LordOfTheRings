@@ -1,3 +1,5 @@
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE NoFieldSelectors #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module LordOfTheRings.Game (module LordOfTheRings.Game, module LordOfTheRings.Game.Base) where
@@ -11,7 +13,6 @@ import Data.IORef
 import Data.List (find, partition)
 import Data.Map.Strict qualified as Map
 import Data.Maybe (fromMaybe, isJust)
-import Debug.Trace
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
@@ -46,7 +47,7 @@ mainLoop = do
   case mmsg of
     Nothing -> pure g
     Just msg -> do
-      liftIO $ print msg
+      debug 1 $ print msg
       g' <- run msg g
       putGame g'
 
@@ -66,7 +67,19 @@ data Env = Env
   { queue :: Queue
   , game :: IORef Game
   , handler :: FrontendMessage -> IO ()
+  , debug :: Int
   }
+
+class HasDebug m where
+  getDebug :: m Int
+
+instance HasDebug GameT where
+  getDebug = asks (.debug)
+
+debug :: (HasDebug m, MonadIO m) => Int -> IO () -> m ()
+debug lvl action = do
+  lvl' <- getDebug
+  when (lvl' >= lvl) $ liftIO action
 
 newtype GameT a = GameT {unGameT :: ReaderT Env IO a}
   deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader Env)
@@ -188,7 +201,7 @@ runPlayerMessage msg player = case msg of
   RunWindow window -> do
     abilities <- getWindowAbilities window
     when (notNull abilities) $ do
-      let (forced, traceShowId -> nonForced) = partition isForcedAbility abilities
+      let (forced, nonForced) = partition isForcedAbility abilities
       if null forced
         then push $ Ask player.id $ ChooseOne $ map UseAbilityLabel nonForced
         else push $ Ask player.id $ ChooseOneAtATime $ map UseAbilityLabel forced
@@ -206,7 +219,10 @@ runPlayerMessage msg player = case msg of
     let (hand, deck) = splitAt 6 player.deck
     pure $ player {hand, deck}
   BeginPhase ResourcePhase -> do
-    let (cards, deck) = splitAt 1 player.deck
+    push $ DrawCards $ Drawing player.id 1
+    pure player
+  DrawCards drawing | drawing.player == player.id -> do
+    let (cards, deck) = splitAt drawing.count player.deck
     pure $ player {hand = player.hand <> cards, deck}
   WithTarget (isTarget player -> True) (BeginPhase PlanningPhase) -> do
     playable <- filterM (canPlay player) player.hand

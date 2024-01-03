@@ -364,9 +364,8 @@ main = do
             , scenario = newScenario PassageThroughMirkwood
             }
       c <- atomically newTChan
-      let
-        handler msg = atomically $ writeTChan c (encode $ toJSON msg)
-      let env = Env {queue, game, handler}
+      let handler msg = atomically $ writeTChan c (encode $ toJSON msg)
+      let env = Env {queue, game, handler, debug = 1}
       let room = Room {env, chan = c}
       runGameT (pushAll [Setup, BeginRound, EndRound]) env
       warp 3000 (App room)

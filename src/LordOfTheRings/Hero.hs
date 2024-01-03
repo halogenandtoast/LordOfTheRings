@@ -15,6 +15,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Name
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
+import LordOfTheRings.Queue
 import LordOfTheRings.Run
 
 instance Run Hero where
@@ -23,7 +24,10 @@ instance Run Hero where
 instance Run HeroAttrs where
   run msg attrs = case msg of
     BeginPhase ResourcePhase -> do
-      pure $ attrs {resources = attrs.resources + 1}
+      push $ GainHeroResources attrs.id 1
+      pure attrs
+    GainHeroResources hId n | hId == attrs.id -> do
+      pure $ attrs {resources = attrs.resources + n}
     SpendHeroResources hId n | hId == attrs.id -> do
       pure $ attrs {resources = max 0 (attrs.resources - n)}
     _ -> pure attrs

@@ -13,8 +13,8 @@ clearQueue :: (HasQueue m) => m ()
 clearQueue = do
   (readRef, writeRef) <- getQueue
   liftIO $ do
-    atomicModifyIORef' readRef $ \_ -> (Empty, ())
-    atomicModifyIORef' writeRef $ \_ -> (Empty, ())
+    atomicModifyIORef' readRef $ const (Empty, ())
+    atomicModifyIORef' writeRef $ const (Empty, ())
 
 newQueue :: (MonadIO m) => m Queue
 newQueue = liftIO $ do
@@ -27,14 +27,24 @@ push msg = do
   (ref, _) <- getQueue
   liftIO $ atomicModifyIORef' ref $ \inbox -> (inbox |> msg, ())
 
+flushQueue :: (HasQueue m) => m (Seq Message)
+flushQueue = do
+  (readRef, writeRef) <- getQueue
+  liftIO $ do
+    newMsgs <- atomicModifyIORef' readRef (Empty,)
+    atomicModifyIORef' writeRef $ \oldMsgs -> let msgs' = newMsgs <> oldMsgs in (msgs', msgs')
+
+peekQueue :: (HasQueue m) => m (Seq Message)
+peekQueue = flushQueue
+
 pushAll :: (HasQueue m) => [Message] -> m ()
-pushAll msgs = traverse_ push msgs
+pushAll = traverse_ push
 
 pop :: (HasQueue m) => m (Maybe Message)
 pop = do
   (readRef, writeRef) <- getQueue
   liftIO $ do
-    newMsgs <- atomicModifyIORef' readRef $ \inbox -> (Empty, inbox)
+    newMsgs <- atomicModifyIORef' readRef (Empty,)
     atomicModifyIORef' writeRef $ \oldMsgs -> case newMsgs <> oldMsgs of
       Empty -> (Empty, Nothing)
       msg :<| msgs -> (msgs, Just msg)
