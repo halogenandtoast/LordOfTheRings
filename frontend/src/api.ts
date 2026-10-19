@@ -42,6 +42,10 @@ export const exportGame = async (id: string | number) => {
   URL.revokeObjectURL(url)
 }
 
+/** Upload a game's export for a bug report, giving back where it went. */
+export const fileBug = (id: string | number) =>
+  apiFetch(`/api/games/${id}/file-bug`, { method: 'POST' }).then((r) => json<{ url: string }>(r))
+
 /** Load an exported game file as a new game. */
 export const importGame = async (file: File) =>
   apiFetch('/api/import', {

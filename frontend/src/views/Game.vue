@@ -15,6 +15,7 @@ import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
+import FileBug from '../components/FileBug.vue'
 import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
 import { provideDebug } from '../composables/useDebug'
@@ -27,6 +28,12 @@ const {
   started, question, scenario, players, outcome, answer, reset, undo, canUndo, debug,
 } = useGame(route.params.id as string)
 const { active: debugging, send: sendDebug } = provideDebug(debug)
+const filingBug = ref(false)
+const bugDescription = ref('')
+const fileBugAbout = (description = '') => {
+  bugDescription.value = description
+  filingBug.value = true
+}
 // on a narrower screen the sidebar is a drawer over the board, so it starts shut
 const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matches)
 
@@ -139,9 +146,11 @@ watch(question, (asked) => {
     @reset="reset"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
+    @file-bug="fileBugAbout()"
     @toggle-sidebar="showSidebar = !showSidebar"
     @toggle-debug="debugging = !debugging"
   />
+  <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
     <SearchPanel v-if="question?.searched" :question="{ ...question, searched: question.searched }" @choose="choose" />
@@ -221,7 +230,10 @@ watch(question, (asked) => {
     <QuestionZone v-if="started" class="docked-question" :question="question" @choose="choose" />
 
     <aside v-if="showSidebar" class="sidebar">
-      <p v-if="error" class="error">{{ tr(error) }}</p>
+      <p v-if="error" class="error">
+        {{ tr(error) }}
+        <button type="button" class="file-bug-link" @click="fileBugAbout(tr(error))">{{ $t('game.bar.fileBug') }}</button>
+      </p>
       <Prompt
         v-if="started"
         :question="question"
@@ -350,6 +362,7 @@ watch(question, (asked) => {
 .debug-threat button { width: 28px; height: 22px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; color: inherit; cursor: pointer; }
 .debug-threat button:disabled { opacity: 0.35; cursor: default; }
 .error { margin: 0; color: var(--danger); font-size: 0.8rem; }
+.file-bug-link { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
 
 .announcement {
   margin: 0;

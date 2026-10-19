@@ -15,6 +15,7 @@
     "restartScenario": "Restart scenario",
     "file": "File",
     "exportGame": "Export game",
+    "fileBug": "File bug",
     "testing": "Testing",
     "debugMode": "Debug mode",
     "leaveDebugMode": "Leave debug mode",
@@ -65,6 +66,15 @@
   "search": {
     "label": "Search",
     "searched": "({count} searched)"
+  },
+  "fileBug": {
+    "title": "File a bug",
+    "explain": "This uploads the game, undo history included, so the bug can be replayed, then opens a new GitHub issue with your report filled in for you to submit.",
+    "titlePlaceholder": "What went wrong, in a few words",
+    "descriptionPlaceholder": "What you did, what happened, and what should have happened",
+    "submit": "Submit",
+    "uploading": "Uploading…",
+    "failed": "Could not upload the game. Try again, or export it and attach the file."
   },
   "errors": {
     "serverUnreachable": "the server could not be reached",
