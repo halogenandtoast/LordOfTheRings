@@ -23,6 +23,7 @@ import Data.Aeson
 import Data.ByteString.Lazy (ByteString)
 import Data.IORef
 import Data.Map.Strict qualified as Map
+import Data.Maybe (fromMaybe)
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Card.PlayerCard as PC
@@ -36,6 +37,8 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Queue
 import LordOfTheRings.Scenario
+import System.Environment (lookupEnv)
+import Text.Read (readMaybe)
 import UnliftIO.STM
 import Yesod.Core
 import Yesod.WebSockets
@@ -368,4 +371,5 @@ main = do
       let env = Env {queue, game, handler, debug = 1}
       let room = Room {env, chan = c}
       runGameT (pushAll [Setup, BeginRound, EndRound]) env
-      warp 3000 (App room)
+      port <- fromMaybe 3000 . (>>= readMaybe) <$> lookupEnv "PORT"
+      warp port (App room)
