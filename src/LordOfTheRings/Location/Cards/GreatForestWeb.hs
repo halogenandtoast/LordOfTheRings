@@ -20,7 +20,6 @@ instance HasModifiersFor GreatForestWeb where
 instance RunMessage GreatForestWeb where
   runMessage msg l@(GreatForestWeb a) = case msg of
     TravelTo lid | lid == a.id -> do
-      order <- getPlayerOrder
-      pushAll [ChooseAndExhaustHero (toSource a) p | p <- order]
+      eachPlayer $ push . ChooseAndExhaustHero (toSource a)
       pure l
     _ -> GreatForestWeb <$> runMessage msg a

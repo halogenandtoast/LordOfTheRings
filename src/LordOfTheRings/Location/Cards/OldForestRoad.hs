@@ -20,9 +20,9 @@ instance RunMessage OldForestRoad where
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       lead <- getLead
       exhausted <- selectCharacters (HeroControlledBy (PlayerWithId lead) <> ExhaustedHero) (AllyControlledBy (PlayerWithId lead) <> ExhaustedAlly)
-      unless (null exhausted)
-        $ push
-        $ questionLabelWith (ikey "label.oldForestRoad.ready") (Just $ toTarget a) [] lead
-          [targetLabel c [Ready c] | c <- exhausted]
+      chooseOneM lead do
+        questionLabeled "oldForestRoad.ready"
+        causedBy a
+        targets exhausted ready
       pure l
     _ -> OldForestRoad <$> runMessage msg a

@@ -21,19 +21,17 @@ instance HasAbilities MountainsOfMirkwood where
 instance RunMessage MountainsOfMirkwood where
   runMessage msg l@(MountainsOfMirkwood a) = case msg of
     TravelTo lid | lid == a.id -> do
-      push RevealEncounterCard
+      revealEncounterCard
       pure l
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      order <- getPlayerOrder
-      searches <- for order \p -> do
+      eachPlayer \p -> do
         top <- take 5 . (.deck) <$> getPlayer p
-        pure
+        push
           $ Ask p
           $ QuestionLabel (ikey "label.mountainsOfMirkwood.search") (Just $ toTarget a) []
           $ SearchCards top
           $ ChooseOne
           $ [targetLabel (CardIdTarget c.id) [TakeFromDeck p c.id, ShufflePlayerDeck p] | c <- top]
           <> [Label (ikey "label.takeNothing") [ShufflePlayerDeck p]]
-      pushAll searches
       pure l
     _ -> MountainsOfMirkwood <$> runMessage msg a

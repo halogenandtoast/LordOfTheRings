@@ -17,6 +17,6 @@ instance HasAbilities TheBrownLands where
 instance RunMessage TheBrownLands where
   runMessage msg l@(TheBrownLands a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      push $ PlaceTokens (toSource a) (toTarget a) Progress 1
+      placeProgress a a 1
       pure l
     _ -> TheBrownLands <$> runMessage msg a
