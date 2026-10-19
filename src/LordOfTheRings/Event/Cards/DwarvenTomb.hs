@@ -20,6 +20,6 @@ instance RunMessage DwarvenTomb where
       chooseOneM pid do
         questionLabeled "dwarvenTomb.return"
         causedBy attrs
-        targets spirits \c -> push $ ReturnFromDiscardToHand pid c.id
+        targets spirits \c -> returnFromDiscardToHand pid c.id
       pure e
     _ -> DwarvenTomb <$> runMessage msg attrs

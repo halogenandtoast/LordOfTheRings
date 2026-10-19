@@ -19,6 +19,6 @@ instance HasAbilities TowerGate where
 instance RunMessage TowerGate where
   runMessage msg l@(TowerGate a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      eachPlayer $ push . PlaceOrcGuard
+      eachPlayer placeOrcGuard
       pure l
     _ -> TowerGate <$> runMessage msg a

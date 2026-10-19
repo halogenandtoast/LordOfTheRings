@@ -19,7 +19,7 @@ instance RunMessage IronShackles where
   runMessage msg t@(IronShackles attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
-      push $ AttachTreachery attrs.treacheryId (PlayerTarget lead)
+      attachTreachery attrs.treacheryId (PlayerTarget lead)
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       lead <- getLead

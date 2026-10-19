@@ -78,9 +78,13 @@ aimedAt as = ChooseT $ modify \st -> st {chooseTargets = st.chooseTargets <> map
 
 -- | A choice named by a key under @label.@ in the locale files.
 labeled :: (ReverseQueue m) => Text -> QueueT Message m () -> ChooseT m ()
-labeled key action = do
+labeled key = labeledWith key []
+
+-- | As 'labeled', with variables for the key.
+labeledWith :: (ReverseQueue m) => Text -> [I18nVar] -> QueueT Message m () -> ChooseT m ()
+labeledWith key vars action = do
   msgs <- lift $ capture action
-  ChooseT $ lift $ tell [Label (ikey $ "label." <> key) msgs]
+  ChooseT $ lift $ tell [Label (ikeyWith ("label." <> key) vars) msgs]
 
 -- | A choice made by clicking the target.
 targeting :: (ReverseQueue m, Targetable a) => a -> QueueT Message m () -> ChooseT m ()

@@ -15,7 +15,6 @@ import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Types
-import LordOfTheRings.Message
 import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Question
 import LordOfTheRings.Matcher.Types as X
@@ -195,15 +194,6 @@ getAttachmentsControlledBy pid = do
 -- | Players still in the game, in turn order from the first player.
 getRemainingPlayers :: (HasGame m) => m [PlayerId]
 getRemainingPlayers = filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
-
--- | A player still in the game, chosen by the given player; with one there is no choice.
-choosePlayer :: (HasGame m) => PlayerId -> Maybe Target -> (PlayerId -> [Message]) -> m Message
-choosePlayer pid source f = do
-  order <- getPlayerOrder
-  players <- filterM (fmap (not . (.eliminated)) . getPlayer) order
-  pure $ case players of
-    [p] -> Run (f p)
-    ps -> questionLabelWith (ikey "label.choosePlayer") source [] pid [targetLabel (PlayerTarget p) (f p) | p <- ps]
 
 -- | The damage on a character, or 0 for anything else.
 getDamage :: (HasGame m) => Target -> m Int

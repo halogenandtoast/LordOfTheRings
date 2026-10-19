@@ -7,7 +7,6 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import Control.Monad.Writer.Strict (tell)
 import LordOfTheRings.Card (EncounterCard)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
@@ -20,10 +19,8 @@ import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
 import LordOfTheRings.Placement (Placement (AttachedTo))
-import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
-import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
@@ -131,8 +128,6 @@ cancelMatching = lift . void . popMessagesMatching
 cancelWhenRevealed :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
 cancelWhenRevealed t = cancelMatching (== WhenRevealed t)
 
--- Event helpers
-
 -- | Heal all the damage on a character.
 healAllDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()
 healAllDamage source target = healDamage source target =<< getDamage (toTarget target)
@@ -147,13 +142,6 @@ removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
 placeEnemy :: (ReverseQueue m) => EnemyId -> Placement -> m ()
 placeEnemy eid placement = push $ PlaceEnemy eid placement
 
--- | As 'labeled', with variables for the key.
-labeledWith :: (ReverseQueue m) => Text -> [I18nVar] -> QueueT Message m () -> ChooseT m ()
-labeledWith key vars action = do
-  msgs <- lift $ capture action
-  ChooseT $ lift $ tell [Label (ikeyWith ("label." <> key) vars) msgs]
-
--- Ally/Hero helpers
 
 -- | The player looks at the top card of the encounter deck; with @mayBottom@ they may
 -- then move it to the bottom.
@@ -164,7 +152,6 @@ lookAtTopOfEncounterDeck pid source mayBottom = push $ LookAtTopOfEncounterDeck 
 returnFromDiscardToHand :: (ReverseQueue m) => PlayerId -> CardId -> m ()
 returnFromDiscardToHand pid cid = push $ ReturnFromDiscardToHand pid cid
 
--- Encounter card helpers
 
 -- | A shadow effect's two values: the first when the attack is undefended (no defender),
 -- the second otherwise.
@@ -184,7 +171,6 @@ chooseAndDiscard source pid cards = push $ ChooseAndDiscard (toSource source) pi
 dealShadowCard :: (ReverseQueue m) => EnemyId -> m ()
 dealShadowCard = push . DealShadowCard
 
--- Attachment/Objective/Scenario helpers
 
 -- | Act on the card this one is attached to; nothing when it is not attached.
 withHost :: (Applicative m, HasField "placement" a Placement) => a -> (Target -> m ()) -> m ()
@@ -197,3 +183,13 @@ addToStaging = push . AddToStaging
 
 putQuestIntoPlay :: (ReverseQueue m) => EncounterCard -> m ()
 putQuestIntoPlay = push . PutQuestIntoPlay
+
+placeOrcGuard :: (ReverseQueue m) => PlayerId -> m ()
+placeOrcGuard = push . PlaceOrcGuard
+
+attachTreachery :: (ReverseQueue m, Targetable target) => TreacheryId -> target -> m ()
+attachTreachery tid = push . AttachTreachery tid . toTarget
+
+-- | The player chooses and exhausts N of their characters.
+chooseAndExhaust :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
+chooseAndExhaust source pid n = push $ ChooseAndExhaust (toSource source) pid n

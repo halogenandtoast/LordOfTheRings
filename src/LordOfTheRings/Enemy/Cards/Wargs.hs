@@ -22,7 +22,7 @@ instance HasAbilities Wargs where
 instance RunMessage Wargs where
   runMessage msg e@(Wargs attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ PlaceEnemy attrs.id StagingArea
+      placeEnemy attrs.id StagingArea
       pure e
     ResolveShadowEffect cid eid _ defender | cid == attrs.cardId -> do
       enemyGetsAttack attrs eid (ifUndefended defender 2 1)

@@ -40,11 +40,9 @@ instance RunMessage CaughtInAWeb where
         chooseOneM p do
           questionLabeled "caughtInAWeb.attach"
           causedBy attrs
-          targets heroes \h -> push $ AttachTreachery attrs.treacheryId (toTarget h)
+          targets heroes \h -> attachTreachery attrs.treacheryId h
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      case attrs.placement of
-        AttachedTo host -> ready host
-        _ -> pure ()
+      withHost attrs ready
       pure t
     _ -> CaughtInAWeb <$> runMessage msg attrs

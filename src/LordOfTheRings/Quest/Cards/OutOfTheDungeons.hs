@@ -24,6 +24,6 @@ instance HasAbilities OutOfTheDungeons where
 instance RunMessage OutOfTheDungeons where
   runMessage msg q@(OutOfTheDungeons attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      eachPlayer $ push . PlaceOrcGuard
+      eachPlayer placeOrcGuard
       pure q
     _ -> OutOfTheDungeons <$> runBlockedStage (EnemyWithCardCode $ toCardCode Enemies.nazgulOfDolGuldur) msg attrs
