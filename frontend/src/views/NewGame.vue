@@ -63,7 +63,7 @@ const create = async () => {
             @click="chooseCampaign(c)"
           >
             <img :src="c.image" alt="" />
-            <span class="campaign-name">{{ c.name }}</span>
+            <span class="campaign-name"><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</span>
             <span class="campaign-count">
               {{ c.scenarios.length }} scenarios<template v-if="playableCount(c) > 0"> &middot; {{ playableCount(c) }} playable</template>
             </span>
@@ -78,7 +78,7 @@ const create = async () => {
         <div class="campaign-header">
           <img :src="selectedCampaign.image" alt="" />
           <div>
-            <h3>{{ selectedCampaign.name }}</h3>
+            <h3><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" /> {{ selectedCampaign.name }}</h3>
             <button type="button" class="change-campaign" @click="back">Choose a different campaign</button>
           </div>
         </div>
@@ -94,7 +94,7 @@ const create = async () => {
             @click="selectedScenario = option"
           >
             <img :src="option.image" alt="" />
-            <span class="scenario-name">{{ option.name }}</span>
+            <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
             <span v-if="!option.available" class="coming-soon">Coming soon</span>
           </button>
         </div>
@@ -102,7 +102,7 @@ const create = async () => {
 
       <fieldset v-if="selectedScenario">
         <legend>Game</legend>
-        <p class="deck">Playing as <strong>{{ currentUser?.username }}</strong> with <strong>Starter Set Leadership</strong> (Aragorn, Théodred, Glóin)</p>
+        <p class="deck">Playing as <strong>{{ currentUser?.username }}</strong> with <strong><span class="icon leadership" style="--icon: url('/images/icons/game/leadership.svg')" /> Starter Set Leadership</strong> (Aragorn, Théodred, Glóin)</p>
         <label>
           Game name
           <input v-model="gameName" type="text" :placeholder="defaultName" />
@@ -219,7 +219,8 @@ legend {
 .campaign-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
 .campaign-box:hover { border-color: var(--accent); transform: translateY(-2px); }
 .campaign-box.unavailable img { filter: grayscale(70%); }
-.campaign-name { padding: 8px 8px 0; font-weight: 700; }
+.campaign-name { display: flex; align-items: center; gap: 6px; padding: 8px 8px 0; font-weight: 700; text-align: left; }
+.campaign-name .icon, .scenario-name .icon { font-size: 1.2em; }
 .campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
 
 .campaign-header {
@@ -263,7 +264,7 @@ legend {
 .scenario-box:not(.selected) img { filter: grayscale(100%); }
 .scenario-box.selected { border-color: var(--accent); }
 .scenario-box.unavailable { cursor: not-allowed; opacity: 0.6; }
-.scenario-name { padding: 8px; font-weight: 700; text-align: center; }
+.scenario-name { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; font-weight: 700; text-align: center; }
 .coming-soon {
   position: absolute;
   top: 8px;
@@ -301,6 +302,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 
 .deck { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
 .deck strong { color: var(--text); }
+.deck .leadership { color: var(--leadership); }
 
 .error { margin: 0; color: var(--danger); }
 

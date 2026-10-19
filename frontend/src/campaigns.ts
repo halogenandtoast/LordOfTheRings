@@ -1,10 +1,13 @@
 // The official campaigns: each deluxe box with its cycle of adventure packs, and the two
 // Sagas. Scenario lists follow Hall of Beorn; box art lives in /images/products by code.
+// Expansion symbols and encounter set icons come from KevBelisle/lotr-lcg-assets.
 
 export interface ScenarioOption {
   id: string
   name: string
   image: string
+  /** The scenario's encounter set icon. */
+  icon: string
   /** Only scenarios the engine scripts can be started. */
   available: boolean
 }
@@ -13,6 +16,8 @@ export interface Campaign {
   id: string
   name: string
   image: string
+  /** The expansion symbol printed on its cards. */
+  symbol: string
   scenarios: ScenarioOption[]
 }
 
@@ -26,12 +31,18 @@ const slug = (name: string) =>
     .toLowerCase()
     .replace(/\s+/g, '-')
 
-// A box's own scenarios share its art; each adventure pack has its own.
-const fromBox = (code: string, names: string[]): ScenarioOption[] =>
-  names.map((name) => ({ id: slug(name), name, image: product(code), available: false }))
+const scenario = (code: string, name: string): ScenarioOption => ({
+  id: slug(name),
+  name,
+  image: product(code),
+  icon: `/images/icons/scenarios/${slug(name)}.svg`,
+  available: false,
+})
 
-const fromPacks = (packs: [string, string][]): ScenarioOption[] =>
-  packs.map(([code, name]) => ({ id: slug(name), name, image: product(code), available: false }))
+// A box's own scenarios share its art; each adventure pack has its own.
+const fromBox = (code: string, names: string[]): ScenarioOption[] => names.map((name) => scenario(code, name))
+
+const fromPacks = (packs: [string, string][]): ScenarioOption[] => packs.map(([code, name]) => scenario(code, name))
 
 const playable = new Set(['passage-through-mirkwood'])
 
@@ -39,6 +50,7 @@ const campaign = (id: string, name: string, code: string, scenarios: ScenarioOpt
   id,
   name,
   image: product(code),
+  symbol: `/images/icons/expansions/${id}.svg`,
   scenarios: scenarios.map((s) => ({ ...s, available: playable.has(s.id) })),
 })
 

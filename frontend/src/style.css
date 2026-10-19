@@ -4,6 +4,8 @@
   --gap: 10px;
   --attachment-peek: 18px;
   --nav-height: 40px;
+  --font-title: "Vafthrudnir", Georgia, serif;
+  --leadership: #9b5aa8;
 
   /* Palette: sage, soft olive, forest green, cream, antique gold and wood brown. */
   --sage: #9e9f73;
@@ -94,6 +96,30 @@
 html, body, #app { height: 100%; }
 
 #app { display: flex; flex-direction: column; }
+
+@font-face {
+  font-family: "Vafthrudnir";
+  src: url('/fonts/vafthrudnir.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* The card title face, from KevBelisle/lotr-lcg-assets. */
+h1, h2, h3, .home-link, .campaign-name, .scenario-name {
+  font-family: var(--font-title);
+  font-weight: normal;
+  letter-spacing: 0.02em;
+}
+
+/* A game icon tinted with the text colour: set --icon to the svg's url(). */
+.icon {
+  display: inline-block;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  background-color: currentColor;
+  mask: var(--icon) center / contain no-repeat;
+}
 
 body {
   margin: 0;
