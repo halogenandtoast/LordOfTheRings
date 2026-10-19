@@ -186,17 +186,24 @@ toParsedDeck db source override deck =
 slot :: CardDb -> Text -> Maybe Text -> Int -> Slot
 slot db sourceCode cardCode quantity = Slot {quantity, sourceCode, cardCode, card = flip lookupCard db =<< cardCode}
 
--- | The decklist id in a RingsDB URL, or 'Nothing' for anything else.
+-- | RingsDB has two kinds of deck: a published decklist, public to all, and a deck
+-- still in somebody's collection, readable only when its owner shares their decks.
+data RingsdbDeckKind = Decklist | SharedDeck
+
+-- | The kind of deck and its id in a RingsDB URL, or 'Nothing' for anything else. A
+-- bare number is taken for a published decklist.
 --
 -- Only @ringsdb.com@ and @www.ringsdb.com@, and only a path naming a deck. The server
 -- never follows the URL it was given: it takes an id out of it and builds its own, so
 -- a link pointed elsewhere on the network goes nowhere.
-ringsdbId :: Text -> Maybe Text
+ringsdbId :: Text -> Maybe (RingsdbDeckKind, Text)
 ringsdbId raw
   | T.null stripped = Nothing
-  | allDigits stripped = Just stripped
+  | allDigits stripped = Just (Decklist, stripped)
   | not onRingsdb = Nothing
-  | otherwise = firstNumber (drop 1 (dropWhile (`notElem` deckPaths) segments))
+  | otherwise = case break (`elem` deckPaths) segments of
+      (_, path : rest) -> (if path `elem` ["deck", "decks"] then SharedDeck else Decklist,) <$> firstNumber rest
+      _ -> Nothing
  where
   stripped = T.strip raw
   withoutScheme = snd (T.breakOnEnd "://" stripped)
@@ -210,11 +217,21 @@ ringsdbId raw
     p : rest | allDigits p -> Just p | otherwise -> firstNumber rest
   allDigits t = not (T.null t) && T.all isDigit t
 
--- | Fetch a public decklist by id. The URL is built here, never taken from the user.
-fetchRingsdbDeck :: Manager -> Text -> IO (Either ImportError Value)
-fetchRingsdbDeck manager ringsdbDeck = do
+-- | Where a deck of each kind is read and where people look at it.
+ringsdbApi, ringsdbPage :: RingsdbDeckKind -> Text -> Text
+ringsdbApi kind ident = case kind of
+  Decklist -> "https://ringsdb.com/api/public/decklist/" <> ident <> ".json"
+  -- the endpoint DragnCards reads: it answers only for owners who share their decks
+  SharedDeck -> "https://ringsdb.com/api/oauth2/deck/load/" <> ident
+ringsdbPage kind ident = case kind of
+  Decklist -> "https://ringsdb.com/decklist/view/" <> ident
+  SharedDeck -> "https://ringsdb.com/deck/view/" <> ident
+
+-- | Fetch a deck by kind and id. The URL is built here, never taken from the user.
+fetchRingsdbDeck :: Manager -> RingsdbDeckKind -> Text -> IO (Either ImportError Value)
+fetchRingsdbDeck manager kind ringsdbDeck = do
   attempt <- tryAny do
-    request <- parseRequest (unpack ("https://ringsdb.com/api/public/decklist/" <> ringsdbDeck <> ".json"))
+    request <- parseRequest (unpack (ringsdbApi kind ringsdbDeck))
     httpLbs request {requestHeaders = [("accept", "application/json"), ("user-agent", "lotr")]} manager
   pure case attempt of
     Left err -> Left (FetchFailed (pack (takeWhile (/= '\n') (show err))))
@@ -225,16 +242,24 @@ fetchRingsdbDeck manager ringsdbDeck = do
         | otherwise -> case eitherDecode (responseBody response) of
             -- RingsDB answers an unknown path with an HTML page and a 200
             Left _ -> Left (FetchFailed ("RingsDB did not return a deck for " <> ringsdbDeck))
+            -- the shared-deck endpoint refuses with a 200 and a reason
+            Right (Object o)
+              | Just (Bool False) <- KeyMap.lookup "success" o ->
+                  Left (FetchFailed (fromMaybe "RingsDB refused that deck" (KeyMap.lookup "error" o >>= asText)))
             Right value -> Right value
+ where
+  asText = \case
+    String t -> Just t
+    _ -> Nothing
 
 -- | The whole import: fetch if asked to, parse, resolve.
 importDeck :: Manager -> CardDb -> ImportRequest -> IO (Either ImportError ParsedDeck)
 importDeck manager db request = case (T.strip <$> request.url, request.deck) of
   (Just u, _) | not (T.null u) -> case ringsdbId u of
     Nothing -> pure (Left (NotARingsdbUrl u))
-    Just ringsdbDeck ->
-      fmap (finish "ringsdb" (Just ("https://ringsdb.com/decklist/view/" <> ringsdbDeck)))
-        <$> fetchRingsdbDeck manager ringsdbDeck
+    Just (kind, ringsdbDeck) ->
+      fmap (finish "ringsdb" (Just (ringsdbPage kind ringsdbDeck)))
+        <$> fetchRingsdbDeck manager kind ringsdbDeck
         <&> join
   (_, Just value) -> pure (finish "json" Nothing value)
   _ -> pure (Left NothingToImport)
