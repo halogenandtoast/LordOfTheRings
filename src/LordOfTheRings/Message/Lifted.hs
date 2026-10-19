@@ -7,8 +7,10 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
+import Control.Monad.Writer.Strict (tell)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
+import LordOfTheRings.I18n
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -16,9 +18,12 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
+import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
+import LordOfTheRings.Question
 import LordOfTheRings.Source
+import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
 
@@ -123,3 +128,25 @@ cancelMatching = lift . void . popMessagesMatching
 -- | Cancel the When Revealed effects of a card just revealed.
 cancelWhenRevealed :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
 cancelWhenRevealed t = cancelMatching (== WhenRevealed t)
+
+-- Event helpers
+
+-- | Heal all the damage on a character.
+healAllDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()
+healAllDamage source target = healDamage source target =<< getDamage (toTarget target)
+
+-- | The player spends resources of a sphere from his heroes' pools.
+spendResources :: (ReverseQueue m) => PlayerId -> Sphere -> Int -> m ()
+spendResources pid sphere n = push $ SpendResources pid sphere n
+
+removeFromDiscard :: (ReverseQueue m) => PlayerId -> CardId -> m ()
+removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
+
+placeEnemy :: (ReverseQueue m) => EnemyId -> Placement -> m ()
+placeEnemy eid placement = push $ PlaceEnemy eid placement
+
+-- | As 'labeled', with variables for the key.
+labeledWith :: (ReverseQueue m) => Text -> [I18nVar] -> QueueT Message m () -> ChooseT m ()
+labeledWith key vars action = do
+  msgs <- lift $ capture action
+  ChooseT $ lift $ tell [Label (ikeyWith ("label." <> key) vars) msgs]
