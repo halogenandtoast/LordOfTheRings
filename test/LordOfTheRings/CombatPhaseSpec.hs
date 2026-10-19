@@ -67,3 +67,15 @@ spec = describe "Combat phase" do
     run $ PlayerAttacks pid
     for_ ["01012", "01002", "01007"] $ getHeroWithCode >=> chooseTarget pid
     getsGame (length . (.entities.enemies)) `shouldReturn` 0
+
+  it "names the attacking enemy as the source of the defender question" . gameTest $ \pid -> do
+    s <- engageSpider pid
+    run $ EnemyAttack pid (toId s)
+    Just (QuestionLabel _ source _ _) <- getQuestion pid
+    source `shouldBe` Just (toTarget s)
+
+  it "names the attacked enemy as the target when declaring attackers" . gameTest $ \pid -> do
+    s <- engageSpider pid
+    run $ DeclareAttackers pid (toId s)
+    Just (QuestionLabel _ _ targets _) <- getQuestion pid
+    targets `shouldBe` [toTarget s]

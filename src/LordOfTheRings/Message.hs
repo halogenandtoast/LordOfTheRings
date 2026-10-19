@@ -86,8 +86,8 @@ data Message
   | CreateEffect Effect
   | AttachCard AttachmentId Target
   | PlayAttachment PlayerId PlayerCard
-  | ChooseAndExhaust PlayerId Int
-  | ChooseAndDiscard PlayerId [Target]
+  | ChooseAndExhaust Source PlayerId Int
+  | ChooseAndDiscard Source PlayerId [Target]
   | DiscardEventsFromHand PlayerId
   | Exhaust Target
   | CommitCharacters PlayerId
@@ -137,8 +137,13 @@ chooseOne pid choices = Ask pid $ ChooseOne choices
 
 -- | Ask a question with a prompt explaining what is being chosen.
 questionLabel :: (HasCallStack) => Text -> PlayerId -> [UI Message] -> Message
-questionLabel _ _ [] = error "questionLabel: no choices"
-questionLabel prompt pid choices = Ask pid $ QuestionLabel prompt $ ChooseOne choices
+questionLabel prompt = questionLabelWith prompt Nothing []
+
+-- | A question that names the card causing it and the cards it is aimed at, so the
+-- board can mark them.
+questionLabelWith :: (HasCallStack) => Text -> Maybe Target -> [Target] -> PlayerId -> [UI Message] -> Message
+questionLabelWith _ _ _ _ [] = error "questionLabel: no choices"
+questionLabelWith prompt source targets pid choices = Ask pid $ QuestionLabel prompt source targets $ ChooseOne choices
 
 chooseOrRunOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
 chooseOrRunOne _ [x] = uiToRun x

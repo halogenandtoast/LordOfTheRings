@@ -20,9 +20,9 @@ instance RunMessage DrivenByShadow where
           then [RevealEncounterCard]
           else [CreateEffect $ Effect (toSource attrs) c [ThreatModifier 1] UntilEndOfPhase | c <- enemies <> locations]
       pure t
-    ResolveShadowEffect cid _ pid defender | cid == attrs.cardId -> do
+    ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
       case defender of
-        Just character -> push . ChooseAndDiscard pid =<< getAttachmentsOn character
+        Just character -> push . ChooseAndDiscard (EnemySource eid) pid =<< getAttachmentsOn character
         Nothing -> pushAll . map Discard =<< getAttachmentsControlledBy pid
       pure t
     _ -> DrivenByShadow <$> runMessage msg attrs

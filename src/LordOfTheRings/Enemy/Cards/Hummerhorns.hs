@@ -20,7 +20,7 @@ instance RunMessage Hummerhorns where
         heroes <- select (HeroControlledBy $ PlayerWithId pid)
         unless (null heroes)
           $ push
-          $ questionLabel "Hummerhorns: deal 5 damage to a hero you control" pid [targetLabel h [DealDamage (toSource attrs) (toTarget h) 5] | h <- heroes]
+          $ questionLabelWith "Hummerhorns: deal 5 damage to a hero you control" (Just $ toTarget attrs) [] pid [targetLabel h [DealDamage (toSource attrs) (toTarget h) 5] | h <- heroes]
       pure e
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
       characters <- charactersControlledBy pid

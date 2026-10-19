@@ -73,7 +73,7 @@ answerQuestion pid n = do
   let rest = take n choices <> drop (n + 1) choices
       remaining = \case
         ChooseOneAtATime _ | notNull rest -> Just $ ChooseOneAtATime rest
-        QuestionLabel l q -> QuestionLabel l <$> remaining q
+        QuestionLabel l s ts q -> QuestionLabel l s ts <$> remaining q
         _ -> Nothing
   pushAll $ uiToRun choice : [Ask pid q | Just q <- [remaining question]]
   mainLoop
@@ -278,7 +278,7 @@ runGameMessage msg g = case msg of
     defenders <- readyCharacters pid
     enemyName <- display . (.name) <$> getEnemy eid
     push
-      $ questionLabel (enemyName <> " attacks: declare a defender") pid
+      $ questionLabelWith (enemyName <> " attacks: declare a defender") (Just $ toTarget eid) [] pid
       $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
       <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
     pure g
@@ -293,7 +293,7 @@ runGameMessage msg g = case msg of
     heroes <- select (HeroControlledBy $ PlayerWithId pid)
     unless (null heroes)
       $ push
-      $ questionLabel "The attack is undefended: which hero takes the damage?" pid
+      $ questionLabelWith "The attack is undefended: which hero takes the damage?" (Just $ toTarget eid) [] pid
         [targetLabel h [DealDamage (EnemySource eid) (toTarget h) attack] | h <- heroes]
     pure g
   PlayerAttacks pid -> do
@@ -306,7 +306,7 @@ runGameMessage msg g = case msg of
       $ if null attackers
         then ResolveAttack pid eid
         else
-          questionLabel "Declare attackers" pid
+          questionLabelWith "Declare attackers" Nothing [toTarget eid] pid
             $ [targetLabel a [AttackWith a, DeclareAttackers pid eid] | a <- attackers]
             <> [Label "Done attacking" [ResolveAttack pid eid]]
     pure g
@@ -327,23 +327,27 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       for_ enemy.shadowCards \card -> resolveShadowEffect card (ResolveShadowEffect (ecId card) eid pid mDefender)
     pure g
-  ChooseAndExhaust pid n | n > 0 -> do
+  ChooseAndExhaust source pid n | n > 0 -> do
     ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
     unless (null ready)
       $ push
-      $ questionLabel "Choose and exhaust a character" pid [targetLabel c [Exhaust c, ChooseAndExhaust pid (n - 1)] | c <- ready]
+      $ questionLabelWith "Choose and exhaust a character" (sourceTarget source) [] pid
+        [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
     pure g
-  ChooseAndDiscard pid targets -> do
-    unless (null targets) $ push $ questionLabel "Choose a card to discard" pid [targetLabel t [Discard t] | t <- targets]
+  ChooseAndDiscard source pid targets -> do
+    unless (null targets)
+      $ push
+      $ questionLabelWith "Choose a card to discard" (sourceTarget source) [] pid [targetLabel t [Discard t] | t <- targets]
     pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
     allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
     let characters = map toTarget heroes <> map toTarget allies
+    quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
     unless (null characters)
       $ push
-      $ questionLabel "Commit characters to the quest" pid
+      $ questionLabelWith "Commit characters to the quest" Nothing quests pid
       $ [ targetLabel c [CommitToQuest c, CheckWindows [mkAfter $ CommittedToQuest c], CommitCharacters pid]
         | c <- characters
         ]
