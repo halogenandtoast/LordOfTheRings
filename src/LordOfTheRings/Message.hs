@@ -82,6 +82,11 @@ data Message
   | UseCardAbility PlayerId Source Int [Window]
   | CreateEffect Effect
   | Exhaust Target
+  | CommitCharacters PlayerId
+  | CommitToQuest Target
+  | Staging
+  | QuestResolution
+  | PlaceProgressOnQuest Int
   | Ready Target
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int

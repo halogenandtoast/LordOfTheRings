@@ -11,6 +11,7 @@ export interface Props {
   data: GameData
   rotated?: boolean
   currentChoice?: Choice
+  target?: { tag: string, contents: string }
   side?: 'A' | 'B'
   you: Player
 }
@@ -59,8 +60,11 @@ const choice = computed(() => {
   if (!currentQuestion) return null
 
   switch (currentQuestion.tag) {
-    case "ChooseOne":
-      return currentQuestion.choices.find((choice: Choice) => choice.tag === "TargetLabel" && choice.target.contents === props.card.id)
+    case "ChooseOne": {
+      const target = props.target ?? { tag: 'CardIdTarget', contents: props.card.id }
+      return currentQuestion.choices.find((choice: Choice) =>
+        choice.tag === "TargetLabel" && choice.target.tag === target.tag && choice.target.contents === target.contents)
+    }
     default:
       return null
   }

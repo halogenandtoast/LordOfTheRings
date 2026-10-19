@@ -91,6 +91,7 @@ library
       LordOfTheRings.GameT
       LordOfTheRings.Helpers.Character
       LordOfTheRings.Helpers.Modifiers
+      LordOfTheRings.Helpers.Staging
       LordOfTheRings.Helpers.Window
       LordOfTheRings.Hero
       LordOfTheRings.Hero.CardDefs
@@ -312,6 +313,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.QuestAdvancementSpec
+      LordOfTheRings.QuestPhaseSpec
       LordOfTheRings.RefreshPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.RevealSpec

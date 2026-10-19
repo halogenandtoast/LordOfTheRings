@@ -23,20 +23,6 @@ const locations = computed(() => {
   return Object.values(props.data.game.entities.locations).filter((location) => location.placement.tag === "StagingArea")
 })
 
-const questChoice = computed(() => {
-  const currentQuestion = question.value
-  if (!currentQuestion) return null
-
-  switch (currentQuestion.tag) {
-    case "ChooseOne":
-      return currentQuestion.choices.find((choice: Choice) =>
-        choice.tag === "TargetLabel" && choice.target.contents === quest.value.id
-      )
-    default:
-      return null
-  }
-})
-
 </script>
 
 <template>
@@ -45,11 +31,11 @@ const questChoice = computed(() => {
       <div class="deck">
         <div class="deck-size">{{scenario.encounterDeck.length}}</div>
       </div>
-      <Card v-if="quest" :card="{ id: quest.cardId, cardCode: quest.cardCode }" :side="quest.flipped ? 'B' : 'A'" :progress="quest.tokens.Progress" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" :you="you" />
+      <Card v-if="quest" :card="{ id: quest.cardId, cardCode: quest.cardCode }" :side="quest.flipped ? 'B' : 'A'" :progress="quest.tokens.Progress" :data="data" @choose="$emit('choose', $event)" rotated :target="{ tag: 'QuestTarget', contents: quest.id }" :you="you" />
     </div>
 
     <div class="staging">
-      <Card v-for="enemy in enemies" :key="enemy.id" :card="{ id: enemy.cardId, cardCode: enemy.cardCode }" :data="data" @choose="$emit('choose', $event)" :you="you" />
+      <Card v-for="enemy in enemies" :key="enemy.id" :card="{ id: enemy.cardId, cardCode: enemy.cardCode }" :target="{ tag: 'EnemyTarget', contents: enemy.id }" :data="data" @choose="$emit('choose', $event)" :you="you" />
       <Location v-for="location in locations" :key="location.id" :location="location" :you="you" :data="data" @choose="$emit('choose', $event)" />
     </div>
   </div>

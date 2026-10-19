@@ -43,6 +43,7 @@ data AllyAttrs = AllyAttrs
   , allyPlacement :: Placement
   , allyTokens :: Tokens
   , allyExhausted :: Bool
+  , allyCommitted :: Bool
   }
   deriving stock (Show, Eq, Generic)
 
@@ -65,6 +66,7 @@ ally f cardDef =
             , allyPlacement = Unplaced
             , allyTokens = mempty
             , allyExhausted = False
+            , allyCommitted = False
             }
     }
 

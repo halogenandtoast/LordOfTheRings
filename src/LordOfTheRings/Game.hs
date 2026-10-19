@@ -14,7 +14,10 @@ import LordOfTheRings.Enemy
 import LordOfTheRings.Entities
 import LordOfTheRings.Frontend
 import LordOfTheRings.Effect
+import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Modifiers
+import LordOfTheRings.Helpers.Staging
+import LordOfTheRings.Token
 import LordOfTheRings.Helpers.Window
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Source
@@ -171,7 +174,46 @@ runGameMessage msg g = case msg of
     players <- getPlayers
     pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]
     pure $ g & phaseL .~ PlanningPhase
+  BeginPhase QuestPhase -> do
+    order <- getPlayerOrder
+    pushAll $ map CommitCharacters order <> [Staging, QuestResolution]
+    pure $ g & phaseL .~ QuestPhase
   BeginPhase phase -> pure $ g & phaseL .~ phase
+  CommitCharacters pid -> do
+    heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
+    allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
+    let characters = map toTarget heroes <> map toTarget allies
+    unless (null characters)
+      $ push
+      $ chooseOne pid
+      $ [ targetLabel c [CommitToQuest c, CheckWindows [mkAfter $ CommittedToQuest c], CommitCharacters pid]
+        | c <- characters
+        ]
+      <> [Label "Done committing" []]
+    pure g
+  Staging -> do
+    pushAll [RevealEncounterCard | player <- toList g.players, not player.eliminated]
+    pure g
+  QuestResolution -> do
+    heroes <- select CommittedHero
+    allies <- select CommittedAlly
+    willpower <- sum <$> traverse getWillpower (map toTarget heroes <> map toTarget allies)
+    threat <- getStagingThreat
+    players <- getPlayerOrder
+    if
+      | willpower > threat -> push $ PlaceProgressOnQuest (willpower - threat)
+      | threat > willpower -> pushAll [RaiseThreat pid (threat - willpower) | pid <- players]
+      | otherwise -> pure ()
+    pure g
+  PlaceProgressOnQuest n -> do
+    active <- traverse getLocation =<< selectOne IsActiveLocation
+    let onLocation = maybe 0 (\l -> min n (l.questPoints - l.progress)) active
+        overflow = n - onLocation
+    quests <- toList <$> getsGame (entitiesQuests . gameEntities)
+    pushAll
+      $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
+      <> [PlaceTokens GameSource (toTarget q) Progress overflow | q <- quests, overflow > 0]
+    pure g
   PayForCard pid card -> do
     costId <- getRandom
     push $ PayCost costId

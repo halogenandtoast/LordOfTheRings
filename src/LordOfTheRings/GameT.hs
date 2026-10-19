@@ -39,6 +39,9 @@ newGameEnv game logger seed = do
 runGameT :: GameEnv -> GameT a -> IO a
 runGameT env body = runReaderT (unGameT body) env
 
+instance MonadFail GameT where
+  fail = error
+
 instance HasGame GameT where
   getGame = asks gameEnvGame >>= readIORef
 

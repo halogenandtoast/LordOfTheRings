@@ -3,6 +3,7 @@ module LordOfTheRings.Ally.Runner (module LordOfTheRings.Ally.Runner, module X) 
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Message
+import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -10,6 +11,8 @@ import LordOfTheRings.Token
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
     Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
+    CommitToQuest (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True & committedL .~ True
+    EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n

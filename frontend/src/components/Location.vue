@@ -35,7 +35,7 @@ const abilityChoices = computed(() => {
 
 <template>
   <div class="location">
-    <Card :card="{ id: location.cardId, cardCode: location.cardCode }" :data="data" @choose="$emit('choose', $event)" :data-index="location.cardId" :you="you" :progress="location.tokens.Progress" />
+    <Card :card="{ id: location.cardId, cardCode: location.cardCode }" :target="{ tag: 'LocationTarget', contents: location.id }" :data="data" @choose="$emit('choose', $event)" :data-index="location.cardId" :you="you" :progress="location.tokens.Progress" />
     <Ability v-for="choice in abilityChoices" :choice="choice" :ability="choice.ability" :key="`${choice.ability.source.contents}${choice.ability.index}`" :data="data" :you="you" @choose="$emit('choose', $event)" />
   </div>
 </template>
