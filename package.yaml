@@ -82,5 +82,9 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    build-tools:
+    - hspec-discover
     dependencies:
     - LordOfTheRings
+    - hspec
+    - hspec-expectations-lifted

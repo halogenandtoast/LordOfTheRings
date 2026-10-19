@@ -181,6 +181,8 @@ test-suite LordOfTheRings-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LordOfTheRings.SetupSpec
+      TestImport
       Paths_LordOfTheRings
   hs-source-dirs:
       test
@@ -211,6 +213,8 @@ test-suite LordOfTheRings-test
       UndecidableInstances
       ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-tool-depends:
+      hspec-discover:hspec-discover
   build-depends:
       LordOfTheRings
     , MonadRandom
@@ -221,6 +225,8 @@ test-suite LordOfTheRings-test
     , conduit
     , containers
     , extra
+    , hspec
+    , hspec-expectations-lifted
     , lens
     , mtl
     , random
