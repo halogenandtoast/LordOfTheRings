@@ -79,6 +79,12 @@
   line-height: 1.5;
 }
 
+/* #app is a flex column: a page with auto side margins would shrink to its content. */
+.card-browser.page {
+  width: 100%;
+  flex: 1 0 auto;
+}
+
 /* Resets sit in a layer, so the components' own unlayered styles win over them. */
 @layer card-browser {
   .card-browser :where(*) { margin: 0; }

@@ -17,6 +17,7 @@ const leave = async () => {
       <RouterLink to="/" class="home-link">The Lord of the Rings</RouterLink>
       <RouterLink v-if="currentUser" to="/" class="nav-link">Home</RouterLink>
       <RouterLink to="/cards" class="nav-link">Cards</RouterLink>
+      <RouterLink v-if="currentUser" to="/decks" class="nav-link">Decks</RouterLink>
     </nav>
     <div class="user-links">
       <GameMenu v-if="currentUser" class="user-menu" align="right">
