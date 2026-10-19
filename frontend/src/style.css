@@ -160,13 +160,25 @@ body {
 .pile.encounter { background-image: url('/images/encounter.jpg'); }
 .pile.empty { opacity: 0.3; }
 
+/* A deck or discard with its count pill underneath. */
+.pile-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+}
+
 .pile-count {
   color: var(--count-text);
   background: var(--count-background);
-  padding: calc(var(--card-width) / 12);
-  border-radius: calc(var(--card-width) / 5);
-  border: 1px solid var(--count-text);
-  font-size: 0.85rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
   min-width: 1.75rem;
   text-align: center;
