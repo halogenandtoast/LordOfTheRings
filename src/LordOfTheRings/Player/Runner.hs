@@ -8,6 +8,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Event
+import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Window (getActionAbilities, passesCriteria)
 import LordOfTheRings.Modifier
@@ -42,6 +43,7 @@ instance RunMessage Player where
       let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
       pure $ player & handL .~ rest & discardL <>~ events
     Mulligan pid | pid == player.id -> do
+      send $ ShuffleIntoDeck $ map (.id) player.hand
       (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
       pure $ player & handL .~ hand & deckL .~ deck
     RaiseThreat pid n | pid == player.id -> do

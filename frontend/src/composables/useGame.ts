@@ -4,7 +4,7 @@ import { token } from '../auth'
 import type { CardDef, GameData, ServerMessage } from '../server'
 import type { GameView } from '../types'
 import { toView } from '../view'
-import { dealFrom } from './dealing'
+import { beforeTheDeal, dealFrom } from './dealing'
 import { transitionsOn, withViewTransition } from './useViewTransition'
 
 const LOG_LIMIT = 200
@@ -26,6 +26,7 @@ export const useGame = (gameId: string) => {
 
   let defs: Record<string, CardDef> = {}
   let pendingFlips: string[] = []
+  let shuffledBack = new Set<string>()
   const queue: ServerMessage[] = []
   let draining = false
   let socket: WebSocket | null = null
@@ -42,7 +43,14 @@ export const useGame = (gameId: string) => {
   const update = async (next: GameData) => {
     data.value = next
     const view = toView(next, defs, game.value)
-    const dealing = transitionsOn() ? dealFrom(game.value, view) : null
+    // a game opening on the mulligan shows its empty hands first, so the opening hand deals out
+    const undealt = game.value === null && transitionsOn() ? beforeTheDeal(view) : null
+    if (undealt) {
+      game.value = undealt
+      await nextTick()
+    }
+    const dealing = transitionsOn() ? dealFrom(game.value, view, shuffledBack) : null
+    shuffledBack = new Set()
     await withViewTransition(async () => {
       dealing?.lift()
       game.value = view
@@ -69,6 +77,9 @@ export const useGame = (gameId: string) => {
         return
       case 'FlipCard':
         pendingFlips.push(message.cardId)
+        return
+      case 'ShuffleIntoDeck':
+        message.cardIds.forEach((id) => shuffledBack.add(id))
         return
     }
   }

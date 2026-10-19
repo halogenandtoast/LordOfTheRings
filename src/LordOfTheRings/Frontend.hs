@@ -9,6 +9,8 @@ data FrontendMessage
   = Log {message :: Text}
   | Announce {message :: Text}
   | FlipCard {cardId :: CardId}
+  | -- | cards shuffled back into a deck, which may be drawn straight out again
+    ShuffleIntoDeck {cardIds :: [CardId]}
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

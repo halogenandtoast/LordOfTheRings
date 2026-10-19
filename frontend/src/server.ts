@@ -87,6 +87,7 @@ export type ServerMessage =
   | { tag: 'Log'; message: string }
   | { tag: 'Announce'; message: string }
   | { tag: 'FlipCard'; cardId: string }
+  | { tag: 'ShuffleIntoDeck'; cardIds: string[] }
 
 export interface GameSummary {
   id: number

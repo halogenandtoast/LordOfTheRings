@@ -200,6 +200,14 @@ body {
 /* a card dealt face down turns over on its way (see composables/dealing.ts) */
 @keyframes deal-turn-away { from { transform: rotateY(0deg); } 50%, to { transform: rotateY(90deg); } }
 @keyframes deal-turn-up { from, 50% { transform: rotateY(-90deg); } to { transform: rotateY(0deg); } }
+@keyframes deal-vanish { to { opacity: 0; } }
+@keyframes deck-shuffle {
+  0%, 100% { transform: none; }
+  20% { transform: translateX(-12%) rotate(-7deg); }
+  40% { transform: translateX(12%) rotate(7deg); }
+  60% { transform: translateX(-8%) rotate(-4deg); }
+  80% { transform: translateX(6%) rotate(3deg); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
