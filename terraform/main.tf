@@ -78,10 +78,13 @@ resource "kubernetes_secret" "app" {
     name = "lotr"
   }
 
-  data = {
-    DATABASE_URL = digitalocean_database_connection_pool.app.private_uri
-    JWT_SECRET   = local.jwt_secret
-  }
+  data = merge(
+    {
+      DATABASE_URL = digitalocean_database_connection_pool.app.private_uri
+      JWT_SECRET   = local.jwt_secret
+    },
+    var.app_secrets,
+  )
 }
 
 # The public entry point. DigitalOcean's cloud controller turns this into a

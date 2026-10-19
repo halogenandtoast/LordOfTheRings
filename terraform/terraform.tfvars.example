@@ -12,3 +12,10 @@ domain_name = "example.com"
 # node_size  = "s-2vcpu-2gb"
 # node_count = 1
 # db_size    = "db-s-1vcpu-1gb"
+
+# Extra env for the backend. Bug uploads need an access key for the
+# lord-of-the-rings-bugs IAM user.
+# app_secrets = {
+#   AWS_ACCESS_KEY_ID     = "..."
+#   AWS_SECRET_ACCESS_KEY = "..."
+# }

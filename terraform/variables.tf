@@ -60,3 +60,10 @@ variable "jwt_secret_override" {
   default     = ""
   sensitive   = true
 }
+
+variable "app_secrets" {
+  description = "Free-form app secrets to mount as env, such as AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for bug uploads. Keys become env var names."
+  type        = map(string)
+  sensitive   = true
+  default     = {}
+}
