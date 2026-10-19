@@ -24,3 +24,24 @@ class Targetable a where
 
 instance Targetable Target where
   toTarget = id
+
+instance Targetable HeroId where
+  toTarget = HeroTarget
+
+instance Targetable AllyId where
+  toTarget = AllyTarget
+
+instance Targetable EnemyId where
+  toTarget = EnemyTarget
+
+instance Targetable LocationId where
+  toTarget = LocationTarget
+
+instance Targetable TreacheryId where
+  toTarget = TreacheryTarget
+
+instance Targetable QuestId where
+  toTarget = QuestTarget
+
+instance Targetable PlayerId where
+  toTarget = PlayerTarget

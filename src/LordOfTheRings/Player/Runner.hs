@@ -32,7 +32,7 @@ instance RunMessage Player where
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
     DoStep 2 Setup -> do
-      heroes <- select $ PlayerHero player.id
+      heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       pure $ player & threatL .~ sum (map (.threat) heroes)
     DoStep 5 Setup -> do
       let (hand, deck) = splitAt 6 player.deck
@@ -60,7 +60,7 @@ instance RunMessage Player where
           push $ PayForCard pid card
           pure $ player & handL %~ filter ((/= cid) . (.id))
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
-      heroes <- select $ PlayerHero player.id
+      heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       let sphereMatches h = sphere == Neutral || h.sphere == sphere
       case filter (\h -> sphereMatches h && h.resources > 0) heroes of
         [x] -> push $ RemoveTokens (toSource player) (toTarget x) Resource n
@@ -85,7 +85,7 @@ canPlay p c = case c.cost of
 
 passesUnique :: (HasGame m) => Card -> m Bool
 passesUnique card
-  | card.unique = andM [selectNone $ AllyWithName card.name, selectNone $ HeroWithName card.name]
+  | card.unique = andM [selectNone $ AllyWithTitle card.name, selectNone $ HeroWithTitle card.name]
   | otherwise = pure True
 
 correctPhase :: (HasGame m) => Card -> m Bool
@@ -100,5 +100,5 @@ isPhase phase = (== phase) <$> getsGame gamePhase
 
 resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
 resourcesInSphere sphere player = do
-  heroes <- select $ PlayerHero player.id
+  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
   pure $ sum . map (.resources) $ filter (\h -> sphere == Neutral || h.sphere == sphere) heroes

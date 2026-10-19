@@ -49,6 +49,7 @@ library
       LordOfTheRings.Classes.Entity
       LordOfTheRings.Classes.HasGame
       LordOfTheRings.Classes.HasQueue
+      LordOfTheRings.Classes.Query
       LordOfTheRings.Classes.RunMessage
       LordOfTheRings.Decklist
       LordOfTheRings.EncounterSet
@@ -122,6 +123,7 @@ library
       LordOfTheRings.Location.Runner
       LordOfTheRings.Location.Types
       LordOfTheRings.Matcher
+      LordOfTheRings.Matcher.Types
       LordOfTheRings.Message
       LordOfTheRings.Name
       LordOfTheRings.Objective.CardDefs

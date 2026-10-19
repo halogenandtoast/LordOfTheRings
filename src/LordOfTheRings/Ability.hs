@@ -2,8 +2,7 @@ module LordOfTheRings.Ability (module LordOfTheRings.Ability) where
 
 import LordOfTheRings.Source
 import LordOfTheRings.Target
-import LordOfTheRings.Location.Types
-import LordOfTheRings.Matcher
+import LordOfTheRings.Matcher.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Window
 
@@ -26,14 +25,14 @@ data WindowMatcherTiming = WindowMatcherTiming Timing WindowMatcher
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
-data Criteria = LocationExists (Matcher Location)
+data Criteria = LocationExists LocationMatcher
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 class Exists a where
-  exists :: Matcher a -> Criteria
+  exists :: a -> Criteria
 
-instance Exists Location where
+instance Exists LocationMatcher where
   exists = LocationExists
 
 after :: WindowMatcher -> WindowMatcherTiming

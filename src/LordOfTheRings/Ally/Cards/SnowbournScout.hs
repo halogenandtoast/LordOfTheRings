@@ -19,14 +19,14 @@ instance HasAbilities SnowbournScout where
         a
         1
         (after $ entersPlay a)
-        (exists CanProgressLocation)
+        (exists AnyLocation)
         "_Response_: After Snowbourn Scout enters play, choose a location. Place 1 progress token on that location."
     ]
 
 instance RunMessage SnowbournScout where
   runMessage msg s@(SnowbournScout a) = case msg of
     UseCardAbility p (isSource a -> True) 1 -> do
-      locations <- select CanProgressLocation
+      locations <- select AnyLocation
       push
         $ chooseOrRunOne p [targetLabel location [PlaceTokens (toSource a) (toTarget location) Progress 1] | location <- locations]
       pure s

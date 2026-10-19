@@ -1,75 +1,119 @@
-module LordOfTheRings.Matcher (module LordOfTheRings.Matcher) where
+{-# OPTIONS_GHC -Wno-orphans #-}
+
+module LordOfTheRings.Matcher (module LordOfTheRings.Matcher, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Types
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Classes.Query as X
+import LordOfTheRings.Enemy.Types
+import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
-import LordOfTheRings.Player.Types
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Types
-import LordOfTheRings.Name
+import LordOfTheRings.Matcher.Types as X
+import LordOfTheRings.Placement
+import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 
-class Query a where
-  data Matcher a
-  select :: (HasGame m) => Matcher a -> m [a]
-
-instance Query Hero where
-  data Matcher Hero = PlayerHero PlayerId | HeroWithName Name
+instance Query PlayerMatcher where
+  type QueryElement PlayerMatcher = PlayerId
   select matcher = do
-    heroes <- Map.elems <$> getsGame (.entities.heroes)
-    case matcher of
-      PlayerHero pid -> pure $ filter ((== pid) . (.owner)) heroes
-      HeroWithName name -> pure $ filter ((== name) . (.name)) heroes
+    players <- getsGame (toList . gamePlayers)
+    map toId <$> filterM (matchPlayer matcher) players
 
-instance Query Ally where
-  data Matcher Ally = AllyWithName Name
+matchPlayer :: (HasGame m) => PlayerMatcher -> Player -> m Bool
+matchPlayer matcher player = case matcher of
+  PlayerWithId pid -> pure $ player.id == pid
+  FirstPlayer -> (== player.id) <$> getsGame gameFirstPlayer
+  ActivePlayer -> (== player.id) <$> getsGame gameActivePlayer
+  AnyPlayer -> pure True
+  PlayerMatchAll ms -> allM (`matchPlayer` player) ms
+
+instance Query HeroMatcher where
+  type QueryElement HeroMatcher = HeroId
   select matcher = do
-    allies <- Map.elems <$> getsGame (.entities.allies)
-    case matcher of
-      AllyWithName name -> pure $ filter ((== name) . (.name)) allies
+    heroes <- getsGame (toList . entitiesHeroes . gameEntities)
+    map toId <$> filterM (matchHero matcher) heroes
 
-instance Query Player where
-  data Matcher Player = ActivePlayer | FirstPlayer
+matchHero :: (HasGame m) => HeroMatcher -> Hero -> m Bool
+matchHero matcher hero = case matcher of
+  HeroWithId hid -> pure $ hero.id == hid
+  HeroControlledBy pm -> elem hero.owner <$> select pm
+  HeroWithTitle name -> pure $ hero.name == name
+  ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
+  ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
+  AnyHero -> pure True
+  NotHero m -> not <$> matchHero m hero
+  HeroMatchAll ms -> allM (`matchHero` hero) ms
+
+instance Query AllyMatcher where
+  type QueryElement AllyMatcher = AllyId
   select matcher = do
-    case matcher of
-      ActivePlayer -> (: []) <$> (getPlayer =<< getsGame (.activePlayer))
-      FirstPlayer -> (: []) <$> (getPlayer =<< getsGame (.firstPlayer))
+    allies <- getsGame (toList . entitiesAllies . gameEntities)
+    map toId <$> filterM (matchAlly matcher) allies
 
-instance Query Location where
-  data Matcher Location = CanProgressLocation
-    deriving stock (Show, Generic)
-    deriving anyclass (ToJSON, FromJSON)
+matchAlly :: (HasGame m) => AllyMatcher -> Ally -> m Bool
+matchAlly matcher ally = case matcher of
+  AllyWithId aid -> pure $ ally.id == aid
+  AllyControlledBy pm -> case placementController ally.placement of
+    Just pid -> elem pid <$> select pm
+    Nothing -> pure False
+  AllyWithTitle name -> pure $ ally.name == name
+  ReadyAlly -> pure $ not (allyExhausted $ toAttrs ally)
+  ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
+  AnyAlly -> pure True
+  NotAlly m -> not <$> matchAlly m ally
+  AllyMatchAll ms -> allM (`matchAlly` ally) ms
+
+instance Query EnemyMatcher where
+  type QueryElement EnemyMatcher = EnemyId
   select matcher = do
-    locations <- Map.elems <$> getsGame (.entities.locations)
-    case matcher of
-      CanProgressLocation -> pure locations
+    enemies <- getsGame (toList . entitiesEnemies . gameEntities)
+    map toId <$> filterM (matchEnemy matcher) enemies
 
-selectJust :: (HasGame m, Query a) => Matcher a -> m a
-selectJust matcher = do
-  as <- select matcher
-  case as of
-    [a] -> pure a
-    _ -> error "selectJust: expected exactly one result"
+matchEnemy :: (HasGame m) => EnemyMatcher -> Enemy -> m Bool
+matchEnemy matcher enemy = case matcher of
+  EnemyWithId eid -> pure $ enemy.id == eid
+  EnemyInStagingArea -> pure $ enemy.placement == StagingArea
+  EnemyEngagedWith pm -> case enemy.placement of
+    EngagedWith pid -> elem pid <$> select pm
+    _ -> pure False
+  AnyEnemy -> pure True
+  NotEnemy m -> not <$> matchEnemy m enemy
+  EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms
 
-selectOne :: (HasGame m, Query a) => Matcher a -> m (Maybe a)
-selectOne matcher = do
-  as <- select matcher
-  case as of
-    (a : _) -> pure (Just a)
-    _ -> pure Nothing
+instance Query LocationMatcher where
+  type QueryElement LocationMatcher = LocationId
+  select matcher = do
+    locations <- getsGame (toList . entitiesLocations . gameEntities)
+    map toId <$> filterM (matchLocation matcher) locations
 
-selectNone :: (HasGame m, Query a) => Matcher a -> m Bool
-selectNone matcher = null <$> select matcher
+matchLocation :: (HasGame m) => LocationMatcher -> Location -> m Bool
+matchLocation matcher location = case matcher of
+  LocationWithId lid -> pure $ location.id == lid
+  LocationInStagingArea -> pure $ location.placement == StagingArea
+  IsActiveLocation -> pure $ location.placement == ActiveLocation
+  AnyLocation -> pure True
+  NotLocation m -> not <$> matchLocation m location
+  LocationMatchAll ms -> allM (`matchLocation` location) ms
 
-selectAny :: (HasGame m, Query a) => Matcher a -> m Bool
-selectAny matcher = notNull <$> select matcher
+getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
+getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
 
-getPlayer :: (HasGame m) => PlayerId -> m Player
-getPlayer pid = Map.findWithDefault missingPlayer pid <$> getsGame gamePlayers
- where
-  missingPlayer = error $ "Player not found: " <> show pid
+getHero :: (HasCallStack, HasGame m) => HeroId -> m Hero
+getHero hid = fromJustNote ("missing hero " <> show hid) . Map.lookup hid <$> getsGame (entitiesHeroes . gameEntities)
+
+getAlly :: (HasCallStack, HasGame m) => AllyId -> m Ally
+getAlly aid = fromJustNote ("missing ally " <> show aid) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
+
+getEnemy :: (HasCallStack, HasGame m) => EnemyId -> m Enemy
+getEnemy eid = fromJustNote ("missing enemy " <> show eid) . Map.lookup eid <$> getsGame (entitiesEnemies . gameEntities)
+
+getLocation :: (HasCallStack, HasGame m) => LocationId -> m Location
+getLocation lid = fromJustNote ("missing location " <> show lid) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
 
 getLead :: (HasGame m) => m PlayerId
-getLead = (.id) <$> selectJust FirstPlayer
+getLead = getsGame gameFirstPlayer

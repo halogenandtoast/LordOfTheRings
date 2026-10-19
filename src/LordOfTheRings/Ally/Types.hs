@@ -142,3 +142,6 @@ instance HasField "name" Ally Name where
 
 instance HasField "sphere" Ally Sphere where
   getField = (.sphere) . toAttrs
+
+instance HasField "placement" Ally Placement where
+  getField = (.placement) . toAttrs
