@@ -197,6 +197,10 @@ body {
   animation-duration: 0.28s;
 }
 
+/* a card dealt face down turns over on its way (see composables/dealing.ts) */
+@keyframes deal-turn-away { from { transform: rotateY(0deg); } 50%, to { transform: rotateY(90deg); } }
+@keyframes deal-turn-up { from, 50% { transform: rotateY(-90deg); } to { transform: rotateY(0deg); } }
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),

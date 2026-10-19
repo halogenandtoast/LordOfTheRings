@@ -36,7 +36,13 @@ const targetKinds: Record<string, keyof ServerGame['entities']> = {
 }
 const kindTargets = Object.fromEntries(Object.entries(targetKinds).map(([tag, kind]) => [kind, tag]))
 
-export const toView = (data: GameData, defs: Record<string, CardDef>): GameView => {
+// Cards stay where they were in hand, new ones going on the end.
+const keepOrder = (previous: CardView[] | undefined, cards: CardView[]) => {
+  const rank = new Map(previous?.map((c, i) => [c.id, i]))
+  return [...cards].sort((a, b) => (rank.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (rank.get(b.id) ?? Number.MAX_SAFE_INTEGER))
+}
+
+export const toView = (data: GameData, defs: Record<string, CardDef>, previous: GameView | null = null): GameView => {
   const game = data.game
   if (!data.started || !game) return { started: false, round: 0, phase: null, outcome: null, over: false, question: null, attachmentHosts: {}, scenario: null, players: [], tally: null }
 
@@ -78,6 +84,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
       questPoints: d.questPoints ?? null,
       attachedTo: null,
       target: null,
+      playing: false,
       ...extra,
     }
   }
@@ -122,7 +129,12 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
       handSize: p.hand.length,
       deckSize: p.deckSize,
       discardSize: p.discard.length,
-      hand: p.hand.map((c) => card(c.cardCode, c.id)),
+      hand: keepOrder(previous?.players.find((v) => v.playerId === pid)?.hand, [
+        ...p.hand.map((c) => card(c.cardCode, c.id)),
+        // played but not yet in play: being paid for, or an attachment waiting for its host
+        ...Object.values(game.activeCosts ?? {}).filter((cost) => cost.player === pid).map((cost) => card(cost.card.cardCode, cost.card.id, { playing: true })),
+        ...Object.values(entities.attachments).filter((a) => a.owner === pid && a.placement?.tag === 'Unplaced').map((a) => card(a.cardCode, a.cardId, { playing: true })),
+      ]),
       discard: p.discard.map((c) => card(c.cardCode, c.id)),
       inPlay: withAttachments(characters),
       engaged: withAttachments(placed('enemies', isAt('EngagedWith', pid))),

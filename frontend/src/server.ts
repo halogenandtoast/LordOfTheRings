@@ -68,6 +68,8 @@ export interface ServerGame {
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
   entities: Record<'heroes' | 'allies' | 'enemies' | 'locations' | 'attachments' | 'quests' | 'treacheries', Record<string, Entity>>
+  /** Cards being paid for, by cost id. */
+  activeCosts: Record<string, { player: string; card: Card }>
   committedWillpower: number
   stagingThreat: number
   lastCommittedWillpower: number | null

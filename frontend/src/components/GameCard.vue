@@ -74,7 +74,7 @@ const toggleUnless = (attached: CardView) => {
     <div
       ref="cardRef"
       class="card"
-      :class="{ rotated, exhausted: card.exhausted, active, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, flipping }"
+      :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, flipping }"
       :style="{ viewTransitionName: `card-${card.id}` }"
       :title="card.name"
       :data-card-id="card.id"
@@ -169,6 +169,9 @@ const toggleUnless = (attached: CardView) => {
 .card img { width: 100%; border-radius: 7px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); }
 .card.exhausted { transform: rotate(90deg) scale(0.88); }
 .card.committed img { box-shadow: 0 0 0 2px var(--accent); }
+/* played from hand and being paid for: lifted out of the hand until it goes into play */
+.card.playing { transform: translateY(-12%); }
+.card.playing img { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 6px 16px var(--shadow); }
 .card.active { cursor: pointer; }
 /* The visual language: magenta can be interacted with, cyan is the source of the
    decision, amber is its target. */

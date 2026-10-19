@@ -14,15 +14,19 @@ const supported = (): StartViewTransition | null => {
  * Applies a state change inside a view transition so cards morph between zones, falling
  * back to a plain update where the API is unavailable.
  */
-export const withViewTransition = async (apply: () => void): Promise<void> => {
+/** Whether state changes will animate through a view transition. */
+export const transitionsOn = () =>
+  supported() !== null && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+export const withViewTransition = async (apply: () => void | Promise<void>): Promise<void> => {
   const start = supported()
-  if (!start || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    apply()
+  if (!start || !transitionsOn()) {
+    await apply()
     await nextTick()
     return
   }
   const transition = start(async () => {
-    apply()
+    await apply()
     await nextTick()
   })
   await transition.finished.catch(() => undefined)

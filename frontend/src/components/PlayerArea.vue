@@ -18,8 +18,8 @@ const emit = defineEmits<{ choose: [index: number] }>()
 <template>
   <section class="band player" :class="{ eliminated: player.eliminated }">
     <div class="piles">
-      <DiscardPile :cards="player.discard" back="player" />
-      <CardBack :count="player.deckSize" back="player" />
+      <DiscardPile :cards="player.discard" back="player" :data-pile="`discard-${player.playerId}`" />
+      <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
     </div>
 
     <div class="hand">

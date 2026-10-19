@@ -1,10 +1,11 @@
-import { computed, onScopeDispose, readonly, ref, shallowRef } from 'vue'
+import { computed, nextTick, onScopeDispose, readonly, ref, shallowRef } from 'vue'
 import { apiFetch } from '../api'
 import { token } from '../auth'
 import type { CardDef, GameData, ServerMessage } from '../server'
 import type { GameView } from '../types'
 import { toView } from '../view'
-import { withViewTransition } from './useViewTransition'
+import { dealFrom } from './dealing'
+import { transitionsOn, withViewTransition } from './useViewTransition'
 
 const LOG_LIMIT = 200
 const FLIP_MS = 320
@@ -40,9 +41,15 @@ export const useGame = (gameId: string) => {
 
   const update = async (next: GameData) => {
     data.value = next
-    await withViewTransition(() => {
-      game.value = toView(next, defs)
+    const view = toView(next, defs, game.value)
+    const dealing = transitionsOn() ? dealFrom(game.value, view) : null
+    await withViewTransition(async () => {
+      dealing?.lift()
+      game.value = view
+      await nextTick()
+      dealing?.land()
     })
+    dealing?.done()
     const flips = pendingFlips
     pendingFlips = []
     for (const cardId of flips) await flip(cardId)
@@ -109,7 +116,7 @@ export const useGame = (gameId: string) => {
     .then((response) => response.json())
     .then((cards: Record<string, CardDef>) => {
       defs = cards
-      if (data.value) game.value = toView(data.value, defs)
+      if (data.value) game.value = toView(data.value, defs, game.value)
     })
     .catch(() => {
       error.value = 'could not load card data'

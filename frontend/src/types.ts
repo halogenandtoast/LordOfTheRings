@@ -18,6 +18,8 @@ export interface CardView {
   progress: number | null
   questPoints: number | null
   attachedTo: string | null
+  /** Still in hand while its cost is paid or its host chosen. */
+  playing: boolean
   /** The engine's target for a card in play, so debug mode can change it. */
   target: Target | null
 }
