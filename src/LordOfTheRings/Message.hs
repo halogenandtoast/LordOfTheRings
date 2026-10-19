@@ -116,6 +116,7 @@ data Message
   | RemoveTokens Source Target Token Int
   | Run [Message]
   | DrawCards Drawing
+  | Mulligan PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON)
 

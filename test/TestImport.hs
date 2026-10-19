@@ -79,6 +79,7 @@ chooseAbility pid = chooseOptionMatching "use ability" pid \case
 flipFirstQuest :: PlayerId -> GameT ()
 flipFirstQuest pid = do
   run Setup
+  chooseLabel "Keep this hand" pid
   chooseOptionMatching "flip the quest" pid (const True)
 
 -- | Process exactly one message, leaving whatever it queues unprocessed.

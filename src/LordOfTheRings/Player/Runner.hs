@@ -25,7 +25,15 @@ instance RunMessage Player where
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       pure $ player & threatL .~ sum (map (.threat) heroes)
     DoStep 5 Setup -> do
-      let (hand, deck) = splitAt 6 player.deck
+      push
+        $ chooseOne player.id
+          [ Label "Keep this hand" []
+          , Label "Mulligan: shuffle all six back and draw again" [Mulligan player.id]
+          ]
+      let (hand, deck) = splitAt startingHandSize player.deck
+      pure $ player & handL .~ hand & deckL .~ deck
+    Mulligan pid | pid == player.id -> do
+      (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
       pure $ player & handL .~ hand & deckL .~ deck
     RaiseThreat pid n | pid == player.id -> do
       push CheckEliminations
@@ -97,3 +105,6 @@ resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
 resourcesInSphere sphere player = do
   heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
   pure $ sum . map (.resources) $ filter (\h -> sphere == Neutral || h.sphere == sphere) heroes
+
+startingHandSize :: Int
+startingHandSize = 6

@@ -17,9 +17,17 @@ spec = describe "Setup" do
     length player.deck `shouldBe` deckSize - 6
 
   it "flips Flies and Spiders and puts its setup cards in staging" . gameTest $ \pid -> do
-    run Setup
-    chooseOptionMatching "flip the quest" pid (const True)
+    flipFirstQuest pid
     enemies <- getsGame (toList . (.entities.enemies))
     locations <- getsGame (toList . (.entities.locations))
     map toCardCode enemies `shouldBe` ["01096"]
     map toCardCode locations `shouldBe` ["01099"]
+
+  it "offers a mulligan that redraws a fresh hand of 6" . gameTest $ \pid -> do
+    run Setup
+    chooseOptionMatching "mulligan" pid \case
+      Label _ [Mulligan _] -> True
+      _ -> False
+    player <- getPlayer pid
+    length player.hand `shouldBe` 6
+    getQuestion pid >>= (`shouldSatisfy` isJust) -- straight on to flipping the quest

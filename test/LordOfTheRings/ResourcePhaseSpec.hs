@@ -11,8 +11,7 @@ spec = describe "Resource phase" do
     map (.resources) heroes `shouldBe` [1, 1, 1]
 
   it "draws 1 card for each player" . gameTest $ \pid -> do
-    run Setup
-    chooseOptionMatching "flip the quest" pid (const True)
+    flipFirstQuest pid
     handSize <- length . (.hand) <$> getPlayer pid
     run $ BeginPhase ResourcePhase
     length . (.hand) <$> getPlayer pid `shouldReturn` handSize + 1

@@ -129,6 +129,10 @@ runGameMessage msg g = case msg of
   Setup -> do
     pushAll [DoStep n Setup | n <- [1 .. 7]]
     pure g
+  DoStep 3 Setup -> do
+    firstPlayer <- uniform g.playerOrder
+    push $ SetFirstPlayer firstPlayer
+    pure g
   BeginRound -> do
     pushAll [BeginPhase minBound, EndPhase minBound]
     pure $ g & roundL +~ 1
