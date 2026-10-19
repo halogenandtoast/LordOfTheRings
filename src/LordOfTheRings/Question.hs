@@ -20,6 +20,7 @@ data UI msg
 data Question msg
   = ChooseOne {choices :: [UI msg]}
   | ChooseOneAtATime {choices :: [UI msg]}
+  | QuestionLabel {label :: Text, question :: Question msg}
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON)
 
@@ -27,6 +28,7 @@ questionChoices :: Question msg -> [UI msg]
 questionChoices = \case
   ChooseOne cs -> cs
   ChooseOneAtATime cs -> cs
+  QuestionLabel _ q -> questionChoices q
 
 targetLabel :: (Targetable a) => a -> [msg] -> UI msg
 targetLabel (toTarget -> target) messages = TargetLabel {target, messages}

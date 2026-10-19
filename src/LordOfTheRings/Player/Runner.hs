@@ -27,7 +27,7 @@ instance RunMessage Player where
       pure $ player & threatL .~ sum (map (.threat) heroes)
     DoStep 5 Setup -> do
       push
-        $ chooseOne player.id
+        $ questionLabel "Keep this starting hand?" player.id
           [ Label "Keep this hand" []
           , Label "Mulligan: shuffle all six back and draw again" [Mulligan player.id]
           ]
@@ -54,7 +54,7 @@ instance RunMessage Player where
       playable <- filterM (canPlay player) player.hand
       unless (null playable) $
         push
-          $ chooseOne player.id
+          $ questionLabel "Play cards from your hand" player.id
           $ Label "Done Planning" []
           : [ targetLabel c [PlayCard player.id c.id, WithTarget (toTarget player) (DoPhase PlanningPhase)]
             | c <- playable
@@ -73,7 +73,7 @@ instance RunMessage Player where
         [x] -> push $ RemoveTokens (toSource player) (toTarget x) Resource n
         xs ->
           push
-            $ chooseOne pid
+            $ questionLabel ("Pay " <> tshow n <> " more") pid
               [ targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResources pid sphere (n - 1)]
               | x <- xs
               ]

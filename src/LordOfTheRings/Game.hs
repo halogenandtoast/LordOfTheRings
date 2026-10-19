@@ -69,10 +69,12 @@ answerQuestion pid n = do
   let choices = questionChoices question
   choice <- maybe (error "invalid choice") pure $ atMay choices n
   putGame $ g & questionL %~ Map.delete pid
-  case question of
-    ChooseOneAtATime _ | rest@(_ : _) <- take n choices <> drop (n + 1) choices -> do
-      pushAll [uiToRun choice, Ask pid (ChooseOneAtATime rest)]
-    _ -> push $ uiToRun choice
+  let rest = take n choices <> drop (n + 1) choices
+      remaining = \case
+        ChooseOneAtATime _ | notNull rest -> Just $ ChooseOneAtATime rest
+        QuestionLabel l q -> QuestionLabel l <$> remaining q
+        _ -> Nothing
+  pushAll $ uiToRun choice : [Ask pid q | Just q <- [remaining question]]
   mainLoop
 
 -- | Run messages until the queue empties or someone has to answer a question.
@@ -220,7 +222,7 @@ runGameMessage msg g = case msg of
     lead <- getLead
     unless (hasActive || null locations)
       $ push
-      $ chooseOne lead
+      $ questionLabel "Travel to a location?" lead
       $ [targetLabel lid [TravelTo lid] | lid <- locations]
       <> [Label "Do not travel" []]
     pure $ g & phaseL .~ TravelPhase
@@ -235,7 +237,7 @@ runGameMessage msg g = case msg of
     enemies <- select EnemyInStagingArea
     unless (null enemies)
       $ push
-      $ chooseOne pid
+      $ questionLabel "Engage an enemy from the staging area?" pid
       $ [targetLabel eid [EngageEnemy pid eid] | eid <- enemies]
       <> [Label "Do not engage" []]
     pure g
@@ -266,8 +268,9 @@ runGameMessage msg g = case msg of
     pure g
   EnemyAttack pid eid -> do
     defenders <- readyCharacters pid
+    enemyName <- display . (.name) <$> getEnemy eid
     push
-      $ chooseOne pid
+      $ questionLabel (enemyName <> " attacks: declare a defender") pid
       $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
       <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
     pure g
@@ -282,7 +285,8 @@ runGameMessage msg g = case msg of
     heroes <- select (HeroControlledBy $ PlayerWithId pid)
     unless (null heroes)
       $ push
-      $ chooseOne pid [targetLabel h [DealDamage (EnemySource eid) (toTarget h) attack] | h <- heroes]
+      $ questionLabel "The attack is undefended: which hero takes the damage?" pid
+        [targetLabel h [DealDamage (EnemySource eid) (toTarget h) attack] | h <- heroes]
     pure g
   PlayerAttacks pid -> do
     enemies <- engagedByCost pid
@@ -294,7 +298,7 @@ runGameMessage msg g = case msg of
       $ if null attackers
         then ResolveAttack pid eid
         else
-          chooseOne pid
+          questionLabel "Declare attackers" pid
             $ [targetLabel a [AttackWith a, DeclareAttackers pid eid] | a <- attackers]
             <> [Label "Done attacking" [ResolveAttack pid eid]]
     pure g
@@ -317,10 +321,12 @@ runGameMessage msg g = case msg of
     pure g
   ChooseAndExhaust pid n | n > 0 -> do
     ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
-    unless (null ready) $ push $ chooseOne pid [targetLabel c [Exhaust c, ChooseAndExhaust pid (n - 1)] | c <- ready]
+    unless (null ready)
+      $ push
+      $ questionLabel "Choose and exhaust a character" pid [targetLabel c [Exhaust c, ChooseAndExhaust pid (n - 1)] | c <- ready]
     pure g
   ChooseAndDiscard pid targets -> do
-    unless (null targets) $ push $ chooseOne pid [targetLabel t [Discard t] | t <- targets]
+    unless (null targets) $ push $ questionLabel "Choose a card to discard" pid [targetLabel t [Discard t] | t <- targets]
     pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
@@ -329,7 +335,7 @@ runGameMessage msg g = case msg of
     let characters = map toTarget heroes <> map toTarget allies
     unless (null characters)
       $ push
-      $ chooseOne pid
+      $ questionLabel "Commit characters to the quest" pid
       $ [ targetLabel c [CommitToQuest c, CheckWindows [mkAfter $ CommittedToQuest c], CommitCharacters pid]
         | c <- characters
         ]
@@ -404,7 +410,7 @@ runGameMessage msg g = case msg of
       $ if null available
         then next
         else
-          chooseOne pid
+          questionLabel "Use a response?" pid
             $ [AbilityLabel pid ab windows [ResponseWindow windows order (abilityKey ab : used) 0] | ab <- available]
             <> [Label "Pass" [next]]
     pure g

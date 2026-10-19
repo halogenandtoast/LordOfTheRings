@@ -31,6 +31,6 @@ instance RunMessage PassageThroughMirkwood where
     -- A Fork in the Road: the players choose which A Chosen Path to take.
     AdvanceQuest | stages@[_, _] <- attrs.questDeck -> do
       lead <- getLead
-      push $ chooseOne lead [Label (display $ cdName $ toCardDef stage) [AdvanceToQuest stage] | stage <- stages]
+      push $ questionLabel "A Fork in the Road: choose your path" lead [Label (display $ cdName $ toCardDef stage) [AdvanceToQuest stage] | stage <- stages]
       pure $ PassageThroughMirkwood $ attrs & questDeckL .~ []
     _ -> PassageThroughMirkwood <$> runMessage msg attrs

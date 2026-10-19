@@ -135,6 +135,11 @@ chooseOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
 chooseOne _ [] = error "chooseOne: no choices"
 chooseOne pid choices = Ask pid $ ChooseOne choices
 
+-- | Ask a question with a prompt explaining what is being chosen.
+questionLabel :: (HasCallStack) => Text -> PlayerId -> [UI Message] -> Message
+questionLabel _ _ [] = error "questionLabel: no choices"
+questionLabel prompt pid choices = Ask pid $ QuestionLabel prompt $ ChooseOne choices
+
 chooseOrRunOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
 chooseOrRunOne _ [x] = uiToRun x
 chooseOrRunOne pid choices = chooseOne pid choices
