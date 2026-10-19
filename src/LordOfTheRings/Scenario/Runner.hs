@@ -16,7 +16,8 @@ gatherEncounterSet :: (MonadRandom m) => EncounterSet -> m [EncounterCard]
 gatherEncounterSet encounterSet =
   concatMapM
     (\def -> replicateM (fromMaybe 1 $ cdEncounterSetQuantity def) (genEncounterCard def))
-    $ filter ((== Just encounterSet) . cdEncounterSet) (toList allEncounterCards)
+    -- quest stages share the set but make up the quest deck, never the encounter deck
+    $ filter (\def -> cdEncounterSet def == Just encounterSet && cdCardType def /= QuestType) (toList allEncounterCards)
 
 cardMatches :: CardMatcher -> EncounterCard -> Bool
 cardMatches = \case

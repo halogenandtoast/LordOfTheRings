@@ -23,6 +23,11 @@ spec = describe "Setup" do
     map toCardCode enemies `shouldBe` ["01096"]
     map toCardCode locations `shouldBe` ["01099"]
 
+  it "keeps the quest stages out of the encounter deck" . gameTest $ \_ -> do
+    run Setup
+    deck <- getEncounterDeck
+    filter (`elem` ["01119", "01120", "01121", "01122"]) (map toCardCode deck) `shouldBe` []
+
   it "offers a mulligan that redraws a fresh hand of 6" . gameTest $ \pid -> do
     run Setup
     chooseOptionMatching "mulligan" pid \case
