@@ -337,4 +337,4 @@ getPhase = getsGame (.scenario.phase)
 resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
 resourcesInSphere sphere player = do
   heroes <- select $ PlayerHero player.id
-  pure $ sum . map (.resources) $ filter ((== sphere) . (.sphere)) heroes
+  pure $ sum . map (.resources) $ filter (\h -> sphere == Neutral || h.sphere == sphere) heroes
