@@ -161,3 +161,23 @@ lookAtTopOfEncounterDeck pid source mayBottom = push $ LookAtTopOfEncounterDeck 
 -- | Return a card from the player's discard pile to their hand.
 returnFromDiscardToHand :: (ReverseQueue m) => PlayerId -> CardId -> m ()
 returnFromDiscardToHand pid cid = push $ ReturnFromDiscardToHand pid cid
+
+-- Encounter card helpers
+
+-- | A shadow effect's two values: the first when the attack is undefended (no defender),
+-- the second otherwise.
+ifUndefended :: Maybe Target -> a -> a -> a
+ifUndefended defender whenUndefended otherwise' = maybe whenUndefended (const otherwise') defender
+
+-- | The enemy gets +N attack until the end of the phase, as "attacking enemy gets +1
+-- attack" reads.
+enemyGetsAttack :: (ReverseQueue m, Sourceable source) => source -> EnemyId -> Int -> m ()
+enemyGetsAttack source eid n = phaseModifier source eid (AttackModifier n)
+
+-- | The player chooses and discards 1 of the cards.
+chooseAndDiscard :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> [Target] -> m ()
+chooseAndDiscard source pid cards = push $ ChooseAndDiscard (toSource source) pid cards
+
+-- | Deal the enemy 1 more shadow card.
+dealShadowCard :: (ReverseQueue m) => EnemyId -> m ()
+dealShadowCard = push . DealShadowCard
