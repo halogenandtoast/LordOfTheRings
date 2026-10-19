@@ -170,6 +170,35 @@ runGameMessage msg g = case msg of
     clearQueue
     pure $ g & outcomeL ?~ outcome
   Discard target -> discardTarget target g
+  DealDamage source target n | n > 0 -> do
+    pushAll
+      [ PlaceTokens source target Damage n
+      , CheckWindows [mkAfter $ DealtDamage target n]
+      , CheckDefeated target
+      ]
+    pure g
+  CheckDefeated target -> do
+    destroyed <- case target of
+      HeroTarget hid -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
+      AllyTarget aid -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
+      EnemyTarget eid -> (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      _ -> pure False
+    when destroyed $ push (Destroy target)
+    pure g
+  Destroy target@(EnemyTarget eid) -> do
+    enemy <- getEnemy eid
+    send $ Log $ display enemy.name <> " is destroyed"
+    case cdVictoryPoints (toCardDef enemy) of
+      Just _ -> do
+        let card = MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
+        pure
+          $ g
+          & entitiesL . enemiesL %~ Map.delete eid
+          & scenarioL %~ overAttrs (victoryDisplayL %~ (card :))
+      Nothing -> discardTarget target g
+  Destroy target -> do
+    pushAll [Discard target, CheckEliminations]
+    pure g
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]

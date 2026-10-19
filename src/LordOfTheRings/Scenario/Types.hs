@@ -30,6 +30,7 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioEncounterDeck :: [EncounterCard]
   , scenarioEncounterDiscard :: [EncounterCard]
   , scenarioQuestDeck :: [EncounterCard]
+  , scenarioVictoryDisplay :: [EncounterCard]
   }
   deriving stock (Show, Eq, Generic)
 
@@ -47,6 +48,7 @@ scenario f sid name =
       , scenarioEncounterDeck = []
       , scenarioEncounterDiscard = []
       , scenarioQuestDeck = []
+      , scenarioVictoryDisplay = []
       }
 
 instance Entity ScenarioAttrs where

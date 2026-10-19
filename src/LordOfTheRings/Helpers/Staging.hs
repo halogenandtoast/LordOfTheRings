@@ -28,3 +28,18 @@ getEngagementCost :: (HasGame m) => EnemyId -> m Int
 getEngagementCost eid = do
   enemy <- getEnemy eid
   modifiedValue engagementCostOf (toTarget eid) enemy.engagementCost
+
+getEnemyHitPoints :: (HasGame m) => EnemyId -> m Int
+getEnemyHitPoints eid = do
+  enemy <- getEnemy eid
+  modifiedValue hitPointsOf (toTarget eid) enemy.hitPoints
+
+getEnemyAttack :: (HasGame m) => EnemyId -> m Int
+getEnemyAttack eid = do
+  enemy <- getEnemy eid
+  modifiedValue attackOf (toTarget eid) enemy.attack
+
+getEnemyDefense :: (HasGame m) => EnemyId -> m Int
+getEnemyDefense eid = do
+  enemy <- getEnemy eid
+  modifiedValue defenseOf (toTarget eid) enemy.defense

@@ -161,3 +161,9 @@ instance HasField "threat" Hero Int where
 
 instance HasField "resources" Hero Int where
   getField = (.resources) . toAttrs
+
+instance HasField "damage" HeroAttrs Int where
+  getField = countTokens Damage . heroTokens
+
+instance HasField "damage" Hero Int where
+  getField = (.damage) . toAttrs

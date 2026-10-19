@@ -50,6 +50,9 @@ data Message
   | EliminatePlayer PlayerId
   | GameOver Outcome
   | Discard Target
+  | DealDamage Source Target Int
+  | CheckDefeated Target
+  | Destroy Target
   | PlaceEnemy EnemyId Placement
   | PlaceLocation LocationId Placement
   | SetFirstPlayer PlayerId

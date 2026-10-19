@@ -158,3 +158,9 @@ instance HasField "sphere" Ally Sphere where
 
 instance HasField "placement" Ally Placement where
   getField = (.placement) . toAttrs
+
+instance HasField "damage" AllyAttrs Int where
+  getField = countTokens Damage . allyTokens
+
+instance HasField "damage" Ally Int where
+  getField = (.damage) . toAttrs
