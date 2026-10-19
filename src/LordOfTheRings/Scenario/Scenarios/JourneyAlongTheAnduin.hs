@@ -22,6 +22,6 @@ instance RunMessage JourneyAlongTheAnduin where
     DoStep 6 Setup -> do
       firstStage <- genEncounterCard Quests.toTheRiver
       laterStages <- traverse genEncounterCard [Quests.anduinPassage, Quests.ambushOnTheShore]
-      push $ PutQuestIntoPlay firstStage
+      putQuestIntoPlay firstStage
       pure $ JourneyAlongTheAnduin $ attrs & questDeckL .~ laterStages
     _ -> JourneyAlongTheAnduin <$> runMessage msg attrs

@@ -1,6 +1,5 @@
 module LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur (escapeFromDolGuldur) where
 
-import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -24,12 +23,12 @@ instance RunMessage EscapeFromDolGuldur where
     DoStep 6 Setup -> do
       firstStage <- genEncounterCard Quests.theNecromancersTower
       laterStages <- traverse genEncounterCard [Quests.throughTheCaverns, Quests.outOfTheDungeons]
-      push $ PutQuestIntoPlay firstStage
+      putQuestIntoPlay firstStage
       pure $ EscapeFromDolGuldur $ attrs & questDeckL .~ laterStages
     -- Nazgul of Dol Guldur: Forced: When the prisoner is "rescued", move Nazgul of Dol
     -- Guldur into the staging area.
     RescuePrisoner _ -> do
       let (nazgul, rest) = partition ((== toCardCode Enemies.nazgulOfDolGuldur) . toCardCode) attrs.scenarioSetAside
-      pushAll $ map AddToStaging nazgul
+      traverse_ addToStaging nazgul
       pure $ EscapeFromDolGuldur $ attrs & setAsideL .~ rest
     _ -> EscapeFromDolGuldur <$> runMessage msg attrs

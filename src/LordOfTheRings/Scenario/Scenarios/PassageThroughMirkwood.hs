@@ -25,7 +25,7 @@ instance RunMessage PassageThroughMirkwood where
         traverse
           genEncounterCard
           [Quests.aForkInTheRoad, Quests.aChosenPathDontLeaveThePath, Quests.aChosenPathBeornsPath]
-      push $ PutQuestIntoPlay firstStage
+      putQuestIntoPlay firstStage
       pure $ PassageThroughMirkwood $ attrs & questDeckL .~ laterStages
     -- A Fork in the Road: proceed to one of the 2 A Chosen Path stages, at random.
     AdvanceQuest | stages@[_, _] <- attrs.questDeck, all isChosenPath stages -> do
