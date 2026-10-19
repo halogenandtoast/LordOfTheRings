@@ -24,20 +24,11 @@ const onError = (e: Event) => {
   console.log(e)
 }
 
-const { status, data, send, open, close } = useWebSocket(`ws://${location.host}/api/data`, { autoReconnect: true, onError })
+const { status, data, send, open, close } = useWebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/data`, { autoReconnect: true, onError })
 
 watch(data, (message) => {
   const json = JSON.parse(message)
   handleResult(json)
-})
-
-watch(uiLock, async () => {
-  if(!uiLock.value) {
-    const r = resultQueue.value.shift()
-    if (r) {
-      handleResult(r)
-    }
-  }
 })
 
 const emitter = inject('emitter')
