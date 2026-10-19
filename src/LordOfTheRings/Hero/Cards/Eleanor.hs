@@ -19,11 +19,10 @@ instance HasAbilities Eleanor where
 instance RunMessage Eleanor where
   runMessage msg h@(Eleanor attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
-      for_ [t | Window _ (Revealed t@(TreacheryTarget _)) <- windows] \t -> do
-        _ <- popMessagesMatching \case
-          WhenRevealed t' -> t == t'
-          FinishRevelation tid -> t == TreacheryTarget tid
-          _ -> False
-        pushAll [Discard t, RevealEncounterCard]
+      for_ [(t, tid) | Window _ (Revealed t@(TreacheryTarget tid)) <- windows] \(t, tid) -> do
+        cancelWhenRevealed t
+        cancelMatching (== FinishRevelation tid)
+        discard t
+        revealEncounterCard
       pure h
     _ -> Eleanor <$> runMessage msg attrs

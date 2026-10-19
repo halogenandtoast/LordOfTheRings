@@ -15,6 +15,6 @@ aTestOfWill = eventWith ATestOfWill Cards.aTestOfWill (windowL ?~ CardRevealedWi
 instance RunMessage ATestOfWill where
   runMessage msg e@(ATestOfWill attrs) = case msg of
     PlayEvent _ card windows | card.id == toId attrs -> do
-      for_ [t | Window _ (Revealed t) <- windows] \t -> popMessagesMatching (== WhenRevealed t)
+      for_ [t | Window _ (Revealed t) <- windows] cancelWhenRevealed
       pure e
     _ -> ATestOfWill <$> runMessage msg attrs

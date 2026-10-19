@@ -2,10 +2,11 @@ module LordOfTheRings.Treachery.Import.Lifted (module X) where
 
 import LordOfTheRings.Card as X (CardDef)
 import LordOfTheRings.Classes.Entity as X
-import LordOfTheRings.Classes.HasQueue as X
+import LordOfTheRings.Classes.HasQueue as X (push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage as X
 import LordOfTheRings.Treachery.Runner as X
 import LordOfTheRings.Message as X
+import LordOfTheRings.Message.Lifted as X
 import LordOfTheRings.I18n as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Question as X

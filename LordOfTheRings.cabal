@@ -189,6 +189,9 @@ library
       LordOfTheRings.Matcher.Types
       LordOfTheRings.Matcher.Window
       LordOfTheRings.Message
+      LordOfTheRings.Message.Lifted
+      LordOfTheRings.Message.Lifted.Choose
+      LordOfTheRings.Message.Lifted.Queue
       LordOfTheRings.Modifier
       LordOfTheRings.Name
       LordOfTheRings.Objective

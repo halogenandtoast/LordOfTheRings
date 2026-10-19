@@ -125,7 +125,7 @@ runNext =
     Just msg -> do
       debug 1 $ print msg
       -- store the result first, so the constant abilities read the game as it now is
-      g <- runMessage msg =<< getGame
+      g <- runGame msg =<< getGame
       putGame g
       putGame =<< preloadModifiers g
       pure True
@@ -139,29 +139,34 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON = genericParseJSON (aesonOptions $ Just "game")
 
-instance RunMessage Entities where
-  runMessage msg entities =
-    traverseOf (heroesL . traverse) (runMessage msg) entities
-      >>= traverseOf (alliesL . traverse) (runMessage msg)
-      >>= traverseOf (locationsL . traverse) (runMessage msg)
-      >>= traverseOf (enemiesL . traverse) (runMessage msg)
-      >>= traverseOf (treacheriesL . traverse) (runMessage msg)
-      >>= traverseOf (questsL . traverse) (runMessage msg)
-      >>= traverseOf (attachmentsL . traverse) (runMessage msg)
-      >>= traverseOf (objectivesL . traverse) (runMessage msg)
+-- | Run the message on one thing in play, putting what it pushes on the queue once it is
+-- done.
+runEach :: (RunMessage a) => Message -> a -> GameT a
+runEach msg = runQueueT . runMessage msg
 
-instance RunMessage Game where
-  runMessage msg g =
-    logMessage msg
-      >> traverseOf (playersL . traverse) (runMessage msg) g
-      >>= traverseOf (activeCostsL . traverse) (runMessage msg)
-      >>= traverseOf entitiesL (runMessage msg)
-      >>= traverseOf scenarioL (runMessage msg)
-      >>= runGameMessage msg
-      >>= \g' -> case msg of
-        -- the window goes in front of the phase's own steps
-        BeginPhase phase -> g' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
-        _ -> pure g'
+runEntities :: Message -> Entities -> GameT Entities
+runEntities msg entities =
+  traverseOf (heroesL . traverse) (runEach msg) entities
+    >>= traverseOf (alliesL . traverse) (runEach msg)
+    >>= traverseOf (locationsL . traverse) (runEach msg)
+    >>= traverseOf (enemiesL . traverse) (runEach msg)
+    >>= traverseOf (treacheriesL . traverse) (runEach msg)
+    >>= traverseOf (questsL . traverse) (runEach msg)
+    >>= traverseOf (attachmentsL . traverse) (runEach msg)
+    >>= traverseOf (objectivesL . traverse) (runEach msg)
+
+runGame :: Message -> Game -> GameT Game
+runGame msg g =
+  logMessage msg
+    >> traverseOf (playersL . traverse) (runEach msg) g
+    >>= traverseOf (activeCostsL . traverse) (runEach msg)
+    >>= traverseOf entitiesL (runEntities msg)
+    >>= traverseOf scenarioL (runEach msg)
+    >>= runGameMessage msg
+    >>= \g' -> case msg of
+      -- the window goes in front of the phase's own steps
+      BeginPhase phase -> g' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
+      _ -> pure g'
 
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
@@ -634,7 +639,7 @@ runGameMessage msg g = case msg of
   PlayEvent pid card _ -> do
     player <- getPlayer pid
     send $ Log $ ikeyWith "log.plays" (nameVar "player" player.name <> cardVar "card" card)
-    for_ (lookupEvent (toCardCode card) card.id pid) $ void . runMessage msg
+    for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g
   ReturnToHand target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     leftPlay g target
@@ -898,9 +903,9 @@ readyCharacters pid = do
 -- through a temporary instance of it.
 resolveShadowEffect :: EncounterCard -> Message -> GameT ()
 resolveShadowEffect card msg = case cdCardType (toCardDef card) of
-  EnemyType -> void . runMessage msg . createEnemy card =<< getRandom
-  LocationType -> void . runMessage msg . createLocation card =<< getRandom
-  TreacheryType -> void . runMessage msg . createTreachery card =<< getRandom
+  EnemyType -> void . runEach msg . createEnemy card =<< getRandom
+  LocationType -> void . runEach msg . createLocation card =<< getRandom
+  TreacheryType -> void . runEach msg . createTreachery card =<< getRandom
   _ -> pure ()
 
 

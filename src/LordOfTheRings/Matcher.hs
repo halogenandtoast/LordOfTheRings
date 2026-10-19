@@ -192,6 +192,10 @@ getAttachmentsControlledBy pid = do
     AttachedTo host -> Just host
     _ -> Nothing
 
+-- | Players still in the game, in turn order from the first player.
+getRemainingPlayers :: (HasGame m) => m [PlayerId]
+getRemainingPlayers = filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
+
 -- | A player still in the game, chosen by the given player; with one there is no choice.
 choosePlayer :: (HasGame m) => PlayerId -> Maybe Target -> (PlayerId -> [Message]) -> m Message
 choosePlayer pid source f = do

@@ -4,6 +4,7 @@ module LordOfTheRings.Frontend (module LordOfTheRings.Frontend) where
 
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+import LordOfTheRings.Queue
 
 data FrontendMessage
   = Log {message :: Text}
@@ -16,3 +17,6 @@ data FrontendMessage
 
 class (Monad m) => Frontend m where
   send :: FrontendMessage -> m ()
+
+instance (Frontend m) => Frontend (QueueT msg m) where
+  send = lift . send

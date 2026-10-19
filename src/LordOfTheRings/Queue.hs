@@ -10,6 +10,7 @@ newtype QueueT msg m a = QueueT {unQueueT :: ReaderT (Queue msg) m a}
     , Applicative
     , Monad
     , MonadIO
+    , MonadFail
     , MonadRandom
     , MonadReader (Queue msg)
     , MonadTrans
