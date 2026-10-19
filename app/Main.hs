@@ -581,12 +581,34 @@ postImportR = do
 getCardsR :: Handler Value
 getCardsR = pure $ toJSON $ allPlayerCards <> allEncounterCards
 
+-- | Games were keyed by bigint, which the automatic migration cannot turn into a
+-- uuid. Give each game a uuid and repoint its steps; the migration then puts back the
+-- foreign key and unique constraint that went with the old column.
+gameIdsToUuids :: Text
+gameIdsToUuids =
+  T.unlines
+    [ "DO $$ BEGIN"
+    , "  IF (SELECT data_type FROM information_schema.columns"
+    , "      WHERE table_name = 'lotr_games' AND column_name = 'id') = 'bigint' THEN"
+    , "    ALTER TABLE lotr_games ADD COLUMN uuid uuid NOT NULL DEFAULT gen_random_uuid();"
+    , "    ALTER TABLE lotr_steps ADD COLUMN game_uuid uuid;"
+    , "    UPDATE lotr_steps s SET game_uuid = g.uuid FROM lotr_games g WHERE s.game_id = g.id;"
+    , "    ALTER TABLE lotr_steps DROP COLUMN game_id;"
+    , "    ALTER TABLE lotr_steps RENAME COLUMN game_uuid TO game_id;"
+    , "    ALTER TABLE lotr_steps ALTER COLUMN game_id SET NOT NULL;"
+    , "    ALTER TABLE lotr_games DROP COLUMN id;"
+    , "    ALTER TABLE lotr_games RENAME COLUMN uuid TO id;"
+    , "    ALTER TABLE lotr_games ADD PRIMARY KEY (id);"
+    , "  END IF;"
+    , "END $$;"
+    ]
+
 main :: IO ()
 main = do
   port <- fromMaybe 3000 . (>>= readMaybe) <$> lookupEnv "PORT"
   database <- fromMaybe "host=localhost dbname=lordoftherings" <$> lookupEnv "DATABASE_URL"
   pool <- runStdoutLoggingT $ createPostgresqlPool (encodeUtf8 $ pack database) 10
-  runSqlPool (runMigration migrateAll) pool
+  runSqlPool (rawExecute gameIdsToUuids [] >> runMigration migrateAll) pool
   channels <- newTVarIO mempty
   jwtSecret <- maybe "development-only-secret-set-JWT_SECRET-in-production" pack <$> lookupEnv "JWT_SECRET"
   -- HS256 signing needs a key of at least 256 bits

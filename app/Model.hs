@@ -4,9 +4,26 @@
 
 module Model (module Model) where
 
+import Data.ByteString.Char8 qualified as BS8
+import Data.UUID (UUID)
+import Data.UUID qualified as UUID
 import Database.Persist.Postgresql.JSON ()
+import Database.Persist.Sql
 import Database.Persist.TH
 import LordOfTheRings.Prelude
+import Yesod.Core (PathPiece (..))
+
+instance PersistField UUID where
+  toPersistValue = PersistLiteral_ Escaped . BS8.pack . UUID.toString
+  fromPersistValue (PersistLiteral_ _ t) = maybe (Left "Invalid UUID") Right $ UUID.fromString $ BS8.unpack t
+  fromPersistValue _ = Left "Not PersistDBSpecific"
+
+instance PersistFieldSql UUID where
+  sqlType _ = SqlOther "uuid"
+
+instance PathPiece UUID where
+  toPathPiece = UUID.toText
+  fromPathPiece = UUID.fromText
 
 share
   [mkPersist sqlSettings, mkMigrate "migrateAll"]
@@ -21,6 +38,7 @@ User sql=users
   deriving Show
 
 LotrGame sql=lotr_games
+  Id UUID default=gen_random_uuid()
   userId UserId OnDeleteCascade
   name Text
   playerName Text
