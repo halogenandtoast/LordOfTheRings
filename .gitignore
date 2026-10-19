@@ -1,2 +1,4 @@
 .stack-work/
 *~
+# macOS Finder metadata
+.DS_Store
