@@ -1,0 +1,84 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
+const open = ref(false)
+const root = ref<HTMLElement | null>(null)
+
+const close = () => {
+  open.value = false
+}
+
+// A menu closes when you click anywhere outside it or press Escape.
+const onDocumentClick = (event: MouseEvent) => {
+  if (root.value && !root.value.contains(event.target as Node)) close()
+}
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') close()
+}
+
+onMounted(() => {
+  document.addEventListener('click', onDocumentClick)
+  document.addEventListener('keydown', onKeydown)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onDocumentClick)
+  document.removeEventListener('keydown', onKeydown)
+})
+</script>
+
+<template>
+  <div ref="root" class="menu">
+    <button type="button" :aria-expanded="open" @click="open = !open">
+      <slot></slot>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+      </svg>
+    </button>
+    <transition name="appear">
+      <div v-if="open" class="menu-items" @click="close">
+        <slot name="items"></slot>
+      </div>
+    </transition>
+  </div>
+</template>
+
+<style scoped>
+.menu {
+  position: relative;
+  height: 100%;
+}
+
+button {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  font: inherit;
+  display: flex;
+  height: 100%;
+  padding: 5px 10px;
+  gap: 5px;
+  align-items: center;
+  cursor: pointer;
+}
+button:hover { background: rgb(0 0 0 / 0.4); }
+
+svg { width: 20px; }
+
+.menu-items {
+  background-color: var(--background-mid);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 12rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.6);
+}
+
+.appear-enter-active, .appear-leave-active { transition: opacity 0.2s ease-in-out; }
+.appear-enter-from, .appear-leave-to { opacity: 0; }
+</style>

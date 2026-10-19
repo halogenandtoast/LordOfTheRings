@@ -4,7 +4,8 @@ import type { CardView } from './types'
 import CardBand from './components/CardBand.vue'
 import CardOverlay from './components/CardOverlay.vue'
 import Log from './components/Log.vue'
-import MenuBar from './components/MenuBar.vue'
+import GameBar from './components/GameBar.vue'
+import NavBar from './components/NavBar.vue'
 import PlayerArea from './components/PlayerArea.vue'
 import Prompt from './components/Prompt.vue'
 import Scenario from './components/Scenario.vue'
@@ -16,6 +17,7 @@ const {
   started, question, scenario, players, outcome, startGame, answer, reset, undo, canUndo,
 } = useGame()
 const name = ref('Player')
+const showSidebar = ref(true)
 
 const choices = computed(() => question.value?.choices ?? [])
 const you = computed(() => players.value[0] ?? null)
@@ -47,10 +49,18 @@ const choose = (index: number) => {
 </script>
 
 <template>
-  <div id="app">
+  <NavBar :status="status" />
+  <GameBar
+    v-if="started"
+    :can-undo="canUndo"
+    :show-sidebar="showSidebar"
+    @reset="reset"
+    @undo="undo"
+    @toggle-sidebar="showSidebar = !showSidebar"
+  />
+  <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
     <div class="game">
-      <MenuBar :disabled="!started" :can-undo="canUndo" @reset="reset" @undo="undo" />
 
       <section v-if="!started" class="start">
         <label>
@@ -114,9 +124,7 @@ const choose = (index: number) => {
       </template>
     </div>
 
-    <aside class="sidebar">
-      <h1>The Lord of the Rings</h1>
-      <p class="status" :data-status="status">{{ status }}</p>
+    <aside v-if="showSidebar" class="sidebar">
       <p v-if="error" class="error">{{ error }}</p>
       <Prompt
         v-if="started"
@@ -132,13 +140,15 @@ const choose = (index: number) => {
 </template>
 
 <style scoped>
-#app {
+.layout {
   display: grid;
   grid-template-columns: 1fr 280px;
   gap: var(--gap);
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   padding: var(--gap);
 }
+.layout.no-sidebar { grid-template-columns: 1fr; }
 
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; padding: 0; }
 .hero-column {
@@ -167,9 +177,6 @@ const choose = (index: number) => {
   gap: 0.6rem;
   min-height: 0;
 }
-h1 { margin: 0; font-size: 1rem; letter-spacing: 0.02em; }
-.status { margin: 0; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; }
-.status[data-status='closed'] { color: var(--danger); }
 .error { margin: 0; color: var(--danger); font-size: 0.8rem; }
 
 .announcement {

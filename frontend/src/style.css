@@ -9,12 +9,17 @@
   --accent: #e2cd91;
   --danger: #c9603f;
   --select: #ff3b30;
+  --nav-height: 40px;
+  --background-dark: rgb(12 10 8 / 0.92);
+  --background-mid: rgb(34 29 22 / 0.92);
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 
 html, body, #app { height: 100%; }
+
+#app { display: flex; flex-direction: column; }
 
 body {
   margin: 0;
