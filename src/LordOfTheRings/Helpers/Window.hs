@@ -27,6 +27,7 @@ getAllAbilities = do
       , concatMap getAbilities (toList es.locations)
       , concatMap getAbilities (toList es.treacheries)
       , concatMap getAbilities (toList es.quests)
+      , concatMap getAbilities (toList es.attachments)
       ]
 
 -- | Abilities whose window matches one of the windows and that can be used right now.

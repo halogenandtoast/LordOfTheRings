@@ -80,6 +80,14 @@ instance Monoid AllyMatcher where
 instance Not AllyMatcher where
   not_ = NotAlly
 
+data AttachMatcher
+  = AttachToHero HeroMatcher
+  | AttachToCharacter
+  | AttachToEnemy EnemyMatcher
+  | AttachToLocation LocationMatcher
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 data EnemyMatcher
   = EnemyWithId EnemyId
   | EnemyInStagingArea

@@ -47,6 +47,10 @@ const engaged = computed(() => {
     enemy.placement.tag === 'EngagedWith' && enemy.placement.contents === props.player.id)
 })
 
+const attachmentsOn = (tag: string, id: string) =>
+  Object.values(props.data.game.entities.attachments).filter((a) =>
+    a.placement.tag === 'AttachedTo' && a.placement.contents.tag === tag && a.placement.contents.contents === id)
+
 const heroes = computed(() => {
   return Object.values(props.data.game.entities.heroes).filter((hero) => hero.owner === props.player.id)
 })
@@ -131,7 +135,10 @@ function onLeave(el, done) {
       </transition-group>
     </div>
     <div class="heroes">
-      <Card v-for="hero in heroes" :key="hero.id" :card="{ id: hero.cardId, cardCode: hero.cardCode }" :target="{ tag: 'HeroTarget', contents: hero.id }" :resources="hero.tokens.Resource" :damage="hero.tokens.Damage" :data="data" @choose="$emit('choose', $event)" :you="you" />
+      <div v-for="hero in heroes" :key="hero.id" class="slot">
+        <Card v-for="attachment in attachmentsOn('HeroTarget', hero.id)" :key="attachment.id" class="attachment" :card="{ id: attachment.cardId, cardCode: attachment.cardCode }" :target="{ tag: 'AttachmentTarget', contents: attachment.id }" :data="data" @choose="$emit('choose', $event)" :you="you" />
+        <Card :card="{ id: hero.cardId, cardCode: hero.cardCode }" :target="{ tag: 'HeroTarget', contents: hero.id }" :resources="hero.tokens.Resource" :damage="hero.tokens.Damage" :data="data" @choose="$emit('choose', $event)" :you="you" />
+      </div>
     </div>
     <div class="player-main">
       <div class="threat">
@@ -155,6 +162,15 @@ function onLeave(el, done) {
 </template>
 
 <style scoped lang="scss">
+.slot {
+  display: flex;
+  flex-direction: column;
+}
+
+.slot .attachment {
+  margin-bottom: calc(var(--attachment-peek) - $card-width / $card-aspect);
+}
+
 .player {
   align-self: flex-end;
   gap: $gap;

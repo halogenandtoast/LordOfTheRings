@@ -24,6 +24,7 @@ preloadModifiers g = do
       traverse_ getModifiersFor es.locations
       traverse_ getModifiersFor es.treacheries
       traverse_ getModifiersFor es.quests
+      traverse_ getModifiersFor es.attachments
   let fromEffects =
         Map.fromListWith
           (<>)

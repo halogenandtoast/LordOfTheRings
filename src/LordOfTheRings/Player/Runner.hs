@@ -5,6 +5,7 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -84,7 +85,13 @@ canPlay p c = case c.cost of
       [ maybe (pure False) (\s -> (>= costAsResources cost) <$> resourcesInSphere s p) c.sphere
       , passesUnique c
       , correctPhase c
+      , hasHost c
       ]
+
+hasHost :: (HasGame m) => Card -> m Bool
+hasHost c
+  | c.cardType == AttachmentType = notNull <$> attachmentHosts (attachMatcherFor $ toCardCode c)
+  | otherwise = pure True
 
 passesUnique :: (HasGame m) => Card -> m Bool
 passesUnique card

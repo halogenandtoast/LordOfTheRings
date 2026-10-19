@@ -9,6 +9,7 @@ data Source
   | AllySource AllyId
   | EnemySource EnemyId
   | LocationSource LocationId
+  | AttachmentSource AttachmentId
   | TreacherySource TreacheryId
   | QuestSource QuestId
   | PlayerSource PlayerId

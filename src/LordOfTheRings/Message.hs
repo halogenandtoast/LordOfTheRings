@@ -84,6 +84,8 @@ data Message
   | UseAbility PlayerId Ability [Window]
   | UseCardAbility PlayerId Source Int [Window]
   | CreateEffect Effect
+  | AttachCard AttachmentId Target
+  | PlayAttachment PlayerId PlayerCard
   | Exhaust Target
   | CommitCharacters PlayerId
   | CommitToQuest Target

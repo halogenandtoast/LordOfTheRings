@@ -56,6 +56,7 @@ instance RunMessage ActiveCost where
       case ac.activeCostCard of
         PlayerCard card -> case cdCardType (toCardDef card) of
           AllyType -> push $ PlayAlly ac.activeCostPlayer card
+          AttachmentType -> push $ PlayAttachment ac.activeCostPlayer card
           _ -> pure ()
         EncounterCard _ -> pure ()
       pure ac

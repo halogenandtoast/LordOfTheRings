@@ -5,6 +5,7 @@ module LordOfTheRings.Game (module LordOfTheRings.Game, module X) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally
+import LordOfTheRings.Attachment
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -14,6 +15,7 @@ import LordOfTheRings.Enemy
 import LordOfTheRings.Entities
 import LordOfTheRings.Frontend
 import LordOfTheRings.Effect
+import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Helpers.Staging
@@ -112,6 +114,7 @@ instance RunMessage Entities where
       >>= traverseOf (enemiesL . traverse) (runMessage msg)
       >>= traverseOf (treacheriesL . traverse) (runMessage msg)
       >>= traverseOf (questsL . traverse) (runMessage msg)
+      >>= traverseOf (attachmentsL . traverse) (runMessage msg)
 
 instance RunMessage Game where
   runMessage msg g =
@@ -404,6 +407,12 @@ runGameMessage msg g = case msg of
   CompleteQuest qid -> do
     push AdvanceQuest
     pure $ g & entitiesL . questsL %~ Map.delete qid
+  PlayAttachment pid card -> do
+    attachment <- newAttachment pid card
+    hosts <- attachmentHosts (toAttrs attachment).attachTo
+    send . Log . (<> " plays " <> display (cdName $ toCardDef card)) . (.name) =<< getPlayer pid
+    push $ chooseOrRunOne pid [targetLabel host [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]] | host <- hosts]
+    pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
@@ -451,12 +460,16 @@ discardTarget target g = case target of
   EnemyTarget eid -> fromEntity enemiesL eid
   LocationTarget lid -> fromEntity locationsL lid
   TreacheryTarget tid -> fromEntity treacheriesL tid
+  AttachmentTarget aid -> fromEntity attachmentsL aid
   _ -> pure g
  where
   fromEntity :: (Ord k, IsCard v) => Lens' Entities (Map k v) -> k -> GameT Game
   fromEntity l k = case Map.lookup k (g.entities ^. l) of
     Nothing -> pure g
-    Just entity -> pure $ addToDiscard (toCard entity) $ g & entitiesL . l %~ Map.delete k
+    Just entity -> do
+      -- attachments leave play with the card they are attached to
+      pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      pure $ addToDiscard (toCard entity) $ g & entitiesL . l %~ Map.delete k
   addToDiscard card = case card of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
     EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
@@ -489,3 +502,4 @@ resolveShadowEffect card msg = case cdCardType (toCardDef card) of
   LocationType -> void . runMessage msg . createLocation card =<< getRandom
   TreacheryType -> void . runMessage msg . createTreachery card =<< getRandom
   _ -> pure ()
+

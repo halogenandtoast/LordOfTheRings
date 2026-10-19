@@ -40,7 +40,26 @@ library
       LordOfTheRings.Ally.Import.Lifted
       LordOfTheRings.Ally.Runner
       LordOfTheRings.Ally.Types
+      LordOfTheRings.Attachment
       LordOfTheRings.Attachment.CardDefs
+      LordOfTheRings.Attachment.Cards.BladeOfGondolin
+      LordOfTheRings.Attachment.Cards.CelebriansStone
+      LordOfTheRings.Attachment.Cards.CitadelPlate
+      LordOfTheRings.Attachment.Cards.DarkKnowledge
+      LordOfTheRings.Attachment.Cards.DunedainMark
+      LordOfTheRings.Attachment.Cards.DwarvenAxe
+      LordOfTheRings.Attachment.Cards.ForestSnare
+      LordOfTheRings.Attachment.Cards.HornOfGondor
+      LordOfTheRings.Attachment.Cards.MendorsSupport
+      LordOfTheRings.Attachment.Cards.PowerInTheEarth
+      LordOfTheRings.Attachment.Cards.ProtectorOfLorien
+      LordOfTheRings.Attachment.Cards.SelfPreservation
+      LordOfTheRings.Attachment.Cards.StewardOfGondor
+      LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
+      LordOfTheRings.Attachment.Cards.UnexpectedCourage
+      LordOfTheRings.Attachment.Import.Lifted
+      LordOfTheRings.Attachment.Runner
+      LordOfTheRings.Attachment.Types
       LordOfTheRings.Card
       LordOfTheRings.Card.CardDef
       LordOfTheRings.Card.CardType
@@ -89,6 +108,7 @@ library
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
       LordOfTheRings.GameT
+      LordOfTheRings.Helpers.Attachment
       LordOfTheRings.Helpers.Character
       LordOfTheRings.Helpers.Modifiers
       LordOfTheRings.Helpers.Staging
@@ -309,6 +329,7 @@ test-suite LordOfTheRings-test
   main-is: Spec.hs
   other-modules:
       LordOfTheRings.Ally.SnowbournScoutSpec
+      LordOfTheRings.AttachmentSpec
       LordOfTheRings.CombatPhaseSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.EncounterPhaseSpec

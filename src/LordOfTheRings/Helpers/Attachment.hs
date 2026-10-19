@@ -1,0 +1,23 @@
+module LordOfTheRings.Helpers.Attachment (module LordOfTheRings.Helpers.Attachment) where
+
+import Data.UUID qualified as UUID
+import LordOfTheRings.Attachment
+import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Id
+import LordOfTheRings.Matcher
+import LordOfTheRings.Prelude
+import LordOfTheRings.Target
+
+-- | What an attachment card can be attached to, read from its builder.
+attachMatcherFor :: CardCode -> AttachMatcher
+attachMatcherFor code =
+  (toAttrs $ lookupAttachment code (CardId UUID.nil) (AttachmentId UUID.nil) (PlayerId UUID.nil)).attachTo
+
+attachmentHosts :: (HasGame m) => AttachMatcher -> m [Target]
+attachmentHosts = \case
+  AttachToHero m -> map toTarget <$> select m
+  AttachToCharacter -> (<>) <$> (map toTarget <$> select AnyHero) <*> (map toTarget <$> select AnyAlly)
+  AttachToEnemy m -> map toTarget <$> select m
+  AttachToLocation m -> map toTarget <$> select m

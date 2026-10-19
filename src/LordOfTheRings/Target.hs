@@ -8,6 +8,7 @@ data Target
   | AllyTarget AllyId
   | EnemyTarget EnemyId
   | LocationTarget LocationId
+  | AttachmentTarget AttachmentId
   | TreacheryTarget TreacheryId
   | QuestTarget QuestId
   | PlayerTarget PlayerId
@@ -45,3 +46,6 @@ instance Targetable QuestId where
 
 instance Targetable PlayerId where
   toTarget = PlayerTarget
+
+instance Targetable AttachmentId where
+  toTarget = AttachmentTarget
