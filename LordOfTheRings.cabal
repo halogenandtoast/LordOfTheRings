@@ -53,7 +53,29 @@ library
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.CardDefs
-      LordOfTheRings.Enemy.Type
+      LordOfTheRings.Enemy.Cards.BlackForestBats
+      LordOfTheRings.Enemy.Cards.CavernGuardian
+      LordOfTheRings.Enemy.Cards.ChieftanUfthak
+      LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
+      LordOfTheRings.Enemy.Cards.DolGuldurOrcs
+      LordOfTheRings.Enemy.Cards.DungeonJailor
+      LordOfTheRings.Enemy.Cards.EastBightPatrol
+      LordOfTheRings.Enemy.Cards.EasternCrows
+      LordOfTheRings.Enemy.Cards.ForestSpider
+      LordOfTheRings.Enemy.Cards.GoblinSniper
+      LordOfTheRings.Enemy.Cards.HillTroll
+      LordOfTheRings.Enemy.Cards.Hummerhorns
+      LordOfTheRings.Enemy.Cards.KingSpider
+      LordOfTheRings.Enemy.Cards.MarshAdder
+      LordOfTheRings.Enemy.Cards.MistyMountainGoblins
+      LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
+      LordOfTheRings.Enemy.Cards.UngoliantsSpawn
+      LordOfTheRings.Enemy.Cards.UngoliantsSwarm
+      LordOfTheRings.Enemy.Cards.Wargs
+      LordOfTheRings.Enemy.Cards.WolfRider
+      LordOfTheRings.Enemy.Import.Lifted
+      LordOfTheRings.Enemy.Runner
+      LordOfTheRings.Enemy.Types
       LordOfTheRings.Event.CardDefs
       LordOfTheRings.Frontend
       LordOfTheRings.Game

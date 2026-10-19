@@ -49,7 +49,7 @@ const questChoice = computed(() => {
     </div>
 
     <div class="staging">
-      <Card v-for="enemy in enemies" :key="enemy.id" :card="enemy.card" :data="data" @choose="$emit('choose', $event)" :you="you" />
+      <Card v-for="enemy in enemies" :key="enemy.id" :card="{ id: enemy.cardId, cardCode: enemy.cardCode }" :data="data" @choose="$emit('choose', $event)" :you="you" />
       <Location v-for="location in locations" :key="location.id" :location="location" :you="you" :data="data" @choose="$emit('choose', $event)" />
     </div>
   </div>

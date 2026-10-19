@@ -140,7 +140,7 @@ runGameMessage msg g = case msg of
     case cdCardType (toCardDef card) of
       EnemyType -> do
         thisEnemy <- newEnemy card
-        pure $ g & entitiesL . enemiesL %~ insertEntity (thisEnemy & P.placementL .~ StagingArea)
+        pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) thisEnemy)
       LocationType -> do
         thisLocation <- newLocation card
         pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & P.placementL .~ StagingArea)

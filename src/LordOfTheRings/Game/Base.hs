@@ -7,7 +7,7 @@ import Control.Lens
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Types
 import LordOfTheRings.Card
-import LordOfTheRings.Enemy.Type
+import LordOfTheRings.Enemy.Types
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
