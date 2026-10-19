@@ -16,8 +16,8 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
 
 <template>
   <section class="band scenario">
-    <CardBack :count="scenario.encounterDeck" back="encounter" />
     <DiscardPile :cards="scenario.discard" back="encounter" />
+    <CardBack :count="scenario.encounterDeck" back="encounter" />
     <GameCard
       v-if="scenario.quest"
       :card="scenario.quest"
