@@ -122,6 +122,13 @@ data Message
   | DiscardRandomFromHand PlayerId Int
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target
+  | ClaimObjective ObjectiveId Target
+  | PlaceObjective ObjectiveId Placement
+  | SetObjectiveGuard ObjectiveId CardId
+  | -- | the next encounter card guards the objective: an enemy or location goes to the
+    -- staging area to guard it, any other card is revealed
+    GuardObjective ObjectiveId
+  | PutObjectiveIntoPlay EncounterCard
   | ShufflePlayerDeck PlayerId
   | ReturnToTopOfEncounterDeck Target
   | RemoveProgressFromQuest Source Int

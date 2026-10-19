@@ -14,6 +14,9 @@ newtype AttachmentId = AttachmentId {unAttachmentId :: UUID}
 newtype TreacheryId = TreacheryId {unTreacheryId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 
+newtype ObjectiveId = ObjectiveId {unObjectiveId :: UUID}
+  deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
+
 newtype QuestId = QuestId {unQuestId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 

@@ -31,6 +31,7 @@ import LordOfTheRings.Hero
 import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Location
+import LordOfTheRings.Objective
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
@@ -131,7 +132,7 @@ getPlayers :: (HasGame m) => m [Player]
 getPlayers = toList <$> getsGame gamePlayers
 
 instance FromJSON Entities where
-  parseJSON = genericParseJSON (aesonOptions $ Just "entities")
+  parseJSON = genericParseJSON (aesonOptions $ Just "entities") . withDefaults [("objectives", object [])]
 
 instance FromJSON Game where
   parseJSON = genericParseJSON (aesonOptions $ Just "game")
@@ -145,6 +146,7 @@ instance RunMessage Entities where
       >>= traverseOf (treacheriesL . traverse) (runMessage msg)
       >>= traverseOf (questsL . traverse) (runMessage msg)
       >>= traverseOf (attachmentsL . traverse) (runMessage msg)
+      >>= traverseOf (objectivesL . traverse) (runMessage msg)
 
 instance RunMessage Game where
   runMessage msg g =
@@ -175,7 +177,9 @@ runGameMessage msg g = case msg of
     pushAll [BeginPhase minBound, EndPhase minBound]
     pure $ g & roundL +~ 1
   EndRound -> do
-    unless (isJust g.outcome) $ pushEnd BeginRound
+    unless (isJust g.outcome) do
+      push $ CheckWindows [mkWhen RoundEnds]
+      pushEnd BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
   BeginPhase RefreshPhase -> do
     heroes <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) =<< select ExhaustedHero
@@ -616,6 +620,11 @@ runGameMessage msg g = case msg of
           ]
         putGame $ g & entitiesL . enemiesL %~ insertEntity attacker
     getGame
+  PutObjectiveIntoPlay card -> do
+    thisObjective <- newObjective card
+    send $ Log $ display (cdName $ toCardDef card) <> " is placed in the staging area"
+    push $ GuardObjective (toId thisObjective)
+    pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   CompleteQuest qid -> do
     push AdvanceQuest
@@ -652,6 +661,9 @@ runGameMessage msg g = case msg of
         treachery <- newTreachery card
         pushAll $ revealing (toTarget treachery) <> [FinishRevelation (toId treachery)] <> surge
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
+      ObjectiveType -> do
+        push $ PutObjectiveIntoPlay card
+        pure g
       _ -> pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
   FinishRevelation tid -> do
     -- a treachery that did not attach itself to something is discarded once it resolves
@@ -720,6 +732,7 @@ targetName target = do
     AttachmentTarget aid -> (.name) <$> Map.lookup aid es.attachments
     QuestTarget qid -> (.name) <$> Map.lookup qid es.quests
     TreacheryTarget tid -> (.name) <$> Map.lookup tid es.treacheries
+    ObjectiveTarget oid -> (.name) <$> Map.lookup oid es.objectives
     _ -> Nothing
 
 eliminationThreat :: Int
@@ -734,6 +747,8 @@ discardTarget target g = leftPlay g target >> case target of
   LocationTarget lid -> fromEntity locationsL lid
   TreacheryTarget tid -> fromEntity treacheriesL tid
   AttachmentTarget aid -> fromEntity attachmentsL aid
+  -- an objective that leaves its hero, or is discarded, goes back to the staging area
+  ObjectiveTarget oid -> g <$ push (PlaceObjective oid StagingArea)
   _ -> pure g
  where
   fromEntity :: (Ord k, IsCard v) => Lens' Entities (Map k v) -> k -> GameT Game
@@ -744,6 +759,7 @@ discardTarget target g = leftPlay g target >> case target of
       pushAll
         $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
         <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+        <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
       mods <- getModifiers target
       let removed = g & entitiesL . l %~ Map.delete k
       case toCard entity of
@@ -806,7 +822,7 @@ readyCharacters :: PlayerId -> GameT [Target]
 readyCharacters pid = do
   heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
   allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
-  pure $ map toTarget heroes <> map toTarget allies
+  filterM (fmap (notElem CannotAttackOrDefend) . getModifiers) $ map toTarget heroes <> map toTarget allies
 
 -- | Shadow cards are not in play, so the card's own module resolves the effect
 -- through a temporary instance of it.

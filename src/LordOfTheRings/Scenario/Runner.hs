@@ -72,6 +72,14 @@ instance RunMessage ScenarioAttrs where
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
       top : rest -> pure $ attrs & encounterDeckL .~ rest <> [top]
       [] -> pure attrs
+    GuardObjective oid -> case attrs.encounterDeck of
+      card : rest -> do
+        push
+          $ if cdCardType (toCardDef card) `elem` [EnemyType, LocationType]
+            then Run [AddToStaging card, SetObjectiveGuard oid card.id]
+            else RevealCard card
+        pure $ attrs & encounterDeckL .~ rest
+      [] -> pure attrs
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)

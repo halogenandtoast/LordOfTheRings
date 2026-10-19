@@ -8,6 +8,8 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types
+import LordOfTheRings.Enemy.Types (enemyCardId)
+import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -30,6 +32,7 @@ getAllAbilities = do
       , concatMap getAbilities (toList es.treacheries)
       , concatMap getAbilities (toList es.quests)
       , concatMap getAbilities (toList es.attachments)
+      , concatMap getAbilities (toList es.objectives)
       ]
 
 -- | Abilities whose window matches one of the windows and that can be used right now.
@@ -63,6 +66,11 @@ passesCriteria = \case
   AllyExists m -> selectAny m
   PlayerExists m -> selectAny m
   DuringPhase phase -> (== phase) <$> getsGame gamePhase
+  CardNotInPlay cid -> do
+    es <- getsGame gameEntities
+    pure
+      $ cid `notElem` map (enemyCardId . toAttrs) (toList es.enemies)
+      && cid `notElem` map (locationCardId . toAttrs) (toList es.locations)
   CardInHand pid cType -> any ((== cType) . (.cardType)) . (.hand) <$> getPlayer pid
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
@@ -78,6 +86,7 @@ canPay = \case
   ResourceCost (HeroTarget hid) n -> (>= n) . (.resources) <$> getHero hid
   ResourceCost _ _ -> pure False
   DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
+  RaiseThreatCost _ -> pure True
   Costs cs -> allM canPay cs
 
 costMessages :: Source -> AbilityCost -> [Message]
@@ -86,6 +95,9 @@ costMessages source = \case
   ExhaustCost target -> [Exhaust target]
   ResourceCost target n -> [RemoveTokens source target Resource n]
   DiscardFromHandCost pid n -> [ChooseAndDiscardFromHand pid source n]
+  RaiseThreatCost n -> case source of
+    PlayerSource pid -> [RaiseThreat pid n]
+    _ -> []
   Costs cs -> concatMap (costMessages source) cs
 
 -- | The player who controls an ability's source, if anyone does.

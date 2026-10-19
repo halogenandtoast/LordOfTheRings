@@ -19,6 +19,7 @@ data ModifierType
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
   | CannotAttack
+  | CannotAttackOrDefend
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks

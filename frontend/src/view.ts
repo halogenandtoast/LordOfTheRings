@@ -33,6 +33,7 @@ const targetKinds: Record<string, keyof ServerGame['entities']> = {
   AttachmentTarget: 'attachments',
   QuestTarget: 'quests',
   TreacheryTarget: 'treacheries',
+  ObjectiveTarget: 'objectives',
 }
 const kindTargets = Object.fromEntries(Object.entries(targetKinds).map(([tag, kind]) => [kind, tag]))
 
@@ -54,7 +55,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     if (!target?.contents) return null
     if (target.tag === 'CardIdTarget') return target.contents
     const kind = targetKinds[target.tag]
-    return kind ? entities[kind][target.contents]?.cardId ?? null : null
+    return kind ? entities[kind]?.[target.contents]?.cardId ?? null : null
   }
 
   const targetName = (target: Target | undefined) => {
@@ -102,11 +103,15 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     })
 
   const placed = (kind: keyof ServerGame['entities'], test: (e: Entity) => boolean) =>
-    Object.values(entities[kind]).filter(test).map((e) => fromEntity(e, kind))
+    // games saved before a kind existed do not have it
+    Object.values(entities[kind] ?? {}).filter(test).map((e) => fromEntity(e, kind))
 
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))
-    return placed('attachments', () => true).filter((a) => a.attachedTo !== null && ids.has(a.attachedTo))
+    // claimed objectives sit on their heroes like attachments
+    return [...placed('attachments', () => true), ...placed('objectives', () => true)].filter(
+      (a) => a.attachedTo !== null && ids.has(a.attachedTo),
+    )
   }
 
   const withAttachments = (cards: CardView[]) => [...cards, ...attachmentsOn(cards)]
@@ -141,7 +146,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     }
   })
 
-  const staging = [...placed('enemies', isAt('StagingArea')), ...placed('locations', isAt('StagingArea'))]
+  const staging = [
+    ...placed('enemies', isAt('StagingArea')),
+    ...placed('locations', isAt('StagingArea')),
+    ...placed('objectives', isAt('StagingArea')),
+  ]
 
   const toQuestion = (pid: string, question: Question): QuestionView => {
     let prompt = ''

@@ -188,7 +188,15 @@ library
       LordOfTheRings.Message
       LordOfTheRings.Modifier
       LordOfTheRings.Name
+      LordOfTheRings.Objective
       LordOfTheRings.Objective.CardDefs
+      LordOfTheRings.Objective.Cards.DungeonTorch
+      LordOfTheRings.Objective.Cards.GandalfsMap
+      LordOfTheRings.Objective.Cards.ShadowKey
+      LordOfTheRings.Objective.Claim
+      LordOfTheRings.Objective.Import.Lifted
+      LordOfTheRings.Objective.Runner
+      LordOfTheRings.Objective.Types
       LordOfTheRings.Outcome
       LordOfTheRings.Phase
       LordOfTheRings.Placement
@@ -386,6 +394,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Core.CombatCardsSpec
       LordOfTheRings.Core.EventsSpec
       LordOfTheRings.Core.JourneyAlongTheAnduinSpec
+      LordOfTheRings.Core.ObjectivesSpec
       LordOfTheRings.Core.PassageEncounterSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec

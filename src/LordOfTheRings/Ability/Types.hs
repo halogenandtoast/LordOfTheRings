@@ -13,6 +13,7 @@ data AbilityCost
   | ExhaustCost Target
   | ResourceCost Target Int
   | DiscardFromHandCost PlayerId Int
+  | RaiseThreatCost Int
   | Costs [AbilityCost]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

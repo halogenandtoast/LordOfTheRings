@@ -10,6 +10,7 @@ data Target
   | LocationTarget LocationId
   | AttachmentTarget AttachmentId
   | TreacheryTarget TreacheryId
+  | ObjectiveTarget ObjectiveId
   | QuestTarget QuestId
   | PlayerTarget PlayerId
   | CardIdTarget CardId
@@ -40,6 +41,9 @@ instance Targetable LocationId where
 
 instance Targetable TreacheryId where
   toTarget = TreacheryTarget
+
+instance Targetable ObjectiveId where
+  toTarget = ObjectiveTarget
 
 instance Targetable QuestId where
   toTarget = QuestTarget

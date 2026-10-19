@@ -12,6 +12,7 @@ data Source
   | LocationSource LocationId
   | AttachmentSource AttachmentId
   | TreacherySource TreacheryId
+  | ObjectiveSource ObjectiveId
   | QuestSource QuestId
   | PlayerSource PlayerId
   | CardIdSource CardId
@@ -30,6 +31,7 @@ sourceTarget = \case
   LocationSource i -> Just $ LocationTarget i
   AttachmentSource i -> Just $ AttachmentTarget i
   TreacherySource i -> Just $ TreacheryTarget i
+  ObjectiveSource i -> Just $ ObjectiveTarget i
   QuestSource i -> Just $ QuestTarget i
   CardIdSource i -> Just $ CardIdTarget i
   PlayerSource _ -> Nothing

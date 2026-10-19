@@ -15,6 +15,8 @@ data Criterion
   | CardInHand PlayerId CardType
   | PlayerExists PlayerMatcher
   | DuringPhase Phase
+  | -- | no enemy or location in play is that card
+    CardNotInPlay CardId
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)

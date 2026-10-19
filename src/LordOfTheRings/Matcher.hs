@@ -16,6 +16,7 @@ import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Types
 import LordOfTheRings.Message
+import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Question
 import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier
@@ -176,8 +177,17 @@ getAttachmentsOn host =
   getsGame (map toTarget . filter ((== AttachedTo host) . (.placement)) . toList . entitiesAttachments . gameEntities)
 
 getAttachmentsControlledBy :: (HasGame m) => PlayerId -> m [Target]
-getAttachmentsControlledBy pid =
-  getsGame (map toTarget . filter ((== pid) . (.owner) . toAttrs) . toList . entitiesAttachments . gameEntities)
+getAttachmentsControlledBy pid = do
+  es <- getsGame gameEntities
+  heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
+  -- a claimed objective counts as an attachment of the hero it is attached to
+  pure
+    $ [toTarget a | a <- toList es.attachments, (toAttrs a).owner == pid]
+    <> [toTarget o | o <- toList es.objectives, objectiveOn o `elem` map Just heroes]
+ where
+  objectiveOn o = case o.placement of
+    AttachedTo host -> Just host
+    _ -> Nothing
 
 -- | A player still in the game, chosen by the given player; with one there is no choice.
 choosePlayer :: (HasGame m) => PlayerId -> Maybe Target -> (PlayerId -> [Message]) -> m Message
