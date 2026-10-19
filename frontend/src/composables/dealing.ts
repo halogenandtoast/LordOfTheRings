@@ -13,6 +13,9 @@ interface Move {
   ghost: HTMLElement
 }
 
+// cards that come from the encounter deck rather than a player's
+const encounterTypes = new Set(['Enemy', 'Location', 'Treachery', 'Objective', 'Objective Ally'])
+
 /**
  * Cards moving between a player's hand or play area and their deck or discard have nothing
  * on screen at one end of the move, so for the view transition a stand-in is laid on the
@@ -37,7 +40,7 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
 
   const move = (pile: string, card: CardView, faceDown: boolean, name = `card-${card.id}`): Move => {
     const ghost = faceDown ? document.createElement('div') : Object.assign(document.createElement('img'), { src: cardImage(card), alt: '' })
-    if (faceDown) ghost.className = 'pile player'
+    if (faceDown) ghost.className = `pile ${pile.endsWith('-encounter') ? 'encounter' : 'player'}`
     else ghost.style.borderRadius = '7px'
     ghost.style.setProperty('view-transition-name', name)
     return { name, card, pile, faceDown, ghost }
@@ -82,10 +85,30 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
     if (arriving.some((m) => m.pile === deck)) shuffling.push(player.playerId)
 
     // arrivals: anything new to the hand or play area came from the discard or else the deck
-    for (const card of [...player.hand, ...player.inPlay]) {
+    // (encounter cards attached in play came from the encounter deck, below)
+    for (const card of [...player.hand, ...player.inPlay.filter((c) => !encounterTypes.has(c.type))]) {
       // the top of the discard, say, morphs on its own
       if (onScreen(card.id) && !shuffledBack.has(card.id)) continue
       leaving.push(wasDiscarded.has(card.id) ? move(discard, card, false) : move(deck, card, true))
+    }
+  }
+
+  // the encounter deck and discard: cards revealed or searched out of them, and cards
+  // defeated or discarded into the discard
+  if (before.scenario && after.scenario) {
+    const wasDiscarded = new Set(before.scenario.discard.map((card) => card.id))
+    const isDiscarded = new Set(after.scenario.discard.map((card) => card.id))
+    const inPlay = (view: GameView) =>
+      [
+        ...(view.scenario?.staging ?? []),
+        ...(view.scenario?.activeLocation ? [view.scenario.activeLocation] : []),
+        ...view.players.flatMap((p) => [...p.engaged, ...p.inPlay]),
+      ].filter((card) => encounterTypes.has(card.type))
+    for (const card of inPlay(before))
+      if (isDiscarded.has(card.id) && !wasDiscarded.has(card.id)) arriving.push(move('discard-encounter', card, false))
+    for (const card of inPlay(after)) {
+      if (onScreen(card.id)) continue
+      leaving.push(wasDiscarded.has(card.id) ? move('discard-encounter', card, false) : move('deck-encounter', card, true))
     }
   }
   if (!leaving.length && !arriving.length) return null
