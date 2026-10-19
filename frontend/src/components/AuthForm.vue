@@ -6,7 +6,6 @@ defineEmits<{ submit: [] }>()
 <template>
   <form class="auth-form" @submit.prevent="$emit('submit')">
     <header>
-      <img class="ring" src="/images/threat.png" alt="" />
       <h2>{{ title }}</h2>
     </header>
     <div v-if="error" class="error" role="alert">{{ error }}</div>
@@ -32,8 +31,6 @@ header {
   text-align: center;
   margin-bottom: 10px;
 }
-
-.ring { width: 140px; }
 
 h2 {
   color: var(--title);
