@@ -33,9 +33,22 @@ const isDrop = computed(() => highlights.value.dropIds.includes(card.id))
 const choiceFor = (attached: CardView) =>
   choices.find((option) => option.targetId === attached.id) ?? null
 
+// On a touch screen a long press reads a card, as does a tap on one with nothing to do.
+const showOverlay = (touched = false) => cardRef.value && overlay.show(card, cardRef.value, rotated, touched)
+let lastPointer = 'mouse'
+let pressTimer: ReturnType<typeof setTimeout> | undefined
+const cancelPress = () => clearTimeout(pressTimer)
+const press = (event: PointerEvent) => {
+  lastPointer = event.pointerType
+  cancelPress()
+  if (event.pointerType !== 'mouse') pressTimer = setTimeout(() => showOverlay(true), 400)
+}
+
 const choose = () => {
   if (choice.value) {
     emit('choose', choice.value.index)
+  } else if (lastPointer !== 'mouse') {
+    showOverlay(true)
   }
 }
 
@@ -78,10 +91,14 @@ const toggleUnless = (attached: CardView) => {
       :style="{ viewTransitionName: `card-${card.id}` }"
       :title="card.name"
       :data-card-id="card.id"
-      :draggable="draggable && active"
+      :draggable="draggable && active && overlay.canHover.value"
       @dragstart="dragStart"
-      @mouseenter="cardRef && overlay.show(card, cardRef, rotated)"
-      @mouseleave="overlay.hide()"
+      @pointerenter="$event.pointerType === 'mouse' && showOverlay()"
+      @pointerleave="$event.pointerType === 'mouse' && overlay.hide()"
+      @pointerdown="press"
+      @pointerup="cancelPress"
+      @pointercancel="cancelPress"
+      @contextmenu="lastPointer !== 'mouse' && $event.preventDefault()"
       @click="choose"
     >
       <img :src="source" :alt="card.name" />
@@ -167,6 +184,9 @@ const toggleUnless = (attached: CardView) => {
   aspect-ratio: calc(1 / 0.715);
 }
 .card img { width: 100%; border-radius: 7px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); }
+/* a long press reads the card, not Safari's save-image menu */
+.card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+@media (hover: none) { .card img { -webkit-user-drag: none; } }
 .card.exhausted { transform: rotate(90deg) scale(0.88); }
 .card.committed img { box-shadow: 0 0 0 2px var(--accent); }
 /* played from hand and being paid for: lifted out of the hand until it goes into play */
