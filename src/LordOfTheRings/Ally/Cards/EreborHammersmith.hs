@@ -21,9 +21,8 @@ instance RunMessage EreborHammersmith where
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       order <- getPlayerOrder
       tops <- forMaybeM order \p -> fmap (p,) . topAttachment . (.discard) <$> getPlayer p
-      unless (null tops)
-        $ push
-        $ chooseOrRunOne pid [targetLabel (CardIdTarget c.id) [ReturnFromDiscardToHand p c.id] | (p, c) <- tops]
+      chooseOrRunOneM pid do
+        for_ tops \(p, c) -> targeting (CardIdTarget c.id) $ returnFromDiscardToHand p c.id
       pure s
     _ -> EreborHammersmith <$> runMessage msg a
    where

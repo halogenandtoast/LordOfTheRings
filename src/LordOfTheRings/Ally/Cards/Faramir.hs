@@ -18,12 +18,8 @@ instance HasAbilities Faramir where
 instance RunMessage Faramir where
   runMessage msg f@(Faramir attrs) = case msg of
     UseCardAbility p (isSource attrs -> True) 1 _ -> do
-      players <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
-      choices <- for players \pid -> do
+      choosePlayerM p attrs \pid -> do
         characters <- charactersControlledBy pid
-        pure
-          $ targetLabel pid
-            [CreateEffect $ Effect (toSource attrs) c [WillpowerModifier 1] UntilEndOfPhase | c <- characters]
-      push $ chooseOrRunOne p choices
+        for_ characters \c -> phaseModifier attrs c (WillpowerModifier 1)
       pure f
     _ -> Faramir <$> runMessage msg attrs

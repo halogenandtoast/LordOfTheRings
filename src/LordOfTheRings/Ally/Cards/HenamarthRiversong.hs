@@ -17,6 +17,6 @@ instance HasAbilities HenamarthRiversong where
 instance RunMessage HenamarthRiversong where
   runMessage msg s@(HenamarthRiversong a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      push $ LookAtTopOfEncounterDeck pid (toSource a) False
+      lookAtTopOfEncounterDeck pid a False
       pure s
     _ -> HenamarthRiversong <$> runMessage msg a

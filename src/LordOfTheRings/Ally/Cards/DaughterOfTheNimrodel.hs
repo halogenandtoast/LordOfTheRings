@@ -18,9 +18,9 @@ instance RunMessage DaughterOfTheNimrodel where
   runMessage msg s@(DaughterOfTheNimrodel a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       heroes <- filterM (fmap (> 0) . getDamage) . map toTarget =<< select AnyHero
-      unless (null heroes)
-        $ push
-        $ questionLabelWith (ikey "label.daughterOfTheNimrodel.heal") (Just $ toTarget a) [] pid
-          [targetLabel h [HealDamage (toSource a) h 2] | h <- heroes]
+      chooseOneM pid do
+        questionLabeled "daughterOfTheNimrodel.heal"
+        causedBy a
+        targets heroes \h -> healDamage a h 2
       pure s
     _ -> DaughterOfTheNimrodel <$> runMessage msg a

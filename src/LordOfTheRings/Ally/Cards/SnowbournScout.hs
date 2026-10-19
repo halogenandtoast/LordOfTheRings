@@ -20,7 +20,6 @@ instance RunMessage SnowbournScout where
   runMessage msg s@(SnowbournScout a) = case msg of
     UseCardAbility p (isSource a -> True) 1 _ -> do
       locations <- select AnyLocation
-      push
-        $ chooseOrRunOne p [targetLabel location [PlaceTokens (toSource a) (toTarget location) Progress 1] | location <- locations]
+      chooseOrRunOneM p $ targets locations \location -> placeProgress a location 1
       pure s
     _ -> SnowbournScout <$> runMessage msg a

@@ -20,6 +20,6 @@ instance RunMessage LorienGuide where
   runMessage msg s@(LorienGuide a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       active <- select IsActiveLocation
-      pushAll [PlaceTokens (toSource a) (toTarget l) Progress 1 | l <- active]
+      for_ active \l -> placeProgress a l 1
       pure s
     _ -> LorienGuide <$> runMessage msg a

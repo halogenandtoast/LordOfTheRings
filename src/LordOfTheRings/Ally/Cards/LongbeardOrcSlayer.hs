@@ -20,6 +20,6 @@ instance RunMessage LongbeardOrcSlayer where
   runMessage msg l@(LongbeardOrcSlayer attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       orcs <- select (EnemyWithTrait Orc)
-      pushAll [DealDamage (toSource attrs) (toTarget e) 1 | e <- orcs]
+      for_ orcs \e -> dealDamage attrs e 1
       pure l
     _ -> LongbeardOrcSlayer <$> runMessage msg attrs

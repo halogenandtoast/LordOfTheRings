@@ -18,6 +18,6 @@ instance HasAbilities Beorn where
 instance RunMessage Beorn where
   runMessage msg s@(Beorn a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      push $ CreateEffect $ Effect (toSource a) (toTarget a) [AttackModifier 5, ShuffleIntoDeckAtEndOfPhase] UntilEndOfPhase
+      phaseModifiers a a [AttackModifier 5, ShuffleIntoDeckAtEndOfPhase]
       pure s
     _ -> Beorn <$> runMessage msg a

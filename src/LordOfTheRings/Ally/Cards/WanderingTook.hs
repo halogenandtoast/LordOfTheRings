@@ -25,8 +25,12 @@ instance RunMessage WanderingTook where
   runMessage msg s@(WanderingTook a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       others <- select (NotPlayer $ PlayerWithId pid)
-      push
-        $ questionLabelWith (ikey "label.wanderingTook.giveControl") (Just $ toTarget a) [] pid
-          [targetLabel (PlayerTarget p) [LowerThreat pid 3, TakeControl a.id p, RaiseThreat p 3] | p <- others]
+      chooseOneM pid do
+        questionLabeled "wanderingTook.giveControl"
+        causedBy a
+        targets others \p -> do
+          lowerThreat pid 3
+          push $ TakeControl a.id p
+          raiseThreat p 3
       pure s
     _ -> WanderingTook <$> runMessage msg a

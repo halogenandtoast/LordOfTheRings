@@ -19,9 +19,9 @@ instance RunMessage MinerOfTheIronHills where
   runMessage msg s@(MinerOfTheIronHills a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       conditions <- getConditionAttachments
-      unless (null conditions)
-        $ push
-        $ questionLabelWith (ikey "label.minerOfTheIronHills.discardCondition") (Just $ toTarget a) [] pid
-          [targetLabel c [Discard c] | c <- conditions]
+      chooseOneM pid do
+        questionLabeled "minerOfTheIronHills.discardCondition"
+        causedBy a
+        targets conditions discard
       pure s
     _ -> MinerOfTheIronHills <$> runMessage msg a

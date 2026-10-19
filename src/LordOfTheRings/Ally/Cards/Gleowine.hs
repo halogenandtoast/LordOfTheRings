@@ -17,6 +17,6 @@ instance HasAbilities Gleowine where
 instance RunMessage Gleowine where
   runMessage msg s@(Gleowine a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      push =<< choosePlayer pid (Just $ toTarget a) \p -> [DrawCards $ Drawing p 1]
+      choosePlayerM pid a \p -> drawCards p 1
       pure s
     _ -> Gleowine <$> runMessage msg a

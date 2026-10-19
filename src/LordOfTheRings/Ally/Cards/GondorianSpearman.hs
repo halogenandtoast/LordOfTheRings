@@ -18,6 +18,6 @@ instance HasAbilities GondorianSpearman where
 instance RunMessage GondorianSpearman where
   runMessage msg s@(GondorianSpearman a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 windows -> do
-      pushAll $ take 1 [DealDamage (toSource a) (toTarget eid) 1 | Window _ (DeclaredAsDefender _ eid) <- windows]
+      for_ (headMay [eid | Window _ (DeclaredAsDefender _ eid) <- windows]) \eid -> dealDamage a eid 1
       pure s
     _ -> GondorianSpearman <$> runMessage msg a

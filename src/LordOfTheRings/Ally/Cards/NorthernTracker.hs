@@ -20,6 +20,6 @@ instance RunMessage NorthernTracker where
   runMessage msg s@(NorthernTracker a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       staged <- select LocationInStagingArea
-      pushAll [PlaceTokens (toSource a) (toTarget l) Progress 1 | l <- staged]
+      for_ staged \l -> placeProgress a l 1
       pure s
     _ -> NorthernTracker <$> runMessage msg a
