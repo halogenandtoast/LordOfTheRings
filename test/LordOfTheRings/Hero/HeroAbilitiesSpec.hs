@@ -75,7 +75,7 @@ spec = do
       [top, second] <- setEncounterDeck [Enemies.forestSpider, Enemies.kingSpider]
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid denethor
-      chooseLabel "Move it to the bottom" pid
+      chooseLabel "$label.moveToBottom" pid
       getEncounterDeck `shouldReturn` [second, top]
 
   describe "Gimli" do

@@ -28,5 +28,5 @@ spec = describe "Snowbourn Scout" do
 
   it "can pass on the response" . gameTest $ \pid -> do
     location <- playScout pid
-    chooseLabel "Pass" pid
+    chooseLabel "$label.pass" pid
     progressOn location `shouldReturn` 0

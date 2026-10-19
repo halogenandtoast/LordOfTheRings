@@ -32,7 +32,7 @@ instance RunMessage RainOfArrows where
       choose <- choosePlayer pid (Just $ toTarget attrs) \p ->
         [DealDamage (toSource attrs) (toTarget eid) 1 | eid <- fromMaybe [] (lookup p volleys)]
       push
-        $ questionLabelWith "Exhaust a ranged character" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.rainOfArrows.exhaust") (Just $ toTarget attrs) [] pid
           [targetLabel c [Exhaust c, choose] | c <- archers]
       pure e
     _ -> RainOfArrows <$> runMessage msg attrs

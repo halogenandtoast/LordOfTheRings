@@ -20,7 +20,7 @@ instance RunMessage SneakAttack where
       let returnLater c = Effect (toSource attrs) (CardIdTarget c.id) [ReturnToHandAtEndOfPhase] UntilEndOfPhase
       unless (null allies)
         $ push
-        $ questionLabelWith "Choose an ally to put into play" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.chooseAllyToPutIntoPlay") (Just $ toTarget attrs) [] pid
           [targetLabel (CardIdTarget c.id) [CreateEffect (returnLater c), PutAllyIntoPlay pid c.id] | c <- allies]
       pure e
     _ -> SneakAttack <$> runMessage msg attrs

@@ -20,7 +20,7 @@ instance RunMessage DolGuldurOrcs where
       committed <- selectCharacters CommittedHero CommittedAlly
       unless (null committed)
         $ push
-        $ questionLabelWith "Deal 2 damage to a committed character" (Just $ toTarget attrs) [] lead
+        $ questionLabelWith (ikey "label.dolGuldurOrcs.damage") (Just $ toTarget attrs) [] lead
           [targetLabel c [DealDamage (toSource attrs) c 2] | c <- committed]
       pure e
     ResolveShadowEffect cid eid _ defender | cid == attrs.cardId -> do

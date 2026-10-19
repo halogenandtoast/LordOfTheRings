@@ -42,7 +42,7 @@ spec = describe "Combat phase" do
     _ <- setEncounterDeck [Locations.oldForestRoad]
     run $ BeginPhase CombatPhase
     passActions pid
-    chooseLabel "Take the attack undefended" pid
+    chooseLabel "$label.takeAttackUndefended" pid
     beravor <- getHeroWithCode "01012"
     chooseTarget pid beravor
     (.damage) <$> getHeroWithCode "01012" `shouldReturn` 3
@@ -61,7 +61,7 @@ spec = describe "Combat phase" do
     -- Beravor (2) and Theodred (2) against the spider's 1 defense
     getHeroWithCode "01012" >>= chooseTarget pid
     getHeroWithCode "01002" >>= chooseTarget pid
-    chooseLabel "Done attacking" pid
+    chooseLabel "$label.doneAttacking" pid
     (.damage) <$> spider `shouldReturn` 3
     heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
 
@@ -91,7 +91,7 @@ spec = describe "Combat phase" do
     run $ EngageEnemy pid second
     run $ EnemyAttacks pid
     Just (QuestionLabel prompt _ targets _) <- getQuestion pid
-    prompt `shouldBe` "Choose the next enemy attack to resolve"
+    prompt `shouldBe` "$label.chooseNextAttack"
     length targets `shouldBe` 2
 
   it "turns each shadow card face up as its attack resolves, blank ones too" . gameTest $ \pid -> do

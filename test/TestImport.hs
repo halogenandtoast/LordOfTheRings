@@ -104,7 +104,7 @@ chooseAbility pid = chooseOptionMatching "use ability" pid \case
 flipFirstQuest :: PlayerId -> GameT ()
 flipFirstQuest pid = do
   run Setup
-  chooseLabel "Keep this hand" pid
+  chooseLabel "$label.keepHand" pid
   chooseOptionMatching "flip the quest" pid (const True)
 
 -- | Process exactly one message, leaving whatever it queues unprocessed.
@@ -150,8 +150,8 @@ getCharacterDamage = getDamage
 passActions :: PlayerId -> GameT ()
 passActions pid =
   getQuestion pid >>= \case
-    Just (QuestionLabel prompt _ _ q) | prompt `elem` ["Take an action?", "Play cards or use actions"] ->
-      case findIndex (\case Label l _ -> l `elem` ["Pass", "Done Planning"]; _ -> False) (questionChoices q) of
+    Just (QuestionLabel prompt _ _ q) | prompt `elem` ["$label.takeAction", "$label.planningActions"] ->
+      case findIndex (\case Label l _ -> l `elem` ["$label.pass", "$label.donePlanning"]; _ -> False) (questionChoices q) of
         Just n -> answerQuestion pid n >> passActions pid
         Nothing -> pure ()
     _ -> pure ()

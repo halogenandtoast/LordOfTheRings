@@ -30,7 +30,7 @@ instance RunMessage DunedainMark where
         AttachedTo (HeroTarget hid) -> select (not_ $ HeroWithId hid)
         _ -> pure []
       push
-        $ questionLabelWith "Move Dúnedain Mark to another hero" (Just $ toTarget attrs) [] p
+        $ questionLabelWith (ikey "label.dunedainMark.move") (Just $ toTarget attrs) [] p
           [targetLabel h [AttachCard (toId attrs) (toTarget h)] | h <- others]
       pure d
     _ -> DunedainMark <$> runMessage msg attrs

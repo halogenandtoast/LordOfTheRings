@@ -33,6 +33,6 @@ spec = describe "Serialization" do
     run Setup
     g <- getGame
     either error putGame (roundTrip g)
-    chooseLabel "Keep this hand" pid
+    chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
     getsGame (length . (.entities.enemies)) `shouldReturn` 1

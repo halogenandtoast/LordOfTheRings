@@ -20,10 +20,10 @@ instance RunMessage CommonCause where
       -- the hero exhausted is ready now, so it is never one of these
       exhausted <- select ExhaustedHero
       let readyOne =
-            questionLabelWith "Choose a different hero to ready" (Just $ toTarget attrs) [] pid
+            questionLabelWith (ikey "label.commonCause.ready") (Just $ toTarget attrs) [] pid
               [targetLabel h [Ready (toTarget h)] | h <- exhausted]
       push
-        $ questionLabelWith "Choose a hero you control to exhaust" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.commonCause.exhaust") (Just $ toTarget attrs) [] pid
           [targetLabel h [Exhaust (toTarget h), readyOne] | h <- ready]
       pure e
     _ -> CommonCause <$> runMessage msg attrs

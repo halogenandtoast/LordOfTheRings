@@ -18,7 +18,7 @@ instance RunMessage FliesAndSpiders where
   runMessage msg q@(FliesAndSpiders attrs) = case msg of
     DoStep 7 Setup -> do
       lead <- getLead
-      push $ questionLabel "Perform setup: flip Flies and Spiders" lead [targetLabel attrs [Flip $ toTarget attrs]]
+      push $ questionLabel (ikeyWith "label.performSetup" (cardVar "quest" attrs)) lead [targetLabel attrs [Flip $ toTarget attrs]]
       pure q
     Flip (isTarget attrs -> True) -> do
       lead <- getLead

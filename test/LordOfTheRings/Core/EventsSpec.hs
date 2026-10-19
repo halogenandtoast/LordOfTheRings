@@ -7,6 +7,7 @@ import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
+import LordOfTheRings.I18n (ikeyWith, intVar)
 import TestImport
 
 handSize :: PlayerId -> GameT Int
@@ -49,11 +50,11 @@ spec = do
       getCharacterDamage eowyn `shouldReturn` 0
       getCharacterDamage theodred `shouldReturn` 0
 
-  describe "The Galadhrim's Greeting" do
+  describe "$label.theGaladhrimsGreeting.title" do
     it "reduces one player's threat by 6" . gameTest $ \pid -> do
       run $ RaiseThreat pid 20
       _ <- playWith pid "01007" 3 Events.theGaladhrimsGreeting
-      chooseLabel "Reduce one player's threat by 6" pid
+      chooseLabel "$label.theGaladhrimsGreeting.one" pid
       (.threat) <$> getPlayer pid `shouldReturn` 14
 
   describe "A Light in the Dark" do
@@ -142,7 +143,7 @@ spec = do
     it "looks at the top X cards of a deck and adds one to hand" . gameTestWith (coreDeck "lore") $ \pid -> do
       deck <- (.deck) <$> getPlayer pid
       _ <- playWith pid "01012" 2 Events.gandalfsSearch
-      chooseLabel "X = 2" pid
+      chooseLabel (ikeyWith "label.xEquals" [intVar "x" 2]) pid
       let [top, second] = take 2 deck
       chooseTarget pid (CardIdTarget second.id)
       map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem second.id)

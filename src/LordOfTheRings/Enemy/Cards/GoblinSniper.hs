@@ -30,7 +30,7 @@ instance RunMessage GoblinSniper where
         characters <- charactersControlledBy p
         unless (null characters)
           $ push
-          $ questionLabelWith "Deal 1 damage to a character you control" (Just $ toTarget attrs) [] p
+          $ questionLabelWith (ikey "label.goblinSniper.damage") (Just $ toTarget attrs) [] p
             [targetLabel c [DealDamage (toSource attrs) c 1] | c <- characters]
       pure e
     _ -> GoblinSniper <$> runMessage msg attrs

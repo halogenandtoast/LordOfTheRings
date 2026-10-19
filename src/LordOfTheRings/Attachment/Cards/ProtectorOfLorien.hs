@@ -25,8 +25,8 @@ instance RunMessage ProtectorOfLorien where
         AttachedTo host -> do
           let boost m = CreateEffect $ Effect (toSource a) host [m] UntilEndOfPhase
           push
-            $ questionLabelWith "Give the attached hero" (Just $ toTarget a) [host] pid
-              [Label "+1 defense" [boost $ DefenseModifier 1], Label "+1 willpower" [boost $ WillpowerModifier 1]]
+            $ questionLabelWith (ikey "label.protectorOfLorien.give") (Just $ toTarget a) [host] pid
+              [Label (ikey "label.protectorOfLorien.defense") [boost $ DefenseModifier 1], Label (ikey "label.protectorOfLorien.willpower") [boost $ WillpowerModifier 1]]
         _ -> pure ()
       pure s
     _ -> ProtectorOfLorien <$> runMessage msg a

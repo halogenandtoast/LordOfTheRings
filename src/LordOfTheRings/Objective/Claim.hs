@@ -7,6 +7,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Objective.Types
 import LordOfTheRings.Placement (Placement (StagingArea))
+import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Target
@@ -23,5 +24,5 @@ claimObjective :: (HasGame m) => PlayerId -> ObjectiveAttrs -> m Message
 claimObjective pid a = do
   heroes <- select (HeroControlledBy $ PlayerWithId pid)
   pure
-    $ questionLabelWith "Attach the objective to a hero you control" (Just $ toTarget a) [] pid
+    $ questionLabelWith (ikey "label.claimObjective") (Just $ toTarget a) [] pid
       [targetLabel h [ClaimObjective a.id (toTarget h)] | h <- heroes]

@@ -23,7 +23,7 @@ instance RunMessage ToTheRiver where
   runMessage msg q@(ToTheRiver attrs) = case msg of
     DoStep 7 Setup -> do
       lead <- getLead
-      push $ questionLabel "Perform setup: flip To the River..." lead [targetLabel attrs [Flip $ toTarget attrs]]
+      push $ questionLabel (ikeyWith "label.performSetup" (cardVar "quest" attrs)) lead [targetLabel attrs [Flip $ toTarget attrs]]
       pure q
     Flip (isTarget attrs -> True) -> do
       lead <- getLead

@@ -23,7 +23,7 @@ instance RunMessage StrengthOfWill where
       spirits <- selectCharacters (ReadyHero <> HeroWithSphere Spirit) (ReadyAlly <> AllyWithSphere Spirit)
       for_ (headMay [lid | Window _ (Traveled lid) <- windows]) \lid ->
         push
-          $ questionLabelWith "Exhaust a Spirit character" (Just $ toTarget attrs) [toTarget lid] pid
+          $ questionLabelWith (ikey "label.strengthOfWill.exhaust") (Just $ toTarget attrs) [toTarget lid] pid
             [targetLabel c [Exhaust c, PlaceTokens (toSource attrs) (toTarget lid) Progress 2] | c <- spirits]
       pure e
     _ -> StrengthOfWill <$> runMessage msg attrs

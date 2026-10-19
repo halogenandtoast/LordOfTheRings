@@ -48,4 +48,4 @@ spec = describe "Damage" do
     run $ Discard eowyn
     run $ AttackDamage eid eowyn
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
-    prompt `shouldBe` "The attack is undefended: which hero takes the damage?"
+    prompt `shouldBe` "$label.undefendedDamage"

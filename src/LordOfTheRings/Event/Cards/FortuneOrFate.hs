@@ -24,6 +24,6 @@ instance RunMessage FortuneOrFate where
           | PlayerCard pc <- discard
           , cdCardType (toCardDef pc) == HeroType
           ]
-      unless (null choices) $ push $ questionLabelWith "Choose a hero to put into play" (Just $ toTarget attrs) [] pid choices
+      unless (null choices) $ push $ questionLabelWith (ikey "label.fortuneOrFate.choose") (Just $ toTarget attrs) [] pid choices
       pure e
     _ -> FortuneOrFate <$> runMessage msg attrs

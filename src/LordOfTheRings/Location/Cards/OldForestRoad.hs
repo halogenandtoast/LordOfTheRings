@@ -22,7 +22,7 @@ instance RunMessage OldForestRoad where
       exhausted <- selectCharacters (HeroControlledBy (PlayerWithId lead) <> ExhaustedHero) (AllyControlledBy (PlayerWithId lead) <> ExhaustedAlly)
       unless (null exhausted)
         $ push
-        $ questionLabelWith "Ready a character you control" (Just $ toTarget a) [] lead
+        $ questionLabelWith (ikey "label.oldForestRoad.ready") (Just $ toTarget a) [] lead
           [targetLabel c [Ready c] | c <- exhausted]
       pure l
     _ -> OldForestRoad <$> runMessage msg a

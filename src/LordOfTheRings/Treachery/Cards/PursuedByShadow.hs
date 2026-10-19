@@ -28,7 +28,7 @@ instance RunMessage PursuedByShadow where
         $ if null allies
           then RaiseThreat pid 3
           else
-            questionLabelWith "Return an exhausted ally to its owner's hand" (Just $ toTarget attrs) [] pid
+            questionLabelWith (ikey "label.pursuedByShadow.returnAlly") (Just $ toTarget attrs) [] pid
               [targetLabel a [ReturnToHand (toTarget a)] | a <- allies]
       pure t
     _ -> PursuedByShadow <$> runMessage msg attrs

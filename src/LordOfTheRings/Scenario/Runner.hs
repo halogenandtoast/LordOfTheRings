@@ -6,6 +6,7 @@ import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
+import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Source (Source, sourceTarget)
@@ -63,12 +64,12 @@ instance RunMessage ScenarioAttrs where
       for_ (headMay attrs.encounterDeck) \top ->
         push
           $ Ask pid
-          $ QuestionLabel "The top card of the encounter deck" (sourceTarget source) []
+          $ QuestionLabel (ikey "label.topOfEncounterDeck") (sourceTarget source) []
           $ SearchCards [EncounterCard top]
           $ ChooseOne
           $ if canMove
-            then [Label "Leave it on top" [], Label "Move it to the bottom" [MoveTopOfEncounterDeckToBottom]]
-            else [Label "Continue" []]
+            then [Label (ikey "label.leaveOnTop") [], Label (ikey "label.moveToBottom") [MoveTopOfEncounterDeckToBottom]]
+            else [Label (ikey "label.continue") []]
       pure attrs
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
       top : rest -> pure $ attrs & encounterDeckL .~ rest <> [top]
@@ -95,20 +96,20 @@ instance RunMessage ScenarioAttrs where
       push
         $ Ask pid
         $ QuestionLabel
-          (if null choices then "Nothing found: the search turned up no match" else "Choose a card to add to the staging area")
+          (if null choices then (ikey "label.searchFoundNothing") else (ikey "label.searchChoose"))
           (Just source)
           []
         $ SearchCards (map EncounterCard $ attrs.encounterDeck <> attrs.encounterDiscard)
         $ ChooseOne
-        $ if null choices then [Label "Continue" [ShuffleDeck EncounterDeck]] else choices
+        $ if null choices then [Label (ikey "label.continue") [ShuffleDeck EncounterDeck]] else choices
       pure attrs
     DebugSearchEncounterDeck pid -> do
       push
         $ Ask pid
-        $ QuestionLabel "Reveal a card" Nothing []
+        $ QuestionLabel (ikey "label.revealCard") Nothing []
         $ SearchCards (map EncounterCard attrs.encounterDeck)
         $ ChooseOne
-        $ Label "Done" []
+        $ Label (ikey "label.done") []
         : [targetLabel y [RemoveFromEncounterDeck y, RevealCard y] | y <- attrs.encounterDeck]
       pure attrs
     AdvanceQuest -> case attrs.questDeck of

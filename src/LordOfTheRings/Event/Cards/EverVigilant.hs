@@ -16,7 +16,7 @@ instance RunMessage EverVigilant where
     PlayEvent pid card _ | card.id == toId attrs -> do
       allies <- select ExhaustedAlly
       push
-        $ questionLabelWith "Choose an ally to ready" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.everVigilant.ready") (Just $ toTarget attrs) [] pid
           [targetLabel a [Ready (toTarget a)] | a <- allies]
       pure e
     _ -> EverVigilant <$> runMessage msg attrs

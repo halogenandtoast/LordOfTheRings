@@ -164,6 +164,7 @@ library
       LordOfTheRings.Hero.Import.Lifted
       LordOfTheRings.Hero.Runner
       LordOfTheRings.Hero.Types
+      LordOfTheRings.I18n
       LordOfTheRings.Id
       LordOfTheRings.Json
       LordOfTheRings.Keyword

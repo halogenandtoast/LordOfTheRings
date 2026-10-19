@@ -29,11 +29,11 @@ instance RunMessage MountainsOfMirkwood where
         top <- take 5 . (.deck) <$> getPlayer p
         pure
           $ Ask p
-          $ QuestionLabel "Add 1 of the top 5 cards of your deck to your hand" (Just $ toTarget a) []
+          $ QuestionLabel (ikey "label.mountainsOfMirkwood.search") (Just $ toTarget a) []
           $ SearchCards top
           $ ChooseOne
           $ [targetLabel (CardIdTarget c.id) [TakeFromDeck p c.id, ShufflePlayerDeck p] | c <- top]
-          <> [Label "Take nothing" [ShufflePlayerDeck p]]
+          <> [Label (ikey "label.takeNothing") [ShufflePlayerDeck p]]
       pushAll searches
       pure l
     _ -> MountainsOfMirkwood <$> runMessage msg a

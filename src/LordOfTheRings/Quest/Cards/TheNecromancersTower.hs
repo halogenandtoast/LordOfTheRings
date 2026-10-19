@@ -32,7 +32,7 @@ instance RunMessage TheNecromancersTower where
   runMessage msg q@(TheNecromancersTower attrs) = case msg of
     DoStep 7 Setup -> do
       lead <- getLead
-      push $ questionLabel "Perform setup: flip The Necromancer's Tower" lead [targetLabel attrs [Flip $ toTarget attrs]]
+      push $ questionLabel (ikeyWith "label.performSetup" (cardVar "quest" attrs)) lead [targetLabel attrs [Flip $ toTarget attrs]]
       pure q
     Flip (isTarget attrs -> True) -> do
       send $ FlipCard attrs.cardId

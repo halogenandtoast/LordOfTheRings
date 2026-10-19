@@ -24,9 +24,9 @@ instance RunMessage QuickStrike where
       ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
       enemies <- select (EnemyEngagedWith $ PlayerWithId pid)
       push
-        $ questionLabelWith "Exhaust a character to attack with" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.quickStrike.exhaust") (Just $ toTarget attrs) [] pid
           [ targetLabel c
-              [ questionLabelWith "Attack which enemy?" (Just c) [] pid
+              [ questionLabelWith (ikey "label.quickStrike.enemy") (Just c) [] pid
                   [targetLabel eid [AttackWith c, ResolveAttack pid eid] | eid <- enemies]
               ]
           | c <- ready

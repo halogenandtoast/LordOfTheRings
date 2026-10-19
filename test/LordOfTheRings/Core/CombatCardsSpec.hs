@@ -65,7 +65,7 @@ spec = do
       run $ BeginPhase CombatPhase
       passActions pid
       Just (QuestionLabel prompt _ _ _) <- getQuestion pid
-      prompt `shouldBe` "Declare attackers"
+      prompt `shouldBe` "$label.declareAttackers"
 
   describe "Feint" do
     it "stops an engaged enemy attacking this phase" . tacticsTest $ \pid -> do
@@ -77,7 +77,7 @@ spec = do
       chooseTarget pid eid
       passActions pid
       Just (QuestionLabel prompt _ _ _) <- getQuestion pid
-      prompt `shouldBe` "Declare attackers"
+      prompt `shouldBe` "$label.declareAttackers"
 
   describe "Thicket of Spears" do
     it "is paid from 3 different heroes and stops the player's enemies attacking" . tacticsTest $ \pid -> do
@@ -91,7 +91,7 @@ spec = do
       resources `shouldBe` [1, 1, 1]
       passActions pid
       Just (QuestionLabel prompt _ _ _) <- getQuestion pid
-      prompt `shouldBe` "Declare attackers"
+      prompt `shouldBe` "$label.declareAttackers"
 
     it "cannot be played with fewer than 3 heroes able to pay" . tacticsTest $ \pid -> do
       card <- putCardIntoHand pid Events.thicketOfSpears
@@ -110,7 +110,7 @@ spec = do
       passActions pid
       chooseTarget pid =<< hero "01004"
       chooseTarget pid =<< hero "01006"
-      chooseLabel "Done declaring defenders" pid
+      chooseLabel "$label.doneDeclaringDefenders" pid
       -- 3 attack against 2 + 2 defense
       chooseTarget pid =<< hero "01004"
       (getCharacterDamage =<< hero "01004") `shouldReturn` 0
@@ -124,11 +124,11 @@ spec = do
       _ <- setEncounterDeck [Locations.oldForestRoad]
       run $ BeginPhase CombatPhase
       passActions pid
-      chooseLabel "Take the attack undefended" pid
+      chooseLabel "$label.takeAttackUndefended" pid
       chooseTarget pid =<< hero "01006"
       chooseTarget pid =<< hero "01005"
       chooseTarget pid =<< hero "01004"
-      chooseLabel "Done attacking" pid
+      chooseLabel "$label.doneAttacking" pid
       legolas <- hero "01005"
       chooseAbilityOf pid legolas
       (.progress) <$> getActiveQuest `shouldReturn` 2
@@ -138,7 +138,7 @@ spec = do
       _ <- setEncounterDeck [Enemies.forestSpider]
       run $ BeginPhase QuestPhase
       chooseTarget pid =<< hero "01006"
-      chooseLabel "Done committing" pid
+      chooseLabel "$label.doneCommitting" pid
       eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
       enemyDamage eid `shouldReturn` 1
 
@@ -165,7 +165,7 @@ spec = do
       for_ orcs \eid -> run $ EngageEnemy pid eid
       run $ PlayerAttacks pid
       chooseTarget pid gimli
-      chooseLabel "Done attacking" pid
+      chooseLabel "$label.doneAttacking" pid
       blade <- getsGame (toTarget . fromJustNote "no blade" . headMay . toList . (.entities.attachments))
       chooseAbilityOf pid blade
       (.progress) <$> getActiveQuest `shouldReturn` 1

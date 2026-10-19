@@ -7,6 +7,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (..), mkAfter, mkWhen)
+import LordOfTheRings.I18n (cardVar, ikeyWith)
 import TestImport
 
 hero :: CardCode -> GameT Target
@@ -45,7 +46,7 @@ spec = do
       run $ ResolveShadow eid pid Nothing
       riders <- enemiesWith Enemies.wolfRider
       length riders `shouldBe` 1
-      prompt pid `shouldReturn` Just "Wolf Rider attacks: declare a defender"
+      prompt pid `shouldReturn` Just (ikeyWith "label.declareDefender" (cardVar "enemy" Enemies.wolfRider))
 
   describe "Hill Troll" do
     it "raises the player's threat by the excess damage of its attack" . gameTest $ \pid -> do
@@ -159,7 +160,7 @@ spec = do
       reveal Locations.theEastBight []
       reveal Locations.forestGate []
       run $ BeginPhase TravelPhase
-      prompt pid `shouldReturn` Just "You must travel to a location"
+      prompt pid `shouldReturn` Just "$label.mustTravel"
 
   describe "Banks of the Anduin" do
     it "returns to the top of the encounter deck when it leaves play" . gameTest $ \_ -> do

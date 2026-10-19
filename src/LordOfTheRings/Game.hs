@@ -41,6 +41,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (..), placementController)
 import LordOfTheRings.Player.Runner as X
+import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest
 import LordOfTheRings.Question
@@ -235,7 +236,7 @@ runGameMessage msg g = case msg of
     player <- getPlayer pid
     unless (null player.hand)
       $ push
-      $ questionLabelWith "Choose a card to discard from your hand" (sourceTarget source) [] pid
+      $ questionLabelWith (ikey "label.chooseCardToDiscardFromHand") (sourceTarget source) [] pid
         [targetLabel (CardIdTarget c.id) [DiscardFromHand pid c.id, ChooseAndDiscardFromHand pid source (n - 1)] | c <- player.hand]
     pure g
   CheckDefeated target -> do
@@ -249,7 +250,7 @@ runGameMessage msg g = case msg of
     pure g
   Destroy target@(EnemyTarget eid) -> do
     enemy <- getEnemy eid
-    send $ Log $ display enemy.name <> " is destroyed"
+    send $ Log $ ikeyWith "log.destroyed" (cardVar "name" enemy)
     case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         let card = MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
@@ -278,10 +279,10 @@ runGameMessage msg g = case msg of
       $ push
       $ if null forced
         then
-          questionLabel "Travel to a location?" lead
+          questionLabel (ikey "label.travelToLocation") lead
             $ [targetLabel lid [TravelTo lid] | lid <- locations]
-            <> [Label "Do not travel" []]
-        else questionLabel "You must travel to a location" lead [targetLabel lid [TravelTo lid] | lid <- forced]
+            <> [Label (ikey "label.doNotTravel") []]
+        else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
     pure $ g & phaseL .~ TravelPhase
   TravelTo lid -> do
     pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
@@ -297,9 +298,9 @@ runGameMessage msg g = case msg of
       if length staged > 1 then notElem CannotBeOptionallyEngagedWhileOthersInStaging <$> getModifiers eid else pure True
     unless (null enemies)
       $ push
-      $ questionLabel "Engage an enemy from the staging area?" pid
+      $ questionLabel (ikey "label.optionalEngagement") pid
       $ [targetLabel eid [EngageEnemy pid eid] | eid <- enemies]
-      <> [Label "Do not engage" []]
+      <> [Label (ikey "label.doNotEngage") []]
     pure g
   EngagementCheck pid seatsPassed -> do
     skip <- elem NoEngagementChecks <$> getModifiers GameTarget
@@ -336,20 +337,20 @@ runGameMessage msg g = case msg of
       [eid] -> push $ EnemyAttack pid eid
       _ ->
         push
-          $ questionLabelWith "Choose the next enemy attack to resolve" Nothing (map toTarget enemies) pid
+          $ questionLabelWith (ikey "label.chooseNextAttack") Nothing (map toTarget enemies) pid
             [targetLabel eid [EnemyAttack pid eid, ChooseEnemyAttack pid (filter (/= eid) enemies)] | eid <- enemies]
     pure g
   EnemyAttack pid eid -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
     defenders <- readyCharacters pid
-    enemyName <- display . (.name) <$> getEnemy eid
+    enemyName <- cardVar "enemy" <$> getEnemy eid
     let declare =
           if many
             then DeclareDefenders pid eid []
             else
-              questionLabelWith (enemyName <> " attacks: declare a defender") (Just $ toTarget eid) [] pid
+              questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
                 $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
-                <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+                <> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
     pushAll [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
     pure g
   DefendWith pid eid defender -> do
@@ -362,16 +363,16 @@ runGameMessage msg g = case msg of
     pure g
   DeclareDefenders pid eid chosen -> do
     defenders <- readyCharacters pid
-    enemyName <- display . (.name) <$> getEnemy eid
+    enemyName <- cardVar "enemy" <$> getEnemy eid
     push
-      $ questionLabelWith (enemyName <> " attacks: declare any number of defenders") (Just $ toTarget eid) chosen pid
+      $ questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
       $ [ targetLabel d [Exhaust d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
         | d <- defenders
         ]
       <> case chosen of
-        [] -> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+        [] -> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
         first : _ ->
-          [ Label "Done declaring defenders"
+          [ Label (ikey "label.doneDeclaringDefenders")
               [ResolveShadow eid pid (Just first), DefendedByMany pid eid chosen, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
           ]
     pure g
@@ -391,7 +392,7 @@ runGameMessage msg g = case msg of
     choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid (toTarget h) attack
     unless (null heroes)
       $ push
-      $ questionLabelWith "The attack is undefended: which hero takes the damage?" (Just $ toTarget eid) [] pid choices
+      $ questionLabelWith (ikey "label.undefendedDamage") (Just $ toTarget eid) [] pid choices
     pure g
   PlayerAttacks pid -> do
     enemies <- engagedByCost pid
@@ -403,11 +404,11 @@ runGameMessage msg g = case msg of
     staged <- select EnemyInStagingArea
     when (ready && notNull staged)
       $ push
-      $ questionLabelWith "Attack an enemy in the staging area alone?" (Just attacker) [] pid
+      $ questionLabelWith (ikey "label.attackStagingAlone") (Just attacker) [] pid
       $ [ targetLabel eid [AttackWith attacker, CreateEffect $ Effect GameSource attacker [AttackModifier 1] UntilEndOfPhase, ResolveAttack pid eid]
         | eid <- staged
         ]
-      <> [Label "Do not attack" []]
+      <> [Label (ikey "label.doNotAttack") []]
     pure g
   DeclareAttackers pid eid -> do
     attackers <- readyCharacters pid
@@ -415,9 +416,9 @@ runGameMessage msg g = case msg of
       $ if null attackers
         then ResolveAttack pid eid
         else
-          questionLabelWith "Declare attackers" Nothing [toTarget eid] pid
+          questionLabelWith (ikey "label.declareAttackers") Nothing [toTarget eid] pid
             $ [targetLabel a [AttackWith a, DeclareAttackers pid eid] | a <- attackers]
-            <> [Label "Done attacking" [ResolveAttack pid eid]]
+            <> [Label (ikey "label.doneAttacking") [ResolveAttack pid eid]]
     pure g
   ResolveAttack pid eid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> AttackingHero)
@@ -472,11 +473,11 @@ runGameMessage msg g = case msg of
         let name = display (cdName $ toCardDef card)
             effect = if cdShadowEffect (toCardDef card) then "" else " (no shadow effect)"
         send $ FlipCard cid
-        send $ Log $ "Shadow card for " <> display enemy.name <> ": " <> name <> effect
-        send $ Announce $ "Shadow: " <> name
+        send $ Log $ ikeyWith (if cdShadowEffect (toCardDef card) then "log.shadowRevealed" else "log.shadowRevealedNoEffect") (cardVar "enemy" enemy <> cardVar "card" card)
+        send $ Announce $ ikeyWith "log.shadowAnnounce" (cardVar "card" card)
     pure g
   AttachShadowCard eid _ -> do
-    for_ (Map.lookup eid g.entities.enemies) \enemy -> send $ Log $ display enemy.name <> " is dealt a shadow card"
+    for_ (Map.lookup eid g.entities.enemies) \enemy -> send $ Log $ ikeyWith "log.dealtShadow" (cardVar "enemy" enemy)
     pure g
   ResolveShadowCard cid eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
@@ -485,7 +486,7 @@ runGameMessage msg g = case msg of
         resolveShadowEffect card (ResolveShadowEffect cid eid pid mDefender)
     pure g
   ShuffleIntoEncounterDeck target@(ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
-    send . Log . (<> " is shuffled into the encounter deck") . fromMaybe "An objective" =<< targetName target
+    send $ Log $ ikeyWith "log.shuffledIntoEncounterDeck" (cardVar "name" o)
     deck <- shuffleM (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
   PutShadowTreacheryIntoPlay host cid placement -> do
@@ -499,19 +500,19 @@ runGameMessage msg g = case msg of
     ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
     unless (null ready)
       $ push
-      $ questionLabelWith "Choose and exhaust a character" (sourceTarget source) [] pid
+      $ questionLabelWith (ikey "label.chooseAndExhaustCharacter") (sourceTarget source) [] pid
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
     pure g
   ChooseAndExhaustHero source pid -> do
     ready <- map toTarget <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
     unless (null ready)
       $ push
-      $ questionLabelWith "Choose and exhaust a hero" (sourceTarget source) [] pid [targetLabel h [Exhaust h] | h <- ready]
+      $ questionLabelWith (ikey "label.chooseAndExhaustHero") (sourceTarget source) [] pid [targetLabel h [Exhaust h] | h <- ready]
     pure g
   ChooseAndDiscard source pid targets -> do
     unless (null targets)
       $ push
-      $ questionLabelWith "Choose a card to discard" (sourceTarget source) [] pid [targetLabel t [Discard t] | t <- targets]
+      $ questionLabelWith (ikey "label.chooseCardToDiscard") (sourceTarget source) [] pid [targetLabel t [Discard t] | t <- targets]
     pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
@@ -521,11 +522,11 @@ runGameMessage msg g = case msg of
     quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
     unless (null characters)
       $ push
-      $ questionLabelWith "Commit characters to the quest" Nothing quests pid
+      $ questionLabelWith (ikey "label.commitCharacters") Nothing quests pid
       $ [ targetLabel c [CommitToQuest c, CheckWindows [mkAfter $ CommittedToQuest c], CommitCharacters pid]
         | c <- characters
         ]
-      <> [Label "Done committing" []]
+      <> [Label (ikey "label.doneCommitting") []]
     pure g
   Staging -> do
     mods <- getModifiers GameTarget
@@ -584,17 +585,17 @@ runGameMessage msg g = case msg of
     thisAlly <- newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
     pushWhen limited' $ CreateEffect $ Effect GameSource GameTarget [AllyPlayedThisRound] UntilEndOfRound
-    send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
+    send $ Log $ ikeyWith "log.plays" (nameVar "player" player.name <> cardVar "card" card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- newAlly (fromMaybe pid card.owner) card
-    send $ Log $ display (cdName $ toCardDef card) <> " is put into play"
+    send $ Log $ ikeyWith "log.putIntoPlay" (cardVar "name" card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutHeroIntoPlay pid card -> do
     thisHero <- newHero pid card
-    send $ Log $ display (cdName $ toCardDef card) <> " is put into play"
+    send $ Log $ ikeyWith "log.putIntoPlay" (cardVar "name" card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   CheckWindows windows -> do
@@ -622,28 +623,28 @@ runGameMessage msg g = case msg of
       $ if null available && null fromHand
         then next
         else
-          questionLabel "Use a response?" pid
+          questionLabel (ikey "label.useResponse") pid
             $ [AbilityLabel pid ab windows [ResponseWindow windows order (abilityKey ab : used) 0] | ab <- available]
             <> fromHand
-            <> [Label "Pass" [next]]
+            <> [Label (ikey "label.pass") [next]]
     pure g
   UseAbility pid ab windows -> do
     pushAll $ costMessages (PlayerSource pid) (abilityCost ab) <> [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
     pure g
   PlayEvent pid card _ -> do
     player <- getPlayer pid
-    send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
+    send $ Log $ ikeyWith "log.plays" (nameVar "player" player.name <> cardVar "card" card)
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runMessage msg
     pure g
   ReturnToHand target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     leftPlay g target
     pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
-    send $ Log $ display a.name <> " returns to its owner's hand"
+    send $ Log $ ikeyWith "log.returnsToHand" (cardVar "name" a)
     pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . handL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     leftPlay g target
     pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
-    send $ Log $ display a.name <> " is shuffled into its owner's deck"
+    send $ Log $ ikeyWith "log.shuffledIntoOwnersDeck" (cardVar "name" a)
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
   ReturnToTopOfEncounterDeck target -> do
@@ -676,7 +677,7 @@ runGameMessage msg g = case msg of
     getGame
   EngageOrcGuard pid card -> do
     guard' <- newEnemy (MkEncounterCard card.id (toCardCode orcGuard))
-    send $ Log $ "An Orc Guard engages " <> fromMaybe "a player" ((.name) <$> Map.lookup pid g.players)
+    send $ Log $ ikeyWith "log.orcGuardEngages" (nameVar "player" $ maybe "" (.name) (Map.lookup pid g.players))
     push $ CheckWindows [mkAfter $ EnemyEngaged guard'.id pid]
     pure
       $ g
@@ -684,7 +685,7 @@ runGameMessage msg g = case msg of
       & scenarioL %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
-    send $ Log $ display (cdName $ toCardDef card) <> " is placed in the staging area"
+    send $ Log $ ikeyWith "log.placedInStaging" (cardVar "name" card)
     push $ GuardObjective (toId thisObjective)
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
@@ -694,18 +695,18 @@ runGameMessage msg g = case msg of
   PlayAttachment pid card -> do
     attachment <- newAttachment pid card
     hosts <- attachmentHosts (toAttrs attachment).attachTo
-    send . Log . (<> " plays " <> display (cdName $ toCardDef card)) . (.name) =<< getPlayer pid
+    send . Log . (\p -> ikeyWith "log.plays" (nameVar "player" p.name <> cardVar "card" card)) =<< getPlayer pid
     let attachTo host = targetLabel host [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
     push $ case hosts of
       [host] -> uiToRun (attachTo host)
-      _ -> questionLabelWith "Attach to" (Just $ toTarget attachment) hosts pid (map attachTo hosts)
+      _ -> questionLabelWith (ikey "label.attachTo") (Just $ toTarget attachment) hosts pid (map attachTo hosts)
     pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
   RevealCard card -> do
     let def = toCardDef card
-    send $ Log $ "Revealed " <> display (cdName def)
+    send $ Log $ ikeyWith "log.revealed" (cardVar "name" card)
     players <- getPlayerOrder
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
         doomed = [RaiseThreat p n | Doomed n <- toList (cdKeywords def), p <- players]
@@ -747,54 +748,56 @@ logMessage :: Message -> GameT ()
 logMessage = \case
   BeginRound -> do
     n <- getsGame ((+ 1) . gameRound)
-    send $ Log $ "Round " <> tshow n
+    send $ Log $ ikeyWith "log.round" [intVar "round" n]
   BeginPhase phase -> do
     let label = phaseName phase
     send $ Log label
     send $ Announce label
   RaiseThreat pid n -> do
     player <- getPlayer pid
-    send $ Log $ player.name <> " threat +" <> tshow n
+    send $ Log $ ikeyWith "log.threatRaised" (nameVar "player" player.name <> [intVar "count" n])
   LowerThreat pid n -> do
     player <- getPlayer pid
-    send $ Log $ player.name <> " threat -" <> tshow n
+    send $ Log $ ikeyWith "log.threatLowered" (nameVar "player" player.name <> [intVar "count" n])
   EngageEnemy pid eid -> do
     player <- getPlayer pid
     enemy <- getEnemy eid
-    send $ Log $ display enemy.name <> " engages " <> player.name
-  PlaceTokens _ target Progress n -> whenJustM (targetName target) \name -> send $ Log $ tshow n <> " progress on " <> name
-  DealDamage _ target n | n > 0 -> whenJustM (targetName target) \name -> send $ Log $ name <> " takes " <> tshow n <> " damage"
-  Discard target -> whenJustM (targetName target) \name -> send $ Log $ name <> " leaves play"
+    send $ Log $ ikeyWith "log.engages" (cardVar "enemy" enemy <> nameVar "player" player.name)
+  PlaceTokens _ target Progress n -> whenJustM (targetCard target) \card -> send $ Log $ ikeyWith "log.progress" (intVar "count" n : cardVar "name" card)
+  DealDamage _ target n | n > 0 -> whenJustM (targetCard target) \card -> send $ Log $ ikeyWith "log.takesDamage" (intVar "count" n : cardVar "name" card)
+  Discard target -> whenJustM (targetCard target) \card -> send $ Log $ ikeyWith "log.leavesPlay" (cardVar "name" card)
   AdvanceToQuest card -> send $ FlipCard card.id
   GameOver outcome -> do
-    send $ Log $ "Game over: " <> tshow outcome
-    send $ Announce $ case outcome of
-      Won -> "The players win"
-      Lost -> "The players lose"
+    let key = case outcome of
+          Won -> "won"
+          Lost -> "lost"
+    send $ Log $ ikey $ "log.gameOver." <> key
+    send $ Announce $ ikey $ "log.gameOver." <> key
   _ -> pure ()
 
 phaseName :: Phase -> Text
-phaseName = \case
-  ResourcePhase -> "Resource phase"
-  PlanningPhase -> "Planning phase"
-  QuestPhase -> "Quest phase"
-  TravelPhase -> "Travel phase"
-  EncounterPhase -> "Encounter phase"
-  CombatPhase -> "Combat phase"
-  RefreshPhase -> "Refresh phase"
+phaseName = ikey . ("log.phase." <>) . \case
+  ResourcePhase -> "resource"
+  PlanningPhase -> "planning"
+  QuestPhase -> "quest"
+  TravelPhase -> "travel"
+  EncounterPhase -> "encounter"
+  CombatPhase -> "combat"
+  RefreshPhase -> "refresh"
 
-targetName :: Target -> GameT (Maybe Text)
-targetName target = do
+-- | The card a target is in play, to name it in the log.
+targetCard :: Target -> GameT (Maybe CardCode)
+targetCard target = do
   es <- getsGame gameEntities
-  pure $ display <$> case target of
-    HeroTarget hid -> (.name) <$> Map.lookup hid es.heroes
-    AllyTarget aid -> (.name) <$> Map.lookup aid es.allies
-    EnemyTarget eid -> (.name) <$> Map.lookup eid es.enemies
-    LocationTarget lid -> (.name) <$> Map.lookup lid es.locations
-    AttachmentTarget aid -> (.name) <$> Map.lookup aid es.attachments
-    QuestTarget qid -> (.name) <$> Map.lookup qid es.quests
-    TreacheryTarget tid -> (.name) <$> Map.lookup tid es.treacheries
-    ObjectiveTarget oid -> (.name) <$> Map.lookup oid es.objectives
+  pure $ case target of
+    HeroTarget hid -> toCardCode <$> Map.lookup hid es.heroes
+    AllyTarget aid -> toCardCode <$> Map.lookup aid es.allies
+    EnemyTarget eid -> toCardCode <$> Map.lookup eid es.enemies
+    LocationTarget lid -> toCardCode <$> Map.lookup lid es.locations
+    AttachmentTarget aid -> toCardCode <$> Map.lookup aid es.attachments
+    QuestTarget qid -> toCardCode <$> Map.lookup qid es.quests
+    TreacheryTarget tid -> toCardCode <$> Map.lookup tid es.treacheries
+    ObjectiveTarget oid -> toCardCode <$> Map.lookup oid es.objectives
     _ -> Nothing
 
 eliminationThreat :: Int

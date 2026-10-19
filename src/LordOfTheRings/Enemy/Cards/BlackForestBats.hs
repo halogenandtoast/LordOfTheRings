@@ -20,7 +20,7 @@ instance RunMessage BlackForestBats where
         committed <- selectCharacters (HeroControlledBy (PlayerWithId p) <> CommittedHero) (AllyControlledBy (PlayerWithId p) <> CommittedAlly)
         unless (null committed)
           $ push
-          $ questionLabelWith "Remove a character from the quest" (Just $ toTarget attrs) [] p
+          $ questionLabelWith (ikey "label.blackForestBats.remove") (Just $ toTarget attrs) [] p
             [targetLabel c [RemoveFromQuest c] | c <- committed]
       pure e
     _ -> BlackForestBats <$> runMessage msg attrs

@@ -54,4 +54,4 @@ spec = do
       chooseTarget pid (CardIdTarget card.id)
       -- King Spider's shadow would have the defending player exhaust a character
       Just (QuestionLabel prompt _ _ _) <- getQuestion pid
-      prompt `shouldBe` "Declare attackers"
+      prompt `shouldBe` "$label.declareAttackers"

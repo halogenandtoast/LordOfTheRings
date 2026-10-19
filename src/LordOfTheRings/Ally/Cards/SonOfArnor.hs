@@ -21,7 +21,7 @@ instance RunMessage SonOfArnor where
     UseCardAbility p (isSource attrs -> True) 1 _ -> do
       enemies <- select EnemyInStagingArea
       push
-        $ questionLabelWith "Choose an enemy to engage" (Just $ toTarget attrs) [] p
+        $ questionLabelWith (ikey "label.sonOfArnor.chooseEnemy") (Just $ toTarget attrs) [] p
           [targetLabel e [EngageEnemy p e] | e <- enemies]
       pure s
     _ -> SonOfArnor <$> runMessage msg attrs

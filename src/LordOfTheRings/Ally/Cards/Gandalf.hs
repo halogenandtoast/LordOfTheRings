@@ -20,13 +20,13 @@ instance RunMessage Gandalf where
     UseCardAbility p (isSource attrs -> True) 1 _ -> do
       enemies <- select AnyEnemy
       let damage =
-            questionLabelWith "Deal 4 damage to an enemy" (Just $ toTarget attrs) [] p
+            questionLabelWith (ikey "label.gandalf.chooseEnemy") (Just $ toTarget attrs) [] p
               [targetLabel e [DealDamage (toSource attrs) (toTarget e) 4] | e <- enemies]
       push
-        $ questionLabelWith "Gandalf: choose 1" (Just $ toTarget attrs) [] p
-        $ [Label "Draw 3 cards" [DrawCards $ Drawing p 3]]
-        <> [Label "Deal 4 damage to 1 enemy in play" [damage] | notNull enemies]
-        <> [Label "Reduce your threat by 5" [LowerThreat p 5]]
+        $ questionLabelWith (ikey "label.gandalf.chooseOne") (Just $ toTarget attrs) [] p
+        $ [Label (ikey "label.gandalf.draw") [DrawCards $ Drawing p 3]]
+        <> [Label (ikey "label.gandalf.damage") [damage] | notNull enemies]
+        <> [Label (ikey "label.gandalf.threat") [LowerThreat p 5]]
       pure g
     -- At the end of the round, discard Gandalf from play.
     EndRound -> do

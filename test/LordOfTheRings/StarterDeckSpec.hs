@@ -37,7 +37,7 @@ allyInPlay :: PlayerId -> CardDef -> GameT Ally
 allyInPlay pid def = do
   card <- genPlayerCard def (Just pid)
   run $ PlayAlly pid card
-  whenJustM (getQuestion pid) \_ -> chooseLabel "Pass" pid
+  whenJustM (getQuestion pid) \_ -> chooseLabel "$label.pass" pid
   getsGame (fromJustNote "ally not in play" . find ((== pcId card) . allyCardId . toAttrs) . toList . (.entities.allies))
 
 allies :: GameT [Ally]
@@ -106,7 +106,7 @@ spec = describe "Starter deck" do
       threat <- (.threat) <$> getPlayer pid
       _ <- playFromHand pid Allies.gandalf 5
       chooseAbility pid
-      chooseLabel "Reduce your threat by 5" pid
+      chooseLabel "$label.gandalf.threat" pid
       (.threat) <$> getPlayer pid `shouldReturn` (threat - 5)
 
     it "is discarded at the end of the round" . starterTest $ \pid -> do

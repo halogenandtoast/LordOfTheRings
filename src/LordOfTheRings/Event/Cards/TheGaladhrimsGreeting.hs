@@ -17,9 +17,9 @@ instance RunMessage TheGaladhrimsGreeting where
       order <- getPlayerOrder
       one <- choosePlayer pid (Just $ toTarget attrs) \p -> [LowerThreat p 6]
       push
-        $ questionLabelWith "The Galadhrim's Greeting" (Just $ toTarget attrs) [] pid
-          [ Label "Reduce one player's threat by 6" [one]
-          , Label "Reduce each player's threat by 2" [LowerThreat p 2 | p <- order]
+        $ questionLabelWith (ikey "label.theGaladhrimsGreeting.title") (Just $ toTarget attrs) [] pid
+          [ Label (ikey "label.theGaladhrimsGreeting.one") [one]
+          , Label (ikey "label.theGaladhrimsGreeting.each") [LowerThreat p 2 | p <- order]
           ]
       pure e
     _ -> TheGaladhrimsGreeting <$> runMessage msg attrs

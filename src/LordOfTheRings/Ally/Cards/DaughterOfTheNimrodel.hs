@@ -20,7 +20,7 @@ instance RunMessage DaughterOfTheNimrodel where
       heroes <- filterM (fmap (> 0) . getDamage) . map toTarget =<< select AnyHero
       unless (null heroes)
         $ push
-        $ questionLabelWith "Heal up to 2 damage on a hero" (Just $ toTarget a) [] pid
+        $ questionLabelWith (ikey "label.daughterOfTheNimrodel.heal") (Just $ toTarget a) [] pid
           [targetLabel h [HealDamage (toSource a) h 2] | h <- heroes]
       pure s
     _ -> DaughterOfTheNimrodel <$> runMessage msg a

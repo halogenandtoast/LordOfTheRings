@@ -17,14 +17,14 @@ spec :: Spec
 spec = describe "Journey Along the Anduin" do
   it "sets up To the River... with a Hill Troll in the staging area" . journeyTest $ \pid -> do
     run Setup
-    chooseLabel "Keep this hand" pid
+    chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
     length <$> enemiesWith Enemies.hillTroll `shouldReturn` 1
     (.flipped) <$> getActiveQuest `shouldReturn` True
 
   it "cannot leave To the River... while a Hill Troll is in play" . journeyTest $ \pid -> do
     run Setup
-    chooseLabel "Keep this hand" pid
+    chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
     quest <- toTarget <$> getActiveQuest
     run $ PlaceTokens GameSource quest Progress 20
@@ -37,7 +37,7 @@ spec = describe "Journey Along the Anduin" do
     _ <- putQuestStage Quests.anduinPassage
     _ <- setEncounterDeck [Enemies.forestSpider, Locations.forestGate]
     run $ BeginPhase QuestPhase
-    chooseLabel "Done committing" pid
+    chooseLabel "$label.doneCommitting" pid
     getsGame (length . (.entities.enemies)) `shouldReturn` 1
     getsGame (length . (.entities.locations)) `shouldReturn` 1
     run $ EngagementCheck pid 0
@@ -58,5 +58,5 @@ spec = describe "Journey Along the Anduin" do
     _ <- setEncounterDeck [Enemies.forestSpider, Enemies.forestSpider, Locations.forestGate]
     run $ Flip stage
     run $ BeginPhase QuestPhase
-    chooseLabel "Done committing" pid
+    chooseLabel "$label.doneCommitting" pid
     getsGame (length . (.entities.locations)) `shouldReturn` 0

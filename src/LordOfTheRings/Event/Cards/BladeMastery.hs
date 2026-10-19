@@ -17,7 +17,7 @@ instance RunMessage BladeMastery where
     PlayEvent pid card _ | card.id == toId attrs -> do
       characters <- selectCharacters AnyHero AnyAlly
       push
-        $ questionLabelWith "Choose a character" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.chooseCharacter") (Just $ toTarget attrs) [] pid
           [ targetLabel c [CreateEffect $ Effect (toSource attrs) c [AttackModifier 1, DefenseModifier 1] UntilEndOfPhase]
           | c <- characters
           ]

@@ -22,7 +22,7 @@ instance RunMessage Glorfindel where
       damaged <- damagedCharacters AnyHero AnyAlly
       unless (null damaged)
         $ push
-        $ questionLabelWith "Heal 1 damage on a character" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.glorfindel.heal") (Just $ toTarget attrs) [] pid
           [targetLabel c [HealDamage (toSource attrs) c 1] | c <- damaged]
       pure h
     _ -> Glorfindel <$> runMessage msg attrs

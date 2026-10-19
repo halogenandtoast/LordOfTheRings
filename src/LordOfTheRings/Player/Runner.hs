@@ -21,6 +21,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
 import LordOfTheRings.Player.Types as X
+import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Source
@@ -37,9 +38,9 @@ instance RunMessage Player where
       pure $ player & threatL .~ sum (map (.threat) heroes)
     DoStep 5 Setup -> do
       push
-        $ questionLabel "Keep this starting hand?" player.id
-          [ Label "Keep this hand" []
-          , Label "Mulligan: shuffle all six back and draw again" [Mulligan player.id]
+        $ questionLabel (ikey "label.keepStartingHand") player.id
+          [ Label (ikey "label.keepHand") []
+          , Label (ikey "label.mulligan") [Mulligan player.id]
           ]
       let (hand, deck) = splitAt startingHandSize player.deck
       pure $ player & handL .~ hand & deckL .~ deck
@@ -66,10 +67,10 @@ instance RunMessage Player where
       let (cards, deck) = splitAt drawing.count player.deck
       pure $ if blocked || notNull shackles then player else player & handL <>~ cards & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
-      actionWindow "Play cards or use actions" "Done Planning" $ WithTarget (toTarget player) (DoPhase PlanningPhase)
+      actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") $ WithTarget (toTarget player) (DoPhase PlanningPhase)
       pure player
     ActionWindow pid | pid == player.id -> do
-      actionWindow "Take an action?" "Pass" $ ActionWindow pid
+      actionWindow (ikey "label.takeAction") (ikey "label.pass") $ ActionWindow pid
       pure player
     PlayCard pid cid | pid == player.id -> do
       push $ PlayCardInWindow pid cid []
@@ -95,10 +96,10 @@ instance RunMessage Player where
       -- ponytail: no shuffle after, debug searches leave the deck order alone
       push
         $ Ask pid
-        $ QuestionLabel "Take a card into your hand" Nothing []
+        $ QuestionLabel (ikey "label.takeCardIntoHand") Nothing []
         $ SearchCards player.deck
         $ ChooseOne
-        $ Label "Done" []
+        $ Label (ikey "label.done") []
         : [targetLabel (CardIdTarget c.id) [TakeFromDeck pid c.id, DebugSearchDeck pid] | c <- player.deck]
       pure player
     ReturnFromDiscardToHand pid cid | pid == player.id -> do
@@ -130,7 +131,7 @@ instance RunMessage Player where
     SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id && n > 0 -> do
       payers <- filter ((`notElem` used) . (.id)) <$> payingHeroes sphere player
       push
-        $ questionLabel ("Pay 1 from a different hero (" <> tshow n <> " more)") pid
+        $ questionLabel (ikeyWith "label.payFromDifferentHero" [intVar "count" n]) pid
           [ targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)]
           | x <- payers
           ]
@@ -142,7 +143,7 @@ instance RunMessage Player where
         [x] -> push $ RemoveTokens (toSource player) (toTarget x) Resource n
         xs ->
           push
-            $ questionLabel ("Pay " <> tshow n <> " more") pid
+            $ questionLabel (ikeyWith "label.payMore" [intVar "count" n]) pid
               [ targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResources pid sphere (n - 1)]
               | x <- xs
               ]

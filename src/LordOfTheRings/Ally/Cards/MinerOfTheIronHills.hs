@@ -21,7 +21,7 @@ instance RunMessage MinerOfTheIronHills where
       conditions <- getConditionAttachments
       unless (null conditions)
         $ push
-        $ questionLabelWith "Discard a Condition attachment" (Just $ toTarget a) [] pid
+        $ questionLabelWith (ikey "label.minerOfTheIronHills.discardCondition") (Just $ toTarget a) [] pid
           [targetLabel c [Discard c] | c <- conditions]
       pure s
     _ -> MinerOfTheIronHills <$> runMessage msg a

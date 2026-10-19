@@ -31,7 +31,7 @@ instance RunMessage StandAndFight where
           , Just (StaticCost x) <- [cdCost (toCardDef pc)]
           , x <= spirit
           ]
-      unless (null choices) $ push $ questionLabelWith "Choose an ally to put into play" (Just $ toTarget attrs) [] pid choices
+      unless (null choices) $ push $ questionLabelWith (ikey "label.chooseAllyToPutIntoPlay") (Just $ toTarget attrs) [] pid choices
       pure e
     _ -> StandAndFight <$> runMessage msg attrs
    where

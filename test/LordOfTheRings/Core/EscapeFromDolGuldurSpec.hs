@@ -36,7 +36,7 @@ spec :: Spec
 spec = describe "Escape from Dol Guldur" do
   it "sets up the objectives, sets the Nazgul aside and takes a hero prisoner" . escapeTest $ \pid -> do
     run Setup
-    chooseLabel "Keep this hand" pid
+    chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
     getsGame (length . (.entities.objectives)) `shouldReturn` 3
     map toCardCode . scenarioSetAside . toAttrs <$> getsGame (.scenario) `shouldReturn` [toCardCode Enemies.nazgulOfDolGuldur]
@@ -85,6 +85,6 @@ spec = describe "Escape from Dol Guldur" do
     guards <- getsGame (map toId . filter ((== "OrcGuard") . toCardCode) . toList . (.entities.enemies))
     length guards `shouldBe` 1
     length . (.deck) <$> getPlayer pid `shouldReturn` deck - 1
-    chooseLabel "Done committing" pid
+    chooseLabel "$label.doneCommitting" pid
     for_ guards \eid -> run $ DealDamage GameSource (toTarget eid) 1
     length . (.discard) <$> getPlayer pid `shouldReturn` 1

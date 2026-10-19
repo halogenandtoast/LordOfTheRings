@@ -39,7 +39,7 @@ instance RunMessage CaughtInAWeb where
         heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId p)
         unless (null heroes)
           $ push
-          $ questionLabelWith "Attach Caught in a Web to one of your heroes" (Just $ toTarget attrs) [] p
+          $ questionLabelWith (ikey "label.caughtInAWeb.attach") (Just $ toTarget attrs) [] p
             [targetLabel h [AttachTreachery attrs.treacheryId h] | h <- heroes]
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do

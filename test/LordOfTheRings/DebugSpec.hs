@@ -18,7 +18,7 @@ spec = describe "Debug messages" do
     card : _ <- drop 5 . (.deck) <$> getPlayer pid
     _ <- runDebug $ DebugSearchDeck pid
     chooseTarget pid (CardIdTarget card.id)
-    chooseLabel "Done" pid
+    chooseLabel "$label.done" pid
     map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem card.id)
     map (.id) . (.deck) <$> getPlayer pid >>= (`shouldSatisfy` notElem card.id)
 

@@ -25,18 +25,18 @@ instance RunMessage GandalfsSearch where
         deck <- (.deck) <$> getPlayer p
         pure
           ( p
-          , [ Label ("X = " <> tshow x) [SpendResources pid Lore x, lookAt p (take x deck)]
+          , [ Label (ikeyWith "label.xEquals" [intVar "x" x]) [SpendResources pid Lore x, lookAt p (take x deck)]
             | x <- [1 .. min lore (length deck)]
             ]
           )
       chooseDeck <- choosePlayer pid (Just $ toTarget attrs) \p ->
-        [questionLabelWith "Choose X" (Just $ toTarget attrs) [] pid xs | Just xs@(_ : _) <- [lookup p looks]]
+        [questionLabelWith (ikey "label.chooseX") (Just $ toTarget attrs) [] pid xs | Just xs@(_ : _) <- [lookup p looks]]
       push chooseDeck
       pure e
     _ -> GandalfsSearch <$> runMessage msg attrs
    where
     lookAt p cards =
       Ask (eventOwner attrs)
-        $ QuestionLabel "Add 1 of these cards to its owner's hand" (Just $ toTarget attrs) []
+        $ QuestionLabel (ikey "label.gandalfsSearch.take") (Just $ toTarget attrs) []
         $ SearchCards cards
         $ ChooseOne [targetLabel (CardIdTarget c.id) [TakeFromDeck p c.id] | c <- cards]

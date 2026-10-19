@@ -22,6 +22,7 @@ import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
+import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Trait
@@ -198,7 +199,7 @@ choosePlayer pid source f = do
   players <- filterM (fmap (not . (.eliminated)) . getPlayer) order
   pure $ case players of
     [p] -> Run (f p)
-    ps -> questionLabelWith "Choose a player" source [] pid [targetLabel (PlayerTarget p) (f p) | p <- ps]
+    ps -> questionLabelWith (ikey "label.choosePlayer") source [] pid [targetLabel (PlayerTarget p) (f p) | p <- ps]
 
 -- | The damage on a character, or 0 for anything else.
 getDamage :: (HasGame m) => Target -> m Int

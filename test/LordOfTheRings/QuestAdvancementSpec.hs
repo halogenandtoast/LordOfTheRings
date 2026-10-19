@@ -70,7 +70,7 @@ spec = describe "Quest advancement" do
       _ <- setEncounterDiscard []
       completeQuest
       completeQuest
-      chooseLabel "Continue" pid
+      chooseLabel "$label.continue" pid
       getQuestion pid `shouldReturn` Nothing
 
     it "is won by defeating Ungoliant's Spawn" . gameTest $ \pid -> do

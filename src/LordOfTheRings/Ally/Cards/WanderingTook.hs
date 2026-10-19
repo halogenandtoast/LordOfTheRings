@@ -26,7 +26,7 @@ instance RunMessage WanderingTook where
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       others <- select (NotPlayer $ PlayerWithId pid)
       push
-        $ questionLabelWith "Give control of Wandering Took to" (Just $ toTarget a) [] pid
+        $ questionLabelWith (ikey "label.wanderingTook.giveControl") (Just $ toTarget a) [] pid
           [targetLabel (PlayerTarget p) [LowerThreat pid 3, TakeControl a.id p, RaiseThreat p 3] | p <- others]
       pure s
     _ -> WanderingTook <$> runMessage msg a

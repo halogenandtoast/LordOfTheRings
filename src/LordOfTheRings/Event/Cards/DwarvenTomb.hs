@@ -19,7 +19,7 @@ instance RunMessage DwarvenTomb where
       discard <- filter (\c -> c.id /= card.id && c.sphere == Just Spirit) . (.discard) <$> getPlayer pid
       unless (null discard)
         $ push
-        $ questionLabelWith "Return a Spirit card to your hand" (Just $ toTarget attrs) [] pid
+        $ questionLabelWith (ikey "label.dwarvenTomb.return") (Just $ toTarget attrs) [] pid
           [targetLabel (CardIdTarget c.id) [ReturnFromDiscardToHand pid c.id] | c <- discard]
       pure e
     _ -> DwarvenTomb <$> runMessage msg attrs

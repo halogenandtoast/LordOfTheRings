@@ -27,7 +27,7 @@ spec = describe "Travel phase" do
   it "leaves every location where it was when declining" . gameTest $ \pid -> do
     flipFirstQuest pid
     run $ BeginPhase TravelPhase
-    chooseLabel "Do not travel" pid
+    chooseLabel "$label.doNotTravel" pid
     placements `shouldReturn` [StagingArea]
 
   it "does not ask while a location is already active" . gameTest $ \pid -> do

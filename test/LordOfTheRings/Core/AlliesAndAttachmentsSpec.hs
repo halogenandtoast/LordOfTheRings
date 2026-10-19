@@ -46,8 +46,8 @@ spec = do
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid henamarth
       Just question <- getQuestion pid
-      [() | Label "Move it to the bottom" _ <- questionChoices question] `shouldBe` []
-      chooseLabel "Continue" pid
+      [() | Label "$label.moveToBottom" _ <- questionChoices question] `shouldBe` []
+      chooseLabel "$label.continue" pid
       getEncounterDeck `shouldReturn` deck
 
   describe "Erebor Hammersmith" do
@@ -161,5 +161,5 @@ spec = do
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid protector
       chooseTarget pid (CardIdTarget card.id)
-      chooseLabel "+1 defense" pid
+      chooseLabel "$label.protectorOfLorien.defense" pid
       getDefense eowyn `shouldReturn` 2

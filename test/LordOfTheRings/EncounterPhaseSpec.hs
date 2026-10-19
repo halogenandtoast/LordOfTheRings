@@ -32,7 +32,7 @@ spec = describe "Encounter phase" do
     run RevealEncounterCard
     run RevealEncounterCard
     run $ BeginPhase EncounterPhase
-    chooseLabel "Do not engage" pid
+    chooseLabel "$label.doNotEngage" pid
     placements <- enemyPlacements
     sort placements
       `shouldBe` sort [("01096", EngagedWith pid), ("01098", EngagedWith pid), ("01076", StagingArea)]

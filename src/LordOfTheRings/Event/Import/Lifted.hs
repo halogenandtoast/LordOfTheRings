@@ -11,6 +11,7 @@ import LordOfTheRings.Id as X
 import LordOfTheRings.Matcher as X
 import LordOfTheRings.Matcher.Window as X
 import LordOfTheRings.Message as X
+import LordOfTheRings.I18n as X
 import LordOfTheRings.Modifier as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Question as X
