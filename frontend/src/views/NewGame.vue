@@ -265,5 +265,5 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
   cursor: pointer;
 }
 .primary-action:hover { background: var(--button-primary-hover); }
-.primary-action:disabled { background: var(--button-disabled); cursor: not-allowed; }
+.primary-action:disabled { background: var(--button-disabled); color: var(--button-disabled-text); cursor: not-allowed; }
 </style>

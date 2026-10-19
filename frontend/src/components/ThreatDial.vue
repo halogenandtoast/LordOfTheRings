@@ -15,16 +15,16 @@ defineProps<{ threat: number }>()
   display: grid;
   place-items: center;
   border-radius: 5px;
-  color: rgb(255 255 255);
+  color: var(--threat-text);
   letter-spacing: 25px;
   text-indent: 25px;
   flex: none;
 }
 .threat span {
-  background: linear-gradient(#e8dda6, #e8dda6, #e93323, #822017);
+  background: linear-gradient(var(--threat-light), var(--threat-light), var(--threat-red), var(--threat-dark));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.threat.danger span { background: linear-gradient(#f3b0a4, #e93323, #822017); background-clip: text; -webkit-background-clip: text; }
+.threat.danger span { background: linear-gradient(var(--threat-danger-light), var(--threat-red), var(--threat-dark)); background-clip: text; -webkit-background-clip: text; }
 </style>

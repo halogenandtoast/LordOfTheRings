@@ -56,10 +56,10 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--line);
   border-radius: 4px;
-  background: rgb(255 255 255 / 0.04);
+  background: var(--subtle-tint);
   color: inherit;
   cursor: pointer;
 }
-.options button:hover { border-color: var(--accent); background: rgb(226 205 145 / 0.12); }
+.options button:hover { border-color: var(--accent); background: var(--highlight-tint); }
 .hint { margin: 0; font-size: 0.65rem; opacity: 0.5; font-style: italic; }
 </style>

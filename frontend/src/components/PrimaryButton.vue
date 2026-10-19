@@ -25,7 +25,7 @@ defineEmits(['click'])
 }
 .primary-btn:hover { background: var(--button-primary-hover); }
 .primary-btn.danger { background-color: var(--danger); color: var(--text); }
-.primary-btn:disabled { background: var(--button-disabled); cursor: not-allowed; }
+.primary-btn:disabled { background: var(--button-disabled); color: var(--button-disabled-text); cursor: not-allowed; }
 @media (max-width: 768px) {
   .primary-btn { padding: 6px 10px; font-size: 0.82em; }
 }

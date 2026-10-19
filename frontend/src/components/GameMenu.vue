@@ -61,12 +61,12 @@ button {
   align-items: center;
   cursor: pointer;
 }
-button:hover { background: rgb(0 0 0 / 0.4); }
+button:hover { background: var(--hover-tint); }
 
 svg { width: 20px; }
 
 .menu-items {
-  background-color: var(--background-mid);
+  background-color: var(--menu-background);
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   position: absolute;
@@ -76,7 +76,7 @@ svg { width: 20px; }
   z-index: 10;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.6);
+  box-shadow: 0 8px 24px var(--shadow);
 }
 
 .appear-enter-active, .appear-leave-active { transition: opacity 0.2s ease-in-out; }

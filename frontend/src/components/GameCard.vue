@@ -87,7 +87,7 @@ const toggleUnless = (attached: CardView) => {
   cursor: pointer;
   transform: translateY(calc(var(--depth) * var(--attachment-peek) * -1 + var(--attachment-peek)));
   transition: transform 0.2s ease;
-  filter: drop-shadow(0 -1px 4px rgb(0 0 0 / 0.6));
+  filter: drop-shadow(0 -1px 4px var(--shadow));
 }
 .card-slot.expanded .attached {
   transform: translateY(calc(var(--depth) * (var(--card-width) / var(--card-aspect)) * -0.55
@@ -133,7 +133,7 @@ const toggleUnless = (attached: CardView) => {
   background-size: cover;
   width: calc(var(--card-width) / 4);
   height: calc(var(--card-width) / 4);
-  color: #000;
+  color: var(--token-text);
   font-weight: 700;
   font-size: 0.7rem;
   line-height: 1;
@@ -144,9 +144,9 @@ const toggleUnless = (attached: CardView) => {
 .damage {
   place-self: start end;
   background: var(--danger);
-  color: #fff;
+  color: var(--damage-text);
   border-radius: 50%;
-  border: 1px solid rgb(0 0 0 / 0.5);
+  border: 1px solid var(--shadow);
 }
 
 </style>

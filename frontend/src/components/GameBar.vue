@@ -62,7 +62,7 @@ const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
   justify-content: flex-start;
   margin: 0;
   padding: 0;
-  background: var(--background-mid);
+  background: var(--bar-background);
   font-size: 0.875rem;
   flex-shrink: 0;
   position: relative;
@@ -76,7 +76,7 @@ const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: rgb(255 255 255 / 0.55);
+  color: var(--menu-section-text);
   padding: 6px 10px 4px;
   user-select: none;
   pointer-events: none;
@@ -108,7 +108,7 @@ const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
   cursor: pointer;
   text-align: left;
 }
-.game-bar :deep(.menu-items button:hover:not(:disabled)) { background: rgb(0 0 0 / 0.4); }
+.game-bar :deep(.menu-items button:hover:not(:disabled)) { background: var(--hover-tint); }
 .game-bar :deep(.menu-items button:disabled) { opacity: 0.4; cursor: not-allowed; }
 
 .right {
@@ -129,6 +129,6 @@ const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
   min-width: 40px;
 }
 .right .drawer-toggle svg { width: 20px; height: 20px; }
-.right .drawer-toggle:hover { background: rgb(0 0 0 / 0.4); }
-.right .drawer-toggle[aria-expanded='true'] { background: rgb(0 0 0 / 0.21); }
+.right .drawer-toggle:hover { background: var(--hover-tint); }
+.right .drawer-toggle[aria-expanded='true'] { background: var(--active-tint); }
 </style>

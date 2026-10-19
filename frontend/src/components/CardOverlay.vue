@@ -30,7 +30,7 @@ const source = computed(() => (card.value ? cardImage(card.value) : ''))
   position: fixed;
   z-index: 9999;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgb(0 0 0 / 0.85);
+  box-shadow: 0 10px 40px var(--shadow-strong);
   pointer-events: none;
   animation: overlay-in 0.12s ease-out;
 }

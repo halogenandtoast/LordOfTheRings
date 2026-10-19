@@ -3,31 +3,73 @@
   --card-aspect: 0.715;
   --gap: 10px;
   --attachment-peek: 18px;
-  --text: #f2ead6;
-  --panel: rgb(12 10 8 / 0.72);
-  --line: rgb(226 205 145 / 0.22);
-  --accent: #e2cd91;
-  --danger: #c9603f;
-  --select: #ff3b30;
   --nav-height: 40px;
-  --title: var(--accent);
-  --accent-bright: #f3e3b0;
-  --text-muted: rgb(242 234 214 / 0.7);
+
+  /* Palette: parchment, ring gold, leather, Shire green and Mordor ember. */
+  --parchment: #f5ecd7;
+  --parchment-muted: rgb(245 236 215 / 0.78);
+  --gold: #d9b45a;
+  --gold-bright: #f0d68a;
+  --gold-deep: #b8913f;
+  --leather-900: #120e08;
+  --leather-800: #1c160e;
+  --leather-700: #2a2116;
+  --leather-600: #3b2f20;
+  --leather-500: #4f412d;
+  --shire-green: #78a35b;
+  --mordor-ember: #d4563c;
+  --ember-bright: #ff6b3d;
+  --ink: #1d160c;
+  --ash: #7a7264;
+
+  /* Roles */
+  --text: var(--parchment);
+  --text-muted: var(--parchment-muted);
+  --title: var(--gold-bright);
+  --accent: var(--gold);
+  --accent-bright: var(--gold-bright);
+  --danger: var(--mordor-ember);
+  --success: var(--shire-green);
+  --select: var(--ember-bright);
+
+  --page-background: var(--leather-900);
+  --panel: rgb(28 22 14 / 0.92);
   --box-background: var(--panel);
+  --line: rgb(217 180 90 / 0.32);
   --box-border: var(--line);
-  --input-background: rgb(0 0 0 / 0.35);
-  --button-primary: #8a6d2f;
-  --button-primary-hover: #a3843c;
-  --button-primary-text: #fff8e6;
-  --button-secondary: #4b4335;
-  --button-secondary-hover: #5d5442;
-  --button-disabled: #6b6559;
-  --success: #5c8a4a;
-  --nav-background: var(--background-dark);
-  --nav-link: rgb(242 234 214 / 0.65);
-  --shadow: rgb(0 0 0 / 0.5);
-  --background-dark: rgb(12 10 8 / 0.92);
-  --background-mid: rgb(34 29 22 / 0.92);
+  --input-background: var(--leather-800);
+  --nav-background: var(--leather-800);
+  --nav-link: var(--parchment-muted);
+  --bar-background: var(--leather-700);
+  --menu-background: var(--leather-700);
+  --menu-section-text: var(--parchment-muted);
+
+  --button-primary: var(--gold-deep);
+  --button-primary-hover: var(--gold);
+  --button-primary-text: var(--ink);
+  --button-secondary: var(--leather-500);
+  --button-secondary-hover: var(--leather-600);
+  --button-disabled: var(--ash);
+  --button-disabled-text: var(--parchment-muted);
+
+  --hover-tint: rgb(0 0 0 / 0.35);
+  --active-tint: rgb(0 0 0 / 0.2);
+  --highlight-tint: rgb(217 180 90 / 0.14);
+  --subtle-tint: rgb(245 236 215 / 0.05);
+  --shadow: rgb(0 0 0 / 0.55);
+  --shadow-strong: rgb(0 0 0 / 0.85);
+
+  --count-background: rgb(0 0 0 / 0.8);
+  --count-text: #fff;
+  --token-text: #000;
+  --damage-text: #fff;
+
+  --threat-text: #fff;
+  --threat-light: #e8dda6;
+  --threat-red: #e93323;
+  --threat-dark: #822017;
+  --threat-danger-light: #f3b0a4;
+
   color-scheme: dark;
 }
 
@@ -41,7 +83,7 @@ body {
   margin: 0;
   color: var(--text);
   font-family: "Trebuchet MS", ui-sans-serif, system-ui, sans-serif;
-  background: #000 url('/images/background.jpg') center center / auto 100% no-repeat;
+  background: var(--page-background) url('/images/background.jpg') center center / auto 100% no-repeat;
 }
 
 .band {
@@ -72,11 +114,11 @@ body {
 .pile.empty { opacity: 0.3; }
 
 .pile-count {
-  color: #fff;
-  background: rgb(0 0 0 / 0.8);
+  color: var(--count-text);
+  background: var(--count-background);
   padding: calc(var(--card-width) / 12);
   border-radius: calc(var(--card-width) / 5);
-  border: 1px solid #fff;
+  border: 1px solid var(--count-text);
   font-size: 0.85rem;
   line-height: 1;
   min-width: 1.75rem;
