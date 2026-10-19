@@ -5,57 +5,59 @@
   --attachment-peek: 18px;
   --nav-height: 40px;
 
-  /* Palette: parchment, ring gold, leather, Shire green and Mordor ember. */
-  --parchment: #f5ecd7;
-  --parchment-muted: rgb(245 236 215 / 0.78);
-  --gold: #d9b45a;
-  --gold-bright: #f0d68a;
-  --gold-deep: #b8913f;
-  --leather-900: #120e08;
-  --leather-800: #1c160e;
-  --leather-700: #2a2116;
-  --leather-600: #3b2f20;
-  --leather-500: #4f412d;
-  --shire-green: #78a35b;
-  --mordor-ember: #d4563c;
-  --ember-bright: #ff6b3d;
-  --ink: #1d160c;
-  --ash: #7a7264;
+  /* Palette: sage, soft olive, forest green, cream, antique gold and wood brown. */
+  --sage: #9e9f73;
+  --soft-olive: #7c7d3b;
+  --forest: #42501f;
+  --cream: #e5d3ad;
+  --antique-gold: #b7933f;
+  --wood-brown: #7f561f;
+
+  /* Shades of the palette for depth */
+  --forest-deep: #1c2310;
+  --forest-dark: #2b3515;
+  --forest-light: #55652a;
+  --cream-muted: rgb(229 211 173 / 0.78);
+  --gold-light: #d6b25e;
+  --wood-dark: #63431a;
+  --rust: #a8452c;
+  --ink: #1c2310;
+  --ash: #6f6e58;
 
   /* Roles */
-  --text: var(--parchment);
-  --text-muted: var(--parchment-muted);
-  --title: var(--gold-bright);
-  --accent: var(--gold);
-  --accent-bright: var(--gold-bright);
-  --danger: var(--mordor-ember);
-  --success: var(--shire-green);
-  --select: var(--ember-bright);
+  --text: var(--cream);
+  --text-muted: var(--cream-muted);
+  --title: var(--gold-light);
+  --accent: var(--antique-gold);
+  --accent-bright: var(--gold-light);
+  --danger: var(--rust);
+  --success: var(--soft-olive);
+  --select: #f0c75e;
 
-  --page-background: var(--leather-900);
-  --panel: rgb(28 22 14 / 0.92);
+  --page-background: var(--forest-deep);
+  --panel: rgb(43 53 21 / 0.94);
   --box-background: var(--panel);
-  --line: rgb(217 180 90 / 0.32);
+  --line: rgb(158 159 115 / 0.45);
   --box-border: var(--line);
-  --input-background: var(--leather-800);
-  --nav-background: var(--leather-800);
-  --nav-link: var(--parchment-muted);
-  --bar-background: var(--leather-700);
-  --menu-background: var(--leather-700);
-  --menu-section-text: var(--parchment-muted);
+  --input-background: var(--forest-deep);
+  --nav-background: var(--forest-dark);
+  --nav-link: var(--cream-muted);
+  --bar-background: var(--forest);
+  --menu-background: var(--forest);
+  --menu-section-text: var(--sage);
 
-  --button-primary: var(--gold-deep);
-  --button-primary-hover: var(--gold);
+  --button-primary: var(--antique-gold);
+  --button-primary-hover: var(--gold-light);
   --button-primary-text: var(--ink);
-  --button-secondary: var(--leather-500);
-  --button-secondary-hover: var(--leather-600);
+  --button-secondary: var(--wood-brown);
+  --button-secondary-hover: var(--wood-dark);
   --button-disabled: var(--ash);
-  --button-disabled-text: var(--parchment-muted);
+  --button-disabled-text: var(--cream-muted);
 
   --hover-tint: rgb(0 0 0 / 0.35);
   --active-tint: rgb(0 0 0 / 0.2);
-  --highlight-tint: rgb(217 180 90 / 0.14);
-  --subtle-tint: rgb(245 236 215 / 0.05);
+  --highlight-tint: rgb(183 147 63 / 0.18);
+  --subtle-tint: rgb(229 211 173 / 0.06);
   --shadow: rgb(0 0 0 / 0.55);
   --shadow-strong: rgb(0 0 0 / 0.85);
 
