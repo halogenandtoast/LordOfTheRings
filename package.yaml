@@ -88,6 +88,9 @@ executables:
     - splitmix
     - http-client
     - http-client-tls
+    - crypton
+    - ram
+    - base16-bytestring
 
 tests:
   LordOfTheRings-test:

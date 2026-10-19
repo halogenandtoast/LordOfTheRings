@@ -317,6 +317,7 @@ executable LordOfTheRings-exe
   main-is: Main.hs
   other-modules:
       Auth
+      BugUpload
       CardDb
       Decks
       Model
@@ -356,11 +357,13 @@ executable LordOfTheRings-exe
     , aeson
     , aeson-diff
     , base >=4.7 && <5
+    , base16-bytestring
     , bcrypt
     , bytestring
     , classy-prelude
     , conduit
     , containers
+    , crypton
     , extra
     , http-client
     , http-client-tls
@@ -373,6 +376,7 @@ executable LordOfTheRings-exe
     , mtl
     , persistent
     , persistent-postgresql
+    , ram
     , random
     , random-shuffle
     , safe

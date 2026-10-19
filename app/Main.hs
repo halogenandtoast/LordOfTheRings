@@ -33,13 +33,14 @@ import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
 import LordOfTheRings.Scenario.Types (scenarioName)
 import Auth
+import BugUpload (uploadBugExport)
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import CardDb (CardDb, loadCardDb)
 import Decks
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
-import Network.HTTP.Types.Status (status400, status401, status409)
+import Network.HTTP.Types.Status (status400, status401, status409, status500)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import Yesod.Core
@@ -64,6 +65,7 @@ mkYesod
   /games/#LotrGameId/reset ResetR POST
   /games/#LotrGameId/debug DebugR POST
   /games/#LotrGameId/export ExportR GET
+  /games/#LotrGameId/file-bug BugR POST
   /import ImportR POST
   /cards CardsR GET
   /decks DecksR GET POST
@@ -503,14 +505,14 @@ data ExportedStep = ExportedStep
 exportVersion :: Int
 exportVersion = 1
 
-getExportR :: LotrGameId -> Handler Value
-getExportR gid = do
+-- | A game the signed-in user owns, as an export.
+exportGame :: LotrGameId -> Handler (LotrGame, ExportedGame)
+exportGame gid = do
   row <- requireOwnedGame gid
   steps <- runDB $ selectList [LotrStepGameId ==. gid] [Asc LotrStepStep]
-  addHeader "Content-Disposition" $ "attachment; filename=\"" <> slug row.lotrGameName <> ".json\""
   pure
-    $ toJSON
-      ExportedGame
+    ( row
+    , ExportedGame
         { version = exportVersion
         , name = row.lotrGameName
         , playerName = row.lotrGamePlayerName
@@ -523,8 +525,24 @@ getExportR gid = do
             | Entity _ st <- steps
             ]
         }
+    )
+
+getExportR :: LotrGameId -> Handler Value
+getExportR gid = do
+  (row, exported) <- exportGame gid
+  addHeader "Content-Disposition" $ "attachment; filename=\"" <> slug row.lotrGameName <> ".json\""
+  pure $ toJSON exported
  where
   slug = T.intercalate "-" . T.words . T.filter (\c -> c == ' ' || c == '-' || isAlphaNum c) . toLower
+
+-- | Upload the game's export for a bug report, giving back the URL to put in the issue.
+postBugR :: LotrGameId -> Handler Value
+postBugR gid = do
+  (_, exported) <- exportGame gid
+  manager <- getsYesod (.manager)
+  liftIO (uploadBugExport manager (encode exported)) >>= \case
+    Left err -> sendResponseStatus status500 err
+    Right url -> pure $ object ["url" .= url]
 
 -- | Load an exported game as a new game of the signed-in user's.
 postImportR :: Handler Value
