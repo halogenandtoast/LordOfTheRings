@@ -1,4 +1,5 @@
-resolver: nightly-2023-12-26
+snapshot: nightly-2026-10-19
+compiler: ghc-9.14.1
 packages:
 - .
 system-ghc: true
