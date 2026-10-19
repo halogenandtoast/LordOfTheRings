@@ -60,7 +60,7 @@ const questChoice = computed(() => {
   width: $card-width;
   aspect-ratio: $card-aspect;
   height: fit-content;
-  background-image: url('/images/player.jpg');
+  background-image: url('/images/encounter.jpg');
   background-size: cover;
   display: grid;
   place-items: center;
