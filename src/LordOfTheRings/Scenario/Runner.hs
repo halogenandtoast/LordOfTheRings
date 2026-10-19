@@ -1,0 +1,44 @@
+module LordOfTheRings.Scenario.Runner (module LordOfTheRings.Scenario.Runner, module X) where
+
+import LordOfTheRings.Card
+import LordOfTheRings.Classes.HasQueue
+import LordOfTheRings.EncounterSet (EncounterSet)
+import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Message
+import LordOfTheRings.Prelude
+import LordOfTheRings.Question
+import LordOfTheRings.Scenario.Types as X
+
+gatherEncounterSet :: (MonadRandom m) => EncounterSet -> m [EncounterCard]
+gatherEncounterSet encounterSet =
+  concatMapM
+    (\def -> replicateM (fromMaybe 1 $ cdEncounterSetQuantity def) (genEncounterCard def))
+    $ filter ((== Just encounterSet) . cdEncounterSet) (toList allEncounterCards)
+
+cardMatches :: CardMatcher -> EncounterCard -> Bool
+cardMatches = \case
+  CardWithCode code -> (== code) . toCardCode
+
+instance RunMessage ScenarioAttrs where
+  runMessage msg attrs = case msg of
+    BeginPhase p -> pure $ attrs & phaseL .~ p
+    ShuffleDeck EncounterDeck -> do
+      encounterDeck <- shuffleM attrs.encounterDeck
+      pure $ attrs & encounterDeckL .~ encounterDeck
+    Search pid EncounterDeck cardMatcher ToStaging Shuffle -> do
+      let matches = filter (cardMatches cardMatcher) attrs.encounterDeck
+      case matches of
+        [] -> pure attrs
+        (x : xs) ->
+          if all ((== toCardCode x) . toCardCode) xs
+            then do
+              encounterDeck <- shuffleM $ filter ((/= x.id) . (.id)) attrs.encounterDeck
+              push $ AddToStaging x
+              pure $ attrs & encounterDeckL .~ encounterDeck
+            else do
+              push $
+                chooseOne pid $
+                  targetLabel x [AddToStaging x]
+                      : map (\y -> targetLabel y [AddToStaging y, ShuffleDeck EncounterDeck]) xs
+              pure attrs
+    _ -> pure attrs

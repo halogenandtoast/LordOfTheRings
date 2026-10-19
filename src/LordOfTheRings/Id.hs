@@ -28,3 +28,6 @@ newtype CardId = CardId {unCardId :: UUID}
 
 newtype CostId = CostId {unCostId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON)
+
+newtype ScenarioId = ScenarioId {unScenarioId :: Text}
+  deriving newtype (Show, Eq, Ord, IsString, ToJSON, FromJSON, ToJSONKey, FromJSONKey)

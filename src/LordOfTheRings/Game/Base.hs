@@ -13,7 +13,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
-import LordOfTheRings.Scenario.Type
+import LordOfTheRings.Scenario.Types
 
 data Game = Game
   { players :: Map PlayerId Player

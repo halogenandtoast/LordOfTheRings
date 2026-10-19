@@ -44,7 +44,7 @@ newGame player heroes =
     , activePlayer = player.id
     , firstPlayer = player.id
     , entities = mempty {entitiesHeroes = Map.fromList [(h.id, h) | h <- heroes]}
-    , scenario = newScenario PassageThroughMirkwood
+    , scenario = passageThroughMirkwood
     , question = mempty
     , questionVersion = 0
     }

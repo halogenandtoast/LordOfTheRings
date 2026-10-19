@@ -144,7 +144,10 @@ library
       LordOfTheRings.Question
       LordOfTheRings.Queue
       LordOfTheRings.Scenario
-      LordOfTheRings.Scenario.Type
+      LordOfTheRings.Scenario.Import.Lifted
+      LordOfTheRings.Scenario.Runner
+      LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
+      LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
       LordOfTheRings.Sphere
       LordOfTheRings.Target
