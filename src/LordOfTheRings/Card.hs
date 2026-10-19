@@ -23,7 +23,9 @@ instance Display Name where
     Nothing -> title
     Just subtitle -> title <> ": " <> subtitle
 
-data Card = PlayerCard SomePlayerCard | EncounterCard SomeEncounterCard
+data Card
+  = PlayerCard !SomePlayerCard
+  | EncounterCard !SomeEncounterCard
   deriving stock (Show, Generic)
 
 instance Reference Card where
@@ -59,7 +61,9 @@ instance HasField "sphere" Card (Maybe Sphere) where
 instance HasField "cost" Card (Maybe ResourceCost) where
   getField = cardCost
 
-data SomeCardDef = SomePlayerCardDef SomePlayerCardDef | SomeEncounterCardDef SomeEncounterCardDef
+data SomeCardDef
+  = SomePlayerCardDef !SomePlayerCardDef
+  | SomeEncounterCardDef !SomeEncounterCardDef
 
 cardCost :: Card -> Maybe ResourceCost
 cardCost (PlayerCard pc) = playerCardCost pc
