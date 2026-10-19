@@ -8,6 +8,7 @@ module LordOfTheRings.Message.Lifted (
 ) where
 
 import Control.Monad.Writer.Strict (tell)
+import LordOfTheRings.Card (EncounterCard)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.I18n
@@ -18,6 +19,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
@@ -181,3 +183,17 @@ chooseAndDiscard source pid cards = push $ ChooseAndDiscard (toSource source) pi
 -- | Deal the enemy 1 more shadow card.
 dealShadowCard :: (ReverseQueue m) => EnemyId -> m ()
 dealShadowCard = push . DealShadowCard
+
+-- Attachment/Objective/Scenario helpers
+
+-- | Act on the card this one is attached to; nothing when it is not attached.
+withHost :: (Applicative m, HasField "placement" a Placement) => a -> (Target -> m ()) -> m ()
+withHost a f = case a.placement of
+  AttachedTo host -> f host
+  _ -> pure ()
+
+addToStaging :: (ReverseQueue m) => EncounterCard -> m ()
+addToStaging = push . AddToStaging
+
+putQuestIntoPlay :: (ReverseQueue m) => EncounterCard -> m ()
+putQuestIntoPlay = push . PutQuestIntoPlay
