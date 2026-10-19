@@ -178,6 +178,19 @@ runGameMessage msg g = case msg of
     order <- getPlayerOrder
     pushAll $ map CommitCharacters order <> [Staging, QuestResolution]
     pure $ g & phaseL .~ QuestPhase
+  BeginPhase TravelPhase -> do
+    hasActive <- selectAny IsActiveLocation
+    locations <- select LocationInStagingArea
+    lead <- getLead
+    unless (hasActive || null locations)
+      $ push
+      $ chooseOne lead
+      $ [targetLabel lid [TravelTo lid] | lid <- locations]
+      <> [Label "Do not travel" []]
+    pure $ g & phaseL .~ TravelPhase
+  TravelTo lid -> do
+    pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
+    pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)

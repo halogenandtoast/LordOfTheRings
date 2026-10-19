@@ -87,6 +87,7 @@ data Message
   | Staging
   | QuestResolution
   | PlaceProgressOnQuest Int
+  | TravelTo LocationId
   | Ready Target
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int

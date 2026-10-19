@@ -19,6 +19,10 @@ const enemies = computed(() => {
   return Object.values(props.data.game.entities.enemies).filter((enemy) => enemy.placement.tag === "StagingArea")
 })
 
+const activeLocation = computed(() => {
+  return Object.values(props.data.game.entities.locations).find((location) => location.placement.tag === "ActiveLocation")
+})
+
 const locations = computed(() => {
   return Object.values(props.data.game.entities.locations).filter((location) => location.placement.tag === "StagingArea")
 })
@@ -32,6 +36,7 @@ const locations = computed(() => {
         <div class="deck-size">{{scenario.encounterDeck.length}}</div>
       </div>
       <Card v-if="quest" :card="{ id: quest.cardId, cardCode: quest.cardCode }" :side="quest.flipped ? 'B' : 'A'" :progress="quest.tokens.Progress" :data="data" @choose="$emit('choose', $event)" rotated :target="{ tag: 'QuestTarget', contents: quest.id }" :you="you" />
+      <Location v-if="activeLocation" :location="activeLocation" :you="you" :data="data" @choose="$emit('choose', $event)" />
     </div>
 
     <div class="staging">

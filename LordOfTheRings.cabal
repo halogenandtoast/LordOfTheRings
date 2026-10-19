@@ -318,6 +318,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.RevealSpec
       LordOfTheRings.SetupSpec
+      LordOfTheRings.TravelPhaseSpec
       TestImport
       Paths_LordOfTheRings
   hs-source-dirs:
