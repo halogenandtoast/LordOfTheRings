@@ -3,30 +3,29 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { createGame } from '../api'
 import { currentUser } from '../auth'
-
-interface ScenarioOption {
-  id: string
-  name: string
-  image: string
-  available: boolean
-}
-
-// Only Passage Through Mirkwood is scripted so far; the other core scenarios are shown
-// so it is clear what is coming.
-const scenarios: ScenarioOption[] = [
-  { id: 'passage-through-mirkwood', name: 'Passage Through Mirkwood', image: '/images/cards/01119.jpg', available: true },
-  { id: 'journey-along-the-anduin', name: 'Journey Along the Anduin', image: '/images/cards/01126.jpg', available: false },
-  { id: 'escape-from-dol-guldur', name: 'Escape from Dol Guldur', image: '/images/cards/01123.jpg', available: false },
-]
+import { campaigns, type Campaign, type ScenarioOption } from '../campaigns'
 
 const router = useRouter()
-const selectedScenario = ref(scenarios[0])
+const selectedCampaign = ref<Campaign | null>(null)
+const selectedScenario = ref<ScenarioOption | null>(null)
 const gameName = ref('')
 const creating = ref(false)
 const error = ref<string | null>(null)
 
-const defaultName = computed(() => selectedScenario.value.name)
-const canCreate = computed(() => selectedScenario.value.available && !creating.value)
+const playableCount = (c: Campaign) => c.scenarios.filter((s) => s.available).length
+const defaultName = computed(() => selectedScenario.value?.name ?? '')
+const canCreate = computed(() => !!selectedScenario.value?.available && !creating.value)
+
+const chooseCampaign = (c: Campaign) => {
+  selectedCampaign.value = c
+  selectedScenario.value = c.scenarios.find((s) => s.available) ?? null
+}
+
+const back = () => {
+  selectedCampaign.value = null
+  selectedScenario.value = null
+  error.value = null
+}
 
 const cancel = () => router.push('/')
 
@@ -35,9 +34,7 @@ const create = async () => {
   creating.value = true
   error.value = null
   try {
-    const { id } = await createGame({
-      name: gameName.value.trim() || defaultName.value,
-    })
+    const { id } = await createGame({ name: gameName.value.trim() || defaultName.value })
     await router.push(`/games/${id}`)
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Could not create the game.'
@@ -53,18 +50,47 @@ const create = async () => {
       <button type="button" class="cancel-new-game-button" @click="cancel">Cancel</button>
     </header>
 
-    <form id="new-game" @submit.prevent="create">
+    <div v-if="!selectedCampaign" id="new-game">
+      <fieldset>
+        <legend>Campaign</legend>
+        <div class="campaigns">
+          <button
+            v-for="c in campaigns"
+            :key="c.id"
+            type="button"
+            class="campaign-box"
+            :class="{ unavailable: playableCount(c) === 0 }"
+            @click="chooseCampaign(c)"
+          >
+            <img :src="c.image" alt="" />
+            <span class="campaign-name">{{ c.name }}</span>
+            <span class="campaign-count">
+              {{ c.scenarios.length }} scenarios<template v-if="playableCount(c) > 0"> &middot; {{ playableCount(c) }} playable</template>
+            </span>
+          </button>
+        </div>
+      </fieldset>
+    </div>
+
+    <form v-else id="new-game" @submit.prevent="create">
       <fieldset>
         <legend>Scenario</legend>
+        <div class="campaign-header">
+          <img :src="selectedCampaign.image" alt="" />
+          <div>
+            <h3>{{ selectedCampaign.name }}</h3>
+            <button type="button" class="change-campaign" @click="back">Choose a different campaign</button>
+          </div>
+        </div>
         <div class="scenarios">
           <button
-            v-for="option in scenarios"
+            v-for="option in selectedCampaign.scenarios"
             :key="option.id"
             type="button"
             class="scenario-box"
-            :class="{ selected: option.id === selectedScenario.id, unavailable: !option.available }"
+            :class="{ selected: option.id === selectedScenario?.id, unavailable: !option.available }"
             :disabled="!option.available"
-            :aria-pressed="option.id === selectedScenario.id"
+            :aria-pressed="option.id === selectedScenario?.id"
             @click="selectedScenario = option"
           >
             <img :src="option.image" alt="" />
@@ -74,14 +100,9 @@ const create = async () => {
         </div>
       </fieldset>
 
-      <fieldset>
-        <legend>Players</legend>
-        <p class="deck">Playing as <strong>{{ currentUser?.username }}</strong></p>
-        <p class="deck">Deck: <strong>Starter Set Leadership</strong> (Aragorn, Théodred, Glóin)</p>
-      </fieldset>
-
-      <fieldset>
+      <fieldset v-if="selectedScenario">
         <legend>Game</legend>
+        <p class="deck">Playing as <strong>{{ currentUser?.username }}</strong> with <strong>Starter Set Leadership</strong> (Aragorn, Théodred, Glóin)</p>
         <label>
           Game name
           <input v-model="gameName" type="text" :placeholder="defaultName" />
@@ -91,6 +112,7 @@ const create = async () => {
       <p v-if="error" class="error">{{ error }}</p>
 
       <div class="wizard-actions">
+        <button type="button" class="secondary-action" @click="back">Back</button>
         <button class="primary-action" type="submit" :disabled="!canCreate">
           {{ creating ? 'Creating…' : 'Create' }}
         </button>
@@ -174,9 +196,53 @@ legend {
   padding: 0 6px;
 }
 
+.campaigns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.campaign-box {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--input-background);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  font: inherit;
+  text-align: center;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.campaign-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.campaign-box:hover { border-color: var(--accent); transform: translateY(-2px); }
+.campaign-box.unavailable img { filter: grayscale(70%); }
+.campaign-name { padding: 8px 8px 0; font-weight: 700; }
+.campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.campaign-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.campaign-header img { width: 84px; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
+.campaign-header h3 { margin: 0 0 4px; color: var(--title); font-size: 1.4em; }
+.change-campaign {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent-bright);
+  font: inherit;
+  font-size: 0.85em;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .scenarios {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px;
 }
 
@@ -193,7 +259,7 @@ legend {
   color: var(--text);
   font: inherit;
 }
-.scenario-box img { width: 100%; aspect-ratio: 1 / 0.715; object-fit: cover; display: block; }
+.scenario-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
 .scenario-box:not(.selected) img { filter: grayscale(100%); }
 .scenario-box.selected { border-color: var(--accent); }
 .scenario-box.unavailable { cursor: not-allowed; opacity: 0.6; }
@@ -211,9 +277,7 @@ legend {
   border-radius: 3px;
 }
 
-@media (max-width: 768px) {
-  .scenarios { grid-template-columns: 1fr; }
-}
+
 
 label {
   display: grid;
@@ -239,6 +303,26 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .deck strong { color: var(--text); }
 
 .error { margin: 0; color: var(--danger); }
+
+.wizard-actions {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 10px;
+}
+
+.secondary-action {
+  font: inherit;
+  font-weight: 700;
+  padding: 15px;
+  background: var(--button-secondary);
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.secondary-action:hover { background: var(--button-secondary-hover); }
 
 .primary-action {
   width: 100%;
