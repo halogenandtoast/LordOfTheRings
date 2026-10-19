@@ -1,6 +1,7 @@
 module LordOfTheRings.PlanningPhaseSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Phase
 import TestImport
 
@@ -23,3 +24,11 @@ spec = describe "Planning phase" do
     question <- getQuestion pid
     let offered = [t | Just q <- [question], TargetLabel t _ <- questionChoices q]
     offered `shouldSatisfy` notElem (toTarget card)
+
+  it "does not offer events" . gameTest $ \pid -> do
+    card <- putCardIntoHand pid Events.everVigilant
+    theodred <- getHeroWithCode "01002"
+    run $ PlaceTokens GameSource (toTarget theodred) Resource 2
+    run $ BeginPhase PlanningPhase
+    question <- getQuestion pid
+    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget card)

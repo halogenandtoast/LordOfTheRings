@@ -105,7 +105,8 @@ correctPhase :: (HasGame m) => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
   AllyType -> isPhase PlanningPhase
   AttachmentType -> isPhase PlanningPhase
-  _ -> pure True
+  -- ponytail: events need action windows, which do not exist yet
+  _ -> pure False
 correctPhase (EncounterCard _) = pure False
 
 isPhase :: (HasGame m) => Phase -> m Bool
