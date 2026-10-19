@@ -68,6 +68,14 @@ resource "digitalocean_database_firewall" "app" {
     type  = "k8s"
     value = digitalocean_kubernetes_cluster.app.id
   }
+
+  dynamic "rule" {
+    for_each = var.db_trusted_ips
+    content {
+      type  = "ip_addr"
+      value = rule.value
+    }
+  }
 }
 
 # --- In-cluster --------------------------------------------------------------
@@ -120,6 +128,14 @@ resource "kubernetes_service" "public" {
       port        = 443
       target_port = 80
     }
+  }
+  # DigitalOcean's controller writes these back onto the service. Dropping the
+  # load balancer id would orphan the load balancer.
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations["kubernetes.digitalocean.com/load-balancer-id"],
+      metadata[0].annotations["service.beta.kubernetes.io/do-loadbalancer-type"],
+    ]
   }
 }
 

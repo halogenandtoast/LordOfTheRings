@@ -55,6 +55,12 @@ variable "db_engine_version" {
   default     = "16"
 }
 
+variable "db_trusted_ips" {
+  description = "Extra IPs allowed through the database firewall, such as your own for psql."
+  type        = list(string)
+  default     = []
+}
+
 variable "jwt_secret_override" {
   description = "Override the auto-generated JWT signing secret. Leave empty to let terraform generate one and keep it in state."
   type        = string

@@ -24,6 +24,12 @@ output "db_private_uri" {
   sensitive   = true
 }
 
+output "db_public_uri" {
+  description = "Public Postgres URI, reachable from IPs in db_trusted_ips. Sensitive: contains the doadmin password."
+  value       = digitalocean_database_cluster.app.uri
+  sensitive   = true
+}
+
 output "jwt_secret" {
   description = "JWT signing secret stored in terraform state. Sensitive."
   value       = local.jwt_secret
