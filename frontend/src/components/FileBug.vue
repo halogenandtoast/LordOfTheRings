@@ -52,7 +52,7 @@ const submit = async () => {
       assignee: 'halogenandtoast',
       projects: 'halogenandtoast/3',
     })
-    const issue = `https://github.com/halogenandtoast/LordOfTheRingsWeb/issues/new?${params}`
+    const issue = `https://github.com/halogenandtoast/LordOfTheRings/issues/new?${params}`
     if (tab) tab.location.href = issue
     else window.open(issue, '_blank')
     title.value = ''
