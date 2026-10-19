@@ -1,5 +1,6 @@
 module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module X) where
 
+import LordOfTheRings.Ability.Types
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -76,7 +77,18 @@ instance RunMessage Player where
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     PlayEvent pid card _ | pid == player.id -> pure $ player & discardL <>~ [PlayerCard card]
+    DiscardFromHand pid cid | pid == player.id -> do
+      let (discarded, kept) = partition ((== cid) . (.id)) player.hand
+      pure $ player & handL .~ kept & discardL <>~ discarded
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
+    UseAbility pid ab _ | pid == player.id, Just limitType <- abilityLimitType ab.abilityLimit -> do
+      let same u = u.usedAbilitySource == ab.abilitySource && u.usedAbilityIndex == ab.abilityIndex
+          used = case find same player.usedAbilities of
+            Just u -> u {usedTimes = u.usedTimes + 1} : filter (not . same) player.usedAbilities
+            Nothing -> UsedAbility ab.abilitySource ab.abilityIndex limitType 1 : player.usedAbilities
+      pure $ player & usedAbilitiesL .~ used
+    EndPhase _ -> pure $ player & usedAbilitiesL %~ filter ((/= PerPhase) . (.usedAbilityLimitType))
+    EndRound -> pure $ player & usedAbilitiesL %~ filter ((/= PerRound) . (.usedAbilityLimitType))
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes

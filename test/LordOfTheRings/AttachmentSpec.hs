@@ -19,6 +19,10 @@ playOnTheodred pid def = do
   chooseTarget pid card
   chooseTarget pid theodred
 
+-- | The one attachment in play, as a target.
+steward :: GameT Target
+steward = getsGame (toTarget . fromJustNote "no attachment" . headMay . toList . (.entities.attachments))
+
 spec :: Spec
 spec = describe "Attachments" do
   it "attach to the chosen hero" . gameTest $ \pid -> do
@@ -35,6 +39,7 @@ spec = describe "Attachments" do
   it "leave play when the hero they are attached to does" . gameTest $ \pid -> do
     playOnTheodred pid Attachments.celebriansStone
     theodred <- getHeroWithCode "01002"
+    passActions pid
     run $ Discard (toTarget theodred)
     getsGame (length . (.entities.attachments)) `shouldReturn` 0
     sort . map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` ["01002", "01027"]
@@ -50,7 +55,7 @@ spec = describe "Attachments" do
   describe "Steward of Gondor" do
     it "exhausts to add 2 resources to the attached hero" . gameTest $ \pid -> do
       playOnTheodred pid Attachments.stewardOfGondor
-      chooseAbility pid
+      chooseAbilityOf pid =<< steward
       theodred <- getHeroWithCode "01002"
       theodred.resources `shouldBe` 2
       steward <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
@@ -58,9 +63,8 @@ spec = describe "Attachments" do
 
     it "cannot be used again while exhausted" . gameTest $ \pid -> do
       playOnTheodred pid Attachments.stewardOfGondor
-      chooseAbility pid
-      question <- getQuestion pid
-      [() | Just q <- [question], AbilityLabel {} <- questionChoices q] `shouldBe` []
+      chooseAbilityOf pid =<< steward
+      (offersAbilityOf pid =<< steward) `shouldReturn` False
 
     it "gives the attached hero the Gondor trait" . gameTest $ \pid -> do
       playOnTheodred pid Attachments.stewardOfGondor
@@ -69,7 +73,8 @@ spec = describe "Attachments" do
 
     it "readies during the refresh phase" . gameTest $ \pid -> do
       playOnTheodred pid Attachments.stewardOfGondor
-      chooseAbility pid
+      chooseAbilityOf pid =<< steward
+      passActions pid
       run $ BeginPhase RefreshPhase
       steward <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
       attachmentExhausted (toAttrs steward) `shouldBe` False

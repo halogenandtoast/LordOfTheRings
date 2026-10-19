@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Player.Types (module LordOfTheRings.Player.Types) where
 
+import LordOfTheRings.Ability.Types (UsedAbility)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Id
@@ -18,6 +19,7 @@ data Player = Player
   , playerDiscard :: [Card]
   , playerThreat :: Int
   , playerEliminated :: Bool
+  , playerUsedAbilities :: [UsedAbility]
   }
   deriving stock (Show, Eq, Generic)
 
@@ -27,7 +29,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player")
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility]))]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -39,6 +41,7 @@ newPlayer pid name deck =
     , playerDiscard = []
     , playerThreat = 0
     , playerEliminated = False
+    , playerUsedAbilities = []
     }
 
 instance Entity Player where
@@ -71,6 +74,9 @@ instance HasField "discard" Player [Card] where
 
 instance HasField "threat" Player Int where
   getField = playerThreat
+
+instance HasField "usedAbilities" Player [UsedAbility] where
+  getField = playerUsedAbilities
 
 instance HasField "eliminated" Player Bool where
   getField = playerEliminated

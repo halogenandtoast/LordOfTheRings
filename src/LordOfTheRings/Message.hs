@@ -52,6 +52,13 @@ data Message
   | GameOver Outcome
   | Discard Target
   | DealDamage Source Target Int
+  | HealDamage Source Target Int
+  | -- | the player looks at the top card of the encounter deck, and may move it to the
+    -- bottom when the flag says so
+    LookAtTopOfEncounterDeck PlayerId Source Bool
+  | MoveTopOfEncounterDeckToBottom
+  | DiscardFromHand PlayerId CardId
+  | ChooseAndDiscardFromHand PlayerId Source Int
   | CheckDefeated Target
   | Destroy Target
   | PlaceEnemy EnemyId Placement

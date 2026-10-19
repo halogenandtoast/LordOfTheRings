@@ -8,6 +8,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
+import LordOfTheRings.Source (Source, sourceTarget)
 import LordOfTheRings.Target
 import LordOfTheRings.Scenario.Types as X
 
@@ -56,6 +57,20 @@ instance RunMessage ScenarioAttrs where
       (card : rest) -> do
         push $ AttachShadowCard eid card
         pure $ attrs & encounterDeckL .~ rest
+      [] -> pure attrs
+    LookAtTopOfEncounterDeck pid source canMove -> do
+      for_ (headMay attrs.encounterDeck) \top ->
+        push
+          $ Ask pid
+          $ QuestionLabel "The top card of the encounter deck" (sourceTarget source) []
+          $ SearchCards [EncounterCard top]
+          $ ChooseOne
+          $ if canMove
+            then [Label "Leave it on top" [], Label "Move it to the bottom" [MoveTopOfEncounterDeckToBottom]]
+            else [Label "Continue" []]
+      pure attrs
+    MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
+      top : rest -> pure $ attrs & encounterDeckL .~ rest <> [top]
       [] -> pure attrs
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)

@@ -37,8 +37,22 @@ getWindowAbilities :: (HasGame m) => [Window] -> m [Ability]
 getWindowAbilities windows = do
   abilities <- getAllAbilities
   flip filterM abilities \ab -> case abilityWindow ab of
-    Just matcher | any (windowMatches matcher) windows -> andM [passesCriteria ab.abilityCriteria, canPay (abilityCost ab)]
+    Just matcher | any (windowMatches matcher) windows -> andM [passesCriteria ab.abilityCriteria, canPay (abilityCost ab), withinLimit ab]
     _ -> pure False
+
+-- | Whether an ability's limit leaves it a use: its controller's uses for a player
+-- limit, everyone's for a group limit.
+withinLimit :: (HasGame m) => Ability -> m Bool
+withinLimit ab = case ab.abilityLimit of
+  NoLimit -> pure True
+  PlayerLimit _ n -> do
+    controller <- abilityController ab
+    players <- getsGame (toList . gamePlayers)
+    pure $ uses [p | p <- players, Just p.id == controller] < n
+  GroupLimit _ n -> (< n) . uses . toList <$> getsGame gamePlayers
+ where
+  uses players =
+    sum [u.usedTimes | p <- players, u <- p.usedAbilities, u.usedAbilitySource == ab.abilitySource, u.usedAbilityIndex == ab.abilityIndex]
 
 passesCriteria :: (HasGame m) => Criterion -> m Bool
 passesCriteria = \case
@@ -60,6 +74,7 @@ canPay = \case
   ExhaustCost _ -> pure False
   ResourceCost (HeroTarget hid) n -> (>= n) . (.resources) <$> getHero hid
   ResourceCost _ _ -> pure False
+  DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
   Costs cs -> allM canPay cs
 
 costMessages :: Source -> AbilityCost -> [Message]
@@ -67,6 +82,7 @@ costMessages source = \case
   Free -> []
   ExhaustCost target -> [Exhaust target]
   ResourceCost target n -> [RemoveTokens source target Resource n]
+  DiscardFromHandCost pid n -> [ChooseAndDiscardFromHand pid source n]
   Costs cs -> concatMap (costMessages source) cs
 
 -- | The player who controls an ability's source, if anyone does.
@@ -86,7 +102,7 @@ getActionAbilities :: (HasGame m) => PlayerId -> m [Ability]
 getActionAbilities pid = do
   abilities <- getAllAbilities
   flip filterM abilities \ab -> case ab.abilityType of
-    ActionAbility cost -> andM [(== Just pid) <$> abilityController ab, passesCriteria ab.abilityCriteria, canPay cost]
+    ActionAbility cost -> andM [(== Just pid) <$> abilityController ab, passesCriteria ab.abilityCriteria, canPay cost, withinLimit ab]
     _ -> pure False
 
 abilityKey :: Ability -> (Source, Int)

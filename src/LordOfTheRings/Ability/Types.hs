@@ -1,6 +1,8 @@
 module LordOfTheRings.Ability.Types (module LordOfTheRings.Ability.Types) where
 
 import LordOfTheRings.Criteria
+import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Matcher.Window
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -10,6 +12,7 @@ data AbilityCost
   = Free
   | ExhaustCost Target
   | ResourceCost Target Int
+  | DiscardFromHandCost PlayerId Int
   | Costs [AbilityCost]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
@@ -22,11 +25,43 @@ data AbilityType
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+-- | How often an ability may be used, as in Arkham: by each player, or by the group.
+data AbilityLimitType = PerPhase | PerRound
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data AbilityLimit
+  = NoLimit
+  | PlayerLimit AbilityLimitType Int
+  | GroupLimit AbilityLimitType Int
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+abilityLimitType :: AbilityLimit -> Maybe AbilityLimitType
+abilityLimitType = \case
+  NoLimit -> Nothing
+  PlayerLimit t _ -> Just t
+  GroupLimit t _ -> Just t
+
 data Ability = Ability
   { abilitySource :: Source
   , abilityIndex :: Int
   , abilityType :: AbilityType
   , abilityCriteria :: Criterion
+  , abilityLimit :: AbilityLimit
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON)
+
+instance FromJSON Ability where
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("abilityLimit", toJSON NoLimit)]
+
+-- | An ability used under a limit, kept until the limit's phase or round ends.
+data UsedAbility = UsedAbility
+  { usedAbilitySource :: Source
+  , usedAbilityIndex :: Int
+  , usedAbilityLimitType :: AbilityLimitType
+  , usedTimes :: Int
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

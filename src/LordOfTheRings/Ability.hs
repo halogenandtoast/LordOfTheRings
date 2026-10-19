@@ -8,10 +8,13 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 
 mkAbility :: (Sourceable a) => a -> Int -> AbilityType -> Ability
-mkAbility a idx aType = Ability (toSource a) idx aType NoCriteria
+mkAbility a idx aType = Ability (toSource a) idx aType NoCriteria NoLimit
 
 restricted :: (Sourceable a) => a -> Int -> Criterion -> AbilityType -> Ability
-restricted a idx criteria aType = Ability (toSource a) idx aType criteria
+restricted a idx criteria aType = Ability (toSource a) idx aType criteria NoLimit
+
+limited :: AbilityLimit -> Ability -> Ability
+limited l ab = ab {abilityLimit = l}
 
 response :: WindowMatcher -> AbilityType
 response w = ResponseAbility w Free

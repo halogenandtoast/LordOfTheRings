@@ -29,6 +29,7 @@ spec = describe "Combat phase" do
     _ <- engageSpider pid
     _ <- setEncounterDeck [Locations.oldForestRoad]
     run $ BeginPhase CombatPhase
+    passActions pid
     eowyn <- getHeroWithCode "01007"
     chooseTarget pid eowyn
     eowyn' <- getHeroWithCode "01007"
@@ -39,6 +40,7 @@ spec = describe "Combat phase" do
     _ <- engageSpider pid
     _ <- setEncounterDeck [Locations.oldForestRoad]
     run $ BeginPhase CombatPhase
+    passActions pid
     chooseLabel "Take the attack undefended" pid
     beravor <- getHeroWithCode "01012"
     chooseTarget pid beravor

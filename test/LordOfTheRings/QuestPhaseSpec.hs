@@ -14,7 +14,9 @@ commitHeroes pid codes = do
     -- decline any response to committing, such as Théodred's
     whenJustM (getQuestion pid) $ \q ->
       when (notNull [() | Label "Pass" _ <- questionChoices q]) $ chooseLabel "Pass" pid
-  whenJustM (getQuestion pid) $ \_ -> chooseLabel "Done committing" pid
+  whenJustM (getQuestion pid) $ \q ->
+    when (notNull [() | Label "Done committing" _ <- questionChoices q]) $ chooseLabel "Done committing" pid
+  passActions pid
 
 -- Flies and Spiders setup leaves Forest Spider (2 threat) and Old Forest Road (1 threat) in staging.
 questWith :: PlayerId -> [CardDef] -> [CardCode] -> GameT ()

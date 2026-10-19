@@ -213,6 +213,20 @@ runGameMessage msg g = case msg of
       , CheckDefeated target
       ]
     pure g
+  HealDamage source target n | n > 0 -> do
+    damage <- case target of
+      HeroTarget hid -> (.damage) <$> getHero hid
+      AllyTarget aid -> (.damage) <$> getAlly aid
+      _ -> pure 0
+    pushWhen (damage > 0) $ RemoveTokens source target Damage (min n damage)
+    pure g
+  ChooseAndDiscardFromHand pid source n | n > 0 -> do
+    player <- getPlayer pid
+    unless (null player.hand)
+      $ push
+      $ questionLabelWith "Choose a card to discard from your hand" (sourceTarget source) [] pid
+        [targetLabel (CardIdTarget c.id) [DiscardFromHand pid c.id, ChooseAndDiscardFromHand pid source (n - 1)] | c <- player.hand]
+    pure g
   CheckDefeated target -> do
     destroyed <- case target of
       HeroTarget hid -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target

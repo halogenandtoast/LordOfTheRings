@@ -14,11 +14,12 @@ import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Quest as X (Quest, QuestAttrs (..))
 import LordOfTheRings.Source as X
+import LordOfTheRings.Ability.Types as X (Ability (..))
 import LordOfTheRings.Token as X
 import LordOfTheRings.Game as X
 import LordOfTheRings.GameT as X
 import LordOfTheRings.Id as X
-import LordOfTheRings.Matcher as X (getPlayer)
+import LordOfTheRings.Matcher as X (getDamage, getPlayer)
 import LordOfTheRings.Message as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Question as X
@@ -117,3 +118,32 @@ getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . (.scenario))
 
 getEncounterDeck :: GameT [EncounterCard]
 getEncounterDeck = getsGame ((.encounterDeck) . toAttrs . (.scenario))
+
+-- | Use the offered ability of the given card.
+chooseAbilityOf :: (HasCallStack, Targetable a) => PlayerId -> a -> GameT ()
+chooseAbilityOf pid (toTarget -> target) = chooseOptionMatching "use the card's ability" pid \case
+  AbilityLabel _ ab _ _ -> sourceTarget ab.abilitySource == Just target
+  _ -> False
+
+-- | Whether the open question offers an ability of the given card.
+offersAbilityOf :: (Targetable a) => PlayerId -> a -> GameT Bool
+offersAbilityOf pid (toTarget -> target) =
+  maybe False (any \case AbilityLabel _ ab _ _ -> sourceTarget ab.abilitySource == Just target; _ -> False) . fmap questionChoices
+    <$> getQuestion pid
+
+-- | One of the core set's sphere starter decks.
+coreDeck :: Text -> DeckList
+coreDeck sphere = fromJustNote "no such starter deck" $ lookup sphere coreStarterDecks
+
+getCharacterDamage :: Target -> GameT Int
+getCharacterDamage = getDamage
+
+-- | Decline any open action window (planning or otherwise), for tests about what follows.
+passActions :: PlayerId -> GameT ()
+passActions pid =
+  getQuestion pid >>= \case
+    Just (QuestionLabel prompt _ _ q) | prompt `elem` ["Take an action?", "Play cards or use actions"] ->
+      case findIndex (\case Label l _ -> l `elem` ["Pass", "Done Planning"]; _ -> False) (questionChoices q) of
+        Just n -> answerQuestion pid n >> passActions pid
+        Nothing -> pure ()
+    _ -> pure ()
