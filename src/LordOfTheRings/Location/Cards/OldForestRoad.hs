@@ -4,7 +4,7 @@ import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 
 newtype OldForestRoad = OldForestRoad LocationAttrs
-  deriving anyclass (IsLocation, RunMessage)
+  deriving anyclass (IsLocation, HasAbilities, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 oldForestRoad :: LocationCard OldForestRoad

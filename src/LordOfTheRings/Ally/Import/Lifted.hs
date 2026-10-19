@@ -9,5 +9,6 @@ import LordOfTheRings.Message as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Source as X
 import LordOfTheRings.Target as X
-import LordOfTheRings.Ability as X (HasAbilities (..))
 import LordOfTheRings.Question as X
+import LordOfTheRings.Ability as X
+import LordOfTheRings.Timing as X

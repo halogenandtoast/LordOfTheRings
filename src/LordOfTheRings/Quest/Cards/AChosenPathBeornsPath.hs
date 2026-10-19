@@ -4,7 +4,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype AChosenPathBeornsPath = AChosenPathBeornsPath QuestAttrs
-  deriving anyclass (IsQuest, RunMessage)
+  deriving anyclass (IsQuest, HasAbilities, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 aChosenPathBeornsPath :: QuestCard AChosenPathBeornsPath

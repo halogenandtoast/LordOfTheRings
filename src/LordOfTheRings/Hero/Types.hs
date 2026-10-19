@@ -4,6 +4,7 @@ module LordOfTheRings.Hero.Types (module LordOfTheRings.Hero.Types) where
 
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
@@ -17,6 +18,7 @@ class
   ( Typeable a
   , Show a
   , ToJSON a
+  , HasAbilities a
   , RunMessage a
   , Entity a
   , EntityId a ~ HeroId
@@ -74,6 +76,9 @@ instance Entity Hero where
   toId = toId . toAttrs
   toAttrs (Hero a) = toAttrs a
   overAttrs f (Hero a) = Hero $ overAttrs f a
+
+instance HasAbilities Hero where
+  getAbilities (Hero a) = getAbilities a
 
 instance Show Hero where
   show (Hero a) = show a

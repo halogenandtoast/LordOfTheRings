@@ -4,6 +4,7 @@ module LordOfTheRings.Enemy.Types (module LordOfTheRings.Enemy.Types) where
 
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
@@ -18,6 +19,7 @@ class
   ( Typeable a
   , Show a
   , ToJSON a
+  , HasAbilities a
   , RunMessage a
   , Entity a
   , EntityId a ~ EnemyId
@@ -73,6 +75,9 @@ instance Entity Enemy where
   toId = toId . toAttrs
   toAttrs (Enemy a) = toAttrs a
   overAttrs f (Enemy a) = Enemy $ overAttrs f a
+
+instance HasAbilities Enemy where
+  getAbilities (Enemy a) = getAbilities a
 
 instance Show Enemy where
   show (Enemy a) = show a

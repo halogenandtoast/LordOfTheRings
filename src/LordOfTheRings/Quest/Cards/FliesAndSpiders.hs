@@ -8,7 +8,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype FliesAndSpiders = FliesAndSpiders QuestAttrs
-  deriving anyclass (IsQuest)
+  deriving anyclass (IsQuest, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 fliesAndSpiders :: QuestCard FliesAndSpiders

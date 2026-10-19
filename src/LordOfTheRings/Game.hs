@@ -13,6 +13,9 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy
 import LordOfTheRings.Entities
 import LordOfTheRings.Frontend
+import LordOfTheRings.Helpers.Window
+import LordOfTheRings.Ability.Types
+import LordOfTheRings.Source
 import LordOfTheRings.Game.Base as X
 import LordOfTheRings.GameT
 import LordOfTheRings.Hero
@@ -132,8 +135,39 @@ runGameMessage msg g = case msg of
     player <- getPlayer pid
     thisAlly <- newAlly pid card
     send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
-    push $ RunWindow $ Window After $ EnterPlay $ toTarget thisAlly
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  CheckWindows windows -> do
+    abilities <- getWindowAbilities windows
+    let forcedAbilities = filter isForcedAbility abilities
+    lead <- getLead
+    order <- getPlayerOrder
+    forcedMsgs <- case forcedAbilities of
+      [] -> pure []
+      [ab] -> do
+        controller <- fromMaybe lead <$> abilityController ab
+        pure [UseAbility controller ab windows]
+      abs' -> pure [Ask lead $ ChooseOneAtATime [AbilityLabel lead ab windows [] | ab <- abs']]
+    pushAll $ forcedMsgs <> [ResponseWindow windows order [] 0]
+    pure g
+  ResponseWindow windows order used passes | passes < length order, (pid : _) <- order -> do
+    abilities <- getWindowAbilities windows
+    available <-
+      filterM
+        (\ab -> (== Just pid) <$> abilityController ab)
+        [ab | ab <- abilities, isResponseAbility ab, abilityKey ab `notElem` used]
+    let next = ResponseWindow windows (drop 1 order <> [pid]) used (passes + 1)
+    push
+      $ if null available
+        then next
+        else
+          chooseOne pid
+            $ [AbilityLabel pid ab windows [ResponseWindow windows order (abilityKey ab : used) 0] | ab <- available]
+            <> [Label "Pass" [next]]
+    pure g
+  UseAbility pid ab windows -> do
+    pushAll $ costMessages (PlayerSource pid) (abilityCost ab) <> [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
+    pure g
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest

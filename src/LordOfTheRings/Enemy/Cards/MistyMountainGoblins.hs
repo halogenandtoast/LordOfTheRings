@@ -4,7 +4,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 
 newtype MistyMountainGoblins = MistyMountainGoblins EnemyAttrs
-  deriving anyclass (IsEnemy, RunMessage)
+  deriving anyclass (IsEnemy, HasAbilities, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 mistyMountainGoblins :: EnemyCard MistyMountainGoblins

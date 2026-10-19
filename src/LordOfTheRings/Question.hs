@@ -4,15 +4,16 @@
 
 module LordOfTheRings.Question (module LordOfTheRings.Question) where
 
-import {-# SOURCE #-} LordOfTheRings.Ability
+import LordOfTheRings.Ability.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
+import LordOfTheRings.Window
 
 data UI msg
   = Label {label :: Text, messages :: [msg]}
   | TargetLabel {target :: Target, messages :: [msg]}
-  | AbilityLabel {player :: PlayerId, ability :: Ability, messages :: [msg]}
+  | AbilityLabel {player :: PlayerId, ability :: Ability, windows :: [Window], messages :: [msg]}
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 

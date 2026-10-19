@@ -4,7 +4,7 @@ import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
 
 newtype Beravor = Beravor HeroAttrs
-  deriving anyclass (IsHero, RunMessage)
+  deriving anyclass (IsHero, HasAbilities, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 beravor :: HeroCard Beravor

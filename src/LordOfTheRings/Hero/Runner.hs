@@ -15,6 +15,8 @@ instance RunMessage HeroAttrs where
     BeginPhase ResourcePhase -> do
       push $ PlaceTokens GameSource (toTarget attrs) Resource 1
       pure attrs
+    Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
+    Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

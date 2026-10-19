@@ -4,6 +4,7 @@ module LordOfTheRings.Treachery.Types (module LordOfTheRings.Treachery.Types) wh
 
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
@@ -18,6 +19,7 @@ class
   ( Typeable a
   , Show a
   , ToJSON a
+  , HasAbilities a
   , RunMessage a
   , Entity a
   , EntityId a ~ TreacheryId
@@ -73,6 +75,9 @@ instance Entity Treachery where
   toId = toId . toAttrs
   toAttrs (Treachery a) = toAttrs a
   overAttrs f (Treachery a) = Treachery $ overAttrs f a
+
+instance HasAbilities Treachery where
+  getAbilities (Treachery a) = getAbilities a
 
 instance Show Treachery where
   show (Treachery a) = show a

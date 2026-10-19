@@ -1,72 +1,23 @@
-module LordOfTheRings.Ability (module LordOfTheRings.Ability) where
+module LordOfTheRings.Ability (module LordOfTheRings.Ability, module X) where
 
-import LordOfTheRings.Source
-import LordOfTheRings.Target
-import LordOfTheRings.Matcher.Types
+import LordOfTheRings.Ability.Types as X
+import LordOfTheRings.Classes.HasAbilities as X
+import LordOfTheRings.Criteria as X
+import LordOfTheRings.Matcher.Window as X
 import LordOfTheRings.Prelude
-import LordOfTheRings.Window
+import LordOfTheRings.Source
 
-isForcedAbility :: Ability -> Bool
-isForcedAbility ab = case ab.kind of
-  Forced _ -> True
-  Response _ -> False
+mkAbility :: (Sourceable a) => a -> Int -> AbilityType -> Ability
+mkAbility a idx aType = Ability (toSource a) idx aType NoCriteria
 
-windowMatches :: Window -> WindowMatcherTiming -> Bool
-windowMatches (Window timing (EnterPlay target)) (WindowMatcherTiming timing' (EntersPlay target')) = target == target' && timing == timing'
+restricted :: (Sourceable a) => a -> Int -> Criterion -> AbilityType -> Ability
+restricted a idx criteria aType = Ability (toSource a) idx aType criteria
 
-data WindowMatcher = EntersPlay Target
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+response :: WindowMatcher -> AbilityType
+response w = ResponseAbility w Free
 
-entersPlay :: (Targetable a) => a -> WindowMatcher
-entersPlay = EntersPlay . toTarget
+forced :: WindowMatcher -> AbilityType
+forced = ForcedAbility
 
-data WindowMatcherTiming = WindowMatcherTiming Timing WindowMatcher
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
-
-data Criteria = LocationExists LocationMatcher
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
-
-class Exists a where
-  exists :: a -> Criteria
-
-instance Exists LocationMatcher where
-  exists = LocationExists
-
-after :: WindowMatcher -> WindowMatcherTiming
-after = WindowMatcherTiming After
-
-data AbilityKind = Response WindowMatcherTiming | Forced WindowMatcherTiming
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
-
-data Ability = Ability {kind :: AbilityKind, source :: Source, index :: Int, criteria :: Criteria, text :: Text}
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
-
-abilityWindow :: Ability -> Maybe WindowMatcherTiming
-abilityWindow ab = case ab.kind of
-  Response wmTiming -> Just wmTiming
-  Forced wmTiming -> Just wmTiming
-
-abilitySource :: Ability -> Source
-abilitySource = (.source)
-
-abilityIndex :: Ability -> Int
-abilityIndex = (.index)
-
-response :: (Sourceable a) => a -> Int -> WindowMatcherTiming -> Criteria -> Text -> Ability
-response (toSource -> source) index wmTiming criteria text =
-  Ability
-    { source
-    , index
-    , criteria
-    , text
-    , kind = Response wmTiming
-    }
-
-class HasAbilities a where
-  getAbilities :: a -> [Ability]
-  getAbilities _ = []
+silent :: WindowMatcher -> AbilityType
+silent = SilentForcedAbility

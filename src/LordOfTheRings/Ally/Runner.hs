@@ -9,6 +9,8 @@ import LordOfTheRings.Token
 
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
+    Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
+    Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

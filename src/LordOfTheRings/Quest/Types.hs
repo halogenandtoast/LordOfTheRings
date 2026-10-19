@@ -4,6 +4,7 @@ module LordOfTheRings.Quest.Types (module LordOfTheRings.Quest.Types) where
 
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
@@ -17,6 +18,7 @@ class
   ( Typeable a
   , Show a
   , ToJSON a
+  , HasAbilities a
   , RunMessage a
   , Entity a
   , EntityId a ~ QuestId
@@ -72,6 +74,9 @@ instance Entity Quest where
   toId = toId . toAttrs
   toAttrs (Quest a) = toAttrs a
   overAttrs f (Quest a) = Quest $ overAttrs f a
+
+instance HasAbilities Quest where
+  getAbilities (Quest a) = getAbilities a
 
 instance Show Quest where
   show (Quest a) = show a

@@ -13,6 +13,7 @@ build-type:     Simple
 library
   exposed-modules:
       LordOfTheRings.Ability
+      LordOfTheRings.Ability.Types
       LordOfTheRings.ActiveCost
       LordOfTheRings.Ally
       LordOfTheRings.Ally.CardDefs
@@ -47,10 +48,12 @@ library
       LordOfTheRings.Card.EncounterCard
       LordOfTheRings.Card.PlayerCard
       LordOfTheRings.Classes.Entity
+      LordOfTheRings.Classes.HasAbilities
       LordOfTheRings.Classes.HasGame
       LordOfTheRings.Classes.HasQueue
       LordOfTheRings.Classes.Query
       LordOfTheRings.Classes.RunMessage
+      LordOfTheRings.Criteria
       LordOfTheRings.Decklist
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
@@ -124,6 +127,7 @@ library
       LordOfTheRings.Location.Types
       LordOfTheRings.Matcher
       LordOfTheRings.Matcher.Types
+      LordOfTheRings.Matcher.Window
       LordOfTheRings.Message
       LordOfTheRings.Name
       LordOfTheRings.Objective.CardDefs
@@ -157,6 +161,7 @@ library
       LordOfTheRings.Source
       LordOfTheRings.Sphere
       LordOfTheRings.Target
+      LordOfTheRings.Timing
       LordOfTheRings.Token
       LordOfTheRings.Trait
       LordOfTheRings.Treachery
@@ -294,6 +299,7 @@ test-suite LordOfTheRings-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LordOfTheRings.Ally.SnowbournScoutSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.SetupSpec

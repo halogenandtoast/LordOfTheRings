@@ -2,9 +2,9 @@
 
 module LordOfTheRings.Ally.Types (module LordOfTheRings.Ally.Types) where
 
-import {-# SOURCE #-} LordOfTheRings.Ability (HasAbilities (..))
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json

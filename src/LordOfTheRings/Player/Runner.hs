@@ -1,12 +1,10 @@
 module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module X) where
 
-import LordOfTheRings.Ability
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Game.Base
-import LordOfTheRings.Helpers.Window
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -20,14 +18,6 @@ import LordOfTheRings.Token
 
 instance RunMessage Player where
   runMessage msg player = case msg of
-    RunWindow window -> do
-      abilities <- getWindowAbilities window
-      when (notNull abilities) $ do
-        let (forced, nonForced) = partition isForcedAbility abilities
-        if null forced
-          then push $ chooseOne player.id [AbilityLabel player.id ab [] | ab <- nonForced]
-          else push $ Ask player.id $ ChooseOneAtATime [AbilityLabel player.id ab [] | ab <- forced]
-      pure player
     DoStep 1 Setup -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck

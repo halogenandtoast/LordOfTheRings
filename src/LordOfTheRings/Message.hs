@@ -1,6 +1,6 @@
 module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
-import {-# SOURCE #-} LordOfTheRings.Ability
+import LordOfTheRings.Ability.Types
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Source
@@ -57,8 +57,12 @@ data Message
   | AddToStaging EncounterCard
   | PutQuestIntoPlay EncounterCard
   | ShuffleDeck DeckSignifier
-  | RunWindow Window
-  | UseCardAbility PlayerId Source Int
+  | CheckWindows [Window]
+  | ResponseWindow [Window] [PlayerId] [(Source, Int)] Int
+  | UseAbility PlayerId Ability [Window]
+  | UseCardAbility PlayerId Source Int [Window]
+  | Exhaust Target
+  | Ready Target
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int
   | Run [Message]
@@ -70,7 +74,7 @@ uiToRun :: UI Message -> Message
 uiToRun = \case
   Label _ msgs -> Run msgs
   TargetLabel _ msgs -> Run msgs
-  AbilityLabel pid ability msgs -> Run $ UseCardAbility pid (abilitySource ability) (abilityIndex ability) : msgs
+  AbilityLabel pid ability windows msgs -> Run $ UseAbility pid ability windows : msgs
 
 chooseOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
 chooseOne _ [] = error "chooseOne: no choices"

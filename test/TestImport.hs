@@ -68,3 +68,13 @@ getHeroWithCode code =
 
 getHeroResources :: HeroId -> GameT Int
 getHeroResources hid = maybe 0 (.resources) . Map.lookup hid <$> getsGame (.entities.heroes)
+
+chooseAbility :: (HasCallStack) => PlayerId -> GameT ()
+chooseAbility pid = chooseOptionMatching "use ability" pid \case
+  AbilityLabel {} -> True
+  _ -> False
+
+flipFirstQuest :: PlayerId -> GameT ()
+flipFirstQuest pid = do
+  run Setup
+  chooseOptionMatching "flip the quest" pid (const True)

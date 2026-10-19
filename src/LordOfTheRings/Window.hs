@@ -1,16 +1,27 @@
-module LordOfTheRings.Window (module LordOfTheRings.Window) where
+module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
-import LordOfTheRings.Target
+import LordOfTheRings.Id
+import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
+import LordOfTheRings.Target
+import LordOfTheRings.Timing as X
 
-data Timing = After
+data Window = Window {windowTiming :: Timing, windowType :: WindowType}
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
-data Window = Window {timing :: Timing, kind :: WindowKind}
-  deriving stock (Show, Generic)
+data WindowType
+  = EntersPlay Target
+  | PhaseBegins Phase
+  | CommittedToQuest Target
+  | EnemyEngaged EnemyId PlayerId
+  | DealtDamage Target Int
+  | Traveled LocationId
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
-data WindowKind = EnterPlay Target
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+mkWhen :: WindowType -> Window
+mkWhen = Window When
+
+mkAfter :: WindowType -> Window
+mkAfter = Window After

@@ -4,7 +4,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 
 newtype DolGuldurOrcs = DolGuldurOrcs EnemyAttrs
-  deriving anyclass (IsEnemy, RunMessage)
+  deriving anyclass (IsEnemy, HasAbilities, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 dolGuldurOrcs :: EnemyCard DolGuldurOrcs
