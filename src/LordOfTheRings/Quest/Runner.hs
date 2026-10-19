@@ -7,7 +7,8 @@ import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.I18n
-import LordOfTheRings.Question
+import LordOfTheRings.Message.Lifted
+import LordOfTheRings.Queue
 import LordOfTheRings.Matcher
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Quest.Types as X
@@ -28,17 +29,26 @@ instance RunMessage QuestAttrs where
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
 
+-- | The lead clicks the first stage to perform its setup, which flips it.
+askToPerformSetup :: (ReverseQueue m) => QuestAttrs -> m ()
+askToPerformSetup attrs = leadClicks "performSetup" attrs (Flip $ toTarget attrs)
+
 -- | The lead clicks the stage to resolve its When Revealed effect, which the stage
 -- handles as 'WhenRevealed' on itself.
-whenRevealedQuestion :: (HasGame m) => QuestAttrs -> m Message
-whenRevealedQuestion attrs = do
+askToResolveWhenRevealed :: (ReverseQueue m) => QuestAttrs -> m ()
+askToResolveWhenRevealed attrs = leadClicks "resolveWhenRevealed" attrs (WhenRevealed $ toTarget attrs)
+
+leadClicks :: (ReverseQueue m) => Text -> QuestAttrs -> Message -> m ()
+leadClicks key attrs msg = do
   lead <- getLead
-  pure $ questionLabel (ikeyWith "label.resolveWhenRevealed" (cardVar "quest" attrs)) lead [targetLabel attrs [WhenRevealed $ toTarget attrs]]
+  chooseOneM lead do
+    questionLabeledWith key (cardVar "quest" attrs)
+    targeting attrs $ push msg
 
 -- | A stage that cannot be defeated while an enemy matching the matcher is in play: its
 -- progress piles up, and once the last such enemy leaves play a stage with enough
 -- progress is defeated. Runs the message as an ordinary stage otherwise.
-runBlockedStage :: EnemyMatcher -> Message -> QuestAttrs -> GameT QuestAttrs
+runBlockedStage :: EnemyMatcher -> Message -> QuestAttrs -> QueueT Message GameT QuestAttrs
 runBlockedStage blocker msg attrs = case msg of
   PlaceTokens _ (isTarget attrs -> True) Progress n -> do
     blocked <- selectAny blocker
@@ -61,7 +71,7 @@ runBlockedStage blocker msg attrs = case msg of
 -- | A stage the players cannot advance from until the condition holds: its progress piles
 -- up, and it is defeated once it has enough progress and the condition is met. Messages
 -- that may meet the condition have it check again once they have resolved.
-runConditionalStage :: GameT Bool -> Message -> QuestAttrs -> GameT QuestAttrs
+runConditionalStage :: QueueT Message GameT Bool -> Message -> QuestAttrs -> QueueT Message GameT QuestAttrs
 runConditionalStage condition msg attrs = case msg of
   PlaceTokens _ (isTarget attrs -> True) Progress n -> do
     met <- condition

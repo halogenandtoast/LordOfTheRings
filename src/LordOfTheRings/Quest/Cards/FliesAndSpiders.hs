@@ -17,15 +17,12 @@ fliesAndSpiders = quest FliesAndSpiders Cards.fliesAndSpiders
 instance RunMessage FliesAndSpiders where
   runMessage msg q@(FliesAndSpiders attrs) = case msg of
     DoStep 7 Setup -> do
-      lead <- getLead
-      push $ questionLabel (ikeyWith "label.performSetup" (cardVar "quest" attrs)) lead [targetLabel attrs [Flip $ toTarget attrs]]
+      askToPerformSetup attrs
       pure q
     Flip (isTarget attrs -> True) -> do
       lead <- getLead
       send $ FlipCard attrs.cardId
-      pushAll
-        [ Search lead EncounterDeck (cardIs Enemies.forestSpider) ToStaging Shuffle
-        , Search lead EncounterDeck (cardIs Locations.oldForestRoad) ToStaging Shuffle
-        ]
+      searchEncounterDeckToStaging lead (cardIs Enemies.forestSpider)
+      searchEncounterDeckToStaging lead (cardIs Locations.oldForestRoad)
       pure $ FliesAndSpiders $ attrs {questFlipped = True}
     _ -> FliesAndSpiders <$> runMessage msg attrs

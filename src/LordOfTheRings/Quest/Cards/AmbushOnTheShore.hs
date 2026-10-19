@@ -21,20 +21,20 @@ instance HasModifiersFor AmbushOnTheShore where
 instance RunMessage AmbushOnTheShore where
   runMessage msg q@(AmbushOnTheShore attrs) = case msg of
     Flip (isTarget attrs -> True) -> do
-      push =<< whenRevealedQuestion attrs
+      askToResolveWhenRevealed attrs
       AmbushOnTheShore <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
-      order <- getPlayerOrder
+      eachPlayer $ const $ revealEncounterCards 2
       -- once the ambush is revealed, see whether any enemy came of it
-      pushAll $ concatMap (const [RevealEncounterCard, RevealEncounterCard]) order <> [DoStep 1 (Flip $ toTarget attrs)]
+      push $ DoStep 1 msg
       pure q
-    DoStep 1 (Flip (isTarget attrs -> True)) -> do
+    DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       none <- selectNone AnyEnemy
-      pushWhen none $ GameOver Won
+      when none winGame
       pure q
     _ | Just eid <- leaving msg -> do
       others <- select (not_ $ EnemyWithId eid)
-      pushWhen (null others) $ GameOver Won
+      when (null others) winGame
       AmbushOnTheShore <$> runMessage msg attrs
     _ -> AmbushOnTheShore <$> runMessage msg attrs
    where

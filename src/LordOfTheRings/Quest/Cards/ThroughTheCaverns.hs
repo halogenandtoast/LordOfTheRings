@@ -29,7 +29,7 @@ instance RunMessage ThroughTheCaverns where
   runMessage msg q@(ThroughTheCaverns attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       prisoners <- select PrisonerHero
-      pushAll $ map RescuePrisoner prisoners
+      for_ prisoners $ push . RescuePrisoner
       pure q
     _ -> ThroughTheCaverns <$> runConditionalStage condition msg attrs
    where

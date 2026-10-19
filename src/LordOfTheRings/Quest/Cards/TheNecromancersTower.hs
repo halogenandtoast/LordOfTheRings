@@ -31,21 +31,18 @@ instance HasModifiersFor TheNecromancersTower where
 instance RunMessage TheNecromancersTower where
   runMessage msg q@(TheNecromancersTower attrs) = case msg of
     DoStep 7 Setup -> do
-      lead <- getLead
-      push $ questionLabel (ikeyWith "label.performSetup" (cardVar "quest" attrs)) lead [targetLabel attrs [Flip $ toTarget attrs]]
+      askToPerformSetup attrs
       pure q
     Flip (isTarget attrs -> True) -> do
       send $ FlipCard attrs.cardId
       deck <- getsGame (scenarioEncounterDeck . toAttrs . gameScenario)
       let objectives = [c | c <- deck, cdCardType (toCardDef c) == ObjectiveType]
           nazgul = [c | c <- deck, toCardCode c == toCardCode Enemies.nazgulOfDolGuldur]
-      revealed <- whenRevealedQuestion attrs
-      pushAll
-        $ map RemoveFromEncounterDeck objectives
-        <> map SetAside nazgul
-        <> [ShuffleDeck EncounterDeck]
-        <> map PutObjectiveIntoPlay objectives
-        <> [revealed]
+      for_ objectives $ push . RemoveFromEncounterDeck
+      for_ nazgul $ push . SetAside
+      push $ ShuffleDeck EncounterDeck
+      for_ objectives $ push . PutObjectiveIntoPlay
+      askToResolveWhenRevealed attrs
       pure $ TheNecromancersTower $ attrs {questFlipped = True}
     WhenRevealed (isTarget attrs -> True) -> do
       heroes <- select AnyHero

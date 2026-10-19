@@ -22,19 +22,17 @@ toTheRiver = quest ToTheRiver Cards.toTheRiver
 instance RunMessage ToTheRiver where
   runMessage msg q@(ToTheRiver attrs) = case msg of
     DoStep 7 Setup -> do
-      lead <- getLead
-      push $ questionLabel (ikeyWith "label.performSetup" (cardVar "quest" attrs)) lead [targetLabel attrs [Flip $ toTarget attrs]]
+      askToPerformSetup attrs
       pure q
     Flip (isTarget attrs -> True) -> do
-      order <- getPlayerOrder
       send $ FlipCard attrs.cardId
-      revealed <- whenRevealedQuestion attrs
-      pushAll $ map (const RevealEncounterCard) order <> [revealed]
+      eachPlayer $ const revealEncounterCard
+      askToResolveWhenRevealed attrs
       pure $ ToTheRiver $ attrs {questFlipped = True}
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
       trolls <- selectAny hillTrolls
-      pushWhen (not trolls) $ Search lead EncounterDeck (cardIs Enemies.hillTroll) ToStaging Shuffle
+      unless trolls $ searchEncounterDeckToStaging lead (cardIs Enemies.hillTroll)
       pure q
     _ -> ToTheRiver <$> runBlockedStage hillTrolls msg attrs
    where
