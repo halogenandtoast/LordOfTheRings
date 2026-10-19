@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { createGame } from '../api'
+import { createGame, type DeckChoice } from '../api'
+import { fetchDecks } from '../browser/lib/api'
+import type { DeckSummary } from '../browser/types/deck'
 import { currentUser } from '../auth'
 import { campaigns, type Campaign, type ScenarioOption } from '../campaigns'
 
@@ -13,6 +15,22 @@ const selectedScenario = ref<ScenarioOption | null>(null)
 const gameName = ref('')
 const creating = ref(false)
 const error = ref<string | null>(null)
+
+const starterSpheres = ['leadership', 'tactics', 'spirit', 'lore'] as const
+const decks = ref<DeckSummary[]>([])
+// a select's value is a string: `starter:<sphere>` or `deck:<id>`
+const deckChoice = ref('starter:leadership')
+const toDeckChoice = (value: string): DeckChoice => {
+  const [kind, rest] = value.split(':')
+  return kind === 'deck' ? { deckId: Number(rest) } : { starter: rest }
+}
+onMounted(async () => {
+  try {
+    decks.value = await fetchDecks()
+  } catch {
+    // the starter decks are enough to play with
+  }
+})
 
 const playableCount = (c: Campaign) => c.scenarios.filter((s) => s.available).length
 const defaultName = computed(() => selectedScenario.value?.name ?? '')
@@ -36,7 +54,11 @@ const create = async () => {
   creating.value = true
   error.value = null
   try {
-    const { id } = await createGame({ name: gameName.value.trim() || defaultName.value })
+    const { id } = await createGame({
+      name: gameName.value.trim() || defaultName.value,
+      scenario: selectedScenario.value?.id,
+      deck: toDeckChoice(deckChoice.value),
+    })
     await router.push(`/games/${id}`)
   } catch (e) {
     error.value = e instanceof Error ? e.message : t('newGame.couldNotCreateGame')
@@ -106,8 +128,20 @@ const create = async () => {
         <legend>{{ $t('common.game') }}</legend>
         <i18n-t keypath="newGame.playingAs" tag="p" class="deck">
           <template #player><strong>{{ currentUser?.username }}</strong></template>
-          <template #deck><strong><span class="icon leadership" style="--icon: url('/images/icons/game/leadership.svg')" /> Starter Set Leadership</strong></template>
         </i18n-t>
+        <label>
+          {{ $t('newGame.deck') }}
+          <select v-model="deckChoice">
+            <optgroup :label="$t('newGame.starterDecks')">
+              <option v-for="sphere in starterSpheres" :key="sphere" :value="`starter:${sphere}`">
+                {{ $t(`newGame.starter.${sphere}`) }}
+              </option>
+            </optgroup>
+            <optgroup v-if="decks.length" :label="$t('newGame.yourDecks')">
+              <option v-for="d in decks" :key="d.id" :value="`deck:${d.id}`">{{ d.name }} ({{ d.heroNames.join(', ') }})</option>
+            </optgroup>
+          </select>
+        </label>
         <label>
           {{ $t('newGame.gameName') }}
           <input v-model="gameName" type="text" :placeholder="defaultName" />
@@ -292,7 +326,7 @@ label {
   color: var(--text-muted);
 }
 
-input[type='text'] {
+input[type='text'], select {
   font: inherit;
   font-size: 1rem;
   color: var(--text);
@@ -302,12 +336,11 @@ input[type='text'] {
   padding: 12px;
   background: var(--input-background);
 }
-input[type='text']:focus { border-color: var(--accent); }
+input[type='text']:focus, select:focus { border-color: var(--accent); }
 input::placeholder { color: var(--text-muted); opacity: 0.7; }
 
 .deck { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
 .deck strong { color: var(--text); }
-.deck .leadership { color: var(--leadership); }
 
 .error { margin: 0; color: var(--danger); }
 

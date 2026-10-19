@@ -60,9 +60,18 @@
     "playableCount": "{count} playable",
     "chooseDifferentCampaign": "Choose a different campaign",
     "comingSoon": "Coming soon",
-    "playingAs": "Playing as {player} with {deck} (Aragorn, Théodred, Glóin)",
+    "playingAs": "Playing as {player}",
     "gameName": "Game name",
     "creating": "Creating…",
-    "couldNotCreateGame": "Could not create the game."
+    "couldNotCreateGame": "Could not create the game.",
+    "deck": "Deck",
+    "starterDecks": "Core set starter decks",
+    "yourDecks": "Your decks",
+    "starter": {
+      "leadership": "Leadership (Aragorn, Théodred, Glóin)",
+      "tactics": "Tactics (Gimli, Legolas, Thalin)",
+      "spirit": "Spirit (Éowyn, Eleanor, Dúnhere)",
+      "lore": "Lore (Denethor, Glorfindel, Beravor)"
+    }
   }
 }

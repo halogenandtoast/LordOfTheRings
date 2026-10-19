@@ -51,6 +51,12 @@ exhausted code = heroExhausted . toAttrs <$> getHeroWithCode code
 
 spec :: Spec
 spec = describe "Starter deck" do
+  describe "core starter decks" do
+    for_ coreStarterDecks \(sphere, deck) ->
+      it ("deals the " <> unpack sphere <> " deck with three heroes") . gameTestWith deck $ \_ -> do
+        heroes <- getsGame (length . (.entities.heroes))
+        heroes `shouldBe` 3
+
   describe "Théodred" do
     it "adds 1 resource to a committed hero after committing" . starterTest $ \pid -> do
       aragorn <- getHeroWithCode aragornCode

@@ -16,6 +16,7 @@ module Decks (
   saveDeck,
   listDecks,
   loadDeck,
+  deckListFor,
   ringsdbId,
 ) where
 
@@ -29,6 +30,8 @@ import Data.Map.Strict qualified as Map
 import Data.Text qualified as T
 import Database.Persist
 import Database.Persist.Sql (SqlBackend, fromSqlKey)
+import LordOfTheRings.Card (CardCode (..), allPlayerCards)
+import LordOfTheRings.Decklist (DeckList (..))
 import LordOfTheRings.Prelude
 import Model
 import Network.HTTP.Client (Manager, httpLbs, parseRequest, requestHeaders, responseBody, responseStatus)
@@ -325,3 +328,20 @@ loadDeck db userId key =
             , sideslots = section "side"
             }
     _ -> pure Nothing
+
+-- | A stored deck as the engine deals it: heroes and draw deck by RingsDB code, the
+-- engine's own. Refused, with the cards named, when the engine does not know a card.
+deckListFor :: (MonadIO m) => CardDb -> UserId -> LotrDeckId -> ReaderT SqlBackend m (Either Text DeckList)
+deckListFor db userId key =
+  get key >>= \case
+    Just d | d.lotrDeckUserId == userId -> do
+      rows <- map entityVal <$> selectList [LotrDeckSlotDeckId ==. key] [Asc LotrDeckSlotPosition]
+      let code r = fromMaybe r.lotrDeckSlotSourceCode (flip cardRingsdbCode db =<< r.lotrDeckSlotCardCode)
+          known r = Map.member (CardCode $ code r) allPlayerCards
+          section kind = [r | r <- rows, r.lotrDeckSlotKind == kind]
+          unknown = [fromMaybe (code r) (flip cardName db =<< r.lotrDeckSlotCardCode) | r <- section "hero" <> section "draw", not (known r)]
+      pure
+        if null unknown
+          then Right $ DeckList (map (CardCode . code) (section "hero")) [(CardCode (code r), r.lotrDeckSlotQuantity) | r <- section "draw"]
+          else Left $ "This deck has cards the game does not know yet: " <> intercalate ", " unknown
+    _ -> pure $ Left "No such deck."

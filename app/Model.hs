@@ -28,6 +28,9 @@ LotrGame sql=lotr_games
   currentQueue Value
   randomGen Text
   step Int
+  -- | what reset deals again: the scenario, and the deck when it was not the starter
+  scenario Text default='passage-through-mirkwood'
+  deck Value Maybe
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show

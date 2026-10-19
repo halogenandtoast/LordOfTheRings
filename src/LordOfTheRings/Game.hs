@@ -49,14 +49,17 @@ import LordOfTheRings.Treachery
 import LordOfTheRings.Window
 
 newGame :: Player -> [Hero] -> Game
-newGame player heroes =
+newGame = newGameIn passageThroughMirkwood
+
+newGameIn :: Scenario -> Player -> [Hero] -> Game
+newGameIn gameScenario player heroes =
   Game
     { gamePlayers = Map.singleton player.id player
     , gamePlayerOrder = [player.id]
     , gameActivePlayer = player.id
     , gameFirstPlayer = player.id
     , gameEntities = mempty {entitiesHeroes = Map.fromList [(h.id, h) | h <- heroes]}
-    , gameScenario = passageThroughMirkwood
+    , gameScenario
     , gamePhase = ResourcePhase
     , gameRound = 0
     , gameQuestion = mempty

@@ -19,7 +19,10 @@ const json = async <T>(response: Response): Promise<T> => {
 
 export const fetchGames = () => apiFetch('/api/games').then((r) => json<GameSummary[]>(r))
 
-export const createGame = (game: { name: string; seed?: number }) =>
+/** A core starter deck by sphere, or one of the user's imported decks. */
+export type DeckChoice = { starter: string } | { deckId: number }
+
+export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice }) =>
   apiFetch('/api/games', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

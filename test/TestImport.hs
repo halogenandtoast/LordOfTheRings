@@ -9,7 +9,7 @@ import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.Entity as X (overAttrs, toAttrs, toId)
 import LordOfTheRings.Scenario.Types (encounterDeckL)
-import LordOfTheRings.Decklist as X (DeckList (..), starterDeck)
+import LordOfTheRings.Decklist as X (DeckList (..), coreStarterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Quest as X (Quest, QuestAttrs (..))

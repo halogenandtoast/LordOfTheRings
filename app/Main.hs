@@ -17,7 +17,7 @@ import Data.Char (isAlphaNum)
 import Data.Text qualified as T
 import Database.Persist.Postgresql
 import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
-import LordOfTheRings.Classes.Entity (toAttrs)
+import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Decklist
@@ -30,6 +30,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
+import LordOfTheRings.Scenario (Scenario, lookupScenario)
 import LordOfTheRings.Scenario.Types (scenarioName)
 import Auth
 import CardDb (CardDb, loadCardDb)
@@ -251,16 +252,22 @@ getGamesR = do
   games <- runDB $ selectList [LotrGameUserId ==. userId] [Desc LotrGameUpdatedAt]
   pure $ toJSON $ mapMaybe summary games
 
-data NewGame = NewGame {name :: Text, seed :: Maybe Int}
+-- | A deck to deal: one of the core starter decks by sphere, or one of the user's decks.
+data DeckChoice = StarterDeck Text | ImportedDeck LotrDeckId
+
+instance FromJSON DeckChoice where
+  parseJSON = withObject "DeckChoice" \o -> (StarterDeck <$> o .: "starter") <|> (ImportedDeck <$> o .: "deckId")
+
+data NewGame = NewGame {name :: Text, seed :: Maybe Int, scenario :: Maybe Text, deck :: Maybe DeckChoice}
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
 -- | Deal a new game from a seed and play it up to its first question.
-startGame :: Text -> Int -> IO (Game, [Message], StdGen)
-startGame playerName seed = do
-  (player, heroes) <- either (error . show) pure $ evalRand (loadPlayer playerName starterDeck) (mkStdGen seed)
+startGame :: Scenario -> DeckList -> Text -> Int -> IO (Game, [Message], StdGen)
+startGame scenario deckList playerName seed = do
+  (player, heroes) <- either (error . show) pure $ evalRand (loadPlayer playerName deckList) (mkStdGen seed)
   chan <- newBroadcastTChanIO
-  env <- envFor chan (newGame player heroes) [] (mkStdGen $ seed + 1)
+  env <- envFor chan (newGameIn scenario player heroes) [] (mkStdGen $ seed + 1)
   void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
   currentState env
 
@@ -271,7 +278,16 @@ postGamesR = do
   new <- requireCheckJsonBody @_ @NewGame
   -- you play under your username
   let playerName = user.userUsername
-  (g, queue, gen) <- liftIO . startGame playerName =<< maybe (liftIO randomIO) pure new.seed
+      scenarioId = fromMaybe "passage-through-mirkwood" new.scenario
+  scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> scenarioId)) pure $ lookupScenario (ScenarioId scenarioId)
+  deckList <- case new.deck of
+    Nothing -> pure Nothing
+    Just (StarterDeck sphere) ->
+      maybe (sendResponseStatus status400 ("No " <> sphere <> " starter deck")) (pure . Just) $ lookup sphere coreStarterDecks
+    Just (ImportedDeck deckId) -> do
+      db <- getsYesod (.cardDb)
+      runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) (pure . Just)
+  (g, queue, gen) <- liftIO . startGame scenario (fromMaybe starterDeck deckList) playerName =<< maybe (liftIO randomIO) pure new.seed
   now <- liftIO getCurrentTime
   gid <-
     runDB
@@ -284,6 +300,8 @@ postGamesR = do
           , lotrGameCurrentQueue = toJSON queue
           , lotrGameRandomGen = showGen gen
           , lotrGameStep = 0
+          , lotrGameScenario = scenarioId
+          , lotrGameDeck = toJSON <$> deckList
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
@@ -440,7 +458,9 @@ postUndoR gid = do
 postResetR :: LotrGameId -> Handler ()
 postResetR gid = do
   row <- requireOwnedGame gid
-  (g, queue, gen) <- liftIO . startGame row.lotrGamePlayerName =<< liftIO randomIO
+  scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure $ lookupScenario (ScenarioId row.lotrGameScenario)
+  deckList <- maybe (pure starterDeck) (decodeOrFail "deck") row.lotrGameDeck
+  (g, queue, gen) <- liftIO . startGame scenario deckList row.lotrGamePlayerName =<< liftIO randomIO
   now <- liftIO getCurrentTime
   row' <- runDB do
     deleteWhere [LotrStepGameId ==. gid]
@@ -512,7 +532,7 @@ postImportR = do
   exported <- requireCheckJsonBody @_ @ExportedGame
   unless (exported.version == exportVersion) $ invalidArgs ["This export comes from an unsupported version."]
   -- refuse a file the engine cannot read before storing any of it
-  _ <- decodeOrFail @Game "game" exported.game
+  imported <- decodeOrFail @Game "game" exported.game
   _ <- decodeOrFail @[Message] "queue" exported.queue
   _ <- readGen exported.randomGen
   now <- liftIO getCurrentTime
@@ -527,6 +547,8 @@ postImportR = do
           , lotrGameCurrentQueue = exported.queue
           , lotrGameRandomGen = exported.randomGen
           , lotrGameStep = exported.step
+          , lotrGameScenario = unScenarioId $ toId imported.scenario
+          , lotrGameDeck = Nothing
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
