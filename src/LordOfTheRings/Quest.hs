@@ -1,64 +1,53 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module LordOfTheRings.Quest (module LordOfTheRings.Quest, module LordOfTheRings.Quest.Type) where
+module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
-import LordOfTheRings.Classes.Entity
-import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
-import LordOfTheRings.Classes.HasGame
-import LordOfTheRings.Game.Base
-import LordOfTheRings.Id
-import LordOfTheRings.Target
-import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher
-import LordOfTheRings.Message
-import LordOfTheRings.Prelude
-import LordOfTheRings.Quest.Type
-import LordOfTheRings.Question
-import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-
-getLead :: (HasGame m) => m PlayerId
-getLead = (.id) <$> selectJust ActivePlayer
+import LordOfTheRings.Quest.Cards.AChosenPathBeornsPath
+import LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
+import LordOfTheRings.Quest.Cards.AForkInTheRoad
+import LordOfTheRings.Quest.Cards.AmbushOnTheShore
+import LordOfTheRings.Quest.Cards.AnduinPassage
+import LordOfTheRings.Quest.Cards.FliesAndSpiders
+import LordOfTheRings.Quest.Cards.OutOfTheDungeons
+import LordOfTheRings.Quest.Cards.TheNecromancersTower
+import LordOfTheRings.Quest.Cards.ThroughTheCaverns
+import LordOfTheRings.Quest.Cards.ToTheRiver
+import LordOfTheRings.Quest.Runner ()
+import LordOfTheRings.Quest.Types as X
+import LordOfTheRings.Id
+import LordOfTheRings.Prelude
 
 instance RunMessage Quest where
   runMessage msg (Quest a) = Quest <$> runMessage msg a
 
-newtype FliesAndSpiders = FliesAndSpiders QuestAttrs
-  deriving anyclass (IsQuest)
-  deriving newtype (Show, ToJSON, Entity)
-instance RunMessage FliesAndSpiders where
-  runMessage msg s@(FliesAndSpiders a) = case msg of
-    DoStep 7 Setup -> do
-      lead <- getLead
-      push $ chooseOne lead [targetLabel a [Flip $ toTarget a]]
-      pure s
-    Flip (isTarget a -> True) -> do
-      lead <- getLead
-      send $ FlipCard a.card.id
-      pushAll
-        [ Search lead EncounterDeck (cardIs Enemies.forestSpider) ToStaging Shuffle
-        , Search lead EncounterDeck (cardIs Locations.oldForestRoad) ToStaging Shuffle
-        ]
-      pure $ FliesAndSpiders $ a {side = B}
-    _ -> FliesAndSpiders <$> runMessage msg a
+createQuest :: EncounterCard -> QuestId -> Quest
+createQuest card = lookupQuest (toCardCode card) (ecId card)
 
-instance RunMessage QuestAttrs where
-  runMessage msg attrs = case msg of
-    _ -> pure attrs
-
-lookupQuest :: CardCode -> QuestAttrs -> Quest
-lookupQuest cCode = fromMaybe (error "No such quest") $ Map.lookup cCode allData
- where
-  allData =
-    Map.fromList
-      [ ("01119", Quest . FliesAndSpiders)
-      ]
+lookupQuest :: (HasCallStack) => CardCode -> CardId -> QuestId -> Quest
+lookupQuest cardCode cardId ident = case Map.lookup cardCode allQuests of
+  Just (SomeQuestCard builder) -> Quest $ cbCardBuilder builder cardId ident
+  Nothing -> error $ "Unknown quest: " <> show cardCode
 
 newQuest :: (MonadRandom m) => EncounterCard -> m Quest
-newQuest card = do
-  questId <- getRandom
-  let attrs = QuestAttrs {id = questId, card, side = A}
-  pure $ lookupQuest (toCardCode card) attrs
+newQuest card = createQuest card <$> getRandom
+
+allQuests :: Map CardCode SomeQuestCard
+allQuests =
+  Map.fromList
+    [ (toCardCode builder, card)
+    | card@(SomeQuestCard builder) <-
+        [ SomeQuestCard fliesAndSpiders
+        , SomeQuestCard aForkInTheRoad
+        , SomeQuestCard aChosenPathDontLeaveThePath
+        , SomeQuestCard aChosenPathBeornsPath
+        , SomeQuestCard theNecromancersTower
+        , SomeQuestCard throughTheCaverns
+        , SomeQuestCard outOfTheDungeons
+        , SomeQuestCard toTheRiver
+        , SomeQuestCard anduinPassage
+        , SomeQuestCard ambushOnTheShore
+        ]
+    ]

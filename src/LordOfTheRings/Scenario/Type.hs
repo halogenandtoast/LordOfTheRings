@@ -3,7 +3,6 @@ module LordOfTheRings.Scenario.Type (module LordOfTheRings.Scenario.Type) where
 import LordOfTheRings.Card
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
-import LordOfTheRings.Quest.Type
 import LordOfTheRings.Classes.RunMessage
 
 class (Show a, ToJSON a, RunMessage a) => IsScenario a where
@@ -19,7 +18,6 @@ instance HasField "phase" Scenario Phase where
 
 data ScenarioAttrs = ScenarioAttrs
   { questDeck :: [EncounterCard]
-  , quest :: Maybe Quest
   , encounterDeck :: [EncounterCard]
   , phase :: Phase
   }

@@ -10,6 +10,7 @@ import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy
 import LordOfTheRings.Entities
+import LordOfTheRings.Quest
 import LordOfTheRings.Treachery ()
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -95,6 +96,7 @@ instance RunMessage Entities where
       >>= traverseOf (locationsL . traverse) (runMessage msg)
       >>= traverseOf (enemiesL . traverse) (runMessage msg)
       >>= traverseOf (treacheriesL . traverse) (runMessage msg)
+      >>= traverseOf (questsL . traverse) (runMessage msg)
 
 instance RunMessage Game where
   runMessage msg game = do
@@ -137,6 +139,9 @@ runGameMessage msg g = case msg of
     send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
     pushAll [RunWindow $ Window After $ EnterPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  PutQuestIntoPlay card -> do
+    thisQuest <- newQuest card
+    pure $ g & entitiesL . questsL %~ insertEntity thisQuest
   AddToStaging card -> do
     case cdCardType (toCardDef card) of
       EnemyType -> do

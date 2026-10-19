@@ -8,7 +8,7 @@ const emit = defineEmits<{ reset: [], choose: [Choice] }>()
 const props = defineProps<{ you: Player, data: GameData, scenario: Scenario }>()
 
 const quest = computed<Quest>(() => {
-  return props.scenario.quest
+  return Object.values(props.data.game.entities.quests)[0]
 })
 
 const question = computed(() => {
@@ -45,7 +45,7 @@ const questChoice = computed(() => {
       <div class="deck">
         <div class="deck-size">{{scenario.encounterDeck.length}}</div>
       </div>
-      <Card v-if="quest" :card="quest.card" :side="quest.side" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" :you="you" />
+      <Card v-if="quest" :card="{ id: quest.cardId, cardCode: quest.cardCode }" :side="quest.flipped ? 'B' : 'A'" :progress="quest.tokens.Progress" :data="data" @choose="$emit('choose', $event)" rotated :currentChoice="questChoice" :you="you" />
     </div>
 
     <div class="staging">

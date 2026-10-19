@@ -128,7 +128,19 @@ library
       LordOfTheRings.Prelude
       LordOfTheRings.Quest
       LordOfTheRings.Quest.CardDefs
-      LordOfTheRings.Quest.Type
+      LordOfTheRings.Quest.Cards.AChosenPathBeornsPath
+      LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
+      LordOfTheRings.Quest.Cards.AForkInTheRoad
+      LordOfTheRings.Quest.Cards.AmbushOnTheShore
+      LordOfTheRings.Quest.Cards.AnduinPassage
+      LordOfTheRings.Quest.Cards.FliesAndSpiders
+      LordOfTheRings.Quest.Cards.OutOfTheDungeons
+      LordOfTheRings.Quest.Cards.TheNecromancersTower
+      LordOfTheRings.Quest.Cards.ThroughTheCaverns
+      LordOfTheRings.Quest.Cards.ToTheRiver
+      LordOfTheRings.Quest.Import.Lifted
+      LordOfTheRings.Quest.Runner
+      LordOfTheRings.Quest.Types
       LordOfTheRings.Question
       LordOfTheRings.Queue
       LordOfTheRings.Scenario

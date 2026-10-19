@@ -54,6 +54,7 @@ data Message
   | Flip Target
   | Search PlayerId DeckSignifier CardMatcher CardHandler DeckHandler
   | AddToStaging EncounterCard
+  | PutQuestIntoPlay EncounterCard
   | ShuffleDeck DeckSignifier
   | RunWindow Window
   | UseCardAbility PlayerId Source Int

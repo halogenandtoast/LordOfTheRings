@@ -69,3 +69,6 @@ getPlayer :: (HasGame m) => PlayerId -> m Player
 getPlayer pid = Map.findWithDefault missingPlayer pid <$> getsGame (.players)
  where
   missingPlayer = error $ "Player not found: " <> show pid
+
+getLead :: (HasGame m) => m PlayerId
+getLead = (.id) <$> selectJust FirstPlayer

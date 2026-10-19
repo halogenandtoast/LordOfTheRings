@@ -10,7 +10,6 @@ import LordOfTheRings.GameT
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
-import LordOfTheRings.Quest
 import LordOfTheRings.Quest.CardDefs qualified as Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
@@ -18,7 +17,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Scenario.Type
 
 newScenario :: (IsScenario a) => (ScenarioAttrs -> a) -> Scenario
-newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] ResourcePhase
+newScenario f = Scenario $ f $ ScenarioAttrs [] [] ResourcePhase
 
 instance RunMessage Scenario where
   runMessage msg (Scenario a) = Scenario <$> runMessage msg a
@@ -52,9 +51,8 @@ instance RunMessage PassageThroughMirkwood where
             , Quest.aChosenPathBeornsPath
             ]
 
-      quest <- Just <$> newQuest fliesAndSpiders
-
-      pure $ PassageThroughMirkwood $ a {questDeck, quest}
+      push $ PutQuestIntoPlay fliesAndSpiders
+      pure $ PassageThroughMirkwood $ a {questDeck}
     _ -> PassageThroughMirkwood <$> runMessage msg a
 
 cardMatches :: CardMatcher -> EncounterCard -> Bool
@@ -86,6 +84,4 @@ runScenarioMessage msg attrs = case msg of
   _ -> pure attrs
 
 instance RunMessage ScenarioAttrs where
-  runMessage msg attrs = do
-    quest <- traverse (runMessage msg) attrs.quest
-    runScenarioMessage msg $ attrs {quest}
+  runMessage = runScenarioMessage

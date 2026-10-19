@@ -9,6 +9,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Location.Types
 import LordOfTheRings.Prelude
+import LordOfTheRings.Quest.Types
 import LordOfTheRings.Treachery.Types
 
 data Entities = Entities
@@ -17,6 +18,7 @@ data Entities = Entities
   , entitiesEnemies :: Map EnemyId Enemy
   , entitiesLocations :: Map LocationId Location
   , entitiesTreacheries :: Map TreacheryId Treachery
+  , entitiesQuests :: Map QuestId Quest
   }
   deriving stock (Show, Generic)
 
@@ -26,11 +28,11 @@ instance ToJSON Entities where
   toJSON = genericToJSON (aesonOptions $ Just "entities")
 
 instance Semigroup Entities where
-  Entities h1 a1 e1 l1 t1 <> Entities h2 a2 e2 l2 t2 =
-    Entities (h1 <> h2) (a1 <> a2) (e1 <> e2) (l1 <> l2) (t1 <> t2)
+  Entities h1 a1 e1 l1 t1 q1 <> Entities h2 a2 e2 l2 t2 q2 =
+    Entities (h1 <> h2) (a1 <> a2) (e1 <> e2) (l1 <> l2) (t1 <> t2) (q1 <> q2)
 
 instance Monoid Entities where
-  mempty = Entities mempty mempty mempty mempty mempty
+  mempty = Entities mempty mempty mempty mempty mempty mempty
 
 instance HasField "heroes" Entities (Map HeroId Hero) where
   getField = entitiesHeroes
@@ -46,3 +48,6 @@ instance HasField "locations" Entities (Map LocationId Location) where
 
 instance HasField "treacheries" Entities (Map TreacheryId Treachery) where
   getField = entitiesTreacheries
+
+instance HasField "quests" Entities (Map QuestId Quest) where
+  getField = entitiesQuests
