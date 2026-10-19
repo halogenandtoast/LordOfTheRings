@@ -14,9 +14,9 @@ instance RunMessage UngoliantsSpawn where
   runMessage msg e@(UngoliantsSpawn attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       committed <- selectCharacters CommittedHero CommittedAlly
-      pushAll [CreateEffect $ Effect (toSource attrs) c [WillpowerModifier (-1)] UntilEndOfPhase | c <- committed]
+      for_ committed \c -> phaseModifier attrs c (WillpowerModifier (-1))
       pure e
     ResolveShadowEffect cid _ pid defender | cid == attrs.cardId -> do
-      push $ RaiseThreat pid (if isJust defender then 4 else 8)
+      raiseThreat pid (ifUndefended defender 8 4)
       pure e
     _ -> UngoliantsSpawn <$> runMessage msg attrs

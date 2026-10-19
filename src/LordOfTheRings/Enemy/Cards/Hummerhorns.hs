@@ -18,13 +18,13 @@ instance RunMessage Hummerhorns where
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
       for_ [pid | Window _ (EnemyEngaged _ pid) <- windows] \pid -> do
         heroes <- select (HeroControlledBy $ PlayerWithId pid)
-        unless (null heroes)
-          $ push
-          $ questionLabelWith (ikey "label.hummerhorns.damage") (Just $ toTarget attrs) [] pid [targetLabel h [DealDamage (toSource attrs) (toTarget h) 5] | h <- heroes]
+        chooseOneM pid do
+          questionLabeled "hummerhorns.damage"
+          causedBy attrs
+          targets heroes \h -> dealDamage attrs h 5
       pure e
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
       characters <- charactersControlledBy pid
-      let damage = if isJust defender then 1 else 2
-      pushAll [DealDamage (EnemySource eid) c damage | c <- characters]
+      for_ characters \c -> dealDamage (EnemySource eid) c (ifUndefended defender 2 1)
       pure e
     _ -> Hummerhorns <$> runMessage msg attrs

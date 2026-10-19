@@ -20,6 +20,6 @@ instance RunMessage EasternCrows where
   runMessage msg e@(EasternCrows attrs) = case msg of
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
       threat <- (.threat) <$> getPlayer pid
-      push $ CreateEffect $ Effect (toSource attrs) (toTarget eid) [AttackModifier $ if threat >= 35 then 2 else 1] UntilEndOfPhase
+      enemyGetsAttack attrs eid (if threat >= 35 then 2 else 1)
       pure e
     _ -> EasternCrows <$> runMessage msg attrs

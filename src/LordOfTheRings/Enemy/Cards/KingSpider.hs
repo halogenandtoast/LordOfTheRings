@@ -13,10 +13,9 @@ kingSpider = enemy KingSpider Cards.kingSpider
 instance RunMessage KingSpider where
   runMessage msg e@(KingSpider attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      players <- getPlayerOrder
-      pushAll [ChooseAndExhaust (toSource attrs) pid 1 | pid <- players]
+      eachPlayer \pid -> push $ ChooseAndExhaust (toSource attrs) pid 1
       pure e
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
-      push $ ChooseAndExhaust (EnemySource eid) pid (if isJust defender then 1 else 2)
+      push $ ChooseAndExhaust (EnemySource eid) pid (ifUndefended defender 2 1)
       pure e
     _ -> KingSpider <$> runMessage msg attrs

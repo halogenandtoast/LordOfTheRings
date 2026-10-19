@@ -15,12 +15,11 @@ blackForestBats = enemy BlackForestBats Cards.blackForestBats
 instance RunMessage BlackForestBats where
   runMessage msg e@(BlackForestBats attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      order <- getPlayerOrder
-      for_ order \p -> do
+      eachPlayer \p -> do
         committed <- selectCharacters (HeroControlledBy (PlayerWithId p) <> CommittedHero) (AllyControlledBy (PlayerWithId p) <> CommittedAlly)
-        unless (null committed)
-          $ push
-          $ questionLabelWith (ikey "label.blackForestBats.remove") (Just $ toTarget attrs) [] p
-            [targetLabel c [RemoveFromQuest c] | c <- committed]
+        chooseOneM p do
+          questionLabeled "blackForestBats.remove"
+          causedBy attrs
+          targets committed \c -> push $ RemoveFromQuest c
       pure e
     _ -> BlackForestBats <$> runMessage msg attrs

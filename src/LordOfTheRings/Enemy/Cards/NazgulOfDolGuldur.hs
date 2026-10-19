@@ -26,7 +26,6 @@ instance RunMessage NazgulOfDolGuldur where
   runMessage msg e@(NazgulOfDolGuldur attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       for_ (placementController attrs.placement) \pid -> do
-        characters <- charactersControlledBy pid
-        push $ ChooseAndDiscard (toSource attrs) pid characters
+        chooseAndDiscard attrs pid =<< charactersControlledBy pid
       pure e
     _ -> NazgulOfDolGuldur <$> runMessage msg attrs

@@ -16,9 +16,9 @@ instance HasAbilities ForestSpider where
 instance RunMessage ForestSpider where
   runMessage msg e@(ForestSpider attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ CreateEffect $ Effect (toSource attrs) (toTarget attrs) [AttackModifier 1] UntilEndOfRound
+      roundModifier attrs attrs (AttackModifier 1)
       pure e
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
-      push . ChooseAndDiscard (EnemySource eid) pid =<< getAttachmentsControlledBy pid
+      chooseAndDiscard (EnemySource eid) pid =<< getAttachmentsControlledBy pid
       pure e
     _ -> ForestSpider <$> runMessage msg attrs

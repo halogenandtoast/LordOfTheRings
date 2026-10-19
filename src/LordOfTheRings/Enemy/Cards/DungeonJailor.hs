@@ -26,8 +26,6 @@ instance RunMessage DungeonJailor where
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       lead <- getLead
       unclaimed <- getsGame (map toTarget . filter ((== StagingArea) . (.placement)) . toList . entitiesObjectives . gameEntities)
-      unless (null unclaimed)
-        $ push
-        $ chooseOrRunOne lead [targetLabel o [ShuffleIntoEncounterDeck o] | o <- unclaimed]
+      chooseOrRunOneM lead $ targets unclaimed \o -> push $ ShuffleIntoEncounterDeck o
       pure e
     _ -> DungeonJailor <$> runMessage msg attrs

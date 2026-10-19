@@ -18,12 +18,12 @@ instance RunMessage DolGuldurOrcs where
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
       committed <- selectCharacters CommittedHero CommittedAlly
-      unless (null committed)
-        $ push
-        $ questionLabelWith (ikey "label.dolGuldurOrcs.damage") (Just $ toTarget attrs) [] lead
-          [targetLabel c [DealDamage (toSource attrs) c 2] | c <- committed]
+      chooseOneM lead do
+        questionLabeled "dolGuldurOrcs.damage"
+        causedBy attrs
+        targets committed \c -> dealDamage attrs c 2
       pure e
     ResolveShadowEffect cid eid _ defender | cid == attrs.cardId -> do
-      push $ CreateEffect $ Effect (toSource attrs) (toTarget eid) [AttackModifier $ maybe 3 (const 1) defender] UntilEndOfPhase
+      enemyGetsAttack attrs eid (ifUndefended defender 3 1)
       pure e
     _ -> DolGuldurOrcs <$> runMessage msg attrs

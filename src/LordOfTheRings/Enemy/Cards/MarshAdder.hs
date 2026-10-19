@@ -17,6 +17,6 @@ instance HasAbilities MarshAdder where
 instance RunMessage MarshAdder where
   runMessage msg e@(MarshAdder attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
-      pushAll $ take 1 [RaiseThreat pid 1 | Window _ (EnemyAttacking _ pid) <- windows]
+      for_ (headMay [pid | Window _ (EnemyAttacking _ pid) <- windows]) \pid -> raiseThreat pid 1
       pure e
     _ -> MarshAdder <$> runMessage msg attrs

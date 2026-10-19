@@ -23,6 +23,6 @@ instance HasAbilities ChieftanUfthak where
 instance RunMessage ChieftanUfthak where
   runMessage msg e@(ChieftanUfthak attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ PlaceTokens (toSource attrs) (toTarget attrs) Resource 1
+      placeResources attrs attrs 1
       pure e
     _ -> ChieftanUfthak <$> runMessage msg attrs

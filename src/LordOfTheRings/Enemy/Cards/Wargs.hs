@@ -25,6 +25,6 @@ instance RunMessage Wargs where
       push $ PlaceEnemy attrs.id StagingArea
       pure e
     ResolveShadowEffect cid eid _ defender | cid == attrs.cardId -> do
-      push $ CreateEffect $ Effect (toSource attrs) (toTarget eid) [AttackModifier $ maybe 2 (const 1) defender] UntilEndOfPhase
+      enemyGetsAttack attrs eid (ifUndefended defender 2 1)
       pure e
     _ -> Wargs <$> runMessage msg attrs

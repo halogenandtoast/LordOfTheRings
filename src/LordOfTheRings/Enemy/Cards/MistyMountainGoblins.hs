@@ -20,9 +20,9 @@ instance HasAbilities MistyMountainGoblins where
 instance RunMessage MistyMountainGoblins where
   runMessage msg e@(MistyMountainGoblins attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ RemoveProgressFromQuest (toSource attrs) 1
+      removeProgressFromQuest attrs 1
       pure e
     ResolveShadowEffect cid _ _ defender | cid == attrs.cardId -> do
-      push $ RemoveProgressFromQuest (toSource attrs) (maybe 3 (const 1) defender)
+      removeProgressFromQuest attrs (ifUndefended defender 3 1)
       pure e
     _ -> MistyMountainGoblins <$> runMessage msg attrs

@@ -17,9 +17,6 @@ instance RunMessage CavernGuardian where
   runMessage msg e@(CavernGuardian attrs) = case msg of
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
       attachments <- getAttachmentsControlledBy pid
-      push
-        $ if isJust defender
-          then ChooseAndDiscard (EnemySource eid) pid attachments
-          else Run (map Discard attachments)
+      ifUndefended defender (for_ attachments discard) (chooseAndDiscard (EnemySource eid) pid attachments)
       pure e
     _ -> CavernGuardian <$> runMessage msg attrs

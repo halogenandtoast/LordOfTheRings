@@ -17,6 +17,6 @@ instance HasAbilities DolGuldurBeastmaster where
 instance RunMessage DolGuldurBeastmaster where
   runMessage msg e@(DolGuldurBeastmaster attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ DealShadowCard attrs.id
+      dealShadowCard attrs.id
       pure e
     _ -> DolGuldurBeastmaster <$> runMessage msg attrs

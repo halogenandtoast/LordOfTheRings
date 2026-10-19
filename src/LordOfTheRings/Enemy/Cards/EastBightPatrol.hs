@@ -15,8 +15,7 @@ eastBightPatrol = enemy EastBightPatrol Cards.eastBightPatrol
 instance RunMessage EastBightPatrol where
   runMessage msg e@(EastBightPatrol attrs) = case msg of
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
-      pushAll
-        $ CreateEffect (Effect (toSource attrs) (toTarget eid) [AttackModifier 1] UntilEndOfPhase)
-        : [RaiseThreat pid 3 | isNothing defender]
+      enemyGetsAttack attrs eid 1
+      when (isNothing defender) $ raiseThreat pid 3
       pure e
     _ -> EastBightPatrol <$> runMessage msg attrs
