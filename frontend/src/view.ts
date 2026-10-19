@@ -130,9 +130,13 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
 
   const toQuestion = (pid: string, question: Question): QuestionView => {
     let prompt = ''
+    let sourceId: string | null = null
+    let targetIds: string[] = []
     let q = question
     while (q.tag === 'QuestionLabel') {
       prompt = q.label
+      sourceId = targetCardId(q.source ?? undefined)
+      targetIds = q.targets.map(targetCardId).filter((id): id is string => id !== null)
       q = q.question
     }
     const choices = q.choices.map((ui: UI, index): ChoiceView => {
@@ -144,11 +148,13 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
         case 'AbilityLabel': {
           const kind = ui.ability?.abilityType.tag.replace(/Ability$/, '').replace(/^SilentForced$/, 'Forced') ?? 'Use'
           const source = ui.ability?.abilitySource
-          return { index, label: `${kind}: ${targetName(source && { tag: source.tag.replace(/Source$/, 'Target'), contents: source.contents })}`, targetId: null }
+          const sourceCard = source && { tag: source.tag.replace(/Source$/, 'Target'), contents: source.contents }
+          // the ability's own card is what you click to use it
+          return { index, label: `${kind}: ${targetName(sourceCard)}`, targetId: targetCardId(sourceCard) }
         }
       }
     })
-    return { askId: game.questionVersion, playerId: pid, prompt, choices }
+    return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices }
   }
 
   const [asked] = Object.entries(game.question)

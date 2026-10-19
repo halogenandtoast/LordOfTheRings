@@ -28,6 +28,10 @@ export interface QuestionView {
   askId: number
   playerId: string
   prompt: string
+  /** The card causing this decision. */
+  sourceId: string | null
+  /** The cards the decision is aimed at. */
+  targetIds: string[]
   choices: ChoiceView[]
 }
 

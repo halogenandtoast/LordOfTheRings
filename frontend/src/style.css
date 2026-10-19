@@ -38,7 +38,14 @@
   --accent-bright: var(--gold-light);
   --danger: var(--rust);
   --success: var(--soft-olive);
-  --select: #f0c75e;
+  /* Visual language for decisions */
+  --interactive: #ff00ff;
+  --interactive-glow: rgb(255 0 255 / 0.55);
+  --source: #00d9ff;
+  --source-glow: rgb(0 217 255 / 0.5);
+  --target: #ffa21f;
+  --target-glow: rgb(255 162 31 / 0.5);
+  --select: var(--interactive);
 
   --page-background: var(--surface-0);
   --panel: rgb(42 35 25 / 0.96);

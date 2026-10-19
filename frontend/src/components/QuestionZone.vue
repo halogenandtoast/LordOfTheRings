@@ -25,13 +25,37 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
           {{ choice.label }}
         </button>
       </div>
-      <p v-if="targeted" class="hint">or click a highlighted card</p>
+      <p v-if="targeted" class="hint"><span class="swatch interactive"></span>or click a highlighted card</p>
+      <p v-if="question.sourceId || question.targetIds.length" class="legend">
+        <span v-if="question.sourceId"><span class="swatch source"></span>source</span>
+        <span v-if="question.targetIds.length"><span class="swatch target"></span>target</span>
+      </p>
     </template>
     <p v-else class="prompt idle-text">waiting</p>
   </div>
 </template>
 
 <style scoped>
+.swatch {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+}
+.swatch.interactive { background: var(--interactive); }
+.swatch.source { background: var(--source); }
+.swatch.target { background: var(--target); }
+.legend {
+  display: flex;
+  gap: 0.8rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 .question {
   flex: 0 1 20rem;
   min-width: 12rem;

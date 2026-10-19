@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
+import { useHighlights } from '../composables/useHighlights'
 import { cardImage, type CardView, type ChoiceView } from '../types'
 
 const { card, choices = [], attachments = [], rotated = false, flipping = false } = defineProps<{
@@ -20,6 +21,9 @@ const cardRef = useTemplateRef<HTMLElement>('cardRef')
 const source = computed(() => cardImage(card))
 const choice = computed(() => choices.find((option) => option.targetId === card.id) ?? null)
 const active = computed(() => choice.value !== null)
+const highlights = useHighlights()
+const isSource = computed(() => highlights.value.sourceId === card.id)
+const isTarget = computed(() => highlights.value.targetIds.includes(card.id))
 const choiceFor = (attached: CardView) =>
   choices.find((option) => option.targetId === attached.id) ?? null
 
@@ -54,7 +58,7 @@ const toggleUnless = (attached: CardView) => {
     <div
       ref="cardRef"
       class="card"
-      :class="{ rotated, exhausted: card.exhausted, active, committed: card.committed, flipping }"
+      :class="{ rotated, exhausted: card.exhausted, active, source: isSource, target: isTarget, committed: card.committed, flipping }"
       :style="{ viewTransitionName: `card-${card.id}` }"
       :title="card.name"
       @mouseenter="cardRef && overlay.show(card, cardRef, rotated)"
@@ -110,7 +114,11 @@ const toggleUnless = (attached: CardView) => {
 .card.exhausted { transform: rotate(90deg) scale(0.88); }
 .card.committed img { box-shadow: 0 0 0 2px var(--accent); }
 .card.active { cursor: pointer; }
-.card.active img { border: 2px solid var(--select); }
+/* The visual language: magenta can be interacted with, cyan is the source of the
+   decision, amber is its target. */
+.card.active img { border: 2px solid var(--interactive); box-shadow: 0 0 10px var(--interactive-glow); }
+.card.source img { outline: 3px solid var(--source); outline-offset: 2px; box-shadow: 0 0 12px var(--source-glow); }
+.card.target img { outline: 3px solid var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
 .card.flipping { animation: flip 0.32s ease-in-out; }
 .card.flipping.exhausted { animation: flip-exhausted 0.32s ease-in-out; }
 

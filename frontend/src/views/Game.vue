@@ -12,6 +12,7 @@ import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
 import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
+import { provideHighlights } from '../composables/useHighlights'
 
 const route = useRoute()
 const {
@@ -21,6 +22,7 @@ const {
 const showSidebar = ref(true)
 
 const choices = computed(() => question.value?.choices ?? [])
+provideHighlights(() => question.value)
 const you = computed(() => players.value[0] ?? null)
 const engaged = computed(() => players.value.flatMap((player) => player.engaged))
 const cardsInPlay = computed(() => players.value.flatMap((player) => player.inPlay))

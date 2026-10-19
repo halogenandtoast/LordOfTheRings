@@ -43,7 +43,7 @@ export interface UI {
 
 export type Question =
   | { tag: 'ChooseOne' | 'ChooseOneAtATime'; choices: UI[] }
-  | { tag: 'QuestionLabel'; label: string; question: Question }
+  | { tag: 'QuestionLabel'; label: string; source: Target | null; targets: Target[]; question: Question }
 
 export interface ServerPlayer {
   id: string
