@@ -3,6 +3,7 @@ module LordOfTheRings.Matcher.Types (module LordOfTheRings.Matcher.Types) where
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Name
+import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Trait
@@ -34,6 +35,7 @@ data HeroMatcher
   | HeroWithTitle Name
   | HeroWithTrait Trait
   | HeroWithSphere Sphere
+  | HeroWithKeyword Keyword
   | ReadyHero
   | ExhaustedHero
   | CommittedHero
@@ -64,6 +66,7 @@ data AllyMatcher
   | AllyWithTitle Name
   | AllyWithTrait Trait
   | AllyWithSphere Sphere
+  | AllyWithKeyword Keyword
   | ReadyAlly
   | ExhaustedAlly
   | CommittedAlly

@@ -247,7 +247,7 @@ runGameMessage msg g = case msg of
           & scenarioL %~ overAttrs (victoryDisplayL %~ (card :))
       Nothing -> discardTarget target g
   Destroy target -> do
-    pushAll [Discard target, CheckEliminations]
+    pushAll [Discard target, CheckEliminations, CheckWindows [mkAfter $ CharacterDestroyed target]]
     pure g
   BeginPhase PlanningPhase -> do
     players <- getPlayers
@@ -355,7 +355,19 @@ runGameMessage msg g = case msg of
     pure g
   PlayerAttacks pid -> do
     enemies <- engagedByCost pid
-    pushAll $ map (DeclareAttackers pid) enemies
+    loners <- filterM (fmap (elem CanAttackStagingAreaAlone) . getModifiers) =<< select (HeroControlledBy $ PlayerWithId pid)
+    pushAll $ map (DeclareAttackers pid) enemies <> [AttackStagingAreaAlone pid (toTarget h) | h <- loners]
+    pure g
+  AttackStagingAreaAlone pid attacker -> do
+    ready <- elem attacker <$> readyCharacters pid
+    staged <- select EnemyInStagingArea
+    when (ready && notNull staged)
+      $ push
+      $ questionLabelWith "Attack an enemy in the staging area alone?" (Just attacker) [] pid
+      $ [ targetLabel eid [AttackWith attacker, CreateEffect $ Effect GameSource attacker [AttackModifier 1] UntilEndOfPhase, ResolveAttack pid eid]
+        | eid <- staged
+        ]
+      <> [Label "Do not attack" []]
     pure g
   DeclareAttackers pid eid -> do
     attackers <- readyCharacters pid
@@ -371,9 +383,20 @@ runGameMessage msg g = case msg of
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> AttackingHero)
     allies <- select (AllyControlledBy (PlayerWithId pid) <> AttackingAlly)
     let attackers = map toTarget heroes <> map toTarget allies
-    attack <- sum <$> traverse getAttack attackers
+    enemyDef <- toCardDef <$> getEnemy eid
+    bonuses <- for attackers \a -> do
+      mods <- getModifiers a
+      sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemyDef
+    attack <- (+ sum bonuses) . sum <$> traverse getAttack attackers
     defense <- getEnemyDefense eid
-    pushAll $ map StopAttacking attackers <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | notNull attackers]
+    pushAll
+      $ map StopAttacking attackers
+      <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | notNull attackers]
+      <> [AttackResolved eid attackers | notNull attackers]
+    pure g
+  AttackResolved eid attackers -> do
+    destroyed <- not <$> selectAny (EnemyWithId eid)
+    pushWhen destroyed $ CheckWindows [mkAfter $ EnemyDestroyedByAttack eid attackers]
     pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
@@ -526,19 +549,22 @@ runGameMessage msg g = case msg of
   RevealCard card -> do
     let def = toCardDef card
     send $ Log $ "Revealed " <> display (cdName def)
+    players <- getPlayerOrder
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
+        doomed = [RaiseThreat p n | Doomed n <- toList (cdKeywords def), p <- players]
+        revealing t = [CheckWindows [mkWhen $ Revealed t], WhenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
-        pushAll $ WhenRevealed (toTarget enemy) : surge
+        pushAll $ revealing (toTarget enemy) <> surge
         pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
       LocationType -> do
         location <- newLocation card
-        pushAll $ WhenRevealed (toTarget location) : surge
+        pushAll $ revealing (toTarget location) <> surge
         pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) location)
       TreacheryType -> do
         treachery <- newTreachery card
-        pushAll $ [WhenRevealed (toTarget treachery), FinishRevelation (toId treachery)] <> surge
+        pushAll $ revealing (toTarget treachery) <> [FinishRevelation (toId treachery)] <> surge
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       _ -> pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
   FinishRevelation tid -> do

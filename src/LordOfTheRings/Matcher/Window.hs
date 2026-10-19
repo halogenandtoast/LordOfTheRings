@@ -16,6 +16,12 @@ data WindowMatcher
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
   | AnyTraveledWindow Timing
+  | -- | an enemy destroyed by an attack, by any attackers or with the given one among them
+    EnemyDestroyedByAttackWindow Timing (Maybe Target)
+  | CharacterDestroyedWindow Timing
+  | EnemyRevealedWindow Timing
+  | -- | any encounter card revealed from the encounter deck
+    CardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
     DefenderDeclaredWindow Timing (Maybe Target)
   | AllyLeftPlayWindow Timing
@@ -34,6 +40,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
+  (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers) -> t == timing && maybe True (`elem` attackers) who
+  (CharacterDestroyedWindow t, CharacterDestroyed _) -> t == timing
+  (EnemyRevealedWindow t, Revealed (EnemyTarget _)) -> t == timing
+  (CardRevealedWindow t, Revealed _) -> t == timing
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (HeroLeftPlayWindow t pid trait, LeftPlay (HeroTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits
   _ -> False

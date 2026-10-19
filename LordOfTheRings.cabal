@@ -115,7 +115,9 @@ library
       LordOfTheRings.Event.Cards.GrimResolve
       LordOfTheRings.Event.Cards.LoreOfImladris
       LordOfTheRings.Event.Cards.LoriensWealth
+      LordOfTheRings.Event.Cards.QuickStrike
       LordOfTheRings.Event.Cards.RadagastsCunning
+      LordOfTheRings.Event.Cards.RainOfArrows
       LordOfTheRings.Event.Cards.SecretPaths
       LordOfTheRings.Event.Cards.SneakAttack
       LordOfTheRings.Event.Cards.StandTogether

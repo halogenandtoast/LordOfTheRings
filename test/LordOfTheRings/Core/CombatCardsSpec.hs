@@ -115,3 +115,82 @@ spec = do
       chooseTarget pid =<< hero "01004"
       (getCharacterDamage =<< hero "01004") `shouldReturn` 0
       heroExhausted . toAttrs <$> getHeroWithCode "01006" `shouldReturn` True
+
+  describe "Legolas" do
+    it "places 2 progress on the quest after helping destroy an enemy" . tacticsTest $ \pid -> do
+      flipFirstQuest pid
+      eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
+      run $ EngageEnemy pid eid
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      run $ BeginPhase CombatPhase
+      passActions pid
+      chooseLabel "Take the attack undefended" pid
+      chooseTarget pid =<< hero "01006"
+      chooseTarget pid =<< hero "01005"
+      chooseTarget pid =<< hero "01004"
+      chooseLabel "Done attacking" pid
+      legolas <- hero "01005"
+      chooseAbilityOf pid legolas
+      (.progress) <$> getActiveQuest `shouldReturn` 2
+
+  describe "Thalin" do
+    it "deals 1 damage to each enemy revealed while he is committed" . tacticsTest $ \pid -> do
+      _ <- setEncounterDeck [Enemies.forestSpider]
+      run $ BeginPhase QuestPhase
+      chooseTarget pid =<< hero "01006"
+      chooseLabel "Done committing" pid
+      eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
+      enemyDamage eid `shouldReturn` 1
+
+  describe "Dúnhere" do
+    it "attacks an enemy in the staging area alone with +1 attack" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      _ <- setEncounterDeck [Enemies.forestSpider]
+      run RevealEncounterCard
+      eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
+      run $ BeginPhase CombatPhase
+      passActions pid
+      chooseTarget pid eid
+      -- 2 attack + 1 against 1 defense
+      enemyDamage eid `shouldReturn` 2
+
+  describe "Blade of Gondolin" do
+    it "gives +1 attack against an Orc and progress after destroying it" . tacticsTest $ \pid -> do
+      flipFirstQuest pid
+      gimli <- hero "01004"
+      _ <- putAttachmentOn pid Attachments.bladeOfGondolin gimli
+      _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
+      run RevealEncounterCard
+      passActions pid
+      orcs <- getsGame (map toId . filter ((== toCardCode Enemies.dolGuldurOrcs) . toCardCode) . toList . (.entities.enemies))
+      for_ orcs \eid -> run $ EngageEnemy pid eid
+      run $ PlayerAttacks pid
+      chooseTarget pid gimli
+      chooseLabel "Done attacking" pid
+      blade <- getsGame (toTarget . fromJustNote "no blade" . headMay . toList . (.entities.attachments))
+      chooseAbilityOf pid blade
+      (.progress) <$> getActiveQuest `shouldReturn` 1
+
+  describe "Horn of Gondor" do
+    it "adds a resource to the attached hero after a character is destroyed" . tacticsTest $ \pid -> do
+      gimli <- hero "01004"
+      horn <- putAttachmentOn pid Attachments.hornOfGondor gimli
+      axehand <- putAllyIntoPlay pid Allies.veteranAxehand
+      run $ DealDamage GameSource axehand 2
+      chooseAbilityOf pid horn
+      (.resources) <$> getHeroWithCode "01004" `shouldReturn` 1
+
+  describe "Quick Strike" do
+    it "exhausts a character to attack an engaged enemy at once" . tacticsTest $ \pid -> do
+      eid <- engageSpider pid
+      _ <- playWith pid "01004" 1 Events.quickStrike
+      chooseTarget pid =<< hero "01004"
+      chooseTarget pid eid
+      enemyDamage eid `shouldReturn` 1
+
+  describe "Rain of Arrows" do
+    it "exhausts a ranged character to deal 1 damage to each enemy engaged with a player" . tacticsTest $ \pid -> do
+      eid <- engageSpider pid
+      _ <- playWith pid "01004" 1 Events.rainOfArrows
+      chooseTarget pid =<< hero "01005"
+      enemyDamage eid `shouldReturn` 1
+      heroExhausted . toAttrs <$> getHeroWithCode "01005" `shouldReturn` True

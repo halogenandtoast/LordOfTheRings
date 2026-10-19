@@ -19,6 +19,10 @@ data ModifierType
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
   | CannotAttack
+  | -- | when attacking an enemy with the trait, attack is raised by this much
+    AttackBonusAgainst Trait Int
+  | -- | the hero may attack an enemy in the staging area when attacking alone
+    CanAttackStagingAreaAlone
   | -- | on a player: the enemies engaged with them cannot attack them
     EngagedEnemiesCannotAttack
   | -- | on a player: they may declare any number of defenders against each attack

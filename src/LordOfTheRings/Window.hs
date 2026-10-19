@@ -19,6 +19,11 @@ data WindowType
   | DealtDamage Target Int
   | Traveled LocationId
   | DeclaredAsDefender Target EnemyId
+  | -- | an attack destroyed the enemy: the characters that attacked
+    EnemyDestroyedByAttack EnemyId [Target]
+  | CharacterDestroyed Target
+  | -- | an encounter card revealed from the encounter deck
+    Revealed Target
   | -- | a character left play: who controlled it, and its traits as it left
     LeftPlay Target PlayerId (Set Trait)
   deriving stock (Show, Eq, Generic)

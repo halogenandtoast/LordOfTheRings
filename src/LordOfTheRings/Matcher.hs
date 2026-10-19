@@ -54,6 +54,7 @@ matchHero matcher hero = case matcher of
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
   HeroWithSphere sphere -> pure $ hero.sphere == sphere
+  HeroWithKeyword k -> pure $ k `member` cdKeywords (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
@@ -77,6 +78,7 @@ matchAlly matcher ally = case matcher of
   AllyWithTitle name -> pure $ ally.name == name
   AllyWithTrait trait -> hasTrait trait (toTarget ally) (toCardDef ally)
   AllyWithSphere sphere -> pure $ cdSphere (toCardDef ally) == Just sphere
+  AllyWithKeyword k -> pure $ k `member` cdKeywords (toCardDef ally)
   ReadyAlly -> pure $ not (allyExhausted $ toAttrs ally)
   ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
@@ -208,3 +210,7 @@ getConditionAttachments = do
   isAttached = \case
     AttachedTo _ -> True
     _ -> False
+
+-- | The quest card in play, as a target.
+getCurrentQuest :: (HasGame m) => m (Maybe Target)
+getCurrentQuest = getsGame (fmap toTarget . headMay . toList . entitiesQuests . gameEntities)

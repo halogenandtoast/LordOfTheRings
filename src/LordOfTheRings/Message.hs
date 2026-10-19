@@ -143,6 +143,8 @@ data Message
   | DeclareAttackers PlayerId EnemyId
   | AttackWith Target
   | ResolveAttack PlayerId EnemyId
+  | AttackResolved EnemyId [Target]
+  | AttackStagingAreaAlone PlayerId Target
   | StopAttacking Target
   | Ready Target
   | PlaceTokens Source Target Token Int
