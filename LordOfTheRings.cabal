@@ -107,6 +107,7 @@ library
       LordOfTheRings.Frontend
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
+      LordOfTheRings.Game.Public
       LordOfTheRings.GameT
       LordOfTheRings.Helpers.Attachment
       LordOfTheRings.Helpers.Character

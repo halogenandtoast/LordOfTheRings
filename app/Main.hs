@@ -14,6 +14,7 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Decklist
 import LordOfTheRings.Game
+import LordOfTheRings.Game.Public
 import LordOfTheRings.GameT
 import LordOfTheRings.Id
 import LordOfTheRings.Message
@@ -56,7 +57,7 @@ instance Yesod App
 
 data GameData = GameData
   { started :: Bool
-  , game :: Maybe Game
+  , game :: Maybe Value
   , playerId :: Maybe PlayerId
   , canUndo :: Bool
   }
@@ -80,7 +81,7 @@ data GameSummary = GameSummary
 gameData :: Session -> IO GameData
 gameData s = do
   g <- runGameT s.env getGame
-  pure $ GameData True (Just g) (Just g.activePlayer) (notNull s.history)
+  pure $ GameData True (Just $ publicGame g) (Just g.activePlayer) (notNull s.history)
 
 summary :: Text -> Session -> IO GameSummary
 summary gid s = do
