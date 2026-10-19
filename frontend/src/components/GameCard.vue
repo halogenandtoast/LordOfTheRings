@@ -60,6 +60,7 @@ const toggleUnless = (attached: CardView) => {
         @click="toggleUnless(attached)"
       >
         <GameCard :card="attached" :choices="choices" @choose="emit('choose', $event)" />
+        <span class="attached-name" :class="{ exhausted: attached.exhausted }">{{ attached.name }}</span>
       </div>
     </div>
 
@@ -98,12 +99,39 @@ const toggleUnless = (attached: CardView) => {
   z-index: 1;
 }
 .attached {
+  position: relative;
   grid-area: 1 / 1;
   cursor: pointer;
   transform: translateY(calc(var(--depth) * var(--attachment-peek) * -1 + var(--attachment-peek)));
   transition: transform 0.2s ease;
   filter: drop-shadow(0 -1px 4px var(--shadow));
 }
+/* The peeking strip of an attachment is its tiny title bar, so name it in readable text. */
+.attached-name {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 3;
+  height: var(--attachment-peek);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  border-radius: 7px 7px 0 0;
+  background: linear-gradient(rgb(20 16 10 / 0.92), rgb(20 16 10 / 0.75));
+  color: var(--cream);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.attached-name.exhausted { color: var(--text-muted); }
+.attached-name.exhausted::after { content: "· exhausted"; font-weight: 400; font-style: italic; }
+/* Turning an attachment sideways would break the stack, so it dims instead. */
+.attached :deep(.card.exhausted) { transform: none; }
+.attached :deep(.card.exhausted img) { filter: brightness(0.6) saturate(0.6); }
 .card-slot.expanded .attached {
   transform: translateY(calc(var(--depth) * (var(--card-width) / var(--card-aspect)) * -0.55
     + (var(--card-width) / var(--card-aspect)) * 0.55));
