@@ -66,6 +66,10 @@ data Message
   | Flip Target
   | Search PlayerId DeckSignifier CardMatcher CardHandler DeckHandler
   | AddToStaging EncounterCard
+  | RevealEncounterCard
+  | RevealCard EncounterCard
+  | WhenRevealed Target
+  | FinishRevelation TreacheryId
   | PutQuestIntoPlay EncounterCard
   | CompleteQuest QuestId
   | AdvanceQuest

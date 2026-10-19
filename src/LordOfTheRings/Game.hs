@@ -34,7 +34,8 @@ import LordOfTheRings.Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario
 import LordOfTheRings.Target
-import LordOfTheRings.Treachery ()
+import LordOfTheRings.Keyword
+import LordOfTheRings.Treachery
 import LordOfTheRings.Window
 
 newGame :: Player -> [Hero] -> Game
@@ -230,6 +231,29 @@ runGameMessage msg g = case msg of
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
+  RevealCard card -> do
+    let def = toCardDef card
+    send $ Log $ "Revealed " <> display (cdName def)
+    let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
+    case cdCardType def of
+      EnemyType -> do
+        enemy <- newEnemy card
+        pushAll $ WhenRevealed (toTarget enemy) : surge
+        pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
+      LocationType -> do
+        location <- newLocation card
+        pushAll $ WhenRevealed (toTarget location) : surge
+        pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) location)
+      TreacheryType -> do
+        treachery <- newTreachery card
+        pushAll $ [WhenRevealed (toTarget treachery), FinishRevelation (toId treachery)] <> surge
+        pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
+      _ -> pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
+  FinishRevelation tid -> do
+    -- a treachery that did not attach itself to something is discarded once it resolves
+    for_ (Map.lookup tid g.entities.treacheries) \treachery ->
+      when (treachery.placement == Unplaced) $ push (Discard $ toTarget treachery)
+    pure g
   AddToStaging card -> case cdCardType (toCardDef card) of
     EnemyType -> do
       thisEnemy <- newEnemy card

@@ -6,8 +6,9 @@ module TestImport (
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame as X
 import LordOfTheRings.Classes.HasQueue as X
-import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, genPlayerCard, toCardCode)
-import LordOfTheRings.Classes.Entity as X (toAttrs, toId)
+import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
+import LordOfTheRings.Classes.Entity as X (overAttrs, toAttrs, toId)
+import LordOfTheRings.Scenario.Types (encounterDeckL)
 import LordOfTheRings.Decklist
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Quest as X (Quest, QuestAttrs (..))
@@ -86,3 +87,16 @@ runOnly msg = push msg >> void runNext
 
 getActiveQuest :: (HasCallStack) => GameT Quest
 getActiveQuest = getsGame (fromJustNote "no active quest" . headMay . toList . (.entities.quests))
+
+setEncounterDeck :: [CardDef] -> GameT [EncounterCard]
+setEncounterDeck defs = do
+  cards <- traverse genEncounterCard defs
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (encounterDeckL .~ cards)
+  pure cards
+
+getEncounterDiscard :: GameT [EncounterCard]
+getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . (.scenario))
+
+getEncounterDeck :: GameT [EncounterCard]
+getEncounterDeck = getsGame ((.encounterDeck) . toAttrs . (.scenario))

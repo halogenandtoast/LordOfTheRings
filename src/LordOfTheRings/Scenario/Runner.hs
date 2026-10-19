@@ -41,6 +41,16 @@ instance RunMessage ScenarioAttrs where
                 $ chooseOne pid
                   [targetLabel y [RemoveFromEncounterDeck y, AddToStaging y, ShuffleDeck EncounterDeck] | y <- x : xs]
               pure attrs
+    RevealEncounterCard -> case attrs.encounterDeck of
+      (card : rest) -> do
+        push $ RevealCard card
+        pure $ attrs & encounterDeckL .~ rest
+      []
+        | null attrs.encounterDiscard -> pure attrs
+        | otherwise -> do
+            deck <- shuffleM attrs.encounterDiscard
+            push RevealEncounterCard
+            pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     AdvanceQuest -> case attrs.questDeck of
       [] -> do

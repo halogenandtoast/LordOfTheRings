@@ -80,3 +80,6 @@ instance HasField "encounterDeck" ScenarioAttrs [EncounterCard] where
 
 instance HasField "questDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioQuestDeck
+
+instance HasField "encounterDiscard" ScenarioAttrs [EncounterCard] where
+  getField = scenarioEncounterDiscard
