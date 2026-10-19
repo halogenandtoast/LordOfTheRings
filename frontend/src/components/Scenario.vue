@@ -16,11 +16,11 @@ const question = computed(() => {
 })
 
 const enemies = computed(() => {
-  return Object.values(props.data.game.entities.enemies).filter((enemy) => enemy.placement.tag === "Staging")
+  return Object.values(props.data.game.entities.enemies).filter((enemy) => enemy.placement.tag === "StagingArea")
 })
 
 const locations = computed(() => {
-  return Object.values(props.data.game.entities.locations).filter((location) => location.placement.tag === "Staging")
+  return Object.values(props.data.game.entities.locations).filter((location) => location.placement.tag === "StagingArea")
 })
 
 const questChoice = computed(() => {

@@ -132,15 +132,15 @@ runGameMessage msg g = case msg of
     thisAlly <- newAlly card
     send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
     pushAll [RunWindow $ Window After $ EnterPlay $ toTarget thisAlly]
-    pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ Controlled pid)
+    pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ InPlayArea pid)
   AddToStaging card -> do
     case cdCardType (toCardDef card) of
       EnemyType -> do
         thisEnemy <- newEnemy card
-        pure $ g & entitiesL . enemiesL %~ insertEntity (thisEnemy & placementL .~ Staging)
+        pure $ g & entitiesL . enemiesL %~ insertEntity (thisEnemy & placementL .~ StagingArea)
       LocationType -> do
         thisLocation <- newLocation card
-        pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & placementL .~ Staging)
+        pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & placementL .~ StagingArea)
       _ -> error "Unhandled"
   _ -> pure g
 

@@ -115,3 +115,14 @@ genEncounterCard :: (MonadRandom m) => CardDef -> m EncounterCard
 genEncounterCard def = do
   cardId <- getRandom
   pure $ MkEncounterCard {ecId = cardId, ecCardCode = cdCardCode def}
+
+data CardBuilder ident a = CardBuilder
+  { cbCardDef :: CardDef
+  , cbCardBuilder :: CardId -> ident -> a
+  }
+
+instance HasCardCode (CardBuilder ident a) where
+  toCardCode = cdCardCode . cbCardDef
+
+instance Functor (CardBuilder ident) where
+  fmap f CardBuilder {..} = CardBuilder {cbCardDef, cbCardBuilder = \cardId ident -> f (cbCardBuilder cardId ident)}

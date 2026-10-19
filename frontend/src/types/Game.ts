@@ -22,7 +22,7 @@ type Player = {
   question: Question | null;
 }
 
-type Placement = { tag: "Controlled", contents: string }
+type Placement = { tag: "InPlayArea", contents: string }
 
 type Ally = {
   card: Card;

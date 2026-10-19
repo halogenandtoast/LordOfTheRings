@@ -63,6 +63,7 @@ library
       LordOfTheRings.Source
       LordOfTheRings.Sphere
       LordOfTheRings.Target
+      LordOfTheRings.Token
       LordOfTheRings.Trait
       LordOfTheRings.Treachery.CardDefs
       LordOfTheRings.Window

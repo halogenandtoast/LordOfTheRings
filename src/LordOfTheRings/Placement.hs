@@ -1,12 +1,25 @@
 module LordOfTheRings.Placement (module LordOfTheRings.Placement) where
 
-import Control.Lens
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+import LordOfTheRings.Target
 
-data Placement = Controlled PlayerId | Unplaced | Staging
-  deriving stock (Show, Generic)
+data Placement
+  = InPlayArea PlayerId
+  | AttachedTo Target
+  | StagingArea
+  | ActiveLocation
+  | EngagedWith PlayerId
+  | InVictoryDisplay
+  | Unplaced
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+placementController :: Placement -> Maybe PlayerId
+placementController = \case
+  InPlayArea pid -> Just pid
+  EngagedWith pid -> Just pid
+  _ -> Nothing
 
 class HasPlacement a where
   placementL :: Lens' a Placement
