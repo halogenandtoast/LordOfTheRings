@@ -9,7 +9,8 @@ import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.Entity as X (overAttrs, toAttrs, toId)
 import LordOfTheRings.Scenario.Types (encounterDeckL)
-import LordOfTheRings.Decklist
+import LordOfTheRings.Decklist as X (DeckList (..), starterDeck)
+import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Quest as X (Quest, QuestAttrs (..))
 import LordOfTheRings.Source as X
@@ -27,10 +28,25 @@ import Test.Hspec.Expectations.Lifted as X (shouldBe, shouldReturn, shouldSatisf
 
 -- | Run a test against a one player game built from the starter deck.
 gameTest :: (PlayerId -> GameT ()) -> IO ()
-gameTest body = do
-  (player, heroes) <- either (error . show) pure =<< loadPlayer starterDeck
+gameTest = gameTestWith testDeck
+
+gameTestWith :: DeckList -> (PlayerId -> GameT ()) -> IO ()
+gameTestWith deck body = do
+  (player, heroes) <- either (error . show) pure =<< loadPlayer deck
   env <- newGameEnv (newGame player heroes) (const $ pure ()) 1
   runGameT env (body player.id)
+
+-- | Beravor, Éowyn and Théodred (27 starting threat) with a mix of allies, attachments and events.
+testDeck :: DeckList
+testDeck =
+  DeckList
+    ["01012", "01007", "01002"]
+    [ ("01013", 3), ("01014", 2), ("01015", 2), ("01016", 3), ("01017", 2), ("01031", 1)
+    , ("01045", 2), ("01059", 2), ("01060", 1), ("01061", 2), ("01062", 2), ("01073", 3)
+    , ("01026", 2), ("01027", 1), ("01057", 1), ("01069", 2), ("01070", 2), ("01072", 2)
+    , ("01020", 2), ("01023", 2), ("01025", 1), ("01046", 2), ("01048", 2), ("01050", 2)
+    , ("01051", 2), ("01053", 1), ("01064", 1)
+    ]
 
 -- | Push a message and run the queue until it empties or a question is asked.
 run :: Message -> GameT ()

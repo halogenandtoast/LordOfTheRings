@@ -335,6 +335,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
+      LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.QuestAdvancementSpec
