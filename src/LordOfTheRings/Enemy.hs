@@ -7,21 +7,21 @@ import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Type
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-instance Run Enemy where
-  run msg (Enemy a) = Enemy <$> run msg a
+instance RunMessage Enemy where
+  runMessage msg (Enemy a) = Enemy <$> runMessage msg a
 
 newtype ForestSpider = ForestSpider EnemyAttrs
   deriving newtype (Show, ToJSON)
 
 instance IsEnemy ForestSpider
-instance Run ForestSpider where
-  run msg (ForestSpider a) = case msg of
-    _ -> ForestSpider <$> run msg a
+instance RunMessage ForestSpider where
+  runMessage msg (ForestSpider a) = case msg of
+    _ -> ForestSpider <$> runMessage msg a
 
-instance Run EnemyAttrs where
-  run msg attrs = case msg of
+instance RunMessage EnemyAttrs where
+  runMessage msg attrs = case msg of
     _ -> pure attrs
 
 lookupEnemy :: CardCode -> EnemyAttrs -> Enemy

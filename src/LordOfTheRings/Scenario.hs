@@ -8,6 +8,7 @@ import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.Cards (allEnemies)
 import LordOfTheRings.Location.Cards (allLocations)
+import LordOfTheRings.GameT
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
@@ -15,15 +16,15 @@ import LordOfTheRings.Quest
 import LordOfTheRings.Quest.Cards qualified as Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Scenario.Type
 import LordOfTheRings.Treachery.Cards (allTreacheries)
 
 newScenario :: (IsScenario a) => (ScenarioAttrs -> a) -> Scenario
 newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] Normal ResourcePhase
 
-instance Run Scenario where
-  run msg (Scenario a) = Scenario <$> run msg a
+instance RunMessage Scenario where
+  runMessage msg (Scenario a) = Scenario <$> runMessage msg a
 
 newtype PassageThroughMirkwood = PassageThroughMirkwood ScenarioAttrs
   deriving newtype (Show, ToJSON)
@@ -49,8 +50,8 @@ gatherEncounterSet difficulty encounterSet = do
     Nightmare -> nightmare
 
 instance IsScenario PassageThroughMirkwood
-instance Run PassageThroughMirkwood where
-  run msg (PassageThroughMirkwood a) = case msg of
+instance RunMessage PassageThroughMirkwood where
+  runMessage msg (PassageThroughMirkwood a) = case msg of
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
@@ -71,14 +72,14 @@ instance Run PassageThroughMirkwood where
       quest <- Just <$> newQuest fliesAndSpiders
 
       pure $ PassageThroughMirkwood $ a {questDeck, quest}
-    _ -> PassageThroughMirkwood <$> run msg a
+    _ -> PassageThroughMirkwood <$> runMessage msg a
 
 cardMatches :: CardMatcher -> SomeEncounterCard -> Bool
 cardMatches = \case
   CardWithCode code -> \case
     SomeEncounterCard (MkEncounterCard _ c) -> code == c.code
 
-runScenarioMessage :: (MonadRandom m, HasQueue Message m) => Message -> ScenarioAttrs -> m ScenarioAttrs
+runScenarioMessage :: Message -> ScenarioAttrs -> GameT ScenarioAttrs
 runScenarioMessage msg attrs = case msg of
   BeginPhase p -> pure $ attrs {phase = p}
   ShuffleDeck EncounterDeck -> do
@@ -103,7 +104,7 @@ runScenarioMessage msg attrs = case msg of
             pure attrs
   _ -> pure attrs
 
-instance Run ScenarioAttrs where
-  run msg attrs = do
-    quest <- traverse (run msg) attrs.quest
+instance RunMessage ScenarioAttrs where
+  runMessage msg attrs = do
+    quest <- traverse (runMessage msg) attrs.quest
     runScenarioMessage msg $ attrs {quest}

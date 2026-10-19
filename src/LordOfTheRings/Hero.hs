@@ -14,13 +14,13 @@ import LordOfTheRings.Name
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-instance Run Hero where
-  run msg (Hero a) = Hero <$> run msg a
+instance RunMessage Hero where
+  runMessage msg (Hero a) = Hero <$> runMessage msg a
 
-instance Run HeroAttrs where
-  run msg attrs = case msg of
+instance RunMessage HeroAttrs where
+  runMessage msg attrs = case msg of
     BeginPhase ResourcePhase -> do
       push $ GainHeroResources attrs.id 1
       pure attrs
@@ -33,20 +33,20 @@ instance Run HeroAttrs where
 newtype Beravor = Beravor HeroAttrs
   deriving newtype (Show, ToJSON)
 instance IsHero Beravor
-instance Run Beravor where
-  run msg (Beravor a) = Beravor <$> run msg a
+instance RunMessage Beravor where
+  runMessage msg (Beravor a) = Beravor <$> runMessage msg a
 
 newtype Eowyn = Eowyn HeroAttrs
   deriving newtype (Show, ToJSON)
 instance IsHero Eowyn
-instance Run Eowyn where
-  run msg (Eowyn a) = Eowyn <$> run msg a
+instance RunMessage Eowyn where
+  runMessage msg (Eowyn a) = Eowyn <$> runMessage msg a
 
 newtype Theodred = Theodred HeroAttrs
   deriving newtype (Show, ToJSON)
 instance IsHero Theodred
-instance Run Theodred where
-  run msg (Theodred a) = Theodred <$> run msg a
+instance RunMessage Theodred where
+  runMessage msg (Theodred a) = Theodred <$> runMessage msg a
 
 lookupHero :: CardCode -> HeroAttrs -> Hero
 lookupHero cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData

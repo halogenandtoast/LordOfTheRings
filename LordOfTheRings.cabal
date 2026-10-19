@@ -19,7 +19,9 @@ library
       LordOfTheRings.Card.Code
       LordOfTheRings.Card.EncounterCard
       LordOfTheRings.Card.PlayerCard
+      LordOfTheRings.Classes.HasGame
       LordOfTheRings.Classes.HasQueue
+      LordOfTheRings.Classes.RunMessage
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.Cards
@@ -28,6 +30,7 @@ library
       LordOfTheRings.Frontend
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
+      LordOfTheRings.GameT
       LordOfTheRings.Hero
       LordOfTheRings.Hero.Type
       LordOfTheRings.Id
@@ -45,7 +48,6 @@ library
       LordOfTheRings.Quest.Type
       LordOfTheRings.Question
       LordOfTheRings.Queue
-      LordOfTheRings.Run
       LordOfTheRings.Scenario
       LordOfTheRings.Scenario.Type
       LordOfTheRings.Source

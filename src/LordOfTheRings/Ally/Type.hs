@@ -12,9 +12,9 @@ import LordOfTheRings.Target
 import LordOfTheRings.Name
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-class (HasAbilities a, Run a, Show a, ToJSON a) => IsAlly a where
+class (HasAbilities a, RunMessage a, Show a, ToJSON a) => IsAlly a where
   allyAttrs :: a -> AllyAttrs
   default allyAttrs :: (Coercible a AllyAttrs) => a -> AllyAttrs
   allyAttrs = coerce

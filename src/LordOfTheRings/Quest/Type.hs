@@ -5,9 +5,9 @@ import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Prelude
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-class (Show a, ToJSON a, Run a) => IsQuest a
+class (Show a, ToJSON a, RunMessage a) => IsQuest a
 
 data Quest where
   Quest :: (IsQuest a) => a -> Quest

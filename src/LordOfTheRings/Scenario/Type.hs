@@ -4,13 +4,13 @@ import LordOfTheRings.Card
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Type
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
 data Difficulty = Easy | Normal | Nightmare
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
-class (Show a, ToJSON a, Run a) => IsScenario a where
+class (Show a, ToJSON a, RunMessage a) => IsScenario a where
   scenarioAttrs :: a -> ScenarioAttrs
   default scenarioAttrs :: (Coercible a ScenarioAttrs) => a -> ScenarioAttrs
   scenarioAttrs = coerce

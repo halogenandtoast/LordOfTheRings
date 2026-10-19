@@ -12,6 +12,7 @@ import Control.Monad.Random (
   MonadRandom (..),
   getRandom,
   newStdGen,
+  mkStdGen,
   randomIO,
   randomRIO,
   randomRs,
@@ -22,6 +23,8 @@ import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Card.PlayerCard as PC
 import LordOfTheRings.Game
+import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.GameT
 import LordOfTheRings.Game qualified as E
 import LordOfTheRings.Hero
 import LordOfTheRings.Id
@@ -245,7 +248,7 @@ loadDecklist DeckList {heroes, cards} = do
   pure $ Deck <$> loadedHeroes <*> loadedCards
 
 data Room = Room
-  { env :: Env
+  { env :: GameEnv
   , chan :: TChan LByteString
   }
 
@@ -284,7 +287,7 @@ getGameR :: Handler GameData
 getGameR = do
   App {room} <- getYesod
   webSockets (handleSocket room)
-  g <- liftIO $ runGameT mainLoop room.env
+  g <- liftIO $ runGameT room.env mainLoop
   pure $ GameData g g.activePlayer
 
 data Response = Response
@@ -298,7 +301,7 @@ postGameR :: Handler ()
 postGameR = do
   App {room} <- getYesod
   response <- requireCheckJsonBody @_ @Response
-  g <- liftIO $ flip runGameT room.env $ do
+  g <- liftIO $ runGameT room.env $ do
     clearQuestion response.player
     pushAll $ choiceMessages response.player response.choice
     mainLoop
@@ -318,7 +321,7 @@ clearQuestion pid = do
 postResetR :: Handler ()
 postResetR = do
   App {room} <- getYesod
-  liftIO $ flip runGameT room.env $ do
+  liftIO $ runGameT room.env $ do
     clearQueue
     resetGame
     pushAll [Setup, BeginRound, EndRound]
@@ -362,8 +365,9 @@ main = do
             }
       c <- atomically newTChan
       let handler msg = atomically $ writeTChan c (encode $ toJSON msg)
-      let env = Env {queue, game, handler, debug = 1}
+      gen <- newIORef . mkStdGen =<< randomIO
+      let env = GameEnv {gameEnvGame = game, gameEnvQueue = queue, gameRandomGen = gen, gameLogger = handler, gameDebug = 1}
       let room = Room {env, chan = c}
-      runGameT (pushAll [Setup, BeginRound, EndRound]) env
+      runGameT env (pushAll [Setup, BeginRound, EndRound])
       port <- fromMaybe 3000 . (>>= readMaybe) <$> lookupEnv "PORT"
       warp port (App room)

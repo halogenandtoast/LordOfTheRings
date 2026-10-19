@@ -10,21 +10,21 @@ import LordOfTheRings.Message
 import LordOfTheRings.Target
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-instance Run Location where
-  run msg (Location a) = Location <$> run msg a
+instance RunMessage Location where
+  runMessage msg (Location a) = Location <$> runMessage msg a
 
 newtype OldForestRoad = OldForestRoad LocationAttrs
   deriving newtype (Show, ToJSON)
 
 instance IsLocation OldForestRoad
-instance Run OldForestRoad where
-  run msg (OldForestRoad a) = case msg of
-    _ -> OldForestRoad <$> run msg a
+instance RunMessage OldForestRoad where
+  runMessage msg (OldForestRoad a) = case msg of
+    _ -> OldForestRoad <$> runMessage msg a
 
-instance Run LocationAttrs where
-  run msg attrs = case msg of
+instance RunMessage LocationAttrs where
+  runMessage msg attrs = case msg of
     PlaceProgress (isTarget attrs -> True) n -> do
       pure $ attrs {progress = attrs.progress + n}
     _ -> pure attrs

@@ -2,6 +2,7 @@ module LordOfTheRings.Matcher (module LordOfTheRings.Matcher) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Type
+import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
@@ -63,3 +64,8 @@ selectNone matcher = null <$> select matcher
 
 selectAny :: (HasGame m, Query a) => Matcher a -> m Bool
 selectAny matcher = notNull <$> select matcher
+
+getPlayer :: (HasGame m) => PlayerId -> m Player
+getPlayer pid = Map.findWithDefault missingPlayer pid <$> getsGame (.players)
+ where
+  missingPlayer = error $ "Player not found: " <> show pid

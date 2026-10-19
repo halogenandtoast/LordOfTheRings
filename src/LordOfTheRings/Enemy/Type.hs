@@ -8,9 +8,9 @@ import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-class (Show a, ToJSON a, Run a) => IsEnemy a where
+class (Show a, ToJSON a, RunMessage a) => IsEnemy a where
   enemyAttrs :: a -> EnemyAttrs
   default enemyAttrs :: (Coercible a EnemyAttrs) => a -> EnemyAttrs
   enemyAttrs = coerce

@@ -6,9 +6,9 @@ import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-class (Run a, Show a, ToJSON a) => IsHero a where
+class (RunMessage a, Show a, ToJSON a) => IsHero a where
   heroAttrs :: a -> HeroAttrs
   default heroAttrs :: (Coercible a HeroAttrs) => a -> HeroAttrs
   heroAttrs = coerce

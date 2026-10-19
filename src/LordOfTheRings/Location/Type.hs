@@ -10,9 +10,9 @@ import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
-class (Show a, ToJSON a, Run a) => IsLocation a where
+class (Show a, ToJSON a, RunMessage a) => IsLocation a where
   locationAttrs :: a -> LocationAttrs
   default locationAttrs :: (Coercible a LocationAttrs) => a -> LocationAttrs
   locationAttrs = coerce

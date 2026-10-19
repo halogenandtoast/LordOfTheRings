@@ -19,15 +19,15 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
 type AllyCard = PlayerCardDef 'AllyKind
 
-instance Run Ally where
-  run msg (Ally a) = Ally <$> run msg a
+instance RunMessage Ally where
+  runMessage msg (Ally a) = Ally <$> runMessage msg a
 
-instance Run AllyAttrs where
-  run msg attrs = case msg of
+instance RunMessage AllyAttrs where
+  runMessage msg attrs = case msg of
     _ -> pure attrs
 
 instance HasField "id" Ally AllyId where
@@ -40,83 +40,83 @@ newtype Beorn = Beorn AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly Beorn
-instance Run Beorn where
-  run msg (Beorn a) = Beorn <$> run msg a
+instance RunMessage Beorn where
+  runMessage msg (Beorn a) = Beorn <$> runMessage msg a
 
 newtype EreborHammersmith = EreborHammersmith AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly EreborHammersmith
-instance Run EreborHammersmith where
-  run msg (EreborHammersmith a) = EreborHammersmith <$> run msg a
+instance RunMessage EreborHammersmith where
+  runMessage msg (EreborHammersmith a) = EreborHammersmith <$> runMessage msg a
 
 newtype Faramir = Faramir AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly Faramir
-instance Run Faramir where
-  run msg (Faramir a) = Faramir <$> run msg a
+instance RunMessage Faramir where
+  runMessage msg (Faramir a) = Faramir <$> runMessage msg a
 
 newtype Gandalf = Gandalf AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly Gandalf
-instance Run Gandalf where
-  run msg (Gandalf a) = Gandalf <$> run msg a
+instance RunMessage Gandalf where
+  runMessage msg (Gandalf a) = Gandalf <$> runMessage msg a
 
 newtype Gleowine = Gleowine AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly Gleowine
-instance Run Gleowine where
-  run msg (Gleowine a) = Gleowine <$> run msg a
+instance RunMessage Gleowine where
+  runMessage msg (Gleowine a) = Gleowine <$> runMessage msg a
 
 newtype GuardOfTheCitadel = GuardOfTheCitadel AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly GuardOfTheCitadel
-instance Run GuardOfTheCitadel where
-  run msg (GuardOfTheCitadel a) = GuardOfTheCitadel <$> run msg a
+instance RunMessage GuardOfTheCitadel where
+  runMessage msg (GuardOfTheCitadel a) = GuardOfTheCitadel <$> runMessage msg a
 
 newtype HenamarthRiversong = HenamarthRiversong AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly HenamarthRiversong
-instance Run HenamarthRiversong where
-  run msg (HenamarthRiversong a) = HenamarthRiversong <$> run msg a
+instance RunMessage HenamarthRiversong where
+  runMessage msg (HenamarthRiversong a) = HenamarthRiversong <$> runMessage msg a
 
 newtype MinerOfTheIronHills = MinerOfTheIronHills AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly MinerOfTheIronHills
-instance Run MinerOfTheIronHills where
-  run msg (MinerOfTheIronHills a) = MinerOfTheIronHills <$> run msg a
+instance RunMessage MinerOfTheIronHills where
+  runMessage msg (MinerOfTheIronHills a) = MinerOfTheIronHills <$> runMessage msg a
 
 newtype NorthernTracker = NorthernTracker AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly NorthernTracker
-instance Run NorthernTracker where
-  run msg (NorthernTracker a) = NorthernTracker <$> run msg a
+instance RunMessage NorthernTracker where
+  runMessage msg (NorthernTracker a) = NorthernTracker <$> runMessage msg a
 
 newtype SilverlodeArcher = SilverlodeArcher AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly SilverlodeArcher
-instance Run SilverlodeArcher where
-  run msg (SilverlodeArcher a) = SilverlodeArcher <$> run msg a
+instance RunMessage SilverlodeArcher where
+  runMessage msg (SilverlodeArcher a) = SilverlodeArcher <$> runMessage msg a
 
 newtype SnowbournScout = SnowbournScout AllyAttrs
   deriving newtype (Show, ToJSON)
 instance IsAlly SnowbournScout
-instance Run SnowbournScout where
-  run msg s@(SnowbournScout a) = case msg of
+instance RunMessage SnowbournScout where
+  runMessage msg s@(SnowbournScout a) = case msg of
     UseCardAbility p (isSource a -> True) 1 -> do
       locations <- select CanProgressLocation
       push $
         chooseOrRunOne p [targetChoice location [PlaceProgress (toTarget location) 1] | location <- locations]
       pure s
-    _ -> SnowbournScout <$> run msg a
+    _ -> SnowbournScout <$> runMessage msg a
 
 instance HasAbilities SnowbournScout where
   getAbilities (SnowbournScout a) =
@@ -132,8 +132,8 @@ newtype SonOfArnor = SonOfArnor AllyAttrs
   deriving newtype (Show, ToJSON)
   deriving anyclass (HasAbilities)
 instance IsAlly SonOfArnor
-instance Run SonOfArnor where
-  run msg (SonOfArnor a) = SonOfArnor <$> run msg a
+instance RunMessage SonOfArnor where
+  runMessage msg (SonOfArnor a) = SonOfArnor <$> runMessage msg a
 
 lookupAlly :: CardCode -> AllyAttrs -> Ally
 lookupAlly cCode = fromMaybe (error "No such ally") $ Map.lookup cCode allData

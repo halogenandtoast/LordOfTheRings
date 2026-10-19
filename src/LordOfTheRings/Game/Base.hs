@@ -18,9 +18,6 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Type
 
-class (Monad m) => HasGame m where
-  getGame :: m Game
-
 data Entities = Entities
   { allies :: Map AllyId Ally
   , heroes :: Map HeroId Hero
@@ -96,11 +93,3 @@ data Player = Player
 
 instance Targetable Player where
   toTarget p = PlayerTarget p.id
-
-getsGame :: (HasGame m) => (Game -> a) -> m a
-getsGame f = f <$> getGame
-
-getPlayer :: (HasGame m) => PlayerId -> m Player
-getPlayer pid = Map.findWithDefault missingPlayer pid <$> getsGame (.players)
- where
-  missingPlayer = error $ "Player not found: " <> show pid

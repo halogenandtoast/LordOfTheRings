@@ -4,15 +4,15 @@
 
 module LordOfTheRings.Game (module LordOfTheRings.Game, module LordOfTheRings.Game.Base) where
 
-import Control.Monad.Random (MonadRandom (..), newStdGen, randomIO, randomRIO, randomRs, randoms)
-import Control.Monad.Reader
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy
 import LordOfTheRings.Entity
+import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Frontend
+import LordOfTheRings.GameT
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
@@ -28,7 +28,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Queue
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Scenario ()
 import LordOfTheRings.Window
 
@@ -43,7 +43,7 @@ mainLoop = do
     Nothing -> pure g
     Just msg -> do
       debug 1 $ print msg
-      g' <- run msg g
+      g' <- runMessage msg g
       putGame g'
 
       -- do we have a question
@@ -52,69 +52,25 @@ mainLoop = do
         then pure g'
         else mainLoop
 
-instance MonadRandom GameT where
-  getRandom = liftIO randomIO
-  getRandomR = liftIO . randomRIO
-  getRandomRs lohi = fmap (randomRs lohi) newStdGen
-  getRandoms = fmap randoms newStdGen
-
-data Env = Env
-  { queue :: Queue Message
-  , game :: IORef Game
-  , handler :: FrontendMessage -> IO ()
-  , debug :: Int
-  }
-
-class HasDebug m where
-  getDebug :: m Int
-
-instance HasDebug GameT where
-  getDebug = asks (.debug)
-
-debug :: (HasDebug m, MonadIO m) => Int -> IO () -> m ()
-debug lvl action = do
-  lvl' <- getDebug
-  when (lvl' >= lvl) $ liftIO action
-
-newtype GameT a = GameT {unGameT :: ReaderT Env IO a}
-  deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader Env)
-
-instance Frontend GameT where
-  send msg = asks (.handler) >>= \f -> liftIO (f msg)
-
-runGameT :: GameT a -> Env -> IO a
-runGameT body = runReaderT body.unGameT
-
-putGame :: Game -> GameT ()
-putGame game = do
-  ref <- asks (.game)
-  liftIO $ writeIORef ref game
-
-instance HasGame GameT where
-  getGame = asks (.game) >>= liftIO . readIORef
-
-instance HasQueue Message GameT where
-  messageQueue = asks (.queue)
-
 getPlayers :: (HasGame m) => m [Player]
 getPlayers = Map.elems <$> getsGame (.players)
 
-instance Run Entities where
-  run msg entities = do
-    heroes <- traverse (run msg) entities.heroes
-    allies <- traverse (run msg) entities.allies
-    locations <- traverse (run msg) entities.locations
-    enemies <- traverse (run msg) entities.enemies
+instance RunMessage Entities where
+  runMessage msg entities = do
+    heroes <- traverse (runMessage msg) entities.heroes
+    allies <- traverse (runMessage msg) entities.allies
+    locations <- traverse (runMessage msg) entities.locations
+    enemies <- traverse (runMessage msg) entities.enemies
     pure (entities {heroes, allies, locations, enemies})
 
-instance Run Game where
-  run msg game = do
-    players <- traverse (run msg) game.players
-    entities <- run msg game.entities
-    scenario <- run msg game.scenario
+instance RunMessage Game where
+  runMessage msg game = do
+    players <- traverse (runMessage msg) game.players
+    entities <- runMessage msg game.entities
+    scenario <- runMessage msg game.scenario
     runGameMessage msg (game {players, entities, scenario})
 
-runGameMessage :: (HasQueue Message m, HasGame m, MonadRandom m, Frontend m) => Message -> Game -> m Game
+runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
   Run msgs -> do
     pushAll msgs
@@ -190,7 +146,7 @@ validCriteria :: (HasGame m) => Criteria -> m Bool
 validCriteria = \case
   LocationExists lMatcher -> selectAny lMatcher
 
-runPlayerMessage :: (MonadRandom m, HasQueue Message m, HasGame m) => Message -> Player -> m Player
+runPlayerMessage :: Message -> Player -> GameT Player
 runPlayerMessage msg player = case msg of
   RunWindow window -> do
     abilities <- getWindowAbilities window
@@ -272,8 +228,8 @@ runPlayerMessage msg player = case msg of
         pure $ player {Player.cost = Nothing}
   _ -> pure player
 
-instance Run ActiveCost where
-  run msg ac = case msg of
+instance RunMessage ActiveCost where
+  runMessage msg ac = case msg of
     PayCost acId | acId == ac.id -> do
       case ac.cost of
         Free -> do
@@ -293,9 +249,9 @@ instance Run ActiveCost where
       pure ac
     _ -> pure ac
 
-instance Run Player where
-  run msg player = do
-    cost <- traverse (run msg) player.cost
+instance RunMessage Player where
+  runMessage msg player = do
+    cost <- traverse (runMessage msg) player.cost
     runPlayerMessage msg $ player {Player.cost = cost}
 
 canPlay :: (HasGame m) => Player -> Card -> m Bool

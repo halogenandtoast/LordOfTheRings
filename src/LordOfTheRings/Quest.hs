@@ -6,6 +6,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Cards qualified as Enemies
 import LordOfTheRings.Frontend
+import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id
 import LordOfTheRings.Target
@@ -16,20 +17,20 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Type
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Run
+import LordOfTheRings.Classes.RunMessage
 
 getLead :: (HasGame m) => m PlayerId
 getLead = (.id) <$> selectJust ActivePlayer
 
-instance Run Quest where
-  run msg (Quest a) = Quest <$> run msg a
+instance RunMessage Quest where
+  runMessage msg (Quest a) = Quest <$> runMessage msg a
 
 newtype FliesAndSpiders = FliesAndSpiders QuestAttrs
   deriving newtype (Show, ToJSON)
 
 instance IsQuest FliesAndSpiders
-instance Run FliesAndSpiders where
-  run msg s@(FliesAndSpiders a) = case msg of
+instance RunMessage FliesAndSpiders where
+  runMessage msg s@(FliesAndSpiders a) = case msg of
     DoStep 7 Setup -> do
       lead <- getLead
       push $ Ask lead $ ChooseOne [targetChoice a [Flip $ toTarget a]]
@@ -42,10 +43,10 @@ instance Run FliesAndSpiders where
         , Search lead EncounterDeck (cardIs Locations.oldForestRoad) ToStaging Shuffle
         ]
       pure $ FliesAndSpiders $ a {side = B}
-    _ -> FliesAndSpiders <$> run msg a
+    _ -> FliesAndSpiders <$> runMessage msg a
 
-instance Run QuestAttrs where
-  run msg attrs = case msg of
+instance RunMessage QuestAttrs where
+  runMessage msg attrs = case msg of
     _ -> pure attrs
 
 lookupQuest :: CardCode -> QuestAttrs -> Quest
