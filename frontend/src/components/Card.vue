@@ -7,6 +7,7 @@ export interface Props {
   card: Card
   resources?: number
   progress?: number
+  damage?: number
   data: GameData
   rotated?: boolean
   currentChoice?: Choice
@@ -91,8 +92,9 @@ const flipped = ref(false)
     <div ref="cardRef" class="card" :id="card.id" @mouseenter="showOverlay" @mouseleave="overlay.hide()" :class="{ rotated }" @click="choose">
       <img class="front" :class="{flipped, active}" :src="src" />
       <img class="back" :class="{flipped}" v-if="otherSide" :src="otherSide" />
-      <span v-if="resources" class="resources">{{resources}}</span>
-      <span v-if="progress" class="progress">{{progress}}</span>
+      <span v-if="resources" class="token resources">{{resources}}</span>
+      <span v-if="progress" class="token progress">{{progress}}</span>
+      <span v-if="damage" class="token damage">{{damage}}</span>
     </div>
   </div>
 </template>
@@ -118,38 +120,34 @@ const flipped = ref(false)
   grid-area: 1 / 1;
 }
 
-.resources {
+.token {
   z-index: 100;
-  background-image: url('/images/tokens/resource.png');
   display: grid;
   place-items: center;
   background-size: cover;
   width: calc($card-width / 4);
   height: calc($card-width / 4);
-  color: black;
-  font-weight: bold;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.7rem;
+  line-height: 1;
   grid-area: 1 / 1;
-  place-self: center;
 }
-
-.progress {
-  z-index: 100;
-  background-image: url('/images/tokens/progress.png');
-  display: grid;
-  place-items: center;
-  background-size: cover;
-  width: calc($card-width / 4);
-  height: calc($card-width / 4);
-  color: black;
-  font-weight: bold;
-  grid-area: 1 / 1;
-  place-self: center;
+.resources { background-image: url('/images/tokens/resource.png'); place-self: end start; }
+.progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
+.damage {
+  place-self: start end;
+  background: var(--danger);
+  color: #fff;
+  border-radius: 50%;
+  border: 1px solid rgb(0 0 0 / 0.5);
 }
 
 .active {
-  border: 2px solid red;
+  border: 2px solid var(--select);
   box-sizing: border-box;
 }
+.card:has(.active) { cursor: pointer; }
 
 .front {
   transform-style: preserve-3d;
