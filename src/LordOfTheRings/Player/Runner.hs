@@ -91,6 +91,16 @@ instance RunMessage Player where
     TakeFromDeck pid cid | pid == player.id -> do
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ kept & handL <>~ taken
+    DebugSearchDeck pid | pid == player.id -> do
+      -- ponytail: no shuffle after, debug searches leave the deck order alone
+      push
+        $ Ask pid
+        $ QuestionLabel "Take a card into your hand" Nothing []
+        $ SearchCards player.deck
+        $ ChooseOne
+        $ Label "Done" []
+        : [targetLabel (CardIdTarget c.id) [TakeFromDeck pid c.id, DebugSearchDeck pid] | c <- player.deck]
+      pure player
     ReturnFromDiscardToHand pid cid | pid == player.id -> do
       let (returned, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & handL <>~ returned

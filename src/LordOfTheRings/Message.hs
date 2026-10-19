@@ -85,6 +85,10 @@ data Message
   | ShuffleDiscardIntoDeck PlayerId
   | -- | a card from the player's deck goes to their hand
     TakeFromDeck PlayerId CardId
+  | -- | debug mode: the player looks through their deck and takes any card into hand
+    DebugSearchDeck PlayerId
+  | -- | debug mode: the player looks through the encounter deck and reveals any card
+    DebugSearchEncounterDeck PlayerId
   | LowerThreat PlayerId Int
   | ActionWindow PlayerId
   | PayCost CostId

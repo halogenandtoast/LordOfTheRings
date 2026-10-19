@@ -102,6 +102,15 @@ instance RunMessage ScenarioAttrs where
         $ ChooseOne
         $ if null choices then [Label "Continue" [ShuffleDeck EncounterDeck]] else choices
       pure attrs
+    DebugSearchEncounterDeck pid -> do
+      push
+        $ Ask pid
+        $ QuestionLabel "Reveal a card" Nothing []
+        $ SearchCards (map EncounterCard attrs.encounterDeck)
+        $ ChooseOne
+        $ Label "Done" []
+        : [targetLabel y [RemoveFromEncounterDeck y, RevealCard y] | y <- attrs.encounterDeck]
+      pure attrs
     AdvanceQuest -> case attrs.questDeck of
       [] -> do
         push $ GameOver Won
