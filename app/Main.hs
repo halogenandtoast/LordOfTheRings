@@ -33,6 +33,7 @@ import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
 import LordOfTheRings.Scenario.Types (scenarioName)
 import Auth
+import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import CardDb (CardDb, loadCardDb)
 import Decks
 import Model
@@ -108,7 +109,7 @@ requireUserId :: Handler UserId
 requireUserId = do
   secret <- getsYesod (.jwtSecret)
   subject <- liftIO . fmap join . traverse (verifyToken secret) =<< lookupToken
-  maybe (sendResponseStatus status401 ("sign in first" :: Text)) pure $ toSqlKey <$> (readMaybe . unpack =<< subject)
+  maybe (sendResponseStatus status401 (ikey "error.signInFirst")) pure $ toSqlKey <$> (readMaybe . unpack =<< subject)
 
 -- | A game the signed-in user owns, or 404: other people's games do not exist for you.
 requireOwnedGame :: LotrGameId -> Handler LotrGame
@@ -141,10 +142,10 @@ postRegisterR = do
   reg <- requireCheckJsonBody @_ @Registration
   let username = T.strip reg.username
       email = toLower (T.strip reg.email)
-  when (null username || null email) $ invalidArgs ["Choose a username and give an email address."]
-  when (length reg.password < 8) $ invalidArgs ["Passwords must be at least 8 characters."]
+  when (null username || null email) $ sendResponseStatus status400 (ikey "error.registrationIncomplete")
+  when (length reg.password < 8) $ sendResponseStatus status400 (ikey "error.passwordTooShort")
   taken <- runDB $ (||) <$> (isJust <$> getBy (UniqueUsername username)) <*> (isJust <$> getBy (UniqueEmail email))
-  when taken $ sendResponseStatus status409 ("That username or email is already registered." :: Text)
+  when taken $ sendResponseStatus status409 (ikey "error.alreadyRegistered")
   digest <- maybe (error "bcrypt failed") pure =<< liftIO (hashPassword reg.password)
   now <- liftIO getCurrentTime
   let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userCreatedAt = now}
@@ -163,7 +164,7 @@ postAuthenticateR = do
   found <- runDB $ maybe (getBy $ UniqueEmail $ toLower login) (pure . Just) =<< getBy (UniqueUsername login)
   case found of
     Just user | checkPassword (entityVal user).userPasswordDigest creds.password -> newSession user
-    _ -> sendResponseStatus status401 ("That username or password is not right." :: Text)
+    _ -> sendResponseStatus status401 (ikey "error.badLogin")
 
 getWhoAmIR :: Handler Value
 getWhoAmIR = do
@@ -279,11 +280,11 @@ postGamesR = do
   -- you play under your username
   let playerName = user.userUsername
       scenarioId = fromMaybe "passage-through-mirkwood" new.scenario
-  scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> scenarioId)) pure $ lookupScenario (ScenarioId scenarioId)
+  scenario <- maybe (sendResponseStatus status400 (ikeyWith "error.noSuchScenario" [textVar "scenario" scenarioId])) pure $ lookupScenario (ScenarioId scenarioId)
   deckList <- case new.deck of
     Nothing -> pure Nothing
     Just (StarterDeck sphere) ->
-      maybe (sendResponseStatus status400 ("No " <> sphere <> " starter deck")) (pure . Just) $ lookup sphere coreStarterDecks
+      maybe (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere])) (pure . Just) $ lookup sphere coreStarterDecks
     Just (ImportedDeck deckId) -> do
       db <- getsYesod (.cardDb)
       runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) (pure . Just)
@@ -530,7 +531,7 @@ postImportR :: Handler Value
 postImportR = do
   userId <- requireUserId
   exported <- requireCheckJsonBody @_ @ExportedGame
-  unless (exported.version == exportVersion) $ invalidArgs ["This export comes from an unsupported version."]
+  unless (exported.version == exportVersion) $ sendResponseStatus status400 (ikey "error.unsupportedExport")
   -- refuse a file the engine cannot read before storing any of it
   imported <- decodeOrFail @Game "game" exported.game
   _ <- decodeOrFail @[Message] "queue" exported.queue

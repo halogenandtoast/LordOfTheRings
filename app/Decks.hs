@@ -32,6 +32,7 @@ import Database.Persist
 import Database.Persist.Sql (SqlBackend, fromSqlKey)
 import LordOfTheRings.Card (CardCode (..), allPlayerCards)
 import LordOfTheRings.Decklist (DeckList (..))
+import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import LordOfTheRings.Prelude
 import Model
 import Network.HTTP.Client (Manager, httpLbs, parseRequest, requestHeaders, responseBody, responseStatus)
@@ -52,11 +53,11 @@ data ImportError
 
 describeImportError :: ImportError -> Text
 describeImportError = \case
-  NothingToImport -> "Give a RingsDB link or a deck JSON file."
-  NotARingsdbUrl u -> "Not a RingsDB deck link: " <> u
-  FetchFailed why -> "Could not fetch that deck from RingsDB: " <> why
-  MalformedJson why -> "That is not a deck JSON file: " <> pack why
-  NoCards -> "That deck list has no cards in it."
+  NothingToImport -> ikey "error.noDeckSource"
+  NotARingsdbUrl u -> ikeyWith "error.notRingsdbLink" [textVar "url" u]
+  FetchFailed why -> ikeyWith "error.fetchFailed" [textVar "reason" why]
+  MalformedJson why -> ikeyWith "error.malformedDeck" [textVar "reason" (pack why)]
+  NoCards -> ikey "error.noCards"
 
 -- | A RingsDB deck list. RingsDB repeats each hero inside @slots@, and sends an empty
 -- array for an empty sideboard; both are undone here.
@@ -368,5 +369,5 @@ deckListFor db userId key =
       pure
         if null unknown
           then Right $ DeckList (map (CardCode . code) (section "hero")) [(CardCode (code r), r.lotrDeckSlotQuantity) | r <- section "draw"]
-          else Left $ "This deck has cards the game does not know yet: " <> intercalate ", " unknown
-    _ -> pure $ Left "No such deck."
+          else Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
+    _ -> pure $ Left $ ikey "error.noSuchDeck"
