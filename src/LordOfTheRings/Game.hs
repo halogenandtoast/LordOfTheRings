@@ -297,11 +297,12 @@ runGameMessage msg g = case msg of
       <> [Label "Do not engage" []]
     pure g
   EngagementCheck pid seatsPassed -> do
+    skip <- elem NoEngagementChecks <$> getModifiers GameTarget
     order <- getPlayerOrder
     let next = seatAfter order pid
     player <- getPlayer pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
-    case sortOn (Down . snd) [c | c@(_, cost) <- candidates, cost <= player.threat] of
+    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- candidates, cost <= player.threat] of
       ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
     pure g
@@ -474,7 +475,10 @@ runGameMessage msg g = case msg of
       <> [Label "Done committing" []]
     pure g
   Staging -> do
-    pushAll [RevealEncounterCard | player <- toList g.players, not player.eliminated]
+    mods <- getModifiers GameTarget
+    let extra = sum [n | AdditionalStagingReveals n <- mods]
+        players = length [() | player <- toList g.players, not player.eliminated]
+    unless (SkipStagingStep `elem` mods) $ pushAll $ replicate (players + extra) RevealEncounterCard
     pure g
   QuestResolution -> do
     willpower <- getCommittedWillpower

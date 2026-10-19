@@ -9,6 +9,7 @@ import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.Entity as X (insertEntity, overAttrs, toAttrs, toId)
 import LordOfTheRings.Scenario.Types (encounterDeckL)
+import LordOfTheRings.Scenario as X (Scenario, journeyAlongTheAnduin, passageThroughMirkwood)
 import LordOfTheRings.Decklist as X (DeckList (..), coreStarterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
@@ -182,3 +183,17 @@ playWith pid heroCode resources def = do
   run $ BeginPhase PlanningPhase
   chooseTarget pid (CardIdTarget card.id)
   pure card
+
+-- | Run a test against a one player game of the given scenario.
+gameTestIn :: Scenario -> DeckList -> (PlayerId -> GameT ()) -> IO ()
+gameTestIn scenario deck body = do
+  (player, heroes) <- either (error . show) pure =<< loadPlayer "tester" deck
+  env <- newGameEnv (newGameIn scenario player heroes) (const $ pure ()) 1
+  runGameT env (body player.id)
+
+-- | Put a quest stage straight into play, with nothing else in the quest deck.
+putQuestStage :: CardDef -> GameT Target
+putQuestStage def = do
+  card <- genEncounterCard def
+  run $ PutQuestIntoPlay card
+  pure $ toTarget card

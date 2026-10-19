@@ -19,6 +19,10 @@ data ModifierType
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
   | CannotAttack
+  | -- | on the game: reveal this many more encounter cards during staging
+    AdditionalStagingReveals Int
+  | NoEngagementChecks
+  | SkipStagingStep
   | -- | damage an attack deals past the character's remaining hit points raises threat
     ExcessDamageToThreat
   | CannotBeOptionallyEngagedWhileOthersInStaging
