@@ -7,6 +7,31 @@ import Ally from './Ally.vue'
 const props = defineProps<{ you: Player, player: Player, data: GameData }>()
 const emit = defineEmits<{ choose: [Choice] }>()
 
+function toChoices(q) {
+  if (!q) return []
+  switch(q.tag) {
+    case 'ChooseOne':
+      return q.contents
+    case 'ChooseOneAtATime':
+      return q.contents
+  }
+
+  return []
+}
+
+const choices = computed(() => {
+  return toChoices(props.data.game.players[props.you.id].question)
+})
+
+const labelChoices = computed(() => {
+  const xs = choices.value.filter((c) => {
+    if (c.tag !== 'Label') return false
+    return true
+  })
+
+  return xs
+})
+
 const animationMatrix = ref([])
 
 const nextId = ref(4)
@@ -37,11 +62,11 @@ function onEnter(el, done) {
   }
 
   const data = animationMatrix.value.find(([idx,]) => idx === index)
-  console.log(data)
   animationMatrix.value = animationMatrix.value.filter(([idx,]) => idx !== index)
 
   if (!data) {
-    gsap.to(el, { startAt: { height: 0, marginLeft: 50, marginTop: 70 }, ease: "power4.in", opacity: 1, width: 100, height: 140, marginLeft: 0, marginTop: 0, onComplete: done })
+    gsap.to(el, { opacity: 1, width: 100, onComplete: done })
+    //gsap.to(el, { startAt: { height: 0, marginLeft: 50, marginTop: 70 }, ease: "power4.in", opacity: 1, width: 100, height: 140, marginLeft: 0, marginTop: 0, onComplete: done })
     return
   }
 
@@ -103,6 +128,9 @@ function onLeave(el, done) {
     <div class="player-main">
       <div class="threat">
         <span>{{player.threat}}</span>
+      </div>
+      <div class="choices">
+        <button v-for="choice in labelChoices" @click="$emit('choose', choice)">{{choice.label}}</button>
       </div>
       <div class="discard">
       </div>
