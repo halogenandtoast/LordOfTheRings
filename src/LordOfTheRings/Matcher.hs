@@ -6,7 +6,7 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
-import LordOfTheRings.Location.Type
+import LordOfTheRings.Location.Types
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 

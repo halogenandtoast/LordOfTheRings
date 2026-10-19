@@ -103,7 +103,21 @@ library
       LordOfTheRings.Keyword
       LordOfTheRings.Location
       LordOfTheRings.Location.CardDefs
-      LordOfTheRings.Location.Type
+      LordOfTheRings.Location.Cards.BanksOfTheAnduin
+      LordOfTheRings.Location.Cards.EnchantedStream
+      LordOfTheRings.Location.Cards.EndlessCaverns
+      LordOfTheRings.Location.Cards.ForestGate
+      LordOfTheRings.Location.Cards.GladdenFields
+      LordOfTheRings.Location.Cards.GreatForestWeb
+      LordOfTheRings.Location.Cards.MountainsOfMirkwood
+      LordOfTheRings.Location.Cards.NecromancersPass
+      LordOfTheRings.Location.Cards.OldForestRoad
+      LordOfTheRings.Location.Cards.TheBrownLands
+      LordOfTheRings.Location.Cards.TheEastBight
+      LordOfTheRings.Location.Cards.TowerGate
+      LordOfTheRings.Location.Import.Lifted
+      LordOfTheRings.Location.Runner
+      LordOfTheRings.Location.Types
       LordOfTheRings.Matcher
       LordOfTheRings.Message
       LordOfTheRings.Name

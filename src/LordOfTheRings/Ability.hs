@@ -2,7 +2,7 @@ module LordOfTheRings.Ability (module LordOfTheRings.Ability) where
 
 import LordOfTheRings.Source
 import LordOfTheRings.Target
-import LordOfTheRings.Location.Type
+import LordOfTheRings.Location.Types
 import LordOfTheRings.Matcher
 import LordOfTheRings.Prelude
 import LordOfTheRings.Window

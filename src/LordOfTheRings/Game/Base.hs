@@ -12,7 +12,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Target
-import LordOfTheRings.Location.Type
+import LordOfTheRings.Location.Types
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question

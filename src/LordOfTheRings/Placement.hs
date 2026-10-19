@@ -20,6 +20,3 @@ placementController = \case
   InPlayArea pid -> Just pid
   EngagedWith pid -> Just pid
   _ -> Nothing
-
-class HasPlacement a where
-  placementL :: Lens' a Placement

@@ -25,7 +25,6 @@ import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
-import LordOfTheRings.Placement qualified as P
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
@@ -143,7 +142,7 @@ runGameMessage msg g = case msg of
         pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) thisEnemy)
       LocationType -> do
         thisLocation <- newLocation card
-        pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & P.placementL .~ StagingArea)
+        pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) thisLocation)
       _ -> error "Unhandled"
   _ -> pure g
 
