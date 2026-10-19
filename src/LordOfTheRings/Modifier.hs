@@ -2,6 +2,7 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
+import LordOfTheRings.Trait
 
 data ModifierType
   = WillpowerModifier Int
@@ -10,6 +11,7 @@ data ModifierType
   | HitPointModifier Int
   | ThreatModifier Int
   | EngagementCostModifier Int
+  | GainTrait Trait
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -1,6 +1,10 @@
 module LordOfTheRings.AttachmentSpec (spec) where
 
+import LordOfTheRings.Attachment (AttachmentAttrs (..))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier
+import LordOfTheRings.Trait (Trait (Gondor))
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement
@@ -29,11 +33,11 @@ spec = describe "Attachments" do
     getWillpower (toTarget theodred) `shouldReturn` 3
 
   it "leave play when the hero they are attached to does" . gameTest $ \pid -> do
-    playOnTheodred pid Attachments.stewardOfGondor
+    playOnTheodred pid Attachments.celebriansStone
     theodred <- getHeroWithCode "01002"
     run $ Discard (toTarget theodred)
     getsGame (length . (.entities.attachments)) `shouldReturn` 0
-    sort . map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` ["01002", "01026"]
+    sort . map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` ["01002", "01027"]
 
   it "cannot be played without something to attach to" . gameTest $ \pid -> do
     card <- putCardIntoHand pid Attachments.forestSnare
@@ -42,3 +46,30 @@ spec = describe "Attachments" do
     run $ BeginPhase PlanningPhase
     question <- getQuestion pid
     [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget card)
+
+  describe "Steward of Gondor" do
+    it "exhausts to add 2 resources to the attached hero" . gameTest $ \pid -> do
+      playOnTheodred pid Attachments.stewardOfGondor
+      chooseAbility pid
+      theodred <- getHeroWithCode "01002"
+      theodred.resources `shouldBe` 2
+      steward <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
+      attachmentExhausted (toAttrs steward) `shouldBe` True
+
+    it "cannot be used again while exhausted" . gameTest $ \pid -> do
+      playOnTheodred pid Attachments.stewardOfGondor
+      chooseAbility pid
+      question <- getQuestion pid
+      [() | Just q <- [question], AbilityLabel {} <- questionChoices q] `shouldBe` []
+
+    it "gives the attached hero the Gondor trait" . gameTest $ \pid -> do
+      playOnTheodred pid Attachments.stewardOfGondor
+      theodred <- getHeroWithCode "01002"
+      getModifiers theodred >>= (`shouldSatisfy` elem (GainTrait Gondor))
+
+    it "readies during the refresh phase" . gameTest $ \pid -> do
+      playOnTheodred pid Attachments.stewardOfGondor
+      chooseAbility pid
+      run $ BeginPhase RefreshPhase
+      steward <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
+      attachmentExhausted (toAttrs steward) `shouldBe` False
