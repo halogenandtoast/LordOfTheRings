@@ -19,7 +19,7 @@ const json = async <T>(response: Response): Promise<T> => {
 
 export const fetchGames = () => apiFetch('/api/games').then((r) => json<GameSummary[]>(r))
 
-export const createGame = (game: { name: string; playerName: string; seed?: number }) =>
+export const createGame = (game: { name: string; seed?: number }) =>
   apiFetch('/api/games', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { createGame } from '../api'
+import { currentUser } from '../auth'
 
 interface ScenarioOption {
   id: string
@@ -20,14 +21,13 @@ const scenarios: ScenarioOption[] = [
 
 const router = useRouter()
 const selectedScenario = ref(scenarios[0])
-const playerName = ref('')
 const gameName = ref('')
 const seed = ref('')
 const creating = ref(false)
 const error = ref<string | null>(null)
 
 const defaultName = computed(() => selectedScenario.value.name)
-const canCreate = computed(() => selectedScenario.value.available && playerName.value.trim() !== '' && !creating.value)
+const canCreate = computed(() => selectedScenario.value.available && !creating.value)
 
 const cancel = () => router.push('/')
 
@@ -38,7 +38,6 @@ const create = async () => {
   try {
     const { id } = await createGame({
       name: gameName.value.trim() || defaultName.value,
-      playerName: playerName.value.trim(),
       seed: seed.value.trim() === '' ? undefined : Number(seed.value),
     })
     await router.push(`/games/${id}`)
@@ -79,10 +78,7 @@ const create = async () => {
 
       <fieldset>
         <legend>Players</legend>
-        <label>
-          Your name
-          <input v-model="playerName" type="text" placeholder="Frodo" required />
-        </label>
+        <p class="deck">Playing as <strong>{{ currentUser?.username }}</strong></p>
         <p class="deck">Deck: <strong>Starter Set Leadership</strong> (Aragorn, Théodred, Glóin)</p>
       </fieldset>
 

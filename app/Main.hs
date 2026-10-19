@@ -244,7 +244,7 @@ getGamesR = do
   games <- runDB $ selectList [LotrGameUserId ==. userId] [Desc LotrGameUpdatedAt]
   pure $ toJSON $ mapMaybe summary games
 
-data NewGame = NewGame {name :: Text, playerName :: Text, seed :: Maybe Int}
+data NewGame = NewGame {name :: Text, seed :: Maybe Int}
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
@@ -260,8 +260,11 @@ startGame playerName seed = do
 postGamesR :: Handler Value
 postGamesR = do
   userId <- requireUserId
+  user <- runDB $ get404 userId
   new <- requireCheckJsonBody @_ @NewGame
-  (g, queue, gen) <- liftIO . startGame new.playerName =<< maybe (liftIO randomIO) pure new.seed
+  -- you play under your username
+  let playerName = user.userUsername
+  (g, queue, gen) <- liftIO . startGame playerName =<< maybe (liftIO randomIO) pure new.seed
   now <- liftIO getCurrentTime
   gid <-
     runDB
@@ -269,7 +272,7 @@ postGamesR = do
         LotrGame
           { lotrGameUserId = userId
           , lotrGameName = new.name
-          , lotrGamePlayerName = new.playerName
+          , lotrGamePlayerName = playerName
           , lotrGameCurrentData = toJSON g
           , lotrGameCurrentQueue = toJSON queue
           , lotrGameRandomGen = showGen gen
