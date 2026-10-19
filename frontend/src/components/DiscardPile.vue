@@ -120,7 +120,7 @@ onBeforeUnmount(close)
 .discard-panel {
   position: fixed;
   z-index: 9000; /* under the card overlay */
-  max-width: min(60vw, 640px);
+  max-width: min(94vw, 640px);
   padding: 10px;
   border-radius: 10px;
   border: 1px solid rgb(255 255 255 / 0.12);

@@ -10,8 +10,9 @@ const close = () => {
   open.value = false
 }
 
-// A menu closes when you click anywhere outside it or press Escape.
-const onDocumentClick = (event: MouseEvent) => {
+// A menu closes when you press anywhere outside it or press Escape. A press, not a click:
+// iOS sends no click for a tap on something that isn't clickable.
+const onDocumentPointerDown = (event: PointerEvent) => {
   if (root.value && !root.value.contains(event.target as Node)) close()
 }
 const onKeydown = (event: KeyboardEvent) => {
@@ -19,11 +20,11 @@ const onKeydown = (event: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  document.addEventListener('click', onDocumentClick)
+  document.addEventListener('pointerdown', onDocumentPointerDown)
   document.addEventListener('keydown', onKeydown)
 })
 onBeforeUnmount(() => {
-  document.removeEventListener('click', onDocumentClick)
+  document.removeEventListener('pointerdown', onDocumentPointerDown)
   document.removeEventListener('keydown', onKeydown)
 })
 </script>

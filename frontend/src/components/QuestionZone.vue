@@ -85,5 +85,9 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
   cursor: pointer;
 }
 .options button:hover { border-color: var(--accent); background: var(--highlight-tint); }
+/* finger-sized answers */
+@media (pointer: coarse) {
+  .options button { min-height: 44px; font-size: 0.9rem; }
+}
 .hint { margin: 0; font-size: 0.65rem; opacity: 0.5; font-style: italic; }
 </style>

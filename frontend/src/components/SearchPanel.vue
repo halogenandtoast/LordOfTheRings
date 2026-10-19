@@ -34,11 +34,11 @@ const labels = computed<ChoiceView[]>(() => question.choices.filter((c) => c.tar
 <style scoped>
 .search-panel {
   position: fixed;
-  top: 18vh;
+  top: 10dvh;
   left: 50%;
   translate: -50% 0;
   z-index: 8000; /* under the card overlay */
-  width: min(80vw, 900px);
+  width: min(94vw, 900px);
   padding: 10px;
   border-radius: 10px;
   border: 1px solid var(--line-strong);
