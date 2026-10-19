@@ -14,21 +14,21 @@ const leave = async () => {
 <template>
   <header id="nav">
     <nav class="main-links">
-      <RouterLink to="/" class="home-link">The Lord of the Rings</RouterLink>
-      <RouterLink v-if="currentUser" to="/" class="nav-link">Home</RouterLink>
-      <RouterLink to="/cards" class="nav-link">Cards</RouterLink>
-      <RouterLink v-if="currentUser" to="/decks" class="nav-link">Decks</RouterLink>
+      <RouterLink to="/" class="home-link">{{ $t('appName') }}</RouterLink>
+      <RouterLink v-if="currentUser" to="/" class="nav-link">{{ $t('nav.home') }}</RouterLink>
+      <RouterLink to="/cards" class="nav-link">{{ $t('nav.cards') }}</RouterLink>
+      <RouterLink v-if="currentUser" to="/decks" class="nav-link">{{ $t('nav.decks') }}</RouterLink>
     </nav>
     <div class="user-links">
       <GameMenu v-if="currentUser" class="user-menu" align="right">
         {{ currentUser.username }}
         <template #items>
-          <button type="button" @click="leave">Sign out</button>
+          <button type="button" @click="leave">{{ $t('auth.signOut') }}</button>
         </template>
       </GameMenu>
       <template v-else>
-        <RouterLink to="/sign-in">Sign in</RouterLink>
-        <RouterLink to="/sign-up">Sign up</RouterLink>
+        <RouterLink to="/sign-in">{{ $t('auth.signIn') }}</RouterLink>
+        <RouterLink to="/sign-up">{{ $t('auth.signUp') }}</RouterLink>
       </template>
     </div>
   </header>

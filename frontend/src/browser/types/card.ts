@@ -165,46 +165,6 @@ export const PLAYER_SPHERES = [
   'neutral',
 ] as const satisfies readonly Sphere[]
 
-export const SPHERE_LABELS: Record<Sphere, string> = {
-  leadership: 'Leadership',
-  lore: 'Lore',
-  spirit: 'Spirit',
-  tactics: 'Tactics',
-  baggins: 'Baggins',
-  fellowship: 'Fellowship',
-  neutral: 'Neutral',
-  boon: 'Boon',
-  burden: 'Burden',
-  special: 'Special',
-}
-
-export const TYPE_LABELS: Record<CardType, string> = {
-  hero: 'Hero',
-  ally: 'Ally',
-  attachment: 'Attachment',
-  event: 'Event',
-  'player-side-quest': 'Player Side Quest',
-  contract: 'Contract',
-  treasure: 'Treasure',
-  enemy: 'Enemy',
-  'ship-enemy': 'Ship Enemy',
-  location: 'Location',
-  treachery: 'Treachery',
-  objective: 'Objective',
-  'objective-ally': 'Objective Ally',
-  'side-quest': 'Side Quest',
-  quest: 'Quest',
-  campaign: 'Campaign',
-  nightmare: 'Nightmare',
-}
-
-export const SECTION_LABELS: Record<Section, string> = {
-  player: 'Player',
-  encounter: 'Encounter',
-  quest: 'Quest',
-  nightmare: 'Nightmare',
-}
-
 /** Types a player can put in a deck, in the order the deckbuilder shows them. */
 export const PLAYER_TYPES = [
   'hero',

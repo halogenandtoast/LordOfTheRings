@@ -48,7 +48,7 @@ function cost(slot: Slot): number | 'X' | null {
 
         <template v-if="slot.card">
           <RouterLink class="slot__name truncate" :to="`/cards/${slot.card.code}`">
-            <span v-if="slot.card.unique" class="unique" aria-label="Unique">&#9670;</span>
+            <span v-if="slot.card.unique" class="unique" :aria-label="$t('browser.common.unique')">&#9670;</span>
             {{ slot.card.name }}
           </RouterLink>
 
@@ -57,13 +57,13 @@ function cost(slot: Slot): number | 'X' | null {
           </span>
 
           <GameIcon v-if="sphereIcon(slot)" :name="sphereIcon(slot)!" class="slot__sphere" />
-          <span v-else-if="slot.card.sphere" class="sphere-dot" :title="slot.card.sphere" />
+          <span v-else-if="slot.card.sphere" class="sphere-dot" :title="$t(`browser.spheres.${slot.card.sphere}`)" />
           <span v-else class="slot__sphere" />
         </template>
 
         <template v-else>
           <span class="slot__name slot__name--unknown">
-            Unknown card <code>{{ slot.sourceCode }}</code>
+            {{ $t('browser.common.unknownCard') }} <code>{{ slot.sourceCode }}</code>
           </span>
           <span class="slot__cost" />
           <span class="slot__sphere" />

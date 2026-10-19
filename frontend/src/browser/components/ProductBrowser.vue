@@ -84,16 +84,16 @@ function isPackSelected(code: string): boolean {
 </script>
 
 <template>
-  <nav class="products" aria-label="Products">
+  <nav class="products" :aria-label="$t('browser.products.title')">
     <div class="products__head">
-      <h2 class="products__title">Products</h2>
+      <h2 class="products__title">{{ $t('browser.products.title') }}</h2>
       <button
         v-if="selectedCount"
         type="button"
         class="button button--ghost products__clear"
         @click="store.filters.packs = []"
       >
-        Clear {{ selectedCount }}
+        {{ $t('browser.common.clearCount', { count: selectedCount }) }}
       </button>
     </div>
 
@@ -102,8 +102,8 @@ function isPackSelected(code: string): boolean {
         v-model="query"
         class="input"
         type="search"
-        placeholder="Find a set…"
-        aria-label="Search products"
+        :placeholder="$t('browser.products.searchPlaceholder')"
+        :aria-label="$t('browser.products.searchLabel')"
       />
     </div>
 
@@ -115,7 +115,7 @@ function isPackSelected(code: string): boolean {
             type="button"
             class="cycle__toggle"
             :aria-expanded="expanded(cycle)"
-            :title="expanded(cycle) ? 'Collapse' : 'Expand'"
+            :title="expanded(cycle) ? $t('browser.products.collapse') : $t('browser.products.expand')"
             @click="ui.toggleCycle(cycle.code)"
           >
             <span class="chevron" :class="{ 'chevron--open': expanded(cycle) }" aria-hidden="true">
@@ -152,7 +152,7 @@ function isPackSelected(code: string): boolean {
         </ul>
       </li>
 
-      <li v-if="!cycles.length" class="tree__empty">No products match “{{ query }}”.</li>
+      <li v-if="!cycles.length" class="tree__empty">{{ $t('browser.products.noMatches', { query }) }}</li>
     </ul>
   </nav>
 </template>

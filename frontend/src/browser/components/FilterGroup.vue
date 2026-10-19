@@ -12,7 +12,7 @@ const {
   options,
   selected,
   searchable = false,
-  searchPlaceholder = 'Filter…',
+  searchPlaceholder,
   open: initiallyOpen = true,
   maxVisible = 0,
 } = defineProps<{
@@ -66,8 +66,8 @@ const selectedCount = computed(() => selected.length)
         v-model="query"
         class="input group__search"
         type="search"
-        :placeholder="searchPlaceholder"
-        :aria-label="`Search ${title}`"
+        :placeholder="searchPlaceholder ?? $t('browser.filters.filterPlaceholder')"
+        :aria-label="$t('browser.filters.searchGroup', { title })"
       />
 
       <ul class="options">
@@ -84,11 +84,11 @@ const selectedCount = computed(() => selected.length)
             <span v-if="option.count !== undefined" class="option__count">{{ option.count }}</span>
           </label>
         </li>
-        <li v-if="!visible.length" class="options__empty">No matches</li>
+        <li v-if="!visible.length" class="options__empty">{{ $t('browser.filters.noMatches') }}</li>
       </ul>
 
       <button v-if="hiddenCount > 0" type="button" class="group__more" @click="expanded = true">
-        Show {{ hiddenCount }} more
+        {{ $t('browser.filters.showMore', { count: hiddenCount }) }}
       </button>
       <button
         v-else-if="expanded && maxVisible > 0 && !query"
@@ -96,7 +96,7 @@ const selectedCount = computed(() => selected.length)
         class="group__more"
         @click="expanded = false"
       >
-        Show fewer
+        {{ $t('browser.filters.showFewer') }}
       </button>
     </div>
   </section>

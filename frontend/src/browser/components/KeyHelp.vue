@@ -46,17 +46,17 @@ function onClick(event: MouseEvent): void {
     ref="dialog"
     class="dialog"
     data-shortcuts
-    aria-label="Keyboard shortcuts"
+    :aria-label="$t('browser.keys.label')"
     @cancel.prevent="emit('close')"
     @close="emit('close')"
     @click="onClick"
   >
     <div class="dialog__frame">
       <header class="dialog__bar">
-        <h2 class="dialog__title">Keyboard</h2>
-        <button type="button" class="button button--ghost" title="Close" @click="emit('close')">
+        <h2 class="dialog__title">{{ $t('browser.keys.title') }}</h2>
+        <button type="button" class="button button--ghost" :title="$t('browser.common.close')" @click="emit('close')">
           <span aria-hidden="true">✕</span>
-          <span class="visually-hidden">Close</span>
+          <span class="visually-hidden">{{ $t('browser.common.close') }}</span>
         </button>
       </header>
 
@@ -68,7 +68,7 @@ function onClick(event: MouseEvent): void {
           <dd>{{ shortcut.description }}</dd>
         </template>
         <dt><kbd>Esc</kbd></dt>
-        <dd>Close this list</dd>
+        <dd>{{ $t('browser.keys.closeList') }}</dd>
       </dl>
     </div>
   </dialog>

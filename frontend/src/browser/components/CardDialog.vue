@@ -91,7 +91,7 @@ function onClick(event: MouseEvent): void {
   <dialog
     ref="dialog"
     class="dialog"
-    aria-label="Card details"
+    :aria-label="$t('browser.dialog.label')"
     @cancel.prevent="emit('close')"
     @close="emit('close')"
     @keydown="onKeydown"
@@ -104,34 +104,34 @@ function onClick(event: MouseEvent): void {
             type="button"
             class="button button--ghost"
             :disabled="!hasPrev"
-            title="Previous card (←)"
+            :title="$t('browser.dialog.previousCardTitle')"
             @click="step(-1)"
           >
             <span aria-hidden="true">←</span>
-            <span class="visually-hidden">Previous card</span>
+            <span class="visually-hidden">{{ $t('browser.dialog.previousCard') }}</span>
           </button>
-          <span class="dialog__position">{{ index + 1 }} of {{ cards.length }}</span>
+          <span class="dialog__position">{{ $t('browser.dialog.position', { index: index + 1, total: cards.length }) }}</span>
           <button
             type="button"
             class="button button--ghost"
             :disabled="!hasNext"
-            title="Next card (→)"
+            :title="$t('browser.dialog.nextCardTitle')"
             @click="step(1)"
           >
             <span aria-hidden="true">→</span>
-            <span class="visually-hidden">Next card</span>
+            <span class="visually-hidden">{{ $t('browser.dialog.nextCard') }}</span>
           </button>
         </div>
 
         <p class="dialog__hint">
-          <kbd>←</kbd><kbd>→</kbd> cards
-          <template v-if="card.images.length > 1"> · <kbd>↑</kbd><kbd>↓</kbd> faces </template>
-          · <kbd>Esc</kbd> close
+          <kbd>←</kbd><kbd>→</kbd> {{ $t('browser.dialog.hintCards') }}
+          <template v-if="card.images.length > 1"> · <kbd>↑</kbd><kbd>↓</kbd> {{ $t('browser.dialog.hintFaces') }} </template>
+          · <kbd>Esc</kbd> {{ $t('browser.dialog.hintClose') }}
         </p>
 
-        <button type="button" class="button button--ghost" title="Close" @click="emit('close')">
+        <button type="button" class="button button--ghost" :title="$t('browser.common.close')" @click="emit('close')">
           <span aria-hidden="true">✕</span>
-          <span class="visually-hidden">Close</span>
+          <span class="visually-hidden">{{ $t('browser.common.close') }}</span>
         </button>
       </header>
 

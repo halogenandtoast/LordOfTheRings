@@ -14,10 +14,10 @@ const on = (value: number) => ({ '--n': at(value) })
 </script>
 
 <template>
-  <section class="tally" aria-label="Quest tally">
+  <section class="tally" :aria-label="$t('game.tally.label')">
     <p class="summary">
       <span class="total"><span class="icon marker willpower" :style="willpowerIcon" /> {{ tally.willpower }}</span>
-      <span v-if="tally.lastWillpower !== null" class="total last-round">last round {{ tally.lastWillpower }}</span>
+      <span v-if="tally.lastWillpower !== null" class="total last-round">{{ $t('game.tally.lastRound', { value: tally.lastWillpower }) }}</span>
       <span class="total"><span class="icon marker threat" :style="threatIcon" /> {{ tally.threat }}</span>
     </p>
     <div class="rail">
@@ -39,10 +39,10 @@ const on = (value: number) => ({ '--n': at(value) })
         v-if="tally.lastWillpower !== null"
         class="icon marker left last"
         :style="[willpowerIcon, on(tally.lastWillpower)]"
-        :title="`Last round ${tally.lastWillpower}`"
+        :title="$t('game.tally.lastRoundTitle', { value: tally.lastWillpower })"
       />
-      <span class="icon marker left willpower" :style="[willpowerIcon, on(tally.willpower)]" :title="`Willpower ${tally.willpower}`" />
-      <span class="icon marker right threat" :style="[threatIcon, on(tally.threat)]" :title="`Threat ${tally.threat}`" />
+      <span class="icon marker left willpower" :style="[willpowerIcon, on(tally.willpower)]" :title="$t('game.tally.willpower', { value: tally.willpower })" />
+      <span class="icon marker right threat" :style="[threatIcon, on(tally.threat)]" :title="$t('game.threat', { value: tally.threat })" />
     </div>
   </section>
 </template>

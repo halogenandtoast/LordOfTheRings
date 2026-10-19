@@ -5,6 +5,7 @@
  * the rest. They read at 1em and carry the sphere colour.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { IconName } from '@browser/lib/card-text'
 
 const { name, label } = defineProps<{
@@ -13,7 +14,9 @@ const { name, label } = defineProps<{
   label?: string
 }>()
 
-const title = computed(() => label ?? LABELS[name])
+const { t } = useI18n()
+
+const title = computed(() => label ?? t(LABELS[name]))
 
 const REAL_ICONS = new Set<IconName>([
   'leadership', 'lore', 'spirit', 'tactics', 'baggins', 'fellowship',
@@ -22,18 +25,18 @@ const REAL_ICONS = new Set<IconName>([
 const realIcon = computed(() => REAL_ICONS.has(name) ? `url('/images/icons/game/${name}.svg')` : null)
 
 const LABELS: Record<IconName, string> = {
-  leadership: 'Leadership',
-  lore: 'Lore',
-  spirit: 'Spirit',
-  tactics: 'Tactics',
-  baggins: 'Baggins',
-  fellowship: 'Fellowship',
-  neutral: 'Neutral',
-  willpower: 'Willpower',
-  attack: 'Attack',
-  defense: 'Defense',
-  threat: 'Threat',
-  'per-player': 'Per player',
+  leadership: 'browser.spheres.leadership',
+  lore: 'browser.spheres.lore',
+  spirit: 'browser.spheres.spirit',
+  tactics: 'browser.spheres.tactics',
+  baggins: 'browser.spheres.baggins',
+  fellowship: 'browser.spheres.fellowship',
+  neutral: 'browser.spheres.neutral',
+  willpower: 'browser.stats.willpower',
+  attack: 'browser.stats.attack',
+  defense: 'browser.stats.defense',
+  threat: 'browser.stats.threat',
+  'per-player': 'browser.icons.perPlayer',
 }
 </script>
 

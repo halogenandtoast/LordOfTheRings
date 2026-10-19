@@ -41,9 +41,9 @@ async function remove(deck: DeckSummary): Promise<void> {
 <template>
   <main class="page card-browser">
     <header class="page__head">
-      <h1>Decks</h1>
+      <h1>{{ $t('browser.decks.title') }}</h1>
       <p v-if="decks.decks.length" class="muted">
-        {{ decks.decks.length }} {{ decks.decks.length === 1 ? 'deck' : 'decks' }}
+        {{ $t('browser.decks.count', decks.decks.length) }}
       </p>
     </header>
 
@@ -51,29 +51,28 @@ async function remove(deck: DeckSummary): Promise<void> {
       <DeckImport class="layout__import" @imported="onImported" />
 
       <div class="layout__list">
-        <p v-if="decks.state === 'loading'" class="notice">Loading…</p>
+        <p v-if="decks.state === 'loading'" class="notice">{{ $t('browser.common.loading') }}</p>
         <p v-else-if="decks.state === 'error'" class="notice notice--error">{{ decks.error }}</p>
 
-        <p v-else-if="decks.isEmpty" class="notice">
-          Nothing here yet. Import a deck to get started — the fifty sample decks in
-          <code>backend/data/decks</code> are all built from the Core Set.
-        </p>
+        <i18n-t v-else-if="decks.isEmpty" keypath="browser.decks.empty" scope="global" tag="p" class="notice">
+          <template #path><code>backend/data/decks</code></template>
+        </i18n-t>
 
         <ul v-else class="decks">
           <li v-for="deck in decks.decks" :key="deck.id" class="deck">
             <RouterLink class="deck__link" :to="{ name: 'deck', params: { id: deck.id } }">
               <h2 class="deck__name truncate">{{ deck.name }}</h2>
               <p class="deck__heroes truncate">
-                {{ deck.heroNames.length ? deck.heroNames.join(' · ') : 'No heroes' }}
+                {{ deck.heroNames.length ? deck.heroNames.join(' · ') : $t('browser.decks.noHeroes') }}
               </p>
               <p class="deck__meta">
-                <span>{{ deck.cardCount }} cards</span>
+                <span>{{ $t('browser.common.cardCount', deck.cardCount) }}</span>
                 <span v-if="deck.startingThreat !== null">
-                  starting threat {{ deck.startingThreat }}
+                  {{ $t('browser.common.startingThreat', { threat: deck.startingThreat }) }}
                 </span>
                 <span v-if="deck.source === 'ringsdb'" class="chip">RingsDB</span>
                 <span v-if="deck.unresolvedCount" class="chip chip--warn">
-                  {{ deck.unresolvedCount }} unknown
+                  {{ $t('browser.decks.unknownCount', { count: deck.unresolvedCount }) }}
                 </span>
               </p>
             </RouterLink>
@@ -82,11 +81,11 @@ async function remove(deck: DeckSummary): Promise<void> {
               type="button"
               class="button button--ghost deck__remove"
               :disabled="removing === deck.id"
-              :title="`Delete ${deck.name}`"
+              :title="$t('browser.decks.delete', { name: deck.name })"
               @click="remove(deck)"
             >
               <span aria-hidden="true">&#10005;</span>
-              <span class="visually-hidden">Delete {{ deck.name }}</span>
+              <span class="visually-hidden">{{ $t('browser.decks.delete', { name: deck.name }) }}</span>
             </button>
           </li>
         </ul>

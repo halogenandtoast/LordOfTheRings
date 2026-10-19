@@ -1,4 +1,5 @@
 import { computed, nextTick, onScopeDispose, readonly, ref, shallowRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { apiFetch } from '../api'
 import { token } from '../auth'
 import type { CardDef, GameData, ServerMessage } from '../server'
@@ -16,6 +17,7 @@ const socketUrl = (gameId: string) => {
 }
 
 export const useGame = (gameId: string) => {
+  const { t } = useI18n()
   let closed = false
   const error = ref<string | null>(null)
   const data = shallowRef<GameData | null>(null)
@@ -97,7 +99,7 @@ export const useGame = (gameId: string) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }).catch(() => null)
-    error.value = response?.ok ? null : (await response?.text()) || 'the server could not be reached'
+    error.value = response?.ok ? null : (await response?.text()) || t('game.errors.serverUnreachable')
   }
 
   const refresh = async () => {
@@ -130,7 +132,7 @@ export const useGame = (gameId: string) => {
       if (data.value) game.value = toView(data.value, defs, game.value)
     })
     .catch(() => {
-      error.value = 'could not load card data'
+      error.value = t('game.errors.cardData')
     })
 
   connect()

@@ -6,18 +6,21 @@
  * measuring, which is what keeps 4000 of them scrolling smoothly.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import CardImage from './CardImage.vue'
 import CardStats from './CardStats.vue'
 import GameIcon from './GameIcon.vue'
 import type { Card } from '@browser/types/card'
-import { primaryCost, TYPE_LABELS } from '@browser/types/card'
+import { primaryCost } from '@browser/types/card'
 import type { IconName } from '@browser/lib/card-text'
 
 const { card, selected = false } = defineProps<{ card: Card; selected?: boolean }>()
 
+const { t } = useI18n()
+
 const cost = computed(() => primaryCost(card))
-const costLabel = computed(() => (card.type === 'hero' ? 'Threat cost' : 'Resource cost'))
-const typeLabel = computed(() => (card.type ? TYPE_LABELS[card.type] : (card.typeName ?? '—')))
+const costLabel = computed(() => t(card.type === 'hero' ? 'browser.card.threatCost' : 'browser.card.resourceCost'))
+const typeLabel = computed(() => (card.type ? t(`browser.cardTypes.${card.type}`) : (card.typeName ?? '—')))
 
 /** Only the four player spheres have a glyph; the rest show as a colour dot. */
 const sphereIcon = computed<IconName | null>(() => {
@@ -44,9 +47,9 @@ const sphereIcon = computed<IconName | null>(() => {
 
     <div class="row__main">
       <h3 class="row__name">
-        <span v-if="card.unique" class="unique" aria-label="Unique">&#9670;</span>
+        <span v-if="card.unique" class="unique" :aria-label="$t('browser.common.unique')">&#9670;</span>
         {{ card.name }}
-        <span v-if="card.hasErrata" class="errata" title="Has errata">e</span>
+        <span v-if="card.hasErrata" class="errata" :title="$t('browser.card.hasErrata')">e</span>
       </h3>
 
       <p v-if="card.traits.length" class="row__traits">{{ card.traits.join('. ') }}.</p>
@@ -59,7 +62,7 @@ const sphereIcon = computed<IconName | null>(() => {
       <template v-if="cost !== null">
         <span class="cost" :title="costLabel">{{ cost }}</span>
         <GameIcon v-if="sphereIcon" :name="sphereIcon" />
-        <span v-else-if="card.sphere" class="sphere-dot" :title="card.sphere" />
+        <span v-else-if="card.sphere" class="sphere-dot" :title="$t(`browser.spheres.${card.sphere}`)" />
       </template>
       <GameIcon v-else-if="sphereIcon" :name="sphereIcon" />
     </div>

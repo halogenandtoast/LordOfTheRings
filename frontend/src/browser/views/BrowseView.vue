@@ -10,19 +10,21 @@ import '@browser/browser.css'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { refDebounced } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 import CardDialog from '@browser/components/CardDialog.vue'
 import CardList from '@browser/components/CardList.vue'
 import FilterSidebar from '@browser/components/FilterSidebar.vue'
 import ProductBrowser from '@browser/components/ProductBrowser.vue'
 import { useCardStore } from '@browser/stores/cards'
 import { useUiStore } from '@browser/stores/ui'
-import { SORT_LABELS, type SortField } from '@browser/lib/search'
+import { SORT_FIELDS, type SortField } from '@browser/lib/search'
 import type { Card, CardType, Section, Sphere } from '@browser/types/card'
 
 const store = useCardStore()
 const ui = useUiStore()
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
 /**
  * The search box writes here on every keystroke; the store — and so the
@@ -84,7 +86,7 @@ function readUrl(): void {
   store.filters.uniqueOnly = q.unique === '1'
   store.filters.costMin = asNumber(q.costMin)
   store.filters.costMax = asNumber(q.costMax)
-  if (typeof q.sort === 'string' && q.sort in SORT_LABELS) store.sortField = q.sort as SortField
+  if (typeof q.sort === 'string' && SORT_FIELDS.includes(q.sort as SortField)) store.sortField = q.sort as SortField
   store.sortDescending = q.desc === '1'
   selectedCode.value = typeof q.card === 'string' ? q.card : null
 }
@@ -129,14 +131,16 @@ watch(
   { deep: true },
 )
 
-const sortOptions = Object.entries(SORT_LABELS) as [SortField, string][]
-
 const resultLabel = computed(() => {
   const n = store.results.length
   const total = store.cards.length
   if (store.state !== 'ready') return ''
-  if (n === total) return `${total.toLocaleString()} cards`
-  return `${n.toLocaleString()} of ${total.toLocaleString()} cards`
+  if (n === total) return t('browser.browse.resultsAll', { total: total.toLocaleString() }, total)
+  return t(
+    'browser.browse.resultsSome',
+    { count: n.toLocaleString(), total: total.toLocaleString() },
+    total,
+  )
 })
 </script>
 
@@ -153,29 +157,29 @@ const resultLabel = computed(() => {
           type="button"
           class="button button--ghost"
           :aria-pressed="ui.productsOpen"
-          :title="ui.productsOpen ? 'Hide products' : 'Show products'"
+          :title="ui.productsOpen ? $t('browser.browse.hideProducts') : $t('browser.browse.showProducts')"
           @click="ui.productsOpen = !ui.productsOpen"
         >
           <span aria-hidden="true">&#9776;</span>
-          <span class="visually-hidden">Toggle products</span>
+          <span class="visually-hidden">{{ $t('browser.browse.toggleProducts') }}</span>
         </button>
 
         <input
           v-model="searchInput"
           class="input toolbar__search"
           type="search"
-          placeholder="Search names, traits and card text…"
-          aria-label="Search cards"
+          :placeholder="$t('browser.browse.searchPlaceholder')"
+          :aria-label="$t('browser.browse.searchLabel')"
           autocomplete="off"
         />
 
         <p class="toolbar__count" aria-live="polite">{{ resultLabel }}</p>
 
         <label class="toolbar__sort">
-          <span class="visually-hidden">Sort by</span>
+          <span class="visually-hidden">{{ $t('browser.browse.sortBy') }}</span>
           <select v-model="store.sortField" class="input">
-            <option v-for="[value, label] in sortOptions" :key="value" :value="value">
-              {{ label }}
+            <option v-for="value in SORT_FIELDS" :key="value" :value="value">
+              {{ $t(`browser.sort.${value}`) }}
             </option>
           </select>
         </label>
@@ -184,21 +188,21 @@ const resultLabel = computed(() => {
           type="button"
           class="button button--ghost"
           :aria-pressed="store.sortDescending"
-          :title="store.sortDescending ? 'Descending' : 'Ascending'"
+          :title="store.sortDescending ? $t('browser.browse.descending') : $t('browser.browse.ascending')"
           @click="store.sortDescending = !store.sortDescending"
         >
           <span aria-hidden="true">{{ store.sortDescending ? '↓' : '↑' }}</span>
-          <span class="visually-hidden">Reverse sort order</span>
+          <span class="visually-hidden">{{ $t('browser.browse.reverseSort') }}</span>
         </button>
 
-        <div class="toolbar__views" role="group" aria-label="View mode">
+        <div class="toolbar__views" role="group" :aria-label="$t('browser.browse.viewMode')">
           <button
             type="button"
             class="button"
             :aria-pressed="ui.viewMode === 'list'"
             @click="ui.viewMode = 'list'"
           >
-            List
+            {{ $t('browser.browse.list') }}
           </button>
           <button
             type="button"
@@ -206,7 +210,7 @@ const resultLabel = computed(() => {
             :aria-pressed="ui.viewMode === 'grid'"
             @click="ui.viewMode = 'grid'"
           >
-            Grid
+            {{ $t('browser.browse.grid') }}
           </button>
         </div>
 
@@ -214,33 +218,35 @@ const resultLabel = computed(() => {
           type="button"
           class="button button--ghost toolbar__filters"
           :aria-pressed="ui.filtersOpen"
-          :title="ui.filtersOpen ? 'Hide filters' : 'Show filters'"
+          :title="ui.filtersOpen ? $t('browser.browse.hideFilters') : $t('browser.browse.showFilters')"
           @click="ui.filtersOpen = !ui.filtersOpen"
         >
           <span aria-hidden="true">&#9662;</span>
-          Filters
+          {{ $t('browser.filters.title') }}
           <span v-if="store.filterCount" class="toolbar__badge">{{ store.filterCount }}</span>
         </button>
       </div>
 
       <div class="browse__body">
-        <p v-if="store.state === 'loading'" class="notice">Loading the card database…</p>
+        <p v-if="store.state === 'loading'" class="notice">{{ $t('browser.browse.loadingDatabase') }}</p>
 
         <div v-else-if="store.state === 'error'" class="notice notice--error">
-          <p>Could not load the card database.</p>
+          <p>{{ $t('browser.browse.loadError') }}</p>
           <p class="notice__detail">{{ store.error }}</p>
-          <p class="notice__detail">Is the API running? <code>./dev.up</code></p>
+          <i18n-t keypath="browser.browse.apiHint" scope="global" tag="p" class="notice__detail">
+            <template #command><code>./dev.up</code></template>
+          </i18n-t>
         </div>
 
         <p v-else-if="!store.results.length" class="notice">
-          No cards match those filters.
+          {{ $t('browser.browse.noMatches') }}
           <button
             v-if="store.hasFilters"
             type="button"
             class="button button--ghost"
             @click="store.resetFilters()"
           >
-            Clear filters
+            {{ $t('browser.browse.clearFilters') }}
           </button>
         </p>
 

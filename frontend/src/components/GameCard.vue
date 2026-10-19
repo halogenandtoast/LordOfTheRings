@@ -94,9 +94,9 @@ const toggleUnless = (attached: CardView) => {
 
     <div v-if="debugging && card.target" class="debug" @click.stop>
       <span v-for="(count, token) in counts" :key="token">
-        <button type="button" :aria-label="`Remove ${token}`" :disabled="count === 0" @click="adjust(token, -1)">−</button>
-        {{ token }}
-        <button type="button" :aria-label="`Add ${token}`" @click="adjust(token, 1)">+</button>
+        <button type="button" :aria-label="$t('game.debug.removeToken', { token: $t(`game.debug.tokens.${token}`) })" :disabled="count === 0" @click="adjust(token, -1)">−</button>
+        {{ $t(`game.debug.tokens.${token}`) }}
+        <button type="button" :aria-label="$t('game.debug.addToken', { token: $t(`game.debug.tokens.${token}`) })" @click="adjust(token, 1)">+</button>
       </span>
     </div>
   </div>

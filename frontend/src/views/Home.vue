@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { deleteGame, fetchGames, importGame } from '../api'
 import GameRow from '../components/GameRow.vue'
@@ -9,6 +10,7 @@ import type { GameSummary } from '../server'
 
 type Tab = 'active' | 'finished'
 
+const { t } = useI18n()
 const router = useRouter()
 const games = ref<GameSummary[]>([])
 const error = ref<string | null>(null)
@@ -24,13 +26,13 @@ const tab = computed<Tab>(() => {
 })
 
 const tabOptions = computed(() => [
-  { value: 'active' as Tab, label: 'Active games', count: activeGames.value.length },
-  { value: 'finished' as Tab, label: 'Finished games', count: finishedGames.value.length },
+  { value: 'active' as Tab, label: t('home.activeGames'), count: activeGames.value.length },
+  { value: 'finished' as Tab, label: t('home.finishedGames'), count: finishedGames.value.length },
 ])
 
 fetchGames()
   .then((result) => (games.value = result))
-  .catch(() => (error.value = 'The server could not be reached.'))
+  .catch(() => (error.value = t('home.serverUnreachable')))
 
 const removeGame = (game: GameSummary) =>
   deleteGame(game.id).then(() => {
@@ -57,7 +59,7 @@ const submitImport = async () => {
     const { id } = await importGame(importFile.value)
     await router.push(`/games/${id}`)
   } catch (e) {
-    importError.value = e instanceof Error ? e.message : 'Could not load that file.'
+    importError.value = e instanceof Error ? e.message : t('home.couldNotLoadFile')
   } finally {
     importing.value = false
   }
@@ -70,35 +72,35 @@ const submitImport = async () => {
       <section>
         <header class="main-header">
           <div class="title-group">
-            <h2>Your Games</h2>
+            <h2>{{ $t('home.yourGames') }}</h2>
             <SegmentedToggle
               class="tabs"
               :model-value="tab"
               :options="tabOptions"
-              label="Games"
+              :label="$t('home.games')"
               @update:model-value="chosenTab = $event as Tab"
             />
           </div>
           <div class="header-actions">
-            <button class="secondary-cta" type="button" @click="showImportGame = !showImportGame">Load game</button>
-            <PrimaryButton label="New Game" @click="goToNewGame" />
+            <button class="secondary-cta" type="button" @click="showImportGame = !showImportGame">{{ $t('home.loadGame') }}</button>
+            <PrimaryButton :label="$t('newGame.title')" @click="goToNewGame" />
           </div>
         </header>
 
         <Transition name="slide">
           <div v-if="showImportGame" class="load-game-panel">
             <div class="panel-header">
-              <h3>Load game</h3>
+              <h3>{{ $t('home.loadGame') }}</h3>
               <div class="panel-actions">
-                <button class="panel-close" type="button" @click="showImportGame = false">Cancel</button>
+                <button class="panel-close" type="button" @click="showImportGame = false">{{ $t('common.cancel') }}</button>
                 <button v-if="importFile" class="panel-load" type="button" :disabled="importing" @click="submitImport">
-                  {{ importing ? 'Loading…' : 'Load Game' }}
+                  {{ importing ? $t('home.loading') : $t('home.loadGame') }}
                 </button>
               </div>
             </div>
             <label class="file-picker">
               <input type="file" accept="application/json,.json" @change="chooseFile" />
-              <span>{{ importFile ? importFile.name : 'Choose an exported game (.json)' }}</span>
+              <span>{{ importFile ? importFile.name : $t('home.chooseFile') }}</span>
             </label>
             <p v-if="importError" class="import-error">{{ importError }}</p>
           </div>
@@ -110,13 +112,13 @@ const submitImport = async () => {
 
         <template v-if="tab === 'active'">
           <div v-if="activeGames.length === 0" class="box">
-            <p>You have no games in progress. Start a new one to set out on a quest.</p>
+            <p>{{ $t('home.noActiveGames') }}</p>
           </div>
           <GameRow v-for="game in activeGames" :key="game.id" :game="game" :delete-game="() => removeGame(game)" />
         </template>
         <template v-else>
           <div v-if="finishedGames.length === 0" class="box">
-            <p>No finished games yet.</p>
+            <p>{{ $t('home.noFinishedGames') }}</p>
           </div>
           <GameRow v-for="game in finishedGames" :key="game.id" :game="game" :delete-game="() => removeGame(game)" />
         </template>

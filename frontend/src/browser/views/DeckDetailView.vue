@@ -8,14 +8,16 @@
 import '@browser/browser.css'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import CardImage from '@browser/components/CardImage.vue'
 import DeckSection from '@browser/components/DeckSection.vue'
 import { fetchDeck } from '@browser/lib/api'
 import { messageOf } from '@browser/stores/decks'
 import { computedThreat, drawDeckSize, unresolvedSlots, type Deck, type Slot } from '@browser/types/deck'
-import { TYPE_LABELS, type CardType } from '@browser/types/card'
+import type { CardType } from '@browser/types/card'
 
 const route = useRoute()
+const { t, te } = useI18n()
 
 const deck = ref<Deck | null>(null)
 const error = ref<string | null>(null)
@@ -60,7 +62,7 @@ const byType = computed(() => {
     .sort((a, b) => rank(a[0]) - rank(b[0]) || a[0].localeCompare(b[0]))
     .map(([type, slots]) => ({
       type,
-      title: TYPE_LABELS[type as CardType] ?? 'Other',
+      title: te(`browser.cardTypes.${type}`) ? t(`browser.cardTypes.${type}`) : t('browser.deck.other'),
       slots,
     }))
 })
@@ -76,17 +78,17 @@ const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))
 
 <template>
   <main class="page card-browser">
-    <RouterLink class="button button--ghost back" to="/decks">&#8592; All decks</RouterLink>
+    <RouterLink class="button button--ghost back" to="/decks">&#8592; {{ $t('browser.deck.allDecks') }}</RouterLink>
 
-    <p v-if="loading" class="notice">Loading…</p>
+    <p v-if="loading" class="notice">{{ $t('browser.common.loading') }}</p>
     <p v-else-if="error" class="notice notice--error">{{ error }}</p>
 
     <template v-else-if="deck">
       <header class="head">
         <h1>{{ deck.name }}</h1>
         <p class="head__meta">
-          <span>{{ size }} cards</span>
-          <span v-if="threat !== null">starting threat {{ threat }}</span>
+          <span>{{ $t('browser.common.cardCount', size) }}</span>
+          <span v-if="threat !== null">{{ $t('browser.common.startingThreat', { threat }) }}</span>
           <a
             v-if="deck.sourceUrl"
             class="head__source"
@@ -94,26 +96,25 @@ const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))
             target="_blank"
             rel="noreferrer noopener"
           >
-            on RingsDB &#8599;
+            {{ $t('browser.deck.onRingsdb') }} &#8599;
           </a>
         </p>
         <p v-if="size < 50" class="head__warning">
-          A deck needs at least 50 cards; this one has {{ size }}.
+          {{ $t('browser.deck.tooSmall', { count: size }) }}
         </p>
       </header>
 
       <p v-if="unknown.length" class="notice notice--error">
-        {{ unknown.length }} {{ unknown.length === 1 ? 'card is' : 'cards are' }} not in our
-        database and are shown by the code the source used.
+        {{ $t('browser.deck.unresolved', unknown.length) }}
       </p>
 
       <section v-if="deck.heroes.length" class="heroes">
         <article v-for="slot in deck.heroes" :key="slot.sourceCode" class="hero">
           <CardImage v-if="slot.card" :card="slot.card" size="thumb" />
           <div v-else class="hero__missing">{{ slot.sourceCode }}</div>
-          <h2 class="hero__name truncate">{{ slot.card?.name ?? 'Unknown card' }}</h2>
+          <h2 class="hero__name truncate">{{ slot.card?.name ?? $t('browser.common.unknownCard') }}</h2>
           <p class="hero__sphere muted">
-            {{ slot.card?.sphere ?? '—' }}
+            {{ slot.card?.sphere ? $t(`browser.spheres.${slot.card.sphere}`) : '—' }}
           </p>
         </article>
       </section>
@@ -127,7 +128,7 @@ const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))
         />
         <DeckSection
           v-if="deck.sideslots.length"
-          title="Sideboard"
+          :title="$t('browser.deck.sideboard')"
           :slots="deck.sideslots"
           class="sideboard"
         />

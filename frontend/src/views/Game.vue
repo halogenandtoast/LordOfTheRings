@@ -154,7 +154,7 @@ watch(question, (asked) => {
 
         <CardBand
           v-if="scenario"
-          label="staging"
+          :label="$t('game.bands.staging')"
           :cards="scenario.staging"
           :choices="choices"
           :flipping="flipping"
@@ -162,7 +162,7 @@ watch(question, (asked) => {
         />
 
         <CardBand
-          label="threat area"
+          :label="$t('game.bands.threatArea')"
           align="bottom"
           :cards="engagedWithAttachments"
           :choices="choices"
@@ -182,15 +182,15 @@ watch(question, (asked) => {
             />
             <ThreatDial v-if="you" :threat="you.threat" />
             <div v-if="you && debugging" class="debug-threat">
-              <button type="button" aria-label="Lower threat" :disabled="you.threat === 0" @click="sendDebug({ tag: 'LowerThreat', contents: [you.playerId, 1] })">−</button>
-              <button type="button" aria-label="Raise threat" @click="sendDebug({ tag: 'RaiseThreat', contents: [you.playerId, 1] })">+</button>
+              <button type="button" :aria-label="$t('game.debug.lowerThreat')" :disabled="you.threat === 0" @click="sendDebug({ tag: 'LowerThreat', contents: [you.playerId, 1] })">−</button>
+              <button type="button" :aria-label="$t('game.debug.raiseThreat')" @click="sendDebug({ tag: 'RaiseThreat', contents: [you.playerId, 1] })">+</button>
             </div>
           </div>
           <div class="player-column">
             <CardBand
               class="play-area"
               :class="{ 'drop-zone': dragging && dragging.hosts === null }"
-              label="play area"
+              :label="$t('game.bands.playArea')"
               :cards="inPlay"
               :choices="choices"
               :flipping="flipping"

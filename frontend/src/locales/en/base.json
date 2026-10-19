@@ -1,0 +1,68 @@
+{
+  "appName": "The Lord of the Rings",
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "create": "Create",
+    "delete": "Delete",
+    "game": "Game",
+    "scenario": "Scenario"
+  },
+  "nav": {
+    "home": "Home",
+    "cards": "Cards",
+    "decks": "Decks"
+  },
+  "titles": {
+    "card": "Card",
+    "deck": "Deck",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "createAccount": "Create an account",
+    "usernameOrEmail": "Username or email",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "Password (8 characters or more)",
+    "newToMiddleEarth": "New to Middle-earth?",
+    "haveAccount": "Already have an account?",
+    "oneMoment": "One moment…",
+    "couldNotSignIn": "Could not sign in.",
+    "couldNotCreateAccount": "Could not create the account."
+  },
+  "home": {
+    "yourGames": "Your Games",
+    "games": "Games",
+    "activeGames": "Active games",
+    "finishedGames": "Finished games",
+    "loadGame": "Load game",
+    "loading": "Loading…",
+    "chooseFile": "Choose an exported game (.json)",
+    "serverUnreachable": "The server could not be reached.",
+    "couldNotLoadFile": "Could not load that file.",
+    "noActiveGames": "You have no games in progress. Start a new one to set out on a quest.",
+    "noFinishedGames": "No finished games yet.",
+    "won": "Won",
+    "lost": "Lost",
+    "deleteGame": "Delete game",
+    "confirmDelete": "Delete this game?",
+    "threat": "threat {threat}"
+  },
+  "newGame": {
+    "title": "New Game",
+    "campaign": "Campaign",
+    "scenarioCount": "{count} scenario | {count} scenarios",
+    "playableCount": "{count} playable",
+    "chooseDifferentCampaign": "Choose a different campaign",
+    "comingSoon": "Coming soon",
+    "playingAs": "Playing as {player} with {deck} (Aragorn, Théodred, Glóin)",
+    "gameName": "Game name",
+    "creating": "Creating…",
+    "couldNotCreateGame": "Could not create the game."
+  }
+}

@@ -11,7 +11,7 @@ defineEmits<{ submit: [] }>()
     <div v-if="error" class="error" role="alert">{{ error }}</div>
     <section>
       <slot></slot>
-      <button type="submit" :disabled="submitting">{{ submitting ? 'One moment…' : submitLabel }}</button>
+      <button type="submit" :disabled="submitting">{{ submitting ? $t('auth.oneMoment') : submitLabel }}</button>
     </section>
     <section class="links">
       <slot name="links"></slot>

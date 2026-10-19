@@ -1,0 +1,70 @@
+{
+  "round": "round {round}",
+  "threat": "Threat {value}",
+  "phaseTracker": "Phases",
+  "phases": {
+    "resource": "resource",
+    "planning": "planning",
+    "quest": "quest",
+    "travel": "travel",
+    "encounter": "encounter",
+    "combat": "combat",
+    "refresh": "refresh"
+  },
+  "bar": {
+    "restartScenario": "Restart scenario",
+    "file": "File",
+    "exportGame": "Export game",
+    "testing": "Testing",
+    "debugMode": "Debug mode",
+    "leaveDebugMode": "Leave debug mode",
+    "undo": "Undo",
+    "undoLastAnswer": "Undo last answer",
+    "undoTo": "Undo to",
+    "startOfPhase": "Start of phase",
+    "startOfRound": "Start of round",
+    "toggleSidebar": "Toggle sidebar"
+  },
+  "bands": {
+    "staging": "staging",
+    "threatArea": "threat area",
+    "playArea": "play area"
+  },
+  "debug": {
+    "lowerThreat": "Lower threat",
+    "raiseThreat": "Raise threat",
+    "removeToken": "Remove {token}",
+    "addToken": "Add {token}",
+    "tokens": {
+      "Damage": "Damage",
+      "Progress": "Progress",
+      "Resource": "Resource"
+    }
+  },
+  "prompt": {
+    "playersWin": "The players win",
+    "playersLose": "The players lose",
+    "orClickHighlighted": "or click a highlighted card",
+    "source": "source",
+    "target": "target",
+    "waiting": "waiting"
+  },
+  "discard": {
+    "title": "Discard pile ({count}) — click to view",
+    "header": "Discard pile ({count})"
+  },
+  "tally": {
+    "label": "Quest tally",
+    "lastRound": "last round {value}",
+    "lastRoundTitle": "Last round {value}",
+    "willpower": "Willpower {value}"
+  },
+  "search": {
+    "label": "Search",
+    "searched": "({count} searched)"
+  },
+  "errors": {
+    "serverUnreachable": "the server could not be reached",
+    "cardData": "could not load card data"
+  }
+}

@@ -17,7 +17,7 @@ const { card, selected = false } = defineProps<{ card: Card; selected?: boolean 
     <CardImage :card="card" size="thumb" />
     <div class="tile__caption">
       <span class="tile__name truncate">
-        <span v-if="card.unique" class="unique" aria-label="Unique">&#9670;</span>
+        <span v-if="card.unique" class="unique" :aria-label="$t('browser.common.unique')">&#9670;</span>
         {{ card.name }}
       </span>
       <span class="tile__set truncate">{{ card.packName }}</span>

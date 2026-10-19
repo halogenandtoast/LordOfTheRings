@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { signUp } from '../auth'
 import AuthForm from '../components/AuthForm.vue'
 
+const { t } = useI18n()
 const router = useRouter()
 const username = ref('')
 const email = ref('')
@@ -18,7 +20,7 @@ const submit = async () => {
     await signUp(username.value, email.value, password.value)
     await router.push('/')
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Could not create the account.'
+    error.value = e instanceof Error ? e.message : t('auth.couldNotCreateAccount')
   } finally {
     submitting.value = false
   }
@@ -26,12 +28,12 @@ const submit = async () => {
 </script>
 
 <template>
-  <AuthForm title="Create an account" submit-label="Sign up" :error="error" :submitting="submitting" @submit="submit">
-    <input v-model="username" type="text" autocomplete="username" placeholder="Username" required />
-    <input v-model="email" type="email" autocomplete="email" placeholder="Email" required />
-    <input v-model="password" type="password" autocomplete="new-password" minlength="8" placeholder="Password (8 characters or more)" required />
+  <AuthForm :title="$t('auth.createAccount')" :submit-label="$t('auth.signUp')" :error="error" :submitting="submitting" @submit="submit">
+    <input v-model="username" type="text" autocomplete="username" :placeholder="$t('auth.username')" required />
+    <input v-model="email" type="email" autocomplete="email" :placeholder="$t('auth.email')" required />
+    <input v-model="password" type="password" autocomplete="new-password" minlength="8" :placeholder="$t('auth.newPassword')" required />
     <template #links>
-      Already have an account? <RouterLink to="/sign-in">Sign in</RouterLink>
+      {{ $t('auth.haveAccount') }} <RouterLink to="/sign-in">{{ $t('auth.signIn') }}</RouterLink>
     </template>
   </AuthForm>
 </template>

@@ -1,0 +1,198 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "close": "Close",
+    "unique": "Unique",
+    "unknownCard": "Unknown card",
+    "clearCount": "Clear {count}",
+    "cardCount": "{count} card | {count} cards",
+    "startingThreat": "starting threat {threat}"
+  },
+  "cardTypes": {
+    "hero": "Hero",
+    "ally": "Ally",
+    "attachment": "Attachment",
+    "event": "Event",
+    "player-side-quest": "Player Side Quest",
+    "contract": "Contract",
+    "treasure": "Treasure",
+    "enemy": "Enemy",
+    "ship-enemy": "Ship Enemy",
+    "location": "Location",
+    "treachery": "Treachery",
+    "objective": "Objective",
+    "objective-ally": "Objective Ally",
+    "side-quest": "Side Quest",
+    "quest": "Quest",
+    "campaign": "Campaign",
+    "nightmare": "Nightmare"
+  },
+  "spheres": {
+    "leadership": "Leadership",
+    "lore": "Lore",
+    "spirit": "Spirit",
+    "tactics": "Tactics",
+    "baggins": "Baggins",
+    "fellowship": "Fellowship",
+    "neutral": "Neutral",
+    "boon": "Boon",
+    "burden": "Burden",
+    "special": "Special"
+  },
+  "sections": {
+    "player": "Player",
+    "encounter": "Encounter",
+    "quest": "Quest",
+    "nightmare": "Nightmare"
+  },
+  "sort": {
+    "set": "Set order",
+    "name": "Name",
+    "cost": "Cost",
+    "type": "Type",
+    "sphere": "Sphere"
+  },
+  "stats": {
+    "engagementCost": "Engagement cost",
+    "threat": "Threat",
+    "willpower": "Willpower",
+    "attack": "Attack",
+    "defense": "Defense",
+    "hitPoints": "Hit points",
+    "questPoints": "Quest points",
+    "victoryPoints": "Victory points",
+    "abbreviations": {
+      "engagement": "ENG",
+      "health": "HP",
+      "quest": "QP",
+      "victory": "VP"
+    }
+  },
+  "icons": {
+    "perPlayer": "Per player"
+  },
+  "browse": {
+    "showProducts": "Show products",
+    "hideProducts": "Hide products",
+    "toggleProducts": "Toggle products",
+    "searchPlaceholder": "Search names, traits and card text…",
+    "searchLabel": "Search cards",
+    "sortBy": "Sort by",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "reverseSort": "Reverse sort order",
+    "viewMode": "View mode",
+    "list": "List",
+    "grid": "Grid",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "resultsAll": "{total} card | {total} cards",
+    "resultsSome": "{count} of {total} card | {count} of {total} cards",
+    "loadingDatabase": "Loading the card database…",
+    "loadError": "Could not load the card database.",
+    "apiHint": "Is the API running? {command}",
+    "noMatches": "No cards match those filters.",
+    "clearFilters": "Clear filters"
+  },
+  "products": {
+    "title": "Products",
+    "searchPlaceholder": "Find a set…",
+    "searchLabel": "Search products",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "noMatches": "No products match “{query}”."
+  },
+  "filters": {
+    "title": "Filters",
+    "section": "Section",
+    "type": "Type",
+    "sphere": "Sphere",
+    "cost": "Cost",
+    "minimumCost": "Minimum cost",
+    "maximumCost": "Maximum cost",
+    "min": "min",
+    "max": "max",
+    "uniqueOnly": "Unique only",
+    "traits": "Traits",
+    "searchTraits": "Search traits…",
+    "encounterSet": "Encounter set",
+    "searchEncounterSets": "Search encounter sets…",
+    "filterPlaceholder": "Filter…",
+    "searchGroup": "Search {title}",
+    "noMatches": "No matches",
+    "showMore": "Show {count} more",
+    "showFewer": "Show fewer"
+  },
+  "dialog": {
+    "label": "Card details",
+    "previousCard": "Previous card",
+    "previousCardTitle": "Previous card (←)",
+    "nextCard": "Next card",
+    "nextCardTitle": "Next card (→)",
+    "position": "{index} of {total}",
+    "hintCards": "cards",
+    "hintFaces": "faces",
+    "hintClose": "close"
+  },
+  "card": {
+    "unknownType": "Unknown",
+    "imageStage": "Stage {stage}",
+    "imageSide": "Side {face}",
+    "faces": "Card faces",
+    "threat": "Threat",
+    "cost": "Cost",
+    "stage": "Stage {stage}",
+    "setup": "Setup",
+    "reverse": "Reverse",
+    "questPoints": "Quest points {count}",
+    "viewOnRingsdb": "View on RingsDB",
+    "facts": {
+      "set": "Set",
+      "pack": "Pack",
+      "cycle": "Cycle",
+      "number": "Number",
+      "section": "Section",
+      "encounterSet": "Encounter set",
+      "quantity": "Quantity",
+      "deckLimit": "Deck limit",
+      "illustrator": "Illustrator",
+      "reverseOf": "Reverse of"
+    },
+    "threatCost": "Threat cost",
+    "resourceCost": "Resource cost",
+    "hasErrata": "Has errata",
+    "back": "Back to browsing",
+    "notFound": "No card with the code {code}."
+  },
+  "keys": {
+    "label": "Keyboard shortcuts",
+    "title": "Keyboard",
+    "closeList": "Close this list"
+  },
+  "decks": {
+    "title": "Decks",
+    "count": "{count} deck | {count} decks",
+    "empty": "Nothing here yet. Import a deck to get started — the fifty sample decks in {path} are all built from the Core Set.",
+    "noHeroes": "No heroes",
+    "unknownCount": "{count} unknown",
+    "delete": "Delete {name}"
+  },
+  "deck": {
+    "allDecks": "All decks",
+    "onRingsdb": "on RingsDB",
+    "tooSmall": "A deck needs at least 50 cards; this one has {count}.",
+    "unresolved": "{count} card is not in our database and is shown by the code the source used. | {count} cards are not in our database and are shown by the code the source used.",
+    "other": "Other",
+    "sideboard": "Sideboard"
+  },
+  "deckImport": {
+    "title": "Load a deck",
+    "lead": "Paste a RingsDB deck link, or drop a deck JSON file you have exported.",
+    "urlLabel": "RingsDB deck link",
+    "import": "Import",
+    "or": "or",
+    "fileLabel": "Drop a deck JSON file here, or choose one",
+    "fileHint": "RingsDB's export, or any file in the same shape",
+    "invalidJson": "{name} is not valid JSON."
+  }
+}

@@ -4,15 +4,17 @@
  * and where the data came from.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import CardImage from './CardImage.vue'
 import CardStats from './CardStats.vue'
 import CardText from './CardText.vue'
 import GameIcon from './GameIcon.vue'
 import type { Card } from '@browser/types/card'
-import { primaryCost, SECTION_LABELS, SPHERE_LABELS, TYPE_LABELS } from '@browser/types/card'
+import { primaryCost } from '@browser/types/card'
 import type { IconName } from '@browser/lib/card-text'
 
 const { card } = defineProps<{ card: Card }>()
+const { t } = useI18n()
 
 /**
  * Which image is showing. Errata reprints and quest stages each get their own,
@@ -26,8 +28,8 @@ const activeImage = computed(() => card.images[imageIndex.value] ?? card.images[
 const imageLabels = computed(() =>
   card.images.map((image) => {
     const parts: string[] = []
-    if (image.stage !== null) parts.push(`Stage ${image.stage}`)
-    parts.push(`Side ${image.face.toUpperCase()}`)
+    if (image.stage !== null) parts.push(t('browser.card.imageStage', { stage: image.stage }))
+    parts.push(t('browser.card.imageSide', { face: image.face.toUpperCase() }))
     if (image.variant) parts.push(image.variant)
     return parts.join(' · ')
   }),
@@ -35,9 +37,9 @@ const imageLabels = computed(() =>
 
 const cost = computed(() => primaryCost(card))
 const typeLabel = computed(() =>
-  card.type ? TYPE_LABELS[card.type] : (card.typeName ?? 'Unknown'),
+  card.type ? t(`browser.cardTypes.${card.type}`) : (card.typeName ?? t('browser.card.unknownType')),
 )
-const sphereLabel = computed(() => (card.sphere ? SPHERE_LABELS[card.sphere] : null))
+const sphereLabel = computed(() => (card.sphere ? t(`browser.spheres.${card.sphere}`) : null))
 
 const sphereIcon = computed<IconName | null>(() =>
   card.sphere &&
@@ -50,18 +52,18 @@ const sphereIcon = computed<IconName | null>(() =>
 
 const facts = computed(() => {
   const rows: { label: string; value: string }[] = []
-  rows.push({ label: 'Set', value: card.setName })
-  if (card.packName !== card.setName) rows.push({ label: 'Pack', value: card.packName })
-  if (card.cycleName !== card.packName) rows.push({ label: 'Cycle', value: card.cycleName })
+  rows.push({ label: t('browser.card.facts.set'), value: card.setName })
+  if (card.packName !== card.setName) rows.push({ label: t('browser.card.facts.pack'), value: card.packName })
+  if (card.cycleName !== card.packName) rows.push({ label: t('browser.card.facts.cycle'), value: card.cycleName })
   if (card.number !== null) {
-    rows.push({ label: 'Number', value: String(card.number).padStart(3, '0') })
+    rows.push({ label: t('browser.card.facts.number'), value: String(card.number).padStart(3, '0') })
   }
-  rows.push({ label: 'Section', value: SECTION_LABELS[card.section] })
-  if (card.encounterSet) rows.push({ label: 'Encounter set', value: card.encounterSet })
-  if (card.quantity !== null) rows.push({ label: 'Quantity', value: String(card.quantity) })
-  if (card.deckLimit !== null) rows.push({ label: 'Deck limit', value: String(card.deckLimit) })
-  if (card.illustrator) rows.push({ label: 'Illustrator', value: card.illustrator })
-  if (card.isBackOf) rows.push({ label: 'Reverse of', value: card.isBackOf })
+  rows.push({ label: t('browser.card.facts.section'), value: t(`browser.sections.${card.section}`) })
+  if (card.encounterSet) rows.push({ label: t('browser.card.facts.encounterSet'), value: card.encounterSet })
+  if (card.quantity !== null) rows.push({ label: t('browser.card.facts.quantity'), value: String(card.quantity) })
+  if (card.deckLimit !== null) rows.push({ label: t('browser.card.facts.deckLimit'), value: String(card.deckLimit) })
+  if (card.illustrator) rows.push({ label: t('browser.card.facts.illustrator'), value: card.illustrator })
+  if (card.isBackOf) rows.push({ label: t('browser.card.facts.reverseOf'), value: card.isBackOf })
   return rows
 })
 </script>
@@ -76,7 +78,7 @@ const facts = computed(() => {
       <div class="detail__art">
         <CardImage :card="card" :image="activeImage" size="full" eager />
 
-        <div v-if="card.images.length > 1" class="faces" role="tablist" aria-label="Card faces">
+        <div v-if="card.images.length > 1" class="faces" role="tablist" :aria-label="$t('browser.card.faces')">
           <button
             v-for="(label, i) in imageLabels"
             :key="i"
@@ -95,20 +97,20 @@ const facts = computed(() => {
       <div class="detail__body stack">
         <header class="head">
           <h2 class="head__name">
-            <span v-if="card.unique" class="unique" aria-label="Unique">&#9670;</span>
+            <span v-if="card.unique" class="unique" :aria-label="$t('browser.common.unique')">&#9670;</span>
             {{ card.name }}
           </h2>
 
           <p class="head__line">
             <span v-if="cost !== null" class="head__cost">
-              {{ card.type === 'hero' ? 'Threat' : 'Cost' }} {{ cost }}
+              {{ $t(card.type === 'hero' ? 'browser.card.threat' : 'browser.card.cost') }} {{ cost }}
             </span>
             <span v-if="sphereLabel" class="head__sphere">
               <GameIcon v-if="sphereIcon" :name="sphereIcon" />
               {{ sphereLabel }}
             </span>
             <span class="head__type">{{ typeLabel }}</span>
-            <span v-if="card.stage !== null" class="head__stage">Stage {{ card.stage }}</span>
+            <span v-if="card.stage !== null" class="head__stage">{{ $t('browser.card.stage', { stage: card.stage }) }}</span>
           </p>
 
           <p v-if="card.traits.length" class="traits">{{ card.traits.join('. ') }}.</p>
@@ -121,7 +123,7 @@ const facts = computed(() => {
         </ul>
 
         <section v-if="card.setupText" class="block">
-          <h3 class="block__title">Setup</h3>
+          <h3 class="block__title">{{ $t('browser.card.setup') }}</h3>
           <CardText :text="card.setupText" />
         </section>
 
@@ -135,14 +137,14 @@ const facts = computed(() => {
 
         <section v-if="card.back" class="block block--back">
           <h3 class="block__title">
-            Reverse{{
+            {{ $t('browser.card.reverse') }}{{
               card.back.name && card.back.name !== card.name ? ` · ${card.back.name}` : ''
             }}
           </h3>
           <p v-if="card.back.traits.length" class="traits">{{ card.back.traits.join('. ') }}.</p>
           <CardText v-if="card.back.text" :text="card.back.text" />
           <p v-if="card.back.questPoints !== null" class="back-stat">
-            Quest points {{ card.back.questPoints }}
+            {{ $t('browser.card.questPoints', { count: card.back.questPoints }) }}
           </p>
         </section>
 
@@ -157,7 +159,7 @@ const facts = computed(() => {
 
         <p v-if="card.ringsdbUrl" class="links">
           <a class="button button--ghost" :href="card.ringsdbUrl" target="_blank" rel="noreferrer">
-            View on RingsDB &#8599;
+            {{ $t('browser.card.viewOnRingsdb') }} &#8599;
           </a>
         </p>
       </div>

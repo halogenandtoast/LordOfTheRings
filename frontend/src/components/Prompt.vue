@@ -7,9 +7,9 @@ defineProps<{ question: QuestionView | null; outcome: 'WON' | 'LOST' | null; rou
 <template>
   <aside class="prompt">
     <p v-if="outcome" class="outcome" :class="outcome.toLowerCase()">
-      {{ outcome === 'WON' ? 'The players win' : 'The players lose' }}
+      {{ $t(outcome === 'WON' ? 'game.prompt.playersWin' : 'game.prompt.playersLose') }}
     </p>
-    <p class="round">round {{ round }}<template v-if="phase"> &middot; {{ phase.toLowerCase() }}</template></p>
+    <p class="round">{{ $t('game.round', { round }) }}<template v-if="phase"> &middot; {{ $t(`game.phases.${phase.toLowerCase()}`) }}</template></p>
     <p v-if="question" class="ask">{{ question.prompt }}</p>
   </aside>
 </template>

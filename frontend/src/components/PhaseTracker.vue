@@ -5,14 +5,14 @@ const phases = ['resource', 'planning', 'quest', 'travel', 'encounter', 'combat'
 </script>
 
 <template>
-  <ol class="phases" aria-label="Phases">
+  <ol class="phases" :aria-label="$t('game.phaseTracker')">
     <li
       v-for="name in phases"
       :key="name"
       :class="{ active: name === phase }"
       :aria-current="name === phase ? 'step' : undefined"
     >
-      {{ name }}
+      {{ $t(`game.phases.${name}`) }}
     </li>
   </ol>
 </template>

@@ -21,7 +21,7 @@ const digitAngle = (i: number, d: number) => (i === 0 ? 36 * d : 180 - 36 * d)
 </script>
 
 <template>
-  <div class="threat" :class="{ danger: threat >= 40 }" role="img" :aria-label="`Threat ${threat}`">
+  <div class="threat" :class="{ danger: threat >= 40 }" role="img" :aria-label="$t('game.threat', { value: threat })">
     <div v-for="i in [0, 1]" :key="i" class="window" :class="i === 0 ? 'left' : 'right'" aria-hidden="true">
       <div class="wheel" :style="{ rotate: `${wheelAngle(i)}deg` }">
         <template v-for="d in 10" :key="d">

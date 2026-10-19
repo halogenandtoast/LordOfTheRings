@@ -8,12 +8,14 @@
  * so no upload endpoint is needed.
  */
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useDeckStore, messageOf } from '@browser/stores/decks'
 import type { Deck } from '@browser/types/deck'
 
 const emit = defineEmits<{ imported: [deck: Deck] }>()
 
 const decks = useDeckStore()
+const { t } = useI18n()
 
 const url = ref('')
 const busy = ref(false)
@@ -44,7 +46,7 @@ async function importFile(file: File): Promise<void> {
   try {
     parsed = JSON.parse(await file.text())
   } catch {
-    error.value = `${file.name} is not valid JSON.`
+    error.value = t('browser.deckImport.invalidJson', { name: file.name })
     return
   }
   await run({ deck: parsed })
@@ -66,13 +68,13 @@ function onDrop(event: DragEvent): void {
 
 <template>
   <section class="import">
-    <h2 class="import__title">Load a deck</h2>
+    <h2 class="import__title">{{ $t('browser.deckImport.title') }}</h2>
     <p class="import__lead muted">
-      Paste a RingsDB deck link, or drop a deck JSON file you have exported.
+      {{ $t('browser.deckImport.lead') }}
     </p>
 
     <form class="from-url" @submit.prevent="importFromUrl">
-      <label class="visually-hidden" for="deck-url">RingsDB deck link</label>
+      <label class="visually-hidden" for="deck-url">{{ $t('browser.deckImport.urlLabel') }}</label>
       <input
         id="deck-url"
         v-model="url"
@@ -83,11 +85,11 @@ function onDrop(event: DragEvent): void {
         :disabled="busy"
       />
       <button class="button button--primary" type="submit" :disabled="busy || !url.trim()">
-        {{ busy ? 'Loading…' : 'Import' }}
+        {{ busy ? $t('browser.common.loading') : $t('browser.deckImport.import') }}
       </button>
     </form>
 
-    <p class="or" aria-hidden="true"><span>or</span></p>
+    <p class="or" aria-hidden="true"><span>{{ $t('browser.deckImport.or') }}</span></p>
 
     <label
       class="from-file"
@@ -105,8 +107,8 @@ function onDrop(event: DragEvent): void {
         @change="onPick"
       />
       <span class="from-file__mark" aria-hidden="true">&#8681;</span>
-      <span class="from-file__label">Drop a deck JSON file here, or choose one</span>
-      <span class="from-file__hint muted">RingsDB's export, or any file in the same shape</span>
+      <span class="from-file__label">{{ $t('browser.deckImport.fileLabel') }}</span>
+      <span class="from-file__hint muted">{{ $t('browser.deckImport.fileHint') }}</span>
     </label>
 
     <p v-if="error" class="error" role="alert">{{ error }}</p>

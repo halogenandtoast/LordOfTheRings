@@ -8,6 +8,7 @@
  * to get its own panel; see ProductBrowser.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import FilterGroup from './FilterGroup.vue'
 import GameIcon from './GameIcon.vue'
 import { useCardStore } from '@browser/stores/cards'
@@ -15,9 +16,6 @@ import {
   ENCOUNTER_TYPES,
   PLAYER_SPHERES,
   PLAYER_TYPES,
-  SECTION_LABELS,
-  SPHERE_LABELS,
-  TYPE_LABELS,
   type CardType,
   type Section,
   type Sphere,
@@ -26,11 +24,15 @@ import type { IconName } from '@browser/lib/card-text'
 import type { FilterOption } from '@browser/types/facets'
 
 const store = useCardStore()
+const { t, te } = useI18n()
+
+const label = (group: string, value: string) =>
+  te(`browser.${group}.${value}`) ? t(`browser.${group}.${value}`) : value
 
 const sectionOptions = computed<FilterOption[]>(() =>
   (['player', 'encounter', 'quest', 'nightmare'] as Section[]).map((value) => ({
     value,
-    label: SECTION_LABELS[value],
+    label: t(`browser.sections.${value}`),
     count: store.facets.sections.find((f) => f.value === value)?.count,
   })),
 )
@@ -46,7 +48,7 @@ const typeOptions = computed<FilterOption[]>(() => {
   const extras = store.facets.types.map((f) => f.value).filter((v) => !seen.has(v)) as CardType[]
   return [...ordered, ...extras]
     .filter((value) => counts.has(value))
-    .map((value) => ({ value, label: TYPE_LABELS[value] ?? value, count: counts.get(value) }))
+    .map((value) => ({ value, label: label('cardTypes', value), count: counts.get(value) }))
 })
 
 const sphereOptions = computed<FilterOption[]>(() => {
@@ -57,7 +59,7 @@ const sphereOptions = computed<FilterOption[]>(() => {
     .filter((v) => !ordered.includes(v)) as Sphere[]
   return [...ordered, ...extras]
     .filter((value) => counts.has(value))
-    .map((value) => ({ value, label: SPHERE_LABELS[value] ?? value, count: counts.get(value) }))
+    .map((value) => ({ value, label: label('spheres', value), count: counts.get(value) }))
 })
 
 const traitOptions = computed<FilterOption[]>(() =>
@@ -91,28 +93,28 @@ function sphereIcon(value: string): IconName | null {
 </script>
 
 <template>
-  <aside class="sidebar" aria-label="Filters">
+  <aside class="sidebar" :aria-label="$t('browser.filters.title')">
     <div class="sidebar__head">
-      <h2 class="sidebar__title">Filters</h2>
+      <h2 class="sidebar__title">{{ $t('browser.filters.title') }}</h2>
       <button
         v-if="store.filterCount"
         type="button"
         class="button button--ghost sidebar__clear"
         @click="store.resetFacets()"
       >
-        Clear {{ store.filterCount }}
+        {{ $t('browser.common.clearCount', { count: store.filterCount }) }}
       </button>
     </div>
 
     <FilterGroup
-      title="Section"
+      :title="$t('browser.filters.section')"
       :options="sectionOptions"
       :selected="store.filters.sections"
       @toggle="store.toggle('sections', $event as Section)"
     />
 
     <FilterGroup
-      title="Type"
+      :title="$t('browser.filters.type')"
       :options="typeOptions"
       :selected="store.filters.types"
       :max-visible="8"
@@ -120,7 +122,7 @@ function sphereIcon(value: string): IconName | null {
     />
 
     <FilterGroup
-      title="Sphere"
+      :title="$t('browser.filters.sphere')"
       :options="sphereOptions"
       :selected="store.filters.spheres"
       @toggle="store.toggle('spheres', $event as Sphere)"
@@ -132,55 +134,55 @@ function sphereIcon(value: string): IconName | null {
     </FilterGroup>
 
     <section class="group group--cost">
-      <h3 class="group__title">Cost</h3>
+      <h3 class="group__title">{{ $t('browser.filters.cost') }}</h3>
       <div class="cost-range">
         <label>
-          <span class="visually-hidden">Minimum cost</span>
+          <span class="visually-hidden">{{ $t('browser.filters.minimumCost') }}</span>
           <input
             v-model.number="costMin"
             class="input"
             type="number"
             min="0"
             max="99"
-            placeholder="min"
+            :placeholder="$t('browser.filters.min')"
           />
         </label>
         <span aria-hidden="true">–</span>
         <label>
-          <span class="visually-hidden">Maximum cost</span>
+          <span class="visually-hidden">{{ $t('browser.filters.maximumCost') }}</span>
           <input
             v-model.number="costMax"
             class="input"
             type="number"
             min="0"
             max="99"
-            placeholder="max"
+            :placeholder="$t('browser.filters.max')"
           />
         </label>
       </div>
       <label class="unique-toggle">
         <input v-model="store.filters.uniqueOnly" type="checkbox" />
-        Unique only
+        {{ $t('browser.filters.uniqueOnly') }}
       </label>
     </section>
 
     <FilterGroup
-      title="Traits"
+      :title="$t('browser.filters.traits')"
       :options="traitOptions"
       :selected="store.filters.traits"
       searchable
-      search-placeholder="Search traits…"
+      :search-placeholder="$t('browser.filters.searchTraits')"
       :max-visible="10"
       :open="false"
       @toggle="store.toggle('traits', $event)"
     />
 
     <FilterGroup
-      title="Encounter set"
+      :title="$t('browser.filters.encounterSet')"
       :options="encounterSetOptions"
       :selected="store.filters.encounterSets"
       searchable
-      search-placeholder="Search encounter sets…"
+      :search-placeholder="$t('browser.filters.searchEncounterSets')"
       :max-visible="10"
       :open="false"
       @toggle="store.toggle('encounterSets', $event)"

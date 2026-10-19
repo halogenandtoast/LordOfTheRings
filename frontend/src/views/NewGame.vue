@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { createGame } from '../api'
 import { currentUser } from '../auth'
 import { campaigns, type Campaign, type ScenarioOption } from '../campaigns'
 
+const { t } = useI18n()
 const router = useRouter()
 const selectedCampaign = ref<Campaign | null>(null)
 const selectedScenario = ref<ScenarioOption | null>(null)
@@ -37,7 +39,7 @@ const create = async () => {
     const { id } = await createGame({ name: gameName.value.trim() || defaultName.value })
     await router.push(`/games/${id}`)
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Could not create the game.'
+    error.value = e instanceof Error ? e.message : t('newGame.couldNotCreateGame')
     creating.value = false
   }
 }
@@ -46,13 +48,13 @@ const create = async () => {
 <template>
   <div class="new-game-content">
     <header class="main-header">
-      <h2>New Game</h2>
-      <button type="button" class="cancel-new-game-button" @click="cancel">Cancel</button>
+      <h2>{{ $t('newGame.title') }}</h2>
+      <button type="button" class="cancel-new-game-button" @click="cancel">{{ $t('common.cancel') }}</button>
     </header>
 
     <div v-if="!selectedCampaign" id="new-game">
       <fieldset>
-        <legend>Campaign</legend>
+        <legend>{{ $t('newGame.campaign') }}</legend>
         <div class="campaigns">
           <button
             v-for="c in campaigns"
@@ -65,7 +67,7 @@ const create = async () => {
             <img :src="c.image" alt="" />
             <span class="campaign-name"><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</span>
             <span class="campaign-count">
-              {{ c.scenarios.length }} scenarios<template v-if="playableCount(c) > 0"> &middot; {{ playableCount(c) }} playable</template>
+              {{ $t('newGame.scenarioCount', c.scenarios.length) }}<template v-if="playableCount(c) > 0"> &middot; {{ $t('newGame.playableCount', { count: playableCount(c) }) }}</template>
             </span>
           </button>
         </div>
@@ -74,12 +76,12 @@ const create = async () => {
 
     <form v-else id="new-game" @submit.prevent="create">
       <fieldset>
-        <legend>Scenario</legend>
+        <legend>{{ $t('common.scenario') }}</legend>
         <div class="campaign-header">
           <img :src="selectedCampaign.image" alt="" />
           <div>
             <h3><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" /> {{ selectedCampaign.name }}</h3>
-            <button type="button" class="change-campaign" @click="back">Choose a different campaign</button>
+            <button type="button" class="change-campaign" @click="back">{{ $t('newGame.chooseDifferentCampaign') }}</button>
           </div>
         </div>
         <div class="scenarios">
@@ -95,16 +97,19 @@ const create = async () => {
           >
             <img :src="option.image" alt="" />
             <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
-            <span v-if="!option.available" class="coming-soon">Coming soon</span>
+            <span v-if="!option.available" class="coming-soon">{{ $t('newGame.comingSoon') }}</span>
           </button>
         </div>
       </fieldset>
 
       <fieldset v-if="selectedScenario">
-        <legend>Game</legend>
-        <p class="deck">Playing as <strong>{{ currentUser?.username }}</strong> with <strong><span class="icon leadership" style="--icon: url('/images/icons/game/leadership.svg')" /> Starter Set Leadership</strong> (Aragorn, Théodred, Glóin)</p>
+        <legend>{{ $t('common.game') }}</legend>
+        <i18n-t keypath="newGame.playingAs" tag="p" class="deck">
+          <template #player><strong>{{ currentUser?.username }}</strong></template>
+          <template #deck><strong><span class="icon leadership" style="--icon: url('/images/icons/game/leadership.svg')" /> Starter Set Leadership</strong></template>
+        </i18n-t>
         <label>
-          Game name
+          {{ $t('newGame.gameName') }}
           <input v-model="gameName" type="text" :placeholder="defaultName" />
         </label>
       </fieldset>
@@ -112,9 +117,9 @@ const create = async () => {
       <p v-if="error" class="error">{{ error }}</p>
 
       <div class="wizard-actions">
-        <button type="button" class="secondary-action" @click="back">Back</button>
+        <button type="button" class="secondary-action" @click="back">{{ $t('common.back') }}</button>
         <button class="primary-action" type="submit" :disabled="!canCreate">
-          {{ creating ? 'Creating…' : 'Create' }}
+          {{ creating ? $t('newGame.creating') : $t('common.create') }}
         </button>
       </div>
     </form>

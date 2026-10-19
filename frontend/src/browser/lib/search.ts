@@ -172,13 +172,7 @@ export function filterCards(cards: Card[], filters: CardFilters): Card[] {
 
 export type SortField = 'set' | 'name' | 'cost' | 'type' | 'sphere'
 
-export const SORT_LABELS: Record<SortField, string> = {
-  set: 'Set order',
-  name: 'Name',
-  cost: 'Cost',
-  type: 'Type',
-  sphere: 'Sphere',
-}
+export const SORT_FIELDS: SortField[] = ['set', 'name', 'cost', 'type', 'sphere']
 
 /** Cards with no value for the sort key go last, whichever way we sort. */
 function nullsLast<T>(value: T | null): [number, T | null] {

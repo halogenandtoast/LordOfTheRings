@@ -25,13 +25,13 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
           {{ choice.label }}
         </button>
       </div>
-      <p v-if="targeted" class="hint"><span class="swatch interactive"></span>or click a highlighted card</p>
+      <p v-if="targeted" class="hint"><span class="swatch interactive"></span>{{ $t('game.prompt.orClickHighlighted') }}</p>
       <p v-if="question.sourceId || question.targetIds.length" class="legend">
-        <span v-if="question.sourceId"><span class="swatch source"></span>source</span>
-        <span v-if="question.targetIds.length"><span class="swatch target"></span>target</span>
+        <span v-if="question.sourceId"><span class="swatch source"></span>{{ $t('game.prompt.source') }}</span>
+        <span v-if="question.targetIds.length"><span class="swatch target"></span>{{ $t('game.prompt.target') }}</span>
       </p>
     </template>
-    <p v-else class="prompt idle-text">waiting</p>
+    <p v-else class="prompt idle-text">{{ $t('game.prompt.waiting') }}</p>
   </div>
 </template>
 

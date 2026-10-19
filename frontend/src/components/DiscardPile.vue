@@ -69,7 +69,7 @@ onBeforeUnmount(close)
       class="pile-count pile-button"
       :class="{ open }"
       :aria-expanded="open"
-      :title="`Discard pile (${cards.length}) — click to view`"
+      :title="$t('game.discard.title', { count: cards.length })"
       @click="toggle"
     >
       <span class="stack-glyph" aria-hidden="true"><span /><span /></span>
@@ -79,7 +79,7 @@ onBeforeUnmount(close)
 
     <Teleport to="body">
       <div v-if="open" ref="panel" class="discard-panel" :style="position">
-        <div class="discard-panel-header">Discard pile ({{ cards.length }})</div>
+        <div class="discard-panel-header">{{ $t('game.discard.header', { count: cards.length }) }}</div>
         <div class="discard-panel-cards">
           <GameCard v-for="card in pile" :key="card.id" :card="card" />
         </div>
