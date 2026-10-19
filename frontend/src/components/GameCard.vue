@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
+import { useDebug } from '../composables/useDebug'
 import { useHighlights } from '../composables/useHighlights'
 import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
 
@@ -40,6 +41,11 @@ const dragStart = (event: DragEvent) => {
   overlay.hide()
   event.dataTransfer?.setData(cardDrag, card.id)
 }
+
+const { active: debugging, send } = useDebug()
+const counts = computed(() => ({ Damage: card.damage, Progress: card.progress ?? 0, Resource: card.resources ?? 0 }))
+const adjust = (token: keyof typeof counts.value, amount: 1 | -1) =>
+  send({ tag: amount > 0 ? 'PlaceTokens' : 'RemoveTokens', contents: [{ tag: 'GameSource' }, card.target, token, 1] })
 
 const toggleUnless = (attached: CardView) => {
   if (!choiceFor(attached)) {
@@ -81,6 +87,14 @@ const toggleUnless = (attached: CardView) => {
       <span v-if="card.resources" class="token resources">{{ card.resources }}</span>
       <span v-if="card.progress" class="token progress">{{ card.progress }}</span>
       <span v-if="card.damage > 0" class="token damage">{{ card.damage }}</span>
+    </div>
+
+    <div v-if="debugging && card.target" class="debug" @click.stop>
+      <span v-for="(count, token) in counts" :key="token">
+        <button type="button" :aria-label="`Remove ${token}`" :disabled="count === 0" @click="adjust(token, -1)">−</button>
+        {{ token }}
+        <button type="button" :aria-label="`Add ${token}`" @click="adjust(token, 1)">+</button>
+      </span>
     </div>
   </div>
 </template>
@@ -194,4 +208,23 @@ const toggleUnless = (attached: CardView) => {
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; font-size: 1.1rem; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; color: var(--damage-text); text-shadow: 0 1px 2px rgb(0 0 0 / 0.9); }
 
+/* debug mode: token adjusters over the bottom of a hovered card */
+.debug {
+  position: absolute;
+  inset: auto 2px 2px 2px;
+  z-index: 4;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 5px;
+  background: rgb(20 16 10 / 0.88);
+  color: var(--cream);
+  font-size: 0.6rem;
+  line-height: 1;
+}
+.card-slot:hover > .debug, .debug:focus-within { display: flex; }
+.debug span { display: flex; align-items: center; justify-content: space-between; }
+.debug button { width: 18px; height: 16px; padding: 0; border: 1px solid var(--line); border-radius: 3px; background: none; color: inherit; cursor: pointer; }
+.debug button:disabled { opacity: 0.35; cursor: default; }
 </style>

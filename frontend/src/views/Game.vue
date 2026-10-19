@@ -14,13 +14,15 @@ import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
 import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
+import { provideDebug } from '../composables/useDebug'
 import { provideHighlights } from '../composables/useHighlights'
 
 const route = useRoute()
 const {
   error, game, log, announcement, flipping,
-  started, question, scenario, players, outcome, answer, reset, undo, canUndo,
+  started, question, scenario, players, outcome, answer, reset, undo, canUndo, debug,
 } = useGame(route.params.id as string)
+const { active: debugging, send: sendDebug } = provideDebug(debug)
 const showSidebar = ref(true)
 
 const choices = computed(() => question.value?.choices ?? [])
@@ -45,9 +47,12 @@ const inPlay = computed(() =>
 )
 const engagedWithAttachments = computed(() => withAttachments(engaged.value))
 
-// Cmd/Ctrl+Z steps back one answer, unless you are typing somewhere.
+// Cmd/Ctrl+Z steps back one answer and D toggles debug mode, unless you are typing somewhere.
 const onKeydown = (event: KeyboardEvent) => {
   const typing = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement
+  if (!typing && !event.metaKey && !event.ctrlKey && !event.altKey && event.key.toLowerCase() === 'd') {
+    debugging.value = !debugging.value
+  }
   if (!typing && (event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && canUndo.value) {
     event.preventDefault()
     undo()
@@ -125,10 +130,12 @@ watch(question, (asked) => {
   <GameBar
     :can-undo="canUndo"
     :show-sidebar="showSidebar"
+    :debugging="debugging"
     @reset="reset"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
     @toggle-sidebar="showSidebar = !showSidebar"
+    @toggle-debug="debugging = !debugging"
   />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
@@ -174,6 +181,10 @@ watch(question, (asked) => {
               @choose="choose"
             />
             <ThreatDial v-if="you" :threat="you.threat" />
+            <div v-if="you && debugging" class="debug-threat">
+              <button type="button" aria-label="Lower threat" :disabled="you.threat === 0" @click="sendDebug({ tag: 'LowerThreat', contents: [you.playerId, 1] })">−</button>
+              <button type="button" aria-label="Raise threat" @click="sendDebug({ tag: 'RaiseThreat', contents: [you.playerId, 1] })">+</button>
+            </div>
           </div>
           <div class="player-column">
             <CardBand
@@ -271,6 +282,9 @@ watch(question, (asked) => {
   gap: 0.6rem;
   min-height: 0;
 }
+.debug-threat { display: flex; gap: var(--gap); }
+.debug-threat button { width: 28px; height: 22px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; color: inherit; cursor: pointer; }
+.debug-threat button:disabled { opacity: 0.35; cursor: default; }
 .error { margin: 0; color: var(--danger); font-size: 0.8rem; }
 
 .announcement {

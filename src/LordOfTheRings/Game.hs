@@ -94,6 +94,16 @@ mainLoop = go (0 :: Int)
       | n >= messageLimit -> error "message limit reached: the game is probably looping"
       | otherwise -> runNext >>= bool getGame (go (n + 1))
 
+-- | Run a debug message now, even while a question waits: it and whatever it leads to go
+-- first, then the waiting question is asked again and play carries on from there.
+runDebug :: Message -> GameT Game
+runDebug msg = do
+  asked <- getsGame (.question)
+  waiting <- peekQueue
+  putGame . (questionL .~ mempty) =<< getGame
+  setQueue $ msg : [Ask pid q | (pid, q) <- Map.toList asked] <> waiting
+  mainLoop
+
 messageLimit :: Int
 messageLimit = 10000
 
