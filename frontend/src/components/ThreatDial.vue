@@ -24,7 +24,10 @@ const digitAngle = (i: number, d: number) => (i === 0 ? 36 * d : 180 - 36 * d)
   <div class="threat" :class="{ danger: threat >= 40 }" role="img" :aria-label="`Threat ${threat}`">
     <div v-for="i in [0, 1]" :key="i" class="window" :class="i === 0 ? 'left' : 'right'" aria-hidden="true">
       <div class="wheel" :style="{ rotate: `${wheelAngle(i)}deg` }">
-        <span v-for="d in 10" :key="d" :style="{ '--a': `${digitAngle(i, d - 1)}deg` }">{{ d - 1 }}</span>
+        <template v-for="d in 10" :key="d">
+          <span :style="{ '--a': `${digitAngle(i, d - 1)}deg` }">{{ d - 1 }}</span>
+          <i :style="{ '--a': `${digitAngle(i, d - 1)}deg` }" />
+        </template>
       </div>
     </div>
   </div>
@@ -44,11 +47,12 @@ const digitAngle = (i: number, d: number) => (i === 0 ? 36 * d : 180 - 36 * d)
 }
 /* the two openings in threat.png (600px wide, so 6px = 1cqw) */
 .window { position: absolute; top: 21.3cqw; height: 8.2cqw; width: 16.5cqw; overflow: hidden; }
-.left { left: 30.3cqw; --cx: -3.8cqw; }
-.right { left: 53.3cqw; --cx: 20.2cqw; --flip: 180deg; }
-/* wheels sit outboard of the windows, their rims (digits 36° apart) rolling through them */
+.left { left: 30.3cqw; --cx: -7.83cqw; }
+.right { left: 53.3cqw; --cx: 24.17cqw; --flip: 180deg; }
+/* wheels sit outboard of the windows, their rims (digits 36° apart, each with a pointer inboard) rolling through them */
 .wheel {
-  --r: 16cqw;
+  --r: 20cqw;
+  --pointer-r: 13.17cqw;
   position: absolute;
   left: calc(var(--cx) - var(--r));
   top: calc(4.1cqw - var(--r));
@@ -72,5 +76,16 @@ const digitAngle = (i: number, d: number) => (i === 0 ? 36 * d : 180 - 36 * d)
   -webkit-text-fill-color: transparent;
 }
 .threat.danger .wheel span { background: linear-gradient(var(--threat-danger-light), var(--threat-red), var(--threat-dark)); background-clip: text; -webkit-background-clip: text; }
+/* the window's pointer, cut out of threat.png so it turns with its digit */
+.wheel i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9.33cqw;
+  height: 5.67cqw;
+  margin: -2.83cqw -4.67cqw;
+  background: url('/images/threat-pointer.png') center / 100% 100%;
+  transform: rotate(var(--a)) translateX(var(--pointer-r));
+}
 @media (prefers-reduced-motion: reduce) { .wheel { transition: none; } }
 </style>
