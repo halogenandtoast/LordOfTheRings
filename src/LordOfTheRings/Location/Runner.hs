@@ -7,6 +7,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window
 
 instance RunMessage LocationAttrs where
   runMessage msg attrs = case msg of
@@ -15,7 +16,7 @@ instance RunMessage LocationAttrs where
       let attrs' = attrs & tokensL %~ addTokens token n
       -- a location with as much progress as its quest points is explored
       when (token == Progress && attrs'.questPoints > 0 && attrs'.progress >= attrs'.questPoints)
-        $ push (Discard $ toTarget attrs)
+        $ pushAll [CheckWindows [mkWhen $ Explored attrs.id], Discard $ toTarget attrs]
       pure attrs'
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n

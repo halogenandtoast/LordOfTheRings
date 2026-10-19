@@ -71,7 +71,7 @@ spec = do
   describe "Lórien Guide" do
     it "places 1 progress on the active location after committing" . gameTest $ \pid -> do
       guide <- putAllyIntoPlay pid Allies.lorienGuide
-      lid <- stageLocation Locations.forestGate
+      lid <- stageLocation Locations.enchantedStream
       run $ TravelTo lid
       passActions pid
       _ <- setEncounterDeck [Locations.oldForestRoad]

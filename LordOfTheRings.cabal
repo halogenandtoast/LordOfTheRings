@@ -383,6 +383,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Core.CancelSpec
       LordOfTheRings.Core.CombatCardsSpec
       LordOfTheRings.Core.EventsSpec
+      LordOfTheRings.Core.PassageEncounterSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec
       LordOfTheRings.Encounter.ScriptedCardsSpec

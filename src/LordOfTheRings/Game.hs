@@ -121,7 +121,10 @@ runNext =
       pure True
     Just msg -> do
       debug 1 $ print msg
-      putGame =<< preloadModifiers =<< runMessage msg =<< getGame
+      -- store the result first, so the constant abilities read the game as it now is
+      g <- runMessage msg =<< getGame
+      putGame g
+      putGame =<< preloadModifiers g
       pure True
 
 getPlayers :: (HasGame m) => m [Player]
@@ -171,7 +174,7 @@ runGameMessage msg g = case msg of
     unless (isJust g.outcome) $ pushEnd BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
   BeginPhase RefreshPhase -> do
-    heroes <- select ExhaustedHero
+    heroes <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) =<< select ExhaustedHero
     allies <- select ExhaustedAlly
     players <- getPlayerOrder
     let passToken = case drop 1 players of
@@ -259,7 +262,7 @@ runGameMessage msg g = case msg of
     pure $ g & phaseL .~ QuestPhase
   BeginPhase TravelPhase -> do
     hasActive <- selectAny IsActiveLocation
-    locations <- select LocationInStagingArea
+    locations <- filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
     lead <- getLead
     unless (hasActive || null locations)
       $ push
@@ -310,18 +313,24 @@ runGameMessage msg g = case msg of
     pure g
   EnemyAttack pid eid -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
-    if many
-      then push $ DeclareDefenders pid eid []
-      else do
-        defenders <- readyCharacters pid
-        enemyName <- display . (.name) <$> getEnemy eid
-        push
-          $ questionLabelWith (enemyName <> " attacks: declare a defender") (Just $ toTarget eid) [] pid
-          $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
-          <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+    defenders <- readyCharacters pid
+    enemyName <- display . (.name) <$> getEnemy eid
+    let declare =
+          if many
+            then DeclareDefenders pid eid []
+            else
+              questionLabelWith (enemyName <> " attacks: declare a defender") (Just $ toTarget eid) [] pid
+                $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
+                <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+    pushAll [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
     pure g
   DefendWith pid eid defender -> do
-    pushAll [CheckWindows [mkAfter $ DeclaredAsDefender defender eid], ResolveShadow eid pid (Just defender), AttackDamage eid defender]
+    pushAll
+      [ CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
+      , ResolveShadow eid pid (Just defender)
+      , AttackDamage eid defender
+      , CheckWindows [mkAfter $ EnemyAttacking eid pid]
+      ]
     pure g
   DeclareDefenders pid eid chosen -> do
     defenders <- readyCharacters pid
@@ -333,7 +342,10 @@ runGameMessage msg g = case msg of
         ]
       <> case chosen of
         [] -> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
-        first : _ -> [Label "Done declaring defenders" [ResolveShadow eid pid (Just first), DefendedByMany pid eid chosen]]
+        first : _ ->
+          [ Label "Done declaring defenders"
+              [ResolveShadow eid pid (Just first), DefendedByMany pid eid chosen, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
+          ]
     pure g
   DefendedByMany pid eid defenders -> do
     attack <- getEnemyAttack eid
@@ -343,7 +355,7 @@ runGameMessage msg g = case msg of
         [targetLabel d [DealDamage (EnemySource eid) d (attack - defense)] | d <- defenders]
     pure g
   UndefendedAttack pid eid -> do
-    pushAll [ResolveShadow eid pid Nothing, UndefendedDamage pid eid]
+    pushAll [ResolveShadow eid pid Nothing, UndefendedDamage pid eid, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
     pure g
   UndefendedDamage pid eid -> do
     attack <- getEnemyAttack eid
@@ -423,6 +435,12 @@ runGameMessage msg g = case msg of
       $ push
       $ questionLabelWith "Choose and exhaust a character" (sourceTarget source) [] pid
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
+    pure g
+  ChooseAndExhaustHero source pid -> do
+    ready <- map toTarget <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
+    unless (null ready)
+      $ push
+      $ questionLabelWith "Choose and exhaust a hero" (sourceTarget source) [] pid [targetLabel h [Exhaust h] | h <- ready]
     pure g
   ChooseAndDiscard source pid targets -> do
     unless (null targets)
@@ -674,8 +692,10 @@ discardTarget target g = leftPlay g target >> case target of
   fromEntity l k = case Map.lookup k (g.entities ^. l) of
     Nothing -> pure g
     Just entity -> do
-      -- attachments leave play with the card they are attached to
-      pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      -- attachments, and encounter cards attached as conditions, leave play with their host
+      pushAll
+        $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+        <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       pure $ addToDiscard (toCard entity) $ g & entitiesL . l %~ Map.delete k
   addToDiscard card = case card of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)

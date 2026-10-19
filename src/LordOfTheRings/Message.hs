@@ -118,6 +118,11 @@ data Message
   | AttachCard AttachmentId Target
   | PlayAttachment PlayerId PlayerCard
   | ChooseAndExhaust Source PlayerId Int
+  | ChooseAndExhaustHero Source PlayerId
+  | DiscardRandomFromHand PlayerId Int
+  | RemoveFromQuest Target
+  | AttachTreachery TreacheryId Target
+  | ShufflePlayerDeck PlayerId
   | ChooseAndDiscard Source PlayerId [Target]
   | DiscardEventsFromHand PlayerId
   | Exhaust Target

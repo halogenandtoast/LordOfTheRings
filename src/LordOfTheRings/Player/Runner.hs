@@ -56,8 +56,9 @@ instance RunMessage Player where
       push $ DrawCards $ Drawing player.id 1
       pure player
     DrawCards drawing | drawing.player == player.id -> do
+      blocked <- elem CannotDrawCards <$> getModifiers player
       let (cards, deck) = splitAt drawing.count player.deck
-      pure $ player & handL <>~ cards & deckL .~ deck
+      pure $ if blocked then player else player & handL <>~ cards & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow "Play cards or use actions" "Done Planning" $ WithTarget (toTarget player) (DoPhase PlanningPhase)
       pure player
@@ -87,6 +88,12 @@ instance RunMessage Player where
     ReturnFromDiscardToHand pid cid | pid == player.id -> do
       let (returned, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & handL <>~ returned
+    ShufflePlayerDeck pid | pid == player.id -> do
+      deck <- shuffleM player.deck
+      pure $ player & deckL .~ deck
+    DiscardRandomFromHand pid n | pid == player.id -> do
+      (discarded, kept) <- splitAt n <$> shuffleM player.hand
+      pure $ player & handL .~ kept & discardL <>~ discarded
     DiscardFromHand pid cid | pid == player.id -> do
       let (discarded, kept) = partition ((== cid) . (.id)) player.hand
       pure $ player & handL .~ kept & discardL <>~ discarded

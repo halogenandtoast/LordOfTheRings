@@ -19,6 +19,11 @@ data ModifierType
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
   | CannotAttack
+  | -- | on a location: the players cannot travel there now (its travel cost cannot be paid)
+    CannotBeTraveledTo
+  | -- | on a player
+    CannotDrawCards
+  | DoesNotReadyDuringRefresh
   | -- | when attacking an enemy with the trait, attack is raised by this much
     AttackBonusAgainst Trait Int
   | -- | the hero may attack an enemy in the staging area when attacking alone

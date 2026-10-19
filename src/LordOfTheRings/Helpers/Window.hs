@@ -98,7 +98,8 @@ abilityController ab = go ab.abilitySource
     AllySource aid -> placementController . (.placement) <$> getAlly aid
     PlayerSource pid -> pure $ Just pid
     AttachmentSource aid -> fmap (attachmentOwner . toAttrs) . Map.lookup aid <$> getsGame (entitiesAttachments . gameEntities)
-    _ -> pure Nothing
+    -- encounter cards' responses are the first player's to make
+    _ -> Just <$> getLead
 
 -- | The Action abilities a player can use right now.
 getActionAbilities :: (HasGame m) => PlayerId -> m [Ability]

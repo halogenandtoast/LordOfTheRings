@@ -20,6 +20,7 @@ instance RunMessage HeroAttrs where
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
+    RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
