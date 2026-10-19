@@ -53,6 +53,7 @@ matchHero matcher hero = case matcher of
   HeroControlledBy pm -> elem hero.owner <$> select pm
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
+  HeroWithSphere sphere -> pure $ hero.sphere == sphere
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
@@ -75,6 +76,7 @@ matchAlly matcher ally = case matcher of
     Nothing -> pure False
   AllyWithTitle name -> pure $ ally.name == name
   AllyWithTrait trait -> hasTrait trait (toTarget ally) (toCardDef ally)
+  AllyWithSphere sphere -> pure $ cdSphere (toCardDef ally) == Just sphere
   ReadyAlly -> pure $ not (allyExhausted $ toAttrs ally)
   ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)

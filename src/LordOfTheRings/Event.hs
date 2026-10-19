@@ -3,6 +3,15 @@ module LordOfTheRings.Event (module LordOfTheRings.Event, module X) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Event.Cards.CommonCause
+import LordOfTheRings.Event.Cards.StrengthOfWill
+import LordOfTheRings.Event.Cards.SecretPaths
+import LordOfTheRings.Event.Cards.RadagastsCunning
+import LordOfTheRings.Event.Cards.ALightInTheDark
+import LordOfTheRings.Event.Cards.TheGaladhrimsGreeting
+import LordOfTheRings.Event.Cards.BeornsHospitality
+import LordOfTheRings.Event.Cards.LoriensWealth
+import LordOfTheRings.Event.Cards.LoreOfImladris
+import LordOfTheRings.Event.Cards.BladeMastery
 import LordOfTheRings.Event.Cards.EverVigilant
 import LordOfTheRings.Event.Cards.ForGondor
 import LordOfTheRings.Event.Cards.GrimResolve
@@ -29,5 +38,14 @@ allEvents =
         , SomeEventCard sneakAttack
         , SomeEventCard valiantSacrifice
         , SomeEventCard grimResolve
+        , SomeEventCard strengthOfWill
+        , SomeEventCard secretPaths
+        , SomeEventCard radagastsCunning
+        , SomeEventCard aLightInTheDark
+        , SomeEventCard theGaladhrimsGreeting
+        , SomeEventCard beornsHospitality
+        , SomeEventCard loriensWealth
+        , SomeEventCard loreOfImladris
+        , SomeEventCard bladeMastery
         ]
     ]

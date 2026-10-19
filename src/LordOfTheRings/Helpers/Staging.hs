@@ -3,6 +3,7 @@ module LordOfTheRings.Helpers.Staging (module LordOfTheRings.Helpers.Staging) wh
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
 import LordOfTheRings.Id
 import LordOfTheRings.Target
@@ -10,12 +11,14 @@ import LordOfTheRings.Target
 getEnemyThreat :: (HasGame m) => EnemyId -> m Int
 getEnemyThreat eid = do
   enemy <- getEnemy eid
-  modifiedValue threatOf (toTarget eid) enemy.threat
+  blank <- elem DoesNotContributeThreat <$> getModifiers eid
+  if blank then pure 0 else modifiedValue threatOf (toTarget eid) enemy.threat
 
 getLocationThreat :: (HasGame m) => LocationId -> m Int
 getLocationThreat lid = do
   location <- getLocation lid
-  modifiedValue threatOf (toTarget lid) location.threat
+  blank <- elem DoesNotContributeThreat <$> getModifiers lid
+  if blank then pure 0 else modifiedValue threatOf (toTarget lid) location.threat
 
 -- | The total threat of every card in the staging area.
 getStagingThreat :: (HasGame m) => m Int

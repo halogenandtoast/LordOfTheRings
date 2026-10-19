@@ -15,6 +15,7 @@ data WindowMatcher
   | EnemyEngagedWindow Timing EnemyId
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
+  | AnyTraveledWindow Timing
   | AllyLeftPlayWindow Timing
   | -- | a hero with the trait, controlled by the player, left play
     HeroLeftPlayWindow Timing PlayerId Trait
@@ -29,6 +30,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyEngagedWindow t eid, EnemyEngaged eid' _) -> t == timing && eid == eid'
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
+  (AnyTraveledWindow t, Traveled _) -> t == timing
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (HeroLeftPlayWindow t pid trait, LeftPlay (HeroTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits
   _ -> False

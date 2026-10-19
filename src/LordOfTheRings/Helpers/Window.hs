@@ -62,8 +62,10 @@ passesCriteria = \case
   HeroExists m -> selectAny m
   AllyExists m -> selectAny m
   PlayerExists m -> selectAny m
+  DuringPhase phase -> (== phase) <$> getsGame gamePhase
   CardInHand pid cType -> any ((== cType) . (.cardType)) . (.hand) <$> getPlayer pid
   Criteria cs -> allM passesCriteria cs
+  AnyCriteria cs -> anyM passesCriteria cs
 
 canPay :: (HasGame m) => AbilityCost -> m Bool
 canPay = \case

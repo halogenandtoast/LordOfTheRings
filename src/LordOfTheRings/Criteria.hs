@@ -3,6 +3,7 @@ module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
+import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
 
 data Criterion
@@ -13,7 +14,9 @@ data Criterion
   | AllyExists AllyMatcher
   | CardInHand PlayerId CardType
   | PlayerExists PlayerMatcher
+  | DuringPhase Phase
   | Criteria [Criterion]
+  | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

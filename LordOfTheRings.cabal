@@ -105,11 +105,20 @@ library
       LordOfTheRings.Entities
       LordOfTheRings.Event
       LordOfTheRings.Event.CardDefs
+      LordOfTheRings.Event.Cards.ALightInTheDark
+      LordOfTheRings.Event.Cards.BeornsHospitality
+      LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.CommonCause
       LordOfTheRings.Event.Cards.EverVigilant
       LordOfTheRings.Event.Cards.ForGondor
       LordOfTheRings.Event.Cards.GrimResolve
+      LordOfTheRings.Event.Cards.LoreOfImladris
+      LordOfTheRings.Event.Cards.LoriensWealth
+      LordOfTheRings.Event.Cards.RadagastsCunning
+      LordOfTheRings.Event.Cards.SecretPaths
       LordOfTheRings.Event.Cards.SneakAttack
+      LordOfTheRings.Event.Cards.StrengthOfWill
+      LordOfTheRings.Event.Cards.TheGaladhrimsGreeting
       LordOfTheRings.Event.Cards.ValiantSacrifice
       LordOfTheRings.Event.Import.Lifted
       LordOfTheRings.Event.Types
@@ -358,6 +367,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.AttachmentSpec
       LordOfTheRings.CombatPhaseSpec
       LordOfTheRings.Core.AlliesAndAttachmentsSpec
+      LordOfTheRings.Core.EventsSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec
       LordOfTheRings.Encounter.ScriptedCardsSpec

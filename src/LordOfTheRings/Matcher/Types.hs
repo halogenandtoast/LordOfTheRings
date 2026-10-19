@@ -4,6 +4,7 @@ import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
+import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Trait
 
 data PlayerMatcher
@@ -32,6 +33,7 @@ data HeroMatcher
   | HeroControlledBy PlayerMatcher
   | HeroWithTitle Name
   | HeroWithTrait Trait
+  | HeroWithSphere Sphere
   | ReadyHero
   | ExhaustedHero
   | CommittedHero
@@ -61,6 +63,7 @@ data AllyMatcher
   | AllyControlledBy PlayerMatcher
   | AllyWithTitle Name
   | AllyWithTrait Trait
+  | AllyWithSphere Sphere
   | ReadyAlly
   | ExhaustedAlly
   | CommittedAlly

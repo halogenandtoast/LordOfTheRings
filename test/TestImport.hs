@@ -17,6 +17,7 @@ import LordOfTheRings.Attachment (AttachmentAttrs (..), newAttachment)
 
 import LordOfTheRings.Helpers.Modifiers (preloadModifiers)
 import LordOfTheRings.Entities (attachmentsL)
+import LordOfTheRings.Phase (Phase (PlanningPhase))
 import LordOfTheRings.Placement as X (Placement (..))
 import LordOfTheRings.Quest as X (Quest, QuestAttrs (..))
 import LordOfTheRings.Source as X
@@ -170,3 +171,14 @@ putAttachmentOn pid def host = do
   g <- getGame
   putGame =<< preloadModifiers (g & entitiesL . attachmentsL %~ insertEntity att)
   pure $ toTarget att
+
+-- | Give a hero resources, then play a card from hand in the planning phase, paid from
+-- that hero alone.
+playWith :: PlayerId -> CardCode -> Int -> CardDef -> GameT Card
+playWith pid heroCode resources def = do
+  card <- putCardIntoHand pid def
+  payer <- getHeroWithCode heroCode
+  run $ PlaceTokens GameSource (toTarget payer) Resource resources
+  run $ BeginPhase PlanningPhase
+  chooseTarget pid (CardIdTarget card.id)
+  pure card

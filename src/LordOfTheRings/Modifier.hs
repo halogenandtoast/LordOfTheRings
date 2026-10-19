@@ -16,6 +16,8 @@ data ModifierType
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
   | ShuffleIntoDeckAtEndOfPhase
+  | -- | a card in the staging area adds nothing to the staging total
+    DoesNotContributeThreat
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
