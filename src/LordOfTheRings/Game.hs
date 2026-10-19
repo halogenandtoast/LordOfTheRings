@@ -162,6 +162,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ map (Ready . toTarget) heroes
       <> map (Ready . toTarget) allies
+      <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [RaiseThreat pid 1 | pid <- players]
       <> passToken
     pure $ g & phaseL .~ RefreshPhase
