@@ -1,0 +1,11 @@
+.stack-work/
+.git/
+.claude/
+.DS_Store
+*~
+terraform/
+k8s/
+tags
+client_session_key.aes
+frontend/
+!frontend/public/data/cards.json
