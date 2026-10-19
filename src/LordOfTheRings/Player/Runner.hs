@@ -77,6 +77,9 @@ instance RunMessage Player where
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     PlayEvent pid card _ | pid == player.id -> pure $ player & discardL <>~ [PlayerCard card]
+    ReturnFromDiscardToHand pid cid | pid == player.id -> do
+      let (returned, kept) = partition ((== cid) . (.id)) player.discard
+      pure $ player & discardL .~ kept & handL <>~ returned
     DiscardFromHand pid cid | pid == player.id -> do
       let (discarded, kept) = partition ((== cid) . (.id)) player.hand
       pure $ player & handL .~ kept & discardL <>~ discarded

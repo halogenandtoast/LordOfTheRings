@@ -424,7 +424,8 @@ runGameMessage msg g = case msg of
   EndPhase phase -> do
     returning <- flip filterM (toList g.entities.allies) \a ->
       elem ReturnToHandAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
-    pushAll [ReturnToHand (toTarget a) | a <- returning]
+    shuffling <- flip filterM (toList g.entities.allies) \a -> elem ShuffleIntoDeckAtEndOfPhase <$> getModifiers a
+    pushAll $ [ReturnToHand (toTarget a) | a <- returning] <> [ShuffleIntoOwnersDeck (toTarget a) | a <- shuffling]
     pushEnd $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
     pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
   PlayAlly pid card -> do
@@ -476,6 +477,13 @@ runGameMessage msg g = case msg of
     pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     send $ Log $ display a.name <> " returns to its owner's hand"
     pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . handL %~ (<> [toCard a])
+  ShuffleIntoOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
+    leftPlay g target
+    pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+    send $ Log $ display a.name <> " is shuffled into its owner's deck"
+    deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
+    pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+  TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   CompleteQuest qid -> do
     push AdvanceQuest
     pure $ g & entitiesL . questsL %~ Map.delete qid

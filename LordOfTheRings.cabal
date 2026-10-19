@@ -357,6 +357,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Ally.SnowbournScoutSpec
       LordOfTheRings.AttachmentSpec
       LordOfTheRings.CombatPhaseSpec
+      LordOfTheRings.Core.AlliesAndAttachmentsSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec
       LordOfTheRings.Encounter.ScriptedCardsSpec

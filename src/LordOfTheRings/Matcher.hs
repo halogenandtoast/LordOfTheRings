@@ -24,6 +24,7 @@ import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Trait
+import LordOfTheRings.Treachery.Types (Treachery)
 
 instance Query PlayerMatcher where
   type QueryElement PlayerMatcher = PlayerId
@@ -37,6 +38,7 @@ matchPlayer matcher player = case matcher of
   FirstPlayer -> (== player.id) <$> getsGame gameFirstPlayer
   ActivePlayer -> (== player.id) <$> getsGame gameActivePlayer
   AnyPlayer -> pure True
+  NotPlayer m -> not <$> matchPlayer m player
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
 
 instance Query HeroMatcher where
@@ -192,3 +194,15 @@ getDamage = \case
 -- | Characters with damage to heal.
 damagedCharacters :: (HasGame m) => HeroMatcher -> AllyMatcher -> m [Target]
 damagedCharacters heroes allies = filterM (fmap (> 0) . getDamage) =<< selectCharacters heroes allies
+
+-- | Condition attachments in play: attachments with the Condition trait, and encounter
+-- cards attached to something, which in the core set all count as Conditions.
+getConditionAttachments :: (HasGame m) => m [Target]
+getConditionAttachments = do
+  es <- getsGame gameEntities
+  conditions <- filterM (\a -> hasTrait Condition (toTarget a) (toCardDef a)) (toList es.attachments)
+  pure $ map toTarget conditions <> [toTarget t | t <- toList es.treacheries, isAttached t.placement]
+ where
+  isAttached = \case
+    AttachedTo _ -> True
+    _ -> False

@@ -73,6 +73,11 @@ data Message
   | PlayEvent PlayerId PlayerCard [Window]
   | PutAllyIntoPlay PlayerId CardId
   | ReturnToHand Target
+  | -- | a card goes from its owner's discard pile to their hand
+    ReturnFromDiscardToHand PlayerId CardId
+  | -- | an ally leaves play and is shuffled into its owner's deck
+    ShuffleIntoOwnersDeck Target
+  | TakeControl AllyId PlayerId
   | LowerThreat PlayerId Int
   | ActionWindow PlayerId
   | PayCost CostId

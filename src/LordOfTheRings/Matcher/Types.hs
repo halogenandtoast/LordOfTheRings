@@ -11,6 +11,7 @@ data PlayerMatcher
   | FirstPlayer
   | ActivePlayer
   | AnyPlayer
+  | NotPlayer PlayerMatcher
   | PlayerMatchAll [PlayerMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

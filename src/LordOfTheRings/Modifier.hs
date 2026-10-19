@@ -15,6 +15,7 @@ data ModifierType
   | GainTrait Trait
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
+  | ShuffleIntoDeckAtEndOfPhase
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

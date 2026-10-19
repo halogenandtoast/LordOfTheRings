@@ -7,11 +7,17 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame as X
 import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
-import LordOfTheRings.Classes.Entity as X (overAttrs, toAttrs, toId)
+import LordOfTheRings.Classes.Entity as X (insertEntity, overAttrs, toAttrs, toId)
 import LordOfTheRings.Scenario.Types (encounterDeckL)
 import LordOfTheRings.Decklist as X (DeckList (..), coreStarterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
+import LordOfTheRings.Ally as X (AllyAttrs (..))
+import LordOfTheRings.Attachment (AttachmentAttrs (..), newAttachment)
+
+import LordOfTheRings.Helpers.Modifiers (preloadModifiers)
+import LordOfTheRings.Entities (attachmentsL)
+import LordOfTheRings.Placement as X (Placement (..))
 import LordOfTheRings.Quest as X (Quest, QuestAttrs (..))
 import LordOfTheRings.Source as X
 import LordOfTheRings.Ability.Types as X (Ability (..))
@@ -19,7 +25,7 @@ import LordOfTheRings.Token as X
 import LordOfTheRings.Game as X
 import LordOfTheRings.GameT as X
 import LordOfTheRings.Id as X
-import LordOfTheRings.Matcher as X (getDamage, getPlayer)
+import LordOfTheRings.Matcher as X (getDamage, getLocation, getPlayer)
 import LordOfTheRings.Message as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Question as X
@@ -147,3 +153,20 @@ passActions pid =
         Just n -> answerQuestion pid n >> passActions pid
         Nothing -> pure ()
     _ -> pure ()
+
+-- | Put an ally from hand into play under the player's control, returning it as a target.
+-- Any response to it entering play is left open.
+putAllyIntoPlay :: PlayerId -> CardDef -> GameT Target
+putAllyIntoPlay pid def = do
+  card <- putCardIntoHand pid def
+  run $ PutAllyIntoPlay pid card.id
+  getsGame (toTarget . fromJustNote "ally did not enter play" . find ((== card.id) . allyCardId . toAttrs) . toList . (.entities.allies))
+
+-- | An attachment of the player's put straight onto a host, skipping play and payment.
+putAttachmentOn :: PlayerId -> CardDef -> Target -> GameT Target
+putAttachmentOn pid def host = do
+  card <- genPlayerCard def (Just pid)
+  att <- overAttrs (\a -> a {attachmentPlacement = AttachedTo host}) <$> newAttachment pid card
+  g <- getGame
+  putGame =<< preloadModifiers (g & entitiesL . attachmentsL %~ insertEntity att)
+  pure $ toTarget att

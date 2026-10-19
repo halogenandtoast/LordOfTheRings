@@ -61,6 +61,7 @@ passesCriteria = \case
   EnemyExists m -> selectAny m
   HeroExists m -> selectAny m
   AllyExists m -> selectAny m
+  PlayerExists m -> selectAny m
   CardInHand pid cType -> any ((== cType) . (.cardType)) . (.hand) <$> getPlayer pid
   Criteria cs -> allM passesCriteria cs
 

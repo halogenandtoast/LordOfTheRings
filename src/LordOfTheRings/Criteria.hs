@@ -12,6 +12,7 @@ data Criterion
   | HeroExists HeroMatcher
   | AllyExists AllyMatcher
   | CardInHand PlayerId CardType
+  | PlayerExists PlayerMatcher
   | Criteria [Criterion]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
