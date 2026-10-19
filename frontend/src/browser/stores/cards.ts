@@ -28,6 +28,56 @@ async function fetchCardIndex(): Promise<CardIndex> {
 
 export type LoadState = 'idle' | 'loading' | 'ready' | 'error'
 
+/**
+ * A quest stage printed with more than one reverse (Beorn's Path and "Don't Leave the
+ * Path!" both back A Chosen Path) has only its B side scanned as its own card. Make such a
+ * card two-sided like its sibling: its front's name, copy and A side, with its own copy
+ * and art as the other side.
+ */
+export function withSharedFronts(cards: Card[]): Card[] {
+  const key = (setCode: string, name: string, stage: number | null) => `${setCode}|${name}|${stage}`
+  const fronts = new Map<string, Card>()
+  for (const card of cards) {
+    if (card.isBackOf || !card.images.some((image) => image.face === 'a')) continue
+    fronts.set(key(card.setCode, card.name, card.stage), card)
+    if (!fronts.has(key(card.setCode, card.name, null))) fronts.set(key(card.setCode, card.name, null), card)
+  }
+  return cards.map((card) => {
+    if (!card.isBackOf || card.images.some((image) => image.face === 'a')) return card
+    const front =
+      fronts.get(key(card.setCode, card.isBackOf, card.stage)) ?? fronts.get(key(card.setCode, card.isBackOf, null))
+    const frontImage = front?.images.find((image) => image.face === 'a')
+    if (!front || !frontImage) return card
+    return {
+      ...card,
+      name: front.name,
+      text: front.text,
+      setupText: front.setupText,
+      flavor: front.flavor,
+      questPoints: front.questPoints,
+      isBackOf: null,
+      images: [frontImage, ...card.images],
+      back: {
+        name: card.name,
+        type: card.type,
+        traits: card.traits,
+        text: card.text,
+        cost: card.cost,
+        threatCost: card.threatCost,
+        willpower: card.willpower,
+        attack: card.attack,
+        defense: card.defense,
+        health: card.health,
+        threat: card.threat,
+        engagementCost: card.engagementCost,
+        questPoints: card.questPoints,
+        victoryPoints: card.victoryPoints,
+        stage: card.stage,
+      },
+    }
+  })
+}
+
 export const useCardStore = defineStore('cards', () => {
   // shallowRef: the card array is large and immutable once loaded, so deep
   // reactivity would cost a full proxy walk for nothing.
@@ -53,7 +103,7 @@ export const useCardStore = defineStore('cards', () => {
     error.value = null
     inFlight = fetchCardIndex()
       .then((index) => {
-        cards.value = index.cards
+        cards.value = withSharedFronts(index.cards)
         packs.value = index.packs
         cycles.value = index.cycles
         generatedAt.value = index.generatedAt
