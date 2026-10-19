@@ -100,7 +100,12 @@ hasHost c
 
 passesUnique :: (HasGame m) => Card -> m Bool
 passesUnique card
-  | card.unique = andM [selectNone $ AllyWithTitle card.name, selectNone $ HeroWithTitle card.name]
+  | card.unique =
+      andM
+        [ selectNone $ AllyWithTitle card.name
+        , selectNone $ HeroWithTitle card.name
+        , getsGame $ all ((/= card.name) . cdName . toCardDef) . toList . (.entities.attachments)
+        ]
   | otherwise = pure True
 
 correctPhase :: (HasGame m) => Card -> m Bool
