@@ -29,7 +29,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude hiding (Handler)
 import LordOfTheRings.Question
-import LordOfTheRings.Queue
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Scenario
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
@@ -350,7 +350,7 @@ main = do
   case ePlayer of
     Left err -> error (show err)
     Right (player, heroes) -> liftIO $ do
-      queue <- newQueue
+      queue <- newQueue []
       game <-
         newIORef $
           Game

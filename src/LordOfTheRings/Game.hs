@@ -26,6 +26,7 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Queue
 import LordOfTheRings.Run
 import LordOfTheRings.Scenario ()
@@ -36,7 +37,7 @@ getHasQuestion = any (isJust . (.question)) <$> getPlayers
 
 mainLoop :: GameT Game
 mainLoop = do
-  mmsg <- pop
+  mmsg <- popMessage
   g <- getGame
   case mmsg of
     Nothing -> pure g
@@ -58,7 +59,7 @@ instance MonadRandom GameT where
   getRandoms = fmap randoms newStdGen
 
 data Env = Env
-  { queue :: Queue
+  { queue :: Queue Message
   , game :: IORef Game
   , handler :: FrontendMessage -> IO ()
   , debug :: Int
@@ -92,8 +93,8 @@ putGame game = do
 instance HasGame GameT where
   getGame = asks (.game) >>= liftIO . readIORef
 
-instance HasQueue GameT where
-  getQueue = asks (.queue)
+instance HasQueue Message GameT where
+  messageQueue = asks (.queue)
 
 getPlayers :: (HasGame m) => m [Player]
 getPlayers = Map.elems <$> getsGame (.players)
@@ -113,7 +114,7 @@ instance Run Game where
     scenario <- run msg game.scenario
     runGameMessage msg (game {players, entities, scenario})
 
-runGameMessage :: (HasQueue m, HasGame m, MonadRandom m, Frontend m) => Message -> Game -> m Game
+runGameMessage :: (HasQueue Message m, HasGame m, MonadRandom m, Frontend m) => Message -> Game -> m Game
 runGameMessage msg g = case msg of
   Run msgs -> do
     pushAll msgs
@@ -139,8 +140,7 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase PlanningPhase -> do
     players <- getPlayers
-    for_ players \player -> do
-      push $ WithTarget (toTarget player) (DoPhase PlanningPhase)
+    pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]
     pure g
   PlayAlly pid card -> do
     player <- getPlayer pid
@@ -190,7 +190,7 @@ validCriteria :: (HasGame m) => Criteria -> m Bool
 validCriteria = \case
   LocationExists lMatcher -> selectAny lMatcher
 
-runPlayerMessage :: (MonadRandom m, HasQueue m, HasGame m) => Message -> Player -> m Player
+runPlayerMessage :: (MonadRandom m, HasQueue Message m, HasGame m) => Message -> Player -> m Player
 runPlayerMessage msg player = case msg of
   RunWindow window -> do
     abilities <- getWindowAbilities window

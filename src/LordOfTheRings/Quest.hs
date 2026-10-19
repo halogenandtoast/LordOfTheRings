@@ -15,7 +15,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Type
 import LordOfTheRings.Question
-import LordOfTheRings.Queue
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Run
 
 getLead :: (HasGame m) => m PlayerId

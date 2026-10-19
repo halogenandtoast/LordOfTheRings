@@ -4,7 +4,7 @@ import LordOfTheRings.Frontend
 import {-# SOURCE #-} LordOfTheRings.Game.Base
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
-import LordOfTheRings.Queue
+import LordOfTheRings.Classes.HasQueue
 
 class Run a where
-  run :: (HasQueue m, HasGame m, MonadRandom m, Frontend m) => Message -> a -> m a
+  run :: (HasQueue Message m, HasGame m, MonadRandom m, Frontend m) => Message -> a -> m a

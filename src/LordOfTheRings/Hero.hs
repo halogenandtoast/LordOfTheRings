@@ -13,7 +13,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Name
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
-import LordOfTheRings.Queue
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Run
 
 instance Run Hero where

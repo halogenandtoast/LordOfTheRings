@@ -14,7 +14,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Quest
 import LordOfTheRings.Quest.Cards qualified as Quest
 import LordOfTheRings.Question
-import LordOfTheRings.Queue
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Run
 import LordOfTheRings.Scenario.Type
 import LordOfTheRings.Treachery.Cards (allTreacheries)
@@ -78,7 +78,7 @@ cardMatches = \case
   CardWithCode code -> \case
     SomeEncounterCard (MkEncounterCard _ c) -> code == c.code
 
-runScenarioMessage :: (MonadRandom m, HasQueue m) => Message -> ScenarioAttrs -> m ScenarioAttrs
+runScenarioMessage :: (MonadRandom m, HasQueue Message m) => Message -> ScenarioAttrs -> m ScenarioAttrs
 runScenarioMessage msg attrs = case msg of
   BeginPhase p -> pure $ attrs {phase = p}
   ShuffleDeck EncounterDeck -> do

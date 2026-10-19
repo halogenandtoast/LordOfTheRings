@@ -31,6 +31,8 @@ import Control.Lens as X (
  )
 import Control.Lens.TH as X
 import Control.Monad.Fail as X (MonadFail (fail))
+import Control.Monad.Reader as X (MonadReader (..), ReaderT (..), asks)
+import Control.Monad.Trans.Class as X (MonadTrans (..))
 import Control.Monad.Extra as X (
   allM,
   andM,

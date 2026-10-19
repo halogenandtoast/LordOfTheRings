@@ -18,7 +18,7 @@ import LordOfTheRings.Name
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
-import LordOfTheRings.Queue
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Run
 
 type AllyCard = PlayerCardDef 'AllyKind

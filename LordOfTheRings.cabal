@@ -19,6 +19,7 @@ library
       LordOfTheRings.Card.Code
       LordOfTheRings.Card.EncounterCard
       LordOfTheRings.Card.PlayerCard
+      LordOfTheRings.Classes.HasQueue
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.Cards
