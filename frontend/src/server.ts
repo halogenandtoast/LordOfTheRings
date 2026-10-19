@@ -96,7 +96,7 @@ export type ServerMessage =
   | { tag: 'ShuffleIntoDeck'; cardIds: string[] }
 
 export interface GameSummary {
-  id: number
+  id: string
   name: string
   playerName: string
   scenario: string

@@ -27,12 +27,12 @@ export const createGame = (game: { name: string; seed?: number; scenario?: strin
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(game),
-  }).then((r) => json<{ id: number }>(r))
+  }).then((r) => json<{ id: string }>(r))
 
-export const deleteGame = (id: number) => apiFetch(`/api/games/${id}`, { method: 'DELETE' })
+export const deleteGame = (id: string) => apiFetch(`/api/games/${id}`, { method: 'DELETE' })
 
 /** Download a game as a JSON file. */
-export const exportGame = async (id: string | number) => {
+export const exportGame = async (id: string) => {
   const response = await apiFetch(`/api/games/${id}/export`)
   if (!response.ok) throw new Error((await response.text()) || response.statusText)
   const filename = /filename="([^"]+)"/.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? `game-${id}.json`
@@ -43,7 +43,7 @@ export const exportGame = async (id: string | number) => {
 }
 
 /** Upload a game's export for a bug report, giving back where it went. */
-export const fileBug = (id: string | number) =>
+export const fileBug = (id: string) =>
   apiFetch(`/api/games/${id}/file-bug`, { method: 'POST' }).then((r) => json<{ url: string }>(r))
 
 /** Load an exported game file as a new game. */
@@ -52,4 +52,4 @@ export const importGame = async (file: File) =>
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: await file.text(),
-  }).then((r) => json<{ id: number }>(r))
+  }).then((r) => json<{ id: string }>(r))
