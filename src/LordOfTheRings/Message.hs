@@ -88,6 +88,9 @@ data Message
   | QuestResolution
   | PlaceProgressOnQuest Int
   | TravelTo LocationId
+  | OptionalEngagement PlayerId
+  | EngagementCheck PlayerId Int
+  | EngageEnemy PlayerId EnemyId
   | Ready Target
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int

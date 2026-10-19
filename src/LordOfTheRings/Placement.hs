@@ -12,7 +12,7 @@ data Placement
   | EngagedWith PlayerId
   | InVictoryDisplay
   | Unplaced
-  deriving stock (Show, Eq, Generic)
+  deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 placementController :: Placement -> Maybe PlayerId

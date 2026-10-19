@@ -42,6 +42,11 @@ const allies = computed(() => {
   return Object.values(props.data.game.entities.allies).filter((ally) => ally.placement.contents === props.player.id)
 })
 
+const engaged = computed(() => {
+  return Object.values(props.data.game.entities.enemies).filter((enemy) =>
+    enemy.placement.tag === 'EngagedWith' && enemy.placement.contents === props.player.id)
+})
+
 const heroes = computed(() => {
   return Object.values(props.data.game.entities.heroes).filter((hero) => hero.owner === props.player.id)
 })
@@ -117,13 +122,16 @@ function onLeave(el, done) {
 
 <template>
   <div class="player">
+    <div class="threat-area band">
+      <Card v-for="enemy in engaged" :key="enemy.id" :card="{ id: enemy.cardId, cardCode: enemy.cardCode }" :target="{ tag: 'EnemyTarget', contents: enemy.id }" :damage="enemy.tokens.Damage" :data="data" @choose="$emit('choose', $event)" :you="you" />
+    </div>
     <div class="play-area">
       <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">
         <Ally v-for="ally in allies" :ally="ally" :key="ally.id" :you="you" :data="data" @choose="$emit('choose', $event)" />
       </transition-group>
     </div>
     <div class="heroes">
-      <Card v-for="hero in heroes" :key="hero.id" :card="{ id: hero.cardId, cardCode: hero.cardCode }" :target="{ tag: 'HeroTarget', contents: hero.id }" :resources="hero.tokens.Resource" :data="data" @choose="$emit('choose', $event)" :you="you" />
+      <Card v-for="hero in heroes" :key="hero.id" :card="{ id: hero.cardId, cardCode: hero.cardCode }" :target="{ tag: 'HeroTarget', contents: hero.id }" :resources="hero.tokens.Resource" :damage="hero.tokens.Damage" :data="data" @choose="$emit('choose', $event)" :you="you" />
     </div>
     <div class="player-main">
       <div class="threat">

@@ -191,6 +191,30 @@ runGameMessage msg g = case msg of
   TravelTo lid -> do
     pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
     pure g
+  BeginPhase EncounterPhase -> do
+    order <- getPlayerOrder
+    pushAll $ map OptionalEngagement order <> [EngagementCheck pid 0 | pid <- take 1 order]
+    pure $ g & phaseL .~ EncounterPhase
+  OptionalEngagement pid -> do
+    enemies <- select EnemyInStagingArea
+    unless (null enemies)
+      $ push
+      $ chooseOne pid
+      $ [targetLabel eid [EngageEnemy pid eid] | eid <- enemies]
+      <> [Label "Do not engage" []]
+    pure g
+  EngagementCheck pid seatsPassed -> do
+    order <- getPlayerOrder
+    let next = seatAfter order pid
+    player <- getPlayer pid
+    candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
+    case sortOn (Down . snd) [c | c@(_, cost) <- candidates, cost <= player.threat] of
+      ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
+      [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
+    pure g
+  EngageEnemy pid eid -> do
+    pushAll [PlaceEnemy eid (EngagedWith pid), CheckWindows [mkAfter $ EnemyEngaged eid pid]]
+    pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
@@ -340,3 +364,9 @@ discardTarget target g = case target of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
     EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
     _ -> id
+
+-- | The next player clockwise from the given one.
+seatAfter :: [PlayerId] -> PlayerId -> PlayerId
+seatAfter order pid = case dropWhile (/= pid) order of
+  (_ : next : _) -> next
+  _ -> fromMaybe pid (headMay order)

@@ -23,3 +23,8 @@ getStagingThreat = do
   enemies <- traverse getEnemyThreat =<< select EnemyInStagingArea
   locations <- traverse getLocationThreat =<< select LocationInStagingArea
   pure $ sum enemies + sum locations
+
+getEngagementCost :: (HasGame m) => EnemyId -> m Int
+getEngagementCost eid = do
+  enemy <- getEnemy eid
+  modifiedValue engagementCostOf (toTarget eid) enemy.engagementCost
