@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type { CardView } from '../types'
+import { cardDrag, type CardView } from '../types'
 import CardBand from '../components/CardBand.vue'
 import CardOverlay from '../components/CardOverlay.vue'
 import Log from '../components/Log.vue'
 import GameBar from '../components/GameBar.vue'
 import PlayerArea from '../components/PlayerArea.vue'
+import PhaseTracker from '../components/PhaseTracker.vue'
 import Prompt from '../components/Prompt.vue'
 import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
@@ -60,6 +61,44 @@ const choose = (index: number) => {
     answer(asked.askId, index)
   }
 }
+
+// Dragging a playable hand card onto the play area plays it; dropping an attachment on a
+// card also picks that card as its host once the engine asks, after any payment.
+const presetHost = ref<{ cardId: string; hostId: string } | null>(null)
+const dropping = ref(false)
+
+const isCardDrag = (event: DragEvent) => event.dataTransfer?.types.includes(cardDrag) ?? false
+
+const onDragOver = (event: DragEvent) => {
+  if (!isCardDrag(event)) return
+  event.preventDefault()
+  dropping.value = true
+}
+
+const onDrop = (event: DragEvent) => {
+  dropping.value = false
+  const cardId = event.dataTransfer?.getData(cardDrag)
+  const play = choices.value.find((option) => option.targetId === cardId)
+  if (!cardId || !play) return
+  event.preventDefault()
+  const card = you.value?.hand.find((c) => c.id === cardId)
+  const hostId = (event.target as Element).closest<HTMLElement>('[data-card-id]')?.dataset.cardId
+  presetHost.value = card?.type === 'Attachment' && hostId ? { cardId, hostId } : null
+  choose(play.index)
+}
+
+watch(question, (asked) => {
+  const preset = presetHost.value
+  if (!preset || !asked) return
+  if (asked.prompt !== 'Attach to' || asked.sourceId !== preset.cardId) {
+    // still paying for it; anything else means the drop has been used up
+    if (!asked.prompt.startsWith('Pay ')) presetHost.value = null
+    return
+  }
+  presetHost.value = null
+  const host = asked.choices.find((option) => option.targetId === preset.hostId)
+  if (host) choose(host.index)
+})
 </script>
 
 <template>
@@ -74,7 +113,7 @@ const choose = (index: number) => {
   />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
-    <div class="game">
+    <div class="game" @dragend="dropping = false">
 
 
       <template v-if="started">
@@ -98,7 +137,13 @@ const choose = (index: number) => {
           @choose="choose"
         />
 
-        <section class="band play">
+        <section
+          class="band play"
+          :class="{ dropping }"
+          @dragover="onDragOver"
+          @dragleave.self="dropping = false"
+          @drop="onDrop"
+        >
           <div class="hero-column">
             <ThreatDial v-if="you" :threat="you.threat" />
             <CardBand
@@ -131,6 +176,8 @@ const choose = (index: number) => {
       </template>
     </div>
 
+    <PhaseTracker :phase="game?.phase ?? null" />
+
     <aside v-if="showSidebar" class="sidebar">
       <p v-if="error" class="error">{{ error }}</p>
       <Prompt
@@ -151,13 +198,13 @@ const choose = (index: number) => {
 .game-view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .layout {
   display: grid;
-  grid-template-columns: 1fr 280px;
+  grid-template-columns: 1fr auto 280px;
   gap: var(--gap);
   flex: 1;
   min-height: 0;
   padding: var(--gap);
 }
-.layout.no-sidebar { grid-template-columns: 1fr; }
+.layout.no-sidebar { grid-template-columns: 1fr auto; }
 
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; padding: 0; }
 .hero-column {
@@ -170,6 +217,7 @@ const choose = (index: number) => {
   border-right: 1px solid var(--line);
   padding-right: calc(var(--gap) * 1.5);
 }
+.band.play.dropping { outline: 2px dashed var(--interactive); outline-offset: -2px; }
 .band.play .heroes { flex: 0 0 auto; padding: 0; }
 
 .game {

@@ -2,14 +2,16 @@
 import { computed, ref, useTemplateRef } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
 import { useHighlights } from '../composables/useHighlights'
-import { cardImage, type CardView, type ChoiceView } from '../types'
+import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
 
-const { card, choices = [], attachments = [], rotated = false, flipping = false } = defineProps<{
+const { card, choices = [], attachments = [], rotated = false, flipping = false, draggable = false } = defineProps<{
   card: CardView
   choices?: ChoiceView[]
   attachments?: CardView[]
   rotated?: boolean
   flipping?: boolean
+  /** Playable cards can also be dragged onto the board. */
+  draggable?: boolean
 }>()
 
 const emit = defineEmits<{ choose: [index: number] }>()
@@ -31,6 +33,11 @@ const choose = () => {
   if (choice.value) {
     emit('choose', choice.value.index)
   }
+}
+
+const dragStart = (event: DragEvent) => {
+  overlay.hide()
+  event.dataTransfer?.setData(cardDrag, card.id)
 }
 
 const toggleUnless = (attached: CardView) => {
@@ -61,6 +68,9 @@ const toggleUnless = (attached: CardView) => {
       :class="{ rotated, exhausted: card.exhausted, active, source: isSource, target: isTarget, committed: card.committed, flipping }"
       :style="{ viewTransitionName: `card-${card.id}` }"
       :title="card.name"
+      :data-card-id="card.id"
+      :draggable="draggable && active"
+      @dragstart="dragStart"
       @mouseenter="cardRef && overlay.show(card, cardRef, rotated)"
       @mouseleave="overlay.hide()"
       @click="choose"
@@ -110,7 +120,7 @@ const toggleUnless = (attached: CardView) => {
   width: calc(var(--card-width) / var(--card-aspect));
   aspect-ratio: calc(1 / 0.715);
 }
-.card img { width: 100%; border-radius: 5px; grid-area: 1 / 1; }
+.card img { width: 100%; border-radius: 5px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); }
 .card.exhausted { transform: rotate(90deg) scale(0.88); }
 .card.committed img { box-shadow: 0 0 0 2px var(--accent); }
 .card.active { cursor: pointer; }

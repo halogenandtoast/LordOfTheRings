@@ -73,3 +73,6 @@ export interface GameView {
 
 export const cardImage = (card: Pick<CardView, 'code' | 'flipped'>) =>
   `/images/cards/${card.code}${card.flipped ? '-b' : ''}.jpg`
+
+/** The drag data type carrying a hand card's id. */
+export const cardDrag = 'application/x-lotr-card'

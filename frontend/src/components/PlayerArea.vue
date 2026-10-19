@@ -31,6 +31,7 @@ const emit = defineEmits<{ choose: [index: number] }>()
         :card="card"
         :choices="choices"
         :flipping="flipping.has(card.id)"
+        draggable
         @choose="emit('choose', $event)"
       />
     </div>
