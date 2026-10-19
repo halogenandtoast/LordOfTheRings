@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { CardView } from '../types'
 import CardBand from '../components/CardBand.vue'
@@ -41,6 +41,17 @@ const inPlay = computed(() =>
 )
 const engagedWithAttachments = computed(() => withAttachments(engaged.value))
 
+// Cmd/Ctrl+Z steps back one answer, unless you are typing somewhere.
+const onKeydown = (event: KeyboardEvent) => {
+  const typing = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement
+  if (!typing && (event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && canUndo.value) {
+    event.preventDefault()
+    undo()
+  }
+}
+onMounted(() => document.addEventListener('keydown', onKeydown))
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
+
 const choose = (index: number) => {
   const asked = question.value
   if (asked) {
@@ -56,7 +67,7 @@ const choose = (index: number) => {
     :can-undo="canUndo"
     :show-sidebar="showSidebar"
     @reset="reset"
-    @undo="undo"
+    @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
     @toggle-sidebar="showSidebar = !showSidebar"
   />

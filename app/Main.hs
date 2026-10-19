@@ -336,29 +336,53 @@ postGameR gid = do
 deleteGameR :: LotrGameId -> Handler ()
 deleteGameR gid = requireOwnedGame gid >> runDB (delete gid)
 
--- | Step a game back one answer by applying the latest step's patch.
+data UndoTarget = LastAnswer | StartOfPhase | StartOfRound
+  deriving stock (Eq)
+
+-- | How many steps to take back: one answer, or every answer since the phase or round
+-- began. With none taken yet this phase (or round), go back to the start of the last one.
+stepsToUndo :: UndoTarget -> [LotrStep] -> Int
+stepsToUndo target latestFirst = case (target, latestFirst) of
+  (_, []) -> 0
+  (LastAnswer, _) -> 1
+  (StartOfPhase, newest : _) -> length $ takeWhile (samePhase newest) latestFirst
+  (StartOfRound, newest : _) -> length $ takeWhile (sameRound newest) latestFirst
+ where
+  samePhase a b = sameRound a b && a.lotrStepPhase == b.lotrStepPhase
+  sameRound a b = a.lotrStepRound == b.lotrStepRound
+
+-- | Step a game back by applying the latest steps' patches, newest first.
 postUndoR :: LotrGameId -> Handler ()
 postUndoR gid = do
   row <- requireOwnedGame gid
-  mstep <- runDB $ getBy (UniqueGameStep gid row.lotrGameStep)
-  for_ mstep \(Entity stepId step) -> do
-    patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
-    previous <- case Diff.patch patch row.lotrGameCurrentData of
-      Success v -> pure v
-      Error err -> sendResponseStatus status400 ("could not undo: " <> pack err)
+  target <-
+    lookupGetParam "to" <&> \case
+      Just "phase" -> StartOfPhase
+      Just "round" -> StartOfRound
+      _ -> LastAnswer
+  steps <- runDB $ selectList [LotrStepGameId ==. gid] [Desc LotrStepStep]
+  let undone = take (stepsToUndo target (map entityVal steps)) steps
+  for_ (lastMay undone) \(Entity _ oldest) -> do
+    previous <- foldM undoStep row.lotrGameCurrentData undone
     g <- decodeOrFail "game" previous
     now <- liftIO getCurrentTime
     row' <- runDB do
-      delete stepId
+      deleteWhere [LotrStepId <-. map entityKey undone]
       updateGet
         gid
         [ LotrGameCurrentData =. previous
-        , LotrGameCurrentQueue =. step.lotrStepQueue
-        , LotrGameRandomGen =. step.lotrStepRandomGen
-        , LotrGameStep =. row.lotrGameStep - 1
+        , LotrGameCurrentQueue =. oldest.lotrStepQueue
+        , LotrGameRandomGen =. oldest.lotrStepRandomGen
+        , LotrGameStep =. row.lotrGameStep - length undone
         , LotrGameUpdatedAt =. now
         ]
     broadcast gid row' g
+ where
+  undoStep current (Entity _ step) = do
+    patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
+    case Diff.patch patch current of
+      Success v -> pure v
+      Error err -> sendResponseStatus status400 ("could not undo: " <> pack err)
 
 postResetR :: LotrGameId -> Handler ()
 postResetR gid = do

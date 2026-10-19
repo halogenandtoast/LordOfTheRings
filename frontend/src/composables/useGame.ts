@@ -142,7 +142,7 @@ export const useGame = (gameId: string) => {
     scenario: computed(() => game.value?.scenario ?? null),
     players: computed(() => game.value?.players ?? []),
     outcome: computed(() => game.value?.outcome ?? null),
-    undo: () => post('/undo'),
+    undo: (to?: 'phase' | 'round') => post(to ? `/undo?to=${to}` : '/undo'),
     reset: () => {
       log.value = []
       announcement.value = null

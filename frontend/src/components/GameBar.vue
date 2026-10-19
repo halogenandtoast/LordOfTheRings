@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import GameMenu from './GameMenu.vue'
 
+const undoShortcut = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘Z' : 'Ctrl+Z'
+
 defineProps<{ canUndo: boolean; showSidebar: boolean; status: 'connecting' | 'open' | 'closed' }>()
-const emit = defineEmits<{ reset: []; undo: []; export: []; toggleSidebar: [] }>()
+const emit = defineEmits<{ reset: []; undo: [to?: 'phase' | 'round']; export: []; toggleSidebar: [] }>()
 </script>
 
 <template>
@@ -40,6 +42,20 @@ const emit = defineEmits<{ reset: []; undo: []; export: []; toggleSidebar: [] }>
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
           </svg>
           Undo last answer
+          <span class="shortcut">{{ undoShortcut }}</span>
+        </button>
+        <div class="menu-section">Undo to</div>
+        <button type="button" :disabled="!canUndo" @click="emit('undo', 'phase')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+          </svg>
+          Start of phase
+        </button>
+        <button type="button" :disabled="!canUndo" @click="emit('undo', 'round')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+          Start of round
         </button>
       </template>
     </GameMenu>
@@ -117,6 +133,13 @@ const emit = defineEmits<{ reset: []; undo: []; export: []; toggleSidebar: [] }>
 }
 .game-bar :deep(.menu-items button:hover:not(:disabled)) { background: var(--hover-tint); }
 .game-bar :deep(.menu-items button:disabled) { opacity: 0.4; cursor: not-allowed; }
+
+.shortcut {
+  margin-left: auto;
+  padding-left: 16px;
+  font-size: 0.8em;
+  color: var(--text-muted);
+}
 
 .right {
   display: flex;
