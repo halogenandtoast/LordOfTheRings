@@ -11,6 +11,8 @@ import LordOfTheRings.Token
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
     Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
+    AttackWith (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True & attackingL .~ True
+    StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False

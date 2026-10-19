@@ -106,6 +106,11 @@ data Message
   | ResolveShadowEffect CardId EnemyId PlayerId (Maybe Target)
   | AttackDamage EnemyId Target
   | AddToEncounterDiscard [EncounterCard]
+  | PlayerAttacks PlayerId
+  | DeclareAttackers PlayerId EnemyId
+  | AttackWith Target
+  | ResolveAttack PlayerId EnemyId
+  | StopAttacking Target
   | Ready Target
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int

@@ -246,7 +246,7 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    pushAll $ DealShadowCards : map EnemyAttacks order
+    pushAll $ DealShadowCards : map EnemyAttacks order <> map PlayerAttacks order
     pure $ g & phaseL .~ CombatPhase
   DealShadowCards -> do
     order <- getPlayerOrder
@@ -276,6 +276,28 @@ runGameMessage msg g = case msg of
     unless (null heroes)
       $ push
       $ chooseOne pid [targetLabel h [DealDamage (EnemySource eid) (toTarget h) attack] | h <- heroes]
+    pure g
+  PlayerAttacks pid -> do
+    enemies <- engagedByCost pid
+    pushAll $ map (DeclareAttackers pid) enemies
+    pure g
+  DeclareAttackers pid eid -> do
+    attackers <- readyCharacters pid
+    push
+      $ if null attackers
+        then ResolveAttack pid eid
+        else
+          chooseOne pid
+            $ [targetLabel a [AttackWith a, DeclareAttackers pid eid] | a <- attackers]
+            <> [Label "Done attacking" [ResolveAttack pid eid]]
+    pure g
+  ResolveAttack pid eid -> do
+    heroes <- select (HeroControlledBy (PlayerWithId pid) <> AttackingHero)
+    allies <- select (AllyControlledBy (PlayerWithId pid) <> AttackingAlly)
+    let attackers = map toTarget heroes <> map toTarget allies
+    attack <- sum <$> traverse getAttack attackers
+    defense <- getEnemyDefense eid
+    pushAll $ map StopAttacking attackers <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | notNull attackers]
     pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid

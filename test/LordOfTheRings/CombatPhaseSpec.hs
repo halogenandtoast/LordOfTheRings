@@ -50,3 +50,19 @@ spec = describe "Combat phase" do
     run $ EndPhase CombatPhase
     (.shadowCards) <$> spider `shouldReturn` []
     getEncounterDiscard `shouldReturn` shadow
+
+  it "deals the attackers' total attack minus the enemy's defense" . gameTest $ \pid -> do
+    _ <- engageSpider pid
+    run $ PlayerAttacks pid
+    -- Beravor (2) and Theodred (2) against the spider's 1 defense
+    getHeroWithCode "01012" >>= chooseTarget pid
+    getHeroWithCode "01002" >>= chooseTarget pid
+    chooseLabel "Done attacking" pid
+    (.damage) <$> spider `shouldReturn` 3
+    heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
+  it "destroys an enemy that takes enough damage" . gameTest $ \pid -> do
+    _ <- engageSpider pid
+    run $ PlayerAttacks pid
+    for_ ["01012", "01002", "01007"] $ getHeroWithCode >=> chooseTarget pid
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0

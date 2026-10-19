@@ -31,6 +31,7 @@ data HeroMatcher
   | ReadyHero
   | ExhaustedHero
   | CommittedHero
+  | AttackingHero
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]
@@ -58,6 +59,7 @@ data AllyMatcher
   | ReadyAlly
   | ExhaustedAlly
   | CommittedAlly
+  | AttackingAlly
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]

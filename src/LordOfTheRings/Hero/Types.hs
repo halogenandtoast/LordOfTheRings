@@ -42,6 +42,7 @@ data HeroAttrs = HeroAttrs
   , heroTokens :: Tokens
   , heroExhausted :: Bool
   , heroCommitted :: Bool
+  , heroAttacking :: Bool
   }
   deriving stock (Show, Eq, Generic)
 
@@ -64,6 +65,7 @@ hero f cardDef =
             , heroTokens = mempty
             , heroExhausted = False
             , heroCommitted = False
+            , heroAttacking = False
             }
     }
 
