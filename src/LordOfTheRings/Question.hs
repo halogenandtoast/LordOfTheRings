@@ -5,11 +5,11 @@
 module LordOfTheRings.Question (module LordOfTheRings.Question) where
 
 import {-# SOURCE #-} LordOfTheRings.Ability
-import LordOfTheRings.Id
+import LordOfTheRings.Target
 import LordOfTheRings.Prelude
 
-targetChoice :: (Reference a) => a -> [msg] -> Choice msg
-targetChoice (toRef -> target) msgs = TargetChoice {target, messages = msgs}
+targetChoice :: (Targetable a) => a -> [msg] -> Choice msg
+targetChoice (toTarget -> target) msgs = TargetChoice {target, messages = msgs}
 
 data Choice msg
   = Label {label :: Text, messages :: [msg]}

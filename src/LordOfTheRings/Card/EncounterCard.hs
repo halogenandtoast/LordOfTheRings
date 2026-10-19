@@ -8,6 +8,7 @@ import Data.Aeson.Types (Parser)
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Id
+import LordOfTheRings.Target
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude hiding (id)
 
@@ -50,8 +51,8 @@ data SomeEncounterCard where
     => EncounterCard k
     -> SomeEncounterCard
 
-instance Reference SomeEncounterCard where
-  toRef c = CardRef c.id
+instance Targetable SomeEncounterCard where
+  toTarget c = CardIdTarget c.id
 
 instance Show SomeEncounterCard where
   show (SomeEncounterCard card) = show card

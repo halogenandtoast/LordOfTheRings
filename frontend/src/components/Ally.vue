@@ -26,7 +26,7 @@ const choices = computed(() => {
 const abilityChoices = computed(() => {
   const xs = choices.value.filter((c) => {
     if (c.tag !== 'UseAbilityLabel') return false
-    return c.ability.target.contents === props.ally.id
+    return c.ability.source.contents === props.ally.id
   })
 
   return xs
@@ -38,6 +38,6 @@ const abilityChoices = computed(() => {
 <template>
   <div class="ally" :data-index="ally.card.id">
     <Card :card="ally.card" :data="data" @choose="$emit('choose', $event)" :you="you" />
-    <Ability v-for="choice in abilityChoices" :choice="choice" :ability="choice.ability" :key="`${choice.ability.target.contents}${choice.ability.index}`" :data="data" :you="you" @choose="$emit('choose', $event)" />
+    <Ability v-for="choice in abilityChoices" :choice="choice" :ability="choice.ability" :key="`${choice.ability.source.contents}${choice.ability.index}`" :data="data" :you="you" @choose="$emit('choose', $event)" />
   </div>
 </template>

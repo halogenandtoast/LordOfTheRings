@@ -8,6 +8,7 @@ import LordOfTheRings.Enemy.Cards qualified as Enemies
 import LordOfTheRings.Frontend
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id
+import LordOfTheRings.Target
 import LordOfTheRings.Location.Cards qualified as Locations
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -31,7 +32,7 @@ instance Run FliesAndSpiders where
   run msg s@(FliesAndSpiders a) = case msg of
     DoStep 7 Setup -> do
       lead <- getLead
-      push $ Ask lead $ ChooseOne [targetChoice a [Flip $ toRef a]]
+      push $ Ask lead $ ChooseOne [targetChoice a [Flip $ toTarget a]]
       pure s
     Flip (isTarget a -> True) -> do
       lead <- getLead

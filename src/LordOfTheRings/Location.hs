@@ -7,6 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Type
 import LordOfTheRings.Message
+import LordOfTheRings.Target
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run

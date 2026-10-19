@@ -3,6 +3,8 @@ module LordOfTheRings.Message (module LordOfTheRings.Message) where
 import {-# SOURCE #-} LordOfTheRings.Ability
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Source
+import LordOfTheRings.Target
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
@@ -55,7 +57,7 @@ data Message
   | AddToStaging SomeEncounterCard
   | ShuffleDeck DeckSignifier
   | RunWindow Window
-  | UseAbility PlayerId AbilityRef
+  | UseCardAbility PlayerId Source Int
   | PlaceProgress Target Int
   | Run [Message]
   | DrawCards Drawing
@@ -66,7 +68,7 @@ choiceMessages :: PlayerId -> Choice Message -> [Message]
 choiceMessages pid = \case
   Label _ msgs -> msgs
   TargetChoice _ msgs -> msgs
-  UseAbilityLabel ability -> [UseAbility pid $ toAbilityRef ability]
+  UseAbilityLabel ability -> [UseCardAbility pid (abilitySource ability) (abilityIndex ability)]
 
 chooseOrRunOne :: PlayerId -> [Choice Message] -> Message
 chooseOrRunOne pid = \case

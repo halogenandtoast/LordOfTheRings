@@ -6,6 +6,8 @@ module LordOfTheRings.Location.Type (module LordOfTheRings.Location.Type) where
 import Control.Lens
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Source
+import LordOfTheRings.Target
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
@@ -22,11 +24,17 @@ class (Show a, ToJSON a, Run a) => IsLocation a where
 data Location where
   Location :: (IsLocation a) => a -> Location
 
-instance Reference Location where
-  toRef (Location a) = toRef $ locationAttrs a
+instance Targetable Location where
+  toTarget (Location a) = toTarget (locationAttrs a)
 
-instance Reference LocationAttrs where
-  toRef a = LocationRef a.id
+instance Sourceable Location where
+  toSource (Location a) = toSource (locationAttrs a)
+
+instance Targetable LocationAttrs where
+  toTarget a = LocationTarget a.id
+
+instance Sourceable LocationAttrs where
+  toSource a = LocationSource a.id
 
 instance HasField "id" Location LocationId where
   getField (Location a) = (locationAttrs a).id

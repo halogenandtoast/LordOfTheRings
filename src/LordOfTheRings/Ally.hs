@@ -10,6 +10,8 @@ import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
 import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Id
+import LordOfTheRings.Source
+import LordOfTheRings.Target
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Name
@@ -109,10 +111,10 @@ newtype SnowbournScout = SnowbournScout AllyAttrs
 instance IsAlly SnowbournScout
 instance Run SnowbournScout where
   run msg s@(SnowbournScout a) = case msg of
-    UseAbility p (isAbility a 1 -> True) -> do
+    UseCardAbility p (isSource a -> True) 1 -> do
       locations <- select CanProgressLocation
       push $
-        chooseOrRunOne p [targetChoice location [PlaceProgress (toRef location) 1] | location <- locations]
+        chooseOrRunOne p [targetChoice location [PlaceProgress (toTarget location) 1] | location <- locations]
       pure s
     _ -> SnowbournScout <$> run msg a
 

@@ -18,6 +18,7 @@ import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
 import LordOfTheRings.Hero ()
 import LordOfTheRings.Id
+import LordOfTheRings.Target
 import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -139,13 +140,13 @@ runGameMessage msg g = case msg of
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     for_ players \player -> do
-      push $ WithTarget (toRef player) (DoPhase PlanningPhase)
+      push $ WithTarget (toTarget player) (DoPhase PlanningPhase)
     pure g
   PlayAlly pid card -> do
     player <- getPlayer pid
     thisAlly <- newAlly card
     send $ Log $ player.name <> " plays " <> display card.name
-    pushAll [RunWindow $ Window After $ EnterPlay $ toRef thisAlly]
+    pushAll [RunWindow $ Window After $ EnterPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ Controlled pid)
   AddToStaging (SomeEncounterCard card) -> do
     case card.def.kind of
@@ -228,7 +229,7 @@ runPlayerMessage msg player = case msg of
                 Just $
                   ChooseOne $
                     Label "Done Planning" []
-                      : [ targetChoice c [PlayCard player.id c.id, WithTarget (toRef player) (DoPhase PlanningPhase)]
+                      : [ targetChoice c [PlayCard player.id c.id, WithTarget (toTarget player) (DoPhase PlanningPhase)]
                         | c <- playable
                         ]
             }

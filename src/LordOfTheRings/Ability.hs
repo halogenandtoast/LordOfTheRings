@@ -1,6 +1,7 @@
 module LordOfTheRings.Ability (module LordOfTheRings.Ability) where
 
-import LordOfTheRings.Id
+import LordOfTheRings.Source
+import LordOfTheRings.Target
 import LordOfTheRings.Location.Type
 import LordOfTheRings.Matcher
 import LordOfTheRings.Prelude
@@ -18,8 +19,8 @@ data WindowMatcher = EntersPlay Target
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
-entersPlay :: (Reference a) => a -> WindowMatcher
-entersPlay = EntersPlay . toRef
+entersPlay :: (Targetable a) => a -> WindowMatcher
+entersPlay = EntersPlay . toTarget
 
 data WindowMatcherTiming = WindowMatcherTiming Timing WindowMatcher
   deriving stock (Show, Generic)
@@ -35,9 +36,6 @@ class Exists a where
 instance Exists Location where
   exists = LocationExists
 
-toAbilityRef :: Ability -> AbilityRef
-toAbilityRef a = AbilityRef (a.target) (a.index)
-
 after :: WindowMatcher -> WindowMatcherTiming
 after = WindowMatcherTiming After
 
@@ -45,7 +43,7 @@ data AbilityKind = Response WindowMatcherTiming | Forced WindowMatcherTiming
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
-data Ability = Ability {kind :: AbilityKind, target :: Target, index :: Int, criteria :: Criteria, text :: Text}
+data Ability = Ability {kind :: AbilityKind, source :: Source, index :: Int, criteria :: Criteria, text :: Text}
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -54,16 +52,16 @@ abilityWindow ab = case ab.kind of
   Response wmTiming -> Just wmTiming
   Forced wmTiming -> Just wmTiming
 
-abilityTarget :: Ability -> Target
-abilityTarget = (.target)
+abilitySource :: Ability -> Source
+abilitySource = (.source)
 
 abilityIndex :: Ability -> Int
 abilityIndex = (.index)
 
-response :: (Reference a) => a -> Int -> WindowMatcherTiming -> Criteria -> Text -> Ability
-response (toRef -> target) index wmTiming criteria text =
+response :: (Sourceable a) => a -> Int -> WindowMatcherTiming -> Criteria -> Text -> Ability
+response (toSource -> source) index wmTiming criteria text =
   Ability
-    { target
+    { source
     , index
     , criteria
     , text

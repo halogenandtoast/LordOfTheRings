@@ -7,6 +7,8 @@ import Control.Lens
 import {-# SOURCE #-} LordOfTheRings.Ability
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Source
+import LordOfTheRings.Target
 import LordOfTheRings.Name
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
@@ -56,8 +58,14 @@ instance Show Ally where
 instance ToJSON Ally where
   toJSON (Ally a) = toJSON a
 
-instance Reference Ally where
-  toRef (Ally a) = toRef (allyAttrs a)
+instance Targetable Ally where
+  toTarget (Ally a) = toTarget (allyAttrs a)
 
-instance Reference AllyAttrs where
-  toRef a = AllyRef a.id
+instance Sourceable Ally where
+  toSource (Ally a) = toSource (allyAttrs a)
+
+instance Targetable AllyAttrs where
+  toTarget a = AllyTarget a.id
+
+instance Sourceable AllyAttrs where
+  toSource a = AllySource a.id

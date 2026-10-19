@@ -1,7 +1,7 @@
 module LordOfTheRings.Ability (module LordOfTheRings.Ability) where
 
-import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+import LordOfTheRings.Source
 
 data Ability
 
@@ -9,7 +9,8 @@ instance Show Ability
 instance FromJSON Ability
 instance ToJSON Ability
 
-toAbilityRef :: Ability -> AbilityRef
+abilitySource :: Ability -> Source
+abilityIndex :: Ability -> Int
 
 class HasAbilities a where
   getAbilities :: a -> [Ability]

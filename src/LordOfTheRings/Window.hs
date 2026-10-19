@@ -1,6 +1,6 @@
 module LordOfTheRings.Window (module LordOfTheRings.Window) where
 
-import LordOfTheRings.Id
+import LordOfTheRings.Target
 import LordOfTheRings.Prelude
 
 data Timing = After

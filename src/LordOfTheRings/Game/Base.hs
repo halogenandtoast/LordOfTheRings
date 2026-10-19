@@ -11,6 +11,7 @@ import LordOfTheRings.Enemy.Type
 import LordOfTheRings.Entity
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
+import LordOfTheRings.Target
 import LordOfTheRings.Location.Type
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
@@ -93,8 +94,8 @@ data Player = Player
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 
-instance Reference Player where
-  toRef p = PlayerRef p.id
+instance Targetable Player where
+  toTarget p = PlayerTarget p.id
 
 getsGame :: (HasGame m) => (Game -> a) -> m a
 getsGame f = f <$> getGame

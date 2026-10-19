@@ -2,6 +2,8 @@ module LordOfTheRings.Hero.Type (module LordOfTheRings.Hero.Type) where
 
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Source
+import LordOfTheRings.Target
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
@@ -14,11 +16,17 @@ class (Run a, Show a, ToJSON a) => IsHero a where
 data Hero where
   Hero :: (IsHero a) => a -> Hero
 
-instance Reference Hero where
-  toRef (Hero a) = toRef (heroAttrs a)
+instance Targetable Hero where
+  toTarget (Hero a) = toTarget (heroAttrs a)
 
-instance Reference HeroAttrs where
-  toRef a = HeroRef a.id
+instance Sourceable Hero where
+  toSource (Hero a) = toSource (heroAttrs a)
+
+instance Targetable HeroAttrs where
+  toTarget a = HeroTarget a.id
+
+instance Sourceable HeroAttrs where
+  toSource a = HeroSource a.id
 
 data HeroAttrs = HeroAttrs
   { id :: HeroId

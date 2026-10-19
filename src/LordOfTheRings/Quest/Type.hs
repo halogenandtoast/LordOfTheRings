@@ -2,6 +2,8 @@ module LordOfTheRings.Quest.Type (module LordOfTheRings.Quest.Type) where
 
 import LordOfTheRings.Card
 import LordOfTheRings.Id
+import LordOfTheRings.Source
+import LordOfTheRings.Target
 import LordOfTheRings.Prelude
 import LordOfTheRings.Run
 
@@ -28,5 +30,8 @@ instance Show Quest where
 instance ToJSON Quest where
   toJSON (Quest a) = toJSON a
 
-instance Reference QuestAttrs where
-  toRef a = QuestRef a.id
+instance Targetable QuestAttrs where
+  toTarget a = QuestTarget a.id
+
+instance Sourceable QuestAttrs where
+  toSource a = QuestSource a.id

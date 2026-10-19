@@ -47,6 +47,8 @@ library
       LordOfTheRings.Run
       LordOfTheRings.Scenario
       LordOfTheRings.Scenario.Type
+      LordOfTheRings.Source
+      LordOfTheRings.Target
       LordOfTheRings.Treachery.Cards
       LordOfTheRings.Window
   other-modules:

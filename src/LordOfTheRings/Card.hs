@@ -12,6 +12,7 @@ import LordOfTheRings.Card.EncounterCard as X hiding (unique)
 import LordOfTheRings.Card.PlayerCard as X hiding (unique)
 import LordOfTheRings.Card.PlayerCard qualified as PlayerCard
 import LordOfTheRings.Id
+import LordOfTheRings.Target
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude hiding (id)
 
@@ -28,10 +29,8 @@ data Card
   | EncounterCard !SomeEncounterCard
   deriving stock (Show, Generic)
 
-instance Reference Card where
-  toRef = \case
-    PlayerCard pc -> CardRef pc.id
-    EncounterCard ec -> CardRef ec.id
+instance Targetable Card where
+  toTarget = CardIdTarget . (.id)
 
 instance ToJSON Card where
   toJSON = \case
