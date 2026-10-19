@@ -17,18 +17,17 @@ pursuedByShadow = treachery PursuedByShadow Cards.pursuedByShadow
 instance RunMessage PursuedByShadow where
   runMessage msg t@(PursuedByShadow attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      order <- getPlayerOrder
-      for_ order \p -> do
+      eachPlayer \p -> do
         idle <- selectCharacters (HeroControlledBy (PlayerWithId p) <> not_ CommittedHero) (AllyControlledBy (PlayerWithId p) <> not_ CommittedAlly)
-        pushWhen (notNull idle) $ RaiseThreat p (length idle)
+        when (notNull idle) $ raiseThreat p (length idle)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       allies <- select (AllyControlledBy (PlayerWithId pid) <> ExhaustedAlly)
-      push
-        $ if null allies
-          then RaiseThreat pid 3
-          else
-            questionLabelWith (ikey "label.pursuedByShadow.returnAlly") (Just $ toTarget attrs) [] pid
-              [targetLabel a [ReturnToHand (toTarget a)] | a <- allies]
+      if null allies
+        then raiseThreat pid 3
+        else chooseOneM pid do
+          questionLabeled "pursuedByShadow.returnAlly"
+          causedBy attrs
+          targets allies \a -> push $ ReturnToHand (toTarget a)
       pure t
     _ -> PursuedByShadow <$> runMessage msg attrs

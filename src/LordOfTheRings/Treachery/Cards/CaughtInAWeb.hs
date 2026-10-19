@@ -36,15 +36,15 @@ instance RunMessage CaughtInAWeb where
       threats <- for order \p -> (p,) . (.threat) <$> getPlayer p
       let highest = foldr (max . snd) 0 threats
       for_ (headMay [p | (p, n) <- threats, n == highest]) \p -> do
-        heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId p)
-        unless (null heroes)
-          $ push
-          $ questionLabelWith (ikey "label.caughtInAWeb.attach") (Just $ toTarget attrs) [] p
-            [targetLabel h [AttachTreachery attrs.treacheryId h] | h <- heroes]
+        heroes <- select (HeroControlledBy $ PlayerWithId p)
+        chooseOneM p do
+          questionLabeled "caughtInAWeb.attach"
+          causedBy attrs
+          targets heroes \h -> push $ AttachTreachery attrs.treacheryId (toTarget h)
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       case attrs.placement of
-        AttachedTo host -> push $ Ready host
+        AttachedTo host -> ready host
         _ -> pure ()
       pure t
     _ -> CaughtInAWeb <$> runMessage msg attrs

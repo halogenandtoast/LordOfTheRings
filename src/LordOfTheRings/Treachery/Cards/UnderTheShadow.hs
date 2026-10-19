@@ -18,10 +18,10 @@ instance RunMessage UnderTheShadow where
   runMessage msg t@(UnderTheShadow attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       players <- length <$> getPlayerOrder
-      push $ CreateEffect $ Effect (toSource attrs) GameTarget [StagingThreatBonus players] UntilEndOfPhase
+      phaseModifier attrs GameTarget (StagingThreatBonus players)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       engaged <- length <$> select (EnemyEngagedWith $ PlayerWithId pid)
-      pushWhen (engaged > 0) $ RaiseThreat pid engaged
+      when (engaged > 0) $ raiseThreat pid engaged
       pure t
     _ -> UnderTheShadow <$> runMessage msg attrs

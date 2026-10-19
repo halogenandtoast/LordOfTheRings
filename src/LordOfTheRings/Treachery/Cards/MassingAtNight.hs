@@ -17,10 +17,10 @@ instance RunMessage MassingAtNight where
   runMessage msg t@(MassingAtNight attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       players <- length <$> getPlayerOrder
-      pushAll $ replicate players RevealEncounterCard
+      revealEncounterCards players
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       players <- length <$> getPlayerOrder
-      pushAll $ replicate players (DealShadowCard eid)
+      replicateM_ players $ dealShadowCard eid
       pure t
     _ -> MassingAtNight <$> runMessage msg attrs

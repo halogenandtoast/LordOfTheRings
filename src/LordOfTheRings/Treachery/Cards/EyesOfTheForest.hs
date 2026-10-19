@@ -13,7 +13,6 @@ eyesOfTheForest = treachery EyesOfTheForest Cards.eyesOfTheForest
 instance RunMessage EyesOfTheForest where
   runMessage msg t@(EyesOfTheForest attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      players <- getPlayerOrder
-      pushAll $ map DiscardEventsFromHand players
+      eachPlayer $ push . DiscardEventsFromHand
       pure t
     _ -> EyesOfTheForest <$> runMessage msg attrs

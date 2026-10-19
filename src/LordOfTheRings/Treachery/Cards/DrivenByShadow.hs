@@ -15,14 +15,13 @@ instance RunMessage DrivenByShadow where
     WhenRevealed (isTarget attrs -> True) -> do
       enemies <- map toTarget <$> select EnemyInStagingArea
       locations <- map toTarget <$> select LocationInStagingArea
-      pushAll
-        $ if null enemies && null locations
-          then [RevealEncounterCard]
-          else [CreateEffect $ Effect (toSource attrs) c [ThreatModifier 1] UntilEndOfPhase | c <- enemies <> locations]
+      if null enemies && null locations
+        then revealEncounterCard
+        else for_ (enemies <> locations) \c -> phaseModifier attrs c (ThreatModifier 1)
       pure t
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
       case defender of
-        Just character -> push . ChooseAndDiscard (EnemySource eid) pid =<< getAttachmentsOn character
-        Nothing -> pushAll . map Discard =<< getAttachmentsControlledBy pid
+        Just character -> chooseAndDiscard (EnemySource eid) pid =<< getAttachmentsOn character
+        Nothing -> traverse_ discard =<< getAttachmentsControlledBy pid
       pure t
     _ -> DrivenByShadow <$> runMessage msg attrs

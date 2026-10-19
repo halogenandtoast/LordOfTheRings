@@ -18,6 +18,6 @@ instance RunMessage EvilStorm where
       order <- getPlayerOrder
       high <- filterM (fmap ((>= 35) . (.threat)) . getPlayer) order
       characters <- concatMapM charactersControlledBy high
-      pushAll [DealDamage (toSource attrs) c 1 | c <- characters]
+      for_ characters \c -> dealDamage attrs c 1
       pure t
     _ -> EvilStorm <$> runMessage msg attrs

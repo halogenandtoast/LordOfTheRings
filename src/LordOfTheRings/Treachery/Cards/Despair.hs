@@ -15,9 +15,9 @@ despair = treachery Despair Cards.despair
 instance RunMessage Despair where
   runMessage msg t@(Despair attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      push $ RemoveProgressFromQuest (toSource attrs) 4
+      removeProgressFromQuest attrs 4
       pure t
     ResolveShadowEffect cid _ _ defender | cid == attrs.cardId -> do
-      pushAll [CreateEffect $ Effect (toSource attrs) d [DoesNotCountDefense] UntilEndOfPhase | d <- toList defender]
+      for_ defender \d -> phaseModifier attrs d DoesNotCountDefense
       pure t
     _ -> Despair <$> runMessage msg attrs

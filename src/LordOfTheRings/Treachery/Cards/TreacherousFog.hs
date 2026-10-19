@@ -19,8 +19,7 @@ instance RunMessage TreacherousFog where
       locations <- select LocationInStagingArea
       order <- getPlayerOrder
       high <- filterM (fmap ((>= 35) . (.threat)) . getPlayer) order
-      pushAll
-        $ [CreateEffect $ Effect (toSource attrs) (toTarget l) [ThreatModifier 1] UntilEndOfPhase | l <- locations]
-        <> [ChooseAndDiscardFromHand p (toSource attrs) 1 | p <- high]
+      for_ locations \l -> phaseModifier attrs l (ThreatModifier 1)
+      for_ high \p -> push $ ChooseAndDiscardFromHand p (toSource attrs) 1
       pure t
     _ -> TreacherousFog <$> runMessage msg attrs

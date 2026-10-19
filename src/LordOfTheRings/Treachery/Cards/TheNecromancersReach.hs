@@ -14,6 +14,6 @@ instance RunMessage TheNecromancersReach where
   runMessage msg t@(TheNecromancersReach attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       exhausted <- selectCharacters ExhaustedHero ExhaustedAlly
-      pushAll [DealDamage (toSource attrs) c 1 | c <- exhausted]
+      for_ exhausted \c -> dealDamage attrs c 1
       pure t
     _ -> TheNecromancersReach <$> runMessage msg attrs
