@@ -138,7 +138,7 @@ body {
   margin: 0;
   color: var(--text);
   font-family: "Trebuchet MS", ui-sans-serif, system-ui, sans-serif;
-  background: var(--page-background) url('/images/background.jpg') center center / auto 100% no-repeat;
+  background: var(--page-background);
   -webkit-tap-highlight-color: transparent;
 }
 
