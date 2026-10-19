@@ -29,13 +29,13 @@ treachery code name encounterSet encounterSetCount =
     }
 
 eyesOfTheForest :: EncounterCardDef 'TreacheryKind
-eyesOfTheForest = treachery "01076" "Ungoliant's Spawn" SpidersOfMirkwood (0, 1, 1)
+eyesOfTheForest = treachery "01079" "Eyes of the Forest" SpidersOfMirkwood (0, 1, 1)
 
 caughtInAWeb :: EncounterCardDef 'TreacheryKind
-caughtInAWeb = treachery "01089" "Dol Guldur Orcs" SpidersOfMirkwood (0, 2, 0)
+caughtInAWeb = treachery "01080" "Caught in a Web" SpidersOfMirkwood (0, 2, 0)
 
 drivenByShadow :: EncounterCardDef 'TreacheryKind
-drivenByShadow = treachery "01074" "King Spider" DolGuldurOrcs (1, 1, 1)
+drivenByShadow = treachery "01092" "Driven by Shadow" DolGuldurOrcs (1, 1, 1)
 
 theNecromancersReach :: EncounterCardDef 'TreacheryKind
-theNecromancersReach = treachery "01075" "Hummerhorns" DolGuldurOrcs (1, 3, 3)
+theNecromancersReach = treachery "01093" "The Necromancer's Reach" DolGuldurOrcs (1, 3, 3)
