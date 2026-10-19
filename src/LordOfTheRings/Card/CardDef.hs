@@ -3,6 +3,7 @@ module LordOfTheRings.Card.CardDef (module LordOfTheRings.Card.CardDef) where
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Json
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
@@ -37,7 +38,9 @@ data CardDef = CardDef
   , cdDoubleSided :: Bool
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON)
+
+instance ToJSON CardDef where
+  toJSON = genericToJSON (aesonOptions $ Just "cd")
 
 class HasCardDef a where
   toCardDef :: a -> CardDef

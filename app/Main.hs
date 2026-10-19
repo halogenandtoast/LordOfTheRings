@@ -6,6 +6,7 @@
 module Main (main) where
 
 import Control.Monad.Random (StdGen, evalRand, mkStdGen, randomIO)
+import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Decklist
@@ -43,6 +44,7 @@ mkYesod
   /start StartR POST
   /undo UndoR POST
   /reset ResetR POST
+  /cards CardsR GET
 |]
 
 instance Yesod App
@@ -157,6 +159,9 @@ postResetR = do
   withSession \case
     Nothing -> pure Nothing
     Just s -> Just <$> (newSession app s.name =<< randomIO)
+
+getCardsR :: Handler Value
+getCardsR = pure $ toJSON $ allPlayerCards <> allEncounterCards
 
 main :: IO ()
 main = do

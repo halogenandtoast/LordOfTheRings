@@ -5,7 +5,10 @@ module LordOfTheRings.Frontend (module LordOfTheRings.Frontend) where
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 
-data FrontendMessage = Log {message :: Text} | FlipCard {cardId :: CardId}
+data FrontendMessage
+  = Log {message :: Text}
+  | Announce {message :: Text}
+  | FlipCard {cardId :: CardId}
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

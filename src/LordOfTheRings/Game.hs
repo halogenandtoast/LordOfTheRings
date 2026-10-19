@@ -120,7 +120,8 @@ instance RunMessage Entities where
 
 instance RunMessage Game where
   runMessage msg g =
-    traverseOf (playersL . traverse) (runMessage msg) g
+    logMessage msg
+      >> traverseOf (playersL . traverse) (runMessage msg) g
       >>= traverseOf (activeCostsL . traverse) (runMessage msg)
       >>= traverseOf entitiesL (runMessage msg)
       >>= traverseOf scenarioL (runMessage msg)
@@ -461,6 +462,57 @@ runGameMessage msg g = case msg of
       pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) thisLocation)
     _ -> error "Unhandled"
   _ -> pure g
+
+-- | Tell the players what just happened, before it happens.
+logMessage :: Message -> GameT ()
+logMessage = \case
+  BeginRound -> do
+    n <- getsGame ((+ 1) . gameRound)
+    send $ Log $ "Round " <> tshow n
+  BeginPhase phase -> do
+    let label = phaseName phase
+    send $ Log label
+    send $ Announce label
+  RaiseThreat pid n -> do
+    player <- getPlayer pid
+    send $ Log $ player.name <> " threat +" <> tshow n
+  EngageEnemy pid eid -> do
+    player <- getPlayer pid
+    enemy <- getEnemy eid
+    send $ Log $ display enemy.name <> " engages " <> player.name
+  PlaceTokens _ target Progress n -> whenJustM (targetName target) \name -> send $ Log $ tshow n <> " progress on " <> name
+  DealDamage _ target n | n > 0 -> whenJustM (targetName target) \name -> send $ Log $ name <> " takes " <> tshow n <> " damage"
+  Discard target -> whenJustM (targetName target) \name -> send $ Log $ name <> " leaves play"
+  AdvanceToQuest card -> send $ FlipCard card.id
+  GameOver outcome -> do
+    send $ Log $ "Game over: " <> tshow outcome
+    send $ Announce $ case outcome of
+      Won -> "The players win"
+      Lost -> "The players lose"
+  _ -> pure ()
+
+phaseName :: Phase -> Text
+phaseName = \case
+  ResourcePhase -> "Resource phase"
+  PlanningPhase -> "Planning phase"
+  QuestPhase -> "Quest phase"
+  TravelPhase -> "Travel phase"
+  EncounterPhase -> "Encounter phase"
+  CombatPhase -> "Combat phase"
+  RefreshPhase -> "Refresh phase"
+
+targetName :: Target -> GameT (Maybe Text)
+targetName target = do
+  es <- getsGame gameEntities
+  pure $ display <$> case target of
+    HeroTarget hid -> (.name) <$> Map.lookup hid es.heroes
+    AllyTarget aid -> (.name) <$> Map.lookup aid es.allies
+    EnemyTarget eid -> (.name) <$> Map.lookup eid es.enemies
+    LocationTarget lid -> (.name) <$> Map.lookup lid es.locations
+    AttachmentTarget aid -> (.name) <$> Map.lookup aid es.attachments
+    QuestTarget qid -> (.name) <$> Map.lookup qid es.quests
+    TreacheryTarget tid -> (.name) <$> Map.lookup tid es.treacheries
+    _ -> Nothing
 
 eliminationThreat :: Int
 eliminationThreat = 50
