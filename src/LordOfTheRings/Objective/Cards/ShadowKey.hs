@@ -19,11 +19,9 @@ instance HasAbilities ShadowKey where
 instance RunMessage ShadowKey where
   runMessage msg o@(ShadowKey attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      push =<< claimObjective pid attrs
+      claimObjective pid attrs
       pure o
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
-      case attrs.placement of
-        AttachedTo host -> push $ DealDamage (toSource attrs) host 1
-        _ -> pure ()
+      withHost attrs \host -> dealDamage attrs host 1
       pure o
     _ -> ShadowKey <$> runMessage msg attrs

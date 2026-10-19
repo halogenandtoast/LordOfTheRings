@@ -24,6 +24,6 @@ instance HasModifiersFor GandalfsMap where
 instance RunMessage GandalfsMap where
   runMessage msg o@(GandalfsMap attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      push =<< claimObjective pid attrs
+      claimObjective pid attrs
       pure o
     _ -> GandalfsMap <$> runMessage msg attrs

@@ -1,15 +1,14 @@
 module LordOfTheRings.Objective.Claim (claimAbility, claimObjective) where
 
 import LordOfTheRings.Ability
-import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.Types
 import LordOfTheRings.Placement (Placement (StagingArea))
-import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
-import LordOfTheRings.Question
 import LordOfTheRings.Target
 
 -- | Action: Raise your threat by 2 to claim this objective when it is free of encounters.
@@ -20,9 +19,10 @@ claimAbility a =
   | a.placement == StagingArea
   ]
 
-claimObjective :: (HasGame m) => PlayerId -> ObjectiveAttrs -> m Message
+claimObjective :: (ReverseQueue m) => PlayerId -> ObjectiveAttrs -> m ()
 claimObjective pid a = do
   heroes <- select (HeroControlledBy $ PlayerWithId pid)
-  pure
-    $ questionLabelWith (ikey "label.claimObjective") (Just $ toTarget a) [] pid
-      [targetLabel h [ClaimObjective a.id (toTarget h)] | h <- heroes]
+  chooseOneM pid do
+    questionLabeled "claimObjective"
+    causedBy a
+    targets heroes \h -> push $ ClaimObjective a.id (toTarget h)

@@ -19,11 +19,11 @@ instance HasAbilities DungeonTorch where
 instance RunMessage DungeonTorch where
   runMessage msg o@(DungeonTorch attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      push =<< claimObjective pid attrs
+      claimObjective pid attrs
       pure o
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
-      case attrs.placement of
-        AttachedTo (HeroTarget hid) -> push . (`RaiseThreat` 2) . (.owner) =<< getHero hid
+      withHost attrs \case
+        HeroTarget hid -> (`raiseThreat` 2) . (.owner) =<< getHero hid
         _ -> pure ()
       pure o
     _ -> DungeonTorch <$> runMessage msg attrs
