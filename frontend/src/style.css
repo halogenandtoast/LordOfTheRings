@@ -109,7 +109,7 @@ html, body, #app { height: 100%; }
 }
 
 /* The card title face, from KevBelisle/lotr-lcg-assets. */
-h1, h2, h3, .home-link, .campaign-name, .scenario-name {
+h1, h2, h3, .home-link, .campaign-name {
   font-family: var(--font-title);
   font-weight: normal;
   letter-spacing: 0.02em;
