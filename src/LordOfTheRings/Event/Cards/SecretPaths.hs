@@ -17,8 +17,9 @@ instance RunMessage SecretPaths where
   runMessage msg e@(SecretPaths attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       locations <- select LocationInStagingArea
-      push
-        $ questionLabelWith (ikey "label.chooseLocationInStaging") (Just $ toTarget attrs) [] pid
-          [targetLabel lid [CreateEffect $ Effect (toSource attrs) (toTarget lid) [DoesNotContributeThreat] UntilEndOfPhase] | lid <- locations]
+      chooseOneM pid do
+        questionLabeled "chooseLocationInStaging"
+        causedBy attrs
+        targets locations \lid -> phaseModifier attrs lid DoesNotContributeThreat
       pure e
     _ -> SecretPaths <$> runMessage msg attrs

@@ -22,8 +22,12 @@ instance RunMessage StrengthOfWill where
     PlayEvent pid card windows | card.id == toId attrs -> do
       spirits <- selectCharacters (ReadyHero <> HeroWithSphere Spirit) (ReadyAlly <> AllyWithSphere Spirit)
       for_ (headMay [lid | Window _ (Traveled lid) <- windows]) \lid ->
-        push
-          $ questionLabelWith (ikey "label.strengthOfWill.exhaust") (Just $ toTarget attrs) [toTarget lid] pid
-            [targetLabel c [Exhaust c, PlaceTokens (toSource attrs) (toTarget lid) Progress 2] | c <- spirits]
+        chooseOneM pid do
+          questionLabeled "strengthOfWill.exhaust"
+          causedBy attrs
+          aimedAt [lid]
+          targets spirits \c -> do
+            exhaust c
+            placeProgress attrs lid 2
       pure e
     _ -> StrengthOfWill <$> runMessage msg attrs

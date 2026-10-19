@@ -18,10 +18,6 @@ instance RunMessage ForGondor where
     PlayEvent _ card _ | card.id == toId attrs -> do
       characters <- selectCharacters AnyHero AnyAlly
       gondor <- selectCharacters (HeroWithTrait Gondor) (AllyWithTrait Gondor)
-      pushAll
-        [ CreateEffect
-          $ Effect (toSource attrs) c (AttackModifier 1 : [DefenseModifier 1 | c `elem` gondor]) UntilEndOfPhase
-        | c <- characters
-        ]
+      for_ characters \c -> phaseModifiers attrs c (AttackModifier 1 : [DefenseModifier 1 | c `elem` gondor])
       pure e
     _ -> ForGondor <$> runMessage msg attrs

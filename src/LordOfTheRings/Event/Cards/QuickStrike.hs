@@ -21,15 +21,14 @@ quickStrike =
 instance RunMessage QuickStrike where
   runMessage msg e@(QuickStrike attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
+      attackers <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
       enemies <- select (EnemyEngagedWith $ PlayerWithId pid)
-      push
-        $ questionLabelWith (ikey "label.quickStrike.exhaust") (Just $ toTarget attrs) [] pid
-          [ targetLabel c
-              [ questionLabelWith (ikey "label.quickStrike.enemy") (Just c) [] pid
-                  [targetLabel eid [AttackWith c, ResolveAttack pid eid] | eid <- enemies]
-              ]
-          | c <- ready
-          ]
+      chooseOneM pid do
+        questionLabeled "quickStrike.exhaust"
+        causedBy attrs
+        targets attackers \c -> chooseOneM pid do
+          questionLabeled "quickStrike.enemy"
+          causedBy c
+          targets enemies \eid -> pushAll [AttackWith c, ResolveAttack pid eid]
       pure e
     _ -> QuickStrike <$> runMessage msg attrs

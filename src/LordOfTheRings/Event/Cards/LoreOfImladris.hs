@@ -15,7 +15,9 @@ instance RunMessage LoreOfImladris where
   runMessage msg e@(LoreOfImladris attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       damaged <- damagedCharacters AnyHero AnyAlly
-      choices <- for damaged \c -> targetLabel c . pure . HealDamage (toSource attrs) c <$> getDamage c
-      unless (null choices) $ push $ questionLabelWith (ikey "label.loreOfImladris.heal") (Just $ toTarget attrs) [] pid choices
+      chooseOneM pid do
+        questionLabeled "loreOfImladris.heal"
+        causedBy attrs
+        targets damaged $ healAllDamage attrs
       pure e
     _ -> LoreOfImladris <$> runMessage msg attrs

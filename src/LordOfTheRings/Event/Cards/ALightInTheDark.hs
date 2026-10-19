@@ -16,8 +16,9 @@ instance RunMessage ALightInTheDark where
   runMessage msg e@(ALightInTheDark attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       engaged <- select (EnemyEngagedWith AnyPlayer)
-      push
-        $ questionLabelWith (ikey "label.aLightInTheDark.return") (Just $ toTarget attrs) [] pid
-          [targetLabel eid [PlaceEnemy eid StagingArea] | eid <- engaged]
+      chooseOneM pid do
+        questionLabeled "aLightInTheDark.return"
+        causedBy attrs
+        targets engaged \eid -> placeEnemy eid StagingArea
       pure e
     _ -> ALightInTheDark <$> runMessage msg attrs

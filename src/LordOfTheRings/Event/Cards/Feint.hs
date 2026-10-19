@@ -17,8 +17,9 @@ instance RunMessage Feint where
   runMessage msg e@(Feint attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       engaged <- select (EnemyEngagedWith AnyPlayer)
-      push
-        $ questionLabelWith (ikey "label.feint.choose") (Just $ toTarget attrs) [] pid
-          [targetLabel eid [CreateEffect $ Effect (toSource attrs) (toTarget eid) [CannotAttack] UntilEndOfPhase] | eid <- engaged]
+      chooseOneM pid do
+        questionLabeled "feint.choose"
+        causedBy attrs
+        targets engaged \eid -> phaseModifier attrs eid CannotAttack
       pure e
     _ -> Feint <$> runMessage msg attrs

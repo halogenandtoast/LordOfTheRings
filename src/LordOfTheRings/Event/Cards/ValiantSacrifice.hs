@@ -14,6 +14,7 @@ valiantSacrifice = eventWith ValiantSacrifice Cards.valiantSacrifice (windowL ?~
 instance RunMessage ValiantSacrifice where
   runMessage msg e@(ValiantSacrifice attrs) = case msg of
     PlayEvent _ card windows | card.id == toId attrs -> do
-      pushAll $ take 1 [DrawCards (Drawing controller 2) | Window _ (LeftPlay (AllyTarget _) controller _) <- windows]
+      for_ (headMay [controller | Window _ (LeftPlay (AllyTarget _) controller _) <- windows]) \controller ->
+        drawCards controller 2
       pure e
     _ -> ValiantSacrifice <$> runMessage msg attrs

@@ -16,10 +16,10 @@ instance RunMessage DwarvenTomb where
   runMessage msg e@(DwarvenTomb attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       -- Dwarven Tomb is in the discard pile already, and may not return itself
-      discard <- filter (\c -> c.id /= card.id && c.sphere == Just Spirit) . (.discard) <$> getPlayer pid
-      unless (null discard)
-        $ push
-        $ questionLabelWith (ikey "label.dwarvenTomb.return") (Just $ toTarget attrs) [] pid
-          [targetLabel (CardIdTarget c.id) [ReturnFromDiscardToHand pid c.id] | c <- discard]
+      spirits <- filter (\c -> c.id /= card.id && c.sphere == Just Spirit) . (.discard) <$> getPlayer pid
+      chooseOneM pid do
+        questionLabeled "dwarvenTomb.return"
+        causedBy attrs
+        targets spirits \c -> push $ ReturnFromDiscardToHand pid c.id
       pure e
     _ -> DwarvenTomb <$> runMessage msg attrs

@@ -14,6 +14,6 @@ grimResolve = event GrimResolve Cards.grimResolve
 instance RunMessage GrimResolve where
   runMessage msg e@(GrimResolve attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      pushAll . map Ready =<< selectCharacters ExhaustedHero ExhaustedAlly
+      traverse_ ready =<< selectCharacters ExhaustedHero ExhaustedAlly
       pure e
     _ -> GrimResolve <$> runMessage msg attrs

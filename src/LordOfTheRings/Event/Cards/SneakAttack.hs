@@ -17,10 +17,11 @@ instance RunMessage SneakAttack where
     PlayEvent pid card _ | card.id == toId attrs -> do
       player <- getPlayer pid
       allies <- filterM passesUnique [c | c <- player.hand, c.cardType == AllyType]
-      let returnLater c = Effect (toSource attrs) (CardIdTarget c.id) [ReturnToHandAtEndOfPhase] UntilEndOfPhase
-      unless (null allies)
-        $ push
-        $ questionLabelWith (ikey "label.chooseAllyToPutIntoPlay") (Just $ toTarget attrs) [] pid
-          [targetLabel (CardIdTarget c.id) [CreateEffect (returnLater c), PutAllyIntoPlay pid c.id] | c <- allies]
+      chooseOneM pid do
+        questionLabeled "chooseAllyToPutIntoPlay"
+        causedBy attrs
+        targets allies \c -> do
+          phaseModifier attrs (CardIdTarget c.id) ReturnToHandAtEndOfPhase
+          push $ PutAllyIntoPlay pid c.id
       pure e
     _ -> SneakAttack <$> runMessage msg attrs

@@ -22,16 +22,22 @@ instance RunMessage StandAndFight where
     PlayEvent pid card _ | card.id == toId attrs -> do
       spirit <- resourcesIn pid
       order <- getPlayerOrder
-      choices <- fmap concat $ for order \owner -> do
-        discard <- (.discard) <$> getPlayer owner
+      allies <- fmap concat $ for order \owner -> do
+        discarded <- (.discard) <$> getPlayer owner
         pure
-          [ targetLabel (CardIdTarget pc.id) [SpendResources pid Spirit x, RemoveFromDiscard owner pc.id, PutAllyIntoPlayUnder pid pc]
-          | PlayerCard pc <- discard
+          [ (owner, pc, x)
+          | PlayerCard pc <- discarded
           , cdCardType (toCardDef pc) == AllyType
           , Just (StaticCost x) <- [cdCost (toCardDef pc)]
           , x <= spirit
           ]
-      unless (null choices) $ push $ questionLabelWith (ikey "label.chooseAllyToPutIntoPlay") (Just $ toTarget attrs) [] pid choices
+      chooseOneM pid do
+        questionLabeled "chooseAllyToPutIntoPlay"
+        causedBy attrs
+        for_ allies \(owner, pc, x) -> targeting pc do
+          spendResources pid Spirit x
+          removeFromDiscard owner pc.id
+          push $ PutAllyIntoPlayUnder pid pc
       pure e
     _ -> StandAndFight <$> runMessage msg attrs
    where

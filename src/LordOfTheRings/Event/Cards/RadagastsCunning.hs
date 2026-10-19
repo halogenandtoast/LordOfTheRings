@@ -18,8 +18,9 @@ instance RunMessage RadagastsCunning where
   runMessage msg e@(RadagastsCunning attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       enemies <- select EnemyInStagingArea
-      push
-        $ questionLabelWith (ikey "label.chooseEnemyInStaging") (Just $ toTarget attrs) [] pid
-          [targetLabel eid [CreateEffect $ Effect (toSource attrs) (toTarget eid) [DoesNotContributeThreat] UntilEndOfPhase] | eid <- enemies]
+      chooseOneM pid do
+        questionLabeled "chooseEnemyInStaging"
+        causedBy attrs
+        targets enemies \eid -> phaseModifier attrs eid DoesNotContributeThreat
       pure e
     _ -> RadagastsCunning <$> runMessage msg attrs

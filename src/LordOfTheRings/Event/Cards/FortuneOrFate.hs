@@ -17,13 +17,14 @@ instance RunMessage FortuneOrFate where
   runMessage msg e@(FortuneOrFate attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       order <- getPlayerOrder
-      choices <- fmap concat $ for order \owner -> do
-        discard <- (.discard) <$> getPlayer owner
-        pure
-          [ targetLabel (CardIdTarget pc.id) [RemoveFromDiscard owner pc.id, PutHeroIntoPlay owner pc]
-          | PlayerCard pc <- discard
-          , cdCardType (toCardDef pc) == HeroType
-          ]
-      unless (null choices) $ push $ questionLabelWith (ikey "label.fortuneOrFate.choose") (Just $ toTarget attrs) [] pid choices
+      heroes <- fmap concat $ for order \owner -> do
+        discarded <- (.discard) <$> getPlayer owner
+        pure [(owner, pc) | PlayerCard pc <- discarded, cdCardType (toCardDef pc) == HeroType]
+      chooseOneM pid do
+        questionLabeled "fortuneOrFate.choose"
+        causedBy attrs
+        for_ heroes \(owner, pc) -> targeting pc do
+          removeFromDiscard owner pc.id
+          push $ PutHeroIntoPlay owner pc
       pure e
     _ -> FortuneOrFate <$> runMessage msg attrs

@@ -16,14 +16,17 @@ commonCause =
 instance RunMessage CommonCause where
   runMessage msg e@(CommonCause attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      ready <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
+      readyHeroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
       -- the hero exhausted is ready now, so it is never one of these
       exhausted <- select ExhaustedHero
-      let readyOne =
-            questionLabelWith (ikey "label.commonCause.ready") (Just $ toTarget attrs) [] pid
-              [targetLabel h [Ready (toTarget h)] | h <- exhausted]
-      push
-        $ questionLabelWith (ikey "label.commonCause.exhaust") (Just $ toTarget attrs) [] pid
-          [targetLabel h [Exhaust (toTarget h), readyOne] | h <- ready]
+      chooseOneM pid do
+        questionLabeled "commonCause.exhaust"
+        causedBy attrs
+        targets readyHeroes \h -> do
+          exhaust h
+          chooseOneM pid do
+            questionLabeled "commonCause.ready"
+            causedBy attrs
+            targets exhausted ready
       pure e
     _ -> CommonCause <$> runMessage msg attrs

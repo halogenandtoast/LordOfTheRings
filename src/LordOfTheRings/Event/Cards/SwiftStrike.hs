@@ -15,6 +15,6 @@ swiftStrike = eventWith SwiftStrike Cards.swiftStrike (windowL ?~ DefenderDeclar
 instance RunMessage SwiftStrike where
   runMessage msg e@(SwiftStrike attrs) = case msg of
     PlayEvent _ card windows | card.id == toId attrs -> do
-      pushAll $ take 1 [DealDamage (toSource attrs) (toTarget eid) 2 | Window _ (DeclaredAsDefender _ eid) <- windows]
+      for_ (headMay [eid | Window _ (DeclaredAsDefender _ eid) <- windows]) \eid -> dealDamage attrs eid 2
       pure e
     _ -> SwiftStrike <$> runMessage msg attrs
