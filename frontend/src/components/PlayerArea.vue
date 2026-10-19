@@ -17,8 +17,6 @@ const emit = defineEmits<{ choose: [index: number] }>()
 
 <template>
   <section class="band player" :class="{ eliminated: player.eliminated }">
-    <QuestionZone :question="question" @choose="emit('choose', $event)" />
-
     <div class="piles">
       <DiscardPile :cards="player.discard" back="player" />
       <CardBack :count="player.deckSize" back="player" />
@@ -35,6 +33,8 @@ const emit = defineEmits<{ choose: [index: number] }>()
         @choose="emit('choose', $event)"
       />
     </div>
+
+    <QuestionZone :question="question" @choose="emit('choose', $event)" />
   </section>
 </template>
 
@@ -42,7 +42,6 @@ const emit = defineEmits<{ choose: [index: number] }>()
 .player { flex: 0 0 auto; align-items: flex-end; margin-top: auto; }
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
-.piles { margin-left: auto; }
 .hand { flex: 1; flex-wrap: wrap; justify-content: flex-start; }
 
 

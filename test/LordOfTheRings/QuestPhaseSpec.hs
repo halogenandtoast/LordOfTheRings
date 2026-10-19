@@ -9,7 +9,11 @@ import TestImport
 
 commitHeroes :: PlayerId -> [CardCode] -> GameT ()
 commitHeroes pid codes = do
-  for_ codes $ \code -> getHeroWithCode code >>= chooseTarget pid
+  for_ codes $ \code -> do
+    getHeroWithCode code >>= chooseTarget pid
+    -- decline any response to committing, such as Théodred's
+    whenJustM (getQuestion pid) $ \q ->
+      when (notNull [() | Label "Pass" _ <- questionChoices q]) $ chooseLabel "Pass" pid
   whenJustM (getQuestion pid) $ \_ -> chooseLabel "Done committing" pid
 
 -- Flies and Spiders setup leaves Forest Spider (2 threat) and Old Forest Road (1 threat) in staging.

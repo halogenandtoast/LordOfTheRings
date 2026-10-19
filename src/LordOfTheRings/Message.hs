@@ -59,7 +59,14 @@ data Message
   | EndRound
   | WithTarget Target Message
   | PlayCard PlayerId CardId
-  | PayForCard PlayerId Card
+  | -- | play a card in response to the windows, which its effect may read
+    PlayCardInWindow PlayerId CardId [Window]
+  | PayForCard PlayerId Card [Window]
+  | PlayEvent PlayerId PlayerCard [Window]
+  | PutAllyIntoPlay PlayerId CardId
+  | ReturnToHand Target
+  | LowerThreat PlayerId Int
+  | ActionWindow PlayerId
   | PayCost CostId
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int

@@ -10,6 +10,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
+import LordOfTheRings.Window
 
 data Cost = ResourceCost Sphere CardCost | Free
   deriving stock (Show, Eq, Generic)
@@ -20,6 +21,8 @@ data ActiveCost = ActiveCost
   , activeCostCost :: Cost
   , activeCostCard :: Card
   , activeCostPlayer :: PlayerId
+  , activeCostWindows :: [Window]
+  -- ^ the windows the card is played in response to, if any
   }
   deriving stock (Show, Eq, Generic)
 
@@ -60,6 +63,7 @@ instance RunMessage ActiveCost where
         PlayerCard card -> case cdCardType (toCardDef card) of
           AllyType -> push $ PlayAlly ac.activeCostPlayer card
           AttachmentType -> push $ PlayAttachment ac.activeCostPlayer card
+          EventType -> push $ PlayEvent ac.activeCostPlayer card ac.activeCostWindows
           _ -> pure ()
         EncounterCard _ -> pure ()
       pure ac

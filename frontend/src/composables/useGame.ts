@@ -143,6 +143,7 @@ export const useGame = (gameId: string) => {
     },
     answer: (askId: number, choice: number) =>
       post('', { choice, questionVersion: askId, player: data.value?.playerId }),
+    debug: (message: object) => post('/debug', message),
     refresh,
   }
 }

@@ -1,3 +1,5 @@
+import type { Target } from './server'
+
 export interface CardView {
   id: string
   code: string
@@ -16,6 +18,8 @@ export interface CardView {
   progress: number | null
   questPoints: number | null
   attachedTo: string | null
+  /** The engine's target for a card in play, so debug mode can change it. */
+  target: Target | null
 }
 
 export interface ChoiceView {

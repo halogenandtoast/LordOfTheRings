@@ -103,7 +103,16 @@ library
       LordOfTheRings.Enemy.Runner
       LordOfTheRings.Enemy.Types
       LordOfTheRings.Entities
+      LordOfTheRings.Event
       LordOfTheRings.Event.CardDefs
+      LordOfTheRings.Event.Cards.CommonCause
+      LordOfTheRings.Event.Cards.EverVigilant
+      LordOfTheRings.Event.Cards.ForGondor
+      LordOfTheRings.Event.Cards.GrimResolve
+      LordOfTheRings.Event.Cards.SneakAttack
+      LordOfTheRings.Event.Cards.ValiantSacrifice
+      LordOfTheRings.Event.Import.Lifted
+      LordOfTheRings.Event.Types
       LordOfTheRings.Frontend
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
@@ -358,6 +367,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.RevealSpec
       LordOfTheRings.SerializationSpec
       LordOfTheRings.SetupSpec
+      LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
       TestImport
       Paths_LordOfTheRings

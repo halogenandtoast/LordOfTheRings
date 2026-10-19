@@ -165,7 +165,6 @@ watch(question, (asked) => {
 
         <section class="band play">
           <div class="hero-column">
-            <ThreatDial v-if="you" :threat="you.threat" />
             <CardBand
               class="heroes"
               :cards="heroes"
@@ -174,27 +173,29 @@ watch(question, (asked) => {
               align="bottom"
               @choose="choose"
             />
+            <ThreatDial v-if="you" :threat="you.threat" />
           </div>
-          <CardBand
-            class="play-area"
-            :class="{ 'drop-zone': dragging && dragging.hosts === null }"
-            label="play area"
-            :cards="inPlay"
-            :choices="choices"
-            :flipping="flipping"
-            align="bottom"
-            @choose="choose"
-          />
+          <div class="player-column">
+            <CardBand
+              class="play-area"
+              :class="{ 'drop-zone': dragging && dragging.hosts === null }"
+              label="play area"
+              :cards="inPlay"
+              :choices="choices"
+              :flipping="flipping"
+              align="bottom"
+              @choose="choose"
+            />
+            <PlayerArea
+              v-if="you"
+              :player="you"
+              :choices="choices"
+              :flipping="flipping"
+              :question="question"
+              @choose="choose"
+            />
+          </div>
         </section>
-
-        <PlayerArea
-          v-if="you"
-          :player="you"
-          :choices="choices"
-          :flipping="flipping"
-          :question="question"
-          @choose="choose"
-        />
       </template>
     </div>
 
@@ -246,6 +247,15 @@ watch(question, (asked) => {
   outline-offset: -2px;
 }
 .band.play .heroes { flex: 0 0 auto; padding: 0; }
+/* the play area over the hand, both beside the heroes */
+.player-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  flex: 1 1 0;
+  min-width: 0;
+}
+.player-column .play-area { flex: 1 1 auto; }
 
 .game {
   display: flex;

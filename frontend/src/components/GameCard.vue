@@ -190,7 +190,7 @@ const toggleUnless = (attached: CardView) => {
   filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.6)) drop-shadow(0 0 1px rgb(0 0 0 / 0.8));
   text-shadow: 0 0 2px rgb(255 255 255 / 0.85);
 }
-.resources { background-image: url('/images/tokens/resource.png'); place-self: end start; }
+.resources { background-image: url('/images/tokens/resource.png'); place-self: end end; }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; font-size: 1.1rem; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; color: var(--damage-text); text-shadow: 0 1px 2px rgb(0 0 0 / 0.9); }
 

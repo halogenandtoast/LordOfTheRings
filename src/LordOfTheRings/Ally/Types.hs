@@ -9,6 +9,7 @@ import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import LordOfTheRings.Matcher.Window
 import LordOfTheRings.Name
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
@@ -45,6 +46,8 @@ data AllyAttrs = AllyAttrs
   , allyExhausted :: Bool
   , allyCommitted :: Bool
   , allyAttacking :: Bool
+  , allyHandWindow :: Maybe WindowMatcher
+  -- ^ a window in which the ally can be put into play from its owner's hand
   }
   deriving stock (Show, Eq, Generic)
 
@@ -72,6 +75,7 @@ ally f cardDef =
             , allyExhausted = False
             , allyCommitted = False
             , allyAttacking = False
+            , allyHandWindow = Nothing
             }
     }
 

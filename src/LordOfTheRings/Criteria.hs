@@ -1,5 +1,7 @@
 module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 
+import LordOfTheRings.Card.CardType
+import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
 import LordOfTheRings.Prelude
 
@@ -9,6 +11,7 @@ data Criterion
   | EnemyExists EnemyMatcher
   | HeroExists HeroMatcher
   | AllyExists AllyMatcher
+  | CardInHand PlayerId CardType
   | Criteria [Criterion]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

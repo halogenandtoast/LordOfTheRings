@@ -5,6 +5,7 @@ module LordOfTheRings.Matcher (module LordOfTheRings.Matcher, module X) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Types
 import LordOfTheRings.Attachment.Types
+import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.Query as X
@@ -15,10 +16,12 @@ import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Types
 import LordOfTheRings.Matcher.Types as X
+import LordOfTheRings.Modifier
 import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
+import LordOfTheRings.Trait
 
 instance Query PlayerMatcher where
   type QueryElement PlayerMatcher = PlayerId
@@ -45,6 +48,7 @@ matchHero matcher hero = case matcher of
   HeroWithId hid -> pure $ hero.id == hid
   HeroControlledBy pm -> elem hero.owner <$> select pm
   HeroWithTitle name -> pure $ hero.name == name
+  HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
@@ -66,6 +70,7 @@ matchAlly matcher ally = case matcher of
     Just pid -> elem pid <$> select pm
     Nothing -> pure False
   AllyWithTitle name -> pure $ ally.name == name
+  AllyWithTrait trait -> hasTrait trait (toTarget ally) (toCardDef ally)
   ReadyAlly -> pure $ not (allyExhausted $ toAttrs ally)
   ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
@@ -84,6 +89,7 @@ matchEnemy :: (HasGame m) => EnemyMatcher -> Enemy -> m Bool
 matchEnemy matcher enemy = case matcher of
   EnemyWithId eid -> pure $ enemy.id == eid
   EnemyInStagingArea -> pure $ enemy.placement == StagingArea
+  EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
   EnemyEngagedWith pm -> case enemy.placement of
     EngagedWith pid -> elem pid <$> select pm
     _ -> pure False
@@ -105,6 +111,23 @@ matchLocation matcher location = case matcher of
   AnyLocation -> pure True
   NotLocation m -> not <$> matchLocation m location
   LocationMatchAll ms -> allM (`matchLocation` location) ms
+
+-- | A unique card cannot enter play while a card with its title is in play.
+passesUnique :: (HasGame m) => Card -> m Bool
+passesUnique card
+  | card.unique =
+      andM
+        [ selectNone $ AllyWithTitle card.name
+        , selectNone $ HeroWithTitle card.name
+        , getsGame $ all ((/= card.name) . cdName . toCardDef) . toList . (.entities.attachments)
+        ]
+  | otherwise = pure True
+
+-- | A printed trait, or one a modifier grants.
+hasTrait :: (HasGame m) => Trait -> Target -> CardDef -> m Bool
+hasTrait trait target def
+  | trait `member` cdCardTraits def = pure True
+  | otherwise = elem (GainTrait trait) . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
 
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers

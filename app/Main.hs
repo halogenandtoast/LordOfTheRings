@@ -54,6 +54,7 @@ mkYesod
   /games/#LotrGameId GameR GET POST DELETE
   /games/#LotrGameId/undo UndoR POST
   /games/#LotrGameId/reset ResetR POST
+  /games/#LotrGameId/debug DebugR POST
   /games/#LotrGameId/export ExportR GET
   /import ImportR POST
   /cards CardsR GET
@@ -304,11 +305,25 @@ postGameR :: LotrGameId -> Handler ()
 postGameR gid = do
   row <- requireOwnedGame gid
   answer <- requireCheckJsonBody @_ @Answer
+  advance gid row \before -> do
+    when (answer.questionVersion /= before.questionVersion) $
+      sendResponseStatus status409 ("stale answer" :: Text)
+    pure $ answerQuestion answer.player answer.choice
+
+-- | Run any engine message against the game, for adjusting it by hand while testing.
+postDebugR :: LotrGameId -> Handler ()
+postDebugR gid = do
+  row <- requireOwnedGame gid
+  msg <- requireCheckJsonBody @_ @Message
+  advance gid row \_ -> pure $ runDebug msg
+
+-- | Play a stored game on from where it stands, keeping the move as an undoable step.
+advance :: LotrGameId -> LotrGame -> (Game -> Handler (GameT Game)) -> Handler ()
+advance gid row prepare = do
   env <- loadGame gid row
   (before, queue, gen) <- liftIO $ currentState env
-  when (answer.questionVersion /= before.questionVersion) $
-    sendResponseStatus status409 ("stale answer" :: Text)
-  void $ liftIO $ runGameT env $ answerQuestion answer.player answer.choice
+  play <- prepare before
+  void $ liftIO $ runGameT env play
   (after, queue', gen') <- liftIO $ currentState env
   now <- liftIO getCurrentTime
   let step = row.lotrGameStep + 1

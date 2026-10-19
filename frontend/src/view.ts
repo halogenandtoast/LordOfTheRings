@@ -34,6 +34,7 @@ const targetKinds: Record<string, keyof ServerGame['entities']> = {
   QuestTarget: 'quests',
   TreacheryTarget: 'treacheries',
 }
+const kindTargets = Object.fromEntries(Object.entries(targetKinds).map(([tag, kind]) => [kind, tag]))
 
 export const toView = (data: GameData, defs: Record<string, CardDef>): GameView => {
   const game = data.game
@@ -76,12 +77,14 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
       progress: null,
       questPoints: d.questPoints ?? null,
       attachedTo: null,
+      target: null,
       ...extra,
     }
   }
 
-  const fromEntity = (e: Entity): CardView =>
+  const fromEntity = (e: Entity, kind: keyof ServerGame['entities']): CardView =>
     card(e.cardCode, e.cardId, {
+      target: { tag: kindTargets[kind], contents: e.id },
       resources: e.tokens.Resource ?? null,
       damage: e.tokens.Damage ?? 0,
       progress: e.tokens.Progress ?? null,
@@ -92,7 +95,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
     })
 
   const placed = (kind: keyof ServerGame['entities'], test: (e: Entity) => boolean) =>
-    Object.values(entities[kind]).filter(test).map(fromEntity)
+    Object.values(entities[kind]).filter(test).map((e) => fromEntity(e, kind))
 
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))

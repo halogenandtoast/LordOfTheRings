@@ -3,6 +3,7 @@ module LordOfTheRings.Matcher.Types (module LordOfTheRings.Matcher.Types) where
 import LordOfTheRings.Id
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
+import LordOfTheRings.Trait
 
 data PlayerMatcher
   = PlayerWithId PlayerId
@@ -28,6 +29,7 @@ data HeroMatcher
   = HeroWithId HeroId
   | HeroControlledBy PlayerMatcher
   | HeroWithTitle Name
+  | HeroWithTrait Trait
   | ReadyHero
   | ExhaustedHero
   | CommittedHero
@@ -56,6 +58,7 @@ data AllyMatcher
   = AllyWithId AllyId
   | AllyControlledBy PlayerMatcher
   | AllyWithTitle Name
+  | AllyWithTrait Trait
   | ReadyAlly
   | ExhaustedAlly
   | CommittedAlly
@@ -91,6 +94,7 @@ data AttachMatcher
 data EnemyMatcher
   = EnemyWithId EnemyId
   | EnemyInStagingArea
+  | EnemyWithTrait Trait
   | EnemyEngagedWith PlayerMatcher
   | AnyEnemy
   | NotEnemy EnemyMatcher

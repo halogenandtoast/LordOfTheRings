@@ -89,8 +89,11 @@ onBeforeUnmount(close)
 </template>
 
 <style scoped>
-.discard { display: grid; opacity: 0.55; transition: opacity 0.15s ease; }
-.pile-stack:hover .discard { opacity: 1; }
+/* Dimmed, not see-through. The dimming goes on the card's image because each card is
+   its own view transition snapshot, drawn without effects from wrappers like this one. */
+.discard { display: grid; }
+.discard :deep(img) { filter: brightness(0.55); transition: filter 0.15s ease; }
+.pile-stack:hover .discard :deep(img) { filter: none; }
 
 .pile-button {
   display: inline-flex;
@@ -141,6 +144,6 @@ onBeforeUnmount(close)
   max-height: 50vh;
   overflow: auto;
 }
-.discard-panel-cards > * { filter: grayscale(0.85); transition: filter 0.15s ease; }
-.discard-panel-cards > *:hover { filter: none; }
+.discard-panel-cards :deep(img) { filter: grayscale(0.85); transition: filter 0.15s ease; }
+.discard-panel-cards :deep(.card:hover img) { filter: none; }
 </style>

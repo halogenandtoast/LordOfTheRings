@@ -3,6 +3,7 @@
 module LordOfTheRings.Game (module LordOfTheRings.Game, module X) where
 
 import Data.Map.Strict qualified as Map
+import Data.UUID qualified as UUID
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally
 import LordOfTheRings.Attachment
@@ -12,6 +13,7 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy
+import LordOfTheRings.Event
 import LordOfTheRings.Entities
 import LordOfTheRings.Frontend
 import LordOfTheRings.Effect
@@ -30,10 +32,12 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Location
 import LordOfTheRings.Matcher
+import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
+import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
-import LordOfTheRings.Placement (Placement (..))
+import LordOfTheRings.Placement (Placement (..), placementController)
 import LordOfTheRings.Player.Runner as X
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest
@@ -224,7 +228,7 @@ runGameMessage msg g = case msg of
     pure $ g & phaseL .~ PlanningPhase
   BeginPhase QuestPhase -> do
     order <- getPlayerOrder
-    pushAll $ map CommitCharacters order <> [Staging, QuestResolution]
+    pushAll $ map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
     pure $ g & phaseL .~ QuestPhase
   BeginPhase TravelPhase -> do
     hasActive <- selectAny IsActiveLocation
@@ -265,7 +269,7 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    pushAll $ DealShadowCards : map EnemyAttacks order <> map PlayerAttacks order
+    pushAll $ DealShadowCards : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order
     pure $ g & phaseL .~ CombatPhase
   DealShadowCards -> do
     order <- getPlayerOrder
@@ -376,7 +380,7 @@ runGameMessage msg g = case msg of
       $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
       <> [PlaceTokens GameSource (toTarget q) Progress overflow | q <- quests, overflow > 0]
     pure g
-  PayForCard pid card -> do
+  PayForCard pid card windows -> do
     costId <- getRandom
     push $ PayCost costId
     let activeCost =
@@ -385,11 +389,15 @@ runGameMessage msg g = case msg of
             , activeCostCost = cardCost card
             , activeCostCard = card
             , activeCostPlayer = pid
+            , activeCostWindows = windows
             }
     pure $ g & activeCostsL %~ insertEntity activeCost
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
+    returning <- flip filterM (toList g.entities.allies) \a ->
+      elem ReturnToHandAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
+    pushAll [ReturnToHand (toTarget a) | a <- returning]
     pushEnd $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
     pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
   PlayAlly pid card -> do
@@ -417,18 +425,30 @@ runGameMessage msg g = case msg of
       filterM
         (\ab -> (== Just pid) <$> abilityController ab)
         [ab | ab <- abilities, isResponseAbility ab, abilityKey ab `notElem` used]
+    fromHand <- handResponses pid windows (ResponseWindow windows order used 0)
     let next = ResponseWindow windows (drop 1 order <> [pid]) used (passes + 1)
     push
-      $ if null available
+      $ if null available && null fromHand
         then next
         else
           questionLabel "Use a response?" pid
             $ [AbilityLabel pid ab windows [ResponseWindow windows order (abilityKey ab : used) 0] | ab <- available]
+            <> fromHand
             <> [Label "Pass" [next]]
     pure g
   UseAbility pid ab windows -> do
     pushAll $ costMessages (PlayerSource pid) (abilityCost ab) <> [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
     pure g
+  PlayEvent pid card _ -> do
+    player <- getPlayer pid
+    send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
+    for_ (lookupEvent (toCardCode card) card.id pid) $ void . runMessage msg
+    pure g
+  ReturnToHand target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
+    leftPlay g target
+    pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+    send $ Log $ display a.name <> " returns to its owner's hand"
+    pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . handL %~ (<> [toCard a])
   CompleteQuest qid -> do
     push AdvanceQuest
     pure $ g & entitiesL . questsL %~ Map.delete qid
@@ -490,6 +510,9 @@ logMessage = \case
   RaiseThreat pid n -> do
     player <- getPlayer pid
     send $ Log $ player.name <> " threat +" <> tshow n
+  LowerThreat pid n -> do
+    player <- getPlayer pid
+    send $ Log $ player.name <> " threat -" <> tshow n
   EngageEnemy pid eid -> do
     player <- getPlayer pid
     enemy <- getEnemy eid
@@ -533,7 +556,7 @@ eliminationThreat = 50
 
 -- | Remove an entity from play and put its card in the right discard pile.
 discardTarget :: Target -> Game -> GameT Game
-discardTarget target g = case target of
+discardTarget target g = leftPlay g target >> case target of
   HeroTarget hid -> fromEntity heroesL hid
   AllyTarget aid -> fromEntity alliesL aid
   EnemyTarget eid -> fromEntity enemiesL eid
@@ -553,6 +576,37 @@ discardTarget target g = case target of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
     EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
     _ -> id
+
+-- | Open the window for a character leaving play, while it can still be looked at.
+leftPlay :: Game -> Target -> GameT ()
+leftPlay g target = case target of
+  HeroTarget hid | Just h <- Map.lookup hid g.entities.heroes -> window h.owner (toCardDef h)
+  AllyTarget aid | Just a <- Map.lookup aid g.entities.allies, Just pid <- placementController a.placement -> window pid (toCardDef a)
+  _ -> pure ()
+ where
+  window pid def = do
+    gained <- mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
+    push $ CheckWindows [mkAfter $ LeftPlay target pid (cdCardTraits def <> setFromList gained)]
+
+-- | Cards in a player's hand that can be played or put into play in response to the
+-- windows: response events, and allies like Brok Ironfist.
+handResponses :: PlayerId -> [Window] -> Message -> GameT [UI Message]
+handResponses pid windows continue = do
+  player <- getPlayer pid
+  let matches = maybe False (\w -> any (windowMatches w) windows)
+  fmap catMaybes $ for player.hand \case
+    card@(PlayerCard pc) -> case cdCardType (toCardDef pc) of
+      EventType
+        | Just e <- lookupEvent (toCardCode pc) pc.id pid
+        , matches (toAttrs e).eventWindow -> do
+            ok <- andM [passesCriteria (toAttrs e).eventCriteria, canAfford player card]
+            pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PlayCardInWindow pid pc.id windows, continue]
+      AllyType
+        | matches (allyHandWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid) -> do
+            ok <- passesUnique card
+            pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PutAllyIntoPlay pid pc.id, continue]
+      _ -> pure Nothing
+    EncounterCard _ -> pure Nothing
 
 -- | The next player clockwise from the given one.
 seatAfter :: [PlayerId] -> PlayerId -> PlayerId

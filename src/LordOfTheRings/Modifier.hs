@@ -2,6 +2,7 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
+import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
 
 data ModifierType
@@ -12,6 +13,8 @@ data ModifierType
   | ThreatModifier Int
   | EngagementCostModifier Int
   | GainTrait Trait
+  | GainResourceIcon Sphere
+  | ReturnToHandAtEndOfPhase
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
