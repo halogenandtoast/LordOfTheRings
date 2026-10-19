@@ -1,6 +1,7 @@
 module LordOfTheRings.CombatPhaseSpec (spec) where
 
-import LordOfTheRings.Enemy (Enemy)
+import LordOfTheRings.Enemy (Enemy, EnemyAttrs (..))
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
@@ -81,3 +82,22 @@ spec = describe "Combat phase" do
     run $ DeclareAttackers pid (toId s)
     Just (QuestionLabel _ _ targets _) <- getQuestion pid
     targets `shouldBe` [toTarget s]
+
+  it "lets the player choose which engaged enemy attacks next" . gameTest $ \pid -> do
+    _ <- engageSpider pid
+    _ <- setEncounterDeck [Enemies.forestSpider, Locations.oldForestRoad, Locations.oldForestRoad]
+    run RevealEncounterCard
+    second <- getsGame (fromJustNote "no second spider" . lastMay . map toId . toList . (.entities.enemies))
+    run $ EngageEnemy pid second
+    run $ EnemyAttacks pid
+    Just (QuestionLabel prompt _ targets _) <- getQuestion pid
+    prompt `shouldBe` "Choose the next enemy attack to resolve"
+    length targets `shouldBe` 2
+
+  it "turns each shadow card face up as its attack resolves, blank ones too" . gameTest $ \pid -> do
+    eid <- toId <$> engageSpider pid
+    shadow <- setEncounterDeck [Locations.oldForestRoad]
+    run DealShadowCards
+    run $ ResolveShadow eid pid Nothing
+    engaged <- getsGame (fromJustNote "gone" . lookup eid . mapToList . (.entities.enemies))
+    enemyShadowRevealed (toAttrs engaged) `shouldBe` map (.id) shadow

@@ -38,12 +38,14 @@ spec = describe "Damage" do
     run $ Run [DealDamage GameSource eowyn 3, DealDamage GameSource eowyn 1]
     getsGame (length . (.entities.heroes)) `shouldReturn` 2
 
-  it "deals no attack damage to a defender that left play before it" . gameTest $ \pid -> do
+  it "treats an attack as undefended when its defender left play before the damage" . gameTest $ \pid -> do
     eowyn <- toTarget <$> getHeroWithCode "01007"
     _ <- setEncounterDeck [Enemies.hummerhorns]
     run RevealEncounterCard
     eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+    run $ EngageEnemy pid eid
+    chooseOptionMatching "take the Hummerhorns damage" pid (const True)
     run $ Discard eowyn
     run $ AttackDamage eid eowyn
-    getsGame (length . (.entities.heroes)) `shouldReturn` 2
-    getQuestion pid `shouldReturn` Nothing
+    Just (QuestionLabel prompt _ _ _) <- getQuestion pid
+    prompt `shouldBe` "The attack is undefended: which hero takes the damage?"

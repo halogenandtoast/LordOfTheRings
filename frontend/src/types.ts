@@ -7,7 +7,7 @@ export interface CardView {
   type: string
   flipped: boolean
   /** Face down: a prisoner, or a player card fighting as an Orc Guard. */
-  facedown?: boolean
+  facedown?: 'player' | 'encounter'
   threat: number | null
   attack: number | null
   defense: number | null
@@ -91,7 +91,7 @@ export interface TallyView {
 }
 
 export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown'>) =>
-  card.facedown ? '/images/player.jpg' : `/images/cards/${card.code}${card.flipped ? '-b' : ''}.jpg`
+  card.facedown ? `/images/${card.facedown}.jpg` : `/images/cards/${card.code}${card.flipped ? '-b' : ''}.jpg`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

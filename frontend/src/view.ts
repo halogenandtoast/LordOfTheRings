@@ -99,9 +99,23 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       exhausted: e.exhausted ?? false,
       committed: e.committed ?? false,
       flipped: e.flipped ?? false,
-      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard',
+      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' ? 'player' : undefined,
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : null,
     })
+
+  // shadow cards sit under the enemy they were dealt to, face down until they resolve
+  const shadowsOf = (pid: string) =>
+    Object.values(entities.enemies)
+      .filter(isAt('EngagedWith', pid))
+      .flatMap((e) =>
+        (e.shadowCards ?? []).map((shadow) => {
+          const revealed = (e.shadowRevealed ?? []).includes(shadow.id)
+          return card(shadow.cardCode, shadow.id, {
+            attachedTo: e.cardId,
+            ...(revealed ? {} : { facedown: 'encounter' as const, name: 'Shadow card' }),
+          })
+        }),
+      )
 
   const placed = (kind: keyof ServerGame['entities'], test: (e: Entity) => boolean) =>
     // games saved before a kind existed do not have it
@@ -143,7 +157,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       ]),
       discard: p.discard.map((c) => card(c.cardCode, c.id)),
       inPlay: withAttachments(characters),
-      engaged: withAttachments(placed('enemies', isAt('EngagedWith', pid))),
+      engaged: [...withAttachments(placed('enemies', isAt('EngagedWith', pid))), ...shadowsOf(pid)],
     }
   })
 

@@ -29,6 +29,9 @@ export interface Entity {
   flipped?: boolean
   /** A hero taken prisoner, face down until rescued. */
   prisoner?: boolean
+  /** The shadow cards dealt to an enemy, and those turned face up so far. */
+  shadowCards?: Card[]
+  shadowRevealed?: string[]
 }
 
 export interface Card {

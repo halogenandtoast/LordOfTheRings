@@ -324,9 +324,20 @@ runGameMessage msg g = case msg of
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
+    push . ChooseEnemyAttack pid =<< engagedByCost pid
+    pure g
+  ChooseEnemyAttack pid candidates -> do
+    -- checked again before each attack: a card played between attacks may stop one
     shielded <- elem EngagedEnemiesCannotAttack <$> getModifiers (PlayerTarget pid)
-    enemies <- filterM (fmap (notElem CannotAttack) . getModifiers) =<< engagedByCost pid
-    unless shielded $ pushAll $ map (EnemyAttack pid) enemies
+    engaged <- select (EnemyEngagedWith $ PlayerWithId pid)
+    enemies <- filterM (fmap (notElem CannotAttack) . getModifiers) [e | e <- candidates, e `elem` engaged]
+    unless shielded $ case enemies of
+      [] -> pure ()
+      [eid] -> push $ EnemyAttack pid eid
+      _ ->
+        push
+          $ questionLabelWith "Choose the next enemy attack to resolve" Nothing (map toTarget enemies) pid
+            [targetLabel eid [EnemyAttack pid eid, ChooseEnemyAttack pid (filter (/= eid) enemies)] | eid <- enemies]
     pure g
   EnemyAttack pid eid -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
@@ -364,6 +375,7 @@ runGameMessage msg g = case msg of
               [ResolveShadow eid pid (Just first), DefendedByMany pid eid chosen, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
           ]
     pure g
+  DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
   DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
     attack <- getEnemyAttack eid
     defense <- sum <$> traverse getDefense defenders
@@ -429,8 +441,12 @@ runGameMessage msg g = case msg of
     destroyed <- not <$> selectAny (EnemyWithId eid)
     pushWhen destroyed $ CheckWindows [mkAfter $ EnemyDestroyedByAttack eid attackers]
     pure g
-  -- a defender that left play before the damage takes none, and no one else takes it
-  AttackDamage _ defender | not (inPlay g defender) -> pure g
+  -- a defender that left play before the damage leaves the attack undefended
+  AttackDamage eid defender | not (inPlay g defender) -> do
+    lead <- getLead
+    engaged <- placementController . (.placement) <$> getEnemy eid
+    push $ UndefendedDamage (fromMaybe lead engaged) eid
+    pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
     defense <- getDefense defender
@@ -440,12 +456,27 @@ runGameMessage msg g = case msg of
     pure g
   ResolveShadow eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
+      -- each shadow card turns face up, and one with an effect resolves it
       pushAll
         $ concat
-          [ [CheckWindows [mkWhen $ ShadowEffectTriggered (ecId card) eid], ResolveShadowCard (ecId card) eid pid mDefender]
+          [ RevealShadowCard eid (ecId card)
+              : if cdShadowEffect (toCardDef card)
+                then [CheckWindows [mkWhen $ ShadowEffectTriggered (ecId card) eid], ResolveShadowCard (ecId card) eid pid mDefender]
+                else []
           | card <- enemy.shadowCards
-          , cdShadowEffect (toCardDef card)
           ]
+    pure g
+  RevealShadowCard eid cid -> do
+    for_ (Map.lookup eid g.entities.enemies) \enemy ->
+      for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
+        let name = display (cdName $ toCardDef card)
+            effect = if cdShadowEffect (toCardDef card) then "" else " (no shadow effect)"
+        send $ FlipCard cid
+        send $ Log $ "Shadow card for " <> display enemy.name <> ": " <> name <> effect
+        send $ Announce $ "Shadow: " <> name
+    pure g
+  AttachShadowCard eid _ -> do
+    for_ (Map.lookup eid g.entities.enemies) \enemy -> send $ Log $ display enemy.name <> " is dealt a shadow card"
     pure g
   ResolveShadowCard cid eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->

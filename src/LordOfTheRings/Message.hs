@@ -173,6 +173,10 @@ data Message
   | UndefendedAttack PlayerId EnemyId
   | UndefendedDamage PlayerId EnemyId
   | ResolveShadow EnemyId PlayerId (Maybe Target)
+  | -- | the shadow card dealt to the enemy turns face up
+    RevealShadowCard EnemyId CardId
+  | -- | the player chooses which of these engaged enemies attacks next
+    ChooseEnemyAttack PlayerId [EnemyId]
   | ResolveShadowEffect CardId EnemyId PlayerId (Maybe Target)
   | -- | resolve one shadow card dealt to the enemy, unless it was cancelled
     ResolveShadowCard CardId EnemyId PlayerId (Maybe Target)
