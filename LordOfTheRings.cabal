@@ -110,9 +110,12 @@ library
       LordOfTheRings.Event.Cards.BeornsHospitality
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.CommonCause
+      LordOfTheRings.Event.Cards.DwarvenTomb
       LordOfTheRings.Event.Cards.EverVigilant
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.ForGondor
+      LordOfTheRings.Event.Cards.FortuneOrFate
+      LordOfTheRings.Event.Cards.GandalfsSearch
       LordOfTheRings.Event.Cards.GrimResolve
       LordOfTheRings.Event.Cards.HastyStroke
       LordOfTheRings.Event.Cards.LoreOfImladris
@@ -122,12 +125,14 @@ library
       LordOfTheRings.Event.Cards.RainOfArrows
       LordOfTheRings.Event.Cards.SecretPaths
       LordOfTheRings.Event.Cards.SneakAttack
+      LordOfTheRings.Event.Cards.StandAndFight
       LordOfTheRings.Event.Cards.StandTogether
       LordOfTheRings.Event.Cards.StrengthOfWill
       LordOfTheRings.Event.Cards.SwiftStrike
       LordOfTheRings.Event.Cards.TheGaladhrimsGreeting
       LordOfTheRings.Event.Cards.ThicketOfSpears
       LordOfTheRings.Event.Cards.ValiantSacrifice
+      LordOfTheRings.Event.Cards.WillOfTheWest
       LordOfTheRings.Event.Import.Lifted
       LordOfTheRings.Event.Types
       LordOfTheRings.Frontend

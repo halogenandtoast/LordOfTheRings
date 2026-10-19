@@ -77,6 +77,13 @@ instance RunMessage Player where
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     PlayEvent pid card _ | pid == player.id -> pure $ player & discardL <>~ [PlayerCard card]
+    RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
+    ShuffleDiscardIntoDeck pid | pid == player.id -> do
+      deck <- shuffleM (player.deck <> player.discard)
+      pure $ player & deckL .~ deck & discardL .~ []
+    TakeFromDeck pid cid | pid == player.id -> do
+      let (taken, kept) = partition ((== cid) . (.id)) player.deck
+      pure $ player & deckL .~ kept & handL <>~ taken
     ReturnFromDiscardToHand pid cid | pid == player.id -> do
       let (returned, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & handL <>~ returned

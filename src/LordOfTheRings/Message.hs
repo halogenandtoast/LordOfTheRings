@@ -78,6 +78,13 @@ data Message
   | -- | an ally leaves play and is shuffled into its owner's deck
     ShuffleIntoOwnersDeck Target
   | TakeControl AllyId PlayerId
+  | RemoveFromDiscard PlayerId CardId
+  | -- | an ally card put into play under the player's control, keeping its owner
+    PutAllyIntoPlayUnder PlayerId PlayerCard
+  | PutHeroIntoPlay PlayerId PlayerCard
+  | ShuffleDiscardIntoDeck PlayerId
+  | -- | a card from the player's deck goes to their hand
+    TakeFromDeck PlayerId CardId
   | LowerThreat PlayerId Int
   | ActionWindow PlayerId
   | PayCost CostId

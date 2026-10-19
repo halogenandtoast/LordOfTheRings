@@ -491,6 +491,16 @@ runGameMessage msg g = case msg of
     send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  PutAllyIntoPlayUnder pid card -> do
+    thisAlly <- newAlly (fromMaybe pid card.owner) card
+    send $ Log $ display (cdName $ toCardDef card) <> " is put into play"
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
+    pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  PutHeroIntoPlay pid card -> do
+    thisHero <- newHero pid card
+    send $ Log $ display (cdName $ toCardDef card) <> " is put into play"
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
+    pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   CheckWindows windows -> do
     abilities <- getWindowAbilities windows
     let forcedAbilities = filter isForcedAbility abilities

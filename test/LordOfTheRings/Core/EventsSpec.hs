@@ -1,5 +1,6 @@
 module LordOfTheRings.Core.EventsSpec (spec) where
 
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
@@ -99,3 +100,51 @@ spec = do
       eowyn <- toTarget <$> getHeroWithCode "01007"
       chooseTarget pid eowyn
       (.progress) <$> getLocation lid `shouldReturn` 2
+
+  describe "Stand and Fight" do
+    it "puts an ally of cost X from a discard pile into play" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      tracker <- PlayerCard <$> genPlayerCard Allies.northernTracker (Just pid)
+      g <- getGame
+      putGame $ g & playersL . ix pid . discardL .~ [tracker]
+      _ <- playWith pid "01007" 4 Events.standAndFight
+      chooseTarget pid (CardIdTarget tracker.id)
+      getsGame (map (allyCardId . toAttrs) . toList . (.entities.allies)) `shouldReturn` [tracker.id]
+      (.resources) <$> getHeroWithCode "01007" `shouldReturn` 0
+
+  describe "Fortune or Fate" do
+    it "puts a hero from a discard pile back into play" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      dunhere <- getHeroWithCode "01009"
+      run $ Discard (toTarget dunhere)
+      _ <- playWith pid "01007" 5 Events.fortuneOrFate
+      chooseTarget pid (CardIdTarget $ heroCardId $ toAttrs dunhere)
+      getsGame (length . (.entities.heroes)) `shouldReturn` 3
+
+  describe "Dwarven Tomb" do
+    it "returns a Spirit card from the discard pile to hand" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      testOfWill <- PlayerCard <$> genPlayerCard Events.aTestOfWill (Just pid)
+      g <- getGame
+      putGame $ g & playersL . ix pid . discardL .~ [testOfWill]
+      _ <- playWith pid "01007" 1 Events.dwarvenTomb
+      chooseTarget pid (CardIdTarget testOfWill.id)
+      map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem testOfWill.id)
+
+  describe "Will of the West" do
+    it "shuffles a discard pile into the deck and leaves the game" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      testOfWill <- PlayerCard <$> genPlayerCard Events.aTestOfWill (Just pid)
+      g <- getGame
+      putGame $ g & playersL . ix pid . discardL .~ [testOfWill]
+      deck <- length . (.deck) <$> getPlayer pid
+      _ <- playWith pid "01007" 1 Events.willOfTheWest
+      (.discard) <$> getPlayer pid `shouldReturn` []
+      length . (.deck) <$> getPlayer pid `shouldReturn` deck + 1
+
+  describe "Gandalf's Search" do
+    it "looks at the top X cards of a deck and adds one to hand" . gameTestWith (coreDeck "lore") $ \pid -> do
+      deck <- (.deck) <$> getPlayer pid
+      _ <- playWith pid "01012" 2 Events.gandalfsSearch
+      chooseLabel "X = 2" pid
+      let [top, second] = take 2 deck
+      chooseTarget pid (CardIdTarget second.id)
+      map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem second.id)
+      take 1 . map (.id) . (.deck) <$> getPlayer pid `shouldReturn` [top.id]
+      (.resources) <$> getHeroWithCode "01012" `shouldReturn` 0
