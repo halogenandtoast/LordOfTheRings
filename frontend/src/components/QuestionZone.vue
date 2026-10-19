@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useServerText } from '../i18n'
 import type { ChoiceView, QuestionView } from '../types'
+
+const tr = useServerText()
 
 const { question } = defineProps<{ question: QuestionView | null }>()
 const emit = defineEmits<{ choose: [index: number] }>()
@@ -14,7 +17,7 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
 <template>
   <div class="question" :class="{ idle: !question }">
     <template v-if="question">
-      <p class="prompt">{{ question.prompt }}</p>
+      <p class="prompt">{{ tr(question.prompt) }}</p>
       <div class="options">
         <button
           v-for="choice in labelChoices"
@@ -22,7 +25,7 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
           type="button"
           @click="emit('choose', choice.index)"
         >
-          {{ choice.label }}
+          {{ tr(choice.label) }}
         </button>
       </div>
       <p v-if="targeted" class="hint"><span class="swatch interactive"></span>{{ $t('game.prompt.orClickHighlighted') }}</p>

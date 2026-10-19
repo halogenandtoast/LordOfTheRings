@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { nextTick, useTemplateRef, watch } from 'vue'
+import { useServerText } from '../i18n'
 
 const { log } = defineProps<{ log: readonly string[] }>()
+const tr = useServerText()
 const listRef = useTemplateRef<HTMLElement>('listRef')
 
 watch(
@@ -15,7 +17,7 @@ watch(
 
 <template>
   <ol ref="listRef" class="log">
-    <li v-for="(line, index) in log" :key="`${index}-${line}`">{{ line }}</li>
+    <li v-for="(line, index) in log" :key="`${index}-${line}`">{{ tr(line) }}</li>
   </ol>
 </template>
 

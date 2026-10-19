@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
+import { useServerText } from '../i18n'
 import { cardImage } from '../types'
+
+const tr = useServerText()
 
 const { card, sideways, placement, visible } = useCardOverlay()
 
@@ -15,7 +18,7 @@ const source = computed(() => (card.value ? cardImage(card.value) : ''))
       class="card-overlay"
       :class="{ sideways }"
       :src="source"
-      :alt="card.name"
+      :alt="tr(card.name)"
       :style="{
         top: `${placement.top}px`,
         left: `${placement.left}px`,

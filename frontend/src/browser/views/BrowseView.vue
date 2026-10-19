@@ -19,6 +19,10 @@ import { useCardStore } from '@browser/stores/cards'
 import { useUiStore } from '@browser/stores/ui'
 import { SORT_FIELDS, type SortField } from '@browser/lib/search'
 import type { Card, CardType, Section, Sphere } from '@browser/types/card'
+import { useServerText } from '../../i18n'
+
+const tr = useServerText()
+
 
 const store = useCardStore()
 const ui = useUiStore()
@@ -232,7 +236,7 @@ const resultLabel = computed(() => {
 
         <div v-else-if="store.state === 'error'" class="notice notice--error">
           <p>{{ $t('browser.browse.loadError') }}</p>
-          <p class="notice__detail">{{ store.error }}</p>
+          <p class="notice__detail">{{ tr(store.error) }}</p>
           <i18n-t keypath="browser.browse.apiHint" scope="global" tag="p" class="notice__detail">
             <template #command><code>./dev.up</code></template>
           </i18n-t>

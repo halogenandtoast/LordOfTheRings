@@ -11,6 +11,10 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDeckStore, messageOf } from '@browser/stores/decks'
 import type { Deck } from '@browser/types/deck'
+import { useServerText } from '../../i18n'
+
+const tr = useServerText()
+
 
 const emit = defineEmits<{ imported: [deck: Deck] }>()
 
@@ -111,7 +115,7 @@ function onDrop(event: DragEvent): void {
       <span class="from-file__hint muted">{{ $t('browser.deckImport.fileHint') }}</span>
     </label>
 
-    <p v-if="error" class="error" role="alert">{{ error }}</p>
+    <p v-if="error" class="error" role="alert">{{ tr(error) }}</p>
   </section>
 </template>
 

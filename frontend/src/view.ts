@@ -1,3 +1,4 @@
+import { ikey } from './i18n'
 import type { CardDef, Entity, GameData, Question, ServerGame, Target, UI } from './server'
 import type { CardView, ChoiceView, GameView, PlayerView, QuestionView } from './types'
 
@@ -112,7 +113,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
           const revealed = (e.shadowRevealed ?? []).includes(shadow.id)
           return card(shadow.cardCode, shadow.id, {
             attachedTo: e.cardId,
-            ...(revealed ? {} : { facedown: 'encounter' as const, name: 'Shadow card' }),
+            ...(revealed ? {} : { facedown: 'encounter' as const, name: ikey('log.shadowCard') }),
           })
         }),
       )
@@ -190,11 +191,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         case 'TargetLabel':
           return { index, label: targetName(ui.target), targetId: targetCardId(ui.target) }
         case 'AbilityLabel': {
-          const kind = ui.ability?.abilityType.tag.replace(/Ability$/, '').replace(/^SilentForced$/, 'Forced') ?? 'Use'
+          const kind = ui.ability?.abilityType.tag.replace(/Ability$/, '').replace(/^SilentForced$/, 'Forced') ?? 'Action'
           const source = ui.ability?.abilitySource
           const sourceCard = source && { tag: source.tag.replace(/Source$/, 'Target'), contents: source.contents }
           // the ability's own card is what you click to use it
-          return { index, label: `${kind}: ${targetName(sourceCard)}`, targetId: targetCardId(sourceCard) }
+          return { index, label: ikey(`label.ability.${kind}`, { name: targetName(sourceCard) }), targetId: targetCardId(sourceCard) }
         }
       }
     })

@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useServerText } from '../i18n'
 import type { QuestionView } from '../types'
+
+const tr = useServerText()
 
 defineProps<{ question: QuestionView | null; outcome: 'WON' | 'LOST' | null; round: number; phase: string | null }>()
 </script>
@@ -10,7 +13,7 @@ defineProps<{ question: QuestionView | null; outcome: 'WON' | 'LOST' | null; rou
       {{ $t(outcome === 'WON' ? 'game.prompt.playersWin' : 'game.prompt.playersLose') }}
     </p>
     <p class="round">{{ $t('game.round', { round }) }}<template v-if="phase"> &middot; {{ $t(`game.phases.${phase.toLowerCase()}`) }}</template></p>
-    <p v-if="question" class="ask">{{ question.prompt }}</p>
+    <p v-if="question" class="ask">{{ tr(question.prompt) }}</p>
   </aside>
 </template>
 

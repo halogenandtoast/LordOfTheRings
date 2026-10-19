@@ -3,6 +3,7 @@ import { computed, ref, useTemplateRef } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
 import { useDebug } from '../composables/useDebug'
 import { useHighlights } from '../composables/useHighlights'
+import { useServerText } from '../i18n'
 import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
 
 const { card, choices = [], attachments = [], rotated = false, flipping = false, draggable = false, banner = false } = defineProps<{
@@ -17,6 +18,7 @@ const { card, choices = [], attachments = [], rotated = false, flipping = false,
   banner?: boolean
 }>()
 
+const tr = useServerText()
 const emit = defineEmits<{ choose: [index: number] }>()
 
 const overlay = useCardOverlay()
@@ -89,7 +91,7 @@ const toggleUnless = (attached: CardView) => {
       class="card"
       :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, flipping }"
       :style="{ viewTransitionName: `card-${card.id}` }"
-      :title="card.name"
+      :title="tr(card.name)"
       :data-card-id="card.id"
       :draggable="draggable && active && overlay.canHover.value"
       @dragstart="dragStart"
@@ -101,9 +103,9 @@ const toggleUnless = (attached: CardView) => {
       @contextmenu="lastPointer !== 'mouse' && $event.preventDefault()"
       @click="choose"
     >
-      <img :src="source" :alt="card.name" />
+      <img :src="source" :alt="tr(card.name)" />
       <!-- inside the card so it travels in the card's view transition snapshot -->
-      <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ card.name }}</span>
+      <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
       <span v-if="card.resources" class="token resources">{{ card.resources }}</span>
       <span v-if="card.progress" class="token progress">{{ card.progress }}</span>
       <span v-if="card.damage > 0" class="token damage">{{ card.damage }}</span>

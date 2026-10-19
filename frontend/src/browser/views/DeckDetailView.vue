@@ -15,6 +15,10 @@ import { fetchDeck } from '@browser/lib/api'
 import { messageOf } from '@browser/stores/decks'
 import { computedThreat, drawDeckSize, unresolvedSlots, type Deck, type Slot } from '@browser/types/deck'
 import type { CardType } from '@browser/types/card'
+import { useServerText } from '../../i18n'
+
+const tr = useServerText()
+
 
 const route = useRoute()
 const { t, te } = useI18n()
@@ -81,7 +85,7 @@ const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))
     <RouterLink class="button button--ghost back" to="/decks">&#8592; {{ $t('browser.deck.allDecks') }}</RouterLink>
 
     <p v-if="loading" class="notice">{{ $t('browser.common.loading') }}</p>
-    <p v-else-if="error" class="notice notice--error">{{ error }}</p>
+    <p v-else-if="error" class="notice notice--error">{{ tr(error) }}</p>
 
     <template v-else-if="deck">
       <header class="head">

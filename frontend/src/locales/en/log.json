@@ -1,0 +1,36 @@
+{
+  "destroyed": "{name} is destroyed",
+  "shadowRevealed": "Shadow card for {enemy}: {card}",
+  "shadowRevealedNoEffect": "Shadow card for {enemy}: {card} (no shadow effect)",
+  "shadowAnnounce": "Shadow: {card}",
+  "dealtShadow": "{enemy} is dealt a shadow card",
+  "shuffledIntoEncounterDeck": "{name} is shuffled into the encounter deck",
+  "putIntoPlay": "{name} is put into play",
+  "returnsToHand": "{name} returns to its owner's hand",
+  "shuffledIntoOwnersDeck": "{name} is shuffled into its owner's deck",
+  "orcGuardEngages": "An Orc Guard engages {player}",
+  "placedInStaging": "{name} is placed in the staging area",
+  "plays": "{player} plays {card}",
+  "revealed": "Revealed {name}",
+  "round": "Round {round}",
+  "threatRaised": "{player} threat +{count}",
+  "threatLowered": "{player} threat -{count}",
+  "engages": "{enemy} engages {player}",
+  "progress": "{count} progress on {name}",
+  "takesDamage": "{name} takes {count} damage",
+  "leavesPlay": "{name} leaves play",
+  "gameOver": {
+    "won": "The players win",
+    "lost": "The players lose"
+  },
+  "phase": {
+    "resource": "Resource phase",
+    "planning": "Planning phase",
+    "quest": "Quest phase",
+    "travel": "Travel phase",
+    "encounter": "Encounter phase",
+    "combat": "Combat phase",
+    "refresh": "Refresh phase"
+  },
+  "shadowCard": "Shadow card"
+}

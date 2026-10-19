@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { useServerText } from '../i18n'
+
+const tr = useServerText()
 defineProps<{ title: string; error: string | null; submitting: boolean; submitLabel: string }>()
 defineEmits<{ submit: [] }>()
 </script>
@@ -8,7 +11,7 @@ defineEmits<{ submit: [] }>()
     <header>
       <h2>{{ title }}</h2>
     </header>
-    <div v-if="error" class="error" role="alert">{{ error }}</div>
+    <div v-if="error" class="error" role="alert">{{ tr(error) }}</div>
     <section>
       <slot></slot>
       <button type="submit" :disabled="submitting">{{ submitting ? $t('auth.oneMoment') : submitLabel }}</button>

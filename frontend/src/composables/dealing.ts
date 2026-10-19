@@ -1,3 +1,4 @@
+import { isKey } from '../i18n'
 import { cardImage, type CardView, type GameView } from '../types'
 
 const DEAL_MS = 520
@@ -166,6 +167,6 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
  * decks. Shown first when a game opens on the mulligan, so the opening hand deals out.
  */
 export const beforeTheDeal = (view: GameView): GameView | null =>
-  view.question?.prompt === 'Keep this starting hand?'
+  isKey(view.question?.prompt, 'label.keepStartingHand')
     ? { ...view, players: view.players.map((p) => ({ ...p, hand: [], handSize: 0, deckSize: p.deckSize + p.hand.length })) }
     : null

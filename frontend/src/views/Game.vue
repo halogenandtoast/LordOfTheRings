@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { cardDrag, type CardView } from '../types'
+import { isKey, useServerText } from '../i18n'
 import CardBand from '../components/CardBand.vue'
 import CardOverlay from '../components/CardOverlay.vue'
 import Log from '../components/Log.vue'
@@ -20,6 +21,7 @@ import { provideDebug } from '../composables/useDebug'
 import { provideHighlights } from '../composables/useHighlights'
 
 const route = useRoute()
+const tr = useServerText()
 const {
   error, game, log, announcement, flipping,
   started, question, scenario, players, outcome, answer, reset, undo, canUndo, debug,
@@ -117,9 +119,9 @@ const onDrop = (event: DragEvent) => {
 watch(question, (asked) => {
   const preset = presetHost.value
   if (!preset || !asked) return
-  if (asked.prompt !== 'Attach to' || asked.sourceId !== preset.cardId) {
+  if (!isKey(asked.prompt, 'label.attachTo') || asked.sourceId !== preset.cardId) {
     // still paying for it; anything else means the drop has been used up
-    if (!asked.prompt.startsWith('Pay ')) presetHost.value = null
+    if (!isKey(asked.prompt, 'label.payMore') && !isKey(asked.prompt, 'label.payFromDifferentHero')) presetHost.value = null
     return
   }
   presetHost.value = null
@@ -219,7 +221,7 @@ watch(question, (asked) => {
     <QuestionZone v-if="started" class="docked-question" :question="question" @choose="choose" />
 
     <aside v-if="showSidebar" class="sidebar">
-      <p v-if="error" class="error">{{ error }}</p>
+      <p v-if="error" class="error">{{ tr(error) }}</p>
       <Prompt
         v-if="started"
         :question="question"
@@ -227,7 +229,7 @@ watch(question, (asked) => {
         :round="game?.round ?? 0"
         :phase="game?.phase ?? null"
       />
-      <p v-if="announcement" class="announcement">{{ announcement }}</p>
+      <p v-if="announcement" class="announcement">{{ tr(announcement) }}</p>
       <Log :log="log" />
     </aside>
   </div>

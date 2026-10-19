@@ -73,5 +73,10 @@
       "spirit": "Spirit (Éowyn, Eleanor, Dúnhere)",
       "lore": "Lore (Denethor, Glorfindel, Beravor)"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageHint": "The language of the interface and the game's messages. Card names and text stay in English for now."
   }
 }

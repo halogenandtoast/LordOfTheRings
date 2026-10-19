@@ -1,0 +1,17 @@
+{
+  "noDeckSource": "Give a RingsDB link or a deck JSON file.",
+  "notRingsdbLink": "Not a RingsDB deck link: {url}",
+  "fetchFailed": "Could not fetch that deck from RingsDB: {reason}",
+  "malformedDeck": "That is not a deck JSON file: {reason}",
+  "noCards": "That deck list has no cards in it.",
+  "unknownCards": "This deck has cards the game does not know yet: {cards}",
+  "noSuchDeck": "No such deck.",
+  "signInFirst": "Sign in first.",
+  "registrationIncomplete": "Choose a username and give an email address.",
+  "passwordTooShort": "Passwords must be at least 8 characters.",
+  "alreadyRegistered": "That username or email is already registered.",
+  "badLogin": "That username or password is not right.",
+  "noSuchScenario": "No such scenario: {scenario}",
+  "noStarterDeck": "No {sphere} starter deck.",
+  "unsupportedExport": "This export comes from an unsupported version."
+}

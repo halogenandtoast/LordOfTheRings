@@ -11,6 +11,10 @@ import { useRouter } from 'vue-router'
 import DeckImport from '@browser/components/DeckImport.vue'
 import { useDeckStore, messageOf } from '@browser/stores/decks'
 import type { Deck, DeckSummary } from '@browser/types/deck'
+import { useServerText } from '../../i18n'
+
+const tr = useServerText()
+
 
 const router = useRouter()
 const decks = useDeckStore()
@@ -52,7 +56,7 @@ async function remove(deck: DeckSummary): Promise<void> {
 
       <div class="layout__list">
         <p v-if="decks.state === 'loading'" class="notice">{{ $t('browser.common.loading') }}</p>
-        <p v-else-if="decks.state === 'error'" class="notice notice--error">{{ decks.error }}</p>
+        <p v-else-if="decks.state === 'error'" class="notice notice--error">{{ tr(decks.error) }}</p>
 
         <i18n-t v-else-if="decks.isEmpty" keypath="browser.decks.empty" scope="global" tag="p" class="notice">
           <template #path><code>backend/data/decks</code></template>
@@ -90,7 +94,7 @@ async function remove(deck: DeckSummary): Promise<void> {
           </li>
         </ul>
 
-        <p v-if="removeError" class="notice notice--error" role="alert">{{ removeError }}</p>
+        <p v-if="removeError" class="notice notice--error" role="alert">{{ tr(removeError) }}</p>
       </div>
     </div>
   </main>

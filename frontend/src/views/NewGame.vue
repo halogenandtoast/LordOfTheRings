@@ -7,6 +7,10 @@ import { fetchDecks } from '../browser/lib/api'
 import type { DeckSummary } from '../browser/types/deck'
 import { currentUser } from '../auth'
 import { campaigns, type Campaign, type ScenarioOption } from '../campaigns'
+import { useServerText } from '../i18n'
+
+const tr = useServerText()
+
 
 const { t } = useI18n()
 const router = useRouter()
@@ -148,7 +152,7 @@ const create = async () => {
         </label>
       </fieldset>
 
-      <p v-if="error" class="error">{{ error }}</p>
+      <p v-if="error" class="error">{{ tr(error) }}</p>
 
       <div class="wizard-actions">
         <button type="button" class="secondary-action" @click="back">{{ $t('common.back') }}</button>

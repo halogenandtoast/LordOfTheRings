@@ -1,0 +1,155 @@
+{
+  "choosePlayer": "Choose a player",
+  "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
+  "travelToLocation": "Travel to a location?",
+  "doNotTravel": "Do not travel",
+  "mustTravel": "You must travel to a location",
+  "optionalEngagement": "Engage an enemy from the staging area?",
+  "doNotEngage": "Do not engage",
+  "chooseNextAttack": "Choose the next enemy attack to resolve",
+  "takeAttackUndefended": "Take the attack undefended",
+  "doneDeclaringDefenders": "Done declaring defenders",
+  "undefendedDamage": "The attack is undefended: which hero takes the damage?",
+  "attackStagingAlone": "Attack an enemy in the staging area alone?",
+  "doNotAttack": "Do not attack",
+  "declareAttackers": "Declare attackers",
+  "doneAttacking": "Done attacking",
+  "chooseAndExhaustCharacter": "Choose and exhaust a character",
+  "chooseAndExhaustHero": "Choose and exhaust a hero",
+  "chooseCardToDiscard": "Choose a card to discard",
+  "commitCharacters": "Commit characters to the quest",
+  "doneCommitting": "Done committing",
+  "useResponse": "Use a response?",
+  "pass": "Pass",
+  "attachTo": "Attach to",
+  "planningActions": "Play cards or use actions",
+  "donePlanning": "Done Planning",
+  "takeAction": "Take an action?",
+  "keepStartingHand": "Keep this starting hand?",
+  "keepHand": "Keep this hand",
+  "mulligan": "Mulligan: shuffle all six back and draw again",
+  "takeCardIntoHand": "Take a card into your hand",
+  "done": "Done",
+  "continue": "Continue",
+  "topOfEncounterDeck": "The top card of the encounter deck",
+  "leaveOnTop": "Leave it on top",
+  "moveToBottom": "Move it to the bottom",
+  "revealCard": "Reveal a card",
+  "takeNothing": "Take nothing",
+  "mountainsOfMirkwood": {
+    "search": "Add 1 of the top 5 cards of your deck to your hand"
+  },
+  "sonOfArnor": {
+    "chooseEnemy": "Choose an enemy to engage"
+  },
+  "gandalf": {
+    "chooseEnemy": "Deal 4 damage to an enemy",
+    "chooseOne": "Gandalf: choose 1",
+    "draw": "Draw 3 cards",
+    "damage": "Deal 4 damage to 1 enemy in play",
+    "threat": "Reduce your threat by 5"
+  },
+  "minerOfTheIronHills": {
+    "discardCondition": "Discard a Condition attachment"
+  },
+  "daughterOfTheNimrodel": {
+    "heal": "Heal up to 2 damage on a hero"
+  },
+  "wanderingTook": {
+    "giveControl": "Give control of Wandering Took to"
+  },
+  "oldForestRoad": {
+    "ready": "Ready a character you control"
+  },
+  "protectorOfLorien": {
+    "give": "Give the attached hero",
+    "defense": "+1 defense",
+    "willpower": "+1 willpower"
+  },
+  "dunedainMark": {
+    "move": "Move Dúnedain Mark to another hero"
+  },
+  "caughtInAWeb": {
+    "attach": "Attach Caught in a Web to one of your heroes"
+  },
+  "pursuedByShadow": {
+    "returnAlly": "Return an exhausted ally to its owner's hand"
+  },
+  "claimObjective": "Attach the objective to a hero you control",
+  "hummerhorns": {
+    "damage": "Hummerhorns: deal 5 damage to a hero you control"
+  },
+  "dolGuldurOrcs": {
+    "damage": "Deal 2 damage to a committed character"
+  },
+  "goblinSniper": {
+    "damage": "Deal 1 damage to a character you control"
+  },
+  "blackForestBats": {
+    "remove": "Remove a character from the quest"
+  },
+  "theodred": {
+    "chooseHero": "Choose a committed hero to add 1 resource to"
+  },
+  "chooseAllyToPutIntoPlay": "Choose an ally to put into play",
+  "chooseEnemyInStaging": "Choose an enemy in the staging area",
+  "glorfindel": {
+    "heal": "Heal 1 damage on a character"
+  },
+  "commonCause": {
+    "ready": "Choose a different hero to ready",
+    "exhaust": "Choose a hero you control to exhaust"
+  },
+  "loreOfImladris": {
+    "heal": "Heal all damage from a character"
+  },
+  "chooseLocationInStaging": "Choose a location in the staging area",
+  "chooseCharacter": "Choose a character",
+  "theGaladhrimsGreeting": {
+    "title": "The Galadhrim's Greeting",
+    "one": "Reduce one player's threat by 6",
+    "each": "Reduce each player's threat by 2"
+  },
+  "dwarvenTomb": {
+    "return": "Return a Spirit card to your hand"
+  },
+  "chooseX": "Choose X",
+  "gandalfsSearch": {
+    "take": "Add 1 of these cards to its owner's hand"
+  },
+  "rainOfArrows": {
+    "exhaust": "Exhaust a ranged character"
+  },
+  "aLightInTheDark": {
+    "return": "Return an engaged enemy to the staging area"
+  },
+  "quickStrike": {
+    "exhaust": "Exhaust a character to attack with",
+    "enemy": "Attack which enemy?"
+  },
+  "strengthOfWill": {
+    "exhaust": "Exhaust a Spirit character"
+  },
+  "everVigilant": {
+    "ready": "Choose an ally to ready"
+  },
+  "feint": {
+    "choose": "Choose an engaged enemy that cannot attack this phase"
+  },
+  "fortuneOrFate": {
+    "choose": "Choose a hero to put into play"
+  },
+  "searchFoundNothing": "Nothing found: the search turned up no match",
+  "searchChoose": "Choose a card to add to the staging area",
+  "declareDefender": "{enemy} attacks: declare a defender",
+  "declareDefenders": "{enemy} attacks: declare any number of defenders",
+  "payMore": "Pay {count} more",
+  "payFromDifferentHero": "Pay 1 from a different hero ({count} more)",
+  "performSetup": "Perform setup: flip {quest}",
+  "xEquals": "X = {x}",
+  "ability": {
+    "Action": "Action: {name}",
+    "Response": "Response: {name}",
+    "Forced": "Forced: {name}"
+  }
+}

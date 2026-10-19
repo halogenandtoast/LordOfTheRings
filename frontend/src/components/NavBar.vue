@@ -23,10 +23,12 @@ const leave = async () => {
       <GameMenu v-if="currentUser" class="user-menu" align="right">
         {{ currentUser.username }}
         <template #items>
+          <RouterLink to="/settings">{{ $t('settings.title') }}</RouterLink>
           <button type="button" @click="leave">{{ $t('auth.signOut') }}</button>
         </template>
       </GameMenu>
       <template v-else>
+        <RouterLink to="/settings">{{ $t('settings.title') }}</RouterLink>
         <RouterLink to="/sign-in">{{ $t('auth.signIn') }}</RouterLink>
         <RouterLink to="/sign-up">{{ $t('auth.signUp') }}</RouterLink>
       </template>
@@ -111,7 +113,8 @@ const leave = async () => {
 }
 .user-links a:hover { color: var(--accent); }
 
-.user-menu :deep(.menu-items button) {
+.user-menu :deep(.menu-items button),
+.user-menu :deep(.menu-items a) {
   background: none;
   border: 0;
   color: var(--text);
@@ -120,5 +123,6 @@ const leave = async () => {
   text-align: left;
   cursor: pointer;
 }
-.user-menu :deep(.menu-items button:hover) { background: var(--hover-tint); }
+.user-menu :deep(.menu-items button:hover),
+.user-menu :deep(.menu-items a:hover) { background: var(--hover-tint); }
 </style>

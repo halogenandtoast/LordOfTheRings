@@ -7,6 +7,10 @@ import GameRow from '../components/GameRow.vue'
 import PrimaryButton from '../components/PrimaryButton.vue'
 import SegmentedToggle from '../components/SegmentedToggle.vue'
 import type { GameSummary } from '../server'
+import { useServerText } from '../i18n'
+
+const tr = useServerText()
+
 
 type Tab = 'active' | 'finished'
 
@@ -102,12 +106,12 @@ const submitImport = async () => {
               <input type="file" accept="application/json,.json" @change="chooseFile" />
               <span>{{ importFile ? importFile.name : $t('home.chooseFile') }}</span>
             </label>
-            <p v-if="importError" class="import-error">{{ importError }}</p>
+            <p v-if="importError" class="import-error">{{ tr(importError) }}</p>
           </div>
         </Transition>
 
         <div v-if="error" class="box error">
-          <p>{{ error }}</p>
+          <p>{{ tr(error) }}</p>
         </div>
 
         <template v-if="tab === 'active'">
