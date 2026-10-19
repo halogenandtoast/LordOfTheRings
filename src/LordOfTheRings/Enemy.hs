@@ -4,6 +4,7 @@ module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module LordOfTheRings.
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Enemy.Type
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
@@ -13,9 +14,8 @@ instance RunMessage Enemy where
   runMessage msg (Enemy a) = Enemy <$> runMessage msg a
 
 newtype ForestSpider = ForestSpider EnemyAttrs
-  deriving newtype (Show, ToJSON)
-
-instance IsEnemy ForestSpider
+  deriving anyclass (IsEnemy)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage ForestSpider where
   runMessage msg (ForestSpider a) = case msg of
     _ -> ForestSpider <$> runMessage msg a

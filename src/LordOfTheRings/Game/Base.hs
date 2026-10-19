@@ -8,7 +8,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Type
-import LordOfTheRings.Entity
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
 import LordOfTheRings.Target
@@ -26,9 +26,6 @@ data Entities = Entities
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
-
-insertEntity :: (Ord (Id a), Entity a) => a -> Map (Id a) a -> Map (Id a) a
-insertEntity a = Map.insert a.id a
 
 alliesL :: Lens' Entities (Map AllyId Ally)
 alliesL = lens (.allies) (\e a -> e {allies = a})

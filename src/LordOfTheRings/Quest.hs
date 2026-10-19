@@ -4,6 +4,7 @@ module LordOfTheRings.Quest (module LordOfTheRings.Quest, module LordOfTheRings.
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Enemy.Cards qualified as Enemies
 import LordOfTheRings.Frontend
 import LordOfTheRings.Classes.HasGame
@@ -26,9 +27,8 @@ instance RunMessage Quest where
   runMessage msg (Quest a) = Quest <$> runMessage msg a
 
 newtype FliesAndSpiders = FliesAndSpiders QuestAttrs
-  deriving newtype (Show, ToJSON)
-
-instance IsQuest FliesAndSpiders
+  deriving anyclass (IsQuest)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage FliesAndSpiders where
   runMessage msg s@(FliesAndSpiders a) = case msg of
     DoStep 7 Setup -> do

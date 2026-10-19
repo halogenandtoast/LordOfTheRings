@@ -19,6 +19,7 @@ library
       LordOfTheRings.Card.Code
       LordOfTheRings.Card.EncounterCard
       LordOfTheRings.Card.PlayerCard
+      LordOfTheRings.Classes.Entity
       LordOfTheRings.Classes.HasGame
       LordOfTheRings.Classes.HasQueue
       LordOfTheRings.Classes.RunMessage
@@ -26,7 +27,6 @@ library
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.Cards
       LordOfTheRings.Enemy.Type
-      LordOfTheRings.Entity
       LordOfTheRings.Frontend
       LordOfTheRings.Game
       LordOfTheRings.Game.Base

@@ -4,6 +4,7 @@ module LordOfTheRings.Location (module LordOfTheRings.Location, module LordOfThe
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Type
 import LordOfTheRings.Message
@@ -16,9 +17,8 @@ instance RunMessage Location where
   runMessage msg (Location a) = Location <$> runMessage msg a
 
 newtype OldForestRoad = OldForestRoad LocationAttrs
-  deriving newtype (Show, ToJSON)
-
-instance IsLocation OldForestRoad
+  deriving anyclass (IsLocation)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage OldForestRoad where
   runMessage msg (OldForestRoad a) = case msg of
     _ -> OldForestRoad <$> runMessage msg a

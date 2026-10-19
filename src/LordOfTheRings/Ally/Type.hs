@@ -6,6 +6,7 @@ module LordOfTheRings.Ally.Type (module LordOfTheRings.Ally.Type) where
 import Control.Lens
 import {-# SOURCE #-} LordOfTheRings.Ability
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -14,19 +15,36 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Classes.RunMessage
 
-class (HasAbilities a, RunMessage a, Show a, ToJSON a) => IsAlly a where
-  allyAttrs :: a -> AllyAttrs
-  default allyAttrs :: (Coercible a AllyAttrs) => a -> AllyAttrs
-  allyAttrs = coerce
-  overAllyAttrs :: (AllyAttrs -> AllyAttrs) -> a -> a
-  default overAllyAttrs :: (Coercible a AllyAttrs) => (AllyAttrs -> AllyAttrs) -> a -> a
-  overAllyAttrs f = coerce f
+class
+  ( Typeable a
+  , Show a
+  , ToJSON a
+  , HasAbilities a, RunMessage a
+  , Entity a
+  , EntityId a ~ AllyId
+  , EntityAttrs a ~ AllyAttrs
+  )
+  => IsAlly a
 
-data Ally where
-  Ally :: (IsAlly a) => a -> Ally
+data Ally = forall a. (IsAlly a) => Ally a
+
+instance Entity Ally where
+  type EntityId Ally = AllyId
+  type EntityAttrs Ally = AllyAttrs
+  toId = toId . toAttrs
+  toAttrs (Ally a) = toAttrs a
+  overAttrs f (Ally a) = Ally $ overAttrs f a
+
+instance Entity AllyAttrs where
+  type EntityId AllyAttrs = AllyId
+  type EntityAttrs AllyAttrs = AllyAttrs
+  toId = (.id)
+  toAttrs a = a
+  overAttrs f a = f a
+
 
 instance HasField "name" Ally Name where
-  getField (Ally a) = (allyAttrs a).name
+  getField (Ally a) = (toAttrs a).name
 
 instance HasField "name" AllyAttrs Name where
   getField a = a.card.def.name
@@ -37,8 +55,8 @@ instance HasAbilities Ally where
 instance HasPlacement Ally where
   placementL =
     lens
-      (\(Ally a) -> (allyAttrs a) ^. placementL)
-      (\(Ally a) p -> Ally $ overAllyAttrs (placementL .~ p) a)
+      (\(Ally a) -> (toAttrs a) ^. placementL)
+      (\(Ally a) p -> Ally $ overAttrs (placementL .~ p) a)
 
 data AllyAttrs = AllyAttrs
   { id :: AllyId
@@ -59,10 +77,10 @@ instance ToJSON Ally where
   toJSON (Ally a) = toJSON a
 
 instance Targetable Ally where
-  toTarget (Ally a) = toTarget (allyAttrs a)
+  toTarget (Ally a) = toTarget (toAttrs a)
 
 instance Sourceable Ally where
-  toSource (Ally a) = toSource (allyAttrs a)
+  toSource (Ally a) = toSource (toAttrs a)
 
 instance Targetable AllyAttrs where
   toTarget a = AllyTarget a.id

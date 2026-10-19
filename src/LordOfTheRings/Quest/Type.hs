@@ -1,16 +1,40 @@
 module LordOfTheRings.Quest.Type (module LordOfTheRings.Quest.Type) where
 
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Prelude
 import LordOfTheRings.Classes.RunMessage
 
-class (Show a, ToJSON a, RunMessage a) => IsQuest a
+class
+  ( Typeable a
+  , Show a
+  , ToJSON a
+  , RunMessage a
+  , Entity a
+  , EntityId a ~ QuestId
+  , EntityAttrs a ~ QuestAttrs
+  )
+  => IsQuest a
 
-data Quest where
-  Quest :: (IsQuest a) => a -> Quest
+
+data Quest = forall a. (IsQuest a) => Quest a
+
+instance Entity Quest where
+  type EntityId Quest = QuestId
+  type EntityAttrs Quest = QuestAttrs
+  toId = toId . toAttrs
+  toAttrs (Quest a) = toAttrs a
+  overAttrs f (Quest a) = Quest $ overAttrs f a
+
+instance Entity QuestAttrs where
+  type EntityId QuestAttrs = QuestId
+  type EntityAttrs QuestAttrs = QuestAttrs
+  toId = (.id)
+  toAttrs a = a
+  overAttrs f a = f a
 
 data Side = A | B
   deriving stock (Show, Generic)

@@ -8,6 +8,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Id
 import LordOfTheRings.Source
@@ -31,84 +32,74 @@ instance RunMessage AllyAttrs where
     _ -> pure attrs
 
 instance HasField "id" Ally AllyId where
-  getField (Ally a) = (allyAttrs a).id
+  getField (Ally a) = (toAttrs a).id
 
 instance HasField "sphere" Ally Sphere where
-  getField (Ally a) = (allyAttrs a).sphere
+  getField (Ally a) = (toAttrs a).sphere
 
 newtype Beorn = Beorn AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly Beorn
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage Beorn where
   runMessage msg (Beorn a) = Beorn <$> runMessage msg a
 
 newtype EreborHammersmith = EreborHammersmith AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly EreborHammersmith
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage EreborHammersmith where
   runMessage msg (EreborHammersmith a) = EreborHammersmith <$> runMessage msg a
 
 newtype Faramir = Faramir AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly Faramir
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage Faramir where
   runMessage msg (Faramir a) = Faramir <$> runMessage msg a
 
 newtype Gandalf = Gandalf AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly Gandalf
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage Gandalf where
   runMessage msg (Gandalf a) = Gandalf <$> runMessage msg a
 
 newtype Gleowine = Gleowine AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly Gleowine
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage Gleowine where
   runMessage msg (Gleowine a) = Gleowine <$> runMessage msg a
 
 newtype GuardOfTheCitadel = GuardOfTheCitadel AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly GuardOfTheCitadel
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage GuardOfTheCitadel where
   runMessage msg (GuardOfTheCitadel a) = GuardOfTheCitadel <$> runMessage msg a
 
 newtype HenamarthRiversong = HenamarthRiversong AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly HenamarthRiversong
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage HenamarthRiversong where
   runMessage msg (HenamarthRiversong a) = HenamarthRiversong <$> runMessage msg a
 
 newtype MinerOfTheIronHills = MinerOfTheIronHills AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly MinerOfTheIronHills
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage MinerOfTheIronHills where
   runMessage msg (MinerOfTheIronHills a) = MinerOfTheIronHills <$> runMessage msg a
 
 newtype NorthernTracker = NorthernTracker AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly NorthernTracker
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage NorthernTracker where
   runMessage msg (NorthernTracker a) = NorthernTracker <$> runMessage msg a
 
 newtype SilverlodeArcher = SilverlodeArcher AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly SilverlodeArcher
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage SilverlodeArcher where
   runMessage msg (SilverlodeArcher a) = SilverlodeArcher <$> runMessage msg a
 
 newtype SnowbournScout = SnowbournScout AllyAttrs
-  deriving newtype (Show, ToJSON)
-instance IsAlly SnowbournScout
+  deriving anyclass (IsAlly)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage SnowbournScout where
   runMessage msg s@(SnowbournScout a) = case msg of
     UseCardAbility p (isSource a -> True) 1 -> do
@@ -129,9 +120,8 @@ instance HasAbilities SnowbournScout where
     ]
 
 newtype SonOfArnor = SonOfArnor AllyAttrs
-  deriving newtype (Show, ToJSON)
-  deriving anyclass (HasAbilities)
-instance IsAlly SonOfArnor
+  deriving anyclass (IsAlly, HasAbilities)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage SonOfArnor where
   runMessage msg (SonOfArnor a) = SonOfArnor <$> runMessage msg a
 

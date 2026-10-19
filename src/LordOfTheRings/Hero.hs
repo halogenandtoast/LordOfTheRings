@@ -6,6 +6,7 @@ module LordOfTheRings.Hero (module LordOfTheRings.Hero.Type, module LordOfTheRin
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
@@ -31,20 +32,20 @@ instance RunMessage HeroAttrs where
     _ -> pure attrs
 
 newtype Beravor = Beravor HeroAttrs
-  deriving newtype (Show, ToJSON)
-instance IsHero Beravor
+  deriving anyclass (IsHero)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage Beravor where
   runMessage msg (Beravor a) = Beravor <$> runMessage msg a
 
 newtype Eowyn = Eowyn HeroAttrs
-  deriving newtype (Show, ToJSON)
-instance IsHero Eowyn
+  deriving anyclass (IsHero)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage Eowyn where
   runMessage msg (Eowyn a) = Eowyn <$> runMessage msg a
 
 newtype Theodred = Theodred HeroAttrs
-  deriving newtype (Show, ToJSON)
-instance IsHero Theodred
+  deriving anyclass (IsHero)
+  deriving newtype (Show, ToJSON, Entity)
 instance RunMessage Theodred where
   runMessage msg (Theodred a) = Theodred <$> runMessage msg a
 

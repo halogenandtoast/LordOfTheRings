@@ -9,7 +9,7 @@ import LordOfTheRings.Ability
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy
-import LordOfTheRings.Entity
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Frontend
 import LordOfTheRings.GameT
@@ -114,21 +114,6 @@ runGameMessage msg g = case msg of
         pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & placementL .~ Staging)
       _ -> error "Unhandled"
   _ -> pure g
-
-instance Entity Ally where
-  type Id Ally = AllyId
-  type Attrs Ally = AllyAttrs
-  overAttrs f (Ally a) = Ally (overAllyAttrs f a)
-
-instance Entity Enemy where
-  type Id Enemy = EnemyId
-  type Attrs Enemy = EnemyAttrs
-  overAttrs f (Enemy a) = Enemy (overEnemyAttrs f a)
-
-instance Entity Location where
-  type Id Location = LocationId
-  type Attrs Location = LocationAttrs
-  overAttrs f (Location a) = Location (overLocationAttrs f a)
 
 getWindowAbilities :: (HasGame m) => Window -> m [Ability]
 getWindowAbilities window = do
