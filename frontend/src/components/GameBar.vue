@@ -2,7 +2,7 @@
 import GameMenu from './GameMenu.vue'
 
 defineProps<{ canUndo: boolean; showSidebar: boolean; status: 'connecting' | 'open' | 'closed' }>()
-const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
+const emit = defineEmits<{ reset: []; undo: []; export: []; toggleSidebar: [] }>()
 </script>
 
 <template>
@@ -19,6 +19,13 @@ const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
           </svg>
           Restart scenario
+        </button>
+        <div class="menu-section">File</div>
+        <button type="button" @click="emit('export')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Export game
         </button>
       </template>
     </GameMenu>

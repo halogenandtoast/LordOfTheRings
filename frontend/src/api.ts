@@ -27,3 +27,22 @@ export const createGame = (game: { name: string; playerName: string; seed?: numb
   }).then((r) => json<{ id: number }>(r))
 
 export const deleteGame = (id: number) => apiFetch(`/api/games/${id}`, { method: 'DELETE' })
+
+/** Download a game as a JSON file. */
+export const exportGame = async (id: string | number) => {
+  const response = await apiFetch(`/api/games/${id}/export`)
+  if (!response.ok) throw new Error((await response.text()) || response.statusText)
+  const filename = /filename="([^"]+)"/.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? `game-${id}.json`
+  const url = URL.createObjectURL(await response.blob())
+  const link = Object.assign(document.createElement('a'), { href: url, download: filename })
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+/** Load an exported game file as a new game. */
+export const importGame = async (file: File) =>
+  apiFetch('/api/import', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: await file.text(),
+  }).then((r) => json<{ id: number }>(r))

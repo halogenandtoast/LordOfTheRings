@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { deleteGame, fetchGames } from '../api'
+import { deleteGame, fetchGames, importGame } from '../api'
 import GameRow from '../components/GameRow.vue'
 import PrimaryButton from '../components/PrimaryButton.vue'
 import SegmentedToggle from '../components/SegmentedToggle.vue'
@@ -38,6 +38,30 @@ const removeGame = (game: GameSummary) =>
   })
 
 const goToNewGame = () => router.push('/new-game')
+
+const showImportGame = ref(false)
+const importFile = ref<File | null>(null)
+const importing = ref(false)
+const importError = ref<string | null>(null)
+
+const chooseFile = (event: Event) => {
+  importFile.value = (event.target as HTMLInputElement).files?.[0] ?? null
+  importError.value = null
+}
+
+const submitImport = async () => {
+  if (!importFile.value) return
+  importing.value = true
+  importError.value = null
+  try {
+    const { id } = await importGame(importFile.value)
+    await router.push(`/games/${id}`)
+  } catch (e) {
+    importError.value = e instanceof Error ? e.message : 'Could not load that file.'
+  } finally {
+    importing.value = false
+  }
+}
 </script>
 
 <template>
@@ -56,9 +80,29 @@ const goToNewGame = () => router.push('/new-game')
             />
           </div>
           <div class="header-actions">
+            <button class="secondary-cta" type="button" @click="showImportGame = !showImportGame">Load game</button>
             <PrimaryButton label="New Game" @click="goToNewGame" />
           </div>
         </header>
+
+        <Transition name="slide">
+          <div v-if="showImportGame" class="load-game-panel">
+            <div class="panel-header">
+              <h3>Load game</h3>
+              <div class="panel-actions">
+                <button class="panel-close" type="button" @click="showImportGame = false">Cancel</button>
+                <button v-if="importFile" class="panel-load" type="button" :disabled="importing" @click="submitImport">
+                  {{ importing ? 'Loading…' : 'Load Game' }}
+                </button>
+              </div>
+            </div>
+            <label class="file-picker">
+              <input type="file" accept="application/json,.json" @change="chooseFile" />
+              <span>{{ importFile ? importFile.name : 'Choose an exported game (.json)' }}</span>
+            </label>
+            <p v-if="importError" class="import-error">{{ importError }}</p>
+          </div>
+        </Transition>
 
         <div v-if="error" class="box error">
           <p>{{ error }}</p>
@@ -148,4 +192,78 @@ h2 {
 .box.error { border-color: var(--danger); margin-bottom: 10px; }
 
 p { margin: 0; }
+
+.secondary-cta {
+  background: transparent;
+  border: 1px solid var(--box-border);
+  border-radius: 3px;
+  color: var(--title);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85em;
+  font-weight: 700;
+  padding: 8px 12px;
+  text-transform: uppercase;
+}
+.secondary-cta:hover { background: var(--subtle-tint); }
+
+.load-game-panel {
+  background: var(--box-background);
+  border: 1px solid var(--box-border);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.panel-header h3 {
+  flex: 1;
+  margin: 0;
+  color: var(--title);
+  font-size: 1.2em;
+  text-transform: uppercase;
+}
+.panel-actions { display: flex; gap: 8px; }
+.panel-load,
+.panel-close {
+  border: 1px solid var(--box-border);
+  border-radius: 3px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8em;
+  font-weight: 700;
+  padding: 7px 10px;
+  text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+}
+.panel-load { background: var(--button-primary); border-color: var(--button-primary); color: var(--button-primary-text); }
+.panel-load:hover:not(:disabled) { background: var(--button-primary-hover); }
+.panel-load:disabled { opacity: 0.55; cursor: not-allowed; }
+.panel-close:hover { background: var(--subtle-tint); }
+
+.file-picker {
+  display: block;
+  border: 1px dashed var(--box-border);
+  border-radius: 5px;
+  padding: 18px;
+  text-align: center;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.file-picker:hover { border-color: var(--accent); color: var(--text); }
+.file-picker input { display: none; }
+
+.import-error { color: var(--danger); margin-top: 8px; }
+
+.slide-enter-active,
+.slide-leave-active { transition: opacity 0.3s ease-in-out; }
+.slide-enter-from,
+.slide-leave-to { opacity: 0; }
 </style>

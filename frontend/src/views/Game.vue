@@ -10,6 +10,7 @@ import PlayerArea from '../components/PlayerArea.vue'
 import Prompt from '../components/Prompt.vue'
 import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
+import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
 
 const route = useRoute()
@@ -56,6 +57,7 @@ const choose = (index: number) => {
     :show-sidebar="showSidebar"
     @reset="reset"
     @undo="undo"
+    @export="exportGame(route.params.id as string)"
     @toggle-sidebar="showSidebar = !showSidebar"
   />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">

@@ -13,6 +13,7 @@ import System.Random.SplitMix (seedSMGen', unseedSMGen)
 import Data.Aeson (Result (..))
 import Data.Aeson.Diff qualified as Diff
 import Data.Map.Strict qualified as Map
+import Data.Char (isAlphaNum)
 import Data.Text qualified as T
 import Data.Time (getCurrentTime)
 import Database.Persist.Postgresql
@@ -55,6 +56,8 @@ mkYesod
   /games/#LotrGameId GameR GET POST DELETE
   /games/#LotrGameId/undo UndoR POST
   /games/#LotrGameId/reset ResetR POST
+  /games/#LotrGameId/export ExportR GET
+  /import ImportR POST
   /cards CardsR GET
   /register RegisterR POST
   /authenticate AuthenticateR POST
@@ -373,6 +376,89 @@ postResetR gid = do
       , LotrGameUpdatedAt =. now
       ]
   broadcast gid row' g
+
+-- | Everything needed to carry a game elsewhere, undo history included.
+data ExportedGame = ExportedGame
+  { version :: Int
+  , name :: Text
+  , playerName :: Text
+  , game :: Value
+  , queue :: Value
+  , randomGen :: Text
+  , step :: Int
+  , steps :: [ExportedStep]
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data ExportedStep = ExportedStep
+  { step :: Int
+  , patchDown :: Value
+  , queue :: Value
+  , randomGen :: Text
+  , round :: Int
+  , phase :: Text
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+exportVersion :: Int
+exportVersion = 1
+
+getExportR :: LotrGameId -> Handler Value
+getExportR gid = do
+  row <- requireOwnedGame gid
+  steps <- runDB $ selectList [LotrStepGameId ==. gid] [Asc LotrStepStep]
+  addHeader "Content-Disposition" $ "attachment; filename=\"" <> slug row.lotrGameName <> ".json\""
+  pure
+    $ toJSON
+      ExportedGame
+        { version = exportVersion
+        , name = row.lotrGameName
+        , playerName = row.lotrGamePlayerName
+        , game = row.lotrGameCurrentData
+        , queue = row.lotrGameCurrentQueue
+        , randomGen = row.lotrGameRandomGen
+        , step = row.lotrGameStep
+        , steps =
+            [ ExportedStep st.lotrStepStep st.lotrStepPatchDown st.lotrStepQueue st.lotrStepRandomGen st.lotrStepRound st.lotrStepPhase
+            | Entity _ st <- steps
+            ]
+        }
+ where
+  slug = T.intercalate "-" . T.words . T.filter (\c -> c == ' ' || c == '-' || isAlphaNum c) . toLower
+
+-- | Load an exported game as a new game of the signed-in user's.
+postImportR :: Handler Value
+postImportR = do
+  userId <- requireUserId
+  exported <- requireCheckJsonBody @_ @ExportedGame
+  unless (exported.version == exportVersion) $ invalidArgs ["This export comes from an unsupported version."]
+  -- refuse a file the engine cannot read before storing any of it
+  _ <- decodeOrFail @Game "game" exported.game
+  _ <- decodeOrFail @[Message] "queue" exported.queue
+  _ <- readGen exported.randomGen
+  now <- liftIO getCurrentTime
+  gid <- runDB do
+    gid <-
+      insert
+        LotrGame
+          { lotrGameUserId = userId
+          , lotrGameName = exported.name
+          , lotrGamePlayerName = exported.playerName
+          , lotrGameCurrentData = exported.game
+          , lotrGameCurrentQueue = exported.queue
+          , lotrGameRandomGen = exported.randomGen
+          , lotrGameStep = exported.step
+          , lotrGameCreatedAt = now
+          , lotrGameUpdatedAt = now
+          }
+    insertMany_
+      [ LotrStep gid st.step st.patchDown st.queue st.randomGen st.round st.phase now
+      | st <- exported.steps
+      ]
+    pure gid
+  pure $ object ["id" .= gid]
 
 getCardsR :: Handler Value
 getCardsR = pure $ toJSON $ allPlayerCards <> allEncounterCards
