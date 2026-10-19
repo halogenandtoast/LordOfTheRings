@@ -1,0 +1,156 @@
+import { computed, onScopeDispose, readonly, ref, shallowRef } from 'vue'
+import type { CardDef, GameData, ServerMessage } from '../server'
+import type { GameView } from '../types'
+import { toView } from '../view'
+import { withViewTransition } from './useViewTransition'
+
+type Status = 'connecting' | 'open' | 'closed'
+
+const LOG_LIMIT = 200
+const FLIP_MS = 320
+
+const socketUrl = () => {
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+  return `${protocol}://${window.location.host}/api/data`
+}
+
+export const useGame = () => {
+  const status = ref<Status>('connecting')
+  const error = ref<string | null>(null)
+  const data = shallowRef<GameData | null>(null)
+  const game = shallowRef<GameView | null>(null)
+  const log = ref<string[]>([])
+  const announcement = ref<string | null>(null)
+  const flipping = ref<Set<string>>(new Set())
+
+  let defs: Record<string, CardDef> = {}
+  let pendingFlips: string[] = []
+  const queue: ServerMessage[] = []
+  let draining = false
+  let socket: WebSocket | null = null
+  let reconnect: number | undefined
+
+  const flip = async (cardId: string) => {
+    flipping.value = new Set(flipping.value).add(cardId)
+    await new Promise((resolve) => window.setTimeout(resolve, FLIP_MS))
+    const remaining = new Set(flipping.value)
+    remaining.delete(cardId)
+    flipping.value = remaining
+  }
+
+  const update = async (next: GameData) => {
+    data.value = next
+    await withViewTransition(() => {
+      game.value = toView(next, defs)
+    })
+    const flips = pendingFlips
+    pendingFlips = []
+    for (const cardId of flips) await flip(cardId)
+  }
+
+  // Log, announce and flip messages arrive while the server is working; the state that
+  // follows them is applied in order, then any flips play on the new board.
+  const apply = async (message: ServerMessage) => {
+    switch (message.tag) {
+      case 'Update':
+        return update(message.contents)
+      case 'Log':
+        log.value = [...log.value, message.message].slice(-LOG_LIMIT)
+        return
+      case 'Announce':
+        announcement.value = message.message
+        return
+      case 'FlipCard':
+        pendingFlips.push(message.cardId)
+        return
+    }
+  }
+
+  const drain = async () => {
+    if (draining) return
+    draining = true
+    while (queue.length) await apply(queue.shift() as ServerMessage)
+    draining = false
+  }
+
+  const post = async (path: string, body: unknown = {}) => {
+    const response = await fetch(`/api/${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }).catch(() => null)
+    error.value = response?.ok ? null : (await response?.text()) || 'the server could not be reached'
+  }
+
+  const refresh = async () => {
+    const response = await fetch('/api/data').catch(() => null)
+    if (response?.ok) {
+      queue.push({ tag: 'Update', contents: (await response.json()) as GameData })
+      void drain()
+    }
+  }
+
+  const connect = () => {
+    status.value = 'connecting'
+    socket = new WebSocket(socketUrl())
+    socket.addEventListener('open', () => {
+      status.value = 'open'
+      error.value = null
+      void refresh()
+    })
+    socket.addEventListener('message', (event: MessageEvent<string>) => {
+      queue.push(JSON.parse(event.data) as ServerMessage)
+      void drain()
+    })
+    socket.addEventListener('close', () => {
+      status.value = 'closed'
+      reconnect = window.setTimeout(connect, 2000)
+    })
+  }
+
+  fetch('/api/cards')
+    .then((response) => response.json())
+    .then((cards: Record<string, CardDef>) => {
+      defs = cards
+      if (data.value) game.value = toView(data.value, defs)
+    })
+    .catch(() => {
+      error.value = 'could not load card data'
+    })
+
+  connect()
+
+  onScopeDispose(() => {
+    window.clearTimeout(reconnect)
+    socket?.close()
+  })
+
+  return {
+    status: readonly(status),
+    error: readonly(error),
+    game: readonly(game),
+    canUndo: computed(() => data.value?.canUndo ?? false),
+    log: readonly(log),
+    announcement: readonly(announcement),
+    flipping: readonly(flipping),
+    started: computed(() => game.value?.started ?? false),
+    question: computed(() => game.value?.question ?? null),
+    scenario: computed(() => game.value?.scenario ?? null),
+    players: computed(() => game.value?.players ?? []),
+    outcome: computed(() => game.value?.outcome ?? null),
+    startGame: (name: string) => {
+      log.value = []
+      announcement.value = null
+      return post('start', { name })
+    },
+    undo: () => post('undo'),
+    reset: () => {
+      log.value = []
+      announcement.value = null
+      return post('reset')
+    },
+    answer: (askId: number, choice: number) =>
+      post('data', { choice, questionVersion: askId, player: data.value?.playerId }),
+    refresh,
+  }
+}
