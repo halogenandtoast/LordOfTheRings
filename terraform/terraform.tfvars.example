@@ -5,7 +5,7 @@
 
 # Public domain. Terraform adds it to DigitalOcean DNS — point the
 # registrar's nameservers at ns{1,2,3}.digitalocean.com.
-domain_name = "example.com"
+# domain_name = "lordoftherings.app"
 
 # Optional tweaks.
 # region     = "nyc3"

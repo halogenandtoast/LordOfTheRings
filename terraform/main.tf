@@ -125,6 +125,13 @@ resource "kubernetes_service" "public" {
 
 # --- DNS + TLS ---------------------------------------------------------------
 
+# The domain was created in the DigitalOcean console first. This import is
+# one-shot and safe to delete after a successful apply.
+import {
+  to = digitalocean_domain.app
+  id = var.domain_name
+}
+
 resource "digitalocean_domain" "app" {
   name = var.domain_name
 }

@@ -32,6 +32,7 @@ variable "node_count" {
 variable "domain_name" {
   description = "Public domain. Terraform creates it in DigitalOcean DNS, points it at the load balancer, and issues a Let's Encrypt certificate for it."
   type        = string
+  default     = "lordoftherings.app"
 }
 
 # --- Database ----------------------------------------------------------------
