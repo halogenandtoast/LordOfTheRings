@@ -9,6 +9,7 @@ defineEmits<{ submit: [] }>()
 <template>
   <form class="auth-form" @submit.prevent="$emit('submit')">
     <header>
+      <img src="/icon.svg" alt="" class="logo" />
       <h2>{{ title }}</h2>
     </header>
     <div v-if="error" class="error" role="alert">{{ tr(error) }}</div>
@@ -33,6 +34,13 @@ defineEmits<{ submit: [] }>()
 header {
   text-align: center;
   margin-bottom: 10px;
+}
+
+.logo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
 }
 
 h2 {
