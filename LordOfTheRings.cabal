@@ -14,8 +14,12 @@ library
   exposed-modules:
       LordOfTheRings.Ability
       LordOfTheRings.Ally
+      LordOfTheRings.Ally.CardDefs
       LordOfTheRings.Ally.Type
+      LordOfTheRings.Attachment.CardDefs
       LordOfTheRings.Card
+      LordOfTheRings.Card.CardDef
+      LordOfTheRings.Card.CardType
       LordOfTheRings.Card.Code
       LordOfTheRings.Card.EncounterCard
       LordOfTheRings.Card.PlayerCard
@@ -25,25 +29,32 @@ library
       LordOfTheRings.Classes.RunMessage
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
+      LordOfTheRings.Enemy.CardDefs
       LordOfTheRings.Enemy.Cards
       LordOfTheRings.Enemy.Type
+      LordOfTheRings.Event.CardDefs
       LordOfTheRings.Frontend
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
       LordOfTheRings.GameT
       LordOfTheRings.Hero
+      LordOfTheRings.Hero.CardDefs
       LordOfTheRings.Hero.Type
       LordOfTheRings.Id
+      LordOfTheRings.Keyword
       LordOfTheRings.Location
+      LordOfTheRings.Location.CardDefs
       LordOfTheRings.Location.Cards
       LordOfTheRings.Location.Type
       LordOfTheRings.Matcher
       LordOfTheRings.Message
       LordOfTheRings.Name
+      LordOfTheRings.Objective.CardDefs
       LordOfTheRings.Phase
       LordOfTheRings.Placement
       LordOfTheRings.Prelude
       LordOfTheRings.Quest
+      LordOfTheRings.Quest.CardDefs
       LordOfTheRings.Quest.Cards
       LordOfTheRings.Quest.Type
       LordOfTheRings.Question
@@ -51,7 +62,10 @@ library
       LordOfTheRings.Scenario
       LordOfTheRings.Scenario.Type
       LordOfTheRings.Source
+      LordOfTheRings.Sphere
       LordOfTheRings.Target
+      LordOfTheRings.Trait
+      LordOfTheRings.Treachery.CardDefs
       LordOfTheRings.Treachery.Cards
       LordOfTheRings.Window
   other-modules:

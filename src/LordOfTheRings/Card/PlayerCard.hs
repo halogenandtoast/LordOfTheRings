@@ -2,12 +2,13 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
-module LordOfTheRings.Card.PlayerCard (module LordOfTheRings.Card.PlayerCard) where
+module LordOfTheRings.Card.PlayerCard (module LordOfTheRings.Card.PlayerCard, module X) where
 
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
+import LordOfTheRings.Sphere as X
 
 data PlayerCard (k :: PlayerCardKind) = MkPlayerCard
   { id :: CardId
@@ -159,10 +160,6 @@ instance (ToJSON (PlayerCardDetails k)) => ToJSON (PlayerCardDef k) where
       , "details" .= toJSON details
       , "sphere" .= toJSON sphere
       ]
-
-data Sphere = Leadership | Tactics | Spirit | Lore | Neutral
-  deriving stock (Eq, Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
 
 data ResourceCost = StaticCost Int | DynamicCost
   deriving stock (Show, Generic)

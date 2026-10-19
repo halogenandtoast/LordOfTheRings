@@ -1,7 +1,12 @@
-module LordOfTheRings.Card.Code (CardCode) where
+module LordOfTheRings.Card.Code (CardCode (..), HasCardCode (..)) where
 
-import Data.String (IsString)
 import LordOfTheRings.Prelude
 
-newtype CardCode = CardCode Text
-  deriving newtype (Ord, Eq, IsString, Show, ToJSON, FromJSON)
+newtype CardCode = CardCode {unCardCode :: Text}
+  deriving newtype (Ord, Eq, IsString, Show, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
+
+class HasCardCode a where
+  toCardCode :: a -> CardCode
+
+instance HasCardCode CardCode where
+  toCardCode = id
