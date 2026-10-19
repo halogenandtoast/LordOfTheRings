@@ -24,6 +24,8 @@ data WindowType
   | CharacterDestroyed Target
   | -- | an encounter card revealed from the encounter deck
     Revealed Target
+  | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
+    ShadowEffectTriggered CardId EnemyId
   | -- | a character left play: who controlled it, and its traits as it left
     LeftPlay Target PlayerId (Set Trait)
   deriving stock (Show, Eq, Generic)

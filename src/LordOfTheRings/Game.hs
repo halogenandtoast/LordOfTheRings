@@ -405,7 +405,17 @@ runGameMessage msg g = case msg of
     pure g
   ResolveShadow eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
-      for_ enemy.shadowCards \card -> resolveShadowEffect card (ResolveShadowEffect (ecId card) eid pid mDefender)
+      pushAll
+        $ concat
+          [ [CheckWindows [mkWhen $ ShadowEffectTriggered (ecId card) eid], ResolveShadowCard (ecId card) eid pid mDefender]
+          | card <- enemy.shadowCards
+          , cdShadowEffect (toCardDef card)
+          ]
+    pure g
+  ResolveShadowCard cid eid pid mDefender -> do
+    for_ (Map.lookup eid g.entities.enemies) \enemy ->
+      for_ (find ((== cid) . ecId) enemy.shadowCards) \card ->
+        resolveShadowEffect card (ResolveShadowEffect cid eid pid mDefender)
     pure g
   ChooseAndExhaust source pid n | n > 0 -> do
     ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)

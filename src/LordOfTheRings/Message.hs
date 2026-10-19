@@ -137,6 +137,8 @@ data Message
   | UndefendedDamage PlayerId EnemyId
   | ResolveShadow EnemyId PlayerId (Maybe Target)
   | ResolveShadowEffect CardId EnemyId PlayerId (Maybe Target)
+  | -- | resolve one shadow card dealt to the enemy, unless it was cancelled
+    ResolveShadowCard CardId EnemyId PlayerId (Maybe Target)
   | AttackDamage EnemyId Target
   | AddToEncounterDiscard [EncounterCard]
   | PlayerAttacks PlayerId

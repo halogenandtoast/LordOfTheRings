@@ -20,6 +20,8 @@ data WindowMatcher
     EnemyDestroyedByAttackWindow Timing (Maybe Target)
   | CharacterDestroyedWindow Timing
   | EnemyRevealedWindow Timing
+  | TreacheryRevealedWindow Timing
+  | ShadowEffectWindow Timing
   | -- | any encounter card revealed from the encounter deck
     CardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
@@ -43,6 +45,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers) -> t == timing && maybe True (`elem` attackers) who
   (CharacterDestroyedWindow t, CharacterDestroyed _) -> t == timing
   (EnemyRevealedWindow t, Revealed (EnemyTarget _)) -> t == timing
+  (TreacheryRevealedWindow t, Revealed (TreacheryTarget _)) -> t == timing
+  (ShadowEffectWindow t, ShadowEffectTriggered _ _) -> t == timing
   (CardRevealedWindow t, Revealed _) -> t == timing
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (HeroLeftPlayWindow t pid trait, LeftPlay (HeroTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits

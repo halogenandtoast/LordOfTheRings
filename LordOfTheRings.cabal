@@ -106,6 +106,7 @@ library
       LordOfTheRings.Event
       LordOfTheRings.Event.CardDefs
       LordOfTheRings.Event.Cards.ALightInTheDark
+      LordOfTheRings.Event.Cards.ATestOfWill
       LordOfTheRings.Event.Cards.BeornsHospitality
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.CommonCause
@@ -113,6 +114,7 @@ library
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.ForGondor
       LordOfTheRings.Event.Cards.GrimResolve
+      LordOfTheRings.Event.Cards.HastyStroke
       LordOfTheRings.Event.Cards.LoreOfImladris
       LordOfTheRings.Event.Cards.LoriensWealth
       LordOfTheRings.Event.Cards.QuickStrike
@@ -373,6 +375,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.AttachmentSpec
       LordOfTheRings.CombatPhaseSpec
       LordOfTheRings.Core.AlliesAndAttachmentsSpec
+      LordOfTheRings.Core.CancelSpec
       LordOfTheRings.Core.CombatCardsSpec
       LordOfTheRings.Core.EventsSpec
       LordOfTheRings.DamageSpec

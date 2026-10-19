@@ -42,26 +42,30 @@ allEnemyCards =
 kingSpider :: CardDef
 kingSpider =
   (enemy "01074" "King Spider" SpidersOfMirkwood 2 20 2 3 1 3)
-    { cdCardTraits = setFromList [Creature, Spider]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Creature, Spider]
     }
 
 hummerhorns :: CardDef
 hummerhorns =
   (enemy "01075" "Hummerhorns" SpidersOfMirkwood 1 40 1 2 0 3)
-    { cdCardTraits = setFromList [Creature, Insect]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Creature, Insect]
     , cdVictoryPoints = Just 5
     }
 
 ungoliantsSpawn :: CardDef
 ungoliantsSpawn =
   (enemy "01076" "Ungoliant's Spawn" SpidersOfMirkwood 1 32 3 5 2 9)
-    { cdCardTraits = setFromList [Creature, Spider]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Creature, Spider]
     }
 
 wolfRider :: CardDef
 wolfRider =
   (enemy "01081" "Wolf Rider" Wilderlands 1 10 1 2 0 2)
-    { cdCardTraits = setFromList [Goblin, Orc]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Goblin, Orc]
     , cdKeywords = setFromList [Surge]
     }
 
@@ -88,13 +92,15 @@ marshAdder =
 wargs :: CardDef
 wargs =
   (enemy "01085" "Wargs" Wilderlands 2 20 2 3 1 3)
-    { cdCardTraits = setFromList [Creature]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Creature]
     }
 
 dolGuldurOrcs :: CardDef
 dolGuldurOrcs =
   (enemy "01089" "Dol Guldur Orcs" DolGuldurOrcs 3 10 2 2 0 3)
-    { cdCardTraits = setFromList [DolGuldur, Orc]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [DolGuldur, Orc]
     }
 
 chieftanUfthak :: CardDef
@@ -113,13 +119,15 @@ dolGuldurBeastmaster =
 forestSpider :: CardDef
 forestSpider =
   (enemy "01096" "Forest Spider" PassageThroughMirkwood 4 25 2 2 1 4)
-    { cdCardTraits = setFromList [Creature, Spider]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Creature, Spider]
     }
 
 eastBightPatrol :: CardDef
 eastBightPatrol =
   (enemy "01097" "East Bight Patrol" PassageThroughMirkwood 1 5 3 3 1 2)
-    { cdCardTraits = setFromList [Goblin, Orc]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Goblin, Orc]
     }
 
 blackForestBats :: CardDef
@@ -144,20 +152,23 @@ nazgulOfDolGuldur =
 cavernGuardian :: CardDef
 cavernGuardian =
   (enemy "01103" "Cavern Guardian" EscapeFromDolGuldur 2 8 2 2 1 2)
-    { cdCardTraits = setFromList [Undead]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Undead]
     , cdKeywords = setFromList [Doomed 1]
     }
 
 mistyMountainGoblins :: CardDef
 mistyMountainGoblins =
   (enemy "01111" "Misty Mountain Goblins" JourneyAlongTheAnduin 3 15 2 2 1 3)
-    { cdCardTraits = setFromList [Goblin, Orc]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Goblin, Orc]
     }
 
 easternCrows :: CardDef
 easternCrows =
   (enemy "01115" "Eastern Crows" SauronsReach 3 30 1 1 0 1)
-    { cdCardTraits = setFromList [Creature]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
     }
 

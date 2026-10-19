@@ -3,6 +3,8 @@ module LordOfTheRings.Event (module LordOfTheRings.Event, module X) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Event.Cards.CommonCause
+import LordOfTheRings.Event.Cards.ATestOfWill
+import LordOfTheRings.Event.Cards.HastyStroke
 import LordOfTheRings.Event.Cards.RainOfArrows
 import LordOfTheRings.Event.Cards.QuickStrike
 import LordOfTheRings.Event.Cards.StandTogether
@@ -44,6 +46,8 @@ allEvents =
         , SomeEventCard sneakAttack
         , SomeEventCard valiantSacrifice
         , SomeEventCard grimResolve
+        , SomeEventCard aTestOfWill
+        , SomeEventCard hastyStroke
         , SomeEventCard rainOfArrows
         , SomeEventCard quickStrike
         , SomeEventCard standTogether

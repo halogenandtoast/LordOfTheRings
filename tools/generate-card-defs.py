@@ -149,6 +149,8 @@ def definition(card):
         updates.append(f"cdKeywords = setFromList [{', '.join(kws)}]")
     if victory:
         updates.append(f"cdVictoryPoints = Just {victory}")
+    if card.get("shadow_text") or "Shadow:" in (card.get("text") or ""):
+        updates.append("cdShadowEffect = True")
     expr = base(card)
     name = ident(card)
     if not updates:

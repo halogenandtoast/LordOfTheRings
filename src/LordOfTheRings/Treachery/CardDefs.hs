@@ -38,28 +38,28 @@ caughtInAWeb :: CardDef
 caughtInAWeb = treachery "01080" "Caught in a Web" SpidersOfMirkwood 2
 
 despair :: CardDef
-despair = treachery "01086" "Despair" Wilderlands 2
+despair = (treachery "01086" "Despair" Wilderlands 2) {cdShadowEffect = True}
 
 drivenByShadow :: CardDef
-drivenByShadow = treachery "01092" "Driven by Shadow" DolGuldurOrcs 1
+drivenByShadow = (treachery "01092" "Driven by Shadow" DolGuldurOrcs 1) {cdShadowEffect = True}
 
 theNecromancersReach :: CardDef
 theNecromancersReach = treachery "01093" "The Necromancer's Reach" DolGuldurOrcs 3
 
 underTheShadow :: CardDef
-underTheShadow = treachery "01104" "Under the Shadow" EscapeFromDolGuldur 2
+underTheShadow = (treachery "01104" "Under the Shadow" EscapeFromDolGuldur 2) {cdShadowEffect = True}
 
 ironShackles :: CardDef
-ironShackles = treachery "01105" "Iron Shackles" EscapeFromDolGuldur 1
+ironShackles = (treachery "01105" "Iron Shackles" EscapeFromDolGuldur 1) {cdShadowEffect = True}
 
 massingAtNight :: CardDef
-massingAtNight = treachery "01112" "Massing at Night" JourneyAlongTheAnduin 1
+massingAtNight = (treachery "01112" "Massing at Night" JourneyAlongTheAnduin 1) {cdShadowEffect = True}
 
 evilStorm :: CardDef
 evilStorm = treachery "01116" "Evil Storm" SauronsReach 3
 
 pursuedByShadow :: CardDef
-pursuedByShadow = treachery "01117" "Pursued by Shadow" SauronsReach 2
+pursuedByShadow = (treachery "01117" "Pursued by Shadow" SauronsReach 2) {cdShadowEffect = True}
 
 treacherousFog :: CardDef
 treacherousFog = treachery "01118" "Treacherous Fog" SauronsReach 2

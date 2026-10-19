@@ -36,6 +36,8 @@ data CardDef = CardDef
   , cdEncounterSet :: Maybe EncounterSet
   , cdEncounterSetQuantity :: Maybe Int
   , cdDoubleSided :: Bool
+  , cdShadowEffect :: Bool
+  -- ^ an encounter card with a shadow effect, as opposed to a blank shadow card
   , cdDistinctPayers :: Maybe Int
   -- ^ the card must be paid for from this many different heroes' pools
   }
@@ -77,6 +79,7 @@ emptyCardDef cCode name cType =
     , cdEncounterSet = Nothing
     , cdEncounterSetQuantity = Nothing
     , cdDoubleSided = False
+    , cdShadowEffect = False
     , cdDistinctPayers = Nothing
     }
 
