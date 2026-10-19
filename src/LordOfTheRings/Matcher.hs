@@ -203,8 +203,8 @@ choosePlayer pid source f = do
 -- | The damage on a character, or 0 for anything else.
 getDamage :: (HasGame m) => Target -> m Int
 getDamage = \case
-  HeroTarget hid -> (.damage) <$> getHero hid
-  AllyTarget aid -> (.damage) <$> getAlly aid
+  HeroTarget hid -> maybe 0 (.damage) . Map.lookup hid <$> getsGame (entitiesHeroes . gameEntities)
+  AllyTarget aid -> maybe 0 (.damage) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
   _ -> pure 0
 
 -- | Characters with damage to heal.

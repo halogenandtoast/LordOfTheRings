@@ -32,3 +32,18 @@ spec = describe "Damage" do
     run $ DealDamage GameSource (toTarget hummerhorns) 3
     getsGame (length . (.entities.enemies)) `shouldReturn` 0
     getEncounterDiscard `shouldReturn` []
+
+  it "lets later damage in a batch pass over a character already destroyed" . gameTest $ \_ -> do
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ Run [DealDamage GameSource eowyn 3, DealDamage GameSource eowyn 1]
+    getsGame (length . (.entities.heroes)) `shouldReturn` 2
+
+  it "deals no attack damage to a defender that left play before it" . gameTest $ \pid -> do
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    _ <- setEncounterDeck [Enemies.hummerhorns]
+    run RevealEncounterCard
+    eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+    run $ Discard eowyn
+    run $ AttackDamage eid eowyn
+    getsGame (length . (.entities.heroes)) `shouldReturn` 2
+    getQuestion pid `shouldReturn` Nothing

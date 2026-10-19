@@ -9,6 +9,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Modifier
+import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 
@@ -22,10 +23,11 @@ preloadModifiers g = do
       traverse_ getModifiersFor es.allies
       traverse_ getModifiersFor es.enemies
       traverse_ getModifiersFor es.locations
-      traverse_ getModifiersFor es.treacheries
+      traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.treacheries)
       traverse_ getModifiersFor es.quests
-      traverse_ getModifiersFor es.attachments
-      traverse_ getModifiersFor es.objectives
+      -- a card whose host has just left play is about to follow it, and adds nothing
+      traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.attachments)
+      traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.objectives)
   let fromEffects =
         Map.fromListWith
           (<>)
@@ -48,3 +50,12 @@ defenseOf = \case DefenseModifier n -> Just n; _ -> Nothing
 hitPointsOf = \case HitPointModifier n -> Just n; _ -> Nothing
 threatOf = \case ThreatModifier n -> Just n; _ -> Nothing
 engagementCostOf = \case EngagementCostModifier n -> Just n; _ -> Nothing
+
+-- | Whether the card something is attached to is still in play.
+hostInPlay :: Entities -> Placement -> Bool
+hostInPlay es = \case
+  AttachedTo (HeroTarget i) -> Map.member i es.heroes
+  AttachedTo (AllyTarget i) -> Map.member i es.allies
+  AttachedTo (EnemyTarget i) -> Map.member i es.enemies
+  AttachedTo (LocationTarget i) -> Map.member i es.locations
+  _ -> True

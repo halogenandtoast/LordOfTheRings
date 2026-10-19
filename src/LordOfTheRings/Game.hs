@@ -164,6 +164,8 @@ instance RunMessage Game where
 
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
+  -- the rest of an attack does nothing once its enemy has left play
+  _ | Just eid <- attackingEnemy msg, not (Map.member eid g.entities.enemies) -> pure g
   Run msgs -> do
     pushAll msgs
     pure g
@@ -226,10 +228,7 @@ runGameMessage msg g = case msg of
       ]
     pure g
   HealDamage source target n | n > 0 -> do
-    damage <- case target of
-      HeroTarget hid -> (.damage) <$> getHero hid
-      AllyTarget aid -> (.damage) <$> getAlly aid
-      _ -> pure 0
+    damage <- getDamage target
     pushWhen (damage > 0) $ RemoveTokens source target Damage (min n damage)
     pure g
   ChooseAndDiscardFromHand pid source n | n > 0 -> do
@@ -240,10 +239,11 @@ runGameMessage msg g = case msg of
         [targetLabel (CardIdTarget c.id) [DiscardFromHand pid c.id, ChooseAndDiscardFromHand pid source (n - 1)] | c <- player.hand]
     pure g
   CheckDefeated target -> do
+    -- damage dealt in a batch can reach a card an earlier part of it already destroyed
     destroyed <- case target of
-      HeroTarget hid -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
-      AllyTarget aid -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
-      EnemyTarget eid -> (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      HeroTarget hid | Map.member hid g.entities.heroes -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
+      AllyTarget aid | Map.member aid g.entities.allies -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
+      EnemyTarget eid | Map.member eid g.entities.enemies -> (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
       _ -> pure False
     when destroyed $ push (Destroy target)
     pure g
@@ -364,7 +364,7 @@ runGameMessage msg g = case msg of
               [ResolveShadow eid pid (Just first), DefendedByMany pid eid chosen, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
           ]
     pure g
-  DefendedByMany pid eid defenders -> do
+  DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
     attack <- getEnemyAttack eid
     defense <- sum <$> traverse getDefense defenders
     choices <- for defenders \d -> targetLabel d <$> attackDamage pid eid d (attack - defense)
@@ -411,21 +411,26 @@ runGameMessage msg g = case msg of
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> AttackingHero)
     allies <- select (AllyControlledBy (PlayerWithId pid) <> AttackingAlly)
     let attackers = map toTarget heroes <> map toTarget allies
-    enemyDef <- toCardDef <$> getEnemy eid
-    bonuses <- for attackers \a -> do
-      mods <- getModifiers a
-      sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemyDef
-    attack <- (+ sum bonuses) . sum <$> traverse getAttack attackers
-    defense <- getEnemyDefense eid
-    pushAll
-      $ map StopAttacking attackers
-      <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | notNull attackers]
-      <> [AttackResolved eid attackers | notNull attackers]
+    case Map.lookup eid g.entities.enemies of
+      -- the enemy left play before the attack resolved: the attackers just stop
+      Nothing -> pushAll (map StopAttacking attackers)
+      Just enemy' -> do
+        bonuses <- for attackers \a -> do
+          mods <- getModifiers a
+          sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) (toCardDef enemy')
+        attack <- (+ sum bonuses) . sum <$> traverse getAttack attackers
+        defense <- getEnemyDefense eid
+        pushAll
+          $ map StopAttacking attackers
+          <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | notNull attackers]
+          <> [AttackResolved eid attackers | notNull attackers]
     pure g
   AttackResolved eid attackers -> do
     destroyed <- not <$> selectAny (EnemyWithId eid)
     pushWhen destroyed $ CheckWindows [mkAfter $ EnemyDestroyedByAttack eid attackers]
     pure g
+  -- a defender that left play before the damage takes none, and no one else takes it
+  AttackDamage _ defender | not (inPlay g defender) -> pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
     defense <- getDefense defender
@@ -873,3 +878,24 @@ attackDamage pid eid target n = do
   remaining <- (-) <$> getHitPoints target <*> getDamage target
   let excess = if excessToThreat then max 0 (n - remaining) else 0
   pure $ DealDamage (EnemySource eid) target n : [RaiseThreat pid excess | excess > 0]
+
+-- | The enemy a step of an enemy's attack, or of an attack on one, is about.
+attackingEnemy :: Message -> Maybe EnemyId
+attackingEnemy = \case
+  EnemyAttack _ eid -> Just eid
+  DefendWith _ eid _ -> Just eid
+  DeclareDefenders _ eid _ -> Just eid
+  DefendedByMany _ eid _ -> Just eid
+  UndefendedAttack _ eid -> Just eid
+  UndefendedDamage _ eid -> Just eid
+  AttackDamage eid _ -> Just eid
+  ResolveShadow eid _ _ -> Just eid
+  DeclareAttackers _ eid -> Just eid
+  _ -> Nothing
+
+-- | Whether a character is still in play.
+inPlay :: Game -> Target -> Bool
+inPlay g = \case
+  HeroTarget hid -> Map.member hid g.entities.heroes
+  AllyTarget aid -> Map.member aid g.entities.allies
+  _ -> True
