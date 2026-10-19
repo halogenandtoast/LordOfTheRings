@@ -129,6 +129,10 @@ data Message
   | EnemyAttacks PlayerId
   | EnemyAttack PlayerId EnemyId
   | DefendWith PlayerId EnemyId Target
+  | DeclareDefenders PlayerId EnemyId [Target]
+  | DefendedByMany PlayerId EnemyId [Target]
+  | -- | spend resources of a sphere, at most 1 from each hero, from heroes not yet used
+    SpendResourcesFromDistinctHeroes PlayerId Sphere Int [HeroId]
   | UndefendedAttack PlayerId EnemyId
   | UndefendedDamage PlayerId EnemyId
   | ResolveShadow EnemyId PlayerId (Maybe Target)

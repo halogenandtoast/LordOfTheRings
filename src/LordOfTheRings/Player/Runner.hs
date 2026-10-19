@@ -92,6 +92,14 @@ instance RunMessage Player where
       pure $ player & usedAbilitiesL .~ used
     EndPhase _ -> pure $ player & usedAbilitiesL %~ filter ((/= PerPhase) . (.usedAbilityLimitType))
     EndRound -> pure $ player & usedAbilitiesL %~ filter ((/= PerRound) . (.usedAbilityLimitType))
+    SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id && n > 0 -> do
+      payers <- filter ((`notElem` used) . (.id)) <$> payingHeroes sphere player
+      push
+        $ questionLabel ("Pay 1 from a different hero (" <> tshow n <> " more)") pid
+          [ targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)]
+          | x <- payers
+          ]
+      pure player
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
@@ -123,8 +131,16 @@ canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c]
 
 canAfford :: (HasGame m) => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of
-  (Just cost, Just sphere) -> (>= costAsResources cost) <$> resourcesInSphere sphere p
+  (Just cost, Just sphere) -> case cdDistinctPayers (toCardDef c) of
+    Just n -> (>= n) . length <$> payingHeroes sphere p
+    Nothing -> (>= costAsResources cost) <$> resourcesInSphere sphere p
   _ -> pure False
+
+-- | Heroes with a resource that could pay for a card of the sphere.
+payingHeroes :: (HasGame m) => Sphere -> Player -> m [Hero]
+payingHeroes sphere player = do
+  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
+  filterM (paysFor sphere) [h | h <- heroes, h.resources > 0]
 
 hasHost :: (HasGame m) => Card -> m Bool
 hasHost c

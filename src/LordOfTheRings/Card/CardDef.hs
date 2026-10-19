@@ -36,6 +36,8 @@ data CardDef = CardDef
   , cdEncounterSet :: Maybe EncounterSet
   , cdEncounterSetQuantity :: Maybe Int
   , cdDoubleSided :: Bool
+  , cdDistinctPayers :: Maybe Int
+  -- ^ the card must be paid for from this many different heroes' pools
   }
   deriving stock (Show, Eq, Generic)
 
@@ -75,6 +77,7 @@ emptyCardDef cCode name cType =
     , cdEncounterSet = Nothing
     , cdEncounterSetQuantity = Nothing
     , cdDoubleSided = False
+    , cdDistinctPayers = Nothing
     }
 
 unique :: CardDef -> CardDef

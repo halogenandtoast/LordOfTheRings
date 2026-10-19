@@ -78,7 +78,7 @@ quickStrike :: CardDef
 quickStrike = event "01035" "Quick Strike" Tactics (StaticCost 1)
 
 thicketOfSpears :: CardDef
-thicketOfSpears = event "01036" "Thicket of Spears" Tactics (StaticCost 3)
+thicketOfSpears = (\d -> d {cdDistinctPayers = Just 3}) $ event "01036" "Thicket of Spears" Tactics (StaticCost 3)
 
 swiftStrike :: CardDef
 swiftStrike = event "01037" "Swift Strike" Tactics (StaticCost 2)

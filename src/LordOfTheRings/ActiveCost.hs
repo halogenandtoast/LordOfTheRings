@@ -56,7 +56,10 @@ instance RunMessage ActiveCost where
         push $ PaidCost acId
         pure ac
       ResourceCost sphere (StaticCost n) -> do
-        pushAll [SpendResources ac.activeCostPlayer sphere n, PayCost acId]
+        let spend = case cdDistinctPayers (toCardDef ac.activeCostCard) of
+              Just _ -> SpendResourcesFromDistinctHeroes ac.activeCostPlayer sphere n []
+              Nothing -> SpendResources ac.activeCostPlayer sphere n
+        pushAll [spend, PayCost acId]
         pure $ ac & costCostL .~ Free
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of

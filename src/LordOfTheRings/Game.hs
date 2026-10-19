@@ -304,19 +304,43 @@ runGameMessage msg g = case msg of
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
-    enemies <- engagedByCost pid
-    pushAll $ map (EnemyAttack pid) enemies
+    shielded <- elem EngagedEnemiesCannotAttack <$> getModifiers (PlayerTarget pid)
+    enemies <- filterM (fmap (notElem CannotAttack) . getModifiers) =<< engagedByCost pid
+    unless shielded $ pushAll $ map (EnemyAttack pid) enemies
     pure g
   EnemyAttack pid eid -> do
+    many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
+    if many
+      then push $ DeclareDefenders pid eid []
+      else do
+        defenders <- readyCharacters pid
+        enemyName <- display . (.name) <$> getEnemy eid
+        push
+          $ questionLabelWith (enemyName <> " attacks: declare a defender") (Just $ toTarget eid) [] pid
+          $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
+          <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+    pure g
+  DefendWith pid eid defender -> do
+    pushAll [CheckWindows [mkAfter $ DeclaredAsDefender defender eid], ResolveShadow eid pid (Just defender), AttackDamage eid defender]
+    pure g
+  DeclareDefenders pid eid chosen -> do
     defenders <- readyCharacters pid
     enemyName <- display . (.name) <$> getEnemy eid
     push
-      $ questionLabelWith (enemyName <> " attacks: declare a defender") (Just $ toTarget eid) [] pid
-      $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
-      <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+      $ questionLabelWith (enemyName <> " attacks: declare any number of defenders") (Just $ toTarget eid) chosen pid
+      $ [ targetLabel d [Exhaust d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
+        | d <- defenders
+        ]
+      <> case chosen of
+        [] -> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+        first : _ -> [Label "Done declaring defenders" [ResolveShadow eid pid (Just first), DefendedByMany pid eid chosen]]
     pure g
-  DefendWith pid eid defender -> do
-    pushAll [ResolveShadow eid pid (Just defender), AttackDamage eid defender]
+  DefendedByMany pid eid defenders -> do
+    attack <- getEnemyAttack eid
+    defense <- sum <$> traverse getDefense defenders
+    push
+      $ chooseOrRunOne pid
+        [targetLabel d [DealDamage (EnemySource eid) d (attack - defense)] | d <- defenders]
     pure g
   UndefendedAttack pid eid -> do
     pushAll [ResolveShadow eid pid Nothing, UndefendedDamage pid eid]

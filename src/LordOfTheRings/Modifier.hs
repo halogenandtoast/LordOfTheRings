@@ -18,6 +18,11 @@ data ModifierType
   | ShuffleIntoDeckAtEndOfPhase
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
+  | CannotAttack
+  | -- | on a player: the enemies engaged with them cannot attack them
+    EngagedEnemiesCannotAttack
+  | -- | on a player: they may declare any number of defenders against each attack
+    MayDeclareMultipleDefenders
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

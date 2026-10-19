@@ -18,6 +18,7 @@ data WindowType
   | EnemyEngaged EnemyId PlayerId
   | DealtDamage Target Int
   | Traveled LocationId
+  | DeclaredAsDefender Target EnemyId
   | -- | a character left play: who controlled it, and its traits as it left
     LeftPlay Target PlayerId (Set Trait)
   deriving stock (Show, Eq, Generic)
