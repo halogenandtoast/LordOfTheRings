@@ -8,17 +8,16 @@ defineProps<{ threat: number }>()
 
 <style scoped>
 .threat {
-  width: calc(var(--card-width) * 1.7);
+  width: calc(var(--card-width) * 2);
   aspect-ratio: 75 / 38;
   background-image: url('/images/threat.png');
   background-size: cover;
   display: grid;
   place-items: center;
   border-radius: 5px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-indent: 0.12em;
+  color: rgb(255 255 255);
+  letter-spacing: 25px;
+  text-indent: 25px;
   flex: none;
 }
 .threat span {
