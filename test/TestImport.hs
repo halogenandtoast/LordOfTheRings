@@ -6,7 +6,12 @@ module TestImport (
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame as X
 import LordOfTheRings.Classes.HasQueue as X
+import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, genPlayerCard, toCardCode)
+import LordOfTheRings.Classes.Entity as X (toAttrs, toId)
 import LordOfTheRings.Decklist
+import LordOfTheRings.Hero as X (Hero)
+import LordOfTheRings.Source as X
+import LordOfTheRings.Token as X
 import LordOfTheRings.Game as X
 import LordOfTheRings.GameT as X
 import LordOfTheRings.Id as X
@@ -49,3 +54,17 @@ chooseTarget :: (HasCallStack, Targetable a) => PlayerId -> a -> GameT ()
 chooseTarget pid (toTarget -> target) = chooseOptionMatching "choose target" pid \case
   TargetLabel target' _ -> target == target'
   _ -> False
+
+putCardIntoHand :: PlayerId -> CardDef -> GameT Card
+putCardIntoHand pid def = do
+  card <- PlayerCard <$> genPlayerCard def (Just pid)
+  g <- getGame
+  putGame $ g {players = Map.adjust (\p -> p {hand = card : p.hand}) pid g.players}
+  pure card
+
+getHeroWithCode :: (HasCallStack) => CardCode -> GameT Hero
+getHeroWithCode code =
+  fromJustNote ("no hero " <> show code) . find ((== code) . toCardCode) . toList <$> getsGame (.entities.heroes)
+
+getHeroResources :: HeroId -> GameT Int
+getHeroResources hid = maybe 0 (.resources) . Map.lookup hid <$> getsGame (.entities.heroes)

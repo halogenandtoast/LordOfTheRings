@@ -5,7 +5,7 @@ module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
 import Control.Lens
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Ally.Type
+import LordOfTheRings.Ally.Types
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Type
 import LordOfTheRings.Classes.Entity

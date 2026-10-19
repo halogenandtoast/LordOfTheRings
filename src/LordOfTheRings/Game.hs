@@ -25,7 +25,8 @@ import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
-import LordOfTheRings.Placement
+import LordOfTheRings.Placement qualified as P
+import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
@@ -131,18 +132,18 @@ runGameMessage msg g = case msg of
     pure g
   PlayAlly pid card -> do
     player <- getPlayer pid
-    thisAlly <- newAlly card
+    thisAlly <- newAlly pid card
     send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
     pushAll [RunWindow $ Window After $ EnterPlay $ toTarget thisAlly]
-    pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ InPlayArea pid)
+    pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   AddToStaging card -> do
     case cdCardType (toCardDef card) of
       EnemyType -> do
         thisEnemy <- newEnemy card
-        pure $ g & entitiesL . enemiesL %~ insertEntity (thisEnemy & placementL .~ StagingArea)
+        pure $ g & entitiesL . enemiesL %~ insertEntity (thisEnemy & P.placementL .~ StagingArea)
       LocationType -> do
         thisLocation <- newLocation card
-        pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & placementL .~ StagingArea)
+        pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & P.placementL .~ StagingArea)
       _ -> error "Unhandled"
   _ -> pure g
 

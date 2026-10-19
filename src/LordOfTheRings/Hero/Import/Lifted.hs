@@ -9,3 +9,4 @@ import LordOfTheRings.Message as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Source as X
 import LordOfTheRings.Target as X
+import LordOfTheRings.Question as X

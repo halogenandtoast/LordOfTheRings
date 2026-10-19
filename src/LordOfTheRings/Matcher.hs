@@ -1,7 +1,7 @@
 module LordOfTheRings.Matcher (module LordOfTheRings.Matcher) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Ally.Type
+import LordOfTheRings.Ally.Types
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types

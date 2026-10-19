@@ -15,7 +15,29 @@ library
       LordOfTheRings.Ability
       LordOfTheRings.Ally
       LordOfTheRings.Ally.CardDefs
-      LordOfTheRings.Ally.Type
+      LordOfTheRings.Ally.Cards.Beorn
+      LordOfTheRings.Ally.Cards.BrokIronfist
+      LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
+      LordOfTheRings.Ally.Cards.EreborHammersmith
+      LordOfTheRings.Ally.Cards.Faramir
+      LordOfTheRings.Ally.Cards.Gandalf
+      LordOfTheRings.Ally.Cards.Gleowine
+      LordOfTheRings.Ally.Cards.GondorianSpearman
+      LordOfTheRings.Ally.Cards.GuardOfTheCitadel
+      LordOfTheRings.Ally.Cards.HenamarthRiversong
+      LordOfTheRings.Ally.Cards.HorsebackArcher
+      LordOfTheRings.Ally.Cards.LongbeardOrcSlayer
+      LordOfTheRings.Ally.Cards.LorienGuide
+      LordOfTheRings.Ally.Cards.MinerOfTheIronHills
+      LordOfTheRings.Ally.Cards.NorthernTracker
+      LordOfTheRings.Ally.Cards.SilverlodeArcher
+      LordOfTheRings.Ally.Cards.SnowbournScout
+      LordOfTheRings.Ally.Cards.SonOfArnor
+      LordOfTheRings.Ally.Cards.VeteranAxehand
+      LordOfTheRings.Ally.Cards.WanderingTook
+      LordOfTheRings.Ally.Import.Lifted
+      LordOfTheRings.Ally.Runner
+      LordOfTheRings.Ally.Types
       LordOfTheRings.Attachment.CardDefs
       LordOfTheRings.Card
       LordOfTheRings.Card.CardDef
@@ -198,6 +220,7 @@ test-suite LordOfTheRings-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.SetupSpec
       TestImport
