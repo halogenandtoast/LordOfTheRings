@@ -75,6 +75,17 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - LordOfTheRings
+    - aeson-diff
+    - bcrypt
+    - jose
+    - monad-time
+    - persistent
+    - persistent-postgresql
+    - time
+    - yesod-persistent
+    - monad-logger
+    - random
+    - splitmix
 
 tests:
   LordOfTheRings-test:

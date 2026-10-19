@@ -269,6 +269,7 @@ library
 executable LordOfTheRings-exe
   main-is: Main.hs
   other-modules:
+      Model
       Paths_LordOfTheRings
   hs-source-dirs:
       app
@@ -303,25 +304,35 @@ executable LordOfTheRings-exe
       LordOfTheRings
     , MonadRandom
     , aeson
+    , aeson-diff
     , base >=4.7 && <5
+    , bcrypt
     , bytestring
     , classy-prelude
     , conduit
     , containers
     , extra
     , http-types
+    , jose
     , lens
+    , monad-logger
+    , monad-time
     , monoidal-containers
     , mtl
+    , persistent
+    , persistent-postgresql
     , random
     , random-shuffle
     , safe
+    , splitmix
     , template-haskell
     , text
+    , time
     , transformers
     , unliftio
     , uuid
     , yesod-core
+    , yesod-persistent
     , yesod-websockets
   default-language: GHC2021
 

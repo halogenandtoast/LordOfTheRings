@@ -82,7 +82,7 @@ export type ServerMessage =
   | { tag: 'FlipCard'; cardId: string }
 
 export interface GameSummary {
-  id: string
+  id: number
   name: string
   playerName: string
   scenario: string

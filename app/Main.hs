@@ -1,18 +1,26 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
 
 module Main (main) where
 
-import Control.Monad.Random (StdGen, evalRand, mkStdGen, randomIO)
+import Control.Monad.Logger (runStdoutLoggingT)
+import Control.Monad.Random (evalRand, mkStdGen, randomIO)
+import System.Random.Internal (StdGen (..))
+import System.Random.SplitMix (seedSMGen', unseedSMGen)
+import Data.Aeson (Result (..))
+import Data.Aeson.Diff qualified as Diff
 import Data.Map.Strict qualified as Map
-import Data.UUID qualified as UUID
+import Data.Time (getCurrentTime)
+import Database.Persist.Postgresql
 import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Decklist
+import LordOfTheRings.Frontend (FrontendMessage)
 import LordOfTheRings.Game
 import LordOfTheRings.Game.Public
 import LordOfTheRings.GameT
@@ -20,40 +28,38 @@ import LordOfTheRings.Id
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
-import LordOfTheRings.Prelude hiding (Handler)
+import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario.Types (scenarioName)
-import Network.HTTP.Types.Status (status404, status409)
+import Model
+import Network.HTTP.Types.Status (status400, status409)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import UnliftIO.STM
 import Yesod.Core
+import Yesod.Persist.Core
 import Yesod.WebSockets
 
--- | What undo restores: the game, the messages still queued and the random generator.
-data Snapshot = Snapshot Game [Message] StdGen
-
-data Session = Session
-  { env :: GameEnv
-  , name :: Text
-  , playerName :: Text
-  , history :: [Snapshot]
-  , chan :: TChan LByteString
+data App = App
+  { pool :: ConnectionPool
+  , channels :: TVar (Map LotrGameId (TChan LByteString))
   }
-
-newtype App = App {sessions :: MVar (Map Text Session)}
 
 mkYesod
   "App"
   [parseRoutes|
 /api ApiP:
   /games GamesR GET POST
-  /games/#Text GameR GET POST DELETE
-  /games/#Text/undo UndoR POST
-  /games/#Text/reset ResetR POST
+  /games/#LotrGameId GameR GET POST DELETE
+  /games/#LotrGameId/undo UndoR POST
+  /games/#LotrGameId/reset ResetR POST
   /cards CardsR GET
 |]
 
 instance Yesod App
+
+instance YesodPersist App where
+  type YesodPersistBackend App = SqlBackend
+  runDB action = getsYesod (.pool) >>= runSqlPool action
 
 data GameData = GameData
   { started :: Bool
@@ -66,7 +72,7 @@ data GameData = GameData
 
 -- | What the home page lists for each game.
 data GameSummary = GameSummary
-  { id :: Text
+  { id :: LotrGameId
   , name :: Text
   , playerName :: Text
   , scenario :: Text
@@ -78,94 +84,130 @@ data GameSummary = GameSummary
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
-gameData :: Session -> IO GameData
-gameData s = do
-  g <- runGameT s.env getGame
-  pure $ GameData True (Just $ publicGame g) (Just g.activePlayer) (notNull s.history)
-
-summary :: Text -> Session -> IO GameSummary
-summary gid s = do
-  g <- runGameT s.env getGame
-  pure
-    GameSummary
-      { id = gid
-      , name = s.name
-      , playerName = s.playerName
-      , scenario = scenarioName (toAttrs g.scenario)
-      , round = g.round
-      , phase = g.phase
-      , threat = sum [p.threat | p <- toList g.players]
-      , outcome = g.outcome
-      }
-
-broadcast :: Session -> IO ()
-broadcast s = do
-  current <- gameData s
-  atomically $ writeTChan s.chan $ encode $ object ["tag" .= String "Update", "contents" .= current]
-
-findSession :: Text -> Handler Session
-findSession gid = do
+-- | Every connected client of a game listens on that game's channel.
+gameChannel :: LotrGameId -> Handler (TChan LByteString)
+gameChannel gid = do
   app <- getYesod
-  maybe (sendResponseStatus status404 ("no such game" :: Text)) pure . Map.lookup gid =<< liftIO (readMVar app.sessions)
+  atomically do
+    channels <- readTVar app.channels
+    case Map.lookup gid channels of
+      Just chan -> pure chan
+      Nothing -> do
+        chan <- newBroadcastTChan
+        writeTVar app.channels (Map.insert gid chan channels)
+        pure chan
 
--- | Run a change against one game and tell its clients about the result.
-withSession :: Text -> (Session -> IO Session) -> Handler ()
-withSession gid f = do
-  app <- getYesod
-  found <- liftIO $ modifyMVar app.sessions \sessions -> case Map.lookup gid sessions of
-    Nothing -> pure (sessions, False)
-    Just s -> do
-      s' <- f s
-      broadcast s'
-      pure (Map.insert gid s' sessions, True)
-  unless found $ sendResponseStatus status404 ("no such game" :: Text)
+decodeOrFail :: (FromJSON a) => Text -> Value -> Handler a
+decodeOrFail what v = case fromJSON v of
+  Success a -> pure a
+  Error err -> sendResponseStatus status400 ("could not read the stored " <> what <> ": " <> pack err)
 
-newSession :: Text -> Text -> Int -> IO Session
-newSession name playerName seed = do
-  (player, heroes) <- either (error . show) pure $ evalRand (loadPlayer playerName starterDeck) (mkStdGen seed)
-  chan <- newBroadcastTChanIO
-  let logger msg = atomically $ writeTChan chan $ encode $ toJSON msg
-  env <- (\e -> e {gameDebug = 1}) <$> newGameEnv (newGame player heroes) logger (seed + 1)
-  void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
-  pure Session {env, name, playerName, history = [], chan}
+-- | A random generator is stored as its splitmix seed, so a reloaded game rolls the same.
+showGen :: StdGen -> Text
+showGen = tshow . unseedSMGen . unStdGen
 
-snapshot :: GameEnv -> IO Snapshot
-snapshot env = Snapshot <$> runGameT env getGame <*> runGameT env peekQueue <*> readIORef (gameRandomGen env)
+readGen :: Text -> Handler StdGen
+readGen =
+  maybe (sendResponseStatus status400 ("could not read the stored random generator" :: Text)) (pure . StdGen . seedSMGen')
+    . readMaybe
+    . unpack
 
-restore :: GameEnv -> Snapshot -> IO ()
-restore env (Snapshot g queue gen) = do
-  runGameT env $ putGame g >> setQueue queue
+-- | Load a stored game into a fresh environment whose log goes to the game's clients.
+loadGame :: LotrGameId -> LotrGame -> Handler GameEnv
+loadGame gid row = do
+  g <- decodeOrFail "game" row.lotrGameCurrentData
+  queue <- decodeOrFail "queue" row.lotrGameCurrentQueue
+  gen <- readGen row.lotrGameRandomGen
+  chan <- gameChannel gid
+  liftIO $ envFor chan g queue gen
+
+envFor :: TChan LByteString -> Game -> [Message] -> StdGen -> IO GameEnv
+envFor chan g queue gen = do
+  env <- newGameEnv g (logTo chan) 0
+  runGameT env $ setQueue queue
   writeIORef (gameRandomGen env) gen
+  pure env {gameDebug = 1}
+
+logTo :: TChan LByteString -> FrontendMessage -> IO ()
+logTo chan msg = atomically $ writeTChan chan $ encode $ toJSON msg
+
+-- | The game, its queue and its random generator as they now stand.
+currentState :: GameEnv -> IO (Game, [Message], StdGen)
+currentState env = (,,) <$> runGameT env getGame <*> runGameT env peekQueue <*> readIORef (gameRandomGen env)
+
+gameData :: LotrGame -> Game -> GameData
+gameData row g = GameData True (Just $ publicGame g) (Just g.activePlayer) (row.lotrGameStep > 0)
+
+broadcast :: LotrGameId -> LotrGame -> Game -> Handler ()
+broadcast gid row g = do
+  chan <- gameChannel gid
+  atomically $ writeTChan chan $ encode $ object ["tag" .= String "Update", "contents" .= gameData row g]
+
+summary :: Entity LotrGame -> Maybe GameSummary
+summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
+  Error _ -> Nothing
+  Success (g :: Game) ->
+    Just
+      GameSummary
+        { id = gid
+        , name = row.lotrGameName
+        , playerName = row.lotrGamePlayerName
+        , scenario = scenarioName (toAttrs g.scenario)
+        , round = g.round
+        , phase = g.phase
+        , threat = sum [p.threat | p <- toList g.players]
+        , outcome = g.outcome
+        }
 
 getGamesR :: Handler Value
 getGamesR = do
-  app <- getYesod
-  sessions <- liftIO $ readMVar app.sessions
-  toJSON <$> liftIO (traverse (uncurry summary) (Map.toList sessions))
+  games <- runDB $ selectList [] [Desc LotrGameUpdatedAt]
+  pure $ toJSON $ mapMaybe summary games
 
 data NewGame = NewGame {name :: Text, playerName :: Text, seed :: Maybe Int}
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
+-- | Deal a new game from a seed and play it up to its first question.
+startGame :: Text -> Int -> IO (Game, [Message], StdGen)
+startGame playerName seed = do
+  (player, heroes) <- either (error . show) pure $ evalRand (loadPlayer playerName starterDeck) (mkStdGen seed)
+  chan <- newBroadcastTChanIO
+  env <- envFor chan (newGame player heroes) [] (mkStdGen $ seed + 1)
+  void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
+  currentState env
+
 postGamesR :: Handler Value
 postGamesR = do
-  app <- getYesod
   new <- requireCheckJsonBody @_ @NewGame
-  gid <- UUID.toText <$> liftIO randomIO
-  s <- liftIO $ newSession new.name new.playerName =<< maybe randomIO pure new.seed
-  liftIO $ modifyMVar_ app.sessions (pure . Map.insert gid s)
+  (g, queue, gen) <- liftIO . startGame new.playerName =<< maybe (liftIO randomIO) pure new.seed
+  now <- liftIO getCurrentTime
+  gid <-
+    runDB
+      $ insert
+        LotrGame
+          { lotrGameName = new.name
+          , lotrGamePlayerName = new.playerName
+          , lotrGameCurrentData = toJSON g
+          , lotrGameCurrentQueue = toJSON queue
+          , lotrGameRandomGen = showGen gen
+          , lotrGameStep = 0
+          , lotrGameCreatedAt = now
+          , lotrGameUpdatedAt = now
+          }
   pure $ object ["id" .= gid]
 
-handleSocket :: Session -> WebSocketsT Handler ()
-handleSocket s = do
-  readChannel <- atomically $ dupTChan s.chan
+handleSocket :: TChan LByteString -> WebSocketsT Handler ()
+handleSocket chan = do
+  readChannel <- atomically $ dupTChan chan
   forever $ atomically (readTChan readChannel) >>= sendTextData
 
-getGameR :: Text -> Handler Value
+getGameR :: LotrGameId -> Handler Value
 getGameR gid = do
-  s <- findSession gid
-  webSockets (handleSocket s)
-  toJSON <$> liftIO (gameData s)
+  row <- runDB $ get404 gid
+  webSockets . handleSocket =<< gameChannel gid
+  g <- decodeOrFail "game" row.lotrGameCurrentData
+  pure $ toJSON $ gameData row g
 
 data Answer = Answer
   { choice :: Int
@@ -175,40 +217,92 @@ data Answer = Answer
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
-postGameR :: Text -> Handler ()
+postGameR :: LotrGameId -> Handler ()
 postGameR gid = do
   answer <- requireCheckJsonBody @_ @Answer
-  s <- findSession gid
-  g <- liftIO $ runGameT s.env getGame
-  when (answer.questionVersion /= g.questionVersion) $
+  row <- runDB $ get404 gid
+  env <- loadGame gid row
+  (before, queue, gen) <- liftIO $ currentState env
+  when (answer.questionVersion /= before.questionVersion) $
     sendResponseStatus status409 ("stale answer" :: Text)
-  withSession gid \s' -> do
-    before <- snapshot s'.env
-    void $ runGameT s'.env $ answerQuestion answer.player answer.choice
-    pure s' {history = before : s'.history}
+  void $ liftIO $ runGameT env $ answerQuestion answer.player answer.choice
+  (after, queue', gen') <- liftIO $ currentState env
+  now <- liftIO getCurrentTime
+  let step = row.lotrGameStep + 1
+  row' <- runDB do
+    insert_
+      LotrStep
+        { lotrStepGameId = gid
+        , lotrStepStep = step
+        , lotrStepPatchDown = toJSON $ Diff.diff (toJSON after) (toJSON before)
+        , lotrStepQueue = toJSON queue
+        , lotrStepRandomGen = showGen gen
+        , lotrStepRound = before.round
+        , lotrStepPhase = tshow before.phase
+        , lotrStepCreatedAt = now
+        }
+    updateGet
+      gid
+      [ LotrGameCurrentData =. toJSON after
+      , LotrGameCurrentQueue =. toJSON queue'
+      , LotrGameRandomGen =. showGen gen'
+      , LotrGameStep =. step
+      , LotrGameUpdatedAt =. now
+      ]
+  broadcast gid row' after
 
-deleteGameR :: Text -> Handler ()
-deleteGameR gid = do
-  app <- getYesod
-  liftIO $ modifyMVar_ app.sessions (pure . Map.delete gid)
+deleteGameR :: LotrGameId -> Handler ()
+deleteGameR gid = runDB $ delete gid
 
-postUndoR :: Text -> Handler ()
-postUndoR gid = withSession gid \s -> case s.history of
-  (previous : rest) -> do
-    restore s.env previous
-    pure s {history = rest}
-  [] -> pure s
+-- | Step a game back one answer by applying the latest step's patch.
+postUndoR :: LotrGameId -> Handler ()
+postUndoR gid = do
+  row <- runDB $ get404 gid
+  mstep <- runDB $ getBy (UniqueGameStep gid row.lotrGameStep)
+  for_ mstep \(Entity stepId step) -> do
+    patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
+    previous <- case Diff.patch patch row.lotrGameCurrentData of
+      Success v -> pure v
+      Error err -> sendResponseStatus status400 ("could not undo: " <> pack err)
+    g <- decodeOrFail "game" previous
+    now <- liftIO getCurrentTime
+    row' <- runDB do
+      delete stepId
+      updateGet
+        gid
+        [ LotrGameCurrentData =. previous
+        , LotrGameCurrentQueue =. step.lotrStepQueue
+        , LotrGameRandomGen =. step.lotrStepRandomGen
+        , LotrGameStep =. row.lotrGameStep - 1
+        , LotrGameUpdatedAt =. now
+        ]
+    broadcast gid row' g
 
-postResetR :: Text -> Handler ()
-postResetR gid = withSession gid \s -> do
-  fresh <- newSession s.name s.playerName =<< randomIO
-  pure fresh {chan = s.chan}
+postResetR :: LotrGameId -> Handler ()
+postResetR gid = do
+  row <- runDB $ get404 gid
+  (g, queue, gen) <- liftIO . startGame row.lotrGamePlayerName =<< liftIO randomIO
+  now <- liftIO getCurrentTime
+  row' <- runDB do
+    deleteWhere [LotrStepGameId ==. gid]
+    updateGet
+      gid
+      [ LotrGameCurrentData =. toJSON g
+      , LotrGameCurrentQueue =. toJSON queue
+      , LotrGameRandomGen =. showGen gen
+      , LotrGameStep =. 0
+      , LotrGameUpdatedAt =. now
+      ]
+  broadcast gid row' g
 
 getCardsR :: Handler Value
 getCardsR = pure $ toJSON $ allPlayerCards <> allEncounterCards
 
 main :: IO ()
 main = do
-  sessions <- newMVar mempty
   port <- fromMaybe 3000 . (>>= readMaybe) <$> lookupEnv "PORT"
-  warp port App {sessions}
+  database <- fromMaybe "host=localhost dbname=lordoftherings" <$> lookupEnv "DATABASE_URL"
+  pool <- runStdoutLoggingT $ createPostgresqlPool (encodeUtf8 $ pack database) 10
+  runSqlPool (runMigration migrateAll) pool
+  channels <- newTVarIO mempty
+  warp port App {pool, channels}

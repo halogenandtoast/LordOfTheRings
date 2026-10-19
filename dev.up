@@ -38,6 +38,19 @@ export API_PORT PORT=$API_PORT
 
 [ -d frontend/node_modules ] || { say web "installing npm deps"; (cd frontend && npm install); }
 
+DATABASE_NAME=${DATABASE_NAME:-lordoftherings}
+export DATABASE_URL=${DATABASE_URL:-"host=localhost dbname=$DATABASE_NAME"}
+if ! pg_isready -q 2>/dev/null; then
+  say db "postgres is not running - start it (e.g. brew services start postgresql) and rerun"
+  exit 1
+fi
+if psql -lqt | cut -d'|' -f1 | grep -qw "$DATABASE_NAME"; then
+  say db "using database $DATABASE_NAME"
+else
+  say db "creating database $DATABASE_NAME"
+  createdb "$DATABASE_NAME"
+fi
+
 cleanup() {
   trap - INT TERM EXIT
   say dev "shutting down"

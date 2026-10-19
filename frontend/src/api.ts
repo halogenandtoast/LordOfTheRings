@@ -12,6 +12,6 @@ export const createGame = (game: { name: string; playerName: string; seed?: numb
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(game),
-  }).then((r) => json<{ id: string }>(r))
+  }).then((r) => json<{ id: number }>(r))
 
-export const deleteGame = (id: string) => fetch(`/api/games/${id}`, { method: 'DELETE' })
+export const deleteGame = (id: number) => fetch(`/api/games/${id}`, { method: 'DELETE' })
