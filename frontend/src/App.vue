@@ -14,5 +14,5 @@ watchEffect(() => {
 
 <template>
   <NavBar />
-  <RouterView :key="$route.fullPath" />
+  <RouterView :key="$route.path" />
 </template>
