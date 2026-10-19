@@ -16,3 +16,8 @@ import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier as X
 import LordOfTheRings.Placement as X
 import LordOfTheRings.Timing as X
+import LordOfTheRings.Matcher as X
+import LordOfTheRings.Effect as X
+import LordOfTheRings.Token as X
+import LordOfTheRings.Window as X
+import LordOfTheRings.Id as X

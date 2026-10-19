@@ -77,12 +77,3 @@ abilityController ab = go ab.abilitySource
 
 abilityKey :: Ability -> (Source, Int)
 abilityKey ab = (ab.abilitySource, ab.abilityIndex)
-
--- | Players in turn order, starting with the first player.
-getPlayerOrder :: (HasGame m) => m [PlayerId]
-getPlayerOrder = do
-  order <- getsGame gamePlayerOrder
-  firstPlayer <- getsGame gameFirstPlayer
-  let (before, after) = break (== firstPlayer) order
-  pure $ after <> before
-

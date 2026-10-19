@@ -33,6 +33,9 @@ instance RunMessage Player where
           ]
       let (hand, deck) = splitAt startingHandSize player.deck
       pure $ player & handL .~ hand & deckL .~ deck
+    DiscardEventsFromHand pid | pid == player.id -> do
+      let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
+      pure $ player & handL .~ rest & discardL <>~ events
     Mulligan pid | pid == player.id -> do
       (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
       pure $ player & handL .~ hand & deckL .~ deck

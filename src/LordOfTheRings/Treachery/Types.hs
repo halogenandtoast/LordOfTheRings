@@ -140,3 +140,6 @@ instance HasField "name" TreacheryAttrs Name where
 
 instance HasField "name" Treachery Name where
   getField = (.name) . toAttrs
+
+instance HasField "cardId" TreacheryAttrs CardId where
+  getField = treacheryCardId

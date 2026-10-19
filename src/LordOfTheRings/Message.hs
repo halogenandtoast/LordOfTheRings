@@ -86,6 +86,9 @@ data Message
   | CreateEffect Effect
   | AttachCard AttachmentId Target
   | PlayAttachment PlayerId PlayerCard
+  | ChooseAndExhaust PlayerId Int
+  | ChooseAndDiscard PlayerId [Target]
+  | DiscardEventsFromHand PlayerId
   | Exhaust Target
   | CommitCharacters PlayerId
   | CommitToQuest Target

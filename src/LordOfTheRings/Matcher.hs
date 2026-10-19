@@ -4,6 +4,7 @@ module LordOfTheRings.Matcher (module LordOfTheRings.Matcher, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Types
+import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.Query as X
@@ -17,6 +18,7 @@ import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
+import LordOfTheRings.Target
 
 instance Query PlayerMatcher where
   type QueryElement PlayerMatcher = PlayerId
@@ -121,3 +123,26 @@ getLocation lid = fromJustNote ("missing location " <> show lid) . Map.lookup li
 
 getLead :: (HasGame m) => m PlayerId
 getLead = getsGame gameFirstPlayer
+
+-- | Players in turn order, starting with the first player.
+getPlayerOrder :: (HasGame m) => m [PlayerId]
+getPlayerOrder = do
+  order <- getsGame gamePlayerOrder
+  firstPlayer <- getsGame gameFirstPlayer
+  let (before, after) = break (== firstPlayer) order
+  pure $ after <> before
+
+-- | Heroes and allies matching the given matchers, as targets.
+selectCharacters :: (HasGame m) => HeroMatcher -> AllyMatcher -> m [Target]
+selectCharacters heroes allies = (<>) <$> (map toTarget <$> select heroes) <*> (map toTarget <$> select allies)
+
+charactersControlledBy :: (HasGame m) => PlayerId -> m [Target]
+charactersControlledBy pid = selectCharacters (HeroControlledBy $ PlayerWithId pid) (AllyControlledBy $ PlayerWithId pid)
+
+getAttachmentsOn :: (HasGame m) => Target -> m [Target]
+getAttachmentsOn host =
+  getsGame (map toTarget . filter ((== AttachedTo host) . (.placement)) . toList . entitiesAttachments . gameEntities)
+
+getAttachmentsControlledBy :: (HasGame m) => PlayerId -> m [Target]
+getAttachmentsControlledBy pid =
+  getsGame (map toTarget . filter ((== pid) . (.owner) . toAttrs) . toList . entitiesAttachments . gameEntities)

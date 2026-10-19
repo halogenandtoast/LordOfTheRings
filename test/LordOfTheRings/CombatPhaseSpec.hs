@@ -5,7 +5,8 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
 
--- | Engage the Forest Spider from Flies and Spiders setup (2 attack, 1 defense, 4 hit points).
+-- | Engage the Forest Spider from Flies and Spiders setup: 2 attack, +1 from its Forced
+-- effect on engaging, 1 defense and 4 hit points.
 engageSpider :: PlayerId -> GameT Enemy
 engageSpider pid = do
   flipFirstQuest pid
@@ -31,7 +32,7 @@ spec = describe "Combat phase" do
     eowyn <- getHeroWithCode "01007"
     chooseTarget pid eowyn
     eowyn' <- getHeroWithCode "01007"
-    eowyn'.damage `shouldBe` 1
+    eowyn'.damage `shouldBe` 2
     heroExhausted (toAttrs eowyn') `shouldBe` True
 
   it "deals the full attack to a hero when undefended" . gameTest $ \pid -> do
@@ -41,7 +42,7 @@ spec = describe "Combat phase" do
     chooseLabel "Take the attack undefended" pid
     beravor <- getHeroWithCode "01012"
     chooseTarget pid beravor
-    (.damage) <$> getHeroWithCode "01012" `shouldReturn` 2
+    (.damage) <$> getHeroWithCode "01012" `shouldReturn` 3
 
   it "discards shadow cards at the end of combat" . gameTest $ \pid -> do
     _ <- engageSpider pid

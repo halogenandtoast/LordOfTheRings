@@ -156,3 +156,6 @@ instance HasField "attachTo" AttachmentAttrs AttachMatcher where
 
 instance HasField "owner" AttachmentAttrs PlayerId where
   getField = attachmentOwner
+
+instance HasField "cardId" AttachmentAttrs CardId where
+  getField = attachmentCardId

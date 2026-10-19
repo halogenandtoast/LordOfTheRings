@@ -315,6 +315,13 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       for_ enemy.shadowCards \card -> resolveShadowEffect card (ResolveShadowEffect (ecId card) eid pid mDefender)
     pure g
+  ChooseAndExhaust pid n | n > 0 -> do
+    ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
+    unless (null ready) $ push $ chooseOne pid [targetLabel c [Exhaust c, ChooseAndExhaust pid (n - 1)] | c <- ready]
+    pure g
+  ChooseAndDiscard pid targets -> do
+    unless (null targets) $ push $ chooseOne pid [targetLabel t [Discard t] | t <- targets]
+    pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
