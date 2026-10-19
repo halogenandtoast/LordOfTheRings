@@ -1,5 +1,6 @@
 :root {
-  --card-width: 100px;
+  /* shrinks with the screen, so a phone still fits a row of cards */
+  --card-width: clamp(50px, min(12vw, 14vh), 100px);
   --card-aspect: 0.715;
   --gap: 10px;
   --attachment-peek: 22px;
@@ -93,9 +94,16 @@
 
 * { box-sizing: border-box; }
 
-html, body, #app { height: 100%; }
+html, body { height: 100%; }
+html { -webkit-text-size-adjust: 100%; }
 
-#app { display: flex; flex-direction: column; }
+/* dvh, so the bottom isn't under Safari's toolbar; padded clear of the notch and home bar */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
 
 @font-face {
   font-family: "Vafthrudnir";
@@ -131,7 +139,11 @@ body {
   color: var(--text);
   font-family: "Trebuchet MS", ui-sans-serif, system-ui, sans-serif;
   background: var(--page-background) url('/images/background.jpg') center center / auto 100% no-repeat;
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* no double-tap zoom, so taps answer at once */
+button, a, input, select, label, [data-card-id] { touch-action: manipulation; }
 
 .band {
   display: flex;
