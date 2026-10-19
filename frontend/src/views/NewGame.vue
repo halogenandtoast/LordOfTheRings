@@ -22,7 +22,6 @@ const scenarios: ScenarioOption[] = [
 const router = useRouter()
 const selectedScenario = ref(scenarios[0])
 const gameName = ref('')
-const seed = ref('')
 const creating = ref(false)
 const error = ref<string | null>(null)
 
@@ -38,7 +37,6 @@ const create = async () => {
   try {
     const { id } = await createGame({
       name: gameName.value.trim() || defaultName.value,
-      seed: seed.value.trim() === '' ? undefined : Number(seed.value),
     })
     await router.push(`/games/${id}`)
   } catch (e) {
@@ -87,10 +85,6 @@ const create = async () => {
         <label>
           Game name
           <input v-model="gameName" type="text" :placeholder="defaultName" />
-        </label>
-        <label>
-          Seed <span class="optional">(optional, replays the same shuffle)</span>
-          <input v-model="seed" type="text" inputmode="numeric" pattern="-?[0-9]*" placeholder="random" />
         </label>
       </fieldset>
 
@@ -227,7 +221,6 @@ label {
   font-size: 0.85rem;
   color: var(--text-muted);
 }
-.optional { opacity: 0.8; font-size: 0.9em; }
 
 input[type='text'] {
   font: inherit;
