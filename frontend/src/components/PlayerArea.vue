@@ -43,6 +43,10 @@ const emit = defineEmits<{ choose: [index: number] }>()
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
 .hand { flex: 1; flex-wrap: wrap; justify-content: flex-start; }
+/* docked under the board instead (see Game.vue) */
+@media (width < 1100px), (height < 500px) {
+  .player .question { display: none; }
+}
 
 
 </style>

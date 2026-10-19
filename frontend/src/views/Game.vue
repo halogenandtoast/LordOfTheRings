@@ -10,6 +10,7 @@ import PlayerArea from '../components/PlayerArea.vue'
 import PhaseTracker from '../components/PhaseTracker.vue'
 import Prompt from '../components/Prompt.vue'
 import QuestTally from '../components/QuestTally.vue'
+import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
@@ -24,7 +25,8 @@ const {
   started, question, scenario, players, outcome, answer, reset, undo, canUndo, debug,
 } = useGame(route.params.id as string)
 const { active: debugging, send: sendDebug } = provideDebug(debug)
-const showSidebar = ref(true)
+// on a narrower screen the sidebar is a drawer over the board, so it starts shut
+const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matches)
 
 const choices = computed(() => question.value?.choices ?? [])
 provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
@@ -213,6 +215,8 @@ watch(question, (asked) => {
     </div>
 
     <PhaseTracker :phase="game?.phase ?? null" />
+    <!-- on a small screen the question sits under the board, always in view -->
+    <QuestionZone v-if="started" class="docked-question" :question="question" @choose="choose" />
 
     <aside v-if="showSidebar" class="sidebar">
       <p v-if="error" class="error">{{ error }}</p>
@@ -241,6 +245,57 @@ watch(question, (asked) => {
   padding: var(--gap);
 }
 .layout.no-sidebar { grid-template-columns: 1fr auto; }
+.docked-question { display: none; }
+
+@media (width < 1100px), (height < 500px) {
+  .layout, .layout.no-sidebar {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+  .layout > .phases { order: -1; }
+  .game { margin-top: 0; padding-top: 0; }
+  .game :deep(.tally) { margin-top: 0; border-top: 1px solid var(--line); border-radius: 6px; }
+  .sidebar {
+    position: absolute;
+    inset: 0 0 0 auto;
+    z-index: 60;
+    width: min(320px, 85vw);
+    padding: var(--gap);
+    background: var(--surface-1);
+    border-left: 1px solid var(--line);
+    box-shadow: -8px 0 24px var(--shadow);
+  }
+  .docked-question {
+    display: flex;
+    order: 1;
+    min-width: 0;
+    max-height: 40dvh;
+  }
+}
+
+/* a phone on its side: the question beside the board, which needs all the height there is */
+@media (height < 500px) and (width >= 700px) {
+  .layout, .layout.no-sidebar {
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 30%);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .layout > .phases, .game { grid-column: 1; }
+  .game { grid-row: 2; }
+  .docked-question { grid-column: 2; grid-row: 1 / -1; max-height: none; }
+}
+
+@media (width < 700px) {
+  .band.play { flex-direction: column; gap: var(--gap); }
+  .hero-column {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: flex-start;
+    border-right: 0;
+    padding-right: 0;
+  }
+}
 
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; padding: 0; }
 .hero-column {
@@ -276,6 +331,11 @@ watch(question, (asked) => {
   gap: var(--gap);
   min-width: 0;
   min-height: 0;
+  /* scrolls when the board is taller than the screen; reaches up to the bar so the tally
+     can still tuck under it */
+  overflow: hidden auto;
+  margin-top: calc(-1 * var(--gap));
+  padding-top: var(--gap);
 }
 
 .sidebar {

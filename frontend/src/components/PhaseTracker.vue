@@ -43,6 +43,11 @@ const phases = ['resource', 'planning', 'quest', 'travel', 'encounter', 'combat'
   color: var(--cream-faint);
 }
 .phases li + li { border-top: 1px solid var(--line); }
+@media (width < 1100px), (height < 500px) {
+  .phases { flex-direction: row; overflow-x: auto; }
+  .phases li { writing-mode: horizontal-tb; padding: 0.3rem 0.4rem; font-size: 0.6rem; letter-spacing: 0.06em; }
+  .phases li + li { border-top: 0; border-left: 1px solid var(--line); }
+}
 .phases li.active {
   background: var(--forest);
   color: var(--accent-bright);
