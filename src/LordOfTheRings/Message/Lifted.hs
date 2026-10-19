@@ -150,3 +150,14 @@ labeledWith :: (ReverseQueue m) => Text -> [I18nVar] -> QueueT Message m () -> C
 labeledWith key vars action = do
   msgs <- lift $ capture action
   ChooseT $ lift $ tell [Label (ikeyWith ("label." <> key) vars) msgs]
+
+-- Ally/Hero helpers
+
+-- | The player looks at the top card of the encounter deck; with @mayBottom@ they may
+-- then move it to the bottom.
+lookAtTopOfEncounterDeck :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Bool -> m ()
+lookAtTopOfEncounterDeck pid source mayBottom = push $ LookAtTopOfEncounterDeck pid (toSource source) mayBottom
+
+-- | Return a card from the player's discard pile to their hand.
+returnFromDiscardToHand :: (ReverseQueue m) => PlayerId -> CardId -> m ()
+returnFromDiscardToHand pid cid = push $ ReturnFromDiscardToHand pid cid
