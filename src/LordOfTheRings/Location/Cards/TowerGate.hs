@@ -4,8 +4,22 @@ import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 
 newtype TowerGate = TowerGate LocationAttrs
-  deriving anyclass (IsLocation, HasAbilities, HasModifiersFor, RunMessage)
+  deriving anyclass (IsLocation, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 towerGate :: LocationCard TowerGate
 towerGate = location TowerGate Cards.towerGate
+
+-- | Forced: After travelling to Tower Gate, each player places the top card of his deck,
+-- face down in front of him, as if it just engaged him from the staging area. These cards
+-- are called "Orc Guard", and act as enemies with: 1 hit point, 1 attack, and 1 defense.
+instance HasAbilities TowerGate where
+  getAbilities (TowerGate a) = [mkAbility a 1 $ forced $ TraveledWindow After a.id]
+
+instance RunMessage TowerGate where
+  runMessage msg l@(TowerGate a) = case msg of
+    UseCardAbility _ (isSource a -> True) 1 _ -> do
+      order <- getPlayerOrder
+      pushAll [PlaceOrcGuard p | p <- order]
+      pure l
+    _ -> TowerGate <$> runMessage msg a

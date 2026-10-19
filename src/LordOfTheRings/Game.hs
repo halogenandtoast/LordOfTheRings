@@ -444,9 +444,21 @@ runGameMessage msg g = case msg of
     pure g
   ResolveShadowCard cid eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
-      for_ (find ((== cid) . ecId) enemy.shadowCards) \card ->
+      for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
+        push $ CheckWindows [mkAfter $ ShadowEffectResolved cid eid]
         resolveShadowEffect card (ResolveShadowEffect cid eid pid mDefender)
     pure g
+  ShuffleIntoEncounterDeck target@(ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
+    send . Log . (<> " is shuffled into the encounter deck") . fromMaybe "An objective" =<< targetName target
+    deck <- shuffleM (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o) : (toAttrs g.scenario).encounterDeck)
+    pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+  PutShadowTreacheryIntoPlay host cid placement -> do
+    for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
+      for_ (find ((== cid) . ecId) hostEnemy.shadowCards) \card -> do
+        thisTreachery <- overAttrs (\a -> a {treacheryPlacement = placement}) <$> newTreachery card
+        pushAll [RemoveShadowCard host cid]
+        putGame $ g & entitiesL . treacheriesL %~ insertEntity thisTreachery
+    getGame
   ChooseAndExhaust source pid n | n > 0 -> do
     ready <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
     unless (null ready)
@@ -491,7 +503,7 @@ runGameMessage msg g = case msg of
     players <- getPlayerOrder
     if
       | willpower > threat -> push $ PlaceProgressOnQuest (willpower - threat)
-      | threat > willpower -> pushAll [RaiseThreat pid (threat - willpower) | pid <- players]
+      | threat > willpower -> pushAll $ [RaiseThreat pid (threat - willpower) | pid <- players] <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
   PlaceTokens _ target@(QuestTarget _) Progress n | n > 0 -> do

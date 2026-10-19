@@ -20,6 +20,9 @@ data ModifierType
     DoesNotContributeThreat
   | CannotAttack
   | CannotAttackOrDefend
+  | CannotHaveAttachments
+  | -- | on the game: the total threat in the staging area is raised by this much
+    StagingThreatBonus Int
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks

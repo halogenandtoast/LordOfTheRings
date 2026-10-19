@@ -99,6 +99,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       exhausted: e.exhausted ?? false,
       committed: e.committed ?? false,
       flipped: e.flipped ?? false,
+      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard',
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : null,
     })
 

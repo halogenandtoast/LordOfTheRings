@@ -27,6 +27,8 @@ data WindowMatcher
   | -- | at the end of the round
     RoundEndsWindow
   | ProgressPlacedWindow Timing Target
+  | QuestedUnsuccessfullyWindow Timing
+  | ShadowEffectResolvedWindow Timing EnemyId
   | EnemyAttacksWindow Timing EnemyId
   | -- | any encounter card revealed from the encounter deck
     CardRevealedWindow Timing
@@ -57,6 +59,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
   (RoundEndsWindow, RoundEnds) -> True
   (ProgressPlacedWindow t target, ProgressPlaced target' _) -> t == timing && target == target'
+  (QuestedUnsuccessfullyWindow t, QuestedUnsuccessfully) -> t == timing
+  (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
   (CardRevealedWindow t, Revealed _) -> t == timing
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing

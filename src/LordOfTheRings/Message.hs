@@ -138,6 +138,10 @@ data Message
     -- with them
     PlaceOrcGuard PlayerId
   | EngageOrcGuard PlayerId PlayerCard
+  | ShuffleIntoEncounterDeck Target
+  | -- | a treachery dealt as a shadow card resolves its revelation as if revealed, here
+    -- attaching itself where its placement says
+    PutShadowTreacheryIntoPlay EnemyId CardId Placement
   | ShufflePlayerDeck PlayerId
   | ReturnToTopOfEncounterDeck Target
   | RemoveProgressFromQuest Source Int

@@ -44,7 +44,7 @@ const fromBox = (code: string, names: string[]): ScenarioOption[] => names.map((
 
 const fromPacks = (packs: [string, string][]): ScenarioOption[] => packs.map(([code, name]) => scenario(code, name))
 
-const playable = new Set(['passage-through-mirkwood', 'journey-along-the-anduin'])
+const playable = new Set(['passage-through-mirkwood', 'journey-along-the-anduin', 'escape-from-dol-guldur'])
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({
   id,

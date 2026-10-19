@@ -14,6 +14,9 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Window (getActionAbilities, passesCriteria)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Hero.Types
+import LordOfTheRings.Entities (entitiesTreacheries)
+import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
@@ -57,8 +60,11 @@ instance RunMessage Player where
       pure player
     DrawCards drawing | drawing.player == player.id -> do
       blocked <- elem CannotDrawCards <$> getModifiers player
+      -- a condition on top of the deck is discarded in place of the next draw
+      shackles <- getsGame (filter ((== AttachedTo (toTarget player)) . (.placement)) . toList . entitiesTreacheries . gameEntities)
+      pushAll [Discard (toTarget t) | t <- take 1 shackles]
       let (cards, deck) = splitAt drawing.count player.deck
-      pure $ if blocked then player else player & handL <>~ cards & deckL .~ deck
+      pure $ if blocked || notNull shackles then player else player & handL <>~ cards & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow "Play cards or use actions" "Done Planning" $ WithTarget (toTarget player) (DoPhase PlanningPhase)
       pure player

@@ -395,6 +395,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Core.AnduinEncounterSpec
       LordOfTheRings.Core.CancelSpec
       LordOfTheRings.Core.CombatCardsSpec
+      LordOfTheRings.Core.EscapeEncounterSpec
       LordOfTheRings.Core.EscapeFromDolGuldurSpec
       LordOfTheRings.Core.EventsSpec
       LordOfTheRings.Core.JourneyAlongTheAnduinSpec

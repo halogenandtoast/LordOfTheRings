@@ -25,7 +25,8 @@ getStagingThreat :: (HasGame m) => m Int
 getStagingThreat = do
   enemies <- traverse getEnemyThreat =<< select EnemyInStagingArea
   locations <- traverse getLocationThreat =<< select LocationInStagingArea
-  pure $ sum enemies + sum locations
+  bonus <- sum . mapMaybe (\case StagingThreatBonus n -> Just n; _ -> Nothing) <$> getModifiers GameTarget
+  pure $ sum enemies + sum locations + bonus
 
 getEngagementCost :: (HasGame m) => EnemyId -> m Int
 getEngagementCost eid = do

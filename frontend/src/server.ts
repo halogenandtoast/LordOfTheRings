@@ -27,6 +27,8 @@ export interface Entity {
   exhausted?: boolean
   committed?: boolean
   flipped?: boolean
+  /** A hero taken prisoner, face down until rescued. */
+  prisoner?: boolean
 }
 
 export interface Card {

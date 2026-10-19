@@ -6,7 +6,9 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Id
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 
@@ -19,5 +21,5 @@ attachmentHosts :: (HasGame m) => AttachMatcher -> m [Target]
 attachmentHosts = \case
   AttachToHero m -> map toTarget <$> select m
   AttachToCharacter -> (<>) <$> (map toTarget <$> select AnyHero) <*> (map toTarget <$> select AnyAlly)
-  AttachToEnemy m -> map toTarget <$> select m
+  AttachToEnemy m -> map toTarget <$> (filterM (fmap (notElem CannotHaveAttachments) . getModifiers) =<< select m)
   AttachToLocation m -> map toTarget <$> select m
