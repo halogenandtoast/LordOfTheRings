@@ -9,7 +9,6 @@ import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
-import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -21,8 +20,6 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-
-type AllyCard = PlayerCardDef 'AllyKind
 
 instance RunMessage Ally where
   runMessage msg (Ally a) = Ally <$> runMessage msg a
@@ -144,72 +141,8 @@ lookupAlly cCode = fromMaybe (error "No such ally") $ Map.lookup cCode allData
       , ("01015", Ally . SonOfArnor)
       ]
 
-newAlly :: (MonadRandom m) => PlayerCard 'AllyKind -> m Ally
+newAlly :: (MonadRandom m) => PlayerCard -> m Ally
 newAlly card = do
   allyId <- getRandom
-  let attrs = AllyAttrs {id = allyId, card, sphere = card.def.sphere, placement = Unplaced}
-  pure $ lookupAlly card.def.code attrs
-
-allAllies :: Map CardCode (AllyCard)
-allAllies =
-  Map.fromList
-    [ ("01013", guardOfTheCitadel)
-    , ("01014", faramir)
-    , ("01015", sonOfArnor)
-    , ("01016", snowbournScout)
-    , ("01017", silverlodeArcher)
-    , ("01031", beorn)
-    , ("01045", northernTracker)
-    , ("01059", ereborHammersmith)
-    , ("01060", henamarthRiversong)
-    , ("01061", minerOfTheIronHills)
-    , ("01062", gleowine)
-    , ("01073", gandalf)
-    ]
-
-ally :: CardCode -> Name -> Sphere -> Int -> Int -> Int -> Int -> Int -> AllyCard
-ally code name sphere cost willpower attack defense hitPoints =
-  PlayerCardDef
-    { code
-    , name
-    , PC.unique = False
-    , kind = SAllyKind
-    , details = AllyDetails (StaticCost cost) willpower attack defense hitPoints
-    , sphere
-    }
-
-beorn :: AllyCard
-beorn = unique $ ally "01031" "Beorn" Tactics 6 1 3 3 6
-
-ereborHammersmith :: AllyCard
-ereborHammersmith = ally "01059" "Erebor Hammersmith" Lore 2 1 1 1 3
-
-faramir :: AllyCard
-faramir = unique $ ally "01014" "Faramir" Leadership 4 2 1 2 3
-
-gandalf :: AllyCard
-gandalf = unique $ ally "01073" "Gandalf" Neutral 5 4 4 4 4
-
-gleowine :: AllyCard
-gleowine = unique $ ally "01062" "Gleowine" Lore 2 1 0 0 2
-
-guardOfTheCitadel :: AllyCard
-guardOfTheCitadel = ally "01013" "Guard of the Citadel" Leadership 2 1 1 0 2
-
-henamarthRiversong :: AllyCard
-henamarthRiversong = unique $ ally "01060" "Henamarth Riversong" Lore 1 1 1 0 1
-
-minerOfTheIronHills :: AllyCard
-minerOfTheIronHills = ally "01061" "Miner of the Iron Hills" Lore 2 0 1 1 2
-
-northernTracker :: AllyCard
-northernTracker = ally "01045" "Northern Tracker" Spirit 4 1 2 2 3
-
-silverlodeArcher :: AllyCard
-silverlodeArcher = ally "01017" "Silverlode Archer" Leadership 3 1 2 0 1
-
-snowbournScout :: AllyCard
-snowbournScout = ally "01016" "Snowbourn Scout" Leadership 1 0 0 1 1
-
-sonOfArnor :: AllyCard
-sonOfArnor = ally "01015" "Son of Arnor" Leadership 3 0 2 0 2
+  let attrs = AllyAttrs {id = allyId, card, sphere = fromMaybe Neutral $ cdSphere (toCardDef card), placement = Unplaced}
+  pure $ lookupAlly (toCardCode card) attrs

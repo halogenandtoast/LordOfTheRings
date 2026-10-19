@@ -7,7 +7,6 @@ module LordOfTheRings.Hero (module LordOfTheRings.Hero.Type, module LordOfTheRin
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
-import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Hero.Type
 import LordOfTheRings.Id
 import LordOfTheRings.Message
@@ -54,25 +53,8 @@ lookupHero cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData
  where
   allData = Map.fromList [("01012", Hero . Beravor), ("01007", Hero . Eowyn), ("01002", Hero . Theodred)]
 
-newHero :: (MonadRandom m) => PlayerId -> PlayerCard 'HeroKind -> m Hero
+newHero :: (MonadRandom m) => PlayerId -> PlayerCard -> m Hero
 newHero player card = do
   heroId <- getRandom
-  let attrs = HeroAttrs {id = heroId, card, player, resources = 0, sphere = card.def.sphere}
-  pure $ lookupHero card.def.code attrs
-
-type HeroCard = PlayerCardDef 'HeroKind
-
-allHeroes :: Map CardCode HeroCard
-allHeroes = Map.fromList [("01012", beravor), ("01007", eowyn), ("01002", theodred)]
-
-hero :: CardCode -> Name -> Sphere -> HeroDetails -> HeroCard
-hero code name sphere details = PlayerCardDef {code, name, PC.unique = True, kind = SHeroKind, details, sphere}
-
-beravor :: HeroCard
-beravor = hero "01012" "Beravor" Lore (HeroDetails 10 2 2 2 4)
-
-eowyn :: HeroCard
-eowyn = hero "01007" "Eowyn" Spirit (HeroDetails 9 4 1 1 3)
-
-theodred :: HeroCard
-theodred = hero "01002" "Theodred" Leadership (HeroDetails 8 1 2 1 4)
+  let attrs = HeroAttrs {id = heroId, card, player, resources = 0, sphere = fromMaybe Neutral $ cdSphere (toCardDef card)}
+  pure $ lookupHero (toCardCode card) attrs

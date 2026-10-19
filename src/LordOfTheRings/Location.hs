@@ -37,8 +37,8 @@ lookupLocation cCode = fromMaybe (error "No such quest") $ Map.lookup cCode allD
       [ ("01099", Location . OldForestRoad)
       ]
 
-newLocation :: (MonadRandom m) => EncounterCard 'LocationKind -> m Location
+newLocation :: (MonadRandom m) => EncounterCard -> m Location
 newLocation card = do
   locationId <- getRandom
   let attrs = LocationAttrs {id = locationId, card, placement = Unplaced, progress = 0}
-  pure $ lookupLocation card.def.code attrs
+  pure $ lookupLocation (toCardCode card) attrs

@@ -63,7 +63,7 @@ data CostTarget = CostCardTarget Card
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 
-data Cost = ResourceCost Sphere ResourceCost | Free
+data Cost = ResourceCost Sphere CardCost | Free
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
 

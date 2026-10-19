@@ -47,7 +47,7 @@ instance HasField "name" Ally Name where
   getField (Ally a) = (toAttrs a).name
 
 instance HasField "name" AllyAttrs Name where
-  getField a = a.card.def.name
+  getField a = cdName (toCardDef a.card)
 
 instance HasAbilities Ally where
   getAbilities (Ally a) = getAbilities a
@@ -60,7 +60,7 @@ instance HasPlacement Ally where
 
 data AllyAttrs = AllyAttrs
   { id :: AllyId
-  , card :: PlayerCard 'AllyKind
+  , card :: PlayerCard
   , sphere :: Sphere
   , placement :: Placement
   }

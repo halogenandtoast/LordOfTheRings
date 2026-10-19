@@ -51,7 +51,7 @@ instance Sourceable HeroAttrs where
 
 data HeroAttrs = HeroAttrs
   { id :: HeroId
-  , card :: PlayerCard 'HeroKind
+  , card :: PlayerCard
   , resources :: Int
   , sphere :: Sphere
   , player :: PlayerId
@@ -69,10 +69,10 @@ instance HasField "name" Hero Name where
   getField (Hero a) = (toAttrs a).name
 
 instance HasField "name" HeroAttrs Name where
-  getField a = a.card.def.name
+  getField a = cdName (toCardDef a.card)
 
 instance HasField "threat" HeroAttrs Int where
-  getField a = a.card.def.details.threat
+  getField a = fromMaybe 0 $ cdThreatCost (toCardDef a.card)
 
 instance HasField "player" Hero PlayerId where
   getField (Hero a) = (toAttrs a).player

@@ -18,8 +18,8 @@ data CardMatcher = CardWithCode CardCode
   deriving stock (Show, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
-cardIs :: EncounterCardDef k -> CardMatcher
-cardIs = CardWithCode . (.code)
+cardIs :: CardDef -> CardMatcher
+cardIs = CardWithCode . cdCardCode
 
 data CardHandler = ToStaging
   deriving stock (Show, Generic)
@@ -49,12 +49,12 @@ data Message
   | SpendResources PlayerId Sphere Int
   | SpendHeroResources HeroId Int
   | GainHeroResources HeroId Int
-  | PlayAlly PlayerId (PlayerCard 'AllyKind)
+  | PlayAlly PlayerId PlayerCard
   | DoStep Int Message
   | Ask PlayerId (Question Message)
   | Flip Target
   | Search PlayerId DeckSignifier CardMatcher CardHandler DeckHandler
-  | AddToStaging SomeEncounterCard
+  | AddToStaging EncounterCard
   | ShuffleDeck DeckSignifier
   | RunWindow Window
   | UseCardAbility PlayerId Source Int

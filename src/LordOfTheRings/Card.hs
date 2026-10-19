@@ -1,20 +1,28 @@
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE NoFieldSelectors #-}
-
 module LordOfTheRings.Card (
   module LordOfTheRings.Card,
   module X,
 ) where
 
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Ally.CardDefs (allAllyCards)
+import LordOfTheRings.Attachment.CardDefs (allAttachmentCards)
+import LordOfTheRings.Card.CardDef as X
+import LordOfTheRings.Card.CardType as X
 import LordOfTheRings.Card.Code as X
-import LordOfTheRings.Card.EncounterCard as X hiding (unique)
-import LordOfTheRings.Card.PlayerCard as X hiding (unique)
-import LordOfTheRings.Card.PlayerCard qualified as PlayerCard
+import LordOfTheRings.Card.EncounterCard as X
+import LordOfTheRings.Card.PlayerCard as X
+import LordOfTheRings.Enemy.CardDefs (allEnemyCards)
+import LordOfTheRings.Event.CardDefs (allEventCards)
+import LordOfTheRings.Hero.CardDefs (allHeroCards)
 import LordOfTheRings.Id
-import LordOfTheRings.Target
+import LordOfTheRings.Location.CardDefs (allLocationCards)
 import LordOfTheRings.Name
-import LordOfTheRings.Prelude hiding (id)
+import LordOfTheRings.Objective.CardDefs (allObjectiveCards)
+import LordOfTheRings.Prelude
+import LordOfTheRings.Quest.CardDefs (allQuestCards)
+import LordOfTheRings.Sphere as X
+import LordOfTheRings.Target
+import LordOfTheRings.Treachery.CardDefs (allTreacheryCards)
 
 class Display a where
   display :: a -> Text
@@ -25,53 +33,85 @@ instance Display Name where
     Just subtitle -> title <> ": " <> subtitle
 
 data Card
-  = PlayerCard !SomePlayerCard
-  | EncounterCard !SomeEncounterCard
-  deriving stock (Show, Generic)
-
-instance Targetable Card where
-  toTarget = CardIdTarget . (.id)
+  = PlayerCard PlayerCard
+  | EncounterCard EncounterCard
+  deriving stock (Show, Eq, Generic)
 
 instance ToJSON Card where
   toJSON = \case
     PlayerCard pc -> toJSON pc
     EncounterCard ec -> toJSON ec
 
+allPlayerCards :: Map CardCode CardDef
+allPlayerCards = Map.unions [allHeroCards, allAllyCards, allAttachmentCards, allEventCards]
+
+allEncounterCards :: Map CardCode CardDef
+allEncounterCards =
+  Map.unions [allEnemyCards, allLocationCards, allTreacheryCards, allQuestCards, allObjectiveCards]
+
+lookupCardDef :: CardCode -> Maybe CardDef
+lookupCardDef cCode = Map.lookup cCode allPlayerCards <|> Map.lookup cCode allEncounterCards
+
+instance HasCardDef CardCode where
+  toCardDef cCode = fromJustNote ("missing card def: " <> show cCode) $ lookupCardDef cCode
+
+instance HasCardDef PlayerCard where
+  toCardDef = toCardDef . toCardCode
+
+instance HasCardDef EncounterCard where
+  toCardDef = toCardDef . toCardCode
+
+instance HasCardCode Card where
+  toCardCode = \case
+    PlayerCard pc -> toCardCode pc
+    EncounterCard ec -> toCardCode ec
+
+instance HasCardDef Card where
+  toCardDef = toCardDef . toCardCode
+
+instance Targetable Card where
+  toTarget = CardIdTarget . toCardId
+
+instance Targetable PlayerCard where
+  toTarget = CardIdTarget . pcId
+
+instance Targetable EncounterCard where
+  toTarget = CardIdTarget . ecId
+
+toCardId :: Card -> CardId
+toCardId = \case
+  PlayerCard pc -> pcId pc
+  EncounterCard ec -> ecId ec
+
 instance HasField "id" Card CardId where
-  getField = \case
-    PlayerCard pc -> pc.id
-    EncounterCard ec -> ec.id
+  getField = toCardId
 
 instance HasField "name" Card Name where
-  getField = \case
-    PlayerCard pc -> pc.name
-    EncounterCard ec -> ec.name
+  getField = cdName . toCardDef
 
 instance HasField "unique" Card Bool where
-  getField = \case
-    PlayerCard pc -> pc.unique
-    EncounterCard ec -> ec.unique
+  getField = cdUnique . toCardDef
 
 instance HasField "sphere" Card (Maybe Sphere) where
-  getField = \case
-    PlayerCard pc -> Just pc.sphere
-    EncounterCard _ -> Nothing
+  getField = cdSphere . toCardDef
 
-instance HasField "cost" Card (Maybe ResourceCost) where
-  getField = cardCost
+instance HasField "cost" Card (Maybe CardCost) where
+  getField = cdCost . toCardDef
 
-data SomeCardDef
-  = SomePlayerCardDef !SomePlayerCardDef
-  | SomeEncounterCardDef !SomeEncounterCardDef
+instance HasField "cardType" Card CardType where
+  getField = cdCardType . toCardDef
 
-cardCost :: Card -> Maybe ResourceCost
-cardCost (PlayerCard pc) = playerCardCost pc
-cardCost _ = Nothing
-
-costAsResources :: ResourceCost -> Int
+costAsResources :: CardCost -> Int
 costAsResources = \case
   StaticCost n -> n
   DynamicCost -> 0
 
-unique :: PlayerCardDef k -> PlayerCardDef k
-unique def = def {PlayerCard.unique = True}
+genPlayerCard :: (MonadRandom m) => CardDef -> Maybe PlayerId -> m PlayerCard
+genPlayerCard def owner = do
+  cardId <- getRandom
+  pure $ MkPlayerCard {pcId = cardId, pcCardCode = cdCardCode def, pcOwner = owner}
+
+genEncounterCard :: (MonadRandom m) => CardDef -> m EncounterCard
+genEncounterCard def = do
+  cardId <- getRandom
+  pure $ MkEncounterCard {ecId = cardId, ecCardCode = cdCardCode def}

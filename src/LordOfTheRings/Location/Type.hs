@@ -70,7 +70,7 @@ data Side = A | B
 
 data LocationAttrs = LocationAttrs
   { id :: LocationId
-  , card :: EncounterCard 'LocationKind
+  , card :: EncounterCard
   , placement :: Placement
   , progress :: Int
   }

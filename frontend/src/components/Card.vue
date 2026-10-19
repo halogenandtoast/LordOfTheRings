@@ -72,12 +72,12 @@ const active = computed(() => {
 })
 
 const src = computed(() => {
-  return `/images/cards/${props.card.def.code}${ props.side ? props.side.toLowerCase() : '' }.jpg`
+  return `/images/cards/${props.card.cardCode}${ props.side ? props.side.toLowerCase() : '' }.jpg`
 })
 
 const otherSide = computed(() => {
   if (props.side?.toLowerCase() === 'a') {
-    return `/images/cards/${props.card.def.code}b.jpg`
+    return `/images/cards/${props.card.cardCode}b.jpg`
   }
 
   return null

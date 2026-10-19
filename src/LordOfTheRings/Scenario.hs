@@ -6,22 +6,19 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
-import LordOfTheRings.Enemy.Cards (allEnemies)
-import LordOfTheRings.Location.Cards (allLocations)
 import LordOfTheRings.GameT
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest
-import LordOfTheRings.Quest.Cards qualified as Quest
+import LordOfTheRings.Quest.CardDefs qualified as Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Scenario.Type
-import LordOfTheRings.Treachery.Cards (allTreacheries)
 
 newScenario :: (IsScenario a) => (ScenarioAttrs -> a) -> Scenario
-newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] Normal ResourcePhase
+newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] ResourcePhase
 
 instance RunMessage Scenario where
   runMessage msg (Scenario a) = Scenario <$> runMessage msg a
@@ -29,25 +26,11 @@ instance RunMessage Scenario where
 newtype PassageThroughMirkwood = PassageThroughMirkwood ScenarioAttrs
   deriving newtype (Show, ToJSON)
 
-allEncounterCardDefs :: Map CardCode SomeEncounterCardDef
-allEncounterCardDefs =
-  Map.unions
-    [ Map.map MkSomeEncounterCardDef allEnemies
-    , Map.map MkSomeEncounterCardDef allTreacheries
-    , Map.map MkSomeEncounterCardDef allLocations
-    ]
-
-gatherEncounterSet :: (MonadRandom m) => Difficulty -> EncounterSet -> m [SomeEncounterCard]
-gatherEncounterSet difficulty encounterSet = do
+gatherEncounterSet :: (MonadRandom m) => EncounterSet -> m [EncounterCard]
+gatherEncounterSet encounterSet =
   concatMapM
-    (\e -> replicateM (pickCount e.encounterSetCount) (genSomeEncounterCard e))
-    $ filter (\e -> e.encounterSet == encounterSet) (Map.elems allEncounterCardDefs)
- where
-  pickCount :: (Int, Int, Int) -> Int
-  pickCount (easy, normal, nightmare) = case difficulty of
-    Easy -> easy
-    Normal -> normal
-    Nightmare -> nightmare
+    (\def -> replicateM (fromMaybe 1 $ cdEncounterSetQuantity def) (genEncounterCard def))
+    $ filter ((== Just encounterSet) . cdEncounterSet) (toList allEncounterCards)
 
 instance IsScenario PassageThroughMirkwood
 instance RunMessage PassageThroughMirkwood where
@@ -55,7 +38,7 @@ instance RunMessage PassageThroughMirkwood where
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
-          (gatherEncounterSet a.difficulty)
+          gatherEncounterSet
           [EncounterSet.DolGuldurOrcs, EncounterSet.PassageThroughMirkwood, EncounterSet.SpidersOfMirkwood]
       pure $ PassageThroughMirkwood $ a {encounterDeck}
     DoStep 6 Setup -> do
@@ -74,10 +57,9 @@ instance RunMessage PassageThroughMirkwood where
       pure $ PassageThroughMirkwood $ a {questDeck, quest}
     _ -> PassageThroughMirkwood <$> runMessage msg a
 
-cardMatches :: CardMatcher -> SomeEncounterCard -> Bool
+cardMatches :: CardMatcher -> EncounterCard -> Bool
 cardMatches = \case
-  CardWithCode code -> \case
-    SomeEncounterCard (MkEncounterCard _ c) -> code == c.code
+  CardWithCode code -> (== code) . toCardCode
 
 runScenarioMessage :: Message -> ScenarioAttrs -> GameT ScenarioAttrs
 runScenarioMessage msg attrs = case msg of
@@ -90,7 +72,7 @@ runScenarioMessage msg attrs = case msg of
     case matches of
       [] -> pure attrs
       (x : xs) ->
-        if all ((== x.code) . (.code)) xs
+        if all ((== toCardCode x) . toCardCode) xs
           then do
             encounterDeck <- shuffleM $ filter ((/= x.id) . (.id)) attrs.encounterDeck
             push $ AddToStaging x

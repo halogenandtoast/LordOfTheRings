@@ -56,7 +56,7 @@ data Side = A | B
 
 data EnemyAttrs = EnemyAttrs
   { id :: EnemyId
-  , card :: EncounterCard 'EnemyKind
+  , card :: EncounterCard
   , placement :: Placement
   }
   deriving stock (Show, Generic)

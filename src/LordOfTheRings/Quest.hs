@@ -5,13 +5,13 @@ module LordOfTheRings.Quest (module LordOfTheRings.Quest, module LordOfTheRings.
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
-import LordOfTheRings.Enemy.Cards qualified as Enemies
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Frontend
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id
 import LordOfTheRings.Target
-import LordOfTheRings.Location.Cards qualified as Locations
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
@@ -57,8 +57,8 @@ lookupQuest cCode = fromMaybe (error "No such quest") $ Map.lookup cCode allData
       [ ("01119", Quest . FliesAndSpiders)
       ]
 
-newQuest :: (MonadRandom m) => EncounterCard 'QuestKind -> m Quest
+newQuest :: (MonadRandom m) => EncounterCard -> m Quest
 newQuest card = do
   questId <- getRandom
   let attrs = QuestAttrs {id = questId, card, side = A}
-  pure $ lookupQuest card.def.code attrs
+  pure $ lookupQuest (toCardCode card) attrs

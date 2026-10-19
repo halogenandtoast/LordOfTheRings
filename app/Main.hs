@@ -21,7 +21,6 @@ import Control.Monad.Random (
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
-import LordOfTheRings.Card.PlayerCard as PC
 import LordOfTheRings.Game
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.GameT
@@ -46,105 +45,6 @@ data GameData = GameData
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
-
-type AttachmentCard = PlayerCardDef 'AttachmentKind
-
-allAttachments :: Map CardCode AttachmentCard
-allAttachments =
-  Map.fromList
-    [ ("01026", stewardOfGondor)
-    , ("01027", celebriansStone)
-    , ("01057", unexpectedCourage)
-    , ("01069", forestSnare)
-    , ("01070", protectorOfLorien)
-    , ("01072", selfPreservation)
-    ]
-
-attachment :: CardCode -> Name -> Sphere -> Int -> AttachmentCard
-attachment code name sphere cost =
-  PlayerCardDef
-    { code
-    , name
-    , unique = False
-    , kind = SAttachmentKind
-    , details = AttachmentDetails (StaticCost cost) False
-    , sphere
-    }
-
-restricted :: AttachmentCard -> AttachmentCard
-restricted def = def {PC.details = def.details {restricted = True}}
-
-stewardOfGondor :: AttachmentCard
-stewardOfGondor = unique $ attachment "01026" "Steward of Gondor" Leadership 2
-
-celebriansStone :: AttachmentCard
-celebriansStone = unique $ restricted $ attachment "01027" "Celebrian's Stone" Leadership 2
-
-unexpectedCourage :: AttachmentCard
-unexpectedCourage = attachment "01057" "Unexpected Courage" Spirit 2
-
-forestSnare :: AttachmentCard
-forestSnare = attachment "01069" "Forest Snare" Lore 3
-
-protectorOfLorien :: AttachmentCard
-protectorOfLorien = attachment "01070" "Protector of Lorien" Lore 1
-
-selfPreservation :: AttachmentCard
-selfPreservation = attachment "01072" "Self Preservation" Lore 3
-
-type EventCard = PlayerCardDef 'EventKind
-
-allEvents :: Map CardCode EventCard
-allEvents =
-  Map.fromList
-    [ ("01050", aTestOfWill)
-    , ("01053", dwarvenTomb)
-    , ("01020", everVigilant)
-    , ("01025", grimResolve)
-    , ("01048", hastyStroke)
-    , ("01064", loriensWealth)
-    , ("01023", sneakAttack)
-    , ("01051", standAndFight)
-    , ("01046", theGaladhrimsGreeting)
-    ]
-
-event :: CardCode -> Name -> Sphere -> Int -> EventCard
-event code name sphere cost =
-  PlayerCardDef
-    { code
-    , name
-    , unique = False
-    , kind = SEventKind
-    , details = EventDetails (StaticCost cost)
-    , sphere
-    }
-
-aTestOfWill :: EventCard
-aTestOfWill = event "01050" "A Test of Will" Spirit 1
-
-dwarvenTomb :: EventCard
-dwarvenTomb = event "01053" "Dwarven Tomb" Spirit 1
-
-everVigilant :: EventCard
-everVigilant = event "01020" "Ever Vigilant" Leadership 1
-
-grimResolve :: EventCard
-grimResolve = event "01025" "Grim Resolve" Leadership 5
-
-hastyStroke :: EventCard
-hastyStroke = event "01048" "Hasty Stroke" Spirit 1
-
-loriensWealth :: EventCard
-loriensWealth = event "01064" "Lorien's Wealth" Lore 3
-
-sneakAttack :: EventCard
-sneakAttack = event "01023" "Sneak Attack" Leadership 1
-
-standAndFight :: EventCard
-standAndFight = dynamic $ event "01051" "Stand and Fight" Spirit 0
-
-theGaladhrimsGreeting :: EventCard
-theGaladhrimsGreeting = event "01046" "The Galadhrim's Greeting" Spirit 3
 
 data DeckList = DeckList
   { heroes :: [CardCode]
@@ -184,25 +84,27 @@ testDeckList =
     , ("01046", 2)
     ]
 
-data Deck = Deck
-  { heroes :: [PlayerCard 'HeroKind]
-  , cards :: [Card]
-  }
-  deriving stock (Show)
-
 newtype DeckException = DeckException Text
   deriving newtype (Show)
 
+lookupPlayerCardDef :: CardCode -> Either DeckException CardDef
+lookupPlayerCardDef cCode =
+  maybe (Left $ DeckException $ "Missing card: " <> tshow cCode) Right $ Map.lookup cCode allPlayerCards
+
 loadPlayer :: (MonadRandom m) => DeckList -> m (Either DeckException (Player, [Hero]))
-loadPlayer dl = traverse go =<< loadDecklist dl
- where
-  go deck = do
-    pid <- getRandom
-    heroes <- traverse (newHero pid) deck.heroes
-    pure $
+loadPlayer dl = do
+  pid <- getRandom
+  let defs =
+        (,)
+          <$> traverse lookupPlayerCardDef dl.heroes
+          <*> (concat <$> traverse (\(cCode, n) -> replicate n <$> lookupPlayerCardDef cCode) dl.cards)
+  for defs \(heroDefs, cardDefs) -> do
+    heroes <- traverse (newHero pid <=< (`genPlayerCard` Just pid)) heroDefs
+    deck <- traverse (fmap PlayerCard . (`genPlayerCard` Just pid)) cardDefs
+    pure
       ( Player
           { id = pid
-          , deck = map (setCardOwner pid) deck.cards
+          , deck
           , hand = []
           , threat = 0
           , question = Nothing
@@ -211,41 +113,6 @@ loadPlayer dl = traverse go =<< loadDecklist dl
           }
       , heroes
       )
-
-setCardOwner :: PlayerId -> Card -> Card
-setCardOwner pid (PlayerCard (SomePlayerCard c)) = PlayerCard . SomePlayerCard $ c {owner = Just pid}
-setCardOwner _ c = c
-
-missingCard :: CardCode -> DeckException
-missingCard code = DeckException $ "Missing card: " <> tshow code
-
-allCardDefs :: Map CardCode SomeCardDef
-allCardDefs =
-  Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allHeroes
-    <> Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allAllies
-    <> Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allAttachments
-    <> Map.map (SomePlayerCardDef . MkSomePlayerCardDef) allEvents
-
-lookupCard :: (MonadRandom m) => CardCode -> m (Either DeckException Card)
-lookupCard code = case Map.lookup code allCardDefs of
-  Nothing -> pure $ Left $ missingCard code
-  Just (SomePlayerCardDef (MkSomePlayerCardDef c)) -> Right . PlayerCard . SomePlayerCard <$> newPlayerCard c Nothing
-  Just (SomeEncounterCardDef (MkSomeEncounterCardDef c)) -> Right . EncounterCard . SomeEncounterCard <$> newEncounterCard c
-
-lookupHeroCard :: (MonadRandom m) => CardCode -> m (Either DeckException (PlayerCard 'HeroKind))
-lookupHeroCard code = case Map.lookup code allHeroes of
-  Nothing -> pure $ Left $ missingCard code
-  Just c -> Right <$> newPlayerCard c Nothing
-
-_PlayerCard :: Card -> Maybe SomePlayerCard
-_PlayerCard (PlayerCard c) = Just c
-_PlayerCard _ = Nothing
-
-loadDecklist :: (MonadRandom m) => DeckList -> m (Either DeckException Deck)
-loadDecklist DeckList {heroes, cards} = do
-  loadedHeroes <- sequence <$> traverse lookupHeroCard heroes
-  loadedCards <- sequence <$> concatMapM (\(code, n) -> replicateM n (lookupCard code)) cards
-  pure $ Deck <$> loadedHeroes <*> loadedCards
 
 data Room = Room
   { env :: GameEnv

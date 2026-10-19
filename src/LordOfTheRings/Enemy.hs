@@ -32,8 +32,8 @@ lookupEnemy cCode = fromMaybe (error "No such enemy") $ Map.lookup cCode allData
       [ ("01096", Enemy . ForestSpider)
       ]
 
-newEnemy :: (MonadRandom m) => EncounterCard 'EnemyKind -> m Enemy
+newEnemy :: (MonadRandom m) => EncounterCard -> m Enemy
 newEnemy card = do
   enemyId <- getRandom
   let attrs = EnemyAttrs {id = enemyId, card, placement = Unplaced}
-  pure $ lookupEnemy card.def.code attrs
+  pure $ lookupEnemy (toCardCode card) attrs

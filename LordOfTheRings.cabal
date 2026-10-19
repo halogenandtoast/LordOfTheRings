@@ -30,7 +30,6 @@ library
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.CardDefs
-      LordOfTheRings.Enemy.Cards
       LordOfTheRings.Enemy.Type
       LordOfTheRings.Event.CardDefs
       LordOfTheRings.Frontend
@@ -41,10 +40,10 @@ library
       LordOfTheRings.Hero.CardDefs
       LordOfTheRings.Hero.Type
       LordOfTheRings.Id
+      LordOfTheRings.Json
       LordOfTheRings.Keyword
       LordOfTheRings.Location
       LordOfTheRings.Location.CardDefs
-      LordOfTheRings.Location.Cards
       LordOfTheRings.Location.Type
       LordOfTheRings.Matcher
       LordOfTheRings.Message
@@ -55,7 +54,6 @@ library
       LordOfTheRings.Prelude
       LordOfTheRings.Quest
       LordOfTheRings.Quest.CardDefs
-      LordOfTheRings.Quest.Cards
       LordOfTheRings.Quest.Type
       LordOfTheRings.Question
       LordOfTheRings.Queue
@@ -66,7 +64,6 @@ library
       LordOfTheRings.Target
       LordOfTheRings.Trait
       LordOfTheRings.Treachery.CardDefs
-      LordOfTheRings.Treachery.Cards
       LordOfTheRings.Window
   other-modules:
       Paths_LordOfTheRings

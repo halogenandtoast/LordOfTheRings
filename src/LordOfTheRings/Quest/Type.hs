@@ -42,7 +42,7 @@ data Side = A | B
 
 data QuestAttrs = QuestAttrs
   { id :: QuestId
-  , card :: EncounterCard 'QuestKind
+  , card :: EncounterCard
   , side :: Side
   }
   deriving stock (Show, Generic)

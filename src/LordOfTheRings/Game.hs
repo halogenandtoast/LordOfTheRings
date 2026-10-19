@@ -101,15 +101,15 @@ runGameMessage msg g = case msg of
   PlayAlly pid card -> do
     player <- getPlayer pid
     thisAlly <- newAlly card
-    send $ Log $ player.name <> " plays " <> display card.name
+    send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
     pushAll [RunWindow $ Window After $ EnterPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (thisAlly & placementL .~ Controlled pid)
-  AddToStaging (SomeEncounterCard card) -> do
-    case card.def.kind of
-      SEnemyKind -> do
+  AddToStaging card -> do
+    case cdCardType (toCardDef card) of
+      EnemyType -> do
         thisEnemy <- newEnemy card
         pure $ g & entitiesL . enemiesL %~ insertEntity (thisEnemy & placementL .~ Staging)
-      SLocationKind -> do
+      LocationType -> do
         thisLocation <- newLocation card
         pure $ g & entitiesL . locationsL %~ insertEntity (thisLocation & placementL .~ Staging)
       _ -> error "Unhandled"
@@ -227,8 +227,8 @@ instance RunMessage ActiveCost where
             pure ac {Cost.cost = Free}
     PaidCost acId | acId == ac.id -> do
       case ac.target of
-        CostCardTarget (PlayerCard (SomePlayerCard card)) -> case card.def.kind of
-          SAllyKind -> push $ PlayAlly ac.player card
+        CostCardTarget (PlayerCard card) -> case cdCardType (toCardDef card) of
+          AllyType -> push $ PlayAlly ac.player card
           _ -> pure ()
         _ -> error "Unhandled cost target"
       pure ac
@@ -240,7 +240,7 @@ instance RunMessage Player where
     runPlayerMessage msg $ player {Player.cost = cost}
 
 canPlay :: (HasGame m) => Player -> Card -> m Bool
-canPlay p c = case cardCost c of
+canPlay p c = case c.cost of
   Nothing -> pure False
   Just cost -> do
     andM
@@ -256,10 +256,10 @@ passesUnique card = do
     else pure True
 
 correctPhase :: (HasGame m) => Card -> m Bool
-correctPhase (PlayerCard (SomePlayerCard card)) = do
-  case card.def.kind of
-    SAllyKind -> isPhase PlanningPhase
-    SAttachmentKind -> isPhase PlanningPhase
+correctPhase (PlayerCard card) = do
+  case cdCardType (toCardDef card) of
+    AllyType -> isPhase PlanningPhase
+    AttachmentType -> isPhase PlanningPhase
     _ -> pure True
 correctPhase (EncounterCard _) = pure False
 
