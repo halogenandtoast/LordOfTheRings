@@ -6,8 +6,6 @@ import type { GameView } from '../types'
 import { toView } from '../view'
 import { withViewTransition } from './useViewTransition'
 
-type Status = 'connecting' | 'open' | 'closed'
-
 const LOG_LIMIT = 200
 const FLIP_MS = 320
 
@@ -17,7 +15,6 @@ const socketUrl = (gameId: string) => {
 }
 
 export const useGame = (gameId: string) => {
-  const status = ref<Status>('connecting')
   let closed = false
   const error = ref<string | null>(null)
   const data = shallowRef<GameData | null>(null)
@@ -94,10 +91,8 @@ export const useGame = (gameId: string) => {
   }
 
   const connect = () => {
-    status.value = 'connecting'
     socket = new WebSocket(socketUrl(gameId))
     socket.addEventListener('open', () => {
-      status.value = 'open'
       error.value = null
       void refresh()
     })
@@ -106,7 +101,6 @@ export const useGame = (gameId: string) => {
       void drain()
     })
     socket.addEventListener('close', () => {
-      status.value = 'closed'
       if (!closed) reconnect = window.setTimeout(connect, 2000)
     })
   }
@@ -130,7 +124,6 @@ export const useGame = (gameId: string) => {
   })
 
   return {
-    status: readonly(status),
     error: readonly(error),
     game: readonly(game),
     canUndo: computed(() => data.value?.canUndo ?? false),

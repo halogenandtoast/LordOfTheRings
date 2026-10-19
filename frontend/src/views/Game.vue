@@ -15,7 +15,7 @@ import { useGame } from '../composables/useGame'
 
 const route = useRoute()
 const {
-  status, error, game, log, announcement, flipping,
+  error, game, log, announcement, flipping,
   started, question, scenario, players, outcome, answer, reset, undo, canUndo,
 } = useGame(route.params.id as string)
 const showSidebar = ref(true)
@@ -63,7 +63,6 @@ const choose = (index: number) => {
 <template>
   <div class="game-view">
   <GameBar
-    :status="status"
     :can-undo="canUndo"
     :show-sidebar="showSidebar"
     @reset="reset"

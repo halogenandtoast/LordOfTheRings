@@ -3,7 +3,7 @@ import GameMenu from './GameMenu.vue'
 
 const undoShortcut = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘Z' : 'Ctrl+Z'
 
-defineProps<{ canUndo: boolean; showSidebar: boolean; status: 'connecting' | 'open' | 'closed' }>()
+defineProps<{ canUndo: boolean; showSidebar: boolean }>()
 const emit = defineEmits<{ reset: []; undo: [to?: 'phase' | 'round']; export: []; toggleSidebar: [] }>()
 </script>
 
@@ -60,7 +60,6 @@ const emit = defineEmits<{ reset: []; undo: [to?: 'phase' | 'round']; export: []
       </template>
     </GameMenu>
     <div class="right">
-      <span class="status" :data-status="status">{{ status }}</span>
       <button
         type="button"
         class="drawer-toggle"
@@ -148,14 +147,6 @@ const emit = defineEmits<{ reset: []; undo: [to?: 'phase' | 'round']; export: []
   align-items: center;
   margin-left: auto;
 }
-.status {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.6;
-  padding: 0 10px;
-}
-.status[data-status='closed'] { color: var(--danger); opacity: 1; }
 .right .drawer-toggle {
   justify-content: center;
   min-width: 40px;
