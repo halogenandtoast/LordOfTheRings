@@ -27,12 +27,13 @@ instance RunMessage RainOfArrows where
         selectCharacters
           (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> HeroWithKeyword Ranged)
           (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> AllyWithKeyword Ranged)
-      order <- getPlayerOrder
-      volleys <- for order \p -> (p,) <$> select (EnemyEngagedWith $ PlayerWithId p)
-      choose <- choosePlayer pid (Just $ toTarget attrs) \p ->
-        [DealDamage (toSource attrs) (toTarget eid) 1 | eid <- fromMaybe [] (lookup p volleys)]
-      push
-        $ questionLabelWith (ikey "label.rainOfArrows.exhaust") (Just $ toTarget attrs) [] pid
-          [targetLabel c [Exhaust c, choose] | c <- archers]
+      chooseOneM pid do
+        questionLabeled "rainOfArrows.exhaust"
+        causedBy attrs
+        targets archers \c -> do
+          exhaust c
+          choosePlayerM pid attrs \p -> do
+            enemies <- select (EnemyEngagedWith $ PlayerWithId p)
+            for_ enemies \eid -> dealDamage attrs eid 1
       pure e
     _ -> RainOfArrows <$> runMessage msg attrs

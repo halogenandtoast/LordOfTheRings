@@ -14,6 +14,6 @@ loriensWealth = event LoriensWealth Cards.loriensWealth
 instance RunMessage LoriensWealth where
   runMessage msg e@(LoriensWealth attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      push =<< choosePlayer pid (Just $ toTarget attrs) \p -> [DrawCards $ Drawing p 3]
+      choosePlayerM pid attrs \p -> drawCards p 3
       pure e
     _ -> LoriensWealth <$> runMessage msg attrs

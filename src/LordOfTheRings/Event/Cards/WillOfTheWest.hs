@@ -15,8 +15,8 @@ willOfTheWest = event WillOfTheWest Cards.willOfTheWest
 instance RunMessage WillOfTheWest where
   runMessage msg e@(WillOfTheWest attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      choose <- choosePlayer pid (Just $ toTarget attrs) \p -> [ShuffleDiscardIntoDeck p]
       -- out of the game before the discard pile it sits in is shuffled
-      pushAll [RemoveFromDiscard pid card.id, choose]
+      removeFromDiscard pid card.id
+      choosePlayerM pid attrs \p -> push $ ShuffleDiscardIntoDeck p
       pure e
     _ -> WillOfTheWest <$> runMessage msg attrs

@@ -14,12 +14,10 @@ theGaladhrimsGreeting = event TheGaladhrimsGreeting Cards.theGaladhrimsGreeting
 instance RunMessage TheGaladhrimsGreeting where
   runMessage msg e@(TheGaladhrimsGreeting attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      order <- getPlayerOrder
-      one <- choosePlayer pid (Just $ toTarget attrs) \p -> [LowerThreat p 6]
-      push
-        $ questionLabelWith (ikey "label.theGaladhrimsGreeting.title") (Just $ toTarget attrs) [] pid
-          [ Label (ikey "label.theGaladhrimsGreeting.one") [one]
-          , Label (ikey "label.theGaladhrimsGreeting.each") [LowerThreat p 2 | p <- order]
-          ]
+      chooseOneM pid do
+        questionLabeled "theGaladhrimsGreeting.title"
+        causedBy attrs
+        labeled "theGaladhrimsGreeting.one" $ choosePlayerM pid attrs \p -> lowerThreat p 6
+        labeled "theGaladhrimsGreeting.each" $ eachPlayer \p -> lowerThreat p 2
       pure e
     _ -> TheGaladhrimsGreeting <$> runMessage msg attrs

@@ -15,7 +15,6 @@ standTogether = event StandTogether Cards.standTogether
 instance RunMessage StandTogether where
   runMessage msg e@(StandTogether attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      push =<< choosePlayer pid (Just $ toTarget attrs) \p ->
-        [CreateEffect $ Effect (toSource attrs) (PlayerTarget p) [MayDeclareMultipleDefenders] UntilEndOfPhase]
+      choosePlayerM pid attrs \p -> phaseModifier attrs p MayDeclareMultipleDefenders
       pure e
     _ -> StandTogether <$> runMessage msg attrs

@@ -20,18 +20,14 @@ instance RunMessage GandalfsSearch where
   runMessage msg e@(GandalfsSearch attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       lore <- sum . map (.resources) <$> (traverse getHero =<< select (HeroControlledBy (PlayerWithId pid) <> HeroWithSphere Lore))
-      order <- getPlayerOrder
-      looks <- for order \p -> do
+      choosePlayerM pid attrs \p -> do
         deck <- (.deck) <$> getPlayer p
-        pure
-          ( p
-          , [ Label (ikeyWith "label.xEquals" [intVar "x" x]) [SpendResources pid Lore x, lookAt p (take x deck)]
-            | x <- [1 .. min lore (length deck)]
-            ]
-          )
-      chooseDeck <- choosePlayer pid (Just $ toTarget attrs) \p ->
-        [questionLabelWith (ikey "label.chooseX") (Just $ toTarget attrs) [] pid xs | Just xs@(_ : _) <- [lookup p looks]]
-      push chooseDeck
+        chooseOneM pid do
+          questionLabeled "chooseX"
+          causedBy attrs
+          for_ [1 .. min lore (length deck)] \x -> labeledWith "xEquals" [intVar "x" x] do
+            spendResources pid Lore x
+            push $ lookAt p (take x deck)
       pure e
     _ -> GandalfsSearch <$> runMessage msg attrs
    where

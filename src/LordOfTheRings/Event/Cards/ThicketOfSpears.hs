@@ -16,7 +16,6 @@ thicketOfSpears = event ThicketOfSpears Cards.thicketOfSpears
 instance RunMessage ThicketOfSpears where
   runMessage msg e@(ThicketOfSpears attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      push =<< choosePlayer pid (Just $ toTarget attrs) \p ->
-        [CreateEffect $ Effect (toSource attrs) (PlayerTarget p) [EngagedEnemiesCannotAttack] UntilEndOfPhase]
+      choosePlayerM pid attrs \p -> phaseModifier attrs p EngagedEnemiesCannotAttack
       pure e
     _ -> ThicketOfSpears <$> runMessage msg attrs
