@@ -27,6 +27,7 @@ data WindowType
   | -- | a location about to leave play as an explored location
     Explored LocationId
   | EnemyAttacking EnemyId PlayerId
+  | PhaseEnds Phase
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId
   | -- | a character left play: who controlled it, and its traits as it left

@@ -23,6 +23,7 @@ data WindowMatcher
   | TreacheryRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
+  | PhaseEndsWindow Timing Phase
   | EnemyAttacksWindow Timing EnemyId
   | -- | any encounter card revealed from the encounter deck
     CardRevealedWindow Timing
@@ -50,6 +51,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TreacheryRevealedWindow t, Revealed (TreacheryTarget _)) -> t == timing
   (ShadowEffectWindow t, ShadowEffectTriggered _ _) -> t == timing
   (ExploredWindow t lid, Explored lid') -> t == timing && lid == lid'
+  (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
   (CardRevealedWindow t, Revealed _) -> t == timing
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing

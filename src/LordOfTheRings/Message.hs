@@ -123,6 +123,11 @@ data Message
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target
   | ShufflePlayerDeck PlayerId
+  | ReturnToTopOfEncounterDeck Target
+  | RemoveProgressFromQuest Source Int
+  | -- | a shadow card dealt to the enemy becomes an enemy itself, engaged with the player
+    PutShadowCardIntoPlay EnemyId CardId PlayerId
+  | RemoveShadowCard EnemyId CardId
   | ChooseAndDiscard Source PlayerId [Target]
   | DiscardEventsFromHand PlayerId
   | Exhaust Target

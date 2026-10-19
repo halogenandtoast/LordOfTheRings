@@ -19,6 +19,16 @@ data ModifierType
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
   | CannotAttack
+  | -- | damage an attack deals past the character's remaining hit points raises threat
+    ExcessDamageToThreat
+  | CannotBeOptionallyEngagedWhileOthersInStaging
+  | DoesNotCountDefense
+  | -- | on a location: when the players may travel and there is no active location, they
+    -- must travel here
+    MustBeTraveledTo
+  | LeavesPlayToTopOfEncounterDeck
+  | ShuffledIntoEncounterDeckWhenDefeated
+  | ReturnToTopOfEncounterDeckAfterCombat
   | -- | on a location: the players cannot travel there now (its travel cost cannot be paid)
     CannotBeTraveledTo
   | -- | on a player

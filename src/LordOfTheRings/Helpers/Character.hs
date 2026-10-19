@@ -23,7 +23,9 @@ characterStat printed mods target = do
 getWillpower, getAttack, getDefense, getHitPoints :: (HasGame m) => Target -> m Int
 getWillpower = characterStat cdWillpower willpowerOf
 getAttack = characterStat cdAttack attackOf
-getDefense = characterStat cdDefense defenseOf
+getDefense target = do
+  blank <- elem DoesNotCountDefense <$> getModifiers target
+  if blank then pure 0 else characterStat cdDefense defenseOf target
 getHitPoints = characterStat cdHitPoints hitPointsOf
 
 -- | The total willpower of every character committed to the quest.

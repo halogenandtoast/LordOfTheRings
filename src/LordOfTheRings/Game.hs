@@ -154,6 +154,10 @@ instance RunMessage Game where
       >>= traverseOf entitiesL (runMessage msg)
       >>= traverseOf scenarioL (runMessage msg)
       >>= runGameMessage msg
+      >>= \g' -> case msg of
+        -- the window goes in front of the phase's own steps
+        BeginPhase phase -> g' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
+        _ -> pure g'
 
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
@@ -264,11 +268,15 @@ runGameMessage msg g = case msg of
     hasActive <- selectAny IsActiveLocation
     locations <- filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
     lead <- getLead
+    forced <- filterM (fmap (elem MustBeTraveledTo) . getModifiers) locations
     unless (hasActive || null locations)
       $ push
-      $ questionLabel "Travel to a location?" lead
-      $ [targetLabel lid [TravelTo lid] | lid <- locations]
-      <> [Label "Do not travel" []]
+      $ if null forced
+        then
+          questionLabel "Travel to a location?" lead
+            $ [targetLabel lid [TravelTo lid] | lid <- locations]
+            <> [Label "Do not travel" []]
+        else questionLabel "You must travel to a location" lead [targetLabel lid [TravelTo lid] | lid <- forced]
     pure $ g & phaseL .~ TravelPhase
   TravelTo lid -> do
     pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
@@ -278,7 +286,10 @@ runGameMessage msg g = case msg of
     pushAll $ map OptionalEngagement order <> [EngagementCheck pid 0 | pid <- take 1 order]
     pure $ g & phaseL .~ EncounterPhase
   OptionalEngagement pid -> do
-    enemies <- select EnemyInStagingArea
+    staged <- select EnemyInStagingArea
+    -- some enemies may only be engaged once they are alone in the staging area
+    enemies <- flip filterM staged \eid ->
+      if length staged > 1 then notElem CannotBeOptionallyEngagedWhileOthersInStaging <$> getModifiers eid else pure True
     unless (null enemies)
       $ push
       $ questionLabel "Engage an enemy from the staging area?" pid
@@ -350,9 +361,8 @@ runGameMessage msg g = case msg of
   DefendedByMany pid eid defenders -> do
     attack <- getEnemyAttack eid
     defense <- sum <$> traverse getDefense defenders
-    push
-      $ chooseOrRunOne pid
-        [targetLabel d [DealDamage (EnemySource eid) d (attack - defense)] | d <- defenders]
+    choices <- for defenders \d -> targetLabel d <$> attackDamage pid eid d (attack - defense)
+    push $ chooseOrRunOne pid choices
     pure g
   UndefendedAttack pid eid -> do
     pushAll [ResolveShadow eid pid Nothing, UndefendedDamage pid eid, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
@@ -360,10 +370,10 @@ runGameMessage msg g = case msg of
   UndefendedDamage pid eid -> do
     attack <- getEnemyAttack eid
     heroes <- select (HeroControlledBy $ PlayerWithId pid)
+    choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid (toTarget h) attack
     unless (null heroes)
       $ push
-      $ questionLabelWith "The attack is undefended: which hero takes the damage?" (Just $ toTarget eid) [] pid
-        [targetLabel h [DealDamage (EnemySource eid) (toTarget h) attack] | h <- heroes]
+      $ questionLabelWith "The attack is undefended: which hero takes the damage?" (Just $ toTarget eid) [] pid choices
     pure g
   PlayerAttacks pid -> do
     enemies <- engagedByCost pid
@@ -413,7 +423,9 @@ runGameMessage msg g = case msg of
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
     defense <- getDefense defender
-    push $ DealDamage (EnemySource eid) defender (attack - defense)
+    engaged <- placementController . (.placement) <$> getEnemy eid
+    lead <- getLead
+    pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)
     pure g
   ResolveShadow eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
@@ -497,6 +509,10 @@ runGameMessage msg g = case msg of
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
+    push $ CheckWindows [mkWhen $ PhaseEnds phase]
+    when (phase == CombatPhase) do
+      returning <- filterM (fmap (elem ReturnToTopOfEncounterDeckAfterCombat) . getModifiers) (toList g.entities.enemies)
+      pushAll [ReturnToTopOfEncounterDeck (toTarget e) | e <- returning]
     returning <- flip filterM (toList g.entities.allies) \a ->
       elem ReturnToHandAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
     shuffling <- flip filterM (toList g.entities.allies) \a -> elem ShuffleIntoDeckAtEndOfPhase <$> getModifiers a
@@ -568,6 +584,34 @@ runGameMessage msg g = case msg of
     send $ Log $ display a.name <> " is shuffled into its owner's deck"
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+  ReturnToTopOfEncounterDeck target -> do
+    let toTop card = scenarioL %~ overAttrs (encounterDeckL %~ (card :))
+        withAttached = pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+    case target of
+      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
+        withAttached
+        pure $ g & entitiesL . enemiesL %~ Map.delete eid & toTop (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e))
+      LocationTarget lid | Just l <- Map.lookup lid g.entities.locations -> do
+        withAttached
+        pure $ g & entitiesL . locationsL %~ Map.delete lid & toTop (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l))
+      _ -> pure g
+  RemoveProgressFromQuest source n -> do
+    quests <- toList <$> getsGame (entitiesQuests . gameEntities)
+    pushAll [RemoveTokens source (toTarget q) Progress (min n q.progress) | q <- quests, q.progress > 0]
+    pure g
+  PutShadowCardIntoPlay host cid pid -> do
+    for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
+      for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do
+        attacker <- newEnemy card
+        pushAll
+          [ RemoveShadowCard host cid
+          , PlaceEnemy attacker.id (EngagedWith pid)
+          , CreateEffect $ Effect (toSource attacker) (toTarget attacker) [ReturnToTopOfEncounterDeckAfterCombat] UntilEndOfRound
+          , DealShadowCard attacker.id
+          , EnemyAttack pid attacker.id
+          ]
+        putGame $ g & entitiesL . enemiesL %~ insertEntity attacker
+    getGame
   TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   CompleteQuest qid -> do
     push AdvanceQuest
@@ -696,7 +740,15 @@ discardTarget target g = leftPlay g target >> case target of
       pushAll
         $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
         <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
-      pure $ addToDiscard (toCard entity) $ g & entitiesL . l %~ Map.delete k
+      mods <- getModifiers target
+      let removed = g & entitiesL . l %~ Map.delete k
+      case toCard entity of
+        EncounterCard ec
+          | LeavesPlayToTopOfEncounterDeck `elem` mods -> pure $ removed & scenarioL %~ overAttrs (encounterDeckL %~ (ec :))
+          | ShuffledIntoEncounterDeckWhenDefeated `elem` mods -> do
+              deck <- shuffleM (ec : (toAttrs g.scenario).encounterDeck)
+              pure $ removed & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+        card -> pure $ addToDiscard card removed
   addToDiscard card = case card of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
     EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
@@ -761,3 +813,12 @@ resolveShadowEffect card msg = case cdCardType (toCardDef card) of
   TreacheryType -> void . runMessage msg . createTreachery card =<< getRandom
   _ -> pure ()
 
+
+-- | The damage an enemy's attack deals to a character, and, for an enemy whose excess
+-- damage counts against the player, the threat it raises.
+attackDamage :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
+attackDamage pid eid target n = do
+  excessToThreat <- elem ExcessDamageToThreat <$> getModifiers eid
+  remaining <- (-) <$> getHitPoints target <*> getDamage target
+  let excess = if excessToThreat then max 0 (n - remaining) else 0
+  pure $ DealDamage (EnemySource eid) target n : [RaiseThreat pid excess | excess > 0]

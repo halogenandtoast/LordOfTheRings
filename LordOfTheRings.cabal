@@ -380,6 +380,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.AttachmentSpec
       LordOfTheRings.CombatPhaseSpec
       LordOfTheRings.Core.AlliesAndAttachmentsSpec
+      LordOfTheRings.Core.AnduinEncounterSpec
       LordOfTheRings.Core.CancelSpec
       LordOfTheRings.Core.CombatCardsSpec
       LordOfTheRings.Core.EventsSpec

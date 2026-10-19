@@ -156,7 +156,8 @@ spec = do
       run $ BeginPhase RefreshPhase
       exhausted "01007" `shouldReturn` True
       run $ PlaceTokens GameSource eowyn Resource 2
-      run $ CheckWindows [mkAfter $ PhaseBegins RefreshPhase]
+      run $ Exhaust eowyn
+      run $ BeginPhase RefreshPhase
       web <- getsGame (toTarget . fromJustNote "no web" . headMay . toList . (.entities.treacheries))
       chooseAbilityOf pid web
       exhausted "01007" `shouldReturn` False

@@ -13,6 +13,7 @@ instance RunMessage EnemyAttrs where
   runMessage msg attrs = case msg of
     PlaceEnemy eid placement | eid == attrs.id -> pure $ attrs & placementL .~ placement
     AttachShadowCard eid card | eid == attrs.id -> pure $ attrs & shadowCardsL %~ (<> [card])
+    RemoveShadowCard eid cid | eid == attrs.id -> pure $ attrs & shadowCardsL %~ filter ((/= cid) . (.id))
     EndPhase CombatPhase | notNull attrs.shadowCards -> do
       push $ AddToEncounterDiscard attrs.shadowCards
       pure $ attrs & shadowCardsL .~ []
