@@ -5,7 +5,13 @@ import LordOfTheRings.Prelude
 
 data Token = Damage | Progress | Resource
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
-  deriving anyclass (ToJSON, FromJSON, ToJSONKey, FromJSONKey)
+  deriving anyclass (ToJSON, FromJSON)
+
+instance ToJSONKey Token where
+  toJSONKey = genericToJSONKey defaultJSONKeyOptions
+
+instance FromJSONKey Token where
+  fromJSONKey = genericFromJSONKey defaultJSONKeyOptions
 
 type Tokens = Map Token Int
 

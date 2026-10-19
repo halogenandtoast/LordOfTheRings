@@ -18,7 +18,9 @@ import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
 import LordOfTheRings.Hero
 import LordOfTheRings.Id
+import LordOfTheRings.Source
 import LordOfTheRings.Target
+import LordOfTheRings.Token
 import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -221,10 +223,10 @@ runPlayerMessage msg player = case msg of
     let heroesWithResources = filter (\h -> sphereMatches h && h.resources > 0) heroes
     case heroesWithResources of
       [x] -> do
-        push $ SpendHeroResources x.id n
+        push $ RemoveTokens (PlayerSource pid) (toTarget x) Resource n
         pure player
       xs -> do
-        push $ chooseOne pid [targetLabel x [SpendHeroResources x.id 1, SpendResources pid sphere (n - 1)] | x <- xs]
+        push $ chooseOne pid [targetLabel x [RemoveTokens (PlayerSource pid) (toTarget x) Resource 1, SpendResources pid sphere (n - 1)] | x <- xs]
         pure player
   PaidCost acId
     | Just cost <- player.cost

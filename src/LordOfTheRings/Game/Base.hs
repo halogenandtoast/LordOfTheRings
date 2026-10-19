@@ -9,7 +9,7 @@ import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Type
 import LordOfTheRings.Classes.Entity
-import LordOfTheRings.Hero.Type
+import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Target
 import LordOfTheRings.Location.Type

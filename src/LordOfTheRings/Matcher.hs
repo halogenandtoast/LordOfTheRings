@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Game.Base
-import LordOfTheRings.Hero.Type
+import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Type
 import LordOfTheRings.Name
@@ -19,7 +19,7 @@ instance Query Hero where
   select matcher = do
     heroes <- Map.elems <$> getsGame (.entities.heroes)
     case matcher of
-      PlayerHero pid -> pure $ filter ((== pid) . (.player)) heroes
+      PlayerHero pid -> pure $ filter ((== pid) . (.owner)) heroes
       HeroWithName name -> pure $ filter ((== name) . (.name)) heroes
 
 instance Query Ally where

@@ -1,60 +1,59 @@
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE NoFieldSelectors #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module LordOfTheRings.Hero (module LordOfTheRings.Hero.Type, module LordOfTheRings.Hero) where
+module LordOfTheRings.Hero (module LordOfTheRings.Hero, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
-import LordOfTheRings.Classes.Entity
-import LordOfTheRings.Hero.Type
-import LordOfTheRings.Id
-import LordOfTheRings.Message
-import LordOfTheRings.Name
-import LordOfTheRings.Phase
-import LordOfTheRings.Prelude
-import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Hero.Cards.Aragorn
+import LordOfTheRings.Hero.Cards.Beravor
+import LordOfTheRings.Hero.Cards.Denethor
+import LordOfTheRings.Hero.Cards.Dunhere
+import LordOfTheRings.Hero.Cards.Eleanor
+import LordOfTheRings.Hero.Cards.Eowyn
+import LordOfTheRings.Hero.Cards.Gimli
+import LordOfTheRings.Hero.Cards.Gloin
+import LordOfTheRings.Hero.Cards.Glorfindel
+import LordOfTheRings.Hero.Cards.Legolas
+import LordOfTheRings.Hero.Cards.Thalin
+import LordOfTheRings.Hero.Cards.Theodred
+import LordOfTheRings.Hero.Runner ()
+import LordOfTheRings.Hero.Types as X
+import LordOfTheRings.Id
+import LordOfTheRings.Prelude
 
 instance RunMessage Hero where
   runMessage msg (Hero a) = Hero <$> runMessage msg a
 
-instance RunMessage HeroAttrs where
-  runMessage msg attrs = case msg of
-    BeginPhase ResourcePhase -> do
-      push $ GainHeroResources attrs.id 1
-      pure attrs
-    GainHeroResources hId n | hId == attrs.id -> do
-      pure $ attrs {resources = attrs.resources + n}
-    SpendHeroResources hId n | hId == attrs.id -> do
-      pure $ attrs {resources = max 0 (attrs.resources - n)}
-    _ -> pure attrs
+createHero :: PlayerCard -> HeroId -> PlayerId -> Hero
+createHero card hid pid = lookupHero (toCardCode card) (pcId card) hid pid
 
-newtype Beravor = Beravor HeroAttrs
-  deriving anyclass (IsHero)
-  deriving newtype (Show, ToJSON, Entity)
-instance RunMessage Beravor where
-  runMessage msg (Beravor a) = Beravor <$> runMessage msg a
-
-newtype Eowyn = Eowyn HeroAttrs
-  deriving anyclass (IsHero)
-  deriving newtype (Show, ToJSON, Entity)
-instance RunMessage Eowyn where
-  runMessage msg (Eowyn a) = Eowyn <$> runMessage msg a
-
-newtype Theodred = Theodred HeroAttrs
-  deriving anyclass (IsHero)
-  deriving newtype (Show, ToJSON, Entity)
-instance RunMessage Theodred where
-  runMessage msg (Theodred a) = Theodred <$> runMessage msg a
-
-lookupHero :: CardCode -> HeroAttrs -> Hero
-lookupHero cCode = fromMaybe (error "No such hero") $ Map.lookup cCode allData
- where
-  allData = Map.fromList [("01012", Hero . Beravor), ("01007", Hero . Eowyn), ("01002", Hero . Theodred)]
+lookupHero :: (HasCallStack) => CardCode -> CardId -> HeroId -> PlayerId -> Hero
+lookupHero cardCode cardId hid pid = case Map.lookup cardCode allHeroes of
+  Just (SomeHeroCard builder) -> Hero $ cbCardBuilder builder cardId (hid, pid)
+  Nothing -> error $ "Unknown hero: " <> show cardCode
 
 newHero :: (MonadRandom m) => PlayerId -> PlayerCard -> m Hero
-newHero player card = do
-  heroId <- getRandom
-  let attrs = HeroAttrs {id = heroId, card, player, resources = 0, sphere = fromMaybe Neutral $ cdSphere (toCardDef card)}
-  pure $ lookupHero (toCardCode card) attrs
+newHero pid card = do
+  hid <- getRandom
+  pure $ createHero card hid pid
+
+allHeroes :: Map CardCode SomeHeroCard
+allHeroes =
+  Map.fromList
+    [ (toCardCode builder, card)
+    | card@(SomeHeroCard builder) <-
+        [ SomeHeroCard aragorn
+        , SomeHeroCard theodred
+        , SomeHeroCard gloin
+        , SomeHeroCard gimli
+        , SomeHeroCard legolas
+        , SomeHeroCard thalin
+        , SomeHeroCard eowyn
+        , SomeHeroCard eleanor
+        , SomeHeroCard dunhere
+        , SomeHeroCard denethor
+        , SomeHeroCard glorfindel
+        , SomeHeroCard beravor
+        ]
+    ]

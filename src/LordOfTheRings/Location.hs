@@ -9,6 +9,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Location.Type
 import LordOfTheRings.Message
 import LordOfTheRings.Target
+import LordOfTheRings.Token
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Classes.RunMessage
@@ -25,7 +26,7 @@ instance RunMessage OldForestRoad where
 
 instance RunMessage LocationAttrs where
   runMessage msg attrs = case msg of
-    PlaceProgress (isTarget attrs -> True) n -> do
+    PlaceTokens _ (isTarget attrs -> True) Progress n -> do
       pure $ attrs {progress = attrs.progress + n}
     _ -> pure attrs
 

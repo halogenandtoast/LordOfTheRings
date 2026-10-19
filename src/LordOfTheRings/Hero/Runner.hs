@@ -1,0 +1,22 @@
+module LordOfTheRings.Hero.Runner (module LordOfTheRings.Hero.Runner, module X) where
+
+import LordOfTheRings.Classes.HasQueue
+import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Hero.Types as X
+import LordOfTheRings.Message
+import LordOfTheRings.Phase
+import LordOfTheRings.Prelude
+import LordOfTheRings.Source
+import LordOfTheRings.Target
+import LordOfTheRings.Token
+
+instance RunMessage HeroAttrs where
+  runMessage msg attrs = case msg of
+    BeginPhase ResourcePhase -> do
+      push $ PlaceTokens GameSource (toTarget attrs) Resource 1
+      pure attrs
+    PlaceTokens _ (isTarget attrs -> True) token n -> do
+      pure $ attrs & tokensL %~ addTokens token n
+    RemoveTokens _ (isTarget attrs -> True) token n -> do
+      pure $ attrs & tokensL %~ subtractTokens token n
+    _ -> pure attrs

@@ -12,6 +12,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
+import LordOfTheRings.Token
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Name
@@ -102,7 +103,7 @@ instance RunMessage SnowbournScout where
     UseCardAbility p (isSource a -> True) 1 -> do
       locations <- select CanProgressLocation
       push $
-        chooseOrRunOne p [targetLabel location [PlaceProgress (toTarget location) 1] | location <- locations]
+        chooseOrRunOne p [targetLabel location [PlaceTokens (toSource a) (toTarget location) Progress 1] | location <- locations]
       pure s
     _ -> SnowbournScout <$> runMessage msg a
 

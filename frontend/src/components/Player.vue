@@ -43,7 +43,7 @@ const allies = computed(() => {
 })
 
 const heroes = computed(() => {
-  return Object.values(props.data.game.entities.heroes).filter((hero) => hero.player === props.player.id)
+  return Object.values(props.data.game.entities.heroes).filter((hero) => hero.owner === props.player.id)
 })
 
 function onBeforeEnter(el) {
@@ -123,7 +123,7 @@ function onLeave(el, done) {
       </transition-group>
     </div>
     <div class="heroes">
-      <Card v-for="hero in heroes" :key="hero.id" :card="hero.card" :resources="hero.resources" :data="data" @choose="$emit('choose', $event)" :you="you" />
+      <Card v-for="hero in heroes" :key="hero.id" :card="{ id: hero.cardId, cardCode: hero.cardCode }" :resources="hero.tokens.Resource" :data="data" @choose="$emit('choose', $event)" :you="you" />
     </div>
     <div class="player-main">
       <div class="threat">

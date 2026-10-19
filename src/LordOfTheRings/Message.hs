@@ -5,6 +5,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
+import LordOfTheRings.Token
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
@@ -47,8 +48,6 @@ data Message
   | PayCost CostId
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int
-  | SpendHeroResources HeroId Int
-  | GainHeroResources HeroId Int
   | PlayAlly PlayerId PlayerCard
   | DoStep Int Message
   | Ask PlayerId (Question Message)
@@ -58,7 +57,8 @@ data Message
   | ShuffleDeck DeckSignifier
   | RunWindow Window
   | UseCardAbility PlayerId Source Int
-  | PlaceProgress Target Int
+  | PlaceTokens Source Target Token Int
+  | RemoveTokens Source Target Token Int
   | Run [Message]
   | DrawCards Drawing
   deriving stock (Show, Generic)

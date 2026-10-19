@@ -39,7 +39,21 @@ library
       LordOfTheRings.GameT
       LordOfTheRings.Hero
       LordOfTheRings.Hero.CardDefs
-      LordOfTheRings.Hero.Type
+      LordOfTheRings.Hero.Cards.Aragorn
+      LordOfTheRings.Hero.Cards.Beravor
+      LordOfTheRings.Hero.Cards.Denethor
+      LordOfTheRings.Hero.Cards.Dunhere
+      LordOfTheRings.Hero.Cards.Eleanor
+      LordOfTheRings.Hero.Cards.Eowyn
+      LordOfTheRings.Hero.Cards.Gimli
+      LordOfTheRings.Hero.Cards.Gloin
+      LordOfTheRings.Hero.Cards.Glorfindel
+      LordOfTheRings.Hero.Cards.Legolas
+      LordOfTheRings.Hero.Cards.Thalin
+      LordOfTheRings.Hero.Cards.Theodred
+      LordOfTheRings.Hero.Import.Lifted
+      LordOfTheRings.Hero.Runner
+      LordOfTheRings.Hero.Types
       LordOfTheRings.Id
       LordOfTheRings.Json
       LordOfTheRings.Keyword
@@ -184,6 +198,7 @@ test-suite LordOfTheRings-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.SetupSpec
       TestImport
       Paths_LordOfTheRings
