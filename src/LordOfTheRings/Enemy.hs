@@ -2,10 +2,7 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module LordOfTheRings.Enemy.Type) where
 
-import Control.Monad.Random
-import Data.Aeson
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe)
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Type
 import LordOfTheRings.Placement

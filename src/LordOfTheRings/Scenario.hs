@@ -2,9 +2,6 @@
 
 module LordOfTheRings.Scenario (module LordOfTheRings.Scenario, module LordOfTheRings.Scenario.Type) where
 
-import Control.Monad.Extra (concatMapM)
-import Control.Monad.Random
-import Data.Aeson
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.EncounterSet (EncounterSet)
@@ -21,7 +18,6 @@ import LordOfTheRings.Queue
 import LordOfTheRings.Run
 import LordOfTheRings.Scenario.Type
 import LordOfTheRings.Treachery.Cards (allTreacheries)
-import System.Random.Shuffle (shuffleM)
 
 newScenario :: (IsScenario a) => (ScenarioAttrs -> a) -> Scenario
 newScenario f = Scenario $ f $ ScenarioAttrs [] Nothing [] Normal ResourcePhase

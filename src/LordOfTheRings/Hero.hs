@@ -4,9 +4,7 @@
 
 module LordOfTheRings.Hero (module LordOfTheRings.Hero.Type, module LordOfTheRings.Hero) where
 
-import Control.Monad.Random (MonadRandom (getRandom))
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe)
 import LordOfTheRings.Card
 import LordOfTheRings.Card.PlayerCard qualified as PC
 import LordOfTheRings.Hero.Type

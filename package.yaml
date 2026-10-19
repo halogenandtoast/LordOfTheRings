@@ -1,19 +1,31 @@
 name:                LordOfTheRings
 language: GHC2021
 default-extensions:
-- NoImplicitPrelude
+- AllowAmbiguousTypes
 - BlockArguments
-- DefaultSignatures
-- DerivingStrategies
-- OverloadedStrings
 - DataKinds
-- TypeFamilies
-- LambdaCase
+- DefaultSignatures
 - DeriveAnyClass
-- RecordWildCards
-- PatternSynonyms
-- ViewPatterns
+- DerivingStrategies
+- DerivingVia
+- ExtendedDefaultRules
+- FunctionalDependencies
+- GADTs
+- LambdaCase
+- MultiWayIf
+- NoImplicitPrelude
+- NoMonomorphismRestriction
+- OverloadedLabels
 - OverloadedRecordDot
+- OverloadedStrings
+- PatternSynonyms
+- RecordWildCards
+- StrictData
+- TypeFamilies
+- TypeFamilyDependencies
+- TypeOperators
+- UndecidableInstances
+- ViewPatterns
 
 dependencies:
 - base >= 4.7 && < 5
@@ -31,6 +43,11 @@ dependencies:
 - conduit
 - bytestring
 - lens
+- classy-prelude
+- random
+- safe
+- template-haskell
+- transformers
 
 ghc-options:
 - -Wall

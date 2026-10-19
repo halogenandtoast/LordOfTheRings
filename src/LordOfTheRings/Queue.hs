@@ -1,8 +1,5 @@
 module LordOfTheRings.Queue (module LordOfTheRings.Queue) where
 
-import Control.Monad.IO.Class (MonadIO, liftIO)
-import Data.Foldable (traverse_)
-import Data.IORef (IORef, atomicModifyIORef', newIORef)
 import Data.Sequence (Seq, (|>), data Empty, data (:<|))
 import LordOfTheRings.Message (Message)
 import LordOfTheRings.Prelude

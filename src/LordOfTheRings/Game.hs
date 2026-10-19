@@ -4,15 +4,9 @@
 
 module LordOfTheRings.Game (module LordOfTheRings.Game, module LordOfTheRings.Game.Base) where
 
-import Control.Lens ((%~), (&), (.~))
-import Control.Monad.Extra (andM)
-import Control.Monad.Random
+import Control.Monad.Random (MonadRandom (..), newStdGen, randomIO, randomRIO, randomRs, randoms)
 import Control.Monad.Reader
-import Data.Foldable (for_)
-import Data.IORef
-import Data.List (find, partition)
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe, isJust)
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
@@ -35,7 +29,6 @@ import LordOfTheRings.Queue
 import LordOfTheRings.Run
 import LordOfTheRings.Scenario ()
 import LordOfTheRings.Window
-import System.Random.Shuffle (shuffleM)
 
 getHasQuestion :: GameT Bool
 getHasQuestion = any (isJust . (.question)) <$> getPlayers

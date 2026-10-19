@@ -1,7 +1,5 @@
 module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
-import Data.Aeson
-import GHC.Generics
 import {-# SOURCE #-} LordOfTheRings.Ability
 import LordOfTheRings.Card
 import LordOfTheRings.Id

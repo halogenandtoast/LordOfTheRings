@@ -4,10 +4,6 @@
 module LordOfTheRings.Enemy.Type (module LordOfTheRings.Enemy.Type) where
 
 import Control.Lens
-import Data.Aeson
-import Data.Coerce
-import GHC.Generics
-import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Placement

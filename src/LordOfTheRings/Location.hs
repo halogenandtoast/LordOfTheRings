@@ -2,10 +2,7 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module LordOfTheRings.Location.Type) where
 
-import Control.Monad.Random
-import Data.Aeson
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe)
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Type

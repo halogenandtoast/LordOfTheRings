@@ -1,9 +1,5 @@
 module LordOfTheRings.Scenario.Type (module LordOfTheRings.Scenario.Type) where
 
-import Data.Aeson
-import Data.Coerce
-import GHC.Generics
-import GHC.Records
 import LordOfTheRings.Card
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude

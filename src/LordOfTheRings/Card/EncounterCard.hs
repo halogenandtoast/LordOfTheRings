@@ -4,8 +4,6 @@
 
 module LordOfTheRings.Card.EncounterCard (module LordOfTheRings.Card.EncounterCard) where
 
-import Control.Monad.Random (MonadRandom (getRandom))
-import Data.Aeson (Object, Value (..), object, parseJSON, withObject, withText, (.:), (.=))
 import Data.Aeson.Types (Parser)
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet

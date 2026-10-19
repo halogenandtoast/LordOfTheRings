@@ -8,8 +8,6 @@
 module Main (main) where
 
 import Conduit
-import Control.Monad (forever)
-import Control.Monad.Extra (concatMapM, replicateM)
 import Control.Monad.Random (
   MonadRandom (..),
   getRandom,
@@ -19,11 +17,7 @@ import Control.Monad.Random (
   randomRs,
   randoms,
  )
-import Data.Aeson
-import Data.ByteString.Lazy (ByteString)
-import Data.IORef
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe)
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Card.PlayerCard as PC
@@ -33,7 +27,7 @@ import LordOfTheRings.Hero
 import LordOfTheRings.Id
 import LordOfTheRings.Message
 import LordOfTheRings.Name
-import LordOfTheRings.Prelude
+import LordOfTheRings.Prelude hiding (Handler)
 import LordOfTheRings.Question
 import LordOfTheRings.Queue
 import LordOfTheRings.Scenario
@@ -252,7 +246,7 @@ loadDecklist DeckList {heroes, cards} = do
 
 data Room = Room
   { env :: Env
-  , chan :: TChan ByteString
+  , chan :: TChan LByteString
   }
 
 data App = App {room :: Room}

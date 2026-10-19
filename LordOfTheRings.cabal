@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.39.6.
 --
 -- see: https://github.com/sol/hpack
 
@@ -54,32 +54,49 @@ library
   hs-source-dirs:
       src
   default-extensions:
-      NoImplicitPrelude
+      AllowAmbiguousTypes
       BlockArguments
-      DefaultSignatures
-      DerivingStrategies
-      OverloadedStrings
       DataKinds
-      TypeFamilies
-      LambdaCase
+      DefaultSignatures
       DeriveAnyClass
-      RecordWildCards
-      PatternSynonyms
-      ViewPatterns
+      DerivingStrategies
+      DerivingVia
+      ExtendedDefaultRules
+      FunctionalDependencies
+      GADTs
+      LambdaCase
+      MultiWayIf
+      NoImplicitPrelude
+      NoMonomorphismRestriction
+      OverloadedLabels
       OverloadedRecordDot
+      OverloadedStrings
+      PatternSynonyms
+      RecordWildCards
+      StrictData
+      TypeFamilies
+      TypeFamilyDependencies
+      TypeOperators
+      UndecidableInstances
+      ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       MonadRandom
     , aeson
     , base >=4.7 && <5
     , bytestring
+    , classy-prelude
     , conduit
     , containers
     , extra
     , lens
     , mtl
+    , random
     , random-shuffle
+    , safe
+    , template-haskell
     , text
+    , transformers
     , unliftio
     , uuid
     , yesod-core
@@ -93,19 +110,31 @@ executable LordOfTheRings-exe
   hs-source-dirs:
       app
   default-extensions:
-      NoImplicitPrelude
+      AllowAmbiguousTypes
       BlockArguments
-      DefaultSignatures
-      DerivingStrategies
-      OverloadedStrings
       DataKinds
-      TypeFamilies
-      LambdaCase
+      DefaultSignatures
       DeriveAnyClass
-      RecordWildCards
-      PatternSynonyms
-      ViewPatterns
+      DerivingStrategies
+      DerivingVia
+      ExtendedDefaultRules
+      FunctionalDependencies
+      GADTs
+      LambdaCase
+      MultiWayIf
+      NoImplicitPrelude
+      NoMonomorphismRestriction
+      OverloadedLabels
       OverloadedRecordDot
+      OverloadedStrings
+      PatternSynonyms
+      RecordWildCards
+      StrictData
+      TypeFamilies
+      TypeFamilyDependencies
+      TypeOperators
+      UndecidableInstances
+      ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       LordOfTheRings
@@ -113,13 +142,18 @@ executable LordOfTheRings-exe
     , aeson
     , base >=4.7 && <5
     , bytestring
+    , classy-prelude
     , conduit
     , containers
     , extra
     , lens
     , mtl
+    , random
     , random-shuffle
+    , safe
+    , template-haskell
     , text
+    , transformers
     , unliftio
     , uuid
     , yesod-core
@@ -134,19 +168,31 @@ test-suite LordOfTheRings-test
   hs-source-dirs:
       test
   default-extensions:
-      NoImplicitPrelude
+      AllowAmbiguousTypes
       BlockArguments
-      DefaultSignatures
-      DerivingStrategies
-      OverloadedStrings
       DataKinds
-      TypeFamilies
-      LambdaCase
+      DefaultSignatures
       DeriveAnyClass
-      RecordWildCards
-      PatternSynonyms
-      ViewPatterns
+      DerivingStrategies
+      DerivingVia
+      ExtendedDefaultRules
+      FunctionalDependencies
+      GADTs
+      LambdaCase
+      MultiWayIf
+      NoImplicitPrelude
+      NoMonomorphismRestriction
+      OverloadedLabels
       OverloadedRecordDot
+      OverloadedStrings
+      PatternSynonyms
+      RecordWildCards
+      StrictData
+      TypeFamilies
+      TypeFamilyDependencies
+      TypeOperators
+      UndecidableInstances
+      ViewPatterns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       LordOfTheRings
@@ -154,13 +200,18 @@ test-suite LordOfTheRings-test
     , aeson
     , base >=4.7 && <5
     , bytestring
+    , classy-prelude
     , conduit
     , containers
     , extra
     , lens
     , mtl
+    , random
     , random-shuffle
+    , safe
+    , template-haskell
     , text
+    , transformers
     , unliftio
     , uuid
     , yesod-core

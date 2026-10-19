@@ -1,7 +1,5 @@
 module LordOfTheRings.Phase (Phase (..)) where
 
-import Data.Aeson
-import GHC.Generics
 import LordOfTheRings.Prelude
 
 data Phase

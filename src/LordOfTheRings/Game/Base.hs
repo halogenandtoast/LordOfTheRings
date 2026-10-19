@@ -4,9 +4,7 @@
 module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
 import Control.Lens
-import Data.Aeson
 import Data.Map.Strict qualified as Map
-import GHC.Generics
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy.Type

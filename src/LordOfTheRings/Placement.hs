@@ -1,8 +1,6 @@
 module LordOfTheRings.Placement (module LordOfTheRings.Placement) where
 
 import Control.Lens
-import Data.Aeson
-import GHC.Generics
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 

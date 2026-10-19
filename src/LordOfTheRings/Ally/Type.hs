@@ -4,8 +4,6 @@
 module LordOfTheRings.Ally.Type (module LordOfTheRings.Ally.Type) where
 
 import Control.Lens
-import Data.Aeson
-import Data.Coerce
 import {-# SOURCE #-} LordOfTheRings.Ability
 import LordOfTheRings.Card
 import LordOfTheRings.Id

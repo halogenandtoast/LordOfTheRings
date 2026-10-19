@@ -1,7 +1,5 @@
 module LordOfTheRings.Quest.Type (module LordOfTheRings.Quest.Type) where
 
-import Data.Aeson
-import GHC.Generics
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude

@@ -4,8 +4,6 @@
 
 module LordOfTheRings.Question (module LordOfTheRings.Question) where
 
-import Data.Aeson
-import GHC.Generics
 import {-# SOURCE #-} LordOfTheRings.Ability
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude

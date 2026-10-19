@@ -4,9 +4,7 @@
 
 module LordOfTheRings.Ally (module LordOfTheRings.Ally.Type, module LordOfTheRings.Ally) where
 
-import Control.Monad.Random (MonadRandom (getRandom))
 import Data.Map.Strict qualified as Map
-import Data.Maybe (fromMaybe)
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Type
 import LordOfTheRings.Card

@@ -1,6 +1,7 @@
 module LordOfTheRings.Entity (module LordOfTheRings.Entity) where
 
-import GHC.Records
+import LordOfTheRings.Prelude
+
 
 class (HasField "id" a (Id a)) => Entity a where
   type Id a

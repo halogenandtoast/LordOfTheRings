@@ -1,10 +1,5 @@
 module LordOfTheRings.Id (module LordOfTheRings.Id) where
 
-import Control.Monad.Random (Random)
-import Data.Aeson
-import Data.Coerce
-import Data.UUID (UUID)
-import GHC.Generics
 import LordOfTheRings.Prelude
 
 newtype LocationId = LocationId UUID

@@ -2,8 +2,6 @@
 
 module LordOfTheRings.Frontend (module LordOfTheRings.Frontend) where
 
-import Data.Aeson
-import GHC.Generics
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 

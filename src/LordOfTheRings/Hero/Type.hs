@@ -1,7 +1,5 @@
 module LordOfTheRings.Hero.Type (module LordOfTheRings.Hero.Type) where
 
-import Data.Aeson
-import Data.Coerce
 import LordOfTheRings.Card
 import LordOfTheRings.Id
 import LordOfTheRings.Name

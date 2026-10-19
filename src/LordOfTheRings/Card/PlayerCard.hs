@@ -4,8 +4,6 @@
 
 module LordOfTheRings.Card.PlayerCard (module LordOfTheRings.Card.PlayerCard) where
 
-import Control.Monad.Random (MonadRandom (getRandom))
-import Data.Aeson (object, parseJSON, withText, (.=))
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Name (Name)
