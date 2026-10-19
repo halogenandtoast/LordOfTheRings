@@ -142,7 +142,7 @@ lookupAlly cCode = fromMaybe (error "No such ally") $ Map.lookup cCode allData
     Map.fromList
       [ ("01031", Ally . Beorn)
       , ("01059", Ally . EreborHammersmith)
-      , ("01013", Ally . Faramir)
+      , ("01014", Ally . Faramir)
       , ("01073", Ally . Gandalf)
       , ("01062", Ally . Gleowine)
       , ("01013", Ally . GuardOfTheCitadel)
@@ -210,13 +210,13 @@ henamarthRiversong :: AllyCard
 henamarthRiversong = unique $ ally "01060" "Henamarth Riversong" Lore 1 1 1 0 1
 
 minerOfTheIronHills :: AllyCard
-minerOfTheIronHills = ally "01061" "Miner of the Iron Hills" Lore 2 0 0 1 2
+minerOfTheIronHills = ally "01061" "Miner of the Iron Hills" Lore 2 0 1 1 2
 
 northernTracker :: AllyCard
-northernTracker = ally "01045" "Nothern Tracker" Spirit 4 1 2 2 3
+northernTracker = ally "01045" "Northern Tracker" Spirit 4 1 2 2 3
 
 silverlodeArcher :: AllyCard
-silverlodeArcher = ally "01017" "Silverload Archer" Leadership 3 1 2 0 1
+silverlodeArcher = ally "01017" "Silverlode Archer" Leadership 3 1 2 0 1
 
 snowbournScout :: AllyCard
 snowbournScout = ally "01016" "Snowbourn Scout" Leadership 1 0 0 1 1
