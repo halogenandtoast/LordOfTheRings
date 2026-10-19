@@ -69,3 +69,16 @@ body {
   opacity: 0.5;
   margin: 0 0 0.25rem;
 }
+
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 0.28s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, useTemplateRef, watch } from 'vue'
 
-const props = defineProps<{ log: readonly string[] }>()
-const listRef = ref<HTMLElement | null>(null)
+const { log } = defineProps<{ log: readonly string[] }>()
+const listRef = useTemplateRef<HTMLElement>('listRef')
 
 watch(
-  () => props.log.length,
+  () => log.length,
   async () => {
     await nextTick()
     listRef.value?.scrollTo({ top: listRef.value.scrollHeight })
@@ -15,7 +15,7 @@ watch(
 
 <template>
   <ol ref="listRef" class="log">
-    <li v-for="(line, index) in props.log" :key="`${index}-${line}`">{{ line }}</li>
+    <li v-for="(line, index) in log" :key="`${index}-${line}`">{{ line }}</li>
   </ol>
 </template>
 

@@ -1,4 +1,5 @@
 import { computed, reactive, readonly, ref, shallowRef } from 'vue'
+import type { CardView } from '../types'
 
 const OVERLAY_WIDTH = 300
 const CARD_RATIO = 0.715
@@ -12,7 +13,7 @@ interface Placement {
   height: number
 }
 
-const src = ref<string | null>(null)
+const card = shallowRef<CardView | null>(null)
 const sideways = ref(false)
 const anchor = shallowRef<HTMLElement | null>(null)
 const placement = reactive<Placement>({ top: 0, left: 0, width: OVERLAY_WIDTH, height: 0 })
@@ -60,19 +61,19 @@ const listen = () => {
 }
 
 export const useCardOverlay = () => ({
-  src: readonly(src),
+  card: readonly(card),
   sideways: readonly(sideways),
   placement,
-  visible: computed(() => src.value !== null),
-  show: (shown: string, element: HTMLElement, rotated = false) => {
+  visible: computed(() => card.value !== null),
+  show: (shown: CardView, element: HTMLElement, rotated = false) => {
     listen()
-    src.value = shown
+    card.value = shown
     sideways.value = rotated
     anchor.value = element
     measure()
   },
   hide: () => {
-    src.value = null
+    card.value = null
     anchor.value = null
   },
 })

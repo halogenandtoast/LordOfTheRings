@@ -14,16 +14,4 @@ export default defineConfig({
       }
     }
   },
-  resolve: {
-    alias: {
-      '@': '/src'
-    }
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@import "./src/assets/scss/variables.scss";`
-      }
-    }
-  }
 })

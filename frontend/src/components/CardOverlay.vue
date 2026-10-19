@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { useCardOverlay } from '@/composables/useCardOverlay'
+import { computed } from 'vue'
+import { useCardOverlay } from '../composables/useCardOverlay'
+import { cardImage } from '../types'
 
-const { src, sideways, placement, visible } = useCardOverlay()
+const { card, sideways, placement, visible } = useCardOverlay()
+
+const source = computed(() => (card.value ? cardImage(card.value) : ''))
 </script>
 
 <template>
   <Teleport to="body">
     <img
-      v-if="visible && src"
+      v-if="visible && card"
       class="card-overlay"
       :class="{ sideways }"
-      :src="src"
+      :src="source"
+      :alt="card.name"
       :style="{
         top: `${placement.top}px`,
         left: `${placement.left}px`,

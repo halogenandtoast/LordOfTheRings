@@ -1,17 +1,18 @@
 import type { CardDef, Entity, GameData, Question, ServerGame, Target, UI } from './server'
 import type { CardView, ChoiceView, GameView, PlayerView, QuestionView } from './types'
 
+// ringsdb type names, as the board compares against them
 const cardTypes: Record<string, string> = {
-  HeroType: 'hero',
-  AllyType: 'ally',
-  AttachmentType: 'attachment',
-  EventType: 'event',
-  EnemyType: 'enemy',
-  LocationType: 'location',
-  TreacheryType: 'treachery',
-  QuestType: 'quest',
-  ObjectiveType: 'objective',
-  ObjectiveAllyType: 'objective-ally',
+  HeroType: 'Hero',
+  AllyType: 'Ally',
+  AttachmentType: 'Attachment',
+  EventType: 'Event',
+  EnemyType: 'Enemy',
+  LocationType: 'Location',
+  TreacheryType: 'Treachery',
+  QuestType: 'Quest',
+  ObjectiveType: 'Objective',
+  ObjectiveAllyType: 'Objective Ally',
 }
 
 const phases: Record<string, string> = {
@@ -61,7 +62,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
       id,
       code,
       name: d.name ?? code,
-      type: cardTypes[d.cardType ?? ''] ?? 'unknown',
+      type: cardTypes[d.cardType ?? ''] ?? 'Unknown',
       flipped: false,
       threat: d.threat ?? d.threatCost ?? null,
       attack: d.attack ?? null,
