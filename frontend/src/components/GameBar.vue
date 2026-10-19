@@ -86,6 +86,8 @@ const emit = defineEmits<{ reset: []; undo: [to?: 'phase' | 'round']; export: []
   margin: 0;
   padding: 0;
   background: var(--bar-background);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 8px var(--shadow);
   font-size: 0.875rem;
   flex-shrink: 0;
   position: relative;

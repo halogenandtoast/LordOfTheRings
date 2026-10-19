@@ -13,16 +13,22 @@
   --antique-gold: #b7933f;
   --wood-brown: #7f561f;
 
-  /* Shades of the palette for depth */
-  --forest-deep: #1c2310;
-  --forest-dark: #2b3515;
-  --forest-light: #55652a;
-  --cream-muted: rgb(229 211 173 / 0.78);
+  /* Warm neutrals for surfaces, so green and gold can be accents. Each step is a layer:
+     page, header, bar, panel, raised panel. */
+  --surface-0: #15120d;
+  --surface-1: #1f1a13;
+  --surface-2: #2a2319;
+  --surface-3: #352d21;
+  --surface-4: #43392a;
+  --well: #110f0b;
+
+  --cream-muted: #c2b79b;
+  --cream-faint: #8f866f;
   --gold-light: #d6b25e;
+  --forest-light: #55652a;
   --wood-dark: #63431a;
-  --rust: #a8452c;
-  --ink: #1c2310;
-  --ash: #6f6e58;
+  --rust: #b0503a;
+  --ink: #1a160f;
 
   /* Roles */
   --text: var(--cream);
@@ -34,29 +40,30 @@
   --success: var(--soft-olive);
   --select: #f0c75e;
 
-  --page-background: var(--forest-deep);
-  --panel: rgb(43 53 21 / 0.94);
+  --page-background: var(--surface-0);
+  --panel: rgb(42 35 25 / 0.96);
   --box-background: var(--panel);
-  --line: rgb(158 159 115 / 0.45);
+  --line: rgb(229 211 173 / 0.16);
+  --line-strong: rgb(183 147 63 / 0.55);
   --box-border: var(--line);
-  --input-background: var(--forest-deep);
-  --nav-background: var(--forest-dark);
+  --input-background: var(--well);
+  --nav-background: var(--surface-1);
   --nav-link: var(--cream-muted);
-  --bar-background: var(--forest);
-  --menu-background: var(--forest);
+  --bar-background: var(--surface-3);
+  --menu-background: var(--surface-4);
   --menu-section-text: var(--sage);
 
   --button-primary: var(--antique-gold);
   --button-primary-hover: var(--gold-light);
   --button-primary-text: var(--ink);
-  --button-secondary: var(--wood-brown);
-  --button-secondary-hover: var(--wood-dark);
-  --button-disabled: var(--ash);
-  --button-disabled-text: var(--cream-muted);
+  --button-secondary: var(--forest);
+  --button-secondary-hover: var(--forest-light);
+  --button-disabled: var(--surface-4);
+  --button-disabled-text: var(--cream-faint);
 
   --hover-tint: rgb(0 0 0 / 0.35);
   --active-tint: rgb(0 0 0 / 0.2);
-  --highlight-tint: rgb(183 147 63 / 0.18);
+  --highlight-tint: rgb(183 147 63 / 0.16);
   --subtle-tint: rgb(229 211 173 / 0.06);
   --shadow: rgb(0 0 0 / 0.55);
   --shadow-strong: rgb(0 0 0 / 0.85);

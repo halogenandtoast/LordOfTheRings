@@ -35,7 +35,7 @@ const leave = async () => {
 <style scoped>
 #nav {
   background: var(--nav-background);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-strong);
   box-shadow: 0 1px 12px var(--shadow);
   display: flex;
   align-items: stretch;
