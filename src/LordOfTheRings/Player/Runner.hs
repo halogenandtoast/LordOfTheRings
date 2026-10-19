@@ -6,6 +6,7 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Attachment
+import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -52,13 +53,14 @@ instance RunMessage Player where
       pure $ player & handL <>~ cards & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       playable <- filterM (canPlay player) player.hand
-      unless (null playable) $
-        push
-          $ questionLabel "Play cards from your hand" player.id
-          $ Label "Done Planning" []
-          : [ targetLabel c [PlayCard player.id c.id, WithTarget (toTarget player) (DoPhase PlanningPhase)]
-            | c <- playable
-            ]
+      actions <- getActionAbilities player.id
+      let again = WithTarget (toTarget player) (DoPhase PlanningPhase)
+      unless (null playable && null actions)
+        $ push
+        $ questionLabel "Play cards or use actions" player.id
+        $ Label "Done Planning" []
+        : [targetLabel c [PlayCard player.id c.id, again] | c <- playable]
+        <> [AbilityLabel player.id ab [] [again] | ab <- actions]
       pure player
     PlayCard pid cid | pid == player.id -> do
       case find ((== cid) . (.id)) player.hand of

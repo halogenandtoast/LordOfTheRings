@@ -1,6 +1,8 @@
 module LordOfTheRings.Helpers.Window (module LordOfTheRings.Helpers.Window) where
 
 import LordOfTheRings.Ability
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
@@ -52,6 +54,8 @@ canPay = \case
   Free -> pure True
   ExhaustCost (HeroTarget hid) -> selectAny (HeroWithId hid <> ReadyHero)
   ExhaustCost (AllyTarget aid) -> selectAny (AllyWithId aid <> ReadyAlly)
+  ExhaustCost (AttachmentTarget aid) ->
+    maybe False (not . attachmentExhausted . toAttrs) . Map.lookup aid <$> getsGame (entitiesAttachments . gameEntities)
   ExhaustCost _ -> pure False
   ResourceCost (HeroTarget hid) n -> (>= n) . (.resources) <$> getHero hid
   ResourceCost _ _ -> pure False
@@ -73,7 +77,16 @@ abilityController ab = go ab.abilitySource
     HeroSource hid -> Just . (.owner) <$> getHero hid
     AllySource aid -> placementController . (.placement) <$> getAlly aid
     PlayerSource pid -> pure $ Just pid
+    AttachmentSource aid -> fmap (attachmentOwner . toAttrs) . Map.lookup aid <$> getsGame (entitiesAttachments . gameEntities)
     _ -> pure Nothing
+
+-- | The Action abilities a player can use right now.
+getActionAbilities :: (HasGame m) => PlayerId -> m [Ability]
+getActionAbilities pid = do
+  abilities <- getAllAbilities
+  flip filterM abilities \ab -> case ab.abilityType of
+    ActionAbility cost -> andM [(== Just pid) <$> abilityController ab, passesCriteria ab.abilityCriteria, canPay cost]
+    _ -> pure False
 
 abilityKey :: Ability -> (Source, Int)
 abilityKey ab = (ab.abilitySource, ab.abilityIndex)
