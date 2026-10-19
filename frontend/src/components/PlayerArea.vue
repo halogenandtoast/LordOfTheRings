@@ -4,6 +4,7 @@ import DiscardPile from './DiscardPile.vue'
 import GameCard from './GameCard.vue'
 import QuestionZone from './QuestionZone.vue'
 import type { ChoiceView, PlayerView, QuestionView } from '../types'
+import { useDebug } from '../composables/useDebug'
 
 const { player, choices, flipping } = defineProps<{
   player: PlayerView
@@ -12,6 +13,7 @@ const { player, choices, flipping } = defineProps<{
   question: QuestionView | null
 }>()
 const emit = defineEmits<{ choose: [index: number] }>()
+const { active: debugging, send } = useDebug()
 
 </script>
 
@@ -19,7 +21,13 @@ const emit = defineEmits<{ choose: [index: number] }>()
   <section class="band player" :class="{ eliminated: player.eliminated }">
     <div class="piles">
       <DiscardPile :cards="player.discard" back="player" :data-pile="`discard-${player.playerId}`" />
-      <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
+      <div class="deck">
+        <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
+        <div v-if="debugging" class="deck-debug">
+          <button type="button" :disabled="player.deckSize === 0" @click="send({ tag: 'DrawCards', contents: { player: player.playerId, count: 1 } })">{{ $t('game.debug.draw') }}</button>
+          <button type="button" :disabled="player.deckSize === 0" @click="send({ tag: 'DebugSearchDeck', contents: player.playerId })">{{ $t('game.debug.search') }}</button>
+        </div>
+      </div>
     </div>
 
     <div class="hand">
@@ -42,6 +50,7 @@ const emit = defineEmits<{ choose: [index: number] }>()
 .player { flex: 0 0 auto; align-items: flex-end; margin-top: auto; }
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
+.deck { display: flex; flex-direction: column; gap: 4px; }
 .hand { flex: 1; flex-wrap: wrap; justify-content: flex-start; }
 /* docked under the board instead (see Game.vue) */
 @media (width < 1100px), (height < 500px) {

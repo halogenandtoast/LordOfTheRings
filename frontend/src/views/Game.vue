@@ -154,7 +154,7 @@ watch(question, (asked) => {
 
       <template v-if="started">
         <QuestTally v-if="game?.tally" :tally="game.tally" />
-        <Scenario v-if="scenario" :scenario="scenario" :choices="choices" :flipping="flipping" @choose="choose" />
+        <Scenario v-if="scenario" :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
 
         <CardBand
           v-if="scenario"

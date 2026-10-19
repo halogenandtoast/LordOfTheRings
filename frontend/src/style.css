@@ -228,3 +228,8 @@ button, a, input, select, label, [data-card-id] { touch-action: manipulation; }
     animation: none !important;
   }
 }
+
+/* debug mode: draw and search buttons under a deck */
+.deck-debug { display: flex; flex-direction: column; gap: 2px; }
+.deck-debug button { padding: 1px 4px; font: inherit; font-size: 0.7rem; border: 1px solid var(--line); border-radius: 3px; background: none; color: inherit; cursor: pointer; }
+.deck-debug button:disabled { opacity: 0.35; cursor: default; }

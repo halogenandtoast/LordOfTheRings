@@ -33,6 +33,9 @@
   "debug": {
     "lowerThreat": "Lower threat",
     "raiseThreat": "Raise threat",
+    "draw": "Draw",
+    "reveal": "Reveal",
+    "search": "Search",
     "removeToken": "Remove {token}",
     "addToken": "Add {token}",
     "tokens": {
