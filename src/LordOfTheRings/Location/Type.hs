@@ -33,6 +33,12 @@ instance Entity Location where
   toAttrs (Location a) = toAttrs a
   overAttrs f (Location a) = Location $ overAttrs f a
 
+instance HasCardCode Location where
+  toCardCode = toCardCode . toAttrs
+
+instance HasCardCode LocationAttrs where
+  toCardCode a = toCardCode a.card
+
 instance Entity LocationAttrs where
   type EntityId LocationAttrs = LocationId
   type EntityAttrs LocationAttrs = LocationAttrs

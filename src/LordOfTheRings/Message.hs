@@ -62,16 +62,18 @@ data Message
   | Run [Message]
   | DrawCards Drawing
   deriving stock (Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
+  deriving anyclass (ToJSON)
 
-choiceMessages :: PlayerId -> Choice Message -> [Message]
-choiceMessages pid = \case
-  Label _ msgs -> msgs
-  TargetChoice _ msgs -> msgs
-  UseAbilityLabel ability -> [UseCardAbility pid (abilitySource ability) (abilityIndex ability)]
+uiToRun :: UI Message -> Message
+uiToRun = \case
+  Label _ msgs -> Run msgs
+  TargetLabel _ msgs -> Run msgs
+  AbilityLabel pid ability msgs -> Run $ UseCardAbility pid (abilitySource ability) (abilityIndex ability) : msgs
 
-chooseOrRunOne :: PlayerId -> [Choice Message] -> Message
-chooseOrRunOne pid = \case
-  [] -> error "chooseOrRunOne: empty list"
-  [c] -> Run $ choiceMessages pid c
-  cs -> Ask pid $ ChooseOne cs
+chooseOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
+chooseOne _ [] = error "chooseOne: no choices"
+chooseOne pid choices = Ask pid $ ChooseOne choices
+
+chooseOrRunOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
+chooseOrRunOne _ [x] = uiToRun x
+chooseOrRunOne pid choices = chooseOne pid choices

@@ -11,16 +11,16 @@ function toChoices(q) {
   if (!q) return []
   switch(q.tag) {
     case 'ChooseOne':
-      return q.contents
+      return q.choices
     case 'ChooseOneAtATime':
-      return q.contents
+      return q.choices
   }
 
   return []
 }
 
 const choices = computed(() => {
-  return toChoices(props.data.game.players[props.you.id].question)
+  return toChoices(props.data.game.question[props.you.id])
 })
 
 const labelChoices = computed(() => {

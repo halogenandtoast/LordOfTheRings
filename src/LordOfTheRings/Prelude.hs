@@ -51,12 +51,12 @@ import Control.Monad.Trans.Maybe as X (MaybeT (..), hoistMaybe, runMaybeT)
 import Data.Aeson as X hiding (Result (..))
 import Data.Coerce as X (Coercible, coerce)
 import Data.Kind as X (Type)
-import Data.List as X (nub, (\\))
+import Data.List as X (findIndex, nub, (\\))
 import Data.List.NonEmpty as X (NonEmpty (..), nonEmpty)
 import Data.UUID as X (UUID)
 import GHC.Records as X (HasField (..))
 import GHC.Stack as X
-import Safe as X (fromJustNote)
+import Safe as X (atMay, fromJustNote)
 import System.Random.Shuffle as X (shuffleM)
 
 import Data.Char qualified as C

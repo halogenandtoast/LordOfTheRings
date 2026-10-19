@@ -106,6 +106,7 @@ library
     , conduit
     , containers
     , extra
+    , http-types
     , lens
     , mtl
     , random
@@ -163,6 +164,7 @@ executable LordOfTheRings-exe
     , conduit
     , containers
     , extra
+    , http-types
     , lens
     , mtl
     , random
@@ -227,6 +229,7 @@ test-suite LordOfTheRings-test
     , extra
     , hspec
     , hspec-expectations-lifted
+    , http-types
     , lens
     , mtl
     , random

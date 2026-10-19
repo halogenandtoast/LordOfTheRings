@@ -43,6 +43,12 @@ instance Entity Enemy where
   toAttrs (Enemy a) = toAttrs a
   overAttrs f (Enemy a) = Enemy $ overAttrs f a
 
+instance HasCardCode Enemy where
+  toCardCode = toCardCode . toAttrs
+
+instance HasCardCode EnemyAttrs where
+  toCardCode a = toCardCode a.card
+
 instance Entity EnemyAttrs where
   type EntityId EnemyAttrs = EnemyId
   type EntityAttrs EnemyAttrs = EnemyAttrs

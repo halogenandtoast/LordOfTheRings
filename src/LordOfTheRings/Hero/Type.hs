@@ -29,6 +29,12 @@ instance Entity Hero where
   toAttrs (Hero a) = toAttrs a
   overAttrs f (Hero a) = Hero $ overAttrs f a
 
+instance HasCardCode Hero where
+  toCardCode = toCardCode . toAttrs
+
+instance HasCardCode HeroAttrs where
+  toCardCode a = toCardCode a.card
+
 instance Entity HeroAttrs where
   type EntityId HeroAttrs = HeroId
   type EntityAttrs HeroAttrs = HeroAttrs

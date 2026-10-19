@@ -14,6 +14,7 @@ import LordOfTheRings.Matcher as X (getPlayer)
 import LordOfTheRings.Message as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Question as X
+import LordOfTheRings.Target as X
 import Test.Hspec as X hiding (shouldBe, shouldReturn, shouldSatisfy)
 import Test.Hspec.Expectations.Lifted as X (shouldBe, shouldReturn, shouldSatisfy)
 
@@ -29,25 +30,22 @@ run :: Message -> GameT ()
 run msg = push msg >> void mainLoop
 
 getQuestion :: PlayerId -> GameT (Maybe (Question Message))
-getQuestion pid = (.question) <$> getPlayer pid
+getQuestion pid = Map.lookup pid <$> getsGame (.question)
 
 -- | Answer the open question with the first choice that matches.
-chooseOptionMatching :: (HasCallStack) => Text -> PlayerId -> (Choice Message -> Bool) -> GameT ()
+chooseOptionMatching :: (HasCallStack) => Text -> PlayerId -> (UI Message -> Bool) -> GameT ()
 chooseOptionMatching reason pid f = do
-  question <- getQuestion pid
-  let choices = case question of
-        Just (ChooseOne cs) -> cs
-        Just (ChooseOneAtATime cs) -> cs
-        Nothing -> error $ "no question when trying to " <> unpack reason
-  case find f choices of
+  question <- maybe (error $ "no question when trying to " <> unpack reason) pure =<< getQuestion pid
+  case findIndex f (questionChoices question) of
     Nothing -> error $ "could not " <> unpack reason
-    Just choice -> do
-      g <- getGame
-      putGame $ g {players = Map.adjust (\p -> p {question = Nothing}) pid g.players}
-      pushAll $ choiceMessages pid choice
-      void mainLoop
+    Just n -> void $ answerQuestion pid n
 
 chooseLabel :: (HasCallStack) => Text -> PlayerId -> GameT ()
 chooseLabel l pid = chooseOptionMatching ("choose " <> l) pid \case
   Label l' _ -> l == l'
+  _ -> False
+
+chooseTarget :: (HasCallStack, Targetable a) => PlayerId -> a -> GameT ()
+chooseTarget pid (toTarget -> target) = chooseOptionMatching "choose target" pid \case
+  TargetLabel target' _ -> target == target'
   _ -> False

@@ -37,6 +37,7 @@ dependencies:
 - MonadRandom
 - extra
 - yesod-core
+- http-types
 - random-shuffle
 - unliftio
 - yesod-websockets

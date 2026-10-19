@@ -5,19 +5,27 @@
 module LordOfTheRings.Question (module LordOfTheRings.Question) where
 
 import {-# SOURCE #-} LordOfTheRings.Ability
-import LordOfTheRings.Target
+import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+import LordOfTheRings.Target
 
-targetChoice :: (Targetable a) => a -> [msg] -> Choice msg
-targetChoice (toTarget -> target) msgs = TargetChoice {target, messages = msgs}
-
-data Choice msg
+data UI msg
   = Label {label :: Text, messages :: [msg]}
-  | TargetChoice {target :: Target, messages :: [msg]}
-  | UseAbilityLabel {ability :: Ability}
+  | TargetLabel {target :: Target, messages :: [msg]}
+  | AbilityLabel {player :: PlayerId, ability :: Ability, messages :: [msg]}
   deriving stock (Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
+  deriving anyclass (ToJSON)
 
-data Question msg = ChooseOne [Choice msg] | ChooseOneAtATime [Choice msg]
+data Question msg
+  = ChooseOne {choices :: [UI msg]}
+  | ChooseOneAtATime {choices :: [UI msg]}
   deriving stock (Show, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+  deriving anyclass (ToJSON)
+
+questionChoices :: Question msg -> [UI msg]
+questionChoices = \case
+  ChooseOne cs -> cs
+  ChooseOneAtATime cs -> cs
+
+targetLabel :: (Targetable a) => a -> [msg] -> UI msg
+targetLabel (toTarget -> target) messages = TargetLabel {target, messages}

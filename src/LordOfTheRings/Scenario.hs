@@ -79,10 +79,9 @@ runScenarioMessage msg attrs = case msg of
             pure $ attrs {encounterDeck}
           else do
             push $
-              Ask pid $
-                ChooseOne $
-                  targetChoice x [AddToStaging x]
-                    : map (\y -> targetChoice y [AddToStaging y, ShuffleDeck EncounterDeck]) xs
+              chooseOne pid $
+                targetLabel x [AddToStaging x]
+                    : map (\y -> targetLabel y [AddToStaging y, ShuffleDeck EncounterDeck]) xs
             pure attrs
   _ -> pure attrs
 

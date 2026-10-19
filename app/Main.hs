@@ -37,6 +37,7 @@ import LordOfTheRings.Scenario
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import UnliftIO.STM
+import Network.HTTP.Types.Status (status409)
 import Yesod.Core
 import Yesod.WebSockets
 
@@ -90,9 +91,10 @@ getGameR = do
   g <- liftIO $ runGameT room.env mainLoop
   pure $ GameData g g.activePlayer
 
-data Response = Response
-  { choice :: Choice Message
+data Answer = Answer
+  { choice :: Int
   , player :: PlayerId
+  , questionVersion :: Int
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
@@ -100,23 +102,17 @@ data Response = Response
 postGameR :: Handler ()
 postGameR = do
   App {room} <- getYesod
-  response <- requireCheckJsonBody @_ @Response
-  g <- liftIO $ runGameT room.env $ do
-    clearQuestion response.player
-    pushAll $ choiceMessages response.player response.choice
-    mainLoop
-
+  answer <- requireCheckJsonBody @_ @Answer
+  current <- liftIO $ runGameT room.env getGame
+  when (answer.questionVersion /= current.questionVersion) $
+    sendResponseStatus status409 ("stale answer" :: Text)
+  g <- liftIO $ runGameT room.env $ answerQuestion answer.player answer.choice
   liftIO $
     atomically $
       writeTChan room.chan $
         encode $
           toJSON $
             object ["contents" .= GameData g g.activePlayer, "tag" .= String "Update"]
-
-clearQuestion :: PlayerId -> GameT ()
-clearQuestion pid = do
-  g <- getGame
-  putGame $ g {players = Map.adjust (\p -> p {question = Nothing}) pid g.players}
 
 postResetR :: Handler ()
 postResetR = do

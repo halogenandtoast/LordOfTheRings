@@ -29,6 +29,12 @@ instance Entity Quest where
   toAttrs (Quest a) = toAttrs a
   overAttrs f (Quest a) = Quest $ overAttrs f a
 
+instance HasCardCode Quest where
+  toCardCode = toCardCode . toAttrs
+
+instance HasCardCode QuestAttrs where
+  toCardCode a = toCardCode a.card
+
 instance Entity QuestAttrs where
   type EntityId QuestAttrs = QuestId
   type EntityAttrs QuestAttrs = QuestAttrs

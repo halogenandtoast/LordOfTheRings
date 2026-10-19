@@ -11,21 +11,21 @@ function toChoices(q) {
   if (!q) return []
   switch(q.tag) {
     case 'ChooseOne':
-      return q.contents
+      return q.choices
     case 'ChooseOneAtATime':
-      return q.contents
+      return q.choices
   }
 
   return []
 }
 
 const choices = computed(() => {
-  return toChoices(props.data.game.players[props.you.id].question)
+  return toChoices(props.data.game.question[props.you.id])
 })
 
 const abilityChoices = computed(() => {
   return choices.value.filter((c) => {
-    if (c.tag !== 'UseAbilityLabel') return false
+    if (c.tag !== 'AbilityLabel') return false
     return c.ability.source.contents === props.location.id
   })
 })

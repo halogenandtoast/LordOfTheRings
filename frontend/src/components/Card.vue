@@ -44,7 +44,7 @@ const showOverlay = () => {
 }
 
 const question = computed(() => {
-  return props.data.game.players[props.you.id].question
+  return props.data.game.question[props.you.id]
 })
 
 const choose = () => {
@@ -60,7 +60,7 @@ const choice = computed(() => {
 
   switch (currentQuestion.tag) {
     case "ChooseOne":
-      return currentQuestion.contents.find((choice: Choice) => choice.tag === "TargetChoice" && choice.target.contents === props.card.id)
+      return currentQuestion.choices.find((choice: Choice) => choice.tag === "TargetLabel" && choice.target.contents === props.card.id)
     default:
       return null
   }

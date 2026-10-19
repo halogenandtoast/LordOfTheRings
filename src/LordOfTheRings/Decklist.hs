@@ -67,7 +67,6 @@ loadPlayer dl = do
           , deck
           , hand = []
           , threat = 0
-          , question = Nothing
           , cost = Nothing
           , name = "halogen64"
           }

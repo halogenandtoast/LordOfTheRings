@@ -12,7 +12,7 @@ const quest = computed<Quest>(() => {
 })
 
 const question = computed(() => {
-  return props.data.game.players[props.you.id].question
+  return props.data.game.question[props.you.id]
 })
 
 const enemies = computed(() => {
@@ -29,8 +29,8 @@ const questChoice = computed(() => {
 
   switch (currentQuestion.tag) {
     case "ChooseOne":
-      return currentQuestion.contents.find((choice: Choice) =>
-        choice.tag === "TargetChoice" && choice.target.contents === quest.value.id
+      return currentQuestion.choices.find((choice: Choice) =>
+        choice.tag === "TargetLabel" && choice.target.contents === quest.value.id
       )
     default:
       return null

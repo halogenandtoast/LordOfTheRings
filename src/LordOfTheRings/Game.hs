@@ -40,10 +40,25 @@ newGame player heroes =
     , firstPlayer = player.id
     , entities = mempty {heroes = Map.fromList [(h.id, h) | h <- heroes]}
     , scenario = newScenario PassageThroughMirkwood
+    , question = mempty
+    , questionVersion = 0
     }
 
+answerQuestion :: PlayerId -> Int -> GameT Game
+answerQuestion pid n = do
+  g <- getGame
+  question <- maybe (error "no question for player") pure $ Map.lookup pid g.question
+  let choices = questionChoices question
+  choice <- maybe (error "invalid choice") pure $ atMay choices n
+  putGame $ g {question = Map.delete pid g.question}
+  case question of
+    ChooseOneAtATime _ | rest@(_ : _) <- take n choices <> drop (n + 1) choices -> do
+      pushAll [uiToRun choice, Ask pid (ChooseOneAtATime rest)]
+    _ -> push $ uiToRun choice
+  mainLoop
+
 getHasQuestion :: GameT Bool
-getHasQuestion = any (isJust . (.question)) <$> getPlayers
+getHasQuestion = getsGame (notNull . (.question))
 
 mainLoop :: GameT Game
 mainLoop = do
@@ -51,6 +66,10 @@ mainLoop = do
   g <- getGame
   case mmsg of
     Nothing -> pure g
+    Just (Ask pid q) -> do
+      let g' = g {question = Map.singleton pid q, questionVersion = g.questionVersion + 1}
+      putGame g'
+      pure g'
     Just msg -> do
       debug 1 $ print msg
       g' <- runMessage msg g
@@ -148,11 +167,9 @@ runPlayerMessage msg player = case msg of
     when (notNull abilities) $ do
       let (forced, nonForced) = partition isForcedAbility abilities
       if null forced
-        then push $ Ask player.id $ ChooseOne $ map UseAbilityLabel nonForced
-        else push $ Ask player.id $ ChooseOneAtATime $ map UseAbilityLabel forced
+        then push $ chooseOne player.id [AbilityLabel player.id ab [] | ab <- nonForced]
+        else push $ Ask player.id $ ChooseOneAtATime [AbilityLabel player.id ab [] | ab <- forced]
     pure player
-  Ask pid q | pid == player.id -> do
-    pure $ player {question = Just q}
   DoStep 1 Setup -> do
     deck <- shuffleM player.deck
     pure $ player {deck}
@@ -173,17 +190,14 @@ runPlayerMessage msg player = case msg of
     playable <- filterM (canPlay player) player.hand
     if null playable
       then pure player
-      else
-        pure $
-          player
-            { question =
-                Just $
-                  ChooseOne $
-                    Label "Done Planning" []
-                      : [ targetChoice c [PlayCard player.id c.id, WithTarget (toTarget player) (DoPhase PlanningPhase)]
-                        | c <- playable
-                        ]
-            }
+      else do
+        push
+          $ chooseOne player.id
+          $ Label "Done Planning" []
+          : [ targetLabel c [PlayCard player.id c.id, WithTarget (toTarget player) (DoPhase PlanningPhase)]
+            | c <- playable
+            ]
+        pure player
   PlayCard pid cid | pid == player.id -> do
     let mcard = find ((== cid) . (.id)) player.hand
     case mcard of
@@ -209,14 +223,9 @@ runPlayerMessage msg player = case msg of
       [x] -> do
         push $ SpendHeroResources x.id n
         pure player
-      xs ->
-        pure $
-          player
-            { question =
-                Just
-                  ( ChooseOne [targetChoice x [SpendHeroResources x.id 1, SpendResources pid sphere (n - 1)] | x <- xs]
-                  )
-            }
+      xs -> do
+        push $ chooseOne pid [targetLabel x [SpendHeroResources x.id 1, SpendResources pid sphere (n - 1)] | x <- xs]
+        pure player
   PaidCost acId
     | Just cost <- player.cost
     , cost.id == acId -> do

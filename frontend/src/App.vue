@@ -68,7 +68,7 @@ const question = computed(() => {
   const current = gameData.value
   if(!current) return null
 
-  return current.game.players[current.playerId].question
+  return current.game.question[current.playerId]
 })
 
 const choose = (e: Choice) => {
@@ -77,7 +77,11 @@ const choose = (e: Choice) => {
       "Content-Type": "application/json",
       // 'Content-Type': 'application/x-www-form-urlencoded',
     }
-    , body: JSON.stringify({choice: e, player: gameData.value.playerId})
+    , body: JSON.stringify({
+        choice: question.value.choices.indexOf(e),
+        player: gameData.value.playerId,
+        questionVersion: gameData.value.game.questionVersion,
+      })
   })
 }
 </script>

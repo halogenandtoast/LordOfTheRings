@@ -35,6 +35,12 @@ instance Entity Ally where
   toAttrs (Ally a) = toAttrs a
   overAttrs f (Ally a) = Ally $ overAttrs f a
 
+instance HasCardCode Ally where
+  toCardCode = toCardCode . toAttrs
+
+instance HasCardCode AllyAttrs where
+  toCardCode a = toCardCode a.card
+
 instance Entity AllyAttrs where
   type EntityId AllyAttrs = AllyId
   type EntityAttrs AllyAttrs = AllyAttrs

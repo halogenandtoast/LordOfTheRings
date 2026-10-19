@@ -102,7 +102,7 @@ instance RunMessage SnowbournScout where
     UseCardAbility p (isSource a -> True) 1 -> do
       locations <- select CanProgressLocation
       push $
-        chooseOrRunOne p [targetChoice location [PlaceProgress (toTarget location) 1] | location <- locations]
+        chooseOrRunOne p [targetLabel location [PlaceProgress (toTarget location) 1] | location <- locations]
       pure s
     _ -> SnowbournScout <$> runMessage msg a
 

@@ -52,6 +52,8 @@ data Game = Game
   , firstPlayer :: PlayerId
   , entities :: Entities
   , scenario :: Scenario
+  , question :: Map PlayerId (Question Message)
+  , questionVersion :: Int
   }
   deriving stock (Show, Generic)
   deriving anyclass (ToJSON)
@@ -81,7 +83,6 @@ data Player = Player
   , hand :: [Card]
   , deck :: [Card]
   , threat :: Int
-  , question :: Maybe (Question Message)
   , cost :: Maybe ActiveCost
   , name :: Text
   }
