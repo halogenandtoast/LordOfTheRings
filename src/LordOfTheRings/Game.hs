@@ -9,6 +9,8 @@ import LordOfTheRings.Ability
 import LordOfTheRings.Ally
 import LordOfTheRings.Card
 import LordOfTheRings.Enemy
+import LordOfTheRings.Entities
+import LordOfTheRings.Treachery ()
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Frontend
@@ -40,7 +42,7 @@ newGame player heroes =
     { players = Map.singleton player.id player
     , activePlayer = player.id
     , firstPlayer = player.id
-    , entities = mempty {heroes = Map.fromList [(h.id, h) | h <- heroes]}
+    , entities = mempty {entitiesHeroes = Map.fromList [(h.id, h) | h <- heroes]}
     , scenario = newScenario PassageThroughMirkwood
     , question = mempty
     , questionVersion = 0
@@ -87,12 +89,12 @@ getPlayers :: (HasGame m) => m [Player]
 getPlayers = Map.elems <$> getsGame (.players)
 
 instance RunMessage Entities where
-  runMessage msg entities = do
-    heroes <- traverse (runMessage msg) entities.heroes
-    allies <- traverse (runMessage msg) entities.allies
-    locations <- traverse (runMessage msg) entities.locations
-    enemies <- traverse (runMessage msg) entities.enemies
-    pure (entities {heroes, allies, locations, enemies})
+  runMessage msg entities =
+    traverseOf (heroesL . traverse) (runMessage msg) entities
+      >>= traverseOf (alliesL . traverse) (runMessage msg)
+      >>= traverseOf (locationsL . traverse) (runMessage msg)
+      >>= traverseOf (enemiesL . traverse) (runMessage msg)
+      >>= traverseOf (treacheriesL . traverse) (runMessage msg)
 
 instance RunMessage Game where
   runMessage msg game = do

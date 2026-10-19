@@ -8,6 +8,7 @@ data Target
   | AllyTarget AllyId
   | EnemyTarget EnemyId
   | LocationTarget LocationId
+  | TreacheryTarget TreacheryId
   | QuestTarget QuestId
   | PlayerTarget PlayerId
   | CardIdTarget CardId

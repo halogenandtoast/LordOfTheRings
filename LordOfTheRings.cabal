@@ -76,6 +76,7 @@ library
       LordOfTheRings.Enemy.Import.Lifted
       LordOfTheRings.Enemy.Runner
       LordOfTheRings.Enemy.Types
+      LordOfTheRings.Entities
       LordOfTheRings.Event.CardDefs
       LordOfTheRings.Frontend
       LordOfTheRings.Game
@@ -137,7 +138,23 @@ library
       LordOfTheRings.Target
       LordOfTheRings.Token
       LordOfTheRings.Trait
+      LordOfTheRings.Treachery
       LordOfTheRings.Treachery.CardDefs
+      LordOfTheRings.Treachery.Cards.CaughtInAWeb
+      LordOfTheRings.Treachery.Cards.Despair
+      LordOfTheRings.Treachery.Cards.DrivenByShadow
+      LordOfTheRings.Treachery.Cards.EvilStorm
+      LordOfTheRings.Treachery.Cards.EyesOfTheForest
+      LordOfTheRings.Treachery.Cards.IronShackles
+      LordOfTheRings.Treachery.Cards.LingeringVenom
+      LordOfTheRings.Treachery.Cards.MassingAtNight
+      LordOfTheRings.Treachery.Cards.PursuedByShadow
+      LordOfTheRings.Treachery.Cards.TheNecromancersReach
+      LordOfTheRings.Treachery.Cards.TreacherousFog
+      LordOfTheRings.Treachery.Cards.UnderTheShadow
+      LordOfTheRings.Treachery.Import.Lifted
+      LordOfTheRings.Treachery.Runner
+      LordOfTheRings.Treachery.Types
       LordOfTheRings.Window
   other-modules:
       Paths_LordOfTheRings

@@ -8,6 +8,9 @@ newtype LocationId = LocationId {unLocationId :: UUID}
 newtype EnemyId = EnemyId {unEnemyId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 
+newtype TreacheryId = TreacheryId {unTreacheryId :: UUID}
+  deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
+
 newtype QuestId = QuestId {unQuestId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 
