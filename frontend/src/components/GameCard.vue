@@ -5,7 +5,7 @@ import { useDebug } from '../composables/useDebug'
 import { useHighlights } from '../composables/useHighlights'
 import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
 
-const { card, choices = [], attachments = [], rotated = false, flipping = false, draggable = false } = defineProps<{
+const { card, choices = [], attachments = [], rotated = false, flipping = false, draggable = false, banner = false } = defineProps<{
   card: CardView
   choices?: ChoiceView[]
   attachments?: CardView[]
@@ -13,6 +13,8 @@ const { card, choices = [], attachments = [], rotated = false, flipping = false,
   flipping?: boolean
   /** Playable cards can also be dragged onto the board. */
   draggable?: boolean
+  /** Name the card on its top strip, for an attachment peeking out of its host's stack. */
+  banner?: boolean
 }>()
 
 const emit = defineEmits<{ choose: [index: number] }>()
@@ -65,8 +67,7 @@ const toggleUnless = (attached: CardView) => {
         :style="{ '--depth': attachments.length - index }"
         @click="toggleUnless(attached)"
       >
-        <GameCard :card="attached" :choices="choices" @choose="emit('choose', $event)" />
-        <span class="attached-name" :class="{ exhausted: attached.exhausted }">{{ attached.name }}</span>
+        <GameCard :card="attached" :choices="choices" banner @choose="emit('choose', $event)" />
       </div>
     </div>
 
@@ -84,6 +85,8 @@ const toggleUnless = (attached: CardView) => {
       @click="choose"
     >
       <img :src="source" :alt="card.name" />
+      <!-- inside the card so it travels in the card's view transition snapshot -->
+      <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ card.name }}</span>
       <span v-if="card.resources" class="token resources">{{ card.resources }}</span>
       <span v-if="card.progress" class="token progress">{{ card.progress }}</span>
       <span v-if="card.damage > 0" class="token damage">{{ card.damage }}</span>
