@@ -17,6 +17,6 @@ instance RunMessage Gloin where
   runMessage msg h@(Gloin attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
       let damage = sum [n | Window _ (DealtDamage _ n) <- windows]
-      push $ PlaceTokens (toSource attrs) (toTarget attrs) Resource damage
+      placeResources attrs attrs damage
       pure h
     _ -> Gloin <$> runMessage msg attrs

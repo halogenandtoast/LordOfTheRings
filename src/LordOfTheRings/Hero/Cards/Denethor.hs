@@ -18,6 +18,6 @@ instance HasAbilities Denethor where
 instance RunMessage Denethor where
   runMessage msg h@(Denethor attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      push $ LookAtTopOfEncounterDeck pid (toSource attrs) True
+      lookAtTopOfEncounterDeck pid attrs True
       pure h
     _ -> Denethor <$> runMessage msg attrs

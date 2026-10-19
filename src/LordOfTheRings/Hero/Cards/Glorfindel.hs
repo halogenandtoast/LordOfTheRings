@@ -20,9 +20,9 @@ instance RunMessage Glorfindel where
   runMessage msg h@(Glorfindel attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       damaged <- damagedCharacters AnyHero AnyAlly
-      unless (null damaged)
-        $ push
-        $ questionLabelWith (ikey "label.glorfindel.heal") (Just $ toTarget attrs) [] pid
-          [targetLabel c [HealDamage (toSource attrs) c 1] | c <- damaged]
+      chooseOneM pid do
+        questionLabeled "glorfindel.heal"
+        causedBy attrs
+        targets damaged \c -> healDamage attrs c 1
       pure h
     _ -> Glorfindel <$> runMessage msg attrs

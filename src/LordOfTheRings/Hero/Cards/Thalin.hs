@@ -19,6 +19,6 @@ instance HasAbilities Thalin where
 instance RunMessage Thalin where
   runMessage msg h@(Thalin attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
-      pushAll $ take 1 [DealDamage (toSource attrs) enemy 1 | Window _ (Revealed enemy@(EnemyTarget _)) <- windows]
+      for_ (headMay [enemy | Window _ (Revealed enemy@(EnemyTarget _)) <- windows]) \enemy -> dealDamage attrs enemy 1
       pure h
     _ -> Thalin <$> runMessage msg attrs

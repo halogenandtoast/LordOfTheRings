@@ -17,6 +17,6 @@ instance HasAbilities Aragorn where
 instance RunMessage Aragorn where
   runMessage msg h@(Aragorn attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ Ready (toTarget attrs)
+      ready attrs
       pure h
     _ -> Aragorn <$> runMessage msg attrs

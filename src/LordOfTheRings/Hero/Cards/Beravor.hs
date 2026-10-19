@@ -18,6 +18,6 @@ instance HasAbilities Beravor where
 instance RunMessage Beravor where
   runMessage msg h@(Beravor attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      push =<< choosePlayer pid (Just $ toTarget attrs) \p -> [DrawCards $ Drawing p 2]
+      choosePlayerM pid attrs \p -> drawCards p 2
       pure h
     _ -> Beravor <$> runMessage msg attrs

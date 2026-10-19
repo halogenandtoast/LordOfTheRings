@@ -19,6 +19,6 @@ instance HasAbilities Eowyn where
 instance RunMessage Eowyn where
   runMessage msg h@(Eowyn attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ CreateEffect $ Effect (toSource attrs) (toTarget attrs) [WillpowerModifier 1] UntilEndOfPhase
+      phaseModifier attrs attrs (WillpowerModifier 1)
       pure h
     _ -> Eowyn <$> runMessage msg attrs

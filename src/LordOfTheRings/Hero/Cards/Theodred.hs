@@ -17,8 +17,9 @@ instance RunMessage Theodred where
   runMessage msg h@(Theodred attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       heroes <- select CommittedHero
-      push
-        $ questionLabelWith (ikey "label.theodred.chooseHero") (Just $ toTarget attrs) [] attrs.owner
-          [targetLabel hero' [PlaceTokens (toSource attrs) (toTarget hero') Resource 1] | hero' <- heroes]
+      chooseOneM attrs.owner do
+        questionLabeled "theodred.chooseHero"
+        causedBy attrs
+        targets heroes \hero' -> placeResources attrs hero' 1
       pure h
     _ -> Theodred <$> runMessage msg attrs
