@@ -3,6 +3,7 @@ import { ref, computed, watch, inject } from 'vue'
 import { useWebSocket } from '@vueuse/core'
 import Game from './components/Game.vue'
 import Log from './components/Log.vue'
+import CardOverlay from './components/CardOverlay.vue'
 import { Choice } from './types/Game'
 
 const uiLock = ref<boolean>(false)
@@ -85,6 +86,7 @@ const choose = (e: Choice) => {
   <div id="app">
     <Game v-if="gameData" :data="gameData" @reset="reset" :question="question" @choose="choose" />
     <Log :log="gameLog" />
+    <CardOverlay />
   </div>
 </template>
 

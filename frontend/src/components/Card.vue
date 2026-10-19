@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, computed, withDefaults, inject } from 'vue'
+import { ref, computed, withDefaults, inject, onUnmounted } from 'vue'
+import { useCardOverlay } from '@/composables/useCardOverlay'
 import { Card, GameData, Choice } from '@/types/Game'
 
 export interface Props {
@@ -16,13 +17,12 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), { rotated: false })
 const emit = defineEmits<{ choose: [string] }>()
 
-const showBig = ref(false)
-const bigRef = ref(null)
-const cardRef = ref(null)
+const cardRef = ref<HTMLElement | null>(null)
+const overlay = useCardOverlay()
 
 const emitter = inject('emitter')
 
-emitter.on('flip', ({ cardId, callback }) => {
+const onFlip = ({ cardId, callback }) => {
   if (cardId === props.card.id) {
     flipped.value = true
     setTimeout(() => {
@@ -30,9 +30,17 @@ emitter.on('flip', ({ cardId, callback }) => {
       callback()
     }, 300)
   }
+}
+
+emitter.on('flip', onFlip)
+onUnmounted(() => {
+  emitter.off('flip', onFlip)
+  overlay.hide()
 })
 
-
+const showOverlay = () => {
+  if (cardRef.value) overlay.show(src.value, cardRef.value, props.rotated)
+}
 
 const question = computed(() => {
   return props.data.game.players[props.you.id].question
@@ -62,30 +70,6 @@ const active = computed(() => {
   return currentChoice !== undefined && currentChoice !== null
 })
 
-watch(bigRef, () => {
-  const card = cardRef.value
-  const big = bigRef.value
-  if (card && big) {
-    const maxWidth = window.innerWidth
-    const cardRect = card.getBoundingClientRect()
-    const bigRect = big.getBoundingClientRect()
-    let x = cardRect.x
-
-    if (x + bigRect.width > maxWidth) {
-      x = x - bigRect.width + cardRect.width
-    }
-
-    let y = cardRect.y - bigRect.height
-
-    if (y < 0) {
-      y = cardRect.y + cardRect.height
-    }
-
-    big.style.left = `${x}px`
-    big.style.top = `${y}px`
-  }
-})
-
 const src = computed(() => {
   return `/images/cards/${props.card.def.code}${ props.side ? props.side.toLowerCase() : '' }.jpg`
 })
@@ -104,13 +88,12 @@ const flipped = ref(false)
 
 <template>
   <div>
-    <div ref="cardRef" class="card" :id="card.id" @mouseover="showBig = true" @mouseleave="showBig = false" :class="{ rotated }" @click="choose">
+    <div ref="cardRef" class="card" :id="card.id" @mouseenter="showOverlay" @mouseleave="overlay.hide()" :class="{ rotated }" @click="choose">
       <img class="front" :class="{flipped, active}" :src="src" />
       <img class="back" :class="{flipped}" v-if="otherSide" :src="otherSide" />
       <span v-if="resources" class="resources">{{resources}}</span>
       <span v-if="progress" class="progress">{{progress}}</span>
     </div>
-    <img ref="bigRef" class="big" :class="{ rotated }" v-if="showBig" :src="src" :anchor="card.id" />
   </div>
 </template>
 
@@ -161,19 +144,6 @@ const flipped = ref(false)
   font-weight: bold;
   grid-area: 1 / 1;
   place-self: center;
-}
-
-img.big {
-  position: absolute;
-  width: calc($card-width * 4);
-  aspect-ratio: $card-aspect;
-  border-radius: 20px;
-  z-index: 100;
-
-  &.rotated {
-    width: calc($card-width * 4 / $card-aspect);
-    aspect-ratio: calc(1 / $card-aspect);
-  }
 }
 
 .active {
