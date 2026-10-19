@@ -22,6 +22,7 @@ User sql=users
   deriving Show
 
 LotrGame sql=lotr_games
+  userId UserId OnDeleteCascade
   name Text
   playerName Text
   currentData Value

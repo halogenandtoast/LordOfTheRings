@@ -13,6 +13,7 @@ import System.Random.SplitMix (seedSMGen', unseedSMGen)
 import Data.Aeson (Result (..))
 import Data.Aeson.Diff qualified as Diff
 import Data.Map.Strict qualified as Map
+import Data.Text qualified as T
 import Data.Time (getCurrentTime)
 import Database.Persist.Postgresql
 import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
@@ -30,8 +31,9 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario.Types (scenarioName)
+import Auth
 import Model
-import Network.HTTP.Types.Status (status400, status409)
+import Network.HTTP.Types.Status (status400, status401, status409)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import UnliftIO.STM
@@ -41,6 +43,7 @@ import Yesod.WebSockets
 
 data App = App
   { pool :: ConnectionPool
+  , jwtSecret :: Text
   , channels :: TVar (Map LotrGameId (TChan LByteString))
   }
 
@@ -53,9 +56,14 @@ mkYesod
   /games/#LotrGameId/undo UndoR POST
   /games/#LotrGameId/reset ResetR POST
   /cards CardsR GET
+  /register RegisterR POST
+  /authenticate AuthenticateR POST
+  /whoami WhoAmIR GET
 |]
 
-instance Yesod App
+-- | The API authenticates with tokens, so there is no cookie session.
+instance Yesod App where
+  makeSessionBackend _ = pure Nothing
 
 instance YesodPersist App where
   type YesodPersistBackend App = SqlBackend
@@ -83,6 +91,74 @@ data GameSummary = GameSummary
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
+
+-- | The signed-in user, or 401.
+requireUserId :: Handler UserId
+requireUserId = do
+  secret <- getsYesod (.jwtSecret)
+  subject <- liftIO . fmap join . traverse (verifyToken secret) =<< lookupToken
+  maybe (sendResponseStatus status401 ("sign in first" :: Text)) pure $ toSqlKey <$> (readMaybe . unpack =<< subject)
+
+-- | A game the signed-in user owns, or 404: other people's games do not exist for you.
+requireOwnedGame :: LotrGameId -> Handler LotrGame
+requireOwnedGame gid = do
+  userId <- requireUserId
+  row <- runDB $ get404 gid
+  unless (row.lotrGameUserId == userId) notFound
+  pure row
+
+data UserView = UserView {id :: UserId, username :: Text, email :: Text}
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+data Session = Session {token :: Text, user :: UserView}
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+newSession :: Entity User -> Handler Value
+newSession (Entity userId user) = do
+  secret <- getsYesod (.jwtSecret)
+  token <- liftIO $ signToken secret (tshow $ fromSqlKey userId)
+  pure $ toJSON $ Session token (UserView userId user.userUsername user.userEmail)
+
+data Registration = Registration {username :: Text, email :: Text, password :: Text}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+postRegisterR :: Handler Value
+postRegisterR = do
+  reg <- requireCheckJsonBody @_ @Registration
+  let username = T.strip reg.username
+      email = toLower (T.strip reg.email)
+  when (null username || null email) $ invalidArgs ["Choose a username and give an email address."]
+  when (length reg.password < 8) $ invalidArgs ["Passwords must be at least 8 characters."]
+  taken <- runDB $ (||) <$> (isJust <$> getBy (UniqueUsername username)) <*> (isJust <$> getBy (UniqueEmail email))
+  when taken $ sendResponseStatus status409 ("That username or email is already registered." :: Text)
+  digest <- maybe (error "bcrypt failed") pure =<< liftIO (hashPassword reg.password)
+  now <- liftIO getCurrentTime
+  let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userCreatedAt = now}
+  userId <- runDB $ insert user
+  newSession (Entity userId user)
+
+data Credentials = Credentials {login :: Text, password :: Text}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+-- | Sign in with either a username or an email address.
+postAuthenticateR :: Handler Value
+postAuthenticateR = do
+  creds <- requireCheckJsonBody @_ @Credentials
+  let login = T.strip creds.login
+  found <- runDB $ maybe (getBy $ UniqueEmail $ toLower login) (pure . Just) =<< getBy (UniqueUsername login)
+  case found of
+    Just user | checkPassword (entityVal user).userPasswordDigest creds.password -> newSession user
+    _ -> sendResponseStatus status401 ("That username or password is not right." :: Text)
+
+getWhoAmIR :: Handler Value
+getWhoAmIR = do
+  userId <- requireUserId
+  user <- runDB $ get404 userId
+  pure $ toJSON $ UserView userId user.userUsername user.userEmail
 
 -- | Every connected client of a game listens on that game's channel.
 gameChannel :: LotrGameId -> Handler (TChan LByteString)
@@ -161,7 +237,8 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
 
 getGamesR :: Handler Value
 getGamesR = do
-  games <- runDB $ selectList [] [Desc LotrGameUpdatedAt]
+  userId <- requireUserId
+  games <- runDB $ selectList [LotrGameUserId ==. userId] [Desc LotrGameUpdatedAt]
   pure $ toJSON $ mapMaybe summary games
 
 data NewGame = NewGame {name :: Text, playerName :: Text, seed :: Maybe Int}
@@ -179,6 +256,7 @@ startGame playerName seed = do
 
 postGamesR :: Handler Value
 postGamesR = do
+  userId <- requireUserId
   new <- requireCheckJsonBody @_ @NewGame
   (g, queue, gen) <- liftIO . startGame new.playerName =<< maybe (liftIO randomIO) pure new.seed
   now <- liftIO getCurrentTime
@@ -186,7 +264,8 @@ postGamesR = do
     runDB
       $ insert
         LotrGame
-          { lotrGameName = new.name
+          { lotrGameUserId = userId
+          , lotrGameName = new.name
           , lotrGamePlayerName = new.playerName
           , lotrGameCurrentData = toJSON g
           , lotrGameCurrentQueue = toJSON queue
@@ -204,7 +283,7 @@ handleSocket chan = do
 
 getGameR :: LotrGameId -> Handler Value
 getGameR gid = do
-  row <- runDB $ get404 gid
+  row <- requireOwnedGame gid
   webSockets . handleSocket =<< gameChannel gid
   g <- decodeOrFail "game" row.lotrGameCurrentData
   pure $ toJSON $ gameData row g
@@ -219,8 +298,8 @@ data Answer = Answer
 
 postGameR :: LotrGameId -> Handler ()
 postGameR gid = do
+  row <- requireOwnedGame gid
   answer <- requireCheckJsonBody @_ @Answer
-  row <- runDB $ get404 gid
   env <- loadGame gid row
   (before, queue, gen) <- liftIO $ currentState env
   when (answer.questionVersion /= before.questionVersion) $
@@ -252,12 +331,12 @@ postGameR gid = do
   broadcast gid row' after
 
 deleteGameR :: LotrGameId -> Handler ()
-deleteGameR gid = runDB $ delete gid
+deleteGameR gid = requireOwnedGame gid >> runDB (delete gid)
 
 -- | Step a game back one answer by applying the latest step's patch.
 postUndoR :: LotrGameId -> Handler ()
 postUndoR gid = do
-  row <- runDB $ get404 gid
+  row <- requireOwnedGame gid
   mstep <- runDB $ getBy (UniqueGameStep gid row.lotrGameStep)
   for_ mstep \(Entity stepId step) -> do
     patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
@@ -280,7 +359,7 @@ postUndoR gid = do
 
 postResetR :: LotrGameId -> Handler ()
 postResetR gid = do
-  row <- runDB $ get404 gid
+  row <- requireOwnedGame gid
   (g, queue, gen) <- liftIO . startGame row.lotrGamePlayerName =<< liftIO randomIO
   now <- liftIO getCurrentTime
   row' <- runDB do
@@ -305,4 +384,7 @@ main = do
   pool <- runStdoutLoggingT $ createPostgresqlPool (encodeUtf8 $ pack database) 10
   runSqlPool (runMigration migrateAll) pool
   channels <- newTVarIO mempty
-  warp port App {pool, channels}
+  jwtSecret <- maybe "development-only-secret-set-JWT_SECRET-in-production" pack <$> lookupEnv "JWT_SECRET"
+  -- HS256 signing needs a key of at least 256 bits
+  when (length (encodeUtf8 jwtSecret) < 32) $ error "JWT_SECRET must be at least 32 bytes"
+  warp port App {pool, jwtSecret, channels}

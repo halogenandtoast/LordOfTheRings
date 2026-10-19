@@ -269,6 +269,7 @@ library
 executable LordOfTheRings-exe
   main-is: Main.hs
   other-modules:
+      Auth
       Model
       Paths_LordOfTheRings
   hs-source-dirs:
