@@ -25,8 +25,6 @@ instance HasAbilities StewardOfGondor where
 instance RunMessage StewardOfGondor where
   runMessage msg s@(StewardOfGondor attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      case attrs.placement of
-        AttachedTo hero -> push $ PlaceTokens (toSource attrs) hero Resource 2
-        _ -> pure ()
+      withHost attrs \hero -> placeResources attrs hero 2
       pure s
     _ -> StewardOfGondor <$> runMessage msg attrs

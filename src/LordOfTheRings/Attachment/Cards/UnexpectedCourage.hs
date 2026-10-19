@@ -19,8 +19,6 @@ instance HasAbilities UnexpectedCourage where
 instance RunMessage UnexpectedCourage where
   runMessage msg s@(UnexpectedCourage a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      case a.placement of
-        AttachedTo host -> push $ Ready host
-        _ -> pure ()
+      withHost a ready
       pure s
     _ -> UnexpectedCourage <$> runMessage msg a

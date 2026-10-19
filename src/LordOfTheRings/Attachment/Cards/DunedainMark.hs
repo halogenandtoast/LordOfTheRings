@@ -29,8 +29,9 @@ instance RunMessage DunedainMark where
       others <- case attrs.placement of
         AttachedTo (HeroTarget hid) -> select (not_ $ HeroWithId hid)
         _ -> pure []
-      push
-        $ questionLabelWith (ikey "label.dunedainMark.move") (Just $ toTarget attrs) [] p
-          [targetLabel h [AttachCard (toId attrs) (toTarget h)] | h <- others]
+      chooseOneM p do
+        questionLabeled "dunedainMark.move"
+        causedBy attrs
+        targets others \h -> push $ AttachCard (toId attrs) (toTarget h)
       pure d
     _ -> DunedainMark <$> runMessage msg attrs

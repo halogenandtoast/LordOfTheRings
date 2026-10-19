@@ -17,8 +17,6 @@ instance HasAbilities SelfPreservation where
 instance RunMessage SelfPreservation where
   runMessage msg s@(SelfPreservation a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      case a.placement of
-        AttachedTo host -> push $ HealDamage (toSource a) host 2
-        _ -> pure ()
+      withHost a \host -> healDamage a host 2
       pure s
     _ -> SelfPreservation <$> runMessage msg a

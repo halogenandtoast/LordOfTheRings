@@ -17,8 +17,6 @@ instance HasAbilities HornOfGondor where
 instance RunMessage HornOfGondor where
   runMessage msg s@(HornOfGondor a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      case a.placement of
-        AttachedTo host -> push $ PlaceTokens (toSource a) host Resource 1
-        _ -> pure ()
+      withHost a \host -> placeResources a host 1
       pure s
     _ -> HornOfGondor <$> runMessage msg a

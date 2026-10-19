@@ -21,12 +21,11 @@ instance HasAbilities ProtectorOfLorien where
 instance RunMessage ProtectorOfLorien where
   runMessage msg s@(ProtectorOfLorien a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      case a.placement of
-        AttachedTo host -> do
-          let boost m = CreateEffect $ Effect (toSource a) host [m] UntilEndOfPhase
-          push
-            $ questionLabelWith (ikey "label.protectorOfLorien.give") (Just $ toTarget a) [host] pid
-              [Label (ikey "label.protectorOfLorien.defense") [boost $ DefenseModifier 1], Label (ikey "label.protectorOfLorien.willpower") [boost $ WillpowerModifier 1]]
-        _ -> pure ()
+      withHost a \host -> chooseOneM pid do
+        questionLabeled "protectorOfLorien.give"
+        causedBy a
+        aimedAt [host]
+        labeled "protectorOfLorien.defense" $ phaseModifier a host (DefenseModifier 1)
+        labeled "protectorOfLorien.willpower" $ phaseModifier a host (WillpowerModifier 1)
       pure s
     _ -> ProtectorOfLorien <$> runMessage msg a
