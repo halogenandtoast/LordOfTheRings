@@ -15,7 +15,6 @@ import Data.Aeson.Diff qualified as Diff
 import Data.Map.Strict qualified as Map
 import Data.Char (isAlphaNum)
 import Data.Text qualified as T
-import Data.Time (getCurrentTime)
 import Database.Persist.Postgresql
 import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
 import LordOfTheRings.Classes.Entity (toAttrs)
@@ -37,7 +36,6 @@ import Model
 import Network.HTTP.Types.Status (status400, status401, status409)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
-import UnliftIO.STM
 import Yesod.Core
 import Yesod.Persist.Core
 import Yesod.WebSockets
@@ -385,7 +383,7 @@ postUndoR gid = do
     patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
     case Diff.patch patch current of
       Success v -> pure v
-      Error err -> sendResponseStatus status400 ("could not undo: " <> pack err)
+      Error err -> sendResponseStatus status400 ("could not undo: " <> pack @Text err)
 
 postResetR :: LotrGameId -> Handler ()
 postResetR gid = do

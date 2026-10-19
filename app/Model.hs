@@ -4,7 +4,6 @@
 
 module Model (module Model) where
 
-import Data.Time (UTCTime)
 import Database.Persist.Postgresql.JSON ()
 import Database.Persist.TH
 import LordOfTheRings.Prelude

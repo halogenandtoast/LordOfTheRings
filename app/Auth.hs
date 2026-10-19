@@ -38,7 +38,7 @@ signToken secret subject = do
     Right signed -> pure $ decodeUtf8 $ toStrict $ encodeCompact signed
 
 -- | The subject of a valid token. A bad or stale token is simply not signed in.
-verifyToken :: (MonadIO m, MonadTime m) => Text -> Text -> m (Maybe Text)
+verifyToken :: (MonadIO m) => Text -> Text -> m (Maybe Text)
 verifyToken secret token = do
   res <- liftIO $ runJOSE do
     jwt <- decodeCompact $ fromStrict $ encodeUtf8 token
@@ -51,7 +51,7 @@ verifyToken secret token = do
 lookupToken :: (MonadHandler m) => m (Maybe Text)
 lookupToken = lookupHeader "Authorization" >>= maybe (lookupGetParam "token") (pure . extract . decodeUtf8)
  where
-  extract header = case T.breakOn " " header of
+  extract value = case T.breakOn " " value of
     (scheme, rest) | T.toLower scheme == "token" -> Just (T.strip rest)
     _ -> Nothing
 
@@ -59,4 +59,4 @@ hashPassword :: Text -> IO (Maybe Text)
 hashPassword password = fmap decodeUtf8 <$> hashPasswordUsingPolicy fastBcryptHashingPolicy (encodeUtf8 password)
 
 checkPassword :: Text -> Text -> Bool
-checkPassword digest password = validatePassword (encodeUtf8 digest) (encodeUtf8 password)
+checkPassword passwordDigest password = validatePassword (encodeUtf8 passwordDigest) (encodeUtf8 password)
