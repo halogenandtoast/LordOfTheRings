@@ -1,15 +1,71 @@
+:root {
+  --card-width: 100px;
+  --card-aspect: 0.715;
+  --gap: 10px;
+  --attachment-peek: 18px;
+  --text: #f2ead6;
+  --panel: rgb(12 10 8 / 0.72);
+  --line: rgb(226 205 145 / 0.22);
+  --accent: #e2cd91;
+  --danger: #c9603f;
+  --select: #ff3b30;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #app { height: 100%; }
+
 body {
-  min-height: 100%;
   margin: 0;
-  padding: 0;
+  color: var(--text);
+  font-family: "Trebuchet MS", ui-sans-serif, system-ui, sans-serif;
+  background: #000 url('/images/background.jpg') center center / auto 100% no-repeat;
+}
+
+.band {
+  display: flex;
+  gap: var(--gap);
+  flex-wrap: wrap;
+  align-items: flex-start;
+  min-height: 0;
+  padding: 4px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: flex-basis 0.2s ease;
+}
+
+.pile {
+  width: var(--card-width);
+  aspect-ratio: var(--card-aspect);
+  background-size: cover;
+  background-position: center;
+  border-radius: 5px;
   display: grid;
+  place-items: center;
+  flex: none;
 }
 
-html {
-  height: 100%;
+.pile.player { background-image: url('/images/player.jpg'); }
+.pile.encounter { background-image: url('/images/encounter.jpg'); }
+.pile.empty { opacity: 0.3; }
+
+.pile-count {
+  color: #fff;
+  background: rgb(0 0 0 / 0.8);
+  padding: calc(var(--card-width) / 12);
+  border-radius: calc(var(--card-width) / 5);
+  border: 1px solid #fff;
+  font-size: 0.85rem;
+  line-height: 1;
+  min-width: 1.75rem;
+  text-align: center;
 }
 
-#app {
-  min-height: 100%;
-  width: 100%;
+.zone-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  margin: 0 0 0.25rem;
 }
