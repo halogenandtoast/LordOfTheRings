@@ -53,6 +53,9 @@ makeLensesWith suffixedFields ''AttachmentAttrs
 instance ToJSON AttachmentAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "attachment")
 
+instance FromJSON AttachmentAttrs where
+  parseJSON = genericParseJSON (aesonOptions $ Just "attachment")
+
 attachment :: (AttachmentAttrs -> a) -> CardDef -> AttachmentCard a
 attachment f cardDef =
   CardBuilder

@@ -51,6 +51,9 @@ makeLensesWith suffixedFields ''HeroAttrs
 instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
+instance FromJSON HeroAttrs where
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero")
+
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
   CardBuilder

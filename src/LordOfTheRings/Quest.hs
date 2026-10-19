@@ -4,6 +4,7 @@ module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Quest.Cards.AChosenPathBeornsPath
 import LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
@@ -19,6 +20,12 @@ import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+
+-- | A stored quest is rebuilt from its card's builder, then given back its saved state.
+instance FromJSON Quest where
+  parseJSON v = do
+    attrs <- parseJSON @QuestAttrs v
+    pure $ overAttrs (const attrs) $ lookupQuest (questCardCode attrs) (questCardId attrs) (questId attrs)
 
 instance RunMessage Quest where
   runMessage msg (Quest a) = Quest <$> runMessage msg a

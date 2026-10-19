@@ -13,7 +13,7 @@ import LordOfTheRings.Prelude
 
 data Cost = ResourceCost Sphere CardCost | Free
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (ToJSON, FromJSON)
 
 data ActiveCost = ActiveCost
   { activeCostId :: CostId
@@ -27,6 +27,9 @@ makeLensesWith suffixedFields ''ActiveCost
 
 instance ToJSON ActiveCost where
   toJSON = genericToJSON (aesonOptions $ Just "activeCost")
+
+instance FromJSON ActiveCost where
+  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost")
 
 instance Entity ActiveCost where
   type EntityId ActiveCost = CostId

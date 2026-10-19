@@ -53,6 +53,9 @@ makeLensesWith suffixedFields ''AllyAttrs
 instance ToJSON AllyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "ally")
 
+instance FromJSON AllyAttrs where
+  parseJSON = genericParseJSON (aesonOptions $ Just "ally")
+
 ally :: (AllyAttrs -> a) -> CardDef -> AllyCard a
 ally f cardDef =
   CardBuilder

@@ -4,6 +4,7 @@ module LordOfTheRings.Attachment (module LordOfTheRings.Attachment, module X) wh
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Attachment.Cards.BladeOfGondolin
 import LordOfTheRings.Attachment.Cards.CelebriansStone
@@ -24,6 +25,12 @@ import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+
+-- | A stored attachment is rebuilt from its card's builder, then given back its saved state.
+instance FromJSON Attachment where
+  parseJSON v = do
+    attrs <- parseJSON @AttachmentAttrs v
+    pure $ overAttrs (const attrs) $ lookupAttachment (attachmentCardCode attrs) (attachmentCardId attrs) (attachmentId attrs) (attachmentOwner attrs)
 
 instance RunMessage Attachment where
   runMessage msg (Attachment a) = Attachment <$> runMessage msg a

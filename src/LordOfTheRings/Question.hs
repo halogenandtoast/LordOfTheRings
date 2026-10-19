@@ -15,14 +15,14 @@ data UI msg
   | TargetLabel {target :: Target, messages :: [msg]}
   | AbilityLabel {player :: PlayerId, ability :: Ability, windows :: [Window], messages :: [msg]}
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (ToJSON, FromJSON)
 
 data Question msg
   = ChooseOne {choices :: [UI msg]}
   | ChooseOneAtATime {choices :: [UI msg]}
   | QuestionLabel {label :: Text, question :: Question msg}
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (ToJSON, FromJSON)
 
 questionChoices :: Question msg -> [UI msg]
 questionChoices = \case

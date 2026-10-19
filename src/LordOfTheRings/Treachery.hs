@@ -4,6 +4,7 @@ module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) wher
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Treachery.Cards.CaughtInAWeb
 import LordOfTheRings.Treachery.Cards.Despair
@@ -21,6 +22,12 @@ import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+
+-- | A stored treachery is rebuilt from its card's builder, then given back its saved state.
+instance FromJSON Treachery where
+  parseJSON v = do
+    attrs <- parseJSON @TreacheryAttrs v
+    pure $ overAttrs (const attrs) $ lookupTreachery (treacheryCardCode attrs) (treacheryCardId attrs) (treacheryId attrs)
 
 instance RunMessage Treachery where
   runMessage msg (Treachery a) = Treachery <$> runMessage msg a

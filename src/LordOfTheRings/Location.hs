@@ -4,6 +4,7 @@ module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Location.Cards.BanksOfTheAnduin
 import LordOfTheRings.Location.Cards.EnchantedStream
@@ -21,6 +22,12 @@ import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+
+-- | A stored location is rebuilt from its card's builder, then given back its saved state.
+instance FromJSON Location where
+  parseJSON v = do
+    attrs <- parseJSON @LocationAttrs v
+    pure $ overAttrs (const attrs) $ lookupLocation (locationCardCode attrs) (locationCardId attrs) (locationId attrs)
 
 instance RunMessage Location where
   runMessage msg (Location a) = Location <$> runMessage msg a

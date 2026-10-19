@@ -4,6 +4,7 @@ module LordOfTheRings.Hero (module LordOfTheRings.Hero, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Hero.Cards.Aragorn
 import LordOfTheRings.Hero.Cards.Beravor
@@ -21,6 +22,12 @@ import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+
+-- | A stored hero is rebuilt from its card's builder, then given back its saved state.
+instance FromJSON Hero where
+  parseJSON v = do
+    attrs <- parseJSON @HeroAttrs v
+    pure $ overAttrs (const attrs) $ lookupHero (heroCardCode attrs) (heroCardId attrs) (heroId attrs) (heroOwner attrs)
 
 instance RunMessage Hero where
   runMessage msg (Hero a) = Hero <$> runMessage msg a

@@ -4,6 +4,7 @@ module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.Cards.BlackForestBats
 import LordOfTheRings.Enemy.Cards.CavernGuardian
@@ -29,6 +30,12 @@ import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+
+-- | A stored enemy is rebuilt from its card's builder, then given back its saved state.
+instance FromJSON Enemy where
+  parseJSON v = do
+    attrs <- parseJSON @EnemyAttrs v
+    pure $ overAttrs (const attrs) $ lookupEnemy (enemyCardCode attrs) (enemyCardId attrs) (enemyId attrs)
 
 instance RunMessage Enemy where
   runMessage msg (Enemy a) = Enemy <$> runMessage msg a

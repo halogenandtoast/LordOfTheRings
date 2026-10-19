@@ -4,6 +4,7 @@ module LordOfTheRings.Ally (module LordOfTheRings.Ally, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Ally.Cards.Beorn
 import LordOfTheRings.Ally.Cards.BrokIronfist
@@ -29,6 +30,12 @@ import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
+
+-- | A stored ally is rebuilt from its card's builder, then given back its saved state.
+instance FromJSON Ally where
+  parseJSON v = do
+    attrs <- parseJSON @AllyAttrs v
+    pure $ overAttrs (const attrs) $ lookupAlly (allyCardCode attrs) (allyCardId attrs) (allyId attrs) (allyOwner attrs)
 
 instance RunMessage Ally where
   runMessage msg (Ally a) = Ally <$> runMessage msg a

@@ -123,7 +123,7 @@ data Message
   | DrawCards Drawing
   | Mulligan PlayerId
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass (ToJSON, FromJSON)
 
 uiToRun :: UI Message -> Message
 uiToRun = \case

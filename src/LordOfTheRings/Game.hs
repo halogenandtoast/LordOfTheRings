@@ -27,6 +27,7 @@ import LordOfTheRings.Game.Base as X
 import LordOfTheRings.GameT
 import LordOfTheRings.Hero
 import LordOfTheRings.Id
+import LordOfTheRings.Json
 import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -107,6 +108,12 @@ runNext =
 
 getPlayers :: (HasGame m) => m [Player]
 getPlayers = toList <$> getsGame gamePlayers
+
+instance FromJSON Entities where
+  parseJSON = genericParseJSON (aesonOptions $ Just "entities")
+
+instance FromJSON Game where
+  parseJSON = genericParseJSON (aesonOptions $ Just "game")
 
 instance RunMessage Entities where
   runMessage msg entities =

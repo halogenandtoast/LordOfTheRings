@@ -48,6 +48,9 @@ makeLensesWith suffixedFields ''QuestAttrs
 instance ToJSON QuestAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "quest")
 
+instance FromJSON QuestAttrs where
+  parseJSON = genericParseJSON (aesonOptions $ Just "quest")
+
 quest :: (QuestAttrs -> a) -> CardDef -> QuestCard a
 quest f cardDef =
   CardBuilder

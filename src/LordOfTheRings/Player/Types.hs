@@ -26,6 +26,9 @@ makeLensesWith suffixedFields ''Player
 instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
+instance FromJSON Player where
+  parseJSON = genericParseJSON (aesonOptions $ Just "player")
+
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
   Player

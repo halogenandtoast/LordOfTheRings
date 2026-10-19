@@ -3,6 +3,7 @@ module LordOfTheRings.Card (
   module X,
 ) where
 
+import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.CardDefs (allAllyCards)
 import LordOfTheRings.Attachment.CardDefs (allAttachmentCards)
@@ -47,6 +48,13 @@ instance ToJSON Card where
   toJSON = \case
     PlayerCard pc -> toJSON pc
     EncounterCard ec -> toJSON ec
+
+-- | Player cards carry an owner and encounter cards do not.
+instance FromJSON Card where
+  parseJSON = withObject "Card" \o ->
+    if KeyMap.member "owner" o
+      then PlayerCard <$> parseJSON (Object o)
+      else EncounterCard <$> parseJSON (Object o)
 
 allPlayerCards :: Map CardCode CardDef
 allPlayerCards = Map.unions [allHeroCards, allAllyCards, allAttachmentCards, allEventCards]

@@ -49,6 +49,9 @@ makeLensesWith suffixedFields ''LocationAttrs
 instance ToJSON LocationAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "location")
 
+instance FromJSON LocationAttrs where
+  parseJSON = genericParseJSON (aesonOptions $ Just "location")
+
 location :: (LocationAttrs -> a) -> CardDef -> LocationCard a
 location f cardDef =
   CardBuilder

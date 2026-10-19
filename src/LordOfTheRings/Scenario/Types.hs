@@ -39,6 +39,9 @@ makeLensesWith suffixedFields ''ScenarioAttrs
 instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
+instance FromJSON ScenarioAttrs where
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario")
+
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =
   f

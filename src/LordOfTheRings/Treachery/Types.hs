@@ -49,6 +49,9 @@ makeLensesWith suffixedFields ''TreacheryAttrs
 instance ToJSON TreacheryAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "treachery")
 
+instance FromJSON TreacheryAttrs where
+  parseJSON = genericParseJSON (aesonOptions $ Just "treachery")
+
 treachery :: (TreacheryAttrs -> a) -> CardDef -> TreacheryCard a
 treachery f cardDef =
   CardBuilder
