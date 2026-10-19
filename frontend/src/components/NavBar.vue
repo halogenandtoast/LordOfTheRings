@@ -15,7 +15,7 @@ const leave = async () => {
   <header id="nav">
     <nav class="main-links">
       <RouterLink to="/" class="home-link">{{ $t('appName') }}</RouterLink>
-      <RouterLink v-if="currentUser" to="/" class="nav-link">{{ $t('nav.home') }}</RouterLink>
+      <RouterLink v-if="currentUser" to="/" class="nav-link nav-home">{{ $t('nav.home') }}</RouterLink>
       <RouterLink to="/cards" class="nav-link">{{ $t('nav.cards') }}</RouterLink>
       <RouterLink v-if="currentUser" to="/decks" class="nav-link">{{ $t('nav.decks') }}</RouterLink>
     </nav>
@@ -86,8 +86,14 @@ const leave = async () => {
 }
 .home-link:hover { color: var(--accent-bright); }
 
+/* the title already goes home; the other links stay, scrolling if they must */
 @media (max-width: 768px) {
-  .nav-link { display: none; }
+  .main-links { overflow-x: auto; scrollbar-width: none; min-width: 0; }
+  .home-link, .nav-link { padding: 0 8px; }
+  .nav-home { display: none; }
+  .user-links { padding: 0 8px; min-width: 0; }
+  .user-menu { min-width: 0; }
+  .user-links :deep(.user-menu > button) { max-width: 30vw; overflow: hidden; white-space: nowrap; }
 }
 
 .user-links {

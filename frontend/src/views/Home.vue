@@ -176,6 +176,8 @@ h2 {
 
 @media (max-width: 768px) {
   h2 { font-size: 1.5em; }
+  header { flex-wrap: wrap; }
+  .tabs { min-width: 0; }
 }
 
 .header-actions {

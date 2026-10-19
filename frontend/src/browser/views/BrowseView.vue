@@ -270,7 +270,8 @@ const resultLabel = computed(() => {
 .browse {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  height: calc(100dvh - var(--header-height));
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 

@@ -10,8 +10,10 @@ export const useUiStore = defineStore('ui', () => {
   const viewMode = useStorage<ViewMode>('lotr:view', 'list')
 
   /** The product browser on the left and the facet panel on the right. */
-  const productsOpen = useStorage('lotr:products', true)
-  const filtersOpen = useStorage('lotr:filters', true)
+  // shut at first on a screen too narrow for them beside the results (see BrowseView)
+  const wide = !matchMedia('(width < 64rem)').matches
+  const productsOpen = useStorage('lotr:products', wide)
+  const filtersOpen = useStorage('lotr:filters', wide)
 
   /** Which cycles are expanded in the product browser. */
   const expandedCycles = useStorage<string[]>('lotr:cycles-open', [])
