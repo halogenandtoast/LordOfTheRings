@@ -147,11 +147,16 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     let prompt = ''
     let sourceId: string | null = null
     let targetIds: string[] = []
+    let searched: CardView[] | null = null
     let q = question
-    while (q.tag === 'QuestionLabel') {
-      prompt = q.label
-      sourceId = targetCardId(q.source ?? undefined)
-      targetIds = q.targets.map(targetCardId).filter((id): id is string => id !== null)
+    while (q.tag === 'QuestionLabel' || q.tag === 'SearchCards') {
+      if (q.tag === 'SearchCards') {
+        searched = q.cards.map((c) => card(c.cardCode, c.id))
+      } else {
+        prompt = q.label
+        sourceId = targetCardId(q.source ?? undefined)
+        targetIds = q.targets.map(targetCardId).filter((id): id is string => id !== null)
+      }
       q = q.question
     }
     const choices = q.choices.map((ui: UI, index): ChoiceView => {
@@ -169,7 +174,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         }
       }
     })
-    return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices }
+    return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched }
   }
 
   const [asked] = Object.entries(game.question)

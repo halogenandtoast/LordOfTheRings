@@ -39,6 +39,8 @@ export interface QuestionView {
   /** The cards the decision is aimed at. */
   targetIds: string[]
   choices: ChoiceView[]
+  /** The cards a search looked through, when the decision is choosing from them. */
+  searched: CardView[] | null
 }
 
 export interface ScenarioView {

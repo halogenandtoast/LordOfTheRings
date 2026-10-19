@@ -20,6 +20,7 @@ gatherEncounterSet encounterSet =
 cardMatches :: CardMatcher -> EncounterCard -> Bool
 cardMatches = \case
   CardWithCode code -> (== code) . toCardCode
+  CardWithTrait trait -> member trait . cdCardTraits . toCardDef
 
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = case msg of
@@ -58,6 +59,24 @@ instance RunMessage ScenarioAttrs where
       [] -> pure attrs
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
+    RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)
+    SearchEncounterDeckAndDiscard pid source matcher -> do
+      let fromDeck = filter (cardMatches matcher) attrs.encounterDeck
+          fromDiscard = filter (cardMatches matcher) attrs.encounterDiscard
+          take' remove y = targetLabel y [remove y, AddToStaging y, ShuffleDeck EncounterDeck]
+          choices =
+            map (take' RemoveFromEncounterDeck) fromDeck
+              <> map (take' RemoveFromEncounterDiscard) fromDiscard
+      push
+        $ Ask pid
+        $ QuestionLabel
+          (if null choices then "Nothing found: the search turned up no match" else "Choose a card to add to the staging area")
+          (Just source)
+          []
+        $ SearchCards (map EncounterCard $ attrs.encounterDeck <> attrs.encounterDiscard)
+        $ ChooseOne
+        $ if null choices then [Label "Continue" [ShuffleDeck EncounterDeck]] else choices
+      pure attrs
     AdvanceQuest -> case attrs.questDeck of
       [] -> do
         push $ GameOver Won

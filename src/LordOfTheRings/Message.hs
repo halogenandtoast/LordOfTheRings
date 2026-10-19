@@ -12,13 +12,14 @@ import LordOfTheRings.Token
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
+import LordOfTheRings.Trait
 import LordOfTheRings.Window
 
 data DeckSignifier = EncounterDeck
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
-data CardMatcher = CardWithCode CardCode
+data CardMatcher = CardWithCode CardCode | CardWithTrait Trait
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
@@ -85,6 +86,10 @@ data Message
   | AdvanceQuest
   | AdvanceToQuest EncounterCard
   | RemoveFromEncounterDeck EncounterCard
+  | RemoveFromEncounterDiscard EncounterCard
+  | -- | the player searches the encounter deck and discard pile for a matching card to
+    -- add to the staging area, then the deck is shuffled
+    SearchEncounterDeckAndDiscard PlayerId Target CardMatcher
   | ShuffleDeck DeckSignifier
   | CheckWindows [Window]
   | ResponseWindow [Window] [PlayerId] [(Source, Int)] Int

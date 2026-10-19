@@ -1,5 +1,6 @@
 module LordOfTheRings.Matcher.Types (module LordOfTheRings.Matcher.Types) where
 
+import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
@@ -95,6 +96,7 @@ data EnemyMatcher
   = EnemyWithId EnemyId
   | EnemyInStagingArea
   | EnemyWithTrait Trait
+  | EnemyWithCardCode CardCode
   | EnemyEngagedWith PlayerMatcher
   | AnyEnemy
   | NotEnemy EnemyMatcher

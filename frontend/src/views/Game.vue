@@ -10,6 +10,7 @@ import PlayerArea from '../components/PlayerArea.vue'
 import PhaseTracker from '../components/PhaseTracker.vue'
 import Prompt from '../components/Prompt.vue'
 import QuestTally from '../components/QuestTally.vue'
+import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
 import { exportGame } from '../api'
@@ -139,6 +140,7 @@ watch(question, (asked) => {
   />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
+    <SearchPanel v-if="question?.searched" :question="{ ...question, searched: question.searched }" @choose="choose" />
     <div
       class="game"
       @dragstart="onDragStart"

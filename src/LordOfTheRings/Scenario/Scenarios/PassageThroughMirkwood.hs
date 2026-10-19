@@ -2,7 +2,6 @@ module LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood (passageThroughM
 
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Matcher (getLead)
 import LordOfTheRings.Scenario.Import.Lifted
 
 newtype PassageThroughMirkwood = PassageThroughMirkwood ScenarioAttrs
@@ -28,9 +27,10 @@ instance RunMessage PassageThroughMirkwood where
           [Quests.aForkInTheRoad, Quests.aChosenPathDontLeaveThePath, Quests.aChosenPathBeornsPath]
       push $ PutQuestIntoPlay firstStage
       pure $ PassageThroughMirkwood $ attrs & questDeckL .~ laterStages
-    -- A Fork in the Road: the players choose which A Chosen Path to take.
-    AdvanceQuest | stages@[_, _] <- attrs.questDeck -> do
-      lead <- getLead
-      push $ questionLabel "A Fork in the Road: choose your path" lead [Label (display $ cdName $ toCardDef stage) [AdvanceToQuest stage] | stage <- stages]
+    -- A Fork in the Road: proceed to one of the 2 A Chosen Path stages, at random.
+    AdvanceQuest | stages@[_, _] <- attrs.questDeck, all isChosenPath stages -> do
+      push . AdvanceToQuest =<< uniform stages
       pure $ PassageThroughMirkwood $ attrs & questDeckL .~ []
     _ -> PassageThroughMirkwood <$> runMessage msg attrs
+   where
+    isChosenPath = (`elem` map toCardCode [Quests.aChosenPathDontLeaveThePath, Quests.aChosenPathBeornsPath]) . toCardCode

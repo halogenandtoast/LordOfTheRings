@@ -90,6 +90,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithId eid -> pure $ enemy.id == eid
   EnemyInStagingArea -> pure $ enemy.placement == StagingArea
   EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
+  EnemyWithCardCode code -> pure $ toCardCode enemy == code
   EnemyEngagedWith pm -> case enemy.placement of
     EngagedWith pid -> elem pid <$> select pm
     _ -> pure False
