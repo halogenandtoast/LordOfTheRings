@@ -25,6 +25,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Location
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Player.Runner as X
@@ -52,6 +53,7 @@ newGame player heroes =
     , gameActiveCosts = mempty
     , gameModifiers = mempty
     , gameEffects = []
+    , gameOutcome = Nothing
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -74,7 +76,7 @@ mainLoop = go (0 :: Int)
   go n = do
     g <- getGame
     if
-      | notNull g.question -> pure g
+      | notNull g.question || isJust g.outcome -> pure g
       | n >= messageLimit -> error "message limit reached: the game is probably looping"
       | otherwise -> runNext >>= bool getGame (go (n + 1))
 
@@ -127,7 +129,7 @@ runGameMessage msg g = case msg of
     pushAll [BeginPhase minBound, EndPhase minBound]
     pure $ g & roundL +~ 1
   EndRound -> do
-    push BeginRound
+    unless (isJust g.outcome) $ push BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
   BeginPhase RefreshPhase -> do
     heroes <- select ExhaustedHero
@@ -143,6 +145,27 @@ runGameMessage msg g = case msg of
       <> passToken
     pure $ g & phaseL .~ RefreshPhase
   SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid
+  CheckEliminations -> do
+    eliminated <- forMaybeM (toList g.players) \player -> do
+      heroes <- select (HeroControlledBy $ PlayerWithId player.id)
+      pure $ guard (not player.eliminated && (player.threat >= eliminationThreat || null heroes)) $> player.id
+    pushAll $ map EliminatePlayer eliminated
+    pure g
+  EliminatePlayer pid -> do
+    heroes <- select (HeroControlledBy $ PlayerWithId pid)
+    allies <- select (AllyControlledBy $ PlayerWithId pid)
+    engaged <- select (EnemyEngagedWith $ PlayerWithId pid)
+    let remaining = [p | p <- toList g.players, p.id /= pid, not p.eliminated]
+    pushAll
+      $ map (Discard . toTarget) heroes
+      <> map (Discard . toTarget) allies
+      <> [PlaceEnemy eid StagingArea | eid <- engaged]
+      <> [GameOver Lost | null remaining]
+    pure g
+  GameOver outcome -> do
+    clearQueue
+    pure $ g & outcomeL ?~ outcome
+  Discard target -> discardTarget target g
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]
@@ -213,3 +236,25 @@ runGameMessage msg g = case msg of
       pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) thisLocation)
     _ -> error "Unhandled"
   _ -> pure g
+
+eliminationThreat :: Int
+eliminationThreat = 50
+
+-- | Remove an entity from play and put its card in the right discard pile.
+discardTarget :: Target -> Game -> GameT Game
+discardTarget target g = case target of
+  HeroTarget hid -> fromEntity heroesL hid
+  AllyTarget aid -> fromEntity alliesL aid
+  EnemyTarget eid -> fromEntity enemiesL eid
+  LocationTarget lid -> fromEntity locationsL lid
+  TreacheryTarget tid -> fromEntity treacheriesL tid
+  _ -> pure g
+ where
+  fromEntity :: (Ord k, IsCard v) => Lens' Entities (Map k v) -> k -> GameT Game
+  fromEntity l k = case Map.lookup k (g.entities ^. l) of
+    Nothing -> pure g
+    Just entity -> pure $ addToDiscard (toCard entity) $ g & entitiesL . l %~ Map.delete k
+  addToDiscard card = case card of
+    PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
+    EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
+    _ -> id

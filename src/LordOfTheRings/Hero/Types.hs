@@ -91,6 +91,12 @@ instance Show Hero where
 instance ToJSON Hero where
   toJSON (Hero a) = toJSON a
 
+instance IsCard HeroAttrs where
+  toCard a = PlayerCard $ MkPlayerCard {pcId = heroCardId a, pcCardCode = heroCardCode a, pcOwner = Just (heroOwner a)}
+
+instance IsCard Hero where
+  toCard = toCard . toAttrs
+
 instance HasCardCode HeroAttrs where
   toCardCode = heroCardCode
 

@@ -90,6 +90,12 @@ instance Show Location where
 instance ToJSON Location where
   toJSON (Location a) = toJSON a
 
+instance IsCard LocationAttrs where
+  toCard a = EncounterCard $ MkEncounterCard {ecId = locationCardId a, ecCardCode = locationCardCode a}
+
+instance IsCard Location where
+  toCard = toCard . toAttrs
+
 instance HasCardCode LocationAttrs where
   toCardCode = locationCardCode
 

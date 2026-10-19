@@ -3,6 +3,8 @@ module LordOfTheRings.Message (module LordOfTheRings.Message) where
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Card
 import LordOfTheRings.Effect
+import LordOfTheRings.Outcome
+import LordOfTheRings.Placement
 import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -44,6 +46,12 @@ data Message
   | EndPhase Phase
   | BeginRound
   | RaiseThreat PlayerId Int
+  | CheckEliminations
+  | EliminatePlayer PlayerId
+  | GameOver Outcome
+  | Discard Target
+  | PlaceEnemy EnemyId Placement
+  | PlaceLocation LocationId Placement
   | SetFirstPlayer PlayerId
   | EndRound
   | WithTarget Target Message

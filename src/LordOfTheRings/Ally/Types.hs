@@ -88,6 +88,12 @@ instance Show Ally where
 instance ToJSON Ally where
   toJSON (Ally a) = toJSON a
 
+instance IsCard AllyAttrs where
+  toCard a = PlayerCard $ MkPlayerCard {pcId = allyCardId a, pcCardCode = allyCardCode a, pcOwner = Just (allyOwner a)}
+
+instance IsCard Ally where
+  toCard = toCard . toAttrs
+
 instance HasCardCode AllyAttrs where
   toCardCode = allyCardCode
 

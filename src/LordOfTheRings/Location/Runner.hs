@@ -9,6 +9,7 @@ import LordOfTheRings.Token
 
 instance RunMessage LocationAttrs where
   runMessage msg attrs = case msg of
+    PlaceLocation lid placement | lid == attrs.id -> pure $ attrs & placementL .~ placement
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

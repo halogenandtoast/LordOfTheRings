@@ -90,6 +90,12 @@ instance Show Enemy where
 instance ToJSON Enemy where
   toJSON (Enemy a) = toJSON a
 
+instance IsCard EnemyAttrs where
+  toCard a = EncounterCard $ MkEncounterCard {ecId = enemyCardId a, ecCardCode = enemyCardCode a}
+
+instance IsCard Enemy where
+  toCard = toCard . toAttrs
+
 instance HasCardCode EnemyAttrs where
   toCardCode = enemyCardCode
 

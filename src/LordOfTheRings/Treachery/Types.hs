@@ -90,6 +90,12 @@ instance Show Treachery where
 instance ToJSON Treachery where
   toJSON (Treachery a) = toJSON a
 
+instance IsCard TreacheryAttrs where
+  toCard a = EncounterCard $ MkEncounterCard {ecId = treacheryCardId a, ecCardCode = treacheryCardCode a}
+
+instance IsCard Treachery where
+  toCard = toCard . toAttrs
+
 instance HasCardCode TreacheryAttrs where
   toCardCode = treacheryCardCode
 

@@ -24,6 +24,12 @@ import LordOfTheRings.Sphere as X
 import LordOfTheRings.Target
 import LordOfTheRings.Treachery.CardDefs (allTreacheryCards)
 
+class IsCard a where
+  toCard :: a -> Card
+
+instance IsCard Card where
+  toCard = id
+
 class Display a where
   display :: a -> Text
 

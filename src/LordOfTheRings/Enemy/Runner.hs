@@ -9,6 +9,7 @@ import LordOfTheRings.Token
 
 instance RunMessage EnemyAttrs where
   runMessage msg attrs = case msg of
+    PlaceEnemy eid placement | eid == attrs.id -> pure $ attrs & placementL .~ placement
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

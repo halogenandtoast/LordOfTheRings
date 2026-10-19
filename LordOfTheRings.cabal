@@ -136,6 +136,7 @@ library
       LordOfTheRings.Modifier
       LordOfTheRings.Name
       LordOfTheRings.Objective.CardDefs
+      LordOfTheRings.Outcome
       LordOfTheRings.Phase
       LordOfTheRings.Placement
       LordOfTheRings.Player.Runner
@@ -307,6 +308,7 @@ test-suite LordOfTheRings-test
   main-is: Spec.hs
   other-modules:
       LordOfTheRings.Ally.SnowbournScoutSpec
+      LordOfTheRings.EndGameSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.RefreshPhaseSpec

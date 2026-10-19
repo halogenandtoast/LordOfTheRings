@@ -27,7 +27,11 @@ instance RunMessage Player where
     DoStep 5 Setup -> do
       let (hand, deck) = splitAt 6 player.deck
       pure $ player & handL .~ hand & deckL .~ deck
-    RaiseThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . (+ n)
+    RaiseThreat pid n | pid == player.id -> do
+      push CheckEliminations
+      pure $ player & threatL %~ max 0 . (+ n)
+    EliminatePlayer pid | pid == player.id -> do
+      pure $ player & eliminatedL .~ True & discardL <>~ player.hand & handL .~ []
     BeginPhase ResourcePhase -> do
       push $ DrawCards $ Drawing player.id 1
       pure player

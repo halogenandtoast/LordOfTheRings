@@ -9,6 +9,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier
+import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
@@ -30,6 +31,7 @@ data Game = Game
   , gameActiveCosts :: Map CostId ActiveCost
   , gameModifiers :: Map Target [Modifier]
   , gameEffects :: [Effect]
+  , gameOutcome :: Maybe Outcome
   }
   deriving stock (Show, Generic)
 
@@ -67,3 +69,6 @@ instance HasField "question" Game (Map PlayerId (Question Message)) where
 
 instance HasField "questionVersion" Game Int where
   getField = gameQuestionVersion
+
+instance HasField "outcome" Game (Maybe Outcome) where
+  getField = gameOutcome

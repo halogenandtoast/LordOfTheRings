@@ -17,6 +17,7 @@ data Player = Player
   , playerDeck :: [Card]
   , playerDiscard :: [Card]
   , playerThreat :: Int
+  , playerEliminated :: Bool
   }
   deriving stock (Show, Eq, Generic)
 
@@ -34,6 +35,7 @@ newPlayer pid name deck =
     , playerDeck = deck
     , playerDiscard = []
     , playerThreat = 0
+    , playerEliminated = False
     }
 
 instance Entity Player where
@@ -66,3 +68,6 @@ instance HasField "discard" Player [Card] where
 
 instance HasField "threat" Player Int where
   getField = playerThreat
+
+instance HasField "eliminated" Player Bool where
+  getField = playerEliminated

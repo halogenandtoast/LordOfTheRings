@@ -89,6 +89,12 @@ instance Show Quest where
 instance ToJSON Quest where
   toJSON (Quest a) = toJSON a
 
+instance IsCard QuestAttrs where
+  toCard a = EncounterCard $ MkEncounterCard {ecId = questCardId a, ecCardCode = questCardCode a}
+
+instance IsCard Quest where
+  toCard = toCard . toAttrs
+
 instance HasCardCode QuestAttrs where
   toCardCode = questCardCode
 
