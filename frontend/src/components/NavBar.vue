@@ -1,9 +1,34 @@
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { currentUser, signOut } from '../auth'
+import GameMenu from './GameMenu.vue'
+
+const router = useRouter()
+
+const leave = async () => {
+  signOut()
+  await router.push('/sign-in')
+}
+</script>
+
 <template>
   <header id="nav">
     <nav class="main-links">
       <RouterLink to="/" class="home-link">The Lord of the Rings</RouterLink>
-      <RouterLink to="/new-game" class="nav-link">New Game</RouterLink>
+      <RouterLink v-if="currentUser" to="/new-game" class="nav-link">New Game</RouterLink>
     </nav>
+    <div class="user-links">
+      <GameMenu v-if="currentUser" class="user-menu" align="right">
+        {{ currentUser.username }}
+        <template #items>
+          <button type="button" @click="leave">Sign out</button>
+        </template>
+      </GameMenu>
+      <template v-else>
+        <RouterLink to="/sign-in">Sign in</RouterLink>
+        <RouterLink to="/sign-up">Sign up</RouterLink>
+      </template>
+    </div>
   </header>
 </template>
 
@@ -62,4 +87,30 @@
 @media (max-width: 768px) {
   .nav-link { display: none; }
 }
+
+.user-links {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 14px;
+  padding: 0 16px;
+  font-size: 0.875rem;
+}
+.user-links a {
+  color: var(--nav-link);
+  text-decoration: none;
+  font-weight: 500;
+}
+.user-links a:hover { color: var(--accent); }
+
+.user-menu :deep(.menu-items button) {
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+}
+.user-menu :deep(.menu-items button:hover) { background: var(--hover-tint); }
 </style>

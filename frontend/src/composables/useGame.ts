@@ -1,4 +1,6 @@
 import { computed, onScopeDispose, readonly, ref, shallowRef } from 'vue'
+import { apiFetch } from '../api'
+import { token } from '../auth'
 import type { CardDef, GameData, ServerMessage } from '../server'
 import type { GameView } from '../types'
 import { toView } from '../view'
@@ -11,7 +13,7 @@ const FLIP_MS = 320
 
 const socketUrl = (gameId: string) => {
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  return `${protocol}://${window.location.host}/api/games/${gameId}`
+  return `${protocol}://${window.location.host}/api/games/${gameId}?token=${encodeURIComponent(token.value ?? '')}`
 }
 
 export const useGame = (gameId: string) => {
@@ -75,7 +77,7 @@ export const useGame = (gameId: string) => {
   }
 
   const post = async (path: string, body: unknown = {}) => {
-    const response = await fetch(`/api/games/${gameId}${path}`, {
+    const response = await apiFetch(`/api/games/${gameId}${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -84,7 +86,7 @@ export const useGame = (gameId: string) => {
   }
 
   const refresh = async () => {
-    const response = await fetch(`/api/games/${gameId}`).catch(() => null)
+    const response = await apiFetch(`/api/games/${gameId}`).catch(() => null)
     if (response?.ok) {
       queue.push({ tag: 'Update', contents: (await response.json()) as GameData })
       void drain()

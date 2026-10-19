@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
+const { align = 'left' } = defineProps<{ align?: 'left' | 'right' }>()
+
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
 
@@ -35,7 +37,7 @@ onBeforeUnmount(() => {
       </svg>
     </button>
     <transition name="appear">
-      <div v-if="open" class="menu-items" @click="close">
+      <div v-if="open" class="menu-items" :class="align" @click="close">
         <slot name="items"></slot>
       </div>
     </transition>
@@ -78,6 +80,8 @@ svg { width: 20px; }
   flex-direction: column;
   box-shadow: 0 8px 24px var(--shadow);
 }
+
+.menu-items.right { left: auto; right: 0; }
 
 .appear-enter-active, .appear-leave-active { transition: opacity 0.2s ease-in-out; }
 .appear-enter-from, .appear-leave-to { opacity: 0; }
