@@ -30,7 +30,9 @@ spec = describe "Encounter phase" do
     -- threat 27: Black Forest Bats (15) and Forest Spider (25) can engage, Ungoliant's Spawn (32) cannot
     _ <- setEncounterDeck [Enemies.blackForestBats, Enemies.ungoliantsSpawn]
     run RevealEncounterCard
+    resolveRevealed
     run RevealEncounterCard
+    resolveRevealed
     run $ BeginPhase EncounterPhase
     chooseLabel "$label.doNotEngage" pid
     placements <- enemyPlacements

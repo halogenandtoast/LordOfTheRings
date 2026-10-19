@@ -145,8 +145,8 @@
   "declareDefenders": "{enemy} attacks: declare any number of defenders",
   "payMore": "Pay {count} more",
   "payFromDifferentHero": "Pay 1 from a different hero ({count} more)",
-  "performSetup": "Perform setup: flip {quest}",
-  "resolveWhenRevealed": "Resolve When Revealed: {quest}",
+  "performSetup": "Perform setup: flip {card}",
+  "resolveWhenRevealed": "Resolve When Revealed: {card}",
   "xEquals": "X = {x}",
   "ability": {
     "Action": "Action: {name}",

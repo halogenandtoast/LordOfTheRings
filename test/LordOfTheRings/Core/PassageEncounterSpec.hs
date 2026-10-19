@@ -18,7 +18,7 @@ handSize pid = length . (.hand) <$> getPlayer pid
 
 -- | Reveal a card from the encounter deck, with the given cards under it.
 reveal :: CardDef -> [CardDef] -> GameT ()
-reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard
+reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard >> resolveRevealed
 
 theLocation :: GameT LocationId
 theLocation = getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))

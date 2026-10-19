@@ -103,6 +103,8 @@ data Message
   | RevealEncounterCard
   | RevealCard EncounterCard
   | WhenRevealed Target
+  | -- | the lead clicks the revealed card to resolve its When Revealed effect
+    AskToResolveWhenRevealed Target EncounterCard
   | FinishRevelation TreacheryId
   | PutQuestIntoPlay EncounterCard
   | CompleteQuest QuestId

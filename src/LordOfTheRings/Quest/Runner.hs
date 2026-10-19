@@ -42,7 +42,7 @@ leadClicks :: (ReverseQueue m) => Text -> QuestAttrs -> Message -> m ()
 leadClicks key attrs msg = do
   lead <- getLead
   chooseOneM lead do
-    questionLabeledWith key (cardVar "quest" attrs)
+    questionLabeledWith key (cardVar "card" attrs)
     targeting attrs $ push msg
 
 -- | A stage that cannot be defeated while an enemy matching the matcher is in play: its

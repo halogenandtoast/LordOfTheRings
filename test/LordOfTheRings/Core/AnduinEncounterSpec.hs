@@ -14,7 +14,7 @@ hero :: CardCode -> GameT Target
 hero code = toTarget <$> getHeroWithCode code
 
 reveal :: CardDef -> [CardDef] -> GameT ()
-reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard
+reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard >> resolveRevealed
 
 enemiesWith :: CardDef -> GameT [EnemyId]
 enemiesWith def = getsGame (map toId . filter ((== toCardCode def) . toCardCode) . toList . (.entities.enemies))

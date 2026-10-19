@@ -27,7 +27,7 @@ import LordOfTheRings.Token as X
 import LordOfTheRings.Game as X
 import LordOfTheRings.GameT as X
 import LordOfTheRings.Id as X
-import LordOfTheRings.Matcher as X (getDamage, getLocation, getPlayer)
+import LordOfTheRings.Matcher as X (getDamage, getLead, getLocation, getPlayer)
 import LordOfTheRings.Message as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Question as X
@@ -110,6 +110,17 @@ flipFirstQuest pid = do
 -- | Click the active stage to resolve its When Revealed effect.
 resolveWhenRevealed :: (HasCallStack) => PlayerId -> GameT ()
 resolveWhenRevealed pid = chooseTarget pid =<< getActiveQuest
+
+-- | Click each card waiting for the lead to resolve its When Revealed
+-- effect, in turn, until none is left waiting.
+resolveRevealed :: GameT ()
+resolveRevealed = do
+  lead <- getLead
+  getQuestion lead >>= \case
+    Just (QuestionLabel l _ _ _) | "$label.resolveWhenRevealed" `isPrefixOf` l -> do
+      chooseOptionMatching "resolve When Revealed" lead (const True)
+      resolveRevealed
+    _ -> pure ()
 
 -- | Process exactly one message, leaving whatever it queues unprocessed.
 runOnly :: Message -> GameT ()

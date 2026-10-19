@@ -715,7 +715,8 @@ runGameMessage msg g = case msg of
     players <- getPlayerOrder
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
         doomed = [RaiseThreat p n | Doomed n <- toList (cdKeywords def), p <- players]
-        revealing t = [CheckWindows [mkWhen $ Revealed t], WhenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
+        whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
+        revealing t = [CheckWindows [mkWhen $ Revealed t], whenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
@@ -733,6 +734,10 @@ runGameMessage msg g = case msg of
         push $ PutObjectiveIntoPlay card
         pure g
       _ -> pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
+  AskToResolveWhenRevealed t card -> do
+    lead <- getLead
+    push $ questionLabelWith (ikeyWith "label.resolveWhenRevealed" (cardVar "card" card)) (Just t) [] lead [targetLabel t [WhenRevealed t]]
+    pure g
   FinishRevelation tid -> do
     -- a treachery that did not attach itself to something is discarded once it resolves
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->

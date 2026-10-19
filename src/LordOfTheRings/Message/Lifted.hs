@@ -124,9 +124,13 @@ choosePlayerM pid source f = do
 cancelMatching :: (MonadTrans t, HasQueue Message m) => (Message -> Bool) -> t m ()
 cancelMatching = lift . void . popMessagesMatching
 
--- | Cancel the When Revealed effects of a card just revealed.
+-- | Cancel the When Revealed effects of a card just revealed, and with them the lead's
+-- click to resolve them.
 cancelWhenRevealed :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
-cancelWhenRevealed t = cancelMatching (== WhenRevealed t)
+cancelWhenRevealed t = cancelMatching \case
+  WhenRevealed t' -> t == t'
+  AskToResolveWhenRevealed t' _ -> t == t'
+  _ -> False
 
 -- | Heal all the damage on a character.
 healAllDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()

@@ -11,7 +11,7 @@ import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
 reveal :: [CardDef] -> GameT ()
-reveal defs = setEncounterDeck defs >> run RevealEncounterCard
+reveal defs = setEncounterDeck defs >> run RevealEncounterCard >> resolveRevealed
 
 enemyWithCode :: CardCode -> GameT Enemy
 enemyWithCode code = getsGame (fromJustNote "no enemy" . find ((== code) . toCardCode) . toList . (.entities.enemies))

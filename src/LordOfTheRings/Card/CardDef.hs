@@ -37,6 +37,8 @@ data CardDef = CardDef
   , cdEncounterSetQuantity :: Maybe Int
   , cdDoubleSided :: Bool
   , cdShadowEffect :: Bool
+  , -- | revealing it has a When Revealed effect, which the lead resolves by clicking it
+    cdWhenRevealed :: Bool
   -- ^ an encounter card with a shadow effect, as opposed to a blank shadow card
   , cdDistinctPayers :: Maybe Int
   -- ^ the card must be paid for from this many different heroes' pools
@@ -80,6 +82,7 @@ emptyCardDef cCode name cType =
     , cdEncounterSetQuantity = Nothing
     , cdDoubleSided = False
     , cdShadowEffect = False
+    , cdWhenRevealed = False
     , cdDistinctPayers = Nothing
     }
 
@@ -141,7 +144,7 @@ location cCode name encounterSet quantity threat questPoints =
     }
 
 treachery :: CardCode -> Name -> EncounterSet -> Int -> CardDef
-treachery cCode name encounterSet quantity = encounterCard cCode name TreacheryType encounterSet quantity
+treachery cCode name encounterSet quantity = (encounterCard cCode name TreacheryType encounterSet quantity) {cdWhenRevealed = True}
 
 quest :: CardCode -> Name -> EncounterSet -> Int -> Int -> CardDef
 quest cCode name encounterSet stage questPoints =

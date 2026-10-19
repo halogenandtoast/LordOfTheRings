@@ -160,6 +160,7 @@ spec = do
       _ <- putAttachmentOn pid Attachments.bladeOfGondolin gimli
       _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
       run RevealEncounterCard
+      resolveRevealed
       passActions pid
       orcs <- getsGame (map toId . filter ((== toCardCode Enemies.dolGuldurOrcs) . toCardCode) . toList . (.entities.enemies))
       for_ orcs \eid -> run $ EngageEnemy pid eid

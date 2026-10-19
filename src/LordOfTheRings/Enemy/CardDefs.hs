@@ -58,6 +58,7 @@ ungoliantsSpawn :: CardDef
 ungoliantsSpawn =
   (enemy "01076" "Ungoliant's Spawn" SpidersOfMirkwood 1 32 3 5 2 9)
     { cdShadowEffect = True
+    , cdWhenRevealed = True
     , cdCardTraits = setFromList [Creature, Spider]
     }
 
@@ -100,6 +101,7 @@ dolGuldurOrcs :: CardDef
 dolGuldurOrcs =
   (enemy "01089" "Dol Guldur Orcs" DolGuldurOrcs 3 10 2 2 0 3)
     { cdShadowEffect = True
+    , cdWhenRevealed = True
     , cdCardTraits = setFromList [DolGuldur, Orc]
     }
 

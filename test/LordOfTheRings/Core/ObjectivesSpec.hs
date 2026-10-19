@@ -15,6 +15,7 @@ objectiveGuardedBy :: CardDef -> [CardDef] -> GameT Target
 objectiveGuardedBy def guards = do
   _ <- setEncounterDeck guards
   run . PutObjectiveIntoPlay =<< genEncounterCard def
+  resolveRevealed
   getsGame (toTarget . fromJustNote "no objective" . headMay . toList . (.entities.objectives))
 
 placement :: Target -> GameT Placement

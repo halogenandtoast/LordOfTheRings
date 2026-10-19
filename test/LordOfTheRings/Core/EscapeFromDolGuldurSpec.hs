@@ -23,6 +23,7 @@ freeObjective def = do
   _ <- setEncounterDeck [Treacheries.theNecromancersReach]
   card <- genEncounterCard def
   run $ PutObjectiveIntoPlay card
+  resolveRevealed
   getsGame (toTarget . fromJustNote "no objective" . find ((== card.id) . objectiveCardId . toAttrs) . toList . (.entities.objectives))
 
 claimOnto :: PlayerId -> Target -> GameT ()
@@ -38,7 +39,8 @@ spec = describe "Escape from Dol Guldur" do
     run Setup
     chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
-    resolveWhenRevealed pid
+    -- the objectives' guards, then the stage
+    resolveRevealed
     getsGame (length . (.entities.objectives)) `shouldReturn` 3
     map toCardCode . scenarioSetAside . toAttrs <$> getsGame (.scenario) `shouldReturn` [toCardCode Enemies.nazgulOfDolGuldur]
     map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` notElem (toCardCode Enemies.nazgulOfDolGuldur))

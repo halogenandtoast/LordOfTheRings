@@ -13,7 +13,7 @@ escapeTest :: (PlayerId -> GameT ()) -> IO ()
 escapeTest = gameTestIn escapeFromDolGuldur starterDeck
 
 reveal :: CardDef -> [CardDef] -> GameT ()
-reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard
+reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard >> resolveRevealed
 
 theEnemy :: CardDef -> GameT EnemyId
 theEnemy def = getsGame (fromJustNote "no such enemy" . find ((== toCardCode def) . toCardCode) . toList . (.entities.enemies)) <&> toId
@@ -28,6 +28,7 @@ spec = do
       reveal Enemies.dungeonJailor []
       _ <- setEncounterDeck [Treacheries.theNecromancersReach]
       run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.shadowKey
+      resolveRevealed
       run QuestResolution
       getsGame (length . (.entities.objectives)) `shouldReturn` 0
       map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` elem (toCardCode Objectives.shadowKey))
