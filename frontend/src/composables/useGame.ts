@@ -9,13 +9,14 @@ type Status = 'connecting' | 'open' | 'closed'
 const LOG_LIMIT = 200
 const FLIP_MS = 320
 
-const socketUrl = () => {
+const socketUrl = (gameId: string) => {
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  return `${protocol}://${window.location.host}/api/data`
+  return `${protocol}://${window.location.host}/api/games/${gameId}`
 }
 
-export const useGame = () => {
+export const useGame = (gameId: string) => {
   const status = ref<Status>('connecting')
+  let closed = false
   const error = ref<string | null>(null)
   const data = shallowRef<GameData | null>(null)
   const game = shallowRef<GameView | null>(null)
@@ -74,7 +75,7 @@ export const useGame = () => {
   }
 
   const post = async (path: string, body: unknown = {}) => {
-    const response = await fetch(`/api/${path}`, {
+    const response = await fetch(`/api/games/${gameId}${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -83,7 +84,7 @@ export const useGame = () => {
   }
 
   const refresh = async () => {
-    const response = await fetch('/api/data').catch(() => null)
+    const response = await fetch(`/api/games/${gameId}`).catch(() => null)
     if (response?.ok) {
       queue.push({ tag: 'Update', contents: (await response.json()) as GameData })
       void drain()
@@ -92,7 +93,7 @@ export const useGame = () => {
 
   const connect = () => {
     status.value = 'connecting'
-    socket = new WebSocket(socketUrl())
+    socket = new WebSocket(socketUrl(gameId))
     socket.addEventListener('open', () => {
       status.value = 'open'
       error.value = null
@@ -104,7 +105,7 @@ export const useGame = () => {
     })
     socket.addEventListener('close', () => {
       status.value = 'closed'
-      reconnect = window.setTimeout(connect, 2000)
+      if (!closed) reconnect = window.setTimeout(connect, 2000)
     })
   }
 
@@ -121,6 +122,7 @@ export const useGame = () => {
   connect()
 
   onScopeDispose(() => {
+    closed = true
     window.clearTimeout(reconnect)
     socket?.close()
   })
@@ -138,19 +140,14 @@ export const useGame = () => {
     scenario: computed(() => game.value?.scenario ?? null),
     players: computed(() => game.value?.players ?? []),
     outcome: computed(() => game.value?.outcome ?? null),
-    startGame: (name: string) => {
-      log.value = []
-      announcement.value = null
-      return post('start', { name })
-    },
-    undo: () => post('undo'),
+    undo: () => post('/undo'),
     reset: () => {
       log.value = []
       announcement.value = null
-      return post('reset')
+      return post('/reset')
     },
     answer: (askId: number, choice: number) =>
-      post('data', { choice, questionVersion: askId, player: data.value?.playerId }),
+      post('', { choice, questionVersion: askId, player: data.value?.playerId }),
     refresh,
   }
 }

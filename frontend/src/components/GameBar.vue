@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import GameMenu from './GameMenu.vue'
 
-defineProps<{ canUndo: boolean; showSidebar: boolean }>()
+defineProps<{ canUndo: boolean; showSidebar: boolean; status: 'connecting' | 'open' | 'closed' }>()
 const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
 </script>
 
@@ -37,6 +37,7 @@ const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
       </template>
     </GameMenu>
     <div class="right">
+      <span class="status" :data-status="status">{{ status }}</span>
       <button
         type="button"
         class="drawer-toggle"
@@ -112,8 +113,17 @@ const emit = defineEmits<{ reset: []; undo: []; toggleSidebar: [] }>()
 
 .right {
   display: flex;
+  align-items: center;
   margin-left: auto;
 }
+.status {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  padding: 0 10px;
+}
+.status[data-status='closed'] { color: var(--danger); opacity: 1; }
 .right .drawer-toggle {
   justify-content: center;
   min-width: 40px;

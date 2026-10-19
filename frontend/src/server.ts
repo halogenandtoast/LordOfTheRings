@@ -80,3 +80,14 @@ export type ServerMessage =
   | { tag: 'Log'; message: string }
   | { tag: 'Announce'; message: string }
   | { tag: 'FlipCard'; cardId: string }
+
+export interface GameSummary {
+  id: string
+  name: string
+  playerName: string
+  scenario: string
+  round: number
+  phase: string
+  threat: number
+  outcome: 'Won' | 'Lost' | null
+}
