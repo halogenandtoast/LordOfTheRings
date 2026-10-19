@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Card browser renditions (~480 MB), copied from the importer rather than committed
+public/images/browse/

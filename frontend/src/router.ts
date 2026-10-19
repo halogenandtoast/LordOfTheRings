@@ -8,6 +8,8 @@ export const router = createRouter({
     { path: '/', component: Home, meta: { title: 'The Lord of the Rings', requiresAuth: true } },
     { path: '/new-game', component: () => import('./views/NewGame.vue'), meta: { title: 'New Game', requiresAuth: true } },
     { path: '/games/:id', component: () => import('./views/Game.vue'), meta: { title: 'Game', requiresAuth: true } },
+    { path: '/cards', component: () => import('./browser/views/BrowseView.vue'), meta: { title: 'Cards' } },
+    { path: '/cards/:code', component: () => import('./browser/views/CardDetailView.vue'), meta: { title: 'Card' } },
     { path: '/sign-in', component: () => import('./views/SignIn.vue'), meta: { title: 'Sign In', guest: true } },
     { path: '/sign-up', component: () => import('./views/SignUp.vue'), meta: { title: 'Sign Up', guest: true } },
   ],
