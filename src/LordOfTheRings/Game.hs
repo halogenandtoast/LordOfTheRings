@@ -224,6 +224,9 @@ runGameMessage msg g = case msg of
   UseAbility pid ab windows -> do
     pushAll $ costMessages (PlayerSource pid) (abilityCost ab) <> [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
     pure g
+  CompleteQuest qid -> do
+    push AdvanceQuest
+    pure $ g & entitiesL . questsL %~ Map.delete qid
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest

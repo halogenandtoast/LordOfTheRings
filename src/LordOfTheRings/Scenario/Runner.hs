@@ -5,8 +5,10 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Message
+import LordOfTheRings.Outcome
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
+import LordOfTheRings.Target
 import LordOfTheRings.Scenario.Types as X
 
 gatherEncounterSet :: (MonadRandom m) => EncounterSet -> m [EncounterCard]
@@ -35,9 +37,19 @@ instance RunMessage ScenarioAttrs where
               push $ AddToStaging x
               pure $ attrs & encounterDeckL .~ encounterDeck
             else do
-              push $
-                chooseOne pid $
-                  targetLabel x [AddToStaging x]
-                      : map (\y -> targetLabel y [AddToStaging y, ShuffleDeck EncounterDeck]) xs
+              push
+                $ chooseOne pid
+                  [targetLabel y [RemoveFromEncounterDeck y, AddToStaging y, ShuffleDeck EncounterDeck] | y <- x : xs]
               pure attrs
+    RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
+    AdvanceQuest -> case attrs.questDeck of
+      [] -> do
+        push $ GameOver Won
+        pure attrs
+      (next : rest) -> do
+        push $ AdvanceToQuest next
+        pure $ attrs & questDeckL .~ rest
+    AdvanceToQuest card -> do
+      pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
+      pure attrs
     _ -> pure attrs

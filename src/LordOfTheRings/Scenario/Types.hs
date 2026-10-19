@@ -77,3 +77,6 @@ instance Sourceable ScenarioAttrs where
 
 instance HasField "encounterDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioEncounterDeck
+
+instance HasField "questDeck" ScenarioAttrs [EncounterCard] where
+  getField = scenarioQuestDeck

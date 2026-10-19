@@ -109,6 +109,8 @@ instance HasCardDef Quest where
 
 instance Targetable QuestAttrs where
   toTarget = QuestTarget . questId
+  isTarget attrs (CardIdTarget cid) = cid == questCardId attrs
+  isTarget attrs target = toTarget attrs == target
 
 instance Targetable Quest where
   toTarget = toTarget . toAttrs

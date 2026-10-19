@@ -311,6 +311,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EndGameSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
+      LordOfTheRings.QuestAdvancementSpec
       LordOfTheRings.RefreshPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.SetupSpec

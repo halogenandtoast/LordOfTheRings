@@ -67,6 +67,10 @@ data Message
   | Search PlayerId DeckSignifier CardMatcher CardHandler DeckHandler
   | AddToStaging EncounterCard
   | PutQuestIntoPlay EncounterCard
+  | CompleteQuest QuestId
+  | AdvanceQuest
+  | AdvanceToQuest EncounterCard
+  | RemoveFromEncounterDeck EncounterCard
   | ShuffleDeck DeckSignifier
   | CheckWindows [Window]
   | ResponseWindow [Window] [PlayerId] [(Source, Int)] Int

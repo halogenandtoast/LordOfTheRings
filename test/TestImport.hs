@@ -10,6 +10,7 @@ import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, genPlayerCard, to
 import LordOfTheRings.Classes.Entity as X (toAttrs, toId)
 import LordOfTheRings.Decklist
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
+import LordOfTheRings.Quest as X (Quest, QuestAttrs (..))
 import LordOfTheRings.Source as X
 import LordOfTheRings.Token as X
 import LordOfTheRings.Game as X
@@ -82,3 +83,6 @@ flipFirstQuest pid = do
 -- | Process exactly one message, leaving whatever it queues unprocessed.
 runOnly :: Message -> GameT ()
 runOnly msg = push msg >> void runNext
+
+getActiveQuest :: (HasCallStack) => GameT Quest
+getActiveQuest = getsGame (fromJustNote "no active quest" . headMay . toList . (.entities.quests))
