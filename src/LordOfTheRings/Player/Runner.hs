@@ -88,6 +88,11 @@ instance RunMessage Player where
     ReturnFromDiscardToHand pid cid | pid == player.id -> do
       let (returned, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & handL <>~ returned
+    PlaceOrcGuard pid | pid == player.id -> case player.deck of
+      PlayerCard top : rest -> do
+        push $ EngageOrcGuard pid top
+        pure $ player & deckL .~ rest
+      _ -> pure player
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -163,7 +168,7 @@ hasHost c
 
 correctPhase :: (HasGame m) => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
-  AllyType -> isPhase PlanningPhase
+  AllyType -> andM [isPhase PlanningPhase, allyAllowed]
   AttachmentType -> isPhase PlanningPhase
   -- an action event can be played in any action window; responses are offered by theirs
   EventType -> case card.owner >>= lookupEvent (toCardCode card) card.id of
@@ -189,3 +194,9 @@ paysFor sphere h
 
 startingHandSize :: Int
 startingHandSize = 6
+
+-- | Whether an ally may be played under a one-ally-per-round rule.
+allyAllowed :: (HasGame m) => m Bool
+allyAllowed = do
+  mods <- getModifiers GameTarget
+  pure $ not (OneAllyPerRound `elem` mods && AllyPlayedThisRound `elem` mods)

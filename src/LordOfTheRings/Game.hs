@@ -8,6 +8,7 @@ import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally
 import LordOfTheRings.Attachment
 import LordOfTheRings.Card
+import LordOfTheRings.Card.Synthetic (orcGuard)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
@@ -493,6 +494,9 @@ runGameMessage msg g = case msg of
       | threat > willpower -> pushAll [RaiseThreat pid (threat - willpower) | pid <- players]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
+  PlaceTokens _ target@(QuestTarget _) Progress n | n > 0 -> do
+    push $ CheckWindows [mkAfter $ ProgressPlaced target n]
+    pure g
   PlaceProgressOnQuest n -> do
     active <- traverse getLocation =<< selectOne IsActiveLocation
     let onLocation = maybe 0 (\l -> min n (l.questPoints - l.progress)) active
@@ -530,6 +534,8 @@ runGameMessage msg g = case msg of
   PlayAlly pid card -> do
     player <- getPlayer pid
     thisAlly <- newAlly pid card
+    limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
+    pushWhen limited' $ CreateEffect $ Effect GameSource GameTarget [AllyPlayedThisRound] UntilEndOfRound
     send $ Log $ player.name <> " plays " <> display (cdName $ toCardDef card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
@@ -620,6 +626,14 @@ runGameMessage msg g = case msg of
           ]
         putGame $ g & entitiesL . enemiesL %~ insertEntity attacker
     getGame
+  EngageOrcGuard pid card -> do
+    guard' <- newEnemy (MkEncounterCard card.id (toCardCode orcGuard))
+    send $ Log $ "An Orc Guard engages " <> fromMaybe "a player" ((.name) <$> Map.lookup pid g.players)
+    push $ CheckWindows [mkAfter $ EnemyEngaged guard'.id pid]
+    pure
+      $ g
+      & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = EngagedWith pid}) guard')
+      & scenarioL %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     send $ Log $ display (cdName $ toCardDef card) <> " is placed in the staging area"
@@ -762,7 +776,12 @@ discardTarget target g = leftPlay g target >> case target of
         <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
       mods <- getModifiers target
       let removed = g & entitiesL . l %~ Map.delete k
+          orcGuards = (toAttrs g.scenario).scenarioOrcGuards
       case toCard entity of
+        -- an Orc Guard leaves its player card in that player's discard pile
+        EncounterCard ec
+          | Just pc <- Map.lookup ec.id orcGuards ->
+              pure $ addToDiscard (PlayerCard pc) $ removed & scenarioL %~ overAttrs (orcGuardsL %~ Map.delete ec.id)
         EncounterCard ec
           | LeavesPlayToTopOfEncounterDeck `elem` mods -> pure $ removed & scenarioL %~ overAttrs (encounterDeckL %~ (ec :))
           | ShuffledIntoEncounterDeckWhenDefeated `elem` mods -> do

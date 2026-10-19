@@ -13,8 +13,13 @@ import LordOfTheRings.Token
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
     BeginPhase ResourcePhase -> do
-      push $ PlaceTokens GameSource (toTarget attrs) Resource 1
+      unless attrs.heroPrisoner $ push $ PlaceTokens GameSource (toTarget attrs) Resource 1
       pure attrs
+    TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
+    RescuePrisoner hid | hid == attrs.heroId -> do
+      push $ PlaceTokens GameSource (toTarget attrs) Damage 1
+      pure $ attrs & prisonerL .~ False
+    PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
     Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
     AttackWith (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True & attackingL .~ True
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False

@@ -1,6 +1,10 @@
 module LordOfTheRings.Quest.Runner (module LordOfTheRings.Quest.Runner, module X) where
 
 import LordOfTheRings.GameT (GameT)
+import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Entities (entitiesObjectives)
+import LordOfTheRings.Game.Base (gameEntities)
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Matcher
 import LordOfTheRings.Classes.RunMessage
@@ -44,3 +48,31 @@ runBlockedStage blocker msg attrs = case msg of
     Discard (EnemyTarget eid) -> Just eid
     ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
     _ -> Nothing
+
+-- | A stage the players cannot advance from until the condition holds: its progress piles
+-- up, and it is defeated once it has enough progress and the condition is met. Messages
+-- that may meet the condition have it check again once they have resolved.
+runConditionalStage :: GameT Bool -> Message -> QuestAttrs -> GameT QuestAttrs
+runConditionalStage condition msg attrs = case msg of
+  PlaceTokens _ (isTarget attrs -> True) Progress n -> do
+    met <- condition
+    if met then runMessage msg attrs else pure $ attrs & tokensL %~ addTokens Progress n
+  CheckStage qid | qid == attrs.id -> do
+    met <- condition
+    when (met && attrs.questPoints > 0 && attrs.progress >= attrs.questPoints) $ push (CompleteQuest attrs.id)
+    pure attrs
+  ClaimObjective {} -> recheck
+  RescuePrisoner {} -> recheck
+  _ -> runMessage msg attrs
+ where
+  recheck = do
+    push $ CheckStage attrs.id
+    runMessage msg attrs
+
+-- | Objectives the players have claimed.
+claimedObjectives :: (HasGame m) => m Int
+claimedObjectives = getsGame (length . filter (isAttached . (.placement)) . toList . entitiesObjectives . gameEntities)
+ where
+  isAttached = \case
+    AttachedTo _ -> True
+    _ -> False

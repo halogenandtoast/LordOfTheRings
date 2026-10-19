@@ -26,6 +26,7 @@ import LordOfTheRings.Enemy.Cards.UngoliantsSpawn
 import LordOfTheRings.Enemy.Cards.UngoliantsSwarm
 import LordOfTheRings.Enemy.Cards.Wargs
 import LordOfTheRings.Enemy.Cards.WolfRider
+import LordOfTheRings.Enemy.Cards.OrcGuard
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -60,6 +61,7 @@ allEnemys =
         , SomeEnemyCard hummerhorns
         , SomeEnemyCard ungoliantsSpawn
         , SomeEnemyCard wolfRider
+        , SomeEnemyCard orcGuard
         , SomeEnemyCard hillTroll
         , SomeEnemyCard goblinSniper
         , SomeEnemyCard marshAdder

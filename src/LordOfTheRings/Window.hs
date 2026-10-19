@@ -29,6 +29,7 @@ data WindowType
   | EnemyAttacking EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
+  | ProgressPlaced Target Int
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId
   | -- | a character left play: who controlled it, and its traits as it left

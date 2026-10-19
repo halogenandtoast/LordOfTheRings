@@ -12,6 +12,7 @@ import LordOfTheRings.Card.CardType as X
 import LordOfTheRings.Card.Code as X
 import LordOfTheRings.Card.EncounterCard as X
 import LordOfTheRings.Card.PlayerCard as X
+import LordOfTheRings.Card.Synthetic (syntheticCards)
 import LordOfTheRings.Enemy.CardDefs (allEnemyCards)
 import LordOfTheRings.Event.CardDefs (allEventCards)
 import LordOfTheRings.Hero.CardDefs (allHeroCards)
@@ -61,7 +62,7 @@ allPlayerCards = Map.unions [allHeroCards, allAllyCards, allAttachmentCards, all
 
 allEncounterCards :: Map CardCode CardDef
 allEncounterCards =
-  Map.unions [allEnemyCards, allLocationCards, allTreacheryCards, allQuestCards, allObjectiveCards]
+  Map.unions [allEnemyCards, allLocationCards, allTreacheryCards, allQuestCards, allObjectiveCards, syntheticCards]
 
 lookupCardDef :: CardCode -> Maybe CardDef
 lookupCardDef cCode = Map.lookup cCode allPlayerCards <|> Map.lookup cCode allEncounterCards

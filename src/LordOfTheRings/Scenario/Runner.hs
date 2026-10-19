@@ -80,6 +80,7 @@ instance RunMessage ScenarioAttrs where
             else RevealCard card
         pure $ attrs & encounterDeckL .~ rest
       [] -> pure attrs
+    SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)

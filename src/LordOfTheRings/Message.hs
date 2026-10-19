@@ -129,6 +129,15 @@ data Message
     -- staging area to guard it, any other card is revealed
     GuardObjective ObjectiveId
   | PutObjectiveIntoPlay EncounterCard
+  | TakePrisoner HeroId
+  | RescuePrisoner HeroId
+  | SetAside EncounterCard
+  | -- | a stage whose condition may have just been met checks whether it is defeated
+    CheckStage QuestId
+  | -- | the player's top card goes face down in front of them as an Orc Guard engaged
+    -- with them
+    PlaceOrcGuard PlayerId
+  | EngageOrcGuard PlayerId PlayerCard
   | ShufflePlayerDeck PlayerId
   | ReturnToTopOfEncounterDeck Target
   | RemoveProgressFromQuest Source Int

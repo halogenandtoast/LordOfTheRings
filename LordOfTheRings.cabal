@@ -66,6 +66,7 @@ library
       LordOfTheRings.Card.Code
       LordOfTheRings.Card.EncounterCard
       LordOfTheRings.Card.PlayerCard
+      LordOfTheRings.Card.Synthetic
       LordOfTheRings.Classes.Entity
       LordOfTheRings.Classes.HasAbilities
       LordOfTheRings.Classes.HasGame
@@ -95,6 +96,7 @@ library
       LordOfTheRings.Enemy.Cards.MarshAdder
       LordOfTheRings.Enemy.Cards.MistyMountainGoblins
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
+      LordOfTheRings.Enemy.Cards.OrcGuard
       LordOfTheRings.Enemy.Cards.UngoliantsSpawn
       LordOfTheRings.Enemy.Cards.UngoliantsSwarm
       LordOfTheRings.Enemy.Cards.Wargs
@@ -223,6 +225,7 @@ library
       LordOfTheRings.Scenario
       LordOfTheRings.Scenario.Import.Lifted
       LordOfTheRings.Scenario.Runner
+      LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
       LordOfTheRings.Scenario.Types
@@ -392,6 +395,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Core.AnduinEncounterSpec
       LordOfTheRings.Core.CancelSpec
       LordOfTheRings.Core.CombatCardsSpec
+      LordOfTheRings.Core.EscapeFromDolGuldurSpec
       LordOfTheRings.Core.EventsSpec
       LordOfTheRings.Core.JourneyAlongTheAnduinSpec
       LordOfTheRings.Core.ObjectivesSpec

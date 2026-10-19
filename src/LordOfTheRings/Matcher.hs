@@ -51,7 +51,8 @@ instance Query HeroMatcher where
 matchHero :: (HasGame m) => HeroMatcher -> Hero -> m Bool
 matchHero matcher hero = case matcher of
   HeroWithId hid -> pure $ hero.id == hid
-  HeroControlledBy pm -> elem hero.owner <$> select pm
+  -- a prisoner is face down: no one controls it until it is rescued
+  HeroControlledBy pm -> if heroPrisoner (toAttrs hero) then pure False else elem hero.owner <$> select pm
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
   HeroWithSphere sphere -> pure $ hero.sphere == sphere
@@ -60,6 +61,7 @@ matchHero matcher hero = case matcher of
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
   AttackingHero -> pure $ heroAttacking (toAttrs hero)
+  PrisonerHero -> pure $ heroPrisoner (toAttrs hero)
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
   HeroMatchAll ms -> allM (`matchHero` hero) ms

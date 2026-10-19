@@ -40,6 +40,7 @@ data HeroMatcher
   | ExhaustedHero
   | CommittedHero
   | AttackingHero
+  | PrisonerHero
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]

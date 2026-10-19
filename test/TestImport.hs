@@ -9,7 +9,7 @@ import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.Entity as X (insertEntity, overAttrs, toAttrs, toId)
 import LordOfTheRings.Scenario.Types (encounterDeckL)
-import LordOfTheRings.Scenario as X (Scenario, journeyAlongTheAnduin, passageThroughMirkwood)
+import LordOfTheRings.Scenario as X (Scenario, escapeFromDolGuldur, journeyAlongTheAnduin, passageThroughMirkwood)
 import LordOfTheRings.Decklist as X (DeckList (..), coreStarterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
@@ -196,4 +196,4 @@ putQuestStage :: CardDef -> GameT Target
 putQuestStage def = do
   card <- genEncounterCard def
   run $ PutQuestIntoPlay card
-  pure $ toTarget card
+  toTarget <$> getActiveQuest

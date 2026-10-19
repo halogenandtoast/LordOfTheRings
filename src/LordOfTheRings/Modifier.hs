@@ -24,6 +24,9 @@ data ModifierType
     AdditionalStagingReveals Int
   | NoEngagementChecks
   | SkipStagingStep
+  | -- | on the game: the players, as a group, cannot play more than 1 ally each round
+    OneAllyPerRound
+  | AllyPlayedThisRound
   | -- | damage an attack deals past the character's remaining hit points raises threat
     ExcessDamageToThreat
   | CannotBeOptionallyEngagedWhileOthersInStaging

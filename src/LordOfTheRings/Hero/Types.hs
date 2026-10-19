@@ -43,6 +43,8 @@ data HeroAttrs = HeroAttrs
   , heroExhausted :: Bool
   , heroCommitted :: Bool
   , heroAttacking :: Bool
+  , heroPrisoner :: Bool
+  -- ^ face down: it cannot be used, cannot be damaged and collects no resources
   }
   deriving stock (Show, Eq, Generic)
 
@@ -52,7 +54,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero")
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False)]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -69,6 +71,7 @@ hero f cardDef =
             , heroExhausted = False
             , heroCommitted = False
             , heroAttacking = False
+            , heroPrisoner = False
             }
     }
 
@@ -90,7 +93,7 @@ instance HasModifiersFor Hero where
   getModifiersFor (Hero a) = getModifiersFor a
 
 instance HasAbilities Hero where
-  getAbilities (Hero a) = getAbilities a
+  getAbilities (Hero a) = if heroPrisoner (toAttrs a) then [] else getAbilities a
 
 instance Show Hero where
   show (Hero a) = show a
