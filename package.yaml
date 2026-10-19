@@ -86,6 +86,8 @@ executables:
     - monad-logger
     - random
     - splitmix
+    - http-client
+    - http-client-tls
 
 tests:
   LordOfTheRings-test:

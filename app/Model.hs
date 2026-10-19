@@ -45,4 +45,27 @@ LotrStep sql=lotr_steps
   createdAt UTCTime
   UniqueGameStep gameId step
   deriving Show
+
+-- | An imported deck list. Slots name our card code when the importer could place
+-- the card, and always keep the code the source used.
+LotrDeck sql=lotr_decks
+  userId UserId OnDeleteCascade
+  name Text
+  description Text
+  startingThreat Int Maybe
+  source Text
+  sourceId Text Maybe
+  sourceUrl Text Maybe
+  createdAt UTCTime
+  updatedAt UTCTime
+  deriving Show
+
+LotrDeckSlot sql=lotr_deck_slots
+  deckId LotrDeckId OnDeleteCascade
+  kind Text
+  position Int
+  sourceCode Text
+  cardCode Text Maybe
+  quantity Int
+  deriving Show
 |]

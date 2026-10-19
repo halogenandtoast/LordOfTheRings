@@ -279,6 +279,8 @@ executable LordOfTheRings-exe
   main-is: Main.hs
   other-modules:
       Auth
+      CardDb
+      Decks
       Model
       Paths_LordOfTheRings
   hs-source-dirs:
@@ -322,6 +324,8 @@ executable LordOfTheRings-exe
     , conduit
     , containers
     , extra
+    , http-client
+    , http-client-tls
     , http-types
     , jose
     , lens

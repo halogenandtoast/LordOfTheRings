@@ -32,7 +32,11 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario.Types (scenarioName)
 import Auth
+import CardDb (CardDb, loadCardDb)
+import Decks
 import Model
+import Network.HTTP.Client (Manager)
+import Network.HTTP.Client.TLS (newTlsManager)
 import Network.HTTP.Types.Status (status400, status401, status409)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
@@ -44,6 +48,8 @@ data App = App
   { pool :: ConnectionPool
   , jwtSecret :: Text
   , channels :: TVar (Map LotrGameId (TChan LByteString))
+  , cardDb :: CardDb
+  , manager :: Manager
   }
 
 mkYesod
@@ -58,6 +64,8 @@ mkYesod
   /games/#LotrGameId/export ExportR GET
   /import ImportR POST
   /cards CardsR GET
+  /decks DecksR GET POST
+  /decks/#LotrDeckId DeckR GET DELETE
   /register RegisterR POST
   /authenticate AuthenticateR POST
   /whoami WhoAmIR GET
@@ -352,6 +360,35 @@ advance gid row prepare = do
 deleteGameR :: LotrGameId -> Handler ()
 deleteGameR gid = requireOwnedGame gid >> runDB (delete gid)
 
+getDecksR :: Handler Value
+getDecksR = do
+  userId <- requireUserId
+  db <- getsYesod (.cardDb)
+  toJSON <$> runDB (listDecks db userId)
+
+-- | Import a deck from a RingsDB link or a deck file's contents.
+postDecksR :: Handler Value
+postDecksR = do
+  userId <- requireUserId
+  request <- requireCheckJsonBody @_ @ImportRequest
+  App {cardDb, manager} <- getYesod
+  liftIO (importDeck manager cardDb request) >>= \case
+    Left err -> sendResponseStatus status400 (describeImportError err)
+    Right parsed -> toJSON <$> runDB (saveDeck userId parsed)
+
+getDeckR :: LotrDeckId -> Handler Value
+getDeckR deckId = do
+  userId <- requireUserId
+  db <- getsYesod (.cardDb)
+  maybe notFound (pure . toJSON) =<< runDB (loadDeck db userId deckId)
+
+deleteDeckR :: LotrDeckId -> Handler ()
+deleteDeckR deckId = do
+  userId <- requireUserId
+  deck <- runDB $ get deckId
+  unless (((.lotrDeckUserId) <$> deck) == Just userId) notFound
+  runDB $ delete deckId
+
 data UndoTarget = LastAnswer | StartOfPhase | StartOfRound
   deriving stock (Eq)
 
@@ -513,4 +550,7 @@ main = do
   jwtSecret <- maybe "development-only-secret-set-JWT_SECRET-in-production" pack <$> lookupEnv "JWT_SECRET"
   -- HS256 signing needs a key of at least 256 bits
   when (length (encodeUtf8 jwtSecret) < 32) $ error "JWT_SECRET must be at least 32 bytes"
-  warp port App {pool, jwtSecret, channels}
+  cardsPath <- fromMaybe "frontend/public/data/cards.json" <$> lookupEnv "CARDS_JSON"
+  cardDb <- loadCardDb cardsPath >>= either (\err -> error $ "could not load " <> cardsPath <> ": " <> err) pure
+  manager <- newTlsManager
+  warp port App {pool, jwtSecret, channels, cardDb, manager}
