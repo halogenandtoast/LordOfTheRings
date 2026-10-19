@@ -13,6 +13,7 @@ build-type:     Simple
 library
   exposed-modules:
       LordOfTheRings.Ability
+      LordOfTheRings.ActiveCost
       LordOfTheRings.Ally
       LordOfTheRings.Ally.CardDefs
       LordOfTheRings.Ally.Cards.Beorn
@@ -82,6 +83,7 @@ library
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
       LordOfTheRings.GameT
+      LordOfTheRings.Helpers.Window
       LordOfTheRings.Hero
       LordOfTheRings.Hero.CardDefs
       LordOfTheRings.Hero.Cards.Aragorn
@@ -125,6 +127,8 @@ library
       LordOfTheRings.Objective.CardDefs
       LordOfTheRings.Phase
       LordOfTheRings.Placement
+      LordOfTheRings.Player.Runner
+      LordOfTheRings.Player.Types
       LordOfTheRings.Prelude
       LordOfTheRings.Quest
       LordOfTheRings.Quest.CardDefs

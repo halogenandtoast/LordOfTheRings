@@ -45,6 +45,7 @@ data Message
   | EndRound
   | WithTarget Target Message
   | PlayCard PlayerId CardId
+  | PayForCard PlayerId Card
   | PayCost CostId
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int

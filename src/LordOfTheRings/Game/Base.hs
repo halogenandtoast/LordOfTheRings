@@ -1,62 +1,64 @@
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE NoFieldSelectors #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
-import Control.Lens
-import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card
-import LordOfTheRings.Classes.Entity
+import LordOfTheRings.ActiveCost
 import LordOfTheRings.Entities
 import LordOfTheRings.Id
-import LordOfTheRings.Target
+import LordOfTheRings.Json
 import LordOfTheRings.Message
+import LordOfTheRings.Phase
+import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types
 
 data Game = Game
-  { players :: Map PlayerId Player
-  , activePlayer :: PlayerId
-  , firstPlayer :: PlayerId
-  , entities :: Entities
-  , scenario :: Scenario
-  , question :: Map PlayerId (Question Message)
-  , questionVersion :: Int
+  { gamePlayers :: Map PlayerId Player
+  , gamePlayerOrder :: [PlayerId]
+  , gameActivePlayer :: PlayerId
+  , gameFirstPlayer :: PlayerId
+  , gameEntities :: Entities
+  , gameScenario :: Scenario
+  , gamePhase :: Phase
+  , gameRound :: Int
+  , gameQuestion :: Map PlayerId (Question Message)
+  , gameQuestionVersion :: Int
+  , gameActiveCosts :: Map CostId ActiveCost
   }
   deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
 
-entitiesL :: Lens' Game Entities
-entitiesL = lens (.entities) (\g e -> g {entities = e})
+makeLensesWith suffixedFields ''Game
 
-data CostTarget = CostCardTarget Card
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
+instance ToJSON Game where
+  toJSON = genericToJSON (aesonOptions $ Just "game")
 
-data Cost = ResourceCost Sphere CardCost | Free
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
+instance HasField "players" Game (Map PlayerId Player) where
+  getField = gamePlayers
 
-data ActiveCost = ActiveCost
-  { id :: CostId
-  , cost :: Cost
-  , target :: CostTarget
-  , player :: PlayerId
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
+instance HasField "playerOrder" Game [PlayerId] where
+  getField = gamePlayerOrder
 
-data Player = Player
-  { id :: PlayerId
-  , hand :: [Card]
-  , deck :: [Card]
-  , threat :: Int
-  , cost :: Maybe ActiveCost
-  , name :: Text
-  }
-  deriving stock (Show, Generic)
-  deriving anyclass (ToJSON)
+instance HasField "activePlayer" Game PlayerId where
+  getField = gameActivePlayer
 
-instance Targetable Player where
-  toTarget p = PlayerTarget p.id
+instance HasField "firstPlayer" Game PlayerId where
+  getField = gameFirstPlayer
+
+instance HasField "entities" Game Entities where
+  getField = gameEntities
+
+instance HasField "scenario" Game Scenario where
+  getField = gameScenario
+
+instance HasField "phase" Game Phase where
+  getField = gamePhase
+
+instance HasField "round" Game Int where
+  getField = gameRound
+
+instance HasField "question" Game (Map PlayerId (Question Message)) where
+  getField = gameQuestion
+
+instance HasField "questionVersion" Game Int where
+  getField = gameQuestionVersion

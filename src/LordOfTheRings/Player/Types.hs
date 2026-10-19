@@ -1,0 +1,68 @@
+{-# LANGUAGE TemplateHaskell #-}
+
+module LordOfTheRings.Player.Types (module LordOfTheRings.Player.Types) where
+
+import LordOfTheRings.Card
+import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Id
+import LordOfTheRings.Json
+import LordOfTheRings.Prelude
+import LordOfTheRings.Source
+import LordOfTheRings.Target
+
+data Player = Player
+  { playerId :: PlayerId
+  , playerName :: Text
+  , playerHand :: [Card]
+  , playerDeck :: [Card]
+  , playerDiscard :: [Card]
+  , playerThreat :: Int
+  }
+  deriving stock (Show, Eq, Generic)
+
+makeLensesWith suffixedFields ''Player
+
+instance ToJSON Player where
+  toJSON = genericToJSON (aesonOptions $ Just "player")
+
+newPlayer :: PlayerId -> Text -> [Card] -> Player
+newPlayer pid name deck =
+  Player
+    { playerId = pid
+    , playerName = name
+    , playerHand = []
+    , playerDeck = deck
+    , playerDiscard = []
+    , playerThreat = 0
+    }
+
+instance Entity Player where
+  type EntityId Player = PlayerId
+  type EntityAttrs Player = Player
+  toId = playerId
+  toAttrs a = a
+  overAttrs f a = f a
+
+instance Targetable Player where
+  toTarget = PlayerTarget . playerId
+
+instance Sourceable Player where
+  toSource = PlayerSource . playerId
+
+instance HasField "id" Player PlayerId where
+  getField = playerId
+
+instance HasField "name" Player Text where
+  getField = playerName
+
+instance HasField "hand" Player [Card] where
+  getField = playerHand
+
+instance HasField "deck" Player [Card] where
+  getField = playerDeck
+
+instance HasField "discard" Player [Card] where
+  getField = playerDiscard
+
+instance HasField "threat" Player Int where
+  getField = playerThreat

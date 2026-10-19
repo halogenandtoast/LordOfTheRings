@@ -7,7 +7,6 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
-import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -31,7 +30,6 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioEncounterDeck :: [EncounterCard]
   , scenarioEncounterDiscard :: [EncounterCard]
   , scenarioQuestDeck :: [EncounterCard]
-  , scenarioPhase :: Phase
   }
   deriving stock (Show, Eq, Generic)
 
@@ -49,7 +47,6 @@ scenario f sid name =
       , scenarioEncounterDeck = []
       , scenarioEncounterDiscard = []
       , scenarioQuestDeck = []
-      , scenarioPhase = ResourcePhase
       }
 
 instance Entity ScenarioAttrs where
@@ -77,12 +74,6 @@ instance Targetable ScenarioAttrs where
 
 instance Sourceable ScenarioAttrs where
   toSource _ = ScenarioSource
-
-instance HasField "phase" ScenarioAttrs Phase where
-  getField = scenarioPhase
-
-instance HasField "phase" Scenario Phase where
-  getField = (.phase) . toAttrs
 
 instance HasField "encounterDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioEncounterDeck

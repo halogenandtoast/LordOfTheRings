@@ -59,7 +59,7 @@ putCardIntoHand :: PlayerId -> CardDef -> GameT Card
 putCardIntoHand pid def = do
   card <- PlayerCard <$> genPlayerCard def (Just pid)
   g <- getGame
-  putGame $ g {players = Map.adjust (\p -> p {hand = card : p.hand}) pid g.players}
+  putGame $ g & playersL . ix pid . handL %~ (card :)
   pure card
 
 getHeroWithCode :: (HasCallStack) => CardCode -> GameT Hero

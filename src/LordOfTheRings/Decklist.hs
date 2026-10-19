@@ -2,7 +2,7 @@ module LordOfTheRings.Decklist (module LordOfTheRings.Decklist) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
-import LordOfTheRings.Game.Base
+import LordOfTheRings.Player.Types
 import LordOfTheRings.Hero
 import LordOfTheRings.Prelude
 
@@ -62,13 +62,4 @@ loadPlayer dl = do
     heroes <- traverse (newHero pid <=< (`genPlayerCard` Just pid)) heroDefs
     deck <- traverse (fmap PlayerCard . (`genPlayerCard` Just pid)) cardDefs
     pure
-      ( Player
-          { id = pid
-          , deck
-          , hand = []
-          , threat = 0
-          , cost = Nothing
-          , name = "halogen64"
-          }
-      , heroes
-      )
+      (newPlayer pid "halogen64" deck, heroes)

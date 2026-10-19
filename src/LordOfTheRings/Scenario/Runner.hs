@@ -21,7 +21,6 @@ cardMatches = \case
 
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = case msg of
-    BeginPhase p -> pure $ attrs & phaseL .~ p
     ShuffleDeck EncounterDeck -> do
       encounterDeck <- shuffleM attrs.encounterDeck
       pure $ attrs & encounterDeckL .~ encounterDeck
