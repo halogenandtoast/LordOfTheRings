@@ -437,7 +437,10 @@ runGameMessage msg g = case msg of
     attachment <- newAttachment pid card
     hosts <- attachmentHosts (toAttrs attachment).attachTo
     send . Log . (<> " plays " <> display (cdName $ toCardDef card)) . (.name) =<< getPlayer pid
-    push $ chooseOrRunOne pid [targetLabel host [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]] | host <- hosts]
+    let attachTo host = targetLabel host [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
+    push $ case hosts of
+      [host] -> uiToRun (attachTo host)
+      _ -> questionLabelWith "Attach to" (Just $ toTarget attachment) hosts pid (map attachTo hosts)
     pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
