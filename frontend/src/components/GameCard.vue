@@ -26,6 +26,7 @@ const active = computed(() => choice.value !== null)
 const highlights = useHighlights()
 const isSource = computed(() => highlights.value.sourceId === card.id)
 const isTarget = computed(() => highlights.value.targetIds.includes(card.id))
+const isDrop = computed(() => highlights.value.dropIds.includes(card.id))
 const choiceFor = (attached: CardView) =>
   choices.find((option) => option.targetId === attached.id) ?? null
 
@@ -65,7 +66,7 @@ const toggleUnless = (attached: CardView) => {
     <div
       ref="cardRef"
       class="card"
-      :class="{ rotated, exhausted: card.exhausted, active, source: isSource, target: isTarget, committed: card.committed, flipping }"
+      :class="{ rotated, exhausted: card.exhausted, active, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, flipping }"
       :style="{ viewTransitionName: `card-${card.id}` }"
       :title="card.name"
       :data-card-id="card.id"
@@ -120,15 +121,16 @@ const toggleUnless = (attached: CardView) => {
   width: calc(var(--card-width) / var(--card-aspect));
   aspect-ratio: calc(1 / 0.715);
 }
-.card img { width: 100%; border-radius: 5px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); }
+.card img { width: 100%; border-radius: 7px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); }
 .card.exhausted { transform: rotate(90deg) scale(0.88); }
 .card.committed img { box-shadow: 0 0 0 2px var(--accent); }
 .card.active { cursor: pointer; }
 /* The visual language: magenta can be interacted with, cyan is the source of the
    decision, amber is its target. */
-.card.active img { border: 2px solid var(--interactive); box-shadow: 0 0 10px var(--interactive-glow); }
-.card.source img { outline: 3px solid var(--source); outline-offset: 2px; box-shadow: 0 0 12px var(--source-glow); }
-.card.target img { outline: 3px solid var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
+.card.active img { border: 1px solid var(--interactive); box-shadow: 0 0 10px var(--interactive-glow); }
+.card.source img { outline: 2px solid var(--source); outline-offset: 2px; box-shadow: 0 0 12px var(--source-glow); }
+.card.target img { outline: 2px solid var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
+.card.drop img { outline: 2px dashed var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
 .card.flipping { animation: flip 0.32s ease-in-out; }
 .card.flipping.exhausted { animation: flip-exhausted 0.32s ease-in-out; }
 

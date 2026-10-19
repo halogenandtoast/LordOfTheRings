@@ -17,5 +17,12 @@ instance (HasGame m) => HasGame (QueueT msg m) where
 getsGame :: (HasGame m) => (Game -> a) -> m a
 getsGame f = f <$> getGame
 
+-- | Read a game without running it, for values derived from a stored game.
+newtype ReadGame a = ReadGame {runReadGame :: Game -> a}
+  deriving newtype (Functor, Applicative, Monad)
+
+instance HasGame ReadGame where
+  getGame = ReadGame id
+
 instance (Monoid w, HasGame m) => HasGame (WriterT w m) where
   getGame = lift getGame

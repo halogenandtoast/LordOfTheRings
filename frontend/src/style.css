@@ -101,6 +101,11 @@ html, body, #app { height: 100%; }
   font-family: "Vafthrudnir";
   src: url('/fonts/vafthrudnir.woff2') format('woff2');
   font-display: swap;
+  /* All capitals, but its metrics leave room for descenders it lacks, so text sat low.
+     These centre the 724-unit capitals in the line box. */
+  ascent-override: 90%;
+  descent-override: 17.6%;
+  line-gap-override: 0%;
 }
 
 /* The card title face, from KevBelisle/lotr-lcg-assets. */

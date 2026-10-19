@@ -9,6 +9,7 @@ import GameBar from '../components/GameBar.vue'
 import PlayerArea from '../components/PlayerArea.vue'
 import PhaseTracker from '../components/PhaseTracker.vue'
 import Prompt from '../components/Prompt.vue'
+import QuestTally from '../components/QuestTally.vue'
 import Scenario from '../components/Scenario.vue'
 import ThreatDial from '../components/ThreatDial.vue'
 import { exportGame } from '../api'
@@ -23,7 +24,7 @@ const {
 const showSidebar = ref(true)
 
 const choices = computed(() => question.value?.choices ?? [])
-provideHighlights(() => question.value)
+provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
 const you = computed(() => players.value[0] ?? null)
 const engaged = computed(() => players.value.flatMap((player) => player.engaged))
 const cardsInPlay = computed(() => players.value.flatMap((player) => player.inPlay))
@@ -62,28 +63,46 @@ const choose = (index: number) => {
   }
 }
 
-// Dragging a playable hand card onto the play area plays it; dropping an attachment on a
-// card also picks that card as its host once the engine asks, after any payment.
+// Dragging a playable hand card plays it: an attachment onto one of the cards it can go
+// on, which is then picked as its host once the engine asks (after any payment), anything
+// else onto the play area.
 const presetHost = ref<{ cardId: string; hostId: string } | null>(null)
-const dropping = ref(false)
+const dragging = ref<{ cardId: string; hosts: readonly string[] | null } | null>(null)
 
-const isCardDrag = (event: DragEvent) => event.dataTransfer?.types.includes(cardDrag) ?? false
+const cardIdAt = (event: Event) =>
+  (event.target as Element).closest<HTMLElement>('[data-card-id]')?.dataset.cardId
+
+const onDragStart = (event: DragEvent) => {
+  const cardId = cardIdAt(event)
+  const card = you.value?.hand.find((c) => c.id === cardId)
+  if (!card || !event.dataTransfer?.types.includes(cardDrag)) return
+  dragging.value = {
+    cardId: card.id,
+    hosts: card.type === 'Attachment' ? game.value?.attachmentHosts[card.id] ?? [] : null,
+  }
+}
+
+// The host it would attach to, or the play area, when the drag is over a valid spot.
+const dropSpot = (event: DragEvent) => {
+  const drag = dragging.value
+  if (!drag) return null
+  if (drag.hosts === null) return (event.target as Element).closest('.play-area') ? { hostId: null } : null
+  const hostId = cardIdAt(event)
+  return hostId && drag.hosts.includes(hostId) ? { hostId } : null
+}
 
 const onDragOver = (event: DragEvent) => {
-  if (!isCardDrag(event)) return
-  event.preventDefault()
-  dropping.value = true
+  if (dropSpot(event)) event.preventDefault()
 }
 
 const onDrop = (event: DragEvent) => {
-  dropping.value = false
-  const cardId = event.dataTransfer?.getData(cardDrag)
-  const play = choices.value.find((option) => option.targetId === cardId)
-  if (!cardId || !play) return
+  const drag = dragging.value
+  const spot = dropSpot(event)
+  dragging.value = null
+  const play = choices.value.find((option) => option.targetId === drag?.cardId)
+  if (!drag || !spot || !play) return
   event.preventDefault()
-  const card = you.value?.hand.find((c) => c.id === cardId)
-  const hostId = (event.target as Element).closest<HTMLElement>('[data-card-id]')?.dataset.cardId
-  presetHost.value = card?.type === 'Attachment' && hostId ? { cardId, hostId } : null
+  presetHost.value = spot.hostId ? { cardId: drag.cardId, hostId: spot.hostId } : null
   choose(play.index)
 }
 
@@ -113,10 +132,17 @@ watch(question, (asked) => {
   />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
-    <div class="game" @dragend="dropping = false">
+    <div
+      class="game"
+      @dragstart="onDragStart"
+      @dragover="onDragOver"
+      @drop="onDrop"
+      @dragend="dragging = null"
+    >
 
 
       <template v-if="started">
+        <QuestTally v-if="game?.tally" :tally="game.tally" />
         <Scenario v-if="scenario" :scenario="scenario" :choices="choices" :flipping="flipping" @choose="choose" />
 
         <CardBand
@@ -137,13 +163,7 @@ watch(question, (asked) => {
           @choose="choose"
         />
 
-        <section
-          class="band play"
-          :class="{ dropping }"
-          @dragover="onDragOver"
-          @dragleave.self="dropping = false"
-          @drop="onDrop"
-        >
+        <section class="band play">
           <div class="hero-column">
             <ThreatDial v-if="you" :threat="you.threat" />
             <CardBand
@@ -156,6 +176,8 @@ watch(question, (asked) => {
             />
           </div>
           <CardBand
+            class="play-area"
+            :class="{ 'drop-zone': dragging && dragging.hosts === null }"
             label="play area"
             :cards="inPlay"
             :choices="choices"
@@ -217,7 +239,12 @@ watch(question, (asked) => {
   border-right: 1px solid var(--line);
   padding-right: calc(var(--gap) * 1.5);
 }
-.band.play.dropping { outline: 2px dashed var(--interactive); outline-offset: -2px; }
+.band.play .play-area.drop-zone {
+  flex: 1 1 auto;
+  min-height: calc(var(--card-width) / var(--card-aspect));
+  outline: 2px dashed var(--target);
+  outline-offset: -2px;
+}
 .band.play .heroes { flex: 0 0 auto; padding: 0; }
 
 .game {

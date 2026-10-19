@@ -37,7 +37,7 @@ const targetKinds: Record<string, keyof ServerGame['entities']> = {
 
 export const toView = (data: GameData, defs: Record<string, CardDef>): GameView => {
   const game = data.game
-  if (!data.started || !game) return { started: false, round: 0, phase: null, outcome: null, over: false, question: null, scenario: null, players: [] }
+  if (!data.started || !game) return { started: false, round: 0, phase: null, outcome: null, over: false, question: null, attachmentHosts: {}, scenario: null, players: [], tally: null }
 
   const def = (code: string): Partial<CardDef> => defs[code] ?? {}
   const entities = game.entities
@@ -166,6 +166,12 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
     outcome: game.outcome === 'Won' ? 'WON' : game.outcome === 'Lost' ? 'LOST' : null,
     over: game.outcome !== null,
     question: asked ? toQuestion(asked[0], asked[1]) : null,
+    attachmentHosts: Object.fromEntries(
+      Object.entries(game.attachmentHosts ?? {}).map(([cardId, hosts]) => [
+        cardId,
+        hosts.map(targetCardId).filter((id): id is string => id !== null),
+      ]),
+    ),
     scenario: {
       name: game.scenario.name,
       quest: placed('quests', () => true)[0] ?? null,
@@ -176,5 +182,6 @@ export const toView = (data: GameData, defs: Record<string, CardDef>): GameView 
       discard: game.scenario.encounterDiscard.map((c) => card(c.cardCode, c.id)),
     },
     players,
+    tally: { willpower: game.committedWillpower, threat: game.stagingThreat, lastWillpower: game.lastCommittedWillpower },
   }
 }

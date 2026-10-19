@@ -25,3 +25,7 @@ getWillpower = characterStat cdWillpower willpowerOf
 getAttack = characterStat cdAttack attackOf
 getDefense = characterStat cdDefense defenseOf
 getHitPoints = characterStat cdHitPoints hitPointsOf
+
+-- | The total willpower of every character committed to the quest.
+getCommittedWillpower :: (HasGame m) => m Int
+getCommittedWillpower = sum <$> (traverse getWillpower =<< selectCharacters CommittedHero CommittedAlly)

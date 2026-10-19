@@ -153,5 +153,4 @@ const emit = defineEmits<{ reset: []; undo: [to?: 'phase' | 'round']; export: []
 }
 .right .drawer-toggle svg { width: 20px; height: 20px; }
 .right .drawer-toggle:hover { background: var(--hover-tint); }
-.right .drawer-toggle[aria-expanded='true'] { background: var(--active-tint); }
 </style>

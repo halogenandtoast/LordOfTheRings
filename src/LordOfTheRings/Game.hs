@@ -61,6 +61,7 @@ newGame player heroes =
     , gameModifiers = mempty
     , gameEffects = []
     , gameOutcome = Nothing
+    , gameLastCommittedWillpower = Nothing
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -358,16 +359,14 @@ runGameMessage msg g = case msg of
     pushAll [RevealEncounterCard | player <- toList g.players, not player.eliminated]
     pure g
   QuestResolution -> do
-    heroes <- select CommittedHero
-    allies <- select CommittedAlly
-    willpower <- sum <$> traverse getWillpower (map toTarget heroes <> map toTarget allies)
+    willpower <- getCommittedWillpower
     threat <- getStagingThreat
     players <- getPlayerOrder
     if
       | willpower > threat -> push $ PlaceProgressOnQuest (willpower - threat)
       | threat > willpower -> pushAll [RaiseThreat pid (threat - willpower) | pid <- players]
       | otherwise -> pure ()
-    pure g
+    pure $ g & lastCommittedWillpowerL ?~ willpower
   PlaceProgressOnQuest n -> do
     active <- traverse getLocation =<< selectOne IsActiveLocation
     let onLocation = maybe 0 (\l -> min n (l.questPoints - l.progress)) active

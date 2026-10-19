@@ -32,6 +32,8 @@ data Game = Game
   , gameModifiers :: Map Target [Modifier]
   , gameEffects :: [Effect]
   , gameOutcome :: Maybe Outcome
+  , gameLastCommittedWillpower :: Maybe Int
+  -- ^ What was committed at the last quest resolution, for the board's tally
   }
   deriving stock (Show, Generic)
 

@@ -15,7 +15,7 @@ const leave = async () => {
   <header id="nav">
     <nav class="main-links">
       <RouterLink to="/" class="home-link">The Lord of the Rings</RouterLink>
-      <RouterLink v-if="currentUser" to="/new-game" class="nav-link">New Game</RouterLink>
+      <RouterLink v-if="currentUser" to="/" class="nav-link">Home</RouterLink>
     </nav>
     <div class="user-links">
       <GameMenu v-if="currentUser" class="user-menu" align="right">
@@ -35,7 +35,7 @@ const leave = async () => {
 <style scoped>
 #nav {
   background: var(--nav-background);
-  border-bottom: 1px solid var(--line-strong);
+  border-bottom: 1px solid rgb(0 0 0 / 0.85);
   box-shadow: 0 1px 12px var(--shadow);
   display: flex;
   align-items: stretch;

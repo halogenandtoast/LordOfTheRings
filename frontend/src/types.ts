@@ -67,8 +67,17 @@ export interface GameView {
   outcome: 'WON' | 'LOST' | null
   over: boolean
   question: QuestionView | null
+  /** The cards each attachment in hand could be attached to. */
+  attachmentHosts: Record<string, string[]>
   scenario: ScenarioView | null
   players: PlayerView[]
+  tally: TallyView | null
+}
+
+export interface TallyView {
+  willpower: number
+  threat: number
+  lastWillpower: number | null
 }
 
 export const cardImage = (card: Pick<CardView, 'code' | 'flipped'>) =>
