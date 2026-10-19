@@ -4,7 +4,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype AnduinPassage = AnduinPassage QuestAttrs
-  deriving anyclass (IsQuest, HasAbilities, RunMessage)
+  deriving anyclass (IsQuest, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 anduinPassage :: QuestCard AnduinPassage

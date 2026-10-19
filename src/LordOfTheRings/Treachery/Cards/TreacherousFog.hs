@@ -4,7 +4,7 @@ import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
 newtype TreacherousFog = TreacherousFog TreacheryAttrs
-  deriving anyclass (IsTreachery, HasAbilities, RunMessage)
+  deriving anyclass (IsTreachery, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 treacherousFog :: TreacheryCard TreacherousFog

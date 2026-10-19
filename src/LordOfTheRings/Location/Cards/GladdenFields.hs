@@ -4,7 +4,7 @@ import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 
 newtype GladdenFields = GladdenFields LocationAttrs
-  deriving anyclass (IsLocation, HasAbilities, RunMessage)
+  deriving anyclass (IsLocation, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 gladdenFields :: LocationCard GladdenFields

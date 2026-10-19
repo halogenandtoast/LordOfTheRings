@@ -2,6 +2,7 @@ module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Card
+import LordOfTheRings.Effect
 import LordOfTheRings.Id
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -61,6 +62,7 @@ data Message
   | ResponseWindow [Window] [PlayerId] [(Source, Int)] Int
   | UseAbility PlayerId Ability [Window]
   | UseCardAbility PlayerId Source Int [Window]
+  | CreateEffect Effect
   | Exhaust Target
   | Ready Target
   | PlaceTokens Source Target Token Int

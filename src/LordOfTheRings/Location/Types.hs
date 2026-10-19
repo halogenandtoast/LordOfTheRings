@@ -5,6 +5,7 @@ module LordOfTheRings.Location.Types (module LordOfTheRings.Location.Types) wher
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
+import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
@@ -20,6 +21,7 @@ class
   , Show a
   , ToJSON a
   , HasAbilities a
+  , HasModifiersFor a
   , RunMessage a
   , Entity a
   , EntityId a ~ LocationId
@@ -75,6 +77,9 @@ instance Entity Location where
   toId = toId . toAttrs
   toAttrs (Location a) = toAttrs a
   overAttrs f (Location a) = Location $ overAttrs f a
+
+instance HasModifiersFor Location where
+  getModifiersFor (Location a) = getModifiersFor a
 
 instance HasAbilities Location where
   getAbilities (Location a) = getAbilities a

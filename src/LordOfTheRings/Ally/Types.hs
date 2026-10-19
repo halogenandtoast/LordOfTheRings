@@ -5,6 +5,7 @@ module LordOfTheRings.Ally.Types (module LordOfTheRings.Ally.Types) where
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
+import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
@@ -20,6 +21,7 @@ class
   , Show a
   , ToJSON a
   , HasAbilities a
+  , HasModifiersFor a
   , RunMessage a
   , Entity a
   , EntityId a ~ AllyId
@@ -124,6 +126,9 @@ instance HasField "name" AllyAttrs Name where
 
 instance HasField "sphere" AllyAttrs Sphere where
   getField = fromMaybe Neutral . cdSphere . toCardDef
+
+instance HasModifiersFor Ally where
+  getModifiersFor (Ally a) = getModifiersFor a
 
 instance HasAbilities Ally where
   getAbilities (Ally a) = getAbilities a

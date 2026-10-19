@@ -4,7 +4,7 @@ import LordOfTheRings.Ally.CardDefs qualified as Cards
 import LordOfTheRings.Ally.Import.Lifted
 
 newtype Beorn = Beorn AllyAttrs
-  deriving anyclass (IsAlly, HasAbilities, RunMessage)
+  deriving anyclass (IsAlly, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 beorn :: AllyCard Beorn

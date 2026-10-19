@@ -4,7 +4,7 @@ import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
 
 newtype Thalin = Thalin HeroAttrs
-  deriving anyclass (IsHero, HasAbilities, RunMessage)
+  deriving anyclass (IsHero, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 thalin :: HeroCard Thalin

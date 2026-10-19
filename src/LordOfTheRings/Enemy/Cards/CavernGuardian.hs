@@ -4,7 +4,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 
 newtype CavernGuardian = CavernGuardian EnemyAttrs
-  deriving anyclass (IsEnemy, HasAbilities, RunMessage)
+  deriving anyclass (IsEnemy, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 cavernGuardian :: EnemyCard CavernGuardian

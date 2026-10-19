@@ -6,7 +6,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Token
 
 newtype SnowbournScout = SnowbournScout AllyAttrs
-  deriving anyclass (IsAlly)
+  deriving anyclass (IsAlly, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 snowbournScout :: AllyCard SnowbournScout

@@ -15,7 +15,7 @@ data Target
   | ScenarioTarget
   | GameTarget
   deriving stock (Show, Eq, Ord, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+  deriving anyclass (ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 
 class Targetable a where
   toTarget :: a -> Target

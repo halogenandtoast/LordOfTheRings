@@ -12,3 +12,5 @@ import LordOfTheRings.Target as X
 import LordOfTheRings.Question as X
 import LordOfTheRings.Ability as X
 import LordOfTheRings.Timing as X
+import LordOfTheRings.Classes.HasModifiersFor as X
+import LordOfTheRings.Modifier as X

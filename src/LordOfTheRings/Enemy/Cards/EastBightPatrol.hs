@@ -4,7 +4,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 
 newtype EastBightPatrol = EastBightPatrol EnemyAttrs
-  deriving anyclass (IsEnemy, HasAbilities, RunMessage)
+  deriving anyclass (IsEnemy, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 eastBightPatrol :: EnemyCard EastBightPatrol

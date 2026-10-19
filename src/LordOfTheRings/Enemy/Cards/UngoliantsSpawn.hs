@@ -4,7 +4,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 
 newtype UngoliantsSpawn = UngoliantsSpawn EnemyAttrs
-  deriving anyclass (IsEnemy, HasAbilities, RunMessage)
+  deriving anyclass (IsEnemy, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 ungoliantsSpawn :: EnemyCard UngoliantsSpawn

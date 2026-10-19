@@ -4,7 +4,7 @@ import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 
 newtype TheEastBight = TheEastBight LocationAttrs
-  deriving anyclass (IsLocation, HasAbilities, RunMessage)
+  deriving anyclass (IsLocation, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theEastBight :: LocationCard TheEastBight

@@ -50,11 +50,13 @@ library
       LordOfTheRings.Classes.Entity
       LordOfTheRings.Classes.HasAbilities
       LordOfTheRings.Classes.HasGame
+      LordOfTheRings.Classes.HasModifiersFor
       LordOfTheRings.Classes.HasQueue
       LordOfTheRings.Classes.Query
       LordOfTheRings.Classes.RunMessage
       LordOfTheRings.Criteria
       LordOfTheRings.Decklist
+      LordOfTheRings.Effect
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.CardDefs
@@ -87,6 +89,8 @@ library
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
       LordOfTheRings.GameT
+      LordOfTheRings.Helpers.Character
+      LordOfTheRings.Helpers.Modifiers
       LordOfTheRings.Helpers.Window
       LordOfTheRings.Hero
       LordOfTheRings.Hero.CardDefs
@@ -129,6 +133,7 @@ library
       LordOfTheRings.Matcher.Types
       LordOfTheRings.Matcher.Window
       LordOfTheRings.Message
+      LordOfTheRings.Modifier
       LordOfTheRings.Name
       LordOfTheRings.Objective.CardDefs
       LordOfTheRings.Phase
@@ -224,6 +229,7 @@ library
     , extra
     , http-types
     , lens
+    , monoidal-containers
     , mtl
     , random
     , random-shuffle
@@ -282,6 +288,7 @@ executable LordOfTheRings-exe
     , extra
     , http-types
     , lens
+    , monoidal-containers
     , mtl
     , random
     , random-shuffle
@@ -300,6 +307,7 @@ test-suite LordOfTheRings-test
   main-is: Spec.hs
   other-modules:
       LordOfTheRings.Ally.SnowbournScoutSpec
+      LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.SetupSpec
@@ -350,6 +358,7 @@ test-suite LordOfTheRings-test
     , hspec-expectations-lifted
     , http-types
     , lens
+    , monoidal-containers
     , mtl
     , random
     , random-shuffle

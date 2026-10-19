@@ -13,6 +13,8 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy
 import LordOfTheRings.Entities
 import LordOfTheRings.Frontend
+import LordOfTheRings.Effect
+import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Helpers.Window
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Source
@@ -48,6 +50,8 @@ newGame player heroes =
     , gameQuestion = mempty
     , gameQuestionVersion = 0
     , gameActiveCosts = mempty
+    , gameModifiers = mempty
+    , gameEffects = []
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -75,7 +79,7 @@ mainLoop = do
       pure g'
     Just msg -> do
       debug 1 $ print msg
-      g' <- runMessage msg g
+      g' <- preloadModifiers =<< runMessage msg g
       putGame g'
       if notNull g'.question then pure g' else mainLoop
 
@@ -131,6 +135,9 @@ runGameMessage msg g = case msg of
             }
     pure $ g & activeCostsL %~ insertEntity activeCost
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
+  CreateEffect effect -> pure $ g & effectsL %~ (effect :)
+  EndPhase _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
+  EndRound -> pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
   PlayAlly pid card -> do
     player <- getPlayer pid
     thisAlly <- newAlly pid card

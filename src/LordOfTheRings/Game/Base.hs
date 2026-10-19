@@ -3,15 +3,18 @@
 module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
 import LordOfTheRings.ActiveCost
+import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
+import LordOfTheRings.Modifier
 import LordOfTheRings.Phase
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types
+import LordOfTheRings.Target
 
 data Game = Game
   { gamePlayers :: Map PlayerId Player
@@ -25,6 +28,8 @@ data Game = Game
   , gameQuestion :: Map PlayerId (Question Message)
   , gameQuestionVersion :: Int
   , gameActiveCosts :: Map CostId ActiveCost
+  , gameModifiers :: Map Target [Modifier]
+  , gameEffects :: [Effect]
   }
   deriving stock (Show, Generic)
 

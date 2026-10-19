@@ -4,7 +4,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype OutOfTheDungeons = OutOfTheDungeons QuestAttrs
-  deriving anyclass (IsQuest, HasAbilities, RunMessage)
+  deriving anyclass (IsQuest, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 outOfTheDungeons :: QuestCard OutOfTheDungeons
