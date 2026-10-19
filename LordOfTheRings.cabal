@@ -309,6 +309,7 @@ test-suite LordOfTheRings-test
   main-is: Spec.hs
   other-modules:
       LordOfTheRings.Ally.SnowbournScoutSpec
+      LordOfTheRings.CombatPhaseSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec

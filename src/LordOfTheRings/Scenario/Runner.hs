@@ -51,6 +51,12 @@ instance RunMessage ScenarioAttrs where
             deck <- shuffleM attrs.encounterDiscard
             push RevealEncounterCard
             pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+    DealShadowCard eid -> case attrs.encounterDeck of
+      (card : rest) -> do
+        push $ AttachShadowCard eid card
+        pure $ attrs & encounterDeckL .~ rest
+      [] -> pure attrs
+    AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     AdvanceQuest -> case attrs.questDeck of
       [] -> do

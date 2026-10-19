@@ -94,6 +94,18 @@ data Message
   | OptionalEngagement PlayerId
   | EngagementCheck PlayerId Int
   | EngageEnemy PlayerId EnemyId
+  | DealShadowCards
+  | DealShadowCard EnemyId
+  | AttachShadowCard EnemyId EncounterCard
+  | EnemyAttacks PlayerId
+  | EnemyAttack PlayerId EnemyId
+  | DefendWith PlayerId EnemyId Target
+  | UndefendedAttack PlayerId EnemyId
+  | UndefendedDamage PlayerId EnemyId
+  | ResolveShadow EnemyId PlayerId (Maybe Target)
+  | ResolveShadowEffect CardId EnemyId PlayerId (Maybe Target)
+  | AttackDamage EnemyId Target
+  | AddToEncounterDiscard [EncounterCard]
   | Ready Target
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int

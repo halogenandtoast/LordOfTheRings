@@ -41,6 +41,7 @@ data EnemyAttrs = EnemyAttrs
   , enemyCardCode :: CardCode
   , enemyPlacement :: Placement
   , enemyTokens :: Tokens
+  , enemyShadowCards :: [EncounterCard]
   }
   deriving stock (Show, Eq, Generic)
 
@@ -61,6 +62,7 @@ enemy f cardDef =
             , enemyCardCode = cdCardCode cardDef
             , enemyPlacement = Unplaced
             , enemyTokens = mempty
+            , enemyShadowCards = []
             }
     }
 
@@ -176,3 +178,12 @@ instance HasField "damage" EnemyAttrs Int where
 
 instance HasField "damage" Enemy Int where
   getField = (.damage) . toAttrs
+
+instance HasField "shadowCards" EnemyAttrs [EncounterCard] where
+  getField = enemyShadowCards
+
+instance HasField "shadowCards" Enemy [EncounterCard] where
+  getField = (.shadowCards) . toAttrs
+
+instance HasField "cardId" EnemyAttrs CardId where
+  getField = enemyCardId

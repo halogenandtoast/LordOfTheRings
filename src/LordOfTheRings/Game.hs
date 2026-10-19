@@ -133,7 +133,7 @@ runGameMessage msg g = case msg of
     pushAll [BeginPhase minBound, EndPhase minBound]
     pure $ g & roundL +~ 1
   EndRound -> do
-    unless (isJust g.outcome) $ push BeginRound
+    unless (isJust g.outcome) $ pushEnd BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
   BeginPhase RefreshPhase -> do
     heroes <- select ExhaustedHero
@@ -244,6 +244,48 @@ runGameMessage msg g = case msg of
   EngageEnemy pid eid -> do
     pushAll [PlaceEnemy eid (EngagedWith pid), CheckWindows [mkAfter $ EnemyEngaged eid pid]]
     pure g
+  BeginPhase CombatPhase -> do
+    order <- getPlayerOrder
+    pushAll $ DealShadowCards : map EnemyAttacks order
+    pure $ g & phaseL .~ CombatPhase
+  DealShadowCards -> do
+    order <- getPlayerOrder
+    enemies <- concatMapM engagedByCost order
+    pushAll $ map DealShadowCard enemies
+    pure g
+  EnemyAttacks pid -> do
+    enemies <- engagedByCost pid
+    pushAll $ map (EnemyAttack pid) enemies
+    pure g
+  EnemyAttack pid eid -> do
+    defenders <- readyCharacters pid
+    push
+      $ chooseOne pid
+      $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
+      <> [Label "Take the attack undefended" [UndefendedAttack pid eid]]
+    pure g
+  DefendWith pid eid defender -> do
+    pushAll [ResolveShadow eid pid (Just defender), AttackDamage eid defender]
+    pure g
+  UndefendedAttack pid eid -> do
+    pushAll [ResolveShadow eid pid Nothing, UndefendedDamage pid eid]
+    pure g
+  UndefendedDamage pid eid -> do
+    attack <- getEnemyAttack eid
+    heroes <- select (HeroControlledBy $ PlayerWithId pid)
+    unless (null heroes)
+      $ push
+      $ chooseOne pid [targetLabel h [DealDamage (EnemySource eid) (toTarget h) attack] | h <- heroes]
+    pure g
+  AttackDamage eid defender -> do
+    attack <- getEnemyAttack eid
+    defense <- getDefense defender
+    push $ DealDamage (EnemySource eid) defender (attack - defense)
+    pure g
+  ResolveShadow eid pid mDefender -> do
+    for_ (Map.lookup eid g.entities.enemies) \enemy ->
+      for_ enemy.shadowCards \card -> resolveShadowEffect card (ResolveShadowEffect (ecId card) eid pid mDefender)
+    pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
@@ -294,7 +336,7 @@ runGameMessage msg g = case msg of
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
-    push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
+    pushEnd $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
     pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
   PlayAlly pid card -> do
     player <- getPlayer pid
@@ -399,3 +441,25 @@ seatAfter :: [PlayerId] -> PlayerId -> PlayerId
 seatAfter order pid = case dropWhile (/= pid) order of
   (_ : next : _) -> next
   _ -> fromMaybe pid (headMay order)
+
+-- | Enemies engaged with a player, highest engagement cost first.
+engagedByCost :: PlayerId -> GameT [EnemyId]
+engagedByCost pid = do
+  enemies <- select (EnemyEngagedWith $ PlayerWithId pid)
+  costs <- traverse getEngagementCost enemies
+  pure $ map fst $ sortOn (Down . snd) $ zip enemies costs
+
+readyCharacters :: PlayerId -> GameT [Target]
+readyCharacters pid = do
+  heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
+  allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
+  pure $ map toTarget heroes <> map toTarget allies
+
+-- | Shadow cards are not in play, so the card's own module resolves the effect
+-- through a temporary instance of it.
+resolveShadowEffect :: EncounterCard -> Message -> GameT ()
+resolveShadowEffect card msg = case cdCardType (toCardDef card) of
+  EnemyType -> void . runMessage msg . createEnemy card =<< getRandom
+  LocationType -> void . runMessage msg . createLocation card =<< getRandom
+  TreacheryType -> void . runMessage msg . createTreachery card =<< getRandom
+  _ -> pure ()
