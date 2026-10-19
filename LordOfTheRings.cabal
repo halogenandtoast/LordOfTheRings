@@ -27,6 +27,7 @@ library
       LordOfTheRings.Classes.HasGame
       LordOfTheRings.Classes.HasQueue
       LordOfTheRings.Classes.RunMessage
+      LordOfTheRings.Decklist
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.CardDefs

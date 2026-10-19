@@ -16,7 +16,7 @@ import LordOfTheRings.GameT
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.Base as Cost (ActiveCost (..))
 import LordOfTheRings.Game.Base as Player (Player (..))
-import LordOfTheRings.Hero ()
+import LordOfTheRings.Hero
 import LordOfTheRings.Id
 import LordOfTheRings.Target
 import LordOfTheRings.Location
@@ -29,8 +29,18 @@ import LordOfTheRings.Question
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Queue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Scenario ()
+import LordOfTheRings.Scenario
 import LordOfTheRings.Window
+
+newGame :: Player -> [Hero] -> Game
+newGame player heroes =
+  Game
+    { players = Map.singleton player.id player
+    , activePlayer = player.id
+    , firstPlayer = player.id
+    , entities = mempty {heroes = Map.fromList [(h.id, h) | h <- heroes]}
+    , scenario = newScenario PassageThroughMirkwood
+    }
 
 getHasQuestion :: GameT Bool
 getHasQuestion = any (isJust . (.question)) <$> getPlayers
