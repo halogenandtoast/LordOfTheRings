@@ -7,6 +7,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -36,8 +37,16 @@ data ScenarioAttrs = ScenarioAttrs
 
 makeLensesWith suffixedFields ''ScenarioAttrs
 
+-- | The encounter and quest decks are hidden information, so only their sizes are sent.
 instance ToJSON ScenarioAttrs where
-  toJSON = genericToJSON (aesonOptions $ Just "scenario")
+  toJSON a = case genericToJSON (aesonOptions $ Just "scenario") a of
+    Object o ->
+      Object
+        $ KeyMap.insert "encounterDeckSize" (toJSON $ length a.scenarioEncounterDeck)
+        $ KeyMap.insert "questDeckSize" (toJSON $ length a.scenarioQuestDeck)
+        $ KeyMap.delete "encounterDeck"
+        $ KeyMap.delete "questDeck" o
+    v -> v
 
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =

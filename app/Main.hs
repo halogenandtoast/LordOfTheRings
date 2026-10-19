@@ -1,95 +1,124 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE NoFieldSelectors #-}
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
 
 module Main (main) where
 
-import Conduit
-import Control.Monad.Random (
-  MonadRandom (..),
-  getRandom,
-  newStdGen,
-  mkStdGen,
-  randomIO,
-  randomRIO,
-  randomRs,
-  randoms,
- )
-import Data.Map.Strict qualified as Map
-import LordOfTheRings.Ally
-import LordOfTheRings.Card
-import LordOfTheRings.Game
+import Control.Monad.Random (StdGen, evalRand, mkStdGen, randomIO)
 import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Decklist
+import LordOfTheRings.Game
 import LordOfTheRings.GameT
-import LordOfTheRings.Game qualified as E
-import LordOfTheRings.Hero
 import LordOfTheRings.Id
 import LordOfTheRings.Message
-import LordOfTheRings.Name
 import LordOfTheRings.Prelude hiding (Handler)
-import LordOfTheRings.Question
-import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Scenario
+import Network.HTTP.Types.Status (status400, status409)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import UnliftIO.STM
-import Network.HTTP.Types.Status (status409)
 import Yesod.Core
 import Yesod.WebSockets
 
-data GameData = GameData
-  { game :: Game
-  , playerId :: PlayerId
-  }
-  deriving stock (Generic)
-  deriving anyclass (ToJSON)
+-- | What undo restores: the game, the messages still queued and the random generator.
+data Snapshot = Snapshot Game [Message] StdGen
 
-data Room = Room
+data Session = Session
   { env :: GameEnv
+  , name :: Text
+  , history :: [Snapshot]
+  }
+
+data App = App
+  { session :: MVar (Maybe Session)
   , chan :: TChan LByteString
   }
-
-data App = App {room :: Room}
 
 mkYesod
   "App"
   [parseRoutes|
 /api ApiP:
   /data GameR GET POST
+  /start StartR POST
+  /undo UndoR POST
   /reset ResetR POST
 |]
 
 instance Yesod App
 
-instance ToTypedContent GameData where
-  toTypedContent = toTypedContent . toJSON
+data GameData = GameData
+  { started :: Bool
+  , game :: Maybe Game
+  , playerId :: Maybe PlayerId
+  , canUndo :: Bool
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
 
 instance ToContent GameData where
   toContent = toContent . toJSON
 
-instance MonadRandom (HandlerFor App) where
-  getRandom = liftIO randomIO
-  getRandomR = liftIO . randomRIO
-  getRandomRs lohi = fmap (randomRs lohi) newStdGen
-  getRandoms = fmap randoms newStdGen
+instance ToTypedContent GameData where
+  toTypedContent = toTypedContent . toJSON
 
-handleSocket :: Room -> WebSocketsT Handler ()
-handleSocket room = do
-  readChannel <- atomically $ dupTChan room.chan
-  race_
-    (forever $ atomically (readTChan readChannel) >>= sendTextData)
-    (runConduit $ sourceWS .| mapM_C (atomically . writeTChan room.chan))
+gameData :: Maybe Session -> IO GameData
+gameData = \case
+  Nothing -> pure $ GameData False Nothing Nothing False
+  Just s -> do
+    g <- runGameT s.env getGame
+    pure $ GameData True (Just g) (Just g.activePlayer) (notNull s.history)
+
+broadcast :: App -> Maybe Session -> IO ()
+broadcast app s = do
+  current <- gameData s
+  atomically $ writeTChan app.chan $ encode $ object ["tag" .= String "Update", "contents" .= current]
+
+handleSocket :: App -> WebSocketsT Handler ()
+handleSocket app = do
+  readChannel <- atomically $ dupTChan app.chan
+  forever $ atomically (readTChan readChannel) >>= sendTextData
 
 getGameR :: Handler GameData
 getGameR = do
-  App {room} <- getYesod
-  webSockets (handleSocket room)
-  g <- liftIO $ runGameT room.env mainLoop
-  pure $ GameData g g.activePlayer
+  app <- getYesod
+  webSockets (handleSocket app)
+  liftIO $ gameData =<< readMVar app.session
+
+-- | Run a change against the session and tell every client about the result.
+withSession :: (Maybe Session -> IO (Maybe Session)) -> Handler ()
+withSession f = do
+  app <- getYesod
+  liftIO $ modifyMVar_ app.session \s -> do
+    s' <- f s
+    broadcast app s'
+    pure s'
+
+newSession :: App -> Text -> Int -> IO Session
+newSession app name seed = do
+  (player, heroes) <- either (error . show) pure $ evalRand (loadPlayer name starterDeck) (mkStdGen seed)
+  let logger msg = atomically $ writeTChan app.chan $ encode $ toJSON msg
+  env <- (\e -> e {gameDebug = 1}) <$> newGameEnv (newGame player heroes) logger (seed + 1)
+  void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
+  pure $ Session env name []
+
+snapshot :: GameEnv -> IO Snapshot
+snapshot env = Snapshot <$> runGameT env getGame <*> runGameT env peekQueue <*> readIORef (gameRandomGen env)
+
+restore :: GameEnv -> Snapshot -> IO ()
+restore env (Snapshot g queue gen) = do
+  runGameT env $ putGame g >> setQueue queue
+  writeIORef (gameRandomGen env) gen
+
+data Start = Start {name :: Text, seed :: Maybe Int}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+postStartR :: Handler ()
+postStartR = do
+  app <- getYesod
+  start <- requireCheckJsonBody @_ @Start
+  withSession \_ -> Just <$> (newSession app start.name =<< maybe randomIO pure start.seed)
 
 data Answer = Answer
   { choice :: Int
@@ -101,43 +130,37 @@ data Answer = Answer
 
 postGameR :: Handler ()
 postGameR = do
-  App {room} <- getYesod
+  app <- getYesod
   answer <- requireCheckJsonBody @_ @Answer
-  current <- liftIO $ runGameT room.env getGame
-  when (answer.questionVersion /= current.questionVersion) $
+  current <- liftIO $ readMVar app.session
+  s <- maybe (sendResponseStatus status400 ("no game" :: Text)) pure current
+  g <- liftIO $ runGameT s.env getGame
+  when (answer.questionVersion /= g.questionVersion) $
     sendResponseStatus status409 ("stale answer" :: Text)
-  g <- liftIO $ runGameT room.env $ answerQuestion answer.player answer.choice
-  liftIO $
-    atomically $
-      writeTChan room.chan $
-        encode $
-          toJSON $
-            object ["contents" .= GameData g g.activePlayer, "tag" .= String "Update"]
+  withSession \case
+    Nothing -> pure Nothing
+    Just s' -> do
+      before <- snapshot s'.env
+      void $ runGameT s'.env $ answerQuestion answer.player answer.choice
+      pure $ Just s' {history = before : s'.history}
+
+postUndoR :: Handler ()
+postUndoR = withSession \case
+  Just s | (previous : rest) <- s.history -> do
+    restore s.env previous
+    pure $ Just s {history = rest}
+  other -> pure other
 
 postResetR :: Handler ()
 postResetR = do
-  App {room} <- getYesod
-  liftIO $ runGameT room.env $ do
-    clearQueue
-    resetGame
-    pushAll [Setup, BeginRound]
-    g <- mainLoop
-    atomically $
-      writeTChan room.chan $
-        encode $
-          toJSON $
-            object ["contents" .= GameData g g.activePlayer, "tag" .= String "Update"]
-
-resetGame :: GameT ()
-resetGame = either (error . show) (putGame . uncurry newGame) =<< loadPlayer starterDeck
+  app <- getYesod
+  withSession \case
+    Nothing -> pure Nothing
+    Just s -> Just <$> (newSession app s.name =<< randomIO)
 
 main :: IO ()
 main = do
-  (player, heroes) <- either (error . show) pure =<< loadPlayer starterDeck
-  c <- atomically newTChan
-  let handler msg = atomically $ writeTChan c (encode $ toJSON msg)
-  env <- (\e -> e {gameDebug = 1}) <$> (newGameEnv (newGame player heroes) handler =<< randomIO)
-  let room = Room {env, chan = c}
-  runGameT env (pushAll [Setup, BeginRound])
+  session <- newMVar Nothing
+  chan <- atomically newTChan
   port <- fromMaybe 3000 . (>>= readMaybe) <$> lookupEnv "PORT"
-  warp port (App room)
+  warp port App {session, chan}

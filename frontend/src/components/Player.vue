@@ -150,7 +150,7 @@ function onLeave(el, done) {
       <div class="discard">
       </div>
       <div class="deck">
-        <div class="deck-size">{{player.deck.length}}</div>
+        <div class="deck-size">{{player.deckSize}}</div>
       </div>
       <div class="hand">
         <transition-group @enter="onEnter" @leave="onLeave" @before-enter="onBeforeEnter">

@@ -59,6 +59,19 @@ const handleResult = (result) => {
 
 fetch('/api/data').then((res) => res.json().then((newData) => gameData.value = newData))
 
+const name = ref('')
+
+const start = () => {
+  gameLog.value = []
+  fetch('/api/start', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: name.value || 'Player' }),
+  })
+}
+
+const undo = () => fetch('/api/undo', { method: "POST" })
+
 const reset = () => {
   gameLog.value = []
   fetch('/api/reset', { method: "POST" })
@@ -66,7 +79,7 @@ const reset = () => {
 
 const question = computed(() => {
   const current = gameData.value
-  if(!current) return null
+  if(!current?.started) return null
 
   return current.game.question[current.playerId]
 })
@@ -88,7 +101,11 @@ const choose = (e: Choice) => {
 
 <template>
   <div id="app">
-    <Game v-if="gameData" :data="gameData" @reset="reset" :question="question" @choose="choose" />
+    <Game v-if="gameData?.started" :data="gameData" @reset="reset" @undo="undo" :question="question" @choose="choose" />
+    <form v-else-if="gameData" class="start" @submit.prevent="start">
+      <input v-model="name" placeholder="Your name" />
+      <button type="submit">Start a game</button>
+    </form>
     <Log :log="gameLog" />
     <CardOverlay />
   </div>

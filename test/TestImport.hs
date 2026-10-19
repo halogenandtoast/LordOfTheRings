@@ -32,7 +32,7 @@ gameTest = gameTestWith testDeck
 
 gameTestWith :: DeckList -> (PlayerId -> GameT ()) -> IO ()
 gameTestWith deck body = do
-  (player, heroes) <- either (error . show) pure =<< loadPlayer deck
+  (player, heroes) <- either (error . show) pure =<< loadPlayer "tester" deck
   env <- newGameEnv (newGame player heroes) (const $ pure ()) 1
   runGameT env (body player.id)
 

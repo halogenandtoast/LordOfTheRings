@@ -6,6 +6,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -23,8 +24,11 @@ data Player = Player
 
 makeLensesWith suffixedFields ''Player
 
+-- | The deck is hidden information, so only its size is sent.
 instance ToJSON Player where
-  toJSON = genericToJSON (aesonOptions $ Just "player")
+  toJSON p = case genericToJSON (aesonOptions $ Just "player") p of
+    Object o -> Object $ KeyMap.insert "deckSize" (toJSON $ length p.playerDeck) $ KeyMap.delete "deck" o
+    v -> v
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =

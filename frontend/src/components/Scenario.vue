@@ -33,7 +33,7 @@ const locations = computed(() => {
   <div class="scenario-main">
     <div class="scenario">
       <div class="deck">
-        <div class="deck-size">{{scenario.encounterDeck.length}}</div>
+        <div class="deck-size">{{scenario.encounterDeckSize}}</div>
       </div>
       <Card v-if="quest" :card="{ id: quest.cardId, cardCode: quest.cardCode }" :side="quest.flipped ? 'B' : 'A'" :progress="quest.tokens.Progress" :data="data" @choose="$emit('choose', $event)" rotated :target="{ tag: 'QuestTarget', contents: quest.id }" :you="you" />
       <Location v-if="activeLocation" :location="activeLocation" :you="you" :data="data" @choose="$emit('choose', $event)" />

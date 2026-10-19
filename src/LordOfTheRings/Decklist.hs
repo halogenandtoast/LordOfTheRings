@@ -27,8 +27,8 @@ lookupPlayerCardDef :: CardCode -> Either DeckException CardDef
 lookupPlayerCardDef cCode =
   maybe (Left $ DeckException $ "Missing card: " <> tshow cCode) Right $ Map.lookup cCode allPlayerCards
 
-loadPlayer :: (MonadRandom m) => DeckList -> m (Either DeckException (Player, [Hero]))
-loadPlayer dl = do
+loadPlayer :: (MonadRandom m) => Text -> DeckList -> m (Either DeckException (Player, [Hero]))
+loadPlayer name dl = do
   pid <- getRandom
   let defs =
         (,)
@@ -38,4 +38,4 @@ loadPlayer dl = do
     heroes <- traverse (newHero pid <=< (`genPlayerCard` Just pid)) heroDefs
     deck <- traverse (fmap PlayerCard . (`genPlayerCard` Just pid)) cardDefs
     pure
-      (newPlayer pid "halogen64" deck, heroes)
+      (newPlayer pid name deck, heroes)
