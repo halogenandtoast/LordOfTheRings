@@ -13,28 +13,28 @@ import LordOfTheRings.Question
 import LordOfTheRings.Window
 
 data DeckSignifier = EncounterDeck
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
 data CardMatcher = CardWithCode CardCode
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
 cardIs :: CardDef -> CardMatcher
 cardIs = CardWithCode . cdCardCode
 
 data CardHandler = ToStaging
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 data DeckHandler = Shuffle
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
 data Drawing = Drawing
   { player :: PlayerId
   , count :: Int
   }
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
 data Message
@@ -43,6 +43,8 @@ data Message
   | DoPhase Phase
   | EndPhase Phase
   | BeginRound
+  | RaiseThreat PlayerId Int
+  | SetFirstPlayer PlayerId
   | EndRound
   | WithTarget Target Message
   | PlayCard PlayerId CardId
@@ -69,7 +71,7 @@ data Message
   | RemoveTokens Source Target Token Int
   | Run [Message]
   | DrawCards Drawing
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON)
 
 uiToRun :: UI Message -> Message

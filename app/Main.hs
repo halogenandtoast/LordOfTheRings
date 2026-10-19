@@ -120,7 +120,7 @@ postResetR = do
   liftIO $ runGameT room.env $ do
     clearQueue
     resetGame
-    pushAll [Setup, BeginRound, EndRound]
+    pushAll [Setup, BeginRound]
     g <- mainLoop
     atomically $
       writeTChan room.chan $
@@ -138,6 +138,6 @@ main = do
   let handler msg = atomically $ writeTChan c (encode $ toJSON msg)
   env <- (\e -> e {gameDebug = 1}) <$> (newGameEnv (newGame player heroes) handler =<< randomIO)
   let room = Room {env, chan = c}
-  runGameT env (pushAll [Setup, BeginRound, EndRound])
+  runGameT env (pushAll [Setup, BeginRound])
   port <- fromMaybe 3000 . (>>= readMaybe) <$> lookupEnv "PORT"
   warp port (App room)

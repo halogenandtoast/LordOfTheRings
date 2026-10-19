@@ -67,21 +67,33 @@ answerQuestion pid n = do
     _ -> push $ uiToRun choice
   mainLoop
 
+-- | Run messages until the queue empties or someone has to answer a question.
 mainLoop :: GameT Game
-mainLoop = do
-  mmsg <- popMessage
-  g <- getGame
-  case mmsg of
-    Nothing -> pure g
+mainLoop = go (0 :: Int)
+ where
+  go n = do
+    g <- getGame
+    if
+      | notNull g.question -> pure g
+      | n >= messageLimit -> error "message limit reached: the game is probably looping"
+      | otherwise -> runNext >>= bool getGame (go (n + 1))
+
+messageLimit :: Int
+messageLimit = 10000
+
+-- | Run the next queued message, returning False when the queue is empty.
+runNext :: GameT Bool
+runNext =
+  popMessage >>= \case
+    Nothing -> pure False
     Just (Ask pid q) -> do
-      let g' = g & questionL .~ Map.singleton pid q & questionVersionL +~ 1
-      putGame g'
-      pure g'
+      g <- getGame
+      putGame $ g & questionL .~ Map.singleton pid q & questionVersionL +~ 1
+      pure True
     Just msg -> do
       debug 1 $ print msg
-      g' <- preloadModifiers =<< runMessage msg g
-      putGame g'
-      if notNull g'.question then pure g' else mainLoop
+      putGame =<< preloadModifiers =<< runMessage msg =<< getGame
+      pure True
 
 getPlayers :: (HasGame m) => m [Player]
 getPlayers = toList <$> getsGame gamePlayers
@@ -112,12 +124,25 @@ runGameMessage msg g = case msg of
     pushAll [DoStep n Setup | n <- [1 .. 7]]
     pure g
   BeginRound -> do
-    pushAll
-      $ concat
-        [ [BeginPhase phase, EndPhase phase]
-        | phase <- [ResourcePhase, PlanningPhase, QuestPhase, TravelPhase, EncounterPhase, CombatPhase]
-        ]
+    pushAll [BeginPhase minBound, EndPhase minBound]
     pure $ g & roundL +~ 1
+  EndRound -> do
+    push BeginRound
+    pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
+  BeginPhase RefreshPhase -> do
+    heroes <- select ExhaustedHero
+    allies <- select ExhaustedAlly
+    players <- getPlayerOrder
+    let passToken = case drop 1 players of
+          (next : _) -> [SetFirstPlayer next]
+          [] -> []
+    pushAll
+      $ map (Ready . toTarget) heroes
+      <> map (Ready . toTarget) allies
+      <> [RaiseThreat pid 1 | pid <- players]
+      <> passToken
+    pure $ g & phaseL .~ RefreshPhase
+  SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]
@@ -136,8 +161,9 @@ runGameMessage msg g = case msg of
     pure $ g & activeCostsL %~ insertEntity activeCost
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
-  EndPhase _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
-  EndRound -> pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
+  EndPhase phase -> do
+    push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
+    pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
   PlayAlly pid card -> do
     player <- getPlayer pid
     thisAlly <- newAlly pid card

@@ -309,6 +309,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Ally.SnowbournScoutSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
+      LordOfTheRings.RefreshPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.SetupSpec
       TestImport

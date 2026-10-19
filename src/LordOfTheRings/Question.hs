@@ -14,13 +14,13 @@ data UI msg
   = Label {label :: Text, messages :: [msg]}
   | TargetLabel {target :: Target, messages :: [msg]}
   | AbilityLabel {player :: PlayerId, ability :: Ability, windows :: [Window], messages :: [msg]}
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON)
 
 data Question msg
   = ChooseOne {choices :: [UI msg]}
   | ChooseOneAtATime {choices :: [UI msg]}
-  deriving stock (Show, Generic)
+  deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON)
 
 questionChoices :: Question msg -> [UI msg]

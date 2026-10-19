@@ -9,7 +9,7 @@ import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.Entity as X (toAttrs, toId)
 import LordOfTheRings.Decklist
-import LordOfTheRings.Hero as X (Hero)
+import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Source as X
 import LordOfTheRings.Token as X
 import LordOfTheRings.Game as X
@@ -78,3 +78,7 @@ flipFirstQuest :: PlayerId -> GameT ()
 flipFirstQuest pid = do
   run Setup
   chooseOptionMatching "flip the quest" pid (const True)
+
+-- | Process exactly one message, leaving whatever it queues unprocessed.
+runOnly :: Message -> GameT ()
+runOnly msg = push msg >> void runNext

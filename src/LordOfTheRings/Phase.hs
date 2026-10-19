@@ -1,4 +1,4 @@
-module LordOfTheRings.Phase (Phase (..)) where
+module LordOfTheRings.Phase (Phase (..), nextPhase) where
 
 import LordOfTheRings.Prelude
 
@@ -9,5 +9,11 @@ data Phase
   | TravelPhase
   | EncounterPhase
   | CombatPhase
-  deriving stock (Show, Eq, Generic)
+  | RefreshPhase
+  deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
   deriving anyclass (FromJSON, ToJSON)
+
+nextPhase :: Phase -> Maybe Phase
+nextPhase phase
+  | phase == maxBound = Nothing
+  | otherwise = Just (succ phase)
