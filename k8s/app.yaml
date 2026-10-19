@@ -1,0 +1,68 @@
+# Applied by scripts/deploy.sh, which swaps @TAG@ for the git SHA it built.
+# Terraform owns what the cluster needs before this: the `lotr` secret
+# (DATABASE_URL, JWT_SECRET) and the public load balancer in front of
+# lotr-frontend.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lotr-backend
+spec:
+  # Game channels live in the backend's memory, so there is only ever one, and
+  # the old one stops before the new one starts.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: lotr-backend
+  template:
+    metadata:
+      labels:
+        app: lotr-backend
+    spec:
+      containers:
+        - name: backend
+          image: halogenandtoast/lotr-backend:@TAG@
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: lotr
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lotr-backend
+spec:
+  selector:
+    app: lotr-backend
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lotr-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lotr-frontend
+  template:
+    metadata:
+      labels:
+        app: lotr-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: halogenandtoast/lotr-frontend:@TAG@
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            tcpSocket:
+              port: 80
