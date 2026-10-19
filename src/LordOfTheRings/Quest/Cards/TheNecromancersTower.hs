@@ -39,13 +39,16 @@ instance RunMessage TheNecromancersTower where
       deck <- getsGame (scenarioEncounterDeck . toAttrs . gameScenario)
       let objectives = [c | c <- deck, cdCardType (toCardDef c) == ObjectiveType]
           nazgul = [c | c <- deck, toCardCode c == toCardCode Enemies.nazgulOfDolGuldur]
-      heroes <- select AnyHero
-      prisoner <- for (nonEmpty heroes) \hs -> TakePrisoner <$> uniform (toList hs)
+      revealed <- whenRevealedQuestion attrs
       pushAll
         $ map RemoveFromEncounterDeck objectives
         <> map SetAside nazgul
         <> [ShuffleDeck EncounterDeck]
         <> map PutObjectiveIntoPlay objectives
-        <> toList prisoner
+        <> [revealed]
       pure $ TheNecromancersTower $ attrs {questFlipped = True}
+    WhenRevealed (isTarget attrs -> True) -> do
+      heroes <- select AnyHero
+      for_ (nonEmpty heroes) \hs -> push . TakePrisoner =<< uniform (toList hs)
+      pure q
     _ -> TheNecromancersTower <$> runConditionalStage ((>= 1) <$> claimedObjectives) msg attrs

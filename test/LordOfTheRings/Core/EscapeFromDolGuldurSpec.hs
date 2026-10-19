@@ -38,6 +38,7 @@ spec = describe "Escape from Dol Guldur" do
     run Setup
     chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
+    resolveWhenRevealed pid
     getsGame (length . (.entities.objectives)) `shouldReturn` 3
     map toCardCode . scenarioSetAside . toAttrs <$> getsGame (.scenario) `shouldReturn` [toCardCode Enemies.nazgulOfDolGuldur]
     map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` notElem (toCardCode Enemies.nazgulOfDolGuldur))

@@ -6,6 +6,8 @@ import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Classes.HasQueue
+import LordOfTheRings.I18n
+import LordOfTheRings.Question
 import LordOfTheRings.Matcher
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Quest.Types as X
@@ -25,6 +27,13 @@ instance RunMessage QuestAttrs where
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
+
+-- | The lead clicks the stage to resolve its When Revealed effect, which the stage
+-- handles as 'WhenRevealed' on itself.
+whenRevealedQuestion :: (HasGame m) => QuestAttrs -> m Message
+whenRevealedQuestion attrs = do
+  lead <- getLead
+  pure $ questionLabel (ikeyWith "label.resolveWhenRevealed" (cardVar "quest" attrs)) lead [targetLabel attrs [WhenRevealed $ toTarget attrs]]
 
 -- | A stage that cannot be defeated while an enemy matching the matcher is in play: its
 -- progress piles up, and once the last such enemy leaves play a stage with enough

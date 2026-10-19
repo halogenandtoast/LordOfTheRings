@@ -26,14 +26,16 @@ instance RunMessage ToTheRiver where
       push $ questionLabel (ikeyWith "label.performSetup" (cardVar "quest" attrs)) lead [targetLabel attrs [Flip $ toTarget attrs]]
       pure q
     Flip (isTarget attrs -> True) -> do
-      lead <- getLead
       order <- getPlayerOrder
-      trolls <- selectAny hillTrolls
       send $ FlipCard attrs.cardId
-      pushAll
-        $ map (const RevealEncounterCard) order
-        <> [Search lead EncounterDeck (cardIs Enemies.hillTroll) ToStaging Shuffle | not trolls]
+      revealed <- whenRevealedQuestion attrs
+      pushAll $ map (const RevealEncounterCard) order <> [revealed]
       pure $ ToTheRiver $ attrs {questFlipped = True}
+    WhenRevealed (isTarget attrs -> True) -> do
+      lead <- getLead
+      trolls <- selectAny hillTrolls
+      pushWhen (not trolls) $ Search lead EncounterDeck (cardIs Enemies.hillTroll) ToStaging Shuffle
+      pure q
     _ -> ToTheRiver <$> runBlockedStage hillTrolls msg attrs
    where
     hillTrolls = EnemyWithCardCode (toCardCode Enemies.hillTroll)

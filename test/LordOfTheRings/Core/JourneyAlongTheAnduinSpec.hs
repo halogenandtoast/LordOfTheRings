@@ -19,6 +19,7 @@ spec = describe "Journey Along the Anduin" do
     run Setup
     chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
+    resolveWhenRevealed pid
     length <$> enemiesWith Enemies.hillTroll `shouldReturn` 1
     (.flipped) <$> getActiveQuest `shouldReturn` True
 
@@ -26,6 +27,7 @@ spec = describe "Journey Along the Anduin" do
     run Setup
     chooseLabel "$label.keepHand" pid
     chooseOptionMatching "flip the quest" pid (const True)
+    resolveWhenRevealed pid
     quest <- toTarget <$> getActiveQuest
     run $ PlaceTokens GameSource quest Progress 20
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.toTheRiver
@@ -44,10 +46,11 @@ spec = describe "Journey Along the Anduin" do
     spider <- fromJustNote "no spider" . headMay <$> enemiesWith Enemies.forestSpider
     getsGame (fmap (.placement) . lookup spider . mapToList . (.entities.enemies)) `shouldReturn` Just StagingArea
 
-  it "wins at Ambush on the Shore once no enemies are in play" . journeyTest $ \_ -> do
+  it "wins at Ambush on the Shore once no enemies are in play" . journeyTest $ \pid -> do
     _ <- setEncounterDeck [Enemies.forestSpider, Enemies.forestSpider]
     stage <- putQuestStage Quests.ambushOnTheShore
     run $ Flip stage
+    resolveWhenRevealed pid
     spiders <- enemiesWith Enemies.forestSpider
     length spiders `shouldBe` 2
     for_ spiders \eid -> run $ DealDamage GameSource (toTarget eid) 4
@@ -57,6 +60,7 @@ spec = describe "Journey Along the Anduin" do
     stage <- putQuestStage Quests.ambushOnTheShore
     _ <- setEncounterDeck [Enemies.forestSpider, Enemies.forestSpider, Locations.forestGate]
     run $ Flip stage
+    resolveWhenRevealed pid
     run $ BeginPhase QuestPhase
     chooseLabel "$label.doneCommitting" pid
     getsGame (length . (.entities.locations)) `shouldReturn` 0

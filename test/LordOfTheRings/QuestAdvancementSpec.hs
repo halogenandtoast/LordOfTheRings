@@ -56,6 +56,7 @@ spec = describe "Quest advancement" do
       [king] <- setEncounterDiscard [Enemies.kingSpider]
       completeQuest
       completeQuest
+      resolveWhenRevealed pid
       Just question <- getQuestion pid
       [() | SearchCards cards _ <- [unlabel question], length cards == 3] `shouldBe` [()]
       length [() | TargetLabel {} <- questionChoices question] `shouldBe` 2
@@ -70,6 +71,7 @@ spec = describe "Quest advancement" do
       _ <- setEncounterDiscard []
       completeQuest
       completeQuest
+      resolveWhenRevealed pid
       chooseLabel "$label.continue" pid
       getQuestion pid `shouldReturn` Nothing
 
@@ -79,6 +81,7 @@ spec = describe "Quest advancement" do
       [spawnCard] <- setEncounterDeck [Enemies.ungoliantsSpawn]
       completeQuest
       completeQuest
+      resolveWhenRevealed pid
       chooseTarget pid spawnCard
       getsGame (.outcome) `shouldReturn` Nothing
       run . Destroy . toTarget =<< spawn

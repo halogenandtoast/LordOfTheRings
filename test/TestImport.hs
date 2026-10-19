@@ -107,6 +107,10 @@ flipFirstQuest pid = do
   chooseLabel "$label.keepHand" pid
   chooseOptionMatching "flip the quest" pid (const True)
 
+-- | Click the active stage to resolve its When Revealed effect.
+resolveWhenRevealed :: (HasCallStack) => PlayerId -> GameT ()
+resolveWhenRevealed pid = chooseTarget pid =<< getActiveQuest
+
 -- | Process exactly one message, leaving whatever it queues unprocessed.
 runOnly :: Message -> GameT ()
 runOnly msg = push msg >> void runNext

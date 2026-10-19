@@ -16,13 +16,16 @@ aChosenPathDontLeaveThePath :: QuestCard AChosenPathDontLeaveThePath
 aChosenPathDontLeaveThePath = quest AChosenPathDontLeaveThePath Cards.aChosenPathDontLeaveThePath
 
 instance RunMessage AChosenPathDontLeaveThePath where
-  runMessage msg (AChosenPathDontLeaveThePath attrs) = case msg of
+  runMessage msg q@(AChosenPathDontLeaveThePath attrs) = case msg of
+    Flip (isTarget attrs -> True) -> do
+      push =<< whenRevealedQuestion attrs
+      AChosenPathDontLeaveThePath <$> runMessage msg attrs
     -- When Revealed: Each player must search the encounter deck and discard pile for 1
     -- Spider card of his choice, and add it to the staging area.
-    Flip (isTarget attrs -> True) -> do
+    WhenRevealed (isTarget attrs -> True) -> do
       players <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
       pushAll [SearchEncounterDeckAndDiscard pid (toTarget attrs) (CardWithTrait Spider) | pid <- players]
-      AChosenPathDontLeaveThePath <$> runMessage msg attrs
+      pure q
     -- The players must find and defeat Ungoliant's Spawn to win this game.
     Destroy (EnemyTarget eid) -> do
       defeated <- selectAny (EnemyWithId eid <> EnemyWithCardCode (toCardCode Enemies.ungoliantsSpawn))
