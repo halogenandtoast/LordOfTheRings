@@ -29,7 +29,7 @@
   --cream-faint: #8f866f;
   --gold-light: #d6b25e;
   --forest-light: #55652a;
-  --forest-deep: #12170e;
+  --pine-deep: #0f1a18;
   --wood-dark: #63431a;
   --rust: #b0503a;
   --ink: #1a160f;
@@ -51,7 +51,7 @@
   --target-glow: rgb(255 162 31 / 0.5);
   --select: var(--interactive);
 
-  --page-background: var(--forest-deep);
+  --page-background: var(--pine-deep);
   --panel: rgb(42 35 25 / 0.96);
   --box-background: var(--panel);
   --line: rgb(229 211 173 / 0.16);
