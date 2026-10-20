@@ -72,10 +72,8 @@ const withAttachments = (cards: CardView[], hosts: CardView[]) => [
   ...cards.filter((attached) => hosts.some((host) => host.id === attached.attachedTo)),
 ]
 
-const heroes = computed(() => {
-  const cards = you.value?.inPlay ?? []
-  return withAttachments(cards, cards.filter((card) => card.type === 'Hero'))
-})
+const heroes = (player: PlayerView) =>
+  withAttachments(player.inPlay, player.inPlay.filter((card) => card.type === 'Hero'))
 const inPlay = (player: PlayerView) =>
   withAttachments(player.inPlay, player.inPlay.filter((card) => card.type !== 'Hero' && card.attachedTo === null))
 
@@ -232,8 +230,18 @@ watch(question, (asked) => {
           :players="players"
           :viewing="you?.playerId ?? null"
         >
+          <!-- the seat's heroes always on the left, what else it has in play after them -->
           <CardBand
+            class="heroes"
             :label="$t('game.bands.playArea')"
+            :cards="heroes(player)"
+            :choices="choices"
+            :flipping="flipping"
+            align="bottom"
+            @choose="choose"
+          />
+          <CardBand
+            class="in-play"
             :cards="inPlay(player)"
             :choices="choices"
             :flipping="flipping"
@@ -243,16 +251,6 @@ watch(question, (asked) => {
         </SeatBlobs>
 
         <section class="band seat">
-          <div class="hero-column">
-            <CardBand
-              class="heroes"
-              :cards="heroes"
-              :choices="choices"
-              :flipping="flipping"
-              align="bottom"
-              @choose="choose"
-            />
-          </div>
           <PlayerArea
             v-if="you"
             :player="you"
@@ -376,30 +374,20 @@ watch(question, (asked) => {
 .game > :is(.staging, .threat-area, .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
-/* your seat: heroes and threat dial beside your deck, hand and question */
+/* heroes as wide as they need, the rest of the play area after them */
+.game > .play-area :deep(.band.heroes) { flex: 0 0 auto; gap: calc(var(--gap) * 2); }
+.game > .play-area :deep(.band.in-play) { padding-left: 0; }
+/* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
 .band.seat > .player { flex: 1 1 0; min-width: 0; }
-.hero-column {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-  align-items: center;
-  justify-content: flex-end;
-  flex: 0 0 auto;
-}
 .game > .play-area.drop-zone {
   outline: 2px dashed var(--target);
   outline-offset: -2px;
 }
-.band.seat .heroes { flex: 0 0 auto; padding: 0; gap: calc(var(--gap) * 2); }
-/* level with the deck and hand, which sit above their count pills (see PlayerArea) */
-.band.seat .heroes { margin-bottom: calc(0.75rem + 8px + 5px); }
-/* a phone: your heroes over your deck and threat (after the rules above, to win over them) */
+/* a phone: your seat stacked (after the rules above, to win over them) */
 @media (width < 700px) {
   .band.seat { flex-direction: column; align-items: stretch; gap: var(--gap); }
   .band.seat > .player { flex: none; }
-  .hero-column { flex-direction: row; justify-content: flex-start; }
-  .band.seat .heroes { margin-bottom: 0; }
 }
 
 .game {
