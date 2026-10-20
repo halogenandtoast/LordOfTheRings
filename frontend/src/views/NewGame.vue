@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { createGame, type DeckChoice } from '../api'
 import { fetchDecks } from '../browser/lib/api'
 import type { DeckSummary } from '../browser/types/deck'
-import { currentUser } from '../auth'
+import { currentUser, updateSettings } from '../auth'
 import { campaigns, type Campaign, type ScenarioOption } from '../campaigns'
 import { useServerText } from '../i18n'
 
@@ -18,6 +18,16 @@ const selectedCampaign = ref<Campaign | null>(null)
 const selectedScenario = ref<ScenarioOption | null>(null)
 const gameName = ref('')
 const creating = ref(false)
+// As in Arkham: decided when the game is made, starting from the player's default,
+// which they can make whatever they picked here.
+const allowSpectators = ref(currentUser.value?.allowSpectatorsByDefault === true)
+const differsFromDefault = computed(() => allowSpectators.value !== (currentUser.value?.allowSpectatorsByDefault === true))
+const savedDefault = ref(false)
+watch(allowSpectators, () => (savedDefault.value = false))
+const makeDefault = async () => {
+  await updateSettings({ allowSpectatorsByDefault: allowSpectators.value })
+  savedDefault.value = true
+}
 const error = ref<string | null>(null)
 
 const starterSpheres = ['leadership', 'tactics', 'spirit', 'lore'] as const
@@ -62,6 +72,7 @@ const create = async () => {
       name: gameName.value.trim() || defaultName.value,
       scenario: selectedScenario.value?.id,
       deck: toDeckChoice(deckChoice.value),
+      allowSpectators: allowSpectators.value,
     })
     await router.push(`/games/${id}`)
   } catch (e) {
@@ -150,6 +161,16 @@ const create = async () => {
           {{ $t('newGame.gameName') }}
           <input v-model="gameName" type="text" :placeholder="defaultName" />
         </label>
+        <div class="spectators">
+          {{ $t('newGame.allowSpectators') }}
+          <div class="choices">
+            <label><input v-model="allowSpectators" type="radio" :value="false" /> {{ $t('newGame.no') }}</label>
+            <label><input v-model="allowSpectators" type="radio" :value="true" /> {{ $t('newGame.yes') }}</label>
+            <button v-if="differsFromDefault" type="button" class="make-default" @click="makeDefault">{{ $t('newGame.makeDefault') }}</button>
+            <span v-else-if="savedDefault" class="saved">{{ $t('newGame.defaultSaved') }}</span>
+          </div>
+          <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
+        </div>
       </fieldset>
 
       <p v-if="error" class="error">{{ tr(error) }}</p>
@@ -356,6 +377,13 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .deck strong { color: var(--text); }
 
 .error { margin: 0; color: var(--danger); }
+
+.spectators { display: grid; gap: 6px; font-size: 0.85rem; color: var(--text-muted); }
+.spectators .choices { display: flex; align-items: center; gap: 16px; color: var(--text); }
+.spectators .choices label { display: flex; flex-direction: row; align-items: center; gap: 6px; }
+.make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
+.saved { color: var(--text-muted); }
+.hint { margin: 0; font-size: 0.8rem; }
 
 .wizard-actions {
   display: grid;

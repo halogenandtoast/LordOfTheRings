@@ -149,13 +149,6 @@ export const useGame = (gameId: string, spectate = false) => {
     error: readonly(error),
     game: readonly(game),
     canUndo: computed(() => data.value?.canUndo ?? false),
-    allowSpectators: computed(() => data.value?.allowSpectators ?? false),
-    setAllowSpectators: (allowSpectators: boolean) =>
-      apiFetch(`/api/games/${gameId}/spectators`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ allowSpectators }),
-      }),
     log: readonly(log),
     announcement: readonly(announcement),
     flipping: readonly(flipping),

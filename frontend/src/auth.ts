@@ -5,6 +5,7 @@ export interface User {
   username: string
   email: string
   admin: boolean
+  allowSpectatorsByDefault: boolean
 }
 
 interface Session {
@@ -57,6 +58,17 @@ export const signUp = (username: string, email: string, password: string) =>
   post('/api/register', { username, email, password })
 
 export const signOut = () => save(null)
+
+/** Save the user's settings, keeping the stored user in step. */
+export const updateSettings = async (settings: { allowSpectatorsByDefault: boolean }) => {
+  const response = await fetch('/api/settings', {
+    method: 'PUT',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(settings),
+  })
+  if (!response.ok) throw new Error((await response.text()) || response.statusText)
+  if (session.value) save({ ...session.value, user: (await response.json()) as User })
+}
 
 /** Bring the stored user up to date, such as when they have been made an admin. */
 export const refreshUser = async () => {

@@ -74,7 +74,13 @@
       "tactics": "Tactics (Gimli, Legolas, Thalin)",
       "spirit": "Spirit (Éowyn, Eleanor, Dúnhere)",
       "lore": "Lore (Denethor, Glorfindel, Beravor)"
-    }
+    },
+    "allowSpectators": "Allow spectators",
+    "allowSpectatorsHint": "List this game on the Watch page so anyone can watch it. Spectators see the table but cannot take any actions. This cannot be changed once the game has started.",
+    "no": "No",
+    "yes": "Yes",
+    "makeDefault": "Make this my default",
+    "defaultSaved": "Saved as your default"
   },
   "settings": {
     "title": "Settings",

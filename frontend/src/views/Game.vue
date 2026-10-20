@@ -25,7 +25,7 @@ const route = useRoute()
 const tr = useServerText()
 const spectate = route.meta.spectate === true
 const {
-  error, game, log, announcement, flipping, allowSpectators, setAllowSpectators,
+  error, game, log, announcement, flipping,
   started, question: asked, scenario, players, outcome, answer, reset, undo, canUndo, debug,
 } = useGame(route.params.id as string, spectate)
 // a spectator sees what is asked, with nothing to choose
@@ -148,14 +148,12 @@ watch(question, (asked) => {
     :show-sidebar="showSidebar"
     :debugging="debugging"
     :spectate="spectate"
-    :allow-spectators="allowSpectators"
     @reset="reset"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
     @file-bug="fileBugAbout()"
     @toggle-sidebar="showSidebar = !showSidebar"
     @toggle-debug="debugging = !debugging"
-    @toggle-spectators="setAllowSpectators(!allowSpectators)"
   />
   <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">

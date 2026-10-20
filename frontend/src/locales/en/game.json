@@ -25,9 +25,7 @@
     "startOfPhase": "Start of phase",
     "startOfRound": "Start of round",
     "toggleSidebar": "Toggle sidebar",
-    "spectating": "Spectating",
-    "allowSpectators": "Allow spectators",
-    "closeToSpectators": "Close to spectators"
+    "spectating": "Spectating"
   },
   "bands": {
     "staging": "staging",
