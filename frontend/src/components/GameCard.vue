@@ -73,7 +73,7 @@ const toggleUnless = (attached: CardView) => {
 </script>
 
 <template>
-  <div class="card-slot" :class="{ expanded, hosting: attachments.length > 0 }">
+  <div class="card-slot" :class="{ expanded, hosting: attachments.length > 0, sideways: card.exhausted && !banner && !rotated }">
     <div v-if="attachments.length" class="attachments">
       <div
         v-for="(attached, index) in attachments"
@@ -122,7 +122,9 @@ const toggleUnless = (attached: CardView) => {
 </template>
 
 <style scoped>
-.card-slot { position: relative; line-height: 0; }
+.card-slot { position: relative; line-height: 0; transition: margin 0.2s ease; }
+/* an exhausted card turns past its own width (height × 0.88 scale), so make room for it */
+.card-slot.sideways { margin-inline: calc((var(--card-width) / var(--card-aspect) * 0.88 - var(--card-width)) / 2); }
 .card-slot.hosting { padding-top: calc(var(--attachment-peek) * v-bind('attachments.length')); }
 .card-slot.hosting.expanded {
   padding-top: calc(var(--card-width) / var(--card-aspect) * v-bind('attachments.length') * 0.55);
