@@ -46,12 +46,6 @@ const emit = defineEmits<{
           </svg>
           {{ $t('game.bar.exportGame') }}
         </button>
-        <button type="button" @click="emit('fileBug')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-          </svg>
-          {{ $t('game.bar.fileBug') }}
-        </button>
         <div class="menu-section">{{ $t('game.bar.testing') }}</div>
         <button type="button" :aria-pressed="debugging" @click="emit('toggleDebug')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -90,6 +84,12 @@ const emit = defineEmits<{
         </button>
       </template>
     </GameMenu>
+    <button type="button" class="bar-button" @click="emit('fileBug')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+      </svg>
+      {{ $t('game.bar.fileBug') }}
+    </button>
     </template>
     <div class="right">
       <button
@@ -148,6 +148,7 @@ const emit = defineEmits<{
   pointer-events: none;
 }
 
+.bar-button,
 .right button {
   background: none;
   border: 0;
@@ -194,5 +195,6 @@ const emit = defineEmits<{
   min-width: 40px;
 }
 .right .drawer-toggle svg { width: 20px; height: 20px; }
+.bar-button:hover,
 .right .drawer-toggle:hover { background: var(--hover-tint); }
 </style>
