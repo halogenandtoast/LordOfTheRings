@@ -25,7 +25,7 @@ const digitAngle = (i: number, d: number) => (i === 0 ? 36 * d : 180 - 36 * d)
     <div v-for="i in [0, 1]" :key="i" class="window" :class="i === 0 ? 'left' : 'right'" aria-hidden="true">
       <div class="wheel" :style="{ rotate: `${wheelAngle(i)}deg` }">
         <template v-for="d in 10" :key="d">
-          <span :style="{ '--a': `${digitAngle(i, d - 1)}deg` }">{{ d - 1 }}</span>
+          <span :style="{ '--a': `${digitAngle(i, d - 1)}deg` }"><b>{{ d - 1 }}</b></span>
           <i :style="{ '--a': `${digitAngle(i, d - 1)}deg` }" />
         </template>
       </div>
@@ -72,12 +72,17 @@ const digitAngle = (i: number, d: number) => (i === 0 ? 36 * d : 180 - 36 * d)
   text-align: center;
   font-size: 7cqw;
   transform: rotate(var(--a)) translateX(var(--r)) rotate(var(--flip, 0deg));
+}
+/* the gradient on a child of the turned span: Firefox draws no text clipped from a
+   background on the transformed element itself */
+.wheel b {
+  font-weight: inherit;
   background: linear-gradient(var(--threat-light), var(--threat-light), var(--threat-red), var(--threat-dark));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.threat.danger .wheel span { background: linear-gradient(var(--threat-danger-light), var(--threat-red), var(--threat-dark)); background-clip: text; -webkit-background-clip: text; }
+.threat.danger .wheel b { background: linear-gradient(var(--threat-danger-light), var(--threat-red), var(--threat-dark)); background-clip: text; -webkit-background-clip: text; }
 /* the window's pointer, cut out of threat.png so it turns with its digit */
 .wheel i {
   position: absolute;
