@@ -53,6 +53,7 @@
     "scenario": "scenario",
     "staging": "staging",
     "threatArea": "threat area",
+    "heroes": "heroes",
     "playArea": "play area",
     "player": "player"
   },

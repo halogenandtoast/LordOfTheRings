@@ -255,10 +255,11 @@ watch(question, (asked) => {
           :class="{ 'drop-zone': dragging && dragging.hosts === null, split: playSplit }"
         >
           <div v-for="seat in playSplit ? players : [playSeat]" :key="seat.playerId" class="seat-part">
-            <!-- the seat's heroes always on the left, what else it has in play after them -->
+            <!-- the seat's heroes in a zone of their own on the left, what else it has in play
+                 beside them -->
             <CardBand
               class="heroes"
-              :label="playSplit ? seat.name : $t('game.bands.playArea')"
+              :label="playSplit ? seat.name : $t('game.bands.heroes')"
               :cards="heroes(seat)"
               :choices="choices"
               :flipping="flipping"
@@ -267,6 +268,7 @@ watch(question, (asked) => {
             />
             <CardBand
               class="in-play"
+              :label="$t('game.bands.playArea')"
               :cards="inPlay(seat)"
               :choices="choices"
               :flipping="flipping"
@@ -420,9 +422,17 @@ watch(question, (asked) => {
 .seat-part + .seat-part { border-left: 2px solid var(--line-strong); }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
-/* heroes as wide as they need, the rest of the play area after them */
+/* the heroes and the rest of the play area as two zones side by side, as the scenario and
+   staging are: the heroes as wide as they need, the play area taking the rest */
+.game > .play-area { background: none; border-color: transparent; }
+.game > .play-area .seat-part { gap: var(--gap); }
+.game > .play-area .seat-part + .seat-part { border-left: 0; margin-left: var(--gap); }
+.game > .play-area :deep(:is(.band.heroes, .band.in-play)) {
+  background: var(--zone-base);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 6px;
+}
 .game > .play-area :deep(.band.heroes) { flex: 0 0 auto; gap: calc(var(--gap) * 2); }
-.game > .play-area :deep(.band.in-play) { padding-left: calc(var(--gap) * 2); }
 /* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
 .band.seat > .player { flex: 1 1 0; min-width: 0; }
