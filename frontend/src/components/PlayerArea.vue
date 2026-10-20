@@ -17,6 +17,7 @@ const { player, choices, flipping, heroes = [] } = defineProps<{
   choices: ChoiceView[]
   flipping: ReadonlySet<string>
   question: QuestionView | null
+  outcome: 'WON' | 'LOST' | null
 }>()
 const emit = defineEmits<{ choose: [index: number] }>()
 const { active: debugging, send } = useDebug()
@@ -67,7 +68,7 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
       </div>
     </div>
 
-    <QuestionZone :question="question" @choose="emit('choose', $event)" />
+    <QuestionZone :question="question" :outcome="outcome" @choose="emit('choose', $event)" />
   </section>
 </template>
 

@@ -5,7 +5,7 @@ import type { ChoiceView, QuestionView } from '../types'
 
 const tr = useServerText()
 
-const { question } = defineProps<{ question: QuestionView | null }>()
+const { question, outcome = null } = defineProps<{ question: QuestionView | null; outcome?: 'WON' | 'LOST' | null }>()
 const emit = defineEmits<{ choose: [index: number] }>()
 
 const labelChoices = computed<ChoiceView[]>(() =>
@@ -34,6 +34,9 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
         <span v-if="question.targetIds.length"><span class="swatch target"></span>{{ $t('game.prompt.target') }}</span>
       </p>
     </template>
+    <p v-else-if="outcome" class="prompt outcome" :class="outcome.toLowerCase()">
+      {{ $t(outcome === 'WON' ? 'game.prompt.playersWin' : 'game.prompt.playersLose') }}
+    </p>
     <p v-else class="prompt idle-text">{{ $t('game.prompt.waiting') }}</p>
   </div>
 </template>
@@ -72,7 +75,10 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
   border-radius: 6px;
   overflow-y: auto;
 }
-.question.idle { opacity: 0.4; }
+.question.idle:not(:has(.outcome)) { opacity: 0.4; }
+.outcome { font-weight: 700; }
+.outcome.won { color: var(--accent); }
+.outcome.lost { color: var(--danger); }
 .prompt { margin: 0; font-size: 0.8rem; line-height: 1.35; }
 .idle-text { opacity: 0.6; font-style: italic; }
 .options { display: flex; flex-direction: column; gap: 4px; }
