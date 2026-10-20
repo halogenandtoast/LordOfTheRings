@@ -17,6 +17,7 @@ const { player, choices, flipping } = defineProps<{
 }>()
 const emit = defineEmits<{ choose: [index: number] }>()
 const { active: debugging, send } = useDebug()
+const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
 
 // Pinned to the foot of a small screen, the hand peeks out until tapped, as in Arkham.
 const handOpen = ref(false)
@@ -49,8 +50,12 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
       />
     </div>
 
-    <div class="threat">
-      <ThreatDial :threat="player.threat" />
+    <div class="threat-box">
+      <ThreatDial class="dial" :threat="player.threat" />
+      <!-- the dial's stand-in where there is no room for it -->
+      <span class="threat-stat" :class="{ danger: player.threat >= 40 }" :title="$t('game.threat', { value: player.threat })">
+        <span class="icon" :style="threatIcon" />{{ player.threat }}
+      </span>
       <div v-if="debugging" class="debug-threat">
         <button type="button" :aria-label="$t('game.debug.lowerThreat')" :disabled="player.threat === 0" @click="send({ tag: 'LowerThreat', contents: [player.playerId, 1] })">−</button>
         <button type="button" :aria-label="$t('game.debug.raiseThreat')" @click="send({ tag: 'RaiseThreat', contents: [player.playerId, 1] })">+</button>
@@ -66,7 +71,21 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
 .deck { display: flex; flex-direction: column; gap: 4px; }
-.threat { display: flex; flex-direction: column; align-items: center; align-self: center; gap: var(--gap); }
+.threat-box { display: flex; flex-direction: column; align-items: center; align-self: center; gap: var(--gap); }
+.threat-stat {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: var(--count-background);
+  color: var(--count-text);
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.threat-stat.danger { color: var(--danger); }
 .debug-threat { display: flex; gap: var(--gap); }
 .debug-threat button { width: 28px; height: 22px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; color: inherit; cursor: pointer; }
 .debug-threat button:disabled { opacity: 0.35; cursor: default; }
@@ -102,6 +121,11 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
     transition: translate 0.3s ease;
   }
   .player .hand.open { translate: 0 0; }
+  .dial { display: none; }
+  .threat-stat { display: inline-flex; }
+  /* the deck and discard, then the threat, beside them rather than spread out */
+  .player { gap: calc(var(--gap) * 2); }
+  .threat-box { align-self: flex-start; }
   /* the first tap opens it rather than playing a card */
   .player .hand:not(.open) > * { pointer-events: none; }
 }

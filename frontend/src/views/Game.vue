@@ -339,16 +339,6 @@ watch(question, (asked) => {
   .layout, .layout.no-sidebar { padding-bottom: calc(var(--gap) + var(--hand-peek)); }
 }
 
-@media (width < 700px) {
-  .band.seat { flex-direction: column; gap: var(--gap); }
-  .hero-column {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: flex-start;
-  }
-}
-
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
 .game > .scenario { background: var(--zone-scenario); }
 .game > .staging { background: var(--zone-staging); }
@@ -384,6 +374,13 @@ watch(question, (asked) => {
 .band.seat .heroes { flex: 0 0 auto; padding: 0; gap: calc(var(--gap) * 2); }
 /* level with the deck and hand, which sit above their count pills (see PlayerArea) */
 .band.seat .heroes { margin-bottom: calc(0.75rem + 8px + 5px); }
+/* a phone: your heroes over your deck and threat (after the rules above, to win over them) */
+@media (width < 700px) {
+  .band.seat { flex-direction: column; align-items: stretch; gap: var(--gap); }
+  .band.seat > .player { flex: none; }
+  .hero-column { flex-direction: row; justify-content: flex-start; }
+  .band.seat .heroes { margin-bottom: 0; }
+}
 
 .game {
   display: flex;
