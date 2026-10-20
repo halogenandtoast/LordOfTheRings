@@ -2,15 +2,18 @@
 import { ref, useTemplateRef } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import CardBack from './CardBack.vue'
+import CardBand from './CardBand.vue'
 import DiscardPile from './DiscardPile.vue'
 import GameCard from './GameCard.vue'
 import QuestionZone from './QuestionZone.vue'
 import ThreatDial from './ThreatDial.vue'
-import type { ChoiceView, PlayerView, QuestionView } from '../types'
+import type { CardView, ChoiceView, PlayerView, QuestionView } from '../types'
 import { useDebug } from '../composables/useDebug'
 
-const { player, choices, flipping } = defineProps<{
+const { player, choices, flipping, heroes = [] } = defineProps<{
   player: PlayerView
+  /** On a phone the heroes sit here, by the deck, as the play area has no room for them. */
+  heroes?: CardView[]
   choices: ChoiceView[]
   flipping: ReadonlySet<string>
   question: QuestionView | null
@@ -37,6 +40,8 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
         </div>
       </div>
     </div>
+
+    <CardBand v-if="heroes.length" class="heroes" :cards="heroes" :choices="choices" :flipping="flipping" @choose="emit('choose', $event)" />
 
     <div ref="hand" class="hand" :class="{ open: handOpen }" :style="{ '--count': player.hand.length }" @click="handOpen = true">
       <GameCard
@@ -71,6 +76,7 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
 .deck { display: flex; flex-direction: column; gap: 4px; }
+.heroes { flex: 0 1 auto; min-width: 0; padding: 0; }
 .threat-box { display: flex; flex-direction: column; align-items: center; align-self: center; gap: var(--gap); }
 /* clear of the question and its actions beside it */
 .threat-box { margin-right: calc(var(--gap) * 2); }

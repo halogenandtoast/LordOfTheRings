@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useMediaQuery } from '@vueuse/core'
 import { cardDrag, type CardView, type PlayerView } from '../types'
 import { isKey, useServerText } from '../i18n'
 import CardBand from '../components/CardBand.vue'
@@ -88,6 +89,8 @@ const withAttachments = (cards: CardView[], hosts: CardView[]) => [
   ...cards.filter((attached) => hosts.some((host) => host.id === attached.attachedTo)),
 ]
 
+// a phone has no room for the heroes beside the play area; they go by your deck
+const phone = useMediaQuery('(width < 700px)')
 const heroes = (player: PlayerView) =>
   withAttachments(player.inPlay, player.inPlay.filter((card) => card.type === 'Hero'))
 const inPlay = (player: PlayerView) =>
@@ -260,11 +263,10 @@ watch(question, (asked) => {
           :class="{ 'drop-zone': dragging && dragging.hosts === null, split: playSplit }"
         >
           <div v-for="seat in playSplit ? players : [playSeat]" :key="seat.playerId" class="seat-part">
-            <!-- on a phone the two run together as one zone, under this label -->
-            <span class="band-label merged-label">{{ playSplit ? seat.name : $t('game.bands.playArea') }}</span>
             <!-- the seat's heroes in a zone of their own on the left, what else it has in play
-                 beside them -->
+                 beside them; on a phone your heroes sit by your deck instead -->
             <CardBand
+              v-if="!phone"
               class="heroes"
               :label="playSplit ? seat.name : $t('game.bands.heroes')"
               :cards="heroes(seat)"
@@ -298,6 +300,7 @@ watch(question, (asked) => {
           <PlayerArea
             v-if="you"
             :player="you"
+            :heroes="phone ? heroes(you) : []"
             :choices="choices"
             :flipping="flipping"
             :question="question"
@@ -451,8 +454,6 @@ watch(question, (asked) => {
   outline: 2px dashed var(--target);
   outline-offset: -2px;
 }
-/* only for the merged zone on a phone */
-.game > .play-area .merged-label { display: none; }
 /* a phone: your seat stacked (after the rules above, to win over them) */
 @media (width < 700px) {
   .band.seat { flex-direction: column; align-items: stretch; gap: var(--gap); }
@@ -461,21 +462,8 @@ watch(question, (asked) => {
   .encounter > .scenario { flex: 1 1 auto; }
   .encounter > .victory { order: 1; }
   .encounter > .staging { order: 2; flex-basis: 100%; }
-  /* the heroes and the rest of the play area as one zone, the full width: the bands give
-     their cards to it */
-  .game > .play-area .seat-part {
-    position: relative;
-    flex-wrap: wrap;
-    align-content: flex-end;
-    align-items: flex-end;
-    padding: var(--gap) 4px var(--gap) 1.5rem;
-    background: var(--zone-base);
-    border: 1px solid rgb(255 255 255 / 0.1);
-    border-radius: 6px;
-  }
-  .game > .play-area :deep(:is(.band.heroes, .band.in-play)) { display: contents; }
-  .game > .play-area :deep(:is(.band.heroes, .band.in-play) > .band-label) { display: none; }
-  .game > .play-area .merged-label { display: block; }
+  /* room for a row of cards, not the height the other rows leave */
+  .game > .play-area { flex: 0 0 auto; }
 }
 
 .game {
