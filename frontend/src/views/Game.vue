@@ -260,6 +260,8 @@ watch(question, (asked) => {
           :class="{ 'drop-zone': dragging && dragging.hosts === null, split: playSplit }"
         >
           <div v-for="seat in playSplit ? players : [playSeat]" :key="seat.playerId" class="seat-part">
+            <!-- on a phone the two run together as one zone, under this label -->
+            <span class="band-label merged-label">{{ playSplit ? seat.name : $t('game.bands.playArea') }}</span>
             <!-- the seat's heroes in a zone of their own on the left, what else it has in play
                  beside them -->
             <CardBand
@@ -449,10 +451,31 @@ watch(question, (asked) => {
   outline: 2px dashed var(--target);
   outline-offset: -2px;
 }
+/* only for the merged zone on a phone */
+.game > .play-area .merged-label { display: none; }
 /* a phone: your seat stacked (after the rules above, to win over them) */
 @media (width < 700px) {
   .band.seat { flex-direction: column; align-items: stretch; gap: var(--gap); }
   .band.seat > .player { flex: none; }
+  /* the scenario stretched, the victory display beside it, the staging area a row below */
+  .encounter > .scenario { flex: 1 1 auto; }
+  .encounter > .victory { order: 1; }
+  .encounter > .staging { order: 2; flex-basis: 100%; }
+  /* the heroes and the rest of the play area as one zone, the full width: the bands give
+     their cards to it */
+  .game > .play-area .seat-part {
+    position: relative;
+    flex-wrap: wrap;
+    align-content: flex-end;
+    align-items: flex-end;
+    padding: var(--gap) 4px var(--gap) 1.5rem;
+    background: var(--zone-base);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 6px;
+  }
+  .game > .play-area :deep(:is(.band.heroes, .band.in-play)) { display: contents; }
+  .game > .play-area :deep(:is(.band.heroes, .band.in-play) > .band-label) { display: none; }
+  .game > .play-area .merged-label { display: block; }
 }
 
 .game {

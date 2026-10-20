@@ -125,9 +125,21 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
   .player .hand.open { translate: 0 0; }
   .dial { display: none; }
   .threat-stat { display: inline-flex; }
-  /* the deck and discard, then the threat, beside them rather than spread out */
-  .player { gap: calc(var(--gap) * 2); }
-  .threat-box { align-self: flex-start; }
+  /* the deck and discard, then the threat as a stripe across the foot of your seat: out
+     through this band's padding (4px) and the seat's (4px, 1.5rem on the left) */
+  .player { gap: calc(var(--gap) * 2); flex-wrap: wrap; }
+  .threat-box {
+    order: 1;
+    flex: 1 0 100%;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0 -8px -8px calc(-4px - 1.5rem);
+    padding: 4px var(--gap);
+    border-top: 1px solid rgb(from var(--threat-red) r g b / 0.35);
+    border-radius: 0 0 5px 5px;
+    background: rgb(from var(--threat-red) r g b / 0.14);
+  }
+  .threat-stat { padding: 0; border: 0; background: none; box-shadow: none; }
   /* the first tap opens it rather than playing a card */
   .player .hand:not(.open) > * { pointer-events: none; }
 }
