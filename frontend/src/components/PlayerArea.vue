@@ -72,6 +72,8 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 .hand, .piles { display: flex; gap: var(--gap); }
 .deck { display: flex; flex-direction: column; gap: 4px; }
 .threat-box { display: flex; flex-direction: column; align-items: center; align-self: center; gap: var(--gap); }
+/* clear of the question and its actions beside it */
+.threat-box { margin-right: calc(var(--gap) * 2); }
 .threat-stat {
   display: none;
   align-items: center;
