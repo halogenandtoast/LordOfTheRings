@@ -44,7 +44,6 @@ const emit = defineEmits<{ view: [playerId: string] }>()
   z-index: 2;
   display: flex;
   align-items: flex-end;
-  gap: 2px;
   padding: 3px 3px 0;
   background: var(--page-background);
   border-radius: 0 6px 0 var(--cut);
@@ -62,10 +61,12 @@ const emit = defineEmits<{ view: [playerId: string] }>()
 button {
   /* the zone's colour turned to this seat's hue (see seatHue), stronger while it waits */
   --seat-zone: oklch(from var(--zone-base) l c calc(h + var(--seat-hue)));
-  padding: 2px 8px;
+  /* straight on the left, the top right corner cut off in a slope */
+  --slope: 8px;
+  padding: 2px calc(6px + var(--slope)) 2px 6px;
   margin-top: 3px;
   border: 0;
-  border-radius: 5px 5px 0 0;
+  clip-path: polygon(0 0, calc(100% - var(--slope)) 0, 100% 100%, 0 100%);
   background: oklch(from var(--zone-base) l c calc(h + var(--seat-hue)) / calc(alpha * 2.5));
   color: var(--text-muted);
   font: inherit;
