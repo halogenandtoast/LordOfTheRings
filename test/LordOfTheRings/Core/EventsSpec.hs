@@ -4,7 +4,7 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
-import LordOfTheRings.Helpers.Staging (getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getStagingThreat, getStagingThreats)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import LordOfTheRings.I18n (ikeyWith, intVar)
@@ -88,6 +88,7 @@ spec = do
       eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
       chooseTarget pid eid
       getStagingThreat `shouldReturn` 0
+      map snd <$> getStagingThreats `shouldReturn` [0]
 
   describe "Strength of Will" do
     it "exhausts a Spirit character after travelling to place 2 progress" . gameTest $ \pid -> do

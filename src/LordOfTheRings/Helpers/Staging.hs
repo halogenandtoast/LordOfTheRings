@@ -1,5 +1,6 @@
 module LordOfTheRings.Helpers.Staging (module LordOfTheRings.Helpers.Staging) where
 
+import LordOfTheRings.Card (IsCard (..))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Matcher
@@ -23,10 +24,18 @@ getLocationThreat lid = do
 -- | The total threat of every card in the staging area.
 getStagingThreat :: (HasGame m) => m Int
 getStagingThreat = do
-  enemies <- traverse getEnemyThreat =<< select EnemyInStagingArea
-  locations <- traverse getLocationThreat =<< select LocationInStagingArea
+  cards <- getStagingThreats
   bonus <- sum . mapMaybe (\case StagingThreatBonus n -> Just n; _ -> Nothing) <$> getModifiers GameTarget
-  pure $ sum enemies + sum locations + bonus
+  pure $ sum (map snd cards) + bonus
+
+-- | What each card in the staging area adds to its threat, modifiers included.
+getStagingThreats :: (HasGame m) => m [(CardId, Int)]
+getStagingThreats = do
+  enemies <- for' EnemyInStagingArea getEnemy getEnemyThreat
+  locations <- for' LocationInStagingArea getLocation getLocationThreat
+  pure $ enemies <> locations
+ where
+  for' matcher get threat = select matcher >>= traverse \i -> (,) <$> ((.id) . toCard <$> get i) <*> threat i
 
 getEngagementCost :: (HasGame m) => EnemyId -> m Int
 getEngagementCost eid = do

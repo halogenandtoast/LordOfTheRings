@@ -9,6 +9,8 @@ export interface CardView {
   /** Face down: a prisoner, or a player card fighting as an Orc Guard. */
   facedown?: 'player' | 'encounter'
   threat: number | null
+  /** What it adds to the staging area's threat, modifiers included, while it is there. */
+  stagingThreat?: number
   attack: number | null
   defense: number | null
   hitPoints: number | null

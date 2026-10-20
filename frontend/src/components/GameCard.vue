@@ -115,6 +115,9 @@ const toggleUnless = (attached: CardView) => {
       <span v-if="card.progress" class="token progress">{{ card.progress }}</span>
       <span v-if="card.damage > 0" class="token damage">{{ card.damage }}</span>
     </div>
+    <span v-if="card.stagingThreat !== undefined" class="pile-count staging-threat" :title="$t('game.threat', { value: card.stagingThreat })">
+      <span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />{{ card.stagingThreat }}
+    </span>
 
     <div v-if="debugging && card.target" class="debug" @click.stop>
       <span v-for="(count, token) in counts" :key="token">
@@ -128,6 +131,16 @@ const toggleUnless = (attached: CardView) => {
 
 <style scoped>
 .card-slot { position: relative; line-height: 0; transition: margin 0.2s ease; }
+/* under a staging card, the threat it adds */
+.staging-threat {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: fit-content;
+  margin: 5px auto 0;
+  line-height: 1;
+  color: var(--threat-red);
+}
 /* an exhausted card turns past its own width (height × 0.88 scale), so make room for it */
 .card-slot.sideways { margin-inline: calc((var(--card-width) / var(--card-aspect) * 0.88 - var(--card-width)) / 2); }
 .card-slot.hosting { padding-top: calc(var(--attachment-peek) * v-bind('attachments.length')); }

@@ -175,8 +175,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   })
 
   const staging = [
-    ...placed('enemies', isAt('StagingArea')),
-    ...placed('locations', isAt('StagingArea')),
+    ...[...placed('enemies', isAt('StagingArea')), ...placed('locations', isAt('StagingArea'))].map((c) => ({
+      ...c,
+      stagingThreat: game.stagingThreats?.[c.id],
+    })),
     ...placed('objectives', isAt('StagingArea')),
     // a treachery shows in staging while it resolves, until it attaches or is discarded
     ...placed('treacheries', isAt('Unplaced')),

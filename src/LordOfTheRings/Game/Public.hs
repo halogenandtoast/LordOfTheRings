@@ -15,7 +15,8 @@ import LordOfTheRings.Prelude
 
 -- | The game as the players may see it: decks are hidden information, so only their
 -- sizes are sent. Stored games and exports keep everything. The quest tally is added
--- so the board shows the engine's totals, modifiers included, as are the hosts each
+-- so the board shows the engine's totals, modifiers included (and each staging card's
+-- part of the threat), as are the hosts each
 -- attachment in hand could go on, so dragging one only lights up those.
 publicGame :: Game -> Value
 publicGame = publicGameFor (const True)
@@ -30,6 +31,7 @@ publicGameFor seesHand g = hideDecks $ toJSON g
       Object
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)
         $ KeyMap.insert "stagingThreat" (toJSON $ runReadGame getStagingThreat g)
+        $ KeyMap.insert "stagingThreats" (toJSON $ mapFromList @(Map CardId Int) $ runReadGame getStagingThreats g)
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
