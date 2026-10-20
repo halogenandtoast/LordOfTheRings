@@ -23,24 +23,50 @@ const emit = defineEmits<{ view: [playerId: string] }>()
 </template>
 
 <style scoped>
+/* a notch cut out of the zone's top corner, the page showing through; the shown seat's
+   tab is the zone itself rising into it, so it reads as a folder tab */
 .zone-seats {
+  --cut: 6px;
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: -1px;
+  right: -1px;
   z-index: 2;
   display: flex;
+  align-items: flex-end;
   gap: 2px;
+  padding: 3px 3px 0;
+  background: var(--page-background);
+  border-radius: 0 6px 0 var(--cut);
 }
+/* the zone's edges round off into the cut */
+.zone-seats::before, .zone-seats::after {
+  content: '';
+  position: absolute;
+  width: var(--cut);
+  height: var(--cut);
+  background: radial-gradient(circle at 0 100%, transparent var(--cut), var(--page-background) calc(var(--cut) + 0.5px));
+}
+.zone-seats::before { top: 0; left: calc(-1 * var(--cut)); }
+.zone-seats::after { right: 0; bottom: calc(-1 * var(--cut)); }
 button {
-  padding: 1px 6px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--surface-1);
+  padding: 2px 8px;
+  margin-top: 3px;
+  border: 0;
+  border-radius: 5px 5px 0 0;
+  background: none;
   color: var(--text-muted);
   font: inherit;
   font-size: 0.65rem;
   cursor: pointer;
+  transition: margin-top 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
-button:hover { color: var(--text); }
-button.active { border-color: var(--line-strong); background: var(--surface-2); color: var(--text); }
+button:hover { color: var(--text); margin-top: 1px; }
+button.active {
+  margin-top: 0;
+  padding-bottom: 4px;
+  background: linear-gradient(var(--zone-bg), var(--zone-bg)) var(--page-background);
+  color: var(--text);
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }
 </style>

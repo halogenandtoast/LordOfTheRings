@@ -369,8 +369,8 @@ watch(question, (asked) => {
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
 .game > .scenario { background: var(--zone-scenario); }
 .game > .staging { background: var(--zone-staging); }
-.game > .threat-area { background: var(--zone-threat); }
-.game > .play-area { background: var(--zone-play); }
+.game > .threat-area { background: var(--zone-threat); --zone-bg: var(--zone-threat); }
+.game > .play-area { background: var(--zone-play); --zone-bg: var(--zone-play); }
 .band.seat { background: var(--zone-seat); }
 /* room for a card even when empty; border-box, so the padding and border count toward it */
 .game > .staging, .game > .threat-area, .game > .play-area {
