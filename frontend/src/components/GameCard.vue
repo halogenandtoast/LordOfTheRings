@@ -116,7 +116,7 @@ const toggleUnless = (attached: CardView) => {
       <span v-if="card.damage > 0" class="token damage">{{ card.damage }}</span>
     </div>
     <span v-if="card.stagingThreat !== undefined" class="pile-count staging-threat" :title="$t('game.threat', { value: card.stagingThreat })">
-      <span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />{{ card.stagingThreat }}
+      {{ card.stagingThreat }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />
     </span>
 
     <div v-if="debugging && card.target" class="debug" @click.stop>
