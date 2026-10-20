@@ -361,6 +361,7 @@ watch(question, (asked) => {
   padding: var(--gap) 4px;
   min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
 }
+.game > .staging :deep(.band-label), .game > .threat-area :deep(.band-label) { align-self: flex-start; }
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; background: var(--zone-play); }
 .hero-column {
   display: flex;
