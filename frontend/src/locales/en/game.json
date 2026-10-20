@@ -45,7 +45,8 @@
     "asked": "Being asked",
     "firstPlayer": "First player",
     "hand": "{count} in hand",
-    "split": "Split view"
+    "split": "Split view",
+    "collapse": "Back to one seat"
   },
   "noActiveLocation": "No active location",
   "bands": {

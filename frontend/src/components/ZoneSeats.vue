@@ -12,7 +12,7 @@ export const seatHue = (players: PlayerView[], playerId: string | null | undefin
 <script setup lang="ts">
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
-import { Columns2 } from 'lucide-vue-next'
+import { Columns2, FoldHorizontal } from 'lucide-vue-next'
 
 // A segmented switch over a zone's corner, for showing another seat's cards in just that
 // zone, floating in its top corner: a seat per segment, its first hero's face beside its name, and a thumb in the
@@ -73,11 +73,12 @@ watch([shown, () => props.players.length], place)
       class="split-toggle"
       :class="{ active: split }"
       :aria-pressed="split"
-      :title="$t('game.seats.split')"
-      :aria-label="$t('game.seats.split')"
+      :title="$t(split ? 'game.seats.collapse' : 'game.seats.split')"
+      :aria-label="$t(split ? 'game.seats.collapse' : 'game.seats.split')"
       @click="emit('split')"
     >
-      <Columns2 :size="16" />
+      <FoldHorizontal v-if="split" :size="16" />
+      <Columns2 v-else :size="16" />
     </button>
   </nav>
 </template>
