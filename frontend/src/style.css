@@ -1,7 +1,6 @@
 :root {
   /* shrinks with the screen, so a phone still fits a row of cards */
   --card-width: clamp(50px, min(12vw, 14vh), 100px);
-  --hero-card-width: clamp(58px, min(13.8vw, 16.1vh), 115px);
   --card-aspect: 0.715;
   --gap: 10px;
   /* how much of the pinned hand shows while it is closed */
