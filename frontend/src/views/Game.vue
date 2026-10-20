@@ -393,9 +393,6 @@ watch(question, (asked) => {
   background: rgb(0 0 0 / 0.22);
   box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.45);
 }
-/* a small seat is a narrow column of card art (see CardFaces), leaving the rest of the
-   row to the seat that is open */
-.game > :is(.threat-area, .play-area) :deep(.blob.small) { flex-grow: 0 !important; flex-basis: auto; }
 /* the label stays out to the left of the inset */
 .game > .play-area :deep(.band.heroes > .band-label) { left: calc(4px - 1.5rem); }
 .game > .play-area :deep(.band.in-play) { padding-left: 0; }

@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, useId, watch } from 'vue'
 import type { PlayerView } from '../types'
 
-// A zone as a blob per seat: yours first, then the others to its right, each a preview of
-// that seat. Clicking a small blob grows it to the big share, the rest sharing what is left;
-// that first click only picks the blob, so it never answers with a card it can barely show.
+// A zone as a blob per seat: yours first, then the others to its right. One seat is open
+// and takes the row; the rest are shrunk to a narrow column. Clicking a shrunk blob opens
+// it, and that first click only opens it, so it never answers with a card it can't show.
 const props = defineProps<{ players: PlayerView[]; viewing: string | null }>()
-
-// the big share by table size; the others split the rest evenly
-const bigShare: Record<number, number> = { 1: 100, 2: 75, 3: 64, 4: 52 }
 
 const seats = computed(() => {
   const mine = props.players.find((player) => player.playerId === props.viewing) ?? props.players[0]
@@ -17,16 +14,20 @@ const seats = computed(() => {
 const picked = ref<string | null>(null)
 watch(() => props.viewing, () => (picked.value = null))
 const big = computed(() => picked.value ?? seats.value[0]?.playerId)
+
+// Each blob morphs from where it was to where it lands, its contents fading across
+// (see the view transition styles below), where the browser can.
+const zone = useId()
 const pick = (event: MouseEvent, playerId: string) => {
   if (playerId === big.value) return
   event.stopPropagation()
   event.preventDefault()
-  picked.value = playerId
-}
-const share = (playerId: string) => {
-  const n = seats.value.length
-  const largest = bigShare[n] ?? 100 / n
-  return playerId === big.value ? largest : (100 - largest) / (n - 1)
+  const open = async () => {
+    picked.value = playerId
+    await nextTick()
+  }
+  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) void open()
+  else document.startViewTransition(open)
 }
 </script>
 
@@ -37,7 +38,7 @@ const share = (playerId: string) => {
       :key="player.playerId"
       class="blob"
       :class="{ small: player.playerId !== big }"
-      :style="{ flexGrow: share(player.playerId) }"
+      :style="{ viewTransitionName: `seat-${zone}-${i}` }"
       @click.capture="pick($event, player.playerId)"
     >
       <span v-if="i > 0" class="name">{{ player.name }}</span>
@@ -54,14 +55,17 @@ const share = (playerId: string) => {
 .blob {
   position: relative;
   display: flex;
-  flex: 0 1 0;
+  flex: 1 1 0;
   min-width: 0;
   overflow: hidden;
   border-radius: 6px;
   background: var(--zone-base);
-  /* eases in, no overshoot */
-  transition: flex-grow 0.32s cubic-bezier(0.4, 0.1, 0.2, 1);
+  view-transition-class: seat-blob;
 }
+/* as wide as what it shows, which is a narrow column */
+.blob.small { flex: 0 0 auto; cursor: pointer; }
+.blob.small :deep(*) { cursor: inherit; }
+.blob.small:hover { filter: brightness(1.15); }
 .name {
   position: absolute;
   top: var(--gap);
@@ -75,8 +79,20 @@ const share = (playerId: string) => {
   color: rgb(from var(--text) r g b / 0.7);
   pointer-events: none;
 }
-.blob.small { cursor: pointer; }
-.blob.small :deep(*) { cursor: inherit; }
-.blob.small:hover { filter: brightness(1.15); }
-@media (prefers-reduced-motion: reduce) { .blob { transition: none; } }
+/* the blob's box moves and resizes; its contents are cropped to it, never stretched, the
+   old fading out as the new fades in */
+:global(::view-transition-group(.seat-blob)) {
+  overflow: clip;
+  border-radius: 6px;
+  animation-duration: 0.36s;
+  animation-timing-function: cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+:global(::view-transition-old(.seat-blob)),
+:global(::view-transition-new(.seat-blob)) {
+  width: 100%;
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+  animation-duration: 0.36s;
+}
 </style>
