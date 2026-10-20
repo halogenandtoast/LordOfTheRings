@@ -2,9 +2,11 @@
 import { computed } from 'vue'
 import GameCard from './GameCard.vue'
 import type { ChoiceView, QuestionView } from '../types'
+import { useServerText } from '../i18n'
 
 const { question } = defineProps<{ question: QuestionView & { searched: NonNullable<QuestionView['searched']> } }>()
 const emit = defineEmits<{ choose: [index: number] }>()
+const tr = useServerText()
 
 const choosable = computed(() => new Set(question.choices.map((c) => c.targetId).filter((id) => id !== null)))
 const labels = computed<ChoiceView[]>(() => question.choices.filter((c) => c.targetId === null))
@@ -12,7 +14,7 @@ const labels = computed<ChoiceView[]>(() => question.choices.filter((c) => c.tar
 
 <template>
   <section class="search-panel" :aria-label="$t('game.search.label')">
-    <header>{{ question.prompt }} <span class="count">{{ $t('game.search.searched', { count: question.searched.length }) }}</span></header>
+    <header>{{ tr(question.prompt) }} <span class="count">{{ $t('game.search.searched', { count: question.searched.length }) }}</span></header>
     <div class="cards">
       <GameCard
         v-for="card in question.searched"
@@ -25,7 +27,7 @@ const labels = computed<ChoiceView[]>(() => question.choices.filter((c) => c.tar
     </div>
     <div v-if="labels.length" class="options">
       <button v-for="choice in labels" :key="choice.index" type="button" @click="emit('choose', choice.index)">
-        {{ choice.label }}
+        {{ tr(choice.label) }}
       </button>
     </div>
   </section>
