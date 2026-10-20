@@ -34,30 +34,15 @@ const emit = defineEmits<{ view: [playerId: string] }>()
 </template>
 
 <style scoped>
-/* a notch cut out of the zone's top corner, the page showing through; the shown seat's
-   tab is the zone itself rising into it, so it reads as a folder tab */
+/* a row of folder tabs of its own, along the top of the zone (which leaves room for it,
+   see Game.vue); the shown seat's tab is in the zone's colour, so it joins the zone */
 .zone-seats {
-  --cut: 6px;
   position: absolute;
-  top: -1px;
-  right: -1px;
-  z-index: 2;
+  bottom: 100%;
+  right: 0;
   display: flex;
   align-items: flex-end;
-  padding: 3px 3px 0;
-  background: var(--page-background);
-  border-radius: 0 6px 0 var(--cut);
 }
-/* the zone's edges round off into the cut */
-.zone-seats::before, .zone-seats::after {
-  content: '';
-  position: absolute;
-  width: var(--cut);
-  height: var(--cut);
-  background: radial-gradient(circle at 0 100%, transparent var(--cut), var(--page-background) calc(var(--cut) + 0.5px));
-}
-.zone-seats::before { top: 0; left: calc(-1 * var(--cut)); }
-.zone-seats::after { right: 0; bottom: calc(-1 * var(--cut)); }
 button {
   /* the zone's colour turned to this seat's hue (see seatHue), stronger while it waits */
   --seat-zone: oklch(from var(--zone-base) l c calc(h + var(--seat-hue)));
@@ -71,6 +56,7 @@ button {
   color: var(--text-muted);
   font: inherit;
   font-size: 0.65rem;
+  line-height: 13px;
   cursor: pointer;
   transition: margin-top 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
