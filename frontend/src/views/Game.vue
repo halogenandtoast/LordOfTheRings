@@ -397,22 +397,22 @@ watch(question, (asked) => {
   background: rgb(0 0 0 / 0.22);
   box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.45);
 }
-/* a small seat's heroes, as on the deck tiles (see DeckTile) */
+/* a small seat's heroes, as on the deck tiles (see DeckTile) but stacked, in a narrow
+   column that leaves the rest of the row to the seat that is open */
+.game > .play-area :deep(.blob.small) { flex-grow: 0 !important; flex-basis: auto; }
 .hero-faces {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   align-self: center;
-  width: calc(100% - var(--gap) * 2);
-  aspect-ratio: 2 / 1;
+  width: 96px;
   margin: var(--gap);
   border-radius: 6px;
   overflow: hidden;
   background: rgb(0 0 0 / 0.22);
 }
 /* the art sits in the top half of a card, right of the stats */
-.hero-face { background-size: 210% auto; background-position: 62% 14%; }
-.hero-face + .hero-face { box-shadow: -1px 0 0 rgb(0 0 0 / 0.5); }
+.hero-face { aspect-ratio: 2 / 1; background-size: 140% auto; background-position: 70% 18%; }
+.hero-face + .hero-face { box-shadow: 0 -1px 0 rgb(0 0 0 / 0.5); }
 /* the label stays out to the left of the inset */
 .game > .play-area :deep(.band.heroes > .band-label) { left: calc(4px - 1.5rem); }
 .game > .play-area :deep(.band.in-play) { padding-left: 0; }
