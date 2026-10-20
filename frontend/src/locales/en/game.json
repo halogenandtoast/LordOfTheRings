@@ -27,6 +27,11 @@
     "toggleSidebar": "Toggle sidebar",
     "spectating": "Spectating"
   },
+  "seats": {
+    "view": "Look at {name}'s board",
+    "firstPlayer": "First player",
+    "cards": "{hand} in hand · {deck} in deck"
+  },
   "bands": {
     "staging": "staging",
     "threatArea": "threat area",
