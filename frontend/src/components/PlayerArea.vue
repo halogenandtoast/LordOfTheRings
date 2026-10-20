@@ -52,6 +52,8 @@ const { active: debugging, send } = useDebug()
 .hand, .piles { display: flex; gap: var(--gap); }
 .deck { display: flex; flex-direction: column; gap: 4px; }
 .hand { flex: 1; flex-wrap: wrap; justify-content: flex-start; }
+/* level with the deck and discard, not their count pills: a pill's height and the stack's gap */
+.player .hand { margin-bottom: calc(0.75rem + 8px + 5px); }
 /* docked under the board instead (see Game.vue) */
 @media (width < 1100px), (height < 500px) {
   .player .question { display: none; }
