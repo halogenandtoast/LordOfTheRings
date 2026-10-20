@@ -35,6 +35,8 @@ data CardDef = CardDef
   , cdKeywords :: Set Keyword
   , cdEncounterSet :: Maybe EncounterSet
   , cdEncounterSetQuantity :: Maybe Int
+  , cdEasyModeQuantity :: Maybe Int
+  -- ^ the copies kept in easy mode, when it keeps fewer than all of them
   , cdDoubleSided :: Bool
   , cdShadowEffect :: Bool
   , -- | revealing it has a When Revealed effect, which the lead resolves by clicking it
@@ -80,6 +82,7 @@ emptyCardDef cCode name cType =
     , cdKeywords = mempty
     , cdEncounterSet = Nothing
     , cdEncounterSetQuantity = Nothing
+    , cdEasyModeQuantity = Nothing
     , cdDoubleSided = False
     , cdShadowEffect = False
     , cdWhenRevealed = False

@@ -36,6 +36,9 @@ TYPE_MODULES = {
 
 TEXT_KEYWORDS = ("Sentinel", "Ranged", "Restricted", "Surge", "Guarded")
 
+# copies kept in easy mode, by pack name and card number; see tools/extract-easy-mode.py
+EASY_MODE = json.loads((Path(__file__).resolve().parent / "easy-mode.json").read_text())
+
 
 def ascii_fold(s):
     return unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
@@ -151,6 +154,8 @@ def definition(card):
         updates.append(f"cdVictoryPoints = Just {victory}")
     if card.get("shadow_text") or "Shadow:" in (card.get("text") or ""):
         updates.append("cdShadowEffect = True")
+    if (kept := EASY_MODE.get(card.get("pack_name"), {}).get(str(card.get("position")))) is not None:
+        updates.append(f"cdEasyModeQuantity = Just {kept}")
     expr = base(card)
     name = ident(card)
     if not updates:

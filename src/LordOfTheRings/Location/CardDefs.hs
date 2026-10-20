@@ -59,6 +59,7 @@ necromancersPass :: CardDef
 necromancersPass =
   (location "01094" "Necromancer's Pass" DolGuldurOrcs 2 3 2)
     { cdCardTraits = setFromList [DolGuldur, Stronghold]
+    , cdEasyModeQuantity = Just 1
     }
 
 enchantedStream :: CardDef
@@ -103,4 +104,5 @@ gladdenFields =
   (location "01114" "Gladden Fields" JourneyAlongTheAnduin 3 3 3)
     { cdCardTraits = setFromList [Marshland]
     , cdVictoryPoints = Just 3
+    , cdEasyModeQuantity = Just 1
     }

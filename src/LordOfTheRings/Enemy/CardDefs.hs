@@ -52,6 +52,7 @@ hummerhorns =
     { cdShadowEffect = True
     , cdCardTraits = setFromList [Creature, Insect]
     , cdVictoryPoints = Just 5
+    , cdEasyModeQuantity = Just 0
     }
 
 ungoliantsSpawn :: CardDef
@@ -75,6 +76,7 @@ hillTroll =
   (enemy "01082" "Hill Troll" Wilderlands 2 30 1 6 3 9)
     { cdCardTraits = setFromList [Troll]
     , cdVictoryPoints = Just 4
+    , cdEasyModeQuantity = Just 1
     }
 
 goblinSniper :: CardDef
@@ -88,6 +90,7 @@ marshAdder =
   (enemy "01084" "Marsh Adder" Wilderlands 1 40 3 4 1 7)
     { cdCardTraits = setFromList [Creature]
     , cdVictoryPoints = Just 3
+    , cdEasyModeQuantity = Just 0
     }
 
 wargs :: CardDef
@@ -110,12 +113,14 @@ chieftanUfthak =
   (enemy "01090" "Chieftan Ufthak" DolGuldurOrcs 1 35 2 3 3 6)
     { cdCardTraits = setFromList [DolGuldur, Orc]
     , cdVictoryPoints = Just 4
+    , cdEasyModeQuantity = Just 0
     }
 
 dolGuldurBeastmaster :: CardDef
 dolGuldurBeastmaster =
   (enemy "01091" "Dol Guldur Beastmaster" DolGuldurOrcs 2 35 2 3 1 5)
     { cdCardTraits = setFromList [DolGuldur, Orc]
+    , cdEasyModeQuantity = Just 1
     }
 
 forestSpider :: CardDef
@@ -143,6 +148,7 @@ dungeonJailor =
   (enemy "01101" "Dungeon Jailor" EscapeFromDolGuldur 2 38 1 2 3 5)
     { cdCardTraits = setFromList [DolGuldur, Orc]
     , cdVictoryPoints = Just 5
+    , cdEasyModeQuantity = Just 0
     }
 
 nazgulOfDolGuldur :: CardDef
@@ -172,6 +178,7 @@ easternCrows =
     { cdShadowEffect = True
     , cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
     }
 
 ungoliantsSwarm :: CardDef
