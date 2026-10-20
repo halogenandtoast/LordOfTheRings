@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^13.9.0",
+    "lucide-vue-next": "^1.0.0",
     "vue": "^3.5.13",
     "vue-i18n": "^11.4.16",
     "vue-router": "^4.5.1"
