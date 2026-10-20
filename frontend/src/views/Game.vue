@@ -385,8 +385,8 @@ watch(question, (asked) => {
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
 .game > :is(.staging, .threat-area, .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
-/* a row above for its seat tabs, 22px tall (see ZoneSeats), the usual gap over them */
-.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 22px; border-top-right-radius: 0; }
+/* room above for its seat switch, 24px tall (see ZoneSeats), the usual gap over it */
+.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 24px; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* heroes as wide as they need, the rest of the play area after them */

@@ -1,8 +1,8 @@
 <script lang="ts">
 import type { PlayerView } from '../types'
 
-/** How far round the hue wheel a seat's zones are turned, so each seat's tab has its own
-    shade of the zone's colour: 0, then 18° either side, then 36°. */
+/** How far round the hue wheel a seat's colour is turned from the zone's, so each seat has
+    its own shade of it: 0, then 18° either side, then 36°. */
 export const seatHue = (players: PlayerView[], playerId: string | null | undefined) => {
   const seat = Math.max(0, players.findIndex((player) => player.playerId === playerId))
   return Math.ceil(seat / 2) * 18 * (seat % 2 ? 1 : -1)
@@ -10,71 +10,120 @@ export const seatHue = (players: PlayerView[], playerId: string | null | undefin
 </script>
 
 <script setup lang="ts">
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 
-// Small tabs in a zone's corner, for showing another seat's cards in just that zone.
-defineProps<{ players: PlayerView[]; viewing: string | null }>()
+// A segmented switch over a zone's corner, for showing another seat's cards in just that
+// zone: a seat per segment, its first hero's face beside its name, and a thumb in the
+// seat's shade that glides under the one shown.
+const props = defineProps<{ players: PlayerView[]; viewing: string | null }>()
 const emit = defineEmits<{ view: [playerId: string] }>()
+
+const face = (player: PlayerView) => player.inPlay.find((card) => card.type === 'Hero')?.code
+
+const segments: HTMLButtonElement[] = []
+const thumb = ref<{ left: number; width: number } | null>(null)
+const shown = computed(() => props.players.findIndex((player) => player.playerId === props.viewing))
+const place = async () => {
+  await nextTick()
+  const segment = segments[shown.value]
+  thumb.value = segment ? { left: segment.offsetLeft, width: segment.offsetWidth } : null
+}
+onMounted(place)
+watch([shown, () => props.players.length], place)
 </script>
 
 <template>
   <nav class="zone-seats" role="tablist" :aria-label="$t('game.seats.label')">
+    <span
+      v-if="thumb"
+      class="thumb"
+      :style="{
+        '--seat-hue': seatHue(players, viewing),
+        translate: `${thumb.left}px 0`,
+        width: `${thumb.width}px`,
+      }"
+    />
     <button
-      v-for="player in players"
+      v-for="(player, i) in players"
       :key="player.playerId"
+      :ref="(el) => (segments[i] = el as HTMLButtonElement)"
       type="button"
       role="tab"
       :class="{ active: player.playerId === viewing }"
-      :style="{ '--seat-hue': seatHue(players, player.playerId) }"
       :aria-selected="player.playerId === viewing"
       @click="emit('view', player.playerId)"
     >
+      <span
+        class="avatar"
+        :style="{
+          '--seat-hue': seatHue(players, player.playerId),
+          backgroundImage: face(player) ? `url(/images/cards/${face(player)}.jpg)` : undefined,
+        }"
+      />
       {{ player.name }}
     </button>
   </nav>
 </template>
 
 <style scoped>
-/* a row of folder tabs of its own, along the top of the zone (which leaves room for it,
-   see Game.vue); the shown seat's tab is in the zone's colour, so it joins the zone */
 .zone-seats {
   position: absolute;
-  bottom: 100%;
-  right: 0;
+  right: 4px;
+  bottom: calc(100% + 3px);
+  z-index: 2;
   display: flex;
-  align-items: flex-end;
+  padding: 3px;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.35);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+}
+/* the zone's colour turned to a seat's hue (see seatHue), lifted to read on the dark */
+.thumb, .avatar { --seat: oklch(from var(--zone-base) 0.62 calc(c * 0.9) calc(h + var(--seat-hue)) / 1); }
+.thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  border-radius: 999px;
+  background: rgb(from var(--seat) r g b / 0.32);
+  box-shadow: inset 0 0 0 1px rgb(from var(--seat) r g b / 0.5);
+  transition: translate 0.22s cubic-bezier(0.3, 0.7, 0.4, 1), width 0.22s cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 button {
-  /* the zone's colour turned to this seat's hue (see seatHue) */
-  --seat: oklch(from var(--zone-base) 0.5 calc(c * 0.8) calc(h + var(--seat-hue)));
-  /* straight on the left, the top right corner cut off in a long, gentle slope */
-  --slope: 14px;
-  padding: 3px calc(6px + var(--slope)) 3px 9px;
-  margin-top: 2px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 18px;
+  margin: 0;
+  padding: 0 9px 0 2px;
   border: 0;
-  clip-path: polygon(0 0, calc(100% - var(--slope)) 0, 100% 100%, 0 100%);
-  background: rgb(from var(--seat) r g b / 0.28);
-  color: rgb(from var(--text) r g b / 0.7);
+  border-radius: 999px;
+  background: none;
+  color: rgb(from var(--text) r g b / 0.6);
   font: inherit;
   font-size: 0.72rem;
-  font-weight: 500;
-  line-height: 14px;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: margin-top 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: color 0.15s;
 }
-/* each tab tucks its straight edge over the slope of the one before */
-button + button { margin-left: calc(-1 * var(--slope) / 2); }
-button:hover { color: var(--text); background: rgb(from var(--seat) r g b / 0.4); margin-top: 0; }
-button:focus-visible { outline: 1px solid var(--text); outline-offset: -3px; }
-/* the zone's own colour, so the tab joins the zone */
-button.active {
-  position: relative;
-  margin-top: 0;
-  padding-bottom: 5px;
-  background: linear-gradient(var(--zone-base), var(--zone-base)) var(--page-background);
-  color: var(--text);
-  font-weight: 600;
-  cursor: default;
+button:hover, button.active { color: var(--text); }
+button.active { cursor: default; }
+button:focus-visible { outline: 1px solid var(--text); outline-offset: 1px; }
+/* the face in the hero's art, high on the card and right of the stats */
+.avatar {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: 64% 4% / 300% auto no-repeat var(--seat);
+  box-shadow: 0 0 0 1.5px var(--seat);
+  filter: saturate(0.7);
+  transition: filter 0.15s;
 }
-@media (prefers-reduced-motion: reduce) { button { transition: none; } }
+button:hover .avatar, button.active .avatar { filter: none; }
+@media (prefers-reduced-motion: reduce) { .thumb { transition: none; } }
 </style>
