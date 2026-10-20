@@ -32,6 +32,7 @@ User sql=users
   username Text
   email Text
   passwordDigest Text
+  admin Bool default=false
   createdAt UTCTime
   UniqueUsername username
   UniqueEmail email
@@ -49,6 +50,8 @@ LotrGame sql=lotr_games
   -- | what reset deals again: the scenario, and the deck when it was not the starter
   scenario Text default='passage-through-mirkwood'
   deck Value Maybe
+  -- | whether anyone may watch, not only the owner and admins
+  allowSpectators Bool default=false
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show

@@ -14,6 +14,7 @@ import Data.Aeson (Result (..))
 import Data.Aeson.Diff qualified as Diff
 import Data.Map.Strict qualified as Map
 import Data.Char (isAlphaNum)
+import Data.Time.Clock (addUTCTime, nominalDay)
 import Data.Text qualified as T
 import Database.Persist.Postgresql
 import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
@@ -61,11 +62,15 @@ mkYesod
 /api ApiP:
   /games GamesR GET POST
   /games/#LotrGameId GameR GET POST DELETE
+  /games/#LotrGameId/spectate SpectateR GET
+  /games/#LotrGameId/spectators SpectatorsR PUT
   /games/#LotrGameId/undo UndoR POST
   /games/#LotrGameId/reset ResetR POST
   /games/#LotrGameId/debug DebugR POST
   /games/#LotrGameId/export ExportR GET
   /games/#LotrGameId/file-bug BugR POST
+  /spectatable SpectatableR GET
+  /admin AdminR GET
   /import ImportR POST
   /cards CardsR GET
   /decks DecksR GET POST
@@ -88,6 +93,7 @@ data GameData = GameData
   , game :: Maybe Value
   , playerId :: Maybe PlayerId
   , canUndo :: Bool
+  , allowSpectators :: Bool
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
@@ -106,12 +112,21 @@ data GameSummary = GameSummary
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
--- | The signed-in user, or 401.
-requireUserId :: Handler UserId
-requireUserId = do
+-- | The signed-in user, if there is one.
+lookupUserId :: Handler (Maybe UserId)
+lookupUserId = do
   secret <- getsYesod (.jwtSecret)
   subject <- liftIO . fmap join . traverse (verifyToken secret) =<< lookupToken
-  maybe (sendResponseStatus status401 (ikey "error.signInFirst")) pure $ toSqlKey <$> (readMaybe . unpack =<< subject)
+  pure $ toSqlKey <$> (readMaybe . unpack =<< subject)
+
+-- | The signed-in user, or 401.
+requireUserId :: Handler UserId
+requireUserId = maybe (sendResponseStatus status401 (ikey "error.signInFirst")) pure =<< lookupUserId
+
+requireAdmin :: Handler ()
+requireAdmin = do
+  user <- runDB . get404 =<< requireUserId
+  unless user.userAdmin $ permissionDenied "admins only"
 
 -- | A game the signed-in user owns, or 404: other people's games do not exist for you.
 requireOwnedGame :: LotrGameId -> Handler LotrGame
@@ -121,7 +136,16 @@ requireOwnedGame gid = do
   unless (row.lotrGameUserId == userId) notFound
   pure row
 
-data UserView = UserView {id :: UserId, username :: Text, email :: Text}
+-- | A game you may watch: one open to spectators, your own, or any game for an admin.
+requireWatchableGame :: LotrGameId -> Handler LotrGame
+requireWatchableGame gid = do
+  row <- runDB $ get404 gid
+  userId <- lookupUserId
+  admin <- maybe (pure False) (fmap (maybe False (.userAdmin)) . runDB . get) userId
+  unless (row.lotrGameAllowSpectators || userId == Just row.lotrGameUserId || admin) notFound
+  pure row
+
+data UserView = UserView {id :: UserId, username :: Text, email :: Text, admin :: Bool}
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
@@ -133,7 +157,10 @@ newSession :: Entity User -> Handler Value
 newSession (Entity userId user) = do
   secret <- getsYesod (.jwtSecret)
   token <- liftIO $ signToken secret (tshow $ fromSqlKey userId)
-  pure $ toJSON $ Session token (UserView userId user.userUsername user.userEmail)
+  pure $ toJSON $ Session token (userView userId user)
+
+userView :: UserId -> User -> UserView
+userView userId user = UserView userId user.userUsername user.userEmail user.userAdmin
 
 data Registration = Registration {username :: Text, email :: Text, password :: Text}
   deriving stock (Generic)
@@ -150,7 +177,7 @@ postRegisterR = do
   when taken $ sendResponseStatus status409 (ikey "error.alreadyRegistered")
   digest <- maybe (error "bcrypt failed") pure =<< liftIO (hashPassword reg.password)
   now <- liftIO getCurrentTime
-  let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userCreatedAt = now}
+  let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userAdmin = False, userCreatedAt = now}
   userId <- runDB $ insert user
   newSession (Entity userId user)
 
@@ -172,7 +199,7 @@ getWhoAmIR :: Handler Value
 getWhoAmIR = do
   userId <- requireUserId
   user <- runDB $ get404 userId
-  pure $ toJSON $ UserView userId user.userUsername user.userEmail
+  pure $ toJSON $ userView userId user
 
 -- | Every connected client of a game listens on that game's channel.
 gameChannel :: LotrGameId -> Handler (TChan LByteString)
@@ -226,7 +253,7 @@ currentState :: GameEnv -> IO (Game, [Message], StdGen)
 currentState env = (,,) <$> runGameT env getGame <*> runGameT env peekQueue <*> readIORef (gameRandomGen env)
 
 gameData :: LotrGame -> Game -> GameData
-gameData row g = GameData True (Just $ publicGame g) (Just g.activePlayer) (row.lotrGameStep > 0)
+gameData row g = GameData True (Just $ publicGame g) (Just g.activePlayer) (row.lotrGameStep > 0) row.lotrGameAllowSpectators
 
 broadcast :: LotrGameId -> LotrGame -> Game -> Handler ()
 broadcast gid row g = do
@@ -305,6 +332,7 @@ postGamesR = do
           , lotrGameStep = 0
           , lotrGameScenario = scenarioId
           , lotrGameDeck = toJSON <$> deckList
+          , lotrGameAllowSpectators = False
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
@@ -315,12 +343,62 @@ handleSocket chan = do
   readChannel <- atomically $ dupTChan chan
   forever $ atomically (readTChan readChannel) >>= sendTextData
 
-getGameR :: LotrGameId -> Handler Value
-getGameR gid = do
-  row <- requireOwnedGame gid
+-- | The game as it stands, or its updates as they come over a websocket.
+serveGame :: LotrGameId -> LotrGame -> Handler Value
+serveGame gid row = do
   webSockets . handleSocket =<< gameChannel gid
   g <- decodeOrFail "game" row.lotrGameCurrentData
   pure $ toJSON $ gameData row g
+
+getGameR :: LotrGameId -> Handler Value
+getGameR gid = serveGame gid =<< requireOwnedGame gid
+
+-- | The same game and updates for someone watching. The socket only sends, and
+-- answering needs the owner, so watching cannot change the game.
+getSpectateR :: LotrGameId -> Handler Value
+getSpectateR gid = serveGame gid =<< requireWatchableGame gid
+
+newtype SpectatorSetting = SpectatorSetting {allowSpectators :: Bool}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+-- | Open a game to spectators or close it. Someone already watching keeps watching
+-- until they leave.
+putSpectatorsR :: LotrGameId -> Handler ()
+putSpectatorsR gid = do
+  _ <- requireOwnedGame gid
+  setting <- requireCheckJsonBody @_ @SpectatorSetting
+  row <- runDB $ updateGet gid [LotrGameAllowSpectators =. setting.allowSpectators]
+  broadcast gid row =<< decodeOrFail "game" row.lotrGameCurrentData
+
+-- | Games in progress open to spectators, other than your own.
+getSpectatableR :: Handler Value
+getSpectatableR = do
+  userId <- lookupUserId
+  games <- runDB $ selectList ((LotrGameAllowSpectators ==. True) : maybe [] (\u -> [LotrGameUserId !=. u]) userId) [Desc LotrGameUpdatedAt, LimitTo 50]
+  pure $ toJSON $ filter (isNothing . (.outcome)) $ mapMaybe summary games
+
+data AdminDashboard = AdminDashboard
+  { users :: Int
+  , activeUsers :: Int
+  , games :: Int
+  , recentGames :: [GameSummary]
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+-- | Counts of users and games, active meaning a game played in the last two weeks, and
+-- the games played most recently.
+getAdminR :: Handler Value
+getAdminR = do
+  requireAdmin
+  since <- addUTCTime (-14 * nominalDay) <$> liftIO getCurrentTime
+  runDB do
+    users <- Database.Persist.Postgresql.count ([] :: [Filter User])
+    games <- Database.Persist.Postgresql.count ([] :: [Filter LotrGame])
+    active <- rawSql "SELECT COUNT(DISTINCT user_id) FROM lotr_games WHERE updated_at >= ?" [toPersistValue since]
+    recent <- selectList [] [Desc LotrGameUpdatedAt, LimitTo 20]
+    pure $ toJSON AdminDashboard {users, activeUsers = sum (map unSingle active), games, recentGames = mapMaybe summary recent}
 
 data Answer = Answer
   { choice :: Int
@@ -568,6 +646,7 @@ postImportR = do
           , lotrGameStep = exported.step
           , lotrGameScenario = unScenarioId $ toId imported.scenario
           , lotrGameDeck = Nothing
+          , lotrGameAllowSpectators = False
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
