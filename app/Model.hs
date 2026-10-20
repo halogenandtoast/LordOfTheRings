@@ -33,6 +33,8 @@ User sql=users
   email Text
   passwordDigest Text
   admin Bool default=false
+  -- | what "allow spectators" starts as when making a game
+  allowSpectatorsByDefault Bool default=false
   createdAt UTCTime
   UniqueUsername username
   UniqueEmail email
@@ -50,7 +52,7 @@ LotrGame sql=lotr_games
   -- | what reset deals again: the scenario, and the deck when it was not the starter
   scenario Text default='passage-through-mirkwood'
   deck Value Maybe
-  -- | whether anyone may watch, not only the owner and admins
+  -- | whether anyone may watch, not only the owner and admins; chosen when the game is made
   allowSpectators Bool default=false
   createdAt UTCTime
   updatedAt UTCTime

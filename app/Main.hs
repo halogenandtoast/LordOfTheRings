@@ -63,7 +63,6 @@ mkYesod
   /games GamesR GET POST
   /games/#LotrGameId GameR GET POST DELETE
   /games/#LotrGameId/spectate SpectateR GET
-  /games/#LotrGameId/spectators SpectatorsR PUT
   /games/#LotrGameId/undo UndoR POST
   /games/#LotrGameId/reset ResetR POST
   /games/#LotrGameId/debug DebugR POST
@@ -78,6 +77,7 @@ mkYesod
   /register RegisterR POST
   /authenticate AuthenticateR POST
   /whoami WhoAmIR GET
+  /settings SettingsR PUT
 |]
 
 -- | The API authenticates with tokens, so there is no cookie session.
@@ -93,7 +93,6 @@ data GameData = GameData
   , game :: Maybe Value
   , playerId :: Maybe PlayerId
   , canUndo :: Bool
-  , allowSpectators :: Bool
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
@@ -145,7 +144,13 @@ requireWatchableGame gid = do
   unless (row.lotrGameAllowSpectators || userId == Just row.lotrGameUserId || admin) notFound
   pure row
 
-data UserView = UserView {id :: UserId, username :: Text, email :: Text, admin :: Bool}
+data UserView = UserView
+  { id :: UserId
+  , username :: Text
+  , email :: Text
+  , admin :: Bool
+  , allowSpectatorsByDefault :: Bool
+  }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
@@ -160,7 +165,7 @@ newSession (Entity userId user) = do
   pure $ toJSON $ Session token (userView userId user)
 
 userView :: UserId -> User -> UserView
-userView userId user = UserView userId user.userUsername user.userEmail user.userAdmin
+userView userId user = UserView userId user.userUsername user.userEmail user.userAdmin user.userAllowSpectatorsByDefault
 
 data Registration = Registration {username :: Text, email :: Text, password :: Text}
   deriving stock (Generic)
@@ -177,7 +182,7 @@ postRegisterR = do
   when taken $ sendResponseStatus status409 (ikey "error.alreadyRegistered")
   digest <- maybe (error "bcrypt failed") pure =<< liftIO (hashPassword reg.password)
   now <- liftIO getCurrentTime
-  let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userAdmin = False, userCreatedAt = now}
+  let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userAdmin = False, userAllowSpectatorsByDefault = False, userCreatedAt = now}
   userId <- runDB $ insert user
   newSession (Entity userId user)
 
@@ -199,6 +204,17 @@ getWhoAmIR :: Handler Value
 getWhoAmIR = do
   userId <- requireUserId
   user <- runDB $ get404 userId
+  pure $ toJSON $ userView userId user
+
+newtype Settings = Settings {allowSpectatorsByDefault :: Bool}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+putSettingsR :: Handler Value
+putSettingsR = do
+  userId <- requireUserId
+  settings <- requireCheckJsonBody @_ @Settings
+  user <- runDB $ updateGet userId [UserAllowSpectatorsByDefault =. settings.allowSpectatorsByDefault]
   pure $ toJSON $ userView userId user
 
 -- | Every connected client of a game listens on that game's channel.
@@ -253,7 +269,7 @@ currentState :: GameEnv -> IO (Game, [Message], StdGen)
 currentState env = (,,) <$> runGameT env getGame <*> runGameT env peekQueue <*> readIORef (gameRandomGen env)
 
 gameData :: LotrGame -> Game -> GameData
-gameData row g = GameData True (Just $ publicGame g) (Just g.activePlayer) (row.lotrGameStep > 0) row.lotrGameAllowSpectators
+gameData row g = GameData True (Just $ publicGame g) (Just g.activePlayer) (row.lotrGameStep > 0)
 
 broadcast :: LotrGameId -> LotrGame -> Game -> Handler ()
 broadcast gid row g = do
@@ -288,7 +304,13 @@ data DeckChoice = StarterDeck Text | ImportedDeck LotrDeckId
 instance FromJSON DeckChoice where
   parseJSON = withObject "DeckChoice" \o -> (StarterDeck <$> o .: "starter") <|> (ImportedDeck <$> o .: "deckId")
 
-data NewGame = NewGame {name :: Text, seed :: Maybe Int, scenario :: Maybe Text, deck :: Maybe DeckChoice}
+data NewGame = NewGame
+  { name :: Text
+  , seed :: Maybe Int
+  , scenario :: Maybe Text
+  , deck :: Maybe DeckChoice
+  , allowSpectators :: Maybe Bool
+  }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
@@ -332,7 +354,7 @@ postGamesR = do
           , lotrGameStep = 0
           , lotrGameScenario = scenarioId
           , lotrGameDeck = toJSON <$> deckList
-          , lotrGameAllowSpectators = False
+          , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
@@ -357,19 +379,6 @@ getGameR gid = serveGame gid =<< requireOwnedGame gid
 -- answering needs the owner, so watching cannot change the game.
 getSpectateR :: LotrGameId -> Handler Value
 getSpectateR gid = serveGame gid =<< requireWatchableGame gid
-
-newtype SpectatorSetting = SpectatorSetting {allowSpectators :: Bool}
-  deriving stock (Generic)
-  deriving anyclass (FromJSON)
-
--- | Open a game to spectators or close it. Someone already watching keeps watching
--- until they leave.
-putSpectatorsR :: LotrGameId -> Handler ()
-putSpectatorsR gid = do
-  _ <- requireOwnedGame gid
-  setting <- requireCheckJsonBody @_ @SpectatorSetting
-  row <- runDB $ updateGet gid [LotrGameAllowSpectators =. setting.allowSpectators]
-  broadcast gid row =<< decodeOrFail "game" row.lotrGameCurrentData
 
 -- | Games in progress open to spectators, other than your own.
 getSpectatableR :: Handler Value
