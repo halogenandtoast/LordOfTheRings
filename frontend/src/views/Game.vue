@@ -16,6 +16,7 @@ import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import SeatTabs from '../components/SeatTabs.vue'
 import SeatBlobs from '../components/SeatBlobs.vue'
+import CardFaces from '../components/CardFaces.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
@@ -213,8 +214,11 @@ watch(question, (asked) => {
         />
 
         <!-- in front of the player, as engaged enemies sit on the table -->
-        <SeatBlobs v-slot="{ player }" class="threat-area" :players="players" :viewing="you?.playerId ?? null">
+        <SeatBlobs v-slot="{ player, small }" class="threat-area" :players="players" :viewing="you?.playerId ?? null">
+          <!-- shrunk to the art of the enemies engaged with the seat, stacked -->
+          <CardFaces v-if="small" :cards="player.engaged" />
           <CardBand
+            v-else
             :label="$t('game.bands.threatArea')"
             :cards="player.engaged"
             :choices="choices"
@@ -230,16 +234,8 @@ watch(question, (asked) => {
           :players="players"
           :viewing="you?.playerId ?? null"
         >
-          <!-- shrunk to a seat's heroes, their art side by side as on the deck tiles -->
-          <span v-if="small" class="hero-faces">
-            <span
-              v-for="hero in player.inPlay.filter((card) => card.type === 'Hero')"
-              :key="hero.id"
-              class="hero-face"
-              :title="hero.name"
-              :style="{ backgroundImage: `url(/images/cards/${hero.code}.jpg)` }"
-            />
-          </span>
+          <!-- shrunk to a seat's heroes, their art stacked -->
+          <CardFaces v-if="small" :cards="player.inPlay.filter((card) => card.type === 'Hero')" />
           <!-- the seat's heroes always on the left, what else it has in play after them -->
           <CardBand
             v-else
@@ -397,22 +393,9 @@ watch(question, (asked) => {
   background: rgb(0 0 0 / 0.22);
   box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.45);
 }
-/* a small seat's heroes, as on the deck tiles (see DeckTile) but stacked, in a narrow
-   column that leaves the rest of the row to the seat that is open */
-.game > .play-area :deep(.blob.small) { flex-grow: 0 !important; flex-basis: auto; }
-.hero-faces {
-  display: flex;
-  flex-direction: column;
-  align-self: center;
-  width: 96px;
-  margin: var(--gap);
-  border-radius: 6px;
-  overflow: hidden;
-  background: rgb(0 0 0 / 0.22);
-}
-/* the art sits in the top half of a card, right of the stats */
-.hero-face { aspect-ratio: 2 / 1; background-size: 140% auto; background-position: 70% 18%; }
-.hero-face + .hero-face { box-shadow: 0 -1px 0 rgb(0 0 0 / 0.5); }
+/* a small seat is a narrow column of card art (see CardFaces), leaving the rest of the
+   row to the seat that is open */
+.game > :is(.threat-area, .play-area) :deep(.blob.small) { flex-grow: 0 !important; flex-basis: auto; }
 /* the label stays out to the left of the inset */
 .game > .play-area :deep(.band.heroes > .band-label) { left: calc(4px - 1.5rem); }
 .game > .play-area :deep(.band.in-play) { padding-left: 0; }
