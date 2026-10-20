@@ -1,10 +1,26 @@
 module LordOfTheRings.SetupSpec (spec) where
 
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Decklist (loadPlayer)
 import TestImport
 
 spec :: Spec
 spec = describe "Setup" do
+  it "sets up every seat at a multi-handed table, asking each about their hand" do
+    seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", starterDeck)])
+    env <- newGameEnv (newTableIn passageThroughMirkwood seats) (const $ pure ()) 1
+    runGameT env do
+      run Setup
+      players <- traverse (getPlayer . (.id) . fst) (toList seats)
+      map (length . (.hand)) players `shouldBe` [6, 6]
+      map (.threat) players `shouldBe` [27, 29]
+      [first] <- getsGame (Map.keys . (.question))
+      chooseOptionMatching "keep the hand" first \case
+        Label _ [] -> True
+        _ -> False
+      next <- getsGame (Map.keys . (.question))
+      sort (first : next) `shouldBe` sort (map (.id) players)
   it "sets starting threat to the total of the heroes' threat costs" . gameTest $ \pid -> do
     run Setup
     (.threat) <$> getPlayer pid `shouldReturn` 27

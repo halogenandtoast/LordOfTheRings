@@ -55,13 +55,17 @@ newGame :: Player -> [Hero] -> Game
 newGame = newGameIn passageThroughMirkwood
 
 newGameIn :: Scenario -> Player -> [Hero] -> Game
-newGameIn gameScenario player heroes =
+newGameIn gameScenario player heroes = newTableIn gameScenario ((player, heroes) :| [])
+
+-- | A game with a seat for each player, in the order given.
+newTableIn :: Scenario -> NonEmpty (Player, [Hero]) -> Game
+newTableIn gameScenario seats@((player, _) :| _) =
   Game
-    { gamePlayers = Map.singleton player.id player
-    , gamePlayerOrder = [player.id]
+    { gamePlayers = Map.fromList [(p.id, p) | (p, _) <- toList seats]
+    , gamePlayerOrder = [p.id | (p, _) <- toList seats]
     , gameActivePlayer = player.id
     , gameFirstPlayer = player.id
-    , gameEntities = mempty {entitiesHeroes = Map.fromList [(h.id, h) | h <- heroes]}
+    , gameEntities = mempty {entitiesHeroes = Map.fromList [(h.id, h) | (_, hs) <- toList seats, h <- hs]}
     , gameScenario
     , gamePhase = ResourcePhase
     , gameRound = 0
