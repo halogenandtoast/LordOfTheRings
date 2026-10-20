@@ -124,8 +124,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
 
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))
-    // claimed objectives sit on their heroes like attachments
-    return [...placed('attachments', () => true), ...placed('objectives', () => true)].filter(
+    // claimed objectives and condition treacheries sit on their hosts like attachments
+    return [...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true)].filter(
       (a) => a.attachedTo !== null && ids.has(a.attachedTo),
     )
   }
