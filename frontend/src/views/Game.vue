@@ -381,8 +381,8 @@ watch(question, (asked) => {
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .game > :is(.staging, .threat-area, .play-area) { position: relative; padding-left: 1.5rem; }
 .game > :is(.staging, .threat-area, .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
-/* a row above for its seat tabs, 20px tall (see ZoneSeats), the usual gap over them */
-.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 20px; border-top-right-radius: 0; }
+/* a row above for its seat tabs, 25px tall (see ZoneSeats), the usual gap over them */
+.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 25px; border-top-right-radius: 0; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* your seat: heroes and threat dial beside your deck, hand and question */
