@@ -351,8 +351,6 @@ watch(question, (asked) => {
     flex-wrap: wrap;
     align-items: flex-end;
     justify-content: flex-start;
-    border-right: 0;
-    padding-right: 0;
   }
 }
 
@@ -367,8 +365,6 @@ watch(question, (asked) => {
   align-items: center;
   justify-content: flex-end;
   flex: 0 0 auto;
-  border-right: 1px solid var(--line);
-  padding-right: calc(var(--gap) * 1.5);
 }
 .band.play .play-area.drop-zone {
   flex: 1 1 auto;

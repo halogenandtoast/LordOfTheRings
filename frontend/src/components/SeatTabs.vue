@@ -58,7 +58,9 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  border: 0;
+  border: 1px solid transparent;
+  border-top: 0;
+  border-bottom: 0;
   background: none;
   color: var(--text-muted);
   font: inherit;
@@ -68,6 +70,7 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
 }
 .tab:hover { color: var(--text); background: var(--surface-1); }
 .tab.active {
+  border-color: var(--line-strong);
   background: var(--surface-2);
   color: var(--text);
 }
