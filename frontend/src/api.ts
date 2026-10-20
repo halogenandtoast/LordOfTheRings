@@ -19,6 +19,18 @@ const json = async <T>(response: Response): Promise<T> => {
 
 export const fetchGames = () => apiFetch('/api/games').then((r) => json<GameSummary[]>(r))
 
+/** Games in progress that are open to spectators. */
+export const fetchSpectatableGames = () => apiFetch('/api/spectatable').then((r) => json<GameSummary[]>(r))
+
+export interface AdminDashboard {
+  users: number
+  activeUsers: number
+  games: number
+  recentGames: GameSummary[]
+}
+
+export const fetchAdminDashboard = () => apiFetch('/api/admin').then((r) => json<AdminDashboard>(r))
+
 /** A core starter deck by sphere, or one of the user's imported decks. */
 export type DeckChoice = { starter: string } | { deckId: number }
 

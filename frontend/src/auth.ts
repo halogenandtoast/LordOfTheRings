@@ -4,6 +4,7 @@ export interface User {
   id: number
   username: string
   email: string
+  admin: boolean
 }
 
 interface Session {
@@ -56,3 +57,10 @@ export const signUp = (username: string, email: string, password: string) =>
   post('/api/register', { username, email, password })
 
 export const signOut = () => save(null)
+
+/** Bring the stored user up to date, such as when they have been made an admin. */
+export const refreshUser = async () => {
+  if (!session.value) return
+  const response = await fetch('/api/whoami', { headers: authHeaders() }).catch(() => null)
+  if (response?.ok && session.value) save({ ...session.value, user: (await response.json()) as User })
+}

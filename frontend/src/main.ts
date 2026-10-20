@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import { router } from './router'
+import { refreshUser } from './auth'
 import { loadLocaleMessages, normalizeLocale } from './locales/messages'
 import { preferredLanguage } from './locales/language'
 import './style.css'
@@ -28,6 +29,7 @@ async function bootstrap() {
     messages: loadedMessages,
   })
 
+  void refreshUser()
   createApp(App).use(router).use(i18n).mount('#app')
 }
 

@@ -86,6 +86,7 @@ export interface GameData {
   game: ServerGame | null
   playerId: string | null
   canUndo: boolean
+  allowSpectators: boolean
 }
 
 export type ServerMessage =

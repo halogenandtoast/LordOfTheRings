@@ -11,7 +11,9 @@
   "nav": {
     "home": "Home",
     "cards": "Cards",
-    "decks": "Decks"
+    "decks": "Decks",
+    "watch": "Watch",
+    "admin": "Admin"
   },
   "titles": {
     "card": "Card",
@@ -78,5 +80,15 @@
     "title": "Settings",
     "language": "Language",
     "languageHint": "The language of the interface and the game's messages. Card names and text stay in English for now."
+  },
+  "watch": {
+    "title": "Watch",
+    "none": "No one is playing a game open to spectators right now."
+  },
+  "admin": {
+    "users": "Users",
+    "activeUsers": "Active users (14 days)",
+    "games": "Games",
+    "recentGames": "Recent games"
   }
 }

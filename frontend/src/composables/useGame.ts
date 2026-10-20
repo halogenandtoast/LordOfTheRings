@@ -11,12 +11,14 @@ import { transitionsOn, withViewTransition } from './useViewTransition'
 const LOG_LIMIT = 200
 const FLIP_MS = 320
 
-const socketUrl = (gameId: string) => {
+const socketUrl = (path: string) => {
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  return `${protocol}://${window.location.host}/api/games/${gameId}?token=${encodeURIComponent(token.value ?? '')}`
+  return `${protocol}://${window.location.host}${path}?token=${encodeURIComponent(token.value ?? '')}`
 }
 
-export const useGame = (gameId: string) => {
+/** A game to play, or with `spectate` to watch: the same updates, read only. */
+export const useGame = (gameId: string, spectate = false) => {
+  const gamePath = `/api/games/${gameId}${spectate ? '/spectate' : ''}`
   const { t } = useI18n()
   let closed = false
   const error = ref<string | null>(null)
@@ -103,7 +105,7 @@ export const useGame = (gameId: string) => {
   }
 
   const refresh = async () => {
-    const response = await apiFetch(`/api/games/${gameId}`).catch(() => null)
+    const response = await apiFetch(gamePath).catch(() => null)
     if (response?.ok) {
       queue.push({ tag: 'Update', contents: (await response.json()) as GameData })
       void drain()
@@ -111,7 +113,7 @@ export const useGame = (gameId: string) => {
   }
 
   const connect = () => {
-    socket = new WebSocket(socketUrl(gameId))
+    socket = new WebSocket(socketUrl(gamePath))
     socket.addEventListener('open', () => {
       error.value = null
       void refresh()
@@ -147,6 +149,13 @@ export const useGame = (gameId: string) => {
     error: readonly(error),
     game: readonly(game),
     canUndo: computed(() => data.value?.canUndo ?? false),
+    allowSpectators: computed(() => data.value?.allowSpectators ?? false),
+    setAllowSpectators: (allowSpectators: boolean) =>
+      apiFetch(`/api/games/${gameId}/spectators`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ allowSpectators }),
+      }),
     log: readonly(log),
     announcement: readonly(announcement),
     flipping: readonly(flipping),

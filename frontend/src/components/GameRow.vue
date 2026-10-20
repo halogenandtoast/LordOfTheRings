@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import type { GameSummary } from '../server'
 
-const props = defineProps<{ game: GameSummary; deleteGame?: () => void }>()
+const props = defineProps<{ game: GameSummary; deleteGame?: () => void; spectate?: boolean }>()
 
 const deleting = ref(false)
 const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '').toLowerCase()}`)
@@ -16,7 +16,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           <div class="scenario-icon-container">
             <img class="scenario-icon" src="/images/cards/01119.jpg" alt="" />
           </div>
-          <RouterLink class="title" :to="`/games/${game.id}`">{{ game.name }}</RouterLink>
+          <RouterLink class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
           <div v-if="game.outcome" class="outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
             {{ $t(game.outcome === 'Won' ? 'home.won' : 'home.lost') }}
           </div>

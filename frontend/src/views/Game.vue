@@ -23,10 +23,13 @@ import { provideHighlights } from '../composables/useHighlights'
 
 const route = useRoute()
 const tr = useServerText()
+const spectate = route.meta.spectate === true
 const {
-  error, game, log, announcement, flipping,
-  started, question, scenario, players, outcome, answer, reset, undo, canUndo, debug,
-} = useGame(route.params.id as string)
+  error, game, log, announcement, flipping, allowSpectators, setAllowSpectators,
+  started, question: asked, scenario, players, outcome, answer, reset, undo, canUndo, debug,
+} = useGame(route.params.id as string, spectate)
+// a spectator sees what is asked, with nothing to choose
+const question = computed(() => (spectate && asked.value ? { ...asked.value, choices: [] } : asked.value))
 const { active: debugging, send: sendDebug } = provideDebug(debug)
 const filingBug = ref(false)
 const bugDescription = ref('')
@@ -61,6 +64,7 @@ const engagedWithAttachments = computed(() => withAttachments(engaged.value))
 
 // Cmd/Ctrl+Z steps back one answer and D toggles debug mode, unless you are typing somewhere.
 const onKeydown = (event: KeyboardEvent) => {
+  if (spectate) return
   const typing = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement
   if (!typing && !event.metaKey && !event.ctrlKey && !event.altKey && event.key.toLowerCase() === 'd') {
     debugging.value = !debugging.value
@@ -143,12 +147,15 @@ watch(question, (asked) => {
     :can-undo="canUndo"
     :show-sidebar="showSidebar"
     :debugging="debugging"
+    :spectate="spectate"
+    :allow-spectators="allowSpectators"
     @reset="reset"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
     @file-bug="fileBugAbout()"
     @toggle-sidebar="showSidebar = !showSidebar"
     @toggle-debug="debugging = !debugging"
+    @toggle-spectators="setAllowSpectators(!allowSpectators)"
   />
   <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
@@ -232,7 +239,7 @@ watch(question, (asked) => {
     <aside v-if="showSidebar" class="sidebar">
       <p v-if="error" class="error">
         {{ tr(error) }}
-        <button type="button" class="file-bug-link" @click="fileBugAbout(tr(error))">{{ $t('game.bar.fileBug') }}</button>
+        <button v-if="!spectate" type="button" class="file-bug-link" @click="fileBugAbout(tr(error))">{{ $t('game.bar.fileBug') }}</button>
       </p>
       <Prompt
         v-if="started"
