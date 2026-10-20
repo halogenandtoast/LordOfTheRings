@@ -137,6 +137,7 @@ data DeckSummary = DeckSummary
   , source :: Text
   , sourceUrl :: Maybe Text
   , heroNames :: [Text]
+  , heroCodes :: [Text]
   , cardCount :: Int
   , unresolvedCount :: Int
   , updatedAt :: UTCTime
@@ -325,6 +326,7 @@ listDecks db userId = do
         , source = d.lotrDeckSource
         , sourceUrl = d.lotrDeckSourceUrl
         , heroNames = [n | s <- slots, s.lotrDeckSlotKind == "hero", Just n <- [flip cardName db =<< s.lotrDeckSlotCardCode]]
+        , heroCodes = [c | s <- slots, s.lotrDeckSlotKind == "hero", Just c <- [s.lotrDeckSlotCardCode]]
         , cardCount = sum [s.lotrDeckSlotQuantity | s <- slots, s.lotrDeckSlotKind == "draw"]
         , unresolvedCount = length [() | s <- slots, isNothing s.lotrDeckSlotCardCode]
         , updatedAt = d.lotrDeckUpdatedAt

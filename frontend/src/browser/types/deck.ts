@@ -50,6 +50,7 @@ export interface DeckSummary {
   source: string
   sourceUrl: string | null
   heroNames: string[]
+  heroCodes: string[]
   cardCount: number
   unresolvedCount: number
   updatedAt: string
