@@ -375,7 +375,15 @@ watch(question, (asked) => {
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* heroes as wide as they need, the rest of the play area after them */
-.game > .play-area :deep(.band.heroes) { flex: 0 0 auto; gap: calc(var(--gap) * 2); }
+.game > .play-area :deep(.band.heroes) {
+  flex: 0 0 auto;
+  gap: calc(var(--gap) * 2);
+  /* set into the play area, a shade darker */
+  margin: 4px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.22);
+  box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.45);
+}
 .game > .play-area :deep(.band.in-play) { padding-left: 0; }
 /* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
