@@ -310,7 +310,8 @@ watch(question, (asked) => {
     grid-template-rows: auto minmax(0, 1fr) auto;
   }
   .layout > .phases { order: -1; }
-  .game { margin-top: 0; padding-top: 0; }
+  .game { margin: 0 0 0 calc(-1 * var(--gap)); padding-top: 0; padding-bottom: 0; }
+  .game > .seat-tabs { margin-bottom: 0; bottom: 0; }
   .game :deep(.tally) { margin-top: 0; border-top: 1px solid var(--line); border-radius: 6px; }
   .sidebar {
     position: absolute;
@@ -397,7 +398,14 @@ watch(question, (asked) => {
   overflow: hidden auto;
   margin-top: calc(-1 * var(--gap));
   padding-top: var(--gap);
+  /* out to the layout's left and bottom edges, so the seat tabs can sit in the corner */
+  margin-left: calc(-1 * var(--gap));
+  padding-left: var(--gap);
+  margin-bottom: calc(-1 * var(--gap));
+  padding-bottom: var(--gap);
 }
+/* sticky keeps out of .game's padding unless told to reach into it */
+.game > .seat-tabs { margin: var(--gap) 0 calc(-1 * var(--gap)) calc(-1 * var(--gap)); bottom: calc(-1 * var(--gap)); }
 
 .sidebar {
   display: flex;
