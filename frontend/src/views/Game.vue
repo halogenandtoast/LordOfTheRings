@@ -212,17 +212,18 @@ watch(question, (asked) => {
       <Lobby v-if="!started && table?.withFriends" :table="table" @join="join" @leave="leave" @start="start" />
       <template v-if="started">
         <QuestTally v-if="game?.tally" :tally="game.tally" />
-        <Scenario v-if="scenario" :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
-
-        <CardBand
-          v-if="scenario"
-          class="staging"
-          :label="$t('game.bands.staging')"
-          :cards="scenario.staging"
-          :choices="choices"
-          :flipping="flipping"
-          @choose="choose"
-        />
+        <!-- the quest and location, the staging area beside them -->
+        <div v-if="scenario" class="encounter">
+          <Scenario :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
+          <CardBand
+            class="staging"
+            :label="$t('game.bands.staging')"
+            :cards="scenario.staging"
+            :choices="choices"
+            :flipping="flipping"
+            @choose="choose"
+          />
+        </div>
 
         <!-- in front of the player, as engaged enemies sit on the table -->
         <section v-if="threatSeat" class="threat-area">
@@ -365,28 +366,30 @@ watch(question, (asked) => {
 }
 
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
-.game > .scenario { background: var(--zone-scenario); }
-.game > .staging { background: var(--zone-staging); }
+.encounter > .scenario { background: var(--zone-scenario); }
+.encounter > .staging { background: var(--zone-staging); }
+/* the staging area beside the scenario, under it when the screen is too narrow */
+.game > .encounter { display: flex; flex-wrap: wrap; gap: var(--gap); flex: 0 0 auto; }
 .game > .threat-area { --zone-base: var(--zone-threat); }
 .game > .play-area { --zone-base: var(--zone-play); }
 .game > :is(.threat-area, .play-area) { position: relative; display: flex; background: var(--zone-base); }
 .band.seat { background: var(--zone-seat); }
 /* room for a card even when empty; border-box, so the padding and border count toward it */
-.game > .staging, .game > .threat-area, .game > .play-area {
+.encounter > .staging, .game > .threat-area, .game > .play-area {
   flex: 0 0 auto;
   min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
   border-radius: 6px;
 }
 /* the threat and play areas hold their bands, which take the padding */
-.game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
-/* no label, but in line with the bands that have one */
-.game > .scenario { padding-left: 1.5rem; }
+.encounter > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
+.encounter > .scenario { padding-left: 1.5rem; }
 .game > :is(.threat-area, .play-area) :deep(.band) { flex: 1 1 auto; }
 /* labels pinned to the top corner, even where the cards sit along the bottom */
-.game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
-.game > :is(.staging, .threat-area, .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
+.encounter > :is(.scenario, .staging), .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
+:is(.encounter, .game > .threat-area, .game > .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
 /* room above for its seat switch, 24px tall (see ZoneSeats), the usual gap over it */
 .game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 24px; }
+.encounter > .staging { flex: 1 1 calc(var(--card-width) * 3); min-width: 0; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* heroes as wide as they need, the rest of the play area after them */

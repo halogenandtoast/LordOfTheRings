@@ -170,6 +170,17 @@ button, a, input, select, label, [data-card-id] { touch-action: manipulation; }
   transition: flex-basis 0.2s ease;
 }
 
+/* a zone's name, up its side */
+.band-label {
+  align-self: center;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.35;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+}
+
 .pile {
   width: var(--card-width);
   aspect-ratio: var(--card-aspect);

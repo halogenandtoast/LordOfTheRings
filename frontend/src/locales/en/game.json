@@ -46,7 +46,9 @@
     "firstPlayer": "First player",
     "hand": "{count} in hand"
   },
+  "noActiveLocation": "No active location",
   "bands": {
+    "scenario": "scenario",
     "staging": "staging",
     "threatArea": "threat area",
     "playArea": "play area"

@@ -20,6 +20,7 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
 
 <template>
   <section class="band scenario">
+    <span class="band-label">{{ $t('game.bands.scenario') }}</span>
     <DiscardPile :cards="scenario.discard" back="encounter" data-pile="discard-encounter" />
     <div class="deck">
       <CardBack :count="scenario.encounterDeck" back="encounter" data-pile="deck-encounter" />
@@ -43,10 +44,27 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
       :flipping="isFlipping(scenario.activeLocation)"
       @choose="emit('choose', $event)"
     />
+    <!-- where the travelled-to location goes, kept when there is none -->
+    <div v-else class="location-placeholder">{{ $t('game.noActiveLocation') }}</div>
   </section>
 </template>
 
 <style scoped>
 .scenario { flex: 0 0 auto; }
 .deck { display: flex; flex-direction: column; gap: 4px; }
+.location-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--card-width);
+  aspect-ratio: var(--card-aspect);
+  padding: 6px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
 </style>

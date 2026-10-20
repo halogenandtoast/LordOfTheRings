@@ -37,13 +37,4 @@ const attachmentsFor = (card: CardView) => cards.filter((other) => other.attache
 .band.align-top { align-content: flex-start; align-items: flex-start; }
 .band.align-bottom { align-content: flex-end; align-items: flex-end; }
 .band.empty { flex: 0 0 auto; min-height: 0; padding: 0; border-color: transparent; }
-.band-label {
-  align-self: center;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  opacity: 0.35;
-  writing-mode: vertical-rl;
-  rotate: 180deg;
-}
 </style>
