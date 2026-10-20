@@ -3,6 +3,7 @@ import CardBack from './CardBack.vue'
 import DiscardPile from './DiscardPile.vue'
 import GameCard from './GameCard.vue'
 import QuestionZone from './QuestionZone.vue'
+import ThreatDial from './ThreatDial.vue'
 import type { ChoiceView, PlayerView, QuestionView } from '../types'
 import { useDebug } from '../composables/useDebug'
 
@@ -42,16 +43,29 @@ const { active: debugging, send } = useDebug()
       />
     </div>
 
+    <div class="threat">
+      <ThreatDial :threat="player.threat" />
+      <div v-if="debugging" class="debug-threat">
+        <button type="button" :aria-label="$t('game.debug.lowerThreat')" :disabled="player.threat === 0" @click="send({ tag: 'LowerThreat', contents: [player.playerId, 1] })">−</button>
+        <button type="button" :aria-label="$t('game.debug.raiseThreat')" @click="send({ tag: 'RaiseThreat', contents: [player.playerId, 1] })">+</button>
+      </div>
+    </div>
+
     <QuestionZone :question="question" @choose="emit('choose', $event)" />
   </section>
 </template>
 
 <style scoped>
-.player { flex: 0 0 auto; align-items: flex-end; margin-top: auto; }
+.player { flex: 0 0 auto; flex-wrap: nowrap; align-items: flex-end; margin-top: auto; }
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
 .deck { display: flex; flex-direction: column; gap: 4px; }
-.hand { flex: 1; flex-wrap: wrap; justify-content: flex-start; }
+.threat { display: flex; flex-direction: column; align-items: center; align-self: center; gap: var(--gap); }
+.debug-threat { display: flex; gap: var(--gap); }
+.debug-threat button { width: 28px; height: 22px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; color: inherit; cursor: pointer; }
+.debug-threat button:disabled { opacity: 0.35; cursor: default; }
+/* sized by its cards, so the question box gives way before the hand stacks up */
+.hand { flex: 1 1 auto; flex-wrap: wrap; justify-content: flex-start; }
 /* level with the deck and discard, not their count pills: a pill's height and the stack's gap */
 .player .hand { margin-bottom: calc(0.75rem + 8px + 5px); }
 /* docked under the board instead (see Game.vue) */

@@ -375,6 +375,8 @@ watch(question, (asked) => {
   outline-offset: -2px;
 }
 .band.seat .heroes { flex: 0 0 auto; padding: 0; gap: calc(var(--gap) * 2); }
+/* level with the deck and hand, which sit above their count pills (see PlayerArea) */
+.band.seat .heroes { margin-bottom: calc(0.75rem + 8px + 5px); }
 
 .game {
   display: flex;
