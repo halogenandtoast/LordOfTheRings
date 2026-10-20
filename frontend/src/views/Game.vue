@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { cardDrag, type CardView } from '../types'
+import { cardDrag, type CardView, type PlayerView } from '../types'
 import { isKey, useServerText } from '../i18n'
 import CardBand from '../components/CardBand.vue'
 import CardOverlay from '../components/CardOverlay.vue'
@@ -15,7 +15,7 @@ import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import SeatTabs from '../components/SeatTabs.vue'
-import ZoneSeats from '../components/ZoneSeats.vue'
+import SeatDrawers from '../components/SeatDrawers.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
@@ -75,9 +75,6 @@ watch(() => you.value?.playerId, () => {
   threatSeatId.value = null
   playSeatId.value = null
 })
-const seatOr = (id: string | null) => players.value.find((player) => player.playerId === id) ?? you.value
-const threatSeat = computed(() => seatOr(threatSeatId.value))
-const playSeat = computed(() => seatOr(playSeatId.value))
 
 const withAttachments = (cards: CardView[], hosts: CardView[]) => [
   ...hosts,
@@ -88,11 +85,8 @@ const heroes = computed(() => {
   const cards = you.value?.inPlay ?? []
   return withAttachments(cards, cards.filter((card) => card.type === 'Hero'))
 })
-const inPlay = computed(() => {
-  const cards = playSeat.value?.inPlay ?? []
-  return withAttachments(cards, cards.filter((card) => card.type !== 'Hero' && card.attachedTo === null))
-})
-const engaged = computed(() => threatSeat.value?.engaged ?? [])
+const inPlay = (player: PlayerView) =>
+  withAttachments(player.inPlay, player.inPlay.filter((card) => card.type !== 'Hero' && card.attachedTo === null))
 
 // Cmd/Ctrl+Z steps back one answer and D toggles debug mode, unless you are typing somewhere.
 const onKeydown = (event: KeyboardEvent) => {
@@ -230,29 +224,39 @@ watch(question, (asked) => {
         />
 
         <!-- in front of the player, as engaged enemies sit on the table -->
-        <CardBand
+        <SeatDrawers
+          v-slot="{ player }"
           class="threat-area"
-          :label="$t('game.bands.threatArea')"
-          :cards="engaged"
-          :choices="choices"
-          :flipping="flipping"
-          @choose="choose"
+          :players="players"
+          :viewing="threatSeatId ?? you?.playerId ?? null"
+          @view="threatSeatId = $event"
         >
-          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="threatSeat?.playerId ?? null" @view="threatSeatId = $event" />
-        </CardBand>
+          <CardBand
+            :label="$t('game.bands.threatArea')"
+            :cards="player.engaged"
+            :choices="choices"
+            :flipping="flipping"
+            @choose="choose"
+          />
+        </SeatDrawers>
 
-        <CardBand
+        <SeatDrawers
+          v-slot="{ player }"
           class="play-area"
           :class="{ 'drop-zone': dragging && dragging.hosts === null }"
-          :label="$t('game.bands.playArea')"
-          :cards="inPlay"
-          :choices="choices"
-          :flipping="flipping"
-          align="bottom"
-          @choose="choose"
+          :players="players"
+          :viewing="playSeatId ?? you?.playerId ?? null"
+          @view="playSeatId = $event"
         >
-          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="playSeat?.playerId ?? null" @view="playSeatId = $event" />
-        </CardBand>
+          <CardBand
+            :label="$t('game.bands.playArea')"
+            :cards="inPlay(player)"
+            :choices="choices"
+            :flipping="flipping"
+            align="bottom"
+            @choose="choose"
+          />
+        </SeatDrawers>
 
         <section class="band seat">
           <div class="hero-column">
@@ -375,14 +379,15 @@ watch(question, (asked) => {
 /* room for a card even when empty; border-box, so the padding and border count toward it */
 .game > .staging, .game > .threat-area, .game > .play-area {
   flex: 0 0 auto;
-  padding: var(--gap) 4px;
   min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
+  border-radius: 6px;
 }
+/* the threat and play areas are a drawer per seat (see SeatDrawers), each its own band */
+.game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
+.game > :is(.threat-area, .play-area) :deep(.band) { flex: 1 1 auto; }
 /* labels pinned to the top corner, even where the cards sit along the bottom */
-.game > :is(.staging, .threat-area, .play-area) { position: relative; padding-left: 1.5rem; }
+.game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
 .game > :is(.staging, .threat-area, .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
-/* a row above for its seat tabs, 22px tall (see ZoneSeats), the usual gap over them */
-.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 22px; border-top-right-radius: 0; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* your seat: heroes and threat dial beside your deck, hand and question */
