@@ -35,9 +35,6 @@ const attachmentsFor = (card: CardView) => cards.filter((other) => other.attache
 .band { flex: 1 1 auto; }
 .band.align-top { align-content: flex-start; align-items: flex-start; }
 .band.align-bottom { align-content: flex-end; align-items: flex-end; }
-/* centred cards leave the label at the band's edge */
-.band.centered { position: relative; }
-.band.centered .band-label { position: absolute; left: 4px; top: 50%; translate: 0 -50%; }
 .band.empty { flex: 0 0 auto; min-height: 0; padding: 0; border-color: transparent; }
 .band-label {
   align-self: center;

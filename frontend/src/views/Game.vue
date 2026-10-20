@@ -170,11 +170,10 @@ watch(question, (asked) => {
 
       <template v-if="started">
         <QuestTally v-if="game?.tally" :tally="game.tally" />
-        <Scenario v-if="scenario" class="centered" :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
+        <Scenario v-if="scenario" :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
 
         <CardBand
           v-if="scenario"
-          class="centered"
           :label="$t('game.bands.staging')"
           :cards="scenario.staging"
           :choices="choices"
@@ -183,7 +182,6 @@ watch(question, (asked) => {
         />
 
         <CardBand
-          class="centered"
           :label="$t('game.bands.threatArea')"
           align="bottom"
           :cards="engagedWithAttachments"
@@ -318,7 +316,6 @@ watch(question, (asked) => {
   }
 }
 
-.centered { justify-content: center; }
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; padding: 0; }
 .hero-column {
   display: flex;
