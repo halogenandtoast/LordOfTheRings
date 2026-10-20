@@ -15,7 +15,7 @@ import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import SeatTabs from '../components/SeatTabs.vue'
-import SeatDrawers from '../components/SeatDrawers.vue'
+import SeatBlobs from '../components/SeatBlobs.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
@@ -66,15 +66,6 @@ const you = computed(
 watch(() => question.value?.playerId, (asked) => {
   if (asked && !withFriends.value) seatId.value = asked
 }, { immediate: true })
-
-// The threat and play areas can each show another seat, as for a ranged attack on an
-// enemy engaged with someone else. They follow the seat shown again when it changes.
-const threatSeatId = ref<string | null>(null)
-const playSeatId = ref<string | null>(null)
-watch(() => you.value?.playerId, () => {
-  threatSeatId.value = null
-  playSeatId.value = null
-})
 
 const withAttachments = (cards: CardView[], hosts: CardView[]) => [
   ...hosts,
@@ -224,13 +215,7 @@ watch(question, (asked) => {
         />
 
         <!-- in front of the player, as engaged enemies sit on the table -->
-        <SeatDrawers
-          v-slot="{ player }"
-          class="threat-area"
-          :players="players"
-          :viewing="threatSeatId ?? you?.playerId ?? null"
-          @view="threatSeatId = $event"
-        >
+        <SeatBlobs v-slot="{ player }" class="threat-area" :players="players" :viewing="you?.playerId ?? null">
           <CardBand
             :label="$t('game.bands.threatArea')"
             :cards="player.engaged"
@@ -238,15 +223,14 @@ watch(question, (asked) => {
             :flipping="flipping"
             @choose="choose"
           />
-        </SeatDrawers>
+        </SeatBlobs>
 
-        <SeatDrawers
+        <SeatBlobs
           v-slot="{ player }"
           class="play-area"
           :class="{ 'drop-zone': dragging && dragging.hosts === null }"
           :players="players"
-          :viewing="playSeatId ?? you?.playerId ?? null"
-          @view="playSeatId = $event"
+          :viewing="you?.playerId ?? null"
         >
           <CardBand
             :label="$t('game.bands.playArea')"
@@ -256,7 +240,7 @@ watch(question, (asked) => {
             align="bottom"
             @choose="choose"
           />
-        </SeatDrawers>
+        </SeatBlobs>
 
         <section class="band seat">
           <div class="hero-column">
@@ -373,8 +357,8 @@ watch(question, (asked) => {
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
 .game > .scenario { background: var(--zone-scenario); }
 .game > .staging { background: var(--zone-staging); }
-.game > .threat-area { background: var(--zone-threat); --zone-base: var(--zone-threat); }
-.game > .play-area { background: var(--zone-play); --zone-base: var(--zone-play); }
+.game > .threat-area { --zone-base: var(--zone-threat); }
+.game > .play-area { --zone-base: var(--zone-play); }
 .band.seat { background: var(--zone-seat); }
 /* room for a card even when empty; border-box, so the padding and border count toward it */
 .game > .staging, .game > .threat-area, .game > .play-area {
@@ -382,7 +366,7 @@ watch(question, (asked) => {
   min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
   border-radius: 6px;
 }
-/* the threat and play areas are a drawer per seat (see SeatDrawers), each its own band */
+/* the threat and play areas are a blob per seat (see SeatBlobs), each its own band */
 .game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
 /* no label, but in line with the bands that have one */
 .game > .scenario { padding-left: 1.5rem; }
