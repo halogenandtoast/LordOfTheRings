@@ -45,6 +45,8 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
   position: sticky;
   bottom: 0;
   z-index: 5;
+  /* overflow-x makes its min height 0, so a full board would squash it */
+  flex: none;
   display: flex;
   gap: 4px;
   padding: 0 var(--gap);
