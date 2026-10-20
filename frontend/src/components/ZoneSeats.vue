@@ -1,5 +1,12 @@
-<script setup lang="ts">
+<script lang="ts">
 import type { PlayerView } from '../types'
+
+/** How far round the hue wheel a seat's zones are turned, so each seat has its own colour. */
+export const seatHue = (players: PlayerView[], playerId: string | null | undefined) =>
+  Math.max(0, players.findIndex((player) => player.playerId === playerId)) * (360 / Math.max(1, players.length))
+</script>
+
+<script setup lang="ts">
 
 // Small tabs in a zone's corner, for showing another seat's cards in just that zone.
 defineProps<{ players: PlayerView[]; viewing: string | null }>()
@@ -14,6 +21,7 @@ const emit = defineEmits<{ view: [playerId: string] }>()
       type="button"
       role="tab"
       :class="{ active: player.playerId === viewing }"
+      :style="{ '--seat-hue': seatHue(players, player.playerId) }"
       :aria-selected="player.playerId === viewing"
       @click="emit('view', player.playerId)"
     >
@@ -49,22 +57,24 @@ const emit = defineEmits<{ view: [playerId: string] }>()
 .zone-seats::before { top: 0; left: calc(-1 * var(--cut)); }
 .zone-seats::after { right: 0; bottom: calc(-1 * var(--cut)); }
 button {
+  /* the zone's colour turned to this seat's hue (see seatHue), stronger while it waits */
+  --seat-zone: oklch(from var(--zone-base) l c calc(h + var(--seat-hue)));
   padding: 2px 8px;
   margin-top: 3px;
   border: 0;
   border-radius: 5px 5px 0 0;
-  background: none;
+  background: oklch(from var(--zone-base) l c calc(h + var(--seat-hue)) / calc(alpha * 2.5));
   color: var(--text-muted);
   font: inherit;
   font-size: 0.65rem;
   cursor: pointer;
-  transition: margin-top 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  transition: margin-top 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 button:hover { color: var(--text); margin-top: 1px; }
 button.active {
   margin-top: 0;
   padding-bottom: 4px;
-  background: linear-gradient(var(--zone-bg), var(--zone-bg)) var(--page-background);
+  background: linear-gradient(var(--seat-zone), var(--seat-zone)) var(--page-background);
   color: var(--text);
   cursor: default;
 }
