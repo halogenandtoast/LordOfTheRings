@@ -11,6 +11,7 @@ export interface CardDef {
   defense: number | null
   hitPoints: number | null
   questPoints: number | null
+  sphere?: string | null
 }
 
 export type Target = { tag: string; contents?: string }
@@ -81,6 +82,8 @@ export interface ServerGame {
   committedWillpower: number
   stagingThreat: number
   lastCommittedWillpower: number | null
+  /** What each target is modified by, as [target, modifiers] pairs. */
+  modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]
 }
 
 export interface GameData {

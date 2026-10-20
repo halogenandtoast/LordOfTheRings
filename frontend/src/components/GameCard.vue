@@ -26,6 +26,11 @@ const expanded = ref(false)
 const cardRef = useTemplateRef<HTMLElement>('cardRef')
 
 const source = computed(() => cardImage(card))
+// the resource token takes the colour of the card's sphere, blending when it has several
+const sphereTint = computed(() => {
+  const colours = card.spheres.map((s) => `var(--${s.toLowerCase()})`)
+  return colours.length > 1 ? `linear-gradient(135deg, ${colours.join(', ')})` : colours[0]
+})
 const choice = computed(() => choices.find((option) => option.targetId === card.id) ?? null)
 const active = computed(() => choice.value !== null)
 const highlights = useHighlights()
@@ -106,7 +111,7 @@ const toggleUnless = (attached: CardView) => {
       <img :src="source" :alt="tr(card.name)" />
       <!-- inside the card so it travels in the card's view transition snapshot -->
       <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
-      <span v-if="card.resources" class="token resources">{{ card.resources }}</span>
+      <span v-if="card.resources" class="token resources" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
       <span v-if="card.progress" class="token progress">{{ card.progress }}</span>
       <span v-if="card.damage > 0" class="token damage">{{ card.damage }}</span>
     </div>
@@ -234,7 +239,17 @@ const toggleUnless = (attached: CardView) => {
   filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.6)) drop-shadow(0 0 1px rgb(0 0 0 / 0.8));
   text-shadow: 0 0 2px rgb(255 255 255 / 0.85);
 }
-.resources { background-image: url('/images/tokens/resource.png'); place-self: end end; }
+.resources { background-image: url('/images/tokens/resource.png'); place-self: end end; position: relative; }
+/* the tint colours the coin, under the number and inside the coin's outline */
+.resources::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--sphere-tint, none);
+  mask: url('/images/tokens/resource.png') center / cover;
+  mix-blend-mode: color;
+}
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; font-size: 1.1rem; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; color: var(--damage-text); text-shadow: 0 1px 2px rgb(0 0 0 / 0.9); }
 

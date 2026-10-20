@@ -84,6 +84,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       committed: false,
       progress: null,
       questPoints: d.questPoints ?? null,
+      spheres: d.sphere ? [d.sphere] : [],
       attachedTo: null,
       target: null,
       playing: false,
@@ -91,9 +92,19 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     }
   }
 
-  const fromEntity = (e: Entity, kind: keyof ServerGame['entities']): CardView =>
-    card(e.cardCode, e.cardId, {
-      target: { tag: kindTargets[kind], contents: e.id },
+  // resource icons gained from modifiers, such as Celebrían's Stone on Aragorn
+  const gainedIcons = (target: Target) =>
+    (game.modifiers ?? [])
+      .filter(([t]) => t.tag === target.tag && t.contents === target.contents)
+      .flatMap(([, modifiers]) => modifiers)
+      .flatMap((m) => (m.modifierType.tag === 'GainResourceIcon' ? [m.modifierType.contents as string] : []))
+
+  const fromEntity = (e: Entity, kind: keyof ServerGame['entities']): CardView => {
+    const target = { tag: kindTargets[kind], contents: e.id }
+    const d = def(e.cardCode)
+    return card(e.cardCode, e.cardId, {
+      spheres: [...new Set([...(d.sphere ? [d.sphere] : []), ...gainedIcons(target)])],
+      target,
       resources: e.tokens.Resource ?? null,
       damage: e.tokens.Damage ?? 0,
       progress: e.tokens.Progress ?? null,
@@ -103,6 +114,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' ? 'player' : undefined,
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : null,
     })
+  }
 
   // shadow cards sit under the enemy they were dealt to, face down until they resolve
   const shadowsOf = (pid: string) =>

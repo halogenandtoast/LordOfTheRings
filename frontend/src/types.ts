@@ -19,6 +19,8 @@ export interface CardView {
   committed: boolean
   progress: number | null
   questPoints: number | null
+  /** The spheres of its resource icons: its own, then any it has gained. */
+  spheres: string[]
   attachedTo: string | null
   /** Still in hand while its cost is paid or its host chosen. */
   playing: boolean

@@ -20,12 +20,12 @@
   --c-focus: var(--gold-light);
 
   --c-leadership: var(--leadership);
-  --c-lore: hsl(96 34% 50%);
-  --c-spirit: hsl(200 50% 70%);
-  --c-tactics: hsl(4 66% 56%);
+  --c-lore: var(--lore);
+  --c-spirit: var(--spirit);
+  --c-tactics: var(--tactics);
   --c-baggins: hsl(38 60% 56%);
   --c-fellowship: hsl(280 40% 62%);
-  --c-neutral: hsl(30 8% 55%);
+  --c-neutral: var(--neutral);
   --c-boon: hsl(150 40% 50%);
   --c-burden: hsl(340 45% 55%);
   --c-special: hsl(200 20% 55%);
