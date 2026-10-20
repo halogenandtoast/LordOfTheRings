@@ -10,8 +10,9 @@ import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Random (evalRand, mkStdGen, randomIO)
 import System.Random.Internal (StdGen (..))
 import System.Random.SplitMix (seedSMGen', unseedSMGen)
-import Data.Aeson (Result (..))
+import Data.Aeson (Result (..), Value (Array))
 import Data.Aeson.Diff qualified as Diff
+import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as Map
 import Data.Char (isAlphaNum)
 import Data.Time.Clock (addUTCTime, nominalDay)
@@ -235,6 +236,19 @@ decodeOrFail what v = case fromJSON v of
   Success a -> pure a
   Error err -> sendResponseStatus status400 ("could not read the stored " <> what <> ": " <> pack err)
 
+-- | The decks reset deals again: none for a lone starter deck, one deck as itself (as games
+-- made before there were seats store it), or one per seat.
+storedDecks :: NonEmpty (Maybe DeckList) -> Maybe Value
+storedDecks = \case
+  Nothing :| [] -> Nothing
+  Just deckList :| [] -> Just $ toJSON deckList
+  deckLists -> Just $ toJSON $ fromMaybe starterDeck <$> deckLists
+
+seatDecks :: Value -> Value
+seatDecks = \case
+  v@(Array _) -> v
+  v -> toJSON [v]
+
 -- | A random generator is stored as its splitmix seed, so a reloaded game rolls the same.
 showGen :: StdGen -> Text
 showGen = tshow . unseedSMGen . unStdGen
@@ -309,17 +323,21 @@ data NewGame = NewGame
   , seed :: Maybe Int
   , scenario :: Maybe Text
   , deck :: Maybe DeckChoice
+  , decks :: Maybe [Maybe DeckChoice]
+  -- ^ one deck per seat for multi-handed solo, Nothing being the starter deck; overrides deck
   , allowSpectators :: Maybe Bool
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
--- | Deal a new game from a seed and play it up to its first question.
-startGame :: Scenario -> DeckList -> Text -> Int -> IO (Game, [Message], StdGen)
-startGame scenario deckList playerName seed = do
-  (player, heroes) <- either (error . show) pure $ evalRand (loadPlayer playerName deckList) (mkStdGen seed)
+-- | Deal a new game from a seed and play it up to its first question, with a seat for
+-- each deck, all played by you.
+startGame :: Scenario -> NonEmpty DeckList -> Text -> Int -> IO (Game, [Message], StdGen)
+startGame scenario deckLists playerName seed = do
+  let seatName n = if length deckLists == 1 then playerName else playerName <> " (" <> tshow n <> ")"
+  seats <- either (error . show) pure . sequence $ evalRand (traverse (\(n, deckList) -> loadPlayer (seatName n) deckList) (NE.zip (NE.iterate (+ 1) (1 :: Int)) deckLists)) (mkStdGen seed)
   chan <- newBroadcastTChanIO
-  env <- envFor chan (newGameIn scenario player heroes) [] (mkStdGen $ seed + 1)
+  env <- envFor chan (newTableIn scenario seats) [] (mkStdGen $ seed + 1)
   void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
   currentState env
 
@@ -332,14 +350,17 @@ postGamesR = do
   let playerName = user.userUsername
       scenarioId = fromMaybe "passage-through-mirkwood" new.scenario
   scenario <- maybe (sendResponseStatus status400 (ikeyWith "error.noSuchScenario" [textVar "scenario" scenarioId])) pure $ lookupScenario (ScenarioId scenarioId)
-  deckList <- case new.deck of
+  choices <- maybe (sendResponseStatus status400 (ikey "error.seatCount")) pure do
+    seats <- nonEmpty $ fromMaybe [new.deck] new.decks
+    guard (length seats <= 4) $> seats
+  deckLists <- for choices \case
     Nothing -> pure Nothing
     Just (StarterDeck sphere) ->
       maybe (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere])) (pure . Just) $ lookup sphere coreStarterDecks
     Just (ImportedDeck deckId) -> do
       db <- getsYesod (.cardDb)
       runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) (pure . Just)
-  (g, queue, gen) <- liftIO . startGame scenario (fromMaybe starterDeck deckList) playerName =<< maybe (liftIO randomIO) pure new.seed
+  (g, queue, gen) <- liftIO . startGame scenario (fromMaybe starterDeck <$> deckLists) playerName =<< maybe (liftIO randomIO) pure new.seed
   now <- liftIO getCurrentTime
   gid <-
     runDB
@@ -353,7 +374,7 @@ postGamesR = do
           , lotrGameRandomGen = showGen gen
           , lotrGameStep = 0
           , lotrGameScenario = scenarioId
-          , lotrGameDeck = toJSON <$> deckList
+          , lotrGameDeck = storedDecks deckLists
           , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
@@ -424,6 +445,9 @@ postGameR gid = do
   advance gid row \before -> do
     when (answer.questionVersion /= before.questionVersion) $
       sendResponseStatus status409 ("stale answer" :: Text)
+    -- every seat is yours, but only the one asked can answer
+    unless (Map.member answer.player before.question) $
+      sendResponseStatus status409 ("not asked" :: Text)
     pure $ answerQuestion answer.player answer.choice
 
 -- | Run any engine message against the game, for adjusting it by hand while testing.
@@ -549,8 +573,8 @@ postResetR :: LotrGameId -> Handler ()
 postResetR gid = do
   row <- requireOwnedGame gid
   scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure $ lookupScenario (ScenarioId row.lotrGameScenario)
-  deckList <- maybe (pure starterDeck) (decodeOrFail "deck") row.lotrGameDeck
-  (g, queue, gen) <- liftIO . startGame scenario deckList row.lotrGamePlayerName =<< liftIO randomIO
+  deckLists <- maybe (pure $ starterDeck :| []) (decodeOrFail "deck" . seatDecks) row.lotrGameDeck
+  (g, queue, gen) <- liftIO . startGame scenario deckLists row.lotrGamePlayerName =<< liftIO randomIO
   now <- liftIO getCurrentTime
   row' <- runDB do
     deleteWhere [LotrStepGameId ==. gid]

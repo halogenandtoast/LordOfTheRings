@@ -1,4 +1,5 @@
 {
+  "seatCount": "A game has from 1 to 4 decks.",
   "noDeckSource": "Give a RingsDB link or a deck JSON file.",
   "notRingsdbLink": "Not a RingsDB deck link: {url}",
   "fetchFailed": "Could not fetch that deck from RingsDB: {reason}",
