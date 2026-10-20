@@ -44,36 +44,36 @@ const emit = defineEmits<{ view: [playerId: string] }>()
   align-items: flex-end;
 }
 button {
-  /* the zone's colour turned to this seat's hue (see seatHue), as solid shades */
-  --seat-dim: oklch(from var(--zone-base) 0.3 calc(c * 0.7) calc(h + var(--seat-hue)) / 1);
-  --seat-hover: oklch(from var(--zone-base) 0.36 calc(c * 0.8) calc(h + var(--seat-hue)) / 1);
-  --seat-bright: oklch(from var(--zone-base) 0.78 c calc(h + var(--seat-hue)) / 1);
-  /* straight on the left, the top right corner cut off in a slope */
-  --slope: 10px;
-  padding: 4px calc(10px + var(--slope)) 4px 10px;
-  margin-top: 3px;
+  /* the zone's colour turned to this seat's hue (see seatHue) */
+  --seat: oklch(from var(--zone-base) 0.5 calc(c * 0.8) calc(h + var(--seat-hue)));
+  /* straight on the left, the top right corner cut off in a long, gentle slope */
+  --slope: 14px;
+  padding: 3px calc(6px + var(--slope)) 3px 9px;
+  margin-top: 2px;
   border: 0;
   clip-path: polygon(0 0, calc(100% - var(--slope)) 0, 100% 100%, 0 100%);
-  background: var(--seat-dim);
-  color: rgb(from var(--text) r g b / 0.75);
+  background: rgb(from var(--seat) r g b / 0.28);
+  color: rgb(from var(--text) r g b / 0.7);
   font: inherit;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 500;
   line-height: 14px;
   white-space: nowrap;
   cursor: pointer;
   transition: margin-top 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
-button:hover { color: var(--text); background: var(--seat-hover); margin-top: 1px; }
-button:focus-visible { outline: 2px solid var(--seat-bright); outline-offset: -2px; }
-/* the zone's own colour, so the tab joins the zone, with a stripe of the seat's shade */
+/* each tab tucks its straight edge over the slope of the one before */
+button + button { margin-left: calc(-1 * var(--slope) / 2); }
+button:hover { color: var(--text); background: rgb(from var(--seat) r g b / 0.4); margin-top: 0; }
+button:focus-visible { outline: 1px solid var(--text); outline-offset: -3px; }
+/* the zone's own colour, so the tab joins the zone */
 button.active {
+  position: relative;
   margin-top: 0;
-  padding-bottom: 7px;
+  padding-bottom: 5px;
   background: linear-gradient(var(--zone-base), var(--zone-base)) var(--page-background);
-  box-shadow: inset 0 3px 0 var(--seat-bright);
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
   cursor: default;
 }
 @media (prefers-reduced-motion: reduce) { button { transition: none; } }
