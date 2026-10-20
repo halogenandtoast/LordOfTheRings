@@ -95,7 +95,20 @@ const onKeydown = (event: KeyboardEvent) => {
     event.preventDefault()
     undo()
   }
+  if (!typing && event.key === ' ' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+    const next = spaceChoice.value
+    if (next !== null) {
+      event.preventDefault()
+      choose(next)
+    }
+  }
 }
+// Space takes the only choice, or passes on a response.
+const spaceChoice = computed(() => {
+  if (choices.value.length === 1) return choices.value[0].index
+  if (!isKey(question.value?.prompt, 'label.useResponse')) return null
+  return choices.value.find((choice) => isKey(choice.label, 'label.pass'))?.index ?? null
+})
 onMounted(() => document.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 
