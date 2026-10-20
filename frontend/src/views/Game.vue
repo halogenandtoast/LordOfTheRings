@@ -14,7 +14,7 @@ import QuestTally from '../components/QuestTally.vue'
 import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
-import SeatStrip from '../components/SeatStrip.vue'
+import SeatTabs from '../components/SeatTabs.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import ThreatDial from '../components/ThreatDial.vue'
@@ -57,14 +57,12 @@ const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matche
 
 const choices = computed(() => question.value?.choices ?? [])
 provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
-// The seat whose board is shown in full; the others sit beside it, small. It starts as
-// yours, follows whoever is asked when every seat is yours, and clicking another seat
-// looks at that one instead.
+// The seat whose board is shown, picked from the tabs along the foot. It starts as
+// yours, and follows whoever is asked when every seat is yours.
 const seatId = ref<string | null>(null)
 const you = computed(
   () => players.value.find((player) => player.playerId === (seatId.value ?? mySeat.value)) ?? players.value[0] ?? null,
 )
-const otherSeats = computed(() => players.value.filter((player) => player !== you.value))
 watch(() => question.value?.playerId, (asked) => {
   if (asked && !withFriends.value) seatId.value = asked
 }, { immediate: true })
@@ -222,7 +220,6 @@ watch(question, (asked) => {
 
         <section class="band play">
           <div class="hero-column">
-            <p v-if="otherSeats.length && you" class="seat-label">{{ you.name }}</p>
             <CardBand
               class="heroes"
               :cards="heroes"
@@ -238,18 +235,6 @@ watch(question, (asked) => {
             </div>
           </div>
           <div class="player-column">
-            <div v-if="otherSeats.length" class="other-seats">
-              <SeatStrip
-                v-for="player in otherSeats"
-                :key="player.playerId"
-                :player="player"
-                :choices="choices"
-                :flipping="flipping"
-                :asked="question?.playerId === player.playerId"
-                @choose="choose"
-                @view="seatId = player.playerId"
-              />
-            </div>
             <CardBand
               class="play-area"
               :class="{ 'drop-zone': dragging && dragging.hosts === null }"
@@ -270,6 +255,14 @@ watch(question, (asked) => {
             />
           </div>
         </section>
+        <SeatTabs
+          v-if="players.length > 1"
+          :players="players"
+          :viewing="you?.playerId ?? null"
+          :asked="asked?.playerId ?? null"
+          :mine="mySeat"
+          @view="seatId = $event"
+        />
       </template>
     </div>
 
@@ -365,9 +358,6 @@ watch(question, (asked) => {
 .encounter-row { display: flex; gap: var(--gap); align-items: stretch; }
 .encounter-row > * { flex: 1 1 0; min-width: 0; }
 .encounter-row > .threat-area:not(.empty) { border-left: 1px solid var(--line); }
-/* the other seats up in the room over your play area */
-.other-seats { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--gap); }
-.seat-label { margin: 0 auto 0 0; font-weight: 700; line-height: 1; }
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; padding: 0; }
 .hero-column {
   display: flex;

@@ -39,9 +39,10 @@
     "join": "Take a seat"
   },
   "seats": {
-    "view": "Look at {name}'s board",
+    "label": "Seats",
+    "asked": "Being asked",
     "firstPlayer": "First player",
-    "cards": "{hand} in hand · {deck} in deck"
+    "hand": "{count} in hand"
   },
   "bands": {
     "staging": "staging",
