@@ -35,7 +35,9 @@ const digitAngle = (i: number, d: number) => (i === 0 ? 36 * d : 180 - 36 * d)
 
 <style scoped>
 .threat {
-  width: calc(var(--card-width) * 2);
+  width: calc(var(--card-width) * 2.4);
+  /* follows the dial's outline, not its box */
+  filter: drop-shadow(0 4px 10px var(--shadow));
   aspect-ratio: 75 / 38;
   background-image: url('/images/threat.png');
   background-size: cover;
