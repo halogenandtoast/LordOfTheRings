@@ -35,6 +35,8 @@ data ScenarioAttrs = ScenarioAttrs
   -- ^ out of play until the scenario calls for them
   , scenarioOrcGuards :: Map CardId PlayerCard
   -- ^ the player card face down under each Orc Guard
+  , scenarioEasyMode :: Bool
+  -- ^ fewer copies of the difficult encounter cards, and a resource more for each hero
   }
   deriving stock (Show, Eq, Generic)
 
@@ -44,7 +46,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object [])]
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False)]
 
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =
@@ -58,6 +60,7 @@ scenario f sid name =
       , scenarioVictoryDisplay = []
       , scenarioSetAside = []
       , scenarioOrcGuards = mempty
+      , scenarioEasyMode = False
       }
 
 instance Entity ScenarioAttrs where
@@ -94,3 +97,6 @@ instance HasField "questDeck" ScenarioAttrs [EncounterCard] where
 
 instance HasField "encounterDiscard" ScenarioAttrs [EncounterCard] where
   getField = scenarioEncounterDiscard
+
+instance HasField "easyMode" ScenarioAttrs Bool where
+  getField = scenarioEasyMode

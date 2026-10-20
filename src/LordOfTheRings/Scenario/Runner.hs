@@ -4,7 +4,9 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Message.Lifted (placeResources)
 import LordOfTheRings.Outcome
 import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
@@ -13,12 +15,16 @@ import LordOfTheRings.Source (Source, sourceTarget)
 import LordOfTheRings.Target
 import LordOfTheRings.Scenario.Types as X
 
-gatherEncounterSet :: (MonadRandom m) => EncounterSet -> m [EncounterCard]
-gatherEncounterSet encounterSet =
+-- | The copies of each card in the set, fewer of some in easy mode.
+gatherEncounterSet :: (MonadRandom m) => ScenarioAttrs -> EncounterSet -> m [EncounterCard]
+gatherEncounterSet attrs encounterSet =
   concatMapM
-    (\def -> replicateM (fromMaybe 1 $ cdEncounterSetQuantity def) (genEncounterCard def))
+    (\def -> replicateM (copies def) (genEncounterCard def))
     -- quest stages share the set but make up the quest deck, never the encounter deck
     $ filter (\def -> cdEncounterSet def == Just encounterSet && cdCardType def /= QuestType) (toList allEncounterCards)
+ where
+  copies def =
+    fromMaybe 1 $ (guard attrs.easyMode *> cdEasyModeQuantity def) <|> cdEncounterSetQuantity def
 
 cardMatches :: CardMatcher -> EncounterCard -> Bool
 cardMatches = \case
@@ -27,6 +33,10 @@ cardMatches = \case
 
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = case msg of
+    DoStep 4 Setup | attrs.easyMode -> do
+      heroes <- select AnyHero
+      for_ heroes \hero -> placeResources attrs hero 1
+      pure attrs
     ShuffleDeck EncounterDeck -> do
       encounterDeck <- shuffleM attrs.encounterDeck
       pure $ attrs & encounterDeckL .~ encounterDeck

@@ -5,6 +5,7 @@ import LordOfTheRings.Card (toCardCode)
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Game.Public (publicGameFor)
+import LordOfTheRings.Scenario.Types (easyModeL)
 import TestImport
 
 spec :: Spec
@@ -55,6 +56,17 @@ spec = describe "Setup" do
     locations <- getsGame (toList . (.entities.locations))
     map toCardCode enemies `shouldBe` ["01096"]
     map toCardCode locations `shouldBe` ["01099"]
+
+  it "in easy mode, leaves the difficult copies out and gives each hero a resource" do
+    gameTestIn (overAttrs (easyModeL .~ True) passageThroughMirkwood) testDeck \_ -> do
+      run Setup
+      deck <- getEncounterDeck
+      let copies code = length $ filter ((== code) . toCardCode) deck
+      -- Hummerhorns gone, Dol Guldur Beastmaster and The Necromancer's Reach thinned,
+      -- Enchanted Stream untouched
+      map copies ["01075", "01091", "01093", "01095"] `shouldBe` [0, 1, 1, 2]
+      heroes <- getsGame (Map.keys . (.entities.heroes))
+      traverse getHeroResources heroes `shouldReturn` [1, 1, 1]
 
   it "keeps the quest stages out of the encounter deck" . gameTest $ \_ -> do
     run Setup

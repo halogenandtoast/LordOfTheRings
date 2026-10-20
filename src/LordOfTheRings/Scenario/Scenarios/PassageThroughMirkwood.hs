@@ -16,7 +16,7 @@ instance RunMessage PassageThroughMirkwood where
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
-          gatherEncounterSet
+          (gatherEncounterSet attrs)
           [EncounterSet.DolGuldurOrcs, EncounterSet.PassageThroughMirkwood, EncounterSet.SpidersOfMirkwood]
       pure $ PassageThroughMirkwood $ attrs & encounterDeckL .~ encounterDeck
     DoStep 6 Setup -> do

@@ -17,7 +17,7 @@ instance RunMessage EscapeFromDolGuldur where
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
-          gatherEncounterSet
+          (gatherEncounterSet attrs)
           [EncounterSet.EscapeFromDolGuldur, EncounterSet.SpidersOfMirkwood, EncounterSet.DolGuldurOrcs]
       pure $ EscapeFromDolGuldur $ attrs & encounterDeckL .~ encounterDeck
     DoStep 6 Setup -> do

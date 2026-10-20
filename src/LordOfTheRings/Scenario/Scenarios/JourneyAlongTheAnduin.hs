@@ -16,7 +16,7 @@ instance RunMessage JourneyAlongTheAnduin where
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
-          gatherEncounterSet
+          (gatherEncounterSet attrs)
           [EncounterSet.JourneyAlongTheAnduin, EncounterSet.SauronsReach, EncounterSet.DolGuldurOrcs, EncounterSet.Wilderlands]
       pure $ JourneyAlongTheAnduin $ attrs & encounterDeckL .~ encounterDeck
     DoStep 6 Setup -> do
