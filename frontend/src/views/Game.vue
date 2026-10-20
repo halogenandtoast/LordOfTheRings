@@ -333,13 +333,7 @@ watch(question, (asked) => {
 </template>
 
 <style scoped>
-.game-view {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  background: var(--page-background) url('/images/background.jpg') center / cover no-repeat;
-}
+.game-view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .layout {
   display: grid;
   grid-template-columns: 1fr auto 280px;
@@ -396,15 +390,14 @@ watch(question, (asked) => {
 }
 
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
-/* each tinted over a backing that lets the table's picture show faintly through */
-.encounter > .scenario { background: linear-gradient(var(--zone-scenario), var(--zone-scenario)), var(--zone-backing); }
-.encounter > .staging { background: linear-gradient(var(--zone-staging), var(--zone-staging)), var(--zone-backing); }
+.encounter > .scenario { background: var(--zone-scenario); }
+.encounter > .staging { background: var(--zone-staging); }
 /* the staging area beside the scenario, under it when the screen is too narrow */
 .game > .encounter { display: flex; flex-wrap: wrap; gap: var(--gap); flex: 0 0 auto; }
 .game > .threat-area { --zone-base: var(--zone-threat); }
 .game > .play-area { --zone-base: var(--zone-play); }
-.game > :is(.threat-area, .play-area) { position: relative; display: flex; background: linear-gradient(var(--zone-base), var(--zone-base)), var(--zone-backing); }
-.band.seat { background: linear-gradient(var(--zone-seat), var(--zone-seat)), var(--zone-backing); }
+.game > :is(.threat-area, .play-area) { position: relative; display: flex; background: var(--zone-base); }
+.band.seat { background: var(--zone-seat); }
 /* a faint light edge, so each zone stands off the page */
 :is(.encounter > .scenario, .encounter > .staging, .game > .threat-area, .game > .play-area, .band.seat) {
   border: 1px solid rgb(255 255 255 / 0.1);
@@ -435,7 +428,7 @@ watch(question, (asked) => {
 .game > .play-area .seat-part { gap: var(--gap); }
 .game > .play-area .seat-part + .seat-part { border-left: 0; margin-left: var(--gap); }
 .game > .play-area :deep(:is(.band.heroes, .band.in-play)) {
-  background: linear-gradient(var(--zone-base), var(--zone-base)), var(--zone-backing);
+  background: var(--zone-base);
   border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: 6px;
 }
