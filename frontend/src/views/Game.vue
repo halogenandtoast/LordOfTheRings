@@ -15,8 +15,7 @@ import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import SeatTabs from '../components/SeatTabs.vue'
-import SeatBlobs from '../components/SeatBlobs.vue'
-import CardFaces from '../components/CardFaces.vue'
+import ZoneSeats from '../components/ZoneSeats.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
@@ -67,6 +66,18 @@ const you = computed(
 watch(() => question.value?.playerId, (asked) => {
   if (asked && !withFriends.value) seatId.value = asked
 }, { immediate: true })
+
+// The threat and play areas can each show another seat, as for a ranged attack on an
+// enemy engaged with someone else. They follow the seat shown again when it changes.
+const threatSeatId = ref<string | null>(null)
+const playSeatId = ref<string | null>(null)
+watch(() => you.value?.playerId, () => {
+  threatSeatId.value = null
+  playSeatId.value = null
+})
+const seatOr = (id: string | null) => players.value.find((player) => player.playerId === id) ?? you.value
+const threatSeat = computed(() => seatOr(threatSeatId.value))
+const playSeat = computed(() => seatOr(playSeatId.value))
 
 const withAttachments = (cards: CardView[], hosts: CardView[]) => [
   ...hosts,
@@ -214,49 +225,42 @@ watch(question, (asked) => {
         />
 
         <!-- in front of the player, as engaged enemies sit on the table -->
-        <SeatBlobs v-slot="{ player, small }" class="threat-area" :players="players" :viewing="you?.playerId ?? null">
-          <!-- shrunk to the art of the enemies engaged with the seat, stacked -->
-          <CardFaces v-if="small" :cards="player.engaged" />
+        <section v-if="threatSeat" class="threat-area">
           <CardBand
-            v-else
             :label="$t('game.bands.threatArea')"
-            :cards="player.engaged"
+            :cards="threatSeat.engaged"
             :choices="choices"
             :flipping="flipping"
             @choose="choose"
           />
-        </SeatBlobs>
+          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="threatSeat.playerId" @view="threatSeatId = $event" />
+        </section>
 
-        <SeatBlobs
-          v-slot="{ player, small }"
+        <section
+          v-if="playSeat"
           class="play-area"
           :class="{ 'drop-zone': dragging && dragging.hosts === null }"
-          :players="players"
-          :viewing="you?.playerId ?? null"
         >
-          <!-- shrunk to a seat's heroes, their art stacked -->
-          <CardFaces v-if="small" :cards="player.inPlay.filter((card) => card.type === 'Hero')" />
           <!-- the seat's heroes always on the left, what else it has in play after them -->
           <CardBand
-            v-else
             class="heroes"
             :label="$t('game.bands.playArea')"
-            :cards="heroes(player)"
+            :cards="heroes(playSeat)"
             :choices="choices"
             :flipping="flipping"
             align="bottom"
             @choose="choose"
           />
           <CardBand
-            v-if="!small"
             class="in-play"
-            :cards="inPlay(player)"
+            :cards="inPlay(playSeat)"
             :choices="choices"
             :flipping="flipping"
             align="bottom"
             @choose="choose"
           />
-        </SeatBlobs>
+          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="playSeat.playerId" @view="playSeatId = $event" />
+        </section>
 
         <section class="band seat">
           <PlayerArea
@@ -365,6 +369,7 @@ watch(question, (asked) => {
 .game > .staging { background: var(--zone-staging); }
 .game > .threat-area { --zone-base: var(--zone-threat); }
 .game > .play-area { --zone-base: var(--zone-play); }
+.game > :is(.threat-area, .play-area) { position: relative; display: flex; background: var(--zone-base); }
 .band.seat { background: var(--zone-seat); }
 /* room for a card even when empty; border-box, so the padding and border count toward it */
 .game > .staging, .game > .threat-area, .game > .play-area {
@@ -372,7 +377,7 @@ watch(question, (asked) => {
   min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
   border-radius: 6px;
 }
-/* the threat and play areas are a blob per seat (see SeatBlobs), each its own band */
+/* the threat and play areas hold their bands, which take the padding */
 .game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
 /* no label, but in line with the bands that have one */
 .game > .scenario { padding-left: 1.5rem; }
@@ -380,6 +385,8 @@ watch(question, (asked) => {
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
 .game > :is(.staging, .threat-area, .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
+/* a row above for its seat tabs, 22px tall (see ZoneSeats), the usual gap over them */
+.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 22px; border-top-right-radius: 0; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* heroes as wide as they need, the rest of the play area after them */
