@@ -388,8 +388,8 @@ watch(question, (asked) => {
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .encounter > :is(.scenario, .staging), .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
 :is(.encounter, .game > .threat-area, .game > .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
-/* room above for its seat switch, 24px tall (see ZoneSeats), the usual gap over it */
-.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 24px; }
+/* room above for its seat switch, 37px tall (see ZoneSeats), the usual gap over it */
+.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 32px; }
 .encounter > .staging { flex: 1 1 calc(var(--card-width) * 3); min-width: 0; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }

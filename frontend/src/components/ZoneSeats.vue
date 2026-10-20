@@ -95,16 +95,16 @@ button {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  height: 18px;
+  gap: 7px;
+  height: 28px;
   margin: 0;
-  padding: 0 9px 0 2px;
+  padding: 0 12px 0 3px;
   border: 0;
   border-radius: 999px;
   background: none;
   color: rgb(from var(--text) r g b / 0.6);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
@@ -116,8 +116,8 @@ button:focus-visible { outline: 1px solid var(--text); outline-offset: 1px; }
 /* the face in the hero's art, high on the card and right of the stats */
 .avatar {
   flex: none;
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: 64% 4% / 300% auto no-repeat var(--seat);
   box-shadow: 0 0 0 1.5px var(--seat);
