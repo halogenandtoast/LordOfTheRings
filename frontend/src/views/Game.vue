@@ -397,7 +397,7 @@ watch(question, (asked) => {
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
 .encounter > .scenario { background: var(--zone-scenario); }
 .encounter > .staging { background: var(--zone-staging); }
-.encounter > .victory { background: var(--zone-victory); padding-left: 1.5rem; }
+.encounter > .victory { background: var(--zone-victory); }
 /* the staging area beside the scenario, under it when the screen is too narrow */
 .game > .encounter { display: flex; flex-wrap: wrap; gap: var(--gap); flex: 0 0 auto; }
 .game > .threat-area { --zone-base: var(--zone-threat); }
@@ -416,8 +416,8 @@ watch(question, (asked) => {
   border-radius: 6px;
 }
 /* the threat and play areas hold their bands, which take the padding */
-.encounter > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
-.encounter > .scenario { padding-left: 1.5rem; }
+/* the same on the scenario, staging and victory display, so their cards' tops line up */
+.encounter > :is(.scenario, .staging, .victory), .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
 .game > :is(.threat-area, .play-area) :deep(.band) { flex: 1 1 auto; }
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .encounter > :is(.scenario, .staging, .victory), .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
