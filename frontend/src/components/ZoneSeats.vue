@@ -10,7 +10,8 @@ export const seatHue = (players: PlayerView[], playerId: string | null | undefin
 </script>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
+import { useResizeObserver } from '@vueuse/core'
 
 // A segmented switch over a zone's corner, for showing another seat's cards in just that
 // zone: a seat per segment, its first hero's face beside its name, and a thumb in the
@@ -28,12 +29,13 @@ const place = async () => {
   const segment = segments[shown.value]
   thumb.value = segment ? { left: segment.offsetLeft, width: segment.offsetWidth } : null
 }
-onMounted(place)
+// again whenever the switch changes size, as when its font comes in
+useResizeObserver(useTemplateRef('nav'), () => void place())
 watch([shown, () => props.players.length], place)
 </script>
 
 <template>
-  <nav class="zone-seats" role="tablist" :aria-label="$t('game.seats.label')">
+  <nav ref="nav" class="zone-seats" role="tablist" :aria-label="$t('game.seats.label')">
     <span
       v-if="thumb"
       class="thumb"
