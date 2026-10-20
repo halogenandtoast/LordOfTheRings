@@ -197,26 +197,25 @@ watch(question, (asked) => {
         <QuestTally v-if="game?.tally" :tally="game.tally" />
         <Scenario v-if="scenario" :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
 
-        <!-- side by side, so the seats below get the height -->
-        <div class="encounter-row">
-          <CardBand
-            v-if="scenario"
-            :label="$t('game.bands.staging')"
-            :cards="scenario.staging"
-            :choices="choices"
-            :flipping="flipping"
-            @choose="choose"
-          />
+        <CardBand
+          v-if="scenario"
+          class="staging"
+          :label="$t('game.bands.staging')"
+          :cards="scenario.staging"
+          :choices="choices"
+          :flipping="flipping"
+          @choose="choose"
+        />
 
-          <CardBand
-            class="threat-area"
-            :label="$t('game.bands.threatArea')"
-            :cards="engaged"
-            :choices="choices"
-            :flipping="flipping"
-            @choose="choose"
-          />
-        </div>
+        <!-- in front of the player, as engaged enemies sit on the table -->
+        <CardBand
+          class="threat-area"
+          :label="$t('game.bands.threatArea')"
+          :cards="engaged"
+          :choices="choices"
+          :flipping="flipping"
+          @choose="choose"
+        />
 
         <section class="band play">
           <div class="hero-column">
@@ -343,8 +342,6 @@ watch(question, (asked) => {
 }
 
 @media (width < 700px) {
-  .encounter-row { flex-direction: column; }
-  .encounter-row > .threat-area:not(.empty) { border-left: 0; }
   .band.play { flex-direction: column; gap: var(--gap); }
   .hero-column {
     flex-direction: row;
@@ -354,10 +351,12 @@ watch(question, (asked) => {
   }
 }
 
-.encounter-row { display: flex; gap: var(--gap); align-items: stretch; }
-.encounter-row > * { flex: 1 1 0; min-width: 0; }
-.encounter-row > .threat-area:not(.empty) { border-left: 1px solid var(--line); }
-.band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; padding: 0; }
+/* each zone of the table has its own stripe, kept when empty so it stays a place */
+.game > .scenario { background: var(--zone-scenario); }
+.game > .staging { background: var(--zone-staging); }
+.game > .threat-area { background: var(--zone-threat); }
+.game > .staging, .game > .threat-area { flex: 0 0 auto; min-height: 3rem; padding: 4px; }
+.band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; background: var(--zone-play); }
 .hero-column {
   display: flex;
   flex-direction: column;
