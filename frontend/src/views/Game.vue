@@ -17,7 +17,6 @@ import Scenario from '../components/Scenario.vue'
 import SeatTabs from '../components/SeatTabs.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
-import ThreatDial from '../components/ThreatDial.vue'
 import FileBug from '../components/FileBug.vue'
 import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
@@ -45,7 +44,7 @@ const waitingOn = computed(() =>
     : null,
 )
 const question = computed(() => (waitingOn.value && asked.value ? { ...asked.value, choices: [] } : asked.value))
-const { active: debugging, send: sendDebug } = provideDebug(debug)
+const { active: debugging } = provideDebug(debug)
 const filingBug = ref(false)
 const bugDescription = ref('')
 const fileBugAbout = (description = '') => {
@@ -217,7 +216,18 @@ watch(question, (asked) => {
           @choose="choose"
         />
 
-        <section class="band play">
+        <CardBand
+          class="play-area"
+          :class="{ 'drop-zone': dragging && dragging.hosts === null }"
+          :label="$t('game.bands.playArea')"
+          :cards="inPlay"
+          :choices="choices"
+          :flipping="flipping"
+          align="bottom"
+          @choose="choose"
+        />
+
+        <section class="band seat">
           <div class="hero-column">
             <CardBand
               class="heroes"
@@ -227,32 +237,15 @@ watch(question, (asked) => {
               align="bottom"
               @choose="choose"
             />
-            <ThreatDial v-if="you" :threat="you.threat" />
-            <div v-if="you && debugging" class="debug-threat">
-              <button type="button" :aria-label="$t('game.debug.lowerThreat')" :disabled="you.threat === 0" @click="sendDebug({ tag: 'LowerThreat', contents: [you.playerId, 1] })">−</button>
-              <button type="button" :aria-label="$t('game.debug.raiseThreat')" @click="sendDebug({ tag: 'RaiseThreat', contents: [you.playerId, 1] })">+</button>
-            </div>
           </div>
-          <div class="player-column">
-            <CardBand
-              class="play-area"
-              :class="{ 'drop-zone': dragging && dragging.hosts === null }"
-              :label="$t('game.bands.playArea')"
-              :cards="inPlay"
-              :choices="choices"
-              :flipping="flipping"
-              align="bottom"
-              @choose="choose"
-            />
-            <PlayerArea
-              v-if="you"
-              :player="you"
-              :choices="choices"
-              :flipping="flipping"
-              :question="question"
-              @choose="choose"
-            />
-          </div>
+          <PlayerArea
+            v-if="you"
+            :player="you"
+            :choices="choices"
+            :flipping="flipping"
+            :question="question"
+            @choose="choose"
+          />
         </section>
         <SeatTabs
           v-if="players.length > 1"
@@ -342,7 +335,7 @@ watch(question, (asked) => {
 }
 
 @media (width < 700px) {
-  .band.play { flex-direction: column; gap: var(--gap); }
+  .band.seat { flex-direction: column; gap: var(--gap); }
   .hero-column {
     flex-direction: row;
     flex-wrap: wrap;
@@ -355,14 +348,20 @@ watch(question, (asked) => {
 .game > .scenario { background: var(--zone-scenario); }
 .game > .staging { background: var(--zone-staging); }
 .game > .threat-area { background: var(--zone-threat); }
+.game > .play-area { background: var(--zone-play); }
+.band.seat { background: var(--zone-seat); }
 /* room for a card even when empty; border-box, so the padding and border count toward it */
-.game > .staging, .game > .threat-area {
+.game > .staging, .game > .threat-area, .game > .play-area {
   flex: 0 0 auto;
   padding: var(--gap) 4px;
   min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
 }
-.game > .staging :deep(.band-label), .game > .threat-area :deep(.band-label) { align-self: flex-start; }
-.band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; background: var(--zone-play); }
+.game > .band :deep(.band-label) { align-self: flex-start; }
+/* the play area takes the height the other rows leave */
+.game > .play-area { flex: 1 1 auto; }
+/* your seat: heroes and threat dial beside your deck, hand and question */
+.band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
+.band.seat > .player { flex: 1 1 0; min-width: 0; }
 .hero-column {
   display: flex;
   flex-direction: column;
@@ -371,22 +370,11 @@ watch(question, (asked) => {
   justify-content: flex-end;
   flex: 0 0 auto;
 }
-.band.play .play-area.drop-zone {
-  flex: 1 1 auto;
-  min-height: calc(var(--card-width) / var(--card-aspect));
+.game > .play-area.drop-zone {
   outline: 2px dashed var(--target);
   outline-offset: -2px;
 }
-.band.play .heroes { flex: 0 0 auto; padding: 0; gap: calc(var(--gap) * 2); }
-/* the play area over the hand, both beside the heroes */
-.player-column {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-  flex: 1 1 0;
-  min-width: 0;
-}
-.player-column .play-area { flex: 1 1 auto; }
+.band.seat .heroes { flex: 0 0 auto; padding: 0; gap: calc(var(--gap) * 2); }
 
 .game {
   display: flex;
@@ -414,9 +402,6 @@ watch(question, (asked) => {
   gap: 0.6rem;
   min-height: 0;
 }
-.debug-threat { display: flex; gap: var(--gap); }
-.debug-threat button { width: 28px; height: 22px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; color: inherit; cursor: pointer; }
-.debug-threat button:disabled { opacity: 0.35; cursor: default; }
 .error { margin: 0; color: var(--danger); font-size: 0.8rem; }
 .file-bug-link { background: none; border: 0; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
 

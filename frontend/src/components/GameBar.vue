@@ -3,7 +3,7 @@ import GameMenu from './GameMenu.vue'
 
 const undoShortcut = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘Z' : 'Ctrl+Z'
 
-// a guest at a friend's game plays, but the game's menus are its owner's
+// a guest at a friend's game can undo and export, but restarting and debugging are the owner's
 defineProps<{ canUndo: boolean; showSidebar: boolean; debugging: boolean; spectate: boolean; guest?: boolean }>()
 const emit = defineEmits<{
   reset: []
@@ -19,13 +19,13 @@ const emit = defineEmits<{
   <div class="game-bar">
     <span v-if="spectate" class="spectating">{{ $t('game.bar.spectating') }}</span>
     <template v-else>
-    <template v-if="!guest">
     <GameMenu>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
       </svg>
       {{ $t('common.game') }}
       <template #items>
+        <template v-if="!guest">
         <div class="menu-section">{{ $t('common.scenario') }}</div>
         <button type="button" @click="emit('reset')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -33,6 +33,7 @@ const emit = defineEmits<{
           </svg>
           {{ $t('game.bar.restartScenario') }}
         </button>
+        </template>
         <div class="menu-section">{{ $t('game.bar.file') }}</div>
         <button type="button" @click="emit('export')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -40,6 +41,7 @@ const emit = defineEmits<{
           </svg>
           {{ $t('game.bar.exportGame') }}
         </button>
+        <template v-if="!guest">
         <div class="menu-section">{{ $t('game.bar.testing') }}</div>
         <button type="button" :aria-pressed="debugging" @click="emit('toggleDebug')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -48,6 +50,7 @@ const emit = defineEmits<{
           {{ debugging ? $t('game.bar.leaveDebugMode') : $t('game.bar.debugMode') }}
           <span class="shortcut">D</span>
         </button>
+        </template>
       </template>
     </GameMenu>
     <GameMenu>
@@ -78,7 +81,6 @@ const emit = defineEmits<{
         </button>
       </template>
     </GameMenu>
-    </template>
     <button type="button" class="bar-button" @click="emit('fileBug')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />

@@ -169,6 +169,8 @@ export const useGame = (gameId: string, spectate = false) => {
       post('', { choice, questionVersion: askId, player }),
     debug: (message: object) => post('/debug', message),
     join: (deck: DeckChoice) => post('/join', { deck }),
+    leave: () => post('/leave'),
+    start: () => post('/start'),
     refresh,
   }
 }

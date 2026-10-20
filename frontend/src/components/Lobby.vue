@@ -11,13 +11,14 @@ import type { Table } from '../server'
 // A game with friends before it is dealt: who has sat down, the link to send the rest,
 // and a seat to take with a deck. Taking the last seat deals the game.
 const { table } = defineProps<{ table: Table }>()
-const emit = defineEmits<{ join: [deck: DeckChoice] }>()
+const emit = defineEmits<{ join: [deck: DeckChoice]; leave: []; start: [] }>()
 
 const seats = computed(() =>
   Array.from({ length: table.seats }, (_, position) => table.seated.find((s) => s.position === position) ?? null),
 )
 const seated = computed(() => table.seated.some((s) => s.userId === currentUser.value?.id))
 const full = computed(() => table.seated.length >= table.seats)
+const owner = computed(() => table.owner === currentUser.value?.id)
 
 const link = window.location.href
 const copied = ref(false)
@@ -57,7 +58,13 @@ onMounted(async () => {
       </div>
     </div>
 
-    <p v-if="seated" class="hint">{{ $t('game.lobby.dealtWhenFull') }}</p>
+    <template v-if="seated">
+      <p class="hint">{{ $t('game.lobby.dealtWhenFull') }}</p>
+      <div class="actions">
+        <button v-if="owner" type="button" class="join" @click="emit('start')">{{ $t('game.lobby.startNow', table.seated.length) }}</button>
+        <button v-else type="button" class="secondary" @click="emit('leave')">{{ $t('game.lobby.leave') }}</button>
+      </div>
+    </template>
     <template v-else-if="!full">
       <h3>{{ $t('game.lobby.chooseDeck') }}</h3>
       <DeckPicker v-model="deck" :decks="decks" />
@@ -129,5 +136,20 @@ h3 { font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
 }
 .link button:hover, .join:hover { background: var(--button-primary-hover); }
 .join { padding: 15px; }
+.actions { display: flex; gap: 10px; }
+.actions .join { flex: 1; }
+.secondary {
+  padding: 15px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--button-secondary);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.secondary:hover { background: var(--button-secondary-hover); }
 .hint { margin: 0; color: var(--text-muted); }
 </style>
