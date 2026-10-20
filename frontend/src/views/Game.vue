@@ -334,6 +334,11 @@ watch(question, (asked) => {
   .docked-question { grid-column: 2; grid-row: 1 / -1; max-height: none; }
 }
 
+@media (width < 700px), (height < 500px) {
+  /* room for the hand pinned to the foot of the screen (see PlayerArea) */
+  .layout, .layout.no-sidebar { padding-bottom: calc(var(--gap) + var(--hand-peek)); }
+}
+
 @media (width < 700px) {
   .band.seat { flex-direction: column; gap: var(--gap); }
   .hero-column {

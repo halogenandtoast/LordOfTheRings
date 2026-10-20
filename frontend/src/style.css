@@ -3,6 +3,8 @@
   --card-width: clamp(50px, min(12vw, 14vh), 100px);
   --card-aspect: 0.715;
   --gap: 10px;
+  /* how much of the pinned hand shows while it is closed */
+  --hand-peek: 2.5rem;
   --attachment-peek: 22px;
   --nav-height: 40px;
   --font-title: "Vafthrudnir", Georgia, serif;
