@@ -71,6 +71,9 @@ watch(() => question.value?.playerId, (asked) => {
 // enemy engaged with someone else. They follow the seat shown again when it changes.
 const threatSeatId = ref<string | null>(null)
 const playSeatId = ref<string | null>(null)
+// or split evenly between every seat
+const threatSplit = ref(false)
+const playSplit = ref(false)
 watch(() => you.value?.playerId, () => {
   threatSeatId.value = null
   playSeatId.value = null
@@ -226,41 +229,59 @@ watch(question, (asked) => {
         </div>
 
         <!-- in front of the player, as engaged enemies sit on the table -->
-        <section v-if="threatSeat" class="threat-area">
-          <CardBand
-            :label="$t('game.bands.threatArea')"
-            :cards="threatSeat.engaged"
-            :choices="choices"
-            :flipping="flipping"
-            @choose="choose"
+        <section v-if="threatSeat" class="threat-area" :class="{ split: threatSplit }">
+          <div v-for="seat in threatSplit ? players : [threatSeat]" :key="seat.playerId" class="seat-part">
+            <CardBand
+              :label="threatSplit ? seat.name : $t('game.bands.threatArea')"
+              :cards="seat.engaged"
+              :choices="choices"
+              :flipping="flipping"
+              @choose="choose"
+            />
+          </div>
+          <ZoneSeats
+            v-if="players.length > 1"
+            :players="players"
+            :viewing="threatSeat.playerId"
+            :split="threatSplit"
+            @view="(id) => { threatSeatId = id; threatSplit = false }"
+            @split="threatSplit = !threatSplit"
           />
-          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="threatSeat.playerId" @view="threatSeatId = $event" />
         </section>
 
         <section
           v-if="playSeat"
           class="play-area"
-          :class="{ 'drop-zone': dragging && dragging.hosts === null }"
+          :class="{ 'drop-zone': dragging && dragging.hosts === null, split: playSplit }"
         >
-          <!-- the seat's heroes always on the left, what else it has in play after them -->
-          <CardBand
-            class="heroes"
-            :label="$t('game.bands.playArea')"
-            :cards="heroes(playSeat)"
-            :choices="choices"
-            :flipping="flipping"
-            align="bottom"
-            @choose="choose"
+          <div v-for="seat in playSplit ? players : [playSeat]" :key="seat.playerId" class="seat-part">
+            <!-- the seat's heroes always on the left, what else it has in play after them -->
+            <CardBand
+              class="heroes"
+              :label="playSplit ? seat.name : $t('game.bands.playArea')"
+              :cards="heroes(seat)"
+              :choices="choices"
+              :flipping="flipping"
+              align="bottom"
+              @choose="choose"
+            />
+            <CardBand
+              class="in-play"
+              :cards="inPlay(seat)"
+              :choices="choices"
+              :flipping="flipping"
+              align="bottom"
+              @choose="choose"
+            />
+          </div>
+          <ZoneSeats
+            v-if="players.length > 1"
+            :players="players"
+            :viewing="playSeat.playerId"
+            :split="playSplit"
+            @view="(id) => { playSeatId = id; playSplit = false }"
+            @split="playSplit = !playSplit"
           />
-          <CardBand
-            class="in-play"
-            :cards="inPlay(playSeat)"
-            :choices="choices"
-            :flipping="flipping"
-            align="bottom"
-            @choose="choose"
-          />
-          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="playSeat.playerId" @view="playSeatId = $event" />
         </section>
 
         <section class="band seat">
@@ -388,9 +409,10 @@ watch(question, (asked) => {
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .encounter > :is(.scenario, .staging), .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
 :is(.encounter, .game > .threat-area, .game > .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
-/* room above for its seat switch, 37px tall (see ZoneSeats), the usual gap over it */
-.game > :is(.threat-area, .play-area):has(> .zone-seats) { margin-top: 32px; }
 .encounter > .staging { flex: 1 1 calc(var(--card-width) * 3); min-width: 0; }
+/* a seat's share of the zone: all of it, or an even share when split, a bar between */
+.seat-part { display: flex; flex: 1 1 0; min-width: 0; }
+.seat-part + .seat-part { border-left: 2px solid var(--line-strong); }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* heroes as wide as they need, the rest of the play area after them */

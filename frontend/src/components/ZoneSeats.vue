@@ -12,18 +12,22 @@ export const seatHue = (players: PlayerView[], playerId: string | null | undefin
 <script setup lang="ts">
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
+import { Columns2 } from 'lucide-vue-next'
 
 // A segmented switch over a zone's corner, for showing another seat's cards in just that
-// zone: a seat per segment, its first hero's face beside its name, and a thumb in the
-// seat's shade that glides under the one shown.
-const props = defineProps<{ players: PlayerView[]; viewing: string | null }>()
-const emit = defineEmits<{ view: [playerId: string] }>()
+// zone, floating in its top corner: a seat per segment, its first hero's face beside its name, and a thumb in the
+// seat's shade that glides under the one shown. Its last segment splits the zone between
+// every seat, and then each seat's segment floats over its own share.
+const props = defineProps<{ players: PlayerView[]; viewing: string | null; split: boolean }>()
+const emit = defineEmits<{ view: [playerId: string]; split: [] }>()
 
 const face = (player: PlayerView) => player.inPlay.find((card) => card.type === 'Hero')?.code
 
 const segments: HTMLButtonElement[] = []
 const thumb = ref<{ left: number; width: number } | null>(null)
-const shown = computed(() => props.players.findIndex((player) => player.playerId === props.viewing))
+const shown = computed(() =>
+  props.split ? -1 : props.players.findIndex((player) => player.playerId === props.viewing),
+)
 const place = async () => {
   await nextTick()
   const segment = segments[shown.value]
@@ -35,7 +39,7 @@ watch([shown, () => props.players.length], place)
 </script>
 
 <template>
-  <nav ref="nav" class="zone-seats" role="tablist" :aria-label="$t('game.seats.label')">
+  <nav ref="nav" class="zone-seats" :class="{ split }" role="tablist" :aria-label="$t('game.seats.label')">
     <span
       v-if="thumb"
       class="thumb"
@@ -51,8 +55,8 @@ watch([shown, () => props.players.length], place)
       :ref="(el) => (segments[i] = el as HTMLButtonElement)"
       type="button"
       role="tab"
-      :class="{ active: player.playerId === viewing }"
-      :aria-selected="player.playerId === viewing"
+      :class="{ active: split || player.playerId === viewing }"
+      :aria-selected="!split && player.playerId === viewing"
       @click="emit('view', player.playerId)"
     >
       <span
@@ -64,16 +68,28 @@ watch([shown, () => props.players.length], place)
       />
       {{ player.name }}
     </button>
+    <button
+      type="button"
+      class="split-toggle"
+      :class="{ active: split }"
+      :aria-pressed="split"
+      :title="$t('game.seats.split')"
+      :aria-label="$t('game.seats.split')"
+      @click="emit('split')"
+    >
+      <Columns2 :size="16" />
+    </button>
   </nav>
 </template>
 
 <style scoped>
 .zone-seats {
   position: absolute;
+  top: 4px;
   right: 4px;
-  bottom: calc(100% + 3px);
   z-index: 2;
   display: flex;
+  gap: 6px;
   padding: 3px;
   border: 1px solid rgb(255 255 255 / 0.08);
   border-radius: 999px;
@@ -127,5 +143,33 @@ button:focus-visible { outline: 1px solid var(--text); outline-offset: 1px; }
   transition: filter 0.15s;
 }
 button:hover .avatar, button.active .avatar { filter: none; }
+.split-toggle { padding: 0 6px; }
+.split-toggle.active { background: rgb(255 255 255 / 0.12); cursor: pointer; }
+/* split: a column per seat across the zone (whose shares are even, see Game.vue), each
+   seat's segment a pill of its own centred over its share, the toggle at the far end */
+.zone-seats.split {
+  left: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  justify-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  pointer-events: none;
+}
+.zone-seats.split > button {
+  padding: 3px 15px 3px 6px;
+  height: 34px;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(0 0 0 / 0.35);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.zone-seats.split > .split-toggle { position: absolute; top: 0; right: 0; padding: 0 9px; background: rgb(255 255 255 / 0.12); }
 @media (prefers-reduced-motion: reduce) { .thumb { transition: none; } }
 </style>

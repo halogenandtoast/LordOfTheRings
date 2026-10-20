@@ -44,7 +44,8 @@
     "label": "Seats",
     "asked": "Being asked",
     "firstPlayer": "First player",
-    "hand": "{count} in hand"
+    "hand": "{count} in hand",
+    "split": "Split view"
   },
   "noActiveLocation": "No active location",
   "bands": {
