@@ -15,6 +15,8 @@ import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import SeatStrip from '../components/SeatStrip.vue'
+import Lobby from '../components/Lobby.vue'
+import { currentUser } from '../auth'
 import ThreatDial from '../components/ThreatDial.vue'
 import FileBug from '../components/FileBug.vue'
 import { exportGame } from '../api'
@@ -27,10 +29,22 @@ const tr = useServerText()
 const spectate = route.meta.spectate === true
 const {
   error, game, log, announcement, flipping,
-  started, question: asked, scenario, players, outcome, answer, reset, undo, canUndo, debug,
+  started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join,
 } = useGame(route.params.id as string, spectate)
-// a spectator sees what is asked, with nothing to choose
-const question = computed(() => (spectate && asked.value ? { ...asked.value, choices: [] } : asked.value))
+// With friends you play your own seat; otherwise every seat is yours.
+const withFriends = computed(() => table.value?.withFriends ?? false)
+const guest = computed(() => withFriends.value && table.value?.owner !== currentUser.value?.id)
+const mySeat = computed(() => {
+  const position = table.value?.seated.find((seat) => seat.userId === currentUser.value?.id)?.position
+  return withFriends.value && position !== undefined ? players.value[position]?.playerId ?? null : null
+})
+// someone else's turn to answer, as a spectator always sees it: what is asked, with nothing to choose
+const waitingOn = computed(() =>
+  asked.value && (spectate || (withFriends.value && asked.value.playerId !== mySeat.value))
+    ? players.value.find((player) => player.playerId === asked.value?.playerId) ?? null
+    : null,
+)
+const question = computed(() => (waitingOn.value && asked.value ? { ...asked.value, choices: [] } : asked.value))
 const { active: debugging, send: sendDebug } = provideDebug(debug)
 const filingBug = ref(false)
 const bugDescription = ref('')
@@ -43,13 +57,16 @@ const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matche
 
 const choices = computed(() => question.value?.choices ?? [])
 provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
-// The seat whose board is shown in full; the others sit beside it, small. It follows
-// whoever is asked something, and clicking another seat looks at that one instead.
+// The seat whose board is shown in full; the others sit beside it, small. It starts as
+// yours, follows whoever is asked when every seat is yours, and clicking another seat
+// looks at that one instead.
 const seatId = ref<string | null>(null)
-const you = computed(() => players.value.find((player) => player.playerId === seatId.value) ?? players.value[0] ?? null)
+const you = computed(
+  () => players.value.find((player) => player.playerId === (seatId.value ?? mySeat.value)) ?? players.value[0] ?? null,
+)
 const otherSeats = computed(() => players.value.filter((player) => player !== you.value))
 watch(() => question.value?.playerId, (asked) => {
-  if (asked) seatId.value = asked
+  if (asked && !withFriends.value) seatId.value = asked
 }, { immediate: true })
 
 const cardsInPlay = computed(() => you.value?.inPlay ?? [])
@@ -77,7 +94,7 @@ const onKeydown = (event: KeyboardEvent) => {
   if (!typing && !event.metaKey && !event.ctrlKey && !event.altKey && event.key.toLowerCase() === 'd') {
     debugging.value = !debugging.value
   }
-  if (!typing && (event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && canUndo.value) {
+  if (!typing && (event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && canUndo.value && !guest.value) {
     event.preventDefault()
     undo()
   }
@@ -156,6 +173,7 @@ watch(question, (asked) => {
     :show-sidebar="showSidebar"
     :debugging="debugging"
     :spectate="spectate"
+    :guest="guest"
     @reset="reset"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
@@ -176,6 +194,7 @@ watch(question, (asked) => {
     >
 
 
+      <Lobby v-if="!started && table?.withFriends" :table="table" @join="join" />
       <template v-if="started">
         <QuestTally v-if="game?.tally" :tally="game.tally" />
         <Scenario v-if="scenario" :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
@@ -270,6 +289,7 @@ watch(question, (asked) => {
         :round="game?.round ?? 0"
         :phase="game?.phase ?? null"
       />
+      <p v-if="waitingOn && !spectate" class="announcement">{{ $t('game.waitingOn', { name: waitingOn.name }) }}</p>
       <p v-if="announcement" class="announcement">{{ tr(announcement) }}</p>
       <Log :log="log" />
     </aside>

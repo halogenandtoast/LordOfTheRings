@@ -5,6 +5,7 @@ import LordOfTheRings.Ally (Ally, AllyAttrs (..))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (PlayerCard (..), genPlayerCard)
+import LordOfTheRings.Decklist (sharedHeroes)
 import LordOfTheRings.Sphere (Sphere (Spirit))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -51,6 +52,12 @@ exhausted code = heroExhausted . toAttrs <$> getHeroWithCode code
 
 spec :: Spec
 spec = describe "Starter deck" do
+  describe "sharedHeroes" do
+    it "finds hero titles more than one deck brings" $ liftIO @IO do
+      let deck sphere = fromJustNote (unpack sphere) $ lookup (sphere :: Text) coreStarterDecks
+      sharedHeroes [deck "leadership", deck "tactics", deck "spirit", deck "lore"] `shouldBe` []
+      sort (sharedHeroes [deck "leadership", deck "lore", deck "leadership"]) `shouldBe` ["Aragorn", "Glóin", "Théodred"]
+
   describe "core starter decks" do
     for_ coreStarterDecks \(sphere, deck) ->
       it ("deals the " <> unpack sphere <> " deck with three heroes") . gameTestWith deck $ \_ -> do

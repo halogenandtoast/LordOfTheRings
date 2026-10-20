@@ -10,7 +10,7 @@ import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Random (evalRand, mkStdGen, randomIO)
 import System.Random.Internal (StdGen (..))
 import System.Random.SplitMix (seedSMGen', unseedSMGen)
-import Data.Aeson (Result (..), Value (Array))
+import Data.Aeson (Result (..), Value (Array, Null))
 import Data.Aeson.Diff qualified as Diff
 import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as Map
@@ -64,6 +64,7 @@ mkYesod
   /games GamesR GET POST
   /games/#LotrGameId GameR GET POST DELETE
   /games/#LotrGameId/spectate SpectateR GET
+  /games/#LotrGameId/join JoinR POST
   /games/#LotrGameId/undo UndoR POST
   /games/#LotrGameId/reset ResetR POST
   /games/#LotrGameId/debug DebugR POST
@@ -94,7 +95,23 @@ data GameData = GameData
   , game :: Maybe Value
   , playerId :: Maybe PlayerId
   , canUndo :: Bool
+  , table :: Table
   }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+-- | Who plays: with friends, who sits in which seat (seat n playing the nth player);
+-- otherwise the owner plays every seat.
+data Table = Table
+  { withFriends :: Bool
+  , seats :: Int
+  , owner :: UserId
+  , seated :: [SeatView]
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+data SeatView = SeatView {position :: Int, userId :: UserId, username :: Text}
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
@@ -108,6 +125,8 @@ data GameSummary = GameSummary
   , phase :: Phase
   , threat :: Int
   , outcome :: Maybe Outcome
+  , waiting :: Bool
+  -- ^ a game with friends that has not been dealt, waiting for seats to fill
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
@@ -135,6 +154,20 @@ requireOwnedGame gid = do
   row <- runDB $ get404 gid
   unless (row.lotrGameUserId == userId) notFound
   pure row
+
+-- | A game you play: your own, or one you have a seat at. A game with friends still
+-- waiting for players is open to anyone signed in, so its invite link shows the lobby.
+requirePlayableGame :: LotrGameId -> Handler LotrGame
+requirePlayableGame gid = do
+  userId <- requireUserId
+  row <- runDB $ get404 gid
+  seat <- runDB $ getBy $ UniqueSeatUser gid userId
+  unless (row.lotrGameUserId == userId || isJust seat || (row.lotrGameWithFriends && awaitingPlayers row)) notFound
+  pure row
+
+-- | A game with friends before it is dealt.
+awaitingPlayers :: LotrGame -> Bool
+awaitingPlayers row = row.lotrGameCurrentData == Null
 
 -- | A game you may watch: one open to spectators, your own, or any game for an admin.
 requireWatchableGame :: LotrGameId -> Handler LotrGame
@@ -282,15 +315,42 @@ logTo chan msg = atomically $ writeTChan chan $ encode $ toJSON msg
 currentState :: GameEnv -> IO (Game, [Message], StdGen)
 currentState env = (,,) <$> runGameT env getGame <*> runGameT env peekQueue <*> readIORef (gameRandomGen env)
 
-gameData :: LotrGame -> Game -> GameData
-gameData row g = GameData True (Just $ publicGame g) (Just g.activePlayer) (row.lotrGameStep > 0)
+-- | The game, nothing while it waits for players.
+storedGame :: LotrGame -> Handler (Maybe Game)
+storedGame row = if awaitingPlayers row then pure Nothing else Just <$> decodeOrFail "game" row.lotrGameCurrentData
 
-broadcast :: LotrGameId -> LotrGame -> Game -> Handler ()
+tableFor :: LotrGameId -> LotrGame -> Handler Table
+tableFor gid row = do
+  seated <- runDB do
+    seats <- selectList [LotrSeatGameId ==. gid] [Asc LotrSeatPosition]
+    for seats \(Entity _ seat) ->
+      SeatView seat.lotrSeatPosition seat.lotrSeatUserId . maybe "" (.userUsername) <$> get seat.lotrSeatUserId
+  pure Table {withFriends = row.lotrGameWithFriends, seats = row.lotrGameSeats, owner = row.lotrGameUserId, seated}
+
+gameData :: LotrGameId -> LotrGame -> Maybe Game -> Handler GameData
+gameData gid row g = GameData (isJust g) (toJSON . publicGame <$> g) ((.activePlayer) <$> g) (row.lotrGameStep > 0) <$> tableFor gid row
+
+broadcast :: LotrGameId -> LotrGame -> Maybe Game -> Handler ()
 broadcast gid row g = do
   chan <- gameChannel gid
-  atomically $ writeTChan chan $ encode $ object ["tag" .= String "Update", "contents" .= gameData row g]
+  contents <- gameData gid row g
+  atomically $ writeTChan chan $ encode $ object ["tag" .= String "Update", "contents" .= contents]
 
 summary :: Entity LotrGame -> Maybe GameSummary
+summary (Entity gid row) | awaitingPlayers row = do
+  scenario <- lookupScenario (ScenarioId row.lotrGameScenario)
+  pure
+    GameSummary
+      { id = gid
+      , name = row.lotrGameName
+      , playerName = row.lotrGamePlayerName
+      , scenario = scenarioName (toAttrs scenario)
+      , round = 0
+      , phase = minBound
+      , threat = 0
+      , outcome = Nothing
+      , waiting = True
+      }
 summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
   Error _ -> Nothing
   Success (g :: Game) ->
@@ -304,12 +364,15 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , phase = g.phase
         , threat = sum [p.threat | p <- toList g.players]
         , outcome = g.outcome
+        , waiting = False
         }
 
 getGamesR :: Handler Value
 getGamesR = do
   userId <- requireUserId
-  games <- runDB $ selectList [LotrGameUserId ==. userId] [Desc LotrGameUpdatedAt]
+  games <- runDB do
+    seatedAt <- map ((.lotrSeatGameId) . entityVal) <$> selectList [LotrSeatUserId ==. userId] []
+    selectList ([LotrGameUserId ==. userId] ||. [LotrGameId <-. seatedAt]) [Desc LotrGameUpdatedAt]
   pure $ toJSON $ mapMaybe summary games
 
 -- | A deck to deal: one of the core starter decks by sphere, or one of the user's decks.
@@ -325,17 +388,53 @@ data NewGame = NewGame
   , deck :: Maybe DeckChoice
   , decks :: Maybe [Maybe DeckChoice]
   -- ^ one deck per seat for multi-handed solo, Nothing being the starter deck; overrides deck
+  , withFriends :: Maybe Bool
+  , seats :: Maybe Int
+  -- ^ with friends, how many play; you bring the first deck and the rest join
   , allowSpectators :: Maybe Bool
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
+newtype JoinGame = JoinGame {deck :: Maybe DeckChoice}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+-- | The deck chosen, Nothing for the starter deck.
+resolveDeck :: UserId -> Maybe DeckChoice -> Handler (Maybe DeckList)
+resolveDeck userId = \case
+  Nothing -> pure Nothing
+  Just (StarterDeck sphere) ->
+    maybe (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere])) (pure . Just) $ lookup sphere coreStarterDecks
+  Just (ImportedDeck deckId) -> do
+    db <- getsYesod (.cardDb)
+    runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) (pure . Just)
+
+-- | Refuse decks that would put heroes with the same title at the table.
+refuseSharedHeroes :: [DeckList] -> Handler ()
+refuseSharedHeroes deckLists = case sharedHeroes deckLists of
+  [] -> pure ()
+  titles -> sendResponseStatus status400 (ikeyWith "error.sharedHeroes" [textVar "heroes" (intercalate ", " titles)])
+
+-- | Your seats in multi-handed solo, numbered when there are several.
+soloSeats :: Text -> NonEmpty DeckList -> NonEmpty (Text, DeckList)
+soloSeats name = \case
+  deckList :| [] -> (name, deckList) :| []
+  deckLists -> NE.zipWith (\n deckList -> (name <> " (" <> tshow n <> ")", deckList)) (NE.iterate (+ 1) (1 :: Int)) deckLists
+
+-- | The seats of a game with friends, in order, with who sits there and their deck.
+friendSeats :: LotrGameId -> Handler [(Text, DeckList)]
+friendSeats gid = do
+  seats <- runDB $ selectList [LotrSeatGameId ==. gid] [Asc LotrSeatPosition]
+  for seats \(Entity _ seat) -> do
+    name <- maybe "" (.userUsername) <$> runDB (get seat.lotrSeatUserId)
+    (name,) <$> maybe (pure starterDeck) (decodeOrFail "deck") seat.lotrSeatDeck
+
 -- | Deal a new game from a seed and play it up to its first question, with a seat for
--- each deck, all played by you.
-startGame :: Scenario -> NonEmpty DeckList -> Text -> Int -> IO (Game, [Message], StdGen)
-startGame scenario deckLists playerName seed = do
-  let seatName n = if length deckLists == 1 then playerName else playerName <> " (" <> tshow n <> ")"
-  seats <- either (error . show) pure . sequence $ evalRand (traverse (\(n, deckList) -> loadPlayer (seatName n) deckList) (NE.zip (NE.iterate (+ 1) (1 :: Int)) deckLists)) (mkStdGen seed)
+-- each named deck.
+startGame :: Scenario -> NonEmpty (Text, DeckList) -> Int -> IO (Game, [Message], StdGen)
+startGame scenario players seed = do
+  seats <- either (error . show) pure . sequence $ evalRand (traverse (uncurry loadPlayer) players) (mkStdGen seed)
   chan <- newBroadcastTChanIO
   env <- envFor chan (newTableIn scenario seats) [] (mkStdGen $ seed + 1)
   void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
@@ -353,33 +452,78 @@ postGamesR = do
   choices <- maybe (sendResponseStatus status400 (ikey "error.seatCount")) pure do
     seats <- nonEmpty $ fromMaybe [new.deck] new.decks
     guard (length seats <= 4) $> seats
-  deckLists <- for choices \case
-    Nothing -> pure Nothing
-    Just (StarterDeck sphere) ->
-      maybe (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere])) (pure . Just) $ lookup sphere coreStarterDecks
-    Just (ImportedDeck deckId) -> do
-      db <- getsYesod (.cardDb)
-      runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) (pure . Just)
-  (g, queue, gen) <- liftIO . startGame scenario (fromMaybe starterDeck <$> deckLists) playerName =<< maybe (liftIO randomIO) pure new.seed
+  deckLists <- traverse (resolveDeck userId) choices
+  refuseSharedHeroes $ fromMaybe starterDeck <$> toList deckLists
+  let friends = fromMaybe False new.withFriends
+      seatCount = fromMaybe 1 new.seats
+  when (friends && (seatCount < 2 || seatCount > 4)) $ sendResponseStatus status400 (ikey "error.seatCount")
   now <- liftIO getCurrentTime
-  gid <-
-    runDB
-      $ insert
+  let newGame' g queue gen =
         LotrGame
           { lotrGameUserId = userId
           , lotrGameName = new.name
           , lotrGamePlayerName = playerName
-          , lotrGameCurrentData = toJSON g
-          , lotrGameCurrentQueue = toJSON queue
+          , lotrGameCurrentData = g
+          , lotrGameCurrentQueue = queue
           , lotrGameRandomGen = showGen gen
           , lotrGameStep = 0
           , lotrGameScenario = scenarioId
           , lotrGameDeck = storedDecks deckLists
           , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
+          , lotrGameWithFriends = friends
+          , lotrGameSeats = if friends then seatCount else length deckLists
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
+  gid <-
+    if friends
+      then -- dealt once the rest of the seats are taken
+        runDB do
+          gid <- insert $ newGame' Null (toJSON ([] :: [Message])) (mkStdGen 0)
+          insert_ $ LotrSeat gid 0 userId (toJSON <$> NE.head deckLists)
+          pure gid
+      else do
+        (g, queue, gen) <- liftIO . startGame scenario (soloSeats playerName $ fromMaybe starterDeck <$> deckLists) =<< maybe (liftIO randomIO) pure new.seed
+        runDB $ insert $ newGame' (toJSON g) (toJSON queue) gen
   pure $ object ["id" .= gid]
+
+-- | Take the first free seat at a game with friends, bringing a deck. Taking the last
+-- one deals the game.
+postJoinR :: LotrGameId -> Handler ()
+postJoinR gid = do
+  userId <- requireUserId
+  row <- runDB $ get404 gid
+  unless (row.lotrGameWithFriends && awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notWaitingForPlayers")
+  joining <- requireCheckJsonBody @_ @JoinGame
+  deckList <- resolveDeck userId joining.deck
+  seated <- runDB $ selectList [LotrSeatGameId ==. gid] []
+  when (any ((== userId) . (.lotrSeatUserId) . entityVal) seated) $ sendResponseStatus status409 (ikey "error.alreadySeated")
+  refuseSharedHeroes . (fromMaybe starterDeck deckList :) . map snd =<< friendSeats gid
+  case [0 .. row.lotrGameSeats - 1] \\ map ((.lotrSeatPosition) . entityVal) seated of
+    [] -> sendResponseStatus status409 (ikey "error.noFreeSeat")
+    (position : rest) -> do
+      runDB $ insert_ $ LotrSeat gid position userId (toJSON <$> deckList)
+      if null rest
+        then deal gid row =<< maybe (error "no seats") pure . nonEmpty =<< friendSeats gid
+        else broadcast gid row Nothing
+
+-- | Deal the game again from the start, with a new seed.
+deal :: LotrGameId -> LotrGame -> NonEmpty (Text, DeckList) -> Handler ()
+deal gid row players = do
+  scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure $ lookupScenario (ScenarioId row.lotrGameScenario)
+  (g, queue, gen) <- liftIO . startGame scenario players =<< liftIO randomIO
+  now <- liftIO getCurrentTime
+  row' <- runDB do
+    deleteWhere [LotrStepGameId ==. gid]
+    updateGet
+      gid
+      [ LotrGameCurrentData =. toJSON g
+      , LotrGameCurrentQueue =. toJSON queue
+      , LotrGameRandomGen =. showGen gen
+      , LotrGameStep =. 0
+      , LotrGameUpdatedAt =. now
+      ]
+  broadcast gid row' (Just g)
 
 handleSocket :: TChan LByteString -> WebSocketsT Handler ()
 handleSocket chan = do
@@ -390,11 +534,10 @@ handleSocket chan = do
 serveGame :: LotrGameId -> LotrGame -> Handler Value
 serveGame gid row = do
   webSockets . handleSocket =<< gameChannel gid
-  g <- decodeOrFail "game" row.lotrGameCurrentData
-  pure $ toJSON $ gameData row g
+  toJSON <$> (gameData gid row =<< storedGame row)
 
 getGameR :: LotrGameId -> Handler Value
-getGameR gid = serveGame gid =<< requireOwnedGame gid
+getGameR gid = serveGame gid =<< requirePlayableGame gid
 
 -- | The same game and updates for someone watching. The socket only sends, and
 -- answering needs the owner, so watching cannot change the game.
@@ -440,14 +583,18 @@ data Answer = Answer
 
 postGameR :: LotrGameId -> Handler ()
 postGameR gid = do
-  row <- requireOwnedGame gid
+  row <- requirePlayableGame gid
+  userId <- requireUserId
+  seat <- runDB $ getBy $ UniqueSeatUser gid userId
   answer <- requireCheckJsonBody @_ @Answer
   advance gid row \before -> do
     when (answer.questionVersion /= before.questionVersion) $
       sendResponseStatus status409 ("stale answer" :: Text)
-    -- every seat is yours, but only the one asked can answer
+    -- only the seat asked can answer, and with friends only from its own player
     unless (Map.member answer.player before.question) $
       sendResponseStatus status409 ("not asked" :: Text)
+    let yours = (before.playerOrder `atMay`) . (.lotrSeatPosition) . entityVal =<< seat
+    unless (if row.lotrGameWithFriends then yours == Just answer.player else row.lotrGameUserId == userId) notFound
     pure $ answerQuestion answer.player answer.choice
 
 -- | Run any engine message against the game, for adjusting it by hand while testing.
@@ -487,7 +634,7 @@ advance gid row prepare = do
       , LotrGameStep =. step
       , LotrGameUpdatedAt =. now
       ]
-  broadcast gid row' after
+  broadcast gid row' (Just after)
 
 deleteGameR :: LotrGameId -> Handler ()
 deleteGameR gid = requireOwnedGame gid >> runDB (delete gid)
@@ -561,7 +708,7 @@ postUndoR gid = do
         , LotrGameStep =. row.lotrGameStep - length undone
         , LotrGameUpdatedAt =. now
         ]
-    broadcast gid row' g
+    broadcast gid row' (Just g)
  where
   undoStep current (Entity _ step) = do
     patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
@@ -572,21 +719,12 @@ postUndoR gid = do
 postResetR :: LotrGameId -> Handler ()
 postResetR gid = do
   row <- requireOwnedGame gid
-  scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure $ lookupScenario (ScenarioId row.lotrGameScenario)
-  deckLists <- maybe (pure $ starterDeck :| []) (decodeOrFail "deck" . seatDecks) row.lotrGameDeck
-  (g, queue, gen) <- liftIO . startGame scenario deckLists row.lotrGamePlayerName =<< liftIO randomIO
-  now <- liftIO getCurrentTime
-  row' <- runDB do
-    deleteWhere [LotrStepGameId ==. gid]
-    updateGet
-      gid
-      [ LotrGameCurrentData =. toJSON g
-      , LotrGameCurrentQueue =. toJSON queue
-      , LotrGameRandomGen =. showGen gen
-      , LotrGameStep =. 0
-      , LotrGameUpdatedAt =. now
-      ]
-  broadcast gid row' g
+  when (awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notDealtYet")
+  players <-
+    if row.lotrGameWithFriends
+      then maybe (error "no seats") pure . nonEmpty =<< friendSeats gid
+      else soloSeats row.lotrGamePlayerName <$> maybe (pure $ starterDeck :| []) (decodeOrFail "deck" . seatDecks) row.lotrGameDeck
+  deal gid row players
 
 -- | Everything needed to carry a game elsewhere, undo history included.
 data ExportedGame = ExportedGame
@@ -680,6 +818,8 @@ postImportR = do
           , lotrGameScenario = unScenarioId $ toId imported.scenario
           , lotrGameDeck = Nothing
           , lotrGameAllowSpectators = False
+          , lotrGameWithFriends = False
+          , lotrGameSeats = length imported.playerOrder
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }

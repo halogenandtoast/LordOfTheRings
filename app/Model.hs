@@ -54,8 +54,24 @@ LotrGame sql=lotr_games
   deck Value Maybe
   -- | whether anyone may watch, not only the owner and admins; chosen when the game is made
   allowSpectators Bool default=false
+  -- | played with friends, a seat each, rather than every seat being the owner's
+  withFriends Bool default=false
+  -- | a game with friends is dealt once all of its seats are taken; until then its
+  -- current data is null
+  seats Int default=1
   createdAt UTCTime
   updatedAt UTCTime
+  deriving Show
+
+-- | Who sits where at a game with friends, and the deck they brought (null for the
+-- starter deck). Seats are dealt in position order, so position n plays the nth player.
+LotrSeat sql=lotr_seats
+  gameId LotrGameId OnDeleteCascade
+  position Int
+  userId UserId OnDeleteCascade
+  deck Value Maybe
+  UniqueSeat gameId position
+  UniqueSeatUser gameId userId
   deriving Show
 
 -- | Enough to step a game back one answer: a patch from the game after the answer to

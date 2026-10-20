@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Hero
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 
 data DeckList = DeckList
@@ -42,6 +43,14 @@ newtype DeckException = DeckException Text
 lookupPlayerCardDef :: CardCode -> Either DeckException CardDef
 lookupPlayerCardDef cCode =
   maybe (Left $ DeckException $ "Missing card: " <> tshow cCode) Right $ Map.lookup cCode allPlayerCards
+
+-- | Hero titles brought by more than one deck. Heroes are unique, so no two players may
+-- control heroes with the same title, whichever versions they are.
+sharedHeroes :: [DeckList] -> [Text]
+sharedHeroes deckLists = [title | (title, n) <- mapToList counts, n > (1 :: Int)]
+ where
+  counts = Map.fromListWith (+) [(title, 1) | dl <- deckLists, title <- ordNub (mapMaybe heroTitle dl.heroes)]
+  heroTitle code = (\(Name title _) -> title) . (.cdName) <$> Map.lookup code allPlayerCards
 
 loadPlayer :: (MonadRandom m) => Text -> DeckList -> m (Either DeckException (Player, [Hero]))
 loadPlayer name dl = do

@@ -1,4 +1,9 @@
 {
+  "sharedHeroes": "Heroes are unique, and more than one deck brings {heroes}.",
+  "notWaitingForPlayers": "This game is not waiting for players.",
+  "alreadySeated": "You already have a seat at this game.",
+  "noFreeSeat": "Every seat at this game is taken.",
+  "notDealtYet": "The game has not been dealt yet.",
   "seatCount": "A game has from 1 to 4 decks.",
   "noDeckSource": "Give a RingsDB link or a deck JSON file.",
   "notRingsdbLink": "Not a RingsDB deck link: {url}",

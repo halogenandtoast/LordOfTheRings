@@ -1,6 +1,6 @@
 import { computed, nextTick, onScopeDispose, readonly, ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { apiFetch } from '../api'
+import { apiFetch, type DeckChoice } from '../api'
 import { token } from '../auth'
 import type { CardDef, GameData, ServerMessage } from '../server'
 import type { GameView } from '../types'
@@ -156,6 +156,7 @@ export const useGame = (gameId: string, spectate = false) => {
     question: computed(() => game.value?.question ?? null),
     scenario: computed(() => game.value?.scenario ?? null),
     players: computed(() => game.value?.players ?? []),
+    table: computed(() => data.value?.table ?? null),
     outcome: computed(() => game.value?.outcome ?? null),
     undo: (to?: 'phase' | 'round') => post(to ? `/undo?to=${to}` : '/undo'),
     reset: () => {
@@ -167,6 +168,7 @@ export const useGame = (gameId: string, spectate = false) => {
     answer: (askId: number, choice: number, player: string) =>
       post('', { choice, questionVersion: askId, player }),
     debug: (message: object) => post('/debug', message),
+    join: (deck: DeckChoice) => post('/join', { deck }),
     refresh,
   }
 }

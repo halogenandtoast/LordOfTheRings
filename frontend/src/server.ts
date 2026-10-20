@@ -86,6 +86,15 @@ export interface GameData {
   game: ServerGame | null
   playerId: string | null
   canUndo: boolean
+  table: Table
+}
+
+/** Who plays: with friends, who sits where (seat n plays the nth player); otherwise the owner plays every seat. */
+export interface Table {
+  withFriends: boolean
+  seats: number
+  owner: number
+  seated: { position: number; userId: number; username: string }[]
 }
 
 export type ServerMessage =
@@ -104,4 +113,6 @@ export interface GameSummary {
   phase: string
   threat: number
   outcome: 'Won' | 'Lost' | null
+  /** Waiting for friends to take the rest of the seats. */
+  waiting: boolean
 }
