@@ -51,7 +51,8 @@
     "scenario": "scenario",
     "staging": "staging",
     "threatArea": "threat area",
-    "playArea": "play area"
+    "playArea": "play area",
+    "player": "player"
   },
   "debug": {
     "lowerThreat": "Lower threat",

@@ -264,6 +264,7 @@ watch(question, (asked) => {
         </section>
 
         <section class="band seat">
+          <span class="band-label">{{ $t('game.bands.player') }}</span>
           <PlayerArea
             v-if="you"
             :player="you"
@@ -409,6 +410,8 @@ watch(question, (asked) => {
 /* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
 .band.seat > .player { flex: 1 1 0; min-width: 0; }
+.band.seat { position: relative; padding-left: 1.5rem; }
+.band.seat > .band-label { position: absolute; top: var(--gap); left: 4px; }
 .game > .play-area.drop-zone {
   outline: 2px dashed var(--target);
   outline-offset: -2px;
