@@ -3,7 +3,12 @@ import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import GameCard from './GameCard.vue'
 import type { CardView } from '../types'
 
-const { cards, back } = defineProps<{ cards: CardView[]; back: 'player' | 'encounter' }>()
+// the victory display is the same pile: an empty place for a card, the count opening the rest
+const { cards, back, kind = 'discard' } = defineProps<{
+  cards: CardView[]
+  back: 'player' | 'encounter' | 'victory'
+  kind?: 'discard' | 'victory'
+}>()
 
 const top = computed(() => cards.at(-1) ?? null)
 // most recently discarded first
@@ -58,7 +63,7 @@ onBeforeUnmount(close)
 
 <template>
   <div class="pile-stack">
-    <div class="discard">
+    <div :class="kind">
       <div v-if="!top" class="pile" :class="[back, 'empty']" />
       <GameCard v-else :card="top" />
     </div>
@@ -69,7 +74,7 @@ onBeforeUnmount(close)
       class="pile-count pile-button"
       :class="{ open }"
       :aria-expanded="open"
-      :title="$t('game.discard.title', { count: cards.length })"
+      :title="$t(`game.${kind}.title`, { count: cards.length })"
       @click="toggle"
     >
       <span class="stack-glyph" aria-hidden="true"><span /><span /></span>
@@ -79,7 +84,7 @@ onBeforeUnmount(close)
 
     <Teleport to="body">
       <div v-if="open" ref="panel" class="discard-panel" :style="position">
-        <div class="discard-panel-header">{{ $t('game.discard.header', { count: cards.length }) }}</div>
+        <div class="discard-panel-header">{{ $t(`game.${kind}.header`, { count: cards.length }) }}</div>
         <div class="discard-panel-cards">
           <GameCard v-for="card in pile" :key="card.id" :card="card" />
         </div>

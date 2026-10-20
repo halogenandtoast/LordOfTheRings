@@ -195,6 +195,7 @@ button, a, input, select, label, [data-card-id] { touch-action: manipulation; }
 .pile.player { background-image: url('/images/player.jpg'); }
 .pile.encounter { background-image: url('/images/encounter.jpg'); }
 .pile.empty { opacity: 0.3; }
+.pile.victory { border: 1px dashed var(--line-strong); }
 
 /* A deck or discard with its count pill underneath. */
 .pile-stack {

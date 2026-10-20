@@ -52,6 +52,7 @@
   "bands": {
     "scenario": "scenario",
     "staging": "staging",
+    "victory": "victory",
     "threatArea": "threat area",
     "heroes": "heroes",
     "playArea": "play area",
@@ -82,6 +83,10 @@
   "discard": {
     "title": "Discard pile ({count}) — click to view",
     "header": "Discard pile ({count})"
+  },
+  "victory": {
+    "title": "Victory display ({count}) — click to view",
+    "header": "Victory display ({count})"
   },
   "tally": {
     "label": "Quest tally",

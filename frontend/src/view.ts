@@ -239,6 +239,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       encounterDeck: game.scenario.encounterDeckSize,
       encounterDiscard: game.scenario.encounterDiscard.length,
       discard: game.scenario.encounterDiscard.map((c) => card(c.cardCode, c.id)),
+      victory: game.scenario.victoryDisplay.map((c) => card(c.cardCode, c.id)),
     },
     players,
     tally: { willpower: game.committedWillpower, threat: game.stagingThreat, lastWillpower: game.lastCommittedWillpower },

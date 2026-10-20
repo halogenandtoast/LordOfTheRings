@@ -74,7 +74,7 @@ export interface ServerGame {
   outcome: 'Won' | 'Lost' | null
   question: Record<string, Question>
   questionVersion: number
-  scenario: { name: string; encounterDeckSize: number; encounterDiscard: Card[] }
+  scenario: { name: string; encounterDeckSize: number; encounterDiscard: Card[]; victoryDisplay: Card[] }
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
   entities: Record<'heroes' | 'allies' | 'enemies' | 'locations' | 'attachments' | 'quests' | 'treacheries' | 'objectives', Record<string, Entity>>

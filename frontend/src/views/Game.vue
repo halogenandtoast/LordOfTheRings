@@ -14,6 +14,7 @@ import QuestTally from '../components/QuestTally.vue'
 import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
+import DiscardPile from '../components/DiscardPile.vue'
 import SeatTabs from '../components/SeatTabs.vue'
 import ZoneSeats from '../components/ZoneSeats.vue'
 import Lobby from '../components/Lobby.vue'
@@ -226,6 +227,10 @@ watch(question, (asked) => {
             :flipping="flipping"
             @choose="choose"
           />
+          <section class="band victory">
+            <span class="band-label">{{ $t('game.bands.victory') }}</span>
+            <DiscardPile :cards="scenario.victory" back="victory" kind="victory" />
+          </section>
         </div>
 
         <!-- in front of the player, as engaged enemies sit on the table -->
@@ -392,6 +397,7 @@ watch(question, (asked) => {
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
 .encounter > .scenario { background: var(--zone-scenario); }
 .encounter > .staging { background: var(--zone-staging); }
+.encounter > .victory { background: var(--zone-scenario); padding-left: 1.5rem; }
 /* the staging area beside the scenario, under it when the screen is too narrow */
 .game > .encounter { display: flex; flex-wrap: wrap; gap: var(--gap); flex: 0 0 auto; }
 .game > .threat-area { --zone-base: var(--zone-threat); }
@@ -399,7 +405,7 @@ watch(question, (asked) => {
 .game > :is(.threat-area, .play-area) { position: relative; display: flex; background: var(--zone-base); }
 .band.seat { background: var(--zone-seat); }
 /* a faint light edge, so each zone stands off the page */
-:is(.encounter > .scenario, .encounter > .staging, .game > .threat-area, .game > .play-area, .band.seat) {
+:is(.encounter > .scenario, .encounter > .staging, .encounter > .victory, .game > .threat-area, .game > .play-area, .band.seat) {
   border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: 6px;
 }
@@ -414,7 +420,7 @@ watch(question, (asked) => {
 .encounter > .scenario { padding-left: 1.5rem; }
 .game > :is(.threat-area, .play-area) :deep(.band) { flex: 1 1 auto; }
 /* labels pinned to the top corner, even where the cards sit along the bottom */
-.encounter > :is(.scenario, .staging), .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
+.encounter > :is(.scenario, .staging, .victory), .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
 :is(.encounter, .game > .threat-area, .game > .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
 .encounter > .staging { flex: 1 1 calc(var(--card-width) * 3); min-width: 0; }
 /* a seat's share of the zone: all of it, or an even share when split, a bar between */
