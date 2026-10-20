@@ -79,7 +79,7 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
 .you { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-bright); }
 .stat { display: inline-flex; align-items: center; gap: 3px; font-size: 0.75rem; color: var(--text-muted); }
 .stat .threat { font-size: 14px; }
-.asked { color: var(--accent-bright); animation: spin 1s linear infinite; }
+.asked { color: var(--accent-bright); animation: spin 2.5s linear infinite; }
 @keyframes spin { to { rotate: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .asked { animation: none; } }
 </style>
