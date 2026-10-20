@@ -432,7 +432,8 @@ watch(question, (asked) => {
   border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: 6px;
 }
-.game > .play-area :deep(.band.heroes) { flex: 0 0 auto; gap: calc(var(--gap) * 2); }
+/* as much room after the heroes as the label takes before them */
+.game > .play-area :deep(.band.heroes) { flex: 0 0 auto; gap: calc(var(--gap) * 2); padding-right: 1.5rem; }
 /* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
 .band.seat > .player { flex: 1 1 0; min-width: 0; }
