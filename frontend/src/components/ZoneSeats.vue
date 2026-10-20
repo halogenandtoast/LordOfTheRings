@@ -1,9 +1,12 @@
 <script lang="ts">
 import type { PlayerView } from '../types'
 
-/** How far round the hue wheel a seat's zones are turned, so each seat has its own colour. */
-export const seatHue = (players: PlayerView[], playerId: string | null | undefined) =>
-  Math.max(0, players.findIndex((player) => player.playerId === playerId)) * (360 / Math.max(1, players.length))
+/** How far round the hue wheel a seat's zones are turned, so each seat has its own shade
+    of the zone's colour: 0, then 18° either side, then 36°. */
+export const seatHue = (players: PlayerView[], playerId: string | null | undefined) => {
+  const seat = Math.max(0, players.findIndex((player) => player.playerId === playerId))
+  return Math.ceil(seat / 2) * 18 * (seat % 2 ? 1 : -1)
+}
 </script>
 
 <script setup lang="ts">
