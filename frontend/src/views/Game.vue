@@ -361,7 +361,9 @@ watch(question, (asked) => {
   padding: var(--gap) 4px;
   min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
 }
-.game > .band :deep(.band-label) { align-self: flex-start; }
+/* labels pinned to the top corner, even where the cards sit along the bottom */
+.game > :is(.staging, .threat-area, .play-area) { position: relative; padding-left: 1.5rem; }
+.game > :is(.staging, .threat-area, .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* your seat: heroes and threat dial beside your deck, hand and question */
