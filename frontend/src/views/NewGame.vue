@@ -32,8 +32,10 @@ const error = ref<string | null>(null)
 
 const starterSpheres = ['leadership', 'tactics', 'spirit', 'lore'] as const
 const decks = ref<DeckSummary[]>([])
-// a select's value is a string: `starter:<sphere>` or `deck:<id>`
-const deckChoice = ref('starter:leadership')
+// a select's value is a string: `starter:<sphere>` or `deck:<id>`; one per seat, all of
+// them yours for multi-handed solo
+const deckChoices = ref(['starter:leadership', 'starter:tactics', 'starter:spirit', 'starter:lore'])
+const seatCount = ref(1)
 const toDeckChoice = (value: string): DeckChoice => {
   const [kind, rest] = value.split(':')
   return kind === 'deck' ? { deckId: Number(rest) } : { starter: rest }
@@ -71,7 +73,7 @@ const create = async () => {
     const { id } = await createGame({
       name: gameName.value.trim() || defaultName.value,
       scenario: selectedScenario.value?.id,
-      deck: toDeckChoice(deckChoice.value),
+      decks: deckChoices.value.slice(0, seatCount.value).map(toDeckChoice),
       allowSpectators: allowSpectators.value,
     })
     await router.push(`/games/${id}`)
@@ -144,9 +146,16 @@ const create = async () => {
         <i18n-t keypath="newGame.playingAs" tag="p" class="deck">
           <template #player><strong>{{ currentUser?.username }}</strong></template>
         </i18n-t>
-        <label>
-          {{ $t('newGame.deck') }}
-          <select v-model="deckChoice">
+        <div class="spectators">
+          {{ $t('newGame.seats') }}
+          <div class="choices">
+            <label v-for="n in 4" :key="n"><input v-model="seatCount" type="radio" :value="n" /> {{ n }}</label>
+          </div>
+          <p v-if="seatCount > 1" class="hint">{{ $t('newGame.seatsHint') }}</p>
+        </div>
+        <label v-for="seat in seatCount" :key="seat">
+          {{ seatCount > 1 ? $t('newGame.seatDeck', { seat }) : $t('newGame.deck') }}
+          <select v-model="deckChoices[seat - 1]">
             <optgroup :label="$t('newGame.starterDecks')">
               <option v-for="sphere in starterSpheres" :key="sphere" :value="`starter:${sphere}`">
                 {{ $t(`newGame.starter.${sphere}`) }}

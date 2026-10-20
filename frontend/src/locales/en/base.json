@@ -67,6 +67,9 @@
     "creating": "Creating…",
     "couldNotCreateGame": "Could not create the game.",
     "deck": "Deck",
+    "seats": "Decks",
+    "seatsHint": "Multi-handed solo: you play every deck, and the board follows whichever one is asked. Click another deck's name to look at its board.",
+    "seatDeck": "Deck {seat}",
     "starterDecks": "Core set starter decks",
     "yourDecks": "Your decks",
     "starter": {
