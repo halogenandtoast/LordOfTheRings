@@ -219,6 +219,18 @@ watch(question, (asked) => {
             </div>
           </div>
           <div class="player-column">
+            <div v-if="otherSeats.length" class="other-seats">
+              <SeatStrip
+                v-for="player in otherSeats"
+                :key="player.playerId"
+                :player="player"
+                :choices="choices"
+                :flipping="flipping"
+                :asked="question?.playerId === player.playerId"
+                @choose="choose"
+                @view="seatId = player.playerId"
+              />
+            </div>
             <CardBand
               class="play-area"
               :class="{ 'drop-zone': dragging && dragging.hosts === null }"
@@ -236,18 +248,6 @@ watch(question, (asked) => {
               :flipping="flipping"
               :question="question"
               @choose="choose"
-            />
-          </div>
-          <div v-if="otherSeats.length" class="other-seats">
-            <SeatStrip
-              v-for="player in otherSeats"
-              :key="player.playerId"
-              :player="player"
-              :choices="choices"
-              :flipping="flipping"
-              :asked="question?.playerId === player.playerId"
-              @choose="choose"
-              @view="seatId = player.playerId"
             />
           </div>
         </section>
@@ -331,7 +331,6 @@ watch(question, (asked) => {
 @media (width < 700px) {
   .encounter-row { flex-direction: column; }
   .encounter-row > .threat-area:not(.empty) { border-left: 0; }
-  .other-seats { max-width: none; }
   .band.play { flex-direction: column; gap: var(--gap); }
   .hero-column {
     flex-direction: row;
@@ -346,14 +345,8 @@ watch(question, (asked) => {
 .encounter-row { display: flex; gap: var(--gap); align-items: stretch; }
 .encounter-row > * { flex: 1 1 0; min-width: 0; }
 .encounter-row > .threat-area:not(.empty) { border-left: 1px solid var(--line); }
-.other-seats {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-  flex: 0 1 auto;
-  max-width: 45%;
-  overflow-y: auto;
-}
+/* the other seats up in the room over your play area */
+.other-seats { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--gap); }
 .seat-label { margin: 0 auto 0 0; font-weight: 700; line-height: 1; }
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; padding: 0; }
 .hero-column {
