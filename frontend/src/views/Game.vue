@@ -421,23 +421,7 @@ watch(question, (asked) => {
 /* the play area takes the height the other rows leave */
 .game > .play-area { flex: 1 1 auto; }
 /* heroes as wide as they need, the rest of the play area after them */
-.game > .play-area :deep(.band.heroes) {
-  flex: 0 0 auto;
-  gap: calc(var(--gap) * 2);
-  padding-right: calc(var(--gap) * 2);
-  /* a soft pool of light under them, as on a stage */
-  background: radial-gradient(ellipse 75% 55% at 50% 100%, rgb(255 255 255 / 0.09), transparent 75%);
-}
-/* a thin rule between them and the rest, fading out at both ends */
-.game > .play-area :deep(.band.heroes)::after {
-  content: '';
-  position: absolute;
-  top: 12%;
-  bottom: 12%;
-  right: 0;
-  width: 1px;
-  background: linear-gradient(transparent, rgb(255 255 255 / 0.22), transparent);
-}
+.game > .play-area :deep(.band.heroes) { flex: 0 0 auto; gap: calc(var(--gap) * 2); }
 .game > .play-area :deep(.band.in-play) { padding-left: calc(var(--gap) * 2); }
 /* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
