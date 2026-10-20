@@ -76,7 +76,8 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
 .deck { display: flex; flex-direction: column; gap: 4px; }
-.heroes { flex: 0 1 auto; min-width: 0; padding: 0; }
+/* tops level with the deck and discard, whose count pills hang below them */
+.heroes { flex: 0 1 auto; min-width: 0; padding: 0; align-self: flex-start; }
 .threat-box { display: flex; flex-direction: column; align-items: center; align-self: center; gap: var(--gap); }
 /* clear of the question and its actions beside it */
 .threat-box { margin-right: calc(var(--gap) * 2); }
