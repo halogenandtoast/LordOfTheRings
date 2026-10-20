@@ -424,16 +424,21 @@ watch(question, (asked) => {
 .game > .play-area :deep(.band.heroes) {
   flex: 0 0 auto;
   gap: calc(var(--gap) * 2);
-  /* set into the play area, a shade darker, past the label and clear of the other cards */
-  margin: 4px var(--gap) 4px 1.5rem;
-  padding: var(--gap);
-  border-radius: 6px;
-  background: rgb(0 0 0 / 0.22);
-  box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.45);
+  padding-right: calc(var(--gap) * 2);
+  /* a soft pool of light under them, as on a stage */
+  background: radial-gradient(ellipse 75% 55% at 50% 100%, rgb(255 255 255 / 0.09), transparent 75%);
 }
-/* the label stays out to the left of the inset */
-.game > .play-area :deep(.band.heroes > .band-label) { left: calc(4px - 1.5rem); }
-.game > .play-area :deep(.band.in-play) { padding-left: 0; }
+/* a thin rule between them and the rest, fading out at both ends */
+.game > .play-area :deep(.band.heroes)::after {
+  content: '';
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  right: 0;
+  width: 1px;
+  background: linear-gradient(transparent, rgb(255 255 255 / 0.22), transparent);
+}
+.game > .play-area :deep(.band.in-play) { padding-left: calc(var(--gap) * 2); }
 /* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
 .band.seat > .player { flex: 1 1 0; min-width: 0; }
