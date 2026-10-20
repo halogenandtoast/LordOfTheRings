@@ -48,6 +48,7 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
   display: flex;
   gap: 4px;
   padding: 0 var(--gap);
+  border-top: 1px solid var(--line-strong);
   background: var(--surface-0);
   overflow-x: auto;
 }
@@ -57,9 +58,7 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  border: 1px solid transparent;
-  border-top: 0;
-  border-bottom: 0;
+  border: 0;
   background: none;
   color: var(--text-muted);
   font: inherit;
@@ -69,7 +68,6 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
 }
 .tab:hover { color: var(--text); background: var(--surface-1); }
 .tab.active {
-  border-color: var(--line-strong);
   background: var(--surface-2);
   color: var(--text);
 }
