@@ -19,6 +19,7 @@ const attachmentsFor = (card: CardView) => cards.filter((other) => other.attache
 <template>
   <section class="band" :class="[`align-${align}`, { empty: !cards.length }]">
     <span v-if="label" class="band-label">{{ label }}</span>
+    <slot />
     <GameCard
       v-for="card in hosts"
       :key="card.id"

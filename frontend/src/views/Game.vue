@@ -15,6 +15,7 @@ import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import SeatTabs from '../components/SeatTabs.vue'
+import ZoneSeats from '../components/ZoneSeats.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
@@ -66,23 +67,32 @@ watch(() => question.value?.playerId, (asked) => {
   if (asked && !withFriends.value) seatId.value = asked
 }, { immediate: true })
 
-const cardsInPlay = computed(() => you.value?.inPlay ?? [])
-const attachments = computed(() => cardsInPlay.value.filter((card) => card.attachedTo !== null))
+// The threat and play areas can each show another seat, as for a ranged attack on an
+// enemy engaged with someone else. They follow the seat shown again when it changes.
+const threatSeatId = ref<string | null>(null)
+const playSeatId = ref<string | null>(null)
+watch(() => you.value?.playerId, () => {
+  threatSeatId.value = null
+  playSeatId.value = null
+})
+const seatOr = (id: string | null) => players.value.find((player) => player.playerId === id) ?? you.value
+const threatSeat = computed(() => seatOr(threatSeatId.value))
+const playSeat = computed(() => seatOr(playSeatId.value))
 
-const withAttachments = (hosts: CardView[]) => [
+const withAttachments = (cards: CardView[], hosts: CardView[]) => [
   ...hosts,
-  ...attachments.value.filter((attached) => hosts.some((host) => host.id === attached.attachedTo)),
+  ...cards.filter((attached) => hosts.some((host) => host.id === attached.attachedTo)),
 ]
 
-const heroes = computed(() =>
-  withAttachments(cardsInPlay.value.filter((card) => card.type === 'Hero')),
-)
-const inPlay = computed(() =>
-  withAttachments(
-    cardsInPlay.value.filter((card) => card.type !== 'Hero' && card.attachedTo === null),
-  ),
-)
-const engaged = computed(() => you.value?.engaged ?? [])
+const heroes = computed(() => {
+  const cards = you.value?.inPlay ?? []
+  return withAttachments(cards, cards.filter((card) => card.type === 'Hero'))
+})
+const inPlay = computed(() => {
+  const cards = playSeat.value?.inPlay ?? []
+  return withAttachments(cards, cards.filter((card) => card.type !== 'Hero' && card.attachedTo === null))
+})
+const engaged = computed(() => threatSeat.value?.engaged ?? [])
 
 // Cmd/Ctrl+Z steps back one answer and D toggles debug mode, unless you are typing somewhere.
 const onKeydown = (event: KeyboardEvent) => {
@@ -227,7 +237,9 @@ watch(question, (asked) => {
           :choices="choices"
           :flipping="flipping"
           @choose="choose"
-        />
+        >
+          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="threatSeat?.playerId ?? null" @view="threatSeatId = $event" />
+        </CardBand>
 
         <CardBand
           class="play-area"
@@ -238,7 +250,9 @@ watch(question, (asked) => {
           :flipping="flipping"
           align="bottom"
           @choose="choose"
-        />
+        >
+          <ZoneSeats v-if="players.length > 1" :players="players" :viewing="playSeat?.playerId ?? null" @view="playSeatId = $event" />
+        </CardBand>
 
         <section class="band seat">
           <div class="hero-column">
