@@ -49,10 +49,29 @@ import Yesod.Core
 import Yesod.Persist.Core
 import Yesod.WebSockets
 
+-- | Who plays: with friends, who sits in which seat (seat n playing the nth player);
+-- otherwise the owner plays every seat.
+data Table = Table
+  { withFriends :: Bool
+  , seats :: Int
+  , owner :: UserId
+  , seated :: [SeatView]
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+data SeatView = SeatView {position :: Int, userId :: UserId, username :: Text}
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+-- | What goes out to a game's clients: log lines as they are, and the game, sent to
+-- each client as its viewer may see it.
+data Outgoing = Said LByteString | Updated LotrGame Table (Maybe Game)
+
 data App = App
   { pool :: ConnectionPool
   , jwtSecret :: Text
-  , channels :: TVar (Map LotrGameId (TChan LByteString))
+  , channels :: TVar (Map LotrGameId (TChan Outgoing))
   , cardDb :: CardDb
   , manager :: Manager
   }
@@ -65,6 +84,8 @@ mkYesod
   /games/#LotrGameId GameR GET POST DELETE
   /games/#LotrGameId/spectate SpectateR GET
   /games/#LotrGameId/join JoinR POST
+  /games/#LotrGameId/leave LeaveR POST
+  /games/#LotrGameId/start StartR POST
   /games/#LotrGameId/undo UndoR POST
   /games/#LotrGameId/reset ResetR POST
   /games/#LotrGameId/debug DebugR POST
@@ -100,20 +121,6 @@ data GameData = GameData
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
--- | Who plays: with friends, who sits in which seat (seat n playing the nth player);
--- otherwise the owner plays every seat.
-data Table = Table
-  { withFriends :: Bool
-  , seats :: Int
-  , owner :: UserId
-  , seated :: [SeatView]
-  }
-  deriving stock (Generic)
-  deriving anyclass (ToJSON)
-
-data SeatView = SeatView {position :: Int, userId :: UserId, username :: Text}
-  deriving stock (Generic)
-  deriving anyclass (ToJSON)
 
 -- | What the home page lists for each game.
 data GameSummary = GameSummary
@@ -252,7 +259,7 @@ putSettingsR = do
   pure $ toJSON $ userView userId user
 
 -- | Every connected client of a game listens on that game's channel.
-gameChannel :: LotrGameId -> Handler (TChan LByteString)
+gameChannel :: LotrGameId -> Handler (TChan Outgoing)
 gameChannel gid = do
   app <- getYesod
   atomically do
@@ -301,15 +308,15 @@ loadGame gid row = do
   chan <- gameChannel gid
   liftIO $ envFor chan g queue gen
 
-envFor :: TChan LByteString -> Game -> [Message] -> StdGen -> IO GameEnv
+envFor :: TChan Outgoing -> Game -> [Message] -> StdGen -> IO GameEnv
 envFor chan g queue gen = do
   env <- newGameEnv g (logTo chan) 0
   runGameT env $ setQueue queue
   writeIORef (gameRandomGen env) gen
   pure env {gameDebug = 1}
 
-logTo :: TChan LByteString -> FrontendMessage -> IO ()
-logTo chan msg = atomically $ writeTChan chan $ encode $ toJSON msg
+logTo :: TChan Outgoing -> FrontendMessage -> IO ()
+logTo chan msg = atomically $ writeTChan chan $ Said $ encode $ toJSON msg
 
 -- | The game, its queue and its random generator as they now stand.
 currentState :: GameEnv -> IO (Game, [Message], StdGen)
@@ -327,14 +334,23 @@ tableFor gid row = do
       SeatView seat.lotrSeatPosition seat.lotrSeatUserId . maybe "" (.userUsername) <$> get seat.lotrSeatUserId
   pure Table {withFriends = row.lotrGameWithFriends, seats = row.lotrGameSeats, owner = row.lotrGameUserId, seated}
 
-gameData :: LotrGameId -> LotrGame -> Maybe Game -> Handler GameData
-gameData gid row g = GameData (isJust g) (toJSON . publicGame <$> g) ((.activePlayer) <$> g) (row.lotrGameStep > 0) <$> tableFor gid row
+-- | The game as a viewer may see it: with friends, only your own seat's hand.
+gameData :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> GameData
+gameData viewer row table g =
+  GameData (isJust g) (toJSON . (\g' -> publicGameFor (seesHand g') g') <$> g) ((.activePlayer) <$> g) (row.lotrGameStep > 0) table
+ where
+  seesHand g' pid
+    | table.withFriends = isJust viewer && any (\seat -> Just seat.userId == viewer && g'.playerOrder `atMay` seat.position == Just pid) table.seated
+    | otherwise = True
+
+updateFor :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> LByteString
+updateFor viewer row table g = encode $ object ["tag" .= String "Update", "contents" .= gameData viewer row table g]
 
 broadcast :: LotrGameId -> LotrGame -> Maybe Game -> Handler ()
 broadcast gid row g = do
   chan <- gameChannel gid
-  contents <- gameData gid row g
-  atomically $ writeTChan chan $ encode $ object ["tag" .= String "Update", "contents" .= contents]
+  table <- tableFor gid row
+  atomically $ writeTChan chan $ Updated row table g
 
 summary :: Entity LotrGame -> Maybe GameSummary
 summary (Entity gid row) | awaitingPlayers row = do
@@ -507,6 +523,30 @@ postJoinR gid = do
         then deal gid row =<< maybe (error "no seats") pure . nonEmpty =<< friendSeats gid
         else broadcast gid row Nothing
 
+-- | Give up your seat at a game with friends before it is dealt. The owner keeps theirs;
+-- they delete the game instead.
+postLeaveR :: LotrGameId -> Handler ()
+postLeaveR gid = do
+  userId <- requireUserId
+  row <- runDB $ get404 gid
+  unless (awaitingPlayers row && row.lotrGameUserId /= userId) $ sendResponseStatus status409 (ikey "error.notWaitingForPlayers")
+  runDB $ Database.Persist.Postgresql.deleteBy $ UniqueSeatUser gid userId
+  broadcast gid row Nothing
+
+-- | Deal a game with friends now, with the seats taken so far, closing the empty ones.
+-- The seats are numbered again from 0 so they still match the players dealt.
+postStartR :: LotrGameId -> Handler ()
+postStartR gid = do
+  row <- requireOwnedGame gid
+  unless (awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notWaitingForPlayers")
+  seats <- runDB $ selectList [LotrSeatGameId ==. gid] [Asc LotrSeatPosition]
+  row' <- runDB do
+    -- out of the way first, as positions are unique
+    for_ (zip [0 :: Int ..] seats) \(n, Entity sid _) -> update sid [LotrSeatPosition =. -1 - n]
+    for_ (zip [0 :: Int ..] seats) \(n, Entity sid _) -> update sid [LotrSeatPosition =. n]
+    updateGet gid [LotrGameSeats =. length seats]
+  deal gid row' =<< maybe (error "no seats") pure . nonEmpty =<< friendSeats gid
+
 -- | Deal the game again from the start, with a new seed.
 deal :: LotrGameId -> LotrGame -> NonEmpty (Text, DeckList) -> Handler ()
 deal gid row players = do
@@ -525,16 +565,20 @@ deal gid row players = do
       ]
   broadcast gid row' (Just g)
 
-handleSocket :: TChan LByteString -> WebSocketsT Handler ()
-handleSocket chan = do
+handleSocket :: Maybe UserId -> TChan Outgoing -> WebSocketsT Handler ()
+handleSocket viewer chan = do
   readChannel <- atomically $ dupTChan chan
-  forever $ atomically (readTChan readChannel) >>= sendTextData
+  forever $ atomically (readTChan readChannel) >>= sendTextData . \case
+    Said bytes -> bytes
+    Updated row table g -> updateFor viewer row table g
 
 -- | The game as it stands, or its updates as they come over a websocket.
 serveGame :: LotrGameId -> LotrGame -> Handler Value
 serveGame gid row = do
-  webSockets . handleSocket =<< gameChannel gid
-  toJSON <$> (gameData gid row =<< storedGame row)
+  viewer <- lookupUserId
+  webSockets . handleSocket viewer =<< gameChannel gid
+  table <- tableFor gid row
+  toJSON . gameData viewer row table <$> storedGame row
 
 getGameR :: LotrGameId -> Handler Value
 getGameR gid = serveGame gid =<< requirePlayableGame gid
@@ -686,7 +730,7 @@ stepsToUndo target latestFirst = case (target, latestFirst) of
 -- | Step a game back by applying the latest steps' patches, newest first.
 postUndoR :: LotrGameId -> Handler ()
 postUndoR gid = do
-  row <- requireOwnedGame gid
+  row <- requirePlayableGame gid
   target <-
     lookupGetParam "to" <&> \case
       Just "phase" -> StartOfPhase
@@ -754,10 +798,10 @@ data ExportedStep = ExportedStep
 exportVersion :: Int
 exportVersion = 1
 
--- | A game the signed-in user owns, as an export.
+-- | A game the signed-in user plays, as an export.
 exportGame :: LotrGameId -> Handler (LotrGame, ExportedGame)
 exportGame gid = do
-  row <- requireOwnedGame gid
+  row <- requirePlayableGame gid
   steps <- runDB $ selectList [LotrStepGameId ==. gid] [Asc LotrStepStep]
   pure
     ( row

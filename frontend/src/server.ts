@@ -57,6 +57,8 @@ export interface ServerPlayer {
   threat: number
   eliminated: boolean
   hand: Card[]
+  /** Sent in place of the hand when it is someone else's, at a game with friends. */
+  handSize?: number
   discard: Card[]
   deckSize: number
 }
