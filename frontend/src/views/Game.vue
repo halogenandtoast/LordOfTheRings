@@ -29,7 +29,7 @@ const tr = useServerText()
 const spectate = route.meta.spectate === true
 const {
   error, game, log, announcement, flipping,
-  started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join,
+  started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join, leave, start,
 } = useGame(route.params.id as string, spectate)
 // With friends you play your own seat; otherwise every seat is yours.
 const withFriends = computed(() => table.value?.withFriends ?? false)
@@ -92,7 +92,7 @@ const onKeydown = (event: KeyboardEvent) => {
   if (!typing && !event.metaKey && !event.ctrlKey && !event.altKey && event.key.toLowerCase() === 'd') {
     debugging.value = !debugging.value
   }
-  if (!typing && (event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && canUndo.value && !guest.value) {
+  if (!typing && (event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && canUndo.value) {
     event.preventDefault()
     undo()
   }
@@ -192,7 +192,7 @@ watch(question, (asked) => {
     >
 
 
-      <Lobby v-if="!started && table?.withFriends" :table="table" @join="join" />
+      <Lobby v-if="!started && table?.withFriends" :table="table" @join="join" @leave="leave" @start="start" />
       <template v-if="started">
         <QuestTally v-if="game?.tally" :tally="game.tally" />
         <Scenario v-if="scenario" :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
@@ -355,7 +355,12 @@ watch(question, (asked) => {
 .game > .scenario { background: var(--zone-scenario); }
 .game > .staging { background: var(--zone-staging); }
 .game > .threat-area { background: var(--zone-threat); }
-.game > .staging, .game > .threat-area { flex: 0 0 auto; min-height: 3rem; padding: 4px; }
+/* room for a card even when empty; border-box, so the padding and border count toward it */
+.game > .staging, .game > .threat-area {
+  flex: 0 0 auto;
+  padding: var(--gap) 4px;
+  min-height: calc(var(--card-width) / var(--card-aspect) + var(--gap) * 2 + 2px);
+}
 .band.play { flex: 1 1 auto; gap: calc(var(--gap) * 2); align-items: stretch; background: var(--zone-play); }
 .hero-column {
   display: flex;
