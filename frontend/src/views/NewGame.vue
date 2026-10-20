@@ -2,7 +2,10 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { createGame, type DeckChoice } from '../api'
+import { createGame } from '../api'
+import DeckPicker from '../components/DeckPicker.vue'
+import DeckTile from '../components/DeckTile.vue'
+import { deckFaces, toDeckChoice, type DeckKey } from '../deckChoice'
 import { fetchDecks } from '../browser/lib/api'
 import type { DeckSummary } from '../browser/types/deck'
 import { currentUser, updateSettings } from '../auth'
@@ -30,16 +33,23 @@ const makeDefault = async () => {
 }
 const error = ref<string | null>(null)
 
-const starterSpheres = ['leadership', 'tactics', 'spirit', 'lore'] as const
 const decks = ref<DeckSummary[]>([])
-// a select's value is a string: `starter:<sphere>` or `deck:<id>`; one per seat, all of
-// them yours for multi-handed solo
-const deckChoices = ref(['starter:leadership', 'starter:tactics', 'starter:spirit', 'starter:lore'])
-const seatCount = ref(1)
-const toDeckChoice = (value: string): DeckChoice => {
-  const [kind, rest] = value.split(':')
-  return kind === 'deck' ? { deckId: Number(rest) } : { starter: rest }
-}
+// solo plays one deck; multi-handed plays several, all yours; with friends you bring the
+// first deck and friends join with theirs
+type Mode = 'solo' | 'multi' | 'friends'
+const modes: { id: Mode; icon: string }[] = [
+  { id: 'solo', icon: 'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z' },
+  { id: 'multi', icon: 'M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6' },
+  { id: 'friends', icon: 'M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z' },
+]
+const mode = ref<Mode>('solo')
+const seatCount = ref(2)
+const deckChoices = ref<DeckKey[]>(['starter:leadership', 'starter:tactics', 'starter:spirit', 'starter:lore'])
+// the seat whose deck the picker is choosing; only multi-handed has more than yours
+const chosenSeat = ref(0)
+const pickingSeat = computed(() => (mode.value === 'multi' ? Math.min(chosenSeat.value, seatCount.value - 1) : 0))
+const faces = computed(() => new Map(deckFaces(decks.value).map((face) => [face.key, face])))
+const faceOf = (key: DeckKey) => faces.value.get(key) ?? deckFaces([])[0]
 onMounted(async () => {
   try {
     decks.value = await fetchDecks()
@@ -73,7 +83,9 @@ const create = async () => {
     const { id } = await createGame({
       name: gameName.value.trim() || defaultName.value,
       scenario: selectedScenario.value?.id,
-      decks: deckChoices.value.slice(0, seatCount.value).map(toDeckChoice),
+      decks: deckChoices.value.slice(0, mode.value === 'multi' ? seatCount.value : 1).map(toDeckChoice),
+      withFriends: mode.value === 'friends',
+      seats: mode.value === 'friends' ? seatCount.value : undefined,
       allowSpectators: allowSpectators.value,
     })
     await router.push(`/games/${id}`)
@@ -141,46 +153,92 @@ const create = async () => {
         </div>
       </fieldset>
 
-      <fieldset v-if="selectedScenario">
-        <legend>{{ $t('common.game') }}</legend>
-        <i18n-t keypath="newGame.playingAs" tag="p" class="deck">
-          <template #player><strong>{{ currentUser?.username }}</strong></template>
-        </i18n-t>
-        <div class="spectators">
-          {{ $t('newGame.seats') }}
-          <div class="choices">
-            <label v-for="n in 4" :key="n"><input v-model="seatCount" type="radio" :value="n" /> {{ n }}</label>
+      <template v-if="selectedScenario">
+        <fieldset>
+          <legend>{{ $t('newGame.whoPlays') }}</legend>
+          <div class="modes" role="radiogroup">
+            <button
+              v-for="m in modes"
+              :key="m.id"
+              type="button"
+              role="radio"
+              class="mode"
+              :class="{ selected: mode === m.id }"
+              :aria-checked="mode === m.id"
+              @click="mode = m.id"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" :d="m.icon" />
+              </svg>
+              <strong>{{ $t(`newGame.modes.${m.id}.title`) }}</strong>
+              <span>{{ $t(`newGame.modes.${m.id}.hint`) }}</span>
+            </button>
           </div>
-          <p v-if="seatCount > 1" class="hint">{{ $t('newGame.seatsHint') }}</p>
-        </div>
-        <label v-for="seat in seatCount" :key="seat">
-          {{ seatCount > 1 ? $t('newGame.seatDeck', { seat }) : $t('newGame.deck') }}
-          <select v-model="deckChoices[seat - 1]">
-            <optgroup :label="$t('newGame.starterDecks')">
-              <option v-for="sphere in starterSpheres" :key="sphere" :value="`starter:${sphere}`">
-                {{ $t(`newGame.starter.${sphere}`) }}
-              </option>
-            </optgroup>
-            <optgroup v-if="decks.length" :label="$t('newGame.yourDecks')">
-              <option v-for="d in decks" :key="d.id" :value="`deck:${d.id}`">{{ d.name }} ({{ d.heroNames.join(', ') }})</option>
-            </optgroup>
-          </select>
-        </label>
-        <label>
-          {{ $t('newGame.gameName') }}
-          <input v-model="gameName" type="text" :placeholder="defaultName" />
-        </label>
-        <div class="spectators">
-          {{ $t('newGame.allowSpectators') }}
-          <div class="choices">
-            <label><input v-model="allowSpectators" type="radio" :value="false" /> {{ $t('newGame.no') }}</label>
-            <label><input v-model="allowSpectators" type="radio" :value="true" /> {{ $t('newGame.yes') }}</label>
+          <div v-if="mode !== 'solo'" class="seat-count">
+            {{ $t(mode === 'friends' ? 'newGame.howManyPlayers' : 'newGame.howManyDecks') }}
+            <div class="segmented" role="radiogroup">
+              <button
+                v-for="n in [2, 3, 4]"
+                :key="n"
+                type="button"
+                role="radio"
+                :aria-checked="seatCount === n"
+                :class="{ selected: seatCount === n }"
+                @click="seatCount = n"
+              >{{ n }}</button>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>{{ $t(mode === 'multi' ? 'newGame.yourDecks' : 'newGame.yourDeck') }}</legend>
+          <div v-if="mode !== 'solo'" class="seats">
+            <template v-if="mode === 'multi'">
+              <button
+                v-for="seat in seatCount"
+                :key="seat"
+                type="button"
+                class="seat"
+                :class="{ picking: pickingSeat === seat - 1 }"
+                @click="chosenSeat = seat - 1"
+              >
+                <span class="seat-label">{{ $t('newGame.seatDeck', { seat }) }}</span>
+                <DeckTile :face="faceOf(deckChoices[seat - 1])" :selected="pickingSeat === seat - 1" />
+              </button>
+            </template>
+            <template v-else>
+              <div class="seat picking">
+                <span class="seat-label">{{ currentUser?.username }}</span>
+                <DeckTile :face="faceOf(deckChoices[0])" selected />
+              </div>
+              <div v-for="n in seatCount - 1" :key="n" class="seat">
+                <span class="seat-label">{{ $t('newGame.openSeat') }}</span>
+                <span class="open-seat">{{ $t('newGame.friendBringsDeck') }}</span>
+              </div>
+            </template>
+          </div>
+          <p v-if="mode === 'multi'" class="hint">{{ $t('newGame.pickingFor', { seat: pickingSeat + 1 }) }}</p>
+          <DeckPicker v-model="deckChoices[pickingSeat]" :decks="decks" />
+        </fieldset>
+
+        <fieldset>
+          <legend>{{ $t('common.game') }}</legend>
+          <label>
+            {{ $t('newGame.gameName') }}
+            <input v-model="gameName" type="text" :placeholder="defaultName" />
+          </label>
+          <div class="spectators">
+            <label class="switch">
+              <input v-model="allowSpectators" type="checkbox" role="switch" />
+              <span class="track" aria-hidden="true" />
+              {{ $t('newGame.allowSpectators') }}
+            </label>
             <button v-if="differsFromDefault" type="button" class="make-default" @click="makeDefault">{{ $t('newGame.makeDefault') }}</button>
             <span v-else-if="savedDefault" class="saved">{{ $t('newGame.defaultSaved') }}</span>
+            <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
           </div>
-          <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
-        </div>
-      </fieldset>
+        </fieldset>
+      </template>
 
       <p v-if="error" class="error">{{ tr(error) }}</p>
 
@@ -387,9 +445,87 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 
 .error { margin: 0; color: var(--danger); }
 
-.spectators { display: grid; gap: 6px; font-size: 0.85rem; color: var(--text-muted); }
-.spectators .choices { display: flex; align-items: center; gap: 16px; color: var(--text); }
-.spectators .choices label { display: flex; flex-direction: row; align-items: center; gap: 6px; }
+.spectators { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: 0.85rem; color: var(--text-muted); }
+.spectators .hint { flex-basis: 100%; }
+.switch { display: flex; align-items: center; gap: 10px; color: var(--text); font-size: 0.95rem; cursor: pointer; }
+.switch input { position: absolute; opacity: 0; pointer-events: none; }
+.track {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 11px;
+  background: var(--surface-4);
+  transition: background 0.15s;
+}
+.track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--cream);
+  transition: translate 0.15s;
+}
+.switch input:checked + .track { background: var(--accent); }
+.switch input:checked + .track::after { translate: 16px 0; }
+.switch input:focus-visible + .track { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+.modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.mode {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: var(--input-background);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.mode svg { grid-row: span 2; width: 32px; height: 32px; color: var(--text-muted); }
+.mode span { font-size: 0.8rem; color: var(--text-muted); }
+.mode:hover { border-color: var(--line-strong); }
+.mode.selected { border-color: var(--accent); }
+.mode.selected svg { color: var(--accent-bright); }
+
+.seat-count { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; color: var(--text-muted); }
+.segmented { display: inline-flex; border: 1px solid var(--box-border); border-radius: 5px; overflow: hidden; }
+.segmented button {
+  min-width: 44px;
+  padding: 8px 0;
+  border: 0;
+  background: var(--input-background);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.segmented button + button { border-left: 1px solid var(--box-border); }
+.segmented button.selected { background: var(--accent); color: var(--button-primary-text); }
+
+.seats { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.seat { display: grid; gap: 4px; align-content: start; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; }
+button.seat { cursor: pointer; }
+.seat-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.seat.picking .seat-label { color: var(--accent-bright); }
+.open-seat {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 150 / 118;
+  padding: 10px;
+  border: 2px dashed var(--line);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
 .make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }

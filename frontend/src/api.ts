@@ -34,7 +34,7 @@ export const fetchAdminDashboard = () => apiFetch('/api/admin').then((r) => json
 /** A core starter deck by sphere, or one of the user's imported decks. */
 export type DeckChoice = { starter: string } | { deckId: number }
 
-export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; allowSpectators?: boolean }) =>
+export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; withFriends?: boolean; seats?: number; allowSpectators?: boolean }) =>
   apiFetch('/api/games', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

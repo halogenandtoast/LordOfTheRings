@@ -38,6 +38,7 @@
     "couldNotCreateAccount": "Could not create the account."
   },
   "home": {
+    "waitingForPlayers": "Waiting for players",
     "yourGames": "Your Games",
     "games": "Games",
     "activeGames": "Active games",
@@ -67,9 +68,21 @@
     "creating": "Creating…",
     "couldNotCreateGame": "Could not create the game.",
     "deck": "Deck",
-    "seats": "Decks",
-    "seatsHint": "Multi-handed solo: you play every deck, and the board follows whichever one is asked. Click another deck's name to look at its board.",
     "seatDeck": "Deck {seat}",
+    "whoPlays": "Who plays",
+    "modes": {
+      "solo": { "title": "Solo", "hint": "One deck, played by you" },
+      "multi": { "title": "Multi-handed", "hint": "Several decks, all played by you" },
+      "friends": { "title": "With friends", "hint": "Each player brings a deck" }
+    },
+    "howManyDecks": "Decks",
+    "howManyPlayers": "Players",
+    "yourDeck": "Your deck",
+    "openSeat": "Open seat",
+    "friendBringsDeck": "A friend joins with their own deck",
+    "pickingFor": "Choosing the deck for seat {seat}. Click a seat to choose another.",
+    "importDeck": "Import a deck…",
+    "starterDeck": "Core set starter",
     "starterDecks": "Core set starter decks",
     "yourDecks": "Your decks",
     "starter": {
