@@ -10,9 +10,9 @@ const { cards, back, kind = 'discard' } = defineProps<{
   kind?: 'discard' | 'victory'
 }>()
 
-const top = computed(() => cards.at(-1) ?? null)
-// most recently discarded first
-const pile = computed(() => [...cards].reverse())
+// the engine keeps piles most recently discarded first
+const top = computed(() => cards[0] ?? null)
+const pile = computed(() => cards)
 
 // Like Arkham's discard: the count opens a panel of every card in the pile. It is a plain
 // fixed panel rather than a top-layer popover so the card hover overlay still shows above it.

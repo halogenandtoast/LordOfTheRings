@@ -46,7 +46,7 @@ instance RunMessage Player where
       pure $ player & handL .~ hand & deckL .~ deck
     DiscardEventsFromHand pid | pid == player.id -> do
       let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
-      pure $ player & handL .~ rest & discardL <>~ events
+      pure $ player & handL .~ rest & discardL %~ (events <>)
     Mulligan pid | pid == player.id -> do
       send $ ShuffleIntoDeck $ map (.id) player.hand
       (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
@@ -55,7 +55,7 @@ instance RunMessage Player where
       push CheckEliminations
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
-      pure $ player & eliminatedL .~ True & discardL <>~ player.hand & handL .~ []
+      pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
     BeginPhase ResourcePhase -> do
       push $ DrawCards $ Drawing player.id 1
       pure player
@@ -84,7 +84,7 @@ instance RunMessage Player where
         PlayerCard card -> push $ PlayAlly pid card
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
-    PlayEvent pid card _ | pid == player.id -> pure $ player & discardL <>~ [PlayerCard card]
+    PlayEvent pid card _ | pid == player.id -> pure $ player & discardL %~ (PlayerCard card :)
     RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
     ShuffleDiscardIntoDeck pid | pid == player.id -> do
       deck <- shuffleM (player.deck <> player.discard)
@@ -115,10 +115,10 @@ instance RunMessage Player where
       pure $ player & deckL .~ deck
     DiscardRandomFromHand pid n | pid == player.id -> do
       (discarded, kept) <- splitAt n <$> shuffleM player.hand
-      pure $ player & handL .~ kept & discardL <>~ discarded
+      pure $ player & handL .~ kept & discardL %~ (discarded <>)
     DiscardFromHand pid cid | pid == player.id -> do
       let (discarded, kept) = partition ((== cid) . (.id)) player.hand
-      pure $ player & handL .~ kept & discardL <>~ discarded
+      pure $ player & handL .~ kept & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
     UseAbility pid ab _ | pid == player.id, Just limitType <- abilityLimitType ab.abilityLimit -> do
       let same u = u.usedAbilitySource == ab.abilitySource && u.usedAbilityIndex == ab.abilityIndex
