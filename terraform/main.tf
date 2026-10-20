@@ -104,6 +104,7 @@ resource "kubernetes_service" "public" {
     name = "lotr-public"
     annotations = {
       "service.beta.kubernetes.io/do-loadbalancer-name"                             = var.name
+      "service.beta.kubernetes.io/do-loadbalancer-type"                             = "REGIONAL" # the default network LB is TCP-only and ignores the TLS settings
       "service.beta.kubernetes.io/do-loadbalancer-protocol"                         = "http"
       "service.beta.kubernetes.io/do-loadbalancer-tls-ports"                        = "443"
       "service.beta.kubernetes.io/do-loadbalancer-certificate-name"                 = digitalocean_certificate.app.name
@@ -134,7 +135,6 @@ resource "kubernetes_service" "public" {
   lifecycle {
     ignore_changes = [
       metadata[0].annotations["kubernetes.digitalocean.com/load-balancer-id"],
-      metadata[0].annotations["service.beta.kubernetes.io/do-loadbalancer-type"],
     ]
   }
 }
