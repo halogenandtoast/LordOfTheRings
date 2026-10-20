@@ -58,6 +58,8 @@
   --select: var(--interactive);
 
   --page-background: var(--pine-deep);
+  /* under each zone of the board: the page colour, a little see-through */
+  --zone-backing: rgb(15 26 24 / 0.82);
   --panel: rgb(42 35 25 / 0.96);
   --box-background: var(--panel);
   --line: rgb(229 211 173 / 0.16);
