@@ -91,6 +91,8 @@
       "spirit": "Spirit (Éowyn, Eleanor, Dúnhere)",
       "lore": "Lore (Denethor, Glorfindel, Beravor)"
     },
+    "easyMode": "Easy mode",
+    "easyModeHint": "Each hero starts with 1 extra resource, and the encounter deck leaves out the cards marked as difficult.",
     "allowSpectators": "Allow spectators",
     "allowSpectatorsHint": "List this game on the Watch page so anyone can watch it. Spectators see the table but cannot take any actions. This cannot be changed once the game has started.",
     "no": "No",

@@ -31,6 +31,7 @@ const makeDefault = async () => {
   await updateSettings({ allowSpectatorsByDefault: allowSpectators.value })
   savedDefault.value = true
 }
+const easyMode = ref(false)
 const error = ref<string | null>(null)
 
 const decks = ref<DeckSummary[]>([])
@@ -87,6 +88,7 @@ const create = async () => {
       withFriends: mode.value === 'friends',
       seats: mode.value === 'friends' ? seatCount.value : undefined,
       allowSpectators: allowSpectators.value,
+      easyMode: easyMode.value,
     })
     await router.push(`/games/${id}`)
   } catch (e) {
@@ -227,7 +229,15 @@ const create = async () => {
             {{ $t('newGame.gameName') }}
             <input v-model="gameName" type="text" :placeholder="defaultName" />
           </label>
-          <div class="spectators">
+          <div class="toggle-row">
+            <label class="switch">
+              <input v-model="easyMode" type="checkbox" role="switch" />
+              <span class="track" aria-hidden="true" />
+              {{ $t('newGame.easyMode') }}
+            </label>
+            <p class="hint">{{ $t('newGame.easyModeHint') }}</p>
+          </div>
+          <div class="toggle-row">
             <label class="switch">
               <input v-model="allowSpectators" type="checkbox" role="switch" />
               <span class="track" aria-hidden="true" />
@@ -445,8 +455,8 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 
 .error { margin: 0; color: var(--danger); }
 
-.spectators { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: 0.85rem; color: var(--text-muted); }
-.spectators .hint { flex-basis: 100%; }
+.toggle-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: 0.85rem; color: var(--text-muted); }
+.toggle-row .hint { flex-basis: 100%; }
 .switch { display: flex; align-items: center; gap: 10px; color: var(--text); font-size: 0.95rem; cursor: pointer; }
 .switch input { position: absolute; opacity: 0; pointer-events: none; }
 .track {

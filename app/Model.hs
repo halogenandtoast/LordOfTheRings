@@ -59,6 +59,9 @@ LotrGame sql=lotr_games
   -- | a game with friends is dealt once all of its seats are taken; until then its
   -- current data is null
   seats Int default=1
+  -- | fewer of the difficult encounter cards and a resource more for each hero, dealt
+  -- again the same way
+  easyMode Bool default=false
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show

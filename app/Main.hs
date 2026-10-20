@@ -19,7 +19,7 @@ import Data.Time.Clock (addUTCTime, nominalDay)
 import Data.Text qualified as T
 import Database.Persist.Postgresql
 import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
-import LordOfTheRings.Classes.Entity (toAttrs, toId)
+import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Decklist
@@ -33,7 +33,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
-import LordOfTheRings.Scenario.Types (scenarioName)
+import LordOfTheRings.Scenario.Types (easyModeL, scenarioName)
 import Auth
 import BugUpload (uploadBugExport)
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
@@ -408,6 +408,7 @@ data NewGame = NewGame
   , seats :: Maybe Int
   -- ^ with friends, how many play; you bring the first deck and the rest join
   , allowSpectators :: Maybe Bool
+  , easyMode :: Maybe Bool
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
@@ -447,12 +448,12 @@ friendSeats gid = do
     (name,) <$> maybe (pure starterDeck) (decodeOrFail "deck") seat.lotrSeatDeck
 
 -- | Deal a new game from a seed and play it up to its first question, with a seat for
--- each named deck.
-startGame :: Scenario -> NonEmpty (Text, DeckList) -> Int -> IO (Game, [Message], StdGen)
-startGame scenario players seed = do
+-- each named deck, in easy mode when the flag says so.
+startGame :: Scenario -> Bool -> NonEmpty (Text, DeckList) -> Int -> IO (Game, [Message], StdGen)
+startGame scenario easyMode players seed = do
   seats <- either (error . show) pure . sequence $ evalRand (traverse (uncurry loadPlayer) players) (mkStdGen seed)
   chan <- newBroadcastTChanIO
-  env <- envFor chan (newTableIn scenario seats) [] (mkStdGen $ seed + 1)
+  env <- envFor chan (newTableIn (overAttrs (easyModeL .~ easyMode) scenario) seats) [] (mkStdGen $ seed + 1)
   void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
   currentState env
 
@@ -471,6 +472,7 @@ postGamesR = do
   deckLists <- traverse (resolveDeck userId) choices
   refuseSharedHeroes $ fromMaybe starterDeck <$> toList deckLists
   let friends = fromMaybe False new.withFriends
+      easyMode = fromMaybe False new.easyMode
       seatCount = fromMaybe 1 new.seats
   when (friends && (seatCount < 2 || seatCount > 4)) $ sendResponseStatus status400 (ikey "error.seatCount")
   now <- liftIO getCurrentTime
@@ -487,6 +489,7 @@ postGamesR = do
           , lotrGameDeck = storedDecks deckLists
           , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
           , lotrGameWithFriends = friends
+          , lotrGameEasyMode = easyMode
           , lotrGameSeats = if friends then seatCount else length deckLists
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
@@ -499,7 +502,7 @@ postGamesR = do
           insert_ $ LotrSeat gid 0 userId (toJSON <$> NE.head deckLists)
           pure gid
       else do
-        (g, queue, gen) <- liftIO . startGame scenario (soloSeats playerName $ fromMaybe starterDeck <$> deckLists) =<< maybe (liftIO randomIO) pure new.seed
+        (g, queue, gen) <- liftIO . startGame scenario easyMode (soloSeats playerName $ fromMaybe starterDeck <$> deckLists) =<< maybe (liftIO randomIO) pure new.seed
         runDB $ insert $ newGame' (toJSON g) (toJSON queue) gen
   pure $ object ["id" .= gid]
 
@@ -551,7 +554,7 @@ postStartR gid = do
 deal :: LotrGameId -> LotrGame -> NonEmpty (Text, DeckList) -> Handler ()
 deal gid row players = do
   scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure $ lookupScenario (ScenarioId row.lotrGameScenario)
-  (g, queue, gen) <- liftIO . startGame scenario players =<< liftIO randomIO
+  (g, queue, gen) <- liftIO . startGame scenario row.lotrGameEasyMode players =<< liftIO randomIO
   now <- liftIO getCurrentTime
   row' <- runDB do
     deleteWhere [LotrStepGameId ==. gid]
@@ -863,6 +866,7 @@ postImportR = do
           , lotrGameDeck = Nothing
           , lotrGameAllowSpectators = False
           , lotrGameWithFriends = False
+          , lotrGameEasyMode = (toAttrs imported.scenario).easyMode
           , lotrGameSeats = length imported.playerOrder
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
