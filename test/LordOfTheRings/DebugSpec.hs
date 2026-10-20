@@ -1,5 +1,6 @@
 module LordOfTheRings.DebugSpec (spec) where
 
+import LordOfTheRings.Card.CardType (CardType (AllyType))
 import LordOfTheRings.Phase
 import TestImport
 
@@ -13,6 +14,19 @@ spec = describe "Debug messages" do
     _ <- runDebug $ RaiseThreat pid 3
     (.threat) <$> getPlayer pid `shouldReturn` threat + 3
     fmap questionChoices <$> getQuestion pid `shouldReturn` Just (questionChoices asked)
+
+  it "build an open window afresh, offering what it now can" . gameTest $ \pid -> do
+    for_ ["01012", "01007", "01002"] \code -> do
+      hero <- getHeroWithCode code
+      run $ PlaceTokens GameSource (toTarget hero) Resource 5
+    first : second : _ <- filter ((== AllyType) . (.cardType)) . (.deck) <$> getPlayer pid
+    run $ TakeFromDeck pid first.id
+    run $ BeginPhase PlanningPhase
+    let offers card = maybe False (elem (CardIdTarget card.id) . targetsOf) <$> getQuestion pid
+        targetsOf q = [t | TargetLabel t _ <- questionChoices q]
+    offers second `shouldReturn` False
+    _ <- runDebug $ TakeFromDeck pid second.id
+    offers second `shouldReturn` True
 
   it "search a deck and take any card into hand" . gameTest $ \pid -> do
     card : _ <- drop 5 . (.deck) <$> getPlayer pid

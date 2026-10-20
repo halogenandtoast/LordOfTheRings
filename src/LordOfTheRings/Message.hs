@@ -224,6 +224,11 @@ questionLabelWith :: (HasCallStack) => Text -> Maybe Target -> [Target] -> Playe
 questionLabelWith _ _ _ _ [] = error "questionLabel: no choices"
 questionLabelWith prompt source targets pid choices = Ask pid $ QuestionLabel prompt source targets $ ChooseOne choices
 
+-- | A window's question, which the given message builds afresh when the game changes
+-- under it.
+playerWindow :: Text -> Message -> PlayerId -> [UI Message] -> Message
+playerWindow prompt rebuild pid = Ask pid . QuestionLabel prompt Nothing [] . PlayerWindow rebuild . ChooseOne
+
 chooseOrRunOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
 chooseOrRunOne _ [x] = uiToRun x
 chooseOrRunOne pid choices = chooseOne pid choices

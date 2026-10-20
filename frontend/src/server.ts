@@ -51,6 +51,7 @@ export type Question =
   | { tag: 'ChooseOne' | 'ChooseOneAtATime'; choices: UI[] }
   | { tag: 'QuestionLabel'; label: string; source: Target | null; targets: Target[]; question: Question }
   | { tag: 'SearchCards'; cards: Card[]; question: Question }
+  | { tag: 'PlayerWindow'; question: Question }
 
 export interface ServerPlayer {
   id: string

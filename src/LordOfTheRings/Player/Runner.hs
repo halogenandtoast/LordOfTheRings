@@ -156,7 +156,7 @@ instance RunMessage Player where
       actions <- getActionAbilities player.id
       unless (null playable && null actions)
         $ push
-        $ questionLabel prompt player.id
+        $ playerWindow prompt again player.id
         $ Label done []
         : [targetLabel c [PlayCard player.id c.id, again] | c <- playable]
         <> [AbilityLabel player.id ab [] [again] | ab <- actions]

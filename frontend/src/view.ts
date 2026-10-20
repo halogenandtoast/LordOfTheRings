@@ -188,10 +188,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     let targetIds: string[] = []
     let searched: CardView[] | null = null
     let q = question
-    while (q.tag === 'QuestionLabel' || q.tag === 'SearchCards') {
+    while (q.tag === 'QuestionLabel' || q.tag === 'SearchCards' || q.tag === 'PlayerWindow') {
       if (q.tag === 'SearchCards') {
         searched = q.cards.map((c) => card(c.cardCode, c.id))
-      } else {
+      } else if (q.tag === 'QuestionLabel') {
         prompt = q.label
         sourceId = targetCardId(q.source ?? undefined)
         targetIds = q.targets.map(targetCardId).filter((id): id is string => id !== null)

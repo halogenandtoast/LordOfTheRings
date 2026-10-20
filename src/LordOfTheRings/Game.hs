@@ -105,13 +105,14 @@ mainLoop = go (0 :: Int)
       | otherwise -> runNext >>= bool getGame (go (n + 1))
 
 -- | Run a debug message now, even while a question waits: it and whatever it leads to go
--- first, then the waiting question is asked again and play carries on from there.
+-- first, then the waiting question is asked again (a window is built afresh, as what it
+-- offers may have changed) and play carries on from there.
 runDebug :: Message -> GameT Game
 runDebug msg = do
   asked <- getsGame (.question)
   waiting <- peekQueue
   putGame . (questionL .~ mempty) =<< getGame
-  setQueue $ msg : [Ask pid q | (pid, q) <- Map.toList asked] <> waiting
+  setQueue $ msg : [fromMaybe (Ask pid q) (questionRebuild q) | (pid, q) <- Map.toList asked] <> waiting
   mainLoop
 
 messageLimit :: Int
@@ -632,7 +633,7 @@ runGameMessage msg g = case msg of
       $ if null available && null fromHand
         then next
         else
-          questionLabel (ikey "label.useResponse") pid
+          playerWindow (ikey "label.useResponse") msg pid
             $ [AbilityLabel pid ab windows [ResponseWindow windows order (abilityKey ab : used) 0] | ab <- available]
             <> fromHand
             <> [Label (ikey "label.pass") [next]]
