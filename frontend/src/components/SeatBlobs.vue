@@ -41,7 +41,7 @@ const share = (playerId: string) => {
       @click.capture="pick($event, player.playerId)"
     >
       <span v-if="i > 0" class="name">{{ player.name }}</span>
-      <slot :player="player" />
+      <slot :player="player" :small="player.playerId !== big" />
     </div>
   </div>
 </template>
