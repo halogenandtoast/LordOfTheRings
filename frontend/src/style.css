@@ -67,6 +67,7 @@
   --zone-staging: rgb(170 60 40 / 0.12);
   --zone-threat: rgb(200 120 40 / 0.10);
   --zone-play: rgb(90 150 90 / 0.08);
+  --zone-victory: rgb(130 100 200 / 0.12);
   --zone-seat: rgb(229 211 173 / 0.04);
   --box-border: var(--line);
   --input-background: var(--well);

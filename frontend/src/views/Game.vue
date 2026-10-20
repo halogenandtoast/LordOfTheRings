@@ -397,7 +397,7 @@ watch(question, (asked) => {
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
 .encounter > .scenario { background: var(--zone-scenario); }
 .encounter > .staging { background: var(--zone-staging); }
-.encounter > .victory { background: var(--zone-scenario); padding-left: 1.5rem; }
+.encounter > .victory { background: var(--zone-victory); padding-left: 1.5rem; }
 /* the staging area beside the scenario, under it when the screen is too narrow */
 .game > .encounter { display: flex; flex-wrap: wrap; gap: var(--gap); flex: 0 0 auto; }
 .game > .threat-area { --zone-base: var(--zone-threat); }
