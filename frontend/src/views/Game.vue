@@ -15,7 +15,7 @@ import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import SeatTabs from '../components/SeatTabs.vue'
-import ZoneSeats, { seatHue } from '../components/ZoneSeats.vue'
+import ZoneSeats from '../components/ZoneSeats.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
@@ -232,7 +232,6 @@ watch(question, (asked) => {
         <!-- in front of the player, as engaged enemies sit on the table -->
         <CardBand
           class="threat-area"
-          :style="{ '--seat-hue': seatHue(players, threatSeat?.playerId) }"
           :label="$t('game.bands.threatArea')"
           :cards="engaged"
           :choices="choices"
@@ -244,7 +243,6 @@ watch(question, (asked) => {
 
         <CardBand
           class="play-area"
-          :style="{ '--seat-hue': seatHue(players, playSeat?.playerId) }"
           :class="{ 'drop-zone': dragging && dragging.hosts === null }"
           :label="$t('game.bands.playArea')"
           :cards="inPlay"
@@ -371,14 +369,9 @@ watch(question, (asked) => {
 /* each zone of the table has its own stripe, kept when empty so it stays a place */
 .game > .scenario { background: var(--zone-scenario); }
 .game > .staging { background: var(--zone-staging); }
-.game > .threat-area { --zone-base: var(--zone-threat); }
-.game > .play-area { --zone-base: var(--zone-play); }
+.game > .threat-area { background: var(--zone-threat); --zone-base: var(--zone-threat); }
+.game > .play-area { background: var(--zone-play); --zone-base: var(--zone-play); }
 .band.seat { background: var(--zone-seat); }
-/* turned to the hue of the seat shown in them (see ZoneSeats) */
-.game > :is(.threat-area, .play-area) {
-  background: oklch(from var(--zone-base) l c calc(h + var(--seat-hue, 0)));
-  transition: background 0.2s ease;
-}
 /* room for a card even when empty; border-box, so the padding and border count toward it */
 .game > .staging, .game > .threat-area, .game > .play-area {
   flex: 0 0 auto;

@@ -1,8 +1,8 @@
 <script lang="ts">
 import type { PlayerView } from '../types'
 
-/** How far round the hue wheel a seat's zones are turned, so each seat has its own shade
-    of the zone's colour: 0, then 18° either side, then 36°. */
+/** How far round the hue wheel a seat's zones are turned, so each seat's tab has its own
+    shade of the zone's colour: 0, then 18° either side, then 36°. */
 export const seatHue = (players: PlayerView[], playerId: string | null | undefined) => {
   const seat = Math.max(0, players.findIndex((player) => player.playerId === playerId))
   return Math.ceil(seat / 2) * 18 * (seat % 2 ? 1 : -1)
@@ -77,6 +77,7 @@ button:hover { color: var(--text); margin-top: 1px; }
 button.active {
   margin-top: 0;
   padding-bottom: 4px;
+  /* this seat's shade at the zone's strength, so the tab joins the zone */
   background: linear-gradient(var(--seat-zone), var(--seat-zone)) var(--page-background);
   color: var(--text);
   cursor: default;
