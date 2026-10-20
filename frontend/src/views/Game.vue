@@ -384,6 +384,8 @@ watch(question, (asked) => {
 }
 /* the threat and play areas are a drawer per seat (see SeatDrawers), each its own band */
 .game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
+/* no label, but in line with the bands that have one */
+.game > .scenario { padding-left: 1.5rem; }
 .game > :is(.threat-area, .play-area) :deep(.band) { flex: 1 1 auto; }
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .game > .staging, .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
