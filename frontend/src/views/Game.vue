@@ -396,6 +396,11 @@ watch(question, (asked) => {
 .game > .play-area { --zone-base: var(--zone-play); }
 .game > :is(.threat-area, .play-area) { position: relative; display: flex; background: var(--zone-base); }
 .band.seat { background: var(--zone-seat); }
+/* a faint light edge, so each zone stands off the page */
+:is(.encounter > .scenario, .encounter > .staging, .game > .threat-area, .game > .play-area, .band.seat) {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 6px;
+}
 /* room for a card even when empty; border-box, so the padding and border count toward it */
 .encounter > .staging, .game > .threat-area, .game > .play-area {
   flex: 0 0 auto;
