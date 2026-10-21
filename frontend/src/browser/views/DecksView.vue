@@ -8,6 +8,7 @@ import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import DeckImport from '@browser/components/DeckImport.vue'
 import GameIcon from '@browser/components/GameIcon.vue'
+import PrimaryButton from '../../components/PrimaryButton.vue'
 import ConfirmDelete from '../../components/ConfirmDelete.vue'
 import TrashIcon from '../../components/TrashIcon.vue'
 import { useDeckStore, messageOf } from '@browser/stores/decks'
@@ -52,6 +53,11 @@ async function remove(deck: DeckSummary): Promise<void> {
   }
 }
 
+// the loading row waits behind New Deck, as a new game does on Home; open from the
+// start with no decks, when loading one is all there is to do
+const loadOpen = ref<boolean | null>(null)
+const showLoad = computed(() => loadOpen.value ?? decks.isEmpty)
+
 const search = ref('')
 // a deck shows when its heroes cover every sphere chosen
 const spheres = ref<Sphere[]>([])
@@ -92,9 +98,14 @@ const shown = computed(() => {
       <p v-if="decks.decks.length" class="muted">
         {{ $t('browser.decks.count', decks.decks.length) }}
       </p>
+      <!-- Cancel while the row is open, as New Game's own Cancel -->
+      <button v-if="showLoad" type="button" class="new-deck cancel" @click="loadOpen = false">{{ $t('common.cancel') }}</button>
+      <PrimaryButton v-else class="new-deck" :label="$t('browser.decks.new')" @click="loadOpen = true" />
     </header>
 
-    <DeckImport class="import" @imported="onImported" />
+    <Transition name="slide">
+      <DeckImport v-if="showLoad" class="import" @imported="onImported" />
+    </Transition>
 
     <p v-if="decks.state === 'loading'" class="notice">{{ $t('browser.common.loading') }}</p>
     <p v-else-if="decks.state === 'error'" class="notice notice--error">{{ tr(decks.error) }}</p>
@@ -230,9 +241,37 @@ const shown = computed(() => {
 
 .page__head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
   margin-bottom: 12px;
+}
+
+.new-deck {
+  margin-left: auto;
+}
+
+.cancel {
+  padding: 10px 15px;
+  border-radius: 3px;
+  background-color: var(--button-secondary);
+  color: var(--text);
+  font-weight: bolder;
+  text-transform: uppercase;
+  transition: background-color 0.3s linear;
+}
+
+.cancel:hover {
+  background-color: var(--button-secondary-hover);
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
 }
 
 /* the head takes the room below it */
