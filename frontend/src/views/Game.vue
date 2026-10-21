@@ -445,6 +445,8 @@ watch(question, (asked) => {
 /* the same on the scenario, staging and victory display, so their cards' tops line up */
 .encounter > :is(.scenario, .staging, .victory), .game > :is(.threat-area, .play-area) :deep(.band) { padding: var(--gap) 4px var(--gap) 1.5rem; }
 .game > :is(.threat-area, .play-area) :deep(.band) { flex: 1 1 auto; }
+/* as much room after the scenario and victory display as their labels take before them */
+.encounter > :is(.scenario, .victory) { padding-right: 1.5rem; }
 /* labels pinned to the top corner, even where the cards sit along the bottom */
 .encounter > :is(.scenario, .staging, .victory), .game > :is(.threat-area, .play-area) :deep(.band) { position: relative; }
 :is(.encounter, .game > .threat-area, .game > .play-area) :deep(.band-label) { position: absolute; top: var(--gap); left: 4px; }
