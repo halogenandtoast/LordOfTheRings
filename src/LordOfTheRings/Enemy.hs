@@ -34,6 +34,8 @@ import LordOfTheRings.Enemy.Cards.Morris
 import LordOfTheRings.Enemy.Cards.Stuart
 import LordOfTheRings.Enemy.Cards.Rupert
 import LordOfTheRings.Enemy.Cards.MuckAdder
+import LordOfTheRings.Enemy.Cards.MirkwoodFlock
+import LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -92,5 +94,7 @@ allEnemys =
         , SomeEnemyCard stuart
         , SomeEnemyCard rupert
         , SomeEnemyCard muckAdder
+        , SomeEnemyCard mirkwoodFlock
+        , SomeEnemyCard blackForestBatsRhosgobel
         ]
     ]

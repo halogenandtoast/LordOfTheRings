@@ -68,6 +68,7 @@ allAttachmentCards =
       , norAmIAStranger
       , aBurningBrand
       , songOfWisdom
+      , dunedainQuest
       ]
 
 stewardOfGondor :: CardDef
@@ -401,4 +402,10 @@ songOfWisdom :: CardDef
 songOfWisdom =
   (attachment "02034" "Song of Wisdom" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Song]
+    }
+
+dunedainQuest :: CardDef
+dunedainQuest =
+  (attachment "02051" "Dúnedain Quest" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Signal]
     }

@@ -27,6 +27,8 @@ import LordOfTheRings.Location.Cards.TheCarrock
 import LordOfTheRings.Location.Cards.RiverLangflood
 import LordOfTheRings.Location.Cards.BeePastures
 import LordOfTheRings.Location.Cards.OakWoodGrove
+import LordOfTheRings.Location.Cards.Rhosgobel
+import LordOfTheRings.Location.Cards.ForestGrove
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -78,5 +80,7 @@ allLocations =
         , SomeLocationCard riverLangflood
         , SomeLocationCard beePastures
         , SomeLocationCard oakWoodGrove
+        , SomeLocationCard rhosgobel
+        , SomeLocationCard forestGrove
         ]
     ]

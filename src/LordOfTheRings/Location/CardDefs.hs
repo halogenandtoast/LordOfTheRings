@@ -38,6 +38,8 @@ allLocationCards =
       , riverLangflood
       , beePastures
       , oakWoodGrove
+      , rhosgobel
+      , forestGrove
       ]
 
 greatForestWeb :: CardDef
@@ -171,5 +173,19 @@ beePastures = location "02045" "Bee Pastures" ConflictAtTheCarrock 3 1 2
 oakWoodGrove :: CardDef
 oakWoodGrove =
   (location "02046" "Oak-wood Grove" ConflictAtTheCarrock 3 2 1)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+rhosgobel :: CardDef
+rhosgobel =
+  (location "02065" "Rhosgobel" AJourneyToRhosgobel 1 0 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Forest]
+    , cdVictoryPoints = Just 4
+    }
+
+forestGrove :: CardDef
+forestGrove =
+  (location "02066" "Forest Grove" AJourneyToRhosgobel 4 2 3)
     { cdCardTraits = setFromList [Forest]
     }

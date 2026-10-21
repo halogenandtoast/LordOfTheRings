@@ -74,6 +74,9 @@ allEventCards =
       , musteringTheRohirrim
       , stridersPath
       , secondBreakfast
+      , partingGifts
+      , toTheEyrie
+      , infighting
       ]
 
 everVigilant :: CardDef
@@ -252,3 +255,12 @@ stridersPath = event "02009" "Strider's Path" Lore (StaticCost 1)
 
 secondBreakfast :: CardDef
 secondBreakfast = event "02027" "Second Breakfast" Leadership (StaticCost 1)
+
+partingGifts :: CardDef
+partingGifts = event "02052" "Parting Gifts" Leadership (StaticCost 0)
+
+toTheEyrie :: CardDef
+toTheEyrie = event "02054" "To the Eyrie" Tactics (StaticCost 2)
+
+infighting :: CardDef
+infighting = event "02058" "Infighting" Lore (StaticCost 1)

@@ -21,6 +21,9 @@ import LordOfTheRings.Quest.Cards.ANewTerrorAbroad
 import LordOfTheRings.Quest.Cards.OnTheTrail
 import LordOfTheRings.Quest.Cards.GrimbeornsQuest
 import LordOfTheRings.Quest.Cards.AgainstTheTrolls
+import LordOfTheRings.Quest.Cards.TheWoundedEagle
+import LordOfTheRings.Quest.Cards.RadagastsRequest
+import LordOfTheRings.Quest.Cards.ReturnToRhosgobel
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -66,5 +69,8 @@ allQuests =
         , SomeQuestCard onTheTrail
         , SomeQuestCard grimbeornsQuest
         , SomeQuestCard againstTheTrolls
+        , SomeQuestCard theWoundedEagle
+        , SomeQuestCard radagastsRequest
+        , SomeQuestCard returnToRhosgobel
         ]
     ]

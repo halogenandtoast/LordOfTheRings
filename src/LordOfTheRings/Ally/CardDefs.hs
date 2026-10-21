@@ -82,6 +82,9 @@ allAllyCards =
       , rivendellMinstrel
       , beorningBeekeeper
       , longbeardMapMaker
+      , landroval
+      , haldirOfLorien
+      , radagast
       ]
 
 guardOfTheCitadel :: CardDef
@@ -498,4 +501,27 @@ longbeardMapMaker :: CardDef
 longbeardMapMaker =
   (ally "02032" "Longbeard Map-Maker" Lore (StaticCost 3) 1 1 1 3)
     { cdCardTraits = setFromList [Dwarf]
+    }
+
+landroval :: CardDef
+landroval =
+  (ally "02053" "Landroval" Tactics (StaticCost 5) 1 3 1 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Eagle]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+haldirOfLorien :: CardDef
+haldirOfLorien =
+  (ally "02057" "Haldir of Lórien" Lore (StaticCost 4) 2 2 2 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Silvan]
+    , cdKeywords = setFromList [Ranged, Sentinel]
+    }
+
+radagast :: CardDef
+radagast =
+  (ally "02059" "Radagast" Neutral (StaticCost 5) 2 1 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Istari]
     }

@@ -24,6 +24,9 @@ import LordOfTheRings.Treachery.Cards.OldWivesTales
 import LordOfTheRings.Treachery.Cards.AFrightenedBeast
 import LordOfTheRings.Treachery.Cards.Sacked
 import LordOfTheRings.Treachery.Cards.RoastedSlowly
+import LordOfTheRings.Treachery.Cards.Exhaustion
+import LordOfTheRings.Treachery.Cards.SwarmingInsect
+import LordOfTheRings.Treachery.Cards.FesteringWounds
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -72,5 +75,8 @@ allTreacherys =
         , SomeTreacheryCard aFrightenedBeast
         , SomeTreacheryCard sacked
         , SomeTreacheryCard roastedSlowly
+        , SomeTreacheryCard exhaustion
+        , SomeTreacheryCard swarmingInsect
+        , SomeTreacheryCard festeringWounds
         ]
     ]

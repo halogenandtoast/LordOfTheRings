@@ -35,6 +35,9 @@ allTreacheryCards =
       , aFrightenedBeast
       , sacked
       , roastedSlowly
+      , exhaustion
+      , swarmingInsect
+      , festeringWounds
       ]
 
 eyesOfTheForest :: CardDef
@@ -133,4 +136,25 @@ roastedSlowly =
   (treachery "02049" "Roasted Slowly" ConflictAtTheCarrock 2)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+exhaustion :: CardDef
+exhaustion =
+  (treachery "02067" "Exhaustion" AJourneyToRhosgobel 4)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+swarmingInsect :: CardDef
+swarmingInsect =
+  (treachery "02068" "Swarming Insect" AJourneyToRhosgobel 4)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+festeringWounds :: CardDef
+festeringWounds =
+  (treachery "02069" "Festering Wounds" AJourneyToRhosgobel 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

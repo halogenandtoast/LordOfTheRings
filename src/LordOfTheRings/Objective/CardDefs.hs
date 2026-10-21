@@ -23,6 +23,8 @@ allObjectiveCards =
       , mendor
       , signsOfGollum
       , grimbeornTheOld
+      , athelas
+      , wilyador
       ]
 
 gandalfsMap :: CardDef
@@ -67,4 +69,20 @@ grimbeornTheOld =
   ((objective "02037" "Grimbeorn the Old" ConflictAtTheCarrock 1)
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 4, cdDefense = Just 3, cdHitPoints = Just 10 })
     { cdUnique = True
+    }
+
+athelas :: CardDef
+athelas =
+  (objective "02063" "Athelas" AJourneyToRhosgobel 4)
+    { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Guarded]
+    }
+
+wilyador :: CardDef
+wilyador =
+  ((objective "02064" "Wilyador" AJourneyToRhosgobel 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 1, cdDefense = Just 1, cdHitPoints = Just 20 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Eagle]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

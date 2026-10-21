@@ -44,6 +44,8 @@ allEnemyCards =
       , stuart
       , rupert
       , muckAdder
+      , mirkwoodFlock
+      , blackForestBatsRhosgobel
       ]
 
 kingSpider :: CardDef
@@ -244,4 +246,18 @@ muckAdder =
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+mirkwoodFlock :: CardDef
+mirkwoodFlock =
+  (enemy "02070" "Mirkwood Flock" AJourneyToRhosgobel 4 32 1 2 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+blackForestBatsRhosgobel :: CardDef
+blackForestBatsRhosgobel =
+  (enemy "02071" "Black Forest Bats" AJourneyToRhosgobel 5 26 1 1 0 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
     }

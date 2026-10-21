@@ -36,6 +36,25 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "payFromAlly": "Pay with resources from an ally?",
+  "payFromHeroes": "Pay from your heroes",
+  "partingGifts": {
+    "from": "Move resources from a Leadership hero",
+    "to": "Move them to another hero"
+  },
+  "infighting": {
+    "from": "Move damage from an enemy",
+    "to": "Move it to another enemy"
+  },
+  "toTheEyrie": {
+    "exhaust": "Exhaust an Eagle character"
+  },
+  "radagast": {
+    "heal": "Heal a Creature"
+  },
+  "athelas": {
+    "exhaust": "Exhaust a hero to claim Athelas"
+  },
   "moveSignal": "Attach it to another hero",
   "aFrightenedBeast": {
     "cancel": "Discard a Creature ally to cancel A Frightened Beast",

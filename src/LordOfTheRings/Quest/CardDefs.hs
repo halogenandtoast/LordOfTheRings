@@ -32,6 +32,9 @@ allQuestCards =
       , onTheTrail
       , grimbeornsQuest
       , againstTheTrolls
+      , theWoundedEagle
+      , radagastsRequest
+      , returnToRhosgobel
       ]
 
 fliesAndSpiders :: CardDef
@@ -78,3 +81,12 @@ grimbeornsQuest = quest "02035" "Grimbeorn's Quest" ConflictAtTheCarrock 1 7
 
 againstTheTrolls :: CardDef
 againstTheTrolls = quest "02036" "Against the Trolls" ConflictAtTheCarrock 2 1
+
+theWoundedEagle :: CardDef
+theWoundedEagle = quest "02060" "The Wounded Eagle" AJourneyToRhosgobel 1 8
+
+radagastsRequest :: CardDef
+radagastsRequest = quest "02061" "Radagast's Request" AJourneyToRhosgobel 2 12
+
+returnToRhosgobel :: CardDef
+returnToRhosgobel = quest "02062" "Return to Rhosgobel" AJourneyToRhosgobel 3 0
