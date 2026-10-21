@@ -292,7 +292,7 @@ const toggleUnless = (attached: CardView) => {
   font-size: 0.85rem;
   font-weight: 900;
   /* a true outline, drawn under the fill so the figure keeps its full weight */
-  -webkit-text-stroke: 3px #000;
+  -webkit-text-stroke: 2px #000;
   paint-order: stroke fill;
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.8);
 }
