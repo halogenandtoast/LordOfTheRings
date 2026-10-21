@@ -63,6 +63,17 @@ import LordOfTheRings.Ally.Cards.GaladhonArcher
 import LordOfTheRings.Ally.Cards.Orophin
 import LordOfTheRings.Ally.Cards.GaladrielsHandmaiden
 import LordOfTheRings.Ally.Cards.GreenwoodArcher
+import LordOfTheRings.Ally.Cards.ZigilMiner
+import LordOfTheRings.Ally.Cards.EreborRecordKeeper
+import LordOfTheRings.Ally.Cards.Bombur
+import LordOfTheRings.Ally.Cards.LongbeardElder
+import LordOfTheRings.Ally.Cards.EredNimraisProspector
+import LordOfTheRings.Ally.Cards.EredLuinMiner
+import LordOfTheRings.Ally.Cards.Fili
+import LordOfTheRings.Ally.Cards.Kili
+import LordOfTheRings.Ally.Cards.Dori
+import LordOfTheRings.Ally.Cards.Gloin
+import LordOfTheRings.Ally.Cards.EreborGuard
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -152,5 +163,16 @@ allAllies =
         , SomeAllyCard orophin
         , SomeAllyCard galadrielsHandmaiden
         , SomeAllyCard greenwoodArcher
+        , SomeAllyCard zigilMiner
+        , SomeAllyCard ereborRecordKeeper
+        , SomeAllyCard bombur
+        , SomeAllyCard longbeardElder
+        , SomeAllyCard eredNimraisProspector
+        , SomeAllyCard eredLuinMiner
+        , SomeAllyCard fili
+        , SomeAllyCard kili
+        , SomeAllyCard dori
+        , SomeAllyCard gloin
+        , SomeAllyCard ereborGuard
         ]
     ]

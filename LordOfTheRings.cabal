@@ -19,23 +19,31 @@ library
       LordOfTheRings.Ally.CardDefs
       LordOfTheRings.Ally.Cards.Beorn
       LordOfTheRings.Ally.Cards.BeorningBeekeeper
+      LordOfTheRings.Ally.Cards.Bombur
       LordOfTheRings.Ally.Cards.BrokIronfist
       LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
       LordOfTheRings.Ally.Cards.DefenderOfTheNaith
       LordOfTheRings.Ally.Cards.DescendantOfThorondor
+      LordOfTheRings.Ally.Cards.Dori
       LordOfTheRings.Ally.Cards.DunedainWatcher
       LordOfTheRings.Ally.Cards.EaglesOfTheMistyMountains
       LordOfTheRings.Ally.Cards.Elfhelm
       LordOfTheRings.Ally.Cards.Eomund
+      LordOfTheRings.Ally.Cards.EreborGuard
       LordOfTheRings.Ally.Cards.EreborHammersmith
+      LordOfTheRings.Ally.Cards.EreborRecordKeeper
+      LordOfTheRings.Ally.Cards.EredLuinMiner
+      LordOfTheRings.Ally.Cards.EredNimraisProspector
       LordOfTheRings.Ally.Cards.EscortFromEdoras
       LordOfTheRings.Ally.Cards.Faramir
+      LordOfTheRings.Ally.Cards.Fili
       LordOfTheRings.Ally.Cards.GaladhonArcher
       LordOfTheRings.Ally.Cards.GaladhrimMinstrel
       LordOfTheRings.Ally.Cards.GaladrielsHandmaiden
       LordOfTheRings.Ally.Cards.Gandalf
       LordOfTheRings.Ally.Cards.GildorInglorion
       LordOfTheRings.Ally.Cards.Gleowine
+      LordOfTheRings.Ally.Cards.Gloin
       LordOfTheRings.Ally.Cards.GondorianSpearman
       LordOfTheRings.Ally.Cards.GreenwoodArcher
       LordOfTheRings.Ally.Cards.GrimbeornTheOld
@@ -45,7 +53,9 @@ library
       LordOfTheRings.Ally.Cards.HenamarthRiversong
       LordOfTheRings.Ally.Cards.HorsebackArcher
       LordOfTheRings.Ally.Cards.KeenEyedTook
+      LordOfTheRings.Ally.Cards.Kili
       LordOfTheRings.Ally.Cards.Landroval
+      LordOfTheRings.Ally.Cards.LongbeardElder
       LordOfTheRings.Ally.Cards.LongbeardMapMaker
       LordOfTheRings.Ally.Cards.LongbeardOrcSlayer
       LordOfTheRings.Ally.Cards.LorienGuide
@@ -74,6 +84,7 @@ library
       LordOfTheRings.Ally.Cards.WestRoadTraveller
       LordOfTheRings.Ally.Cards.Wilyador
       LordOfTheRings.Ally.Cards.WingedGuardian
+      LordOfTheRings.Ally.Cards.ZigilMiner
       LordOfTheRings.Ally.Import.Lifted
       LordOfTheRings.Ally.Runner
       LordOfTheRings.Ally.Types
