@@ -49,12 +49,12 @@ const implemented: Record<string, Gateable> = {
   'passage-through-mirkwood': {},
   'journey-along-the-anduin': {},
   'escape-from-dol-guldur': {},
-  'the-hunt-for-gollum': { alpha: true },
-  'conflict-at-the-carrock': { alpha: true },
-  'a-journey-to-rhosgobel': { alpha: true },
-  'the-hills-of-emyn-muil': { alpha: true },
-  'the-dead-marshes': { alpha: true },
-  'return-to-mirkwood': { alpha: true },
+  'the-hunt-for-gollum': {},
+  'conflict-at-the-carrock': {},
+  'a-journey-to-rhosgobel': {},
+  'the-hills-of-emyn-muil': {},
+  'the-dead-marshes': {},
+  'return-to-mirkwood': {},
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({
