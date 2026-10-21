@@ -23,7 +23,6 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           </div>
         </div>
         <div class="extra-details">
-          <div class="game-meta">{{ game.scenario }}</div>
           <div v-if="deleteGame" class="game-delete">
             <a href="#delete" :aria-label="$t('home.deleteGame')" @click.prevent="deleting = true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -135,7 +134,6 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   align-items: center;
   gap: 12px;
 }
-.game-meta { color: var(--text-muted); font-size: 0.85em; }
 
 .game-delete a { color: var(--text-muted); display: flex; }
 .game-delete a:hover { color: var(--danger); }
