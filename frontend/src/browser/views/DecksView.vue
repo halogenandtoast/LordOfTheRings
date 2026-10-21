@@ -4,10 +4,11 @@
  * sphere and sorted, by default, as they were last played.
  */
 import '@browser/browser.css'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import DeckImport from '@browser/components/DeckImport.vue'
 import GameIcon from '@browser/components/GameIcon.vue'
+import ConfirmDelete from '../../components/ConfirmDelete.vue'
 import TrashIcon from '../../components/TrashIcon.vue'
 import { useDeckStore, messageOf } from '@browser/stores/decks'
 import type { IconName } from '@browser/lib/card-text'
@@ -28,6 +29,14 @@ onMounted(() => decks.load(true))
 
 function onImported(deck: Deck): void {
   void router.push({ name: 'deck', params: { id: deck.id } })
+}
+
+// asked first, as deleting a game is
+const confirm = useTemplateRef<InstanceType<typeof ConfirmDelete>>('confirm')
+const deleting = ref<DeckSummary | null>(null)
+function ask(deck: DeckSummary): void {
+  deleting.value = deck
+  confirm.value?.open()
 }
 
 async function remove(deck: DeckSummary): Promise<void> {
@@ -167,7 +176,7 @@ const shown = computed(() => {
             class="deck__remove"
             :disabled="removing === deck.id"
             :title="$t('browser.decks.delete', { name: deck.name })"
-            @click="remove(deck)"
+            @click="ask(deck)"
           >
             <TrashIcon />
             <span class="visually-hidden">{{ $t('browser.decks.delete', { name: deck.name }) }}</span>
@@ -177,6 +186,19 @@ const shown = computed(() => {
 
       <p v-if="removeError" class="notice notice--error" role="alert">{{ tr(removeError) }}</p>
     </template>
+
+    <ConfirmDelete ref="confirm" :title="$t('browser.decks.confirmDelete')" @confirm="deleting && remove(deleting)">
+      <template v-if="deleting">
+        <span class="deck__art confirm-art" aria-hidden="true">
+          <span v-for="hero in deleting.heroes" :key="hero.code" :style="{ backgroundImage: `url(/images/cards/${hero.code}.jpg)` }" />
+        </span>
+        <span class="confirm-details">
+          <strong>{{ deleting.name }}</strong>
+          <span class="confirm-meta">{{ deleting.heroes.map((h) => h.name).join(', ') }}</span>
+          <span class="confirm-meta">{{ $t('browser.common.cardCount', deleting.cardCount) }}</span>
+        </span>
+      </template>
+    </ConfirmDelete>
   </main>
 </template>
 
@@ -264,6 +286,25 @@ h1 {
 
 .deck__art > span + span {
   box-shadow: -1px 0 0 rgb(0 0 0 / 0.5);
+}
+
+/* the deck in the delete dialog: its heroes small beside its name */
+.confirm-art {
+  flex: 0 0 6rem;
+  height: 3.5rem;
+  border-radius: var(--radius);
+}
+
+.confirm-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.confirm-meta {
+  color: var(--c-text-muted);
+  font-size: var(--text-sm);
 }
 
 .deck__body {

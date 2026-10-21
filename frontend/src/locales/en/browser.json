@@ -176,6 +176,7 @@
     "noHeroes": "No heroes",
     "unknownCount": "{count} unknown",
     "delete": "Delete {name}",
+    "confirmDelete": "Delete this deck?",
     "search": "Search by deck or hero",
     "spheres": "Heroes' spheres",
     "noneMatch": "No decks match.",
