@@ -110,6 +110,15 @@ data Message
   | PayCost CostId
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int
+  | -- | the card is played without paying its cost, from wherever it was taken
+    PlayAtNoCost PlayerId PlayerCard
+  | -- | the card is played from its owner's hand without paying its cost
+    PlayFromHandAtNoCost PlayerId CardId
+  | -- | the top card of the player's deck is revealed: they may play it at no cost, if
+    -- able, or else it goes to the bottom of their deck
+    PlayTopOfDeckAtNoCostOrBottom PlayerId Source
+  | RemoveFromDeck PlayerId CardId
+  | MoveToBottomOfDeck PlayerId CardId
   | PlayAlly PlayerId PlayerCard
   | DoStep Int Message
   | Ask PlayerId (Question Message)

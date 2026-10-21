@@ -285,5 +285,9 @@
   },
   "waitNoLonger": {
     "chooseEnemy": "Choose an enemy to engage"
-  }
+  },
+  "playAtNoCost": "Play this card at no cost?",
+  "playIt": "Play it",
+  "moveToBottomOfDeck": "Move it to the bottom of your deck",
+  "returnAllyToHand": "Return an ally you control to your hand"
 }

@@ -402,3 +402,30 @@ moveToTopOfEncounterDeck card = do
 -- | The shadow card, a location, becomes the active location.
 putShadowLocationIntoPlay :: (ReverseQueue m) => EnemyId -> CardId -> m ()
 putShadowLocationIntoPlay eid = push . PutShadowLocationIntoPlay eid
+
+-- | The player returns a matching ally they control to their hand, as "return a Silvan
+-- ally you control to your hand" pays for a card; see 'controlsAlly'.
+returnAllyToHand :: (ReverseQueue m, Targetable source) => PlayerId -> source -> AllyMatcher -> m ()
+returnAllyToHand pid source matcher = do
+  allies <- select (AllyControlledBy (PlayerWithId pid) <> matcher)
+  chooseOrRunOneM pid do
+    questionLabeled "returnAllyToHand"
+    causedBy source
+    targets allies returnToHand
+
+-- | Play a card from the player's hand without paying its cost: it still counts as played
+-- from hand.
+playFromHandAtNoCost :: (ReverseQueue m) => PlayerId -> CardId -> m ()
+playFromHandAtNoCost pid cid = push $ PlayFromHandAtNoCost pid cid
+
+-- | The character attacks the enemy, wherever it is, as an effect declares it an
+-- attacker; its attack raised by the bonus for that attack alone.
+attackEnemyWith :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Target -> EnemyId -> Int -> m ()
+attackEnemyWith pid source attacker eid bonus = do
+  push $ AttackWith attacker
+  when (bonus /= 0) $ createEffect source attacker [AttackModifier bonus] UntilEndOfAttack
+  push $ ResolveAttack pid eid
+
+-- | The player chooses and discards N cards from their hand.
+chooseAndDiscardFromHand :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
+chooseAndDiscardFromHand pid source n = push $ ChooseAndDiscardFromHand pid (toSource source) n

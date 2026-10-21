@@ -4,6 +4,7 @@ import LordOfTheRings.Card (Card)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (CardMatcher, cardMatches)
 import LordOfTheRings.Phase
+import LordOfTheRings.Source
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Timing
@@ -54,6 +55,14 @@ data WindowMatcher
     AttackerDeclaredWindow Timing (Maybe Target)
   | -- | a hero with the trait, controlled by the player, left play
     HeroLeftPlayWindow Timing PlayerId Trait
+  | -- | an ally with the trait, controlled by the player, left play
+    AllyWithTraitLeftPlayWindow Timing PlayerId Trait
+  | -- | a character, or one with the trait, readied during the refresh phase
+    ReadiedWindow Timing (Maybe Trait)
+  | -- | a character healed by anything but the source
+    HealedByOtherWindow Timing Source
+  | -- | an ally entered play, under the player and with the trait when given
+    AllyEnteredPlayWindow Timing (Maybe PlayerId) (Maybe Trait)
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -93,4 +102,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (AttackerDeclaredWindow t who, DeclaredAsAttacker target _) -> t == timing && maybe True (== target) who
   (HeroLeftPlayWindow t pid trait, LeftPlay (HeroTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits
+  (AllyWithTraitLeftPlayWindow t pid trait, LeftPlay (AllyTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits
+  (ReadiedWindow t trait, Readied _ traits) -> t == timing && maybe True (`member` traits) trait
+  (HealedByOtherWindow t source, Healed _ source') -> t == timing && source /= source'
+  (AllyEnteredPlayWindow t pid trait, AllyEnteredPlay _ pid' traits) ->
+    t == timing && maybe True (== pid') pid && maybe True (`member` traits) trait
   _ -> False

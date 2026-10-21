@@ -3,6 +3,7 @@ module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
+import LordOfTheRings.Source
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Trait
@@ -49,6 +50,12 @@ data WindowType
     CharacterLeftPlay Card
   | -- | a character left play: who controlled it, and its traits as it left
     LeftPlay Target PlayerId (Set Trait)
+  | -- | a character readied during the refresh phase, with its traits
+    Readied Target (Set Trait)
+  | -- | damage was healed from a character, by the source
+    Healed Target Source
+  | -- | an ally entered play: who controls it, and its traits
+    AllyEnteredPlay Target PlayerId (Set Trait)
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

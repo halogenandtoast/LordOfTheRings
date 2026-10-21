@@ -192,6 +192,9 @@ narrationFor = \case
   ReturnFromDiscardToHand pid cid -> Just $ withPlayer pid \player who ->
     pure [mechanic [ikeyPart "log.returnsFromDiscard" ["player" ~> who, "card" ~> card]] | card <- filter ((== cid) . (.id)) player.discard]
   ShuffleDiscardIntoDeck pid -> Just $ withPlayer pid \_ who -> one $ mechanic [ikeyPart "log.shufflesDiscardIntoDeck" ["player" ~> who]]
+  MoveToBottomOfDeck pid cid -> Just $ withPlayer pid \player who ->
+    pure [mechanic [ikeyPart "log.movesToBottomOfDeck" ["player" ~> who, "card" ~> card]] | card <- filter ((== cid) . (.id)) player.deck]
+  PlayAtNoCost _ card -> Just $ one $ mechanic [ikeyPart "log.playedAtNoCost" ["card" ~> PlayerCard card]]
   _ -> Nothing
 
 one :: (Applicative m) => LogEntry -> m [LogEntry]

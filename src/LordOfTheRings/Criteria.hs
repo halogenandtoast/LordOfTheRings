@@ -3,6 +3,8 @@ module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
+import LordOfTheRings.Modifier (ModifierType)
+import LordOfTheRings.Target (Target)
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
@@ -26,6 +28,9 @@ data Criterion
   | -- | nothing stops a player card cancelling an encounter card's effects
     EncounterEffectsCancelable
   | NotCriterion Criterion
+  | -- | the target has, or lacks, the modifier
+    TargetHasModifier Target ModifierType
+  | TargetLacksModifier Target ModifierType
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)
@@ -56,3 +61,7 @@ instance Exists HeroMatcher where
 
 instance Exists AllyMatcher where
   exists = AllyExists
+
+-- | The player controls a matching ally, as a card that returns one to hand needs.
+controlsAlly :: PlayerId -> AllyMatcher -> Criterion
+controlsAlly pid m = AllyExists (AllyControlledBy (PlayerWithId pid) <> m)

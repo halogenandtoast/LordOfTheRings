@@ -78,12 +78,16 @@ instance RunMessage ActiveCost where
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
-          case cdCardType (toCardDef card) of
-            AllyType -> push $ PlayAlly ac.activeCostPlayer card
-            AttachmentType -> push $ PlayAttachment ac.activeCostPlayer card
-            EventType -> push $ PlayEvent ac.activeCostPlayer card ac.activeCostWindows
-            _ -> pure ()
+          pushAll $ playCard ac.activeCostPlayer card ac.activeCostWindows
           push $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card)]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac
+
+-- | A card, its cost paid, played into play or resolved.
+playCard :: PlayerId -> PlayerCard -> [Window] -> [Message]
+playCard pid card windows = case cdCardType (toCardDef card) of
+  AllyType -> [PlayAlly pid card]
+  AttachmentType -> [PlayAttachment pid card]
+  EventType -> [PlayEvent pid card windows]
+  _ -> []

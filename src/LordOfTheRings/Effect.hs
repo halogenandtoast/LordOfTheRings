@@ -5,7 +5,11 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 
-data EffectDuration = UntilEndOfPhase | UntilEndOfRound
+data EffectDuration
+  = UntilEndOfPhase
+  | UntilEndOfRound
+  | -- | until the attack being made resolves
+    UntilEndOfAttack
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

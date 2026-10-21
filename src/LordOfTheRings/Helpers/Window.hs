@@ -83,6 +83,8 @@ passesCriteria = \case
   BeforeCommitting -> andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
   NotCriterion c -> not <$> passesCriteria c
+  TargetHasModifier t m -> elem m <$> getModifiers t
+  TargetLacksModifier t m -> notElem m <$> getModifiers t
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
 

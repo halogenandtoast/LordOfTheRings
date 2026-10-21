@@ -55,6 +55,7 @@ import LordOfTheRings.Question
 import LordOfTheRings.Scenario
 import LordOfTheRings.Target
 import LordOfTheRings.Keyword
+import LordOfTheRings.Trait (Trait)
 import LordOfTheRings.Treachery
 import LordOfTheRings.Window
 
@@ -231,9 +232,12 @@ runGameMessage msg g = case msg of
     let passToken = case drop 1 players of
           (next : _) -> [SetFirstPlayer next]
           [] -> []
+    -- each character readied opens its own window, for responses to it readying
+    readied <- for (map toTarget heroes <> map toTarget allies) \c -> do
+      traits <- characterTraits c
+      pure [Ready c, CheckWindows [mkAfter $ Readied c traits]]
     pushAll
-      $ map (Ready . toTarget) heroes
-      <> map (Ready . toTarget) allies
+      $ concat readied
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [RaiseThreat pid 1 | pid <- players]
       <> passToken
@@ -275,7 +279,7 @@ runGameMessage msg g = case msg of
     damage <- getDamage target
     mods <- getModifiers target
     let healed = foldr min (min n damage) [k | HealLimit k <- mods]
-    pushWhen (healed > 0 && CannotBeHealed `notElem` mods) $ RemoveTokens source target Damage healed
+    when (healed > 0 && CannotBeHealed `notElem` mods) $ pushAll [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
     pure g
   ChooseAndDiscardFromHand pid source n | n > 0 -> do
     player <- getPlayer pid
@@ -361,7 +365,11 @@ runGameMessage msg g = case msg of
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
     pure g
   EngageEnemy pid eid -> do
-    pushAll [PlaceEnemy eid (EngagedWith pid), CheckWindows [mkAfter $ EnemyEngaged eid pid]]
+    pushAll
+      [ PlaceEnemy eid (EngagedWith pid)
+      , CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
+      , CheckWindows [mkAfter $ EnemyEngaged eid pid]
+      ]
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
@@ -490,7 +498,10 @@ runGameMessage msg g = case msg of
       Nothing -> pushAll (map StopAttacking attackers)
       Just enemy' -> do
         attack <- getAttackStrength attackers eid (toCardDef enemy')
-        defense <- getEnemyDefense eid
+        alone <- case attackers of
+          [a] -> elem IgnoresDefenseWhenAttackingAlone <$> getModifiers a
+          _ -> pure False
+        defense <- if alone then pure 0 else getEnemyDefense eid
         if null attackers
           then pure ()
           else
@@ -505,7 +516,7 @@ runGameMessage msg g = case msg of
   AttackResolved eid attackers -> do
     destroyed <- not <$> selectAny (EnemyWithId eid)
     pushWhen destroyed $ CheckWindows [mkAfter $ EnemyDestroyedByAttack eid attackers]
-    pure g
+    pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   -- a defender that left play before the damage leaves the attack undefended
   AttackDamage eid defender | not (inPlay g defender) -> do
     lead <- getLead
@@ -651,7 +662,9 @@ runGameMessage msg g = case msg of
               , k <- [1 .. min r n]
               ]
             <> [Label (ikey "label.payFromHeroes") [PayCost costId]]
-    pure $ g & activeCostsL %~ insertEntity activeCost
+    -- a reduction of the next matching card's cost is spent on this one
+    let spent e = effectTarget e == PlayerTarget pid && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
+    pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
@@ -669,11 +682,11 @@ runGameMessage msg g = case msg of
     thisAlly <- newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
     pushWhen limited' $ CreateEffect $ Effect GameSource GameTarget [AllyPlayedThisRound] UntilEndOfRound
-    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
+    push $ allyEntersPlay pid thisAlly
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- newAlly (fromMaybe pid card.owner) card
-    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
+    push $ allyEntersPlay pid thisAlly
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutHeroIntoPlay pid card -> do
     thisHero <- newHero pid card
@@ -945,12 +958,23 @@ leftPlay g target = case target of
   _ -> pure ()
  where
   window pid def = do
-    gained <- mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
+    gained <- gainedTraits target
     let card = case target of
           HeroTarget hid -> toCard <$> Map.lookup hid g.entities.heroes
           AllyTarget aid -> toCard <$> Map.lookup aid g.entities.allies
           _ -> Nothing
-    push $ CheckWindows $ mkAfter (LeftPlay target pid (cdCardTraits def <> setFromList gained)) : [mkAfter $ CharacterLeftPlay c | Just c <- [card]]
+    push $ CheckWindows $ mkAfter (LeftPlay target pid (cdCardTraits def <> gained)) : [mkAfter $ CharacterLeftPlay c | Just c <- [card]]
+
+gainedTraits :: Target -> GameT (Set Trait)
+gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
+
+-- | A character's traits, printed and gained.
+characterTraits :: Target -> GameT (Set Trait)
+characterTraits target = (<>) . cdCardTraits <$> characterCardDef target <*> gainedTraits target
+
+-- | The windows for an ally entering play under the player.
+allyEntersPlay :: PlayerId -> Ally -> Message
+allyEntersPlay pid a = CheckWindows [mkAfter $ EntersPlay $ toTarget a, mkAfter $ AllyEnteredPlay (toTarget a) pid (cdCardTraits $ toCardDef a)]
 
 -- | Cards in a player's hand that can be played or put into play in response to the
 -- windows: response events, and allies like Brok Ironfist.

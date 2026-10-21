@@ -1,7 +1,7 @@
 module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module X) where
 
 import LordOfTheRings.Ability.Types
-import LordOfTheRings.ActiveCost (ActiveCost (..))
+import LordOfTheRings.ActiveCost (ActiveCost (..), playCard)
 import LordOfTheRings.Effect
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -31,6 +31,7 @@ import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window (WindowType (PlayedFromHand), mkAfter)
 
 instance RunMessage Player where
   runMessage msg player = case msg of
@@ -89,6 +90,31 @@ instance RunMessage Player where
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     PlayEvent pid card _ | pid == player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    PlayAtNoCost pid card | pid == player.id -> do
+      pushAll $ playCard pid card []
+      pure player
+    PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
+      Just card@(PlayerCard pc) -> do
+        pushAll =<< inLogBlock (PlayBlock pid card) [PlayAtNoCost pid pc, CheckWindows [mkAfter $ PlayedFromHand (toTarget pc)]]
+        pure $ player & handL %~ filter ((/= cid) . (.id))
+      _ -> pure player
+    PlayTopOfDeckAtNoCostOrBottom pid source | pid == player.id -> do
+      for_ (headMay player.deck) \case
+        top@(PlayerCard pc) -> do
+          able <- canPlayAtNoCost top
+          push
+            $ Ask pid
+            $ QuestionLabel (ikey "label.playAtNoCost") (sourceTarget source) []
+            $ SearchCards [top]
+            $ ChooseOne
+            $ [Label (ikey "label.playIt") [RemoveFromDeck pid pc.id, PlayAtNoCost pid pc] | able]
+            <> [Label (ikey "label.moveToBottomOfDeck") [MoveToBottomOfDeck pid pc.id]]
+        EncounterCard _ -> pure ()
+      pure player
+    RemoveFromDeck pid cid | pid == player.id -> pure $ player & deckL %~ filter ((/= cid) . (.id))
+    MoveToBottomOfDeck pid cid | pid == player.id -> do
+      let (moved, kept) = partition ((== cid) . (.id)) player.deck
+      pure $ player & deckL .~ kept <> moved
     RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
     ShuffleDiscardIntoDeck pid | pid == player.id -> do
       deck <- shuffleM (player.deck <> player.discard)
@@ -233,6 +259,7 @@ costModifier pid c = do
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
     CostModifier n -> Just n
+    ReduceNextCostOf m n | cardMatches m c -> Just (negate $ min n $ maybe 0 (max 0 . subtract 1 . costAsResources) c.cost)
     _ -> Nothing
 
 -- | Heroes with a resource that could pay for a card of the sphere.
@@ -251,11 +278,24 @@ correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
   AllyType -> andM [isPhase PlanningPhase, allyAllowed]
   AttachmentType -> isPhase PlanningPhase
   -- an action event can be played in any action window; responses are offered by theirs
-  EventType -> case card.owner >>= lookupEvent (toCardCode card) card.id of
-    Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
-    _ -> pure False
+  EventType -> actionEventPlayable card
   _ -> pure False
 correctPhase (EncounterCard _) = pure False
+
+-- | Whether an event is an action whose criteria let it be played now.
+actionEventPlayable :: (HasGame m) => PlayerCard -> m Bool
+actionEventPlayable card = case card.owner >>= lookupEvent (toCardCode card) card.id of
+  Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
+  _ -> pure False
+
+-- | Whether a card could be played with nothing to pay for it, at any time: as the
+-- unique rule, an attachment's hosts and an event's criteria allow.
+canPlayAtNoCost :: (HasGame m) => Card -> m Bool
+canPlayAtNoCost c = andM [passesUnique c, hasHost c, eventOk]
+ where
+  eventOk = case c of
+    PlayerCard pc | c.cardType == EventType -> actionEventPlayable pc
+    _ -> pure True
 
 isPhase :: (HasGame m) => Phase -> m Bool
 isPhase phase = (== phase) <$> getsGame gamePhase
