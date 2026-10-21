@@ -4,6 +4,11 @@
   "willpower": "Willpower {value}",
   "attack": "Attack {value}",
   "defense": "Defense {value}",
+  "combat": {
+    "takes": "takes {damage}",
+    "defeated": "defeated",
+    "dealt": "{dealt} / {remaining}"
+  },
   "phaseTracker": "Phases",
   "phases": {
     "resource": "resource",

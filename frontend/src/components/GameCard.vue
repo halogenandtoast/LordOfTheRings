@@ -3,6 +3,7 @@ import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
 import { useDebug } from '../composables/useDebug'
 import { useHighlights } from '../composables/useHighlights'
+import { hoveredId, useCombat, type CombatPreview } from '../composables/useCombat'
 import { useServerText } from '../i18n'
 import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
 
@@ -37,6 +38,10 @@ const highlights = useHighlights()
 const isSource = computed(() => highlights.value.sourceId === card.id)
 const isTarget = computed(() => highlights.value.targetIds.includes(card.id))
 const isDrop = computed(() => highlights.value.dropIds.includes(card.id))
+const combat = useCombat()
+const preview = computed((): CombatPreview => (banner ? {} : combat.value[card.id] ?? {}))
+// a part of the enemy's remaining hit points, as a width on its progress track
+const share = (n: number) => `${(Math.min(n, preview.value.attack?.remaining ?? 0) / Math.max(1, preview.value.attack?.remaining ?? 1)) * 100}%`
 const choiceFor = (attached: CardView) =>
   choices.find((option) => option.targetId === attached.id) ?? null
 
@@ -112,8 +117,8 @@ const toggleUnless = (attached: CardView) => {
         :data-card-id="card.id"
         :draggable="draggable && active && overlay.canHover.value"
         @dragstart="dragStart"
-        @pointerenter="$event.pointerType === 'mouse' && showOverlay()"
-        @pointerleave="$event.pointerType === 'mouse' && overlay.hide()"
+        @pointerenter="$event.pointerType === 'mouse' && (showOverlay(), hoveredId = card.id)"
+        @pointerleave="$event.pointerType === 'mouse' && (overlay.hide(), hoveredId === card.id && (hoveredId = null))"
         @pointerdown="press"
         @pointerup="cancelPress"
         @pointercancel="cancelPress"
@@ -125,6 +130,17 @@ const toggleUnless = (attached: CardView) => {
         <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
         <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
         <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
+        <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
+          <span>{{ $t('game.combat.takes', { damage: preview.defend.damage }) }}</span>
+          <span v-if="preview.defend.defeated">{{ $t('game.combat.defeated') }}</span>
+        </span>
+        <div v-if="preview.attack" class="attack-progress" :class="{ defeated: preview.attack.dealt + preview.attack.adding >= preview.attack.remaining }">
+          <div class="track">
+            <span class="dealt" :style="{ flexBasis: share(preview.attack.dealt) }" />
+            <span class="adding" :style="{ flexBasis: share(preview.attack.adding) }" />
+          </div>
+          <span class="label">{{ $t('game.combat.dealt', { dealt: preview.attack.dealt + preview.attack.adding, remaining: preview.attack.remaining }) }}</span>
+        </div>
         <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
       </div>
       <div v-if="card.stats.length && !banner" class="stats">
@@ -317,6 +333,50 @@ const toggleUnless = (attached: CardView) => {
   from { opacity: 0; translate: 0 -60%; scale: 1.6; }
   to { opacity: 1; translate: 0 0; scale: 1; }
 }
+/* hovering a defender: the damage it would take, before shadow effects */
+.defend-preview {
+  z-index: 4;
+  grid-area: 1 / 1;
+  place-self: center;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgb(20 16 10 / 0.88);
+  color: var(--cream);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  pointer-events: none;
+}
+.defend-preview.defeated { box-shadow: 0 0 0 1px var(--threat-red); }
+.defend-preview.defeated > :last-child { color: var(--threat-red); text-transform: uppercase; font-size: 0.65rem; }
+/* an enemy being attacked: the declared attack against its remaining hit points */
+.attack-progress {
+  --attack-fill: #f08a4b;
+  z-index: 4;
+  grid-area: 1 / 1;
+  place-self: end stretch;
+  display: grid;
+  gap: 2px;
+  margin: 4px;
+  padding: 3px 4px;
+  border-radius: 5px;
+  background: rgb(20 16 10 / 0.88);
+  color: var(--cream);
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+  pointer-events: none;
+}
+.attack-progress.defeated { --attack-fill: var(--gold-light); }
+.attack-progress .track { display: flex; height: 5px; border-radius: 3px; background: rgb(255 255 255 / 0.15); overflow: hidden; }
+.attack-progress .track > span { flex: none; background: var(--attack-fill); transition: flex-basis 0.2s ease; }
+.attack-progress .adding { opacity: 0.45; }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; }
 

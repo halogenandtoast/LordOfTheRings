@@ -26,6 +26,7 @@ import { useGame } from '../composables/useGame'
 import { table as tableStyle } from '../table'
 import { provideDebug } from '../composables/useDebug'
 import { provideHighlights } from '../composables/useHighlights'
+import { provideCombat } from '../composables/useCombat'
 
 const route = useRoute()
 const tr = useServerText()
@@ -64,6 +65,10 @@ const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matche
 
 const choices = computed(() => question.value?.choices ?? [])
 provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
+provideCombat(() => question.value, () => [
+  ...players.value.flatMap((player) => [...player.inPlay, ...player.engaged]),
+  ...(scenario.value?.staging ?? []),
+])
 // The seat whose board is shown, picked from the tabs along the foot. It starts as
 // yours, and follows whoever is asked when that seat is yours.
 const seatId = ref<string | null>(null)

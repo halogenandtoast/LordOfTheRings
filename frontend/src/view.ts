@@ -76,7 +76,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       threat: d.threat ?? d.threatCost ?? null,
       attack: d.attack ?? null,
       defense: d.defense ?? null,
-      hitPoints: d.hitPoints ?? null,
+      hitPoints: game.hitPoints?.[id] ?? d.hitPoints ?? null,
       willpower: d.willpower ?? null,
       resources: null,
       damage: 0,
@@ -89,6 +89,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       target: null,
       playing: false,
       stats: game.stats?.[id] ?? [],
+      attackStrength: game.attackStrength?.[id],
       ...extra,
     }
   }

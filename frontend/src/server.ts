@@ -84,6 +84,10 @@ export interface ServerGame {
   stagingThreat: number
   /** The stats of each card in play as modified, in printed order, by card id. */
   stats?: Record<string, [string, number][]>
+  /** The hit points of each character and enemy as modified, by card id. */
+  hitPoints?: Record<string, number>
+  /** While attackers are declared, the attack they would make on each enemy, by card id. */
+  attackStrength?: Record<string, number>
   lastCommittedWillpower: number | null
   /** What each target is modified by, as [target, modifiers] pairs. */
   modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]
