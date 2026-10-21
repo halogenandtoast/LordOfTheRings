@@ -26,6 +26,7 @@ import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Trait
+import LordOfTheRings.Token (Token (Resource), countTokens)
 import LordOfTheRings.Treachery.Types (Treachery)
 
 instance Query PlayerMatcher where
@@ -81,6 +82,7 @@ matchAlly matcher ally = case matcher of
     Just pid -> elem pid <$> select pm
     Nothing -> pure False
   AllyWithTitle name -> pure $ ally.name == name
+  AllyWithCardCode code -> pure $ toCardCode ally == code
   AllyWithTrait trait -> hasTrait trait (toTarget ally) (toCardDef ally)
   AllyWithSphere sphere -> pure $ cdSphere (toCardDef ally) == Just sphere
   AllyWithKeyword k -> hasKeyword k (toTarget ally) (toCardDef ally)
@@ -162,6 +164,19 @@ getResourcesOfSphere pid sphere = do
   heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
   sum . map (.resources) <$> filterM (heroPaysFor sphere) heroes
 
+-- | The player's allies whose resources can pay for the card, with the resources on each.
+allyPayersFor :: (HasGame m) => PlayerId -> Card -> m [(AllyId, Int)]
+allyPayersFor pid card = do
+  allies <- traverse getAlly =<< select (AllyControlledBy $ PlayerWithId pid)
+  mods <- getsGame gameModifiers
+  pure
+    [ (a.id, r)
+    | a <- allies
+    , let r = countTokens Resource (allyTokens $ toAttrs a)
+    , r > 0
+    , any (\case ResourcesPayFor m -> cardMatches m card; _ -> False) (map modifierType $ Map.findWithDefault [] (toTarget a) mods)
+    ]
+
 -- | A printed keyword, or one a modifier grants.
 hasKeyword :: (HasGame m) => Keyword -> Target -> CardDef -> m Bool
 hasKeyword k target def
@@ -229,6 +244,18 @@ attachedWithTrait trait host = do
     $ [toTarget a | a <- toList es.attachments, on a, trait `member` cdCardTraits (toCardDef a)]
     <> [toTarget o | o <- toList es.objectives, on o, trait `member` cdCardTraits (toCardDef o)]
     <> [toTarget t | t <- toList es.treacheries, on t, trait `member` cdCardTraits (toCardDef t)]
+
+-- | Every card attached to the host: attachments, objectives and encounter cards attached
+-- as conditions.
+getAllAttachmentsOn :: (HasGame m) => Target -> m [Target]
+getAllAttachmentsOn host = do
+  es <- getsGame gameEntities
+  let on :: (HasField "placement" a Placement) => a -> Bool
+      on a = a.placement == AttachedTo host
+  pure
+    $ [toTarget a | a <- toList es.attachments, on a]
+    <> [toTarget o | o <- toList es.objectives, on o]
+    <> [toTarget t | t <- toList es.treacheries, on t]
 
 -- | What the treacheries with the card code are attached to.
 hostsOfTreachery :: (HasGame m) => CardCode -> m [Target]

@@ -185,7 +185,9 @@ canAfford p c = case (c.cost, c.sphere) of
     extra <- costIncrease c
     case cdDistinctPayers (toCardDef c) of
       Just n -> (>= n + extra) . length <$> payingHeroes sphere p
-      Nothing -> (>= costAsResources cost + extra) <$> resourcesInSphere sphere p
+      Nothing -> do
+        fromAllies <- sum . map snd <$> allyPayersFor p.id c
+        (>= costAsResources cost + extra) . (+ fromAllies) <$> resourcesInSphere sphere p
   _ -> pure False
 
 -- | What the game's modifiers add to the card's cost.

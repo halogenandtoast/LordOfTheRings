@@ -69,6 +69,7 @@ data AllyMatcher
   = AllyWithId AllyId
   | AllyControlledBy PlayerMatcher
   | AllyWithTitle Name
+  | AllyWithCardCode CardCode
   | AllyWithTrait Trait
   | AllyWithSphere Sphere
   | AllyWithKeyword Keyword

@@ -248,7 +248,9 @@ runGameMessage msg g = case msg of
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
-    pushWhen (damage > 0) $ RemoveTokens source target Damage (min n damage)
+    mods <- getModifiers target
+    let healed = foldr min (min n damage) [k | HealLimit k <- mods]
+    pushWhen (healed > 0 && CannotBeHealed `notElem` mods) $ RemoveTokens source target Damage healed
     pure g
   ChooseAndDiscardFromHand pid source n | n > 0 -> do
     player <- getPlayer pid
@@ -277,7 +279,11 @@ runGameMessage msg g = case msg of
           & scenarioL %~ overAttrs (victoryDisplayL %~ (card :))
       Nothing -> discardTarget target g
   Destroy target -> do
-    pushAll [Discard target, CheckEliminations, CheckWindows [mkAfter $ CharacterDestroyed target]]
+    let card = case target of
+          HeroTarget hid -> toCard <$> Map.lookup hid g.entities.heroes
+          AllyTarget aid -> toCard <$> Map.lookup aid g.entities.allies
+          _ -> Nothing
+    pushAll $ [Discard target, CheckEliminations] <> [CheckWindows [mkAfter $ CharacterDestroyed target c] | Just c <- [card]]
     pure g
   BeginPhase PlanningPhase -> do
     players <- getPlayers
@@ -359,7 +365,7 @@ runGameMessage msg g = case msg of
     pure g
   EnemyAttack pid eid -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
-    defenders <- readyCharacters pid
+    defenders <- filterM (canFight eid) =<< readyCharacters pid
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
@@ -381,7 +387,7 @@ runGameMessage msg g = case msg of
       ]
     pure g
   DeclareDefenders pid eid chosen -> do
-    defenders <- readyCharacters pid
+    defenders <- filterM (canFight eid) =<< readyCharacters pid
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     push
@@ -411,7 +417,9 @@ runGameMessage msg g = case msg of
     pure g
   UndefendedDamage pid eid -> do
     attack <- getEnemyAttack eid
-    heroes <- select (HeroControlledBy $ PlayerWithId pid)
+    redirected <- filter (inPlay g) . mapMaybe (\case UndefendedDamageTo t -> Just t; _ -> Nothing) <$> getModifiers eid
+    heroes <- if null redirected then select (HeroControlledBy $ PlayerWithId pid) else pure []
+    for_ (take 1 redirected) \t -> pushAll =<< attackDamage pid eid t attack
     choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid (toTarget h) attack
     unless (null heroes)
       $ push
@@ -434,7 +442,7 @@ runGameMessage msg g = case msg of
       <> [Label (ikey "label.doNotAttack") []]
     pure g
   DeclareAttackers pid eid -> do
-    attackers <- readyCharacters pid
+    attackers <- filterM (canFight eid) =<< readyCharacters pid
     push
       $ if null attackers
         then ResolveAttack pid eid
@@ -568,6 +576,10 @@ runGameMessage msg g = case msg of
   PlaceTokens _ target@(QuestTarget _) Progress n | n > 0 -> do
     push $ CheckWindows [mkAfter $ ProgressPlaced target n]
     pure g
+  -- tokens for a character by its card, as one put into play is known before it has an id
+  PlaceTokens source (CardIdTarget cid) token n
+    | Just h <- find ((== cid) . heroCardId . toAttrs) (toList g.entities.heroes) -> g <$ push (PlaceTokens source (toTarget h) token n)
+    | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) -> g <$ push (PlaceTokens source (toTarget a) token n)
   PlaceProgressOnQuest n -> do
     active <- traverse getLocation =<< selectOne IsActiveLocation
     let onLocation = maybe 0 (\l -> min n (l.questPoints - l.progress)) active
@@ -580,7 +592,6 @@ runGameMessage msg g = case msg of
   PayForCard pid card windows -> do
     costId <- getRandom
     extra <- costIncrease card
-    push $ PayCost costId
     let activeCost =
           ActiveCost
             { activeCostId = costId
@@ -589,6 +600,19 @@ runGameMessage msg g = case msg of
             , activeCostPlayer = pid
             , activeCostWindows = windows
             }
+    -- resources on allies, as Radagast's, may pay for the cards they are for
+    payers <- allyPayersFor pid card
+    let n = staticCost activeCost.activeCostCost
+    push
+      $ if null payers || n == 0
+        then PayCost costId
+        else
+          questionLabel (ikey "label.payFromAlly") pid
+            $ [ targetLabel aid [RemoveTokens (PlayerSource pid) (toTarget aid) Resource k, ReduceActiveCost costId k, PayCost costId]
+              | (aid, r) <- payers
+              , k <- [1 .. min r n]
+              ]
+            <> [Label (ikey "label.payFromHeroes") [PayCost costId]]
     pure $ g & activeCostsL %~ insertEntity activeCost
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
@@ -766,6 +790,11 @@ runGameMessage msg g = case msg of
   ShuffleIntoEncounterDeck (TreacheryTarget tid) | Just t <- Map.lookup tid g.entities.treacheries -> do
     deck <- shuffleM (MkEncounterCard (treacheryCardId $ toAttrs t) (toCardCode t) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . treacheriesL %~ Map.delete tid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+  AddToStaging card | FirstPlayerGainsControl `member` cdKeywords (toCardDef card) -> do
+    thisObjective <- newObjective card
+    lead <- getLead
+    push $ PutObjectiveAllyIntoPlay (toId thisObjective) lead
+    pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   AddToStaging card -> case cdCardType (toCardDef card) of
     EnemyType -> do
       thisEnemy <- newEnemy card
@@ -919,6 +948,14 @@ attackingEnemy = \case
   ResolveShadow eid _ _ -> Just eid
   DeclareAttackers _ eid -> Just eid
   _ -> Nothing
+
+-- | Whether the character may attack or defend against the enemy: some enemies only
+-- characters of a trait, or with a keyword, can.
+canFight :: EnemyId -> Target -> GameT Bool
+canFight eid c = do
+  mods <- getModifiers eid
+  def <- characterCardDef c
+  allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
 
 -- | Whether declaring the character as a defender against the enemy exhausts it.
 exhaustToDefend :: Target -> EnemyId -> GameT Bool

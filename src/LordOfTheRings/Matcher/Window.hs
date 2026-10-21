@@ -19,6 +19,8 @@ data WindowMatcher
   | -- | an enemy destroyed by an attack, by any attackers or with the given one among them
     EnemyDestroyedByAttackWindow Timing (Maybe Target)
   | CharacterDestroyedWindow Timing
+  | HeroDestroyedWindow Timing
+  | AllyDestroyedWindow Timing
   | EnemyRevealedWindow Timing
   | TreacheryRevealedWindow Timing
   | ShadowEffectWindow Timing
@@ -58,7 +60,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers) -> t == timing && maybe True (`elem` attackers) who
-  (CharacterDestroyedWindow t, CharacterDestroyed _) -> t == timing
+  (CharacterDestroyedWindow t, CharacterDestroyed _ _) -> t == timing
+  (HeroDestroyedWindow t, CharacterDestroyed (HeroTarget _) _) -> t == timing
+  (AllyDestroyedWindow t, CharacterDestroyed (AllyTarget _) _) -> t == timing
   (EnemyRevealedWindow t, Revealed (EnemyTarget _)) -> t == timing
   (TreacheryRevealedWindow t, Revealed (TreacheryTarget _)) -> t == timing
   (ShadowEffectWindow t, ShadowEffectTriggered _ _) -> t == timing

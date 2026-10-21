@@ -156,6 +156,7 @@ data Message
   | ShuffleEncounterDiscardIntoDeck CardMatcher
   | -- | an objective ally in play joins the player as an ally
     PutObjectiveAllyIntoPlay ObjectiveId PlayerId
+  | ReduceActiveCost CostId Int
   | -- | the quest deck goes back to the stage, put into play on its B side, with the
     -- stages after it to follow
     ResetToStage EncounterCard [EncounterCard]

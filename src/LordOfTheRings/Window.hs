@@ -1,5 +1,6 @@
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
+import LordOfTheRings.Card (Card)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
@@ -21,7 +22,7 @@ data WindowType
   | DeclaredAsDefender Target EnemyId
   | -- | an attack destroyed the enemy: the characters that attacked
     EnemyDestroyedByAttack EnemyId [Target]
-  | CharacterDestroyed Target
+  | CharacterDestroyed Target Card
   | -- | an encounter card revealed from the encounter deck
     Revealed Target
   | -- | a location about to leave play as an explored location

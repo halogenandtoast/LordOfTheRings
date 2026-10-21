@@ -53,8 +53,15 @@ raiseCost n = \case
   ResourceCost sphere (StaticCost c) -> ResourceCost sphere (StaticCost $ max 0 $ c + n)
   cost -> cost
 
+-- | The resources a cost asks for.
+staticCost :: Cost -> Int
+staticCost = \case
+  ResourceCost _ (StaticCost c) -> c
+  _ -> 0
+
 instance RunMessage ActiveCost where
   runMessage msg ac = case msg of
+    ReduceActiveCost acId n | acId == ac.activeCostId -> pure $ ac & costCostL %~ raiseCost (negate n)
     PayCost acId | acId == ac.activeCostId -> case ac.activeCostCost of
       Free -> do
         push $ PaidCost acId
