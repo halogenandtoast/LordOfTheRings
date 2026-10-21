@@ -12,8 +12,9 @@ const tr = useServerText()
 
 const { t } = useI18n()
 const router = useRouter()
-const selectedCampaign = ref<Campaign | null>(null)
-const selectedScenario = ref<ScenarioOption | null>(null)
+const firstPlayable = (c: Campaign) => c.scenarios.find((s) => s.available) ?? null
+const selectedCampaign = ref<Campaign>(campaigns.find(firstPlayable) ?? campaigns[0])
+const selectedScenario = ref<ScenarioOption | null>(firstPlayable(selectedCampaign.value))
 const gameName = ref('')
 const creating = ref(false)
 // As in Arkham: decided when the game is made, starting from the player's default,
@@ -33,19 +34,12 @@ const error = ref<string | null>(null)
 // friends to the open ones.
 const seatCount = ref(1)
 
-const playableCount = (c: Campaign) => c.scenarios.filter((s) => s.available).length
 const defaultName = computed(() => selectedScenario.value?.name ?? '')
 const canCreate = computed(() => !!selectedScenario.value?.available && !creating.value)
 
 const chooseCampaign = (c: Campaign) => {
   selectedCampaign.value = c
-  selectedScenario.value = c.scenarios.find((s) => s.available) ?? null
-}
-
-const back = () => {
-  selectedCampaign.value = null
-  selectedScenario.value = null
-  error.value = null
+  selectedScenario.value = firstPlayable(c)
 }
 
 const cancel = () => router.push('/')
@@ -78,38 +72,20 @@ const create = async () => {
       <button type="button" class="cancel-new-game-button" @click="cancel">{{ $t('common.cancel') }}</button>
     </header>
 
-    <div v-if="!selectedCampaign" id="new-game">
-      <fieldset>
-        <legend>{{ $t('newGame.campaign') }}</legend>
-        <div class="campaigns">
-          <button
-            v-for="c in campaigns"
-            :key="c.id"
-            type="button"
-            class="campaign-box"
-            :class="{ unavailable: playableCount(c) === 0 }"
-            @click="chooseCampaign(c)"
-          >
-            <img :src="c.image" alt="" />
-            <span class="campaign-name"><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</span>
-            <span class="campaign-count">
-              {{ $t('newGame.scenarioCount', c.scenarios.length) }}<template v-if="playableCount(c) > 0"> &middot; {{ $t('newGame.playableCount', { count: playableCount(c) }) }}</template>
-            </span>
-          </button>
-        </div>
-      </fieldset>
-    </div>
-
-    <form v-else id="new-game" @submit.prevent="create">
+    <form id="new-game" @submit.prevent="create">
       <fieldset>
         <legend>{{ $t('common.scenario') }}</legend>
-        <div class="campaign-row">
-          <div class="campaign-header">
-            <img :src="selectedCampaign.image" alt="" />
-            <div>
-              <h3><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" /> {{ selectedCampaign.name }}</h3>
-              <button type="button" class="change-campaign" @click="back">{{ $t('newGame.chooseDifferentCampaign') }}</button>
-            </div>
+        <div class="scenario-row">
+          <div class="segmented campaigns" role="radiogroup" :aria-label="$t('newGame.campaign')">
+            <button
+              v-for="c in campaigns"
+              :key="c.id"
+              type="button"
+              role="radio"
+              :aria-checked="c.id === selectedCampaign.id"
+              :class="{ selected: c.id === selectedCampaign.id, unavailable: !firstPlayable(c) }"
+              @click="chooseCampaign(c)"
+            ><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</button>
           </div>
           <div class="scenarios">
             <button
@@ -174,8 +150,7 @@ const create = async () => {
 
       <p v-if="error" class="error">{{ tr(error) }}</p>
 
-      <div class="wizard-actions">
-        <button type="button" class="secondary-action" @click="back">{{ $t('common.back') }}</button>
+      <div>
         <button class="primary-action" type="submit" :disabled="!canCreate">
           {{ creating ? $t('newGame.creating') : $t('common.create') }}
         </button>
@@ -259,59 +234,15 @@ legend {
   padding: 0 6px;
 }
 
-.campaigns {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 12px;
-}
-
-.campaign-box {
-  padding: 0;
-  border: 2px solid transparent;
-  border-radius: 5px;
-  overflow: hidden;
-  background: var(--input-background);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  color: var(--text);
-  font: inherit;
-  text-align: center;
-  transition: border-color 0.15s, transform 0.15s;
-}
-.campaign-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-.campaign-box:hover { border-color: var(--accent); transform: translateY(-2px); }
-.campaign-box.unavailable img { filter: grayscale(70%); }
-.campaign-name { display: flex; align-items: center; gap: 6px; padding: 8px 8px 0; font-weight: 700; text-align: left; }
-.campaign-name .icon, .scenario-name .icon { font-size: 1.2em; }
-.campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
-
-.campaign-row {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  align-items: start;
-  gap: 14px;
-}
+.scenario-row { display: grid; grid-template-columns: 220px 1fr; align-items: start; gap: 14px; }
 @media (max-width: 600px) {
-  .campaign-row { grid-template-columns: 1fr; }
+  .scenario-row { grid-template-columns: 1fr; }
 }
-.campaign-header {
-  display: grid;
-  gap: 8px;
-}
-.campaign-header img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
-.campaign-header h3 { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; color: var(--title); font-size: 1.2em; }
-.change-campaign {
-  text-align: left;
-  background: none;
-  border: 0;
-  padding: 0;
-  color: var(--accent-bright);
-  font: inherit;
-  font-size: 0.85em;
-  text-decoration: underline;
-  cursor: pointer;
-}
+.segmented.campaigns { grid-auto-flow: row; }
+.segmented.campaigns button { display: flex; align-items: center; gap: 8px; padding: 9px 12px; font-weight: 600; text-align: left; }
+.segmented.campaigns button + button { border-left: 0; border-top: 1px solid var(--box-border); }
+.campaigns button.unavailable:not(.selected) { color: var(--text-muted); }
+.campaigns .icon, .scenario-name .icon { font-size: 1.2em; }
 
 .scenarios {
   display: grid;
@@ -430,26 +361,6 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }
-
-.wizard-actions {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 10px;
-}
-
-.secondary-action {
-  font: inherit;
-  font-weight: 700;
-  padding: 15px;
-  background: var(--button-secondary);
-  color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border: 0;
-  border-radius: 3px;
-  cursor: pointer;
-}
-.secondary-action:hover { background: var(--button-secondary-hover); }
 
 .primary-action {
   width: 100%;
