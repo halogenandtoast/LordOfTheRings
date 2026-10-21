@@ -36,6 +36,7 @@ spec = do
       reveal Locations.greatForestWeb []
       for_ ["01012", "01007", "01002"] \code -> run . Exhaust =<< hero code
       run $ BeginPhase TravelPhase
+      passActions pid
       getQuestion pid `shouldReturn` Nothing
 
     it "makes each player exhaust a hero to travel there" . gameTest $ \pid -> do
@@ -84,6 +85,7 @@ spec = do
       reveal Locations.necromancersPass []
       _ <- putCardIntoHand pid Events.grimResolve
       run $ BeginPhase TravelPhase
+      passActions pid
       getQuestion pid `shouldReturn` Nothing
       _ <- putCardIntoHand pid Events.grimResolve
       run . TravelTo =<< theLocation

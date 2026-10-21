@@ -359,6 +359,10 @@ runGameMessage msg g = case msg of
     pushAll $ map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
     pure $ g & phaseL .~ QuestPhase
   BeginPhase TravelPhase -> do
+    -- the players' actions come first, as Thrór's Map's, then the lead may travel
+    pushAll [TravelActions, DoStep 1 (BeginPhase TravelPhase)]
+    pure $ g & phaseL .~ TravelPhase
+  DoStep 1 (BeginPhase TravelPhase) -> do
     hasActive <- selectAny IsActiveLocation
     locations <- filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
     lead <- getLead
@@ -371,8 +375,7 @@ runGameMessage msg g = case msg of
             $ [targetLabel lid [TravelTo lid] | lid <- locations]
             <> [Label (ikey "label.doNotTravel") []]
         else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
-    push TravelActions
-    pure $ g & phaseL .~ TravelPhase
+    pure g
   TravelTo lid -> do
     pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
     pure g
@@ -1164,15 +1167,6 @@ discardResponses pid windows used continue = do
             pure $ Just $ targetLabel (CardIdTarget pc.id) [RespondFromDiscard pid pc windows, continue pc.id]
       _ -> pure Nothing
     _ -> pure Nothing
-
--- | An action ability that can only be used in the travel phase.
-isTravelAction :: Ability -> Bool
-isTravelAction ab = go ab.abilityCriteria
- where
-  go = \case
-    DuringPhase TravelPhase -> True
-    Criteria cs -> any go cs
-    _ -> False
 
 -- | The next player clockwise from the given one.
 seatAfter :: [PlayerId] -> PlayerId -> PlayerId

@@ -160,6 +160,7 @@ spec = do
       reveal Locations.theEastBight []
       reveal Locations.forestGate []
       run $ BeginPhase TravelPhase
+      passActions pid
       prompt pid `shouldReturn` Just "$label.mustTravel"
 
   describe "Banks of the Anduin" do
