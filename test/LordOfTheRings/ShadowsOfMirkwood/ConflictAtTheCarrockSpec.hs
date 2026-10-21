@@ -5,6 +5,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getDefense)
 import LordOfTheRings.Modifier (ModifierType (DefenseModifier))
 import LordOfTheRings.Window (WindowType (EnemyAttacking), mkAfter)
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -75,6 +76,15 @@ spec = describe "Conflict at the Carrock" do
     getHeroResources eowyn.id `shouldReturn` resources
     run $ CommitCharacters pid
     offered <- maybe False (any \case TargetLabel t _ -> t == toTarget eowyn; _ -> False) . fmap questionChoices <$> getQuestion pid
+    offered `shouldBe` False
+
+  it "cannot have Sacked!'s when revealed effect canceled" . carrockTest $ \pid -> do
+    card <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- getHeroWithCode "01007"
+    run $ PlaceTokens GameSource (toTarget eowyn) Resource 1
+    _ <- setEncounterDeck [Treacheries.sacked]
+    run RevealEncounterCard
+    offered <- maybe False (any \case TargetLabel t _ -> t == CardIdTarget card.id; _ -> False) . fmap questionChoices <$> getQuestion pid
     offered `shouldBe` False
 
   it "has Grimbeorn the Old join the first player at 8 resources" . carrockTest $ \pid -> do
