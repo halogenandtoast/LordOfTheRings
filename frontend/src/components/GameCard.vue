@@ -192,8 +192,9 @@ const toggleUnless = (attached: CardView) => {
 .stats .willpower { color: var(--willpower); }
 .stats .attack { color: var(--attack); }
 .stats .defense { color: var(--defense); }
-/* an exhausted card turns past its own width (height × 0.88 scale), so make room for it */
-.card-slot.sideways { margin-inline: calc((var(--card-width) / var(--card-aspect) * 0.88 - var(--card-width)) / 2); }
+/* an exhausted card turns past its own width (height × 0.88 scale), so make room for it;
+   heroes always keep that room, so exhausting one never moves the others */
+.card-slot.sideways, .heroes > .card-slot { margin-inline: calc((var(--card-width) / var(--card-aspect) * 0.88 - var(--card-width)) / 2); }
 .card-slot.hosting { padding-top: calc(var(--attachment-peek) * v-bind('attachments.length')); }
 .card-slot.hosting.expanded {
   padding-top: calc(var(--card-width) / var(--card-aspect) * v-bind('attachments.length') * 0.55);
