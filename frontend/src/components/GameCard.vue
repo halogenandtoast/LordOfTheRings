@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
 import { useDebug } from '../composables/useDebug'
 import { useHighlights } from '../composables/useHighlights'
@@ -69,6 +69,17 @@ const counts = computed(() => ({ Damage: card.damage, Progress: card.progress ??
 const adjust = (token: keyof typeof counts.value, amount: 1 | -1) =>
   send({ tag: amount > 0 ? 'PlaceTokens' : 'RemoveTokens', contents: [{ tag: 'GameSource' }, card.target, token, 1] })
 
+// Each time a token's count goes up it is placed again, keyed afresh so its drop plays.
+const placed = reactive({ resources: 0, progress: 0, damage: 0 })
+watch(
+  () => [card.resources ?? 0, card.progress ?? 0, card.damage] as const,
+  ([resources, progress, damage], [hadResources, hadProgress, hadDamage]) => {
+    if (resources > hadResources) placed.resources++
+    if (progress > hadProgress) placed.progress++
+    if (damage > hadDamage) placed.damage++
+  },
+)
+
 const toggleUnless = (attached: CardView) => {
   if (!choiceFor(attached)) {
     expanded.value = !expanded.value
@@ -111,9 +122,9 @@ const toggleUnless = (attached: CardView) => {
       <img :src="source" :alt="tr(card.name)" />
       <!-- inside the card so it travels in the card's view transition snapshot -->
       <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
-      <span v-if="card.resources" class="token resources" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
-      <span v-if="card.progress" class="token progress">{{ card.progress }}</span>
-      <span v-if="card.damage > 0" class="token damage">{{ card.damage }}</span>
+      <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
+      <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
+      <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
     </div>
     <span v-if="card.stagingThreat !== undefined" class="pile-count staging-threat" :title="$t('game.threat', { value: card.stagingThreat })">
       {{ card.stagingThreat }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />
@@ -262,6 +273,14 @@ const toggleUnless = (attached: CardView) => {
   background: var(--sphere-tint, none);
   mask: url('/images/tokens/resource.png') center / cover;
   mix-blend-mode: color;
+}
+/* a token dropped onto the card */
+@media (prefers-reduced-motion: no-preference) {
+  .token.placed { animation: token-place 0.42s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+}
+@keyframes token-place {
+  from { opacity: 0; translate: 0 -60%; scale: 1.6; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
 }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; font-size: 1.1rem; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; color: var(--damage-text); text-shadow: 0 1px 2px rgb(0 0 0 / 0.9); }
