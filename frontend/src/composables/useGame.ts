@@ -9,9 +9,9 @@ import { toView } from '../view'
 import { beforeTheDeal, dealFrom, openingStages, shuffleDecks } from './dealing'
 import { transitionsOn, withViewTransition } from './useViewTransition'
 
-// as many entries as the server opens a game with, and pages back by
-const LOG_TAIL = 150
-const LOG_PAGE = 100
+// entries are numbered from 1, so a page not reaching it has more before it; counting a
+// page would not tell, as the entries a viewer may not read are left out of it
+const olderThan = (page: LogEntry[]) => (page[0]?.seq ?? 1) > 1
 const FLIP_MS = 320
 // how long the opening resources take to drop on before the decks shuffle
 const TOKEN_MS = 450
@@ -73,7 +73,7 @@ export const useGame = (gameId: string, spectate = false) => {
     // the log afresh: on opening the game, and after an undo or a deal
     if (next.log) {
       log.value = next.log
-      hasOlder.value = next.log.length >= LOG_TAIL
+      hasOlder.value = olderThan(next.log)
     }
     const view = toView(next, defs, game.value)
     // a game opening on the mulligan, on arrival or dealt from the lobby, is laid out with
@@ -190,7 +190,7 @@ export const useGame = (gameId: string, spectate = false) => {
       if (!response?.ok) return
       const older = (await response.json()) as LogEntry[]
       log.value = [...older, ...log.value]
-      hasOlder.value = older.length >= LOG_PAGE
+      hasOlder.value = olderThan(older)
     },
     say: (text: string) => post('/chat', { text }),
     reset: () => post('/reset'),
