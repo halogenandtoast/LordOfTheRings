@@ -670,6 +670,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
+      LordOfTheRings.KeywordSpec
       LordOfTheRings.LogSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
