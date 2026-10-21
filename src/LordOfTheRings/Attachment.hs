@@ -6,6 +6,14 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Attachment.Cards.AncientMathom
+import LordOfTheRings.Attachment.Cards.SpearOfTheMark
+import LordOfTheRings.Attachment.Cards.SteedOfTheMark
+import LordOfTheRings.Attachment.Cards.RohanWarhorse
+import LordOfTheRings.Attachment.Cards.Firefoot
+import LordOfTheRings.Attachment.Cards.TheRedArrow
+import LordOfTheRings.Attachment.Cards.WarAxe
+import LordOfTheRings.Attachment.Cards.HornOfTheMark
 import LordOfTheRings.Attachment.Cards.BladeOfGondolin
 import LordOfTheRings.Attachment.Cards.CelebriansStone
 import LordOfTheRings.Attachment.Cards.CitadelPlate
@@ -96,5 +104,13 @@ allAttachments =
         , SomeAttachmentCard songOfBattle
         , SomeAttachmentCard dunedainSignal
         , SomeAttachmentCard supportOfTheEagles
+        , SomeAttachmentCard ancientMathom
+        , SomeAttachmentCard spearOfTheMark
+        , SomeAttachmentCard steedOfTheMark
+        , SomeAttachmentCard rohanWarhorse
+        , SomeAttachmentCard firefoot
+        , SomeAttachmentCard theRedArrow
+        , SomeAttachmentCard warAxe
+        , SomeAttachmentCard hornOfTheMark
         ]
     ]

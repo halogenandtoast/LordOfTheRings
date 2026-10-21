@@ -69,6 +69,7 @@ library
       LordOfTheRings.Attachment
       LordOfTheRings.Attachment.CardDefs
       LordOfTheRings.Attachment.Cards.ABurningBrand
+      LordOfTheRings.Attachment.Cards.AncientMathom
       LordOfTheRings.Attachment.Cards.BladeOfGondolin
       LordOfTheRings.Attachment.Cards.BornAloft
       LordOfTheRings.Attachment.Cards.CelebriansStone
@@ -81,22 +82,29 @@ library
       LordOfTheRings.Attachment.Cards.DunedainWarning
       LordOfTheRings.Attachment.Cards.DwarvenAxe
       LordOfTheRings.Attachment.Cards.FastHitch
+      LordOfTheRings.Attachment.Cards.Firefoot
       LordOfTheRings.Attachment.Cards.ForestSnare
       LordOfTheRings.Attachment.Cards.HornOfGondor
+      LordOfTheRings.Attachment.Cards.HornOfTheMark
       LordOfTheRings.Attachment.Cards.MendorsSupport
       LordOfTheRings.Attachment.Cards.NorAmIAStranger
       LordOfTheRings.Attachment.Cards.PowerInTheEarth
       LordOfTheRings.Attachment.Cards.ProtectorOfLorien
+      LordOfTheRings.Attachment.Cards.RohanWarhorse
       LordOfTheRings.Attachment.Cards.SelfPreservation
       LordOfTheRings.Attachment.Cards.SongOfBattle
       LordOfTheRings.Attachment.Cards.SongOfKings
       LordOfTheRings.Attachment.Cards.SongOfMocking
       LordOfTheRings.Attachment.Cards.SongOfTravel
       LordOfTheRings.Attachment.Cards.SongOfWisdom
+      LordOfTheRings.Attachment.Cards.SpearOfTheMark
+      LordOfTheRings.Attachment.Cards.SteedOfTheMark
       LordOfTheRings.Attachment.Cards.StewardOfGondor
       LordOfTheRings.Attachment.Cards.SupportOfTheEagles
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
+      LordOfTheRings.Attachment.Cards.TheRedArrow
       LordOfTheRings.Attachment.Cards.UnexpectedCourage
+      LordOfTheRings.Attachment.Cards.WarAxe
       LordOfTheRings.Attachment.Import.Lifted
       LordOfTheRings.Attachment.Runner
       LordOfTheRings.Attachment.Types
