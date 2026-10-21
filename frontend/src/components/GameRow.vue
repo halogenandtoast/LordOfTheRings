@@ -33,7 +33,8 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
         </div>
       </div>
       <div class="game-progress">
-        <span>{{ game.playerName }}</span>
+        <!-- otherwise named beside their heroes -->
+        <span v-if="!game.seats?.length">{{ game.playerName }}</span>
         <span v-if="game.waiting">{{ $t('home.waitingForPlayers') }}</span>
         <template v-else>
           <span>{{ $t('game.round', { round: game.round }) }} &middot; {{ $t(phase) }}</span>
