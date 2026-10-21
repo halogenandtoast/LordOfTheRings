@@ -24,6 +24,16 @@ class Targetable a where
   isTarget :: a -> Target -> Bool
   isTarget = (==) . toTarget
 
+-- | Whether the target is a player card: a hero, ally, attachment or event (an event is
+-- its card id), as 'LordOfTheRings.Source.isPlayerCardSource' reads a source.
+isPlayerCardTarget :: Target -> Bool
+isPlayerCardTarget = \case
+  HeroTarget _ -> True
+  AllyTarget _ -> True
+  AttachmentTarget _ -> True
+  CardIdTarget _ -> True
+  _ -> False
+
 instance Targetable Target where
   toTarget = id
 

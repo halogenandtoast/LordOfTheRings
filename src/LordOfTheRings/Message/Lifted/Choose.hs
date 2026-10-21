@@ -8,12 +8,14 @@
 -- >   targets enemies \e -> dealDamage attrs e 4
 module LordOfTheRings.Message.Lifted.Choose (module LordOfTheRings.Message.Lifted.Choose) where
 
-import Control.Monad.State.Strict (StateT, modify, runStateT)
+import Control.Monad.State.Strict (StateT, gets, modify, runStateT)
 import Control.Monad.Writer.Strict (WriterT, runWriterT, tell)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.I18n
+import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects))
 import LordOfTheRings.Id
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted.Queue
@@ -107,11 +109,15 @@ labeledWith key vars action = do
   msgs <- lift $ capture action
   ChooseT $ lift $ tell [Label (ikeyWith ("label." <> key) vars) msgs]
 
--- | A choice made by clicking the target.
+-- | A choice made by clicking the target. A card immune to player card effects is not
+-- offered when a player card, the one 'causedBy' names, is causing the question.
 targeting :: (ReverseQueue m, Targetable a) => a -> QueueT Message m () -> ChooseT m ()
 targeting a action = do
-  msgs <- lift $ capture action
-  ChooseT $ lift $ tell [targetLabel a msgs]
+  source <- ChooseT $ gets (.chooseSource)
+  immune <- lift $ elem ImmuneToPlayerCardEffects <$> getModifiers a
+  unless (immune && maybe False isPlayerCardTarget source) do
+    msgs <- lift $ capture action
+    ChooseT $ lift $ tell [targetLabel a msgs]
 
 -- | A choice for each target.
 targets :: (ReverseQueue m, Targetable a) => [a] -> (a -> QueueT Message m ()) -> ChooseT m ()
