@@ -89,5 +89,6 @@ spec = describe "Escape from Dol Guldur" do
     length guards `shouldBe` 1
     length . (.deck) <$> getPlayer pid `shouldReturn` deck - 1
     chooseLabel "$label.doneCommitting" pid
+    chooseLabel "$label.pass" pid
     for_ guards \eid -> run $ DealDamage GameSource (toTarget eid) 1
     length . (.discard) <$> getPlayer pid `shouldReturn` 1

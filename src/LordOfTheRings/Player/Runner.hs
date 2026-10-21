@@ -150,12 +150,11 @@ instance RunMessage Player where
       pure player
     _ -> pure player
    where
-    -- only asks when there is something to play or use
+    -- asks even with nothing to play or use, so the player moves the game on, not the engine
     actionWindow prompt done again = do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
-      unless (null playable && null actions)
-        $ push
+      push
         $ playerWindow prompt again player.id
         $ Label done []
         : [targetLabel c [PlayCard player.id c.id, again] | c <- playable]
