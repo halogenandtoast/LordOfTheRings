@@ -658,6 +658,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheDeadMarshesSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
+      LordOfTheRings.Starter.DwarvesOfDurinSpec
       LordOfTheRings.Starter.ElvesOfLorienSpec
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
