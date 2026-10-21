@@ -161,10 +161,14 @@ const toggleUnless = (attached: CardView) => {
   line-height: 1;
 }
 .stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 5px 0 3px; }
-/* upright, the card squares off its bottom and the strip carries on from its edge ring,
-   so the two translucent rings never overlap */
-.with-stats > .card img { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-.with-stats > .stats { margin: 1px -1px 0; border-top: 0; border-radius: 0 0 7px 7px; }
+/* upright, the card squares off its bottom and drops its ring there, and the strip's
+   border carries on its sides, so card and strip read as one with no line between */
+.with-stats > .card img {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: -1px 0 0 rgb(255 255 255 / 0.14), 1px 0 0 rgb(255 255 255 / 0.14), 0 -1px 0 rgb(255 255 255 / 0.14);
+}
+.with-stats > .stats { margin: 0 -1px; border-top: 0; border-radius: 0 0 7px 7px; }
 .stats > span + span { border-left: 1px solid var(--line); }
 .stats .threat { color: var(--threat-red); }
 .stats .willpower { color: var(--willpower); }
