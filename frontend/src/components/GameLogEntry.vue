@@ -176,14 +176,14 @@ const requestUndo = () => {
 }
 .log-structure--scenario:first-child { margin-top: 0; }
 .log-structure--nested { margin: 4px -10px 1px -12px; padding: 4px 10px 4px 9px; }
-/* the phase tracker's own colours */
-.log-structure--resource { --tone: var(--antique-gold); }
-.log-structure--planning { --tone: var(--leadership); }
-.log-structure--quest { --tone: hsl(200 45% 45%); }
-.log-structure--travel { --tone: var(--forest-light); }
-.log-structure--encounter { --tone: var(--wood-brown); }
-.log-structure--combat { --tone: var(--rust); }
-.log-structure--refresh { --tone: var(--sage); }
+/* the phase bar's own colours */
+.log-structure--resource { --tone: var(--phase-resource); }
+.log-structure--planning { --tone: var(--phase-planning); }
+.log-structure--quest { --tone: var(--phase-quest); }
+.log-structure--travel { --tone: var(--phase-travel); }
+.log-structure--encounter { --tone: var(--phase-encounter); }
+.log-structure--combat { --tone: var(--phase-combat); }
+.log-structure--refresh { --tone: var(--phase-refresh); }
 /* the scenario's title opens the whole log: the one banner that is big */
 .log-structure--scenario {
   --tone: var(--antique-gold);

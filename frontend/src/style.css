@@ -102,6 +102,15 @@
   --threat-danger-light: #f3b0a4;
 
   color-scheme: dark;
+
+  /* each phase's colour: the phase bar's current phase and the log's banners */
+  --phase-resource: var(--antique-gold);
+  --phase-planning: var(--leadership);
+  --phase-quest: hsl(200 45% 45%);
+  --phase-travel: var(--forest-light);
+  --phase-encounter: var(--wood-brown);
+  --phase-combat: var(--rust);
+  --phase-refresh: var(--sage);
 }
 
 * { box-sizing: border-box; }

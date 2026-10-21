@@ -20,6 +20,7 @@ const icons: Record<string, string> = {
       v-for="name in phases"
       :key="name"
       :class="{ active: name === phase }"
+      :style="{ '--tone': `var(--phase-${name})` }"
       :aria-current="name === phase ? 'step' : undefined"
       :title="$t(`game.phases.${name}`)"
     >
@@ -68,9 +69,10 @@ const icons: Record<string, string> = {
   .phases li:not(.active) .name { display: none; }
   .phases li.active { flex-grow: 2.4; }
 }
+/* drawn as the log draws the phase's banner */
 .phases li.active {
-  background: var(--forest);
-  color: var(--accent-bright);
+  background: linear-gradient(color-mix(in srgb, var(--tone) 35%, transparent) 0 0), var(--surface-2);
+  color: var(--text);
   font-weight: 700;
 }
 </style>
