@@ -7,6 +7,7 @@ import { currentUser, updateSettings } from '../auth'
 import { campaigns as allCampaigns, type Campaign, type ScenarioOption } from '../campaigns'
 import { alphaEnabled, filterDisplayable, isDevBuild } from '../displayRules'
 import { useServerText } from '../i18n'
+import { useShortcuts } from '../browser/lib/keys'
 
 const tr = useServerText()
 
@@ -58,6 +59,7 @@ const back = () => {
   else selectedCampaign.value = null
   error.value = null
 }
+useShortcuts([{ key: 'Escape', description: 'Go back a step.', run: () => selectedCampaign.value && back() }])
 
 const cancel = () => router.push('/')
 
