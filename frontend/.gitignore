@@ -25,6 +25,8 @@ dist-ssr
 
 # Card browser renditions (~480 MB), copied from the importer rather than committed
 public/images/browse/
+# Card scans are Fantasy Flight Games' artwork: kept on disk, never committed
+public/images/cards/
 
 # Playwright
 test-results/
