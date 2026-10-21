@@ -450,10 +450,11 @@ getGamesR = do
   pure $ toJSON $ mapMaybe summary games
 
 -- | A deck to deal: one of the core starter decks by sphere, or one of the user's decks.
-data DeckChoice = StarterDeck Text | ImportedDeck LotrDeckId
+-- | A starter, one of your decks, or a deck loaded for this game alone and not kept.
+data DeckChoice = StarterDeck Text | ImportedDeck LotrDeckId | ListedDeck DeckList
 
 instance FromJSON DeckChoice where
-  parseJSON = withObject "DeckChoice" \o -> (StarterDeck <$> o .: "starter") <|> (ImportedDeck <$> o .: "deckId")
+  parseJSON = withObject "DeckChoice" \o -> (StarterDeck <$> o .: "starter") <|> (ImportedDeck <$> o .: "deckId") <|> (ListedDeck <$> o .: "list")
 
 data NewGame = NewGame
   { name :: Text
@@ -485,6 +486,7 @@ resolveDeck userId = \case
   Just (ImportedDeck deckId) -> do
     db <- getsYesod (.cardDb)
     runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) (pure . Just)
+  Just (ListedDeck deckList) -> either (sendResponseStatus status400) (pure . Just) (checkedDeckList deckList)
 
 -- | Refuse decks that would put heroes with the same title at the table.
 refuseSharedHeroes :: [DeckList] -> Handler ()
@@ -799,7 +801,9 @@ postDecksR = do
   App {cardDb, manager} <- getYesod
   liftIO (importDeck manager cardDb request) >>= \case
     Left err -> sendResponseStatus status400 (describeImportError err)
-    Right parsed -> toJSON <$> runDB (saveDeck userId parsed)
+    Right parsed
+      | savesDeck request -> toJSON <$> runDB (saveDeck userId parsed)
+      | otherwise -> pure $ toJSON $ previewDeck cardDb parsed
 
 getDeckR :: LotrDeckId -> Handler Value
 getDeckR deckId = do

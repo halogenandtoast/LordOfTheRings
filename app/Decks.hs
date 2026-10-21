@@ -11,7 +11,10 @@
 -- disappears without saying so.
 module Decks (
   ImportRequest,
+  savesDeck,
   importDeck,
+  previewDeck,
+  checkedDeckList,
   describeImportError,
   saveDeck,
   listDecks,
@@ -39,10 +42,14 @@ import Network.HTTP.Client (Manager, httpLbs, parseRequest, requestHeaders, resp
 import Network.HTTP.Types (statusCode)
 
 -- | What the deck page posts: a RingsDB link or a deck file's contents, and
--- optionally a name to use instead of the source's.
-data ImportRequest = ImportRequest {url :: Maybe Text, deck :: Maybe Value, name :: Maybe Text}
+-- optionally a name to use instead of the source's. Saved unless @save@ is false, as
+-- for a deck loaded only to play the game at hand.
+data ImportRequest = ImportRequest {url :: Maybe Text, deck :: Maybe Value, name :: Maybe Text, save :: Maybe Bool}
   deriving stock (Generic)
   deriving anyclass (FromJSON)
+
+savesDeck :: ImportRequest -> Bool
+savesDeck request = fromMaybe True request.save
 
 data ImportError
   = NothingToImport
@@ -162,6 +169,42 @@ data ParsedDeck = ParsedDeck
   , slots :: [Slot]
   , sideslots :: [Slot]
   }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+-- | A deck loaded but not kept: what it holds, and the list the engine would deal from
+-- it, or why it cannot.
+data DeckPreview = DeckPreview
+  { deck :: ParsedDeck
+  , heroCodes :: [Text]
+  , cardCount :: Int
+  , list :: Maybe DeckList
+  , problem :: Maybe Text
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+previewDeck :: CardDb -> ParsedDeck -> DeckPreview
+previewDeck db parsed =
+  DeckPreview
+    { deck = parsed
+    , heroCodes = [c | s <- parsed.heroes, Just c <- [flip cardRingsdbCode db =<< s.cardCode]]
+    , cardCount = sum [s.quantity | s <- parsed.slots]
+    , list = either (const Nothing) Just dealt
+    , problem = either Just (const Nothing) dealt
+    }
+ where
+  dealt = listFrom db (map lineOf parsed.heroes) (map lineOf parsed.slots)
+  lineOf s = (s.sourceCode, s.cardCode, s.quantity)
+
+-- | A deck list a client sent back from a preview: only cards the engine knows, each
+-- at least once.
+checkedDeckList :: DeckList -> Either Text DeckList
+checkedDeckList deckList
+  | null unknown && all ((> 0) . snd) deckList.cards && not (null deckList.heroes) = Right deckList
+  | otherwise = Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
+ where
+  unknown = [code | CardCode code <- deckList.heroes <> map fst deckList.cards, not (Map.member (CardCode code) allPlayerCards)]
 
 -- | Heroes come out of the draw deck; a card we cannot place stays as an unresolved slot.
 toParsedDeck :: CardDb -> Text -> Maybe Text -> RingsdbDeck -> ParsedDeck
@@ -365,12 +408,16 @@ deckListFor db userId key =
   get key >>= \case
     Just d | d.lotrDeckUserId == userId -> do
       rows <- map entityVal <$> selectList [LotrDeckSlotDeckId ==. key] [Asc LotrDeckSlotPosition]
-      let code r = fromMaybe r.lotrDeckSlotSourceCode (flip cardRingsdbCode db =<< r.lotrDeckSlotCardCode)
-          known r = Map.member (CardCode $ code r) allPlayerCards
-          section kind = [r | r <- rows, r.lotrDeckSlotKind == kind]
-          unknown = [fromMaybe (code r) (flip cardName db =<< r.lotrDeckSlotCardCode) | r <- section "hero" <> section "draw", not (known r)]
-      pure
-        if null unknown
-          then Right $ DeckList (map (CardCode . code) (section "hero")) [(CardCode (code r), r.lotrDeckSlotQuantity) | r <- section "draw"]
-          else Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
+      let section kind = [(r.lotrDeckSlotSourceCode, r.lotrDeckSlotCardCode, r.lotrDeckSlotQuantity) | r <- rows, r.lotrDeckSlotKind == kind]
+      pure $ listFrom db (section "hero") (section "draw")
     _ -> pure $ Left $ ikey "error.noSuchDeck"
+
+-- | Heroes and draw deck, each line by the code its source used, our code and how
+-- many, as the engine deals them.
+listFrom :: CardDb -> [(Text, Maybe Text, Int)] -> [(Text, Maybe Text, Int)] -> Either Text DeckList
+listFrom db heroes draw
+  | null unknown = Right $ DeckList (map (CardCode . code) heroes) [(CardCode (code l), n) | l@(_, _, n) <- draw]
+  | otherwise = Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
+ where
+  code (source, ours, _) = fromMaybe source (flip cardRingsdbCode db =<< ours)
+  unknown = [fromMaybe (code l) (flip cardName db =<< ours) | l@(_, ours, _) <- heroes <> draw, not (Map.member (CardCode $ code l) allPlayerCards)]
