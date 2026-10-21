@@ -89,7 +89,7 @@ const toggleUnless = (attached: CardView) => {
 </script>
 
 <template>
-  <div class="card-slot" :class="{ expanded, hosting: attachments.length > 0, sideways: card.exhausted && !banner && !rotated }">
+  <div class="card-slot" :class="{ expanded, hosting: attachments.length > 0, sideways: card.exhausted && !banner && !rotated, 'with-stats': card.stats.length && !banner && !card.exhausted }">
     <div v-if="attachments.length" class="attachments">
       <div
         v-for="(attached, index) in attachments"
@@ -149,21 +149,22 @@ const toggleUnless = (attached: CardView) => {
   --willpower: #8cc4ea;
   --attack: #f08a4b;
   --defense: #b9c4cf;
-  /* reaching up behind the card's rounded corners, so its sides run on from the card's */
-  position: relative;
-  z-index: 1;
   display: flex;
-  margin-top: -9px;
-  border-radius: 0 0 7px 7px;
+  margin-top: 4px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 7px;
   background: rgb(20 16 10 / 0.92);
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14);
   overflow: hidden;
   font-size: 0.75rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 13px 0 3px; }
+.stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 5px 0 3px; }
+/* upright, the card squares off its bottom and the strip carries on from its edge ring,
+   so the two translucent rings never overlap */
+.with-stats .card img { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.with-stats .stats { margin: 1px -1px 0; border-top: 0; border-radius: 0 0 7px 7px; }
 .stats > span + span { border-left: 1px solid var(--line); }
 .stats .threat { color: var(--threat-red); }
 .stats .willpower { color: var(--willpower); }
