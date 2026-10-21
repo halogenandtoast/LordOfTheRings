@@ -68,13 +68,13 @@ LotrGame sql=lotr_games
 
 -- | Who sits where at a game with friends, and the deck they brought (null for the
 -- starter deck). Seats are dealt in position order, so position n plays the nth player.
+-- The owner may take several seats; whoever joins takes one.
 LotrSeat sql=lotr_seats
   gameId LotrGameId OnDeleteCascade
   position Int
   userId UserId OnDeleteCascade
   deck Value Maybe
   UniqueSeat gameId position
-  UniqueSeatUser gameId userId
   deriving Show
 
 -- | Enough to step a game back one answer: a patch from the game after the answer to

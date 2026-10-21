@@ -8,8 +8,8 @@ defineProps<{
   viewing: string | null
   /** The seat being asked something. */
   asked: string | null
-  /** Your own seat at a game with friends. */
-  mine: string | null
+  /** Your own seats at a game with friends. */
+  mine: string[]
 }>()
 const emit = defineEmits<{ view: [playerId: string] }>()
 
@@ -30,7 +30,7 @@ const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
     >
       <LoaderCircle v-if="player.playerId === asked" class="asked" :size="14" :aria-label="$t('game.seats.asked')" />
       <span class="name">{{ player.name }}</span>
-      <span v-if="player.playerId === mine" class="you">{{ $t('game.lobby.you') }}</span>
+      <span v-if="mine.includes(player.playerId)" class="you">{{ $t('game.lobby.you') }}</span>
       <span v-if="player.firstPlayer" class="first" :title="$t('game.seats.firstPlayer')">①</span>
       <span class="stat" :title="$t('game.threat', { value: player.threat })">
         <span class="icon threat" :style="threatIcon" />{{ player.threat }}

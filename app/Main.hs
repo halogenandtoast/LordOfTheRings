@@ -169,7 +169,7 @@ requirePlayableGame :: LotrGameId -> Handler LotrGame
 requirePlayableGame gid = do
   userId <- requireUserId
   row <- runDB $ get404 gid
-  seat <- runDB $ getBy $ UniqueSeatUser gid userId
+  seat <- runDB $ selectFirst [LotrSeatGameId ==. gid, LotrSeatUserId ==. userId] []
   unless (row.lotrGameUserId == userId || isJust seat || (row.lotrGameWithFriends && awaitingPlayers row)) notFound
   pure row
 
@@ -407,9 +407,9 @@ data NewGame = NewGame
   , deck :: Maybe DeckChoice
   , decks :: Maybe [Maybe DeckChoice]
   -- ^ one deck per seat for multi-handed solo, Nothing being the starter deck; overrides deck
-  , withFriends :: Maybe Bool
   , seats :: Maybe Int
-  -- ^ with friends, how many play; you bring the first deck and the rest join
+  -- ^ how many play, at least one per deck; you take the first seats and the rest are
+  -- open for friends to join
   , allowSpectators :: Maybe Bool
   , easyMode :: Maybe Bool
   }
@@ -443,12 +443,16 @@ soloSeats name = \case
   deckLists -> NE.zipWith (\n deckList -> (name <> " (" <> tshow n <> ")", deckList)) (NE.iterate (+ 1) (1 :: Int)) deckLists
 
 -- | The seats of a game with friends, in order, with who sits there and their deck.
+-- Someone sitting in several seats is numbered in each, as in multi-handed solo.
 friendSeats :: LotrGameId -> Handler [(Text, DeckList)]
 friendSeats gid = do
   seats <- runDB $ selectList [LotrSeatGameId ==. gid] [Asc LotrSeatPosition]
-  for seats \(Entity _ seat) -> do
+  let users = map ((.lotrSeatUserId) . entityVal) seats
+  for (zip [0 :: Int ..] seats) \(n, Entity _ seat) -> do
     name <- maybe "" (.userUsername) <$> runDB (get seat.lotrSeatUserId)
-    (name,) <$> maybe (pure starterDeck) (decodeOrFail "deck") seat.lotrSeatDeck
+    let theirs = filter (== seat.lotrSeatUserId) users
+        name' = if length theirs > 1 then name <> " (" <> tshow (1 + length (filter (== seat.lotrSeatUserId) (take n users))) <> ")" else name
+    (name',) <$> maybe (pure starterDeck) (decodeOrFail "deck") seat.lotrSeatDeck
 
 -- | Deal a new game from a seed and play it up to its first question, with a seat for
 -- each named deck, in easy mode when the flag says so.
@@ -474,10 +478,11 @@ postGamesR = do
     guard (length seats <= 4) $> seats
   deckLists <- traverse (resolveDeck userId) choices
   refuseSharedHeroes $ fromMaybe starterDeck <$> toList deckLists
-  let friends = fromMaybe False new.withFriends
-      easyMode = fromMaybe False new.easyMode
-      seatCount = fromMaybe 1 new.seats
-  when (friends && (seatCount < 2 || seatCount > 4)) $ sendResponseStatus status400 (ikey "error.seatCount")
+  let easyMode = fromMaybe False new.easyMode
+      seatCount = fromMaybe (length deckLists) new.seats
+      -- seats left open are for friends, and the game waits for them
+      friends = seatCount > length deckLists
+  when (seatCount < length deckLists || seatCount > 4) $ sendResponseStatus status400 (ikey "error.seatCount")
   now <- liftIO getCurrentTime
   let newGame' g queue gen =
         LotrGame
@@ -493,7 +498,7 @@ postGamesR = do
           , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
           , lotrGameWithFriends = friends
           , lotrGameEasyMode = easyMode
-          , lotrGameSeats = if friends then seatCount else length deckLists
+          , lotrGameSeats = seatCount
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
@@ -502,7 +507,7 @@ postGamesR = do
       then -- dealt once the rest of the seats are taken
         runDB do
           gid <- insert $ newGame' Null (toJSON ([] :: [Message])) (mkStdGen 0)
-          insert_ $ LotrSeat gid 0 userId (toJSON <$> NE.head deckLists)
+          for_ (zip [0 ..] (toList deckLists)) \(position, deckList) -> insert_ $ LotrSeat gid position userId (toJSON <$> deckList)
           pure gid
       else do
         (g, queue, gen) <- liftIO . startGame scenario easyMode (soloSeats playerName $ fromMaybe starterDeck <$> deckLists) =<< maybe (liftIO randomIO) pure new.seed
@@ -536,7 +541,7 @@ postLeaveR gid = do
   userId <- requireUserId
   row <- runDB $ get404 gid
   unless (awaitingPlayers row && row.lotrGameUserId /= userId) $ sendResponseStatus status409 (ikey "error.notWaitingForPlayers")
-  runDB $ Database.Persist.Postgresql.deleteBy $ UniqueSeatUser gid userId
+  runDB $ deleteWhere [LotrSeatGameId ==. gid, LotrSeatUserId ==. userId]
   broadcast gid row Nothing
 
 -- | Deal a game with friends now, with the seats taken so far, closing the empty ones.
@@ -635,7 +640,7 @@ postGameR :: LotrGameId -> Handler ()
 postGameR gid = do
   row <- requirePlayableGame gid
   userId <- requireUserId
-  seat <- runDB $ getBy $ UniqueSeatUser gid userId
+  seats <- runDB $ selectList [LotrSeatGameId ==. gid, LotrSeatUserId ==. userId] []
   answer <- requireCheckJsonBody @_ @Answer
   advance gid row \before -> do
     when (answer.questionVersion /= before.questionVersion) $
@@ -643,8 +648,8 @@ postGameR gid = do
     -- only the seat asked can answer, and with friends only from its own player
     unless (Map.member answer.player before.question) $
       sendResponseStatus status409 ("not asked" :: Text)
-    let yours = (before.playerOrder `atMay`) . (.lotrSeatPosition) . entityVal =<< seat
-    unless (if row.lotrGameWithFriends then yours == Just answer.player else row.lotrGameUserId == userId) notFound
+    let yours = mapMaybe ((before.playerOrder `atMay`) . (.lotrSeatPosition) . entityVal) seats
+    unless (if row.lotrGameWithFriends then answer.player `elem` yours else row.lotrGameUserId == userId) notFound
     pure $ answerQuestion answer.player answer.choice
 
 -- | Run any engine message against the game, for adjusting it by hand while testing.

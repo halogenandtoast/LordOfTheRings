@@ -34,16 +34,20 @@ const {
   error, game, log, announcement, flipping,
   started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join, leave, start,
 } = useGame(route.params.id as string, spectate)
-// With friends you play your own seat; otherwise every seat is yours.
+// With friends you play your own seats; otherwise every seat is yours.
 const withFriends = computed(() => table.value?.withFriends ?? false)
 const guest = computed(() => withFriends.value && table.value?.owner !== currentUser.value?.id)
-const mySeat = computed(() => {
-  const position = table.value?.seated.find((seat) => seat.userId === currentUser.value?.id)?.position
-  return withFriends.value && position !== undefined ? players.value[position]?.playerId ?? null : null
-})
+const mySeats = computed(() =>
+  withFriends.value
+    ? (table.value?.seated ?? []).flatMap((seat) =>
+        seat.userId === currentUser.value?.id && players.value[seat.position] ? [players.value[seat.position].playerId] : [],
+      )
+    : [],
+)
+const mine = (playerId: string) => !withFriends.value || mySeats.value.includes(playerId)
 // someone else's turn to answer, as a spectator always sees it: what is asked, with nothing to choose
 const waitingOn = computed(() =>
-  asked.value && (spectate || (withFriends.value && asked.value.playerId !== mySeat.value))
+  asked.value && (spectate || !mine(asked.value.playerId))
     ? players.value.find((player) => player.playerId === asked.value?.playerId) ?? null
     : null,
 )
@@ -61,13 +65,13 @@ const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matche
 const choices = computed(() => question.value?.choices ?? [])
 provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
 // The seat whose board is shown, picked from the tabs along the foot. It starts as
-// yours, and follows whoever is asked when every seat is yours.
+// yours, and follows whoever is asked when that seat is yours.
 const seatId = ref<string | null>(null)
 const you = computed(
-  () => players.value.find((player) => player.playerId === (seatId.value ?? mySeat.value)) ?? players.value[0] ?? null,
+  () => players.value.find((player) => player.playerId === (seatId.value ?? mySeats.value[0])) ?? players.value[0] ?? null,
 )
 watch(() => question.value?.playerId, (asked) => {
-  if (asked && !withFriends.value) seatId.value = asked
+  if (asked && mine(asked)) seatId.value = asked
 }, { immediate: true })
 
 // The threat and play areas can each show another seat, as for a ranged attack on an
@@ -314,7 +318,7 @@ watch(question, (asked) => {
           :players="players"
           :viewing="you?.playerId ?? null"
           :asked="asked?.playerId ?? null"
-          :mine="mySeat"
+          :mine="mySeats"
           @view="seatId = $event"
         />
       </template>
