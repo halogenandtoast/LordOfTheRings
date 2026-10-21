@@ -425,30 +425,6 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 
 .toggle-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: 0.85rem; color: var(--text-muted); }
 .toggle-row .hint { flex-basis: 100%; }
-.switch { display: flex; align-items: center; gap: 10px; color: var(--text); font-size: 0.95rem; cursor: pointer; }
-.switch input { position: absolute; opacity: 0; pointer-events: none; }
-.track {
-  position: relative;
-  width: 38px;
-  height: 22px;
-  border-radius: 11px;
-  background: var(--surface-4);
-  transition: background 0.15s;
-}
-.track::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--cream);
-  transition: translate 0.15s;
-}
-.switch input:checked + .track { background: var(--accent); }
-.switch input:checked + .track::after { translate: 16px 0; }
-.switch input:focus-visible + .track { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
 
 .option { display: grid; gap: 8px; }
 .option-title { font-size: 0.85rem; color: var(--text-muted); }
