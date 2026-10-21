@@ -31,6 +31,8 @@ data Criterion
   | -- | the target has, or lacks, the modifier
     TargetHasModifier Target ModifierType
   | TargetLacksModifier Target ModifierType
+  | -- | at least this many characters match: heroes and allies
+    CharactersAtLeast Int HeroMatcher AllyMatcher
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)

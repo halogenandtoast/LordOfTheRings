@@ -47,6 +47,8 @@ data HeroMatcher
   | PrisonerHero
   | -- | a hero with an attachment, objective or condition of the trait attached
     HeroWithAttached Trait
+  | -- | a hero with a resource in its pool
+    HeroWithResources
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]
@@ -82,6 +84,8 @@ data AllyMatcher
   | CommittedAlly
   | AttackingAlly
   | UniqueAlly
+  | -- | an ally with an attachment of the trait attached
+    AllyWithAttached Trait
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]

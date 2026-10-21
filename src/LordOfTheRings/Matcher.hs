@@ -66,6 +66,7 @@ matchHero matcher hero = case matcher of
   AttackingHero -> pure $ heroAttacking (toAttrs hero)
   PrisonerHero -> pure $ heroPrisoner (toAttrs hero)
   HeroWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget hero)
+  HeroWithResources -> pure $ hero.resources > 0
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
   HeroMatchAll ms -> allM (`matchHero` hero) ms
@@ -93,6 +94,7 @@ matchAlly matcher ally = case matcher of
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
   AttackingAlly -> pure $ allyAttacking (toAttrs ally)
   UniqueAlly -> pure $ cdUnique (toCardDef ally)
+  AllyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget ally)
   AnyAlly -> pure True
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms

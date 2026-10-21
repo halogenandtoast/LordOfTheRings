@@ -85,6 +85,7 @@ passesCriteria = \case
   NotCriterion c -> not <$> passesCriteria c
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
+  CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
 
