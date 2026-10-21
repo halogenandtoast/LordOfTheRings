@@ -23,11 +23,13 @@ import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Decklist
-import LordOfTheRings.Frontend (FrontendMessage)
+import LordOfTheRings.Frontend (FrontendMessage (..))
 import LordOfTheRings.Game
 import LordOfTheRings.Game.Public
 import LordOfTheRings.GameT
 import LordOfTheRings.Id
+import LordOfTheRings.Log (chat)
+import LordOfTheRings.Log.Entry
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -39,6 +41,7 @@ import BugUpload (uploadBugExport)
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import CardDb (CardDb, loadCardDb)
 import Decks
+import GameLog
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
@@ -64,9 +67,10 @@ data SeatView = SeatView {position :: Int, userId :: UserId, username :: Text}
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
--- | What goes out to a game's clients: log lines as they are, and the game, sent to
--- each client as its viewer may see it.
-data Outgoing = Said LByteString | Updated LotrGame Table (Maybe Game)
+-- | What goes out to a game's clients: what the game said as it is, log entries to the
+-- viewers who may read them (by the table and its player order), and the game, sent to
+-- each client as its viewer may see it, with the log afresh when it was undone or dealt.
+data Outgoing = Said LByteString | Told Table [PlayerId] LogEntry | Updated LotrGame Table (Maybe Game) (Maybe [LogEntry])
 
 data App = App
   { pool :: ConnectionPool
@@ -87,6 +91,8 @@ mkYesod
   /games/#LotrGameId/leave LeaveR POST
   /games/#LotrGameId/start StartR POST
   /games/#LotrGameId/undo UndoR POST
+  /games/#LotrGameId/log LogR GET
+  /games/#LotrGameId/chat ChatR POST
   /games/#LotrGameId/reset ResetR POST
   /games/#LotrGameId/debug DebugR POST
   /games/#LotrGameId/export ExportR GET
@@ -117,6 +123,8 @@ data GameData = GameData
   , playerId :: Maybe PlayerId
   , canUndo :: Bool
   , table :: Table
+  , log :: Maybe [LogEntry]
+  -- ^ the log's latest entries, when the client should take them afresh
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
@@ -183,7 +191,8 @@ requireWatchableGame gid = do
   row <- runDB $ get404 gid
   userId <- lookupUserId
   admin <- maybe (pure False) (fmap (maybe False (.userAdmin)) . runDB . get) userId
-  unless (row.lotrGameAllowSpectators || userId == Just row.lotrGameUserId || admin) notFound
+  seat <- maybe (pure Nothing) (\u -> runDB $ selectFirst [LotrSeatGameId ==. gid, LotrSeatUserId ==. u] []) userId
+  unless (row.lotrGameAllowSpectators || userId == Just row.lotrGameUserId || isJust seat || admin) notFound
   pure row
 
 data UserView = UserView
@@ -301,24 +310,34 @@ readGen =
     . readMaybe
     . unpack
 
--- | Load a stored game into a fresh environment whose log goes to the game's clients.
-loadGame :: LotrGameId -> LotrGame -> Handler GameEnv
-loadGame gid row = do
+-- | Load a stored game into a fresh environment, with what it says kept to send once
+-- the move is stored.
+loadGame :: LotrGame -> Handler (GameEnv, IORef [FrontendMessage])
+loadGame row = do
   g <- decodeOrFail "game" row.lotrGameCurrentData
   queue <- decodeOrFail "queue" row.lotrGameCurrentQueue
   gen <- readGen row.lotrGameRandomGen
-  chan <- gameChannel gid
-  liftIO $ envFor chan g queue gen
+  liftIO $ envFor g queue gen
 
-envFor :: TChan Outgoing -> Game -> [Message] -> StdGen -> IO GameEnv
-envFor chan g queue gen = do
-  env <- newGameEnv g (logTo chan) 0
+-- | What the game says is kept, newest first, rather than sent as it is said: its log
+-- entries are numbered as they are stored, which has to wait for the move to be.
+envFor :: Game -> [Message] -> StdGen -> IO (GameEnv, IORef [FrontendMessage])
+envFor g queue gen = do
+  said <- newIORef []
+  env <- newGameEnv g (\msg -> modifyIORef' said (msg :)) 0
   runGameT env $ setQueue queue
   writeIORef (gameRandomGen env) gen
-  pure env {gameDebug = 1}
+  pure (env {gameDebug = 1}, said)
 
-logTo :: TChan Outgoing -> FrontendMessage -> IO ()
-logTo chan msg = atomically $ writeTChan chan $ Said $ encode $ toJSON msg
+-- | What the game said, in order, to the game's clients: each log entry to whoever may
+-- read it.
+publish :: LotrGameId -> LotrGame -> [PlayerId] -> [FrontendMessage] -> Handler ()
+publish gid row order said = do
+  chan <- gameChannel gid
+  table <- tableFor gid row
+  atomically $ for_ said $ writeTChan chan . \case
+    Logged e -> Told table order e
+    msg -> Said $ encode msg
 
 -- | The game, its queue and its random generator as they now stand.
 currentState :: GameEnv -> IO (Game, [Message], StdGen)
@@ -336,23 +355,33 @@ tableFor gid row = do
       SeatView seat.lotrSeatPosition seat.lotrSeatUserId . maybe "" (.userUsername) <$> get seat.lotrSeatUserId
   pure Table {withFriends = row.lotrGameWithFriends, seats = row.lotrGameSeats, owner = row.lotrGameUserId, seated}
 
--- | The game as a viewer may see it: with friends, only your own seat's hand.
-gameData :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> GameData
-gameData viewer row table g =
-  GameData (isJust g) (toJSON . (\g' -> publicGameFor (seesHand g') g') <$> g) ((.activePlayer) <$> g) (row.lotrGameStep > 0) table
- where
-  seesHand g' pid
-    | table.withFriends = isJust viewer && any (\seat -> Just seat.userId == viewer && g'.playerOrder `atMay` seat.position == Just pid) table.seated
-    | otherwise = True
+-- | The game as a viewer may see it: with friends, only your own seat's hand, and only
+-- the log entries meant for whoever sees it.
+gameData :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> Maybe [LogEntry] -> GameData
+gameData viewer row table g entries =
+  GameData
+    (isJust g)
+    (toJSON . (\g' -> publicGameFor (seesHand table viewer g'.playerOrder) g') <$> g)
+    ((.activePlayer) <$> g)
+    (row.lotrGameStep > 0)
+    table
+    (filter (readsEntry $ seesHand table viewer (maybe [] (.playerOrder) g)) <$> entries)
 
-updateFor :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> LByteString
-updateFor viewer row table g = encode $ object ["tag" .= String "Update", "contents" .= gameData viewer row table g]
+-- | Whether a viewer sees a player's hand: with friends, only their own seat's.
+seesHand :: Table -> Maybe UserId -> [PlayerId] -> PlayerId -> Bool
+seesHand table viewer order pid
+  | table.withFriends = isJust viewer && any (\seat -> Just seat.userId == viewer && order `atMay` seat.position == Just pid) table.seated
+  | otherwise = True
 
-broadcast :: LotrGameId -> LotrGame -> Maybe Game -> Handler ()
-broadcast gid row g = do
+updateFor :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> Maybe [LogEntry] -> LByteString
+updateFor viewer row table g entries = encode $ object ["tag" .= String "Update", "contents" .= gameData viewer row table g entries]
+
+-- | The game to its clients, with the log afresh when given.
+broadcast :: LotrGameId -> LotrGame -> Maybe Game -> Maybe [LogEntry] -> Handler ()
+broadcast gid row g entries = do
   chan <- gameChannel gid
   table <- tableFor gid row
-  atomically $ writeTChan chan $ Updated row table g
+  atomically $ writeTChan chan $ Updated row table g entries
 
 summary :: Entity LotrGame -> Maybe GameSummary
 summary (Entity gid row) | awaitingPlayers row = do
@@ -458,13 +487,12 @@ friendSeats gid = do
 
 -- | Deal a new game from a seed and play it up to its first question, with a seat for
 -- each named deck, in easy mode when the flag says so.
-startGame :: Scenario -> Bool -> NonEmpty (Text, DeckList) -> Int -> IO (Game, [Message], StdGen)
+startGame :: Scenario -> Bool -> NonEmpty (Text, DeckList) -> Int -> IO ((Game, [Message], StdGen), [FrontendMessage])
 startGame scenario easyMode players seed = do
   seats <- either (error . show) pure . sequence $ evalRand (traverse (uncurry loadPlayer) players) (mkStdGen seed)
-  chan <- newBroadcastTChanIO
-  env <- envFor chan (newTableIn (overAttrs (easyModeL .~ easyMode) scenario) seats) [] (mkStdGen $ seed + 1)
+  (env, said) <- envFor (newTableIn (overAttrs (easyModeL .~ easyMode) scenario) seats) [] (mkStdGen $ seed + 1)
   void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
-  currentState env
+  (,) <$> currentState env <*> (reverse <$> readIORef said)
 
 postGamesR :: Handler Value
 postGamesR = do
@@ -504,8 +532,11 @@ postGamesR = do
           }
   gid <- case nonEmpty deckLists of
     Just dealt | not friends -> do
-      (g, queue, gen) <- liftIO . startGame scenario easyMode (soloSeats playerName $ fromMaybe starterDeck <$> dealt) =<< maybe (liftIO randomIO) pure new.seed
-      runDB $ insert $ newGame' (toJSON g) (toJSON queue) gen
+      ((g, queue, gen), said) <- liftIO . startGame scenario easyMode (soloSeats playerName $ fromMaybe starterDeck <$> dealt) =<< maybe (liftIO randomIO) pure new.seed
+      runDB do
+        gid <- insert $ newGame' (toJSON g) (toJSON queue) gen
+        void $ storeLog gid (-1) now said
+        pure gid
     _ -> -- dealt once the rest of the seats are taken
       runDB do
         gid <- insert $ newGame' Null (toJSON ([] :: [Message])) (mkStdGen 0)
@@ -531,7 +562,7 @@ postJoinR gid = do
       runDB $ insert_ $ LotrSeat gid position userId (toJSON <$> deckList)
       if null rest
         then deal gid row =<< maybe (error "no seats") pure . nonEmpty =<< friendSeats gid
-        else broadcast gid row Nothing
+        else broadcast gid row Nothing Nothing
 
 -- | Give up your seats at a game with friends before it is dealt.
 postLeaveR :: LotrGameId -> Handler ()
@@ -540,7 +571,7 @@ postLeaveR gid = do
   row <- runDB $ get404 gid
   unless (awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notWaitingForPlayers")
   runDB $ deleteWhere [LotrSeatGameId ==. gid, LotrSeatUserId ==. userId]
-  broadcast gid row Nothing
+  broadcast gid row Nothing Nothing
 
 -- | Deal a game with friends now, with the seats taken so far, closing the empty ones.
 -- The seats are numbered again from 0 so they still match the players dealt.
@@ -561,11 +592,13 @@ postStartR gid = do
 deal :: LotrGameId -> LotrGame -> NonEmpty (Text, DeckList) -> Handler ()
 deal gid row players = do
   scenario <- maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure $ lookupScenario (ScenarioId row.lotrGameScenario)
-  (g, queue, gen) <- liftIO . startGame scenario row.lotrGameEasyMode players =<< liftIO randomIO
+  ((g, queue, gen), said) <- liftIO . startGame scenario row.lotrGameEasyMode players =<< liftIO randomIO
   now <- liftIO getCurrentTime
-  row' <- runDB do
+  (row', entries) <- runDB do
     deleteWhere [LotrStepGameId ==. gid]
-    updateGet
+    clearLog gid
+    void $ storeLog gid (-1) now said
+    (,) <$> updateGet
       gid
       [ LotrGameCurrentData =. toJSON g
       , LotrGameCurrentQueue =. toJSON queue
@@ -573,14 +606,16 @@ deal gid row players = do
       , LotrGameStep =. 0
       , LotrGameUpdatedAt =. now
       ]
-  broadcast gid row' (Just g)
+      <*> logTail gid
+  broadcast gid row' (Just g) (Just entries)
 
 handleSocket :: Maybe UserId -> TChan Outgoing -> WebSocketsT Handler ()
 handleSocket viewer chan = do
   readChannel <- atomically $ dupTChan chan
-  forever $ atomically (readTChan readChannel) >>= sendTextData . \case
-    Said bytes -> bytes
-    Updated row table g -> updateFor viewer row table g
+  forever $ atomically (readTChan readChannel) >>= traverse_ sendTextData . \case
+    Said bytes -> Just bytes
+    Told table order e -> guard (readsEntry (seesHand table viewer order) e) $> encode (Logged e)
+    Updated row table g entries -> Just $ updateFor viewer row table g entries
 
 -- | The game as it stands, or its updates as they come over a websocket.
 serveGame :: LotrGameId -> LotrGame -> Handler Value
@@ -588,7 +623,9 @@ serveGame gid row = do
   viewer <- lookupUserId
   webSockets . handleSocket viewer =<< gameChannel gid
   table <- tableFor gid row
-  toJSON . gameData viewer row table <$> storedGame row
+  entries <- runDB $ logTail gid
+  g <- storedGame row
+  pure $ toJSON $ gameData viewer row table g (Just entries)
 
 getGameR :: LotrGameId -> Handler Value
 getGameR gid = serveGame gid =<< requirePlayableGame gid
@@ -661,14 +698,15 @@ postDebugR gid = do
 -- | Play a stored game on from where it stands, keeping the move as an undoable step.
 advance :: LotrGameId -> LotrGame -> (Game -> Handler (GameT Game)) -> Handler ()
 advance gid row prepare = do
-  env <- loadGame gid row
+  (env, said) <- loadGame row
   (before, queue, gen) <- liftIO $ currentState env
   play <- prepare before
   void $ liftIO $ runGameT env play
   (after, queue', gen') <- liftIO $ currentState env
   now <- liftIO getCurrentTime
   let step = row.lotrGameStep + 1
-  row' <- runDB do
+  (row', stored) <- runDB do
+    stored <- storeLog gid row.lotrGameStep now . reverse =<< readIORef said
     insert_
       LotrStep
         { lotrStepGameId = gid
@@ -688,10 +726,39 @@ advance gid row prepare = do
       , LotrGameStep =. step
       , LotrGameUpdatedAt =. now
       ]
-  broadcast gid row' (Just after)
+      <&> (,stored)
+  publish gid row' after.playerOrder stored
+  broadcast gid row' (Just after) Nothing
 
 deleteGameR :: LotrGameId -> Handler ()
 deleteGameR gid = requireOwnedGame gid >> runDB (delete gid)
+
+-- | The page of the log before the entry given, for scrolling back.
+getLogR :: LotrGameId -> Handler Value
+getLogR gid = do
+  row <- requireWatchableGame gid
+  viewer <- lookupUserId
+  before <- maybe (sendResponseStatus status400 ("before what?" :: Text)) pure . (readMaybe . unpack =<<) =<< lookupGetParam "before"
+  table <- tableFor gid row
+  g <- storedGame row
+  entries <- runDB $ logBefore gid before
+  pure $ toJSON $ filter (readsEntry $ seesHand table viewer (maybe [] (.playerOrder) g)) entries
+
+newtype Say = Say {text :: Text}
+  deriving stock (Generic)
+  deriving anyclass (FromJSON)
+
+-- | Something a player says, into the log for the table to read.
+postChatR :: LotrGameId -> Handler ()
+postChatR gid = do
+  row <- requirePlayableGame gid
+  user <- runDB . get404 =<< requireUserId
+  said <- T.strip . (.text) <$> requireCheckJsonBody @_ @Say
+  when (null said || length said > 500) $ sendResponseStatus status400 ("say something shorter" :: Text)
+  now <- liftIO getCurrentTime
+  stored <- runDB $ storeLog gid row.lotrGameStep now [Logged $ chat [LogText user.userUsername, LogText ": ", LogText said]]
+  g <- storedGame row
+  publish gid row (maybe [] (.playerOrder) g) stored
 
 getDecksR :: Handler Value
 getDecksR = do
@@ -722,15 +789,16 @@ deleteDeckR deckId = do
   unless (((.lotrDeckUserId) <$> deck) == Just userId) notFound
   runDB $ delete deckId
 
-data UndoTarget = LastAnswer | StartOfPhase | StartOfRound
+data UndoTarget = LastAnswer | StartOfPhase | StartOfRound | ToStep Int
   deriving stock (Eq)
 
--- | How many steps to take back: one answer, or every answer since the phase or round
--- began. With none taken yet this phase (or round), go back to the start of the last one.
+-- | How many steps to take back: one answer, every answer since the phase or round
+-- began, or every answer since the step given, as a log entry offers. With none taken yet this phase (or round), go back to the start of the last one.
 stepsToUndo :: UndoTarget -> [LotrStep] -> Int
 stepsToUndo target latestFirst = case (target, latestFirst) of
   (_, []) -> 0
   (LastAnswer, _) -> 1
+  (ToStep n, _) -> length $ takeWhile ((> n) . (.lotrStepStep)) latestFirst
   (StartOfPhase, newest : _) -> length $ takeWhile (samePhase newest) latestFirst
   (StartOfRound, newest : _) -> length $ takeWhile (sameRound newest) latestFirst
  where
@@ -741,10 +809,12 @@ stepsToUndo target latestFirst = case (target, latestFirst) of
 postUndoR :: LotrGameId -> Handler ()
 postUndoR gid = do
   row <- requirePlayableGame gid
+  stepParam <- (readMaybe . unpack =<<) <$> lookupGetParam "step"
   target <-
     lookupGetParam "to" <&> \case
       Just "phase" -> StartOfPhase
       Just "round" -> StartOfRound
+      Just "step" | Just n <- stepParam -> ToStep n
       _ -> LastAnswer
   steps <- runDB $ selectList [LotrStepGameId ==. gid] [Desc LotrStepStep]
   let undone = take (stepsToUndo target (map entityVal steps)) steps
@@ -752,17 +822,21 @@ postUndoR gid = do
     previous <- foldM undoStep row.lotrGameCurrentData undone
     g <- decodeOrFail "game" previous
     now <- liftIO getCurrentTime
-    row' <- runDB do
+    let step = row.lotrGameStep - length undone
+    (row', entries) <- runDB do
       deleteWhere [LotrStepId <-. map entityKey undone]
-      updateGet
-        gid
-        [ LotrGameCurrentData =. previous
-        , LotrGameCurrentQueue =. oldest.lotrStepQueue
-        , LotrGameRandomGen =. oldest.lotrStepRandomGen
-        , LotrGameStep =. row.lotrGameStep - length undone
-        , LotrGameUpdatedAt =. now
-        ]
-    broadcast gid row' (Just g)
+      trimLog gid step
+      (,)
+        <$> updateGet
+          gid
+          [ LotrGameCurrentData =. previous
+          , LotrGameCurrentQueue =. oldest.lotrStepQueue
+          , LotrGameRandomGen =. oldest.lotrStepRandomGen
+          , LotrGameStep =. step
+          , LotrGameUpdatedAt =. now
+          ]
+        <*> logTail gid
+    broadcast gid row' (Just g) (Just entries)
  where
   undoStep current (Entity _ step) = do
     patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
@@ -790,6 +864,8 @@ data ExportedGame = ExportedGame
   , randomGen :: Text
   , step :: Int
   , steps :: [ExportedStep]
+  , log :: Maybe [LogEntry]
+  -- ^ every entry, oldest first; missing from exports made before the log was stored
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON, FromJSON)
@@ -812,7 +888,7 @@ exportVersion = 1
 exportGame :: LotrGameId -> Handler (LotrGame, ExportedGame)
 exportGame gid = do
   row <- requirePlayableGame gid
-  steps <- runDB $ selectList [LotrStepGameId ==. gid] [Asc LotrStepStep]
+  (steps, entries) <- runDB $ (,) <$> selectList [LotrStepGameId ==. gid] [Asc LotrStepStep] <*> wholeLog gid
   pure
     ( row
     , ExportedGame
@@ -827,6 +903,7 @@ exportGame gid = do
             [ ExportedStep st.lotrStepStep st.lotrStepPatchDown st.lotrStepQueue st.lotrStepRandomGen st.lotrStepRound st.lotrStepPhase
             | Entity _ st <- steps
             ]
+        , log = Just entries
         }
     )
 
@@ -882,6 +959,7 @@ postImportR = do
       [ LotrStep gid st.step st.patchDown st.queue st.randomGen st.round st.phase now
       | st <- exported.steps
       ]
+    restoreLog gid now (fromMaybe [] exported.log)
     pure gid
   pure $ object ["id" .= gid]
 

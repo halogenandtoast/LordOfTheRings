@@ -325,6 +325,7 @@ executable LordOfTheRings-exe
       BugUpload
       CardDb
       Decks
+      GameLog
       Model
       Paths_LordOfTheRings
   hs-source-dirs:
@@ -420,8 +421,8 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
-      LordOfTheRings.ModifierSpec
       LordOfTheRings.LogSpec
+      LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.QuestAdvancementSpec
       LordOfTheRings.QuestPhaseSpec

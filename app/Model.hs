@@ -93,6 +93,20 @@ LotrStep sql=lotr_steps
   UniqueGameStep gameId step
   deriving Show
 
+-- | One entry of a game's log, written under the step the game was on before the answer
+-- that wrote it, so undoing to that step takes it back out. Entries written while the
+-- game was dealt sit before step 0, where no undo reaches. Rows are only ever added,
+-- and deleted by step; chat survives an undo, moved to just before the step undone to.
+LotrLogEntry sql=lotr_log_entries
+  gameId LotrGameId OnDeleteCascade
+  step Int
+  seq Int
+  kind Text
+  payload Value
+  createdAt UTCTime
+  UniqueLogSeq gameId seq
+  deriving Show
+
 -- | An imported deck list. Slots name our card code when the importer could place
 -- the card, and always keep the code the source used.
 LotrDeck sql=lotr_decks
