@@ -27,6 +27,9 @@ import LordOfTheRings.Treachery.Cards.RoastedSlowly
 import LordOfTheRings.Treachery.Cards.Exhaustion
 import LordOfTheRings.Treachery.Cards.SwarmingInsect
 import LordOfTheRings.Treachery.Cards.FesteringWounds
+import LordOfTheRings.Treachery.Cards.ImpassableChasm
+import LordOfTheRings.Treachery.Cards.Rockslide
+import LordOfTheRings.Treachery.Cards.SlickFooting
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -78,5 +81,8 @@ allTreacherys =
         , SomeTreacheryCard exhaustion
         , SomeTreacheryCard swarmingInsect
         , SomeTreacheryCard festeringWounds
+        , SomeTreacheryCard impassableChasm
+        , SomeTreacheryCard rockslide
+        , SomeTreacheryCard slickFooting
         ]
     ]

@@ -46,6 +46,7 @@ allEnemyCards =
       , muckAdder
       , mirkwoodFlock
       , blackForestBatsRhosgobel
+      , orcHorseThieves
       ]
 
 kingSpider :: CardDef
@@ -260,4 +261,12 @@ blackForestBatsRhosgobel =
   (enemy "02071" "Black Forest Bats" AJourneyToRhosgobel 5 26 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+orcHorseThieves :: CardDef
+orcHorseThieves =
+  (enemy "02094" "Orc Horse Thieves" TheHillsOfEmynMuil 3 35 3 1 2 6)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 2
     }

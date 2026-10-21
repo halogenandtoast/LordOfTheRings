@@ -38,6 +38,10 @@ import LordOfTheRings.Event.Cards.SecondBreakfast
 import LordOfTheRings.Event.Cards.PartingGifts
 import LordOfTheRings.Event.Cards.ToTheEyrie
 import LordOfTheRings.Event.Cards.Infighting
+import LordOfTheRings.Event.Cards.RearGuard
+import LordOfTheRings.Event.Cards.MeneldorsFlight
+import LordOfTheRings.Event.Cards.RideToRuin
+import LordOfTheRings.Event.Cards.GildorsCounsel
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -89,5 +93,9 @@ allEvents =
         , SomeEventCard partingGifts
         , SomeEventCard toTheEyrie
         , SomeEventCard infighting
+        , SomeEventCard rearGuard
+        , SomeEventCard meneldorsFlight
+        , SomeEventCard rideToRuin
+        , SomeEventCard gildorsCounsel
         ]
     ]

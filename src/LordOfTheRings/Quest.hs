@@ -24,6 +24,7 @@ import LordOfTheRings.Quest.Cards.AgainstTheTrolls
 import LordOfTheRings.Quest.Cards.TheWoundedEagle
 import LordOfTheRings.Quest.Cards.RadagastsRequest
 import LordOfTheRings.Quest.Cards.ReturnToRhosgobel
+import LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -72,5 +73,6 @@ allQuests =
         , SomeQuestCard theWoundedEagle
         , SomeQuestCard radagastsRequest
         , SomeQuestCard returnToRhosgobel
+        , SomeQuestCard theHillsOfEmynMuil
         ]
     ]

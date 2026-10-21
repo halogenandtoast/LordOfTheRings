@@ -98,5 +98,8 @@ instance HasField "questDeck" ScenarioAttrs [EncounterCard] where
 instance HasField "encounterDiscard" ScenarioAttrs [EncounterCard] where
   getField = scenarioEncounterDiscard
 
+instance HasField "victoryDisplay" ScenarioAttrs [EncounterCard] where
+  getField = scenarioVictoryDisplay
+
 instance HasField "easyMode" ScenarioAttrs Bool where
   getField = scenarioEasyMode

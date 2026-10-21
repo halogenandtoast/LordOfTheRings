@@ -35,6 +35,9 @@ import LordOfTheRings.Ally.Cards.Landroval
 import LordOfTheRings.Ally.Cards.HaldirOfLorien
 import LordOfTheRings.Ally.Cards.Radagast
 import LordOfTheRings.Ally.Cards.Wilyador
+import LordOfTheRings.Ally.Cards.KeenEyedTook
+import LordOfTheRings.Ally.Cards.DescendantOfThorondor
+import LordOfTheRings.Ally.Cards.GildorInglorion
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -96,5 +99,8 @@ allAllies =
         , SomeAllyCard haldirOfLorien
         , SomeAllyCard radagast
         , SomeAllyCard wilyador
+        , SomeAllyCard keenEyedTook
+        , SomeAllyCard descendantOfThorondor
+        , SomeAllyCard gildorInglorion
         ]
     ]

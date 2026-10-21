@@ -28,6 +28,7 @@ import LordOfTheRings.Attachment.Cards.NorAmIAStranger
 import LordOfTheRings.Attachment.Cards.ABurningBrand
 import LordOfTheRings.Attachment.Cards.SongOfWisdom
 import LordOfTheRings.Attachment.Cards.DunedainQuest
+import LordOfTheRings.Attachment.Cards.SongOfTravel
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -82,5 +83,6 @@ allAttachments =
         , SomeAttachmentCard aBurningBrand
         , SomeAttachmentCard songOfWisdom
         , SomeAttachmentCard dunedainQuest
+        , SomeAttachmentCard songOfTravel
         ]
     ]

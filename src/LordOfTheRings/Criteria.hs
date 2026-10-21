@@ -25,6 +25,7 @@ data Criterion
     BeforeCommitting
   | -- | nothing stops a player card cancelling an encounter card's effects
     EncounterEffectsCancelable
+  | NotCriterion Criterion
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)

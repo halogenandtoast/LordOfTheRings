@@ -84,6 +84,8 @@ runConditionalStage condition msg attrs = case msg of
     pure attrs
   ClaimObjective {} -> recheck
   RescuePrisoner {} -> recheck
+  AddToVictoryDisplay {} -> recheck
+  Discard (LocationTarget _) -> recheck
   _ -> runMessage msg attrs
  where
   recheck = do

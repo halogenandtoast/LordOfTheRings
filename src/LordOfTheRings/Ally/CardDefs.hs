@@ -85,6 +85,9 @@ allAllyCards =
       , landroval
       , haldirOfLorien
       , radagast
+      , keenEyedTook
+      , descendantOfThorondor
+      , gildorInglorion
       ]
 
 guardOfTheCitadel :: CardDef
@@ -524,4 +527,23 @@ radagast =
   (ally "02059" "Radagast" Neutral (StaticCost 5) 2 1 1 3)
     { cdUnique = True
     , cdCardTraits = setFromList [Istari]
+    }
+
+keenEyedTook :: CardDef
+keenEyedTook =
+  (ally "02073" "Keen-eyed Took" Leadership (StaticCost 2) 1 0 0 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+descendantOfThorondor :: CardDef
+descendantOfThorondor =
+  (ally "02075" "Descendant of Thorondor" Tactics (StaticCost 4) 1 2 1 2)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    }
+
+gildorInglorion :: CardDef
+gildorInglorion =
+  (ally "02079" "Gildor Inglorion" Lore (StaticCost 5) 3 2 3 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Noldor]
     }

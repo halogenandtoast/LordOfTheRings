@@ -77,6 +77,10 @@ allEventCards =
       , partingGifts
       , toTheEyrie
       , infighting
+      , rearGuard
+      , meneldorsFlight
+      , rideToRuin
+      , gildorsCounsel
       ]
 
 everVigilant :: CardDef
@@ -264,3 +268,15 @@ toTheEyrie = event "02054" "To the Eyrie" Tactics (StaticCost 2)
 
 infighting :: CardDef
 infighting = event "02058" "Infighting" Lore (StaticCost 1)
+
+rearGuard :: CardDef
+rearGuard = event "02074" "Rear Guard" Leadership (StaticCost 1)
+
+meneldorsFlight :: CardDef
+meneldorsFlight = event "02076" "Meneldor's Flight" Tactics (StaticCost 0)
+
+rideToRuin :: CardDef
+rideToRuin = event "02078" "Ride to Ruin" Spirit (StaticCost 1)
+
+gildorsCounsel :: CardDef
+gildorsCounsel = event "02080" "Gildor's Counsel" Lore (StaticCost 3)

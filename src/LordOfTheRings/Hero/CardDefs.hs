@@ -48,6 +48,7 @@ allHeroCards =
       , lothiriel
       , bilboBaggins
       , frodoBaggins
+      , brandSonOfBain
       ]
 
 aragorn :: CardDef
@@ -239,4 +240,11 @@ frodoBaggins :: CardDef
 frodoBaggins =
   (hero "02025" "Frodo Baggins" Spirit 7 2 1 2 2)
     { cdCardTraits = setFromList [Hobbit]
+    }
+
+brandSonOfBain :: CardDef
+brandSonOfBain =
+  (hero "02072" "Brand son of Bain" Tactics 10 2 3 2 3)
+    { cdCardTraits = setFromList [Dale]
+    , cdKeywords = setFromList [Ranged]
     }

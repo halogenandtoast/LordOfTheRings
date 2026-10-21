@@ -38,6 +38,9 @@ allTreacheryCards =
       , exhaustion
       , swarmingInsect
       , festeringWounds
+      , impassableChasm
+      , rockslide
+      , slickFooting
       ]
 
 eyesOfTheForest :: CardDef
@@ -157,4 +160,25 @@ festeringWounds =
   (treachery "02069" "Festering Wounds" AJourneyToRhosgobel 2)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+impassableChasm :: CardDef
+impassableChasm =
+  (treachery "02091" "Impassable Chasm" TheHillsOfEmynMuil 4)
+    { cdCardTraits = setFromList [Hazard]
+    , cdEasyModeQuantity = Just 2
+    }
+
+rockslide :: CardDef
+rockslide =
+  (treachery "02092" "Rockslide" TheHillsOfEmynMuil 3)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+slickFooting :: CardDef
+slickFooting =
+  (treachery "02093" "Slick Footing" TheHillsOfEmynMuil 3)
+    { cdCardTraits = setFromList [Hazard]
     }

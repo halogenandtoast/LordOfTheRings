@@ -36,6 +36,29 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "keenEyedTook": {
+    "reveal": "The top card of each player's deck"
+  },
+  "descendantOfThorondor": {
+    "damage": "Deal 2 damage to an enemy in the staging area"
+  },
+  "gildorInglorion": {
+    "fromDeck": "Switch one of these cards with a card from your hand?",
+    "fromHand": "Choose the card from your hand"
+  },
+  "rearGuard": {
+    "discard": "Discard a Leadership ally"
+  },
+  "meneldorsFlight": {
+    "return": "Return an Eagle ally to its owner's hand"
+  },
+  "rideToRuin": {
+    "discard": "Discard a Rohan ally",
+    "location": "Place 3 progress on a location"
+  },
+  "theShoresOfNenHithoel": {
+    "discard": "Discard an event to travel here"
+  },
   "payFromAlly": "Pay with resources from an ally?",
   "payFromHeroes": "Pay from your heroes",
   "partingGifts": {

@@ -35,6 +35,7 @@ allQuestCards =
       , theWoundedEagle
       , radagastsRequest
       , returnToRhosgobel
+      , theHillsOfEmynMuil
       ]
 
 fliesAndSpiders :: CardDef
@@ -90,3 +91,6 @@ radagastsRequest = quest "02061" "Radagast's Request" AJourneyToRhosgobel 2 12
 
 returnToRhosgobel :: CardDef
 returnToRhosgobel = quest "02062" "Return to Rhosgobel" AJourneyToRhosgobel 3 0
+
+theHillsOfEmynMuil :: CardDef
+theHillsOfEmynMuil = quest "02082" "The Hills of Emyn Muil" TheHillsOfEmynMuil 1 1

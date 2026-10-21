@@ -82,6 +82,7 @@ passesCriteria = \case
   ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
   BeforeCommitting -> andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
+  NotCriterion c -> not <$> passesCriteria c
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
 

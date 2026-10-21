@@ -40,6 +40,14 @@ allLocationCards =
       , oakWoodGrove
       , rhosgobel
       , forestGrove
+      , amonHen
+      , amonLhaw
+      , theEastWallOfRohan
+      , theNorthStair
+      , raurosFalls
+      , theShoresOfNenHithoel
+      , theOuterRidge
+      , theHighlands
       ]
 
 greatForestWeb :: CardDef
@@ -188,4 +196,66 @@ forestGrove :: CardDef
 forestGrove =
   (location "02066" "Forest Grove" AJourneyToRhosgobel 4 2 3)
     { cdCardTraits = setFromList [Forest]
+    }
+
+amonHen :: CardDef
+amonHen =
+  (location "02083" "Amon Hen" TheHillsOfEmynMuil 1 0 5)
+    { cdUnique = True
+    , cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 5
+    }
+
+amonLhaw :: CardDef
+amonLhaw =
+  (location "02084" "Amon Lhaw" TheHillsOfEmynMuil 1 0 5)
+    { cdUnique = True
+    , cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 5
+    }
+
+theEastWallOfRohan :: CardDef
+theEastWallOfRohan =
+  (location "02085" "The East Wall of Rohan" TheHillsOfEmynMuil 2 4 2)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 3
+    , cdEasyModeQuantity = Just 0
+    }
+
+theNorthStair :: CardDef
+theNorthStair =
+  (location "02086" "The North Stair" TheHillsOfEmynMuil 2 3 3)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 3
+    }
+
+raurosFalls :: CardDef
+raurosFalls =
+  (location "02087" "Rauros Falls" TheHillsOfEmynMuil 2 2 4)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 3
+    , cdShadowEffect = True
+    }
+
+theShoresOfNenHithoel :: CardDef
+theShoresOfNenHithoel =
+  (location "02088" "The Shores of Nen Hithoel" TheHillsOfEmynMuil 3 2 2)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 2
+    , cdShadowEffect = True
+    }
+
+theOuterRidge :: CardDef
+theOuterRidge =
+  (location "02089" "The Outer Ridge" TheHillsOfEmynMuil 3 2 2)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 2
+    , cdShadowEffect = True
+    }
+
+theHighlands :: CardDef
+theHighlands =
+  (location "02090" "The Highlands" TheHillsOfEmynMuil 4 1 1)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 1
     }

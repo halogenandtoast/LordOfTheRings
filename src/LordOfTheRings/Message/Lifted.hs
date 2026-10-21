@@ -21,7 +21,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
-import LordOfTheRings.Placement (Placement (ActiveLocation, AttachedTo))
+import LordOfTheRings.Placement (Placement (ActiveLocation, AttachedTo, StagingArea))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
 import LordOfTheRings.Source
@@ -329,3 +329,26 @@ doStep n = push . DoStep n
 -- character.
 undefendedDamageTo :: (ReverseQueue m, Sourceable source, Targetable target) => source -> EnemyId -> target -> m ()
 undefendedDamageTo source eid = phaseModifier source eid . UndefendedDamageTo . toTarget
+
+-- | The card leaves the encounter discard pile and is revealed, its When Revealed
+-- effects resolving.
+revealFromEncounterDiscard :: (ReverseQueue m) => EncounterCard -> m ()
+revealFromEncounterDiscard card = do
+  push $ RemoveFromEncounterDiscard card
+  push $ RevealCard card
+
+-- | After its attack resolves, the enemy returns to the staging area.
+returnToStagingAfterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> t m ()
+returnToStagingAfterAttack eid = afterAttack eid [PlaceEnemy eid StagingArea]
+
+-- | The defending character is removed from the attack, which is now undefended.
+makeUndefended :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => PlayerId -> EnemyId -> t m ()
+makeUndefended pid eid = do
+  cancelMatching \case
+    AttackDamage eid' _ -> eid == eid'
+    DefendedByMany _ eid' _ -> eid == eid'
+    _ -> False
+  push $ UndefendedDamage pid eid
+
+discardFromHand :: (ReverseQueue m) => PlayerId -> Card -> m ()
+discardFromHand pid card = push $ DiscardFromHand pid card.id

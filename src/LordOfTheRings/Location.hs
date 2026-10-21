@@ -29,6 +29,14 @@ import LordOfTheRings.Location.Cards.BeePastures
 import LordOfTheRings.Location.Cards.OakWoodGrove
 import LordOfTheRings.Location.Cards.Rhosgobel
 import LordOfTheRings.Location.Cards.ForestGrove
+import LordOfTheRings.Location.Cards.AmonHen
+import LordOfTheRings.Location.Cards.AmonLhaw
+import LordOfTheRings.Location.Cards.TheEastWallOfRohan
+import LordOfTheRings.Location.Cards.TheNorthStair
+import LordOfTheRings.Location.Cards.RaurosFalls
+import LordOfTheRings.Location.Cards.TheShoresOfNenHithoel
+import LordOfTheRings.Location.Cards.TheOuterRidge
+import LordOfTheRings.Location.Cards.TheHighlands
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -82,5 +90,13 @@ allLocations =
         , SomeLocationCard oakWoodGrove
         , SomeLocationCard rhosgobel
         , SomeLocationCard forestGrove
+        , SomeLocationCard amonHen
+        , SomeLocationCard amonLhaw
+        , SomeLocationCard theEastWallOfRohan
+        , SomeLocationCard theNorthStair
+        , SomeLocationCard raurosFalls
+        , SomeLocationCard theShoresOfNenHithoel
+        , SomeLocationCard theOuterRidge
+        , SomeLocationCard theHighlands
         ]
     ]
