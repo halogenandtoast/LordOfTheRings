@@ -3,9 +3,11 @@ module LordOfTheRings.KeywordSpec (spec) where
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Decklist (deckProblem, loadPlayer)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Attachment (attachmentCriteriaFor, cardHosts)
 import LordOfTheRings.Helpers.Window (passesCriteria)
+import LordOfTheRings.Modifier (ModifierType (MayDeclareMultipleDefenders))
 import LordOfTheRings.Phase
 import TestImport
 
@@ -58,18 +60,18 @@ spec = describe "Keywords and limits" do
 
     it "keeps them off Winged Guardian" . gameTestWith (coreDeck "tactics") $ \pid -> do
       guardian <- putAllyIntoPlay pid Allies.wingedGuardian
-      gimli <- toTarget <$> getHeroWithCode "01005"
+      legolas <- toTarget <$> getHeroWithCode "01005"
       hosts <- cardHosts (toCardCode Attachments.warAxe)
-      hosts `shouldSatisfy` elem gimli
+      hosts `shouldSatisfy` elem legolas
       hosts `shouldSatisfy` notElem guardian
 
   it "a card limited to 1 per character goes on no host with a copy" . gameTestWith (coreDeck "tactics") $ \pid -> do
-    gimli <- toTarget <$> getHeroWithCode "01005"
-    legolas <- toTarget <$> getHeroWithCode "01004"
-    _ <- putAttachmentOn pid Attachments.warAxe gimli
+    legolas <- toTarget <$> getHeroWithCode "01005"
+    thalin <- toTarget <$> getHeroWithCode "01004"
+    _ <- putAttachmentOn pid Attachments.warAxe legolas
     hosts <- cardHosts (toCardCode Attachments.warAxe)
-    hosts `shouldSatisfy` notElem gimli
-    hosts `shouldSatisfy` elem legolas
+    hosts `shouldSatisfy` notElem legolas
+    hosts `shouldSatisfy` elem thalin
 
   describe "Lembas" do
     it "cannot be played without a Noldor or Silvan hero" . gameTest $ \pid -> do
@@ -84,31 +86,75 @@ spec = describe "Keywords and limits" do
       passesCriteria (attachmentCriteriaFor pc) `shouldReturn` True
 
   describe "Sentinel" do
-    it "lets another player's character defend" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    it "is offered to its controller once the attacked player declares no defender" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
       eid <- engagedSpider one
       naith <- putAllyIntoPlay two Allies.defenderOfTheNaith
-      gimli <- heroOf two "01005"
+      legolas <- heroOf two "01005"
       run $ EnemyAttack one eid
+      questionTargets one >>= (`shouldSatisfy` notElem naith)
+      chooseLabel "$label.takeAttackUndefended" one
+      targets <- questionTargets two
+      targets `shouldSatisfy` elem naith
+      targets `shouldSatisfy` notElem legolas
+      chooseTarget two naith
+      passActions one
+      passActions two
+      getCharacterDamage naith >>= (`shouldSatisfy` (> 0))
+      (getCharacterDamage =<< heroOf one "01012") `shouldReturn` 0
+
+    it "is not offered once the attacked player declares a defender" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      eid <- engagedSpider one
+      naith <- putAllyIntoPlay two Allies.defenderOfTheNaith
+      run $ EnemyAttack one eid
+      chooseTarget one =<< heroOf one "01012"
+      questionTargets two >>= (`shouldSatisfy` notElem naith)
+
+    it "leaves the attack undefended when its controller declines" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      eid <- engagedSpider one
+      _ <- putAllyIntoPlay two Allies.defenderOfTheNaith
+      run $ EnemyAttack one eid
+      chooseLabel "$label.takeAttackUndefended" one
+      chooseLabel "$label.doNotDefend" two
+      Just (QuestionLabel prompt _ _ _) <- getQuestion one
+      prompt `shouldBe` "$label.undefendedDamage"
+
+    it "joins the defenders when the attacked player may declare several" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      eid <- engagedSpider one
+      naith <- putAllyIntoPlay two Allies.defenderOfTheNaith
+      beravor <- heroOf one "01012"
+      run $ CreateEffect $ Effect GameSource (PlayerTarget one) [MayDeclareMultipleDefenders] UntilEndOfPhase
+      run $ EnemyAttack one eid
+      chooseTarget one beravor
+      chooseLabel "$label.doneDeclaringDefenders" one
+      chooseTarget two naith
+      passActions one
+      passActions two
       targets <- questionTargets one
       targets `shouldSatisfy` elem naith
-      targets `shouldSatisfy` notElem gimli
+      targets `shouldSatisfy` elem beravor
 
     it "is gained by Guthlaf while a Gondor hero is in play" . twoPlayerTest (coreDeck "lore") $ \one two -> do
       eid <- engagedSpider one
       guthlaf <- putAllyIntoPlay two Allies.guthlaf
       run $ EnemyAttack one eid
-      questionTargets one >>= (`shouldSatisfy` elem guthlaf)
+      chooseLabel "$label.takeAttackUndefended" one
+      questionTargets two >>= (`shouldSatisfy` elem guthlaf)
 
   describe "Ranged" do
-    it "lets Brand son of Bain attack for another player, then ready one of theirs" . twoPlayerTest ((coreDeck "tactics") {heroes = ["02072", "01005", "01006"]}) $ \one two -> do
+    it "lets Brand son of Bain's controller join another player's attack, then ready one of theirs" . twoPlayerTest ((coreDeck "tactics") {heroes = ["02072", "01005", "01006"]}) $ \one two -> do
       _ <- engagedSpider one
       brand <- heroOf two "02072"
       beravor <- heroOf one "01012"
       run $ PlayerAttacks one
-      questionTargets one >>= (`shouldSatisfy` elem brand)
-      chooseTarget one brand
+      questionTargets one >>= (`shouldSatisfy` notElem brand)
       chooseTarget one beravor
       chooseLabel "$label.doneAttacking" one
+      targets <- questionTargets two
+      targets `shouldSatisfy` elem brand
+      targets `shouldSatisfy` notElem beravor
+      chooseTarget two brand
+      -- Legolas, ranged too, may still join
+      chooseLabel "$label.doneAttacking" two
       getsGame (length . (.entities.enemies)) `shouldReturn` 0
       chooseAbilityOf two brand
       heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` False
