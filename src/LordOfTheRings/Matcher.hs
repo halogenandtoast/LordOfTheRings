@@ -24,6 +24,7 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
+import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Target
 import LordOfTheRings.Trait
 import LordOfTheRings.Token (Token (Resource), countTokens)
@@ -305,3 +306,7 @@ getConditionAttachments = do
 -- | The quest card in play, as a target.
 getCurrentQuest :: (HasGame m) => m (Maybe Target)
 getCurrentQuest = getsGame (fmap toTarget . headMay . toList . entitiesQuests . gameEntities)
+
+-- | The top card of the encounter deck, if there is one.
+getTopOfEncounterDeck :: (HasGame m) => m (Maybe EncounterCard)
+getTopOfEncounterDeck = getsGame (headMay . (.encounterDeck) . toAttrs . gameScenario)
