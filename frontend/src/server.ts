@@ -131,4 +131,6 @@ export interface GameSummary {
   /** Waiting for friends to take the rest of the seats. */
   waiting: boolean
   easyMode: boolean
+  /** Who plays, in turn order, with their heroes; none until the game is dealt. */
+  seats: { name: string; threat: number; eliminated: boolean; heroes: { code: string; sphere: string | null }[] }[]
 }

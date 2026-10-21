@@ -41,6 +41,24 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           <span>{{ $t('home.threat', { threat: game.threat }) }}</span>
         </template>
       </div>
+      <!-- each player's heroes, as Arkham's rows show their investigators -->
+      <ul v-if="game.seats?.length" class="seats">
+        <li v-for="(seat, n) in game.seats" :key="n" class="seat" :class="{ eliminated: seat.eliminated }">
+          <span class="heroes">
+            <span
+              v-for="hero in seat.heroes"
+              :key="hero.code"
+              class="hero"
+              :class="hero.sphere?.toLowerCase()"
+              :style="{ backgroundImage: `url('/images/cards/${hero.code}.jpg')` }"
+            />
+          </span>
+          <span class="seat-name">{{ seat.name }}</span>
+          <span class="seat-threat" :title="$t('game.threat', { value: seat.threat })">
+            {{ seat.threat }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />
+          </span>
+        </li>
+      </ul>
     </div>
     <div v-if="deleting" class="confirm-delete">
       <span>{{ $t('home.confirmDelete') }}</span>
@@ -131,6 +149,43 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.seats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  list-style: none;
+  background: rgb(229 211 173 / 0.03);
+  border-radius: 4px;
+}
+.seat { display: flex; align-items: center; gap: 8px; }
+.seat.eliminated { opacity: 0.45; }
+.heroes { display: flex; gap: 4px; }
+/* the art off the hero card, framed in its sphere's colour */
+.hero {
+  width: 42px;
+  height: 42px;
+  border: 2px solid var(--neutral);
+  border-radius: 5px;
+  background-size: 230%;
+  background-position: 50% 28%;
+  box-shadow: 1px 1px 5px var(--shadow);
+}
+.hero.leadership { border-color: var(--leadership); }
+.hero.lore { border-color: var(--lore); }
+.hero.spirit { border-color: var(--spirit); }
+.hero.tactics { border-color: var(--tactics); }
+.seat-name { color: var(--text); font-size: 0.85em; font-weight: 600; }
+.seat-threat { display: flex; align-items: center; gap: 2px; color: var(--threat-red); font-size: 0.85em; font-weight: 700; }
+.seat-threat .icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  mask: var(--icon) center / contain no-repeat;
 }
 
 .confirm-delete {

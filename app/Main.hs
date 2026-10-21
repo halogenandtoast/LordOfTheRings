@@ -18,7 +18,7 @@ import Data.Char (isAlphaNum)
 import Data.Time.Clock (addUTCTime, nominalDay)
 import Data.Text qualified as T
 import Database.Persist.Postgresql
-import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
+import LordOfTheRings.Card (CardCode, CardDef (..), Sphere, allEncounterCards, allPlayerCards, toCardCode, toCardDef)
 import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
@@ -143,7 +143,22 @@ data GameSummary = GameSummary
   , waiting :: Bool
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
   , easyMode :: Bool
+  , seats :: [SeatSummary]
+  -- ^ who plays, in turn order, and with which heroes; none until the game is dealt
   }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+data SeatSummary = SeatSummary
+  { name :: Text
+  , threat :: Int
+  , eliminated :: Bool
+  , heroes :: [HeroSummary]
+  }
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
+
+data HeroSummary = HeroSummary {code :: CardCode, sphere :: Maybe Sphere}
   deriving stock (Generic)
   deriving anyclass (ToJSON)
 
@@ -398,6 +413,7 @@ summary (Entity gid row) | awaitingPlayers row = do
       , outcome = Nothing
       , waiting = True
       , easyMode = row.lotrGameEasyMode
+      , seats = []
       }
 summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
   Error _ -> Nothing
@@ -414,6 +430,15 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , outcome = g.outcome
         , waiting = False
         , easyMode = row.lotrGameEasyMode
+        , seats =
+            [ SeatSummary
+                p.name
+                p.threat
+                p.eliminated
+                [HeroSummary (toCardCode h) (cdSphere $ toCardDef h) | h <- toList g.entities.heroes, h.owner == pid]
+            | pid <- g.playerOrder
+            , Just p <- [Map.lookup pid g.players]
+            ]
         }
 
 getGamesR :: Handler Value
