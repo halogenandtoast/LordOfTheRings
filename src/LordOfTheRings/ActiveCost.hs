@@ -79,7 +79,7 @@ instance RunMessage ActiveCost where
       case ac.activeCostCard of
         PlayerCard card -> do
           pushAll $ playCard ac.activeCostPlayer card ac.activeCostWindows
-          push $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card)]
+          push $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card), mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card)]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

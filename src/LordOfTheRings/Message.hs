@@ -183,6 +183,15 @@ data Message
   | DiscardTopOfDeck PlayerId Int
   | -- | an enemy card put into play engaged with the player
     PutEnemyIntoPlayEngaged PlayerId EncounterCard
+  | -- | a card in the player's discard pile goes to the bottom of their deck
+    PutDiscardOnBottomOfDeck PlayerId CardId
+  | -- | a card in the player's discard pile is shuffled into their deck
+    ShuffleFromDiscardIntoDeck PlayerId CardId
+  | -- | a card in its owner's discard pile responds to the windows, as Hidden Cache does:
+    -- the card is built again to resolve it
+    RespondFromDiscard PlayerId PlayerCard [Window]
+  | -- | after travel, an action window for each player with a Travel Action to use
+    TravelActions
   | -- | the player looks at the top cards of the encounter deck, reveals 1 of them and
     -- discards the rest
     RevealOneOfTopEncounterCards PlayerId Source Int

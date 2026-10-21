@@ -7,7 +7,7 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import LordOfTheRings.Card (Card, EncounterCard, PlayerCard)
+import LordOfTheRings.Card (Card (PlayerCard), EncounterCard, PlayerCard)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.HasGame (HasGame)
 import LordOfTheRings.Effect
@@ -228,6 +228,25 @@ attackBeforeEnemies pid = lift $ withQueue_ \q ->
 
 discardTopOfDeck :: (ReverseQueue m) => PlayerId -> Int -> m ()
 discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
+
+shufflePlayerDeck :: (ReverseQueue m) => PlayerId -> m ()
+shufflePlayerDeck = push . ShufflePlayerDeck
+
+removeFromDeck :: (ReverseQueue m) => PlayerId -> CardId -> m ()
+removeFromDeck pid cid = push $ RemoveFromDeck pid cid
+
+-- | A card in the player's discard pile goes to the bottom of their deck.
+putDiscardOnBottomOfDeck :: (ReverseQueue m) => PlayerId -> CardId -> m ()
+putDiscardOnBottomOfDeck pid cid = push $ PutDiscardOnBottomOfDeck pid cid
+
+-- | A card in the player's discard pile is shuffled into their deck.
+shuffleFromDiscardIntoDeck :: (ReverseQueue m) => PlayerId -> CardId -> m ()
+shuffleFromDiscardIntoDeck pid cid = push $ ShuffleFromDiscardIntoDeck pid cid
+
+-- | An ally card, already taken from where it was, goes into play under the player's
+-- control.
+putAllyIntoPlayUnder :: (ReverseQueue m) => PlayerId -> PlayerCard -> m ()
+putAllyIntoPlayUnder pid card = push $ PutAllyIntoPlayUnder pid card
 
 -- | The player looks at the top N cards of the encounter deck, reveals 1 and discards
 -- the rest.

@@ -63,6 +63,12 @@ data WindowMatcher
     HealedByOtherWindow Timing Source
   | -- | an ally entered play, under the player and with the trait when given
     AllyEnteredPlayWindow Timing (Maybe PlayerId) (Maybe Trait)
+  | -- | a card, or any card, discarded from the top of the player's deck
+    DiscardedFromDeckWindow Timing PlayerId (Maybe CardId)
+  | -- | the player played a matching card from their hand
+    PlayedCardFromHandWindow Timing PlayerId CardMatcher
+  | -- | any hero dealt damage
+    HeroDealtDamageWindow Timing
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -107,4 +113,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HealedByOtherWindow t source, Healed _ source') -> t == timing && source /= source'
   (AllyEnteredPlayWindow t pid trait, AllyEnteredPlay _ pid' traits) ->
     t == timing && maybe True (== pid') pid && maybe True (`member` traits) trait
+  (DiscardedFromDeckWindow t pid card, DiscardedFromDeck pid' card') -> t == timing && pid == pid' && maybe True (== card') card
+  (PlayedCardFromHandWindow t pid m, PlayedCardFromHand pid' code) -> t == timing && pid == pid' && cardMatches m code
+  (HeroDealtDamageWindow t, DealtDamage (HeroTarget _) _) -> t == timing
   _ -> False

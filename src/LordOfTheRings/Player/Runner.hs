@@ -31,7 +31,7 @@ import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (PlayedFromHand), mkAfter)
+import LordOfTheRings.Window (WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand), mkAfter)
 
 instance RunMessage Player where
   runMessage msg player = case msg of
@@ -95,7 +95,7 @@ instance RunMessage Player where
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do
-        pushAll =<< inLogBlock (PlayBlock pid card) [PlayAtNoCost pid pc, CheckWindows [mkAfter $ PlayedFromHand (toTarget pc)]]
+        pushAll =<< inLogBlock (PlayBlock pid card) [PlayAtNoCost pid pc, CheckWindows [mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]]
         pure $ player & handL %~ filter ((/= cid) . (.id))
       _ -> pure player
     PlayTopOfDeckAtNoCostOrBottom pid source | pid == player.id -> do
@@ -171,6 +171,7 @@ instance RunMessage Player where
       pure player
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
+      pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromDeck pid c.id | c <- discarded]
       pure $ player & deckL .~ deck & discardL %~ (discarded <>)
     SwapHandWithDeck pid fromHand fromDeck | pid == player.id -> do
       let swap c
@@ -178,6 +179,13 @@ instance RunMessage Player where
             | c.id == fromDeck = fromMaybe c $ find ((== fromHand) . (.id)) player.hand
             | otherwise = c
       pure $ player & handL %~ map swap & deckL %~ map swap
+    PutDiscardOnBottomOfDeck pid cid | pid == player.id -> do
+      let (moved, kept) = partition ((== cid) . (.id)) player.discard
+      pure $ player & discardL .~ kept & deckL <>~ moved
+    ShuffleFromDiscardIntoDeck pid cid | pid == player.id -> do
+      let (moved, kept) = partition ((== cid) . (.id)) player.discard
+      deck <- shuffleM (moved <> player.deck)
+      pure $ player & discardL .~ kept & deckL .~ deck
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck

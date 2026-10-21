@@ -1,6 +1,7 @@
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
 import LordOfTheRings.Card (Card)
+import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
 import LordOfTheRings.Source
@@ -56,6 +57,10 @@ data WindowType
     Healed Target Source
   | -- | an ally entered play: who controls it, and its traits
     AllyEnteredPlay Target PlayerId (Set Trait)
+  | -- | a card discarded from the top of the player's deck, as its card id
+    DiscardedFromDeck PlayerId CardId
+  | -- | the player played a card from their hand, as its code
+    PlayedCardFromHand PlayerId CardCode
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
