@@ -7,8 +7,8 @@ import type { CardView, QuestionView } from '../types'
  * shows how far the declared attack gets through its defense and its remaining hit points.
  */
 export interface CombatPreview {
-  /** `damage` is what gets past its defense. */
-  defend?: { defense: number; damage: number; defeated: boolean }
+  /** `damage` is what gets past its defense, none when the attack is undefended. */
+  defend?: { defense: number | null; damage: number; defeated: boolean }
   /** The attack wearing down its defense, then its remaining hit points: each bar has
    * what is `done` already and the hovered attacker's share `adding` to it, out of `of`. */
   attack?: { bars: { stat: 'defense' | 'hit-points'; done: number; adding: number; of: number }[]; defeated: boolean }
@@ -37,6 +37,17 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
         const defense = [...q.targetIds.map((id) => byId.get(id)), hovered].reduce((sum, d) => sum + stat(d, 'defense'), 0)
         const damage = Math.max(0, stat(byId.get(q.sourceId), 'attack') - defense)
         return { [hovered.id]: { defend: { defense, damage, defeated: damage >= remaining(hovered) } } }
+      }
+
+      // an undefended attack's full damage, on every hero that could take it, to compare
+      if (prompt === '$label.undefendedDamage' && q.sourceId) {
+        const damage = stat(byId.get(q.sourceId), 'attack')
+        return Object.fromEntries(
+          q.choices.flatMap((c) => {
+            const hero = c.targetId ? byId.get(c.targetId) : undefined
+            return hero ? [[hero.id, { defend: { defense: null, damage, defeated: damage >= remaining(hero) } }]] : []
+          }),
+        )
       }
 
       const enemy = prompt === '$label.declareAttackers' ? byId.get(q.targetIds[0]) : undefined

@@ -141,7 +141,7 @@ const toggleUnless = (attached: CardView) => {
         <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
         <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
           <span class="versus">
-            <span class="defense" :title="$t('game.defense', { value: preview.defend.defense })">{{ preview.defend.defense }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/defense.svg')` }" /></span>
+            <span v-if="preview.defend.defense !== null" class="defense" :title="$t('game.defense', { value: preview.defend.defense })">{{ preview.defend.defense }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/defense.svg')` }" /></span>
             <span class="attack" :title="$t('game.combat.damage', { value: preview.defend.damage })">{{ preview.defend.damage }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/attack.svg')` }" /></span>
           </span>
           <span v-if="preview.defend.defeated">{{ $t('game.combat.defeated') }}</span>
@@ -378,6 +378,8 @@ const toggleUnless = (attached: CardView) => {
   text-align: center;
   pointer-events: none;
 }
+/* upright on an exhausted card, which can still take an undefended attack's damage */
+.card.exhausted .defend-preview { place-self: center; margin-top: 0; transform: rotate(-90deg); }
 .defend-preview .versus { display: flex; }
 .defend-preview .versus > span { display: flex; align-items: center; gap: 3px; padding: 0 5px; }
 .defend-preview .versus > span + span { border-left: 1px solid var(--line); }
