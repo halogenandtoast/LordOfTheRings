@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Hero
+import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 
@@ -56,6 +57,22 @@ sharedHeroes deckLists = [title | (title, n) <- mapToList counts, n > (1 :: Int)
  where
   counts = Map.fromListWith (+) [(title, 1) | dl <- deckLists, title <- ordNub (mapMaybe heroTitle dl.heroes)]
   heroTitle code = (\(Name title _) -> title) . (.cdName) <$> Map.lookup code allPlayerCards
+
+-- | Why the deck breaks the deckbuilding rules, if it does: 1 to 3 heroes with no two
+-- sharing a title, and no more copies of a title than its deck limit, 3 for most cards
+-- and 1 for those limited to 1 per deck. Cards the game does not know are not counted.
+deckProblem :: DeckList -> Maybe Text
+deckProblem dl
+  | null dl.heroes || length dl.heroes > 3 = Just $ ikey "error.heroCount"
+  | notNull twice = Just $ ikeyWith "error.duplicateHeroes" [textVar "heroes" (intercalate ", " twice)]
+  | notNull over = Just $ ikeyWith "error.overDeckLimit" [textVar "cards" (intercalate ", " over)]
+  | otherwise = Nothing
+ where
+  title def = let Name t _ = cdName def in t
+  defOf code = Map.lookup code allPlayerCards
+  twice = [t | (t, n) <- mapToList (Map.fromListWith (+) [(title d, 1 :: Int) | Just d <- map defOf dl.heroes]), n > 1]
+  copies = Map.fromListWith (\(a, l) (b, l') -> (a + b, min l l')) [(title d, (n, cdDeckLimit d)) | (code, n) <- dl.cards, Just d <- [defOf code]]
+  over = [t | (t, (n, limit)) <- mapToList copies, n > limit]
 
 loadPlayer :: (MonadRandom m) => Text -> DeckList -> m (Either DeckException (Player, [Hero]))
 loadPlayer name dl = do

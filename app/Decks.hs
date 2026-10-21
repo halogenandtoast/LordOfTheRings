@@ -34,7 +34,7 @@ import Data.Text qualified as T
 import Database.Persist
 import Database.Persist.Sql (SqlBackend, fromSqlKey)
 import LordOfTheRings.Card (CardCode (..), allPlayerCards)
-import LordOfTheRings.Decklist (DeckList (..))
+import LordOfTheRings.Decklist (DeckList (..), deckProblem)
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import LordOfTheRings.Prelude
 import Model
@@ -206,6 +206,7 @@ previewDeck db parsed =
 -- at least once.
 checkedDeckList :: DeckList -> Either Text DeckList
 checkedDeckList deckList
+  | Just problem <- deckProblem deckList = Left problem
   | null unknown && all ((> 0) . snd) deckList.cards && not (null deckList.heroes) = Right deckList
   | otherwise = Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
  where
@@ -428,8 +429,10 @@ deckListFor db userId key =
 -- many, as the engine deals them.
 listFrom :: CardDb -> [(Text, Maybe Text, Int)] -> [(Text, Maybe Text, Int)] -> Either Text DeckList
 listFrom db heroes draw
-  | null unknown = Right $ DeckList (map (CardCode . code) heroes) [(CardCode (code l), n) | l@(_, _, n) <- draw]
+  | null unknown, Just problem <- deckProblem dealt = Left problem
+  | null unknown = Right dealt
   | otherwise = Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
  where
+  dealt = DeckList (map (CardCode . code) heroes) [(CardCode (code l), n) | l@(_, _, n) <- draw]
   code (source, ours, _) = fromMaybe source (flip cardRingsdbCode db =<< ours)
   unknown = [fromMaybe (code l) (flip cardName db =<< ours) | l@(_, ours, _) <- heroes <> draw, not (Map.member (CardCode $ code l) allPlayerCards)]
