@@ -10,10 +10,15 @@ import LordOfTheRings.Target
 import LordOfTheRings.Timing (Timing (After))
 
 mkAbility :: (Sourceable a) => a -> Int -> AbilityType -> Ability
-mkAbility a idx aType = Ability (toSource a) idx aType NoCriteria NoLimit
+mkAbility a idx aType = Ability (toSource a) idx aType NoCriteria NoLimit False
 
 restricted :: (Sourceable a) => a -> Int -> Criterion -> AbilityType -> Ability
-restricted a idx criteria aType = Ability (toSource a) idx aType criteria NoLimit
+restricted a idx criteria aType = Ability (toSource a) idx aType criteria NoLimit False
+
+-- | Any player may trigger the ability, as "Any player may trigger this ability" reads;
+-- its criteria read 'ActivePlayer' as the player it is offered to.
+anyPlayer :: Ability -> Ability
+anyPlayer ab = ab {abilityAnyPlayer = True}
 
 limited :: AbilityLimit -> Ability -> Ability
 limited l ab = ab {abilityLimit = l}

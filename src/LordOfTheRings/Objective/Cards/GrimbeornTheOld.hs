@@ -13,12 +13,9 @@ grimbeornTheOld :: ObjectiveCard GrimbeornTheOld
 grimbeornTheOld = objective GrimbeornTheOld Cards.grimbeornTheOld
 
 -- | Action: Spend 1 Lore resource to place that resource on Grimbeorn the Old.
---
--- ponytail: the first player is the one offered the action, as with every encounter
--- card's ability.
 instance HasAbilities GrimbeornTheOld where
   getAbilities (GrimbeornTheOld a) =
-    [restricted a 1 (ResourcesOfSphere FirstPlayer Lore 1) $ ActionAbility Free | a.placement == StagingArea]
+    [anyPlayer $ restricted a 1 (ResourcesOfSphere ActivePlayer Lore 1) $ ActionAbility Free | a.placement == StagingArea]
 
 -- | If Grimbeorn the Old has 8 or more resource tokens on him, he joins the first player as
 -- an ally.

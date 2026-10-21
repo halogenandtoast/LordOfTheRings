@@ -15,7 +15,8 @@ athelas = objective Athelas Cards.athelas
 -- attach Athelas to that hero.
 instance HasAbilities Athelas where
   getAbilities (Athelas a) =
-    [ restricted a 1 (maybe NoCriteria CardNotInPlay a.objectiveGuard <> exists (HeroControlledBy FirstPlayer <> ReadyHero))
+    [ anyPlayer
+        $ restricted a 1 (maybe NoCriteria CardNotInPlay a.objectiveGuard <> exists (HeroControlledBy ActivePlayer <> ReadyHero))
         $ ActionAbility Free
     | a.placement == StagingArea
     ]

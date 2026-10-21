@@ -53,12 +53,14 @@ data Ability = Ability
   , abilityType :: AbilityType
   , abilityCriteria :: Criterion
   , abilityLimit :: AbilityLimit
+  , -- | any player may trigger it, not only its controller
+    abilityAnyPlayer :: Bool
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON)
 
 instance FromJSON Ability where
-  parseJSON = genericParseJSON defaultOptions . withDefaults [("abilityLimit", toJSON NoLimit)]
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("abilityLimit", toJSON NoLimit), ("abilityAnyPlayer", toJSON False)]
 
 -- | An ability used under a limit, kept until the limit's phase or round ends.
 data UsedAbility = UsedAbility

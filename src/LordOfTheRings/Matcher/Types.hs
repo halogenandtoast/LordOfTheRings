@@ -13,7 +13,8 @@ import LordOfTheRings.Trait
 data PlayerMatcher
   = PlayerWithId PlayerId
   | FirstPlayer
-  | ActivePlayer
+  | -- | the player an action is offered to, while its criteria are checked
+    ActivePlayer
   | AnyPlayer
   | NotPlayer PlayerMatcher
   | -- | a player whose threat is at least this, as Valour reads

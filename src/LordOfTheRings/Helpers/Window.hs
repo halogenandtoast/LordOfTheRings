@@ -134,8 +134,13 @@ getActionAbilities :: (HasGame m) => PlayerId -> m [Ability]
 getActionAbilities pid = do
   abilities <- getAllAbilities
   flip filterM abilities \ab -> case ab.abilityType of
-    ActionAbility cost -> andM [(== Just pid) <$> abilityController ab, passesCriteria ab.abilityCriteria, canPay cost, withinLimit ab]
+    ActionAbility cost -> andM [(ab.abilityAnyPlayer ||) . (== Just pid) <$> abilityController ab, passesCriteriaFor pid ab.abilityCriteria, canPay cost, withinLimit ab]
     _ -> pure False
+
+-- | The criteria as they stand for the player an action is offered to, whom
+-- 'ActivePlayer' matches.
+passesCriteriaFor :: (HasGame m) => PlayerId -> Criterion -> m Bool
+passesCriteriaFor pid c = runReadGame (passesCriteria c) . (\g -> g {gameActivePlayer = pid}) <$> getGame
 
 abilityKey :: Ability -> (Source, Int)
 abilityKey ab = (ab.abilitySource, ab.abilityIndex)

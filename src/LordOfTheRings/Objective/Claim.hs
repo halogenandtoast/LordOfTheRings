@@ -15,7 +15,8 @@ import LordOfTheRings.Target
 -- When claimed, attach it to a hero you control.
 claimAbility :: ObjectiveAttrs -> [Ability]
 claimAbility a =
-  [ restricted a 1 (maybe NoCriteria CardNotInPlay a.objectiveGuard) $ ActionAbility (RaiseThreatCost 2)
+  [ anyPlayer
+      $ restricted a 1 (maybe NoCriteria CardNotInPlay a.objectiveGuard) $ ActionAbility (RaiseThreatCost 2)
   | a.placement == StagingArea
   ]
 
