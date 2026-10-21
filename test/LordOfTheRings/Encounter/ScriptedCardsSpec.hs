@@ -49,6 +49,7 @@ spec = do
       run DealShadowCards
       eowyn <- getHeroWithCode "01007"
       run $ DefendWith pid (toId spider) (toTarget eowyn)
+      passActions pid
       (.threat) <$> getPlayer pid `shouldReturn` 4
 
     it "raises it by 8 when the attack is undefended" . gameTest $ \pid -> do

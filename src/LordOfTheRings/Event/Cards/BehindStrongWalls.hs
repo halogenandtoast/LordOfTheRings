@@ -2,7 +2,6 @@ module LordOfTheRings.Event.Cards.BehindStrongWalls (behindStrongWalls) where
 
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
-import LordOfTheRings.Helpers.Character (characterCardDef)
 import LordOfTheRings.Trait (Trait (Gondor))
 
 newtype BehindStrongWalls = BehindStrongWalls EventAttrs
@@ -11,18 +10,20 @@ newtype BehindStrongWalls = BehindStrongWalls EventAttrs
 
 -- | Action: Ready a defending Gondor character. That character gets +1 defense until the
 -- end of the phase.
---
--- ponytail: an attack has no action window of its own, so this is played in the window
--- after a defender is declared, and offered for any defender; it does nothing to one
--- without the Gondor trait.
 behindStrongWalls :: EventCard BehindStrongWalls
-behindStrongWalls = eventWith BehindStrongWalls Cards.behindStrongWalls (windowL ?~ DefenderDeclaredWindow After Nothing)
+behindStrongWalls =
+  eventWith BehindStrongWalls Cards.behindStrongWalls (criteriaL .~ CharactersAtLeast 1 gondorHero gondorAlly)
+
+gondorHero :: HeroMatcher
+gondorHero = HeroWithTrait Gondor <> DefendingHero
+
+gondorAlly :: AllyMatcher
+gondorAlly = AllyWithTrait Gondor <> DefendingAlly
 
 instance RunMessage BehindStrongWalls where
   runMessage msg e@(BehindStrongWalls attrs) = case msg of
-    PlayEvent pid card windows | card.id == toId attrs -> do
-      defenders <- flip filterM [d | Window _ (DeclaredAsDefender d _) <- windows] \d ->
-        hasTrait Gondor d =<< characterCardDef d
+    PlayEvent pid card _ | card.id == toId attrs -> do
+      defenders <- selectCharacters gondorHero gondorAlly
       chooseOrRunOneM pid do
         questionLabeled "behindStrongWalls.choose"
         causedBy attrs

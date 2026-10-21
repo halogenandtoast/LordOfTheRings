@@ -12,15 +12,10 @@ newtype FoeHammer = FoeHammer EventAttrs
 
 -- | Response: After a hero you control attacks and destroys an enemy, exhaust a Weapon
 -- card attached to that hero to draw 3 cards.
---
--- ponytail: offered while a hero of yours has a Weapon, whether or not that hero made the
--- attack or the Weapon is ready; the effect checks both.
 foeHammer :: EventCard FoeHammer
 foeHammer =
   eventWith FoeHammer Cards.foeHammer \a ->
-    a
-      & windowL ?~ EnemyDestroyedByAttackWindow After Nothing
-      & criteriaL .~ exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithAttached Weapon)
+    a & windowL ?~ EnemyDestroyedByHeroWindow After (HeroControlledBy (PlayerWithId a.owner) <> HeroWithReadyAttached Weapon)
 
 instance RunMessage FoeHammer where
   runMessage msg e@(FoeHammer attrs) = case msg of

@@ -45,9 +45,13 @@ data HeroMatcher
   | ExhaustedHero
   | CommittedHero
   | AttackingHero
+  | -- | a hero defending the attack being resolved
+    DefendingHero
   | PrisonerHero
   | -- | a hero with an attachment, objective or condition of the trait attached
     HeroWithAttached Trait
+  | -- | a hero with a ready attachment of the trait attached
+    HeroWithReadyAttached Trait
   | -- | a hero with a resource in its pool
     HeroWithResources
   | -- | a hero with a copy of the card attached
@@ -86,6 +90,8 @@ data AllyMatcher
   | ExhaustedAlly
   | CommittedAlly
   | AttackingAlly
+  | -- | an ally defending the attack being resolved
+    DefendingAlly
   | UniqueAlly
   | -- | an ally that entered play this round
     AllyEnteredPlayThisRound

@@ -122,8 +122,6 @@ data Message
   | ActionWindow PlayerId
   | -- | an action window within an attack, asked only when the player has an action to take
     OptionalActionWindow PlayerId
-  | -- | an enemy's attack is over: what lasts until the end of the attack ends
-    EndEnemyAttack
   | PayCost CostId
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int

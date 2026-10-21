@@ -242,7 +242,6 @@ runGameMessage msg g = case msg of
     a' <- runEach msg a
     pure $ g & leftPlayL . ix aid .~ a'
   ForgetLeftPlay aid -> pure $ g & leftPlayL %~ Map.delete aid
-  EndEnemyAttack -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   Setup -> do
     pushAll [DoStep n Setup | n <- [1 .. 7]]
@@ -454,30 +453,36 @@ runGameMessage msg g = case msg of
     pushAll =<< inLogBlock (EnemyAttackBlock pid eid) [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
     pure g
   DefendWith pid eid defender -> do
+    order <- getPlayerOrder
     pushAll
-      [ CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
-      , ResolveShadow eid pid (Just defender)
-      , AttackDamage eid defender
-      , CheckWindows [mkAfter $ EnemyAttacking eid pid, mkAfter $ DefendedAttack defender eid]
-      ]
+      $ [ defendingEffect defender
+        , CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
+        ]
+      <> map OptionalActionWindow order
+      <> [ ResolveShadow eid pid (Just defender)
+         , AttackDamage eid defender
+         , CheckWindows [mkAfter $ EnemyAttacking eid pid, mkAfter $ DefendedAttack defender eid]
+         ]
     pure g
   DeclareDefenders pid eid chosen -> do
+    order <- getPlayerOrder
     defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< possibleDefenders pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     push
       $ questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
-      $ [ targetLabel d $ [Exhaust d | Just True <- [lookup d exhausts]] <> [CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
+      $ [ targetLabel d $ [Exhaust d | Just True <- [lookup d exhausts]] <> [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
         | d <- defenders
         ]
       <> case chosen of
         [] -> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
         first : _ ->
           [ Label (ikey "label.doneDeclaringDefenders")
-              [ ResolveShadow eid pid (Just first)
-              , DefendedByMany pid eid chosen
-              , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
-              ]
+              $ map OptionalActionWindow order
+              <> [ ResolveShadow eid pid (Just first)
+                 , DefendedByMany pid eid chosen
+                 , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
+                 ]
           ]
     pure g
   DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)

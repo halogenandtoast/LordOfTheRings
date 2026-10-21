@@ -33,6 +33,7 @@ spec = describe "Combat phase" do
     passActions pid
     eowyn <- getHeroWithCode "01007"
     chooseTarget pid eowyn
+    passActions pid
     eowyn' <- getHeroWithCode "01007"
     eowyn'.damage `shouldBe` 2
     heroExhausted (toAttrs eowyn') `shouldBe` True

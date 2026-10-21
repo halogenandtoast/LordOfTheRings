@@ -66,8 +66,11 @@ matchHero matcher hero = case matcher of
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
   AttackingHero -> pure $ heroAttacking (toAttrs hero)
+  DefendingHero -> isDefending (toTarget hero)
   PrisonerHero -> pure $ heroPrisoner (toAttrs hero)
   HeroWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget hero)
+  HeroWithReadyAttached trait ->
+    getsGame (any (\a -> a.placement == AttachedTo (toTarget hero) && trait `member` cdCardTraits (toCardDef a) && not (attachmentExhausted $ toAttrs a)) . toList . entitiesAttachments . gameEntities)
   HeroWithAttachment code ->
     getsGame (any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code) . toList . entitiesAttachments . gameEntities)
   HeroWithResources -> pure $ hero.resources > 0
@@ -97,6 +100,7 @@ matchAlly matcher ally = case matcher of
   ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
   AttackingAlly -> pure $ allyAttacking (toAttrs ally)
+  DefendingAlly -> isDefending (toTarget ally)
   UniqueAlly -> pure $ cdUnique (toCardDef ally)
   AllyEnteredPlayThisRound ->
     getsGame (any (\e -> effectTarget e == toTarget ally && EnteredPlayThisRound `elem` effectModifiers e) . gameEffects)
@@ -155,6 +159,10 @@ passesUnique card
         , getsGame $ all ((/= card.name) . cdName . toCardDef) . toList . (.entities.attachments)
         ]
   | otherwise = pure True
+
+-- | Whether the character is defending the attack being resolved.
+isDefending :: (HasGame m) => Target -> m Bool
+isDefending target = elem Defending . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
 
 -- | A printed trait, or one a modifier grants.
 hasTrait :: (HasGame m) => Trait -> Target -> CardDef -> m Bool

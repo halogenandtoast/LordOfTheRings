@@ -74,6 +74,10 @@ trapped pid def = do
   trap <- getsGame (toTarget . fromJustNote "no trap" . headMay . toList . (.entities.attachments))
   (trap,) <$> stagedOrcs
 
+-- | Whether the open question offers the target.
+offers :: PlayerId -> Target -> GameT Bool
+offers pid t = maybe False (any \case TargetLabel t' _ -> t == t'; _ -> False) . fmap questionChoices <$> getQuestion pid
+
 -- | The tests start without setup, so the threat starts at 0.
 threatTo40 :: PlayerId -> GameT ()
 threatTo40 pid = do
@@ -197,6 +201,16 @@ spec = describe "Defenders of Gondor" do
     exhausted b `shouldReturn` False
     getDefense b `shouldReturn` 3
 
+  it "Behind Strong Walls is not offered while no Gondor character defends" . dogTest $ \pid -> do
+    eid <- stagedOrcs
+    run $ PlaceEnemy eid (EngagedWith pid)
+    walls <- putCardIntoHand pid Events.behindStrongWalls
+    give mablung 1
+    outrider <- putAllyIntoPlay pid Allies.westfoldOutrider
+    run $ EnemyAttack pid eid
+    chooseTarget pid outrider
+    offers pid (CardIdTarget walls.id) `shouldReturn` False
+
   it "Ranger Spikes waits in staging and traps the next enemy" . dogTest $ \pid -> do
     (spikes, eid) <- trapped pid Attachments.rangerSpikes
     placementOf spikes `shouldReturn` AttachedTo (toTarget eid)
@@ -265,6 +279,18 @@ spec = describe "Defenders of Gondor" do
     chooseTarget pid (CardIdTarget hammer.id)
     exhausted sword `shouldReturn` True
     length . (.hand) <$> getPlayer pid `shouldReturn` (handBefore - 1 + 3)
+
+  it "Foe-hammer is not offered while the hero's Weapon is exhausted" . dogTest $ \pid -> do
+    b <- hero boromir
+    sword <- putAttachmentOn pid Attachments.valiantSword b
+    run $ Exhaust sword
+    eid <- stagedOrcs
+    run $ PlaceEnemy eid (EngagedWith pid)
+    hammer <- putCardIntoHand pid Events.foeHammer
+    run $ PlayerAttacks pid
+    chooseTarget pid b
+    chooseLabel "$label.doneAttacking" pid
+    offers pid (CardIdTarget hammer.id) `shouldReturn` False
 
   it "Coney in a Trap stops an engaged enemy attacking this round" . dogTest $ \pid -> do
     _ <- putHero pid Heroes.faramir

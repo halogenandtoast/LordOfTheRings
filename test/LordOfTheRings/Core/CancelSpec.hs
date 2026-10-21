@@ -51,6 +51,7 @@ spec = do
       run $ BeginPhase CombatPhase
       passActions pid
       chooseTarget pid =<< hero "01008"
+      passActions pid
       chooseTarget pid (CardIdTarget card.id)
       -- King Spider's shadow would have the defending player exhaust a character
       Just (QuestionLabel prompt _ _ _) <- getQuestion pid

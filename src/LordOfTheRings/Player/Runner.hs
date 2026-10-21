@@ -77,6 +77,11 @@ instance RunMessage Player where
     ActionWindow pid | pid == player.id -> do
       actionWindow (ikey "label.takeAction") (ikey "label.pass") $ ActionWindow pid
       pure player
+    OptionalActionWindow pid | pid == player.id -> do
+      playable <- filterM (canPlay player) player.hand
+      actions <- getActionAbilities player.id
+      unless (null playable && null actions) $ actionWindow (ikey "label.takeAction") (ikey "label.pass") $ OptionalActionWindow pid
+      pure player
     PlayCard pid cid | pid == player.id -> do
       push $ PlayCardInWindow pid cid []
       pure player
