@@ -12,6 +12,7 @@ import LordOfTheRings.Objective.Cards.DungeonTorch
 import LordOfTheRings.Objective.Cards.GandalfsMap
 import LordOfTheRings.Objective.Cards.ShadowKey
 import LordOfTheRings.Objective.Cards.SignsOfGollum
+import LordOfTheRings.Objective.Cards.GrimbeornTheOld
 import LordOfTheRings.Objective.Runner ()
 import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Prelude
@@ -40,5 +41,5 @@ allObjectives :: Map CardCode SomeObjectiveCard
 allObjectives =
   Map.fromList
     [ (toCardCode builder, card)
-    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum]
+    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld]
     ]

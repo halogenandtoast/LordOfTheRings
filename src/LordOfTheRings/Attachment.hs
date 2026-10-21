@@ -22,6 +22,11 @@ import LordOfTheRings.Attachment.Cards.StewardOfGondor
 import LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
 import LordOfTheRings.Attachment.Cards.UnexpectedCourage
 import LordOfTheRings.Attachment.Cards.SongOfKings
+import LordOfTheRings.Attachment.Cards.DunedainWarning
+import LordOfTheRings.Attachment.Cards.BornAloft
+import LordOfTheRings.Attachment.Cards.NorAmIAStranger
+import LordOfTheRings.Attachment.Cards.ABurningBrand
+import LordOfTheRings.Attachment.Cards.SongOfWisdom
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -70,5 +75,10 @@ allAttachments =
         , SomeAttachmentCard dunedainMark
         , SomeAttachmentCard mendorsSupport
         , SomeAttachmentCard songOfKings
+        , SomeAttachmentCard dunedainWarning
+        , SomeAttachmentCard bornAloft
+        , SomeAttachmentCard norAmIAStranger
+        , SomeAttachmentCard aBurningBrand
+        , SomeAttachmentCard songOfWisdom
         ]
     ]

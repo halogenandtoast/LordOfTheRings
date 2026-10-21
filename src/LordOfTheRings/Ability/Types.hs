@@ -17,8 +17,6 @@ data AbilityCost
   | RaiseThreatCost Int
   | -- | the player spends resources of the sphere from their heroes' pools
     SphereResourceCost PlayerId Sphere Int
-  | -- | the card discards itself from play
-    DiscardCost Target
   | Costs [AbilityCost]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

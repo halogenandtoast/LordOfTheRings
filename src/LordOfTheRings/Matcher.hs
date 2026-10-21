@@ -123,6 +123,7 @@ matchLocation matcher location = case matcher of
   LocationInStagingArea -> pure $ location.placement == StagingArea
   IsActiveLocation -> pure $ location.placement == ActiveLocation
   LocationWithTrait trait -> hasTrait trait (toTarget location) (toCardDef location)
+  LocationWithCardCode code -> pure $ toCardCode location == code
   AnyLocation -> pure True
   NotLocation m -> not <$> matchLocation m location
   LocationMatchAll ms -> allM (`matchLocation` location) ms
@@ -228,6 +229,10 @@ attachedWithTrait trait host = do
     $ [toTarget a | a <- toList es.attachments, on a, trait `member` cdCardTraits (toCardDef a)]
     <> [toTarget o | o <- toList es.objectives, on o, trait `member` cdCardTraits (toCardDef o)]
     <> [toTarget t | t <- toList es.treacheries, on t, trait `member` cdCardTraits (toCardDef t)]
+
+-- | What the treacheries with the card code are attached to.
+hostsOfTreachery :: (HasGame m) => CardCode -> m [Target]
+hostsOfTreachery code = getsGame \g -> [host | t <- toList g.entities.treacheries, toCardCode t == code, AttachedTo host <- [t.placement]]
 
 -- | Objectives in play with the trait: in the staging area or attached.
 objectivesWithTrait :: (HasGame m) => Trait -> m [Objective]

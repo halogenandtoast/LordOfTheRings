@@ -73,6 +73,7 @@ allEventCards =
       , theEaglesAreComing
       , musteringTheRohirrim
       , stridersPath
+      , secondBreakfast
       ]
 
 everVigilant :: CardDef
@@ -248,3 +249,6 @@ musteringTheRohirrim = event "02007" "Mustering the Rohirrim" Spirit (StaticCost
 
 stridersPath :: CardDef
 stridersPath = event "02009" "Strider's Path" Lore (StaticCost 1)
+
+secondBreakfast :: CardDef
+secondBreakfast = event "02027" "Second Breakfast" Leadership (StaticCost 1)

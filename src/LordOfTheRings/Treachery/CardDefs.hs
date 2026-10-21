@@ -32,6 +32,9 @@ allTreacheryCards =
       , falseLead
       , flooding
       , oldWivesTales
+      , aFrightenedBeast
+      , sacked
+      , roastedSlowly
       ]
 
 eyesOfTheForest :: CardDef
@@ -110,4 +113,24 @@ oldWivesTales =
   (treachery "02024" "Old Wives' Tales" TheHuntForGollum 3)
     { cdCardTraits = setFromList [Gossip]
     , cdEasyModeQuantity = Just 1
+    }
+
+aFrightenedBeast :: CardDef
+aFrightenedBeast =
+  (treachery "02047" "A Frightened Beast" ConflictAtTheCarrock 3)
+    { cdEasyModeQuantity = Just 1
+    }
+
+sacked :: CardDef
+sacked =
+  (treachery "02048" "Sacked!" ConflictAtTheCarrock 5)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 4
+    }
+
+roastedSlowly :: CardDef
+roastedSlowly =
+  (treachery "02049" "Roasted Slowly" ConflictAtTheCarrock 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

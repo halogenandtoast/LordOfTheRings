@@ -34,6 +34,7 @@ import LordOfTheRings.Event.Cards.CampfireTales
 import LordOfTheRings.Event.Cards.TheEaglesAreComing
 import LordOfTheRings.Event.Cards.MusteringTheRohirrim
 import LordOfTheRings.Event.Cards.StridersPath
+import LordOfTheRings.Event.Cards.SecondBreakfast
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -81,5 +82,6 @@ allEvents =
         , SomeEventCard theEaglesAreComing
         , SomeEventCard musteringTheRohirrim
         , SomeEventCard stridersPath
+        , SomeEventCard secondBreakfast
         ]
     ]

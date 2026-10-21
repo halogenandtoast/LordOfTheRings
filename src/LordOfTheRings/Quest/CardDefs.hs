@@ -30,6 +30,8 @@ allQuestCards =
       , theHuntBegins
       , aNewTerrorAbroad
       , onTheTrail
+      , grimbeornsQuest
+      , againstTheTrolls
       ]
 
 fliesAndSpiders :: CardDef
@@ -70,3 +72,9 @@ aNewTerrorAbroad = quest "02012" "A New Terror Abroad" TheHuntForGollum 2 10
 
 onTheTrail :: CardDef
 onTheTrail = quest "02013" "On the Trail" TheHuntForGollum 3 8
+
+grimbeornsQuest :: CardDef
+grimbeornsQuest = quest "02035" "Grimbeorn's Quest" ConflictAtTheCarrock 1 7
+
+againstTheTrolls :: CardDef
+againstTheTrolls = quest "02036" "Against the Trolls" ConflictAtTheCarrock 2 1

@@ -34,6 +34,10 @@ allLocationCards =
       , riverNinglor
       , theEastBank
       , theWestBank
+      , theCarrock
+      , riverLangflood
+      , beePastures
+      , oakWoodGrove
       ]
 
 greatForestWeb :: CardDef
@@ -145,4 +149,27 @@ theWestBank =
   (location "02019" "The West Bank" TheHuntForGollum 2 3 3)
     { cdCardTraits = setFromList [Riverland]
     , cdShadowEffect = True
+    }
+
+theCarrock :: CardDef
+theCarrock =
+  (location "02043" "The Carrock" ConflictAtTheCarrock 1 2 6)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Riverland]
+    }
+
+riverLangflood :: CardDef
+riverLangflood =
+  (location "02044" "River Langflood" ConflictAtTheCarrock 4 2 3)
+    { cdCardTraits = setFromList [Riverland]
+    , cdEasyModeQuantity = Just 2
+    }
+
+beePastures :: CardDef
+beePastures = location "02045" "Bee Pastures" ConflictAtTheCarrock 3 1 2
+
+oakWoodGrove :: CardDef
+oakWoodGrove =
+  (location "02046" "Oak-wood Grove" ConflictAtTheCarrock 3 2 1)
+    { cdCardTraits = setFromList [Forest]
     }

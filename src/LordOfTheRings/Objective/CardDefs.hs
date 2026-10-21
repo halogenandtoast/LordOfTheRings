@@ -22,6 +22,7 @@ allObjectiveCards =
       , shadowKey
       , mendor
       , signsOfGollum
+      , grimbeornTheOld
       ]
 
 gandalfsMap :: CardDef
@@ -59,4 +60,11 @@ signsOfGollum =
   (objective "02014" "Signs of Gollum" TheHuntForGollum 4)
     { cdCardTraits = setFromList [Clue]
     , cdKeywords = setFromList [Guarded]
+    }
+
+grimbeornTheOld :: CardDef
+grimbeornTheOld =
+  ((objective "02037" "Grimbeorn the Old" ConflictAtTheCarrock 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 4, cdDefense = Just 3, cdHitPoints = Just 10 })
+    { cdUnique = True
     }

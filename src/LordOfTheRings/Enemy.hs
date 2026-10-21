@@ -29,6 +29,11 @@ import LordOfTheRings.Enemy.Cards.WolfRider
 import LordOfTheRings.Enemy.Cards.OrcGuard
 import LordOfTheRings.Enemy.Cards.GoblintownScavengers
 import LordOfTheRings.Enemy.Cards.HuntersFromMordor
+import LordOfTheRings.Enemy.Cards.Louis
+import LordOfTheRings.Enemy.Cards.Morris
+import LordOfTheRings.Enemy.Cards.Stuart
+import LordOfTheRings.Enemy.Cards.Rupert
+import LordOfTheRings.Enemy.Cards.MuckAdder
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -82,5 +87,10 @@ allEnemys =
         , SomeEnemyCard ungoliantsSwarm
         , SomeEnemyCard goblintownScavengers
         , SomeEnemyCard huntersFromMordor
+        , SomeEnemyCard louis
+        , SomeEnemyCard morris
+        , SomeEnemyCard stuart
+        , SomeEnemyCard rupert
+        , SomeEnemyCard muckAdder
         ]
     ]

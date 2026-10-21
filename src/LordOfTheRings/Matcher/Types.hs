@@ -137,6 +137,7 @@ data LocationMatcher
   | LocationInStagingArea
   | IsActiveLocation
   | LocationWithTrait Trait
+  | LocationWithCardCode CardCode
   | AnyLocation
   | NotLocation LocationMatcher
   | LocationMatchAll [LocationMatcher]

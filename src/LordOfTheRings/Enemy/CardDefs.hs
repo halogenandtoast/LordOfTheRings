@@ -39,6 +39,11 @@ allEnemyCards =
       , ungoliantsSwarm
       , goblintownScavengers
       , huntersFromMordor
+      , louis
+      , morris
+      , stuart
+      , rupert
+      , muckAdder
       ]
 
 kingSpider :: CardDef
@@ -201,6 +206,42 @@ huntersFromMordor :: CardDef
 huntersFromMordor =
   (enemy "02021" "Hunters from Mordor" TheHuntForGollum 5 34 2 2 2 6)
     { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+louis :: CardDef
+louis =
+  (enemy "02038" "Louis" ConflictAtTheCarrock 1 34 2 4 2 10)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Troll]
+    }
+
+morris :: CardDef
+morris =
+  (enemy "02039" "Morris" ConflictAtTheCarrock 1 34 2 4 2 10)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Troll]
+    }
+
+stuart :: CardDef
+stuart =
+  (enemy "02040" "Stuart" ConflictAtTheCarrock 1 34 2 4 2 10)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Troll]
+    }
+
+rupert :: CardDef
+rupert =
+  (enemy "02041" "Rupert" ConflictAtTheCarrock 1 34 2 4 2 10)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Troll]
+    }
+
+muckAdder :: CardDef
+muckAdder =
+  (enemy "02042" "Muck Adder" ConflictAtTheCarrock 4 20 1 2 0 4)
+    { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }

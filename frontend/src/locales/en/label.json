@@ -36,6 +36,17 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "moveSignal": "Attach it to another hero",
+  "aFrightenedBeast": {
+    "cancel": "Discard a Creature ally to cancel A Frightened Beast",
+    "allow": "Let it resolve"
+  },
+  "sacked": {
+    "attach": "Attach Sacked! to a hero"
+  },
+  "conflictAtTheCarrock": {
+    "discardSacked": "You may discard a Sacked! card from play"
+  },
   "searchTake": "Take cards into your hand",
   "revealOne": "Reveal 1 of these cards; the rest are discarded",
   "payOrDiscard": "Pay 1 resource or discard the card",

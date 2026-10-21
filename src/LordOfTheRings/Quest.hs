@@ -19,6 +19,8 @@ import LordOfTheRings.Quest.Cards.ToTheRiver
 import LordOfTheRings.Quest.Cards.TheHuntBegins
 import LordOfTheRings.Quest.Cards.ANewTerrorAbroad
 import LordOfTheRings.Quest.Cards.OnTheTrail
+import LordOfTheRings.Quest.Cards.GrimbeornsQuest
+import LordOfTheRings.Quest.Cards.AgainstTheTrolls
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -62,5 +64,7 @@ allQuests =
         , SomeQuestCard theHuntBegins
         , SomeQuestCard aNewTerrorAbroad
         , SomeQuestCard onTheTrail
+        , SomeQuestCard grimbeornsQuest
+        , SomeQuestCard againstTheTrolls
         ]
     ]

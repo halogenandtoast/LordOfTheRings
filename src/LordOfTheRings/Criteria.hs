@@ -5,6 +5,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
+import LordOfTheRings.Sphere (Sphere)
 
 data Criterion
   = NoCriteria
@@ -18,6 +19,8 @@ data Criterion
   | DuringPhase Phase
   | -- | no enemy or location in play is that card
     CardNotInPlay CardId
+  | -- | a matching player has this many resources of the sphere to spend
+    ResourcesOfSphere PlayerMatcher Sphere Int
   | -- | nothing stops a player card cancelling an encounter card's effects
     EncounterEffectsCancelable
   | Criteria [Criterion]

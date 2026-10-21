@@ -63,6 +63,11 @@ allAttachmentCards =
       , hornOfTheMark
       , valiantSword
       , songOfKings
+      , dunedainWarning
+      , bornAloft
+      , norAmIAStranger
+      , aBurningBrand
+      , songOfWisdom
       ]
 
 stewardOfGondor :: CardDef
@@ -364,5 +369,36 @@ valiantSword =
 songOfKings :: CardDef
 songOfKings =
   (attachment "02010" "Song of Kings" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }
+
+dunedainWarning :: CardDef
+dunedainWarning =
+  (attachment "02026" "Dúnedain Warning" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Signal]
+    }
+
+bornAloft :: CardDef
+bornAloft =
+  (attachment "02029" "Born Aloft" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+norAmIAStranger :: CardDef
+norAmIAStranger =
+  (attachment "02031" "Nor am I a Stranger" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Title]
+    }
+
+aBurningBrand :: CardDef
+aBurningBrand =
+  (attachment "02033" "A Burning Brand" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+songOfWisdom :: CardDef
+songOfWisdom =
+  (attachment "02034" "Song of Wisdom" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Song]
     }

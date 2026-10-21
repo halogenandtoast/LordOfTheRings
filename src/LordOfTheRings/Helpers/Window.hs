@@ -76,6 +76,7 @@ passesCriteria = \case
       $ cid `notElem` map (enemyCardId . toAttrs) (toList es.enemies)
       && cid `notElem` map (locationCardId . toAttrs) (toList es.locations)
   CardInHand pid cType -> anyM passesUnique . filter ((== cType) . (.cardType)) . (.hand) =<< getPlayer pid
+  ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
@@ -93,7 +94,6 @@ canPay = \case
   DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
   RaiseThreatCost _ -> pure True
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
-  DiscardCost _ -> pure True
   Costs cs -> allM canPay cs
 
 costMessages :: Source -> AbilityCost -> [Message]
@@ -106,7 +106,6 @@ costMessages source = \case
     PlayerSource pid -> [RaiseThreat pid n]
     _ -> []
   SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
-  DiscardCost target -> [Discard target]
   Costs cs -> concatMap (costMessages source) cs
 
 -- | The player who controls an ability's source, if anyone does.

@@ -50,6 +50,7 @@ const implemented: Record<string, Gateable> = {
   'journey-along-the-anduin': {},
   'escape-from-dol-guldur': {},
   'the-hunt-for-gollum': { alpha: true },
+  'conflict-at-the-carrock': { alpha: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

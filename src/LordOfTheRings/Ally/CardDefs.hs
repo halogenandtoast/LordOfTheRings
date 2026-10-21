@@ -80,6 +80,8 @@ allAllyCards =
       , westfoldLancer
       , wingedGuardian
       , rivendellMinstrel
+      , beorningBeekeeper
+      , longbeardMapMaker
       ]
 
 guardOfTheCitadel :: CardDef
@@ -484,4 +486,16 @@ rivendellMinstrel :: CardDef
 rivendellMinstrel =
   (ally "02008" "Rivendell Minstrel" Lore (StaticCost 3) 2 0 0 1)
     { cdCardTraits = setFromList [Noldor]
+    }
+
+beorningBeekeeper :: CardDef
+beorningBeekeeper =
+  (ally "02028" "Beorning Beekeeper" Tactics (StaticCost 4) 1 2 1 3)
+    { cdCardTraits = setFromList [Beorning]
+    }
+
+longbeardMapMaker :: CardDef
+longbeardMapMaker =
+  (ally "02032" "Longbeard Map-Maker" Lore (StaticCost 3) 1 1 1 3)
+    { cdCardTraits = setFromList [Dwarf]
     }

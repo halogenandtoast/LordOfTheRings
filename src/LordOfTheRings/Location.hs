@@ -23,6 +23,10 @@ import LordOfTheRings.Location.Cards.TheEavesOfMirkwood
 import LordOfTheRings.Location.Cards.RiverNinglor
 import LordOfTheRings.Location.Cards.TheEastBank
 import LordOfTheRings.Location.Cards.TheWestBank
+import LordOfTheRings.Location.Cards.TheCarrock
+import LordOfTheRings.Location.Cards.RiverLangflood
+import LordOfTheRings.Location.Cards.BeePastures
+import LordOfTheRings.Location.Cards.OakWoodGrove
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -70,5 +74,9 @@ allLocations =
         , SomeLocationCard riverNinglor
         , SomeLocationCard theEastBank
         , SomeLocationCard theWestBank
+        , SomeLocationCard theCarrock
+        , SomeLocationCard riverLangflood
+        , SomeLocationCard beePastures
+        , SomeLocationCard oakWoodGrove
         ]
     ]

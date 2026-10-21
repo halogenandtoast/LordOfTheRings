@@ -28,7 +28,7 @@ import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyAttacking))
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyAttacking, ShadowEffectTriggered))
 
 dealDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
 dealDamage source target n = push $ DealDamage (toSource source) (toTarget target) n
@@ -235,3 +235,12 @@ afterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m
 afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
   _ -> False
+
+-- | Cancel the shadow effects of the shadow cards whose effects are about to resolve in the
+-- windows, as Hasty Stroke does.
+cancelShadowEffects :: (MonadTrans t, HasQueue Message m) => [Window] -> t m ()
+cancelShadowEffects windows =
+  for_ [cid | Window _ (ShadowEffectTriggered cid _) <- windows] \cid ->
+    cancelMatching \case
+      ResolveShadowCard cid' _ _ _ -> cid == cid'
+      _ -> False

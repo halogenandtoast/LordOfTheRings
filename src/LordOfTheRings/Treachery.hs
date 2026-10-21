@@ -21,6 +21,9 @@ import LordOfTheRings.Treachery.Cards.UnderTheShadow
 import LordOfTheRings.Treachery.Cards.FalseLead
 import LordOfTheRings.Treachery.Cards.Flooding
 import LordOfTheRings.Treachery.Cards.OldWivesTales
+import LordOfTheRings.Treachery.Cards.AFrightenedBeast
+import LordOfTheRings.Treachery.Cards.Sacked
+import LordOfTheRings.Treachery.Cards.RoastedSlowly
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -66,5 +69,8 @@ allTreacherys =
         , SomeTreacheryCard falseLead
         , SomeTreacheryCard flooding
         , SomeTreacheryCard oldWivesTales
+        , SomeTreacheryCard aFrightenedBeast
+        , SomeTreacheryCard sacked
+        , SomeTreacheryCard roastedSlowly
         ]
     ]

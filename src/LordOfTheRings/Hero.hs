@@ -19,6 +19,7 @@ import LordOfTheRings.Hero.Cards.Legolas
 import LordOfTheRings.Hero.Cards.Thalin
 import LordOfTheRings.Hero.Cards.Theodred
 import LordOfTheRings.Hero.Cards.BilboBaggins
+import LordOfTheRings.Hero.Cards.FrodoBaggins
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -64,5 +65,6 @@ allHeroes =
         , SomeHeroCard glorfindel
         , SomeHeroCard beravor
         , SomeHeroCard bilboBaggins
+        , SomeHeroCard frodoBaggins
         ]
     ]
