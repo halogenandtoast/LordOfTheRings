@@ -9,6 +9,8 @@ import type { CardView } from '../types'
 const props = defineProps<{ part: LogPart }>()
 
 const overlay = useCardOverlay()
+// drawn as the token on the board rather than as an icon
+const tokens = ['progress', 'damage', 'resource']
 
 const i18nKey = computed(() => (props.part.tag === 'LogI18n' ? props.part.contents[0] : ''))
 const i18nVars = computed(() => (props.part.tag === 'LogI18n' ? props.part.contents[1] : {}))
@@ -68,9 +70,17 @@ const show = (ref: LogRef, event: PointerEvent) => {
     >{{ part.contents < 0 ? '−' : '+' }}{{ Math.abs(part.contents) }}</span
   >
 
+  <img
+    v-else-if="part.tag === 'LogIcon' && tokens.includes(part.contents)"
+    class="log-token"
+    :src="`/images/tokens/${part.contents}.png`"
+    :alt="part.contents"
+  />
+
   <span
     v-else-if="part.tag === 'LogIcon'"
     class="log-icon"
+    :class="`log-icon--${part.contents}`"
     role="img"
     :aria-label="part.contents"
     :style="{ '--icon': `url('/images/icons/game/${part.contents}.svg')` }"
@@ -108,8 +118,14 @@ const show = (ref: LogRef, event: PointerEvent) => {
   display: inline-block;
   width: 1em;
   height: 1em;
+  margin-left: 1px;
   vertical-align: -0.15em;
   background: currentColor;
   mask: var(--icon) center / contain no-repeat;
 }
+.log-icon--willpower { color: var(--willpower); }
+.log-icon--threat { color: var(--threat-red); }
+.log-icon--attack { color: var(--attack); }
+.log-icon--defense { color: var(--defense); }
+.log-token { width: 1.15em; height: 1.15em; margin-left: 2px; vertical-align: -0.25em; }
 </style>

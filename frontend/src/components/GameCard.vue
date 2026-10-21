@@ -186,12 +186,6 @@ const toggleUnless = (attached: CardView) => {
 </template>
 
 <style scoped>
-.card-slot {
-  /* each stat's colour, on the stats strip and in combat previews */
-  --willpower: #8cc4ea;
-  --attack: #f08a4b;
-  --defense: #b9c4cf;
-}
 .card-slot { position: relative; line-height: 0; transition: margin 0.2s ease; }
 /* under a card, its stats as modified: a strip off its bottom edge, one segment each */
 .stats {

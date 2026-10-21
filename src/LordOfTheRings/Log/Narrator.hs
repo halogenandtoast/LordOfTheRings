@@ -66,7 +66,7 @@ narrationFor = \case
   PutHeroIntoPlay _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   CommitToQuest target -> Just $ whenRef target \c -> do
     willpower <- getWillpower target
-    one $ action [ikeyPart "log.commits" ["character" ~> c, "willpower" ~> willpower]]
+    one $ action [ikeyPart "log.commits" ["character" ~> c, "willpower" ~> stat "willpower" willpower]]
   TravelTo lid -> Just $ whenRef (toTarget lid) \l -> one $ action [ikeyPart "log.travels" ["location" ~> l]]
   EngageEnemy pid eid -> Just $ whenRef (toTarget eid) \e -> do
     who <- playerRefFor pid
@@ -99,7 +99,7 @@ narrationFor = \case
   PlaceTokens source target token n | n > 0 -> Just do
     phase <- getsGame gamePhase
     case token of
-      Progress -> tokens "log.progress"
+      Progress -> whenRef target \t -> one $ mechanic [ikeyPart "log.progress" ["target" ~> t, "progress" ~> stat "progress" n]]
       -- every hero's resource for the round says nothing the board does not
       Resource | source == GameSource && phase == ResourcePhase -> pure []
       Resource -> tokens "log.gainsResources"
@@ -108,7 +108,7 @@ narrationFor = \case
    where
     tokens key = whenRef target \t -> one $ mechanic [ikeyPart key ["target" ~> t, "count" ~> n]]
   RemoveTokens _ target token n | n > 0 -> case token of
-    Progress -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.progressRemoved" ["target" ~> t, "count" ~> n]]
+    Progress -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.progressRemoved" ["target" ~> t, "progress" ~> stat "progress" n]]
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]
     Damage -> Nothing
   -- what a card does to characters; elsewhere readying and exhausting are routine
@@ -157,9 +157,9 @@ narrationFor = \case
   QuestResolution -> Just do
     willpower <- getCommittedWillpower
     threat <- getStagingThreat
-    let versus = ikeyPart "log.versus" ["willpower" ~> willpower, "threat" ~> threat]
+    let versus = ikeyPart "log.versus" ["willpower" ~> stat "willpower" willpower, "threat" ~> stat "threat" threat]
     one $ case compare willpower threat of
-      GT -> toned Good $ test [ikeyPart "log.questSucceeds" ["count" ~> (willpower - threat)], versus]
+      GT -> toned Good $ test [ikeyPart "log.questSucceeds" ["progress" ~> stat "progress" (willpower - threat)], versus]
       LT -> toned Bad $ test [ikeyPart "log.questFails" ["count" ~> (threat - willpower)], versus]
       EQ -> test [ikeyPart "log.questTied" [], versus]
   CompleteQuest qid -> Just $ whenRef (toTarget qid) \q -> one $ toned Good $ mechanic [ikeyPart "log.questComplete" ["quest" ~> q]]
@@ -242,13 +242,13 @@ openBlock block = do
       header
         $ mechanic
           [ case cdThreat def of
-              Just threat | cdCardType def `elem` [EnemyType, LocationType] -> ikeyPart "log.revealedThreat" ["card" ~> EncounterCard card, "threat" ~> threat]
+              Just threat | cdCardType def `elem` [EnemyType, LocationType] -> ikeyPart "log.revealedThreat" ["card" ~> EncounterCard card, "threat" ~> stat "threat" threat]
               _ -> ikeyPart "log.revealed" ["card" ~> EncounterCard card]
           ]
     EnemyAttackBlock pid eid -> whenRef (toTarget eid) \e -> do
       who <- playerRefFor pid
       attack <- getEnemyAttack eid
-      header $ mechanic [ikeyPart "log.enemyAttacks" ["enemy" ~> e, "player" ~> who, "attack" ~> attack]]
+      header $ mechanic [ikeyPart "log.enemyAttacks" ["enemy" ~> e, "player" ~> who, "attack" ~> stat "attack" attack]]
     PlayerAttackBlock _ eid attackers -> do
       enemies <- getsGame (entitiesEnemies . gameEntities)
       case Map.lookup eid enemies of
@@ -261,7 +261,7 @@ openBlock block = do
             $ action
               [ ikeyPart
                   "log.attacks"
-                  ["attackers" ~> refs, "enemy" ~> entityRef RefEnemy eid en, "attack" ~> attack, "defense" ~> defense]
+                  ["attackers" ~> refs, "enemy" ~> entityRef RefEnemy eid en, "attack" ~> stat "attack" attack, "defense" ~> stat "defense" defense]
               ]
 
 -- | A block's summary, where its outcome is worth a band of its own.

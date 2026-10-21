@@ -98,6 +98,10 @@
   --threat-text: #fff;
   --threat-light: #e8dda6;
   --threat-red: #e93323;
+  /* each stat's colour, on a card's stats strip, in combat previews and in the log */
+  --willpower: #8cc4ea;
+  --attack: #f08a4b;
+  --defense: #b9c4cf;
   --threat-dark: #822017;
   --threat-danger-light: #f3b0a4;
 

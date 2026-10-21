@@ -20,7 +20,7 @@
   "forced": "Forced: {card}",
   "putsIntoPlay": "{player} puts {card} into play",
   "putIntoPlay": "{card} is put into play",
-  "commits": "{character} commits to the quest ({willpower} willpower)",
+  "commits": "{character} commits to the quest ({willpower})",
   "travels": "The players travel to {location}",
   "engages": "{enemy} engages {player}",
   "defends": "{defender} defends",
@@ -35,8 +35,8 @@
   "takesDamage": "{target} takes {count} damage",
   "takesDamageFrom": "{target} takes {count} damage from {source}",
   "heals": "{target} heals {count} damage",
-  "progress": "{count} progress on {target}",
-  "progressRemoved": "{count} progress removed from {target}",
+  "progress": "{progress} on {target}",
+  "progressRemoved": "{progress} removed from {target}",
   "gainsResources": "{target} gains a resource | {target} gains {count} resources",
   "spendsResources": "{target} spends a resource | {target} spends {count} resources",
 
@@ -51,7 +51,7 @@
   "returnedToTopOfEncounterDeck": "{target} goes back on top of the encounter deck",
 
   "revealed": "Revealed {card}",
-  "revealedThreat": "Revealed {card} ({threat} threat)",
+  "revealedThreat": "Revealed {card} ({threat})",
   "addedToStaging": "{card} is added to the staging area",
   "placedInStaging": "{card} is placed in the staging area",
   "orcGuardEngages": "An Orc Guard engages {player}",
@@ -64,15 +64,15 @@
   "rescued": "{hero} is rescued",
   "claims": "{target} claims {card}",
 
-  "enemyAttacks": "{enemy} attacks {player} ({attack} attack)",
-  "attacks": "{attackers} attack {enemy} ({attack} attack against {defense} defense)",
+  "enemyAttacks": "{enemy} attacks {player} ({attack})",
+  "attacks": "{attackers} attack {enemy} ({attack} against {defense})",
   "attackDestroys": "Destroyed",
   "attackDamages": "{enemy} survives with {damage} of {hitPoints} damage",
 
-  "questSucceeds": "The quest succeeds: 1 progress | The quest succeeds: {count} progress",
+  "questSucceeds": "The quest succeeds: {progress}",
   "questFails": "The quest fails: threat rises by {count}",
   "questTied": "The quest is held: no progress, no threat",
-  "versus": "{willpower} willpower against {threat} threat",
+  "versus": "{willpower} against {threat}",
   "questComplete": "{quest} is complete",
   "questStage": "{quest}",
 
@@ -85,6 +85,7 @@
   "returnsFromDiscard": "{player} returns {card} to hand",
   "shufflesDiscardIntoDeck": "{player} shuffles their discard pile into their deck",
 
+  "stat": "{value}{icon}",
   "listSeparator": ", ",
   "listLast": " and ",
   "undoToHere": "Undo to before this",

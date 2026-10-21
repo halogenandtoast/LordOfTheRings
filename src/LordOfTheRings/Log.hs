@@ -61,6 +61,10 @@ delta = LogDelta
 icon :: Text -> LogPart
 icon = LogIcon
 
+-- | A number with its icon, such as @2@ and the willpower icon, for @log.stat@.
+stat :: Text -> Int -> LogPart
+stat name n = ikeyPart "log.stat" ["value" ~> n, "icon" ~> icon name]
+
 -- | The wire name of a sphere icon.
 sphereKey :: Sphere -> Text
 sphereKey = toLower . tshow
