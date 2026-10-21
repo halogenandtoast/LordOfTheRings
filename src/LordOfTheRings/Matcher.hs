@@ -192,6 +192,23 @@ getResourcesOfSphere pid sphere = do
   heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
   sum . map (.resources) <$> filterM (heroPaysFor sphere) heroes
 
+-- | Allies in any player's discard pile, with their owners and printed costs, that the
+-- player has the sphere's resources to pay for and the unique rule lets into play, as
+-- Stand and Fight puts into play.
+affordableDiscardedAllies :: (HasGame m) => PlayerId -> Sphere -> m [(PlayerId, PlayerCard, Int)]
+affordableDiscardedAllies pid sphere = do
+  spend <- getResourcesOfSphere pid sphere
+  order <- getPlayerOrder
+  fmap concat $ for order \owner -> do
+    discarded <- filterM passesUnique . (.discard) =<< getPlayer owner
+    pure
+      [ (owner, pc, x)
+      | PlayerCard pc <- discarded
+      , cdCardType (toCardDef pc) == AllyType
+      , Just (StaticCost x) <- [cdCost (toCardDef pc)]
+      , x <= spend
+      ]
+
 -- | The player's allies whose resources can pay for the card, with the resources on each.
 allyPayersFor :: (HasGame m) => PlayerId -> Card -> m [(AllyId, Int)]
 allyPayersFor pid card = do

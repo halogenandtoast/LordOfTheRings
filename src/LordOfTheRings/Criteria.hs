@@ -23,6 +23,9 @@ data Criterion
     CardNotInPlay CardId
   | -- | a matching player has this many resources of the sphere to spend
     ResourcesOfSphere PlayerMatcher Sphere Int
+  | -- | an ally in any player's discard pile whose printed cost the player has the
+    -- sphere's resources for
+    AffordableAllyInDiscard PlayerId Sphere
   | -- | in the quest phase, before any character is committed
     BeforeCommitting
   | -- | nothing stops a player card cancelling an encounter card's effects

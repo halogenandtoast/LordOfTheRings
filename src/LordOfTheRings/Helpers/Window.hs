@@ -118,6 +118,7 @@ passesCriteria = \case
       && cid `notElem` map (locationCardId . toAttrs) (toList es.locations)
   CardInHand pid cType -> anyM passesUnique . filter ((== cType) . (.cardType)) . (.hand) =<< getPlayer pid
   ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
+  AffordableAllyInDiscard pid sphere -> notNull <$> affordableDiscardedAllies pid sphere
   BeforeCommitting -> andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
   NotCriterion c -> not <$> passesCriteria c
