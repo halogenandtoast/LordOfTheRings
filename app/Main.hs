@@ -485,7 +485,10 @@ resolveDeck userId = \case
     maybe (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere])) (pure . Just) $ lookup sphere coreStarterDecks
   Just (ImportedDeck deckId) -> do
     db <- getsYesod (.cardDb)
-    runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) (pure . Just)
+    deckList <- runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) pure
+    now <- liftIO getCurrentTime
+    runDB $ update deckId [LotrDeckUsedAt =. Just now]
+    pure $ Just deckList
   Just (ListedDeck deckList) -> either (sendResponseStatus status400) (pure . Just) (checkedDeckList deckList)
 
 -- | Refuse decks that would put heroes with the same title at the table.

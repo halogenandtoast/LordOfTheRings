@@ -119,6 +119,8 @@ LotrDeck sql=lotr_decks
   sourceUrl Text Maybe
   createdAt UTCTime
   updatedAt UTCTime
+  usedAt UTCTime Maybe
+  -- ^ when a game was last dealt from it
   deriving Show
 
 LotrDeckSlot sql=lotr_deck_slots

@@ -143,16 +143,21 @@ data DeckSummary = DeckSummary
   , startingThreat :: Maybe Int
   , source :: Text
   , sourceUrl :: Maybe Text
-  , heroNames :: [Text]
-  , heroCodes :: [Text]
+  , heroes :: [HeroSummary]
   , cardCount :: Int
   , unresolvedCount :: Int
   , updatedAt :: UTCTime
+  , usedAt :: Maybe UTCTime
   }
   deriving stock (Generic)
 
 instance ToJSON DeckSummary where
   toJSON = genericToJSON idField
+
+-- | A hero as a deck list shows it: by the RingsDB code its art is named by.
+data HeroSummary = HeroSummary {code :: Text, name :: Text, sphere :: Maybe Text}
+  deriving stock (Generic)
+  deriving anyclass (ToJSON)
 
 idField :: Options
 idField = defaultOptions {fieldLabelModifier = \case "deckId" -> "id"; field -> field}
@@ -333,6 +338,7 @@ saveDeck userId parsed = do
         , lotrDeckSourceUrl = parsed.sourceUrl
         , lotrDeckCreatedAt = now
         , lotrDeckUpdatedAt = now
+        , lotrDeckUsedAt = Nothing
         }
   insertMany_
     [ LotrDeckSlot key kind position s.sourceCode s.cardCode s.quantity
@@ -368,12 +374,18 @@ listDecks db userId = do
         , startingThreat = d.lotrDeckStartingThreat
         , source = d.lotrDeckSource
         , sourceUrl = d.lotrDeckSourceUrl
-        , heroNames = [n | s <- slots, s.lotrDeckSlotKind == "hero", Just n <- [flip cardName db =<< s.lotrDeckSlotCardCode]]
-        , -- the RingsDB code, as the art is named by
-          heroCodes = [c | s <- slots, s.lotrDeckSlotKind == "hero", Just c <- [flip cardRingsdbCode db =<< s.lotrDeckSlotCardCode]]
+        , heroes =
+            [ HeroSummary {code, name, sphere = cardSphere ours db}
+            | s <- slots
+            , s.lotrDeckSlotKind == "hero"
+            , Just ours <- [s.lotrDeckSlotCardCode]
+            , Just code <- [cardRingsdbCode ours db]
+            , Just name <- [cardName ours db]
+            ]
         , cardCount = sum [s.lotrDeckSlotQuantity | s <- slots, s.lotrDeckSlotKind == "draw"]
         , unresolvedCount = length [() | s <- slots, isNothing s.lotrDeckSlotCardCode]
         , updatedAt = d.lotrDeckUpdatedAt
+        , usedAt = d.lotrDeckUsedAt
         }
 
 -- | One deck with its cards, or 'Nothing' for a deck this user does not own.
