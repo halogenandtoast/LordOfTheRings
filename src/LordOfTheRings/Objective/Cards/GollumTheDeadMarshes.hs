@@ -14,8 +14,6 @@ gollumTheDeadMarshes = objective GollumTheDeadMarshes Cards.gollumTheDeadMarshes
 -- | Forced: At the end of the quest phase, the party must make an escape test, dealing 1
 -- card per player from the encounter deck. If this test is failed, place 2 resource
 -- tokens on Gollum.
---
--- ponytail: the first player commits for the party.
 instance HasAbilities GollumTheDeadMarshes where
   getAbilities (GollumTheDeadMarshes a) = [mkAbility a 1 $ forced $ PhaseEndsWindow When QuestPhase]
 
@@ -24,9 +22,8 @@ instance HasAbilities GollumTheDeadMarshes where
 instance RunMessage GollumTheDeadMarshes where
   runMessage msg o@(GollumTheDeadMarshes attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      lead <- getLead
       players <- length <$> getRemainingPlayers
-      escapeTest lead attrs players EscapeWillpower (placeResources attrs attrs 2) (pure ())
+      partyEscapeTest attrs players EscapeWillpower (placeResources attrs attrs 2) (pure ())
       pure o
     PlaceTokens _ (isTarget attrs -> True) Resource n | attrs.resources + n >= 8 -> do
       shuffleIntoEncounterDeck attrs

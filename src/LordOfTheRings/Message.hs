@@ -6,6 +6,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Outcome
 import LordOfTheRings.Placement
 import LordOfTheRings.Id
+import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Matcher.Types (CardMatcher)
 import LordOfTheRings.Modifier (ModifierType)
@@ -52,9 +53,14 @@ data EscapeTest = EscapeTest
   , escapeCommitted :: [Target]
   , escapeOnFail :: [Message]
   , escapeOnPass :: [Message]
+  , -- | for a test the party makes: the players still to commit after this one
+    escapeParty :: [PlayerId]
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (FromJSON, ToJSON)
+  deriving anyclass (ToJSON)
+
+instance FromJSON EscapeTest where
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("escapeParty", toJSON ([] :: [PlayerId]))]
 
 data Message
   = Setup

@@ -437,7 +437,18 @@ escapeTest
 escapeTest pid source n stat onFail onPass = do
   failed <- capture onFail
   passed <- capture onPass
-  push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed
+  push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed []
+
+-- | The party makes an escape test: each player still in the game, from the first player,
+-- commits their characters in turn.
+partyEscapeTest
+  :: (ReverseQueue m, Sourceable source)
+  => source -> Int -> EscapeStat -> QueueT Message m () -> QueueT Message m () -> m ()
+partyEscapeTest source n stat onFail onPass = do
+  failed <- capture onFail
+  passed <- capture onPass
+  players <- getRemainingPlayers
+  for_ (uncons players) \(pid, rest) -> push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed rest
 
 placeObjective :: (ReverseQueue m) => ObjectiveId -> Placement -> m ()
 placeObjective oid = push . PlaceObjective oid

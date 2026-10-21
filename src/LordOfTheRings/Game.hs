@@ -830,7 +830,10 @@ runGameMessage msg g = case msg of
     push
       $ questionLabelWith (ikey "label.escapeTest") (sourceTarget t.escapeSource) t.escapeCommitted t.escapePlayer
       $ [targetLabel c [Exhaust c, MakeEscapeTest t {escapeCommitted = t.escapeCommitted <> [c]}] | c <- ready]
-      <> [Label (ikey "label.doneCommittingToEscape") [ResolveEscapeTest t]]
+      <> [ Label (ikey "label.doneCommittingToEscape") $ case t.escapeParty of
+             next : rest -> [MakeEscapeTest t {escapePlayer = next, escapeParty = rest}]
+             [] -> [ResolveEscapeTest t]
+         ]
     pure g
   ResolveEscapeTest t -> do
     (total, escape) <- escapeTestTotals t
