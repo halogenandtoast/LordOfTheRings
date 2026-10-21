@@ -128,6 +128,7 @@ matchEnemy matcher enemy = case matcher of
     _ -> pure False
   UniqueEnemy -> pure $ cdUnique (toCardDef enemy)
   EnemyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget enemy)
+  EnemyNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget enemy)
   AnyEnemy -> pure True
   NotEnemy m -> not <$> matchEnemy m enemy
   EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms
@@ -145,9 +146,13 @@ matchLocation matcher location = case matcher of
   IsActiveLocation -> pure $ location.placement == ActiveLocation
   LocationWithTrait trait -> hasTrait trait (toTarget location) (toCardDef location)
   LocationWithCardCode code -> pure $ toCardCode location == code
+  LocationNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget location)
   AnyLocation -> pure True
   NotLocation m -> not <$> matchLocation m location
   LocationMatchAll ms -> allM (`matchLocation` location) ms
+
+immuneToPlayerCards :: (HasGame m) => Target -> m Bool
+immuneToPlayerCards t = elem ImmuneToPlayerCardEffects . map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
 
 -- | A unique card cannot enter play while a card with its title is in play.
 passesUnique :: (HasGame m) => Card -> m Bool

@@ -203,3 +203,13 @@ spec = describe "Player choices" do
     chooseAbilityOf pid bombur
     Just question <- getQuestion pid
     [code | TargetLabel t _ <- questionChoices question, (code, t') <- locations, t == t'] `shouldBe` [toCardCode Locations.fensAndMires]
+
+  it "does not offer a player card's ability whose only target is The Carrock" . gameTestIn conflictAtTheCarrock testDeck $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Locations.theCarrock
+    bombur <- putAllyIntoPlay pid Allies.bombur
+    run $ ActionWindow pid
+    offersAbilityOf pid bombur `shouldReturn` False
+    chooseLabel "$label.pass" pid
+    run . AddToStaging =<< genEncounterCard Locations.fensAndMires
+    run $ ActionWindow pid
+    offersAbilityOf pid bombur `shouldReturn` True

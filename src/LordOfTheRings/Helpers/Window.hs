@@ -59,7 +59,7 @@ getWindowAbilities :: (HasGame m) => [Window] -> m [Ability]
 getWindowAbilities windows = do
   abilities <- getAllAbilities
   flip filterM abilities \ab -> case abilityWindow ab of
-    Just matcher -> andM [anyM (windowMatchesM matcher) windows, passesCriteria ab.abilityCriteria, canPay (abilityCost ab), withinLimit ab]
+    Just matcher -> andM [anyM (windowMatchesM matcher) windows, passesCriteriaFrom ab.abilitySource ab.abilityCriteria, canPay (abilityCost ab), withinLimit ab]
     _ -> pure False
 
 -- | Whether the window matches, reading the game for the matchers that need it.
@@ -181,11 +181,29 @@ getActionAbilities :: (HasGame m) => PlayerId -> m [Ability]
 getActionAbilities pid = do
   abilities <- getAllAbilities
   flip filterM abilities \ab -> case ab.abilityType of
-    ActionAbility cost -> andM [(ab.abilityAnyPlayer ||) . (== Just pid) <$> abilityController ab, passesCriteriaFor pid ab.abilityCriteria, canPay cost, withinLimit ab]
+    ActionAbility cost -> andM [(ab.abilityAnyPlayer ||) . (== Just pid) <$> abilityController ab, passesCriteriaFor pid (immuneAware ab.abilitySource ab.abilityCriteria), canPay cost, withinLimit ab]
     _ -> pure False
 
 -- | The criteria as they stand for the player an action is offered to, whom
 -- 'ActivePlayer' matches.
+-- | Criteria read for an ability of the source: a player card's ability finds no use in
+-- a location or enemy immune to player card effects, so those do not count as existing.
+passesCriteriaFrom :: (HasGame m) => Source -> Criterion -> m Bool
+passesCriteriaFrom source = passesCriteria . immuneAware source
+
+immuneAware :: Source -> Criterion -> Criterion
+immuneAware source c
+  | isPlayerCardSource source = go c
+  | otherwise = c
+ where
+  go = \case
+    LocationExists m -> LocationExists (m <> LocationNotImmuneToPlayerCards)
+    EnemyExists m -> EnemyExists (m <> EnemyNotImmuneToPlayerCards)
+    NotCriterion x -> NotCriterion (go x)
+    Criteria xs -> Criteria (map go xs)
+    AnyCriteria xs -> AnyCriteria (map go xs)
+    x -> x
+
 passesCriteriaFor :: (HasGame m) => PlayerId -> Criterion -> m Bool
 passesCriteriaFor pid c = runReadGame (passesCriteria c) . (\g -> g {gameActivePlayer = pid}) <$> getGame
 

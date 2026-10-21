@@ -143,6 +143,8 @@ data EnemyMatcher
   | UniqueEnemy
   | -- | an enemy with an attachment of the trait attached
     EnemyWithAttached Trait
+  | -- | an enemy player card effects can reach
+    EnemyNotImmuneToPlayerCards
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]
@@ -169,6 +171,8 @@ data LocationMatcher
   | IsActiveLocation
   | LocationWithTrait Trait
   | LocationWithCardCode CardCode
+  | -- | a location player card effects can reach
+    LocationNotImmuneToPlayerCards
   | AnyLocation
   | NotLocation LocationMatcher
   | LocationMatchAll [LocationMatcher]
