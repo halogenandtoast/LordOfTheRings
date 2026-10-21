@@ -46,6 +46,12 @@ import LordOfTheRings.Event.Cards.WeDoNotSleep
 import LordOfTheRings.Event.Cards.DawnTakeYouAll
 import LordOfTheRings.Event.Cards.RumourFromTheEarth
 import LordOfTheRings.Event.Cards.ShadowOfThePast
+import LordOfTheRings.Event.Cards.AstonishingSpeed
+import LordOfTheRings.Event.Cards.ForthEorlingas
+import LordOfTheRings.Event.Cards.ChargeOfTheRohirrim
+import LordOfTheRings.Event.Cards.WaitNoLonger
+import LordOfTheRings.Event.Cards.OathOfEorl
+import LordOfTheRings.Event.Cards.TheMusterOfRohan
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -105,5 +111,11 @@ allEvents =
         , SomeEventCard dawnTakeYouAll
         , SomeEventCard rumourFromTheEarth
         , SomeEventCard shadowOfThePast
+        , SomeEventCard astonishingSpeed
+        , SomeEventCard forthEorlingas
+        , SomeEventCard chargeOfTheRohirrim
+        , SomeEventCard waitNoLonger
+        , SomeEventCard oathOfEorl
+        , SomeEventCard theMusterOfRohan
         ]
     ]
