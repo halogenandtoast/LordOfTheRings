@@ -1,11 +1,17 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import type { GameSummary } from '../server'
 import { slug } from '../campaigns'
 
 const props = defineProps<{ game: GameSummary; deleteGame?: () => void; spectate?: boolean }>()
 
-const deleting = ref(false)
+// A native dialog: Escape closes it, and Delete has the focus, so Enter confirms.
+const confirm = useTemplateRef<HTMLDialogElement>('confirm')
+const close = () => confirm.value?.close()
+// a click on the dialog itself landed on its backdrop
+const onBackdrop = (event: MouseEvent) => {
+  if (event.target === confirm.value) close()
+}
 // the scenario's encounter set icon, as the new game page shows it
 const icon = computed(() => `url('/images/icons/scenarios/${slug(props.game.scenario)}.svg')`)
 const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '').toLowerCase()}`)
@@ -25,7 +31,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
         </div>
         <div class="extra-details">
           <div v-if="deleteGame" class="game-delete">
-            <a href="#delete" :aria-label="$t('home.deleteGame')" @click.prevent="deleting = true">
+            <a href="#delete" :aria-label="$t('home.deleteGame')" @click.prevent="confirm?.showModal()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
               </svg>
@@ -62,11 +68,25 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
         </li>
       </ul>
     </div>
-    <div v-if="deleting" class="confirm-delete">
-      <span>{{ $t('home.confirmDelete') }}</span>
-      <button type="button" class="confirm" @click="deleteGame?.()">{{ $t('common.delete') }}</button>
-      <button type="button" @click="deleting = false">{{ $t('common.cancel') }}</button>
-    </div>
+    <dialog v-if="deleteGame" ref="confirm" class="confirm-delete" :aria-label="$t('home.confirmDelete')" @click="onBackdrop">
+      <h2>{{ $t('home.confirmDelete') }}</h2>
+      <div class="confirm-game">
+        <span class="scenario-icon" aria-hidden="true" :style="{ '--icon': icon }" />
+        <span>
+          <strong>{{ game.name }}</strong>
+          <span class="confirm-meta">
+            {{ game.scenario }} &middot;
+            <template v-if="game.waiting">{{ $t('home.waitingForPlayers') }}</template>
+            <template v-else>{{ $t('game.round', { round: game.round }) }} &middot; {{ $t(phase) }}</template>
+          </span>
+          <span v-if="game.seats?.length" class="confirm-meta">{{ game.seats.map((seat) => seat.name).join(', ') }}</span>
+        </span>
+      </div>
+      <div class="confirm-actions">
+        <button type="button" @click="close">{{ $t('common.cancel') }}</button>
+        <button type="button" class="confirm" autofocus @click="(close(), deleteGame())">{{ $t('common.delete') }}</button>
+      </div>
+    </dialog>
   </div>
 </template>
 
@@ -199,14 +219,21 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
 }
 
 .confirm-delete {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  font-size: 0.9em;
+  width: min(26rem, 100vw - 2rem);
+  padding: 18px 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 10px 40px var(--shadow-strong);
 }
-.confirm-delete span { flex: 1; }
-.confirm-delete button {
+.confirm-delete::backdrop { background: rgb(0 0 0 / 0.6); backdrop-filter: blur(2px); }
+.confirm-delete h2 { margin: 0 0 12px; font-size: 1.1em; color: var(--title); }
+.confirm-game { display: flex; align-items: center; gap: 12px; }
+.confirm-game > span:last-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.confirm-meta { color: var(--text-muted); font-size: 0.85em; }
+.confirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.confirm-actions button {
   background: transparent;
   border: 1px solid var(--box-border);
   border-radius: 3px;
@@ -215,8 +242,9 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   font: inherit;
   font-size: 0.85em;
   font-weight: 700;
-  padding: 5px 10px;
+  padding: 6px 12px;
   text-transform: uppercase;
 }
-.confirm-delete button.confirm { background: var(--danger); border-color: var(--danger); }
+.confirm-actions button.confirm { background: var(--danger); border-color: var(--danger); }
+.confirm-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </style>
