@@ -111,6 +111,20 @@ instance RunMessage Player where
         push $ EngageOrcGuard pid top
         pure $ player & deckL .~ rest
       _ -> pure player
+    ChooseFromSearch pid source cards matcher anyNumber | pid == player.id -> do
+      let inDeck = filter ((`elem` map (.id) player.deck) . (.id)) cards
+          again c = [ChooseFromSearch pid source (filter ((/= c.id) . (.id)) inDeck) matcher True | anyNumber]
+      push
+        $ Ask pid
+        $ QuestionLabel (ikey "label.searchTake") (sourceTarget source) []
+        $ SearchCards inDeck
+        $ ChooseOne
+        $ [targetLabel (CardIdTarget c.id) (TakeFromDeck pid c.id : again c <> [ShufflePlayerDeck pid | not anyNumber]) | c <- inDeck, cardMatches matcher c]
+        <> [Label (ikey "label.done") [ShufflePlayerDeck pid]]
+      pure player
+    DiscardTopOfDeck pid n | pid == player.id -> do
+      let (discarded, deck) = splitAt n player.deck
+      pure $ player & deckL .~ deck & discardL %~ (discarded <>)
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -167,10 +181,16 @@ canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c]
 
 canAfford :: (HasGame m) => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of
-  (Just cost, Just sphere) -> case cdDistinctPayers (toCardDef c) of
-    Just n -> (>= n) . length <$> payingHeroes sphere p
-    Nothing -> (>= costAsResources cost) <$> resourcesInSphere sphere p
+  (Just cost, Just sphere) -> do
+    extra <- costIncrease c
+    case cdDistinctPayers (toCardDef c) of
+      Just n -> (>= n + extra) . length <$> payingHeroes sphere p
+      Nothing -> (>= costAsResources cost + extra) <$> resourcesInSphere sphere p
   _ -> pure False
+
+-- | What the game's modifiers add to the card's cost.
+costIncrease :: (HasGame m) => Card -> m Int
+costIncrease c = sum . mapMaybe (\case IncreaseCost m n | cardMatches m c -> Just n; _ -> Nothing) <$> getModifiers GameTarget
 
 -- | Heroes with a resource that could pay for a card of the sphere.
 payingHeroes :: (HasGame m) => Sphere -> Player -> m [Hero]

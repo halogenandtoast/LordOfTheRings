@@ -28,6 +28,11 @@ data WindowMatcher
     RoundEndsWindow
   | ProgressPlacedWindow Timing Target
   | QuestedUnsuccessfullyWindow Timing
+  | QuestedSuccessfullyWindow Timing
+  | -- | after an attack the character, or any character, defended
+    DefendedAttackWindow Timing (Maybe Target)
+  | PlayedFromHandWindow Timing Target
+  | LocationRevealedWindow Timing
   | ShadowEffectResolvedWindow Timing EnemyId
   | EnemyAttacksWindow Timing EnemyId
   | -- | any encounter card revealed from the encounter deck
@@ -60,6 +65,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (RoundEndsWindow, RoundEnds) -> True
   (ProgressPlacedWindow t target, ProgressPlaced target' _) -> t == timing && target == target'
   (QuestedUnsuccessfullyWindow t, QuestedUnsuccessfully) -> t == timing
+  (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing
+  (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
+  (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'
+  (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
   (CardRevealedWindow t, Revealed _) -> t == timing

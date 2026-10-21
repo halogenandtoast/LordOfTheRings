@@ -26,11 +26,6 @@ gatherEncounterSet attrs encounterSet =
   copies def =
     fromMaybe 1 $ (guard attrs.easyMode *> cdEasyModeQuantity def) <|> cdEncounterSetQuantity def
 
-cardMatches :: CardMatcher -> EncounterCard -> Bool
-cardMatches = \case
-  CardWithCode code -> (== code) . toCardCode
-  CardWithTrait trait -> member trait . cdCardTraits . toCardDef
-
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = case msg of
     DoStep 4 Setup | attrs.easyMode -> do
@@ -81,6 +76,16 @@ instance RunMessage ScenarioAttrs where
             then [Label (ikey "label.leaveOnTop") [], Label (ikey "label.moveToBottom") [MoveTopOfEncounterDeckToBottom]]
             else [Label (ikey "label.continue") []]
       pure attrs
+    RevealOneOfTopEncounterCards pid source n -> do
+      let (top, rest) = splitAt n attrs.encounterDeck
+      unless (null top)
+        $ push
+        $ Ask pid
+        $ QuestionLabel (ikey "label.revealOne") (sourceTarget source) []
+        $ SearchCards (map EncounterCard top)
+        $ ChooseOne [targetLabel c [RevealCard c, AddToEncounterDiscard (filter (/= c) top)] | c <- top]
+      pure $ attrs & encounterDeckL .~ rest
+    ResetToStage _ rest -> pure $ attrs & questDeckL .~ rest
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
       top : rest -> pure $ attrs & encounterDeckL .~ rest <> [top]
       [] -> pure attrs

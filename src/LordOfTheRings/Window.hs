@@ -31,6 +31,11 @@ data WindowType
   | RoundEnds
   | ProgressPlaced Target Int
   | QuestedUnsuccessfully
+  | QuestedSuccessfully
+  | -- | an attack the character defended has resolved
+    DefendedAttack Target EnemyId
+  | -- | a card played from its owner's hand, as its card id
+    PlayedFromHand Target
   | ShadowEffectResolved CardId EnemyId
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId

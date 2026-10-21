@@ -1,5 +1,6 @@
 module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
+import LordOfTheRings.Matcher.Types (CardMatcher)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
@@ -53,6 +54,12 @@ data ModifierType
     EngagedEnemiesCannotAttack
   | -- | on a player: they may declare any number of defenders against each attack
     MayDeclareMultipleDefenders
+  | -- | on a player
+    CannotCommitCharacters
+  | -- | on the game: no player card may cancel an encounter card's effects
+    CannotCancelEncounterEffects
+  | -- | on the game: matching cards cost this much more to play from hand
+    IncreaseCost CardMatcher Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

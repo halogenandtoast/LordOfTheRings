@@ -64,6 +64,5 @@ data Trait
   | Warrior
   | Wasteland
   | Weapon
-  | Wilderlands
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

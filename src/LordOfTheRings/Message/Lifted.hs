@@ -197,3 +197,18 @@ attachTreachery tid = push . AttachTreachery tid . toTarget
 -- | The player chooses and exhausts N of their characters.
 chooseAndExhaust :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 chooseAndExhaust source pid n = push $ ChooseAndExhaust (toSource source) pid n
+
+-- | The player searches the top N cards of their deck for matching cards to take into
+-- hand, any number of them or only 1, then shuffles their deck.
+searchDeck :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> CardMatcher -> Bool -> m ()
+searchDeck pid source n matcher anyNumber = do
+  deck <- (.deck) <$> getPlayer pid
+  push $ ChooseFromSearch pid (toSource source) (take n deck) matcher anyNumber
+
+discardTopOfDeck :: (ReverseQueue m) => PlayerId -> Int -> m ()
+discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
+
+-- | The player looks at the top N cards of the encounter deck, reveals 1 and discards
+-- the rest.
+revealOneOfTopEncounterCards :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
+revealOneOfTopEncounterCards pid source n = push $ RevealOneOfTopEncounterCards pid (toSource source) n

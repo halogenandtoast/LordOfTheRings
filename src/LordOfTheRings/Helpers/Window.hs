@@ -11,7 +11,9 @@ import LordOfTheRings.Hero.Types
 import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Id
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier (ModifierType (CannotCancelEncounterEffects))
 import LordOfTheRings.Message
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
@@ -72,6 +74,7 @@ passesCriteria = \case
       $ cid `notElem` map (enemyCardId . toAttrs) (toList es.enemies)
       && cid `notElem` map (locationCardId . toAttrs) (toList es.locations)
   CardInHand pid cType -> anyM passesUnique . filter ((== cType) . (.cardType)) . (.hand) =<< getPlayer pid
+  EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
 

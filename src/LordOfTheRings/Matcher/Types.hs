@@ -1,5 +1,7 @@
 module LordOfTheRings.Matcher.Types (module LordOfTheRings.Matcher.Types) where
 
+import LordOfTheRings.Card.CardDef
+import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Name
@@ -149,3 +151,37 @@ instance Monoid LocationMatcher where
 
 instance Not LocationMatcher where
   not_ = NotLocation
+
+-- | A card by what is printed on it, wherever it is.
+data CardMatcher
+  = CardWithCode CardCode
+  | CardWithTrait Trait
+  | CardWithType CardType
+  | AnyCard
+  | NotCard CardMatcher
+  | CardMatchAll [CardMatcher]
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+instance Semigroup CardMatcher where
+  AnyCard <> x = x
+  x <> AnyCard = x
+  CardMatchAll xs <> CardMatchAll ys = CardMatchAll (xs <> ys)
+  CardMatchAll xs <> y = CardMatchAll (xs <> [y])
+  x <> CardMatchAll ys = CardMatchAll (x : ys)
+  x <> y = CardMatchAll [x, y]
+
+instance Monoid CardMatcher where
+  mempty = AnyCard
+
+cardIs :: CardDef -> CardMatcher
+cardIs = CardWithCode . cdCardCode
+
+cardMatches :: (HasCardDef a) => CardMatcher -> a -> Bool
+cardMatches matcher (toCardDef -> def) = case matcher of
+  CardWithCode code -> cdCardCode def == code
+  CardWithTrait trait -> trait `member` cdCardTraits def
+  CardWithType cType -> cdCardType def == cType
+  AnyCard -> True
+  NotCard m -> not $ cardMatches m def
+  CardMatchAll ms -> all (`cardMatches` def) ms

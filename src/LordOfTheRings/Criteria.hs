@@ -18,6 +18,8 @@ data Criterion
   | DuringPhase Phase
   | -- | no enemy or location in play is that card
     CardNotInPlay CardId
+  | -- | nothing stops a player card cancelling an encounter card's effects
+    EncounterEffectsCancelable
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)

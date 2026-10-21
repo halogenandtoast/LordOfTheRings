@@ -10,6 +10,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
+import LordOfTheRings.Target (toTarget)
 import LordOfTheRings.Window
 
 data Cost = ResourceCost Sphere CardCost | Free
@@ -46,6 +47,12 @@ cardCost card = ResourceCost (fromMaybe Neutral $ cdSphere def) (fromMaybe (Stat
  where
   def = toCardDef card
 
+-- | A cost raised by the given amount (lowered, when it is negative), to no less than 0.
+raiseCost :: Int -> Cost -> Cost
+raiseCost n = \case
+  ResourceCost sphere (StaticCost c) -> ResourceCost sphere (StaticCost $ max 0 $ c + n)
+  cost -> cost
+
 instance RunMessage ActiveCost where
   runMessage msg ac = case msg of
     PayCost acId | acId == ac.activeCostId -> case ac.activeCostCost of
@@ -63,11 +70,13 @@ instance RunMessage ActiveCost where
         pure $ ac & costCostL .~ Free
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
-        PlayerCard card -> case cdCardType (toCardDef card) of
-          AllyType -> push $ PlayAlly ac.activeCostPlayer card
-          AttachmentType -> push $ PlayAttachment ac.activeCostPlayer card
-          EventType -> push $ PlayEvent ac.activeCostPlayer card ac.activeCostWindows
-          _ -> pure ()
+        PlayerCard card -> do
+          case cdCardType (toCardDef card) of
+            AllyType -> push $ PlayAlly ac.activeCostPlayer card
+            AttachmentType -> push $ PlayAttachment ac.activeCostPlayer card
+            EventType -> push $ PlayEvent ac.activeCostPlayer card ac.activeCostWindows
+            _ -> pure ()
+          push $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card)]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

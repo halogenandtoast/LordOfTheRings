@@ -7,6 +7,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Placement
 import LordOfTheRings.Id
 import LordOfTheRings.Log.Block
+import LordOfTheRings.Matcher.Types (CardMatcher)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -19,13 +20,6 @@ import LordOfTheRings.Window
 data DeckSignifier = EncounterDeck
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
-
-data CardMatcher = CardWithCode CardCode | CardWithTrait Trait
-  deriving stock (Show, Eq, Generic)
-  deriving anyclass (FromJSON, ToJSON)
-
-cardIs :: CardDef -> CardMatcher
-cardIs = CardWithCode . cdCardCode
 
 data CardHandler = ToStaging
   deriving stock (Show, Eq, Generic)
@@ -150,6 +144,16 @@ data Message
     -- attaching itself where its placement says
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
   | ShufflePlayerDeck PlayerId
+  | -- | the player takes matching cards from those searched in their deck into hand, any
+    -- number of them or only 1 as the flag says, then shuffles their deck
+    ChooseFromSearch PlayerId Source [Card] CardMatcher Bool
+  | DiscardTopOfDeck PlayerId Int
+  | -- | the player looks at the top cards of the encounter deck, reveals 1 of them and
+    -- discards the rest
+    RevealOneOfTopEncounterCards PlayerId Source Int
+  | -- | the quest deck goes back to the stage, put into play on its B side, with the
+    -- stages after it to follow
+    ResetToStage EncounterCard [EncounterCard]
   | ReturnToTopOfEncounterDeck Target
   | RemoveProgressFromQuest Source Int
   | -- | a shadow card dealt to the enemy becomes an enemy itself, engaged with the player

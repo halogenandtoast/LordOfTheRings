@@ -375,7 +375,7 @@ runGameMessage msg g = case msg of
       [ CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
       , ResolveShadow eid pid (Just defender)
       , AttackDamage eid defender
-      , CheckWindows [mkAfter $ EnemyAttacking eid pid]
+      , CheckWindows [mkAfter $ EnemyAttacking eid pid, mkAfter $ DefendedAttack defender eid]
       ]
     pure g
   DeclareDefenders pid eid chosen -> do
@@ -390,7 +390,10 @@ runGameMessage msg g = case msg of
         [] -> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
         first : _ ->
           [ Label (ikey "label.doneDeclaringDefenders")
-              [ResolveShadow eid pid (Just first), DefendedByMany pid eid chosen, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
+              [ ResolveShadow eid pid (Just first)
+              , DefendedByMany pid eid chosen
+              , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
+              ]
           ]
     pure g
   DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
@@ -526,7 +529,8 @@ runGameMessage msg g = case msg of
   CommitCharacters pid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
     allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
-    let characters = map toTarget heroes <> map toTarget allies
+    barred <- elem CannotCommitCharacters <$> getModifiers (PlayerTarget pid)
+    let characters = if barred then [] else map toTarget heroes <> map toTarget allies
     quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
     -- a character's action may be worth more than its willpower, as Faramir's, so the
     -- player's actions are offered alongside committing it
@@ -551,7 +555,7 @@ runGameMessage msg g = case msg of
     threat <- getStagingThreat
     players <- getPlayerOrder
     if
-      | willpower > threat -> push $ PlaceProgressOnQuest (willpower - threat)
+      | willpower > threat -> pushAll [PlaceProgressOnQuest (willpower - threat), CheckWindows [mkAfter QuestedSuccessfully]]
       | threat > willpower -> pushAll $ [RaiseThreat pid (threat - willpower) | pid <- players] <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
@@ -569,11 +573,12 @@ runGameMessage msg g = case msg of
     pure g
   PayForCard pid card windows -> do
     costId <- getRandom
+    extra <- costIncrease card
     push $ PayCost costId
     let activeCost =
           ActiveCost
             { activeCostId = costId
-            , activeCostCost = cardCost card
+            , activeCostCost = raiseCost extra (cardCost card)
             , activeCostCard = card
             , activeCostPlayer = pid
             , activeCostWindows = windows
@@ -664,6 +669,8 @@ runGameMessage msg g = case msg of
       LocationTarget lid | Just l <- Map.lookup lid g.entities.locations -> do
         withAttached
         pure $ g & entitiesL . locationsL %~ Map.delete lid & toTop (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l))
+      ObjectiveTarget oid | Just o <- Map.lookup oid g.entities.objectives ->
+        pure $ g & entitiesL . objectivesL %~ Map.delete oid & toTop (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o))
       _ -> pure g
   RemoveProgressFromQuest source n -> do
     quests <- toList <$> getsGame (entitiesQuests . gameEntities)
@@ -697,6 +704,9 @@ runGameMessage msg g = case msg of
   CompleteQuest qid -> do
     push AdvanceQuest
     pure $ g & entitiesL . questsL %~ Map.delete qid
+  ResetToStage card _ -> do
+    pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
+    pure $ g & entitiesL . questsL .~ mempty
   PlayAttachment pid card -> do
     attachment <- newAttachment pid card
     hosts <- attachmentHosts (toAttrs attachment).attachTo
@@ -779,7 +789,9 @@ discardTarget target g = leftPlay g target >> case target of
   TreacheryTarget tid -> fromEntity treacheriesL tid
   AttachmentTarget aid -> fromEntity attachmentsL aid
   -- an objective that leaves its hero, or is discarded, goes back to the staging area
-  ObjectiveTarget oid -> g <$ push (PlaceObjective oid StagingArea)
+  ObjectiveTarget oid -> do
+    toTop <- elem LeavesPlayToTopOfEncounterDeck <$> getModifiers target
+    g <$ push (if toTop then ReturnToTopOfEncounterDeck target else PlaceObjective oid StagingArea)
   _ -> pure g
  where
   fromEntity :: (Ord k, IsCard v) => Lens' Entities (Map k v) -> k -> GameT Game
