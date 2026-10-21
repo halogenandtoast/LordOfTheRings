@@ -3,24 +3,15 @@ module LordOfTheRings.Attachment.Cards.DwarfPipe (dwarfPipe) where
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
 import LordOfTheRings.Card (Card (PlayerCard))
-import LordOfTheRings.Trait (Trait (Dwarf, Pipe))
+import LordOfTheRings.Trait (Trait (Dwarf))
 
 newtype DwarfPipe = DwarfPipe AttachmentAttrs
   deriving anyclass (IsAttachment, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
--- | Attach to a Dwarf character. Limit 1 per character.
---
--- ponytail: the limit is read as no Pipe already attached; Dwarf Pipe is the only Pipe a
--- Dwarf can take so far
+-- | Attach to a Dwarf character. Limit 1 per character, as its card def says.
 dwarfPipe :: AttachmentCard DwarfPipe
-dwarfPipe =
-  attachment DwarfPipe Cards.dwarfPipe
-    & attachTo
-      ( AttachToCharacterMatching
-          (HeroWithTrait Dwarf <> not_ (HeroWithAttached Pipe))
-          (AllyWithTrait Dwarf <> not_ (AllyWithAttached Pipe))
-      )
+dwarfPipe = attachment DwarfPipe Cards.dwarfPipe & attachTo (AttachToCharacterMatching (HeroWithTrait Dwarf) (AllyWithTrait Dwarf))
 
 -- | Response: After a card is discarded from your deck, exhaust Dwarf Pipe to place that
 -- card on the bottom of your deck.

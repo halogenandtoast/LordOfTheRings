@@ -5,6 +5,9 @@ import LordOfTheRings.Attachment
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Criteria (Criterion)
+import LordOfTheRings.Keyword (Keyword (Restricted))
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Id
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher
@@ -16,6 +19,24 @@ import LordOfTheRings.Target
 attachMatcherFor :: CardCode -> AttachMatcher
 attachMatcherFor code =
   (toAttrs $ lookupAttachment code (CardId UUID.nil) (AttachmentId UUID.nil) (PlayerId UUID.nil)).attachTo
+
+-- | What must be true for the player card, an attachment, to be played by its owner.
+attachmentCriteriaFor :: PlayerCard -> Criterion
+attachmentCriteriaFor card =
+  (toAttrs $ lookupAttachment (toCardCode card) card.id (AttachmentId UUID.nil) (fromMaybe (PlayerId UUID.nil) card.owner)).attachmentCriteria
+
+-- | Where the attachment card can go: its matcher's hosts, less those already carrying
+-- a copy of a card limited to 1 per character, and, for a restricted card, those that
+-- cannot have restricted attachments.
+cardHosts :: (HasGame m) => CardCode -> m [Target]
+cardHosts code = do
+  attached <- getsGame (toList . (.entities.attachments))
+  let copyOn host = any (\a -> a.placement == AttachedTo host && cdName (toCardDef a) == cdName def) attached
+  candidates <- attachmentHosts (attachMatcherFor code)
+  flip filterM [h | h <- candidates, not (cdLimitOnePerHost def && copyOn h)] \host ->
+    if Restricted `member` cdKeywords def then notElem CannotHaveRestrictedAttachments <$> getModifiers host else pure True
+ where
+  def = toCardDef code
 
 attachmentHosts :: (HasGame m) => AttachMatcher -> m [Target]
 attachmentHosts matcher = filterM (fmap (notElem CannotHaveAttachments) . getModifiers) =<< hosts matcher

@@ -281,13 +281,14 @@ payingHeroes sphere player = do
 hasHost :: (HasGame m) => Card -> m Bool
 hasHost c
   | c.cardType == AttachmentType, PlayIntoStagingArea <- attachMatcherFor (toCardCode c) = pure True
-  | c.cardType == AttachmentType = notNull <$> attachableHosts c
+  -- an attachment's play criteria are checked here too, with its hosts
+  | PlayerCard pc <- c, c.cardType == AttachmentType = andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> attachableHosts c]
   | otherwise = pure True
 
 -- | Where an attachment card could go, none for any other card.
 attachableHosts :: (HasGame m) => Card -> m [Target]
 attachableHosts c
-  | c.cardType == AttachmentType = attachmentHosts (attachMatcherFor $ toCardCode c)
+  | c.cardType == AttachmentType = cardHosts (toCardCode c)
   | otherwise = pure []
 
 correctPhase :: (HasGame m) => Card -> m Bool

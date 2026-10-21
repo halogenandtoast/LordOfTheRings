@@ -2,7 +2,7 @@ module LordOfTheRings.Attachment.Cards.GondorianShield (gondorianShield) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
-import LordOfTheRings.Card (toCardCode, toCardDef)
+import LordOfTheRings.Card (toCardDef)
 import LordOfTheRings.Trait (Trait (Gondor))
 
 newtype GondorianShield = GondorianShield AttachmentAttrs
@@ -11,9 +11,7 @@ newtype GondorianShield = GondorianShield AttachmentAttrs
 
 -- | Attach to a hero. Restricted. Limit 1 per hero.
 gondorianShield :: AttachmentCard GondorianShield
-gondorianShield =
-  attachment GondorianShield Cards.gondorianShield
-    & attachTo (AttachToHero $ not_ $ HeroWithAttachment $ toCardCode Cards.gondorianShield)
+gondorianShield = attachment GondorianShield Cards.gondorianShield
 
 -- | Attached hero gains +1 defense. (+2 defense instead if attached hero has the Gondor
 -- trait.)

@@ -5,17 +5,18 @@ import LordOfTheRings.Ally.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (Tactics))
 
 newtype WingedGuardian = WingedGuardian AllyAttrs
-  deriving anyclass (IsAlly, HasModifiersFor)
+  deriving anyclass (IsAlly)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 wingedGuardian :: AllyCard WingedGuardian
 wingedGuardian = ally WingedGuardian Cards.wingedGuardian
 
 -- | Sentinel. Winged Guardian cannot have restricted attachments.
--- Forced: After an attack in which Winged Guardian defends resolves, pay 1 Tactics
+instance HasModifiersFor WingedGuardian where
+  getModifiersFor (WingedGuardian a) = modified a a [CannotHaveRestrictedAttachments]
+
+-- | Forced: After an attack in which Winged Guardian defends resolves, pay 1 Tactics
 -- resource or discard Winged Guardian from play.
---
--- ponytail: no restricted attachment can reach an ally yet, so that line needs nothing.
 instance HasAbilities WingedGuardian where
   getAbilities (WingedGuardian a) = [mkAbility a 1 $ forced $ defendedAttack a]
 

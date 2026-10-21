@@ -660,7 +660,7 @@ runGameMessage msg g = case msg of
   PayForCard pid card windows
     | card.cardType == AttachmentType -> do
         -- a host that lowers the cost is chosen before paying
-        hosts <- attachmentHosts (attachMatcherFor $ toCardCode card)
+        hosts <- cardHosts (toCardCode card)
         discounts <- traverse (attachDiscount card) hosts
         if any (> 0) discounts
           then g <$ push (questionLabelWith (ikey "label.attachTo") (Just $ CardIdTarget card.id) hosts pid [targetLabel h [PayToAttach pid card windows h] | h <- hosts])
@@ -850,12 +850,26 @@ runGameMessage msg g = case msg of
       PlayIntoStagingArea -> do
         push entered
         pure $ g & entitiesL . attachmentsL %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = StagingArea}) attachment)
-      matcher -> do
-        hosts <- attachmentHosts matcher
+      _ -> do
+        hosts <- cardHosts (toCardCode card)
         push $ case hosts of
           [host] -> uiToRun (attachTo host)
           _ -> questionLabelWith (ikey "label.attachTo") (Just $ toTarget attachment) hosts pid (map attachTo hosts)
         pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
+  -- a character can have at most 2 restricted attachments: with a third, its controller
+  -- discards one of them
+  AttachCard aid host | Just a <- Map.lookup aid g.entities.attachments, isRestricted a -> do
+    let restrictedOn = [x | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
+    controller <- case host of
+      HeroTarget hid -> Just . (.owner) <$> getHero hid
+      AllyTarget aid' -> placementController . (.placement) <$> getAlly aid'
+      _ -> pure Nothing
+    for_ controller \pid ->
+      when (length restrictedOn > 2)
+        $ push
+        $ questionLabelWith (ikey "label.discardRestricted") (Just host) [] pid
+          [targetLabel x [Discard (toTarget x)] | x <- restrictedOn]
+    pure g
   PlayAttachmentOn pid card host -> do
     attachment <- newAttachment pid card
     pushAll [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
@@ -1019,6 +1033,10 @@ gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> 
 -- | A character's traits, printed and gained.
 characterTraits :: Target -> GameT (Set Trait)
 characterTraits target = (<>) . cdCardTraits <$> characterCardDef target <*> gainedTraits target
+
+-- | Whether the card has the restricted keyword.
+isRestricted :: (HasCardDef a) => a -> Bool
+isRestricted = member Restricted . cdKeywords . toCardDef
 
 -- | The windows for an ally entering play under the player.
 allyEntersPlay :: PlayerId -> Ally -> Message

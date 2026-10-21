@@ -2,7 +2,6 @@ module LordOfTheRings.Attachment.Cards.ValiantSword (valiantSword) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
-import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Trait (Trait (Noble))
 
 newtype ValiantSword = ValiantSword AttachmentAttrs
@@ -13,7 +12,7 @@ newtype ValiantSword = ValiantSword AttachmentAttrs
 valiantSword :: AttachmentCard ValiantSword
 valiantSword =
   attachment ValiantSword Cards.valiantSword
-    & attachTo (AttachToHero $ HeroWithTrait Noble <> not_ (HeroWithAttachment $ toCardCode Cards.valiantSword))
+    & attachTo (AttachToHero $ HeroWithTrait Noble)
 
 -- | Attached hero gets +1 attack (+2 attack if your threat is 40 or higher).
 instance HasModifiersFor ValiantSword where

@@ -7,6 +7,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Criteria (Criterion (NoCriteria))
 import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Name
@@ -45,6 +46,8 @@ data AttachmentAttrs = AttachmentAttrs
   , attachmentOwner :: PlayerId
   , attachmentExhausted :: Bool
   , attachmentAttachTo :: AttachMatcher
+  , attachmentCriteria :: Criterion
+  -- ^ what must be true for the attachment to be played
   }
   deriving stock (Show, Eq, Generic)
 
@@ -54,7 +57,7 @@ instance ToJSON AttachmentAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "attachment")
 
 instance FromJSON AttachmentAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "attachment")
+  parseJSON = genericParseJSON (aesonOptions $ Just "attachment") . withDefaults [("criteria", toJSON NoCriteria)]
 
 attachment :: (AttachmentAttrs -> a) -> CardDef -> AttachmentCard a
 attachment f cardDef =
@@ -71,6 +74,7 @@ attachment f cardDef =
             , attachmentOwner = pid
             , attachmentExhausted = False
             , attachmentAttachTo = AttachToHero AnyHero
+            , attachmentCriteria = NoCriteria
             }
     }
 
@@ -153,6 +157,10 @@ instance HasField "name" Attachment Name where
 
 attachTo :: (IsAttachment a) => AttachMatcher -> AttachmentCard a -> AttachmentCard a
 attachTo matcher = fmap (overAttrs (\a -> a {attachmentAttachTo = matcher}))
+
+-- | What must be true for the attachment to be played, given the player who would play it.
+playCriteria :: (IsAttachment a) => (PlayerId -> Criterion) -> AttachmentCard a -> AttachmentCard a
+playCriteria f = fmap (overAttrs (\a -> a {attachmentCriteria = f a.owner}))
 
 instance HasField "attachTo" AttachmentAttrs AttachMatcher where
   getField = attachmentAttachTo

@@ -2,18 +2,14 @@ module LordOfTheRings.Attachment.Cards.MagicRing (magicRing) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
-import LordOfTheRings.Trait (Trait (Ring))
 
 newtype MagicRing = MagicRing AttachmentAttrs
   deriving anyclass (IsAttachment, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
--- | Attach to a hero. Limit 1 per hero and 1 per deck.
---
--- ponytail: the per hero limit is read as no Ring already attached, and the per deck
--- limit is deckbuilding's
+-- | Attach to a hero. Limit 1 per hero and 1 per deck: both limits are on the card def.
 magicRing :: AttachmentCard MagicRing
-magicRing = attachment MagicRing Cards.magicRing & attachTo (AttachToHero $ not_ $ HeroWithAttached Ring)
+magicRing = attachment MagicRing Cards.magicRing
 
 -- | Action: Exhaust Magic Ring and raise your threat by 1 to (choose 1): heal 1 damage
 -- from attached hero, add 1 resource to attached hero's pool, or ready attached hero.

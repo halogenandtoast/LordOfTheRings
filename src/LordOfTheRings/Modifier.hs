@@ -26,6 +26,8 @@ data ModifierType
   | CannotAttack
   | CannotAttackOrDefend
   | CannotHaveAttachments
+  | -- | no attachment with the restricted keyword can be attached to it
+    CannotHaveRestrictedAttachments
   | -- | on the game: the total threat in the staging area is raised by this much
     StagingThreatBonus Int
   | -- | on the game: reveal this many more encounter cards during staging

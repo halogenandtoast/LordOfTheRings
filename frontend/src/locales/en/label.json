@@ -22,6 +22,7 @@
   "useResponse": "Use a response?",
   "pass": "Pass",
   "attachTo": "Attach to",
+  "discardRestricted": "A character can have only 2 restricted attachments: discard one",
   "planningActions": "Play cards or use actions",
   "donePlanning": "Done Planning",
   "takeAction": "Take an action?",
