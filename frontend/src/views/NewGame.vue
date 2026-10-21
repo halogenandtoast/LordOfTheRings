@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { createGame } from '../api'
 import { currentUser, updateSettings } from '../auth'
-import { campaigns, type Campaign, type ScenarioOption } from '../campaigns'
+import { campaigns as allCampaigns, type Campaign, type ScenarioOption } from '../campaigns'
+import { alphaEnabled, filterDisplayable, isDevBuild } from '../displayRules'
 import { useServerText } from '../i18n'
 
 const tr = useServerText()
@@ -12,6 +13,15 @@ const tr = useServerText()
 
 const { t } = useI18n()
 const router = useRouter()
+const displayRules = {
+  alpha: alphaEnabled(useRoute().query),
+  beta: currentUser.value?.beta === true,
+  dev: isDevBuild(),
+}
+// the campaigns with something to show, and only what they have to show
+const campaigns = allCampaigns
+  .map((c) => ({ ...c, scenarios: filterDisplayable(c.scenarios, displayRules) }))
+  .filter((c) => c.scenarios.length > 0)
 const selectedCampaign = ref<Campaign | null>(null)
 const selectedScenario = ref<ScenarioOption | null>(null)
 const gameName = ref('')
@@ -33,13 +43,13 @@ const error = ref<string | null>(null)
 // friends to the open ones.
 const seatCount = ref(1)
 
-const playableCount = (c: Campaign) => c.scenarios.filter((s) => s.available).length
+const playableCount = (c: Campaign) => c.scenarios.filter((s) => !s.unimplemented).length
 const defaultName = computed(() => selectedScenario.value?.name ?? '')
-const canCreate = computed(() => !!selectedScenario.value?.available && !creating.value)
+const canCreate = computed(() => !!selectedScenario.value && !selectedScenario.value.unimplemented && !creating.value)
 
 const chooseCampaign = (c: Campaign) => {
   selectedCampaign.value = c
-  selectedScenario.value = c.scenarios.find((s) => s.available) ?? null
+  selectedScenario.value = c.scenarios.find((s) => !s.unimplemented) ?? null
 }
 
 const back = () => {
@@ -93,7 +103,7 @@ const create = async () => {
             <img :src="c.image" alt="" />
             <span class="campaign-name"><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</span>
             <span class="campaign-count">
-              {{ $t('newGame.scenarioCount', c.scenarios.length) }}<template v-if="playableCount(c) > 0"> &middot; {{ $t('newGame.playableCount', { count: playableCount(c) }) }}</template>
+              {{ $t('newGame.scenarioCount', c.scenarios.length) }}<template v-if="playableCount(c) < c.scenarios.length"> &middot; {{ $t('newGame.playableCount', { count: playableCount(c) }) }}</template>
             </span>
           </button>
         </div>
@@ -116,14 +126,13 @@ const create = async () => {
               :key="option.id"
               type="button"
               class="scenario-box"
-              :class="{ selected: option.id === selectedScenario?.id, unavailable: !option.available }"
-              :disabled="!option.available"
+              :class="{ selected: option.id === selectedScenario?.id, unavailable: option.unimplemented, alpha: option.alpha, beta: option.beta }"
+              :disabled="option.unimplemented"
               :aria-pressed="option.id === selectedScenario?.id"
               @click="selectedScenario = option"
             >
               <img :src="option.image" alt="" />
               <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
-              <span v-if="!option.available" class="coming-soon">{{ $t('newGame.comingSoon') }}</span>
             </button>
           </div>
         </div>
@@ -338,19 +347,26 @@ h2 {
 .scenario-box:not(.selected) img { filter: grayscale(100%); }
 .scenario-box.selected { border-color: var(--accent); }
 .scenario-box.unavailable { cursor: not-allowed; opacity: 0.6; }
-.scenario-name { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; font-weight: 700; text-align: center; }
-.coming-soon {
+/* a ribbon across the corner, as in Arkham */
+.scenario-box.alpha::after,
+.scenario-box.beta::after {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: var(--panel);
-  color: var(--text-muted);
-  font-size: 0.7em;
+  top: 9px;
+  left: -22px;
+  width: 86px;
+  rotate: -45deg;
+  color: var(--cream);
+  font-size: 0.7rem;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 24px;
+  text-align: center;
   text-transform: uppercase;
-  padding: 2px 6px;
-  border-radius: 3px;
+  box-shadow: 0 4px 10px var(--shadow);
 }
+.scenario-box.beta::after { content: 'beta'; background: darkgoldenrod; }
+.scenario-box.alpha::after { content: 'alpha'; background: darkred; }
+.scenario-name { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; font-weight: 700; text-align: center; }
 
 
 

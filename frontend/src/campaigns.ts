@@ -2,14 +2,14 @@
 // Sagas. Scenario lists follow Hall of Beorn; box art lives in /images/products by code.
 // Expansion symbols and encounter set icons come from KevBelisle/lotr-lcg-assets.
 
-export interface ScenarioOption {
+import type { Gateable } from './displayRules'
+
+export interface ScenarioOption extends Gateable {
   id: string
   name: string
   image: string
   /** The scenario's encounter set icon. */
   icon: string
-  /** Only scenarios the engine scripts can be started. */
-  available: boolean
 }
 
 export interface Campaign {
@@ -36,7 +36,6 @@ const scenario = (code: string, name: string): ScenarioOption => ({
   name,
   image: product(code),
   icon: `/images/icons/scenarios/${slug(name)}.svg`,
-  available: false,
 })
 
 // A box's own scenarios share its art; each adventure pack has its own.
@@ -44,14 +43,20 @@ const fromBox = (code: string, names: string[]): ScenarioOption[] => names.map((
 
 const fromPacks = (packs: [string, string][]): ScenarioOption[] => packs.map(([code, name]) => scenario(code, name))
 
-const playable = new Set(['passage-through-mirkwood', 'journey-along-the-anduin', 'escape-from-dol-guldur'])
+// The scenarios the engine scripts, with how far along each is (see displayRules.ts);
+// the rest are unimplemented.
+const implemented: Record<string, Gateable> = {
+  'passage-through-mirkwood': {},
+  'journey-along-the-anduin': {},
+  'escape-from-dol-guldur': {},
+}
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({
   id,
   name,
   image: product(code),
   symbol: `/images/icons/expansions/${id}.svg`,
-  scenarios: scenarios.map((s) => ({ ...s, available: playable.has(s.id) })),
+  scenarios: scenarios.map((s) => ({ ...s, ...(implemented[s.id] ?? { unimplemented: true }) })),
 })
 
 export const campaigns: Campaign[] = [
