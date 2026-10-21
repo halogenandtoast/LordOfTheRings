@@ -3,6 +3,7 @@ module LordOfTheRings.Helpers.Character (module LordOfTheRings.Helpers.Character
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
+import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
@@ -27,6 +28,15 @@ getDefense target = do
   blank <- elem DoesNotCountDefense <$> getModifiers target
   if blank then pure 0 else characterStat cdDefense defenseOf target
 getHitPoints = characterStat cdHitPoints hitPointsOf
+
+-- | The attack the characters given make together against an enemy, with their bonuses
+-- against its traits.
+getAttackStrength :: (HasGame m) => [Target] -> EnemyId -> CardDef -> m Int
+getAttackStrength attackers eid enemy = do
+  bonuses <- for attackers \a -> do
+    mods <- getModifiers a
+    sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
+  (+ sum bonuses) . sum <$> traverse getAttack attackers
 
 -- | The total willpower of every character committed to the quest.
 getCommittedWillpower :: (HasGame m) => m Int

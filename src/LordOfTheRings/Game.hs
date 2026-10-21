@@ -438,10 +438,7 @@ runGameMessage msg g = case msg of
       -- the enemy left play before the attack resolved: the attackers just stop
       Nothing -> pushAll (map StopAttacking attackers)
       Just enemy' -> do
-        bonuses <- for attackers \a -> do
-          mods <- getModifiers a
-          sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) (toCardDef enemy')
-        attack <- (+ sum bonuses) . sum <$> traverse getAttack attackers
+        attack <- getAttackStrength attackers eid (toCardDef enemy')
         defense <- getEnemyDefense eid
         pushAll
           $ map StopAttacking attackers
