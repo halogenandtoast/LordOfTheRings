@@ -193,3 +193,13 @@ spec = describe "Player choices" do
     run $ PlaceTokens GameSource carrock Progress 1
     getsGame (fmap (.progress) . headMay . toList . (.entities.locations)) `shouldReturn` Just 1
     getModifiers carrock >>= (`shouldSatisfy` notElem (ThreatModifier (-1)))
+
+  it "does not offer The Carrock as a player card's target" . gameTestIn conflictAtTheCarrock testDeck $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Locations.theCarrock
+    run . AddToStaging =<< genEncounterCard Locations.fensAndMires
+    locations <- getsGame (map (\l -> (toCardCode l, toTarget l)) . toList . (.entities.locations))
+    bombur <- putAllyIntoPlay pid Allies.bombur
+    run $ ActionWindow pid
+    chooseAbilityOf pid bombur
+    Just question <- getQuestion pid
+    [code | TargetLabel t _ <- questionChoices question, (code, t') <- locations, t == t'] `shouldBe` [toCardCode Locations.fensAndMires]
