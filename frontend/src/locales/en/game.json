@@ -1,6 +1,5 @@
 {
   "round": "round {round}",
-  "moreChoices": "More than one choice: click to pick",
   "threat": "Threat {value}",
   "willpower": "Willpower {value}",
   "attack": "Attack {value}",

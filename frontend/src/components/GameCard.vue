@@ -137,7 +137,6 @@ const toggleUnless = (attached: CardView) => {
         @click="choose"
       >
         <img :src="source" :alt="tr(card.name)" />
-        <span v-if="options.length > 1" class="more-choices" :title="$t('game.moreChoices')">&hellip;</span>
         <!-- inside the card so it travels in the card's view transition snapshot -->
         <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
         <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
@@ -472,20 +471,4 @@ const toggleUnless = (attached: CardView) => {
 .debug button { width: 18px; height: 16px; padding: 0; border: 1px solid var(--line); border-radius: 3px; background: none; color: inherit; cursor: pointer; }
 .debug button:disabled { opacity: 0.35; cursor: default; }
 .debug button.defeat { width: auto; height: auto; padding: 2px 0; line-height: 1.2; }
-/* a card offering several choices: clicking it asks which */
-.more-choices {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  min-width: 1.4em;
-  padding: 0 0.3em;
-  font-weight: 700;
-  line-height: 1.2;
-  text-align: center;
-  color: var(--ink);
-  background: var(--interactive);
-  border-radius: 999px;
-  box-shadow: 0 0 6px var(--interactive-glow);
-  pointer-events: none;
-}
 </style>
