@@ -486,9 +486,7 @@ runGameMessage msg g = case msg of
     pure g
   RevealShadowCard eid cid -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
-      for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
-        send $ FlipCard cid
-        send $ Announce $ ikeyWith "log.shadowAnnounce" (cardVar "card" card)
+      when (any ((== cid) . ecId) enemy.shadowCards) $ send $ FlipCard cid
     pure g
   ResolveShadowCard cid eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
@@ -751,15 +749,10 @@ runGameMessage msg g = case msg of
     _ -> error "Unhandled"
   _ -> pure g
 
--- | Show the players what is about to happen: the log is written by the narrator, this
--- is what the board itself shows.
+-- | Show the players what the board does as it happens: the log is written by the narrator.
 announce :: Message -> GameT ()
 announce = \case
-  BeginPhase phase -> send $ Announce $ ikey $ "log.phase." <> phaseKey phase
   AdvanceToQuest card -> send $ FlipCard card.id
-  GameOver outcome -> send $ Announce $ ikey $ "log.gameOver." <> case outcome of
-    Won -> "won"
-    Lost -> "lost"
   _ -> pure ()
 
 eliminationThreat :: Int

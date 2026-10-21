@@ -10,7 +10,6 @@ import LordOfTheRings.Queue
 data FrontendMessage
   = -- | an entry for the game log, stamped and stored before it goes out
     Logged {entry :: LogEntry}
-  | Announce {message :: Text}
   | FlipCard {cardId :: CardId}
   | -- | cards shuffled back into a deck, which may be drawn straight out again
     ShuffleIntoDeck {cardIds :: [CardId]}

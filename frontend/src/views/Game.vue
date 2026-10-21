@@ -11,7 +11,6 @@ import GameLog from '../components/GameLog.vue'
 import GameBar from '../components/GameBar.vue'
 import PlayerArea from '../components/PlayerArea.vue'
 import PhaseTracker from '../components/PhaseTracker.vue'
-import Prompt from '../components/Prompt.vue'
 import QuestTally from '../components/QuestTally.vue'
 import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
@@ -34,7 +33,7 @@ const { t } = useI18n()
 const tr = useServerText()
 const spectate = route.meta.spectate === true
 const {
-  error, game, log, hasOlder, loadOlder, say, undoTo, announcement, flipping,
+  error, game, log, hasOlder, loadOlder, say, undoTo, flipping,
   started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join, leave, start,
 } = useGame(route.params.id as string, spectate)
 // With friends you play your own seats; otherwise every seat is yours.
@@ -346,15 +345,7 @@ watch(question, (asked) => {
         {{ tr(error) }}
         <button v-if="!spectate" type="button" class="file-bug-link" @click="fileBugAbout(tr(error))">{{ $t('game.bar.fileBug') }}</button>
       </p>
-      <Prompt
-        v-if="started"
-        :question="question"
-        :outcome="outcome"
-        :round="game?.round ?? 0"
-        :phase="game?.phase ?? null"
-      />
       <p v-if="waitingOn && !spectate" class="announcement">{{ $t('game.waitingOn', { name: waitingOn.name }) }}</p>
-      <p v-if="announcement" class="announcement">{{ tr(announcement) }}</p>
       <GameLog
         :entries="log"
         :can-undo="!spectate && canUndo"

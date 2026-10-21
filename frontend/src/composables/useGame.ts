@@ -31,7 +31,6 @@ export const useGame = (gameId: string, spectate = false) => {
   const game = shallowRef<GameView | null>(null)
   const log = shallowRef<LogEntry[]>([])
   const hasOlder = ref(false)
-  const announcement = ref<string | null>(null)
   const flipping = ref<Set<string>>(new Set())
 
   let defs: Record<string, CardDef> = {}
@@ -104,9 +103,6 @@ export const useGame = (gameId: string, spectate = false) => {
       case 'Logged':
         log.value = [...log.value, message.entry]
         return
-      case 'Announce':
-        announcement.value = message.message
-        return
       case 'FlipCard':
         pendingFlips.push(message.cardId)
         return
@@ -178,7 +174,6 @@ export const useGame = (gameId: string, spectate = false) => {
     game: readonly(game),
     canUndo: computed(() => data.value?.canUndo ?? false),
     log: shallowReadonly(log),
-    announcement: readonly(announcement),
     flipping: readonly(flipping),
     started: computed(() => game.value?.started ?? false),
     question: computed(() => game.value?.question ?? null),
@@ -198,10 +193,7 @@ export const useGame = (gameId: string, spectate = false) => {
       hasOlder.value = older.length >= LOG_PAGE
     },
     say: (text: string) => post('/chat', { text }),
-    reset: () => {
-      announcement.value = null
-      return post('/reset')
-    },
+    reset: () => post('/reset'),
     // answered as the seat it was asked of
     answer: (askId: number, choice: number, player: string) =>
       post('', { choice, questionVersion: askId, player }),

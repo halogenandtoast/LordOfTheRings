@@ -58,7 +58,6 @@
   "dealtShadow": "{enemy} is dealt a shadow card",
   "shadowRevealed": "Shadow card for {enemy}: {card}",
   "shadowRevealedNoEffect": "Shadow card for {enemy}: {card} (no shadow effect)",
-  "shadowAnnounce": "Shadow: {card}",
   "shadowCard": "Shadow card",
   "attachedTo": "{card} is attached to {target}",
   "takenPrisoner": "{hero} is taken prisoner",
