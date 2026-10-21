@@ -54,8 +54,7 @@
     "easyMode": "Easy",
     "lost": "Lost",
     "deleteGame": "Delete game",
-    "confirmDelete": "Delete this game?",
-    "threat": "threat {threat}"
+    "confirmDelete": "Delete this game?"
   },
   "newGame": {
     "title": "New Game",

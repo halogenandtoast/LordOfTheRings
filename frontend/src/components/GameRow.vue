@@ -38,7 +38,6 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
         <span v-if="game.waiting">{{ $t('home.waitingForPlayers') }}</span>
         <template v-else>
           <span>{{ $t('game.round', { round: game.round }) }} &middot; {{ $t(phase) }}</span>
-          <span>{{ $t('home.threat', { threat: game.threat }) }}</span>
         </template>
       </div>
       <!-- each player's heroes, as Arkham's rows show their investigators -->
