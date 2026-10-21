@@ -27,3 +27,16 @@ router.beforeEach((to) => {
   if (to.meta.requiresAdmin && !currentUser.value?.admin) return { path: '/' }
   if (to.meta.guest && currentUser.value) return { path: '/' }
 })
+
+// After a deploy, an open page still asks for the old build's chunks, which are gone.
+// Load the page afresh at the link followed instead, once: a second failure soon after
+// is a real one, left to show.
+const STALE_KEY = 'reloaded-for-stale-build'
+router.onError((error, to) => {
+  if (!/dynamically imported module|Importing a module script failed|error loading dynamically imported module/i.test(String(error?.message))) return
+  const last = Number(sessionStorage.getItem(STALE_KEY) ?? 0)
+  if (Date.now() - last < 10_000) return
+  sessionStorage.setItem(STALE_KEY, String(Date.now()))
+  window.location.replace(router.resolve(to).href)
+  window.location.reload()
+})
