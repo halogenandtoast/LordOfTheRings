@@ -203,10 +203,27 @@ const shown = computed(() => {
 </template>
 
 <style scoped>
+/* laid out as the games list is: no panel behind the page, as wide as Home */
 .page {
-  max-width: 66rem;
+  width: 70vw;
+  min-width: 60vw;
+  max-width: 98vw;
   margin-inline: auto;
-  padding: var(--space-5) var(--space-4) var(--space-6);
+  padding: 20px 0 var(--space-6);
+  background: none;
+}
+
+@media (max-width: 768px) {
+  .page {
+    width: 100%;
+    min-width: unset;
+    padding-inline: var(--space-3);
+  }
+
+  /* after the art's own rule in the file, so it wins by being more specific */
+  .deck .deck__art {
+    flex-basis: 6rem;
+  }
 }
 
 .page__head {
@@ -217,12 +234,24 @@ const shown = computed(() => {
 }
 
 h1 {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
+  margin: 0;
+  color: var(--title);
+  font-size: 2em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .import {
   margin-bottom: var(--space-4);
+}
+
+.import :deep(.row) {
+  background: var(--box-background);
+  border: 1px solid var(--box-border);
+}
+
+.import :deep(.row--over) {
+  border-color: var(--accent);
 }
 
 .toolbar {
@@ -248,17 +277,21 @@ h1 {
   gap: var(--space-2);
 }
 
+/* as a game row: a panel with the accent down its left edge */
 .deck {
   display: flex;
   align-items: stretch;
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius);
-  background: var(--c-surface);
+  border: 1px solid var(--box-border);
+  border-left: 4px solid var(--accent);
+  border-radius: 5px;
+  background: var(--box-background);
+  overflow: hidden;
   transition: border-color var(--transition);
 }
 
 .deck:hover {
-  border-color: var(--c-border-strong);
+  border-color: var(--line-strong);
+  border-left-color: var(--accent-bright);
 }
 
 .deck__link {
@@ -272,8 +305,6 @@ h1 {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
-  border-radius: var(--radius) 0 0 var(--radius);
-  overflow: hidden;
   background: var(--c-surface-2, rgb(0 0 0 / 0.2));
 }
 
@@ -314,8 +345,10 @@ h1 {
 }
 
 .deck__name {
-  font-family: var(--font-display);
-  font-size: var(--text-base);
+  color: var(--title);
+  font-family: inherit;
+  font-size: 1.25em;
+  font-weight: 700;
 }
 
 .deck__heroes {
