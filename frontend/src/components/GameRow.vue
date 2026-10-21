@@ -53,9 +53,11 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
               :style="{ backgroundImage: `url('/images/cards/${hero.code}.jpg')` }"
             />
           </span>
-          <span class="seat-name">{{ seat.name }}</span>
-          <span class="seat-threat" :title="$t('game.threat', { value: seat.threat })">
-            {{ seat.threat }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />
+          <span class="seat-caption">
+            <span class="seat-name">{{ seat.name }}</span>
+            <span class="seat-threat" :title="$t('game.threat', { value: seat.threat })">
+              {{ seat.threat }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />
+            </span>
           </span>
         </li>
       </ul>
@@ -158,7 +160,9 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   background: rgb(229 211 173 / 0.03);
   border-radius: 4px;
 }
-.seat { display: flex; align-items: center; gap: 8px; }
+.seat { display: flex; flex-direction: column; gap: 4px; }
+/* under the heroes, the player and their threat */
+.seat-caption { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .seat.eliminated { opacity: 0.45; }
 /* as a deck tile shows its heroes: their art side by side, over a bar in each one's
    sphere colour */
@@ -184,7 +188,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
 .hero.lore { --sphere-color: var(--lore); }
 .hero.spirit { --sphere-color: var(--spirit); }
 .hero.tactics { --sphere-color: var(--tactics); }
-.seat-name { color: var(--text); font-size: 0.85em; font-weight: 600; }
+.seat-name { color: var(--text); font-size: 0.85em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .seat-threat { display: flex; align-items: center; gap: 2px; color: var(--threat-red); font-size: 0.85em; font-weight: 700; }
 .seat-threat .icon {
   display: inline-block;
