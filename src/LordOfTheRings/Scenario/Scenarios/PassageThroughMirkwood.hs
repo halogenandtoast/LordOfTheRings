@@ -1,6 +1,7 @@
 module LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood (passageThroughMirkwood) where
 
 import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Matcher (getLead)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
 
@@ -30,6 +31,15 @@ instance RunMessage PassageThroughMirkwood where
     AdvanceQuest | stages@[_, _] <- attrs.questDeck, all isChosenPath stages -> do
       push . AdvanceToQuest =<< uniform stages
       pure $ PassageThroughMirkwood $ attrs & questDeckL .~ []
+    -- The stage comes out on its first side, which both paths share, and the lead turns
+    -- it over to see which path it is.
+    AdvanceToQuest card | isChosenPath card -> do
+      putQuestIntoPlay card
+      lead <- getLead
+      chooseOneM lead do
+        questionLabeledWith "revealPath" []
+        targeting card $ push $ Flip (toTarget card)
+      pure $ PassageThroughMirkwood attrs
     _ -> PassageThroughMirkwood <$> runMessage msg attrs
    where
     isChosenPath = (`elem` map toCardCode [Quests.aChosenPathDontLeaveThePath, Quests.aChosenPathBeornsPath]) . toCardCode

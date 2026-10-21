@@ -23,6 +23,12 @@ nextStageIs def = do
   g <- getGame
   putGame $ g & scenarioL %~ overAttrs (questDeckL %~ \case (fork : _) -> [fork, card]; [] -> [card])
 
+-- | The lead turns over A Chosen Path, which comes out on its shared first side.
+revealPath :: PlayerId -> GameT ()
+revealPath pid = chooseOptionMatching "turn over the path" pid \case
+  TargetLabel {} -> True
+  _ -> False
+
 setEncounterDiscard :: [CardDef] -> GameT [EncounterCard]
 setEncounterDiscard defs = do
   cards <- traverse genEncounterCard defs
@@ -48,6 +54,14 @@ spec = describe "Quest advancement" do
     toCardCode <$> getActiveQuest >>= (`shouldSatisfy` (`elem` ["01121", "01122"]))
     getsGame (.scenario) >>= (`shouldBe` []) . (.questDeck) . toAttrs
 
+  it "shows A Chosen Path on its first side until the lead turns it over" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    completeQuest
+    completeQuest
+    (.flipped) <$> getActiveQuest `shouldReturn` False
+    revealPath pid
+    (.flipped) <$> getActiveQuest `shouldReturn` True
+
   describe "Don't Leave the Path" do
     it "has each player add a Spider of their choice from the encounter deck or discard to staging" . gameTest $ \pid -> do
       flipFirstQuest pid
@@ -56,6 +70,7 @@ spec = describe "Quest advancement" do
       [king] <- setEncounterDiscard [Enemies.kingSpider]
       completeQuest
       completeQuest
+      revealPath pid
       resolveWhenRevealed pid
       Just question <- getQuestion pid
       [() | SearchCards cards _ <- [unlabel question], length cards == 3] `shouldBe` [()]
@@ -71,6 +86,7 @@ spec = describe "Quest advancement" do
       _ <- setEncounterDiscard []
       completeQuest
       completeQuest
+      revealPath pid
       resolveWhenRevealed pid
       chooseLabel "$label.continue" pid
       getQuestion pid `shouldReturn` Nothing
@@ -81,6 +97,7 @@ spec = describe "Quest advancement" do
       [spawnCard] <- setEncounterDeck [Enemies.ungoliantsSpawn]
       completeQuest
       completeQuest
+      revealPath pid
       resolveWhenRevealed pid
       chooseTarget pid spawnCard
       getsGame (.outcome) `shouldReturn` Nothing
@@ -93,6 +110,7 @@ spec = describe "Quest advancement" do
       nextStageIs Quests.aChosenPathBeornsPath
       completeQuest
       completeQuest
+      revealPath pid
       run . AddToStaging =<< genEncounterCard Enemies.ungoliantsSpawn
       completeQuest
       toCardCode <$> getActiveQuest `shouldReturn` "01122"
@@ -105,6 +123,7 @@ spec = describe "Quest advancement" do
     nextStageIs Quests.aChosenPathBeornsPath
     completeQuest
     completeQuest
+    revealPath pid
     completeQuest
     getsGame (.outcome) `shouldReturn` Just Won
  where

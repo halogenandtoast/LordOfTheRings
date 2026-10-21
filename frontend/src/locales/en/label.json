@@ -146,6 +146,7 @@
   "payMore": "Pay {count} more",
   "payFromDifferentHero": "Pay 1 from a different hero ({count} more)",
   "performSetup": "Perform setup: flip {card}",
+  "revealPath": "Turn over A Chosen Path to see which path it is",
   "resolveWhenRevealed": "Resolve When Revealed: {card}",
   "xEquals": "X = {x}",
   "ability": {

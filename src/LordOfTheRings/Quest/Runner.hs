@@ -25,6 +25,8 @@ instance RunMessage QuestAttrs where
         $ push (CompleteQuest attrs.id)
       pure attrs'
     Flip (isTarget attrs -> True) -> pure $ attrs & flippedL .~ True
+    -- a stage put into play unflipped is clicked by its card, before it has an id to show
+    Flip (CardIdTarget cid) | cid == attrs.questCardId -> pure $ attrs & flippedL .~ True
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs

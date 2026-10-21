@@ -756,7 +756,14 @@ runGameMessage msg g = case msg of
 -- | Show the players what the board does as it happens: the log is written by the narrator.
 announce :: Message -> GameT ()
 announce = \case
-  AdvanceToQuest card -> send $ FlipCard card.id
+  -- a stage turning over, as the setup or a click does
+  Flip target -> do
+    quests <- getsGame (toList . entitiesQuests . gameEntities)
+    for_ quests \q -> do
+      let attrs = toAttrs q
+      when (not attrs.questFlipped && (target == toTarget q || target == CardIdTarget attrs.questCardId))
+        $ send
+        $ FlipCard attrs.questCardId
   _ -> pure ()
 
 eliminationThreat :: Int
