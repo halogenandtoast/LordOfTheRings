@@ -20,7 +20,6 @@ watchEffect(() => {
     <template #game><a href="https://www.fantasyflightgames.com/en/products/the-lord-of-the-rings-the-card-game/" rel="noreferrer" target="_blank" tabindex="-1">{{ $t('about.gameName') }}</a></template>
     <template #ffg><a href="https://www.fantasyflightgames.com" rel="noreferrer" target="_blank" tabindex="-1">Fantasy Flight Games (FFG)</a></template>
     <template #mee><a href="https://www.middleearth.com" rel="noreferrer" target="_blank" tabindex="-1">Middle-earth Enterprises</a></template>
-    <template #about><RouterLink to="/about">{{ $t('nav.about') }}</RouterLink></template>
   </i18n-t>
 </template>
 
