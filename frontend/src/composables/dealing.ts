@@ -3,7 +3,6 @@ import { cardImage, type CardView, type GameView } from '../types'
 
 const DEAL_MS = 520
 const STAGGER_MS = 90
-const SHUFFLE_MS = 450
 
 interface Move {
   /** The transition name it moves under. */
@@ -130,19 +129,11 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
   }
   arriving.forEach((m, i) => animate(m, i * STAGGER_MS, m.faceDown))
   const shuffleAt = arriving.length ? (arriving.length - 1) * STAGGER_MS + DEAL_MS : 0
-  const dealAt = shuffling.length ? shuffleAt + SHUFFLE_MS : 0
+  const dealAt = shuffling.length ? shuffleAt + RIFFLE_MS : 0
   leaving.forEach((m, i) => animate(m, dealAt + i * STAGGER_MS, false))
 
-  // the deck takes its own transition name while it shuffles, so it can move on its own
-  const decks = shuffling.flatMap((pid) => pileAt(`deck-${pid}`) ?? [])
-  decks.forEach((deck, i) => {
-    const name = `deck-${shuffling[i]}`
-    deck.style.setProperty('view-transition-name', name)
-    rules.push(
-      `::view-transition-old(${name}) { animation: none; opacity: 0; }`,
-      `::view-transition-new(${name}) { animation: deck-shuffle ${SHUFFLE_MS}ms ease-in-out ${shuffleAt}ms both; }`,
-    )
-  })
+  // the decks riffle as the opening shuffle does, once the cards going back are in; the
+  // riffle is drawn on the page, which shows through the transition live
 
   leaving.forEach(lay)
   const style = Object.assign(document.createElement('style'), { textContent: rules.join('\n') })
@@ -153,10 +144,13 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
       renamed.forEach((shown) => shown.style.setProperty('view-transition-name', `card-${shown.dataset.cardId}`))
     },
     // ponytail: a card that left for somewhere else drawn on screen (an attachment, say) is skipped here
-    land: () => arriving.filter((m) => m.name.startsWith('back-') || !onScreen(m.card.id)).forEach(lay),
+    land: () => {
+      arriving.filter((m) => m.name.startsWith('back-') || !onScreen(m.card.id)).forEach(lay)
+      const riffling = () => shuffling.flatMap((pid) => pileAt(`deck-${pid}`) ?? []).forEach(riffle)
+      if (shuffling.length) window.setTimeout(riffling, shuffleAt)
+    },
     done: () => {
       arriving.forEach((m) => m.ghost.remove())
-      decks.forEach((deck) => deck.style.removeProperty('view-transition-name'))
       style.remove()
     },
   }

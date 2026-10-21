@@ -252,13 +252,6 @@ button, a, input, select, label, [data-card-id] { touch-action: manipulation; }
 @keyframes deal-vanish { to { opacity: 0; } }
 /* a hero set down on the table as the game opens (see composables/dealing.ts) */
 @keyframes hero-place { from { opacity: 0; transform: translateY(-40px) scale(1.15); } to { opacity: 1; transform: none; } }
-@keyframes deck-shuffle {
-  0%, 100% { transform: none; }
-  20% { transform: translateX(-12%) rotate(-7deg); }
-  40% { transform: translateX(12%) rotate(7deg); }
-  60% { transform: translateX(-8%) rotate(-4deg); }
-  80% { transform: translateX(6%) rotate(3deg); }
-}
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
