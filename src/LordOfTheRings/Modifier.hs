@@ -119,8 +119,8 @@ data ModifierType
   | -- | on a card in hand, as its card id: it costs this much more to play (less, when
     -- negative)
     CostModifier Int
-  | -- | on a player: the next matching card they play costs this much less, to no less
-    -- than 1
+  | -- | on a player, or on the game for every player: the next matching card played
+    -- costs this much less, to no less than 1
     ReduceNextCostOf CardMatcher Int
   | -- | on a character: the enemy it attacks alone does not count its defense
     IgnoresDefenseWhenAttackingAlone

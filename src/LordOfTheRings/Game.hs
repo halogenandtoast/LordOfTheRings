@@ -1233,5 +1233,5 @@ payFor g pid card windows host discount = do
             ]
           <> [Label (ikey "label.payFromHeroes") [PayCost costId]]
   -- a reduction of the next matching card's cost is spent on this one
-  let spent e = effectTarget e == PlayerTarget pid && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
+  let spent e = effectTarget e `elem` [PlayerTarget pid, GameTarget] && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
