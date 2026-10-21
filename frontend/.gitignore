@@ -23,9 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Card browser renditions (~480 MB), copied from the importer rather than committed
-public/images/browse/
-# Card scans are Fantasy Flight Games' artwork: kept on disk, never committed
+# Card art (~530 MB, and thumb/) is Fantasy Flight Games' artwork: kept on disk, never
+# committed; named by card code from the importer's renditions by tools/card-images.py
 public/images/cards/
 
 # Playwright

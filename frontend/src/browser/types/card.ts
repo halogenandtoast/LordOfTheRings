@@ -53,7 +53,7 @@ export interface CardImage {
   orientation: Orientation
   /** Path of the original scan. Provenance only; not served. */
   source: string
-  /** File name under `/images/browse` and `/images/browse/thumb`, from the client's public/. */
+  /** File name under `/images/cards` and `/images/cards/thumb`, from the client's public/: the engine's card code. */
   file: string
 }
 
@@ -201,9 +201,9 @@ export function statNumber(stat: Stat | null | undefined): number | null {
 export function imageUrl(card: Card, size: 'full' | 'thumb' = 'full'): string | null {
   const image = card.images[0]
   if (!image) return null
-  return size === 'thumb' ? `/images/browse/thumb/${image.file}` : `/images/browse/${image.file}`
+  return size === 'thumb' ? `/images/cards/thumb/${image.file}` : `/images/cards/${image.file}`
 }
 
 export function imageUrlFor(image: CardImage, size: 'full' | 'thumb' = 'full'): string {
-  return size === 'thumb' ? `/images/browse/thumb/${image.file}` : `/images/browse/${image.file}`
+  return size === 'thumb' ? `/images/cards/thumb/${image.file}` : `/images/cards/${image.file}`
 }
