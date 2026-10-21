@@ -260,10 +260,10 @@ h2 {
 /* the campaign down the left, from top to bottom, and its scenarios beside it */
 .card.split { grid-template-columns: 216px 1fr; gap: 0; padding: 0; overflow: hidden; }
 .split .campaign {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  align-content: start;
-  padding: 16px;
+  padding: 16px 16px 0;
   border-right: 1px solid var(--line-strong);
 }
 .split .card-body { display: grid; gap: 12px; align-content: start; padding: 16px; }
@@ -301,17 +301,22 @@ h2 {
 
 .campaign img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
 .campaign-title { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
+/* flush with the foot of the panel, whatever its height */
 .change-campaign {
-  text-align: left;
-  background: none;
+  margin: auto -16px 0;
+  padding: 12px 16px;
   border: 0;
-  padding: 0;
-  color: var(--accent-bright);
+  background: var(--button-secondary);
+  color: var(--text);
   font: inherit;
   font-size: 0.85em;
-  text-decoration: underline;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
+  transition: background-color 0.15s;
 }
+.change-campaign:hover { background: var(--button-secondary-hover); }
 
 .scenarios {
   display: grid;
