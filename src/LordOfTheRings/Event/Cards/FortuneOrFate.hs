@@ -5,7 +5,7 @@ import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
 newtype FortuneOrFate = FortuneOrFate EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Choose a hero in any player's discard pile. Put that card into play, under its

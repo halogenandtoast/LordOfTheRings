@@ -5,7 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (Spirit))
 
 newtype DwarvenTomb = DwarvenTomb EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Return 1 Spirit card from your discard pile to your hand.

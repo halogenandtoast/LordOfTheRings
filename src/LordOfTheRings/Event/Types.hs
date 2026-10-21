@@ -4,6 +4,7 @@ module LordOfTheRings.Event.Types (module LordOfTheRings.Event.Types) where
 
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Criteria
 import LordOfTheRings.Id
@@ -18,6 +19,7 @@ class
   ( Typeable a
   , Show a
   , RunMessage a
+  , HasModifiersFor a
   , Entity a
   , EntityId a ~ CardId
   , EntityAttrs a ~ EventAttrs
@@ -82,6 +84,10 @@ instance Show Event where
 
 instance RunMessage EventAttrs where
   runMessage _ = pure
+
+-- | An event modifies only itself, from its owner's hand: what it costs to play.
+instance HasModifiersFor Event where
+  getModifiersFor (Event a) = getModifiersFor a
 
 instance RunMessage Event where
   runMessage msg (Event a) = Event <$> runMessage msg a

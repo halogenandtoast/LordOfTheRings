@@ -9,6 +9,9 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (PlayerCard (..), genPlayerCard)
 import LordOfTheRings.Decklist (sharedHeroes)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
+import LordOfTheRings.Matcher (cardIs)
+import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Sphere (Sphere (Spirit))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -80,6 +83,13 @@ spec = describe "Starter deck" do
       chooseAbility pid
       chooseTarget pid aragorn
       (.resources) <$> getHeroWithCode aragornCode `shouldReturn` 1
+
+  describe "cost reduction" do
+    it "lets a player play a card for what a reduction leaves of its cost" . starterTest $ \pid -> do
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [ReduceCostOf (cardIs Allies.faramir) 2] UntilEndOfRound
+      _ <- playFromHand pid Allies.faramir 2
+      (.resources) <$> getHeroWithCode aragornCode `shouldReturn` 0
+      map toCardCode <$> allies `shouldReturn` [toCardCode Allies.faramir]
 
   describe "Faramir" do
     it "exhausts to give each of your characters +1 willpower" . starterTest $ \pid -> do

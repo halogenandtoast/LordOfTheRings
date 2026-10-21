@@ -5,7 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (Lore))
 
 newtype GandalfsSearch = GandalfsSearch EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Look at the top X cards of any player's deck, add 1 of those cards to its

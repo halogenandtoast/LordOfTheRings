@@ -94,6 +94,11 @@ data ModifierType
     CannotCancelEncounterEffects
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
+  | -- | on a player: matching cards they play from hand cost this much less
+    ReduceCostOf CardMatcher Int
+  | -- | on a card in hand, as its card id: it costs this much more to play (less, when
+    -- negative)
+    CostModifier Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

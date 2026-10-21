@@ -4,7 +4,7 @@ import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
 newtype SwiftStrike = SwiftStrike EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Response: After a character is declared as a defender, deal 2 damage to the

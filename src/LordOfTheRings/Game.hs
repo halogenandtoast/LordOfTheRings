@@ -2,6 +2,8 @@
 
 module LordOfTheRings.Game (module LordOfTheRings.Game, module X) where
 
+import Control.Monad.Writer.Strict (execWriterT)
+import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
 import Data.UUID qualified as UUID
 import LordOfTheRings.ActiveCost
@@ -11,6 +13,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Card.Synthetic (orcGuard)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Criteria (Criterion (BeforeCommitting, Criteria))
@@ -139,8 +142,20 @@ runNext =
       -- store the result first, so the constant abilities read the game as it now is
       g <- runGame msg =<< getGame
       putGame g
-      putGame =<< preloadModifiers g
+      putGame =<< withHandModifiers =<< preloadModifiers g
       pure True
+
+-- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
+-- event in a hand is built from its card to be asked.
+withHandModifiers :: Game -> GameT Game
+withHandModifiers g = do
+  MonoidalMap fromHands <- execWriterT $ for_ g.players \player -> for_ player.hand \case
+    PlayerCard pc -> case cdCardType (toCardDef pc) of
+      AllyType -> getModifiersFor $ createAlly pc (AllyId UUID.nil) player.id
+      EventType -> traverse_ getModifiersFor $ lookupEvent (toCardCode pc) pc.id player.id
+      _ -> pure ()
+    EncounterCard _ -> pure ()
+  pure $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
 
 getPlayers :: (HasGame m) => m [Player]
 getPlayers = toList <$> getsGame gamePlayers
@@ -605,7 +620,7 @@ runGameMessage msg g = case msg of
     pure g
   PayForCard pid card windows -> do
     costId <- getRandom
-    extra <- costIncrease card
+    extra <- costModifier pid card
     let activeCost =
           ActiveCost
             { activeCostId = costId

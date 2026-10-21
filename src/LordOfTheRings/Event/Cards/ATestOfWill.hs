@@ -4,7 +4,7 @@ import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
 newtype ATestOfWill = ATestOfWill EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Response: Cancel the "when revealed" effects of a card that was just revealed from the

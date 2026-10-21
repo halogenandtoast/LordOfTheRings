@@ -5,7 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
 
 newtype ALightInTheDark = ALightInTheDark EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Choose an enemy engaged with a player. Return that enemy to the staging area.

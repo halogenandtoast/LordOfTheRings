@@ -4,7 +4,7 @@ import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
 newtype CommonCause = CommonCause EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Exhaust 1 hero you control to choose and ready a different hero.

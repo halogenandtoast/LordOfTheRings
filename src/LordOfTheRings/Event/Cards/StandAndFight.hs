@@ -6,7 +6,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (Spirit))
 
 newtype StandAndFight = StandAndFight EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Choose an ally with a printed cost of X in any player's discard pile. Put that

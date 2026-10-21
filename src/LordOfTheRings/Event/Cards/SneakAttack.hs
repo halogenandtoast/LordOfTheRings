@@ -4,7 +4,7 @@ import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
 newtype SneakAttack = SneakAttack EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Put 1 ally card into play from your hand. At the end of the phase, if that

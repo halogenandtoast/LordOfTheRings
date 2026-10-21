@@ -4,7 +4,7 @@ import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
 newtype TheGaladhrimsGreeting = TheGaladhrimsGreeting EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Reduce one player's threat by 6, or reduce each player's threat by 2.

@@ -5,7 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Keyword (Keyword (Ranged))
 
 newtype RainOfArrows = RainOfArrows EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Exhaust a character you control with the ranged keyword to choose a player.

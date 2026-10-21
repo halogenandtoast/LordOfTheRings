@@ -2,6 +2,7 @@ module LordOfTheRings.Event.Import.Lifted (module X) where
 
 import LordOfTheRings.Card as X (CardDef, CardType (..))
 import LordOfTheRings.Classes.Entity as X
+import LordOfTheRings.Classes.HasModifiersFor as X
 import LordOfTheRings.Classes.HasQueue as X (push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage as X
 import LordOfTheRings.Criteria as X

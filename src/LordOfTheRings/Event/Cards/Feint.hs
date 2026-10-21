@@ -5,7 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Phase (Phase (CombatPhase))
 
 newtype Feint = Feint EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Combat Action: Choose an enemy engaged with a player. That enemy cannot attack that

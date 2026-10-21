@@ -5,7 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Phase (Phase (QuestPhase))
 
 newtype RadagastsCunning = RadagastsCunning EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Quest Action: Choose an enemy in the staging area. Until the end of the phase, that

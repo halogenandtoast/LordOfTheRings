@@ -5,7 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (Spirit))
 
 newtype StrengthOfWill = StrengthOfWill EventAttrs
-  deriving anyclass (IsEvent)
+  deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
 -- | Response: After you travel to a location, exhaust a Spirit character to place 2

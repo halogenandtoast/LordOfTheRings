@@ -194,7 +194,7 @@ cannotPlay pid c = any (\case CannotPlay m -> cardMatches m c; _ -> False) <$> (
 canAfford :: (HasGame m) => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of
   (Just cost, Just sphere) -> do
-    extra <- costIncrease c
+    extra <- costModifier p.id c
     case cdDistinctPayers (toCardDef c) of
       Just n -> (>= n + extra) . length <$> payingHeroes sphere p
       Nothing -> do
@@ -202,9 +202,16 @@ canAfford p c = case (c.cost, c.sphere) of
         (>= costAsResources cost + extra) . (+ fromAllies) <$> resourcesInSphere sphere p
   _ -> pure False
 
--- | What the game's modifiers add to the card's cost.
-costIncrease :: (HasGame m) => Card -> m Int
-costIncrease c = sum . mapMaybe (\case IncreaseCost m n | cardMatches m c -> Just n; _ -> Nothing) <$> getModifiers GameTarget
+-- | What modifiers add to the cost of the card the player would play: the game's, the
+-- player's own and the card's (negative when they lower it).
+costModifier :: (HasGame m) => PlayerId -> Card -> m Int
+costModifier pid c = do
+  mods <- concat <$> sequence [getModifiers GameTarget, getModifiers (PlayerTarget pid), getModifiers (CardIdTarget c.id)]
+  pure $ sum $ flip mapMaybe mods \case
+    IncreaseCost m n | cardMatches m c -> Just n
+    ReduceCostOf m n | cardMatches m c -> Just (negate n)
+    CostModifier n -> Just n
+    _ -> Nothing
 
 -- | Heroes with a resource that could pay for a card of the sphere.
 payingHeroes :: (HasGame m) => Sphere -> Player -> m [Hero]
