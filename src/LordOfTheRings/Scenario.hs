@@ -14,11 +14,12 @@ import LordOfTheRings.Scenario.Scenarios.TheHuntForGollum as X
 import LordOfTheRings.Scenario.Scenarios.ConflictAtTheCarrock as X
 import LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel as X
 import LordOfTheRings.Scenario.Scenarios.TheHillsOfEmynMuil as X
+import LordOfTheRings.Scenario.Scenarios.TheDeadMarshes as X
 import LordOfTheRings.Scenario.Types as X
 
 -- | The scenarios a game can be dealt, by id.
 allScenarios :: [Scenario]
-allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil]
+allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes]
 
 lookupScenario :: ScenarioId -> Maybe Scenario
 lookupScenario sid = find ((== sid) . toId) allScenarios

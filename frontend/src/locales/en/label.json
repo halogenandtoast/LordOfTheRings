@@ -36,6 +36,18 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "escapeTest": "Commit characters to the escape test",
+  "doneCommittingToEscape": "Done committing: deal the cards",
+  "boromir": {
+    "choosePlayer": "Deal 2 damage to each enemy engaged with a player"
+  },
+  "songOfMocking": {
+    "chooseHero": "Take the damage assigned to another hero"
+  },
+  "aWispOfPaleSheen": {
+    "exhaust": "Exhaust a Lore hero to place only 1 resource on Gollum",
+    "allow": "Place 2 resources on Gollum"
+  },
   "keenEyedTook": {
     "reveal": "The top card of each player's deck"
   },

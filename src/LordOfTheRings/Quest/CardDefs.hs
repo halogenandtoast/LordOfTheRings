@@ -36,6 +36,8 @@ allQuestCards =
       , radagastsRequest
       , returnToRhosgobel
       , theHillsOfEmynMuil
+      , intoTheMarshes
+      , theCapture
       ]
 
 fliesAndSpiders :: CardDef
@@ -94,3 +96,9 @@ returnToRhosgobel = quest "02062" "Return to Rhosgobel" AJourneyToRhosgobel 3 0
 
 theHillsOfEmynMuil :: CardDef
 theHillsOfEmynMuil = quest "02082" "The Hills of Emyn Muil" TheHillsOfEmynMuil 1 1
+
+intoTheMarshes :: CardDef
+intoTheMarshes = quest "02105" "Into the Marshes" TheDeadMarshes 1 12
+
+theCapture :: CardDef
+theCapture = quest "02106" "The Capture" TheDeadMarshes 2 3

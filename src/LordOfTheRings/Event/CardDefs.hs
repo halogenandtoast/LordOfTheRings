@@ -81,6 +81,7 @@ allEventCards =
       , meneldorsFlight
       , rideToRuin
       , gildorsCounsel
+      , weDoNotSleep
       ]
 
 everVigilant :: CardDef
@@ -280,3 +281,6 @@ rideToRuin = event "02078" "Ride to Ruin" Spirit (StaticCost 1)
 
 gildorsCounsel :: CardDef
 gildorsCounsel = event "02080" "Gildor's Counsel" Lore (StaticCost 3)
+
+weDoNotSleep :: CardDef
+weDoNotSleep = event "02101" "We Do Not Sleep" Spirit (StaticCost 5)

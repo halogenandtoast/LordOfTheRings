@@ -48,6 +48,9 @@ allLocationCards =
       , theShoresOfNenHithoel
       , theOuterRidge
       , theHighlands
+      , impassableBog
+      , theHeartOfTheMarshes
+      , fensAndMires
       ]
 
 greatForestWeb :: CardDef
@@ -258,4 +261,29 @@ theHighlands =
   (location "02090" "The Highlands" TheHillsOfEmynMuil 4 1 1)
     { cdCardTraits = setFromList [EmynMuil]
     , cdVictoryPoints = Just 1
+    }
+
+impassableBog :: CardDef
+impassableBog =
+  (location "02113" "Impassable Bog" TheDeadMarshes 4 1 12)
+    { cdCardTraits = setFromList [DeadMarshes]
+    , cdVictoryPoints = Just 7
+    , cdEscape = Just 2
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+theHeartOfTheMarshes :: CardDef
+theHeartOfTheMarshes =
+  (location "02114" "The Heart of the Marshes" TheDeadMarshes 4 3 4)
+    { cdCardTraits = setFromList [DeadMarshes]
+    , cdEscape = Just 1
+    , cdEasyModeQuantity = Just 2
+    }
+
+fensAndMires :: CardDef
+fensAndMires =
+  (location "02115" "Fens and Mires" TheDeadMarshes 4 2 2)
+    { cdCardTraits = setFromList [DeadMarshes]
+    , cdEscape = Just 2
     }

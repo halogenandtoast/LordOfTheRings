@@ -28,7 +28,7 @@ instance RunMessage GrimbeornTheOld where
       spendResources pid Lore 1
       placeResources attrs attrs 1
       pure o
-    PlaceTokens _ (isTarget attrs -> True) Resource n | countTokens Resource attrs.objectiveTokens + n >= 8 -> do
+    PlaceTokens _ (isTarget attrs -> True) Resource n | attrs.resources + n >= 8 -> do
       lead <- getLead
       putObjectiveAllyIntoPlay attrs.id lead
       GrimbeornTheOld <$> runMessage msg attrs

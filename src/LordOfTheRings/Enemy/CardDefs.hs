@@ -47,6 +47,7 @@ allEnemyCards =
       , mirkwoodFlock
       , blackForestBatsRhosgobel
       , orcHorseThieves
+      , giantMarshWorm
       ]
 
 kingSpider :: CardDef
@@ -268,5 +269,13 @@ orcHorseThieves =
   (enemy "02094" "Orc Horse Thieves" TheHillsOfEmynMuil 3 35 3 1 2 6)
     { cdCardTraits = setFromList [Mordor, Orc]
     , cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 2
+    }
+
+giantMarshWorm :: CardDef
+giantMarshWorm =
+  (enemy "02112" "Giant Marsh Worm" TheDeadMarshes 4 36 1 3 2 6)
+    { cdCardTraits = setFromList [Creature]
+    , cdEscape = Just 2
     , cdEasyModeQuantity = Just 2
     }

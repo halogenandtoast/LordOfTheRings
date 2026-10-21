@@ -29,6 +29,10 @@ import LordOfTheRings.Attachment.Cards.ABurningBrand
 import LordOfTheRings.Attachment.Cards.SongOfWisdom
 import LordOfTheRings.Attachment.Cards.DunedainQuest
 import LordOfTheRings.Attachment.Cards.SongOfTravel
+import LordOfTheRings.Attachment.Cards.DunedainCache
+import LordOfTheRings.Attachment.Cards.SongOfMocking
+import LordOfTheRings.Attachment.Cards.FastHitch
+import LordOfTheRings.Attachment.Cards.SongOfBattle
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -84,5 +88,9 @@ allAttachments =
         , SomeAttachmentCard songOfWisdom
         , SomeAttachmentCard dunedainQuest
         , SomeAttachmentCard songOfTravel
+        , SomeAttachmentCard dunedainCache
+        , SomeAttachmentCard songOfMocking
+        , SomeAttachmentCard fastHitch
+        , SomeAttachmentCard songOfBattle
         ]
     ]

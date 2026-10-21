@@ -41,6 +41,10 @@ allTreacheryCards =
       , impassableChasm
       , rockslide
       , slickFooting
+      , aWispOfPaleSheen
+      , nightfall
+      , throughTheMist
+      , theLightsOfTheDead
       ]
 
 eyesOfTheForest :: CardDef
@@ -181,4 +185,34 @@ slickFooting :: CardDef
 slickFooting =
   (treachery "02093" "Slick Footing" TheHillsOfEmynMuil 3)
     { cdCardTraits = setFromList [Hazard]
+    }
+
+aWispOfPaleSheen :: CardDef
+aWispOfPaleSheen =
+  (treachery "02108" "A Wisp of Pale Sheen" TheDeadMarshes 3)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 4
+    , cdEasyModeQuantity = Just 1
+    }
+
+nightfall :: CardDef
+nightfall =
+  (treachery "02109" "Nightfall" TheDeadMarshes 3)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 2
+    }
+
+throughTheMist :: CardDef
+throughTheMist =
+  (treachery "02110" "Through the Mist" TheDeadMarshes 3)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 3
+    }
+
+theLightsOfTheDead :: CardDef
+theLightsOfTheDead =
+  (treachery "02111" "The Lights of the Dead" TheDeadMarshes 4)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 5
+    , cdEasyModeQuantity = Just 2
     }

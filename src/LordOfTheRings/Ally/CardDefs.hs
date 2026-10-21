@@ -88,6 +88,9 @@ allAllyCards =
       , keenEyedTook
       , descendantOfThorondor
       , gildorInglorion
+      , dunedainWatcher
+      , vassalOfTheWindlord
+      , elfhelm
       ]
 
 guardOfTheCitadel :: CardDef
@@ -546,4 +549,24 @@ gildorInglorion =
   (ally "02079" "Gildor Inglorion" Lore (StaticCost 5) 3 2 3 3)
     { cdUnique = True
     , cdCardTraits = setFromList [Noldor]
+    }
+
+dunedainWatcher :: CardDef
+dunedainWatcher =
+  (ally "02096" "Dúnedain Watcher" Leadership (StaticCost 3) 1 1 1 2)
+    { cdCardTraits = setFromList [Dunedain]
+    }
+
+vassalOfTheWindlord :: CardDef
+vassalOfTheWindlord =
+  (ally "02098" "Vassal of the Windlord" Tactics (StaticCost 1) 0 3 0 1)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+elfhelm :: CardDef
+elfhelm =
+  (ally "02100" "Elfhelm" Spirit (StaticCost 4) 1 2 2 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan, Warrior]
     }

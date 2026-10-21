@@ -30,6 +30,10 @@ import LordOfTheRings.Treachery.Cards.FesteringWounds
 import LordOfTheRings.Treachery.Cards.ImpassableChasm
 import LordOfTheRings.Treachery.Cards.Rockslide
 import LordOfTheRings.Treachery.Cards.SlickFooting
+import LordOfTheRings.Treachery.Cards.AWispOfPaleSheen
+import LordOfTheRings.Treachery.Cards.Nightfall
+import LordOfTheRings.Treachery.Cards.ThroughTheMist
+import LordOfTheRings.Treachery.Cards.TheLightsOfTheDead
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -84,5 +88,9 @@ allTreacherys =
         , SomeTreacheryCard impassableChasm
         , SomeTreacheryCard rockslide
         , SomeTreacheryCard slickFooting
+        , SomeTreacheryCard aWispOfPaleSheen
+        , SomeTreacheryCard nightfall
+        , SomeTreacheryCard throughTheMist
+        , SomeTreacheryCard theLightsOfTheDead
         ]
     ]

@@ -70,6 +70,10 @@ allAttachmentCards =
       , songOfWisdom
       , dunedainQuest
       , songOfTravel
+      , dunedainCache
+      , songOfMocking
+      , fastHitch
+      , songOfBattle
       ]
 
 stewardOfGondor :: CardDef
@@ -414,5 +418,29 @@ dunedainQuest =
 songOfTravel :: CardDef
 songOfTravel =
   (attachment "02081" "Song of Travel" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }
+
+dunedainCache :: CardDef
+dunedainCache =
+  (attachment "02097" "Dúnedain Cache" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Item]
+    }
+
+songOfMocking :: CardDef
+songOfMocking =
+  (attachment "02099" "Song of Mocking" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }
+
+fastHitch :: CardDef
+fastHitch =
+  (attachment "02103" "Fast Hitch" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    }
+
+songOfBattle :: CardDef
+songOfBattle =
+  (attachment "02104" "Song of Battle" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Song]
     }

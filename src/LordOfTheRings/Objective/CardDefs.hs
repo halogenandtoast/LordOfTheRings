@@ -25,6 +25,7 @@ allObjectiveCards =
       , grimbeornTheOld
       , athelas
       , wilyador
+      , gollumTheDeadMarshes
       ]
 
 gandalfsMap :: CardDef
@@ -85,4 +86,11 @@ wilyador =
     { cdUnique = True
     , cdCardTraits = setFromList [Creature, Eagle]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+gollumTheDeadMarshes :: CardDef
+gollumTheDeadMarshes =
+  (objective "02107" "Gollum" TheDeadMarshes 1)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gollum]
     }

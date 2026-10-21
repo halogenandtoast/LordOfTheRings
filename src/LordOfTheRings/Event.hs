@@ -42,6 +42,7 @@ import LordOfTheRings.Event.Cards.RearGuard
 import LordOfTheRings.Event.Cards.MeneldorsFlight
 import LordOfTheRings.Event.Cards.RideToRuin
 import LordOfTheRings.Event.Cards.GildorsCounsel
+import LordOfTheRings.Event.Cards.WeDoNotSleep
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -97,5 +98,6 @@ allEvents =
         , SomeEventCard meneldorsFlight
         , SomeEventCard rideToRuin
         , SomeEventCard gildorsCounsel
+        , SomeEventCard weDoNotSleep
         ]
     ]

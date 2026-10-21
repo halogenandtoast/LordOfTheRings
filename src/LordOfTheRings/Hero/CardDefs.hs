@@ -49,6 +49,7 @@ allHeroCards =
       , bilboBaggins
       , frodoBaggins
       , brandSonOfBain
+      , boromirTactics
       ]
 
 aragorn :: CardDef
@@ -247,4 +248,10 @@ brandSonOfBain =
   (hero "02072" "Brand son of Bain" Tactics 10 2 3 2 3)
     { cdCardTraits = setFromList [Dale]
     , cdKeywords = setFromList [Ranged]
+    }
+
+boromirTactics :: CardDef
+boromirTactics =
+  (hero "02095" "Boromir" Tactics 11 1 3 2 5)
+    { cdCardTraits = setFromList [Gondor, Noble, Warrior]
     }

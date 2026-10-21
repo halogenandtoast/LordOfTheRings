@@ -37,6 +37,9 @@ import LordOfTheRings.Location.Cards.RaurosFalls
 import LordOfTheRings.Location.Cards.TheShoresOfNenHithoel
 import LordOfTheRings.Location.Cards.TheOuterRidge
 import LordOfTheRings.Location.Cards.TheHighlands
+import LordOfTheRings.Location.Cards.ImpassableBog
+import LordOfTheRings.Location.Cards.TheHeartOfTheMarshes
+import LordOfTheRings.Location.Cards.FensAndMires
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -98,5 +101,8 @@ allLocations =
         , SomeLocationCard theShoresOfNenHithoel
         , SomeLocationCard theOuterRidge
         , SomeLocationCard theHighlands
+        , SomeLocationCard impassableBog
+        , SomeLocationCard theHeartOfTheMarshes
+        , SomeLocationCard fensAndMires
         ]
     ]
