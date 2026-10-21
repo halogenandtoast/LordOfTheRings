@@ -25,7 +25,9 @@ library
       LordOfTheRings.Ally.Cards.DunedainWatcher
       LordOfTheRings.Ally.Cards.EaglesOfTheMistyMountains
       LordOfTheRings.Ally.Cards.Elfhelm
+      LordOfTheRings.Ally.Cards.Eomund
       LordOfTheRings.Ally.Cards.EreborHammersmith
+      LordOfTheRings.Ally.Cards.EscortFromEdoras
       LordOfTheRings.Ally.Cards.Faramir
       LordOfTheRings.Ally.Cards.Gandalf
       LordOfTheRings.Ally.Cards.GildorInglorion
@@ -33,6 +35,7 @@ library
       LordOfTheRings.Ally.Cards.GondorianSpearman
       LordOfTheRings.Ally.Cards.GrimbeornTheOld
       LordOfTheRings.Ally.Cards.GuardOfTheCitadel
+      LordOfTheRings.Ally.Cards.Guthlaf
       LordOfTheRings.Ally.Cards.HaldirOfLorien
       LordOfTheRings.Ally.Cards.HenamarthRiversong
       LordOfTheRings.Ally.Cards.HorsebackArcher
@@ -44,13 +47,20 @@ library
       LordOfTheRings.Ally.Cards.MinerOfTheIronHills
       LordOfTheRings.Ally.Cards.NorthernTracker
       LordOfTheRings.Ally.Cards.Radagast
+      LordOfTheRings.Ally.Cards.RiddermarkKnight
       LordOfTheRings.Ally.Cards.RivendellMinstrel
       LordOfTheRings.Ally.Cards.SilverlodeArcher
       LordOfTheRings.Ally.Cards.SnowbournScout
       LordOfTheRings.Ally.Cards.SonOfArnor
+      LordOfTheRings.Ally.Cards.TheRiddermarksFinest
       LordOfTheRings.Ally.Cards.VassalOfTheWindlord
       LordOfTheRings.Ally.Cards.VeteranAxehand
       LordOfTheRings.Ally.Cards.WanderingTook
+      LordOfTheRings.Ally.Cards.WestfoldHorseBreaker
+      LordOfTheRings.Ally.Cards.WestfoldHorseBreeder
+      LordOfTheRings.Ally.Cards.WestfoldLancer
+      LordOfTheRings.Ally.Cards.WestfoldOutrider
+      LordOfTheRings.Ally.Cards.WestRoadTraveller
       LordOfTheRings.Ally.Cards.Wilyador
       LordOfTheRings.Ally.Cards.WingedGuardian
       LordOfTheRings.Ally.Import.Lifted

@@ -251,5 +251,27 @@
     "Action": "Action: {name}",
     "Response": "Response: {name}",
     "Forced": "Forced: {name}"
+  },
+  "westfoldHorseBreaker": {
+    "ready": "Choose a hero to ready"
+  },
+  "eomund": {
+    "response": "Éomund left play: ready all Rohan characters?",
+    "readyAll": "Ready all Rohan characters"
+  },
+  "theRiddermarksFinest": {
+    "location": "Place 2 progress on a location"
+  },
+  "westRoadTraveller": {
+    "switch": "Choose a location to switch with the active location"
+  },
+  "westfoldOutrider": {
+    "engage": "Choose an enemy to engage"
+  },
+  "westfoldLancer": {
+    "damage": "Deal 2 damage to a non-unique enemy in the staging area"
+  },
+  "firefoot": {
+    "excess": "Exhaust Firefoot to deal the excess damage to another enemy?"
   }
 }

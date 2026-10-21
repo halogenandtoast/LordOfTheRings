@@ -42,6 +42,16 @@ import LordOfTheRings.Ally.Cards.DunedainWatcher
 import LordOfTheRings.Ally.Cards.VassalOfTheWindlord
 import LordOfTheRings.Ally.Cards.Elfhelm
 import LordOfTheRings.Ally.Cards.EaglesOfTheMistyMountains
+import LordOfTheRings.Ally.Cards.WestfoldHorseBreaker
+import LordOfTheRings.Ally.Cards.Eomund
+import LordOfTheRings.Ally.Cards.EscortFromEdoras
+import LordOfTheRings.Ally.Cards.TheRiddermarksFinest
+import LordOfTheRings.Ally.Cards.WestRoadTraveller
+import LordOfTheRings.Ally.Cards.Guthlaf
+import LordOfTheRings.Ally.Cards.WestfoldOutrider
+import LordOfTheRings.Ally.Cards.WestfoldHorseBreeder
+import LordOfTheRings.Ally.Cards.RiddermarkKnight
+import LordOfTheRings.Ally.Cards.WestfoldLancer
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -110,5 +120,15 @@ allAllies =
         , SomeAllyCard vassalOfTheWindlord
         , SomeAllyCard elfhelm
         , SomeAllyCard eaglesOfTheMistyMountains
+        , SomeAllyCard westfoldHorseBreaker
+        , SomeAllyCard eomund
+        , SomeAllyCard escortFromEdoras
+        , SomeAllyCard theRiddermarksFinest
+        , SomeAllyCard westRoadTraveller
+        , SomeAllyCard guthlaf
+        , SomeAllyCard westfoldOutrider
+        , SomeAllyCard westfoldHorseBreeder
+        , SomeAllyCard riddermarkKnight
+        , SomeAllyCard westfoldLancer
         ]
     ]
