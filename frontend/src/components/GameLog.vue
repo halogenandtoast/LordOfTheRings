@@ -17,8 +17,10 @@ const props = withDefaults(
     canChat?: boolean
     /** Whether older entries are still to be had. */
     hasOlder?: boolean
+    /** The scenario's name, for its banner while the entry that opens the log is unloaded. */
+    scenario?: string | null
   }>(),
-  { canUndo: false, canChat: false, hasOlder: false },
+  { canUndo: false, canChat: false, hasOlder: false, scenario: null },
 )
 
 const emit = defineEmits<{
@@ -35,7 +37,23 @@ const send = () => {
   emit('say', text)
 }
 
-const items = computed(() => groupLogEntries(props.entries))
+// The scenario's banner opens the log and stays pinned atop it, so stand one in until
+// scrolling back reaches the real one.
+const opener = (name: string): LogEntry => ({
+  seq: 0,
+  step: null,
+  kind: 'Structure',
+  body: [{ tag: 'LogI18n', contents: ['log.scenarioBegins', { scenario: { tag: 'LogRefPart', contents: { kind: 'RefScenario', name, cardCode: null, cardId: null, entityId: null, faceDown: false } } }] }],
+  source: null,
+  children: [],
+  audience: { tag: 'Everyone' },
+  context: null,
+  tone: null,
+  group: null,
+})
+const items = computed(() =>
+  groupLogEntries(props.hasOlder && props.scenario ? [opener(props.scenario), ...props.entries] : props.entries),
+)
 
 // Each round's entries, and each phase's within it, are an element of their own, so a
 // pinned banner stays only while its own round or phase is in view and is pushed off by

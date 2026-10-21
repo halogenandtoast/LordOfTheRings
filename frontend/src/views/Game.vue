@@ -351,6 +351,7 @@ watch(question, (asked) => {
         :can-undo="!spectate && canUndo"
         :can-chat="!spectate"
         :has-older="hasOlder"
+        :scenario="scenario?.name"
         @undo="undoToEntry"
         @say="say"
         @load-older="loadOlder"
