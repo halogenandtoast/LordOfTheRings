@@ -49,11 +49,13 @@ export interface DeckSummary {
   startingThreat: number | null
   source: string
   sourceUrl: string | null
-  heroNames: string[]
-  heroCodes: string[]
+  /** By RingsDB code, as the art is named by. */
+  heroes: { code: string; name: string; sphere: string | null }[]
   cardCount: number
   unresolvedCount: number
   updatedAt: string
+  /** When a game was last dealt from it. */
+  usedAt: string | null
 }
 
 /** Exactly one of `url` and `deck`; `name` overrides the name in the source. */

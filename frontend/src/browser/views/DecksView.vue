@@ -1,20 +1,21 @@
 <script setup lang="ts">
 /**
- * A user's decks, and the prompt to load one.
- *
- * With no decks the import panel is the page; with decks it sits beside them,
- * because loading another is the main thing anyone does here.
+ * A user's decks, and the row to load another above them, found by name, hero or
+ * sphere and sorted, by default, as they were last played.
  */
 import '@browser/browser.css'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import DeckImport from '@browser/components/DeckImport.vue'
+import GameIcon from '@browser/components/GameIcon.vue'
+import TrashIcon from '../../components/TrashIcon.vue'
 import { useDeckStore, messageOf } from '@browser/stores/decks'
+import type { IconName } from '@browser/lib/card-text'
+import { PLAYER_SPHERES, type Sphere } from '@browser/types/card'
 import type { Deck, DeckSummary } from '@browser/types/deck'
 import { useServerText } from '../../i18n'
 
 const tr = useServerText()
-
 
 const router = useRouter()
 const decks = useDeckStore()
@@ -40,6 +41,37 @@ async function remove(deck: DeckSummary): Promise<void> {
     removing.value = null
   }
 }
+
+const search = ref('')
+// a deck shows when its heroes cover every sphere chosen
+const spheres = ref<Sphere[]>([])
+const SORTS = ['used', 'name', 'threat', 'imported'] as const
+const sort = ref<(typeof SORTS)[number]>('used')
+const reversed = ref(false)
+
+const toggleSphere = (sphere: Sphere) => {
+  spheres.value = spheres.value.includes(sphere) ? spheres.value.filter((s) => s !== sphere) : [...spheres.value, sphere]
+}
+
+const time = (at: string | null) => (at ? Date.parse(at) : 0)
+// each sort's natural order: the latest first, names and threat ascending
+const compare: Record<(typeof SORTS)[number], (a: DeckSummary, b: DeckSummary) => number> = {
+  used: (a, b) => time(b.usedAt ?? b.updatedAt) - time(a.usedAt ?? a.updatedAt),
+  name: (a, b) => a.name.localeCompare(b.name),
+  threat: (a, b) => (a.startingThreat ?? Infinity) - (b.startingThreat ?? Infinity),
+  imported: (a, b) => time(b.updatedAt) - time(a.updatedAt),
+}
+
+const shown = computed(() => {
+  const words = search.value.trim().toLowerCase()
+  const matching = decks.decks.filter(
+    (d) =>
+      (!words || [d.name, ...d.heroes.map((h) => h.name)].some((n) => n.toLowerCase().includes(words))) &&
+      spheres.value.every((s) => d.heroes.some((h) => h.sphere === s)),
+  )
+  const sorted = matching.sort(compare[sort.value])
+  return reversed.value ? sorted.reverse() : sorted
+})
 </script>
 
 <template>
@@ -51,58 +83,99 @@ async function remove(deck: DeckSummary): Promise<void> {
       </p>
     </header>
 
-    <div class="layout" :class="{ 'layout--empty': decks.isEmpty }">
-      <DeckImport class="layout__import" @imported="onImported" />
+    <DeckImport class="import" @imported="onImported" />
 
-      <div class="layout__list">
-        <p v-if="decks.state === 'loading'" class="notice">{{ $t('browser.common.loading') }}</p>
-        <p v-else-if="decks.state === 'error'" class="notice notice--error">{{ tr(decks.error) }}</p>
+    <p v-if="decks.state === 'loading'" class="notice">{{ $t('browser.common.loading') }}</p>
+    <p v-else-if="decks.state === 'error'" class="notice notice--error">{{ tr(decks.error) }}</p>
 
-        <i18n-t v-else-if="decks.isEmpty" keypath="browser.decks.empty" scope="global" tag="p" class="notice">
-          <template #path><code>backend/data/decks</code></template>
-        </i18n-t>
+    <i18n-t v-else-if="decks.isEmpty" keypath="browser.decks.empty" scope="global" tag="p" class="notice">
+      <template #path><code>backend/data/decks</code></template>
+    </i18n-t>
 
-        <ul v-else class="decks">
-          <li v-for="deck in decks.decks" :key="deck.id" class="deck">
-            <RouterLink class="deck__link" :to="{ name: 'deck', params: { id: deck.id } }">
-              <!-- the heroes' art side by side, as a deck tile shows them -->
-              <span class="deck__art" aria-hidden="true">
-                <span v-for="code in deck.heroCodes" :key="code" :style="{ backgroundImage: `url(/images/cards/${code}.jpg)` }" />
-              </span>
-              <div class="deck__body">
-                <h2 class="deck__name truncate">{{ deck.name }}</h2>
-                <p class="deck__heroes truncate">
-                  {{ deck.heroNames.length ? deck.heroNames.join(' · ') : $t('browser.decks.noHeroes') }}
-                </p>
-                <p class="deck__meta">
-                  <span>{{ $t('browser.common.cardCount', deck.cardCount) }}</span>
-                  <span v-if="deck.startingThreat !== null">
-                    {{ $t('browser.common.startingThreat', { threat: deck.startingThreat }) }}
-                  </span>
-                  <span v-if="deck.source === 'ringsdb'" class="chip">RingsDB</span>
-                  <span v-if="deck.unresolvedCount" class="chip chip--warn">
-                    {{ $t('browser.decks.unknownCount', { count: deck.unresolvedCount }) }}
-                  </span>
-                </p>
-              </div>
-            </RouterLink>
-
-            <button
-              type="button"
-              class="button button--ghost deck__remove"
-              :disabled="removing === deck.id"
-              :title="$t('browser.decks.delete', { name: deck.name })"
-              @click="remove(deck)"
-            >
-              <span aria-hidden="true">&#10005;</span>
-              <span class="visually-hidden">{{ $t('browser.decks.delete', { name: deck.name }) }}</span>
-            </button>
-          </li>
-        </ul>
-
-        <p v-if="removeError" class="notice notice--error" role="alert">{{ tr(removeError) }}</p>
+    <template v-else>
+      <div class="toolbar">
+        <input
+          v-model="search"
+          class="input toolbar__search"
+          type="search"
+          :placeholder="$t('browser.decks.search')"
+          :aria-label="$t('browser.decks.search')"
+          autocomplete="off"
+        />
+        <div class="toolbar__spheres" role="group" :aria-label="$t('browser.decks.spheres')">
+          <button
+            v-for="sphere in PLAYER_SPHERES"
+            :key="sphere"
+            type="button"
+            class="button button--ghost"
+            :aria-pressed="spheres.includes(sphere)"
+            @click="toggleSphere(sphere)"
+          >
+            <GameIcon :name="sphere" />
+          </button>
+        </div>
+        <label>
+          <span class="visually-hidden">{{ $t('browser.browse.sortBy') }}</span>
+          <select v-model="sort" class="input">
+            <option v-for="value in SORTS" :key="value" :value="value">{{ $t(`browser.decks.sort.${value}`) }}</option>
+          </select>
+        </label>
+        <button
+          type="button"
+          class="button button--ghost"
+          :aria-pressed="reversed"
+          :title="$t('browser.browse.reverseSort')"
+          @click="reversed = !reversed"
+        >
+          <span aria-hidden="true">{{ reversed ? '↑' : '↓' }}</span>
+          <span class="visually-hidden">{{ $t('browser.browse.reverseSort') }}</span>
+        </button>
       </div>
-    </div>
+
+      <p v-if="!shown.length" class="notice">{{ $t('browser.decks.noneMatch') }}</p>
+      <ul v-else class="decks">
+        <li v-for="deck in shown" :key="deck.id" class="deck">
+          <RouterLink class="deck__link" :to="{ name: 'deck', params: { id: deck.id } }">
+            <!-- the heroes' art side by side, as a deck tile shows them -->
+            <span class="deck__art" aria-hidden="true">
+              <span v-for="hero in deck.heroes" :key="hero.code" :style="{ backgroundImage: `url(/images/cards/${hero.code}.jpg)` }" />
+            </span>
+            <div class="deck__body">
+              <h2 class="deck__name truncate">{{ deck.name }}</h2>
+              <p class="deck__heroes">
+                <span v-for="hero in deck.heroes" :key="hero.code" class="hero" :style="hero.sphere ? { color: `var(--c-${hero.sphere})` } : undefined">
+                  <GameIcon v-if="hero.sphere" :name="hero.sphere as IconName" />{{ hero.name }}
+                </span>
+                <span v-if="!deck.heroes.length">{{ $t('browser.decks.noHeroes') }}</span>
+              </p>
+              <p class="deck__meta">
+                <span>{{ $t('browser.common.cardCount', deck.cardCount) }}</span>
+                <span v-if="deck.startingThreat !== null">
+                  {{ $t('browser.common.startingThreat', { threat: deck.startingThreat }) }}
+                </span>
+                <span v-if="deck.source === 'ringsdb'" class="chip">RingsDB</span>
+                <span v-if="deck.unresolvedCount" class="chip chip--warn">
+                  {{ $t('browser.decks.unknownCount', { count: deck.unresolvedCount }) }}
+                </span>
+              </p>
+            </div>
+          </RouterLink>
+
+          <button
+            type="button"
+            class="deck__remove"
+            :disabled="removing === deck.id"
+            :title="$t('browser.decks.delete', { name: deck.name })"
+            @click="remove(deck)"
+          >
+            <TrashIcon />
+            <span class="visually-hidden">{{ $t('browser.decks.delete', { name: deck.name }) }}</span>
+          </button>
+        </li>
+      </ul>
+
+      <p v-if="removeError" class="notice notice--error" role="alert">{{ tr(removeError) }}</p>
+    </template>
   </main>
 </template>
 
@@ -125,33 +198,25 @@ h1 {
   font-size: var(--text-xl);
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 24rem;
-  gap: var(--space-5);
-  align-items: start;
+.import {
+  margin-bottom: var(--space-4);
 }
 
-.layout__import {
-  grid-column: 2;
-  grid-row: 1;
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
-.layout__list {
-  grid-column: 1;
-  grid-row: 1;
+.toolbar__search {
+  flex: 1 1 14rem;
 }
 
-/* With nothing to list, the prompt is the page rather than a sidebar to it. */
-.layout--empty {
-  grid-template-columns: minmax(0, 34rem);
-  justify-content: center;
-}
-
-.layout--empty .layout__import,
-.layout--empty .layout__list {
-  grid-column: 1;
-  grid-row: auto;
+.toolbar__spheres {
+  display: flex;
+  gap: 2px;
 }
 
 .decks {
@@ -212,8 +277,18 @@ h1 {
 }
 
 .deck__heroes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--space-3);
   color: var(--c-text-muted);
   font-size: var(--text-sm);
+}
+
+/* each hero in its sphere's colour, its icon before it */
+.hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .deck__meta {
@@ -230,10 +305,20 @@ h1 {
   color: var(--c-danger);
 }
 
+/* as a game row's delete */
 .deck__remove {
+  display: flex;
   align-self: center;
-  margin-right: var(--space-2);
+  margin-right: var(--space-3);
+  padding: 4px;
+  border: 0;
+  background: none;
   color: var(--c-text-faint);
+  cursor: pointer;
+}
+
+.deck__remove svg {
+  width: 18px;
 }
 
 .deck__remove:hover:not(:disabled) {
@@ -259,24 +344,5 @@ h1 {
 code {
   font-family: var(--font-mono);
   font-size: 0.9em;
-}
-
-@media (width < 60rem) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .layout__import,
-  .layout__list {
-    grid-column: 1;
-  }
-
-  .layout__import {
-    grid-row: 1;
-  }
-
-  .layout__list {
-    grid-row: 2;
-  }
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
- * The two ways a deck gets in: a RingsDB link, or a JSON file.
+ * The two ways a deck gets in, side by side in one row: a RingsDB link, or a JSON
+ * file, chosen or dropped on the row.
  *
  * Both end at the same endpoint. A link is handed to the server as a link —
  * the browser cannot fetch ringsdb.com itself, and the server will only follow
@@ -75,13 +76,15 @@ function onDrop(event: DragEvent): void {
 </script>
 
 <template>
-  <section class="import">
-    <h2 class="import__title">{{ $t('browser.deckImport.title') }}</h2>
-    <p class="import__lead muted">
-      {{ $t('browser.deckImport.lead') }}
-    </p>
-
-    <form class="from-url" @submit.prevent="importFromUrl">
+  <div class="import">
+    <form
+      class="row"
+      :class="{ 'row--over': dragging }"
+      @submit.prevent="importFromUrl"
+      @dragover.prevent="dragging = true"
+      @dragleave="dragging = false"
+      @drop.prevent="onDrop"
+    >
       <label class="visually-hidden" for="deck-url">{{ $t('browser.deckImport.urlLabel') }}</label>
       <input
         id="deck-url"
@@ -89,64 +92,52 @@ function onDrop(event: DragEvent): void {
         class="input"
         type="url"
         inputmode="url"
-        placeholder="https://ringsdb.com/decklist/view/54349"
+        :placeholder="$t('browser.deckImport.placeholder')"
         :disabled="busy"
       />
       <button class="button button--primary" type="submit" :disabled="busy || !url.trim()">
         {{ busy ? $t('browser.common.loading') : $t('browser.deckImport.import') }}
       </button>
+      <label class="button file" :title="$t('browser.deckImport.fileHint')">
+        <input
+          ref="fileInput"
+          class="visually-hidden"
+          type="file"
+          accept="application/json,.json"
+          :disabled="busy"
+          @change="onPick"
+        />
+        {{ $t('browser.deckImport.file') }}
+      </label>
     </form>
-
-    <p class="or" aria-hidden="true"><span>{{ $t('browser.deckImport.or') }}</span></p>
-
-    <label
-      class="from-file"
-      :class="{ 'from-file--over': dragging }"
-      @dragover.prevent="dragging = true"
-      @dragleave="dragging = false"
-      @drop.prevent="onDrop"
-    >
-      <input
-        ref="fileInput"
-        class="visually-hidden"
-        type="file"
-        accept="application/json,.json"
-        :disabled="busy"
-        @change="onPick"
-      />
-      <span class="from-file__mark" aria-hidden="true">&#8681;</span>
-      <span class="from-file__label">{{ $t('browser.deckImport.fileLabel') }}</span>
-      <span class="from-file__hint muted">{{ $t('browser.deckImport.fileHint') }}</span>
-    </label>
-
     <p v-if="error" class="error" role="alert">{{ tr(error) }}</p>
-  </section>
+  </div>
 </template>
 
 <style scoped>
 .import {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-5);
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg);
-  background: var(--c-surface);
+  display: grid;
+  gap: var(--space-2);
 }
 
-.import__title {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-}
-
-.import__lead {
-  margin-top: calc(var(--space-2) * -1);
-  font-size: var(--text-sm);
-}
-
-.from-url {
+.row {
   display: flex;
   gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px dashed transparent;
+  border-radius: var(--radius-lg);
+  background: var(--c-surface);
+  transition: border-color var(--transition);
+}
+
+/* a file dropped anywhere on the row loads it */
+.row--over {
+  border-color: var(--c-accent);
+}
+
+.row .input {
+  flex: 1;
+  min-width: 0;
 }
 
 .button--primary {
@@ -161,64 +152,14 @@ function onDrop(event: DragEvent): void {
   border-color: var(--c-focus);
 }
 
-/* A rule with the word sitting in a gap in it. */
-.or {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--c-text-faint);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.or::before,
-.or::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--c-border);
-}
-
-.from-file {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-5);
-  border: 1px dashed var(--c-border-strong);
-  border-radius: var(--radius);
-  background: var(--c-surface-2);
-  text-align: center;
+.file {
   cursor: pointer;
-  transition:
-    border-color var(--transition),
-    background var(--transition);
+  white-space: nowrap;
 }
 
-.from-file:hover,
-.from-file--over {
-  border-color: var(--c-accent);
-  background: var(--c-surface-3);
-}
-
-.from-file:focus-within {
+.file:focus-within {
   outline: 2px solid var(--c-focus);
   outline-offset: 2px;
-}
-
-.from-file__mark {
-  color: var(--c-accent);
-  font-size: var(--text-xl);
-  line-height: 1;
-}
-
-.from-file__label {
-  font-size: var(--text-sm);
-}
-
-.from-file__hint {
-  font-size: var(--text-xs);
 }
 
 .error {
@@ -227,11 +168,5 @@ function onDrop(event: DragEvent): void {
   border-radius: var(--radius);
   color: var(--c-danger);
   font-size: var(--text-sm);
-}
-
-@media (width < 34rem) {
-  .from-url {
-    flex-direction: column;
-  }
 }
 </style>

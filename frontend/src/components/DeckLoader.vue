@@ -42,7 +42,7 @@ const use = async () => {
 
 <template>
   <div class="deck-loader">
-    <div v-if="!loaded" class="card-browser">
+    <div v-if="!loaded" class="card-browser bare">
       <DeckImport :keep="false" @loaded="(preview, request) => (loaded = { preview, request })" />
     </div>
     <template v-else-if="face">
@@ -70,6 +70,8 @@ const use = async () => {
 
 <style scoped>
 .deck-loader { display: grid; gap: 12px; }
+/* the browser's tokens for the import row, not its page background */
+.bare { background: none; }
 .preview { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; }
 .details { display: grid; gap: 6px; margin: 0; }
 .details div { display: flex; gap: 8px; }

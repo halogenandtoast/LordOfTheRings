@@ -30,5 +30,5 @@ export interface DeckFace {
 
 export const deckFaces = (decks: DeckSummary[]): DeckFace[] => [
   ...starterSpheres.map((sphere) => ({ key: `starter:${sphere}`, sphere, name: null, heroCodes: starterHeroes[sphere], detail: null })),
-  ...decks.map((d) => ({ key: `deck:${d.id}`, sphere: null, name: d.name, heroCodes: d.heroCodes ?? [], detail: d.heroNames.join(', ') })),
+  ...decks.map((d) => ({ key: `deck:${d.id}`, sphere: null, name: d.name, heroCodes: d.heroes.map((h) => h.code), detail: d.heroes.map((h) => h.name).join(', ') })),
 ]

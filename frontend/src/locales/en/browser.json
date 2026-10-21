@@ -175,7 +175,16 @@
     "empty": "Nothing here yet. Import a deck to get started — the fifty sample decks in {path} are all built from the Core Set.",
     "noHeroes": "No heroes",
     "unknownCount": "{count} unknown",
-    "delete": "Delete {name}"
+    "delete": "Delete {name}",
+    "search": "Search by deck or hero",
+    "spheres": "Heroes' spheres",
+    "noneMatch": "No decks match.",
+    "sort": {
+      "used": "Recently played",
+      "name": "Name",
+      "threat": "Starting threat",
+      "imported": "Recently imported"
+    }
   },
   "deck": {
     "allDecks": "All decks",
@@ -186,13 +195,11 @@
     "sideboard": "Sideboard"
   },
   "deckImport": {
-    "title": "Load a deck",
-    "lead": "Paste a RingsDB deck link, or drop a deck JSON file you have exported.",
     "urlLabel": "RingsDB deck link",
     "import": "Import",
-    "or": "or",
-    "fileLabel": "Drop a deck JSON file here, or choose one",
     "fileHint": "RingsDB's export, or any file in the same shape",
-    "invalidJson": "{name} is not valid JSON."
+    "invalidJson": "{name} is not valid JSON.",
+    "placeholder": "RingsDB deck link, or drop a deck file here",
+    "file": "Choose a file…"
   }
 }
