@@ -103,28 +103,30 @@ const create = async () => {
     <form v-else id="new-game" @submit.prevent="create">
       <fieldset>
         <legend>{{ $t('common.scenario') }}</legend>
-        <div class="campaign-header">
-          <img :src="selectedCampaign.image" alt="" />
-          <div>
-            <h3><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" /> {{ selectedCampaign.name }}</h3>
-            <button type="button" class="change-campaign" @click="back">{{ $t('newGame.chooseDifferentCampaign') }}</button>
+        <div class="campaign-row">
+          <div class="campaign-header">
+            <img :src="selectedCampaign.image" alt="" />
+            <div>
+              <h3><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" /> {{ selectedCampaign.name }}</h3>
+              <button type="button" class="change-campaign" @click="back">{{ $t('newGame.chooseDifferentCampaign') }}</button>
+            </div>
           </div>
-        </div>
-        <div class="scenarios">
-          <button
-            v-for="option in selectedCampaign.scenarios"
-            :key="option.id"
-            type="button"
-            class="scenario-box"
-            :class="{ selected: option.id === selectedScenario?.id, unavailable: !option.available }"
-            :disabled="!option.available"
-            :aria-pressed="option.id === selectedScenario?.id"
-            @click="selectedScenario = option"
-          >
-            <img :src="option.image" alt="" />
-            <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
-            <span v-if="!option.available" class="coming-soon">{{ $t('newGame.comingSoon') }}</span>
-          </button>
+          <div class="scenarios">
+            <button
+              v-for="option in selectedCampaign.scenarios"
+              :key="option.id"
+              type="button"
+              class="scenario-box"
+              :class="{ selected: option.id === selectedScenario?.id, unavailable: !option.available }"
+              :disabled="!option.available"
+              :aria-pressed="option.id === selectedScenario?.id"
+              @click="selectedScenario = option"
+            >
+              <img :src="option.image" alt="" />
+              <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
+              <span v-if="!option.available" class="coming-soon">{{ $t('newGame.comingSoon') }}</span>
+            </button>
+          </div>
         </div>
       </fieldset>
 
@@ -284,14 +286,23 @@ legend {
 .campaign-name .icon, .scenario-name .icon { font-size: 1.2em; }
 .campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
 
-.campaign-header {
-  display: flex;
-  align-items: center;
+.campaign-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: start;
   gap: 14px;
 }
-.campaign-header img { width: 84px; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
-.campaign-header h3 { margin: 0 0 4px; color: var(--title); font-size: 1.4em; }
+@media (max-width: 600px) {
+  .campaign-row { grid-template-columns: 1fr; }
+}
+.campaign-header {
+  display: grid;
+  gap: 8px;
+}
+.campaign-header img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
+.campaign-header h3 { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; color: var(--title); font-size: 1.2em; }
 .change-campaign {
+  text-align: left;
   background: none;
   border: 0;
   padding: 0;
