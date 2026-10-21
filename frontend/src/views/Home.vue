@@ -143,6 +143,7 @@ const submitImport = async () => {
 .home {
   --segmented-accent: var(--button-secondary);
   --segmented-accent-highlight: var(--button-secondary-hover);
+  --segmented-text: var(--text);
   max-width: 98vw;
   width: 70vw;
   min-width: 60vw;

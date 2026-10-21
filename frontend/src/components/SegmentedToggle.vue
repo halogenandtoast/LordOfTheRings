@@ -37,7 +37,9 @@ label { display: flex; align-items: center; justify-content: center; position: r
 input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 span { overflow-wrap: anywhere; }
 small { margin-left: 4px; font-size: inherit; font-variant-numeric: tabular-nums; opacity: .8; }
-label:hover, label:has(input:checked) { color: var(--text); }
+label:hover { color: var(--text); }
+/* the chosen one reads as text on a button of the accent's colour */
+label:has(input:checked) { color: var(--segmented-text, var(--button-primary-text)); }
 label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 label.disabled { color: color-mix(in srgb, var(--text-muted) 45%, transparent); cursor: not-allowed; }
 .segmented-toggle:hover::before { background: var(--segmented-accent-highlight, var(--button-primary-hover)); }
