@@ -160,7 +160,7 @@ const toggleUnless = (attached: CardView) => {
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 5px 0 3px; }
+.stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 3px 0; }
 /* upright, the card squares off its bottom and drops its ring there, and the strip's
    border carries on its sides, so card and strip read as one with no line between */
 .with-stats > .card img {
