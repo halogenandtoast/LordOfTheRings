@@ -38,3 +38,14 @@ game puts what it pushed on the front of the game's queue once the card is done.
 
 Make small, focused commits with no Co-Authored-By or other AI trailer. Other sessions
 share this tree, so stage only your own changes.
+
+## The game log
+
+The log is derived from the message stream, as in Arkham: `LordOfTheRings.Log.Narrator`
+says what each `Message` means, read before the message runs. Cards write nothing.
+
+- To log something new, add a case to `narrationFor` for the message that does it, not a
+  `sendLog` in a card. Leave plumbing silent, and never push or throw from a narration.
+- Every English string is under `log.` in `frontend/src/locales/en/log.json`.
+- An event that spans answers goes in a block: push its messages through `inLogBlock`
+  with a new `LogBlockKind`, and give the kind a header in the narrator's `openBlock`.
