@@ -197,6 +197,7 @@ pathOfNeed :: CardDef
 pathOfNeed =
   (attachment "04103" "Path of Need" Leadership (StaticCost 4))
     { cdCardTraits = setFromList [Condition]
+    , cdDeckLimit = 1
     }
 
 healingHerbs :: CardDef
@@ -223,6 +224,7 @@ gondorianShield =
   (attachment "06005" "Gondorian Shield" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Armor, Item]
     , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
     }
 
 ithilienPit :: CardDef
@@ -338,6 +340,7 @@ dwarfPipe :: CardDef
 dwarfPipe =
   (attachment "17007" "Dwarf Pipe" Spirit (StaticCost 1))
     { cdCardTraits = setFromList [Item, Pipe]
+    , cdLimitOnePerHost = True
     }
 
 theRedArrow :: CardDef
@@ -345,18 +348,23 @@ theRedArrow =
   (attachment "17058" "The Red Arrow" Tactics (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Item]
+    , cdDeckLimit = 1
     }
 
 magicRing :: CardDef
 magicRing =
   (attachment "17143" "Magic Ring" Neutral (StaticCost 2))
     { cdCardTraits = setFromList [Artifact, Item, Ring]
+    , cdDeckLimit = 1
+    , cdLimitOnePerHost = True
     }
 
 warAxe :: CardDef
 warAxe =
   (attachment "22032" "War Axe" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
     }
 
 hornOfTheMark :: CardDef
@@ -372,6 +380,7 @@ valiantSword =
   (attachment "22083" "Valiant Sword" Leadership (StaticCost 1))
     { cdCardTraits = setFromList [Item, Weapon]
     , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
     }
 
 songOfKings :: CardDef

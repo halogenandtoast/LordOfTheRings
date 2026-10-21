@@ -77,8 +77,8 @@ def stat(card, key):
 def keywords(card):
     found, victory = set(), None
     parts = re.split(r"[.;]", card.get("keywords") or "")
-    first_line = (card.get("text") or "").split("\n")[0]
-    parts += [p for p in re.split(r"[.;]", first_line) if p.strip() in TEXT_KEYWORDS]
+    # a keyword can sit on any line of the text, as War Axe's Restricted does
+    parts += [p for p in re.split(r"[.;\n]", card.get("text") or "") if p.strip() in TEXT_KEYWORDS]
     for part in (p.strip() for p in parts):
         if not part:
             continue
@@ -154,6 +154,10 @@ def definition(card):
         updates.append(f"cdVictoryPoints = Just {victory}")
     if card.get("shadow_text") or "Shadow:" in (card.get("text") or ""):
         updates.append("cdShadowEffect = True")
+    if card["type_code"] in ("ally", "attachment", "event") and (limit := card.get("deck_limit")) not in (None, 3):
+        updates.append(f"cdDeckLimit = {limit}")
+    if re.search(r"Limit 1 per (character|hero)", card.get("text") or ""):
+        updates.append("cdLimitOnePerHost = True")
     if (kept := EASY_MODE.get(card.get("pack_name"), {}).get(str(card.get("position")))) is not None:
         updates.append(f"cdEasyModeQuantity = Just {kept}")
     expr = base(card)

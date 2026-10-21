@@ -244,7 +244,7 @@ theMusterOfRohan :: CardDef
 theMusterOfRohan = event "22062" "The Muster of Rohan" Spirit (StaticCost 4)
 
 helmOfSecrecy :: CardDef
-helmOfSecrecy = event "22090" "Helm of Secrecy" Neutral (StaticCost 4)
+helmOfSecrecy = (event "22090" "Helm of Secrecy" Neutral (StaticCost 4)) {cdDeckLimit = 1}
 
 campfireTales :: CardDef
 campfireTales = event "02003" "Campfire Tales" Leadership (StaticCost 1)

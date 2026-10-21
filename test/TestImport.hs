@@ -184,8 +184,10 @@ putAttachmentOn :: PlayerId -> CardDef -> Target -> GameT Target
 putAttachmentOn pid def host = do
   card <- genPlayerCard def (Just pid)
   att <- overAttrs (\a -> a {attachmentPlacement = AttachedTo host}) <$> newAttachment pid card
-  g <- getGame
-  putGame =<< preloadModifiers (g & entitiesL . attachmentsL %~ insertEntity att)
+  -- the modifiers are read from the game with the attachment in it
+  g <- (entitiesL . attachmentsL %~ insertEntity att) <$> getGame
+  putGame g
+  putGame =<< preloadModifiers g
   pure $ toTarget att
 
 -- | Give a hero resources, then play a card from hand in the planning phase, paid from

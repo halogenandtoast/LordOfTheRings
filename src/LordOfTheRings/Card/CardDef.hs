@@ -46,6 +46,10 @@ data CardDef = CardDef
   -- ^ the card must be paid for from this many different heroes' pools
   , cdEscape :: Maybe Int
   -- ^ what the card adds to an escape test it is dealt for
+  , cdDeckLimit :: Int
+  -- ^ the copies of its title a deck may hold
+  , cdLimitOnePerHost :: Bool
+  -- ^ an attachment limited to 1 per character: no host takes a second copy of its title
   }
   deriving stock (Show, Eq, Generic)
 
@@ -90,6 +94,8 @@ emptyCardDef cCode name cType =
     , cdWhenRevealed = False
     , cdDistinctPayers = Nothing
     , cdEscape = Nothing
+    , cdDeckLimit = 3
+    , cdLimitOnePerHost = False
     }
 
 unique :: CardDef -> CardDef
