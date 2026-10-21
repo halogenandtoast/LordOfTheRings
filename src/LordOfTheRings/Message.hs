@@ -266,7 +266,8 @@ data Message
   | DeclareAttackers PlayerId EnemyId
   | AttackWith Target
   | ResolveAttack PlayerId EnemyId
-  | AttackResolved EnemyId [Target]
+  | -- | an attack on the enemy resolved: the player it was engaged with, and the attackers
+    AttackResolved EnemyId (Maybe PlayerId) [Target]
   | AttackStagingAreaAlone PlayerId Target
   | StopAttacking Target
   | Ready Target

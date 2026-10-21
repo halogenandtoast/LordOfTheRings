@@ -26,6 +26,9 @@ data WindowMatcher
   | AnyTraveledWindow Timing
   | -- | an enemy destroyed by an attack, by any attackers or with the given one among them
     EnemyDestroyedByAttackWindow Timing (Maybe Target)
+  | -- | an enemy engaged with a player other than the given one, destroyed by an attack
+    -- the character was among
+    EnemyOfOtherPlayerDestroyedByAttackWindow Timing PlayerId Target
   | CharacterDestroyedWindow Timing
   | HeroDestroyedWindow Timing
   | AllyDestroyedWindow Timing
@@ -92,6 +95,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers) -> t == timing && maybe True (`elem` attackers) who
+  (EnemyOfOtherPlayerDestroyedByAttackWindow t pid who, EngagedEnemyDestroyedByAttack pid' attackers) -> t == timing && pid /= pid' && who `elem` attackers
   (CharacterDestroyedWindow t, CharacterDestroyed _ _) -> t == timing
   (HeroDestroyedWindow t, CharacterDestroyed (HeroTarget _) _) -> t == timing
   (AllyDestroyedWindow t, CharacterDestroyed (AllyTarget _) _) -> t == timing

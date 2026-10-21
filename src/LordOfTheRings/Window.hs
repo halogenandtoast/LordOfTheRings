@@ -31,6 +31,8 @@ data WindowType
   | DeclaredAsAttacker Target EnemyId
   | -- | an attack destroyed the enemy: the characters that attacked
     EnemyDestroyedByAttack EnemyId [Target]
+  | -- | an attack destroyed an enemy engaged with the player: the characters that attacked
+    EngagedEnemyDestroyedByAttack PlayerId [Target]
   | CharacterDestroyed Target Card
   | -- | an encounter card revealed from the encounter deck
     Revealed Target

@@ -405,7 +405,7 @@ runGameMessage msg g = case msg of
     pure g
   EnemyAttack pid eid -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
-    defenders <- filterM (canFight eid) =<< readyCharacters pid
+    defenders <- filterM (canFight eid) =<< possibleDefenders pid
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
@@ -427,7 +427,7 @@ runGameMessage msg g = case msg of
       ]
     pure g
   DeclareDefenders pid eid chosen -> do
-    defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< readyCharacters pid)
+    defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< possibleDefenders pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     push
@@ -492,7 +492,10 @@ runGameMessage msg g = case msg of
     open' <- elem AttackableByAnyCharacter <$> getModifiers eid
     -- one who does not exhaust to attack is still declared only once
     attacking <- selectCharacters AttackingHero AttackingAlly
-    attackers <- filter (`notElem` attacking) <$> (filterM (canFight eid) =<< (if staged && not open' then stagingAttackers else pure) =<< readyCharacters pid)
+    -- ranged characters of other players may join an attack on an enemy engaged with them
+    engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
+    ranged <- if engaged then othersWithKeyword Ranged pid else pure []
+    attackers <- filter (`notElem` attacking) <$> (filterM (canFight eid) . (<> ranged) =<< (if staged && not open' then stagingAttackers else pure) =<< readyCharacters pid)
     push
       $ if null attackers
         then ResolveAttack pid eid
@@ -502,9 +505,8 @@ runGameMessage msg g = case msg of
             <> [Label (ikey "label.doneAttacking") [ResolveAttack pid eid]]
     pure g
   ResolveAttack pid eid -> do
-    heroes <- select (HeroControlledBy (PlayerWithId pid) <> AttackingHero)
-    allies <- select (AllyControlledBy (PlayerWithId pid) <> AttackingAlly)
-    let attackers = map toTarget heroes <> map toTarget allies
+    -- ranged characters of other players among them
+    attackers <- selectCharacters AttackingHero AttackingAlly
     case Map.lookup eid g.entities.enemies of
       -- the enemy left play before the attack resolved: the attackers just stop
       Nothing -> pushAll (map StopAttacking attackers)
@@ -521,13 +523,13 @@ runGameMessage msg g = case msg of
               =<< inLogBlock
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
-                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense), AttackResolved eid attackers]
+                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense), AttackResolved eid (placementController enemy'.placement) attackers]
                     <> [CheckWindows [mkAfter $ AttackedEnemy a eid | a <- attackers]]
                 )
     pure g
-  AttackResolved eid attackers -> do
+  AttackResolved eid engaged attackers -> do
     destroyed <- not <$> selectAny (EnemyWithId eid)
-    pushWhen destroyed $ CheckWindows [mkAfter $ EnemyDestroyedByAttack eid attackers]
+    pushWhen destroyed $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers) : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
     pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   -- a defender that left play before the damage leaves the attack undefended
   AttackDamage eid defender | not (inPlay g defender) -> do
@@ -1033,6 +1035,20 @@ gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> 
 -- | A character's traits, printed and gained.
 characterTraits :: Target -> GameT (Set Trait)
 characterTraits target = (<>) . cdCardTraits <$> characterCardDef target <*> gainedTraits target
+
+-- | Who may defend an attack on the player: their ready characters, and other players'
+-- with sentinel.
+--
+-- ponytail: the attacked player declares other players' sentinels, as the attacking
+-- player declares their ranged characters; ask each controller if a table wants that.
+possibleDefenders :: PlayerId -> GameT [Target]
+possibleDefenders pid = (<>) <$> readyCharacters pid <*> othersWithKeyword Sentinel pid
+
+-- | Other players' ready characters with the keyword.
+othersWithKeyword :: Keyword -> PlayerId -> GameT [Target]
+othersWithKeyword k pid = do
+  others <- filter (/= pid) <$> getPlayerOrder
+  filterM (\t -> hasKeyword k t =<< characterCardDef t) . concat =<< traverse readyCharacters others
 
 -- | Whether the card has the restricted keyword.
 isRestricted :: (HasCardDef a) => a -> Bool

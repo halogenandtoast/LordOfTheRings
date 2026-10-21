@@ -353,6 +353,9 @@
   "dwarfPipe": {
     "chooseCard": "Choose a discarded card to place on the bottom of your deck"
   },
+  "brandSonOfBain": {
+    "ready": "Choose a character to ready"
+  },
   "magicRing": {
     "choose": "Choose one",
     "heal": "Heal 1 damage from attached hero",
