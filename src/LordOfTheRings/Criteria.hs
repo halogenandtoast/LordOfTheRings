@@ -12,7 +12,8 @@ data Criterion
   | EnemyExists EnemyMatcher
   | HeroExists HeroMatcher
   | AllyExists AllyMatcher
-  | CardInHand PlayerId CardType
+  | -- | a card of that type in hand that the unique rule lets into play
+    CardInHand PlayerId CardType
   | PlayerExists PlayerMatcher
   | DuringPhase Phase
   | -- | no enemy or location in play is that card

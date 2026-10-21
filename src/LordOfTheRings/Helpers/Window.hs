@@ -71,7 +71,7 @@ passesCriteria = \case
     pure
       $ cid `notElem` map (enemyCardId . toAttrs) (toList es.enemies)
       && cid `notElem` map (locationCardId . toAttrs) (toList es.locations)
-  CardInHand pid cType -> any ((== cType) . (.cardType)) . (.hand) <$> getPlayer pid
+  CardInHand pid cType -> anyM passesUnique . filter ((== cType) . (.cardType)) . (.hand) =<< getPlayer pid
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
 
