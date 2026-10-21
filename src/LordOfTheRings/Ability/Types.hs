@@ -6,6 +6,7 @@ import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Matcher.Window
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
+import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
 
 data AbilityCost
@@ -14,6 +15,10 @@ data AbilityCost
   | ResourceCost Target Int
   | DiscardFromHandCost PlayerId Int
   | RaiseThreatCost Int
+  | -- | the player spends resources of the sphere from their heroes' pools
+    SphereResourceCost PlayerId Sphere Int
+  | -- | the card discards itself from play
+    DiscardCost Target
   | Costs [AbilityCost]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

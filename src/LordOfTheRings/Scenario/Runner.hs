@@ -97,6 +97,14 @@ instance RunMessage ScenarioAttrs where
             else RevealCard card
         pure $ attrs & encounterDeckL .~ rest
       [] -> pure attrs
+    AddSetAsideToStaging matcher -> do
+      let (matching, rest) = partition (cardMatches matcher) attrs.scenarioSetAside
+      traverse_ (push . AddToStaging) matching
+      pure $ attrs & setAsideL .~ rest
+    ShuffleEncounterDiscardIntoDeck matcher -> do
+      let (matching, rest) = partition (cardMatches matcher) attrs.encounterDiscard
+      deck <- shuffleM (matching <> attrs.encounterDeck)
+      pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ rest
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)

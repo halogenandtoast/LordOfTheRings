@@ -151,6 +151,11 @@ data Message
   | -- | the player looks at the top cards of the encounter deck, reveals 1 of them and
     -- discards the rest
     RevealOneOfTopEncounterCards PlayerId Source Int
+  | -- | set-aside cards go to the staging area
+    AddSetAsideToStaging CardMatcher
+  | ShuffleEncounterDiscardIntoDeck CardMatcher
+  | -- | an objective ally in play joins the player as an ally
+    PutObjectiveAllyIntoPlay ObjectiveId PlayerId
   | -- | the quest deck goes back to the stage, put into play on its B side, with the
     -- stages after it to follow
     ResetToStage EncounterCard [EncounterCard]

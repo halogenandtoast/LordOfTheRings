@@ -3,7 +3,9 @@ module LordOfTheRings.Hero.Runner (module LordOfTheRings.Hero.Runner, module X) 
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Hero.Types as X
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Message
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -13,7 +15,8 @@ import LordOfTheRings.Token
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
     BeginPhase ResourcePhase -> do
-      unless attrs.heroPrisoner $ push $ PlaceTokens GameSource (toTarget attrs) Resource 1
+      blocked <- elem CannotCollectResources <$> getModifiers attrs
+      unless (attrs.heroPrisoner || blocked) $ push $ PlaceTokens GameSource (toTarget attrs) Resource 1
       pure attrs
     TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
     RescuePrisoner hid | hid == attrs.heroId -> do

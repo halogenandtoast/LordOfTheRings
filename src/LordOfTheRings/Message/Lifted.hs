@@ -217,13 +217,6 @@ discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
 revealOneOfTopEncounterCards :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
 revealOneOfTopEncounterCards pid source n = push $ RevealOneOfTopEncounterCards pid (toSource source) n
 
--- | Resources of the sphere the player's heroes could spend: their own sphere's, or one a
--- gained resource icon lets them spend.
-getResourcesOfSphere :: (HasGame m) => PlayerId -> Sphere -> m Int
-getResourcesOfSphere pid sphere = do
-  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
-  sum . map (.resources) <$> filterM (\h -> if h.sphere == sphere then pure True else elem (GainResourceIcon sphere) <$> getModifiers h) heroes
-
 -- | The player pays 1 resource of the sphere or discards the card; with nothing to pay,
 -- the card is discarded.
 payOrDiscard :: (ReverseQueue m, Targetable target) => PlayerId -> target -> Sphere -> m ()

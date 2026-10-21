@@ -361,12 +361,14 @@ runGameMessage msg g = case msg of
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
     defenders <- readyCharacters pid
     enemyName <- cardVar "enemy" <$> getEnemy eid
-    let declare =
+    exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
+    let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
+        declare =
           if many
             then DeclareDefenders pid eid []
             else
               questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
-                $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
+                $ [targetLabel d (exhaust' d <> [DefendWith pid eid d]) | d <- defenders]
                 <> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
     pushAll =<< inLogBlock (EnemyAttackBlock pid eid) [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
     pure g
@@ -381,9 +383,10 @@ runGameMessage msg g = case msg of
   DeclareDefenders pid eid chosen -> do
     defenders <- readyCharacters pid
     enemyName <- cardVar "enemy" <$> getEnemy eid
+    exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     push
       $ questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
-      $ [ targetLabel d [Exhaust d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
+      $ [ targetLabel d $ [Exhaust d | Just True <- [lookup d exhausts]] <> [CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
         | d <- defenders
         ]
       <> case chosen of
@@ -482,7 +485,10 @@ runGameMessage msg g = case msg of
         $ concat
           [ RevealShadowCard eid (ecId card)
               : if cdShadowEffect (toCardDef card)
-                then [CheckWindows [mkWhen $ ShadowEffectTriggered (ecId card) eid], ResolveShadowCard (ecId card) eid pid mDefender]
+                then
+                  [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid) : [mkWhen $ ShadowEffectAgainst d | Just d <- [mDefender]]
+                  , ResolveShadowCard (ecId card) eid pid mDefender
+                  ]
                 else []
           | card <- enemy.shadowCards
           ]
@@ -530,7 +536,7 @@ runGameMessage msg g = case msg of
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
     allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
     barred <- elem CannotCommitCharacters <$> getModifiers (PlayerTarget pid)
-    let characters = if barred then [] else map toTarget heroes <> map toTarget allies
+    characters <- if barred then pure [] else filterM (fmap (notElem CannotCommitToQuest) . getModifiers) $ map toTarget heroes <> map toTarget allies
     quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
     -- a character's action may be worth more than its willpower, as Faramir's, so the
     -- player's actions are offered alongside committing it
@@ -698,7 +704,7 @@ runGameMessage msg g = case msg of
       & scenarioL %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
-    push $ GuardObjective (toId thisObjective)
+    pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   CompleteQuest qid -> do
@@ -753,6 +759,13 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->
       when (treachery.placement == Unplaced) $ push (Discard $ toTarget treachery)
     pure g
+  PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
+    let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
+    pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
+  ShuffleIntoEncounterDeck (TreacheryTarget tid) | Just t <- Map.lookup tid g.entities.treacheries -> do
+    deck <- shuffleM (MkEncounterCard (treacheryCardId $ toAttrs t) (toCardCode t) : (toAttrs g.scenario).encounterDeck)
+    pure $ g & entitiesL . treacheriesL %~ Map.delete tid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
   AddToStaging card -> case cdCardType (toCardDef card) of
     EnemyType -> do
       thisEnemy <- newEnemy card
@@ -760,7 +773,9 @@ runGameMessage msg g = case msg of
     LocationType -> do
       thisLocation <- newLocation card
       pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) thisLocation)
-    _ -> error "Unhandled"
+    _ -> do
+      thisObjective <- newObjective card
+      pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
 
 -- | Show the players what the board does as it happens: the log is written by the narrator.
@@ -904,6 +919,13 @@ attackingEnemy = \case
   ResolveShadow eid _ _ -> Just eid
   DeclareAttackers _ eid -> Just eid
   _ -> Nothing
+
+-- | Whether declaring the character as a defender against the enemy exhausts it.
+exhaustToDefend :: Target -> EnemyId -> GameT Bool
+exhaustToDefend d eid = do
+  mods <- getModifiers d
+  enemy <- getEnemy eid
+  not <$> anyM (\t -> hasTrait t (toTarget eid) (toCardDef enemy)) [t | DoesNotExhaustToDefendAgainst t <- mods]
 
 -- | Whether a character is still in play.
 inPlay :: Game -> Target -> Bool

@@ -225,9 +225,7 @@ resourcesInSphere sphere player = do
 -- | Whether a hero's resources can pay for a card of the sphere: its own sphere, or one
 -- a resource icon it has gained gives it.
 paysFor :: (HasGame m) => Sphere -> Hero -> m Bool
-paysFor sphere h
-  | sphere == Neutral || h.sphere == sphere = pure True
-  | otherwise = elem (GainResourceIcon sphere) <$> getModifiers h
+paysFor = heroPaysFor
 
 startingHandSize :: Int
 startingHandSize = 6

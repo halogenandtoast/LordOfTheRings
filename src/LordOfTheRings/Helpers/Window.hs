@@ -13,7 +13,7 @@ import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Id
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher
-import LordOfTheRings.Modifier (ModifierType (CannotCancelEncounterEffects))
+import LordOfTheRings.Modifier (ModifierType (CannotCancelEncounterEffects, CannotTriggerAbilities))
 import LordOfTheRings.Message
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
@@ -25,17 +25,19 @@ import LordOfTheRings.Window
 getAllAbilities :: (HasGame m) => m [Ability]
 getAllAbilities = do
   es <- getsGame gameEntities
-  pure
-    $ concat
-      [ concatMap getAbilities (toList es.heroes)
-      , concatMap getAbilities (toList es.allies)
-      , concatMap getAbilities (toList es.enemies)
-      , concatMap getAbilities (toList es.locations)
-      , concatMap getAbilities (toList es.treacheries)
-      , concatMap getAbilities (toList es.quests)
-      , concatMap getAbilities (toList es.attachments)
-      , concatMap getAbilities (toList es.objectives)
-      ]
+  let abilities =
+        concat
+          [ concatMap getAbilities (toList es.heroes)
+          , concatMap getAbilities (toList es.allies)
+          , concatMap getAbilities (toList es.enemies)
+          , concatMap getAbilities (toList es.locations)
+          , concatMap getAbilities (toList es.treacheries)
+          , concatMap getAbilities (toList es.quests)
+          , concatMap getAbilities (toList es.attachments)
+          , concatMap getAbilities (toList es.objectives)
+          ]
+  -- a card a condition has blanked offers none
+  flip filterM abilities \ab -> notElem CannotTriggerAbilities <$> maybe (pure []) getModifiers (sourceTarget ab.abilitySource)
 
 -- | Abilities whose window matches one of the windows and that can be used right now.
 getWindowAbilities :: (HasGame m) => [Window] -> m [Ability]
@@ -90,6 +92,8 @@ canPay = \case
   ResourceCost _ _ -> pure False
   DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
   RaiseThreatCost _ -> pure True
+  SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
+  DiscardCost _ -> pure True
   Costs cs -> allM canPay cs
 
 costMessages :: Source -> AbilityCost -> [Message]
@@ -101,6 +105,8 @@ costMessages source = \case
   RaiseThreatCost n -> case source of
     PlayerSource pid -> [RaiseThreat pid n]
     _ -> []
+  SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
+  DiscardCost target -> [Discard target]
   Costs cs -> concatMap (costMessages source) cs
 
 -- | The player who controls an ability's source, if anyone does.

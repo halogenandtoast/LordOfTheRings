@@ -99,6 +99,8 @@ instance Not AllyMatcher where
 data AttachMatcher
   = AttachToHero HeroMatcher
   | AttachToCharacter
+  | AttachToCharacterMatching HeroMatcher AllyMatcher
+  | AttachToAlly AllyMatcher
   | AttachToEnemy EnemyMatcher
   | AttachToLocation LocationMatcher
   deriving stock (Show, Eq, Generic)

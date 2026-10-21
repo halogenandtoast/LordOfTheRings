@@ -99,8 +99,11 @@ instance Show Ally where
 instance ToJSON Ally where
   toJSON (Ally a) = toJSON a
 
+-- | An objective ally is an encounter card, and leaves play to the encounter discard pile.
 instance IsCard AllyAttrs where
-  toCard a = PlayerCard $ MkPlayerCard {pcId = allyCardId a, pcCardCode = allyCardCode a, pcOwner = Just (allyOwner a)}
+  toCard a
+    | cdCardType (toCardDef a) == ObjectiveAllyType = EncounterCard $ MkEncounterCard {ecId = allyCardId a, ecCardCode = allyCardCode a}
+    | otherwise = PlayerCard $ MkPlayerCard {pcId = allyCardId a, pcCardCode = allyCardCode a, pcOwner = Just (allyOwner a)}
 
 instance IsCard Ally where
   toCard = toCard . toAttrs

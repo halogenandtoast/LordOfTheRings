@@ -18,6 +18,7 @@ import LordOfTheRings.Location.Types
 import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Question
 import LordOfTheRings.Matcher.Types as X
+import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
@@ -56,7 +57,7 @@ matchHero matcher hero = case matcher of
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
   HeroWithSphere sphere -> pure $ hero.sphere == sphere
-  HeroWithKeyword k -> pure $ k `member` cdKeywords (toCardDef hero)
+  HeroWithKeyword k -> hasKeyword k (toTarget hero) (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
@@ -82,7 +83,7 @@ matchAlly matcher ally = case matcher of
   AllyWithTitle name -> pure $ ally.name == name
   AllyWithTrait trait -> hasTrait trait (toTarget ally) (toCardDef ally)
   AllyWithSphere sphere -> pure $ cdSphere (toCardDef ally) == Just sphere
-  AllyWithKeyword k -> pure $ k `member` cdKeywords (toCardDef ally)
+  AllyWithKeyword k -> hasKeyword k (toTarget ally) (toCardDef ally)
   ReadyAlly -> pure $ not (allyExhausted $ toAttrs ally)
   ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
@@ -142,6 +143,29 @@ hasTrait :: (HasGame m) => Trait -> Target -> CardDef -> m Bool
 hasTrait trait target def
   | trait `member` cdCardTraits def = pure True
   | otherwise = elem (GainTrait trait) . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+
+-- | Whether the hero's resources can pay for a card or cost of the sphere: its own
+-- sphere's, one a gained resource icon gives it, or any while the game lets resources be
+-- spent as that sphere's.
+heroPaysFor :: (HasGame m) => Sphere -> Hero -> m Bool
+heroPaysFor sphere h
+  | sphere == Neutral || h.sphere == sphere = pure True
+  | otherwise = do
+      mods <- getsGame gameModifiers
+      let on t = map modifierType $ Map.findWithDefault [] t mods
+      pure $ GainResourceIcon sphere `elem` on (toTarget h) || ResourcesSpendableAs sphere `elem` on GameTarget
+
+-- | Resources of the sphere the player's heroes could spend.
+getResourcesOfSphere :: (HasGame m) => PlayerId -> Sphere -> m Int
+getResourcesOfSphere pid sphere = do
+  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
+  sum . map (.resources) <$> filterM (heroPaysFor sphere) heroes
+
+-- | A printed keyword, or one a modifier grants.
+hasKeyword :: (HasGame m) => Keyword -> Target -> CardDef -> m Bool
+hasKeyword k target def
+  | k `member` cdKeywords def = pure True
+  | otherwise = elem (GainKeyword k) . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
 
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers

@@ -21,5 +21,7 @@ attachmentHosts :: (HasGame m) => AttachMatcher -> m [Target]
 attachmentHosts = \case
   AttachToHero m -> map toTarget <$> select m
   AttachToCharacter -> (<>) <$> (map toTarget <$> select AnyHero) <*> (map toTarget <$> select AnyAlly)
+  AttachToCharacterMatching hm am -> (<>) <$> (map toTarget <$> select hm) <*> (map toTarget <$> select am)
+  AttachToAlly m -> map toTarget <$> select m
   AttachToEnemy m -> map toTarget <$> (filterM (fmap (notElem CannotHaveAttachments) . getModifiers) =<< select m)
   AttachToLocation m -> map toTarget <$> select m

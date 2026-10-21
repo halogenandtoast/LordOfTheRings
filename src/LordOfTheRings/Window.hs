@@ -39,6 +39,8 @@ data WindowType
   | ShadowEffectResolved CardId EnemyId
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId
+  | -- | a shadow effect about to resolve during an attack the character defends
+    ShadowEffectAgainst Target
   | -- | a character left play: who controlled it, and its traits as it left
     LeftPlay Target PlayerId (Set Trait)
   deriving stock (Show, Eq, Generic)

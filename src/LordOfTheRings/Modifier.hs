@@ -1,5 +1,6 @@
 module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
+import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -56,6 +57,16 @@ data ModifierType
     MayDeclareMultipleDefenders
   | -- | on a player
     CannotCommitCharacters
+  | GainKeyword Keyword
+  | -- | on a character: it defends against enemies with the trait without exhausting
+    DoesNotExhaustToDefendAgainst Trait
+  | CannotCommitToQuest
+  | -- | on a card in play: its abilities cannot be used, nor its Forced effects trigger
+    CannotTriggerAbilities
+  | -- | on a hero
+    CannotCollectResources
+  | -- | on the game: resources of any sphere may be spent as this sphere's
+    ResourcesSpendableAs Sphere
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
   | -- | on the game: matching cards cost this much more to play from hand
