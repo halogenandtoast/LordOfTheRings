@@ -59,6 +59,11 @@ import LordOfTheRings.Event.Cards.TheTreePeople
 import LordOfTheRings.Event.Cards.FeignedVoices
 import LordOfTheRings.Event.Cards.PursuingTheEnemy
 import LordOfTheRings.Event.Cards.HostOfGaladhrim
+import LordOfTheRings.Event.Cards.DurinsSong
+import LordOfTheRings.Event.Cards.LureOfMoria
+import LordOfTheRings.Event.Cards.WeAreNotIdle
+import LordOfTheRings.Event.Cards.HiddenCache
+import LordOfTheRings.Event.Cards.AVeryGoodTale
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -131,5 +136,10 @@ allEvents =
         , SomeEventCard waitNoLonger
         , SomeEventCard oathOfEorl
         , SomeEventCard theMusterOfRohan
+        , SomeEventCard durinsSong
+        , SomeEventCard lureOfMoria
+        , SomeEventCard weAreNotIdle
+        , SomeEventCard hiddenCache
+        , SomeEventCard aVeryGoodTale
         ]
     ]
