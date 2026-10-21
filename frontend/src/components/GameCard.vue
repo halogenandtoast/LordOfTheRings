@@ -160,7 +160,7 @@ const toggleUnless = (attached: CardView) => {
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 4px 0 3px; }
+.stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 6px 0 3px; }
 .stats > span + span { border-left: 1px solid var(--line); }
 .stats .threat { color: var(--threat-red); }
 .stats .willpower { color: var(--willpower); }
