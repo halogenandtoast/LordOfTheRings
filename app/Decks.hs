@@ -326,7 +326,8 @@ listDecks db userId = do
         , source = d.lotrDeckSource
         , sourceUrl = d.lotrDeckSourceUrl
         , heroNames = [n | s <- slots, s.lotrDeckSlotKind == "hero", Just n <- [flip cardName db =<< s.lotrDeckSlotCardCode]]
-        , heroCodes = [c | s <- slots, s.lotrDeckSlotKind == "hero", Just c <- [s.lotrDeckSlotCardCode]]
+        , -- the RingsDB code, as the art is named by
+          heroCodes = [c | s <- slots, s.lotrDeckSlotKind == "hero", Just c <- [flip cardRingsdbCode db =<< s.lotrDeckSlotCardCode]]
         , cardCount = sum [s.lotrDeckSlotQuantity | s <- slots, s.lotrDeckSlotKind == "draw"]
         , unresolvedCount = length [() | s <- slots, isNothing s.lotrDeckSlotCardCode]
         , updatedAt = d.lotrDeckUpdatedAt
