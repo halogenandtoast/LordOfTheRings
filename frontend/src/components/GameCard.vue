@@ -286,6 +286,12 @@ const toggleUnless = (attached: CardView) => {
   text-shadow: 0 0 2px rgb(255 255 255 / 0.85);
 }
 .resources { background-image: url('/images/tokens/resource.png'); place-self: end end; position: relative; }
+/* white, outlined in black, so it reads on any sphere's tint */
+.token.resources {
+  color: #fff;
+  font-size: 0.85rem;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;
+}
 /* the tint colours the coin, under the number and inside the coin's outline */
 .resources::before {
   content: '';
