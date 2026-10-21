@@ -131,7 +131,10 @@ const toggleUnless = (attached: CardView) => {
         <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
         <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
         <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
-          <span>{{ $t('game.combat.takes', { damage: preview.defend.damage }) }}</span>
+          <span class="versus">
+            <span class="defense" :title="$t('game.defense', { value: preview.defend.defense })">{{ preview.defend.defense }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/defense.svg')` }" /></span>
+            <span class="attack" :title="$t('game.attack', { value: preview.defend.attack })">{{ preview.defend.attack }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/attack.svg')` }" /></span>
+          </span>
           <span v-if="preview.defend.defeated">{{ $t('game.combat.defeated') }}</span>
         </span>
         <div v-if="preview.attack" class="attack-progress" :class="{ defeated: preview.attack.dealt + preview.attack.adding >= preview.attack.remaining }">
@@ -161,12 +164,15 @@ const toggleUnless = (attached: CardView) => {
 </template>
 
 <style scoped>
-.card-slot { position: relative; line-height: 0; transition: margin 0.2s ease; }
-/* under a card, its stats as modified: a strip off its bottom edge, one segment each */
-.stats {
+.card-slot {
+  /* each stat's colour, on the stats strip and in combat previews */
   --willpower: #8cc4ea;
   --attack: #f08a4b;
   --defense: #b9c4cf;
+}
+.card-slot { position: relative; line-height: 0; transition: margin 0.2s ease; }
+/* under a card, its stats as modified: a strip off its bottom edge, one segment each */
+.stats {
   display: flex;
   margin-top: 4px;
   border: 1px solid rgb(255 255 255 / 0.14);
@@ -352,11 +358,16 @@ const toggleUnless = (attached: CardView) => {
   text-align: center;
   pointer-events: none;
 }
+.defend-preview .versus { display: flex; }
+.defend-preview .versus > span { display: flex; align-items: center; gap: 3px; padding: 0 5px; }
+.defend-preview .versus > span + span { border-left: 1px solid var(--line); }
+.defend-preview .defense { color: var(--defense); }
+.defend-preview .attack { color: var(--attack); }
 .defend-preview.defeated { box-shadow: 0 0 0 1px var(--threat-red); }
 .defend-preview.defeated > :last-child { color: var(--threat-red); text-transform: uppercase; font-size: 0.65rem; }
 /* an enemy being attacked: the declared attack against its remaining hit points */
 .attack-progress {
-  --attack-fill: #f08a4b;
+  --attack-fill: var(--attack);
   z-index: 4;
   grid-area: 1 / 1;
   place-self: end stretch;
