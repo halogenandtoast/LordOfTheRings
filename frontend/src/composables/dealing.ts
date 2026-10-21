@@ -196,22 +196,60 @@ export const openingStages = (undealt: GameView) => {
   return { bare, heroes, placing, resourced }
 }
 
+const RIFFLE_MS = 1100
+const RIFFLE_CARDS = 10
+
+/**
+ * A riffle shuffle over a deck: a stack of card backs laid on it splits into two halves
+ * that lean apart, then falls back in from the bottom of each half in turn, the halves
+ * interleaving, and squares up. The deck itself is hidden underneath while it plays.
+ */
+const riffle = (deck: HTMLElement) => {
+  const { left, top, width, height } = deck.getBoundingClientRect()
+  const half = RIFFLE_CARDS / 2
+  deck.style.visibility = 'hidden'
+  const cards = Array.from({ length: RIFFLE_CARDS }, (_, n) => {
+    const side = n < half ? -1 : 1
+    const level = n % half
+    // released from the bottom of each half in turn, so each lands above the last
+    const rank = level * 2 + (side < 0 ? 0 : 1)
+    const card = Object.assign(document.createElement('div'), { className: deck.className })
+    Object.assign(card.style, {
+      position: 'fixed',
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${width}px`,
+      height: `${height}px`,
+      margin: '0',
+      zIndex: `${1000 + rank}`,
+      boxShadow: '0 1px 3px rgb(0 0 0 / 0.5)',
+      pointerEvents: 'none',
+    })
+    document.body.append(card)
+    const squared = `translate(0, ${-rank * 0.6}px)`
+    const apart = `translate(${side * width * 0.42}px, ${-8 - level * 1.2}px) rotate(${side * 6}deg)`
+    const drops = 0.32 + rank * 0.045
+    return card.animate(
+      [
+        { offset: 0, transform: `translate(0, ${-n * 0.6}px)`, easing: 'ease-out' },
+        { offset: 0.24, transform: apart, easing: 'linear' },
+        { offset: drops, transform: apart, easing: 'cubic-bezier(0.5, 0, 0.75, 0)' },
+        { offset: drops + 0.1, transform: squared, easing: 'linear' },
+        { offset: 0.92, transform: squared, easing: 'ease-in-out' },
+        { offset: 1, transform: 'none' },
+      ],
+      { duration: RIFFLE_MS, fill: 'both' },
+    )
+  })
+  return Promise.all(cards.map((a) => a.finished.catch(() => undefined))).then(() => {
+    cards.forEach((a) => (a.effect as KeyframeEffect).target?.remove())
+    deck.style.removeProperty('visibility')
+  })
+}
+
 /** Shuffle every deck on the table at once, resolving when they have settled. */
 export const shuffleDecks = () =>
-  Promise.all(
-    [...document.querySelectorAll<HTMLElement>('[data-pile^="deck-"] .pile')].map(
-      (deck) =>
-        new Promise<void>((resolve) => {
-          deck.style.animation = `deck-shuffle ${SHUFFLE_MS}ms ease-in-out 2`
-          const settle = () => {
-            deck.style.removeProperty('animation')
-            resolve()
-          }
-          deck.addEventListener('animationend', settle, { once: true })
-          window.setTimeout(settle, SHUFFLE_MS * 2 + 100)
-        }),
-    ),
-  )
+  Promise.all([...document.querySelectorAll<HTMLElement>('[data-pile^="deck-"] .pile:not(.empty)')].map(riffle))
 
 /**
  * The board just before the opening hands were dealt: hands empty, their cards still in the
