@@ -651,6 +651,7 @@ test-suite LordOfTheRings-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LordOfTheRings.Ally.LeavingAndThreatSpec
       LordOfTheRings.Ally.SnowbournScoutSpec
       LordOfTheRings.AttachmentSpec
       LordOfTheRings.CombatPhaseSpec
