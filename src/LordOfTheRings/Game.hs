@@ -706,7 +706,9 @@ runGameMessage msg g = case msg of
         pure [UseAbility controller ab windows]
       abs' -> pure [Ask lead $ ChooseOneAtATime [AbilityLabel lead ab windows [] | ab <- abs']]
     pushAll $ forcedMsgs <> [ResponseWindow windows order [] 0]
-    pure g
+    -- after an enemy's attack has resolved, what lasted for that attack ends
+    let attackOver = any (\case Window After (EnemyAttacking _ _) -> True; _ -> False) windows
+    pure $ if attackOver then g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration) else g
   ResponseWindow windows order used passes | passes < length order, (pid : _) <- order -> do
     abilities <- getWindowAbilities windows
     available <-

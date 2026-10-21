@@ -1,6 +1,10 @@
 module LordOfTheRings.ShadowsOfMirkwood.ConflictAtTheCarrockSpec (spec) where
 
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getDefense)
+import LordOfTheRings.Modifier (ModifierType (DefenseModifier))
+import LordOfTheRings.Window (WindowType (EnemyAttacking), mkAfter)
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -96,5 +100,17 @@ spec = describe "Conflict at the Carrock" do
     chooseAbilityOf pid frodo
     getCharacterDamage frodo `shouldReturn` 0
     (.threat) <$> getPlayer pid `shouldReturn` threat + 1
+
+  it "ends Muck Adder's shadow -1 defense when the attack resolves" . carrockTest $ \pid -> do
+    _ <- setEncounterDeck [Enemies.muckAdder]
+    run RevealEncounterCard
+    adder <- getsGame (fromJustNote "no adder" . headMay . map toId . toList . (.entities.enemies))
+    eowyn <- hero "01007"
+    defense <- getDefense eowyn
+    run $ CreateEffect $ Effect (EnemySource adder) eowyn [DefenseModifier (-1)] UntilEndOfAttack
+    getDefense eowyn `shouldReturn` defense - 1
+    run $ CheckWindows [mkAfter $ EnemyAttacking adder pid]
+    getDefense eowyn `shouldReturn` defense
+
  where
   frodoDeck = DeckList [toCardCode Heroes.frodoBaggins, "01007", "01002"] testDeck.cards

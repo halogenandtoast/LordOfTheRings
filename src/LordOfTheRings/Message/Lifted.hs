@@ -166,10 +166,15 @@ returnFromDiscardToHand pid cid = push $ ReturnFromDiscardToHand pid cid
 ifUndefended :: Maybe Target -> a -> a -> a
 ifUndefended defender whenUndefended otherwise' = maybe whenUndefended (const otherwise') defender
 
--- | The enemy gets +N attack until the end of the phase, as "attacking enemy gets +1
+-- | The enemy gets +N attack until its attack resolves, as "attacking enemy gets +1
 -- attack" reads.
 enemyGetsAttack :: (ReverseQueue m, Sourceable source) => source -> EnemyId -> Int -> m ()
-enemyGetsAttack source eid n = phaseModifier source eid (AttackModifier n)
+enemyGetsAttack source eid n = attackModifier source eid (AttackModifier n)
+
+-- | A modifier that lasts until the attack being made resolves, as a shadow effect's
+-- "for this attack" does.
+attackModifier :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> ModifierType -> m ()
+attackModifier source target m = createEffect source target [m] UntilEndOfAttack
 
 -- | The player chooses and discards 1 of the cards.
 chooseAndDiscard :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> [Target] -> m ()

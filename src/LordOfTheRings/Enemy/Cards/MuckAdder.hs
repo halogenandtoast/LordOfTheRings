@@ -18,7 +18,7 @@ instance RunMessage MuckAdder where
       discard target
       pure e
     ResolveShadowEffect cid _ _ (Just defender) | cid == attrs.cardId -> do
-      phaseModifier attrs defender (DefenseModifier (-1))
+      attackModifier attrs defender (DefenseModifier (-1))
       pure e
     _ -> MuckAdder <$> runMessage msg attrs
    where
