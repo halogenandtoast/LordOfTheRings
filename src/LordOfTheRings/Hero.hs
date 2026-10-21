@@ -6,6 +6,10 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Hero.Cards.Eomer
+import LordOfTheRings.Hero.Cards.Hirgon
+import LordOfTheRings.Hero.Cards.Fastred
+import LordOfTheRings.Hero.Cards.Lothiriel
 import LordOfTheRings.Hero.Cards.Aragorn
 import LordOfTheRings.Hero.Cards.Beravor
 import LordOfTheRings.Hero.Cards.Denethor
@@ -70,5 +74,9 @@ allHeroes =
         , SomeHeroCard frodoBaggins
         , SomeHeroCard brandSonOfBain
         , SomeHeroCard boromirTactics
+        , SomeHeroCard eomer
+        , SomeHeroCard hirgon
+        , SomeHeroCard fastred
+        , SomeHeroCard lothiriel
         ]
     ]

@@ -273,5 +273,17 @@
   },
   "firefoot": {
     "excess": "Exhaust Firefoot to deal the excess damage to another enemy?"
+  },
+  "hirgon": {
+    "chooseAlly": "Choose a tactics ally to play for 1 less",
+    "boost": "Raise your threat by 1 to give that ally +1 attack and +1 defense?",
+    "raiseThreat": "Raise your threat by 1",
+    "decline": "Do not raise your threat"
+  },
+  "lothiriel": {
+    "chooseAlly": "Choose an ally in your hand that shares a trait with Lothíriel"
+  },
+  "waitNoLonger": {
+    "chooseEnemy": "Choose an enemy to engage"
   }
 }
