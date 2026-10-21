@@ -127,6 +127,10 @@ data EnemyMatcher
   | EnemyWithTrait Trait
   | EnemyWithCardCode CardCode
   | EnemyEngagedWith PlayerMatcher
+  | -- | an enemy dealt a shadow card still face down
+    EnemyWithFacedownShadow
+  | -- | an enemy whose shadow card has turned face up, as its attack resolves
+    EnemyWithRevealedShadow
   | UniqueEnemy
   | -- | an enemy with an attachment of the trait attached
     EnemyWithAttached Trait

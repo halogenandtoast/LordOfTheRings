@@ -114,6 +114,8 @@ matchEnemy matcher enemy = case matcher of
   EnemyInStagingArea -> pure $ enemy.placement == StagingArea
   EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
   EnemyWithCardCode code -> pure $ toCardCode enemy == code
+  EnemyWithFacedownShadow -> pure $ any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) enemy.shadowCards
+  EnemyWithRevealedShadow -> pure $ notNull (toAttrs enemy).enemyShadowRevealed
   EnemyEngagedWith pm -> case enemy.placement of
     EngagedWith pid -> elem pid <$> select pm
     _ -> pure False

@@ -1,5 +1,6 @@
 module LordOfTheRings.Event.Cards.DawnTakeYouAll (dawnTakeYouAll) where
 
+import LordOfTheRings.Enemy.Types (EnemyAttrs (..))
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Phase (Phase (CombatPhase))
@@ -12,7 +13,10 @@ newtype DawnTakeYouAll = DawnTakeYouAll EventAttrs
 -- Combat Action: Each player may choose and discard 1 facedown shadow card from an enemy
 -- with which he is engaged.
 dawnTakeYouAll :: EventCard DawnTakeYouAll
-dawnTakeYouAll = eventWith DawnTakeYouAll Cards.dawnTakeYouAll (criteriaL .~ DuringPhase CombatPhase)
+dawnTakeYouAll =
+  eventWith DawnTakeYouAll Cards.dawnTakeYouAll
+    $ criteriaL
+    .~ (DuringPhase CombatPhase <> exists (EnemyEngagedWith AnyPlayer <> EnemyWithFacedownShadow) <> NotCriterion (exists EnemyWithRevealedShadow))
 
 instance RunMessage DawnTakeYouAll where
   runMessage msg e@(DawnTakeYouAll attrs) = case msg of
@@ -22,7 +26,7 @@ instance RunMessage DawnTakeYouAll where
         chooseOneM p do
           questionLabeled "dawnTakeYouAll.discard"
           causedBy attrs
-          for_ enemies \en -> for_ (take 1 en.shadowCards) \s ->
+          for_ enemies \en -> for_ (take 1 [s | s <- en.shadowCards, s.id `notElem` (toAttrs en).enemyShadowRevealed]) \s ->
             targeting en $ discardShadowCard en.id s
           labeled "pass" $ pure ()
       pure e
