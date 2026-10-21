@@ -8,15 +8,15 @@ import { toDeckChoice, type DeckKey } from '../deckChoice'
 import type { DeckChoice } from '../api'
 import type { Table } from '../server'
 
-// A game with friends before it is dealt: who has sat down, the link to send the rest,
-// and a seat to take with a deck. Taking the last seat deals the game.
+// A game before it is dealt: who has sat down, the link to send friends, and a seat to
+// take with a deck. The owner may take several. Taking the last seat deals the game.
 const { table } = defineProps<{ table: Table }>()
 const emit = defineEmits<{ join: [deck: DeckChoice]; leave: []; start: [] }>()
 
 const seats = computed(() =>
   Array.from({ length: table.seats }, (_, position) => table.seated.find((s) => s.position === position) ?? null),
 )
-const seated = computed(() => table.seated.some((s) => s.userId === currentUser.value?.id))
+const mine = computed(() => table.seated.filter((s) => s.userId === currentUser.value?.id).length)
 const full = computed(() => table.seated.length >= table.seats)
 const owner = computed(() => table.owner === currentUser.value?.id)
 
@@ -50,7 +50,7 @@ onMounted(async () => {
       </li>
     </ol>
 
-    <div class="invite">
+    <div v-if="table.seats > 1" class="invite">
       <span>{{ $t('game.lobby.invite') }}</span>
       <div class="link">
         <input :value="link" type="text" readonly @focus="($event.target as HTMLInputElement).select()" />
@@ -58,17 +58,17 @@ onMounted(async () => {
       </div>
     </div>
 
-    <template v-if="seated">
+    <template v-if="!full && (owner || mine === 0)">
+      <h3>{{ $t('game.lobby.chooseDeck') }}</h3>
+      <DeckPicker v-model="deck" :decks="decks" />
+      <button type="button" class="join" @click="emit('join', toDeckChoice(deck))">{{ $t(mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
+    </template>
+    <template v-if="mine > 0">
       <p class="hint">{{ $t('game.lobby.dealtWhenFull') }}</p>
       <div class="actions">
         <button v-if="owner" type="button" class="join" @click="emit('start')">{{ $t('game.lobby.startNow', table.seated.length) }}</button>
-        <button v-else type="button" class="secondary" @click="emit('leave')">{{ $t('game.lobby.leave') }}</button>
+        <button type="button" class="secondary" @click="emit('leave')">{{ $t('game.lobby.leave', mine) }}</button>
       </div>
-    </template>
-    <template v-else-if="!full">
-      <h3>{{ $t('game.lobby.chooseDeck') }}</h3>
-      <DeckPicker v-model="deck" :decks="decks" />
-      <button type="button" class="join" @click="emit('join', toDeckChoice(deck))">{{ $t('game.lobby.join') }}</button>
     </template>
   </section>
 </template>

@@ -38,7 +38,8 @@
     "chooseDeck": "Choose your deck",
     "join": "Take a seat",
     "startNow": "Start now, on your own | Start now with {n} players",
-    "leave": "Leave this seat"
+    "leave": "Leave your seat | Leave your seats",
+    "takeAnother": "Take another seat"
   },
   "seats": {
     "label": "Seats",

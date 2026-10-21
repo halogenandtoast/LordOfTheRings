@@ -4,7 +4,7 @@
   "alreadySeated": "You already have a seat at this game.",
   "noFreeSeat": "Every seat at this game is taken.",
   "notDealtYet": "The game has not been dealt yet.",
-  "seatCount": "A game has from 1 to 4 decks.",
+  "seatCount": "A game has from 1 to 4 players.",
   "noDeckSource": "Give a RingsDB link or a deck JSON file.",
   "notRingsdbLink": "Not a RingsDB deck link: {url}",
   "fetchFailed": "Could not fetch that deck from RingsDB: {reason}",
@@ -19,5 +19,6 @@
   "badLogin": "That username or password is not right.",
   "noSuchScenario": "No such scenario: {scenario}",
   "noStarterDeck": "No {sphere} starter deck.",
-  "unsupportedExport": "This export comes from an unsupported version."
+  "unsupportedExport": "This export comes from an unsupported version.",
+  "noSeatTaken": "Take a seat before starting the game."
 }
