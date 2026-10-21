@@ -1,15 +1,37 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DeckTile from './DeckTile.vue'
+import SegmentedToggle from './SegmentedToggle.vue'
 import { deckFaces, type DeckKey } from '../deckChoice'
 import type { DeckSummary } from '../browser/types/deck'
 
 const { decks } = defineProps<{ decks: DeckSummary[] }>()
 const model = defineModel<DeckKey>({ required: true })
-const faces = computed(() => deckFaces(decks))
+const { t } = useI18n()
+
+// your own decks once you have some, the starters until then
+type Tab = 'mine' | 'starter'
+const chosenTab = ref<Tab | null>(null)
+const tab = computed<Tab>(() => chosenTab.value ?? (decks.length ? 'mine' : 'starter'))
+const tabs = computed(() => [
+  { value: 'mine' as const, label: t('newGame.myDecks'), count: decks.length },
+  { value: 'starter' as const, label: t('newGame.starterTab') },
+])
+const faces = computed(() => deckFaces(decks).filter((f) => (tab.value === 'starter') === (f.sphere !== null)))
+
+// the tab shown holds the deck chosen, so your first deck once they arrive
+watch(
+  () => decks.length,
+  () => {
+    if (!chosenTab.value && decks.length && model.value.startsWith('starter:')) model.value = `deck:${decks[0].id}`
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
+  <SegmentedToggle :options="tabs" :label="$t('newGame.deck')" :model-value="tab" @update:model-value="chosenTab = $event" />
   <div class="deck-picker" role="radiogroup">
     <button
       v-for="face in faces"
@@ -22,7 +44,7 @@ const faces = computed(() => deckFaces(decks))
     >
       <DeckTile :face="face" :selected="model === face.key" />
     </button>
-    <RouterLink to="/decks" class="import">{{ $t('newGame.importDeck') }}</RouterLink>
+    <RouterLink v-if="tab === 'mine'" to="/decks" class="import">{{ $t('newGame.importDeck') }}</RouterLink>
   </div>
 </template>
 

@@ -71,6 +71,8 @@
     "importDeck": "Import a deck…",
     "starterDeck": "Core set starter",
     "starterDecks": "Core set starter decks",
+    "myDecks": "My decks",
+    "starterTab": "Starter decks",
     "starter": {
       "leadership": "Leadership (Aragorn, Théodred, Glóin)",
       "tactics": "Tactics (Gimli, Legolas, Thalin)",
