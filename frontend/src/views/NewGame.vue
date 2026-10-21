@@ -1,13 +1,8 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { createGame } from '../api'
-import DeckPicker from '../components/DeckPicker.vue'
-import DeckTile from '../components/DeckTile.vue'
-import { deckFaces, toDeckChoice, type DeckKey } from '../deckChoice'
-import { fetchDecks } from '../browser/lib/api'
-import type { DeckSummary } from '../browser/types/deck'
 import { currentUser, updateSettings } from '../auth'
 import { campaigns, type Campaign, type ScenarioOption } from '../campaigns'
 import { useServerText } from '../i18n'
@@ -34,26 +29,9 @@ const makeDefault = async () => {
 const easyMode = ref(false)
 const error = ref<string | null>(null)
 
-const decks = ref<DeckSummary[]>([])
-// As many seats as play: you take the first of them, each with a deck of yours, and
-// friends join the rest from the game's link. Taking them all deals at once.
+// Seats are taken, each with a deck, once the game is made, where its link brings
+// friends to the open ones.
 const seatCount = ref(1)
-const yourSeats = ref(1)
-watch(seatCount, (n) => (yourSeats.value = Math.min(yourSeats.value, n)))
-const openSeats = computed(() => seatCount.value - yourSeats.value)
-const deckChoices = ref<DeckKey[]>(['starter:leadership', 'starter:tactics', 'starter:spirit', 'starter:lore'])
-// the seat of yours whose deck the picker is choosing
-const chosenSeat = ref(0)
-const pickingSeat = computed(() => Math.min(chosenSeat.value, yourSeats.value - 1))
-const faces = computed(() => new Map(deckFaces(decks.value).map((face) => [face.key, face])))
-const faceOf = (key: DeckKey) => faces.value.get(key) ?? deckFaces([])[0]
-onMounted(async () => {
-  try {
-    decks.value = await fetchDecks()
-  } catch {
-    // the starter decks are enough to play with
-  }
-})
 
 const playableCount = (c: Campaign) => c.scenarios.filter((s) => s.available).length
 const defaultName = computed(() => selectedScenario.value?.name ?? '')
@@ -80,7 +58,7 @@ const create = async () => {
     const { id } = await createGame({
       name: gameName.value.trim() || defaultName.value,
       scenario: selectedScenario.value?.id,
-      decks: deckChoices.value.slice(0, yourSeats.value).map(toDeckChoice),
+      decks: [],
       seats: seatCount.value,
       allowSpectators: allowSpectators.value,
       easyMode: easyMode.value,
@@ -152,7 +130,11 @@ const create = async () => {
 
       <template v-if="selectedScenario">
         <fieldset>
-          <legend>{{ $t('newGame.players') }}</legend>
+          <legend>{{ $t('common.game') }}</legend>
+          <label>
+            {{ $t('newGame.gameName') }}
+            <input v-model="gameName" type="text" :placeholder="defaultName" />
+          </label>
           <div class="option">
             <span class="option-title">{{ $t('newGame.numberOfPlayers') }}</span>
             <div class="segmented" role="radiogroup">
@@ -167,52 +149,6 @@ const create = async () => {
               >{{ n }}</button>
             </div>
           </div>
-          <div v-if="seatCount > 1" class="option">
-            <span class="option-title">{{ $t('newGame.seatsYouTake') }}</span>
-            <div class="segmented" role="radiogroup">
-              <button
-                v-for="n in seatCount"
-                :key="n"
-                type="button"
-                role="radio"
-                :aria-checked="yourSeats === n"
-                :class="{ selected: yourSeats === n }"
-                @click="yourSeats = n"
-              >{{ n }}</button>
-            </div>
-            <p class="hint">{{ openSeats > 0 ? $t('newGame.openSeatsHint', openSeats) : $t('newGame.multiHandedHint') }}</p>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>{{ $t(yourSeats > 1 ? 'newGame.yourDecks' : 'newGame.yourDeck') }}</legend>
-          <div v-if="seatCount > 1" class="seats">
-            <button
-              v-for="seat in yourSeats"
-              :key="seat"
-              type="button"
-              class="seat"
-              :class="{ picking: pickingSeat === seat - 1 }"
-              @click="chosenSeat = seat - 1"
-            >
-              <span class="seat-label">{{ yourSeats > 1 ? $t('newGame.seatDeck', { seat }) : currentUser?.username }}</span>
-              <DeckTile :face="faceOf(deckChoices[seat - 1])" :selected="pickingSeat === seat - 1" />
-            </button>
-            <div v-for="n in openSeats" :key="`open-${n}`" class="seat">
-              <span class="seat-label">{{ $t('newGame.openSeat') }}</span>
-              <span class="open-seat">{{ $t('newGame.friendBringsDeck') }}</span>
-            </div>
-          </div>
-          <p v-if="yourSeats > 1" class="hint">{{ $t('newGame.pickingFor', { seat: pickingSeat + 1 }) }}</p>
-          <DeckPicker v-model="deckChoices[pickingSeat]" :decks="decks" />
-        </fieldset>
-
-        <fieldset>
-          <legend>{{ $t('common.game') }}</legend>
-          <label>
-            {{ $t('newGame.gameName') }}
-            <input v-model="gameName" type="text" :placeholder="defaultName" />
-          </label>
           <div class="toggle-row">
             <label class="switch">
               <input v-model="easyMode" type="checkbox" role="switch" />
@@ -434,8 +370,6 @@ select {
 input[type='text']:focus, select:focus { border-color: var(--accent); }
 input::placeholder { color: var(--text-muted); opacity: 0.7; }
 
-.deck { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
-.deck strong { color: var(--text); }
 
 .error { margin: 0; color: var(--danger); }
 
@@ -467,8 +401,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .switch input:focus-visible + .track { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
 
 .option { display: grid; gap: 8px; }
-.option + .option { padding-top: 10px; border-top: 1px solid var(--line); }
-.option-title { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.option-title { font-size: 0.85rem; color: var(--text-muted); }
 .segmented { display: grid; grid-auto-columns: 1fr; grid-auto-flow: column; border: 1px solid var(--box-border); border-radius: 8px; overflow: hidden; }
 .segmented button {
   padding: 10px 0;
@@ -483,22 +416,6 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .segmented button:hover:not(.selected) { background: var(--surface-4); }
 .segmented button.selected { background: var(--accent); color: var(--button-primary-text); }
 
-.seats { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-.seat { display: grid; gap: 4px; align-content: start; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; }
-button.seat { cursor: pointer; }
-.seat-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
-.seat.picking .seat-label { color: var(--accent-bright); }
-.open-seat {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 150 / 118;
-  padding: 10px;
-  border: 2px dashed var(--line);
-  border-radius: 6px;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  text-align: center;
-}
 .make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }
