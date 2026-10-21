@@ -253,6 +253,12 @@ button, a, input, select, label, [data-card-id] { touch-action: manipulation; }
 /* a hero set down on the table as the game opens (see composables/dealing.ts) */
 @keyframes hero-place { from { opacity: 0; transform: translateY(-40px) scale(1.15); } to { opacity: 1; transform: none; } }
 
+/* A named element is lifted into the view-transition layer, which paints above the top
+   layer, so a deal running behind an open dialog came out in front of it, lit up against
+   the dim board. The groups dealing.ts writes sit at z-index 1; a window that names
+   itself goes above them (see components/FileBug.vue). */
+::view-transition-group(file-bug) { z-index: 2; }
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),
