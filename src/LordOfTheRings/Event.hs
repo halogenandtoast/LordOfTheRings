@@ -52,6 +52,13 @@ import LordOfTheRings.Event.Cards.ChargeOfTheRohirrim
 import LordOfTheRings.Event.Cards.WaitNoLonger
 import LordOfTheRings.Event.Cards.OathOfEorl
 import LordOfTheRings.Event.Cards.TheMusterOfRohan
+import LordOfTheRings.Event.Cards.ElrondsCounsel
+import LordOfTheRings.Event.Cards.DaeronsRunes
+import LordOfTheRings.Event.Cards.HandsUponTheBow
+import LordOfTheRings.Event.Cards.TheTreePeople
+import LordOfTheRings.Event.Cards.FeignedVoices
+import LordOfTheRings.Event.Cards.PursuingTheEnemy
+import LordOfTheRings.Event.Cards.HostOfGaladhrim
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -96,6 +103,13 @@ allEvents =
         , SomeEventCard loreOfImladris
         , SomeEventCard bladeMastery
         , SomeEventCard campfireTales
+        , SomeEventCard elrondsCounsel
+        , SomeEventCard daeronsRunes
+        , SomeEventCard handsUponTheBow
+        , SomeEventCard theTreePeople
+        , SomeEventCard feignedVoices
+        , SomeEventCard pursuingTheEnemy
+        , SomeEventCard hostOfGaladhrim
         , SomeEventCard theEaglesAreComing
         , SomeEventCard musteringTheRohirrim
         , SomeEventCard stridersPath
