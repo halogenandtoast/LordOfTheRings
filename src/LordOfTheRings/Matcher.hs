@@ -67,6 +67,8 @@ matchHero matcher hero = case matcher of
   AttackingHero -> pure $ heroAttacking (toAttrs hero)
   PrisonerHero -> pure $ heroPrisoner (toAttrs hero)
   HeroWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget hero)
+  HeroWithAttachment code ->
+    getsGame (any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code) . toList . entitiesAttachments . gameEntities)
   HeroWithResources -> pure $ hero.resources > 0
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
@@ -116,6 +118,7 @@ matchEnemy matcher enemy = case matcher of
     EngagedWith pid -> elem pid <$> select pm
     _ -> pure False
   UniqueEnemy -> pure $ cdUnique (toCardDef enemy)
+  EnemyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget enemy)
   AnyEnemy -> pure True
   NotEnemy m -> not <$> matchEnemy m enemy
   EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms

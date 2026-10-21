@@ -86,6 +86,8 @@ data Message
   | -- | play a card in response to the windows, which its effect may read
     PlayCardInWindow PlayerId CardId [Window]
   | PayForCard PlayerId Card [Window]
+  | -- | pay for an attachment chosen to go on the host, whose cost the host may lower
+    PayToAttach PlayerId Card [Window] Target
   | PlayEvent PlayerId PlayerCard [Window]
   | PutAllyIntoPlay PlayerId CardId
   | ReturnToHand Target
@@ -148,6 +150,10 @@ data Message
   | CreateEffect Effect
   | AttachCard AttachmentId Target
   | PlayAttachment PlayerId PlayerCard
+  | PlayAttachmentOn PlayerId PlayerCard Target
+  | -- | the hero leaves the game for one from its owner's collection, which takes the
+    -- attachments it can
+    SwapHero HeroId PlayerCard
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | DiscardRandomFromHand PlayerId Int

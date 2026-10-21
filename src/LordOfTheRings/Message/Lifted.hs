@@ -180,6 +180,22 @@ dealShadowCard :: (ReverseQueue m) => EnemyId -> m ()
 dealShadowCard = push . DealShadowCard
 
 
+-- | The player moves 1 resource from the pool of a hero they control to another hero's.
+moveResourceFromHero :: (ReverseQueue m, Sourceable source, Targetable source) => PlayerId -> source -> m ()
+moveResourceFromHero pid source = do
+  from <- select (HeroControlledBy (PlayerWithId pid) <> HeroWithResources)
+  chooseOrRunOneM pid do
+    questionLabeled "moveResourceFrom"
+    causedBy source
+    targets from \h -> do
+      others <- select (not_ $ HeroWithId h)
+      chooseOrRunOneM pid do
+        questionLabeled "moveResourceTo"
+        causedBy source
+        targets others \h' -> do
+          removeTokens source h Resource 1
+          placeResources source h' 1
+
 -- | Act on the card this one is attached to; nothing when it is not attached.
 withHost :: (Applicative m, HasField "placement" a Placement) => a -> (Target -> m ()) -> m ()
 withHost a f = case a.placement of

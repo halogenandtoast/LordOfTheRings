@@ -5,7 +5,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, DoesNotExhaustToCommit))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, DoesNotExhaustToAttack, DoesNotExhaustToCommit))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -24,7 +24,9 @@ instance RunMessage HeroAttrs where
       pure $ attrs & prisonerL .~ False
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
     Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
-    AttackWith (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True & attackingL .~ True
+    AttackWith (isTarget attrs -> True) -> do
+      spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
+      pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
       free <- elem DoesNotExhaustToCommit <$> getModifiers attrs

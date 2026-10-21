@@ -248,7 +248,9 @@ cannotPlay pid c = any (\case CannotPlay m -> cardMatches m c; _ -> False) <$> (
 canAfford :: (HasGame m) => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of
   (Just cost, Just sphere) -> do
-    extra <- costModifier p.id c
+    -- an attachment costs what the host that lowers it most leaves
+    discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts c)
+    extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <- filterM (\h -> orM [paysFor sphere h, iconFor c sphere h]) [h | h <- heroes, h.resources > 0]
     case cdDistinctPayers (toCardDef c) of
@@ -278,8 +280,15 @@ payingHeroes sphere player = do
 
 hasHost :: (HasGame m) => Card -> m Bool
 hasHost c
-  | c.cardType == AttachmentType = notNull <$> attachmentHosts (attachMatcherFor $ toCardCode c)
+  | c.cardType == AttachmentType, PlayIntoStagingArea <- attachMatcherFor (toCardCode c) = pure True
+  | c.cardType == AttachmentType = notNull <$> attachableHosts c
   | otherwise = pure True
+
+-- | Where an attachment card could go, none for any other card.
+attachableHosts :: (HasGame m) => Card -> m [Target]
+attachableHosts c
+  | c.cardType == AttachmentType = attachmentHosts (attachMatcherFor $ toCardCode c)
+  | otherwise = pure []
 
 correctPhase :: (HasGame m) => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of

@@ -64,6 +64,7 @@ narrationFor = \case
     pure [action [ikeyPart "log.putsIntoPlay" ["player" ~> who, "card" ~> c]] | Just c <- [card]]
   PutAllyIntoPlayUnder _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   PutHeroIntoPlay _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
+  SwapHero _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   CommitToQuest target -> Just $ whenRef target \c -> do
     willpower <- getWillpower target
     one $ action [ikeyPart "log.commits" ["character" ~> c, "willpower" ~> stat "willpower" willpower]]

@@ -16,6 +16,11 @@ data WindowMatcher
   | PhaseBeginsWindow Timing Phase
   | CommittedToQuestWindow Timing Target
   | EnemyEngagedWindow Timing EnemyId
+  | -- | any enemy engaged with the player
+    PlayerEngagedEnemyWindow Timing PlayerId
+  | OptionallyEngagedWindow Timing PlayerId
+  | EnemyEntersStagingAreaWindow Timing
+  | GainedResourcesWindow Timing Target
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
   | AnyTraveledWindow Timing
@@ -78,6 +83,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PhaseBeginsWindow t phase, PhaseBegins phase') -> t == timing && phase == phase'
   (CommittedToQuestWindow t target, CommittedToQuest target') -> t == timing && target == target'
   (EnemyEngagedWindow t eid, EnemyEngaged eid' _) -> t == timing && eid == eid'
+  (PlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid == pid'
+  (OptionallyEngagedWindow t pid, OptionallyEngaged _ pid') -> t == timing && pid == pid'
+  (EnemyEntersStagingAreaWindow t, EntersStagingArea (EnemyTarget _)) -> t == timing
+  (GainedResourcesWindow t target, GainedResources target') -> t == timing && target == target'
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (AnyTraveledWindow t, Traveled _) -> t == timing

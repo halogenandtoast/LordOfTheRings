@@ -5,7 +5,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (DoesNotExhaustToCommit))
+import LordOfTheRings.Modifier (ModifierType (DoesNotExhaustToAttack, DoesNotExhaustToCommit))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
@@ -14,7 +14,9 @@ import LordOfTheRings.Token
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
     Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
-    AttackWith (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True & attackingL .~ True
+    AttackWith (isTarget attrs -> True) -> do
+      spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
+      pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
       free <- elem DoesNotExhaustToCommit <$> getModifiers attrs

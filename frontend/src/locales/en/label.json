@@ -373,5 +373,7 @@
     "exhaust": "Choose an ally to exhaust",
     "putIntoPlay": "Put an ally costing up to {count} into play",
     "done": "Done"
-  }
+  },
+  "moveResourceFrom": "Choose a hero to move 1 resource from",
+  "moveResourceTo": "Choose a hero to move the resource to"
 }

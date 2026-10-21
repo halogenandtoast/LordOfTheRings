@@ -353,7 +353,7 @@ runGameMessage msg g = case msg of
     unless (null enemies)
       $ push
       $ questionLabel (ikey "label.optionalEngagement") pid
-      $ [targetLabel eid [EngageEnemy pid eid] | eid <- enemies]
+      $ [targetLabel eid [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]] | eid <- enemies]
       <> [Label (ikey "label.doNotEngage") []]
     pure g
   EngagementCheck pid seatsPassed -> do
@@ -362,7 +362,9 @@ runGameMessage msg g = case msg of
     let next = seatAfter order pid
     player <- getPlayer pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
-    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- candidates, cost <= player.threat] of
+    -- an enemy can be spared engagement checks against it, as a trap does
+    checked <- filterM (fmap (notElem NoEngagementChecks) . getModifiers . fst) candidates
+    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- checked, cost <= player.threat] of
       ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
     pure g
@@ -422,7 +424,7 @@ runGameMessage msg g = case msg of
       ]
     pure g
   DeclareDefenders pid eid chosen -> do
-    defenders <- filterM (canFight eid) =<< readyCharacters pid
+    defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< readyCharacters pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     push
@@ -466,7 +468,9 @@ runGameMessage msg g = case msg of
     loners <- filterM (fmap (elem CanAttackStagingAreaAlone) . getModifiers) =<< select (HeroControlledBy $ PlayerWithId pid)
     raiders <- stagingAttackers =<< readyCharacters pid
     staged <- if null raiders then pure [] else select EnemyInStagingArea
-    pushAll $ map (DeclareAttackers pid) (enemies <> staged) <> [AttackStagingAreaAlone pid (toTarget h) | h <- loners]
+    -- enemies anyone may attack, wherever they are, as one in an Ithilien Pit
+    open' <- filterM (fmap (elem AttackableByAnyCharacter) . getModifiers) =<< select (not_ $ EnemyEngagedWith $ PlayerWithId pid)
+    pushAll $ map (DeclareAttackers pid) (ordNub $ enemies <> staged <> open') <> [AttackStagingAreaAlone pid (toTarget h) | h <- loners]
     pure g
   AttackStagingAreaAlone pid attacker -> do
     ready <- elem attacker <$> readyCharacters pid
@@ -480,9 +484,12 @@ runGameMessage msg g = case msg of
       <> [Label (ikey "label.doNotAttack") []]
     pure g
   DeclareAttackers pid eid -> do
-    -- only those allowed to may attack an enemy in the staging area
+    -- only those allowed to may attack an enemy in the staging area, unless anyone may
     staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea)
-    attackers <- filterM (canFight eid) =<< (if staged then stagingAttackers else pure) =<< readyCharacters pid
+    open' <- elem AttackableByAnyCharacter <$> getModifiers eid
+    -- one who does not exhaust to attack is still declared only once
+    attacking <- selectCharacters AttackingHero AttackingAlly
+    attackers <- filter (`notElem` attacking) <$> (filterM (canFight eid) =<< (if staged && not open' then stagingAttackers else pure) =<< readyCharacters pid)
     push
       $ if null attackers
         then ResolveAttack pid eid
@@ -631,6 +638,13 @@ runGameMessage msg g = case msg of
   PlaceTokens source (CardIdTarget cid) token n
     | Just h <- find ((== cid) . heroCardId . toAttrs) (toList g.entities.heroes) -> g <$ push (PlaceTokens source (toTarget h) token n)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) -> g <$ push (PlaceTokens source (toTarget a) token n)
+  -- the resource phase's resources come from the game, not a card effect
+  PlaceTokens source target@(HeroTarget _) Resource n | n > 0, source /= GameSource -> do
+    push $ CheckWindows [mkAfter $ GainedResources target]
+    pure g
+  PlaceEnemy eid StagingArea -> do
+    push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
+    pure g
   PlaceProgressOnQuest n -> do
     active <- traverse getLocation =<< selectOne IsActiveLocation
     let onLocation = maybe 0 (\l -> min n (l.questPoints - l.progress)) active
@@ -640,33 +654,16 @@ runGameMessage msg g = case msg of
       $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
       <> [PlaceTokens GameSource (toTarget q) Progress overflow | q <- quests, overflow > 0]
     pure g
-  PayForCard pid card windows -> do
-    costId <- getRandom
-    extra <- costModifier pid card
-    let activeCost =
-          ActiveCost
-            { activeCostId = costId
-            , activeCostCost = raiseCost extra (cardCost card)
-            , activeCostCard = card
-            , activeCostPlayer = pid
-            , activeCostWindows = windows
-            }
-    -- resources on allies, as Radagast's, may pay for the cards they are for
-    payers <- allyPayersFor pid card
-    let n = staticCost activeCost.activeCostCost
-    push
-      $ if null payers || n == 0
-        then PayCost costId
-        else
-          questionLabel (ikey "label.payFromAlly") pid
-            $ [ targetLabel aid [RemoveTokens (PlayerSource pid) (toTarget aid) Resource k, ReduceActiveCost costId k, PayCost costId]
-              | (aid, r) <- payers
-              , k <- [1 .. min r n]
-              ]
-            <> [Label (ikey "label.payFromHeroes") [PayCost costId]]
-    -- a reduction of the next matching card's cost is spent on this one
-    let spent e = effectTarget e == PlayerTarget pid && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
-    pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
+  PayForCard pid card windows
+    | card.cardType == AttachmentType -> do
+        -- a host that lowers the cost is chosen before paying
+        hosts <- attachmentHosts (attachMatcherFor $ toCardCode card)
+        discounts <- traverse (attachDiscount card) hosts
+        if any (> 0) discounts
+          then g <$ push (questionLabelWith (ikey "label.attachTo") (Just $ CardIdTarget card.id) hosts pid [targetLabel h [PayToAttach pid card windows h] | h <- hosts])
+          else payFor g pid card windows Nothing 0
+    | otherwise -> payFor g pid card windows Nothing 0
+  PayToAttach pid card windows host -> payFor g pid card windows (Just host) =<< attachDiscount card host
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
@@ -842,12 +839,38 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL .~ mempty
   PlayAttachment pid card -> do
     attachment <- newAttachment pid card
-    hosts <- attachmentHosts (toAttrs attachment).attachTo
-    let attachTo host = targetLabel host [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
-    push $ case hosts of
-      [host] -> uiToRun (attachTo host)
-      _ -> questionLabelWith (ikey "label.attachTo") (Just $ toTarget attachment) hosts pid (map attachTo hosts)
+    let entered = CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]
+        attachTo host = targetLabel host [AttachCard (toId attachment) host, entered]
+    case (toAttrs attachment).attachTo of
+      PlayIntoStagingArea -> do
+        push entered
+        pure $ g & entitiesL . attachmentsL %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = StagingArea}) attachment)
+      matcher -> do
+        hosts <- attachmentHosts matcher
+        push $ case hosts of
+          [host] -> uiToRun (attachTo host)
+          _ -> questionLabelWith (ikey "label.attachTo") (Just $ toTarget attachment) hosts pid (map attachTo hosts)
+        pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
+  PlayAttachmentOn pid card host -> do
+    attachment <- newAttachment pid card
+    pushAll [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
     pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
+  SwapHero hid card | Just old <- Map.lookup hid g.entities.heroes -> do
+    new <- newHero old.owner card
+    let on' :: (HasField "placement" a Placement) => a -> Bool
+        on' a = a.placement == AttachedTo (toTarget old)
+        newHost = AttachedTo (toTarget new)
+    putGame
+      $ g
+      & entitiesL . heroesL %~ (insertEntity new . Map.delete hid)
+      -- the encounter's conditions and claimed objectives go with it
+      & entitiesL . treacheriesL . traverse %~ (\t -> if on' t then overAttrs (\a -> a {treacheryPlacement = newHost}) t else t)
+      & entitiesL . objectivesL . traverse %~ (\o -> if on' o then overAttrs (\a -> a {objectivePlacement = newHost}) o else o)
+    moves <- for (filter on' $ toList g.entities.attachments) \a -> do
+      hosts <- attachmentHosts (toAttrs a).attachTo
+      pure $ if toTarget new `elem` hosts then AttachCard (toId a) (toTarget new) else Discard (toTarget a)
+    pushAll $ moves <> [CheckWindows [mkAfter $ EntersPlay $ toTarget new]]
+    getGame
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
@@ -857,7 +880,7 @@ runGameMessage msg g = case msg of
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
         doomed = [RaiseThreat p n | Doomed n <- toList (cdKeywords def), p <- players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
-        revealing t = inLogBlock (RevealBlock card) $ [CheckWindows [mkWhen $ Revealed t], whenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
+        revealing t = inLogBlock (RevealBlock card) $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType]] <> [CheckWindows [mkWhen $ Revealed t], whenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
@@ -901,6 +924,7 @@ runGameMessage msg g = case msg of
   AddToStaging card -> case cdCardType (toCardDef card) of
     EnemyType -> do
       thisEnemy <- newEnemy card
+      push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy)]
       pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) thisEnemy)
     LocationType -> do
       thisLocation <- newLocation card
@@ -1127,7 +1151,9 @@ exhaustToDefend :: Target -> EnemyId -> GameT Bool
 exhaustToDefend d eid = do
   mods <- getModifiers d
   enemy <- getEnemy eid
-  not <$> anyM (\t -> hasTrait t (toTarget eid) (toCardDef enemy)) [t | DoesNotExhaustToDefendAgainst t <- mods]
+  if DoesNotExhaustToDefend `elem` mods
+    then pure False
+    else not <$> anyM (\t -> hasTrait t (toTarget eid) (toCardDef enemy)) [t | DoesNotExhaustToDefendAgainst t <- mods]
 
 -- | Whether a character is still in play.
 inPlay :: Game -> Target -> Bool
@@ -1135,3 +1161,34 @@ inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes
   AllyTarget aid -> Map.member aid g.entities.allies
   _ -> True
+
+-- | Put the card's cost up to be paid, less what the host it was chosen for takes off.
+payFor :: Game -> PlayerId -> Card -> [Window] -> Maybe Target -> Int -> GameT Game
+payFor g pid card windows host discount = do
+  costId <- getRandom
+  extra <- subtract discount <$> costModifier pid card
+  let activeCost =
+        ActiveCost
+          { activeCostId = costId
+          , activeCostCost = raiseCost extra (cardCost card)
+          , activeCostCard = card
+          , activeCostPlayer = pid
+          , activeCostWindows = windows
+          , activeCostHost = host
+          }
+  -- resources on allies, as Radagast's, may pay for the cards they are for
+  payers <- allyPayersFor pid card
+  let n = staticCost activeCost.activeCostCost
+  push
+    $ if null payers || n == 0
+      then PayCost costId
+      else
+        questionLabel (ikey "label.payFromAlly") pid
+          $ [ targetLabel aid [RemoveTokens (PlayerSource pid) (toTarget aid) Resource k, ReduceActiveCost costId k, PayCost costId]
+            | (aid, r) <- payers
+            , k <- [1 .. min r n]
+            ]
+          <> [Label (ikey "label.payFromHeroes") [PayCost costId]]
+  -- a reduction of the next matching card's cost is spent on this one
+  let spent e = effectTarget e == PlayerTarget pid && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
+  pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)

@@ -49,6 +49,8 @@ data HeroMatcher
     HeroWithAttached Trait
   | -- | a hero with a resource in its pool
     HeroWithResources
+  | -- | a hero with a copy of the card attached
+    HeroWithAttachment CardCode
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]
@@ -114,6 +116,8 @@ data AttachMatcher
   | AttachToAlly AllyMatcher
   | AttachToEnemy EnemyMatcher
   | AttachToLocation LocationMatcher
+  | -- | played into the staging area unattached, as a Trap
+    PlayIntoStagingArea
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -124,6 +128,8 @@ data EnemyMatcher
   | EnemyWithCardCode CardCode
   | EnemyEngagedWith PlayerMatcher
   | UniqueEnemy
+  | -- | an enemy with an attachment of the trait attached
+    EnemyWithAttached Trait
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]
@@ -178,6 +184,7 @@ data CardMatcher
   | AnyCard
   | NotCard CardMatcher
   | CardMatchAll [CardMatcher]
+  | CardMatchAny [CardMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -203,3 +210,4 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   AnyCard -> True
   NotCard m -> not $ cardMatches m def
   CardMatchAll ms -> all (`cardMatches` def) ms
+  CardMatchAny ms -> any (`cardMatches` def) ms

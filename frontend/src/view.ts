@@ -183,6 +183,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ...placed('enemies', isAt('StagingArea')),
     ...placed('locations', isAt('StagingArea')),
     ...placed('objectives', isAt('StagingArea')),
+    // a Trap waits in staging until an enemy walks into it
+    ...placed('attachments', isAt('StagingArea')),
     // a treachery shows in staging while it resolves, until it attaches or is discarded
     ...placed('treacheries', isAt('Unplaced')),
   ]

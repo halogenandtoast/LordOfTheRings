@@ -28,3 +28,10 @@ hosts = \case
   AttachToAlly m -> map toTarget <$> select m
   AttachToEnemy m -> map toTarget <$> select m
   AttachToLocation m -> map toTarget <$> select m
+  PlayIntoStagingArea -> pure []
+
+-- | What the host's modifiers take off the cost of attaching the card to it.
+attachDiscount :: (HasGame m) => Card -> Target -> m Int
+attachDiscount card host = do
+  mods <- getModifiers host
+  pure $ sum [n | ReduceCostToAttach m n <- mods, cardMatches m card]

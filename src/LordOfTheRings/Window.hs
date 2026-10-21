@@ -19,6 +19,12 @@ data WindowType
   | PhaseBegins Phase
   | CommittedToQuest Target
   | EnemyEngaged EnemyId PlayerId
+  | -- | the player engaged the enemy in the optional engagement step
+    OptionallyEngaged EnemyId PlayerId
+  | -- | an enemy or location entered the staging area
+    EntersStagingArea Target
+  | -- | a card effect placed resources in the hero's pool
+    GainedResources Target
   | DealtDamage Target Int
   | Traveled LocationId
   | DeclaredAsDefender Target EnemyId

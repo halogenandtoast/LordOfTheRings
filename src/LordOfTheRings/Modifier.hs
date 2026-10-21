@@ -50,6 +50,12 @@ data ModifierType
   | -- | on a player
     CannotDrawCards
   | DoesNotReadyDuringRefresh
+  | DoesNotExhaustToAttack
+  | DoesNotExhaustToDefend
+  | -- | on a character: matching attachments played onto it cost this much less
+    ReduceCostToAttach CardMatcher Int
+  | -- | on an enemy: any player's characters may attack it, wherever it is
+    AttackableByAnyCharacter
   | -- | when attacking an enemy with the trait, attack is raised by this much
     AttackBonusAgainst Trait Int
   | -- | the hero may attack an enemy in the staging area when attacking alone

@@ -10,7 +10,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
-import LordOfTheRings.Target (toTarget)
+import LordOfTheRings.Target (Target, toTarget)
 import LordOfTheRings.Window
 
 data Cost = ResourceCost Sphere CardCost | Free
@@ -24,6 +24,8 @@ data ActiveCost = ActiveCost
   , activeCostPlayer :: PlayerId
   , activeCostWindows :: [Window]
   -- ^ the windows the card is played in response to, if any
+  , activeCostHost :: Maybe Target
+  -- ^ the host an attachment was chosen to go on before it was paid for
   }
   deriving stock (Show, Eq, Generic)
 
@@ -78,7 +80,7 @@ instance RunMessage ActiveCost where
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
-          pushAll $ playCard ac.activeCostPlayer card ac.activeCostWindows
+          pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
           push $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card), mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card)]
         EncounterCard _ -> pure ()
       pure ac
