@@ -59,7 +59,6 @@ const requestUndo = () => {
       <span v-if="hasDetail" class="log-caret" :class="{ 'log-caret--open': open }">&#9654;</span>
       <span v-else class="log-caret-spacer" />
       <span class="log-group__body"><LogPart v-for="(part, i) in header.body" :key="i" :part="part" /></span>
-      <span v-if="hasDetail && !open" class="log-count">+{{ group.members.length }}</span>
     </component>
 
     <ul v-if="open" class="log-group__detail">
@@ -175,14 +174,6 @@ button.log-group__band:hover { background: color-mix(in srgb, var(--tone) 40%, t
 .log-caret { flex: none; width: 9px; font-size: 0.6em; color: var(--accent); transition: transform 140ms ease; }
 .log-caret--open { transform: rotate(90deg); }
 .log-caret-spacer { flex: none; width: 9px; }
-.log-count {
-  flex: none;
-  font-size: 0.85em;
-  color: var(--text-muted);
-  background: rgb(229 211 173 / 0.08);
-  border-radius: 9px;
-  padding: 0 6px;
-}
 
 .log-undo {
   position: absolute;

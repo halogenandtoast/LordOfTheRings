@@ -123,11 +123,6 @@ function dissolveBarless(items: LogItem[]): LogItem[] {
   })
 }
 
-/** Rows an entry takes fully open: what its "+N" counts. */
-export function logEntrySize(entry: LogEntry): number {
-  return entry.children.reduce((acc, c) => acc + logEntrySize(c), 1)
-}
-
 /** An entry as plain text, for naming it in a confirmation. i18n parts give their
  * variables rather than being translated twice. */
 export function logPartsText(parts: readonly LogPart[]): string {

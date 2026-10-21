@@ -5,7 +5,7 @@
 import { computed } from 'vue'
 import { Undo2 } from 'lucide-vue-next'
 import LogPart from './LogPart.vue'
-import { logEntrySize, logPartsText, type LogEntry } from '../gameLog'
+import { logPartsText, type LogEntry } from '../gameLog'
 
 const props = defineProps<{
   entry: LogEntry
@@ -58,7 +58,6 @@ const annotated = computed(
 )
 const hasKids = computed(() => !annotated.value && props.entry.children.length > 0)
 const open = computed(() => (annotated.value ? true : hasKids.value && props.isOpen(props.path)))
-const hiddenRows = computed(() => props.entry.children.reduce((acc, c) => acc + logEntrySize(c), 0))
 
 const toggle = () => {
   if (hasKids.value) emit('toggle', props.path, !open.value)
@@ -130,8 +129,6 @@ const requestUndo = () => {
       <span v-if="hasKids" class="log-caret" :class="{ 'log-caret--open': open }">&#9654;</span>
       <span v-else class="log-caret-spacer" />
       <span class="log-body"><LogPart v-for="(part, i) in entry.body" :key="i" :part="part" /></span>
-      <!-- says how much is folded, so shut never means hidden -->
-      <span v-if="hasKids && !open" class="log-count">+{{ hiddenRows }}</span>
       <span v-if="hasKids && isPinned(path)" class="log-pin" :title="$t('log.pinned')" />
     </component>
 
@@ -316,14 +313,6 @@ button.log-headline:focus-visible { outline: 2px solid var(--accent); outline-of
 .log-caret--open { transform: rotate(90deg); }
 .log-caret-spacer { flex: none; width: 9px; }
 .log-body { flex: 1 1 auto; min-width: 0; }
-.log-count {
-  flex: none;
-  font-size: 0.85em;
-  color: var(--text-muted);
-  background: rgb(229 211 173 / 0.08);
-  border-radius: 9px;
-  padding: 0 6px;
-}
 .log-pin { flex: none; align-self: center; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-bright); }
 
 /* hidden until the row is hovered or focused: every entry can rewind the game */
