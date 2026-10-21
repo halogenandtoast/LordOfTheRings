@@ -23,7 +23,8 @@ const decks = useDeckStore()
 const removing = ref<number | null>(null)
 const removeError = ref<string | null>(null)
 
-onMounted(() => decks.load())
+// afresh each visit: a deck saved from a lobby, or one just played, changes the list
+onMounted(() => decks.load(true))
 
 function onImported(deck: Deck): void {
   void router.push({ name: 'deck', params: { id: deck.id } })

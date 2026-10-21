@@ -20,9 +20,10 @@ export const useDeckStore = defineStore('decks', () => {
 
   const isEmpty = computed(() => state.value === 'ready' && decks.value.length === 0)
 
+  // forced, it refreshes the list it has in place, without showing it loading again
   async function load(force = false): Promise<void> {
     if (state.value === 'ready' && !force) return
-    state.value = 'loading'
+    if (state.value !== 'ready') state.value = 'loading'
     error.value = null
     try {
       decks.value = await api.fetchDecks()
