@@ -21,6 +21,7 @@ import LordOfTheRings.Entities (entitiesTreacheries)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Log.Block (LogBlockKind (..))
+import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
@@ -72,15 +73,17 @@ instance RunMessage Player where
       let (cards, deck) = splitAt drawing.count player.deck
       pure $ if blocked || notNull shackles then player else player & handL <>~ cards & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
-      actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") $ WithTarget (toTarget player) (DoPhase PlanningPhase)
+      actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase) $ WithTarget (toTarget player) (DoPhase PlanningPhase)
       pure player
     ActionWindow pid | pid == player.id -> do
-      actionWindow (ikey "label.takeAction") (ikey "label.pass") $ ActionWindow pid
+      -- travel's window is the last thing in its phase; the others come before more of theirs
+      travel <- isPhase TravelPhase
+      actionWindow (ikey "label.takeAction") (ikey "label.pass") (guard travel $> EncounterPhase) $ ActionWindow pid
       pure player
     OptionalActionWindow pid | pid == player.id -> do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
-      unless (null playable && null actions) $ actionWindow (ikey "label.takeAction") (ikey "label.pass") $ OptionalActionWindow pid
+      unless (null playable && null actions) $ actionWindow (ikey "label.takeAction") (ikey "label.pass") Nothing $ OptionalActionWindow pid
       pure player
     PlayCard pid cid | pid == player.id -> do
       push $ PlayCardInWindow pid cid []
@@ -237,12 +240,17 @@ instance RunMessage Player where
     _ -> pure player
    where
     -- asks even with nothing to play or use, so the player moves the game on, not the engine
-    actionWindow prompt done again = do
+    -- with nothing to do, it says so, and names the phase that answering moves on to
+    actionWindow prompt done next again = do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
+      let idle = null playable && null actions
+          done' = case next of
+            Just phase | idle -> ikey ("label.proceedTo." <> phaseKey phase)
+            _ -> done
       push
-        $ playerWindow prompt again player.id
-        $ Label done []
+        $ playerWindow (if idle then ikey "label.noRemainingActions" else prompt) again player.id
+        $ Label done' []
         : [targetLabel c [PlayCard player.id c.id, again] | c <- playable]
         <> [AbilityLabel player.id ab [] [again] | ab <- actions]
     takeFromHand cid = maybe (error "not able to find card") pure $ find ((== cid) . (.id)) player.hand

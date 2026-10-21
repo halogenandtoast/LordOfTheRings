@@ -165,8 +165,8 @@ getCharacterDamage = getDamage
 passActions :: PlayerId -> GameT ()
 passActions pid =
   getQuestion pid >>= \case
-    Just (QuestionLabel prompt _ _ q) | prompt `elem` ["$label.takeAction", "$label.planningActions"] ->
-      case findIndex (\case Label l _ -> l `elem` ["$label.pass", "$label.donePlanning"]; _ -> False) (questionChoices q) of
+    Just (QuestionLabel prompt _ _ q) | prompt `elem` ["$label.takeAction", "$label.planningActions", "$label.noRemainingActions"] ->
+      case findIndex (\case Label l _ -> l `elem` ["$label.pass", "$label.donePlanning"] || "$label.proceedTo." `isPrefixOf` l; _ -> False) (questionChoices q) of
         Just n -> answerQuestion pid n >> passActions pid
         Nothing -> pure ()
     _ -> pure ()

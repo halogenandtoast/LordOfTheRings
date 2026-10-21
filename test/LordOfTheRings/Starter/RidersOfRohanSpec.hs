@@ -387,7 +387,7 @@ spec = describe "Riders of Rohan" do
       chooseLabel "$label.done" pid
       (.resources) <$> getHeroWithCode eomerCode `shouldReturn` 0
       sort <$> allyCodes `shouldReturn` sort [toCardCode Allies.riddermarkKnight, toCardCode Allies.westfoldLancer]
-      chooseLabel "$label.donePlanning" pid
+      passActions pid
       run EndRound
       passResponses pid
       passResponses pid

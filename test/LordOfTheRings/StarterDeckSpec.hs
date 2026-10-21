@@ -188,7 +188,7 @@ spec = describe "Starter deck" do
       _ <- playFromHand pid Events.sneakAttack 1
       chooseTarget pid guardCard
       map toCardCode <$> allies `shouldReturn` ["01013"]
-      chooseLabel "$label.donePlanning" pid
+      passActions pid
       run $ EndPhase PlanningPhase
       length <$> allies `shouldReturn` 0
       handCodes pid >>= (`shouldSatisfy` elem "01013")

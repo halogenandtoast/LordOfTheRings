@@ -29,6 +29,16 @@
   "planningActions": "Play cards or use actions",
   "donePlanning": "Done Planning",
   "takeAction": "Take an action?",
+  "noRemainingActions": "No remaining actions",
+  "proceedTo": {
+    "resource": "Proceed to the resource phase",
+    "planning": "Proceed to the planning phase",
+    "quest": "Proceed to the quest phase",
+    "travel": "Proceed to the travel phase",
+    "encounter": "Proceed to the encounter phase",
+    "combat": "Proceed to the combat phase",
+    "refresh": "Proceed to the refresh phase"
+  },
   "keepStartingHand": "Keep this starting hand?",
   "keepHand": "Keep this hand",
   "mulligan": "Mulligan: shuffle all six back and draw again",
