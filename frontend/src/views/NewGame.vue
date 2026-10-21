@@ -173,12 +173,9 @@ const create = async () => {
 
       <p v-if="error" class="error">{{ tr(error) }}</p>
 
-      <div class="wizard-actions">
-        <button type="button" class="secondary-action" @click="back">{{ $t('common.back') }}</button>
-        <button class="primary-action" type="submit" :disabled="!canCreate">
-          {{ creating ? $t('newGame.creating') : $t('common.create') }}
-        </button>
-      </div>
+      <button class="primary-action" type="submit" :disabled="!canCreate">
+        {{ creating ? $t('newGame.creating') : $t('common.create') }}
+      </button>
     </form>
   </div>
 </template>
@@ -436,25 +433,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }
 
-.wizard-actions {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 12px;
-}
 
-.secondary-action {
-  font: inherit;
-  font-weight: 700;
-  padding: 15px;
-  background: var(--button-secondary);
-  color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border: 0;
-  border-radius: 3px;
-  cursor: pointer;
-}
-.secondary-action:hover { background: var(--button-secondary-hover); }
 
 .primary-action {
   width: 100%;
