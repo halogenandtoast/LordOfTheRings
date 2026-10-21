@@ -34,6 +34,11 @@ import LordOfTheRings.Hero.Cards.DainIronfoot
 import LordOfTheRings.Hero.Cards.Bifur
 import LordOfTheRings.Hero.Cards.Nori
 import LordOfTheRings.Hero.Cards.Ori
+import LordOfTheRings.Hero.Cards.PrinceImrahil
+import LordOfTheRings.Hero.Cards.Beregond
+import LordOfTheRings.Hero.Cards.Boromir
+import LordOfTheRings.Hero.Cards.Faramir
+import LordOfTheRings.Hero.Cards.Mablung
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -94,5 +99,10 @@ allHeroes =
         , SomeHeroCard bifur
         , SomeHeroCard nori
         , SomeHeroCard ori
+        , SomeHeroCard princeImrahil
+        , SomeHeroCard beregond
+        , SomeHeroCard boromir
+        , SomeHeroCard faramir
+        , SomeHeroCard mablung
         ]
     ]
