@@ -71,6 +71,7 @@
   },
   "debug": {
     "defeat": "Defeat",
+    "ready": "Ready",
     "lowerThreat": "Lower threat",
     "raiseThreat": "Raise threat",
     "draw": "Draw",

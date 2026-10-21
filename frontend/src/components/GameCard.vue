@@ -177,6 +177,14 @@ const toggleUnless = (attached: CardView) => {
         {{ $t(`game.debug.tokens.${token}`) }}
         <button type="button" :aria-label="$t('game.debug.addToken', { token: $t(`game.debug.tokens.${token}`) })" @click="adjust(token, 1)">+</button>
       </span>
+      <button
+        v-if="card.exhausted && (card.target.tag === 'HeroTarget' || card.target.tag === 'AllyTarget')"
+        type="button"
+        class="defeat"
+        @click="send({ tag: 'Ready', contents: card.target })"
+      >
+        {{ $t('game.debug.ready') }}
+      </button>
       <!-- destroyed as by damage: to the victory display or the discard pile -->
       <button v-if="card.target.tag === 'EnemyTarget'" type="button" class="defeat" @click="send({ tag: 'Destroy', contents: card.target })">
         {{ $t('game.debug.defeat') }}
