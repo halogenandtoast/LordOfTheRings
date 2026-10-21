@@ -50,7 +50,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
               :key="hero.code"
               class="hero"
               :class="hero.sphere?.toLowerCase()"
-              :style="{ backgroundImage: `url('/images/cards/${hero.code}.jpg')` }"
+              :style="{ backgroundImage: `url('/images/cards/${hero.code}.avif')` }"
             />
           </span>
           <span class="seat-caption">

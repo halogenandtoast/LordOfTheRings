@@ -63,7 +63,7 @@ watch([shown, () => props.players.length], place)
         class="avatar"
         :style="{
           '--seat-hue': seatHue(players, player.playerId),
-          backgroundImage: face(player) ? `url(/images/cards/${face(player)}.jpg)` : undefined,
+          backgroundImage: face(player) ? `url(/images/cards/${face(player)}.avif)` : undefined,
         }"
       />
       {{ player.name }}

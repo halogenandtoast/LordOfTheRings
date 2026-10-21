@@ -104,7 +104,7 @@ export interface TallyView {
 }
 
 export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown'>) =>
-  card.facedown ? `/images/${card.facedown}.jpg` : `/images/cards/${card.code}${card.flipped ? '-b' : ''}.jpg`
+  card.facedown ? `/images/${card.facedown}.jpg` : `/images/cards/${card.code}${card.flipped ? '-b' : ''}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

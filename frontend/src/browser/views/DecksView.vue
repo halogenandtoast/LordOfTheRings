@@ -160,7 +160,7 @@ const shown = computed(() => {
           <RouterLink class="deck__link" :to="{ name: 'deck', params: { id: deck.id } }">
             <!-- the heroes' art side by side, as a deck tile shows them -->
             <span class="deck__art" aria-hidden="true">
-              <span v-for="hero in deck.heroes" :key="hero.code" :style="{ backgroundImage: `url(/images/cards/${hero.code}.jpg)` }" />
+              <span v-for="hero in deck.heroes" :key="hero.code" :style="{ backgroundImage: `url(/images/cards/${hero.code}.avif)` }" />
             </span>
             <div class="deck__body">
               <h2 class="deck__name truncate">{{ deck.name }}</h2>
@@ -202,7 +202,7 @@ const shown = computed(() => {
     <ConfirmDelete ref="confirm" :title="$t('browser.decks.confirmDelete')" @confirm="deleting && remove(deleting)">
       <template v-if="deleting">
         <span class="deck__art confirm-art" aria-hidden="true">
-          <span v-for="hero in deleting.heroes" :key="hero.code" :style="{ backgroundImage: `url(/images/cards/${hero.code}.jpg)` }" />
+          <span v-for="hero in deleting.heroes" :key="hero.code" :style="{ backgroundImage: `url(/images/cards/${hero.code}.avif)` }" />
         </span>
         <span class="confirm-details">
           <strong>{{ deleting.name }}</strong>
