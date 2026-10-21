@@ -73,6 +73,12 @@
     "starterDecks": "Core set starter decks",
     "myDecks": "My decks",
     "starterTab": "Starter decks",
+    "loader": {
+      "cards": "Cards",
+      "threat": "Starting threat",
+      "save": "Save to my decks",
+      "use": "Use this deck"
+    },
     "starter": {
       "leadership": "Leadership (Aragorn, Théodred, Glóin)",
       "tactics": "Tactics (Gimli, Legolas, Thalin)",

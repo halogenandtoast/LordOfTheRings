@@ -4,7 +4,8 @@ import DeckPicker from './DeckPicker.vue'
 import { fetchDecks } from '../browser/lib/api'
 import type { DeckSummary } from '../browser/types/deck'
 import { currentUser } from '../auth'
-import { toDeckChoice, type DeckKey } from '../deckChoice'
+import { toDeckChoice, type DeckFace, type DeckKey } from '../deckChoice'
+import type { DeckList } from '../browser/types/deck'
 import type { DeckChoice } from '../api'
 import type { Table } from '../server'
 
@@ -31,13 +32,19 @@ const copy = async () => {
 
 const decks = ref<DeckSummary[]>([])
 const deck = ref<DeckKey>('starter:leadership')
-onMounted(async () => {
+const refresh = async () => {
   try {
     decks.value = await fetchDecks()
   } catch {
     // the starter decks are enough to play with
   }
-})
+}
+onMounted(refresh)
+
+// a deck loaded for this game alone, not kept
+const loaded = ref<{ face: DeckFace; list: DeckList } | null>(null)
+const loading = ref(false)
+const choice = (): DeckChoice => (deck.value === 'loaded' && loaded.value ? { list: loaded.value.list } : toDeckChoice(deck.value))
 </script>
 
 <template>
@@ -62,8 +69,8 @@ onMounted(async () => {
 
     <template v-if="!full && (owner || mine === 0)">
       <h3 v-if="!solo">{{ $t('game.lobby.chooseDeck') }}</h3>
-      <DeckPicker v-model="deck" :decks="decks" />
-      <button type="button" class="join" @click="emit('join', toDeckChoice(deck))">{{ $t(solo ? 'game.lobby.start' : mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
+      <DeckPicker v-model="deck" v-model:loading="loading" :decks="decks" :loaded="loaded?.face" @load="(face, list) => (loaded = { face, list })" @saved="refresh" />
+      <button v-if="!loading" type="button" class="join" @click="emit('join', choice())">{{ $t(solo ? 'game.lobby.start' : mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
     </template>
     <template v-if="mine > 0">
       <p class="hint">{{ $t('game.lobby.dealtWhenFull') }}</p>

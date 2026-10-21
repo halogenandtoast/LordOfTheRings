@@ -61,6 +61,23 @@ export interface ImportRequest {
   url?: string
   deck?: unknown
   name?: string
+  /** False to load the deck without keeping it, for the game at hand. */
+  save?: boolean
+}
+
+/** Heroes and draw deck by RingsDB code, as the engine deals them. */
+export interface DeckList {
+  heroes: string[]
+  cards: [string, number][]
+}
+
+/** A deck loaded but not kept: what it holds, and its list, or why it cannot be played. */
+export interface DeckPreview {
+  deck: Omit<Deck, 'id' | 'createdAt' | 'updatedAt'>
+  heroCodes: string[]
+  cardCount: number
+  list: DeckList | null
+  problem: string | null
 }
 
 /** Every card in a deck, heroes and sideboard included. */

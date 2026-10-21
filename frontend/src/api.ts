@@ -1,3 +1,4 @@
+import type { DeckList } from './browser/types/deck'
 import { authHeaders, signOut } from './auth'
 import { router } from './router'
 import type { GameSummary } from './server'
@@ -32,7 +33,7 @@ export interface AdminDashboard {
 export const fetchAdminDashboard = () => apiFetch('/api/admin').then((r) => json<AdminDashboard>(r))
 
 /** A core starter deck by sphere, or one of the user's imported decks. */
-export type DeckChoice = { starter: string } | { deckId: number }
+export type DeckChoice = { starter: string } | { deckId: number } | { list: DeckList }
 
 export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean }) =>
   apiFetch('/api/games', {

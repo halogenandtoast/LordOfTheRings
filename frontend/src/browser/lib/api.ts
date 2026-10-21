@@ -3,7 +3,7 @@
  * request with a sentence written for a person, which becomes the error's message.
  */
 import { apiFetch } from '../../api'
-import type { Deck, DeckSummary, ImportRequest } from '@browser/types/deck'
+import type { Deck, DeckPreview, DeckSummary, ImportRequest } from '@browser/types/deck'
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await apiFetch(path, init)
@@ -22,6 +22,14 @@ export const importDeck = (body: ImportRequest) =>
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
+  })
+
+/** Load a deck the same way without keeping it. */
+export const previewDeck = (body: ImportRequest) =>
+  request<DeckPreview>('/api/decks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...body, save: false }),
   })
 
 export const deleteDeck = (id: number) => request<void>(`/api/decks/${id}`, { method: 'DELETE' })

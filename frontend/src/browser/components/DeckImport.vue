@@ -10,13 +10,16 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDeckStore, messageOf } from '@browser/stores/decks'
-import type { Deck } from '@browser/types/deck'
+import type { Deck, DeckPreview, ImportRequest } from '@browser/types/deck'
+import { previewDeck } from '@browser/lib/api'
 import { useServerText } from '../../i18n'
 
 const tr = useServerText()
 
 
-const emit = defineEmits<{ imported: [deck: Deck] }>()
+// kept in your decks, or only loaded, to look over before playing it
+const { keep = true } = defineProps<{ keep?: boolean }>()
+const emit = defineEmits<{ imported: [deck: Deck]; loaded: [preview: DeckPreview, request: ImportRequest] }>()
 
 const decks = useDeckStore()
 const { t } = useI18n()
@@ -27,12 +30,13 @@ const error = ref<string | null>(null)
 const dragging = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 
-async function run(request: Parameters<typeof decks.importDeck>[0]): Promise<void> {
+async function run(request: ImportRequest): Promise<void> {
   if (busy.value) return
   busy.value = true
   error.value = null
   try {
-    emit('imported', await decks.importDeck(request))
+    if (keep) emit('imported', await decks.importDeck(request))
+    else emit('loaded', await previewDeck(request), request)
     url.value = ''
   } catch (err) {
     error.value = messageOf(err)
