@@ -40,6 +40,7 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
     <GameCard
       v-if="scenario.activeLocation"
       :card="scenario.activeLocation"
+      :attachments="scenario.activeLocationAttachments"
       :choices="choices"
       :flipping="isFlipping(scenario.activeLocation)"
       @choose="emit('choose', $event)"

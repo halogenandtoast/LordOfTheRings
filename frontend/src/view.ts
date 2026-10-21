@@ -104,6 +104,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       .flatMap(([, modifiers]) => modifiers)
       .flatMap((m) => (m.modifierType.tag === 'GainResourceIcon' ? [m.modifierType.contents as string] : []))
 
+  // a guarded objective is attached to the card guarding it for as long as that card is in play
+  const guardInPlay = (guard: string | null | undefined) =>
+    guard && [...Object.values(entities.enemies), ...Object.values(entities.locations)].some((e) => e.cardId === guard) ? guard : null
+
   const fromEntity = (e: Entity, kind: keyof ServerGame['entities']): CardView => {
     const target = { tag: kindTargets[kind], contents: e.id }
     const d = def(e.cardCode)
@@ -117,7 +121,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       committed: e.committed ?? false,
       flipped: e.flipped ?? false,
       facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' ? 'player' : undefined,
-      attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : null,
+      attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard),
       // only the staging area's threat counts against the quest
       idle: e.placement && e.placement.tag !== 'StagingArea' ? ['threat'] : [],
     })
@@ -181,16 +185,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     }
   })
 
-  const stagedCards = [...placed('enemies', isAt('StagingArea')), ...placed('locations', isAt('StagingArea'))]
-  const stagedIds = new Set(stagedCards.map((c) => c.id))
-  // a guarded objective is attached to the card guarding it while that card is in staging
-  const stagedObjectives = Object.values(entities.objectives ?? {})
-    .filter(isAt('StagingArea'))
-    .map((o) => ({ ...fromEntity(o, 'objectives'), attachedTo: o.guard && stagedIds.has(o.guard) ? o.guard : null }))
-
   const staging = [
-    ...stagedCards,
-    ...stagedObjectives,
+    ...placed('enemies', isAt('StagingArea')),
+    ...placed('locations', isAt('StagingArea')),
+    // a guarded one comes in with its guard's attachments, wherever the guard is
+    ...placed('objectives', isAt('StagingArea')).filter((o) => o.attachedTo === null),
     // a Trap waits in staging until an enemy walks into it
     ...placed('attachments', isAt('StagingArea')),
     // a treachery shows in staging while it resolves, until it attaches or is discarded
@@ -241,6 +240,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched }
   }
 
+  const [activeLocation] = placed('locations', isAt('ActiveLocation'))
+
   const [asked] = Object.entries(game.question)
 
   return {
@@ -259,7 +260,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     scenario: {
       name: game.scenario.name,
       quest: placed('quests', () => true)[0] ?? null,
-      activeLocation: placed('locations', isAt('ActiveLocation'))[0] ?? null,
+      activeLocation: activeLocation ?? null,
+      activeLocationAttachments: attachmentsOn(activeLocation ? [activeLocation] : []),
       staging: withAttachments(staging),
       encounterDeck: game.scenario.encounterDeckSize,
       encounterDiscard: game.scenario.encounterDiscard.length,

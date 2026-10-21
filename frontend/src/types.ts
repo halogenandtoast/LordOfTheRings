@@ -61,6 +61,7 @@ export interface ScenarioView {
   name: string
   quest: CardView | null
   activeLocation: CardView | null
+  activeLocationAttachments: CardView[]
   staging: CardView[]
   encounterDeck: number
   encounterDiscard: number
