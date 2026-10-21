@@ -39,15 +39,10 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
         return { [hovered.id]: { defend: { defense, damage, defeated: damage >= remaining(hovered) } } }
       }
 
-      // an undefended attack's full damage, on every hero that could take it, to compare
-      if (prompt === '$label.undefendedDamage' && q.sourceId) {
+      // an undefended attack's full damage, on the hero it would go to
+      if (prompt === '$label.undefendedDamage' && q.sourceId && hovered) {
         const damage = stat(byId.get(q.sourceId), 'attack')
-        return Object.fromEntries(
-          q.choices.flatMap((c) => {
-            const hero = c.targetId ? byId.get(c.targetId) : undefined
-            return hero ? [[hero.id, { defend: { defense: null, damage, defeated: damage >= remaining(hero) } }]] : []
-          }),
-        )
+        return { [hovered.id]: { defend: { defense: null, damage, defeated: damage >= remaining(hovered) } } }
       }
 
       const enemy = prompt === '$label.declareAttackers' ? byId.get(q.targetIds[0]) : undefined
