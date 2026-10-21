@@ -42,7 +42,7 @@ defineProps<{ face: DeckFace; selected?: boolean }>()
   background: var(--surface-2);
 }
 /* the art sits in the top half of a card, right of the stats */
-.hero { background-size: 210% auto; background-position: 62% 14%; }
+.hero { background-size: 210% auto; background-position: 62% 0; }
 .hero + .hero { box-shadow: -1px 0 0 rgb(0 0 0 / 0.5); }
 .deck-name { padding: 6px 8px 0; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .deck-detail { padding: 0 8px 7px; font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

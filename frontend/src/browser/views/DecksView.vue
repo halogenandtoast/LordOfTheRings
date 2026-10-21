@@ -258,7 +258,7 @@ h1 {
    height, as rows are wider than a deck tile is tall */
 .deck__art > span {
   background-size: auto 200%;
-  background-position: 62% 14%;
+  background-position: 62% 0;
 }
 
 .deck__art > span + span {

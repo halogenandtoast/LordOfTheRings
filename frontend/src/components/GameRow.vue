@@ -199,7 +199,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
 .hero {
   --sphere-color: var(--neutral);
   background-size: 210% auto;
-  background-position: 62% 14%;
+  background-position: 62% 0;
   border-bottom: 3px solid var(--sphere-color);
 }
 .hero + .hero { box-shadow: -1px 0 0 rgb(0 0 0 / 0.5); }
