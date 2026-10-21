@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import type { GameSummary } from '../server'
+import { slug } from '../campaigns'
 
 const props = defineProps<{ game: GameSummary; deleteGame?: () => void; spectate?: boolean }>()
 
 const deleting = ref(false)
+// the scenario's encounter set icon, as the new game page shows it
+const icon = computed(() => `url('/images/icons/scenarios/${slug(props.game.scenario)}.svg')`)
 const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '').toLowerCase()}`)
 </script>
 
@@ -13,9 +16,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
     <div class="game-details">
       <div class="game-title">
         <div class="main-details">
-          <div class="scenario-icon-container">
-            <img class="scenario-icon" src="/images/cards/01119.jpg" alt="" />
-          </div>
+          <span class="scenario-icon" role="img" :aria-label="game.scenario" :title="game.scenario" :style="{ '--icon': icon }" />
           <RouterLink class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
           <div v-if="game.easyMode" class="badge easy">{{ $t('home.easyMode') }}</div>
           <div v-if="game.outcome" class="badge outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
@@ -95,15 +96,13 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   min-width: 0;
 }
 
-.scenario-icon-container {
-  width: 64px;
-  aspect-ratio: 1 / 0.715;
-  border-radius: 3px;
-  overflow: hidden;
+.scenario-icon {
   flex: none;
-  box-shadow: 0 1px 4px var(--shadow);
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  mask: var(--icon) center / contain no-repeat;
 }
-.scenario-icon { width: 100%; height: 100%; object-fit: cover; }
 
 .title {
   color: var(--title);

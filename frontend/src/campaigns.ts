@@ -23,7 +23,7 @@ export interface Campaign {
 
 const product = (code: string) => `/images/products/${code}.jpg`
 
-const slug = (name: string) =>
+export const slug = (name: string) =>
   name
     .normalize('NFKD')
     .replace(/[^\w\s-]/g, '')
