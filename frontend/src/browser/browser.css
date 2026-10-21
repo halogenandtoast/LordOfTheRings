@@ -128,10 +128,11 @@
     padding: 0.4375rem 0.75rem;
     border: 1px solid var(--c-border);
     border-radius: var(--radius);
-    background: var(--input-background);
+    background-color: var(--input-background);
     color: var(--c-text);
     font-size: var(--text-sm);
   }
+  .card-browser select.input { padding-right: 2.25rem; }
   .card-browser .input::placeholder { color: var(--c-text-faint); }
   .card-browser .input:focus-visible { border-color: var(--c-accent-dim); }
 

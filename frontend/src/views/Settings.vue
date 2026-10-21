@@ -69,10 +69,10 @@ select {
   font: inherit;
   font-size: 1rem;
   color: var(--text);
-  padding: 10px;
+  padding: 10px 2.25rem 10px 10px;
   border: 1px solid var(--box-border);
   border-radius: 3px;
-  background: var(--input-background);
+  background-color: var(--input-background);
 }
 select:focus { outline: 0; border-color: var(--accent); }
 .hint { margin: 0; font-size: 0.8rem; color: var(--text-muted); }

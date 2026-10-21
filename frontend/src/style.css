@@ -298,3 +298,13 @@ button, a, input, select, label, [data-card-id] { touch-action: manipulation; }
 .switch input:checked + .track { background: var(--accent); }
 .switch input:checked + .track::after { translate: 16px 0; }
 .switch input:focus-visible + .track { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+/* every dropdown draws its own chevron, so there is room after it as before it; each
+   select keeps that room with its own padding-right */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23c2b79b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.7rem;
+}
