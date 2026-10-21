@@ -134,6 +134,7 @@ data GameSummary = GameSummary
   , outcome :: Maybe Outcome
   , waiting :: Bool
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
+  , easyMode :: Bool
   }
   deriving stock (Generic)
   deriving anyclass (ToJSON)
@@ -366,6 +367,7 @@ summary (Entity gid row) | awaitingPlayers row = do
       , threat = 0
       , outcome = Nothing
       , waiting = True
+      , easyMode = row.lotrGameEasyMode
       }
 summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
   Error _ -> Nothing
@@ -381,6 +383,7 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , threat = sum [p.threat | p <- toList g.players]
         , outcome = g.outcome
         , waiting = False
+        , easyMode = row.lotrGameEasyMode
         }
 
 getGamesR :: Handler Value

@@ -17,7 +17,8 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
             <img class="scenario-icon" src="/images/cards/01119.jpg" alt="" />
           </div>
           <RouterLink class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
-          <div v-if="game.outcome" class="outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
+          <div v-if="game.easyMode" class="badge easy">{{ $t('home.easyMode') }}</div>
+          <div v-if="game.outcome" class="badge outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
             {{ $t(game.outcome === 'Won' ? 'home.won' : 'home.lost') }}
           </div>
         </div>
@@ -98,7 +99,8 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
 }
 .title:hover { color: var(--accent-bright); text-decoration: underline; }
 
-.outcome {
+.badge {
+  flex: none;
   border-radius: 3px;
   font-size: 0.7em;
   font-weight: 700;
@@ -106,6 +108,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
+.badge.easy { border: 1px solid var(--box-border); color: var(--text-muted); padding: 1px 7px; }
 .outcome.won { background: var(--success); color: var(--button-primary-text); }
 .outcome.lost { background: var(--danger); color: var(--text); }
 

@@ -123,4 +123,5 @@ export interface GameSummary {
   outcome: 'Won' | 'Lost' | null
   /** Waiting for friends to take the rest of the seats. */
   waiting: boolean
+  easyMode: boolean
 }

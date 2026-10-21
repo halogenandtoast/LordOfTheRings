@@ -51,6 +51,7 @@
     "noActiveGames": "You have no games in progress. Start a new one to set out on a quest.",
     "noFinishedGames": "No finished games yet.",
     "won": "Won",
+    "easyMode": "Easy",
     "lost": "Lost",
     "deleteGame": "Delete game",
     "confirmDelete": "Delete this game?",
