@@ -52,9 +52,10 @@ const chooseCampaign = (c: Campaign) => {
   selectedScenario.value = null
 }
 
+// a step back: from the game's options to the scenarios, from there to the campaigns
 const back = () => {
-  selectedCampaign.value = null
-  selectedScenario.value = null
+  if (selectedScenario.value) selectedScenario.value = null
+  else selectedCampaign.value = null
   error.value = null
 }
 
@@ -85,6 +86,7 @@ const create = async () => {
   <div class="new-game-content">
     <header class="main-header">
       <h2>{{ $t('newGame.title') }}</h2>
+      <button v-if="selectedCampaign" type="button" class="back-button" @click="back">{{ $t('common.back') }}</button>
       <button type="button" class="cancel-new-game-button" @click="cancel">{{ $t('common.cancel') }}</button>
     </header>
 
@@ -116,7 +118,6 @@ const create = async () => {
           <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
           <img :src="selectedCampaign.image" alt="" />
           <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
-          <button type="button" class="change" :aria-label="$t('newGame.chooseDifferentCampaign')" @click="back">{{ $t('newGame.change') }}</button>
         </div>
         <div class="card-body">
           <h3 class="card-title">{{ $t('common.scenario') }}</h3>
@@ -143,7 +144,6 @@ const create = async () => {
             <h3 class="card-title">{{ $t('common.scenario') }}</h3>
             <img :src="selectedScenario.image" alt="" />
             <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedScenario.icon})` }" />{{ selectedScenario.name }}</h3>
-            <button type="button" class="change" :aria-label="$t('newGame.chooseDifferentScenario')" @click="selectedScenario = null">{{ $t('newGame.change') }}</button>
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ $t('common.game') }}</h3>
@@ -245,6 +245,19 @@ h2 {
   transition: background-color 0.3s linear;
 }
 .cancel-new-game-button:hover { background-color: var(--button-secondary-hover); }
+.back-button {
+  background: none;
+  border: 0;
+  border-radius: 3px;
+  color: var(--text-muted);
+  font: inherit;
+  font-weight: bolder;
+  padding: 10px 15px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.back-button:hover { color: var(--text); }
 
 #new-game {
   display: grid;
@@ -276,7 +289,7 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px 16px 0;
+  padding: 16px;
   border-right: 1px solid var(--line-strong);
 }
 .split .card-body { display: grid; gap: 12px; align-content: start; padding: 16px; }
@@ -314,22 +327,6 @@ h2 {
 
 .panel img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
 .panel-title { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
-/* flush with the foot of the panel, whatever its height */
-.change {
-  margin: auto -16px 0;
-  padding: 12px 16px;
-  border: 0;
-  background: var(--button-secondary);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.85em;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-.change:hover { background: var(--button-secondary-hover); }
 
 .scenarios {
   display: grid;
