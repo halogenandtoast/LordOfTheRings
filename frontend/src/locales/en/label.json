@@ -95,6 +95,9 @@
   },
   "payFromAlly": "Pay with resources from an ally?",
   "payFromHeroes": "Pay from your heroes",
+  "discardToReduceCost": "Discard the top {count} cards of your deck to reduce its cost by {count}?",
+  "discardAndReduce": "Discard them and pay less",
+  "payFullCost": "Pay the full cost",
   "partingGifts": {
     "from": "Move resources from a Leadership hero",
     "to": "Move them to another hero"

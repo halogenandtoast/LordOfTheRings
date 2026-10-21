@@ -273,6 +273,8 @@ costModifier pid c = do
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
     CostModifier n -> Just n
+    -- an optional reduction counts toward whether the card can be afforded
+    ReducedByDiscardingFromDeck n -> Just (negate n)
     ReduceNextCostOf m n | cardMatches m c -> Just (negate $ min n $ maybe 0 (max 0 . subtract 1 . costAsResources) c.cost)
     _ -> Nothing
 

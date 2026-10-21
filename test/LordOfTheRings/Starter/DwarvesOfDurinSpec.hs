@@ -205,9 +205,20 @@ spec = describe "Dwarves of Durin" do
       run $ CreateEffect $ Effect GameSource dain [GainResourceIcon Spirit] UntilEndOfRound
       deck <- length <$> deckIds pid
       _ <- playWith pid dainCode 2 Allies.ereborGuard
+      chooseLabel "$label.discardAndReduce" pid
       allyCodes `shouldReturn` [toCardCode Allies.ereborGuard]
       resources dainCode `shouldReturn` 0
       length <$> deckIds pid `shouldReturn` (deck - 2)
+
+    it "may be paid for in full, keeping the deck" . dodTest $ \pid -> do
+      dain <- hero dainCode
+      run $ CreateEffect $ Effect GameSource dain [GainResourceIcon Spirit] UntilEndOfRound
+      deck <- length <$> deckIds pid
+      _ <- playWith pid dainCode 4 Allies.ereborGuard
+      chooseLabel "$label.payFullCost" pid
+      allyCodes `shouldReturn` [toCardCode Allies.ereborGuard]
+      resources dainCode `shouldReturn` 0
+      length <$> deckIds pid `shouldReturn` deck
 
   describe "Narvi's Belt" do
     it "gives the attached hero a resource icon" . dodTest $ \pid -> do

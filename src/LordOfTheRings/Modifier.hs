@@ -132,6 +132,11 @@ data ModifierType
   | -- | on a player, or on the game for every player: the next matching card played
     -- costs this much less, to no less than 1
     ReduceNextCostOf CardMatcher Int
+  | -- | on a character: it is defending the attack being resolved
+    Defending
+  | -- | on a card in hand, as its card id: its player may discard this many cards from
+    -- the top of their deck to lower its cost by as much
+    ReducedByDiscardingFromDeck Int
   | -- | on a character: the enemy it attacks alone does not count its defense
     IgnoresDefenseWhenAttackingAlone
   | -- | on a player: an enemy engaged them this round

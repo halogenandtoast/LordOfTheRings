@@ -1221,7 +1221,8 @@ payFor g pid card windows host discount = do
   -- the card has left its owner's hand and is not yet being paid for, so the modifiers it
   -- gives itself are asked for here
   MonoidalMap own <- execWriterT $ handCardModifiers pid card
-  let ownExtra = sum [k | Modifier _ (CostModifier k) <- Map.findWithDefault [] (CardIdTarget card.id) own]
+  let ownMods = Map.findWithDefault [] (CardIdTarget card.id) own
+      ownExtra = sum [k | Modifier _ (CostModifier k) <- ownMods]
   extra <- (+ ownExtra) . subtract discount <$> costModifier pid card
   let activeCost =
         ActiveCost
@@ -1235,16 +1236,26 @@ payFor g pid card windows host discount = do
   -- resources on allies, as Radagast's, may pay for the cards they are for
   payers <- allyPayersFor pid card
   let n = staticCost activeCost.activeCostCost
-  push
-    $ if null payers || n == 0
-      then PayCost costId
-      else
-        questionLabel (ikey "label.payFromAlly") pid
-          $ [ targetLabel aid [RemoveTokens (PlayerSource pid) (toTarget aid) Resource k, ReduceActiveCost costId k, PayCost costId]
-            | (aid, r) <- payers
-            , k <- [1 .. min r n]
-            ]
-          <> [Label (ikey "label.payFromHeroes") [PayCost costId]]
+      pay left =
+        if null payers || left == 0
+          then PayCost costId
+          else
+            questionLabel (ikey "label.payFromAlly") pid
+              $ [ targetLabel aid [RemoveTokens (PlayerSource pid) (toTarget aid) Resource k, ReduceActiveCost costId k, PayCost costId]
+                | (aid, r) <- payers
+                , k <- [1 .. min r left]
+                ]
+              <> [Label (ikey "label.payFromHeroes") [PayCost costId]]
+  -- a card that may cost less for cards discarded from the deck, as Erebor Guard, asks
+  -- first; it is offered only with the cards to discard
+  deckSize <- length . (.deck) <$> getPlayer pid
+  push $ case [k | Modifier _ (ReducedByDiscardingFromDeck k) <- ownMods, k <= deckSize] of
+    k : _ ->
+      questionLabelWith (ikeyWith "label.discardToReduceCost" [intVar "count" k]) (Just $ CardIdTarget card.id) [] pid
+        [ Label (ikey "label.discardAndReduce") [DiscardTopOfDeck pid k, ReduceActiveCost costId k, pay (max 0 $ n - k)]
+        , Label (ikey "label.payFullCost") [pay n]
+        ]
+    [] -> pay n
   -- a reduction of the next matching card's cost is spent on this one
   let spent e = effectTarget e `elem` [PlayerTarget pid, GameTarget] && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
