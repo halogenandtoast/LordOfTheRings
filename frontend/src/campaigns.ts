@@ -55,12 +55,10 @@ const campaign = (id: string, name: string, code: string, scenarios: ScenarioOpt
 })
 
 export const campaigns: Campaign[] = [
-  campaign('core-set', 'Core Set', 'MEC01', fromBox('MEC01', ['Passage Through Mirkwood', 'Journey Along the Anduin', 'Escape from Dol Guldur'])),
-  campaign(
-    'shadows-of-mirkwood',
-    'Shadows of Mirkwood',
-    'MEC02',
-    fromPacks([
+  // the core set's cycle is Shadows of Mirkwood
+  campaign('core-set', 'Core Set', 'MEC01', [
+    ...fromBox('MEC01', ['Passage Through Mirkwood', 'Journey Along the Anduin', 'Escape from Dol Guldur']),
+    ...fromPacks([
       ['MEC02', 'The Hunt for Gollum'],
       ['MEC03', 'Conflict at the Carrock'],
       ['MEC04', 'A Journey to Rhosgobel'],
@@ -68,7 +66,7 @@ export const campaigns: Campaign[] = [
       ['MEC06', 'The Dead Marshes'],
       ['MEC07', 'Return to Mirkwood'],
     ]),
-  ),
+  ]),
   campaign('dwarrowdelf', 'Dwarrowdelf', 'MEC08', [
     ...fromBox('MEC08', ['Into the Pit', 'The Seventh Level', 'Flight from Moria']),
     ...fromPacks([
