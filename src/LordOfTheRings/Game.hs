@@ -439,7 +439,8 @@ runGameMessage msg g = case msg of
     pure g
   EnemyAttack pid eid -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
-    defenders <- filterM (canFight eid) =<< possibleDefenders pid
+    defenders <- filterM (canFight eid) =<< readyCharacters pid
+    others <- filter (/= pid) <$> getPlayerOrder
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
@@ -449,7 +450,7 @@ runGameMessage msg g = case msg of
             else
               questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
                 $ [targetLabel d (exhaust' d <> [DefendWith pid eid d]) | d <- defenders]
-                <> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
+                <> [Label (ikey "label.takeAttackUndefended") [DeclareSentinels pid eid [] others]]
     pushAll =<< inLogBlock (EnemyAttackBlock pid eid) [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
     pure g
   DefendWith pid eid defender -> do
@@ -465,8 +466,8 @@ runGameMessage msg g = case msg of
          ]
     pure g
   DeclareDefenders pid eid chosen -> do
-    order <- getPlayerOrder
-    defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< possibleDefenders pid)
+    others <- filter (/= pid) <$> getPlayerOrder
+    defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< readyCharacters pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     push
@@ -474,16 +475,38 @@ runGameMessage msg g = case msg of
       $ [ targetLabel d $ [Exhaust d | Just True <- [lookup d exhausts]] <> [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
         | d <- defenders
         ]
-      <> case chosen of
-        [] -> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
-        first : _ ->
-          [ Label (ikey "label.doneDeclaringDefenders")
-              $ map OptionalActionWindow order
-              <> [ ResolveShadow eid pid (Just first)
-                 , DefendedByMany pid eid chosen
-                 , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
-                 ]
-          ]
+      <> [Label (ikey $ if null chosen then "label.takeAttackUndefended" else "label.doneDeclaringDefenders") [DeclareSentinels pid eid chosen others]]
+    pure g
+  -- then each other player, in turn, may defend with a sentinel of theirs: one, unless
+  -- the attacked player may declare several
+  DeclareSentinels pid eid chosen [] -> do
+    order <- getPlayerOrder
+    push $ case chosen of
+      [] -> UndefendedAttack pid eid
+      first : _ ->
+        Run
+          $ map OptionalActionWindow order
+          <> [ ResolveShadow eid pid (Just first)
+             , DefendedByMany pid eid chosen
+             , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
+             ]
+    pure g
+  DeclareSentinels pid eid chosen (other : rest) -> do
+    many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
+    sentinels <- filterM (canFight eid) . filter (`notElem` chosen) =<< withKeyword Sentinel =<< readyCharacters other
+    enemyName <- cardVar "enemy" <$> getEnemy eid
+    exhausts <- for sentinels \d -> (d,) <$> exhaustToDefend d eid
+    let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
+        defend d
+          | many = exhaust' d <> [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareSentinels pid eid (chosen <> [d]) (other : rest)]
+          | otherwise = exhaust' d <> [DefendWith pid eid d]
+    push
+      $ if null sentinels
+        then DeclareSentinels pid eid chosen rest
+        else
+          questionLabelWith (ikeyWith "label.defendWithSentinel" enemyName) (Just $ toTarget eid) chosen other
+            $ [targetLabel d (defend d) | d <- sentinels]
+            <> [Label (ikey "label.doNotDefend") [DeclareSentinels pid eid chosen rest]]
     pure g
   DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
   DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
@@ -532,17 +555,30 @@ runGameMessage msg g = case msg of
     open' <- elem AttackableByAnyCharacter <$> getModifiers eid
     -- one who does not exhaust to attack is still declared only once
     attacking <- selectCharacters AttackingHero AttackingAlly
-    -- ranged characters of other players may join an attack on an enemy engaged with them
+    -- then other players' ranged characters may join an attack on an enemy engaged with them
     engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
-    ranged <- if engaged then othersWithKeyword Ranged pid else pure []
-    attackers <- filter (`notElem` attacking) <$> (filterM (canFight eid) . (<> ranged) =<< (if staged && not open' then stagingAttackers else pure) =<< readyCharacters pid)
+    others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
+    attackers <- filter (`notElem` attacking) <$> (filterM (canFight eid) =<< (if staged && not open' then stagingAttackers else pure) =<< readyCharacters pid)
     push
       $ if null attackers
-        then ResolveAttack pid eid
+        then DeclareRangedAttackers pid eid others
         else
           questionLabelWith (ikey "label.declareAttackers") Nothing [toTarget eid] pid
             $ [targetLabel a [AttackWith a, CheckWindows [mkAfter $ DeclaredAsAttacker a eid], DeclareAttackers pid eid] | a <- attackers]
-            <> [Label (ikey "label.doneAttacking") [ResolveAttack pid eid]]
+            <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid others]]
+    pure g
+  -- the attack resolves, or its attackers stop, once no one else is left to ask
+  DeclareRangedAttackers pid eid others | null others || not (Map.member eid g.entities.enemies) -> g <$ push (ResolveAttack pid eid)
+  DeclareRangedAttackers pid eid ~(other : rest) -> do
+    attacking <- selectCharacters AttackingHero AttackingAlly
+    ranged <- filterM (canFight eid) . filter (`notElem` attacking) =<< withKeyword Ranged =<< readyCharacters other
+    push
+      $ if null ranged
+        then DeclareRangedAttackers pid eid rest
+        else
+          questionLabelWith (ikey "label.joinAttackRanged") Nothing [toTarget eid] other
+            $ [targetLabel a [AttackWith a, CheckWindows [mkAfter $ DeclaredAsAttacker a eid], DeclareRangedAttackers pid eid (other : rest)] | a <- ranged]
+            <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid rest]]
     pure g
   ResolveAttack pid eid -> do
     -- ranged characters of other players among them
@@ -1100,19 +1136,9 @@ gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> 
 characterTraits :: Target -> GameT (Set Trait)
 characterTraits target = (<>) . cdCardTraits <$> characterCardDef target <*> gainedTraits target
 
--- | Who may defend an attack on the player: their ready characters, and other players'
--- with sentinel.
---
--- ponytail: the attacked player declares other players' sentinels, as the attacking
--- player declares their ranged characters; ask each controller if a table wants that.
-possibleDefenders :: PlayerId -> GameT [Target]
-possibleDefenders pid = (<>) <$> readyCharacters pid <*> othersWithKeyword Sentinel pid
-
--- | Other players' ready characters with the keyword.
-othersWithKeyword :: Keyword -> PlayerId -> GameT [Target]
-othersWithKeyword k pid = do
-  others <- filter (/= pid) <$> getPlayerOrder
-  filterM (\t -> hasKeyword k t =<< characterCardDef t) . concat =<< traverse readyCharacters others
+-- | The characters with the keyword, printed or gained.
+withKeyword :: Keyword -> [Target] -> GameT [Target]
+withKeyword k = filterM (\t -> hasKeyword k t =<< characterCardDef t)
 
 -- | Whether the card has the restricted keyword.
 isRestricted :: (HasCardDef a) => a -> Bool
@@ -1226,6 +1252,7 @@ attackingEnemy = \case
   EnemyAttack _ eid -> Just eid
   DefendWith _ eid _ -> Just eid
   DeclareDefenders _ eid _ -> Just eid
+  DeclareSentinels _ eid _ _ -> Just eid
   DefendedByMany _ eid _ -> Just eid
   UndefendedAttack _ eid -> Just eid
   UndefendedDamage _ eid -> Just eid

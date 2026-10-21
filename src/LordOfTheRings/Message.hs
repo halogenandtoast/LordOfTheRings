@@ -262,6 +262,9 @@ data Message
   | EnemyAttack PlayerId EnemyId
   | DefendWith PlayerId EnemyId Target
   | DeclareDefenders PlayerId EnemyId [Target]
+  | -- | the attacked player has declared: the other players still to be asked, in turn,
+    -- whether a sentinel of theirs defends, with the defenders chosen so far
+    DeclareSentinels PlayerId EnemyId [Target] [PlayerId]
   | DefendedByMany PlayerId EnemyId [Target]
   | -- | spend resources of a sphere, at most 1 from each hero, from heroes not yet used
     SpendResourcesFromDistinctHeroes PlayerId Sphere Int [HeroId]
@@ -279,6 +282,9 @@ data Message
   | AddToEncounterDiscard [EncounterCard]
   | PlayerAttacks PlayerId
   | DeclareAttackers PlayerId EnemyId
+  | -- | the attacking player has declared: the other players still to be asked, in turn,
+    -- whether a ranged character of theirs joins the attack
+    DeclareRangedAttackers PlayerId EnemyId [PlayerId]
   | AttackWith Target
   | ResolveAttack PlayerId EnemyId
   | -- | an attack on the enemy resolved: the player it was engaged with, and the attackers
