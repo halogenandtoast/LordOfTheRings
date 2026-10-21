@@ -5,11 +5,13 @@ import { token } from '../auth'
 import type { CardDef, GameData, ServerMessage } from '../server'
 import type { GameView } from '../types'
 import { toView } from '../view'
-import { beforeTheDeal, dealFrom } from './dealing'
+import { beforeTheDeal, dealFrom, openingStages, shuffleDecks } from './dealing'
 import { transitionsOn, withViewTransition } from './useViewTransition'
 
 const LOG_LIMIT = 200
 const FLIP_MS = 320
+// how long the opening resources take to drop on before the decks shuffle
+const TOKEN_MS = 450
 
 const socketUrl = (path: string) => {
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
@@ -44,15 +46,31 @@ export const useGame = (gameId: string, spectate = false) => {
     flipping.value = remaining
   }
 
+  const pause = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms))
+
+  // A game opening on the mulligan lays the table out first: the scenario, then the heroes,
+  // their resources and a shuffle, ending on the board just before the deal.
+  const layOut = async (undealt: GameView) => {
+    const { bare, heroes, placing, resourced } = openingStages(undealt)
+    game.value = bare
+    await nextTick()
+    const placed = placing()
+    await withViewTransition(async () => {
+      game.value = heroes
+    })
+    placed()
+    game.value = undealt
+    if (resourced) await pause(TOKEN_MS)
+    await nextTick()
+    await shuffleDecks()
+  }
+
   const update = async (next: GameData) => {
     data.value = next
     const view = toView(next, defs, game.value)
-    // a game opening on the mulligan shows its empty hands first, so the opening hand deals out
+    // a game opening on the mulligan is laid out with its hands empty, so the opening hand deals out
     const undealt = game.value === null && transitionsOn() ? beforeTheDeal(view) : null
-    if (undealt) {
-      game.value = undealt
-      await nextTick()
-    }
+    if (undealt) await layOut(undealt)
     const dealing = transitionsOn() ? dealFrom(game.value, view, shuffledBack) : null
     shuffledBack = new Set()
     await withViewTransition(async () => {

@@ -162,6 +162,57 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
   }
 }
 
+const PLACE_MS = 480
+const PLACE_STAGGER_MS = 140
+
+/**
+ * The table being laid out as a game opens on the mulligan, before the opening hands are
+ * dealt: the scenario alone, then the heroes placed one after another, then their
+ * resources (which drop on through `GameCard`), and the decks shuffled. Each stage is a
+ * board to show; `placing` times the heroes' arrival in the view transition into `heroes`.
+ */
+export const openingStages = (undealt: GameView) => {
+  const isHero = (card: CardView) => card.type === 'Hero'
+  const bare = { ...undealt, players: undealt.players.map((p) => ({ ...p, inPlay: [] })) }
+  const heroes = {
+    ...undealt,
+    players: undealt.players.map((p) => ({
+      ...p,
+      inPlay: p.inPlay.filter(isHero).map((card) => ({ ...card, resources: card.resources === null ? null : 0 })),
+    })),
+  }
+  const placing = () => {
+    const rules = heroes.players
+      .flatMap((p) => p.inPlay)
+      .map(
+        (card, i) =>
+          `::view-transition-new(card-${card.id}) { animation: hero-place ${PLACE_MS}ms cubic-bezier(0.2, 0.9, 0.3, 1.1) ${i * PLACE_STAGGER_MS}ms both; }`,
+      )
+    const style = Object.assign(document.createElement('style'), { textContent: rules.join('\n') })
+    document.head.append(style)
+    return () => style.remove()
+  }
+  const resourced = undealt.players.some((p) => p.inPlay.some((card) => (card.resources ?? 0) > 0))
+  return { bare, heroes, placing, resourced }
+}
+
+/** Shuffle every deck on the table at once, resolving when they have settled. */
+export const shuffleDecks = () =>
+  Promise.all(
+    [...document.querySelectorAll<HTMLElement>('[data-pile^="deck-"] .pile')].map(
+      (deck) =>
+        new Promise<void>((resolve) => {
+          deck.style.animation = `deck-shuffle ${SHUFFLE_MS}ms ease-in-out 2`
+          const settle = () => {
+            deck.style.removeProperty('animation')
+            resolve()
+          }
+          deck.addEventListener('animationend', settle, { once: true })
+          window.setTimeout(settle, SHUFFLE_MS * 2 + 100)
+        }),
+    ),
+  )
+
 /**
  * The board just before the opening hands were dealt: hands empty, their cards still in the
  * decks. Shown first when a game opens on the mulligan, so the opening hand deals out.
