@@ -45,6 +45,9 @@ allTreacheryCards =
       , nightfall
       , throughTheMist
       , theLightsOfTheDead
+      , gollumsAnguish
+      , gollumsBite
+      , wastedProvisions
       ]
 
 eyesOfTheForest :: CardDef
@@ -214,5 +217,29 @@ theLightsOfTheDead =
   (treachery "02111" "The Lights of the Dead" TheDeadMarshes 4)
     { cdCardTraits = setFromList [Escape]
     , cdEscape = Just 5
+    , cdEasyModeQuantity = Just 2
+    }
+
+gollumsAnguish :: CardDef
+gollumsAnguish =
+  (treachery "02135" "Gollum's Anguish" ReturnToMirkwood 2)
+    { cdCardTraits = setFromList [Tantrum]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+gollumsBite :: CardDef
+gollumsBite =
+  (treachery "02136" "Gollum's Bite" ReturnToMirkwood 2)
+    { cdCardTraits = setFromList [Tantrum]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+wastedProvisions :: CardDef
+wastedProvisions =
+  (treachery "02137" "Wasted Provisions" ReturnToMirkwood 3)
+    { cdCardTraits = setFromList [Tantrum]
+    , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }

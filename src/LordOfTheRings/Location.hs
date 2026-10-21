@@ -40,6 +40,10 @@ import LordOfTheRings.Location.Cards.TheHighlands
 import LordOfTheRings.Location.Cards.ImpassableBog
 import LordOfTheRings.Location.Cards.TheHeartOfTheMarshes
 import LordOfTheRings.Location.Cards.FensAndMires
+import LordOfTheRings.Location.Cards.TheSpidersRing
+import LordOfTheRings.Location.Cards.DryWatercourse
+import LordOfTheRings.Location.Cards.WoodmansGlade
+import LordOfTheRings.Location.Cards.WoodElfPath
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -104,5 +108,9 @@ allLocations =
         , SomeLocationCard impassableBog
         , SomeLocationCard theHeartOfTheMarshes
         , SomeLocationCard fensAndMires
+        , SomeLocationCard theSpidersRing
+        , SomeLocationCard dryWatercourse
+        , SomeLocationCard woodmansGlade
+        , SomeLocationCard woodElfPath
         ]
     ]

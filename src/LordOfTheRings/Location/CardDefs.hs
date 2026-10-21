@@ -51,6 +51,10 @@ allLocationCards =
       , impassableBog
       , theHeartOfTheMarshes
       , fensAndMires
+      , theSpidersRing
+      , dryWatercourse
+      , woodmansGlade
+      , woodElfPath
       ]
 
 greatForestWeb :: CardDef
@@ -286,4 +290,30 @@ fensAndMires =
   (location "02115" "Fens and Mires" TheDeadMarshes 4 2 2)
     { cdCardTraits = setFromList [DeadMarshes]
     , cdEscape = Just 2
+    }
+
+theSpidersRing :: CardDef
+theSpidersRing =
+  (location "02131" "The Spider's Ring" ReturnToMirkwood 4 3 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+dryWatercourse :: CardDef
+dryWatercourse =
+  (location "02132" "Dry Watercourse" ReturnToMirkwood 3 2 2)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+woodmansGlade :: CardDef
+woodmansGlade =
+  (location "02133" "Woodman's Glade" ReturnToMirkwood 3 2 2)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+woodElfPath :: CardDef
+woodElfPath =
+  (location "02134" "Wood Elf Path" ReturnToMirkwood 3 1 3)
+    { cdCardTraits = setFromList [Forest]
     }

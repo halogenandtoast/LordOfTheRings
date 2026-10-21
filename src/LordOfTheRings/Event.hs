@@ -43,6 +43,9 @@ import LordOfTheRings.Event.Cards.MeneldorsFlight
 import LordOfTheRings.Event.Cards.RideToRuin
 import LordOfTheRings.Event.Cards.GildorsCounsel
 import LordOfTheRings.Event.Cards.WeDoNotSleep
+import LordOfTheRings.Event.Cards.DawnTakeYouAll
+import LordOfTheRings.Event.Cards.RumourFromTheEarth
+import LordOfTheRings.Event.Cards.ShadowOfThePast
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -99,5 +102,8 @@ allEvents =
         , SomeEventCard rideToRuin
         , SomeEventCard gildorsCounsel
         , SomeEventCard weDoNotSleep
+        , SomeEventCard dawnTakeYouAll
+        , SomeEventCard rumourFromTheEarth
+        , SomeEventCard shadowOfThePast
         ]
     ]

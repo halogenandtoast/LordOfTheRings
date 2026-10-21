@@ -33,6 +33,8 @@ import LordOfTheRings.Attachment.Cards.DunedainCache
 import LordOfTheRings.Attachment.Cards.SongOfMocking
 import LordOfTheRings.Attachment.Cards.FastHitch
 import LordOfTheRings.Attachment.Cards.SongOfBattle
+import LordOfTheRings.Attachment.Cards.DunedainSignal
+import LordOfTheRings.Attachment.Cards.SupportOfTheEagles
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -92,5 +94,7 @@ allAttachments =
         , SomeAttachmentCard songOfMocking
         , SomeAttachmentCard fastHitch
         , SomeAttachmentCard songOfBattle
+        , SomeAttachmentCard dunedainSignal
+        , SomeAttachmentCard supportOfTheEagles
         ]
     ]

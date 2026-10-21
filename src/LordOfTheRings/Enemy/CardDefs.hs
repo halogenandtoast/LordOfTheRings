@@ -48,6 +48,8 @@ allEnemyCards =
       , blackForestBatsRhosgobel
       , orcHorseThieves
       , giantMarshWorm
+      , mirkwoodBats
+      , attercopAttercop
       ]
 
 kingSpider :: CardDef
@@ -278,4 +280,19 @@ giantMarshWorm =
     { cdCardTraits = setFromList [Creature]
     , cdEscape = Just 2
     , cdEasyModeQuantity = Just 2
+    }
+
+mirkwoodBats :: CardDef
+mirkwoodBats =
+  (enemy "02138" "Mirkwood Bats" ReturnToMirkwood 4 22 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 2
+    }
+
+attercopAttercop :: CardDef
+attercopAttercop =
+  (enemy "02139" "Attercop, Attercop" ReturnToMirkwood 3 44 2 8 4 6)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdEasyModeQuantity = Just 0
     }

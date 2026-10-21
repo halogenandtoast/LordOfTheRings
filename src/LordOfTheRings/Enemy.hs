@@ -38,6 +38,8 @@ import LordOfTheRings.Enemy.Cards.MirkwoodFlock
 import LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
 import LordOfTheRings.Enemy.Cards.OrcHorseThieves
 import LordOfTheRings.Enemy.Cards.GiantMarshWorm
+import LordOfTheRings.Enemy.Cards.MirkwoodBats
+import LordOfTheRings.Enemy.Cards.AttercopAttercop
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -100,5 +102,7 @@ allEnemys =
         , SomeEnemyCard blackForestBatsRhosgobel
         , SomeEnemyCard orcHorseThieves
         , SomeEnemyCard giantMarshWorm
+        , SomeEnemyCard mirkwoodBats
+        , SomeEnemyCard attercopAttercop
         ]
     ]

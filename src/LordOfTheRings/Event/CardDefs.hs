@@ -82,6 +82,9 @@ allEventCards =
       , rideToRuin
       , gildorsCounsel
       , weDoNotSleep
+      , dawnTakeYouAll
+      , rumourFromTheEarth
+      , shadowOfThePast
       ]
 
 everVigilant :: CardDef
@@ -284,3 +287,12 @@ gildorsCounsel = event "02080" "Gildor's Counsel" Lore (StaticCost 3)
 
 weDoNotSleep :: CardDef
 weDoNotSleep = event "02101" "We Do Not Sleep" Spirit (StaticCost 5)
+
+dawnTakeYouAll :: CardDef
+dawnTakeYouAll = event "02118" "Dawn Take You All" Leadership (StaticCost 2)
+
+rumourFromTheEarth :: CardDef
+rumourFromTheEarth = event "02124" "Rumour from the Earth" Lore (StaticCost 0)
+
+shadowOfThePast :: CardDef
+shadowOfThePast = event "02125" "Shadow of the Past" Neutral (StaticCost 2)

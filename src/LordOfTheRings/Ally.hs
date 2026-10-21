@@ -41,6 +41,7 @@ import LordOfTheRings.Ally.Cards.GildorInglorion
 import LordOfTheRings.Ally.Cards.DunedainWatcher
 import LordOfTheRings.Ally.Cards.VassalOfTheWindlord
 import LordOfTheRings.Ally.Cards.Elfhelm
+import LordOfTheRings.Ally.Cards.EaglesOfTheMistyMountains
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -108,5 +109,6 @@ allAllies =
         , SomeAllyCard dunedainWatcher
         , SomeAllyCard vassalOfTheWindlord
         , SomeAllyCard elfhelm
+        , SomeAllyCard eaglesOfTheMistyMountains
         ]
     ]

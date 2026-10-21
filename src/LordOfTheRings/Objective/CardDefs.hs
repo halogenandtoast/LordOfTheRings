@@ -26,6 +26,7 @@ allObjectiveCards =
       , athelas
       , wilyador
       , gollumTheDeadMarshes
+      , gollumReturnToMirkwood
       ]
 
 gandalfsMap :: CardDef
@@ -93,4 +94,11 @@ gollumTheDeadMarshes =
   (objective "02107" "Gollum" TheDeadMarshes 1)
     { cdUnique = True
     , cdCardTraits = setFromList [Gollum]
+    }
+
+gollumReturnToMirkwood :: CardDef
+gollumReturnToMirkwood =
+  ((objective "02130" "Gollum" ReturnToMirkwood 1) {cdHitPoints = Just 5})
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature]
     }

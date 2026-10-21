@@ -36,6 +36,27 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "returnToMirkwood": {
+    "newGuard": "Choose a new player to guard Gollum"
+  },
+  "woodmansGlade": {
+    "exhaust": "Exhaust a hero to travel to Woodman's Glade"
+  },
+  "gollumsBite": {
+    "hero": "Choose a hero to take the damage"
+  },
+  "dawnTakeYouAll": {
+    "discard": "Discard the shadow card of an enemy engaged with you"
+  },
+  "rumourFromTheEarth": {
+    "return": "Pay 1 Lore resource to return Rumour from the Earth to your hand?"
+  },
+  "supportOfTheEagles": {
+    "chooseEagle": "Choose an Eagle ally",
+    "chooseStat": "Add its attack or its defense",
+    "attack": "Attack (+{n})",
+    "defense": "Defense (+{n})"
+  },
   "escapeTest": "Commit characters to the escape test",
   "doneCommittingToEscape": "Done committing: deal the cards",
   "boromir": {

@@ -38,6 +38,10 @@ allQuestCards =
       , theHillsOfEmynMuil
       , intoTheMarshes
       , theCapture
+      , throughTheForest
+      , escapeAttempt
+      , toTheElvenKingsHalls
+      , ambush
       ]
 
 fliesAndSpiders :: CardDef
@@ -102,3 +106,15 @@ intoTheMarshes = quest "02105" "Into the Marshes" TheDeadMarshes 1 12
 
 theCapture :: CardDef
 theCapture = quest "02106" "The Capture" TheDeadMarshes 2 3
+
+throughTheForest :: CardDef
+throughTheForest = quest "02126" "Through the Forest" ReturnToMirkwood 1 12
+
+escapeAttempt :: CardDef
+escapeAttempt = quest "02127" "Escape Attempt" ReturnToMirkwood 2 3
+
+toTheElvenKingsHalls :: CardDef
+toTheElvenKingsHalls = quest "02128" "To the Elven King's Halls" ReturnToMirkwood 3 7
+
+ambush :: CardDef
+ambush = quest "02129" "Ambush" ReturnToMirkwood 4 2

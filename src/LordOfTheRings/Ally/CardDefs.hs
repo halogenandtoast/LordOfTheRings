@@ -91,6 +91,7 @@ allAllyCards =
       , dunedainWatcher
       , vassalOfTheWindlord
       , elfhelm
+      , eaglesOfTheMistyMountains
       ]
 
 guardOfTheCitadel :: CardDef
@@ -569,4 +570,10 @@ elfhelm =
   (ally "02100" "Elfhelm" Spirit (StaticCost 4) 1 2 2 3)
     { cdUnique = True
     , cdCardTraits = setFromList [Rohan, Warrior]
+    }
+
+eaglesOfTheMistyMountains :: CardDef
+eaglesOfTheMistyMountains =
+  (ally "02119" "Eagles of the Misty Mountains" Tactics (StaticCost 4) 2 2 2 4)
+    { cdCardTraits = setFromList [Creature, Eagle]
     }

@@ -74,6 +74,8 @@ allAttachmentCards =
       , songOfMocking
       , fastHitch
       , songOfBattle
+      , dunedainSignal
+      , supportOfTheEagles
       ]
 
 stewardOfGondor :: CardDef
@@ -443,4 +445,16 @@ songOfBattle :: CardDef
 songOfBattle =
   (attachment "02104" "Song of Battle" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Song]
+    }
+
+dunedainSignal :: CardDef
+dunedainSignal =
+  (attachment "02117" "Dúnedain Signal" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Signal]
+    }
+
+supportOfTheEagles :: CardDef
+supportOfTheEagles =
+  (attachment "02120" "Support of the Eagles" Tactics (StaticCost 3))
+    { cdCardTraits = setFromList [Boon]
     }

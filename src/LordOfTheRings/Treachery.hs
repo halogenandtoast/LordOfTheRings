@@ -34,6 +34,9 @@ import LordOfTheRings.Treachery.Cards.AWispOfPaleSheen
 import LordOfTheRings.Treachery.Cards.Nightfall
 import LordOfTheRings.Treachery.Cards.ThroughTheMist
 import LordOfTheRings.Treachery.Cards.TheLightsOfTheDead
+import LordOfTheRings.Treachery.Cards.GollumsAnguish
+import LordOfTheRings.Treachery.Cards.GollumsBite
+import LordOfTheRings.Treachery.Cards.WastedProvisions
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -92,5 +95,8 @@ allTreacherys =
         , SomeTreacheryCard nightfall
         , SomeTreacheryCard throughTheMist
         , SomeTreacheryCard theLightsOfTheDead
+        , SomeTreacheryCard gollumsAnguish
+        , SomeTreacheryCard gollumsBite
+        , SomeTreacheryCard wastedProvisions
         ]
     ]
