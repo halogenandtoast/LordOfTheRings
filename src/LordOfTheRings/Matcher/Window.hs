@@ -1,6 +1,8 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
+import LordOfTheRings.Card (Card)
 import LordOfTheRings.Id
+import LordOfTheRings.Matcher.Types (CardMatcher, cardMatches)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
@@ -37,6 +39,8 @@ data WindowMatcher
   | LocationRevealedWindow Timing
   | ShadowEffectAgainstWindow Timing Target
   | AnyEnemyAttacksWindow Timing
+  | -- | a character whose printed card matches left play
+    CharacterLeftPlayWindow Timing CardMatcher
   | -- | after an attack the character made resolved
     AttackedWindow Timing Target
   | ShadowEffectResolvedWindow Timing EnemyId
@@ -79,6 +83,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
   (ShadowEffectAgainstWindow t target, ShadowEffectAgainst target') -> t == timing && target == target'
   (AnyEnemyAttacksWindow t, EnemyAttacking _ _) -> t == timing
+  (CharacterLeftPlayWindow t m, CharacterLeftPlay c) -> t == timing && cardMatches m c
   (AttackedWindow t target, AttackedEnemy target' _) -> t == timing && target == target'
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'

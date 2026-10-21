@@ -422,7 +422,8 @@ runGameMessage msg g = case msg of
     pure g
   UndefendedDamage pid eid -> do
     attack <- getEnemyAttack eid
-    redirected <- filter (inPlay g) . mapMaybe (\case UndefendedDamageTo t -> Just t; _ -> Nothing) <$> getModifiers eid
+    -- the enemy's, or the player's, as guarding Gollum makes it
+    redirected <- filter (inPlay g) . mapMaybe (\case UndefendedDamageTo t -> Just t; _ -> Nothing) <$> ((<>) <$> getModifiers eid <*> getModifiers (PlayerTarget pid))
     heroes <- if null redirected then select (HeroControlledBy $ PlayerWithId pid) else pure []
     for_ (take 1 redirected) \t -> pushAll =<< attackDamage pid eid t attack
     choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid (toTarget h) attack
@@ -767,6 +768,15 @@ runGameMessage msg g = case msg of
     let (dealt, rest) = splitAt t.escapeCards (toAttrs g.scenario).encounterDeck
     pushAll $ if escape > total then t.escapeOnFail else t.escapeOnPass
     pure $ g & scenarioL %~ overAttrs ((encounterDeckL .~ rest) . (encounterDiscardL %~ (dealt <>)))
+  -- a shadow card that is a location becomes the active location
+  PutShadowLocationIntoPlay host cid -> do
+    for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
+      for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do
+        thisLocation <- newLocation card
+        active <- select IsActiveLocation
+        pushAll $ RemoveShadowCard host cid : [PlaceLocation l StagingArea | l <- active]
+        putGame $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = ActiveLocation}) thisLocation)
+    getGame
   ResetToStage card _ -> do
     pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
     pure $ g & entitiesL . questsL .~ mempty
@@ -908,7 +918,11 @@ leftPlay g target = case target of
  where
   window pid def = do
     gained <- mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
-    push $ CheckWindows [mkAfter $ LeftPlay target pid (cdCardTraits def <> setFromList gained)]
+    let card = case target of
+          HeroTarget hid -> toCard <$> Map.lookup hid g.entities.heroes
+          AllyTarget aid -> toCard <$> Map.lookup aid g.entities.allies
+          _ -> Nothing
+    push $ CheckWindows $ mkAfter (LeftPlay target pid (cdCardTraits def <> setFromList gained)) : [mkAfter $ CharacterLeftPlay c | Just c <- [card]]
 
 -- | Cards in a player's hand that can be played or put into play in response to the
 -- windows: response events, and allies like Brok Ironfist.
@@ -921,7 +935,7 @@ handResponses pid windows continue = do
       EventType
         | Just e <- lookupEvent (toCardCode pc) pc.id pid
         , matches (toAttrs e).eventWindow -> do
-            ok <- andM [passesCriteria (toAttrs e).eventCriteria, canAfford player card, not <$> cannotPlay card]
+            ok <- andM [passesCriteria (toAttrs e).eventCriteria, canAfford player card, not <$> cannotPlay pid card]
             pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PlayCardInWindow pid pc.id windows, continue]
       AllyType
         | matches (allyHandWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid) -> do
@@ -976,8 +990,10 @@ resolveShadowEffect card msg = case cdCardType (toCardDef card) of
 attackDamage :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
 attackDamage pid eid target n = do
   excessToThreat <- elem ExcessDamageToThreat <$> getModifiers eid
-  remaining <- (-) <$> getHitPoints target <*> getDamage target
-  let excess = if excessToThreat then max 0 (n - remaining) else 0
+  excess <-
+    if excessToThreat
+      then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
+      else pure 0
   pure $ DealDamage (EnemySource eid) target n : [RaiseThreat pid excess | excess > 0]
 
 -- | The enemy a step of an enemy's attack, or of an attack on one, is about.

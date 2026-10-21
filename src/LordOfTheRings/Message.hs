@@ -178,6 +178,12 @@ data Message
     PutObjectiveAllyIntoPlay ObjectiveId PlayerId
   | ReduceActiveCost CostId Int
   | AddToVictoryDisplay Target
+  | PutShadowLocationIntoPlay EnemyId CardId
+  | PutOnTopOfEncounterDeck EncounterCard
+  | -- | a player card goes to its owner's discard pile
+    PutInDiscard PlayerCard
+  | -- | a card goes facedown under the ally
+    AttachFacedown AllyId PlayerCard
   | -- | the player commits characters to the escape test, one at a time
     MakeEscapeTest EscapeTest
   | ResolveEscapeTest EscapeTest

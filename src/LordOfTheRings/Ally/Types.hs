@@ -48,6 +48,8 @@ data AllyAttrs = AllyAttrs
   , allyAttacking :: Bool
   , allyHandWindow :: Maybe WindowMatcher
   -- ^ a window in which the ally can be put into play from its owner's hand
+  , allyFacedown :: [PlayerCard]
+  -- ^ cards attached facedown, as Eagles of the Misty Mountains takes them
   }
   deriving stock (Show, Eq, Generic)
 
@@ -57,7 +59,7 @@ instance ToJSON AllyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "ally")
 
 instance FromJSON AllyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "ally")
+  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard]))]
 
 ally :: (AllyAttrs -> a) -> CardDef -> AllyCard a
 ally f cardDef =
@@ -76,6 +78,7 @@ ally f cardDef =
             , allyCommitted = False
             , allyAttacking = False
             , allyHandWindow = Nothing
+            , allyFacedown = []
             }
     }
 

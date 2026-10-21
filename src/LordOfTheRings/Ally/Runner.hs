@@ -1,5 +1,6 @@
 module LordOfTheRings.Ally.Runner (module LordOfTheRings.Ally.Runner, module X) where
 
+import LordOfTheRings.Classes.HasQueue (pushAll)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -21,8 +22,17 @@ instance RunMessage AllyAttrs where
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
+    AttachFacedown aid card | aid == attrs.allyId -> pure $ attrs & facedownL %~ (card :)
+    -- the cards facedown under it go to their owners' discard piles as it leaves play
+    Discard (isTarget attrs -> True) -> leaving
+    ReturnToHand (isTarget attrs -> True) -> leaving
+    ShuffleIntoOwnersDeck (isTarget attrs -> True) -> leaving
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
+   where
+    leaving = do
+      pushAll $ map PutInDiscard attrs.allyFacedown
+      pure $ attrs & facedownL .~ []

@@ -362,3 +362,26 @@ escapeTest pid source n stat onFail onPass = do
   failed <- capture onFail
   passed <- capture onPass
   push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed
+
+placeObjective :: (ReverseQueue m) => ObjectiveId -> Placement -> m ()
+placeObjective oid = push . PlaceObjective oid
+
+-- | The card goes facedown under the ally.
+attachFacedown :: (ReverseQueue m) => AllyId -> PlayerCard -> m ()
+attachFacedown aid = push . AttachFacedown aid
+
+-- | Discard a shadow card dealt to the enemy, unresolved.
+discardShadowCard :: (ReverseQueue m) => EnemyId -> EncounterCard -> m ()
+discardShadowCard eid card = do
+  push $ RemoveShadowCard eid card.id
+  push $ AddToEncounterDiscard [card]
+
+-- | The encounter card leaves the discard pile for the top of the encounter deck.
+moveToTopOfEncounterDeck :: (ReverseQueue m) => EncounterCard -> m ()
+moveToTopOfEncounterDeck card = do
+  push $ RemoveFromEncounterDiscard card
+  push $ PutOnTopOfEncounterDeck card
+
+-- | The shadow card, a location, becomes the active location.
+putShadowLocationIntoPlay :: (ReverseQueue m) => EnemyId -> CardId -> m ()
+putShadowLocationIntoPlay eid = push . PutShadowLocationIntoPlay eid

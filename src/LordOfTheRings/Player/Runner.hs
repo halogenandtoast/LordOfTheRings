@@ -137,6 +137,7 @@ instance RunMessage Player where
     DiscardRandomFromHand pid n | pid == player.id -> do
       (discarded, kept) <- splitAt n <$> shuffleM player.hand
       pure $ player & handL .~ kept & discardL %~ (discarded <>)
+    PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
     DiscardFromHand pid cid | pid == player.id -> do
       let (discarded, kept) = partition ((== cid) . (.id)) player.hand
       pure $ player & handL .~ kept & discardL %~ (discarded <>)
@@ -183,11 +184,11 @@ instance RunMessage Player where
     takeFromHand cid = maybe (error "not able to find card") pure $ find ((== cid) . (.id)) player.hand
 
 canPlay :: (HasGame m) => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay p.id c]
 
 -- | Whether the game forbids playing the card.
-cannotPlay :: (HasGame m) => Card -> m Bool
-cannotPlay c = any (\case CannotPlay m -> cardMatches m c; _ -> False) <$> getModifiers GameTarget
+cannotPlay :: (HasGame m) => PlayerId -> Card -> m Bool
+cannotPlay pid c = any (\case CannotPlay m -> cardMatches m c; _ -> False) <$> ((<>) <$> getModifiers GameTarget <*> getModifiers (PlayerTarget pid))
 
 canAfford :: (HasGame m) => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of
