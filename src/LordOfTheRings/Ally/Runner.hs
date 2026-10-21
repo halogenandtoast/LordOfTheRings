@@ -19,6 +19,8 @@ instance RunMessage AllyAttrs where
     CommitToQuest (isTarget attrs -> True) -> do
       free <- elem DoesNotExhaustToCommit <$> getModifiers attrs
       pure $ attrs & exhaustedL %~ (|| not free) & committedL .~ True
+    -- an ally put into play committed is aimed at by its card
+    CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> pure $ attrs & exhaustedL .~ True & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False

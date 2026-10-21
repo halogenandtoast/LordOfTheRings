@@ -42,6 +42,7 @@ matchPlayer matcher player = case matcher of
   ActivePlayer -> (== player.id) <$> getsGame gameActivePlayer
   AnyPlayer -> pure True
   NotPlayer m -> not <$> matchPlayer m player
+  PlayerWithThreatAtLeast n -> pure $ player.threat >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
 
 instance Query HeroMatcher where
@@ -68,6 +69,7 @@ matchHero matcher hero = case matcher of
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
   HeroMatchAll ms -> allM (`matchHero` hero) ms
+  HeroMatchAny ms -> anyM (`matchHero` hero) ms
 
 instance Query AllyMatcher where
   type QueryElement AllyMatcher = AllyId
@@ -90,6 +92,7 @@ matchAlly matcher ally = case matcher of
   ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
   AttackingAlly -> pure $ allyAttacking (toAttrs ally)
+  UniqueAlly -> pure $ cdUnique (toCardDef ally)
   AnyAlly -> pure True
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms
@@ -109,6 +112,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyEngagedWith pm -> case enemy.placement of
     EngagedWith pid -> elem pid <$> select pm
     _ -> pure False
+  UniqueEnemy -> pure $ cdUnique (toCardDef enemy)
   AnyEnemy -> pure True
   NotEnemy m -> not <$> matchEnemy m enemy
   EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms

@@ -5,6 +5,8 @@ import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
+import LordOfTheRings.Ally.Types (allyCardId)
+import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
@@ -34,7 +36,12 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           [(effectTarget e, map (Modifier (effectSource e)) (effectModifiers e)) | e <- gameEffects g]
-  pure $ g {gameModifiers = Map.unionWith (<>) fromEntities fromEffects}
+      -- an effect on a card follows it into play as an ally
+      followed =
+        Map.fromListWith
+          (<>)
+          [(AllyTarget (toId a), ms) | a <- toList es.allies, Just ms <- [Map.lookup (CardIdTarget $ allyCardId $ toAttrs a) fromEffects]]
+  pure $ g {gameModifiers = Map.unionsWith (<>) [fromEntities, fromEffects, followed]}
 
 getModifiers :: (HasGame m, Targetable a) => a -> m [ModifierType]
 getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers

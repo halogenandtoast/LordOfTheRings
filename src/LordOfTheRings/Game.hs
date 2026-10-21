@@ -146,15 +146,18 @@ runNext =
       pure True
 
 -- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
--- event in a hand is built from its card to be asked.
+-- event in a hand, or being paid for, is built from its card to be asked.
 withHandModifiers :: Game -> GameT Game
 withHandModifiers g = do
-  MonoidalMap fromHands <- execWriterT $ for_ g.players \player -> for_ player.hand \case
-    PlayerCard pc -> case cdCardType (toCardDef pc) of
-      AllyType -> getModifiersFor $ createAlly pc (AllyId UUID.nil) player.id
-      EventType -> traverse_ getModifiersFor $ lookupEvent (toCardCode pc) pc.id player.id
-      _ -> pure ()
-    EncounterCard _ -> pure ()
+  let fromCard pid = \case
+        PlayerCard pc -> case cdCardType (toCardDef pc) of
+          AllyType -> getModifiersFor $ createAlly pc (AllyId UUID.nil) pid
+          EventType -> traverse_ getModifiersFor $ lookupEvent (toCardCode pc) pc.id pid
+          _ -> pure ()
+        EncounterCard _ -> pure ()
+  MonoidalMap fromHands <- execWriterT do
+    for_ g.players \player -> for_ player.hand (fromCard player.id)
+    for_ (gameActiveCosts g) \ac -> fromCard ac.activeCostPlayer ac.activeCostCard
   pure $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
 
 getPlayers :: (HasGame m) => m [Player]
@@ -216,6 +219,8 @@ runGameMessage msg g = case msg of
     pure $ g & roundL +~ 1
   EndRound -> do
     unless (isJust g.outcome) do
+      leaving <- filterM (fmap (elem DiscardAtEndOfRound) . getModifiers) (toList g.entities.allies)
+      pushAll [Discard (toTarget a) | a <- leaving]
       push $ CheckWindows [mkWhen RoundEnds]
       pushEnd BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
@@ -449,7 +454,9 @@ runGameMessage msg g = case msg of
   PlayerAttacks pid -> do
     enemies <- engagedByCost pid
     loners <- filterM (fmap (elem CanAttackStagingAreaAlone) . getModifiers) =<< select (HeroControlledBy $ PlayerWithId pid)
-    pushAll $ map (DeclareAttackers pid) enemies <> [AttackStagingAreaAlone pid (toTarget h) | h <- loners]
+    raiders <- stagingAttackers =<< readyCharacters pid
+    staged <- if null raiders then pure [] else select EnemyInStagingArea
+    pushAll $ map (DeclareAttackers pid) (enemies <> staged) <> [AttackStagingAreaAlone pid (toTarget h) | h <- loners]
     pure g
   AttackStagingAreaAlone pid attacker -> do
     ready <- elem attacker <$> readyCharacters pid
@@ -463,13 +470,15 @@ runGameMessage msg g = case msg of
       <> [Label (ikey "label.doNotAttack") []]
     pure g
   DeclareAttackers pid eid -> do
-    attackers <- filterM (canFight eid) =<< readyCharacters pid
+    -- only those allowed to may attack an enemy in the staging area
+    staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea)
+    attackers <- filterM (canFight eid) =<< (if staged then stagingAttackers else pure) =<< readyCharacters pid
     push
       $ if null attackers
         then ResolveAttack pid eid
         else
           questionLabelWith (ikey "label.declareAttackers") Nothing [toTarget eid] pid
-            $ [targetLabel a [AttackWith a, DeclareAttackers pid eid] | a <- attackers]
+            $ [targetLabel a [AttackWith a, CheckWindows [mkAfter $ DeclaredAsAttacker a eid], DeclareAttackers pid eid] | a <- attackers]
             <> [Label (ikey "label.doneAttacking") [ResolveAttack pid eid]]
     pure g
   ResolveAttack pid eid -> do
@@ -755,6 +764,10 @@ runGameMessage msg g = case msg of
       $ g
       & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = EngagedWith pid}) guard')
       & scenarioL %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
+  PutEnemyIntoPlayEngaged pid card -> do
+    enemy <- newEnemy card
+    push $ EngageEnemy pid enemy.id
+    pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
@@ -983,6 +996,10 @@ engagedByCost pid = do
   enemies <- select (EnemyEngagedWith $ PlayerWithId pid)
   costs <- traverse getEngagementCost enemies
   pure $ map fst $ sortOn (Down . snd) $ zip enemies costs
+
+-- | The characters that may attack an enemy in the staging area.
+stagingAttackers :: [Target] -> GameT [Target]
+stagingAttackers = filterM (fmap (elem CanAttackStagingArea) . getModifiers)
 
 readyCharacters :: PlayerId -> GameT [Target]
 readyCharacters pid = do

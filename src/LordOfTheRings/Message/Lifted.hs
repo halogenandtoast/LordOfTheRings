@@ -209,6 +209,23 @@ searchDeck pid source n matcher anyNumber = do
   deck <- (.deck) <$> getPlayer pid
   push $ ChooseFromSearch pid (toSource source) (take n deck) matcher anyNumber
 
+-- | The player searches the top N cards of their deck for up to the given number of
+-- matching allies to put into play, each with the modifiers until the end of the round,
+-- then shuffles their deck.
+searchDeckIntoPlay :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> CardMatcher -> Int -> [ModifierType] -> m ()
+searchDeckIntoPlay pid source n matcher count mods = do
+  deck <- (.deck) <$> getPlayer pid
+  push $ ChooseFromSearchIntoPlay pid (toSource source) (take n deck) matcher count mods
+
+-- | The player resolves their attacks before any enemy attacks this combat phase.
+attackBeforeEnemies :: (MonadTrans t, HasQueue Message m) => PlayerId -> t m ()
+attackBeforeEnemies pid = lift $ withQueue_ \q ->
+  if PlayerAttacks pid `notElem` q
+    then q
+    else
+      let (before, after) = break (\case EnemyAttacks _ -> True; _ -> False) (filter (/= PlayerAttacks pid) q)
+       in before <> [PlayerAttacks pid] <> after
+
 discardTopOfDeck :: (ReverseQueue m) => PlayerId -> Int -> m ()
 discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
 

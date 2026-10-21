@@ -16,6 +16,8 @@ data PlayerMatcher
   | ActivePlayer
   | AnyPlayer
   | NotPlayer PlayerMatcher
+  | -- | a player whose threat is at least this, as Valour reads
+    PlayerWithThreatAtLeast Int
   | PlayerMatchAll [PlayerMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
@@ -48,6 +50,8 @@ data HeroMatcher
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]
+  | -- | a hero matching any of them
+    HeroMatchAny [HeroMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -77,6 +81,7 @@ data AllyMatcher
   | ExhaustedAlly
   | CommittedAlly
   | AttackingAlly
+  | UniqueAlly
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]
@@ -100,7 +105,8 @@ instance Not AllyMatcher where
 data AttachMatcher
   = AttachToHero HeroMatcher
   | AttachToCharacter
-  | AttachToCharacterMatching HeroMatcher AllyMatcher
+  | -- | a hero or an ally matching its matcher
+    AttachToCharacterMatching HeroMatcher AllyMatcher
   | AttachToAlly AllyMatcher
   | AttachToEnemy EnemyMatcher
   | AttachToLocation LocationMatcher
@@ -113,6 +119,7 @@ data EnemyMatcher
   | EnemyWithTrait Trait
   | EnemyWithCardCode CardCode
   | EnemyEngagedWith PlayerMatcher
+  | UniqueEnemy
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]

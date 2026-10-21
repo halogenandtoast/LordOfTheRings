@@ -1,6 +1,8 @@
 module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module X) where
 
 import LordOfTheRings.Ability.Types
+import LordOfTheRings.ActiveCost (ActiveCost (..))
+import LordOfTheRings.Effect
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -123,6 +125,24 @@ instance RunMessage Player where
         $ [targetLabel (CardIdTarget c.id) (TakeFromDeck pid c.id : again c <> [ShufflePlayerDeck pid | not anyNumber]) | c <- inDeck, cardMatches matcher c]
         <> [Label (ikey "label.done") [ShufflePlayerDeck pid]]
       pure player
+    ChooseFromSearchIntoPlay pid source cards matcher n mods | pid == player.id && n > 0 -> do
+      let inDeck = filter ((`elem` map (.id) player.deck) . (.id)) cards
+      allies <- filterM passesUnique [c | c <- inDeck, c.cardType == AllyType, cardMatches matcher c]
+      push
+        $ Ask pid
+        $ QuestionLabel (ikey "label.searchPutIntoPlay") (sourceTarget source) []
+        $ SearchCards inDeck
+        $ ChooseOne
+        $ [ targetLabel (CardIdTarget c.id)
+              $ [CreateEffect $ Effect source (CardIdTarget c.id) mods UntilEndOfRound | notNull mods]
+              <> [TakeFromDeck pid c.id, PutAllyIntoPlay pid c.id, ChooseFromSearchIntoPlay pid source (filter ((/= c.id) . (.id)) inDeck) matcher (n - 1) mods]
+          | c <- allies
+          ]
+        <> [Label (ikey "label.done") [ShufflePlayerDeck pid]]
+      pure player
+    ChooseFromSearchIntoPlay pid _ _ _ _ _ | pid == player.id -> do
+      push $ ShufflePlayerDeck pid
+      pure player
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pure $ player & deckL .~ deck & discardL %~ (discarded <>)
@@ -195,11 +215,13 @@ canAfford :: (HasGame m) => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of
   (Just cost, Just sphere) -> do
     extra <- costModifier p.id c
+    heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
+    payers <- filterM (\h -> orM [paysFor sphere h, iconFor c sphere h]) [h | h <- heroes, h.resources > 0]
     case cdDistinctPayers (toCardDef c) of
-      Just n -> (>= n + extra) . length <$> payingHeroes sphere p
+      Just n -> pure $ length payers >= n + extra
       Nothing -> do
         fromAllies <- sum . map snd <$> allyPayersFor p.id c
-        (>= costAsResources cost + extra) . (+ fromAllies) <$> resourcesInSphere sphere p
+        pure $ sum (map (.resources) payers) + fromAllies >= costAsResources cost + extra
   _ -> pure False
 
 -- | What modifiers add to the cost of the card the player would play: the game's, the
@@ -246,7 +268,15 @@ resourcesInSphere sphere player = do
 -- | Whether a hero's resources can pay for a card of the sphere: its own sphere, or one
 -- a resource icon it has gained gives it.
 paysFor :: (HasGame m) => Sphere -> Hero -> m Bool
-paysFor = heroPaysFor
+paysFor sphere h = orM [heroPaysFor sphere h, paying]
+ where
+  paying = do
+    cards <- getsGame (map (.activeCostCard) . toList . gameActiveCosts)
+    orM [iconFor c sphere h | c <- cards]
+
+-- | Whether the hero has the sphere's resource icon while paying for the card.
+iconFor :: (HasGame m) => Card -> Sphere -> Hero -> m Bool
+iconFor c sphere h = any (\case GainResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
 
 startingHandSize :: Int
 startingHandSize = 6

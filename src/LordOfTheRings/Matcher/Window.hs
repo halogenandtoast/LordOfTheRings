@@ -50,6 +50,8 @@ data WindowMatcher
   | -- | a character, or any character, declared as a defender
     DefenderDeclaredWindow Timing (Maybe Target)
   | AllyLeftPlayWindow Timing
+  | -- | a character, or any character, declared as an attacker
+    AttackerDeclaredWindow Timing (Maybe Target)
   | -- | a hero with the trait, controlled by the player, left play
     HeroLeftPlayWindow Timing PlayerId Trait
   deriving stock (Show, Eq, Generic)
@@ -89,5 +91,6 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
   (CardRevealedWindow t, Revealed _) -> t == timing
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
+  (AttackerDeclaredWindow t who, DeclaredAsAttacker target _) -> t == timing && maybe True (== target) who
   (HeroLeftPlayWindow t pid trait, LeftPlay (HeroTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits
   _ -> False

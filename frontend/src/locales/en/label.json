@@ -123,6 +123,7 @@
     "discardSacked": "You may discard a Sacked! card from play"
   },
   "searchTake": "Take cards into your hand",
+  "searchPutIntoPlay": "Put allies into play",
   "revealOne": "Reveal 1 of these cards; the rest are discarded",
   "payOrDiscard": "Pay 1 resource or discard the card",
   "payResource": "Pay 1 resource",

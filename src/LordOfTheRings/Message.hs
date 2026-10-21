@@ -8,6 +8,7 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Id
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Matcher.Types (CardMatcher)
+import LordOfTheRings.Modifier (ModifierType)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -167,7 +168,12 @@ data Message
   | -- | the player takes matching cards from those searched in their deck into hand, any
     -- number of them or only 1 as the flag says, then shuffles their deck
     ChooseFromSearch PlayerId Source [Card] CardMatcher Bool
+  | -- | the player puts up to N matching allies from those searched in their deck into
+    -- play, each with the modifiers until the end of the round, then shuffles their deck
+    ChooseFromSearchIntoPlay PlayerId Source [Card] CardMatcher Int [ModifierType]
   | DiscardTopOfDeck PlayerId Int
+  | -- | an enemy card put into play engaged with the player
+    PutEnemyIntoPlayEngaged PlayerId EncounterCard
   | -- | the player looks at the top cards of the encounter deck, reveals 1 of them and
     -- discards the rest
     RevealOneOfTopEncounterCards PlayerId Source Int

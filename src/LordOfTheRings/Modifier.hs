@@ -1,7 +1,7 @@
 module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
 import LordOfTheRings.Keyword (Keyword)
-import LordOfTheRings.Matcher.Types (CardMatcher)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
@@ -52,6 +52,16 @@ data ModifierType
     AttackBonusAgainst Trait Int
   | -- | the hero may attack an enemy in the staging area when attacking alone
     CanAttackStagingAreaAlone
+  | -- | the character may be declared as an attacker against enemies in the staging area
+    CanAttackStagingArea
+  | -- | when attacking a matching enemy, attack is raised by this much
+    AttackBonusAgainstMatching EnemyMatcher Int
+  | -- | the character is discarded once the attack it makes is over
+    DiscardAfterAttack
+  | -- | on an ally, or its card: it is discarded at the end of the round
+    DiscardAtEndOfRound
+  | -- | on a hero: while paying for a matching card it has the sphere's resource icon
+    GainResourceIconFor CardMatcher Sphere
   | -- | on a player: the enemies engaged with them cannot attack them
     EngagedEnemiesCannotAttack
   | -- | on a player: they may declare any number of defenders against each attack

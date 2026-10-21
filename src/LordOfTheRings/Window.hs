@@ -20,6 +20,7 @@ data WindowType
   | DealtDamage Target Int
   | Traveled LocationId
   | DeclaredAsDefender Target EnemyId
+  | DeclaredAsAttacker Target EnemyId
   | -- | an attack destroyed the enemy: the characters that attacked
     EnemyDestroyedByAttack EnemyId [Target]
   | CharacterDestroyed Target Card

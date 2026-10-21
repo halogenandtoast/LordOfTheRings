@@ -39,7 +39,9 @@ getAttackStrength :: (HasGame m) => [Target] -> EnemyId -> CardDef -> m Int
 getAttackStrength attackers eid enemy = do
   bonuses <- for attackers \a -> do
     mods <- getModifiers a
-    sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
+    byTrait <- sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
+    byMatcher <- sum <$> for [(m, n) | AttackBonusAgainstMatching m n <- mods] \(m, n) -> bool 0 n <$> selectAny (EnemyWithId eid <> m)
+    pure $ byTrait + byMatcher
   (+ sum bonuses) . sum <$> traverse getAttack attackers
 
 -- | The total willpower of every character committed to the quest.
