@@ -56,12 +56,14 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     if (!target?.contents) return null
     if (target.tag === 'CardIdTarget') return target.contents
     const kind = targetKinds[target.tag]
-    return kind ? entities[kind]?.[target.contents]?.cardId ?? null : null
+    // an ally that just left play is still named, as its own response is asked
+    const departed = target.tag === 'AllyTarget' ? game.leftPlay?.[target.contents] : undefined
+    return kind ? entities[kind]?.[target.contents]?.cardId ?? departed?.cardId ?? null : null
   }
 
   const targetName = (target: Target | undefined) => {
     const cardId = targetCardId(target)
-    const entity = Object.values(entities).flatMap((es) => Object.values(es)).find((e) => e.cardId === cardId)
+    const entity = [...Object.values(entities), game.leftPlay ?? {}].flatMap((es) => Object.values(es)).find((e) => e.cardId === cardId)
     return entity ? def(entity.cardCode).name ?? '' : ''
   }
 

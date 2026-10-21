@@ -87,6 +87,8 @@ export interface ServerGame {
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
   entities: Record<'heroes' | 'allies' | 'enemies' | 'locations' | 'attachments' | 'quests' | 'treacheries' | 'objectives', Record<string, Entity>>
+  /** Allies that just left play, kept while their own responses to leaving are asked. */
+  leftPlay?: Record<string, Entity>
   /** Cards being paid for, by cost id. */
   activeCosts: Record<string, { player: string; card: Card }>
   committedWillpower: number
