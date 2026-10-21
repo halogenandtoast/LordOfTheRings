@@ -23,6 +23,7 @@ import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
 import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
+import { table as tableStyle } from '../table'
 import { provideDebug } from '../composables/useDebug'
 import { provideHighlights } from '../composables/useHighlights'
 
@@ -189,7 +190,7 @@ watch(question, (asked) => {
 </script>
 
 <template>
-  <div class="game-view">
+  <div class="game-view" :data-table="tableStyle">
   <GameBar
     :can-undo="canUndo"
     :show-sidebar="showSidebar"
@@ -345,6 +346,9 @@ watch(question, (asked) => {
 
 <style scoped>
 .game-view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+/* the table chosen in settings (see table.ts) */
+.game-view[data-table='playmat'] { background: #151515 url('/images/tables/playmat.jpg') center / cover no-repeat; }
+.game-view[data-table='felt'] { background: #1b1b1b url('/images/tables/felt.jpg') center / cover no-repeat; }
 .layout {
   display: grid;
   grid-template-columns: 1fr auto 280px;

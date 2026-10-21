@@ -104,7 +104,14 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "languageHint": "The language of the interface and the game's messages. Card names and text stay in English for now."
+    "languageHint": "The language of the interface and the game's messages. Card names and text stay in English for now.",
+    "table": "Table",
+    "tableHint": "What the game board is laid out on, in this browser.",
+    "tables": {
+      "plain": "Plain",
+      "playmat": "Playmat",
+      "felt": "Felt"
+    }
   },
   "watch": {
     "title": "Watch",

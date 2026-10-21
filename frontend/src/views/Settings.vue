@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages, normalizeLocale, supportedLocales } from '../locales/messages'
+import { table, tables } from '../table'
 
 // As in Arkham: the language is kept in localStorage, and a language's messages are
 // loaded the first time it is chosen, with no reload.
@@ -34,6 +35,15 @@ const updateLanguage = async () => {
         </select>
       </label>
       <p class="hint">{{ $t('settings.languageHint') }}</p>
+    </section>
+    <section class="panel">
+      <label>
+        {{ $t('settings.table') }}
+        <select v-model="table">
+          <option v-for="option in tables" :key="option" :value="option">{{ $t(`settings.tables.${option}`) }}</option>
+        </select>
+      </label>
+      <p class="hint">{{ $t('settings.tableHint') }}</p>
     </section>
   </div>
 </template>
