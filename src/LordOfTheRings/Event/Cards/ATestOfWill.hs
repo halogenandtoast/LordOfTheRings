@@ -10,7 +10,7 @@ newtype ATestOfWill = ATestOfWill EventAttrs
 -- | Response: Cancel the "when revealed" effects of a card that was just revealed from the
 -- encounter deck.
 aTestOfWill :: EventCard ATestOfWill
-aTestOfWill = eventWith ATestOfWill Cards.aTestOfWill (windowL ?~ CardRevealedWindow When)
+aTestOfWill = eventWith ATestOfWill Cards.aTestOfWill ((windowL ?~ CardRevealedWindow When) . (criteriaL .~ EncounterEffectsCancelable))
 
 instance RunMessage ATestOfWill where
   runMessage msg e@(ATestOfWill attrs) = case msg of

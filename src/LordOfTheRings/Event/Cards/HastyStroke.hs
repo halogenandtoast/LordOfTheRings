@@ -9,7 +9,7 @@ newtype HastyStroke = HastyStroke EventAttrs
 
 -- | Response: Cancel a shadow effect just triggered during combat.
 hastyStroke :: EventCard HastyStroke
-hastyStroke = eventWith HastyStroke Cards.hastyStroke (windowL ?~ ShadowEffectWindow When)
+hastyStroke = eventWith HastyStroke Cards.hastyStroke ((windowL ?~ ShadowEffectWindow When) . (criteriaL .~ EncounterEffectsCancelable))
 
 instance RunMessage HastyStroke where
   runMessage msg e@(HastyStroke attrs) = case msg of

@@ -14,7 +14,7 @@ eleanor = hero Eleanor Cards.eleanor
 -- just revealed by the encounter deck. Then, discard that card, and replace it with the
 -- next card from the encounter deck.
 instance HasAbilities Eleanor where
-  getAbilities (Eleanor a) = [mkAbility a 1 $ ResponseAbility (TreacheryRevealedWindow When) (ExhaustCost $ toTarget a)]
+  getAbilities (Eleanor a) = [restricted a 1 EncounterEffectsCancelable $ ResponseAbility (TreacheryRevealedWindow When) (ExhaustCost $ toTarget a)]
 
 instance RunMessage Eleanor where
   runMessage msg h@(Eleanor attrs) = case msg of
