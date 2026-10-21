@@ -106,7 +106,7 @@ const create = async () => {
           <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
           <img :src="selectedCampaign.image" alt="" />
           <h3 class="campaign-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
-          <button type="button" class="change-campaign" @click="back">{{ $t('newGame.chooseDifferentCampaign') }}</button>
+          <button type="button" class="change-campaign" :aria-label="$t('newGame.chooseDifferentCampaign')" @click="back">{{ $t('newGame.changeCampaign') }}</button>
         </div>
         <div class="card-body">
           <h3 class="card-title">{{ $t('common.scenario') }}</h3>

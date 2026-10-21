@@ -63,6 +63,7 @@
     "scenarioCount": "{count} scenario | {count} scenarios",
     "playableCount": "{count} playable",
     "chooseDifferentCampaign": "Choose a different campaign",
+    "changeCampaign": "Change",
     "comingSoon": "Coming soon",
     "playingAs": "Playing as {player}",
     "gameName": "Game name",
