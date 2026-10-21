@@ -3,6 +3,7 @@
 module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
 import LordOfTheRings.ActiveCost
+import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Id
@@ -37,6 +38,9 @@ data Game = Game
   -- ^ What was committed at the last quest resolution, for the board's tally
   , gameLogBlocks :: [LogBlock]
   -- ^ The log's open blocks, outermost first. See "LordOfTheRings.Log.Block".
+  , gameLeftPlay :: Map AllyId Ally
+  -- ^ Allies that just left play, kept until the window for their leaving closes so
+  -- their own abilities can answer it.
   }
   deriving stock (Show, Generic)
 

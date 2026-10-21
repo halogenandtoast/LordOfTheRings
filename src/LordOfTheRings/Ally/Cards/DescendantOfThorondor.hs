@@ -2,7 +2,6 @@ module LordOfTheRings.Ally.Cards.DescendantOfThorondor (descendantOfThorondor) w
 
 import LordOfTheRings.Ally.CardDefs qualified as Cards
 import LordOfTheRings.Ally.Import.Lifted
-import LordOfTheRings.Placement (placementController)
 
 newtype DescendantOfThorondor = DescendantOfThorondor AllyAttrs
   deriving anyclass (IsAlly, HasModifiersFor)
@@ -16,28 +15,17 @@ descendantOfThorondor = ally DescendantOfThorondor Cards.descendantOfThorondor
 -- enemy in the staging area.
 instance HasAbilities DescendantOfThorondor where
   getAbilities (DescendantOfThorondor a) =
-    [restricted a 1 (exists EnemyInStagingArea) $ response $ entersPlay a]
+    [ restricted a 1 (exists EnemyInStagingArea) $ response $ entersPlay a
+    , restricted a 2 (exists EnemyInStagingArea) $ response $ LeftPlayWindow After (toTarget a)
+    ]
 
--- | Leaving play, it is asked as it goes, while it can still answer.
 instance RunMessage DescendantOfThorondor where
   runMessage msg s@(DescendantOfThorondor a) = case msg of
-    UseCardAbility pid (isSource a -> True) 1 _ -> do
-      strike pid True
-      pure s
-    _ | leaving msg, Just pid <- placementController a.placement -> do
-      strike pid False
-      DescendantOfThorondor <$> runMessage msg a
-    _ -> DescendantOfThorondor <$> runMessage msg a
-   where
-    leaving = \case
-      Discard t -> isTarget a t
-      ReturnToHand t -> isTarget a t
-      ShuffleIntoOwnersDeck t -> isTarget a t
-      _ -> False
-    strike pid entering = do
+    UseCardAbility pid (isSource a -> True) n _ | n `elem` [1, 2] -> do
       enemies <- select EnemyInStagingArea
       chooseOneM pid do
         questionLabeled "descendantOfThorondor.damage"
         causedBy a
         targets enemies \e -> dealDamage a e 2
-        unless entering $ labeled "pass" $ pure ()
+      pure s
+    _ -> DescendantOfThorondor <$> runMessage msg a

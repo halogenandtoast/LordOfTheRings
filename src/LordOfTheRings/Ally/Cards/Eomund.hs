@@ -2,33 +2,23 @@ module LordOfTheRings.Ally.Cards.Eomund (eomund) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Cards
 import LordOfTheRings.Ally.Import.Lifted
-import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Trait (Trait (Rohan))
 
 newtype Eomund = Eomund AllyAttrs
-  deriving anyclass (IsAlly, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsAlly, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 eomund :: AllyCard Eomund
 eomund = ally Eomund Cards.eomund
 
 -- | Response: After Éomund leaves play, ready all Rohan characters in play.
+instance HasAbilities Eomund where
+  getAbilities (Eomund a) = [mkAbility a 1 $ response $ LeftPlayWindow After (toTarget a)]
+
 instance RunMessage Eomund where
-  runMessage msg (Eomund a) = case msg of
-    -- ponytail: a card that has left play offers no abilities, so Éomund asks as he
-    -- leaves; a general "just left play" ability would replace this
-    _ | leaving, Just pid <- placementController a.placement -> do
-      rohan <- filter (/= toTarget a) <$> selectCharacters (HeroWithTrait Rohan) (AllyWithTrait Rohan)
-      chooseOneM pid do
-        questionLabeled "eomund.response"
-        causedBy a
-        labeled "eomund.readyAll" $ for_ rohan ready
-        labeled "pass" $ pure ()
-      Eomund <$> runMessage msg a
+  runMessage msg s@(Eomund a) = case msg of
+    UseCardAbility _ (isSource a -> True) 1 _ -> do
+      rohan <- selectCharacters (HeroWithTrait Rohan) (AllyWithTrait Rohan)
+      for_ rohan ready
+      pure s
     _ -> Eomund <$> runMessage msg a
-   where
-    leaving = case msg of
-      Discard t -> t == toTarget a
-      ReturnToHand t -> t == toTarget a
-      ShuffleIntoOwnersDeck t -> t == toTarget a
-      _ -> False

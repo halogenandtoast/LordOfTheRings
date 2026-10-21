@@ -137,6 +137,7 @@ spec = describe "Defenders of Gondor" do
   it "Squire of the Citadel adds a resource to a Gondor hero as it leaves play" . dogTest $ \pid -> do
     squire <- putAllyIntoPlay pid Allies.squireOfTheCitadel
     run $ Discard squire
+    chooseAbilityOf pid squire
     chooseTarget pid =<< hero boromir
     resources boromir `shouldReturn` 1
 

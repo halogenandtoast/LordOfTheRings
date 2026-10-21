@@ -86,6 +86,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameOutcome = Nothing
     , gameLastCommittedWillpower = Nothing
     , gameLogBlocks = []
+    , gameLeftPlay = mempty
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -173,7 +174,7 @@ instance FromJSON Entities where
   parseJSON = genericParseJSON (aesonOptions $ Just "entities") . withDefaults [("objectives", object [])]
 
 instance FromJSON Game where
-  parseJSON = genericParseJSON (aesonOptions $ Just "game") . withDefaults [("logBlocks", toJSON ([] :: [Value]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "game") . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object [])]
 
 -- | Run the message on one thing in play, putting what it pushes on the queue once it is
 -- done.
@@ -192,7 +193,31 @@ runEntities msg entities =
     >>= traverseOf (objectivesL . traverse) (runEach msg)
 
 runGame :: Message -> Game -> GameT Game
-runGame msg g =
+runGame msg g = case leavingCharacter g msg of
+  -- a character leaving play opens the When window first, while it is still in play
+  Just target -> do
+    windows <- leftPlayWindows g target
+    pushAll [CheckWindows (map mkWhen windows), LeavePlay msg]
+    pure g
+  Nothing -> case msg of
+    LeavePlay inner -> runInPlay inner g
+    _ -> runInPlay msg g
+
+-- | The character a message takes out of play, while it is still in play.
+leavingCharacter :: Game -> Message -> Maybe Target
+leavingCharacter g = \case
+  Discard t | character t -> Just t
+  ReturnToHand t | character t -> Just t
+  ShuffleIntoOwnersDeck t | character t -> Just t
+  _ -> Nothing
+ where
+  character = \case
+    HeroTarget hid -> Map.member hid g.entities.heroes
+    AllyTarget aid -> Map.member aid g.entities.allies
+    _ -> False
+
+runInPlay :: Message -> Game -> GameT Game
+runInPlay msg g =
   announce msg
     >> traverseOf (playersL . traverse) (runEach msg) g
     >>= traverseOf (activeCostsL . traverse) (runEach msg)
@@ -212,6 +237,12 @@ runGameMessage msg g = case msg of
     pushAll msgs
     pure g
   OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
+  -- an ally that has just left play answers its own leaving
+  UseCardAbility _ (AllySource aid) _ _ | Just a <- Map.lookup aid (gameLeftPlay g) -> do
+    a' <- runEach msg a
+    pure $ g & leftPlayL . ix aid .~ a'
+  ForgetLeftPlay aid -> pure $ g & leftPlayL %~ Map.delete aid
+  EndEnemyAttack -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   Setup -> do
     pushAll [DoStep n Setup | n <- [1 .. 7]]
@@ -752,20 +783,17 @@ runGameMessage msg g = case msg of
     pure g
   TravelActions -> do
     order <- getPlayerOrder
-    -- ponytail: only players with a Travel Action get the window; open it for every
-    -- player once action events can be played in the travel phase
-    acting <- filterM (fmap (any isTravelAction) . getActionAbilities) order
-    pushAll $ map ActionWindow acting
+    pushAll $ map ActionWindow order
     pure g
   ReturnToHand target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
-    leftPlay g target
+    g' <- leftPlay g target
     pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
-    pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . handL %~ (<> [toCard a])
+    pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . handL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
-    leftPlay g target
+    g' <- leftPlay g target
     pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
-    pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+    pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
   ReturnToTopOfEncounterDeck target -> do
     let toTop card = scenarioL %~ overAttrs (encounterDeckL %~ (card :))
         withAttached = pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
@@ -982,7 +1010,10 @@ eliminationThreat = 50
 
 -- | Remove an entity from play and put its card in the right discard pile.
 discardTarget :: Target -> Game -> GameT Game
-discardTarget target g = leftPlay g target >> case target of
+discardTarget target = discardFromPlay target <=< (`leftPlay` target)
+
+discardFromPlay :: Target -> Game -> GameT Game
+discardFromPlay target g = case target of
   HeroTarget hid -> fromEntity heroesL hid
   AllyTarget aid -> fromEntity alliesL aid
   EnemyTarget eid -> fromEntity enemiesL eid
@@ -1023,20 +1054,33 @@ discardTarget target g = leftPlay g target >> case target of
     EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
     _ -> id
 
--- | Open the window for a character leaving play, while it can still be looked at.
-leftPlay :: Game -> Target -> GameT ()
-leftPlay g target = case target of
-  HeroTarget hid | Just h <- Map.lookup hid g.entities.heroes -> window h.owner (toCardDef h)
-  AllyTarget aid | Just a <- Map.lookup aid g.entities.allies, Just pid <- placementController a.placement -> window pid (toCardDef a)
-  _ -> pure ()
+-- | Open the window for a character leaving play, while it can still be looked at. An
+-- ally is kept aside until the window closes, so its own abilities can answer it.
+leftPlay :: Game -> Target -> GameT Game
+leftPlay g target = do
+  windows <- leftPlayWindows g target
+  case target of
+    AllyTarget aid | Just a <- Map.lookup aid g.entities.allies, notNull windows -> do
+      pushAll [CheckWindows (map mkAfter windows), ForgetLeftPlay aid]
+      pure $ g & leftPlayL %~ Map.insert aid a
+    _ -> do
+      unless (null windows) $ push $ CheckWindows (map mkAfter windows)
+      pure g
+
+-- | What a character leaving play opens windows for.
+leftPlayWindows :: Game -> Target -> GameT [WindowType]
+leftPlayWindows g target = case target of
+  HeroTarget hid | Just h <- Map.lookup hid g.entities.heroes -> window h.owner (toCardDef h) (toCard h)
+  AllyTarget aid | Just a <- Map.lookup aid g.entities.allies, Just pid <- placementController a.placement -> window pid (toCardDef a) (toCard a)
+  _ -> pure []
  where
-  window pid def = do
+  window pid def card = do
     gained <- gainedTraits target
-    let card = case target of
-          HeroTarget hid -> toCard <$> Map.lookup hid g.entities.heroes
-          AllyTarget aid -> toCard <$> Map.lookup aid g.entities.allies
-          _ -> Nothing
-    push $ CheckWindows $ mkAfter (LeftPlay target pid (cdCardTraits def <> gained)) : [mkAfter $ CharacterLeftPlay c | Just c <- [card]]
+    pure [LeftPlay target pid (cdCardTraits def <> gained), CharacterLeftPlay card]
+
+-- | The character is defending the attack being resolved.
+defendingEffect :: Target -> Message
+defendingEffect d = CreateEffect $ Effect GameSource d [Defending] UntilEndOfAttack
 
 gainedTraits :: Target -> GameT (Set Trait)
 gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
@@ -1076,18 +1120,16 @@ allyEntersPlay pid a = CheckWindows [mkAfter $ EntersPlay $ toTarget a, mkAfter 
 handResponses :: PlayerId -> [Window] -> Message -> GameT [UI Message]
 handResponses pid windows continue = do
   player <- getPlayer pid
-  let matches = maybe False (\w -> any (windowMatches w) windows)
+  let matches = maybe (pure False) (\w -> anyM (windowMatchesM w) windows)
   fmap catMaybes $ for player.hand \case
     card@(PlayerCard pc) -> case cdCardType (toCardDef pc) of
       EventType
-        | Just e <- lookupEvent (toCardCode pc) pc.id pid
-        , matches (toAttrs e).eventWindow -> do
-            ok <- andM [passesCriteria (toAttrs e).eventCriteria, canAfford player card, not <$> cannotPlay pid card]
+        | Just e <- lookupEvent (toCardCode pc) pc.id pid -> do
+            ok <- andM [matches (toAttrs e).eventWindow, passesCriteria (toAttrs e).eventCriteria, canAfford player card, not <$> cannotPlay pid card]
             pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PlayCardInWindow pid pc.id windows, continue]
-      AllyType
-        | matches (allyHandWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid) -> do
-            ok <- passesUnique card
-            pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PutAllyIntoPlay pid pc.id, continue]
+      AllyType -> do
+        ok <- andM [matches (allyHandWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid), passesUnique card]
+        pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PutAllyIntoPlay pid pc.id, continue]
       _ -> pure Nothing
     EncounterCard _ -> pure Nothing
 

@@ -73,6 +73,11 @@ data Message
   | EliminatePlayer PlayerId
   | GameOver Outcome
   | Discard Target
+  | -- | a character leaves play now, the When window for its leaving having closed: the
+    -- Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it
+    LeavePlay Message
+  | -- | the window for the ally's leaving play has closed: its abilities answer no more
+    ForgetLeftPlay AllyId
   | DealDamage Source Target Int
   | HealDamage Source Target Int
   | -- | the player looks at the top card of the encounter deck, and may move it to the
@@ -115,6 +120,10 @@ data Message
     DebugSearchEncounterDeck PlayerId
   | LowerThreat PlayerId Int
   | ActionWindow PlayerId
+  | -- | an action window within an attack, asked only when the player has an action to take
+    OptionalActionWindow PlayerId
+  | -- | an enemy's attack is over: what lasts until the end of the attack ends
+    EndEnemyAttack
   | PayCost CostId
   | PaidCost CostId
   | SpendResources PlayerId Sphere Int

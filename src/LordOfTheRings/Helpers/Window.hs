@@ -28,6 +28,15 @@ import LordOfTheRings.Window
 getAllAbilities :: (HasGame m) => m [Ability]
 getAllAbilities = do
   es <- getsGame gameEntities
+  -- an ally that just left play answers only its own leaving, as Arkham's cards in discard
+  departed <- getsGame gameLeftPlay
+  let leftPlayAbilities =
+        [ ab
+        | a <- toList departed
+        , ab <- getAbilities a
+        , Just (LeftPlayWindow _ t) <- [abilityWindow ab]
+        , t == toTarget a
+        ]
   -- attachments whose text is blank have no abilities
   blank <- elem BlankAttachments <$> getModifiers GameTarget
   let abilities =
@@ -40,6 +49,7 @@ getAllAbilities = do
           , concatMap getAbilities (toList es.quests)
           , if blank then [] else concatMap getAbilities (toList es.attachments)
           , concatMap getAbilities (toList es.objectives)
+          , leftPlayAbilities
           ]
   -- a card a condition has blanked offers none
   flip filterM abilities \ab -> notElem CannotTriggerAbilities <$> maybe (pure []) getModifiers (sourceTarget ab.abilitySource)
@@ -49,8 +59,23 @@ getWindowAbilities :: (HasGame m) => [Window] -> m [Ability]
 getWindowAbilities windows = do
   abilities <- getAllAbilities
   flip filterM abilities \ab -> case abilityWindow ab of
-    Just matcher | any (windowMatches matcher) windows -> andM [passesCriteria ab.abilityCriteria, canPay (abilityCost ab), withinLimit ab]
+    Just matcher -> andM [anyM (windowMatchesM matcher) windows, passesCriteria ab.abilityCriteria, canPay (abilityCost ab), withinLimit ab]
     _ -> pure False
+
+-- | Whether the window matches, reading the game for the matchers that need it.
+windowMatchesM :: (HasGame m) => WindowMatcher -> Window -> m Bool
+windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
+  (LeftPlaySharingTraitWindow t host, LeftPlay _ _ traits) | t == timing -> do
+    def <- hostDef host
+    anyM (\trait -> hasTrait trait host def) (toList traits)
+  (EnemyDestroyedByHeroWindow t m, EnemyDestroyedByAttack _ attackers) | t == timing ->
+    anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
+  _ -> pure $ windowMatches matcher w
+ where
+  hostDef = \case
+    HeroTarget hid -> toCardDef <$> getHero hid
+    AllyTarget aid -> toCardDef <$> getAlly aid
+    _ -> error "not a character"
 
 -- | Whether an ability's limit leaves it a use: its controller's uses for a player
 -- limit, everyone's for a group limit.
@@ -142,7 +167,10 @@ abilityController ab = go ab.abilitySource
   go = \case
     AbilitySource s _ -> go s
     HeroSource hid -> Just . (.owner) <$> getHero hid
-    AllySource aid -> placementController . (.placement) <$> getAlly aid
+    -- one that just left play is still asked of its controller
+    AllySource aid -> do
+      g <- getGame
+      pure $ placementController . (.placement) =<< (Map.lookup aid g.entities.allies <|> Map.lookup aid (gameLeftPlay g))
     PlayerSource pid -> pure $ Just pid
     AttachmentSource aid -> fmap (attachmentOwner . toAttrs) . Map.lookup aid <$> getsGame (entitiesAttachments . gameEntities)
     -- encounter cards' responses are the first player's to make

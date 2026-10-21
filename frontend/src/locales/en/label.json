@@ -262,10 +262,6 @@
   "westfoldHorseBreaker": {
     "ready": "Choose a hero to ready"
   },
-  "eomund": {
-    "response": "Éomund left play: ready all Rohan characters?",
-    "readyAll": "Ready all Rohan characters"
-  },
   "theRiddermarksFinest": {
     "location": "Place 2 progress on a location"
   },
@@ -389,7 +385,7 @@
   "moveResourceTo": "Choose a hero to move the resource to",
   "chooseHeroForResource": "Choose a hero to add 1 resource to",
   "squireOfTheCitadel": {
-    "chooseHero": "Squire of the Citadel left play: add 1 resource to a Gondor hero?"
+    "chooseHero": "Choose a Gondor hero to add 1 resource to"
   },
   "emynArnenRanger": {
     "chooseEnemy": "Choose an enemy with a Trap attached"

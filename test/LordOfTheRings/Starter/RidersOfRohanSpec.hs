@@ -102,8 +102,7 @@ spec = describe "Riders of Rohan" do
       eomund <- putAllyIntoPlay pid Allies.eomund
       run . Exhaust =<< hero eomerCode
       run $ Discard eomund
-      passResponses pid
-      chooseLabel "$label.eomund.readyAll" pid
+      chooseAbilityOf pid eomund
       exhausted eomerCode `shouldReturn` False
 
   describe "Escort from Edoras" do
@@ -351,6 +350,21 @@ spec = describe "Riders of Rohan" do
       ally' <- putAllyIntoPlay pid Allies.westfoldOutrider
       handBefore <- handSize pid
       run $ Discard ally'
+      chooseAbilityOf pid horn
+      handSize pid `shouldReturn` (handBefore + 1)
+
+    it "is not offered when the character shares no trait with its hero" . rohanTest $ \pid -> do
+      eomer <- hero eomerCode
+      horn <- putAttachmentOn pid Attachments.hornOfTheMark eomer
+      ally' <- putAllyIntoPlay pid Allies.wanderingTook
+      run $ Discard ally'
+      offersAbilityOf pid horn `shouldReturn` False
+
+    it "answers its own hero leaving play, as it does so" . rohanTest $ \pid -> do
+      eomer <- hero eomerCode
+      horn <- putAttachmentOn pid Attachments.hornOfTheMark eomer
+      handBefore <- handSize pid
+      run $ Discard eomer
       chooseAbilityOf pid horn
       handSize pid `shouldReturn` (handBefore + 1)
 

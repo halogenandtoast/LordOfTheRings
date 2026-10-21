@@ -33,7 +33,8 @@ targetRefFor target = do
       ref kind m k = entityRef kind k <$> Map.lookup k m
   case target of
     HeroTarget k -> pure $ (\h -> (entityRef RefHero k h) {logRefFaceDown = heroPrisoner (toAttrs h)}) <$> Map.lookup k es.heroes
-    AllyTarget k -> pure $ ref RefAlly es.allies k
+    -- one that has just left play is still named, as its own ability answers it
+    AllyTarget k -> pure $ ref RefAlly es.allies k <|> ref RefAlly (gameLeftPlay g) k
     EnemyTarget k -> pure $ ref RefEnemy es.enemies k
     LocationTarget k -> pure $ ref RefLocation es.locations k
     AttachmentTarget k -> pure $ ref RefAttachment es.attachments k
