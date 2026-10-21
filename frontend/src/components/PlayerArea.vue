@@ -32,7 +32,7 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 <template>
   <section class="band player" :class="{ eliminated: player.eliminated }">
     <div class="piles">
-      <DiscardPile :cards="player.discard" back="player" :data-pile="`discard-${player.playerId}`" />
+      <DiscardPile :cards="player.discard" back="player" :choices="choices" @choose="emit('choose', $event)" :data-pile="`discard-${player.playerId}`" />
       <div class="deck">
         <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
         <div v-if="debugging" class="deck-debug">

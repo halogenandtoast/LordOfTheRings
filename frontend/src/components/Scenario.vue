@@ -21,7 +21,7 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
 <template>
   <section class="band scenario">
     <span class="band-label">{{ $t('game.bands.scenario') }}</span>
-    <DiscardPile :cards="scenario.discard" back="encounter" data-pile="discard-encounter" />
+    <DiscardPile :cards="scenario.discard" back="encounter" :choices="choices" @choose="emit('choose', $event)" data-pile="discard-encounter" />
     <div class="deck">
       <CardBack :count="scenario.encounterDeck" back="encounter" data-pile="deck-encounter" />
       <div v-if="debugging && playerId" class="deck-debug">

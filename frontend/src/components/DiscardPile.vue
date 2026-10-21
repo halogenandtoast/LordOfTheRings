@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, onMounted, useTemplateRef, watch } from 'vue'
 import GameCard from './GameCard.vue'
-import type { CardView } from '../types'
+import type { CardView, ChoiceView } from '../types'
 
 // the victory display is the same pile: an empty place for a card, the count opening the rest
-const { cards, back, kind = 'discard' } = defineProps<{
+const { cards, back, kind = 'discard', choices = [] } = defineProps<{
   cards: CardView[]
+  choices?: ChoiceView[]
   back: 'player' | 'encounter' | 'victory'
   kind?: 'discard' | 'victory'
 }>()
+const emit = defineEmits<{ choose: [index: number] }>()
 
 // the engine keeps piles most recently discarded first
 const top = computed(() => cards[0] ?? null)
@@ -58,6 +60,12 @@ const toggle = async () => {
   document.addEventListener('keydown', onKeydown)
 }
 
+// a choice of a card in the pile opens it, and answering closes it again
+const asked = computed(() => cards.some((c) => choices.some((option) => option.targetId === c.id)))
+const follow = () => asked.value !== open.value && toggle()
+watch(asked, follow, { flush: 'post' })
+onMounted(follow)
+
 onBeforeUnmount(close)
 </script>
 
@@ -65,7 +73,7 @@ onBeforeUnmount(close)
   <div class="pile-stack">
     <div :class="kind">
       <div v-if="!top" class="pile" :class="[back, 'empty']" />
-      <GameCard v-else :card="top" />
+      <GameCard v-else :card="top" :choices="choices" @choose="emit('choose', $event)" />
     </div>
     <button
       v-if="cards.length"
@@ -83,10 +91,10 @@ onBeforeUnmount(close)
     <span v-else class="pile-count">0</span>
 
     <Teleport to="body">
-      <div v-if="open" ref="panel" class="discard-panel" :style="position">
+      <div v-if="open" ref="panel" class="discard-panel" :class="{ asked }" :style="position">
         <div class="discard-panel-header">{{ $t(`game.${kind}.header`, { count: cards.length }) }}</div>
         <div class="discard-panel-cards">
-          <GameCard v-for="card in pile" :key="card.id" :card="card" />
+          <GameCard v-for="card in pile" :key="card.id" :card="card" :choices="choices" @choose="emit('choose', $event)" />
         </div>
       </div>
     </Teleport>
@@ -151,4 +159,6 @@ onBeforeUnmount(close)
 }
 .discard-panel-cards :deep(img) { filter: grayscale(0.85); transition: filter 0.15s ease; }
 .discard-panel-cards :deep(.card:hover img) { filter: none; }
+/* picking from the pile, its cards show in full colour */
+.discard-panel.asked .discard-panel-cards :deep(img) { filter: none; }
 </style>
