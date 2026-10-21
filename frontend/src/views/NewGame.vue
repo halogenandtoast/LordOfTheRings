@@ -12,9 +12,8 @@ const tr = useServerText()
 
 const { t } = useI18n()
 const router = useRouter()
-const firstPlayable = (c: Campaign) => c.scenarios.find((s) => s.available) ?? null
-const selectedCampaign = ref<Campaign>(campaigns.find(firstPlayable) ?? campaigns[0])
-const selectedScenario = ref<ScenarioOption | null>(firstPlayable(selectedCampaign.value))
+const selectedCampaign = ref<Campaign | null>(null)
+const selectedScenario = ref<ScenarioOption | null>(null)
 const gameName = ref('')
 const creating = ref(false)
 // As in Arkham: decided when the game is made, starting from the player's default,
@@ -34,12 +33,19 @@ const error = ref<string | null>(null)
 // friends to the open ones.
 const seatCount = ref(1)
 
+const playableCount = (c: Campaign) => c.scenarios.filter((s) => s.available).length
 const defaultName = computed(() => selectedScenario.value?.name ?? '')
 const canCreate = computed(() => !!selectedScenario.value?.available && !creating.value)
 
 const chooseCampaign = (c: Campaign) => {
   selectedCampaign.value = c
-  selectedScenario.value = firstPlayable(c)
+  selectedScenario.value = c.scenarios.find((s) => s.available) ?? null
+}
+
+const back = () => {
+  selectedCampaign.value = null
+  selectedScenario.value = null
+  error.value = null
 }
 
 const cancel = () => router.push('/')
@@ -72,16 +78,37 @@ const create = async () => {
       <button type="button" class="cancel-new-game-button" @click="cancel">{{ $t('common.cancel') }}</button>
     </header>
 
-    <form id="new-game" @submit.prevent="create">
-      <fieldset>
-        <legend>{{ $t('common.scenario') }}</legend>
-        <div class="scenario-row">
-          <div class="campaign">
-            <img :src="selectedCampaign.image" alt="" />
-            <select :value="selectedCampaign.id" :aria-label="$t('newGame.campaign')" @change="chooseCampaign(campaigns.find((c) => c.id === ($event.target as HTMLSelectElement).value)!)">
-              <option v-for="c in campaigns" :key="c.id" :value="c.id">{{ c.name }}</option>
-            </select>
-          </div>
+    <div v-if="!selectedCampaign" id="new-game">
+      <section class="card">
+        <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
+        <div class="campaigns">
+          <button
+            v-for="c in campaigns"
+            :key="c.id"
+            type="button"
+            class="campaign-box"
+            :class="{ unavailable: playableCount(c) === 0 }"
+            @click="chooseCampaign(c)"
+          >
+            <img :src="c.image" alt="" />
+            <span class="campaign-name"><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</span>
+            <span class="campaign-count">
+              {{ $t('newGame.scenarioCount', c.scenarios.length) }}<template v-if="playableCount(c) > 0"> &middot; {{ $t('newGame.playableCount', { count: playableCount(c) }) }}</template>
+            </span>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <form v-else id="new-game" @submit.prevent="create">
+      <section class="card split">
+        <div class="campaign">
+          <img :src="selectedCampaign.image" alt="" />
+          <h3><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
+          <button type="button" class="change-campaign" @click="back">{{ $t('newGame.chooseDifferentCampaign') }}</button>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ $t('common.scenario') }}</h3>
           <div class="scenarios">
             <button
               v-for="option in selectedCampaign.scenarios"
@@ -99,11 +126,11 @@ const create = async () => {
             </button>
           </div>
         </div>
-      </fieldset>
+      </section>
 
       <template v-if="selectedScenario">
-        <fieldset>
-          <legend>{{ $t('common.game') }}</legend>
+        <section class="card">
+          <h3 class="card-title">{{ $t('common.game') }}</h3>
           <label>
             {{ $t('newGame.gameName') }}
             <input v-model="gameName" type="text" :placeholder="defaultName" />
@@ -140,12 +167,13 @@ const create = async () => {
             <span v-else-if="savedDefault" class="saved">{{ $t('newGame.defaultSaved') }}</span>
             <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
           </div>
-        </fieldset>
+        </section>
       </template>
 
       <p v-if="error" class="error">{{ tr(error) }}</p>
 
-      <div>
+      <div class="wizard-actions">
+        <button type="button" class="secondary-action" @click="back">{{ $t('common.back') }}</button>
         <button class="primary-action" type="submit" :disabled="!canCreate">
           {{ creating ? $t('newGame.creating') : $t('common.create') }}
         </button>
@@ -206,42 +234,88 @@ h2 {
 
 #new-game {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   color: var(--text);
 }
 
-fieldset {
+.card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
   background: var(--box-background);
   border: 1px solid var(--box-border);
-  border-radius: 5px;
-  padding: 12px 14px 14px;
-  margin: 0;
-  display: grid;
-  gap: 10px;
+  border-radius: 8px;
 }
-
-legend {
+.card-title {
+  margin: 0;
+  font-family: inherit;
   color: var(--title);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 0 6px;
 }
 
-.scenario-row { display: grid; grid-template-columns: 216px 1fr; align-items: stretch; gap: 16px; }
-.campaign { display: grid; gap: 8px; align-content: start; padding-right: 16px; border-right: 1px solid var(--line-strong); }
-@media (max-width: 600px) {
-  .scenario-row { grid-template-columns: 1fr; }
-  .campaign { padding: 0 0 16px; border-right: 0; border-bottom: 1px solid var(--line-strong); }
+/* the campaign down the left, from top to bottom, and its scenarios beside it */
+.card.split { grid-template-columns: 216px 1fr; gap: 0; padding: 0; overflow: hidden; }
+.split .campaign {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 16px;
+  border-right: 1px solid var(--line-strong);
 }
+.split .card-body { display: grid; gap: 12px; align-content: start; padding: 16px; }
+@media (max-width: 600px) {
+  .card.split { grid-template-columns: 1fr; }
+  .split .campaign { border-right: 0; border-bottom: 1px solid var(--line-strong); }
+}
+
+.campaigns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.campaign-box {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--input-background);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  font: inherit;
+  text-align: center;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.campaign-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.campaign-box:hover { border-color: var(--accent); transform: translateY(-2px); }
+.campaign-box.unavailable img { filter: grayscale(70%); }
+.campaign-name { display: flex; align-items: center; gap: 6px; padding: 8px 8px 0; font-weight: 700; text-align: left; }
+.campaign-name .icon, .scenario-name .icon { font-size: 1.2em; }
+.campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
 .campaign img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
-.scenario-name .icon { font-size: 1.2em; }
+.campaign h3 { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
+.change-campaign {
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent-bright);
+  font: inherit;
+  font-size: 0.85em;
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 .scenarios {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .scenario-box {
@@ -355,6 +429,26 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }
+
+.wizard-actions {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 12px;
+}
+
+.secondary-action {
+  font: inherit;
+  font-weight: 700;
+  padding: 15px;
+  background: var(--button-secondary);
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.secondary-action:hover { background: var(--button-secondary-hover); }
 
 .primary-action {
   width: 100%;

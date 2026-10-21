@@ -60,6 +60,9 @@
   "newGame": {
     "title": "New Game",
     "campaign": "Campaign",
+    "scenarioCount": "{count} scenario | {count} scenarios",
+    "playableCount": "{count} playable",
+    "chooseDifferentCampaign": "Choose a different campaign",
     "comingSoon": "Coming soon",
     "playingAs": "Playing as {player}",
     "gameName": "Game name",
