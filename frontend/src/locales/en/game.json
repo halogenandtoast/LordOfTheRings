@@ -70,6 +70,7 @@
     "player": "player"
   },
   "debug": {
+    "defeat": "Defeat",
     "lowerThreat": "Lower threat",
     "raiseThreat": "Raise threat",
     "draw": "Draw",

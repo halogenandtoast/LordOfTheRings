@@ -79,8 +79,11 @@ const dragStart = (event: DragEvent) => {
 
 const { active: debugging, send } = useDebug()
 const counts = computed(() => ({ Damage: card.damage, Progress: card.progress ?? 0, Resource: card.resources ?? 0 }))
-const adjust = (token: keyof typeof counts.value, amount: 1 | -1) =>
-  send({ tag: amount > 0 ? 'PlaceTokens' : 'RemoveTokens', contents: [{ tag: 'GameSource' }, card.target, token, 1] })
+const adjust = (token: keyof typeof counts.value, amount: 1 | -1) => {
+  const placing = { tag: amount > 0 ? 'PlaceTokens' : 'RemoveTokens', contents: [{ tag: 'GameSource' }, card.target, token, 1] }
+  // enough damage defeats it, as damage from play would
+  send(token === 'Damage' && amount > 0 ? { tag: 'Run', contents: [placing, { tag: 'CheckDefeated', contents: card.target }] } : placing)
+}
 
 // Each time a token's count goes up it is placed again, keyed afresh so its drop plays.
 const placed = reactive({ resources: 0, progress: 0, damage: 0 })
@@ -174,6 +177,10 @@ const toggleUnless = (attached: CardView) => {
         {{ $t(`game.debug.tokens.${token}`) }}
         <button type="button" :aria-label="$t('game.debug.addToken', { token: $t(`game.debug.tokens.${token}`) })" @click="adjust(token, 1)">+</button>
       </span>
+      <!-- destroyed as by damage: to the victory display or the discard pile -->
+      <button v-if="card.target.tag === 'EnemyTarget'" type="button" class="defeat" @click="send({ tag: 'Destroy', contents: card.target })">
+        {{ $t('game.debug.defeat') }}
+      </button>
     </div>
     <ChoiceMenu
       v-if="menuOpen && cardRef"
@@ -454,6 +461,7 @@ const toggleUnless = (attached: CardView) => {
 .debug span { display: flex; align-items: center; justify-content: space-between; }
 .debug button { width: 18px; height: 16px; padding: 0; border: 1px solid var(--line); border-radius: 3px; background: none; color: inherit; cursor: pointer; }
 .debug button:disabled { opacity: 0.35; cursor: default; }
+.debug button.defeat { width: auto; height: auto; padding: 2px 0; line-height: 1.2; }
 /* a card offering several choices: clicking it asks which */
 .more-choices {
   position: absolute;
