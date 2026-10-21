@@ -43,6 +43,12 @@ import LordOfTheRings.Attachment.Cards.FastHitch
 import LordOfTheRings.Attachment.Cards.SongOfBattle
 import LordOfTheRings.Attachment.Cards.DunedainSignal
 import LordOfTheRings.Attachment.Cards.SupportOfTheEagles
+import LordOfTheRings.Attachment.Cards.Vilya
+import LordOfTheRings.Attachment.Cards.Nenya
+import LordOfTheRings.Attachment.Cards.OLorien
+import LordOfTheRings.Attachment.Cards.Lembas
+import LordOfTheRings.Attachment.Cards.BowOfTheGaladhrim
+import LordOfTheRings.Attachment.Cards.Wingfoot
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -77,6 +83,12 @@ allAttachments =
     | card@(SomeAttachmentCard builder) <-
         [ SomeAttachmentCard stewardOfGondor
         , SomeAttachmentCard celebriansStone
+        , SomeAttachmentCard vilya
+        , SomeAttachmentCard nenya
+        , SomeAttachmentCard oLorien
+        , SomeAttachmentCard lembas
+        , SomeAttachmentCard bowOfTheGaladhrim
+        , SomeAttachmentCard wingfoot
         , SomeAttachmentCard bladeOfGondolin
         , SomeAttachmentCard citadelPlate
         , SomeAttachmentCard dwarvenAxe

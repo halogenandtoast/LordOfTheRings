@@ -2,7 +2,6 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher)
 import LordOfTheRings.Prelude
@@ -121,8 +120,6 @@ data ModifierType
     EngagedAnEnemyThisRound
   | -- | on a player: they played a copy of the card this phase
     PlayedThisPhase CardCode
-  | -- | when attacking an enemy not engaged with the player, attack is raised by this much
-    AttackBonusAgainstEnemyNotEngagedWith PlayerId Int
   | -- | on a card: the card type its controller named
     NamedCardType CardType
   deriving stock (Show, Eq, Generic)

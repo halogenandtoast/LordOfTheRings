@@ -83,6 +83,7 @@ library
       LordOfTheRings.Attachment.Cards.AncientMathom
       LordOfTheRings.Attachment.Cards.BladeOfGondolin
       LordOfTheRings.Attachment.Cards.BornAloft
+      LordOfTheRings.Attachment.Cards.BowOfTheGaladhrim
       LordOfTheRings.Attachment.Cards.CelebriansStone
       LordOfTheRings.Attachment.Cards.CitadelPlate
       LordOfTheRings.Attachment.Cards.DarkKnowledge
@@ -97,8 +98,11 @@ library
       LordOfTheRings.Attachment.Cards.ForestSnare
       LordOfTheRings.Attachment.Cards.HornOfGondor
       LordOfTheRings.Attachment.Cards.HornOfTheMark
+      LordOfTheRings.Attachment.Cards.Lembas
       LordOfTheRings.Attachment.Cards.MendorsSupport
+      LordOfTheRings.Attachment.Cards.Nenya
       LordOfTheRings.Attachment.Cards.NorAmIAStranger
+      LordOfTheRings.Attachment.Cards.OLorien
       LordOfTheRings.Attachment.Cards.PowerInTheEarth
       LordOfTheRings.Attachment.Cards.ProtectorOfLorien
       LordOfTheRings.Attachment.Cards.RohanWarhorse
@@ -115,7 +119,9 @@ library
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
       LordOfTheRings.Attachment.Cards.TheRedArrow
       LordOfTheRings.Attachment.Cards.UnexpectedCourage
+      LordOfTheRings.Attachment.Cards.Vilya
       LordOfTheRings.Attachment.Cards.WarAxe
+      LordOfTheRings.Attachment.Cards.Wingfoot
       LordOfTheRings.Attachment.Import.Lifted
       LordOfTheRings.Attachment.Runner
       LordOfTheRings.Attachment.Types
