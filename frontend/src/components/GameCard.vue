@@ -102,34 +102,36 @@ const toggleUnless = (attached: CardView) => {
       </div>
     </div>
 
-    <div
-      ref="cardRef"
-      class="card"
-      :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, flipping }"
-      :style="{ viewTransitionName: `card-${card.id}` }"
-      :title="tr(card.name)"
-      :data-card-id="card.id"
-      :draggable="draggable && active && overlay.canHover.value"
-      @dragstart="dragStart"
-      @pointerenter="$event.pointerType === 'mouse' && showOverlay()"
-      @pointerleave="$event.pointerType === 'mouse' && overlay.hide()"
-      @pointerdown="press"
-      @pointerup="cancelPress"
-      @pointercancel="cancelPress"
-      @contextmenu="lastPointer !== 'mouse' && $event.preventDefault()"
-      @click="choose"
-    >
-      <img :src="source" :alt="tr(card.name)" />
-      <!-- inside the card so it travels in the card's view transition snapshot -->
-      <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
-      <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
-      <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
-      <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
-    </div>
-    <div v-if="card.stats.length && !banner" class="stats">
-      <span v-for="[stat, value] in card.stats" :key="stat" :class="stat" :title="$t(`game.${stat}`, { value })">
-        {{ value }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/${stat}.svg')` }" />
-      </span>
+    <div class="face">
+      <div
+        ref="cardRef"
+        class="card"
+        :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, flipping }"
+        :style="{ viewTransitionName: `card-${card.id}` }"
+        :title="tr(card.name)"
+        :data-card-id="card.id"
+        :draggable="draggable && active && overlay.canHover.value"
+        @dragstart="dragStart"
+        @pointerenter="$event.pointerType === 'mouse' && showOverlay()"
+        @pointerleave="$event.pointerType === 'mouse' && overlay.hide()"
+        @pointerdown="press"
+        @pointerup="cancelPress"
+        @pointercancel="cancelPress"
+        @contextmenu="lastPointer !== 'mouse' && $event.preventDefault()"
+        @click="choose"
+      >
+        <img :src="source" :alt="tr(card.name)" />
+        <!-- inside the card so it travels in the card's view transition snapshot -->
+        <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
+        <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
+        <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
+        <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
+      </div>
+      <div v-if="card.stats.length && !banner" class="stats">
+        <span v-for="[stat, value] in card.stats" :key="stat" :class="stat" :title="$t(`game.${stat}`, { value })">
+          {{ value }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/${stat}.svg')` }" />
+        </span>
+      </div>
     </div>
 
     <div v-if="debugging && card.target" class="debug" @click.stop>
@@ -163,12 +165,12 @@ const toggleUnless = (attached: CardView) => {
 .stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 3px 0; }
 /* upright, the card squares off its bottom and drops its ring there, and the strip's
    border carries on its sides, so card and strip read as one with no line between */
-.with-stats > .card img {
+.with-stats .face > .card img {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   box-shadow: -1px 0 0 rgb(255 255 255 / 0.14), 1px 0 0 rgb(255 255 255 / 0.14), 0 -1px 0 rgb(255 255 255 / 0.14);
 }
-.with-stats > .stats { margin: 0 -1px; border-top: 0; border-radius: 0 0 7px 7px; }
+.with-stats .face > .stats { margin: 0 -1px; border-top: 0; border-radius: 0 0 7px 7px; }
 .stats > span + span { border-left: 1px solid var(--line); }
 .stats .threat { color: var(--threat-red); }
 .stats .willpower { color: var(--willpower); }
@@ -254,6 +256,13 @@ const toggleUnless = (attached: CardView) => {
 .card.source img { outline: 2px solid var(--source); outline-offset: 2px; box-shadow: 0 0 12px var(--source-glow); }
 .card.target img { outline: 2px solid var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
 .card.drop img { outline: 2px dashed var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
+/* with its stats strip under it, the card is highlighted whole, strip and all */
+.face { border-radius: 7px; }
+.with-stats .face:has(> .card.active) { outline: 1px solid var(--interactive); box-shadow: 0 0 10px var(--interactive-glow); }
+.with-stats .face:has(> .card.source) { outline: 2px solid var(--source); outline-offset: 2px; box-shadow: 0 0 12px var(--source-glow); }
+.with-stats .face:has(> .card.target) { outline: 2px solid var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
+.with-stats .face:has(> .card.drop) { outline: 2px dashed var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
+.with-stats .card:is(.active, .source, .target, .drop) img { border: 0; outline: none; }
 .card.flipping { animation: flip 0.32s ease-in-out; }
 .card.flipping.exhausted { animation: flip-exhausted 0.32s ease-in-out; }
 
@@ -276,18 +285,11 @@ const toggleUnless = (attached: CardView) => {
   background-size: cover;
   width: calc(var(--card-width) / 4);
   height: calc(var(--card-width) / 4);
-  color: var(--token-text);
-  font-weight: 700;
-  font-size: 0.7rem;
   line-height: 1;
   grid-area: 1 / 1;
   /* lift the tokens off the card art */
   filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.6)) drop-shadow(0 0 1px rgb(0 0 0 / 0.8));
-  text-shadow: 0 0 2px rgb(255 255 255 / 0.85);
-}
-.resources { background-image: url('/images/tokens/resource.png'); place-self: end end; position: relative; }
-/* white, outlined in black, so it reads on any sphere's tint */
-.token.resources {
+  /* white, outlined in black, so it reads on any token's colour */
   color: #fff;
   font-size: 0.85rem;
   font-weight: 900;
@@ -296,6 +298,7 @@ const toggleUnless = (attached: CardView) => {
   paint-order: stroke fill;
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.8);
 }
+.resources { background-image: url('/images/tokens/resource.png'); place-self: end end; position: relative; }
 /* the tint colours the coin, under the number and inside the coin's outline */
 .resources::before {
   content: '';
@@ -314,8 +317,8 @@ const toggleUnless = (attached: CardView) => {
   from { opacity: 0; translate: 0 -60%; scale: 1.6; }
   to { opacity: 1; translate: 0 0; scale: 1; }
 }
-.progress { background-image: url('/images/tokens/progress.png'); place-self: center; font-size: 1.1rem; }
-.damage { background-image: url('/images/tokens/damage.png'); place-self: start end; color: var(--damage-text); text-shadow: 0 1px 2px rgb(0 0 0 / 0.9); }
+.progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
+.damage { background-image: url('/images/tokens/damage.png'); place-self: start end; }
 
 /* debug mode: token adjusters over the bottom of a hovered card */
 .debug {
