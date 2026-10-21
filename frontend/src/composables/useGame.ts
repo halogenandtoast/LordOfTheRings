@@ -68,8 +68,9 @@ export const useGame = (gameId: string, spectate = false) => {
   const update = async (next: GameData) => {
     data.value = next
     const view = toView(next, defs, game.value)
-    // a game opening on the mulligan is laid out with its hands empty, so the opening hand deals out
-    const undealt = game.value === null && transitionsOn() ? beforeTheDeal(view) : null
+    // a game opening on the mulligan, on arrival or dealt from the lobby, is laid out with
+    // its hands empty, so the opening hand deals out
+    const undealt = !game.value?.started && transitionsOn() ? beforeTheDeal(view) : null
     if (undealt) await layOut(undealt)
     const dealing = transitionsOn() ? dealFrom(game.value, view, shuffledBack) : null
     shuffledBack = new Set()
