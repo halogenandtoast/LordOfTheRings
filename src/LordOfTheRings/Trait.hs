@@ -61,6 +61,7 @@ data Trait
   | Trap
   | Troll
   | Undead
+  | Underground
   | Warrior
   | Wasteland
   | Weapon
