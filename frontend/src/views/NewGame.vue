@@ -103,8 +103,9 @@ const create = async () => {
     <form v-else id="new-game" @submit.prevent="create">
       <section class="card split">
         <div class="campaign">
+          <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
           <img :src="selectedCampaign.image" alt="" />
-          <h3><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
+          <h3 class="campaign-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
           <button type="button" class="change-campaign" @click="back">{{ $t('newGame.chooseDifferentCampaign') }}</button>
         </div>
         <div class="card-body">
@@ -260,7 +261,7 @@ h2 {
 .card.split { grid-template-columns: 216px 1fr; gap: 0; padding: 0; overflow: hidden; }
 .split .campaign {
   display: grid;
-  gap: 8px;
+  gap: 12px;
   align-content: start;
   padding: 16px;
   border-right: 1px solid var(--line-strong);
@@ -299,7 +300,7 @@ h2 {
 .campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
 
 .campaign img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
-.campaign h3 { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
+.campaign-title { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
 .change-campaign {
   text-align: left;
   background: none;
