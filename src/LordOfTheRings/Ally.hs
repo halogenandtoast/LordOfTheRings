@@ -52,6 +52,17 @@ import LordOfTheRings.Ally.Cards.WestfoldOutrider
 import LordOfTheRings.Ally.Cards.WestfoldHorseBreeder
 import LordOfTheRings.Ally.Cards.RiddermarkKnight
 import LordOfTheRings.Ally.Cards.WestfoldLancer
+import LordOfTheRings.Ally.Cards.SilvanTracker
+import LordOfTheRings.Ally.Cards.MirkwoodRunner
+import LordOfTheRings.Ally.Cards.SilvanRefugee
+import LordOfTheRings.Ally.Cards.NaithGuide
+import LordOfTheRings.Ally.Cards.Rumil
+import LordOfTheRings.Ally.Cards.GaladhrimMinstrel
+import LordOfTheRings.Ally.Cards.DefenderOfTheNaith
+import LordOfTheRings.Ally.Cards.GaladhonArcher
+import LordOfTheRings.Ally.Cards.Orophin
+import LordOfTheRings.Ally.Cards.GaladrielsHandmaiden
+import LordOfTheRings.Ally.Cards.GreenwoodArcher
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -130,5 +141,16 @@ allAllies =
         , SomeAllyCard westfoldHorseBreeder
         , SomeAllyCard riddermarkKnight
         , SomeAllyCard westfoldLancer
+        , SomeAllyCard silvanTracker
+        , SomeAllyCard mirkwoodRunner
+        , SomeAllyCard silvanRefugee
+        , SomeAllyCard naithGuide
+        , SomeAllyCard rumil
+        , SomeAllyCard galadhrimMinstrel
+        , SomeAllyCard defenderOfTheNaith
+        , SomeAllyCard galadhonArcher
+        , SomeAllyCard orophin
+        , SomeAllyCard galadrielsHandmaiden
+        , SomeAllyCard greenwoodArcher
         ]
     ]

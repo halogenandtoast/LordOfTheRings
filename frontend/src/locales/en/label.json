@@ -289,5 +289,25 @@
   "playAtNoCost": "Play this card at no cost?",
   "playIt": "Play it",
   "moveToBottomOfDeck": "Move it to the bottom of your deck",
-  "returnAllyToHand": "Return an ally you control to your hand"
+  "returnAllyToHand": "Return an ally you control to your hand",
+  "chooseHero": "Choose a hero",
+  "chooseEnemy": "Choose an enemy",
+  "returnFromDiscard": "Choose a card to return from your discard pile to your hand",
+  "chooseHeroToReady": "Choose a hero to ready",
+  "chooseEnemyToAttack": "Choose an enemy to attack",
+  "nenya": {
+    "give": "Add Galadriel's willpower to another character"
+  },
+  "wingfoot": {
+    "name": "Name a card type",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery"
+  },
+  "elrondsCounsel": {
+    "give": "Give another character +1 willpower"
+  },
+  "handsUponTheBow": {
+    "attacker": "Exhaust a character with ranged to attack"
+  }
 }
