@@ -76,16 +76,11 @@ const create = async () => {
       <fieldset>
         <legend>{{ $t('common.scenario') }}</legend>
         <div class="scenario-row">
-          <div class="segmented campaigns" role="radiogroup" :aria-label="$t('newGame.campaign')">
-            <button
-              v-for="c in campaigns"
-              :key="c.id"
-              type="button"
-              role="radio"
-              :aria-checked="c.id === selectedCampaign.id"
-              :class="{ selected: c.id === selectedCampaign.id, unavailable: !firstPlayable(c) }"
-              @click="chooseCampaign(c)"
-            ><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</button>
+          <div class="campaign">
+            <img :src="selectedCampaign.image" alt="" />
+            <select :value="selectedCampaign.id" :aria-label="$t('newGame.campaign')" @change="chooseCampaign(campaigns.find((c) => c.id === ($event.target as HTMLSelectElement).value)!)">
+              <option v-for="c in campaigns" :key="c.id" :value="c.id">{{ c.name }}</option>
+            </select>
           </div>
           <div class="scenarios">
             <button
@@ -234,15 +229,14 @@ legend {
   padding: 0 6px;
 }
 
-.scenario-row { display: grid; grid-template-columns: 220px 1fr; align-items: start; gap: 14px; }
+.scenario-row { display: grid; grid-template-columns: 216px 1fr; align-items: stretch; gap: 16px; }
+.campaign { display: grid; gap: 8px; align-content: start; padding-right: 16px; border-right: 1px solid var(--line-strong); }
 @media (max-width: 600px) {
   .scenario-row { grid-template-columns: 1fr; }
+  .campaign { padding: 0 0 16px; border-right: 0; border-bottom: 1px solid var(--line-strong); }
 }
-.segmented.campaigns { grid-auto-flow: row; }
-.segmented.campaigns button { display: flex; align-items: center; gap: 8px; padding: 9px 12px; font-weight: 600; text-align: left; }
-.segmented.campaigns button + button { border-left: 0; border-top: 1px solid var(--box-border); }
-.campaigns button.unavailable:not(.selected) { color: var(--text-muted); }
-.campaigns .icon, .scenario-name .icon { font-size: 1.2em; }
+.campaign img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
+.scenario-name .icon { font-size: 1.2em; }
 
 .scenarios {
   display: grid;
