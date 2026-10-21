@@ -30,6 +30,10 @@ import LordOfTheRings.Hero.Cards.Celeborn
 import LordOfTheRings.Hero.Cards.Galadriel
 import LordOfTheRings.Hero.Cards.HaldirOfLorien
 import LordOfTheRings.Hero.Cards.Elrond
+import LordOfTheRings.Hero.Cards.DainIronfoot
+import LordOfTheRings.Hero.Cards.Bifur
+import LordOfTheRings.Hero.Cards.Nori
+import LordOfTheRings.Hero.Cards.Ori
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -86,5 +90,9 @@ allHeroes =
         , SomeHeroCard galadriel
         , SomeHeroCard haldirOfLorien
         , SomeHeroCard elrond
+        , SomeHeroCard dainIronfoot
+        , SomeHeroCard bifur
+        , SomeHeroCard nori
+        , SomeHeroCard ori
         ]
     ]

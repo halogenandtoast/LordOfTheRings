@@ -258,10 +258,12 @@ library
       LordOfTheRings.Hero.CardDefs
       LordOfTheRings.Hero.Cards.Aragorn
       LordOfTheRings.Hero.Cards.Beravor
+      LordOfTheRings.Hero.Cards.Bifur
       LordOfTheRings.Hero.Cards.BilboBaggins
       LordOfTheRings.Hero.Cards.BoromirTactics
       LordOfTheRings.Hero.Cards.BrandSonOfBain
       LordOfTheRings.Hero.Cards.Celeborn
+      LordOfTheRings.Hero.Cards.DainIronfoot
       LordOfTheRings.Hero.Cards.Denethor
       LordOfTheRings.Hero.Cards.Dunhere
       LordOfTheRings.Hero.Cards.Eleanor
@@ -278,6 +280,8 @@ library
       LordOfTheRings.Hero.Cards.Hirgon
       LordOfTheRings.Hero.Cards.Legolas
       LordOfTheRings.Hero.Cards.Lothiriel
+      LordOfTheRings.Hero.Cards.Nori
+      LordOfTheRings.Hero.Cards.Ori
       LordOfTheRings.Hero.Cards.Thalin
       LordOfTheRings.Hero.Cards.Theodred
       LordOfTheRings.Hero.Import.Lifted
