@@ -113,6 +113,17 @@ spec = do
       getsGame (map (allyCardId . toAttrs) . toList . (.entities.allies)) `shouldReturn` [tracker.id]
       (.resources) <$> getHeroWithCode "01007" `shouldReturn` 0
 
+    it "can't be played without the resources for an ally in a discard pile" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      tracker <- PlayerCard <$> genPlayerCard Allies.northernTracker (Just pid)
+      g <- getGame
+      putGame $ g & playersL . ix pid . discardL .~ [tracker]
+      card <- putCardIntoHand pid Events.standAndFight
+      payer <- getHeroWithCode "01007"
+      run $ PlaceTokens GameSource (toTarget payer) Resource 3
+      run $ BeginPhase PlanningPhase
+      question <- getQuestion pid
+      [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
+
   describe "Fortune or Fate" do
     it "puts a hero from a discard pile back into play" . gameTestWith (coreDeck "spirit") $ \pid -> do
       dunhere <- getHeroWithCode "01009"
