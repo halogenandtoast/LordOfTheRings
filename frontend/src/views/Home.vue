@@ -76,7 +76,7 @@ const submitImport = async () => {
       <section>
         <header class="main-header">
           <div class="title-group">
-            <h2>{{ $t('home.yourGames') }}</h2>
+            <h2 class="page-title">{{ $t('home.yourGames') }}</h2>
             <SegmentedToggle
               class="tabs"
               :model-value="tab"
@@ -132,14 +132,6 @@ const submitImport = async () => {
 </template>
 
 <style scoped>
-.page-container {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-gutter: stable;
-  padding: 20px 10px 10px;
-}
-
 .home {
   --segmented-accent: var(--button-secondary);
   --segmented-accent-highlight: var(--button-secondary-hover);
@@ -156,7 +148,7 @@ const submitImport = async () => {
 
 header {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   align-items: center;
   gap: 12px;
 }
@@ -171,13 +163,8 @@ header {
 
 .tabs { min-width: 18rem; }
 
-h2 {
-  color: var(--title);
-  font-size: 2em;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0;
-}
+/* the header takes the room below it */
+.main-header .page-title { margin: 0; }
 
 @media (max-width: 768px) {
   h2 { font-size: 1.5em; }

@@ -85,9 +85,10 @@ const shown = computed(() => {
 </script>
 
 <template>
+  <div class="page-container">
   <main class="page card-browser">
     <header class="page__head">
-      <h1>{{ $t('browser.decks.title') }}</h1>
+      <h1 class="page-title">{{ $t('browser.decks.title') }}</h1>
       <p v-if="decks.decks.length" class="muted">
         {{ $t('browser.decks.count', decks.decks.length) }}
       </p>
@@ -200,6 +201,7 @@ const shown = computed(() => {
       </template>
     </ConfirmDelete>
   </main>
+  </div>
 </template>
 
 <style scoped>
@@ -209,7 +211,7 @@ const shown = computed(() => {
   min-width: 60vw;
   max-width: 98vw;
   margin-inline: auto;
-  padding: 20px 0 var(--space-6);
+  padding: 0 0 var(--space-6);
   background: none;
 }
 
@@ -230,15 +232,12 @@ const shown = computed(() => {
   display: flex;
   align-items: baseline;
   gap: var(--space-3);
-  margin-bottom: var(--space-5);
+  margin-bottom: 12px;
 }
 
-h1 {
+/* the head takes the room below it */
+.page__head .page-title {
   margin: 0;
-  color: var(--title);
-  font-size: 2em;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .import {
@@ -254,12 +253,17 @@ h1 {
   border-color: var(--accent);
 }
 
+/* in a panel, as the loading row above it is */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
+  padding: var(--space-2);
+  border: 1px solid var(--box-border);
+  border-radius: var(--radius-lg);
+  background: var(--box-background);
 }
 
 .toolbar__search {

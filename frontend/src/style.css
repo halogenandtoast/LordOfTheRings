@@ -301,3 +301,23 @@ select {
   background-position: right 0.75rem center;
   background-size: 0.7rem;
 }
+
+/* a page's scrolling body, its scrollbar's room kept so the content never shifts */
+.page-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding: 20px 10px 10px;
+}
+
+/* a page's title: the same size, and the same room around it, on every page; tall
+   enough that buttons beside it do not move it */
+.page-title {
+  margin: 0 0 12px;
+  color: var(--title);
+  font-size: 2rem;
+  line-height: 40px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

@@ -7,20 +7,22 @@ defineEmits<{ submit: [] }>()
 </script>
 
 <template>
-  <form class="auth-form" @submit.prevent="$emit('submit')">
-    <header>
-      <img src="/icon.svg" alt="" class="logo" />
-      <h2>{{ title }}</h2>
-    </header>
-    <div v-if="error" class="error" role="alert">{{ tr(error) }}</div>
-    <section>
-      <slot></slot>
-      <button type="submit" :disabled="submitting">{{ submitting ? $t('auth.oneMoment') : submitLabel }}</button>
-    </section>
-    <section class="links">
-      <slot name="links"></slot>
-    </section>
-  </form>
+  <div class="page-container">
+    <form class="auth-form" @submit.prevent="$emit('submit')">
+      <header>
+        <img src="/icon.svg" alt="" class="logo" />
+        <h2>{{ title }}</h2>
+      </header>
+      <div v-if="error" class="error" role="alert">{{ tr(error) }}</div>
+      <section>
+        <slot></slot>
+        <button type="submit" :disabled="submitting">{{ submitting ? $t('auth.oneMoment') : submitLabel }}</button>
+      </section>
+      <section class="links">
+        <slot name="links"></slot>
+      </section>
+    </form>
+  </div>
 </template>
 
 <style scoped>

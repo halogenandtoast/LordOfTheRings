@@ -81,66 +81,68 @@ const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))
 </script>
 
 <template>
-  <main class="page card-browser">
-    <RouterLink class="button button--ghost back" to="/decks">&#8592; {{ $t('browser.deck.allDecks') }}</RouterLink>
+  <div class="page-container">
+    <main class="page card-browser">
+      <RouterLink class="button button--ghost back" to="/decks">&#8592; {{ $t('browser.deck.allDecks') }}</RouterLink>
 
-    <p v-if="loading" class="notice">{{ $t('browser.common.loading') }}</p>
-    <p v-else-if="error" class="notice notice--error">{{ tr(error) }}</p>
+      <p v-if="loading" class="notice">{{ $t('browser.common.loading') }}</p>
+      <p v-else-if="error" class="notice notice--error">{{ tr(error) }}</p>
 
-    <template v-else-if="deck">
-      <header class="head">
-        <h1>{{ deck.name }}</h1>
-        <p class="head__meta">
-          <span>{{ $t('browser.common.cardCount', size) }}</span>
-          <span v-if="threat !== null">{{ $t('browser.common.startingThreat', { threat }) }}</span>
-          <a
-            v-if="deck.sourceUrl"
-            class="head__source"
-            :href="deck.sourceUrl"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            {{ $t('browser.deck.onRingsdb') }} &#8599;
-          </a>
-        </p>
-        <p v-if="size < 50" class="head__warning">
-          {{ $t('browser.deck.tooSmall', { count: size }) }}
-        </p>
-      </header>
-
-      <p v-if="unknown.length" class="notice notice--error">
-        {{ $t('browser.deck.unresolved', unknown.length) }}
-      </p>
-
-      <section v-if="deck.heroes.length" class="heroes">
-        <article v-for="slot in deck.heroes" :key="slot.sourceCode" class="hero">
-          <CardImage v-if="slot.card" :card="slot.card" size="thumb" />
-          <div v-else class="hero__missing">{{ slot.sourceCode }}</div>
-          <h2 class="hero__name truncate">{{ slot.card?.name ?? $t('browser.common.unknownCard') }}</h2>
-          <p class="hero__sphere muted">
-            {{ slot.card?.sphere ? $t(`browser.spheres.${slot.card.sphere}`) : '—' }}
+      <template v-else-if="deck">
+        <header class="head">
+          <h1>{{ deck.name }}</h1>
+          <p class="head__meta">
+            <span>{{ $t('browser.common.cardCount', size) }}</span>
+            <span v-if="threat !== null">{{ $t('browser.common.startingThreat', { threat }) }}</span>
+            <a
+              v-if="deck.sourceUrl"
+              class="head__source"
+              :href="deck.sourceUrl"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {{ $t('browser.deck.onRingsdb') }} &#8599;
+            </a>
           </p>
-        </article>
-      </section>
+          <p v-if="size < 50" class="head__warning">
+            {{ $t('browser.deck.tooSmall', { count: size }) }}
+          </p>
+        </header>
 
-      <div class="columns">
-        <DeckSection
-          v-for="group in byType"
-          :key="group.type"
-          :title="group.title"
-          :slots="group.slots"
-        />
-        <DeckSection
-          v-if="deck.sideslots.length"
-          :title="$t('browser.deck.sideboard')"
-          :slots="deck.sideslots"
-          class="sideboard"
-        />
-      </div>
+        <p v-if="unknown.length" class="notice notice--error">
+          {{ $t('browser.deck.unresolved', unknown.length) }}
+        </p>
 
-      <p v-if="deck.description" class="description">{{ deck.description }}</p>
-    </template>
-  </main>
+        <section v-if="deck.heroes.length" class="heroes">
+          <article v-for="slot in deck.heroes" :key="slot.sourceCode" class="hero">
+            <CardImage v-if="slot.card" :card="slot.card" size="thumb" />
+            <div v-else class="hero__missing">{{ slot.sourceCode }}</div>
+            <h2 class="hero__name truncate">{{ slot.card?.name ?? $t('browser.common.unknownCard') }}</h2>
+            <p class="hero__sphere muted">
+              {{ slot.card?.sphere ? $t(`browser.spheres.${slot.card.sphere}`) : '—' }}
+            </p>
+          </article>
+        </section>
+
+        <div class="columns">
+          <DeckSection
+            v-for="group in byType"
+            :key="group.type"
+            :title="group.title"
+            :slots="group.slots"
+          />
+          <DeckSection
+            v-if="deck.sideslots.length"
+            :title="$t('browser.deck.sideboard')"
+            :slots="deck.sideslots"
+            class="sideboard"
+          />
+        </div>
+
+        <p v-if="deck.description" class="description">{{ deck.description }}</p>
+      </template>
+    </main>
+  </div>
 </template>
 
 <style scoped>

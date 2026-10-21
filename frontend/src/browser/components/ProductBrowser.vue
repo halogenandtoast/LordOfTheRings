@@ -194,6 +194,7 @@ function isPackSelected(code: string): boolean {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
   padding: 0 var(--space-2) var(--space-4);
 }

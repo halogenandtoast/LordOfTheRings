@@ -1,36 +1,41 @@
 <template>
-  <div class="about">
-    <section>
-      <h2>{{ $t('about.copyrightTitle') }}</h2>
-      <div class="panel">
-        <i18n-t keypath="about.copyrightBody" tag="p" scope="global">
-          <template #game><a href="https://www.fantasyflightgames.com/en/products/the-lord-of-the-rings-the-card-game/" rel="noreferrer" target="_blank">{{ $t('about.gameName') }}</a></template>
-        </i18n-t>
-        <p>{{ $t('about.copyrightTolkien') }}</p>
-        <p>{{ $t('about.copyrightArtwork') }}</p>
-      </div>
-    </section>
-    <section>
-      <h2>{{ $t('about.projectTitle') }}</h2>
-      <div class="panel">
-        <i18n-t keypath="about.projectBody" tag="p" scope="global">
-          <template #author><a href="https://github.com/halogenandtoast" rel="noreferrer" target="_blank">halogenandtoast</a></template>
-          <template #source><a href="https://github.com/halogenandtoast/LordOfTheRings" rel="noreferrer" target="_blank">GitHub</a></template>
-        </i18n-t>
-      </div>
-    </section>
+  <div class="page-container">
+    <div class="about">
+      <h2 class="page-title">{{ $t('nav.about') }}</h2>
+      <section>
+        <h3>{{ $t('about.copyrightTitle') }}</h3>
+        <div class="panel">
+          <i18n-t keypath="about.copyrightBody" tag="p" scope="global">
+            <template #game><a href="https://www.fantasyflightgames.com/en/products/the-lord-of-the-rings-the-card-game/" rel="noreferrer" target="_blank">{{ $t('about.gameName') }}</a></template>
+          </i18n-t>
+          <p>{{ $t('about.copyrightTolkien') }}</p>
+          <p>{{ $t('about.copyrightArtwork') }}</p>
+        </div>
+      </section>
+      <section>
+        <h3>{{ $t('about.projectTitle') }}</h3>
+        <div class="panel">
+          <i18n-t keypath="about.projectBody" tag="p" scope="global">
+            <template #author><a href="https://github.com/halogenandtoast" rel="noreferrer" target="_blank">halogenandtoast</a></template>
+            <template #source><a href="https://github.com/halogenandtoast/LordOfTheRings" rel="noreferrer" target="_blank">GitHub</a></template>
+          </i18n-t>
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .about {
   width: min(720px, 100% - 32px);
-  margin: 24px auto;
+  margin: 0 auto;
   display: grid;
-  gap: 20px;
+  gap: 12px;
 }
+/* the grid's gap is the room below it */
+.about .page-title { margin: 0; }
 section { display: grid; gap: 10px; }
-h2 { margin: 0; color: var(--title); }
+h3 { margin: 0; color: var(--title); }
 .panel {
   padding: 4px 16px;
   background: var(--box-background);

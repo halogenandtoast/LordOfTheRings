@@ -196,6 +196,7 @@ function sphereIcon(value: string): IconName | null {
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
   background: var(--c-surface);
   border-left: 1px solid var(--c-border);

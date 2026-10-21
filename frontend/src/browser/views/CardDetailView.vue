@@ -18,15 +18,17 @@ onMounted(() => store.load())
 </script>
 
 <template>
-  <main class="page card-browser">
-    <RouterLink class="button button--ghost back" to="/cards">&#8592; {{ $t('browser.card.back') }}</RouterLink>
+  <div class="page-container">
+    <main class="page card-browser">
+      <RouterLink class="button button--ghost back" to="/cards">&#8592; {{ $t('browser.card.back') }}</RouterLink>
 
-    <p v-if="store.state === 'loading'" class="notice">{{ $t('browser.common.loading') }}</p>
-    <i18n-t v-else-if="!card" keypath="browser.card.notFound" scope="global" tag="p" class="notice">
-      <template #code><code>{{ code }}</code></template>
-    </i18n-t>
-    <CardDetail v-else :card="card" />
-  </main>
+      <p v-if="store.state === 'loading'" class="notice">{{ $t('browser.common.loading') }}</p>
+      <i18n-t v-else-if="!card" keypath="browser.card.notFound" scope="global" tag="p" class="notice">
+        <template #code><code>{{ code }}</code></template>
+      </i18n-t>
+      <CardDetail v-else :card="card" />
+    </main>
+  </div>
 </template>
 
 <style scoped>

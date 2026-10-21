@@ -150,6 +150,7 @@ defineExpose({ scrollTo })
 .list {
   height: 100%;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
 

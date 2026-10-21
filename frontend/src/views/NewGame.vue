@@ -100,9 +100,9 @@ const create = async () => {
 </script>
 
 <template>
-  <div class="new-game-content">
+  <div class="page-container">
     <header class="main-header">
-      <h2>{{ $t('newGame.title') }}</h2>
+      <h2 class="page-title">{{ $t('newGame.title') }}</h2>
       <button v-if="selectedCampaign" type="button" class="back-button" @click="back">{{ $t('common.back') }}</button>
       <button type="button" class="cancel-new-game-button" @click="cancel">{{ $t('common.cancel') }}</button>
     </header>
@@ -214,14 +214,6 @@ const create = async () => {
 </template>
 
 <style scoped>
-.new-game-content {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-gutter: stable;
-  padding: 20px 10px 10px;
-}
-
 header,
 #new-game {
   width: 70vw;
@@ -238,16 +230,11 @@ header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
-h2 {
-  color: var(--title);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 2em;
-  margin: 0 auto 0 0;
-}
+/* the header takes the room below it; the buttons sit at its far end */
+.main-header .page-title { margin: 0 auto 0 0; }
 
 .cancel-new-game-button {
   background-color: var(--button-secondary);

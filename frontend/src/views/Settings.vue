@@ -25,37 +25,40 @@ const updateLanguage = async () => {
 </script>
 
 <template>
-  <div class="settings">
-    <h2>{{ $t('settings.title') }}</h2>
-    <section class="panel">
-      <label>
-        {{ $t('settings.language') }}
-        <select v-model="language" @change="updateLanguage">
-          <option v-for="code in supportedLocales" :key="code" :value="code">{{ languageName(code) }}</option>
-        </select>
-      </label>
-      <p class="hint">{{ $t('settings.languageHint') }}</p>
-    </section>
-    <section class="panel">
-      <label>
-        {{ $t('settings.table') }}
-        <select v-model="table">
-          <option v-for="option in tables" :key="option" :value="option">{{ $t(`settings.tables.${option}`) }}</option>
-        </select>
-      </label>
-      <p class="hint">{{ $t('settings.tableHint') }}</p>
-    </section>
+  <div class="page-container">
+    <div class="settings">
+      <h2 class="page-title">{{ $t('settings.title') }}</h2>
+      <section class="panel">
+        <label>
+          {{ $t('settings.language') }}
+          <select v-model="language" @change="updateLanguage">
+            <option v-for="code in supportedLocales" :key="code" :value="code">{{ languageName(code) }}</option>
+          </select>
+        </label>
+        <p class="hint">{{ $t('settings.languageHint') }}</p>
+      </section>
+      <section class="panel">
+        <label>
+          {{ $t('settings.table') }}
+          <select v-model="table">
+            <option v-for="option in tables" :key="option" :value="option">{{ $t(`settings.tables.${option}`) }}</option>
+          </select>
+        </label>
+        <p class="hint">{{ $t('settings.tableHint') }}</p>
+      </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* the grid's gap is the room below it */
+.settings .page-title { margin: 0; }
 .settings {
   width: min(560px, 100% - 32px);
-  margin: 24px auto;
+  margin: 0 auto;
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
-h2 { margin: 0; color: var(--title); }
 .panel {
   display: grid;
   gap: 8px;

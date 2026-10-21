@@ -33,7 +33,6 @@ fetchAdminDashboard()
 </template>
 
 <style scoped>
-.page-container { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 10px 10px; }
 .admin { width: min(70vw, 100%); margin: 0 auto; }
 @media (max-width: 768px) { .admin { width: 100%; } }
 h2 { color: var(--title); font-size: 2em; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 10px; }
