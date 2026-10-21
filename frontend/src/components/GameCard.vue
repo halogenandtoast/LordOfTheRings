@@ -133,7 +133,7 @@ const toggleUnless = (attached: CardView) => {
         <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
           <span class="versus">
             <span class="defense" :title="$t('game.defense', { value: preview.defend.defense })">{{ preview.defend.defense }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/defense.svg')` }" /></span>
-            <span class="attack" :title="$t('game.attack', { value: preview.defend.attack })">{{ preview.defend.attack }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/attack.svg')` }" /></span>
+            <span class="attack" :title="$t('game.combat.damage', { value: preview.defend.damage })">{{ preview.defend.damage }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/attack.svg')` }" /></span>
           </span>
           <span v-if="preview.defend.defeated">{{ $t('game.combat.defeated') }}</span>
         </span>
@@ -340,11 +340,13 @@ const toggleUnless = (attached: CardView) => {
   from { opacity: 0; translate: 0 -60%; scale: 1.6; }
   to { opacity: 1; translate: 0 0; scale: 1; }
 }
-/* hovering a defender: the damage it would take, before shadow effects */
+/* hovering a defender, near its top: its defense and the damage it would take, before
+   shadow effects */
 .defend-preview {
   z-index: 4;
   grid-area: 1 / 1;
-  place-self: center;
+  place-self: start center;
+  margin-top: 12%;
   display: grid;
   justify-items: center;
   gap: 3px;

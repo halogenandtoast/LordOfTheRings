@@ -5,6 +5,7 @@
   "attack": "Attack {value}",
   "defense": "Defense {value}",
   "combat": {
+    "damage": "Takes {value} damage",
     "defeated": "defeated",
     "dealt": "{dealt} / {remaining}"
   },

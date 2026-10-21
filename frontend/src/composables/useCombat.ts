@@ -3,11 +3,12 @@ import type { CardView, QuestionView } from '../types'
 
 /**
  * What a combat decision would come to, from the engine's stats: hovering a defender
- * shows its defense against the attack, and whether it would fall, before shadow effects, and an enemy being attacked
+ * shows its defense and the damage that gets past it, and whether it would fall, before shadow effects, and an enemy being attacked
  * shows how much of its remaining hit points the declared attackers would deal.
  */
 export interface CombatPreview {
-  defend?: { defense: number; attack: number; defeated: boolean }
+  /** `damage` is what gets past its defense. */
+  defend?: { defense: number; damage: number; defeated: boolean }
   /** `adding` is the hovered attacker's share, on top of what is `dealt` already. */
   attack?: { dealt: number; adding: number; remaining: number }
 }
@@ -33,8 +34,8 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
       if ((prompt === '$label.declareDefender' || prompt === '$label.declareDefenders') && q.sourceId && hovered) {
         // with several defenders, those already declared defend too
         const defense = [...q.targetIds.map((id) => byId.get(id)), hovered].reduce((sum, d) => sum + stat(d, 'defense'), 0)
-        const attack = stat(byId.get(q.sourceId), 'attack')
-        return { [hovered.id]: { defend: { defense, attack, defeated: attack - defense >= remaining(hovered) } } }
+        const damage = Math.max(0, stat(byId.get(q.sourceId), 'attack') - defense)
+        return { [hovered.id]: { defend: { defense, damage, defeated: damage >= remaining(hovered) } } }
       }
 
       const enemy = prompt === '$label.declareAttackers' ? byId.get(q.targetIds[0]) : undefined
