@@ -309,5 +309,69 @@
   },
   "handsUponTheBow": {
     "attacker": "Exhaust a character with ranged to attack"
+  },
+  "bifur": {
+    "pay": "Choose a hero to pay 1 resource to Bifur"
+  },
+  "zigilMiner": {
+    "nameNumber": "Name a number",
+    "number": "{number}",
+    "chooseHero": "Choose a hero to add the resources to"
+  },
+  "ereborRecordKeeper": {
+    "ready": "Choose a Dwarf character to ready"
+  },
+  "bombur": {
+    "chooseLocation": "Choose a location to get -1 threat"
+  },
+  "eredNimraisProspector": {
+    "shuffle": "Choose a card in your discard pile to shuffle into your deck"
+  },
+  "dori": {
+    "takeDamage": "Choose the hero whose damage Dori takes"
+  },
+  "gloin": {
+    "chooseHero": "Choose a hero to add 2 resources to"
+  },
+  "narvisBelt": {
+    "chooseIcon": "Choose a resource icon",
+    "leadership": "Leadership",
+    "lore": "Lore",
+    "tactics": "Tactics",
+    "spirit": "Spirit"
+  },
+  "healingHerbs": {
+    "heal": "Choose a character to heal all damage from"
+  },
+  "throrsMap": {
+    "chooseLocation": "Choose a location to make active"
+  },
+  "kingUnderTheMountain": {
+    "take": "Choose a card to add to your hand; the other is discarded"
+  },
+  "dwarfPipe": {
+    "chooseCard": "Choose a discarded card to place on the bottom of your deck"
+  },
+  "magicRing": {
+    "choose": "Choose one",
+    "heal": "Heal 1 damage from attached hero",
+    "resource": "Add 1 resource to attached hero",
+    "ready": "Ready attached hero"
+  },
+  "durinsSong": {
+    "chooseHero": "Choose a Dwarf hero"
+  },
+  "weAreNotIdle": {
+    "exhaust": "Exhaust Dwarf heroes ({count} so far)",
+    "done": "Done exhausting",
+    "chooseHero": "Choose a hero to add {count} resources to"
+  },
+  "hiddenCache": {
+    "chooseHero": "Choose a hero to add 2 resources to"
+  },
+  "aVeryGoodTale": {
+    "exhaust": "Choose an ally to exhaust",
+    "putIntoPlay": "Put an ally costing up to {count} into play",
+    "done": "Done"
   }
 }
