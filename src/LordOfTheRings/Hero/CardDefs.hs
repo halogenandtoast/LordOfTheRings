@@ -46,6 +46,7 @@ allHeroCards =
       , hirgon
       , fastred
       , lothiriel
+      , bilboBaggins
       ]
 
 aragorn :: CardDef
@@ -225,4 +226,10 @@ lothiriel :: CardDef
 lothiriel =
   (hero "22027" "Lothíriel" Spirit 8 3 1 1 3)
     { cdCardTraits = setFromList [Gondor, Noble]
+    }
+
+bilboBaggins :: CardDef
+bilboBaggins =
+  (hero "02001" "Bilbo Baggins" Lore 9 1 1 2 2)
+    { cdCardTraits = setFromList [Hobbit]
     }

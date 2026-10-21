@@ -26,6 +26,8 @@ import LordOfTheRings.Ally.Cards.SnowbournScout
 import LordOfTheRings.Ally.Cards.SonOfArnor
 import LordOfTheRings.Ally.Cards.VeteranAxehand
 import LordOfTheRings.Ally.Cards.WanderingTook
+import LordOfTheRings.Ally.Cards.WingedGuardian
+import LordOfTheRings.Ally.Cards.RivendellMinstrel
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -78,5 +80,7 @@ allAllies =
         , SomeAllyCard minerOfTheIronHills
         , SomeAllyCard gleowine
         , SomeAllyCard gandalf
+        , SomeAllyCard wingedGuardian
+        , SomeAllyCard rivendellMinstrel
         ]
     ]

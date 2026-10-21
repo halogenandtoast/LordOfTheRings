@@ -9,7 +9,10 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Card (EncounterCard)
 import LordOfTheRings.Classes.HasQueue
+import LordOfTheRings.Classes.HasGame (HasGame)
 import LordOfTheRings.Effect
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Hero.Types ()
 import LordOfTheRings.I18n
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
@@ -25,6 +28,7 @@ import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyAttacking))
 
 dealDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
 dealDamage source target n = push $ DealDamage (toSource source) (toTarget target) n
@@ -212,3 +216,29 @@ discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
 -- the rest.
 revealOneOfTopEncounterCards :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
 revealOneOfTopEncounterCards pid source n = push $ RevealOneOfTopEncounterCards pid (toSource source) n
+
+-- | Resources of the sphere the player's heroes could spend: their own sphere's, or one a
+-- gained resource icon lets them spend.
+getResourcesOfSphere :: (HasGame m) => PlayerId -> Sphere -> m Int
+getResourcesOfSphere pid sphere = do
+  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
+  sum . map (.resources) <$> filterM (\h -> if h.sphere == sphere then pure True else elem (GainResourceIcon sphere) <$> getModifiers h) heroes
+
+-- | The player pays 1 resource of the sphere or discards the card; with nothing to pay,
+-- the card is discarded.
+payOrDiscard :: (ReverseQueue m, Targetable target) => PlayerId -> target -> Sphere -> m ()
+payOrDiscard pid card sphere = do
+  able <- (> 0) <$> getResourcesOfSphere pid sphere
+  if able
+    then chooseOneM pid do
+      questionLabeled "payOrDiscard"
+      causedBy card
+      labeled "payResource" $ spendResources pid sphere 1
+      labeled "discardIt" $ discard card
+    else discard card
+
+-- | Messages to run once the enemy's attack has resolved, as "after this attack" reads.
+afterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
+afterAttack eid msgs = lift $ insertAfterMatching msgs \case
+  CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
+  _ -> False

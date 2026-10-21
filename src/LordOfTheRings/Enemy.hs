@@ -27,6 +27,8 @@ import LordOfTheRings.Enemy.Cards.UngoliantsSwarm
 import LordOfTheRings.Enemy.Cards.Wargs
 import LordOfTheRings.Enemy.Cards.WolfRider
 import LordOfTheRings.Enemy.Cards.OrcGuard
+import LordOfTheRings.Enemy.Cards.GoblintownScavengers
+import LordOfTheRings.Enemy.Cards.HuntersFromMordor
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -78,5 +80,7 @@ allEnemys =
         , SomeEnemyCard mistyMountainGoblins
         , SomeEnemyCard easternCrows
         , SomeEnemyCard ungoliantsSwarm
+        , SomeEnemyCard goblintownScavengers
+        , SomeEnemyCard huntersFromMordor
         ]
     ]

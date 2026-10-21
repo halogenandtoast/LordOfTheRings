@@ -36,6 +36,17 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "searchTake": "Take cards into your hand",
+  "revealOne": "Reveal 1 of these cards; the rest are discarded",
+  "payOrDiscard": "Pay 1 resource or discard the card",
+  "payResource": "Pay 1 resource",
+  "discardIt": "Discard it",
+  "falseLead": {
+    "shuffle": "Shuffle a Clue card into the encounter deck"
+  },
+  "signsOfGollum": {
+    "attach": "Attach Signs of Gollum to a hero committed to the quest"
+  },
   "mountainsOfMirkwood": {
     "search": "Add 1 of the top 5 cards of your deck to your hand"
   },

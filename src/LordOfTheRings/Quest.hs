@@ -16,6 +16,9 @@ import LordOfTheRings.Quest.Cards.OutOfTheDungeons
 import LordOfTheRings.Quest.Cards.TheNecromancersTower
 import LordOfTheRings.Quest.Cards.ThroughTheCaverns
 import LordOfTheRings.Quest.Cards.ToTheRiver
+import LordOfTheRings.Quest.Cards.TheHuntBegins
+import LordOfTheRings.Quest.Cards.ANewTerrorAbroad
+import LordOfTheRings.Quest.Cards.OnTheTrail
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -56,5 +59,8 @@ allQuests =
         , SomeQuestCard toTheRiver
         , SomeQuestCard anduinPassage
         , SomeQuestCard ambushOnTheShore
+        , SomeQuestCard theHuntBegins
+        , SomeQuestCard aNewTerrorAbroad
+        , SomeQuestCard onTheTrail
         ]
     ]

@@ -78,6 +78,8 @@ allAllyCards =
       , soldierOfGondor
       , angborTheFearless
       , westfoldLancer
+      , wingedGuardian
+      , rivendellMinstrel
       ]
 
 guardOfTheCitadel :: CardDef
@@ -469,4 +471,17 @@ westfoldLancer :: CardDef
 westfoldLancer =
   (ally "22142" "Westfold Lancer" Tactics (StaticCost 3) 2 2 0 2)
     { cdCardTraits = setFromList [Rohan, Warrior]
+    }
+
+wingedGuardian :: CardDef
+wingedGuardian =
+  (ally "02004" "Winged Guardian" Tactics (StaticCost 2) 0 0 4 1)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+rivendellMinstrel :: CardDef
+rivendellMinstrel =
+  (ally "02008" "Rivendell Minstrel" Lore (StaticCost 3) 2 0 0 1)
+    { cdCardTraits = setFromList [Noldor]
     }

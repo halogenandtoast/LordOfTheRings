@@ -29,6 +29,11 @@ allLocationCards =
       , towerGate
       , banksOfTheAnduin
       , gladdenFields
+      , theOldFord
+      , theEavesOfMirkwood
+      , riverNinglor
+      , theEastBank
+      , theWestBank
       ]
 
 greatForestWeb :: CardDef
@@ -105,4 +110,39 @@ gladdenFields =
     { cdCardTraits = setFromList [Marshland]
     , cdVictoryPoints = Just 3
     , cdEasyModeQuantity = Just 1
+    }
+
+theOldFord :: CardDef
+theOldFord =
+  (location "02015" "The Old Ford" TheHuntForGollum 2 0 2)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+theEavesOfMirkwood :: CardDef
+theEavesOfMirkwood =
+  (location "02016" "The Eaves of Mirkwood" TheHuntForGollum 3 2 2)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+riverNinglor :: CardDef
+riverNinglor =
+  (location "02017" "River Ninglor" TheHuntForGollum 2 2 4)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
+    }
+
+theEastBank :: CardDef
+theEastBank =
+  (location "02018" "The East Bank" TheHuntForGollum 2 3 3)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
+    }
+
+theWestBank :: CardDef
+theWestBank =
+  (location "02019" "The West Bank" TheHuntForGollum 2 3 3)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
     }

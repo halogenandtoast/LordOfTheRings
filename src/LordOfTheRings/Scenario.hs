@@ -10,11 +10,12 @@ import LordOfTheRings.Scenario.Runner ()
 import LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur as X
 import LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin as X
 import LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood as X
+import LordOfTheRings.Scenario.Scenarios.TheHuntForGollum as X
 import LordOfTheRings.Scenario.Types as X
 
 -- | The scenarios a game can be dealt, by id.
 allScenarios :: [Scenario]
-allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur]
+allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum]
 
 lookupScenario :: ScenarioId -> Maybe Scenario
 lookupScenario sid = find ((== sid) . toId) allScenarios

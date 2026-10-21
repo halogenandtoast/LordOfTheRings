@@ -30,6 +30,10 @@ import LordOfTheRings.Event.Cards.ForGondor
 import LordOfTheRings.Event.Cards.GrimResolve
 import LordOfTheRings.Event.Cards.SneakAttack
 import LordOfTheRings.Event.Cards.ValiantSacrifice
+import LordOfTheRings.Event.Cards.CampfireTales
+import LordOfTheRings.Event.Cards.TheEaglesAreComing
+import LordOfTheRings.Event.Cards.MusteringTheRohirrim
+import LordOfTheRings.Event.Cards.StridersPath
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -73,5 +77,9 @@ allEvents =
         , SomeEventCard loriensWealth
         , SomeEventCard loreOfImladris
         , SomeEventCard bladeMastery
+        , SomeEventCard campfireTales
+        , SomeEventCard theEaglesAreComing
+        , SomeEventCard musteringTheRohirrim
+        , SomeEventCard stridersPath
         ]
     ]

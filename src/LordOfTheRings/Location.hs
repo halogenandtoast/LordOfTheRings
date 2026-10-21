@@ -18,6 +18,11 @@ import LordOfTheRings.Location.Cards.OldForestRoad
 import LordOfTheRings.Location.Cards.TheBrownLands
 import LordOfTheRings.Location.Cards.TheEastBight
 import LordOfTheRings.Location.Cards.TowerGate
+import LordOfTheRings.Location.Cards.TheOldFord
+import LordOfTheRings.Location.Cards.TheEavesOfMirkwood
+import LordOfTheRings.Location.Cards.RiverNinglor
+import LordOfTheRings.Location.Cards.TheEastBank
+import LordOfTheRings.Location.Cards.TheWestBank
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -60,5 +65,10 @@ allLocations =
         , SomeLocationCard towerGate
         , SomeLocationCard banksOfTheAnduin
         , SomeLocationCard gladdenFields
+        , SomeLocationCard theOldFord
+        , SomeLocationCard theEavesOfMirkwood
+        , SomeLocationCard riverNinglor
+        , SomeLocationCard theEastBank
+        , SomeLocationCard theWestBank
         ]
     ]

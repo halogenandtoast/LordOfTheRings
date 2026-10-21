@@ -69,6 +69,10 @@ allEventCards =
       , hostOfGaladhrim
       , theMusterOfRohan
       , helmOfSecrecy
+      , campfireTales
+      , theEaglesAreComing
+      , musteringTheRohirrim
+      , stridersPath
       ]
 
 everVigilant :: CardDef
@@ -229,3 +233,18 @@ theMusterOfRohan = event "22062" "The Muster of Rohan" Spirit (StaticCost 4)
 
 helmOfSecrecy :: CardDef
 helmOfSecrecy = event "22090" "Helm of Secrecy" Neutral (StaticCost 4)
+
+campfireTales :: CardDef
+campfireTales = event "02003" "Campfire Tales" Leadership (StaticCost 1)
+
+theEaglesAreComing :: CardDef
+theEaglesAreComing =
+  (event "02005" "The Eagles Are Coming!" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Eagle]
+    }
+
+musteringTheRohirrim :: CardDef
+musteringTheRohirrim = event "02007" "Mustering the Rohirrim" Spirit (StaticCost 1)
+
+stridersPath :: CardDef
+stridersPath = event "02009" "Strider's Path" Lore (StaticCost 1)

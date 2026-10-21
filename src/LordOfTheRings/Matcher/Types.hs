@@ -43,6 +43,8 @@ data HeroMatcher
   | CommittedHero
   | AttackingHero
   | PrisonerHero
+  | -- | a hero with an attachment, objective or condition of the trait attached
+    HeroWithAttached Trait
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]
@@ -132,6 +134,7 @@ data LocationMatcher
   = LocationWithId LocationId
   | LocationInStagingArea
   | IsActiveLocation
+  | LocationWithTrait Trait
   | AnyLocation
   | NotLocation LocationMatcher
   | LocationMatchAll [LocationMatcher]

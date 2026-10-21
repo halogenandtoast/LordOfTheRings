@@ -21,6 +21,7 @@ import LordOfTheRings.Attachment.Cards.SelfPreservation
 import LordOfTheRings.Attachment.Cards.StewardOfGondor
 import LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
 import LordOfTheRings.Attachment.Cards.UnexpectedCourage
+import LordOfTheRings.Attachment.Cards.SongOfKings
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -68,5 +69,6 @@ allAttachments =
         , SomeAttachmentCard selfPreservation
         , SomeAttachmentCard dunedainMark
         , SomeAttachmentCard mendorsSupport
+        , SomeAttachmentCard songOfKings
         ]
     ]

@@ -62,6 +62,7 @@ allAttachmentCards =
       , warAxe
       , hornOfTheMark
       , valiantSword
+      , songOfKings
       ]
 
 stewardOfGondor :: CardDef
@@ -358,4 +359,10 @@ valiantSword =
   (attachment "22083" "Valiant Sword" Leadership (StaticCost 1))
     { cdCardTraits = setFromList [Item, Weapon]
     , cdKeywords = setFromList [Restricted]
+    }
+
+songOfKings :: CardDef
+songOfKings =
+  (attachment "02010" "Song of Kings" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
     }

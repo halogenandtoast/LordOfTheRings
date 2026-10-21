@@ -37,6 +37,8 @@ allEnemyCards =
       , mistyMountainGoblins
       , easternCrows
       , ungoliantsSwarm
+      , goblintownScavengers
+      , huntersFromMordor
       ]
 
 kingSpider :: CardDef
@@ -185,4 +187,20 @@ ungoliantsSwarm :: CardDef
 ungoliantsSwarm =
   (enemy "RC004" "Ungoliant's Swarm" PassageThroughMirkwoodCampaign 1 0 3 2 2 5)
     { cdCardTraits = setFromList [Creature, Spider]
+    }
+
+goblintownScavengers :: CardDef
+goblintownScavengers =
+  (enemy "02020" "Goblintown Scavengers" TheHuntForGollum 2 12 1 1 0 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+huntersFromMordor :: CardDef
+huntersFromMordor =
+  (enemy "02021" "Hunters from Mordor" TheHuntForGollum 5 34 2 2 2 6)
+    { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

@@ -27,6 +27,9 @@ allQuestCards =
       , toTheRiver
       , anduinPassage
       , ambushOnTheShore
+      , theHuntBegins
+      , aNewTerrorAbroad
+      , onTheTrail
       ]
 
 fliesAndSpiders :: CardDef
@@ -58,3 +61,12 @@ anduinPassage = quest "01127" "Anduin Passage" JourneyAlongTheAnduin 2 16
 
 ambushOnTheShore :: CardDef
 ambushOnTheShore = quest "01128" "Ambush on the Shore" JourneyAlongTheAnduin 3 0
+
+theHuntBegins :: CardDef
+theHuntBegins = quest "02011" "The Hunt Begins" TheHuntForGollum 1 8
+
+aNewTerrorAbroad :: CardDef
+aNewTerrorAbroad = quest "02012" "A New Terror Abroad" TheHuntForGollum 2 10
+
+onTheTrail :: CardDef
+onTheTrail = quest "02013" "On the Trail" TheHuntForGollum 3 8

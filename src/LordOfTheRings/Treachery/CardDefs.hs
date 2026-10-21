@@ -29,6 +29,9 @@ allTreacheryCards =
       , pursuedByShadow
       , treacherousFog
       , lingeringVenom
+      , falseLead
+      , flooding
+      , oldWivesTales
       ]
 
 eyesOfTheForest :: CardDef
@@ -89,4 +92,22 @@ lingeringVenom =
   (treachery "RC005" "Lingering Venom" PassageThroughMirkwoodCampaign 1)
     { cdCardTraits = setFromList [Burden]
     , cdKeywords = setFromList [Surge]
+    }
+
+falseLead :: CardDef
+falseLead = treachery "02022" "False Lead" TheHuntForGollum 2
+
+flooding :: CardDef
+flooding =
+  (treachery "02023" "Flooding" TheHuntForGollum 2)
+    { cdCardTraits = setFromList [Disaster]
+    , cdKeywords = setFromList [Doomed 1, Surge]
+    , cdShadowEffect = True
+    }
+
+oldWivesTales :: CardDef
+oldWivesTales =
+  (treachery "02024" "Old Wives' Tales" TheHuntForGollum 3)
+    { cdCardTraits = setFromList [Gossip]
+    , cdEasyModeQuantity = Just 1
     }

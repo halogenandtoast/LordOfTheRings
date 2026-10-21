@@ -18,6 +18,9 @@ import LordOfTheRings.Treachery.Cards.PursuedByShadow
 import LordOfTheRings.Treachery.Cards.TheNecromancersReach
 import LordOfTheRings.Treachery.Cards.TreacherousFog
 import LordOfTheRings.Treachery.Cards.UnderTheShadow
+import LordOfTheRings.Treachery.Cards.FalseLead
+import LordOfTheRings.Treachery.Cards.Flooding
+import LordOfTheRings.Treachery.Cards.OldWivesTales
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -60,5 +63,8 @@ allTreacherys =
         , SomeTreacheryCard pursuedByShadow
         , SomeTreacheryCard treacherousFog
         , SomeTreacheryCard lingeringVenom
+        , SomeTreacheryCard falseLead
+        , SomeTreacheryCard flooding
+        , SomeTreacheryCard oldWivesTales
         ]
     ]

@@ -62,6 +62,7 @@ matchHero matcher hero = case matcher of
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
   AttackingHero -> pure $ heroAttacking (toAttrs hero)
   PrisonerHero -> pure $ heroPrisoner (toAttrs hero)
+  HeroWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget hero)
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
   HeroMatchAll ms -> allM (`matchHero` hero) ms
@@ -120,6 +121,7 @@ matchLocation matcher location = case matcher of
   LocationWithId lid -> pure $ location.id == lid
   LocationInStagingArea -> pure $ location.placement == StagingArea
   IsActiveLocation -> pure $ location.placement == ActiveLocation
+  LocationWithTrait trait -> hasTrait trait (toTarget location) (toCardDef location)
   AnyLocation -> pure True
   NotLocation m -> not <$> matchLocation m location
   LocationMatchAll ms -> allM (`matchLocation` location) ms
@@ -190,6 +192,23 @@ getAttachmentsControlledBy pid = do
   objectiveOn o = case o.placement of
     AttachedTo host -> Just host
     _ -> Nothing
+
+-- | The cards attached to the host with the trait: attachments, objectives and encounter
+-- cards attached as conditions.
+attachedWithTrait :: (HasGame m) => Trait -> Target -> m [Target]
+attachedWithTrait trait host = do
+  es <- getsGame gameEntities
+  let on :: (HasField "placement" a Placement) => a -> Bool
+      on a = a.placement == AttachedTo host
+  pure
+    $ [toTarget a | a <- toList es.attachments, on a, trait `member` cdCardTraits (toCardDef a)]
+    <> [toTarget o | o <- toList es.objectives, on o, trait `member` cdCardTraits (toCardDef o)]
+    <> [toTarget t | t <- toList es.treacheries, on t, trait `member` cdCardTraits (toCardDef t)]
+
+-- | Objectives in play with the trait: in the staging area or attached.
+objectivesWithTrait :: (HasGame m) => Trait -> m [Objective]
+objectivesWithTrait trait =
+  getsGame (filter (\o -> trait `member` cdCardTraits (toCardDef o) && o.placement /= Unplaced) . toList . entitiesObjectives . gameEntities)
 
 -- | Players still in the game, in turn order from the first player.
 getRemainingPlayers :: (HasGame m) => m [PlayerId]

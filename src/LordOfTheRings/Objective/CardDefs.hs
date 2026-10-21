@@ -21,6 +21,7 @@ allObjectiveCards =
       , dungeonTorch
       , shadowKey
       , mendor
+      , signsOfGollum
       ]
 
 gandalfsMap :: CardDef
@@ -51,4 +52,11 @@ mendor =
     { cdUnique = True
     , cdCardTraits = setFromList [Scout, Silvan]
     , cdKeywords = setFromList [Ranged, Sentinel]
+    }
+
+signsOfGollum :: CardDef
+signsOfGollum =
+  (objective "02014" "Signs of Gollum" TheHuntForGollum 4)
+    { cdCardTraits = setFromList [Clue]
+    , cdKeywords = setFromList [Guarded]
     }
