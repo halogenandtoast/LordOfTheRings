@@ -74,6 +74,15 @@ import LordOfTheRings.Ally.Cards.Kili
 import LordOfTheRings.Ally.Cards.Dori
 import LordOfTheRings.Ally.Cards.Gloin
 import LordOfTheRings.Ally.Cards.EreborGuard
+import LordOfTheRings.Ally.Cards.ErrandRider
+import LordOfTheRings.Ally.Cards.PelargirShipCaptain
+import LordOfTheRings.Ally.Cards.CitadelCustodian
+import LordOfTheRings.Ally.Cards.DefenderOfRammas
+import LordOfTheRings.Ally.Cards.EnvoyOfPelargir
+import LordOfTheRings.Ally.Cards.SquireOfTheCitadel
+import LordOfTheRings.Ally.Cards.EmynArnenRanger
+import LordOfTheRings.Ally.Cards.SoldierOfGondor
+import LordOfTheRings.Ally.Cards.AngborTheFearless
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -174,5 +183,14 @@ allAllies =
         , SomeAllyCard dori
         , SomeAllyCard gloin
         , SomeAllyCard ereborGuard
+        , SomeAllyCard errandRider
+        , SomeAllyCard pelargirShipCaptain
+        , SomeAllyCard citadelCustodian
+        , SomeAllyCard defenderOfRammas
+        , SomeAllyCard envoyOfPelargir
+        , SomeAllyCard squireOfTheCitadel
+        , SomeAllyCard emynArnenRanger
+        , SomeAllyCard soldierOfGondor
+        , SomeAllyCard angborTheFearless
         ]
     ]

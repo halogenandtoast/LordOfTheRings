@@ -375,5 +375,22 @@
     "done": "Done"
   },
   "moveResourceFrom": "Choose a hero to move 1 resource from",
-  "moveResourceTo": "Choose a hero to move the resource to"
+  "moveResourceTo": "Choose a hero to move the resource to",
+  "chooseHeroForResource": "Choose a hero to add 1 resource to",
+  "squireOfTheCitadel": {
+    "chooseHero": "Squire of the Citadel left play: add 1 resource to a Gondor hero?"
+  },
+  "emynArnenRanger": {
+    "chooseEnemy": "Choose an enemy with a Trap attached"
+  },
+  "behindStrongWalls": {
+    "choose": "Choose a defending Gondor character to ready"
+  },
+  "foeHammer": {
+    "choose": "Choose a Weapon to exhaust"
+  },
+  "helmOfSecrecy": {
+    "chooseHero": "Choose a hero to swap out",
+    "chooseSwap": "Choose a hero from your collection to swap in"
+  }
 }
