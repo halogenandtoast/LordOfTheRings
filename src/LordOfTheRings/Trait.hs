@@ -7,38 +7,56 @@ data Trait
   | Armor
   | Artifact
   | Beorning
+  | Boon
   | Burden
+  | Clue
   | Condition
   | Craftsman
   | Creature
+  | Dale
+  | DeadMarshes
+  | Disaster
   | DolGuldur
   | Dunedain
   | Dungeon
   | Dwarf
+  | Eagle
+  | EmynMuil
+  | Escape
   | Forest
   | Goblin
+  | Gollum
   | Gondor
+  | Gossip
+  | Hazard
   | Hobbit
   | Insect
   | Istari
   | Item
   | Marshland
+  | Mathom
   | Minstrel
+  | Mordor
+  | Mount
   | Mountain
   | Nazgul
   | Noble
   | Noldor
   | Orc
+  | Pipe
   | Ranger
+  | Ring
   | Riverland
   | Rohan
   | Scout
   | Signal
   | Silvan
   | Skill
+  | Song
   | Spider
   | Steward
   | Stronghold
+  | Tantrum
   | Title
   | Trap
   | Troll
@@ -46,5 +64,6 @@ data Trait
   | Warrior
   | Wasteland
   | Weapon
+  | Wilderlands
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

@@ -45,6 +45,30 @@ allEventCards =
       , secretPaths
       , gandalfsSearch
       , beornsHospitality
+      , astonishingSpeed
+      , durinsSong
+      , lureOfMoria
+      , elrondsCounsel
+      , daeronsRunes
+      , weAreNotIdle
+      , handsUponTheBow
+      , behindStrongWalls
+      , forthEorlingas
+      , hiddenCache
+      , theTreePeople
+      , feignedVoices
+      , pursuingTheEnemy
+      , chargeOfTheRohirrim
+      , aVeryGoodTale
+      , foeHammer
+      , waitNoLonger
+      , coneyInATrap
+      , oathOfEorl
+      , pillarsOfTheKings
+      , needDrivesThem
+      , hostOfGaladhrim
+      , theMusterOfRohan
+      , helmOfSecrecy
       ]
 
 everVigilant :: CardDef
@@ -130,3 +154,78 @@ gandalfsSearch = event "01067" "Gandalf's Search" Lore DynamicCost
 
 beornsHospitality :: CardDef
 beornsHospitality = event "01068" "Beorn's Hospitality" Lore (StaticCost 5)
+
+astonishingSpeed :: CardDef
+astonishingSpeed = event "02122" "Astonishing Speed" Spirit (StaticCost 3)
+
+durinsSong :: CardDef
+durinsSong =
+  (event "03004" "Durin's Song" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }
+
+lureOfMoria :: CardDef
+lureOfMoria = event "04030" "Lure of Moria" Leadership (StaticCost 3)
+
+elrondsCounsel :: CardDef
+elrondsCounsel = event "04059" "Elrond's Counsel" Spirit (StaticCost 0)
+
+daeronsRunes :: CardDef
+daeronsRunes = event "04108" "Daeron's Runes" Lore (StaticCost 0)
+
+weAreNotIdle :: CardDef
+weAreNotIdle = event "04129" "We Are Not Idle" Leadership (StaticCost 0)
+
+handsUponTheBow :: CardDef
+handsUponTheBow = event "04131" "Hands Upon the Bow" Tactics (StaticCost 1)
+
+behindStrongWalls :: CardDef
+behindStrongWalls = event "05008" "Behind Strong Walls" Tactics (StaticCost 1)
+
+forthEorlingas :: CardDef
+forthEorlingas = event "06138" "Forth Eorlingas!" Tactics (StaticCost 2)
+
+hiddenCache :: CardDef
+hiddenCache = event "06143" "Hidden Cache" Neutral (StaticCost 0)
+
+theTreePeople :: CardDef
+theTreePeople = event "08009" "The Tree People" Lore (StaticCost 0)
+
+feignedVoices :: CardDef
+feignedVoices = event "08027" "Feigned Voices" Leadership (StaticCost 0)
+
+pursuingTheEnemy :: CardDef
+pursuingTheEnemy = event "08060" "Pursuing the Enemy" Tactics (StaticCost 0)
+
+chargeOfTheRohirrim :: CardDef
+chargeOfTheRohirrim = event "08116" "Charge of the Rohirrim" Tactics (StaticCost 2)
+
+aVeryGoodTale :: CardDef
+aVeryGoodTale = event "131014" "A Very Good Tale" Leadership (StaticCost 0)
+
+foeHammer :: CardDef
+foeHammer = event "131015" "Foe-hammer" Tactics (StaticCost 0)
+
+waitNoLonger :: CardDef
+waitNoLonger = event "17005" "Wait no Longer" Tactics (StaticCost 2)
+
+coneyInATrap :: CardDef
+coneyInATrap = event "17009" "Coney in a Trap" Lore (StaticCost 1)
+
+oathOfEorl :: CardDef
+oathOfEorl = event "17085" "Oath of Eorl" Tactics (StaticCost 3)
+
+pillarsOfTheKings :: CardDef
+pillarsOfTheKings = event "22003" "Pillars of the Kings" Leadership (StaticCost 4)
+
+needDrivesThem :: CardDef
+needDrivesThem = event "22029" "Need Drives Them" Leadership (StaticCost 3)
+
+hostOfGaladhrim :: CardDef
+hostOfGaladhrim = event "22036" "Host of Galadhrim" Neutral (StaticCost 4)
+
+theMusterOfRohan :: CardDef
+theMusterOfRohan = event "22062" "The Muster of Rohan" Spirit (StaticCost 4)
+
+helmOfSecrecy :: CardDef
+helmOfSecrecy = event "22090" "Helm of Secrecy" Neutral (StaticCost 4)

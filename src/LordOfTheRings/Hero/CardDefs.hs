@@ -29,6 +29,23 @@ allHeroCards =
       , denethor
       , glorfindel
       , beravor
+      , princeImrahil
+      , dainIronfoot
+      , bifur
+      , elrond
+      , beregond
+      , boromir
+      , faramir
+      , eomer
+      , celeborn
+      , haldirOfLorien
+      , mablung
+      , galadriel
+      , nori
+      , ori
+      , hirgon
+      , fastred
+      , lothiriel
       ]
 
 aragorn :: CardDef
@@ -103,4 +120,109 @@ beravor :: CardDef
 beravor =
   (hero "01012" "Beravor" Lore 10 2 2 2 4)
     { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+princeImrahil :: CardDef
+princeImrahil =
+  (hero "02050" "Prince Imrahil" Leadership 11 2 3 2 4)
+    { cdCardTraits = setFromList [Gondor, Noble]
+    }
+
+dainIronfoot :: CardDef
+dainIronfoot =
+  (hero "02116" "Dáin Ironfoot" Leadership 11 1 2 3 5)
+    { cdCardTraits = setFromList [Dwarf, Noble]
+    }
+
+bifur :: CardDef
+bifur =
+  (hero "03002" "Bifur" Lore 7 2 1 2 3)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+elrond :: CardDef
+elrond =
+  (hero "04128" "Elrond" Lore 13 3 2 3 4)
+    { cdCardTraits = setFromList [Noble, Noldor]
+    }
+
+beregond :: CardDef
+beregond =
+  (hero "05001" "Beregond" Tactics 10 0 1 4 4)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+boromir :: CardDef
+boromir =
+  (hero "05002" "Boromir" Leadership 11 1 3 2 5)
+    { cdCardTraits = setFromList [Gondor, Noble, Warrior]
+    }
+
+faramir :: CardDef
+faramir =
+  (hero "06081" "Faramir" Lore 11 2 2 2 5)
+    { cdCardTraits = setFromList [Gondor, Noble, Ranger]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+eomer :: CardDef
+eomer =
+  (hero "07001" "Éomer" Tactics 10 1 3 2 4)
+    { cdCardTraits = setFromList [Noble, Rohan, Warrior]
+    }
+
+celeborn :: CardDef
+celeborn =
+  (hero "08001" "Celeborn" Leadership 11 3 2 2 4)
+    { cdCardTraits = setFromList [Noble, Silvan]
+    }
+
+haldirOfLorien :: CardDef
+haldirOfLorien =
+  (hero "08056" "Haldir of Lórien" Lore 9 2 3 1 3)
+    { cdCardTraits = setFromList [Ranger, Scout, Silvan]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+mablung :: CardDef
+mablung =
+  (hero "08084" "Mablung" Tactics 10 2 2 2 4)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
+galadriel :: CardDef
+galadriel =
+  (hero "08112" "Galadriel" Spirit 9 4 0 0 4)
+    { cdCardTraits = setFromList [Noble, Noldor]
+    }
+
+nori :: CardDef
+nori =
+  (hero "131003" "Nori" Spirit 9 2 1 2 4)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+ori :: CardDef
+ori =
+  (hero "131004" "Ori" Lore 8 2 2 1 3)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+hirgon :: CardDef
+hirgon =
+  (hero "17055" "Hirgon" Tactics 9 2 2 1 4)
+    { cdCardTraits = setFromList [Gondor, Scout]
+    }
+
+fastred :: CardDef
+fastred =
+  (hero "17081" "Fastred" Spirit 9 1 2 3 3)
+    { cdCardTraits = setFromList [Rohan, Warrior]
+    }
+
+lothiriel :: CardDef
+lothiriel =
+  (hero "22027" "Lothíriel" Spirit 8 3 1 1 3)
+    { cdCardTraits = setFromList [Gondor, Noble]
     }

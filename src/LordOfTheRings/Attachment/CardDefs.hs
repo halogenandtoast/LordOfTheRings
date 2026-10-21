@@ -32,6 +32,36 @@ allAttachmentCards =
       , selfPreservation
       , dunedainMark
       , mendorsSupport
+      , ancientMathom
+      , narvisBelt
+      , legacyOfDurin
+      , pathOfNeed
+      , healingHerbs
+      , vilya
+      , rangerSpikes
+      , gondorianShield
+      , ithilienPit
+      , visionaryLeadership
+      , spearOfTheMark
+      , steedOfTheMark
+      , rohanWarhorse
+      , firefoot
+      , oLorien
+      , lembas
+      , bowOfTheGaladhrim
+      , wingfoot
+      , heirOfMardil
+      , nenya
+      , captainOfGondor
+      , cram
+      , throrsMap
+      , kingUnderTheMountain
+      , dwarfPipe
+      , theRedArrow
+      , magicRing
+      , warAxe
+      , hornOfTheMark
+      , valiantSword
       ]
 
 stewardOfGondor :: CardDef
@@ -128,3 +158,204 @@ dunedainMark =
 
 mendorsSupport :: CardDef
 mendorsSupport = attachment "RC003" "Mendor's Support" Neutral (StaticCost 0)
+
+ancientMathom :: CardDef
+ancientMathom =
+  (attachment "02056" "Ancient Mathom" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Mathom]
+    }
+
+narvisBelt :: CardDef
+narvisBelt =
+  (attachment "03003" "Narvi's Belt" Leadership (StaticCost 2))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Item]
+    }
+
+legacyOfDurin :: CardDef
+legacyOfDurin =
+  (attachment "04061" "Legacy of Durin" Lore (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Condition]
+    }
+
+pathOfNeed :: CardDef
+pathOfNeed =
+  (attachment "04103" "Path of Need" Leadership (StaticCost 4))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+healingHerbs :: CardDef
+healingHerbs =
+  (attachment "04109" "Healing Herbs" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    }
+
+vilya :: CardDef
+vilya =
+  (attachment "04137" "Vilya" Neutral (StaticCost 2))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Ring]
+    }
+
+rangerSpikes :: CardDef
+rangerSpikes =
+  (attachment "05017" "Ranger Spikes" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Trap]
+    }
+
+gondorianShield :: CardDef
+gondorianShield =
+  (attachment "06005" "Gondorian Shield" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Armor, Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+ithilienPit :: CardDef
+ithilienPit =
+  (attachment "06064" "Ithilien Pit" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Trap]
+    }
+
+visionaryLeadership :: CardDef
+visionaryLeadership =
+  (attachment "06136" "Visionary Leadership" Leadership (StaticCost 2))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Skill]
+    }
+
+spearOfTheMark :: CardDef
+spearOfTheMark =
+  (attachment "06137" "Spear of the Mark" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+steedOfTheMark :: CardDef
+steedOfTheMark =
+  (attachment "06139" "Steed of the Mark" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Mount]
+    }
+
+rohanWarhorse :: CardDef
+rohanWarhorse =
+  (attachment "07008" "Rohan Warhorse" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+firefoot :: CardDef
+firefoot =
+  (attachment "08004" "Firefoot" Tactics (StaticCost 2))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+oLorien :: CardDef
+oLorien =
+  (attachment "08058" "O Lórien!" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Song]
+    }
+
+lembas :: CardDef
+lembas =
+  (attachment "08064" "Lembas" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    }
+
+bowOfTheGaladhrim :: CardDef
+bowOfTheGaladhrim =
+  (attachment "08088" "Bow of the Galadhrim" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+wingfoot :: CardDef
+wingfoot =
+  (attachment "08092" "Wingfoot" Lore (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+heirOfMardil :: CardDef
+heirOfMardil =
+  (attachment "08113" "Heir of Mardil" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+nenya :: CardDef
+nenya =
+  (attachment "08121" "Nenya" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Ring]
+    }
+
+captainOfGondor :: CardDef
+captainOfGondor =
+  (attachment "08140" "Captain of Gondor" Tactics (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+cram :: CardDef
+cram =
+  (attachment "131011" "Cram" Leadership (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    }
+
+throrsMap :: CardDef
+throrsMap =
+  (attachment "131013" "Thrór's Map" Lore (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    }
+
+kingUnderTheMountain :: CardDef
+kingUnderTheMountain =
+  (attachment "132018" "King Under the Mountain" Leadership (StaticCost 2))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+dwarfPipe :: CardDef
+dwarfPipe =
+  (attachment "17007" "Dwarf Pipe" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Pipe]
+    }
+
+theRedArrow :: CardDef
+theRedArrow =
+  (attachment "17058" "The Red Arrow" Tactics (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    }
+
+magicRing :: CardDef
+magicRing =
+  (attachment "17143" "Magic Ring" Neutral (StaticCost 2))
+    { cdCardTraits = setFromList [Artifact, Item, Ring]
+    }
+
+warAxe :: CardDef
+warAxe =
+  (attachment "22032" "War Axe" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    }
+
+hornOfTheMark :: CardDef
+hornOfTheMark =
+  (attachment "22035" "Horn of the Mark" Spirit (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+valiantSword :: CardDef
+valiantSword =
+  (attachment "22083" "Valiant Sword" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }

@@ -37,6 +37,47 @@ allAllyCards =
       , minerOfTheIronHills
       , gleowine
       , gandalf
+      , westfoldHorseBreaker
+      , eomund
+      , escortFromEdoras
+      , theRiddermarksFinest
+      , silvanTracker
+      , westRoadTraveller
+      , mirkwoodRunner
+      , zigilMiner
+      , ereborRecordKeeper
+      , bombur
+      , longbeardElder
+      , errandRider
+      , citadelCustodian
+      , defenderOfRammas
+      , envoyOfPelargir
+      , silvanRefugee
+      , squireOfTheCitadel
+      , guthlaf
+      , pelargirShipCaptain
+      , eredNimraisProspector
+      , westfoldOutrider
+      , westfoldHorseBreeder
+      , naithGuide
+      , rumil
+      , galadhrimMinstrel
+      , defenderOfTheNaith
+      , galadhonArcher
+      , orophin
+      , galadrielsHandmaiden
+      , eredLuinMiner
+      , fili
+      , kili
+      , dori
+      , gloin
+      , greenwoodArcher
+      , ereborGuard
+      , riddermarkKnight
+      , emynArnenRanger
+      , soldierOfGondor
+      , angborTheFearless
+      , westfoldLancer
       ]
 
 guardOfTheCitadel :: CardDef
@@ -166,4 +207,266 @@ gandalf =
   (ally "01073" "Gandalf" Neutral (StaticCost 5) 4 4 4 4)
     { cdUnique = True
     , cdCardTraits = setFromList [Istari]
+    }
+
+westfoldHorseBreaker :: CardDef
+westfoldHorseBreaker =
+  (ally "02006" "Westfold Horse-breaker" Spirit (StaticCost 2) 1 0 1 1)
+    { cdCardTraits = setFromList [Rohan]
+    }
+
+eomund :: CardDef
+eomund =
+  (ally "02030" "Éomund" Spirit (StaticCost 3) 2 1 1 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan]
+    }
+
+escortFromEdoras :: CardDef
+escortFromEdoras =
+  (ally "02055" "Escort from Edoras" Spirit (StaticCost 2) 2 0 0 1)
+    { cdCardTraits = setFromList [Rohan]
+    }
+
+theRiddermarksFinest :: CardDef
+theRiddermarksFinest =
+  (ally "02077" "The Riddermark's Finest" Spirit (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Creature, Rohan]
+    }
+
+silvanTracker :: CardDef
+silvanTracker =
+  (ally "02102" "Silvan Tracker" Lore (StaticCost 3) 1 1 1 3)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+westRoadTraveller :: CardDef
+westRoadTraveller =
+  (ally "02121" "West Road Traveller" Spirit (StaticCost 2) 2 0 0 1)
+    { cdCardTraits = setFromList [Rohan]
+    }
+
+mirkwoodRunner :: CardDef
+mirkwoodRunner =
+  (ally "02123" "Mirkwood Runner" Lore (StaticCost 3) 1 2 0 2)
+    { cdCardTraits = setFromList [Scout, Silvan]
+    }
+
+zigilMiner :: CardDef
+zigilMiner =
+  (ally "03009" "Zigil Miner" Spirit (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+ereborRecordKeeper :: CardDef
+ereborRecordKeeper =
+  (ally "03011" "Erebor Record Keeper" Lore (StaticCost 1) 1 0 0 1)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+bombur :: CardDef
+bombur =
+  (ally "04035" "Bombur" Lore (StaticCost 3) 0 0 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+longbeardElder :: CardDef
+longbeardElder =
+  (ally "04102" "Longbeard Elder" Leadership (StaticCost 3) 2 1 1 2)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+errandRider :: CardDef
+errandRider =
+  (ally "05003" "Errand-rider" Leadership (StaticCost 1) 0 0 0 2)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+citadelCustodian :: CardDef
+citadelCustodian =
+  (ally "05004" "Citadel Custodian" Leadership (StaticCost 5) 1 0 1 3)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+defenderOfRammas :: CardDef
+defenderOfRammas =
+  (ally "05007" "Defender of Rammas" Tactics (StaticCost 2) 0 1 4 1)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+envoyOfPelargir :: CardDef
+envoyOfPelargir =
+  (ally "05018" "Envoy of Pelargir" Neutral (StaticCost 2) 1 1 0 1)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+silvanRefugee :: CardDef
+silvanRefugee =
+  (ally "06037" "Silvan Refugee" Spirit (StaticCost 1) 2 0 0 1)
+    { cdCardTraits = setFromList [Scout, Silvan]
+    }
+
+squireOfTheCitadel :: CardDef
+squireOfTheCitadel =
+  (ally "06108" "Squire of the Citadel" Leadership (StaticCost 1) 0 0 1 1)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+guthlaf :: CardDef
+guthlaf =
+  (ally "06110" "Guthlaf" Tactics (StaticCost 3) 1 1 2 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan]
+    }
+
+pelargirShipCaptain :: CardDef
+pelargirShipCaptain =
+  (ally "06135" "Pelargir Ship Captain" Leadership (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+eredNimraisProspector :: CardDef
+eredNimraisProspector =
+  (ally "06141" "Ered Nimrais Prospector" Lore (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+westfoldOutrider :: CardDef
+westfoldOutrider =
+  (ally "07006" "Westfold Outrider" Tactics (StaticCost 2) 0 2 1 2)
+    { cdCardTraits = setFromList [Rohan, Scout]
+    }
+
+westfoldHorseBreeder :: CardDef
+westfoldHorseBreeder =
+  (ally "07007" "Westfold Horse-breeder" Spirit (StaticCost 1) 1 0 0 1)
+    { cdCardTraits = setFromList [Rohan]
+    }
+
+naithGuide :: CardDef
+naithGuide =
+  (ally "08002" "Naith Guide" Leadership (StaticCost 2) 1 1 0 1)
+    { cdCardTraits = setFromList [Scout, Silvan]
+    }
+
+rumil :: CardDef
+rumil =
+  (ally "08028" "Rúmil" Tactics (StaticCost 4) 2 2 1 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Scout, Silvan]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+galadhrimMinstrel :: CardDef
+galadhrimMinstrel =
+  (ally "08063" "Galadhrim Minstrel" Lore (StaticCost 2) 1 0 0 1)
+    { cdCardTraits = setFromList [Minstrel, Silvan]
+    }
+
+defenderOfTheNaith :: CardDef
+defenderOfTheNaith =
+  (ally "08065" "Defender of the Naith" Neutral (StaticCost 3) 0 1 2 2)
+    { cdCardTraits = setFromList [Silvan, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+galadhonArcher :: CardDef
+galadhonArcher =
+  (ally "08087" "Galadhon Archer" Tactics (StaticCost 2) 0 2 0 1)
+    { cdCardTraits = setFromList [Silvan, Warrior]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+orophin :: CardDef
+orophin =
+  (ally "08114" "Orophin" Leadership (StaticCost 3) 2 2 0 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Scout, Silvan]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+galadrielsHandmaiden :: CardDef
+galadrielsHandmaiden =
+  (ally "08117" "Galadriel's Handmaiden" Spirit (StaticCost 2) 2 0 1 1)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+eredLuinMiner :: CardDef
+eredLuinMiner =
+  (ally "12066" "Ered Luin Miner" Neutral (StaticCost 3) 1 1 1 2)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+fili :: CardDef
+fili =
+  (ally "131006" "Fili" Leadership (StaticCost 3) 1 1 1 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+kili :: CardDef
+kili =
+  (ally "131007" "Kili" Spirit (StaticCost 3) 1 1 1 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+dori :: CardDef
+dori =
+  (ally "131009" "Dori" Lore (StaticCost 3) 1 2 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+gloin :: CardDef
+gloin =
+  (ally "132006" "Glóin" Leadership (StaticCost 3) 2 1 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+greenwoodArcher :: CardDef
+greenwoodArcher =
+  (ally "16003" "Greenwood Archer" Leadership (StaticCost 2) 0 2 0 1)
+    { cdCardTraits = setFromList [Silvan]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+ereborGuard :: CardDef
+ereborGuard =
+  (ally "16004" "Erebor Guard" Spirit (StaticCost 4) 0 1 2 3)
+    { cdCardTraits = setFromList [Dwarf, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+riddermarkKnight :: CardDef
+riddermarkKnight =
+  (ally "17112" "Riddermark Knight" Tactics (StaticCost 2) 0 2 0 2)
+    { cdCardTraits = setFromList [Rohan, Warrior]
+    }
+
+emynArnenRanger :: CardDef
+emynArnenRanger =
+  (ally "17141" "Emyn Arnen Ranger" Lore (StaticCost 2) 0 1 1 2)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
+soldierOfGondor :: CardDef
+soldierOfGondor =
+  (ally "22002" "Soldier of Gondor" Leadership (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+angborTheFearless :: CardDef
+angborTheFearless =
+  (ally "22028" "Angbor the Fearless" Leadership (StaticCost 2) 2 1 0 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+westfoldLancer :: CardDef
+westfoldLancer =
+  (ally "22142" "Westfold Lancer" Tactics (StaticCost 3) 2 2 0 2)
+    { cdCardTraits = setFromList [Rohan, Warrior]
     }
