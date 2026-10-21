@@ -49,6 +49,14 @@ import LordOfTheRings.Attachment.Cards.OLorien
 import LordOfTheRings.Attachment.Cards.Lembas
 import LordOfTheRings.Attachment.Cards.BowOfTheGaladhrim
 import LordOfTheRings.Attachment.Cards.Wingfoot
+import LordOfTheRings.Attachment.Cards.NarvisBelt
+import LordOfTheRings.Attachment.Cards.LegacyOfDurin
+import LordOfTheRings.Attachment.Cards.HealingHerbs
+import LordOfTheRings.Attachment.Cards.Cram
+import LordOfTheRings.Attachment.Cards.ThrorsMap
+import LordOfTheRings.Attachment.Cards.KingUnderTheMountain
+import LordOfTheRings.Attachment.Cards.DwarfPipe
+import LordOfTheRings.Attachment.Cards.MagicRing
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -124,5 +132,13 @@ allAttachments =
         , SomeAttachmentCard theRedArrow
         , SomeAttachmentCard warAxe
         , SomeAttachmentCard hornOfTheMark
+        , SomeAttachmentCard narvisBelt
+        , SomeAttachmentCard legacyOfDurin
+        , SomeAttachmentCard healingHerbs
+        , SomeAttachmentCard cram
+        , SomeAttachmentCard throrsMap
+        , SomeAttachmentCard kingUnderTheMountain
+        , SomeAttachmentCard dwarfPipe
+        , SomeAttachmentCard magicRing
         ]
     ]
