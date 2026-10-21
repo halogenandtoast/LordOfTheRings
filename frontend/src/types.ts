@@ -40,6 +40,8 @@ export interface ChoiceView {
   targetId: string | null
   /** What choosing it does, for a card's menu when it offers several choices. */
   action: string
+  /** The damage choosing it deals its own card, to preview where that leaves it. */
+  damage?: number
 }
 
 export interface QuestionView {

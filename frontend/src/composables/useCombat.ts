@@ -45,6 +45,12 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
         return { [hovered.id]: { defend: { defense: null, damage, defeated: damage >= remaining(hovered) } } }
       }
 
+      // anything else dealing damage to the card chosen, such as a when revealed effect
+      const dealing = q.choices.find((c) => c.targetId === hovered?.id)?.damage
+      if (hovered && dealing) {
+        return { [hovered.id]: { defend: { defense: null, damage: dealing, defeated: dealing >= remaining(hovered) } } }
+      }
+
       const enemy = prompt === '$label.declareAttackers' ? byId.get(q.targetIds[0]) : undefined
       if (enemy) {
         const strength = enemy.attackStrength ?? 0

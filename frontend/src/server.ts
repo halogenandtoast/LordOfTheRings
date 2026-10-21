@@ -47,7 +47,14 @@ export interface UI {
   label?: string
   target?: Target
   ability?: { abilitySource: Target; abilityType: { tag: string } }
+  messages?: Message[]
 }
+
+/** The few messages read from a choice, to preview what it does; the rest pass as they are. */
+export type Message =
+  | { tag: 'DealDamage'; contents: [unknown, Target, number] }
+  | { tag: 'Run'; contents: Message[] }
+  | { tag: string; contents?: unknown }
 
 export type Question =
   | { tag: 'ChooseOne' | 'ChooseOneAtATime'; choices: UI[] }

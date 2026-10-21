@@ -1,5 +1,5 @@
 import { ikey } from './i18n'
-import type { CardDef, Entity, GameData, Question, ServerGame, Target, UI } from './server'
+import type { CardDef, Entity, GameData, Message, Question, ServerGame, Target, UI } from './server'
 import type { CardView, ChoiceView, GameView, PlayerView, QuestionView } from './types'
 
 // ringsdb type names, as the board compares against them
@@ -187,6 +187,15 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ...placed('treacheries', isAt('Unplaced')),
   ]
 
+  const damageTo = (id: string | null, messages: Message[]): number =>
+    messages.reduce((sum, m) => {
+      if (m.tag === 'DealDamage') {
+        const [, target, n] = m.contents as [unknown, Target, number]
+        return sum + (id && targetCardId(target) === id ? n : 0)
+      }
+      return sum + (m.tag === 'Run' ? damageTo(id, m.contents as Message[]) : 0)
+    }, 0)
+
   const toQuestion = (pid: string, question: Question): QuestionView => {
     let prompt = ''
     let sourceId: string | null = null
@@ -208,7 +217,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         case 'Label':
           return { index, label: ui.label ?? '', targetId: null, action: ui.label ?? '' }
         case 'TargetLabel':
-          return { index, label: targetName(ui.target), targetId: targetCardId(ui.target), action: prompt }
+          return { index, label: targetName(ui.target), targetId: targetCardId(ui.target), action: prompt, damage: damageTo(targetCardId(ui.target), ui.messages ?? []) }
         case 'AbilityLabel': {
           const kind = ui.ability?.abilityType.tag.replace(/Ability$/, '').replace(/^SilentForced$/, 'Forced') ?? 'Action'
           const source = ui.ability?.abilitySource
