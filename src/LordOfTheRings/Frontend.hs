@@ -3,11 +3,13 @@
 module LordOfTheRings.Frontend (module LordOfTheRings.Frontend) where
 
 import LordOfTheRings.Id
+import LordOfTheRings.Log.Entry
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
 
 data FrontendMessage
-  = Log {message :: Text}
+  = -- | an entry for the game log, stamped and stored before it goes out
+    Logged {entry :: LogEntry}
   | Announce {message :: Text}
   | FlipCard {cardId :: CardId}
   | -- | cards shuffled back into a deck, which may be drawn straight out again

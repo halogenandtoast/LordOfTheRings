@@ -32,6 +32,9 @@ import LordOfTheRings.Hero
 import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Location
+import LordOfTheRings.Log.Narrator
+import LordOfTheRings.Log.Block
+import LordOfTheRings.Log.Refs (phaseKey, sendLogInOpenBlock)
 import LordOfTheRings.Objective
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
@@ -76,6 +79,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameEffects = []
     , gameOutcome = Nothing
     , gameLastCommittedWillpower = Nothing
+    , gameLogBlocks = []
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -129,6 +133,8 @@ runNext =
       pure True
     Just msg -> do
       debug 1 $ print msg
+      -- the log, read off the game as the message finds it
+      for_ (narrationFor msg) \build -> traverse_ sendLogInOpenBlock =<< build
       -- store the result first, so the constant abilities read the game as it now is
       g <- runGame msg =<< getGame
       putGame g
@@ -142,7 +148,7 @@ instance FromJSON Entities where
   parseJSON = genericParseJSON (aesonOptions $ Just "entities") . withDefaults [("objectives", object [])]
 
 instance FromJSON Game where
-  parseJSON = genericParseJSON (aesonOptions $ Just "game")
+  parseJSON = genericParseJSON (aesonOptions $ Just "game") . withDefaults [("logBlocks", toJSON ([] :: [Value]))]
 
 -- | Run the message on one thing in play, putting what it pushes on the queue once it is
 -- done.
@@ -162,7 +168,7 @@ runEntities msg entities =
 
 runGame :: Message -> Game -> GameT Game
 runGame msg g =
-  logMessage msg
+  announce msg
     >> traverseOf (playersL . traverse) (runEach msg) g
     >>= traverseOf (activeCostsL . traverse) (runEach msg)
     >>= traverseOf entitiesL (runEntities msg)
@@ -180,6 +186,8 @@ runGameMessage msg g = case msg of
   Run msgs -> do
     pushAll msgs
     pure g
+  OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
+  CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   Setup -> do
     pushAll [DoStep n Setup | n <- [1 .. 7]]
     pure g
@@ -260,7 +268,6 @@ runGameMessage msg g = case msg of
     pure g
   Destroy target@(EnemyTarget eid) -> do
     enemy <- getEnemy eid
-    send $ Log $ ikeyWith "log.destroyed" (cardVar "name" enemy)
     case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         let card = MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
@@ -361,7 +368,7 @@ runGameMessage msg g = case msg of
               questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
                 $ [targetLabel d [Exhaust d, DefendWith pid eid d] | d <- defenders]
                 <> [Label (ikey "label.takeAttackUndefended") [UndefendedAttack pid eid]]
-    pushAll [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
+    pushAll =<< inLogBlock (EnemyAttackBlock pid eid) [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
     pure g
   DefendWith pid eid defender -> do
     pushAll
@@ -440,10 +447,13 @@ runGameMessage msg g = case msg of
       Just enemy' -> do
         attack <- getAttackStrength attackers eid (toCardDef enemy')
         defense <- getEnemyDefense eid
-        pushAll
-          $ map StopAttacking attackers
-          <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | notNull attackers]
-          <> [AttackResolved eid attackers | notNull attackers]
+        if null attackers
+          then pure ()
+          else
+            pushAll
+              =<< inLogBlock
+                (PlayerAttackBlock pid eid attackers)
+                (map StopAttacking attackers <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense), AttackResolved eid attackers])
     pure g
   AttackResolved eid attackers -> do
     destroyed <- not <$> selectAny (EnemyWithId eid)
@@ -477,14 +487,8 @@ runGameMessage msg g = case msg of
   RevealShadowCard eid cid -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
-        let name = display (cdName $ toCardDef card)
-            effect = if cdShadowEffect (toCardDef card) then "" else " (no shadow effect)"
         send $ FlipCard cid
-        send $ Log $ ikeyWith (if cdShadowEffect (toCardDef card) then "log.shadowRevealed" else "log.shadowRevealedNoEffect") (cardVar "enemy" enemy <> cardVar "card" card)
         send $ Announce $ ikeyWith "log.shadowAnnounce" (cardVar "card" card)
-    pure g
-  AttachShadowCard eid _ -> do
-    for_ (Map.lookup eid g.entities.enemies) \enemy -> send $ Log $ ikeyWith "log.dealtShadow" (cardVar "enemy" enemy)
     pure g
   ResolveShadowCard cid eid pid mDefender -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
@@ -492,8 +496,7 @@ runGameMessage msg g = case msg of
         push $ CheckWindows [mkAfter $ ShadowEffectResolved cid eid]
         resolveShadowEffect card (ResolveShadowEffect cid eid pid mDefender)
     pure g
-  ShuffleIntoEncounterDeck target@(ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
-    send $ Log $ ikeyWith "log.shuffledIntoEncounterDeck" (cardVar "name" o)
+  ShuffleIntoEncounterDeck (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
     deck <- shuffleM (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
   PutShadowTreacheryIntoPlay host cid placement -> do
@@ -588,21 +591,17 @@ runGameMessage msg g = case msg of
     pushEnd $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
     pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
   PlayAlly pid card -> do
-    player <- getPlayer pid
     thisAlly <- newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
     pushWhen limited' $ CreateEffect $ Effect GameSource GameTarget [AllyPlayedThisRound] UntilEndOfRound
-    send $ Log $ ikeyWith "log.plays" (nameVar "player" player.name <> cardVar "card" card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- newAlly (fromMaybe pid card.owner) card
-    send $ Log $ ikeyWith "log.putIntoPlay" (cardVar "name" card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutHeroIntoPlay pid card -> do
     thisHero <- newHero pid card
-    send $ Log $ ikeyWith "log.putIntoPlay" (cardVar "name" card)
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   CheckWindows windows -> do
@@ -636,22 +635,21 @@ runGameMessage msg g = case msg of
             <> [Label (ikey "label.pass") [next]]
     pure g
   UseAbility pid ab windows -> do
-    pushAll $ costMessages (PlayerSource pid) (abilityCost ab) <> [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
+    pushAll
+      =<< inLogBlock
+        (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
+        (costMessages (PlayerSource pid) (abilityCost ab) <> [UseCardAbility pid ab.abilitySource ab.abilityIndex windows])
     pure g
   PlayEvent pid card _ -> do
-    player <- getPlayer pid
-    send $ Log $ ikeyWith "log.plays" (nameVar "player" player.name <> cardVar "card" card)
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g
   ReturnToHand target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     leftPlay g target
     pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
-    send $ Log $ ikeyWith "log.returnsToHand" (cardVar "name" a)
     pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . handL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     leftPlay g target
     pushAll [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
-    send $ Log $ ikeyWith "log.shuffledIntoOwnersDeck" (cardVar "name" a)
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
   ReturnToTopOfEncounterDeck target -> do
@@ -684,7 +682,6 @@ runGameMessage msg g = case msg of
     getGame
   EngageOrcGuard pid card -> do
     guard' <- newEnemy (MkEncounterCard card.id (toCardCode orcGuard))
-    send $ Log $ ikeyWith "log.orcGuardEngages" (nameVar "player" $ maybe "" (.name) (Map.lookup pid g.players))
     push $ CheckWindows [mkAfter $ EnemyEngaged guard'.id pid]
     pure
       $ g
@@ -692,7 +689,6 @@ runGameMessage msg g = case msg of
       & scenarioL %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
-    send $ Log $ ikeyWith "log.placedInStaging" (cardVar "name" card)
     push $ GuardObjective (toId thisObjective)
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
@@ -702,7 +698,6 @@ runGameMessage msg g = case msg of
   PlayAttachment pid card -> do
     attachment <- newAttachment pid card
     hosts <- attachmentHosts (toAttrs attachment).attachTo
-    send . Log . (\p -> ikeyWith "log.plays" (nameVar "player" p.name <> cardVar "card" card)) =<< getPlayer pid
     let attachTo host = targetLabel host [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
     push $ case hosts of
       [host] -> uiToRun (attachTo host)
@@ -713,29 +708,30 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
   RevealCard card -> do
     let def = toCardDef card
-    send $ Log $ ikeyWith "log.revealed" (cardVar "name" card)
     players <- getPlayerOrder
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
         doomed = [RaiseThreat p n | Doomed n <- toList (cdKeywords def), p <- players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
-        revealing t = [CheckWindows [mkWhen $ Revealed t], whenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
+        revealing t = inLogBlock (RevealBlock card) $ [CheckWindows [mkWhen $ Revealed t], whenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
-        pushAll $ revealing (toTarget enemy) <> surge
+        pushAll . (<> surge) =<< revealing (toTarget enemy)
         pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
       LocationType -> do
         location <- newLocation card
-        pushAll $ revealing (toTarget location) <> surge
+        pushAll . (<> surge) =<< revealing (toTarget location)
         pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) location)
       TreacheryType -> do
         treachery <- newTreachery card
-        pushAll $ revealing (toTarget treachery) <> [FinishRevelation (toId treachery)] <> surge
+        pushAll . (<> (FinishRevelation (toId treachery) : surge)) =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       ObjectiveType -> do
-        push $ PutObjectiveIntoPlay card
+        pushAll =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
-      _ -> pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
+      _ -> do
+        pushAll =<< inLogBlock (RevealBlock card) []
+        pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
   AskToResolveWhenRevealed t card -> do
     lead <- getLead
     push $ questionLabelWith (ikeyWith "label.resolveWhenRevealed" (cardVar "card" card)) (Just t) [] lead [targetLabel t [WhenRevealed t]]
@@ -755,62 +751,16 @@ runGameMessage msg g = case msg of
     _ -> error "Unhandled"
   _ -> pure g
 
--- | Tell the players what just happened, before it happens.
-logMessage :: Message -> GameT ()
-logMessage = \case
-  BeginRound -> do
-    n <- getsGame ((+ 1) . gameRound)
-    send $ Log $ ikeyWith "log.round" [intVar "round" n]
-  BeginPhase phase -> do
-    let label = phaseName phase
-    send $ Log label
-    send $ Announce label
-  RaiseThreat pid n -> do
-    player <- getPlayer pid
-    send $ Log $ ikeyWith "log.threatRaised" (nameVar "player" player.name <> [intVar "count" n])
-  LowerThreat pid n -> do
-    player <- getPlayer pid
-    send $ Log $ ikeyWith "log.threatLowered" (nameVar "player" player.name <> [intVar "count" n])
-  EngageEnemy pid eid -> do
-    player <- getPlayer pid
-    enemy <- getEnemy eid
-    send $ Log $ ikeyWith "log.engages" (cardVar "enemy" enemy <> nameVar "player" player.name)
-  PlaceTokens _ target Progress n -> whenJustM (targetCard target) \card -> send $ Log $ ikeyWith "log.progress" (intVar "count" n : cardVar "name" card)
-  DealDamage _ target n | n > 0 -> whenJustM (targetCard target) \card -> send $ Log $ ikeyWith "log.takesDamage" (intVar "count" n : cardVar "name" card)
-  Discard target -> whenJustM (targetCard target) \card -> send $ Log $ ikeyWith "log.leavesPlay" (cardVar "name" card)
+-- | Show the players what is about to happen: the log is written by the narrator, this
+-- is what the board itself shows.
+announce :: Message -> GameT ()
+announce = \case
+  BeginPhase phase -> send $ Announce $ ikey $ "log.phase." <> phaseKey phase
   AdvanceToQuest card -> send $ FlipCard card.id
-  GameOver outcome -> do
-    let key = case outcome of
-          Won -> "won"
-          Lost -> "lost"
-    send $ Log $ ikey $ "log.gameOver." <> key
-    send $ Announce $ ikey $ "log.gameOver." <> key
+  GameOver outcome -> send $ Announce $ ikey $ "log.gameOver." <> case outcome of
+    Won -> "won"
+    Lost -> "lost"
   _ -> pure ()
-
-phaseName :: Phase -> Text
-phaseName = ikey . ("log.phase." <>) . \case
-  ResourcePhase -> "resource"
-  PlanningPhase -> "planning"
-  QuestPhase -> "quest"
-  TravelPhase -> "travel"
-  EncounterPhase -> "encounter"
-  CombatPhase -> "combat"
-  RefreshPhase -> "refresh"
-
--- | The card a target is in play, to name it in the log.
-targetCard :: Target -> GameT (Maybe CardCode)
-targetCard target = do
-  es <- getsGame gameEntities
-  pure $ case target of
-    HeroTarget hid -> toCardCode <$> Map.lookup hid es.heroes
-    AllyTarget aid -> toCardCode <$> Map.lookup aid es.allies
-    EnemyTarget eid -> toCardCode <$> Map.lookup eid es.enemies
-    LocationTarget lid -> toCardCode <$> Map.lookup lid es.locations
-    AttachmentTarget aid -> toCardCode <$> Map.lookup aid es.attachments
-    QuestTarget qid -> toCardCode <$> Map.lookup qid es.quests
-    TreacheryTarget tid -> toCardCode <$> Map.lookup tid es.treacheries
-    ObjectiveTarget oid -> toCardCode <$> Map.lookup oid es.objectives
-    _ -> Nothing
 
 eliminationThreat :: Int
 eliminationThreat = 50

@@ -87,7 +87,7 @@ spec = describe "Combat phase" do
     _ <- engageSpider pid
     _ <- setEncounterDeck [Enemies.forestSpider, Locations.oldForestRoad, Locations.oldForestRoad]
     run RevealEncounterCard
-    second <- getsGame (fromJustNote "no second spider" . lastMay . map toId . toList . (.entities.enemies))
+    second <- getsGame (fromJustNote "no second spider" . headMay . map toId . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies))
     run $ EngageEnemy pid second
     run $ EnemyAttacks pid
     Just (QuestionLabel prompt _ targets _) <- getQuestion pid

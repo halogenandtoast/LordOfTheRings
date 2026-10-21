@@ -185,6 +185,11 @@ library
       LordOfTheRings.Location.Import.Lifted
       LordOfTheRings.Location.Runner
       LordOfTheRings.Location.Types
+      LordOfTheRings.Log
+      LordOfTheRings.Log.Block
+      LordOfTheRings.Log.Entry
+      LordOfTheRings.Log.Narrator
+      LordOfTheRings.Log.Refs
       LordOfTheRings.Matcher
       LordOfTheRings.Matcher.Types
       LordOfTheRings.Matcher.Window
@@ -416,6 +421,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.ModifierSpec
+      LordOfTheRings.LogSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.QuestAdvancementSpec
       LordOfTheRings.QuestPhaseSpec

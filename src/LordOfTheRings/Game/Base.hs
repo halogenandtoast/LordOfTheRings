@@ -7,6 +7,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import LordOfTheRings.Log.Block
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
@@ -34,6 +35,8 @@ data Game = Game
   , gameOutcome :: Maybe Outcome
   , gameLastCommittedWillpower :: Maybe Int
   -- ^ What was committed at the last quest resolution, for the board's tally
+  , gameLogBlocks :: [LogBlock]
+  -- ^ The log's open blocks, outermost first. See "LordOfTheRings.Log.Block".
   }
   deriving stock (Show, Generic)
 

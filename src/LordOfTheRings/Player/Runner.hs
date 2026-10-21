@@ -17,6 +17,7 @@ import LordOfTheRings.Hero.Types
 import LordOfTheRings.Entities (entitiesTreacheries)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Treachery.Types ()
+import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Phase
@@ -77,7 +78,7 @@ instance RunMessage Player where
       pure player
     PlayCardInWindow pid cid windows | pid == player.id -> do
       card <- takeFromHand cid
-      push $ PayForCard pid card windows
+      pushAll =<< inLogBlock (PlayBlock pid card) [PayForCard pid card windows]
       pure $ player & handL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case

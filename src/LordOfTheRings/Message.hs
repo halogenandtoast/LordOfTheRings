@@ -6,6 +6,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Outcome
 import LordOfTheRings.Placement
 import LordOfTheRings.Id
+import LordOfTheRings.Log.Block
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -201,6 +202,9 @@ data Message
   | Run [Message]
   | DrawCards Drawing
   | Mulligan PlayerId
+  | -- | log only: what is narrated until the block closes is filed under it
+    OpenLogBlock LogBlock
+  | CloseLogBlock UUID
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -232,3 +236,9 @@ playerWindow prompt rebuild pid = Ask pid . QuestionLabel prompt Nothing [] . Pl
 chooseOrRunOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
 chooseOrRunOne _ [x] = uiToRun x
 chooseOrRunOne pid choices = chooseOne pid choices
+
+-- | The messages as one block in the log, opened before them and closed after.
+inLogBlock :: (MonadRandom m) => LogBlockKind -> [Message] -> m [Message]
+inLogBlock kind msgs = do
+  block <- LogBlock <$> getRandom <*> pure kind
+  pure $ OpenLogBlock block : msgs <> [CloseLogBlock block.id]
