@@ -482,7 +482,7 @@ resolveDeck :: UserId -> Maybe DeckChoice -> Handler (Maybe DeckList)
 resolveDeck userId = \case
   Nothing -> pure Nothing
   Just (StarterDeck sphere) ->
-    maybe (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere])) (pure . Just) $ lookup sphere coreStarterDecks
+    maybe (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere])) (pure . Just) $ lookup sphere starterDecks
   Just (ImportedDeck deckId) -> do
     db <- getsYesod (.cardDb)
     deckList <- runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) pure

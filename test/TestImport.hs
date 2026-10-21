@@ -10,7 +10,7 @@ import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, ge
 import LordOfTheRings.Classes.Entity as X (insertEntity, overAttrs, toAttrs, toId)
 import LordOfTheRings.Scenario.Types (encounterDeckL)
 import LordOfTheRings.Scenario as X (Scenario, escapeFromDolGuldur, journeyAlongTheAnduin, passageThroughMirkwood)
-import LordOfTheRings.Decklist as X (DeckList (..), coreStarterDecks, starterDeck)
+import LordOfTheRings.Decklist as X (DeckList (..), starterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Ally as X (AllyAttrs (..))
@@ -156,7 +156,7 @@ offersAbilityOf pid (toTarget -> target) =
 
 -- | One of the core set's sphere starter decks.
 coreDeck :: Text -> DeckList
-coreDeck sphere = fromJustNote "no such starter deck" $ lookup sphere coreStarterDecks
+coreDeck sphere = fromJustNote "no such starter deck" $ lookup sphere starterDecks
 
 getCharacterDamage :: Target -> GameT Int
 getCharacterDamage = getDamage

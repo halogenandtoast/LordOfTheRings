@@ -1,7 +1,10 @@
 module LordOfTheRings.StarterDeckSpec (spec) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Ally (Ally, AllyAttrs (..))
+import LordOfTheRings.Ally (Ally, AllyAttrs (..), allAllies)
+import LordOfTheRings.Attachment (allAttachments)
+import LordOfTheRings.Event (allEvents)
+import LordOfTheRings.Hero (allHeroes)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (PlayerCard (..), genPlayerCard)
@@ -54,15 +57,18 @@ spec :: Spec
 spec = describe "Starter deck" do
   describe "sharedHeroes" do
     it "finds hero titles more than one deck brings" $ liftIO @IO do
-      let deck sphere = fromJustNote (unpack sphere) $ lookup (sphere :: Text) coreStarterDecks
+      let deck sphere = fromJustNote (unpack sphere) $ lookup (sphere :: Text) starterDecks
       sharedHeroes [deck "leadership", deck "tactics", deck "spirit", deck "lore"] `shouldBe` []
       sort (sharedHeroes [deck "leadership", deck "lore", deck "leadership"]) `shouldBe` ["Aragorn", "Glóin", "Théodred"]
 
-  describe "core starter decks" do
-    for_ coreStarterDecks \(sphere, deck) ->
-      it ("deals the " <> unpack sphere <> " deck with three heroes") . gameTestWith deck $ \_ -> do
+  describe "starter decks" do
+    for_ starterDecks \(name, deck) -> do
+      it ("deals the " <> unpack name <> " deck with three heroes") . gameTestWith deck $ \_ -> do
         heroes <- getsGame (length . (.entities.heroes))
         heroes `shouldBe` 3
+      it ("has every card of the " <> unpack name <> " deck implemented") $ liftIO @IO do
+        let implemented code = or [Map.member code allHeroes, Map.member code allAllies, Map.member code allAttachments, Map.member code allEvents]
+        filter (not . implemented) (deck.heroes <> map fst deck.cards) `shouldBe` []
 
   describe "Théodred" do
     it "adds 1 resource to a committed hero after committing" . starterTest $ \pid -> do
