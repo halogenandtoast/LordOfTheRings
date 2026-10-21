@@ -225,11 +225,13 @@ library
       LordOfTheRings.Event.Cards.AstonishingSpeed
       LordOfTheRings.Event.Cards.ATestOfWill
       LordOfTheRings.Event.Cards.AVeryGoodTale
+      LordOfTheRings.Event.Cards.BehindStrongWalls
       LordOfTheRings.Event.Cards.BeornsHospitality
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.CampfireTales
       LordOfTheRings.Event.Cards.ChargeOfTheRohirrim
       LordOfTheRings.Event.Cards.CommonCause
+      LordOfTheRings.Event.Cards.ConeyInATrap
       LordOfTheRings.Event.Cards.DaeronsRunes
       LordOfTheRings.Event.Cards.DawnTakeYouAll
       LordOfTheRings.Event.Cards.DurinsSong
@@ -238,6 +240,7 @@ library
       LordOfTheRings.Event.Cards.EverVigilant
       LordOfTheRings.Event.Cards.FeignedVoices
       LordOfTheRings.Event.Cards.Feint
+      LordOfTheRings.Event.Cards.FoeHammer
       LordOfTheRings.Event.Cards.ForGondor
       LordOfTheRings.Event.Cards.ForthEorlingas
       LordOfTheRings.Event.Cards.FortuneOrFate
@@ -246,6 +249,7 @@ library
       LordOfTheRings.Event.Cards.GrimResolve
       LordOfTheRings.Event.Cards.HandsUponTheBow
       LordOfTheRings.Event.Cards.HastyStroke
+      LordOfTheRings.Event.Cards.HelmOfSecrecy
       LordOfTheRings.Event.Cards.HiddenCache
       LordOfTheRings.Event.Cards.HostOfGaladhrim
       LordOfTheRings.Event.Cards.Infighting
@@ -254,8 +258,10 @@ library
       LordOfTheRings.Event.Cards.LureOfMoria
       LordOfTheRings.Event.Cards.MeneldorsFlight
       LordOfTheRings.Event.Cards.MusteringTheRohirrim
+      LordOfTheRings.Event.Cards.NeedDrivesThem
       LordOfTheRings.Event.Cards.OathOfEorl
       LordOfTheRings.Event.Cards.PartingGifts
+      LordOfTheRings.Event.Cards.PillarsOfTheKings
       LordOfTheRings.Event.Cards.PursuingTheEnemy
       LordOfTheRings.Event.Cards.QuickStrike
       LordOfTheRings.Event.Cards.RadagastsCunning

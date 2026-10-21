@@ -64,6 +64,12 @@ import LordOfTheRings.Event.Cards.LureOfMoria
 import LordOfTheRings.Event.Cards.WeAreNotIdle
 import LordOfTheRings.Event.Cards.HiddenCache
 import LordOfTheRings.Event.Cards.AVeryGoodTale
+import LordOfTheRings.Event.Cards.BehindStrongWalls
+import LordOfTheRings.Event.Cards.FoeHammer
+import LordOfTheRings.Event.Cards.ConeyInATrap
+import LordOfTheRings.Event.Cards.PillarsOfTheKings
+import LordOfTheRings.Event.Cards.NeedDrivesThem
+import LordOfTheRings.Event.Cards.HelmOfSecrecy
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -141,5 +147,11 @@ allEvents =
         , SomeEventCard weAreNotIdle
         , SomeEventCard hiddenCache
         , SomeEventCard aVeryGoodTale
+        , SomeEventCard behindStrongWalls
+        , SomeEventCard foeHammer
+        , SomeEventCard coneyInATrap
+        , SomeEventCard pillarsOfTheKings
+        , SomeEventCard needDrivesThem
+        , SomeEventCard helmOfSecrecy
         ]
     ]

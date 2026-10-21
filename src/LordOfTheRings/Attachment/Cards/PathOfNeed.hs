@@ -18,5 +18,5 @@ instance HasModifiersFor PathOfNeed where
       active <- selectAny (LocationWithId lid <> IsActiveLocation)
       when active do
         heroes <- select AnyHero
-        for_ heroes \h -> modified a h [DoesNotExhaustToQuest, DoesNotExhaustToAttack, DoesNotExhaustToDefend]
+        for_ heroes \h -> modified a h [DoesNotExhaustToCommit, DoesNotExhaustToAttack, DoesNotExhaustToDefend]
     _ -> pure ()
