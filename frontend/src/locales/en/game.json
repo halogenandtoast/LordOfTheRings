@@ -4,6 +4,7 @@
   "willpower": "Willpower {value}",
   "attack": "Attack {value}",
   "defense": "Defense {value}",
+  "healthLeft": "{value} hit points left",
   "combat": {
     "damage": "Takes {value} damage",
     "defeated": "defeated"

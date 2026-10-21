@@ -148,6 +148,9 @@ const toggleUnless = (attached: CardView) => {
           </div>
         </div>
         <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
+        <span v-if="card.damage > 0 && card.hitPoints" class="health-left" :title="$t('game.healthLeft', { value: card.hitPoints - card.damage })">
+          {{ card.hitPoints - card.damage }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/hit-points.svg')` }" />
+        </span>
       </div>
       <div v-if="card.stats.length && !banner" class="stats">
         <span v-for="[stat, value] in card.stats" :key="stat" :class="stat" :title="$t(`game.${stat}`, { value })">
@@ -397,6 +400,26 @@ const toggleUnless = (attached: CardView) => {
 .attack-progress .adding { opacity: 0.45; }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; }
+/* under the damage token, the hit points left */
+.health-left {
+  z-index: 3;
+  grid-area: 1 / 1;
+  place-self: start end;
+  margin-top: calc(var(--card-width) / 4 + 2px);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  border-radius: 999px;
+  background: rgb(20 16 10 / 0.88);
+  color: var(--cream);
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  pointer-events: none;
+}
+.health-left .icon { color: var(--threat-red); }
 
 /* debug mode: token adjusters over the bottom of a hovered card */
 .debug {
