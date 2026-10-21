@@ -160,21 +160,30 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
 }
 .seat { display: flex; align-items: center; gap: 8px; }
 .seat.eliminated { opacity: 0.45; }
-.heroes { display: flex; gap: 4px; }
-/* the art off the hero card, framed in its sphere's colour */
-.hero {
-  width: 42px;
-  height: 42px;
-  border: 2px solid var(--neutral);
-  border-radius: 5px;
-  background-size: 230%;
-  background-position: 50% 28%;
+/* as a deck tile shows its heroes: their art side by side, over a bar in each one's
+   sphere colour */
+.heroes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 40px;
+  height: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface-2);
   box-shadow: 1px 1px 5px var(--shadow);
 }
-.hero.leadership { border-color: var(--leadership); }
-.hero.lore { border-color: var(--lore); }
-.hero.spirit { border-color: var(--spirit); }
-.hero.tactics { border-color: var(--tactics); }
+/* the art sits in the top half of a card, right of the stats */
+.hero {
+  --sphere-color: var(--neutral);
+  background-size: 210% auto;
+  background-position: 62% 14%;
+  border-bottom: 3px solid var(--sphere-color);
+}
+.hero + .hero { box-shadow: -1px 0 0 rgb(0 0 0 / 0.5); }
+.hero.leadership { --sphere-color: var(--leadership); }
+.hero.lore { --sphere-color: var(--lore); }
+.hero.spirit { --sphere-color: var(--spirit); }
+.hero.tactics { --sphere-color: var(--tactics); }
 .seat-name { color: var(--text); font-size: 0.85em; font-weight: 600; }
 .seat-threat { display: flex; align-items: center; gap: 2px; color: var(--threat-red); font-size: 0.85em; font-weight: 700; }
 .seat-threat .icon {
