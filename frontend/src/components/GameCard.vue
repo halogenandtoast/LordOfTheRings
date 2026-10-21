@@ -162,7 +162,7 @@ const toggleUnless = (attached: CardView) => {
         </span>
       </div>
       <div v-if="card.stats.length && !banner" class="stats">
-        <span v-for="[stat, value] in card.stats" :key="stat" :class="stat" :title="$t(`game.${stat}`, { value })">
+        <span v-for="[stat, value] in card.stats" :key="stat" :class="[stat, { idle: card.idle.includes(stat) }]" :title="$t(`game.${stat}`, { value })">
           {{ value }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/${stat}.svg')` }" />
         </span>
       </div>
@@ -217,6 +217,8 @@ const toggleUnless = (attached: CardView) => {
 .with-stats .face > .stats { margin: 0 -1px; border-top: 0; border-radius: 0 0 7px 7px; }
 .stats > span + span { border-left: 1px solid var(--line); }
 .stats .threat { color: var(--threat-red); }
+/* shown, but counting for nothing where the card is */
+.stats .idle { opacity: 0.35; }
 .stats .willpower { color: var(--willpower); }
 .stats .attack { color: var(--attack); }
 .stats .defense { color: var(--defense); }

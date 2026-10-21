@@ -28,6 +28,8 @@ export interface CardView {
   target: Target | null
   /** The stats down its side as modified, such as ['attack', 3], while in play. */
   stats: [string, number][]
+  /** Stats shown that count for nothing where the card is: threat out of the staging area. */
+  idle: string[]
   /** While attackers are declared, the attack they would make on it, bonuses included. */
   attackStrength?: number
 }
