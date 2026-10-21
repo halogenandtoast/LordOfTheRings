@@ -1,18 +1,13 @@
 <script lang="ts" setup>
 import { computed, useTemplateRef } from 'vue'
+import ConfirmDelete from './ConfirmDelete.vue'
 import TrashIcon from './TrashIcon.vue'
 import type { GameSummary } from '../server'
 import { slug } from '../campaigns'
 
 const props = defineProps<{ game: GameSummary; deleteGame?: () => void; spectate?: boolean }>()
 
-// A native dialog: Escape closes it, and Delete has the focus, so Enter confirms.
-const confirm = useTemplateRef<HTMLDialogElement>('confirm')
-const close = () => confirm.value?.close()
-// a click on the dialog itself landed on its backdrop
-const onBackdrop = (event: MouseEvent) => {
-  if (event.target === confirm.value) close()
-}
+const confirm = useTemplateRef<InstanceType<typeof ConfirmDelete>>('confirm')
 // the scenario's encounter set icon, as the new game page shows it
 const icon = computed(() => `url('/images/icons/scenarios/${slug(props.game.scenario)}.svg')`)
 const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '').toLowerCase()}`)
@@ -32,7 +27,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
         </div>
         <div class="extra-details">
           <div v-if="deleteGame" class="game-delete">
-            <a href="#delete" :aria-label="$t('home.deleteGame')" @click.prevent="confirm?.showModal()">
+            <a href="#delete" :aria-label="$t('home.deleteGame')" @click.prevent="confirm?.open()">
               <TrashIcon />
             </a>
           </div>
@@ -67,25 +62,18 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
         </li>
       </ul>
     </div>
-    <dialog v-if="deleteGame" ref="confirm" class="confirm-delete" :aria-label="$t('home.confirmDelete')" @click="onBackdrop">
-      <h2>{{ $t('home.confirmDelete') }}</h2>
-      <div class="confirm-game">
-        <span class="scenario-icon" aria-hidden="true" :style="{ '--icon': icon }" />
-        <span>
-          <strong>{{ game.name }}</strong>
-          <span class="confirm-meta">
-            {{ game.scenario }} &middot;
-            <template v-if="game.waiting">{{ $t('home.waitingForPlayers') }}</template>
-            <template v-else>{{ $t('game.round', { round: game.round }) }} &middot; {{ $t(phase) }}</template>
-          </span>
-          <span v-if="game.seats?.length" class="confirm-meta">{{ game.seats.map((seat) => seat.name).join(', ') }}</span>
+    <ConfirmDelete v-if="deleteGame" ref="confirm" :title="$t('home.confirmDelete')" @confirm="deleteGame()">
+      <span class="scenario-icon" aria-hidden="true" :style="{ '--icon': icon }" />
+      <span class="confirm-details">
+        <strong>{{ game.name }}</strong>
+        <span class="confirm-meta">
+          {{ game.scenario }} &middot;
+          <template v-if="game.waiting">{{ $t('home.waitingForPlayers') }}</template>
+          <template v-else>{{ $t('game.round', { round: game.round }) }} &middot; {{ $t(phase) }}</template>
         </span>
-      </div>
-      <div class="confirm-actions">
-        <button type="button" @click="close">{{ $t('common.cancel') }}</button>
-        <button type="button" class="confirm" autofocus @click="(close(), deleteGame())">{{ $t('common.delete') }}</button>
-      </div>
-    </dialog>
+        <span v-if="game.seats?.length" class="confirm-meta">{{ game.seats.map((seat) => seat.name).join(', ') }}</span>
+      </span>
+    </ConfirmDelete>
   </div>
 </template>
 
@@ -217,33 +205,6 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   mask: var(--icon) center / contain no-repeat;
 }
 
-.confirm-delete {
-  width: min(26rem, 100vw - 2rem);
-  padding: 18px 20px;
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
-  background: var(--panel);
-  color: var(--text);
-  box-shadow: 0 10px 40px var(--shadow-strong);
-}
-.confirm-delete::backdrop { background: rgb(0 0 0 / 0.6); backdrop-filter: blur(2px); }
-.confirm-delete h2 { margin: 0 0 12px; font-size: 1.1em; color: var(--title); }
-.confirm-game { display: flex; align-items: center; gap: 12px; }
-.confirm-game > span:last-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.confirm-details { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .confirm-meta { color: var(--text-muted); font-size: 0.85em; }
-.confirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
-.confirm-actions button {
-  background: transparent;
-  border: 1px solid var(--box-border);
-  border-radius: 3px;
-  color: var(--text);
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.85em;
-  font-weight: 700;
-  padding: 6px 12px;
-  text-transform: uppercase;
-}
-.confirm-actions button.confirm { background: var(--danger); border-color: var(--danger); }
-.confirm-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </style>
