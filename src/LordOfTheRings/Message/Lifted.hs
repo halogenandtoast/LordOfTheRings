@@ -381,6 +381,15 @@ resetToStage card = push . ResetToStage card
 checkStage :: (ReverseQueue m) => QuestId -> m ()
 checkStage = push . CheckStage
 
+-- | The player puts the cards, which are in their deck, back on top of it in the order
+-- they choose: each goes on top as it is chosen, so the last one chosen ends on top.
+returnToTopOfDeckInAnyOrder :: (ReverseQueue m, Targetable source) => PlayerId -> source -> [Card] -> m ()
+returnToTopOfDeckInAnyOrder pid source cards = chooseOneAtATimeM pid do
+  questionLabeled "putOnTopOfDeck"
+  causedBy source
+  showing cards
+  targets cards \c -> push $ MoveToTopOfDeck pid c.id
+
 -- | The player switches a card in hand with one in their deck.
 swapHandWithDeck :: (ReverseQueue m) => PlayerId -> Card -> Card -> m ()
 swapHandWithDeck pid fromHand fromDeck = push $ SwapHandWithDeck pid fromHand.id fromDeck.id

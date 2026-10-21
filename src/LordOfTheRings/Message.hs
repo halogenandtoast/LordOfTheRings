@@ -121,6 +121,8 @@ data Message
     PlayTopOfDeckAtNoCostOrBottom PlayerId Source
   | RemoveFromDeck PlayerId CardId
   | MoveToBottomOfDeck PlayerId CardId
+  | -- | a card in the player's deck goes to the top of it
+    MoveToTopOfDeck PlayerId CardId
   | PlayAlly PlayerId PlayerCard
   | DoStep Int Message
   | Ask PlayerId (Question Message)

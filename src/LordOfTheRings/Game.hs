@@ -99,6 +99,7 @@ answerQuestion pid n = do
       remaining = \case
         ChooseOneAtATime _ | notNull rest -> Just $ ChooseOneAtATime rest
         QuestionLabel l s ts q -> QuestionLabel l s ts <$> remaining q
+        SearchCards cs q -> SearchCards cs <$> remaining q
         _ -> Nothing
   pushAll $ uiToRun choice : [Ask pid q | Just q <- [remaining question]]
   mainLoop

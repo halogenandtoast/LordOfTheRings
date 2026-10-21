@@ -41,6 +41,11 @@ allyInPlay pid def = do
   passResponses pid
   pure a
 
+allyCard :: Target -> GameT CardId
+allyCard = \case
+  AllyTarget aid -> allyCardId . toAttrs . fromJustNote "ally" . lookup aid . mapToList <$> getsGame (.entities.allies)
+  _ -> error "not an ally"
+
 alliesInPlay :: GameT [CardCode]
 alliesInPlay = getsGame (map toCardCode . toList . (.entities.allies))
 
@@ -223,11 +228,17 @@ spec = describe "Elves of Lórien" do
     it "returns each Silvan ally and plays them again at no cost" . elvesTest $ \pid -> do
       archer <- allyInPlay pid Allies.greenwoodArcher
       run $ Exhaust archer
-      _ <- allyInPlay pid Allies.mirkwoodRunner
+      runner <- allyInPlay pid Allies.mirkwoodRunner
+      [archerCard, runnerCard] <- traverse allyCard [archer, runner]
       card <- putCardIntoHand pid Events.hostOfGaladhrim
       fund celebornCode 4
       run $ BeginPhase PlanningPhase
       playCard pid card
+      -- the player picks the order: the runner first
+      chooseTarget pid (CardIdTarget runnerCard)
+      passResponses pid
+      alliesInPlay `shouldReturn` [toCardCode Allies.mirkwoodRunner]
+      chooseTarget pid (CardIdTarget archerCard)
       passResponses pid
       sort <$> alliesInPlay `shouldReturn` sort [toCardCode Allies.greenwoodArcher, toCardCode Allies.mirkwoodRunner]
       resources celebornCode `shouldReturn` 0
@@ -375,7 +386,7 @@ spec = describe "Elves of Lórien" do
       playCard pid card
       passResponses pid
       chooseTarget pid eid
-      getModifiers eid >>= (`shouldSatisfy` elem CannotAttack)
+      getModifiers eid >>= (`shouldSatisfy` elem (CannotAttackPlayer pid))
       alliesInPlay `shouldReturn` []
 
   describe "Orophin" do

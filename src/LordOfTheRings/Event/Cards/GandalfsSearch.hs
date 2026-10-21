@@ -10,9 +10,6 @@ newtype GandalfsSearch = GandalfsSearch EventAttrs
 
 -- | Action: Look at the top X cards of any player's deck, add 1 of those cards to its
 -- owner's hand, and return the rest to the top of the deck in any order.
---
--- ponytail: the rest go back in the order they were in; choosing an order can come with a
--- card that cares about it.
 gandalfsSearch :: EventCard GandalfsSearch
 gandalfsSearch = event GandalfsSearch Cards.gandalfsSearch
 
@@ -27,12 +24,13 @@ instance RunMessage GandalfsSearch where
           causedBy attrs
           for_ [1 .. min lore (length deck)] \x -> labeledWith "xEquals" [intVar "x" x] do
             spendResources pid Lore x
-            push $ lookAt p (take x deck)
+            let cards = take x deck
+            chooseOneM pid do
+              questionLabeled "gandalfsSearch.take"
+              causedBy attrs
+              showing cards
+              targets cards \c -> do
+                push $ TakeFromDeck p c.id
+                returnToTopOfDeckInAnyOrder pid attrs (filter (/= c) cards)
       pure e
     _ -> GandalfsSearch <$> runMessage msg attrs
-   where
-    lookAt p cards =
-      Ask (eventOwner attrs)
-        $ QuestionLabel (ikey "label.gandalfsSearch.take") (Just $ toTarget attrs) []
-        $ SearchCards cards
-        $ ChooseOne [targetLabel (CardIdTarget c.id) [TakeFromDeck p c.id] | c <- cards]

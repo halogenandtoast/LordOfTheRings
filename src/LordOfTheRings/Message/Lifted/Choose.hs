@@ -58,12 +58,25 @@ chooseOrRunOneM pid body = do
     [x] -> push $ uiToRun x
     _ -> push $ ask' pid st choices
 
+-- | The player chooses the choices one at a time, each taken as it is chosen, until none
+-- are left: the order to resolve them in. A lone choice is taken without asking.
+chooseOneAtATimeM :: (ReverseQueue m) => PlayerId -> ChooseT m a -> m ()
+chooseOneAtATimeM pid body = do
+  (st, choices) <- runChooseT body
+  case choices of
+    [] -> pure ()
+    [x] -> push $ uiToRun x
+    _ -> push $ askWith ChooseOneAtATime pid st choices
+
 ask' :: PlayerId -> ChooseState -> [UI Message] -> Message
-ask' pid st choices = Ask pid $ case st.chooseLabel of
+ask' = askWith ChooseOne
+
+askWith :: ([UI Message] -> Question Message) -> PlayerId -> ChooseState -> [UI Message] -> Message
+askWith question pid st choices = Ask pid $ case st.chooseLabel of
   Just l -> QuestionLabel l st.chooseSource st.chooseTargets shown
   Nothing -> shown
  where
-  shown = if null st.chooseCards then ChooseOne choices else SearchCards st.chooseCards $ ChooseOne choices
+  shown = if null st.chooseCards then question choices else SearchCards st.chooseCards $ question choices
 
 -- | The prompt, a key under @label.@ in the locale files.
 questionLabeled :: (Monad m) => Text -> ChooseT m ()

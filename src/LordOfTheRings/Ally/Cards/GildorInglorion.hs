@@ -13,9 +13,6 @@ gildorInglorion = ally GildorInglorion Cards.gildorInglorion
 -- | Action: Exhaust Gildor Inglorion to look at the top 3 cards of your deck. Switch one of
 -- those cards with a card from your hand. Then, return the 3 cards to the top of your
 -- deck, in any order.
---
--- ponytail: the 3 cards go back in the order they were in, with the switched card in its
--- place.
 instance HasAbilities GildorInglorion where
   getAbilities (GildorInglorion a) = [mkAbility a 1 $ ActionAbility (exhaustCost a)]
 
@@ -31,7 +28,9 @@ instance RunMessage GildorInglorion where
         unless (null player.hand) $ targets top \d -> chooseOneM pid do
           questionLabeled "gildorInglorion.fromHand"
           causedBy a
-          targets player.hand \h -> swapHandWithDeck pid h d
-        labeled "done" $ pure ()
+          targets player.hand \h -> do
+            swapHandWithDeck pid h d
+            returnToTopOfDeckInAnyOrder pid a [if c == d then h else c | c <- top]
+        labeled "done" $ returnToTopOfDeckInAnyOrder pid a top
       pure s
     _ -> GildorInglorion <$> runMessage msg a
