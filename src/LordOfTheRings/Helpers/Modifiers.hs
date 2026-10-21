@@ -17,16 +17,18 @@ import LordOfTheRings.Target
 preloadModifiers :: (HasGame m) => Game -> m Game
 preloadModifiers g = do
   let es = g.entities
+  -- a location may blank the attachments' text, so the locations go first
+  MonoidalMap fromLocations <- execWriterT $ traverse_ getModifiersFor es.locations
+  let blank = BlankAttachments `elem` map modifierType (Map.findWithDefault [] GameTarget fromLocations)
   MonoidalMap fromEntities <-
-    execWriterT $ do
+    fmap (MonoidalMap fromLocations <>) . execWriterT $ do
       traverse_ getModifiersFor es.heroes
       traverse_ getModifiersFor es.allies
       traverse_ getModifiersFor es.enemies
-      traverse_ getModifiersFor es.locations
       traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.treacheries)
       traverse_ getModifiersFor es.quests
       -- a card whose host has just left play is about to follow it, and adds nothing
-      traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.attachments)
+      unless blank $ traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.attachments)
       traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.objectives)
   let fromEffects =
         Map.fromListWith

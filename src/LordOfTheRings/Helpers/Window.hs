@@ -13,8 +13,9 @@ import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Id
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher
-import LordOfTheRings.Modifier (ModifierType (CannotCancelEncounterEffects, CannotTriggerAbilities))
+import LordOfTheRings.Modifier (ModifierType (BlankAttachments, CannotCancelEncounterEffects, CannotTriggerAbilities))
 import LordOfTheRings.Message
+import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -25,6 +26,8 @@ import LordOfTheRings.Window
 getAllAbilities :: (HasGame m) => m [Ability]
 getAllAbilities = do
   es <- getsGame gameEntities
+  -- attachments whose text is blank have no abilities
+  blank <- elem BlankAttachments <$> getModifiers GameTarget
   let abilities =
         concat
           [ concatMap getAbilities (toList es.heroes)
@@ -33,7 +36,7 @@ getAllAbilities = do
           , concatMap getAbilities (toList es.locations)
           , concatMap getAbilities (toList es.treacheries)
           , concatMap getAbilities (toList es.quests)
-          , concatMap getAbilities (toList es.attachments)
+          , if blank then [] else concatMap getAbilities (toList es.attachments)
           , concatMap getAbilities (toList es.objectives)
           ]
   -- a card a condition has blanked offers none
@@ -77,6 +80,7 @@ passesCriteria = \case
       && cid `notElem` map (locationCardId . toAttrs) (toList es.locations)
   CardInHand pid cType -> anyM passesUnique . filter ((== cType) . (.cardType)) . (.hand) =<< getPlayer pid
   ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
+  BeforeCommitting -> andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs

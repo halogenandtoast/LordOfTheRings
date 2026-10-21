@@ -125,6 +125,12 @@ instance RunMessage Player where
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pure $ player & deckL .~ deck & discardL %~ (discarded <>)
+    SwapHandWithDeck pid fromHand fromDeck | pid == player.id -> do
+      let swap c
+            | c.id == fromHand = fromMaybe c $ find ((== fromDeck) . (.id)) player.deck
+            | c.id == fromDeck = fromMaybe c $ find ((== fromHand) . (.id)) player.hand
+            | otherwise = c
+      pure $ player & handL %~ map swap & deckL %~ map swap
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -177,7 +183,11 @@ instance RunMessage Player where
     takeFromHand cid = maybe (error "not able to find card") pure $ find ((== cid) . (.id)) player.hand
 
 canPlay :: (HasGame m) => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay c]
+
+-- | Whether the game forbids playing the card.
+cannotPlay :: (HasGame m) => Card -> m Bool
+cannotPlay c = any (\case CannotPlay m -> cardMatches m c; _ -> False) <$> getModifiers GameTarget
 
 canAfford :: (HasGame m) => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of

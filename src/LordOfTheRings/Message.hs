@@ -157,6 +157,10 @@ data Message
   | -- | an objective ally in play joins the player as an ally
     PutObjectiveAllyIntoPlay ObjectiveId PlayerId
   | ReduceActiveCost CostId Int
+  | AddToVictoryDisplay Target
+  | -- | the player switches a card in hand with one in their deck, each taking the other's
+    -- place
+    SwapHandWithDeck PlayerId CardId CardId
   | -- | the quest deck goes back to the stage, put into play on its B side, with the
     -- stages after it to follow
     ResetToStage EncounterCard [EncounterCard]

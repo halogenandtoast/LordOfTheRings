@@ -78,6 +78,12 @@ data ModifierType
     UndefendedDamageTo Target
   | -- | on an ally: the resources on it can pay for matching cards its controller plays
     ResourcesPayFor CardMatcher
+  | -- | on the game: players cannot play matching cards
+    CannotPlay CardMatcher
+  | -- | on the game: attachments' printed text boxes are treated as blank
+    BlankAttachments
+  | -- | on the game: every character must commit to the quest
+    MustCommitAll
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
   | -- | on the game: matching cards cost this much more to play from hand

@@ -13,6 +13,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Criteria (Criterion (BeforeCommitting, Criteria))
 import LordOfTheRings.Enemy
 import LordOfTheRings.Event
 import LordOfTheRings.Entities
@@ -549,6 +550,9 @@ runGameMessage msg g = case msg of
     -- a character's action may be worth more than its willpower, as Faramir's, so the
     -- player's actions are offered alongside committing it
     actions <- getActionAbilities pid
+    mustCommitAll <- elem MustCommitAll <$> getModifiers GameTarget
+    player <- getPlayer pid
+    early <- filterM (\c -> andM [pure $ playsBeforeCommitting pid c, canPlay player c]) player.hand
     -- asked even with no one left to commit, so the player moves on to staging
     push
       $ questionLabelWith (ikey "label.commitCharacters") Nothing quests pid
@@ -556,13 +560,15 @@ runGameMessage msg g = case msg of
         | c <- characters
         ]
       <> [AbilityLabel pid ab [] [CommitCharacters pid] | ab <- actions]
-      <> [Label (ikey "label.doneCommitting") []]
+      <> [targetLabel (CardIdTarget c.id) [PlayCard pid c.id, CommitCharacters pid] | c <- early]
+      <> [Label (ikey "label.doneCommitting") [] | not mustCommitAll || null characters]
     pure g
   Staging -> do
     mods <- getModifiers GameTarget
     let extra = sum [n | AdditionalStagingReveals n <- mods]
         players = length [() | player <- toList g.players, not player.eliminated]
-    unless (SkipStagingStep `elem` mods) $ pushAll $ replicate (players + extra) RevealEncounterCard
+    -- fewer reveals still reveal 1
+    unless (SkipStagingStep `elem` mods) $ pushAll $ replicate (max 1 $ players + extra) RevealEncounterCard
     pure g
   QuestResolution -> do
     willpower <- getCommittedWillpower
@@ -734,6 +740,14 @@ runGameMessage msg g = case msg of
   CompleteQuest qid -> do
     push AdvanceQuest
     pure $ g & entitiesL . questsL %~ Map.delete qid
+  AddToVictoryDisplay target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+    pure
+      $ g
+      & entitiesL . locationsL %~ Map.delete lid
+      & scenarioL %~ overAttrs (victoryDisplayL %~ (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) :))
   ResetToStage card _ -> do
     pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
     pure $ g & entitiesL . questsL .~ mempty
@@ -888,7 +902,7 @@ handResponses pid windows continue = do
       EventType
         | Just e <- lookupEvent (toCardCode pc) pc.id pid
         , matches (toAttrs e).eventWindow -> do
-            ok <- andM [passesCriteria (toAttrs e).eventCriteria, canAfford player card]
+            ok <- andM [passesCriteria (toAttrs e).eventCriteria, canAfford player card, not <$> cannotPlay card]
             pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PlayCardInWindow pid pc.id windows, continue]
       AllyType
         | matches (allyHandWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid) -> do
@@ -896,6 +910,18 @@ handResponses pid windows continue = do
             pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PutAllyIntoPlay pid pc.id, continue]
       _ -> pure Nothing
     EncounterCard _ -> pure Nothing
+
+-- | Whether the card is an event the player can play in the quest phase before
+-- characters are committed.
+playsBeforeCommitting :: PlayerId -> Card -> Bool
+playsBeforeCommitting pid = \case
+  PlayerCard pc | Just e <- lookupEvent (toCardCode pc) pc.id pid -> before (toAttrs e).eventCriteria
+  _ -> False
+ where
+  before = \case
+    BeforeCommitting -> True
+    Criteria cs -> any before cs
+    _ -> False
 
 -- | The next player clockwise from the given one.
 seatAfter :: [PlayerId] -> PlayerId -> PlayerId

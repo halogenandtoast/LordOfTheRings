@@ -21,6 +21,8 @@ data Criterion
     CardNotInPlay CardId
   | -- | a matching player has this many resources of the sphere to spend
     ResourcesOfSphere PlayerMatcher Sphere Int
+  | -- | in the quest phase, before any character is committed
+    BeforeCommitting
   | -- | nothing stops a player card cancelling an encounter card's effects
     EncounterEffectsCancelable
   | Criteria [Criterion]
