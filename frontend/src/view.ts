@@ -181,10 +181,16 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     }
   })
 
+  const stagedCards = [...placed('enemies', isAt('StagingArea')), ...placed('locations', isAt('StagingArea'))]
+  const stagedIds = new Set(stagedCards.map((c) => c.id))
+  // a guarded objective is attached to the card guarding it while that card is in staging
+  const stagedObjectives = Object.values(entities.objectives ?? {})
+    .filter(isAt('StagingArea'))
+    .map((o) => ({ ...fromEntity(o, 'objectives'), attachedTo: o.guard && stagedIds.has(o.guard) ? o.guard : null }))
+
   const staging = [
-    ...placed('enemies', isAt('StagingArea')),
-    ...placed('locations', isAt('StagingArea')),
-    ...placed('objectives', isAt('StagingArea')),
+    ...stagedCards,
+    ...stagedObjectives,
     // a Trap waits in staging until an enemy walks into it
     ...placed('attachments', isAt('StagingArea')),
     // a treachery shows in staging while it resolves, until it attaches or is discarded

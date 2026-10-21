@@ -35,6 +35,8 @@ export interface Entity {
   /** The shadow cards dealt to an enemy, and those turned face up so far. */
   shadowCards?: Card[]
   shadowRevealed?: string[]
+  /** The encounter card guarding an objective. */
+  guard?: string | null
 }
 
 export interface Card {
