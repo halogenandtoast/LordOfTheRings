@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { createGame } from '../api'
@@ -48,17 +48,32 @@ const playableCount = (c: Campaign) => c.scenarios.filter((s) => !s.unimplemente
 const defaultName = computed(() => selectedScenario.value?.name ?? '')
 const canCreate = computed(() => !!selectedScenario.value && !selectedScenario.value.unimplemented && !creating.value)
 
-const chooseCampaign = (c: Campaign) => {
-  selectedCampaign.value = c
-  selectedScenario.value = null
+// As in Arkham, each step is a view transition: every box is named for what it shows,
+// so the one chosen moves into the panel on the left, and back out again. The new
+// state is captured once Vue has drawn it.
+const step = (change: () => void) => {
+  if (!document.startViewTransition) return change()
+  document.startViewTransition(async () => {
+    change()
+    await nextTick()
+  })
 }
 
+const chooseCampaign = (c: Campaign) =>
+  step(() => {
+    selectedCampaign.value = c
+    selectedScenario.value = null
+  })
+
+const chooseScenario = (s: ScenarioOption) => step(() => (selectedScenario.value = s))
+
 // a step back: from the game's options to the scenarios, from there to the campaigns
-const back = () => {
-  if (selectedScenario.value) selectedScenario.value = null
-  else selectedCampaign.value = null
-  error.value = null
-}
+const back = () =>
+  step(() => {
+    if (selectedScenario.value) selectedScenario.value = null
+    else selectedCampaign.value = null
+    error.value = null
+  })
 useShortcuts([{ key: 'Escape', description: 'Go back a step.', run: () => selectedCampaign.value && back() }])
 
 const cancel = () => router.push('/')
@@ -104,7 +119,7 @@ const create = async () => {
             :class="{ unavailable: playableCount(c) === 0 }"
             @click="chooseCampaign(c)"
           >
-            <img :src="c.image" alt="" />
+            <img :src="c.image" alt="" :style="{ viewTransitionName: `campaign-${c.id}` }" />
             <span class="campaign-name"><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</span>
             <span class="campaign-count">
               {{ $t('newGame.scenarioCount', c.scenarios.length) }}<template v-if="playableCount(c) < c.scenarios.length"> &middot; {{ $t('newGame.playableCount', { count: playableCount(c) }) }}</template>
@@ -118,7 +133,7 @@ const create = async () => {
       <section v-if="!selectedScenario" class="card split">
         <div class="panel">
           <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
-          <img :src="selectedCampaign.image" alt="" />
+          <img :src="selectedCampaign.image" alt="" :style="{ viewTransitionName: `campaign-${selectedCampaign.id}` }" />
           <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
         </div>
         <div class="card-body">
@@ -131,9 +146,9 @@ const create = async () => {
               class="scenario-box"
               :class="{ unavailable: option.unimplemented, alpha: option.alpha, beta: option.beta }"
               :disabled="option.unimplemented"
-              @click="selectedScenario = option"
+              @click="chooseScenario(option)"
             >
-              <img :src="option.image" alt="" />
+              <img :src="option.image" alt="" :style="{ viewTransitionName: `scenario-${option.id}` }" />
               <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
             </button>
           </div>
@@ -144,7 +159,7 @@ const create = async () => {
         <section class="card split">
           <div class="panel">
             <h3 class="card-title">{{ $t('common.scenario') }}</h3>
-            <img :src="selectedScenario.image" alt="" />
+            <img :src="selectedScenario.image" alt="" :style="{ viewTransitionName: `scenario-${selectedScenario.id}` }" />
             <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedScenario.icon})` }" />{{ selectedScenario.name }}</h3>
           </div>
           <div class="card-body">
