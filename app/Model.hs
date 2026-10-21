@@ -33,6 +33,8 @@ User sql=users
   email Text
   passwordDigest Text
   admin Bool default=false
+  -- | sees the beta scenarios when making a game, as in Arkham
+  beta Bool default=false
   -- | what "allow spectators" starts as when making a game
   allowSpectatorsByDefault Bool default=false
   createdAt UTCTime

@@ -191,6 +191,7 @@ data UserView = UserView
   , username :: Text
   , email :: Text
   , admin :: Bool
+  , beta :: Bool
   , allowSpectatorsByDefault :: Bool
   }
   deriving stock (Generic)
@@ -207,7 +208,7 @@ newSession (Entity userId user) = do
   pure $ toJSON $ Session token (userView userId user)
 
 userView :: UserId -> User -> UserView
-userView userId user = UserView userId user.userUsername user.userEmail user.userAdmin user.userAllowSpectatorsByDefault
+userView userId user = UserView userId user.userUsername user.userEmail user.userAdmin user.userBeta user.userAllowSpectatorsByDefault
 
 data Registration = Registration {username :: Text, email :: Text, password :: Text}
   deriving stock (Generic)
@@ -224,7 +225,7 @@ postRegisterR = do
   when taken $ sendResponseStatus status409 (ikey "error.alreadyRegistered")
   digest <- maybe (error "bcrypt failed") pure =<< liftIO (hashPassword reg.password)
   now <- liftIO getCurrentTime
-  let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userAdmin = False, userAllowSpectatorsByDefault = False, userCreatedAt = now}
+  let user = User {userUsername = username, userEmail = email, userPasswordDigest = digest, userAdmin = False, userBeta = False, userAllowSpectatorsByDefault = False, userCreatedAt = now}
   userId <- runDB $ insert user
   newSession (Entity userId user)
 

@@ -5,6 +5,7 @@ export interface User {
   username: string
   email: string
   admin: boolean
+  beta: boolean
   allowSpectatorsByDefault: boolean
 }
 
