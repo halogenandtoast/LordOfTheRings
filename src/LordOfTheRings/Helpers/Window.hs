@@ -86,8 +86,14 @@ passesCriteria = \case
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
+  DistinctCharacters pairs -> distinct [] <$> traverse (uncurry selectCharacters) pairs
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
+
+-- | Whether each list can give a character not taken by an earlier one.
+distinct :: [Target] -> [[Target]] -> Bool
+distinct _ [] = True
+distinct taken (cs : rest) = any (\c -> distinct (c : taken) rest) [c | c <- cs, c `notElem` taken]
 
 canPay :: (HasGame m) => AbilityCost -> m Bool
 canPay = \case

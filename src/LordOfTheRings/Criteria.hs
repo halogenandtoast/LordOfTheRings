@@ -33,6 +33,9 @@ data Criterion
   | TargetLacksModifier Target ModifierType
   | -- | at least this many characters match: heroes and allies
     CharactersAtLeast Int HeroMatcher AllyMatcher
+  | -- | a different character for each pair of matchers, heroes and allies: "a Rohan
+    -- character and another Gondor character"
+    DistinctCharacters [(HeroMatcher, AllyMatcher)]
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)
