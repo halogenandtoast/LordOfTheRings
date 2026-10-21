@@ -219,6 +219,9 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   }
 
   const [asked] = Object.entries(game.question)
+  // the active location's threat no longer counts toward the staging area's
+  const active = placed('locations', isAt('ActiveLocation'))[0]
+  const activeLocation = active ? { ...active, stats: active.stats.filter(([stat]) => stat !== 'threat') } : null
 
   return {
     started: true,
@@ -236,7 +239,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     scenario: {
       name: game.scenario.name,
       quest: placed('quests', () => true)[0] ?? null,
-      activeLocation: placed('locations', isAt('ActiveLocation'))[0] ?? null,
+      activeLocation,
       staging: withAttachments(staging),
       encounterDeck: game.scenario.encounterDeckSize,
       encounterDiscard: game.scenario.encounterDiscard.length,
