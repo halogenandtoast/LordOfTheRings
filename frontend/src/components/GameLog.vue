@@ -183,11 +183,17 @@ watch(
   overflow: hidden;
 }
 .game-log__scroll {
+  /* the pinned banners' heights, which is where each stacks under the last */
+  --banner-scenario: 34px;
+  --banner-round: 24px;
+  --banner-phase: 24px;
+  --log-surface: rgb(42 35 25);
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0.5rem 0.6rem;
+  /* none on top: a pinned banner sticks to the edge, not under a gap */
+  padding: 0 0.6rem 0.5rem;
   font-size: 0.72rem;
 }
 .game-log__list { list-style: none; margin: 0; padding: 0; }

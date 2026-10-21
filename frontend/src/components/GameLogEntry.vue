@@ -34,6 +34,15 @@ const structureTone = computed(() => {
   return null
 })
 
+// The scenario, the round and the phase stay pinned atop the log, stacked in that order,
+// each until the next of its kind scrolls up to replace it.
+const phases = ['resource', 'planning', 'quest', 'travel', 'encounter', 'combat', 'refresh']
+const stickyTier = computed(() => {
+  const tone = structureTone.value
+  if (tone === 'scenario' || tone === 'round') return tone
+  return tone && phases.includes(tone) ? 'phase' : null
+})
+
 // A Test's body is its sentence and then the numbers, drawn apart as their own stripe.
 const testSentence = computed(() => (props.entry.body.length > 1 ? props.entry.body.slice(0, -1) : props.entry.body))
 const testStats = computed(() => (props.entry.body.length > 1 ? props.entry.body[props.entry.body.length - 1] : null))
@@ -70,7 +79,10 @@ const requestUndo = () => {
   <li
     v-if="entry.kind === 'Structure'"
     class="log-structure"
-    :class="[structureTone ? `log-structure--${structureTone}` : null, { 'log-structure--nested': depth > 0 }]"
+    :class="[
+      structureTone ? `log-structure--${structureTone}` : null,
+      depth > 0 ? 'log-structure--nested' : stickyTier ? `log-structure--pinned log-structure--pinned-${stickyTier}` : null,
+    ]"
   >
     <LogPart v-for="(part, i) in entry.body" :key="i" :part="part" />
     <button v-if="undoStep !== null" class="log-undo" type="button" :title="$t('log.undoToHere')" :aria-label="$t('log.undoToHere')" @click.stop="requestUndo">
@@ -185,6 +197,24 @@ const requestUndo = () => {
   color: var(--title);
 }
 .log-structure--round { --tone: var(--line-strong); margin-top: 22px; font-size: 1em; }
+.log-structure--pinned {
+  position: sticky;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  /* opaque, so what scrolls under it does not show through */
+  background: color-mix(in srgb, var(--tone) 35%, var(--log-surface));
+}
+.log-structure--pinned-scenario { top: 0; z-index: 3; height: var(--banner-scenario); padding-block: 0; justify-content: center; }
+.log-structure--pinned-round { top: var(--banner-scenario); z-index: 2; height: var(--banner-round); padding-block: 0; }
+.log-structure--pinned-phase {
+  top: calc(var(--banner-scenario) + var(--banner-round));
+  z-index: 1;
+  height: var(--banner-phase);
+  padding-block: 0;
+}
 .log-structure--over { --tone: var(--title); text-align: center; font-size: 1.05em; }
 
 .log-entry {
