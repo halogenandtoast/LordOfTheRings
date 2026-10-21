@@ -28,6 +28,10 @@ gatherEncounterSet attrs encounterSet =
 
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = case msg of
+    -- the scenario gathers its encounter deck at step 1; shuffle it before any setup reveals
+    DoStep 2 Setup -> do
+      encounterDeck <- shuffleM attrs.encounterDeck
+      pure $ attrs & encounterDeckL .~ encounterDeck
     DoStep 4 Setup | attrs.easyMode -> do
       heroes <- select AnyHero
       for_ heroes \hero -> placeResources attrs hero 1
