@@ -19,7 +19,7 @@ const error = ref<string | null>(null)
 const face = computed((): DeckFace => {
   const { preview } = loaded
   const names = preview.deck.heroes.map((s) => s.card?.name ?? s.sourceCode)
-  return { key: 'loaded', sphere: null, name: preview.deck.name, heroCodes: preview.heroCodes, detail: names.join(', ') }
+  return { key: 'loaded', sphere: null, starter: null, name: preview.deck.name, heroCodes: preview.heroCodes, detail: names.join(', ') }
 })
 
 const use = async () => {

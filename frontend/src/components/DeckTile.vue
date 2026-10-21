@@ -10,8 +10,8 @@ defineProps<{ face: DeckFace; selected?: boolean }>()
     <span class="heroes">
       <span v-for="code in face.heroCodes" :key="code" class="hero" :style="{ backgroundImage: `url(/images/cards/${code}.jpg)` }" />
     </span>
-    <span class="deck-name">{{ face.sphere ? $t(`newGame.starter.${face.sphere}`) : face.name }}</span>
-    <span class="deck-detail">{{ face.sphere ? $t('newGame.starterDeck') : face.detail }}</span>
+    <span class="deck-name">{{ face.starter ? $t(`newGame.starter.${face.starter}`) : face.name }}</span>
+    <span class="deck-detail">{{ face.starter && face.detail ? $t(face.detail) : face.detail }}</span>
   </span>
 </template>
 

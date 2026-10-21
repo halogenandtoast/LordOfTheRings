@@ -82,6 +82,7 @@
     "numberOfPlayers": "Number of players",
     "openSeat": "Open seat",
     "starterDeck": "Core set starter",
+    "starterBox": "Starter deck",
     "starterDecks": "Core set starter decks",
     "myDecks": "My decks",
     "starterTab": "Starter decks",
@@ -95,7 +96,11 @@
       "leadership": "Leadership (Aragorn, Théodred, Glóin)",
       "tactics": "Tactics (Gimli, Legolas, Thalin)",
       "spirit": "Spirit (Éowyn, Eleanor, Dúnhere)",
-      "lore": "Lore (Denethor, Glorfindel, Beravor)"
+      "lore": "Lore (Denethor, Glorfindel, Beravor)",
+      "dwarves-of-durin": "Dwarves of Durin (Dáin Ironfoot, Ori, Bifur)",
+      "elves-of-lorien": "Elves of Lórien (Celeborn, Galadriel, Haldir)",
+      "defenders-of-gondor": "Defenders of Gondor (Boromir, Prince Imrahil, Mablung)",
+      "riders-of-rohan": "Riders of Rohan (Éomer, Hirgon, Lothíriel)"
     },
     "easyMode": "Easy mode",
     "easyModeHint": "Each hero starts with 1 extra resource, and the encounter deck leaves out the cards marked as difficult.",
