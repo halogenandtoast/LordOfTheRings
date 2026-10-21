@@ -35,6 +35,26 @@ data Drawing = Drawing
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
+-- | What characters count toward an escape test.
+data EscapeStat = EscapeWillpower | EscapeAttack
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (FromJSON, ToJSON)
+
+-- | An escape test: the player commits characters by exhausting them, then cards are
+-- dealt from the encounter deck, and the test fails if their escape values come to more
+-- than the committed characters' total.
+data EscapeTest = EscapeTest
+  { escapePlayer :: PlayerId
+  , escapeSource :: Source
+  , escapeCards :: Int
+  , escapeStat :: EscapeStat
+  , escapeCommitted :: [Target]
+  , escapeOnFail :: [Message]
+  , escapeOnPass :: [Message]
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (FromJSON, ToJSON)
+
 data Message
   = Setup
   | BeginPhase Phase
@@ -158,6 +178,9 @@ data Message
     PutObjectiveAllyIntoPlay ObjectiveId PlayerId
   | ReduceActiveCost CostId Int
   | AddToVictoryDisplay Target
+  | -- | the player commits characters to the escape test, one at a time
+    MakeEscapeTest EscapeTest
+  | ResolveEscapeTest EscapeTest
   | -- | the player switches a card in hand with one in their deck, each taking the other's
     -- place
     SwapHandWithDeck PlayerId CardId CardId

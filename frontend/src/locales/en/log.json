@@ -73,6 +73,9 @@
   "questFails": "The quest fails: threat rises by {count}",
   "questTied": "The quest is held: no progress, no threat",
   "versus": "{willpower} against {threat}",
+  "escapePasses": "The escape test is passed",
+  "escapeFails": "The escape test is failed",
+  "escapeVersus": "{total} against escape {escape}",
   "questComplete": "{quest} is complete",
   "questStage": "{quest}",
 

@@ -352,3 +352,13 @@ makeUndefended pid eid = do
 
 discardFromHand :: (ReverseQueue m) => PlayerId -> Card -> m ()
 discardFromHand pid card = push $ DiscardFromHand pid card.id
+
+-- | The player makes an escape test against the given number of encounter cards,
+-- counting the stat; what follows a failure and a pass are actions of their own.
+escapeTest
+  :: (ReverseQueue m, Sourceable source)
+  => PlayerId -> source -> Int -> EscapeStat -> QueueT Message m () -> QueueT Message m () -> m ()
+escapeTest pid source n stat onFail onPass = do
+  failed <- capture onFail
+  passed <- capture onPass
+  push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed

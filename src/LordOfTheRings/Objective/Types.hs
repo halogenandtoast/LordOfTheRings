@@ -149,3 +149,9 @@ instance HasField "name" Objective Name where
 
 instance HasField "cardId" ObjectiveAttrs CardId where
   getField = objectiveCardId
+
+instance HasField "resources" ObjectiveAttrs Int where
+  getField = countTokens Resource . objectiveTokens
+
+instance HasField "resources" Objective Int where
+  getField = (.resources) . toAttrs

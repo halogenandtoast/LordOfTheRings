@@ -241,11 +241,15 @@ runGameMessage msg g = case msg of
     pure $ g & outcomeL ?~ outcome
   Discard target -> discardTarget target g
   DealDamage source target n | n > 0 -> do
-    pushAll
-      [ PlaceTokens source target Damage n
-      , CheckWindows [mkAfter $ DealtDamage target n]
-      , CheckDefeated target
-      ]
+    -- damage another character takes in its place, as Song of Mocking's
+    redirected <- filter (inPlay g) . mapMaybe (\case DamageRedirectedTo t -> Just t; _ -> Nothing) <$> getModifiers target
+    pushAll $ case redirected of
+      t : _ -> [DealDamage source t n]
+      [] ->
+        [ PlaceTokens source target Damage n
+        , CheckWindows [mkAfter $ DealtDamage target n]
+        , CheckDefeated target
+        ]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
@@ -468,7 +472,10 @@ runGameMessage msg g = case msg of
             pushAll
               =<< inLogBlock
                 (PlayerAttackBlock pid eid attackers)
-                (map StopAttacking attackers <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense), AttackResolved eid attackers])
+                ( map StopAttacking attackers
+                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense), AttackResolved eid attackers]
+                    <> [CheckWindows [mkAfter $ AttackedEnemy a eid | a <- attackers]]
+                )
     pure g
   AttackResolved eid attackers -> do
     destroyed <- not <$> selectAny (EnemyWithId eid)
@@ -748,6 +755,18 @@ runGameMessage msg g = case msg of
       $ g
       & entitiesL . locationsL %~ Map.delete lid
       & scenarioL %~ overAttrs (victoryDisplayL %~ (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) :))
+  MakeEscapeTest t -> do
+    ready <- filter (`notElem` t.escapeCommitted) <$> selectCharacters (HeroControlledBy (PlayerWithId t.escapePlayer) <> ReadyHero) (AllyControlledBy (PlayerWithId t.escapePlayer) <> ReadyAlly)
+    push
+      $ questionLabelWith (ikey "label.escapeTest") (sourceTarget t.escapeSource) t.escapeCommitted t.escapePlayer
+      $ [targetLabel c [Exhaust c, MakeEscapeTest t {escapeCommitted = t.escapeCommitted <> [c]}] | c <- ready]
+      <> [Label (ikey "label.doneCommittingToEscape") [ResolveEscapeTest t]]
+    pure g
+  ResolveEscapeTest t -> do
+    (total, escape) <- escapeTestTotals t
+    let (dealt, rest) = splitAt t.escapeCards (toAttrs g.scenario).encounterDeck
+    pushAll $ if escape > total then t.escapeOnFail else t.escapeOnPass
+    pure $ g & scenarioL %~ overAttrs ((encounterDeckL .~ rest) . (encounterDiscardL %~ (dealt <>)))
   ResetToStage card _ -> do
     pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
     pure $ g & entitiesL . questsL .~ mempty

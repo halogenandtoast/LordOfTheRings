@@ -162,6 +162,12 @@ narrationFor = \case
       GT -> toned Good $ test [ikeyPart "log.questSucceeds" ["progress" ~> stat "progress" (willpower - threat)], versus]
       LT -> toned Bad $ test [ikeyPart "log.questFails" ["count" ~> (threat - willpower)], versus]
       EQ -> test [ikeyPart "log.questTied" [], versus]
+  ResolveEscapeTest t -> Just do
+    (total, escape) <- escapeTestTotals t
+    let versus = ikeyPart "log.escapeVersus" ["total" ~> total, "escape" ~> escape]
+    one $ if escape > total
+      then toned Bad $ test [ikeyPart "log.escapeFails" [], versus]
+      else toned Good $ test [ikeyPart "log.escapePasses" [], versus]
   CompleteQuest qid -> Just $ whenRef (toTarget qid) \q -> one $ toned Good $ mechanic [ikeyPart "log.questComplete" ["quest" ~> q]]
   AdvanceToQuest card -> Just $ one $ structure [ikeyPart "log.questStage" ["quest" ~> EncounterCard card]]
   -- * Hands and decks

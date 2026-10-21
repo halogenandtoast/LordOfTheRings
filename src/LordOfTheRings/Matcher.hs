@@ -192,6 +192,9 @@ getHero hid = fromJustNote ("missing hero " <> show hid) . Map.lookup hid <$> ge
 getAlly :: (HasCallStack, HasGame m) => AllyId -> m Ally
 getAlly aid = fromJustNote ("missing ally " <> show aid) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
 
+getObjective :: (HasCallStack, HasGame m) => ObjectiveId -> m Objective
+getObjective oid = fromJustNote ("missing objective " <> show oid) . Map.lookup oid <$> getsGame (entitiesObjectives . gameEntities)
+
 getEnemy :: (HasCallStack, HasGame m) => EnemyId -> m Enemy
 getEnemy eid = fromJustNote ("missing enemy " <> show eid) . Map.lookup eid <$> getsGame (entitiesEnemies . gameEntities)
 

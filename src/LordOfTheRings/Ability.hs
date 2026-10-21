@@ -37,6 +37,10 @@ dealtDamage = DealtDamageWindow After . toTarget
 defendedAttack :: (Targetable a) => a -> WindowMatcher
 defendedAttack = DefendedAttackWindow After . Just . toTarget
 
+-- | After an attack the character made has resolved.
+attacked :: (Targetable a) => a -> WindowMatcher
+attacked = AttackedWindow After . toTarget
+
 forced :: WindowMatcher -> AbilityType
 forced = ForcedAbility
 

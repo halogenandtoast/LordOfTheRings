@@ -33,6 +33,8 @@ data WindowType
   | ProgressPlaced Target Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully
+  | -- | an attack the character made has resolved
+    AttackedEnemy Target EnemyId
   | -- | an attack the character defended has resolved
     DefendedAttack Target EnemyId
   | -- | a card played from its owner's hand, as its card id

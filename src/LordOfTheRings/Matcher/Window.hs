@@ -37,6 +37,8 @@ data WindowMatcher
   | LocationRevealedWindow Timing
   | ShadowEffectAgainstWindow Timing Target
   | AnyEnemyAttacksWindow Timing
+  | -- | after an attack the character made resolved
+    AttackedWindow Timing Target
   | ShadowEffectResolvedWindow Timing EnemyId
   | EnemyAttacksWindow Timing EnemyId
   | -- | any encounter card revealed from the encounter deck
@@ -77,6 +79,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
   (ShadowEffectAgainstWindow t target, ShadowEffectAgainst target') -> t == timing && target == target'
   (AnyEnemyAttacksWindow t, EnemyAttacking _ _) -> t == timing
+  (AttackedWindow t target, AttackedEnemy target' _) -> t == timing && target == target'
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
   (CardRevealedWindow t, Revealed _) -> t == timing

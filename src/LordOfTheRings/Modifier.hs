@@ -84,6 +84,12 @@ data ModifierType
     BlankAttachments
   | -- | on the game: every character must commit to the quest
     MustCommitAll
+  | -- | on the game: each card dealt for an escape test adds this much more
+    EscapeBonus Int
+  | -- | on a character: damage dealt to it is dealt to the given character instead
+    DamageRedirectedTo Target
+  | -- | on a character: it commits to the quest without exhausting
+    DoesNotExhaustToCommit
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
   | -- | on the game: matching cards cost this much more to play from hand

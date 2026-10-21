@@ -44,6 +44,8 @@ data CardDef = CardDef
   -- ^ an encounter card with a shadow effect, as opposed to a blank shadow card
   , cdDistinctPayers :: Maybe Int
   -- ^ the card must be paid for from this many different heroes' pools
+  , cdEscape :: Maybe Int
+  -- ^ what the card adds to an escape test it is dealt for
   }
   deriving stock (Show, Eq, Generic)
 
@@ -87,6 +89,7 @@ emptyCardDef cCode name cType =
     , cdShadowEffect = False
     , cdWhenRevealed = False
     , cdDistinctPayers = Nothing
+    , cdEscape = Nothing
     }
 
 unique :: CardDef -> CardDef
