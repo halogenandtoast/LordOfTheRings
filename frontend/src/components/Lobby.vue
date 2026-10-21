@@ -19,6 +19,8 @@ const seats = computed(() =>
 const mine = computed(() => table.seated.filter((s) => s.userId === currentUser.value?.id).length)
 const full = computed(() => table.seated.length >= table.seats)
 const owner = computed(() => table.owner === currentUser.value?.id)
+// on your own there is only a deck to choose
+const solo = computed(() => table.seats === 1)
 
 const link = window.location.href
 const copied = ref(false)
@@ -40,9 +42,9 @@ onMounted(async () => {
 
 <template>
   <section class="lobby">
-    <h2>{{ $t('game.lobby.waiting') }}</h2>
+    <h2>{{ $t(solo ? 'game.lobby.chooseDeck' : 'game.lobby.waiting') }}</h2>
 
-    <ol class="seats">
+    <ol v-if="!solo" class="seats">
       <li v-for="(seat, position) in seats" :key="position" class="seat" :class="{ open: !seat, you: seat?.userId === currentUser?.id }">
         <span class="number">{{ position + 1 }}</span>
         <span v-if="seat" class="name">{{ seat.username }}<template v-if="seat.userId === currentUser?.id"> · {{ $t('game.lobby.you') }}</template></span>
@@ -50,7 +52,7 @@ onMounted(async () => {
       </li>
     </ol>
 
-    <div v-if="table.seats > 1" class="invite">
+    <div v-if="!solo" class="invite">
       <span>{{ $t('game.lobby.invite') }}</span>
       <div class="link">
         <input :value="link" type="text" readonly @focus="($event.target as HTMLInputElement).select()" />
@@ -59,9 +61,9 @@ onMounted(async () => {
     </div>
 
     <template v-if="!full && (owner || mine === 0)">
-      <h3>{{ $t('game.lobby.chooseDeck') }}</h3>
+      <h3 v-if="!solo">{{ $t('game.lobby.chooseDeck') }}</h3>
       <DeckPicker v-model="deck" :decks="decks" />
-      <button type="button" class="join" @click="emit('join', toDeckChoice(deck))">{{ $t(mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
+      <button type="button" class="join" @click="emit('join', toDeckChoice(deck))">{{ $t(solo ? 'game.lobby.start' : mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
     </template>
     <template v-if="mine > 0">
       <p class="hint">{{ $t('game.lobby.dealtWhenFull') }}</p>

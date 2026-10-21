@@ -39,7 +39,8 @@
     "join": "Take a seat",
     "startNow": "Start now, on your own | Start now with {n} players",
     "leave": "Leave your seat | Leave your seats",
-    "takeAnother": "Take another seat"
+    "takeAnother": "Take another seat",
+    "start": "Start the game"
   },
   "seats": {
     "label": "Seats",
