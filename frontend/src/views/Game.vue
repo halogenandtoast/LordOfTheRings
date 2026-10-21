@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useMediaQuery } from '@vueuse/core'
 import { cardDrag, type CardView, type PlayerView } from '../types'
 import { isKey, useServerText } from '../i18n'
 import CardBand from '../components/CardBand.vue'
 import CardOverlay from '../components/CardOverlay.vue'
-import Log from '../components/Log.vue'
+import GameLog from '../components/GameLog.vue'
 import GameBar from '../components/GameBar.vue'
 import PlayerArea from '../components/PlayerArea.vue'
 import PhaseTracker from '../components/PhaseTracker.vue'
@@ -29,10 +30,11 @@ import { provideHighlights } from '../composables/useHighlights'
 import { provideCombat } from '../composables/useCombat'
 
 const route = useRoute()
+const { t } = useI18n()
 const tr = useServerText()
 const spectate = route.meta.spectate === true
 const {
-  error, game, log, announcement, flipping,
+  error, game, log, hasOlder, loadOlder, say, undoTo, announcement, flipping,
   started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join, leave, start,
 } = useGame(route.params.id as string, spectate)
 // With friends you play your own seats; otherwise every seat is yours.
@@ -62,6 +64,11 @@ const fileBugAbout = (description = '') => {
 }
 // on a narrower screen the sidebar is a drawer over the board, so it starts shut
 const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matches)
+
+// back to just before a log entry, once the player says so
+const undoToEntry = (step: number, label: string) => {
+  if (window.confirm(t('log.undoConfirm', { entry: label }))) void undoTo(step)
+}
 
 const choices = computed(() => question.value?.choices ?? [])
 provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
@@ -348,7 +355,15 @@ watch(question, (asked) => {
       />
       <p v-if="waitingOn && !spectate" class="announcement">{{ $t('game.waitingOn', { name: waitingOn.name }) }}</p>
       <p v-if="announcement" class="announcement">{{ tr(announcement) }}</p>
-      <Log :log="log" />
+      <GameLog
+        :entries="log"
+        :can-undo="!spectate && canUndo"
+        :can-chat="!spectate"
+        :has-older="hasOlder"
+        @undo="undoToEntry"
+        @say="say"
+        @load-older="loadOlder"
+      />
     </aside>
   </div>
   </div>

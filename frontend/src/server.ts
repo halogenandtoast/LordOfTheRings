@@ -1,5 +1,7 @@
 // The shapes the server sends. The game is sent whole; ./view.ts turns it into the views the board draws.
 
+import type { LogEntry } from './gameLog'
+
 export interface CardDef {
   cardCode: string
   name: string
@@ -99,6 +101,8 @@ export interface GameData {
   playerId: string | null
   canUndo: boolean
   table: Table
+  /** The log's latest entries, when the client should take them afresh. */
+  log: LogEntry[] | null
 }
 
 /** Who plays: with friends, who sits where (seat n plays the nth player); otherwise the owner plays every seat. */
@@ -111,7 +115,7 @@ export interface Table {
 
 export type ServerMessage =
   | { tag: 'Update'; contents: GameData }
-  | { tag: 'Log'; message: string }
+  | { tag: 'Logged'; entry: LogEntry }
   | { tag: 'Announce'; message: string }
   | { tag: 'FlipCard'; cardId: string }
   | { tag: 'ShuffleIntoDeck'; cardIds: string[] }

@@ -1,14 +1,17 @@
-import { computed, nextTick, onScopeDispose, readonly, ref, shallowRef } from 'vue'
+import { computed, nextTick, onScopeDispose, readonly, ref, shallowReadonly, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { apiFetch, type DeckChoice } from '../api'
 import { token } from '../auth'
 import type { CardDef, GameData, ServerMessage } from '../server'
 import type { GameView } from '../types'
+import type { LogEntry } from '../gameLog'
 import { toView } from '../view'
 import { beforeTheDeal, dealFrom, openingStages, shuffleDecks } from './dealing'
 import { transitionsOn, withViewTransition } from './useViewTransition'
 
-const LOG_LIMIT = 200
+// as many entries as the server opens a game with, and pages back by
+const LOG_TAIL = 150
+const LOG_PAGE = 100
 const FLIP_MS = 320
 // how long the opening resources take to drop on before the decks shuffle
 const TOKEN_MS = 450
@@ -26,7 +29,8 @@ export const useGame = (gameId: string, spectate = false) => {
   const error = ref<string | null>(null)
   const data = shallowRef<GameData | null>(null)
   const game = shallowRef<GameView | null>(null)
-  const log = ref<string[]>([])
+  const log = shallowRef<LogEntry[]>([])
+  const hasOlder = ref(false)
   const announcement = ref<string | null>(null)
   const flipping = ref<Set<string>>(new Set())
 
@@ -67,6 +71,11 @@ export const useGame = (gameId: string, spectate = false) => {
 
   const update = async (next: GameData) => {
     data.value = next
+    // the log afresh: on opening the game, and after an undo or a deal
+    if (next.log) {
+      log.value = next.log
+      hasOlder.value = next.log.length >= LOG_TAIL
+    }
     const view = toView(next, defs, game.value)
     // a game opening on the mulligan, on arrival or dealt from the lobby, is laid out with
     // its hands empty, so the opening hand deals out
@@ -92,8 +101,8 @@ export const useGame = (gameId: string, spectate = false) => {
     switch (message.tag) {
       case 'Update':
         return update(message.contents)
-      case 'Log':
-        log.value = [...log.value, message.message].slice(-LOG_LIMIT)
+      case 'Logged':
+        log.value = [...log.value, message.entry]
         return
       case 'Announce':
         announcement.value = message.message
@@ -168,7 +177,7 @@ export const useGame = (gameId: string, spectate = false) => {
     error: readonly(error),
     game: readonly(game),
     canUndo: computed(() => data.value?.canUndo ?? false),
-    log: readonly(log),
+    log: shallowReadonly(log),
     announcement: readonly(announcement),
     flipping: readonly(flipping),
     started: computed(() => game.value?.started ?? false),
@@ -178,8 +187,18 @@ export const useGame = (gameId: string, spectate = false) => {
     table: computed(() => data.value?.table ?? null),
     outcome: computed(() => game.value?.outcome ?? null),
     undo: (to?: 'phase' | 'round') => post(to ? `/undo?to=${to}` : '/undo'),
+    // back to just before a log entry
+    undoTo: (step: number) => post(`/undo?to=step&step=${step}`),
+    hasOlder: readonly(hasOlder),
+    loadOlder: async (before: number) => {
+      const response = await apiFetch(`/api/games/${gameId}/log?before=${before}`).catch(() => null)
+      if (!response?.ok) return
+      const older = (await response.json()) as LogEntry[]
+      log.value = [...older, ...log.value]
+      hasOlder.value = older.length >= LOG_PAGE
+    },
+    say: (text: string) => post('/chat', { text }),
     reset: () => {
-      log.value = []
       announcement.value = null
       return post('/reset')
     },
