@@ -9,8 +9,6 @@ export interface CardView {
   /** Face down: a prisoner, or a player card fighting as an Orc Guard. */
   facedown?: 'player' | 'encounter'
   threat: number | null
-  /** What it adds to the staging area's threat, modifiers included, while it is there. */
-  stagingThreat?: number
   attack: number | null
   defense: number | null
   hitPoints: number | null
@@ -28,6 +26,8 @@ export interface CardView {
   playing: boolean
   /** The engine's target for a card in play, so debug mode can change it. */
   target: Target | null
+  /** The stats down its side as modified, such as ['attack', 3], while in play. */
+  stats: [string, number][]
 }
 
 export interface ChoiceView {

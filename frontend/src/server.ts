@@ -82,8 +82,8 @@ export interface ServerGame {
   activeCosts: Record<string, { player: string; card: Card }>
   committedWillpower: number
   stagingThreat: number
-  /** Each staging card's part of that threat, by card id. */
-  stagingThreats?: Record<string, number>
+  /** The stats of each card in play as modified, in printed order, by card id. */
+  stats?: Record<string, [string, number][]>
   lastCommittedWillpower: number | null
   /** What each target is modified by, as [target, modifiers] pairs. */
   modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]

@@ -10,13 +10,14 @@ import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
+import LordOfTheRings.Matcher
 import LordOfTheRings.Target
 import LordOfTheRings.Prelude
 
 -- | The game as the players may see it: decks are hidden information, so only their
 -- sizes are sent. Stored games and exports keep everything. The quest tally is added
--- so the board shows the engine's totals, modifiers included (and each staging card's
--- part of the threat), as are the hosts each
+-- so the board shows the engine's totals, modifiers included (and each card's stats
+-- as modified), as are the hosts each
 -- attachment in hand could go on, so dragging one only lights up those.
 publicGame :: Game -> Value
 publicGame = publicGameFor (const True)
@@ -31,12 +32,29 @@ publicGameFor seesHand g = hideDecks $ toJSON g
       Object
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)
         $ KeyMap.insert "stagingThreat" (toJSON $ runReadGame getStagingThreat g)
-        $ KeyMap.insert "stagingThreats" (toJSON $ mapFromList @(Map CardId Int) $ runReadGame getStagingThreats g)
+        $ KeyMap.insert "stats" (toJSON $ runReadGame cardStats g)
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
         $ adjust hideScenario "scenario" o
     v -> v
+  -- the stats printed down a card's side, as they are now
+  cardStats :: ReadGame (Map CardId [(Text, Int)])
+  cardStats = do
+    heroes <- select AnyHero >>= traverse \i -> character (toTarget i) =<< getHero i
+    allies <- select AnyAlly >>= traverse \i -> character (toTarget i) =<< getAlly i
+    enemies <- select AnyEnemy >>= traverse \i -> do
+      e <- getEnemy i
+      stats <- sequence [("threat",) <$> getEnemyThreat i, ("attack",) <$> getEnemyAttack i, ("defense",) <$> getEnemyDefense i]
+      pure ((toCard e).id, stats)
+    locations <- select AnyLocation >>= traverse \i -> do
+      l <- getLocation i
+      threat <- getLocationThreat i
+      pure ((toCard l).id, [("threat", threat)])
+    pure $ mapFromList $ heroes <> allies <> enemies <> locations
+  character target c = do
+    stats <- sequence [("willpower",) <$> getWillpower target, ("attack",) <$> getAttack target, ("defense",) <$> getDefense target]
+    pure ((toCard c).id, stats)
   attachHosts :: Map CardId [Target]
   attachHosts =
     mapFromList

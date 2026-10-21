@@ -126,9 +126,11 @@ const toggleUnless = (attached: CardView) => {
       <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
       <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
     </div>
-    <span v-if="card.stagingThreat !== undefined" class="pile-count staging-threat" :title="$t('game.threat', { value: card.stagingThreat })">
-      {{ card.stagingThreat }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/threat.svg')` }" />
-    </span>
+    <div v-if="card.stats.length && !banner" class="stats">
+      <span v-for="[stat, value] in card.stats" :key="stat" :class="stat" :title="$t(`game.${stat}`, { value })">
+        {{ value }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/${stat}.svg')` }" />
+      </span>
+    </div>
 
     <div v-if="debugging && card.target" class="debug" @click.stop>
       <span v-for="(count, token) in counts" :key="token">
@@ -142,16 +144,28 @@ const toggleUnless = (attached: CardView) => {
 
 <style scoped>
 .card-slot { position: relative; line-height: 0; transition: margin 0.2s ease; }
-/* under a staging card, the threat it adds */
-.staging-threat {
+/* under a card, its stats as modified: a strip off its bottom edge, one segment each */
+.stats {
+  --willpower: #8cc4ea;
+  --attack: #f08a4b;
+  --defense: #b9c4cf;
   display: flex;
-  align-items: center;
-  gap: 3px;
-  width: fit-content;
-  margin: 5px auto 0;
+  margin-top: -2px;
+  border-radius: 0 0 7px 7px;
+  background: rgb(20 16 10 / 0.92);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14);
+  overflow: hidden;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
-  color: var(--threat-red);
 }
+.stats > span { flex: 1; display: flex; justify-content: center; align-items: center; gap: 3px; padding: 4px 0 3px; }
+.stats > span + span { border-left: 1px solid var(--line); }
+.stats .threat { color: var(--threat-red); }
+.stats .willpower { color: var(--willpower); }
+.stats .attack { color: var(--attack); }
+.stats .defense { color: var(--defense); }
 /* an exhausted card turns past its own width (height × 0.88 scale), so make room for it */
 .card-slot.sideways { margin-inline: calc((var(--card-width) / var(--card-aspect) * 0.88 - var(--card-width)) / 2); }
 .card-slot.hosting { padding-top: calc(var(--attachment-peek) * v-bind('attachments.length')); }

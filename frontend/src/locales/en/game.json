@@ -1,6 +1,9 @@
 {
   "round": "round {round}",
   "threat": "Threat {value}",
+  "willpower": "Willpower {value}",
+  "attack": "Attack {value}",
+  "defense": "Defense {value}",
   "phaseTracker": "Phases",
   "phases": {
     "resource": "resource",
