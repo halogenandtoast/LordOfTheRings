@@ -40,8 +40,8 @@ const isTarget = computed(() => highlights.value.targetIds.includes(card.id))
 const isDrop = computed(() => highlights.value.dropIds.includes(card.id))
 const combat = useCombat()
 const preview = computed((): CombatPreview => (banner ? {} : combat.value[card.id] ?? {}))
-// a part of the enemy's remaining hit points, as a width on its progress track
-const share = (n: number) => `${(Math.min(n, preview.value.attack?.remaining ?? 0) / Math.max(1, preview.value.attack?.remaining ?? 1)) * 100}%`
+// a part of a progress track's whole, as a width
+const share = (n: number, of: number) => `${(n / Math.max(1, of)) * 100}%`
 const choiceFor = (attached: CardView) =>
   choices.find((option) => option.targetId === attached.id) ?? null
 
@@ -137,12 +137,15 @@ const toggleUnless = (attached: CardView) => {
           </span>
           <span v-if="preview.defend.defeated">{{ $t('game.combat.defeated') }}</span>
         </span>
-        <div v-if="preview.attack" class="attack-progress" :class="{ defeated: preview.attack.dealt + preview.attack.adding >= preview.attack.remaining }">
-          <div class="track">
-            <span class="dealt" :style="{ flexBasis: share(preview.attack.dealt) }" />
-            <span class="adding" :style="{ flexBasis: share(preview.attack.adding) }" />
+        <div v-if="preview.attack" class="attack-progress" :class="{ defeated: preview.attack.defeated }">
+          <div v-for="bar in preview.attack.bars" :key="bar.stat" class="bar" :class="bar.stat">
+            <span class="icon" :style="{ '--icon': `url('/images/icons/game/${bar.stat}.svg')` }" />
+            <div class="track">
+              <span :style="{ flexBasis: share(bar.done, bar.of) }" />
+              <span class="adding" :style="{ flexBasis: share(bar.adding, bar.of) }" />
+            </div>
+            <span>{{ bar.done + bar.adding }}/{{ bar.of }}</span>
           </div>
-          <span class="label">{{ $t('game.combat.dealt', { dealt: preview.attack.dealt + preview.attack.adding, remaining: preview.attack.remaining }) }}</span>
         </div>
         <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
       </div>
@@ -367,9 +370,8 @@ const toggleUnless = (attached: CardView) => {
 .defend-preview .attack { color: var(--attack); }
 .defend-preview.defeated { box-shadow: 0 0 0 1px var(--threat-red); }
 .defend-preview.defeated > :last-child { color: var(--threat-red); text-transform: uppercase; font-size: 0.65rem; }
-/* an enemy being attacked: the declared attack against its remaining hit points */
+/* an enemy being attacked: the declared attack through its defense, then its hit points */
 .attack-progress {
-  --attack-fill: var(--attack);
   z-index: 4;
   grid-area: 1 / 1;
   place-self: end stretch;
@@ -384,12 +386,14 @@ const toggleUnless = (attached: CardView) => {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  text-align: center;
   pointer-events: none;
 }
-.attack-progress.defeated { --attack-fill: var(--gold-light); }
-.attack-progress .track { display: flex; height: 5px; border-radius: 3px; background: rgb(255 255 255 / 0.15); overflow: hidden; }
-.attack-progress .track > span { flex: none; background: var(--attack-fill); transition: flex-basis 0.2s ease; }
+.attack-progress .bar { display: flex; align-items: center; gap: 3px; }
+.attack-progress .defense { --fill: var(--defense); color: var(--defense); }
+.attack-progress .hit-points { --fill: var(--attack); color: var(--attack); }
+.attack-progress.defeated .hit-points { --fill: var(--gold-light); color: var(--gold-light); }
+.attack-progress .track { flex: 1; display: flex; height: 5px; border-radius: 3px; background: rgb(255 255 255 / 0.15); overflow: hidden; }
+.attack-progress .track > span { flex: none; background: var(--fill); transition: flex-basis 0.2s ease; }
 .attack-progress .adding { opacity: 0.45; }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; }

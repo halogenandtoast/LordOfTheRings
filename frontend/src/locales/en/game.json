@@ -6,8 +6,7 @@
   "defense": "Defense {value}",
   "combat": {
     "damage": "Takes {value} damage",
-    "defeated": "defeated",
-    "dealt": "{dealt} / {remaining}"
+    "defeated": "defeated"
   },
   "phaseTracker": "Phases",
   "phases": {

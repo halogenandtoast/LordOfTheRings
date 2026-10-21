@@ -4,13 +4,14 @@ import type { CardView, QuestionView } from '../types'
 /**
  * What a combat decision would come to, from the engine's stats: hovering a defender
  * shows its defense and the damage that gets past it, and whether it would fall, before shadow effects, and an enemy being attacked
- * shows how much of its remaining hit points the declared attackers would deal.
+ * shows how far the declared attack gets through its defense and its remaining hit points.
  */
 export interface CombatPreview {
   /** `damage` is what gets past its defense. */
   defend?: { defense: number; damage: number; defeated: boolean }
-  /** `adding` is the hovered attacker's share, on top of what is `dealt` already. */
-  attack?: { dealt: number; adding: number; remaining: number }
+  /** The attack wearing down its defense, then its remaining hit points: each bar has
+   * what is `done` already and the hovered attacker's share `adding` to it, out of `of`. */
+  attack?: { bars: { stat: 'defense' | 'hit-points'; done: number; adding: number; of: number }[]; defeated: boolean }
 }
 
 /** The card under the mouse, so a choice can be previewed before it is made. */
@@ -42,10 +43,17 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
       if (enemy) {
         const strength = enemy.attackStrength ?? 0
         const defense = stat(enemy, 'defense')
-        const dealt = Math.max(0, strength - defense)
         // ponytail: the hovered attacker's printed-side attack, without its bonuses against traits
-        const adding = hovered ? Math.max(0, strength + stat(hovered, 'attack') - defense) - dealt : 0
-        return { [enemy.id]: { attack: { dealt, adding, remaining: remaining(enemy) } } }
+        const withHovered = strength + stat(hovered, 'attack')
+        const bar = (stat: 'defense' | 'hit-points', of: number, through: (attack: number) => number) => ({
+          stat, of, done: through(strength), adding: through(withHovered) - through(strength),
+        })
+        const left = remaining(enemy)
+        const bars = [
+          ...(defense > 0 ? [bar('defense', defense, (a) => Math.min(a, defense))] : []),
+          bar('hit-points', left, (a) => Math.min(left, Math.max(0, a - defense))),
+        ]
+        return { [enemy.id]: { attack: { bars, defeated: withHovered - defense >= left } } }
       }
       return {}
     }),
