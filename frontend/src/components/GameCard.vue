@@ -158,6 +158,7 @@ const toggleUnless = (attached: CardView) => {
             </div>
             <span>{{ bar.done + bar.adding }}/{{ bar.of }}</span>
           </div>
+          <span v-if="preview.attack.defeated" class="defeated-label">{{ $t('game.combat.defeated') }}</span>
         </div>
         <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
         <span v-if="card.damage > 0 && card.hitPoints" class="health-left" :title="$t('game.healthLeft', { value: card.hitPoints - card.damage })">
@@ -424,6 +425,7 @@ const toggleUnless = (attached: CardView) => {
 .attack-progress .defense { --fill: var(--defense); color: var(--defense); }
 .attack-progress .hit-points { --fill: var(--attack); color: var(--attack); }
 .attack-progress.defeated .hit-points { --fill: var(--gold-light); color: var(--gold-light); }
+.attack-progress .defeated-label { color: var(--gold-light); text-align: center; text-transform: uppercase; font-size: 0.65rem; }
 .attack-progress .track { flex: 1; display: flex; height: 7px; border-radius: 3px; background: rgb(255 255 255 / 0.15); overflow: hidden; }
 .attack-progress .track > span { flex: none; background: var(--fill); transition: flex-basis 0.2s ease; }
 .attack-progress .adding { opacity: 0.45; }
