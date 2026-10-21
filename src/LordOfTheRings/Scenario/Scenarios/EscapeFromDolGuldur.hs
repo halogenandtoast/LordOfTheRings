@@ -14,17 +14,16 @@ escapeFromDolGuldur = Scenario $ scenario EscapeFromDolGuldur "escape-from-dol-g
 
 instance RunMessage EscapeFromDolGuldur where
   runMessage msg (EscapeFromDolGuldur attrs) = case msg of
+    -- the first stage is out from the start, its setup followed at step 7 as ever
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
           (gatherEncounterSet attrs)
           [EncounterSet.EscapeFromDolGuldur, EncounterSet.SpidersOfMirkwood, EncounterSet.DolGuldurOrcs]
-      pure $ EscapeFromDolGuldur $ attrs & encounterDeckL .~ encounterDeck
-    DoStep 6 Setup -> do
       firstStage <- genEncounterCard Quests.theNecromancersTower
       laterStages <- traverse genEncounterCard [Quests.throughTheCaverns, Quests.outOfTheDungeons]
       putQuestIntoPlay firstStage
-      pure $ EscapeFromDolGuldur $ attrs & questDeckL .~ laterStages
+      pure $ EscapeFromDolGuldur $ attrs & encounterDeckL .~ encounterDeck & questDeckL .~ laterStages
     -- Nazgul of Dol Guldur: Forced: When the prisoner is "rescued", move Nazgul of Dol
     -- Guldur into the staging area.
     RescuePrisoner _ -> do

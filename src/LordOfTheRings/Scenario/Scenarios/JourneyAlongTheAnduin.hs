@@ -13,15 +13,14 @@ journeyAlongTheAnduin = Scenario $ scenario JourneyAlongTheAnduin "journey-along
 
 instance RunMessage JourneyAlongTheAnduin where
   runMessage msg (JourneyAlongTheAnduin attrs) = case msg of
+    -- the first stage is out from the start, its setup followed at step 7 as ever
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
           (gatherEncounterSet attrs)
           [EncounterSet.JourneyAlongTheAnduin, EncounterSet.SauronsReach, EncounterSet.DolGuldurOrcs, EncounterSet.Wilderlands]
-      pure $ JourneyAlongTheAnduin $ attrs & encounterDeckL .~ encounterDeck
-    DoStep 6 Setup -> do
       firstStage <- genEncounterCard Quests.toTheRiver
       laterStages <- traverse genEncounterCard [Quests.anduinPassage, Quests.ambushOnTheShore]
       putQuestIntoPlay firstStage
-      pure $ JourneyAlongTheAnduin $ attrs & questDeckL .~ laterStages
+      pure $ JourneyAlongTheAnduin $ attrs & encounterDeckL .~ encounterDeck & questDeckL .~ laterStages
     _ -> JourneyAlongTheAnduin <$> runMessage msg attrs
