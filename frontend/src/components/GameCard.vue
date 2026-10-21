@@ -290,7 +290,11 @@ const toggleUnless = (attached: CardView) => {
 .token.resources {
   color: #fff;
   font-size: 0.85rem;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;
+  font-weight: 900;
+  /* a true outline, drawn under the fill so the figure keeps its full weight */
+  -webkit-text-stroke: 3px #000;
+  paint-order: stroke fill;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.8);
 }
 /* the tint colours the coin, under the number and inside the coin's outline */
 .resources::before {
