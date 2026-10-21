@@ -674,6 +674,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.LogSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
+      LordOfTheRings.PlayerChoicesSpec
       LordOfTheRings.QuestAdvancementSpec
       LordOfTheRings.QuestPhaseSpec
       LordOfTheRings.RefreshPhaseSpec
