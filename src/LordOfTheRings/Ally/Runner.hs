@@ -3,9 +3,10 @@ module LordOfTheRings.Ally.Runner (module LordOfTheRings.Ally.Runner, module X) 
 import LordOfTheRings.Classes.HasQueue (pushAll)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Ally.Types as X
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Card.CardDef (HasCardDef (..))
+import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (DoesNotExhaustToAttack, DoesNotExhaustToCommit))
+import LordOfTheRings.Modifier (ModifierType (DoesNotExhaustToAttack))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
@@ -19,7 +20,7 @@ instance RunMessage AllyAttrs where
       pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
-      free <- elem DoesNotExhaustToCommit <$> getModifiers attrs
+      free <- doesNotExhaustToCommit (toTarget attrs) (toCardDef attrs)
       pure $ attrs & exhaustedL %~ (|| not free) & committedL .~ True
     -- an ally put into play committed is aimed at by its card
     CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> pure $ attrs & exhaustedL .~ True & committedL .~ True

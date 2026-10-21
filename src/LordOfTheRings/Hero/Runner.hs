@@ -3,9 +3,10 @@ module LordOfTheRings.Hero.Runner (module LordOfTheRings.Hero.Runner, module X) 
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Hero.Types as X
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Card.CardDef (HasCardDef (..))
+import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, DoesNotExhaustToAttack, DoesNotExhaustToCommit))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, DoesNotExhaustToAttack))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -29,7 +30,7 @@ instance RunMessage HeroAttrs where
       pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
-      free <- elem DoesNotExhaustToCommit <$> getModifiers attrs
+      free <- doesNotExhaustToCommit (toTarget attrs) (toCardDef attrs)
       pure $ attrs & exhaustedL %~ (|| not free) & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
