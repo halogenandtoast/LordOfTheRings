@@ -28,7 +28,7 @@ import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyAttacking, ShadowEffectTriggered, Traveled))
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyAttacking, ShadowEffectTriggered, ThreatRaisedByEncounter, Traveled))
 
 dealDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
 dealDamage source target n = push $ DealDamage (toSource source) (toTarget target) n
@@ -57,6 +57,13 @@ removeProgressFromQuest source n = push $ RemoveProgressFromQuest (toSource sour
 
 raiseThreat :: (ReverseQueue m) => PlayerId -> Int -> m ()
 raiseThreat pid n = push $ RaiseThreat pid n
+
+-- | Raise the player's threat by an encounter or quest card's effect, opening the window
+-- Elfhelm answers.
+encounterRaisesThreat :: (ReverseQueue m) => PlayerId -> Int -> m ()
+encounterRaisesThreat pid n = when (n > 0) do
+  push $ RaiseThreat pid n
+  push $ CheckWindows [Window After $ ThreatRaisedByEncounter pid]
 
 lowerThreat :: (ReverseQueue m) => PlayerId -> Int -> m ()
 lowerThreat pid n = push $ LowerThreat pid n

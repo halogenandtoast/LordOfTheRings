@@ -23,7 +23,7 @@ instance RunMessage DungeonTorch where
       pure o
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       withHost attrs \case
-        HeroTarget hid -> (`raiseThreat` 2) . (.owner) =<< getHero hid
+        HeroTarget hid -> (`encounterRaisesThreat` 2) . (.owner) =<< getHero hid
         _ -> pure ()
       pure o
     _ -> DungeonTorch <$> runMessage msg attrs

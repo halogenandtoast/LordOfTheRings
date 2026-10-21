@@ -29,7 +29,7 @@ instance RunMessage AFrightenedBeast where
 -- resolves.
 offer :: (ReverseQueue m) => TreacheryAttrs -> Int -> [(PlayerId, [AllyId])] -> m ()
 offer attrs threat = \case
-  [] -> eachPlayer \p -> raiseThreat p threat
+  [] -> eachPlayer \p -> encounterRaisesThreat p threat
   (p, allies) : rest -> chooseOneM p do
     questionLabeled "aFrightenedBeast.cancel"
     causedBy attrs

@@ -18,6 +18,6 @@ instance RunMessage Nightfall where
   runMessage msg t@(Nightfall attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
-      escapeTest lead attrs 2 EscapeWillpower (placeOnGollum attrs 1 >> eachPlayer (`raiseThreat` 2)) (pure ())
+      escapeTest lead attrs 2 EscapeWillpower (placeOnGollum attrs 1 >> eachPlayer (`encounterRaisesThreat` 2)) (pure ())
       pure t
     _ -> Nightfall <$> runMessage msg attrs

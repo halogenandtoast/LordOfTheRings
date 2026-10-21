@@ -22,6 +22,6 @@ instance RunMessage UnderTheShadow where
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       engaged <- length <$> select (EnemyEngagedWith $ PlayerWithId pid)
-      when (engaged > 0) $ raiseThreat pid engaged
+      when (engaged > 0) $ encounterRaisesThreat pid engaged
       pure t
     _ -> UnderTheShadow <$> runMessage msg attrs

@@ -2,7 +2,7 @@ module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) wher
 
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher.Types (CardMatcher, cardMatches)
+import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher, cardMatches)
 import LordOfTheRings.Phase
 import LordOfTheRings.Source
 import LordOfTheRings.Prelude
@@ -77,6 +77,16 @@ data WindowMatcher
     PlayedCardFromHandWindow Timing PlayerId CardMatcher
   | -- | any hero dealt damage
     HeroDealtDamageWindow Timing
+  | -- | the character itself left play, for its own abilities to answer
+    LeftPlayWindow Timing Target
+  | -- | a character sharing a trait with the given one left play
+    LeftPlaySharingTraitWindow Timing Target
+  | -- | the character attacked alone, and dealt damage beyond what the enemy had left
+    AttackedAloneWithExcessWindow Timing Target
+  | -- | an enemy destroyed by an attack a matching hero made
+    EnemyDestroyedByHeroWindow Timing HeroMatcher
+  | -- | an encounter or quest card's effect raised the player's threat
+    ThreatRaisedByEncounterWindow Timing PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -129,4 +139,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DiscardedFromDeckWindow t pid card, DiscardedFromDeck pid' card') -> t == timing && pid == pid' && maybe True (== card') card
   (PlayedCardFromHandWindow t pid m, PlayedCardFromHand pid' code) -> t == timing && pid == pid' && cardMatches m code
   (HeroDealtDamageWindow t, DealtDamage (HeroTarget _) _) -> t == timing
+  (LeftPlayWindow t target, LeftPlay target' _ _) -> t == timing && target == target'
+  (AttackedAloneWithExcessWindow t target, AttackedAlone target' _ n) -> t == timing && target == target' && n > 0
+  (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid') -> t == timing && pid == pid'
+  -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
+  (LeftPlaySharingTraitWindow {}, _) -> False
+  (EnemyDestroyedByHeroWindow {}, _) -> False
   _ -> False

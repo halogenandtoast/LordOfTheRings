@@ -16,6 +16,6 @@ instance RunMessage EastBightPatrol where
   runMessage msg e@(EastBightPatrol attrs) = case msg of
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
       enemyGetsAttack attrs eid 1
-      when (isNothing defender) $ raiseThreat pid 3
+      when (isNothing defender) $ encounterRaisesThreat pid 3
       pure e
     _ -> EastBightPatrol <$> runMessage msg attrs

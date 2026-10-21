@@ -20,6 +20,6 @@ instance HasAbilities GladdenFields where
 instance RunMessage GladdenFields where
   runMessage msg l@(GladdenFields a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      eachPlayer \p -> raiseThreat p 1
+      eachPlayer \p -> encounterRaisesThreat p 1
       pure l
     _ -> GladdenFields <$> runMessage msg a

@@ -17,6 +17,6 @@ theLightsOfTheDead = treachery TheLightsOfTheDead Cards.theLightsOfTheDead
 instance RunMessage TheLightsOfTheDead where
   runMessage msg t@(TheLightsOfTheDead attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      eachPlayer \p -> escapeTest p attrs 2 EscapeWillpower (placeOnGollum attrs 1 >> raiseThreat p 1) (pure ())
+      eachPlayer \p -> escapeTest p attrs 2 EscapeWillpower (placeOnGollum attrs 1 >> encounterRaisesThreat p 1) (pure ())
       pure t
     _ -> TheLightsOfTheDead <$> runMessage msg attrs

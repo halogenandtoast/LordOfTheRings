@@ -18,6 +18,6 @@ instance RunMessage ThroughTheMist where
   runMessage msg t@(ThroughTheMist attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
-      escapeTest lead attrs 2 EscapeAttack (placeOnGollum attrs 1 >> eachPlayer (`raiseThreat` 1)) (pure ())
+      escapeTest lead attrs 2 EscapeAttack (placeOnGollum attrs 1 >> eachPlayer (`encounterRaisesThreat` 1)) (pure ())
       pure t
     _ -> ThroughTheMist <$> runMessage msg attrs

@@ -907,7 +907,7 @@ runGameMessage msg g = case msg of
     let def = toCardDef card
     players <- getPlayerOrder
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
-        doomed = [RaiseThreat p n | Doomed n <- toList (cdKeywords def), p <- players]
+        doomed = concat [[RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p]] | Doomed n <- toList (cdKeywords def), n > 0, p <- players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
         revealing t = inLogBlock (RevealBlock card) $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType]] <> [CheckWindows [mkWhen $ Revealed t], whenRevealed t] <> doomed <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
@@ -1174,7 +1174,7 @@ attackDamage pid eid target n = do
     if excessToThreat
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
-  pure $ DealDamage (EnemySource eid) target n : [RaiseThreat pid excess | excess > 0]
+  pure $ DealDamage (EnemySource eid) target n : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excess > 0]
 
 -- | The enemy a step of an enemy's attack, or of an attack on one, is about.
 attackingEnemy :: Message -> Maybe EnemyId

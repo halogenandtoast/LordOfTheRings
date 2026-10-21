@@ -19,12 +19,12 @@ instance RunMessage PursuedByShadow where
     WhenRevealed (isTarget attrs -> True) -> do
       eachPlayer \p -> do
         idle <- selectCharacters (HeroControlledBy (PlayerWithId p) <> not_ CommittedHero) (AllyControlledBy (PlayerWithId p) <> not_ CommittedAlly)
-        when (notNull idle) $ raiseThreat p (length idle)
+        when (notNull idle) $ encounterRaisesThreat p (length idle)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       allies <- select (AllyControlledBy (PlayerWithId pid) <> ExhaustedAlly)
       if null allies
-        then raiseThreat pid 3
+        then encounterRaisesThreat pid 3
         else chooseOneM pid do
           questionLabeled "pursuedByShadow.returnAlly"
           causedBy attrs

@@ -17,10 +17,10 @@ gollumsAnguish = treachery GollumsAnguish Cards.gollumsAnguish
 instance RunMessage GollumsAnguish where
   runMessage msg t@(GollumsAnguish attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      traverse_ (`raiseThreat` 8) =<< tantrumTargets
+      traverse_ (`encounterRaisesThreat` 8) =<< tantrumTargets
       passGollum False
       pure t
     ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do
-      traverse_ (`raiseThreat` 4) =<< getGuard
+      traverse_ (`encounterRaisesThreat` 4) =<< getGuard
       pure t
     _ -> GollumsAnguish <$> runMessage msg attrs

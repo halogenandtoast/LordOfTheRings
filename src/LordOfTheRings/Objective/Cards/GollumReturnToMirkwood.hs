@@ -29,7 +29,7 @@ instance HasAbilities GollumReturnToMirkwood where
 instance RunMessage GollumReturnToMirkwood where
   runMessage msg o@(GollumReturnToMirkwood attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      for_ (guardOf attrs) \g -> raiseThreat g 3
+      for_ (guardOf attrs) \g -> encounterRaisesThreat g 3
       passGollum True
       pure o
     PlaceTokens _ (isTarget attrs -> True) Damage n | countTokens Damage attrs.objectiveTokens + n >= 5 -> do

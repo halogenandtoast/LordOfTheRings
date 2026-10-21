@@ -23,7 +23,7 @@ instance RunMessage Louis where
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
       for_ [(eid, pid) | Window _ (EnemyAttacking eid pid) <- windows] \(eid, pid) -> do
         troll <- maybe False (member Troll . cdCardTraits . toCardDef) <$> selectEnemy eid
-        when troll $ raiseThreat pid 3
+        when troll $ encounterRaisesThreat pid 3
       pure e
     _ -> Louis <$> runMessage msg attrs
    where

@@ -59,6 +59,11 @@ data WindowType
     CharacterLeftPlay Card
   | -- | a character left play: who controlled it, and its traits as it left
     LeftPlay Target PlayerId (Set Trait)
+  | -- | a character attacked an enemy alone: the damage the attack dealt beyond what the
+    -- enemy had left
+    AttackedAlone Target EnemyId Int
+  | -- | an encounter or quest card's effect raised the player's threat
+    ThreatRaisedByEncounter PlayerId
   | -- | a character readied during the refresh phase, with its traits
     Readied Target (Set Trait)
   | -- | damage was healed from a character, by the source

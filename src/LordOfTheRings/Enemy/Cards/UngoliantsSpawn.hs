@@ -17,6 +17,6 @@ instance RunMessage UngoliantsSpawn where
       for_ committed \c -> phaseModifier attrs c (WillpowerModifier (-1))
       pure e
     ResolveShadowEffect cid _ pid defender | cid == attrs.cardId -> do
-      raiseThreat pid (ifUndefended defender 8 4)
+      encounterRaisesThreat pid (ifUndefended defender 8 4)
       pure e
     _ -> UngoliantsSpawn <$> runMessage msg attrs
