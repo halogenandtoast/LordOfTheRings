@@ -26,11 +26,13 @@ const leave = async () => {
         {{ currentUser.username }}
         <template #items>
           <RouterLink to="/settings">{{ $t('settings.title') }}</RouterLink>
+          <RouterLink to="/about">{{ $t('nav.about') }}</RouterLink>
           <button type="button" @click="leave">{{ $t('auth.signOut') }}</button>
         </template>
       </GameMenu>
       <template v-else>
         <RouterLink to="/settings">{{ $t('settings.title') }}</RouterLink>
+        <RouterLink to="/about">{{ $t('nav.about') }}</RouterLink>
         <RouterLink to="/sign-in">{{ $t('auth.signIn') }}</RouterLink>
         <RouterLink to="/sign-up">{{ $t('auth.signUp') }}</RouterLink>
       </template>

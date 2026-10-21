@@ -13,7 +13,20 @@
     "cards": "Cards",
     "decks": "Decks",
     "watch": "Watch",
-    "admin": "Admin"
+    "admin": "Admin",
+    "about": "About"
+  },
+  "footer": {
+    "notice": "{game} and all related content © {ffg}. This site is not produced, endorsed by or affiliated with FFG. {about}."
+  },
+  "about": {
+    "gameName": "The Lord of the Rings: The Card Game™",
+    "copyrightTitle": "Copyright Disclaimer",
+    "copyrightBody": "The information presented in this app about {game}, both textual and graphical, is © Fantasy Flight Games. This app is a fan project and is not produced, endorsed, or supported by, or affiliated with Fantasy Flight Games.",
+    "copyrightTolkien": "The Lord of the Rings and the names of the characters, items, events and places therein are trademarks of The Saul Zaentz Company d/b/a Middle-earth Enterprises, used by Fantasy Flight Games under license. This app is not affiliated with Middle-earth Enterprises or the Tolkien Estate.",
+    "copyrightArtwork": "All artwork and illustrations are the intellectual property of their respective creators. All The Lord of the Rings: The Card Game™ images and graphics are copyrighted by Fantasy Flight Games.",
+    "projectTitle": "Project Details",
+    "projectBody": "This application was created by {author} and contributors to support The Lord of the Rings: The Card Game community. Its source code is available on {source}, where feedback and bug reports are welcome as issues."
   },
   "titles": {
     "card": "Card",
