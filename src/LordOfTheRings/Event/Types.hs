@@ -40,6 +40,8 @@ data EventAttrs = EventAttrs
   -- ^ when the event is a response, the window it is played in; otherwise it is an action
   , eventCriteria :: Criterion
   -- ^ what must be true for the event to be played
+  , eventDiscardWindow :: Maybe WindowMatcher
+  -- ^ a window in which the event responds from its owner's discard pile
   }
   deriving stock (Show, Eq, Generic)
 
@@ -62,6 +64,7 @@ eventWith f cardDef g =
               , eventOwner = pid
               , eventWindow = Nothing
               , eventCriteria = NoCriteria
+              , eventDiscardWindow = Nothing
               }
     }
 

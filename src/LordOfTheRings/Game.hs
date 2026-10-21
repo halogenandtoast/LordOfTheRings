@@ -29,6 +29,7 @@ import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Token
 import LordOfTheRings.Helpers.Window
 import LordOfTheRings.Ability.Types
+import LordOfTheRings.Criteria (Criterion (..))
 import LordOfTheRings.Source
 import LordOfTheRings.Game.Base as X
 import LordOfTheRings.GameT
@@ -335,6 +336,7 @@ runGameMessage msg g = case msg of
             $ [targetLabel lid [TravelTo lid] | lid <- locations]
             <> [Label (ikey "label.doNotTravel") []]
         else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
+    push TravelActions
     pure $ g & phaseL .~ TravelPhase
   TravelTo lid -> do
     pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
@@ -712,14 +714,17 @@ runGameMessage msg g = case msg of
         (\ab -> (== Just pid) <$> abilityController ab)
         [ab | ab <- abilities, isResponseAbility ab, abilityKey ab `notElem` used]
     fromHand <- handResponses pid windows (ResponseWindow windows order used 0)
+    -- a card responding from the discard pile stays there, so it is marked as used
+    fromDiscard <- discardResponses pid windows used \cid -> ResponseWindow windows order ((CardIdSource cid, 0) : used) 0
     let next = ResponseWindow windows (drop 1 order <> [pid]) used (passes + 1)
     push
-      $ if null available && null fromHand
+      $ if null available && null fromHand && null fromDiscard
         then next
         else
           playerWindow (ikey "label.useResponse") msg pid
             $ [AbilityLabel pid ab windows [ResponseWindow windows order (abilityKey ab : used) 0] | ab <- available]
             <> fromHand
+            <> fromDiscard
             <> [Label (ikey "label.pass") [next]]
     pure g
   UseAbility pid ab windows -> do
@@ -730,6 +735,20 @@ runGameMessage msg g = case msg of
     pure g
   PlayEvent pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
+    pure g
+  -- a later step of an event's effect, which the event, built again, resolves
+  DoStep _ (PlayEvent pid card _) -> do
+    for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
+    pure g
+  RespondFromDiscard pid card _ -> do
+    for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
+    pure g
+  TravelActions -> do
+    order <- getPlayerOrder
+    -- ponytail: only players with a Travel Action get the window; open it for every
+    -- player once action events can be played in the travel phase
+    acting <- filterM (fmap (any isTravelAction) . getActionAbilities) order
+    pushAll $ map ActionWindow acting
     pure g
   ReturnToHand target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     leftPlay g target
@@ -1006,6 +1025,35 @@ playsBeforeCommitting pid = \case
   before = \case
     BeforeCommitting -> True
     Criteria cs -> any before cs
+    _ -> False
+
+-- | Cards in a player's discard pile that respond to the windows from there: allies like
+-- Ered Luin Miner, put into play, and events like Hidden Cache, which resolve it. The
+-- continuation gets the card id, to mark the card as used.
+discardResponses :: PlayerId -> [Window] -> [(Source, Int)] -> (CardId -> Message) -> GameT [UI Message]
+discardResponses pid windows used continue = do
+  player <- getPlayer pid
+  let matches = maybe False (\w -> any (windowMatches w) windows)
+  fmap catMaybes $ for player.discard \case
+    PlayerCard pc | (CardIdSource pc.id, 0) `notElem` used -> case cdCardType (toCardDef pc) of
+      AllyType
+        | matches (allyDiscardWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid) -> do
+            ok <- passesUnique (PlayerCard pc)
+            pure $ guard ok $> targetLabel (CardIdTarget pc.id) [RemoveFromDiscard pid pc.id, PutAllyIntoPlayUnder pid pc, continue pc.id]
+      EventType
+        | Just e <- lookupEvent (toCardCode pc) pc.id pid
+        , matches (toAttrs e).eventDiscardWindow ->
+            pure $ Just $ targetLabel (CardIdTarget pc.id) [RespondFromDiscard pid pc windows, continue pc.id]
+      _ -> pure Nothing
+    _ -> pure Nothing
+
+-- | An action ability that can only be used in the travel phase.
+isTravelAction :: Ability -> Bool
+isTravelAction ab = go ab.abilityCriteria
+ where
+  go = \case
+    DuringPhase TravelPhase -> True
+    Criteria cs -> any go cs
     _ -> False
 
 -- | The next player clockwise from the given one.

@@ -50,6 +50,8 @@ data AllyAttrs = AllyAttrs
   -- ^ a window in which the ally can be put into play from its owner's hand
   , allyFacedown :: [PlayerCard]
   -- ^ cards attached facedown, as Eagles of the Misty Mountains takes them
+  , allyDiscardWindow :: Maybe WindowMatcher
+  -- ^ a window in which the ally can be put into play from its owner's discard pile
   }
   deriving stock (Show, Eq, Generic)
 
@@ -79,6 +81,7 @@ ally f cardDef =
             , allyAttacking = False
             , allyHandWindow = Nothing
             , allyFacedown = []
+            , allyDiscardWindow = Nothing
             }
     }
 
