@@ -21,7 +21,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
-import LordOfTheRings.Placement (Placement (ActiveLocation, AttachedTo, StagingArea))
+import LordOfTheRings.Placement (Placement (ActiveLocation, AttachedTo, StagingArea), placementController)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
 import LordOfTheRings.Source
@@ -292,6 +292,13 @@ afterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m
 afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
   _ -> False
+
+-- | Until the end of the phase, the enemy cannot attack the player it is engaged with now,
+-- as "that enemy cannot attack that player this phase" reads.
+cannotAttackEngagedPlayer :: (ReverseQueue m, Sourceable source) => source -> EnemyId -> m ()
+cannotAttackEngagedPlayer source eid = do
+  engaged <- placementController . (.placement) <$> getEnemy eid
+  for_ engaged \pid -> phaseModifier source eid (CannotAttackPlayer pid)
 
 -- | Cancel the shadow effects of the shadow cards whose effects are about to resolve in the
 -- windows, as Hasty Stroke does.

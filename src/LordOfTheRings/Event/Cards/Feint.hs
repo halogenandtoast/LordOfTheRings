@@ -20,6 +20,6 @@ instance RunMessage Feint where
       chooseOneM pid do
         questionLabeled "feint.choose"
         causedBy attrs
-        targets engaged \eid -> phaseModifier attrs eid CannotAttack
+        targets engaged \eid -> cannotAttackEngagedPlayer attrs eid
       pure e
     _ -> Feint <$> runMessage msg attrs

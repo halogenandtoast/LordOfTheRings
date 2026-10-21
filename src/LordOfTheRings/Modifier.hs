@@ -2,6 +2,7 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
+import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher)
 import LordOfTheRings.Prelude
@@ -24,6 +25,8 @@ data ModifierType
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
   | CannotAttack
+  | -- | on an enemy: it cannot attack that player, though it may attack others
+    CannotAttackPlayer PlayerId
   | CannotAttackOrDefend
   | CannotHaveAttachments
   | -- | no attachment with the restricted keyword can be attached to it

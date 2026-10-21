@@ -394,7 +394,7 @@ runGameMessage msg g = case msg of
     -- checked again before each attack: a card played between attacks may stop one
     shielded <- elem EngagedEnemiesCannotAttack <$> getModifiers (PlayerTarget pid)
     engaged <- select (EnemyEngagedWith $ PlayerWithId pid)
-    enemies <- filterM (fmap (notElem CannotAttack) . getModifiers) [e | e <- candidates, e `elem` engaged]
+    enemies <- filterM (fmap (\ms -> CannotAttack `notElem` ms && CannotAttackPlayer pid `notElem` ms) . getModifiers) [e | e <- candidates, e `elem` engaged]
     unless shielded $ case enemies of
       [] -> pure ()
       [eid] -> push $ EnemyAttack pid eid

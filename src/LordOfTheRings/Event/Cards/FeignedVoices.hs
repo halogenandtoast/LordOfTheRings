@@ -11,9 +11,6 @@ newtype FeignedVoices = FeignedVoices EventAttrs
 
 -- | Combat Action: Return a Silvan ally you control to your hand to choose an enemy
 -- engaged with a player. That enemy cannot attack that player this phase.
---
--- ponytail: the enemy cannot attack anyone this phase; it can only attack the player it
--- is engaged with anyway.
 feignedVoices :: EventCard FeignedVoices
 feignedVoices =
   eventWith FeignedVoices Cards.feignedVoices \a ->
@@ -27,6 +24,6 @@ instance RunMessage FeignedVoices where
       chooseOneM pid do
         questionLabeled "chooseEnemy"
         causedBy attrs
-        targets enemies \en -> phaseModifier attrs en CannotAttack
+        targets enemies \en -> cannotAttackEngagedPlayer attrs en
       pure e
     _ -> FeignedVoices <$> runMessage msg attrs
