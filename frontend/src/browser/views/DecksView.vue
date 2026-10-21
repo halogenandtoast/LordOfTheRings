@@ -65,20 +65,26 @@ async function remove(deck: DeckSummary): Promise<void> {
         <ul v-else class="decks">
           <li v-for="deck in decks.decks" :key="deck.id" class="deck">
             <RouterLink class="deck__link" :to="{ name: 'deck', params: { id: deck.id } }">
-              <h2 class="deck__name truncate">{{ deck.name }}</h2>
-              <p class="deck__heroes truncate">
-                {{ deck.heroNames.length ? deck.heroNames.join(' · ') : $t('browser.decks.noHeroes') }}
-              </p>
-              <p class="deck__meta">
-                <span>{{ $t('browser.common.cardCount', deck.cardCount) }}</span>
-                <span v-if="deck.startingThreat !== null">
-                  {{ $t('browser.common.startingThreat', { threat: deck.startingThreat }) }}
-                </span>
-                <span v-if="deck.source === 'ringsdb'" class="chip">RingsDB</span>
-                <span v-if="deck.unresolvedCount" class="chip chip--warn">
-                  {{ $t('browser.decks.unknownCount', { count: deck.unresolvedCount }) }}
-                </span>
-              </p>
+              <!-- the heroes' art side by side, as a deck tile shows them -->
+              <span class="deck__art" aria-hidden="true">
+                <span v-for="code in deck.heroCodes" :key="code" :style="{ backgroundImage: `url(/images/cards/${code}.jpg)` }" />
+              </span>
+              <div class="deck__body">
+                <h2 class="deck__name truncate">{{ deck.name }}</h2>
+                <p class="deck__heroes truncate">
+                  {{ deck.heroNames.length ? deck.heroNames.join(' · ') : $t('browser.decks.noHeroes') }}
+                </p>
+                <p class="deck__meta">
+                  <span>{{ $t('browser.common.cardCount', deck.cardCount) }}</span>
+                  <span v-if="deck.startingThreat !== null">
+                    {{ $t('browser.common.startingThreat', { threat: deck.startingThreat }) }}
+                  </span>
+                  <span v-if="deck.source === 'ringsdb'" class="chip">RingsDB</span>
+                  <span v-if="deck.unresolvedCount" class="chip chip--warn">
+                    {{ $t('browser.decks.unknownCount', { count: deck.unresolvedCount }) }}
+                  </span>
+                </p>
+              </div>
             </RouterLink>
 
             <button
@@ -168,6 +174,33 @@ h1 {
 }
 
 .deck__link {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+
+.deck__art {
+  flex: 0 0 11rem;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  border-radius: var(--radius) 0 0 var(--radius);
+  overflow: hidden;
+  background: var(--c-surface-2, rgb(0 0 0 / 0.2));
+}
+
+/* the art sits in the top half of a card, right of the stats; sized by the row's
+   height, as rows are wider than a deck tile is tall */
+.deck__art > span {
+  background-size: auto 200%;
+  background-position: 62% 14%;
+}
+
+.deck__art > span + span {
+  box-shadow: -1px 0 0 rgb(0 0 0 / 0.5);
+}
+
+.deck__body {
   flex: 1;
   min-width: 0;
   padding: var(--space-3) var(--space-4);
