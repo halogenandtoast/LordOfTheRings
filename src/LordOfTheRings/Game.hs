@@ -528,12 +528,16 @@ runGameMessage msg g = case msg of
     allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
     let characters = map toTarget heroes <> map toTarget allies
     quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
+    -- a character's action may be worth more than its willpower, as Faramir's, so the
+    -- player's actions are offered alongside committing it
+    actions <- getActionAbilities pid
     -- asked even with no one left to commit, so the player moves on to staging
     push
       $ questionLabelWith (ikey "label.commitCharacters") Nothing quests pid
       $ [ targetLabel c [CommitToQuest c, CheckWindows [mkAfter $ CommittedToQuest c], CommitCharacters pid]
         | c <- characters
         ]
+      <> [AbilityLabel pid ab [] [CommitCharacters pid] | ab <- actions]
       <> [Label (ikey "label.doneCommitting") []]
     pure g
   Staging -> do

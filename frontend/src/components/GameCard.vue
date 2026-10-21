@@ -6,6 +6,7 @@ import { useHighlights } from '../composables/useHighlights'
 import { hoveredId, useCombat, type CombatPreview } from '../composables/useCombat'
 import { useServerText } from '../i18n'
 import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
+import ChoiceMenu from './ChoiceMenu.vue'
 
 const { card, choices = [], attachments = [], rotated = false, flipping = false, draggable = false, banner = false } = defineProps<{
   card: CardView
@@ -32,7 +33,11 @@ const sphereTint = computed(() => {
   const colours = card.spheres.map((s) => `var(--${s.toLowerCase()})`)
   return colours.length > 1 ? `linear-gradient(135deg, ${colours.join(', ')})` : colours[0]
 })
-const choice = computed(() => choices.find((option) => option.targetId === card.id) ?? null)
+const options = computed(() => choices.filter((option) => option.targetId === card.id))
+const choice = computed(() => options.value[0] ?? null)
+// a card offering several choices asks which, in a menu beside it
+const menuOpen = ref(false)
+watch(options, () => (menuOpen.value = false))
 const active = computed(() => choice.value !== null)
 const highlights = useHighlights()
 const isSource = computed(() => highlights.value.sourceId === card.id)
@@ -57,7 +62,10 @@ const press = (event: PointerEvent) => {
 }
 
 const choose = () => {
-  if (choice.value) {
+  if (options.value.length > 1) {
+    overlay.hide()
+    menuOpen.value = !menuOpen.value
+  } else if (choice.value) {
     emit('choose', choice.value.index)
   } else if (lastPointer !== 'mouse') {
     showOverlay(true)
@@ -126,6 +134,7 @@ const toggleUnless = (attached: CardView) => {
         @click="choose"
       >
         <img :src="source" :alt="tr(card.name)" />
+        <span v-if="options.length > 1" class="more-choices" :title="$t('game.moreChoices')">&hellip;</span>
         <!-- inside the card so it travels in the card's view transition snapshot -->
         <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
         <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
@@ -166,6 +175,13 @@ const toggleUnless = (attached: CardView) => {
         <button type="button" :aria-label="$t('game.debug.addToken', { token: $t(`game.debug.tokens.${token}`) })" @click="adjust(token, 1)">+</button>
       </span>
     </div>
+    <ChoiceMenu
+      v-if="menuOpen && cardRef"
+      :options="options"
+      :anchor="cardRef"
+      @choose="(index) => ((menuOpen = false), emit('choose', index))"
+      @close="menuOpen = false"
+    />
   </div>
 </template>
 
@@ -440,4 +456,20 @@ const toggleUnless = (attached: CardView) => {
 .debug span { display: flex; align-items: center; justify-content: space-between; }
 .debug button { width: 18px; height: 16px; padding: 0; border: 1px solid var(--line); border-radius: 3px; background: none; color: inherit; cursor: pointer; }
 .debug button:disabled { opacity: 0.35; cursor: default; }
+/* a card offering several choices: clicking it asks which */
+.more-choices {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 1.4em;
+  padding: 0 0.3em;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--ink);
+  background: var(--interactive);
+  border-radius: 999px;
+  box-shadow: 0 0 6px var(--interactive-glow);
+  pointer-events: none;
+}
 </style>

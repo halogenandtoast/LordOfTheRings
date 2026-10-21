@@ -36,6 +36,8 @@ export interface ChoiceView {
   index: number
   label: string
   targetId: string | null
+  /** What choosing it does, for a card's menu when it offers several choices. */
+  action: string
 }
 
 export interface QuestionView {
