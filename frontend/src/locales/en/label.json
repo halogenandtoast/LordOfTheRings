@@ -275,7 +275,7 @@
     "damage": "Deal 2 damage to a non-unique enemy in the staging area"
   },
   "firefoot": {
-    "excess": "Exhaust Firefoot to deal the excess damage to another enemy?"
+    "excess": "Choose an enemy to take the excess damage"
   },
   "hirgon": {
     "chooseAlly": "Choose a tactics ally to play for 1 less",

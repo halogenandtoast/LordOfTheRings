@@ -241,16 +241,24 @@ spec = describe "Riders of Rohan" do
   describe "Firefoot" do
     it "gives Éomer +2 attack and sends the excess damage of a lone attack to another enemy" . rohanTest $ \pid -> do
       eomer <- hero eomerCode
-      _ <- putAttachmentOn pid Attachments.firefoot eomer
+      firefoot <- putAttachmentOn pid Attachments.firefoot eomer
       getAttack eomer `shouldReturn` 5
       sniper <- engagedEnemy pid Enemies.goblinSniper
       troll <- engagedEnemy pid Enemies.hillTroll
       run $ AttackWith eomer
       run $ ResolveAttack pid (toId sniper)
-      passResponses pid
-      chooseTarget pid (toId troll)
+      chooseAbilityOf pid firefoot
       isNothing <$> enemyNow sniper `shouldReturn` True
       fmap (.damage) <$> enemyNow troll `shouldReturn` Just 3
+
+    it "is not offered when the lone attack has no damage to spare" . rohanTest $ \pid -> do
+      eomer <- hero eomerCode
+      firefoot <- putAttachmentOn pid Attachments.firefoot eomer
+      troll <- engagedEnemy pid Enemies.hillTroll
+      _ <- engagedEnemy pid Enemies.goblinSniper
+      run $ AttackWith eomer
+      run $ ResolveAttack pid (toId troll)
+      offersAbilityOf pid firefoot `shouldReturn` False
 
   describe "Charge of the Rohirrim" do
     it "gives Rohan characters with a Mount +3 attack" . rohanTest $ \pid -> do

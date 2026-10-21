@@ -556,6 +556,9 @@ runGameMessage msg g = case msg of
           [a] -> elem IgnoresDefenseWhenAttackingAlone <$> getModifiers a
           _ -> pure False
         defense <- if alone then pure 0 else getEnemyDefense eid
+        hitPoints <- getEnemyHitPoints eid
+        -- what a lone attack deals beyond the enemy's remaining hit points, as Firefoot reads
+        let excess = max 0 $ attack - defense - (hitPoints - enemy'.damage)
         if null attackers
           then pure ()
           else
@@ -564,7 +567,7 @@ runGameMessage msg g = case msg of
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
                     <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense), AttackResolved eid (placementController enemy'.placement) attackers]
-                    <> [CheckWindows [mkAfter $ AttackedEnemy a eid | a <- attackers]]
+                    <> [CheckWindows $ [mkAfter $ AttackedEnemy a eid | a <- attackers] <> [mkAfter $ AttackedAlone a eid excess | [a] <- [attackers]]]
                 )
     pure g
   AttackResolved eid engaged attackers -> do
