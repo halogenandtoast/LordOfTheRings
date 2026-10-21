@@ -14,6 +14,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Window (getActionAbilities, passesCriteria)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Hero.Types
+import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Entities (entitiesTreacheries)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Treachery.Types ()
