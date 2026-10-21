@@ -376,23 +376,23 @@ const toggleUnless = (attached: CardView) => {
   grid-area: 1 / 1;
   place-self: end stretch;
   display: grid;
-  gap: 2px;
+  gap: 5px;
   margin: 4px;
-  padding: 3px 4px;
+  padding: 5px 6px;
   border-radius: 5px;
   background: rgb(20 16 10 / 0.88);
   color: var(--cream);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   pointer-events: none;
 }
-.attack-progress .bar { display: flex; align-items: center; gap: 3px; }
+.attack-progress .bar { display: flex; align-items: center; gap: 4px; }
 .attack-progress .defense { --fill: var(--defense); color: var(--defense); }
 .attack-progress .hit-points { --fill: var(--attack); color: var(--attack); }
 .attack-progress.defeated .hit-points { --fill: var(--gold-light); color: var(--gold-light); }
-.attack-progress .track { flex: 1; display: flex; height: 5px; border-radius: 3px; background: rgb(255 255 255 / 0.15); overflow: hidden; }
+.attack-progress .track { flex: 1; display: flex; height: 7px; border-radius: 3px; background: rgb(255 255 255 / 0.15); overflow: hidden; }
 .attack-progress .track > span { flex: none; background: var(--fill); transition: flex-basis 0.2s ease; }
 .attack-progress .adding { opacity: 0.45; }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
