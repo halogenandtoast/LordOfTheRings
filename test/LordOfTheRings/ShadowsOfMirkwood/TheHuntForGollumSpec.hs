@@ -67,6 +67,22 @@ spec = describe "The Hunt for Gollum" do
     length <$> getEncounterDiscard `shouldReturn` 2
     map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.huntersFromMordor]
 
+  it "shuffles the Signs of Gollum into the encounter deck at setup" . huntTest $ \_ -> do
+    run Setup
+    codes <- map toCardCode <$> getEncounterDeck
+    take 4 codes `shouldSatisfy` (/= replicate 4 (toCardCode Objectives.signsOfGollum))
+
+  it "guards Signs of Gollum with the next card when it reveals another Signs of Gollum" . huntTest $ \_ -> do
+    _ <- setEncounterDeck [Objectives.signsOfGollum, Enemies.huntersFromMordor, Locations.theOldFord]
+    run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.signsOfGollum
+    resolveRevealed
+    objectives <- getsGame (toList . (.entities.objectives))
+    length objectives `shouldBe` 2
+    guards <- getsGame (\g -> map toCardCode (toList g.entities.enemies) <> map toCardCode (toList g.entities.locations))
+    sort guards `shouldBe` sort [toCardCode Enemies.huntersFromMordor, toCardCode Locations.theOldFord]
+    all (isJust . objectiveGuard . toAttrs) objectives `shouldBe` True
+    getEncounterDeck `shouldReturn` []
+
   it "lets Signs of Gollum be claimed onto a committed hero after questing successfully" . huntTest $ \pid -> do
     signs <- signsGuardedBy [Treacheries.oldWivesTales]
     claimSigns pid signs

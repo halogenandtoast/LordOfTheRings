@@ -4,6 +4,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Keyword (Keyword (Guarded))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
@@ -95,10 +96,13 @@ instance RunMessage ScenarioAttrs where
       [] -> pure attrs
     GuardObjective oid -> case attrs.encounterDeck of
       card : rest -> do
+        let def = toCardDef card
         push
-          $ if cdCardType (toCardDef card) `elem` [EnemyType, LocationType]
-            then Run [AddToStaging card, SetObjectiveGuard oid card.id]
-            else RevealCard card
+          $ if
+            | cdCardType def `elem` [EnemyType, LocationType] -> Run [RevealCard card, SetObjectiveGuard oid card.id]
+            -- the next card guards this objective, then the revealed one is guarded in turn
+            | Guarded `member` cdKeywords def -> Run [GuardObjective oid, RevealCard card]
+            | otherwise -> RevealCard card
         pure $ attrs & encounterDeckL .~ rest
       [] -> pure attrs
     AddSetAsideToStaging matcher -> do
