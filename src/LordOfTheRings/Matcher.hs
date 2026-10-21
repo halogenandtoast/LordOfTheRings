@@ -10,6 +10,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.Query as X
 import LordOfTheRings.Enemy.Types
+import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types
@@ -97,6 +98,8 @@ matchAlly matcher ally = case matcher of
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
   AttackingAlly -> pure $ allyAttacking (toAttrs ally)
   UniqueAlly -> pure $ cdUnique (toCardDef ally)
+  AllyEnteredPlayThisRound ->
+    getsGame (any (\e -> effectTarget e == toTarget ally && EnteredPlayThisRound `elem` effectModifiers e) . gameEffects)
   AllyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget ally)
   AnyAlly -> pure True
   NotAlly m -> not <$> matchAlly m ally

@@ -87,6 +87,8 @@ data AllyMatcher
   | CommittedAlly
   | AttackingAlly
   | UniqueAlly
+  | -- | an ally that entered play this round
+    AllyEnteredPlayThisRound
   | -- | an ally with an attachment of the trait attached
     AllyWithAttached Trait
   | AnyAlly

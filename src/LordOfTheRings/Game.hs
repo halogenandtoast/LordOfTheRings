@@ -686,10 +686,12 @@ runGameMessage msg g = case msg of
     thisAlly <- newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
     pushWhen limited' $ CreateEffect $ Effect GameSource GameTarget [AllyPlayedThisRound] UntilEndOfRound
+    push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- newAlly (fromMaybe pid card.owner) card
+    push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly
     pure $ g & entitiesL . alliesL %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutHeroIntoPlay pid card -> do
@@ -932,6 +934,7 @@ runGameMessage msg g = case msg of
     pure g
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
+    push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
   ShuffleIntoEncounterDeck (TreacheryTarget tid) | Just t <- Map.lookup tid g.entities.treacheries -> do
@@ -1053,6 +1056,10 @@ othersWithKeyword k pid = do
 -- | Whether the card has the restricted keyword.
 isRestricted :: (HasCardDef a) => a -> Bool
 isRestricted = member Restricted . cdKeywords . toCardDef
+
+-- | Mark the ally as having entered play this round.
+enteredPlayThisRound :: Ally -> Message
+enteredPlayThisRound a = CreateEffect $ Effect GameSource (toTarget a) [EnteredPlayThisRound] UntilEndOfRound
 
 -- | The windows for an ally entering play under the player.
 allyEntersPlay :: PlayerId -> Ally -> Message
