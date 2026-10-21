@@ -150,6 +150,7 @@ const toggleUnless = (attached: CardView) => {
           <span v-if="preview.defend.defeated">{{ $t('game.combat.defeated') }}</span>
         </span>
         <div v-if="preview.attack" class="attack-progress" :class="{ defeated: preview.attack.defeated }">
+          <span v-if="preview.attack.defeated" class="defeated-label">{{ $t('game.combat.defeated') }}</span>
           <div v-for="bar in preview.attack.bars" :key="bar.stat" class="bar" :class="bar.stat">
             <span class="icon" :style="{ '--icon': `url('/images/icons/game/${bar.stat}.svg')` }" />
             <div class="track">
@@ -158,7 +159,6 @@ const toggleUnless = (attached: CardView) => {
             </div>
             <span>{{ bar.done + bar.adding }}/{{ bar.of }}</span>
           </div>
-          <span v-if="preview.attack.defeated" class="defeated-label">{{ $t('game.combat.defeated') }}</span>
         </div>
         <span v-if="card.damage > 0" :key="`damage-${placed.damage}`" class="token damage" :class="{ placed: placed.damage }">{{ card.damage }}</span>
         <span v-if="card.damage > 0 && card.hitPoints" class="health-left" :title="$t('game.healthLeft', { value: card.hitPoints - card.damage })">
