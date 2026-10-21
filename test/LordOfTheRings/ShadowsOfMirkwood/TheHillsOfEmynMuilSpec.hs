@@ -81,6 +81,26 @@ spec = describe "The Hills of Emyn Muil" do
     resolveRevealed
     getsGame (fmap (.placement) . find ((== lid) . toId) . toList . (.entities.locations)) `shouldReturn` Just StagingArea
 
+  it "gives surge to the first treachery of the quest phase with no location staged" . emynMuilTest $ \_ -> do
+    _ <- putQuestStage Quests.theHillsOfEmynMuil
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    _ <- setEncounterDeck [Treacheries.treacherousFog, Treacheries.treacherousFog, Treacheries.treacherousFog]
+    run RevealEncounterCard
+    resolveRevealed
+    length <$> getEncounterDeck `shouldReturn` 1
+
+  it "looks only at the first treachery of the quest phase" . emynMuilTest $ \_ -> do
+    _ <- putQuestStage Quests.theHillsOfEmynMuil
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    lid <- revealLocation Locations.theHighlands
+    _ <- setEncounterDeck [Treacheries.treacherousFog, Treacheries.treacherousFog, Treacheries.treacherousFog]
+    run RevealEncounterCard
+    resolveRevealed
+    run $ Discard (toTarget lid)
+    run RevealEncounterCard
+    resolveRevealed
+    length <$> getEncounterDeck `shouldReturn` 1
+
   it "switches a card in hand with one on top of the deck with Gildor Inglorion" . emynMuilTest $ \pid -> do
     gildor <- putAllyIntoPlay pid Allies.gildorInglorion
     passActions pid

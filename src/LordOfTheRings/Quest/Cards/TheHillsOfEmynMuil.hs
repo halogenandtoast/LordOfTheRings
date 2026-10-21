@@ -17,17 +17,10 @@ theHillsOfEmynMuil :: QuestCard TheHillsOfEmynMuil
 theHillsOfEmynMuil = quest TheHillsOfEmynMuil Cards.theHillsOfEmynMuil
 
 -- | Forced: If there are no location cards in the staging area, the first treachery card
--- revealed during the quest phase gains surge.
---
--- ponytail: once a phase, at the first treachery revealed while no location is in the
--- staging area, not only the very first treachery.
+-- revealed during the quest phase gains surge. Only that first treachery is looked at.
 instance HasAbilities TheHillsOfEmynMuil where
   getAbilities (TheHillsOfEmynMuil a) =
-    [ limited (GroupLimit PerPhase 1)
-        $ restricted a 1 (DuringPhase QuestPhase <> NotCriterion (exists LocationInStagingArea))
-        $ forced
-        $ TreacheryRevealedWindow After
-    ]
+    [limited (GroupLimit PerPhase 1) $ restricted a 1 (DuringPhase QuestPhase) $ silent $ TreacheryRevealedWindow After]
 
 -- | Setup: Search the encounter deck for Amon Hen and Amon Lhaw, and add them to the
 -- staging area. Then shuffle the encounter deck.
@@ -45,7 +38,7 @@ instance RunMessage TheHillsOfEmynMuil where
       searchEncounterDeckToStaging lead (cardIs Locations.amonLhaw)
       pure $ TheHillsOfEmynMuil $ attrs {questFlipped = True}
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      revealEncounterCard
+      whenM (selectNone LocationInStagingArea) revealEncounterCard
       pure q
     _ -> TheHillsOfEmynMuil <$> runConditionalStage condition msg attrs
    where
