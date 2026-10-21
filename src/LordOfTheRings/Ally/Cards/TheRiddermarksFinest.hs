@@ -19,10 +19,11 @@ instance RunMessage TheRiddermarksFinest where
   runMessage msg s@(TheRiddermarksFinest a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       locations <- select AnyLocation
-      discard a
       chooseOrRunOneM pid do
         questionLabeled "theRiddermarksFinest.location"
         causedBy a
         targets locations \l -> placeProgress a l 2
+      -- the discard is the cost, but what it leads to waits for the effect
+      discard a
       pure s
     _ -> TheRiddermarksFinest <$> runMessage msg a

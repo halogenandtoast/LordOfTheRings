@@ -23,10 +23,11 @@ instance RunMessage WestfoldOutrider where
   runMessage msg s@(WestfoldOutrider a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       enemies <- select $ not_ $ EnemyEngagedWith $ PlayerWithId pid
-      discard a
       chooseOrRunOneM pid do
         questionLabeled "westfoldOutrider.engage"
         causedBy a
         targets enemies $ engageEnemy pid
+      -- the discard is the cost, but what it leads to waits for the effect
+      discard a
       pure s
     _ -> WestfoldOutrider <$> runMessage msg a

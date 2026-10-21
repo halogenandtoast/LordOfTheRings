@@ -18,10 +18,11 @@ instance RunMessage WestfoldHorseBreaker where
   runMessage msg s@(WestfoldHorseBreaker a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       heroes <- select ExhaustedHero
-      discard a
       chooseOneM pid do
         questionLabeled "westfoldHorseBreaker.ready"
         causedBy a
         targets heroes ready
+      -- the discard is the cost, but what it leads to waits for the effect
+      discard a
       pure s
     _ -> WestfoldHorseBreaker <$> runMessage msg a
