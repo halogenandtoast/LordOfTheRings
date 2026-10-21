@@ -174,7 +174,7 @@ const requestUndo = () => {
   text-transform: uppercase;
   color: var(--text);
 }
-.log-structure:first-child { margin-top: 0; }
+.log-structure--scenario:first-child { margin-top: 0; }
 .log-structure--nested { margin: 4px -10px 1px -12px; padding: 4px 10px 4px 9px; }
 /* the phase tracker's own colours */
 .log-structure--resource { --tone: var(--antique-gold); }
@@ -204,8 +204,12 @@ const requestUndo = () => {
   box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
-  /* opaque, so what scrolls under it does not show through */
-  background: color-mix(in srgb, var(--tone) 35%, var(--log-surface));
+  /* opaque, so what scrolls under it does not show through: the tone can itself be
+     translucent, so it is laid over a solid surface rather than mixed into it */
+  background: linear-gradient(color-mix(in srgb, var(--tone) 35%, transparent) 0 0), var(--log-surface);
+  /* the gap before it belongs to the section above, so it lands flush under the
+     banner it replaces before pushing it off */
+  margin-top: 0;
 }
 .log-structure--pinned-scenario { top: 0; z-index: 3; height: var(--banner-scenario); padding-block: 0; justify-content: center; }
 .log-structure--pinned-round { top: var(--banner-scenario); z-index: 2; height: var(--banner-round); padding-block: 0; }

@@ -6,7 +6,7 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import GameLogEntry from './GameLogEntry.vue'
 import LogGroupBlock from './LogGroupBlock.vue'
-import { groupLogEntries, type LogEntry } from '../gameLog'
+import { groupLogEntries, type LogEntry, type LogItem } from '../gameLog'
 
 const props = withDefaults(
   defineProps<{
@@ -36,6 +36,54 @@ const send = () => {
 }
 
 const items = computed(() => groupLogEntries(props.entries))
+
+// Each round's entries, and each phase's within it, are an element of their own, so a
+// pinned banner stays only while its own round or phase is in view and is pushed off by
+// the next. Items keep their index, which is their path.
+type Indexed = { item: LogItem; i: number }
+type PhaseSection = { banner: Indexed | null; items: Indexed[] }
+type RoundSection = { banner: Indexed | null; phases: PhaseSection[] }
+
+const headingKey = (item: LogItem) => {
+  if (item.kind !== 'entry' || item.entry.kind !== 'Structure') return null
+  const first = item.entry.body[0]
+  return first?.tag === 'LogI18n' ? first.contents[0] : null
+}
+
+const sections = computed(() => {
+  const opening: Indexed[] = []
+  const rounds: RoundSection[] = []
+  items.value.forEach((item, i) => {
+    const key = headingKey(item)
+    if (key === 'log.round') {
+      rounds.push({ banner: { item, i }, phases: [] })
+      return
+    }
+    const round = rounds[rounds.length - 1]
+    if (!round) {
+      opening.push({ item, i })
+      return
+    }
+    if (key?.startsWith('log.phase.')) {
+      round.phases.push({ banner: { item, i }, items: [] })
+      return
+    }
+    if (!round.phases.length) round.phases.push({ banner: null, items: [] })
+    round.phases[round.phases.length - 1].items.push({ item, i })
+  })
+  return { opening, rounds }
+})
+
+const keyOf = ({ item }: Indexed) => (item.kind === 'group' ? `g${item.id}` : `e${item.entry.seq}`)
+const componentOf = ({ item }: Indexed) => (item.kind === 'entry' ? GameLogEntry : LogGroupBlock)
+const propsOf = ({ item, i }: Indexed) => ({
+  ...(item.kind === 'entry' ? { entry: item.entry, depth: 0 } : { group: item }),
+  path: String(i),
+  isOpen,
+  isTail,
+  isPinned,
+  canUndo: props.canUndo,
+})
 
 // The newest top-level entry with detail to show. Indexed into items, as paths are.
 const tailPath = computed(() => {
@@ -129,31 +177,47 @@ watch(
   <div class="game-log">
     <div ref="scroller" class="game-log__scroll" @scroll.passive="onScroll">
       <ul class="game-log__list">
-        <template v-for="(item, i) in items" :key="item.kind === 'group' ? `g${item.id}` : `e${item.entry.seq}`">
-          <GameLogEntry
-            v-if="item.kind === 'entry'"
-            :entry="item.entry"
-            :path="String(i)"
-            :depth="0"
-            :is-open="isOpen"
-            :is-tail="isTail"
-            :is-pinned="isPinned"
-            :can-undo="canUndo"
-            @toggle="onToggle"
-            @undo="(step, label) => emit('undo', step, label)"
-          />
-          <LogGroupBlock
-            v-else
-            :group="item"
-            :path="String(i)"
-            :is-open="isOpen"
-            :is-tail="isTail"
-            :is-pinned="isPinned"
-            :can-undo="canUndo"
-            @toggle="onToggle"
-            @undo="(step, label) => emit('undo', step, label)"
-          />
-        </template>
+        <component
+          :is="componentOf(x)"
+          v-for="x in sections.opening"
+          :key="keyOf(x)"
+          v-bind="propsOf(x)"
+          @toggle="onToggle"
+          @undo="(step: number, label: string) => emit('undo', step, label)"
+        />
+        <li
+          v-for="(round, r) in sections.rounds"
+          :key="round.banner ? keyOf(round.banner) : 'round'"
+          class="game-log__section game-log__section--round"
+          :class="{ 'game-log__section--first': r === 0 }"
+        >
+          <ul class="game-log__list">
+            <component
+              :is="componentOf(round.banner)"
+              v-if="round.banner"
+              v-bind="propsOf(round.banner)"
+              @undo="(step: number, label: string) => emit('undo', step, label)"
+            />
+            <li v-for="(phase, p) in round.phases" :key="phase.banner ? keyOf(phase.banner) : `p${p}`" class="game-log__section game-log__section--phase">
+              <ul class="game-log__list">
+                <component
+                  :is="componentOf(phase.banner)"
+                  v-if="phase.banner"
+                  v-bind="propsOf(phase.banner)"
+                  @undo="(step: number, label: string) => emit('undo', step, label)"
+                />
+                <component
+                  :is="componentOf(x)"
+                  v-for="x in phase.items"
+                  :key="keyOf(x)"
+                  v-bind="propsOf(x)"
+                  @toggle="onToggle"
+                  @undo="(step: number, label: string) => emit('undo', step, label)"
+                />
+              </ul>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
 
@@ -197,6 +261,14 @@ watch(
   font-size: 0.72rem;
 }
 .game-log__list { list-style: none; margin: 0; padding: 0; }
+.game-log__section { list-style: none; }
+/* The gap after a round or phase is inside it, as the end of its content: a banner is
+   held only within its section, so a gap between sections would push it off while the
+   next banner was still a gap away. */
+.game-log__section--phase > .game-log__list::after { content: ''; display: block; height: 14px; }
+/* a round's gap is its last phase's, so the round and that phase end together */
+.game-log__section--phase:last-child > .game-log__list::after { height: 22px; }
+.game-log__section--first { margin-top: 14px; }
 .game-log__compose {
   flex: none;
   display: flex;
