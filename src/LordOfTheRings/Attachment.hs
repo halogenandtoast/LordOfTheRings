@@ -57,6 +57,14 @@ import LordOfTheRings.Attachment.Cards.ThrorsMap
 import LordOfTheRings.Attachment.Cards.KingUnderTheMountain
 import LordOfTheRings.Attachment.Cards.DwarfPipe
 import LordOfTheRings.Attachment.Cards.MagicRing
+import LordOfTheRings.Attachment.Cards.PathOfNeed
+import LordOfTheRings.Attachment.Cards.RangerSpikes
+import LordOfTheRings.Attachment.Cards.IthilienPit
+import LordOfTheRings.Attachment.Cards.GondorianShield
+import LordOfTheRings.Attachment.Cards.ValiantSword
+import LordOfTheRings.Attachment.Cards.VisionaryLeadership
+import LordOfTheRings.Attachment.Cards.HeirOfMardil
+import LordOfTheRings.Attachment.Cards.CaptainOfGondor
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -140,5 +148,13 @@ allAttachments =
         , SomeAttachmentCard kingUnderTheMountain
         , SomeAttachmentCard dwarfPipe
         , SomeAttachmentCard magicRing
+        , SomeAttachmentCard pathOfNeed
+        , SomeAttachmentCard rangerSpikes
+        , SomeAttachmentCard ithilienPit
+        , SomeAttachmentCard gondorianShield
+        , SomeAttachmentCard valiantSword
+        , SomeAttachmentCard visionaryLeadership
+        , SomeAttachmentCard heirOfMardil
+        , SomeAttachmentCard captainOfGondor
         ]
     ]
