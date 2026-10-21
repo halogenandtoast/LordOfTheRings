@@ -21,6 +21,7 @@ library
       LordOfTheRings.Ally.Cards.BeorningBeekeeper
       LordOfTheRings.Ally.Cards.BrokIronfist
       LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
+      LordOfTheRings.Ally.Cards.DefenderOfTheNaith
       LordOfTheRings.Ally.Cards.DescendantOfThorondor
       LordOfTheRings.Ally.Cards.DunedainWatcher
       LordOfTheRings.Ally.Cards.EaglesOfTheMistyMountains
@@ -29,10 +30,14 @@ library
       LordOfTheRings.Ally.Cards.EreborHammersmith
       LordOfTheRings.Ally.Cards.EscortFromEdoras
       LordOfTheRings.Ally.Cards.Faramir
+      LordOfTheRings.Ally.Cards.GaladhonArcher
+      LordOfTheRings.Ally.Cards.GaladhrimMinstrel
+      LordOfTheRings.Ally.Cards.GaladrielsHandmaiden
       LordOfTheRings.Ally.Cards.Gandalf
       LordOfTheRings.Ally.Cards.GildorInglorion
       LordOfTheRings.Ally.Cards.Gleowine
       LordOfTheRings.Ally.Cards.GondorianSpearman
+      LordOfTheRings.Ally.Cards.GreenwoodArcher
       LordOfTheRings.Ally.Cards.GrimbeornTheOld
       LordOfTheRings.Ally.Cards.GuardOfTheCitadel
       LordOfTheRings.Ally.Cards.Guthlaf
@@ -45,10 +50,16 @@ library
       LordOfTheRings.Ally.Cards.LongbeardOrcSlayer
       LordOfTheRings.Ally.Cards.LorienGuide
       LordOfTheRings.Ally.Cards.MinerOfTheIronHills
+      LordOfTheRings.Ally.Cards.MirkwoodRunner
+      LordOfTheRings.Ally.Cards.NaithGuide
       LordOfTheRings.Ally.Cards.NorthernTracker
+      LordOfTheRings.Ally.Cards.Orophin
       LordOfTheRings.Ally.Cards.Radagast
       LordOfTheRings.Ally.Cards.RiddermarkKnight
       LordOfTheRings.Ally.Cards.RivendellMinstrel
+      LordOfTheRings.Ally.Cards.Rumil
+      LordOfTheRings.Ally.Cards.SilvanRefugee
+      LordOfTheRings.Ally.Cards.SilvanTracker
       LordOfTheRings.Ally.Cards.SilverlodeArcher
       LordOfTheRings.Ally.Cards.SnowbournScout
       LordOfTheRings.Ally.Cards.SonOfArnor
@@ -237,16 +248,20 @@ library
       LordOfTheRings.Hero.Cards.BilboBaggins
       LordOfTheRings.Hero.Cards.BoromirTactics
       LordOfTheRings.Hero.Cards.BrandSonOfBain
+      LordOfTheRings.Hero.Cards.Celeborn
       LordOfTheRings.Hero.Cards.Denethor
       LordOfTheRings.Hero.Cards.Dunhere
       LordOfTheRings.Hero.Cards.Eleanor
+      LordOfTheRings.Hero.Cards.Elrond
       LordOfTheRings.Hero.Cards.Eomer
       LordOfTheRings.Hero.Cards.Eowyn
       LordOfTheRings.Hero.Cards.Fastred
       LordOfTheRings.Hero.Cards.FrodoBaggins
+      LordOfTheRings.Hero.Cards.Galadriel
       LordOfTheRings.Hero.Cards.Gimli
       LordOfTheRings.Hero.Cards.Gloin
       LordOfTheRings.Hero.Cards.Glorfindel
+      LordOfTheRings.Hero.Cards.HaldirOfLorien
       LordOfTheRings.Hero.Cards.Hirgon
       LordOfTheRings.Hero.Cards.Legolas
       LordOfTheRings.Hero.Cards.Lothiriel

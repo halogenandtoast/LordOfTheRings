@@ -22,6 +22,6 @@ instance RunMessage NaithGuide where
       chooseOneM pid do
         questionLabeled "chooseHero"
         causedBy a
-        targets heroes \h -> roundModifier a h DoesNotExhaustToQuest
+        targets heroes \h -> roundModifier a h DoesNotExhaustToCommit
       pure s
     _ -> NaithGuide <$> runMessage msg a

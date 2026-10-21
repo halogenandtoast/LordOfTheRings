@@ -12,7 +12,7 @@ silvanRefugee = ally SilvanRefugee Cards.silvanRefugee
 
 -- | Forced: After a character leaves play, discard Silvan Refugee from play.
 instance HasAbilities SilvanRefugee where
-  getAbilities (SilvanRefugee a) = [mkAbility a 1 $ forced $ CharacterLeftPlayWindow After]
+  getAbilities (SilvanRefugee a) = [mkAbility a 1 $ forced $ CharacterLeftPlayWindow After AnyCard]
 
 instance RunMessage SilvanRefugee where
   runMessage msg s@(SilvanRefugee a) = case msg of

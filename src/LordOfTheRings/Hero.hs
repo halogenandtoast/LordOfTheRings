@@ -26,6 +26,10 @@ import LordOfTheRings.Hero.Cards.BilboBaggins
 import LordOfTheRings.Hero.Cards.FrodoBaggins
 import LordOfTheRings.Hero.Cards.BrandSonOfBain
 import LordOfTheRings.Hero.Cards.BoromirTactics
+import LordOfTheRings.Hero.Cards.Celeborn
+import LordOfTheRings.Hero.Cards.Galadriel
+import LordOfTheRings.Hero.Cards.HaldirOfLorien
+import LordOfTheRings.Hero.Cards.Elrond
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -78,5 +82,9 @@ allHeroes =
         , SomeHeroCard hirgon
         , SomeHeroCard fastred
         , SomeHeroCard lothiriel
+        , SomeHeroCard celeborn
+        , SomeHeroCard galadriel
+        , SomeHeroCard haldirOfLorien
+        , SomeHeroCard elrond
         ]
     ]
