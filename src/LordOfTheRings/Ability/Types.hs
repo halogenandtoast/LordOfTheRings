@@ -30,7 +30,11 @@ data AbilityType
   deriving anyclass (ToJSON, FromJSON)
 
 -- | How often an ability may be used, as in Arkham: by each player, or by the group.
-data AbilityLimitType = PerPhase | PerRound
+data AbilityLimitType
+  = PerPhase
+  | PerRound
+  | -- | never reset, as "Limit once per game"
+    PerGame
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

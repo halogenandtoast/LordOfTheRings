@@ -15,10 +15,8 @@ landroval = ally Landroval Cards.landroval
 -- | Sentinel. Landroval cannot have restricted attachments.
 -- Response: After a hero card is destroyed, return Landroval to his owner's hand to put
 -- that hero back into play, with 1 damage token on it. (Limit once per game.)
---
--- ponytail: the once-per-game limit is not kept; returning to hand keeps it rare.
 instance HasAbilities Landroval where
-  getAbilities (Landroval a) = [mkAbility a 1 $ response $ HeroDestroyedWindow After]
+  getAbilities (Landroval a) = [limited (PlayerLimit PerGame 1) $ mkAbility a 1 $ response $ HeroDestroyedWindow After]
 
 instance RunMessage Landroval where
   runMessage msg s@(Landroval a) = case msg of

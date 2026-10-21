@@ -13,7 +13,7 @@ import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Event
 import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Window (getActionAbilities, passesCriteria)
+import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id (PlayerId)
@@ -201,10 +201,11 @@ instance RunMessage Player where
       pure $ player & handL .~ kept & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
     UseAbility pid ab _ | pid == player.id, Just limitType <- abilityLimitType ab.abilityLimit -> do
-      let same u = u.usedAbilitySource == ab.abilitySource && u.usedAbilityIndex == ab.abilityIndex
+      source <- limitSource ab
+      let same u = u.usedAbilitySource == source && u.usedAbilityIndex == ab.abilityIndex
           used = case find same player.usedAbilities of
             Just u -> u {usedTimes = u.usedTimes + 1} : filter (not . same) player.usedAbilities
-            Nothing -> UsedAbility ab.abilitySource ab.abilityIndex limitType 1 : player.usedAbilities
+            Nothing -> UsedAbility source ab.abilityIndex limitType 1 : player.usedAbilities
       pure $ player & usedAbilitiesL .~ used
     EndPhase _ -> pure $ player & usedAbilitiesL %~ filter ((/= PerPhase) . (.usedAbilityLimitType))
     EndRound -> pure $ player & usedAbilitiesL %~ filter ((/= PerRound) . (.usedAbilityLimitType))

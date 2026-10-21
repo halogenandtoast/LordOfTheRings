@@ -8,6 +8,8 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types
+import LordOfTheRings.Ally.Types (allyCardId)
+import LordOfTheRings.Card (toCardDef)
 import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Id
@@ -58,11 +60,22 @@ withinLimit ab = case ab.abilityLimit of
   PlayerLimit _ n -> do
     controller <- abilityController ab
     players <- getsGame (toList . gamePlayers)
-    pure $ uses [p | p <- players, Just p.id == controller] < n
-  GroupLimit _ n -> (< n) . uses . toList <$> getsGame gamePlayers
+    source <- limitSource ab
+    pure $ uses source [p | p <- players, Just p.id == controller] < n
+  GroupLimit _ n -> do
+    source <- limitSource ab
+    (< n) . uses source . toList <$> getsGame gamePlayers
  where
-  uses players =
-    sum [u.usedTimes | p <- players, u <- p.usedAbilities, u.usedAbilitySource == ab.abilitySource, u.usedAbilityIndex == ab.abilityIndex]
+  uses source players =
+    sum [u.usedTimes | p <- players, u <- p.usedAbilities, u.usedAbilitySource == source, u.usedAbilityIndex == ab.abilityIndex]
+
+-- | The source an ability's uses are counted against: a once-per-game limit follows the
+-- ally's card, as the ally comes back into play under a new id.
+limitSource :: (HasGame m) => Ability -> m Source
+limitSource ab = case (abilityLimitType ab.abilityLimit, ab.abilitySource) of
+  (Just PerGame, AllySource aid) ->
+    maybe ab.abilitySource (CardIdSource . allyCardId . toAttrs) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
+  _ -> pure ab.abilitySource
 
 passesCriteria :: (HasGame m) => Criterion -> m Bool
 passesCriteria = \case
