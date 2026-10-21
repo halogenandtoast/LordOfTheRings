@@ -273,6 +273,7 @@ watch(question, (asked) => {
             <CardBand
               v-if="!phone"
               class="heroes"
+              :style="{ '--heroes': seat.inPlay.filter((card) => card.type === 'Hero').length }"
               :label="playSplit ? seat.name : $t('game.bands.heroes')"
               :cards="heroes(seat)"
               :choices="choices"
@@ -452,8 +453,14 @@ watch(question, (asked) => {
   border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: 6px;
 }
-/* as much room after the heroes as the label takes before them */
-.game > .play-area :deep(.band.heroes) { flex: 0 0 auto; gap: calc(var(--gap) * 2); padding-right: 1.5rem; }
+/* as much room after the heroes as the label takes before them, and room for every hero
+   turned sideways, so exhausting one does not push the play area over */
+.game > .play-area :deep(.band.heroes) {
+  flex: 0 0 auto;
+  gap: calc(var(--gap) * 2);
+  padding-right: 1.5rem;
+  min-width: calc(var(--heroes, 0) * (var(--card-width) / var(--card-aspect) * 0.88 + var(--gap) * 2) + 1.1rem);
+}
 /* your seat: your deck, hand and question */
 .band.seat { flex: 0 0 auto; gap: calc(var(--gap) * 2); align-items: flex-end; }
 .band.seat > .player { flex: 1 1 0; min-width: 0; }
