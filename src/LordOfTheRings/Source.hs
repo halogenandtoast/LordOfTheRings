@@ -21,6 +21,17 @@ data Source
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+-- | Whether the source is a player card: a hero, ally, attachment or event (an event is
+-- its card id).
+isPlayerCardSource :: Source -> Bool
+isPlayerCardSource = \case
+  AbilitySource s _ -> isPlayerCardSource s
+  HeroSource _ -> True
+  AllySource _ -> True
+  AttachmentSource _ -> True
+  CardIdSource _ -> True
+  _ -> False
+
 -- | The card a source is, when it is one on the board.
 sourceTarget :: Source -> Maybe Target
 sourceTarget = \case

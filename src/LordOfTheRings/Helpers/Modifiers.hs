@@ -14,6 +14,7 @@ import LordOfTheRings.Game.Base
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Source (isPlayerCardSource)
 import LordOfTheRings.Target
 
 -- | Collect every constant ability and lasting effect into the modifier cache.
@@ -42,8 +43,11 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           [(AllyTarget (toId a), ms) | a <- toList es.allies, Just ms <- [Map.lookup (CardIdTarget $ allyCardId $ toAttrs a) fromEffects]]
-  pure $ g {gameModifiers = Map.unionsWith (<>) [fromEntities, fromEffects, followed]}
-
+      all' = Map.unionsWith (<>) [fromEntities, fromEffects, followed]
+      -- a card immune to player card effects keeps none of their modifiers
+      immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
+      unaffected ms = if immune ms then filter (not . isPlayerCardSource . modifierSource) ms else ms
+  pure $ g {gameModifiers = Map.map unaffected all'}
 
 -- | Whether the character commits to the quest without exhausting: by its own modifiers,
 -- or the game's for a trait it has, printed or gained.

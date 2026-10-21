@@ -24,6 +24,8 @@ data ModifierType
   | ShuffleIntoDeckAtEndOfPhase
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
+  | -- | on a card in play: player card effects do not touch it
+    ImmuneToPlayerCardEffects
   | CannotAttack
   | -- | on an enemy: it cannot attack that player, though it may attack others
     CannotAttackPlayer PlayerId
