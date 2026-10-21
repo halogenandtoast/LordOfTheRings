@@ -527,8 +527,8 @@ runGameMessage msg g = case msg of
     allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
     let characters = map toTarget heroes <> map toTarget allies
     quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
-    unless (null characters)
-      $ push
+    -- asked even with no one left to commit, so the player moves on to staging
+    push
       $ questionLabelWith (ikey "label.commitCharacters") Nothing quests pid
       $ [ targetLabel c [CommitToQuest c, CheckWindows [mkAfter $ CommittedToQuest c], CommitCharacters pid]
         | c <- characters
