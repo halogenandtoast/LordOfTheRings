@@ -7,7 +7,7 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import LordOfTheRings.Card (EncounterCard)
+import LordOfTheRings.Card (Card, EncounterCard, PlayerCard)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.HasGame (HasGame)
 import LordOfTheRings.Effect
@@ -21,14 +21,14 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
-import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Placement (Placement (ActiveLocation, AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyAttacking, ShadowEffectTriggered))
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyAttacking, ShadowEffectTriggered, Traveled))
 
 dealDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
 dealDamage source target n = push $ DealDamage (toSource source) (toTarget target) n
@@ -244,3 +244,88 @@ cancelShadowEffects windows =
     cancelMatching \case
       ResolveShadowCard cid' _ _ _ -> cid == cid'
       _ -> False
+
+returnToHand :: (ReverseQueue m, Targetable target) => target -> m ()
+returnToHand = push . ReturnToHand . toTarget
+
+destroy :: (ReverseQueue m, Targetable target) => target -> m ()
+destroy = push . Destroy . toTarget
+
+checkDefeated :: (ReverseQueue m, Targetable target) => target -> m ()
+checkDefeated = push . CheckDefeated . toTarget
+
+shuffleIntoEncounterDeck :: (ReverseQueue m, Targetable target) => target -> m ()
+shuffleIntoEncounterDeck = push . ShuffleIntoEncounterDeck . toTarget
+
+returnToTopOfEncounterDeck :: (ReverseQueue m, Targetable target) => target -> m ()
+returnToTopOfEncounterDeck = push . ReturnToTopOfEncounterDeck . toTarget
+
+shuffleEncounterDeck :: (ReverseQueue m) => m ()
+shuffleEncounterDeck = push $ ShuffleDeck EncounterDeck
+
+-- | Set an encounter card aside, out of play.
+setAside :: (ReverseQueue m) => EncounterCard -> m ()
+setAside = push . SetAside
+
+addSetAsideToStaging :: (ReverseQueue m) => CardMatcher -> m ()
+addSetAsideToStaging = push . AddSetAsideToStaging
+
+shuffleEncounterDiscardIntoDeck :: (ReverseQueue m) => CardMatcher -> m ()
+shuffleEncounterDiscardIntoDeck = push . ShuffleEncounterDiscardIntoDeck
+
+-- | The player searches the encounter deck and discard pile for a matching card to add to
+-- the staging area, then shuffles the encounter deck.
+searchEncounterDeckAndDiscard :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
+searchEncounterDeckAndDiscard pid source = push . SearchEncounterDeckAndDiscard pid (toTarget source)
+
+-- | Claim the objective onto the host, attaching it there.
+attachObjective :: (ReverseQueue m, Targetable host) => ObjectiveId -> host -> m ()
+attachObjective oid = push . ClaimObjective oid . toTarget
+
+-- | Move an attachment to another host.
+moveAttachment :: (ReverseQueue m, Targetable host) => AttachmentId -> host -> m ()
+moveAttachment aid = push . AttachCard aid . toTarget
+
+putObjectiveAllyIntoPlay :: (ReverseQueue m) => ObjectiveId -> PlayerId -> m ()
+putObjectiveAllyIntoPlay oid = push . PutObjectiveAllyIntoPlay oid
+
+putHeroIntoPlay :: (ReverseQueue m) => PlayerId -> PlayerCard -> m ()
+putHeroIntoPlay pid = push . PutHeroIntoPlay pid
+
+-- | A treachery dealt as a shadow card comes into play attached to the host.
+attachShadowTreachery :: (ReverseQueue m, Targetable host) => EnemyId -> CardId -> host -> m ()
+attachShadowTreachery eid cid = push . PutShadowTreacheryIntoPlay eid cid . AttachedTo . toTarget
+
+placeLocation :: (ReverseQueue m) => LocationId -> Placement -> m ()
+placeLocation lid = push . PlaceLocation lid
+
+-- | Make the location the active location, without traveling there.
+makeActive :: (ReverseQueue m) => LocationId -> m ()
+makeActive lid = placeLocation lid ActiveLocation
+
+-- | Travel to the location without resolving its Travel effect: it becomes active, and
+-- the players have traveled there.
+travelWithoutCost :: (ReverseQueue m) => LocationId -> m ()
+travelWithoutCost lid = do
+  makeActive lid
+  push $ CheckWindows [Window After (Traveled lid)]
+
+-- | The quest deck goes back to the stage, followed by the stages given.
+resetToStage :: (ReverseQueue m) => EncounterCard -> [EncounterCard] -> m ()
+resetToStage card = push . ResetToStage card
+
+checkStage :: (ReverseQueue m) => QuestId -> m ()
+checkStage = push . CheckStage
+
+-- | The player switches a card in hand with one in their deck.
+swapHandWithDeck :: (ReverseQueue m) => PlayerId -> Card -> Card -> m ()
+swapHandWithDeck pid fromHand fromDeck = push $ SwapHandWithDeck pid fromHand.id fromDeck.id
+
+-- | Run the message again, as a later step of itself.
+doStep :: (ReverseQueue m) => Int -> Message -> m ()
+doStep n = push . DoStep n
+
+-- | Until the end of the phase, damage from the enemy's undefended attacks goes to the
+-- character.
+undefendedDamageTo :: (ReverseQueue m, Sourceable source, Targetable target) => source -> EnemyId -> target -> m ()
+undefendedDamageTo source eid = phaseModifier source eid . UndefendedDamageTo . toTarget

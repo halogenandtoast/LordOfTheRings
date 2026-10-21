@@ -5,7 +5,6 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Frontend
 import LordOfTheRings.Game.Base (gameScenario)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Placement (Placement (ActiveLocation))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
@@ -38,14 +37,14 @@ instance RunMessage GrimbeornsQuest where
           sacked = take 4 [c | c <- deck, toCardCode c == toCardCode Treacheries.sacked]
       searchEncounterDeckToStaging lead (cardIs Locations.theCarrock)
       -- the copies shuffled back in are simply never taken out
-      for_ (trolls <> drop players sacked) $ push . SetAside
-      push $ ShuffleDeck EncounterDeck
+      for_ (trolls <> drop players sacked) setAside
+      shuffleEncounterDeck
       pure $ GrimbeornsQuest $ attrs {questFlipped = True}
     PlaceTokens _ (isTarget attrs -> True) Progress n | attrs.progress < 7 && attrs.progress + n >= 7 -> do
       carrock <- select (LocationWithCardCode $ toCardCode Locations.theCarrock)
       active <- select (IsActiveLocation <> not_ (LocationWithCardCode $ toCardCode Locations.theCarrock))
       for_ carrock \l -> do
         for_ active discard
-        push $ PlaceLocation l ActiveLocation
+        makeActive l
       GrimbeornsQuest <$> runMessage msg attrs
     _ -> GrimbeornsQuest <$> runMessage msg attrs

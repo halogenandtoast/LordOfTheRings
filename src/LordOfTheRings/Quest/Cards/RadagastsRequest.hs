@@ -32,7 +32,7 @@ instance RunMessage RadagastsRequest where
       wilyador <- select (AllyWithCardCode $ toCardCode Objectives.wilyador)
       for_ wilyador \w -> do
         placeTokens attrs w Damage players
-        push $ CheckDefeated (toTarget w)
+        checkDefeated w
       revealOneOfTopEncounterCards pid attrs 3
       pure q
     _ -> RadagastsRequest <$> runMessage msg attrs

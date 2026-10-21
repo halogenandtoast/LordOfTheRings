@@ -37,9 +37,9 @@ instance RunMessage SignsOfGollum where
       chooseOneM pid do
         questionLabeled "signsOfGollum.attach"
         causedBy attrs
-        targets heroes \h -> push $ ClaimObjective attrs.id (toTarget h)
+        targets heroes $ attachObjective attrs.id
       pure o
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
-      push $ ReturnToTopOfEncounterDeck (toTarget attrs)
+      returnToTopOfEncounterDeck attrs
       pure o
     _ -> SignsOfGollum <$> runMessage msg attrs

@@ -30,6 +30,6 @@ instance RunMessage GrimbeornTheOld where
       pure o
     PlaceTokens _ (isTarget attrs -> True) Resource n | countTokens Resource attrs.objectiveTokens + n >= 8 -> do
       lead <- getLead
-      push $ PutObjectiveAllyIntoPlay attrs.id lead
+      putObjectiveAllyIntoPlay attrs.id lead
       GrimbeornTheOld <$> runMessage msg attrs
     _ -> GrimbeornTheOld <$> runMessage msg attrs

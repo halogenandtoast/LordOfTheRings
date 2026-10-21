@@ -13,7 +13,7 @@ frodoBaggins = hero FrodoBaggins Cards.frodoBaggins
 -- | Response: After Frodo Baggins is damaged, cancel the damage and instead raise your
 -- threat by the amount of damage he would have been dealt. (Limit once per phase.)
 instance HasAbilities FrodoBaggins where
-  getAbilities (FrodoBaggins a) = [limited (PlayerLimit PerPhase 1) $ mkAbility a 1 $ response $ DealtDamageWindow After (toTarget a)]
+  getAbilities (FrodoBaggins a) = [limited (PlayerLimit PerPhase 1) $ mkAbility a 1 $ response $ dealtDamage a]
 
 instance RunMessage FrodoBaggins where
   runMessage msg h@(FrodoBaggins attrs) = case msg of

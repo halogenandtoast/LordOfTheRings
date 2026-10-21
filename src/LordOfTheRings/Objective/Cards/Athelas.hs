@@ -29,6 +29,6 @@ instance RunMessage Athelas where
         causedBy attrs
         targets heroes \h -> do
           exhaust h
-          push $ ClaimObjective attrs.id (toTarget h)
+          attachObjective attrs.id h
       pure o
     _ -> Athelas <$> runMessage msg attrs

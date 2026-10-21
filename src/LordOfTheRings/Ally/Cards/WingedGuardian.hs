@@ -17,7 +17,7 @@ wingedGuardian = ally WingedGuardian Cards.wingedGuardian
 --
 -- ponytail: no restricted attachment can reach an ally yet, so that line needs nothing.
 instance HasAbilities WingedGuardian where
-  getAbilities (WingedGuardian a) = [mkAbility a 1 $ forced $ DefendedAttackWindow After (Just $ toTarget a)]
+  getAbilities (WingedGuardian a) = [mkAbility a 1 $ forced $ defendedAttack a]
 
 instance RunMessage WingedGuardian where
   runMessage msg s@(WingedGuardian a) = case msg of

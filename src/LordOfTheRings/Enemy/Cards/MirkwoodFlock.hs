@@ -23,12 +23,7 @@ instance HasModifiersFor MirkwoodFlock where
 instance RunMessage MirkwoodFlock where
   runMessage msg e@(MirkwoodFlock attrs) = case msg of
     ResolveShadowEffect cid eid _ Nothing | cid == attrs.cardId -> do
-      damageOnWilyador attrs eid
+      wilyador <- select (AllyWithCardCode $ toCardCode Objectives.wilyador)
+      for_ wilyador $ undefendedDamageTo attrs eid
       pure e
     _ -> MirkwoodFlock <$> runMessage msg attrs
-
--- | Until the end of the phase, the enemy's undefended damage goes to Wilyador.
-damageOnWilyador :: (ReverseQueue m) => EnemyAttrs -> EnemyId -> m ()
-damageOnWilyador attrs eid = do
-  wilyador <- select (AllyWithCardCode $ toCardCode Objectives.wilyador)
-  for_ wilyador \w -> phaseModifier attrs eid (UndefendedDamageTo $ toTarget w)

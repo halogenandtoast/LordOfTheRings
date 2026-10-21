@@ -19,8 +19,8 @@ instance RunMessage RoastedSlowly where
   runMessage msg t@(RoastedSlowly attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       sacked <- hostsOfTreachery (toCardCode Cards.sacked)
-      for_ [h | h@(HeroTarget _) <- sacked] (push . Destroy)
-      push $ ShuffleIntoEncounterDeck (toTarget attrs)
+      for_ [h | h@(HeroTarget _) <- sacked] destroy
+      shuffleIntoEncounterDeck attrs
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       enemy <- getEnemy eid

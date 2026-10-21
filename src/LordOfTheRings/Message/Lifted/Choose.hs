@@ -10,6 +10,7 @@ module LordOfTheRings.Message.Lifted.Choose (module LordOfTheRings.Message.Lifte
 
 import Control.Monad.State.Strict (StateT, modify, runStateT)
 import Control.Monad.Writer.Strict (WriterT, runWriterT, tell)
+import LordOfTheRings.Card (Card)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.I18n
@@ -25,6 +26,7 @@ data ChooseState = ChooseState
   { chooseLabel :: Maybe Text
   , chooseSource :: Maybe Target
   , chooseTargets :: [Target]
+  , chooseCards :: [Card]
   }
 
 newtype ChooseT m a = ChooseT {unChooseT :: StateT ChooseState (WriterT [UI Message] m) a}
@@ -38,7 +40,7 @@ instance (HasGame m) => HasGame (ChooseT m) where
 
 runChooseT :: (Monad m) => ChooseT m a -> m (ChooseState, [UI Message])
 runChooseT body = do
-  ((_, st), choices) <- runWriterT $ runStateT (unChooseT body) (ChooseState Nothing Nothing [])
+  ((_, st), choices) <- runWriterT $ runStateT (unChooseT body) (ChooseState Nothing Nothing [] [])
   pure (st, choices)
 
 -- | The player chooses one of the choices; nothing is asked when there are none.
@@ -58,8 +60,10 @@ chooseOrRunOneM pid body = do
 
 ask' :: PlayerId -> ChooseState -> [UI Message] -> Message
 ask' pid st choices = Ask pid $ case st.chooseLabel of
-  Just l -> QuestionLabel l st.chooseSource st.chooseTargets $ ChooseOne choices
-  Nothing -> ChooseOne choices
+  Just l -> QuestionLabel l st.chooseSource st.chooseTargets shown
+  Nothing -> shown
+ where
+  shown = if null st.chooseCards then ChooseOne choices else SearchCards st.chooseCards $ ChooseOne choices
 
 -- | The prompt, a key under @label.@ in the locale files.
 questionLabeled :: (Monad m) => Text -> ChooseT m ()
@@ -75,6 +79,10 @@ causedBy a = ChooseT $ modify \st -> st {chooseSource = Just $ toTarget a}
 -- | Cards the question is aimed at, marked on the board.
 aimedAt :: (Monad m, Targetable a) => [a] -> ChooseT m ()
 aimedAt as = ChooseT $ modify \st -> st {chooseTargets = st.chooseTargets <> map toTarget as}
+
+-- | Cards shown to the player choosing, as a search shows what it looked through.
+showing :: (Monad m) => [Card] -> ChooseT m ()
+showing cs = ChooseT $ modify \st -> st {chooseCards = st.chooseCards <> cs}
 
 -- | A choice named by a key under @label.@ in the locale files.
 labeled :: (ReverseQueue m) => Text -> QueueT Message m () -> ChooseT m ()

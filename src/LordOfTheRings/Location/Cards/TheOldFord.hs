@@ -26,7 +26,7 @@ instance RunMessage TheOldFord where
       riverlands <- selectCount (LocationWithTrait Riverland)
       allies <- traverse getAlly =<< select AnyAlly
       for_ allies \x -> case cdCost (toCardDef x) of
-        Just (StaticCost n) | n < riverlands -> discard (toTarget x)
+        Just (StaticCost n) | n < riverlands -> discard x
         _ -> pure ()
       pure l
     _ -> TheOldFord <$> runMessage msg a

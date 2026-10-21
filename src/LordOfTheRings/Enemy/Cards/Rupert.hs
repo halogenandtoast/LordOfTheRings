@@ -19,6 +19,6 @@ instance HasAbilities Rupert where
 instance RunMessage Rupert where
   runMessage msg e@(Rupert attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ ShuffleEncounterDiscardIntoDeck (cardIs Treacheries.sacked)
+      shuffleEncounterDiscardIntoDeck (cardIs Treacheries.sacked)
       pure e
     _ -> Rupert <$> runMessage msg attrs

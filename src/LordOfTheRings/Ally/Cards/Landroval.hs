@@ -23,11 +23,11 @@ instance HasAbilities Landroval where
 instance RunMessage Landroval where
   runMessage msg s@(Landroval a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 windows -> do
-      push $ ReturnToHand (toTarget a)
+      returnToHand a
       for_ [c | Window _ (CharacterDestroyed (HeroTarget _) (PlayerCard c)) <- windows] \c ->
         for_ (c.owner <|> placementController a.placement) \owner -> do
           removeFromDiscard owner c.pcId
-          push $ PutHeroIntoPlay owner c
-          push $ PlaceTokens (toSource a) (CardIdTarget c.pcId) Damage 1
+          putHeroIntoPlay owner c
+          placeTokens a c Damage 1
       pure s
     _ -> Landroval <$> runMessage msg a

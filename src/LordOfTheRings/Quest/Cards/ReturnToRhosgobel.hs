@@ -27,11 +27,11 @@ instance RunMessage ReturnToRhosgobel where
       athelas <- getsGame \g -> [o | o <- toList g.entities.objectives, toCardCode o == toCardCode Objectives.athelas, isAttached o.placement]
       wilyador <- select (AllyWithCardCode $ toCardCode Objectives.wilyador)
       for_ wilyador \w -> for_ athelas \o -> healDamage o w 5
-      push $ DoStep 1 msg
+      doStep 1 msg
       pure q
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       wilyador <- select (AllyWithCardCode $ toCardCode Objectives.wilyador)
-      healed <- allM (fmap (== 0) . getDamage . toTarget) wilyador
+      healed <- allM (fmap (== 0) . getDamage . AllyTarget) wilyador
       if notNull wilyador && healed then winGame else gameOver Lost
       pure q
     _ -> ReturnToRhosgobel <$> runMessage msg attrs

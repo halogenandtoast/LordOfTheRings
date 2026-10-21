@@ -1,7 +1,6 @@
 module LordOfTheRings.Treachery.Cards.Sacked (sacked) where
 
 import LordOfTheRings.Card (CardDef (..), toCardCode, toCardDef)
-import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Trait (Trait (Troll))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
@@ -31,7 +30,7 @@ instance RunMessage Sacked where
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       troll <- member Troll . cdCardTraits . toCardDef <$> getEnemy eid
-      when troll $ chooseHero \h -> push $ PutShadowTreacheryIntoPlay eid cid (AttachedTo $ toTarget h)
+      when troll $ chooseHero $ attachShadowTreachery eid cid
       pure t
     _ -> Sacked <$> runMessage msg attrs
    where
@@ -42,4 +41,4 @@ instance RunMessage Sacked where
       chooseOrRunOneM lead do
         questionLabeled "sacked.attach"
         causedBy attrs
-        targets [h | h <- map toTarget heroes, h `notElem` taken] f
+        targets (filter (\h -> not $ any (isTarget h) taken) heroes) f

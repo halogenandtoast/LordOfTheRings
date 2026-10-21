@@ -32,6 +32,6 @@ instance RunMessage DunedainQuest where
       chooseOneM p do
         questionLabeled "moveSignal"
         causedBy attrs
-        targets others \h -> push $ AttachCard (toId attrs) (toTarget h)
+        targets others $ moveAttachment attrs.id
       pure d
     _ -> DunedainQuest <$> runMessage msg attrs

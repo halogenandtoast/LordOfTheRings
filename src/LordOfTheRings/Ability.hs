@@ -6,6 +6,8 @@ import LordOfTheRings.Criteria as X
 import LordOfTheRings.Matcher.Window as X
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
+import LordOfTheRings.Target
+import LordOfTheRings.Timing (Timing (After))
 
 mkAbility :: (Sourceable a) => a -> Int -> AbilityType -> Ability
 mkAbility a idx aType = Ability (toSource a) idx aType NoCriteria NoLimit
@@ -18,6 +20,22 @@ limited l ab = ab {abilityLimit = l}
 
 response :: WindowMatcher -> AbilityType
 response w = ResponseAbility w Free
+
+-- | The cost of exhausting the card.
+exhaustCost :: (Targetable a) => a -> AbilityCost
+exhaustCost = ExhaustCost . toTarget
+
+-- | After the card enters play.
+entersPlay :: (Targetable a) => a -> WindowMatcher
+entersPlay = EntersPlayWindow After . toTarget
+
+-- | After the character is dealt damage.
+dealtDamage :: (Targetable a) => a -> WindowMatcher
+dealtDamage = DealtDamageWindow After . toTarget
+
+-- | After an attack the character defended has resolved.
+defendedAttack :: (Targetable a) => a -> WindowMatcher
+defendedAttack = DefendedAttackWindow After . Just . toTarget
 
 forced :: WindowMatcher -> AbilityType
 forced = ForcedAbility

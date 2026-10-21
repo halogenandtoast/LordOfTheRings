@@ -20,6 +20,6 @@ instance HasAbilities ForestGrove where
 instance RunMessage ForestGrove where
   runMessage msg l@(ForestGrove a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      push $ SearchEncounterDeckAndDiscard pid (toTarget a) (cardIs Objectives.athelas)
+      searchEncounterDeckAndDiscard pid a (cardIs Objectives.athelas)
       pure l
     _ -> ForestGrove <$> runMessage msg a

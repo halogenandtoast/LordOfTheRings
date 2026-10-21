@@ -2,7 +2,7 @@ module LordOfTheRings.Event.Cards.StridersPath (stridersPath) where
 
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
-import LordOfTheRings.Placement (Placement (ActiveLocation, StagingArea))
+import LordOfTheRings.Placement (Placement (StagingArea))
 
 newtype StridersPath = StridersPath EventAttrs
   deriving anyclass (IsEvent, HasModifiersFor)
@@ -19,8 +19,7 @@ instance RunMessage StridersPath where
     PlayEvent _ card windows | card.id == toId attrs -> do
       for_ [lid | Window _ (Revealed (LocationTarget lid)) <- windows] \lid -> do
         active <- select IsActiveLocation
-        for_ active \old -> push $ PlaceLocation old StagingArea
-        push $ PlaceLocation lid ActiveLocation
-        push $ CheckWindows [mkAfter $ Traveled lid]
+        for_ active \old -> placeLocation old StagingArea
+        travelWithoutCost lid
       pure e
     _ -> StridersPath <$> runMessage msg attrs

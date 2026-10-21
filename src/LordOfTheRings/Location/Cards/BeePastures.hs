@@ -19,6 +19,6 @@ instance HasAbilities BeePastures where
 instance RunMessage BeePastures where
   runMessage msg l@(BeePastures a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      push $ SearchEncounterDeckAndDiscard pid (toTarget a) (cardIs Objectives.grimbeornTheOld)
+      searchEncounterDeckAndDiscard pid a (cardIs Objectives.grimbeornTheOld)
       pure l
     _ -> BeePastures <$> runMessage msg a

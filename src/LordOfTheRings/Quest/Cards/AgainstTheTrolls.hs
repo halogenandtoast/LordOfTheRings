@@ -19,6 +19,6 @@ instance RunMessage AgainstTheTrolls where
       askToResolveWhenRevealed attrs
       AgainstTheTrolls <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
-      push $ AddSetAsideToStaging (CardWithTrait Troll)
+      addSetAsideToStaging (CardWithTrait Troll)
       pure q
     _ -> AgainstTheTrolls <$> runBlockedStage (EnemyWithTrait Troll) msg attrs

@@ -32,7 +32,7 @@ instance RunMessage ConflictAtTheCarrock where
     Destroy (EnemyTarget eid) -> do
       present <- selectAny (EnemyWithId eid)
       troll <- if present then (`elem` uniqueTrolls) . toCardCode <$> getEnemy eid else pure False
-      sacked <- getsGame \g -> [toTarget t | t <- toList g.entities.treacheries, toCardCode t == toCardCode Treacheries.sacked]
+      sacked <- getsGame \g -> [t | t <- toList g.entities.treacheries, toCardCode t == toCardCode Treacheries.sacked]
       lead <- getLead
       when (troll && notNull sacked) $ chooseOneM lead do
         questionLabeled "conflictAtTheCarrock.discardSacked"

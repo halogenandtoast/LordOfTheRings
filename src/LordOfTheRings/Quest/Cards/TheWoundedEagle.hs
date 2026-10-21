@@ -32,6 +32,6 @@ instance RunMessage TheWoundedEagle where
       searchEncounterDeckToStaging lead (cardIs Objectives.wilyador)
       -- Wilyador joins the first player as he comes out, keeping his card
       for_ [c | c <- deck, toCardCode c == toCardCode Objectives.wilyador] \c ->
-        push $ PlaceTokens (toSource attrs) (CardIdTarget c.id) Damage 2
+        placeTokens attrs c Damage 2
       pure $ TheWoundedEagle $ attrs {questFlipped = True}
     _ -> TheWoundedEagle <$> runMessage msg attrs

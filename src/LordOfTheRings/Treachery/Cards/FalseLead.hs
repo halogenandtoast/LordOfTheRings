@@ -24,6 +24,6 @@ instance RunMessage FalseLead where
         else chooseOrRunOneM lead do
           questionLabeled "falseLead.shuffle"
           causedBy attrs
-          targets (map toTarget clues) \c -> push $ ShuffleIntoEncounterDeck c
+          targets clues shuffleIntoEncounterDeck
       pure t
     _ -> FalseLead <$> runMessage msg attrs

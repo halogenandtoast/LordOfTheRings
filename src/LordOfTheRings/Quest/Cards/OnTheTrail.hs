@@ -29,7 +29,7 @@ instance RunMessage OnTheTrail where
       none <- selectNone (HeroWithAttached Clue)
       when none do
         stage2 <- genEncounterCard Cards.aNewTerrorAbroad
-        push $ ResetToStage stage2 [toEncounterCard attrs]
+        resetToStage stage2 [toEncounterCard attrs]
       pure q
     Flip (isTarget attrs -> True) -> recheck
     ReturnToTopOfEncounterDeck _ -> recheck
@@ -39,6 +39,6 @@ instance RunMessage OnTheTrail where
     _ -> OnTheTrail <$> runMessage msg attrs
    where
     recheck = do
-      push $ CheckStage attrs.id
+      checkStage attrs.id
       OnTheTrail <$> runMessage msg attrs
     toEncounterCard a = MkEncounterCard a.cardId (toCardCode a)

@@ -17,7 +17,7 @@ aBurningBrand =
 -- attack that attached character is defending.
 instance HasAbilities ABurningBrand where
   getAbilities (ABurningBrand a) =
-    [ restricted a 1 EncounterEffectsCancelable $ ResponseAbility (ShadowEffectAgainstWindow When host) (ExhaustCost $ toTarget a)
+    [ restricted a 1 EncounterEffectsCancelable $ ResponseAbility (ShadowEffectAgainstWindow When host) (exhaustCost a)
     | AttachedTo host <- [a.placement]
     ]
 
