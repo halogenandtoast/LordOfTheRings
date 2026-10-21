@@ -151,16 +151,19 @@ runNext =
 -- event in a hand, or being paid for, is built from its card to be asked.
 withHandModifiers :: Game -> GameT Game
 withHandModifiers g = do
-  let fromCard pid = \case
-        PlayerCard pc -> case cdCardType (toCardDef pc) of
-          AllyType -> getModifiersFor $ createAlly pc (AllyId UUID.nil) pid
-          EventType -> traverse_ getModifiersFor $ lookupEvent (toCardCode pc) pc.id pid
-          _ -> pure ()
-        EncounterCard _ -> pure ()
   MonoidalMap fromHands <- execWriterT do
-    for_ g.players \player -> for_ player.hand (fromCard player.id)
-    for_ (gameActiveCosts g) \ac -> fromCard ac.activeCostPlayer ac.activeCostCard
+    for_ g.players \player -> for_ player.hand (handCardModifiers player.id)
+    for_ (gameActiveCosts g) \ac -> handCardModifiers ac.activeCostPlayer ac.activeCostCard
   pure $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
+
+-- | The modifiers a card gives itself from its owner's hand, or while being paid for.
+handCardModifiers :: (HasModifiersM m) => PlayerId -> Card -> m ()
+handCardModifiers pid = \case
+  PlayerCard pc -> case cdCardType (toCardDef pc) of
+    AllyType -> getModifiersFor $ createAlly pc (AllyId UUID.nil) pid
+    EventType -> traverse_ getModifiersFor $ lookupEvent (toCardCode pc) pc.id pid
+    _ -> pure ()
+  EncounterCard _ -> pure ()
 
 getPlayers :: (HasGame m) => m [Player]
 getPlayers = toList <$> getsGame gamePlayers
@@ -1166,7 +1169,11 @@ inPlay g = \case
 payFor :: Game -> PlayerId -> Card -> [Window] -> Maybe Target -> Int -> GameT Game
 payFor g pid card windows host discount = do
   costId <- getRandom
-  extra <- subtract discount <$> costModifier pid card
+  -- the card has left its owner's hand and is not yet being paid for, so the modifiers it
+  -- gives itself are asked for here
+  MonoidalMap own <- execWriterT $ handCardModifiers pid card
+  let ownExtra = sum [k | Modifier _ (CostModifier k) <- Map.findWithDefault [] (CardIdTarget card.id) own]
+  extra <- (+ ownExtra) . subtract discount <$> costModifier pid card
   let activeCost =
         ActiveCost
           { activeCostId = costId
