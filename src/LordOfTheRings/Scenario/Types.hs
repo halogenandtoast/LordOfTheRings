@@ -30,7 +30,8 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioEncounterDeck :: [EncounterCard]
   , scenarioEncounterDiscard :: [EncounterCard]
   , scenarioQuestDeck :: [EncounterCard]
-  , scenarioVictoryDisplay :: [EncounterCard]
+  , -- | encounter cards, and player cards an effect adds, as The Red Arrow
+    scenarioVictoryDisplay :: [Card]
   , scenarioSetAside :: [EncounterCard]
   -- ^ out of play until the scenario calls for them
   , scenarioOrcGuards :: Map CardId PlayerCard
@@ -98,7 +99,7 @@ instance HasField "questDeck" ScenarioAttrs [EncounterCard] where
 instance HasField "encounterDiscard" ScenarioAttrs [EncounterCard] where
   getField = scenarioEncounterDiscard
 
-instance HasField "victoryDisplay" ScenarioAttrs [EncounterCard] where
+instance HasField "victoryDisplay" ScenarioAttrs [Card] where
   getField = scenarioVictoryDisplay
 
 instance HasField "easyMode" ScenarioAttrs Bool where

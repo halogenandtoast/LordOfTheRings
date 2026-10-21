@@ -28,10 +28,7 @@ instance HasAbilities TheRedArrow where
 instance RunMessage TheRedArrow where
   runMessage msg s@(TheRedArrow a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      -- ponytail: the victory display holds only encounter cards, so it leaves the game
-      -- instead; it goes there once the display can hold player cards
-      discard a
-      removeFromDiscard a.owner a.cardId
+      addToVictoryDisplay a
       searchDeckIntoPlay pid a 5 (CardWithType AllyType) 1 []
       pure s
     _ -> TheRedArrow <$> runMessage msg a

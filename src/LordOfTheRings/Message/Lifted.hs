@@ -312,6 +312,9 @@ cancelShadowEffects windows =
 returnToHand :: (ReverseQueue m, Targetable target) => target -> m ()
 returnToHand = push . ReturnToHand . toTarget
 
+addToVictoryDisplay :: (ReverseQueue m, Targetable target) => target -> m ()
+addToVictoryDisplay = push . AddToVictoryDisplay . toTarget
+
 destroy :: (ReverseQueue m, Targetable target) => target -> m ()
 destroy = push . Destroy . toTarget
 

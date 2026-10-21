@@ -306,7 +306,7 @@ runGameMessage msg g = case msg of
     enemy <- getEnemy eid
     case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
-        let card = MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
+        let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
         pure
           $ g
           & entitiesL . enemiesL %~ Map.delete eid
@@ -822,7 +822,9 @@ runGameMessage msg g = case msg of
     pure
       $ g
       & entitiesL . locationsL %~ Map.delete lid
-      & scenarioL %~ overAttrs (victoryDisplayL %~ (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) :))
+      & scenarioL %~ overAttrs (victoryDisplayL %~ (EncounterCard (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l)) :))
+  AddToVictoryDisplay (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments ->
+    pure $ g & entitiesL . attachmentsL %~ Map.delete aid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard a :))
   MakeEscapeTest t -> do
     ready <- filter (`notElem` t.escapeCommitted) <$> selectCharacters (HeroControlledBy (PlayerWithId t.escapePlayer) <> ReadyHero) (AllyControlledBy (PlayerWithId t.escapePlayer) <> ReadyAlly)
     push
