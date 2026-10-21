@@ -49,7 +49,7 @@ const canCreate = computed(() => !!selectedScenario.value && !selectedScenario.v
 
 const chooseCampaign = (c: Campaign) => {
   selectedCampaign.value = c
-  selectedScenario.value = c.scenarios.find((s) => !s.unimplemented) ?? null
+  selectedScenario.value = null
 }
 
 const back = () => {
@@ -111,12 +111,12 @@ const create = async () => {
     </div>
 
     <form v-else id="new-game" @submit.prevent="create">
-      <section class="card split">
-        <div class="campaign">
+      <section v-if="!selectedScenario" class="card split">
+        <div class="panel">
           <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
           <img :src="selectedCampaign.image" alt="" />
-          <h3 class="campaign-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
-          <button type="button" class="change-campaign" :aria-label="$t('newGame.chooseDifferentCampaign')" @click="back">{{ $t('newGame.changeCampaign') }}</button>
+          <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
+          <button type="button" class="change" :aria-label="$t('newGame.chooseDifferentCampaign')" @click="back">{{ $t('newGame.change') }}</button>
         </div>
         <div class="card-body">
           <h3 class="card-title">{{ $t('common.scenario') }}</h3>
@@ -126,9 +126,8 @@ const create = async () => {
               :key="option.id"
               type="button"
               class="scenario-box"
-              :class="{ selected: option.id === selectedScenario?.id, unavailable: option.unimplemented, alpha: option.alpha, beta: option.beta }"
+              :class="{ unavailable: option.unimplemented, alpha: option.alpha, beta: option.beta }"
               :disabled="option.unimplemented"
-              :aria-pressed="option.id === selectedScenario?.id"
               @click="selectedScenario = option"
             >
               <img :src="option.image" alt="" />
@@ -138,53 +137,61 @@ const create = async () => {
         </div>
       </section>
 
-      <template v-if="selectedScenario">
-        <section class="card">
-          <h3 class="card-title">{{ $t('common.game') }}</h3>
-          <label>
-            {{ $t('newGame.gameName') }}
-            <input v-model="gameName" type="text" :placeholder="defaultName" />
-          </label>
-          <div class="option">
-            <span class="option-title">{{ $t('newGame.numberOfPlayers') }}</span>
-            <div class="segmented" role="radiogroup">
-              <button
-                v-for="n in 4"
-                :key="n"
-                type="button"
-                role="radio"
-                :aria-checked="seatCount === n"
-                :class="{ selected: seatCount === n }"
-                @click="seatCount = n"
-              >{{ n }}</button>
+      <template v-else>
+        <section class="card split">
+          <div class="panel">
+            <h3 class="card-title">{{ $t('common.scenario') }}</h3>
+            <img :src="selectedScenario.image" alt="" />
+            <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedScenario.icon})` }" />{{ selectedScenario.name }}</h3>
+            <button type="button" class="change" :aria-label="$t('newGame.chooseDifferentScenario')" @click="selectedScenario = null">{{ $t('newGame.change') }}</button>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ $t('common.game') }}</h3>
+            <label>
+              {{ $t('newGame.gameName') }}
+              <input v-model="gameName" type="text" :placeholder="defaultName" />
+            </label>
+            <div class="option">
+              <span class="option-title">{{ $t('newGame.numberOfPlayers') }}</span>
+              <div class="segmented" role="radiogroup">
+                <button
+                  v-for="n in 4"
+                  :key="n"
+                  type="button"
+                  role="radio"
+                  :aria-checked="seatCount === n"
+                  :class="{ selected: seatCount === n }"
+                  @click="seatCount = n"
+                >{{ n }}</button>
+              </div>
+            </div>
+            <div class="toggle-row">
+              <label class="switch">
+                <input v-model="easyMode" type="checkbox" role="switch" />
+                <span class="track" aria-hidden="true" />
+                {{ $t('newGame.easyMode') }}
+              </label>
+              <p class="hint">{{ $t('newGame.easyModeHint') }}</p>
+            </div>
+            <div class="toggle-row">
+              <label class="switch">
+                <input v-model="allowSpectators" type="checkbox" role="switch" />
+                <span class="track" aria-hidden="true" />
+                {{ $t('newGame.allowSpectators') }}
+              </label>
+              <button v-if="differsFromDefault" type="button" class="make-default" @click="makeDefault">{{ $t('newGame.makeDefault') }}</button>
+              <span v-else-if="savedDefault" class="saved">{{ $t('newGame.defaultSaved') }}</span>
+              <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
             </div>
           </div>
-          <div class="toggle-row">
-            <label class="switch">
-              <input v-model="easyMode" type="checkbox" role="switch" />
-              <span class="track" aria-hidden="true" />
-              {{ $t('newGame.easyMode') }}
-            </label>
-            <p class="hint">{{ $t('newGame.easyModeHint') }}</p>
-          </div>
-          <div class="toggle-row">
-            <label class="switch">
-              <input v-model="allowSpectators" type="checkbox" role="switch" />
-              <span class="track" aria-hidden="true" />
-              {{ $t('newGame.allowSpectators') }}
-            </label>
-            <button v-if="differsFromDefault" type="button" class="make-default" @click="makeDefault">{{ $t('newGame.makeDefault') }}</button>
-            <span v-else-if="savedDefault" class="saved">{{ $t('newGame.defaultSaved') }}</span>
-            <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
-          </div>
         </section>
+
+        <p v-if="error" class="error">{{ tr(error) }}</p>
+
+        <button class="primary-action" type="submit" :disabled="!canCreate">
+          {{ creating ? $t('newGame.creating') : $t('common.create') }}
+        </button>
       </template>
-
-      <p v-if="error" class="error">{{ tr(error) }}</p>
-
-      <button class="primary-action" type="submit" :disabled="!canCreate">
-        {{ creating ? $t('newGame.creating') : $t('common.create') }}
-      </button>
     </form>
   </div>
 </template>
@@ -263,9 +270,9 @@ h2 {
   text-transform: uppercase;
 }
 
-/* the campaign down the left, from top to bottom, and its scenarios beside it */
+/* what was chosen down the left, from top to bottom, and the next choice beside it */
 .card.split { grid-template-columns: 216px 1fr; gap: 0; padding: 0; overflow: hidden; }
-.split .campaign {
+.split .panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -275,7 +282,7 @@ h2 {
 .split .card-body { display: grid; gap: 12px; align-content: start; padding: 16px; }
 @media (max-width: 600px) {
   .card.split { grid-template-columns: 1fr; }
-  .split .campaign { border-right: 0; border-bottom: 1px solid var(--line-strong); }
+  .split .panel { border-right: 0; border-bottom: 1px solid var(--line-strong); }
 }
 
 .campaigns {
@@ -305,10 +312,10 @@ h2 {
 .campaign-name .icon, .scenario-name .icon { font-size: 1.2em; }
 .campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
 
-.campaign img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
-.campaign-title { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
+.panel img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
+.panel-title { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
 /* flush with the foot of the panel, whatever its height */
-.change-campaign {
+.change {
   margin: auto -16px 0;
   padding: 12px 16px;
   border: 0;
@@ -322,7 +329,7 @@ h2 {
   cursor: pointer;
   transition: background-color 0.15s;
 }
-.change-campaign:hover { background: var(--button-secondary-hover); }
+.change:hover { background: var(--button-secondary-hover); }
 
 .scenarios {
   display: grid;
@@ -344,8 +351,8 @@ h2 {
   font: inherit;
 }
 .scenario-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-.scenario-box:not(.selected) img { filter: grayscale(100%); }
-.scenario-box.selected { border-color: var(--accent); }
+.scenario-box:not(:disabled):hover { border-color: var(--accent); }
+.scenario-box.unavailable img { filter: grayscale(100%); }
 .scenario-box.unavailable { cursor: not-allowed; opacity: 0.6; }
 /* a ribbon across the corner, as in Arkham */
 .scenario-box.alpha::after,
