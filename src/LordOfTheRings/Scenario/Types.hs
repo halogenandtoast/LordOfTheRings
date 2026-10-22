@@ -102,5 +102,9 @@ instance HasField "encounterDiscard" ScenarioAttrs [EncounterCard] where
 instance HasField "victoryDisplay" ScenarioAttrs [Card] where
   getField = scenarioVictoryDisplay
 
+-- | The victory points of the cards in the victory display.
+instance HasField "victoryPoints" ScenarioAttrs Int where
+  getField = sum . mapMaybe (cdVictoryPoints . toCardDef) . scenarioVictoryDisplay
+
 instance HasField "easyMode" ScenarioAttrs Bool where
   getField = scenarioEasyMode

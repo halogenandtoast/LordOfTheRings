@@ -1,6 +1,5 @@
 module LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil (theHillsOfEmynMuil) where
 
-import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -43,5 +42,5 @@ instance RunMessage TheHillsOfEmynMuil where
     _ -> TheHillsOfEmynMuil <$> runConditionalStage condition msg attrs
    where
     condition = do
-      victory <- getsGame (sum . mapMaybe (cdVictoryPoints . toCardDef) . (.victoryDisplay) . toAttrs . (.scenario))
+      victory <- getsGame ((.victoryPoints) . toAttrs . (.scenario))
       andM [selectNone (LocationWithTrait EmynMuil), pure $ victory >= 20]
