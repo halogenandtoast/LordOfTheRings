@@ -56,6 +56,7 @@ kingSpider :: CardDef
 kingSpider =
   (enemy "01074" "King Spider" SpidersOfMirkwood 2 20 2 3 1 3)
     { cdShadowEffect = True
+    , cdWhenRevealed = True
     , cdCardTraits = setFromList [Creature, Spider]
     }
 
@@ -154,6 +155,7 @@ blackForestBats :: CardDef
 blackForestBats =
   (enemy "01098" "Black Forest Bats" PassageThroughMirkwood 1 15 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
     }
 
 dungeonJailor :: CardDef
