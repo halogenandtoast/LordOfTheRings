@@ -127,7 +127,6 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackedWindow t target, AttackedEnemy target' _) -> t == timing && target == target'
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
-  (CardRevealedWindow t, Revealed _) -> t == timing
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (AttackerDeclaredWindow t who, DeclaredAsAttacker target _) -> t == timing && maybe True (== target) who
   (HeroLeftPlayWindow t pid trait, LeftPlay (HeroTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits
@@ -145,4 +144,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
+  (CardRevealedWindow {}, _) -> False
   _ -> False

@@ -9,7 +9,7 @@ import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Ally.Types (allyCardId)
-import LordOfTheRings.Card (toCardDef)
+import LordOfTheRings.Card (cdWhenRevealed, toCardDef)
 import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Id
@@ -70,6 +70,14 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     anyM (\trait -> hasTrait trait host def) (toList traits)
   (EnemyDestroyedByHeroWindow t m, EnemyDestroyedByAttack _ attackers) | t == timing ->
     anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
+  -- only a card with When Revealed effects leaves A Test of Will something to cancel
+  (CardRevealedWindow t, Revealed target) | t == timing -> do
+    es <- getsGame gameEntities
+    pure $ maybe False cdWhenRevealed case target of
+      EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
+      LocationTarget i -> toCardDef <$> Map.lookup i es.locations
+      TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
+      _ -> Nothing
   _ -> pure $ windowMatches matcher w
  where
   hostDef = \case

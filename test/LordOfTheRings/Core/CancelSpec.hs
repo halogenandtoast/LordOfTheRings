@@ -27,6 +27,15 @@ spec = do
       chooseTarget pid (CardIdTarget card.id)
       getCharacterDamage dunhere `shouldReturn` 0
 
+    it "isn't offered for a card without when revealed effects" . spiritTest $ \pid -> do
+      card <- putCardIntoHand pid Events.aTestOfWill
+      eowyn <- hero "01007"
+      run $ PlaceTokens GameSource eowyn Resource 1
+      _ <- setEncounterDeck [Locations.forestGate]
+      run RevealEncounterCard
+      question <- getQuestion pid
+      [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
+
   describe "Eleanor" do
     it "exhausts to cancel a treachery, discard it and reveal the next card" . spiritTest $ \pid -> do
       dunhere <- hero "01009"
