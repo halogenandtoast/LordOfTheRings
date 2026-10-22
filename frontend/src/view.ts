@@ -106,7 +106,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
 
   // a guarded objective is attached to the card guarding it for as long as that card is in play
   const guardInPlay = (guard: string | null | undefined) =>
-    guard && [...Object.values(entities.enemies), ...Object.values(entities.locations)].some((e) => e.cardId === guard) ? guard : null
+    guard && [...Object.values(entities.enemies), ...Object.values(entities.locations), ...Object.values(entities.treacheries ?? {})].some((e) => e.cardId === guard) ? guard : null
 
   const fromEntity = (e: Entity, kind: keyof ServerGame['entities']): CardView => {
     const target = { tag: kindTargets[kind], contents: e.id }

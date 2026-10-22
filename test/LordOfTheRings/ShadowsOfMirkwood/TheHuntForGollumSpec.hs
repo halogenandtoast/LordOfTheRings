@@ -93,6 +93,27 @@ spec = describe "The Hunt for Gollum" do
     map (objectiveGuard . toAttrs) objectives `shouldBe` [Just hunters.id]
     getEncounterDiscard `shouldReturn` []
 
+  it "is guarded by a surging enemy, not the card its surge reveals" . huntTest $ \_ -> do
+    [crows, _] <- setEncounterDeck [Enemies.easternCrows, Treacheries.oldWivesTales]
+    run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.signsOfGollum
+    resolveRevealed
+    getsGame (map (objectiveGuard . toAttrs) . toList . (.entities.objectives)) `shouldReturn` [Just crows.id]
+
+  it "is guarded by a treachery only until the treachery's effects resolve" . huntTest $ \_ -> do
+    [tales] <- setEncounterDeck [Treacheries.oldWivesTales]
+    run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.signsOfGollum
+    getsGame (map (objectiveGuard . toAttrs) . toList . (.entities.objectives)) `shouldReturn` [Just tales.id]
+    resolveRevealed
+    getsGame (map (objectiveGuard . toAttrs) . toList . (.entities.objectives)) `shouldReturn` [Nothing]
+
+  it "is no longer guarded by a treachery whose effects are canceled" . huntTest $ \pid -> do
+    card <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- hero "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    _ <- signsGuardedBy [Treacheries.oldWivesTales]
+    chooseTarget pid (CardIdTarget card.id)
+    getsGame (map (objectiveGuard . toAttrs) . toList . (.entities.objectives)) `shouldReturn` [Nothing]
+
   it "lets Signs of Gollum be claimed onto a committed hero after questing successfully" . huntTest $ \pid -> do
     signs <- signsGuardedBy [Treacheries.oldWivesTales]
     claimSigns pid signs

@@ -1012,7 +1012,10 @@ runGameMessage msg g = case msg of
     -- a treachery that did not attach itself to something is discarded once it resolves
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->
       when (treachery.placement == Unplaced) $ push (Discard $ toTarget treachery)
-    pure g
+    -- its effects have resolved or been canceled, so it guards nothing any more
+    let cid = (.cardId) . toAttrs <$> Map.lookup tid g.entities.treacheries
+        guarding o = isJust cid && (toAttrs o).objectiveGuard == cid
+    pure $ g & entitiesL . objectivesL . traverse %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
     push $ enteredPlayThisRound thisAlly

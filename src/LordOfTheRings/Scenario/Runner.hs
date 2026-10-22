@@ -99,7 +99,9 @@ instance RunMessage ScenarioAttrs where
         let def = toCardDef card
         push
           $ if
-            | cdCardType def `elem` [EnemyType, LocationType] -> Run [RevealCard card, SetObjectiveGuard oid card.id]
+            -- it guards before it resolves, so before its surge; a treachery only until its
+            -- effects resolve or are canceled
+            | cdCardType def `elem` [EnemyType, LocationType, TreacheryType] -> Run [SetObjectiveGuard oid card.id, RevealCard card]
             -- the next card guards this objective, then the revealed one is guarded in turn
             | Guarded `member` cdKeywords def -> Run [GuardObjective oid, RevealCard card]
             | otherwise -> RevealCard card
