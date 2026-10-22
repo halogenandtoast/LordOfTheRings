@@ -140,6 +140,7 @@ data GameSummary = GameSummary
   , phase :: Phase
   , threat :: Int
   , outcome :: Maybe Outcome
+  , victoryPoints :: Int
   , waiting :: Bool
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
   , easyMode :: Bool
@@ -411,6 +412,7 @@ summary (Entity gid row) | awaitingPlayers row = do
       , phase = minBound
       , threat = 0
       , outcome = Nothing
+      , victoryPoints = 0
       , waiting = True
       , easyMode = row.lotrGameEasyMode
       , seats = []
@@ -428,6 +430,7 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , phase = g.phase
         , threat = sum [p.threat | p <- toList g.players]
         , outcome = g.outcome
+        , victoryPoints = (toAttrs g.scenario).victoryPoints
         , waiting = False
         , easyMode = row.lotrGameEasyMode
         , seats =

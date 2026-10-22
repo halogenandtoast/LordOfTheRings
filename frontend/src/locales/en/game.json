@@ -87,6 +87,7 @@
   "prompt": {
     "playersWin": "The players win",
     "playersLose": "The players lose",
+    "victoryPoints": "{value} victory points",
     "orClickHighlighted": "or click a highlighted card",
     "source": "source",
     "target": "target",

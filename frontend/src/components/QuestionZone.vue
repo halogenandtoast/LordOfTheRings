@@ -5,7 +5,11 @@ import type { ChoiceView, QuestionView } from '../types'
 
 const tr = useServerText()
 
-const { question, outcome = null } = defineProps<{ question: QuestionView | null; outcome?: 'WON' | 'LOST' | null }>()
+const { question, outcome = null, victoryPoints = 0 } = defineProps<{
+  question: QuestionView | null
+  outcome?: 'WON' | 'LOST' | null
+  victoryPoints?: number
+}>()
 const emit = defineEmits<{ choose: [index: number] }>()
 
 const labelChoices = computed<ChoiceView[]>(() =>
@@ -36,6 +40,7 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
     </template>
     <p v-else-if="outcome" class="prompt outcome" :class="outcome.toLowerCase()">
       {{ $t(outcome === 'WON' ? 'game.prompt.playersWin' : 'game.prompt.playersLose') }}
+      &middot; {{ $t('game.prompt.victoryPoints', { value: victoryPoints }) }}
     </p>
     <p v-else class="prompt idle-text">{{ $t('game.prompt.waiting') }}</p>
   </div>

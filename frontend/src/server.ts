@@ -13,6 +13,7 @@ export interface CardDef {
   defense: number | null
   hitPoints: number | null
   questPoints: number | null
+  victoryPoints?: number | null
   sphere?: string | null
 }
 
@@ -139,6 +140,7 @@ export interface GameSummary {
   phase: string
   threat: number
   outcome: 'Won' | 'Lost' | null
+  victoryPoints: number
   /** Waiting for friends to take the rest of the seats. */
   waiting: boolean
   easyMode: boolean

@@ -67,6 +67,7 @@ export interface ScenarioView {
   encounterDiscard: number
   discard: CardView[]
   victory: CardView[]
+  victoryPoints: number
 }
 
 export interface PlayerView {

@@ -24,6 +24,9 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           <div v-if="game.outcome" class="badge outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
             {{ $t(game.outcome === 'Won' ? 'home.won' : 'home.lost') }}
           </div>
+          <div v-if="game.outcome" class="badge victory" :title="$t('home.victoryPoints', { value: game.victoryPoints })">
+            {{ $t('home.vp', { value: game.victoryPoints }) }}
+          </div>
         </div>
         <div class="extra-details">
           <div v-if="deleteGame" class="game-delete">
@@ -133,7 +136,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.badge.easy { border: 1px solid var(--box-border); color: var(--text-muted); padding: 1px 7px; }
+.badge:is(.easy, .victory) { border: 1px solid var(--box-border); color: var(--text-muted); padding: 1px 7px; }
 .outcome.won { background: var(--success); color: var(--button-primary-text); }
 .outcome.lost { background: var(--danger); color: var(--text); }
 

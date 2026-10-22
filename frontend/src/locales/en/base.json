@@ -66,6 +66,8 @@
     "won": "Won",
     "easyMode": "Easy",
     "lost": "Lost",
+    "victoryPoints": "{value} victory points",
+    "vp": "{value} VP",
     "deleteGame": "Delete game",
     "confirmDelete": "Delete this game?"
   },
