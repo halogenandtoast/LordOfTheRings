@@ -83,6 +83,16 @@ spec = describe "The Hunt for Gollum" do
     all (isJust . objectiveGuard . toAttrs) objectives `shouldBe` True
     getEncounterDeck `shouldReturn` []
 
+  it "shuffles the encounter discard back in when Signs of Gollum finds the deck empty" . huntTest $ \_ -> do
+    _ <- setEncounterDeck []
+    hunters <- genEncounterCard Enemies.huntersFromMordor
+    run $ AddToEncounterDiscard [hunters]
+    run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.signsOfGollum
+    resolveRevealed
+    objectives <- getsGame (toList . (.entities.objectives))
+    map (objectiveGuard . toAttrs) objectives `shouldBe` [Just hunters.id]
+    getEncounterDiscard `shouldReturn` []
+
   it "lets Signs of Gollum be claimed onto a committed hero after questing successfully" . huntTest $ \pid -> do
     signs <- signsGuardedBy [Treacheries.oldWivesTales]
     claimSigns pid signs

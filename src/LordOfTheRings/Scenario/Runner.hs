@@ -104,7 +104,12 @@ instance RunMessage ScenarioAttrs where
             | Guarded `member` cdKeywords def -> Run [GuardObjective oid, RevealCard card]
             | otherwise -> RevealCard card
         pure $ attrs & encounterDeckL .~ rest
-      [] -> pure attrs
+      []
+        | null attrs.encounterDiscard -> pure attrs
+        | otherwise -> do
+            deck <- shuffleM attrs.encounterDiscard
+            push $ GuardObjective oid
+            pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
     AddSetAsideToStaging matcher -> do
       let (matching, rest) = partition (cardMatches matcher) attrs.scenarioSetAside
       traverse_ (push . AddToStaging) matching
