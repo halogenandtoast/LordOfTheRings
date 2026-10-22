@@ -230,7 +230,7 @@ const toggleUnless = (attached: CardView) => {
 /* inverted where it counts toward the quest: willpower committed, threat in staging */
 .stats .counting { color: rgb(20 16 10); }
 .stats .willpower.counting { background: var(--willpower); }
-.stats .threat.counting { color: var(--cream); background: color-mix(in srgb, var(--threat-red) 75%, black); }
+.stats .threat.counting { color: var(--cream); background: color-mix(in srgb, var(--threat-red) 65%, black); }
 .stats .attack { color: var(--attack); }
 .stats .defense { color: var(--defense); }
 /* an exhausted card turns past its own width (height × 0.88 scale), so make room for it;
