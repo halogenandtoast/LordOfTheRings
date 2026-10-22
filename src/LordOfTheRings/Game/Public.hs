@@ -16,9 +16,10 @@ import LordOfTheRings.Prelude
 
 -- | The game as the players may see it: decks are hidden information, so only their
 -- sizes are sent. Stored games and exports keep everything. The quest tally is added
--- so the board shows the engine's totals, modifiers included (and each card's stats
--- and hit points as modified, and the attack being declared), as are the hosts each
--- attachment in hand could go on, so dragging one only lights up those.
+-- so the board shows the engine's totals, modifiers included, and which cards add to
+-- the threat (and each card's stats and hit points as modified, and the attack being
+-- declared), as are the hosts each attachment in hand could go on, so dragging one only
+-- lights up those.
 publicGame :: Game -> Value
 publicGame = publicGameFor (const True)
 
@@ -32,6 +33,7 @@ publicGameFor seesHand g = hideDecks $ toJSON g
       Object
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)
         $ KeyMap.insert "stagingThreat" (toJSON $ runReadGame getStagingThreat g)
+        $ KeyMap.insert "threatening" (toJSON [cid | (cid, n) <- runReadGame getStagingThreats g, n > 0])
         $ KeyMap.insert "stats" (toJSON $ runReadGame cardStats g)
         $ KeyMap.insert "hitPoints" (toJSON $ runReadGame hitPoints g)
         $ KeyMap.insert "attackStrength" (toJSON $ runReadGame attackStrength g)

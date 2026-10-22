@@ -49,6 +49,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   if (!data.started || !game) return { started: false, round: 0, phase: null, outcome: null, over: false, question: null, attachmentHosts: {}, scenario: null, players: [], tally: null }
 
   const def = (code: string): Partial<CardDef> => defs[code] ?? {}
+  const threatening = new Set(game.threatening ?? [])
   const entities = game.entities
 
   // The card an entity target refers to, so a choice can highlight it on the board.
@@ -91,7 +92,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       target: null,
       playing: false,
       stats: game.stats?.[id] ?? [],
-      idle: [],
+      counting: [],
       attackStrength: game.attackStrength?.[id],
       ...extra,
     }
@@ -122,8 +123,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       flipped: e.flipped ?? false,
       facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' ? 'player' : undefined,
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard),
-      // only the staging area's threat counts against the quest
-      idle: e.placement && e.placement.tag !== 'StagingArea' ? ['threat'] : [],
+      counting: [...(e.committed ? ['willpower'] : []), ...(threatening.has(e.cardId) ? ['threat'] : [])],
     })
   }
 

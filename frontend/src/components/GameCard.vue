@@ -165,7 +165,7 @@ const toggleUnless = (attached: CardView) => {
         </span>
       </div>
       <div v-if="card.stats.length && !banner" class="stats">
-        <span v-for="[stat, value] in card.stats" :key="stat" :class="[stat, { idle: card.idle.includes(stat), committed: stat === 'willpower' && card.committed }]" :title="$t(`game.${stat}`, { value })">
+        <span v-for="[stat, value] in card.stats" :key="stat" :class="[stat, { counting: card.counting.includes(stat) }]" :title="$t(`game.${stat}`, { value })">
           {{ value }}<span class="icon" :style="{ '--icon': `url('/images/icons/game/${stat}.svg')` }" />
         </span>
       </div>
@@ -226,11 +226,11 @@ const toggleUnless = (attached: CardView) => {
 .with-stats .face > .stats { margin: 0 -1px; border-top: 0; border-radius: 0 0 7px 7px; }
 .stats > span + span { border-left: 1px solid var(--line); }
 .stats .threat { color: var(--threat-red); }
-/* shown, but counting for nothing where the card is */
-.stats .idle { opacity: 0.35; }
 .stats .willpower { color: var(--willpower); }
-/* the willpower counting toward the quest */
-.stats .willpower.committed { color: rgb(20 16 10); background: var(--willpower); }
+/* inverted where it counts toward the quest: willpower committed, threat in staging */
+.stats .counting { color: rgb(20 16 10); }
+.stats .willpower.counting { background: var(--willpower); }
+.stats .threat.counting { background: var(--threat-red); }
 .stats .attack { color: var(--attack); }
 .stats .defense { color: var(--defense); }
 /* an exhausted card turns past its own width (height × 0.88 scale), so make room for it;

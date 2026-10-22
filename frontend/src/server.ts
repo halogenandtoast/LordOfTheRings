@@ -96,6 +96,8 @@ export interface ServerGame {
   activeCosts: Record<string, { player: string; card: Card }>
   committedWillpower: number
   stagingThreat: number
+  /** The cards adding to the staging threat. */
+  threatening?: string[]
   /** The stats of each card in play as modified, in printed order, by card id. */
   stats?: Record<string, [string, number][]>
   /** The hit points of each character and enemy as modified, by card id. */
