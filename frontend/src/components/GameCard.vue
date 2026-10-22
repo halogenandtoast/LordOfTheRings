@@ -301,7 +301,14 @@ const toggleUnless = (attached: CardView) => {
 .card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 @media (hover: none) { .card img { -webkit-user-drag: none; } }
 .card.exhausted { transform: rotate(90deg) scale(0.88); }
-.card.committed img { box-shadow: 0 0 0 2px var(--accent); }
+/* its own layer, so a committed card that can also be used shows both frames */
+.card.committed::after {
+  content: "";
+  grid-area: 1 / 1;
+  border-radius: 7px;
+  box-shadow: 0 0 0 2px var(--accent);
+  pointer-events: none;
+}
 /* played from hand and being paid for: lifted out of the hand until it goes into play */
 .card.playing { transform: translateY(-12%); }
 .card.playing img { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 6px 16px var(--shadow); }
