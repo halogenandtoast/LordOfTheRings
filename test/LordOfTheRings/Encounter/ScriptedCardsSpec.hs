@@ -59,6 +59,7 @@ spec = do
       _ <- setEncounterDeck [Enemies.ungoliantsSpawn]
       run DealShadowCards
       run $ UndefendedAttack pid (toId spider)
+      passActions pid
       (.threat) <$> getPlayer pid `shouldReturn` 8
 
   describe "Eyes of the Forest" do

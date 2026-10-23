@@ -91,6 +91,8 @@ spec = describe "Keywords and limits" do
       naith <- putAllyIntoPlay two Allies.defenderOfTheNaith
       legolas <- heroOf two "01005"
       run $ EnemyAttack one eid
+      passActions one
+      passActions two
       questionTargets one >>= (`shouldSatisfy` notElem naith)
       chooseLabel "$label.takeAttackUndefended" one
       targets <- questionTargets two
@@ -106,6 +108,8 @@ spec = describe "Keywords and limits" do
       eid <- engagedSpider one
       naith <- putAllyIntoPlay two Allies.defenderOfTheNaith
       run $ EnemyAttack one eid
+      passActions one
+      passActions two
       chooseTarget one =<< heroOf one "01012"
       questionTargets two >>= (`shouldSatisfy` notElem naith)
 
@@ -113,8 +117,12 @@ spec = describe "Keywords and limits" do
       eid <- engagedSpider one
       _ <- putAllyIntoPlay two Allies.defenderOfTheNaith
       run $ EnemyAttack one eid
+      passActions one
+      passActions two
       chooseLabel "$label.takeAttackUndefended" one
       chooseLabel "$label.doNotDefend" two
+      passActions one
+      passActions two
       Just (QuestionLabel prompt _ _ _) <- getQuestion one
       prompt `shouldBe` "$label.undefendedDamage"
 
@@ -124,6 +132,8 @@ spec = describe "Keywords and limits" do
       beravor <- heroOf one "01012"
       run $ CreateEffect $ Effect GameSource (PlayerTarget one) [MayDeclareMultipleDefenders] UntilEndOfPhase
       run $ EnemyAttack one eid
+      passActions one
+      passActions two
       chooseTarget one beravor
       chooseLabel "$label.doneDeclaringDefenders" one
       chooseTarget two naith
@@ -137,6 +147,8 @@ spec = describe "Keywords and limits" do
       eid <- engagedSpider one
       guthlaf <- putAllyIntoPlay two Allies.guthlaf
       run $ EnemyAttack one eid
+      passActions one
+      passActions two
       chooseLabel "$label.takeAttackUndefended" one
       questionTargets two >>= (`shouldSatisfy` elem guthlaf)
 

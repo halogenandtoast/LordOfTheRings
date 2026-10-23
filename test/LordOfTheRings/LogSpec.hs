@@ -37,7 +37,9 @@ spec = describe "Game log" do
     _ <- setEncounterDeck []
     writeIORef logged []
     run $ EnemyAttack pid (toId spider)
+    passActions pid
     chooseLabel "$label.takeAttackUndefended" pid
+    passActions pid
     hero <- getsGame (fromJustNote "no hero" . headMay . toList . (.entities.heroes))
     chooseTarget pid hero
     attack <- entries logged

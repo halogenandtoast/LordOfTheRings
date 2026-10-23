@@ -437,59 +437,61 @@ runGameMessage msg g = case msg of
           $ questionLabelWith (ikey "label.chooseNextAttack") Nothing (map toTarget enemies) pid
             [targetLabel eid [EnemyAttack pid eid, ChooseEnemyAttack pid (filter (/= eid) enemies)] | eid <- enemies]
     pure g
+  -- players may act at the end of each step of the attack: once its enemy is chosen,
+  -- its defenders declared, its shadow resolved and its damage dealt
   EnemyAttack pid eid -> do
-    many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
-    defenders <- filterM (canFight eid) =<< readyCharacters pid
-    others <- filter (/= pid) <$> getPlayerOrder
-    enemyName <- cardVar "enemy" <$> getEnemy eid
-    exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
-    let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
-        declare =
-          if many
-            then DeclareDefenders pid eid []
-            else
-              questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
-                $ [targetLabel d (exhaust' d <> [DefendWith pid eid d]) | d <- defenders]
-                <> [Label (ikey "label.takeAttackUndefended") [DeclareSentinels pid eid [] others]]
-    pushAll =<< inLogBlock (EnemyAttackBlock pid eid) [CheckWindows [mkWhen $ EnemyAttacking eid pid], declare]
+    windows <- actionWindows
+    pushAll =<< inLogBlock (EnemyAttackBlock pid eid) (CheckWindows [mkWhen $ EnemyAttacking eid pid] : windows <> [DeclareDefenders pid eid []])
     pure g
   DefendWith pid eid defender -> do
-    order <- getPlayerOrder
+    windows <- actionWindows
     pushAll
       $ [ defendingEffect defender
         , CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
         ]
-      <> map OptionalActionWindow order
-      <> [ ResolveShadow eid pid (Just defender)
-         , AttackDamage eid defender
+      <> windows
+      <> [ResolveShadow eid pid (Just defender)]
+      <> windows
+      <> [ AttackDamage eid defender
          , CheckWindows [mkAfter $ EnemyAttacking eid pid, mkAfter $ DefendedAttack defender eid]
          ]
+      <> windows
     pure g
   DeclareDefenders pid eid chosen -> do
+    many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
     others <- filter (/= pid) <$> getPlayerOrder
     defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< readyCharacters pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
+    let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
     push
-      $ questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
-      $ [ targetLabel d $ [Exhaust d | Just True <- [lookup d exhausts]] <> [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
-        | d <- defenders
-        ]
-      <> [Label (ikey $ if null chosen then "label.takeAttackUndefended" else "label.doneDeclaringDefenders") [DeclareSentinels pid eid chosen others]]
+      $ if many
+        then
+          questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
+            $ [ targetLabel d $ exhaust' d <> [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid], DeclareDefenders pid eid (chosen <> [d])]
+              | d <- defenders
+              ]
+            <> [Label (ikey $ if null chosen then "label.takeAttackUndefended" else "label.doneDeclaringDefenders") [DeclareSentinels pid eid chosen others]]
+        else
+          questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
+            $ [targetLabel d (exhaust' d <> [DefendWith pid eid d]) | d <- defenders]
+            <> [Label (ikey "label.takeAttackUndefended") [DeclareSentinels pid eid [] others]]
     pure g
   -- then each other player, in turn, may defend with a sentinel of theirs: one, unless
   -- the attacked player may declare several
   DeclareSentinels pid eid chosen [] -> do
-    order <- getPlayerOrder
+    windows <- actionWindows
     push $ case chosen of
       [] -> UndefendedAttack pid eid
       first : _ ->
         Run
-          $ map OptionalActionWindow order
-          <> [ ResolveShadow eid pid (Just first)
-             , DefendedByMany pid eid chosen
+          $ windows
+          <> [ResolveShadow eid pid (Just first)]
+          <> windows
+          <> [ DefendedByMany pid eid chosen
              , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
              ]
+          <> windows
     pure g
   DeclareSentinels pid eid chosen (other : rest) -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
@@ -516,7 +518,8 @@ runGameMessage msg g = case msg of
     push $ chooseOrRunOne pid choices
     pure g
   UndefendedAttack pid eid -> do
-    pushAll [ResolveShadow eid pid Nothing, UndefendedDamage pid eid, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
+    windows <- actionWindows
+    pushAll $ windows <> [ResolveShadow eid pid Nothing] <> windows <> [UndefendedDamage pid eid, CheckWindows [mkAfter $ EnemyAttacking eid pid]] <> windows
     pure g
   UndefendedDamage pid eid -> do
     attack <- getEnemyAttack eid
@@ -567,8 +570,13 @@ runGameMessage msg g = case msg of
             $ [targetLabel a [AttackWith a, CheckWindows [mkAfter $ DeclaredAsAttacker a eid], DeclareAttackers pid eid] | a <- attackers]
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid others]]
     pure g
-  -- the attack resolves, or its attackers stop, once no one else is left to ask
-  DeclareRangedAttackers pid eid others | null others || not (Map.member eid g.entities.enemies) -> g <$ push (ResolveAttack pid eid)
+  -- the attack resolves, or its attackers stop, once no one else is left to ask; players
+  -- may act once its attackers are declared and once its damage is dealt
+  DeclareRangedAttackers pid eid others | null others || not (Map.member eid g.entities.enemies) -> do
+    attackers <- selectCharacters AttackingHero AttackingAlly
+    windows <- if null attackers || not (Map.member eid g.entities.enemies) then pure [] else actionWindows
+    pushAll $ windows <> [ResolveAttack pid eid] <> windows
+    pure g
   DeclareRangedAttackers pid eid ~(other : rest) -> do
     attacking <- selectCharacters AttackingHero AttackingAlly
     ranged <- filterM (canFight eid) . filter (`notElem` attacking) =<< withKeyword Ranged =<< readyCharacters other
@@ -1248,6 +1256,10 @@ attackDamage pid eid target n = do
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   pure $ DealDamage (EnemySource eid) target n : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excess > 0]
+
+-- | An action window for each player, in turn order, asked only of those with an action.
+actionWindows :: GameT [Message]
+actionWindows = map OptionalActionWindow <$> getPlayerOrder
 
 -- | The enemy a step of an enemy's attack, or of an attack on one, is about.
 attackingEnemy :: Message -> Maybe EnemyId

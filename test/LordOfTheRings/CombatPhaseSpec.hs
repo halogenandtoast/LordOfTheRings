@@ -44,6 +44,7 @@ spec = describe "Combat phase" do
     run $ BeginPhase CombatPhase
     passActions pid
     chooseLabel "$label.takeAttackUndefended" pid
+    passActions pid
     beravor <- getHeroWithCode "01012"
     chooseTarget pid beravor
     (.damage) <$> getHeroWithCode "01012" `shouldReturn` 3
@@ -63,6 +64,7 @@ spec = describe "Combat phase" do
     getHeroWithCode "01012" >>= chooseTarget pid
     getHeroWithCode "01002" >>= chooseTarget pid
     chooseLabel "$label.doneAttacking" pid
+    passActions pid
     (.damage) <$> spider `shouldReturn` 3
     heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
 
@@ -70,11 +72,13 @@ spec = describe "Combat phase" do
     _ <- engageSpider pid
     run $ PlayerAttacks pid
     for_ ["01012", "01002", "01007"] $ getHeroWithCode >=> chooseTarget pid
+    passActions pid
     getsGame (length . (.entities.enemies)) `shouldReturn` 0
 
   it "names the attacking enemy as the source of the defender question" . gameTest $ \pid -> do
     s <- engageSpider pid
     run $ EnemyAttack pid (toId s)
+    passActions pid
     Just (QuestionLabel _ source _ _) <- getQuestion pid
     source `shouldBe` Just (toTarget s)
 

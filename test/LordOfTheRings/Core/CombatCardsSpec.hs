@@ -125,10 +125,13 @@ spec = do
       run $ BeginPhase CombatPhase
       passActions pid
       chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
       chooseTarget pid =<< hero "01006"
+      passActions pid
       chooseTarget pid =<< hero "01005"
       chooseTarget pid =<< hero "01004"
       chooseLabel "$label.doneAttacking" pid
+      passActions pid
       legolas <- hero "01005"
       chooseAbilityOf pid legolas
       (.progress) <$> getActiveQuest `shouldReturn` 2
@@ -167,6 +170,7 @@ spec = do
       run $ PlayerAttacks pid
       chooseTarget pid gimli
       chooseLabel "$label.doneAttacking" pid
+      passActions pid
       blade <- getsGame (toTarget . fromJustNote "no blade" . headMay . toList . (.entities.attachments))
       chooseAbilityOf pid blade
       (.progress) <$> getActiveQuest `shouldReturn` 1

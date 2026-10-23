@@ -96,6 +96,8 @@ spec = describe "Player choices" do
     (CannotAttackPlayer one `elem` mods, CannotAttack `elem` mods) `shouldBe` (True, False)
     run $ PlaceEnemy eid (EngagedWith two)
     run $ ChooseEnemyAttack two [eid]
+    passActions one
+    passActions two
     isJust <$> getQuestion two `shouldReturn` True
 
   describe "Galadriel" do

@@ -46,6 +46,7 @@ spec = do
       run $ ResolveShadow eid pid Nothing
       riders <- enemiesWith Enemies.wolfRider
       length riders `shouldBe` 1
+      passActions pid
       prompt pid `shouldReturn` Just (ikeyWith "label.declareDefender" (cardVar "enemy" Enemies.wolfRider))
 
   describe "Hill Troll" do
