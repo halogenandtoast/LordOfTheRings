@@ -4,8 +4,8 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
-import LordOfTheRings.Name
 import LordOfTheRings.Keyword (Keyword)
+import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Trait
@@ -33,6 +33,10 @@ instance Semigroup PlayerMatcher where
 
 instance Monoid PlayerMatcher where
   mempty = AnyPlayer
+
+data CharacterMatcher = CharacterWithTitle Name | CharacterWithTrait Trait
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
 
 data HeroMatcher
   = HeroWithId HeroId
@@ -219,7 +223,7 @@ instance Monoid CardMatcher where
 cardIs :: CardDef -> CardMatcher
 cardIs = CardWithCode . cdCardCode
 
-cardMatches :: (HasCardDef a) => CardMatcher -> a -> Bool
+cardMatches :: HasCardDef a => CardMatcher -> a -> Bool
 cardMatches matcher (toCardDef -> def) = case matcher of
   CardWithCode code -> cdCardCode def == code
   CardWithTrait trait -> trait `member` cdCardTraits def

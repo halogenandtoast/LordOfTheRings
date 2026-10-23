@@ -20,6 +20,10 @@ newtype ObjectiveId = ObjectiveId {unObjectiveId :: UUID}
 newtype QuestId = QuestId {unQuestId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 
+data CharacterId = HeroCharacterId HeroId | AllyCharacterId AllyId
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving anyclass (ToJSON, FromJSON, ToJSONKey, FromJSONKey)
+
 newtype HeroId = HeroId {unHeroId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 
