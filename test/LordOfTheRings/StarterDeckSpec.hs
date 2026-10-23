@@ -72,6 +72,9 @@ spec = describe "Starter deck" do
       it ("has every card of the " <> unpack name <> " deck implemented") $ liftIO @IO do
         let implemented code = or [Map.member code allHeroes, Map.member code allAllies, Map.member code allAttachments, Map.member code allEvents]
         filter (not . implemented) (deck.heroes <> map fst deck.cards) `shouldBe` []
+    for_ ["dwarves-of-durin", "elves-of-lorien", "defenders-of-gondor", "riders-of-rohan"] \name ->
+      it ("deals the " <> unpack name <> " deck's 50 cards without its sideboard") $ liftIO @IO do
+        sum . map snd . (.cards) <$> lookup (name :: Text) starterDecks `shouldBe` Just 50
 
   describe "Théodred" do
     it "adds 1 resource to a committed hero after committing" . starterTest $ \pid -> do
