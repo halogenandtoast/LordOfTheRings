@@ -33,7 +33,7 @@ if [ "${1:-}" = "--restart-api" ]; then
   exit 0
 fi
 
-API_PORT=$(pick_port "${API_PORT:-3000}")
+API_PORT=$(pick_port "${API_PORT:-3010}")
 export API_PORT PORT=$API_PORT
 
 [ -d frontend/node_modules ] || { say web "installing npm deps"; (cd frontend && npm install); }
