@@ -99,6 +99,21 @@ spec = describe "Combat phase" do
     prompt `shouldBe` "$label.chooseNextAttack"
     length targets `shouldBe` 2
 
+  it "lets the player choose which engaged enemy to attack next" . gameTest $ \pid -> do
+    _ <- engageSpider pid
+    _ <- setEncounterDeck [Enemies.forestSpider]
+    run RevealEncounterCard
+    second <- getsGame (fromJustNote "no second spider" . headMay . map toId . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies))
+    run $ EngageEnemy pid second
+    run $ PlayerAttacks pid
+    Just (QuestionLabel prompt _ targets _) <- getQuestion pid
+    prompt `shouldBe` "$label.chooseEnemyToAttack"
+    length targets `shouldBe` 2
+    chooseTarget pid second
+    Just (QuestionLabel declare _ declared _) <- getQuestion pid
+    declare `shouldBe` "$label.declareAttackers"
+    declared `shouldBe` [toTarget second]
+
   it "turns each shadow card face up as its attack resolves, blank ones too" . gameTest $ \pid -> do
     eid <- toId <$> engageSpider pid
     shadow <- setEncounterDeck [Locations.oldForestRoad]

@@ -281,6 +281,8 @@ data Message
   | AttackDamage EnemyId Target
   | AddToEncounterDiscard [EncounterCard]
   | PlayerAttacks PlayerId
+  | -- | the player chooses which of these enemies to attack next
+    ChooseAttackTarget PlayerId [EnemyId]
   | DeclareAttackers PlayerId EnemyId
   | -- | the attacking player has declared: the other players still to be asked, in turn,
     -- whether a ranged character of theirs joins the attack

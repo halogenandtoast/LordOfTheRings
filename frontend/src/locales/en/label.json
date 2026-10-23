@@ -14,6 +14,7 @@
   "joinAttackRanged": "Join the attack with a ranged character?",
   "undefendedDamage": "The attack is undefended: which hero takes the damage?",
   "attackStagingAlone": "Attack an enemy in the staging area alone?",
+  "chooseEnemyToAttack": "Choose the next enemy to attack",
   "doNotAttack": "Do not attack",
   "declareAttackers": "Declare attackers",
   "doneAttacking": "Done attacking",

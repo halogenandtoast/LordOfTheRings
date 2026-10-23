@@ -539,7 +539,19 @@ runGameMessage msg g = case msg of
     staged <- if null raiders then pure [] else select EnemyInStagingArea
     -- enemies anyone may attack, wherever they are, as one in an Ithilien Pit
     open' <- filterM (fmap (elem AttackableByAnyCharacter) . getModifiers) =<< select (not_ $ EnemyEngagedWith $ PlayerWithId pid)
-    pushAll $ map (DeclareAttackers pid) (ordNub $ enemies <> staged <> open') <> [AttackStagingAreaAlone pid (toTarget h) | h <- loners]
+    pushAll $ ChooseAttackTarget pid (ordNub $ enemies <> staged <> open') : [AttackStagingAreaAlone pid (toTarget h) | h <- loners]
+    pure g
+  -- the player chooses which enemy to attack next, each once, among those someone could
+  ChooseAttackTarget pid candidates -> do
+    targets <- filterM (fmap notNull . mayAttack pid) [eid | eid <- candidates, Map.member eid g.entities.enemies]
+    case targets of
+      [] -> pure ()
+      [eid] -> push $ DeclareAttackers pid eid
+      _ ->
+        push
+          $ questionLabelWith (ikey "label.chooseEnemyToAttack") Nothing (map toTarget targets) pid
+          $ [targetLabel eid [DeclareAttackers pid eid, ChooseAttackTarget pid (filter (/= eid) targets)] | eid <- targets]
+          <> [Label (ikey "label.doNotAttack") []]
     pure g
   AttackStagingAreaAlone pid attacker -> do
     ready <- elem attacker <$> readyCharacters pid
@@ -553,15 +565,10 @@ runGameMessage msg g = case msg of
       <> [Label (ikey "label.doNotAttack") []]
     pure g
   DeclareAttackers pid eid -> do
-    -- only those allowed to may attack an enemy in the staging area, unless anyone may
-    staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea)
-    open' <- elem AttackableByAnyCharacter <$> getModifiers eid
-    -- one who does not exhaust to attack is still declared only once
-    attacking <- selectCharacters AttackingHero AttackingAlly
     -- then other players' ranged characters may join an attack on an enemy engaged with them
     engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
     others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
-    attackers <- filter (`notElem` attacking) <$> (filterM (canFight eid) =<< (if staged && not open' then stagingAttackers else pure) =<< readyCharacters pid)
+    attackers <- ownAttackers pid eid
     push
       $ if null attackers
         then DeclareRangedAttackers pid eid others
@@ -1256,6 +1263,26 @@ attackDamage pid eid target n = do
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   pure $ DealDamage (EnemySource eid) target n : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excess > 0]
+
+-- | The player's characters that may yet be declared as attackers against the enemy.
+ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
+ownAttackers pid eid = do
+  -- only those allowed to may attack an enemy in the staging area, unless anyone may
+  staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea)
+  open' <- elem AttackableByAnyCharacter <$> getModifiers eid
+  -- one who does not exhaust to attack is still declared only once
+  attacking <- selectCharacters AttackingHero AttackingAlly
+  filter (`notElem` attacking) <$> (filterM (canFight eid) =<< (if staged && not open' then stagingAttackers else pure) =<< readyCharacters pid)
+
+-- | Who may attack the enemy for the player: their own characters, then the ranged
+-- characters of other players, when it is engaged with them.
+mayAttack :: PlayerId -> EnemyId -> GameT [Target]
+mayAttack pid eid = do
+  own <- ownAttackers pid eid
+  engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
+  others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
+  ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyCharacters others
+  pure $ own <> ranged
 
 -- | An action window for each player, in turn order, asked only of those with an action.
 actionWindows :: GameT [Message]
