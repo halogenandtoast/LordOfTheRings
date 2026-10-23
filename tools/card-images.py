@@ -33,7 +33,8 @@ def slug(s):
 
 def main():
     index = json.loads(INDEX.read_text())
-    order = {p["code"]: (p.get("cycleOrder") or 0, p.get("order") or 0) for p in index["packs"]}
+    # packs outside any cycle (promos) are reprints, so they sort after every cycle
+    order = {p["code"]: (p.get("cycleOrder") or 99, p.get("order") or 0) for p in index["packs"]}
     prefix = {}
     for card in index["cards"]:
         code = card.get("ringsdbCode") or ""
