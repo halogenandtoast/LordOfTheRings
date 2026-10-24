@@ -16,6 +16,8 @@ thicketOfSpears = event ThicketOfSpears Cards.thicketOfSpears
 instance RunMessage ThicketOfSpears where
   runMessage msg e@(ThicketOfSpears attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      choosePlayerM pid attrs \p -> phaseModifier attrs p EngagedEnemiesCannotAttack
+      -- only the enemies engaged with them now: one that engages later may attack
+      choosePlayerM pid attrs \p ->
+        traverse_ (cannotAttackEngagedPlayer attrs) =<< select (EnemyEngagedWith $ PlayerWithId p)
       pure e
     _ -> ThicketOfSpears <$> runMessage msg attrs

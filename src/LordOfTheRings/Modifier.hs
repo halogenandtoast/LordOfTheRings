@@ -79,8 +79,6 @@ data ModifierType
     DiscardAtEndOfRound
   | -- | on a hero: while paying for a matching card it has the sphere's resource icon
     GainResourceIconFor CardMatcher Sphere
-  | -- | on a player: the enemies engaged with them cannot attack them
-    EngagedEnemiesCannotAttack
   | -- | on a player: they may declare any number of defenders against each attack
     MayDeclareMultipleDefenders
   | -- | on a player

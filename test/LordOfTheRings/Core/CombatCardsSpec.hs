@@ -7,6 +7,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.I18n (cardVar, ikeyWith)
 import LordOfTheRings.Phase
 import TestImport
 
@@ -93,6 +94,23 @@ spec = do
       passActions pid
       Just (QuestionLabel prompt _ _ _) <- getQuestion pid
       prompt `shouldBe` "$label.declareAttackers"
+
+    it "does not stop an enemy that engages the player after it is played" . tacticsTest $ \pid -> do
+      card <- putCardIntoHand pid Events.thicketOfSpears
+      for_ ["01004", "01005", "01006"] \code -> fund code 2
+      engaged <- engageSpider pid
+      _ <- setEncounterDeck [Enemies.forestSpider]
+      run RevealEncounterCard
+      later <- getsGame (fromJustNote "no second spider" . find (/= engaged) . map toId . toList . (.entities.enemies))
+      run $ BeginPhase CombatPhase
+      playFromHand pid card
+      for_ ["01004", "01005", "01006"] \code -> chooseTarget pid =<< hero code
+      -- the second spider engages only once Thicket of Spears has resolved
+      runOnly $ EngageEnemy pid later
+      passActions pid
+      passActions pid
+      Just (QuestionLabel prompt _ _ _) <- getQuestion pid
+      prompt `shouldBe` ikeyWith "label.declareDefender" (cardVar "enemy" Enemies.forestSpider)
 
     it "cannot be played with fewer than 3 heroes able to pay" . tacticsTest $ \pid -> do
       card <- putCardIntoHand pid Events.thicketOfSpears
