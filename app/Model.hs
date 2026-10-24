@@ -5,7 +5,6 @@
 module Model (module Model) where
 
 import Data.ByteString.Char8 qualified as BS8
-import Data.UUID (UUID)
 import Data.UUID qualified as UUID
 import Database.Persist.Postgresql.JSON ()
 import Database.Persist.Sql
