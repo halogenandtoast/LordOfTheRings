@@ -242,6 +242,9 @@ runGameMessage msg g = case msg of
   Run msgs -> do
     pushAll msgs
     pure g
+  WhileInPlay t msgs -> do
+    when (inPlay g t) $ pushAll msgs
+    pure g
   OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
   -- an ally that has just left play answers its own leaving
   UseCardAbility _ (AllySource aid) _ _ | Just a <- Map.lookup aid (gameLeftPlay g) -> do
@@ -1260,13 +1263,12 @@ runGameMessage msg g = case msg of
         revealing t =
           inLogBlock (RevealBlock card)
             $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType]]
-            <> [CheckWindows [mkWhen $ Revealed t], whenRevealed t]
-            <> doomed
+            <> [CheckWindows [mkWhen $ Revealed t], whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
-        pushAll . (<> surge) =<< revealing (toTarget enemy)
+        pushAll . (<> [WhileInPlay (toTarget enemy) surge]) =<< revealing (toTarget enemy)
         pure
           $ g
           & entitiesL
@@ -1290,6 +1292,8 @@ runGameMessage msg g = case msg of
       _ -> do
         pushAll =<< inLogBlock (RevealBlock card) []
         pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
+  -- an enemy destroyed as it was revealed resolves no more of its revelation (FAQ)
+  AskToResolveWhenRevealed t _ | not (inPlay g t) -> pure g
   AskToResolveWhenRevealed t card -> do
     lead <- getLead
     push
@@ -1697,6 +1701,7 @@ inPlay :: Game -> Target -> Bool
 inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes
   AllyTarget aid -> Map.member aid g.entities.allies
+  EnemyTarget eid -> Map.member eid g.entities.enemies
   _ -> True
 
 -- | Put the card's cost up to be paid, less what the host it was chosen for takes off.

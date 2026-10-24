@@ -146,6 +146,14 @@ spec = do
       eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
       enemyDamage eid `shouldReturn` 1
 
+    it "destroys a revealed enemy before its surge resolves" . tacticsTest $ \pid -> do
+      _ <- setEncounterDeck [Enemies.easternCrows, Enemies.forestSpider]
+      run $ BeginPhase QuestPhase
+      chooseTarget pid =<< hero "01006"
+      chooseLabel "$label.doneCommitting" pid
+      -- the crows are shuffled back, and the spider was never revealed
+      getsGame (length . (.entities.enemies)) `shouldReturn` 0
+
   describe "Dúnhere" do
     it "attacks an enemy in the staging area alone with +1 attack" . gameTestWith (coreDeck "spirit") $ \pid -> do
       _ <- setEncounterDeck [Enemies.forestSpider]

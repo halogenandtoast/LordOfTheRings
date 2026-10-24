@@ -12,9 +12,11 @@ thalin = hero Thalin Cards.thalin
 
 -- | While Thalin is committed to a quest, deal 1 damage to each enemy as it is revealed by
 -- the encounter deck.
+--
+-- He deals it before its When Revealed and keywords resolve (FAQ errata).
 instance HasAbilities Thalin where
   getAbilities (Thalin a) =
-    [restricted a 1 (HeroExists $ HeroWithId a.id <> CommittedHero) $ silent $ EnemyRevealedWindow After]
+    [restricted a 1 (HeroExists $ HeroWithId a.id <> CommittedHero) $ silent $ EnemyRevealedWindow When]
 
 instance RunMessage Thalin where
   runMessage msg h@(Thalin attrs) = case msg of

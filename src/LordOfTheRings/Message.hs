@@ -313,6 +313,8 @@ data Message
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int
   | Run [Message]
+  | -- | the messages, unless the card has left play by the time they run
+    WhileInPlay Target [Message]
   | DrawCards Drawing
   | Mulligan PlayerId
   | -- | log only: what is narrated until the block closes is filed under it
