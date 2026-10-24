@@ -50,10 +50,10 @@ shadowKey =
 mendor :: CardDef
 mendor =
   ((objective "RC002" "Mendor" PassageThroughMirkwoodCampaign 1)
-      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 5 })
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 1, cdDefense = Just 1, cdHitPoints = Just 3 })
     { cdUnique = True
     , cdCardTraits = setFromList [Scout, Silvan]
-    , cdKeywords = setFromList [Ranged, Sentinel]
+    , cdKeywords = setFromList [Ranged]
     }
 
 signsOfGollum :: CardDef
