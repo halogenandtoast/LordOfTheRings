@@ -495,7 +495,7 @@ runGameMessage msg g = case msg of
         , CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
         ]
       <> windows
-      <> [ResolveShadow eid pid (Just defender)]
+      <> [ResolveShadow eid pid [defender]]
       <> windows
       <> [ AttackDamage eid defender
          , CheckWindows [mkAfter $ EnemyAttacking eid pid, mkAfter $ DefendedAttack defender eid]
@@ -537,10 +537,10 @@ runGameMessage msg g = case msg of
     windows <- actionWindows
     push $ case chosen of
       [] -> UndefendedAttack pid eid
-      first : _ ->
+      _ ->
         Run
           $ windows
-          <> [ResolveShadow eid pid (Just first)]
+          <> [ResolveShadow eid pid chosen]
           <> windows
           <> [ DefendedByMany pid eid chosen
              , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
@@ -584,7 +584,7 @@ runGameMessage msg g = case msg of
     windows <- actionWindows
     pushAll
       $ windows
-      <> [ResolveShadow eid pid Nothing]
+      <> [ResolveShadow eid pid []]
       <> windows
       <> [UndefendedDamage pid eid, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
       <> windows
@@ -744,7 +744,7 @@ runGameMessage msg g = case msg of
     lead <- getLead
     pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)
     pure g
-  ResolveShadow eid pid mDefender -> do
+  ResolveShadow eid pid defenders -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       -- each shadow card turns face up, and one with an effect resolves it
       pushAll
@@ -753,8 +753,8 @@ runGameMessage msg g = case msg of
               : if cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
-                      : [mkWhen $ ShadowEffectAgainst d | Just d <- [mDefender]]
-                  , ResolveShadowCard (ecId card) eid pid mDefender
+                      : [mkWhen $ ShadowEffectAgainst d | d <- defenders]
+                  , ResolveShadowCard (ecId card) eid pid defenders
                   ]
                 else []
           | card <- enemy.shadowCards
@@ -764,11 +764,11 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       when (any ((== cid) . ecId) enemy.shadowCards) $ send $ FlipCard cid
     pure g
-  ResolveShadowCard cid eid pid mDefender -> do
+  ResolveShadowCard cid eid pid defenders -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
         push $ CheckWindows [mkAfter $ ShadowEffectResolved cid eid]
-        resolveShadowEffect card (ResolveShadowEffect cid eid pid mDefender)
+        resolveShadowEffect card (ResolveShadowEffect cid eid pid defenders)
     pure g
   ShuffleIntoEncounterDeck (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
     deck <-

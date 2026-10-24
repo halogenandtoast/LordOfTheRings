@@ -22,7 +22,7 @@ instance HasModifiersFor BlackForestBatsRhosgobel where
 -- | Shadow: If this attack is undefended, the damage must be placed on Wilyador.
 instance RunMessage BlackForestBatsRhosgobel where
   runMessage msg e@(BlackForestBatsRhosgobel attrs) = case msg of
-    ResolveShadowEffect cid eid _ Nothing | cid == attrs.cardId -> do
+    ResolveShadowEffect cid eid _ [] | cid == attrs.cardId -> do
       wilyador <- select (AllyWithCardCode $ toCardCode Objectives.wilyador)
       for_ wilyador $ undefendedDamageTo attrs eid
       pure e

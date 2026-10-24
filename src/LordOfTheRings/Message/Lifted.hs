@@ -195,8 +195,8 @@ returnFromDiscardToHand pid cid = push $ ReturnFromDiscardToHand pid cid
 {- | A shadow effect's two values: the first when the attack is undefended (no defender),
 the second otherwise.
 -}
-ifUndefended :: Maybe Target -> a -> a -> a
-ifUndefended defender whenUndefended otherwise' = maybe whenUndefended (const otherwise') defender
+ifUndefended :: [Target] -> a -> a -> a
+ifUndefended defenders whenUndefended otherwise' = if null defenders then whenUndefended else otherwise'
 
 {- | The enemy gets +N attack until its attack resolves, as "attacking enemy gets +1
 attack" reads.

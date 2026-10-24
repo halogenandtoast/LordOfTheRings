@@ -18,7 +18,7 @@ instance RunMessage Rockslide where
       committed <- selectCharacters CommittedHero CommittedAlly
       for_ committed \c -> dealDamage attrs c 2
       pure t
-    ResolveShadowEffect cid eid pid (Just _) | cid == attrs.cardId -> do
+    ResolveShadowEffect cid eid pid (_ : _) | cid == attrs.cardId -> do
       makeUndefended pid eid
       pure t
     _ -> Rockslide <$> runMessage msg attrs

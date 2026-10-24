@@ -121,7 +121,7 @@ spec = do
       eid <- theEnemy
       [shadow] <- traverse genEncounterCard [Enemies.dolGuldurOrcs]
       run $ AttachShadowCard eid shadow
-      run $ ResolveShadow eid pid Nothing
+      run $ ResolveShadow eid pid []
       getEnemyAttack eid `shouldReturn` 5
 
   describe "East Bight Patrol" do
@@ -131,7 +131,7 @@ spec = do
       threat <- (.threat) <$> getPlayer pid
       [shadow] <- traverse genEncounterCard [Enemies.eastBightPatrol]
       run $ AttachShadowCard eid shadow
-      run $ ResolveShadow eid pid Nothing
+      run $ ResolveShadow eid pid []
       (.threat) <$> getPlayer pid `shouldReturn` threat + 3
       getEnemyAttack eid `shouldReturn` 3
 

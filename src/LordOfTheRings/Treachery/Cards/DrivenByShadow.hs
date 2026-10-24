@@ -21,7 +21,7 @@ instance RunMessage DrivenByShadow where
       pure t
     ResolveShadowEffect cid eid pid defender | cid == attrs.cardId -> do
       case defender of
-        Just character -> chooseAndDiscard (EnemySource eid) pid =<< getAttachmentsOn character
-        Nothing -> traverse_ discard =<< getAttachmentsControlledBy pid
+        [] -> traverse_ discard =<< getAttachmentsControlledBy pid
+        defenders -> chooseAndDiscard (EnemySource eid) pid . concat =<< traverse getAttachmentsOn defenders
       pure t
     _ -> DrivenByShadow <$> runMessage msg attrs

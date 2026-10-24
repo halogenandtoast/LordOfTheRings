@@ -22,7 +22,7 @@ instance HasModifiersFor MirkwoodFlock where
 -- | Shadow: If this attack is undefended, the damage must be placed on Wilyador.
 instance RunMessage MirkwoodFlock where
   runMessage msg e@(MirkwoodFlock attrs) = case msg of
-    ResolveShadowEffect cid eid _ Nothing | cid == attrs.cardId -> do
+    ResolveShadowEffect cid eid _ [] | cid == attrs.cardId -> do
       wilyador <- select (AllyWithCardCode $ toCardCode Objectives.wilyador)
       for_ wilyador $ undefendedDamageTo attrs eid
       pure e

@@ -45,7 +45,7 @@ spec = do
       run $ EngageEnemy pid eid
       [shadow] <- traverse genEncounterCard [Enemies.dolGuldurOrcs]
       run $ AttachShadowCard eid shadow
-      run $ ResolveShadow eid pid Nothing
+      run $ ResolveShadow eid pid []
       gloin <- toTarget <$> getHeroWithCode "01003"
       chooseTarget pid gloin
       getsGame (length . (.entities.heroes)) `shouldReturn` 2
@@ -58,7 +58,7 @@ spec = do
       eid <- theEnemy Enemies.hummerhorns
       [shadow] <- traverse genEncounterCard [Enemies.cavernGuardian]
       run $ AttachShadowCard eid shadow
-      run $ ResolveShadow eid pid Nothing
+      run $ ResolveShadow eid pid []
       getsGame (length . (.entities.attachments)) `shouldReturn` 0
 
   describe "Under the Shadow" do

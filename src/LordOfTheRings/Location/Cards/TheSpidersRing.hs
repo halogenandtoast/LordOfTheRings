@@ -16,7 +16,7 @@ theSpidersRing = location TheSpidersRing Cards.theSpidersRing
 -- area. The Spider's Ring becomes the active location.
 instance RunMessage TheSpidersRing where
   runMessage msg l@(TheSpidersRing a) = case msg of
-    ResolveShadowEffect cid eid _ Nothing | cid == a.cardId -> do
+    ResolveShadowEffect cid eid _ [] | cid == a.cardId -> do
       putShadowLocationIntoPlay eid cid
       pure l
     _ -> TheSpidersRing <$> runMessage msg a

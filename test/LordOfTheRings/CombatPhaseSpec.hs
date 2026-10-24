@@ -118,6 +118,6 @@ spec = describe "Combat phase" do
     eid <- toId <$> engageSpider pid
     shadow <- setEncounterDeck [Locations.oldForestRoad]
     run DealShadowCards
-    run $ ResolveShadow eid pid Nothing
+    run $ ResolveShadow eid pid []
     engaged <- getsGame (fromJustNote "gone" . lookup eid . mapToList . (.entities.enemies))
     enemyShadowRevealed (toAttrs engaged) `shouldBe` map (.id) shadow

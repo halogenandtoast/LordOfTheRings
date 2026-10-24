@@ -285,14 +285,15 @@ data Message
     SpendResourcesFromDistinctHeroes PlayerId Sphere Int [HeroId]
   | UndefendedAttack PlayerId EnemyId
   | UndefendedDamage PlayerId EnemyId
-  | ResolveShadow EnemyId PlayerId (Maybe Target)
+  | -- | the attack's defenders, none when undefended
+    ResolveShadow EnemyId PlayerId [Target]
   | -- | the shadow card dealt to the enemy turns face up
     RevealShadowCard EnemyId CardId
   | -- | the player chooses which of these engaged enemies attacks next
     ChooseEnemyAttack PlayerId [EnemyId]
-  | ResolveShadowEffect CardId EnemyId PlayerId (Maybe Target)
+  | ResolveShadowEffect CardId EnemyId PlayerId [Target]
   | -- | resolve one shadow card dealt to the enemy, unless it was cancelled
-    ResolveShadowCard CardId EnemyId PlayerId (Maybe Target)
+    ResolveShadowCard CardId EnemyId PlayerId [Target]
   | AttackDamage EnemyId Target
   | AddToEncounterDiscard [EncounterCard]
   | PlayerAttacks PlayerId

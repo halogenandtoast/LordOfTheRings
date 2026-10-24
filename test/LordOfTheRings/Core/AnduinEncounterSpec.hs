@@ -1,10 +1,12 @@
 module LordOfTheRings.Core.AnduinEncounterSpec (spec) where
 
 import LordOfTheRings.Enemy (EnemyAttrs (..))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getDefense)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Modifier (ModifierType (MayDeclareMultipleDefenders))
 import LordOfTheRings.Phase
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (..), mkAfter, mkWhen)
@@ -44,7 +46,7 @@ spec = do
       [shadow] <- traverse genEncounterCard [Enemies.wolfRider]
       run $ AttachShadowCard eid shadow
       _ <- setEncounterDeck [Locations.forestGate]
-      run $ ResolveShadow eid pid Nothing
+      run $ ResolveShadow eid pid []
       riders <- enemiesWith Enemies.wolfRider
       length riders `shouldBe` 1
       passActions pid
@@ -100,7 +102,7 @@ spec = do
       eid <- theEnemy Enemies.hummerhorns
       [shadow] <- traverse genEncounterCard [Enemies.wargs]
       run $ AttachShadowCard eid shadow
-      run $ ResolveShadow eid pid Nothing
+      run $ ResolveShadow eid pid []
       getEnemyAttack eid `shouldReturn` 4
 
   describe "Misty Mountain Goblins" do
@@ -134,10 +136,26 @@ spec = do
       defender <- hero "01012"
       base <- getDefense defender
       run . AttachShadowCard eid =<< genEncounterCard Treacheries.despair
-      run $ ResolveShadow eid pid (Just defender)
+      run $ ResolveShadow eid pid [defender]
       getDefense defender `shouldReturn` 0
       run $ CheckWindows [mkAfter $ EnemyAttacking eid pid]
       getDefense defender `shouldReturn` base
+
+    it "as a shadow ignores the defense of each defender" . gameTest $ \pid -> do
+      reveal Enemies.forestSpider []
+      eid <- theEnemy Enemies.forestSpider
+      run $ EngageEnemy pid eid
+      run . AttachShadowCard eid =<< genEncounterCard Treacheries.despair
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [MayDeclareMultipleDefenders] UntilEndOfPhase
+      beravor <- hero "01012"
+      eowyn <- hero "01007"
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseTarget pid beravor
+      chooseTarget pid eowyn
+      chooseLabel "$label.doneDeclaringDefenders" pid
+      passActions pid
+      traverse getDefense [beravor, eowyn] `shouldReturn` [0, 0]
 
   describe "Massing at Night" do
     it "reveals an additional card for each player" . gameTest $ \_ -> do
