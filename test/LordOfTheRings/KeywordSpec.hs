@@ -131,22 +131,26 @@ spec = describe "Keywords and limits" do
       Just (QuestionLabel prompt _ _ _) <- getQuestion one
       prompt `shouldBe` "$label.undefendedDamage"
 
-    it "joins the defenders when the attacked player may declare several" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    it "is not offered once the attacked player declares several defenders" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
       eid <- engagedSpider one
       naith <- putAllyIntoPlay two Allies.defenderOfTheNaith
-      beravor <- heroOf one "01012"
       run $ CreateEffect $ Effect GameSource (PlayerTarget one) [MayDeclareMultipleDefenders] UntilEndOfPhase
       run $ EnemyAttack one eid
       passActions one
       passActions two
-      chooseTarget one beravor
+      chooseTarget one =<< heroOf one "01012"
       chooseLabel "$label.doneDeclaringDefenders" one
-      chooseTarget two naith
+      questionTargets two >>= (`shouldSatisfy` notElem naith)
+
+    it "may defend when the attacked player may declare several but declares none" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      eid <- engagedSpider one
+      naith <- putAllyIntoPlay two Allies.defenderOfTheNaith
+      run $ CreateEffect $ Effect GameSource (PlayerTarget one) [MayDeclareMultipleDefenders] UntilEndOfPhase
+      run $ EnemyAttack one eid
       passActions one
       passActions two
-      targets <- questionTargets one
-      targets `shouldSatisfy` elem naith
-      targets `shouldSatisfy` elem beravor
+      chooseLabel "$label.takeAttackUndefended" one
+      questionTargets two >>= (`shouldSatisfy` elem naith)
 
     it "is gained by Guthlaf while a Gondor hero is in play" . twoPlayerTest (coreDeck "lore") $ \one two -> do
       eid <- engagedSpider one

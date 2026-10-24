@@ -524,7 +524,8 @@ runGameMessage msg g = case msg of
               ]
             <> [ Label
                    (ikey $ if null chosen then "label.takeAttackUndefended" else "label.doneDeclaringDefenders")
-                   [DeclareSentinels pid eid chosen others]
+                   -- sentinels may defend only once the attacked player declares no defenders
+                   [DeclareSentinels pid eid chosen (if null chosen then others else [])]
                ]
         else
           questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
