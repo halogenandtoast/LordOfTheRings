@@ -6,6 +6,7 @@ import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Classes.HasQueue (pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Matcher (characterController)
 import LordOfTheRings.Matcher.Types (AttachMatcher (PlayIntoStagingArea))
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier
@@ -17,7 +18,9 @@ import LordOfTheRings.Window
 
 instance RunMessage AttachmentAttrs where
   runMessage msg attrs = case msg of
-    AttachCard aid host | aid == attrs.id -> pure $ attrs & placementL .~ AttachedTo host
+    AttachCard aid host | aid == attrs.id -> do
+      controller <- characterController host
+      pure $ attrs & placementL .~ AttachedTo host & controllerL .~ controller
     -- a Trap waiting in the staging area attaches to the next enemy that can take it
     CheckWindows ws
       | attrs.placement == StagingArea

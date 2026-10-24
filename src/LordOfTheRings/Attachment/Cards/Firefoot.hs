@@ -28,7 +28,7 @@ instance HasModifiersFor Firefoot where
 -- enemy.
 instance HasAbilities Firefoot where
   getAbilities (Firefoot a) =
-    [ restricted a 1 (exists $ EnemyEngagedWith (PlayerWithId a.owner) <> not_ UniqueEnemy)
+    [ restricted a 1 (exists $ EnemyEngagedWith (PlayerWithId a.controller) <> not_ UniqueEnemy)
         $ ResponseAbility (AttackedAloneWithExcessWindow After host) (exhaustCost a)
     | AttachedTo host <- [a.placement]
     ]

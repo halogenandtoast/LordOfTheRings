@@ -17,7 +17,7 @@ dwarfPipe = attachment DwarfPipe Cards.dwarfPipe & attachTo (AttachToCharacterMa
 -- card on the bottom of your deck.
 instance HasAbilities DwarfPipe where
   getAbilities (DwarfPipe a) =
-    [mkAbility a 1 $ ResponseAbility (DiscardedFromDeckWindow After a.owner Nothing) (ExhaustCost $ toTarget a)]
+    [mkAbility a 1 $ ResponseAbility (DiscardedFromDeckWindow After a.controller Nothing) (ExhaustCost $ toTarget a)]
 
 instance RunMessage DwarfPipe where
   runMessage msg s@(DwarfPipe a) = case msg of

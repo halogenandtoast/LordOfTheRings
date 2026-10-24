@@ -208,7 +208,7 @@ abilityController ab = go ab.abilitySource
         =<< (Map.lookup aid g.entities.allies <|> Map.lookup aid (gameLeftPlay g))
     PlayerSource pid -> pure $ Just pid
     AttachmentSource aid ->
-      fmap (attachmentOwner . toAttrs) . Map.lookup aid <$> getsGame (entitiesAttachments . gameEntities)
+      fmap ((.controller) . toAttrs) . Map.lookup aid <$> getsGame (entitiesAttachments . gameEntities)
     -- encounter cards' responses are the first player's to make
     _ -> Just <$> getLead
 

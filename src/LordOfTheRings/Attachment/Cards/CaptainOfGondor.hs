@@ -15,7 +15,7 @@ captainOfGondor = attachment CaptainOfGondor Cards.captainOfGondor & attachTo (A
 -- attached hero +1 attack and +1 defense until the end of the round.
 instance HasAbilities CaptainOfGondor where
   getAbilities (CaptainOfGondor a) =
-    [mkAbility a 1 $ ResponseAbility (OptionallyEngagedWindow After a.owner) (ExhaustCost $ toTarget a) | AttachedTo _ <- [a.placement]]
+    [mkAbility a 1 $ ResponseAbility (OptionallyEngagedWindow After a.controller) (ExhaustCost $ toTarget a) | AttachedTo _ <- [a.placement]]
 
 instance RunMessage CaptainOfGondor where
   runMessage msg c@(CaptainOfGondor attrs) = case msg of

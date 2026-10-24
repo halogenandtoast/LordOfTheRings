@@ -19,4 +19,4 @@ bowOfTheGaladhrim =
 -- engaged with you.)
 instance HasModifiersFor BowOfTheGaladhrim where
   getModifiersFor (BowOfTheGaladhrim a) = withHost a \host ->
-    modified a host [AttackModifier 1, AttackBonusAgainstMatching (not_ $ EnemyEngagedWith $ PlayerWithId a.owner) 1]
+    modified a host [AttackModifier 1, AttackBonusAgainstMatching (not_ $ EnemyEngagedWith $ PlayerWithId a.controller) 1]

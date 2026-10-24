@@ -44,6 +44,8 @@ data AttachmentAttrs = AttachmentAttrs
   , attachmentPlacement :: Placement
   , attachmentTokens :: Tokens
   , attachmentOwner :: PlayerId
+  , attachmentController :: Maybe PlayerId
+  -- ^ the controller of the character it is attached to, who controls it (FAQ 1.38)
   , attachmentExhausted :: Bool
   , attachmentAttachTo :: AttachMatcher
   , attachmentCriteria :: Criterion
@@ -57,7 +59,7 @@ instance ToJSON AttachmentAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "attachment")
 
 instance FromJSON AttachmentAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "attachment") . withDefaults [("criteria", toJSON NoCriteria)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "attachment") . withDefaults [("criteria", toJSON NoCriteria), ("controller", toJSON (Nothing :: Maybe PlayerId))]
 
 attachment :: (AttachmentAttrs -> a) -> CardDef -> AttachmentCard a
 attachment f cardDef =
@@ -72,6 +74,7 @@ attachment f cardDef =
             , attachmentPlacement = Unplaced
             , attachmentTokens = mempty
             , attachmentOwner = pid
+            , attachmentController = Nothing
             , attachmentExhausted = False
             , attachmentAttachTo = AttachToHero AnyHero
             , attachmentCriteria = NoCriteria
@@ -167,6 +170,10 @@ instance HasField "attachTo" AttachmentAttrs AttachMatcher where
 
 instance HasField "owner" AttachmentAttrs PlayerId where
   getField = attachmentOwner
+
+-- | Who controls it: the player who played it, until it is attached to a character.
+instance HasField "controller" AttachmentAttrs PlayerId where
+  getField a = fromMaybe a.owner a.attachmentController
 
 instance HasField "cardId" AttachmentAttrs CardId where
   getField = attachmentCardId

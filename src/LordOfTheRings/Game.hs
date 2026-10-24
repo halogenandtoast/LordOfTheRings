@@ -1491,10 +1491,7 @@ checkRestricted g host = do
   let restrictedOn =
         [toTarget x | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
           <> [toTarget o | o <- toList g.entities.objectives, o.placement == AttachedTo host, isRestricted o]
-  controller <- case host of
-    HeroTarget hid -> Just . (.owner) <$> getHero hid
-    AllyTarget aid -> placementController . (.placement) <$> getAlly aid
-    _ -> pure Nothing
+  controller <- characterController host
   for_ controller \pid ->
     when (length restrictedOn > 2)
       $ push

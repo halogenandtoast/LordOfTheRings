@@ -7,6 +7,7 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Attachment (attachmentCriteriaFor, cardHosts)
 import LordOfTheRings.Helpers.Window (passesCriteria)
+import LordOfTheRings.Matcher (getAttachmentsControlledBy)
 import LordOfTheRings.Modifier (ModifierType (MayDeclareMultipleDefenders))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase
@@ -46,6 +47,15 @@ heroOf pid code =
 
 spec :: Spec
 spec = describe "Keywords and limits" do
+  it "an attachment played on another player's hero is controlled by that player" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    legolas <- heroOf two "01005"
+    courage <- putAttachmentOn one Attachments.unexpectedCourage legolas
+    case courage of
+      AttachmentTarget aid -> run $ AttachCard aid legolas
+      _ -> error "not an attachment"
+    getAttachmentsControlledBy two `shouldReturn` [courage]
+    getAttachmentsControlledBy one `shouldReturn` []
+
   describe "Restricted" do
     it "makes the controller discard one of three restricted attachments" . gameTest $ \pid -> do
       beravor <- toTarget <$> getHeroWithCode "01012"

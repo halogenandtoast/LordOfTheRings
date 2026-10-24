@@ -18,6 +18,6 @@ valiantSword =
 instance HasModifiersFor ValiantSword where
   getModifiersFor (ValiantSword a) = case a.placement of
     AttachedTo host -> do
-      threat <- (.threat) <$> getPlayer a.owner
+      threat <- (.threat) <$> getPlayer a.controller
       modified a host [AttackModifier $ if threat >= 40 then 2 else 1]
     _ -> pure ()

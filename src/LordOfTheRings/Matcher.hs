@@ -358,13 +358,20 @@ getAttachmentsOn host =
         . gameEntities
     )
 
+-- | The player who controls the character, if it is one.
+characterController :: HasGame m => Target -> m (Maybe PlayerId)
+characterController = \case
+  HeroTarget hid -> Just . (.owner) <$> getHero hid
+  AllyTarget aid -> placementController . (.placement) <$> getAlly aid
+  _ -> pure Nothing
+
 getAttachmentsControlledBy :: HasGame m => PlayerId -> m [Target]
 getAttachmentsControlledBy pid = do
   es <- getsGame gameEntities
   heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
   -- a claimed objective counts as an attachment of the hero it is attached to
   pure
-    $ [toTarget a | a <- toList es.attachments, (toAttrs a).owner == pid]
+    $ [toTarget a | a <- toList es.attachments, (toAttrs a).controller == pid]
     <> [toTarget o | o <- toList es.objectives, objectiveOn o `elem` map Just heroes]
  where
   objectiveOn o = case o.placement of

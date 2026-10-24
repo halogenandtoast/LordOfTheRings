@@ -18,7 +18,7 @@ legacyOfDurin = attachment LegacyOfDurin Cards.legacyOfDurin & attachTo (AttachT
 instance HasAbilities LegacyOfDurin where
   getAbilities (LegacyOfDurin a) =
     [ mkAbility a 1
-        $ ResponseAbility (PlayedCardFromHandWindow After a.owner $ CardWithTrait Dwarf <> CardWithType AllyType) (ExhaustCost $ toTarget a)
+        $ ResponseAbility (PlayedCardFromHandWindow After a.controller $ CardWithTrait Dwarf <> CardWithType AllyType) (ExhaustCost $ toTarget a)
     ]
 
 instance RunMessage LegacyOfDurin where

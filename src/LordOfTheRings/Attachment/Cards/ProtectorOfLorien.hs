@@ -14,7 +14,7 @@ protectorOfLorien = attachment ProtectorOfLorien Cards.protectorOfLorien
 -- willpower until the end of the phase. Limit 3 times per phase.
 instance HasAbilities ProtectorOfLorien where
   getAbilities (ProtectorOfLorien a) =
-    [ limited (GroupLimit PerPhase 3) $ mkAbility a 1 $ ActionAbility (DiscardFromHandCost a.owner 1)
+    [ limited (GroupLimit PerPhase 3) $ mkAbility a 1 $ ActionAbility (DiscardFromHandCost a.controller 1)
     | AttachedTo _ <- [a.placement]
     ]
 
