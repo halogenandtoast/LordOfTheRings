@@ -1,17 +1,19 @@
-module LordOfTheRings.Attachment.Runner (module LordOfTheRings.Attachment.Runner, module X) where
+{-# OPTIONS_GHC -Wno-orphans #-}
 
-import LordOfTheRings.Classes.RunMessage
+module LordOfTheRings.Attachment.Runner (module X) where
+
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Classes.HasQueue (pushWhen)
+import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher.Types (AttachMatcher (PlayIntoStagingArea))
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier
-import LordOfTheRings.Window
 import LordOfTheRings.Placement
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window
 
 instance RunMessage AttachmentAttrs where
   runMessage msg attrs = case msg of

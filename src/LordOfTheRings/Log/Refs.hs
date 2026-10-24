@@ -15,7 +15,6 @@ import LordOfTheRings.Id
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Phase
-import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target

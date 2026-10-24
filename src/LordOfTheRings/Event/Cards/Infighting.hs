@@ -1,7 +1,7 @@
 module LordOfTheRings.Event.Cards.Infighting (infighting) where
 
 import LordOfTheRings.Event.CardDefs qualified as Cards
-import LordOfTheRings.Event.Import.Lifted
+import LordOfTheRings.Event.Import.Lifted hiding (to)
 
 newtype Infighting = Infighting EventAttrs
   deriving anyclass (IsEvent, HasModifiersFor)

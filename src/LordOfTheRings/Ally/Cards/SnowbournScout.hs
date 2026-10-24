@@ -2,8 +2,6 @@ module LordOfTheRings.Ally.Cards.SnowbournScout (snowbournScout) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Cards
 import LordOfTheRings.Ally.Import.Lifted
-import LordOfTheRings.Matcher
-import LordOfTheRings.Token
 
 newtype SnowbournScout = SnowbournScout AllyAttrs
   deriving anyclass (IsAlly, HasModifiersFor)

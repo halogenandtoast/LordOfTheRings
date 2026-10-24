@@ -1,7 +1,6 @@
 module LordOfTheRings.Quest.Cards.AmbushOnTheShore (ambushOnTheShore) where
 
 import LordOfTheRings.Matcher
-import LordOfTheRings.Outcome
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 

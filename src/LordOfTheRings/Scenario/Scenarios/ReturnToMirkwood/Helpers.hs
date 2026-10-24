@@ -15,10 +15,10 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Placement (Placement (InPlayArea))
-import LordOfTheRings.Prelude
+import LordOfTheRings.Prelude hiding (optional)
 
 -- | Gollum, while he is in play, and the player guarding him.
-gollum :: (HasGame m) => m (Maybe (ObjectiveId, Maybe PlayerId))
+gollum :: HasGame m => m (Maybe (ObjectiveId, Maybe PlayerId))
 gollum =
   getsGame
     $ fmap (\o -> (toId o, guardOf o.placement))
@@ -30,22 +30,24 @@ gollum =
     InPlayArea pid -> Just pid
     _ -> Nothing
 
-getGollum :: (HasGame m) => m (Maybe ObjectiveId)
+getGollum :: HasGame m => m (Maybe ObjectiveId)
 getGollum = fmap fst <$> gollum
 
-getGuard :: (HasGame m) => m (Maybe PlayerId)
+getGuard :: HasGame m => m (Maybe PlayerId)
 getGuard = (>>= snd) <$> gollum
 
--- | The players a Tantrum card's effect reaches: the player guarding Gollum, or every
--- player while Dry Watercourse is the active location.
-tantrumTargets :: (HasGame m) => m [PlayerId]
+{- | The players a Tantrum card's effect reaches: the player guarding Gollum, or every
+player while Dry Watercourse is the active location.
+-}
+tantrumTargets :: HasGame m => m [PlayerId]
 tantrumTargets = do
   dry <- selectAny (IsActiveLocation <> LocationWithCardCode (toCardCode Locations.dryWatercourse))
   if dry then getRemainingPlayers else maybeToList <$> getGuard
 
--- | The player guarding Gollum chooses a new player to guard him, if able; when it is
--- optional they may keep him. Not while The Spider's Ring is the active location.
-passGollum :: (ReverseQueue m) => Bool -> m ()
+{- | The player guarding Gollum chooses a new player to guard him, if able; when it is
+optional they may keep him. Not while The Spider's Ring is the active location.
+-}
+passGollum :: ReverseQueue m => Bool -> m ()
 passGollum optional = do
   locked <- selectAny (IsActiveLocation <> LocationWithCardCode (toCardCode Locations.theSpidersRing))
   gollum >>= \case

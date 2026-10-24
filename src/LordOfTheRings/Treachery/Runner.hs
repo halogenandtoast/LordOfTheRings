@@ -1,12 +1,14 @@
-module LordOfTheRings.Treachery.Runner (module LordOfTheRings.Treachery.Runner, module X) where
+{-# OPTIONS_GHC -Wno-orphans #-}
+
+module LordOfTheRings.Treachery.Runner (module X) where
 
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Treachery.Types as X
 
 instance RunMessage TreacheryAttrs where
   runMessage msg attrs = case msg of

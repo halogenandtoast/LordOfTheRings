@@ -3,20 +3,19 @@ module LordOfTheRings.Message (module LordOfTheRings.Message) where
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Card
 import LordOfTheRings.Effect
-import LordOfTheRings.Outcome
-import LordOfTheRings.Placement
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Matcher.Types (CardMatcher)
 import LordOfTheRings.Modifier (ModifierType)
+import LordOfTheRings.Outcome
+import LordOfTheRings.Phase
+import LordOfTheRings.Placement
+import LordOfTheRings.Prelude
+import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Phase
-import LordOfTheRings.Prelude
-import LordOfTheRings.Question
-import LordOfTheRings.Trait
 import LordOfTheRings.Window
 
 data DeckSignifier = EncounterDeck
@@ -42,9 +41,10 @@ data EscapeStat = EscapeWillpower | EscapeAttack
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
--- | An escape test: the player commits characters by exhausting them, then cards are
--- dealt from the encounter deck, and the test fails if their escape values come to more
--- than the committed characters' total.
+{- | An escape test: the player commits characters by exhausting them, then cards are
+dealt from the encounter deck, and the test fails if their escape values come to more
+than the committed characters' total.
+-}
 data EscapeTest = EscapeTest
   { escapePlayer :: PlayerId
   , escapeSource :: Source
@@ -53,11 +53,11 @@ data EscapeTest = EscapeTest
   , escapeCommitted :: [Target]
   , escapeOnFail :: [Message]
   , escapeOnPass :: [Message]
-  , -- | for a test the party makes: the players still to commit after this one
-    escapeParty :: [PlayerId]
+  , escapeParty :: [PlayerId]
+  -- ^ for a test the party makes: the players still to commit after this one
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON)
+  deriving anyclass ToJSON
 
 instance FromJSON EscapeTest where
   parseJSON = genericParseJSON defaultOptions . withDefaults [("escapeParty", toJSON ([] :: [PlayerId]))]
@@ -73,15 +73,17 @@ data Message
   | EliminatePlayer PlayerId
   | GameOver Outcome
   | Discard Target
-  | -- | a character leaves play now, the When window for its leaving having closed: the
-    -- Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it
+  | {- | a character leaves play now, the When window for its leaving having closed: the
+    Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it
+    -}
     LeavePlay Message
   | -- | the window for the ally's leaving play has closed: its abilities answer no more
     ForgetLeftPlay AllyId
   | DealDamage Source Target Int
   | HealDamage Source Target Int
-  | -- | the player looks at the top card of the encounter deck, and may move it to the
-    -- bottom when the flag says so
+  | {- | the player looks at the top card of the encounter deck, and may move it to the
+    bottom when the flag says so
+    -}
     LookAtTopOfEncounterDeck PlayerId Source Bool
   | MoveTopOfEncounterDeckToBottom
   | DiscardFromHand PlayerId CardId
@@ -129,8 +131,9 @@ data Message
     PlayAtNoCost PlayerId PlayerCard
   | -- | the card is played from its owner's hand without paying its cost
     PlayFromHandAtNoCost PlayerId CardId
-  | -- | the top card of the player's deck is revealed: they may play it at no cost, if
-    -- able, or else it goes to the bottom of their deck
+  | {- | the top card of the player's deck is revealed: they may play it at no cost, if
+    able, or else it goes to the bottom of their deck
+    -}
     PlayTopOfDeckAtNoCostOrBottom PlayerId Source
   | RemoveFromDeck PlayerId CardId
   | MoveToBottomOfDeck PlayerId CardId
@@ -154,8 +157,9 @@ data Message
   | AdvanceToQuest EncounterCard
   | RemoveFromEncounterDeck EncounterCard
   | RemoveFromEncounterDiscard EncounterCard
-  | -- | the player searches the encounter deck and discard pile for a matching card to
-    -- add to the staging area, then the deck is shuffled
+  | {- | the player searches the encounter deck and discard pile for a matching card to
+    add to the staging area, then the deck is shuffled
+    -}
     SearchEncounterDeckAndDiscard PlayerId Target CardMatcher
   | ShuffleDeck DeckSignifier
   | CheckWindows [Window]
@@ -166,8 +170,9 @@ data Message
   | AttachCard AttachmentId Target
   | PlayAttachment PlayerId PlayerCard
   | PlayAttachmentOn PlayerId PlayerCard Target
-  | -- | the hero leaves the game for one from its owner's collection, which takes the
-    -- attachments it can
+  | {- | the hero leaves the game for one from its owner's collection, which takes the
+    attachments it can
+    -}
     SwapHero HeroId PlayerCard
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
@@ -177,8 +182,9 @@ data Message
   | ClaimObjective ObjectiveId Target
   | PlaceObjective ObjectiveId Placement
   | SetObjectiveGuard ObjectiveId CardId
-  | -- | the next encounter card guards the objective: an enemy or location goes to the
-    -- staging area to guard it, any other card is revealed
+  | {- | the next encounter card guards the objective: an enemy or location goes to the
+    staging area to guard it, any other card is revealed
+    -}
     GuardObjective ObjectiveId
   | PutObjectiveIntoPlay EncounterCard
   | TakePrisoner HeroId
@@ -186,20 +192,24 @@ data Message
   | SetAside EncounterCard
   | -- | a stage whose condition may have just been met checks whether it is defeated
     CheckStage QuestId
-  | -- | the player's top card goes face down in front of them as an Orc Guard engaged
-    -- with them
+  | {- | the player's top card goes face down in front of them as an Orc Guard engaged
+    with them
+    -}
     PlaceOrcGuard PlayerId
   | EngageOrcGuard PlayerId PlayerCard
   | ShuffleIntoEncounterDeck Target
-  | -- | a treachery dealt as a shadow card resolves its revelation as if revealed, here
-    -- attaching itself where its placement says
+  | {- | a treachery dealt as a shadow card resolves its revelation as if revealed, here
+    attaching itself where its placement says
+    -}
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
   | ShufflePlayerDeck PlayerId
-  | -- | the player takes matching cards from those searched in their deck into hand, any
-    -- number of them or only 1 as the flag says, then shuffles their deck
+  | {- | the player takes matching cards from those searched in their deck into hand, any
+    number of them or only 1 as the flag says, then shuffles their deck
+    -}
     ChooseFromSearch PlayerId Source [Card] CardMatcher Bool
-  | -- | the player puts up to N matching allies from those searched in their deck into
-    -- play, each with the modifiers until the end of the round, then shuffles their deck
+  | {- | the player puts up to N matching allies from those searched in their deck into
+    play, each with the modifiers until the end of the round, then shuffles their deck
+    -}
     ChooseFromSearchIntoPlay PlayerId Source [Card] CardMatcher Int [ModifierType]
   | DiscardTopOfDeck PlayerId Int
   | -- | an enemy card put into play engaged with the player
@@ -208,13 +218,15 @@ data Message
     PutDiscardOnBottomOfDeck PlayerId CardId
   | -- | a card in the player's discard pile is shuffled into their deck
     ShuffleFromDiscardIntoDeck PlayerId CardId
-  | -- | a card in its owner's discard pile responds to the windows, as Hidden Cache does:
-    -- the card is built again to resolve it
+  | {- | a card in its owner's discard pile responds to the windows, as Hidden Cache does:
+    the card is built again to resolve it
+    -}
     RespondFromDiscard PlayerId PlayerCard [Window]
   | -- | after travel, an action window for each player with a Travel Action to use
     TravelActions
-  | -- | the player looks at the top cards of the encounter deck, reveals 1 of them and
-    -- discards the rest
+  | {- | the player looks at the top cards of the encounter deck, reveals 1 of them and
+    discards the rest
+    -}
     RevealOneOfTopEncounterCards PlayerId Source Int
   | -- | set-aside cards go to the staging area
     AddSetAsideToStaging CardMatcher
@@ -232,11 +244,13 @@ data Message
   | -- | the player commits characters to the escape test, one at a time
     MakeEscapeTest EscapeTest
   | ResolveEscapeTest EscapeTest
-  | -- | the player switches a card in hand with one in their deck, each taking the other's
-    -- place
+  | {- | the player switches a card in hand with one in their deck, each taking the other's
+    place
+    -}
     SwapHandWithDeck PlayerId CardId CardId
-  | -- | the quest deck goes back to the stage, put into play on its B side, with the
-    -- stages after it to follow
+  | {- | the quest deck goes back to the stage, put into play on its B side, with the
+    stages after it to follow
+    -}
     ResetToStage EncounterCard [EncounterCard]
   | ReturnToTopOfEncounterDeck Target
   | RemoveProgressFromQuest Source Int
@@ -262,8 +276,9 @@ data Message
   | EnemyAttack PlayerId EnemyId
   | DefendWith PlayerId EnemyId Target
   | DeclareDefenders PlayerId EnemyId [Target]
-  | -- | the attacked player has declared: the other players still to be asked, in turn,
-    -- whether a sentinel of theirs defends, with the defenders chosen so far
+  | {- | the attacked player has declared: the other players still to be asked, in turn,
+    whether a sentinel of theirs defends, with the defenders chosen so far
+    -}
     DeclareSentinels PlayerId EnemyId [Target] [PlayerId]
   | DefendedByMany PlayerId EnemyId [Target]
   | -- | spend resources of a sphere, at most 1 from each hero, from heroes not yet used
@@ -284,8 +299,9 @@ data Message
   | -- | the player chooses which of these enemies to attack next
     ChooseAttackTarget PlayerId [EnemyId]
   | DeclareAttackers PlayerId EnemyId
-  | -- | the attacking player has declared: the other players still to be asked, in turn,
-    -- whether a ranged character of theirs joins the attack
+  | {- | the attacking player has declared: the other players still to be asked, in turn,
+    whether a ranged character of theirs joins the attack
+    -}
     DeclareRangedAttackers PlayerId EnemyId [PlayerId]
   | AttackWith Target
   | ResolveAttack PlayerId EnemyId
@@ -311,31 +327,34 @@ uiToRun = \case
   TargetLabel _ msgs -> Run msgs
   AbilityLabel pid ability windows msgs -> Run $ UseAbility pid ability windows : msgs
 
-chooseOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
+chooseOne :: HasCallStack => PlayerId -> [UI Message] -> Message
 chooseOne _ [] = error "chooseOne: no choices"
 chooseOne pid choices = Ask pid $ ChooseOne choices
 
 -- | Ask a question with a prompt explaining what is being chosen.
-questionLabel :: (HasCallStack) => Text -> PlayerId -> [UI Message] -> Message
+questionLabel :: HasCallStack => Text -> PlayerId -> [UI Message] -> Message
 questionLabel prompt = questionLabelWith prompt Nothing []
 
--- | A question that names the card causing it and the cards it is aimed at, so the
--- board can mark them.
-questionLabelWith :: (HasCallStack) => Text -> Maybe Target -> [Target] -> PlayerId -> [UI Message] -> Message
+{- | A question that names the card causing it and the cards it is aimed at, so the
+board can mark them.
+-}
+questionLabelWith
+  :: HasCallStack => Text -> Maybe Target -> [Target] -> PlayerId -> [UI Message] -> Message
 questionLabelWith _ _ _ _ [] = error "questionLabel: no choices"
 questionLabelWith prompt source targets pid choices = Ask pid $ QuestionLabel prompt source targets $ ChooseOne choices
 
--- | A window's question, which the given message builds afresh when the game changes
--- under it.
+{- | A window's question, which the given message builds afresh when the game changes
+under it.
+-}
 playerWindow :: Text -> Message -> PlayerId -> [UI Message] -> Message
 playerWindow prompt rebuild pid = Ask pid . QuestionLabel prompt Nothing [] . PlayerWindow rebuild . ChooseOne
 
-chooseOrRunOne :: (HasCallStack) => PlayerId -> [UI Message] -> Message
+chooseOrRunOne :: HasCallStack => PlayerId -> [UI Message] -> Message
 chooseOrRunOne _ [x] = uiToRun x
 chooseOrRunOne pid choices = chooseOne pid choices
 
 -- | The messages as one block in the log, opened before them and closed after.
-inLogBlock :: (MonadRandom m) => LogBlockKind -> [Message] -> m [Message]
+inLogBlock :: MonadRandom m => LogBlockKind -> [Message] -> m [Message]
 inLogBlock kind msgs = do
   block <- LogBlock <$> getRandom <*> pure kind
   pure $ OpenLogBlock block : msgs <> [CloseLogBlock block.id]

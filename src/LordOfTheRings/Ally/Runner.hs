@@ -1,9 +1,11 @@
-module LordOfTheRings.Ally.Runner (module LordOfTheRings.Ally.Runner, module X) where
+{-# OPTIONS_GHC -Wno-orphans #-}
 
-import LordOfTheRings.Classes.HasQueue (pushAll)
-import LordOfTheRings.Classes.RunMessage
+module LordOfTheRings.Ally.Runner (module X) where
+
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Card.CardDef (HasCardDef (..))
+import LordOfTheRings.Classes.HasQueue (pushAll)
+import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (ModifierType (DoesNotExhaustToAttack))

@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath (aChosenPathDontLe
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Matcher
-import LordOfTheRings.Outcome
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Trait (Trait (Spider))

@@ -3,21 +3,20 @@
 module LordOfTheRings.Matcher (module LordOfTheRings.Matcher, module X) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Ally.Types
+import LordOfTheRings.Ally.Types hiding (ally)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card
+import LordOfTheRings.Card hiding (ally, enemy, hero, location)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.Query as X
 import LordOfTheRings.Effect (Effect (..))
-import LordOfTheRings.Enemy.Types
+import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
-import LordOfTheRings.Hero.Types
-import LordOfTheRings.I18n
+import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword)
-import LordOfTheRings.Location.Types
+import LordOfTheRings.Location.Types hiding (location)
 import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Name
@@ -25,12 +24,10 @@ import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
-import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Resource), countTokens)
 import LordOfTheRings.Trait
-import LordOfTheRings.Treachery.Types (Treachery)
 
 instance Query PlayerMatcher where
   type QueryElement PlayerMatcher = PlayerId

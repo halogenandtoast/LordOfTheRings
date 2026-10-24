@@ -1,10 +1,12 @@
-module LordOfTheRings.Hero.Runner (module LordOfTheRings.Hero.Runner, module X) where
+{-# OPTIONS_GHC -Wno-orphans #-}
 
+module LordOfTheRings.Hero.Runner (module X) where
+
+import LordOfTheRings.Card.CardDef (HasCardDef (..))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Hero.Types as X
-import LordOfTheRings.Card.CardDef (HasCardDef (..))
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
+import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, DoesNotExhaustToAttack))
 import LordOfTheRings.Phase

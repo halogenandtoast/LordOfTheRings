@@ -1,38 +1,43 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module X) where
 
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.ActiveCost (ActiveCost (..), playCard)
-import LordOfTheRings.Effect
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Game.Base
-import LordOfTheRings.Helpers.Attachment
+import LordOfTheRings.Effect
+import LordOfTheRings.Entities (entitiesTreacheries)
 import LordOfTheRings.Event
 import LordOfTheRings.Frontend (FrontendMessage (..), send)
+import LordOfTheRings.Game.Base
+import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria)
-import LordOfTheRings.Modifier
 import LordOfTheRings.Hero.Types
+import LordOfTheRings.I18n
 import LordOfTheRings.Id (PlayerId)
-import LordOfTheRings.Entities (entitiesTreacheries)
-import LordOfTheRings.Placement (Placement (AttachedTo))
-import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Modifier
 import LordOfTheRings.Phase
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Player.Types as X
-import LordOfTheRings.I18n
-import LordOfTheRings.Prelude
+import LordOfTheRings.Prelude hiding (swap)
 import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand), mkAfter)
+import LordOfTheRings.Treachery.Types ()
+import LordOfTheRings.Window (
+  WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand),
+  mkAfter,
+ )
 
 instance RunMessage Player where
   runMessage msg player = case msg of
@@ -44,7 +49,9 @@ instance RunMessage Player where
       pure $ player & threatL .~ sum (map (.threat) heroes)
     DoStep 5 Setup -> do
       push
-        $ questionLabel (ikey "label.keepStartingHand") player.id
+        $ questionLabel
+          (ikey "label.keepStartingHand")
+          player.id
           [ Label (ikey "label.keepHand") []
           , Label (ikey "label.mulligan") [Mulligan player.id]
           ]
@@ -68,22 +75,32 @@ instance RunMessage Player where
     DrawCards drawing | drawing.player == player.id -> do
       blocked <- elem CannotDrawCards <$> getModifiers player
       -- a condition on top of the deck is discarded in place of the next draw
-      shackles <- getsGame (filter ((== AttachedTo (toTarget player)) . (.placement)) . toList . entitiesTreacheries . gameEntities)
+      shackles <-
+        getsGame
+          ( filter ((== AttachedTo (toTarget player)) . (.placement))
+              . toList
+              . entitiesTreacheries
+              . gameEntities
+          )
       pushAll [Discard (toTarget t) | t <- take 1 shackles]
       let (cards, deck) = splitAt drawing.count player.deck
       pure $ if blocked || notNull shackles then player else player & handL <>~ cards & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
-      actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase) $ WithTarget (toTarget player) (DoPhase PlanningPhase)
+      actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase)
+        $ WithTarget (toTarget player) (DoPhase PlanningPhase)
       pure player
     ActionWindow pid | pid == player.id -> do
       -- travel's window is the last thing in its phase; the others come before more of theirs
       travel <- isPhase TravelPhase
-      actionWindow (ikey "label.takeAction") (ikey "label.pass") (guard travel $> EncounterPhase) $ ActionWindow pid
+      actionWindow (ikey "label.takeAction") (ikey "label.pass") (guard travel $> EncounterPhase)
+        $ ActionWindow pid
       pure player
     OptionalActionWindow pid | pid == player.id -> do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
-      unless (null playable && null actions) $ actionWindow (ikey "label.takeAction") (ikey "label.pass") Nothing $ OptionalActionWindow pid
+      unless (null playable && null actions)
+        $ actionWindow (ikey "label.takeAction") (ikey "label.pass") Nothing
+        $ OptionalActionWindow pid
       pure player
     PlayCard pid cid | pid == player.id -> do
       push $ PlayCardInWindow pid cid []
@@ -103,7 +120,13 @@ instance RunMessage Player where
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do
-        pushAll =<< inLogBlock (PlayBlock pid card) [PlayAtNoCost pid pc, CheckWindows [mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]]
+        pushAll
+          =<< inLogBlock
+            (PlayBlock pid card)
+            [ PlayAtNoCost pid pc
+            , CheckWindows
+                [mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]
+            ]
         pure $ player & handL %~ filter ((/= cid) . (.id))
       _ -> pure player
     PlayTopOfDeckAtNoCostOrBottom pid source | pid == player.id -> do
@@ -159,7 +182,12 @@ instance RunMessage Player where
         $ QuestionLabel (ikey "label.searchTake") (sourceTarget source) []
         $ SearchCards inDeck
         $ ChooseOne
-        $ [targetLabel (CardIdTarget c.id) (TakeFromDeck pid c.id : again c <> [ShufflePlayerDeck pid | not anyNumber]) | c <- inDeck, cardMatches matcher c]
+        $ [ targetLabel
+              (CardIdTarget c.id)
+              (TakeFromDeck pid c.id : again c <> [ShufflePlayerDeck pid | not anyNumber])
+          | c <- inDeck
+          , cardMatches matcher c
+          ]
         <> [Label (ikey "label.done") [ShufflePlayerDeck pid]]
       pure player
     ChooseFromSearchIntoPlay pid source cards matcher n mods | pid == player.id && n > 0 -> do
@@ -172,7 +200,10 @@ instance RunMessage Player where
         $ ChooseOne
         $ [ targetLabel (CardIdTarget c.id)
               $ [CreateEffect $ Effect source (CardIdTarget c.id) mods UntilEndOfRound | notNull mods]
-              <> [TakeFromDeck pid c.id, PutAllyIntoPlay pid c.id, ChooseFromSearchIntoPlay pid source (filter ((/= c.id) . (.id)) inDeck) matcher (n - 1) mods]
+              <> [ TakeFromDeck pid c.id
+                 , PutAllyIntoPlay pid c.id
+                 , ChooseFromSearchIntoPlay pid source (filter ((/= c.id) . (.id)) inDeck) matcher (n - 1) mods
+                 ]
           | c <- allies
           ]
         <> [Label (ikey "label.done") [ShufflePlayerDeck pid]]
@@ -208,20 +239,28 @@ instance RunMessage Player where
       let (discarded, kept) = partition ((== cid) . (.id)) player.hand
       pure $ player & handL .~ kept & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
-    UseAbility pid ab _ | pid == player.id, Just limitType <- abilityLimitType ab.abilityLimit -> do
-      source <- limitSource ab
-      let same u = u.usedAbilitySource == source && u.usedAbilityIndex == ab.abilityIndex
-          used = case find same player.usedAbilities of
-            Just u -> u {usedTimes = u.usedTimes + 1} : filter (not . same) player.usedAbilities
-            Nothing -> UsedAbility source ab.abilityIndex limitType 1 : player.usedAbilities
-      pure $ player & usedAbilitiesL .~ used
+    UseAbility pid ab _
+      | pid == player.id
+      , Just limitType <- abilityLimitType ab.abilityLimit -> do
+          source <- limitSource ab
+          let same u = u.usedAbilitySource == source && u.usedAbilityIndex == ab.abilityIndex
+              used = case find same player.usedAbilities of
+                Just u -> u {usedTimes = u.usedTimes + 1} : filter (not . same) player.usedAbilities
+                Nothing -> UsedAbility source ab.abilityIndex limitType 1 : player.usedAbilities
+          pure $ player & usedAbilitiesL .~ used
     EndPhase _ -> pure $ player & usedAbilitiesL %~ filter ((/= PerPhase) . (.usedAbilityLimitType))
     EndRound -> pure $ player & usedAbilitiesL %~ filter ((/= PerRound) . (.usedAbilityLimitType))
     SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id && n > 0 -> do
       payers <- filter ((`notElem` used) . (.id)) <$> payingHeroes sphere player
       push
-        $ questionLabel (ikeyWith "label.payFromDifferentHero" [intVar "count" n]) pid
-          [ targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)]
+        $ questionLabel
+          (ikeyWith "label.payFromDifferentHero" [intVar "count" n])
+          pid
+          [ targetLabel
+              x
+              [ RemoveTokens (toSource player) (toTarget x) Resource 1
+              , SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)
+              ]
           | x <- payers
           ]
       pure player
@@ -232,8 +271,12 @@ instance RunMessage Player where
         [x] -> push $ RemoveTokens (toSource player) (toTarget x) Resource n
         xs ->
           push
-            $ questionLabel (ikeyWith "label.payMore" [intVar "count" n]) pid
-              [ targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResources pid sphere (n - 1)]
+            $ questionLabel
+              (ikeyWith "label.payMore" [intVar "count" n])
+              pid
+              [ targetLabel
+                  x
+                  [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResources pid sphere (n - 1)]
               | x <- xs
               ]
       pure player
@@ -252,24 +295,27 @@ instance RunMessage Player where
         $ playerWindow (if idle then ikey "label.noRemainingActions" else prompt) again player.id
         $ Label done' []
         : [targetLabel c [PlayCard player.id c.id, again] | c <- playable]
-        <> [AbilityLabel player.id ab [] [again] | ab <- actions]
+          <> [AbilityLabel player.id ab [] [again] | ab <- actions]
     takeFromHand cid = maybe (error "not able to find card") pure $ find ((== cid) . (.id)) player.hand
 
-canPlay :: (HasGame m) => Player -> Card -> m Bool
+canPlay :: HasGame m => Player -> Card -> m Bool
 canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay p.id c]
 
 -- | Whether the game forbids playing the card.
-cannotPlay :: (HasGame m) => PlayerId -> Card -> m Bool
-cannotPlay pid c = any (\case CannotPlay m -> cardMatches m c; _ -> False) <$> ((<>) <$> getModifiers GameTarget <*> getModifiers (PlayerTarget pid))
+cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
+cannotPlay pid c =
+  any (\case CannotPlay m -> cardMatches m c; _ -> False)
+    <$> ((<>) <$> getModifiers GameTarget <*> getModifiers (PlayerTarget pid))
 
-canAfford :: (HasGame m) => Player -> Card -> m Bool
+canAfford :: HasGame m => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of
   (Just cost, Just sphere) -> do
     -- an attachment costs what the host that lowers it most leaves
     discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts c)
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
-    payers <- filterM (\h -> orM [paysFor sphere h, iconFor c sphere h]) [h | h <- heroes, h.resources > 0]
+    payers <-
+      filterM (\h -> orM [paysFor sphere h, iconFor c sphere h]) [h | h <- heroes, h.resources > 0]
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
       Nothing -> do
@@ -277,11 +323,15 @@ canAfford p c = case (c.cost, c.sphere) of
         pure $ sum (map (.resources) payers) + fromAllies >= costAsResources cost + extra
   _ -> pure False
 
--- | What modifiers add to the cost of the card the player would play: the game's, the
--- player's own and the card's (negative when they lower it).
-costModifier :: (HasGame m) => PlayerId -> Card -> m Int
+{- | What modifiers add to the cost of the card the player would play: the game's, the
+player's own and the card's (negative when they lower it).
+-}
+costModifier :: HasGame m => PlayerId -> Card -> m Int
 costModifier pid c = do
-  mods <- concat <$> sequence [getModifiers GameTarget, getModifiers (PlayerTarget pid), getModifiers (CardIdTarget c.id)]
+  mods <-
+    concat
+      <$> sequence
+        [getModifiers GameTarget, getModifiers (PlayerTarget pid), getModifiers (CardIdTarget c.id)]
   pure $ sum $ flip mapMaybe mods \case
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
@@ -292,25 +342,27 @@ costModifier pid c = do
     _ -> Nothing
 
 -- | Heroes with a resource that could pay for a card of the sphere.
-payingHeroes :: (HasGame m) => Sphere -> Player -> m [Hero]
+payingHeroes :: HasGame m => Sphere -> Player -> m [Hero]
 payingHeroes sphere player = do
   heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
   filterM (paysFor sphere) [h | h <- heroes, h.resources > 0]
 
-hasHost :: (HasGame m) => Card -> m Bool
+hasHost :: HasGame m => Card -> m Bool
 hasHost c
   | c.cardType == AttachmentType, PlayIntoStagingArea <- attachMatcherFor (toCardCode c) = pure True
   -- an attachment's play criteria are checked here too, with its hosts
-  | PlayerCard pc <- c, c.cardType == AttachmentType = andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> attachableHosts c]
+  | PlayerCard pc <- c
+  , c.cardType == AttachmentType =
+      andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> attachableHosts c]
   | otherwise = pure True
 
 -- | Where an attachment card could go, none for any other card.
-attachableHosts :: (HasGame m) => Card -> m [Target]
+attachableHosts :: HasGame m => Card -> m [Target]
 attachableHosts c
   | c.cardType == AttachmentType = cardHosts (toCardCode c)
   | otherwise = pure []
 
-correctPhase :: (HasGame m) => Card -> m Bool
+correctPhase :: HasGame m => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
   AllyType -> andM [isPhase PlanningPhase, allyAllowed]
   AttachmentType -> isPhase PlanningPhase
@@ -320,31 +372,33 @@ correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
 correctPhase (EncounterCard _) = pure False
 
 -- | Whether an event is an action whose criteria let it be played now.
-actionEventPlayable :: (HasGame m) => PlayerCard -> m Bool
+actionEventPlayable :: HasGame m => PlayerCard -> m Bool
 actionEventPlayable card = case card.owner >>= lookupEvent (toCardCode card) card.id of
   Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
   _ -> pure False
 
--- | Whether a card could be played with nothing to pay for it, at any time: as the
--- unique rule, an attachment's hosts and an event's criteria allow.
-canPlayAtNoCost :: (HasGame m) => Card -> m Bool
+{- | Whether a card could be played with nothing to pay for it, at any time: as the
+unique rule, an attachment's hosts and an event's criteria allow.
+-}
+canPlayAtNoCost :: HasGame m => Card -> m Bool
 canPlayAtNoCost c = andM [passesUnique c, hasHost c, eventOk]
  where
   eventOk = case c of
     PlayerCard pc | c.cardType == EventType -> actionEventPlayable pc
     _ -> pure True
 
-isPhase :: (HasGame m) => Phase -> m Bool
+isPhase :: HasGame m => Phase -> m Bool
 isPhase phase = (== phase) <$> getsGame gamePhase
 
-resourcesInSphere :: (HasGame m) => Sphere -> Player -> m Int
+resourcesInSphere :: HasGame m => Sphere -> Player -> m Int
 resourcesInSphere sphere player = do
   heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
   sum . map (.resources) <$> filterM (paysFor sphere) heroes
 
--- | Whether a hero's resources can pay for a card of the sphere: its own sphere, or one
--- a resource icon it has gained gives it.
-paysFor :: (HasGame m) => Sphere -> Hero -> m Bool
+{- | Whether a hero's resources can pay for a card of the sphere: its own sphere, or one
+a resource icon it has gained gives it.
+-}
+paysFor :: HasGame m => Sphere -> Hero -> m Bool
 paysFor sphere h = orM [heroPaysFor sphere h, paying]
  where
   paying = do
@@ -352,14 +406,15 @@ paysFor sphere h = orM [heroPaysFor sphere h, paying]
     orM [iconFor c sphere h | c <- cards]
 
 -- | Whether the hero has the sphere's resource icon while paying for the card.
-iconFor :: (HasGame m) => Card -> Sphere -> Hero -> m Bool
-iconFor c sphere h = any (\case GainResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
+iconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
+iconFor c sphere h =
+  any (\case GainResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
 
 startingHandSize :: Int
 startingHandSize = 6
 
 -- | Whether an ally may be played under a one-ally-per-round rule.
-allyAllowed :: (HasGame m) => m Bool
+allyAllowed :: HasGame m => m Bool
 allyAllowed = do
   mods <- getModifiers GameTarget
   pure $ not (OneAllyPerRound `elem` mods && AllyPlayedThisRound `elem` mods)

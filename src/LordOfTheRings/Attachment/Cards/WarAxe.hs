@@ -1,7 +1,7 @@
 module LordOfTheRings.Attachment.Cards.WarAxe (warAxe) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
-import LordOfTheRings.Attachment.Import.Lifted
+import LordOfTheRings.Attachment.Import.Lifted hiding (restricted)
 import LordOfTheRings.Card (cdKeywords, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Keyword (Keyword (Restricted))
@@ -16,8 +16,9 @@ warAxe =
   attachment WarAxe Cards.warAxe
     & attachTo (AttachToCharacterMatching (HeroWithSphere Tactics) (AllyWithSphere Tactics))
 
--- | Limit 1 per character. Restricted. Attached character gets +1 attack for each
--- attachment it has with the restricted keyword, War Axe among them.
+{- | Limit 1 per character. Restricted. Attached character gets +1 attack for each
+attachment it has with the restricted keyword, War Axe among them.
+-}
 instance HasModifiersFor WarAxe where
   getModifiersFor (WarAxe a) = withHost a \host -> do
     restricted <-

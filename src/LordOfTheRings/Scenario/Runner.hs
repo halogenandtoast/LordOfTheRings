@@ -1,28 +1,32 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module LordOfTheRings.Scenario.Runner (module LordOfTheRings.Scenario.Runner, module X) where
 
-import LordOfTheRings.Card
+import LordOfTheRings.Card hiding (hero)
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.EncounterSet (EncounterSet)
+import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Guarded))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
 import LordOfTheRings.Outcome
-import LordOfTheRings.I18n
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
-import LordOfTheRings.Source (Source, sourceTarget)
-import LordOfTheRings.Target
 import LordOfTheRings.Scenario.Types as X
+import LordOfTheRings.Source (sourceTarget)
+import LordOfTheRings.Target
 
 -- | The copies of each card in the set, fewer of some in easy mode.
-gatherEncounterSet :: (MonadRandom m) => ScenarioAttrs -> EncounterSet -> m [EncounterCard]
+gatherEncounterSet :: MonadRandom m => ScenarioAttrs -> EncounterSet -> m [EncounterCard]
 gatherEncounterSet attrs encounterSet =
   concatMapM
     (\def -> replicateM (copies def) (genEncounterCard def))
     -- quest stages share the set but make up the quest deck, never the encounter deck
-    $ filter (\def -> cdEncounterSet def == Just encounterSet && cdCardType def /= QuestType) (toList allEncounterCards)
+    $ filter
+      (\def -> cdEncounterSet def == Just encounterSet && cdCardType def /= QuestType)
+      (toList allEncounterCards)
  where
   copies def =
     fromMaybe 1 $ (guard attrs.easyMode *> cdEasyModeQuantity def) <|> cdEncounterSetQuantity def
@@ -52,7 +56,8 @@ instance RunMessage ScenarioAttrs where
               pure $ attrs & encounterDeckL .~ encounterDeck
             else do
               push
-                $ chooseOne pid
+                $ chooseOne
+                  pid
                   [targetLabel y [RemoveFromEncounterDeck y, AddToStaging y, ShuffleDeck EncounterDeck] | y <- x : xs]
               pure attrs
     RevealEncounterCard -> case attrs.encounterDeck of
@@ -78,7 +83,10 @@ instance RunMessage ScenarioAttrs where
           $ SearchCards [EncounterCard top]
           $ ChooseOne
           $ if canMove
-            then [Label (ikey "label.leaveOnTop") [], Label (ikey "label.moveToBottom") [MoveTopOfEncounterDeckToBottom]]
+            then
+              [ Label (ikey "label.leaveOnTop") []
+              , Label (ikey "label.moveToBottom") [MoveTopOfEncounterDeckToBottom]
+              ]
             else [Label (ikey "label.continue") []]
       pure attrs
     RevealOneOfTopEncounterCards pid source n -> do
@@ -101,7 +109,8 @@ instance RunMessage ScenarioAttrs where
           $ if
             -- it guards before it resolves, so before its surge; a treachery only until its
             -- effects resolve or are canceled
-            | cdCardType def `elem` [EnemyType, LocationType, TreacheryType] -> Run [SetObjectiveGuard oid card.id, RevealCard card]
+            | cdCardType def `elem` [EnemyType, LocationType, TreacheryType] ->
+                Run [SetObjectiveGuard oid card.id, RevealCard card]
             -- the next card guards this objective, then the revealed one is guarded in turn
             | Guarded `member` cdKeywords def -> Run [GuardObjective oid, RevealCard card]
             | otherwise -> RevealCard card

@@ -1,6 +1,6 @@
 module LordOfTheRings.Helpers.Character (module LordOfTheRings.Helpers.Character) where
 
-import LordOfTheRings.Card
+import LordOfTheRings.Card hiding (enemy)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Game.Base (gameScenario)
 import LordOfTheRings.Message (EscapeStat (..), EscapeTest (..))

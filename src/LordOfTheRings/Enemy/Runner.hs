@@ -1,10 +1,12 @@
-module LordOfTheRings.Enemy.Runner (module LordOfTheRings.Enemy.Runner, module X) where
+{-# OPTIONS_GHC -Wno-orphans #-}
+
+module LordOfTheRings.Enemy.Runner (module X) where
 
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Phase
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Message
+import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token

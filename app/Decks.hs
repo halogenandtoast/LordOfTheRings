@@ -36,7 +36,7 @@ import Database.Persist.Sql (SqlBackend, fromSqlKey)
 import LordOfTheRings.Card (CardCode (..), allPlayerCards)
 import LordOfTheRings.Decklist (DeckList (..), deckProblem)
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
-import LordOfTheRings.Prelude
+import LordOfTheRings.Prelude hiding (asText)
 import Model
 import Network.HTTP.Client (Manager, httpLbs, parseRequest, requestHeaders, responseBody, responseStatus)
 import Network.HTTP.Types (statusCode)

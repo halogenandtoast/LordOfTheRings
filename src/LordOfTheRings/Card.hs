@@ -1,7 +1,6 @@
-module LordOfTheRings.Card (
-  module LordOfTheRings.Card,
-  module X,
-) where
+{-# OPTIONS_GHC -Wno-orphans #-}
+
+module LordOfTheRings.Card (module LordOfTheRings.Card, module X) where
 
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
@@ -62,7 +61,14 @@ allPlayerCards = Map.unions [allHeroCards, allAllyCards, allAttachmentCards, all
 
 allEncounterCards :: Map CardCode CardDef
 allEncounterCards =
-  Map.unions [allEnemyCards, allLocationCards, allTreacheryCards, allQuestCards, allObjectiveCards, syntheticCards]
+  Map.unions
+    [ allEnemyCards
+    , allLocationCards
+    , allTreacheryCards
+    , allQuestCards
+    , allObjectiveCards
+    , syntheticCards
+    ]
 
 lookupCardDef :: CardCode -> Maybe CardDef
 lookupCardDef cCode = Map.lookup cCode allPlayerCards <|> Map.lookup cCode allEncounterCards
@@ -121,12 +127,12 @@ costAsResources = \case
   StaticCost n -> n
   DynamicCost -> 0
 
-genPlayerCard :: (MonadRandom m) => CardDef -> Maybe PlayerId -> m PlayerCard
+genPlayerCard :: MonadRandom m => CardDef -> Maybe PlayerId -> m PlayerCard
 genPlayerCard def owner = do
   cardId <- getRandom
   pure $ MkPlayerCard {pcId = cardId, pcCardCode = cdCardCode def, pcOwner = owner}
 
-genEncounterCard :: (MonadRandom m) => CardDef -> m EncounterCard
+genEncounterCard :: MonadRandom m => CardDef -> m EncounterCard
 genEncounterCard def = do
   cardId <- getRandom
   pure $ MkEncounterCard {ecId = cardId, ecCardCode = cdCardCode def}

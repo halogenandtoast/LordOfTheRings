@@ -1,10 +1,12 @@
-module LordOfTheRings.Location.Runner (module LordOfTheRings.Location.Runner, module X) where
+{-# OPTIONS_GHC -Wno-orphans #-}
+
+module LordOfTheRings.Location.Runner (module X) where
 
 import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects))
 import LordOfTheRings.Prelude
@@ -26,7 +28,9 @@ instance RunMessage LocationAttrs where
         $ pushAll
           [ CheckWindows [mkWhen $ Explored attrs.id]
           , -- a location with victory points goes to the victory display
-            if isJust (cdVictoryPoints $ toCardDef attrs) then AddToVictoryDisplay (toTarget attrs) else Discard (toTarget attrs)
+            if isJust (cdVictoryPoints $ toCardDef attrs)
+              then AddToVictoryDisplay (toTarget attrs)
+              else Discard (toTarget attrs)
           ]
       pure attrs'
     RemoveTokens _ (isTarget attrs -> True) token n -> do

@@ -1,6 +1,6 @@
 module LordOfTheRings.Hero.Cards.Hirgon (hirgon) where
 
-import LordOfTheRings.Card (Card (..), CardType (AllyType), costAsResources)
+import LordOfTheRings.Card (CardType (AllyType), costAsResources)
 import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (Tactics))
@@ -12,9 +12,10 @@ newtype Hirgon = Hirgon HeroAttrs
 hirgon :: HeroCard Hirgon
 hirgon = hero Hirgon Cards.hirgon
 
--- | Response: After Hirgon quests successfully, play a tactics ally from your hand,
--- reducing its cost by 1 (to a minimum of 1). Then, you may raise your threat by 1 to give
--- that ally +1 attack and +1 defense until the end of the round.
+{- | Response: After Hirgon quests successfully, play a tactics ally from your hand,
+reducing its cost by 1 (to a minimum of 1). Then, you may raise your threat by 1 to give
+that ally +1 attack and +1 defense until the end of the round.
+-}
 instance HasAbilities Hirgon where
   getAbilities (Hirgon a) =
     [ restricted a 1 (exists (HeroWithId a.id <> CommittedHero) <> CardInHand a.owner AllyType)
@@ -28,15 +29,22 @@ instance RunMessage Hirgon where
       player <- getPlayer pid
       tactics <- getResourcesOfSphere pid Tactics
       let cost c = maybe 0 costAsResources c.cost
-          reduction c = if cost c > 1 then 1 else 0
+          reduction c = if cost c > 1 then 1 else 0 :: Int
       allies <-
-        filterM passesUnique
-          [c | c <- player.hand, c.cardType == AllyType, c.sphere == Just Tactics, tactics >= cost c - reduction c]
+        filterM
+          passesUnique
+          [ c
+          | c <- player.hand
+          , c.cardType == AllyType
+          , c.sphere == Just Tactics
+          , tactics >= cost c - reduction c
+          ]
       chooseOneM pid do
         questionLabeled "hirgon.chooseAlly"
         causedBy attrs
         targets allies \c -> do
-          when (reduction c > 0) $ phaseModifier attrs (CardIdTarget c.id) (CostModifier $ negate $ reduction c)
+          when (reduction c > 0)
+            $ phaseModifier attrs (CardIdTarget c.id) (CostModifier $ negate $ reduction c)
           push $ PlayCardInWindow pid c.id []
           chooseOneM pid do
             questionLabeled "hirgon.boost"

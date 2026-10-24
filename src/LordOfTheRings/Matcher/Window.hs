@@ -1,11 +1,10 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
-import LordOfTheRings.Card (Card)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher, cardMatches)
 import LordOfTheRings.Phase
-import LordOfTheRings.Source
 import LordOfTheRings.Prelude
+import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Timing
 import LordOfTheRings.Trait
@@ -26,8 +25,9 @@ data WindowMatcher
   | AnyTraveledWindow Timing
   | -- | an enemy destroyed by an attack, by any attackers or with the given one among them
     EnemyDestroyedByAttackWindow Timing (Maybe Target)
-  | -- | an enemy engaged with a player other than the given one, destroyed by an attack
-    -- the character was among
+  | {- | an enemy engaged with a player other than the given one, destroyed by an attack
+    the character was among
+    -}
     EnemyOfOtherPlayerDestroyedByAttackWindow Timing PlayerId Target
   | CharacterDestroyedWindow Timing
   | HeroDestroyedWindow Timing

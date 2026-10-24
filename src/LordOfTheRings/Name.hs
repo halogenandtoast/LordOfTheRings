@@ -1,6 +1,5 @@
 module LordOfTheRings.Name (Name (..)) where
 
-import Data.String (IsString (..))
 import LordOfTheRings.Prelude
 
 data Name = Name Text (Maybe Text)

@@ -1,8 +1,10 @@
-module LordOfTheRings.Objective.Runner (module LordOfTheRings.Objective.Runner, module X) where
+{-# OPTIONS_GHC -Wno-orphans #-}
+
+module LordOfTheRings.Objective.Runner (module X) where
 
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Message
+import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target

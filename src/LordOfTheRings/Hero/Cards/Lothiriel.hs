@@ -20,7 +20,7 @@ instance HasModifiersFor Lothiriel where
 
 instance HasAbilities Lothiriel where
   getAbilities (Lothiriel a) =
-    [ restricted a 1 (CardInHand a.owner AllyType) $ response $ CommittedToQuestWindow After (toTarget a)
+    [ restricted a 1 (CardInHand a.owner #ally) $ response $ CommittedToQuestWindow After (toTarget a)
     ]
 
 instance RunMessage Lothiriel where
