@@ -5,6 +5,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Helpers.Character (getAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
@@ -155,6 +156,9 @@ spec = do
       chooseTarget pid eid
       -- 2 attack + 1 against 1 defense
       enemyDamage eid `shouldReturn` 2
+      -- the +1 lasts only for that attack
+      dunhere <- toTarget <$> getHeroWithCode "01009"
+      getAttack dunhere `shouldReturn` 2
 
   describe "Blade of Gondolin" do
     it "gives +1 attack against an Orc and progress after destroying it" . tacticsTest $ \pid -> do

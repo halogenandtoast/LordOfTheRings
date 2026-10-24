@@ -638,7 +638,7 @@ runGameMessage msg g = case msg of
       $ [ targetLabel
             eid
             [ AttackWith attacker
-            , CreateEffect $ Effect GameSource attacker [AttackModifier 1] UntilEndOfPhase
+            , CreateEffect $ Effect GameSource attacker [AttackModifier 1] UntilEndOfAttack
             , ResolveAttack pid eid
             ]
         | eid <- staged
