@@ -267,6 +267,8 @@ affordableDiscardedAllies pid sphere = do
       [ (owner, pc, x)
       | PlayerCard pc <- discarded
       , cdCardType (toCardDef pc) == AllyType
+      , -- neutral cards belong to no sphere, so "any sphere" leaves them out (FAQ)
+        cdSphere (toCardDef pc) /= Just Neutral
       , Just (StaticCost x) <- [cdCost (toCardDef pc)]
       , x <= spend
       ]

@@ -124,6 +124,17 @@ spec = do
       question <- getQuestion pid
       [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
 
+    it "can't put a neutral ally into play" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      gandalf <- PlayerCard <$> genPlayerCard Allies.gandalf (Just pid)
+      g <- getGame
+      putGame $ g & playersL . ix pid . discardL .~ [gandalf]
+      card <- putCardIntoHand pid Events.standAndFight
+      payer <- getHeroWithCode "01007"
+      run $ PlaceTokens GameSource (toTarget payer) Resource 5
+      run $ BeginPhase PlanningPhase
+      question <- getQuestion pid
+      [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
+
   describe "Fortune or Fate" do
     it "puts a hero from a discard pile back into play" . gameTestWith (coreDeck "spirit") $ \pid -> do
       dunhere <- getHeroWithCode "01009"
