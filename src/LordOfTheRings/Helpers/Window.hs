@@ -97,10 +97,20 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
 limit, everyone's for a group limit.
 -}
 withinLimit :: HasGame m => Ability -> m Bool
-withinLimit ab = case ab.abilityLimit of
+withinLimit ab = withinLimitOf ab =<< abilityController ab
+
+{- | As 'withinLimit', for the player who would use it: one any player may trigger is
+limited by each player's own uses.
+-}
+withinLimitFor :: HasGame m => PlayerId -> Ability -> m Bool
+withinLimitFor pid ab
+  | ab.abilityAnyPlayer = withinLimitOf ab (Just pid)
+  | otherwise = withinLimit ab
+
+withinLimitOf :: HasGame m => Ability -> Maybe PlayerId -> m Bool
+withinLimitOf ab controller = case ab.abilityLimit of
   NoLimit -> pure True
   PlayerLimit _ n -> do
-    controller <- abilityController ab
     players <- getsGame (toList . gamePlayers)
     source <- limitSource ab
     pure $ uses source [p | p <- players, Just p.id == controller] < n
@@ -222,7 +232,7 @@ getActionAbilities pid = do
         [ (ab.abilityAnyPlayer ||) . (== Just pid) <$> abilityController ab
         , passesCriteriaFor pid (immuneAware ab.abilitySource ab.abilityCriteria)
         , canPay cost
-        , withinLimit ab
+        , withinLimitFor pid ab
         ]
     _ -> pure False
 

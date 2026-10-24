@@ -3,6 +3,7 @@ module LordOfTheRings.Hero.HeroAbilitiesSpec (spec) where
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getWillpower)
+import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Phase
 import TestImport
 
@@ -56,6 +57,19 @@ spec = do
       passActions pid
       run $ EndPhase PlanningPhase
       getWillpower (toTarget eowyn) `shouldReturn` 4
+
+    it "may be triggered by each player once each round, from their own hand" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      eowyn <- heroOf one "01007"
+      _ <- putCardIntoHand one Events.grimResolve
+      card <- putCardIntoHand two Events.bladeMastery
+      let abilities p = filter ((== Just eowyn) . sourceTarget . (.abilitySource)) <$> getActionAbilities p
+      [ab] <- abilities two
+      run $ UseAbility two ab []
+      chooseTarget two (CardIdTarget card.id)
+      getWillpower eowyn `shouldReturn` 5
+      map (.id) . (.hand) <$> getPlayer two `shouldReturn` []
+      abilities two `shouldReturn` []
+      length <$> abilities one `shouldReturn` 1
 
   describe "Glorfindel" do
     it "pays 1 resource to heal 1 damage, once per round" . gameTestWith (coreDeck "lore") $ \pid -> do

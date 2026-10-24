@@ -19,6 +19,7 @@ data PlayerMatcher
   | NotPlayer PlayerMatcher
   | -- | a player whose threat is at least this, as Valour reads
     PlayerWithThreatAtLeast Int
+  | PlayerWithCardsInHand Int
   | PlayerMatchAll [PlayerMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

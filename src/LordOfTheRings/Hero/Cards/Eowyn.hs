@@ -14,11 +14,16 @@ eowyn = hero Eowyn Cards.eowyn
 -- phase. This effect may be triggered by each player once each round.
 instance HasAbilities Eowyn where
   getAbilities (Eowyn a) =
-    [limited (PlayerLimit PerRound 1) $ mkAbility a 1 $ ActionAbility (DiscardFromHandCost a.owner 1)]
+    [ anyPlayer
+        $ limited (PlayerLimit PerRound 1)
+        $ restricted a 1 (PlayerExists $ ActivePlayer <> PlayerWithCardsInHand 1) (ActionAbility Free)
+    ]
 
 instance RunMessage Eowyn where
   runMessage msg h@(Eowyn attrs) = case msg of
-    UseCardAbility _ (isSource attrs -> True) 1 _ -> do
+    -- the player who triggers it discards from their own hand
+    UseCardAbility pid (isSource attrs -> True) 1 _ -> do
+      chooseAndDiscardFromHand pid attrs 1
       phaseModifier attrs attrs (WillpowerModifier 1)
       pure h
     _ -> Eowyn <$> runMessage msg attrs

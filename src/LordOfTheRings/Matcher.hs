@@ -45,6 +45,7 @@ matchPlayer matcher player = case matcher of
   AnyPlayer -> pure True
   NotPlayer m -> not <$> matchPlayer m player
   PlayerWithThreatAtLeast n -> pure $ player.threat >= n
+  PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
 
 data Character = HeroCharacter Hero | AllyCharacter Ally

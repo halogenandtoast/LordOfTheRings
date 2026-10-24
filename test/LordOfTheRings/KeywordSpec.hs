@@ -2,7 +2,7 @@ module LordOfTheRings.KeywordSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Decklist (deckProblem, loadPlayer)
+import LordOfTheRings.Decklist (deckProblem)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Attachment (attachmentCriteriaFor, cardHosts)
@@ -12,17 +12,6 @@ import LordOfTheRings.Modifier (ModifierType (MayDeclareMultipleDefenders))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase
 import TestImport
-
--- | A table of two: the test deck, then the given deck.
-twoPlayerTest :: DeckList -> (PlayerId -> PlayerId -> GameT ()) -> IO ()
-twoPlayerTest other body = do
-  seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", other)])
-  env <- newGameEnv (newTableIn passageThroughMirkwood seats) (const $ pure ()) 1
-  runGameT env do
-    order <- getsGame (.playerOrder)
-    case order of
-      [one, two] -> body one two
-      _ -> error "two players"
 
 -- | A Forest Spider (2 attack, 1 defense, 4 hit points) engaged with the player.
 engagedSpider :: PlayerId -> GameT EnemyId
@@ -40,10 +29,6 @@ questionTargets :: PlayerId -> GameT [Target]
 questionTargets pid = do
   question <- getQuestion pid
   pure [t | Just q <- [question], TargetLabel t _ <- questionChoices q]
-
-heroOf :: PlayerId -> CardCode -> GameT Target
-heroOf pid code =
-  getsGame (toTarget . fromJustNote "no hero" . find (\h -> toCardCode h == code && h.owner == pid) . toList . (.entities.heroes))
 
 spec :: Spec
 spec = describe "Keywords and limits" do

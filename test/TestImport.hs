@@ -214,3 +214,18 @@ putQuestStage def = do
   card <- genEncounterCard def
   run $ PutQuestIntoPlay card
   toTarget <$> getActiveQuest
+
+-- | A table of two: the test deck, then the given deck.
+twoPlayerTest :: DeckList -> (PlayerId -> PlayerId -> GameT ()) -> IO ()
+twoPlayerTest other body = do
+  seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", other)])
+  env <- newGameEnv (newTableIn passageThroughMirkwood seats) (const $ pure ()) 1
+  runGameT env do
+    order <- getsGame (.playerOrder)
+    case order of
+      [one, two] -> body one two
+      _ -> error "two players"
+
+heroOf :: PlayerId -> CardCode -> GameT Target
+heroOf pid code =
+  getsGame (toTarget . fromJustNote "no hero" . find (\h -> toCardCode h == code && h.owner == pid) . toList . (.entities.heroes))
