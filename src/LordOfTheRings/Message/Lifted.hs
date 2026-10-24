@@ -541,6 +541,10 @@ moveToTopOfEncounterDeck card = do
 putShadowLocationIntoPlay :: ReverseQueue m => EnemyId -> CardId -> m ()
 putShadowLocationIntoPlay eid = push . PutShadowLocationIntoPlay eid
 
+-- | Put the shadow card dealt to the enemy into play, engaged with the player.
+putShadowEnemyIntoPlay :: ReverseQueue m => EnemyId -> CardId -> PlayerId -> m ()
+putShadowEnemyIntoPlay eid cid = push . PutShadowEnemyIntoPlay eid cid
+
 {- | The player returns a matching ally they control to their hand, as "return a Silvan
 ally you control to your hand" pays for a card; see 'controlsAlly'.
 -}

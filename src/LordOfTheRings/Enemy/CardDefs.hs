@@ -195,7 +195,8 @@ easternCrows =
 ungoliantsSwarm :: CardDef
 ungoliantsSwarm =
   (enemy "RC004" "Ungoliant's Swarm" PassageThroughMirkwoodCampaign 1 0 3 2 2 5)
-    { cdCardTraits = setFromList [Creature, Spider]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Creature, Spider]
     }
 
 goblintownScavengers :: CardDef

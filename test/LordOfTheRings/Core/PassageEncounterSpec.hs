@@ -190,3 +190,23 @@ spec = do
       chooseAbilityOf pid second
       exhausted "01007" `shouldReturn` False
       (.resources) <$> getHeroWithCode "01007" `shouldReturn` 0
+
+  describe "Ungoliant's Swarm" do
+    it "makes the player it engages exhaust 2 characters" . gameTest $ \pid -> do
+      reveal Enemies.ungoliantsSwarm []
+      run . EngageEnemy pid =<< theEnemy
+      chooseTarget pid =<< hero "01012"
+      chooseTarget pid =<< hero "01007"
+      traverse exhausted ["01012", "01007", "01002"] `shouldReturn` [True, True, False]
+
+    it "as a shadow is put into play engaged with the defending player" . gameTest $ \pid -> do
+      reveal Enemies.forestSpider []
+      spider <- theEnemy
+      run $ EngageEnemy pid spider
+      run . AttachShadowCard spider =<< genEncounterCard Enemies.ungoliantsSwarm
+      run $ ResolveShadow spider pid []
+      chooseTarget pid =<< hero "01012"
+      chooseTarget pid =<< hero "01007"
+      engaged <- getsGame (filter ((== EngagedWith pid) . (.placement)) . toList . (.entities.enemies))
+      sort (map toCardCode engaged) `shouldBe` sort [toCardCode Enemies.forestSpider, toCardCode Enemies.ungoliantsSwarm]
+

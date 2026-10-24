@@ -1085,6 +1085,13 @@ runGameMessage msg g = case msg of
     quests <- toList <$> getsGame (entitiesQuests . gameEntities)
     pushAll [RemoveTokens source (toTarget q) Progress (min n q.progress) | q <- quests, q.progress > 0]
     pure g
+  PutShadowEnemyIntoPlay host cid pid -> do
+    for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
+      for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do
+        enemy <- newEnemy card
+        pushAll [RemoveShadowCard host cid, EngageEnemy pid enemy.id]
+        putGame $ g & entitiesL . enemiesL %~ insertEntity enemy
+    getGame
   PutShadowCardIntoPlay host cid pid -> do
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do

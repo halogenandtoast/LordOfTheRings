@@ -258,6 +258,8 @@ data Message
   | RemoveProgressFromQuest Source Int
   | -- | a shadow card dealt to the enemy becomes an enemy itself, engaged with the player
     PutShadowCardIntoPlay EnemyId CardId PlayerId
+  | -- | a shadow card dealt to the enemy is put into play as an enemy engaged with the player
+    PutShadowEnemyIntoPlay EnemyId CardId PlayerId
   | RemoveShadowCard EnemyId CardId
   | ChooseAndDiscard Source PlayerId [Target]
   | DiscardEventsFromHand PlayerId
