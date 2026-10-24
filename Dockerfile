@@ -22,10 +22,14 @@ RUN apt-get update \
 # Pull in just the dependency descriptors first so dependency compilation
 # can be cached independently from source changes.
 COPY stack.yaml stack.yaml.lock package.yaml LordOfTheRings.cabal ./
-RUN stack build --only-dependencies
+RUN --mount=type=cache,id=lotr-stack-root,target=/root/.stack \
+    stack build --only-dependencies
 
 COPY . .
-RUN stack install --local-bin-path /out LordOfTheRings:exe:LordOfTheRings-exe
+# .stack-work is a cache mount so a deploy only recompiles changed modules.
+RUN --mount=type=cache,id=lotr-stack-root,target=/root/.stack \
+    --mount=type=cache,id=lotr-stack-work,target=/build/.stack-work \
+    stack install --local-bin-path /out LordOfTheRings:exe:LordOfTheRings-exe
 
 # Stage 2: minimal runtime.
 FROM debian:bookworm-slim AS runtime
