@@ -3,6 +3,7 @@
 module LordOfTheRings.Matcher (module LordOfTheRings.Matcher, module X) where
 
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Ability.Types (UsedAbility (..))
 import LordOfTheRings.Ally.Types hiding (ally)
 import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Card hiding (ally, enemy, hero, location)
@@ -25,7 +26,6 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
-import LordOfTheRings.Ability.Types (UsedAbility (..))
 import LordOfTheRings.Source (Source)
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Resource), countTokens)
@@ -271,7 +271,7 @@ affordableDiscardedAllies pid sphere = do
       | PlayerCard pc <- discarded
       , cdCardType (toCardDef pc) == AllyType
       , -- neutral cards belong to no sphere, so "any sphere" leaves them out (FAQ)
-        cdSphere (toCardDef pc) /= Just Neutral
+      cdSphere (toCardDef pc) /= Just Neutral
       , Just (StaticCost x) <- [cdCost (toCardDef pc)]
       , x <= spend
       ]
@@ -417,8 +417,10 @@ treacheriesOn code host = getsGame \g ->
 
 -- | Whether a player has used the ability since its limit last reset.
 abilityUsed :: HasGame m => Source -> Int -> m Bool
-abilityUsed source index = getsGame \g ->
-  any (\u -> u.usedAbilitySource == source && u.usedAbilityIndex == index) $ concatMap (.usedAbilities) g.players
+abilityUsed source idx = getsGame \g ->
+  any
+    (any (\u -> u.usedAbilitySource == source && u.usedAbilityIndex == idx) . ((.usedAbilities)))
+    g.players
 
 -- | Objectives in play with the trait: in the staging area or attached.
 objectivesWithTrait :: HasGame m => Trait -> m [Objective]
