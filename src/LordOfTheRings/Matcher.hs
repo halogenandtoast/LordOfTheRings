@@ -25,6 +25,8 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
+import LordOfTheRings.Ability.Types (UsedAbility (..))
+import LordOfTheRings.Source (Source)
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Resource), countTokens)
 import LordOfTheRings.Trait
@@ -399,6 +401,16 @@ getAllAttachmentsOn host = do
 hostsOfTreachery :: HasGame m => CardCode -> m [Target]
 hostsOfTreachery code = getsGame \g ->
   [host | t <- toList g.entities.treacheries, toCardCode t == code, AttachedTo host <- [t.placement]]
+
+-- | The treacheries with the card code attached to the host.
+treacheriesOn :: HasGame m => CardCode -> Target -> m [TreacheryId]
+treacheriesOn code host = getsGame \g ->
+  [toId t | t <- toList g.entities.treacheries, toCardCode t == code, t.placement == AttachedTo host]
+
+-- | Whether a player has used the ability since its limit last reset.
+abilityUsed :: HasGame m => Source -> Int -> m Bool
+abilityUsed source index = getsGame \g ->
+  any (\u -> u.usedAbilitySource == source && u.usedAbilityIndex == index) $ concatMap (.usedAbilities) g.players
 
 -- | Objectives in play with the trait: in the staging area or attached.
 objectivesWithTrait :: HasGame m => Trait -> m [Objective]

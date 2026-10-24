@@ -163,3 +163,19 @@ spec = do
       web <- getsGame (toTarget . fromJustNote "no web" . headMay . toList . (.entities.treacheries))
       chooseAbilityOf pid web
       exhausted "01007" `shouldReturn` False
+
+    it "with two copies needs both paid for, 4 resources, before the hero readies" . gameTest $ \pid -> do
+      reveal Treacheries.caughtInAWeb []
+      eowyn <- hero "01007"
+      chooseTarget pid eowyn
+      reveal Treacheries.caughtInAWeb []
+      chooseTarget pid eowyn
+      run $ PlaceTokens GameSource eowyn Resource 4
+      run $ Exhaust eowyn
+      run $ BeginPhase RefreshPhase
+      [first, second] <- getsGame (map toTarget . toList . (.entities.treacheries))
+      chooseAbilityOf pid first
+      exhausted "01007" `shouldReturn` True
+      chooseAbilityOf pid second
+      exhausted "01007" `shouldReturn` False
+      (.resources) <$> getHeroWithCode "01007" `shouldReturn` 0

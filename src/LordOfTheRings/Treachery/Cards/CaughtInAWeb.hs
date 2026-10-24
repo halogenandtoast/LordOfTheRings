@@ -19,10 +19,13 @@ instance HasModifiersFor CaughtInAWeb where
     AttachedTo host -> modified a host [DoesNotReadyDuringRefresh]
     _ -> pure ()
 
+-- | Each copy is paid for once in the phase, and the hero readies once every copy on it
+-- has been paid for (FAQ).
 instance HasAbilities CaughtInAWeb where
   getAbilities (CaughtInAWeb a) = case a.placement of
     AttachedTo (HeroTarget hid) ->
-      [ restricted a 1 (HeroExists $ HeroWithId hid <> ExhaustedHero)
+      [ limited (GroupLimit PerPhase 1)
+          $ restricted a 1 (HeroExists $ HeroWithId hid <> ExhaustedHero)
           $ ResponseAbility (PhaseBeginsWindow After RefreshPhase) (ResourceCost (HeroTarget hid) 2)
       ]
     _ -> []
@@ -43,6 +46,9 @@ instance RunMessage CaughtInAWeb where
           targets heroes \h -> attachTreachery attrs.treacheryId h
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      withHost attrs ready
+      withHost attrs \host -> do
+        copies <- treacheriesOn attrs.treacheryCardCode host
+        paid <- allM (\c -> abilityUsed (TreacherySource c) 1) copies
+        when paid $ ready host
       pure t
     _ -> CaughtInAWeb <$> runMessage msg attrs
