@@ -1,3 +1,3 @@
-module LordOfTheRings.Game.Base where
+module LordOfTheRings.Game.Base (Game) where
 
 data Game
