@@ -1202,26 +1202,16 @@ runGameMessage msg g = case msg of
               pid
               (map attachTo hosts)
         pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
-  -- a character can have at most 2 restricted attachments: with a third, its controller
-  -- discards one of them
+  -- a character can have at most 2 restricted attachments, claimed objectives among
+  -- them: with a third, its controller discards one of them
   AttachCard aid host
     | Just a <- Map.lookup aid g.entities.attachments
-    , isRestricted a -> do
-        let restrictedOn = [x | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
-        controller <- case host of
-          HeroTarget hid -> Just . (.owner) <$> getHero hid
-          AllyTarget aid' -> placementController . (.placement) <$> getAlly aid'
-          _ -> pure Nothing
-        for_ controller \pid ->
-          when (length restrictedOn > 2)
-            $ push
-            $ questionLabelWith
-              (ikey "label.discardRestricted")
-              (Just host)
-              []
-              pid
-              [targetLabel x [Discard (toTarget x)] | x <- restrictedOn]
-        pure g
+    , isRestricted a ->
+        g <$ checkRestricted g host
+  ClaimObjective oid host
+    | Just o <- Map.lookup oid g.entities.objectives
+    , isRestricted o ->
+        g <$ checkRestricted g host
   PlayAttachmentOn pid card host -> do
     attachment <- newAttachment pid card
     pushAll
@@ -1490,6 +1480,26 @@ withKeyword k = filterM (\t -> hasKeyword k t =<< characterCardDef t)
 -- | Whether the card has the restricted keyword.
 isRestricted :: HasCardDef a => a -> Bool
 isRestricted = member Restricted . cdKeywords . toCardDef
+
+-- | With a third restricted card on the character, its controller discards one of them.
+checkRestricted :: Game -> Target -> GameT ()
+checkRestricted g host = do
+  let restrictedOn =
+        [toTarget x | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
+          <> [toTarget o | o <- toList g.entities.objectives, o.placement == AttachedTo host, isRestricted o]
+  controller <- case host of
+    HeroTarget hid -> Just . (.owner) <$> getHero hid
+    AllyTarget aid -> placementController . (.placement) <$> getAlly aid
+    _ -> pure Nothing
+  for_ controller \pid ->
+    when (length restrictedOn > 2)
+      $ push
+      $ questionLabelWith
+        (ikey "label.discardRestricted")
+        (Just host)
+        []
+        pid
+        [targetLabel x [Discard x] | x <- restrictedOn]
 
 -- | Mark the ally as having entered play this round.
 enteredPlayThisRound :: Ally -> Message

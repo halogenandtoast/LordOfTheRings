@@ -8,6 +8,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Attachment (attachmentCriteriaFor, cardHosts)
 import LordOfTheRings.Helpers.Window (passesCriteria)
 import LordOfTheRings.Modifier (ModifierType (MayDeclareMultipleDefenders))
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase
 import TestImport
 
@@ -57,6 +58,15 @@ spec = describe "Keywords and limits" do
       length <$> questionTargets pid `shouldReturn` 3
       chooseTarget pid third
       getsGame (length . (.entities.attachments)) `shouldReturn` 2
+
+    it "counts a claimed restricted objective" . gameTest $ \pid -> do
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      _ <- putAttachmentOn pid Attachments.bladeOfGondolin beravor
+      _ <- putAttachmentOn pid Attachments.citadelPlate beravor
+      run . AddToStaging =<< genEncounterCard Objectives.dungeonTorch
+      torch <- getsGame (toId . fromJustNote "no torch" . headMay . toList . (.entities.objectives))
+      run $ ClaimObjective torch beravor
+      length <$> questionTargets pid `shouldReturn` 3
 
     it "keeps them off Winged Guardian" . gameTestWith (coreDeck "tactics") $ \pid -> do
       guardian <- putAllyIntoPlay pid Allies.wingedGuardian
