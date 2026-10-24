@@ -50,6 +50,7 @@
   "done": "Done",
   "continue": "Continue",
   "topOfEncounterDeck": "The top card of the encounter deck",
+  "shadowCard": "A shadow card dealt to an enemy engaged with you",
   "leaveOnTop": "Leave it on top",
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",

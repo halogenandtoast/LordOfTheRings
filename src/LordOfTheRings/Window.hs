@@ -51,6 +51,8 @@ data WindowType
   | -- | a card played from its owner's hand, as its card id
     PlayedFromHand Target
   | ShadowEffectResolved CardId EnemyId
+  | -- | a shadow card dealt to an enemy: the enemy, the card, and the player it is engaged with
+    ShadowCardDealt EnemyId CardId PlayerId
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId
   | -- | a shadow effect about to resolve during an attack the character defends

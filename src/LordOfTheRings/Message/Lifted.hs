@@ -188,6 +188,11 @@ lookAtTopOfEncounterDeck
   :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Bool -> m ()
 lookAtTopOfEncounterDeck pid source mayBottom = push $ LookAtTopOfEncounterDeck pid (toSource source) mayBottom
 
+-- | The player looks at a shadow card dealt to the enemy.
+lookAtShadowCard
+  :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> EnemyId -> CardId -> m ()
+lookAtShadowCard pid source eid cid = push $ LookAtShadowCard pid (toSource source) eid cid
+
 -- | Return a card from the player's discard pile to their hand.
 returnFromDiscardToHand :: ReverseQueue m => PlayerId -> CardId -> m ()
 returnFromDiscardToHand pid cid = push $ ReturnFromDiscardToHand pid cid

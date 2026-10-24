@@ -3,12 +3,14 @@ module LordOfTheRings.Core.AlliesAndAttachmentsSpec (spec) where
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense, getHitPoints, getWillpower)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (ReturnToHandAtEndOfPhase))
 import LordOfTheRings.Phase
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
 handSize :: PlayerId -> GameT Int
@@ -91,6 +93,21 @@ spec = do
       chooseTarget pid tracker
       chooseAbilityOf pid tracker
       (.progress) <$> getLocation lid `shouldReturn` 1
+
+  describe "Dark Knowledge" do
+    it "exhausts to look at a shadow card just dealt to an enemy engaged with you" . gameTest $ \pid -> do
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      knowledge <- putAttachmentOn pid Attachments.darkKnowledge beravor
+      _ <- setEncounterDeck [Enemies.forestSpider]
+      run RevealEncounterCard
+      eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
+      run $ EngageEnemy pid eid
+      [despair] <- setEncounterDeck [Treacheries.despair]
+      run $ BeginPhase CombatPhase
+      chooseAbilityOf pid knowledge
+      Just (QuestionLabel prompt _ _ (SearchCards cards _)) <- getQuestion pid
+      prompt `shouldBe` "$label.shadowCard"
+      map (.id) cards `shouldBe` [despair.id]
 
   describe "Beorn" do
     it "gains +5 attack and is shuffled into the deck at the end of the phase" . gameTest $ \pid -> do

@@ -86,6 +86,8 @@ data Message
     -}
     LookAtTopOfEncounterDeck PlayerId Source Bool
   | MoveTopOfEncounterDeckToBottom
+  | -- | the player looks at a shadow card dealt to the enemy
+    LookAtShadowCard PlayerId Source EnemyId CardId
   | DiscardFromHand PlayerId CardId
   | ChooseAndDiscardFromHand PlayerId Source Int
   | CheckDefeated Target
