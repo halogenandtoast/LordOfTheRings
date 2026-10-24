@@ -189,6 +189,12 @@
   "dunedainMark": {
     "move": "Move Dúnedain Mark to another hero"
   },
+  "lingeringVenom": {
+    "choose": "Lingering Venom: choose one",
+    "exhaust": "Exhaust each damaged character you control",
+    "damage": "Deal 2 damage to the hero you control with the most damage",
+    "chooseHero": "Choose the hero with the most damage to take 2 damage"
+  },
   "caughtInAWeb": {
     "attach": "Attach Caught in a Web to one of your heroes",
     "choosePlayer": "Choose a tied player to take Caught in a Web"

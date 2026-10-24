@@ -102,7 +102,8 @@ treacherousFog = treachery "01118" "Treacherous Fog" SauronsReach 2
 lingeringVenom :: CardDef
 lingeringVenom =
   (treachery "RC005" "Lingering Venom" PassageThroughMirkwoodCampaign 1)
-    { cdCardTraits = setFromList [Burden]
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Burden]
     , cdKeywords = setFromList [Surge]
     }
 

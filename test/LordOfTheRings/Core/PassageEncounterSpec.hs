@@ -210,3 +210,24 @@ spec = do
       engaged <- getsGame (filter ((== EngagedWith pid) . (.placement)) . toList . (.entities.enemies))
       sort (map toCardCode engaged) `shouldBe` sort [toCardCode Enemies.forestSpider, toCardCode Enemies.ungoliantsSwarm]
 
+  describe "Lingering Venom" do
+    it "deals 2 damage to the most damaged hero when the player chooses it" . gameTest $ \pid -> do
+      beravor <- hero "01012"
+      run $ PlaceTokens GameSource beravor Damage 1
+      reveal Treacheries.lingeringVenom [Locations.forestGate]
+      chooseLabel "$label.lingeringVenom.damage" pid
+      getCharacterDamage beravor `shouldReturn` 3
+
+    it "exhausts each damaged character when the player chooses it" . gameTest $ \pid -> do
+      run . (\b -> PlaceTokens GameSource b Damage 1) =<< hero "01012"
+      reveal Treacheries.lingeringVenom [Locations.forestGate]
+      chooseLabel "$label.lingeringVenom.exhaust" pid
+      traverse exhausted ["01012", "01007"] `shouldReturn` [True, False]
+
+    it "as a shadow exhausts each damaged character the defending player controls" . gameTest $ \pid -> do
+      run . (\b -> PlaceTokens GameSource b Damage 1) =<< hero "01012"
+      reveal Enemies.forestSpider []
+      spider <- theEnemy
+      run . AttachShadowCard spider =<< genEncounterCard Treacheries.lingeringVenom
+      run $ ResolveShadow spider pid []
+      traverse exhausted ["01012", "01007"] `shouldReturn` [True, False]
