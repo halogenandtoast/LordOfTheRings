@@ -38,12 +38,17 @@ instance RunMessage CaughtInAWeb where
       order <- getPlayerOrder
       threats <- for order \p -> (p,) . (.threat) <$> getPlayer p
       let highest = foldr (max . snd) 0 threats
-      for_ (headMay [p | (p, n) <- threats, n == highest]) \p -> do
-        heroes <- select (HeroControlledBy $ PlayerWithId p)
-        chooseOneM p do
-          questionLabeled "caughtInAWeb.attach"
-          causedBy attrs
-          targets heroes \h -> attachTreachery attrs.treacheryId h
+      lead <- getLead
+      -- with a tie, the first player chooses which of the tied players (FAQ 1.03)
+      chooseOrRunOneM lead do
+        questionLabeled "caughtInAWeb.choosePlayer"
+        causedBy attrs
+        targets [p | (p, n) <- threats, n == highest] \p -> do
+          heroes <- select (HeroControlledBy $ PlayerWithId p)
+          chooseOneM p do
+            questionLabeled "caughtInAWeb.attach"
+            causedBy attrs
+            targets heroes \h -> attachTreachery attrs.treacheryId h
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       withHost attrs \host -> do

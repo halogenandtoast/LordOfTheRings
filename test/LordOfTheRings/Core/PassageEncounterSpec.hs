@@ -164,6 +164,17 @@ spec = do
       chooseAbilityOf pid web
       exhausted "01007" `shouldReturn` False
 
+    it "with tied threat goes to the tied player the first player chooses" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      t1 <- (.threat) <$> getPlayer one
+      t2 <- (.threat) <$> getPlayer two
+      run $ RaiseThreat one (max 0 (t2 - t1))
+      run $ RaiseThreat two (max 0 (t1 - t2))
+      reveal Treacheries.caughtInAWeb []
+      chooseTarget one two
+      legolas <- heroOf two "01005"
+      chooseTarget two legolas
+      getsGame (map (.placement) . toList . (.entities.treacheries)) `shouldReturn` [AttachedTo legolas]
+
     it "with two copies needs both paid for, 4 resources, before the hero readies" . gameTest $ \pid -> do
       reveal Treacheries.caughtInAWeb []
       eowyn <- hero "01007"
