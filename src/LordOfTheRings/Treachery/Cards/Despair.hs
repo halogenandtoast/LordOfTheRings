@@ -18,6 +18,6 @@ instance RunMessage Despair where
       removeProgressFromQuest attrs 4
       pure t
     ResolveShadowEffect cid _ _ defender | cid == attrs.cardId -> do
-      for_ defender \d -> phaseModifier attrs d DoesNotCountDefense
+      for_ defender \d -> attackModifier attrs d DoesNotCountDefense
       pure t
     _ -> Despair <$> runMessage msg attrs

@@ -2,6 +2,7 @@ module LordOfTheRings.Core.AnduinEncounterSpec (spec) where
 
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getDefense)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
@@ -126,6 +127,17 @@ spec = do
       run $ PlaceTokens GameSource quest Progress 5
       reveal Treacheries.despair []
       (.progress) <$> getActiveQuest `shouldReturn` 1
+
+    it "as a shadow ignores the defense only for that attack" . gameTest $ \pid -> do
+      reveal Enemies.hummerhorns []
+      eid <- theEnemy Enemies.hummerhorns
+      defender <- hero "01012"
+      base <- getDefense defender
+      run . AttachShadowCard eid =<< genEncounterCard Treacheries.despair
+      run $ ResolveShadow eid pid (Just defender)
+      getDefense defender `shouldReturn` 0
+      run $ CheckWindows [mkAfter $ EnemyAttacking eid pid]
+      getDefense defender `shouldReturn` base
 
   describe "Massing at Night" do
     it "reveals an additional card for each player" . gameTest $ \_ -> do
