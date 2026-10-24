@@ -933,9 +933,23 @@ runGameMessage msg g = case msg of
     returning <- flip filterM (toList g.entities.allies) \a ->
       elem ReturnToHandAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
     shuffling <- flip filterM (toList g.entities.allies) \a -> elem ShuffleIntoDeckAtEndOfPhase <$> getModifiers a
+    -- an ally under both, as Beorn put into play by Sneak Attack, goes where the first
+    -- player chooses (FAQ 1.02)
+    let both = map toTarget $ filter ((`elem` map toId shuffling) . toId) returning
+    lead <- getLead
     pushAll
-      $ [ReturnToHand (toTarget a) | a <- returning]
-      <> [ShuffleIntoOwnersDeck (toTarget a) | a <- shuffling]
+      $ [ReturnToHand t | t <- map toTarget returning, t `notElem` both]
+      <> [ShuffleIntoOwnersDeck t | t <- map toTarget shuffling, t `notElem` both]
+      <> [ questionLabelWith
+             (ikey "label.endOfPhaseAlly")
+             (Just t)
+             []
+             lead
+             [ Label (ikey "label.returnAllyToHand") [ReturnToHand t]
+             , Label (ikey "label.shuffleAllyIntoDeck") [ShuffleIntoOwnersDeck t]
+             ]
+         | t <- both
+         ]
     pushEnd $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
     pure $ g & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
   PlayAlly pid card -> do

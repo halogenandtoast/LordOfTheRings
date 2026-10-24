@@ -2,10 +2,12 @@ module LordOfTheRings.Core.AlliesAndAttachmentsSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense, getHitPoints, getWillpower)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Modifier (ModifierType (ReturnToHandAtEndOfPhase))
 import LordOfTheRings.Phase
 import TestImport
 
@@ -101,6 +103,19 @@ spec = do
       run $ EndPhase PlanningPhase
       getsGame (length . (.entities.allies)) `shouldReturn` 0
       length . (.deck) <$> getPlayer pid `shouldReturn` deck + 1
+
+    it "goes where the first player chooses when Sneak Attack would also return him" . gameTest $ \pid -> do
+      beorn <- putAllyIntoPlay pid Allies.beorn
+      cid <- getsGame (allyCardId . toAttrs . fromJustNote "no Beorn" . headMay . toList . (.entities.allies))
+      run $ CreateEffect $ Effect GameSource (CardIdTarget cid) [ReturnToHandAtEndOfPhase] UntilEndOfPhase
+      deck <- length . (.deck) <$> getPlayer pid
+      run $ BeginPhase PlanningPhase
+      chooseAbilityOf pid beorn
+      passActions pid
+      run $ EndPhase PlanningPhase
+      chooseLabel "$label.shuffleAllyIntoDeck" pid
+      length . (.deck) <$> getPlayer pid `shouldReturn` deck + 1
+      map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` notElem cid)
 
   describe "Wandering Took" do
     it "has no one to go to in a one player game" . gameTest $ \pid -> do
