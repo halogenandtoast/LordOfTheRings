@@ -42,6 +42,8 @@ data ModifierType
   | -- | on the game: the players, as a group, cannot play more than 1 ally each round
     OneAllyPerRound
   | AllyPlayedThisRound
+  | -- | on the game: a copy of the card was played this round
+    PlayedThisRound CardCode
   | -- | on an ally: it entered play this round
     EnteredPlayThisRound
   | -- | damage an attack deals past the character's remaining hit points raises threat

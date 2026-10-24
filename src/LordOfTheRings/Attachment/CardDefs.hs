@@ -27,7 +27,6 @@ allAttachmentCards =
       , darkKnowledge
       , selfPreservation
       , dunedainMark
-      , mendorsSupport
       , ancientMathom
       , narvisBelt
       , legacyOfDurin
@@ -165,9 +164,6 @@ dunedainMark =
   (attachment "02002" "Dúnedain Mark" Leadership (StaticCost 1))
     { cdCardTraits = setFromList [Signal]
     }
-
-mendorsSupport :: CardDef
-mendorsSupport = attachment "RC003" "Mendor's Support" Neutral (StaticCost 0)
 
 ancientMathom :: CardDef
 ancientMathom =

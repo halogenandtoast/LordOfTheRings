@@ -31,6 +31,7 @@ allEventCards =
       , willOfTheWest
       , aTestOfWill
       , standAndFight
+      , mendorsSupport
       , aLightInTheDark
       , dwarvenTomb
       , fortuneOrFate
@@ -135,6 +136,12 @@ willOfTheWest = event "01049" "Will of the West" Spirit (StaticCost 1)
 
 aTestOfWill :: CardDef
 aTestOfWill = event "01050" "A Test of Will" Spirit (StaticCost 1)
+
+mendorsSupport :: CardDef
+mendorsSupport =
+  (event "RC003" "Mendor's Support" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Boon]
+    }
 
 standAndFight :: CardDef
 standAndFight = event "01051" "Stand and Fight" Spirit DynamicCost

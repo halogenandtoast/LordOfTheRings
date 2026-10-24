@@ -135,6 +135,13 @@ spec = do
       question <- getQuestion pid
       [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
 
+  describe "Mendor's Support" do
+    it "can't be played without Mendor in play" . gameTest $ \pid -> do
+      card <- putCardIntoHand pid Events.mendorsSupport
+      run $ BeginPhase PlanningPhase
+      question <- getQuestion pid
+      [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
+
   describe "Fortune or Fate" do
     it "puts a hero from a discard pile back into play" . gameTestWith (coreDeck "spirit") $ \pid -> do
       dunhere <- getHeroWithCode "01009"

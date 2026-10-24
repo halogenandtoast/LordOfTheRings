@@ -7,6 +7,7 @@ import LordOfTheRings.Event.Cards.GandalfsSearch
 import LordOfTheRings.Event.Cards.WillOfTheWest
 import LordOfTheRings.Event.Cards.DwarvenTomb
 import LordOfTheRings.Event.Cards.FortuneOrFate
+import LordOfTheRings.Event.Cards.MendorsSupport
 import LordOfTheRings.Event.Cards.StandAndFight
 import LordOfTheRings.Event.Cards.ATestOfWill
 import LordOfTheRings.Event.Cards.HastyStroke
@@ -96,6 +97,7 @@ allEvents =
         , SomeEventCard dwarvenTomb
         , SomeEventCard fortuneOrFate
         , SomeEventCard standAndFight
+        , SomeEventCard mendorsSupport
         , SomeEventCard aTestOfWill
         , SomeEventCard hastyStroke
         , SomeEventCard rainOfArrows

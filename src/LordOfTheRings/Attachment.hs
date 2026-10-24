@@ -22,7 +22,6 @@ import LordOfTheRings.Attachment.Cards.DunedainMark
 import LordOfTheRings.Attachment.Cards.DwarvenAxe
 import LordOfTheRings.Attachment.Cards.ForestSnare
 import LordOfTheRings.Attachment.Cards.HornOfGondor
-import LordOfTheRings.Attachment.Cards.MendorsSupport
 import LordOfTheRings.Attachment.Cards.PowerInTheEarth
 import LordOfTheRings.Attachment.Cards.ProtectorOfLorien
 import LordOfTheRings.Attachment.Cards.SelfPreservation
@@ -117,7 +116,6 @@ allAttachments =
         , SomeAttachmentCard darkKnowledge
         , SomeAttachmentCard selfPreservation
         , SomeAttachmentCard dunedainMark
-        , SomeAttachmentCard mendorsSupport
         , SomeAttachmentCard songOfKings
         , SomeAttachmentCard dunedainWarning
         , SomeAttachmentCard bornAloft
