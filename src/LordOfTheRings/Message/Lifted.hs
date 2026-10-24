@@ -331,6 +331,12 @@ payOrDiscard pid card sphere = do
       labeled "discardIt" $ discard card
     else discard card
 
+-- | Reveal the next encounter card once the card's revelation, its keywords too, has resolved.
+revealEncounterCardAfter :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
+revealEncounterCardAfter t = lift $ insertAfterMatching [RevealEncounterCard] \case
+  WhileInPlay t' _ -> t == t'
+  _ -> False
+
 -- | Messages to run once the enemy's attack has resolved, as "after this attack" reads.
 afterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
 afterAttack eid msgs = lift $ insertAfterMatching msgs \case

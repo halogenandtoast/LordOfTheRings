@@ -23,6 +23,7 @@ instance RunMessage Eleanor where
         cancelWhenRevealed t
         cancelMatching (== FinishRevelation tid)
         discard t
-        revealEncounterCard
+        -- its surge and doomed resolve before the replacement is revealed (FAQ)
+        revealEncounterCardAfter t
       pure h
     _ -> Eleanor <$> runMessage msg attrs

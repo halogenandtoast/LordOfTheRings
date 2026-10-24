@@ -1284,7 +1284,8 @@ runGameMessage msg g = case msg of
           %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) location)
       TreacheryType -> do
         treachery <- newTreachery card
-        pushAll . (<> (FinishRevelation (toId treachery) : surge)) =<< revealing (toTarget treachery)
+        pushAll . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
+          =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         pushAll =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]

@@ -47,6 +47,16 @@ spec = do
       map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode reach]
       getsGame (length . (.entities.locations)) `shouldReturn` 1
 
+    it "lets the canceled card's doomed and surge resolve before the replacement" . spiritTest $ \pid -> do
+      -- Doomed takes the player to 35 threat before the surge reveals Evil Storm
+      run $ RaiseThreat pid 34
+      _ <- setEncounterDeck [Treacheries.flooding, Treacheries.evilStorm, Locations.forestGate]
+      run RevealEncounterCard
+      chooseAbilityOf pid =<< hero "01008"
+      resolveRevealed
+      eowyn <- hero "01007"
+      getCharacterDamage eowyn `shouldReturn` 1
+
   describe "Hasty Stroke" do
     it "cancels a shadow effect as it triggers" . spiritTest $ \pid -> do
       card <- putCardIntoHand pid Events.hastyStroke
