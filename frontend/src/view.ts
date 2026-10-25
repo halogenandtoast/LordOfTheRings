@@ -231,9 +231,13 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
           const kind = ui.ability?.abilityType.tag.replace(/Ability$/, '').replace(/^SilentForced$/, 'Forced') ?? 'Action'
           const source = ui.ability?.abilitySource
           const sourceCard = source && { tag: source.tag.replace(/Source$/, 'Target'), contents: source.contents }
-          // the ability's own card is what you click to use it
+          // the ability's own card is what you click to use it, but an ally that left play
+          // for a deck, as Éomund shuffled away by Lothíriel, is out of sight: it is a button
           const label = ikey(`label.ability.${kind}`, { name: targetName(sourceCard) })
-          return { index, label, targetId: targetCardId(sourceCard), action: label }
+          const cardId = targetCardId(sourceCard)
+          const departed = source?.tag === 'AllySource' && source.contents && game.leftPlay?.[source.contents]
+          const seen = Object.values(game.players).some((p) => [...(p.hand ?? []), ...p.discard].some((c) => c.id === cardId))
+          return { index, label, targetId: departed && !seen ? null : cardId, action: label }
         }
       }
     })
