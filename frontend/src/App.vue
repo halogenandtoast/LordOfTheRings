@@ -25,9 +25,8 @@ watchEffect(() => {
 
 <style scoped>
 footer {
-  position: fixed;
-  bottom: 0;
-  z-index: 100;
+  flex: none;
+  margin-top: auto;
   width: 100%;
   padding: 1px 8px;
   font-size: 0.6rem;

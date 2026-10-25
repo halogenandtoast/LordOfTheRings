@@ -128,7 +128,7 @@ export interface Table {
 }
 
 export type ServerMessage =
-  | { tag: 'Update'; contents: GameData }
+  | { tag: 'Update'; contents: GameData; animate?: boolean }
   | { tag: 'Logged'; entry: LogEntry }
   | { tag: 'FlipCard'; cardId: string }
   | { tag: 'ShuffleIntoDeck'; cardIds: string[] }

@@ -68,7 +68,7 @@ export const useGame = (gameId: string, spectate = false) => {
     await shuffleDecks()
   }
 
-  const update = async (next: GameData) => {
+  const update = async (next: GameData, animate = true) => {
     data.value = next
     // the log afresh: on opening the game, and after an undo or a deal
     if (next.log) {
@@ -76,6 +76,14 @@ export const useGame = (gameId: string, spectate = false) => {
       hasOlder.value = olderThan(next.log)
     }
     const view = toView(next, defs, game.value)
+    if (!animate) {
+      pendingFlips = []
+      shuffledBack = new Set()
+      flipping.value = new Set()
+      game.value = view
+      await nextTick()
+      return
+    }
     // a game opening on the mulligan, on arrival or dealt from the lobby, is laid out with
     // its hands empty, so the opening hand deals out
     const undealt = !game.value?.started && transitionsOn() ? beforeTheDeal(view) : null
@@ -99,7 +107,7 @@ export const useGame = (gameId: string, spectate = false) => {
   const apply = async (message: ServerMessage) => {
     switch (message.tag) {
       case 'Update':
-        return update(message.contents)
+        return update(message.contents, message.animate)
       case 'Logged':
         log.value = [...log.value, message.entry]
         return

@@ -63,6 +63,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   }
 
   const targetName = (target: Target | undefined) => {
+    if (target?.tag === 'PlayerTarget') return game.players[target.contents ?? '']?.name ?? ''
     const cardId = targetCardId(target)
     const entity = [...Object.values(entities), game.leftPlay ?? {}].flatMap((es) => Object.values(es)).find((e) => e.cardId === cardId)
     return entity ? def(entity.cardCode).name ?? '' : ''

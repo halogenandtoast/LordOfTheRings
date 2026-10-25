@@ -83,7 +83,7 @@ each client as its viewer may see it, with the log afresh when it was undone or 
 data Outgoing
   = Said LByteString
   | Told Table [PlayerId] LogEntry
-  | Updated LotrGame Table (Maybe Game) (Maybe [LogEntry])
+  | Updated LotrGame Table (Maybe Game) (Maybe [LogEntry]) Bool
 
 data App = App
   { pool :: ConnectionPool
@@ -450,15 +450,19 @@ seesHand table viewer order pid
         && any (\seat -> Just seat.userId == viewer && order `atMay` seat.position == Just pid) table.seated
   | otherwise = True
 
-updateFor :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> Maybe [LogEntry] -> LByteString
-updateFor viewer row table g entries = encode $ object ["tag" .= String "Update", "contents" .= gameData viewer row table g entries]
+updateFor :: Maybe UserId -> LotrGame -> Table -> Maybe Game -> Maybe [LogEntry] -> Bool -> LByteString
+updateFor viewer row table g entries animate = encode $ object ["tag" .= String "Update", "contents" .= gameData viewer row table g entries, "animate" .= animate]
 
 -- | The game to its clients, with the log afresh when given.
 broadcast :: LotrGameId -> LotrGame -> Maybe Game -> Maybe [LogEntry] -> Handler ()
-broadcast gid row g entries = do
+broadcast = broadcastAnimated True
+
+-- | Undo restores the board without replaying card movements for any viewer.
+broadcastAnimated :: Bool -> LotrGameId -> LotrGame -> Maybe Game -> Maybe [LogEntry] -> Handler ()
+broadcastAnimated animate gid row g entries = do
   chan <- gameChannel gid
   table <- tableFor gid row
-  atomically $ writeTChan chan $ Updated row table g entries
+  atomically $ writeTChan chan $ Updated row table g entries animate
 
 summary :: Entity LotrGame -> Maybe GameSummary
 summary (Entity gid row) | awaitingPlayers row = do
@@ -757,7 +761,7 @@ handleSocket viewer chan = do
   forever $ atomically (readTChan readChannel) >>= traverse_ sendTextData . \case
     Said bytes -> Just bytes
     Told table order e -> guard (readsEntry (seesHand table viewer order) e) $> encode (Logged e)
-    Updated row table g entries -> Just $ updateFor viewer row table g entries
+    Updated row table g entries animate -> Just $ updateFor viewer row table g entries animate
 
 -- | The game as it stands, or its updates as they come over a websocket.
 serveGame :: LotrGameId -> LotrGame -> Handler Value
@@ -1007,7 +1011,7 @@ postUndoR gid = do
           , LotrGameUpdatedAt =. now
           ]
         <*> logTail gid
-    broadcast gid row' (Just g) (Just entries)
+    broadcastAnimated False gid row' (Just g) (Just entries)
  where
   undoStep current (Entity _ step) = do
     patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
