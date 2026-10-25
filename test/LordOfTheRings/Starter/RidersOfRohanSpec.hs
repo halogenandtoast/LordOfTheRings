@@ -344,6 +344,22 @@ spec = describe "Riders of Rohan" do
       [ally'] <- allies
       getModifiers ally' >>= (`shouldSatisfy` elem ShuffleIntoDeckAtEndOfPhase)
 
+    it "lets the ally answer being shuffled away at the end of the phase" . rohanTest $ \pid -> do
+      flipFirstQuest pid
+      _ <- setEncounterDeck [Locations.forestGate]
+      card <- putCardIntoHand pid Allies.eomund
+      run $ Run [BeginPhase QuestPhase, EndPhase QuestPhase]
+      lothiriel <- hero lothirielCode
+      chooseTarget pid lothiriel
+      chooseAbilityOf pid lothiriel
+      chooseTarget pid card
+      [eomund] <- map toTarget <$> allies
+      chooseLabel "$label.doneCommitting" pid
+      passActions pid
+      chooseAbilityOf pid eomund
+      allyCodes `shouldReturn` []
+      exhausted lothirielCode `shouldReturn` False
+
   describe "War Axe" do
     it "gives +1 attack for each restricted attachment" . rohanTest $ \pid -> do
       eomer <- hero eomerCode
