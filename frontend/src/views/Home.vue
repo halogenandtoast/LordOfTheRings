@@ -6,7 +6,8 @@ import { deleteGame, fetchGames, importGame } from '../api'
 import GameRow from '../components/GameRow.vue'
 import PrimaryButton from '../components/PrimaryButton.vue'
 import SegmentedToggle from '../components/SegmentedToggle.vue'
-import type { GameSummary } from '../server'
+import type { CardDef, GameSummary } from '../server'
+import { importPreview } from '../importPreview'
 import { useServerText } from '../i18n'
 
 const tr = useServerText()
@@ -49,10 +50,34 @@ const showImportGame = ref(false)
 const importFile = ref<File | null>(null)
 const importing = ref(false)
 const importError = ref<string | null>(null)
+const preview = ref<GameSummary | null>(null)
+const readingFile = ref(false)
+let selection = 0
+let cardDefinitions: Promise<Record<string, CardDef>> | undefined
 
-const chooseFile = (event: Event) => {
-  importFile.value = (event.target as HTMLInputElement).files?.[0] ?? null
+const chooseFile = async (event: Event) => {
+  const currentSelection = ++selection
+  const file = (event.target as HTMLInputElement).files?.[0] ?? null
+  importFile.value = null
+  preview.value = null
   importError.value = null
+  readingFile.value = !!file
+  if (!file) return
+  try {
+    cardDefinitions ??= fetch('/api/cards').then((response) => {
+      if (!response.ok) throw new Error('Could not load cards')
+      return response.json() as Promise<Record<string, CardDef>>
+    }).catch(() => ({}))
+    const [contents, cards] = await Promise.all([file.text(), cardDefinitions])
+    const summary = importPreview(JSON.parse(contents), cards)
+    if (currentSelection !== selection) return
+    preview.value = summary
+    importFile.value = file
+  } catch {
+    if (currentSelection === selection) importError.value = t('home.couldNotLoadFile')
+  } finally {
+    if (currentSelection === selection) readingFile.value = false
+  }
 }
 
 const submitImport = async () => {
@@ -97,14 +122,15 @@ const submitImport = async () => {
               <h3>{{ $t('home.loadGame') }}</h3>
               <div class="panel-actions">
                 <button class="panel-close" type="button" @click="showImportGame = false">{{ $t('common.cancel') }}</button>
-                <button v-if="importFile" class="panel-load" type="button" :disabled="importing" @click="submitImport">
+                <button v-if="preview" class="panel-load" type="button" :disabled="importing || readingFile" @click="submitImport">
                   {{ importing ? $t('home.loading') : $t('home.loadGame') }}
                 </button>
               </div>
             </div>
-            <label class="file-picker">
-              <input type="file" accept="application/json,.json" @change="chooseFile" />
-              <span>{{ importFile ? importFile.name : $t('home.chooseFile') }}</span>
+            <GameRow v-if="preview" class="import-preview" :game="preview" preview />
+            <label class="file-picker" :class="{ compact: preview }">
+              <input type="file" accept="application/json,.json" :disabled="importing" @change="chooseFile" />
+              <span>{{ readingFile ? $t('home.loading') : $t('home.chooseFile') }}</span>
             </label>
             <p v-if="importError" class="import-error">{{ tr(importError) }}</p>
           </div>
@@ -255,6 +281,8 @@ p { margin: 0; }
 }
 .file-picker:hover { border-color: var(--accent); color: var(--text); }
 .file-picker input { display: none; }
+.file-picker.compact { padding: 8px; font-size: 0.8em; }
+.import-preview { margin-bottom: 8px; }
 
 .import-error { color: var(--danger); margin-top: 8px; }
 

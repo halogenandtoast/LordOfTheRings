@@ -5,7 +5,7 @@ import TrashIcon from './TrashIcon.vue'
 import type { GameSummary } from '../server'
 import { slug } from '../campaigns'
 
-const props = defineProps<{ game: GameSummary; deleteGame?: () => void; spectate?: boolean }>()
+const props = defineProps<{ game: GameSummary; deleteGame?: () => void; spectate?: boolean; preview?: boolean }>()
 
 const confirm = useTemplateRef<InstanceType<typeof ConfirmDelete>>('confirm')
 // the scenario's encounter set icon, as the new game page shows it
@@ -19,7 +19,8 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
       <div class="game-title">
         <div class="main-details">
           <span class="scenario-icon" role="img" :aria-label="game.scenario" :title="game.scenario" :style="{ '--icon': icon }" />
-          <RouterLink class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
+          <span v-if="preview" class="title preview-title">{{ game.name }}</span>
+          <RouterLink v-else class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
           <div v-if="game.easyMode" class="badge easy">{{ $t('home.easyMode') }}</div>
           <div v-if="game.outcome" class="badge outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
             {{ $t(game.outcome === 'Won' ? 'home.won' : 'home.lost') }}
@@ -125,7 +126,8 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.title:hover { color: var(--accent-bright); text-decoration: underline; }
+a.title:hover { color: var(--accent-bright); text-decoration: underline; }
+.preview-title { white-space: normal; overflow-wrap: anywhere; }
 
 .badge {
   flex: none;
