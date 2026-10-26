@@ -9,13 +9,12 @@ import TestImport
 
 commitHeroes :: PlayerId -> [CardCode] -> GameT ()
 commitHeroes pid codes = do
-  for_ codes $ \code -> do
-    getHeroWithCode code >>= chooseTarget pid
-    -- decline any response to committing, such as Théodred's
-    whenJustM (getQuestion pid) $ \q ->
-      when (notNull [() | Label "$label.pass" _ <- questionChoices q]) $ chooseLabel "$label.pass" pid
+  for_ codes $ getHeroWithCode >=> chooseTarget pid
   whenJustM (getQuestion pid) $ \q ->
     when (notNull [() | Label "$label.doneCommitting" _ <- questionChoices q]) $ chooseLabel "$label.doneCommitting" pid
+  -- decline any response to committing, such as Théodred's
+  whenJustM (getQuestion pid) $ \q ->
+    when (notNull [() | Label "$label.pass" _ <- questionChoices q]) $ chooseLabel "$label.pass" pid
   passActions pid
 
 -- Flies and Spiders setup leaves Forest Spider (2 threat) and Old Forest Road (1 threat) in staging.
@@ -33,6 +32,23 @@ spec = describe "Quest phase" do
     run $ BeginPhase QuestPhase
     Just question <- getQuestion pid
     length [() | TargetLabel {} <- questionChoices question] `shouldBe` 3
+
+  it "waits for every character to be committed before responses to committing" . gameTestWith testDeck {heroes = ["01001", "01002", "01007"]} $ \pid -> do
+    flipFirstQuest pid
+    _ <- setEncounterDeck [Locations.forestGate]
+    run $ BeginPhase QuestPhase
+    aragorn <- getHeroWithCode "01001"
+    theodred <- getHeroWithCode "01002"
+    chooseTarget pid aragorn
+    chooseTarget pid theodred
+    chooseLabel "$label.doneCommitting" pid
+    -- Théodred gives Aragorn the resource his response costs
+    chooseAbilityOf pid theodred
+    chooseTarget pid aragorn
+    chooseAbilityOf pid aragorn
+    aragorn' <- toAttrs <$> getHeroWithCode "01001"
+    heroExhausted aragorn' `shouldBe` False
+    heroCommitted aragorn' `shouldBe` True
 
   it "exhausts committed characters" . gameTest $ \pid -> do
     questWith pid [Locations.forestGate] ["01007"]

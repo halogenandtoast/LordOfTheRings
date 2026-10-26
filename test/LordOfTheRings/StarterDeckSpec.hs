@@ -83,7 +83,8 @@ spec = describe "Starter deck" do
       run $ BeginPhase QuestPhase
       chooseTarget pid aragorn
       chooseTarget pid theodred
-      chooseAbility pid
+      chooseLabel "$label.doneCommitting" pid
+      chooseAbilityOf pid theodred
       chooseTarget pid aragorn
       (.resources) <$> getHeroWithCode aragornCode `shouldReturn` 1
 

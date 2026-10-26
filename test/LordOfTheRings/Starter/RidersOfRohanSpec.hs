@@ -351,10 +351,10 @@ spec = describe "Riders of Rohan" do
       run $ Run [BeginPhase QuestPhase, EndPhase QuestPhase]
       lothiriel <- hero lothirielCode
       chooseTarget pid lothiriel
+      chooseLabel "$label.doneCommitting" pid
       chooseAbilityOf pid lothiriel
       chooseTarget pid card
       [eomund] <- map toTarget <$> allies
-      chooseLabel "$label.doneCommitting" pid
       passActions pid
       chooseAbilityOf pid eomund
       allyCodes `shouldReturn` []

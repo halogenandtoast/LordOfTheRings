@@ -81,6 +81,7 @@ spec = do
       _ <- setEncounterDeck [Locations.oldForestRoad]
       run $ BeginPhase QuestPhase
       chooseTarget pid guide
+      chooseLabel "$label.doneCommitting" pid
       chooseAbilityOf pid guide
       (.progress) <$> getLocation lid `shouldReturn` 1
 
@@ -91,6 +92,7 @@ spec = do
       _ <- setEncounterDeck [Locations.oldForestRoad]
       run $ BeginPhase QuestPhase
       chooseTarget pid tracker
+      chooseLabel "$label.doneCommitting" pid
       chooseAbilityOf pid tracker
       (.progress) <$> getLocation lid `shouldReturn` 1
 

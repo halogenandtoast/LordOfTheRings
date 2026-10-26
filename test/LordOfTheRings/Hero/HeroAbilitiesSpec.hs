@@ -15,6 +15,7 @@ spec = do
       run $ PlaceTokens GameSource (toTarget aragorn) Resource 1
       run $ BeginPhase QuestPhase
       chooseTarget pid aragorn
+      chooseLabel "$label.doneCommitting" pid
       chooseAbility pid
       aragorn' <- getHeroWithCode "01001"
       heroExhausted (toAttrs aragorn') `shouldBe` False
@@ -24,6 +25,7 @@ spec = do
       aragorn <- getHeroWithCode "01001"
       run $ BeginPhase QuestPhase
       chooseTarget pid aragorn
+      chooseLabel "$label.doneCommitting" pid
       Just question <- getQuestion pid
       [() | AbilityLabel {} <- questionChoices question] `shouldBe` []
 

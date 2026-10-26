@@ -840,15 +840,23 @@ runGameMessage msg g = case msg of
     mustCommitAll <- elem MustCommitAll <$> getModifiers GameTarget
     player <- getPlayer pid
     early <- filterM (\c -> andM [pure $ playsBeforeCommitting pid c, canPlay player c]) player.hand
+    -- a player commits their characters at once, so responses to committing, as Aragorn's
+    -- and Théodred's, wait until they are done and are then taken in any order
+    committed <-
+      selectCharacters
+        (HeroControlledBy (PlayerWithId pid) <> CommittedHero)
+        (AllyControlledBy (PlayerWithId pid) <> CommittedAlly)
     -- asked even with no one left to commit, so the player moves on to staging
     push
       $ questionLabelWith (ikey "label.commitCharacters") Nothing quests pid
-      $ [ targetLabel c [CommitToQuest c, CheckWindows [mkAfter $ CommittedToQuest c], CommitCharacters pid]
+      $ [ targetLabel c [CommitToQuest c, CommitCharacters pid]
         | c <- characters
         ]
       <> [AbilityLabel pid ab [] [CommitCharacters pid] | ab <- actions]
       <> [targetLabel (CardIdTarget c.id) [PlayCard pid c.id, CommitCharacters pid] | c <- early]
-      <> [Label (ikey "label.doneCommitting") [] | not mustCommitAll || null characters]
+      <> [ Label (ikey "label.doneCommitting") [CheckWindows [mkAfter $ CommittedToQuest c | c <- committed] | notNull committed]
+         | not mustCommitAll || null characters
+         ]
     pure g
   Staging -> do
     mods <- getModifiers GameTarget

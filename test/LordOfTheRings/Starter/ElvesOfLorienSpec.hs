@@ -370,9 +370,9 @@ spec = describe "Elves of Lórien" do
       _ <- setEncounterDeck [Enemies.forestSpider]
       run $ BeginPhase QuestPhase
       chooseTarget pid haldir
+      chooseLabel "$label.doneCommitting" pid
       chooseAbility pid
       chooseLabel "$label.wingfoot.enemy" pid
-      chooseLabel "$label.doneCommitting" pid
       chooseAbility pid
       isExhausted haldir `shouldReturn` False
 

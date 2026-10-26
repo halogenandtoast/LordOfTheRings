@@ -158,6 +158,7 @@ spec = describe "Defenders of Gondor" do
     ranger <- putAllyIntoPlay pid Allies.emynArnenRanger
     run $ BeginPhase QuestPhase
     chooseTarget pid ranger
+    chooseLabel "$label.doneCommitting" pid
     chooseAbilityOf pid ranger
     getWillpower ranger `shouldReturn` 2
 
