@@ -86,9 +86,11 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
 
     // arrivals: anything new to the hand or play area came from the discard or else the deck
     // (encounter cards attached in play came from the encounter deck, below)
+    const wasHeld = new Set([...was.hand, ...was.inPlay].map((card) => card.id))
     for (const card of [...player.hand, ...player.inPlay.filter((c) => !encounterTypes.has(c.type))]) {
-      // the top of the discard, say, morphs on its own
-      if (onScreen(card.id) && !shuffledBack.has(card.id)) continue
+      // the top of the discard, say, morphs on its own, and a card already there but off
+      // screen, in a seat not shown, has not moved
+      if ((onScreen(card.id) || wasHeld.has(card.id)) && !shuffledBack.has(card.id)) continue
       leaving.push(wasDiscarded.has(card.id) ? move(discard, card, false) : move(deck, card, true))
     }
   }
@@ -106,8 +108,10 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
       ].filter((card) => encounterTypes.has(card.type))
     for (const card of inPlay(before))
       if (isDiscarded.has(card.id) && !wasDiscarded.has(card.id)) arriving.push(move('discard-encounter', card, false))
+    // one already in play has not come out, though it is off screen, as on a seat not shown
+    const wasInPlay = new Set(inPlay(before).map((card) => card.id))
     for (const card of inPlay(after)) {
-      if (onScreen(card.id)) continue
+      if (onScreen(card.id) || wasInPlay.has(card.id)) continue
       leaving.push(wasDiscarded.has(card.id) ? move('discard-encounter', card, false) : move('deck-encounter', card, true))
     }
   }
