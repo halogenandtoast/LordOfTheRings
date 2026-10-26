@@ -42,6 +42,8 @@ export interface ChoiceView {
   action: string
   /** The damage choosing it deals its own card, to preview where that leaves it. */
   damage?: number
+  /** The card of a button choice whose card is out of sight, to preview it. */
+  card?: CardView
 }
 
 export interface QuestionView {

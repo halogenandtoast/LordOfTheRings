@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useCardOverlay } from '../composables/useCardOverlay'
 import { useServerText } from '../i18n'
 import type { ChoiceView, QuestionView } from '../types'
 
 const tr = useServerText()
+const overlay = useCardOverlay()
 
 const { question, outcome = null, victoryPoints = 0 } = defineProps<{
   question: QuestionView | null
@@ -27,7 +29,9 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
           v-for="choice in labelChoices"
           :key="choice.index"
           type="button"
-          @click="emit('choose', choice.index)"
+          @click="choice.card && overlay.hide(); emit('choose', choice.index)"
+          @pointerenter="(e: PointerEvent) => choice.card && e.pointerType === 'mouse' && overlay.show(choice.card, e.currentTarget as HTMLElement)"
+          @pointerleave="(e: PointerEvent) => choice.card && e.pointerType === 'mouse' && overlay.hide()"
         >
           {{ tr(choice.label) }}
         </button>
