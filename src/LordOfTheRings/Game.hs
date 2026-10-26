@@ -390,12 +390,10 @@ runGameMessage msg g = case msg of
     pushAll [TravelActions, DoStep 1 (BeginPhase TravelPhase)]
     pure $ g & phaseL .~ TravelPhase
   DoStep 1 (BeginPhase TravelPhase) -> do
-    hasActive <- selectAny IsActiveLocation
-    locations <-
-      filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
+    locations <- travelableLocations
     lead <- getLead
     forced <- filterM (fmap (elem MustBeTraveledTo) . getModifiers) locations
-    unless (hasActive || null locations)
+    unless (null locations)
       $ push
       $ if null forced
         then

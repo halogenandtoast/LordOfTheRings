@@ -16,7 +16,7 @@ import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (
-  ModifierType (BlankAttachments, CannotCancelEncounterEffects, CannotTriggerAbilities),
+  ModifierType (BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotTriggerAbilities),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -262,3 +262,10 @@ passesCriteriaFor pid c = runReadGame (passesCriteria c) . (\g -> g {gameActiveP
 
 abilityKey :: Ability -> (Source, Int)
 abilityKey ab = (ab.abilitySource, ab.abilityIndex)
+
+-- | The locations the travel phase may go to: none while a location is active.
+travelableLocations :: HasGame m => m [LocationId]
+travelableLocations =
+  selectAny IsActiveLocation >>= \case
+    True -> pure []
+    False -> filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea

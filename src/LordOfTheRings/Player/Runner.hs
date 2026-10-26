@@ -16,7 +16,7 @@ import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria)
+import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
 import LordOfTheRings.Id (PlayerId)
@@ -90,9 +90,11 @@ instance RunMessage Player where
         $ WithTarget (toTarget player) (DoPhase PlanningPhase)
       pure player
     ActionWindow pid | pid == player.id -> do
-      -- travel's window is the last thing in its phase; the others come before more of theirs
+      -- travel's window is the last thing in its phase unless the lead may travel after it;
+      -- the others come before more of theirs
       travel <- isPhase TravelPhase
-      actionWindow (ikey "label.takeAction") (ikey "label.pass") (guard travel $> EncounterPhase)
+      last' <- if travel then null <$> travelableLocations else pure False
+      actionWindow (ikey "label.takeAction") (ikey "label.pass") (guard last' $> EncounterPhase)
         $ ActionWindow pid
       pure player
     OptionalActionWindow pid | pid == player.id -> do
