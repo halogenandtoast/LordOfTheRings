@@ -835,6 +835,16 @@ runGameMessage msg g = case msg of
         pid
         [targetLabel h [Exhaust h] | h <- ready]
     pure g
+  PayExhaustHeroCost pid matcher rest -> do
+    heroes <- asPlayer pid (exhaustableHeroes matcher)
+    -- the ability paid for finds the hero in its windows
+    let paidWith h = \case
+          UseCardAbility p s i ws -> UseCardAbility p s i (ws <> [mkAfter $ Exhausted $ toTarget h])
+          m -> m
+    push
+      $ questionLabelWith (ikey "label.chooseAndExhaustHero") Nothing [] pid
+        [targetLabel h (Exhaust (toTarget h) : map (paidWith h) rest) | h <- heroes]
+    pure g
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
     push $ case others of
@@ -1070,9 +1080,7 @@ runGameMessage msg g = case msg of
     pushAll
       =<< inLogBlock
         (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
-        ( costMessages (PlayerSource pid) (abilityCost ab)
-            <> [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
-        )
+        (payCost pid (abilityCost ab) [UseCardAbility pid ab.abilitySource ab.abilityIndex windows])
     pure g
   PlayEvent pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg

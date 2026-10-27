@@ -3,6 +3,7 @@ module LordOfTheRings.Ability.Types (module LordOfTheRings.Ability.Types) where
 import LordOfTheRings.Criteria
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Json (withDefaults)
+import LordOfTheRings.Matcher.Types (HeroMatcher)
 import LordOfTheRings.Matcher.Window
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -17,6 +18,9 @@ data AbilityCost
   | RaiseThreatCost Int
   | -- | the player spends resources of the sphere from their heroes' pools
     SphereResourceCost PlayerId Sphere Int
+  | -- | the player exhausts a hero the matcher picks out, chosen as they pay, as Arkham's
+    -- ExhaustAssetCost; 'ActivePlayer' in it is the player paying
+    ExhaustHeroCost HeroMatcher
   | Costs [AbilityCost]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

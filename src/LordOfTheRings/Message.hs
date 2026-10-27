@@ -6,7 +6,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Log.Block
-import LordOfTheRings.Matcher.Types (CardMatcher)
+import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher)
 import LordOfTheRings.Modifier (ModifierType)
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -186,6 +186,9 @@ data Message
     SwapHero HeroId PlayerCard
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
+  | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then
+    -- used is told which, by the hero's exhausted window
+    PayExhaustHeroCost PlayerId HeroMatcher [Message]
   | -- | the player deals 1 damage to a character they control other than the one given
     DamageAnotherCharacter Source PlayerId Target
   | DiscardRandomFromHand PlayerId Int

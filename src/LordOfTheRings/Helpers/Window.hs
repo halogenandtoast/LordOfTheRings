@@ -193,7 +193,29 @@ canPay = \case
   DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
   RaiseThreatCost _ -> pure True
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
+  ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
   Costs cs -> allM canPay cs
+
+-- | As 'canPay', for the player paying, whom 'ActivePlayer' matches.
+canPayFor :: HasGame m => PlayerId -> AbilityCost -> m Bool
+canPayFor pid = asPlayer pid . canPay
+
+-- | A query read with the player as the one 'ActivePlayer' matches.
+asPlayer :: HasGame m => PlayerId -> ReadGame a -> m a
+asPlayer pid q = runReadGame q . (\g -> g {gameActivePlayer = pid}) <$> getGame
+
+-- | The ready heroes matching that can exhaust.
+exhaustableHeroes :: HasGame m => HeroMatcher -> m [HeroId]
+exhaustableHeroes m = filterM (\h -> notElem CannotExhaust <$> getModifiers (HeroTarget h)) =<< select (m <> ReadyHero)
+
+{- | The messages that pay the cost, then the rest: a cost paid by a choice holds the rest
+until it is made.
+-}
+payCost :: PlayerId -> AbilityCost -> [Message] -> [Message]
+payCost pid cost rest = case cost of
+  ExhaustHeroCost m -> [PayExhaustHeroCost pid m rest]
+  Costs cs -> foldr (payCost pid) rest cs
+  _ -> costMessages (PlayerSource pid) cost <> rest
 
 costMessages :: Source -> AbilityCost -> [Message]
 costMessages source = \case
@@ -205,6 +227,7 @@ costMessages source = \case
     PlayerSource pid -> [RaiseThreat pid n]
     _ -> []
   SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
+  ExhaustHeroCost _ -> [] -- chosen as it is paid, by 'payCost'
   Costs cs -> concatMap (costMessages source) cs
 
 -- | The player who controls an ability's source, if anyone does.
@@ -244,7 +267,7 @@ getActionAbilities pid = do
       andM
         [ (ab.abilityAnyPlayer ||) . (== Just pid) <$> abilityController ab
         , passesCriteriaFor pid (immuneAware ab.abilitySource ab.abilityCriteria)
-        , canPay cost
+        , canPayFor pid cost
         , withinLimitFor pid ab
         ]
     _ -> pure False
