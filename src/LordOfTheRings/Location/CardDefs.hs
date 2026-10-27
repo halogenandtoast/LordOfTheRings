@@ -67,6 +67,11 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       , upperHall
+      , doorsOfDurin
+      , stairFalls
+      , perilousSwamp
+      , makeshiftPassage
+      , stagnantCreek
       ]
 
 eastGate :: CardDef
@@ -443,4 +448,40 @@ theMountainsRoots =
   (location "03047" "The Mountains' Roots" DeepsOfMoria 3 0 0)
     { cdCardTraits = setFromList [Underground]
     , cdShadowEffect = True
+    }
+
+doorsOfDurin :: CardDef
+doorsOfDurin =
+  (location "04065" "Doors of Durin" TheWatcherInTheWater 1 2 0)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gate]
+    , cdVictoryPoints = Just 3
+    }
+
+stairFalls :: CardDef
+stairFalls =
+  (location "04066" "Stair Falls" TheWatcherInTheWater 1 2 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Stair]
+    , cdShadowEffect = True
+    }
+
+perilousSwamp :: CardDef
+perilousSwamp =
+  (location "04067" "Perilous Swamp" TheWatcherInTheWater 2 4 2)
+    { cdCardTraits = setFromList [Swamp]
+    , cdShadowEffect = True
+    }
+
+makeshiftPassage :: CardDef
+makeshiftPassage =
+  (location "04068" "Makeshift Passage" TheWatcherInTheWater 2 1 5)
+    { cdCardTraits = setFromList [Swamp]
+    }
+
+stagnantCreek :: CardDef
+stagnantCreek =
+  (location "04069" "Stagnant Creek" TheWatcherInTheWater 3 3 3)
+    { cdCardTraits = setFromList [Swamp]
+    , cdWhenRevealed = True
     }
