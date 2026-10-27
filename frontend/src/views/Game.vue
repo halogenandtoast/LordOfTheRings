@@ -14,6 +14,7 @@ import PhaseTracker from '../components/PhaseTracker.vue'
 import QuestTally from '../components/QuestTally.vue'
 import QuestionZone from '../components/QuestionZone.vue'
 import SearchPanel from '../components/SearchPanel.vue'
+import AmountPanel from '../components/AmountPanel.vue'
 import Scenario from '../components/Scenario.vue'
 import DiscardPile from '../components/DiscardPile.vue'
 import SeatTabs from '../components/SeatTabs.vue'
@@ -223,6 +224,7 @@ watch(question, (asked) => {
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
     <SearchPanel v-if="question?.searched" :question="{ ...question, searched: question.searched }" @choose="choose" />
+    <AmountPanel v-if="question?.amount && question.choices.length" :key="question.askId" :prompt="question.prompt" :amount="question.amount" @choose="choose" />
     <div
       class="game"
       @dragstart="onDragStart"

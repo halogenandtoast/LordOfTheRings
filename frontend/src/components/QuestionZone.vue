@@ -15,7 +15,8 @@ const { question, outcome = null, victoryPoints = 0 } = defineProps<{
 const emit = defineEmits<{ choose: [index: number] }>()
 
 const labelChoices = computed<ChoiceView[]>(() =>
-  (question?.choices ?? []).filter((choice) => choice.targetId === null),
+  // an amount is picked in its own panel
+  question?.amount ? [] : (question?.choices ?? []).filter((choice) => choice.targetId === null),
 )
 const targeted = computed(() => (question?.choices ?? []).length - labelChoices.value.length)
 </script>

@@ -63,6 +63,7 @@
     "decline": "Do not discard"
   },
   "pass": "Pass",
+  "amount": "{n}",
   "undisturbedBones": {
     "ally": "Choose an ally to take the damage"
   },

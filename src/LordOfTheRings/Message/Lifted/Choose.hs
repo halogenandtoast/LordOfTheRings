@@ -70,6 +70,18 @@ chooseOneAtATimeM pid body = do
     [x] -> push $ uiToRun x
     _ -> push $ askWith ChooseOneAtATime pid st choices
 
+-- | The player chooses an amount from the least to the most, as Arkham's 'chooseAmount',
+-- asked as the prompt, a key under @label.@, caused by the source; a lone amount is taken
+-- without asking.
+chooseAmountM
+  :: (ReverseQueue m, Targetable source) => PlayerId -> Text -> source -> Int -> Int -> (Int -> QueueT Message m ()) -> m ()
+chooseAmountM pid key source lo hi f = do
+  choices <- for [lo .. hi] \n -> Label (ikeyWith "label.amount" [intVar "n" n]) <$> capture (f n)
+  case choices of
+    [] -> pure ()
+    [x] -> push $ uiToRun x
+    _ -> push $ Ask pid $ QuestionLabel (ikey $ "label." <> key) (Just $ toTarget source) [] $ ChooseAmount lo choices
+
 ask' :: PlayerId -> ChooseState -> [UI Message] -> Message
 ask' = askWith ChooseOne
 

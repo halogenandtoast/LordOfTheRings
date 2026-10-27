@@ -21,6 +21,9 @@ data UI msg
 data Question msg
   = ChooseOne {choices :: [UI msg]}
   | ChooseOneAtATime {choices :: [UI msg]}
+  | -- | An amount, from the least on up: each choice is the amount its index past the least,
+    -- as Arkham's ChooseAmounts asks for one.
+    ChooseAmount {minAmount :: Int, choices :: [UI msg]}
   | -- | A prompt, the card causing the decision and the cards it is aimed at.
     QuestionLabel {label :: Text, source :: Maybe Target, targets :: [Target], question :: Question msg}
   | -- | The cards a search looked through, shown to the player choosing from them.
@@ -35,6 +38,7 @@ questionChoices :: Question msg -> [UI msg]
 questionChoices = \case
   ChooseOne cs -> cs
   ChooseOneAtATime cs -> cs
+  ChooseAmount _ cs -> cs
   QuestionLabel _ _ _ q -> questionChoices q
   SearchCards _ q -> questionChoices q
   PlayerWindow _ q -> questionChoices q

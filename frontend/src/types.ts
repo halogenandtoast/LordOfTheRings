@@ -57,6 +57,8 @@ export interface QuestionView {
   choices: ChoiceView[]
   /** The cards a search looked through, when the decision is choosing from them. */
   searched: CardView[] | null
+  /** The amounts to pick from, when the decision is an amount: choice 0 is the least. */
+  amount: { min: number; max: number } | null
 }
 
 export interface ScenarioView {

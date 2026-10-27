@@ -61,6 +61,8 @@ export type Message =
 
 export type Question =
   | { tag: 'ChooseOne' | 'ChooseOneAtATime'; choices: UI[] }
+  /** Each choice is the amount its index past the least. */
+  | { tag: 'ChooseAmount'; minAmount: number; choices: UI[] }
   | { tag: 'QuestionLabel'; label: string; source: Target | null; targets: Target[]; question: Question }
   | { tag: 'SearchCards'; cards: Card[]; question: Question }
   | { tag: 'PlayerWindow'; question: Question }

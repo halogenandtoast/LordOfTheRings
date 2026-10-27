@@ -107,6 +107,9 @@
     "lastRoundTitle": "Last round {value}",
     "willpower": "Willpower {value}"
   },
+  "amount": {
+    "confirm": "Confirm"
+  },
   "search": {
     "label": "Search",
     "searched": "({count} searched)"

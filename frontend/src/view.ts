@@ -244,7 +244,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         }
       }
     })
-    return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched }
+    const amount = q.tag === 'ChooseAmount' ? { min: q.minAmount, max: q.minAmount + q.choices.length - 1 } : null
+    return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched, amount }
   }
 
   const [activeLocation] = placed('locations', isAt('ActiveLocation'))
