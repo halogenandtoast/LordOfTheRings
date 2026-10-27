@@ -52,6 +52,11 @@ import LordOfTheRings.Quest.Cards.ApproachingRivendell
 import LordOfTheRings.Quest.Cards.UpThePass
 import LordOfTheRings.Quest.Cards.Snowdrifts
 import LordOfTheRings.Quest.Cards.TheMountainsPeaks
+import LordOfTheRings.Quest.Cards.TheDrippingWalls
+import LordOfTheRings.Quest.Cards.TheWatersEdge
+import LordOfTheRings.Quest.Cards.WashedAway
+import LordOfTheRings.Quest.Cards.BelowTheMines
+import LordOfTheRings.Quest.Cards.OutOfTheDepths
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -128,5 +133,13 @@ allQuests =
         , SomeQuestCard upThePass
         , SomeQuestCard snowdrifts
         , SomeQuestCard theMountainsPeaks
+        , SomeQuestCard theDrippingWalls
+        , SomeQuestCard theWatersEdge
+        , SomeQuestCard washedAway
+        , SomeQuestCard belowTheMines
+        , SomeQuestCard theEndlessCaves
+        , SomeQuestCard theShiveringBank
+        , SomeQuestCard oldOneLair
+        , SomeQuestCard outOfTheDepths
         ]
     ]

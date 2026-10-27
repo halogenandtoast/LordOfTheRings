@@ -1136,6 +1136,15 @@ runGameMessage msg g = case msg of
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+  -- a hero shuffled into its owner's deck, as Lost and Alone has it, is put into play as it is drawn
+  ShuffleIntoOwnersDeck target@(HeroTarget hid) | Just h <- Map.lookup hid g.entities.heroes -> do
+    g' <- leftPlay g target
+    pushAll
+      $ [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+    deck <- shuffleM . (toCard h :) . (.deck) =<< getPlayer h.owner
+    pure $ g' & entitiesL . heroesL %~ Map.delete hid & playersL . ix h.owner . deckL .~ deck
   ReturnToTopOfEncounterDeck target -> do
     let toTop card = scenarioL %~ overAttrs (encounterDeckL %~ (card :))
         withAttached =
@@ -1419,7 +1428,7 @@ runGameMessage msg g = case msg of
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
-        pushAll =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
+        pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
       _ -> do
         pushAll =<< inLogBlock (RevealBlock card) []
@@ -1827,7 +1836,10 @@ canFight :: EnemyId -> Target -> GameT Bool
 canFight eid c = do
   mods <- getModifiers eid
   def <- characterCardDef c
-  allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
+  andM
+    [ allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
+    , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
+    ]
 
 -- | Whether the character may defend against the enemy's attack.
 canDefend :: EnemyId -> Target -> GameT Bool

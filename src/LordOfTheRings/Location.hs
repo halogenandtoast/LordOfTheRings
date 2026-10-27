@@ -73,6 +73,8 @@ import LordOfTheRings.Location.Cards.Fanuidhol
 import LordOfTheRings.Location.Cards.Celebdil
 import LordOfTheRings.Location.Cards.TheDimrillStair
 import LordOfTheRings.Location.Cards.RockyCrags
+import LordOfTheRings.Location.Cards.DrownedTreasury
+import LordOfTheRings.Location.Cards.MithrilLode
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -170,5 +172,7 @@ allLocations =
         , SomeLocationCard celebdil
         , SomeLocationCard theDimrillStair
         , SomeLocationCard rockyCrags
+        , SomeLocationCard drownedTreasury
+        , SomeLocationCard mithrilLode
         ]
     ]

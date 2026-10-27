@@ -66,6 +66,9 @@ import LordOfTheRings.Enemy.Cards.WildBear
 import LordOfTheRings.Enemy.Cards.MountainGoblin
 import LordOfTheRings.Enemy.Cards.MountainTroll
 import LordOfTheRings.Enemy.Cards.SnowWarg
+import LordOfTheRings.Enemy.Cards.NamelessThing
+import LordOfTheRings.Enemy.Cards.ElderNamelessThing
+import LordOfTheRings.Enemy.Cards.MoriaBats
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -156,5 +159,8 @@ allEnemys =
         , SomeEnemyCard mountainGoblin
         , SomeEnemyCard mountainTroll
         , SomeEnemyCard snowWarg
+        , SomeEnemyCard namelessThing
+        , SomeEnemyCard elderNamelessThing
+        , SomeEnemyCard moriaBats
         ]
     ]

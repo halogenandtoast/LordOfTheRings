@@ -72,7 +72,30 @@ allEnemyCards =
       , mountainGoblin
       , mountainTroll
       , snowWarg
+      , namelessThing
+      , elderNamelessThing
+      , moriaBats
       ]
+
+namelessThing :: CardDef
+namelessThing =
+  (enemy "04125" "Nameless Thing" FoundationsOfStone 5 27 3 0 3 0)
+    { cdCardTraits = setFromList [Nameless]
+    , cdVictoryPoints = Just 1
+    }
+
+elderNamelessThing :: CardDef
+elderNamelessThing =
+  (enemy "04126" "Elder Nameless Thing" FoundationsOfStone 3 40 4 0 4 0)
+    { cdCardTraits = setFromList [Nameless]
+    , cdVictoryPoints = Just 3
+    }
+
+moriaBats :: CardDef
+moriaBats =
+  (enemy "04127" "Moria Bats" FoundationsOfStone 4 33 1 1 2 1)
+    { cdCardTraits = setFromList [Creature]
+    }
 
 patrolLeader :: CardDef
 patrolLeader =

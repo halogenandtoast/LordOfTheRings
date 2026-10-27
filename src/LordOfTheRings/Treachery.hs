@@ -65,6 +65,8 @@ import LordOfTheRings.Treachery.Cards.FallenStones
 import LordOfTheRings.Treachery.Cards.Snowstorm
 import LordOfTheRings.Treachery.Cards.FreezingCold
 import LordOfTheRings.Treachery.Cards.Avalanche
+import LordOfTheRings.Treachery.Cards.DeepDeepDark
+import LordOfTheRings.Treachery.Cards.LostAndAlone
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -154,5 +156,7 @@ allTreacherys =
         , SomeTreacheryCard snowstorm
         , SomeTreacheryCard freezingCold
         , SomeTreacheryCard avalanche
+        , SomeTreacheryCard deepDeepDark
+        , SomeTreacheryCard lostAndAlone
         ]
     ]

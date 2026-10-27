@@ -72,7 +72,22 @@ allTreacheryCards =
       , snowstorm
       , freezingCold
       , avalanche
+      , deepDeepDark
+      , lostAndAlone
       ]
+
+deepDeepDark :: CardDef
+deepDeepDark =
+  (treachery "04123" "Deep Deep Dark" FoundationsOfStone 4)
+    { cdKeywords = setFromList [Doomed 1, Surge]
+    , cdShadowEffect = True
+    }
+
+lostAndAlone :: CardDef
+lostAndAlone =
+  (treachery "04124" "Lost and Alone" FoundationsOfStone 2)
+    { cdShadowEffect = True
+    }
 
 signsOfConflict :: CardDef
 signsOfConflict =

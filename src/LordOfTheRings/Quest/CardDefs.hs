@@ -58,7 +58,40 @@ allQuestCards =
       , upThePass
       , snowdrifts
       , theMountainsPeaks
+      , theDrippingWalls
+      , theWatersEdge
+      , washedAway
+      , belowTheMines
+      , theEndlessCaves
+      , theShiveringBank
+      , oldOneLair
+      , outOfTheDepths
       ]
+
+theDrippingWalls :: CardDef
+theDrippingWalls = quest "04111" "The Dripping Walls" FoundationsOfStone 1 9
+
+theWatersEdge :: CardDef
+theWatersEdge = quest "04112" "The Water's Edge" FoundationsOfStone 2 12
+
+washedAway :: CardDef
+washedAway = quest "04113" "Washed Away!" FoundationsOfStone 3 0
+
+-- | The four stage 4s share a side A, Below the Mines: 04114's B side is Sheltered Rocks.
+belowTheMines :: CardDef
+belowTheMines = quest "04114" "Sheltered Rocks" FoundationsOfStone 4 11
+
+theEndlessCaves :: CardDef
+theEndlessCaves = quest "04115" "The Endless Caves" FoundationsOfStone 4 17
+
+theShiveringBank :: CardDef
+theShiveringBank = quest "04116" "The Shivering Bank" FoundationsOfStone 4 7
+
+oldOneLair :: CardDef
+oldOneLair = quest "04117" "Old One Lair" FoundationsOfStone 4 5
+
+outOfTheDepths :: CardDef
+outOfTheDepths = quest "04118" "Out of the Depths" FoundationsOfStone 5 11
 
 enteringTheMines :: CardDef
 enteringTheMines = quest "03064" "Entering the Mines" IntoThePit 1 7

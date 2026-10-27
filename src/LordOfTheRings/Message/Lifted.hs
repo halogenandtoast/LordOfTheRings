@@ -507,6 +507,10 @@ putObjectiveIntoPlayAttached card = push . PutObjectiveIntoPlayAttached card . t
 removeFromGame :: (ReverseQueue m, Targetable target) => target -> m ()
 removeFromGame = push . RemoveFromGame . toTarget
 
+-- | The character is shuffled into its owner's deck, as Lost and Alone does with a hero.
+shuffleIntoOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
+shuffleIntoOwnersDeck = push . ShuffleIntoOwnersDeck . toTarget
+
 putObjectiveAllyIntoPlay :: ReverseQueue m => ObjectiveId -> PlayerId -> m ()
 putObjectiveAllyIntoPlay oid = push . PutObjectiveAllyIntoPlay oid
 
@@ -633,9 +637,9 @@ partyEscapeTest source n stat onFail onPass = do
 placeObjective :: ReverseQueue m => ObjectiveId -> Placement -> m ()
 placeObjective oid = push . PlaceObjective oid
 
--- | The card goes facedown under the ally.
-attachFacedown :: ReverseQueue m => AllyId -> PlayerCard -> m ()
-attachFacedown aid = push . AttachFacedown aid
+-- | The card goes facedown under the ally, or the Nameless enemy.
+attachFacedown :: (ReverseQueue m, Targetable target) => target -> PlayerCard -> m ()
+attachFacedown target = push . AttachFacedown (toTarget target)
 
 -- | Discard a shadow card dealt to the enemy, unresolved.
 discardShadowCard :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
