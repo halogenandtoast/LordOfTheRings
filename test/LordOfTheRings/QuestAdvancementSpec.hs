@@ -1,6 +1,5 @@
 module LordOfTheRings.QuestAdvancementSpec (spec) where
 
-import LordOfTheRings.Card (genEncounterCard)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Outcome

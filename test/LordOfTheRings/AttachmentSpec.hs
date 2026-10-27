@@ -58,8 +58,8 @@ spec = describe "Attachments" do
       chooseAbilityOf pid =<< steward
       theodred <- getHeroWithCode "01002"
       theodred.resources `shouldBe` 2
-      steward <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
-      attachmentExhausted (toAttrs steward) `shouldBe` True
+      attachment <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
+      attachmentExhausted (toAttrs attachment) `shouldBe` True
 
     it "cannot be used again while exhausted" . gameTest $ \pid -> do
       playOnTheodred pid Attachments.stewardOfGondor
@@ -76,16 +76,16 @@ spec = describe "Attachments" do
       chooseAbilityOf pid =<< steward
       passActions pid
       run $ BeginPhase RefreshPhase
-      steward <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
-      attachmentExhausted (toAttrs steward) `shouldBe` False
+      attachment <- getsGame (fromJustNote "no steward" . headMay . toList . (.entities.attachments))
+      attachmentExhausted (toAttrs attachment) `shouldBe` False
 
   it "cannot play a second copy of a unique attachment" . gameTest $ \pid -> do
-    first <- putCardIntoHand pid Attachments.celebriansStone
-    second <- putCardIntoHand pid Attachments.celebriansStone
+    one <- putCardIntoHand pid Attachments.celebriansStone
+    two <- putCardIntoHand pid Attachments.celebriansStone
     theodred <- getHeroWithCode "01002"
     run $ PlaceTokens GameSource (toTarget theodred) Resource 4
     run $ BeginPhase PlanningPhase
-    chooseTarget pid first
+    chooseTarget pid one
     chooseTarget pid theodred
     question <- getQuestion pid
-    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget second)
+    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget two)

@@ -11,9 +11,9 @@ import TestImport
 engageSpider :: PlayerId -> GameT Enemy
 engageSpider pid = do
   flipFirstQuest pid
-  spider <- getsGame (fromJustNote "no enemy" . headMay . toList . (.entities.enemies))
-  run $ EngageEnemy pid (toId spider)
-  pure spider
+  engaged <- getsGame (fromJustNote "no enemy" . headMay . toList . (.entities.enemies))
+  run $ EngageEnemy pid (toId engaged)
+  pure engaged
 
 spider :: GameT Enemy
 spider = getsGame (fromJustNote "no enemy" . headMay . toList . (.entities.enemies))
@@ -92,8 +92,8 @@ spec = describe "Combat phase" do
     _ <- engageSpider pid
     _ <- setEncounterDeck [Enemies.forestSpider, Locations.oldForestRoad, Locations.oldForestRoad]
     run RevealEncounterCard
-    second <- getsGame (fromJustNote "no second spider" . headMay . map toId . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies))
-    run $ EngageEnemy pid second
+    two <- getsGame (fromJustNote "no second spider" . headMay . map toId . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies))
+    run $ EngageEnemy pid two
     run $ EnemyAttacks pid
     Just (QuestionLabel prompt _ targets _) <- getQuestion pid
     prompt `shouldBe` "$label.chooseNextAttack"
@@ -103,16 +103,16 @@ spec = describe "Combat phase" do
     _ <- engageSpider pid
     _ <- setEncounterDeck [Enemies.forestSpider]
     run RevealEncounterCard
-    second <- getsGame (fromJustNote "no second spider" . headMay . map toId . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies))
-    run $ EngageEnemy pid second
+    two <- getsGame (fromJustNote "no second spider" . headMay . map toId . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies))
+    run $ EngageEnemy pid two
     run $ PlayerAttacks pid
     Just (QuestionLabel prompt _ targets _) <- getQuestion pid
     prompt `shouldBe` "$label.chooseEnemyToAttack"
     length targets `shouldBe` 2
-    chooseTarget pid second
+    chooseTarget pid two
     Just (QuestionLabel declare _ declared _) <- getQuestion pid
     declare `shouldBe` "$label.declareAttackers"
-    declared `shouldBe` [toTarget second]
+    declared `shouldBe` [toTarget two]
 
   it "turns each shadow card face up as its attack resolves, blank ones too" . gameTest $ \pid -> do
     eid <- toId <$> engageSpider pid

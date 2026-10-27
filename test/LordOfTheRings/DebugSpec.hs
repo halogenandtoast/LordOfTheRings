@@ -19,14 +19,14 @@ spec = describe "Debug messages" do
     for_ ["01012", "01007", "01002"] \code -> do
       hero <- getHeroWithCode code
       run $ PlaceTokens GameSource (toTarget hero) Resource 5
-    first : second : _ <- filter ((== AllyType) . (.cardType)) . (.deck) <$> getPlayer pid
-    run $ TakeFromDeck pid first.id
+    one : two : _ <- filter ((== AllyType) . (.cardType)) . (.deck) <$> getPlayer pid
+    run $ TakeFromDeck pid one.id
     run $ BeginPhase PlanningPhase
     let offers card = maybe False (elem (CardIdTarget card.id) . targetsOf) <$> getQuestion pid
         targetsOf q = [t | TargetLabel t _ <- questionChoices q]
-    offers second `shouldReturn` False
-    _ <- runDebug $ TakeFromDeck pid second.id
-    offers second `shouldReturn` True
+    offers two `shouldReturn` False
+    _ <- runDebug $ TakeFromDeck pid two.id
+    offers two `shouldReturn` True
 
   it "search a deck and take any card into hand" . gameTest $ \pid -> do
     card : _ <- drop 5 . (.deck) <$> getPlayer pid

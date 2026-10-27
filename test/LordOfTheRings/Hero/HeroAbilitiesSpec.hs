@@ -88,11 +88,11 @@ spec = do
   describe "Denethor" do
     it "looks at the top encounter card and may move it to the bottom" . gameTestWith (coreDeck "lore") $ \pid -> do
       denethor <- getHeroWithCode "01010"
-      [top, second] <- setEncounterDeck [Enemies.forestSpider, Enemies.kingSpider]
+      [top, two] <- setEncounterDeck [Enemies.forestSpider, Enemies.kingSpider]
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid denethor
       chooseLabel "$label.moveToBottom" pid
-      getEncounterDeck `shouldReturn` [second, top]
+      getEncounterDeck `shouldReturn` [two, top]
 
   describe "Gimli" do
     it "gets +1 attack for each damage on him" . gameTestWith (coreDeck "tactics") $ \_ -> do

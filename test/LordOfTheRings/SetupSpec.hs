@@ -1,7 +1,6 @@
 module LordOfTheRings.SetupSpec (spec) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (toCardCode)
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Game.Public (publicGameFor)
@@ -18,12 +17,12 @@ spec = describe "Setup" do
       players <- traverse (getPlayer . (.id) . fst) (toList seats)
       map (length . (.hand)) players `shouldBe` [6, 6]
       map (.threat) players `shouldBe` [27, 29]
-      [first] <- getsGame (Map.keys . (.question))
-      chooseOptionMatching "keep the hand" first \case
+      [one] <- getsGame (Map.keys . (.question))
+      chooseOptionMatching "keep the hand" one \case
         Label _ [] -> True
         _ -> False
       next <- getsGame (Map.keys . (.question))
-      sort (first : next) `shouldBe` sort (map (.id) players)
+      sort (one : next) `shouldBe` sort (map (.id) players)
   it "shows a player only the hands they may see, with the size of the rest" do
     seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", starterDeck)])
     env <- newGameEnv (newTableIn passageThroughMirkwood seats) (const $ pure ()) 1

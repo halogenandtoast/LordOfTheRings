@@ -35,7 +35,7 @@ spec = do
       getsGame (length . (.entities.heroes)) `shouldReturn` 2
 
   describe "Ungoliant's Spawn" do
-    it "gives committed characters -1 willpower when revealed" . gameTest $ \pid -> do
+    it "gives committed characters -1 willpower when revealed" . gameTest $ \_ -> do
       eowyn <- getHeroWithCode "01007"
       run $ CommitToQuest (toTarget eowyn)
       reveal [Enemies.ungoliantsSpawn]
