@@ -455,6 +455,11 @@ shuffleIntoEncounterDeck = push . ShuffleIntoEncounterDeck . toTarget
 returnToTopOfEncounterDeck :: (ReverseQueue m, Targetable target) => target -> m ()
 returnToTopOfEncounterDeck = push . ReturnToTopOfEncounterDeck . toTarget
 
+-- | The character leaves the quest, its willpower no longer counted, as "remove 1 questing
+-- hero from the quest" reads.
+removeFromQuest :: (ReverseQueue m, Targetable target) => target -> m ()
+removeFromQuest = push . RemoveFromQuest . toTarget
+
 shuffleEncounterDeck :: ReverseQueue m => m ()
 shuffleEncounterDeck = push $ ShuffleDeck EncounterDeck
 
