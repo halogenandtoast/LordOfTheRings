@@ -61,6 +61,8 @@ allEnemyCards =
       , goblinArcher
       , caveTroll
       , orcHornBlower
+      , durinsBane
+      , rangingGoblin
       ]
 
 patrolLeader :: CardDef
@@ -423,4 +425,19 @@ theNamelessFear :: CardDef
 theNamelessFear =
   (enemy "03025" "The Nameless Fear" FlightFromMoria 1 50 0 0 0 27)
     { cdCardTraits = setFromList [Flame, Shadow]
+    }
+
+durinsBane :: CardDef
+durinsBane =
+  (enemy "04150" "Durin's Bane" ShadowAndFlame 1 1 4 6 3 27)
+    { cdCardTraits = setFromList [Balrog, Flame, Shadow]
+    , cdKeywords = setFromList [Regenerate 3, Indestructible]
+    , cdUnique = True
+    }
+
+rangingGoblin :: CardDef
+rangingGoblin =
+  (enemy "04151" "Ranging Goblin" ShadowAndFlame 3 35 2 1 1 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdWhenRevealed = True
     }

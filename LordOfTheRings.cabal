@@ -195,6 +195,7 @@ library
       LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
       LordOfTheRings.Enemy.Cards.DolGuldurOrcs
       LordOfTheRings.Enemy.Cards.DungeonJailor
+      LordOfTheRings.Enemy.Cards.DurinsBane
       LordOfTheRings.Enemy.Cards.EastBightPatrol
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ForestSpider
@@ -225,6 +226,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcHornBlower
       LordOfTheRings.Enemy.Cards.OrcHorseThieves
       LordOfTheRings.Enemy.Cards.PatrolLeader
+      LordOfTheRings.Enemy.Cards.RangingGoblin
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.StrayGoblin
       LordOfTheRings.Enemy.Cards.Stuart
