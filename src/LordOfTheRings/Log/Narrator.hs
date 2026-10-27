@@ -143,6 +143,9 @@ narrationFor = \case
   ReturnToTopOfEncounterDeck target -> Just $ simply "log.returnedToTopOfEncounterDeck" target
   -- \* The encounter deck
   AddToStaging card -> Just $ one $ mechanic [ikeyPart "log.addedToStaging" ["card" ~> EncounterCard card]]
+  PutShadowEnemyIntoStaging eid cid -> Just do
+    mCard <- getsGame (\g -> find ((== cid) . (.id)) . (.shadowCards) =<< Map.lookup eid g.entities.enemies)
+    pure [mechanic [ikeyPart "log.addedToStaging" ["card" ~> EncounterCard c]] | Just c <- [mCard]]
   PutObjectiveIntoPlay card -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid

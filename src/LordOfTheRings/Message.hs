@@ -179,6 +179,8 @@ data Message
     SwapHero HeroId PlayerCard
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
+  | -- | the player deals 1 damage to a character they control other than the one given
+    DamageAnotherCharacter Source PlayerId Target
   | DiscardRandomFromHand PlayerId Int
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target
@@ -261,6 +263,8 @@ data Message
     PutShadowCardIntoPlay EnemyId CardId PlayerId
   | -- | a shadow card dealt to the enemy is put into play as an enemy engaged with the player
     PutShadowEnemyIntoPlay EnemyId CardId PlayerId
+  | -- | a shadow card dealt to the enemy is added to the staging area as an enemy
+    PutShadowEnemyIntoStaging EnemyId CardId
   | RemoveShadowCard EnemyId CardId
   | ChooseAndDiscard Source PlayerId [Target]
   | DiscardEventsFromHand PlayerId

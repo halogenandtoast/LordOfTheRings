@@ -549,6 +549,17 @@ moveToTopOfEncounterDeck card = do
 putShadowLocationIntoPlay :: ReverseQueue m => EnemyId -> CardId -> m ()
 putShadowLocationIntoPlay eid = push . PutShadowLocationIntoPlay eid
 
+-- | Add the shadow card dealt to the enemy to the staging area, as "Shadow: Add Goblin
+-- Swordsman to the staging area" reads.
+putShadowEnemyIntoStaging :: ReverseQueue m => EnemyId -> CardId -> m ()
+putShadowEnemyIntoStaging eid = push . PutShadowEnemyIntoStaging eid
+
+{- | The enemy's shadow cards not yet resolved turn face up and resolve, as shadow cards
+dealt during an attack do: the attack's defenders, none when undefended.
+-}
+resolveShadowCards :: ReverseQueue m => EnemyId -> PlayerId -> [Target] -> m ()
+resolveShadowCards eid pid = push . ResolveShadow eid pid
+
 -- | Put the shadow card dealt to the enemy into play, engaged with the player.
 putShadowEnemyIntoPlay :: ReverseQueue m => EnemyId -> CardId -> PlayerId -> m ()
 putShadowEnemyIntoPlay eid cid = push . PutShadowEnemyIntoPlay eid cid

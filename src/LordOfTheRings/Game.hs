@@ -763,7 +763,8 @@ runGameMessage msg g = case msg of
     pure g
   ResolveShadow eid pid defenders -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
-      -- each shadow card turns face up, and one with an effect resolves it
+      -- each shadow card turns face up, and one with an effect resolves it; one already face
+      -- up resolved in an earlier attack, as an enemy attacking again has
       pushAll
         $ concat
           [ RevealShadowCard eid (ecId card)
@@ -775,6 +776,7 @@ runGameMessage msg g = case msg of
                   ]
                 else []
           | card <- enemy.shadowCards
+          , card.id `notElem` (toAttrs enemy).enemyShadowRevealed
           ]
     pure g
   RevealShadowCard eid cid -> do
@@ -829,6 +831,15 @@ runGameMessage msg g = case msg of
         []
         pid
         [targetLabel h [Exhaust h] | h <- ready]
+    pure g
+  DamageAnotherCharacter source pid damaged -> do
+    others <- filter (/= damaged) <$> charactersControlledBy pid
+    push $ case others of
+      [] -> Run []
+      [c] -> DealDamage source c 1
+      _ ->
+        questionLabelWith (ikey "label.damageAnotherCharacter") (sourceTarget source) [] pid
+          $ [targetLabel c [DealDamage source c 1] | c <- others]
     pure g
   ChooseAndDiscard source pid targets -> do
     unless (null targets)
@@ -1121,6 +1132,13 @@ runGameMessage msg g = case msg of
         enemy <- newEnemy card
         pushAll [RemoveShadowCard host cid, EngageEnemy pid enemy.id]
         putGame $ g & entitiesL . enemiesL %~ insertEntity enemy
+    getGame
+  PutShadowEnemyIntoStaging host cid -> do
+    for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
+      for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do
+        enemy <- newEnemy card
+        pushAll [RemoveShadowCard host cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget enemy)]]
+        putGame $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
     getGame
   PutShadowCardIntoPlay host cid pid -> do
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
@@ -1677,13 +1695,16 @@ damage counts against the player, the threat it raises.
 -}
 attackDamage :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
 attackDamage pid eid target n = do
-  excessToThreat <- elem ExcessDamageToThreat <$> getModifiers eid
+  mods <- getModifiers eid
+  let excessToThreat = ExcessDamageToThreat `elem` mods
+      excessToOthers = ExcessDamageToOtherCharacters `elem` mods
   excess <-
-    if excessToThreat
+    if excessToThreat || excessToOthers
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   pure $ DealDamage (EnemySource eid) target n
-    : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excess > 0]
+    : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excessToThreat, excess > 0]
+    <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemySource eid) pid target)
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

@@ -58,6 +58,9 @@ data ModifierType
     EnteredPlayThisRound
   | -- | damage an attack deals past the character's remaining hit points raises threat
     ExcessDamageToThreat
+  | -- | on an enemy: for each point of damage its attack deals past the character's remaining
+    -- hit points, the player damages another character they control
+    ExcessDamageToOtherCharacters
   | CannotBeOptionallyEngagedWhileOthersInStaging
   | -- | on an enemy, or on the game for every enemy: matching players cannot optionally
     -- engage it
