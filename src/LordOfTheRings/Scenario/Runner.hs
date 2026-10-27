@@ -139,6 +139,8 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM (matching <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ rest
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
+    -- a set-aside card put into play, as The Seething Lake makes Doors of Durin active
+    PutIntoPlayAsActiveLocation card -> pure $ attrs & setAsideL %~ filter (/= card)
     ShuffleSetAsideIntoEncounterDeck cards -> do
       let shuffled = filter (`elem` cards) attrs.scenarioSetAside
       deck <- shuffleM (shuffled <> attrs.encounterDeck)
