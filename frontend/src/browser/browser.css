@@ -79,6 +79,16 @@
   line-height: 1.5;
 }
 
+/* The card list reads in the body face; the title face is for headers. */
+.browse {
+  --font-display: var(--font-body);
+}
+
+.browse :is(h1, h2, h3) {
+  font-family: var(--font-body);
+  letter-spacing: normal;
+}
+
 /* #app is a flex column: a page with auto side margins would shrink to its content. */
 .card-browser.page {
   width: 100%;

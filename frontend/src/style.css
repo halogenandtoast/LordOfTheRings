@@ -8,6 +8,7 @@
   --attachment-peek: 22px;
   --nav-height: 40px;
   --font-title: "Vafthrudnir", Georgia, serif;
+  --font-body: "Trebuchet MS", ui-sans-serif, system-ui, sans-serif;
   --leadership: #9b5aa8;
   --lore: hsl(96 34% 50%);
   --spirit: hsl(200 50% 70%);
@@ -162,7 +163,7 @@ h1, h2, h3, .home-link, .campaign-name {
 body {
   margin: 0;
   color: var(--text);
-  font-family: "Trebuchet MS", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body);
   background: var(--page-background);
   -webkit-tap-highlight-color: transparent;
 }
