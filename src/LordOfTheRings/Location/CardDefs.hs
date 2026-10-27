@@ -54,6 +54,7 @@ allLocationCards =
       , dryWatercourse
       , woodmansGlade
       , woodElfPath
+      , theMountainsRoots
       , plunderedArmoury
       ]
 
@@ -346,4 +347,12 @@ plunderedArmoury :: CardDef
 plunderedArmoury =
   (location "03034" "Plundered Armoury" PlunderingGoblins 2 3 2)
     { cdCardTraits = setFromList [Underground]
+    }
+
+-- | X is the number of players in the game.
+theMountainsRoots :: CardDef
+theMountainsRoots =
+  (location "03047" "The Mountains' Roots" DeepsOfMoria 3 0 0)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
     }

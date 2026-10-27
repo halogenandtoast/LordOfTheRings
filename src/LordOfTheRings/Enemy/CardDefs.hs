@@ -48,6 +48,9 @@ allEnemyCards =
       , giantMarshWorm
       , mirkwoodBats
       , attercopAttercop
+      , greatCaveTroll
+      , orcDrummer
+      , strayGoblin
       , chieftainOfThePit
       , goblinSpearman
       , goblinArcher
@@ -334,4 +337,27 @@ goblinArcher :: CardDef
 goblinArcher =
   (enemy "03032" "Goblin Archer" PlunderingGoblins 2 48 2 1 3 1)
     { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+greatCaveTroll :: CardDef
+greatCaveTroll =
+  (enemy "03042" "Great Cave-troll" DeepsOfMoria 2 38 2 7 3 10)
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 3
+    , cdEasyModeQuantity = Just 0
+    }
+
+orcDrummer :: CardDef
+orcDrummer =
+  (enemy "03043" "Orc Drummer" DeepsOfMoria 1 50 1 1 3 1)
+    { cdCardTraits = setFromList [Orc, Summoner]
+    , cdEasyModeQuantity = Just 0
+    }
+
+-- | X is the number of players in the game.
+strayGoblin :: CardDef
+strayGoblin =
+  (enemy "03044" "Stray Goblin" DeepsOfMoria 3 29 0 0 2 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
     }

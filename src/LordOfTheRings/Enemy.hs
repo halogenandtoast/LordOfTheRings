@@ -42,6 +42,9 @@ import LordOfTheRings.Enemy.Cards.OrcHorseThieves
 import LordOfTheRings.Enemy.Cards.GiantMarshWorm
 import LordOfTheRings.Enemy.Cards.MirkwoodBats
 import LordOfTheRings.Enemy.Cards.AttercopAttercop
+import LordOfTheRings.Enemy.Cards.GreatCaveTroll
+import LordOfTheRings.Enemy.Cards.OrcDrummer
+import LordOfTheRings.Enemy.Cards.StrayGoblin
 import LordOfTheRings.Enemy.Cards.ChieftainOfThePit
 import LordOfTheRings.Enemy.Cards.GoblinSpearman
 import LordOfTheRings.Enemy.Cards.GoblinArcher
@@ -111,6 +114,9 @@ allEnemys =
         , SomeEnemyCard giantMarshWorm
         , SomeEnemyCard mirkwoodBats
         , SomeEnemyCard attercopAttercop
+        , SomeEnemyCard greatCaveTroll
+        , SomeEnemyCard orcDrummer
+        , SomeEnemyCard strayGoblin
         , SomeEnemyCard chieftainOfThePit
         , SomeEnemyCard goblinSpearman
         , SomeEnemyCard goblinArcher

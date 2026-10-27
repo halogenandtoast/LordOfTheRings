@@ -47,6 +47,7 @@ import LordOfTheRings.Location.Cards.TheSpidersRing
 import LordOfTheRings.Location.Cards.DryWatercourse
 import LordOfTheRings.Location.Cards.WoodmansGlade
 import LordOfTheRings.Location.Cards.WoodElfPath
+import LordOfTheRings.Location.Cards.TheMountainsRoots
 import LordOfTheRings.Location.Cards.PlunderedArmoury
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
@@ -119,6 +120,7 @@ allLocations =
         , SomeLocationCard dryWatercourse
         , SomeLocationCard woodmansGlade
         , SomeLocationCard woodElfPath
+        , SomeLocationCard theMountainsRoots
         , SomeLocationCard plunderedArmoury
         ]
     ]

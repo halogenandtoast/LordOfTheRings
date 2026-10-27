@@ -49,6 +49,8 @@ allTreacheryCards =
       , gollumsAnguish
       , gollumsBite
       , wastedProvisions
+      , chanceEncounter
+      , massingInTheDeep
       , undisturbedBones
       ]
 
@@ -286,4 +288,15 @@ undisturbedBones =
   (treachery "03033" "Undisturbed Bones" PlunderingGoblins 3)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+chanceEncounter :: CardDef
+chanceEncounter = (treachery "03045" "Chance Encounter" DeepsOfMoria 3) {cdShadowEffect = True}
+
+massingInTheDeep :: CardDef
+massingInTheDeep =
+  (treachery "03046" "Massing in the Deep" DeepsOfMoria 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }
