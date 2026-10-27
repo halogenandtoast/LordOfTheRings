@@ -67,6 +67,9 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       , upperHall
+      , darkPit
+      , secondHall
+      , secondDeep
       ]
 
 eastGate :: CardDef
@@ -444,3 +447,16 @@ theMountainsRoots =
     { cdCardTraits = setFromList [Underground]
     , cdShadowEffect = True
     }
+
+darkPit :: CardDef
+darkPit = (location "04141" "Dark Pit" ShadowAndFlame 1 0 11) {cdCardTraits = setFromList [Underground, Dark]}
+
+secondHall :: CardDef
+secondHall =
+  (location "04142" "Second Hall" ShadowAndFlame 1 4 2)
+    { cdCardTraits = setFromList [Underground]
+    , cdUnique = True
+    }
+
+secondDeep :: CardDef
+secondDeep = (location "04143" "Second Deep" ShadowAndFlame 3 3 3) {cdCardTraits = setFromList [Underground]}

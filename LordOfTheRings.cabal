@@ -377,6 +377,7 @@ library
       LordOfTheRings.Location.Cards.BeePastures
       LordOfTheRings.Location.Cards.BranchingPaths
       LordOfTheRings.Location.Cards.BridgeOfKhazadDum
+      LordOfTheRings.Location.Cards.DarkPit
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DryWatercourse
       LordOfTheRings.Location.Cards.EastGate
@@ -402,6 +403,8 @@ library
       LordOfTheRings.Location.Cards.Rhosgobel
       LordOfTheRings.Location.Cards.RiverLangflood
       LordOfTheRings.Location.Cards.RiverNinglor
+      LordOfTheRings.Location.Cards.SecondDeep
+      LordOfTheRings.Location.Cards.SecondHall
       LordOfTheRings.Location.Cards.StairsOfNain
       LordOfTheRings.Location.Cards.TheBrownLands
       LordOfTheRings.Location.Cards.TheCarrock

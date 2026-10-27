@@ -60,6 +60,9 @@ import LordOfTheRings.Location.Cards.WoodElfPath
 import LordOfTheRings.Location.Cards.TheMountainsRoots
 import LordOfTheRings.Location.Cards.PlunderedArmoury
 import LordOfTheRings.Location.Cards.UpperHall
+import LordOfTheRings.Location.Cards.DarkPit
+import LordOfTheRings.Location.Cards.SecondHall
+import LordOfTheRings.Location.Cards.SecondDeep
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -144,5 +147,8 @@ allLocations =
         , SomeLocationCard theMountainsRoots
         , SomeLocationCard plunderedArmoury
         , SomeLocationCard upperHall
+        , SomeLocationCard darkPit
+        , SomeLocationCard secondHall
+        , SomeLocationCard secondDeep
         ]
     ]
