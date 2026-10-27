@@ -185,6 +185,8 @@ data LocationMatcher
   | AnyLocation
   | NotLocation LocationMatcher
   | LocationMatchAll [LocationMatcher]
+  | -- | a location matching any of them
+    LocationMatchAny [LocationMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

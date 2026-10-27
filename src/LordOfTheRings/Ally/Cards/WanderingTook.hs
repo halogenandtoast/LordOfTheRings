@@ -30,7 +30,7 @@ instance RunMessage WanderingTook where
         causedBy a
         targets others \p -> do
           lowerThreat pid 3
-          push $ TakeControl a.id p
+          takeControl a.id p
           raiseThreat p 3
       pure s
     _ -> WanderingTook <$> runMessage msg a

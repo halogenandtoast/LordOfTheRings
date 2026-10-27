@@ -1,7 +1,7 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher, LocationMatcher, cardMatches)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, cardMatches)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -117,6 +117,8 @@ data WindowMatcher
   | -- | a player other than the given one played an attachment on a hero the given one
     -- controls
     AttachmentPlayedOnHeroWindow Timing PlayerId
+  | -- | a matching enemy attacked the player
+    EnemyAttacksPlayerWindow Timing PlayerId EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -191,4 +193,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackDealtDamageWithTraitWindow {}, _) -> False
   (TraveledToWindow {}, _) -> False
   (AttachmentPlayedOnHeroWindow {}, _) -> False
+  (EnemyAttacksPlayerWindow {}, _) -> False
   _ -> False

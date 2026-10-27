@@ -209,6 +209,7 @@ matchLocation matcher location = case matcher of
   AnyLocation -> pure True
   NotLocation m -> not <$> matchLocation m location
   LocationMatchAll ms -> allM (`matchLocation` location) ms
+  LocationMatchAny ms -> anyM (`matchLocation` location) ms
 
 immuneToPlayerCards :: HasGame m => Target -> m Bool
 immuneToPlayerCards t =

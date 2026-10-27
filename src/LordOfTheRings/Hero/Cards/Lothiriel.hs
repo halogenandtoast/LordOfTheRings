@@ -35,8 +35,7 @@ instance RunMessage Lothiriel where
         questionLabeled "lothiriel.chooseAlly"
         causedBy attrs
         targets allies \c -> when (shares c) do
-          push $ PutAllyIntoPlay pid c.id
-          push $ CommitToQuest (CardIdTarget c.id)
+          putIntoPlayCommitted pid c.id
           phaseModifier attrs (CardIdTarget c.id) ShuffleIntoDeckAtEndOfPhase
       pure h
     _ -> Lothiriel <$> runMessage msg attrs

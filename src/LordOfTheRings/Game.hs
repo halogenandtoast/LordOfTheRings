@@ -1861,6 +1861,7 @@ inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes
   AllyTarget aid -> Map.member aid g.entities.allies
   EnemyTarget eid -> Map.member eid g.entities.enemies
+  LocationTarget lid -> Map.member lid g.entities.locations
   _ -> True
 
 -- | Put the card's cost up to be paid, less what the host it was chosen for takes off.
