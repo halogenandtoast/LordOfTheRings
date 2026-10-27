@@ -450,6 +450,16 @@ runGameMessage msg g = case msg of
       ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
     pure g
+  AmbushEngagementCheck eid | Just enemy <- Map.lookup eid g.entities.enemies, enemy.placement == StagingArea -> do
+    ambush <- hasKeyword Ambush (toTarget eid) (toCardDef enemy)
+    gameMods <- getModifiers GameTarget
+    mods <- getModifiers eid
+    let checked = ambush && IgnoreAmbush `notElem` gameMods && NoEngagementChecks `notElem` (gameMods <> mods)
+    when checked do
+      cost <- getEngagementCost eid
+      players <- traverse getPlayer =<< getPlayerOrder
+      for_ (find ((>= cost) . (.threat)) players) \p -> push (EngageEnemy p.id eid)
+    pure g
   EngageEnemy pid eid -> do
     pushAll
       [ PlaceEnemy eid (EngagedWith pid)
@@ -1373,7 +1383,8 @@ runGameMessage msg g = case msg of
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
-        pushAll . (<> [WhileInPlay (toTarget enemy) surge]) =<< revealing (toTarget enemy)
+        pushAll . (<> [WhileInPlay (toTarget enemy) (AmbushEngagementCheck (toId enemy) : surge)])
+          =<< revealing (toTarget enemy)
         pure
           $ g
           & entitiesL
@@ -1453,7 +1464,7 @@ runGameMessage msg g = case msg of
   AddToStaging card -> case cdCardType (toCardDef card) of
     EnemyType -> do
       thisEnemy <- newEnemy card
-      push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy)]
+      pushAll [CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy)], AmbushEngagementCheck (toId thisEnemy)]
       pure
         $ g
         & entitiesL

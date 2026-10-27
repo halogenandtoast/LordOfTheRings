@@ -51,6 +51,8 @@ data ModifierType
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks
+  | -- | on the game: enemies with ambush make no engagement check as they enter play
+    IgnoreAmbush
   | SkipStagingStep
   | -- | on the game: the players, as a group, cannot play more than 1 ally each round
     OneAllyPerRound

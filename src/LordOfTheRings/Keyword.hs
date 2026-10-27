@@ -3,7 +3,10 @@ module LordOfTheRings.Keyword (module LordOfTheRings.Keyword) where
 import LordOfTheRings.Prelude
 
 data Keyword
-  = Doomed Int
+  = -- | as the enemy enters play, each player in turn order makes an engagement check
+    -- against it alone
+    Ambush
+  | Doomed Int
   | -- | an objective ally the first player gains control of as it enters play
     FirstPlayerGainsControl
   | Guarded
