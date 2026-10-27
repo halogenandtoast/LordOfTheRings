@@ -12,6 +12,7 @@ import LordOfTheRings.Treachery.Cards.CrumblingRuin
 import LordOfTheRings.Treachery.Cards.DarkAndDreadful
 import LordOfTheRings.Treachery.Cards.SuddenPitfall
 import LordOfTheRings.Treachery.Cards.WatchfulEyes
+import LordOfTheRings.Treachery.Cards.SignsOfConflict
 import LordOfTheRings.Treachery.Cards.ManyRoads
 import LordOfTheRings.Treachery.Cards.BurningLow
 import LordOfTheRings.Treachery.Cards.Despair
@@ -86,6 +87,7 @@ allTreacherys =
         , SomeTreacheryCard darkAndDreadful
         , SomeTreacheryCard suddenPitfall
         , SomeTreacheryCard watchfulEyes
+        , SomeTreacheryCard signsOfConflict
         , SomeTreacheryCard manyRoads
         , SomeTreacheryCard burningLow
         , SomeTreacheryCard caughtInAWeb

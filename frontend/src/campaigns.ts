@@ -55,6 +55,7 @@ const implemented: Record<string, Gateable> = {
   'the-hills-of-emyn-muil': {},
   'the-dead-marshes': {},
   'return-to-mirkwood': {},
+  'into-the-pit': { alpha: true },
   'flight-from-moria': { alpha: true },
 }
 

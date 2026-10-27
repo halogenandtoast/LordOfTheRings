@@ -219,6 +219,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcDrummer
       LordOfTheRings.Enemy.Cards.OrcGuard
       LordOfTheRings.Enemy.Cards.OrcHorseThieves
+      LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.StrayGoblin
       LordOfTheRings.Enemy.Cards.Stuart
@@ -368,11 +369,14 @@ library
       LordOfTheRings.Location.Cards.BanksOfTheAnduin
       LordOfTheRings.Location.Cards.BeePastures
       LordOfTheRings.Location.Cards.BranchingPaths
+      LordOfTheRings.Location.Cards.BridgeOfKhazadDum
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DryWatercourse
+      LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
       LordOfTheRings.Location.Cards.FensAndMires
+      LordOfTheRings.Location.Cards.FirstHall
       LordOfTheRings.Location.Cards.ForestGate
       LordOfTheRings.Location.Cards.ForestGrove
       LordOfTheRings.Location.Cards.FouledWell
@@ -390,6 +394,7 @@ library
       LordOfTheRings.Location.Cards.Rhosgobel
       LordOfTheRings.Location.Cards.RiverLangflood
       LordOfTheRings.Location.Cards.RiverNinglor
+      LordOfTheRings.Location.Cards.StairsOfNain
       LordOfTheRings.Location.Cards.TheBrownLands
       LordOfTheRings.Location.Cards.TheCarrock
       LordOfTheRings.Location.Cards.TheEastBank
@@ -455,6 +460,7 @@ library
       LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
       LordOfTheRings.Quest.Cards.AForkInTheRoad
       LordOfTheRings.Quest.Cards.APresenceInTheDark
+      LordOfTheRings.Quest.Cards.AWayUp
       LordOfTheRings.Quest.Cards.AWrongTurn
       LordOfTheRings.Quest.Cards.AgainstTheTrolls
       LordOfTheRings.Quest.Cards.Ambush
@@ -462,9 +468,11 @@ library
       LordOfTheRings.Quest.Cards.AnduinPassage
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
       LordOfTheRings.Quest.Cards.BlockedByShadow
+      LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
       LordOfTheRings.Quest.Cards.EscapeFromDarkness
       LordOfTheRings.Quest.Cards.FliesAndSpiders
+      LordOfTheRings.Quest.Cards.GoblinPatrol
       LordOfTheRings.Quest.Cards.GrimbeornsQuest
       LordOfTheRings.Quest.Cards.HastyCouncil
       LordOfTheRings.Quest.Cards.HeadingDown
@@ -497,6 +505,7 @@ library
       LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur
       LordOfTheRings.Scenario.Scenarios.FlightFromMoria
       LordOfTheRings.Scenario.Scenarios.FlightFromMoria.Helpers
+      LordOfTheRings.Scenario.Scenarios.IntoThePit
       LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
@@ -548,6 +557,7 @@ library
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.Sacked
       LordOfTheRings.Treachery.Cards.ShadowOfFear
+      LordOfTheRings.Treachery.Cards.SignsOfConflict
       LordOfTheRings.Treachery.Cards.SlickFooting
       LordOfTheRings.Treachery.Cards.SuddenPitfall
       LordOfTheRings.Treachery.Cards.SwarmingInsect
@@ -725,6 +735,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.KeywordSpec
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec
+      LordOfTheRings.KhazadDum.IntoThePitSpec
       LordOfTheRings.KhazadDum.PlayerCardsSpec
       LordOfTheRings.KhazadDumEngineSpec
       LordOfTheRings.LogSpec

@@ -13,6 +13,9 @@ allQuestCards =
     map
       (\def -> (cdCardCode def, def))
       [ fliesAndSpiders
+      , enteringTheMines
+      , goblinPatrol
+      , aWayUp
       , aForkInTheRoad
       , aChosenPathDontLeaveThePath
       , aChosenPathBeornsPath
@@ -46,6 +49,15 @@ allQuestCards =
       , blockedByShadow
       , escapeFromDarkness
       ]
+
+enteringTheMines :: CardDef
+enteringTheMines = quest "03064" "Entering the Mines" IntoThePit 1 7
+
+goblinPatrol :: CardDef
+goblinPatrol = quest "03065" "Goblin Patrol" IntoThePit 2 11
+
+aWayUp :: CardDef
+aWayUp = quest "03066" "A Way Up" IntoThePit 3 12
 
 fliesAndSpiders :: CardDef
 fliesAndSpiders = quest "01119" "Flies and Spiders" PassageThroughMirkwood 1 8

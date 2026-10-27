@@ -17,6 +17,10 @@ allLocationCards =
       , dreadfulGap
       , fouledWell
       , goblinTunnels
+      , eastGate
+      , firstHall
+      , bridgeOfKhazadDum
+      , stairsOfNain
       , branchingPaths
       , lightlessPassage
       , zigilMineshaft
@@ -60,6 +64,34 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       ]
+
+eastGate :: CardDef
+eastGate =
+  (location "03016" "East-gate" IntoThePit 1 7 7)
+    { cdCardTraits = setFromList [Gate]
+    , cdVictoryPoints = Just 1
+    }
+
+firstHall :: CardDef
+firstHall =
+  (location "03017" "First Hall" IntoThePit 1 2 2)
+    { cdCardTraits = setFromList [Underground]
+    , cdVictoryPoints = Just 1
+    }
+
+bridgeOfKhazadDum :: CardDef
+bridgeOfKhazadDum =
+  (location "03018" "Bridge of Khazad-dûm" IntoThePit 1 3 3)
+    { cdCardTraits = setFromList [Underground, Bridge]
+    , cdVictoryPoints = Just 2
+    }
+
+stairsOfNain :: CardDef
+stairsOfNain =
+  (location "03019" "Stairs of Náin" IntoThePit 2 2 4)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    }
 
 branchingPaths :: CardDef
 branchingPaths =

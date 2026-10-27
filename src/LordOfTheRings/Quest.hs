@@ -7,6 +7,9 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Quest.Cards.AChosenPathBeornsPath
+import LordOfTheRings.Quest.Cards.EnteringTheMines
+import LordOfTheRings.Quest.Cards.GoblinPatrol
+import LordOfTheRings.Quest.Cards.AWayUp
 import LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
 import LordOfTheRings.Quest.Cards.AForkInTheRoad
 import LordOfTheRings.Quest.Cards.AmbushOnTheShore
@@ -70,6 +73,9 @@ allQuests =
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
         [ SomeQuestCard fliesAndSpiders
+        , SomeQuestCard enteringTheMines
+        , SomeQuestCard goblinPatrol
+        , SomeQuestCard aWayUp
         , SomeQuestCard aForkInTheRoad
         , SomeQuestCard aChosenPathDontLeaveThePath
         , SomeQuestCard aChosenPathBeornsPath

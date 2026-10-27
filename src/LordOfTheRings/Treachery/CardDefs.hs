@@ -19,6 +19,7 @@ allTreacheryCards =
       , darkAndDreadful
       , suddenPitfall
       , watchfulEyes
+      , signsOfConflict
       , manyRoads
       , burningLow
       , caughtInAWeb
@@ -58,6 +59,15 @@ allTreacheryCards =
       , massingInTheDeep
       , undisturbedBones
       ]
+
+signsOfConflict :: CardDef
+signsOfConflict =
+  (treachery "03015" "Signs of Conflict" IntoThePit 5)
+    { cdKeywords = setFromList [Doomed 2, Surge]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
 
 manyRoads :: CardDef
 manyRoads =

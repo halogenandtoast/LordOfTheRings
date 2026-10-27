@@ -10,6 +10,10 @@ import LordOfTheRings.Location.Cards.BanksOfTheAnduin
 import LordOfTheRings.Location.Cards.DreadfulGap
 import LordOfTheRings.Location.Cards.FouledWell
 import LordOfTheRings.Location.Cards.GoblinTunnels
+import LordOfTheRings.Location.Cards.EastGate
+import LordOfTheRings.Location.Cards.FirstHall
+import LordOfTheRings.Location.Cards.BridgeOfKhazadDum
+import LordOfTheRings.Location.Cards.StairsOfNain
 import LordOfTheRings.Location.Cards.BranchingPaths
 import LordOfTheRings.Location.Cards.LightlessPassage
 import LordOfTheRings.Location.Cards.ZigilMineshaft
@@ -86,6 +90,10 @@ allLocations =
         , SomeLocationCard dreadfulGap
         , SomeLocationCard fouledWell
         , SomeLocationCard goblinTunnels
+        , SomeLocationCard eastGate
+        , SomeLocationCard firstHall
+        , SomeLocationCard bridgeOfKhazadDum
+        , SomeLocationCard stairsOfNain
         , SomeLocationCard branchingPaths
         , SomeLocationCard lightlessPassage
         , SomeLocationCard zigilMineshaft

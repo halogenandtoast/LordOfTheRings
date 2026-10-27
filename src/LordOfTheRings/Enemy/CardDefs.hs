@@ -16,6 +16,7 @@ allEnemyCards =
       [ kingSpider
       , goblinScout
       , goblinSwordsman
+      , patrolLeader
       , goblinFollower
       , hummerhorns
       , ungoliantsSpawn
@@ -57,6 +58,14 @@ allEnemyCards =
       , goblinSpearman
       , goblinArcher
       ]
+
+patrolLeader :: CardDef
+patrolLeader =
+  (enemy "03014" "Patrol Leader" IntoThePit 2 30 3 4 3 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
 
 goblinFollower :: CardDef
 goblinFollower =

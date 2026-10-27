@@ -31,6 +31,9 @@
   "watchfulEyes": {
     "attach": "Attach Watchful Eyes to one of your heroes"
   },
+  "enteringTheMines": {
+    "attach": "Attach Cave Torch to a hero"
+  },
   "caveTorch": {
     "location": "Place 3 progress on a Dark location"
   },
@@ -38,6 +41,9 @@
     "cancel": "Exhaust Cave Torch to cancel Burning Low?",
     "exhaustTorch": "Exhaust Cave Torch",
     "burn": "Let it burn low"
+  },
+  "stairsOfNain": {
+    "exhaust": "Exhaust a character to travel to Stairs of Náin"
   },
   "crumblingRuin": {
     "exhaust": "Exhaust a character: if the discarded card costs at least its remaining hit points, it is discarded"
