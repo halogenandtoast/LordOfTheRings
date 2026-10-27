@@ -289,6 +289,9 @@ data Message
   | -- | a shadow card dealt to the enemy is added to the staging area as an enemy
     PutShadowEnemyIntoStaging EnemyId CardId
   | RemoveShadowCard EnemyId CardId
+  | -- | the shadow cards dealt to the enemy go to the encounter discard pile, as after an
+    -- immediate attack outside the combat phase
+    DiscardShadowCards EnemyId
   | ChooseAndDiscard Source PlayerId [Target]
   | DiscardEventsFromHand PlayerId
   | Exhaust Target

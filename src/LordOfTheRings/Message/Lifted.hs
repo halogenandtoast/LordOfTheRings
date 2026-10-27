@@ -9,8 +9,10 @@ module LordOfTheRings.Message.Lifted (
 ) where
 
 import LordOfTheRings.Card (Card (..), EncounterCard, IsCard (..), PlayerCard)
+import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
+import LordOfTheRings.Game.Base (gamePhase)
 import LordOfTheRings.Hero.Types ()
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
@@ -19,6 +21,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
+import LordOfTheRings.Phase (Phase (CombatPhase))
 import LordOfTheRings.Placement (
   Placement (ActiveLocation, AttachedTo, StagingArea),
   placementController,
@@ -688,3 +691,14 @@ chooseAndDiscardFromHand pid source n = push $ ChooseAndDiscardFromHand pid (toS
 -- | The player discards N cards at random from their hand.
 discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
 discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n
+
+{- | The enemy makes an immediate attack against the player, dealt a shadow card for it.
+Outside the combat phase its shadow cards are discarded once the attack resolves.
+-}
+immediateAttack :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+immediateAttack pid eid = do
+  push $ DealShadowCard eid
+  push $ EnemyAttack pid eid
+  phase <- getsGame gamePhase
+  when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
+
