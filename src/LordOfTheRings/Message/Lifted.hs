@@ -261,6 +261,16 @@ addToStaging = push . AddToStaging
 putQuestIntoPlay :: ReverseQueue m => EncounterCard -> m ()
 putQuestIntoPlay = push . PutQuestIntoPlay
 
+-- | Turn the stage over to its B side, as a stage that waits to flip does when it may.
+flipStage :: (ReverseQueue m, Targetable a) => a -> m ()
+flipStage = push . Flip . toTarget
+
+-- | Put a stage into play on its B side, as Hasty Council makes the one chosen the active quest.
+putQuestIntoPlayFlipped :: ReverseQueue m => EncounterCard -> m ()
+putQuestIntoPlayFlipped card = do
+  putQuestIntoPlay card
+  flipStage card
+
 placeOrcGuard :: ReverseQueue m => PlayerId -> m ()
 placeOrcGuard = push . PlaceOrcGuard
 
