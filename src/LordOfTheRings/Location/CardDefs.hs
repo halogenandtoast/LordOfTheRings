@@ -85,6 +85,11 @@ allLocationCards =
       , darkPit
       , secondHall
       , secondDeep
+      , doorsOfDurin
+      , stairFalls
+      , perilousSwamp
+      , makeshiftPassage
+      , stagnantCreek
       ]
 
 drownedTreasury :: CardDef
@@ -581,3 +586,39 @@ secondHall =
 
 secondDeep :: CardDef
 secondDeep = (location "04143" "Second Deep" ShadowAndFlame 3 3 3) {cdCardTraits = setFromList [Underground]}
+
+doorsOfDurin :: CardDef
+doorsOfDurin =
+  (location "04065" "Doors of Durin" TheWatcherInTheWater 1 2 0)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gate]
+    , cdVictoryPoints = Just 3
+    }
+
+stairFalls :: CardDef
+stairFalls =
+  (location "04066" "Stair Falls" TheWatcherInTheWater 1 2 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Stair]
+    , cdShadowEffect = True
+    }
+
+perilousSwamp :: CardDef
+perilousSwamp =
+  (location "04067" "Perilous Swamp" TheWatcherInTheWater 2 4 2)
+    { cdCardTraits = setFromList [Swamp]
+    , cdShadowEffect = True
+    }
+
+makeshiftPassage :: CardDef
+makeshiftPassage =
+  (location "04068" "Makeshift Passage" TheWatcherInTheWater 2 1 5)
+    { cdCardTraits = setFromList [Swamp]
+    }
+
+stagnantCreek :: CardDef
+stagnantCreek =
+  (location "04069" "Stagnant Creek" TheWatcherInTheWater 3 3 3)
+    { cdCardTraits = setFromList [Swamp]
+    , cdWhenRevealed = True
+    }

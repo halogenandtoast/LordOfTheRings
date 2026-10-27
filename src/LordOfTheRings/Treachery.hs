@@ -74,6 +74,9 @@ import LordOfTheRings.Treachery.Cards.WhipLash
 import LordOfTheRings.Treachery.Cards.LeapingFlame
 import LordOfTheRings.Treachery.Cards.FierySword
 import LordOfTheRings.Treachery.Cards.ManyThongedWhip
+import LordOfTheRings.Treachery.Cards.IllPurpose
+import LordOfTheRings.Treachery.Cards.DisturbedWaters
+import LordOfTheRings.Treachery.Cards.Wrapped
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -172,5 +175,8 @@ allTreacherys =
         , SomeTreacheryCard leapingFlame
         , SomeTreacheryCard fierySword
         , SomeTreacheryCard manyThongedWhip
+        , SomeTreacheryCard illPurpose
+        , SomeTreacheryCard disturbedWaters
+        , SomeTreacheryCard wrapped
         ]
     ]

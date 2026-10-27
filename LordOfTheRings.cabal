@@ -213,6 +213,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinTaskmaster
       LordOfTheRings.Enemy.Cards.GoblintownScavengers
       LordOfTheRings.Enemy.Cards.GoblinWarlord
+      LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.GreatCaveTroll
       LordOfTheRings.Enemy.Cards.HillTroll
       LordOfTheRings.Enemy.Cards.Hummerhorns
@@ -242,8 +243,11 @@ library
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.SnowWarg
       LordOfTheRings.Enemy.Cards.StrayGoblin
+      LordOfTheRings.Enemy.Cards.StrikingTentacle
       LordOfTheRings.Enemy.Cards.Stuart
       LordOfTheRings.Enemy.Cards.TheNamelessFear
+      LordOfTheRings.Enemy.Cards.TheWatcher
+      LordOfTheRings.Enemy.Cards.ThrashingTentacle
       LordOfTheRings.Enemy.Cards.UngoliantsSpawn
       LordOfTheRings.Enemy.Cards.UngoliantsSwarm
       LordOfTheRings.Enemy.Cards.Wargs
@@ -396,6 +400,7 @@ library
       LordOfTheRings.Location.Cards.Caradhras
       LordOfTheRings.Location.Cards.Celebdil
       LordOfTheRings.Location.Cards.DarkPit
+      LordOfTheRings.Location.Cards.DoorsOfDurin
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DrownedTreasury
       LordOfTheRings.Location.Cards.DryWatercourse
@@ -416,12 +421,14 @@ library
       LordOfTheRings.Location.Cards.ImpassableBog
       LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LightlessPassage
+      LordOfTheRings.Location.Cards.MakeshiftPassage
       LordOfTheRings.Location.Cards.MithrilLode
       LordOfTheRings.Location.Cards.MountainsOfMirkwood
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.OakWoodGrove
       LordOfTheRings.Location.Cards.OldForestRoad
       LordOfTheRings.Location.Cards.PathlessCountry
+      LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.RaurosFalls
       LordOfTheRings.Location.Cards.Rhosgobel
@@ -432,6 +439,8 @@ library
       LordOfTheRings.Location.Cards.SecondDeep
       LordOfTheRings.Location.Cards.SecondHall
       LordOfTheRings.Location.Cards.SilentCaverns
+      LordOfTheRings.Location.Cards.StagnantCreek
+      LordOfTheRings.Location.Cards.StairFalls
       LordOfTheRings.Location.Cards.StairsOfNain
       LordOfTheRings.Location.Cards.TheBrownLands
       LordOfTheRings.Location.Cards.TheCarrock
@@ -550,12 +559,14 @@ library
       LordOfTheRings.Quest.Cards.TheMountainsPeaks
       LordOfTheRings.Quest.Cards.TheNecromancersTower
       LordOfTheRings.Quest.Cards.TheRearGuard
+      LordOfTheRings.Quest.Cards.TheSeethingLake
       LordOfTheRings.Quest.Cards.TheWatersEdge
       LordOfTheRings.Quest.Cards.TheWoundedEagle
       LordOfTheRings.Quest.Cards.ThroughTheCaverns
       LordOfTheRings.Quest.Cards.ThroughTheForest
       LordOfTheRings.Quest.Cards.ToTheElvenKingsHalls
       LordOfTheRings.Quest.Cards.ToTheRiver
+      LordOfTheRings.Quest.Cards.ToTheWestDoor
       LordOfTheRings.Quest.Cards.UpThePass
       LordOfTheRings.Quest.Cards.WashedAway
       LordOfTheRings.Quest.Import.Lifted
@@ -590,6 +601,8 @@ library
       LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRedhornGate
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
+      LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater
+      LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater.Helpers
       LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
       LordOfTheRings.Sphere
@@ -612,6 +625,7 @@ library
       LordOfTheRings.Treachery.Cards.DarkAndDreadful
       LordOfTheRings.Treachery.Cards.DeepDeepDark
       LordOfTheRings.Treachery.Cards.Despair
+      LordOfTheRings.Treachery.Cards.DisturbedWaters
       LordOfTheRings.Treachery.Cards.DrivenByShadow
       LordOfTheRings.Treachery.Cards.EvilStorm
       LordOfTheRings.Treachery.Cards.Exhaustion
@@ -631,6 +645,7 @@ library
       LordOfTheRings.Treachery.Cards.GollumsAnguish
       LordOfTheRings.Treachery.Cards.GollumsBite
       LordOfTheRings.Treachery.Cards.HiddenThreat
+      LordOfTheRings.Treachery.Cards.IllPurpose
       LordOfTheRings.Treachery.Cards.ImpassableChasm
       LordOfTheRings.Treachery.Cards.InnerFlame
       LordOfTheRings.Treachery.Cards.InnerShadow
@@ -667,6 +682,7 @@ library
       LordOfTheRings.Treachery.Cards.WastedProvisions
       LordOfTheRings.Treachery.Cards.WatchfulEyes
       LordOfTheRings.Treachery.Cards.WhipLash
+      LordOfTheRings.Treachery.Cards.Wrapped
       LordOfTheRings.Treachery.Import.Lifted
       LordOfTheRings.Treachery.Runner
       LordOfTheRings.Treachery.Types
@@ -832,6 +848,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Dwarrowdelf.ShadowAndFlameSpec
       LordOfTheRings.Dwarrowdelf.TheLongDarkSpec
       LordOfTheRings.Dwarrowdelf.TheRedhornGateSpec
+      LordOfTheRings.Dwarrowdelf.TheWatcherInTheWaterSpec
       LordOfTheRings.DwarrowdelfEngineSpec
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec

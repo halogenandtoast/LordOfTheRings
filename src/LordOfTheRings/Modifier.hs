@@ -76,6 +76,12 @@ data ModifierType
     -- it stays there, as Durin's Bane, and is dealt a new shadow card for each attack
     EngagedWithEachPlayer PlayerMatcher
   | DoesNotCountDefense
+  | -- | on a character: its attack counts as 0
+    DoesNotCountAttack
+  | -- | on an enemy: its attack is undefended, no character may defend against it
+    CannotBeDefended
+  | -- | on a location: at most this much more progress can be placed on it now
+    ProgressLimit Int
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
   | -- | on a character: it is discarded from play once its willpower is 0, as The

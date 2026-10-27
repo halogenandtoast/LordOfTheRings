@@ -73,6 +73,8 @@ data WindowMatcher
   | -- | a shadow card dealt to an enemy engaged with the player
     ShadowCardDealtWindow Timing PlayerId
   | EnemyAttacksWindow Timing EnemyId
+  | -- | characters attack the enemy, as "when it is attacked" reads
+    EnemyAttackedWindow Timing EnemyId
   | -- | any encounter card revealed from the encounter deck
     CardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
@@ -157,6 +159,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (ShadowCardDealtWindow t pid, ShadowCardDealt _ _ pid') -> t == timing && pid == pid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
+  (EnemyAttackedWindow t eid, EnemyAttacked eid') -> t == timing && eid == eid'
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (AttackerDeclaredWindow t who, DeclaredAsAttacker target _) -> t == timing && maybe True (== target) who
   (HeroLeftPlayWindow t pid trait, LeftPlay (HeroTarget _) pid' traits) -> t == timing && pid == pid' && trait `member` traits

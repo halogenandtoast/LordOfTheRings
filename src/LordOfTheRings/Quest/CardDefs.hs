@@ -69,6 +69,8 @@ allQuestCards =
       , nearingTheGate
       , theRearGuard
       , lastLordOfMoria
+      , toTheWestDoor
+      , theSeethingLake
       ]
 
 theDrippingWalls :: CardDef
@@ -247,3 +249,9 @@ theRearGuard = quest "04139" "The Rear Guard" ShadowAndFlame 2 16
 
 lastLordOfMoria :: CardDef
 lastLordOfMoria = quest "04140" "Last Lord of Moria" ShadowAndFlame 3 1
+
+toTheWestDoor :: CardDef
+toTheWestDoor = quest "04063" "To the West-door" TheWatcherInTheWater 1 13
+
+theSeethingLake :: CardDef
+theSeethingLake = quest "04064" "The Seething Lake" TheWatcherInTheWater 2 5

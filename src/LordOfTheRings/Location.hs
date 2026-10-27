@@ -78,6 +78,11 @@ import LordOfTheRings.Location.Cards.MithrilLode
 import LordOfTheRings.Location.Cards.DarkPit
 import LordOfTheRings.Location.Cards.SecondHall
 import LordOfTheRings.Location.Cards.SecondDeep
+import LordOfTheRings.Location.Cards.DoorsOfDurin
+import LordOfTheRings.Location.Cards.StairFalls
+import LordOfTheRings.Location.Cards.PerilousSwamp
+import LordOfTheRings.Location.Cards.MakeshiftPassage
+import LordOfTheRings.Location.Cards.StagnantCreek
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -180,5 +185,10 @@ allLocations =
         , SomeLocationCard darkPit
         , SomeLocationCard secondHall
         , SomeLocationCard secondDeep
+        , SomeLocationCard doorsOfDurin
+        , SomeLocationCard stairFalls
+        , SomeLocationCard perilousSwamp
+        , SomeLocationCard makeshiftPassage
+        , SomeLocationCard stagnantCreek
         ]
     ]

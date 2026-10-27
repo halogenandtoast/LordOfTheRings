@@ -31,6 +31,8 @@ data WindowType
     Exhausted Target
   | DeclaredAsDefender Target EnemyId
   | DeclaredAsAttacker Target EnemyId
+  | -- | characters attack the enemy, their attack about to deal its damage
+    EnemyAttacked EnemyId
   | -- | an attack destroyed the enemy: the characters that attacked, and its traits as it left
     EnemyDestroyedByAttack EnemyId [Target] (Set Trait)
   | -- | an attack destroyed an enemy engaged with the player: the characters that attacked

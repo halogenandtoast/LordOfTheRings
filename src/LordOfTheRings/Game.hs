@@ -370,6 +370,18 @@ runGameMessage msg g = case msg of
         | c <- player.hand
         ]
     pure g
+  EachDiscardAnyFromHand source (pid : rest) discarded -> do
+    player <- getPlayer pid
+    push
+      $ if null player.hand
+        then EachDiscardAnyFromHand source rest discarded
+        else
+          questionLabelWith (ikey "label.discardAnyFromHand") (sourceTarget source) [] pid
+            $ [ targetLabel (CardIdTarget c.id) [DiscardFromHand pid c.id, EachDiscardAnyFromHand source (pid : rest) (discarded <> [c])]
+              | c <- player.hand
+              ]
+            <> [Label (ikey "label.doneDiscarding") [EachDiscardAnyFromHand source rest discarded]]
+    pure g
   CheckDefeated target -> do
     -- damage dealt in a batch can reach a card an earlier part of it already destroyed
     destroyed <- case target of
@@ -539,6 +551,8 @@ runGameMessage msg g = case msg of
       <> windows
     pure g
   DeclareDefenders pid eid chosen -> do
+    -- an attack that cannot be defended, as Striking Tentacle's may be, is undefended
+    undefendable <- elem CannotBeDefended <$> getModifiers eid
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
     others <- filter (/= pid) <$> getPlayerOrder
     defenders <- filter (`notElem` chosen) <$> (filterM (canDefend eid) =<< readyCharacters pid)
@@ -546,8 +560,9 @@ runGameMessage msg g = case msg of
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
     push
-      $ if many
-        then
+      $ if
+        | undefendable -> UndefendedAttack pid eid
+        | many ->
           questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
             $ [ targetLabel d
                   $ exhaust' d
@@ -562,7 +577,7 @@ runGameMessage msg g = case msg of
                    -- sentinels may defend only once the attacked player declares no defenders
                    [DeclareSentinels pid eid chosen (if null chosen then others else [])]
                ]
-        else
+        | otherwise ->
           questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
             $ [targetLabel d (exhaust' d <> [DefendWith pid eid d]) | d <- defenders]
             <> [Label (ikey "label.takeAttackUndefended") [DeclareSentinels pid eid [] others]]
@@ -737,11 +752,20 @@ runGameMessage msg g = case msg of
               ]
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid rest]]
     pure g
-  ResolveAttack pid eid -> do
+  -- the enemy is attacked, for its "when attacked" effects, before the damage is dealt
+  ResolveAttack _ eid -> do
+    attackers <- selectCharacters AttackingHero AttackingAlly
+    pushAll $ [CheckWindows [mkWhen $ EnemyAttacked eid] | notNull attackers, Map.member eid g.entities.enemies] <> [DoStep 1 msg]
+    pure g
+  DoStep 1 (ResolveAttack pid eid) -> do
     -- ranged characters of other players among them
     attackers <- selectCharacters AttackingHero AttackingAlly
-    case Map.lookup eid g.entities.enemies of
-      -- the enemy left play before the attack resolved: the attackers just stop
+    let unattached e = case e.placement of
+          AttachedTo _ -> Nothing
+          _ -> Just e
+    case unattached =<< Map.lookup eid g.entities.enemies of
+      -- the enemy left play, or became an attachment, before the attack resolved: the
+      -- attackers just stop
       Nothing -> pushAll (map StopAttacking attackers)
       Just enemy' -> do
         mods <- getModifiers eid
@@ -983,8 +1007,12 @@ runGameMessage msg g = case msg of
   PlaceProgressOnQuest n -> do
     active <- traverse getLocation =<< selectOne IsActiveLocation
     questPoints <- traverse (getLocationQuestPoints . (.id)) active
-    let onLocation = maybe 0 (\(l, qp) -> min n (qp - l.progress)) ((,) <$> active <*> questPoints)
-        overflow = n - onLocation
+    -- a location that takes only so much progress, as Perilous Swamp, is not explored by
+    -- the rest, which is lost
+    limits <- maybe (pure []) (fmap (\ms -> [k | ProgressLimit k <- ms]) . getModifiers) active
+    let remaining = maybe 0 (\(l, qp) -> qp - l.progress) ((,) <$> active <*> questPoints)
+        onLocation = if isJust active then max 0 $ foldr min (min n remaining) limits else 0
+        overflow = if onLocation < remaining then 0 else n - onLocation
     quests <- toList <$> getsGame (entitiesQuests . gameEntities)
     pushAll
       $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
@@ -1562,6 +1590,7 @@ discardFromPlay target g = case target of
         $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
         <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
         <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+        <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
       mods <- getModifiers target
       let removed = g & entitiesL . l %~ Map.delete k
           orcGuards = (toAttrs g.scenario).scenarioOrcGuards

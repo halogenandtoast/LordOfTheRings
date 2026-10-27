@@ -60,6 +60,8 @@ import LordOfTheRings.Quest.Cards.OutOfTheDepths
 import LordOfTheRings.Quest.Cards.NearingTheGate
 import LordOfTheRings.Quest.Cards.TheRearGuard
 import LordOfTheRings.Quest.Cards.LastLordOfMoria
+import LordOfTheRings.Quest.Cards.ToTheWestDoor
+import LordOfTheRings.Quest.Cards.TheSeethingLake
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -147,5 +149,7 @@ allQuests =
         , SomeQuestCard nearingTheGate
         , SomeQuestCard theRearGuard
         , SomeQuestCard lastLordOfMoria
+        , SomeQuestCard toTheWestDoor
+        , SomeQuestCard theSeethingLake
         ]
     ]

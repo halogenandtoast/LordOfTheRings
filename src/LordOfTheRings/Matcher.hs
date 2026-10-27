@@ -167,8 +167,13 @@ matchAlly matcher ally = case matcher of
 instance Query EnemyMatcher where
   type QueryElement EnemyMatcher = EnemyId
   select matcher = do
-    enemies <- getsGame (toList . entitiesEnemies . gameEntities)
+    -- an enemy attached to a character, as Grasping Tentacle becomes, is an attachment
+    enemies <- getsGame (filter (not . attached . (.placement)) . toList . entitiesEnemies . gameEntities)
     map toId <$> filterM (matchEnemy matcher) enemies
+   where
+    attached = \case
+      AttachedTo _ -> True
+      _ -> False
 
 matchEnemy :: HasGame m => EnemyMatcher -> Enemy -> m Bool
 matchEnemy matcher enemy = case matcher of
@@ -405,6 +410,7 @@ attachedWithTrait trait host = do
     $ [toTarget a | a <- toList es.attachments, on a, trait `member` cdCardTraits (toCardDef a)]
     <> [toTarget o | o <- toList es.objectives, on o, trait `member` cdCardTraits (toCardDef o)]
     <> [toTarget t | t <- toList es.treacheries, on t, trait `member` cdCardTraits (toCardDef t)]
+    <> [toTarget e | e <- toList es.enemies, on e, trait `member` cdCardTraits (toCardDef e)]
 
 {- | Every card attached to the host: attachments, objectives and encounter cards attached
 as conditions.
@@ -418,6 +424,7 @@ getAllAttachmentsOn host = do
     $ [toTarget a | a <- toList es.attachments, on a]
     <> [toTarget o | o <- toList es.objectives, on o]
     <> [toTarget t | t <- toList es.treacheries, on t]
+    <> [toTarget e | e <- toList es.enemies, on e]
 
 -- | What the treacheries with the card code are attached to.
 hostsOfTreachery :: HasGame m => CardCode -> m [Target]

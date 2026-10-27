@@ -2,6 +2,8 @@
   "choosePlayer": "Choose a player",
   "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
+  "discardAnyFromHand": "Discard a card from your hand?",
+  "doneDiscarding": "Done discarding",
   "travelToLocation": "Travel to a location?",
   "doNotTravel": "Do not travel",
   "mustTravel": "You must travel to a location",
@@ -60,6 +62,18 @@
   },
   "stairsOfNain": {
     "exhaust": "Exhaust a character to travel to Stairs of Náin"
+  },
+  "graspingTentacle": {
+    "attach": "Grasping Tentacle wraps an attacking character: which?"
+  },
+  "thrashingTentacle": {
+    "damage": "Thrashing Tentacle deals the attack's {n} damage to a character of an attacking player"
+  },
+  "illPurpose": {
+    "choosePlayer": "Choose the player with the highest threat: the enemies in the staging area engage them"
+  },
+  "wrapped": {
+    "attach": "Attach Wrapped! to one of your heroes"
   },
   "crumblingRuin": {
     "exhaust": "Exhaust a character: if the discarded card costs at least its remaining hit points, it is discarded"

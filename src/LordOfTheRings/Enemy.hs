@@ -71,6 +71,10 @@ import LordOfTheRings.Enemy.Cards.ElderNamelessThing
 import LordOfTheRings.Enemy.Cards.MoriaBats
 import LordOfTheRings.Enemy.Cards.DurinsBane
 import LordOfTheRings.Enemy.Cards.RangingGoblin
+import LordOfTheRings.Enemy.Cards.TheWatcher
+import LordOfTheRings.Enemy.Cards.GraspingTentacle
+import LordOfTheRings.Enemy.Cards.ThrashingTentacle
+import LordOfTheRings.Enemy.Cards.StrikingTentacle
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -166,5 +170,9 @@ allEnemys =
         , SomeEnemyCard moriaBats
         , SomeEnemyCard durinsBane
         , SomeEnemyCard rangingGoblin
+        , SomeEnemyCard theWatcher
+        , SomeEnemyCard graspingTentacle
+        , SomeEnemyCard thrashingTentacle
+        , SomeEnemyCard strikingTentacle
         ]
     ]
