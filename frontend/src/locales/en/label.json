@@ -2,6 +2,8 @@
   "choosePlayer": "Choose a player",
   "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
+  "discardAnyFromHand": "Discard a card from your hand?",
+  "doneDiscarding": "Done discarding",
   "travelToLocation": "Travel to a location?",
   "doNotTravel": "Do not travel",
   "mustTravel": "You must travel to a location",

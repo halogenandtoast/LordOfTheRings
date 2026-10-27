@@ -357,6 +357,18 @@ runGameMessage msg g = case msg of
         | c <- player.hand
         ]
     pure g
+  EachDiscardAnyFromHand source (pid : rest) discarded -> do
+    player <- getPlayer pid
+    push
+      $ if null player.hand
+        then EachDiscardAnyFromHand source rest discarded
+        else
+          questionLabelWith (ikey "label.discardAnyFromHand") (sourceTarget source) [] pid
+            $ [ targetLabel (CardIdTarget c.id) [DiscardFromHand pid c.id, EachDiscardAnyFromHand source (pid : rest) (discarded <> [c])]
+              | c <- player.hand
+              ]
+            <> [Label (ikey "label.doneDiscarding") [EachDiscardAnyFromHand source rest discarded]]
+    pure g
   CheckDefeated target -> do
     -- damage dealt in a batch can reach a card an earlier part of it already destroyed
     destroyed <- case target of

@@ -91,6 +91,10 @@ data Message
     LookAtShadowCard PlayerId Source EnemyId CardId
   | DiscardFromHand PlayerId CardId
   | ChooseAndDiscardFromHand PlayerId Source Int
+  | {- | each player in turn may discard any number of cards from hand, one at a time, with
+    the cards discarded so far; the source reads them back once no player is left to ask
+    -}
+    EachDiscardAnyFromHand Source [PlayerId] [Card]
   | CheckDefeated Target
   | Destroy Target
   | PlaceEnemy EnemyId Placement

@@ -696,6 +696,15 @@ attachFromHand pid card = push . PutAttachmentIntoPlayFromHand pid card.id . toT
 chooseAndDiscardFromHand :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
 chooseAndDiscardFromHand pid source n = push $ ChooseAndDiscardFromHand pid (toSource source) n
 
+{- | Each player, in turn, may discard any number of cards from his hand; the source reads
+the cards back as 'EachDiscardAnyFromHand' with no player left to ask, as Doors of Durin
+does.
+-}
+eachPlayerMayDiscardFromHand :: (ReverseQueue m, Sourceable source) => source -> m ()
+eachPlayerMayDiscardFromHand source = do
+  players <- getRemainingPlayers
+  push $ EachDiscardAnyFromHand (toSource source) players []
+
 -- | The player discards N cards at random from their hand.
 discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
 discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n
