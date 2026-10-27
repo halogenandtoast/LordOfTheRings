@@ -34,7 +34,7 @@ instance RunMessage AllyAttrs where
     Ready (isTarget attrs -> True) -> do
       blocked <- elem CannotReady <$> getModifiers attrs
       pure $ attrs & exhaustedL %~ (&& blocked)
-    AttachFacedown aid card | aid == attrs.allyId -> pure $ attrs & facedownL %~ (card :)
+    AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
     -- the cards facedown under it go to their owners' discard piles as it leaves play
     Discard (isTarget attrs -> True) -> leaving
     ReturnToHand (isTarget attrs -> True) -> leaving

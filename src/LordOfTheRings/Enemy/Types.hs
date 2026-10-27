@@ -44,6 +44,8 @@ data EnemyAttrs = EnemyAttrs
   , enemyShadowCards :: [EncounterCard]
   , enemyShadowRevealed :: [CardId]
   -- ^ shadow cards turned face up as the attack resolved
+  , enemyFacedown :: [PlayerCard]
+  -- ^ player cards attached facedown, as a Nameless Thing takes them
   }
   deriving stock (Show, Eq, Generic)
 
@@ -53,7 +55,7 @@ instance ToJSON EnemyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "enemy")
 
 instance FromJSON EnemyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "enemy") . withDefaults [("shadowRevealed", toJSON ([] :: [CardId]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "enemy") . withDefaults [("shadowRevealed", toJSON ([] :: [CardId])), ("facedown", toJSON ([] :: [PlayerCard]))]
 
 enemy :: (EnemyAttrs -> a) -> CardDef -> EnemyCard a
 enemy f cardDef =
@@ -69,6 +71,7 @@ enemy f cardDef =
             , enemyTokens = mempty
             , enemyShadowCards = []
             , enemyShadowRevealed = []
+            , enemyFacedown = []
             }
     }
 
@@ -190,6 +193,9 @@ instance HasField "shadowCards" EnemyAttrs [EncounterCard] where
 
 instance HasField "shadowCards" Enemy [EncounterCard] where
   getField = (.shadowCards) . toAttrs
+
+instance HasField "facedown" EnemyAttrs [PlayerCard] where
+  getField = enemyFacedown
 
 instance HasField "cardId" EnemyAttrs CardId where
   getField = enemyCardId

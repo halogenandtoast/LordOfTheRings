@@ -269,8 +269,8 @@ data Message
   | PutOnBottomOfEncounterDeck [EncounterCard]
   | -- | a player card goes to its owner's discard pile
     PutInDiscard PlayerCard
-  | -- | a card goes facedown under the ally
-    AttachFacedown AllyId PlayerCard
+  | -- | a card goes facedown under the ally, or the Nameless enemy
+    AttachFacedown Target PlayerCard
   | -- | the player commits characters to the escape test, one at a time
     MakeEscapeTest EscapeTest
   | ResolveEscapeTest EscapeTest

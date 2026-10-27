@@ -36,12 +36,22 @@ instance RunMessage EnemyAttrs where
     RevealShadowCard eid cid | eid == attrs.id -> pure $ attrs & shadowRevealedL %~ (cid :)
     EndPhase CombatPhase | notNull attrs.shadowCards -> discardShadows
     DiscardShadowCards eid | eid == attrs.id && notNull attrs.shadowCards -> discardShadows
+    AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (<> [card])
+    -- the cards facedown under it go to their owners' discard piles as it leaves play
+    Destroy (isTarget attrs -> True) -> leaving
+    Discard (isTarget attrs -> True) -> leaving
+    ReturnToTopOfEncounterDeck (isTarget attrs -> True) -> leaving
+    ShuffleIntoEncounterDeck (isTarget attrs -> True) -> leaving
+    RemoveFromGame (isTarget attrs -> True) -> leaving
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
    where
+    leaving = do
+      pushAll $ map PutInDiscard attrs.facedown
+      pure $ attrs & facedownL .~ []
     discardShadows = do
       push $ AddToEncounterDiscard attrs.shadowCards
       pure $ attrs & shadowCardsL .~ [] & shadowRevealedL .~ []
