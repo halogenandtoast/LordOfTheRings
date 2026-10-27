@@ -17,6 +17,9 @@ allLocationCards =
       , dreadfulGap
       , fouledWell
       , goblinTunnels
+      , branchingPaths
+      , lightlessPassage
+      , zigilMineshaft
       , mountainsOfMirkwood
       , theBrownLands
       , theEastBight
@@ -57,6 +60,28 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       ]
+
+branchingPaths :: CardDef
+branchingPaths =
+  (location "03036" "Branching Paths" TwistsAndTurns 3 1 3)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdEasyModeQuantity = Just 1
+    }
+
+lightlessPassage :: CardDef
+lightlessPassage =
+  (location "03037" "Lightless Passage" TwistsAndTurns 2 4 4)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+zigilMineshaft :: CardDef
+zigilMineshaft =
+  (location "03038" "Zigil Mineshaft" TwistsAndTurns 3 5 5)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdEasyModeQuantity = Just 1
+    }
 
 -- | X quest points: the number of characters in play (see the card).
 dreadfulGap :: CardDef

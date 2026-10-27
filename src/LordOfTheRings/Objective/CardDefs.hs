@@ -15,6 +15,7 @@ allObjectiveCards =
     map
       (\def -> (cdCardCode def, def))
       [ gandalfsMap
+      , caveTorch
       , dungeonTorch
       , shadowKey
       , mendor
@@ -26,6 +27,13 @@ allObjectiveCards =
       , gollumReturnToMirkwood
       , abandonedTools
       ]
+
+caveTorch :: CardDef
+caveTorch =
+  (objective "03041" "Cave Torch" TwistsAndTurns 1)
+    { cdCardTraits = setFromList [Light]
+    , cdKeywords = setFromList [Restricted]
+    }
 
 gandalfsMap :: CardDef
 gandalfsMap =

@@ -31,6 +31,14 @@
   "watchfulEyes": {
     "attach": "Attach Watchful Eyes to one of your heroes"
   },
+  "caveTorch": {
+    "location": "Place 3 progress on a Dark location"
+  },
+  "burningLow": {
+    "cancel": "Exhaust Cave Torch to cancel Burning Low?",
+    "exhaustTorch": "Exhaust Cave Torch",
+    "burn": "Let it burn low"
+  },
   "crumblingRuin": {
     "exhaust": "Exhaust a character: if the discarded card costs at least its remaining hit points, it is discarded"
   },

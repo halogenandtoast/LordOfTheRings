@@ -19,6 +19,8 @@ allTreacheryCards =
       , darkAndDreadful
       , suddenPitfall
       , watchfulEyes
+      , manyRoads
+      , burningLow
       , caughtInAWeb
       , despair
       , drivenByShadow
@@ -56,6 +58,18 @@ allTreacheryCards =
       , massingInTheDeep
       , undisturbedBones
       ]
+
+manyRoads :: CardDef
+manyRoads =
+  (treachery "03039" "Many Roads" TwistsAndTurns 1)
+    { cdKeywords = setFromList [Surge]
+    }
+
+burningLow :: CardDef
+burningLow =
+  (treachery "03040" "Burning Low" TwistsAndTurns 3)
+    { cdShadowEffect = True
+    }
 
 caveIn :: CardDef
 caveIn =

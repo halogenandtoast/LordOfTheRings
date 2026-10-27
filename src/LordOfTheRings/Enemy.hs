@@ -9,6 +9,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.Cards.BlackForestBats
 import LordOfTheRings.Enemy.Cards.GoblinScout
 import LordOfTheRings.Enemy.Cards.GoblinSwordsman
+import LordOfTheRings.Enemy.Cards.GoblinFollower
 import LordOfTheRings.Enemy.Cards.CavernGuardian
 import LordOfTheRings.Enemy.Cards.ChieftanUfthak
 import LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
@@ -82,6 +83,7 @@ allEnemys =
         [ SomeEnemyCard kingSpider
         , SomeEnemyCard goblinScout
         , SomeEnemyCard goblinSwordsman
+        , SomeEnemyCard goblinFollower
         , SomeEnemyCard hummerhorns
         , SomeEnemyCard ungoliantsSpawn
         , SomeEnemyCard wolfRider

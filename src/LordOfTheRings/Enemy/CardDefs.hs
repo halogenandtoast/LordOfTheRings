@@ -16,6 +16,7 @@ allEnemyCards =
       [ kingSpider
       , goblinScout
       , goblinSwordsman
+      , goblinFollower
       , hummerhorns
       , ungoliantsSpawn
       , wolfRider
@@ -56,6 +57,14 @@ allEnemyCards =
       , goblinSpearman
       , goblinArcher
       ]
+
+goblinFollower :: CardDef
+goblinFollower =
+  (enemy "03035" "Goblin Follower" TwistsAndTurns 4 33 1 3 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
 
 goblinScout :: CardDef
 goblinScout =
