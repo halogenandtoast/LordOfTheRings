@@ -102,5 +102,6 @@
   "undoConfirm": "Undo the game back to just before \"{entry}\"?",
   "pinned": "Pinned",
   "say": "Say",
-  "sayPlaceholder": "Say something to the table"
+  "sayPlaceholder": "Say something to the table",
+  "jumpToLatest": "New messages · Jump to latest"
 }

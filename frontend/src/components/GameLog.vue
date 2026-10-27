@@ -143,14 +143,24 @@ const onToggle = (path: string, open: boolean) => {
 
 const scroller = ref<HTMLElement | null>(null)
 const pinnedToBottom = ref(true)
+const hasNewMessages = ref(false)
 const loadingOlder = ref(false)
+
+const jumpToLatest = async () => {
+  pinnedToBottom.value = true
+  hasNewMessages.value = false
+  await nextTick()
+  const el = scroller.value
+  if (el && pinnedToBottom.value) el.scrollTop = el.scrollHeight
+}
 
 // Follow the log only for a reader already at the bottom; near the top, ask for the
 // page before what is held.
 const onScroll = () => {
   const el = scroller.value
   if (!el) return
-  pinnedToBottom.value = el.scrollHeight - el.scrollTop - el.clientHeight < 40
+  pinnedToBottom.value = el.scrollHeight - el.scrollTop - el.clientHeight <= 2
+  if (pinnedToBottom.value) hasNewMessages.value = false
   const oldest = props.entries[0]?.seq
   if (el.scrollTop < 80 && props.hasOlder && !loadingOlder.value && oldest !== undefined) {
     loadingOlder.value = true
@@ -181,13 +191,14 @@ watch(
 
 watch(
   () => props.entries[props.entries.length - 1]?.seq ?? 0,
-  async () => {
-    if (!pinnedToBottom.value) return
-    await nextTick()
-    const el = scroller.value
-    if (el) el.scrollTop = el.scrollHeight
+  (latest, previous) => {
+    if (!pinnedToBottom.value) {
+      if (previous !== undefined && latest > previous) hasNewMessages.value = true
+      return
+    }
+    void jumpToLatest()
   },
-  { immediate: true, flush: 'post' },
+  { immediate: true },
 )
 </script>
 
@@ -239,6 +250,10 @@ watch(
       </ul>
     </div>
 
+    <button v-if="hasNewMessages" class="game-log__latest" type="button" @click="jumpToLatest">
+      {{ $t('log.jumpToLatest') }} <span aria-hidden="true">↓</span>
+    </button>
+
     <form v-if="canChat" class="game-log__compose" @submit.prevent="send">
       <input
         v-model="draft"
@@ -287,6 +302,19 @@ watch(
 /* a round's gap is its last phase's, so the round and that phase end together */
 .game-log__section--phase:last-child > .game-log__list::after { height: 22px; }
 .game-log__section--first { margin-top: 14px; }
+.game-log__latest {
+  flex: none;
+  padding: 7px 10px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.game-log__latest:hover { background: rgb(229 211 173 / 0.13); }
+.game-log__latest:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .game-log__compose {
   flex: none;
   display: flex;
