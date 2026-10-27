@@ -652,7 +652,7 @@ runGameMessage msg g = case msg of
     pure g
   AttackStagingAreaAlone pid attacker -> do
     ready <- elem attacker <$> readyAttackers pid
-    staged <- select EnemyInStagingArea
+    staged <- filterM (fmap (notElem CannotBeAttacked) . getModifiers) =<< select EnemyInStagingArea
     when (ready && notNull staged)
       $ push
       $ questionLabelWith (ikey "label.attackStagingAlone") (Just attacker) [] pid
@@ -1766,6 +1766,11 @@ characters of other players, when it is engaged with them.
 -}
 mayAttack :: PlayerId -> EnemyId -> GameT [Target]
 mayAttack pid eid = do
+  blocked <- elem CannotBeAttacked <$> getModifiers eid
+  if blocked then pure [] else mayAttack' pid eid
+
+mayAttack' :: PlayerId -> EnemyId -> GameT [Target]
+mayAttack' pid eid = do
   own <- ownAttackers pid eid
   engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
   others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
