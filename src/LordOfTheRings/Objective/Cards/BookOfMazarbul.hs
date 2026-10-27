@@ -15,7 +15,7 @@ bookOfMazarbul = objective BookOfMazarbul Cards.bookOfMazarbul
 -- hero. (If detached, return Book of Mazarbul to the staging area.)
 instance HasAbilities BookOfMazarbul where
   getAbilities (BookOfMazarbul a) =
-    [ anyPlayer $ restricted a 1 (HeroExists $ HeroControlledBy ActivePlayer <> ReadyHero) $ ActionAbility Free
+    [ anyPlayer $ mkAbility a 1 $ ActionAbility (ExhaustHeroCost $ HeroControlledBy ActivePlayer)
     | a.placement == StagingArea
     ]
 
@@ -27,13 +27,8 @@ instance HasModifiersFor BookOfMazarbul where
 
 instance RunMessage BookOfMazarbul where
   runMessage msg o@(BookOfMazarbul attrs) = case msg of
-    UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
-      chooseOneM pid do
-        questionLabeled "bookOfMazarbul.exhaust"
-        causedBy attrs
-        targets heroes \h -> do
-          exhaust h
-          attachObjective attrs.id h
+    UseCardAbility _ (isSource attrs -> True) 1 windows -> do
+      -- the hero exhausted to pay
+      for_ [h | Window _ (Exhausted h) <- windows] $ attachObjective attrs.id
       pure o
     _ -> BookOfMazarbul <$> runMessage msg attrs

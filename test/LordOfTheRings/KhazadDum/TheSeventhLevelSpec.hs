@@ -97,3 +97,26 @@ spec = describe "The Seventh Level" do
     passActions pid
     reveal [Treacheries.undisturbedBones]
     getDamage guard' `shouldReturn` 1
+
+  it "claims Book of Mazarbul by exhausting a hero as its cost" . seventhTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Objectives.bookOfMazarbul
+    bookId <- getsGame (fromJustNote "no book" . fmap toTarget . headMay . toList . (.entities.objectives))
+    beravor <- getHeroWithCode "01012"
+    run $ ActionWindow pid
+    chooseAbilityOf pid bookId
+    chooseTarget pid beravor
+    book `shouldReturn` Just (AttachedTo $ toTarget beravor)
+    heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
+  it "does not offer Book of Mazarbul without a hero that can exhaust" . seventhTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Objectives.bookOfMazarbul
+    bookId <- getsGame (fromJustNote "no book" . fmap toTarget . headMay . toList . (.entities.objectives))
+    for_ ["01007", "01002"] \code -> run . Exhaust . toTarget =<< getHeroWithCode code
+    beravor <- getHeroWithCode "01012"
+    -- Shadow of Fear: the hero cannot exhaust
+    _ <- setEncounterDeck [Treacheries.shadowOfFear]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid beravor
+    run $ ActionWindow pid
+    offersAbilityOf pid bookId `shouldReturn` False
