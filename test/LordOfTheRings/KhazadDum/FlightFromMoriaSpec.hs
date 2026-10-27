@@ -1,6 +1,5 @@
 module LordOfTheRings.KhazadDum.FlightFromMoriaSpec (spec) where
 
-import LordOfTheRings.Card (CardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations

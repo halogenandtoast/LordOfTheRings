@@ -1,6 +1,5 @@
 module LordOfTheRings.KhazadDum.IntoThePitSpec (spec) where
 
-import LordOfTheRings.Card (CardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
