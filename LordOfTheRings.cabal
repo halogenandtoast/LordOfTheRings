@@ -441,15 +441,23 @@ library
       LordOfTheRings.Quest.Cards.AChosenPathBeornsPath
       LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
       LordOfTheRings.Quest.Cards.AForkInTheRoad
+      LordOfTheRings.Quest.Cards.APresenceInTheDark
+      LordOfTheRings.Quest.Cards.AWrongTurn
       LordOfTheRings.Quest.Cards.AgainstTheTrolls
       LordOfTheRings.Quest.Cards.Ambush
       LordOfTheRings.Quest.Cards.AmbushOnTheShore
       LordOfTheRings.Quest.Cards.AnduinPassage
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
+      LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.EscapeAttempt
+      LordOfTheRings.Quest.Cards.EscapeFromDarkness
       LordOfTheRings.Quest.Cards.FliesAndSpiders
       LordOfTheRings.Quest.Cards.GrimbeornsQuest
+      LordOfTheRings.Quest.Cards.HastyCouncil
+      LordOfTheRings.Quest.Cards.HeadingDown
+      LordOfTheRings.Quest.Cards.HeadingUp
       LordOfTheRings.Quest.Cards.IntoTheMarshes
+      LordOfTheRings.Quest.Cards.NarrowPaths
       LordOfTheRings.Quest.Cards.OnTheTrail
       LordOfTheRings.Quest.Cards.OutOfTheDungeons
       LordOfTheRings.Quest.Cards.RadagastsRequest
@@ -474,6 +482,7 @@ library
       LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel
       LordOfTheRings.Scenario.Scenarios.ConflictAtTheCarrock
       LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur
+      LordOfTheRings.Scenario.Scenarios.FlightFromMoria
       LordOfTheRings.Scenario.Scenarios.FlightFromMoria.Helpers
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
@@ -699,6 +708,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.KeywordSpec
+      LordOfTheRings.KhazadDum.FlightFromMoriaSpec
       LordOfTheRings.KhazadDumEngineSpec
       LordOfTheRings.LogSpec
       LordOfTheRings.ModifierSpec

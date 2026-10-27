@@ -77,6 +77,20 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "narrowPaths": {
+    "choose": "Choose 1 questing character: the rest do not count their willpower"
+  },
+  "hastyCouncil": {
+    "choose": "Choose the stage to become the active quest; the other goes to the bottom"
+  },
+  "blockedByShadow": {
+    "choose": "Blocked by Shadow: choose 1",
+    "discard": "Each player discards the top encounter card: a treachery eliminates them",
+    "nextQuest": "Reveal the next quest card, Blocked by Shadow to the bottom"
+  },
+  "escapeFromDarkness": {
+    "exhaust": "Exhaust the hero with Abandoned Tools to place 1 progress"
+  },
   "aFoeBeyond": {
     "hero": "Choose a hero to take the damage"
   },

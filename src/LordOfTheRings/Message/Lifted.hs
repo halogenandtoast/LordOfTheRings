@@ -114,6 +114,10 @@ gameOver = push . GameOver
 winGame :: ReverseQueue m => m ()
 winGame = gameOver Won
 
+-- | The player is eliminated from the game, as Blocked by Shadow's discard reads.
+eliminatePlayer :: ReverseQueue m => PlayerId -> m ()
+eliminatePlayer = push . EliminatePlayer
+
 createEffect
   :: (ReverseQueue m, Sourceable source, Targetable target)
   => source -> target -> [ModifierType] -> EffectDuration -> m ()

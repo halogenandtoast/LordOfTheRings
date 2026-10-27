@@ -55,6 +55,7 @@ const implemented: Record<string, Gateable> = {
   'the-hills-of-emyn-muil': {},
   'the-dead-marshes': {},
   'return-to-mirkwood': {},
+  'flight-from-moria': { alpha: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

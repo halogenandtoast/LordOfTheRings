@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 
 allQuestCards :: Map CardCode CardDef
@@ -36,6 +37,14 @@ allQuestCards =
       , escapeAttempt
       , toTheElvenKingsHalls
       , ambush
+      , aPresenceInTheDark
+      , headingDown
+      , headingUp
+      , aWrongTurn
+      , narrowPaths
+      , hastyCouncil
+      , blockedByShadow
+      , escapeFromDarkness
       ]
 
 fliesAndSpiders :: CardDef
@@ -112,3 +121,32 @@ toTheElvenKingsHalls = quest "02128" "To the Elven King's Halls" ReturnToMirkwoo
 
 ambush :: CardDef
 ambush = quest "02129" "Ambush" ReturnToMirkwood 4 2
+
+aPresenceInTheDark :: CardDef
+aPresenceInTheDark = (quest "03069" "A Presence in the Dark" FlightFromMoria 1 0) {cdVictoryPoints = Just 2}
+
+-- | A Flight from Moria stage 2: its side A, shared by all, reads "Search for an Exit".
+searchForAnExit :: CardCode -> Text -> Int -> Maybe Int -> CardDef
+searchForAnExit code subtitle questPoints victory =
+  (quest code (Name "Search for an Exit" (Just subtitle)) FlightFromMoria 2 questPoints) {cdVictoryPoints = victory}
+
+headingDown :: CardDef
+headingDown = searchForAnExit "03070" "Heading Down" 5 (Just 1)
+
+headingUp :: CardDef
+headingUp = searchForAnExit "03071" "Heading Up" 7 (Just 1)
+
+aWrongTurn :: CardDef
+aWrongTurn = searchForAnExit "03072" "A Wrong Turn" 1 (Just 2)
+
+narrowPaths :: CardDef
+narrowPaths = searchForAnExit "03073" "Narrow Paths" 3 (Just 1)
+
+hastyCouncil :: CardDef
+hastyCouncil = searchForAnExit "03074" "Hasty Council" 0 (Just 2)
+
+blockedByShadow :: CardDef
+blockedByShadow = searchForAnExit "03075" "Blocked by Shadow" 9 Nothing
+
+escapeFromDarkness :: CardDef
+escapeFromDarkness = searchForAnExit "03076" "Escape from Darkness" 4 Nothing

@@ -31,6 +31,14 @@ import LordOfTheRings.Quest.Cards.ThroughTheForest
 import LordOfTheRings.Quest.Cards.EscapeAttempt
 import LordOfTheRings.Quest.Cards.ToTheElvenKingsHalls
 import LordOfTheRings.Quest.Cards.Ambush
+import LordOfTheRings.Quest.Cards.APresenceInTheDark
+import LordOfTheRings.Quest.Cards.HeadingDown
+import LordOfTheRings.Quest.Cards.HeadingUp
+import LordOfTheRings.Quest.Cards.AWrongTurn
+import LordOfTheRings.Quest.Cards.NarrowPaths
+import LordOfTheRings.Quest.Cards.HastyCouncil
+import LordOfTheRings.Quest.Cards.BlockedByShadow
+import LordOfTheRings.Quest.Cards.EscapeFromDarkness
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -86,5 +94,13 @@ allQuests =
         , SomeQuestCard escapeAttempt
         , SomeQuestCard toTheElvenKingsHalls
         , SomeQuestCard ambush
+        , SomeQuestCard aPresenceInTheDark
+        , SomeQuestCard headingDown
+        , SomeQuestCard headingUp
+        , SomeQuestCard aWrongTurn
+        , SomeQuestCard narrowPaths
+        , SomeQuestCard hastyCouncil
+        , SomeQuestCard blockedByShadow
+        , SomeQuestCard escapeFromDarkness
         ]
     ]
