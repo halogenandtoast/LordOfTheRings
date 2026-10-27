@@ -60,6 +60,11 @@ import LordOfTheRings.Location.Cards.WoodElfPath
 import LordOfTheRings.Location.Cards.TheMountainsRoots
 import LordOfTheRings.Location.Cards.PlunderedArmoury
 import LordOfTheRings.Location.Cards.UpperHall
+import LordOfTheRings.Location.Cards.Caradhras
+import LordOfTheRings.Location.Cards.Fanuidhol
+import LordOfTheRings.Location.Cards.Celebdil
+import LordOfTheRings.Location.Cards.TheDimrillStair
+import LordOfTheRings.Location.Cards.RockyCrags
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -144,5 +149,10 @@ allLocations =
         , SomeLocationCard theMountainsRoots
         , SomeLocationCard plunderedArmoury
         , SomeLocationCard upperHall
+        , SomeLocationCard caradhras
+        , SomeLocationCard fanuidhol
+        , SomeLocationCard celebdil
+        , SomeLocationCard theDimrillStair
+        , SomeLocationCard rockyCrags
         ]
     ]

@@ -67,6 +67,11 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       , upperHall
+      , caradhras
+      , fanuidhol
+      , celebdil
+      , theDimrillStair
+      , rockyCrags
       ]
 
 eastGate :: CardDef
@@ -442,5 +447,44 @@ theMountainsRoots :: CardDef
 theMountainsRoots =
   (location "03047" "The Mountains' Roots" DeepsOfMoria 3 0 0)
     { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    }
+
+caradhras :: CardDef
+caradhras =
+  (location "04015" "Caradhras" TheRedhornGate 1 3 9)
+    { cdCardTraits = setFromList [Mountain, Snow]
+    , cdUnique = True
+    , cdVictoryPoints = Just 3
+    }
+
+fanuidhol :: CardDef
+fanuidhol =
+  (location "04016" "Fanuidhol" TheRedhornGate 1 3 7)
+    { cdCardTraits = setFromList [Mountain, Snow]
+    , cdUnique = True
+    , cdVictoryPoints = Just 2
+    }
+
+celebdil :: CardDef
+celebdil =
+  (location "04017" "Celebdil" TheRedhornGate 1 3 7)
+    { cdCardTraits = setFromList [Mountain, Snow]
+    , cdUnique = True
+    , cdVictoryPoints = Just 2
+    }
+
+theDimrillStair :: CardDef
+theDimrillStair =
+  (location "04018" "The Dimrill Stair" TheRedhornGate 1 2 3)
+    { cdCardTraits = setFromList [Stair]
+    , cdUnique = True
+    , cdVictoryPoints = Just 1
+    }
+
+rockyCrags :: CardDef
+rockyCrags =
+  (location "04019" "Rocky Crags" TheRedhornGate 3 4 2)
+    { cdCardTraits = setFromList [Mountain]
     , cdShadowEffect = True
     }
