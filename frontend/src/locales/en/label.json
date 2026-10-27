@@ -77,6 +77,15 @@
   "moveToBottom": "Move it to the bottom",
   "revealCard": "Reveal a card",
   "takeNothing": "Take nothing",
+  "aFoeBeyond": {
+    "hero": "Choose a hero to take the damage"
+  },
+  "shadowOfFear": {
+    "attach": "Choose a hero to attach Shadow of Fear to"
+  },
+  "abandonedTools": {
+    "exhaust": "Exhaust a hero to claim Abandoned Tools"
+  },
   "returnToMirkwood": {
     "newGuard": "Choose a new player to guard Gollum"
   },

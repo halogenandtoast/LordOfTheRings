@@ -42,6 +42,9 @@ import LordOfTheRings.Treachery.Cards.TheLightsOfTheDead
 import LordOfTheRings.Treachery.Cards.GollumsAnguish
 import LordOfTheRings.Treachery.Cards.GollumsBite
 import LordOfTheRings.Treachery.Cards.WastedProvisions
+import LordOfTheRings.Treachery.Cards.NewDevilry
+import LordOfTheRings.Treachery.Cards.ShadowOfFear
+import LordOfTheRings.Treachery.Cards.AFoeBeyond
 import LordOfTheRings.Treachery.Cards.ChanceEncounter
 import LordOfTheRings.Treachery.Cards.MassingInTheDeep
 import LordOfTheRings.Treachery.Cards.UndisturbedBones
@@ -111,6 +114,9 @@ allTreacherys =
         , SomeTreacheryCard gollumsAnguish
         , SomeTreacheryCard gollumsBite
         , SomeTreacheryCard wastedProvisions
+        , SomeTreacheryCard newDevilry
+        , SomeTreacheryCard shadowOfFear
+        , SomeTreacheryCard aFoeBeyond
         , SomeTreacheryCard chanceEncounter
         , SomeTreacheryCard massingInTheDeep
         , SomeTreacheryCard undisturbedBones

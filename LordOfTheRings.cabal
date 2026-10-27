@@ -218,6 +218,7 @@ library
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.StrayGoblin
       LordOfTheRings.Enemy.Cards.Stuart
+      LordOfTheRings.Enemy.Cards.TheNamelessFear
       LordOfTheRings.Enemy.Cards.UngoliantsSpawn
       LordOfTheRings.Enemy.Cards.UngoliantsSwarm
       LordOfTheRings.Enemy.Cards.Wargs
@@ -415,6 +416,7 @@ library
       LordOfTheRings.Name
       LordOfTheRings.Objective
       LordOfTheRings.Objective.CardDefs
+      LordOfTheRings.Objective.Cards.AbandonedTools
       LordOfTheRings.Objective.Cards.Athelas
       LordOfTheRings.Objective.Cards.DungeonTorch
       LordOfTheRings.Objective.Cards.GandalfsMap
@@ -472,6 +474,7 @@ library
       LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel
       LordOfTheRings.Scenario.Scenarios.ConflictAtTheCarrock
       LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur
+      LordOfTheRings.Scenario.Scenarios.FlightFromMoria.Helpers
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
       LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood
@@ -489,6 +492,7 @@ library
       LordOfTheRings.Trait
       LordOfTheRings.Treachery
       LordOfTheRings.Treachery.CardDefs
+      LordOfTheRings.Treachery.Cards.AFoeBeyond
       LordOfTheRings.Treachery.Cards.AFrightenedBeast
       LordOfTheRings.Treachery.Cards.AWispOfPaleSheen
       LordOfTheRings.Treachery.Cards.CaughtInAWeb
@@ -511,12 +515,14 @@ library
       LordOfTheRings.Treachery.Cards.LingeringVenom
       LordOfTheRings.Treachery.Cards.MassingAtNight
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
+      LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
       LordOfTheRings.Treachery.Cards.OldWivesTales
       LordOfTheRings.Treachery.Cards.PursuedByShadow
       LordOfTheRings.Treachery.Cards.RoastedSlowly
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.Sacked
+      LordOfTheRings.Treachery.Cards.ShadowOfFear
       LordOfTheRings.Treachery.Cards.SlickFooting
       LordOfTheRings.Treachery.Cards.SuddenPitfall
       LordOfTheRings.Treachery.Cards.SwarmingInsect

@@ -24,6 +24,7 @@ allObjectiveCards =
       , wilyador
       , gollumTheDeadMarshes
       , gollumReturnToMirkwood
+      , abandonedTools
       ]
 
 gandalfsMap :: CardDef
@@ -98,4 +99,11 @@ gollumReturnToMirkwood =
   ((objective "02130" "Gollum" ReturnToMirkwood 1) {cdHitPoints = Just 5})
     { cdUnique = True
     , cdCardTraits = setFromList [Creature]
+    }
+
+abandonedTools :: CardDef
+abandonedTools =
+  (objective "03029" "Abandoned Tools" FlightFromMoria 1)
+    { cdCardTraits = setFromList [Tools]
+    , cdKeywords = setFromList [Guarded, Restricted]
     }

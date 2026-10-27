@@ -17,6 +17,7 @@ import LordOfTheRings.Objective.Cards.Athelas
 import LordOfTheRings.Objective.Cards.Wilyador
 import LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
 import LordOfTheRings.Objective.Cards.GollumReturnToMirkwood
+import LordOfTheRings.Objective.Cards.AbandonedTools
 import LordOfTheRings.Objective.Runner ()
 import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Prelude
@@ -45,5 +46,5 @@ allObjectives :: Map CardCode SomeObjectiveCard
 allObjectives =
   Map.fromList
     [ (toCardCode builder, card)
-    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood]
+    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood, SomeObjectiveCard abandonedTools]
     ]

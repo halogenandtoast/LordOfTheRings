@@ -49,6 +49,9 @@ allTreacheryCards =
       , gollumsAnguish
       , gollumsBite
       , wastedProvisions
+      , newDevilry
+      , shadowOfFear
+      , aFoeBeyond
       , chanceEncounter
       , massingInTheDeep
       , undisturbedBones
@@ -299,4 +302,17 @@ massingInTheDeep =
     { cdKeywords = setFromList [Doomed 1]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+newDevilry :: CardDef
+newDevilry = (treachery "03026" "New Devilry" FlightFromMoria 3) {cdShadowEffect = True}
+
+shadowOfFear :: CardDef
+shadowOfFear = (treachery "03027" "Shadow of Fear" FlightFromMoria 3) {cdEasyModeQuantity = Just 1}
+
+aFoeBeyond :: CardDef
+aFoeBeyond =
+  (treachery "03028" "A Foe Beyond" FlightFromMoria 4)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

@@ -48,6 +48,7 @@ allEnemyCards =
       , giantMarshWorm
       , mirkwoodBats
       , attercopAttercop
+      , theNamelessFear
       , greatCaveTroll
       , orcDrummer
       , strayGoblin
@@ -360,4 +361,11 @@ strayGoblin =
   (enemy "03044" "Stray Goblin" DeepsOfMoria 3 29 0 0 2 2)
     { cdCardTraits = setFromList [Goblin, Orc]
     , cdShadowEffect = True
+    }
+
+-- | X is the number of victory points in the victory display.
+theNamelessFear :: CardDef
+theNamelessFear =
+  (enemy "03025" "The Nameless Fear" FlightFromMoria 1 50 0 0 0 27)
+    { cdCardTraits = setFromList [Flame, Shadow]
     }
