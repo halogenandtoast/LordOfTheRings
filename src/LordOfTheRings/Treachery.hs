@@ -51,6 +51,7 @@ import LordOfTheRings.Treachery.Cards.AFoeBeyond
 import LordOfTheRings.Treachery.Cards.ChanceEncounter
 import LordOfTheRings.Treachery.Cards.MassingInTheDeep
 import LordOfTheRings.Treachery.Cards.UndisturbedBones
+import LordOfTheRings.Treachery.Cards.BitterWind
 import LordOfTheRings.Treachery.Cards.HiddenThreat
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
@@ -127,6 +128,7 @@ allTreacherys =
         , SomeTreacheryCard chanceEncounter
         , SomeTreacheryCard massingInTheDeep
         , SomeTreacheryCard undisturbedBones
+        , SomeTreacheryCard bitterWind
         , SomeTreacheryCard hiddenThreat
         ]
     ]

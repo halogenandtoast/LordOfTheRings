@@ -186,6 +186,7 @@ library
       LordOfTheRings.Enemy.Cards.AttercopAttercop
       LordOfTheRings.Enemy.Cards.BlackForestBats
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
+      LordOfTheRings.Enemy.Cards.BlackUruks
       LordOfTheRings.Enemy.Cards.CavernGuardian
       LordOfTheRings.Enemy.Cards.CaveTroll
       LordOfTheRings.Enemy.Cards.ChieftainOfThePit
@@ -215,6 +216,7 @@ library
       LordOfTheRings.Enemy.Cards.MirkwoodFlock
       LordOfTheRings.Enemy.Cards.MistyMountainGoblins
       LordOfTheRings.Enemy.Cards.Morris
+      LordOfTheRings.Enemy.Cards.MountainWarg
       LordOfTheRings.Enemy.Cards.MuckAdder
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
       LordOfTheRings.Enemy.Cards.OrcDrummer
@@ -386,6 +388,7 @@ library
       LordOfTheRings.Location.Cards.GoblinTunnels
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.ImpassableBog
+      LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LightlessPassage
       LordOfTheRings.Location.Cards.MountainsOfMirkwood
       LordOfTheRings.Location.Cards.NecromancersPass
@@ -413,7 +416,9 @@ library
       LordOfTheRings.Location.Cards.TheSpidersRing
       LordOfTheRings.Location.Cards.TheWestBank
       LordOfTheRings.Location.Cards.TowerGate
+      LordOfTheRings.Location.Cards.TurbulentWaters
       LordOfTheRings.Location.Cards.UpperHall
+      LordOfTheRings.Location.Cards.WargLair
       LordOfTheRings.Location.Cards.WoodElfPath
       LordOfTheRings.Location.Cards.WoodmansGlade
       LordOfTheRings.Location.Cards.ZigilMineshaft
@@ -534,6 +539,7 @@ library
       LordOfTheRings.Treachery.Cards.AFoeBeyond
       LordOfTheRings.Treachery.Cards.AFrightenedBeast
       LordOfTheRings.Treachery.Cards.AWispOfPaleSheen
+      LordOfTheRings.Treachery.Cards.BitterWind
       LordOfTheRings.Treachery.Cards.BurningLow
       LordOfTheRings.Treachery.Cards.CaughtInAWeb
       LordOfTheRings.Treachery.Cards.CaveIn

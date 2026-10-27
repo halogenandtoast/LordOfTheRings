@@ -58,6 +58,7 @@ allTreacheryCards =
       , chanceEncounter
       , massingInTheDeep
       , undisturbedBones
+      , bitterWind
       , hiddenThreat
       ]
 
@@ -309,6 +310,12 @@ wastedProvisions =
     { cdCardTraits = setFromList [Tantrum]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+bitterWind :: CardDef
+bitterWind =
+  (treachery "03056" "Bitter Wind" MistyMountains 3)
+    { cdShadowEffect = True
     }
 
 undisturbedBones :: CardDef

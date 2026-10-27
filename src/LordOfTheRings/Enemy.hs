@@ -49,6 +49,8 @@ import LordOfTheRings.Enemy.Cards.GreatCaveTroll
 import LordOfTheRings.Enemy.Cards.OrcDrummer
 import LordOfTheRings.Enemy.Cards.StrayGoblin
 import LordOfTheRings.Enemy.Cards.ChieftainOfThePit
+import LordOfTheRings.Enemy.Cards.BlackUruks
+import LordOfTheRings.Enemy.Cards.MountainWarg
 import LordOfTheRings.Enemy.Cards.GoblinSpearman
 import LordOfTheRings.Enemy.Cards.GoblinArcher
 import LordOfTheRings.Enemy.Cards.CaveTroll
@@ -126,6 +128,8 @@ allEnemys =
         , SomeEnemyCard orcDrummer
         , SomeEnemyCard strayGoblin
         , SomeEnemyCard chieftainOfThePit
+        , SomeEnemyCard blackUruks
+        , SomeEnemyCard mountainWarg
         , SomeEnemyCard goblinSpearman
         , SomeEnemyCard goblinArcher
         , SomeEnemyCard caveTroll

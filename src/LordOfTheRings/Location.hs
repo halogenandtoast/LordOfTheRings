@@ -10,6 +10,9 @@ import LordOfTheRings.Location.Cards.BanksOfTheAnduin
 import LordOfTheRings.Location.Cards.DreadfulGap
 import LordOfTheRings.Location.Cards.FouledWell
 import LordOfTheRings.Location.Cards.GoblinTunnels
+import LordOfTheRings.Location.Cards.KneesOfTheMountain
+import LordOfTheRings.Location.Cards.TurbulentWaters
+import LordOfTheRings.Location.Cards.WargLair
 import LordOfTheRings.Location.Cards.EastGate
 import LordOfTheRings.Location.Cards.FirstHall
 import LordOfTheRings.Location.Cards.BridgeOfKhazadDum
@@ -91,6 +94,9 @@ allLocations =
         , SomeLocationCard dreadfulGap
         , SomeLocationCard fouledWell
         , SomeLocationCard goblinTunnels
+        , SomeLocationCard kneesOfTheMountain
+        , SomeLocationCard turbulentWaters
+        , SomeLocationCard wargLair
         , SomeLocationCard eastGate
         , SomeLocationCard firstHall
         , SomeLocationCard bridgeOfKhazadDum

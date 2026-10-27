@@ -17,6 +17,9 @@ allLocationCards =
       , dreadfulGap
       , fouledWell
       , goblinTunnels
+      , kneesOfTheMountain
+      , turbulentWaters
+      , wargLair
       , eastGate
       , firstHall
       , bridgeOfKhazadDum
@@ -130,6 +133,26 @@ fouledWell :: CardDef
 fouledWell =
   (location "03053" "Fouled Well" HazardsOfThePit 3 3 5)
     { cdCardTraits = setFromList [Underground, Dark, Hazard]
+    , cdWhenRevealed = True
+    }
+
+kneesOfTheMountain :: CardDef
+kneesOfTheMountain =
+  (location "03057" "Knees of the Mountain" MistyMountains 1 2 3)
+    { cdCardTraits = setFromList [Mountain]
+    }
+
+turbulentWaters :: CardDef
+turbulentWaters =
+  (location "03058" "Turbulent Waters" MistyMountains 2 3 2)
+    { cdCardTraits = setFromList [Mountain]
+    , cdEasyModeQuantity = Just 1
+    }
+
+wargLair :: CardDef
+wargLair =
+  (location "03059" "Warg Lair" MistyMountains 2 1 3)
+    { cdCardTraits = setFromList [Mountain]
     , cdWhenRevealed = True
     }
 

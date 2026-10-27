@@ -55,6 +55,8 @@ allEnemyCards =
       , orcDrummer
       , strayGoblin
       , chieftainOfThePit
+      , blackUruks
+      , mountainWarg
       , goblinSpearman
       , goblinArcher
       , caveTroll
@@ -336,6 +338,22 @@ attercopAttercop =
   (enemy "02139" "Attercop, Attercop" ReturnToMirkwood 3 44 2 8 4 6)
     { cdCardTraits = setFromList [Creature, Spider]
     , cdEasyModeQuantity = Just 0
+    }
+
+blackUruks :: CardDef
+blackUruks =
+  (enemy "03054" "Black Uruks" MistyMountains 4 32 2 3 3 2)
+    { cdCardTraits = setFromList [Uruk, Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+mountainWarg :: CardDef
+mountainWarg =
+  (enemy "03055" "Mountain Warg" MistyMountains 3 30 2 4 2 4)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 chieftainOfThePit :: CardDef
