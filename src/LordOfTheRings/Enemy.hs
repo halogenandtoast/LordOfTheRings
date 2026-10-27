@@ -55,6 +55,9 @@ import LordOfTheRings.Enemy.Cards.GoblinSpearman
 import LordOfTheRings.Enemy.Cards.GoblinArcher
 import LordOfTheRings.Enemy.Cards.CaveTroll
 import LordOfTheRings.Enemy.Cards.OrcHornBlower
+import LordOfTheRings.Enemy.Cards.MountainGoblin
+import LordOfTheRings.Enemy.Cards.MountainTroll
+import LordOfTheRings.Enemy.Cards.SnowWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -134,5 +137,8 @@ allEnemys =
         , SomeEnemyCard goblinArcher
         , SomeEnemyCard caveTroll
         , SomeEnemyCard orcHornBlower
+        , SomeEnemyCard mountainGoblin
+        , SomeEnemyCard mountainTroll
+        , SomeEnemyCard snowWarg
         ]
     ]
