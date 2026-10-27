@@ -186,8 +186,8 @@ library
       LordOfTheRings.Enemy.Cards.AttercopAttercop
       LordOfTheRings.Enemy.Cards.BlackForestBats
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
-      LordOfTheRings.Enemy.Cards.CaveTroll
       LordOfTheRings.Enemy.Cards.CavernGuardian
+      LordOfTheRings.Enemy.Cards.CaveTroll
       LordOfTheRings.Enemy.Cards.ChieftainOfThePit
       LordOfTheRings.Enemy.Cards.ChieftanUfthak
       LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
@@ -237,11 +237,11 @@ library
       LordOfTheRings.Event
       LordOfTheRings.Event.CardDefs
       LordOfTheRings.Event.Cards.ALightInTheDark
+      LordOfTheRings.Event.Cards.AncestralKnowledge
       LordOfTheRings.Event.Cards.AstonishingSpeed
       LordOfTheRings.Event.Cards.ATestOfWill
       LordOfTheRings.Event.Cards.AVeryGoodTale
       LordOfTheRings.Event.Cards.BehindStrongWalls
-      LordOfTheRings.Event.Cards.AncestralKnowledge
       LordOfTheRings.Event.Cards.BeornsHospitality
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.CampfireTales
@@ -253,11 +253,11 @@ library
       LordOfTheRings.Event.Cards.DurinsSong
       LordOfTheRings.Event.Cards.DwarvenTomb
       LordOfTheRings.Event.Cards.ElrondsCounsel
+      LordOfTheRings.Event.Cards.EverOnward
       LordOfTheRings.Event.Cards.EverVigilant
       LordOfTheRings.Event.Cards.FeignedVoices
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.FoeHammer
-      LordOfTheRings.Event.Cards.EverOnward
       LordOfTheRings.Event.Cards.ForGondor
       LordOfTheRings.Event.Cards.ForthEorlingas
       LordOfTheRings.Event.Cards.FortuneOrFate
@@ -270,11 +270,11 @@ library
       LordOfTheRings.Event.Cards.HiddenCache
       LordOfTheRings.Event.Cards.HostOfGaladhrim
       LordOfTheRings.Event.Cards.Infighting
+      LordOfTheRings.Event.Cards.KhazadKhazad
       LordOfTheRings.Event.Cards.LoreOfImladris
       LordOfTheRings.Event.Cards.LoriensWealth
       LordOfTheRings.Event.Cards.LureOfMoria
       LordOfTheRings.Event.Cards.MendorsSupport
-      LordOfTheRings.Event.Cards.KhazadKhazad
       LordOfTheRings.Event.Cards.MeneldorsFlight
       LordOfTheRings.Event.Cards.MusteringTheRohirrim
       LordOfTheRings.Event.Cards.NeedDrivesThem
@@ -303,11 +303,11 @@ library
       LordOfTheRings.Event.Cards.TheTreePeople
       LordOfTheRings.Event.Cards.ThicketOfSpears
       LordOfTheRings.Event.Cards.ToTheEyrie
+      LordOfTheRings.Event.Cards.UntroubledByDarkness
       LordOfTheRings.Event.Cards.ValiantSacrifice
       LordOfTheRings.Event.Cards.WaitNoLonger
       LordOfTheRings.Event.Cards.WeAreNotIdle
       LordOfTheRings.Event.Cards.WeDoNotSleep
-      LordOfTheRings.Event.Cards.UntroubledByDarkness
       LordOfTheRings.Event.Cards.WillOfTheWest
       LordOfTheRings.Event.Import.Lifted
       LordOfTheRings.Event.Types
@@ -335,11 +335,11 @@ library
       LordOfTheRings.Hero.Cards.DainIronfoot
       LordOfTheRings.Hero.Cards.Denethor
       LordOfTheRings.Hero.Cards.Dunhere
+      LordOfTheRings.Hero.Cards.Dwalin
       LordOfTheRings.Hero.Cards.Eleanor
       LordOfTheRings.Hero.Cards.Elrond
       LordOfTheRings.Hero.Cards.Eomer
       LordOfTheRings.Hero.Cards.Eowyn
-      LordOfTheRings.Hero.Cards.Dwalin
       LordOfTheRings.Hero.Cards.Faramir
       LordOfTheRings.Hero.Cards.Fastred
       LordOfTheRings.Hero.Cards.FrodoBaggins
@@ -463,14 +463,14 @@ library
       LordOfTheRings.Quest.Cards.AChosenPathBeornsPath
       LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
       LordOfTheRings.Quest.Cards.AForkInTheRoad
-      LordOfTheRings.Quest.Cards.APresenceInTheDark
-      LordOfTheRings.Quest.Cards.AWayUp
-      LordOfTheRings.Quest.Cards.AWrongTurn
       LordOfTheRings.Quest.Cards.AgainstTheTrolls
       LordOfTheRings.Quest.Cards.Ambush
       LordOfTheRings.Quest.Cards.AmbushOnTheShore
       LordOfTheRings.Quest.Cards.AnduinPassage
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
+      LordOfTheRings.Quest.Cards.APresenceInTheDark
+      LordOfTheRings.Quest.Cards.AWayUp
+      LordOfTheRings.Quest.Cards.AWrongTurn
       LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
