@@ -515,6 +515,8 @@ runGameMessage msg g = case msg of
       <> windows
     pure g
   DeclareDefenders pid eid chosen -> do
+    -- an attack that cannot be defended, as Striking Tentacle's may be, is undefended
+    undefendable <- elem CannotBeDefended <$> getModifiers eid
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
     others <- filter (/= pid) <$> getPlayerOrder
     defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< readyCharacters pid)
@@ -522,8 +524,9 @@ runGameMessage msg g = case msg of
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
     push
-      $ if many
-        then
+      $ if
+        | undefendable -> UndefendedAttack pid eid
+        | many ->
           questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
             $ [ targetLabel d
                   $ exhaust' d
@@ -538,7 +541,7 @@ runGameMessage msg g = case msg of
                    -- sentinels may defend only once the attacked player declares no defenders
                    [DeclareSentinels pid eid chosen (if null chosen then others else [])]
                ]
-        else
+        | otherwise ->
           questionLabelWith (ikeyWith "label.declareDefender" enemyName) (Just $ toTarget eid) [] pid
             $ [targetLabel d (exhaust' d <> [DefendWith pid eid d]) | d <- defenders]
             <> [Label (ikey "label.takeAttackUndefended") [DeclareSentinels pid eid [] others]]
