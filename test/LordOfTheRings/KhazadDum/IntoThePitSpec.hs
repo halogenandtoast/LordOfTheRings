@@ -132,3 +132,17 @@ spec = describe "Into the Pit" do
     run RevealEncounterCard
     offered <- maybe False (any \case TargetLabel t _ -> t == CardIdTarget card.id; _ -> False) . fmap questionChoices <$> getQuestion pid
     offered `shouldBe` False
+
+  it "has Cave Torch place the amount of progress its player picks, up to 3" . pitTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run . (`PutObjectiveIntoPlayAttached` beravor) =<< genEncounterCard Objectives.caveTorch
+    torch <- getsGame (fromJustNote "no torch" . fmap toTarget . headMay . toList . (.entities.objectives))
+    run . AddToStaging =<< genEncounterCard Locations.lightlessPassage
+    _ <- setEncounterDeck [Treacheries.suddenPitfall]
+    run $ ActionWindow pid
+    chooseAbilityOf pid torch
+    amounts <- maybe [] (map \case Label l _ -> l; _ -> "") . fmap questionChoices <$> getQuestion pid
+    amounts `shouldBe` ["$label.amount n=i:" <> tshow n | n <- [0 .. 3 :: Int]]
+    chooseLabel "$label.amount n=i:2" pid
+    passage <- locationOf Locations.lightlessPassage
+    getsGame (fmap (.progress) . lookup passage . (.entities.locations)) `shouldReturn` Just 2

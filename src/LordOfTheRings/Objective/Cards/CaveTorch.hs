@@ -2,6 +2,7 @@ module LordOfTheRings.Objective.Cards.CaveTorch (caveTorch) where
 
 import LordOfTheRings.Card (cdCardType, toCardDef)
 import LordOfTheRings.Card.CardType (CardType (EnemyType))
+import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -28,13 +29,16 @@ instance HasAbilities CaveTorch where
 
 instance RunMessage CaveTorch where
   runMessage msg o@(CaveTorch attrs) = case msg of
-    -- ponytail: "up to 3" always places 3; fewer is never worse to skip
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       dark <- select (LocationWithTrait Dark)
       chooseOrRunOneM pid do
         questionLabeled "caveTorch.location"
         causedBy attrs
-        targets dark \l -> placeProgress attrs l 3
+        targets dark \l -> do
+          -- no more than the location has room for
+          left <- (-) <$> getLocationQuestPoints l <*> ((.progress) <$> getLocation l)
+          chooseAmountM pid "caveTorch.progress" attrs 0 (max 0 $ min 3 left) \n ->
+            when (n > 0) $ placeProgress attrs l n
       pure o
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       discardTopOfEncounterDeck attrs 1

@@ -41,7 +41,8 @@
     "attach": "Attach Cave Torch to a hero"
   },
   "caveTorch": {
-    "location": "Place 3 progress on a Dark location"
+    "location": "Place up to 3 progress on a Dark location",
+    "progress": "How much progress does Cave Torch place?"
   },
   "burningLow": {
     "cancel": "Exhaust Cave Torch to cancel Burning Low?",
