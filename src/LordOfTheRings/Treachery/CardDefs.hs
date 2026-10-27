@@ -60,6 +60,9 @@ allTreacheryCards =
       , undisturbedBones
       , bitterWind
       , hiddenThreat
+      , sleepingSentry
+      , followedByNight
+      , orcAmbush
       ]
 
 signsOfConflict :: CardDef
@@ -350,4 +353,25 @@ aFoeBeyond =
   (treachery "03028" "A Foe Beyond" FlightFromMoria 4)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+sleepingSentry :: CardDef
+sleepingSentry =
+  (treachery "04046" "Sleeping Sentry" RoadToRivendell 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+followedByNight :: CardDef
+followedByNight =
+  (treachery "04047" "Followed by Night" RoadToRivendell 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+orcAmbush :: CardDef
+orcAmbush =
+  (treachery "04048" "Orc Ambush" RoadToRivendell 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 0
     }

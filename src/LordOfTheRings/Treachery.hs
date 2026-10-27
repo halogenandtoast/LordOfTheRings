@@ -53,6 +53,9 @@ import LordOfTheRings.Treachery.Cards.MassingInTheDeep
 import LordOfTheRings.Treachery.Cards.UndisturbedBones
 import LordOfTheRings.Treachery.Cards.BitterWind
 import LordOfTheRings.Treachery.Cards.HiddenThreat
+import LordOfTheRings.Treachery.Cards.SleepingSentry
+import LordOfTheRings.Treachery.Cards.FollowedByNight
+import LordOfTheRings.Treachery.Cards.OrcAmbush
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -130,5 +133,8 @@ allTreacherys =
         , SomeTreacheryCard undisturbedBones
         , SomeTreacheryCard bitterWind
         , SomeTreacheryCard hiddenThreat
+        , SomeTreacheryCard sleepingSentry
+        , SomeTreacheryCard followedByNight
+        , SomeTreacheryCard orcAmbush
         ]
     ]
