@@ -713,11 +713,20 @@ runGameMessage msg g = case msg of
               ]
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid rest]]
     pure g
-  ResolveAttack pid eid -> do
+  -- the enemy is attacked, for its "when attacked" effects, before the damage is dealt
+  ResolveAttack _ eid -> do
+    attackers <- selectCharacters AttackingHero AttackingAlly
+    pushAll $ [CheckWindows [mkWhen $ EnemyAttacked eid] | notNull attackers, Map.member eid g.entities.enemies] <> [DoStep 1 msg]
+    pure g
+  DoStep 1 (ResolveAttack pid eid) -> do
     -- ranged characters of other players among them
     attackers <- selectCharacters AttackingHero AttackingAlly
-    case Map.lookup eid g.entities.enemies of
-      -- the enemy left play before the attack resolved: the attackers just stop
+    let unattached e = case e.placement of
+          AttachedTo _ -> Nothing
+          _ -> Just e
+    case unattached =<< Map.lookup eid g.entities.enemies of
+      -- the enemy left play, or became an attachment, before the attack resolved: the
+      -- attackers just stop
       Nothing -> pushAll (map StopAttacking attackers)
       Just enemy' -> do
         mods <- getModifiers eid
