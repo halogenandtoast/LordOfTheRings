@@ -750,6 +750,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.KeywordSpec
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec
       LordOfTheRings.KhazadDum.IntoThePitSpec
+      LordOfTheRings.KhazadDum.MistyMountainsSpec
       LordOfTheRings.KhazadDum.PlayerCardsSpec
       LordOfTheRings.KhazadDum.TheSeventhLevelSpec
       LordOfTheRings.KhazadDumEngineSpec
