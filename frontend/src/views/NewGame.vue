@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { createGame } from '../api'
 import { currentUser, updateSettings } from '../auth'
-import { campaigns as allCampaigns, type Campaign, type ScenarioOption } from '../campaigns'
+import { campaigns as allCampaigns, type ScenarioOption } from '../campaigns'
 import { alphaEnabled, filterDisplayable, isDevBuild } from '../displayRules'
 import { useServerText } from '../i18n'
 import { useShortcuts } from '../browser/lib/keys'
@@ -23,8 +23,9 @@ const displayRules = {
 const campaigns = allCampaigns
   .map((c) => ({ ...c, scenarios: filterDisplayable(c.scenarios, displayRules) }))
   .filter((c) => c.scenarios.length > 0)
-const selectedCampaign = ref<Campaign | null>(null)
-const selectedScenario = ref<ScenarioOption | null>(null)
+const selectedCampaign = ref<(typeof campaigns)[number] | null>(null)
+type Shown = ScenarioOption & { playable: boolean }
+const selectedScenario = ref<Shown | null>(null)
 const gameName = ref('')
 const creating = ref(false)
 // As in Arkham: decided when the game is made, starting from the player's default,
@@ -44,9 +45,9 @@ const error = ref<string | null>(null)
 // friends to the open ones.
 const seatCount = ref(1)
 
-const playableCount = (c: Campaign) => c.scenarios.filter((s) => !s.unimplemented).length
+const playableCount = (c: (typeof campaigns)[number]) => c.scenarios.filter((s) => s.playable).length
 const defaultName = computed(() => selectedScenario.value?.name ?? '')
-const canCreate = computed(() => !!selectedScenario.value && !selectedScenario.value.unimplemented && !creating.value)
+const canCreate = computed(() => !!selectedScenario.value && selectedScenario.value.playable && !creating.value)
 
 // As in Arkham, each step is a view transition: every box is named for what it shows,
 // so the one chosen moves into the panel on the left, and back out again. The new
@@ -59,13 +60,13 @@ const step = (change: () => void) => {
   })
 }
 
-const chooseCampaign = (c: Campaign) =>
+const chooseCampaign = (c: (typeof campaigns)[number]) =>
   step(() => {
     selectedCampaign.value = c
     selectedScenario.value = null
   })
 
-const chooseScenario = (s: ScenarioOption) => step(() => (selectedScenario.value = s))
+const chooseScenario = (s: Shown) => step(() => (selectedScenario.value = s))
 
 // a step back: from the game's options to the scenarios, from there to the campaigns
 const back = () =>
@@ -144,8 +145,8 @@ const create = async () => {
               :key="option.id"
               type="button"
               class="scenario-box"
-              :class="{ unavailable: option.unimplemented, alpha: option.alpha, beta: option.beta }"
-              :disabled="option.unimplemented"
+              :class="{ unavailable: !option.playable, alpha: option.alpha, beta: option.beta }"
+              :disabled="!option.playable"
               @click="chooseScenario(option)"
             >
               <img :src="option.image" alt="" :style="{ viewTransitionName: `scenario-${option.id}` }" />

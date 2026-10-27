@@ -1,6 +1,7 @@
-// What to show of content still being worked on, as in Arkham: alpha to those who have
-// opened ?alpha once, beta to beta users, dev in a dev build with alpha on. Unimplemented
-// content shows only in a dev build, and cannot be chosen.
+// What to show of content still being worked on, as in Arkham: alpha is playable by those
+// who have opened ?alpha once, beta by beta users, and both show to everyone else as
+// unplayable. Dev content shows only in a dev build with alpha on. Unimplemented content
+// shows only in a dev build, and cannot be chosen.
 export type Gateable = { alpha?: boolean; beta?: boolean; dev?: boolean; unimplemented?: boolean }
 
 export type DisplayRuleOptions = {
@@ -11,16 +12,21 @@ export type DisplayRuleOptions = {
 
 export const isDevBuild = () => !import.meta.env.PROD
 
-export const shouldDisplay = (item: Gateable, { alpha, beta, dev }: DisplayRuleOptions) => {
+export const shouldDisplay = (item: Gateable, { alpha, dev }: DisplayRuleOptions) => {
   if (item.unimplemented) return dev
   if (item.dev) return dev && alpha
-  if (item.beta) return beta
-  if (item.alpha) return alpha
   return true
 }
 
+export const canPlay = (item: Gateable, options: DisplayRuleOptions) => {
+  if (item.unimplemented) return false
+  if (item.beta) return options.beta
+  if (item.alpha) return options.alpha
+  return shouldDisplay(item, options)
+}
+
 export const filterDisplayable = <T extends Gateable>(items: T[], options: DisplayRuleOptions) =>
-  items.filter((item) => shouldDisplay(item, options))
+  items.filter((item) => shouldDisplay(item, options)).map((item) => ({ ...item, playable: canPlay(item, options) }))
 
 // ?alpha turns alpha on for good in this browser
 export const alphaEnabled = (query: Record<string, unknown>) => {
