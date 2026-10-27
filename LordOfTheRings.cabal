@@ -672,6 +672,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.KeywordSpec
+      LordOfTheRings.KhazadDumEngineSpec
       LordOfTheRings.LogSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
