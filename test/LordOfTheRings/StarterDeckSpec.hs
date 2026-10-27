@@ -1,13 +1,13 @@
 module LordOfTheRings.StarterDeckSpec (spec) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Ally (Ally, AllyAttrs (..), allAllies)
+import LordOfTheRings.Ally (Ally, allAllies)
 import LordOfTheRings.Attachment (allAttachments)
 import LordOfTheRings.Event (allEvents)
 import LordOfTheRings.Hero (allHeroes)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Card (PlayerCard (..), genPlayerCard)
+import LordOfTheRings.Card (PlayerCard (..))
 import LordOfTheRings.Decklist (sharedHeroes)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Matcher (cardIs)
@@ -203,10 +203,10 @@ spec = describe "Starter deck" do
       sacrifice <- putCardIntoHand pid Events.valiantSacrifice
       aragorn <- getHeroWithCode aragornCode
       run $ PlaceTokens GameSource (toTarget aragorn) Resource 1
-      before <- length <$> handCodes pid
+      initial <- length <$> handCodes pid
       run $ Discard (toTarget guard')
       chooseTarget pid sacrifice
-      length <$> handCodes pid `shouldReturn` (before - 1 + 2)
+      length <$> handCodes pid `shouldReturn` (initial - 1 + 2)
 
   describe "Grim Resolve" do
     it "readies all characters" . starterTest $ \pid -> do

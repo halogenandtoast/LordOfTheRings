@@ -249,17 +249,17 @@ spec = describe "Elves of Lórien" do
     it "lowers the cost of the next Silvan ally by 1" . elvesTest $ \pid -> do
       celeborn <- hero celebornCode
       _ <- putAttachmentOn pid Attachments.oLorien celeborn
-      first <- putCardIntoHand pid Allies.naithGuide
-      second <- putCardIntoHand pid Allies.naithGuide
+      one <- putCardIntoHand pid Allies.naithGuide
+      two <- putCardIntoHand pid Allies.naithGuide
       fund celebornCode 3
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid =<< getsGame (toTarget . fromJustNote "o lorien" . headMay . toList . (.entities.attachments))
-      playCard pid first
+      playCard pid one
       passResponses pid
       resources celebornCode `shouldReturn` 2
       passActions pid
       run $ BeginPhase PlanningPhase
-      playCard pid second
+      playCard pid two
       passResponses pid
       resources celebornCode `shouldReturn` 0
 

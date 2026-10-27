@@ -87,9 +87,9 @@ spec = describe "Dwarves of Durin" do
     it "draws 1 more card in the resource phase with 5 Dwarf characters" . dodTest $ \pid -> do
       _ <- putAllyIntoPlay pid Allies.zigilMiner
       _ <- putAllyIntoPlay pid Allies.zigilMiner
-      before <- length <$> handIds pid
+      initial <- length <$> handIds pid
       run $ BeginPhase ResourcePhase
-      length <$> handIds pid `shouldReturn` (before + 2)
+      length <$> handIds pid `shouldReturn` (initial + 2)
 
   describe "Zigil Miner" do
     it "adds a resource for each discarded card that costs the named number" . dodTest $ \pid -> do
@@ -125,12 +125,12 @@ spec = describe "Dwarves of Durin" do
   describe "Bombur" do
     it "gives a location -1 threat" . dodTest $ \pid -> do
       run . AddToStaging =<< genEncounterCard Locations.mountainsOfMirkwood
-      before <- getStagingThreat
+      initial <- getStagingThreat
       bombur <- putAllyIntoPlay pid Allies.bombur
       planning
       chooseAbilityOf pid bombur
       chooseTarget pid =<< getsGame (toTarget . fromJustNote "no location" . headMay . toList . (.entities.locations))
-      getStagingThreat `shouldReturn` (before - 1)
+      getStagingThreat `shouldReturn` (initial - 1)
 
   describe "Longbeard Elder" do
     it "places 1 progress on the quest when the top encounter card is a location" . dodTest $ \pid -> do
@@ -233,10 +233,10 @@ spec = describe "Dwarves of Durin" do
   describe "Legacy of Durin" do
     it "draws 1 card after you play a Dwarf ally from hand" . dodTest $ \pid -> do
       legacy <- putAttachmentOn pid Attachments.legacyOfDurin =<< hero dainCode
-      before <- length <$> handIds pid
+      initial <- length <$> handIds pid
       _ <- playWith pid oriCode 1 Allies.ereborRecordKeeper
       chooseAbilityOf pid legacy
-      length <$> handIds pid `shouldReturn` (before + 1)
+      length <$> handIds pid `shouldReturn` (initial + 1)
 
   describe "Healing Herbs" do
     it "exhausts the attached hero to heal all damage on a character" . dodTest $ \pid -> do
@@ -253,14 +253,14 @@ spec = describe "Dwarves of Durin" do
 
   describe "We Are Not Idle" do
     it "exhausts X Dwarf heroes to add X resources to a hero and draw 1 card" . dodTest $ \pid -> do
-      before <- length <$> handIds pid
+      initial <- length <$> handIds pid
       _ <- playWith pid dainCode 0 Events.weAreNotIdle
       chooseTarget pid =<< hero oriCode
       chooseTarget pid =<< hero bifurCode
       chooseLabel "$label.weAreNotIdle.done" pid
       chooseTarget pid =<< hero dainCode
       resources dainCode `shouldReturn` 2
-      length <$> handIds pid `shouldReturn` (before + 1)
+      length <$> handIds pid `shouldReturn` (initial + 1)
 
   describe "Cram" do
     it "is discarded to ready the attached hero" . dodTest $ \pid -> do
@@ -276,15 +276,15 @@ spec = describe "Dwarves of Durin" do
       run . AddToStaging =<< genEncounterCard Locations.mountainsOfMirkwood
       run . AddToStaging =<< genEncounterCard Locations.theBrownLands
       locations <- getsGame (map toId . toList . (.entities.locations))
-      let (first, second) = case locations of
+      let (one, two) = case locations of
             [a, b] -> (a, b)
             _ -> error "two locations"
-      run $ PlaceLocation first ActiveLocation
+      run $ PlaceLocation one ActiveLocation
       m <- putAttachmentOn pid Attachments.throrsMap =<< hero oriCode
       run $ BeginPhase TravelPhase
       chooseAbilityOf pid m
-      chooseTarget pid second
-      placements <- getsGame (\g -> [locationPlacement (toAttrs l) | lid <- [first, second], Just l <- [Map.lookup lid g.entities.locations]])
+      chooseTarget pid two
+      placements <- getsGame (\g -> [locationPlacement (toAttrs l) | lid <- [one, two], Just l <- [Map.lookup lid g.entities.locations]])
       placements `shouldBe` [StagingArea, ActiveLocation]
 
   describe "King Under the Mountain" do
@@ -293,13 +293,13 @@ spec = describe "Dwarves of Durin" do
       king <- putAttachmentOn pid Attachments.kingUnderTheMountain =<< hero dainCode
       planning
       chooseAbilityOf pid king
-      (first, second, third) <- case map (.id) cards of
+      (one, two, three) <- case map (.id) cards of
         [a, b, c] -> pure (a, b, c)
         _ -> error "three cards"
-      chooseTarget pid (CardIdTarget second)
-      handIds pid >>= (`shouldSatisfy` elem second)
-      discardIds pid `shouldReturn` [first]
-      deckIds pid `shouldReturn` [third]
+      chooseTarget pid (CardIdTarget two)
+      handIds pid >>= (`shouldSatisfy` elem two)
+      discardIds pid `shouldReturn` [one]
+      deckIds pid `shouldReturn` [three]
 
   describe "Dwarf Pipe" do
     it "places a card discarded from your deck on the bottom of it" . dodTest $ \pid -> do
