@@ -57,6 +57,9 @@ import LordOfTheRings.Treachery.Cards.Fatigue
 import LordOfTheRings.Treachery.Cards.FoulAir
 import LordOfTheRings.Treachery.Cards.GatheringGround
 import LordOfTheRings.Treachery.Cards.VastAndIntricate
+import LordOfTheRings.Treachery.Cards.SleepingSentry
+import LordOfTheRings.Treachery.Cards.FollowedByNight
+import LordOfTheRings.Treachery.Cards.OrcAmbush
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -138,5 +141,8 @@ allTreacherys =
         , SomeTreacheryCard foulAir
         , SomeTreacheryCard gatheringGround
         , SomeTreacheryCard vastAndIntricate
+        , SomeTreacheryCard sleepingSentry
+        , SomeTreacheryCard followedByNight
+        , SomeTreacheryCard orcAmbush
         ]
     ]

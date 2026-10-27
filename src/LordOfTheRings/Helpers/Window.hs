@@ -80,6 +80,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     | t == timing ->
         anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
   (EnemyWithTraitRevealedWindow t trait, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
+  (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m <$> getModifiers eid
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities

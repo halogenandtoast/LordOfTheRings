@@ -251,6 +251,15 @@
   "oldForestRoad": {
     "ready": "Ready a character you control"
   },
+  "ruinedRoad": {
+    "choose": "Place 2 progress on Ruined Road, or ready a hero you control",
+    "progress": "Place 2 progress on Ruined Road"
+  },
+  "followedByNight": {
+    "choose": "Choose one for Followed by Night",
+    "damage": "Deal 1 damage to each ally; Followed by Night gains surge",
+    "attack": "Each engaged enemy makes an immediate attack"
+  },
   "protectorOfLorien": {
     "give": "Give the attached hero",
     "defense": "+1 defense",

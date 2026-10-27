@@ -311,6 +311,9 @@ data Message
   | TravelTo LocationId
   | OptionalEngagement PlayerId
   | EngagementCheck PlayerId Int
+  | -- | an enemy with ambush entering play: the first player in turn order whose threat
+    -- reaches its engagement cost engages it
+    AmbushEngagementCheck EnemyId
   | EngageEnemy PlayerId EnemyId
   | DealShadowCards
   | DealShadowCard EnemyId

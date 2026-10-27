@@ -64,6 +64,9 @@ allTreacheryCards =
       , foulAir
       , gatheringGround
       , vastAndIntricate
+      , sleepingSentry
+      , followedByNight
+      , orcAmbush
       ]
 
 signsOfConflict :: CardDef
@@ -367,3 +370,24 @@ gatheringGround = treachery "04095" "Gathering Ground" TheLongDark 1
 
 vastAndIntricate :: CardDef
 vastAndIntricate = treachery "04096" "Vast and Intricate" TheLongDark 2
+
+sleepingSentry :: CardDef
+sleepingSentry =
+  (treachery "04046" "Sleeping Sentry" RoadToRivendell 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+followedByNight :: CardDef
+followedByNight =
+  (treachery "04047" "Followed by Night" RoadToRivendell 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+orcAmbush :: CardDef
+orcAmbush =
+  (treachery "04048" "Orc Ambush" RoadToRivendell 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 0
+    }

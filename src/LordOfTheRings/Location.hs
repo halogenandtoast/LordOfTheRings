@@ -64,6 +64,10 @@ import LordOfTheRings.Location.Cards.AbandonedMine
 import LordOfTheRings.Location.Cards.DwarvenForge
 import LordOfTheRings.Location.Cards.SilentCaverns
 import LordOfTheRings.Location.Cards.TwistingPassage
+import LordOfTheRings.Location.Cards.RuinedRoad
+import LordOfTheRings.Location.Cards.GoblinGate
+import LordOfTheRings.Location.Cards.PathlessCountry
+import LordOfTheRings.Location.Cards.BarrenHills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -152,5 +156,9 @@ allLocations =
         , SomeLocationCard dwarvenForge
         , SomeLocationCard silentCaverns
         , SomeLocationCard twistingPassage
+        , SomeLocationCard ruinedRoad
+        , SomeLocationCard goblinGate
+        , SomeLocationCard pathlessCountry
+        , SomeLocationCard barrenHills
         ]
     ]

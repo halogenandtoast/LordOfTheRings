@@ -59,6 +59,10 @@ import LordOfTheRings.Enemy.Cards.CaveSpider
 import LordOfTheRings.Enemy.Cards.GoblinSneak
 import LordOfTheRings.Enemy.Cards.GoblinWarlord
 import LordOfTheRings.Enemy.Cards.RockAdder
+import LordOfTheRings.Enemy.Cards.GoblinTaskmaster
+import LordOfTheRings.Enemy.Cards.OrcRaiders
+import LordOfTheRings.Enemy.Cards.Crebain
+import LordOfTheRings.Enemy.Cards.WildBear
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -142,5 +146,9 @@ allEnemys =
         , SomeEnemyCard goblinSneak
         , SomeEnemyCard goblinWarlord
         , SomeEnemyCard rockAdder
+        , SomeEnemyCard goblinTaskmaster
+        , SomeEnemyCard orcRaiders
+        , SomeEnemyCard crebain
+        , SomeEnemyCard wildBear
         ]
     ]

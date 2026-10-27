@@ -52,6 +52,9 @@ allQuestCards =
       , theFateOfBalin
       , journeyInTheBlackPit
       , continuingEastward
+      , alongTheMistyMountains
+      , orcOutpost
+      , approachingRivendell
       ]
 
 enteringTheMines :: CardDef
@@ -178,3 +181,12 @@ journeyInTheBlackPit = quest "04086" "Journey in the Black Pit" TheLongDark 1 13
 
 continuingEastward :: CardDef
 continuingEastward = quest "04087" "Continuing Eastward" TheLongDark 2 17
+
+alongTheMistyMountains :: CardDef
+alongTheMistyMountains = quest "04038" "Along the Misty Mountains" RoadToRivendell 1 20
+
+orcOutpost :: CardDef
+orcOutpost = quest "04039" "Orc Outpost" RoadToRivendell 2 7
+
+approachingRivendell :: CardDef
+approachingRivendell = quest "04040" "Approaching Rivendell" RoadToRivendell 3 13

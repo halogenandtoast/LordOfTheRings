@@ -46,6 +46,9 @@ import LordOfTheRings.Quest.Cards.SearchForTheChamber
 import LordOfTheRings.Quest.Cards.TheFateOfBalin
 import LordOfTheRings.Quest.Cards.JourneyInTheBlackPit
 import LordOfTheRings.Quest.Cards.ContinuingEastward
+import LordOfTheRings.Quest.Cards.AlongTheMistyMountains
+import LordOfTheRings.Quest.Cards.OrcOutpost
+import LordOfTheRings.Quest.Cards.ApproachingRivendell
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -116,5 +119,8 @@ allQuests =
         , SomeQuestCard theFateOfBalin
         , SomeQuestCard journeyInTheBlackPit
         , SomeQuestCard continuingEastward
+        , SomeQuestCard alongTheMistyMountains
+        , SomeQuestCard orcOutpost
+        , SomeQuestCard approachingRivendell
         ]
     ]
