@@ -362,7 +362,9 @@ runGameMessage msg g = case msg of
     destroyed <- case target of
       HeroTarget hid | Map.member hid g.entities.heroes -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
       AllyTarget aid | Map.member aid g.entities.allies -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
-      EnemyTarget eid | Map.member eid g.entities.enemies -> (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      -- an indestructible enemy keeps taking damage past its hit points
+      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, Indestructible `notMember` cdKeywords (toCardDef e) ->
+        (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
       _ -> pure False
     when destroyed $ push (Destroy target)
     pure g

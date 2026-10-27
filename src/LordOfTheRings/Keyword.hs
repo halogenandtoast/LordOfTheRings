@@ -7,6 +7,8 @@ data Keyword
   | -- | an objective ally the first player gains control of as it enters play
     FirstPlayerGainsControl
   | Guarded
+  | -- | on an enemy: damage never destroys it, as Durin's Bane
+    Indestructible
   | Ranged
   | -- | on an enemy: it heals this much damage as the refresh phase begins
     Regenerate Int
