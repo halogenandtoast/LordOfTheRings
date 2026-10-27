@@ -465,6 +465,11 @@ setAside = push . SetAside
 addSetAsideToStaging :: ReverseQueue m => CardMatcher -> m ()
 addSetAsideToStaging = push . AddSetAsideToStaging
 
+-- | The set-aside cards are shuffled into the encounter deck, as Snowdrifts shuffles in
+-- copies of Snowstorm.
+shuffleSetAsideIntoEncounterDeck :: ReverseQueue m => [EncounterCard] -> m ()
+shuffleSetAsideIntoEncounterDeck = push . ShuffleSetAsideIntoEncounterDeck
+
 shuffleEncounterDiscardIntoDeck :: ReverseQueue m => CardMatcher -> m ()
 shuffleEncounterDiscardIntoDeck = push . ShuffleEncounterDiscardIntoDeck
 

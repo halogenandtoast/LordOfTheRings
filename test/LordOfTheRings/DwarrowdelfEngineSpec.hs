@@ -11,12 +11,14 @@ import LordOfTheRings.Message.Lifted (
   discardHand,
   immediateAttack,
   removeAllProgress,
+  shuffleSetAsideIntoEncounterDeck,
  )
 import LordOfTheRings.Modifier (ModifierType (GainKeyword))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Phase (Phase (RefreshPhase, ResourcePhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import TestImport
 
 enemyOf :: CardDef -> GameT EnemyId
@@ -105,3 +107,14 @@ spec = describe "Dwarrowdelf engine" do
     void mainLoop
     getEncounterDiscard `shouldReturn` []
     void $ enemyOf Enemies.forestSpider
+
+  it "shuffles set-aside cards into the encounter deck" . gameTest $ \_ -> do
+    _ <- setEncounterDeck []
+    shuffled <- genEncounterCard Enemies.forestSpider
+    kept <- genEncounterCard Enemies.forestSpider
+    run $ SetAside shuffled
+    run $ SetAside kept
+    runQueueT $ shuffleSetAsideIntoEncounterDeck [shuffled]
+    void mainLoop
+    getEncounterDeck `shouldReturn` [shuffled]
+    getsGame (scenarioSetAside . toAttrs . (.scenario)) `shouldReturn` [kept]

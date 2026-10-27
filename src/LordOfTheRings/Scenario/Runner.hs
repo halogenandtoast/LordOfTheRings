@@ -139,6 +139,10 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM (matching <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ rest
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
+    ShuffleSetAsideIntoEncounterDeck cards -> do
+      let shuffled = filter (`elem` cards) attrs.scenarioSetAside
+      deck <- shuffleM (shuffled <> attrs.encounterDeck)
+      pure $ attrs & encounterDeckL .~ deck & setAsideL %~ filter (`notElem` shuffled)
     PutOnTopOfEncounterDeck card -> pure $ attrs & encounterDeckL %~ (card :)
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)

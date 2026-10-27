@@ -258,6 +258,8 @@ data Message
   | -- | set-aside cards go to the staging area
     AddSetAsideToStaging CardMatcher
   | ShuffleEncounterDiscardIntoDeck CardMatcher
+  | -- | set-aside cards are shuffled into the encounter deck
+    ShuffleSetAsideIntoEncounterDeck [EncounterCard]
   | -- | an objective ally in play joins the player as an ally
     PutObjectiveAllyIntoPlay ObjectiveId PlayerId
   | ReduceActiveCost CostId Int
