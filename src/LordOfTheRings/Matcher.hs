@@ -180,6 +180,11 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithRevealedShadow -> pure $ notNull (toAttrs enemy).enemyShadowRevealed
   EnemyEngagedWith pm -> case enemy.placement of
     EngagedWith pid -> elem pid <$> select pm
+    -- engaged with each matching player while it stays in the staging area, as Arkham's
+    -- massive enemies are with each investigator at their location
+    StagingArea -> do
+      mods <- map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
+      anyM (\m -> selectAny (pm <> m)) [m | EngagedWithEachPlayer m <- mods]
     _ -> pure False
   UniqueEnemy -> pure $ cdUnique (toCardDef enemy)
   EnemyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget enemy)
