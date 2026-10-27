@@ -274,6 +274,12 @@ data Message
   | -- | the player commits characters to the escape test, one at a time
     MakeEscapeTest EscapeTest
   | ResolveEscapeTest EscapeTest
+  | {- | a locate test (The Long Dark): the top card of the encounter deck is discarded, and
+    the test is passed if it carries the pass icon; the messages for a fail, then a pass
+    -}
+    LocateTest Source [Message] [Message]
+  | -- | every "Lost:" effect in play triggers (The Long Dark)
+    TriggerLostEffects Source
   | {- | the player switches a card in hand with one in their deck, each taking the other's
     place
     -}
