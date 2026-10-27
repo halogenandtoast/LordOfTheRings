@@ -49,6 +49,9 @@ import LordOfTheRings.Quest.Cards.ContinuingEastward
 import LordOfTheRings.Quest.Cards.AlongTheMistyMountains
 import LordOfTheRings.Quest.Cards.OrcOutpost
 import LordOfTheRings.Quest.Cards.ApproachingRivendell
+import LordOfTheRings.Quest.Cards.UpThePass
+import LordOfTheRings.Quest.Cards.Snowdrifts
+import LordOfTheRings.Quest.Cards.TheMountainsPeaks
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -122,5 +125,8 @@ allQuests =
         , SomeQuestCard alongTheMistyMountains
         , SomeQuestCard orcOutpost
         , SomeQuestCard approachingRivendell
+        , SomeQuestCard upThePass
+        , SomeQuestCard snowdrifts
+        , SomeQuestCard theMountainsPeaks
         ]
     ]

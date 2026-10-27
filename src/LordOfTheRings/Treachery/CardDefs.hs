@@ -67,6 +67,11 @@ allTreacheryCards =
       , sleepingSentry
       , followedByNight
       , orcAmbush
+      , fellVoices
+      , fallenStones
+      , snowstorm
+      , freezingCold
+      , avalanche
       ]
 
 signsOfConflict :: CardDef
@@ -390,4 +395,33 @@ orcAmbush =
   (treachery "04048" "Orc Ambush" RoadToRivendell 2)
     { cdKeywords = setFromList [Surge]
     , cdEasyModeQuantity = Just 0
+    }
+
+
+fellVoices :: CardDef
+fellVoices = treachery "04020" "Fell Voices" TheRedhornGate 2
+
+fallenStones :: CardDef
+fallenStones =
+  (treachery "04021" "Fallen Stones" TheRedhornGate 2)
+    { cdShadowEffect = True
+    }
+
+snowstorm :: CardDef
+snowstorm =
+  (treachery "04022" "Snowstorm" TheRedhornGate 5)
+    { cdCardTraits = setFromList [Snow]
+    , cdShadowEffect = True
+    }
+
+freezingCold :: CardDef
+freezingCold =
+  (treachery "04023" "Freezing Cold" TheRedhornGate 3)
+    { cdCardTraits = setFromList [Snow]
+    }
+
+avalanche :: CardDef
+avalanche =
+  (treachery "04024" "Avalanche!" TheRedhornGate 1)
+    { cdCardTraits = setFromList [Snow]
     }

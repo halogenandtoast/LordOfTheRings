@@ -43,6 +43,8 @@ data ModifierType
   | -- | on an enemy: it cannot attack that player, though it may attack others
     CannotAttackPlayer PlayerId
   | CannotAttackOrDefend
+  | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
+    CannotBeDefendedByAllies
   | CannotHaveAttachments
   | -- | no attachment with the restricted keyword can be attached to it
     CannotHaveRestrictedAttachments
@@ -73,6 +75,9 @@ data ModifierType
   | DoesNotCountDefense
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
+  | -- | on a character: it is discarded from play once its willpower is 0, as The
+    -- Mountains' Peaks reads
+    DiscardedAtNoWillpower
   | -- | on a location: when the players may travel and there is no active location, they
     -- must travel here
     MustBeTraveledTo

@@ -68,6 +68,11 @@ import LordOfTheRings.Location.Cards.RuinedRoad
 import LordOfTheRings.Location.Cards.GoblinGate
 import LordOfTheRings.Location.Cards.PathlessCountry
 import LordOfTheRings.Location.Cards.BarrenHills
+import LordOfTheRings.Location.Cards.Caradhras
+import LordOfTheRings.Location.Cards.Fanuidhol
+import LordOfTheRings.Location.Cards.Celebdil
+import LordOfTheRings.Location.Cards.TheDimrillStair
+import LordOfTheRings.Location.Cards.RockyCrags
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -160,5 +165,10 @@ allLocations =
         , SomeLocationCard goblinGate
         , SomeLocationCard pathlessCountry
         , SomeLocationCard barrenHills
+        , SomeLocationCard caradhras
+        , SomeLocationCard fanuidhol
+        , SomeLocationCard celebdil
+        , SomeLocationCard theDimrillStair
+        , SomeLocationCard rockyCrags
         ]
     ]

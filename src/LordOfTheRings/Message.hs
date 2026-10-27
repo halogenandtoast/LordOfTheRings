@@ -260,6 +260,8 @@ data Message
   | ShuffleEncounterDiscardIntoDeck CardMatcher
   | -- | set-aside cards are shuffled into the encounter deck
     ShuffleSetAsideIntoEncounterDeck [EncounterCard]
+  | -- | matching encounter cards in the victory display are shuffled into the encounter deck
+    ShuffleVictoryDisplayIntoEncounterDeck CardMatcher
   | -- | an objective ally in play joins the player as an ally
     PutObjectiveAllyIntoPlay ObjectiveId PlayerId
   | ReduceActiveCost CostId Int

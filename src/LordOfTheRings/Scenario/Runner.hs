@@ -143,6 +143,10 @@ instance RunMessage ScenarioAttrs where
       let shuffled = filter (`elem` cards) attrs.scenarioSetAside
       deck <- shuffleM (shuffled <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & setAsideL %~ filter (`notElem` shuffled)
+    ShuffleVictoryDisplayIntoEncounterDeck matcher -> do
+      let (matching, rest) = partition (\case EncounterCard c -> cardMatches matcher c; _ -> False) attrs.victoryDisplay
+      deck <- shuffleM ([c | EncounterCard c <- matching] <> attrs.encounterDeck)
+      pure $ attrs & encounterDeckL .~ deck & victoryDisplayL .~ rest
     PutOnTopOfEncounterDeck card -> pure $ attrs & encounterDeckL %~ (card :)
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)

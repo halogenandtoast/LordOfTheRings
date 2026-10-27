@@ -69,6 +69,9 @@ allEnemyCards =
       , orcRaiders
       , crebain
       , wildBear
+      , mountainGoblin
+      , mountainTroll
+      , snowWarg
       ]
 
 patrolLeader :: CardDef
@@ -489,4 +492,25 @@ wildBear =
   (enemy "04052" "Wild Bear" RoadToRivendell 3 34 0 2 3 5)
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Ambush]
+    }
+
+
+mountainGoblin :: CardDef
+mountainGoblin =
+  (enemy "04025" "Mountain Goblin" TheRedhornGate 3 25 1 2 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+mountainTroll :: CardDef
+mountainTroll =
+  (enemy "04026" "Mountain Troll" TheRedhornGate 2 35 2 5 5 7)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    }
+
+snowWarg :: CardDef
+snowWarg =
+  (enemy "04027" "Snow Warg" TheRedhornGate 3 28 3 3 1 4)
+    { cdCardTraits = setFromList [Creature, Snow]
     }

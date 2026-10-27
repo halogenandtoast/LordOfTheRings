@@ -55,6 +55,9 @@ allQuestCards =
       , alongTheMistyMountains
       , orcOutpost
       , approachingRivendell
+      , upThePass
+      , snowdrifts
+      , theMountainsPeaks
       ]
 
 enteringTheMines :: CardDef
@@ -190,3 +193,12 @@ orcOutpost = quest "04039" "Orc Outpost" RoadToRivendell 2 7
 
 approachingRivendell :: CardDef
 approachingRivendell = quest "04040" "Approaching Rivendell" RoadToRivendell 3 13
+
+upThePass :: CardDef
+upThePass = quest "04011" "Up the Pass" TheRedhornGate 1 9
+
+snowdrifts :: CardDef
+snowdrifts = quest "04012" "Snowdrifts" TheRedhornGate 2 11
+
+theMountainsPeaks :: CardDef
+theMountainsPeaks = quest "04013" "The Mountains' Peaks" TheRedhornGate 3 13

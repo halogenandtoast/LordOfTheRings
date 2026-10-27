@@ -332,6 +332,10 @@ getLocation lid =
     . Map.lookup lid
     <$> getsGame (entitiesLocations . gameEntities)
 
+-- | The progress tokens on the active location, none when there is none.
+activeLocationProgress :: HasGame m => m Int
+activeLocationProgress = sum . map (.progress) <$> (traverse getLocation =<< select IsActiveLocation)
+
 getLead :: HasGame m => m PlayerId
 getLead = getsGame gameFirstPlayer
 

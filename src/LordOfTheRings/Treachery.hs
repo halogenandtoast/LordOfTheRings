@@ -60,6 +60,11 @@ import LordOfTheRings.Treachery.Cards.VastAndIntricate
 import LordOfTheRings.Treachery.Cards.SleepingSentry
 import LordOfTheRings.Treachery.Cards.FollowedByNight
 import LordOfTheRings.Treachery.Cards.OrcAmbush
+import LordOfTheRings.Treachery.Cards.FellVoices
+import LordOfTheRings.Treachery.Cards.FallenStones
+import LordOfTheRings.Treachery.Cards.Snowstorm
+import LordOfTheRings.Treachery.Cards.FreezingCold
+import LordOfTheRings.Treachery.Cards.Avalanche
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -144,5 +149,10 @@ allTreacherys =
         , SomeTreacheryCard sleepingSentry
         , SomeTreacheryCard followedByNight
         , SomeTreacheryCard orcAmbush
+        , SomeTreacheryCard fellVoices
+        , SomeTreacheryCard fallenStones
+        , SomeTreacheryCard snowstorm
+        , SomeTreacheryCard freezingCold
+        , SomeTreacheryCard avalanche
         ]
     ]
