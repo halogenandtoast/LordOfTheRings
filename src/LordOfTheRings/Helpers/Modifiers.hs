@@ -67,13 +67,14 @@ modifiedValue select' a base = do
   mods <- getModifiers a
   pure $ max 0 $ base + sum (mapMaybe select' mods)
 
-willpowerOf, attackOf, defenseOf, hitPointsOf, threatOf, engagementCostOf :: ModifierType -> Maybe Int
+willpowerOf, attackOf, defenseOf, hitPointsOf, threatOf, engagementCostOf, questPointsOf :: ModifierType -> Maybe Int
 willpowerOf = \case WillpowerModifier n -> Just n; _ -> Nothing
 attackOf = \case AttackModifier n -> Just n; _ -> Nothing
 defenseOf = \case DefenseModifier n -> Just n; _ -> Nothing
 hitPointsOf = \case HitPointModifier n -> Just n; _ -> Nothing
 threatOf = \case ThreatModifier n -> Just n; _ -> Nothing
 engagementCostOf = \case EngagementCostModifier n -> Just n; _ -> Nothing
+questPointsOf = \case QuestPointModifier n -> Just n; _ -> Nothing
 
 -- | Whether the card something is attached to is still in play.
 hostInPlay :: Entities -> Placement -> Bool

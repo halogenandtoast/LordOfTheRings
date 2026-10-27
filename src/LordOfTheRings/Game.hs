@@ -412,10 +412,13 @@ runGameMessage msg g = case msg of
   OptionalEngagement pid -> do
     staged <- select EnemyInStagingArea
     -- some enemies may only be engaged once they are alone in the staging area
-    enemies <- flip filterM staged \eid ->
-      if length staged > 1
-        then notElem CannotBeOptionallyEngagedWhileOthersInStaging <$> getModifiers eid
-        else pure True
+    barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
+    enemies <- flip filterM staged \eid -> do
+      mods <- getModifiers eid
+      barred <- anyM (\m -> selectAny (PlayerWithId pid <> m)) $ barredBy <> [m | CannotBeOptionallyEngagedBy m <- mods]
+      pure
+        $ not barred
+        && (length staged <= 1 || CannotBeOptionallyEngagedWhileOthersInStaging `notElem` mods)
     unless (null enemies)
       $ push
       $ questionLabel (ikey "label.optionalEngagement") pid
@@ -901,7 +904,8 @@ runGameMessage msg g = case msg of
     pure g
   PlaceProgressOnQuest n -> do
     active <- traverse getLocation =<< selectOne IsActiveLocation
-    let onLocation = maybe 0 (\l -> min n (l.questPoints - l.progress)) active
+    questPoints <- traverse (getLocationQuestPoints . (.id)) active
+    let onLocation = maybe 0 (\(l, qp) -> min n (qp - l.progress)) ((,) <$> active <*> questPoints)
         overflow = n - onLocation
     quests <- toList <$> getsGame (entitiesQuests . gameEntities)
     pushAll

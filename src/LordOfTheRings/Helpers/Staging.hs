@@ -37,6 +37,12 @@ getStagingThreats = do
  where
   for' matcher get threat = select matcher >>= traverse \i -> (,) <$> ((.id) . toCard <$> get i) <*> threat i
 
+-- | The location's quest points, modifiers included.
+getLocationQuestPoints :: (HasGame m) => LocationId -> m Int
+getLocationQuestPoints lid = do
+  location <- getLocation lid
+  modifiedValue questPointsOf (toTarget lid) location.questPoints
+
 getEngagementCost :: (HasGame m) => EnemyId -> m Int
 getEngagementCost eid = do
   enemy <- getEnemy eid

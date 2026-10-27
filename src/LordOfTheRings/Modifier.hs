@@ -4,7 +4,7 @@ import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
-import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, PlayerMatcher)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
@@ -26,6 +26,10 @@ data ModifierType
     DoesNotContributeThreat
   | -- | on a card in play: player card effects do not touch it
     ImmuneToPlayerCardEffects
+  | -- | on a location: no card effect, player or encounter, places or removes its tokens
+    ImmuneToCardEffects
+  | -- | on a location: its quest points are raised by this much, as an X reads
+    QuestPointModifier Int
   | CannotAttack
   | -- | on an enemy: it cannot attack that player, though it may attack others
     CannotAttackPlayer PlayerId
@@ -49,6 +53,9 @@ data ModifierType
   | -- | damage an attack deals past the character's remaining hit points raises threat
     ExcessDamageToThreat
   | CannotBeOptionallyEngagedWhileOthersInStaging
+  | -- | on an enemy, or on the game for every enemy: matching players cannot optionally
+    -- engage it
+    CannotBeOptionallyEngagedBy PlayerMatcher
   | DoesNotCountDefense
   | -- | on a location: when the players may travel and there is no active location, they
     -- must travel here

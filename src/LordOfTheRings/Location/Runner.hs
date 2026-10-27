@@ -5,10 +5,10 @@ module LordOfTheRings.Location.Runner (module X) where
 import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, questPointsOf)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects))
+import LordOfTheRings.Modifier (ModifierType (ImmuneToCardEffects, ImmuneToPlayerCardEffects))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -19,12 +19,13 @@ instance RunMessage LocationAttrs where
   runMessage msg attrs = case msg of
     PlaceLocation lid placement | lid == attrs.id -> pure $ attrs & placementL .~ placement
     -- tokens a player card would place or remove do not reach an immune location
-    PlaceTokens source (isTarget attrs -> True) _ _ | isPlayerCardSource source -> unlessImmune
-    RemoveTokens source (isTarget attrs -> True) _ _ | isPlayerCardSource source -> unlessImmune
+    PlaceTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
+    RemoveTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       let attrs' = attrs & tokensL %~ addTokens token n
+      questPoints <- modifiedValue questPointsOf attrs attrs'.questPoints
       -- a location with as much progress as its quest points is explored
-      when (token == Progress && attrs'.questPoints > 0 && attrs'.progress >= attrs'.questPoints)
+      when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints)
         $ pushAll
           [ CheckWindows [mkWhen $ Explored attrs.id]
           , -- a location with victory points goes to the victory display
@@ -37,8 +38,9 @@ instance RunMessage LocationAttrs where
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
    where
-    unlessImmune = do
-      immune <- elem ImmuneToPlayerCardEffects <$> getModifiers attrs
+    unlessImmune source = do
+      mods <- getModifiers attrs
+      let immune = ImmuneToCardEffects `elem` mods || (isPlayerCardSource source && ImmuneToPlayerCardEffects `elem` mods)
       -- the message again, from a source the guard lets by
       if immune then pure attrs else runMessage (asGame msg) attrs
     asGame = \case
