@@ -61,6 +61,10 @@ allEnemyCards =
       , goblinArcher
       , caveTroll
       , orcHornBlower
+      , theWatcher
+      , graspingTentacle
+      , thrashingTentacle
+      , strikingTentacle
       ]
 
 patrolLeader :: CardDef
@@ -423,4 +427,31 @@ theNamelessFear :: CardDef
 theNamelessFear =
   (enemy "03025" "The Nameless Fear" FlightFromMoria 1 50 0 0 0 27)
     { cdCardTraits = setFromList [Flame, Shadow]
+    }
+
+theWatcher :: CardDef
+theWatcher =
+  (enemy "04072" "The Watcher" TheWatcherInTheWater 1 48 4 5 7 9)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Regenerate 2]
+    , cdVictoryPoints = Just 3
+    }
+
+graspingTentacle :: CardDef
+graspingTentacle =
+  (enemy "04073" "Grasping Tentacle" TheWatcherInTheWater 4 12 2 3 0 3)
+    { cdCardTraits = setFromList [Tentacle]
+    }
+
+thrashingTentacle :: CardDef
+thrashingTentacle =
+  (enemy "04074" "Thrashing Tentacle" TheWatcherInTheWater 4 12 2 3 0 3)
+    { cdCardTraits = setFromList [Tentacle]
+    }
+
+strikingTentacle :: CardDef
+strikingTentacle =
+  (enemy "04075" "Striking Tentacle" TheWatcherInTheWater 4 18 2 4 1 3)
+    { cdCardTraits = setFromList [Tentacle]
     }
