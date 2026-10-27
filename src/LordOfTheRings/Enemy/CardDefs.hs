@@ -61,6 +61,10 @@ allEnemyCards =
       , goblinArcher
       , caveTroll
       , orcHornBlower
+      , goblinTaskmaster
+      , orcRaiders
+      , crebain
+      , wildBear
       ]
 
 patrolLeader :: CardDef
@@ -423,4 +427,33 @@ theNamelessFear :: CardDef
 theNamelessFear =
   (enemy "03025" "The Nameless Fear" FlightFromMoria 1 50 0 0 0 27)
     { cdCardTraits = setFromList [Flame, Shadow]
+    }
+
+goblinTaskmaster :: CardDef
+goblinTaskmaster =
+  (enemy "04049" "Goblin Taskmaster" RoadToRivendell 4 27 2 2 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Ambush]
+    }
+
+orcRaiders :: CardDef
+orcRaiders =
+  (enemy "04050" "Orc Raiders" RoadToRivendell 3 21 1 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Ambush]
+    }
+
+crebain :: CardDef
+crebain =
+  (enemy "04051" "Crebain" RoadToRivendell 3 35 2 0 0 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+wildBear :: CardDef
+wildBear =
+  (enemy "04052" "Wild Bear" RoadToRivendell 3 34 0 2 3 5)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Ambush]
     }
