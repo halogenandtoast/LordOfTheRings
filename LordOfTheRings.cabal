@@ -717,6 +717,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.KeywordSpec
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec
+      LordOfTheRings.KhazadDum.PlayerCardsSpec
       LordOfTheRings.KhazadDumEngineSpec
       LordOfTheRings.LogSpec
       LordOfTheRings.ModifierSpec
