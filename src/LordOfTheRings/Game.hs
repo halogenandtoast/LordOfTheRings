@@ -971,8 +971,12 @@ runGameMessage msg g = case msg of
   PlaceProgressOnQuest n -> do
     active <- traverse getLocation =<< selectOne IsActiveLocation
     questPoints <- traverse (getLocationQuestPoints . (.id)) active
-    let onLocation = maybe 0 (\(l, qp) -> min n (qp - l.progress)) ((,) <$> active <*> questPoints)
-        overflow = n - onLocation
+    -- a location that takes only so much progress, as Perilous Swamp, is not explored by
+    -- the rest, which is lost
+    limits <- maybe (pure []) (fmap (\ms -> [k | ProgressLimit k <- ms]) . getModifiers) active
+    let remaining = maybe 0 (\(l, qp) -> qp - l.progress) ((,) <$> active <*> questPoints)
+        onLocation = if isJust active then max 0 $ foldr min (min n remaining) limits else 0
+        overflow = if onLocation < remaining then 0 else n - onLocation
     quests <- toList <$> getsGame (entitiesQuests . gameEntities)
     pushAll
       $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
