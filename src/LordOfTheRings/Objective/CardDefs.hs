@@ -29,6 +29,7 @@ allObjectiveCards =
       , bookOfMazarbul
       , arwenUndomielTheRedhornGate
       , arwenUndomielRoadToRivendell
+      , durinsGreaves
       ]
 
 caveTorch :: CardDef
@@ -141,3 +142,11 @@ arwenUndomielTheRedhornGate = arwenUndomiel "04014" TheRedhornGate
 
 arwenUndomielRoadToRivendell :: CardDef
 arwenUndomielRoadToRivendell = arwenUndomiel "04041" RoadToRivendell
+
+durinsGreaves :: CardDef
+durinsGreaves =
+  unique
+    $ (objective "04088" "Durin's Greaves" TheLongDark 1)
+      { cdCardTraits = setFromList [Artifact, Armor]
+      , cdWhenRevealed = True
+      }

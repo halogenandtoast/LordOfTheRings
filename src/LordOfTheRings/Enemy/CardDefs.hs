@@ -61,6 +61,10 @@ allEnemyCards =
       , goblinArcher
       , caveTroll
       , orcHornBlower
+      , caveSpider
+      , goblinSneak
+      , goblinWarlord
+      , rockAdder
       ]
 
 patrolLeader :: CardDef
@@ -423,4 +427,32 @@ theNamelessFear :: CardDef
 theNamelessFear =
   (enemy "03025" "The Nameless Fear" FlightFromMoria 1 50 0 0 0 27)
     { cdCardTraits = setFromList [Flame, Shadow]
+    }
+
+caveSpider :: CardDef
+caveSpider =
+  (enemy "04097" "Cave Spider" TheLongDark 3 31 3 2 1 4)
+    { cdCardTraits = setFromList [Spider, Creature]
+    , cdWhenRevealed = True
+    }
+
+goblinSneak :: CardDef
+goblinSneak =
+  (enemy "04098" "Goblin Sneak" TheLongDark 4 15 2 1 1 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+goblinWarlord :: CardDef
+goblinWarlord =
+  (enemy "04099" "Goblin Warlord" TheLongDark 1 39 4 3 3 5)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+rockAdder :: CardDef
+rockAdder =
+  (enemy "04100" "Rock Adder" TheLongDark 3 20 1 3 0 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
     }

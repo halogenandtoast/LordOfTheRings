@@ -50,6 +50,8 @@ allQuestCards =
       , escapeFromDarkness
       , searchForTheChamber
       , theFateOfBalin
+      , journeyInTheBlackPit
+      , continuingEastward
       ]
 
 enteringTheMines :: CardDef
@@ -170,3 +172,9 @@ blockedByShadow = searchForAnExit "03075" "Blocked by Shadow" 9 Nothing
 
 escapeFromDarkness :: CardDef
 escapeFromDarkness = searchForAnExit "03076" "Escape from Darkness" 4 Nothing
+
+journeyInTheBlackPit :: CardDef
+journeyInTheBlackPit = quest "04086" "Journey in the Black Pit" TheLongDark 1 13
+
+continuingEastward :: CardDef
+continuingEastward = quest "04087" "Continuing Eastward" TheLongDark 2 17
