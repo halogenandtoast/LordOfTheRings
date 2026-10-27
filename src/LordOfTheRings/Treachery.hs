@@ -53,6 +53,11 @@ import LordOfTheRings.Treachery.Cards.MassingInTheDeep
 import LordOfTheRings.Treachery.Cards.UndisturbedBones
 import LordOfTheRings.Treachery.Cards.BitterWind
 import LordOfTheRings.Treachery.Cards.HiddenThreat
+import LordOfTheRings.Treachery.Cards.FellVoices
+import LordOfTheRings.Treachery.Cards.FallenStones
+import LordOfTheRings.Treachery.Cards.Snowstorm
+import LordOfTheRings.Treachery.Cards.FreezingCold
+import LordOfTheRings.Treachery.Cards.Avalanche
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -130,5 +135,10 @@ allTreacherys =
         , SomeTreacheryCard undisturbedBones
         , SomeTreacheryCard bitterWind
         , SomeTreacheryCard hiddenThreat
+        , SomeTreacheryCard fellVoices
+        , SomeTreacheryCard fallenStones
+        , SomeTreacheryCard snowstorm
+        , SomeTreacheryCard freezingCold
+        , SomeTreacheryCard avalanche
         ]
     ]
