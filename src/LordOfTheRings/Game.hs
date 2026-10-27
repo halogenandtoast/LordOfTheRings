@@ -1393,7 +1393,7 @@ runGameMessage msg g = case msg of
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
-        pushAll =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
+        pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
       _ -> do
         pushAll =<< inLogBlock (RevealBlock card) []
