@@ -4,6 +4,9 @@ module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module
 
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.ActiveCost (ActiveCost (..), playCard)
+import Data.UUID qualified as UUID
+import LordOfTheRings.Ally (createAlly)
+import LordOfTheRings.Ally.Types (AllyAttrs (allyHandAction))
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -16,10 +19,11 @@ import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, travelableLocations)
+import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
-import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Keyword (Keyword (Secrecy))
+import LordOfTheRings.Id (AllyId (..), PlayerId)
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
@@ -35,7 +39,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
-  WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand),
+  WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
  )
 
@@ -46,7 +50,8 @@ instance RunMessage Player where
       pure $ player & deckL .~ deck
     DoStep 2 Setup -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
-      pure $ player & threatL .~ sum (map (.threat) heroes)
+      let threat = sum (map (.threat) heroes)
+      pure $ player & threatL .~ threat & startingThreatL .~ threat
     DoStep 5 Setup -> do
       push
         $ questionLabel
@@ -66,6 +71,7 @@ instance RunMessage Player where
       pure $ player & handL .~ hand & deckL .~ deck
     RaiseThreat pid n | pid == player.id -> do
       push CheckEliminations
+      pushWhen (n > 0) $ CheckWindows [mkAfter $ ThreatRaised pid]
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
@@ -106,7 +112,8 @@ instance RunMessage Player where
     OptionalActionWindow pid | pid == player.id -> do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
-      unless (null playable && null actions)
+      fromHand <- handActions player
+      unless (null playable && null actions && null fromHand)
         $ actionWindow (ikey "label.takeAction") (ikey "label.pass") Nothing
         $ OptionalActionWindow pid
       pure player
@@ -238,6 +245,9 @@ instance RunMessage Player where
     PutDiscardOnBottomOfDeck pid cid | pid == player.id -> do
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & deckL <>~ moved
+    PutDiscardOnTopOfDeck pid cid | pid == player.id -> do
+      let (moved, kept) = partition ((== cid) . (.id)) player.discard
+      pure $ player & discardL .~ kept & deckL %~ (moved <>)
     ShuffleFromDiscardIntoDeck pid cid | pid == player.id -> do
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)
@@ -301,7 +311,8 @@ instance RunMessage Player where
     actionWindow prompt done next again = do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
-      let idle = null playable && null actions
+      fromHand <- handActions player
+      let idle = null playable && null actions && null fromHand
           done' = case next of
             Just phase | idle -> ikey ("label.proceedTo." <> phaseKey phase)
             _ -> done
@@ -310,7 +321,16 @@ instance RunMessage Player where
         $ Label done' []
         : [targetLabel c [PlayCard player.id c.id, again] | c <- playable]
           <> [AbilityLabel player.id ab [] [again] | ab <- actions]
+          <> [targetLabel c [UseHandAction player.id c.id, again] | c <- fromHand]
     takeFromHand cid = maybe (error "not able to find card") pure $ find ((== cid) . (.id)) player.hand
+
+-- | Cards in the player's hand whose action from there can be used now, as Bofur's.
+handActions :: HasGame m => Player -> m [Card]
+handActions p = flip filterM p.hand \case
+  c@(PlayerCard pc) | c.cardType == AllyType -> case (toAttrs $ createAlly pc (AllyId UUID.nil) p.id).allyHandAction of
+    Just criteria -> andM [passesCriteriaFor p.id criteria, passesUnique c]
+    Nothing -> pure False
+  _ -> pure False
 
 canPlay :: HasGame m => Player -> Card -> m Bool
 canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay p.id c]
@@ -338,7 +358,8 @@ canAfford p c = case (c.cost, c.sphere) of
   _ -> pure False
 
 {- | What modifiers add to the cost of the card the player would play: the game's, the
-player's own and the card's (negative when they lower it).
+player's own and the card's (negative when they lower it), less its secrecy while the
+player's threat is 20 or lower.
 -}
 costModifier :: HasGame m => PlayerId -> Card -> m Int
 costModifier pid c = do
@@ -346,13 +367,16 @@ costModifier pid c = do
     concat
       <$> sequence
         [getModifiers GameTarget, getModifiers (PlayerTarget pid), getModifiers (CardIdTarget c.id)]
-  pure $ sum $ flip mapMaybe mods \case
+  threat <- (.threat) <$> getPlayer pid
+  let secrecy = if threat <= 20 then sum [n | Secrecy n <- toList (cdKeywords $ toCardDef c)] else 0
+  pure $ subtract secrecy $ sum $ flip mapMaybe mods \case
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
     CostModifier n -> Just n
     -- an optional reduction counts toward whether the card can be afforded
     ReducedByDiscardingFromDeck n -> Just (negate n)
     ReduceNextCostOf m n | cardMatches m c -> Just (negate $ min n $ maybe 0 (max 0 . subtract 1 . costAsResources) c.cost)
+    LowerNextCostOf m n | cardMatches m c -> Just (negate n)
     _ -> Nothing
 
 -- | Heroes with a resource that could pay for a card of the sphere.

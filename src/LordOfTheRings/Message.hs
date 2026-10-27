@@ -110,6 +110,8 @@ data Message
     PayToAttach PlayerId Card [Window] Target
   | PlayEvent PlayerId PlayerCard [Window]
   | PutAllyIntoPlay PlayerId CardId
+  | -- | the player uses the action of a card in their hand, as Bofur's Quest Action
+    UseHandAction PlayerId CardId
   | ReturnToHand Target
   | -- | a card goes from its owner's discard pile to their hand
     ReturnFromDiscardToHand PlayerId CardId
@@ -239,6 +241,8 @@ data Message
     PutEnemyIntoPlayEngaged PlayerId EncounterCard
   | -- | a card in the player's discard pile goes to the bottom of their deck
     PutDiscardOnBottomOfDeck PlayerId CardId
+  | -- | a card in the player's discard pile goes to the top of their deck
+    PutDiscardOnTopOfDeck PlayerId CardId
   | -- | a card in the player's discard pile is shuffled into their deck
     ShuffleFromDiscardIntoDeck PlayerId CardId
   | {- | a card in its owner's discard pile responds to the windows, as Hidden Cache does:
@@ -295,6 +299,8 @@ data Message
     -}
     ResetToStage EncounterCard [EncounterCard]
   | ReturnToTopOfEncounterDeck Target
+  | -- | an encounter card in play goes to the bottom of the encounter deck
+    ReturnToBottomOfEncounterDeck Target
   | RemoveProgressFromQuest Source Int
   | -- | a shadow card dealt to the enemy becomes an enemy itself, engaged with the player
     PutShadowCardIntoPlay EnemyId CardId PlayerId

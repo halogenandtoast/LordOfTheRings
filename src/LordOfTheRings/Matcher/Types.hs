@@ -152,6 +152,8 @@ data EnemyMatcher
     EnemyWithAttached Trait
   | -- | an enemy player card effects can reach
     EnemyNotImmuneToPlayerCards
+  | -- | an enemy whose engagement cost is higher than the player's threat
+    EnemyWithEngagementCostAboveThreatOf PlayerId
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]
@@ -183,6 +185,8 @@ data LocationMatcher
   | AnyLocation
   | NotLocation LocationMatcher
   | LocationMatchAll [LocationMatcher]
+  | -- | a location matching any of them
+    LocationMatchAny [LocationMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -205,6 +209,7 @@ data CardMatcher
   = CardWithCode CardCode
   | CardWithTrait Trait
   | CardWithType CardType
+  | CardWithSphere Sphere
   | AnyCard
   | NotCard CardMatcher
   | CardMatchAll [CardMatcher]
@@ -231,6 +236,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardWithCode code -> cdCardCode def == code
   CardWithTrait trait -> trait `member` cdCardTraits def
   CardWithType cType -> cdCardType def == cType
+  CardWithSphere sphere -> cdSphere def == Just sphere
   AnyCard -> True
   NotCard m -> not $ cardMatches m def
   CardMatchAll ms -> all (`cardMatches` def) ms

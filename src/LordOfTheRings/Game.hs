@@ -792,6 +792,10 @@ runGameMessage msg g = case msg of
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
                     <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | CannotTakeCombatDamage `notElem` mods]
+                    <> [ CheckWindows [mkAfter $ AttackDealtDamage eid attackers (attack - defense)]
+                       | attack > defense
+                       , CannotTakeCombatDamage `notElem` mods
+                       ]
                     <> [ AttackResolved eid (placementController enemy'.placement) attackers traits
                        ]
                     <> [ CheckWindows
@@ -1147,6 +1151,12 @@ runGameMessage msg g = case msg of
   DoStep _ (PlayEvent pid card _) -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g
+  -- the action of an ally in hand, which the ally, built from its card, resolves
+  UseHandAction pid cid -> do
+    player <- getPlayer pid
+    for_ [pc | PlayerCard pc <- player.hand, pc.id == cid] \pc ->
+      void $ runEach msg $ createAlly pc (AllyId UUID.nil) pid
+    pure g
   RespondFromDiscard pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g
@@ -1174,37 +1184,8 @@ runGameMessage msg g = case msg of
       <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
     deck <- shuffleM . (toCard h :) . (.deck) =<< getPlayer h.owner
     pure $ g' & entitiesL . heroesL %~ Map.delete hid & playersL . ix h.owner . deckL .~ deck
-  ReturnToTopOfEncounterDeck target -> do
-    let toTop card = scenarioL %~ overAttrs (encounterDeckL %~ (card :))
-        withAttached =
-          pushAll
-            [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
-    case target of
-      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
-        withAttached
-        pure
-          $ g
-          & entitiesL
-          . enemiesL
-          %~ Map.delete eid
-          & toTop (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e))
-      LocationTarget lid | Just l <- Map.lookup lid g.entities.locations -> do
-        withAttached
-        pure
-          $ g
-          & entitiesL
-          . locationsL
-          %~ Map.delete lid
-          & toTop (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l))
-      ObjectiveTarget oid
-        | Just o <- Map.lookup oid g.entities.objectives ->
-            pure
-              $ g
-              & entitiesL
-              . objectivesL
-              %~ Map.delete oid
-              & toTop (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o))
-      _ -> pure g
+  ReturnToTopOfEncounterDeck target -> returnToEncounterDeck (:) target g
+  ReturnToBottomOfEncounterDeck target -> returnToEncounterDeck (\card deck -> deck <> [card]) target g
   RemoveProgressFromQuest source n -> do
     quests <- toList <$> getsGame (entitiesQuests . gameEntities)
     pushAll [RemoveTokens source (toTarget q) Progress (min n q.progress) | q <- quests, q.progress > 0]
@@ -1276,7 +1257,9 @@ runGameMessage msg g = case msg of
       & entitiesL
       . objectivesL
       %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
-  TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
+  TakeControl aid pid -> do
+    push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
+    pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   CompleteQuest qid -> do
     push AdvanceQuest
     -- a stage with victory points goes to the victory display, as Search for an Exit's
@@ -1299,6 +1282,18 @@ runGameMessage msg g = case msg of
       & scenarioL
       %~ overAttrs
         (victoryDisplayL %~ (EncounterCard (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l)) :))
+  -- a card from the encounter deck, or a player's discard pile, as Out of the Wild takes them
+  AddToVictoryDisplay (CardIdTarget cid) -> do
+    let fromDeck = [EncounterCard c | c <- (toAttrs g.scenario).encounterDeck, c.id == cid]
+        fromDiscards = [c | p <- toList g.players, c <- p.discard, c.id == cid]
+    pure
+      $ g
+      & scenarioL
+      %~ overAttrs ((encounterDeckL %~ filter ((/= cid) . (.id))) . (victoryDisplayL %~ ((fromDeck <> fromDiscards) <>)))
+      & playersL
+      . traverse
+      . discardL
+      %~ filter ((/= cid) . (.id))
   AddToVictoryDisplay (AttachmentTarget aid)
     | Just a <- Map.lookup aid g.entities.attachments ->
         pure
@@ -1494,6 +1489,18 @@ runGameMessage msg g = case msg of
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
+  ShuffleIntoEncounterDeck target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
+    pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+    deck <-
+      shuffleM
+        (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) : (toAttrs g.scenario).encounterDeck)
+    pure
+      $ g
+      & entitiesL
+      . locationsL
+      %~ Map.delete lid
+      & scenarioL
+      %~ overAttrs (encounterDeckL .~ deck)
   ShuffleIntoEncounterDeck (TreacheryTarget tid) | Just t <- Map.lookup tid g.entities.treacheries -> do
     deck <-
       shuffleM
@@ -1533,6 +1540,7 @@ runGameMessage msg g = case msg of
         %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) thisEnemy)
     LocationType -> do
       thisLocation <- newLocation card
+      push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisLocation)]
       pure
         $ g
         & entitiesL
@@ -1546,6 +1554,42 @@ runGameMessage msg g = case msg of
         . objectivesL
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
+
+-- | An encounter card in play goes back into the encounter deck where the function puts it,
+-- the cards attached to it discarded.
+returnToEncounterDeck
+  :: (EncounterCard -> [EncounterCard] -> [EncounterCard]) -> Target -> Game -> GameT Game
+returnToEncounterDeck place target g = do
+  let toDeck card = scenarioL %~ overAttrs (encounterDeckL %~ place card)
+      withAttached =
+        pushAll
+          [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+  case target of
+    EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
+      withAttached
+      pure
+        $ g
+        & entitiesL
+        . enemiesL
+        %~ Map.delete eid
+        & toDeck (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e))
+    LocationTarget lid | Just l <- Map.lookup lid g.entities.locations -> do
+      withAttached
+      pure
+        $ g
+        & entitiesL
+        . locationsL
+        %~ Map.delete lid
+        & toDeck (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l))
+    ObjectiveTarget oid
+      | Just o <- Map.lookup oid g.entities.objectives ->
+          pure
+            $ g
+            & entitiesL
+            . objectivesL
+            %~ Map.delete oid
+            & toDeck (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o))
+    _ -> pure g
 
 -- | Show the players what the board does as it happens: the log is written by the narrator.
 announce :: Message -> GameT ()
@@ -1912,6 +1956,7 @@ inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes
   AllyTarget aid -> Map.member aid g.entities.allies
   EnemyTarget eid -> Map.member eid g.entities.enemies
+  LocationTarget lid -> Map.member lid g.entities.locations
   _ -> True
 
 -- | Put the card's cost up to be paid, less what the host it was chosen for takes off.
@@ -1971,7 +2016,7 @@ payFor g pid card windows host discount = do
   let spent e =
         effectTarget e
           `elem` [PlayerTarget pid, GameTarget]
-          && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
+          && or ([cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e] <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e])
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
 
 -- | Progress placed on a quest card or a location opens a window, as Pathless Country answers.

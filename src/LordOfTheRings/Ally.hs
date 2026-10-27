@@ -85,6 +85,18 @@ import LordOfTheRings.Ally.Cards.EmynArnenRanger
 import LordOfTheRings.Ally.Cards.SoldierOfGondor
 import LordOfTheRings.Ally.Cards.AngborTheFearless
 import LordOfTheRings.Ally.Cards.VeteranOfNanduhirion
+import LordOfTheRings.Ally.Cards.Bofur
+import LordOfTheRings.Ally.Cards.RavenhillScout
+import LordOfTheRings.Ally.Cards.DunedainWanderer
+import LordOfTheRings.Ally.Cards.RiderOfTheMark
+import LordOfTheRings.Ally.Cards.WatcherOfTheBruinen
+import LordOfTheRings.Ally.Cards.ArwenUndomiel
+import LordOfTheRings.Ally.Cards.Erestor
+import LordOfTheRings.Ally.Cards.EreborBattleMaster
+import LordOfTheRings.Ally.Cards.WardenOfHealing
+import LordOfTheRings.Ally.Cards.TrollshawScout
+import LordOfTheRings.Ally.Cards.ImladrisStargazer
+import LordOfTheRings.Ally.Cards.MasterOfTheForge
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -197,5 +209,17 @@ allAllies =
         , SomeAllyCard soldierOfGondor
         , SomeAllyCard angborTheFearless
         , SomeAllyCard veteranOfNanduhirion
+        , SomeAllyCard bofur
+        , SomeAllyCard ravenhillScout
+        , SomeAllyCard dunedainWanderer
+        , SomeAllyCard riderOfTheMark
+        , SomeAllyCard watcherOfTheBruinen
+        , SomeAllyCard arwenUndomiel
+        , SomeAllyCard erestor
+        , SomeAllyCard ereborBattleMaster
+        , SomeAllyCard wardenOfHealing
+        , SomeAllyCard trollshawScout
+        , SomeAllyCard imladrisStargazer
+        , SomeAllyCard masterOfTheForge
         ]
     ]

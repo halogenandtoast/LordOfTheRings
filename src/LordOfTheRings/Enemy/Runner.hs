@@ -41,6 +41,7 @@ instance RunMessage EnemyAttrs where
     Destroy (isTarget attrs -> True) -> leaving
     Discard (isTarget attrs -> True) -> leaving
     ReturnToTopOfEncounterDeck (isTarget attrs -> True) -> leaving
+    ReturnToBottomOfEncounterDeck (isTarget attrs -> True) -> leaving
     ShuffleIntoEncounterDeck (isTarget attrs -> True) -> leaving
     RemoveFromGame (isTarget attrs -> True) -> leaving
     PlaceTokens _ (isTarget attrs -> True) token n -> do

@@ -18,6 +18,8 @@ data Player = Player
   , playerDeck :: [Card]
   , playerDiscard :: [Card]
   , playerThreat :: Int
+  , playerStartingThreat :: Int
+  -- ^ the threat the player began the game at, as Aragorn's Refresh Action reads
   , playerEliminated :: Bool
   , playerUsedAbilities :: [UsedAbility]
   }
@@ -29,7 +31,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int))]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -40,6 +42,7 @@ newPlayer pid name deck =
     , playerDeck = deck
     , playerDiscard = []
     , playerThreat = 0
+    , playerStartingThreat = 0
     , playerEliminated = False
     , playerUsedAbilities = []
     }
@@ -74,6 +77,9 @@ instance HasField "discard" Player [Card] where
 
 instance HasField "threat" Player Int where
   getField = playerThreat
+
+instance HasField "startingThreat" Player Int where
+  getField = playerStartingThreat
 
 instance HasField "usedAbilities" Player [UsedAbility] where
   getField = playerUsedAbilities

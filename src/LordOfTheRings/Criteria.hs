@@ -41,6 +41,8 @@ data Criterion
     DistinctCharacters [(HeroMatcher, AllyMatcher)]
   | -- | a matching card is in the victory display
     CardInVictoryDisplay CardMatcher
+  | -- | a matching card is in the player's discard pile
+    CardInDiscard PlayerId CardMatcher
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)

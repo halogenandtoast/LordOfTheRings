@@ -89,6 +89,18 @@ allAllyCards =
       , elfhelm
       , eaglesOfTheMistyMountains
       , veteranOfNanduhirion
+      , bofur
+      , ravenhillScout
+      , dunedainWanderer
+      , riderOfTheMark
+      , watcherOfTheBruinen
+      , arwenUndomiel
+      , erestor
+      , ereborBattleMaster
+      , wardenOfHealing
+      , trollshawScout
+      , imladrisStargazer
+      , masterOfTheForge
       ]
 
 guardOfTheCitadel :: CardDef
@@ -579,4 +591,82 @@ veteranOfNanduhirion :: CardDef
 veteranOfNanduhirion =
   (ally "03006" "Veteran of Nanduhirion" Tactics (StaticCost 4) 0 3 2 3)
     { cdCardTraits = setFromList [Dwarf, Warrior]
+    }
+
+bofur :: CardDef
+bofur =
+  unique
+    (ally "04006" "Bofur" Spirit (StaticCost 3) 2 1 1 3)
+      { cdCardTraits = setFromList [Dwarf]
+      }
+
+ravenhillScout :: CardDef
+ravenhillScout =
+  (ally "04008" "Ravenhill Scout" Lore (StaticCost 3) 0 1 1 3)
+    { cdCardTraits = setFromList [Dale, Scout]
+    }
+
+dunedainWanderer :: CardDef
+dunedainWanderer =
+  (ally "04029" "Dúnedain Wanderer" Leadership (StaticCost 5) 1 2 2 2)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    , cdKeywords = setFromList [Ranged, Sentinel, Secrecy 3]
+    }
+
+riderOfTheMark :: CardDef
+riderOfTheMark =
+  (ally "04033" "Rider of the Mark" Spirit (StaticCost 3) 2 1 1 2)
+    { cdCardTraits = setFromList [Rohan]
+    }
+
+watcherOfTheBruinen :: CardDef
+watcherOfTheBruinen =
+  (ally "04056" "Watcher of the Bruinen" Tactics (StaticCost 2) 0 1 2 2)
+    { cdCardTraits = setFromList [Noldor, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+arwenUndomiel :: CardDef
+arwenUndomiel =
+  unique
+    (ally "04058" "Arwen Undómiel" Spirit (StaticCost 2) 2 0 1 2)
+      { cdCardTraits = setFromList [Noldor, Noble]
+      }
+
+erestor :: CardDef
+erestor =
+  unique
+    (ally "04077" "Erestor" Leadership (StaticCost 4) 2 0 1 3)
+      { cdCardTraits = setFromList [Noldor]
+      }
+
+ereborBattleMaster :: CardDef
+ereborBattleMaster =
+  (ally "04079" "Erebor Battle Master" Tactics (StaticCost 3) 0 1 1 2)
+    { cdCardTraits = setFromList [Dwarf, Warrior]
+    }
+
+wardenOfHealing :: CardDef
+wardenOfHealing =
+  (ally "04083" "Warden of Healing" Lore (StaticCost 2) 1 0 1 1)
+    { cdCardTraits = setFromList [Gondor, Healer]
+    }
+
+trollshawScout :: CardDef
+trollshawScout =
+  (ally "04104" "Trollshaw Scout" Tactics (StaticCost 2) 0 2 1 2)
+    { cdCardTraits = setFromList [Noldor, Scout]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+imladrisStargazer :: CardDef
+imladrisStargazer =
+  (ally "04106" "Imladris Stargazer" Spirit (StaticCost 2) 0 0 1 1)
+    { cdCardTraits = setFromList [Noldor]
+    }
+
+masterOfTheForge :: CardDef
+masterOfTheForge =
+  (ally "04134" "Master of the Forge" Lore (StaticCost 2) 0 0 1 1)
+    { cdCardTraits = setFromList [Noldor, Craftsman]
     }

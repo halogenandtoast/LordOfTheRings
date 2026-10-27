@@ -464,6 +464,10 @@ returnToTopOfEncounterDeck = push . ReturnToTopOfEncounterDeck . toTarget
 removeFromQuest :: (ReverseQueue m, Targetable target) => target -> m ()
 removeFromQuest = push . RemoveFromQuest . toTarget
 
+-- | The encounter card in play goes to the bottom of the encounter deck.
+returnToBottomOfEncounterDeck :: (ReverseQueue m, Targetable target) => target -> m ()
+returnToBottomOfEncounterDeck = push . ReturnToBottomOfEncounterDeck . toTarget
+
 shuffleEncounterDeck :: ReverseQueue m => m ()
 shuffleEncounterDeck = push $ ShuffleDeck EncounterDeck
 
@@ -768,3 +772,25 @@ addToStagingFromDiscard :: ReverseQueue m => EncounterCard -> m ()
 addToStagingFromDiscard card = do
   removeFromEncounterDiscard card
   addToStaging card
+
+-- | Another player takes control of the ally.
+takeControl :: ReverseQueue m => AllyId -> PlayerId -> m ()
+takeControl aid pid = push $ TakeControl aid pid
+
+-- | The ally card in the player's hand is put into play, exhausted and committed to the
+-- quest.
+putIntoPlayCommitted :: ReverseQueue m => PlayerId -> CardId -> m ()
+putIntoPlayCommitted pid cid = do
+  push $ PutAllyIntoPlay pid cid
+  push $ CommitToQuest (CardIdTarget cid)
+
+{- | Cancel the effects of an event being played, as Arkham's cancelEvent: its
+'PlayEvent' is taken off the game's queue, and the card goes to its owner's discard pile
+as a played event does.
+-}
+cancelEvent :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => CardId -> t m ()
+cancelEvent cid = do
+  cancelled <- lift $ popMessagesMatching \case
+    PlayEvent _ card _ -> card.id == cid
+    _ -> False
+  for_ [card | PlayEvent _ card _ <- cancelled] (push . PutInDiscard)

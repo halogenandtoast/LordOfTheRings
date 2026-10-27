@@ -73,6 +73,20 @@ allAttachmentCards =
       , supportOfTheEagles
       , dwarrowdelfAxe
       , bootsFromErebor
+      , keepingCount
+      , goodMeal
+      , rivendellBlade
+      , songOfEarendil
+      , swordThatWasBroken
+      , rivendellBow
+      , resourceful
+      , ringMail
+      , everMyHeartRises
+      , loveOfTales
+      , lightOfValinor
+      , asfaloth
+      , hardyLeadership
+      , miruvor
       ]
 
 stewardOfGondor :: CardDef
@@ -474,4 +488,89 @@ bootsFromErebor =
   (attachment "03013" "Boots from Erebor" Neutral (StaticCost 0))
     { cdCardTraits = setFromList [Item]
     , cdLimitOnePerHost = True
+    }
+
+keepingCount :: CardDef
+keepingCount =
+  (attachment "04005" "Keeping Count" Tactics (StaticCost 0))
+    { cdLimitOnePerHost = True
+    }
+
+goodMeal :: CardDef
+goodMeal = attachment "04010" "Good Meal" Neutral (StaticCost 0)
+
+rivendellBlade :: CardDef
+rivendellBlade =
+  (attachment "04031" "Rivendell Blade" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+songOfEarendil :: CardDef
+songOfEarendil =
+  (attachment "04034" "Song of Eärendil" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }
+
+swordThatWasBroken :: CardDef
+swordThatWasBroken =
+  unique
+    (attachment "04055" "Sword that was Broken" Leadership (StaticCost 3))
+      { cdCardTraits = setFromList [Artifact]
+      }
+
+rivendellBow :: CardDef
+rivendellBow =
+  (attachment "04057" "Rivendell Bow" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdLimitOnePerHost = True
+    }
+
+resourceful :: CardDef
+resourceful =
+  (attachment "04062" "Resourceful" Neutral (StaticCost 4))
+    { cdKeywords = setFromList [Secrecy 3]
+    }
+
+ringMail :: CardDef
+ringMail =
+  (attachment "04080" "Ring Mail" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+everMyHeartRises :: CardDef
+everMyHeartRises =
+  (attachment "04082" "Ever My Heart Rises" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+loveOfTales :: CardDef
+loveOfTales =
+  (attachment "04085" "Love of Tales" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+lightOfValinor :: CardDef
+lightOfValinor =
+  unique
+    (attachment "04107" "Light of Valinor" Spirit (StaticCost 1))
+      { cdCardTraits = setFromList [Condition]
+      }
+
+asfaloth :: CardDef
+asfaloth =
+  unique
+    (attachment "04110" "Asfaloth" Lore (StaticCost 2))
+      { cdCardTraits = setFromList [Mount]
+      }
+
+hardyLeadership :: CardDef
+hardyLeadership = unique $ attachment "04130" "Hardy Leadership" Leadership (StaticCost 2)
+
+miruvor :: CardDef
+miruvor =
+  (attachment "04133" "Miruvor" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
     }
