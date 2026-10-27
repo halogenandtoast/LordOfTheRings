@@ -3,6 +3,7 @@ module LordOfTheRings.Event.CardDefs (module LordOfTheRings.Event.CardDefs) wher
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
+import LordOfTheRings.Keyword
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
@@ -85,6 +86,23 @@ allEventCards =
       , khazadKhazad
       , untroubledByDarkness
       , ancestralKnowledge
+      , takingInitiative
+      , timelyAid
+      , unseenStrike
+      , renewedFriendship
+      , needfulToKnow
+      , hailOfStones
+      , outOfTheWild
+      , theEndComes
+      , graveCairn
+      , shortCut
+      , freshTracks
+      , outOfSight
+      , wordOfCommand
+      , heavyStroke
+      , aElberethGilthoniel
+      , peaceAndThought
+      , riskSomeLight
       ]
 
 everVigilant :: CardDef
@@ -314,3 +332,54 @@ untroubledByDarkness = event "03010" "Untroubled by Darkness" Spirit (StaticCost
 
 ancestralKnowledge :: CardDef
 ancestralKnowledge = event "03012" "Ancestral Knowledge" Lore (StaticCost 1)
+
+takingInitiative :: CardDef
+takingInitiative = event "04002" "Taking Initiative" Leadership (StaticCost 0)
+
+timelyAid :: CardDef
+timelyAid = (event "04003" "Timely Aid" Leadership (StaticCost 4)) {cdKeywords = setFromList [Secrecy 3]}
+
+unseenStrike :: CardDef
+unseenStrike = event "04004" "Unseen Strike" Tactics (StaticCost 0)
+
+renewedFriendship :: CardDef
+renewedFriendship = event "04007" "Renewed Friendship" Spirit (StaticCost 0)
+
+needfulToKnow :: CardDef
+needfulToKnow = (event "04009" "Needful to Know" Lore (StaticCost 2)) {cdKeywords = setFromList [Secrecy 2]}
+
+hailOfStones :: CardDef
+hailOfStones = event "04032" "Hail of Stones" Tactics (StaticCost 1)
+
+outOfTheWild :: CardDef
+outOfTheWild = (event "04036" "Out of the Wild" Lore (StaticCost 3)) {cdKeywords = setFromList [Secrecy 2]}
+
+theEndComes :: CardDef
+theEndComes = event "04037" "The End Comes" Neutral (StaticCost 0)
+
+graveCairn :: CardDef
+graveCairn = event "04054" "Grave Cairn" Leadership (StaticCost 1)
+
+shortCut :: CardDef
+shortCut = event "04060" "Short Cut" Lore (StaticCost 1)
+
+freshTracks :: CardDef
+freshTracks = event "04078" "Fresh Tracks" Leadership (StaticCost 1)
+
+outOfSight :: CardDef
+outOfSight = (event "04081" "Out of Sight" Spirit (StaticCost 5)) {cdKeywords = setFromList [Secrecy 3]}
+
+wordOfCommand :: CardDef
+wordOfCommand = event "04084" "Word of Command" Lore (StaticCost 1)
+
+heavyStroke :: CardDef
+heavyStroke = event "04105" "Heavy Stroke" Tactics (StaticCost 1)
+
+aElberethGilthoniel :: CardDef
+aElberethGilthoniel = (event "04132" "A Elbereth! Gilthoniel!" Spirit (StaticCost 4)) {cdKeywords = setFromList [Secrecy 4]}
+
+peaceAndThought :: CardDef
+peaceAndThought = event "04135" "Peace, and Thought" Lore (StaticCost 1)
+
+riskSomeLight :: CardDef
+riskSomeLight = (event "04136" "Risk Some Light" Lore (StaticCost 3)) {cdKeywords = setFromList [Secrecy 3]}

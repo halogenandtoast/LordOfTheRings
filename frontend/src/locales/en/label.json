@@ -491,5 +491,79 @@
   "helmOfSecrecy": {
     "chooseHero": "Choose a hero to swap out",
     "chooseSwap": "Choose a hero from your collection to swap in"
+  },
+  "discardItOrFromHand": "Discard it from play, or discard 1 card from your hand",
+  "discardItFromPlay": "Discard it from play",
+  "discardOneFromHand": "Discard 1 card from your hand",
+  "hama": {
+    "return": "Choose a tactics event to return to your hand"
+  },
+  "ravenhillScout": {
+    "from": "Choose a location to move progress from",
+    "to": "Choose a location to move the progress to",
+    "amount": "How many progress tokens to move?"
+  },
+  "riderOfTheMark": {
+    "giveControl": "Choose a player to take control of Rider of the Mark",
+    "discardShadow": "Choose a shadow card to discard"
+  },
+  "arwenUndomiel": {
+    "choose": "Choose a character to gain sentinel and +1 defense"
+  },
+  "wardenOfHealing": {
+    "heal": "Choose a character to heal 1 damage from",
+    "ready": "Pay 2 lore resources to ready Warden of Healing?",
+    "payToReady": "Pay 2 lore resources",
+    "doNotReady": "Do not ready it"
+  },
+  "asfaloth": {
+    "chooseLocation": "Choose a location to place progress on"
+  },
+  "miruvor": {
+    "chooseTwo": "Choose the first of two effects",
+    "chooseAnother": "Choose the second effect",
+    "ready": "Ready attached hero",
+    "resource": "Add 1 resource to attached hero",
+    "willpower": "Attached hero gets +1 willpower until the end of the round",
+    "topOfDeck": "Put Miruvor on top of your deck"
+  },
+  "takingInitiative": {
+    "damage": "Choose an enemy to deal 2 damage to"
+  },
+  "unseenStrike": {
+    "choose": "Choose a character you control"
+  },
+  "renewedFriendship": {
+    "choose": "Choose one for that player",
+    "ready": "Ready 1 of their heroes",
+    "chooseHero": "Choose a hero to ready",
+    "draw": "They draw 1 card",
+    "lowerThreat": "Lower their threat by 2"
+  },
+  "hailOfStones": {
+    "exhaust": "Exhaust characters ({count} so far)",
+    "done": "Done exhausting",
+    "chooseEnemy": "Choose an enemy in the staging area to deal {count} damage to"
+  },
+  "outOfTheWild": {
+    "choose": "Choose a card to add to the victory display",
+    "none": "Take none"
+  },
+  "graveCairn": {
+    "choose": "Choose a character to gain the attack"
+  },
+  "shortCut": {
+    "exhaust": "Exhaust a Hobbit to shuffle the location into the encounter deck"
+  },
+  "wordOfCommand": {
+    "exhaust": "Exhaust an Istari character to search your deck"
+  },
+  "peaceAndThought": {
+    "exhaust": "Choose a hero to exhaust"
+  },
+  "riskSomeLight": {
+    "choose": "Choose a card to move to the bottom of the encounter deck",
+    "none": "Move none",
+    "order": "Put the cards back on top, in order: the last chosen ends on top"
   }
 }

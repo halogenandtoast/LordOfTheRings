@@ -40,6 +40,11 @@ import LordOfTheRings.Hero.Cards.Boromir
 import LordOfTheRings.Hero.Cards.Faramir
 import LordOfTheRings.Hero.Cards.Mablung
 import LordOfTheRings.Hero.Cards.Dwalin
+import LordOfTheRings.Hero.Cards.Elrohir
+import LordOfTheRings.Hero.Cards.Elladan
+import LordOfTheRings.Hero.Cards.AragornLore
+import LordOfTheRings.Hero.Cards.Hama
+import LordOfTheRings.Hero.Cards.GlorfindelSpirit
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -106,5 +111,10 @@ allHeroes =
         , SomeHeroCard faramir
         , SomeHeroCard mablung
         , SomeHeroCard dwalin
+        , SomeHeroCard elrohir
+        , SomeHeroCard elladan
+        , SomeHeroCard aragornLore
+        , SomeHeroCard hama
+        , SomeHeroCard glorfindelSpirit
         ]
     ]

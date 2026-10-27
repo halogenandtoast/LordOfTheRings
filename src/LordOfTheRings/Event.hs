@@ -75,6 +75,23 @@ import LordOfTheRings.Event.Cards.EverOnward
 import LordOfTheRings.Event.Cards.KhazadKhazad
 import LordOfTheRings.Event.Cards.UntroubledByDarkness
 import LordOfTheRings.Event.Cards.AncestralKnowledge
+import LordOfTheRings.Event.Cards.TakingInitiative
+import LordOfTheRings.Event.Cards.TimelyAid
+import LordOfTheRings.Event.Cards.UnseenStrike
+import LordOfTheRings.Event.Cards.RenewedFriendship
+import LordOfTheRings.Event.Cards.NeedfulToKnow
+import LordOfTheRings.Event.Cards.HailOfStones
+import LordOfTheRings.Event.Cards.OutOfTheWild
+import LordOfTheRings.Event.Cards.TheEndComes
+import LordOfTheRings.Event.Cards.GraveCairn
+import LordOfTheRings.Event.Cards.ShortCut
+import LordOfTheRings.Event.Cards.FreshTracks
+import LordOfTheRings.Event.Cards.OutOfSight
+import LordOfTheRings.Event.Cards.WordOfCommand
+import LordOfTheRings.Event.Cards.HeavyStroke
+import LordOfTheRings.Event.Cards.AElberethGilthoniel
+import LordOfTheRings.Event.Cards.PeaceAndThought
+import LordOfTheRings.Event.Cards.RiskSomeLight
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -163,5 +180,22 @@ allEvents =
         , SomeEventCard khazadKhazad
         , SomeEventCard untroubledByDarkness
         , SomeEventCard ancestralKnowledge
+        , SomeEventCard takingInitiative
+        , SomeEventCard timelyAid
+        , SomeEventCard unseenStrike
+        , SomeEventCard renewedFriendship
+        , SomeEventCard needfulToKnow
+        , SomeEventCard hailOfStones
+        , SomeEventCard outOfTheWild
+        , SomeEventCard theEndComes
+        , SomeEventCard graveCairn
+        , SomeEventCard shortCut
+        , SomeEventCard freshTracks
+        , SomeEventCard outOfSight
+        , SomeEventCard wordOfCommand
+        , SomeEventCard heavyStroke
+        , SomeEventCard aElberethGilthoniel
+        , SomeEventCard peaceAndThought
+        , SomeEventCard riskSomeLight
         ]
     ]

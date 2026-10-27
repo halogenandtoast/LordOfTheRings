@@ -66,6 +66,20 @@ import LordOfTheRings.Attachment.Cards.HeirOfMardil
 import LordOfTheRings.Attachment.Cards.CaptainOfGondor
 import LordOfTheRings.Attachment.Cards.DwarrowdelfAxe
 import LordOfTheRings.Attachment.Cards.BootsFromErebor
+import LordOfTheRings.Attachment.Cards.KeepingCount
+import LordOfTheRings.Attachment.Cards.GoodMeal
+import LordOfTheRings.Attachment.Cards.RivendellBlade
+import LordOfTheRings.Attachment.Cards.SongOfEarendil
+import LordOfTheRings.Attachment.Cards.SwordThatWasBroken
+import LordOfTheRings.Attachment.Cards.RivendellBow
+import LordOfTheRings.Attachment.Cards.Resourceful
+import LordOfTheRings.Attachment.Cards.RingMail
+import LordOfTheRings.Attachment.Cards.EverMyHeartRises
+import LordOfTheRings.Attachment.Cards.LoveOfTales
+import LordOfTheRings.Attachment.Cards.LightOfValinor
+import LordOfTheRings.Attachment.Cards.Asfaloth
+import LordOfTheRings.Attachment.Cards.HardyLeadership
+import LordOfTheRings.Attachment.Cards.Miruvor
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -158,5 +172,19 @@ allAttachments =
         , SomeAttachmentCard captainOfGondor
         , SomeAttachmentCard dwarrowdelfAxe
         , SomeAttachmentCard bootsFromErebor
+        , SomeAttachmentCard keepingCount
+        , SomeAttachmentCard goodMeal
+        , SomeAttachmentCard rivendellBlade
+        , SomeAttachmentCard songOfEarendil
+        , SomeAttachmentCard swordThatWasBroken
+        , SomeAttachmentCard rivendellBow
+        , SomeAttachmentCard resourceful
+        , SomeAttachmentCard ringMail
+        , SomeAttachmentCard everMyHeartRises
+        , SomeAttachmentCard loveOfTales
+        , SomeAttachmentCard lightOfValinor
+        , SomeAttachmentCard asfaloth
+        , SomeAttachmentCard hardyLeadership
+        , SomeAttachmentCard miruvor
         ]
     ]

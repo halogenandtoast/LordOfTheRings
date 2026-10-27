@@ -47,6 +47,11 @@ allHeroCards =
       , brandSonOfBain
       , boromirTactics
       , dwalin
+      , elrohir
+      , elladan
+      , aragornLore
+      , hama
+      , glorfindelSpirit
       ]
 
 aragorn :: CardDef
@@ -257,4 +262,35 @@ dwalin :: CardDef
 dwalin =
   (hero "03001" "Dwalin" Spirit 9 1 2 2 4)
     { cdCardTraits = setFromList [Dwarf]
+    }
+
+elrohir :: CardDef
+elrohir =
+  (hero "04001" "Elrohir" Leadership 10 2 2 1 4)
+    { cdCardTraits = setFromList [Noldor, Noble, Ranger]
+    }
+
+elladan :: CardDef
+elladan =
+  (hero "04028" "Elladan" Tactics 10 2 1 2 4)
+    { cdCardTraits = setFromList [Noldor, Noble, Ranger]
+    }
+
+aragornLore :: CardDef
+aragornLore =
+  (hero "04053" "Aragorn" Lore 12 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+hama :: CardDef
+hama =
+  (hero "04076" "Háma" Tactics 9 1 3 1 4)
+    { cdCardTraits = setFromList [Rohan, Warrior]
+    }
+
+glorfindelSpirit :: CardDef
+glorfindelSpirit =
+  (hero "04101" "Glorfindel" Spirit 5 3 3 1 5)
+    { cdCardTraits = setFromList [Noldor, Noble, Warrior]
     }
