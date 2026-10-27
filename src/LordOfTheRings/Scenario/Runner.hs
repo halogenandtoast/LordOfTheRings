@@ -176,6 +176,13 @@ instance RunMessage ScenarioAttrs where
       (next : rest) -> do
         push $ AdvanceToQuest next
         pure $ attrs & questDeckL .~ rest
+    ShuffleIntoQuestDeck card -> do
+      deck <- shuffleM (card : filter (/= card) attrs.questDeck)
+      pure $ attrs & questDeckL .~ deck & victoryDisplayL %~ filter ((/= card.id) . (.id))
+    PutOnBottomOfQuestDeck card ->
+      pure $ attrs & questDeckL %~ ((<> [card]) . filter (/= card)) & victoryDisplayL %~ filter ((/= card.id) . (.id))
+    -- a stage put into play straight from the quest deck, as Hasty Council chooses one, leaves it
+    PutQuestIntoPlay card -> pure $ attrs & questDeckL %~ filter (/= card)
     AdvanceToQuest card -> do
       pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
       pure attrs

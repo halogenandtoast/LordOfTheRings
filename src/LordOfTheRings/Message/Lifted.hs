@@ -8,7 +8,7 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import LordOfTheRings.Card (Card, EncounterCard, PlayerCard)
+import LordOfTheRings.Card (Card (..), EncounterCard, IsCard (..), PlayerCard)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Hero.Types ()
@@ -493,6 +493,23 @@ travelWithoutCost lid = do
 -- | The quest deck goes back to the stage, followed by the stages given.
 resetToStage :: ReverseQueue m => EncounterCard -> [EncounterCard] -> m ()
 resetToStage card = push . ResetToStage card
+
+-- | Reveal the next stage of the quest deck, as a stage that leaves play without being
+-- defeated calls for.
+advanceQuest :: ReverseQueue m => m ()
+advanceQuest = push AdvanceQuest
+
+-- | Shuffle the quest card, in play or in the victory display, into the quest deck.
+shuffleIntoQuestDeck :: (ReverseQueue m, IsCard a) => a -> m ()
+shuffleIntoQuestDeck a = case toCard a of
+  EncounterCard c -> push $ ShuffleIntoQuestDeck c
+  PlayerCard _ -> pure ()
+
+-- | Put the quest card, wherever it is, on the bottom of the quest deck, as bypassing a stage does.
+putOnBottomOfQuestDeck :: (ReverseQueue m, IsCard a) => a -> m ()
+putOnBottomOfQuestDeck a = case toCard a of
+  EncounterCard c -> push $ PutOnBottomOfQuestDeck c
+  PlayerCard _ -> pure ()
 
 checkStage :: ReverseQueue m => QuestId -> m ()
 checkStage = push . CheckStage

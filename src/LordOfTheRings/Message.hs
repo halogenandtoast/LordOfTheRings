@@ -157,6 +157,11 @@ data Message
   | PutQuestIntoPlay EncounterCard
   | CompleteQuest QuestId
   | AdvanceQuest
+  | -- | a quest card, in play or in the victory display, is shuffled into the quest deck
+    ShuffleIntoQuestDeck EncounterCard
+  | -- | a quest card, in play, in the victory display or in the quest deck, goes to the
+    -- bottom of the quest deck
+    PutOnBottomOfQuestDeck EncounterCard
   | AdvanceToQuest EncounterCard
   | RemoveFromEncounterDeck EncounterCard
   | RemoveFromEncounterDiscard EncounterCard

@@ -192,6 +192,8 @@ narrationFor = \case
         then toned Bad $ test [ikeyPart "log.escapeFails" [], versus]
         else toned Good $ test [ikeyPart "log.escapePasses" [], versus]
   CompleteQuest qid -> Just $ whenRef (toTarget qid) \q -> one $ toned Good $ mechanic [ikeyPart "log.questComplete" ["quest" ~> q]]
+  ShuffleIntoQuestDeck card -> Just $ one $ mechanic [ikeyPart "log.shuffledIntoQuestDeck" ["card" ~> EncounterCard card]]
+  PutOnBottomOfQuestDeck card -> Just $ one $ mechanic [ikeyPart "log.putOnBottomOfQuestDeck" ["card" ~> EncounterCard card]]
   AdvanceToQuest card -> Just $ one $ structure [ikeyPart "log.questStage" ["quest" ~> EncounterCard card]]
   -- \* Hands and decks
   DrawCards drawing | drawing.count > 0 -> Just $ withPlayer drawing.player \player who -> do
