@@ -120,6 +120,10 @@ data ModifierType
   | -- | on the game: resources of any sphere may be spent as this sphere's
     ResourcesSpendableAs Sphere
   | CannotBeHealed
+  | -- | on an enemy: no character may attack it
+    CannotBeAttacked
+  | -- | on an enemy: it has dealt damage this round, as Rock Adder reads
+    DealtDamageThisRound
   | -- | on a character or enemy: damage dealt to it is canceled
     CannotTakeDamage
   | -- | on an enemy: the damage of attacks on it is canceled

@@ -60,6 +60,10 @@ allTreacheryCards =
       , undisturbedBones
       , bitterWind
       , hiddenThreat
+      , fatigue
+      , foulAir
+      , gatheringGround
+      , vastAndIntricate
       ]
 
 signsOfConflict :: CardDef
@@ -351,3 +355,15 @@ aFoeBeyond =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+fatigue :: CardDef
+fatigue = (treachery "04093" "Fatigue" TheLongDark 2) {cdShadowEffect = True}
+
+foulAir :: CardDef
+foulAir = treachery "04094" "Foul Air" TheLongDark 4
+
+gatheringGround :: CardDef
+gatheringGround = treachery "04095" "Gathering Ground" TheLongDark 1
+
+vastAndIntricate :: CardDef
+vastAndIntricate = treachery "04096" "Vast and Intricate" TheLongDark 2

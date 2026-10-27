@@ -67,6 +67,10 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       , upperHall
+      , abandonedMine
+      , dwarvenForge
+      , silentCaverns
+      , twistingPassage
       ]
 
 eastGate :: CardDef
@@ -443,4 +447,28 @@ theMountainsRoots =
   (location "03047" "The Mountains' Roots" DeepsOfMoria 3 0 0)
     { cdCardTraits = setFromList [Underground]
     , cdShadowEffect = True
+    }
+
+abandonedMine :: CardDef
+abandonedMine =
+  (location "04089" "Abandoned Mine" TheLongDark 3 3 3)
+    { cdCardTraits = setFromList [Underground, Dark]
+    }
+
+dwarvenForge :: CardDef
+dwarvenForge =
+  (location "04090" "Dwarven Forge" TheLongDark 2 2 4)
+    { cdCardTraits = setFromList [Underground, Dark]
+    }
+
+silentCaverns :: CardDef
+silentCaverns =
+  (location "04091" "Silent Caverns" TheLongDark 2 1 3)
+    { cdCardTraits = setFromList [Underground]
+    }
+
+twistingPassage :: CardDef
+twistingPassage =
+  (location "04092" "Twisting Passage" TheLongDark 2 3 5)
+    { cdCardTraits = setFromList [Underground, Dark]
     }

@@ -652,7 +652,7 @@ runGameMessage msg g = case msg of
     pure g
   AttackStagingAreaAlone pid attacker -> do
     ready <- elem attacker <$> readyAttackers pid
-    staged <- select EnemyInStagingArea
+    staged <- filterM (fmap (notElem CannotBeAttacked) . getModifiers) =<< select EnemyInStagingArea
     when (ready && notNull staged)
       $ push
       $ questionLabelWith (ikey "label.attackStagingAlone") (Just attacker) [] pid
@@ -1208,6 +1208,8 @@ runGameMessage msg g = case msg of
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
+    -- an objective's When Revealed, as Durin's Greaves attaching itself
+    pushWhen (cdWhenRevealed (toCardDef card)) $ WhenRevealed (toTarget thisObjective)
     pure
       $ g
       & entitiesL
@@ -1764,6 +1766,11 @@ characters of other players, when it is engaged with them.
 -}
 mayAttack :: PlayerId -> EnemyId -> GameT [Target]
 mayAttack pid eid = do
+  blocked <- elem CannotBeAttacked <$> getModifiers eid
+  if blocked then pure [] else mayAttack' pid eid
+
+mayAttack' :: PlayerId -> EnemyId -> GameT [Target]
+mayAttack' pid eid = do
   own <- ownAttackers pid eid
   engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
   others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []

@@ -153,6 +153,7 @@ narrationFor = \case
   DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
     top <- getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
     pure [mechanic [ikeyPart "log.discardedFromEncounterDeck" ["cards" ~> map EncounterCard top]] | notNull top]
+  TriggerLostEffects _ -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.lostEffects" []]
   PutObjectiveIntoPlay card -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid

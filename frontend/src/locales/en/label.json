@@ -68,6 +68,12 @@
     "attach": "Attach a Weapon or Armour attachment from your hand",
     "host": "Choose a character you control to attach it to"
   },
+  "durinsGreaves": {
+    "attach": "Attach Durin's Greaves to a hero"
+  },
+  "gatheringGround": {
+    "attach": "Attach Gathering Ground to a location"
+  },
   "attachTo": "Attach to",
   "discardRestricted": "A character can have only 2 restricted attachments: discard one",
   "planningActions": "Play cards or use actions",
