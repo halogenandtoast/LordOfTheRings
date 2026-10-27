@@ -1,6 +1,7 @@
 module LordOfTheRings.KhazadDum.FlightFromMoriaSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getAttack)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -164,3 +165,13 @@ spec = describe "Flight from Moria" do
     run RevealEncounterCard
     run RevealEncounterCard
     (getEnemyAttack =<< enemyOf Enemies.strayGoblin) `shouldReturn` 1
+
+  it "blanks the text box of the hero Shadow of Fear attaches to, constant effects too" . gameTestIn flightFromMoria testDeck {heroes = ["01004", "01007", "01002"]} $ \pid -> do
+    gimli <- toTarget <$> getHeroWithCode "01004"
+    run $ DealDamage GameSource gimli 1
+    getAttack gimli `shouldReturn` 3
+    _ <- setEncounterDeck [Treacheries.shadowOfFear]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid gimli
+    getAttack gimli `shouldReturn` 2

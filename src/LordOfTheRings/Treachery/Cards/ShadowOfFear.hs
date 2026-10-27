@@ -14,10 +14,9 @@ shadowOfFear = treachery ShadowOfFear Cards.shadowOfFear
 
 -- | Counts as a Condition attachment with the text: "Limit 1 per hero. Attached hero
 -- cannot exhaust or ready and its text box is treated as if it were blank."
--- ponytail: the blank text box is its abilities not triggering, as Sacked's
 instance HasModifiersFor ShadowOfFear where
   getModifiersFor (ShadowOfFear a) = withHost a \host ->
-    modified a host [CannotExhaust, CannotReady, CannotTriggerAbilities]
+    modified a host [CannotExhaust, CannotReady, Blank]
 
 -- | Action: Pay 3 resources from attached hero's pool to discard this card.
 instance HasAbilities ShadowOfFear where
