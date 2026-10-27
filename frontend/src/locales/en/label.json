@@ -118,6 +118,17 @@
   "abandonedTools": {
     "exhaust": "Exhaust a hero to claim Abandoned Tools"
   },
+  "lostAndAlone": {
+    "hero": "Choose a hero to shuffle into your deck"
+  },
+  "drownedTreasury": {
+    "choose": "Draw 2 cards, or claim an objective in play",
+    "draw": "Draw 2 cards",
+    "hero": "Choose a hero to claim the objective"
+  },
+  "mithrilLode": {
+    "exhaust": "Exhaust a character to place progress equal to its willpower on the quest"
+  },
   "returnToMirkwood": {
     "newGuard": "Choose a new player to guard Gollum"
   },
