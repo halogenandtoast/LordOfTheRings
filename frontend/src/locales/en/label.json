@@ -35,10 +35,8 @@
   "watchfulEyes": {
     "attach": "Attach Watchful Eyes to one of your heroes"
   },
-  "enteringTheMines": {
-    "attach": "Attach Cave Torch to a hero"
-  },
   "caveTorch": {
+    "attach": "Attach Cave Torch to a hero",
     "location": "Place up to 3 progress on a Dark location",
     "progress": "How much progress does Cave Torch place?"
   },

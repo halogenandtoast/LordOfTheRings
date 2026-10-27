@@ -4,9 +4,9 @@ import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers (attachCaveTorch)
 
 newtype EnteringTheMines = EnteringTheMines QuestAttrs
   deriving anyclass (IsQuest, HasAbilities, HasModifiersFor)
@@ -34,14 +34,7 @@ instance RunMessage EnteringTheMines where
       for_ (find' Locations.eastGate) \gate -> do
         removeFromEncounterDeck gate
         putIntoPlayAsActiveLocation gate
-      for_ (find' Objectives.caveTorch) \torch -> do
-        removeFromEncounterDeck torch
-        lead <- getLead
-        heroes <- select AnyHero
-        chooseOrRunOneM lead do
-          questionLabeled "enteringTheMines.attach"
-          causedBy attrs
-          targets heroes (putObjectiveIntoPlayAttached torch)
+      attachCaveTorch attrs
       traverse_ setAside $ mapMaybe find' [Locations.firstHall, Locations.bridgeOfKhazadDum]
       shuffleEncounterDeck
       eachPlayer $ const revealEncounterCard

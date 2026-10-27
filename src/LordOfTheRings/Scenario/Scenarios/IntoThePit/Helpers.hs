@@ -1,11 +1,12 @@
--- | What Into the Pit's cards share: the Cave Torch.
-module LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers (readyCaveTorch) where
+-- | What the cards of the scenarios with Twists and Turns share: the Cave Torch.
+module LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers (readyCaveTorch, attachCaveTorch) where
 
 import LordOfTheRings.Card (toCardCode)
-import LordOfTheRings.Classes.Entity (toId)
+import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Id (ObjectiveId, PlayerId)
 import LordOfTheRings.Matcher
+import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
@@ -23,3 +24,18 @@ readyCaveTorch = do
     AttachedTo (HeroTarget hid) -> Just . (toId o,) . (.owner) <$> getHero hid
     _ -> pure Nothing
   pure $ headMay (catMaybes held)
+
+{- | Setup: the first player attaches Cave Torch, taken from the encounter deck, to a hero
+of his choice, as Entering the Mines, Journey in the Black Pit and The Dripping Walls read.
+-}
+attachCaveTorch :: (ReverseQueue m, Targetable source) => source -> m ()
+attachCaveTorch source = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  for_ (find ((== toCardCode Objectives.caveTorch) . toCardCode) deck) \torch -> do
+    removeFromEncounterDeck torch
+    lead <- getLead
+    heroes <- select AnyHero
+    chooseOrRunOneM lead do
+      questionLabeled "caveTorch.attach"
+      causedBy source
+      targets heroes (putObjectiveIntoPlayAttached torch)
