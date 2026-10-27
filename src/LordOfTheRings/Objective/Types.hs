@@ -43,6 +43,8 @@ data ObjectiveAttrs = ObjectiveAttrs
   , objectiveTokens :: Tokens
   , objectiveGuard :: Maybe CardId
   -- ^ the encounter card guarding it; it cannot be claimed while that card is in play
+  , objectiveExhausted :: Bool
+  -- ^ one attached to a hero may exhaust, as Cave Torch does
   }
   deriving stock (Show, Eq, Generic)
 
@@ -52,7 +54,7 @@ instance ToJSON ObjectiveAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "objective")
 
 instance FromJSON ObjectiveAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "objective")
+  parseJSON = genericParseJSON (aesonOptions $ Just "objective") . withDefaults [("exhausted", toJSON False)]
 
 objective :: (ObjectiveAttrs -> a) -> CardDef -> ObjectiveCard a
 objective f cardDef =
@@ -67,6 +69,7 @@ objective f cardDef =
             , objectivePlacement = Unplaced
             , objectiveTokens = mempty
             , objectiveGuard = Nothing
+            , objectiveExhausted = False
             }
     }
 
@@ -146,6 +149,12 @@ instance HasField "name" ObjectiveAttrs Name where
 
 instance HasField "name" Objective Name where
   getField = (.name) . toAttrs
+
+instance HasField "exhausted" ObjectiveAttrs Bool where
+  getField = objectiveExhausted
+
+instance HasField "exhausted" Objective Bool where
+  getField = (.exhausted) . toAttrs
 
 instance HasField "cardId" ObjectiveAttrs CardId where
   getField = objectiveCardId

@@ -146,6 +146,9 @@ narrationFor = \case
   PutShadowEnemyIntoStaging eid cid -> Just do
     mCard <- getsGame (\g -> find ((== cid) . (.id)) . (.shadowCards) =<< Map.lookup eid g.entities.enemies)
     pure [mechanic [ikeyPart "log.addedToStaging" ["card" ~> EncounterCard c]] | Just c <- [mCard]]
+  PutObjectiveIntoPlayAttached card host -> Just $ whenRef host \h ->
+    one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> EncounterCard card, "target" ~> h]]
+  RemoveFromGame target -> Just $ simply "log.removedFromGame" target
   PutObjectiveIntoPlay card -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid

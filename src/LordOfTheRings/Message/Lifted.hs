@@ -420,6 +420,16 @@ attachObjective oid = push . ClaimObjective oid . toTarget
 moveAttachment :: (ReverseQueue m, Targetable host) => AttachmentId -> host -> m ()
 moveAttachment aid = push . AttachCard aid . toTarget
 
+{- | An objective card, taken from where it was, comes into play attached to the hero, as
+"have the first player attach Cave Torch to a hero of his choice" reads.
+-}
+putObjectiveIntoPlayAttached :: (ReverseQueue m, Targetable host) => EncounterCard -> host -> m ()
+putObjectiveIntoPlayAttached card = push . PutObjectiveIntoPlayAttached card . toTarget
+
+-- | The card leaves play for good. Only objectives so far.
+removeFromGame :: (ReverseQueue m, Targetable target) => target -> m ()
+removeFromGame = push . RemoveFromGame . toTarget
+
 putObjectiveAllyIntoPlay :: ReverseQueue m => ObjectiveId -> PlayerId -> m ()
 putObjectiveAllyIntoPlay oid = push . PutObjectiveAllyIntoPlay oid
 

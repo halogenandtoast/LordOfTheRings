@@ -283,6 +283,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ concat readied
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
+      <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
       <> [RaiseThreat pid 1 | pid <- players]
       <> passToken
     pure $ g & phaseL .~ RefreshPhase
@@ -1176,6 +1177,10 @@ runGameMessage msg g = case msg of
       & entitiesL
       . enemiesL
       %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
+  PutObjectiveIntoPlayAttached card host -> do
+    thisObjective <- newObjective card
+    pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
+  RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)

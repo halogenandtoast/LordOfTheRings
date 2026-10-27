@@ -192,6 +192,10 @@ data Message
     -}
     GuardObjective ObjectiveId
   | PutObjectiveIntoPlay EncounterCard
+  | -- | an objective card comes into play attached to the hero, as a setup attaches it
+    PutObjectiveIntoPlayAttached EncounterCard Target
+  | -- | the card leaves play for good; an objective, as Book of Mazarbul
+    RemoveFromGame Target
   | TakePrisoner HeroId
   | RescuePrisoner HeroId
   | SetAside EncounterCard

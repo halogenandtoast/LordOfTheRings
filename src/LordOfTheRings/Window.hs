@@ -27,6 +27,8 @@ data WindowType
     GainedResources Target
   | DealtDamage Target Int
   | Traveled LocationId
+  | -- | a card exhausted, as an objective does
+    Exhausted Target
   | DeclaredAsDefender Target EnemyId
   | DeclaredAsAttacker Target EnemyId
   | -- | an attack destroyed the enemy: the characters that attacked, and its traits as it left

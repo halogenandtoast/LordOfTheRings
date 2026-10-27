@@ -183,6 +183,8 @@ canPay = \case
     maybe False (not . attachmentExhausted . toAttrs)
       . Map.lookup aid
       <$> getsGame (entitiesAttachments . gameEntities)
+  ExhaustCost (ObjectiveTarget oid) ->
+    maybe False (not . (.exhausted)) . Map.lookup oid <$> getsGame (entitiesObjectives . gameEntities)
   ExhaustCost _ -> pure False
   ResourceCost (HeroTarget hid) n -> (>= n) . (.resources) <$> getHero hid
   ResourceCost _ _ -> pure False
@@ -220,7 +222,15 @@ abilityController ab = go ab.abilitySource
     PlayerSource pid -> pure $ Just pid
     AttachmentSource aid ->
       fmap ((.controller) . toAttrs) . Map.lookup aid <$> getsGame (entitiesAttachments . gameEntities)
+    -- an encounter card attached to a character, as a condition or a claimed objective, is
+    -- its controller's to use
+    TreacherySource tid -> attachedTo . fmap (.placement) . Map.lookup tid =<< getsGame (entitiesTreacheries . gameEntities)
+    ObjectiveSource oid -> attachedTo . fmap (.placement) . Map.lookup oid =<< getsGame (entitiesObjectives . gameEntities)
     -- encounter cards' responses are the first player's to make
+    _ -> Just <$> getLead
+  attachedTo = \case
+    Just (AttachedTo host@(HeroTarget _)) -> characterController host
+    Just (AttachedTo host@(AllyTarget _)) -> characterController host
     _ -> Just <$> getLead
 
 -- | The Action abilities a player can use right now.

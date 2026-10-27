@@ -22,6 +22,8 @@ data WindowMatcher
   | GainedResourcesWindow Timing Target
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
+  | -- | the card exhausted
+    ExhaustedWindow Timing Target
   | AnyTraveledWindow Timing
   | -- | an enemy destroyed by an attack, by any attackers or with the given one among them
     EnemyDestroyedByAttackWindow Timing (Maybe Target)
@@ -106,6 +108,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (GainedResourcesWindow t target, GainedResources target') -> t == timing && target == target'
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
+  (ExhaustedWindow t target, Exhausted target') -> t == timing && target == target'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers _) -> t == timing && maybe True (`elem` attackers) who

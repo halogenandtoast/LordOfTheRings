@@ -43,13 +43,13 @@ instance RunMessage RadagastsRequest where
       pure q
     UseCardAbility _ (isSource attrs -> True) 2 windows -> do
       ws <- map toTarget <$> select wilyador
-      for_ [s | Window _ (Healed t s) <- windows, t `elem` ws] removeFromGame
+      for_ [s | Window _ (Healed t s) <- windows, t `elem` ws] leaveForGood
       pure q
     _ -> RadagastsRequest <$> runMessage msg attrs
    where
     -- the player card behind the heal leaves play, or its owner's discard pile, for good
-    removeFromGame = \case
-      AbilitySource s _ -> removeFromGame s
+    leaveForGood = \case
+      AbilitySource s _ -> leaveForGood s
       AllySource aid -> do
         a <- getAlly aid
         discard aid
