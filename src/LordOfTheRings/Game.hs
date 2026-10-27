@@ -286,6 +286,8 @@ runGameMessage msg g = case msg of
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
       <> [RaiseThreat pid 1 | pid <- players]
       <> passToken
+      -- the phase ends with an action window, for Refresh Actions as Escape from Darkness gives
+      <> map OptionalActionWindow players
     pure $ g & phaseL .~ RefreshPhase
   SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid
   CheckEliminations -> do

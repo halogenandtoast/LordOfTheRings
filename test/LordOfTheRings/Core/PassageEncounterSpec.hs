@@ -156,6 +156,7 @@ spec = do
       chooseTarget pid eowyn
       run $ Exhaust eowyn
       run $ BeginPhase RefreshPhase
+      passActions pid
       exhausted "01007" `shouldReturn` True
       run $ PlaceTokens GameSource eowyn Resource 2
       run $ Exhaust eowyn
