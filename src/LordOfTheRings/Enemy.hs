@@ -40,6 +40,9 @@ import LordOfTheRings.Enemy.Cards.OrcHorseThieves
 import LordOfTheRings.Enemy.Cards.GiantMarshWorm
 import LordOfTheRings.Enemy.Cards.MirkwoodBats
 import LordOfTheRings.Enemy.Cards.AttercopAttercop
+import LordOfTheRings.Enemy.Cards.ChieftainOfThePit
+import LordOfTheRings.Enemy.Cards.GoblinSpearman
+import LordOfTheRings.Enemy.Cards.GoblinArcher
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -104,5 +107,8 @@ allEnemys =
         , SomeEnemyCard giantMarshWorm
         , SomeEnemyCard mirkwoodBats
         , SomeEnemyCard attercopAttercop
+        , SomeEnemyCard chieftainOfThePit
+        , SomeEnemyCard goblinSpearman
+        , SomeEnemyCard goblinArcher
         ]
     ]

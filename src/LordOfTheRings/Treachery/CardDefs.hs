@@ -44,6 +44,7 @@ allTreacheryCards =
       , gollumsAnguish
       , gollumsBite
       , wastedProvisions
+      , undisturbedBones
       ]
 
 eyesOfTheForest :: CardDef
@@ -239,4 +240,11 @@ wastedProvisions =
     { cdCardTraits = setFromList [Tantrum]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+undisturbedBones :: CardDef
+undisturbedBones =
+  (treachery "03033" "Undisturbed Bones" PlunderingGoblins 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

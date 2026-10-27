@@ -46,6 +46,9 @@ allEnemyCards =
       , giantMarshWorm
       , mirkwoodBats
       , attercopAttercop
+      , chieftainOfThePit
+      , goblinSpearman
+      , goblinArcher
       ]
 
 kingSpider :: CardDef
@@ -294,4 +297,26 @@ attercopAttercop =
   (enemy "02139" "Attercop, Attercop" ReturnToMirkwood 3 44 2 8 4 6)
     { cdCardTraits = setFromList [Creature, Spider]
     , cdEasyModeQuantity = Just 0
+    }
+
+chieftainOfThePit :: CardDef
+chieftainOfThePit =
+  (enemy "03030" "Chieftain of the Pit" PlunderingGoblins 1 27 2 5 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+goblinSpearman :: CardDef
+goblinSpearman =
+  (enemy "03031" "Goblin Spearman" PlunderingGoblins 5 15 2 2 2 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+goblinArcher :: CardDef
+goblinArcher =
+  (enemy "03032" "Goblin Archer" PlunderingGoblins 2 48 2 1 3 1)
+    { cdCardTraits = setFromList [Goblin, Orc]
     }

@@ -184,6 +184,7 @@ library
       LordOfTheRings.Enemy.Cards.BlackForestBats
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
       LordOfTheRings.Enemy.Cards.CavernGuardian
+      LordOfTheRings.Enemy.Cards.ChieftainOfThePit
       LordOfTheRings.Enemy.Cards.ChieftanUfthak
       LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
       LordOfTheRings.Enemy.Cards.DolGuldurOrcs
@@ -192,7 +193,9 @@ library
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ForestSpider
       LordOfTheRings.Enemy.Cards.GiantMarshWorm
+      LordOfTheRings.Enemy.Cards.GoblinArcher
       LordOfTheRings.Enemy.Cards.GoblinSniper
+      LordOfTheRings.Enemy.Cards.GoblinSpearman
       LordOfTheRings.Enemy.Cards.GoblintownScavengers
       LordOfTheRings.Enemy.Cards.HillTroll
       LordOfTheRings.Enemy.Cards.Hummerhorns
@@ -362,6 +365,7 @@ library
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.OakWoodGrove
       LordOfTheRings.Location.Cards.OldForestRoad
+      LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.RaurosFalls
       LordOfTheRings.Location.Cards.Rhosgobel
       LordOfTheRings.Location.Cards.RiverLangflood
@@ -506,6 +510,7 @@ library
       LordOfTheRings.Treachery.Cards.ThroughTheMist
       LordOfTheRings.Treachery.Cards.TreacherousFog
       LordOfTheRings.Treachery.Cards.UnderTheShadow
+      LordOfTheRings.Treachery.Cards.UndisturbedBones
       LordOfTheRings.Treachery.Cards.WastedProvisions
       LordOfTheRings.Treachery.Import.Lifted
       LordOfTheRings.Treachery.Runner

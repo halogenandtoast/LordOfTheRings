@@ -51,6 +51,7 @@ allLocationCards =
       , dryWatercourse
       , woodmansGlade
       , woodElfPath
+      , plunderedArmoury
       ]
 
 greatForestWeb :: CardDef
@@ -312,4 +313,10 @@ woodElfPath :: CardDef
 woodElfPath =
   (location "02134" "Wood Elf Path" ReturnToMirkwood 3 1 3)
     { cdCardTraits = setFromList [Forest]
+    }
+
+plunderedArmoury :: CardDef
+plunderedArmoury =
+  (location "03034" "Plundered Armoury" PlunderingGoblins 2 3 2)
+    { cdCardTraits = setFromList [Underground]
     }

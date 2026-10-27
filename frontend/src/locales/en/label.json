@@ -29,6 +29,13 @@
   "doneCommitting": "Done committing",
   "useResponse": "Use a response?",
   "pass": "Pass",
+  "undisturbedBones": {
+    "ally": "Choose an ally to take the damage"
+  },
+  "plunderedArmoury": {
+    "attach": "Attach a Weapon or Armour attachment from your hand",
+    "host": "Choose a character you control to attach it to"
+  },
   "attachTo": "Attach to",
   "discardRestricted": "A character can have only 2 restricted attachments: discard one",
   "planningActions": "Play cards or use actions",

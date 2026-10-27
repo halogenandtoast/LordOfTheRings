@@ -37,6 +37,7 @@ import LordOfTheRings.Treachery.Cards.TheLightsOfTheDead
 import LordOfTheRings.Treachery.Cards.GollumsAnguish
 import LordOfTheRings.Treachery.Cards.GollumsBite
 import LordOfTheRings.Treachery.Cards.WastedProvisions
+import LordOfTheRings.Treachery.Cards.UndisturbedBones
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -98,5 +99,6 @@ allTreacherys =
         , SomeTreacheryCard gollumsAnguish
         , SomeTreacheryCard gollumsBite
         , SomeTreacheryCard wastedProvisions
+        , SomeTreacheryCard undisturbedBones
         ]
     ]
