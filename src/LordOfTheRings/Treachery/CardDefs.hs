@@ -58,6 +58,7 @@ allTreacheryCards =
       , chanceEncounter
       , massingInTheDeep
       , undisturbedBones
+      , hiddenThreat
       ]
 
 signsOfConflict :: CardDef
@@ -316,6 +317,9 @@ undisturbedBones =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+hiddenThreat :: CardDef
+hiddenThreat = treachery "03022" "Hidden Threat" TheSeventhLevel 2
 
 chanceEncounter :: CardDef
 chanceEncounter = (treachery "03045" "Chance Encounter" DeepsOfMoria 3) {cdShadowEffect = True}

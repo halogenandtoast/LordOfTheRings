@@ -28,6 +28,12 @@
   "commitCharacters": "Commit characters to the quest",
   "doneCommitting": "Done committing",
   "useResponse": "Use a response?",
+  "bookOfMazarbul": {
+    "exhaust": "Exhaust a hero to claim Book of Mazarbul and attach it there"
+  },
+  "searchForTheChamber": {
+    "attach": "Attach Book of Mazarbul to a hero"
+  },
   "watchfulEyes": {
     "attach": "Attach Watchful Eyes to one of your heroes"
   },

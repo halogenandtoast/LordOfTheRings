@@ -48,6 +48,8 @@ allQuestCards =
       , hastyCouncil
       , blockedByShadow
       , escapeFromDarkness
+      , searchForTheChamber
+      , theFateOfBalin
       ]
 
 enteringTheMines :: CardDef
@@ -133,6 +135,12 @@ toTheElvenKingsHalls = quest "02128" "To the Elven King's Halls" ReturnToMirkwoo
 
 ambush :: CardDef
 ambush = quest "02129" "Ambush" ReturnToMirkwood 4 2
+
+searchForTheChamber :: CardDef
+searchForTheChamber = quest "03067" "Search for the Chamber" TheSeventhLevel 1 15
+
+theFateOfBalin :: CardDef
+theFateOfBalin = quest "03068" "The Fate of Balin" TheSeventhLevel 2 17
 
 aPresenceInTheDark :: CardDef
 aPresenceInTheDark = (quest "03069" "A Presence in the Dark" FlightFromMoria 1 0) {cdVictoryPoints = Just 2}

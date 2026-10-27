@@ -42,6 +42,8 @@ import LordOfTheRings.Quest.Cards.NarrowPaths
 import LordOfTheRings.Quest.Cards.HastyCouncil
 import LordOfTheRings.Quest.Cards.BlockedByShadow
 import LordOfTheRings.Quest.Cards.EscapeFromDarkness
+import LordOfTheRings.Quest.Cards.SearchForTheChamber
+import LordOfTheRings.Quest.Cards.TheFateOfBalin
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -108,5 +110,7 @@ allQuests =
         , SomeQuestCard hastyCouncil
         , SomeQuestCard blockedByShadow
         , SomeQuestCard escapeFromDarkness
+        , SomeQuestCard searchForTheChamber
+        , SomeQuestCard theFateOfBalin
         ]
     ]

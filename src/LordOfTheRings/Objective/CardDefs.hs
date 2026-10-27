@@ -26,6 +26,7 @@ allObjectiveCards =
       , gollumTheDeadMarshes
       , gollumReturnToMirkwood
       , abandonedTools
+      , bookOfMazarbul
       ]
 
 caveTorch :: CardDef
@@ -107,6 +108,13 @@ gollumReturnToMirkwood =
   ((objective "02130" "Gollum" ReturnToMirkwood 1) {cdHitPoints = Just 5})
     { cdUnique = True
     , cdCardTraits = setFromList [Creature]
+    }
+
+bookOfMazarbul :: CardDef
+bookOfMazarbul =
+  (objective "03024" "Book of Mazarbul" TheSeventhLevel 1)
+    { cdCardTraits = setFromList [Item, Artifact]
+    , cdKeywords = setFromList [Restricted]
     }
 
 abandonedTools :: CardDef

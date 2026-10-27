@@ -63,6 +63,7 @@ allLocationCards =
       , woodElfPath
       , theMountainsRoots
       , plunderedArmoury
+      , upperHall
       ]
 
 eastGate :: CardDef
@@ -404,6 +405,13 @@ plunderedArmoury :: CardDef
 plunderedArmoury =
   (location "03034" "Plundered Armoury" PlunderingGoblins 2 3 2)
     { cdCardTraits = setFromList [Underground]
+    }
+
+upperHall :: CardDef
+upperHall =
+  (location "03023" "Upper Hall" TheSeventhLevel 3 3 4)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Doomed 2]
     }
 
 -- | X is the number of players in the game.

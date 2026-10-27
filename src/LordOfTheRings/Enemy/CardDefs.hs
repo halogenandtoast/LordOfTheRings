@@ -57,6 +57,8 @@ allEnemyCards =
       , chieftainOfThePit
       , goblinSpearman
       , goblinArcher
+      , caveTroll
+      , orcHornBlower
       ]
 
 patrolLeader :: CardDef
@@ -356,6 +358,23 @@ goblinArcher :: CardDef
 goblinArcher =
   (enemy "03032" "Goblin Archer" PlunderingGoblins 2 48 2 1 3 1)
     { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+caveTroll :: CardDef
+caveTroll =
+  (enemy "03020" "Cave-troll" TheSeventhLevel 2 33 4 6 4 7)
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    , cdEasyModeQuantity = Just 1
+    }
+
+orcHornBlower :: CardDef
+orcHornBlower =
+  (enemy "03021" "Orc Horn Blower" TheSeventhLevel 1 45 2 1 1 3)
+    { cdCardTraits = setFromList [Orc, Summoner]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
     }
 
 greatCaveTroll :: CardDef
