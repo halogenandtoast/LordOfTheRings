@@ -60,6 +60,13 @@ allTreacheryCards =
       , undisturbedBones
       , bitterWind
       , hiddenThreat
+      , firesInTheDeep
+      , innerFlame
+      , innerShadow
+      , whipLash
+      , leapingFlame
+      , fierySword
+      , manyThongedWhip
       ]
 
 signsOfConflict :: CardDef
@@ -350,4 +357,41 @@ aFoeBeyond =
   (treachery "03028" "A Foe Beyond" FlightFromMoria 4)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+firesInTheDeep :: CardDef
+firesInTheDeep =
+  (treachery "04144" "Fires in the Deep" ShadowAndFlame 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+innerFlame :: CardDef
+innerFlame = (treachery "04146" "Inner Flame" ShadowAndFlame 3) {cdShadowEffect = True}
+
+innerShadow :: CardDef
+innerShadow = (treachery "04147" "Inner Shadow" ShadowAndFlame 3) {cdKeywords = setFromList [Surge]}
+
+whipLash :: CardDef
+whipLash = (treachery "04148" "Whip Lash" ShadowAndFlame 2) {cdShadowEffect = True}
+
+leapingFlame :: CardDef
+leapingFlame =
+  (treachery "04149" "Leaping Flame" ShadowAndFlame 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+fierySword :: CardDef
+fierySword =
+  (treachery "04152" "Fiery Sword" ShadowAndFlame 2)
+    { cdCardTraits = setFromList [Weapon, Flame]
+    , cdUnique = True
+    }
+
+manyThongedWhip :: CardDef
+manyThongedWhip =
+  (treachery "04153" "Many Thonged Whip" ShadowAndFlame 2)
+    { cdCardTraits = setFromList [Weapon, Flame]
+    , cdUnique = True
     }

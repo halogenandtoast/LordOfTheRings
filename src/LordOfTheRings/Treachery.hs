@@ -53,6 +53,13 @@ import LordOfTheRings.Treachery.Cards.MassingInTheDeep
 import LordOfTheRings.Treachery.Cards.UndisturbedBones
 import LordOfTheRings.Treachery.Cards.BitterWind
 import LordOfTheRings.Treachery.Cards.HiddenThreat
+import LordOfTheRings.Treachery.Cards.FiresInTheDeep
+import LordOfTheRings.Treachery.Cards.InnerFlame
+import LordOfTheRings.Treachery.Cards.InnerShadow
+import LordOfTheRings.Treachery.Cards.WhipLash
+import LordOfTheRings.Treachery.Cards.LeapingFlame
+import LordOfTheRings.Treachery.Cards.FierySword
+import LordOfTheRings.Treachery.Cards.ManyThongedWhip
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -130,5 +137,12 @@ allTreacherys =
         , SomeTreacheryCard undisturbedBones
         , SomeTreacheryCard bitterWind
         , SomeTreacheryCard hiddenThreat
+        , SomeTreacheryCard firesInTheDeep
+        , SomeTreacheryCard innerFlame
+        , SomeTreacheryCard innerShadow
+        , SomeTreacheryCard whipLash
+        , SomeTreacheryCard leapingFlame
+        , SomeTreacheryCard fierySword
+        , SomeTreacheryCard manyThongedWhip
         ]
     ]
