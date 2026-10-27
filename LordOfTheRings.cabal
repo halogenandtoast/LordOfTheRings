@@ -18,6 +18,7 @@ library
       LordOfTheRings.Ally
       LordOfTheRings.Ally.CardDefs
       LordOfTheRings.Ally.Cards.AngborTheFearless
+      LordOfTheRings.Ally.Cards.ArwenUndomielObjective
       LordOfTheRings.Ally.Cards.Beorn
       LordOfTheRings.Ally.Cards.BeorningBeekeeper
       LordOfTheRings.Ally.Cards.Bombur
@@ -442,6 +443,7 @@ library
       LordOfTheRings.Objective
       LordOfTheRings.Objective.CardDefs
       LordOfTheRings.Objective.Cards.AbandonedTools
+      LordOfTheRings.Objective.Cards.ArwenUndomielObjective
       LordOfTheRings.Objective.Cards.Athelas
       LordOfTheRings.Objective.Cards.BookOfMazarbul
       LordOfTheRings.Objective.Cards.CaveTorch

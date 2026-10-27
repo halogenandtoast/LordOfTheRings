@@ -27,6 +27,8 @@ allObjectiveCards =
       , gollumReturnToMirkwood
       , abandonedTools
       , bookOfMazarbul
+      , arwenUndomielTheRedhornGate
+      , arwenUndomielRoadToRivendell
       ]
 
 caveTorch :: CardDef
@@ -123,3 +125,19 @@ abandonedTools =
     { cdCardTraits = setFromList [Tools]
     , cdKeywords = setFromList [Guarded, Restricted]
     }
+
+-- | The Redhorn Gate's and Road to Rivendell's Arwen, the same card in each set.
+arwenUndomiel :: CardCode -> EncounterSet -> CardDef
+arwenUndomiel code set =
+  ((objective code "Arwen Undómiel" set 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 0, cdDefense = Just 1, cdHitPoints = Just 2 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Noldor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+arwenUndomielTheRedhornGate :: CardDef
+arwenUndomielTheRedhornGate = arwenUndomiel "04014" TheRedhornGate
+
+arwenUndomielRoadToRivendell :: CardDef
+arwenUndomielRoadToRivendell = arwenUndomiel "04041" RoadToRivendell

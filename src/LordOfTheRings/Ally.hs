@@ -35,6 +35,7 @@ import LordOfTheRings.Ally.Cards.Landroval
 import LordOfTheRings.Ally.Cards.HaldirOfLorien
 import LordOfTheRings.Ally.Cards.Radagast
 import LordOfTheRings.Ally.Cards.Wilyador
+import LordOfTheRings.Ally.Cards.ArwenUndomielObjective
 import LordOfTheRings.Ally.Cards.KeenEyedTook
 import LordOfTheRings.Ally.Cards.DescendantOfThorondor
 import LordOfTheRings.Ally.Cards.GildorInglorion
@@ -145,6 +146,8 @@ allAllies =
         , SomeAllyCard haldirOfLorien
         , SomeAllyCard radagast
         , SomeAllyCard wilyador
+        , SomeAllyCard arwenUndomielTheRedhornGate
+        , SomeAllyCard arwenUndomielRoadToRivendell
         , SomeAllyCard keenEyedTook
         , SomeAllyCard descendantOfThorondor
         , SomeAllyCard gildorInglorion
