@@ -1117,37 +1117,8 @@ runGameMessage msg g = case msg of
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
-  ReturnToTopOfEncounterDeck target -> do
-    let toTop card = scenarioL %~ overAttrs (encounterDeckL %~ (card :))
-        withAttached =
-          pushAll
-            [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
-    case target of
-      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
-        withAttached
-        pure
-          $ g
-          & entitiesL
-          . enemiesL
-          %~ Map.delete eid
-          & toTop (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e))
-      LocationTarget lid | Just l <- Map.lookup lid g.entities.locations -> do
-        withAttached
-        pure
-          $ g
-          & entitiesL
-          . locationsL
-          %~ Map.delete lid
-          & toTop (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l))
-      ObjectiveTarget oid
-        | Just o <- Map.lookup oid g.entities.objectives ->
-            pure
-              $ g
-              & entitiesL
-              . objectivesL
-              %~ Map.delete oid
-              & toTop (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o))
-      _ -> pure g
+  ReturnToTopOfEncounterDeck target -> returnToEncounterDeck (:) target g
+  ReturnToBottomOfEncounterDeck target -> returnToEncounterDeck (\card deck -> deck <> [card]) target g
   RemoveProgressFromQuest source n -> do
     quests <- toList <$> getsGame (entitiesQuests . gameEntities)
     pushAll [RemoveTokens source (toTarget q) Progress (min n q.progress) | q <- quests, q.progress > 0]
@@ -1242,6 +1213,18 @@ runGameMessage msg g = case msg of
       & scenarioL
       %~ overAttrs
         (victoryDisplayL %~ (EncounterCard (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l)) :))
+  -- a card from the encounter deck, or a player's discard pile, as Out of the Wild takes them
+  AddToVictoryDisplay (CardIdTarget cid) -> do
+    let fromDeck = [EncounterCard c | c <- (toAttrs g.scenario).encounterDeck, c.id == cid]
+        fromDiscards = [c | p <- toList g.players, c <- p.discard, c.id == cid]
+    pure
+      $ g
+      & scenarioL
+      %~ overAttrs ((encounterDeckL %~ filter ((/= cid) . (.id))) . (victoryDisplayL %~ ((fromDeck <> fromDiscards) <>)))
+      & playersL
+      . traverse
+      . discardL
+      %~ filter ((/= cid) . (.id))
   AddToVictoryDisplay (AttachmentTarget aid)
     | Just a <- Map.lookup aid g.entities.attachments ->
         pure
@@ -1436,6 +1419,18 @@ runGameMessage msg g = case msg of
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
+  ShuffleIntoEncounterDeck target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
+    pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+    deck <-
+      shuffleM
+        (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) : (toAttrs g.scenario).encounterDeck)
+    pure
+      $ g
+      & entitiesL
+      . locationsL
+      %~ Map.delete lid
+      & scenarioL
+      %~ overAttrs (encounterDeckL .~ deck)
   ShuffleIntoEncounterDeck (TreacheryTarget tid) | Just t <- Map.lookup tid g.entities.treacheries -> do
     deck <-
       shuffleM
@@ -1481,6 +1476,42 @@ runGameMessage msg g = case msg of
         . objectivesL
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
+
+-- | An encounter card in play goes back into the encounter deck where the function puts it,
+-- the cards attached to it discarded.
+returnToEncounterDeck
+  :: (EncounterCard -> [EncounterCard] -> [EncounterCard]) -> Target -> Game -> GameT Game
+returnToEncounterDeck place target g = do
+  let toDeck card = scenarioL %~ overAttrs (encounterDeckL %~ place card)
+      withAttached =
+        pushAll
+          [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+  case target of
+    EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
+      withAttached
+      pure
+        $ g
+        & entitiesL
+        . enemiesL
+        %~ Map.delete eid
+        & toDeck (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e))
+    LocationTarget lid | Just l <- Map.lookup lid g.entities.locations -> do
+      withAttached
+      pure
+        $ g
+        & entitiesL
+        . locationsL
+        %~ Map.delete lid
+        & toDeck (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l))
+    ObjectiveTarget oid
+      | Just o <- Map.lookup oid g.entities.objectives ->
+          pure
+            $ g
+            & entitiesL
+            . objectivesL
+            %~ Map.delete oid
+            & toDeck (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o))
+    _ -> pure g
 
 -- | Show the players what the board does as it happens: the log is written by the narrator.
 announce :: Message -> GameT ()

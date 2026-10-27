@@ -234,6 +234,9 @@ instance RunMessage Player where
     PutDiscardOnBottomOfDeck pid cid | pid == player.id -> do
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & deckL <>~ moved
+    PutDiscardOnTopOfDeck pid cid | pid == player.id -> do
+      let (moved, kept) = partition ((== cid) . (.id)) player.discard
+      pure $ player & discardL .~ kept & deckL %~ (moved <>)
     ShuffleFromDiscardIntoDeck pid cid | pid == player.id -> do
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)

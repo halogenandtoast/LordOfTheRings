@@ -141,6 +141,7 @@ narrationFor = \case
   ShuffleIntoOwnersDeck target -> Just $ simply "log.shuffledIntoOwnersDeck" target
   ShuffleIntoEncounterDeck target -> Just $ simply "log.shuffledIntoEncounterDeck" target
   ReturnToTopOfEncounterDeck target -> Just $ simply "log.returnedToTopOfEncounterDeck" target
+  ReturnToBottomOfEncounterDeck target -> Just $ simply "log.returnedToBottomOfEncounterDeck" target
   -- \* The encounter deck
   AddToStaging card -> Just $ one $ mechanic [ikeyPart "log.addedToStaging" ["card" ~> EncounterCard card]]
   PutShadowEnemyIntoStaging eid cid -> Just do

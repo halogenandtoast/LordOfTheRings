@@ -56,6 +56,7 @@
   "shuffledIntoOwnersDeck": "{target} is shuffled into its owner's deck",
   "shuffledIntoEncounterDeck": "{target} is shuffled into the encounter deck",
   "returnedToTopOfEncounterDeck": "{target} goes back on top of the encounter deck",
+  "returnedToBottomOfEncounterDeck": "{target} goes to the bottom of the encounter deck",
 
   "revealed": "Revealed {card}",
   "revealedThreat": "Revealed {card} ({threat})",
