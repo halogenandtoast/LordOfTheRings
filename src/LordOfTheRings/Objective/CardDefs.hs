@@ -29,7 +29,25 @@ allObjectiveCards =
       , bookOfMazarbul
       , arwenUndomielTheRedhornGate
       , arwenUndomielRoadToRivendell
+      , durinsAxe
+      , durinsHelm
       ]
+
+durinsAxe :: CardDef
+durinsAxe =
+  unique
+    (objective "04119" "Durin's Axe" FoundationsOfStone 1)
+      { cdCardTraits = setFromList [Weapon, Artifact]
+      , cdKeywords = setFromList [Surge, Restricted]
+      }
+
+durinsHelm :: CardDef
+durinsHelm =
+  unique
+    (objective "04120" "Durin's Helm" FoundationsOfStone 1)
+      { cdCardTraits = setFromList [Armor, Artifact]
+      , cdKeywords = setFromList [Surge]
+      }
 
 caveTorch :: CardDef
 caveTorch =
