@@ -11,6 +11,8 @@ data Keyword
   | -- | on an enemy: it heals this much damage as the refresh phase begins
     Regenerate Int
   | Restricted
+  | -- | on a player card: it costs this much less while its player's threat is 20 or lower
+    Secrecy Int
   | Sentinel
   | Surge
   deriving stock (Show, Eq, Ord, Generic)

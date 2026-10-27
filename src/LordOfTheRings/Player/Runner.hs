@@ -19,6 +19,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
+import LordOfTheRings.Keyword (Keyword (Secrecy))
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
@@ -332,7 +333,8 @@ canAfford p c = case (c.cost, c.sphere) of
   _ -> pure False
 
 {- | What modifiers add to the cost of the card the player would play: the game's, the
-player's own and the card's (negative when they lower it).
+player's own and the card's (negative when they lower it), less its secrecy while the
+player's threat is 20 or lower.
 -}
 costModifier :: HasGame m => PlayerId -> Card -> m Int
 costModifier pid c = do
@@ -340,7 +342,9 @@ costModifier pid c = do
     concat
       <$> sequence
         [getModifiers GameTarget, getModifiers (PlayerTarget pid), getModifiers (CardIdTarget c.id)]
-  pure $ sum $ flip mapMaybe mods \case
+  threat <- (.threat) <$> getPlayer pid
+  let secrecy = if threat <= 20 then sum [n | Secrecy n <- toList (cdKeywords $ toCardDef c)] else 0
+  pure $ subtract secrecy $ sum $ flip mapMaybe mods \case
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
     CostModifier n -> Just n
