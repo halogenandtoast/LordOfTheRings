@@ -540,8 +540,6 @@ library
       LordOfTheRings.Scenario.Scenarios.TheHuntForGollum
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Types
-      LordOfTheRings.Scenario.Scenarios.ShadowAndFlame
-      LordOfTheRings.Scenario.Scenarios.ShadowAndFlame.Helpers
       LordOfTheRings.Source
       LordOfTheRings.Sphere
       LordOfTheRings.Target
@@ -567,26 +565,26 @@ library
       LordOfTheRings.Treachery.Cards.EyesOfTheForest
       LordOfTheRings.Treachery.Cards.FalseLead
       LordOfTheRings.Treachery.Cards.FesteringWounds
+      LordOfTheRings.Treachery.Cards.FierySword
+      LordOfTheRings.Treachery.Cards.FiresInTheDeep
       LordOfTheRings.Treachery.Cards.Flooding
       LordOfTheRings.Treachery.Cards.GollumsAnguish
       LordOfTheRings.Treachery.Cards.GollumsBite
       LordOfTheRings.Treachery.Cards.HiddenThreat
       LordOfTheRings.Treachery.Cards.ImpassableChasm
+      LordOfTheRings.Treachery.Cards.InnerFlame
+      LordOfTheRings.Treachery.Cards.InnerShadow
       LordOfTheRings.Treachery.Cards.IronShackles
-      LordOfTheRings.Treachery.Cards.FierySword
-      LordOfTheRings.Treachery.Cards.FiresInTheDeep
+      LordOfTheRings.Treachery.Cards.LeapingFlame
       LordOfTheRings.Treachery.Cards.LingeringVenom
       LordOfTheRings.Treachery.Cards.ManyRoads
+      LordOfTheRings.Treachery.Cards.ManyThongedWhip
       LordOfTheRings.Treachery.Cards.MassingAtNight
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.NewDevilry
-      LordOfTheRings.Treachery.Cards.InnerFlame
-      LordOfTheRings.Treachery.Cards.InnerShadow
       LordOfTheRings.Treachery.Cards.Nightfall
-      LordOfTheRings.Treachery.Cards.LeapingFlame
       LordOfTheRings.Treachery.Cards.OldWivesTales
       LordOfTheRings.Treachery.Cards.PursuedByShadow
-      LordOfTheRings.Treachery.Cards.ManyThongedWhip
       LordOfTheRings.Treachery.Cards.RoastedSlowly
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.Sacked
@@ -603,13 +601,13 @@ library
       LordOfTheRings.Treachery.Cards.UndisturbedBones
       LordOfTheRings.Treachery.Cards.WastedProvisions
       LordOfTheRings.Treachery.Cards.WatchfulEyes
+      LordOfTheRings.Treachery.Cards.WhipLash
       LordOfTheRings.Treachery.Import.Lifted
       LordOfTheRings.Treachery.Runner
       LordOfTheRings.Treachery.Types
       LordOfTheRings.Window
   other-modules:
       Paths_LordOfTheRings
-      LordOfTheRings.Treachery.Cards.WhipLash
   hs-source-dirs:
       src
   default-extensions:
@@ -764,6 +762,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Core.PassageEncounterSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec
+      LordOfTheRings.Dwarrowdelf.ShadowAndFlameSpec
       LordOfTheRings.DwarrowdelfEngineSpec
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
