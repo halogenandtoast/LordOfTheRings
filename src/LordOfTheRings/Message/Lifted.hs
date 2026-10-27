@@ -680,3 +680,7 @@ attachFromHand pid card = push . PutAttachmentIntoPlayFromHand pid card.id . toT
 -- | The player chooses and discards N cards from their hand.
 chooseAndDiscardFromHand :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
 chooseAndDiscardFromHand pid source n = push $ ChooseAndDiscardFromHand pid (toSource source) n
+
+-- | The player discards N cards at random from their hand.
+discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
+discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n

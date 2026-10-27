@@ -20,6 +20,6 @@ instance RunMessage NecromancersPass where
   runMessage msg l@(NecromancersPass a) = case msg of
     TravelTo lid | lid == a.id -> do
       lead <- getLead
-      push $ DiscardRandomFromHand lead 2
+      discardRandomFromHand lead 2
       pure l
     _ -> NecromancersPass <$> runMessage msg a
