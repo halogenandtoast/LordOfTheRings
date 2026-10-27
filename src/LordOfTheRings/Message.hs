@@ -106,6 +106,8 @@ data Message
     PayToAttach PlayerId Card [Window] Target
   | PlayEvent PlayerId PlayerCard [Window]
   | PutAllyIntoPlay PlayerId CardId
+  | -- | the player uses the action of a card in their hand, as Bofur's Quest Action
+    UseHandAction PlayerId CardId
   | ReturnToHand Target
   | -- | a card goes from its owner's discard pile to their hand
     ReturnFromDiscardToHand PlayerId CardId

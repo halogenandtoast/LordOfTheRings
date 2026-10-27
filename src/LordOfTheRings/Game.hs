@@ -1099,6 +1099,12 @@ runGameMessage msg g = case msg of
   DoStep _ (PlayEvent pid card _) -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g
+  -- the action of an ally in hand, which the ally, built from its card, resolves
+  UseHandAction pid cid -> do
+    player <- getPlayer pid
+    for_ [pc | PlayerCard pc <- player.hand, pc.id == cid] \pc ->
+      void $ runEach msg $ createAlly pc (AllyId UUID.nil) pid
+    pure g
   RespondFromDiscard pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g

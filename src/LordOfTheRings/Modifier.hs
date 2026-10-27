@@ -176,6 +176,9 @@ data ModifierType
     PlayedThisPhase CardCode
   | -- | on a card: the card type its controller named
     NamedCardType CardType
+  | -- | on an ally, as its card id: it returns to its owner's hand once the players quest
+    -- successfully this phase, as Bofur's
+    ReturnToHandIfQuestedSuccessfully
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

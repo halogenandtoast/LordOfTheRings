@@ -4,6 +4,9 @@ module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module
 
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.ActiveCost (ActiveCost (..), playCard)
+import Data.UUID qualified as UUID
+import LordOfTheRings.Ally (createAlly)
+import LordOfTheRings.Ally.Types (AllyAttrs (allyHandAction))
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -16,11 +19,11 @@ import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, travelableLocations)
+import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Secrecy))
-import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Id (AllyId (..), PlayerId)
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
@@ -102,7 +105,8 @@ instance RunMessage Player where
     OptionalActionWindow pid | pid == player.id -> do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
-      unless (null playable && null actions)
+      fromHand <- handActions player
+      unless (null playable && null actions && null fromHand)
         $ actionWindow (ikey "label.takeAction") (ikey "label.pass") Nothing
         $ OptionalActionWindow pid
       pure player
@@ -300,7 +304,8 @@ instance RunMessage Player where
     actionWindow prompt done next again = do
       playable <- filterM (canPlay player) player.hand
       actions <- getActionAbilities player.id
-      let idle = null playable && null actions
+      fromHand <- handActions player
+      let idle = null playable && null actions && null fromHand
           done' = case next of
             Just phase | idle -> ikey ("label.proceedTo." <> phaseKey phase)
             _ -> done
@@ -309,7 +314,16 @@ instance RunMessage Player where
         $ Label done' []
         : [targetLabel c [PlayCard player.id c.id, again] | c <- playable]
           <> [AbilityLabel player.id ab [] [again] | ab <- actions]
+          <> [targetLabel c [UseHandAction player.id c.id, again] | c <- fromHand]
     takeFromHand cid = maybe (error "not able to find card") pure $ find ((== cid) . (.id)) player.hand
+
+-- | Cards in the player's hand whose action from there can be used now, as Bofur's.
+handActions :: HasGame m => Player -> m [Card]
+handActions p = flip filterM p.hand \case
+  c@(PlayerCard pc) | c.cardType == AllyType -> case (toAttrs $ createAlly pc (AllyId UUID.nil) p.id).allyHandAction of
+    Just criteria -> andM [passesCriteriaFor p.id criteria, passesUnique c]
+    Nothing -> pure False
+  _ -> pure False
 
 canPlay :: HasGame m => Player -> Card -> m Bool
 canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay p.id c]
