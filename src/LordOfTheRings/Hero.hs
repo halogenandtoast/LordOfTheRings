@@ -39,6 +39,7 @@ import LordOfTheRings.Hero.Cards.Beregond
 import LordOfTheRings.Hero.Cards.Boromir
 import LordOfTheRings.Hero.Cards.Faramir
 import LordOfTheRings.Hero.Cards.Mablung
+import LordOfTheRings.Hero.Cards.Dwalin
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -104,5 +105,6 @@ allHeroes =
         , SomeHeroCard boromir
         , SomeHeroCard faramir
         , SomeHeroCard mablung
+        , SomeHeroCard dwalin
         ]
     ]

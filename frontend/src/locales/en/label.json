@@ -459,6 +459,12 @@
     "chooseHero": "Choose a Gondor hero to add 1 resource to"
   },
   "emynArnenRanger": {
+  "khazadKhazad": {
+    "chooseDwarf": "Choose a Dwarf character to get +3 attack"
+  },
+  "ancestralKnowledge": {
+    "exhaust": "Exhaust a Dwarf character to place progress on the active location"
+  },
     "chooseEnemy": "Choose an enemy with a Trap attached"
   },
   "behindStrongWalls": {

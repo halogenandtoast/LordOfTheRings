@@ -71,6 +71,8 @@ allAttachmentCards =
       , songOfBattle
       , dunedainSignal
       , supportOfTheEagles
+      , dwarrowdelfAxe
+      , bootsFromErebor
       ]
 
 stewardOfGondor :: CardDef
@@ -458,4 +460,18 @@ supportOfTheEagles :: CardDef
 supportOfTheEagles =
   (attachment "02120" "Support of the Eagles" Tactics (StaticCost 3))
     { cdCardTraits = setFromList [Boon]
+    }
+
+dwarrowdelfAxe :: CardDef
+dwarrowdelfAxe =
+  (attachment "03007" "Dwarrowdelf Axe" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+bootsFromErebor :: CardDef
+bootsFromErebor =
+  (attachment "03013" "Boots from Erebor" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
     }

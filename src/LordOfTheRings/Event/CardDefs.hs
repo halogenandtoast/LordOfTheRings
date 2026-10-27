@@ -81,6 +81,10 @@ allEventCards =
       , dawnTakeYouAll
       , rumourFromTheEarth
       , shadowOfThePast
+      , everOnward
+      , khazadKhazad
+      , untroubledByDarkness
+      , ancestralKnowledge
       ]
 
 everVigilant :: CardDef
@@ -298,3 +302,15 @@ rumourFromTheEarth = event "02124" "Rumour from the Earth" Lore (StaticCost 0)
 
 shadowOfThePast :: CardDef
 shadowOfThePast = event "02125" "Shadow of the Past" Neutral (StaticCost 2)
+
+everOnward :: CardDef
+everOnward = event "03005" "Ever Onward" Leadership (StaticCost 3)
+
+khazadKhazad :: CardDef
+khazadKhazad = event "03008" "Khazâd! Khazâd!" Tactics (StaticCost 0)
+
+untroubledByDarkness :: CardDef
+untroubledByDarkness = event "03010" "Untroubled by Darkness" Spirit (StaticCost 2)
+
+ancestralKnowledge :: CardDef
+ancestralKnowledge = event "03012" "Ancestral Knowledge" Lore (StaticCost 1)

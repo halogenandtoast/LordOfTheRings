@@ -83,6 +83,7 @@ import LordOfTheRings.Ally.Cards.SquireOfTheCitadel
 import LordOfTheRings.Ally.Cards.EmynArnenRanger
 import LordOfTheRings.Ally.Cards.SoldierOfGondor
 import LordOfTheRings.Ally.Cards.AngborTheFearless
+import LordOfTheRings.Ally.Cards.VeteranOfNanduhirion
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -192,5 +193,6 @@ allAllies =
         , SomeAllyCard emynArnenRanger
         , SomeAllyCard soldierOfGondor
         , SomeAllyCard angborTheFearless
+        , SomeAllyCard veteranOfNanduhirion
         ]
     ]

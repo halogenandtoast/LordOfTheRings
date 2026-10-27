@@ -46,6 +46,7 @@ allHeroCards =
       , frodoBaggins
       , brandSonOfBain
       , boromirTactics
+      , dwalin
       ]
 
 aragorn :: CardDef
@@ -250,4 +251,10 @@ boromirTactics :: CardDef
 boromirTactics =
   (hero "02095" "Boromir" Tactics 11 1 3 2 5)
     { cdCardTraits = setFromList [Gondor, Noble, Warrior]
+    }
+
+dwalin :: CardDef
+dwalin =
+  (hero "03001" "Dwalin" Spirit 9 1 2 2 4)
+    { cdCardTraits = setFromList [Dwarf]
     }

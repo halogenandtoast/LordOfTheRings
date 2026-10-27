@@ -64,6 +64,8 @@ import LordOfTheRings.Attachment.Cards.ValiantSword
 import LordOfTheRings.Attachment.Cards.VisionaryLeadership
 import LordOfTheRings.Attachment.Cards.HeirOfMardil
 import LordOfTheRings.Attachment.Cards.CaptainOfGondor
+import LordOfTheRings.Attachment.Cards.DwarrowdelfAxe
+import LordOfTheRings.Attachment.Cards.BootsFromErebor
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -154,5 +156,7 @@ allAttachments =
         , SomeAttachmentCard visionaryLeadership
         , SomeAttachmentCard heirOfMardil
         , SomeAttachmentCard captainOfGondor
+        , SomeAttachmentCard dwarrowdelfAxe
+        , SomeAttachmentCard bootsFromErebor
         ]
     ]

@@ -88,6 +88,7 @@ allAllyCards =
       , vassalOfTheWindlord
       , elfhelm
       , eaglesOfTheMistyMountains
+      , veteranOfNanduhirion
       ]
 
 guardOfTheCitadel :: CardDef
@@ -572,4 +573,10 @@ eaglesOfTheMistyMountains :: CardDef
 eaglesOfTheMistyMountains =
   (ally "02119" "Eagles of the Misty Mountains" Tactics (StaticCost 4) 2 2 2 4)
     { cdCardTraits = setFromList [Creature, Eagle]
+    }
+
+veteranOfNanduhirion :: CardDef
+veteranOfNanduhirion =
+  (ally "03006" "Veteran of Nanduhirion" Tactics (StaticCost 4) 0 3 2 3)
+    { cdCardTraits = setFromList [Dwarf, Warrior]
     }
