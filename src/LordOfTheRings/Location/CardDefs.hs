@@ -67,7 +67,22 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       , upperHall
+      , drownedTreasury
+      , mithrilLode
       ]
+
+drownedTreasury :: CardDef
+drownedTreasury =
+  (location "04121" "Drowned Treasury" FoundationsOfStone 3 2 3)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    }
+
+mithrilLode :: CardDef
+mithrilLode =
+  (location "04122" "Mithril Lode" FoundationsOfStone 1 2 5)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Doomed 1]
+    }
 
 eastGate :: CardDef
 eastGate =
