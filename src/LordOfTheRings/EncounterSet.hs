@@ -9,6 +9,7 @@ data EncounterSet
   | DolGuldurOrcs
   | EscapeFromDolGuldur
   | FlightFromMoria
+  | FoundationsOfStone
   | GoblinsOfTheDeep
   | HazardsOfThePit
   | IntoThePit
@@ -18,12 +19,17 @@ data EncounterSet
   | PassageThroughMirkwoodCampaign
   | PlunderingGoblins
   | ReturnToMirkwood
+  | RoadToRivendell
   | SauronsReach
+  | ShadowAndFlame
   | SpidersOfMirkwood
   | TheDeadMarshes
   | TheHillsOfEmynMuil
   | TheHuntForGollum
+  | TheLongDark
+  | TheRedhornGate
   | TheSeventhLevel
+  | TheWatcherInTheWater
   | TwistsAndTurns
   | Wilderlands
   deriving stock (Show, Eq, Ord, Generic)

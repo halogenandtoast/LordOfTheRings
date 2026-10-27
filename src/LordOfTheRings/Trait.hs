@@ -6,6 +6,7 @@ data Trait
   = Archer
   | Armor
   | Artifact
+  | Balrog
   | Beorning
   | Boon
   | Bridge
@@ -33,6 +34,8 @@ data Trait
   | Gondor
   | Gossip
   | Hazard
+  | Healer
+  | Hills
   | Hobbit
   | Insect
   | Istari
@@ -44,6 +47,7 @@ data Trait
   | Mordor
   | Mount
   | Mountain
+  | Nameless
   | Nazgul
   | Noble
   | Noldor
@@ -52,24 +56,30 @@ data Trait
   | Ranger
   | Ring
   | Riverland
+  | Road
   | Rohan
   | Scout
   | Shadow
   | Signal
   | Silvan
   | Skill
+  | Snow
   | Song
   | Spider
+  | Stair
   | Steward
   | Stronghold
   | Summoner
+  | Swamp
   | Tantrum
+  | Tentacle
   | Title
   | Tools
   | Trap
   | Troll
   | Undead
   | Underground
+  | Underwater
   | Uruk
   | Warrior
   | Wasteland
