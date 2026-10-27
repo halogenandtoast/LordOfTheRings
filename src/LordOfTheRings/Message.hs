@@ -178,6 +178,8 @@ data Message
   | AttachCard AttachmentId Target
   | PlayAttachment PlayerId PlayerCard
   | PlayAttachmentOn PlayerId PlayerCard Target
+  | -- | an attachment in the player's hand is put into play on the host, not played
+    PutAttachmentIntoPlayFromHand PlayerId CardId Target
   | {- | the hero leaves the game for one from its owner's collection, which takes the
     attachments it can
     -}

@@ -661,6 +661,12 @@ attackEnemyWith pid source attacker eid bonus = do
   when (bonus /= 0) $ createEffect source attacker [AttackModifier bonus] UntilEndOfAttack
   push $ ResolveAttack pid eid
 
+{- | The player attaches a card from their hand to the host without playing it, as "attach
+a Weapon or Armour attachment from his hand" reads; 'cardHosts' gives where it may go.
+-}
+attachFromHand :: (ReverseQueue m, Targetable host) => PlayerId -> Card -> host -> m ()
+attachFromHand pid card = push . PutAttachmentIntoPlayFromHand pid card.id . toTarget
+
 -- | The player chooses and discards N cards from their hand.
 chooseAndDiscardFromHand :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
 chooseAndDiscardFromHand pid source n = push $ ChooseAndDiscardFromHand pid (toSource source) n

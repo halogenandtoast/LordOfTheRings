@@ -116,6 +116,12 @@ instance RunMessage Player where
         PlayerCard card -> push $ PlayAlly pid card
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
+    -- attached without being played, as Plundered Armoury lets one be
+    PutAttachmentIntoPlayFromHand pid cid host | pid == player.id -> do
+      takeFromHand cid >>= \case
+        PlayerCard card -> push $ PlayAttachmentOn pid card host
+        EncounterCard _ -> error "not an attachment"
+      pure $ player & handL %~ filter ((/= cid) . (.id))
     PlayEvent pid card _ | pid == player.id -> pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
       pushAll $ playCard pid card []
