@@ -44,6 +44,11 @@ import LordOfTheRings.Quest.Cards.BlockedByShadow
 import LordOfTheRings.Quest.Cards.EscapeFromDarkness
 import LordOfTheRings.Quest.Cards.SearchForTheChamber
 import LordOfTheRings.Quest.Cards.TheFateOfBalin
+import LordOfTheRings.Quest.Cards.TheDrippingWalls
+import LordOfTheRings.Quest.Cards.TheWatersEdge
+import LordOfTheRings.Quest.Cards.WashedAway
+import LordOfTheRings.Quest.Cards.BelowTheMines
+import LordOfTheRings.Quest.Cards.OutOfTheDepths
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -112,5 +117,13 @@ allQuests =
         , SomeQuestCard escapeFromDarkness
         , SomeQuestCard searchForTheChamber
         , SomeQuestCard theFateOfBalin
+        , SomeQuestCard theDrippingWalls
+        , SomeQuestCard theWatersEdge
+        , SomeQuestCard washedAway
+        , SomeQuestCard belowTheMines
+        , SomeQuestCard theEndlessCaves
+        , SomeQuestCard theShiveringBank
+        , SomeQuestCard oldOneLair
+        , SomeQuestCard outOfTheDepths
         ]
     ]
