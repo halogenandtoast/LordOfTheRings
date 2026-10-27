@@ -1,7 +1,7 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher, cardMatches)
+import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher, LocationMatcher, cardMatches)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -101,6 +101,22 @@ data WindowMatcher
     EnemyDestroyedByHeroWindow Timing HeroMatcher
   | -- | an encounter or quest card's effect raised the player's threat
     ThreatRaisedByEncounterWindow Timing PlayerId
+  | -- | a player other than the given one raised his threat
+    OtherPlayerRaisedThreatWindow Timing PlayerId
+  | ChangedControlWindow Timing Target
+  | -- | any player plays an event
+    EventPlayedWindow Timing
+  | -- | an attack with a character of the trait among its attackers dealt damage
+    AttackDealtDamageWithTraitWindow Timing Trait
+  | -- | a location entered play, in the staging area
+    LocationEntersPlayWindow Timing
+  | -- | the players traveled to a matching location
+    TraveledToWindow Timing LocationMatcher
+  | -- | any player played a matching card from their hand
+    CardPlayedWindow Timing CardMatcher
+  | -- | a player other than the given one played an attachment on a hero the given one
+    -- controls
+    AttachmentPlayedOnHeroWindow Timing PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -162,9 +178,17 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LeftPlayWindow t target, LeftPlay target' _ _) -> t == timing && target == target'
   (AttackedAloneWithExcessWindow t target, AttackedAlone target' _ n) -> t == timing && target == target' && n > 0
   (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid') -> t == timing && pid == pid'
+  (OtherPlayerRaisedThreatWindow t pid, ThreatRaised pid') -> t == timing && pid /= pid'
+  (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
+  (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
+  (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
+  (CardPlayedWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
   (EnemyWithTraitRevealedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
+  (AttackDealtDamageWithTraitWindow {}, _) -> False
+  (TraveledToWindow {}, _) -> False
+  (AttachmentPlayedOnHeroWindow {}, _) -> False
   _ -> False

@@ -744,6 +744,10 @@ runGameMessage msg g = case msg of
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
                     <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | CannotTakeCombatDamage `notElem` mods]
+                    <> [ CheckWindows [mkAfter $ AttackDealtDamage eid attackers (attack - defense)]
+                       | attack > defense
+                       , CannotTakeCombatDamage `notElem` mods
+                       ]
                     <> [ AttackResolved eid (placementController enemy'.placement) attackers traits
                        ]
                     <> [ CheckWindows
@@ -1213,7 +1217,9 @@ runGameMessage msg g = case msg of
       & entitiesL
       . objectivesL
       %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
-  TakeControl aid pid -> pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
+  TakeControl aid pid -> do
+    push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
+    pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   CompleteQuest qid -> do
     push AdvanceQuest
     -- a stage with victory points goes to the victory display, as Search for an Exit's
@@ -1461,6 +1467,7 @@ runGameMessage msg g = case msg of
         %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) thisEnemy)
     LocationType -> do
       thisLocation <- newLocation card
+      push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisLocation)]
       pure
         $ g
         & entitiesL

@@ -88,6 +88,23 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
       TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
       _ -> Nothing
+  -- only while the enemy is still in play, to be dealt more
+  (AttackDealtDamageWithTraitWindow t trait, AttackDealtDamage eid attackers _) | t == timing ->
+    andM
+      [ selectAny (EnemyWithId eid)
+      , flip anyM attackers \case
+          HeroTarget hid -> selectAny (HeroWithId hid <> HeroWithTrait trait)
+          AllyTarget aid -> selectAny (AllyWithId aid <> AllyWithTrait trait)
+          _ -> pure False
+      ]
+  (TraveledToWindow t m, Traveled lid) | t == timing -> selectAny (LocationWithId lid <> m)
+  -- the attachment played is in play by now, on its host
+  (AttachmentPlayedOnHeroWindow t pid, PlayedFromHand (CardIdTarget cid)) | t == timing -> do
+    es <- getsGame gameEntities
+    case find ((== cid) . (.cardId) . toAttrs) (toList es.attachments) of
+      Just a | (toAttrs a).owner /= pid, AttachedTo (HeroTarget hid) <- a.placement ->
+        selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
+      _ -> pure False
   _ -> pure $ windowMatches matcher w
  where
   hostDef = \case

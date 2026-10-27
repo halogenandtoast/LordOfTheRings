@@ -36,7 +36,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
-  WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand),
+  WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
  )
 
@@ -67,6 +67,7 @@ instance RunMessage Player where
       pure $ player & handL .~ hand & deckL .~ deck
     RaiseThreat pid n | pid == player.id -> do
       push CheckEliminations
+      pushWhen (n > 0) $ CheckWindows [mkAfter $ ThreatRaised pid]
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []

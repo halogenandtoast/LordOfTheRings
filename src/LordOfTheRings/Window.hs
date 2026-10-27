@@ -82,6 +82,14 @@ data WindowType
     DiscardedFromDeck PlayerId CardId
   | -- | the player played a card from their hand, as its code
     PlayedCardFromHand PlayerId CardCode
+  | -- | a player's threat was raised, by anything
+    ThreatRaised PlayerId
+  | -- | an ally changed control
+    ChangedControl Target
+  | -- | the player is playing the event, its effects yet to resolve
+    PlayingEvent PlayerId CardId
+  | -- | an attack the characters made dealt the enemy this much damage
+    AttackDealtDamage EnemyId [Target] Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
