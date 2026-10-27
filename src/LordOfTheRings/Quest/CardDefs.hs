@@ -50,6 +50,9 @@ allQuestCards =
       , escapeFromDarkness
       , searchForTheChamber
       , theFateOfBalin
+      , alongTheMistyMountains
+      , orcOutpost
+      , approachingRivendell
       ]
 
 enteringTheMines :: CardDef
@@ -170,3 +173,12 @@ blockedByShadow = searchForAnExit "03075" "Blocked by Shadow" 9 Nothing
 
 escapeFromDarkness :: CardDef
 escapeFromDarkness = searchForAnExit "03076" "Escape from Darkness" 4 Nothing
+
+alongTheMistyMountains :: CardDef
+alongTheMistyMountains = quest "04038" "Along the Misty Mountains" RoadToRivendell 1 20
+
+orcOutpost :: CardDef
+orcOutpost = quest "04039" "Orc Outpost" RoadToRivendell 2 7
+
+approachingRivendell :: CardDef
+approachingRivendell = quest "04040" "Approaching Rivendell" RoadToRivendell 3 13
