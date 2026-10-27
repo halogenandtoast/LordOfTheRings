@@ -123,3 +123,12 @@ spec = describe "Into the Pit" do
     _ <- setEncounterDeck [Enemies.goblinScout]
     run $ Exhaust torch
     placementOf Enemies.goblinScout `shouldReturn` Just StagingArea
+
+  it "cannot have Sudden Pitfall's when revealed effect canceled" . pitTest $ \pid -> do
+    card <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- getHeroWithCode "01007"
+    run $ PlaceTokens GameSource (toTarget eowyn) Resource 1
+    _ <- setEncounterDeck [Treacheries.suddenPitfall]
+    run RevealEncounterCard
+    offered <- maybe False (any \case TargetLabel t _ -> t == CardIdTarget card.id; _ -> False) . fmap questionChoices <$> getQuestion pid
+    offered `shouldBe` False
