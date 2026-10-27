@@ -7,6 +7,10 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Treachery.Cards.CaughtInAWeb
+import LordOfTheRings.Treachery.Cards.CaveIn
+import LordOfTheRings.Treachery.Cards.CrumblingRuin
+import LordOfTheRings.Treachery.Cards.DarkAndDreadful
+import LordOfTheRings.Treachery.Cards.SuddenPitfall
 import LordOfTheRings.Treachery.Cards.WatchfulEyes
 import LordOfTheRings.Treachery.Cards.Despair
 import LordOfTheRings.Treachery.Cards.DrivenByShadow
@@ -70,6 +74,10 @@ allTreacherys =
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
         [ SomeTreacheryCard eyesOfTheForest
+        , SomeTreacheryCard caveIn
+        , SomeTreacheryCard crumblingRuin
+        , SomeTreacheryCard darkAndDreadful
+        , SomeTreacheryCard suddenPitfall
         , SomeTreacheryCard watchfulEyes
         , SomeTreacheryCard caughtInAWeb
         , SomeTreacheryCard despair

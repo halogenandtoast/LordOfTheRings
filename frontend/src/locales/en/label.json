@@ -31,6 +31,17 @@
   "watchfulEyes": {
     "attach": "Attach Watchful Eyes to one of your heroes"
   },
+  "crumblingRuin": {
+    "exhaust": "Exhaust a character: if the discarded card costs at least its remaining hit points, it is discarded"
+  },
+  "suddenPitfall": {
+    "discard": "Discard a questing character you control"
+  },
+  "fouledWell": {
+    "discard": "Discard 1 card at random from your hand? If any player does not, Fouled Well gains surge",
+    "discardRandom": "Discard 1 card at random",
+    "decline": "Do not discard"
+  },
   "pass": "Pass",
   "undisturbedBones": {
     "ally": "Choose an ally to take the damage"

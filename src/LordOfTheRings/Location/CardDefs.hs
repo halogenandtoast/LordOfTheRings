@@ -14,6 +14,8 @@ allLocationCards =
     map
       (\def -> (cdCardCode def, def))
       [ greatForestWeb
+      , dreadfulGap
+      , fouledWell
       , goblinTunnels
       , mountainsOfMirkwood
       , theBrownLands
@@ -54,6 +56,23 @@ allLocationCards =
       , woodElfPath
       , plunderedArmoury
       ]
+
+-- | X quest points: the number of characters in play (see the card).
+dreadfulGap :: CardDef
+dreadfulGap =
+  (location "03052" "Dreadful Gap" HazardsOfThePit 1 2 0)
+    { cdCardTraits = setFromList [Underground, Hazard]
+    , cdVictoryPoints = Just 3
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+fouledWell :: CardDef
+fouledWell =
+  (location "03053" "Fouled Well" HazardsOfThePit 3 3 5)
+    { cdCardTraits = setFromList [Underground, Dark, Hazard]
+    , cdWhenRevealed = True
+    }
 
 goblinTunnels :: CardDef
 goblinTunnels =

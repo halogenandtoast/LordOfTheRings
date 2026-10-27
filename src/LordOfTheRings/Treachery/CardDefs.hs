@@ -14,6 +14,10 @@ allTreacheryCards =
     map
       (\def -> (cdCardCode def, def))
       [ eyesOfTheForest
+      , caveIn
+      , crumblingRuin
+      , darkAndDreadful
+      , suddenPitfall
       , watchfulEyes
       , caughtInAWeb
       , despair
@@ -47,6 +51,34 @@ allTreacheryCards =
       , wastedProvisions
       , undisturbedBones
       ]
+
+caveIn :: CardDef
+caveIn =
+  (treachery "03048" "Cave In" HazardsOfThePit 3)
+    { cdCardTraits = setFromList [Hazard]
+    }
+
+crumblingRuin :: CardDef
+crumblingRuin =
+  (treachery "03049" "Crumbling Ruin" HazardsOfThePit 2)
+    { cdCardTraits = setFromList [Hazard]
+    , cdEasyModeQuantity = Just 0
+    }
+
+darkAndDreadful :: CardDef
+darkAndDreadful =
+  (treachery "03050" "Dark and Dreadful" HazardsOfThePit 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+suddenPitfall :: CardDef
+suddenPitfall =
+  (treachery "03051" "Sudden Pitfall" HazardsOfThePit 1)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
 
 watchfulEyes :: CardDef
 watchfulEyes =
