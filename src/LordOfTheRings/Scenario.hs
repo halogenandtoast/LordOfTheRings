@@ -19,11 +19,12 @@ import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood as X
 import LordOfTheRings.Scenario.Scenarios.IntoThePit as X
 import LordOfTheRings.Scenario.Scenarios.FlightFromMoria as X
 import LordOfTheRings.Scenario.Scenarios.TheSeventhLevel as X
+import LordOfTheRings.Scenario.Scenarios.TheRedhornGate as X
 import LordOfTheRings.Scenario.Types as X
 
 -- | The scenarios a game can be dealt, by id.
 allScenarios :: [Scenario]
-allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel]
+allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel, theRedhornGate]
 
 lookupScenario :: ScenarioId -> Maybe Scenario
 lookupScenario sid = find ((== sid) . toId) allScenarios

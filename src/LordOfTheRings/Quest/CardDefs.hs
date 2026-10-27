@@ -50,6 +50,9 @@ allQuestCards =
       , escapeFromDarkness
       , searchForTheChamber
       , theFateOfBalin
+      , upThePass
+      , snowdrifts
+      , theMountainsPeaks
       ]
 
 enteringTheMines :: CardDef
@@ -170,3 +173,12 @@ blockedByShadow = searchForAnExit "03075" "Blocked by Shadow" 9 Nothing
 
 escapeFromDarkness :: CardDef
 escapeFromDarkness = searchForAnExit "03076" "Escape from Darkness" 4 Nothing
+
+upThePass :: CardDef
+upThePass = quest "04011" "Up the Pass" TheRedhornGate 1 9
+
+snowdrifts :: CardDef
+snowdrifts = quest "04012" "Snowdrifts" TheRedhornGate 2 11
+
+theMountainsPeaks :: CardDef
+theMountainsPeaks = quest "04013" "The Mountains' Peaks" TheRedhornGate 3 13

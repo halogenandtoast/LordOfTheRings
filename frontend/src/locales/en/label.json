@@ -35,6 +35,19 @@
   "watchfulEyes": {
     "attach": "Attach Watchful Eyes to one of your heroes"
   },
+  "freezingCold": {
+    "attach": "Attach Freezing Cold to one of your heroes"
+  },
+  "fallenStones": {
+    "chooseOne": "Fallen Stones: choose one",
+    "removeProgress": "Remove all progress tokens from play",
+    "reveal": "Reveal 2 encounter cards"
+  },
+  "fanuidhol": {
+    "pay": "Spend 1 resource from this hero to count its willpower?",
+    "spend": "Spend 1 resource",
+    "decline": "Do not count its willpower"
+  },
   "caveTorch": {
     "attach": "Attach Cave Torch to a hero",
     "location": "Place up to 3 progress on a Dark location",

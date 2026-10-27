@@ -44,6 +44,9 @@ import LordOfTheRings.Quest.Cards.BlockedByShadow
 import LordOfTheRings.Quest.Cards.EscapeFromDarkness
 import LordOfTheRings.Quest.Cards.SearchForTheChamber
 import LordOfTheRings.Quest.Cards.TheFateOfBalin
+import LordOfTheRings.Quest.Cards.UpThePass
+import LordOfTheRings.Quest.Cards.Snowdrifts
+import LordOfTheRings.Quest.Cards.TheMountainsPeaks
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -112,5 +115,8 @@ allQuests =
         , SomeQuestCard escapeFromDarkness
         , SomeQuestCard searchForTheChamber
         , SomeQuestCard theFateOfBalin
+        , SomeQuestCard upThePass
+        , SomeQuestCard snowdrifts
+        , SomeQuestCard theMountainsPeaks
         ]
     ]
