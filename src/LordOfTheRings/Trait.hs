@@ -8,12 +8,14 @@ data Trait
   | Artifact
   | Beorning
   | Boon
+  | Bridge
   | Burden
   | Clue
   | Condition
   | Craftsman
   | Creature
   | Dale
+  | Dark
   | DeadMarshes
   | Disaster
   | DolGuldur
@@ -23,7 +25,9 @@ data Trait
   | Eagle
   | EmynMuil
   | Escape
+  | Flame
   | Forest
+  | Gate
   | Goblin
   | Gollum
   | Gondor
@@ -33,6 +37,7 @@ data Trait
   | Insect
   | Istari
   | Item
+  | Light
   | Marshland
   | Mathom
   | Minstrel
@@ -49,6 +54,7 @@ data Trait
   | Riverland
   | Rohan
   | Scout
+  | Shadow
   | Signal
   | Silvan
   | Skill
@@ -56,12 +62,15 @@ data Trait
   | Spider
   | Steward
   | Stronghold
+  | Summoner
   | Tantrum
   | Title
+  | Tools
   | Trap
   | Troll
   | Undead
   | Underground
+  | Uruk
   | Warrior
   | Wasteland
   | Weapon
