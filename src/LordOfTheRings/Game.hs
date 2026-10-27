@@ -611,8 +611,14 @@ runGameMessage msg g = case msg of
     loners <-
       filterM (fmap (elem CanAttackStagingAreaAlone) . getModifiers)
         =<< select (HeroControlledBy $ PlayerWithId pid)
-    raiders <- stagingAttackers =<< readyCharacters pid
-    staged <- if null raiders then pure [] else select EnemyInStagingArea
+    ready <- readyAttackers pid
+    raiders <- stagingAttackers ready
+    ranged <- withKeyword Ranged ready
+    staged <-
+      if
+        | notNull raiders -> select EnemyInStagingArea
+        | notNull ranged -> filterM (fmap (elem AttackableInStagingAreaByRanged) . getModifiers) =<< select EnemyInStagingArea
+        | otherwise -> pure []
     -- enemies anyone may attack, wherever they are, as one in an Ithilien Pit
     open' <-
       filterM (fmap (elem AttackableByAnyCharacter) . getModifiers)
@@ -636,7 +642,7 @@ runGameMessage msg g = case msg of
           <> [Label (ikey "label.doNotAttack") []]
     pure g
   AttackStagingAreaAlone pid attacker -> do
-    ready <- elem attacker <$> readyCharacters pid
+    ready <- elem attacker <$> readyAttackers pid
     staged <- select EnemyInStagingArea
     when (ready && notNull staged)
       $ push
@@ -682,7 +688,7 @@ runGameMessage msg g = case msg of
       filterM (canFight eid)
         . filter (`notElem` attacking)
         =<< withKeyword Ranged
-        =<< readyCharacters other
+        =<< readyAttackers other
     push
       $ if null ranged
         then DeclareRangedAttackers pid eid rest
@@ -839,11 +845,15 @@ runGameMessage msg g = case msg of
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
     allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
     barred <- elem CannotCommitCharacters <$> getModifiers (PlayerTarget pid)
+    let committable c = do
+          mods <- getModifiers c
+          free <- doesNotExhaustToCommit c =<< characterCardDef c
+          pure $ CannotCommitToQuest `notElem` mods && (free || CannotExhaust `notElem` mods)
     characters <-
       if barred
         then pure []
         else
-          filterM (fmap (notElem CannotCommitToQuest) . getModifiers)
+          filterM committable
             $ map toTarget heroes
             <> map toTarget allies
     quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
@@ -1638,13 +1648,19 @@ engagedByCost pid = do
 stagingAttackers :: [Target] -> GameT [Target]
 stagingAttackers = filterM (fmap (elem CanAttackStagingArea) . getModifiers)
 
+-- | The player's characters that may attack or defend.
+-- ponytail: one that cannot exhaust is left out even when it would not exhaust to fight
 readyCharacters :: PlayerId -> GameT [Target]
 readyCharacters pid = do
   heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
   allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
-  filterM (fmap (notElem CannotAttackOrDefend) . getModifiers)
+  filterM (fmap (\ms -> CannotAttackOrDefend `notElem` ms && CannotExhaust `notElem` ms) . getModifiers)
     $ map toTarget heroes
     <> map toTarget allies
+
+-- | The player's characters that may attack.
+readyAttackers :: PlayerId -> GameT [Target]
+readyAttackers pid = filterM (fmap (notElem CannotAttack) . getModifiers) =<< readyCharacters pid
 
 {- | Shadow cards are not in play, so the card's own module resolves the effect
 through a temporary instance of it.
@@ -1674,13 +1690,16 @@ ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
 ownAttackers pid eid = do
   -- only those allowed to may attack an enemy in the staging area, unless anyone may
   staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea)
-  open' <- elem AttackableByAnyCharacter <$> getModifiers eid
+  mods <- getModifiers eid
+  let open' = AttackableByAnyCharacter `elem` mods
+      fromStaging cs = (<>) <$> stagingAttackers cs <*> if AttackableInStagingAreaByRanged `elem` mods then withKeyword Ranged cs else pure []
   -- one who does not exhaust to attack is still declared only once
   attacking <- selectCharacters AttackingHero AttackingAlly
   filter (`notElem` attacking)
+    . ordNub
     <$> ( filterM (canFight eid)
-            =<< (if staged && not open' then stagingAttackers else pure)
-            =<< readyCharacters pid
+            =<< (if staged && not open' then fromStaging else pure)
+            =<< readyAttackers pid
         )
 
 {- | Who may attack the enemy for the player: their own characters, then the ranged
@@ -1691,7 +1710,7 @@ mayAttack pid eid = do
   own <- ownAttackers pid eid
   engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
   others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
-  ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyCharacters others
+  ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
   pure $ own <> ranged
 
 -- | An action window for each player, in turn order, asked only of those with an action.

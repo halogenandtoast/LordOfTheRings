@@ -16,7 +16,7 @@ import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (
-  ModifierType (BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotTriggerAbilities),
+  ModifierType (BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -177,8 +177,8 @@ distinct taken (cs : rest) = any (\c -> distinct (c : taken) rest) [c | c <- cs,
 canPay :: HasGame m => AbilityCost -> m Bool
 canPay = \case
   Free -> pure True
-  ExhaustCost (HeroTarget hid) -> selectAny (HeroWithId hid <> ReadyHero)
-  ExhaustCost (AllyTarget aid) -> selectAny (AllyWithId aid <> ReadyAlly)
+  ExhaustCost t@(HeroTarget hid) -> andM [selectAny (HeroWithId hid <> ReadyHero), notElem CannotExhaust <$> getModifiers t]
+  ExhaustCost t@(AllyTarget aid) -> andM [selectAny (AllyWithId aid <> ReadyAlly), notElem CannotExhaust <$> getModifiers t]
   ExhaustCost (AttachmentTarget aid) ->
     maybe False (not . attachmentExhausted . toAttrs)
       . Map.lookup aid

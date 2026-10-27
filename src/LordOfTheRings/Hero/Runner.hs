@@ -8,7 +8,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotReady, DoesNotExhaustToAttack))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -26,7 +26,9 @@ instance RunMessage HeroAttrs where
       push $ PlaceTokens GameSource (toTarget attrs) Damage 1
       pure $ attrs & prisonerL .~ False
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
-    Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
+    Exhaust (isTarget attrs -> True) -> do
+      blocked <- elem CannotExhaust <$> getModifiers attrs
+      pure $ attrs & exhaustedL %~ (|| not blocked)
     AttackWith (isTarget attrs -> True) -> do
       spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
       pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
@@ -36,7 +38,9 @@ instance RunMessage HeroAttrs where
       pure $ attrs & exhaustedL %~ (|| not free) & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
-    Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
+    Ready (isTarget attrs -> True) -> do
+      blocked <- elem CannotReady <$> getModifiers attrs
+      pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

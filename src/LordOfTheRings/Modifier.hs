@@ -30,7 +30,13 @@ data ModifierType
     ImmuneToCardEffects
   | -- | on a location: its quest points are raised by this much, as an X reads
     QuestPointModifier Int
-  | CannotAttack
+  | -- | on an enemy, or a character
+    CannotAttack
+  | -- | on a character: it does not exhaust, so cannot commit, attack or defend
+    CannotExhaust
+  | CannotReady
+  | -- | on an enemy: characters with ranged may attack it in the staging area
+    AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others
     CannotAttackPlayer PlayerId
   | CannotAttackOrDefend

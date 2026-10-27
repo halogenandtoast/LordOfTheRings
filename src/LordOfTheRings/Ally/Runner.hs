@@ -8,7 +8,7 @@ import LordOfTheRings.Classes.HasQueue (pushAll)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, DoesNotExhaustToAttack))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
@@ -16,7 +16,9 @@ import LordOfTheRings.Token
 
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
-    Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
+    Exhaust (isTarget attrs -> True) -> do
+      blocked <- elem CannotExhaust <$> getModifiers attrs
+      pure $ attrs & exhaustedL %~ (|| not blocked)
     AttackWith (isTarget attrs -> True) -> do
       spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
       pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
@@ -28,7 +30,9 @@ instance RunMessage AllyAttrs where
     CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> pure $ attrs & exhaustedL .~ True & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
-    Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
+    Ready (isTarget attrs -> True) -> do
+      blocked <- elem CannotReady <$> getModifiers attrs
+      pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown aid card | aid == attrs.allyId -> pure $ attrs & facedownL %~ (card :)
     -- the cards facedown under it go to their owners' discard piles as it leaves play
     Discard (isTarget attrs -> True) -> leaving
