@@ -37,6 +37,10 @@ data WindowMatcher
   | HeroDestroyedWindow Timing
   | AllyDestroyedWindow Timing
   | EnemyRevealedWindow Timing
+  | -- | an enemy with the trait revealed from the encounter deck, as Goblin Tunnels reads
+    EnemyWithTraitRevealedWindow Timing Trait
+  | -- | any enemy engaged with any player, as Knees of the Mountain reads
+    AnyEnemyEngagedWindow Timing
   | TreacheryRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
@@ -106,6 +110,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PhaseBeginsWindow t phase, PhaseBegins phase') -> t == timing && phase == phase'
   (CommittedToQuestWindow t target, CommittedToQuest target') -> t == timing && target == target'
   (EnemyEngagedWindow t eid, EnemyEngaged eid' _) -> t == timing && eid == eid'
+  (AnyEnemyEngagedWindow t, EnemyEngaged _ _) -> t == timing
   (PlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid == pid'
   (OptionallyEngagedWindow t pid, OptionallyEngaged _ pid') -> t == timing && pid == pid'
   (EnemyEntersStagingAreaWindow t, EntersStagingArea (EnemyTarget _)) -> t == timing
@@ -160,5 +165,6 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
+  (EnemyWithTraitRevealedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
   _ -> False
