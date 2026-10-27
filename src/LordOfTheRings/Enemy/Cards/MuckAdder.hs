@@ -14,7 +14,7 @@ muckAdder = enemy MuckAdder Cards.muckAdder
 -- Shadow: Defending character gets -1 defense for the duration of this attack.
 instance RunMessage MuckAdder where
   runMessage msg e@(MuckAdder attrs) = case msg of
-    DealDamage (EnemySource eid) target n | eid == attrs.id, n > 0, isCharacter target -> do
+    DoStep 1 (DealDamage (EnemySource eid) target n) | eid == attrs.id, n > 0, isCharacter target -> do
       discard target
       pure e
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do

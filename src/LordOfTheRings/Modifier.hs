@@ -103,6 +103,13 @@ data ModifierType
   | -- | on the game: resources of any sphere may be spent as this sphere's
     ResourcesSpendableAs Sphere
   | CannotBeHealed
+  | -- | on a character or enemy: damage dealt to it is canceled
+    CannotTakeDamage
+  | -- | on an enemy: the damage of attacks on it is canceled
+    CannotTakeCombatDamage
+  | -- | on an enemy: characters attacking it with ranged, engaged with another player,
+    -- add nothing to the attack
+    ImmuneToRangedDamage
   | -- | on a character: no single effect heals it of more than this
     HealLimit Int
   | -- | on an enemy: only characters with the trait or the keyword can attack it or defend

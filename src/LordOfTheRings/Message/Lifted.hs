@@ -167,6 +167,14 @@ cancelWhenRevealed t = cancelMatching \case
   AskToResolveWhenRevealed t' _ -> t == t'
   _ -> False
 
+{- | Cancel damage about to be dealt to the target, from the window before it is dealt, as
+"before Patrol Leader is dealt damage ... cancel that damage" reads.
+-}
+cancelDamage :: (MonadTrans t, HasQueue Message m, Targetable target) => target -> t m ()
+cancelDamage target = cancelMatching \case
+  DoStep 1 (DealDamage _ t _) -> t == toTarget target
+  _ -> False
+
 -- | Heal all the damage on a character.
 healAllDamage :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()
 healAllDamage source target = healDamage source target =<< getDamage (toTarget target)

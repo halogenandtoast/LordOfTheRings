@@ -311,18 +311,20 @@ runGameMessage msg g = case msg of
     pure $ g & outcomeL ?~ outcome
   Discard target -> discardTarget target g
   DealDamage source target n | n > 0 -> do
+    mods <- getModifiers target
     -- damage another character takes in its place, as Song of Mocking's
-    redirected <-
-      filter (inPlay g)
-        . mapMaybe (\case DamageRedirectedTo t -> Just t; _ -> Nothing)
-        <$> getModifiers target
-    pushAll $ case redirected of
+    let redirected = filter (inPlay g) [t | DamageRedirectedTo t <- mods]
+    -- before it is dealt, a Forced effect may cancel it, as Patrol Leader's: see 'cancelDamage'
+    unless (CannotTakeDamage `elem` mods) $ pushAll $ case redirected of
       t : _ -> [DealDamage source t n]
-      [] ->
-        [ PlaceTokens source target Damage n
-        , CheckWindows [mkAfter $ DealtDamage target n]
-        , CheckDefeated target
-        ]
+      [] -> [CheckWindows [mkWhen $ DealtDamage target n], DoStep 1 msg]
+    pure g
+  DoStep 1 (DealDamage source target n) -> do
+    pushAll
+      [ PlaceTokens source target Damage n
+      , CheckWindows [mkAfter $ DealtDamage target n]
+      , CheckDefeated target
+      ]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
@@ -703,7 +705,14 @@ runGameMessage msg g = case msg of
       -- the enemy left play before the attack resolved: the attackers just stop
       Nothing -> pushAll (map StopAttacking attackers)
       Just enemy' -> do
-        attack <- getAttackStrength attackers eid (toCardDef enemy')
+        mods <- getModifiers eid
+        -- an enemy immune to ranged damage counts only the attackers of the player it is
+        -- engaged with
+        counted <-
+          if ImmuneToRangedDamage `elem` mods
+            then filterM (fmap (== Just (fromMaybe pid $ placementController enemy'.placement)) . characterController) attackers
+            else pure attackers
+        attack <- getAttackStrength counted eid (toCardDef enemy')
         alone <- case attackers of
           [a] -> elem IgnoresDefenseWhenAttackingAlone <$> getModifiers a
           _ -> pure False
@@ -719,8 +728,8 @@ runGameMessage msg g = case msg of
               =<< inLogBlock
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
-                    <> [ DealDamage (PlayerSource pid) (toTarget eid) (attack - defense)
-                       , AttackResolved eid (placementController enemy'.placement) attackers traits
+                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | CannotTakeCombatDamage `notElem` mods]
+                    <> [ AttackResolved eid (placementController enemy'.placement) attackers traits
                        ]
                     <> [ CheckWindows
                            $ [mkAfter $ AttackedEnemy a eid | a <- attackers]

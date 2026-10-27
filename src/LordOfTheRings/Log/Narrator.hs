@@ -91,7 +91,7 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]
   -- \* Damage and tokens
-  DealDamage source target n | n > 0 -> Just $ whenRef target \t -> do
+  DoStep 1 (DealDamage source target n) | n > 0 -> Just $ whenRef target \t -> do
     mSource <- sourceRefFor source
     one $ mechanic $ pure $ case mSource of
       Just s | s /= t -> ikeyPart "log.takesDamageFrom" ["target" ~> t, "count" ~> n, "source" ~> s]
