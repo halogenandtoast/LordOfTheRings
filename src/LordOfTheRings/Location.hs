@@ -7,6 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Location.Cards.BanksOfTheAnduin
+import LordOfTheRings.Location.Cards.GoblinTunnels
 import LordOfTheRings.Location.Cards.EnchantedStream
 import LordOfTheRings.Location.Cards.EndlessCaverns
 import LordOfTheRings.Location.Cards.ForestGate
@@ -76,6 +77,7 @@ allLocations =
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
         [ SomeLocationCard greatForestWeb
+        , SomeLocationCard goblinTunnels
         , SomeLocationCard mountainsOfMirkwood
         , SomeLocationCard theBrownLands
         , SomeLocationCard theEastBight

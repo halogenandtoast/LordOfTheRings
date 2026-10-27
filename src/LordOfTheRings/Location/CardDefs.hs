@@ -14,6 +14,7 @@ allLocationCards =
     map
       (\def -> (cdCardCode def, def))
       [ greatForestWeb
+      , goblinTunnels
       , mountainsOfMirkwood
       , theBrownLands
       , theEastBight
@@ -53,6 +54,13 @@ allLocationCards =
       , woodElfPath
       , plunderedArmoury
       ]
+
+goblinTunnels :: CardDef
+goblinTunnels =
+  (location "03063" "Goblin Tunnels" GoblinsOfTheDeep 2 2 7)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdShadowEffect = True
+    }
 
 greatForestWeb :: CardDef
 greatForestWeb =

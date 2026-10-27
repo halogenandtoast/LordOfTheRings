@@ -14,6 +14,8 @@ allEnemyCards =
     map
       (\def -> (cdCardCode def, def))
       [ kingSpider
+      , goblinScout
+      , goblinSwordsman
       , hummerhorns
       , ungoliantsSpawn
       , wolfRider
@@ -50,6 +52,19 @@ allEnemyCards =
       , goblinSpearman
       , goblinArcher
       ]
+
+goblinScout :: CardDef
+goblinScout =
+  (enemy "03060" "Goblin Scout" GoblinsOfTheDeep 3 37 3 1 0 2)
+    { cdCardTraits = setFromList [Goblin, Orc, Scout]
+    }
+
+goblinSwordsman :: CardDef
+goblinSwordsman =
+  (enemy "03061" "Goblin Swordsman" GoblinsOfTheDeep 5 20 1 3 1 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
 
 kingSpider :: CardDef
 kingSpider =

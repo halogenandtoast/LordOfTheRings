@@ -28,6 +28,9 @@
   "commitCharacters": "Commit characters to the quest",
   "doneCommitting": "Done committing",
   "useResponse": "Use a response?",
+  "watchfulEyes": {
+    "attach": "Attach Watchful Eyes to one of your heroes"
+  },
   "pass": "Pass",
   "undisturbedBones": {
     "ally": "Choose an ally to take the damage"

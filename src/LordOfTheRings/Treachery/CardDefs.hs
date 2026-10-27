@@ -14,6 +14,7 @@ allTreacheryCards =
     map
       (\def -> (cdCardCode def, def))
       [ eyesOfTheForest
+      , watchfulEyes
       , caughtInAWeb
       , despair
       , drivenByShadow
@@ -46,6 +47,12 @@ allTreacheryCards =
       , wastedProvisions
       , undisturbedBones
       ]
+
+watchfulEyes :: CardDef
+watchfulEyes =
+  (treachery "03062" "Watchful Eyes" GoblinsOfTheDeep 3)
+    { cdEasyModeQuantity = Just 0
+    }
 
 eyesOfTheForest :: CardDef
 eyesOfTheForest =

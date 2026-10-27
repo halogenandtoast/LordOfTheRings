@@ -7,6 +7,8 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.Cards.BlackForestBats
+import LordOfTheRings.Enemy.Cards.GoblinScout
+import LordOfTheRings.Enemy.Cards.GoblinSwordsman
 import LordOfTheRings.Enemy.Cards.CavernGuardian
 import LordOfTheRings.Enemy.Cards.ChieftanUfthak
 import LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
@@ -74,6 +76,8 @@ allEnemys =
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
         [ SomeEnemyCard kingSpider
+        , SomeEnemyCard goblinScout
+        , SomeEnemyCard goblinSwordsman
         , SomeEnemyCard hummerhorns
         , SomeEnemyCard ungoliantsSpawn
         , SomeEnemyCard wolfRider
