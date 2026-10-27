@@ -14,6 +14,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window (WindowType (Exhausted), mkAfter)
 
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
@@ -28,14 +29,14 @@ instance RunMessage HeroAttrs where
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
     Exhaust (isTarget attrs -> True) -> do
       blocked <- elem CannotExhaust <$> getModifiers attrs
-      pure $ attrs & exhaustedL %~ (|| not blocked)
+      exhausting (not blocked) attrs
     AttackWith (isTarget attrs -> True) -> do
       spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
-      pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
+      (attackingL .~ True) <$> exhausting (not spared) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
       free <- doesNotExhaustToCommit (toTarget attrs) (toCardDef attrs)
-      pure $ attrs & exhaustedL %~ (|| not free) & committedL .~ True
+      (committedL .~ True) <$> exhausting (not free) attrs
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
@@ -46,3 +47,11 @@ instance RunMessage HeroAttrs where
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
+
+-- | The character exhausts, when it does, opening the window for responses to it exhausting.
+exhausting :: HasQueue Message m => Bool -> HeroAttrs -> m HeroAttrs
+exhausting exhausts attrs
+  | exhausts && not attrs.heroExhausted = do
+      push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
+      pure $ attrs & exhaustedL .~ True
+  | otherwise = pure attrs

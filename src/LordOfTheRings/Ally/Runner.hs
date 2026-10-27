@@ -4,7 +4,7 @@ module LordOfTheRings.Ally.Runner (module X) where
 
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Card.CardDef (HasCardDef (..))
-import LordOfTheRings.Classes.HasQueue (pushAll)
+import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
@@ -13,19 +13,20 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window (WindowType (Exhausted), mkAfter)
 
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
     Exhaust (isTarget attrs -> True) -> do
       blocked <- elem CannotExhaust <$> getModifiers attrs
-      pure $ attrs & exhaustedL %~ (|| not blocked)
+      exhausting (not blocked) attrs
     AttackWith (isTarget attrs -> True) -> do
       spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
-      pure $ attrs & exhaustedL %~ (|| not spared) & attackingL .~ True
+      (attackingL .~ True) <$> exhausting (not spared) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
       free <- doesNotExhaustToCommit (toTarget attrs) (toCardDef attrs)
-      pure $ attrs & exhaustedL %~ (|| not free) & committedL .~ True
+      (committedL .~ True) <$> exhausting (not free) attrs
     -- an ally put into play committed is aimed at by its card
     CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> pure $ attrs & exhaustedL .~ True & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
@@ -47,3 +48,11 @@ instance RunMessage AllyAttrs where
     leaving = do
       pushAll $ map PutInDiscard attrs.allyFacedown
       pure $ attrs & facedownL .~ []
+
+-- | The character exhausts, when it does, opening the window for responses to it exhausting.
+exhausting :: HasQueue Message m => Bool -> AllyAttrs -> m AllyAttrs
+exhausting exhausts attrs
+  | exhausts && not attrs.allyExhausted = do
+      push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
+      pure $ attrs & exhaustedL .~ True
+  | otherwise = pure attrs
