@@ -14,7 +14,7 @@ import LordOfTheRings.Game.Base
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Source (isPlayerCardSource)
+import LordOfTheRings.Source (isPlayerCardSource, sourceTarget)
 import LordOfTheRings.Target
 
 -- | Collect every constant ability and lasting effect into the modifier cache.
@@ -43,7 +43,11 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           [(AllyTarget (toId a), ms) | a <- toList es.allies, Just ms <- [Map.lookup (CardIdTarget $ allyCardId $ toAttrs a) fromEffects]]
-      all' = Map.unionsWith (<>) [fromEntities, fromEffects, followed]
+      -- a card whose text box is blank gives no modifiers from its constant effects, as
+      -- Arkham's applyBlank; lasting effects it already created stay
+      blanked = Map.keysSet $ Map.filter (any ((== Blank) . modifierType)) fromEntities
+      ownText m = maybe False (`member` blanked) (sourceTarget $ modifierSource m)
+      all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed]
       -- a card immune to player card effects keeps none of their modifiers
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
       unaffected ms = if immune ms then filter (not . isPlayerCardSource . modifierSource) ms else ms

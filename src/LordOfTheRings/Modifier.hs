@@ -112,6 +112,9 @@ data ModifierType
   | CannotCommitToQuest
   | -- | on a card in play: its abilities cannot be used, nor its Forced effects trigger
     CannotTriggerAbilities
+  | -- | on a card in play: its printed text box is treated as blank, as Arkham's: it has no
+    -- abilities or keywords, and its constant effects give no modifiers
+    Blank
   | -- | on a hero
     CannotCollectResources
   | -- | on the game: resources of any sphere may be spent as this sphere's

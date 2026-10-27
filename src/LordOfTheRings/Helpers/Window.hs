@@ -16,7 +16,7 @@ import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (
-  ModifierType (BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -53,7 +53,8 @@ getAllAbilities = do
           , leftPlayAbilities
           ]
   -- a card a condition has blanked offers none
-  flip filterM abilities \ab -> notElem CannotTriggerAbilities <$> maybe (pure []) getModifiers (sourceTarget ab.abilitySource)
+  flip filterM abilities \ab ->
+    not . any (`elem` [CannotTriggerAbilities, Blank]) <$> maybe (pure []) getModifiers (sourceTarget ab.abilitySource)
 
 -- | Abilities whose window matches one of the windows and that can be used right now.
 getWindowAbilities :: HasGame m => [Window] -> m [Ability]

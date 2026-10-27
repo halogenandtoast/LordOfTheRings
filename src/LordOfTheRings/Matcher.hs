@@ -294,10 +294,10 @@ allyPayersFor pid card = do
 
 -- | A printed keyword, or one a modifier grants.
 hasKeyword :: HasGame m => Keyword -> Target -> CardDef -> m Bool
-hasKeyword k target def
-  | k `member` cdKeywords def = pure True
-  | otherwise =
-      elem (GainKeyword k) . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+hasKeyword k target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  -- a blank text box has no printed keywords
+  pure $ GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods)
 
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
