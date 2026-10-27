@@ -12,8 +12,11 @@ import LordOfTheRings.Card (Card (..), EncounterCard, IsCard (..), PlayerCard)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
-import LordOfTheRings.Game.Base (gamePhase)
+import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
+import LordOfTheRings.Game.Base (gameEntities, gamePhase)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Hero.Types ()
+import LordOfTheRings.I18n (intVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -702,3 +705,34 @@ immediateAttack pid eid = do
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
 
+-- | The player deals the damage to 1 character they control, as "each player must deal 3
+-- damage to 1 character he controls" reads.
+dealDamageToOneCharacter :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> Int -> m ()
+dealDamageToOneCharacter source pid n = do
+  characters <- charactersControlledBy pid
+  chooseOneM pid do
+    questionLabeledWith "dealDamageToOneCharacter" [intVar "n" n]
+    causedBy source
+    targets characters \c -> dealDamage source c n
+
+-- | Remove all progress tokens from play: from the quest and every location, but those
+-- immune to card effects.
+removeAllProgress :: (ReverseQueue m, Sourceable source) => source -> m ()
+removeAllProgress source = do
+  quests <- getsGame (toList . entitiesQuests . gameEntities)
+  for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress q.progress
+  locations <- getsGame (toList . entitiesLocations . gameEntities)
+  for_ locations \l -> do
+    immune <- elem ImmuneToCardEffects <$> getModifiers l
+    when (l.progress > 0 && not immune) $ removeTokens source l Progress l.progress
+
+-- | The player discards every card in their hand.
+discardHand :: ReverseQueue m => PlayerId -> m ()
+discardHand pid = traverse_ (discardFromHand pid) . (.hand) =<< getPlayer pid
+
+-- | The card leaves the encounter discard pile for the staging area, as "return the top 2
+-- Goblin enemies in the encounter discard pile to the staging area" reads.
+addToStagingFromDiscard :: ReverseQueue m => EncounterCard -> m ()
+addToStagingFromDiscard card = do
+  removeFromEncounterDiscard card
+  addToStaging card

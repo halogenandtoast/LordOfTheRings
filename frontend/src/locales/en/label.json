@@ -1,5 +1,6 @@
 {
   "choosePlayer": "Choose a player",
+  "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
   "travelToLocation": "Travel to a location?",
   "doNotTravel": "Do not travel",
@@ -273,9 +274,6 @@
   },
   "dolGuldurOrcs": {
     "damage": "Deal 2 damage to a committed character"
-  },
-  "goblinSniper": {
-    "damage": "Deal 1 damage to a character you control"
   },
   "blackForestBats": {
     "remove": "Remove a character from the quest"

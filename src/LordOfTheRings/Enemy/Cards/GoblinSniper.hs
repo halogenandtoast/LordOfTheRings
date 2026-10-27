@@ -25,11 +25,6 @@ instance HasAbilities GoblinSniper where
 instance RunMessage GoblinSniper where
   runMessage msg e@(GoblinSniper attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      eachPlayer \p -> do
-        characters <- charactersControlledBy p
-        chooseOneM p do
-          questionLabeled "goblinSniper.damage"
-          causedBy attrs
-          targets characters \c -> dealDamage attrs c 1
+      eachPlayer \p -> dealDamageToOneCharacter attrs p 1
       pure e
     _ -> GoblinSniper <$> runMessage msg attrs

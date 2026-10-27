@@ -44,8 +44,6 @@ instance RunMessage CaveTorch where
       discardTopOfEncounterDeck attrs 1
       pure o
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
-      for_ (filter ((== EnemyType) . cdCardType . toCardDef) cards) \c -> do
-        removeFromEncounterDiscard c
-        addToStaging c
+      traverse_ addToStagingFromDiscard $ filter ((== EnemyType) . cdCardType . toCardDef) cards
       pure o
     _ -> CaveTorch <$> runMessage msg attrs

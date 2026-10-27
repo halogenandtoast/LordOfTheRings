@@ -35,8 +35,6 @@ instance RunMessage TheFateOfBalin where
       discardTopOfEncounterDeck attrs players
       pure q
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
-      for_ [c | c <- cards, cdCardType (toCardDef c) == EnemyType] \enemy -> do
-        removeFromEncounterDiscard enemy
-        addToStaging enemy
+      traverse_ addToStagingFromDiscard [c | c <- cards, cdCardType (toCardDef c) == EnemyType]
       pure q
     _ -> TheFateOfBalin <$> runMessage msg attrs
