@@ -162,6 +162,7 @@ matchAlly matcher ally = case matcher of
   AnyAlly -> pure True
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms
+  AllyMatchAny ms -> anyM (`matchAlly` ally) ms
 
 instance Query EnemyMatcher where
   type QueryElement EnemyMatcher = EnemyId
@@ -333,6 +334,10 @@ getLocation lid =
 
 getLead :: HasGame m => m PlayerId
 getLead = getsGame gameFirstPlayer
+
+-- | The last player: the last still in the game in turn order from the first player.
+getLastPlayer :: HasGame m => m PlayerId
+getLastPlayer = maybe getLead pure . lastMay =<< getRemainingPlayers
 
 -- | Players in turn order, starting with the first player.
 getPlayerOrder :: HasGame m => m [PlayerId]

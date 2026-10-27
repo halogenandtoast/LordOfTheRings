@@ -25,6 +25,8 @@ data WindowMatcher
   | AnyTraveledWindow Timing
   | -- | an enemy destroyed by an attack, by any attackers or with the given one among them
     EnemyDestroyedByAttackWindow Timing (Maybe Target)
+  | -- | an enemy with the trait destroyed by an attack the character was among
+    EnemyWithTraitDestroyedByAttackWindow Timing Trait Target
   | {- | an enemy engaged with a player other than the given one, destroyed by an attack
     the character was among
     -}
@@ -106,7 +108,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
-  (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers) -> t == timing && maybe True (`elem` attackers) who
+  (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers _) -> t == timing && maybe True (`elem` attackers) who
+  (EnemyWithTraitDestroyedByAttackWindow t trait who, EnemyDestroyedByAttack _ attackers traits) ->
+    t == timing && trait `member` traits && who `elem` attackers
   (EnemyOfOtherPlayerDestroyedByAttackWindow t pid who, EngagedEnemyDestroyedByAttack pid' attackers) -> t == timing && pid /= pid' && who `elem` attackers
   (CharacterDestroyedWindow t, CharacterDestroyed _ _) -> t == timing
   (HeroDestroyedWindow t, CharacterDestroyed (HeroTarget _) _) -> t == timing

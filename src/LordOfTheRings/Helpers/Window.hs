@@ -75,7 +75,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (LeftPlaySharingTraitWindow t host, LeftPlay _ _ traits) | t == timing -> do
     def <- hostDef host
     anyM (\trait -> hasTrait trait host def) (toList traits)
-  (EnemyDestroyedByHeroWindow t m, EnemyDestroyedByAttack _ attackers)
+  (EnemyDestroyedByHeroWindow t m, EnemyDestroyedByAttack _ attackers _)
     | t == timing ->
         anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
@@ -165,6 +165,7 @@ passesCriteria = \case
   TargetLacksModifier t m -> notElem m <$> getModifiers t
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs
+  CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   Criteria cs -> allM passesCriteria cs
   AnyCriteria cs -> anyM passesCriteria cs
 

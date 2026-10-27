@@ -105,6 +105,8 @@ data AllyMatcher
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]
+  | -- | an ally matching any of them
+    AllyMatchAny [AllyMatcher]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

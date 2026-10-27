@@ -706,6 +706,7 @@ runGameMessage msg g = case msg of
           _ -> pure False
         defense <- if alone then pure 0 else getEnemyDefense eid
         hitPoints <- getEnemyHitPoints eid
+        traits <- (cdCardTraits (toCardDef enemy') <>) <$> gainedTraits (toTarget eid)
         -- what a lone attack deals beyond the enemy's remaining hit points, as Firefoot reads
         let excess = max 0 $ attack - defense - (hitPoints - enemy'.damage)
         if null attackers
@@ -716,7 +717,7 @@ runGameMessage msg g = case msg of
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
                     <> [ DealDamage (PlayerSource pid) (toTarget eid) (attack - defense)
-                       , AttackResolved eid (placementController enemy'.placement) attackers
+                       , AttackResolved eid (placementController enemy'.placement) attackers traits
                        ]
                     <> [ CheckWindows
                            $ [mkAfter $ AttackedEnemy a eid | a <- attackers]
@@ -724,9 +725,9 @@ runGameMessage msg g = case msg of
                        ]
                 )
     pure g
-  AttackResolved eid engaged attackers -> do
+  AttackResolved eid engaged attackers traits -> do
     destroyed <- not <$> selectAny (EnemyWithId eid)
-    pushWhen destroyed $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers)
+    pushWhen destroyed $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
       : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
     pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   -- a defender that left play before the damage leaves the attack undefended

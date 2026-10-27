@@ -16,6 +16,7 @@ import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Trait (Trait)
 import LordOfTheRings.Window
 
 data DeckSignifier = EncounterDeck
@@ -310,8 +311,9 @@ data Message
     DeclareRangedAttackers PlayerId EnemyId [PlayerId]
   | AttackWith Target
   | ResolveAttack PlayerId EnemyId
-  | -- | an attack on the enemy resolved: the player it was engaged with, and the attackers
-    AttackResolved EnemyId (Maybe PlayerId) [Target]
+  | -- | an attack on the enemy resolved: the player it was engaged with, the attackers, and
+    -- the enemy's traits
+    AttackResolved EnemyId (Maybe PlayerId) [Target] (Set Trait)
   | AttackStagingAreaAlone PlayerId Target
   | StopAttacking Target
   | Ready Target

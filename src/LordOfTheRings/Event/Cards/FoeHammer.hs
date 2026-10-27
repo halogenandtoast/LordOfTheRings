@@ -21,7 +21,7 @@ instance RunMessage FoeHammer where
   runMessage msg e@(FoeHammer attrs) = case msg of
     PlayEvent pid card windows | card.id == toId attrs -> do
       mine <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
-      let heroes = [h | Window _ (EnemyDestroyedByAttack _ attackers) <- windows, h <- attackers, h `elem` mine]
+      let heroes = [h | Window _ (EnemyDestroyedByAttack _ attackers _) <- windows, h <- attackers, h `elem` mine]
       weapons <- concatMapM (attachedWithTrait Weapon) heroes
       readyWeapons <- flip filterM weapons \case
         AttachmentTarget aid -> not . attachmentExhausted . toAttrs <$> getsGame (fromJustNote "no attachment" . lookup aid . (.entities.attachments))

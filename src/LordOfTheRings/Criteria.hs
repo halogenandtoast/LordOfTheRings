@@ -39,6 +39,8 @@ data Criterion
   | -- | a different character for each pair of matchers, heroes and allies: "a Rohan
     -- character and another Gondor character"
     DistinctCharacters [(HeroMatcher, AllyMatcher)]
+  | -- | a matching card is in the victory display
+    CardInVictoryDisplay CardMatcher
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   deriving stock (Show, Eq, Generic)

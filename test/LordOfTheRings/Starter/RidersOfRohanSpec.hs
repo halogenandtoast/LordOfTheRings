@@ -234,7 +234,7 @@ spec = describe "Riders of Rohan" do
       horse <- putAttachmentOn pid Attachments.rohanWarhorse eomer
       run $ Exhaust eomer
       eid <- getRandom
-      run $ CheckWindows [mkAfter $ EnemyDestroyedByAttack eid [eomer]]
+      run $ CheckWindows [mkAfter $ EnemyDestroyedByAttack eid [eomer] mempty]
       chooseAbilityOf pid horse
       exhausted eomerCode `shouldReturn` False
 

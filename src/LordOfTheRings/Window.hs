@@ -29,8 +29,8 @@ data WindowType
   | Traveled LocationId
   | DeclaredAsDefender Target EnemyId
   | DeclaredAsAttacker Target EnemyId
-  | -- | an attack destroyed the enemy: the characters that attacked
-    EnemyDestroyedByAttack EnemyId [Target]
+  | -- | an attack destroyed the enemy: the characters that attacked, and its traits as it left
+    EnemyDestroyedByAttack EnemyId [Target] (Set Trait)
   | -- | an attack destroyed an enemy engaged with the player: the characters that attacked
     EngagedEnemyDestroyedByAttack PlayerId [Target]
   | CharacterDestroyed Target Card
