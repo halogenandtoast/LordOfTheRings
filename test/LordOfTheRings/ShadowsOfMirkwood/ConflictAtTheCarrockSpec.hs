@@ -11,7 +11,6 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
-import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (conflictAtTheCarrock)
 import LordOfTheRings.Scenario.Types (scenarioSetAside)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -25,9 +24,6 @@ hero code = toTarget <$> getHeroWithCode code
 
 codesOf :: [EncounterCard] -> [CardCode]
 codesOf = map toCardCode
-
-enemyCodes :: GameT [CardCode]
-enemyCodes = getsGame (map toCardCode . toList . (.entities.enemies))
 
 spec :: Spec
 spec = describe "Conflict at the Carrock" do

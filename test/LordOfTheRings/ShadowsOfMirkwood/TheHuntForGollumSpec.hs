@@ -53,8 +53,8 @@ spec = describe "The Hunt for Gollum" do
     resolveRevealed
     deck <- length <$> getEncounterDeck
     discard <- length <$> getEncounterDiscard
-    inPlay <- getsGame (\g -> length g.entities.enemies + length g.entities.locations + length g.entities.objectives)
-    (deck < 48 && (discard + inPlay) >= 1) `shouldBe` True
+    inPlayCount <- getsGame (\g -> length g.entities.enemies + length g.entities.locations + length g.entities.objectives)
+    (deck < 48 && (discard + inPlayCount) >= 1) `shouldBe` True
 
   it "reveals 1 of the top 3 cards after questing successfully at The Hunt Begins" . huntTest $ \pid -> do
     _ <- putQuestStage Quests.theHuntBegins

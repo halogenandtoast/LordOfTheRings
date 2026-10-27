@@ -112,6 +112,6 @@ spec = describe "The Hills of Emyn Muil" do
     chooseAbilityOf pid gildor
     chooseTarget pid fromDeck
     chooseTarget pid fromHand
-    after <- getPlayer pid
-    take 1 (map (.id) after.deck) `shouldBe` [fromHand.id]
-    (fromDeck.id `elem` map (.id) after.hand) `shouldBe` True
+    updated <- getPlayer pid
+    take 1 (map (.id) updated.deck) `shouldBe` [fromHand.id]
+    (fromDeck.id `elem` map (.id) updated.hand) `shouldBe` True
