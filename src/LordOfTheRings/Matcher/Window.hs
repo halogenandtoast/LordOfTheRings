@@ -14,6 +14,8 @@ data WindowMatcher
   = EntersPlayWindow Timing Target
   | PhaseBeginsWindow Timing Phase
   | CommittedToQuestWindow Timing Target
+  | -- | any character committed to the quest, as The Water's Edge reads
+    AnyCommittedToQuestWindow Timing
   | EnemyEngagedWindow Timing EnemyId
   | -- | any enemy engaged with the player
     PlayerEngagedEnemyWindow Timing PlayerId
@@ -109,6 +111,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EntersPlayWindow t target, EntersPlay target') -> t == timing && target == target'
   (PhaseBeginsWindow t phase, PhaseBegins phase') -> t == timing && phase == phase'
   (CommittedToQuestWindow t target, CommittedToQuest target') -> t == timing && target == target'
+  (AnyCommittedToQuestWindow t, CommittedToQuest _) -> t == timing
   (EnemyEngagedWindow t eid, EnemyEngaged eid' _) -> t == timing && eid == eid'
   (AnyEnemyEngagedWindow t, EnemyEngaged _ _) -> t == timing
   (PlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid == pid'
