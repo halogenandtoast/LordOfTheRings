@@ -14,6 +14,9 @@ import LordOfTheRings.Trait
 data ModifierType
   = WillpowerModifier Int
   | AttackModifier Int
+  | -- | on an enemy: its attack is raised by this much when undefended, as Goblin
+    -- Swordsman's
+    AttackModifierIfUndefended Int
   | DefenseModifier Int
   | HitPointModifier Int
   | ThreatModifier Int

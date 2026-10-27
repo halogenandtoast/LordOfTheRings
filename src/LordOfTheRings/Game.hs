@@ -596,7 +596,7 @@ runGameMessage msg g = case msg of
       <> windows
     pure g
   UndefendedDamage pid eid -> do
-    attack <- getEnemyAttack eid
+    attack <- (+) <$> getEnemyAttack eid <*> (sum . (\ms -> [n | AttackModifierIfUndefended n <- ms]) <$> getModifiers eid)
     -- the enemy's, or the player's, as guarding Gollum makes it
     redirected <-
       filter (inPlay g)
