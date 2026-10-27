@@ -270,6 +270,11 @@ runGameMessage msg g = case msg of
       pushEnd BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
   BeginPhase RefreshPhase -> do
+    -- an enemy with regenerate heals as much damage
+    regenerating <- for (toList g.entities.enemies) \e -> do
+      mods <- getModifiers e
+      let printed = [n | Blank `notElem` mods, Regenerate n <- toList (cdKeywords $ toCardDef e)]
+      pure [HealDamage (toSource e) (toTarget e) n | n <- printed <> [n | GainKeyword (Regenerate n) <- mods]]
     heroes <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) =<< select ExhaustedHero
     allies <- select ExhaustedAlly
     players <- getPlayerOrder
@@ -281,7 +286,8 @@ runGameMessage msg g = case msg of
       traits <- characterTraits c
       pure [Ready c, CheckWindows [mkAfter $ Readied c traits]]
     pushAll
-      $ concat readied
+      $ concat regenerating
+      <> concat readied
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
       <> [RaiseThreat pid 1 | pid <- players]

@@ -8,6 +8,8 @@ data Keyword
     FirstPlayerGainsControl
   | Guarded
   | Ranged
+  | -- | on an enemy: it heals this much damage as the refresh phase begins
+    Regenerate Int
   | Restricted
   | Sentinel
   | Surge

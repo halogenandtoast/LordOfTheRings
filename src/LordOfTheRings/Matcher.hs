@@ -446,6 +446,7 @@ getDamage :: HasGame m => Target -> m Int
 getDamage = \case
   HeroTarget hid -> maybe 0 (.damage) . Map.lookup hid <$> getsGame (entitiesHeroes . gameEntities)
   AllyTarget aid -> maybe 0 (.damage) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
+  EnemyTarget eid -> maybe 0 (.damage) . Map.lookup eid <$> getsGame (entitiesEnemies . gameEntities)
   _ -> pure 0
 
 -- | Characters with damage to heal.
