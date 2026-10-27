@@ -9,7 +9,7 @@ module LordOfTheRings.Scenario.Scenarios.ShadowAndFlame.Helpers (
   attachToDurinsBane,
 ) where
 
-import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Card (cdUnique, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Staging (getEnemyHitPoints)
@@ -50,12 +50,12 @@ unlessQuestingHeroLeaves source effect = do
     targets questing removeFromQuest
 
 {- | The treachery attaches itself to Durin's Bane, as Fiery Sword and Many Thonged Whip
-read. Each is unique, so with a copy already on it the new one does not attach, and is
-discarded.
+read. A unique one with a copy already on it does not attach, and is discarded; Counter-spell
+is not unique, so each copy attaches.
 -}
 attachToDurinsBane :: ReverseQueue m => TreacheryAttrs -> m ()
 attachToDurinsBane attrs = do
   bane <- getDurinsBane
   for_ bane \eid -> do
     copies <- treacheriesOn attrs.treacheryCardCode (toTarget eid)
-    when (null copies) $ attachTreachery attrs.treacheryId eid
+    when (null copies || not (cdUnique $ toCardDef attrs)) $ attachTreachery attrs.treacheryId eid

@@ -79,6 +79,7 @@ allTreacheryCards =
       , innerShadow
       , whipLash
       , leapingFlame
+      , counterSpell
       , fierySword
       , manyThongedWhip
       , illPurpose
@@ -458,6 +459,9 @@ firesInTheDeep =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+counterSpell :: CardDef
+counterSpell = (treachery "04145" "Counter-Spell" ShadowAndFlame 3) {cdCardTraits = setFromList [Shadow]}
 
 innerFlame :: CardDef
 innerFlame = (treachery "04146" "Inner Flame" ShadowAndFlame 3) {cdShadowEffect = True}

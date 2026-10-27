@@ -72,6 +72,7 @@ import LordOfTheRings.Treachery.Cards.InnerFlame
 import LordOfTheRings.Treachery.Cards.InnerShadow
 import LordOfTheRings.Treachery.Cards.WhipLash
 import LordOfTheRings.Treachery.Cards.LeapingFlame
+import LordOfTheRings.Treachery.Cards.CounterSpell
 import LordOfTheRings.Treachery.Cards.FierySword
 import LordOfTheRings.Treachery.Cards.ManyThongedWhip
 import LordOfTheRings.Treachery.Cards.IllPurpose
@@ -173,6 +174,7 @@ allTreacherys =
         , SomeTreacheryCard innerShadow
         , SomeTreacheryCard whipLash
         , SomeTreacheryCard leapingFlame
+        , SomeTreacheryCard counterSpell
         , SomeTreacheryCard fierySword
         , SomeTreacheryCard manyThongedWhip
         , SomeTreacheryCard illPurpose

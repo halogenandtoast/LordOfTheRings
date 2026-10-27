@@ -2,6 +2,7 @@ module LordOfTheRings.Dwarrowdelf.ShadowAndFlameSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (EnemyMatcher (EnemyEngagedWith), PlayerMatcher (PlayerWithId), select)
@@ -60,6 +61,21 @@ takeUndefended table pid = do
     TargetLabel {} -> True
     _ -> False
   passAll table
+
+-- | Whether Counter-spell is still attached to Durin's Bane.
+counterSpellOn :: EnemyId -> GameT Bool
+counterSpellOn eid =
+  getsGame (any (\t -> toCardCode t == toCardCode Treacheries.counterSpell && t.placement == AttachedTo (toTarget eid)) . toList . (.entities.treacheries))
+
+-- | Counter-spell on Durin's Bane, a card in hand and the encounter deck's top card given,
+-- then Lórien's Wealth played.
+counterSpellPlay :: PlayerId -> CardDef -> GameT (EnemyId, Card)
+counterSpellPlay pid top = do
+  eid <- bane
+  reveal [Treacheries.counterSpell]
+  _ <- putCardIntoHand pid Allies.guardOfTheCitadel
+  _ <- setEncounterDeck [top]
+  (eid,) <$> playWith pid "01012" 3 Events.loriensWealth
 
 spec :: Spec
 spec = describe "Shadow and Flame" do
@@ -189,3 +205,16 @@ spec = describe "Shadow and Flame" do
     _ <- setEncounterDeck [Locations.oldForestRoad]
     run $ EnemyAttacks pid
     length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
+  it "cancels an event and discards its player's hand as Counter-spell discards a treachery" . flameTest $ \pid -> do
+    (eid, card) <- counterSpellPlay pid Treacheries.innerFlame
+    (.hand) <$> getPlayer pid `shouldReturn` []
+    map (.id) . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem card.id)
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Treacheries.innerFlame))
+    counterSpellOn eid `shouldReturn` False
+
+  it "lets an event resolve as Counter-spell discards a card that is not a treachery" . flameTest $ \pid -> do
+    (eid, _) <- counterSpellPlay pid Locations.oldForestRoad
+    length . (.hand) <$> getPlayer pid `shouldReturn` 4
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Locations.oldForestRoad]
+    counterSpellOn eid `shouldReturn` True
