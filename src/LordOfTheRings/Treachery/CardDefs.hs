@@ -60,6 +60,9 @@ allTreacheryCards =
       , undisturbedBones
       , bitterWind
       , hiddenThreat
+      , illPurpose
+      , disturbedWaters
+      , wrapped
       ]
 
 signsOfConflict :: CardDef
@@ -350,4 +353,21 @@ aFoeBeyond =
   (treachery "03028" "A Foe Beyond" FlightFromMoria 4)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+illPurpose :: CardDef
+illPurpose = (treachery "04070" "Ill Purpose" TheWatcherInTheWater 1) {cdShadowEffect = True}
+
+disturbedWaters :: CardDef
+disturbedWaters =
+  (treachery "04071" "Disturbed Waters" TheWatcherInTheWater 3)
+    { cdKeywords = setFromList [Doomed 5]
+    , cdWhenRevealed = False
+    }
+
+-- | Its database code: Háma has 04076, his RingsDB code.
+wrapped :: CardDef
+wrapped =
+  (treachery "the-watcher-in-the-water-076" "Wrapped!" TheWatcherInTheWater 4)
+    { cdCardTraits = setFromList [Tentacle]
     }
