@@ -509,11 +509,13 @@ library
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
       LordOfTheRings.Quest.Cards.TheHuntBegins
       LordOfTheRings.Quest.Cards.TheNecromancersTower
+      LordOfTheRings.Quest.Cards.TheSeethingLake
       LordOfTheRings.Quest.Cards.TheWoundedEagle
       LordOfTheRings.Quest.Cards.ThroughTheCaverns
       LordOfTheRings.Quest.Cards.ThroughTheForest
       LordOfTheRings.Quest.Cards.ToTheElvenKingsHalls
       LordOfTheRings.Quest.Cards.ToTheRiver
+      LordOfTheRings.Quest.Cards.ToTheWestDoor
       LordOfTheRings.Quest.Import.Lifted
       LordOfTheRings.Quest.Runner
       LordOfTheRings.Quest.Types
@@ -538,6 +540,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheHillsOfEmynMuil
       LordOfTheRings.Scenario.Scenarios.TheHuntForGollum
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
+      LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater.Helpers
       LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
@@ -758,6 +761,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Core.PassageEncounterSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec
+      LordOfTheRings.Dwarrowdelf.TheWatcherInTheWaterSpec
       LordOfTheRings.DwarrowdelfEngineSpec
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec

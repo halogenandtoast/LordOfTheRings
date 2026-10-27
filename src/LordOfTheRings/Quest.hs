@@ -44,6 +44,8 @@ import LordOfTheRings.Quest.Cards.BlockedByShadow
 import LordOfTheRings.Quest.Cards.EscapeFromDarkness
 import LordOfTheRings.Quest.Cards.SearchForTheChamber
 import LordOfTheRings.Quest.Cards.TheFateOfBalin
+import LordOfTheRings.Quest.Cards.ToTheWestDoor
+import LordOfTheRings.Quest.Cards.TheSeethingLake
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -112,5 +114,7 @@ allQuests =
         , SomeQuestCard escapeFromDarkness
         , SomeQuestCard searchForTheChamber
         , SomeQuestCard theFateOfBalin
+        , SomeQuestCard toTheWestDoor
+        , SomeQuestCard theSeethingLake
         ]
     ]

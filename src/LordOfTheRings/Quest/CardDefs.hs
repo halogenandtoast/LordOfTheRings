@@ -50,6 +50,8 @@ allQuestCards =
       , escapeFromDarkness
       , searchForTheChamber
       , theFateOfBalin
+      , toTheWestDoor
+      , theSeethingLake
       ]
 
 enteringTheMines :: CardDef
@@ -170,3 +172,9 @@ blockedByShadow = searchForAnExit "03075" "Blocked by Shadow" 9 Nothing
 
 escapeFromDarkness :: CardDef
 escapeFromDarkness = searchForAnExit "03076" "Escape from Darkness" 4 Nothing
+
+toTheWestDoor :: CardDef
+toTheWestDoor = quest "04063" "To the West-door" TheWatcherInTheWater 1 13
+
+theSeethingLake :: CardDef
+theSeethingLake = quest "04064" "The Seething Lake" TheWatcherInTheWater 2 5
