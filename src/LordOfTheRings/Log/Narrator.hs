@@ -149,6 +149,10 @@ narrationFor = \case
   PutObjectiveIntoPlayAttached card host -> Just $ whenRef host \h ->
     one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> EncounterCard card, "target" ~> h]]
   RemoveFromGame target -> Just $ simply "log.removedFromGame" target
+  PutIntoPlayAsActiveLocation card -> Just $ one $ mechanic [ikeyPart "log.becomesActive" ["location" ~> EncounterCard card]]
+  DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
+    top <- getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
+    pure [mechanic [ikeyPart "log.discardedFromEncounterDeck" ["cards" ~> map EncounterCard top]] | notNull top]
   PutObjectiveIntoPlay card -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid

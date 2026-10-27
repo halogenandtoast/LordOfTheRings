@@ -328,7 +328,42 @@ the rest.
 -}
 revealOneOfTopEncounterCards
   :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
-revealOneOfTopEncounterCards pid source n = push $ RevealOneOfTopEncounterCards pid (toSource source) n
+revealOneOfTopEncounterCards pid source n = push $ RevealOneOfTopEncounterCards pid (toSource source) n False
+
+{- | As 'revealOneOfTopEncounterCards', the rest going to the bottom of the deck, as Branching
+Paths reads.
+-}
+revealOneOfTopEncounterCardsRestToBottom
+  :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
+revealOneOfTopEncounterCardsRestToBottom pid source n = push $ RevealOneOfTopEncounterCards pid (toSource source) n True
+
+{- | Discard the top N cards of the encounter deck; the card reads them back as
+'DiscardedTopOfEncounterDeck' with itself as source and target, as "discard the top card
+of the encounter deck. If it is an enemy..." reads.
+-}
+discardTopOfEncounterDeck :: (ReverseQueue m, Sourceable a, Targetable a) => a -> Int -> m ()
+discardTopOfEncounterDeck a = discardTopOfEncounterDeckFor a a
+
+{- | As 'discardTopOfEncounterDeck', read back on behalf of the target, as "each player
+discards the top card ... the discarding player" reads with each player.
+-}
+discardTopOfEncounterDeckFor
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
+discardTopOfEncounterDeckFor source target n = push $ DiscardTopOfEncounterDeck (toSource source) (toTarget target) n
+
+-- | An encounter card, taken from where it was, becomes the active location, as a setup puts one.
+putIntoPlayAsActiveLocation :: ReverseQueue m => EncounterCard -> m ()
+putIntoPlayAsActiveLocation = push . PutIntoPlayAsActiveLocation
+
+-- | An enemy card, taken from where it was, comes into play engaged with the player.
+putEnemyIntoPlayEngaged :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+putEnemyIntoPlayEngaged pid = push . PutEnemyIntoPlayEngaged pid
+
+removeFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
+removeFromEncounterDeck = push . RemoveFromEncounterDeck
+
+removeFromEncounterDiscard :: ReverseQueue m => EncounterCard -> m ()
+removeFromEncounterDiscard = push . RemoveFromEncounterDiscard
 
 {- | The player pays 1 resource of the sphere or discards the card; with nothing to pay,
 the card is discarded.

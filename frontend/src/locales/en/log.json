@@ -48,6 +48,8 @@
   "destroyed": "{target} is destroyed",
   "discarded": "{target} is discarded",
   "removedFromGame": "{target} is removed from the game",
+  "becomesActive": "{location} becomes the active location",
+  "discardedFromEncounterDeck": "{cards} discarded from the encounter deck",
   "returnsToHand": "{target} returns to its owner's hand",
   "shuffledIntoOwnersDeck": "{target} is shuffled into its owner's deck",
   "shuffledIntoEncounterDeck": "{target} is shuffled into the encounter deck",

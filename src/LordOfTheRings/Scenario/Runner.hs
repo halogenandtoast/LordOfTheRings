@@ -89,15 +89,24 @@ instance RunMessage ScenarioAttrs where
               ]
             else [Label (ikey "label.continue") []]
       pure attrs
-    RevealOneOfTopEncounterCards pid source n -> do
+    RevealOneOfTopEncounterCards pid source n toBottom -> do
       let (top, rest) = splitAt n attrs.encounterDeck
+          others c = filter (/= c) top
       unless (null top)
         $ push
         $ Ask pid
-        $ QuestionLabel (ikey "label.revealOne") (sourceTarget source) []
+        $ QuestionLabel (ikey $ if toBottom then "label.revealOneRestToBottom" else "label.revealOne") (sourceTarget source) []
         $ SearchCards (map EncounterCard top)
-        $ ChooseOne [targetLabel c [RevealCard c, AddToEncounterDiscard (filter (/= c) top)] | c <- top]
+        $ ChooseOne
+          [ targetLabel c [RevealCard c, if toBottom then PutOnBottomOfEncounterDeck (others c) else AddToEncounterDiscard (others c)]
+          | c <- top
+          ]
       pure $ attrs & encounterDeckL .~ rest
+    PutOnBottomOfEncounterDeck cards -> pure $ attrs & encounterDeckL %~ (<> cards)
+    DiscardTopOfEncounterDeck source target n -> do
+      let (top, rest) = splitAt n attrs.encounterDeck
+      push $ DiscardedTopOfEncounterDeck source target top
+      pure $ attrs & encounterDeckL .~ rest & encounterDiscardL %~ (top <>)
     ResetToStage _ rest -> pure $ attrs & questDeckL .~ rest
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
       top : rest -> pure $ attrs & encounterDeckL .~ rest <> [top]

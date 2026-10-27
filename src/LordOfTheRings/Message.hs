@@ -234,9 +234,17 @@ data Message
   | -- | after travel, an action window for each player with a Travel Action to use
     TravelActions
   | {- | the player looks at the top cards of the encounter deck, reveals 1 of them and
-    discards the rest
+    discards the rest, or moves them to the bottom of the deck when the flag says so
     -}
-    RevealOneOfTopEncounterCards PlayerId Source Int
+    RevealOneOfTopEncounterCards PlayerId Source Int Bool
+  | {- | the top cards of the encounter deck are discarded, for the source to read back
+    on behalf of the target, as Arkham's
+    -}
+    DiscardTopOfEncounterDeck Source Target Int
+  | -- | the cards just discarded from the top of the encounter deck
+    DiscardedTopOfEncounterDeck Source Target [EncounterCard]
+  | -- | an encounter card, taken from where it was, becomes the active location
+    PutIntoPlayAsActiveLocation EncounterCard
   | -- | set-aside cards go to the staging area
     AddSetAsideToStaging CardMatcher
   | ShuffleEncounterDiscardIntoDeck CardMatcher
@@ -246,6 +254,7 @@ data Message
   | AddToVictoryDisplay Target
   | PutShadowLocationIntoPlay EnemyId CardId
   | PutOnTopOfEncounterDeck EncounterCard
+  | PutOnBottomOfEncounterDeck [EncounterCard]
   | -- | a player card goes to its owner's discard pile
     PutInDiscard PlayerCard
   | -- | a card goes facedown under the ally
