@@ -54,6 +54,17 @@
   "suddenPitfall": {
     "discard": "Discard a questing character you control"
   },
+  "shadowAndFlame": {
+    "removeQuestingHero": "Remove a questing hero from the quest to cancel this effect?",
+    "resolveEffect": "Let it resolve"
+  },
+  "rangingGoblin": {
+    "damage": "Deal 1 damage to a hero you control"
+  },
+  "darkPit": {
+    "exhaust": "Exhaust a character to discard the top card of your deck ({count} so far, at most 3)",
+    "done": "Discard and compare their printed costs to Durin's Bane's remaining hit points"
+  },
   "fouledWell": {
     "discard": "Discard 1 card at random from your hand? If any player does not, Fouled Well gains surge",
     "discardRandom": "Discard 1 card at random",

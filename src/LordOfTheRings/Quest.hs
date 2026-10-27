@@ -44,6 +44,9 @@ import LordOfTheRings.Quest.Cards.BlockedByShadow
 import LordOfTheRings.Quest.Cards.EscapeFromDarkness
 import LordOfTheRings.Quest.Cards.SearchForTheChamber
 import LordOfTheRings.Quest.Cards.TheFateOfBalin
+import LordOfTheRings.Quest.Cards.NearingTheGate
+import LordOfTheRings.Quest.Cards.TheRearGuard
+import LordOfTheRings.Quest.Cards.LastLordOfMoria
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -112,5 +115,8 @@ allQuests =
         , SomeQuestCard escapeFromDarkness
         , SomeQuestCard searchForTheChamber
         , SomeQuestCard theFateOfBalin
+        , SomeQuestCard nearingTheGate
+        , SomeQuestCard theRearGuard
+        , SomeQuestCard lastLordOfMoria
         ]
     ]

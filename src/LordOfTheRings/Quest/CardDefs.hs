@@ -50,6 +50,9 @@ allQuestCards =
       , escapeFromDarkness
       , searchForTheChamber
       , theFateOfBalin
+      , nearingTheGate
+      , theRearGuard
+      , lastLordOfMoria
       ]
 
 enteringTheMines :: CardDef
@@ -170,3 +173,12 @@ blockedByShadow = searchForAnExit "03075" "Blocked by Shadow" 9 Nothing
 
 escapeFromDarkness :: CardDef
 escapeFromDarkness = searchForAnExit "03076" "Escape from Darkness" 4 Nothing
+
+nearingTheGate :: CardDef
+nearingTheGate = quest "04138" "Nearing the Gate" ShadowAndFlame 1 9
+
+theRearGuard :: CardDef
+theRearGuard = quest "04139" "The Rear Guard" ShadowAndFlame 2 16
+
+lastLordOfMoria :: CardDef
+lastLordOfMoria = quest "04140" "Last Lord of Moria" ShadowAndFlame 3 1

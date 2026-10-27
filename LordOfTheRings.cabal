@@ -494,7 +494,9 @@ library
       LordOfTheRings.Quest.Cards.HeadingDown
       LordOfTheRings.Quest.Cards.HeadingUp
       LordOfTheRings.Quest.Cards.IntoTheMarshes
+      LordOfTheRings.Quest.Cards.LastLordOfMoria
       LordOfTheRings.Quest.Cards.NarrowPaths
+      LordOfTheRings.Quest.Cards.NearingTheGate
       LordOfTheRings.Quest.Cards.OnTheTrail
       LordOfTheRings.Quest.Cards.OutOfTheDungeons
       LordOfTheRings.Quest.Cards.RadagastsRequest
@@ -505,6 +507,7 @@ library
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
       LordOfTheRings.Quest.Cards.TheHuntBegins
       LordOfTheRings.Quest.Cards.TheNecromancersTower
+      LordOfTheRings.Quest.Cards.TheRearGuard
       LordOfTheRings.Quest.Cards.TheWoundedEagle
       LordOfTheRings.Quest.Cards.ThroughTheCaverns
       LordOfTheRings.Quest.Cards.ThroughTheForest
@@ -529,6 +532,8 @@ library
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
       LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood
       LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers
+      LordOfTheRings.Scenario.Scenarios.ShadowAndFlame
+      LordOfTheRings.Scenario.Scenarios.ShadowAndFlame.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes.Helpers
       LordOfTheRings.Scenario.Scenarios.TheHillsOfEmynMuil
