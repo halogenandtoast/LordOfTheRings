@@ -938,7 +938,7 @@ runGameMessage msg g = case msg of
             <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
-  PlaceTokens _ target@(QuestTarget _) Progress n | n > 0 -> do
+  PlaceTokens _ target Progress n | n > 0, isQuestOrLocation target -> do
     push $ CheckWindows [mkAfter $ ProgressPlaced target n]
     pure g
   -- tokens for a character by its card, as one put into play is known before it has an id
@@ -1878,3 +1878,10 @@ payFor g pid card windows host discount = do
           `elem` [PlayerTarget pid, GameTarget]
           && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
+
+-- | Progress placed on a quest card or a location opens a window, as Pathless Country answers.
+isQuestOrLocation :: Target -> Bool
+isQuestOrLocation = \case
+  QuestTarget _ -> True
+  LocationTarget _ -> True
+  _ -> False
