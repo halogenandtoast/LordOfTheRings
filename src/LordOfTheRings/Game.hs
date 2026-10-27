@@ -1113,6 +1113,15 @@ runGameMessage msg g = case msg of
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+  -- a hero shuffled into its owner's deck, as Lost and Alone has it, is put into play as it is drawn
+  ShuffleIntoOwnersDeck target@(HeroTarget hid) | Just h <- Map.lookup hid g.entities.heroes -> do
+    g' <- leftPlay g target
+    pushAll
+      $ [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+    deck <- shuffleM . (toCard h :) . (.deck) =<< getPlayer h.owner
+    pure $ g' & entitiesL . heroesL %~ Map.delete hid & playersL . ix h.owner . deckL .~ deck
   ReturnToTopOfEncounterDeck target -> do
     let toTop card = scenarioL %~ overAttrs (encounterDeckL %~ (card :))
         withAttached =
