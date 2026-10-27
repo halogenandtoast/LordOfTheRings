@@ -148,7 +148,20 @@ runNext =
       g <- runGame msg =<< getGame
       putGame g
       putGame =<< withHandModifiers =<< preloadModifiers g
+      discardAtNoWillpower
       pure True
+
+{- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
+reads, are discarded as soon as it is, unless their discard is already on its way.
+-}
+discardAtNoWillpower :: GameT ()
+discardAtNoWillpower = do
+  over <- getsGame (isJust . (.outcome))
+  unless over do
+    characters <- selectCharacters AnyHero AnyAlly
+    doomed <- flip filterM characters \c -> andM [elem DiscardedAtNoWillpower <$> getModifiers c, (<= 0) <$> getWillpower c]
+    queued <- peekQueue
+    pushAll [Discard c | c <- doomed, Discard c `notElem` queued, LeavePlay (Discard c) `notElem` queued]
 
 {- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
 event in a hand, or being paid for, is built from its card to be asked.
@@ -517,7 +530,7 @@ runGameMessage msg g = case msg of
   DeclareDefenders pid eid chosen -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
     others <- filter (/= pid) <$> getPlayerOrder
-    defenders <- filter (`notElem` chosen) <$> (filterM (canFight eid) =<< readyCharacters pid)
+    defenders <- filter (`notElem` chosen) <$> (filterM (canDefend eid) =<< readyCharacters pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
@@ -562,7 +575,7 @@ runGameMessage msg g = case msg of
   DeclareSentinels pid eid chosen (other : rest) -> do
     many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
     sentinels <-
-      filterM (canFight eid)
+      filterM (canDefend eid)
         . filter (`notElem` chosen)
         =<< withKeyword Sentinel
         =<< readyCharacters other
@@ -1797,6 +1810,15 @@ canFight eid c = do
   mods <- getModifiers eid
   def <- characterCardDef c
   allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
+
+-- | Whether the character may defend against the enemy's attack.
+canDefend :: EnemyId -> Target -> GameT Bool
+canDefend eid c = do
+  noAllies <- elem CannotBeDefendedByAllies <$> getModifiers eid
+  let isAlly = case c of
+        AllyTarget _ -> True
+        _ -> False
+  if noAllies && isAlly then pure False else canFight eid c
 
 -- | Whether declaring the character as a defender against the enemy exhausts it.
 exhaustToDefend :: Target -> EnemyId -> GameT Bool

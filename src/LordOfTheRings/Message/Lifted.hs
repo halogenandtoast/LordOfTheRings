@@ -110,6 +110,10 @@ ready = push . Ready . toTarget
 exhaust :: (ReverseQueue m, Targetable target) => target -> m ()
 exhaust = push . Exhaust . toTarget
 
+-- | The character is committed to the quest, as Avalanche! commits those it exhausts.
+commitToQuest :: (ReverseQueue m, Targetable target) => target -> m ()
+commitToQuest = push . CommitToQuest . toTarget
+
 engageEnemy :: ReverseQueue m => PlayerId -> EnemyId -> m ()
 engageEnemy pid eid = push $ EngageEnemy pid eid
 
@@ -469,6 +473,11 @@ addSetAsideToStaging = push . AddSetAsideToStaging
 -- copies of Snowstorm.
 shuffleSetAsideIntoEncounterDeck :: ReverseQueue m => [EncounterCard] -> m ()
 shuffleSetAsideIntoEncounterDeck = push . ShuffleSetAsideIntoEncounterDeck
+
+-- | Matching cards in the victory display are shuffled into the encounter deck, as The
+-- Dimrill Stair reads.
+shuffleVictoryDisplayIntoEncounterDeck :: ReverseQueue m => CardMatcher -> m ()
+shuffleVictoryDisplayIntoEncounterDeck = push . ShuffleVictoryDisplayIntoEncounterDeck
 
 shuffleEncounterDiscardIntoDeck :: ReverseQueue m => CardMatcher -> m ()
 shuffleEncounterDiscardIntoDeck = push . ShuffleEncounterDiscardIntoDeck

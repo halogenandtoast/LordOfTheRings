@@ -72,6 +72,8 @@ data WindowMatcher
     CardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
     DefenderDeclaredWindow Timing (Maybe Target)
+  | -- | a character declared as a defender against the enemy, as Snow Warg reads
+    DefenderDeclaredAgainstWindow Timing EnemyId
   | AllyLeftPlayWindow Timing
   | -- | a character, or any character, declared as an attacker
     AttackerDeclaredWindow Timing (Maybe Target)
@@ -120,6 +122,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ExhaustedWindow t target, Exhausted target') -> t == timing && target == target'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
+  (DefenderDeclaredAgainstWindow t eid, DeclaredAsDefender _ eid') -> t == timing && eid == eid'
   (EnemyDestroyedByAttackWindow t who, EnemyDestroyedByAttack _ attackers _) -> t == timing && maybe True (`elem` attackers) who
   (EnemyWithTraitDestroyedByAttackWindow t trait who, EnemyDestroyedByAttack _ attackers traits) ->
     t == timing && trait `member` traits && who `elem` attackers
