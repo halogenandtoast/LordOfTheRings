@@ -376,6 +376,7 @@ library
       LordOfTheRings.Location.Cards.AmonHen
       LordOfTheRings.Location.Cards.AmonLhaw
       LordOfTheRings.Location.Cards.BanksOfTheAnduin
+      LordOfTheRings.Location.Cards.BarrenHills
       LordOfTheRings.Location.Cards.BeePastures
       LordOfTheRings.Location.Cards.BranchingPaths
       LordOfTheRings.Location.Cards.BridgeOfKhazadDum
@@ -390,6 +391,7 @@ library
       LordOfTheRings.Location.Cards.ForestGrove
       LordOfTheRings.Location.Cards.FouledWell
       LordOfTheRings.Location.Cards.GladdenFields
+      LordOfTheRings.Location.Cards.GoblinGate
       LordOfTheRings.Location.Cards.GoblinTunnels
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.ImpassableBog
@@ -399,11 +401,13 @@ library
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.OakWoodGrove
       LordOfTheRings.Location.Cards.OldForestRoad
+      LordOfTheRings.Location.Cards.PathlessCountry
       LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.RaurosFalls
       LordOfTheRings.Location.Cards.Rhosgobel
       LordOfTheRings.Location.Cards.RiverLangflood
       LordOfTheRings.Location.Cards.RiverNinglor
+      LordOfTheRings.Location.Cards.RuinedRoad
       LordOfTheRings.Location.Cards.StairsOfNain
       LordOfTheRings.Location.Cards.TheBrownLands
       LordOfTheRings.Location.Cards.TheCarrock

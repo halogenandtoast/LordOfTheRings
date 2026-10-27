@@ -60,6 +60,10 @@ import LordOfTheRings.Location.Cards.WoodElfPath
 import LordOfTheRings.Location.Cards.TheMountainsRoots
 import LordOfTheRings.Location.Cards.PlunderedArmoury
 import LordOfTheRings.Location.Cards.UpperHall
+import LordOfTheRings.Location.Cards.RuinedRoad
+import LordOfTheRings.Location.Cards.GoblinGate
+import LordOfTheRings.Location.Cards.PathlessCountry
+import LordOfTheRings.Location.Cards.BarrenHills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -144,5 +148,9 @@ allLocations =
         , SomeLocationCard theMountainsRoots
         , SomeLocationCard plunderedArmoury
         , SomeLocationCard upperHall
+        , SomeLocationCard ruinedRoad
+        , SomeLocationCard goblinGate
+        , SomeLocationCard pathlessCountry
+        , SomeLocationCard barrenHills
         ]
     ]

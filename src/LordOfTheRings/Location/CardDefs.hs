@@ -67,6 +67,10 @@ allLocationCards =
       , theMountainsRoots
       , plunderedArmoury
       , upperHall
+      , ruinedRoad
+      , goblinGate
+      , pathlessCountry
+      , barrenHills
       ]
 
 eastGate :: CardDef
@@ -442,5 +446,32 @@ theMountainsRoots :: CardDef
 theMountainsRoots =
   (location "03047" "The Mountains' Roots" DeepsOfMoria 3 0 0)
     { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    }
+
+ruinedRoad :: CardDef
+ruinedRoad =
+  (location "04042" "Ruined Road" RoadToRivendell 2 1 5)
+    { cdCardTraits = setFromList [Road]
+    , cdShadowEffect = True
+    }
+
+goblinGate :: CardDef
+goblinGate =
+  (location "04043" "Goblin Gate" RoadToRivendell 1 5 4)
+    { cdCardTraits = setFromList [Gate]
+    }
+
+pathlessCountry :: CardDef
+pathlessCountry =
+  (location "04044" "Pathless Country" RoadToRivendell 3 3 5)
+    { cdCardTraits = setFromList [Hills]
+    , cdShadowEffect = True
+    }
+
+barrenHills :: CardDef
+barrenHills =
+  (location "04045" "Barren Hills" RoadToRivendell 2 2 4)
+    { cdCardTraits = setFromList [Hills]
     , cdShadowEffect = True
     }
