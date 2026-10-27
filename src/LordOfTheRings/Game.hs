@@ -1442,6 +1442,14 @@ runGameMessage msg g = case msg of
       %~ Map.delete tid
       & scenarioL
       %~ overAttrs (encounterDeckL .~ deck)
+  -- an enemy leaves play for the encounter deck, its attachments and shadow cards discarded
+  ShuffleIntoEncounterDeck target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+    deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
+    pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
   AddToStaging card | FirstPlayerGainsControl `member` cdKeywords (toCardDef card) -> do
     thisObjective <- newObjective card
     lead <- getLead
