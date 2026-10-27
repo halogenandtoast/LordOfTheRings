@@ -66,6 +66,8 @@ data ModifierType
     -- engage it
     CannotBeOptionallyEngagedBy PlayerMatcher
   | DoesNotCountDefense
+  | -- | on a character committed to the quest: its willpower does not count toward it
+    DoesNotCountWillpower
   | -- | on a location: when the players may travel and there is no active location, they
     -- must travel here
     MustBeTraveledTo

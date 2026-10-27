@@ -43,6 +43,10 @@ data WindowType
   | EnemyAttacking EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
+  | -- | the staging step begins, before its cards are revealed
+    StagingStepBegins
+  | -- | the staging step ends, its cards revealed
+    StagingStepEnds
   | ProgressPlaced Target Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully

@@ -385,6 +385,14 @@ revealEncounterCardAfter t = lift $ insertAfterMatching [RevealEncounterCard] \c
   WhileInPlay t' _ -> t == t'
   _ -> False
 
+{- | The player does not raise their threat for questing unsuccessfully, from the window
+before it is raised, as Ever Onward reads.
+-}
+doesNotRaiseThreat :: (MonadTrans t, HasQueue Message m) => PlayerId -> t m ()
+doesNotRaiseThreat pid = lift $ withQueue_ \q -> case break (\case RaiseThreat p _ -> p == pid; _ -> False) q of
+  (before, _ : after) -> before <> after
+  _ -> q
+
 -- | Messages to run once the enemy's attack has resolved, as "after this attack" reads.
 afterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
 afterAttack eid msgs = lift $ insertAfterMatching msgs \case

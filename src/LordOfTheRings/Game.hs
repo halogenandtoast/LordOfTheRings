@@ -900,7 +900,9 @@ runGameMessage msg g = case msg of
     -- fewer reveals still reveal 1
     unless (SkipStagingStep `elem` mods)
       $ pushAll
-      $ replicate (max 1 $ players + extra) RevealEncounterCard
+      $ CheckWindows [mkAfter StagingStepBegins]
+      : replicate (max 1 $ players + extra) RevealEncounterCard
+      <> [CheckWindows [mkWhen StagingStepEnds]]
     pure g
   QuestResolution -> do
     willpower <- getCommittedWillpower
@@ -910,8 +912,11 @@ runGameMessage msg g = case msg of
       | willpower > threat ->
           pushAll [PlaceProgressOnQuest (willpower - threat), CheckWindows [mkAfter QuestedSuccessfully]]
       | threat > willpower ->
+          -- responses before the threat is raised may stop it, as Ever Onward's: see
+          -- 'doesNotRaiseThreat'
           pushAll
-            $ [RaiseThreat pid (threat - willpower) | pid <- players]
+            $ CheckWindows [mkWhen QuestedUnsuccessfully]
+            : [RaiseThreat pid (threat - willpower) | pid <- players]
             <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower

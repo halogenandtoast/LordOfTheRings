@@ -46,7 +46,12 @@ getAttackStrength attackers eid enemy = do
 
 -- | The total willpower of every character committed to the quest.
 getCommittedWillpower :: (HasGame m) => m Int
-getCommittedWillpower = sum <$> (traverse getWillpower =<< selectCharacters CommittedHero CommittedAlly)
+getCommittedWillpower =
+  sum
+    <$> ( traverse getWillpower
+            =<< filterM (fmap (notElem DoesNotCountWillpower) . getModifiers)
+            =<< selectCharacters CommittedHero CommittedAlly
+        )
 
 -- | An escape test's committed total, and the escape value of the cards it would deal
 -- from the encounter deck as it stands.
