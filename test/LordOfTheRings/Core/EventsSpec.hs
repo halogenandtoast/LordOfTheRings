@@ -36,9 +36,9 @@ spec = do
 
   describe "Lórien's Wealth" do
     it "has a player draw 3 cards" . gameTest $ \pid -> do
-      before <- handSize pid
+      initial <- handSize pid
       _ <- playWith pid "01012" 3 Events.loriensWealth
-      handSize pid `shouldReturn` before + 3
+      handSize pid `shouldReturn` initial + 3
 
   describe "Beorn's Hospitality" do
     it "heals all damage on each of a player's heroes" . gameTest $ \pid -> do
@@ -174,8 +174,8 @@ spec = do
       deck <- (.deck) <$> getPlayer pid
       _ <- playWith pid "01012" 2 Events.gandalfsSearch
       chooseLabel (ikeyWith "label.xEquals" [intVar "x" 2]) pid
-      let [top, second] = take 2 deck
-      chooseTarget pid (CardIdTarget second.id)
-      map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem second.id)
+      [top, two] <- pure (take 2 deck)
+      chooseTarget pid (CardIdTarget two.id)
+      map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem two.id)
       take 1 . map (.id) . (.deck) <$> getPlayer pid `shouldReturn` [top.id]
       (.resources) <$> getHeroWithCode "01012" `shouldReturn` 0

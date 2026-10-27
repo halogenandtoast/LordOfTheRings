@@ -38,10 +38,10 @@ spec = do
   describe "Gléowine" do
     it "exhausts to have a player draw a card" . gameTest $ \pid -> do
       gleowine <- putAllyIntoPlay pid Allies.gleowine
-      before <- handSize pid
+      initial <- handSize pid
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid gleowine
-      handSize pid `shouldReturn` before + 1
+      handSize pid `shouldReturn` initial + 1
 
   describe "Henamarth Riversong" do
     it "exhausts to look at the top card of the encounter deck" . gameTest $ \pid -> do

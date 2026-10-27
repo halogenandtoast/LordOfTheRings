@@ -75,10 +75,10 @@ spec = do
     it "lets the first player draw 2 cards after travelling there" . gameTest $ \pid -> do
       reveal Locations.forestGate []
       lid <- theLocation
-      before <- handSize pid
+      initial <- handSize pid
       run $ TravelTo lid
       chooseAbilityOf pid lid
-      handSize pid `shouldReturn` before + 2
+      handSize pid `shouldReturn` initial + 2
 
   describe "Necromancer's Pass" do
     it "makes the first player discard 2 random cards to travel there" . gameTest $ \pid -> do
@@ -95,9 +95,9 @@ spec = do
     it "stops players drawing while it is the active location" . gameTest $ \pid -> do
       reveal Locations.enchantedStream []
       run . TravelTo =<< theLocation
-      before <- handSize pid
+      initial <- handSize pid
       run $ DrawCards $ Drawing pid 1
-      handSize pid `shouldReturn` before
+      handSize pid `shouldReturn` initial
 
   describe "Black Forest Bats" do
     it "removes a committed character from the quest" . gameTest $ \pid -> do
@@ -185,10 +185,10 @@ spec = do
       run $ PlaceTokens GameSource eowyn Resource 4
       run $ Exhaust eowyn
       run $ BeginPhase RefreshPhase
-      [first, second] <- getsGame (map toTarget . toList . (.entities.treacheries))
-      chooseAbilityOf pid first
+      [one, two] <- getsGame (map toTarget . toList . (.entities.treacheries))
+      chooseAbilityOf pid one
       exhausted "01007" `shouldReturn` True
-      chooseAbilityOf pid second
+      chooseAbilityOf pid two
       exhausted "01007" `shouldReturn` False
       (.resources) <$> getHeroWithCode "01007" `shouldReturn` 0
 

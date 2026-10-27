@@ -2,7 +2,6 @@ module LordOfTheRings.Core.EscapeFromDolGuldurSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Hero (heroPrisoner)
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase
@@ -48,12 +47,12 @@ spec = describe "Escape from Dol Guldur" do
 
   it "lets the group play only 1 ally each round" . escapeTest $ \pid -> do
     _ <- putQuestStage Quests.theNecromancersTower
-    second <- putCardIntoHand pid Allies.guardOfTheCitadel
+    two <- putCardIntoHand pid Allies.guardOfTheCitadel
     _ <- playWith pid "01001" 4 Allies.guardOfTheCitadel
     passActions pid
     run $ BeginPhase PlanningPhase
     question <- getQuestion pid
-    [() | Just q <- [question], TargetLabel (CardIdTarget cid) _ <- questionChoices q, cid == second.id] `shouldBe` []
+    [() | Just q <- [question], TargetLabel (CardIdTarget cid) _ <- questionChoices q, cid == two.id] `shouldBe` []
 
   it "holds the players at The Necromancer's Tower until they claim an objective" . escapeTest $ \pid -> do
     stage <- putQuestStage Quests.theNecromancersTower

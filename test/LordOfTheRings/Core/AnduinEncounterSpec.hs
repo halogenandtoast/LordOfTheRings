@@ -57,11 +57,11 @@ spec = do
       reveal Enemies.hillTroll []
       eid <- theEnemy Enemies.hillTroll
       run $ EngageEnemy pid eid
-      before <- threat pid
+      initial <- threat pid
       run $ UndefendedDamage pid eid
       chooseTarget pid =<< hero "01007"
       -- 6 damage against Éowyn's 3 hit points
-      threat pid `shouldReturn` before + 3
+      threat pid `shouldReturn` initial + 3
 
   describe "Goblin Sniper" do
     it "cannot be optionally engaged while other enemies are in the staging area" . gameTest $ \pid -> do
@@ -83,9 +83,9 @@ spec = do
     it "raises the attacked player's threat by 1" . gameTest $ \pid -> do
       reveal Enemies.marshAdder []
       eid <- theEnemy Enemies.marshAdder
-      before <- threat pid
+      initial <- threat pid
       run $ CheckWindows [mkWhen $ EnemyAttacking eid pid]
-      threat pid `shouldReturn` before + 1
+      threat pid `shouldReturn` initial + 1
 
   describe "Wargs" do
     it "returns to the staging area after attacking with a blank shadow card" . gameTest $ \pid -> do
@@ -170,9 +170,9 @@ spec = do
 
   describe "Pursued by Shadow" do
     it "raises threat by 1 for each character not committed to the quest" . gameTest $ \pid -> do
-      before <- threat pid
+      initial <- threat pid
       reveal Treacheries.pursuedByShadow []
-      threat pid `shouldReturn` before + 3
+      threat pid `shouldReturn` initial + 3
 
   describe "Treacherous Fog" do
     it "gives each location in the staging area +1 threat" . gameTest $ \_ -> do
@@ -205,6 +205,6 @@ spec = do
     it "raises each player's threat by an extra point in the refresh phase" . gameTest $ \pid -> do
       reveal Locations.gladdenFields []
       run . TravelTo =<< theLocation
-      before <- threat pid
+      initial <- threat pid
       run $ BeginPhase RefreshPhase
-      threat pid `shouldReturn` before + 2
+      threat pid `shouldReturn` initial + 2

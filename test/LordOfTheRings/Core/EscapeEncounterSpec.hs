@@ -70,12 +70,12 @@ spec = do
   describe "Iron Shackles" do
     it "is discarded in place of the first player's next draw" . escapeTest $ \pid -> do
       reveal Treacheries.ironShackles []
-      before <- handSize pid
+      initial <- handSize pid
       run $ DrawCards $ Drawing pid 1
-      handSize pid `shouldReturn` before
+      handSize pid `shouldReturn` initial
       getsGame (length . (.entities.treacheries)) `shouldReturn` 0
       run $ DrawCards $ Drawing pid 1
-      handSize pid `shouldReturn` before + 1
+      handSize pid `shouldReturn` initial + 1
 
   describe "Tower Gate" do
     it "sends each player an Orc Guard after travelling there" . escapeTest $ \_ -> do
