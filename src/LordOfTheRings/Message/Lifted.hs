@@ -498,6 +498,10 @@ putObjectiveIntoPlayAttached card = push . PutObjectiveIntoPlayAttached card . t
 removeFromGame :: (ReverseQueue m, Targetable target) => target -> m ()
 removeFromGame = push . RemoveFromGame . toTarget
 
+-- | The character is shuffled into its owner's deck, as Lost and Alone does with a hero.
+shuffleIntoOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
+shuffleIntoOwnersDeck = push . ShuffleIntoOwnersDeck . toTarget
+
 putObjectiveAllyIntoPlay :: ReverseQueue m => ObjectiveId -> PlayerId -> m ()
 putObjectiveAllyIntoPlay oid = push . PutObjectiveAllyIntoPlay oid
 

@@ -53,6 +53,8 @@ import LordOfTheRings.Treachery.Cards.MassingInTheDeep
 import LordOfTheRings.Treachery.Cards.UndisturbedBones
 import LordOfTheRings.Treachery.Cards.BitterWind
 import LordOfTheRings.Treachery.Cards.HiddenThreat
+import LordOfTheRings.Treachery.Cards.DeepDeepDark
+import LordOfTheRings.Treachery.Cards.LostAndAlone
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -130,5 +132,7 @@ allTreacherys =
         , SomeTreacheryCard undisturbedBones
         , SomeTreacheryCard bitterWind
         , SomeTreacheryCard hiddenThreat
+        , SomeTreacheryCard deepDeepDark
+        , SomeTreacheryCard lostAndAlone
         ]
     ]
