@@ -521,6 +521,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes.Helpers
       LordOfTheRings.Scenario.Scenarios.TheHillsOfEmynMuil
       LordOfTheRings.Scenario.Scenarios.TheHuntForGollum
+      LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
       LordOfTheRings.Sphere
@@ -744,6 +745,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec
       LordOfTheRings.KhazadDum.IntoThePitSpec
       LordOfTheRings.KhazadDum.PlayerCardsSpec
+      LordOfTheRings.KhazadDum.TheSeventhLevelSpec
       LordOfTheRings.KhazadDumEngineSpec
       LordOfTheRings.LogSpec
       LordOfTheRings.ModifierSpec
