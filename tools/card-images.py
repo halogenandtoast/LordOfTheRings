@@ -52,8 +52,10 @@ def main():
         face = "" if image["face"] == "a" else "-" + image["face"]
         return face + ("-" + slug(image["variant"]) if image.get("variant") else "")
 
-    # first printings first, cards with a RingsDB code before codes worked out from a number
-    cards = sorted(index["cards"], key=lambda c: (order.get(c["packCode"], (99, 99)), not c.get("ringsdbCode"), c["code"]))
+    # cards with a RingsDB code before codes worked out from a number, which a deck can
+    # never name (Hama is 04076, so Wrapped!, The Watcher in the Water's 76, keeps its
+    # database code); first printings first
+    cards = sorted(index["cards"], key=lambda c: (not c.get("ringsdbCode"), order.get(c["packCode"], (99, 99)), c["code"]))
     owner = {}  # name -> the card name holding it
     renames = {}  # old file -> new file
     for card in cards:
