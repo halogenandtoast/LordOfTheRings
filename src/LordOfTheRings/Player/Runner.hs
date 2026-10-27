@@ -50,7 +50,8 @@ instance RunMessage Player where
       pure $ player & deckL .~ deck
     DoStep 2 Setup -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
-      pure $ player & threatL .~ sum (map (.threat) heroes)
+      let threat = sum (map (.threat) heroes)
+      pure $ player & threatL .~ threat & startingThreatL .~ threat
     DoStep 5 Setup -> do
       push
         $ questionLabel
@@ -369,6 +370,7 @@ costModifier pid c = do
     -- an optional reduction counts toward whether the card can be afforded
     ReducedByDiscardingFromDeck n -> Just (negate n)
     ReduceNextCostOf m n | cardMatches m c -> Just (negate $ min n $ maybe 0 (max 0 . subtract 1 . costAsResources) c.cost)
+    LowerNextCostOf m n | cardMatches m c -> Just (negate n)
     _ -> Nothing
 
 -- | Heroes with a resource that could pay for a card of the sphere.

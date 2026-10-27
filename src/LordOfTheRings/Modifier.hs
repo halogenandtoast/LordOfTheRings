@@ -117,6 +117,8 @@ data ModifierType
     Blank
   | -- | on a hero
     CannotCollectResources
+  | -- | on a hero: it collects this many more resources in the resource phase
+    CollectsAdditionalResources Int
   | -- | on the game: resources of any sphere may be spent as this sphere's
     ResourcesSpendableAs Sphere
   | CannotBeHealed
@@ -163,6 +165,8 @@ data ModifierType
   | -- | on a player, or on the game for every player: the next matching card played
     -- costs this much less, to no less than 1
     ReduceNextCostOf CardMatcher Int
+  | -- | as 'ReduceNextCostOf', to no less than 0
+    LowerNextCostOf CardMatcher Int
   | -- | on a character: it is defending the attack being resolved
     Defending
   | -- | on a card in hand, as its card id: its player may discard this many cards from

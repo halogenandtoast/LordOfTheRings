@@ -8,7 +8,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotReady, DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotReady, CollectsAdditionalResources, DoesNotExhaustToAttack))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -19,8 +19,9 @@ import LordOfTheRings.Window (WindowType (Exhausted), mkAfter)
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
     BeginPhase ResourcePhase -> do
-      blocked <- elem CannotCollectResources <$> getModifiers attrs
-      unless (attrs.heroPrisoner || blocked) $ push $ PlaceTokens GameSource (toTarget attrs) Resource 1
+      mods <- getModifiers attrs
+      let collected = 1 + sum [n | CollectsAdditionalResources n <- mods]
+      unless (attrs.heroPrisoner || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
       pure attrs
     TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
     RescuePrisoner hid | hid == attrs.heroId -> do

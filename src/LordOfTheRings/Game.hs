@@ -1920,5 +1920,5 @@ payFor g pid card windows host discount = do
   let spent e =
         effectTarget e
           `elem` [PlayerTarget pid, GameTarget]
-          && or [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
+          && or ([cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e] <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e])
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
