@@ -1518,6 +1518,7 @@ discardFromPlay target g = case target of
         $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
         <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
         <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+        <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
       mods <- getModifiers target
       let removed = g & entitiesL . l %~ Map.delete k
           orcGuards = (toAttrs g.scenario).scenarioOrcGuards

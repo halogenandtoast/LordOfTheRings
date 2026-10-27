@@ -27,7 +27,9 @@ characterStat printed mods target = do
 
 getWillpower, getAttack, getDefense, getHitPoints :: (HasGame m) => Target -> m Int
 getWillpower = characterStat cdWillpower willpowerOf
-getAttack = characterStat cdAttack attackOf
+getAttack target = do
+  blank <- elem DoesNotCountAttack <$> getModifiers target
+  if blank then pure 0 else characterStat cdAttack attackOf target
 getDefense target = do
   blank <- elem DoesNotCountDefense <$> getModifiers target
   if blank then pure 0 else characterStat cdDefense defenseOf target
