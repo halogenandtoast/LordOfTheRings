@@ -1796,7 +1796,10 @@ canFight :: EnemyId -> Target -> GameT Bool
 canFight eid c = do
   mods <- getModifiers eid
   def <- characterCardDef c
-  allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
+  andM
+    [ allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
+    , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
+    ]
 
 -- | Whether declaring the character as a defender against the enemy exhausts it.
 exhaustToDefend :: Target -> EnemyId -> GameT Bool

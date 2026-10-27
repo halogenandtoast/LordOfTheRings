@@ -132,6 +132,9 @@ data ModifierType
   | -- | on an enemy: only characters with the trait or the keyword can attack it or defend
     -- against it
     OnlyFoughtBy Trait Keyword
+  | -- | on an enemy: only characters with the keyword can attack it or defend against it,
+    -- as Moria Bats reads for ranged
+    OnlyFoughtByKeyword Keyword
   | -- | on an enemy: damage from its undefended attacks is dealt to this character
     UndefendedDamageTo Target
   | -- | on an ally: the resources on it can pay for matching cards its controller plays
