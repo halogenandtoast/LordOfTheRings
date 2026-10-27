@@ -69,6 +69,8 @@ import LordOfTheRings.Enemy.Cards.SnowWarg
 import LordOfTheRings.Enemy.Cards.NamelessThing
 import LordOfTheRings.Enemy.Cards.ElderNamelessThing
 import LordOfTheRings.Enemy.Cards.MoriaBats
+import LordOfTheRings.Enemy.Cards.DurinsBane
+import LordOfTheRings.Enemy.Cards.RangingGoblin
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -162,5 +164,7 @@ allEnemys =
         , SomeEnemyCard namelessThing
         , SomeEnemyCard elderNamelessThing
         , SomeEnemyCard moriaBats
+        , SomeEnemyCard durinsBane
+        , SomeEnemyCard rangingGoblin
         ]
     ]

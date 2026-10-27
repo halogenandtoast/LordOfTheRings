@@ -75,6 +75,9 @@ import LordOfTheRings.Location.Cards.TheDimrillStair
 import LordOfTheRings.Location.Cards.RockyCrags
 import LordOfTheRings.Location.Cards.DrownedTreasury
 import LordOfTheRings.Location.Cards.MithrilLode
+import LordOfTheRings.Location.Cards.DarkPit
+import LordOfTheRings.Location.Cards.SecondHall
+import LordOfTheRings.Location.Cards.SecondDeep
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -174,5 +177,8 @@ allLocations =
         , SomeLocationCard rockyCrags
         , SomeLocationCard drownedTreasury
         , SomeLocationCard mithrilLode
+        , SomeLocationCard darkPit
+        , SomeLocationCard secondHall
+        , SomeLocationCard secondDeep
         ]
     ]

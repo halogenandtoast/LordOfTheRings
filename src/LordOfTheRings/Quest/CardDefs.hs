@@ -66,6 +66,9 @@ allQuestCards =
       , theShiveringBank
       , oldOneLair
       , outOfTheDepths
+      , nearingTheGate
+      , theRearGuard
+      , lastLordOfMoria
       ]
 
 theDrippingWalls :: CardDef
@@ -235,3 +238,12 @@ snowdrifts = quest "04012" "Snowdrifts" TheRedhornGate 2 11
 
 theMountainsPeaks :: CardDef
 theMountainsPeaks = quest "04013" "The Mountains' Peaks" TheRedhornGate 3 13
+
+nearingTheGate :: CardDef
+nearingTheGate = quest "04138" "Nearing the Gate" ShadowAndFlame 1 9
+
+theRearGuard :: CardDef
+theRearGuard = quest "04139" "The Rear Guard" ShadowAndFlame 2 16
+
+lastLordOfMoria :: CardDef
+lastLordOfMoria = quest "04140" "Last Lord of Moria" ShadowAndFlame 3 1

@@ -72,6 +72,9 @@ data ModifierType
   | -- | on an enemy, or on the game for every enemy: matching players cannot optionally
     -- engage it
     CannotBeOptionallyEngagedBy PlayerMatcher
+  | -- | on an enemy in the staging area: it counts as engaged with each matching player while
+    -- it stays there, as Durin's Bane, and is dealt a new shadow card for each attack
+    EngagedWithEachPlayer PlayerMatcher
   | DoesNotCountDefense
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower

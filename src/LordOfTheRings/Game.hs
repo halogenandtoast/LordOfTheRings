@@ -375,7 +375,9 @@ runGameMessage msg g = case msg of
     destroyed <- case target of
       HeroTarget hid | Map.member hid g.entities.heroes -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
       AllyTarget aid | Map.member aid g.entities.allies -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
-      EnemyTarget eid | Map.member eid g.entities.enemies -> (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      -- an indestructible enemy keeps taking damage past its hit points
+      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, Indestructible `notMember` cdKeywords (toCardDef e) ->
+        (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
       _ -> pure False
     when destroyed $ push (Destroy target)
     pure g
@@ -487,7 +489,8 @@ runGameMessage msg g = case msg of
     pure $ g & phaseL .~ CombatPhase
   DealShadowCards -> do
     order <- getPlayerOrder
-    enemies <- concatMapM engagedByCost order
+    -- one engaged with each player from the staging area is dealt one for each attack
+    enemies <- filterM (fmap not . engagedWithEach) =<< concatMapM engagedByCost order
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
@@ -500,19 +503,17 @@ runGameMessage msg g = case msg of
       filterM
         (fmap (\ms -> CannotAttack `notElem` ms && CannotAttackPlayer pid `notElem` ms) . getModifiers)
         [e | e <- candidates, e `elem` engaged]
+    -- one engaged with each player is dealt a new shadow card for each attack, discarded after
+    let attack eid = do
+          each <- engagedWithEach eid
+          pure $ [DealShadowCard eid | each] <> [EnemyAttack pid eid] <> [DiscardShadowCards eid | each]
     case enemies of
       [] -> pure ()
-      [eid] -> push $ EnemyAttack pid eid
-      _ ->
-        push
-          $ questionLabelWith
-            (ikey "label.chooseNextAttack")
-            Nothing
-            (map toTarget enemies)
-            pid
-            [ targetLabel eid [EnemyAttack pid eid, ChooseEnemyAttack pid (filter (/= eid) enemies)]
-            | eid <- enemies
-            ]
+      [eid] -> pushAll =<< attack eid
+      _ -> do
+        choices <- for enemies \eid ->
+          targetLabel eid . (<> [ChooseEnemyAttack pid (filter (/= eid) enemies)]) <$> attack eid
+        push $ questionLabelWith (ikey "label.chooseNextAttack") Nothing (map toTarget enemies) pid choices
     pure g
   -- players may act at the end of each step of the attack: once its enemy is chosen,
   -- its defenders declared, its shadow resolved and its damage dealt
@@ -1476,6 +1477,14 @@ runGameMessage msg g = case msg of
       %~ Map.delete tid
       & scenarioL
       %~ overAttrs (encounterDeckL .~ deck)
+  -- an enemy leaves play for the encounter deck, its attachments and shadow cards discarded
+  ShuffleIntoEncounterDeck target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+    deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
+    pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
   AddToStaging card | FirstPlayerGainsControl `member` cdKeywords (toCardDef card) -> do
     thisObjective <- newObjective card
     lead <- getLead
@@ -1733,6 +1742,10 @@ engagedByCost pid = do
   costs <- traverse getEngagementCost enemies
   pure $ map fst $ sortOn (Down . snd) $ zip enemies costs
 
+-- | Whether the enemy is engaged with each player from the staging area, as Durin's Bane.
+engagedWithEach :: EnemyId -> GameT Bool
+engagedWithEach eid = any (\case EngagedWithEachPlayer _ -> True; _ -> False) <$> getModifiers eid
+
 -- | The characters that may attack an enemy in the staging area.
 stagingAttackers :: [Target] -> GameT [Target]
 stagingAttackers = filterM (fmap (elem CanAttackStagingArea) . getModifiers)
@@ -1781,7 +1794,8 @@ attackDamage pid eid target n = do
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
 ownAttackers pid eid = do
   -- only those allowed to may attack an enemy in the staging area, unless anyone may
-  staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea)
+  -- one engaged with the player from the staging area, as Durin's Bane, is attacked as engaged
+  staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea <> not_ (EnemyEngagedWith $ PlayerWithId pid))
   mods <- getModifiers eid
   let open' = AttackableByAnyCharacter `elem` mods
       fromStaging cs = (<>) <$> stagingAttackers cs <*> if AttackableInStagingAreaByRanged `elem` mods then withKeyword Ranged cs else pure []

@@ -67,6 +67,13 @@ import LordOfTheRings.Treachery.Cards.FreezingCold
 import LordOfTheRings.Treachery.Cards.Avalanche
 import LordOfTheRings.Treachery.Cards.DeepDeepDark
 import LordOfTheRings.Treachery.Cards.LostAndAlone
+import LordOfTheRings.Treachery.Cards.FiresInTheDeep
+import LordOfTheRings.Treachery.Cards.InnerFlame
+import LordOfTheRings.Treachery.Cards.InnerShadow
+import LordOfTheRings.Treachery.Cards.WhipLash
+import LordOfTheRings.Treachery.Cards.LeapingFlame
+import LordOfTheRings.Treachery.Cards.FierySword
+import LordOfTheRings.Treachery.Cards.ManyThongedWhip
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -158,5 +165,12 @@ allTreacherys =
         , SomeTreacheryCard avalanche
         , SomeTreacheryCard deepDeepDark
         , SomeTreacheryCard lostAndAlone
+        , SomeTreacheryCard firesInTheDeep
+        , SomeTreacheryCard innerFlame
+        , SomeTreacheryCard innerShadow
+        , SomeTreacheryCard whipLash
+        , SomeTreacheryCard leapingFlame
+        , SomeTreacheryCard fierySword
+        , SomeTreacheryCard manyThongedWhip
         ]
     ]

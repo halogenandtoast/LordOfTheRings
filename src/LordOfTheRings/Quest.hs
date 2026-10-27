@@ -57,6 +57,9 @@ import LordOfTheRings.Quest.Cards.TheWatersEdge
 import LordOfTheRings.Quest.Cards.WashedAway
 import LordOfTheRings.Quest.Cards.BelowTheMines
 import LordOfTheRings.Quest.Cards.OutOfTheDepths
+import LordOfTheRings.Quest.Cards.NearingTheGate
+import LordOfTheRings.Quest.Cards.TheRearGuard
+import LordOfTheRings.Quest.Cards.LastLordOfMoria
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -141,5 +144,8 @@ allQuests =
         , SomeQuestCard theShiveringBank
         , SomeQuestCard oldOneLair
         , SomeQuestCard outOfTheDepths
+        , SomeQuestCard nearingTheGate
+        , SomeQuestCard theRearGuard
+        , SomeQuestCard lastLordOfMoria
         ]
     ]

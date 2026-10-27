@@ -75,6 +75,8 @@ allEnemyCards =
       , namelessThing
       , elderNamelessThing
       , moriaBats
+      , durinsBane
+      , rangingGoblin
       ]
 
 namelessThing :: CardDef
@@ -536,4 +538,20 @@ snowWarg :: CardDef
 snowWarg =
   (enemy "04027" "Snow Warg" TheRedhornGate 3 28 3 3 1 4)
     { cdCardTraits = setFromList [Creature, Snow]
+    }
+
+
+durinsBane :: CardDef
+durinsBane =
+  (enemy "04150" "Durin's Bane" ShadowAndFlame 1 1 4 6 3 27)
+    { cdCardTraits = setFromList [Balrog, Flame, Shadow]
+    , cdKeywords = setFromList [Regenerate 3, Indestructible]
+    , cdUnique = True
+    }
+
+rangingGoblin :: CardDef
+rangingGoblin =
+  (enemy "04151" "Ranging Goblin" ShadowAndFlame 3 35 2 1 1 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdWhenRevealed = True
     }
