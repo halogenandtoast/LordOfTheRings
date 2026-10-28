@@ -34,6 +34,7 @@ allAttachmentCards =
       , healingHerbs
       , vilya
       , rangerSpikes
+      , spearOfTheCitadel
       , gondorianShield
       , ithilienPit
       , visionaryLeadership
@@ -222,6 +223,14 @@ vilya =
   (attachment "04137" "Vilya" Neutral (StaticCost 2))
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Ring]
+    }
+
+spearOfTheCitadel :: CardDef
+spearOfTheCitadel =
+  (attachment "05009" "Spear of the Citadel" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
     }
 
 rangerSpikes :: CardDef

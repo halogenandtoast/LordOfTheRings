@@ -660,5 +660,11 @@
     "choose": "Choose a card to move to the bottom of the encounter deck",
     "none": "Move none",
     "order": "Put the cards back on top, in order: the last chosen ends on top"
+  },
+  "masterOfLore": {
+    "name": "Name a card type",
+    "ally": "Ally",
+    "attachment": "Attachment",
+    "event": "Event"
   }
 }

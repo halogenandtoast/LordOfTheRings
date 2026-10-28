@@ -50,6 +50,10 @@ allEventCards =
       , weAreNotIdle
       , handsUponTheBow
       , behindStrongWalls
+      , mutualAccord
+      , wealthOfGondor
+      , lightTheBeacons
+      , aWatchfulPeace
       , forthEorlingas
       , hiddenCache
       , theTreePeople
@@ -224,6 +228,18 @@ handsUponTheBow = event "04131" "Hands Upon the Bow" Tactics (StaticCost 1)
 
 behindStrongWalls :: CardDef
 behindStrongWalls = event "05008" "Behind Strong Walls" Tactics (StaticCost 1)
+
+mutualAccord :: CardDef
+mutualAccord = event "05005" "Mutual Accord" Leadership (StaticCost 0)
+
+wealthOfGondor :: CardDef
+wealthOfGondor = event "05006" "Wealth of Gondor" Leadership (StaticCost 0)
+
+lightTheBeacons :: CardDef
+lightTheBeacons = event "05011" "Light the Beacons" Spirit (StaticCost 5)
+
+aWatchfulPeace :: CardDef
+aWatchfulPeace = event "05012" "A Watchful Peace" Spirit (StaticCost 1)
 
 forthEorlingas :: CardDef
 forthEorlingas = event "06138" "Forth Eorlingas!" Tactics (StaticCost 2)

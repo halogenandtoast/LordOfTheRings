@@ -61,6 +61,7 @@ import LordOfTheRings.Attachment.Cards.DwarfPipe
 import LordOfTheRings.Attachment.Cards.MagicRing
 import LordOfTheRings.Attachment.Cards.PathOfNeed
 import LordOfTheRings.Attachment.Cards.RangerSpikes
+import LordOfTheRings.Attachment.Cards.SpearOfTheCitadel
 import LordOfTheRings.Attachment.Cards.IthilienPit
 import LordOfTheRings.Attachment.Cards.GondorianShield
 import LordOfTheRings.Attachment.Cards.ValiantSword
@@ -170,6 +171,7 @@ allAttachments =
         , SomeAttachmentCard magicRing
         , SomeAttachmentCard pathOfNeed
         , SomeAttachmentCard rangerSpikes
+        , SomeAttachmentCard spearOfTheCitadel
         , SomeAttachmentCard ithilienPit
         , SomeAttachmentCard gondorianShield
         , SomeAttachmentCard valiantSword

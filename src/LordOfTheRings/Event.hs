@@ -66,6 +66,10 @@ import LordOfTheRings.Event.Cards.WeAreNotIdle
 import LordOfTheRings.Event.Cards.HiddenCache
 import LordOfTheRings.Event.Cards.AVeryGoodTale
 import LordOfTheRings.Event.Cards.BehindStrongWalls
+import LordOfTheRings.Event.Cards.MutualAccord
+import LordOfTheRings.Event.Cards.WealthOfGondor
+import LordOfTheRings.Event.Cards.LightTheBeacons
+import LordOfTheRings.Event.Cards.AWatchfulPeace
 import LordOfTheRings.Event.Cards.FoeHammer
 import LordOfTheRings.Event.Cards.ConeyInATrap
 import LordOfTheRings.Event.Cards.PillarsOfTheKings
@@ -174,6 +178,10 @@ allEvents =
         , SomeEventCard hiddenCache
         , SomeEventCard aVeryGoodTale
         , SomeEventCard behindStrongWalls
+        , SomeEventCard mutualAccord
+        , SomeEventCard wealthOfGondor
+        , SomeEventCard lightTheBeacons
+        , SomeEventCard aWatchfulPeace
         , SomeEventCard foeHammer
         , SomeEventCard coneyInATrap
         , SomeEventCard pillarsOfTheKings

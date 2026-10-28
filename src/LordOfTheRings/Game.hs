@@ -1151,7 +1151,13 @@ runGameMessage msg g = case msg of
     pushAll $ forcedMsgs <> [ResponseWindow windows order [] 0]
     -- after an enemy's attack has resolved, what lasted for that attack ends
     let attackOver = any (\case Window After (EnemyAttacking _ _) -> True; _ -> False) windows
-    pure $ if attackOver then g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration) else g
+        -- an effect waiting for the next enemy in the staging area passes to it
+        passed = case [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- windows] of
+          eid : _ -> map \e -> case [m | NextEnemyInStaging m <- effectModifiers e] of
+            [] -> e
+            ms -> e {effectTarget = EnemyTarget eid, effectModifiers = ms}
+          [] -> id
+    pure $ g & effectsL %~ passed . (if attackOver then filter ((/= UntilEndOfAttack) . effectDuration) else id)
   ResponseWindow windows order used passes
     | passes < length order
     , (pid : _) <- order -> do
