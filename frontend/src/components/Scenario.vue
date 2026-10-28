@@ -47,6 +47,15 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
     />
     <!-- where the travelled-to location goes, kept when there is none -->
     <div v-else class="location-placeholder">{{ $t('game.noActiveLocation') }}</div>
+    <GameCard
+      v-for="other in scenario.otherActiveLocations"
+      :key="other.card.id"
+      :card="other.card"
+      :attachments="other.attachments"
+      :choices="choices"
+      :flipping="isFlipping(other.card)"
+      @choose="emit('choose', $event)"
+    />
   </section>
 </template>
 

@@ -768,5 +768,25 @@
   },
   "aKnifeInTheBack": {
     "damage": "Deal {n} damage to one of your heroes"
+  },
+  "divideProgress": "Divide the progress between the active locations: how much goes on {location}?",
+  "osgiliath": {
+    "returnHighest": "Return a location you control with the highest threat to the staging area",
+    "returnLocation": "Return a location you control to the staging area"
+  },
+  "westGate": {
+    "search": "Choose an Osgiliath location to reveal"
+  },
+  "ruinedTower": {
+    "exhaust": "Exhaust a character to travel to Ruined Tower"
+  },
+  "counterAttack": {
+    "choose": "Counter-attack: return your highest threat location, or raise your threat",
+    "return": "Return the location with the highest threat",
+    "raise": "Raise your threat by {n}"
+  },
+  "streetFighting": {
+    "choose": "Exhaust a hero to take control of the location?",
+    "addToStaging": "Add it to the staging area"
   }
 }

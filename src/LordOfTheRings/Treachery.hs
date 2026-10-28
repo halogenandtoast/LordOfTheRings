@@ -103,6 +103,9 @@ import LordOfTheRings.Treachery.Cards.TheDeadCityLooms
 import LordOfTheRings.Treachery.Cards.UnwelcomeDiscovery
 import LordOfTheRings.Treachery.Cards.AKnifeInTheBack
 import LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
+import LordOfTheRings.Treachery.Cards.PinnedDown
+import LordOfTheRings.Treachery.Cards.StreetFighting
+import LordOfTheRings.Treachery.Cards.CounterAttack
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -230,5 +233,8 @@ allTreacherys =
         , SomeTreacheryCard unwelcomeDiscovery
         , SomeTreacheryCard aKnifeInTheBack
         , SomeTreacheryCard falseLeadTheStewardsFear
+        , SomeTreacheryCard pinnedDown
+        , SomeTreacheryCard streetFighting
+        , SomeTreacheryCard counterAttack
         ]
     ]

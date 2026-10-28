@@ -136,6 +136,11 @@ data WindowMatcher
   | -- | the active location explored, as "after the active location leaves play as an
     -- explored location" reads
     ActiveLocationExploredWindow Timing
+  | -- | the player let an attack go undefended
+    AttackUndefendedWindow Timing PlayerId
+  | EnemyDefeatedWindow Timing
+  | -- | the enemy's attack, or any enemy's, destroyed a character
+    CharacterDestroyedByAttackWindow Timing (Maybe EnemyId)
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -206,6 +211,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
   (CardPlayedWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
+  (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
+  (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
+  (CharacterDestroyedByAttackWindow t who, CharacterDestroyedByAttack eid _ _) -> t == timing && maybe True (== eid) who
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

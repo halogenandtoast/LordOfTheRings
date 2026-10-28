@@ -110,6 +110,9 @@ allTreacheryCards =
       , unwelcomeDiscovery
       , aKnifeInTheBack
       , falseLeadTheStewardsFear
+      , pinnedDown
+      , streetFighting
+      , counterAttack
       ]
 
 deepDeepDark :: CardDef
@@ -673,4 +676,20 @@ falseLeadTheStewardsFear :: CardDef
 falseLeadTheStewardsFear =
   (treachery "06025" "False Lead" TheStewardsFear 2)
     { cdShadowEffect = True
+    }
+
+pinnedDown :: CardDef
+pinnedDown =
+  (treachery "06104" "Pinned Down" AssaultOnOsgiliath 2)
+    { cdShadowEffect = True
+    }
+
+streetFighting :: CardDef
+streetFighting = treachery "06105" "Street Fighting" AssaultOnOsgiliath 2
+
+counterAttack :: CardDef
+counterAttack =
+  (treachery "06106" "Counter-attack" AssaultOnOsgiliath 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
     }

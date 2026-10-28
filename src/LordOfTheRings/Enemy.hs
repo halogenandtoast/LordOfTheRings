@@ -113,6 +113,10 @@ import LordOfTheRings.Enemy.Cards.UnderworldDissident
 import LordOfTheRings.Enemy.Cards.DaughterOfBeruthiel
 import LordOfTheRings.Enemy.Cards.TheHandOfCastamir
 import LordOfTheRings.Enemy.Cards.TelemnarsBane
+import LordOfTheRings.Enemy.Cards.UrukLieutenant
+import LordOfTheRings.Enemy.Cards.UrukSoldier
+import LordOfTheRings.Enemy.Cards.SouthronPhalanx
+import LordOfTheRings.Enemy.Cards.SouthronCommander
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -250,5 +254,9 @@ allEnemys =
         , SomeEnemyCard daughterOfBeruthiel
         , SomeEnemyCard theHandOfCastamir
         , SomeEnemyCard telemnarsBane
+        , SomeEnemyCard urukLieutenant
+        , SomeEnemyCard urukSoldier
+        , SomeEnemyCard southronPhalanx
+        , SomeEnemyCard southronCommander
         ]
     ]

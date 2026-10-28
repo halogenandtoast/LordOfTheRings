@@ -119,6 +119,10 @@ allEnemyCards =
       , daughterOfBeruthiel
       , theHandOfCastamir
       , telemnarsBane
+      , urukLieutenant
+      , urukSoldier
+      , southronPhalanx
+      , southronCommander
       ]
 
 namelessThing :: CardDef
@@ -915,3 +919,34 @@ telemnarsBane =
     (enemy "06017" "Telemnar's Bane" TheStewardsFear 1 20 3 3 2 7)
       { cdCardTraits = setFromList [Gondor, Villain]
       }
+
+urukLieutenant :: CardDef
+urukLieutenant =
+  (enemy "06092" "Uruk Lieutenant" AssaultOnOsgiliath 2 40 2 6 2 3)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+urukSoldier :: CardDef
+urukSoldier =
+  (enemy "06093" "Uruk Soldier" AssaultOnOsgiliath 4 30 1 4 1 2)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdShadowEffect = True
+    }
+
+southronPhalanx :: CardDef
+southronPhalanx =
+  (enemy "06094" "Southron Phalanx" AssaultOnOsgiliath 3 25 1 1 2 3)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+southronCommander :: CardDef
+southronCommander =
+  (enemy "06095" "Southron Commander" AssaultOnOsgiliath 2 37 3 5 3 6)
+    { cdCardTraits = setFromList [Harad]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
+    }

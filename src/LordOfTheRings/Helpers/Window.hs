@@ -17,6 +17,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, WhenRevealedCannotBeCanceled),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, TravelableWithActiveLocation),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -327,9 +328,13 @@ passesCriteriaFor pid c = runReadGame (passesCriteria c) . (\g -> g {gameActiveP
 abilityKey :: Ability -> (Source, Int)
 abilityKey ab = (ab.abilitySource, ab.abilityIndex)
 
--- | The locations the travel phase may go to: none while a location is active.
+-- | The locations the travel phase may go to: none while a location is active, but one
+-- that may become a second active location, as Ruined Tower.
 travelableLocations :: HasGame m => m [LocationId]
-travelableLocations =
-  selectAny IsActiveLocation >>= \case
-    True -> pure []
-    False -> filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
+travelableLocations = do
+  active <- length <$> select IsActiveLocation
+  staged <- filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
+  case active of
+    0 -> pure staged
+    1 -> filterM (fmap (elem TravelableWithActiveLocation) . getModifiers) staged
+    _ -> pure []

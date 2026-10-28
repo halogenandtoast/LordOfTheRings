@@ -31,6 +31,9 @@ data ModifierType
     ImmuneToPlayerCardEffects
   | -- | on a location: no card effect, player or encounter, places or removes its tokens
     ImmuneToCardEffects
+  | -- | on a location: player card effects cannot place progress on it, as Retake the City
+    -- reads for the staging area
+    NoProgressFromPlayerCards
   | -- | on a location: its quest points are raised by this much, as an X reads
     QuestPointModifier Int
   | -- | on an enemy, or a character
@@ -114,6 +117,9 @@ data ModifierType
   | ReturnToTopOfEncounterDeckAfterCombat
   | -- | on a location: the players cannot travel there now (its travel cost cannot be paid)
     CannotBeTraveledTo
+  | -- | on a location: the players may travel there while 1 other location is active,
+    -- making 2 active locations, as Ruined Tower reads
+    TravelableWithActiveLocation
   | -- | on a player
     CannotDrawCards
   | DoesNotReadyDuringRefresh
@@ -247,6 +253,10 @@ data ModifierType
     CannotLeavePlay
   | -- | on a character or enemy: any amount of damage dealt to it is reduced to this much
     DamageReducedTo Int
+  | -- | on an attacking enemy: if the attack destroys a character, its controller returns
+    -- the location he controls with the highest threat to the staging area, as Osgiliath's
+    -- shadows read
+    DestroyingReturnsLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

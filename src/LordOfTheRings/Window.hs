@@ -92,6 +92,12 @@ data WindowType
     PlayingEvent PlayerId CardId
   | -- | an attack the characters made dealt the enemy this much damage
     AttackDealtDamage EnemyId [Target] Int
+  | -- | the player let the enemy's attack go undefended
+    AttackUndefended PlayerId EnemyId
+  | -- | an enemy was defeated: damage destroyed it
+    EnemyDefeated EnemyId
+  | -- | the enemy's attack destroyed the character: who controlled it
+    CharacterDestroyedByAttack EnemyId Target PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -107,6 +107,7 @@ allQuestCards =
       , conspiracy
       , theGrandDesign
       , theConfrontation
+      , retakeTheCity
       ]
 
 theDrippingWalls :: CardDef
@@ -368,3 +369,6 @@ theGrandDesign = quest "06012" "The Grand Design" TheStewardsFear 2 0
 
 theConfrontation :: CardDef
 theConfrontation = quest "06013" "The Confrontation" TheStewardsFear 3 15
+
+retakeTheCity :: CardDef
+retakeTheCity = quest "06091" "Retake the City" AssaultOnOsgiliath 1 0

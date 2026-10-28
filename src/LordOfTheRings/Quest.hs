@@ -86,6 +86,7 @@ import LordOfTheRings.Quest.Cards.TheMorgulRider
 import LordOfTheRings.Quest.Cards.Conspiracy
 import LordOfTheRings.Quest.Cards.TheGrandDesign
 import LordOfTheRings.Quest.Cards.TheConfrontation
+import LordOfTheRings.Quest.Cards.RetakeTheCity
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -204,5 +205,6 @@ allQuests =
         , SomeQuestCard conspiracy
         , SomeQuestCard theGrandDesign
         , SomeQuestCard theConfrontation
+        , SomeQuestCard retakeTheCity
         ]
     ]

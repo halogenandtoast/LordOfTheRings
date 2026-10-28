@@ -609,6 +609,14 @@ undefendedDamageTo
   :: (ReverseQueue m, Sourceable source, Targetable target) => source -> EnemyId -> target -> m ()
 undefendedDamageTo source eid = phaseModifier source eid . UndefendedDamageTo . toTarget
 
+{- | The card leaves the encounter discard pile and is revealed, as West Gate's search: its
+keywords and windows apply as for any reveal.
+-}
+revealFromEncounterDiscard :: ReverseQueue m => EncounterCard -> m ()
+revealFromEncounterDiscard card = do
+  removeFromEncounterDiscard card
+  push $ RevealCard card
+
 {- | Only the card's When Revealed effect resolves, as Lieutenant of Mordor's: no keyword,
 window or cancel touches it. The caller first takes the card from where it was.
 -}
@@ -857,3 +865,7 @@ endQuestPhaseWithoutResolving = lift $ withQueue_ \q ->
     ActionWindow _ -> True
     QuestResolution -> True
     _ -> False
+-- | A location card, taken from where it was, comes into play placed there, as Street
+-- Fighting puts one under the first player's control.
+putLocationIntoPlay :: ReverseQueue m => EncounterCard -> Placement -> m ()
+putLocationIntoPlay card = push . PutLocationIntoPlay card
