@@ -95,6 +95,14 @@ import LordOfTheRings.Location.Cards.PelargirDocks
 import LordOfTheRings.Location.Cards.HarborStorehouse
 import LordOfTheRings.Location.Cards.CityStreet
 import LordOfTheRings.Location.Cards.MarketSquare
+import LordOfTheRings.Location.Cards.WestGate
+import LordOfTheRings.Location.Cards.TheKingsLibrary
+import LordOfTheRings.Location.Cards.AncientHarbor
+import LordOfTheRings.Location.Cards.TheOldBridge
+import LordOfTheRings.Location.Cards.WestQuarter
+import LordOfTheRings.Location.Cards.EastQuarter
+import LordOfTheRings.Location.Cards.RuinedSquare
+import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -214,5 +222,13 @@ allLocations =
         , SomeLocationCard harborStorehouse
         , SomeLocationCard cityStreet
         , SomeLocationCard marketSquare
+        , SomeLocationCard westGate
+        , SomeLocationCard theKingsLibrary
+        , SomeLocationCard ancientHarbor
+        , SomeLocationCard theOldBridge
+        , SomeLocationCard westQuarter
+        , SomeLocationCard eastQuarter
+        , SomeLocationCard ruinedSquare
+        , SomeLocationCard ruinedTower
         ]
     ]
