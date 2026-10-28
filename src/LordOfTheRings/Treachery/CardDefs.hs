@@ -85,6 +85,7 @@ allTreacheryCards =
       , illPurpose
       , disturbedWaters
       , wrapped
+      , blockingWargs
       ]
 
 deepDeepDark :: CardDef
@@ -509,4 +510,12 @@ wrapped :: CardDef
 wrapped =
   (treachery "the-watcher-in-the-water-076" "Wrapped!" TheWatcherInTheWater 4)
     { cdCardTraits = setFromList [Tentacle]
+    }
+
+blockingWargs :: CardDef
+blockingWargs =
+  (treachery "05029" "Blocking Wargs" IntoIthilien 4)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

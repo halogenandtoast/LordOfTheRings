@@ -83,6 +83,7 @@ import LordOfTheRings.Location.Cards.StairFalls
 import LordOfTheRings.Location.Cards.PerilousSwamp
 import LordOfTheRings.Location.Cards.MakeshiftPassage
 import LordOfTheRings.Location.Cards.StagnantCreek
+import LordOfTheRings.Location.Cards.IthilienRoad
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -190,5 +191,6 @@ allLocations =
         , SomeLocationCard perilousSwamp
         , SomeLocationCard makeshiftPassage
         , SomeLocationCard stagnantCreek
+        , SomeLocationCard ithilienRoad
         ]
     ]

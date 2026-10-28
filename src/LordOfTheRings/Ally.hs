@@ -103,6 +103,8 @@ import LordOfTheRings.Ally.Cards.MarksmanOfLorien
 import LordOfTheRings.Ally.Cards.Yazan
 import LordOfTheRings.Ally.Cards.Jubayr
 import LordOfTheRings.Ally.Cards.Firyal
+import LordOfTheRings.Ally.Cards.Celador
+import LordOfTheRings.Ally.Cards.IthilienGuardian
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -233,5 +235,7 @@ allAllies =
         , SomeAllyCard yazan
         , SomeAllyCard jubayr
         , SomeAllyCard firyal
+        , SomeAllyCard celador
+        , SomeAllyCard ithilienGuardian
         ]
     ]

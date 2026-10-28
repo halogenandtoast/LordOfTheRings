@@ -81,6 +81,7 @@ allEnemyCards =
       , graspingTentacle
       , thrashingTentacle
       , strikingTentacle
+      , southronCompany
       ]
 
 namelessThing :: CardDef
@@ -586,4 +587,11 @@ strikingTentacle :: CardDef
 strikingTentacle =
   (enemy "04075" "Striking Tentacle" TheWatcherInTheWater 4 18 2 4 1 3)
     { cdCardTraits = setFromList [Tentacle]
+    }
+
+southronCompany :: CardDef
+southronCompany =
+  (enemy "05027" "Southron Company" IntoIthilien 4 34 1 3 1 5)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
     }

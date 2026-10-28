@@ -90,6 +90,7 @@ allLocationCards =
       , perilousSwamp
       , makeshiftPassage
       , stagnantCreek
+      , ithilienRoad
       ]
 
 drownedTreasury :: CardDef
@@ -621,4 +622,11 @@ stagnantCreek =
   (location "04069" "Stagnant Creek" TheWatcherInTheWater 3 3 3)
     { cdCardTraits = setFromList [Swamp]
     , cdWhenRevealed = True
+    }
+
+ithilienRoad :: CardDef
+ithilienRoad =
+  (location "05028" "Ithilien Road" IntoIthilien 2 4 4)
+    { cdCardTraits = setFromList [Forest, Road]
+    , cdShadowEffect = True
     }

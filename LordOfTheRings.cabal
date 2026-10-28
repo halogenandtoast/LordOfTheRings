@@ -25,6 +25,7 @@ library
       LordOfTheRings.Ally.Cards.Bofur
       LordOfTheRings.Ally.Cards.Bombur
       LordOfTheRings.Ally.Cards.BrokIronfist
+      LordOfTheRings.Ally.Cards.Celador
       LordOfTheRings.Ally.Cards.CitadelCustodian
       LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
       LordOfTheRings.Ally.Cards.DefenderOfRammas
@@ -67,6 +68,7 @@ library
       LordOfTheRings.Ally.Cards.HenamarthRiversong
       LordOfTheRings.Ally.Cards.HorsebackArcher
       LordOfTheRings.Ally.Cards.ImladrisStargazer
+      LordOfTheRings.Ally.Cards.IthilienGuardian
       LordOfTheRings.Ally.Cards.Jubayr
       LordOfTheRings.Ally.Cards.KeenEyedTook
       LordOfTheRings.Ally.Cards.Kili
@@ -277,6 +279,7 @@ library
       LordOfTheRings.Enemy.Cards.RockAdder
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.SnowWarg
+      LordOfTheRings.Enemy.Cards.SouthronCompany
       LordOfTheRings.Enemy.Cards.StrayGoblin
       LordOfTheRings.Enemy.Cards.StrikingTentacle
       LordOfTheRings.Enemy.Cards.Stuart
@@ -481,6 +484,7 @@ library
       LordOfTheRings.Location.Cards.GoblinTunnels
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.ImpassableBog
+      LordOfTheRings.Location.Cards.IthilienRoad
       LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LightlessPassage
       LordOfTheRings.Location.Cards.MakeshiftPassage
@@ -552,6 +556,7 @@ library
       LordOfTheRings.Objective.Cards.Athelas
       LordOfTheRings.Objective.Cards.BookOfMazarbul
       LordOfTheRings.Objective.Cards.CaveTorch
+      LordOfTheRings.Objective.Cards.Celador
       LordOfTheRings.Objective.Cards.DungeonTorch
       LordOfTheRings.Objective.Cards.DurinsAxe
       LordOfTheRings.Objective.Cards.DurinsGreaves
@@ -560,6 +565,7 @@ library
       LordOfTheRings.Objective.Cards.GollumReturnToMirkwood
       LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
       LordOfTheRings.Objective.Cards.GrimbeornTheOld
+      LordOfTheRings.Objective.Cards.IthilienGuardian
       LordOfTheRings.Objective.Cards.ShadowKey
       LordOfTheRings.Objective.Cards.SignsOfGollum
       LordOfTheRings.Objective.Cards.Wilyador
@@ -680,6 +686,7 @@ library
       LordOfTheRings.Treachery.Cards.Avalanche
       LordOfTheRings.Treachery.Cards.AWispOfPaleSheen
       LordOfTheRings.Treachery.Cards.BitterWind
+      LordOfTheRings.Treachery.Cards.BlockingWargs
       LordOfTheRings.Treachery.Cards.BurningLow
       LordOfTheRings.Treachery.Cards.CaughtInAWeb
       LordOfTheRings.Treachery.Cards.CaveIn

@@ -32,6 +32,8 @@ allObjectiveCards =
       , durinsGreaves
       , durinsAxe
       , durinsHelm
+      , celador
+      , ithilienGuardian
       ]
 
 durinsAxe :: CardDef
@@ -168,3 +170,20 @@ durinsGreaves =
       { cdCardTraits = setFromList [Artifact, Armor]
       , cdWhenRevealed = True
       }
+
+celador :: CardDef
+celador =
+  ((objective "05025" "Celador" IntoIthilien 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
+ithilienGuardian :: CardDef
+ithilienGuardian =
+  ((objective "05026" "Ithilien Guardian" IntoIthilien 2)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 2, cdDefense = Just 1, cdHitPoints = Just 2 })
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }

@@ -75,6 +75,7 @@ import LordOfTheRings.Enemy.Cards.TheWatcher
 import LordOfTheRings.Enemy.Cards.GraspingTentacle
 import LordOfTheRings.Enemy.Cards.ThrashingTentacle
 import LordOfTheRings.Enemy.Cards.StrikingTentacle
+import LordOfTheRings.Enemy.Cards.SouthronCompany
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -174,5 +175,6 @@ allEnemys =
         , SomeEnemyCard graspingTentacle
         , SomeEnemyCard thrashingTentacle
         , SomeEnemyCard strikingTentacle
+        , SomeEnemyCard southronCompany
         ]
     ]
