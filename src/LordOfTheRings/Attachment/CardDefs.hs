@@ -92,6 +92,7 @@ allAttachmentCards =
       , hardyLeadership
       , miruvor
       , ringOfBarahir
+      , mightyProwess
       ]
 
 stewardOfGondor :: CardDef
@@ -612,4 +613,11 @@ ringOfBarahir =
   (attachment "06007" "Ring of Barahir" Spirit (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Item, Ring]
+    }
+
+mightyProwess :: CardDef
+mightyProwess =
+  (attachment "06035" "Mighty Prowess" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
     }

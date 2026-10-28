@@ -113,6 +113,9 @@ import LordOfTheRings.Ally.Cards.WarriorOfLossarnach
 import LordOfTheRings.Ally.Cards.KnightsOfTheSwan
 import LordOfTheRings.Ally.Cards.EthirSwordsman
 import LordOfTheRings.Ally.Cards.AnfalasHerdsman
+import LordOfTheRings.Ally.Cards.Forlong
+import LordOfTheRings.Ally.Cards.HarborMaster
+import LordOfTheRings.Ally.Cards.WhiteTowerWatchman
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -253,5 +256,8 @@ allAllies =
         , SomeAllyCard knightsOfTheSwan
         , SomeAllyCard ethirSwordsman
         , SomeAllyCard anfalasHerdsman
+        , SomeAllyCard forlong
+        , SomeAllyCard harborMaster
+        , SomeAllyCard whiteTowerWatchman
         ]
     ]

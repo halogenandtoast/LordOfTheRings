@@ -101,6 +101,10 @@ import LordOfTheRings.Event.Cards.PeaceAndThought
 import LordOfTheRings.Event.Cards.RiskSomeLight
 import LordOfTheRings.Event.Cards.GainingStrength
 import LordOfTheRings.Event.Cards.MithrandirsAdvice
+import LordOfTheRings.Event.Cards.StrengthOfArms
+import LordOfTheRings.Event.Cards.TrainedForWar
+import LordOfTheRings.Event.Cards.AgainstTheShadow
+import LordOfTheRings.Event.Cards.AdvanceWarning
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -215,5 +219,9 @@ allEvents =
         , SomeEventCard riskSomeLight
         , SomeEventCard gainingStrength
         , SomeEventCard mithrandirsAdvice
+        , SomeEventCard strengthOfArms
+        , SomeEventCard trainedForWar
+        , SomeEventCard againstTheShadow
+        , SomeEventCard advanceWarning
         ]
     ]

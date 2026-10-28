@@ -112,6 +112,10 @@ allEventCards =
       , riskSomeLight
       , gainingStrength
       , mithrandirsAdvice
+      , strengthOfArms
+      , trainedForWar
+      , againstTheShadow
+      , advanceWarning
       ]
 
 everVigilant :: CardDef
@@ -419,3 +423,15 @@ gainingStrength = event "06003" "Gaining Strength" Leadership (StaticCost 0)
 
 mithrandirsAdvice :: CardDef
 mithrandirsAdvice = event "06009" "Mithrandir's Advice" Lore (StaticCost 1)
+
+strengthOfArms :: CardDef
+strengthOfArms = event "06034" "Strength of Arms" Leadership (StaticCost 2)
+
+trainedForWar :: CardDef
+trainedForWar = event "06036" "Trained for War" Tactics (StaticCost 2)
+
+againstTheShadow :: CardDef
+againstTheShadow = event "06038" "Against the Shadow" Spirit (StaticCost 2)
+
+advanceWarning :: CardDef
+advanceWarning = event "06040" "Advance Warning" Lore (StaticCost 2)

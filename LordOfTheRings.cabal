@@ -54,6 +54,7 @@ library
       LordOfTheRings.Ally.Cards.Faramir
       LordOfTheRings.Ally.Cards.Fili
       LordOfTheRings.Ally.Cards.Firyal
+      LordOfTheRings.Ally.Cards.Forlong
       LordOfTheRings.Ally.Cards.GaladhonArcher
       LordOfTheRings.Ally.Cards.GaladhrimMinstrel
       LordOfTheRings.Ally.Cards.GaladrielsHandmaiden
@@ -68,6 +69,7 @@ library
       LordOfTheRings.Ally.Cards.GuardOfTheCitadel
       LordOfTheRings.Ally.Cards.Guthlaf
       LordOfTheRings.Ally.Cards.HaldirOfLorien
+      LordOfTheRings.Ally.Cards.HarborMaster
       LordOfTheRings.Ally.Cards.HenamarthRiversong
       LordOfTheRings.Ally.Cards.HorsebackArcher
       LordOfTheRings.Ally.Cards.HunterOfLamedon
@@ -120,6 +122,7 @@ library
       LordOfTheRings.Ally.Cards.WestfoldLancer
       LordOfTheRings.Ally.Cards.WestfoldOutrider
       LordOfTheRings.Ally.Cards.WestRoadTraveller
+      LordOfTheRings.Ally.Cards.WhiteTowerWatchman
       LordOfTheRings.Ally.Cards.Wilyador
       LordOfTheRings.Ally.Cards.WingedGuardian
       LordOfTheRings.Ally.Cards.Yazan
@@ -170,6 +173,7 @@ library
       LordOfTheRings.Attachment.Cards.LightOfValinor
       LordOfTheRings.Attachment.Cards.LoveOfTales
       LordOfTheRings.Attachment.Cards.MagicRing
+      LordOfTheRings.Attachment.Cards.MightyProwess
       LordOfTheRings.Attachment.Cards.MirrorOfGaladriel
       LordOfTheRings.Attachment.Cards.Miruvor
       LordOfTheRings.Attachment.Cards.NarvisBelt
@@ -325,7 +329,9 @@ library
       LordOfTheRings.Entities
       LordOfTheRings.Event
       LordOfTheRings.Event.CardDefs
+      LordOfTheRings.Event.Cards.AdvanceWarning
       LordOfTheRings.Event.Cards.AElberethGilthoniel
+      LordOfTheRings.Event.Cards.AgainstTheShadow
       LordOfTheRings.Event.Cards.AGoodHarvest
       LordOfTheRings.Event.Cards.ALightInTheDark
       LordOfTheRings.Event.Cards.AncestralKnowledge
@@ -403,6 +409,7 @@ library
       LordOfTheRings.Event.Cards.SneakAttack
       LordOfTheRings.Event.Cards.StandAndFight
       LordOfTheRings.Event.Cards.StandTogether
+      LordOfTheRings.Event.Cards.StrengthOfArms
       LordOfTheRings.Event.Cards.StrengthOfWill
       LordOfTheRings.Event.Cards.StridersPath
       LordOfTheRings.Event.Cards.SwiftStrike
@@ -415,6 +422,7 @@ library
       LordOfTheRings.Event.Cards.ThicketOfSpears
       LordOfTheRings.Event.Cards.TimelyAid
       LordOfTheRings.Event.Cards.ToTheEyrie
+      LordOfTheRings.Event.Cards.TrainedForWar
       LordOfTheRings.Event.Cards.UnseenStrike
       LordOfTheRings.Event.Cards.UntroubledByDarkness
       LordOfTheRings.Event.Cards.ValiantSacrifice
@@ -475,6 +483,7 @@ library
       LordOfTheRings.Hero.Cards.Legolas
       LordOfTheRings.Hero.Cards.Lothiriel
       LordOfTheRings.Hero.Cards.Mablung
+      LordOfTheRings.Hero.Cards.Mirlonde
       LordOfTheRings.Hero.Cards.Nori
       LordOfTheRings.Hero.Cards.Ori
       LordOfTheRings.Hero.Cards.PrinceImrahil

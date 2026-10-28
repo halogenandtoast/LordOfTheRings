@@ -55,6 +55,7 @@ allHeroCards =
       , arwenUndomiel
       , eowynTactics
       , hirluinTheFair
+      , mirlonde
       ]
 
 aragorn :: CardDef
@@ -315,4 +316,10 @@ hirluinTheFair =
   (hero "06001" "Hirluin the Fair" Leadership 8 1 1 1 4)
     { cdCardTraits = setFromList [Outlands]
     , cdKeywords = setFromList [Ranged]
+    }
+
+mirlonde :: CardDef
+mirlonde =
+  (hero "06032" "Mirlonde" Lore 8 2 2 1 3)
+    { cdCardTraits = setFromList [Silvan]
     }

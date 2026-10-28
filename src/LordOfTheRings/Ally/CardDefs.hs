@@ -115,6 +115,9 @@ allAllyCards =
       , knightsOfTheSwan
       , ethirSwordsman
       , anfalasHerdsman
+      , forlong
+      , harborMaster
+      , whiteTowerWatchman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -777,4 +780,23 @@ anfalasHerdsman :: CardDef
 anfalasHerdsman =
   (ally "06008" "Anfalas Herdsman" Lore (StaticCost 1) 0 0 0 1)
     { cdCardTraits = setFromList [Outlands]
+    }
+
+forlong :: CardDef
+forlong =
+  (ally "06033" "Forlong" Leadership (StaticCost 3) 1 1 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Outlands]
+    }
+
+harborMaster :: CardDef
+harborMaster =
+  (ally "06039" "Harbor Master" Lore (StaticCost 3) 1 2 0 2)
+    { cdCardTraits = setFromList [Noldor]
+    }
+
+whiteTowerWatchman :: CardDef
+whiteTowerWatchman =
+  (ally "06041" "White Tower Watchman" Neutral (StaticCost 3) 1 0 2 3)
+    { cdCardTraits = setFromList [Gondor]
     }
