@@ -1,6 +1,6 @@
 module LordOfTheRings.Hero.Cards.Hirgon (hirgon) where
 
-import LordOfTheRings.Card (CardType (AllyType), costAsResources)
+import LordOfTheRings.Card (costAsResources)
 import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (Tactics))
@@ -18,7 +18,7 @@ that ally +1 attack and +1 defense until the end of the round.
 -}
 instance HasAbilities Hirgon where
   getAbilities (Hirgon a) =
-    [ restricted a 1 (exists (HeroWithId a.id <> CommittedHero) <> CardInHand a.owner AllyType)
+    [ restricted a 1 (exists (HeroWithId a.id <> CommittedHero) <> AffordableAllyInHand a.owner Tactics 1 1)
         $ response
         $ QuestedSuccessfullyWindow After
     ]
@@ -26,19 +26,9 @@ instance HasAbilities Hirgon where
 instance RunMessage Hirgon where
   runMessage msg h@(Hirgon attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      player <- getPlayer pid
-      tactics <- getResourcesOfSphere pid Tactics
       let cost c = maybe 0 costAsResources c.cost
           reduction c = if cost c > 1 then 1 else 0 :: Int
-      allies <-
-        filterM
-          passesUnique
-          [ c
-          | c <- player.hand
-          , c.cardType == AllyType
-          , c.sphere == Just Tactics
-          , tactics >= cost c - reduction c
-          ]
+      allies <- affordableAlliesInHand pid Tactics 1 1
       chooseOneM pid do
         questionLabeled "hirgon.chooseAlly"
         causedBy attrs

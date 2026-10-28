@@ -299,6 +299,28 @@ affordableDiscardedAllies pid sphere = do
       , x <= spend
       ]
 
+-- | Allies Hirgon and similar effects can play from hand at a reduced cost.
+affordableAlliesInHand :: HasGame m => PlayerId -> Sphere -> Int -> Int -> m [Card]
+affordableAlliesInHand pid sphere reduction minimumCost = do
+  player <- getPlayer pid
+  resources <- getResourcesOfSphere pid sphere
+  mods <- getsGame gameModifiers
+  let on t = map modifierType $ Map.findWithDefault [] t mods
+      gameMods = on GameTarget
+      forbidden c = any (\case CannotPlay m -> cardMatches m c; _ -> False) (gameMods <> on (PlayerTarget pid))
+      cost c = maybe 0 costAsResources c.cost
+      reducedCost c = min (cost c) $ max minimumCost (cost c - reduction)
+  if OneAllyPerRound `elem` gameMods && AllyPlayedThisRound `elem` gameMods
+    then pure []
+    else filterM passesUnique
+      [ c
+      | c <- player.hand
+      , c.cardType == AllyType
+      , c.sphere == Just sphere
+      , resources >= reducedCost c
+      , not $ forbidden c
+      ]
+
 -- | The player's allies whose resources can pay for the card, with the resources on each.
 allyPayersFor :: HasGame m => PlayerId -> Card -> m [(AllyId, Int)]
 allyPayersFor pid card = do

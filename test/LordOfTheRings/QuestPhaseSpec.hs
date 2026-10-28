@@ -62,6 +62,18 @@ spec = describe "Quest phase" do
     questWith pid [Locations.forestGate] []
     getsGame (length . (.entities.locations)) `shouldReturn` 2
 
+  it "allows reveal reductions to stack without revealing below zero" . gameTest $ \pid -> do
+    run $ CreateEffect $ Effect GameSource GameTarget [FewerStagingReveals 1, FewerStagingReveals 1] UntilEndOfRound
+    questWith pid [Locations.forestGate] []
+    length <$> getEncounterDeck `shouldReturn` 1
+    getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+  it "subtracts reveal reductions from additional staging reveals" . gameTest $ \pid -> do
+    run $ CreateEffect $ Effect GameSource GameTarget [AdditionalStagingReveals 1, FewerStagingReveals 1] UntilEndOfRound
+    questWith pid [Locations.forestGate, Locations.forestGate] []
+    length <$> getEncounterDeck `shouldReturn` 1
+    getsGame (length . (.entities.locations)) `shouldReturn` 2
+
   it "places the difference as progress when the quest succeeds" . gameTest $ \pid -> do
     -- willpower 4 + 2 + 1 against staging threat 2 + 1 + 2
     questWith pid [Locations.forestGate] ["01007", "01012", "01002"]

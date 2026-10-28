@@ -29,7 +29,7 @@ instance RunMessage WaitNoLonger where
         $ if null enemies
           then [Label (ikey "label.continue") []]
           else [targetLabel c [RemoveFromEncounterDeck c, PutEnemyIntoPlayEngaged pid c] | c <- enemies]
-      phaseModifier attrs GameTarget (AdditionalStagingReveals (-1))
+      phaseModifier attrs GameTarget (FewerStagingReveals 1)
       push $ ShuffleDeck EncounterDeck
       pure e
     _ -> WaitNoLonger <$> runMessage msg attrs

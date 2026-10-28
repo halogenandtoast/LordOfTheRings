@@ -1007,12 +1007,13 @@ runGameMessage msg g = case msg of
   Staging -> do
     mods <- getModifiers GameTarget
     let extra = sum [n | AdditionalStagingReveals n <- mods]
+        fewer = sum [n | FewerStagingReveals n <- mods]
         players = length [() | player <- toList g.players, not player.eliminated]
-    -- fewer reveals still reveal 1
+        reveals = max 0 $ max 1 (players + extra) - fewer
     unless (SkipStagingStep `elem` mods)
       $ pushAll
       $ CheckWindows [mkAfter StagingStepBegins]
-      : replicate (max 1 $ players + extra) RevealEncounterCard
+      : replicate reveals RevealEncounterCard
       <> [CheckWindows [mkWhen StagingStepEnds]]
     pure g
   QuestResolution -> do

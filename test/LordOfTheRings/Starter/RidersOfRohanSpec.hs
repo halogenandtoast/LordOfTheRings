@@ -276,10 +276,37 @@ spec = describe "Riders of Rohan" do
       chooseTarget pid card
       chooseTarget pid spider
       getsGame (map (enemyPlacement . toAttrs) . toList . (.entities.enemies)) `shouldReturn` [EngagedWith pid]
-      getModifiers GameTarget >>= (`shouldSatisfy` elem (AdditionalStagingReveals (-1)))
+      getModifiers GameTarget >>= (`shouldSatisfy` elem (FewerStagingReveals 1))
       length <$> getEncounterDeck `shouldReturn` 2
+      passResponses pid
+      chooseLabel "$label.doneCommitting" pid
+      passActions pid
+      length <$> getEncounterDeck `shouldReturn` 2
+      getsGame (length . (.entities.locations)) `shouldReturn` 0
 
   describe "Hirgon" do
+    for_ [("no allies", [], 2), ("only allies outside tactics", [Allies.westfoldHorseBreaker], 2), ("an unaffordable tactics ally", [Allies.riddermarkKnight], 0), ("a one-cost ally and no resources", [Allies.vassalOfTheWindlord], 0)] \(label, cards, resources) ->
+      it ("does not offer the response with " <> label) . rohanTest $ \pid -> do
+        g <- getGame
+        putGame $ g & playersL . ix pid . handL .~ []
+        traverse_ (putCardIntoHand pid) cards
+        giveResources eomerCode resources
+        hirgon <- hero hirgonCode
+        run $ CommitToQuest hirgon
+        run QuestResolution
+        offersAbilityOf pid hirgon `shouldReturn` False
+
+    it "does not offer the response for a unique ally already in play" . rohanTest $ \pid -> do
+      g <- getGame
+      putGame $ g & playersL . ix pid . handL .~ []
+      _ <- putAllyIntoPlay pid Allies.beorn
+      _ <- putCardIntoHand pid Allies.beorn
+      giveResources eomerCode 5
+      hirgon <- hero hirgonCode
+      run $ CommitToQuest hirgon
+      run QuestResolution
+      offersAbilityOf pid hirgon `shouldReturn` False
+
     it "plays a tactics ally for 1 less after questing successfully, and may boost it" . rohanTest $ \pid -> do
       card <- putCardIntoHand pid Allies.riddermarkKnight
       giveResources eomerCode 1

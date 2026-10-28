@@ -54,6 +54,8 @@ data ModifierType
     StagingThreatBonus Int
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
+  | -- | on the game: reveal fewer encounter cards, allowing staging to reveal none
+    FewerStagingReveals Int
   | NoEngagementChecks
   | -- | on the game: enemies with ambush make no engagement check as they enter play
     IgnoreAmbush
