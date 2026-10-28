@@ -570,3 +570,9 @@ matchCard matcher card = case matcher of
   CardMatchAll ms -> allM (`matchCard` card) ms
   CardMatchAny ms -> anyM (`matchCard` card) ms
   _ -> pure $ cardMatches matcher card
+
+-- | The next player clockwise from the player, still in the game; alone, there is none.
+getNextPlayer :: HasGame m => PlayerId -> m (Maybe PlayerId)
+getNextPlayer pid = do
+  players <- getRemainingPlayers
+  pure $ find (/= pid) $ take 1 $ drop 1 $ dropWhile (/= pid) (players <> players)

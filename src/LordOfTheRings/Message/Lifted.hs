@@ -844,3 +844,8 @@ cancelEvent cid = do
     PlayEvent _ card _ -> card.id == cid
     _ -> False
   for_ [card | PlayEvent _ card _ <- cancelled] (push . PutInDiscard)
+
+-- | The stage is defeated, and the players advance to the next, as "if Murzag is defeated,
+-- advance to the next stage" reads.
+completeQuest :: ReverseQueue m => QuestId -> m ()
+completeQuest = push . CompleteQuest

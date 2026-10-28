@@ -27,10 +27,8 @@ instance RunMessage GoblinSneak where
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards
       | any ((== TreacheryType) . cdCardType . toCardDef) cards
       , EngagedWith pid <- attrs.placement -> do
-          players <- getRemainingPlayers
-          -- the next player clockwise; alone, there is no one else to engage
-          for_ (headMay $ drop 1 $ dropWhile (/= pid) (players <> players)) \next ->
-            when (next /= pid) $ engageEnemy next attrs.id
+          -- alone, there is no one else to engage
+          getNextPlayer pid >>= traverse_ \next -> engageEnemy next attrs.id
           pure e
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       putShadowEnemyIntoStaging eid cid
