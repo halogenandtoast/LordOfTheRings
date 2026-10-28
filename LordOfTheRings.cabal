@@ -253,6 +253,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinWarlord
       LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.GreatCaveTroll
+      LordOfTheRings.Enemy.Cards.HaradrimElite
       LordOfTheRings.Enemy.Cards.HillTroll
       LordOfTheRings.Enemy.Cards.Hummerhorns
       LordOfTheRings.Enemy.Cards.HuntersFromMordor
@@ -269,6 +270,7 @@ library
       LordOfTheRings.Enemy.Cards.MountainTroll
       LordOfTheRings.Enemy.Cards.MountainWarg
       LordOfTheRings.Enemy.Cards.MuckAdder
+      LordOfTheRings.Enemy.Cards.Mumak
       LordOfTheRings.Enemy.Cards.NamelessThing
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
       LordOfTheRings.Enemy.Cards.OrcDrummer
@@ -282,6 +284,7 @@ library
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.SnowWarg
       LordOfTheRings.Enemy.Cards.SouthronCompany
+      LordOfTheRings.Enemy.Cards.SouthronMercenaries
       LordOfTheRings.Enemy.Cards.StrayGoblin
       LordOfTheRings.Enemy.Cards.StrikingTentacle
       LordOfTheRings.Enemy.Cards.Stuart
@@ -746,6 +749,7 @@ library
       LordOfTheRings.Treachery.Cards.SleepingSentry
       LordOfTheRings.Treachery.Cards.SlickFooting
       LordOfTheRings.Treachery.Cards.Snowstorm
+      LordOfTheRings.Treachery.Cards.SouthronSupport
       LordOfTheRings.Treachery.Cards.SuddenPitfall
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.TheLightsOfTheDead

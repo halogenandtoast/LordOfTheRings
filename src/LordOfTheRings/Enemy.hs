@@ -78,6 +78,9 @@ import LordOfTheRings.Enemy.Cards.StrikingTentacle
 import LordOfTheRings.Enemy.Cards.SouthronCompany
 import LordOfTheRings.Enemy.Cards.MorgulSpider
 import LordOfTheRings.Enemy.Cards.ForestBat
+import LordOfTheRings.Enemy.Cards.SouthronMercenaries
+import LordOfTheRings.Enemy.Cards.HaradrimElite
+import LordOfTheRings.Enemy.Cards.Mumak
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -180,5 +183,8 @@ allEnemys =
         , SomeEnemyCard southronCompany
         , SomeEnemyCard morgulSpider
         , SomeEnemyCard forestBat
+        , SomeEnemyCard southronMercenaries
+        , SomeEnemyCard haradrimElite
+        , SomeEnemyCard mumak
         ]
     ]

@@ -84,6 +84,9 @@ allEnemyCards =
       , southronCompany
       , morgulSpider
       , forestBat
+      , southronMercenaries
+      , haradrimElite
+      , mumak
       ]
 
 namelessThing :: CardDef
@@ -612,4 +615,26 @@ forestBat =
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
     , cdShadowEffect = True
+    }
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+southronMercenaries :: CardDef
+southronMercenaries =
+  (enemy "05052" "Southron Mercenaries" Southrons 3 35 2 3 2 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+haradrimElite :: CardDef
+haradrimElite =
+  (enemy "05053" "Haradrim Elite" Southrons 2 27 3 4 3 3)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+mumak :: CardDef
+mumak =
+  (enemy "05054" "Mumak" Southrons 1 38 4 7 3 12)
+    { cdCardTraits = setFromList [Harad, Creature]
+    , cdEasyModeQuantity = Just 0
     }

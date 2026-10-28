@@ -88,6 +88,7 @@ allTreacheryCards =
       , blockingWargs
       , lostCompany
       , watcherInTheWoods
+      , southronSupport
       ]
 
 deepDeepDark :: CardDef
@@ -529,5 +530,12 @@ watcherInTheWoods :: CardDef
 watcherInTheWoods =
   (treachery "05051" "Watcher in the Woods" CreaturesOfTheForest 2)
     { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+southronSupport :: CardDef
+southronSupport =
+  (treachery "05055" "Southron Support" Southrons 2)
+    { cdKeywords = setFromList [Doomed 3]
     , cdEasyModeQuantity = Just 0
     }
