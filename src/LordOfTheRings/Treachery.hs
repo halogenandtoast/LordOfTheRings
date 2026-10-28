@@ -90,6 +90,9 @@ import LordOfTheRings.Treachery.Cards.CollateralDamage
 import LordOfTheRings.Treachery.Cards.LostInTheCity
 import LordOfTheRings.Treachery.Cards.LocalTrouble
 import LordOfTheRings.Treachery.Cards.LurkingInShadows
+import LordOfTheRings.Treachery.Cards.LyingInWait
+import LordOfTheRings.Treachery.Cards.MordorLooms
+import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -204,5 +207,8 @@ allTreacherys =
         , SomeTreacheryCard lostInTheCity
         , SomeTreacheryCard localTrouble
         , SomeTreacheryCard lurkingInShadows
+        , SomeTreacheryCard lyingInWait
+        , SomeTreacheryCard mordorLooms
+        , SomeTreacheryCard conflictAtTheCrossroads
         ]
     ]
