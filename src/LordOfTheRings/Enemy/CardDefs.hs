@@ -81,6 +81,9 @@ allEnemyCards =
       , graspingTentacle
       , thrashingTentacle
       , strikingTentacle
+      , orcScramblers
+      , batteringRam
+      , siegeRaft
       ]
 
 namelessThing :: CardDef
@@ -586,4 +589,33 @@ strikingTentacle :: CardDef
 strikingTentacle =
   (enemy "04075" "Striking Tentacle" TheWatcherInTheWater 4 18 2 4 1 3)
     { cdCardTraits = setFromList [Tentacle]
+    }
+
+orcScramblers :: CardDef
+orcScramblers =
+  (enemy "05030" "Orc Scramblers" TheSiegeOfCairAndros 3 15 1 2 1 2)
+    { cdCardTraits = setFromList [Orc, Besieger]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+batteringRam :: CardDef
+batteringRam =
+  (enemy "05031" "Battering Ram" TheSiegeOfCairAndros 3 33 2 7 3 5)
+    { cdCardTraits = setFromList [Besieger]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+siegeRaft :: CardDef
+siegeRaft =
+  (enemy "05032" "Siege Raft" TheSiegeOfCairAndros 2 30 3 4 1 6)
+    { cdCardTraits = setFromList [Besieger]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

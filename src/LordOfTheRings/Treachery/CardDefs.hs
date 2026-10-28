@@ -85,6 +85,7 @@ allTreacheryCards =
       , illPurpose
       , disturbedWaters
       , wrapped
+      , orcAssault
       ]
 
 deepDeepDark :: CardDef
@@ -510,3 +511,6 @@ wrapped =
   (treachery "the-watcher-in-the-water-076" "Wrapped!" TheWatcherInTheWater 4)
     { cdCardTraits = setFromList [Tentacle]
     }
+
+orcAssault :: CardDef
+orcAssault = (treachery "05036" "Orc Assault" TheSiegeOfCairAndros 2) {cdShadowEffect = True}

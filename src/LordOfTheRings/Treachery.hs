@@ -78,6 +78,7 @@ import LordOfTheRings.Treachery.Cards.ManyThongedWhip
 import LordOfTheRings.Treachery.Cards.IllPurpose
 import LordOfTheRings.Treachery.Cards.DisturbedWaters
 import LordOfTheRings.Treachery.Cards.Wrapped
+import LordOfTheRings.Treachery.Cards.OrcAssault
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -180,5 +181,6 @@ allTreacherys =
         , SomeTreacheryCard illPurpose
         , SomeTreacheryCard disturbedWaters
         , SomeTreacheryCard wrapped
+        , SomeTreacheryCard orcAssault
         ]
     ]

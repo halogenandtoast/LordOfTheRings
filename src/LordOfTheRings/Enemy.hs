@@ -75,6 +75,9 @@ import LordOfTheRings.Enemy.Cards.TheWatcher
 import LordOfTheRings.Enemy.Cards.GraspingTentacle
 import LordOfTheRings.Enemy.Cards.ThrashingTentacle
 import LordOfTheRings.Enemy.Cards.StrikingTentacle
+import LordOfTheRings.Enemy.Cards.OrcScramblers
+import LordOfTheRings.Enemy.Cards.BatteringRam
+import LordOfTheRings.Enemy.Cards.SiegeRaft
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -174,5 +177,8 @@ allEnemys =
         , SomeEnemyCard graspingTentacle
         , SomeEnemyCard thrashingTentacle
         , SomeEnemyCard strikingTentacle
+        , SomeEnemyCard orcScramblers
+        , SomeEnemyCard batteringRam
+        , SomeEnemyCard siegeRaft
         ]
     ]
