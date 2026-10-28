@@ -34,6 +34,7 @@ allObjectiveCards =
       , durinsHelm
       , celador
       , ithilienGuardian
+      , alcaronsScroll
       ]
 
 durinsAxe :: CardDef
@@ -187,3 +188,10 @@ ithilienGuardian =
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
     }
+
+alcaronsScroll :: CardDef
+alcaronsScroll =
+  unique
+    (objective "05019" "Alcaron's Scroll" PerilInPelargir 1)
+      { cdCardTraits = setFromList [Scroll]
+      }

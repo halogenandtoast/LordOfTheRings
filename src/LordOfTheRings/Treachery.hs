@@ -86,6 +86,10 @@ import LordOfTheRings.Treachery.Cards.BlockingWargs
 import LordOfTheRings.Treachery.Cards.LostCompany
 import LordOfTheRings.Treachery.Cards.WatcherInTheWoods
 import LordOfTheRings.Treachery.Cards.SouthronSupport
+import LordOfTheRings.Treachery.Cards.CollateralDamage
+import LordOfTheRings.Treachery.Cards.LostInTheCity
+import LordOfTheRings.Treachery.Cards.LocalTrouble
+import LordOfTheRings.Treachery.Cards.LurkingInShadows
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -196,5 +200,9 @@ allTreacherys =
         , SomeTreacheryCard lostCompany
         , SomeTreacheryCard watcherInTheWoods
         , SomeTreacheryCard southronSupport
+        , SomeTreacheryCard collateralDamage
+        , SomeTreacheryCard lostInTheCity
+        , SomeTreacheryCard localTrouble
+        , SomeTreacheryCard lurkingInShadows
         ]
     ]

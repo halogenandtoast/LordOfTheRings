@@ -93,6 +93,10 @@ allTreacheryCards =
       , lostCompany
       , watcherInTheWoods
       , southronSupport
+      , collateralDamage
+      , lostInTheCity
+      , localTrouble
+      , lurkingInShadows
       ]
 
 deepDeepDark :: CardDef
@@ -554,4 +558,29 @@ southronSupport =
   (treachery "05055" "Southron Support" Southrons 2)
     { cdKeywords = setFromList [Doomed 3]
     , cdEasyModeQuantity = Just 0
+    }
+
+collateralDamage :: CardDef
+collateralDamage =
+  (treachery "05024" "Collateral Damage" PerilInPelargir 4)
+    { cdShadowEffect = True
+    }
+
+lostInTheCity :: CardDef
+lostInTheCity =
+  (treachery "05040" "Lost in the City" StreetsOfGondor 1)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+localTrouble :: CardDef
+localTrouble =
+  (treachery "05041" "Local Trouble" StreetsOfGondor 2)
+    { cdEasyModeQuantity = Just 1
+    }
+
+lurkingInShadows :: CardDef
+lurkingInShadows =
+  (treachery "05045" "Lurking in Shadows" Brigands 2)
+    { cdShadowEffect = True
     }

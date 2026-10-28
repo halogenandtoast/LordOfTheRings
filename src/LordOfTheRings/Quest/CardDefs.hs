@@ -93,6 +93,9 @@ allQuestCards =
       , southronCounterAttack
       , theHiddenWay
       , approachingCairAndros
+      , theLeapingFishQuest
+      , fightingInTheStreets
+      , escapeToTheQuays
       ]
 
 theDrippingWalls :: CardDef
@@ -307,3 +310,15 @@ theHiddenWay = quest "05070" "The Hidden Way" IntoIthilien 3 12
 
 approachingCairAndros :: CardDef
 approachingCairAndros = quest "05071" "Approaching Cair Andros" IntoIthilien 4 15
+
+theLeapingFishQuest :: CardDef
+theLeapingFishQuest = quest "05065" "The Leaping Fish" PerilInPelargir 1 6
+
+fightingInTheStreets :: CardDef
+fightingInTheStreets =
+  (quest "05066" "Fighting in the Streets" PerilInPelargir 2 13)
+    { cdKeywords = setFromList [Battle]
+    }
+
+escapeToTheQuays :: CardDef
+escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15

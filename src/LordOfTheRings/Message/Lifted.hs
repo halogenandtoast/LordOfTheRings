@@ -760,6 +760,15 @@ eachPlayerMayDiscardFromHand source = do
 discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
 discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n
 
+-- | The player discards 1 resource from one of their heroes' resource pools, if able.
+discardResourceFromAHero :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> m ()
+discardResourceFromAHero source pid = do
+  heroes <- select (HeroControlledBy (PlayerWithId pid) <> HeroWithResources)
+  chooseOrRunOneM pid do
+    questionLabeled "discardResourceFromAHero"
+    causedBy source
+    targets heroes \h -> removeTokens source h Resource 1
+
 {- | The enemy makes an immediate attack against the player, dealt a shadow card for it.
 Outside the combat phase its shadow cards are discarded once the attack resolves.
 -}

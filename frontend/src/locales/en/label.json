@@ -84,6 +84,20 @@
     "spirit": "Spirit",
     "tactics": "Tactics"
   },
+  "discardResourceFromAHero": "Discard 1 resource from one of your heroes' resource pools",
+  "alcaronsScroll": {
+    "attach": "Attach Alcaron's Scroll to a hero"
+  },
+  "fightingInTheStreets": {
+    "attach": "Attach Alcaron's Scroll to the enemy with the highest engagement cost"
+  },
+  "umbarAssassin": {
+    "damage": "Umbar Assassin engaged you: deal 3 damage to one of your heroes",
+    "discard": "Umbar Assassin engaged you: discard one of your heroes"
+  },
+  "localTrouble": {
+    "attach": "Attach Local Trouble to the hero with the highest threat cost"
+  },
   "crumblingRuin": {
     "exhaust": "Exhaust a character: if the discarded card costs at least its remaining hit points, it is discarded"
   },

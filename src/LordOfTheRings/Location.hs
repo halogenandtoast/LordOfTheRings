@@ -90,6 +90,11 @@ import LordOfTheRings.Location.Cards.OrcWarCamp
 import LordOfTheRings.Location.Cards.IthilienRoad
 import LordOfTheRings.Location.Cards.OvergrownTrail
 import LordOfTheRings.Location.Cards.SecludedGlade
+import LordOfTheRings.Location.Cards.TheLeapingFish
+import LordOfTheRings.Location.Cards.PelargirDocks
+import LordOfTheRings.Location.Cards.HarborStorehouse
+import LordOfTheRings.Location.Cards.CityStreet
+import LordOfTheRings.Location.Cards.MarketSquare
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -204,5 +209,10 @@ allLocations =
         , SomeLocationCard ithilienRoad
         , SomeLocationCard overgrownTrail
         , SomeLocationCard secludedGlade
+        , SomeLocationCard theLeapingFish
+        , SomeLocationCard pelargirDocks
+        , SomeLocationCard harborStorehouse
+        , SomeLocationCard cityStreet
+        , SomeLocationCard marketSquare
         ]
     ]

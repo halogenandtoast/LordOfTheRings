@@ -72,6 +72,9 @@ import LordOfTheRings.Quest.Cards.AmbushInIthilien
 import LordOfTheRings.Quest.Cards.SouthronCounterAttack
 import LordOfTheRings.Quest.Cards.TheHiddenWay
 import LordOfTheRings.Quest.Cards.ApproachingCairAndros
+import LordOfTheRings.Quest.Cards.TheLeapingFishQuest
+import LordOfTheRings.Quest.Cards.FightingInTheStreets
+import LordOfTheRings.Quest.Cards.EscapeToTheQuays
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -176,5 +179,8 @@ allQuests =
         , SomeQuestCard southronCounterAttack
         , SomeQuestCard theHiddenWay
         , SomeQuestCard approachingCairAndros
+        , SomeQuestCard theLeapingFishQuest
+        , SomeQuestCard fightingInTheStreets
+        , SomeQuestCard escapeToTheQuays
         ]
     ]
