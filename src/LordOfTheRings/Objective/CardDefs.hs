@@ -35,6 +35,7 @@ allObjectiveCards =
       , celador
       , ithilienGuardian
       , alcaronsScroll
+      , toTheTower
       ]
 
 durinsAxe :: CardDef
@@ -194,4 +195,11 @@ alcaronsScroll =
   unique
     (objective "05019" "Alcaron's Scroll" PerilInPelargir 1)
       { cdCardTraits = setFromList [Scroll]
+      }
+
+toTheTower :: CardDef
+toTheTower =
+  unique
+    (objective "06147" "To the Tower" TheMorgulVale 1)
+      { cdCardTraits = setFromList [Captured]
       }
