@@ -96,6 +96,8 @@ allQuestCards =
       , theLeapingFishQuest
       , fightingInTheStreets
       , escapeToTheQuays
+      , savageryOfTheOrcs
+      , protectTheVillagers
       ]
 
 theDrippingWalls :: CardDef
@@ -322,3 +324,10 @@ fightingInTheStreets =
 
 escapeToTheQuays :: CardDef
 escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15
+
+-- | No quest points: progress placed on it moves its villagers to Rescued Villagers.
+savageryOfTheOrcs :: CardDef
+savageryOfTheOrcs = (quest "06066" "Savagery of the Orcs" EncounterAtAmonDin 1 0) {cdQuestPoints = Nothing}
+
+protectTheVillagers :: CardDef
+protectTheVillagers = quest "06067" "Protect the Villagers" EncounterAtAmonDin 2 15

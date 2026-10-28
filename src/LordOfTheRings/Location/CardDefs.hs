@@ -102,6 +102,9 @@ allLocationCards =
       , harborStorehouse
       , cityStreet
       , marketSquare
+      , burningFarmhouse
+      , gondorianHamlet
+      , secludedFarmhouse
       ]
 
 drownedTreasury :: CardDef
@@ -721,4 +724,28 @@ marketSquare =
   (location "05039" "Market Square" StreetsOfGondor 2 3 1)
     { cdCardTraits = setFromList [City]
     , cdShadowEffect = True
+    }
+
+-- | Villagers 4: its villager tokens are placed as it is built.
+burningFarmhouse :: CardDef
+burningFarmhouse =
+  (location "06075" "Burning Farmhouse" EncounterAtAmonDin 4 1 5)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+-- | Villagers 3.
+gondorianHamlet :: CardDef
+gondorianHamlet =
+  (location "06076" "Gondorian Hamlet" EncounterAtAmonDin 4 2 4)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+-- | Villagers 2.
+secludedFarmhouse :: CardDef
+secludedFarmhouse =
+  (location "06077" "Secluded Farmhouse" EncounterAtAmonDin 3 3 3)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
     }

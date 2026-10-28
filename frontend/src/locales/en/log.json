@@ -41,6 +41,8 @@
   "progressRemoved": "{progress} removed from {target}",
   "gainsResources": "{target} gains a resource | {target} gains {count} resources",
   "spendsResources": "{target} spends a resource | {target} spends {count} resources",
+  "villagersPlaced": "A villager is placed on {target} | {count} villagers are placed on {target}",
+  "villagersRemoved": "A villager leaves {target} | {count} villagers leave {target}",
 
   "readies": "{target} readies",
   "exhausts": "{target} exhausts",

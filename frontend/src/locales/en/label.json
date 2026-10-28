@@ -696,5 +696,18 @@
   },
   "forestBat": {
     "damage": "Forest Bat: deal 2 damage to a questing hero and remove it from the quest"
+  },
+  "lordAlcaron": {
+    "placeVillager": "Lord Alcaron: exhaust him to place the discarded villager on a location instead",
+    "decline": "Let the villager be discarded"
+  },
+  "cravenEagle": {
+    "choose": "Craven Eagle: choose the character with the fewest remaining hit points to discard",
+    "prevent": "Craven Eagle: discard 3 cards at random from your hand to keep this character?",
+    "discardCards": "Discard 3 cards at random",
+    "discardCharacter": "Discard the character"
+  },
+  "panicked": {
+    "placeVillager": "Panicked!: place a villager from Rescued Villagers on a location in the staging area"
   }
 }

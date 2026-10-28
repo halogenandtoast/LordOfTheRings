@@ -117,7 +117,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     return card(e.cardCode, e.cardId, {
       spheres: [...new Set([...(d.sphere ? [d.sphere] : []), ...gainedIcons(target)])],
       target,
-      resources: e.tokens.Resource ?? null,
+      // villagers are resource tokens on the table
+      resources: e.tokens.Resource ?? e.tokens.Villager ?? null,
       damage: e.tokens.Damage ?? 0,
       progress: e.tokens.Progress ?? null,
       exhausted: e.exhausted ?? false,
