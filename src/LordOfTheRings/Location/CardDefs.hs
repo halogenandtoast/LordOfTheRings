@@ -94,6 +94,9 @@ allLocationCards =
       , theApproach
       , theBanks
       , orcWarCamp
+      , ithilienRoad
+      , overgrownTrail
+      , secludedGlade
       ]
 
 drownedTreasury :: CardDef
@@ -654,4 +657,26 @@ orcWarCamp =
     { cdCardTraits = setFromList [Mordor]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+ithilienRoad :: CardDef
+ithilienRoad =
+  (location "05028" "Ithilien Road" IntoIthilien 2 4 4)
+    { cdCardTraits = setFromList [Forest, Road]
+    , cdShadowEffect = True
+    }
+
+overgrownTrail :: CardDef
+overgrownTrail =
+  (location "05046" "Overgrown Trail" BroodingForest 3 4 6)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+secludedGlade :: CardDef
+secludedGlade =
+  (location "05047" "Secluded Glade" BroodingForest 3 3 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
     }

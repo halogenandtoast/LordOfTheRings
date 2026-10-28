@@ -673,5 +673,14 @@
     "ally": "Ally",
     "attachment": "Attachment",
     "event": "Event"
+  },
+  "overgrownTrail": {
+    "exhaust": "Exhaust a Ranger character to place 3 progress on Overgrown Trail"
+  },
+  "lostCompany": {
+    "remove": "Lost Company: remove 1 of your characters from the quest"
+  },
+  "forestBat": {
+    "damage": "Forest Bat: deal 2 damage to a questing hero and remove it from the quest"
   }
 }

@@ -390,6 +390,9 @@ runGameMessage msg g = case msg of
       -- an indestructible enemy keeps taking damage past its hit points
       EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, Indestructible `notMember` cdKeywords (toCardDef e) ->
         (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      -- an objective ally in the staging area, as Celador
+      ObjectiveTarget oid | Just o <- Map.lookup oid g.entities.objectives, isJust (cdHitPoints $ toCardDef o) ->
+        (>=) <$> getDamage target <*> getHitPoints target
       _ -> pure False
     when destroyed $ push (Destroy target)
     pure g
@@ -406,6 +409,10 @@ runGameMessage msg g = case msg of
           & scenarioL
           %~ overAttrs (victoryDisplayL %~ (card :))
       Nothing -> discardTarget target g
+  -- an objective ally destroyed in the staging area goes to the encounter discard pile
+  Destroy (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
+    push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
+    pure $ g & entitiesL . objectivesL %~ Map.delete oid
   Destroy target -> do
     let card = case target of
           HeroTarget hid -> toCard <$> Map.lookup hid g.entities.heroes
@@ -1534,7 +1541,8 @@ runGameMessage msg g = case msg of
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly =
-          overAttrs (\a -> a {allyPlacement = InPlayArea pid})
+          -- the damage it took in the staging area stays on it, as Celador's
+          overAttrs (\a -> a {allyPlacement = InPlayArea pid, allyTokens = addTokens Damage (countTokens Damage $ objectiveTokens $ toAttrs o) mempty})
             $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
@@ -1895,6 +1903,7 @@ resolveShadowEffect card msg = case cdCardType (toCardDef card) of
   EnemyType -> void . runEach msg . createEnemy card =<< getRandom
   LocationType -> void . runEach msg . createLocation card =<< getRandom
   TreacheryType -> void . runEach msg . createTreachery card =<< getRandom
+  t | t `elem` [ObjectiveType, ObjectiveAllyType] -> void . runEach msg . createObjective card =<< getRandom
   _ -> pure ()
 
 {- | The damage an enemy's attack deals to a character, and, for an enemy whose excess

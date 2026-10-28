@@ -21,7 +21,7 @@ import LordOfTheRings.Location.Types hiding (location)
 import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Name
-import LordOfTheRings.Objective.Types (Objective)
+import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveTokens))
 import LordOfTheRings.Placement
 import LordOfTheRings.Quest.Types (QuestAttrs (questOwner))
 import LordOfTheRings.Player.Types
@@ -29,7 +29,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Source (Source)
 import LordOfTheRings.Target
-import LordOfTheRings.Token (Token (Resource), countTokens)
+import LordOfTheRings.Token (Token (Damage, Resource), countTokens)
 import LordOfTheRings.Trait
 
 instance Query PlayerMatcher where
@@ -502,6 +502,9 @@ getDamage = \case
   AllyTarget aid -> maybe 0 (.damage) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
   EnemyTarget eid -> maybe 0 (.damage) . Map.lookup eid <$> getsGame (entitiesEnemies . gameEntities)
   LocationTarget lid -> maybe 0 ((.damage) . toAttrs) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
+  -- an objective ally the staging area commits, as Celador
+  ObjectiveTarget oid ->
+    maybe 0 (countTokens Damage . objectiveTokens . toAttrs) . Map.lookup oid <$> getsGame (entitiesObjectives . gameEntities)
   _ -> pure 0
 
 -- | Characters with damage to heal.

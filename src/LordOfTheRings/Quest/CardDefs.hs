@@ -89,6 +89,10 @@ allQuestCards =
       , breakthroughAtTheApproach
       , breakthroughAtTheCitadel
       , theLastBattle
+      , ambushInIthilien
+      , southronCounterAttack
+      , theHiddenWay
+      , approachingCairAndros
       ]
 
 theDrippingWalls :: CardDef
@@ -290,3 +294,16 @@ breakthroughAtTheCitadel =
 
 theLastBattle :: CardDef
 theLastBattle = (quest "05076" "The Last Battle" TheSiegeOfCairAndros 5 15) {cdKeywords = setFromList [Siege]}
+
+ambushInIthilien :: CardDef
+ambushInIthilien = (quest "05068" "Ambush in Ithilien" IntoIthilien 1 15) {cdKeywords = setFromList [Battle]}
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+southronCounterAttack :: CardDef
+southronCounterAttack = (quest "05069" "Southron Counter-attack" IntoIthilien 2 9) {cdKeywords = setFromList [Siege]}
+
+theHiddenWay :: CardDef
+theHiddenWay = quest "05070" "The Hidden Way" IntoIthilien 3 12
+
+approachingCairAndros :: CardDef
+approachingCairAndros = quest "05071" "Approaching Cair Andros" IntoIthilien 4 15

@@ -87,6 +87,9 @@ import LordOfTheRings.Location.Cards.TheCitadel
 import LordOfTheRings.Location.Cards.TheApproach
 import LordOfTheRings.Location.Cards.TheBanks
 import LordOfTheRings.Location.Cards.OrcWarCamp
+import LordOfTheRings.Location.Cards.IthilienRoad
+import LordOfTheRings.Location.Cards.OvergrownTrail
+import LordOfTheRings.Location.Cards.SecludedGlade
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -198,5 +201,8 @@ allLocations =
         , SomeLocationCard theApproach
         , SomeLocationCard theBanks
         , SomeLocationCard orcWarCamp
+        , SomeLocationCard ithilienRoad
+        , SomeLocationCard overgrownTrail
+        , SomeLocationCard secludedGlade
         ]
     ]

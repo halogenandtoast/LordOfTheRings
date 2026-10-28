@@ -89,6 +89,10 @@ allTreacheryCards =
       , theMastersMalice
       , thePowerOfMordor
       , scourgeOfMordor
+      , blockingWargs
+      , lostCompany
+      , watcherInTheWoods
+      , southronSupport
       ]
 
 deepDeepDark :: CardDef
@@ -526,3 +530,28 @@ thePowerOfMordor = (treachery "05061" "The Power of Mordor" MordorElite 1) {cdKe
 
 scourgeOfMordor :: CardDef
 scourgeOfMordor = (treachery "05064" "Scourge of Mordor" RavagingOrcs 2) {cdShadowEffect = True}
+
+blockingWargs :: CardDef
+blockingWargs =
+  (treachery "05029" "Blocking Wargs" IntoIthilien 4)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+lostCompany :: CardDef
+lostCompany = (treachery "05048" "Lost Company" BroodingForest 2) {cdEasyModeQuantity = Just 0}
+
+watcherInTheWoods :: CardDef
+watcherInTheWoods =
+  (treachery "05051" "Watcher in the Woods" CreaturesOfTheForest 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+southronSupport :: CardDef
+southronSupport =
+  (treachery "05055" "Southron Support" Southrons 2)
+    { cdKeywords = setFromList [Doomed 3]
+    , cdEasyModeQuantity = Just 0
+    }

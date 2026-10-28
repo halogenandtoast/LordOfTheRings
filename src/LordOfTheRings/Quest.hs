@@ -68,6 +68,10 @@ import LordOfTheRings.Quest.Cards.ReinforcingTheBanks
 import LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
 import LordOfTheRings.Quest.Cards.BreakthroughAtTheCitadel
 import LordOfTheRings.Quest.Cards.TheLastBattle
+import LordOfTheRings.Quest.Cards.AmbushInIthilien
+import LordOfTheRings.Quest.Cards.SouthronCounterAttack
+import LordOfTheRings.Quest.Cards.TheHiddenWay
+import LordOfTheRings.Quest.Cards.ApproachingCairAndros
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -168,5 +172,9 @@ allQuests =
         , SomeQuestCard breakthroughAtTheApproach
         , SomeQuestCard breakthroughAtTheCitadel
         , SomeQuestCard theLastBattle
+        , SomeQuestCard ambushInIthilien
+        , SomeQuestCard southronCounterAttack
+        , SomeQuestCard theHiddenWay
+        , SomeQuestCard approachingCairAndros
         ]
     ]

@@ -89,6 +89,12 @@ allEnemyCards =
       , orcVanguard
       , orcRabble
       , orcArsonist
+      , southronCompany
+      , morgulSpider
+      , forestBat
+      , southronMercenaries
+      , haradrimElite
+      , mumak
       ]
 
 namelessThing :: CardDef
@@ -661,4 +667,49 @@ orcArsonist =
   (enemy "05063" "Orc Arsonist" RavagingOrcs 3 30 3 3 2 3)
     { cdCardTraits = setFromList [Mordor, Orc]
     , cdShadowEffect = True
+    }
+
+southronCompany :: CardDef
+southronCompany =
+  (enemy "05027" "Southron Company" IntoIthilien 4 34 1 3 1 5)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+morgulSpider :: CardDef
+morgulSpider =
+  (enemy "05049" "Morgul Spider" CreaturesOfTheForest 3 25 3 4 1 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+forestBat :: CardDef
+forestBat =
+  (enemy "05050" "Forest Bat" CreaturesOfTheForest 3 18 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+southronMercenaries :: CardDef
+southronMercenaries =
+  (enemy "05052" "Southron Mercenaries" Southrons 3 35 2 3 2 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+haradrimElite :: CardDef
+haradrimElite =
+  (enemy "05053" "Haradrim Elite" Southrons 2 27 3 4 3 3)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+mumak :: CardDef
+mumak =
+  (enemy "05054" "Mumak" Southrons 1 38 4 7 3 12)
+    { cdCardTraits = setFromList [Harad, Creature]
+    , cdEasyModeQuantity = Just 0
     }
