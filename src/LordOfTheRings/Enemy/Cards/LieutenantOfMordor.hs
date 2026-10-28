@@ -19,11 +19,10 @@ instance HasModifiersFor LieutenantOfMordor where
 
 -- | When Revealed: Resolve the "when revealed" effect on the topmost treachery card in the
 -- encounter discard pile, if able. This effect cannot be canceled.
--- ponytail: the treachery is revealed again from the discard pile, its keywords too
 instance RunMessage LieutenantOfMordor where
   runMessage msg e@(LieutenantOfMordor attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       discarded <- getsGame ((.encounterDiscard) . toAttrs . (.scenario))
-      for_ (find ((== TreacheryType) . cdCardType . toCardDef) discarded) revealFromEncounterDiscard
+      for_ (find ((== TreacheryType) . cdCardType . toCardDef) discarded) resolveWhenRevealedFromDiscard
       pure e
     _ -> LieutenantOfMordor <$> runMessage msg attrs

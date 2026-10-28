@@ -171,13 +171,22 @@ spec = describe "The Siege of Cair Andros" do
 
   -- \* Mordor Elite
 
-  it "keeps allies from defending Lieutenant of Mordor, which reveals the top discarded treachery again" . siegeTest $ \_ -> do
+  it "keeps allies from defending Lieutenant of Mordor" . siegeTest $ \_ -> do
     run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.orcAssault
     reveal [Enemies.lieutenantOfMordor]
     lieutenant <- enemyOf Enemies.lieutenantOfMordor
     getModifiers (toTarget lieutenant) >>= (`shouldSatisfy` elem CannotBeDefendedByAllies)
     beravor <- toTarget <$> getHeroWithCode "01012"
     getAttack beravor `shouldReturn` 0
+
+  it "resolves only the discarded treachery's When Revealed for Lieutenant of Mordor, not its keywords" . siegeTest $ \pid -> do
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.massingInTheDeep
+    threat <- (.threat) <$> getPlayer pid
+    -- Massing in the Deep reveals 1 card for its 1 player, but its Doomed 1 does not fire
+    reveal [Enemies.lieutenantOfMordor, Locations.forestGate]
+    (.threat) <$> getPlayer pid `shouldReturn` threat
+    placementOf Locations.forestGate `shouldReturn` Just StagingArea
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Treacheries.massingInTheDeep]
 
   it "gives Orc Arbalesters archery for each resource icon among the heroes" . siegeTest $ \_ -> do
     run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters
