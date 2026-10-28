@@ -4,6 +4,7 @@ module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module
 
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.ActiveCost (ActiveCost (..), playCard)
+import Data.Map.Strict qualified as Map
 import Data.UUID qualified as UUID
 import LordOfTheRings.Ally (createAlly)
 import LordOfTheRings.Ally.Types (AllyAttrs (allyHandAction))
@@ -18,7 +19,7 @@ import LordOfTheRings.Event
 import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Attachment
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, threatOf)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
@@ -50,7 +51,8 @@ instance RunMessage Player where
       pure $ player & deckL .~ deck
     DoStep 2 Setup -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
-      let threat = sum (map (.threat) heroes)
+      -- a hero's threat cost may be lowered, as Mirlonde's
+      threat <- sum <$> traverse (\h -> modifiedValue threatOf h h.threat) heroes
       pure $ player & threatL .~ threat & startingThreatL .~ threat
     DoStep 5 Setup -> do
       push
@@ -124,7 +126,14 @@ instance RunMessage Player where
     PlayCardInWindow pid cid windows | pid == player.id -> do
       card <- maybe (error "not able to find card") pure $ find ((== cid) . (.id)) (player.hand <> player.discard)
       let fromHand = cid `elem` map (.id) player.hand
-      pushAll =<< inLogBlock (PlayBlock pid card) [PayForCard pid card fromHand windows]
+          ownDiscard = cdPlayableFrom (toCardDef card) `elem` [FromHandOrDiscard, FromDiscardOnly]
+      -- a card in the discard pile a Record lets be played: the Record is discarded for it,
+      -- and the card goes to the bottom of the deck after
+      records <- if fromHand || ownDiscard then pure [] else discardPlayers pid card
+      played <- inLogBlock (PlayBlock pid card) [PayForCard pid card fromHand windows]
+      push $ case records of
+        [] -> Run played
+        _ -> chooseOrRunOne pid [targetLabel r (Discard r : played <> [PutDiscardOnBottomOfDeck pid cid]) | r <- records]
       pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case
@@ -260,6 +269,8 @@ instance RunMessage Player where
     DiscardRandomFromHand pid n | pid == player.id -> do
       (discarded, kept) <- splitAt n <$> shuffleM player.hand
       pure $ player & handL .~ kept & discardL %~ (discarded <>)
+    -- an ally put into play from its owner's hand under any player's control, as Emery
+    PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
     DiscardFromHand pid cid | pid == player.id -> do
       let (discarded, kept) = partition ((== cid) . (.id)) player.hand
@@ -337,12 +348,20 @@ handActions p = flip filterM p.hand \case
 -- | The cards the player could play now: from hand, and from the discard pile those that
 -- may be played from there.
 playableCards :: HasGame m => Player -> m [Card]
-playableCards p =
+playableCards p = do
+  viaRecord <- traverse (discardPlayers p.id) p.discard
   filterM (canPlay p)
     $ filter (from [FromHand, FromHandOrDiscard]) p.hand
-    <> filter (from [FromHandOrDiscard, FromDiscardOnly]) p.discard
+    <> [c | (c, rs) <- zip p.discard viaRecord, from [FromHandOrDiscard, FromDiscardOnly] c || notNull rs]
  where
   from zones c = cdPlayableFrom (toCardDef c) `elem` zones
+
+-- | The cards whose 'MayPlayFromDiscard' lets the player play the card from their discard
+-- pile, as a Record's Action does.
+discardPlayers :: HasGame m => PlayerId -> Card -> m [Target]
+discardPlayers pid c = do
+  mods <- getsGame (Map.findWithDefault [] (PlayerTarget pid) . gameModifiers)
+  pure [t | Modifier source (MayPlayFromDiscard m) <- mods, cardMatches m c, Just t <- [sourceTarget source]]
 
 canPlay :: HasGame m => Player -> Card -> m Bool
 canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay p.id c]

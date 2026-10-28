@@ -35,6 +35,8 @@ spec = describe "Encounter phase" do
     resolveRevealed
     run $ BeginPhase EncounterPhase
     chooseLabel "$label.doNotEngage" pid
+    -- the action window before the engagement checks
+    passActions pid
     placements <- enemyPlacements
     sort placements
       `shouldBe` sort [("01096", EngagedWith pid), ("01098", EngagedWith pid), ("01076", StagingArea)]

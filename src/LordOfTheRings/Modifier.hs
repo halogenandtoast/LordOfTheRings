@@ -33,7 +33,8 @@ data ModifierType
     ImmuneToCardEffects
   | -- | on a location: its quest points are raised by this much, as an X reads
     QuestPointModifier Int
-  | -- | on an enemy, or a character
+  | -- | on an enemy, or a character; on a player, none of their characters may attack,
+    -- as Hobbit-sense reads
     CannotAttack
   | -- | on a character: it does not exhaust, so cannot commit, attack or defend
     CannotExhaust
@@ -57,8 +58,8 @@ data ModifierType
   | -- | on the game: archery damage must be assigned to allies, if able, as An Untimely
     -- End reads
     ArcheryDamageToAllies
-  | -- | on the game: characters use their willpower instead of defense, as Against the
-    -- Shadow reads
+  | -- | on the game, or a character: characters use their willpower instead of defense,
+    -- as Against the Shadow reads
     WillpowerForDefense
   | -- | on the game: characters use their willpower instead of attack when attacking
     -- enemies, as The Passage Out reads
@@ -234,6 +235,19 @@ data ModifierType
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
+  | -- | on a player: matching cards in their discard pile may be played as if from hand,
+    -- by discarding the modifier's source, then go to the bottom of their deck, as a
+    -- Record's Action reads
+    MayPlayFromDiscard CardMatcher
+  | -- | on an enemy: it cannot engage the player, by engagement check or choice, as
+    -- Pippin's
+    CannotEngagePlayer PlayerId
+  | -- | on a player: their undefended attacks' damage may go to this character instead of
+    -- a hero, as White Tower Watchman's
+    UndefendedDamageMayGoTo Target
+  | -- | on the game: the next encounter card revealed, if of this type, is discarded
+    -- without resolving, as Minas Tirith Lampwright's
+    DiscardNextRevealed CardType
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

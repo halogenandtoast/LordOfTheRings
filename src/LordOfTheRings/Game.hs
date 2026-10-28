@@ -180,6 +180,8 @@ handCardModifiers pid = \case
   PlayerCard pc -> case cdCardType (toCardDef pc) of
     AllyType -> getModifiersFor $ createAlly pc (AllyId UUID.nil) pid
     EventType -> traverse_ getModifiersFor $ lookupEvent (toCardCode pc) pc.id pid
+    -- an attachment's builder is unplaced, as a Record that costs less in hand reads it
+    AttachmentType -> getModifiersFor $ lookupAttachment (toCardCode pc) pc.id (AttachmentId UUID.nil) pid
     _ -> pure ()
   EncounterCard _ -> pure ()
 
@@ -331,6 +333,10 @@ runGameMessage msg g = case msg of
   GameOver outcome -> do
     clearQueue
     pure $ g & outcomeL ?~ outcome
+  -- an ally put into play by its card, as Emery is, discarded by its card
+  Discard (CardIdTarget cid)
+    | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
+        g <$ push (Discard $ toTarget a)
   Discard target -> discardTarget target g
   DealDamage source target n | n > 0 -> do
     mods <- getModifiers target
@@ -461,7 +467,12 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase EncounterPhase -> do
     order <- getPlayerOrder
-    pushAll $ map OptionalEngagement order <> [EngagementCheck pid 0 | pid <- take 1 order]
+    -- players may act after the optional engagements and after the engagement checks
+    pushAll
+      $ map OptionalEngagement order
+      <> map OptionalActionWindow order
+      <> [EngagementCheck pid 0 | pid <- take 1 order]
+      <> map OptionalActionWindow order
     pure $ g & phaseL .~ EncounterPhase
   OptionalEngagement pid -> do
     staged <- select EnemyInStagingArea
@@ -472,6 +483,7 @@ runGameMessage msg g = case msg of
       barred <- anyM (\m -> selectAny (PlayerWithId pid <> m)) $ barredBy <> [m | CannotBeOptionallyEngagedBy m <- mods]
       pure
         $ not barred
+        && CannotEngagePlayer pid `notElem` mods
         && (length staged <= 1 || CannotBeOptionallyEngagedWhileOthersInStaging `notElem` mods)
     unless (null enemies)
       $ push
@@ -488,7 +500,7 @@ runGameMessage msg g = case msg of
     player <- getPlayer pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
     -- an enemy can be spared engagement checks against it, as a trap does
-    checked <- filterM (fmap (notElem NoEngagementChecks) . getModifiers . fst) candidates
+    checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
     case sortOn (Down . snd) [c | not skip, c@(_, cost) <- checked, cost <= player.threat] of
       ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
@@ -501,7 +513,7 @@ runGameMessage msg g = case msg of
     when checked do
       cost <- getEngagementCost eid
       players <- traverse getPlayer =<< getPlayerOrder
-      for_ (find ((>= cost) . (.threat)) players) \p -> push (EngageEnemy p.id eid)
+      for_ (find (\p -> p.threat >= cost && CannotEngagePlayer p.id `notElem` mods) players) \p -> push (EngageEnemy p.id eid)
     pure g
   EngageEnemy pid eid -> do
     pushAll
@@ -679,9 +691,14 @@ runGameMessage msg g = case msg of
       filter (inPlay g)
         . mapMaybe (\case UndefendedDamageTo t -> Just t; _ -> Nothing)
         <$> ((<>) <$> getModifiers eid <*> getModifiers (PlayerTarget pid))
-    heroes <- if null redirected then select (HeroControlledBy $ PlayerWithId pid) else pure []
+    -- or a character the player may give it to instead of a hero, as White Tower Watchman
+    watchmen <- filter (inPlay g) . (\ms -> [t | UndefendedDamageMayGoTo t <- ms]) <$> getModifiers (PlayerTarget pid)
+    heroes <-
+      if null redirected
+        then (<> watchmen) . map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
+        else pure []
     for_ (take 1 redirected) \t -> pushAll =<< attackDamage pid eid t attack
-    choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid (toTarget h) attack
+    choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid h attack
     unless (null heroes)
       $ push
       $ questionLabelWith (ikey "label.undefendedDamage") (Just $ toTarget eid) [] pid choices
@@ -1470,6 +1487,14 @@ runGameMessage msg g = case msg of
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
+  -- the next card revealed is discarded unresolved if it is of the type named, as Minas
+  -- Tirith Lampwright reads; either way the effect is spent
+  RevealCard card
+    | Just e <- find (any isDiscardNextRevealed . effectModifiers) (gameEffects g) -> do
+        let g' = g & effectsL %~ filter (/= e)
+        if cdCardType (toCardDef card) `elem` [t | DiscardNextRevealed t <- effectModifiers e]
+          then g' <$ push (AddToEncounterDiscard [card])
+          else runGameMessage msg g'
   RevealCard card -> do
     let def = toCardDef card
     players <- getPlayerOrder
@@ -1914,7 +1939,10 @@ readyCharacters pid = do
 
 -- | The player's characters that may attack.
 readyAttackers :: PlayerId -> GameT [Target]
-readyAttackers pid = filterM (fmap (notElem CannotAttack) . getModifiers) =<< readyCharacters pid
+readyAttackers pid = do
+  -- a player who cannot declare attacks, as Hobbit-sense reads
+  barred <- elem CannotAttack <$> getModifiers (PlayerTarget pid)
+  if barred then pure [] else filterM (fmap (notElem CannotAttack) . getModifiers) =<< readyCharacters pid
 
 {- | Shadow cards are not in play, so the card's own module resolves the effect
 through a temporary instance of it.
@@ -2099,6 +2127,11 @@ payFor g pid card fromHand windows host discount = do
           `elem` [PlayerTarget pid, GameTarget]
           && or ([cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e] <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e])
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
+
+isDiscardNextRevealed :: ModifierType -> Bool
+isDiscardNextRevealed = \case
+  DiscardNextRevealed _ -> True
+  _ -> False
 
 -- | Progress placed on a quest card or a location opens a window, as Pathless Country answers.
 isQuestOrLocation :: Target -> Bool

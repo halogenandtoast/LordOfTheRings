@@ -35,7 +35,7 @@ getAttack target = do
   if blank then pure 0 else characterStat cdAttack attackOf target
 getDefense target = do
   blank <- elem DoesNotCountDefense <$> getModifiers target
-  willpower <- elem WillpowerForDefense <$> getModifiers GameTarget
+  willpower <- elem WillpowerForDefense <$> ((<>) <$> getModifiers GameTarget <*> getModifiers target)
   if
     | blank -> pure 0
     | willpower -> getWillpower target
