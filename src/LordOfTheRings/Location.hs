@@ -95,6 +95,9 @@ import LordOfTheRings.Location.Cards.PelargirDocks
 import LordOfTheRings.Location.Cards.HarborStorehouse
 import LordOfTheRings.Location.Cards.CityStreet
 import LordOfTheRings.Location.Cards.MarketSquare
+import LordOfTheRings.Location.Cards.BurningFarmhouse
+import LordOfTheRings.Location.Cards.GondorianHamlet
+import LordOfTheRings.Location.Cards.SecludedFarmhouse
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -214,5 +217,8 @@ allLocations =
         , SomeLocationCard harborStorehouse
         , SomeLocationCard cityStreet
         , SomeLocationCard marketSquare
+        , SomeLocationCard burningFarmhouse
+        , SomeLocationCard gondorianHamlet
+        , SomeLocationCard secludedFarmhouse
         ]
     ]
