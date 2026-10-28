@@ -32,6 +32,7 @@ allObjectiveCards =
       , durinsGreaves
       , durinsAxe
       , durinsHelm
+      , alcaronsScroll
       ]
 
 durinsAxe :: CardDef
@@ -167,4 +168,11 @@ durinsGreaves =
     $ (objective "04088" "Durin's Greaves" TheLongDark 1)
       { cdCardTraits = setFromList [Artifact, Armor]
       , cdWhenRevealed = True
+      }
+
+alcaronsScroll :: CardDef
+alcaronsScroll =
+  unique
+    (objective "05019" "Alcaron's Scroll" PerilInPelargir 1)
+      { cdCardTraits = setFromList [Scroll]
       }
