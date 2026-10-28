@@ -1533,7 +1533,8 @@ runGameMessage msg g = case msg of
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly =
-          overAttrs (\a -> a {allyPlacement = InPlayArea pid})
+          -- the damage it took in the staging area stays on it, as Celador's
+          overAttrs (\a -> a {allyPlacement = InPlayArea pid, allyTokens = addTokens Damage (countTokens Damage $ objectiveTokens $ toAttrs o) mempty})
             $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
