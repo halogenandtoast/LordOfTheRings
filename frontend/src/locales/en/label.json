@@ -696,5 +696,22 @@
   },
   "forestBat": {
     "damage": "Forest Bat: deal 2 damage to a questing hero and remove it from the quest"
+  },
+  "theStewardsFear": {
+    "removeToken": "Remove 1 token from the current quest",
+    "progress": "A progress token",
+    "resource": "A resource token"
+  },
+  "daughterOfBeruthiel": {
+    "prevent": "Daughter of Berúthiel returns to the staging area unless you raise your threat by 4",
+    "raiseThreat": "Raise your threat by 4",
+    "return": "Return her to the staging area"
+  },
+  "theFourthStar": {
+    "draw": "Draw 1 card?",
+    "drawCard": "Draw 1 card"
+  },
+  "aKnifeInTheBack": {
+    "damage": "Deal {n} damage to one of your heroes"
   }
 }
