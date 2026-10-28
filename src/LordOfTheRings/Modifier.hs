@@ -201,6 +201,8 @@ data ModifierType
     TraitDoesNotExhaustToCommit Trait
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
+  | -- | on an encounter card: its When Revealed effect cannot be canceled
+    WhenRevealedCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
   | -- | on a player: matching cards they play from hand cost this much less

@@ -77,7 +77,8 @@ data WindowMatcher
   | EnemyAttacksWindow Timing EnemyId
   | -- | characters attack the enemy, as "when it is attacked" reads
     EnemyAttackedWindow Timing EnemyId
-  | -- | any encounter card revealed from the encounter deck
+  | -- | an encounter card revealed from the encounter deck with a When Revealed effect
+    -- that can be canceled
     CardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
     DefenderDeclaredWindow Timing (Maybe Target)

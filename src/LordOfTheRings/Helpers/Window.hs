@@ -16,7 +16,7 @@ import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (
-  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, WhenRevealedCannotBeCanceled),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -84,7 +84,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
-    pure $ maybe False cdWhenRevealed case target of
+    cancelable <- notElem WhenRevealedCannotBeCanceled <$> getModifiers target
+    pure $ cancelable && maybe False cdWhenRevealed case target of
       EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
       TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries

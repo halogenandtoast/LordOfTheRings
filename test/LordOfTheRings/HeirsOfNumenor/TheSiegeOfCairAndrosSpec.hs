@@ -2,6 +2,7 @@ module LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec (spec) where
 
 import LordOfTheRings.Card (CardCost (StaticCost), cdCost, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Keyword (Keyword (Battle, Siege))
@@ -187,6 +188,16 @@ spec = describe "The Siege of Cair Andros" do
     (.threat) <$> getPlayer pid `shouldReturn` threat
     placementOf Locations.forestGate `shouldReturn` Just StagingArea
     map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Treacheries.massingInTheDeep]
+
+  it "keeps A Test of Will from canceling Lieutenant of Mordor's When Revealed" . siegeTest $ \pid -> do
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.massingInTheDeep
+    test <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    -- no cancel is offered, so the revealing runs on to Massing in the Deep's reveal
+    reveal [Enemies.lieutenantOfMordor, Locations.forestGate]
+    placementOf Locations.forestGate `shouldReturn` Just StagingArea
+    map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem test.id)
 
   it "gives Orc Arbalesters archery for each resource icon among the heroes" . siegeTest $ \_ -> do
     run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters
