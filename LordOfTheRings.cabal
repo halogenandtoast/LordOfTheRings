@@ -518,6 +518,7 @@ library
       LordOfTheRings.Location.Cards.HarborStorehouse
       LordOfTheRings.Location.Cards.ImpassableBog
       LordOfTheRings.Location.Cards.IthilienRoad
+      LordOfTheRings.Location.Cards.IthilienRoads
       LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LightlessPassage
       LordOfTheRings.Location.Cards.MakeshiftPassage
@@ -551,6 +552,8 @@ library
       LordOfTheRings.Location.Cards.TheBrownLands
       LordOfTheRings.Location.Cards.TheCarrock
       LordOfTheRings.Location.Cards.TheCitadel
+      LordOfTheRings.Location.Cards.TheCrossroads
+      LordOfTheRings.Location.Cards.TheDarkWoods
       LordOfTheRings.Location.Cards.TheDimrillStair
       LordOfTheRings.Location.Cards.TheEastBank
       LordOfTheRings.Location.Cards.TheEastBight

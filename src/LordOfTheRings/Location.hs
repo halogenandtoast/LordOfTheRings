@@ -95,6 +95,9 @@ import LordOfTheRings.Location.Cards.PelargirDocks
 import LordOfTheRings.Location.Cards.HarborStorehouse
 import LordOfTheRings.Location.Cards.CityStreet
 import LordOfTheRings.Location.Cards.MarketSquare
+import LordOfTheRings.Location.Cards.TheCrossroads
+import LordOfTheRings.Location.Cards.IthilienRoads
+import LordOfTheRings.Location.Cards.TheDarkWoods
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -214,5 +217,11 @@ allLocations =
         , SomeLocationCard harborStorehouse
         , SomeLocationCard cityStreet
         , SomeLocationCard marketSquare
+        , SomeLocationCard theCrossroads
+        , SomeLocationCard southernRoad
+        , SomeLocationCard westernRoad
+        , SomeLocationCard northernRoad
+        , SomeLocationCard easternRoad
+        , SomeLocationCard theDarkWoods
         ]
     ]
