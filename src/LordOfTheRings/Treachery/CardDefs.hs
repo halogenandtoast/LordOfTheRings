@@ -97,6 +97,9 @@ allTreacheryCards =
       , lostInTheCity
       , localTrouble
       , lurkingInShadows
+      , menInTheDark
+      , starsInSky
+      , leavesOnTree
       ]
 
 deepDeepDark :: CardDef
@@ -583,4 +586,21 @@ lurkingInShadows :: CardDef
 lurkingInShadows =
   (treachery "05045" "Lurking in Shadows" Brigands 2)
     { cdShadowEffect = True
+    }
+
+menInTheDark :: CardDef
+menInTheDark = (treachery "06053" "Men in the Dark" TheDruadanForest 3) {cdShadowEffect = True}
+
+starsInSky :: CardDef
+starsInSky =
+  (treachery "06054" "Stars in Sky" TheDruadanForest 3)
+    { cdKeywords = setFromList [Prowl 2]
+    , cdShadowEffect = True
+    }
+
+leavesOnTree :: CardDef
+leavesOnTree =
+  (treachery "06055" "Leaves on Tree" TheDruadanForest 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
     }
