@@ -57,6 +57,12 @@ data ModifierType
   | -- | on the game: archery damage must be assigned to allies, if able, as An Untimely
     -- End reads
     ArcheryDamageToAllies
+  | -- | on the game: characters use their willpower instead of defense, as Against the
+    -- Shadow reads
+    WillpowerForDefense
+  | -- | on the game: characters use their willpower instead of attack when attacking
+    -- enemies, as The Passage Out reads
+    WillpowerForAttack
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks

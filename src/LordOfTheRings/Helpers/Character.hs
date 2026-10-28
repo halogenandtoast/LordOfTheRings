@@ -35,7 +35,11 @@ getAttack target = do
   if blank then pure 0 else characterStat cdAttack attackOf target
 getDefense target = do
   blank <- elem DoesNotCountDefense <$> getModifiers target
-  if blank then pure 0 else characterStat cdDefense defenseOf target
+  willpower <- elem WillpowerForDefense <$> getModifiers GameTarget
+  if
+    | blank -> pure 0
+    | willpower -> getWillpower target
+    | otherwise -> characterStat cdDefense defenseOf target
 getHitPoints = characterStat cdHitPoints hitPointsOf
 
 -- | The attack the characters given make together against an enemy, with their bonuses
@@ -47,7 +51,11 @@ getAttackStrength attackers eid enemy = do
     byTrait <- sum <$> for [(trait, n) | AttackBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
     byMatcher <- sum <$> for [(m, n) | AttackBonusAgainstMatching m n <- mods] \(m, n) -> bool 0 n <$> selectAny (EnemyWithId eid <> m)
     pure $ byTrait + byMatcher
-  (+ sum bonuses) . sum <$> traverse getAttack attackers
+  willpower <- elem WillpowerForAttack <$> getModifiers GameTarget
+  let strength a = do
+        blank <- elem DoesNotCountAttack <$> getModifiers a
+        if blank then pure 0 else getWillpower a
+  (+ sum bonuses) . sum <$> traverse (if willpower then strength else getAttack) attackers
 
 -- | The stat characters quest with, by name: attack under battle, defense under siege,
 -- else willpower.

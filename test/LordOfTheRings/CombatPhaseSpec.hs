@@ -1,7 +1,11 @@
 module LordOfTheRings.CombatPhaseSpec (spec) where
 
 import LordOfTheRings.Enemy (Enemy, EnemyAttrs (..))
+import LordOfTheRings.Card.CardDef (toCardDef)
+import LordOfTheRings.Effect
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getAttack, getAttackStrength, getDefense)
+import LordOfTheRings.Modifier
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
@@ -121,3 +125,12 @@ spec = describe "Combat phase" do
     run $ ResolveShadow eid pid []
     engaged <- getsGame (fromJustNote "gone" . lookup eid . mapToList . (.entities.enemies))
     enemyShadowRevealed (toAttrs engaged) `shouldBe` map (.id) shadow
+
+  it "uses willpower instead of defense, and of attack against enemies, when told to" . gameTest $ \pid -> do
+    enemy <- engageSpider pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ CreateEffect $ Effect GameSource GameTarget [WillpowerForDefense, WillpowerForAttack] UntilEndOfRound
+    getDefense eowyn `shouldReturn` 4
+    getAttackStrength [eowyn] (toId enemy) (toCardDef enemy) `shouldReturn` 4
+    -- battle questing still counts attack
+    getAttack eowyn `shouldReturn` 1
