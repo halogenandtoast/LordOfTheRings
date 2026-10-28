@@ -94,6 +94,10 @@ import LordOfTheRings.Enemy.Cards.Pickpocket
 import LordOfTheRings.Enemy.Cards.ZealousTraitor
 import LordOfTheRings.Enemy.Cards.LossarnachBandit
 import LordOfTheRings.Enemy.Cards.UmbarAssassin
+import LordOfTheRings.Enemy.Cards.UnderworldDissident
+import LordOfTheRings.Enemy.Cards.DaughterOfBeruthiel
+import LordOfTheRings.Enemy.Cards.TheHandOfCastamir
+import LordOfTheRings.Enemy.Cards.TelemnarsBane
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -212,5 +216,9 @@ allEnemys =
         , SomeEnemyCard zealousTraitor
         , SomeEnemyCard lossarnachBandit
         , SomeEnemyCard umbarAssassin
+        , SomeEnemyCard underworldDissident
+        , SomeEnemyCard daughterOfBeruthiel
+        , SomeEnemyCard theHandOfCastamir
+        , SomeEnemyCard telemnarsBane
         ]
     ]
