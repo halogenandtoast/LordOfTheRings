@@ -3,3 +3,4 @@
 # macOS Finder metadata
 .DS_Store
 /tags
+dist*/
