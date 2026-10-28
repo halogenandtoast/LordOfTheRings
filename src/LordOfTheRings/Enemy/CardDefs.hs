@@ -100,6 +100,11 @@ allEnemyCards =
       , zealousTraitor
       , lossarnachBandit
       , umbarAssassin
+      , druBuriDru
+      , druadanDrummer
+      , druadanElite
+      , druadanHunter
+      , druadanThief
       ]
 
 namelessThing :: CardDef
@@ -751,4 +756,46 @@ umbarAssassin =
     { cdCardTraits = setFromList [Brigand]
     , cdKeywords = setFromList [Archery 2]
     , cdEasyModeQuantity = Just 0
+    }
+
+druBuriDru :: CardDef
+druBuriDru =
+  (enemy "06045" "Drû-buri-Drû" TheDruadanForest 1 1 4 5 3 6)
+    { cdCardTraits = setFromList [Wose]
+    , cdUnique = True
+    }
+
+druadanDrummer :: CardDef
+druadanDrummer =
+  (enemy "06046" "Drúadan Drummer" TheDruadanForest 3 40 0 1 2 2)
+    { cdCardTraits = setFromList [Wose]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Prowl X, X the number of players: resolved by the card as it is revealed.
+druadanElite :: CardDef
+druadanElite =
+  (enemy "06047" "Drúadan Elite" TheDruadanForest 3 35 2 3 2 4)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Archery 2]
+    , cdShadowEffect = True
+    }
+
+-- | Archery X, X the number of heroes with no resources: gained from its own modifiers.
+druadanHunter :: CardDef
+druadanHunter =
+  (enemy "06048" "Drúadan Hunter" TheDruadanForest 4 25 2 4 3 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Prowl 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+druadanThief :: CardDef
+druadanThief =
+  (enemy "06049" "Drúadan Thief" TheDruadanForest 3 5 2 2 1 2)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Surge, Prowl 1]
+    , cdShadowEffect = True
     }
