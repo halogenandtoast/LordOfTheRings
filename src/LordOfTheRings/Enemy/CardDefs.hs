@@ -100,6 +100,12 @@ allEnemyCards =
       , zealousTraitor
       , lossarnachBandit
       , umbarAssassin
+      , morgulBodyguard
+      , morgulSorcerer
+      , morgulTracker
+      , murzag
+      , lordAlcaron
+      , nazgulOfMinasMorgul
       ]
 
 namelessThing :: CardDef
@@ -752,3 +758,45 @@ umbarAssassin =
     , cdKeywords = setFromList [Archery 2]
     , cdEasyModeQuantity = Just 0
     }
+
+morgulBodyguard :: CardDef
+morgulBodyguard =
+  (enemy "06148" "Morgul Bodyguard" TheMorgulVale 4 35 1 2 2 6)
+    { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    }
+
+morgulSorcerer :: CardDef
+morgulSorcerer =
+  (enemy "06149" "Morgul Sorcerer" TheMorgulVale 2 5 1 3 1 3)
+    { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    }
+
+morgulTracker :: CardDef
+morgulTracker =
+  (enemy "06150" "Morgul Tracker" TheMorgulVale 3 40 4 1 0 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+murzag :: CardDef
+murzag =
+  unique
+    (enemy "06151" "Murzag" TheMorgulVale 1 30 2 5 2 7)
+      { cdCardTraits = setFromList [Orc, Uruk, Captain]
+      }
+
+lordAlcaron :: CardDef
+lordAlcaron =
+  unique
+    (enemy "06152" "Lord Alcaron" TheMorgulVale 1 10 3 4 3 5)
+      { cdCardTraits = setFromList [Gondor, Traitor, Captain]
+      }
+
+nazgulOfMinasMorgul :: CardDef
+nazgulOfMinasMorgul =
+  unique
+    (enemy "06153" "Nazgûl of Minas Morgul" TheMorgulVale 1 1 4 7 4 5)
+      { cdCardTraits = setFromList [Nazgul, Captain]
+      }

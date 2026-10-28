@@ -94,6 +94,12 @@ import LordOfTheRings.Enemy.Cards.Pickpocket
 import LordOfTheRings.Enemy.Cards.ZealousTraitor
 import LordOfTheRings.Enemy.Cards.LossarnachBandit
 import LordOfTheRings.Enemy.Cards.UmbarAssassin
+import LordOfTheRings.Enemy.Cards.MorgulBodyguard
+import LordOfTheRings.Enemy.Cards.MorgulSorcerer
+import LordOfTheRings.Enemy.Cards.MorgulTracker
+import LordOfTheRings.Enemy.Cards.Murzag
+import LordOfTheRings.Enemy.Cards.LordAlcaron
+import LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -212,5 +218,11 @@ allEnemys =
         , SomeEnemyCard zealousTraitor
         , SomeEnemyCard lossarnachBandit
         , SomeEnemyCard umbarAssassin
+        , SomeEnemyCard morgulBodyguard
+        , SomeEnemyCard morgulSorcerer
+        , SomeEnemyCard morgulTracker
+        , SomeEnemyCard murzag
+        , SomeEnemyCard lordAlcaron
+        , SomeEnemyCard nazgulOfMinasMorgul
         ]
     ]
