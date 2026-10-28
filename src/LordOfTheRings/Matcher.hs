@@ -221,6 +221,9 @@ matchLocation matcher location = case matcher of
   NotLocation m -> not <$> matchLocation m location
   LocationMatchAll ms -> allM (`matchLocation` location) ms
   LocationMatchAny ms -> anyM (`matchLocation` location) ms
+  LocationControlledBy pm -> case location.placement of
+    InPlayArea pid -> elem pid <$> select pm
+    _ -> pure False
 
 immuneToPlayerCards :: HasGame m => Target -> m Bool
 immuneToPlayerCards t =

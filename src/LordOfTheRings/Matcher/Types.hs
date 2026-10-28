@@ -187,6 +187,8 @@ data LocationMatcher
   | LocationMatchAll [LocationMatcher]
   | -- | a location matching any of them
     LocationMatchAny [LocationMatcher]
+  | -- | a location in a matching player's play area, under their control, as Osgiliath's
+    LocationControlledBy PlayerMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
