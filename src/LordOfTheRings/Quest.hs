@@ -75,6 +75,8 @@ import LordOfTheRings.Quest.Cards.ApproachingCairAndros
 import LordOfTheRings.Quest.Cards.TheLeapingFishQuest
 import LordOfTheRings.Quest.Cards.FightingInTheStreets
 import LordOfTheRings.Quest.Cards.EscapeToTheQuays
+import LordOfTheRings.Quest.Cards.SavageryOfTheOrcs
+import LordOfTheRings.Quest.Cards.ProtectTheVillagers
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -182,5 +184,7 @@ allQuests =
         , SomeQuestCard theLeapingFishQuest
         , SomeQuestCard fightingInTheStreets
         , SomeQuestCard escapeToTheQuays
+        , SomeQuestCard savageryOfTheOrcs
+        , SomeQuestCard protectTheVillagers
         ]
     ]
