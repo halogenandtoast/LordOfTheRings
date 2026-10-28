@@ -270,10 +270,12 @@ library
       LordOfTheRings.Enemy.Cards.NamelessThing
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
       LordOfTheRings.Enemy.Cards.OrcArbalesters
+      LordOfTheRings.Enemy.Cards.OrcArsonist
       LordOfTheRings.Enemy.Cards.OrcDrummer
       LordOfTheRings.Enemy.Cards.OrcGuard
       LordOfTheRings.Enemy.Cards.OrcHornBlower
       LordOfTheRings.Enemy.Cards.OrcHorseThieves
+      LordOfTheRings.Enemy.Cards.OrcRabble
       LordOfTheRings.Enemy.Cards.OrcRaiders
       LordOfTheRings.Enemy.Cards.OrcScramblers
       LordOfTheRings.Enemy.Cards.OrcVanguard
@@ -747,6 +749,7 @@ library
       LordOfTheRings.Treachery.Cards.RoastedSlowly
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.Sacked
+      LordOfTheRings.Treachery.Cards.ScourgeOfMordor
       LordOfTheRings.Treachery.Cards.ShadowOfFear
       LordOfTheRings.Treachery.Cards.SignsOfConflict
       LordOfTheRings.Treachery.Cards.SleepingSentry

@@ -1,5 +1,6 @@
 module LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec (spec) where
 
+import LordOfTheRings.Card (CardCost (StaticCost), cdCost, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
@@ -213,3 +214,30 @@ spec = describe "The Siege of Cair Andros" do
     staged <- getsGame \g -> length [l | l <- toList g.entities.locations, l.placement == StagingArea] + length [e | e <- toList g.entities.enemies, e.placement == StagingArea]
     staged `shouldBe` 2
     (.threat) <$> getPlayer pid `shouldReturn` threat + 3
+
+  -- \* Ravaging Orcs
+
+  it "raises Orc Rabble's attack by 2 for each shadow card dealt to it" . siegeTest $ \pid -> do
+    eid <- engaged pid Enemies.orcRabble [Locations.theBanks]
+    run $ DealShadowCard eid
+    getEnemyAttack eid `shouldReturn` 3
+
+  it "deals and resolves another shadow card for each player with Orc Rabble's shadow" . siegeTest $ \pid -> do
+    eid <- engaged pid Enemies.siegeRaft [Enemies.orcRabble, Enemies.orcArbalesters]
+    run $ DealShadowCard eid
+    run $ ResolveShadow eid pid []
+    getsGame (fmap (length . (.shadowCards)) . lookup eid . (.entities.enemies)) `shouldReturn` Just 2
+    getEnemyAttack eid `shouldReturn` 6
+
+  it "deals a shadow card to each enemy engaged with the player Orc Arsonist engages" . siegeTest $ \pid -> do
+    raft <- engaged pid Enemies.siegeRaft [Locations.theBanks, Locations.theApproach]
+    arsonist <- engaged pid Enemies.orcArsonist [Locations.theBanks, Locations.theApproach]
+    for_ [raft, arsonist] \e ->
+      getsGame (fmap (length . (.shadowCards)) . lookup e . (.entities.enemies)) `shouldReturn` Just 1
+
+  it "raises the staging threat by the cost of the discarded cards with Scourge of Mordor" . siegeTest $ \pid -> do
+    top <- take 1 . (.deck) <$> getPlayer pid
+    let x = sum [n | c <- top, Just (StaticCost n) <- [cdCost (toCardDef c)]]
+    reveal [Treacheries.scourgeOfMordor]
+    getStagingThreat `shouldReturn` x
+    map (.id) . take 1 . (.discard) <$> getPlayer pid `shouldReturn` map (.id) top

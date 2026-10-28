@@ -87,6 +87,8 @@ allEnemyCards =
       , lieutenantOfMordor
       , orcArbalesters
       , orcVanguard
+      , orcRabble
+      , orcArsonist
       ]
 
 namelessThing :: CardDef
@@ -644,4 +646,19 @@ orcVanguard =
     { cdCardTraits = setFromList [Mordor, Orc]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+orcRabble :: CardDef
+orcRabble =
+  (enemy "05062" "Orc Rabble" RavagingOrcs 3 28 2 1 1 3)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+orcArsonist :: CardDef
+orcArsonist =
+  (enemy "05063" "Orc Arsonist" RavagingOrcs 3 30 3 3 2 3)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
     }

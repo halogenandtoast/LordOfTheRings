@@ -88,6 +88,7 @@ allTreacheryCards =
       , orcAssault
       , theMastersMalice
       , thePowerOfMordor
+      , scourgeOfMordor
       ]
 
 deepDeepDark :: CardDef
@@ -522,3 +523,6 @@ theMastersMalice = (treachery "05060" "The Master's Malice" MordorElite 2) {cdEa
 
 thePowerOfMordor :: CardDef
 thePowerOfMordor = (treachery "05061" "The Power of Mordor" MordorElite 1) {cdKeywords = setFromList [Doomed 3]}
+
+scourgeOfMordor :: CardDef
+scourgeOfMordor = (treachery "05064" "Scourge of Mordor" RavagingOrcs 2) {cdShadowEffect = True}

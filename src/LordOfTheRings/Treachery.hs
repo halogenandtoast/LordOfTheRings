@@ -81,6 +81,7 @@ import LordOfTheRings.Treachery.Cards.Wrapped
 import LordOfTheRings.Treachery.Cards.OrcAssault
 import LordOfTheRings.Treachery.Cards.TheMastersMalice
 import LordOfTheRings.Treachery.Cards.ThePowerOfMordor
+import LordOfTheRings.Treachery.Cards.ScourgeOfMordor
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -186,5 +187,6 @@ allTreacherys =
         , SomeTreacheryCard orcAssault
         , SomeTreacheryCard theMastersMalice
         , SomeTreacheryCard thePowerOfMordor
+        , SomeTreacheryCard scourgeOfMordor
         ]
     ]
