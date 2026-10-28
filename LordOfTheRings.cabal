@@ -906,6 +906,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Core.PassageEncounterSpec
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec
+      LordOfTheRings.DeckCardsSpec
       LordOfTheRings.Dwarrowdelf.FoundationsOfStoneSpec
       LordOfTheRings.Dwarrowdelf.PlayerCardsSpec
       LordOfTheRings.Dwarrowdelf.RoadToRivendellSpec
