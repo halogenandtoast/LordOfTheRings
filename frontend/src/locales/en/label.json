@@ -91,6 +91,17 @@
   "fightingInTheStreets": {
     "attach": "Attach Alcaron's Scroll to the enemy with the highest engagement cost"
   },
+  "faramirObjective": {
+    "turnFaceup": "Faramir: choose a player to turn 1 of their hidden cards faceup"
+  },
+  "lordAlcaron": {
+    "return": "Lord Alcaron: return an enemy engaged with you to the staging area"
+  },
+  "theAmbush": {
+    "choose": "Turn each of your hidden cards faceup, or take 1 hidden card",
+    "turnFaceup": "Turn your hidden cards faceup",
+    "take": "Take 1 hidden card"
+  },
   "umbarAssassin": {
     "damage": "Umbar Assassin engaged you: deal 3 damage to one of your heroes",
     "discard": "Umbar Assassin engaged you: discard one of your heroes"

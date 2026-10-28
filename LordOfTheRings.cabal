@@ -50,6 +50,7 @@ library
       LordOfTheRings.Ally.Cards.ErrandRider
       LordOfTheRings.Ally.Cards.EscortFromEdoras
       LordOfTheRings.Ally.Cards.Faramir
+      LordOfTheRings.Ally.Cards.FaramirObjective
       LordOfTheRings.Ally.Cards.Fili
       LordOfTheRings.Ally.Cards.Firyal
       LordOfTheRings.Ally.Cards.GaladhonArcher
@@ -79,6 +80,7 @@ library
       LordOfTheRings.Ally.Cards.LongbeardElder
       LordOfTheRings.Ally.Cards.LongbeardMapMaker
       LordOfTheRings.Ally.Cards.LongbeardOrcSlayer
+      LordOfTheRings.Ally.Cards.LordAlcaron
       LordOfTheRings.Ally.Cards.LorienGuide
       LordOfTheRings.Ally.Cards.MarksmanOfLorien
       LordOfTheRings.Ally.Cards.MasterOfLore
@@ -607,11 +609,13 @@ library
       LordOfTheRings.Objective.Cards.DurinsAxe
       LordOfTheRings.Objective.Cards.DurinsGreaves
       LordOfTheRings.Objective.Cards.DurinsHelm
+      LordOfTheRings.Objective.Cards.FaramirObjective
       LordOfTheRings.Objective.Cards.GandalfsMap
       LordOfTheRings.Objective.Cards.GollumReturnToMirkwood
       LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
       LordOfTheRings.Objective.Cards.GrimbeornTheOld
       LordOfTheRings.Objective.Cards.IthilienGuardian
+      LordOfTheRings.Objective.Cards.LordAlcaron
       LordOfTheRings.Objective.Cards.ShadowKey
       LordOfTheRings.Objective.Cards.SignsOfGollum
       LordOfTheRings.Objective.Cards.Wilyador

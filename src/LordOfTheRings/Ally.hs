@@ -109,6 +109,8 @@ import LordOfTheRings.Ally.Cards.Jubayr
 import LordOfTheRings.Ally.Cards.Firyal
 import LordOfTheRings.Ally.Cards.Celador
 import LordOfTheRings.Ally.Cards.IthilienGuardian
+import LordOfTheRings.Ally.Cards.FaramirObjective
+import LordOfTheRings.Ally.Cards.LordAlcaron
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -245,5 +247,7 @@ allAllies =
         , SomeAllyCard firyal
         , SomeAllyCard celador
         , SomeAllyCard ithilienGuardian
+        , SomeAllyCard faramirObjective
+        , SomeAllyCard lordAlcaron
         ]
     ]
