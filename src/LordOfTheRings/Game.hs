@@ -1362,6 +1362,10 @@ runGameMessage msg g = case msg of
           %~ Map.delete aid
           & scenarioL
           %~ overAttrs (victoryDisplayL %~ (toCard a :))
+  -- an objective claimed into the victory display, as a Clue of The Steward's Fear
+  AddToVictoryDisplay (ObjectiveTarget oid)
+    | Just o <- Map.lookup oid g.entities.objectives ->
+        pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard o :))
   MakeEscapeTest t -> do
     ready <-
       filter (`notElem` t.escapeCommitted)
