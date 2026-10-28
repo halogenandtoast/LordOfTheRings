@@ -509,6 +509,18 @@ spec = describe "Dwarrowdelf player cards" do
     run $ CheckWindows [mkAfter $ CommittedToQuest glorfindel]
     threat pid `shouldReturn` was + 1
 
+  it "Heavy Stroke doubles only what the Dwarf's attack deals, the rest beating the defense" . gameTest $ \pid -> do
+    elladan <- putHero pid Heroes.elladan
+    card <- putCardIntoHand pid Events.heavyStroke
+    run $ PlaceTokens GameSource elladan Resource 1
+    bofur <- putAllyIntoPlay pid Allies.bofur
+    eid <- staged Enemies.hillTroll
+    setPhase CombatPhase
+    dwarf <- getAttack bofur
+    run $ CheckWindows [mkAfter $ AttackDealtDamage eid [toTarget elladan, bofur] (dwarf + 5)]
+    chooseTarget pid (CardIdTarget card.id)
+    getDamage (toTarget eid) `shouldReturn` dwarf
+
   it "Heavy Stroke deals an attack's damage again when a Dwarf made it" . gameTest $ \pid -> do
     elladan <- putHero pid Heroes.elladan
     card <- putCardIntoHand pid Events.heavyStroke
@@ -516,9 +528,10 @@ spec = describe "Dwarrowdelf player cards" do
     bofur <- putAllyIntoPlay pid Allies.bofur
     eid <- staged Enemies.hillTroll
     setPhase CombatPhase
-    run $ CheckWindows [mkAfter $ AttackDealtDamage eid [bofur] 2]
+    dwarf <- getAttack bofur
+    run $ CheckWindows [mkAfter $ AttackDealtDamage eid [bofur] dwarf]
     chooseTarget pid (CardIdTarget card.id)
-    getDamage (toTarget eid) `shouldReturn` 2
+    getDamage (toTarget eid) `shouldReturn` dwarf
 
   it "Imladris Stargazer lets a player put the top 5 cards of their deck back in any order" . gameTest $ \pid -> do
     star <- putAllyIntoPlay pid Allies.imladrisStargazer
