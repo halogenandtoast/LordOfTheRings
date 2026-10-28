@@ -15,6 +15,8 @@ data Trait
   | Brigand
   | Burden
   | CairAndros
+  | Captain
+  | Captured
   | City
   | Clue
   | Condition
@@ -47,6 +49,7 @@ data Trait
   | Insect
   | Istari
   | Item
+  | Ithilien
   | Light
   | Marshland
   | Mathom
@@ -59,9 +62,12 @@ data Trait
   | Noble
   | Noldor
   | Orc
+  | Osgiliath
   | Outlands
   | Pipe
+  | Plot
   | Ranger
+  | Record
   | Ring
   | River
   | Riverland
@@ -86,14 +92,19 @@ data Trait
   | Thug
   | Title
   | Tools
+  | Traitor
   | Trap
   | Troll
   | Undead
   | Underground
   | Underwater
+  | Underworld
   | Uruk
+  | Valley
+  | Villain
   | Warrior
   | Wasteland
   | Weapon
+  | Wose
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

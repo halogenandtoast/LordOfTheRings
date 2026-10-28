@@ -4,12 +4,14 @@ import LordOfTheRings.Prelude
 
 data EncounterSet
   = AJourneyToRhosgobel
+  | AssaultOnOsgiliath
   | Brigands
   | BroodingForest
   | ConflictAtTheCarrock
   | CreaturesOfTheForest
   | DeepsOfMoria
   | DolGuldurOrcs
+  | EncounterAtAmonDin
   | EscapeFromDolGuldur
   | FlightFromMoria
   | FoundationsOfStone
@@ -32,13 +34,17 @@ data EncounterSet
   | Southrons
   | SpidersOfMirkwood
   | StreetsOfGondor
+  | TheBloodOfGondor
   | TheDeadMarshes
+  | TheDruadanForest
   | TheHillsOfEmynMuil
   | TheHuntForGollum
   | TheLongDark
+  | TheMorgulVale
   | TheRedhornGate
   | TheSeventhLevel
   | TheSiegeOfCairAndros
+  | TheStewardsFear
   | TheWatcherInTheWater
   | TwistsAndTurns
   | Wilderlands
