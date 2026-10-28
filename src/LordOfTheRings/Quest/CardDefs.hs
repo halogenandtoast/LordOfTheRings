@@ -96,6 +96,7 @@ allQuestCards =
       , theLeapingFishQuest
       , fightingInTheStreets
       , escapeToTheQuays
+      , retakeTheCity
       ]
 
 theDrippingWalls :: CardDef
@@ -322,3 +323,6 @@ fightingInTheStreets =
 
 escapeToTheQuays :: CardDef
 escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15
+
+retakeTheCity :: CardDef
+retakeTheCity = quest "06091" "Retake the City" AssaultOnOsgiliath 1 0

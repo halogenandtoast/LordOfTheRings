@@ -102,6 +102,14 @@ allLocationCards =
       , harborStorehouse
       , cityStreet
       , marketSquare
+      , westGate
+      , theKingsLibrary
+      , ancientHarbor
+      , theOldBridge
+      , westQuarter
+      , eastQuarter
+      , ruinedSquare
+      , ruinedTower
       ]
 
 drownedTreasury :: CardDef
@@ -721,4 +729,61 @@ marketSquare =
   (location "05039" "Market Square" StreetsOfGondor 2 3 1)
     { cdCardTraits = setFromList [City]
     , cdShadowEffect = True
+    }
+
+westGate :: CardDef
+westGate =
+  (location "06096" "West Gate" AssaultOnOsgiliath 1 2 5)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+theKingsLibrary :: CardDef
+theKingsLibrary =
+  (location "06097" "The King's Library" AssaultOnOsgiliath 1 2 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+ancientHarbor :: CardDef
+ancientHarbor =
+  (location "06098" "Ancient Harbor" AssaultOnOsgiliath 1 1 5)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+theOldBridge :: CardDef
+theOldBridge =
+  (location "06099" "The Old Bridge" AssaultOnOsgiliath 1 1 6)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+westQuarter :: CardDef
+westQuarter =
+  (location "06100" "West Quarter" AssaultOnOsgiliath 2 2 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+eastQuarter :: CardDef
+eastQuarter =
+  (location "06101" "East Quarter" AssaultOnOsgiliath 2 2 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+ruinedSquare :: CardDef
+ruinedSquare =
+  (location "06102" "Ruined Square" AssaultOnOsgiliath 3 1 2)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdKeywords = setFromList [Surge]
+    }
+
+ruinedTower :: CardDef
+ruinedTower =
+  (location "06103" "Ruined Tower" AssaultOnOsgiliath 3 2 2)
+    { cdCardTraits = setFromList [Osgiliath]
     }

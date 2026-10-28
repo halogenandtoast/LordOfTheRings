@@ -97,6 +97,9 @@ allTreacheryCards =
       , lostInTheCity
       , localTrouble
       , lurkingInShadows
+      , pinnedDown
+      , streetFighting
+      , counterAttack
       ]
 
 deepDeepDark :: CardDef
@@ -583,4 +586,20 @@ lurkingInShadows :: CardDef
 lurkingInShadows =
   (treachery "05045" "Lurking in Shadows" Brigands 2)
     { cdShadowEffect = True
+    }
+
+pinnedDown :: CardDef
+pinnedDown =
+  (treachery "06104" "Pinned Down" AssaultOnOsgiliath 2)
+    { cdShadowEffect = True
+    }
+
+streetFighting :: CardDef
+streetFighting = treachery "06105" "Street Fighting" AssaultOnOsgiliath 2
+
+counterAttack :: CardDef
+counterAttack =
+  (treachery "06106" "Counter-attack" AssaultOnOsgiliath 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
     }
