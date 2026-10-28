@@ -94,6 +94,10 @@ import LordOfTheRings.Enemy.Cards.Pickpocket
 import LordOfTheRings.Enemy.Cards.ZealousTraitor
 import LordOfTheRings.Enemy.Cards.LossarnachBandit
 import LordOfTheRings.Enemy.Cards.UmbarAssassin
+import LordOfTheRings.Enemy.Cards.BlackNumenorean
+import LordOfTheRings.Enemy.Cards.OrcAmbusher
+import LordOfTheRings.Enemy.Cards.BrutalUruk
+import LordOfTheRings.Enemy.Cards.EvilCrow
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -212,5 +216,9 @@ allEnemys =
         , SomeEnemyCard zealousTraitor
         , SomeEnemyCard lossarnachBandit
         , SomeEnemyCard umbarAssassin
+        , SomeEnemyCard blackNumenorean
+        , SomeEnemyCard orcAmbusher
+        , SomeEnemyCard brutalUruk
+        , SomeEnemyCard evilCrow
         ]
     ]
