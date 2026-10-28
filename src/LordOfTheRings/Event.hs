@@ -113,6 +113,7 @@ import LordOfTheRings.Event.Cards.ForestPatrol
 import LordOfTheRings.Event.Cards.TheHammerStroke
 import LordOfTheRings.Event.Cards.ChildrenOfTheSea
 import LordOfTheRings.Event.Cards.WellEquipped
+import LordOfTheRings.Event.Cards.LayOfNimrodel
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -239,5 +240,6 @@ allEvents =
         , SomeEventCard theHammerStroke
         , SomeEventCard childrenOfTheSea
         , SomeEventCard wellEquipped
+        , SomeEventCard layOfNimrodel
         ]
     ]

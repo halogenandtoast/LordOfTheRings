@@ -58,6 +58,7 @@ allHeroCards =
       , mirlonde
       , pippin
       , caldara
+      , theoden
       ]
 
 aragorn :: CardDef
@@ -336,4 +337,11 @@ caldara :: CardDef
 caldara =
   (hero "06107" "Caldara" Spirit 8 2 1 2 3)
     { cdCardTraits = setFromList [Gondor]
+    }
+
+theoden :: CardDef
+theoden =
+  (hero "06134" "Théoden" Tactics 12 2 3 2 4)
+    { cdCardTraits = setFromList [Noble, Rohan, Warrior]
+    , cdKeywords = setFromList [Sentinel]
     }

@@ -745,5 +745,8 @@
     "chooseAttachment": "Attach an attachment discarded by Well-Equipped to a Dwarf character?",
     "chooseDwarf": "Choose the Dwarf character to attach it to",
     "none": "Attach none"
+  },
+  "layOfNimrodel": {
+    "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
   }
 }

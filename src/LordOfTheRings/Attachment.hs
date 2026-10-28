@@ -94,6 +94,7 @@ import LordOfTheRings.Attachment.Cards.RangerBow
 import LordOfTheRings.Attachment.Cards.Palantir
 import LordOfTheRings.Attachment.Cards.TomeOfAtanatar
 import LordOfTheRings.Attachment.Cards.PoisonedStakes
+import LordOfTheRings.Attachment.Cards.ScrollOfIsildur
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -214,5 +215,6 @@ allAttachments =
         , SomeAttachmentCard palantir
         , SomeAttachmentCard tomeOfAtanatar
         , SomeAttachmentCard poisonedStakes
+        , SomeAttachmentCard scrollOfIsildur
         ]
     ]

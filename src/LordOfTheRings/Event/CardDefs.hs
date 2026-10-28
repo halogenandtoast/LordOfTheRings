@@ -124,6 +124,7 @@ allEventCards =
       , theHammerStroke
       , childrenOfTheSea
       , wellEquipped
+      , layOfNimrodel
       ]
 
 everVigilant :: CardDef
@@ -467,3 +468,6 @@ childrenOfTheSea = event "06113" "Children of the Sea" Spirit (StaticCost 0)
 
 wellEquipped :: CardDef
 wellEquipped = event "06116" "Well-Equipped" Neutral (StaticCost 0)
+
+layOfNimrodel :: CardDef
+layOfNimrodel = (event "06140" "Lay of Nimrodel" Spirit (StaticCost 1)) {cdCardTraits = setFromList [Song]}

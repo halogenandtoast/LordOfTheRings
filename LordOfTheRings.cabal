@@ -203,6 +203,7 @@ library
       LordOfTheRings.Attachment.Cards.RivendellBlade
       LordOfTheRings.Attachment.Cards.RivendellBow
       LordOfTheRings.Attachment.Cards.RohanWarhorse
+      LordOfTheRings.Attachment.Cards.ScrollOfIsildur
       LordOfTheRings.Attachment.Cards.SelfPreservation
       LordOfTheRings.Attachment.Cards.SongOfBattle
       LordOfTheRings.Attachment.Cards.SongOfEarendil
@@ -396,6 +397,7 @@ library
       LordOfTheRings.Event.Cards.HostOfGaladhrim
       LordOfTheRings.Event.Cards.Infighting
       LordOfTheRings.Event.Cards.KhazadKhazad
+      LordOfTheRings.Event.Cards.LayOfNimrodel
       LordOfTheRings.Event.Cards.LightTheBeacons
       LordOfTheRings.Event.Cards.LoreOfImladris
       LordOfTheRings.Event.Cards.LoriensWealth
@@ -514,6 +516,7 @@ library
       LordOfTheRings.Hero.Cards.Pippin
       LordOfTheRings.Hero.Cards.PrinceImrahil
       LordOfTheRings.Hero.Cards.Thalin
+      LordOfTheRings.Hero.Cards.Theoden
       LordOfTheRings.Hero.Cards.Theodred
       LordOfTheRings.Hero.Import.Lifted
       LordOfTheRings.Hero.Runner

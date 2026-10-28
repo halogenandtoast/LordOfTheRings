@@ -101,6 +101,7 @@ allAttachmentCards =
       , palantir
       , tomeOfAtanatar
       , poisonedStakes
+      , scrollOfIsildur
       ]
 
 stewardOfGondor :: CardDef
@@ -683,4 +684,11 @@ poisonedStakes :: CardDef
 poisonedStakes =
   (attachment "06115" "Poisoned Stakes" Lore (StaticCost 2))
     { cdCardTraits = setFromList [Trap]
+    }
+
+scrollOfIsildur :: CardDef
+scrollOfIsildur =
+  (attachment "06142" "Scroll of Isildur" Lore (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
     }
