@@ -333,6 +333,15 @@ spec = describe "Riders of Rohan" do
       (indexOf (PlayerAttacks pid) < indexOf (EnemyAttacks pid)) `shouldBe` True
 
   describe "Lothíriel" do
+    it "does not offer the response when no ally in hand shares a trait" . rohanTest $ \pid -> do
+      lothiriel <- hero lothirielCode
+      _ <- putCardIntoHand pid Allies.gandalf
+      run $ CommitToQuest lothiriel
+      run $ CheckWindows [mkAfter $ CommittedToQuest lothiriel]
+      question <- getQuestion pid
+      let choices = maybe [] questionChoices question
+      [() | AbilityLabel {} <- choices] `shouldBe` []
+
     it "gains Rohan with Éomer and puts an ally sharing a trait into play committed" . rohanTest $ \pid -> do
       lothiriel <- hero lothirielCode
       card <- putCardIntoHand pid Allies.westfoldHorseBreaker

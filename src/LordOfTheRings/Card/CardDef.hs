@@ -63,6 +63,9 @@ data CardDef = CardDef
 instance ToJSON CardDef where
   toJSON = genericToJSON (aesonOptions $ Just "cd")
 
+instance HasField "traits" CardDef (Set Trait) where
+  getField = cdCardTraits
+
 class HasCardDef a where
   toCardDef :: a -> CardDef
 

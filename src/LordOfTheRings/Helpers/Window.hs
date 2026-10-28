@@ -176,6 +176,9 @@ passesCriteria = \case
       && cid
       `notElem` map (locationCardId . toAttrs) (toList es.locations)
   CardInHand pid cType -> anyM passesUnique . filter ((== cType) . (.cardType)) . (.hand) =<< getPlayer pid
+  CardInHandMatching pid matcher -> do
+    cards <- filterM (matchCard matcher) . (.hand) =<< getPlayer pid
+    anyM passesUnique cards
   ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
   AffordableAllyInDiscard pid sphere -> notNull <$> affordableDiscardedAllies pid sphere
   BeforeCommitting ->

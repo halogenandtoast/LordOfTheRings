@@ -204,10 +204,11 @@ instance Monoid LocationMatcher where
 instance Not LocationMatcher where
   not_ = NotLocation
 
--- | A card by what is printed on it, wherever it is.
+-- | A card wherever it is; state-dependent matchers require matchCard.
 data CardMatcher
   = CardWithCode CardCode
   | CardWithTrait Trait
+  | CardSharesTraitWithHero HeroMatcher
   | CardWithType CardType
   | CardWithSphere Sphere
   | AnyCard
@@ -235,6 +236,7 @@ cardMatches :: HasCardDef a => CardMatcher -> a -> Bool
 cardMatches matcher (toCardDef -> def) = case matcher of
   CardWithCode code -> cdCardCode def == code
   CardWithTrait trait -> trait `member` cdCardTraits def
+  CardSharesTraitWithHero _ -> error "CardSharesTraitWithHero requires matchCard"
   CardWithType cType -> cdCardType def == cType
   CardWithSphere sphere -> cdSphere def == Just sphere
   AnyCard -> True

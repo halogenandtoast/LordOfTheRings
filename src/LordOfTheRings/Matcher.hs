@@ -519,3 +519,13 @@ getSideQuests = getsGame (map toTarget . filter (isJust . questOwner . toAttrs) 
 -- | The top card of the encounter deck, if there is one.
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)
 getTopOfEncounterDeck = getsGame (headMay . (.encounterDeck) . toAttrs . gameScenario)
+
+-- | Match a card using current game state, including traits granted to heroes.
+matchCard :: (HasGame m, HasCardDef a) => CardMatcher -> a -> m Bool
+matchCard matcher card = case matcher of
+  CardSharesTraitWithHero heroes ->
+    anyM (\trait -> selectAny (heroes <> HeroWithTrait trait)) (toList $ cdCardTraits $ toCardDef card)
+  NotCard m -> not <$> matchCard m card
+  CardMatchAll ms -> allM (`matchCard` card) ms
+  CardMatchAny ms -> anyM (`matchCard` card) ms
+  _ -> pure $ cardMatches matcher card

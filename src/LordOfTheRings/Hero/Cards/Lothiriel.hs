@@ -1,7 +1,5 @@
 module LordOfTheRings.Hero.Cards.Lothiriel (lothiriel) where
 
-import LordOfTheRings.Card (CardType (AllyType), cdCardTraits, toCardDef)
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
 import LordOfTheRings.Trait (Trait (Rohan))
@@ -20,21 +18,27 @@ instance HasModifiersFor Lothiriel where
 
 instance HasAbilities Lothiriel where
   getAbilities (Lothiriel a) =
-    [ restricted a 1 (CardInHand a.owner #ally) $ response $ CommittedToQuestWindow After (toTarget a)
+    [ restricted
+        a
+        1
+        (CardInHandMatching a.owner $ CardWithType #ally <> CardSharesTraitWithHero (HeroWithId a.id))
+        $ response
+        $ CommittedToQuestWindow After (toTarget a)
     ]
 
 instance RunMessage Lothiriel where
   runMessage msg h@(Lothiriel attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       player <- getPlayer pid
-      gained <- mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers attrs
-      let hers = cdCardTraits (toCardDef attrs) <> setFromList gained
-          shares c = not $ null $ intersect hers (cdCardTraits $ toCardDef c)
-      allies <- filterM passesUnique [c | c <- player.hand, c.cardType == AllyType]
+      matching <-
+        filterM
+          (matchCard $ CardWithType #ally <> CardSharesTraitWithHero (HeroWithId attrs.id))
+          player.hand
+      allies <- filterM passesUnique matching
       chooseOneM pid do
         questionLabeled "lothiriel.chooseAlly"
         causedBy attrs
-        targets allies \c -> when (shares c) do
+        targets allies \c -> do
           putIntoPlayCommitted pid c.id
           phaseModifier attrs (CardIdTarget c.id) ShuffleIntoDeckAtEndOfPhase
       pure h
