@@ -234,6 +234,9 @@ data ModifierType
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
+  | -- | on the game: matching enemies engaged with players add their threat to the staging
+    -- area too, as Conflict at the Crossroads reads
+    EngagedEnemiesAddThreat EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
