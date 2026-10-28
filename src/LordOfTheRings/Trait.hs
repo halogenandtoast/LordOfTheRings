@@ -25,6 +25,7 @@ data Trait
   | Dwarf
   | Eagle
   | EmynMuil
+  | Ent
   | Escape
   | Flame
   | Forest
@@ -33,6 +34,7 @@ data Trait
   | Gollum
   | Gondor
   | Gossip
+  | Harad
   | Hazard
   | Healer
   | Hills
