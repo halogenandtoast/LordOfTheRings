@@ -96,6 +96,9 @@ allQuestCards =
       , theLeapingFishQuest
       , fightingInTheStreets
       , escapeToTheQuays
+      , theRearguardTheMorgulVale
+      , theBetrayal
+      , theMorgulRider
       ]
 
 theDrippingWalls :: CardDef
@@ -322,3 +325,13 @@ fightingInTheStreets =
 
 escapeToTheQuays :: CardDef
 escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15
+
+-- | Its quest points are "-": the stage advances only as Murzag is defeated.
+theRearguardTheMorgulVale :: CardDef
+theRearguardTheMorgulVale = quest "06144" "The Rearguard" TheMorgulVale 1 0
+
+theBetrayal :: CardDef
+theBetrayal = quest "06145" "The Betrayal" TheMorgulVale 2 0
+
+theMorgulRider :: CardDef
+theMorgulRider = quest "06146" "The Morgul Rider" TheMorgulVale 3 0
