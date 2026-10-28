@@ -1516,6 +1516,25 @@ runGameMessage msg g = case msg of
       _ -> do
         pushAll =<< inLogBlock (RevealBlock card) []
         pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
+  ResolveWhenRevealedOf card -> do
+    let def = toCardDef card
+        whenRevealed t = inLogBlock (WhenRevealedBlock card) [if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t]
+    case cdCardType def of
+      TreacheryType -> do
+        treachery <- newTreachery card
+        pushAll . (<> [FinishRevelation (toId treachery)]) =<< whenRevealed (toTarget treachery)
+        pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
+      -- ponytail: an enemy or location turned faceup goes to the staging area, as Lying
+      -- in Wait's locations; a card wanting it elsewhere moves it after
+      EnemyType -> do
+        enemy <- newEnemy card
+        pushAll =<< whenRevealed (toTarget enemy)
+        pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
+      LocationType -> do
+        location <- newLocation card
+        pushAll =<< whenRevealed (toTarget location)
+        pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) location)
+      _ -> pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
   -- an enemy destroyed as it was revealed resolves no more of its revelation (FAQ)
   AskToResolveWhenRevealed t _ | not (inPlay g t) -> pure g
   AskToResolveWhenRevealed t card -> do

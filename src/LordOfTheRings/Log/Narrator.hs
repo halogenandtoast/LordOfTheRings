@@ -303,6 +303,8 @@ openBlock block = do
                     ikeyPart "log.revealedThreat" ["card" ~> EncounterCard card, "threat" ~> stat "threat" threat]
               _ -> ikeyPart "log.revealed" ["card" ~> EncounterCard card]
           ]
+    WhenRevealedBlock card ->
+      header $ mechanic [ikeyPart "log.resolvedWhenRevealed" ["card" ~> EncounterCard card]]
     EnemyAttackBlock pid eid -> whenRef (toTarget eid) \e -> do
       who <- playerRefFor pid
       attack <- getEnemyAttack eid

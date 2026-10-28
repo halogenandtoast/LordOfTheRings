@@ -617,6 +617,18 @@ revealFromEncounterDiscard card = do
   push $ RemoveFromEncounterDiscard card
   push $ RevealCard card
 
+{- | Only the card's When Revealed effect resolves, as Lieutenant of Mordor's: no keyword,
+window or cancel touches it. The caller first takes the card from where it was.
+-}
+resolveWhenRevealedOf :: ReverseQueue m => EncounterCard -> m ()
+resolveWhenRevealedOf = push . ResolveWhenRevealedOf
+
+-- | The card leaves the encounter discard pile, and only its When Revealed effect resolves.
+resolveWhenRevealedFromDiscard :: ReverseQueue m => EncounterCard -> m ()
+resolveWhenRevealedFromDiscard card = do
+  removeFromEncounterDiscard card
+  resolveWhenRevealedOf card
+
 -- | After its attack resolves, the enemy returns to the staging area.
 returnToStagingAfterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> t m ()
 returnToStagingAfterAttack eid = afterAttack eid [PlaceEnemy eid StagingArea]

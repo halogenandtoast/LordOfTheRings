@@ -163,6 +163,10 @@ data Message
   | -- | the lead clicks the revealed card to resolve its When Revealed effect
     AskToResolveWhenRevealed Target EncounterCard
   | FinishRevelation TreacheryId
+  | {- | only the card's When Revealed effect resolves, as Lieutenant of Mordor's: it is
+    not revealed, so no keyword, window or cancel touches it
+    -}
+    ResolveWhenRevealedOf EncounterCard
   | PutQuestIntoPlay EncounterCard
   | CompleteQuest QuestId
   | AdvanceQuest

@@ -62,6 +62,7 @@
 
   "revealed": "Revealed {card}",
   "revealedThreat": "Revealed {card} ({threat})",
+  "resolvedWhenRevealed": "Resolved the When Revealed effect of {card}",
   "addedToStaging": "{card} is added to the staging area",
   "placedInStaging": "{card} is placed in the staging area",
   "orcGuardEngages": "An Orc Guard engages {player}",
