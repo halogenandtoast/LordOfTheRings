@@ -1353,6 +1353,20 @@ runGameMessage msg g = case msg of
       . traverse
       . discardL
       %~ filter ((/= cid) . (.id))
+  -- an enemy added to the victory display leaves play, what was attached to it and its
+  -- shadow cards discarded
+  AddToVictoryDisplay target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+    pure
+      $ g
+      & entitiesL
+      . enemiesL
+      %~ Map.delete eid
+      & scenarioL
+      %~ overAttrs (victoryDisplayL %~ (EncounterCard (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e)) :))
   AddToVictoryDisplay (AttachmentTarget aid)
     | Just a <- Map.lookup aid g.entities.attachments ->
         pure
