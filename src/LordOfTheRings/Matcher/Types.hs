@@ -59,6 +59,8 @@ data HeroMatcher
     HeroWithReadyAttached Trait
   | -- | a hero with a resource in its pool
     HeroWithResources
+  | -- | a hero with at least this many resources in its pool
+    HeroWithResourcesAtLeast Int
   | -- | a hero with a copy of the card attached
     HeroWithAttachment CardCode
   | AnyHero

@@ -141,6 +141,16 @@ data WindowMatcher
   | EnemyDefeatedWindow Timing
   | -- | the enemy's attack, or any enemy's, destroyed a character
     CharacterDestroyedByAttackWindow Timing (Maybe EnemyId)
+  | -- | a character with the trait was dealt damage, as Gondorian Discipline reads
+    CharacterWithTraitDealtDamageWindow Timing Trait
+  | -- | an attack the character was among dealt the enemy damage
+    AttackDealtDamageByWindow Timing Target
+  | -- | a card effect placed resources in the pool of a hero the player controls
+    HeroGainedResourcesWindow Timing PlayerId
+  | -- | an encounter card with surge revealed from the encounter deck
+    SurgeCardRevealedWindow Timing
+  | -- | a matching hero declared as a defender
+    HeroDefenderDeclaredWindow Timing HeroMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -226,4 +236,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyAttacksPlayerWindow {}, _) -> False
   (ExploredWithoutVictoryWindow {}, _) -> False
   (ActiveLocationExploredWindow {}, _) -> False
+  (CharacterWithTraitDealtDamageWindow {}, _) -> False
+  (HeroGainedResourcesWindow {}, _) -> False
+  (SurgeCardRevealedWindow {}, _) -> False
+  (HeroDefenderDeclaredWindow {}, _) -> False
+  (AttackDealtDamageByWindow {}, _) -> False
   _ -> False

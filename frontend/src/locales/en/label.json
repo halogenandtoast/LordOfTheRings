@@ -799,5 +799,57 @@
   "streetFighting": {
     "choose": "Exhaust a hero to take control of the location?",
     "addToStaging": "Add it to the staging area"
+  },
+  "gainingStrength": {
+    "chooseHero": "Choose a hero to discard 2 resources from and add 3 to"
+  },
+  "mightyProwess": {
+    "damage": "Mighty Prowess: deal 1 damage to an enemy sharing a Trait with the one destroyed"
+  },
+  "minasTirithLampwright": {
+    "name": "Name a card type: the next encounter card revealed, if of that type, is discarded",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery"
+  },
+  "smallTarget": {
+    "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against"
+  },
+  "menOfTheWest": {
+    "choose": "Choose an Outlands ally to return to your hand, for 1 leadership resource",
+    "done": "Done returning allies"
+  },
+  "knightOfMinasTirith": {
+    "chooseEnemy": "Choose an enemy in the staging area to engage and attack"
+  },
+  "rangerBow": {
+    "damage": "Ranger Bow: deal 1 damage to an enemy in the staging area"
+  },
+  "forestPatrol": {
+    "damage": "Forest Patrol: deal 3 damage to an enemy with a Trap attached"
+  },
+  "palantir": {
+    "name": "Name a card type, then look at the top 3 cards of the encounter deck",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery",
+    "objective": "Objective"
+  },
+  "caldara": {
+    "chooseAlly": "Choose a spirit ally in your discard pile to put into play"
+  },
+  "childrenOfTheSea": {
+    "chooseAlly": "Choose a Silvan or Noldor ally you control"
+  },
+  "anborn": {
+    "chooseTrap": "Choose a Trap card to return to your hand"
+  },
+  "wellEquipped": {
+    "chooseAttachment": "Attach an attachment discarded by Well-Equipped to a Dwarf character?",
+    "chooseDwarf": "Choose the Dwarf character to attach it to",
+    "none": "Attach none"
+  },
+  "layOfNimrodel": {
+    "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
   }
 }

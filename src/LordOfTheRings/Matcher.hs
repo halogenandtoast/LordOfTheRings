@@ -126,6 +126,7 @@ matchHero matcher hero = case matcher of
           . gameEntities
       )
   HeroWithResources -> pure $ hero.resources > 0
+  HeroWithResourcesAtLeast n -> pure $ hero.resources >= n
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
   HeroMatchAll ms -> allM (`matchHero` hero) ms
@@ -579,3 +580,9 @@ getNextPlayer :: HasGame m => PlayerId -> m (Maybe PlayerId)
 getNextPlayer pid = do
   players <- getRemainingPlayers
   pure $ find (/= pid) $ take 1 $ drop 1 $ dropWhile (/= pid) (players <> players)
+
+-- | The characters the player controls with the trait, printed or gained, as "each Outlands
+-- character you control" reads.
+controlledCharactersWithTrait :: HasGame m => PlayerId -> Trait -> m [Target]
+controlledCharactersWithTrait pid trait =
+  selectCharacters (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait) (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait)

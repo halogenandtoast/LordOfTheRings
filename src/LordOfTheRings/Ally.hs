@@ -112,6 +112,20 @@ import LordOfTheRings.Ally.Cards.IthilienGuardian
 import LordOfTheRings.Ally.Cards.LordAlcaron
 import LordOfTheRings.Ally.Cards.FaramirObjective
 import LordOfTheRings.Ally.Cards.LordAlcaronTheBloodOfGondor
+import LordOfTheRings.Ally.Cards.WarriorOfLossarnach
+import LordOfTheRings.Ally.Cards.KnightsOfTheSwan
+import LordOfTheRings.Ally.Cards.EthirSwordsman
+import LordOfTheRings.Ally.Cards.AnfalasHerdsman
+import LordOfTheRings.Ally.Cards.Forlong
+import LordOfTheRings.Ally.Cards.HarborMaster
+import LordOfTheRings.Ally.Cards.WhiteTowerWatchman
+import LordOfTheRings.Ally.Cards.Denethor
+import LordOfTheRings.Ally.Cards.MinasTirithLampwright
+import LordOfTheRings.Ally.Cards.IthilienArcher
+import LordOfTheRings.Ally.Cards.KnightOfMinasTirith
+import LordOfTheRings.Ally.Cards.PelargirShipwright
+import LordOfTheRings.Ally.Cards.Emery
+import LordOfTheRings.Ally.Cards.Anborn
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -251,5 +265,19 @@ allAllies =
         , SomeAllyCard lordAlcaron
         , SomeAllyCard faramirObjective
         , SomeAllyCard lordAlcaronTheBloodOfGondor
+        , SomeAllyCard warriorOfLossarnach
+        , SomeAllyCard knightsOfTheSwan
+        , SomeAllyCard ethirSwordsman
+        , SomeAllyCard anfalasHerdsman
+        , SomeAllyCard forlong
+        , SomeAllyCard harborMaster
+        , SomeAllyCard whiteTowerWatchman
+        , SomeAllyCard denethor
+        , SomeAllyCard minasTirithLampwright
+        , SomeAllyCard ithilienArcher
+        , SomeAllyCard knightOfMinasTirith
+        , SomeAllyCard pelargirShipwright
+        , SomeAllyCard emery
+        , SomeAllyCard anborn
         ]
     ]
