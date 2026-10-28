@@ -102,6 +102,9 @@ allLocationCards =
       , harborStorehouse
       , cityStreet
       , marketSquare
+      , ancestralClearing
+      , gardenOfPoisons
+      , gladeOfCleansing
       ]
 
 drownedTreasury :: CardDef
@@ -721,4 +724,25 @@ marketSquare =
   (location "05039" "Market Square" StreetsOfGondor 2 3 1)
     { cdCardTraits = setFromList [City]
     , cdShadowEffect = True
+    }
+
+ancestralClearing :: CardDef
+ancestralClearing =
+  (location "06050" "Ancestral Clearing" TheDruadanForest 1 4 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdEasyModeQuantity = Just 0
+    }
+
+gardenOfPoisons :: CardDef
+gardenOfPoisons =
+  (location "06051" "Garden of Poisons" TheDruadanForest 3 2 3)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+-- | X threat, X the archery of the highest archery Wose enemy: from its own modifiers.
+gladeOfCleansing :: CardDef
+gladeOfCleansing =
+  (location "06052" "Glade of Cleansing" TheDruadanForest 3 0 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdEasyModeQuantity = Just 1
     }
