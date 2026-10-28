@@ -234,6 +234,9 @@ data ModifierType
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
+  | -- | on an enemy: it cannot leave play unless destroyed; an effect that would discard
+    -- it, return it to the encounter deck or remove it from the game does nothing
+    CannotLeavePlay
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

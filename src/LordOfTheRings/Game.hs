@@ -212,7 +212,26 @@ runEntities msg entities =
     >>= traverseOf (objectivesL . traverse) (runEach msg)
 
 runGame :: Message -> Game -> GameT Game
-runGame msg g = case leavingCharacter g msg of
+runGame msg g = case removedEnemy msg of
+  -- an enemy that cannot leave play unless destroyed, as The Morgul Vale's Captains, stays
+  Just eid -> do
+    stays <- elem CannotLeavePlay <$> getModifiers (EnemyTarget eid)
+    if stays then pure g else runGame' msg g
+  Nothing -> runGame' msg g
+
+-- | The enemy a message takes out of play other than by destroying it.
+removedEnemy :: Message -> Maybe EnemyId
+removedEnemy = \case
+  Discard (EnemyTarget eid) -> Just eid
+  ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ReturnToBottomOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ShuffleIntoEncounterDeck (EnemyTarget eid) -> Just eid
+  RemoveFromGame (EnemyTarget eid) -> Just eid
+  AddToVictoryDisplay (EnemyTarget eid) -> Just eid
+  _ -> Nothing
+
+runGame' :: Message -> Game -> GameT Game
+runGame' msg g = case leavingCharacter g msg of
   -- a character leaving play opens the When window first, while it is still in play
   Just target -> do
     windows <- leftPlayWindows g target
@@ -335,10 +354,16 @@ runGameMessage msg g = case msg of
   DealDamage source target n | n > 0 -> do
     mods <- getModifiers target
     -- damage another character takes in its place, as Song of Mocking's
-    let redirected = filter (inPlay g) [t | DamageRedirectedTo t <- mods]
+    let redirected = ordNub $ filter (inPlay g) [t | DamageRedirectedTo t <- mods]
+    lead <- getLead
     -- before it is dealt, a Forced effect may cancel it, as Patrol Leader's: see 'cancelDamage'
     unless (CannotTakeDamage `elem` mods) $ pushAll $ case redirected of
-      t : _ -> [DealDamage source t n]
+      [t] -> [DealDamage source t n]
+      -- the first player picks which takes it, as "dealt to 1 Morgul Bodyguard" reads
+      _ : _ ->
+        [ questionLabelWith (ikey "label.chooseDamageRedirect") (Just target) [] lead
+            [targetLabel t [DealDamage source t n] | t <- redirected]
+        ]
       [] -> [CheckWindows [mkWhen $ DealtDamage target n], DoStep 1 msg]
     pure g
   DoStep 1 (DealDamage source target n) -> do
@@ -881,6 +906,12 @@ runGameMessage msg g = case msg of
       for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
         push $ CheckWindows [mkAfter $ ShadowEffectResolved cid eid]
         resolveShadowEffect card (ResolveShadowEffect cid eid pid defenders)
+    pure g
+  -- a later step of a shadow effect, as "if this attack destroys a character" reads once
+  -- the attack is over, which the shadow card, built again, resolves
+  DoStep _ (ResolveShadowEffect cid eid _ _) -> do
+    for_ (Map.lookup eid g.entities.enemies) \enemy ->
+      for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> resolveShadowEffect card msg
     pure g
   ShuffleIntoEncounterDeck (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
     deck <-

@@ -696,5 +696,6 @@
   },
   "forestBat": {
     "damage": "Forest Bat: deal 2 damage to a questing hero and remove it from the quest"
-  }
+  },
+  "chooseDamageRedirect": "Choose which card takes the damage instead"
 }
