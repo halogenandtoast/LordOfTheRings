@@ -130,6 +130,11 @@ data WindowMatcher
     AttachmentPlayedOnHeroWindow Timing PlayerId
   | -- | a matching enemy attacked the player
     EnemyAttacksPlayerWindow Timing PlayerId EnemyMatcher
+  | -- | the player let an attack go undefended
+    AttackUndefendedWindow Timing PlayerId
+  | EnemyDefeatedWindow Timing
+  | -- | the enemy's attack, or any enemy's, destroyed a character
+    CharacterDestroyedByAttackWindow Timing (Maybe EnemyId)
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -199,6 +204,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
   (CardPlayedWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
+  (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
+  (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
+  (CharacterDestroyedByAttackWindow t who, CharacterDestroyedByAttack eid _ _) -> t == timing && maybe True (== eid) who
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

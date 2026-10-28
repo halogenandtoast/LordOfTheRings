@@ -844,3 +844,8 @@ cancelEvent cid = do
     PlayEvent _ card _ -> card.id == cid
     _ -> False
   for_ [card | PlayEvent _ card _ <- cancelled] (push . PutInDiscard)
+
+-- | A location card, taken from where it was, comes into play placed there, as Street
+-- Fighting puts one under the first player's control.
+putLocationIntoPlay :: ReverseQueue m => EncounterCard -> Placement -> m ()
+putLocationIntoPlay card = push . PutLocationIntoPlay card

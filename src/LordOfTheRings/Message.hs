@@ -272,6 +272,9 @@ data Message
     DiscardedTopOfEncounterDeck Source Target [EncounterCard]
   | -- | an encounter card, taken from where it was, becomes the active location
     PutIntoPlayAsActiveLocation EncounterCard
+  | -- | a location card, taken from where it was, comes into play placed there, as Street
+    -- Fighting puts one under the first player's control
+    PutLocationIntoPlay EncounterCard Placement
   | -- | set-aside cards go to the staging area
     AddSetAsideToStaging CardMatcher
   | ShuffleEncounterDiscardIntoDeck CardMatcher
@@ -368,6 +371,9 @@ data Message
   | -- | resolve one shadow card dealt to the enemy, unless it was cancelled
     ResolveShadowCard CardId EnemyId PlayerId [Target]
   | AttackDamage EnemyId Target
+  | -- | the enemy's attack has dealt the character its damage: was it destroyed? and who
+    -- controlled it
+    CheckDestroyedByAttack EnemyId Target PlayerId
   | AddToEncounterDiscard [EncounterCard]
   | PlayerAttacks PlayerId
   | -- | the player chooses which of these enemies to attack next

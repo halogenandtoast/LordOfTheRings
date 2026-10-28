@@ -3,6 +3,7 @@
 module LordOfTheRings.Game (module LordOfTheRings.Game, module X) where
 
 import Control.Monad.Writer.Strict (execWriterT)
+import Data.List (mapAccumL)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
 import Data.UUID qualified as UUID
@@ -398,6 +399,7 @@ runGameMessage msg g = case msg of
     pure g
   Destroy target@(EnemyTarget eid) -> do
     enemy <- getEnemy eid
+    push $ CheckWindows [mkAfter $ EnemyDefeated eid]
     case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
@@ -666,7 +668,8 @@ runGameMessage msg g = case msg of
   UndefendedAttack pid eid -> do
     windows <- actionWindows
     pushAll
-      $ windows
+      $ CheckWindows [mkAfter $ AttackUndefended pid eid]
+      : windows
       <> [ResolveShadow eid pid []]
       <> windows
       <> [UndefendedDamage pid eid, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
@@ -846,6 +849,9 @@ runGameMessage msg g = case msg of
     lead <- getLead
     engaged <- placementController . (.placement) <$> getEnemy eid
     push $ UndefendedDamage (fromMaybe lead engaged) eid
+    pure g
+  CheckDestroyedByAttack eid target pid -> do
+    pushWhen (not $ inPlay g target) $ CheckWindows [mkAfter $ CharacterDestroyedByAttack eid target pid]
     pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
@@ -1052,19 +1058,36 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
     pure g
   PlaceProgressOnQuest n -> do
-    active <- traverse getLocation =<< selectOne IsActiveLocation
-    questPoints <- traverse (getLocationQuestPoints . (.id)) active
-    -- a location that takes only so much progress, as Perilous Swamp, is not explored by
-    -- the rest, which is lost
-    limits <- maybe (pure []) (fmap (\ms -> [k | ProgressLimit k <- ms]) . getModifiers) active
-    let remaining = maybe 0 (\(l, qp) -> qp - l.progress) ((,) <$> active <*> questPoints)
-        onLocation = if isJust active then max 0 $ foldr min (min n remaining) limits else 0
-        overflow = if onLocation < remaining then 0 else n - onLocation
+    actives <- select IsActiveLocation
+    -- what each active location still takes; one that takes only so much, as Perilous
+    -- Swamp, is not explored by the rest, which is lost
+    rooms <- for actives \lid -> do
+      l <- getLocation lid
+      remaining <- subtract l.progress <$> getLocationQuestPoints lid
+      limits <- (\ms -> [k | ProgressLimit k <- ms]) <$> getModifiers lid
+      pure (lid, remaining, max 0 $ foldr min remaining limits)
     -- the rest goes to the side quest quested against, else to the quest cards
     quests <- maybe getMainQuests (pure . pure) =<< getCurrentSideQuest
-    pushAll
-      $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
-      <> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
+    let place lid k = [PlaceTokens GameSource (toTarget lid) Progress k | k > 0]
+    case rooms of
+      -- with two active locations the first player divides the progress between them
+      -- (FAQ 1.34); none passes on to the quest until both are explored
+      [(a, _, roomA), (b, _, roomB)] | n < roomA + roomB -> do
+        lead <- getLead
+        first <- getLocation a
+        let lo = max 0 (n - roomB)
+            hi = min n roomA
+        push
+          $ if lo == hi
+            then Run (place a lo <> place b (n - lo))
+            else
+              Ask lead
+                $ QuestionLabel (ikeyWith "label.divideProgress" (cardVar "location" first)) Nothing [toTarget a, toTarget b]
+                $ ChooseAmount lo [Label (ikeyWith "label.amount" [intVar "n" k]) (place a k <> place b (n - k)) | k <- [lo .. hi]]
+      _ -> do
+        let (left, onLocations) = mapAccumL (\m (lid, _, room) -> let k = min m room in (m - k, place lid k)) n rooms
+            overflow = if all (\(_, remaining, room) -> room == remaining) rooms then left else 0
+        pushAll $ concat onLocations <> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
     pure g
   PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do
@@ -1297,6 +1320,9 @@ runGameMessage msg g = case msg of
   PutIntoPlayAsActiveLocation card -> do
     thisLocation <- newLocation card
     pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = ActiveLocation}) thisLocation)
+  PutLocationIntoPlay card placement -> do
+    thisLocation <- newLocation card
+    pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = placement}) thisLocation)
   PutObjectiveIntoPlayAttached card host -> do
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
@@ -1939,8 +1965,10 @@ attackDamage pid eid target n = do
     if excessToThreat || excessToOthers
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
+  controller <- characterController target
   pure $ DealDamage (EnemySource eid) target n
-    : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excessToThreat, excess > 0]
+    : [CheckDestroyedByAttack eid target c | Just c <- [controller]]
+    <> concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excessToThreat, excess > 0]
     <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemySource eid) pid target)
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
