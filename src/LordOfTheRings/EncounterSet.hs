@@ -4,7 +4,10 @@ import LordOfTheRings.Prelude
 
 data EncounterSet
   = AJourneyToRhosgobel
+  | Brigands
+  | BroodingForest
   | ConflictAtTheCarrock
+  | CreaturesOfTheForest
   | DeepsOfMoria
   | DolGuldurOrcs
   | EscapeFromDolGuldur
@@ -12,23 +15,30 @@ data EncounterSet
   | FoundationsOfStone
   | GoblinsOfTheDeep
   | HazardsOfThePit
+  | IntoIthilien
   | IntoThePit
   | JourneyAlongTheAnduin
   | MistyMountains
+  | MordorElite
   | PassageThroughMirkwood
   | PassageThroughMirkwoodCampaign
+  | PerilInPelargir
   | PlunderingGoblins
+  | RavagingOrcs
   | ReturnToMirkwood
   | RoadToRivendell
   | SauronsReach
   | ShadowAndFlame
+  | Southrons
   | SpidersOfMirkwood
+  | StreetsOfGondor
   | TheDeadMarshes
   | TheHillsOfEmynMuil
   | TheHuntForGollum
   | TheLongDark
   | TheRedhornGate
   | TheSeventhLevel
+  | TheSiegeOfCairAndros
   | TheWatcherInTheWater
   | TwistsAndTurns
   | Wilderlands

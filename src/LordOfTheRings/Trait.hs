@@ -7,10 +7,15 @@ data Trait
   | Armor
   | Artifact
   | Balrog
+  | Battleground
   | Beorning
+  | Besieger
   | Boon
   | Bridge
+  | Brigand
   | Burden
+  | CairAndros
+  | City
   | Clue
   | Condition
   | Craftsman
@@ -54,13 +59,16 @@ data Trait
   | Noble
   | Noldor
   | Orc
+  | Outlands
   | Pipe
   | Ranger
   | Ring
+  | River
   | Riverland
   | Road
   | Rohan
   | Scout
+  | Scroll
   | Shadow
   | Signal
   | Silvan
@@ -75,6 +83,7 @@ data Trait
   | Swamp
   | Tantrum
   | Tentacle
+  | Thug
   | Title
   | Tools
   | Trap
