@@ -696,5 +696,8 @@
   },
   "forestBat": {
     "damage": "Forest Bat: deal 2 damage to a questing hero and remove it from the quest"
+  },
+  "gainingStrength": {
+    "chooseHero": "Choose a hero to discard 2 resources from and add 3 to"
   }
 }

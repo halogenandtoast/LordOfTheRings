@@ -110,6 +110,8 @@ allEventCards =
       , aElberethGilthoniel
       , peaceAndThought
       , riskSomeLight
+      , gainingStrength
+      , mithrandirsAdvice
       ]
 
 everVigilant :: CardDef
@@ -411,3 +413,9 @@ elvenLight = (event "10145" "Elven-light" Spirit (StaticCost 1)) {cdPlayableFrom
 
 heedTheDream :: CardDef
 heedTheDream = event "12009" "Heed the Dream" Lore (StaticCost 1)
+
+gainingStrength :: CardDef
+gainingStrength = event "06003" "Gaining Strength" Leadership (StaticCost 0)
+
+mithrandirsAdvice :: CardDef
+mithrandirsAdvice = event "06009" "Mithrandir's Advice" Lore (StaticCost 1)

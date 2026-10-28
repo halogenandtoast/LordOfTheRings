@@ -99,6 +99,8 @@ import LordOfTheRings.Event.Cards.HeavyStroke
 import LordOfTheRings.Event.Cards.AElberethGilthoniel
 import LordOfTheRings.Event.Cards.PeaceAndThought
 import LordOfTheRings.Event.Cards.RiskSomeLight
+import LordOfTheRings.Event.Cards.GainingStrength
+import LordOfTheRings.Event.Cards.MithrandirsAdvice
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -211,5 +213,7 @@ allEvents =
         , SomeEventCard aElberethGilthoniel
         , SomeEventCard peaceAndThought
         , SomeEventCard riskSomeLight
+        , SomeEventCard gainingStrength
+        , SomeEventCard mithrandirsAdvice
         ]
     ]

@@ -47,6 +47,7 @@ import LordOfTheRings.Hero.Cards.Hama
 import LordOfTheRings.Hero.Cards.GlorfindelSpirit
 import LordOfTheRings.Hero.Cards.ArwenUndomiel
 import LordOfTheRings.Hero.Cards.EowynTactics
+import LordOfTheRings.Hero.Cards.HirluinTheFair
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -120,5 +121,6 @@ allHeroes =
         , SomeHeroCard glorfindelSpirit
         , SomeHeroCard arwenUndomiel
         , SomeHeroCard eowynTactics
+        , SomeHeroCard hirluinTheFair
         ]
     ]

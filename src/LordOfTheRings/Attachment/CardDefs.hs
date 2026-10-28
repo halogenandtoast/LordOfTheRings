@@ -91,6 +91,7 @@ allAttachmentCards =
       , asfaloth
       , hardyLeadership
       , miruvor
+      , ringOfBarahir
       ]
 
 stewardOfGondor :: CardDef
@@ -604,4 +605,11 @@ mirrorOfGaladriel =
   (attachment "08118" "Mirror of Galadriel" Spirit (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Item]
+    }
+
+ringOfBarahir :: CardDef
+ringOfBarahir =
+  (attachment "06007" "Ring of Barahir" Spirit (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item, Ring]
     }

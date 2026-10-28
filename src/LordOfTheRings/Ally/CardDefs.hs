@@ -111,6 +111,10 @@ allAllyCards =
       , yazan
       , jubayr
       , firyal
+      , warriorOfLossarnach
+      , knightsOfTheSwan
+      , ethirSwordsman
+      , anfalasHerdsman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -749,4 +753,28 @@ firyal =
   (ally "17008" "Firyal" Lore (StaticCost 5) 3 1 2 3)
     { cdUnique = True
     , cdCardTraits = setFromList [Harad, Scout]
+    }
+
+warriorOfLossarnach :: CardDef
+warriorOfLossarnach =
+  (ally "06002" "Warrior of Lossarnach" Leadership (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Outlands]
+    }
+
+knightsOfTheSwan :: CardDef
+knightsOfTheSwan =
+  (ally "06004" "Knights of the Swan" Tactics (StaticCost 1) 0 0 0 1)
+    { cdCardTraits = setFromList [Outlands]
+    }
+
+ethirSwordsman :: CardDef
+ethirSwordsman =
+  (ally "06006" "Ethir Swordsman" Spirit (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Outlands]
+    }
+
+anfalasHerdsman :: CardDef
+anfalasHerdsman =
+  (ally "06008" "Anfalas Herdsman" Lore (StaticCost 1) 0 0 0 1)
+    { cdCardTraits = setFromList [Outlands]
     }

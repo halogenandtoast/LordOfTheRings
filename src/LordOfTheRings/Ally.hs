@@ -109,6 +109,10 @@ import LordOfTheRings.Ally.Cards.Jubayr
 import LordOfTheRings.Ally.Cards.Firyal
 import LordOfTheRings.Ally.Cards.Celador
 import LordOfTheRings.Ally.Cards.IthilienGuardian
+import LordOfTheRings.Ally.Cards.WarriorOfLossarnach
+import LordOfTheRings.Ally.Cards.KnightsOfTheSwan
+import LordOfTheRings.Ally.Cards.EthirSwordsman
+import LordOfTheRings.Ally.Cards.AnfalasHerdsman
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -245,5 +249,9 @@ allAllies =
         , SomeAllyCard firyal
         , SomeAllyCard celador
         , SomeAllyCard ithilienGuardian
+        , SomeAllyCard warriorOfLossarnach
+        , SomeAllyCard knightsOfTheSwan
+        , SomeAllyCard ethirSwordsman
+        , SomeAllyCard anfalasHerdsman
         ]
     ]
