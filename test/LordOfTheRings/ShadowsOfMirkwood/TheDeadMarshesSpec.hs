@@ -129,5 +129,17 @@ spec = describe "The Dead Marshes" do
     chooseAbilityOf pid boromir
     (.threat) <$> getPlayer pid `shouldReturn` threat + 1
     getsGame (fmap (heroExhausted . toAttrs) . find ((== boromir.id) . toId) . toList . (.entities.heroes)) `shouldReturn` Just False
+
+  it "offers Boromir's ready after he defends" . gameTestIn theDeadMarshes boromirDeck $ \pid -> do
+    boromir <- getHeroWithCode (toCardCode Heroes.boromirTactics)
+    _ <- setEncounterDeck [Enemies.giantMarshWorm]
+    run RevealEncounterCard
+    worm <- getsGame (fromJustNote "no worm" . headMay . map toId . toList . (.entities.enemies))
+    run $ EngageEnemy pid worm
+    _ <- setEncounterDeck [Locations.oldForestRoad]
+    run $ BeginPhase CombatPhase
+    passActions pid
+    chooseTarget pid boromir
+    offersAbilityOf pid boromir `shouldReturn` True
  where
   boromirDeck = DeckList [toCardCode Heroes.boromirTactics, "01007", "01002"] testDeck.cards
