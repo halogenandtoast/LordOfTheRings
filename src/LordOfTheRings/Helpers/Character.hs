@@ -2,7 +2,8 @@ module LordOfTheRings.Helpers.Character (module LordOfTheRings.Helpers.Character
 
 import LordOfTheRings.Card hiding (enemy)
 import LordOfTheRings.Classes.Entity (toAttrs)
-import LordOfTheRings.Game.Base (gameScenario)
+import LordOfTheRings.Entities (entitiesObjectives)
+import LordOfTheRings.Game.Base (gameEntities, gameScenario)
 import LordOfTheRings.Message (EscapeStat (..), EscapeTest (..))
 import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
 import LordOfTheRings.Classes.HasGame
@@ -19,6 +20,7 @@ characterCardDef :: (HasCallStack, HasGame m) => Target -> m CardDef
 characterCardDef = \case
   HeroTarget hid -> toCardDef <$> getHero hid
   AllyTarget aid -> toCardDef <$> getAlly aid
+  ObjectiveTarget oid -> toCardDef <$> getObjective oid
   target -> error $ "not a character: " <> show target
 
 characterStat :: (HasGame m) => (CardDef -> Maybe Int) -> (ModifierType -> Maybe Int) -> Target -> m Int
@@ -66,8 +68,15 @@ getCommittedWillpower = do
   sum
     <$> ( traverse strength
             =<< filterM (fmap (notElem DoesNotCountWillpower) . getModifiers)
-            =<< selectCharacters CommittedHero CommittedAlly
+            =<< getCommittedCharacters
         )
+
+-- | The characters committed to the quest, objective allies the staging area commits too.
+getCommittedCharacters :: (HasGame m) => m [Target]
+getCommittedCharacters = do
+  characters <- selectCharacters CommittedHero CommittedAlly
+  objectives <- getsGame (map toTarget . toList . entitiesObjectives . gameEntities)
+  (characters <>) <$> filterM (fmap (elem CountsAsCommitted) . getModifiers) objectives
 
 -- | An escape test's committed total, and the escape value of the cards it would deal
 -- from the encounter deck as it stands.

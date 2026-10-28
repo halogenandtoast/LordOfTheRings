@@ -155,6 +155,12 @@ data ModifierType
     ImmuneToRangedDamage
   | -- | on a character: no single effect heals it of more than this
     HealLimit Int
+  | -- | on an enemy: at most this much more damage can be placed on it now, as Mumak's
+    -- 3 a round
+    DamageLimit Int
+  | -- | on an objective ally in the staging area: it is committed to the current quest, as
+    -- Celador reads
+    CountsAsCommitted
   | -- | on an enemy: only characters with the trait or the keyword can attack it or defend
     -- against it
     OnlyFoughtBy Trait Keyword
