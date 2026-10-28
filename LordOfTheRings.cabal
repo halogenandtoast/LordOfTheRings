@@ -605,6 +605,8 @@ library
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
       LordOfTheRings.Quest.Cards.EscapeFromDarkness
+      LordOfTheRings.Quest.Cards.EscapeToTheQuays
+      LordOfTheRings.Quest.Cards.FightingInTheStreets
       LordOfTheRings.Quest.Cards.FliesAndSpiders
       LordOfTheRings.Quest.Cards.GatherInformation
       LordOfTheRings.Quest.Cards.GoblinPatrol
@@ -630,6 +632,7 @@ library
       LordOfTheRings.Quest.Cards.TheFateOfBalin
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
       LordOfTheRings.Quest.Cards.TheHuntBegins
+      LordOfTheRings.Quest.Cards.TheLeapingFishQuest
       LordOfTheRings.Quest.Cards.TheMountainsPeaks
       LordOfTheRings.Quest.Cards.TheNecromancersTower
       LordOfTheRings.Quest.Cards.TheRearGuard
@@ -662,6 +665,7 @@ library
       LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
+      LordOfTheRings.Scenario.Scenarios.PerilInPelargir
       LordOfTheRings.Scenario.Scenarios.PerilInPelargir.Helpers
       LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood
       LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers
@@ -935,6 +939,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
+      LordOfTheRings.HeirsOfNumenor.PerilInPelargirSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.KeywordSpec
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec

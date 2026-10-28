@@ -63,6 +63,9 @@ import LordOfTheRings.Quest.Cards.LastLordOfMoria
 import LordOfTheRings.Quest.Cards.ToTheWestDoor
 import LordOfTheRings.Quest.Cards.TheSeethingLake
 import LordOfTheRings.Quest.Cards.GatherInformation
+import LordOfTheRings.Quest.Cards.TheLeapingFishQuest
+import LordOfTheRings.Quest.Cards.FightingInTheStreets
+import LordOfTheRings.Quest.Cards.EscapeToTheQuays
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -158,5 +161,8 @@ allQuests =
         , SomeQuestCard toTheWestDoor
         , SomeQuestCard theSeethingLake
         , SomeQuestCard gatherInformation
+        , SomeQuestCard theLeapingFishQuest
+        , SomeQuestCard fightingInTheStreets
+        , SomeQuestCard escapeToTheQuays
         ]
     ]

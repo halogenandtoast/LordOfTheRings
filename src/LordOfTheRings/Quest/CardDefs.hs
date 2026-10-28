@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Keyword (Keyword (Battle))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -83,6 +84,9 @@ allQuestCards =
       , lastLordOfMoria
       , toTheWestDoor
       , theSeethingLake
+      , theLeapingFishQuest
+      , fightingInTheStreets
+      , escapeToTheQuays
       ]
 
 theDrippingWalls :: CardDef
@@ -267,3 +271,15 @@ toTheWestDoor = quest "04063" "To the West-door" TheWatcherInTheWater 1 13
 
 theSeethingLake :: CardDef
 theSeethingLake = quest "04064" "The Seething Lake" TheWatcherInTheWater 2 5
+
+theLeapingFishQuest :: CardDef
+theLeapingFishQuest = quest "05065" "The Leaping Fish" PerilInPelargir 1 6
+
+fightingInTheStreets :: CardDef
+fightingInTheStreets =
+  (quest "05066" "Fighting in the Streets" PerilInPelargir 2 13)
+    { cdKeywords = setFromList [Battle]
+    }
+
+escapeToTheQuays :: CardDef
+escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15
