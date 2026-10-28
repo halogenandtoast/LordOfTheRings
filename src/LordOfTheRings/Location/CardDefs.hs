@@ -90,6 +90,11 @@ allLocationCards =
       , perilousSwamp
       , makeshiftPassage
       , stagnantCreek
+      , theLeapingFish
+      , pelargirDocks
+      , harborStorehouse
+      , cityStreet
+      , marketSquare
       ]
 
 drownedTreasury :: CardDef
@@ -621,4 +626,41 @@ stagnantCreek =
   (location "04069" "Stagnant Creek" TheWatcherInTheWater 3 3 3)
     { cdCardTraits = setFromList [Swamp]
     , cdWhenRevealed = True
+    }
+
+theLeapingFish :: CardDef
+theLeapingFish =
+  (location "05021" "The Leaping Fish" PerilInPelargir 1 2 6)
+    { cdUnique = True
+    , cdCardTraits = setFromList [City]
+    , cdVictoryPoints = Just 3
+    }
+
+pelargirDocks :: CardDef
+pelargirDocks =
+  (location "05022" "Pelargir Docks" PerilInPelargir 2 4 3)
+    { cdCardTraits = setFromList [City, River]
+    , cdEasyModeQuantity = Just 0
+    }
+
+harborStorehouse :: CardDef
+harborStorehouse =
+  (location "05023" "Harbor Storehouse" PerilInPelargir 2 1 4)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    }
+
+cityStreet :: CardDef
+cityStreet =
+  (location "05038" "City Street" StreetsOfGondor 3 2 2)
+    { cdCardTraits = setFromList [City]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+marketSquare :: CardDef
+marketSquare =
+  (location "05039" "Market Square" StreetsOfGondor 2 3 1)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
     }

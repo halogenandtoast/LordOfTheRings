@@ -83,6 +83,11 @@ import LordOfTheRings.Location.Cards.StairFalls
 import LordOfTheRings.Location.Cards.PerilousSwamp
 import LordOfTheRings.Location.Cards.MakeshiftPassage
 import LordOfTheRings.Location.Cards.StagnantCreek
+import LordOfTheRings.Location.Cards.TheLeapingFish
+import LordOfTheRings.Location.Cards.PelargirDocks
+import LordOfTheRings.Location.Cards.HarborStorehouse
+import LordOfTheRings.Location.Cards.CityStreet
+import LordOfTheRings.Location.Cards.MarketSquare
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -190,5 +195,10 @@ allLocations =
         , SomeLocationCard perilousSwamp
         , SomeLocationCard makeshiftPassage
         , SomeLocationCard stagnantCreek
+        , SomeLocationCard theLeapingFish
+        , SomeLocationCard pelargirDocks
+        , SomeLocationCard harborStorehouse
+        , SomeLocationCard cityStreet
+        , SomeLocationCard marketSquare
         ]
     ]
