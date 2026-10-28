@@ -109,12 +109,14 @@ narrationFor = \case
       Resource -> tokens "log.gainsResources"
       -- dealt with as damage, where the source is known
       Damage -> pure []
+      Villager -> tokens "log.villagersPlaced"
    where
     tokens key = whenRef target \t -> one $ mechanic [ikeyPart key ["target" ~> t, "count" ~> n]]
   RemoveTokens _ target token n | n > 0 -> case token of
     Progress -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.progressRemoved" ["target" ~> t, "progress" ~> stat "progress" n]]
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]
     Damage -> Nothing
+    Villager -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.villagersRemoved" ["target" ~> t, "count" ~> n]]
   -- what a card does to characters; elsewhere readying and exhausting are routine
   Ready target -> Just $ duringCard $ simply "log.readies" target
   Exhaust target -> Just $ duringCard $ simply "log.exhausts" target

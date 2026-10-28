@@ -3,7 +3,12 @@ module LordOfTheRings.Token (module LordOfTheRings.Token) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Prelude
 
-data Token = Damage | Progress | Resource
+data Token
+  = Damage
+  | Progress
+  | Resource
+  | -- | a villager (Encounter at Amon Dîn): a resource token that does not count as a resource
+    Villager
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
