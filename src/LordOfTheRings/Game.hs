@@ -364,7 +364,10 @@ runGameMessage msg g = case msg of
         [ questionLabelWith (ikey "label.chooseDamageRedirect") (Just target) [] lead
             [targetLabel t [DealDamage source t n] | t <- redirected]
         ]
-      [] -> [CheckWindows [mkWhen $ DealtDamage target n], DoStep 1 msg]
+      [] ->
+        -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1
+        let n' = foldr min n [k | DamageReducedTo k <- mods]
+         in [CheckWindows [mkWhen $ DealtDamage target n'], DoStep 1 (DealDamage source target n')]
     pure g
   DoStep 1 (DealDamage source target n) -> do
     pushAll

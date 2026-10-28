@@ -237,6 +237,8 @@ data ModifierType
   | -- | on an enemy: it cannot leave play unless destroyed; an effect that would discard
     -- it, return it to the encounter deck or remove it from the game does nothing
     CannotLeavePlay
+  | -- | on a character or enemy: any amount of damage dealt to it is reduced to this much
+    DamageReducedTo Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
