@@ -91,6 +91,17 @@ allAttachmentCards =
       , asfaloth
       , hardyLeadership
       , miruvor
+      , ringOfBarahir
+      , mightyProwess
+      , lordOfMorthond
+      , bookOfEldacar
+      , swordOfMorthond
+      , mapOfEarnil
+      , rangerBow
+      , palantir
+      , tomeOfAtanatar
+      , poisonedStakes
+      , scrollOfIsildur
       ]
 
 stewardOfGondor :: CardDef
@@ -604,4 +615,80 @@ mirrorOfGaladriel =
   (attachment "08118" "Mirror of Galadriel" Spirit (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Item]
+    }
+
+ringOfBarahir :: CardDef
+ringOfBarahir =
+  (attachment "06007" "Ring of Barahir" Spirit (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item, Ring]
+    }
+
+mightyProwess :: CardDef
+mightyProwess =
+  (attachment "06035" "Mighty Prowess" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+lordOfMorthond :: CardDef
+lordOfMorthond =
+  (attachment "06058" "Lord of Morthond" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+bookOfEldacar :: CardDef
+bookOfEldacar =
+  (attachment "06059" "Book of Eldacar" Tactics (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
+    }
+
+swordOfMorthond :: CardDef
+swordOfMorthond =
+  (attachment "06082" "Sword of Morthond" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Item, Weapon]
+    }
+
+mapOfEarnil :: CardDef
+mapOfEarnil =
+  (attachment "06087" "Map of Earnil" Spirit (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
+    }
+
+rangerBow :: CardDef
+rangerBow =
+  (attachment "06088" "Ranger Bow" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+palantir :: CardDef
+palantir =
+  (attachment "06090" "Palantir" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    }
+
+tomeOfAtanatar :: CardDef
+tomeOfAtanatar =
+  (attachment "06109" "Tome of Atanatar" Leadership (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
+    }
+
+poisonedStakes :: CardDef
+poisonedStakes =
+  (attachment "06115" "Poisoned Stakes" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Trap]
+    }
+
+scrollOfIsildur :: CardDef
+scrollOfIsildur =
+  (attachment "06142" "Scroll of Isildur" Lore (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
     }

@@ -8,6 +8,7 @@ import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
 import LordOfTheRings.Prelude
 import LordOfTheRings.Trait
+import LordOfTheRings.Name (Name)
 
 allObjectiveCards :: Map CardCode CardDef
 allObjectiveCards =
@@ -35,6 +36,18 @@ allObjectiveCards =
       , celador
       , ithilienGuardian
       , alcaronsScroll
+      , rescuedVillagers
+      , deadVillagers
+      , lordAlcaron
+      , toTheTower
+      , aScrapOfHistory
+      , secretMap
+      , aPrisoner
+      , unholyAlliance
+      , upInFlames
+      , poisonedCounsels
+      , faramirObjective
+      , lordAlcaronTheBloodOfGondor
       ]
 
 durinsAxe :: CardDef
@@ -195,3 +208,71 @@ alcaronsScroll =
     (objective "05019" "Alcaron's Scroll" PerilInPelargir 1)
       { cdCardTraits = setFromList [Scroll]
       }
+
+rescuedVillagers :: CardDef
+rescuedVillagers = objective "06068" "Rescued Villagers" EncounterAtAmonDin 1
+
+deadVillagers :: CardDef
+deadVillagers = objective "06069" "Dead Villagers" EncounterAtAmonDin 1
+
+lordAlcaron :: CardDef
+lordAlcaron =
+  ((objective "06070" "Lord Alcaron" EncounterAtAmonDin 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+toTheTower :: CardDef
+toTheTower =
+  unique
+    (objective "06147" "To the Tower" TheMorgulVale 1)
+      { cdCardTraits = setFromList [Captured]
+      }
+
+clue :: CardCode -> Name -> CardDef
+clue code name =
+  (objective code name TheStewardsFear 1)
+    { cdCardTraits = setFromList [Clue]
+    , cdVictoryPoints = Just 1
+    }
+
+aScrapOfHistory :: CardDef
+aScrapOfHistory = clue "06026" "A Scrap of History"
+
+secretMap :: CardDef
+secretMap = clue "06027" "Secret Map"
+
+aPrisoner :: CardDef
+aPrisoner = clue "06028" "A Prisoner"
+
+plot :: CardCode -> Name -> CardDef
+plot code name = (objective code name TheStewardsFear 1) {cdCardTraits = setFromList [Plot]}
+
+unholyAlliance :: CardDef
+unholyAlliance = plot "06029" "Unholy Alliance"
+
+upInFlames :: CardDef
+upInFlames = plot "06030" "Up in Flames"
+
+poisonedCounsels :: CardDef
+poisonedCounsels = plot "06031" "Poisoned Counsels"
+
+faramirObjective :: CardDef
+faramirObjective =
+  ((objective "06132" "Faramir" TheBloodOfGondor 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 3, cdDefense = Just 1, cdHitPoints = Just 4 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+lordAlcaronTheBloodOfGondor :: CardDef
+lordAlcaronTheBloodOfGondor =
+  ((objective "06133" "Lord Alcaron" TheBloodOfGondor 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

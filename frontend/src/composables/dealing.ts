@@ -104,6 +104,7 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
       [
         ...(view.scenario?.staging ?? []),
         ...(view.scenario?.activeLocation ? [view.scenario.activeLocation] : []),
+        ...(view.scenario?.otherActiveLocations ?? []).map((l) => l.card),
         ...view.players.flatMap((p) => [...p.engaged, ...p.inPlay]),
       ].filter((card) => encounterTypes.has(card.type))
     for (const card of inPlay(before))

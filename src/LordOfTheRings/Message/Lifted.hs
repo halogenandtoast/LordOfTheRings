@@ -26,7 +26,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
-import LordOfTheRings.Phase (Phase (CombatPhase))
+import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase))
 import LordOfTheRings.Placement (
   Placement (ActiveLocation, AttachedTo, StagingArea),
   placementController,
@@ -40,7 +40,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, ThreatRaisedByEncounter, Traveled),
+  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByEncounter, Traveled),
  )
 
 dealDamage
@@ -609,13 +609,25 @@ undefendedDamageTo
   :: (ReverseQueue m, Sourceable source, Targetable target) => source -> EnemyId -> target -> m ()
 undefendedDamageTo source eid = phaseModifier source eid . UndefendedDamageTo . toTarget
 
-{- | The card leaves the encounter discard pile and is revealed, its When Revealed
-effects resolving.
+{- | The card leaves the encounter discard pile and is revealed, as West Gate's search: its
+keywords and windows apply as for any reveal.
 -}
 revealFromEncounterDiscard :: ReverseQueue m => EncounterCard -> m ()
 revealFromEncounterDiscard card = do
-  push $ RemoveFromEncounterDiscard card
+  removeFromEncounterDiscard card
   push $ RevealCard card
+
+{- | Only the card's When Revealed effect resolves, as Lieutenant of Mordor's: no keyword,
+window or cancel touches it. The caller first takes the card from where it was.
+-}
+resolveWhenRevealedOf :: ReverseQueue m => EncounterCard -> m ()
+resolveWhenRevealedOf = push . ResolveWhenRevealedOf
+
+-- | The card leaves the encounter discard pile, and only its When Revealed effect resolves.
+resolveWhenRevealedFromDiscard :: ReverseQueue m => EncounterCard -> m ()
+resolveWhenRevealedFromDiscard card = do
+  removeFromEncounterDiscard card
+  resolveWhenRevealedOf card
 
 -- | After its attack resolves, the enemy returns to the staging area.
 returnToStagingAfterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> t m ()
@@ -832,3 +844,38 @@ cancelEvent cid = do
     PlayEvent _ card _ -> card.id == cid
     _ -> False
   for_ [card | PlayEvent _ card _ <- cancelled] (push . PutInDiscard)
+
+-- | The stage is defeated, and the players advance to the next, as "if Murzag is defeated,
+-- advance to the next stage" reads.
+completeQuest :: ReverseQueue m => QuestId -> m ()
+completeQuest = push . CompleteQuest
+
+{- | End the quest phase without resolving the quest, as False Lead reads: the rest of the
+staging step, the players' actions and the quest's resolution are dropped. Nothing
+happens outside the quest phase.
+-}
+endQuestPhaseWithoutResolving :: (MonadTrans t, HasQueue Message m) => t m ()
+endQuestPhaseWithoutResolving = lift $ withQueue_ \q ->
+  case break (== EndPhase QuestPhase) q of
+    (before, after@(_ : _)) -> filter (not . questStep) before <> after
+    _ -> q
+ where
+  questStep = \case
+    RevealEncounterCard -> True
+    CheckWindows [Window When StagingStepEnds] -> True
+    ActionWindow _ -> True
+    QuestResolution -> True
+    _ -> False
+
+-- | A location card, taken from where it was, comes into play placed there, as Street
+-- Fighting puts one under the first player's control.
+putLocationIntoPlay :: ReverseQueue m => EncounterCard -> Placement -> m ()
+putLocationIntoPlay card = push . PutLocationIntoPlay card
+
+-- | The action's messages, unless the card has left play by the time they run.
+whileInPlay :: (ReverseQueue m, Targetable target) => target -> QueueT Message m () -> m ()
+whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture action
+
+-- | Place the ally elsewhere, as Captured! puts Faramir under itself.
+placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
+placeAlly aid = push . PlaceAlly aid

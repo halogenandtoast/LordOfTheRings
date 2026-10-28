@@ -110,6 +110,21 @@ allEventCards =
       , aElberethGilthoniel
       , peaceAndThought
       , riskSomeLight
+      , gainingStrength
+      , mithrandirsAdvice
+      , strengthOfArms
+      , trainedForWar
+      , againstTheShadow
+      , advanceWarning
+      , gondorianDiscipline
+      , smallTarget
+      , hobbitSense
+      , menOfTheWest
+      , forestPatrol
+      , theHammerStroke
+      , childrenOfTheSea
+      , wellEquipped
+      , layOfNimrodel
       ]
 
 everVigilant :: CardDef
@@ -411,3 +426,48 @@ elvenLight = (event "10145" "Elven-light" Spirit (StaticCost 1)) {cdPlayableFrom
 
 heedTheDream :: CardDef
 heedTheDream = event "12009" "Heed the Dream" Lore (StaticCost 1)
+
+gainingStrength :: CardDef
+gainingStrength = event "06003" "Gaining Strength" Leadership (StaticCost 0)
+
+mithrandirsAdvice :: CardDef
+mithrandirsAdvice = event "06009" "Mithrandir's Advice" Lore (StaticCost 1)
+
+strengthOfArms :: CardDef
+strengthOfArms = event "06034" "Strength of Arms" Leadership (StaticCost 2)
+
+trainedForWar :: CardDef
+trainedForWar = event "06036" "Trained for War" Tactics (StaticCost 2)
+
+againstTheShadow :: CardDef
+againstTheShadow = event "06038" "Against the Shadow" Spirit (StaticCost 2)
+
+advanceWarning :: CardDef
+advanceWarning = event "06040" "Advance Warning" Lore (StaticCost 2)
+
+gondorianDiscipline :: CardDef
+gondorianDiscipline = (event "06060" "Gondorian Discipline" Tactics (StaticCost 0)) {cdCardTraits = setFromList [Gondor]}
+
+smallTarget :: CardDef
+smallTarget = event "06062" "Small Target" Spirit (StaticCost 1)
+
+hobbitSense :: CardDef
+hobbitSense = event "06065" "Hobbit-sense" Neutral (StaticCost 2)
+
+menOfTheWest :: CardDef
+menOfTheWest = (event "06083" "Men of the West" Leadership DynamicCost) {cdCardTraits = setFromList [Outlands]}
+
+forestPatrol :: CardDef
+forestPatrol = event "06089" "Forest Patrol" Lore (StaticCost 1)
+
+theHammerStroke :: CardDef
+theHammerStroke = event "06111" "The Hammer-stroke" Tactics (StaticCost 2)
+
+childrenOfTheSea :: CardDef
+childrenOfTheSea = event "06113" "Children of the Sea" Spirit (StaticCost 0)
+
+wellEquipped :: CardDef
+wellEquipped = event "06116" "Well-Equipped" Neutral (StaticCost 0)
+
+layOfNimrodel :: CardDef
+layOfNimrodel = (event "06140" "Lay of Nimrodel" Spirit (StaticCost 1)) {cdCardTraits = setFromList [Song]}

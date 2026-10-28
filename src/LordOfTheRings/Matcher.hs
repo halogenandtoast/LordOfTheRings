@@ -126,6 +126,7 @@ matchHero matcher hero = case matcher of
           . gameEntities
       )
   HeroWithResources -> pure $ hero.resources > 0
+  HeroWithResourcesAtLeast n -> pure $ hero.resources >= n
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
   HeroMatchAll ms -> allM (`matchHero` hero) ms
@@ -221,6 +222,9 @@ matchLocation matcher location = case matcher of
   NotLocation m -> not <$> matchLocation m location
   LocationMatchAll ms -> allM (`matchLocation` location) ms
   LocationMatchAny ms -> anyM (`matchLocation` location) ms
+  LocationControlledBy pm -> case location.placement of
+    InPlayArea pid -> elem pid <$> select pm
+    _ -> pure False
 
 immuneToPlayerCards :: HasGame m => Target -> m Bool
 immuneToPlayerCards t =
@@ -340,8 +344,9 @@ allyPayersFor pid card = do
 hasKeyword :: HasGame m => Keyword -> Target -> CardDef -> m Bool
 hasKeyword k target def = do
   mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  -- a blank text box has no printed keywords
-  pure $ GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods && LoseKeyword k `notElem` mods)
+  -- a blank text box has no printed keywords; losing a keyword wins over gaining it, as
+  -- Arkham applies removes after adds
+  pure $ LoseKeyword k `notElem` mods && (GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods))
 
 -- | The archery the card has, printed or gained, as Archery X reads.
 getArchery :: HasGame m => Target -> CardDef -> m Int
@@ -350,16 +355,20 @@ getArchery target def = do
   let printed = [n | Blank `notElem` mods, Archery n <- toList (cdKeywords def)]
   pure $ sum $ printed <> [n | GainKeyword (Archery n) <- mods]
 
--- | The archery of the cards in the staging area and of the current quest, which the
--- players deal among the characters in play as the combat phase begins.
+-- | The archery of every card in play, the current quest's too, and any bonus, which the players deal
+-- among the characters in play as the combat phase begins.
 getArcheryTotal :: (HasGame m) => m Int
 getArcheryTotal = do
-  enemies <- select EnemyInStagingArea >>= traverse \e -> getArchery (toTarget e) . toCardDef =<< getEnemy e
-  locations <- select LocationInStagingArea >>= traverse \l -> getArchery (toTarget l) . toCardDef =<< getLocation l
+  let inPlay p = p `notElem` [InVictoryDisplay, Unplaced]
+  enemies <- getsGame (filter (inPlay . (.placement)) . toList . entitiesEnemies . gameEntities)
+  locations <- getsGame (filter (inPlay . (.placement)) . toList . entitiesLocations . gameEntities)
+  fromEnemies <- for enemies \e -> getArchery (toTarget e) (toCardDef e)
+  fromLocations <- for locations \l -> getArchery (toTarget l) (toCardDef l)
   onQuest <- getCurrentQuest >>= \case
     Just t@(QuestTarget qid) -> maybe (pure 0) (getArchery t . toCardDef) =<< getsGame (Map.lookup qid . entitiesQuests . gameEntities)
     _ -> pure 0
-  pure $ sum enemies + sum locations + onQuest
+  bonus <- sum . (\ms -> [n | ArcheryBonus n <- map modifierType ms]) . Map.findWithDefault [] GameTarget <$> getsGame gameModifiers
+  pure $ sum fromEnemies + sum fromLocations + onQuest + bonus
 
 -- | The current quest has the keyword, printed or gained, as battle or siege.
 currentQuestHas :: HasGame m => Keyword -> m Bool
@@ -587,3 +596,15 @@ matchCard matcher card = case matcher of
   CardMatchAll ms -> allM (`matchCard` card) ms
   CardMatchAny ms -> anyM (`matchCard` card) ms
   _ -> pure $ cardMatches matcher card
+
+-- | The next player clockwise from the player, still in the game; alone, there is none.
+getNextPlayer :: HasGame m => PlayerId -> m (Maybe PlayerId)
+getNextPlayer pid = do
+  players <- getRemainingPlayers
+  pure $ find (/= pid) $ take 1 $ drop 1 $ dropWhile (/= pid) (players <> players)
+
+-- | The characters the player controls with the trait, printed or gained, as "each Outlands
+-- character you control" reads.
+controlledCharactersWithTrait :: HasGame m => PlayerId -> Trait -> m [Target]
+controlledCharactersWithTrait pid trait =
+  selectCharacters (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait) (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait)

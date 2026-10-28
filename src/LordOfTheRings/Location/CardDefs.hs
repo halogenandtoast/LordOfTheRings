@@ -102,6 +102,34 @@ allLocationCards =
       , harborStorehouse
       , cityStreet
       , marketSquare
+      , burningFarmhouse
+      , gondorianHamlet
+      , secludedFarmhouse
+      , ancestralClearing
+      , gardenOfPoisons
+      , gladeOfCleansing
+      , morgulRoad
+      , morgulVale
+      , theWhiteBridge
+      , sewers
+      , rootsOfMindolluin
+      , storehouse
+      , housesOfTheDead
+      , theFourthStar
+      , westGate
+      , theKingsLibrary
+      , ancientHarbor
+      , theOldBridge
+      , westQuarter
+      , eastQuarter
+      , ruinedSquare
+      , ruinedTower
+      , theCrossroads
+      , southernRoad
+      , westernRoad
+      , northernRoad
+      , easternRoad
+      , theDarkWoods
       ]
 
 drownedTreasury :: CardDef
@@ -722,3 +750,188 @@ marketSquare =
     { cdCardTraits = setFromList [City]
     , cdShadowEffect = True
     }
+
+-- | Villagers 4: its villager tokens are placed as it is built.
+burningFarmhouse :: CardDef
+burningFarmhouse =
+  (location "06075" "Burning Farmhouse" EncounterAtAmonDin 4 1 5)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+-- | Villagers 3.
+gondorianHamlet :: CardDef
+gondorianHamlet =
+  (location "06076" "Gondorian Hamlet" EncounterAtAmonDin 4 2 4)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+-- | Villagers 2.
+secludedFarmhouse :: CardDef
+secludedFarmhouse =
+  (location "06077" "Secluded Farmhouse" EncounterAtAmonDin 3 3 3)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+ancestralClearing :: CardDef
+ancestralClearing =
+  (location "06050" "Ancestral Clearing" TheDruadanForest 1 4 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdEasyModeQuantity = Just 0
+    }
+
+gardenOfPoisons :: CardDef
+gardenOfPoisons =
+  (location "06051" "Garden of Poisons" TheDruadanForest 3 2 3)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+-- | X threat, X the archery of the highest archery Wose enemy: from its own modifiers.
+gladeOfCleansing :: CardDef
+gladeOfCleansing =
+  (location "06052" "Glade of Cleansing" TheDruadanForest 3 0 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdEasyModeQuantity = Just 1
+    }
+
+morgulRoad :: CardDef
+morgulRoad =
+  (location "06154" "Morgul Road" TheMorgulVale 3 2 5)
+    { cdCardTraits = setFromList [Road]
+    , cdShadowEffect = True
+    }
+
+morgulVale :: CardDef
+morgulVale =
+  (location "06155" "Morgul Vale" TheMorgulVale 3 3 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and X quest points, X the progress on To the Tower.
+theWhiteBridge :: CardDef
+theWhiteBridge =
+  unique
+    (location "06156" "The White Bridge" TheMorgulVale 1 0 0)
+      { cdCardTraits = setFromList [Bridge]
+      }
+
+sewers :: CardDef
+sewers =
+  (location "06018" "Sewers" TheStewardsFear 3 3 3)
+    { cdCardTraits = setFromList [Underworld, City]
+    , cdWhenRevealed = True
+    }
+
+rootsOfMindolluin :: CardDef
+rootsOfMindolluin =
+  unique
+    (location "06019" "Roots of Mindolluin" TheStewardsFear 1 2 5)
+      { cdCardTraits = setFromList [Underworld]
+      }
+
+storehouse :: CardDef
+storehouse =
+  (location "06020" "Storehouse" TheStewardsFear 2 2 2)
+    { cdCardTraits = setFromList [Underworld, City]
+    , cdShadowEffect = True
+    }
+
+housesOfTheDead :: CardDef
+housesOfTheDead =
+  unique
+    (location "06021" "Houses of the Dead" TheStewardsFear 1 4 4)
+      { cdCardTraits = setFromList [Underworld, City]
+      , cdEasyModeQuantity = Just 0
+      }
+
+theFourthStar :: CardDef
+theFourthStar =
+  unique
+    (location "06022" "The Fourth Star" TheStewardsFear 1 3 5)
+      { cdCardTraits = setFromList [City]
+      }
+
+westGate :: CardDef
+westGate =
+  (location "06096" "West Gate" AssaultOnOsgiliath 1 2 5)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+theKingsLibrary :: CardDef
+theKingsLibrary =
+  (location "06097" "The King's Library" AssaultOnOsgiliath 1 2 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+ancientHarbor :: CardDef
+ancientHarbor =
+  (location "06098" "Ancient Harbor" AssaultOnOsgiliath 1 1 5)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+theOldBridge :: CardDef
+theOldBridge =
+  (location "06099" "The Old Bridge" AssaultOnOsgiliath 1 1 6)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdUnique = True
+    }
+
+westQuarter :: CardDef
+westQuarter =
+  (location "06100" "West Quarter" AssaultOnOsgiliath 2 2 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+eastQuarter :: CardDef
+eastQuarter =
+  (location "06101" "East Quarter" AssaultOnOsgiliath 2 2 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+ruinedSquare :: CardDef
+ruinedSquare =
+  (location "06102" "Ruined Square" AssaultOnOsgiliath 3 1 2)
+    { cdCardTraits = setFromList [Osgiliath]
+    , cdKeywords = setFromList [Surge]
+    }
+
+ruinedTower :: CardDef
+ruinedTower =
+  (location "06103" "Ruined Tower" AssaultOnOsgiliath 3 2 2)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+-- | X threat, X the number of players: given by its own modifiers.
+theCrossroads :: CardDef
+theCrossroads =
+  unique
+    (location "06123" "The Cross-roads" TheBloodOfGondor 1 0 2)
+      { cdCardTraits = setFromList [Ithilien]
+      , cdVictoryPoints = Just 3
+      }
+
+southernRoad :: CardDef
+southernRoad = (location "06124" "Southern Road" TheBloodOfGondor 1 2 4) {cdCardTraits = setFromList [Ithilien, Road]}
+
+westernRoad :: CardDef
+westernRoad = (location "06125" "Western Road" TheBloodOfGondor 1 2 4) {cdCardTraits = setFromList [Ithilien, Road]}
+
+northernRoad :: CardDef
+northernRoad = (location "06126" "Northern Road" TheBloodOfGondor 1 4 3) {cdCardTraits = setFromList [Ithilien, Road]}
+
+easternRoad :: CardDef
+easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTraits = setFromList [Ithilien, Road]}
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+theDarkWoods :: CardDef
+theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}

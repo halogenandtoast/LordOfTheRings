@@ -59,6 +59,8 @@ data HeroMatcher
     HeroWithReadyAttached Trait
   | -- | a hero with a resource in its pool
     HeroWithResources
+  | -- | a hero with at least this many resources in its pool
+    HeroWithResourcesAtLeast Int
   | -- | a hero with a copy of the card attached
     HeroWithAttachment CardCode
   | AnyHero
@@ -187,6 +189,8 @@ data LocationMatcher
   | LocationMatchAll [LocationMatcher]
   | -- | a location matching any of them
     LocationMatchAny [LocationMatcher]
+  | -- | a location in a matching player's play area, under their control, as Osgiliath's
+    LocationControlledBy PlayerMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

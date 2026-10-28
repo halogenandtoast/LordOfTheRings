@@ -1,0 +1,43 @@
+module LordOfTheRings.Location.Cards.MorgulVale (morgulVale) where
+
+import LordOfTheRings.Location.CardDefs qualified as Cards
+import LordOfTheRings.Location.Import.Lifted
+import LordOfTheRings.Placement (Placement (StagingArea))
+import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (placeOnTower)
+
+newtype MorgulVale = MorgulVale LocationAttrs
+  deriving anyclass (IsLocation, HasModifiersFor)
+  deriving newtype (Show, Eq, ToJSON, Entity)
+
+morgulVale :: LocationCard MorgulVale
+morgulVale = location MorgulVale Cards.morgulVale
+
+-- | Forced: At the end of the round, each player returns 1 enemy engaged with him to the
+-- staging area.
+instance HasAbilities MorgulVale where
+  getAbilities (MorgulVale a) = [mkAbility a 1 $ forced RoundEndsWindow]
+
+-- | Shadow: If this attack destroys a character, place 1 progress token on To the Tower.
+-- Once the attack is over the shadow reads whether any character it could have destroyed,
+-- a defender or, undefended, one of the attacked player's, has left play.
+-- ponytail: a character the attack could destroy that left play during it some other way,
+-- as a defender discarded by a player card, counts as destroyed.
+instance RunMessage MorgulVale where
+  runMessage msg l@(MorgulVale a) = case msg of
+    UseCardAbility _ (isSource a -> True) 1 _ -> do
+      eachPlayer \p -> do
+        engaged <- select (EnemyEngagedWith $ PlayerWithId p)
+        chooseOrRunOneM p do
+          questionLabeled "morgulVale.return"
+          causedBy a
+          targets engaged \e -> placeEnemy e StagingArea
+      pure l
+    ResolveShadowEffect cid eid pid defenders | cid == a.cardId -> do
+      exposed <- if null defenders then charactersControlledBy pid else pure defenders
+      afterAttack eid [DoStep 1 (ResolveShadowEffect cid eid pid exposed)]
+      pure l
+    DoStep 1 (ResolveShadowEffect cid _ _ exposed) | cid == a.cardId -> do
+      remaining <- selectCharacters AnyHero AnyAlly
+      when (any (`notElem` remaining) exposed) $ placeOnTower a 1
+      pure l
+    _ -> MorgulVale <$> runMessage msg a

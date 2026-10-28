@@ -2,6 +2,7 @@ module LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec (spec) where
 
 import LordOfTheRings.Card (CardCost (StaticCost), cdCost, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Keyword (Keyword (Battle, Siege))
@@ -171,13 +172,32 @@ spec = describe "The Siege of Cair Andros" do
 
   -- \* Mordor Elite
 
-  it "keeps allies from defending Lieutenant of Mordor, which reveals the top discarded treachery again" . siegeTest $ \_ -> do
+  it "keeps allies from defending Lieutenant of Mordor" . siegeTest $ \_ -> do
     run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.orcAssault
     reveal [Enemies.lieutenantOfMordor]
     lieutenant <- enemyOf Enemies.lieutenantOfMordor
     getModifiers (toTarget lieutenant) >>= (`shouldSatisfy` elem CannotBeDefendedByAllies)
     beravor <- toTarget <$> getHeroWithCode "01012"
     getAttack beravor `shouldReturn` 0
+
+  it "resolves only the discarded treachery's When Revealed for Lieutenant of Mordor, not its keywords" . siegeTest $ \pid -> do
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.massingInTheDeep
+    threat <- (.threat) <$> getPlayer pid
+    -- Massing in the Deep reveals 1 card for its 1 player, but its Doomed 1 does not fire
+    reveal [Enemies.lieutenantOfMordor, Locations.forestGate]
+    (.threat) <$> getPlayer pid `shouldReturn` threat
+    placementOf Locations.forestGate `shouldReturn` Just StagingArea
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Treacheries.massingInTheDeep]
+
+  it "keeps A Test of Will from canceling Lieutenant of Mordor's When Revealed" . siegeTest $ \pid -> do
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.massingInTheDeep
+    test <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    -- no cancel is offered, so the revealing runs on to Massing in the Deep's reveal
+    reveal [Enemies.lieutenantOfMordor, Locations.forestGate]
+    placementOf Locations.forestGate `shouldReturn` Just StagingArea
+    map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem test.id)
 
   it "gives Orc Arbalesters archery for each resource icon among the heroes" . siegeTest $ \_ -> do
     run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters

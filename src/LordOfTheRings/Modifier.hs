@@ -31,9 +31,13 @@ data ModifierType
     ImmuneToPlayerCardEffects
   | -- | on a location: no card effect, player or encounter, places or removes its tokens
     ImmuneToCardEffects
+  | -- | on a location: player card effects cannot place progress on it, as Retake the City
+    -- reads for the staging area
+    NoProgressFromPlayerCards
   | -- | on a location: its quest points are raised by this much, as an X reads
     QuestPointModifier Int
-  | -- | on an enemy, or a character
+  | -- | on an enemy, or a character; on a player, none of their characters may attack,
+    -- as Hobbit-sense reads
     CannotAttack
   | -- | on a character: it does not exhaust, so cannot commit, attack or defend
     CannotExhaust
@@ -52,6 +56,23 @@ data ModifierType
     CannotHaveRestrictedAttachments
   | -- | on the game: the total threat in the staging area is raised by this much
     StagingThreatBonus Int
+  | -- | on the game: the archery total is raised by this much, as Pinned Down reads
+    ArcheryBonus Int
+  | -- | on the game: archery damage must be assigned to allies, if able, as An Untimely
+    -- End reads
+    ArcheryDamageToAllies
+  | -- | on the game, or a character: characters use their willpower instead of defense,
+    -- as Against the Shadow reads
+    WillpowerForDefense
+  | -- | on the game: characters use their willpower instead of attack when attacking
+    -- enemies, as The Passage Out reads
+    WillpowerForAttack
+  | -- | on the game: attacks on enemies place progress on them instead of damage, as The
+    -- Passage Out reads
+    ProgressInsteadOfAttackDamage
+  | -- | on a hero: resources from card effects are not placed in its pool, as Garden of
+    -- Poisons reads
+    CannotGainResourcesFromCardEffects
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | -- | on the game: reveal fewer encounter cards, allowing staging to reveal none
@@ -99,6 +120,9 @@ data ModifierType
   | ReturnToTopOfEncounterDeckAfterCombat
   | -- | on a location: the players cannot travel there now (its travel cost cannot be paid)
     CannotBeTraveledTo
+  | -- | on a location: the players may travel there while 1 other location is active,
+    -- making 2 active locations, as Ruined Tower reads
+    TravelableWithActiveLocation
   | -- | on a player
     CannotDrawCards
   | DoesNotReadyDuringRefresh
@@ -192,6 +216,8 @@ data ModifierType
     TraitDoesNotExhaustToCommit Trait
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
+  | -- | on an encounter card: its When Revealed effect cannot be canceled
+    WhenRevealedCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
   | -- | on a player: matching cards they play from hand cost this much less
@@ -225,6 +251,31 @@ data ModifierType
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
+  | -- | on an enemy: it cannot leave play unless destroyed; an effect that would discard
+    -- it, return it to the encounter deck or remove it from the game does nothing
+    CannotLeavePlay
+  | -- | on a character or enemy: any amount of damage dealt to it is reduced to this much
+    DamageReducedTo Int
+  | -- | on an attacking enemy: if the attack destroys a character, its controller returns
+    -- the location he controls with the highest threat to the staging area, as Osgiliath's
+    -- shadows read
+    DestroyingReturnsLocation
+  | -- | on the game: matching enemies engaged with players add their threat to the staging
+    -- area too, as Conflict at the Crossroads reads
+    EngagedEnemiesAddThreat EnemyMatcher
+  | -- | on a player: matching cards in their discard pile may be played as if from hand,
+    -- by discarding the modifier's source, then go to the bottom of their deck, as a
+    -- Record's Action reads
+    MayPlayFromDiscard CardMatcher
+  | -- | on an enemy: it cannot engage the player, by engagement check or choice, as
+    -- Pippin's
+    CannotEngagePlayer PlayerId
+  | -- | on a player: their undefended attacks' damage may go to this character instead of
+    -- a hero, as White Tower Watchman's
+    UndefendedDamageMayGoTo Target
+  | -- | on the game: the next encounter card revealed, if of this type, is discarded
+    -- without resolving, as Minas Tirith Lampwright's
+    DiscardNextRevealed CardType
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

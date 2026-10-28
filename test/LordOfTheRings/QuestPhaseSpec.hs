@@ -2,7 +2,11 @@ module LordOfTheRings.QuestPhaseSpec (spec) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Effect
+import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Helpers.Character (questingStat)
 import LordOfTheRings.Keyword
+import LordOfTheRings.Matcher (currentQuestHas)
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier
@@ -138,3 +142,44 @@ spec = describe "Quest phase" do
     chooseTarget pid eowyn
     chooseTarget pid eowyn
     getCharacterDamage eowyn `shouldReturn` 2
+
+  it "deals the archery of an engaged enemy" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    _ <- setEncounterDeck [Locations.forestGate]
+    spider <- getsGame (fromJustNote "no enemy" . headMay . Map.keys . (.entities.enemies))
+    run $ EngageEnemy pid spider
+    run $ CreateEffect $ Effect GameSource (toTarget spider) [GainKeyword (Archery 2)] UntilEndOfRound
+    run $ BeginPhase CombatPhase
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    chooseTarget pid eowyn
+    chooseTarget pid eowyn
+    getCharacterDamage eowyn `shouldReturn` 2
+
+  it "adds an archery bonus to the total" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    run $ CreateEffect $ Effect GameSource GameTarget [ArcheryBonus 1] UntilEndOfRound
+    run $ BeginPhase CombatPhase
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    chooseTarget pid eowyn
+    getCharacterDamage eowyn `shouldReturn` 1
+
+  it "assigns archery damage to allies, if able, when it must" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    run $ CreateEffect $ Effect GameSource GameTarget [ArcheryBonus 1, ArcheryDamageToAllies] UntilEndOfRound
+    ally <- putAllyIntoPlay pid Allies.gondorianSpearman
+    run $ BeginPhase CombatPhase
+    Just question <- getQuestion pid
+    [t | TargetLabel t _ <- questionChoices question] `shouldBe` [ally]
+
+  it "quests with defense once a battle quest gains siege and loses battle" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- putQuestStage Quests.ambushInIthilien
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Siege, LoseKeyword Battle] UntilEndOfRound
+    (name, _) <- questingStat
+    name `shouldBe` "defense"
+
+  it "a lost keyword stays lost though another card grants it" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- putQuestStage Quests.ambushInIthilien
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Battle, LoseKeyword Battle] UntilEndOfRound
+    currentQuestHas Battle `shouldReturn` False

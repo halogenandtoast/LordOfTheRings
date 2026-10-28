@@ -109,12 +109,14 @@ narrationFor = \case
       Resource -> tokens "log.gainsResources"
       -- dealt with as damage, where the source is known
       Damage -> pure []
+      Villager -> tokens "log.villagersPlaced"
    where
     tokens key = whenRef target \t -> one $ mechanic [ikeyPart key ["target" ~> t, "count" ~> n]]
   RemoveTokens _ target token n | n > 0 -> case token of
     Progress -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.progressRemoved" ["target" ~> t, "progress" ~> stat "progress" n]]
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]
     Damage -> Nothing
+    Villager -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.villagersRemoved" ["target" ~> t, "count" ~> n]]
   -- what a card does to characters; elsewhere readying and exhausting are routine
   Ready target -> Just $ duringCard $ simply "log.readies" target
   Exhaust target -> Just $ duringCard $ simply "log.exhausts" target
@@ -161,6 +163,13 @@ narrationFor = \case
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.orcGuardEngages" ["player" ~> who]]
+  TakeHiddenCard pid -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.takesHiddenCard" ["player" ~> who]]
+  TurnHiddenCardFaceup pid card _ -> Just $ whenHidden pid card \who ->
+    one $ mechanic [ikeyPart "log.turnsHiddenCardFaceup" ["player" ~> who, "card" ~> EncounterCard card]]
+  DiscardHiddenCard pid card -> Just $ whenHidden pid card \who ->
+    one $ mechanic [ikeyPart "log.discardsHiddenCard" ["player" ~> who, "card" ~> EncounterCard card]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
   RevealShadowCard eid cid -> Just $ whenRef (toTarget eid) \e -> do
     mCard <-
@@ -172,6 +181,7 @@ narrationFor = \case
       ]
   AttachTreachery tid target -> Just $ attached (toTarget tid) target
   PlaceEnemy eid (AttachedTo target) -> Just $ attached (toTarget eid) target
+  PlaceAlly aid (AttachedTo target) -> Just $ attached (toTarget aid) target
   AttachCard aid target -> Just $ attached (toTarget aid) target
   TakePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.takenPrisoner" ["hero" ~> h]]
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
@@ -242,7 +252,20 @@ narrationFor = \case
       | card <- filter ((== cid) . (.id)) player.deck
       ]
   PlayAtNoCost _ card -> Just $ one $ mechanic [ikeyPart "log.playedAtNoCost" ["card" ~> PlayerCard card]]
+  -- \* Locations the players control, as Osgiliath's
+  PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
+    from <- maybe Unplaced (.placement) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
+    case (from, placement) of
+      (_, InPlayArea pid) | from /= placement -> takesControl pid l
+      (InPlayArea _, StagingArea) -> one $ toned Bad $ mechanic [ikeyPart "log.returnedToStaging" ["location" ~> l]]
+      _ -> pure []
+  PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
   _ -> Nothing
+ where
+  takesControl :: (HasGame m, ToLogPart a) => PlayerId -> a -> m [LogEntry]
+  takesControl pid l = do
+    who <- playerRefFor pid
+    one $ toned Good $ mechanic [ikeyPart "log.takesControl" ["player" ~> who, "location" ~> l]]
 
 one :: Applicative m => LogEntry -> m [LogEntry]
 one = pure . pure
@@ -250,6 +273,12 @@ one = pure . pure
 -- | Say something only when the target can be named.
 whenRef :: HasGame m => Target -> (LogRef -> m [LogEntry]) -> m [LogEntry]
 whenRef target f = targetRefFor target >>= maybe (pure []) f
+
+-- | Say something only while the card is still hidden in the player's play area.
+whenHidden :: HasGame m => PlayerId -> EncounterCard -> (LogRef -> m [LogEntry]) -> m [LogEntry]
+whenHidden pid card f = do
+  hidden <- getsGame (Map.findWithDefault [] pid . (.hiddenCards) . toAttrs . gameScenario)
+  if card `elem` hidden then f =<< playerRefFor pid else pure []
 
 withPlayer :: HasGame m => PlayerId -> (Player -> LogRef -> m [LogEntry]) -> m [LogEntry]
 withPlayer pid f = do
@@ -303,6 +332,8 @@ openBlock block = do
                     ikeyPart "log.revealedThreat" ["card" ~> EncounterCard card, "threat" ~> stat "threat" threat]
               _ -> ikeyPart "log.revealed" ["card" ~> EncounterCard card]
           ]
+    WhenRevealedBlock card ->
+      header $ mechanic [ikeyPart "log.resolvedWhenRevealed" ["card" ~> EncounterCard card]]
     EnemyAttackBlock pid eid -> whenRef (toTarget eid) \e -> do
       who <- playerRefFor pid
       attack <- getEnemyAttack eid

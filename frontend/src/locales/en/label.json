@@ -91,6 +91,17 @@
   "fightingInTheStreets": {
     "attach": "Attach Alcaron's Scroll to the enemy with the highest engagement cost"
   },
+  "faramirObjective": {
+    "turnFaceup": "Faramir: choose a player to turn 1 of their hidden cards faceup"
+  },
+  "lordAlcaronTheBloodOfGondor": {
+    "return": "Lord Alcaron: return an enemy engaged with you to the staging area"
+  },
+  "theAmbush": {
+    "choose": "Turn each of your hidden cards faceup, or take 1 hidden card",
+    "turnFaceup": "Turn your hidden cards faceup",
+    "take": "Take 1 hidden card"
+  },
   "umbarAssassin": {
     "damage": "Umbar Assassin engaged you: deal 3 damage to one of your heroes",
     "discard": "Umbar Assassin engaged you: discard one of your heroes"
@@ -696,5 +707,149 @@
   },
   "forestBat": {
     "damage": "Forest Bat: deal 2 damage to a questing hero and remove it from the quest"
+  },
+  "lordAlcaron": {
+    "placeVillager": "Lord Alcaron: exhaust him to place the discarded villager on a location instead",
+    "decline": "Let the villager be discarded"
+  },
+  "cravenEagle": {
+    "choose": "Craven Eagle: choose the character with the fewest remaining hit points to discard",
+    "prevent": "Craven Eagle: discard 3 cards at random from your hand to keep this character?",
+    "discardCards": "Discard 3 cards at random",
+    "discardCharacter": "Discard the character"
+  },
+  "panicked": {
+    "placeVillager": "Panicked!: place a villager from Rescued Villagers on a location in the staging area"
+  },
+  "druadanForest": {
+    "payOr": "Pay 1 resource from this hero's pool?",
+    "payToKeepEngaged": "Pay 1 resource to keep the enemy from returning to the staging area?",
+    "declineToPay": "Do not pay"
+  },
+  "menInTheDark": {
+    "takeDamage": "Take 1 damage"
+  },
+  "starsInSky": {
+    "removeFromQuest": "Remove it from the quest"
+  },
+  "leavesOnTree": {
+    "payOrDiscard": "Leaves on Tree: pay for your attachments or discard them",
+    "pay": "Pay {n} resources",
+    "discardAll": "Discard all attachments you control"
+  },
+  "ancestralClearing": {
+    "exhaustHero": "Exhaust a hero to travel to Ancestral Clearing"
+  },
+  "chooseDamageRedirect": "Choose which card takes the damage instead",
+  "morgulSorcerer": {
+    "choose": "Morgul Sorcerer: place 1 progress on To the Tower or take this attack undefended",
+    "progress": "Place 1 progress on To the Tower",
+    "undefended": "Treat this attack as undefended"
+  },
+  "morgulRoad": {
+    "choose": "Morgul Road: remove 1 progress from To the Tower, or choose an enemy to deal 1 damage to",
+    "removeProgress": "Remove 1 progress from To the Tower"
+  },
+  "morgulVale": {
+    "return": "Morgul Vale: return 1 enemy engaged with you to the staging area"
+  },
+  "impenetrableFog": {
+    "choose": "Impenetrable Fog: choose one",
+    "progress": "Place 3 progress on To the Tower",
+    "reveal": "Reveal {count} more encounter cards"
+  },
+  "sleeplessMalice": {
+    "choose": "Sleepless Malice: choose one",
+    "discard": "Discard 3 random cards from your hand",
+    "progress": "Place 1 progress on To the Tower"
+  },
+  "theStewardsFear": {
+    "removeToken": "Remove 1 token from the current quest",
+    "progress": "A progress token",
+    "resource": "A resource token"
+  },
+  "daughterOfBeruthiel": {
+    "prevent": "Daughter of Berúthiel returns to the staging area unless you raise your threat by 4",
+    "raiseThreat": "Raise your threat by 4",
+    "return": "Return her to the staging area"
+  },
+  "theFourthStar": {
+    "draw": "Draw 1 card?",
+    "drawCard": "Draw 1 card"
+  },
+  "aKnifeInTheBack": {
+    "damage": "Deal {n} damage to one of your heroes"
+  },
+  "divideProgress": "Divide the progress between the active locations: how much goes on {location}?",
+  "osgiliath": {
+    "returnHighest": "Return a location you control with the highest threat to the staging area",
+    "returnLocation": "Return a location you control to the staging area"
+  },
+  "westGate": {
+    "search": "Choose an Osgiliath location to reveal"
+  },
+  "ruinedTower": {
+    "exhaust": "Exhaust a character to travel to Ruined Tower"
+  },
+  "counterAttack": {
+    "choose": "Counter-attack: return your highest threat location, or raise your threat",
+    "return": "Return the location with the highest threat",
+    "raise": "Raise your threat by {n}"
+  },
+  "streetFighting": {
+    "choose": "Exhaust a hero to take control of the location?",
+    "addToStaging": "Add it to the staging area"
+  },
+  "gainingStrength": {
+    "chooseHero": "Choose a hero to discard 2 resources from and add 3 to"
+  },
+  "mightyProwess": {
+    "damage": "Mighty Prowess: deal 1 damage to an enemy sharing a Trait with the one destroyed"
+  },
+  "minasTirithLampwright": {
+    "name": "Name a card type: the next encounter card revealed, if of that type, is discarded",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery"
+  },
+  "smallTarget": {
+    "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against"
+  },
+  "menOfTheWest": {
+    "choose": "Choose an Outlands ally to return to your hand, for 1 leadership resource",
+    "done": "Done returning allies"
+  },
+  "knightOfMinasTirith": {
+    "chooseEnemy": "Choose an enemy in the staging area to engage and attack"
+  },
+  "rangerBow": {
+    "damage": "Ranger Bow: deal 1 damage to an enemy in the staging area"
+  },
+  "forestPatrol": {
+    "damage": "Forest Patrol: deal 3 damage to an enemy with a Trap attached"
+  },
+  "palantir": {
+    "name": "Name a card type, then look at the top 3 cards of the encounter deck",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery",
+    "objective": "Objective"
+  },
+  "caldara": {
+    "chooseAlly": "Choose a spirit ally in your discard pile to put into play"
+  },
+  "childrenOfTheSea": {
+    "chooseAlly": "Choose a Silvan or Noldor ally you control"
+  },
+  "anborn": {
+    "chooseTrap": "Choose a Trap card to return to your hand"
+  },
+  "wellEquipped": {
+    "chooseAttachment": "Attach an attachment discarded by Well-Equipped to a Dwarf character?",
+    "chooseDwarf": "Choose the Dwarf character to attach it to",
+    "none": "Attach none"
+  },
+  "layOfNimrodel": {
+    "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
   }
 }

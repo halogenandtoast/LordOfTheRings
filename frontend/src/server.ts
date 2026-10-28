@@ -19,7 +19,7 @@ export interface CardDef {
 
 export type Target = { tag: string; contents?: string }
 export type Placement = { tag: string; contents?: string | Target }
-export type Tokens = Partial<Record<'Damage' | 'Progress' | 'Resource', number>>
+export type Tokens = Partial<Record<'Damage' | 'Progress' | 'Resource' | 'Villager', number>>
 
 export interface Entity {
   id: string
@@ -88,7 +88,14 @@ export interface ServerGame {
   outcome: 'Won' | 'Lost' | null
   question: Record<string, Question>
   questionVersion: number
-  scenario: { name: string; encounterDeckSize: number; encounterDiscard: Card[]; victoryDisplay: Card[] }
+  scenario: {
+    name: string
+    encounterDeckSize: number
+    encounterDiscard: Card[]
+    victoryDisplay: Card[]
+    /** The ids of the hidden cards facedown in each player's play area (The Blood of Gondor). */
+    hiddenCards?: Record<string, string[]>
+  }
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
   entities: Record<'heroes' | 'allies' | 'enemies' | 'locations' | 'attachments' | 'quests' | 'treacheries' | 'objectives', Record<string, Entity>>

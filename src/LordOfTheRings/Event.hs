@@ -99,6 +99,21 @@ import LordOfTheRings.Event.Cards.HeavyStroke
 import LordOfTheRings.Event.Cards.AElberethGilthoniel
 import LordOfTheRings.Event.Cards.PeaceAndThought
 import LordOfTheRings.Event.Cards.RiskSomeLight
+import LordOfTheRings.Event.Cards.GainingStrength
+import LordOfTheRings.Event.Cards.MithrandirsAdvice
+import LordOfTheRings.Event.Cards.StrengthOfArms
+import LordOfTheRings.Event.Cards.TrainedForWar
+import LordOfTheRings.Event.Cards.AgainstTheShadow
+import LordOfTheRings.Event.Cards.AdvanceWarning
+import LordOfTheRings.Event.Cards.GondorianDiscipline
+import LordOfTheRings.Event.Cards.SmallTarget
+import LordOfTheRings.Event.Cards.HobbitSense
+import LordOfTheRings.Event.Cards.MenOfTheWest
+import LordOfTheRings.Event.Cards.ForestPatrol
+import LordOfTheRings.Event.Cards.TheHammerStroke
+import LordOfTheRings.Event.Cards.ChildrenOfTheSea
+import LordOfTheRings.Event.Cards.WellEquipped
+import LordOfTheRings.Event.Cards.LayOfNimrodel
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -211,5 +226,20 @@ allEvents =
         , SomeEventCard aElberethGilthoniel
         , SomeEventCard peaceAndThought
         , SomeEventCard riskSomeLight
+        , SomeEventCard gainingStrength
+        , SomeEventCard mithrandirsAdvice
+        , SomeEventCard strengthOfArms
+        , SomeEventCard trainedForWar
+        , SomeEventCard againstTheShadow
+        , SomeEventCard advanceWarning
+        , SomeEventCard gondorianDiscipline
+        , SomeEventCard smallTarget
+        , SomeEventCard hobbitSense
+        , SomeEventCard menOfTheWest
+        , SomeEventCard forestPatrol
+        , SomeEventCard theHammerStroke
+        , SomeEventCard childrenOfTheSea
+        , SomeEventCard wellEquipped
+        , SomeEventCard layOfNimrodel
         ]
     ]

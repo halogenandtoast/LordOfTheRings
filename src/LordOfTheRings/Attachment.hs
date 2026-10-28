@@ -84,6 +84,17 @@ import LordOfTheRings.Attachment.Cards.LightOfValinor
 import LordOfTheRings.Attachment.Cards.Asfaloth
 import LordOfTheRings.Attachment.Cards.HardyLeadership
 import LordOfTheRings.Attachment.Cards.Miruvor
+import LordOfTheRings.Attachment.Cards.RingOfBarahir
+import LordOfTheRings.Attachment.Cards.MightyProwess
+import LordOfTheRings.Attachment.Cards.LordOfMorthond
+import LordOfTheRings.Attachment.Cards.BookOfEldacar
+import LordOfTheRings.Attachment.Cards.SwordOfMorthond
+import LordOfTheRings.Attachment.Cards.MapOfEarnil
+import LordOfTheRings.Attachment.Cards.RangerBow
+import LordOfTheRings.Attachment.Cards.Palantir
+import LordOfTheRings.Attachment.Cards.TomeOfAtanatar
+import LordOfTheRings.Attachment.Cards.PoisonedStakes
+import LordOfTheRings.Attachment.Cards.ScrollOfIsildur
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -194,5 +205,16 @@ allAttachments =
         , SomeAttachmentCard asfaloth
         , SomeAttachmentCard hardyLeadership
         , SomeAttachmentCard miruvor
+        , SomeAttachmentCard ringOfBarahir
+        , SomeAttachmentCard mightyProwess
+        , SomeAttachmentCard lordOfMorthond
+        , SomeAttachmentCard bookOfEldacar
+        , SomeAttachmentCard swordOfMorthond
+        , SomeAttachmentCard mapOfEarnil
+        , SomeAttachmentCard rangerBow
+        , SomeAttachmentCard palantir
+        , SomeAttachmentCard tomeOfAtanatar
+        , SomeAttachmentCard poisonedStakes
+        , SomeAttachmentCard scrollOfIsildur
         ]
     ]

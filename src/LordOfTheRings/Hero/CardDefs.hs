@@ -54,6 +54,11 @@ allHeroCards =
       , glorfindelSpirit
       , arwenUndomiel
       , eowynTactics
+      , hirluinTheFair
+      , mirlonde
+      , pippin
+      , caldara
+      , theoden
       ]
 
 aragorn :: CardDef
@@ -307,4 +312,36 @@ eowynTactics :: CardDef
 eowynTactics =
   (hero "145002" "Éowyn" Tactics 9 4 1 1 3)
     { cdCardTraits = setFromList [Rohan, Noble]
+    }
+
+hirluinTheFair :: CardDef
+hirluinTheFair =
+  (hero "06001" "Hirluin the Fair" Leadership 8 1 1 1 4)
+    { cdCardTraits = setFromList [Outlands]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+mirlonde :: CardDef
+mirlonde =
+  (hero "06032" "Mirlonde" Lore 8 2 2 1 3)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+pippin :: CardDef
+pippin =
+  (hero "06056" "Pippin" Spirit 6 2 1 1 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+caldara :: CardDef
+caldara =
+  (hero "06107" "Caldara" Spirit 8 2 1 2 3)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+theoden :: CardDef
+theoden =
+  (hero "06134" "Théoden" Tactics 12 2 3 2 4)
+    { cdCardTraits = setFromList [Noble, Rohan, Warrior]
+    , cdKeywords = setFromList [Sentinel]
     }

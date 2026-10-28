@@ -95,6 +95,31 @@ import LordOfTheRings.Location.Cards.PelargirDocks
 import LordOfTheRings.Location.Cards.HarborStorehouse
 import LordOfTheRings.Location.Cards.CityStreet
 import LordOfTheRings.Location.Cards.MarketSquare
+import LordOfTheRings.Location.Cards.BurningFarmhouse
+import LordOfTheRings.Location.Cards.GondorianHamlet
+import LordOfTheRings.Location.Cards.SecludedFarmhouse
+import LordOfTheRings.Location.Cards.AncestralClearing
+import LordOfTheRings.Location.Cards.GardenOfPoisons
+import LordOfTheRings.Location.Cards.GladeOfCleansing
+import LordOfTheRings.Location.Cards.MorgulRoad
+import LordOfTheRings.Location.Cards.MorgulVale
+import LordOfTheRings.Location.Cards.TheWhiteBridge
+import LordOfTheRings.Location.Cards.Sewers
+import LordOfTheRings.Location.Cards.RootsOfMindolluin
+import LordOfTheRings.Location.Cards.Storehouse
+import LordOfTheRings.Location.Cards.HousesOfTheDead
+import LordOfTheRings.Location.Cards.TheFourthStar
+import LordOfTheRings.Location.Cards.WestGate
+import LordOfTheRings.Location.Cards.TheKingsLibrary
+import LordOfTheRings.Location.Cards.AncientHarbor
+import LordOfTheRings.Location.Cards.TheOldBridge
+import LordOfTheRings.Location.Cards.WestQuarter
+import LordOfTheRings.Location.Cards.EastQuarter
+import LordOfTheRings.Location.Cards.RuinedSquare
+import LordOfTheRings.Location.Cards.RuinedTower
+import LordOfTheRings.Location.Cards.TheCrossroads
+import LordOfTheRings.Location.Cards.IthilienRoads
+import LordOfTheRings.Location.Cards.TheDarkWoods
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -214,5 +239,33 @@ allLocations =
         , SomeLocationCard harborStorehouse
         , SomeLocationCard cityStreet
         , SomeLocationCard marketSquare
+        , SomeLocationCard burningFarmhouse
+        , SomeLocationCard gondorianHamlet
+        , SomeLocationCard secludedFarmhouse
+        , SomeLocationCard ancestralClearing
+        , SomeLocationCard gardenOfPoisons
+        , SomeLocationCard gladeOfCleansing
+        , SomeLocationCard morgulRoad
+        , SomeLocationCard morgulVale
+        , SomeLocationCard theWhiteBridge
+        , SomeLocationCard sewers
+        , SomeLocationCard rootsOfMindolluin
+        , SomeLocationCard storehouse
+        , SomeLocationCard housesOfTheDead
+        , SomeLocationCard theFourthStar
+        , SomeLocationCard westGate
+        , SomeLocationCard theKingsLibrary
+        , SomeLocationCard ancientHarbor
+        , SomeLocationCard theOldBridge
+        , SomeLocationCard westQuarter
+        , SomeLocationCard eastQuarter
+        , SomeLocationCard ruinedSquare
+        , SomeLocationCard ruinedTower
+        , SomeLocationCard theCrossroads
+        , SomeLocationCard southernRoad
+        , SomeLocationCard westernRoad
+        , SomeLocationCard northernRoad
+        , SomeLocationCard easternRoad
+        , SomeLocationCard theDarkWoods
         ]
     ]

@@ -96,6 +96,20 @@ allQuestCards =
       , theLeapingFishQuest
       , fightingInTheStreets
       , escapeToTheQuays
+      , savageryOfTheOrcs
+      , protectTheVillagers
+      , thePursuit
+      , anUntimelyEnd
+      , thePassageOut
+      , theRearguardTheMorgulVale
+      , theBetrayal
+      , theMorgulRider
+      , conspiracy
+      , theGrandDesign
+      , theConfrontation
+      , retakeTheCity
+      , theAmbush
+      , captured
       ]
 
 theDrippingWalls :: CardDef
@@ -322,3 +336,47 @@ fightingInTheStreets =
 
 escapeToTheQuays :: CardDef
 escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15
+
+-- | No quest points: progress placed on it moves its villagers to Rescued Villagers.
+savageryOfTheOrcs :: CardDef
+savageryOfTheOrcs = (quest "06066" "Savagery of the Orcs" EncounterAtAmonDin 1 0) {cdQuestPoints = Nothing}
+
+protectTheVillagers :: CardDef
+protectTheVillagers = quest "06067" "Protect the Villagers" EncounterAtAmonDin 2 15
+
+thePursuit :: CardDef
+thePursuit = quest "06042" "The Pursuit" TheDruadanForest 1 11
+
+anUntimelyEnd :: CardDef
+anUntimelyEnd = quest "06043" "An Untimely End" TheDruadanForest 2 17
+
+thePassageOut :: CardDef
+thePassageOut = (quest "06044" "The Passage Out" TheDruadanForest 3 14) {cdKeywords = setFromList [Siege]}
+
+-- | Its quest points are "-": the stage advances only as Murzag is defeated.
+theRearguardTheMorgulVale :: CardDef
+theRearguardTheMorgulVale = quest "06144" "The Rearguard" TheMorgulVale 1 0
+
+theBetrayal :: CardDef
+theBetrayal = quest "06145" "The Betrayal" TheMorgulVale 2 0
+
+theMorgulRider :: CardDef
+theMorgulRider = quest "06146" "The Morgul Rider" TheMorgulVale 3 0
+
+conspiracy :: CardDef
+conspiracy = quest "06011" "Conspiracy" TheStewardsFear 1 0
+
+theGrandDesign :: CardDef
+theGrandDesign = quest "06012" "The Grand Design" TheStewardsFear 2 0
+
+theConfrontation :: CardDef
+theConfrontation = quest "06013" "The Confrontation" TheStewardsFear 3 15
+
+retakeTheCity :: CardDef
+retakeTheCity = quest "06091" "Retake the City" AssaultOnOsgiliath 1 0
+
+theAmbush :: CardDef
+theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
+
+captured :: CardDef
+captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}

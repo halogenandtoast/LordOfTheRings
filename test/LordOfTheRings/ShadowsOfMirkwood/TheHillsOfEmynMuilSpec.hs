@@ -47,6 +47,18 @@ spec = describe "The Hills of Emyn Muil" do
       run $ PlaceTokens GameSource (toTarget lid) Progress 10
     getsGame (.outcome) `shouldReturn` Just Won
 
+  it "resolves only the When Revealed of the card The North Stair moves from the discard pile" . emynMuilTest $ \pid -> do
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.massingInTheDeep
+    lid <- revealLocation Locations.theNorthStair
+    _ <- setEncounterDeck [Locations.theHighlands]
+    threat <- (.threat) <$> getPlayer pid
+    run $ TravelTo lid
+    resolveRevealed
+    -- Massing in the Deep reveals The Highlands, but its Doomed 1 does not fire
+    (.threat) <$> getPlayer pid `shouldReturn` threat
+    getsGame (map toCardCode . toList . (.entities.locations)) >>= (`shouldSatisfy` elem (toCardCode Locations.theHighlands))
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Treacheries.massingInTheDeep]
+
   it "keeps events from being played while Amon Hen is active" . emynMuilTest $ \pid -> do
     lid <- revealLocation Locations.amonHen
     run $ PlaceLocation lid ActiveLocation

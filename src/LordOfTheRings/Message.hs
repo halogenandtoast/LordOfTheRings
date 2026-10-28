@@ -163,6 +163,10 @@ data Message
   | -- | the lead clicks the revealed card to resolve its When Revealed effect
     AskToResolveWhenRevealed Target EncounterCard
   | FinishRevelation TreacheryId
+  | {- | only the card's When Revealed effect resolves, as Lieutenant of Mordor's: it is
+    not revealed, so no keyword, window or cancel touches it
+    -}
+    ResolveWhenRevealedOf EncounterCard
   | PutQuestIntoPlay EncounterCard
   | CompleteQuest QuestId
   | AdvanceQuest
@@ -268,6 +272,9 @@ data Message
     DiscardedTopOfEncounterDeck Source Target [EncounterCard]
   | -- | an encounter card, taken from where it was, becomes the active location
     PutIntoPlayAsActiveLocation EncounterCard
+  | -- | a location card, taken from where it was, comes into play placed there, as Street
+    -- Fighting puts one under the first player's control
+    PutLocationIntoPlay EncounterCard Placement
   | -- | set-aside cards go to the staging area
     AddSetAsideToStaging CardMatcher
   | ShuffleEncounterDiscardIntoDeck CardMatcher
@@ -364,6 +371,9 @@ data Message
   | -- | resolve one shadow card dealt to the enemy, unless it was cancelled
     ResolveShadowCard CardId EnemyId PlayerId [Target]
   | AttackDamage EnemyId Target
+  | -- | the enemy's attack has dealt the character its damage: was it destroyed? and who
+    -- controlled it
+    CheckDestroyedByAttack EnemyId Target PlayerId
   | AddToEncounterDiscard [EncounterCard]
   | PlayerAttacks PlayerId
   | -- | the player chooses which of these enemies to attack next
@@ -386,11 +396,34 @@ data Message
   | Run [Message]
   | -- | the messages, unless the card has left play by the time they run
     WhileInPlay Target [Message]
+  | {- | the messages, if any of the targets has left play by the time they run, as "if this
+    attack destroys a character" reads once the attack has resolved
+    -}
+    IfAnyLeftPlay [Target] [Message]
   | DrawCards Drawing
   | Mulligan PlayerId
   | -- | log only: what is narrated until the block closes is filed under it
     OpenLogBlock LogBlock
   | CloseLogBlock UUID
+  | -- | a step only one scenario's module knows, by name, as Arkham's
+    ScenarioSpecific Text Value
+  | {- | an enemy card, taken from where it was, comes into play engaged with the player
+    as the enemy given, so the card putting it there can act on it after, as Arkham's
+    createEnemy
+    -}
+    CreateEnemyEngaged PlayerId EnemyId EncounterCard
+  | {- | the player takes the top card of the encounter deck facedown into his play area as
+    a hidden card (The Blood of Gondor), the discard pile shuffled in first if the deck is
+    empty
+    -}
+    TakeHiddenCard PlayerId
+  | -- | the hidden card, if it is still hidden, turns faceup, then the messages run: what
+    -- becomes of it
+    TurnHiddenCardFaceup PlayerId EncounterCard [Message]
+  | -- | the hidden card goes to the encounter discard pile, if it is still hidden
+    DiscardHiddenCard PlayerId EncounterCard
+  | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
+    PlaceAlly AllyId Placement
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

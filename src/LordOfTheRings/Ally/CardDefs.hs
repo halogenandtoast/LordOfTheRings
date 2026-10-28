@@ -111,6 +111,20 @@ allAllyCards =
       , yazan
       , jubayr
       , firyal
+      , warriorOfLossarnach
+      , knightsOfTheSwan
+      , ethirSwordsman
+      , anfalasHerdsman
+      , forlong
+      , harborMaster
+      , whiteTowerWatchman
+      , denethor
+      , minasTirithLampwright
+      , ithilienArcher
+      , knightOfMinasTirith
+      , pelargirShipwright
+      , emery
+      , anborn
       ]
 
 guardOfTheCitadel :: CardDef
@@ -749,4 +763,93 @@ firyal =
   (ally "17008" "Firyal" Lore (StaticCost 5) 3 1 2 3)
     { cdUnique = True
     , cdCardTraits = setFromList [Harad, Scout]
+    }
+
+warriorOfLossarnach :: CardDef
+warriorOfLossarnach =
+  (ally "06002" "Warrior of Lossarnach" Leadership (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Outlands]
+    }
+
+knightsOfTheSwan :: CardDef
+knightsOfTheSwan =
+  (ally "06004" "Knights of the Swan" Tactics (StaticCost 1) 0 0 0 1)
+    { cdCardTraits = setFromList [Outlands]
+    }
+
+ethirSwordsman :: CardDef
+ethirSwordsman =
+  (ally "06006" "Ethir Swordsman" Spirit (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Outlands]
+    }
+
+anfalasHerdsman :: CardDef
+anfalasHerdsman =
+  (ally "06008" "Anfalas Herdsman" Lore (StaticCost 1) 0 0 0 1)
+    { cdCardTraits = setFromList [Outlands]
+    }
+
+forlong :: CardDef
+forlong =
+  (ally "06033" "Forlong" Leadership (StaticCost 3) 1 1 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Outlands]
+    }
+
+harborMaster :: CardDef
+harborMaster =
+  (ally "06039" "Harbor Master" Lore (StaticCost 3) 1 2 0 2)
+    { cdCardTraits = setFromList [Noldor]
+    }
+
+whiteTowerWatchman :: CardDef
+whiteTowerWatchman =
+  (ally "06041" "White Tower Watchman" Neutral (StaticCost 3) 1 0 2 3)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+denethor :: CardDef
+denethor =
+  (ally "06057" "Denethor" Leadership (StaticCost 4) 3 1 2 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble]
+    }
+
+minasTirithLampwright :: CardDef
+minasTirithLampwright =
+  (ally "06061" "Minas Tirith Lampwright" Spirit (StaticCost 1) 0 0 1 1)
+    { cdCardTraits = setFromList [Craftsman, Gondor]
+    }
+
+ithilienArcher :: CardDef
+ithilienArcher =
+  (ally "06063" "Ithilien Archer" Lore (StaticCost 3) 1 2 1 2)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+knightOfMinasTirith :: CardDef
+knightOfMinasTirith =
+  (ally "06084" "Knight of Minas Tirith" Tactics (StaticCost 3) 0 3 1 3)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+pelargirShipwright :: CardDef
+pelargirShipwright =
+  (ally "06086" "Pelargir Shipwright" Spirit (StaticCost 3) 0 1 1 3)
+    { cdCardTraits = setFromList [Craftsman, Gondor]
+    }
+
+emery :: CardDef
+emery =
+  (ally "06112" "Emery" Spirit (StaticCost 3) 1 1 2 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor]
+    }
+
+anborn :: CardDef
+anborn =
+  (ally "06114" "Anborn" Lore (StaticCost 4) 1 3 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Ranger]
     }

@@ -21,6 +21,8 @@ data LogBlockKind
     PlayerAttackBlock PlayerId EnemyId [Target]
   | -- | an encounter card revealed, and what it does
     RevealBlock EncounterCard
+  | -- | an encounter card's When Revealed effect resolved without revealing it
+    WhenRevealedBlock EncounterCard
   | -- | a card ability triggered, forced or not, with what it costs and does
     AbilityBlock PlayerId Source Bool
   | -- | a card played from hand, with what it costs and does
@@ -51,6 +53,7 @@ logBlockKey b = kind <> ":" <> UUID.toText b.id
     EnemyAttackBlock {} -> "enemyAttack"
     PlayerAttackBlock {} -> "playerAttack"
     RevealBlock {} -> "reveal"
+    WhenRevealedBlock {} -> "whenRevealed"
     AbilityBlock {} -> "ability"
     PlayBlock {} -> "play"
 

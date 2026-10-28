@@ -75,6 +75,20 @@ import LordOfTheRings.Quest.Cards.ApproachingCairAndros
 import LordOfTheRings.Quest.Cards.TheLeapingFishQuest
 import LordOfTheRings.Quest.Cards.FightingInTheStreets
 import LordOfTheRings.Quest.Cards.EscapeToTheQuays
+import LordOfTheRings.Quest.Cards.SavageryOfTheOrcs
+import LordOfTheRings.Quest.Cards.ProtectTheVillagers
+import LordOfTheRings.Quest.Cards.ThePursuit
+import LordOfTheRings.Quest.Cards.AnUntimelyEnd
+import LordOfTheRings.Quest.Cards.ThePassageOut
+import LordOfTheRings.Quest.Cards.TheRearguardTheMorgulVale
+import LordOfTheRings.Quest.Cards.TheBetrayal
+import LordOfTheRings.Quest.Cards.TheMorgulRider
+import LordOfTheRings.Quest.Cards.Conspiracy
+import LordOfTheRings.Quest.Cards.TheGrandDesign
+import LordOfTheRings.Quest.Cards.TheConfrontation
+import LordOfTheRings.Quest.Cards.RetakeTheCity
+import LordOfTheRings.Quest.Cards.TheAmbush
+import LordOfTheRings.Quest.Cards.Captured
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -182,5 +196,19 @@ allQuests =
         , SomeQuestCard theLeapingFishQuest
         , SomeQuestCard fightingInTheStreets
         , SomeQuestCard escapeToTheQuays
+        , SomeQuestCard savageryOfTheOrcs
+        , SomeQuestCard protectTheVillagers
+        , SomeQuestCard thePursuit
+        , SomeQuestCard anUntimelyEnd
+        , SomeQuestCard thePassageOut
+        , SomeQuestCard theRearguardTheMorgulVale
+        , SomeQuestCard theBetrayal
+        , SomeQuestCard theMorgulRider
+        , SomeQuestCard conspiracy
+        , SomeQuestCard theGrandDesign
+        , SomeQuestCard theConfrontation
+        , SomeQuestCard retakeTheCity
+        , SomeQuestCard theAmbush
+        , SomeQuestCard captured
         ]
     ]

@@ -92,7 +92,14 @@ publicGameFor seesHand g = hideDecks $ toJSON g
   hideSearch = \case
     Object o -> Object $ adjust hideSearch "question" $ if KeyMap.member "cards" o then KeyMap.insert "cards" (Array mempty) o else o
     v -> v
-  hideScenario = withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideScenario = hideHidden . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  -- hidden cards are facedown: only their ids are sent, so the board can lay them out
+  hideHidden = \case
+    Object o -> Object $ adjust (overEntries \(_ :: PlayerId) -> idsOnly) "hiddenCards" o
+    v -> v
+  idsOnly = \case
+    Array cards -> Array $ fmap (\case Object c -> fromMaybe Null (KeyMap.lookup "id" c); v -> v) cards
+    v -> v
   withSize key sizeKey = \case
     Object o | Just (Array cards) <- KeyMap.lookup key o ->
       Object $ KeyMap.insert sizeKey (toJSON $ length cards) $ KeyMap.delete key o

@@ -32,8 +32,10 @@ getStagingThreat = do
 getStagingThreats :: (HasGame m) => m [(CardId, Int)]
 getStagingThreats = do
   enemies <- for' EnemyInStagingArea getEnemy getEnemyThreat
+  matchers <- mapMaybe (\case EngagedEnemiesAddThreat m -> Just m; _ -> Nothing) <$> getModifiers GameTarget
+  engaged <- concatMapM (\m -> for' (EnemyEngagedWith AnyPlayer <> m) getEnemy getEnemyThreat) matchers
   locations <- for' LocationInStagingArea getLocation getLocationThreat
-  pure $ enemies <> locations
+  pure $ enemies <> ordNub engaged <> locations
  where
   for' matcher get threat = select matcher >>= traverse \i -> (,) <$> ((.id) . toCard <$> get i) <*> threat i
 

@@ -20,6 +20,6 @@ instance RunMessage TheNorthStair where
   runMessage msg l@(TheNorthStair a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       top <- getsGame (headMay . (.encounterDiscard) . toAttrs . (.scenario))
-      for_ top revealFromEncounterDiscard
+      for_ top resolveWhenRevealedFromDiscard
       pure l
     _ -> TheNorthStair <$> runMessage msg a

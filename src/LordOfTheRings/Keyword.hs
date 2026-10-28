@@ -17,6 +17,9 @@ data Keyword
   | Guarded
   | -- | on an enemy: damage never destroys it, as Durin's Bane
     Indestructible
+  | -- | as the card is revealed from the encounter deck, the players as a group discard
+    -- this many resources from their heroes' pools, as many as they can
+    Prowl Int
   | Ranged
   | -- | on an enemy: it heals this much damage as the refresh phase begins
     Regenerate Int

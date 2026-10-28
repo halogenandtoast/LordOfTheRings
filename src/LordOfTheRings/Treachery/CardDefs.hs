@@ -97,6 +97,25 @@ allTreacheryCards =
       , lostInTheCity
       , localTrouble
       , lurkingInShadows
+      , burntHomestead
+      , trappedInside
+      , panicked
+      , menInTheDark
+      , starsInSky
+      , leavesOnTree
+      , impenetrableFog
+      , sleeplessMalice
+      , terrorDrivesThem
+      , theDeadCityLooms
+      , unwelcomeDiscovery
+      , aKnifeInTheBack
+      , falseLeadTheStewardsFear
+      , pinnedDown
+      , streetFighting
+      , counterAttack
+      , lyingInWait
+      , mordorLooms
+      , conflictAtTheCrossroads
       ]
 
 deepDeepDark :: CardDef
@@ -583,4 +602,114 @@ lurkingInShadows :: CardDef
 lurkingInShadows =
   (treachery "05045" "Lurking in Shadows" Brigands 2)
     { cdShadowEffect = True
+    }
+
+burntHomestead :: CardDef
+burntHomestead =
+  (treachery "06078" "Burnt Homestead" EncounterAtAmonDin 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+trappedInside :: CardDef
+trappedInside =
+  (treachery "06079" "Trapped Inside" EncounterAtAmonDin 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    }
+
+panicked :: CardDef
+panicked = (treachery "06080" "Panicked!" EncounterAtAmonDin 2) {cdShadowEffect = True}
+
+menInTheDark :: CardDef
+menInTheDark = (treachery "06053" "Men in the Dark" TheDruadanForest 3) {cdShadowEffect = True}
+
+starsInSky :: CardDef
+starsInSky =
+  (treachery "06054" "Stars in Sky" TheDruadanForest 3)
+    { cdKeywords = setFromList [Prowl 2]
+    , cdShadowEffect = True
+    }
+
+leavesOnTree :: CardDef
+leavesOnTree =
+  (treachery "06055" "Leaves on Tree" TheDruadanForest 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+impenetrableFog :: CardDef
+impenetrableFog = (treachery "06157" "Impenetrable Fog" TheMorgulVale 2) {cdEasyModeQuantity = Just 0}
+
+sleeplessMalice :: CardDef
+sleeplessMalice =
+  (treachery "06158" "Sleepless Malice" TheMorgulVale 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    }
+
+terrorDrivesThem :: CardDef
+terrorDrivesThem =
+  (treachery "06159" "Terror Drives Them" TheMorgulVale 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+theDeadCityLooms :: CardDef
+theDeadCityLooms =
+  (treachery "06160" "The Dead City Looms" TheMorgulVale 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+unwelcomeDiscovery :: CardDef
+unwelcomeDiscovery =
+  (treachery "06023" "Unwelcome Discovery" TheStewardsFear 2)
+    { cdKeywords = setFromList [Surge]
+    }
+
+aKnifeInTheBack :: CardDef
+aKnifeInTheBack =
+  (treachery "06024" "A Knife in the Back" TheStewardsFear 3)
+    { cdEasyModeQuantity = Just 1
+    }
+
+falseLeadTheStewardsFear :: CardDef
+falseLeadTheStewardsFear =
+  (treachery "06025" "False Lead" TheStewardsFear 2)
+    { cdShadowEffect = True
+    }
+
+pinnedDown :: CardDef
+pinnedDown =
+  (treachery "06104" "Pinned Down" AssaultOnOsgiliath 2)
+    { cdShadowEffect = True
+    }
+
+streetFighting :: CardDef
+streetFighting = treachery "06105" "Street Fighting" AssaultOnOsgiliath 2
+
+counterAttack :: CardDef
+counterAttack =
+  (treachery "06106" "Counter-attack" AssaultOnOsgiliath 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+lyingInWait :: CardDef
+lyingInWait = treachery "06129" "Lying in Wait" TheBloodOfGondor 4
+
+mordorLooms :: CardDef
+mordorLooms =
+  (treachery "06130" "Mordor Looms" TheBloodOfGondor 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+conflictAtTheCrossroads :: CardDef
+conflictAtTheCrossroads =
+  (treachery "06131" "Conflict at the Crossroads" TheBloodOfGondor 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

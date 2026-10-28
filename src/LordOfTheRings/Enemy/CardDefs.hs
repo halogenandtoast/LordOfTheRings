@@ -100,6 +100,33 @@ allEnemyCards =
       , zealousTraitor
       , lossarnachBandit
       , umbarAssassin
+      , ghulat
+      , maraudingOrc
+      , orcRavager
+      , cravenEagle
+      , druBuriDru
+      , druadanDrummer
+      , druadanElite
+      , druadanHunter
+      , druadanThief
+      , morgulBodyguard
+      , morgulSorcerer
+      , morgulTracker
+      , murzag
+      , lordAlcaron
+      , nazgulOfMinasMorgul
+      , underworldDissident
+      , daughterOfBeruthiel
+      , theHandOfCastamir
+      , telemnarsBane
+      , urukLieutenant
+      , urukSoldier
+      , southronPhalanx
+      , southronCommander
+      , blackNumenorean
+      , orcAmbusher
+      , brutalUruk
+      , evilCrow
       ]
 
 namelessThing :: CardDef
@@ -751,4 +778,208 @@ umbarAssassin =
     { cdCardTraits = setFromList [Brigand]
     , cdKeywords = setFromList [Archery 2]
     , cdEasyModeQuantity = Just 0
+    }
+
+-- | X attack, X the damage on Dead Villagers: gained from its own modifiers.
+ghulat :: CardDef
+ghulat =
+  unique
+    (enemy "06071" "Ghulat" EncounterAtAmonDin 1 30 3 0 3 7)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 2
+      }
+
+maraudingOrc :: CardDef
+maraudingOrc =
+  (enemy "06072" "Marauding Orc" EncounterAtAmonDin 4 25 2 4 1 4)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+orcRavager :: CardDef
+orcRavager =
+  (enemy "06073" "Orc Ravager" EncounterAtAmonDin 3 35 2 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+cravenEagle :: CardDef
+cravenEagle =
+  (enemy "06074" "Craven Eagle" EncounterAtAmonDin 2 40 3 5 2 3)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+druBuriDru :: CardDef
+druBuriDru =
+  (enemy "06045" "Drû-buri-Drû" TheDruadanForest 1 1 4 5 3 6)
+    { cdCardTraits = setFromList [Wose]
+    , cdUnique = True
+    }
+
+druadanDrummer :: CardDef
+druadanDrummer =
+  (enemy "06046" "Drúadan Drummer" TheDruadanForest 3 40 0 1 2 2)
+    { cdCardTraits = setFromList [Wose]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Prowl X, X the number of players: resolved by the card as it is revealed.
+druadanElite :: CardDef
+druadanElite =
+  (enemy "06047" "Drúadan Elite" TheDruadanForest 3 35 2 3 2 4)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Archery 2]
+    , cdShadowEffect = True
+    }
+
+-- | Archery X, X the number of heroes with no resources: gained from its own modifiers.
+druadanHunter :: CardDef
+druadanHunter =
+  (enemy "06048" "Drúadan Hunter" TheDruadanForest 4 25 2 4 3 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Prowl 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+druadanThief :: CardDef
+druadanThief =
+  (enemy "06049" "Drúadan Thief" TheDruadanForest 3 5 2 2 1 2)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Surge, Prowl 1]
+    , cdShadowEffect = True
+    }
+
+morgulBodyguard :: CardDef
+morgulBodyguard =
+  (enemy "06148" "Morgul Bodyguard" TheMorgulVale 4 35 1 2 2 6)
+    { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    }
+
+morgulSorcerer :: CardDef
+morgulSorcerer =
+  (enemy "06149" "Morgul Sorcerer" TheMorgulVale 2 5 1 3 1 3)
+    { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    }
+
+morgulTracker :: CardDef
+morgulTracker =
+  (enemy "06150" "Morgul Tracker" TheMorgulVale 3 40 4 1 0 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+murzag :: CardDef
+murzag =
+  unique
+    (enemy "06151" "Murzag" TheMorgulVale 1 30 2 5 2 7)
+      { cdCardTraits = setFromList [Orc, Uruk, Captain]
+      }
+
+lordAlcaron :: CardDef
+lordAlcaron =
+  unique
+    (enemy "06152" "Lord Alcaron" TheMorgulVale 1 10 3 4 3 5)
+      { cdCardTraits = setFromList [Gondor, Traitor, Captain]
+      }
+
+nazgulOfMinasMorgul :: CardDef
+nazgulOfMinasMorgul =
+  unique
+    (enemy "06153" "Nazgûl of Minas Morgul" TheMorgulVale 1 1 4 7 4 5)
+      { cdCardTraits = setFromList [Nazgul, Captain]
+      }
+
+underworldDissident :: CardDef
+underworldDissident =
+  (enemy "06014" "Underworld Dissident" TheStewardsFear 5 25 3 2 2 2)
+    { cdCardTraits = setFromList [Brigand]
+    , cdShadowEffect = True
+    }
+
+daughterOfBeruthiel :: CardDef
+daughterOfBeruthiel =
+  unique
+    (enemy "06015" "Daughter of Berúthiel" TheStewardsFear 1 10 3 5 3 5)
+      { cdCardTraits = setFromList [Gondor, Villain]
+      }
+
+theHandOfCastamir :: CardDef
+theHandOfCastamir =
+  unique
+    (enemy "06016" "The Hand of Castamir" TheStewardsFear 1 30 3 4 3 6)
+      { cdCardTraits = setFromList [Gondor, Villain]
+      }
+
+telemnarsBane :: CardDef
+telemnarsBane =
+  unique
+    (enemy "06017" "Telemnar's Bane" TheStewardsFear 1 20 3 3 2 7)
+      { cdCardTraits = setFromList [Gondor, Villain]
+      }
+
+urukLieutenant :: CardDef
+urukLieutenant =
+  (enemy "06092" "Uruk Lieutenant" AssaultOnOsgiliath 2 40 2 6 2 3)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+urukSoldier :: CardDef
+urukSoldier =
+  (enemy "06093" "Uruk Soldier" AssaultOnOsgiliath 4 30 1 4 1 2)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdShadowEffect = True
+    }
+
+southronPhalanx :: CardDef
+southronPhalanx =
+  (enemy "06094" "Southron Phalanx" AssaultOnOsgiliath 3 25 1 1 2 3)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+southronCommander :: CardDef
+southronCommander =
+  (enemy "06095" "Southron Commander" AssaultOnOsgiliath 2 37 3 5 3 6)
+    { cdCardTraits = setFromList [Harad]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+-- | X threat, X the total number of hidden cards in the game: given by its own modifiers.
+blackNumenorean :: CardDef
+blackNumenorean =
+  (enemy "06119" "Black Númenorean" TheBloodOfGondor 1 35 0 5 3 5)
+    { cdCardTraits = setFromList [Mordor]
+    }
+
+orcAmbusher :: CardDef
+orcAmbusher =
+  (enemy "06120" "Orc Ambusher" TheBloodOfGondor 4 10 2 3 1 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+brutalUruk :: CardDef
+brutalUruk =
+  (enemy "06121" "Brutal Uruk" TheBloodOfGondor 3 20 3 4 1 5)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdEasyModeQuantity = Just 1
+    }
+
+evilCrow :: CardDef
+evilCrow =
+  (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
     }

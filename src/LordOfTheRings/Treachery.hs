@@ -90,6 +90,25 @@ import LordOfTheRings.Treachery.Cards.CollateralDamage
 import LordOfTheRings.Treachery.Cards.LostInTheCity
 import LordOfTheRings.Treachery.Cards.LocalTrouble
 import LordOfTheRings.Treachery.Cards.LurkingInShadows
+import LordOfTheRings.Treachery.Cards.BurntHomestead
+import LordOfTheRings.Treachery.Cards.TrappedInside
+import LordOfTheRings.Treachery.Cards.Panicked
+import LordOfTheRings.Treachery.Cards.MenInTheDark
+import LordOfTheRings.Treachery.Cards.StarsInSky
+import LordOfTheRings.Treachery.Cards.LeavesOnTree
+import LordOfTheRings.Treachery.Cards.ImpenetrableFog
+import LordOfTheRings.Treachery.Cards.SleeplessMalice
+import LordOfTheRings.Treachery.Cards.TerrorDrivesThem
+import LordOfTheRings.Treachery.Cards.TheDeadCityLooms
+import LordOfTheRings.Treachery.Cards.UnwelcomeDiscovery
+import LordOfTheRings.Treachery.Cards.AKnifeInTheBack
+import LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
+import LordOfTheRings.Treachery.Cards.PinnedDown
+import LordOfTheRings.Treachery.Cards.StreetFighting
+import LordOfTheRings.Treachery.Cards.CounterAttack
+import LordOfTheRings.Treachery.Cards.LyingInWait
+import LordOfTheRings.Treachery.Cards.MordorLooms
+import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -204,5 +223,24 @@ allTreacherys =
         , SomeTreacheryCard lostInTheCity
         , SomeTreacheryCard localTrouble
         , SomeTreacheryCard lurkingInShadows
+        , SomeTreacheryCard burntHomestead
+        , SomeTreacheryCard trappedInside
+        , SomeTreacheryCard panicked
+        , SomeTreacheryCard menInTheDark
+        , SomeTreacheryCard starsInSky
+        , SomeTreacheryCard leavesOnTree
+        , SomeTreacheryCard impenetrableFog
+        , SomeTreacheryCard sleeplessMalice
+        , SomeTreacheryCard terrorDrivesThem
+        , SomeTreacheryCard theDeadCityLooms
+        , SomeTreacheryCard unwelcomeDiscovery
+        , SomeTreacheryCard aKnifeInTheBack
+        , SomeTreacheryCard falseLeadTheStewardsFear
+        , SomeTreacheryCard pinnedDown
+        , SomeTreacheryCard streetFighting
+        , SomeTreacheryCard counterAttack
+        , SomeTreacheryCard lyingInWait
+        , SomeTreacheryCard mordorLooms
+        , SomeTreacheryCard conflictAtTheCrossroads
         ]
     ]

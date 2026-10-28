@@ -94,6 +94,33 @@ import LordOfTheRings.Enemy.Cards.Pickpocket
 import LordOfTheRings.Enemy.Cards.ZealousTraitor
 import LordOfTheRings.Enemy.Cards.LossarnachBandit
 import LordOfTheRings.Enemy.Cards.UmbarAssassin
+import LordOfTheRings.Enemy.Cards.Ghulat
+import LordOfTheRings.Enemy.Cards.MaraudingOrc
+import LordOfTheRings.Enemy.Cards.OrcRavager
+import LordOfTheRings.Enemy.Cards.CravenEagle
+import LordOfTheRings.Enemy.Cards.DruBuriDru
+import LordOfTheRings.Enemy.Cards.DruadanDrummer
+import LordOfTheRings.Enemy.Cards.DruadanElite
+import LordOfTheRings.Enemy.Cards.DruadanHunter
+import LordOfTheRings.Enemy.Cards.DruadanThief
+import LordOfTheRings.Enemy.Cards.MorgulBodyguard
+import LordOfTheRings.Enemy.Cards.MorgulSorcerer
+import LordOfTheRings.Enemy.Cards.MorgulTracker
+import LordOfTheRings.Enemy.Cards.Murzag
+import LordOfTheRings.Enemy.Cards.LordAlcaron
+import LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
+import LordOfTheRings.Enemy.Cards.UnderworldDissident
+import LordOfTheRings.Enemy.Cards.DaughterOfBeruthiel
+import LordOfTheRings.Enemy.Cards.TheHandOfCastamir
+import LordOfTheRings.Enemy.Cards.TelemnarsBane
+import LordOfTheRings.Enemy.Cards.UrukLieutenant
+import LordOfTheRings.Enemy.Cards.UrukSoldier
+import LordOfTheRings.Enemy.Cards.SouthronPhalanx
+import LordOfTheRings.Enemy.Cards.SouthronCommander
+import LordOfTheRings.Enemy.Cards.BlackNumenorean
+import LordOfTheRings.Enemy.Cards.OrcAmbusher
+import LordOfTheRings.Enemy.Cards.BrutalUruk
+import LordOfTheRings.Enemy.Cards.EvilCrow
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -212,5 +239,32 @@ allEnemys =
         , SomeEnemyCard zealousTraitor
         , SomeEnemyCard lossarnachBandit
         , SomeEnemyCard umbarAssassin
+        , SomeEnemyCard ghulat
+        , SomeEnemyCard maraudingOrc
+        , SomeEnemyCard orcRavager
+        , SomeEnemyCard cravenEagle
+        , SomeEnemyCard druBuriDru
+        , SomeEnemyCard druadanDrummer
+        , SomeEnemyCard druadanElite
+        , SomeEnemyCard druadanHunter
+        , SomeEnemyCard druadanThief
+        , SomeEnemyCard morgulBodyguard
+        , SomeEnemyCard morgulSorcerer
+        , SomeEnemyCard morgulTracker
+        , SomeEnemyCard murzag
+        , SomeEnemyCard lordAlcaron
+        , SomeEnemyCard nazgulOfMinasMorgul
+        , SomeEnemyCard underworldDissident
+        , SomeEnemyCard daughterOfBeruthiel
+        , SomeEnemyCard theHandOfCastamir
+        , SomeEnemyCard telemnarsBane
+        , SomeEnemyCard urukLieutenant
+        , SomeEnemyCard urukSoldier
+        , SomeEnemyCard southronPhalanx
+        , SomeEnemyCard southronCommander
+        , SomeEnemyCard blackNumenorean
+        , SomeEnemyCard orcAmbusher
+        , SomeEnemyCard brutalUruk
+        , SomeEnemyCard evilCrow
         ]
     ]
