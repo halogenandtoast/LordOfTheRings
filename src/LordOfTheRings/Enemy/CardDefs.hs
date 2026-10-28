@@ -82,6 +82,8 @@ allEnemyCards =
       , thrashingTentacle
       , strikingTentacle
       , southronCompany
+      , morgulSpider
+      , forestBat
       ]
 
 namelessThing :: CardDef
@@ -593,5 +595,21 @@ southronCompany :: CardDef
 southronCompany =
   (enemy "05027" "Southron Company" IntoIthilien 4 34 1 3 1 5)
     { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+morgulSpider :: CardDef
+morgulSpider =
+  (enemy "05049" "Morgul Spider" CreaturesOfTheForest 3 25 3 4 1 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+forestBat :: CardDef
+forestBat =
+  (enemy "05050" "Forest Bat" CreaturesOfTheForest 3 18 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
     , cdShadowEffect = True
     }

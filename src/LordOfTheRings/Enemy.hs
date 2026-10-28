@@ -76,6 +76,8 @@ import LordOfTheRings.Enemy.Cards.GraspingTentacle
 import LordOfTheRings.Enemy.Cards.ThrashingTentacle
 import LordOfTheRings.Enemy.Cards.StrikingTentacle
 import LordOfTheRings.Enemy.Cards.SouthronCompany
+import LordOfTheRings.Enemy.Cards.MorgulSpider
+import LordOfTheRings.Enemy.Cards.ForestBat
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -176,5 +178,7 @@ allEnemys =
         , SomeEnemyCard thrashingTentacle
         , SomeEnemyCard strikingTentacle
         , SomeEnemyCard southronCompany
+        , SomeEnemyCard morgulSpider
+        , SomeEnemyCard forestBat
         ]
     ]

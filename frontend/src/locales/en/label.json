@@ -666,5 +666,8 @@
   },
   "lostCompany": {
     "remove": "Lost Company: remove 1 of your characters from the quest"
+  },
+  "forestBat": {
+    "damage": "Forest Bat: deal 2 damage to a questing hero and remove it from the quest"
   }
 }

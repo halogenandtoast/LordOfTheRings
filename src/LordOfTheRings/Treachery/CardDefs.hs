@@ -87,6 +87,7 @@ allTreacheryCards =
       , wrapped
       , blockingWargs
       , lostCompany
+      , watcherInTheWoods
       ]
 
 deepDeepDark :: CardDef
@@ -523,3 +524,10 @@ blockingWargs =
 
 lostCompany :: CardDef
 lostCompany = (treachery "05048" "Lost Company" BroodingForest 2) {cdEasyModeQuantity = Just 0}
+
+watcherInTheWoods :: CardDef
+watcherInTheWoods =
+  (treachery "05051" "Watcher in the Woods" CreaturesOfTheForest 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
