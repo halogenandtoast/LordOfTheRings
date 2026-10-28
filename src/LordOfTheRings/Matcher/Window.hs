@@ -130,6 +130,9 @@ data WindowMatcher
     AttachmentPlayedOnHeroWindow Timing PlayerId
   | -- | a matching enemy attacked the player
     EnemyAttacksPlayerWindow Timing PlayerId EnemyMatcher
+  | -- | the active location explored, as "after the active location leaves play as an
+    -- explored location" reads
+    ActiveLocationExploredWindow Timing
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -210,4 +213,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttachmentPlayedOnHeroWindow {}, _) -> False
   (EnemyAttacksPlayerWindow {}, _) -> False
   (ExploredWithoutVictoryWindow {}, _) -> False
+  (ActiveLocationExploredWindow {}, _) -> False
   _ -> False
