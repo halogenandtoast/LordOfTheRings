@@ -1481,6 +1481,9 @@ runGameMessage msg g = case msg of
             , n > 0
             , p <- players
             ]
+            -- ponytail: prowl's resources are spent, so a hero barred from spending keeps
+            -- its own; no prowl encounter set shares a deck with such a card
+            <> [SpendGroupResources lead Neutral n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
         revealing t =
           inLogBlock (RevealBlock card)
