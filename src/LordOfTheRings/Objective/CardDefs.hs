@@ -35,6 +35,9 @@ allObjectiveCards =
       , celador
       , ithilienGuardian
       , alcaronsScroll
+      , rescuedVillagers
+      , deadVillagers
+      , lordAlcaron
       ]
 
 durinsAxe :: CardDef
@@ -195,3 +198,18 @@ alcaronsScroll =
     (objective "05019" "Alcaron's Scroll" PerilInPelargir 1)
       { cdCardTraits = setFromList [Scroll]
       }
+
+rescuedVillagers :: CardDef
+rescuedVillagers = objective "06068" "Rescued Villagers" EncounterAtAmonDin 1
+
+deadVillagers :: CardDef
+deadVillagers = objective "06069" "Dead Villagers" EncounterAtAmonDin 1
+
+lordAlcaron :: CardDef
+lordAlcaron =
+  ((objective "06070" "Lord Alcaron" EncounterAtAmonDin 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

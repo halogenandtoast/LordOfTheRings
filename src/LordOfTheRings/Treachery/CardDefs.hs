@@ -97,6 +97,9 @@ allTreacheryCards =
       , lostInTheCity
       , localTrouble
       , lurkingInShadows
+      , burntHomestead
+      , trappedInside
+      , panicked
       ]
 
 deepDeepDark :: CardDef
@@ -584,3 +587,21 @@ lurkingInShadows =
   (treachery "05045" "Lurking in Shadows" Brigands 2)
     { cdShadowEffect = True
     }
+
+burntHomestead :: CardDef
+burntHomestead =
+  (treachery "06078" "Burnt Homestead" EncounterAtAmonDin 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+trappedInside :: CardDef
+trappedInside =
+  (treachery "06079" "Trapped Inside" EncounterAtAmonDin 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    }
+
+panicked :: CardDef
+panicked = (treachery "06080" "Panicked!" EncounterAtAmonDin 2) {cdShadowEffect = True}

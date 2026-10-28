@@ -100,6 +100,10 @@ allEnemyCards =
       , zealousTraitor
       , lossarnachBandit
       , umbarAssassin
+      , ghulat
+      , maraudingOrc
+      , orcRavager
+      , cravenEagle
       ]
 
 namelessThing :: CardDef
@@ -750,5 +754,37 @@ umbarAssassin =
   (enemy "05044" "Umbar Assassin" Brigands 1 40 4 5 1 5)
     { cdCardTraits = setFromList [Brigand]
     , cdKeywords = setFromList [Archery 2]
+    , cdEasyModeQuantity = Just 0
+    }
+
+-- | X attack, X the damage on Dead Villagers: gained from its own modifiers.
+ghulat :: CardDef
+ghulat =
+  unique
+    (enemy "06071" "Ghulat" EncounterAtAmonDin 1 30 3 0 3 7)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 2
+      }
+
+maraudingOrc :: CardDef
+maraudingOrc =
+  (enemy "06072" "Marauding Orc" EncounterAtAmonDin 4 25 2 4 1 4)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+orcRavager :: CardDef
+orcRavager =
+  (enemy "06073" "Orc Ravager" EncounterAtAmonDin 3 35 2 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+cravenEagle :: CardDef
+cravenEagle =
+  (enemy "06074" "Craven Eagle" EncounterAtAmonDin 2 40 3 5 2 3)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 0
     }
