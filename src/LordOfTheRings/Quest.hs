@@ -63,6 +63,10 @@ import LordOfTheRings.Quest.Cards.LastLordOfMoria
 import LordOfTheRings.Quest.Cards.ToTheWestDoor
 import LordOfTheRings.Quest.Cards.TheSeethingLake
 import LordOfTheRings.Quest.Cards.GatherInformation
+import LordOfTheRings.Quest.Cards.AmbushInIthilien
+import LordOfTheRings.Quest.Cards.SouthronCounterAttack
+import LordOfTheRings.Quest.Cards.TheHiddenWay
+import LordOfTheRings.Quest.Cards.ApproachingCairAndros
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -158,5 +162,9 @@ allQuests =
         , SomeQuestCard toTheWestDoor
         , SomeQuestCard theSeethingLake
         , SomeQuestCard gatherInformation
+        , SomeQuestCard ambushInIthilien
+        , SomeQuestCard southronCounterAttack
+        , SomeQuestCard theHiddenWay
+        , SomeQuestCard approachingCairAndros
         ]
     ]

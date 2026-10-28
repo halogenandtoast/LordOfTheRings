@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Keyword (Keyword (Battle, Siege))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -83,6 +84,10 @@ allQuestCards =
       , lastLordOfMoria
       , toTheWestDoor
       , theSeethingLake
+      , ambushInIthilien
+      , southronCounterAttack
+      , theHiddenWay
+      , approachingCairAndros
       ]
 
 theDrippingWalls :: CardDef
@@ -267,3 +272,16 @@ toTheWestDoor = quest "04063" "To the West-door" TheWatcherInTheWater 1 13
 
 theSeethingLake :: CardDef
 theSeethingLake = quest "04064" "The Seething Lake" TheWatcherInTheWater 2 5
+
+ambushInIthilien :: CardDef
+ambushInIthilien = (quest "05068" "Ambush in Ithilien" IntoIthilien 1 15) {cdKeywords = setFromList [Battle]}
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+southronCounterAttack :: CardDef
+southronCounterAttack = (quest "05069" "Southron Counter-attack" IntoIthilien 2 9) {cdKeywords = setFromList [Siege]}
+
+theHiddenWay :: CardDef
+theHiddenWay = quest "05070" "The Hidden Way" IntoIthilien 3 12
+
+approachingCairAndros :: CardDef
+approachingCairAndros = quest "05071" "Approaching Cair Andros" IntoIthilien 4 15
