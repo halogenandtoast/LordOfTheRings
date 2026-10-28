@@ -48,6 +48,10 @@ allAllyCards =
       , citadelCustodian
       , defenderOfRammas
       , envoyOfPelargir
+      , damrod
+      , hunterOfLamedon
+      , ithilienTracker
+      , masterOfLore
       , silvanRefugee
       , squireOfTheCitadel
       , guthlaf
@@ -327,6 +331,31 @@ defenderOfRammas =
 envoyOfPelargir :: CardDef
 envoyOfPelargir =
   (ally "05018" "Envoy of Pelargir" Neutral (StaticCost 2) 1 1 0 1)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+damrod :: CardDef
+damrod =
+  (ally "05010" "Damrod" Spirit (StaticCost 4) 1 2 2 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
+hunterOfLamedon :: CardDef
+hunterOfLamedon =
+  (ally "05014" "Hunter of Lamedon" Lore (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Gondor, Outlands]
+    }
+
+ithilienTracker :: CardDef
+ithilienTracker =
+  (ally "05015" "Ithilien Tracker" Lore (StaticCost 2) 0 1 0 3)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
+masterOfLore :: CardDef
+masterOfLore =
+  (ally "05016" "Master of Lore" Lore (StaticCost 3) 1 0 1 1)
     { cdCardTraits = setFromList [Gondor]
     }
 

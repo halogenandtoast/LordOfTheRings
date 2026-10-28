@@ -80,6 +80,10 @@ import LordOfTheRings.Ally.Cards.PelargirShipCaptain
 import LordOfTheRings.Ally.Cards.CitadelCustodian
 import LordOfTheRings.Ally.Cards.DefenderOfRammas
 import LordOfTheRings.Ally.Cards.EnvoyOfPelargir
+import LordOfTheRings.Ally.Cards.Damrod
+import LordOfTheRings.Ally.Cards.HunterOfLamedon
+import LordOfTheRings.Ally.Cards.IthilienTracker
+import LordOfTheRings.Ally.Cards.MasterOfLore
 import LordOfTheRings.Ally.Cards.SquireOfTheCitadel
 import LordOfTheRings.Ally.Cards.EmynArnenRanger
 import LordOfTheRings.Ally.Cards.SoldierOfGondor
@@ -210,6 +214,10 @@ allAllies =
         , SomeAllyCard citadelCustodian
         , SomeAllyCard defenderOfRammas
         , SomeAllyCard envoyOfPelargir
+        , SomeAllyCard damrod
+        , SomeAllyCard hunterOfLamedon
+        , SomeAllyCard ithilienTracker
+        , SomeAllyCard masterOfLore
         , SomeAllyCard squireOfTheCitadel
         , SomeAllyCard emynArnenRanger
         , SomeAllyCard soldierOfGondor
