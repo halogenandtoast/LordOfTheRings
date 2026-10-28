@@ -110,6 +110,9 @@ import LordOfTheRings.Event.Cards.SmallTarget
 import LordOfTheRings.Event.Cards.HobbitSense
 import LordOfTheRings.Event.Cards.MenOfTheWest
 import LordOfTheRings.Event.Cards.ForestPatrol
+import LordOfTheRings.Event.Cards.TheHammerStroke
+import LordOfTheRings.Event.Cards.ChildrenOfTheSea
+import LordOfTheRings.Event.Cards.WellEquipped
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -233,5 +236,8 @@ allEvents =
         , SomeEventCard hobbitSense
         , SomeEventCard menOfTheWest
         , SomeEventCard forestPatrol
+        , SomeEventCard theHammerStroke
+        , SomeEventCard childrenOfTheSea
+        , SomeEventCard wellEquipped
         ]
     ]

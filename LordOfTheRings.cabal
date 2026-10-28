@@ -17,6 +17,7 @@ library
       LordOfTheRings.ActiveCost
       LordOfTheRings.Ally
       LordOfTheRings.Ally.CardDefs
+      LordOfTheRings.Ally.Cards.Anborn
       LordOfTheRings.Ally.Cards.AnfalasHerdsman
       LordOfTheRings.Ally.Cards.AngborTheFearless
       LordOfTheRings.Ally.Cards.ArwenUndomiel
@@ -39,6 +40,7 @@ library
       LordOfTheRings.Ally.Cards.DunedainWatcher
       LordOfTheRings.Ally.Cards.EaglesOfTheMistyMountains
       LordOfTheRings.Ally.Cards.Elfhelm
+      LordOfTheRings.Ally.Cards.Emery
       LordOfTheRings.Ally.Cards.EmynArnenRanger
       LordOfTheRings.Ally.Cards.EnvoyOfPelargir
       LordOfTheRings.Ally.Cards.Eomund
@@ -190,6 +192,7 @@ library
       LordOfTheRings.Attachment.Cards.OLorien
       LordOfTheRings.Attachment.Cards.Palantir
       LordOfTheRings.Attachment.Cards.PathOfNeed
+      LordOfTheRings.Attachment.Cards.PoisonedStakes
       LordOfTheRings.Attachment.Cards.PowerInTheEarth
       LordOfTheRings.Attachment.Cards.ProtectorOfLorien
       LordOfTheRings.Attachment.Cards.RangerBow
@@ -217,6 +220,7 @@ library
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
       LordOfTheRings.Attachment.Cards.TheRedArrow
       LordOfTheRings.Attachment.Cards.ThrorsMap
+      LordOfTheRings.Attachment.Cards.TomeOfAtanatar
       LordOfTheRings.Attachment.Cards.UnexpectedCourage
       LordOfTheRings.Attachment.Cards.ValiantSword
       LordOfTheRings.Attachment.Cards.Vilya
@@ -356,6 +360,7 @@ library
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.CampfireTales
       LordOfTheRings.Event.Cards.ChargeOfTheRohirrim
+      LordOfTheRings.Event.Cards.ChildrenOfTheSea
       LordOfTheRings.Event.Cards.CommonCause
       LordOfTheRings.Event.Cards.ConeyInATrap
       LordOfTheRings.Event.Cards.DaeronsRunes
@@ -434,6 +439,7 @@ library
       LordOfTheRings.Event.Cards.TheEaglesAreComing
       LordOfTheRings.Event.Cards.TheEndComes
       LordOfTheRings.Event.Cards.TheGaladhrimsGreeting
+      LordOfTheRings.Event.Cards.TheHammerStroke
       LordOfTheRings.Event.Cards.TheMusterOfRohan
       LordOfTheRings.Event.Cards.TheTreePeople
       LordOfTheRings.Event.Cards.ThicketOfSpears
@@ -447,6 +453,7 @@ library
       LordOfTheRings.Event.Cards.WealthOfGondor
       LordOfTheRings.Event.Cards.WeAreNotIdle
       LordOfTheRings.Event.Cards.WeDoNotSleep
+      LordOfTheRings.Event.Cards.WellEquipped
       LordOfTheRings.Event.Cards.WillOfTheWest
       LordOfTheRings.Event.Cards.WordOfCommand
       LordOfTheRings.Event.Import.Lifted
@@ -473,6 +480,7 @@ library
       LordOfTheRings.Hero.Cards.Boromir
       LordOfTheRings.Hero.Cards.BoromirTactics
       LordOfTheRings.Hero.Cards.BrandSonOfBain
+      LordOfTheRings.Hero.Cards.Caldara
       LordOfTheRings.Hero.Cards.Celeborn
       LordOfTheRings.Hero.Cards.DainIronfoot
       LordOfTheRings.Hero.Cards.Denethor

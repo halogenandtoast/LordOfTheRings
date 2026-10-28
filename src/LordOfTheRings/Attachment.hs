@@ -92,6 +92,8 @@ import LordOfTheRings.Attachment.Cards.SwordOfMorthond
 import LordOfTheRings.Attachment.Cards.MapOfEarnil
 import LordOfTheRings.Attachment.Cards.RangerBow
 import LordOfTheRings.Attachment.Cards.Palantir
+import LordOfTheRings.Attachment.Cards.TomeOfAtanatar
+import LordOfTheRings.Attachment.Cards.PoisonedStakes
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -210,5 +212,7 @@ allAttachments =
         , SomeAttachmentCard mapOfEarnil
         , SomeAttachmentCard rangerBow
         , SomeAttachmentCard palantir
+        , SomeAttachmentCard tomeOfAtanatar
+        , SomeAttachmentCard poisonedStakes
         ]
     ]

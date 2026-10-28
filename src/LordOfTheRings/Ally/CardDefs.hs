@@ -123,6 +123,8 @@ allAllyCards =
       , ithilienArcher
       , knightOfMinasTirith
       , pelargirShipwright
+      , emery
+      , anborn
       ]
 
 guardOfTheCitadel :: CardDef
@@ -836,4 +838,18 @@ pelargirShipwright :: CardDef
 pelargirShipwright =
   (ally "06086" "Pelargir Shipwright" Spirit (StaticCost 3) 0 1 1 3)
     { cdCardTraits = setFromList [Craftsman, Gondor]
+    }
+
+emery :: CardDef
+emery =
+  (ally "06112" "Emery" Spirit (StaticCost 3) 1 1 2 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor]
+    }
+
+anborn :: CardDef
+anborn =
+  (ally "06114" "Anborn" Lore (StaticCost 4) 1 3 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Ranger]
     }

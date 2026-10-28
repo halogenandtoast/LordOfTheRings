@@ -731,5 +731,19 @@
     "location": "Location",
     "treachery": "Treachery",
     "objective": "Objective"
+  },
+  "caldara": {
+    "chooseAlly": "Choose a spirit ally in your discard pile to put into play"
+  },
+  "childrenOfTheSea": {
+    "chooseAlly": "Choose a Silvan or Noldor ally you control"
+  },
+  "anborn": {
+    "chooseTrap": "Choose a Trap card to return to your hand"
+  },
+  "wellEquipped": {
+    "chooseAttachment": "Attach an attachment discarded by Well-Equipped to a Dwarf character?",
+    "chooseDwarf": "Choose the Dwarf character to attach it to",
+    "none": "Attach none"
   }
 }

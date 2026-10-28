@@ -57,6 +57,7 @@ allHeroCards =
       , hirluinTheFair
       , mirlonde
       , pippin
+      , caldara
       ]
 
 aragorn :: CardDef
@@ -329,4 +330,10 @@ pippin :: CardDef
 pippin =
   (hero "06056" "Pippin" Spirit 6 2 1 1 2)
     { cdCardTraits = setFromList [Hobbit]
+    }
+
+caldara :: CardDef
+caldara =
+  (hero "06107" "Caldara" Spirit 8 2 1 2 3)
+    { cdCardTraits = setFromList [Gondor]
     }

@@ -99,6 +99,8 @@ allAttachmentCards =
       , mapOfEarnil
       , rangerBow
       , palantir
+      , tomeOfAtanatar
+      , poisonedStakes
       ]
 
 stewardOfGondor :: CardDef
@@ -668,4 +670,17 @@ palantir =
   (attachment "06090" "Palantir" Neutral (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Item]
+    }
+
+tomeOfAtanatar :: CardDef
+tomeOfAtanatar =
+  (attachment "06109" "Tome of Atanatar" Leadership (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
+    }
+
+poisonedStakes :: CardDef
+poisonedStakes =
+  (attachment "06115" "Poisoned Stakes" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Trap]
     }

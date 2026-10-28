@@ -121,6 +121,9 @@ allEventCards =
       , hobbitSense
       , menOfTheWest
       , forestPatrol
+      , theHammerStroke
+      , childrenOfTheSea
+      , wellEquipped
       ]
 
 everVigilant :: CardDef
@@ -455,3 +458,12 @@ menOfTheWest = (event "06083" "Men of the West" Leadership DynamicCost) {cdCardT
 
 forestPatrol :: CardDef
 forestPatrol = event "06089" "Forest Patrol" Lore (StaticCost 1)
+
+theHammerStroke :: CardDef
+theHammerStroke = event "06111" "The Hammer-stroke" Tactics (StaticCost 2)
+
+childrenOfTheSea :: CardDef
+childrenOfTheSea = event "06113" "Children of the Sea" Spirit (StaticCost 0)
+
+wellEquipped :: CardDef
+wellEquipped = event "06116" "Well-Equipped" Neutral (StaticCost 0)
