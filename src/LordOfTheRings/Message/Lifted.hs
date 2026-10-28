@@ -609,14 +609,6 @@ undefendedDamageTo
   :: (ReverseQueue m, Sourceable source, Targetable target) => source -> EnemyId -> target -> m ()
 undefendedDamageTo source eid = phaseModifier source eid . UndefendedDamageTo . toTarget
 
-{- | The card leaves the encounter discard pile and is revealed, its When Revealed
-effects resolving.
--}
-revealFromEncounterDiscard :: ReverseQueue m => EncounterCard -> m ()
-revealFromEncounterDiscard card = do
-  push $ RemoveFromEncounterDiscard card
-  push $ RevealCard card
-
 {- | Only the card's When Revealed effect resolves, as Lieutenant of Mordor's: no keyword,
 window or cancel touches it. The caller first takes the card from where it was.
 -}
