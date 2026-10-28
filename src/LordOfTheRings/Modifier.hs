@@ -42,6 +42,8 @@ data ModifierType
     AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others
     CannotAttackPlayer PlayerId
+  | -- | on a player: the enemies engaged with them cannot attack them, as Out of Sight reads
+    EngagedEnemiesCannotAttack
   | CannotAttackOrDefend
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies

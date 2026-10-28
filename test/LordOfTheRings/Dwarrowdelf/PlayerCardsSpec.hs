@@ -451,7 +451,13 @@ spec = describe "Dwarrowdelf player cards" do
     eid <- staged Enemies.wolfRider
     run $ EngageEnemy pid eid
     _ <- playWith pid eowyn 5 Events.outOfSight
-    getModifiers eid >>= (`shouldSatisfy` elem (CannotAttackPlayer pid))
+    later <- staged Enemies.hillTroll
+    run $ EngageEnemy pid later
+    -- one engaged after it was played is stopped too: neither attacks, so the player is
+    -- not asked which attacks next and is left in the phase's action window
+    run $ EnemyAttacks pid
+    Just (QuestionLabel prompt _ _ _) <- getQuestion pid
+    prompt `shouldBe` "$label.planningActions"
 
   it "Ever My Heart Rises readies its Dwarf and lowers your threat after travel to a Mountain" . gameTest $ \pid -> do
     bofur <- putAllyIntoPlay pid Allies.bofur
