@@ -410,6 +410,8 @@ data Message
     TurnHiddenCardFaceup PlayerId EncounterCard [Message]
   | -- | the hidden card goes to the encounter discard pile, if it is still hidden
     DiscardHiddenCard PlayerId EncounterCard
+  | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
+    PlaceAlly AllyId Placement
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

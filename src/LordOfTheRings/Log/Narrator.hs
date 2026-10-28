@@ -179,6 +179,7 @@ narrationFor = \case
       ]
   AttachTreachery tid target -> Just $ attached (toTarget tid) target
   PlaceEnemy eid (AttachedTo target) -> Just $ attached (toTarget eid) target
+  PlaceAlly aid (AttachedTo target) -> Just $ attached (toTarget aid) target
   AttachCard aid target -> Just $ attached (toTarget aid) target
   TakePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.takenPrisoner" ["hero" ~> h]]
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]

@@ -848,3 +848,7 @@ cancelEvent cid = do
 -- | The action's messages, unless the card has left play by the time they run.
 whileInPlay :: (ReverseQueue m, Targetable target) => target -> QueueT Message m () -> m ()
 whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture action
+
+-- | Place the ally elsewhere, as Captured! puts Faramir under itself.
+placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
+placeAlly aid = push . PlaceAlly aid
