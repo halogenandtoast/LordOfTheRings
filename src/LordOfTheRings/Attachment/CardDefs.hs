@@ -93,6 +93,8 @@ allAttachmentCards =
       , miruvor
       , ringOfBarahir
       , mightyProwess
+      , lordOfMorthond
+      , bookOfEldacar
       ]
 
 stewardOfGondor :: CardDef
@@ -620,4 +622,18 @@ mightyProwess =
   (attachment "06035" "Mighty Prowess" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Skill]
     , cdLimitOnePerHost = True
+    }
+
+lordOfMorthond :: CardDef
+lordOfMorthond =
+  (attachment "06058" "Lord of Morthond" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+bookOfEldacar :: CardDef
+bookOfEldacar =
+  (attachment "06059" "Book of Eldacar" Tactics (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
     }

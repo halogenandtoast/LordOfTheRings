@@ -118,6 +118,9 @@ allAllyCards =
       , forlong
       , harborMaster
       , whiteTowerWatchman
+      , denethor
+      , minasTirithLampwright
+      , ithilienArcher
       ]
 
 guardOfTheCitadel :: CardDef
@@ -799,4 +802,24 @@ whiteTowerWatchman :: CardDef
 whiteTowerWatchman =
   (ally "06041" "White Tower Watchman" Neutral (StaticCost 3) 1 0 2 3)
     { cdCardTraits = setFromList [Gondor]
+    }
+
+denethor :: CardDef
+denethor =
+  (ally "06057" "Denethor" Leadership (StaticCost 4) 3 1 2 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble]
+    }
+
+minasTirithLampwright :: CardDef
+minasTirithLampwright =
+  (ally "06061" "Minas Tirith Lampwright" Spirit (StaticCost 1) 0 0 1 1)
+    { cdCardTraits = setFromList [Craftsman, Gondor]
+    }
+
+ithilienArcher :: CardDef
+ithilienArcher =
+  (ally "06063" "Ithilien Archer" Lore (StaticCost 3) 1 2 1 2)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    , cdKeywords = setFromList [Ranged]
     }

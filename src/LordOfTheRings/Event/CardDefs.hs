@@ -116,6 +116,9 @@ allEventCards =
       , trainedForWar
       , againstTheShadow
       , advanceWarning
+      , gondorianDiscipline
+      , smallTarget
+      , hobbitSense
       ]
 
 everVigilant :: CardDef
@@ -435,3 +438,12 @@ againstTheShadow = event "06038" "Against the Shadow" Spirit (StaticCost 2)
 
 advanceWarning :: CardDef
 advanceWarning = event "06040" "Advance Warning" Lore (StaticCost 2)
+
+gondorianDiscipline :: CardDef
+gondorianDiscipline = (event "06060" "Gondorian Discipline" Tactics (StaticCost 0)) {cdCardTraits = setFromList [Gondor]}
+
+smallTarget :: CardDef
+smallTarget = event "06062" "Small Target" Spirit (StaticCost 1)
+
+hobbitSense :: CardDef
+hobbitSense = event "06065" "Hobbit-sense" Neutral (StaticCost 2)

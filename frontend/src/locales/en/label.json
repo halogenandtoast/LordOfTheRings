@@ -702,5 +702,14 @@
   },
   "mightyProwess": {
     "damage": "Mighty Prowess: deal 1 damage to an enemy sharing a Trait with the one destroyed"
+  },
+  "minasTirithLampwright": {
+    "name": "Name a card type: the next encounter card revealed, if of that type, is discarded",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery"
+  },
+  "smallTarget": {
+    "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against"
   }
 }

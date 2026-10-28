@@ -56,6 +56,7 @@ allHeroCards =
       , eowynTactics
       , hirluinTheFair
       , mirlonde
+      , pippin
       ]
 
 aragorn :: CardDef
@@ -322,4 +323,10 @@ mirlonde :: CardDef
 mirlonde =
   (hero "06032" "Mirlonde" Lore 8 2 2 1 3)
     { cdCardTraits = setFromList [Silvan]
+    }
+
+pippin :: CardDef
+pippin =
+  (hero "06056" "Pippin" Spirit 6 2 1 1 2)
+    { cdCardTraits = setFromList [Hobbit]
     }

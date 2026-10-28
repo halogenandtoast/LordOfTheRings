@@ -86,6 +86,8 @@ import LordOfTheRings.Attachment.Cards.HardyLeadership
 import LordOfTheRings.Attachment.Cards.Miruvor
 import LordOfTheRings.Attachment.Cards.RingOfBarahir
 import LordOfTheRings.Attachment.Cards.MightyProwess
+import LordOfTheRings.Attachment.Cards.LordOfMorthond
+import LordOfTheRings.Attachment.Cards.BookOfEldacar
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -198,5 +200,7 @@ allAttachments =
         , SomeAttachmentCard miruvor
         , SomeAttachmentCard ringOfBarahir
         , SomeAttachmentCard mightyProwess
+        , SomeAttachmentCard lordOfMorthond
+        , SomeAttachmentCard bookOfEldacar
         ]
     ]
