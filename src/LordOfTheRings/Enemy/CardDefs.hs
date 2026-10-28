@@ -81,6 +81,14 @@ allEnemyCards =
       , graspingTentacle
       , thrashingTentacle
       , strikingTentacle
+      , orcScramblers
+      , batteringRam
+      , siegeRaft
+      , lieutenantOfMordor
+      , orcArbalesters
+      , orcVanguard
+      , orcRabble
+      , orcArsonist
       ]
 
 namelessThing :: CardDef
@@ -586,4 +594,71 @@ strikingTentacle :: CardDef
 strikingTentacle =
   (enemy "04075" "Striking Tentacle" TheWatcherInTheWater 4 18 2 4 1 3)
     { cdCardTraits = setFromList [Tentacle]
+    }
+
+orcScramblers :: CardDef
+orcScramblers =
+  (enemy "05030" "Orc Scramblers" TheSiegeOfCairAndros 3 15 1 2 1 2)
+    { cdCardTraits = setFromList [Orc, Besieger]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+batteringRam :: CardDef
+batteringRam =
+  (enemy "05031" "Battering Ram" TheSiegeOfCairAndros 3 33 2 7 3 5)
+    { cdCardTraits = setFromList [Besieger]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+siegeRaft :: CardDef
+siegeRaft =
+  (enemy "05032" "Siege Raft" TheSiegeOfCairAndros 2 30 3 4 1 6)
+    { cdCardTraits = setFromList [Besieger]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+lieutenantOfMordor :: CardDef
+lieutenantOfMordor =
+  (enemy "05056" "Lieutenant of Mordor" MordorElite 1 33 2 5 2 5)
+    { cdCardTraits = setFromList [Mordor]
+    , cdVictoryPoints = Just 3
+    , cdWhenRevealed = True
+    }
+
+orcArbalesters :: CardDef
+orcArbalesters =
+  (enemy "05057" "Orc Arbalesters" MordorElite 3 35 2 1 2 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    }
+
+orcVanguard :: CardDef
+orcVanguard =
+  (enemy "05058" "Orc Vanguard" MordorElite 2 40 2 8 3 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+orcRabble :: CardDef
+orcRabble =
+  (enemy "05062" "Orc Rabble" RavagingOrcs 3 28 2 1 1 3)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+orcArsonist :: CardDef
+orcArsonist =
+  (enemy "05063" "Orc Arsonist" RavagingOrcs 3 30 3 3 2 3)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
     }

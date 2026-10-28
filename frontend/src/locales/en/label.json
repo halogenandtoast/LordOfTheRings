@@ -77,6 +77,13 @@
   "wrapped": {
     "attach": "Attach Wrapped! to one of your heroes"
   },
+  "theMastersMalice": {
+    "chooseSphere": "Choose a sphere: each of your characters outside it takes 3 damage",
+    "leadership": "Leadership",
+    "lore": "Lore",
+    "spirit": "Spirit",
+    "tactics": "Tactics"
+  },
   "crumblingRuin": {
     "exhaust": "Exhaust a character: if the discarded card costs at least its remaining hit points, it is discarded"
   },

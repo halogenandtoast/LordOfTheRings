@@ -256,16 +256,22 @@ sphere's, one a gained resource icon gives it, or any while the game lets resour
 spent as that sphere's.
 -}
 heroPaysFor :: HasGame m => Sphere -> Hero -> m Bool
-heroPaysFor sphere h
-  | sphere == Neutral || h.sphere == sphere = pure True
-  | otherwise = do
-      mods <- getsGame gameModifiers
-      let on t = map modifierType $ Map.findWithDefault [] t mods
-      pure
-        $ GainResourceIcon sphere
-        `elem` on (toTarget h)
-        || ResourcesSpendableAs sphere
-        `elem` on GameTarget
+heroPaysFor sphere h = do
+  mods <- getsGame gameModifiers
+  let on t = map modifierType $ Map.findWithDefault [] t mods
+      own = on (toTarget h)
+  pure
+    $ CannotSpendResources `notElem` own
+    && or
+      [ sphere == Neutral
+      , h.sphere == sphere
+      , GainResourceIcon sphere `elem` own
+      , ResourcesSpendableAs sphere `elem` on GameTarget
+      ]
+
+-- | Whether resources can be spent from the hero's pool at all.
+heroCanSpend :: HasGame m => Hero -> m Bool
+heroCanSpend h = notElem CannotSpendResources . map modifierType . Map.findWithDefault [] (toTarget h) <$> getsGame gameModifiers
 
 -- | Resources of the sphere the player's heroes could spend.
 getResourcesOfSphere :: HasGame m => PlayerId -> Sphere -> m Int
@@ -495,6 +501,7 @@ getDamage = \case
   HeroTarget hid -> maybe 0 (.damage) . Map.lookup hid <$> getsGame (entitiesHeroes . gameEntities)
   AllyTarget aid -> maybe 0 (.damage) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
   EnemyTarget eid -> maybe 0 (.damage) . Map.lookup eid <$> getsGame (entitiesEnemies . gameEntities)
+  LocationTarget lid -> maybe 0 ((.damage) . toAttrs) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
   _ -> pure 0
 
 -- | Characters with damage to heal.

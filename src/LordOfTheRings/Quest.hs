@@ -63,6 +63,11 @@ import LordOfTheRings.Quest.Cards.LastLordOfMoria
 import LordOfTheRings.Quest.Cards.ToTheWestDoor
 import LordOfTheRings.Quest.Cards.TheSeethingLake
 import LordOfTheRings.Quest.Cards.GatherInformation
+import LordOfTheRings.Quest.Cards.TheDefense
+import LordOfTheRings.Quest.Cards.ReinforcingTheBanks
+import LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
+import LordOfTheRings.Quest.Cards.BreakthroughAtTheCitadel
+import LordOfTheRings.Quest.Cards.TheLastBattle
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -158,5 +163,10 @@ allQuests =
         , SomeQuestCard toTheWestDoor
         , SomeQuestCard theSeethingLake
         , SomeQuestCard gatherInformation
+        , SomeQuestCard theDefense
+        , SomeQuestCard reinforcingTheBanks
+        , SomeQuestCard breakthroughAtTheApproach
+        , SomeQuestCard breakthroughAtTheCitadel
+        , SomeQuestCard theLastBattle
         ]
     ]

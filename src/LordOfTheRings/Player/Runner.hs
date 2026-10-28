@@ -361,7 +361,7 @@ canAfford p c = case (c.cost, c.sphere) of
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
-      filterM (\h -> orM [paysFor sphere h, iconFor c sphere h]) [h | h <- heroes, h.resources > 0]
+      filterM (\h -> andM [heroCanSpend h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
       Nothing -> do
@@ -450,7 +450,7 @@ resourcesInSphere sphere player = do
 a resource icon it has gained gives it.
 -}
 paysFor :: HasGame m => Sphere -> Hero -> m Bool
-paysFor sphere h = orM [heroPaysFor sphere h, paying]
+paysFor sphere h = orM [heroPaysFor sphere h, andM [heroCanSpend h, paying]]
  where
   paying = do
     cards <- getsGame (map (.activeCostCard) . toList . gameActiveCosts)

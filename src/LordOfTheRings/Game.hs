@@ -1292,6 +1292,8 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
+  -- ponytail: what is attached to it stays behind, none of Cair Andros's locations take any
+  RemoveFromGame (LocationTarget lid) -> pure $ g & entitiesL . locationsL %~ Map.delete lid
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)

@@ -51,6 +51,7 @@
   "becomesActive": "{location} becomes the active location",
   "discardedFromEncounterDeck": "{cards} discarded from the encounter deck",
   "shuffledIntoQuestDeck": "{card} is shuffled into the quest deck",
+  "removedFromQuestDeck": "{card} is removed from the quest deck",
   "putOnBottomOfQuestDeck": "{card} goes to the bottom of the quest deck",
   "returnsToHand": "{target} returns to its owner's hand",
   "shuffledIntoOwnersDeck": "{target} is shuffled into its owner's deck",

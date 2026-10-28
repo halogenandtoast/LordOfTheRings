@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
+import LordOfTheRings.Keyword (Keyword (Battle, Siege))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -83,6 +84,11 @@ allQuestCards =
       , lastLordOfMoria
       , toTheWestDoor
       , theSeethingLake
+      , theDefense
+      , reinforcingTheBanks
+      , breakthroughAtTheApproach
+      , breakthroughAtTheCitadel
+      , theLastBattle
       ]
 
 theDrippingWalls :: CardDef
@@ -267,3 +273,20 @@ toTheWestDoor = quest "04063" "To the West-door" TheWatcherInTheWater 1 13
 
 theSeethingLake :: CardDef
 theSeethingLake = quest "04064" "The Seething Lake" TheWatcherInTheWater 2 5
+
+theDefense :: CardDef
+theDefense = (quest "05072" "The Defense" TheSiegeOfCairAndros 1 9) {cdKeywords = setFromList [Siege]}
+
+reinforcingTheBanks :: CardDef
+reinforcingTheBanks = quest "05073" "Reinforcing the Banks" TheSiegeOfCairAndros 2 9
+
+breakthroughAtTheApproach :: CardDef
+breakthroughAtTheApproach =
+  (quest "05074" "Breakthrough at the Approach" TheSiegeOfCairAndros 3 7) {cdKeywords = setFromList [Battle]}
+
+breakthroughAtTheCitadel :: CardDef
+breakthroughAtTheCitadel =
+  (quest "05075" "Breakthrough at the Citadel" TheSiegeOfCairAndros 4 5) {cdKeywords = setFromList [Siege]}
+
+theLastBattle :: CardDef
+theLastBattle = (quest "05076" "The Last Battle" TheSiegeOfCairAndros 5 15) {cdKeywords = setFromList [Siege]}

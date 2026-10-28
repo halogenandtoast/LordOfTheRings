@@ -137,6 +137,8 @@ data ModifierType
     Blank
   | -- | on a hero
     CannotCollectResources
+  | -- | on a hero: no resources can be spent from its pool, as Orc Vanguard's
+    CannotSpendResources
   | -- | on a hero: it collects this many more resources in the resource phase
     CollectsAdditionalResources Int
   | -- | on the game: resources of any sphere may be spent as this sphere's

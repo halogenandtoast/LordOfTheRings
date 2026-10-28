@@ -8,7 +8,9 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import LordOfTheRings.Card (Card (..), EncounterCard, IsCard (..), PlayerCard)
+import LordOfTheRings.Card (Card (..), CardDef, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard)
+import LordOfTheRings.Classes.Entity (Entity (toAttrs))
+import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
@@ -36,7 +38,7 @@ import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Window (
-  Timing (After),
+  Timing (After, When),
   Window (..),
   WindowType (EnemyAttacking, ShadowEffectTriggered, ThreatRaisedByEncounter, Traveled),
  )
@@ -517,7 +519,7 @@ moveAttachment aid = push . AttachCard aid . toTarget
 putObjectiveIntoPlayAttached :: (ReverseQueue m, Targetable host) => EncounterCard -> host -> m ()
 putObjectiveIntoPlayAttached card = push . PutObjectiveIntoPlayAttached card . toTarget
 
--- | The card leaves play for good. Only objectives so far.
+-- | The card leaves play for good: an objective or a location.
 removeFromGame :: (ReverseQueue m, Targetable target) => target -> m ()
 removeFromGame = push . RemoveFromGame . toTarget
 
@@ -570,6 +572,13 @@ putOnBottomOfQuestDeck :: (ReverseQueue m, IsCard a) => a -> m ()
 putOnBottomOfQuestDeck a = case toCard a of
   EncounterCard c -> push $ PutOnBottomOfQuestDeck c
   PlayerCard _ -> pure ()
+
+-- | The stage leaves the quest deck, if it is still there, as exploring The Banks removes
+-- stage 2.
+removeFromQuestDeck :: ReverseQueue m => CardDef -> m ()
+removeFromQuestDeck def = do
+  deck <- getsGame ((.questDeck) . toAttrs . (.scenario))
+  traverse_ (push . RemoveFromQuestDeck) $ filter ((== toCardCode def) . toCardCode) deck
 
 checkStage :: ReverseQueue m => QuestId -> m ()
 checkStage = push . CheckStage
@@ -681,6 +690,21 @@ dealt during an attack do: the attack's defenders, none when undefended.
 -}
 resolveShadowCards :: ReverseQueue m => EnemyId -> PlayerId -> [Target] -> m ()
 resolveShadowCards eid pid = push . ResolveShadow eid pid
+
+{- | Deal the attacking enemy more shadow cards as its shadow effects resolve, as "deal it
+another shadow card" reads: the new ones turn face up and resolve too, with the rest
+still face down, which resolve only this once.
+-}
+dealShadowCardsDuringAttack
+  :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> [Target] -> Int -> t m ()
+dealShadowCardsDuringAttack eid pid defenders n = do
+  replicateM_ n $ dealShadowCard eid
+  cancelMatching \case
+    RevealShadowCard eid' _ -> eid' == eid
+    ResolveShadowCard _ eid' _ _ -> eid' == eid
+    CheckWindows (Window When (ShadowEffectTriggered _ eid') : _) -> eid' == eid
+    _ -> False
+  resolveShadowCards eid pid defenders
 
 -- | Put the shadow card dealt to the enemy into play, engaged with the player.
 putShadowEnemyIntoPlay :: ReverseQueue m => EnemyId -> CardId -> PlayerId -> m ()

@@ -90,6 +90,10 @@ allLocationCards =
       , perilousSwamp
       , makeshiftPassage
       , stagnantCreek
+      , theCitadel
+      , theApproach
+      , theBanks
+      , orcWarCamp
       ]
 
 drownedTreasury :: CardDef
@@ -621,4 +625,33 @@ stagnantCreek =
   (location "04069" "Stagnant Creek" TheWatcherInTheWater 3 3 3)
     { cdCardTraits = setFromList [Swamp]
     , cdWhenRevealed = True
+    }
+
+theCitadel :: CardDef
+theCitadel =
+  (location "05033" "The Citadel" TheSiegeOfCairAndros 1 3 11)
+    { cdCardTraits = setFromList [CairAndros, Battleground]
+    , cdVictoryPoints = Just 3
+    }
+
+theApproach :: CardDef
+theApproach =
+  (location "05034" "The Approach" TheSiegeOfCairAndros 1 2 7)
+    { cdCardTraits = setFromList [CairAndros, Battleground]
+    , cdVictoryPoints = Just 2
+    }
+
+theBanks :: CardDef
+theBanks =
+  (location "05035" "The Banks" TheSiegeOfCairAndros 1 1 3)
+    { cdCardTraits = setFromList [CairAndros, Battleground]
+    , cdVictoryPoints = Just 1
+    }
+
+orcWarCamp :: CardDef
+orcWarCamp =
+  (location "05059" "Orc War Camp" MordorElite 2 5 2)
+    { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

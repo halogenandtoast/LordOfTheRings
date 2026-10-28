@@ -85,6 +85,10 @@ allTreacheryCards =
       , illPurpose
       , disturbedWaters
       , wrapped
+      , orcAssault
+      , theMastersMalice
+      , thePowerOfMordor
+      , scourgeOfMordor
       ]
 
 deepDeepDark :: CardDef
@@ -510,3 +514,15 @@ wrapped =
   (treachery "the-watcher-in-the-water-076" "Wrapped!" TheWatcherInTheWater 4)
     { cdCardTraits = setFromList [Tentacle]
     }
+
+orcAssault :: CardDef
+orcAssault = (treachery "05036" "Orc Assault" TheSiegeOfCairAndros 2) {cdShadowEffect = True}
+
+theMastersMalice :: CardDef
+theMastersMalice = (treachery "05060" "The Master's Malice" MordorElite 2) {cdEasyModeQuantity = Just 0}
+
+thePowerOfMordor :: CardDef
+thePowerOfMordor = (treachery "05061" "The Power of Mordor" MordorElite 1) {cdKeywords = setFromList [Doomed 3]}
+
+scourgeOfMordor :: CardDef
+scourgeOfMordor = (treachery "05064" "Scourge of Mordor" RavagingOrcs 2) {cdShadowEffect = True}
