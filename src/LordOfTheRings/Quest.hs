@@ -62,6 +62,7 @@ import LordOfTheRings.Quest.Cards.TheRearGuard
 import LordOfTheRings.Quest.Cards.LastLordOfMoria
 import LordOfTheRings.Quest.Cards.ToTheWestDoor
 import LordOfTheRings.Quest.Cards.TheSeethingLake
+import LordOfTheRings.Quest.Cards.GatherInformation
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -87,12 +88,12 @@ lookupQuest cardCode cardId ident = case Map.lookup cardCode allQuests of
 newQuest :: (MonadRandom m) => EncounterCard -> m Quest
 newQuest card = createQuest card <$> getRandom
 
-allQuests :: Map CardCode SomeQuestCard
 -- | A player side quest, owned by the player who played it.
 newSideQuest :: (MonadRandom m) => PlayerId -> PlayerCard -> m Quest
 newSideQuest pid card =
   overAttrs (\a -> a {questOwner = Just pid}) . lookupQuest (toCardCode card) card.id <$> getRandom
 
+allQuests :: Map CardCode SomeQuestCard
 allQuests =
   Map.fromList
     [ (toCardCode builder, card)
@@ -156,5 +157,6 @@ allQuests =
         , SomeQuestCard lastLordOfMoria
         , SomeQuestCard toTheWestDoor
         , SomeQuestCard theSeethingLake
+        , SomeQuestCard gatherInformation
         ]
     ]

@@ -6,6 +6,18 @@ import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Sphere (Sphere (Neutral))
+
+-- | Side quests from players' decks: player cards, built as quests once played.
+allPlayerSideQuestCards :: Map CardCode CardDef
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation]
+
+gatherInformation :: CardDef
+gatherInformation =
+  (playerSideQuest "09014" "Gather Information" Neutral (StaticCost 0) 4)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
 
 allQuestCards :: Map CardCode CardDef
 allQuestCards =
