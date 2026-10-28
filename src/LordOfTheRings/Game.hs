@@ -523,8 +523,9 @@ runGameMessage msg g = case msg of
   ArcheryDamage n | n > 0 -> do
     lead <- getLead
     alliesOnly <- elem ArcheryDamageToAllies <$> getModifiers GameTarget
-    allies <- map toTarget <$> select AnyAlly
-    characters <- if alliesOnly && notNull allies then pure allies else selectCharacters AnyHero AnyAlly
+    -- the players deal it to characters they control, not to one no one does, as captured
+    allies <- map toTarget <$> select (AllyControlledBy AnyPlayer)
+    characters <- if alliesOnly && notNull allies then pure allies else selectCharacters AnyHero (AllyControlledBy AnyPlayer)
     unless (null characters)
       $ push
       $ questionLabel (ikeyWith "label.assignArcheryDamage" [intVar "count" n]) lead
