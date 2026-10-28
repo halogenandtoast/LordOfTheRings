@@ -105,6 +105,9 @@ allLocationCards =
       , burningFarmhouse
       , gondorianHamlet
       , secludedFarmhouse
+      , ancestralClearing
+      , gardenOfPoisons
+      , gladeOfCleansing
       ]
 
 drownedTreasury :: CardDef
@@ -748,4 +751,25 @@ secludedFarmhouse =
   (location "06077" "Secluded Farmhouse" EncounterAtAmonDin 3 3 3)
     { cdCardTraits = setFromList [Gondor]
     , cdVictoryPoints = Just 1
+    }
+
+ancestralClearing :: CardDef
+ancestralClearing =
+  (location "06050" "Ancestral Clearing" TheDruadanForest 1 4 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdEasyModeQuantity = Just 0
+    }
+
+gardenOfPoisons :: CardDef
+gardenOfPoisons =
+  (location "06051" "Garden of Poisons" TheDruadanForest 3 2 3)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+-- | X threat, X the archery of the highest archery Wose enemy: from its own modifiers.
+gladeOfCleansing :: CardDef
+gladeOfCleansing =
+  (location "06052" "Glade of Cleansing" TheDruadanForest 3 0 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdEasyModeQuantity = Just 1
     }

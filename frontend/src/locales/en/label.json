@@ -709,5 +709,24 @@
   },
   "panicked": {
     "placeVillager": "Panicked!: place a villager from Rescued Villagers on a location in the staging area"
+  },
+  "druadanForest": {
+    "payOr": "Pay 1 resource from this hero's pool?",
+    "payToKeepEngaged": "Pay 1 resource to keep the enemy from returning to the staging area?",
+    "declineToPay": "Do not pay"
+  },
+  "menInTheDark": {
+    "takeDamage": "Take 1 damage"
+  },
+  "starsInSky": {
+    "removeFromQuest": "Remove it from the quest"
+  },
+  "leavesOnTree": {
+    "payOrDiscard": "Leaves on Tree: pay for your attachments or discard them",
+    "pay": "Pay {n} resources",
+    "discardAll": "Discard all attachments you control"
+  },
+  "ancestralClearing": {
+    "exhaustHero": "Exhaust a hero to travel to Ancestral Clearing"
   }
 }

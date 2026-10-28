@@ -817,8 +817,11 @@ runGameMessage msg g = case msg of
         defense <- if alone then pure 0 else getEnemyDefense eid
         hitPoints <- getEnemyHitPoints eid
         traits <- (cdCardTraits (toCardDef enemy') <>) <$> gainedTraits (toTarget eid)
+        -- the attack may place progress in place of its damage, as The Passage Out reads
+        asProgress <- elem ProgressInsteadOfAttackDamage <$> getModifiers GameTarget
         -- what a lone attack deals beyond the enemy's remaining hit points, as Firefoot reads
-        let excess = max 0 $ attack - defense - (hitPoints - enemy'.damage)
+        let excess = if asProgress then 0 else max 0 $ attack - defense - (hitPoints - enemy'.damage)
+            damaging = CannotTakeCombatDamage `notElem` mods && not asProgress
         if null attackers
           then pure ()
           else
@@ -826,10 +829,15 @@ runGameMessage msg g = case msg of
               =<< inLogBlock
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
-                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | CannotTakeCombatDamage `notElem` mods]
+                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | damaging]
+                    <> [ PlaceTokens (PlayerSource pid) (toTarget eid) Progress (attack - defense)
+                       | asProgress
+                       , attack > defense
+                       , CannotTakeCombatDamage `notElem` mods
+                       ]
                     <> [ CheckWindows [mkAfter $ AttackDealtDamage eid attackers (attack - defense)]
                        | attack > defense
-                       , CannotTakeCombatDamage `notElem` mods
+                       , damaging
                        ]
                     <> [ AttackResolved eid (placementController enemy'.placement) attackers traits
                        ]
@@ -1049,7 +1057,8 @@ runGameMessage msg g = case msg of
   PlaceTokens source target@(HeroTarget _) Resource n
     | n > 0
     , source /= GameSource -> do
-        push $ CheckWindows [mkAfter $ GainedResources target]
+        barred <- elem CannotGainResourcesFromCardEffects <$> getModifiers target
+        unless barred $ push $ CheckWindows [mkAfter $ GainedResources target]
         pure g
   PlaceEnemy eid StagingArea -> do
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
@@ -1356,6 +1365,20 @@ runGameMessage msg g = case msg of
       . traverse
       . discardL
       %~ filter ((/= cid) . (.id))
+  -- an enemy added to the victory display leaves play, what was attached to it and its
+  -- shadow cards discarded
+  AddToVictoryDisplay target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+    pure
+      $ g
+      & entitiesL
+      . enemiesL
+      %~ Map.delete eid
+      & scenarioL
+      %~ overAttrs (victoryDisplayL %~ (EncounterCard (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e)) :))
   AddToVictoryDisplay (AttachmentTarget aid)
     | Just a <- Map.lookup aid g.entities.attachments ->
         pure
@@ -1484,6 +1507,9 @@ runGameMessage msg g = case msg of
             , n > 0
             , p <- players
             ]
+            -- ponytail: prowl's resources are spent, so a hero barred from spending keeps
+            -- its own; no prowl encounter set shares a deck with such a card
+            <> [SpendGroupResources lead Neutral n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
         revealing t =
           inLogBlock (RevealBlock card)

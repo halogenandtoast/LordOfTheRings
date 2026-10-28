@@ -98,6 +98,11 @@ import LordOfTheRings.Enemy.Cards.Ghulat
 import LordOfTheRings.Enemy.Cards.MaraudingOrc
 import LordOfTheRings.Enemy.Cards.OrcRavager
 import LordOfTheRings.Enemy.Cards.CravenEagle
+import LordOfTheRings.Enemy.Cards.DruBuriDru
+import LordOfTheRings.Enemy.Cards.DruadanDrummer
+import LordOfTheRings.Enemy.Cards.DruadanElite
+import LordOfTheRings.Enemy.Cards.DruadanHunter
+import LordOfTheRings.Enemy.Cards.DruadanThief
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -220,5 +225,10 @@ allEnemys =
         , SomeEnemyCard maraudingOrc
         , SomeEnemyCard orcRavager
         , SomeEnemyCard cravenEagle
+        , SomeEnemyCard druBuriDru
+        , SomeEnemyCard druadanDrummer
+        , SomeEnemyCard druadanElite
+        , SomeEnemyCard druadanHunter
+        , SomeEnemyCard druadanThief
         ]
     ]

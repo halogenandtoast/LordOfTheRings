@@ -98,6 +98,9 @@ allQuestCards =
       , escapeToTheQuays
       , savageryOfTheOrcs
       , protectTheVillagers
+      , thePursuit
+      , anUntimelyEnd
+      , thePassageOut
       ]
 
 theDrippingWalls :: CardDef
@@ -331,3 +334,12 @@ savageryOfTheOrcs = (quest "06066" "Savagery of the Orcs" EncounterAtAmonDin 1 0
 
 protectTheVillagers :: CardDef
 protectTheVillagers = quest "06067" "Protect the Villagers" EncounterAtAmonDin 2 15
+
+thePursuit :: CardDef
+thePursuit = quest "06042" "The Pursuit" TheDruadanForest 1 11
+
+anUntimelyEnd :: CardDef
+anUntimelyEnd = quest "06043" "An Untimely End" TheDruadanForest 2 17
+
+thePassageOut :: CardDef
+thePassageOut = (quest "06044" "The Passage Out" TheDruadanForest 3 14) {cdKeywords = setFromList [Siege]}

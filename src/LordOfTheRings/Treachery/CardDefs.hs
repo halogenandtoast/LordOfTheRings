@@ -100,6 +100,9 @@ allTreacheryCards =
       , burntHomestead
       , trappedInside
       , panicked
+      , menInTheDark
+      , starsInSky
+      , leavesOnTree
       ]
 
 deepDeepDark :: CardDef
@@ -605,3 +608,20 @@ trappedInside =
 
 panicked :: CardDef
 panicked = (treachery "06080" "Panicked!" EncounterAtAmonDin 2) {cdShadowEffect = True}
+
+menInTheDark :: CardDef
+menInTheDark = (treachery "06053" "Men in the Dark" TheDruadanForest 3) {cdShadowEffect = True}
+
+starsInSky :: CardDef
+starsInSky =
+  (treachery "06054" "Stars in Sky" TheDruadanForest 3)
+    { cdKeywords = setFromList [Prowl 2]
+    , cdShadowEffect = True
+    }
+
+leavesOnTree :: CardDef
+leavesOnTree =
+  (treachery "06055" "Leaves on Tree" TheDruadanForest 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }

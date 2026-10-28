@@ -77,6 +77,9 @@ import LordOfTheRings.Quest.Cards.FightingInTheStreets
 import LordOfTheRings.Quest.Cards.EscapeToTheQuays
 import LordOfTheRings.Quest.Cards.SavageryOfTheOrcs
 import LordOfTheRings.Quest.Cards.ProtectTheVillagers
+import LordOfTheRings.Quest.Cards.ThePursuit
+import LordOfTheRings.Quest.Cards.AnUntimelyEnd
+import LordOfTheRings.Quest.Cards.ThePassageOut
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -186,5 +189,8 @@ allQuests =
         , SomeQuestCard escapeToTheQuays
         , SomeQuestCard savageryOfTheOrcs
         , SomeQuestCard protectTheVillagers
+        , SomeQuestCard thePursuit
+        , SomeQuestCard anUntimelyEnd
+        , SomeQuestCard thePassageOut
         ]
     ]

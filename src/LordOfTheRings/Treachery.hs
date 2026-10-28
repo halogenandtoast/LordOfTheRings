@@ -93,6 +93,9 @@ import LordOfTheRings.Treachery.Cards.LurkingInShadows
 import LordOfTheRings.Treachery.Cards.BurntHomestead
 import LordOfTheRings.Treachery.Cards.TrappedInside
 import LordOfTheRings.Treachery.Cards.Panicked
+import LordOfTheRings.Treachery.Cards.MenInTheDark
+import LordOfTheRings.Treachery.Cards.StarsInSky
+import LordOfTheRings.Treachery.Cards.LeavesOnTree
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -210,5 +213,8 @@ allTreacherys =
         , SomeTreacheryCard burntHomestead
         , SomeTreacheryCard trappedInside
         , SomeTreacheryCard panicked
+        , SomeTreacheryCard menInTheDark
+        , SomeTreacheryCard starsInSky
+        , SomeTreacheryCard leavesOnTree
         ]
     ]

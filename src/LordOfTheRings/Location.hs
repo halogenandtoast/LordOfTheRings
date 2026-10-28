@@ -98,6 +98,9 @@ import LordOfTheRings.Location.Cards.MarketSquare
 import LordOfTheRings.Location.Cards.BurningFarmhouse
 import LordOfTheRings.Location.Cards.GondorianHamlet
 import LordOfTheRings.Location.Cards.SecludedFarmhouse
+import LordOfTheRings.Location.Cards.AncestralClearing
+import LordOfTheRings.Location.Cards.GardenOfPoisons
+import LordOfTheRings.Location.Cards.GladeOfCleansing
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -220,5 +223,8 @@ allLocations =
         , SomeLocationCard burningFarmhouse
         , SomeLocationCard gondorianHamlet
         , SomeLocationCard secludedFarmhouse
+        , SomeLocationCard ancestralClearing
+        , SomeLocationCard gardenOfPoisons
+        , SomeLocationCard gladeOfCleansing
         ]
     ]

@@ -63,6 +63,12 @@ data ModifierType
   | -- | on the game: characters use their willpower instead of attack when attacking
     -- enemies, as The Passage Out reads
     WillpowerForAttack
+  | -- | on the game: attacks on enemies place progress on them instead of damage, as The
+    -- Passage Out reads
+    ProgressInsteadOfAttackDamage
+  | -- | on a hero: resources from card effects are not placed in its pool, as Garden of
+    -- Poisons reads
+    CannotGainResourcesFromCardEffects
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks
