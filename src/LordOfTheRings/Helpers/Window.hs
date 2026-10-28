@@ -125,6 +125,9 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
           _ -> Nothing
     maybe (pure False) (hasKeyword Surge target) def
   (HeroDefenderDeclaredWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
+  -- only while the enemy is still in play
+  (AttackDealtDamageByWindow t who, AttackDealtDamage eid attackers n)
+    | t == timing && who `elem` attackers && n > 0 -> selectAny (EnemyWithId eid)
   _ -> pure $ windowMatches matcher w
  where
   hostDef = \case

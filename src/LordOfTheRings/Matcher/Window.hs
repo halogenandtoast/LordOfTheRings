@@ -209,7 +209,6 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
   (CardPlayedWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
-  (AttackDealtDamageByWindow t who, AttackDealtDamage _ attackers n) -> t == timing && who `elem` attackers && n > 0
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -225,4 +224,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroGainedResourcesWindow {}, _) -> False
   (SurgeCardRevealedWindow {}, _) -> False
   (HeroDefenderDeclaredWindow {}, _) -> False
+  (AttackDealtDamageByWindow {}, _) -> False
   _ -> False
