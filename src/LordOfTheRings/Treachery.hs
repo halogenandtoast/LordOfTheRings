@@ -79,6 +79,7 @@ import LordOfTheRings.Treachery.Cards.IllPurpose
 import LordOfTheRings.Treachery.Cards.DisturbedWaters
 import LordOfTheRings.Treachery.Cards.Wrapped
 import LordOfTheRings.Treachery.Cards.BlockingWargs
+import LordOfTheRings.Treachery.Cards.LostCompany
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -182,5 +183,6 @@ allTreacherys =
         , SomeTreacheryCard disturbedWaters
         , SomeTreacheryCard wrapped
         , SomeTreacheryCard blockingWargs
+        , SomeTreacheryCard lostCompany
         ]
     ]
