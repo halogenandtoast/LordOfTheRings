@@ -32,6 +32,7 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
     <GameCard
       v-if="scenario.quest"
       :card="scenario.quest"
+      :attachments="scenario.questAttachments"
       rotated
       :choices="choices"
       :flipping="isFlipping(scenario.quest)"

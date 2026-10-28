@@ -66,6 +66,8 @@ export interface ScenarioView {
   quest: CardView | null
   activeLocation: CardView | null
   activeLocationAttachments: CardView[]
+  /** what is under the quest card, as Captured! holds Faramir */
+  questAttachments: CardView[]
   staging: CardView[]
   encounterDeck: number
   encounterDiscard: number
