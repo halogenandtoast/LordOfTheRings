@@ -844,3 +844,7 @@ cancelEvent cid = do
     PlayEvent _ card _ -> card.id == cid
     _ -> False
   for_ [card | PlayEvent _ card _ <- cancelled] (push . PutInDiscard)
+
+-- | The action's messages, unless the card has left play by the time they run.
+whileInPlay :: (ReverseQueue m, Targetable target) => target -> QueueT Message m () -> m ()
+whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture action

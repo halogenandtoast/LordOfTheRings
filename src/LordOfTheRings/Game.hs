@@ -1294,6 +1294,9 @@ runGameMessage msg g = case msg of
       & entitiesL
       . enemiesL
       %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
+  CreateEnemyEngaged pid eid card -> do
+    push $ EngageEnemy pid eid
+    pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) (createEnemy card eid))
   PutIntoPlayAsActiveLocation card -> do
     thisLocation <- newLocation card
     pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = ActiveLocation}) thisLocation)
