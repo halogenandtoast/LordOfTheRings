@@ -86,6 +86,8 @@ allTreacheryCards =
       , disturbedWaters
       , wrapped
       , orcAssault
+      , theMastersMalice
+      , thePowerOfMordor
       ]
 
 deepDeepDark :: CardDef
@@ -514,3 +516,9 @@ wrapped =
 
 orcAssault :: CardDef
 orcAssault = (treachery "05036" "Orc Assault" TheSiegeOfCairAndros 2) {cdShadowEffect = True}
+
+theMastersMalice :: CardDef
+theMastersMalice = (treachery "05060" "The Master's Malice" MordorElite 2) {cdEasyModeQuantity = Just 0}
+
+thePowerOfMordor :: CardDef
+thePowerOfMordor = (treachery "05061" "The Power of Mordor" MordorElite 1) {cdKeywords = setFromList [Doomed 3]}

@@ -84,6 +84,9 @@ allEnemyCards =
       , orcScramblers
       , batteringRam
       , siegeRaft
+      , lieutenantOfMordor
+      , orcArbalesters
+      , orcVanguard
       ]
 
 namelessThing :: CardDef
@@ -618,4 +621,27 @@ siegeRaft =
     , cdWhenRevealed = True
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+lieutenantOfMordor :: CardDef
+lieutenantOfMordor =
+  (enemy "05056" "Lieutenant of Mordor" MordorElite 1 33 2 5 2 5)
+    { cdCardTraits = setFromList [Mordor]
+    , cdVictoryPoints = Just 3
+    , cdWhenRevealed = True
+    }
+
+orcArbalesters :: CardDef
+orcArbalesters =
+  (enemy "05057" "Orc Arbalesters" MordorElite 3 35 2 1 2 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    }
+
+orcVanguard :: CardDef
+orcVanguard =
+  (enemy "05058" "Orc Vanguard" MordorElite 2 40 2 8 3 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

@@ -78,6 +78,9 @@ import LordOfTheRings.Enemy.Cards.StrikingTentacle
 import LordOfTheRings.Enemy.Cards.OrcScramblers
 import LordOfTheRings.Enemy.Cards.BatteringRam
 import LordOfTheRings.Enemy.Cards.SiegeRaft
+import LordOfTheRings.Enemy.Cards.LieutenantOfMordor
+import LordOfTheRings.Enemy.Cards.OrcArbalesters
+import LordOfTheRings.Enemy.Cards.OrcVanguard
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -180,5 +183,8 @@ allEnemys =
         , SomeEnemyCard orcScramblers
         , SomeEnemyCard batteringRam
         , SomeEnemyCard siegeRaft
+        , SomeEnemyCard lieutenantOfMordor
+        , SomeEnemyCard orcArbalesters
+        , SomeEnemyCard orcVanguard
         ]
     ]

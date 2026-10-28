@@ -5,7 +5,9 @@ import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Keyword (Keyword (Battle, Siege))
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (currentQuestHas)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal)
+import LordOfTheRings.Modifier (ModifierType (CannotBeDefendedByAllies, CannotSpendResources))
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theSiegeOfCairAndros)
@@ -165,3 +167,49 @@ spec = describe "The Siege of Cair Andros" do
     currentQuestHas Battle `shouldReturn` True
     run $ PlaceTokens GameSource quest Progress 15
     getsGame (.outcome) `shouldReturn` Just Won
+
+  -- \* Mordor Elite
+
+  it "keeps allies from defending Lieutenant of Mordor, which reveals the top discarded treachery again" . siegeTest $ \_ -> do
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Treacheries.orcAssault
+    reveal [Enemies.lieutenantOfMordor]
+    lieutenant <- enemyOf Enemies.lieutenantOfMordor
+    getModifiers (toTarget lieutenant) >>= (`shouldSatisfy` elem CannotBeDefendedByAllies)
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    getAttack beravor `shouldReturn` 0
+
+  it "gives Orc Arbalesters archery for each resource icon among the heroes" . siegeTest $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters
+    -- Beravor's lore, Éowyn's spirit and Théodred's leadership
+    getArcheryTotal `shouldReturn` 3
+
+  it "keeps leadership, spirit and tactics heroes from spending while Orc Vanguard is in the staging area" . siegeTest $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Enemies.orcVanguard
+    theodred <- toTarget <$> getHeroWithCode "01002"
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    getModifiers theodred >>= (`shouldSatisfy` elem CannotSpendResources)
+    getModifiers beravor >>= (`shouldSatisfy` notElem CannotSpendResources)
+
+  it "takes no progress on Orc War Camp in the staging area while an Orc enemy is in play" . siegeTest $ \_ -> do
+    camp <- stage Locations.orcWarCamp
+    run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters
+    run $ PlaceTokens GameSource (toTarget camp) Progress 1
+    getsGame (fmap (.progress) . lookup camp . (.entities.locations)) `shouldReturn` Just 0
+
+  it "deals 3 damage to each character outside the sphere chosen for The Master's Malice" . siegeTest $ \pid -> do
+    reveal [Treacheries.theMastersMalice]
+    chooseLabel "$label.theMastersMalice.lore" pid
+    (getDamage . toTarget =<< getHeroWithCode "01002") `shouldReturn` 3
+    (getDamage . toTarget =<< getHeroWithCode "01012") `shouldReturn` 0
+
+  it "shuffles the staging area away and reveals as many with The Power of Mordor" . siegeTest $ \pid -> do
+    _ <- stage Locations.orcWarCamp
+    run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters
+    threat <- (.threat) <$> getPlayer pid
+    _ <- setEncounterDeck [Treacheries.thePowerOfMordor, Locations.theBanks, Locations.theApproach]
+    run RevealEncounterCard
+    resolveRevealed
+    length <$> getEncounterDeck `shouldReturn` 2
+    staged <- getsGame \g -> length [l | l <- toList g.entities.locations, l.placement == StagingArea] + length [e | e <- toList g.entities.enemies, e.placement == StagingArea]
+    staged `shouldBe` 2
+    (.threat) <$> getPlayer pid `shouldReturn` threat + 3

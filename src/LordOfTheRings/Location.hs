@@ -86,6 +86,7 @@ import LordOfTheRings.Location.Cards.StagnantCreek
 import LordOfTheRings.Location.Cards.TheCitadel
 import LordOfTheRings.Location.Cards.TheApproach
 import LordOfTheRings.Location.Cards.TheBanks
+import LordOfTheRings.Location.Cards.OrcWarCamp
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -196,5 +197,6 @@ allLocations =
         , SomeLocationCard theCitadel
         , SomeLocationCard theApproach
         , SomeLocationCard theBanks
+        , SomeLocationCard orcWarCamp
         ]
     ]

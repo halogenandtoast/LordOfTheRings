@@ -93,6 +93,7 @@ allLocationCards =
       , theCitadel
       , theApproach
       , theBanks
+      , orcWarCamp
       ]
 
 drownedTreasury :: CardDef
@@ -645,4 +646,12 @@ theBanks =
   (location "05035" "The Banks" TheSiegeOfCairAndros 1 1 3)
     { cdCardTraits = setFromList [CairAndros, Battleground]
     , cdVictoryPoints = Just 1
+    }
+
+orcWarCamp :: CardDef
+orcWarCamp =
+  (location "05059" "Orc War Camp" MordorElite 2 5 2)
+    { cdCardTraits = setFromList [Mordor]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

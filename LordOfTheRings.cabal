@@ -255,6 +255,7 @@ library
       LordOfTheRings.Enemy.Cards.Hummerhorns
       LordOfTheRings.Enemy.Cards.HuntersFromMordor
       LordOfTheRings.Enemy.Cards.KingSpider
+      LordOfTheRings.Enemy.Cards.LieutenantOfMordor
       LordOfTheRings.Enemy.Cards.Louis
       LordOfTheRings.Enemy.Cards.MarshAdder
       LordOfTheRings.Enemy.Cards.MirkwoodBats
@@ -268,12 +269,14 @@ library
       LordOfTheRings.Enemy.Cards.MuckAdder
       LordOfTheRings.Enemy.Cards.NamelessThing
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
+      LordOfTheRings.Enemy.Cards.OrcArbalesters
       LordOfTheRings.Enemy.Cards.OrcDrummer
       LordOfTheRings.Enemy.Cards.OrcGuard
       LordOfTheRings.Enemy.Cards.OrcHornBlower
       LordOfTheRings.Enemy.Cards.OrcHorseThieves
       LordOfTheRings.Enemy.Cards.OrcRaiders
       LordOfTheRings.Enemy.Cards.OrcScramblers
+      LordOfTheRings.Enemy.Cards.OrcVanguard
       LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.RangingGoblin
       LordOfTheRings.Enemy.Cards.RockAdder
@@ -492,6 +495,7 @@ library
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.OakWoodGrove
       LordOfTheRings.Location.Cards.OldForestRoad
+      LordOfTheRings.Location.Cards.OrcWarCamp
       LordOfTheRings.Location.Cards.PathlessCountry
       LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PlunderedArmoury
@@ -751,7 +755,9 @@ library
       LordOfTheRings.Treachery.Cards.SuddenPitfall
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.TheLightsOfTheDead
+      LordOfTheRings.Treachery.Cards.TheMastersMalice
       LordOfTheRings.Treachery.Cards.TheNecromancersReach
+      LordOfTheRings.Treachery.Cards.ThePowerOfMordor
       LordOfTheRings.Treachery.Cards.ThroughTheMist
       LordOfTheRings.Treachery.Cards.TreacherousFog
       LordOfTheRings.Treachery.Cards.UnderTheShadow
