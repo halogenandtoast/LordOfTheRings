@@ -22,15 +22,6 @@ instance RunMessage BlackUruks where
       chooseAndDiscard attrs lead . concat =<< traverse getAttachmentsOn (heroes <> allies)
       pure e
     ResolveShadowEffect cid eid pid [] | cid == attrs.cardId -> do
-      dealShadowCard eid
-      dealShadowCard eid
-      -- the new resolution turns over every shadow card still face down, so the rest of
-      -- this one's would resolve twice
-      cancelMatching \case
-        RevealShadowCard eid' _ -> eid' == eid
-        ResolveShadowCard _ eid' _ _ -> eid' == eid
-        CheckWindows (Window When (ShadowEffectTriggered _ eid') : _) -> eid' == eid
-        _ -> False
-      resolveShadowCards eid pid []
+      dealShadowCardsDuringAttack eid pid [] 2
       pure e
     _ -> BlackUruks <$> runMessage msg attrs

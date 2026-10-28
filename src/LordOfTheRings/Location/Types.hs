@@ -162,5 +162,8 @@ instance HasField "progress" LocationAttrs Int where
 instance HasField "progress" Location Int where
   getField = (.progress) . toAttrs
 
+instance HasField "damage" LocationAttrs Int where
+  getField = countTokens Damage . locationTokens
+
 instance HasField "cardId" LocationAttrs CardId where
   getField = locationCardId

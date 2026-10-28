@@ -189,6 +189,7 @@ instance RunMessage ScenarioAttrs where
     ShuffleIntoQuestDeck card -> do
       deck <- shuffleM (card : filter (/= card) attrs.questDeck)
       pure $ attrs & questDeckL .~ deck & victoryDisplayL %~ filter ((/= card.id) . (.id))
+    RemoveFromQuestDeck card -> pure $ attrs & questDeckL %~ filter (/= card)
     PutOnBottomOfQuestDeck card ->
       pure $ attrs & questDeckL %~ ((<> [card]) . filter (/= card)) & victoryDisplayL %~ filter ((/= card.id) . (.id))
     -- a stage put into play straight from the quest deck, as Hasty Council chooses one, leaves it
