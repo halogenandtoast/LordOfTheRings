@@ -330,6 +330,10 @@ data Message
     -- reaches its engagement cost engages it
     AmbushEngagementCheck EnemyId
   | EngageEnemy PlayerId EnemyId
+  | -- | the combat phase begins: the archery in play is dealt among the characters
+    ResolveArchery
+  | -- | the first player deals this much archery damage, 1 at a time, among the characters
+    ArcheryDamage Int
   | DealShadowCards
   | DealShadowCard EnemyId
   | AttachShadowCard EnemyId EncounterCard

@@ -78,6 +78,7 @@
   "attackDestroys": "Destroyed",
   "attackDamages": "{enemy} survives with {damage} of {hitPoints} damage",
 
+  "archery": "Archery: {count} damage is dealt among the characters",
   "questSucceeds": "The quest succeeds: {progress}",
   "questFails": "The quest fails: threat rises by {count}",
   "questTied": "The quest is held: no progress, no threat",

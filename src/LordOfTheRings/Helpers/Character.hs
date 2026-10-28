@@ -8,6 +8,7 @@ import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Id
+import LordOfTheRings.Keyword (Keyword (Battle, Siege))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
@@ -46,11 +47,24 @@ getAttackStrength attackers eid enemy = do
     pure $ byTrait + byMatcher
   (+ sum bonuses) . sum <$> traverse getAttack attackers
 
--- | The total willpower of every character committed to the quest.
+-- | The stat characters quest with, by name: attack under battle, defense under siege,
+-- else willpower.
+questingStat :: (HasGame m) => m (Text, Target -> m Int)
+questingStat = do
+  battle <- currentQuestHas Battle
+  siege <- currentQuestHas Siege
+  pure
+    $ if
+      | battle -> ("attack", getAttack)
+      | siege -> ("defense", getDefense)
+      | otherwise -> ("willpower", getWillpower)
+
+-- | The total strength every character committed to the quest quests with.
 getCommittedWillpower :: (HasGame m) => m Int
-getCommittedWillpower =
+getCommittedWillpower = do
+  (_, strength) <- questingStat
   sum
-    <$> ( traverse getWillpower
+    <$> ( traverse strength
             =<< filterM (fmap (notElem DoesNotCountWillpower) . getModifiers)
             =<< selectCharacters CommittedHero CommittedAlly
         )

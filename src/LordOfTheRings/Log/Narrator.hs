@@ -27,7 +27,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
-import LordOfTheRings.Matcher (getDamage)
+import LordOfTheRings.Matcher (getArcheryTotal, getDamage)
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -68,8 +68,9 @@ narrationFor = \case
   PutHeroIntoPlay _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   SwapHero _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   CommitToQuest target -> Just $ whenRef target \c -> do
-    willpower <- getWillpower target
-    one $ action [ikeyPart "log.commits" ["character" ~> c, "willpower" ~> stat "willpower" willpower]]
+    (name, strength) <- questingStat
+    willpower <- strength target
+    one $ action [ikeyPart "log.commits" ["character" ~> c, "willpower" ~> stat name willpower]]
   TravelTo lid -> Just $ whenRef (toTarget lid) \l -> one $ action [ikeyPart "log.travels" ["location" ~> l]]
   EngageEnemy pid eid -> Just $ whenRef (toTarget eid) \e -> do
     who <- playerRefFor pid
@@ -176,12 +177,16 @@ narrationFor = \case
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
   ClaimObjective oid target -> Just $ whenRef (toTarget oid) \o -> whenRef target \t ->
     one $ toned Good $ mechanic [ikeyPart "log.claims" ["target" ~> t, "card" ~> o]]
+  ResolveArchery -> Just do
+    total <- getArcheryTotal
+    pure [toned Bad $ mechanic [ikeyPart "log.archery" ["count" ~> total]] | total > 0]
   -- \* The quest
   QuestResolution -> Just do
     willpower <- getCommittedWillpower
+    (name, _) <- questingStat
     threat <- getStagingThreat
     let versus =
-          ikeyPart "log.versus" ["willpower" ~> stat "willpower" willpower, "threat" ~> stat "threat" threat]
+          ikeyPart "log.versus" ["willpower" ~> stat name willpower, "threat" ~> stat "threat" threat]
     one $ case compare willpower threat of
       GT ->
         toned Good

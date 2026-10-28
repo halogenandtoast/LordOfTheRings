@@ -16,7 +16,7 @@ import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
-import LordOfTheRings.Keyword (Keyword)
+import LordOfTheRings.Keyword (Keyword (..))
 import LordOfTheRings.Location.Types hiding (location)
 import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier
@@ -313,7 +313,33 @@ hasKeyword :: HasGame m => Keyword -> Target -> CardDef -> m Bool
 hasKeyword k target def = do
   mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
   -- a blank text box has no printed keywords
-  pure $ GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods)
+  pure $ GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods && LoseKeyword k `notElem` mods)
+
+-- | The archery the card has, printed or gained, as Archery X reads.
+getArchery :: HasGame m => Target -> CardDef -> m Int
+getArchery target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  let printed = [n | Blank `notElem` mods, Archery n <- toList (cdKeywords def)]
+  pure $ sum $ printed <> [n | GainKeyword (Archery n) <- mods]
+
+-- | The archery of the cards in the staging area and of the current quest, which the
+-- players deal among the characters in play as the combat phase begins.
+getArcheryTotal :: (HasGame m) => m Int
+getArcheryTotal = do
+  enemies <- select EnemyInStagingArea >>= traverse \e -> getArchery (toTarget e) . toCardDef =<< getEnemy e
+  locations <- select LocationInStagingArea >>= traverse \l -> getArchery (toTarget l) . toCardDef =<< getLocation l
+  onQuest <- getCurrentQuest >>= \case
+    Just t@(QuestTarget qid) -> maybe (pure 0) (getArchery t . toCardDef) =<< getsGame (Map.lookup qid . entitiesQuests . gameEntities)
+    _ -> pure 0
+  pure $ sum enemies + sum locations + onQuest
+
+-- | The current quest has the keyword, printed or gained, as battle or siege.
+currentQuestHas :: HasGame m => Keyword -> m Bool
+currentQuestHas k =
+  getCurrentQuest >>= \case
+    Just t@(QuestTarget qid) ->
+      maybe (pure False) (hasKeyword k t . toCardDef) . Map.lookup qid =<< getsGame (entitiesQuests . gameEntities)
+    _ -> pure False
 
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers

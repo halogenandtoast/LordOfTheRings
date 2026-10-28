@@ -505,9 +505,22 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    pushAll $ DealShadowCards
+    pushAll $ ResolveArchery : DealShadowCards
       : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order
     pure $ g & phaseL .~ CombatPhase
+  ResolveArchery -> do
+    total <- getArcheryTotal
+    pushWhen (total > 0) $ ArcheryDamage total
+    pure g
+  -- ponytail: the first player divides it for the group
+  ArcheryDamage n | n > 0 -> do
+    lead <- getLead
+    characters <- selectCharacters AnyHero AnyAlly
+    unless (null characters)
+      $ push
+      $ questionLabel (ikeyWith "label.assignArcheryDamage" [intVar "count" n]) lead
+      $ [targetLabel c [DealDamage GameSource c 1, ArcheryDamage (n - 1)] | c <- characters]
+    pure g
   DealShadowCards -> do
     order <- getPlayerOrder
     -- one engaged with each player from the staging area is dealt one for each attack

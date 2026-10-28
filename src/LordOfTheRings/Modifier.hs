@@ -125,6 +125,8 @@ data ModifierType
   | -- | on a player
     CannotCommitCharacters
   | GainKeyword Keyword
+  | -- | the card loses a printed keyword, as The Last Battle loses siege
+    LoseKeyword Keyword
   | -- | on a character: it defends against enemies with the trait without exhausting
     DoesNotExhaustToDefendAgainst Trait
   | CannotCommitToQuest

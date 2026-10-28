@@ -1,8 +1,11 @@
 module LordOfTheRings.QuestPhaseSpec (spec) where
 
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Effect
+import LordOfTheRings.Keyword
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Modifier
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement
 import TestImport
@@ -93,3 +96,33 @@ spec = describe "Quest phase" do
     (.threat) <$> getPlayer pid `shouldReturn` 27
     locationPlacement . toAttrs <$> getsGame (fromJustNote "gone" . Map.lookup (toId location) . (.entities.locations))
       `shouldReturn` ActiveLocation
+
+  it "quests with attack under battle" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- toTarget <$> getActiveQuest
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Battle] UntilEndOfRound
+    _ <- setEncounterDeck [Locations.forestGate]
+    run $ BeginPhase QuestPhase
+    -- Théodred's attack 2 against staging threat 5
+    commitHeroes pid ["01002"]
+    (.threat) <$> getPlayer pid `shouldReturn` 30
+
+  it "quests with defense under siege" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- toTarget <$> getActiveQuest
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Siege] UntilEndOfRound
+    _ <- setEncounterDeck [Locations.forestGate]
+    run $ BeginPhase QuestPhase
+    -- Éowyn's defense 1 against staging threat 5
+    commitHeroes pid ["01007"]
+    (.threat) <$> getPlayer pid `shouldReturn` 31
+
+  it "deals the quest's archery among the characters as combat begins" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- toTarget <$> getActiveQuest
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword (Archery 2)] UntilEndOfRound
+    run $ BeginPhase CombatPhase
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    chooseTarget pid eowyn
+    chooseTarget pid eowyn
+    getCharacterDamage eowyn `shouldReturn` 2

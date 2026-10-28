@@ -401,6 +401,7 @@
   "declareDefender": "{enemy} attacks: declare a defender",
   "declareDefenders": "{enemy} attacks: declare any number of defenders",
   "payMore": "Pay {count} more",
+  "assignArcheryDamage": "Deal 1 of {count} archery damage to a character",
   "payFromDifferentHero": "Pay 1 from a different hero ({count} more)",
   "performSetup": "Perform setup: flip {card}",
   "revealPath": "Turn over A Chosen Path to see which path it is",
