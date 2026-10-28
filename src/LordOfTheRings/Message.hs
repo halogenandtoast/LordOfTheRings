@@ -407,6 +407,23 @@ data Message
   | CloseLogBlock UUID
   | -- | a step only one scenario's module knows, by name, as Arkham's
     ScenarioSpecific Text Value
+  | {- | an enemy card, taken from where it was, comes into play engaged with the player
+    as the enemy given, so the card putting it there can act on it after, as Arkham's
+    createEnemy
+    -}
+    CreateEnemyEngaged PlayerId EnemyId EncounterCard
+  | {- | the player takes the top card of the encounter deck facedown into his play area as
+    a hidden card (The Blood of Gondor), the discard pile shuffled in first if the deck is
+    empty
+    -}
+    TakeHiddenCard PlayerId
+  | -- | the hidden card, if it is still hidden, turns faceup, then the messages run: what
+    -- becomes of it
+    TurnHiddenCardFaceup PlayerId EncounterCard [Message]
+  | -- | the hidden card goes to the encounter discard pile, if it is still hidden
+    DiscardHiddenCard PlayerId EncounterCard
+  | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
+    PlaceAlly AllyId Placement
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

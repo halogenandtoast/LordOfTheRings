@@ -163,6 +163,13 @@ narrationFor = \case
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.orcGuardEngages" ["player" ~> who]]
+  TakeHiddenCard pid -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.takesHiddenCard" ["player" ~> who]]
+  TurnHiddenCardFaceup pid card _ -> Just $ whenHidden pid card \who ->
+    one $ mechanic [ikeyPart "log.turnsHiddenCardFaceup" ["player" ~> who, "card" ~> EncounterCard card]]
+  DiscardHiddenCard pid card -> Just $ whenHidden pid card \who ->
+    one $ mechanic [ikeyPart "log.discardsHiddenCard" ["player" ~> who, "card" ~> EncounterCard card]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
   RevealShadowCard eid cid -> Just $ whenRef (toTarget eid) \e -> do
     mCard <-
@@ -174,6 +181,7 @@ narrationFor = \case
       ]
   AttachTreachery tid target -> Just $ attached (toTarget tid) target
   PlaceEnemy eid (AttachedTo target) -> Just $ attached (toTarget eid) target
+  PlaceAlly aid (AttachedTo target) -> Just $ attached (toTarget aid) target
   AttachCard aid target -> Just $ attached (toTarget aid) target
   TakePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.takenPrisoner" ["hero" ~> h]]
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
@@ -265,6 +273,12 @@ one = pure . pure
 -- | Say something only when the target can be named.
 whenRef :: HasGame m => Target -> (LogRef -> m [LogEntry]) -> m [LogEntry]
 whenRef target f = targetRefFor target >>= maybe (pure []) f
+
+-- | Say something only while the card is still hidden in the player's play area.
+whenHidden :: HasGame m => PlayerId -> EncounterCard -> (LogRef -> m [LogEntry]) -> m [LogEntry]
+whenHidden pid card f = do
+  hidden <- getsGame (Map.findWithDefault [] pid . (.hiddenCards) . toAttrs . gameScenario)
+  if card `elem` hidden then f =<< playerRefFor pid else pure []
 
 withPlayer :: HasGame m => PlayerId -> (Player -> LogRef -> m [LogEntry]) -> m [LogEntry]
 withPlayer pid f = do

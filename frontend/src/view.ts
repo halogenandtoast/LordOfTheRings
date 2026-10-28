@@ -151,7 +151,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))
     // claimed objectives, condition treacheries and enemies attached as Grasping Tentacle is sit on their hosts like attachments
-    return [...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true)].filter(
+    // and allies under a quest card, as Captured! holds Faramir
+    return [...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true)].filter(
       (a) => a.attachedTo !== null && ids.has(a.attachedTo),
     )
   }
@@ -185,7 +186,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ...Object.values(entities.attachments).filter((a) => a.owner === pid && a.placement?.tag === 'Unplaced').map((a) => card(a.cardCode, a.cardId, { playing: true })),
       ]),
       discard: p.discard.map((c) => card(c.cardCode, c.id)),
-      inPlay: withAttachments(characters),
+      // hidden cards lie facedown in the player's play area (The Blood of Gondor)
+      inPlay: [
+        ...withAttachments(characters),
+        ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
+      ],
       engaged: [...withAttachments(placed('enemies', isAt('EngagedWith', pid))), ...shadowsOf(pid)],
     }
   })
@@ -255,6 +260,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   }
 
   const [activeLocation, ...otherActiveLocations] = placed('locations', isAt('ActiveLocation'))
+  const [quest] = placed('quests', (q) => !q.owner)
 
   const [asked] = Object.entries(game.question)
 
@@ -273,7 +279,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ),
     scenario: {
       name: game.scenario.name,
-      quest: placed('quests', (q) => !q.owner)[0] ?? null,
+      quest: quest ?? null,
+      questAttachments: attachmentsOn(quest ? [quest] : []),
       activeLocation: activeLocation ?? null,
       activeLocationAttachments: attachmentsOn(activeLocation ? [activeLocation] : []),
       otherActiveLocations: otherActiveLocations.map((card) => ({ card, attachments: attachmentsOn([card]) })),

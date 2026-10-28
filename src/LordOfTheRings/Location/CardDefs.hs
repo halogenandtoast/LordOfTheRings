@@ -124,6 +124,12 @@ allLocationCards =
       , eastQuarter
       , ruinedSquare
       , ruinedTower
+      , theCrossroads
+      , southernRoad
+      , westernRoad
+      , northernRoad
+      , easternRoad
+      , theDarkWoods
       ]
 
 drownedTreasury :: CardDef
@@ -904,3 +910,28 @@ ruinedTower =
   (location "06103" "Ruined Tower" AssaultOnOsgiliath 3 2 2)
     { cdCardTraits = setFromList [Osgiliath]
     }
+
+-- | X threat, X the number of players: given by its own modifiers.
+theCrossroads :: CardDef
+theCrossroads =
+  unique
+    (location "06123" "The Cross-roads" TheBloodOfGondor 1 0 2)
+      { cdCardTraits = setFromList [Ithilien]
+      , cdVictoryPoints = Just 3
+      }
+
+southernRoad :: CardDef
+southernRoad = (location "06124" "Southern Road" TheBloodOfGondor 1 2 4) {cdCardTraits = setFromList [Ithilien, Road]}
+
+westernRoad :: CardDef
+westernRoad = (location "06125" "Western Road" TheBloodOfGondor 1 2 4) {cdCardTraits = setFromList [Ithilien, Road]}
+
+northernRoad :: CardDef
+northernRoad = (location "06126" "Northern Road" TheBloodOfGondor 1 4 3) {cdCardTraits = setFromList [Ithilien, Road]}
+
+easternRoad :: CardDef
+easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTraits = setFromList [Ithilien, Road]}
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+theDarkWoods :: CardDef
+theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}

@@ -257,6 +257,9 @@ data ModifierType
     -- the location he controls with the highest threat to the staging area, as Osgiliath's
     -- shadows read
     DestroyingReturnsLocation
+  | -- | on the game: matching enemies engaged with players add their threat to the staging
+    -- area too, as Conflict at the Crossroads reads
+    EngagedEnemiesAddThreat EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

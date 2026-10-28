@@ -106,6 +106,9 @@ import LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
 import LordOfTheRings.Treachery.Cards.PinnedDown
 import LordOfTheRings.Treachery.Cards.StreetFighting
 import LordOfTheRings.Treachery.Cards.CounterAttack
+import LordOfTheRings.Treachery.Cards.LyingInWait
+import LordOfTheRings.Treachery.Cards.MordorLooms
+import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -236,5 +239,8 @@ allTreacherys =
         , SomeTreacheryCard pinnedDown
         , SomeTreacheryCard streetFighting
         , SomeTreacheryCard counterAttack
+        , SomeTreacheryCard lyingInWait
+        , SomeTreacheryCard mordorLooms
+        , SomeTreacheryCard conflictAtTheCrossroads
         ]
     ]

@@ -123,6 +123,10 @@ allEnemyCards =
       , urukSoldier
       , southronPhalanx
       , southronCommander
+      , blackNumenorean
+      , orcAmbusher
+      , brutalUruk
+      , evilCrow
       ]
 
 namelessThing :: CardDef
@@ -949,4 +953,33 @@ southronCommander =
     { cdCardTraits = setFromList [Harad]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 0
+    }
+
+-- | X threat, X the total number of hidden cards in the game: given by its own modifiers.
+blackNumenorean :: CardDef
+blackNumenorean =
+  (enemy "06119" "Black Númenorean" TheBloodOfGondor 1 35 0 5 3 5)
+    { cdCardTraits = setFromList [Mordor]
+    }
+
+orcAmbusher :: CardDef
+orcAmbusher =
+  (enemy "06120" "Orc Ambusher" TheBloodOfGondor 4 10 2 3 1 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+brutalUruk :: CardDef
+brutalUruk =
+  (enemy "06121" "Brutal Uruk" TheBloodOfGondor 3 20 3 4 1 5)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdEasyModeQuantity = Just 1
+    }
+
+evilCrow :: CardDef
+evilCrow =
+  (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
     }

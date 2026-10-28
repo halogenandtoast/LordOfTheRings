@@ -113,6 +113,9 @@ allTreacheryCards =
       , pinnedDown
       , streetFighting
       , counterAttack
+      , lyingInWait
+      , mordorLooms
+      , conflictAtTheCrossroads
       ]
 
 deepDeepDark :: CardDef
@@ -692,4 +695,21 @@ counterAttack =
   (treachery "06106" "Counter-attack" AssaultOnOsgiliath 2)
     { cdKeywords = setFromList [Surge]
     , cdEasyModeQuantity = Just 1
+    }
+
+lyingInWait :: CardDef
+lyingInWait = treachery "06129" "Lying in Wait" TheBloodOfGondor 4
+
+mordorLooms :: CardDef
+mordorLooms =
+  (treachery "06130" "Mordor Looms" TheBloodOfGondor 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+conflictAtTheCrossroads :: CardDef
+conflictAtTheCrossroads =
+  (treachery "06131" "Conflict at the Crossroads" TheBloodOfGondor 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

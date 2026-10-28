@@ -87,6 +87,8 @@ import LordOfTheRings.Quest.Cards.Conspiracy
 import LordOfTheRings.Quest.Cards.TheGrandDesign
 import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Cards.RetakeTheCity
+import LordOfTheRings.Quest.Cards.TheAmbush
+import LordOfTheRings.Quest.Cards.Captured
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -206,5 +208,7 @@ allQuests =
         , SomeQuestCard theGrandDesign
         , SomeQuestCard theConfrontation
         , SomeQuestCard retakeTheCity
+        , SomeQuestCard theAmbush
+        , SomeQuestCard captured
         ]
     ]

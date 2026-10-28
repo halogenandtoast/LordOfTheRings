@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Scenario.Runner (module LordOfTheRings.Scenario.Runner, module X) where
 
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card hiding (hero)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
@@ -197,4 +198,21 @@ instance RunMessage ScenarioAttrs where
     AdvanceToQuest card -> do
       pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
       pure attrs
+    TakeHiddenCard pid -> do
+      (deck, discard) <-
+        if null attrs.encounterDeck
+          then (,[]) <$> shuffleM attrs.encounterDiscard
+          else pure (attrs.encounterDeck, attrs.encounterDiscard)
+      pure $ case deck of
+        card : rest -> attrs & encounterDeckL .~ rest & encounterDiscardL .~ discard & hiddenCardsL %~ Map.insertWith (flip (<>)) pid [card]
+        [] -> attrs
+    TurnHiddenCardFaceup pid card msgs | card `elem` hiddenOf pid -> do
+      pushAll msgs
+      pure $ attrs & hiddenCardsL . ix pid %~ filter (/= card)
+    DiscardHiddenCard pid card | card `elem` hiddenOf pid ->
+      pure $ attrs & hiddenCardsL . ix pid %~ filter (/= card) & encounterDiscardL %~ (card :)
+    -- an eliminated player's hidden cards are discarded
+    EliminatePlayer pid -> pure $ attrs & hiddenCardsL %~ Map.delete pid & encounterDiscardL %~ (hiddenOf pid <>)
     _ -> pure attrs
+   where
+    hiddenOf pid = Map.findWithDefault [] pid attrs.hiddenCards

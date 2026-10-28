@@ -50,6 +50,7 @@ library
       LordOfTheRings.Ally.Cards.ErrandRider
       LordOfTheRings.Ally.Cards.EscortFromEdoras
       LordOfTheRings.Ally.Cards.Faramir
+      LordOfTheRings.Ally.Cards.FaramirObjective
       LordOfTheRings.Ally.Cards.Fili
       LordOfTheRings.Ally.Cards.Firyal
       LordOfTheRings.Ally.Cards.GaladhonArcher
@@ -80,6 +81,7 @@ library
       LordOfTheRings.Ally.Cards.LongbeardMapMaker
       LordOfTheRings.Ally.Cards.LongbeardOrcSlayer
       LordOfTheRings.Ally.Cards.LordAlcaron
+      LordOfTheRings.Ally.Cards.LordAlcaronTheBloodOfGondor
       LordOfTheRings.Ally.Cards.LorienGuide
       LordOfTheRings.Ally.Cards.MarksmanOfLorien
       LordOfTheRings.Ally.Cards.MasterOfLore
@@ -231,7 +233,9 @@ library
       LordOfTheRings.Enemy.Cards.BatteringRam
       LordOfTheRings.Enemy.Cards.BlackForestBats
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
+      LordOfTheRings.Enemy.Cards.BlackNumenorean
       LordOfTheRings.Enemy.Cards.BlackUruks
+      LordOfTheRings.Enemy.Cards.BrutalUruk
       LordOfTheRings.Enemy.Cards.CavernGuardian
       LordOfTheRings.Enemy.Cards.CaveSpider
       LordOfTheRings.Enemy.Cards.CaveTroll
@@ -252,6 +256,7 @@ library
       LordOfTheRings.Enemy.Cards.EastBightPatrol
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ElderNamelessThing
+      LordOfTheRings.Enemy.Cards.EvilCrow
       LordOfTheRings.Enemy.Cards.ForestBat
       LordOfTheRings.Enemy.Cards.ForestSpider
       LordOfTheRings.Enemy.Cards.Ghulat
@@ -298,6 +303,7 @@ library
       LordOfTheRings.Enemy.Cards.NamelessThing
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
       LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
+      LordOfTheRings.Enemy.Cards.OrcAmbusher
       LordOfTheRings.Enemy.Cards.OrcArbalesters
       LordOfTheRings.Enemy.Cards.OrcArsonist
       LordOfTheRings.Enemy.Cards.OrcDrummer
@@ -546,6 +552,7 @@ library
       LordOfTheRings.Location.Cards.HousesOfTheDead
       LordOfTheRings.Location.Cards.ImpassableBog
       LordOfTheRings.Location.Cards.IthilienRoad
+      LordOfTheRings.Location.Cards.IthilienRoads
       LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LightlessPassage
       LordOfTheRings.Location.Cards.MakeshiftPassage
@@ -587,6 +594,8 @@ library
       LordOfTheRings.Location.Cards.TheBrownLands
       LordOfTheRings.Location.Cards.TheCarrock
       LordOfTheRings.Location.Cards.TheCitadel
+      LordOfTheRings.Location.Cards.TheCrossroads
+      LordOfTheRings.Location.Cards.TheDarkWoods
       LordOfTheRings.Location.Cards.TheDimrillStair
       LordOfTheRings.Location.Cards.TheEastBank
       LordOfTheRings.Location.Cards.TheEastBight
@@ -649,12 +658,14 @@ library
       LordOfTheRings.Objective.Cards.DurinsAxe
       LordOfTheRings.Objective.Cards.DurinsGreaves
       LordOfTheRings.Objective.Cards.DurinsHelm
+      LordOfTheRings.Objective.Cards.FaramirObjective
       LordOfTheRings.Objective.Cards.GandalfsMap
       LordOfTheRings.Objective.Cards.GollumReturnToMirkwood
       LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
       LordOfTheRings.Objective.Cards.GrimbeornTheOld
       LordOfTheRings.Objective.Cards.IthilienGuardian
       LordOfTheRings.Objective.Cards.LordAlcaron
+      LordOfTheRings.Objective.Cards.LordAlcaronTheBloodOfGondor
       LordOfTheRings.Objective.Cards.PoisonedCounsels
       LordOfTheRings.Objective.Cards.RescuedVillagers
       LordOfTheRings.Objective.Cards.SecretMap
@@ -696,6 +707,7 @@ library
       LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
       LordOfTheRings.Quest.Cards.BreakthroughAtTheCitadel
+      LordOfTheRings.Quest.Cards.Captured
       LordOfTheRings.Quest.Cards.Conspiracy
       LordOfTheRings.Quest.Cards.ContinuingEastward
       LordOfTheRings.Quest.Cards.EnteringTheMines
@@ -728,6 +740,7 @@ library
       LordOfTheRings.Quest.Cards.SearchForTheChamber
       LordOfTheRings.Quest.Cards.Snowdrifts
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
+      LordOfTheRings.Quest.Cards.TheAmbush
       LordOfTheRings.Quest.Cards.TheBetrayal
       LordOfTheRings.Quest.Cards.TheCapture
       LordOfTheRings.Quest.Cards.TheConfrontation
@@ -788,6 +801,8 @@ library
       LordOfTheRings.Scenario.Scenarios.RoadToRivendell
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor
+      LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDruadanForest
@@ -828,6 +843,7 @@ library
       LordOfTheRings.Treachery.Cards.CaveIn
       LordOfTheRings.Treachery.Cards.ChanceEncounter
       LordOfTheRings.Treachery.Cards.CollateralDamage
+      LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
       LordOfTheRings.Treachery.Cards.CounterAttack
       LordOfTheRings.Treachery.Cards.CounterSpell
       LordOfTheRings.Treachery.Cards.CrumblingRuin
@@ -869,11 +885,13 @@ library
       LordOfTheRings.Treachery.Cards.LostCompany
       LordOfTheRings.Treachery.Cards.LostInTheCity
       LordOfTheRings.Treachery.Cards.LurkingInShadows
+      LordOfTheRings.Treachery.Cards.LyingInWait
       LordOfTheRings.Treachery.Cards.ManyRoads
       LordOfTheRings.Treachery.Cards.ManyThongedWhip
       LordOfTheRings.Treachery.Cards.MassingAtNight
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.MenInTheDark
+      LordOfTheRings.Treachery.Cards.MordorLooms
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
       LordOfTheRings.Treachery.Cards.OldWivesTales
@@ -1061,6 +1079,7 @@ test-suite LordOfTheRings-test
   other-modules:
       LordOfTheRings.AgainstTheShadow.AssaultOnOsgiliathSpec
       LordOfTheRings.AgainstTheShadow.EncounterAtAmonDinSpec
+      LordOfTheRings.AgainstTheShadow.TheBloodOfGondorSpec
       LordOfTheRings.AgainstTheShadow.TheDruadanForestSpec
       LordOfTheRings.AgainstTheShadow.TheMorgulValeSpec
       LordOfTheRings.AgainstTheShadow.TheStewardsFearSpec

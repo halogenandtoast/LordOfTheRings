@@ -68,6 +68,8 @@ export interface ScenarioView {
   activeLocationAttachments: CardView[]
   /** A second active location, as Ruined Tower makes, with its attachments. */
   otherActiveLocations: { card: CardView; attachments: CardView[] }[]
+  /** what is under the quest card, as Captured! holds Faramir */
+  questAttachments: CardView[]
   staging: CardView[]
   encounterDeck: number
   encounterDiscard: number

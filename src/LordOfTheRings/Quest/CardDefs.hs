@@ -108,6 +108,8 @@ allQuestCards =
       , theGrandDesign
       , theConfrontation
       , retakeTheCity
+      , theAmbush
+      , captured
       ]
 
 theDrippingWalls :: CardDef
@@ -372,3 +374,9 @@ theConfrontation = quest "06013" "The Confrontation" TheStewardsFear 3 15
 
 retakeTheCity :: CardDef
 retakeTheCity = quest "06091" "Retake the City" AssaultOnOsgiliath 1 0
+
+theAmbush :: CardDef
+theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
+
+captured :: CardDef
+captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}

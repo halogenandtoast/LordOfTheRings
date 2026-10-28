@@ -117,6 +117,9 @@ import LordOfTheRings.Location.Cards.WestQuarter
 import LordOfTheRings.Location.Cards.EastQuarter
 import LordOfTheRings.Location.Cards.RuinedSquare
 import LordOfTheRings.Location.Cards.RuinedTower
+import LordOfTheRings.Location.Cards.TheCrossroads
+import LordOfTheRings.Location.Cards.IthilienRoads
+import LordOfTheRings.Location.Cards.TheDarkWoods
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -258,5 +261,11 @@ allLocations =
         , SomeLocationCard eastQuarter
         , SomeLocationCard ruinedSquare
         , SomeLocationCard ruinedTower
+        , SomeLocationCard theCrossroads
+        , SomeLocationCard southernRoad
+        , SomeLocationCard westernRoad
+        , SomeLocationCard northernRoad
+        , SomeLocationCard easternRoad
+        , SomeLocationCard theDarkWoods
         ]
     ]

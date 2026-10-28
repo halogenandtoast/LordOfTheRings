@@ -849,6 +849,7 @@ cancelEvent cid = do
 -- advance to the next stage" reads.
 completeQuest :: ReverseQueue m => QuestId -> m ()
 completeQuest = push . CompleteQuest
+
 {- | End the quest phase without resolving the quest, as False Lead reads: the rest of the
 staging step, the players' actions and the quest's resolution are dropped. Nothing
 happens outside the quest phase.
@@ -865,7 +866,16 @@ endQuestPhaseWithoutResolving = lift $ withQueue_ \q ->
     ActionWindow _ -> True
     QuestResolution -> True
     _ -> False
+
 -- | A location card, taken from where it was, comes into play placed there, as Street
 -- Fighting puts one under the first player's control.
 putLocationIntoPlay :: ReverseQueue m => EncounterCard -> Placement -> m ()
 putLocationIntoPlay card = push . PutLocationIntoPlay card
+
+-- | The action's messages, unless the card has left play by the time they run.
+whileInPlay :: (ReverseQueue m, Targetable target) => target -> QueueT Message m () -> m ()
+whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture action
+
+-- | Place the ally elsewhere, as Captured! puts Faramir under itself.
+placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
+placeAlly aid = push . PlaceAlly aid

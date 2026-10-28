@@ -46,6 +46,8 @@ allObjectiveCards =
       , unholyAlliance
       , upInFlames
       , poisonedCounsels
+      , faramirObjective
+      , lordAlcaronTheBloodOfGondor
       ]
 
 durinsAxe :: CardDef
@@ -256,3 +258,21 @@ upInFlames = plot "06030" "Up in Flames"
 
 poisonedCounsels :: CardDef
 poisonedCounsels = plot "06031" "Poisoned Counsels"
+
+faramirObjective :: CardDef
+faramirObjective =
+  ((objective "06132" "Faramir" TheBloodOfGondor 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 3, cdDefense = Just 1, cdHitPoints = Just 4 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+lordAlcaronTheBloodOfGondor :: CardDef
+lordAlcaronTheBloodOfGondor =
+  ((objective "06133" "Lord Alcaron" TheBloodOfGondor 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

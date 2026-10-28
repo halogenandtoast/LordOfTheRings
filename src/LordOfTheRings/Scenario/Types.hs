@@ -40,6 +40,8 @@ data ScenarioAttrs = ScenarioAttrs
   -- ^ fewer copies of the difficult encounter cards, and a resource more for each hero
   , scenarioMeta :: Value
   -- ^ what only one scenario keeps, as Arkham's meta: its module reads and writes it
+  , scenarioHiddenCards :: Map PlayerId [EncounterCard]
+  -- ^ the encounter cards facedown in each player's play area (The Blood of Gondor)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -49,7 +51,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object [])]
 
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =
@@ -65,6 +67,7 @@ scenario f sid name =
       , scenarioOrcGuards = mempty
       , scenarioEasyMode = False
       , scenarioMeta = Null
+      , scenarioHiddenCards = mempty
       }
 
 instance Entity ScenarioAttrs where
@@ -114,3 +117,6 @@ instance HasField "easyMode" ScenarioAttrs Bool where
 
 instance HasField "meta" ScenarioAttrs Value where
   getField = scenarioMeta
+
+instance HasField "hiddenCards" ScenarioAttrs (Map PlayerId [EncounterCard]) where
+  getField = scenarioHiddenCards

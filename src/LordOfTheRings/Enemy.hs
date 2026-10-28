@@ -117,6 +117,10 @@ import LordOfTheRings.Enemy.Cards.UrukLieutenant
 import LordOfTheRings.Enemy.Cards.UrukSoldier
 import LordOfTheRings.Enemy.Cards.SouthronPhalanx
 import LordOfTheRings.Enemy.Cards.SouthronCommander
+import LordOfTheRings.Enemy.Cards.BlackNumenorean
+import LordOfTheRings.Enemy.Cards.OrcAmbusher
+import LordOfTheRings.Enemy.Cards.BrutalUruk
+import LordOfTheRings.Enemy.Cards.EvilCrow
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -258,5 +262,9 @@ allEnemys =
         , SomeEnemyCard urukSoldier
         , SomeEnemyCard southronPhalanx
         , SomeEnemyCard southronCommander
+        , SomeEnemyCard blackNumenorean
+        , SomeEnemyCard orcAmbusher
+        , SomeEnemyCard brutalUruk
+        , SomeEnemyCard evilCrow
         ]
     ]

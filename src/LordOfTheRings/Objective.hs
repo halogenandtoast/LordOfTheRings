@@ -37,6 +37,8 @@ import LordOfTheRings.Objective.Cards.APrisoner
 import LordOfTheRings.Objective.Cards.UnholyAlliance
 import LordOfTheRings.Objective.Cards.UpInFlames
 import LordOfTheRings.Objective.Cards.PoisonedCounsels
+import LordOfTheRings.Objective.Cards.FaramirObjective
+import LordOfTheRings.Objective.Cards.LordAlcaronTheBloodOfGondor
 import LordOfTheRings.Objective.Runner ()
 import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Prelude
@@ -65,5 +67,5 @@ allObjectives :: Map CardCode SomeObjectiveCard
 allObjectives =
   Map.fromList
     [ (toCardCode builder, card)
-    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard caveTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood, SomeObjectiveCard abandonedTools, SomeObjectiveCard bookOfMazarbul, SomeObjectiveCard arwenUndomielTheRedhornGate, SomeObjectiveCard arwenUndomielRoadToRivendell, SomeObjectiveCard durinsGreaves, SomeObjectiveCard durinsAxe, SomeObjectiveCard durinsHelm, SomeObjectiveCard celador, SomeObjectiveCard ithilienGuardian, SomeObjectiveCard alcaronsScroll, SomeObjectiveCard rescuedVillagers, SomeObjectiveCard deadVillagers, SomeObjectiveCard lordAlcaron, SomeObjectiveCard toTheTower, SomeObjectiveCard aScrapOfHistory, SomeObjectiveCard secretMap, SomeObjectiveCard aPrisoner, SomeObjectiveCard unholyAlliance, SomeObjectiveCard upInFlames, SomeObjectiveCard poisonedCounsels]
+    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard caveTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood, SomeObjectiveCard abandonedTools, SomeObjectiveCard bookOfMazarbul, SomeObjectiveCard arwenUndomielTheRedhornGate, SomeObjectiveCard arwenUndomielRoadToRivendell, SomeObjectiveCard durinsGreaves, SomeObjectiveCard durinsAxe, SomeObjectiveCard durinsHelm, SomeObjectiveCard celador, SomeObjectiveCard ithilienGuardian, SomeObjectiveCard alcaronsScroll, SomeObjectiveCard rescuedVillagers, SomeObjectiveCard deadVillagers, SomeObjectiveCard lordAlcaron, SomeObjectiveCard toTheTower, SomeObjectiveCard aScrapOfHistory, SomeObjectiveCard secretMap, SomeObjectiveCard aPrisoner, SomeObjectiveCard unholyAlliance, SomeObjectiveCard upInFlames, SomeObjectiveCard poisonedCounsels, SomeObjectiveCard faramirObjective, SomeObjectiveCard lordAlcaronTheBloodOfGondor]
     ]
