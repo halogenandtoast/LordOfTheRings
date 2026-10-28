@@ -390,6 +390,10 @@ data Message
   | Run [Message]
   | -- | the messages, unless the card has left play by the time they run
     WhileInPlay Target [Message]
+  | {- | the messages, if any of the targets has left play by the time they run, as "if this
+    attack destroys a character" reads once the attack has resolved
+    -}
+    IfAnyLeftPlay [Target] [Message]
   | DrawCards Drawing
   | Mulligan PlayerId
   | -- | log only: what is narrated until the block closes is filed under it

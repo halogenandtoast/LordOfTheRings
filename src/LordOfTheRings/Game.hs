@@ -258,6 +258,9 @@ runGameMessage msg g = case msg of
   WhileInPlay t msgs -> do
     when (inPlay g t) $ pushAll msgs
     pure g
+  IfAnyLeftPlay ts msgs -> do
+    when (any (not . inPlay g) ts) $ pushAll msgs
+    pure g
   OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
   -- an ally that has just left play answers its own leaving
   UseCardAbility _ (AllySource aid) _ _ | Just a <- Map.lookup aid (gameLeftPlay g) -> do
