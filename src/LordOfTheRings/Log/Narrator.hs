@@ -242,7 +242,20 @@ narrationFor = \case
       | card <- filter ((== cid) . (.id)) player.deck
       ]
   PlayAtNoCost _ card -> Just $ one $ mechanic [ikeyPart "log.playedAtNoCost" ["card" ~> PlayerCard card]]
+  -- \* Locations the players control, as Osgiliath's
+  PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
+    from <- maybe Unplaced (.placement) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
+    case (from, placement) of
+      (_, InPlayArea pid) | from /= placement -> takesControl pid l
+      (InPlayArea _, StagingArea) -> one $ toned Bad $ mechanic [ikeyPart "log.returnedToStaging" ["location" ~> l]]
+      _ -> pure []
+  PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
   _ -> Nothing
+ where
+  takesControl :: (HasGame m, ToLogPart a) => PlayerId -> a -> m [LogEntry]
+  takesControl pid l = do
+    who <- playerRefFor pid
+    one $ toned Good $ mechanic [ikeyPart "log.takesControl" ["player" ~> who, "location" ~> l]]
 
 one :: Applicative m => LogEntry -> m [LogEntry]
 one = pure . pure

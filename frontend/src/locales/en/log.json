@@ -64,6 +64,8 @@
   "revealedThreat": "Revealed {card} ({threat})",
   "resolvedWhenRevealed": "Resolved the When Revealed effect of {card}",
   "addedToStaging": "{card} is added to the staging area",
+  "takesControl": "{player} takes control of {location}",
+  "returnedToStaging": "{location} returns to the staging area",
   "placedInStaging": "{card} is placed in the staging area",
   "orcGuardEngages": "An Orc Guard engages {player}",
   "dealtShadow": "{enemy} is dealt a shadow card",
