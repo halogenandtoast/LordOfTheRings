@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyCardId, allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdWhenRevealed, toCardDef)
+import LordOfTheRings.Card (cdVictoryPoints, cdWhenRevealed, toCardDef)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
@@ -107,6 +107,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       Just a | (toAttrs a).owner /= pid, AttachedTo (HeroTarget hid) <- a.placement ->
         selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
       _ -> pure False
+  (ExploredWithoutVictoryWindow t, Explored lid) | t == timing -> isNothing . cdVictoryPoints . toCardDef <$> getLocation lid
   _ -> pure $ windowMatches matcher w
  where
   hostDef = \case

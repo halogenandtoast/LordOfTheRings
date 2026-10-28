@@ -49,6 +49,8 @@ data WindowMatcher
   | TreacheryRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
+  | -- | any location worth no victory points explored
+    ExploredWithoutVictoryWindow Timing
   | PhaseEndsWindow Timing Phase
   | -- | at the end of the round
     RoundEndsWindow
@@ -207,4 +209,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TraveledToWindow {}, _) -> False
   (AttachmentPlayedOnHeroWindow {}, _) -> False
   (EnemyAttacksPlayerWindow {}, _) -> False
+  (ExploredWithoutVictoryWindow {}, _) -> False
   _ -> False

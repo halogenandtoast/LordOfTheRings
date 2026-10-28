@@ -212,6 +212,9 @@ data ModifierType
     ReturnToHandIfQuestedSuccessfully
   | -- | on a side quest: the players quest against it this phase, as the current quest
     CurrentQuest
+  | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
+    -- for as long as the effect lasts
+    NextEnemyInStaging ModifierType
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
