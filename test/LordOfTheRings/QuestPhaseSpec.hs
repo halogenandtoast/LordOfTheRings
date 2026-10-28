@@ -138,3 +138,11 @@ spec = describe "Quest phase" do
     chooseTarget pid eowyn
     chooseTarget pid eowyn
     getCharacterDamage eowyn `shouldReturn` 2
+
+  it "adds an archery bonus to the total" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    run $ CreateEffect $ Effect GameSource GameTarget [ArcheryBonus 1] UntilEndOfRound
+    run $ BeginPhase CombatPhase
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    chooseTarget pid eowyn
+    getCharacterDamage eowyn `shouldReturn` 1

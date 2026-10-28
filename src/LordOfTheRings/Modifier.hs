@@ -52,6 +52,8 @@ data ModifierType
     CannotHaveRestrictedAttachments
   | -- | on the game: the total threat in the staging area is raised by this much
     StagingThreatBonus Int
+  | -- | on the game: the archery total is raised by this much, as Pinned Down reads
+    ArcheryBonus Int
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks

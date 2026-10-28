@@ -328,7 +328,7 @@ getArchery target def = do
   let printed = [n | Blank `notElem` mods, Archery n <- toList (cdKeywords def)]
   pure $ sum $ printed <> [n | GainKeyword (Archery n) <- mods]
 
--- | The archery of every card in play, the current quest's too, which the players deal
+-- | The archery of every card in play, the current quest's too, and any bonus, which the players deal
 -- among the characters in play as the combat phase begins.
 getArcheryTotal :: (HasGame m) => m Int
 getArcheryTotal = do
@@ -340,7 +340,8 @@ getArcheryTotal = do
   onQuest <- getCurrentQuest >>= \case
     Just t@(QuestTarget qid) -> maybe (pure 0) (getArchery t . toCardDef) =<< getsGame (Map.lookup qid . entitiesQuests . gameEntities)
     _ -> pure 0
-  pure $ sum fromEnemies + sum fromLocations + onQuest
+  bonus <- sum . (\ms -> [n | ArcheryBonus n <- map modifierType ms]) . Map.findWithDefault [] GameTarget <$> getsGame gameModifiers
+  pure $ sum fromEnemies + sum fromLocations + onQuest + bonus
 
 -- | The current quest has the keyword, printed or gained, as battle or siege.
 currentQuestHas :: HasGame m => Keyword -> m Bool
