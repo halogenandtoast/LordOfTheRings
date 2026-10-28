@@ -95,6 +95,11 @@ import LordOfTheRings.Location.Cards.PelargirDocks
 import LordOfTheRings.Location.Cards.HarborStorehouse
 import LordOfTheRings.Location.Cards.CityStreet
 import LordOfTheRings.Location.Cards.MarketSquare
+import LordOfTheRings.Location.Cards.Sewers
+import LordOfTheRings.Location.Cards.RootsOfMindolluin
+import LordOfTheRings.Location.Cards.Storehouse
+import LordOfTheRings.Location.Cards.HousesOfTheDead
+import LordOfTheRings.Location.Cards.TheFourthStar
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -214,5 +219,10 @@ allLocations =
         , SomeLocationCard harborStorehouse
         , SomeLocationCard cityStreet
         , SomeLocationCard marketSquare
+        , SomeLocationCard sewers
+        , SomeLocationCard rootsOfMindolluin
+        , SomeLocationCard storehouse
+        , SomeLocationCard housesOfTheDead
+        , SomeLocationCard theFourthStar
         ]
     ]
