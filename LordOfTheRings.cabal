@@ -696,6 +696,7 @@ library
       LordOfTheRings.Treachery.Cards.CaughtInAWeb
       LordOfTheRings.Treachery.Cards.CaveIn
       LordOfTheRings.Treachery.Cards.ChanceEncounter
+      LordOfTheRings.Treachery.Cards.CollateralDamage
       LordOfTheRings.Treachery.Cards.CounterSpell
       LordOfTheRings.Treachery.Cards.CrumblingRuin
       LordOfTheRings.Treachery.Cards.DarkAndDreadful
@@ -728,7 +729,10 @@ library
       LordOfTheRings.Treachery.Cards.IronShackles
       LordOfTheRings.Treachery.Cards.LeapingFlame
       LordOfTheRings.Treachery.Cards.LingeringVenom
+      LordOfTheRings.Treachery.Cards.LocalTrouble
       LordOfTheRings.Treachery.Cards.LostAndAlone
+      LordOfTheRings.Treachery.Cards.LostInTheCity
+      LordOfTheRings.Treachery.Cards.LurkingInShadows
       LordOfTheRings.Treachery.Cards.ManyRoads
       LordOfTheRings.Treachery.Cards.ManyThongedWhip
       LordOfTheRings.Treachery.Cards.MassingAtNight
