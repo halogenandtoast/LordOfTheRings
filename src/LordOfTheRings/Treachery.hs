@@ -100,6 +100,9 @@ import LordOfTheRings.Treachery.Cards.ImpenetrableFog
 import LordOfTheRings.Treachery.Cards.SleeplessMalice
 import LordOfTheRings.Treachery.Cards.TerrorDrivesThem
 import LordOfTheRings.Treachery.Cards.TheDeadCityLooms
+import LordOfTheRings.Treachery.Cards.UnwelcomeDiscovery
+import LordOfTheRings.Treachery.Cards.AKnifeInTheBack
+import LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -224,5 +227,8 @@ allTreacherys =
         , SomeTreacheryCard sleeplessMalice
         , SomeTreacheryCard terrorDrivesThem
         , SomeTreacheryCard theDeadCityLooms
+        , SomeTreacheryCard unwelcomeDiscovery
+        , SomeTreacheryCard aKnifeInTheBack
+        , SomeTreacheryCard falseLeadTheStewardsFear
         ]
     ]

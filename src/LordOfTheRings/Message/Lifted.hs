@@ -26,7 +26,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
-import LordOfTheRings.Phase (Phase (CombatPhase))
+import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase))
 import LordOfTheRings.Placement (
   Placement (ActiveLocation, AttachedTo, StagingArea),
   placementController,
@@ -40,7 +40,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, ThreatRaisedByEncounter, Traveled),
+  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByEncounter, Traveled),
  )
 
 dealDamage
@@ -841,3 +841,19 @@ cancelEvent cid = do
 -- advance to the next stage" reads.
 completeQuest :: ReverseQueue m => QuestId -> m ()
 completeQuest = push . CompleteQuest
+{- | End the quest phase without resolving the quest, as False Lead reads: the rest of the
+staging step, the players' actions and the quest's resolution are dropped. Nothing
+happens outside the quest phase.
+-}
+endQuestPhaseWithoutResolving :: (MonadTrans t, HasQueue Message m) => t m ()
+endQuestPhaseWithoutResolving = lift $ withQueue_ \q ->
+  case break (== EndPhase QuestPhase) q of
+    (before, after@(_ : _)) -> filter (not . questStep) before <> after
+    _ -> q
+ where
+  questStep = \case
+    RevealEncounterCard -> True
+    CheckWindows [Window When StagingStepEnds] -> True
+    ActionWindow _ -> True
+    QuestResolution -> True
+    _ -> False

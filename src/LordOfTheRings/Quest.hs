@@ -83,6 +83,9 @@ import LordOfTheRings.Quest.Cards.ThePassageOut
 import LordOfTheRings.Quest.Cards.TheRearguardTheMorgulVale
 import LordOfTheRings.Quest.Cards.TheBetrayal
 import LordOfTheRings.Quest.Cards.TheMorgulRider
+import LordOfTheRings.Quest.Cards.Conspiracy
+import LordOfTheRings.Quest.Cards.TheGrandDesign
+import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -198,5 +201,8 @@ allQuests =
         , SomeQuestCard theRearguardTheMorgulVale
         , SomeQuestCard theBetrayal
         , SomeQuestCard theMorgulRider
+        , SomeQuestCard conspiracy
+        , SomeQuestCard theGrandDesign
+        , SomeQuestCard theConfrontation
         ]
     ]

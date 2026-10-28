@@ -104,6 +104,11 @@ import LordOfTheRings.Location.Cards.GladeOfCleansing
 import LordOfTheRings.Location.Cards.MorgulRoad
 import LordOfTheRings.Location.Cards.MorgulVale
 import LordOfTheRings.Location.Cards.TheWhiteBridge
+import LordOfTheRings.Location.Cards.Sewers
+import LordOfTheRings.Location.Cards.RootsOfMindolluin
+import LordOfTheRings.Location.Cards.Storehouse
+import LordOfTheRings.Location.Cards.HousesOfTheDead
+import LordOfTheRings.Location.Cards.TheFourthStar
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -232,5 +237,10 @@ allLocations =
         , SomeLocationCard morgulRoad
         , SomeLocationCard morgulVale
         , SomeLocationCard theWhiteBridge
+        , SomeLocationCard sewers
+        , SomeLocationCard rootsOfMindolluin
+        , SomeLocationCard storehouse
+        , SomeLocationCard housesOfTheDead
+        , SomeLocationCard theFourthStar
         ]
     ]

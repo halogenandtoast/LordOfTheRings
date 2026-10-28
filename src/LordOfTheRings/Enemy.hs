@@ -109,6 +109,10 @@ import LordOfTheRings.Enemy.Cards.MorgulTracker
 import LordOfTheRings.Enemy.Cards.Murzag
 import LordOfTheRings.Enemy.Cards.LordAlcaron
 import LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
+import LordOfTheRings.Enemy.Cards.UnderworldDissident
+import LordOfTheRings.Enemy.Cards.DaughterOfBeruthiel
+import LordOfTheRings.Enemy.Cards.TheHandOfCastamir
+import LordOfTheRings.Enemy.Cards.TelemnarsBane
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -242,5 +246,9 @@ allEnemys =
         , SomeEnemyCard murzag
         , SomeEnemyCard lordAlcaron
         , SomeEnemyCard nazgulOfMinasMorgul
+        , SomeEnemyCard underworldDissident
+        , SomeEnemyCard daughterOfBeruthiel
+        , SomeEnemyCard theHandOfCastamir
+        , SomeEnemyCard telemnarsBane
         ]
     ]

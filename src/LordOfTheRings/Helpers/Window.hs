@@ -109,6 +109,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
         selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
       _ -> pure False
   (ExploredWithoutVictoryWindow t, Explored lid) | t == timing -> isNothing . cdVictoryPoints . toCardDef <$> getLocation lid
+  (ActiveLocationExploredWindow t, Explored lid) | t == timing -> selectAny (LocationWithId lid <> IsActiveLocation)
   _ -> pure $ windowMatches matcher w
  where
   hostDef = \case

@@ -107,6 +107,9 @@ allTreacheryCards =
       , sleeplessMalice
       , terrorDrivesThem
       , theDeadCityLooms
+      , unwelcomeDiscovery
+      , aKnifeInTheBack
+      , falseLeadTheStewardsFear
       ]
 
 deepDeepDark :: CardDef
@@ -652,4 +655,22 @@ theDeadCityLooms =
   (treachery "06160" "The Dead City Looms" TheMorgulVale 2)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+unwelcomeDiscovery :: CardDef
+unwelcomeDiscovery =
+  (treachery "06023" "Unwelcome Discovery" TheStewardsFear 2)
+    { cdKeywords = setFromList [Surge]
+    }
+
+aKnifeInTheBack :: CardDef
+aKnifeInTheBack =
+  (treachery "06024" "A Knife in the Back" TheStewardsFear 3)
+    { cdEasyModeQuantity = Just 1
+    }
+
+falseLeadTheStewardsFear :: CardDef
+falseLeadTheStewardsFear =
+  (treachery "06025" "False Lead" TheStewardsFear 2)
+    { cdShadowEffect = True
     }

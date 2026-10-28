@@ -104,6 +104,9 @@ allQuestCards =
       , theRearguardTheMorgulVale
       , theBetrayal
       , theMorgulRider
+      , conspiracy
+      , theGrandDesign
+      , theConfrontation
       ]
 
 theDrippingWalls :: CardDef
@@ -356,3 +359,12 @@ theBetrayal = quest "06145" "The Betrayal" TheMorgulVale 2 0
 
 theMorgulRider :: CardDef
 theMorgulRider = quest "06146" "The Morgul Rider" TheMorgulVale 3 0
+
+conspiracy :: CardDef
+conspiracy = quest "06011" "Conspiracy" TheStewardsFear 1 0
+
+theGrandDesign :: CardDef
+theGrandDesign = quest "06012" "The Grand Design" TheStewardsFear 2 0
+
+theConfrontation :: CardDef
+theConfrontation = quest "06013" "The Confrontation" TheStewardsFear 3 15

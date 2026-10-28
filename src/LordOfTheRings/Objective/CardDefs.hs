@@ -8,6 +8,7 @@ import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
 import LordOfTheRings.Prelude
 import LordOfTheRings.Trait
+import LordOfTheRings.Name (Name)
 
 allObjectiveCards :: Map CardCode CardDef
 allObjectiveCards =
@@ -39,6 +40,12 @@ allObjectiveCards =
       , deadVillagers
       , lordAlcaron
       , toTheTower
+      , aScrapOfHistory
+      , secretMap
+      , aPrisoner
+      , unholyAlliance
+      , upInFlames
+      , poisonedCounsels
       ]
 
 durinsAxe :: CardDef
@@ -221,3 +228,31 @@ toTheTower =
     (objective "06147" "To the Tower" TheMorgulVale 1)
       { cdCardTraits = setFromList [Captured]
       }
+
+clue :: CardCode -> Name -> CardDef
+clue code name =
+  (objective code name TheStewardsFear 1)
+    { cdCardTraits = setFromList [Clue]
+    , cdVictoryPoints = Just 1
+    }
+
+aScrapOfHistory :: CardDef
+aScrapOfHistory = clue "06026" "A Scrap of History"
+
+secretMap :: CardDef
+secretMap = clue "06027" "Secret Map"
+
+aPrisoner :: CardDef
+aPrisoner = clue "06028" "A Prisoner"
+
+plot :: CardCode -> Name -> CardDef
+plot code name = (objective code name TheStewardsFear 1) {cdCardTraits = setFromList [Plot]}
+
+unholyAlliance :: CardDef
+unholyAlliance = plot "06029" "Unholy Alliance"
+
+upInFlames :: CardDef
+upInFlames = plot "06030" "Up in Flames"
+
+poisonedCounsels :: CardDef
+poisonedCounsels = plot "06031" "Poisoned Counsels"
