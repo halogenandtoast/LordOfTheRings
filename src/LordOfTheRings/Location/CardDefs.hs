@@ -102,6 +102,9 @@ allLocationCards =
       , harborStorehouse
       , cityStreet
       , marketSquare
+      , morgulRoad
+      , morgulVale
+      , theWhiteBridge
       ]
 
 drownedTreasury :: CardDef
@@ -722,3 +725,25 @@ marketSquare =
     { cdCardTraits = setFromList [City]
     , cdShadowEffect = True
     }
+
+morgulRoad :: CardDef
+morgulRoad =
+  (location "06154" "Morgul Road" TheMorgulVale 3 2 5)
+    { cdCardTraits = setFromList [Road]
+    , cdShadowEffect = True
+    }
+
+morgulVale :: CardDef
+morgulVale =
+  (location "06155" "Morgul Vale" TheMorgulVale 3 3 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and X quest points, X the progress on To the Tower.
+theWhiteBridge :: CardDef
+theWhiteBridge =
+  unique
+    (location "06156" "The White Bridge" TheMorgulVale 1 0 0)
+      { cdCardTraits = setFromList [Bridge]
+      }
