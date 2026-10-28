@@ -165,6 +165,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     const characters = [
       ...placed('heroes', (h) => h.owner === pid),
       ...placed('allies', isAt('InPlayArea', pid)),
+      // and the locations they control, as Osgiliath's
+      ...placed('locations', isAt('InPlayArea', pid)),
     ]
     return {
       playerId: pid,
@@ -251,7 +253,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched, amount }
   }
 
-  const [activeLocation] = placed('locations', isAt('ActiveLocation'))
+  const [activeLocation, ...otherActiveLocations] = placed('locations', isAt('ActiveLocation'))
 
   const [asked] = Object.entries(game.question)
 
@@ -273,6 +275,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       quest: placed('quests', (q) => !q.owner)[0] ?? null,
       activeLocation: activeLocation ?? null,
       activeLocationAttachments: attachmentsOn(activeLocation ? [activeLocation] : []),
+      otherActiveLocations: otherActiveLocations.map((card) => ({ card, attachments: attachmentsOn([card]) })),
       staging: withAttachments(staging),
       encounterDeck: game.scenario.encounterDeckSize,
       encounterDiscard: game.scenario.encounterDiscard.length,
