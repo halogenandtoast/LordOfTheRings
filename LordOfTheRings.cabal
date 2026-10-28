@@ -650,6 +650,7 @@ library
       LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
       LordOfTheRings.Quest.Cards.BreakthroughAtTheCitadel
+      LordOfTheRings.Quest.Cards.Captured
       LordOfTheRings.Quest.Cards.ContinuingEastward
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
@@ -678,6 +679,7 @@ library
       LordOfTheRings.Quest.Cards.SearchForTheChamber
       LordOfTheRings.Quest.Cards.Snowdrifts
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
+      LordOfTheRings.Quest.Cards.TheAmbush
       LordOfTheRings.Quest.Cards.TheCapture
       LordOfTheRings.Quest.Cards.TheDefense
       LordOfTheRings.Quest.Cards.TheDrippingWalls
@@ -727,6 +729,7 @@ library
       LordOfTheRings.Scenario.Scenarios.RoadToRivendell
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor
       LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes.Helpers
