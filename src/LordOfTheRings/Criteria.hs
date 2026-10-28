@@ -47,6 +47,8 @@ data Criterion
     CardInDiscard PlayerId CardMatcher
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
+  | -- | at least this many enemies match
+    EnemiesAtLeast Int EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -75,6 +77,11 @@ instance Exists HeroMatcher where
 
 instance Exists AllyMatcher where
   exists = AllyExists
+
+-- | Each hero the player controls has the sphere's printed resource icon, as "Play only
+-- if each hero you control has a printed [lore] resource icon" reads.
+eachHeroHasPrintedIcon :: PlayerId -> Sphere -> Criterion
+eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithSphere sphere))
 
 -- | The player controls a matching ally, as a card that returns one to hand needs.
 controlsAlly :: PlayerId -> AllyMatcher -> Criterion

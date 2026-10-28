@@ -130,6 +130,16 @@ data WindowMatcher
     AttachmentPlayedOnHeroWindow Timing PlayerId
   | -- | a matching enemy attacked the player
     EnemyAttacksPlayerWindow Timing PlayerId EnemyMatcher
+  | -- | a character with the trait was dealt damage, as Gondorian Discipline reads
+    CharacterWithTraitDealtDamageWindow Timing Trait
+  | -- | an attack the character was among dealt the enemy damage
+    AttackDealtDamageByWindow Timing Target
+  | -- | a card effect placed resources in the pool of a hero the player controls
+    HeroGainedResourcesWindow Timing PlayerId
+  | -- | an encounter card with surge revealed from the encounter deck
+    SurgeCardRevealedWindow Timing
+  | -- | a matching hero declared as a defender
+    HeroDefenderDeclaredWindow Timing HeroMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -199,6 +209,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
   (CardPlayedWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
+  (AttackDealtDamageByWindow t who, AttackDealtDamage _ attackers n) -> t == timing && who `elem` attackers && n > 0
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -210,4 +221,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttachmentPlayedOnHeroWindow {}, _) -> False
   (EnemyAttacksPlayerWindow {}, _) -> False
   (ExploredWithoutVictoryWindow {}, _) -> False
+  (CharacterWithTraitDealtDamageWindow {}, _) -> False
+  (HeroGainedResourcesWindow {}, _) -> False
+  (SurgeCardRevealedWindow {}, _) -> False
+  (HeroDefenderDeclaredWindow {}, _) -> False
   _ -> False

@@ -12,6 +12,7 @@ import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Id
+import LordOfTheRings.Keyword (Keyword (Surge))
 import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -108,6 +109,22 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
         selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
       _ -> pure False
   (ExploredWithoutVictoryWindow t, Explored lid) | t == timing -> isNothing . cdVictoryPoints . toCardDef <$> getLocation lid
+  (CharacterWithTraitDealtDamageWindow t trait, DealtDamage target _) | t == timing -> case target of
+    HeroTarget hid -> selectAny (HeroWithId hid <> HeroWithTrait trait)
+    AllyTarget aid -> selectAny (AllyWithId aid <> AllyWithTrait trait)
+    _ -> pure False
+  (HeroGainedResourcesWindow t pid, GainedResources (HeroTarget hid)) | t == timing ->
+    selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
+  -- surge printed or gained, read off the card as it was revealed
+  (SurgeCardRevealedWindow t, Revealed target) | t == timing -> do
+    es <- getsGame gameEntities
+    let def = case target of
+          EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
+          LocationTarget i -> toCardDef <$> Map.lookup i es.locations
+          TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
+          _ -> Nothing
+    maybe (pure False) (hasKeyword Surge target) def
+  (HeroDefenderDeclaredWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
   _ -> pure $ windowMatches matcher w
  where
   hostDef = \case
@@ -193,6 +210,7 @@ passesCriteria = \case
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
   Criteria cs -> allM passesCriteria cs
+  EnemiesAtLeast n m -> (>= n) . length <$> select m
   AnyCriteria cs -> anyM passesCriteria cs
 
 -- | Whether each list can give a character not taken by an earlier one.
