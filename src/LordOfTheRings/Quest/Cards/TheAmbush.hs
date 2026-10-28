@@ -38,7 +38,7 @@ instance RunMessage TheAmbush where
     Flip (isTarget attrs -> True) | not attrs.flipped -> do
       send $ FlipCard attrs.cardId
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      let setUp = map toCardCode [Locations.theCrossroads, Enemies.blackNumenorean, Objectives.faramirObjective, Objectives.lordAlcaron]
+      let setUp = map toCardCode [Locations.theCrossroads, Enemies.blackNumenorean, Objectives.faramirObjective, Objectives.lordAlcaronTheBloodOfGondor]
       -- the objective allies come under the first player's control as they are added
       for_ (filter ((`elem` setUp) . toCardCode) deck) \card -> do
         removeFromEncounterDeck card

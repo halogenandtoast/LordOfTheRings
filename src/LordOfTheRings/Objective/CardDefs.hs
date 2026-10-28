@@ -36,7 +36,7 @@ allObjectiveCards =
       , ithilienGuardian
       , alcaronsScroll
       , faramirObjective
-      , lordAlcaron
+      , lordAlcaronTheBloodOfGondor
       ]
 
 durinsAxe :: CardDef
@@ -207,8 +207,8 @@ faramirObjective =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
 
-lordAlcaron :: CardDef
-lordAlcaron =
+lordAlcaronTheBloodOfGondor :: CardDef
+lordAlcaronTheBloodOfGondor =
   ((objective "06133" "Lord Alcaron" TheBloodOfGondor 1)
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
     { cdUnique = True

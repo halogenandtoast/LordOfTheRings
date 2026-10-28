@@ -67,14 +67,14 @@ spec = describe "The Blood of Gondor" do
   it "stages The Cross-roads and Black Númenorean, gives the first player Faramir and Lord Alcaron, and reveals a card at setup" . bloodTest $ \pid -> do
     run Setup
     chooseLabel "$label.keepHand" pid
-    let setUp = [Locations.theCrossroads, Enemies.blackNumenorean, Objectives.faramirObjective, Objectives.lordAlcaron]
+    let setUp = [Locations.theCrossroads, Enemies.blackNumenorean, Objectives.faramirObjective, Objectives.lordAlcaronTheBloodOfGondor]
     _ <- setEncounterDeck (setUp <> [Locations.southernRoad])
     chooseOptionMatching "flip the quest" pid (const True)
     placementOf Locations.theCrossroads `shouldReturn` Just StagingArea
     placementOf Enemies.blackNumenorean `shouldReturn` Just StagingArea
     placementOf Locations.southernRoad `shouldReturn` Just StagingArea
     placementOf Objectives.faramirObjective `shouldReturn` Just (InPlayArea pid)
-    placementOf Objectives.lordAlcaron `shouldReturn` Just (InPlayArea pid)
+    placementOf Objectives.lordAlcaronTheBloodOfGondor `shouldReturn` Just (InPlayArea pid)
     getsGame (map toCardCode . (.questDeck) . toAttrs . (.scenario)) `shouldReturn` [toCardCode Quests.captured]
 
   -- \* Hidden cards
@@ -269,8 +269,8 @@ spec = describe "The Blood of Gondor" do
     hiddenOf pid `shouldReturn` []
 
   it "returns an engaged enemy to the staging area with Lord Alcaron's Action" . bloodTest $ \pid -> do
-    stage Objectives.lordAlcaron
-    alcaron <- allyOf Objectives.lordAlcaron
+    stage Objectives.lordAlcaronTheBloodOfGondor
+    alcaron <- allyOf Objectives.lordAlcaronTheBloodOfGondor
     _ <- engaged pid Enemies.blackNumenorean
     run $ ActionWindow pid
     chooseAbilityOf pid alcaron
@@ -286,16 +286,16 @@ spec = describe "The Blood of Gondor" do
 
   it "puts Faramir and Lord Alcaron under Captured! and turns every hidden card faceup" . bloodTest $ \pid -> do
     stage Objectives.faramirObjective
-    stage Objectives.lordAlcaron
+    stage Objectives.lordAlcaronTheBloodOfGondor
     hide pid [Locations.southernRoad]
     quest <- putQuestStage Quests.captured
     run $ Flip quest
     resolveWhenRevealed pid
     placementOf Objectives.faramirObjective `shouldReturn` Just (AttachedTo quest)
-    placementOf Objectives.lordAlcaron `shouldReturn` Just (AttachedTo quest)
+    placementOf Objectives.lordAlcaronTheBloodOfGondor `shouldReturn` Just (AttachedTo quest)
     hiddenOf pid `shouldReturn` []
     -- in play, but no one's: archery cannot go to them
-    captives <- traverse (fmap toTarget . allyOf) [Objectives.faramirObjective, Objectives.lordAlcaron]
+    captives <- traverse (fmap toTarget . allyOf) [Objectives.faramirObjective, Objectives.lordAlcaronTheBloodOfGondor]
     stage Locations.theDarkWoods
     run ResolveArchery
     choices <- maybe [] questionChoices <$> getQuestion pid

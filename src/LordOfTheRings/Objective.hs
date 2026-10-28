@@ -28,7 +28,7 @@ import LordOfTheRings.Objective.Cards.Celador
 import LordOfTheRings.Objective.Cards.IthilienGuardian
 import LordOfTheRings.Objective.Cards.AlcaronsScroll
 import LordOfTheRings.Objective.Cards.FaramirObjective
-import LordOfTheRings.Objective.Cards.LordAlcaron
+import LordOfTheRings.Objective.Cards.LordAlcaronTheBloodOfGondor
 import LordOfTheRings.Objective.Runner ()
 import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Prelude
@@ -57,5 +57,5 @@ allObjectives :: Map CardCode SomeObjectiveCard
 allObjectives =
   Map.fromList
     [ (toCardCode builder, card)
-    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard caveTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood, SomeObjectiveCard abandonedTools, SomeObjectiveCard bookOfMazarbul, SomeObjectiveCard arwenUndomielTheRedhornGate, SomeObjectiveCard arwenUndomielRoadToRivendell, SomeObjectiveCard durinsGreaves, SomeObjectiveCard durinsAxe, SomeObjectiveCard durinsHelm, SomeObjectiveCard celador, SomeObjectiveCard ithilienGuardian, SomeObjectiveCard alcaronsScroll, SomeObjectiveCard faramirObjective, SomeObjectiveCard lordAlcaron]
+    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard caveTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood, SomeObjectiveCard abandonedTools, SomeObjectiveCard bookOfMazarbul, SomeObjectiveCard arwenUndomielTheRedhornGate, SomeObjectiveCard arwenUndomielRoadToRivendell, SomeObjectiveCard durinsGreaves, SomeObjectiveCard durinsAxe, SomeObjectiveCard durinsHelm, SomeObjectiveCard celador, SomeObjectiveCard ithilienGuardian, SomeObjectiveCard alcaronsScroll, SomeObjectiveCard faramirObjective, SomeObjectiveCard lordAlcaronTheBloodOfGondor]
     ]

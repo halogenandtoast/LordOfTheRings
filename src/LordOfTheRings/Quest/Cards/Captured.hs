@@ -32,7 +32,7 @@ instance RunMessage Captured where
       captives <-
         select
           $ AllyMatchAny
-            [AllyWithCardCode (toCardCode Objectives.faramirObjective), AllyWithCardCode (toCardCode Objectives.lordAlcaron)]
+            [AllyWithCardCode (toCardCode Objectives.faramirObjective), AllyWithCardCode (toCardCode Objectives.lordAlcaronTheBloodOfGondor)]
       for_ captives \a -> placeAlly a (AttachedTo $ toTarget attrs)
       eachPlayer (void . turnHiddenCardsFaceup)
       pure q

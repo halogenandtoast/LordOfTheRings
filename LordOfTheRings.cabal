@@ -80,7 +80,7 @@ library
       LordOfTheRings.Ally.Cards.LongbeardElder
       LordOfTheRings.Ally.Cards.LongbeardMapMaker
       LordOfTheRings.Ally.Cards.LongbeardOrcSlayer
-      LordOfTheRings.Ally.Cards.LordAlcaron
+      LordOfTheRings.Ally.Cards.LordAlcaronTheBloodOfGondor
       LordOfTheRings.Ally.Cards.LorienGuide
       LordOfTheRings.Ally.Cards.MarksmanOfLorien
       LordOfTheRings.Ally.Cards.MasterOfLore
@@ -615,7 +615,7 @@ library
       LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
       LordOfTheRings.Objective.Cards.GrimbeornTheOld
       LordOfTheRings.Objective.Cards.IthilienGuardian
-      LordOfTheRings.Objective.Cards.LordAlcaron
+      LordOfTheRings.Objective.Cards.LordAlcaronTheBloodOfGondor
       LordOfTheRings.Objective.Cards.ShadowKey
       LordOfTheRings.Objective.Cards.SignsOfGollum
       LordOfTheRings.Objective.Cards.Wilyador
