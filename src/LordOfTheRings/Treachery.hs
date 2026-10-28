@@ -90,6 +90,10 @@ import LordOfTheRings.Treachery.Cards.CollateralDamage
 import LordOfTheRings.Treachery.Cards.LostInTheCity
 import LordOfTheRings.Treachery.Cards.LocalTrouble
 import LordOfTheRings.Treachery.Cards.LurkingInShadows
+import LordOfTheRings.Treachery.Cards.ImpenetrableFog
+import LordOfTheRings.Treachery.Cards.SleeplessMalice
+import LordOfTheRings.Treachery.Cards.TerrorDrivesThem
+import LordOfTheRings.Treachery.Cards.TheDeadCityLooms
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -204,5 +208,9 @@ allTreacherys =
         , SomeTreacheryCard lostInTheCity
         , SomeTreacheryCard localTrouble
         , SomeTreacheryCard lurkingInShadows
+        , SomeTreacheryCard impenetrableFog
+        , SomeTreacheryCard sleeplessMalice
+        , SomeTreacheryCard terrorDrivesThem
+        , SomeTreacheryCard theDeadCityLooms
         ]
     ]
