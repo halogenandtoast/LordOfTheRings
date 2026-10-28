@@ -14,6 +14,11 @@ data CardCost = StaticCost Int | DynamicCost
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+-- | Where a player card may be played from.
+data PlayableFrom = FromHand | FromHandOrDiscard | FromDiscardOnly
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 data CardDef = CardDef
   { cdCardCode :: CardCode
   , cdName :: Name
@@ -50,6 +55,8 @@ data CardDef = CardDef
   -- ^ the copies of its title a deck may hold
   , cdLimitOnePerHost :: Bool
   -- ^ an attachment limited to 1 per character: no host takes a second copy of its title
+  , cdPlayableFrom :: PlayableFrom
+  -- ^ where its owner may play it from, as Glorfindel can be played from the discard pile
   }
   deriving stock (Show, Eq, Generic)
 
@@ -96,6 +103,7 @@ emptyCardDef cCode name cType =
     , cdEscape = Nothing
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
+    , cdPlayableFrom = FromHand
     }
 
 unique :: CardDef -> CardDef

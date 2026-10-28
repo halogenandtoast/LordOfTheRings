@@ -110,7 +110,7 @@ instance RunMessage Player where
         $ ActionWindow pid
       pure player
     OptionalActionWindow pid | pid == player.id -> do
-      playable <- filterM (canPlay player) player.hand
+      playable <- playableCards player
       actions <- getActionAbilities player.id
       fromHand <- handActions player
       unless (null playable && null actions && null fromHand)
@@ -120,10 +120,11 @@ instance RunMessage Player where
     PlayCard pid cid | pid == player.id -> do
       push $ PlayCardInWindow pid cid []
       pure player
+    -- from hand, or from the discard pile for a card that may be played from there
     PlayCardInWindow pid cid windows | pid == player.id -> do
-      card <- takeFromHand cid
+      card <- maybe (error "not able to find card") pure $ find ((== cid) . (.id)) (player.hand <> player.discard)
       pushAll =<< inLogBlock (PlayBlock pid card) [PayForCard pid card windows]
-      pure $ player & handL %~ filter ((/= cid) . (.id))
+      pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case
         PlayerCard card -> push $ PlayAlly pid card
@@ -309,7 +310,7 @@ instance RunMessage Player where
     -- asks even with nothing to play or use, so the player moves the game on, not the engine
     -- with nothing to do, it says so, and names the phase that answering moves on to
     actionWindow prompt done next again = do
-      playable <- filterM (canPlay player) player.hand
+      playable <- playableCards player
       actions <- getActionAbilities player.id
       fromHand <- handActions player
       let idle = null playable && null actions && null fromHand
@@ -331,6 +332,16 @@ handActions p = flip filterM p.hand \case
     Just criteria -> andM [passesCriteriaFor p.id criteria, passesUnique c]
     Nothing -> pure False
   _ -> pure False
+
+-- | The cards the player could play now: from hand, and from the discard pile those that
+-- may be played from there.
+playableCards :: HasGame m => Player -> m [Card]
+playableCards p =
+  filterM (canPlay p)
+    $ filter (from [FromHand, FromHandOrDiscard]) p.hand
+    <> filter (from [FromHandOrDiscard, FromDiscardOnly]) p.discard
+ where
+  from zones c = cdPlayableFrom (toCardDef c) `elem` zones
 
 canPlay :: HasGame m => Player -> Card -> m Bool
 canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay p.id c]
