@@ -2,6 +2,7 @@ module LordOfTheRings.QuestPhaseSpec (spec) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Effect
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Keyword
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -146,3 +147,11 @@ spec = describe "Quest phase" do
     eowyn <- toTarget <$> getHeroWithCode "01007"
     chooseTarget pid eowyn
     getCharacterDamage eowyn `shouldReturn` 1
+
+  it "assigns archery damage to allies, if able, when it must" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    run $ CreateEffect $ Effect GameSource GameTarget [ArcheryBonus 1, ArcheryDamageToAllies] UntilEndOfRound
+    ally <- putAllyIntoPlay pid Allies.gondorianSpearman
+    run $ BeginPhase CombatPhase
+    Just question <- getQuestion pid
+    [t | TargetLabel t _ <- questionChoices question] `shouldBe` [ally]

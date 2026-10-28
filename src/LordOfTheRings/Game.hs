@@ -522,7 +522,9 @@ runGameMessage msg g = case msg of
   -- ponytail: the first player divides it for the group
   ArcheryDamage n | n > 0 -> do
     lead <- getLead
-    characters <- selectCharacters AnyHero AnyAlly
+    alliesOnly <- elem ArcheryDamageToAllies <$> getModifiers GameTarget
+    allies <- map toTarget <$> select AnyAlly
+    characters <- if alliesOnly && notNull allies then pure allies else selectCharacters AnyHero AnyAlly
     unless (null characters)
       $ push
       $ questionLabel (ikeyWith "label.assignArcheryDamage" [intVar "count" n]) lead

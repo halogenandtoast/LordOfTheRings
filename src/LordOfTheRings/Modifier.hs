@@ -54,6 +54,9 @@ data ModifierType
     StagingThreatBonus Int
   | -- | on the game: the archery total is raised by this much, as Pinned Down reads
     ArcheryBonus Int
+  | -- | on the game: archery damage must be assigned to allies, if able, as An Untimely
+    -- End reads
+    ArcheryDamageToAllies
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks
