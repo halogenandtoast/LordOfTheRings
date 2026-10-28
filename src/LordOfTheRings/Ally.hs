@@ -97,6 +97,12 @@ import LordOfTheRings.Ally.Cards.WardenOfHealing
 import LordOfTheRings.Ally.Cards.TrollshawScout
 import LordOfTheRings.Ally.Cards.ImladrisStargazer
 import LordOfTheRings.Ally.Cards.MasterOfTheForge
+import LordOfTheRings.Ally.Cards.Treebeard
+import LordOfTheRings.Ally.Cards.Glorfindel
+import LordOfTheRings.Ally.Cards.MarksmanOfLorien
+import LordOfTheRings.Ally.Cards.Yazan
+import LordOfTheRings.Ally.Cards.Jubayr
+import LordOfTheRings.Ally.Cards.Firyal
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -221,5 +227,11 @@ allAllies =
         , SomeAllyCard trollshawScout
         , SomeAllyCard imladrisStargazer
         , SomeAllyCard masterOfTheForge
+        , SomeAllyCard treebeard
+        , SomeAllyCard glorfindel
+        , SomeAllyCard marksmanOfLorien
+        , SomeAllyCard yazan
+        , SomeAllyCard jubayr
+        , SomeAllyCard firyal
         ]
     ]

@@ -80,6 +80,9 @@ import LordOfTheRings.Event.Cards.TimelyAid
 import LordOfTheRings.Event.Cards.UnseenStrike
 import LordOfTheRings.Event.Cards.RenewedFriendship
 import LordOfTheRings.Event.Cards.NeedfulToKnow
+import LordOfTheRings.Event.Cards.AGoodHarvest
+import LordOfTheRings.Event.Cards.ElvenLight
+import LordOfTheRings.Event.Cards.HeedTheDream
 import LordOfTheRings.Event.Cards.HailOfStones
 import LordOfTheRings.Event.Cards.OutOfTheWild
 import LordOfTheRings.Event.Cards.TheEndComes
@@ -185,6 +188,9 @@ allEvents =
         , SomeEventCard unseenStrike
         , SomeEventCard renewedFriendship
         , SomeEventCard needfulToKnow
+        , SomeEventCard aGoodHarvest
+        , SomeEventCard elvenLight
+        , SomeEventCard heedTheDream
         , SomeEventCard hailOfStones
         , SomeEventCard outOfTheWild
         , SomeEventCard theEndComes

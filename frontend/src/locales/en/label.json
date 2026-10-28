@@ -449,6 +449,33 @@
   "returnFromDiscard": "Choose a card to return from your discard pile to your hand",
   "chooseHeroToReady": "Choose a hero to ready",
   "chooseEnemyToAttack": "Choose an enemy to attack",
+  "treebeard": {
+    "ready": "Ready an Ent character"
+  },
+  "marksmanOfLorien": {
+    "enemy": "Give an enemy -2 defense until the end of the round"
+  },
+  "yazan": {
+    "damage": "Deal 1 damage to a non-unique enemy"
+  },
+  "jubayr": {
+    "discardShadow": "Discard a facedown shadow card from a non-unique enemy"
+  },
+  "firyal": {
+    "discard": "Discard it"
+  },
+  "aGoodHarvest": {
+    "nameSphere": "Name a sphere",
+    "leadership": "Leadership",
+    "tactics": "Tactics",
+    "spirit": "Spirit",
+    "lore": "Lore"
+  },
+  "heedTheDream": {
+    "spend": "Spend 3 leadership resources as a group to search again?",
+    "searchAgain": "Spend 3 to search the whole deck for another card",
+    "done": "Don't spend"
+  },
   "nenya": {
     "give": "Add Galadriel's willpower to another character"
   },
@@ -572,7 +599,8 @@
     "discardShadow": "Choose a shadow card to discard"
   },
   "arwenUndomiel": {
-    "choose": "Choose a character to gain sentinel and +1 defense"
+    "choose": "Choose a character to gain sentinel and +1 defense",
+    "resource": "Add 1 resource to a Noldor's or Aragorn's resource pool"
   },
   "wardenOfHealing": {
     "heal": "Choose a character to heal 1 damage from",

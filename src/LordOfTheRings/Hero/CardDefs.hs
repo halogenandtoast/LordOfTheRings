@@ -52,6 +52,8 @@ allHeroCards =
       , aragornLore
       , hama
       , glorfindelSpirit
+      , arwenUndomiel
+      , eowynTactics
       ]
 
 aragorn :: CardDef
@@ -293,4 +295,16 @@ glorfindelSpirit :: CardDef
 glorfindelSpirit =
   (hero "04101" "Glorfindel" Spirit 5 3 3 1 5)
     { cdCardTraits = setFromList [Noldor, Noble, Warrior]
+    }
+
+arwenUndomiel :: CardDef
+arwenUndomiel =
+  (hero "10140" "Arwen Undómiel" Spirit 9 3 1 2 3)
+    { cdCardTraits = setFromList [Noldor, Noble]
+    }
+
+eowynTactics :: CardDef
+eowynTactics =
+  (hero "145002" "Éowyn" Tactics 9 4 1 1 3)
+    { cdCardTraits = setFromList [Rohan, Noble]
     }

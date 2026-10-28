@@ -47,6 +47,9 @@ allAttachmentCards =
       , wingfoot
       , heirOfMardil
       , nenya
+      , bloodOfNumenor
+      , gondorianFire
+      , mirrorOfGaladriel
       , captainOfGondor
       , cram
       , throrsMap
@@ -573,4 +576,23 @@ miruvor :: CardDef
 miruvor =
   (attachment "04133" "Miruvor" Spirit (StaticCost 1))
     { cdCardTraits = setFromList [Item]
+    }
+
+bloodOfNumenor :: CardDef
+bloodOfNumenor =
+  (attachment "05013" "Blood of Númenor" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+gondorianFire :: CardDef
+gondorianFire =
+  (attachment "06085" "Gondorian Fire" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+mirrorOfGaladriel :: CardDef
+mirrorOfGaladriel =
+  (attachment "08118" "Mirror of Galadriel" Spirit (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
     }

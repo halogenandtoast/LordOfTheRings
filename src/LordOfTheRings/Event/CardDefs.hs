@@ -91,6 +91,9 @@ allEventCards =
       , unseenStrike
       , renewedFriendship
       , needfulToKnow
+      , aGoodHarvest
+      , elvenLight
+      , heedTheDream
       , hailOfStones
       , outOfTheWild
       , theEndComes
@@ -383,3 +386,12 @@ peaceAndThought = event "04135" "Peace, and Thought" Lore (StaticCost 1)
 
 riskSomeLight :: CardDef
 riskSomeLight = (event "04136" "Risk Some Light" Lore (StaticCost 3)) {cdKeywords = setFromList [Secrecy 3]}
+
+aGoodHarvest :: CardDef
+aGoodHarvest = event "06010" "A Good Harvest" Neutral (StaticCost 0)
+
+elvenLight :: CardDef
+elvenLight = (event "10145" "Elven-light" Spirit (StaticCost 1)) {cdPlayableFrom = FromDiscardOnly}
+
+heedTheDream :: CardDef
+heedTheDream = event "12009" "Heed the Dream" Lore (StaticCost 1)

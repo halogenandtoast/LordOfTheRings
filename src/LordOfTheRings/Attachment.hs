@@ -44,6 +44,9 @@ import LordOfTheRings.Attachment.Cards.DunedainSignal
 import LordOfTheRings.Attachment.Cards.SupportOfTheEagles
 import LordOfTheRings.Attachment.Cards.Vilya
 import LordOfTheRings.Attachment.Cards.Nenya
+import LordOfTheRings.Attachment.Cards.BloodOfNumenor
+import LordOfTheRings.Attachment.Cards.GondorianFire
+import LordOfTheRings.Attachment.Cards.MirrorOfGaladriel
 import LordOfTheRings.Attachment.Cards.OLorien
 import LordOfTheRings.Attachment.Cards.Lembas
 import LordOfTheRings.Attachment.Cards.BowOfTheGaladhrim
@@ -116,6 +119,9 @@ allAttachments =
         , SomeAttachmentCard celebriansStone
         , SomeAttachmentCard vilya
         , SomeAttachmentCard nenya
+        , SomeAttachmentCard bloodOfNumenor
+        , SomeAttachmentCard gondorianFire
+        , SomeAttachmentCard mirrorOfGaladriel
         , SomeAttachmentCard oLorien
         , SomeAttachmentCard lembas
         , SomeAttachmentCard bowOfTheGaladhrim

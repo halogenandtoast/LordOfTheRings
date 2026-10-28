@@ -101,6 +101,12 @@ allAllyCards =
       , trollshawScout
       , imladrisStargazer
       , masterOfTheForge
+      , treebeard
+      , glorfindel
+      , marksmanOfLorien
+      , yazan
+      , jubayr
+      , firyal
       ]
 
 guardOfTheCitadel :: CardDef
@@ -669,4 +675,49 @@ masterOfTheForge :: CardDef
 masterOfTheForge =
   (ally "04134" "Master of the Forge" Lore (StaticCost 2) 0 0 1 1)
     { cdCardTraits = setFromList [Noldor, Craftsman]
+    }
+
+treebeard :: CardDef
+treebeard =
+  (ally "08146" "Treebeard" Neutral (StaticCost 4) 2 4 3 5)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Ent]
+    }
+
+glorfindel :: CardDef
+glorfindel =
+  (ally "12006" "Glorfindel" Spirit (StaticCost 5) 3 3 1 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Noldor, Noble, Warrior]
+    , cdPlayableFrom = FromHandOrDiscard
+    }
+
+marksmanOfLorien :: CardDef
+marksmanOfLorien =
+  (ally "12085" "Marksman of Lórien" Tactics (StaticCost 3) 0 3 0 2)
+    { cdCardTraits = setFromList [Silvan, Warrior]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+yazan :: CardDef
+yazan =
+  (ally "17004" "Yazan" Tactics (StaticCost 5) 2 3 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Harad, Ranger]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+jubayr :: CardDef
+jubayr =
+  (ally "17006" "Jubayr" Spirit (StaticCost 5) 1 2 3 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Harad, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+firyal :: CardDef
+firyal =
+  (ally "17008" "Firyal" Lore (StaticCost 5) 3 1 2 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Harad, Scout]
     }
