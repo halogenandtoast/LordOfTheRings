@@ -10,9 +10,14 @@ import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Staging (getEnemyDefense)
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (getEnemy)
-import LordOfTheRings.Phase (Phase (ResourcePhase))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
+import LordOfTheRings.Matcher (getCurrentQuest, getEnemy)
+import LordOfTheRings.Modifier (ModifierType (CurrentQuest))
+import LordOfTheRings.Phase (Phase (QuestPhase, ResourcePhase))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioVictoryDisplay))
 import LordOfTheRings.Window
+import LordOfTheRings.Decklist (deckProblem, loadPlayer)
 import TestImport
 
 -- Beravor (Lore, Dúnedain), Éowyn (Spirit) and Théodred (Leadership): the test deck's heroes.
@@ -88,8 +93,26 @@ offersCard pid card =
   maybe False (any \case TargetLabel t _ -> t == CardIdTarget card.id; _ -> False) . fmap questionChoices
     <$> getQuestion pid
 
+-- | Gather Information, played from hand to the staging area.
+playGatherInformation :: PlayerId -> GameT Target
+playGatherInformation pid = do
+  card <- playWith pid theodred 0 Quests.gatherInformation
+  passActions pid
+  getsGame (toTarget . fromJustNote "no side quest" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.quests))
+
+-- | The decklists, from RingsDB: The One Deck (8682) and Seastan's Boromir (42).
+theOneDeck, seastansBoromir :: DeckList
+theOneDeck = DeckList ["04128", "10140", "145002"] [("01014", 1), ("01026", 2), ("01031", 1), ("01045", 2), ("01046", 1), ("01050", 2), ("01057", 2), ("01073", 3), ("02079", 1), ("02100", 2), ("02119", 3), ("04083", 3), ("04106", 3), ("04134", 3), ("04137", 3), ("08146", 2), ("09014", 1), ("10145", 2), ("12006", 1), ("12009", 3), ("12085", 2), ("17004", 1), ("17006", 3), ("17008", 3)]
+seastansBoromir = DeckList ["02095", "04101", "08112"] [("01026", 3), ("01048", 2), ("01050", 2), ("01053", 2), ("01057", 1), ("01073", 3), ("02056", 3), ("04006", 1), ("04058", 1), ("04059", 3), ("04083", 1), ("04107", 3), ("04108", 2), ("04110", 2), ("05013", 3), ("06005", 3), ("06010", 3), ("06085", 3), ("08117", 3), ("08118", 3), ("08121", 3)]
+
 spec :: Spec
 spec = describe "The One Deck and Seastan's Boromir" do
+  it "both decklists load, every card known and within the deckbuilding rules" . (id :: IO () -> IO ()) $
+    for_ [theOneDeck, seastansBoromir] \dl -> do
+      deckProblem dl `shouldBe` Nothing
+      loaded <- loadPlayer "tester" dl
+      either (Left . show) (const $ Right ()) loaded `shouldBe` Right ()
+
   it "Treebeard enters play exhausted, collects a resource each resource phase, and pays 2 to ready an Ent" . gameTest $ \pid -> do
     tb <- putAllyIntoPlay pid Allies.treebeard
     allyExhausted <$> ally tb `shouldReturn` True
@@ -239,3 +262,23 @@ spec = describe "The One Deck and Seastan's Boromir" do
     hand <- map (.id) <$> handOf pid
     sort hand `shouldBe` sort [top.id, bottom.id]
     resourcesOf t `shouldReturn` 0
+
+  it "Gather Information goes to the staging area, and the first player may quest against it" . gameTest $ \pid -> do
+    main <- putQuestStage Quests.fliesAndSpiders
+    side <- playGatherInformation pid
+    getCurrentQuest `shouldReturn` Just main
+    run $ BeginPhase QuestPhase
+    chooseTarget pid side
+    getCurrentQuest `shouldReturn` Just side
+
+  it "Gather Information, quested against, takes the progress and lets each player search their deck once defeated" . gameTest $ \pid -> do
+    main <- putQuestStage Quests.fliesAndSpiders
+    side <- playGatherInformation pid
+    wanted <- onBottomOfDeck pid Events.aTestOfWill
+    run $ CreateEffect $ Effect GameSource side [CurrentQuest] UntilEndOfPhase
+    run $ PlaceProgressOnQuest 6
+    chooseTarget pid (CardIdTarget wanted.id)
+    map (.id) <$> handOf pid `shouldReturn` [wanted.id]
+    getsGame (map toCardCode . scenarioVictoryDisplay . toAttrs . (.scenario)) `shouldReturn` [toCardCode Quests.gatherInformation]
+    getCurrentQuest `shouldReturn` Just main
+    getsGame (fmap (.progress) . find ((== main) . toTarget) . toList . (.entities.quests)) `shouldReturn` Just 0
