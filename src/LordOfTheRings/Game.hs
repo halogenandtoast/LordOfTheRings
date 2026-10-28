@@ -421,7 +421,16 @@ runGameMessage msg g = case msg of
     pure $ g & phaseL .~ PlanningPhase
   BeginPhase QuestPhase -> do
     order <- getPlayerOrder
-    pushAll $ map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
+    -- the first player may choose a side quest in the staging area to quest against
+    sideQuests <- getSideQuests
+    let chooseQuest =
+          [ questionLabel (ikey "label.chooseCurrentQuest") lead
+            $ Label (ikey "label.questAgainstMainQuest") []
+            : [targetLabel q [CreateEffect $ Effect GameSource q [CurrentQuest] UntilEndOfPhase] | q <- sideQuests]
+          | notNull sideQuests
+          , lead <- take 1 order
+          ]
+    pushAll $ chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
     pure $ g & phaseL .~ QuestPhase
   BeginPhase TravelPhase -> do
     -- the players' actions come first, as Thrór's Map's, then the lead may travel
@@ -1029,10 +1038,11 @@ runGameMessage msg g = case msg of
     let remaining = maybe 0 (\(l, qp) -> qp - l.progress) ((,) <$> active <*> questPoints)
         onLocation = if isJust active then max 0 $ foldr min (min n remaining) limits else 0
         overflow = if onLocation < remaining then 0 else n - onLocation
-    quests <- toList <$> getsGame (entitiesQuests . gameEntities)
+    -- the rest goes to the side quest quested against, else to the quest cards
+    quests <- maybe getMainQuests (pure . pure) =<< getCurrentSideQuest
     pushAll
       $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
-      <> [PlaceTokens GameSource (toTarget q) Progress overflow | q <- quests, overflow > 0]
+      <> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
     pure g
   PayForCard pid card windows
     | card.cardType == AttachmentType -> do
@@ -1107,6 +1117,9 @@ runGameMessage msg g = case msg of
       & entitiesL
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  PutSideQuestIntoPlay pid card -> do
+    sideQuest <- newSideQuest pid card
+    pure $ g & entitiesL . questsL %~ insertEntity sideQuest
   PutHeroIntoPlay pid card -> do
     thisHero <- newHero pid card
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
@@ -1199,7 +1212,8 @@ runGameMessage msg g = case msg of
   ReturnToTopOfEncounterDeck target -> returnToEncounterDeck (:) target g
   ReturnToBottomOfEncounterDeck target -> returnToEncounterDeck (\card deck -> deck <> [card]) target g
   RemoveProgressFromQuest source n -> do
-    quests <- toList <$> getsGame (entitiesQuests . gameEntities)
+    current <- getCurrentQuest
+    let quests = [q | q <- toList g.entities.quests, Just (toTarget q) == current]
     pushAll [RemoveTokens source (toTarget q) Progress (min n q.progress) | q <- quests, q.progress > 0]
     pure g
   PutShadowEnemyIntoPlay host cid pid -> do
@@ -1272,6 +1286,9 @@ runGameMessage msg g = case msg of
   TakeControl aid pid -> do
     push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
     pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
+  -- a side quest defeated goes to the victory display, and the quest stays where it is
+  CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isJust (questOwner $ toAttrs q) ->
+    pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
   CompleteQuest qid -> do
     push AdvanceQuest
     -- a stage with victory points goes to the victory display, as Search for an Exit's
@@ -1355,7 +1372,7 @@ runGameMessage msg g = case msg of
     getGame
   ResetToStage card _ -> do
     pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
-    pure $ g & entitiesL . questsL .~ mempty
+    pure $ g & entitiesL . questsL %~ Map.filter (isJust . questOwner . toAttrs)
   PlayAttachment pid card -> do
     attachment <- newAttachment pid card
     let entered = CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]

@@ -208,6 +208,8 @@ data ModifierType
   | -- | on an ally, as its card id: it returns to its owner's hand once the players quest
     -- successfully this phase, as Bofur's
     ReturnToHandIfQuestedSuccessfully
+  | -- | on a side quest: the players quest against it this phase, as the current quest
+    CurrentQuest
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

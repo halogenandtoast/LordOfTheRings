@@ -136,6 +136,10 @@ ally cCode name sphere cost willpower attack defense hitPoints =
 attachment :: CardCode -> Name -> Sphere -> CardCost -> CardDef
 attachment cCode name sphere cost = (playerCard cCode name AttachmentType sphere) {cdCost = Just cost}
 
+playerSideQuest :: CardCode -> Name -> Sphere -> CardCost -> Int -> CardDef
+playerSideQuest cCode name sphere cost questPoints =
+  (playerCard cCode name PlayerSideQuestType sphere) {cdCost = Just cost, cdQuestPoints = Just questPoints}
+
 event :: CardCode -> Name -> Sphere -> CardCost -> CardDef
 event cCode name sphere cost = (playerCard cCode name EventType sphere) {cdCost = Just cost}
 

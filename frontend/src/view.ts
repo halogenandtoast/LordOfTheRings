@@ -14,6 +14,7 @@ const cardTypes: Record<string, string> = {
   QuestType: 'Quest',
   ObjectiveType: 'Objective',
   ObjectiveAllyType: 'Objective Ally',
+  PlayerSideQuestType: 'Player Side Quest',
 }
 
 const phases: Record<string, string> = {
@@ -195,6 +196,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ...placed('attachments', isAt('StagingArea')),
     // a treachery shows in staging while it resolves, until it attaches or is discarded
     ...placed('treacheries', isAt('Unplaced')),
+    // a player side quest waits in staging until it is defeated
+    ...placed('quests', (q) => !!q.owner),
   ]
 
   const damageTo = (id: string | null, messages: Message[]): number =>
@@ -267,7 +270,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ),
     scenario: {
       name: game.scenario.name,
-      quest: placed('quests', () => true)[0] ?? null,
+      quest: placed('quests', (q) => !q.owner)[0] ?? null,
       activeLocation: activeLocation ?? null,
       activeLocationAttachments: attachmentsOn(activeLocation ? [activeLocation] : []),
       staging: withAttachments(staging),

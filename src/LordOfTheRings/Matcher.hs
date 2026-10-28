@@ -23,6 +23,7 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Name
 import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Placement
+import LordOfTheRings.Quest.Types (QuestAttrs (questOwner))
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
@@ -487,9 +488,33 @@ getConditionAttachments = do
     AttachedTo _ -> True
     _ -> False
 
--- | The quest card in play, as a target.
+-- | The current quest, as a target: a side quest the players chose to quest against this
+-- phase, or else the quest card in play.
 getCurrentQuest :: HasGame m => m (Maybe Target)
-getCurrentQuest = getsGame (fmap toTarget . headMay . toList . entitiesQuests . gameEntities)
+getCurrentQuest = do
+  side <- getCurrentSideQuest
+  mains <- getMainQuests
+  pure $ side <|> headMay mains
+
+-- | The quest cards in play, side quests left out.
+getMainQuests :: HasGame m => m [Target]
+getMainQuests = getsGame (map toTarget . filter (isNothing . questOwner . toAttrs) . toList . entitiesQuests . gameEntities)
+
+-- | The side quest in the staging area chosen as the current quest this phase, if any.
+getCurrentSideQuest :: HasGame m => m (Maybe Target)
+getCurrentSideQuest = do
+  mods <- getsGame gameModifiers
+  quests <- getsGame (toList . entitiesQuests . gameEntities)
+  pure $ headMay
+    [ toTarget q
+    | q <- quests
+    , isJust (questOwner $ toAttrs q)
+    , CurrentQuest `elem` map modifierType (Map.findWithDefault [] (toTarget q) mods)
+    ]
+
+-- | The player side quests in the staging area.
+getSideQuests :: HasGame m => m [Target]
+getSideQuests = getsGame (map toTarget . filter (isJust . questOwner . toAttrs) . toList . entitiesQuests . gameEntities)
 
 -- | The top card of the encounter deck, if there is one.
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)

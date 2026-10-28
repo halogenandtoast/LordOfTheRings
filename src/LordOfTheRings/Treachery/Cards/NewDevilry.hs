@@ -18,7 +18,8 @@ newDevilry = treachery NewDevilry Cards.newDevilry
 instance RunMessage NewDevilry where
   runMessage msg t@(NewDevilry attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      quest <- getsGame (headMay . toList . (.entities.quests))
+      mains <- getMainQuests
+      quest <- getsGame (find ((`elem` mains) . toTarget) . toList . (.entities.quests))
       case quest of
         Just q | q.stage /= 1 -> do
           shuffleIntoQuestDeck q

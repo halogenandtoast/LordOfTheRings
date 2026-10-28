@@ -40,6 +40,9 @@ data QuestAttrs = QuestAttrs
   , questCardCode :: CardCode
   , questTokens :: Tokens
   , questFlipped :: Bool
+  , questOwner :: Maybe PlayerId
+  -- ^ a player side quest's owner; it waits in the staging area until the players quest
+  -- against it
   }
   deriving stock (Show, Eq, Generic)
 
@@ -49,7 +52,7 @@ instance ToJSON QuestAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "quest")
 
 instance FromJSON QuestAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "quest")
+  parseJSON = genericParseJSON (aesonOptions $ Just "quest") . withDefaults [("owner", toJSON (Nothing :: Maybe PlayerId))]
 
 quest :: (QuestAttrs -> a) -> CardDef -> QuestCard a
 quest f cardDef =
@@ -63,6 +66,7 @@ quest f cardDef =
             , questCardCode = cdCardCode cardDef
             , questTokens = mempty
             , questFlipped = False
+            , questOwner = Nothing
             }
     }
 
@@ -92,8 +96,11 @@ instance Show Quest where
 instance ToJSON Quest where
   toJSON (Quest a) = toJSON a
 
+-- | A player side quest is its owner's card.
 instance IsCard QuestAttrs where
-  toCard a = EncounterCard $ MkEncounterCard {ecId = questCardId a, ecCardCode = questCardCode a}
+  toCard a = case questOwner a of
+    Just owner -> PlayerCard $ MkPlayerCard {pcId = questCardId a, pcCardCode = questCardCode a, pcOwner = Just owner}
+    Nothing -> EncounterCard $ MkEncounterCard {ecId = questCardId a, ecCardCode = questCardCode a}
 
 instance IsCard Quest where
   toCard = toCard . toAttrs

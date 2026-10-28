@@ -88,6 +88,11 @@ newQuest :: (MonadRandom m) => EncounterCard -> m Quest
 newQuest card = createQuest card <$> getRandom
 
 allQuests :: Map CardCode SomeQuestCard
+-- | A player side quest, owned by the player who played it.
+newSideQuest :: (MonadRandom m) => PlayerId -> PlayerCard -> m Quest
+newSideQuest pid card =
+  overAttrs (\a -> a {questOwner = Just pid}) . lookupQuest (toCardCode card) card.id <$> getRandom
+
 allQuests =
   Map.fromList
     [ (toCardCode builder, card)

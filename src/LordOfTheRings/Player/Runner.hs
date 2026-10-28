@@ -415,6 +415,7 @@ correctPhase :: HasGame m => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
   AllyType -> andM [isPhase PlanningPhase, allyAllowed]
   AttachmentType -> isPhase PlanningPhase
+  PlayerSideQuestType -> isPhase PlanningPhase
   -- an action event can be played in any action window; responses are offered by theirs
   EventType -> actionEventPlayable card
   _ -> pure False

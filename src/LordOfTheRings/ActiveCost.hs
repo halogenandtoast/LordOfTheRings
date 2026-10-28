@@ -93,4 +93,5 @@ playCard pid card windows = case cdCardType (toCardDef card) of
   AttachmentType -> [PlayAttachment pid card]
   -- the When window comes first, for an effect that cancels it, as Counter-Spell's
   EventType -> [CheckWindows [mkWhen $ PlayingEvent pid card.id], PlayEvent pid card windows]
+  PlayerSideQuestType -> [PutSideQuestIntoPlay pid card]
   _ -> []

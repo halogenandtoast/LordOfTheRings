@@ -1,5 +1,7 @@
 {
   "choosePlayer": "Choose a player",
+  "chooseCurrentQuest": "Choose the quest to quest against this phase",
+  "questAgainstMainQuest": "The main quest",
   "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
   "discardAnyFromHand": "Discard a card from your hand?",

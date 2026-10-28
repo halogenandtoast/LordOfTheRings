@@ -15,11 +15,13 @@ data CardType
   | ObjectiveType
   | ObjectiveAllyType
   | CampaignType
+  | -- | a side quest from a player's deck, played into the staging area
+    PlayerSideQuestType
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 isPlayerCardType :: CardType -> Bool
-isPlayerCardType = (`elem` [HeroType, AllyType, AttachmentType, EventType])
+isPlayerCardType = (`elem` [HeroType, AllyType, AttachmentType, EventType, PlayerSideQuestType])
 
 instance IsLabel "ally" CardType where
   fromLabel = AllyType

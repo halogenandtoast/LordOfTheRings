@@ -122,6 +122,8 @@ data Message
   | -- | an ally card put into play under the player's control, keeping its owner
     PutAllyIntoPlayUnder PlayerId PlayerCard
   | PutHeroIntoPlay PlayerId PlayerCard
+  | -- | a player side quest, played, goes to the staging area
+    PutSideQuestIntoPlay PlayerId PlayerCard
   | ShuffleDiscardIntoDeck PlayerId
   | -- | a card from the player's deck goes to their hand
     TakeFromDeck PlayerId CardId

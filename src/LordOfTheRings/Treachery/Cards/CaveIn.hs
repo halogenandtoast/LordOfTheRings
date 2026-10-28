@@ -17,7 +17,8 @@ caveIn = treachery CaveIn Cards.caveIn
 instance RunMessage CaveIn where
   runMessage msg t@(CaveIn attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      quests <- filter ((> 0) . (.progress)) . toList <$> getsGame (.entities.quests)
+      current <- getCurrentQuest
+      quests <- filter (\q -> q.progress > 0 && Just (toTarget q) == current) . toList <$> getsGame (.entities.quests)
       -- an active location immune to card effects keeps its progress
       active <-
         filterM (fmap (notElem ImmuneToCardEffects) . getModifiers)
