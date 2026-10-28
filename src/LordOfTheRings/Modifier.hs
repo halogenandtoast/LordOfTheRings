@@ -63,6 +63,9 @@ data ModifierType
   | -- | on the game: characters use their willpower instead of attack when attacking
     -- enemies, as The Passage Out reads
     WillpowerForAttack
+  | -- | on the game: attacks on enemies place progress on them instead of damage, as The
+    -- Passage Out reads
+    ProgressInsteadOfAttackDamage
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
   | NoEngagementChecks

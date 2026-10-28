@@ -814,8 +814,11 @@ runGameMessage msg g = case msg of
         defense <- if alone then pure 0 else getEnemyDefense eid
         hitPoints <- getEnemyHitPoints eid
         traits <- (cdCardTraits (toCardDef enemy') <>) <$> gainedTraits (toTarget eid)
+        -- the attack may place progress in place of its damage, as The Passage Out reads
+        asProgress <- elem ProgressInsteadOfAttackDamage <$> getModifiers GameTarget
         -- what a lone attack deals beyond the enemy's remaining hit points, as Firefoot reads
-        let excess = max 0 $ attack - defense - (hitPoints - enemy'.damage)
+        let excess = if asProgress then 0 else max 0 $ attack - defense - (hitPoints - enemy'.damage)
+            damaging = CannotTakeCombatDamage `notElem` mods && not asProgress
         if null attackers
           then pure ()
           else
@@ -823,10 +826,15 @@ runGameMessage msg g = case msg of
               =<< inLogBlock
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
-                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | CannotTakeCombatDamage `notElem` mods]
+                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | damaging]
+                    <> [ PlaceTokens (PlayerSource pid) (toTarget eid) Progress (attack - defense)
+                       | asProgress
+                       , attack > defense
+                       , CannotTakeCombatDamage `notElem` mods
+                       ]
                     <> [ CheckWindows [mkAfter $ AttackDealtDamage eid attackers (attack - defense)]
                        | attack > defense
-                       , CannotTakeCombatDamage `notElem` mods
+                       , damaging
                        ]
                     <> [ AttackResolved eid (placementController enemy'.placement) attackers traits
                        ]
