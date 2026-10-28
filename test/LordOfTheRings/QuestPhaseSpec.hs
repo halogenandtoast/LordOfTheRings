@@ -3,7 +3,10 @@ module LordOfTheRings.QuestPhaseSpec (spec) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Effect
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Helpers.Character (questingStat)
 import LordOfTheRings.Keyword
+import LordOfTheRings.Matcher (currentQuestHas)
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier
@@ -155,3 +158,16 @@ spec = describe "Quest phase" do
     run $ BeginPhase CombatPhase
     Just question <- getQuestion pid
     [t | TargetLabel t _ <- questionChoices question] `shouldBe` [ally]
+
+  it "quests with defense once a battle quest gains siege and loses battle" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- putQuestStage Quests.ambushInIthilien
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Siege, LoseKeyword Battle] UntilEndOfRound
+    (name, _) <- questingStat
+    name `shouldBe` "defense"
+
+  it "a lost keyword stays lost though another card grants it" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- putQuestStage Quests.ambushInIthilien
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Battle, LoseKeyword Battle] UntilEndOfRound
+    currentQuestHas Battle `shouldReturn` False

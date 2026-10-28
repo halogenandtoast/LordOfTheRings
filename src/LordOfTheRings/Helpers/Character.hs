@@ -63,6 +63,8 @@ questingStat :: (HasGame m) => m (Text, Target -> m Int)
 questingStat = do
   battle <- currentQuestHas Battle
   siege <- currentQuestHas Siege
+  -- ponytail: no rule covers a quest with both battle and siege (the cards' errata, as The
+  -- Cross-roads' "and loses battle", avoid it), so battle wins
   pure
     $ if
       | battle -> ("attack", getAttack)

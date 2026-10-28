@@ -318,8 +318,9 @@ allyPayersFor pid card = do
 hasKeyword :: HasGame m => Keyword -> Target -> CardDef -> m Bool
 hasKeyword k target def = do
   mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  -- a blank text box has no printed keywords
-  pure $ GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods && LoseKeyword k `notElem` mods)
+  -- a blank text box has no printed keywords; losing a keyword wins over gaining it, as
+  -- Arkham applies removes after adds
+  pure $ LoseKeyword k `notElem` mods && (GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods))
 
 -- | The archery the card has, printed or gained, as Archery X reads.
 getArchery :: HasGame m => Target -> CardDef -> m Int
