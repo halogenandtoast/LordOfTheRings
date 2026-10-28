@@ -102,6 +102,11 @@ allLocationCards =
       , harborStorehouse
       , cityStreet
       , marketSquare
+      , sewers
+      , rootsOfMindolluin
+      , storehouse
+      , housesOfTheDead
+      , theFourthStar
       ]
 
 drownedTreasury :: CardDef
@@ -722,3 +727,39 @@ marketSquare =
     { cdCardTraits = setFromList [City]
     , cdShadowEffect = True
     }
+
+sewers :: CardDef
+sewers =
+  (location "06018" "Sewers" TheStewardsFear 3 3 3)
+    { cdCardTraits = setFromList [Underworld, City]
+    , cdWhenRevealed = True
+    }
+
+rootsOfMindolluin :: CardDef
+rootsOfMindolluin =
+  unique
+    (location "06019" "Roots of Mindolluin" TheStewardsFear 1 2 5)
+      { cdCardTraits = setFromList [Underworld]
+      }
+
+storehouse :: CardDef
+storehouse =
+  (location "06020" "Storehouse" TheStewardsFear 2 2 2)
+    { cdCardTraits = setFromList [Underworld, City]
+    , cdShadowEffect = True
+    }
+
+housesOfTheDead :: CardDef
+housesOfTheDead =
+  unique
+    (location "06021" "Houses of the Dead" TheStewardsFear 1 4 4)
+      { cdCardTraits = setFromList [Underworld, City]
+      , cdEasyModeQuantity = Just 0
+      }
+
+theFourthStar :: CardDef
+theFourthStar =
+  unique
+    (location "06022" "The Fourth Star" TheStewardsFear 1 3 5)
+      { cdCardTraits = setFromList [City]
+      }

@@ -96,6 +96,9 @@ allQuestCards =
       , theLeapingFishQuest
       , fightingInTheStreets
       , escapeToTheQuays
+      , conspiracy
+      , theGrandDesign
+      , theConfrontation
       ]
 
 theDrippingWalls :: CardDef
@@ -322,3 +325,12 @@ fightingInTheStreets =
 
 escapeToTheQuays :: CardDef
 escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15
+
+conspiracy :: CardDef
+conspiracy = quest "06011" "Conspiracy" TheStewardsFear 1 0
+
+theGrandDesign :: CardDef
+theGrandDesign = quest "06012" "The Grand Design" TheStewardsFear 2 0
+
+theConfrontation :: CardDef
+theConfrontation = quest "06013" "The Confrontation" TheStewardsFear 3 15

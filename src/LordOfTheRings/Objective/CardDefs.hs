@@ -6,6 +6,7 @@ import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Trait
 
@@ -35,6 +36,12 @@ allObjectiveCards =
       , celador
       , ithilienGuardian
       , alcaronsScroll
+      , aScrapOfHistory
+      , secretMap
+      , aPrisoner
+      , unholyAlliance
+      , upInFlames
+      , poisonedCounsels
       ]
 
 durinsAxe :: CardDef
@@ -195,3 +202,31 @@ alcaronsScroll =
     (objective "05019" "Alcaron's Scroll" PerilInPelargir 1)
       { cdCardTraits = setFromList [Scroll]
       }
+
+clue :: CardCode -> Name -> CardDef
+clue code name =
+  (objective code name TheStewardsFear 1)
+    { cdCardTraits = setFromList [Clue]
+    , cdVictoryPoints = Just 1
+    }
+
+aScrapOfHistory :: CardDef
+aScrapOfHistory = clue "06026" "A Scrap of History"
+
+secretMap :: CardDef
+secretMap = clue "06027" "Secret Map"
+
+aPrisoner :: CardDef
+aPrisoner = clue "06028" "A Prisoner"
+
+plot :: CardCode -> Name -> CardDef
+plot code name = (objective code name TheStewardsFear 1) {cdCardTraits = setFromList [Plot]}
+
+unholyAlliance :: CardDef
+unholyAlliance = plot "06029" "Unholy Alliance"
+
+upInFlames :: CardDef
+upInFlames = plot "06030" "Up in Flames"
+
+poisonedCounsels :: CardDef
+poisonedCounsels = plot "06031" "Poisoned Counsels"

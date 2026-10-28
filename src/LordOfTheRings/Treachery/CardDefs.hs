@@ -97,6 +97,9 @@ allTreacheryCards =
       , lostInTheCity
       , localTrouble
       , lurkingInShadows
+      , unwelcomeDiscovery
+      , aKnifeInTheBack
+      , falseLeadTheStewardsFear
       ]
 
 deepDeepDark :: CardDef
@@ -582,5 +585,23 @@ localTrouble =
 lurkingInShadows :: CardDef
 lurkingInShadows =
   (treachery "05045" "Lurking in Shadows" Brigands 2)
+    { cdShadowEffect = True
+    }
+
+unwelcomeDiscovery :: CardDef
+unwelcomeDiscovery =
+  (treachery "06023" "Unwelcome Discovery" TheStewardsFear 2)
+    { cdKeywords = setFromList [Surge]
+    }
+
+aKnifeInTheBack :: CardDef
+aKnifeInTheBack =
+  (treachery "06024" "A Knife in the Back" TheStewardsFear 3)
+    { cdEasyModeQuantity = Just 1
+    }
+
+falseLeadTheStewardsFear :: CardDef
+falseLeadTheStewardsFear =
+  (treachery "06025" "False Lead" TheStewardsFear 2)
     { cdShadowEffect = True
     }

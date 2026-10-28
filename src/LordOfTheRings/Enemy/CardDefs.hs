@@ -100,6 +100,10 @@ allEnemyCards =
       , zealousTraitor
       , lossarnachBandit
       , umbarAssassin
+      , underworldDissident
+      , daughterOfBeruthiel
+      , theHandOfCastamir
+      , telemnarsBane
       ]
 
 namelessThing :: CardDef
@@ -752,3 +756,31 @@ umbarAssassin =
     , cdKeywords = setFromList [Archery 2]
     , cdEasyModeQuantity = Just 0
     }
+
+underworldDissident :: CardDef
+underworldDissident =
+  (enemy "06014" "Underworld Dissident" TheStewardsFear 5 25 3 2 2 2)
+    { cdCardTraits = setFromList [Brigand]
+    , cdShadowEffect = True
+    }
+
+daughterOfBeruthiel :: CardDef
+daughterOfBeruthiel =
+  unique
+    (enemy "06015" "Daughter of Berúthiel" TheStewardsFear 1 10 3 5 3 5)
+      { cdCardTraits = setFromList [Gondor, Villain]
+      }
+
+theHandOfCastamir :: CardDef
+theHandOfCastamir =
+  unique
+    (enemy "06016" "The Hand of Castamir" TheStewardsFear 1 30 3 4 3 6)
+      { cdCardTraits = setFromList [Gondor, Villain]
+      }
+
+telemnarsBane :: CardDef
+telemnarsBane =
+  unique
+    (enemy "06017" "Telemnar's Bane" TheStewardsFear 1 20 3 3 2 7)
+      { cdCardTraits = setFromList [Gondor, Villain]
+      }
