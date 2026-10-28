@@ -108,6 +108,8 @@ import LordOfTheRings.Event.Cards.AdvanceWarning
 import LordOfTheRings.Event.Cards.GondorianDiscipline
 import LordOfTheRings.Event.Cards.SmallTarget
 import LordOfTheRings.Event.Cards.HobbitSense
+import LordOfTheRings.Event.Cards.MenOfTheWest
+import LordOfTheRings.Event.Cards.ForestPatrol
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -229,5 +231,7 @@ allEvents =
         , SomeEventCard gondorianDiscipline
         , SomeEventCard smallTarget
         , SomeEventCard hobbitSense
+        , SomeEventCard menOfTheWest
+        , SomeEventCard forestPatrol
         ]
     ]

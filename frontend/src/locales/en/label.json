@@ -711,5 +711,25 @@
   },
   "smallTarget": {
     "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against"
+  },
+  "menOfTheWest": {
+    "choose": "Choose an Outlands ally to return to your hand, for 1 leadership resource",
+    "done": "Done returning allies"
+  },
+  "knightOfMinasTirith": {
+    "chooseEnemy": "Choose an enemy in the staging area to engage and attack"
+  },
+  "rangerBow": {
+    "damage": "Ranger Bow: deal 1 damage to an enemy in the staging area"
+  },
+  "forestPatrol": {
+    "damage": "Forest Patrol: deal 3 damage to an enemy with a Trap attached"
+  },
+  "palantir": {
+    "name": "Name a card type, then look at the top 3 cards of the encounter deck",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery",
+    "objective": "Objective"
   }
 }

@@ -95,6 +95,10 @@ allAttachmentCards =
       , mightyProwess
       , lordOfMorthond
       , bookOfEldacar
+      , swordOfMorthond
+      , mapOfEarnil
+      , rangerBow
+      , palantir
       ]
 
 stewardOfGondor :: CardDef
@@ -636,4 +640,32 @@ bookOfEldacar =
   (attachment "06059" "Book of Eldacar" Tactics (StaticCost 4))
     { cdUnique = True
     , cdCardTraits = setFromList [Record]
+    }
+
+swordOfMorthond :: CardDef
+swordOfMorthond =
+  (attachment "06082" "Sword of Morthond" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Item, Weapon]
+    }
+
+mapOfEarnil :: CardDef
+mapOfEarnil =
+  (attachment "06087" "Map of Earnil" Spirit (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Record]
+    }
+
+rangerBow :: CardDef
+rangerBow =
+  (attachment "06088" "Ranger Bow" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+palantir :: CardDef
+palantir =
+  (attachment "06090" "Palantir" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
     }

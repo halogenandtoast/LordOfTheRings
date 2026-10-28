@@ -81,6 +81,7 @@ library
       LordOfTheRings.Ally.Cards.Jubayr
       LordOfTheRings.Ally.Cards.KeenEyedTook
       LordOfTheRings.Ally.Cards.Kili
+      LordOfTheRings.Ally.Cards.KnightOfMinasTirith
       LordOfTheRings.Ally.Cards.KnightsOfTheSwan
       LordOfTheRings.Ally.Cards.Landroval
       LordOfTheRings.Ally.Cards.LongbeardElder
@@ -97,6 +98,7 @@ library
       LordOfTheRings.Ally.Cards.NorthernTracker
       LordOfTheRings.Ally.Cards.Orophin
       LordOfTheRings.Ally.Cards.PelargirShipCaptain
+      LordOfTheRings.Ally.Cards.PelargirShipwright
       LordOfTheRings.Ally.Cards.Radagast
       LordOfTheRings.Ally.Cards.RavenhillScout
       LordOfTheRings.Ally.Cards.RiddermarkKnight
@@ -178,6 +180,7 @@ library
       LordOfTheRings.Attachment.Cards.LordOfMorthond
       LordOfTheRings.Attachment.Cards.LoveOfTales
       LordOfTheRings.Attachment.Cards.MagicRing
+      LordOfTheRings.Attachment.Cards.MapOfEarnil
       LordOfTheRings.Attachment.Cards.MightyProwess
       LordOfTheRings.Attachment.Cards.MirrorOfGaladriel
       LordOfTheRings.Attachment.Cards.Miruvor
@@ -185,9 +188,11 @@ library
       LordOfTheRings.Attachment.Cards.Nenya
       LordOfTheRings.Attachment.Cards.NorAmIAStranger
       LordOfTheRings.Attachment.Cards.OLorien
+      LordOfTheRings.Attachment.Cards.Palantir
       LordOfTheRings.Attachment.Cards.PathOfNeed
       LordOfTheRings.Attachment.Cards.PowerInTheEarth
       LordOfTheRings.Attachment.Cards.ProtectorOfLorien
+      LordOfTheRings.Attachment.Cards.RangerBow
       LordOfTheRings.Attachment.Cards.RangerSpikes
       LordOfTheRings.Attachment.Cards.Resourceful
       LordOfTheRings.Attachment.Cards.RingMail
@@ -207,6 +212,7 @@ library
       LordOfTheRings.Attachment.Cards.SteedOfTheMark
       LordOfTheRings.Attachment.Cards.StewardOfGondor
       LordOfTheRings.Attachment.Cards.SupportOfTheEagles
+      LordOfTheRings.Attachment.Cards.SwordOfMorthond
       LordOfTheRings.Attachment.Cards.SwordThatWasBroken
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
       LordOfTheRings.Attachment.Cards.TheRedArrow
@@ -363,6 +369,7 @@ library
       LordOfTheRings.Event.Cards.FeignedVoices
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.FoeHammer
+      LordOfTheRings.Event.Cards.ForestPatrol
       LordOfTheRings.Event.Cards.ForGondor
       LordOfTheRings.Event.Cards.ForthEorlingas
       LordOfTheRings.Event.Cards.FortuneOrFate
@@ -390,6 +397,7 @@ library
       LordOfTheRings.Event.Cards.LureOfMoria
       LordOfTheRings.Event.Cards.MendorsSupport
       LordOfTheRings.Event.Cards.MeneldorsFlight
+      LordOfTheRings.Event.Cards.MenOfTheWest
       LordOfTheRings.Event.Cards.MithrandirsAdvice
       LordOfTheRings.Event.Cards.MusteringTheRohirrim
       LordOfTheRings.Event.Cards.MutualAccord

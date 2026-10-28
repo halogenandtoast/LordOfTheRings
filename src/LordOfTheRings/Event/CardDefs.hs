@@ -119,6 +119,8 @@ allEventCards =
       , gondorianDiscipline
       , smallTarget
       , hobbitSense
+      , menOfTheWest
+      , forestPatrol
       ]
 
 everVigilant :: CardDef
@@ -447,3 +449,9 @@ smallTarget = event "06062" "Small Target" Spirit (StaticCost 1)
 
 hobbitSense :: CardDef
 hobbitSense = event "06065" "Hobbit-sense" Neutral (StaticCost 2)
+
+menOfTheWest :: CardDef
+menOfTheWest = (event "06083" "Men of the West" Leadership DynamicCost) {cdCardTraits = setFromList [Outlands]}
+
+forestPatrol :: CardDef
+forestPatrol = event "06089" "Forest Patrol" Lore (StaticCost 1)

@@ -121,6 +121,8 @@ allAllyCards =
       , denethor
       , minasTirithLampwright
       , ithilienArcher
+      , knightOfMinasTirith
+      , pelargirShipwright
       ]
 
 guardOfTheCitadel :: CardDef
@@ -822,4 +824,16 @@ ithilienArcher =
   (ally "06063" "Ithilien Archer" Lore (StaticCost 3) 1 2 1 2)
     { cdCardTraits = setFromList [Gondor, Ranger]
     , cdKeywords = setFromList [Ranged]
+    }
+
+knightOfMinasTirith :: CardDef
+knightOfMinasTirith =
+  (ally "06084" "Knight of Minas Tirith" Tactics (StaticCost 3) 0 3 1 3)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+pelargirShipwright :: CardDef
+pelargirShipwright =
+  (ally "06086" "Pelargir Shipwright" Spirit (StaticCost 3) 0 1 1 3)
+    { cdCardTraits = setFromList [Craftsman, Gondor]
     }

@@ -88,6 +88,10 @@ import LordOfTheRings.Attachment.Cards.RingOfBarahir
 import LordOfTheRings.Attachment.Cards.MightyProwess
 import LordOfTheRings.Attachment.Cards.LordOfMorthond
 import LordOfTheRings.Attachment.Cards.BookOfEldacar
+import LordOfTheRings.Attachment.Cards.SwordOfMorthond
+import LordOfTheRings.Attachment.Cards.MapOfEarnil
+import LordOfTheRings.Attachment.Cards.RangerBow
+import LordOfTheRings.Attachment.Cards.Palantir
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -202,5 +206,9 @@ allAttachments =
         , SomeAttachmentCard mightyProwess
         , SomeAttachmentCard lordOfMorthond
         , SomeAttachmentCard bookOfEldacar
+        , SomeAttachmentCard swordOfMorthond
+        , SomeAttachmentCard mapOfEarnil
+        , SomeAttachmentCard rangerBow
+        , SomeAttachmentCard palantir
         ]
     ]
