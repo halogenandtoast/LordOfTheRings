@@ -328,16 +328,19 @@ getArchery target def = do
   let printed = [n | Blank `notElem` mods, Archery n <- toList (cdKeywords def)]
   pure $ sum $ printed <> [n | GainKeyword (Archery n) <- mods]
 
--- | The archery of the cards in the staging area and of the current quest, which the
--- players deal among the characters in play as the combat phase begins.
+-- | The archery of every card in play, the current quest's too, which the players deal
+-- among the characters in play as the combat phase begins.
 getArcheryTotal :: (HasGame m) => m Int
 getArcheryTotal = do
-  enemies <- select EnemyInStagingArea >>= traverse \e -> getArchery (toTarget e) . toCardDef =<< getEnemy e
-  locations <- select LocationInStagingArea >>= traverse \l -> getArchery (toTarget l) . toCardDef =<< getLocation l
+  let inPlay p = p `notElem` [InVictoryDisplay, Unplaced]
+  enemies <- getsGame (filter (inPlay . (.placement)) . toList . entitiesEnemies . gameEntities)
+  locations <- getsGame (filter (inPlay . (.placement)) . toList . entitiesLocations . gameEntities)
+  fromEnemies <- for enemies \e -> getArchery (toTarget e) (toCardDef e)
+  fromLocations <- for locations \l -> getArchery (toTarget l) (toCardDef l)
   onQuest <- getCurrentQuest >>= \case
     Just t@(QuestTarget qid) -> maybe (pure 0) (getArchery t . toCardDef) =<< getsGame (Map.lookup qid . entitiesQuests . gameEntities)
     _ -> pure 0
-  pure $ sum enemies + sum locations + onQuest
+  pure $ sum fromEnemies + sum fromLocations + onQuest
 
 -- | The current quest has the keyword, printed or gained, as battle or siege.
 currentQuestHas :: HasGame m => Keyword -> m Bool

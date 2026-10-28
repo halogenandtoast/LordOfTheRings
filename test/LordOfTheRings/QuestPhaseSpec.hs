@@ -126,3 +126,15 @@ spec = describe "Quest phase" do
     chooseTarget pid eowyn
     chooseTarget pid eowyn
     getCharacterDamage eowyn `shouldReturn` 2
+
+  it "deals the archery of an engaged enemy" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    _ <- setEncounterDeck [Locations.forestGate]
+    spider <- getsGame (fromJustNote "no enemy" . headMay . Map.keys . (.entities.enemies))
+    run $ EngageEnemy pid spider
+    run $ CreateEffect $ Effect GameSource (toTarget spider) [GainKeyword (Archery 2)] UntilEndOfRound
+    run $ BeginPhase CombatPhase
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    chooseTarget pid eowyn
+    chooseTarget pid eowyn
+    getCharacterDamage eowyn `shouldReturn` 2
