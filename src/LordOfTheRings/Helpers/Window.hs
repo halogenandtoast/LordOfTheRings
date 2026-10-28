@@ -2,7 +2,7 @@ module LordOfTheRings.Helpers.Window (module LordOfTheRings.Helpers.Window) wher
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
-import LordOfTheRings.Ally.Types (allyCardId)
+import LordOfTheRings.Ally.Types (allyCardId, allyTokens)
 import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Card (cdWhenRevealed, toCardDef)
 import LordOfTheRings.Classes.Entity
@@ -209,6 +209,8 @@ canPay = \case
     maybe False (not . (.exhausted)) . Map.lookup oid <$> getsGame (entitiesObjectives . gameEntities)
   ExhaustCost _ -> pure False
   ResourceCost (HeroTarget hid) n -> (>= n) . (.resources) <$> getHero hid
+  -- an ally's own pool, as Treebeard's
+  ResourceCost (AllyTarget aid) n -> (>= n) . countTokens Resource . allyTokens . toAttrs <$> getAlly aid
   ResourceCost _ _ -> pure False
   DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
   RaiseThreatCost _ -> pure True

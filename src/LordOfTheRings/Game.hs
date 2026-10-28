@@ -904,6 +904,17 @@ runGameMessage msg g = case msg of
       $ questionLabelWith (ikey "label.chooseAndExhaustHero") Nothing [] pid
         [targetLabel h (Exhaust (toTarget h) : map (paidWith h) rest) | h <- heroes]
     pure g
+  -- the group pays, the player picking whose heroes' resources, 1 at a time
+  SpendGroupResources pid sphere n | n > 0 -> do
+    heroes <- traverse getHero =<< select AnyHero
+    payers <- filterM (heroPaysFor sphere) [h | h <- heroes, h.resources > 0]
+    unless (null payers)
+      $ push
+      $ questionLabel (ikeyWith "label.payMore" [intVar "count" n]) pid
+      $ [ targetLabel h [RemoveTokens (PlayerSource pid) (toTarget h) Resource 1, SpendGroupResources pid sphere (n - 1)]
+        | h <- payers
+        ]
+    pure g
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
     push $ case others of

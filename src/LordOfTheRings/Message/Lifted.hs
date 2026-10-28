@@ -197,6 +197,11 @@ healAllDamage source target = healDamage source target =<< getDamage (toTarget t
 spendResources :: ReverseQueue m => PlayerId -> Sphere -> Int -> m ()
 spendResources pid sphere n = push $ SpendResources pid sphere n
 
+-- | The players as a group spend resources of a sphere, the player picking from whose
+-- heroes' pools, as Heed the Dream reads.
+spendGroupResources :: ReverseQueue m => PlayerId -> Sphere -> Int -> m ()
+spendGroupResources pid sphere n = push $ SpendGroupResources pid sphere n
+
 removeFromDiscard :: ReverseQueue m => PlayerId -> CardId -> m ()
 removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
 

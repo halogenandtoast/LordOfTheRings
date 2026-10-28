@@ -339,6 +339,8 @@ data Message
     -}
     DeclareSentinels PlayerId EnemyId [Target] [PlayerId]
   | DefendedByMany PlayerId EnemyId [Target]
+  | -- | the players as a group spend resources of a sphere, from any of their heroes
+    SpendGroupResources PlayerId Sphere Int
   | -- | spend resources of a sphere, at most 1 from each hero, from heroes not yet used
     SpendResourcesFromDistinctHeroes PlayerId Sphere Int [HeroId]
   | UndefendedAttack PlayerId EnemyId
