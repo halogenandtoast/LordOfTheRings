@@ -38,6 +38,7 @@ allObjectiveCards =
       , rescuedVillagers
       , deadVillagers
       , lordAlcaron
+      , toTheTower
       ]
 
 durinsAxe :: CardDef
@@ -213,3 +214,10 @@ lordAlcaron =
     , cdCardTraits = setFromList [Gondor, Noble]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
+
+toTheTower :: CardDef
+toTheTower =
+  unique
+    (objective "06147" "To the Tower" TheMorgulVale 1)
+      { cdCardTraits = setFromList [Captured]
+      }

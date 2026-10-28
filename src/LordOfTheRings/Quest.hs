@@ -80,6 +80,9 @@ import LordOfTheRings.Quest.Cards.ProtectTheVillagers
 import LordOfTheRings.Quest.Cards.ThePursuit
 import LordOfTheRings.Quest.Cards.AnUntimelyEnd
 import LordOfTheRings.Quest.Cards.ThePassageOut
+import LordOfTheRings.Quest.Cards.TheRearguardTheMorgulVale
+import LordOfTheRings.Quest.Cards.TheBetrayal
+import LordOfTheRings.Quest.Cards.TheMorgulRider
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -192,5 +195,8 @@ allQuests =
         , SomeQuestCard thePursuit
         , SomeQuestCard anUntimelyEnd
         , SomeQuestCard thePassageOut
+        , SomeQuestCard theRearguardTheMorgulVale
+        , SomeQuestCard theBetrayal
+        , SomeQuestCard theMorgulRider
         ]
     ]

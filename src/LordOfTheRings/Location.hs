@@ -101,6 +101,9 @@ import LordOfTheRings.Location.Cards.SecludedFarmhouse
 import LordOfTheRings.Location.Cards.AncestralClearing
 import LordOfTheRings.Location.Cards.GardenOfPoisons
 import LordOfTheRings.Location.Cards.GladeOfCleansing
+import LordOfTheRings.Location.Cards.MorgulRoad
+import LordOfTheRings.Location.Cards.MorgulVale
+import LordOfTheRings.Location.Cards.TheWhiteBridge
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -226,5 +229,8 @@ allLocations =
         , SomeLocationCard ancestralClearing
         , SomeLocationCard gardenOfPoisons
         , SomeLocationCard gladeOfCleansing
+        , SomeLocationCard morgulRoad
+        , SomeLocationCard morgulVale
+        , SomeLocationCard theWhiteBridge
         ]
     ]

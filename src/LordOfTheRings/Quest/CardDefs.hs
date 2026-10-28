@@ -101,6 +101,9 @@ allQuestCards =
       , thePursuit
       , anUntimelyEnd
       , thePassageOut
+      , theRearguardTheMorgulVale
+      , theBetrayal
+      , theMorgulRider
       ]
 
 theDrippingWalls :: CardDef
@@ -343,3 +346,13 @@ anUntimelyEnd = quest "06043" "An Untimely End" TheDruadanForest 2 17
 
 thePassageOut :: CardDef
 thePassageOut = (quest "06044" "The Passage Out" TheDruadanForest 3 14) {cdKeywords = setFromList [Siege]}
+
+-- | Its quest points are "-": the stage advances only as Murzag is defeated.
+theRearguardTheMorgulVale :: CardDef
+theRearguardTheMorgulVale = quest "06144" "The Rearguard" TheMorgulVale 1 0
+
+theBetrayal :: CardDef
+theBetrayal = quest "06145" "The Betrayal" TheMorgulVale 2 0
+
+theMorgulRider :: CardDef
+theMorgulRider = quest "06146" "The Morgul Rider" TheMorgulVale 3 0

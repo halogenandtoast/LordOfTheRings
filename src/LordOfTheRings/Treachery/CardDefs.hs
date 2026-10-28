@@ -103,6 +103,10 @@ allTreacheryCards =
       , menInTheDark
       , starsInSky
       , leavesOnTree
+      , impenetrableFog
+      , sleeplessMalice
+      , terrorDrivesThem
+      , theDeadCityLooms
       ]
 
 deepDeepDark :: CardDef
@@ -624,4 +628,28 @@ leavesOnTree =
   (treachery "06055" "Leaves on Tree" TheDruadanForest 2)
     { cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    }
+
+impenetrableFog :: CardDef
+impenetrableFog = (treachery "06157" "Impenetrable Fog" TheMorgulVale 2) {cdEasyModeQuantity = Just 0}
+
+sleeplessMalice :: CardDef
+sleeplessMalice =
+  (treachery "06158" "Sleepless Malice" TheMorgulVale 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    }
+
+terrorDrivesThem :: CardDef
+terrorDrivesThem =
+  (treachery "06159" "Terror Drives Them" TheMorgulVale 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+theDeadCityLooms :: CardDef
+theDeadCityLooms =
+  (treachery "06160" "The Dead City Looms" TheMorgulVale 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

@@ -728,5 +728,28 @@
   },
   "ancestralClearing": {
     "exhaustHero": "Exhaust a hero to travel to Ancestral Clearing"
+  },
+  "chooseDamageRedirect": "Choose which card takes the damage instead",
+  "morgulSorcerer": {
+    "choose": "Morgul Sorcerer: place 1 progress on To the Tower or take this attack undefended",
+    "progress": "Place 1 progress on To the Tower",
+    "undefended": "Treat this attack as undefended"
+  },
+  "morgulRoad": {
+    "choose": "Morgul Road: remove 1 progress from To the Tower, or choose an enemy to deal 1 damage to",
+    "removeProgress": "Remove 1 progress from To the Tower"
+  },
+  "morgulVale": {
+    "return": "Morgul Vale: return 1 enemy engaged with you to the staging area"
+  },
+  "impenetrableFog": {
+    "choose": "Impenetrable Fog: choose one",
+    "progress": "Place 3 progress on To the Tower",
+    "reveal": "Reveal {count} more encounter cards"
+  },
+  "sleeplessMalice": {
+    "choose": "Sleepless Malice: choose one",
+    "discard": "Discard 3 random cards from your hand",
+    "progress": "Place 1 progress on To the Tower"
   }
 }

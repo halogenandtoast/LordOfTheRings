@@ -103,6 +103,12 @@ import LordOfTheRings.Enemy.Cards.DruadanDrummer
 import LordOfTheRings.Enemy.Cards.DruadanElite
 import LordOfTheRings.Enemy.Cards.DruadanHunter
 import LordOfTheRings.Enemy.Cards.DruadanThief
+import LordOfTheRings.Enemy.Cards.MorgulBodyguard
+import LordOfTheRings.Enemy.Cards.MorgulSorcerer
+import LordOfTheRings.Enemy.Cards.MorgulTracker
+import LordOfTheRings.Enemy.Cards.Murzag
+import LordOfTheRings.Enemy.Cards.LordAlcaron
+import LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -230,5 +236,11 @@ allEnemys =
         , SomeEnemyCard druadanElite
         , SomeEnemyCard druadanHunter
         , SomeEnemyCard druadanThief
+        , SomeEnemyCard morgulBodyguard
+        , SomeEnemyCard morgulSorcerer
+        , SomeEnemyCard morgulTracker
+        , SomeEnemyCard murzag
+        , SomeEnemyCard lordAlcaron
+        , SomeEnemyCard nazgulOfMinasMorgul
         ]
     ]

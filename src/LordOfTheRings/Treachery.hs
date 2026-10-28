@@ -96,6 +96,10 @@ import LordOfTheRings.Treachery.Cards.Panicked
 import LordOfTheRings.Treachery.Cards.MenInTheDark
 import LordOfTheRings.Treachery.Cards.StarsInSky
 import LordOfTheRings.Treachery.Cards.LeavesOnTree
+import LordOfTheRings.Treachery.Cards.ImpenetrableFog
+import LordOfTheRings.Treachery.Cards.SleeplessMalice
+import LordOfTheRings.Treachery.Cards.TerrorDrivesThem
+import LordOfTheRings.Treachery.Cards.TheDeadCityLooms
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -216,5 +220,9 @@ allTreacherys =
         , SomeTreacheryCard menInTheDark
         , SomeTreacheryCard starsInSky
         , SomeTreacheryCard leavesOnTree
+        , SomeTreacheryCard impenetrableFog
+        , SomeTreacheryCard sleeplessMalice
+        , SomeTreacheryCard terrorDrivesThem
+        , SomeTreacheryCard theDeadCityLooms
         ]
     ]
