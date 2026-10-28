@@ -250,10 +250,12 @@ library
       LordOfTheRings.Enemy.Cards.GoblinWarlord
       LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.GreatCaveTroll
+      LordOfTheRings.Enemy.Cards.HarborThug
       LordOfTheRings.Enemy.Cards.HillTroll
       LordOfTheRings.Enemy.Cards.Hummerhorns
       LordOfTheRings.Enemy.Cards.HuntersFromMordor
       LordOfTheRings.Enemy.Cards.KingSpider
+      LordOfTheRings.Enemy.Cards.LossarnachBandit
       LordOfTheRings.Enemy.Cards.Louis
       LordOfTheRings.Enemy.Cards.MarshAdder
       LordOfTheRings.Enemy.Cards.MirkwoodBats
@@ -273,6 +275,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcHorseThieves
       LordOfTheRings.Enemy.Cards.OrcRaiders
       LordOfTheRings.Enemy.Cards.PatrolLeader
+      LordOfTheRings.Enemy.Cards.Pickpocket
       LordOfTheRings.Enemy.Cards.RangingGoblin
       LordOfTheRings.Enemy.Cards.RockAdder
       LordOfTheRings.Enemy.Cards.Rupert
@@ -283,11 +286,13 @@ library
       LordOfTheRings.Enemy.Cards.TheNamelessFear
       LordOfTheRings.Enemy.Cards.TheWatcher
       LordOfTheRings.Enemy.Cards.ThrashingTentacle
+      LordOfTheRings.Enemy.Cards.UmbarAssassin
       LordOfTheRings.Enemy.Cards.UngoliantsSpawn
       LordOfTheRings.Enemy.Cards.UngoliantsSwarm
       LordOfTheRings.Enemy.Cards.Wargs
       LordOfTheRings.Enemy.Cards.WildBear
       LordOfTheRings.Enemy.Cards.WolfRider
+      LordOfTheRings.Enemy.Cards.ZealousTraitor
       LordOfTheRings.Enemy.Import.Lifted
       LordOfTheRings.Enemy.Runner
       LordOfTheRings.Enemy.Types

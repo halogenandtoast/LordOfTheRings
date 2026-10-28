@@ -81,6 +81,11 @@ allEnemyCards =
       , graspingTentacle
       , thrashingTentacle
       , strikingTentacle
+      , harborThug
+      , pickpocket
+      , zealousTraitor
+      , lossarnachBandit
+      , umbarAssassin
       ]
 
 namelessThing :: CardDef
@@ -586,4 +591,38 @@ strikingTentacle :: CardDef
 strikingTentacle =
   (enemy "04075" "Striking Tentacle" TheWatcherInTheWater 4 18 2 4 1 3)
     { cdCardTraits = setFromList [Tentacle]
+    }
+
+harborThug :: CardDef
+harborThug =
+  (enemy "05020" "Harbor Thug" PerilInPelargir 5 25 2 3 1 3)
+    { cdCardTraits = setFromList [Thug]
+    , cdShadowEffect = True
+    }
+
+pickpocket :: CardDef
+pickpocket =
+  (enemy "05037" "Pickpocket" StreetsOfGondor 3 28 3 1 0 2)
+    { cdCardTraits = setFromList [Brigand]
+    , cdShadowEffect = True
+    }
+
+zealousTraitor :: CardDef
+zealousTraitor =
+  (enemy "05042" "Zealous Traitor" Brigands 3 17 2 3 2 2)
+    { cdCardTraits = setFromList [Brigand]
+    }
+
+lossarnachBandit :: CardDef
+lossarnachBandit =
+  (enemy "05043" "Lossarnach Bandit" Brigands 2 24 3 3 3 3)
+    { cdCardTraits = setFromList [Brigand]
+    }
+
+umbarAssassin :: CardDef
+umbarAssassin =
+  (enemy "05044" "Umbar Assassin" Brigands 1 40 4 5 1 5)
+    { cdCardTraits = setFromList [Brigand]
+    , cdKeywords = setFromList [Archery 2]
+    , cdEasyModeQuantity = Just 0
     }

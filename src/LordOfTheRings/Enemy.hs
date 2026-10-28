@@ -75,6 +75,11 @@ import LordOfTheRings.Enemy.Cards.TheWatcher
 import LordOfTheRings.Enemy.Cards.GraspingTentacle
 import LordOfTheRings.Enemy.Cards.ThrashingTentacle
 import LordOfTheRings.Enemy.Cards.StrikingTentacle
+import LordOfTheRings.Enemy.Cards.HarborThug
+import LordOfTheRings.Enemy.Cards.Pickpocket
+import LordOfTheRings.Enemy.Cards.ZealousTraitor
+import LordOfTheRings.Enemy.Cards.LossarnachBandit
+import LordOfTheRings.Enemy.Cards.UmbarAssassin
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -174,5 +179,10 @@ allEnemys =
         , SomeEnemyCard graspingTentacle
         , SomeEnemyCard thrashingTentacle
         , SomeEnemyCard strikingTentacle
+        , SomeEnemyCard harborThug
+        , SomeEnemyCard pickpocket
+        , SomeEnemyCard zealousTraitor
+        , SomeEnemyCard lossarnachBandit
+        , SomeEnemyCard umbarAssassin
         ]
     ]
