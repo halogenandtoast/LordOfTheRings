@@ -395,6 +395,8 @@ data Message
   | -- | log only: what is narrated until the block closes is filed under it
     OpenLogBlock LogBlock
   | CloseLogBlock UUID
+  | -- | a step only one scenario's module knows, by name, as Arkham's
+    ScenarioSpecific Text Value
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
