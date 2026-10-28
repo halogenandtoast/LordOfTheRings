@@ -123,7 +123,8 @@ instance RunMessage Player where
     -- from hand, or from the discard pile for a card that may be played from there
     PlayCardInWindow pid cid windows | pid == player.id -> do
       card <- maybe (error "not able to find card") pure $ find ((== cid) . (.id)) (player.hand <> player.discard)
-      pushAll =<< inLogBlock (PlayBlock pid card) [PayForCard pid card windows]
+      let fromHand = cid `elem` map (.id) player.hand
+      pushAll =<< inLogBlock (PlayBlock pid card) [PayForCard pid card fromHand windows]
       pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case

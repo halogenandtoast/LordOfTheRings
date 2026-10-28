@@ -26,6 +26,8 @@ data ActiveCost = ActiveCost
   -- ^ the windows the card is played in response to, if any
   , activeCostHost :: Maybe Target
   -- ^ the host an attachment was chosen to go on before it was paid for
+  , activeCostFromHand :: Bool
+  -- ^ played from its owner's hand, not from the discard pile
   }
   deriving stock (Show, Eq, Generic)
 
@@ -35,7 +37,7 @@ instance ToJSON ActiveCost where
   toJSON = genericToJSON (aesonOptions $ Just "activeCost")
 
 instance FromJSON ActiveCost where
-  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost")
+  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost") . withDefaults [("fromHand", toJSON True)]
 
 instance Entity ActiveCost where
   type EntityId ActiveCost = CostId
@@ -81,7 +83,8 @@ instance RunMessage ActiveCost where
       case ac.activeCostCard of
         PlayerCard card -> do
           pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
-          push $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card), mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card)]
+          pushWhen ac.activeCostFromHand
+            $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card), mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card)]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

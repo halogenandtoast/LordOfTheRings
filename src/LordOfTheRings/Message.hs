@@ -105,9 +105,10 @@ data Message
   | PlayCard PlayerId CardId
   | -- | play a card in response to the windows, which its effect may read
     PlayCardInWindow PlayerId CardId [Window]
-  | PayForCard PlayerId Card [Window]
+  | -- | pay for a card being played, from its owner's hand when the flag says so
+    PayForCard PlayerId Card Bool [Window]
   | -- | pay for an attachment chosen to go on the host, whose cost the host may lower
-    PayToAttach PlayerId Card [Window] Target
+    PayToAttach PlayerId Card Bool [Window] Target
   | PlayEvent PlayerId PlayerCard [Window]
   | PutAllyIntoPlay PlayerId CardId
   | -- | the player uses the action of a card in their hand, as Bofur's Quest Action

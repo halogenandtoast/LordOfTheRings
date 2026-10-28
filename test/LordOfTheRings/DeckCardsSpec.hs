@@ -282,3 +282,15 @@ spec = describe "The One Deck and Seastan's Boromir" do
     getsGame (map toCardCode . scenarioVictoryDisplay . toAttrs . (.scenario)) `shouldReturn` [toCardCode Quests.gatherInformation]
     getCurrentQuest `shouldReturn` Just main
     getsGame (fmap (.progress) . find ((== main) . toTarget) . toList . (.entities.quests)) `shouldReturn` Just 0
+
+  it "A card played from the discard pile is not played from hand" . gameTest $ \pid -> do
+    let minstrelIn played = getsGame (toTarget . fromJustNote "not in play" . find ((== played.id) . allyCardId . toAttrs) . toList . (.entities.allies))
+    fromHand <- putCardIntoHand pid Allies.rivendellMinstrel
+    giveResources beravor 3
+    run $ PlayCard pid fromHand.id
+    (offersAbilityOf pid =<< minstrelIn fromHand) `shouldReturn` True
+    chooseLabel "$label.pass" pid
+    run . Discard =<< minstrelIn fromHand
+    giveResources beravor 3
+    run $ PlayCard pid fromHand.id
+    (offersAbilityOf pid =<< minstrelIn fromHand) `shouldReturn` False

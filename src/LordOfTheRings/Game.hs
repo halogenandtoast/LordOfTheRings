@@ -1044,7 +1044,7 @@ runGameMessage msg g = case msg of
       $ [PlaceTokens GameSource (toTarget l) Progress onLocation | l <- toList active, onLocation > 0]
       <> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
     pure g
-  PayForCard pid card windows
+  PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do
         -- a host that lowers the cost is chosen before paying
         hosts <- cardHosts (toCardCode card)
@@ -1058,11 +1058,11 @@ runGameMessage msg g = case msg of
                     (Just $ CardIdTarget card.id)
                     hosts
                     pid
-                    [targetLabel h [PayToAttach pid card windows h] | h <- hosts]
+                    [targetLabel h [PayToAttach pid card fromHand windows h] | h <- hosts]
                 )
-          else payFor g pid card windows Nothing 0
-    | otherwise -> payFor g pid card windows Nothing 0
-  PayToAttach pid card windows host -> payFor g pid card windows (Just host) =<< attachDiscount card host
+          else payFor g pid card fromHand windows Nothing 0
+    | otherwise -> payFor g pid card fromHand windows Nothing 0
+  PayToAttach pid card fromHand windows host -> payFor g pid card fromHand windows (Just host) =<< attachDiscount card host
   PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
@@ -1989,8 +1989,8 @@ inPlay g = \case
   _ -> True
 
 -- | Put the card's cost up to be paid, less what the host it was chosen for takes off.
-payFor :: Game -> PlayerId -> Card -> [Window] -> Maybe Target -> Int -> GameT Game
-payFor g pid card windows host discount = do
+payFor :: Game -> PlayerId -> Card -> Bool -> [Window] -> Maybe Target -> Int -> GameT Game
+payFor g pid card fromHand windows host discount = do
   costId <- getRandom
   -- the card has left its owner's hand and is not yet being paid for, so the modifiers it
   -- gives itself are asked for here
@@ -2006,6 +2006,7 @@ payFor g pid card windows host discount = do
           , activeCostPlayer = pid
           , activeCostWindows = windows
           , activeCostHost = host
+          , activeCostFromHand = fromHand
           }
   -- resources on allies, as Radagast's, may pay for the cards they are for
   payers <- allyPayersFor pid card
