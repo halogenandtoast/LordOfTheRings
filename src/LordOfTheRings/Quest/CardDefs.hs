@@ -96,6 +96,8 @@ allQuestCards =
       , theLeapingFishQuest
       , fightingInTheStreets
       , escapeToTheQuays
+      , theAmbush
+      , captured
       ]
 
 theDrippingWalls :: CardDef
@@ -322,3 +324,9 @@ fightingInTheStreets =
 
 escapeToTheQuays :: CardDef
 escapeToTheQuays = quest "05067" "Escape to the Quays" PerilInPelargir 3 15
+
+theAmbush :: CardDef
+theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
+
+captured :: CardDef
+captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}

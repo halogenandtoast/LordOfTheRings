@@ -97,6 +97,9 @@ allTreacheryCards =
       , lostInTheCity
       , localTrouble
       , lurkingInShadows
+      , lyingInWait
+      , mordorLooms
+      , conflictAtTheCrossroads
       ]
 
 deepDeepDark :: CardDef
@@ -583,4 +586,21 @@ lurkingInShadows :: CardDef
 lurkingInShadows =
   (treachery "05045" "Lurking in Shadows" Brigands 2)
     { cdShadowEffect = True
+    }
+
+lyingInWait :: CardDef
+lyingInWait = treachery "06129" "Lying in Wait" TheBloodOfGondor 4
+
+mordorLooms :: CardDef
+mordorLooms =
+  (treachery "06130" "Mordor Looms" TheBloodOfGondor 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+conflictAtTheCrossroads :: CardDef
+conflictAtTheCrossroads =
+  (treachery "06131" "Conflict at the Crossroads" TheBloodOfGondor 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }
