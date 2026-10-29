@@ -121,6 +121,9 @@ import LordOfTheRings.Enemy.Cards.BlackNumenorean
 import LordOfTheRings.Enemy.Cards.OrcAmbusher
 import LordOfTheRings.Enemy.Cards.BrutalUruk
 import LordOfTheRings.Enemy.Cards.EvilCrow
+import LordOfTheRings.Enemy.Cards.BellachTroubleInTharbad
+import LordOfTheRings.Enemy.Cards.SpyFromMordor
+import LordOfTheRings.Enemy.Cards.BellachsMarauder
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -266,5 +269,8 @@ allEnemys =
         , SomeEnemyCard orcAmbusher
         , SomeEnemyCard brutalUruk
         , SomeEnemyCard evilCrow
+        , SomeEnemyCard bellachTroubleInTharbad
+        , SomeEnemyCard spyFromMordor
+        , SomeEnemyCard bellachsMarauder
         ]
     ]
