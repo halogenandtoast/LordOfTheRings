@@ -23,6 +23,8 @@ data PlayerMatcher
   | PlayerMatchAll [PlayerMatcher]
   | -- | a player with a hidden card in their play area, as The Blood of Gondor deals them
     PlayerWithHiddenCards
+  | -- | a player with at least this many cards in their deck, as a cost to discard them
+    PlayerWithCardsInDeck Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

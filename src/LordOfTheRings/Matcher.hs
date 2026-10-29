@@ -48,6 +48,7 @@ matchPlayer matcher player = case matcher of
   PlayerWithThreatAtLeast n -> pure $ player.threat >= n
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
+  PlayerWithCardsInDeck n -> pure $ length player.deck >= n
   PlayerWithHiddenCards -> getsGame (notNull . Map.findWithDefault [] player.id . (.hiddenCards) . toAttrs . gameScenario)
 
 data Character = HeroCharacter Hero | AllyCharacter Ally
