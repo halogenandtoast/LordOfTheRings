@@ -22,6 +22,7 @@ import LordOfTheRings.Sphere (Sphere (Leadership, Lore))
 import LordOfTheRings.Message.Lifted (cancelEvent)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase, RefreshPhase, ResourcePhase))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioVictoryDisplay))
 import LordOfTheRings.Window
 import TestImport
@@ -281,6 +282,17 @@ spec = describe "Dwarrowdelf player cards" do
     chooseAbilityOf pid meal
     runes <- PlayerCard <$> genPlayerCard Events.daeronsRunes (Just pid)
     costModifier pid runes `shouldReturn` -2
+
+  it "Longbeard Elder's progress goes on the active location before the quest" . gameTest $ \pid -> do
+    _ <- putQuestStage Quests.fliesAndSpiders
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.mountainsOfMirkwood
+    _ <- setEncounterDeck [Locations.mountainsOfMirkwood]
+    elder <- putAllyIntoPlay pid Allies.longbeardElder
+    run $ CheckWindows [mkAfter $ CommittedToQuest elder]
+    chooseAbilityOf pid elder
+    chooseLabel "$label.continue" pid
+    (.progress) <$> getActiveQuest `shouldReturn` 0
+    getsGame (map (.progress) . filter ((== ActiveLocation) . (.placement)) . toList . (.entities.locations)) `shouldReturn` [1]
 
   it "Rivendell Blade gives the enemy its character attacks -2 defense" . gameTest $ \pid -> do
     elrohir <- putHero pid Heroes.elrohir
