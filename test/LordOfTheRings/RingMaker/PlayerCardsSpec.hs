@@ -233,14 +233,15 @@ spec = describe "The Ring-maker cycle player cards" do
         _ -> error "not a hero"
 
   describe "Defender of the West" do
-    it "gives the first player control of the ally, who may give it undefended damage" . twoPlayerTest testDeck $ \one two -> do
+    it "gives the first player control of the ally, and its player may give it undefended damage" . twoPlayerTest testDeck $ \one two -> do
       henamarth <- putAllyIntoPlay two Allies.henamarthRiversong
       defender <- putAttachmentOn two Attachments.defenderOfTheWest henamarth
       case defender of
         AttachmentTarget aid -> run $ AttachCard aid henamarth
         _ -> error "not an attachment"
       allyController henamarth `shouldReturn` Just (InPlayArea one)
-      getModifiers (PlayerTarget one) >>= (`shouldSatisfy` elem (UndefendedDamageMayGoTo henamarth))
+      getModifiers (PlayerTarget two) >>= (`shouldSatisfy` elem (UndefendedDamageMayGoTo henamarth))
+      getModifiers (PlayerTarget one) >>= (`shouldSatisfy` notElem (UndefendedDamageMayGoTo henamarth))
 
   describe "The Fall of Gil-Galad" do
     it "goes to the victory display as its hero is destroyed, reducing threat by its threat cost" . gameTest $ \pid -> do
