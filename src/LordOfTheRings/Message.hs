@@ -426,6 +426,9 @@ data Message
     DiscardHiddenCard PlayerId EncounterCard
   | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
     PlaceAlly AllyId Placement
+  | -- | as 'SearchEncounterDeckAndDiscard', the enemy found put into play engaged with the
+    -- player, as "searches ... for a Boar Clan enemy and puts it into play engaged with him"
+    SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

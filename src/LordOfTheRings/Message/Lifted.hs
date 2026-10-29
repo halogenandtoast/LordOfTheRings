@@ -533,6 +533,11 @@ searchEncounterDeckAndDiscard
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
 searchEncounterDeckAndDiscard pid source = push . SearchEncounterDeckAndDiscard pid (toTarget source)
 
+-- | As 'searchEncounterDeckAndDiscard', the enemy found put into play engaged with the player.
+searchEncounterDeckAndDiscardToEngage
+  :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
+searchEncounterDeckAndDiscardToEngage pid source = push . SearchEncounterDeckAndDiscardToEngage pid (toTarget source)
+
 -- | Claim the objective onto the host, attaching it there.
 attachObjective :: (ReverseQueue m, Targetable host) => ObjectiveId -> host -> m ()
 attachObjective oid = push . ClaimObjective oid . toTarget
