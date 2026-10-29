@@ -1,5 +1,6 @@
 module LordOfTheRings.AgainstTheShadow.AssaultOnOsgiliathSpec (spec) where
 
+import LordOfTheRings.Ability.Types (AbilityCost (SpendResourcesCost), AbilityType (ActionAbility))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -13,6 +14,7 @@ import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (assaultOnOsgiliath, lookupScenario)
 import LordOfTheRings.Scenario.Types (encounterDiscardL)
+import LordOfTheRings.Sphere (Sphere (Neutral))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
 import TestImport
@@ -283,6 +285,17 @@ spec = describe "Assault on Osgiliath" do
     beravor <- heroOf pid "01012"
     chooseTarget pid beravor
     placementOf Locations.westQuarter `shouldReturn` Just (InPlayArea pid)
+
+  it "offers The Old Bridge's action with its resources as its cost, 1 beside another Osgiliath location" . osgiliathTest $ \pid -> do
+    bridge <- stage Locations.theOldBridge
+    beravor <- getHeroWithCode "01012"
+    run $ PlaceTokens GameSource (toTarget beravor) Resource 3
+    let costs = do
+          Just q <- getQuestion pid
+          pure [ab.abilityType | AbilityLabel _ ab _ _ <- questionChoices q, sourceTarget ab.abilitySource == Just (toTarget bridge)]
+    _ <- stage Locations.westQuarter
+    run $ BeginPhase PlanningPhase
+    costs `shouldReturn` [ActionAbility (SpendResourcesCost Neutral 1)]
 
   it "spends 2 resources, or 1 beside another Osgiliath location, for progress on The Old Bridge" . osgiliathTest $ \pid -> do
     bridge <- stage Locations.theOldBridge
