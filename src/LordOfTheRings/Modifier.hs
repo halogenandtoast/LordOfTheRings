@@ -339,6 +339,8 @@ data ModifierType
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
     CannotGainResourcesFromPlayerCardEffects
+  | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
+    PlayedACardThisRound
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int

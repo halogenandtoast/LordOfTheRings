@@ -10,7 +10,10 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
-import LordOfTheRings.Target (Target, toTarget)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound))
+import LordOfTheRings.Source (Source (GameSource))
+import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
 import LordOfTheRings.Window
 
 data Cost = ResourceCost Sphere CardCost | Free
@@ -87,6 +90,7 @@ instance RunMessage ActiveCost where
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
+          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisRound] UntilEndOfRound
           pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
           pushWhen ac.activeCostFromHand
             $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card), mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card)]
