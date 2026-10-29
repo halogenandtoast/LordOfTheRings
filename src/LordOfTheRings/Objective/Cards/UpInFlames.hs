@@ -3,6 +3,7 @@ module LordOfTheRings.Objective.Cards.UpInFlames (upInFlames) where
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted
 import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Placement (Placement (Unplaced))
 
 newtype UpInFlames = UpInFlames ObjectiveAttrs
   deriving anyclass (IsObjective, HasModifiersFor)
@@ -17,9 +18,9 @@ instance HasAbilities UpInFlames where
   getAbilities (UpInFlames a) = [mkAbility a 1 $ forced RoundEndsWindow]
 
 -- | If any player has no cards in his deck, the players have lost the game.
--- ponytail: checked as cards leave a deck by drawing, discarding (the Forced effect too) or
--- being taken; a deck already empty as Up in Flames enters play is caught at the first of
--- these, at the latest at the end of the round.
+-- Checked as cards leave a deck by drawing, discarding (the Forced effect too) or being
+-- taken, and as each window opens, so a deck already empty as it enters play is caught as
+-- it enters the staging area.
 instance RunMessage UpInFlames where
   runMessage msg o@(UpInFlames attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
@@ -34,6 +35,10 @@ instance RunMessage UpInFlames where
       pure o
     (deckChange -> True) -> do
       doStep 1 msg
+      UpInFlames <$> runMessage msg attrs
+    CheckWindows _ | attrs.placement /= Unplaced -> do
+      players <- traverse getPlayer =<< getRemainingPlayers
+      when (any (null . (.deck)) players) $ gameOver Lost
       UpInFlames <$> runMessage msg attrs
     _ -> UpInFlames <$> runMessage msg attrs
    where

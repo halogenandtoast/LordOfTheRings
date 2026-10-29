@@ -306,6 +306,12 @@ spec = describe "The Steward's Fear" do
     run $ CheckWindows [Window When RoundEnds]
     getsGame (.outcome) `shouldReturn` Just Lost
 
+  it "loses the game as Up in Flames enters play with a deck already empty" . fearTest $ \pid -> do
+    g <- getGame
+    putGame $ g & playersL . ix pid . deckL .~ []
+    staged Objectives.upInFlames
+    getsGame (.outcome) `shouldReturn` Just Lost
+
   it "raises each player's threat by 2 at the end of the round with Poisoned Counsels" . fearTest $ \pid -> do
     staged Objectives.poisonedCounsels
     threat <- (.threat) <$> getPlayer pid
