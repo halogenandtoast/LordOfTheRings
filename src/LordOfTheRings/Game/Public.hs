@@ -30,17 +30,44 @@ publicGame = publicGameFor (const True)
 
 -- | The game as someone sees it who may only look at the hands of the players given:
 -- the rest send only their sizes, and their questions do not show the cards searched.
+--
+-- Separated, every area's players and cards are sent as the game's, and "areas" says
+-- which cards are in each area, in turn order, with its staging threat: the quest tally
+-- is the area in focus's.
 publicGameFor :: (PlayerId -> Bool) -> Game -> Value
-publicGameFor seesHand g = hideDecks $ toJSON g
+publicGameFor seesHand g = hideDecks $ toJSON merged
  where
+  merged = g {gamePlayers = allPlayers g, gameEntities = g.entities <> mconcat (heldEntities g)}
+  -- the game as each area sees it, the area in focus first
+  areaViews = g : [focusArea (areaLead g s a) g | Just s <- [gameSeparation g], a <- separationAreas s, not (isFocusedArea g a)]
+  areas =
+    [ object
+        [ "players" .= areaPlayers a
+        , "focused" .= isFocusedArea g a
+        , "threat" .= runReadGame getStagingThreat v
+        , "cards" .= encounterCards v.entities
+        ]
+    | Just s <- [gameSeparation g]
+    , a <- areasInTurnOrder g s
+    , v <- take 1 [v | v <- areaViews, isFocusedArea v a]
+    ]
+  encounterCards es =
+    map ((.id) . toCard) (toList es.enemies)
+      <> map ((.id) . toCard) (toList es.locations)
+      <> map ((.id) . toCard) (toList es.quests)
+      <> map ((.id) . toCard) (toList es.objectives)
+      <> map ((.id) . toCard) (toList es.attachments)
+      <> map ((.id) . toCard) (toList es.treacheries)
   hideDecks = \case
     Object o ->
       Object
+        $ KeyMap.delete "separation"
+        $ KeyMap.insert "areas" (toJSON areas)
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)
         $ KeyMap.insert "stagingThreat" (toJSON $ runReadGame getStagingThreat g)
-        $ KeyMap.insert "threatening" (toJSON [cid | (cid, n) <- runReadGame getStagingThreats g, n > 0])
-        $ KeyMap.insert "stats" (toJSON $ runReadGame cardStats g)
-        $ KeyMap.insert "hitPoints" (toJSON $ runReadGame hitPoints g)
+        $ KeyMap.insert "threatening" (toJSON [cid | v <- areaViews, (cid, n) <- runReadGame getStagingThreats v, n > 0])
+        $ KeyMap.insert "stats" (toJSON $ foldMap (runReadGame cardStats) areaViews)
+        $ KeyMap.insert "hitPoints" (toJSON $ foldMap (runReadGame hitPoints) areaViews)
         $ KeyMap.insert "attackStrength" (toJSON $ runReadGame attackStrength g)
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
         $ KeyMap.insert "underneath" (toJSON underneath)
@@ -84,8 +111,9 @@ publicGameFor seesHand g = hideDecks $ toJSON g
   attachHosts :: Map CardId [Target]
   attachHosts =
     mapFromList
-      [ (c.id, runReadGame (cardHosts $ toCardCode c) g)
-      | p <- toList g.players
+      [ (c.id, runReadGame (cardHosts $ toCardCode c) v)
+      | v <- areaViews
+      , p <- toList v.players
       , seesHand p.id
       , c <- p.hand
       , c.cardType == AttachmentType
@@ -98,7 +126,7 @@ publicGameFor seesHand g = hideDecks $ toJSON g
     Map.filter (> 0)
       $ Map.unionWith
         (+)
-        (mapFromList [(o.objectiveCardId, length o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives g.entities)])
+        (mapFromList [(o.objectiveCardId, length o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)])
         (maybe mempty (fmap length) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [Value])))
   hidePlayer = withSize "deck" "deckSize"
   hideHand = \case
