@@ -2498,8 +2498,8 @@ payFor g pid card fromHand windows host discount = do
         ]
     [] -> pay n
   -- a card its player may give Doomed as they play it from hand, as Greyflood Wanderer,
-  -- asks first; what it gains it keeps for the round, for its abilities to read
-  -- ponytail: played again from hand this round, it would keep the Doomed it gained
+  -- asks first; what it gains it keeps for the round, for its abilities to read, and
+  -- loses as it is played again, a new card
   for_ (headMay [k | fromHand, Modifier _ (MayGainDoomed k) <- ownMods]) \k ->
     push
       $ questionLabelWith
@@ -2512,7 +2512,8 @@ payFor g pid card fromHand windows host discount = do
             [CreateEffect $ Effect (CardIdSource card.id) (CardIdTarget card.id) [GainKeyword (Doomed k)] UntilEndOfRound]
         , Label (ikey "label.doNotGiveDoomed") []
         ]
-  pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
+  let gained e = effectSource e == CardIdSource card.id && effectTarget e == CardIdTarget card.id
+  pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (\e -> not (spent e || gained e))
 
 -- | The Doomed a card is printed with.
 printedDoomed :: HasCardDef a => a -> Int
