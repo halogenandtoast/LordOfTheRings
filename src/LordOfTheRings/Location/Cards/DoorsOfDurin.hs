@@ -41,6 +41,28 @@ instance RunMessage DoorsOfDurin where
    where
     initial :: CardDef -> Maybe Char
     initial def = let Name title _ = cdName def in unaccent <$> headMay (T.unpack $ T.toLower title)
-    -- ponytail: the accented capitals card titles start with, not a full Unicode fold
+    -- every Latin letter with a diacritic, lowercased, as a title may start with
     unaccent :: Char -> Char
-    unaccent ch = maybe ch snd $ find ((== ch) . fst) (zip ("áâéêíîóôúû" :: String) "aaeeiioouu")
+    unaccent ch = maybe ch snd $ find ((ch `elem`) . fst) folds
+    folds :: [(String, Char)]
+    folds =
+      [ ("àáâãäåāăą", 'a')
+      , ("çćĉċč", 'c')
+      , ("ďđ", 'd')
+      , ("èéêëēĕėęě", 'e')
+      , ("ĝğġģ", 'g')
+      , ("ĥħ", 'h')
+      , ("ìíîïĩīĭįı", 'i')
+      , ("ĵ", 'j')
+      , ("ķ", 'k')
+      , ("ĺļľŀł", 'l')
+      , ("ñńņňŉ", 'n')
+      , ("òóôõöøōŏő", 'o')
+      , ("ŕŗř", 'r')
+      , ("śŝşš", 's')
+      , ("ţťŧ", 't')
+      , ("ùúûüũūŭůűų", 'u')
+      , ("ŵ", 'w')
+      , ("ýÿŷ", 'y')
+      , ("źżž", 'z')
+      ]
