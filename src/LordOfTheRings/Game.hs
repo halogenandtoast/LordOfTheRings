@@ -318,6 +318,7 @@ leavingCharacter g = \case
   Discard t | character t -> Just t
   ReturnToHand t | character t -> Just t
   ShuffleIntoOwnersDeck t | character t -> Just t
+  RemoveFromGame t@(HeroTarget _) | character t -> Just t
   _ -> Nothing
  where
   character = \case
@@ -1724,6 +1725,12 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
+  -- a hero leaves play for good, not for its owner's discard pile, its attachments
+  -- discarded as they would be were it discarded
+  RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
+    g' <- leftPlay g target
+    pushAll $ discardAttached g target
+    pure $ g' & entitiesL . heroesL %~ Map.delete hid
   -- what is attached to it leaves play with it, as it would were it discarded
   RemoveFromGame target@(LocationTarget lid) -> do
     pushAll $ discardAttached g target
