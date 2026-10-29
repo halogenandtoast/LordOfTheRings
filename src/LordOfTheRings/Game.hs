@@ -867,11 +867,12 @@ runGameMessage msg g = case msg of
     ready <- readyAttackers pid
     raiders <- stagingAttackers ready
     ranged <- withKeyword Ranged ready
+    -- a player card letting characters attack into the staging area, as Forth Eorlingas!,
+    -- does not reach an enemy immune to player card effects (ruling)
     staged <-
-      if
-        | notNull raiders -> select EnemyInStagingArea
-        | notNull ranged -> filterM (fmap (elem AttackableInStagingAreaByRanged) . getModifiers) =<< select EnemyInStagingArea
-        | otherwise -> pure []
+      (<>)
+        <$> (if notNull raiders then filterM (fmap not . immuneToPlayerCards . toTarget) =<< select EnemyInStagingArea else pure [])
+        <*> (if notNull ranged then filterM (fmap (elem AttackableInStagingAreaByRanged) . getModifiers) =<< select EnemyInStagingArea else pure [])
     -- enemies anyone may attack, wherever they are, as one in an Ithilien Pit
     open' <-
       filterM (fmap (elem AttackableByAnyCharacter) . getModifiers)

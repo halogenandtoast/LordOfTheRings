@@ -3,6 +3,7 @@ module LordOfTheRings.Starter.RidersOfRohanSpec (spec) where
 import LordOfTheRings.Ally (Ally)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Enemy (Enemy, EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
@@ -208,6 +209,19 @@ spec = describe "Riders of Rohan" do
       chooseTarget pid eomer
       chooseLabel "$label.doneAttacking" pid
       fmap (.damage) <$> enemyNow spider `shouldReturn` Just 2
+
+    it "does not reach an enemy immune to player card effects (ruling)" . rohanTest $ \pid -> do
+      spider <- stageEnemy Enemies.forestSpider
+      run $ CreateEffect $ Effect GameSource (toTarget spider) [ImmuneToPlayerCardEffects] UntilEndOfRound
+      card <- putCardIntoHand pid Events.forthEorlingas
+      giveResources eomerCode 2
+      run $ BeginPhase CombatPhase
+      passResponses pid
+      chooseTarget pid card
+      passActions pid
+      eomer <- hero eomerCode
+      offered <- maybe False (any \case TargetLabel t _ -> t `elem` [toTarget spider, eomer]; _ -> False) . fmap questionChoices <$> getQuestion pid
+      offered `shouldBe` False
 
   describe "Steed of the Mark" do
     it "spends a resource to ready its hero after it commits" . rohanTest $ \pid -> do
