@@ -113,6 +113,8 @@ export interface ServerGame {
   hitPoints?: Record<string, number>
   /** While attackers are declared, the attack they would make on each enemy, by card id. */
   attackStrength?: Record<string, number>
+  /** How many cards lie facedown under each card, by its card id, as underworld cards under a location. */
+  underneath?: Record<string, number>
   lastCommittedWillpower: number | null
   /** What each target is modified by, as [target, modifiers] pairs. */
   modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]
