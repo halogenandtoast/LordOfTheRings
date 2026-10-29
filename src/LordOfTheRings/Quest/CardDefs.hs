@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -110,6 +110,9 @@ allQuestCards =
       , retakeTheCity
       , theAmbush
       , captured
+      , theRoadToTharbad
+      , aWellLaidTrap
+      , noWayOut
       ]
 
 theDrippingWalls :: CardDef
@@ -380,3 +383,15 @@ theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
 
 captured :: CardDef
 captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}
+
+theRoadToTharbad :: CardDef
+theRoadToTharbad = (quest "08011" "The Road to Tharbad" TheDunlandTrap 1 18) {cdKeywords = setFromList [Time 2]}
+
+-- | Its quest points are "-": it advances at the end of the combat phase.
+aWellLaidTrap :: CardDef
+aWellLaidTrap = quest "08012" "A Well Laid Trap" TheDunlandTrap 2 0
+
+-- | Its quest points are "-". Time X, X 5 times the number of players: gained from its
+-- own modifiers.
+noWayOut :: CardDef
+noWayOut = quest "08013" "No Way Out" TheDunlandTrap 3 0
