@@ -336,6 +336,9 @@ data ModifierType
   | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
     -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play
     CannotLeaveStagingArea
+  | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
+    -- encounter card effects still may
+    CannotGainResourcesFromPlayerCardEffects
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int

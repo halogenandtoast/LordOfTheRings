@@ -1304,7 +1304,8 @@ runGameMessage msg g = case msg of
   PlaceTokens source target@(HeroTarget _) Resource n
     | n > 0
     , source /= GameSource -> do
-        barred <- elem CannotGainResourcesFromCardEffects <$> getModifiers target
+        mods <- getModifiers target
+        let barred = CannotGainResourcesFromCardEffects `elem` mods || (isPlayerCardSource source && CannotGainResourcesFromPlayerCardEffects `elem` mods)
         unless barred $ push $ CheckWindows [mkAfter $ GainedResources target]
         pure g
   PlaceEnemy eid StagingArea -> do
