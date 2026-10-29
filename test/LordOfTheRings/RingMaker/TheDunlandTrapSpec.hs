@@ -125,9 +125,15 @@ spec = describe "The Dunland Trap" do
     run . AddToStaging =<< genEncounterCard Locations.hillsOfDunland
     _ <- setEncounterDeck [Locations.plainsOfEnedwaith, Locations.plainsOfEnedwaith]
     run $ DrawCards $ Drawing pid 1
-    -- the lead orders the two copies' Forced effects
-    replicateM_ 2 $ chooseAbility pid
+    -- one copy stands for both, so the lead orders nothing
+    getQuestion pid `shouldReturn` Nothing
     length <$> getEncounterDiscard `shouldReturn` 1
+
+  it "discards for the draws its Travel cost makes, as it is still in the staging area" . trapTest $ \pid -> do
+    hills <- staged Locations.hillsOfDunland
+    _ <- setEncounterDeck [Enemies.boarClanStalker]
+    run $ TravelTo hills
+    placementOf Enemies.boarClanStalker `shouldReturn` Just (EngagedWith pid)
 
   it "has each player draw to travel to Hills of Dunland" . trapTest $ \pid -> do
     hills <- staged Locations.hillsOfDunland
