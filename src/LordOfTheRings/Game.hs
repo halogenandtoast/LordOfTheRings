@@ -347,13 +347,25 @@ runGameMessage msg g = case msg of
     let passToken = case drop 1 players of
           (next : _) -> [SetFirstPlayer next]
           [] -> []
+    let candidates = map toTarget heroes <> map toTarget allies
+    -- a player who may ready only so many characters chooses which, when he has more
+    limited <- forMaybeM players \pid -> do
+      limit <- minimumMay . (\ms -> [n | ReadyLimitDuringRefresh n <- ms]) <$> getModifiers (PlayerTarget pid)
+      owned <- charactersControlledBy pid
+      let mine = filter (`elem` owned) candidates
+      pure $ do
+        n <- limit
+        guard (n < length mine)
+        pure (pid, n, mine)
+    let held = concat [cs | (_, _, cs) <- limited]
     -- each character readied opens its own window, for responses to it readying
-    readied <- for (map toTarget heroes <> map toTarget allies) \c -> do
+    readied <- for (filter (`notElem` held) candidates) \c -> do
       traits <- characterTraits c
       pure [Ready c, CheckWindows [mkAfter $ Readied c traits]]
     pushAll
       $ concat regenerating
       <> concat readied
+      <> [ReadyUpTo pid n cs | (pid, n, cs) <- limited]
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
       <> [RaiseThreat pid 1 | pid <- players]
@@ -362,6 +374,13 @@ runGameMessage msg g = case msg of
       <> map OptionalActionWindow players
     pure $ g & phaseL .~ RefreshPhase
   SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid
+  ReadyUpTo pid n cs -> do
+    when (n > 0 && notNull cs) do
+      choices <- for cs \c -> do
+        traits <- characterTraits c
+        pure $ targetLabel c [Ready c, CheckWindows [mkAfter $ Readied c traits], ReadyUpTo pid (n - 1) (filter (/= c) cs)]
+      push $ questionLabelWith (ikeyWith "label.readyUpTo" [intVar "n" n]) Nothing [] pid choices
+    pure g
   CheckEliminations -> do
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)

@@ -426,6 +426,9 @@ data Message
     DiscardHiddenCard PlayerId EncounterCard
   | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
     PlaceAlly AllyId Placement
+  | -- | the player readies up to this many of the characters, one at a time, as a limit
+    -- on readying in the refresh phase leaves him to choose
+    ReadyUpTo PlayerId Int [Target]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

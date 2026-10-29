@@ -854,5 +854,6 @@
   },
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
-  }
+  },
+  "readyUpTo": "Choose a character to ready ({n} left)"
 }

@@ -285,6 +285,9 @@ data ModifierType
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int
+  | -- | on a player: he readies no more than this many characters during the refresh
+    -- phase, as A Treacherous Swamp reads
+    ReadyLimitDuringRefresh Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
