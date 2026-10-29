@@ -10,7 +10,7 @@ import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getDefense)
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (HeroMatcher (..), selectAny)
+import LordOfTheRings.Matcher (HeroMatcher (..), attachedWithTrait, selectAny)
 import LordOfTheRings.Phase
 import LordOfTheRings.Trait (Trait (Gondor, Rohan))
 import TestImport
@@ -55,6 +55,12 @@ spec = describe "Heirs of Numenor player cards" do
       heroHas boromirCode Rohan `shouldReturn` True
       heroHas eowynCode Gondor `shouldReturn` True
       heroHas beravorCode Gondor `shouldReturn` False
+
+    it "gives Gondor attachments the Rohan trait too" . honTest $ \pid -> do
+      beravor <- hero beravorCode
+      _ <- putAttachmentOn pid Attachments.stewardOfGondor beravor
+      _ <- playWith pid boromirCode 0 Events.mutualAccord
+      attachedWithTrait Rohan beravor >>= (`shouldSatisfy` (not . null))
 
   describe "Wealth of Gondor" do
     it "adds 1 resource to a Gondor hero" . honTest $ \pid -> do
