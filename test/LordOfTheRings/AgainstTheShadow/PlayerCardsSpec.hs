@@ -5,7 +5,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
-import LordOfTheRings.Helpers.Character (getAttack, getDefense)
+import LordOfTheRings.Helpers.Character (getAttack, getDefense, getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Modifier (ModifierType (CostModifier, DiscardNextRevealed))
@@ -312,6 +312,13 @@ spec = describe "Against the Shadow player cards" do
       _ <- playWith pid gimli 0 Events.wellEquipped
       chooseTarget pid (CardIdTarget axe.id)
       getAttack g `shouldReturn` 4
+
+  describe "Théoden" do
+    it "gives +1 willpower only to heroes with the printed tactics icon, not a gained one" . withHeroes [theoden, gimli, beravor] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfBattle =<< hero beravor
+      run $ PlaceTokens GameSource GameTarget Resource 0
+      (getWillpower =<< hero gimli) `shouldReturn` 3
+      (getWillpower =<< hero beravor) `shouldReturn` 2
 
   describe "Mirlonde" do
     it "lowers the starting threat of each lore hero by 1" . withHeroes ["06032", beravor, bilbo] $ \pid -> do

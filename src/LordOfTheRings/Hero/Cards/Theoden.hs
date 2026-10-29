@@ -14,5 +14,5 @@ theoden = hero Theoden Cards.theoden
 -- | Each hero with a printed tactics resource icon gets +1 willpower.
 instance HasModifiersFor Theoden where
   getModifiersFor (Theoden a) = do
-    heroes <- select (HeroWithSphere Tactics)
+    heroes <- select (HeroWithPrintedSphere Tactics)
     for_ heroes \h -> modified a h [WillpowerModifier 1]
