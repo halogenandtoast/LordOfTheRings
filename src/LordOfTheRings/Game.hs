@@ -365,8 +365,10 @@ runGameMessage msg g = case msg of
   CheckEliminations -> do
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
+      -- the level may move, as Double Dealings lowers it
+      level <- (eliminationThreat +) . sum . mapMaybe (\case EliminationThreatModifier n -> Just n; _ -> Nothing) <$> getModifiers (PlayerTarget player.id)
       pure
-        $ guard (not player.eliminated && (player.threat >= eliminationThreat || null heroes))
+        $ guard (not player.eliminated && (player.threat >= level || null heroes))
         $> player.id
     pushAll $ map EliminatePlayer eliminated
     pure g
