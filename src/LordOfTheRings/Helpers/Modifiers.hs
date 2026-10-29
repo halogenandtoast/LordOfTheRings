@@ -53,10 +53,11 @@ preloadModifiers g = do
       blanked = Map.keysSet $ Map.filter (any ((== Blank) . modifierType)) fromEntities
       ownText m = maybe False (`member` blanked) (sourceTarget $ modifierSource m)
       all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed]
-      -- a card immune to player card effects keeps none of their modifiers
+      -- a card immune to player card effects keeps none of their modifiers, but its own, as
+      -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
-      unaffected ms = if immune ms then filter (not . isPlayerCardSource . modifierSource) ms else ms
-  pure $ g {gameModifiers = Map.map unaffected all'}
+      unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (isPlayerCardSource $ modifierSource m)) ms else ms
+  pure $ g {gameModifiers = Map.mapWithKey unaffected all'}
 
 -- | Whether the character commits to the quest without exhausting: by its own modifiers,
 -- or the game's for a trait it has, printed or gained.

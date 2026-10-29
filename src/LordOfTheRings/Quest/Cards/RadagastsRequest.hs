@@ -1,9 +1,6 @@
 module LordOfTheRings.Quest.Cards.RadagastsRequest (radagastsRequest) where
 
-import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Card (toCardCode)
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Hero.Types (heroCardId)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -43,25 +40,6 @@ instance RunMessage RadagastsRequest where
       pure q
     UseCardAbility _ (isSource attrs -> True) 2 windows -> do
       ws <- map toTarget <$> select wilyador
-      for_ [s | Window _ (Healed t s) <- windows, t `elem` ws] leaveForGood
+      for_ [s | Window _ (Healed t s) <- windows, t `elem` ws] removeSourceCardFromGame
       pure q
     _ -> RadagastsRequest <$> runMessage msg attrs
-   where
-    -- the player card behind the heal leaves play, or its owner's discard pile, for good
-    leaveForGood = \case
-      AbilitySource s _ -> leaveForGood s
-      AllySource aid -> do
-        a <- getAlly aid
-        discard aid
-        removeFromDiscard a.owner (allyCardId $ toAttrs a)
-      HeroSource hid -> do
-        h <- getHero hid
-        discard hid
-        removeFromDiscard h.owner (heroCardId $ toAttrs h)
-      AttachmentSource aid ->
-        getsGame (lookup aid . (.entities.attachments)) >>= traverse_ \a -> do
-          discard aid
-          removeFromDiscard (toAttrs a).owner (toAttrs a).cardId
-      -- an event, in its owner's discard pile once played
-      CardIdSource cid -> eachPlayer \p -> removeFromDiscard p cid
-      _ -> pure ()

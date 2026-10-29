@@ -120,6 +120,52 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.Methedras
+import LordOfTheRings.Location.Cards.OrcCave
+import LordOfTheRings.Location.Cards.MugashsLair
+import LordOfTheRings.Location.Cards.EdgeOfFangorn
+import LordOfTheRings.Location.Cards.HeartOfFangorn
+import LordOfTheRings.Location.Cards.TheIslet
+import LordOfTheRings.Location.Cards.FordsOfIsen
+import LordOfTheRings.Location.Cards.TheKingsRoad
+import LordOfTheRings.Location.Cards.GapOfRohan
+import LordOfTheRings.Location.Cards.AncientForestLocation
+import LordOfTheRings.Location.Cards.TangledWoods
+import LordOfTheRings.Location.Cards.BrokenLandsLocation
+import LordOfTheRings.Location.Cards.RavenChiefsCamp
+import LordOfTheRings.Location.Cards.RavenWarCamp
+import LordOfTheRings.Location.Cards.RavenVillage
+import LordOfTheRings.Location.Cards.DunlandBattlefield
+import LordOfTheRings.Location.Cards.RavenCountry
+import LordOfTheRings.Location.Cards.MunuvDuvRavine
+import LordOfTheRings.Location.Cards.OldSouthRoad
+import LordOfTheRings.Location.Cards.HithaeglirFoothills
+import LordOfTheRings.Location.Cards.HillsOfDunland
+import LordOfTheRings.Location.Cards.PlainsOfEnedwaith
+import LordOfTheRings.Location.Cards.HithaeglirStream
+import LordOfTheRings.Location.Cards.TheEmptyMug
+import LordOfTheRings.Location.Cards.TheCrossingAtTharbad
+import LordOfTheRings.Location.Cards.StreetsOfTharbad
+import LordOfTheRings.Location.Cards.TharbadHideout
+import LordOfTheRings.Location.Cards.RuinsOfTheSecondAge
+import LordOfTheRings.Location.Cards.SeedyInn
+import LordOfTheRings.Location.Cards.HiddenAlleyway
+import LordOfTheRings.Location.Cards.DecrepitRooftops
+import LordOfTheRings.Location.Cards.TheSecretChamber
+import LordOfTheRings.Location.Cards.RuinedPlaza
+import LordOfTheRings.Location.Cards.CollapsedTower
+import LordOfTheRings.Location.Cards.AncientFoundation
+import LordOfTheRings.Location.Cards.CityRemains
+import LordOfTheRings.Location.Cards.FenOfReeds
+import LordOfTheRings.Location.Cards.FingerOfGlanduin
+import LordOfTheRings.Location.Cards.HiddenEyot
+import LordOfTheRings.Location.Cards.SinkingBog
+import LordOfTheRings.Location.Cards.HillBarrow
+import LordOfTheRings.Location.Cards.CaveBarrow
+import LordOfTheRings.Location.Cards.StoneBarrow
+import LordOfTheRings.Location.Cards.HallowedCircle
+import LordOfTheRings.Location.Cards.CursedForest
+import LordOfTheRings.Location.Cards.GrimFoothills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +313,51 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard methedras
+        , SomeLocationCard orcCave
+        , SomeLocationCard mugashsLair
+        , SomeLocationCard edgeOfFangorn
+        , SomeLocationCard heartOfFangorn
+        , SomeLocationCard theIslet
+        , SomeLocationCard fordsOfIsen
+        , SomeLocationCard theKingsRoad
+        , SomeLocationCard gapOfRohan
+        , SomeLocationCard ancientForestLocation
+        , SomeLocationCard tangledWoods
+        , SomeLocationCard brokenLandsLocation
+        , SomeLocationCard ravenChiefsCamp
+        , SomeLocationCard ravenWarCamp
+        , SomeLocationCard ravenVillage
+        , SomeLocationCard dunlandBattlefield
+        , SomeLocationCard ravenCountry
+        , SomeLocationCard munuvDuvRavine
+        , SomeLocationCard oldSouthRoad
+        , SomeLocationCard hithaeglirFoothills
+        , SomeLocationCard hillsOfDunland
+        , SomeLocationCard plainsOfEnedwaith
+        , SomeLocationCard hithaeglirStream
+        , SomeLocationCard theEmptyMug
+        , SomeLocationCard theCrossingAtTharbad
+        , SomeLocationCard streetsOfTharbad
+        , SomeLocationCard tharbadHideout
+        , SomeLocationCard ruinsOfTheSecondAge
+        , SomeLocationCard seedyInn
+        , SomeLocationCard hiddenAlleyway
+        , SomeLocationCard decrepitRooftops
+        , SomeLocationCard theSecretChamber
+        , SomeLocationCard ruinedPlaza
+        , SomeLocationCard collapsedTower
+        , SomeLocationCard ancientFoundation
+        , SomeLocationCard cityRemains
+        , SomeLocationCard fenOfReeds
+        , SomeLocationCard fingerOfGlanduin
+        , SomeLocationCard hiddenEyot
+        , SomeLocationCard sinkingBog
+        , SomeLocationCard hillBarrow
+        , SomeLocationCard caveBarrow
+        , SomeLocationCard stoneBarrow
+        , SomeLocationCard hallowedCircle
+        , SomeLocationCard cursedForest
+        , SomeLocationCard grimFoothills
         ]
     ]

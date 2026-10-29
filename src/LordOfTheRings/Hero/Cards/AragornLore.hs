@@ -22,6 +22,6 @@ instance RunMessage AragornLore where
   runMessage msg h@(AragornLore attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       player <- getPlayer pid
-      when (player.threat > player.startingThreat) $ lowerThreat pid (player.threat - player.startingThreat)
+      when (player.threat > player.startingThreat) $ lowerThreatBy attrs pid (player.threat - player.startingThreat)
       pure h
     _ -> AragornLore <$> runMessage msg attrs

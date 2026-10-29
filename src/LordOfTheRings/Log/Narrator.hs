@@ -15,6 +15,7 @@ Three rules:
 -}
 module LordOfTheRings.Log.Narrator (narrationFor) where
 
+import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -91,6 +92,8 @@ narrationFor = \case
   -- \* Threat
   RaiseThreat pid n | n > 0 -> Just $ threatChange "log.threatRaised" pid n (+ n)
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
+  ScenarioSpecific "tharbad.lowerElimination" _ ->
+    Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> (10 :: Int)]]
   EliminatePlayer pid -> Just do
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]
@@ -110,6 +113,8 @@ narrationFor = \case
       -- every hero's resource for the round says nothing the board does not
       Resource | source == GameSource && phase == ResourcePhase -> pure []
       Resource -> tokens "log.gainsResources"
+      -- damage placed on a location, as Celebrimbor's Secret's encounter cards place it
+      Damage | LocationTarget _ <- target -> tokens "log.damagePlaced"
       -- dealt with as damage, where the source is known
       Damage -> pure []
       Villager -> tokens "log.villagersPlaced"
@@ -178,6 +183,9 @@ narrationFor = \case
     one $ mechanic [ikeyPart "log.turnsHiddenCardFaceup" ["player" ~> who, "card" ~> EncounterCard card]]
   DiscardHiddenCard pid card -> Just $ whenHidden pid card \who ->
     one $ mechanic [ikeyPart "log.discardsHiddenCard" ["player" ~> who, "card" ~> EncounterCard card]]
+  DrawTreacheryIntoHand pid tid -> Just $ whenRef (toTarget tid) \t -> do
+    who <- playerRefFor pid
+    one $ toned Bad $ mechanic [ikeyPart "log.drawsIntoHand" ["player" ~> who, "card" ~> t]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
   RevealShadowCard eid cid -> Just $ shadowFaceUp eid cid
   TurnShadowCardFaceUp eid cid -> Just $ shadowFaceUp eid cid
@@ -238,7 +246,7 @@ narrationFor = \case
   DiscardFromHand pid cid -> Just $ withPlayer pid \player who ->
     pure
       [ mechanic [ikeyPart "log.discardsFromHand" ["player" ~> who, "card" ~> card]]
-      | card <- filter ((== cid) . (.id)) player.hand
+      | card <- filter ((== cid) . (.id)) (discardableHand player)
       ]
   DiscardRandomFromHand pid n | n > 0 -> Just $ withPlayer pid \_ who ->
     one $ mechanic [ikeyPart "log.discardsAtRandom" ["player" ~> who, "count" ~> n]]
@@ -253,6 +261,9 @@ narrationFor = \case
       [ mechanic [ikeyPart "log.movesToBottomOfDeck" ["player" ~> who, "card" ~> card]]
       | card <- filter ((== cid) . (.id)) player.deck
       ]
+  PutInHand card | Just pid <- card.owner -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.takesIntoHand" ["player" ~> who, "card" ~> PlayerCard card]]
   PlayAtNoCost _ card -> Just $ one $ mechanic [ikeyPart "log.playedAtNoCost" ["card" ~> PlayerCard card]]
   -- \* Locations the players control, as Osgiliath's
   PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
@@ -262,6 +273,10 @@ narrationFor = \case
       (InPlayArea _, StagingArea) -> one $ toned Bad $ mechanic [ikeyPart "log.returnedToStaging" ["location" ~> l]]
       _ -> pure []
   PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
+  ScenarioSpecific "scour" (parseMaybe parseJSON -> Just target) -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.scour" ["target" ~> t]]
+  PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing
  where
   takesControl :: (HasGame m, ToLogPart a) => PlayerId -> a -> m [LogEntry]

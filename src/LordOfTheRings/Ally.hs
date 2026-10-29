@@ -141,6 +141,10 @@ import LordOfTheRings.Ally.Cards.HennethAnnunGuard
 import LordOfTheRings.Ally.Cards.MirkwoodPioneer
 import LordOfTheRings.Ally.Cards.BlueMountainTrader
 import LordOfTheRings.Ally.Cards.Gwaihir
+import LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
+import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
+import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
+import LordOfTheRings.Ally.Cards.NalirTheNinInEilph
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -309,5 +313,9 @@ allAllies =
         , SomeAllyCard mirkwoodPioneer
         , SomeAllyCard blueMountainTrader
         , SomeAllyCard gwaihir
+        , SomeAllyCard grimaTheFordsOfIsen
+        , SomeAllyCard chiefTurchTheAntleredCrown
+        , SomeAllyCard nalirTroubleInTharbad
+        , SomeAllyCard nalirTheNinInEilph
         ]
     ]

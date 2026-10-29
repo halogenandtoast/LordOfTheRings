@@ -89,6 +89,38 @@ import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Cards.RetakeTheCity
 import LordOfTheRings.Quest.Cards.TheAmbush
 import LordOfTheRings.Quest.Cards.Captured
+import LordOfTheRings.Quest.Cards.OrdersFromOrthanc
+import LordOfTheRings.Quest.Cards.SearchingForMugash
+import LordOfTheRings.Quest.Cards.TheWizardsPrize
+import LordOfTheRings.Quest.Cards.IntoTheWoods
+import LordOfTheRings.Quest.Cards.EscapeFromFangorn
+import LordOfTheRings.Quest.Cards.TheAngryForest
+import LordOfTheRings.Quest.Cards.FightAtTheFords
+import LordOfTheRings.Quest.Cards.DunlendingAttack
+import LordOfTheRings.Quest.Cards.HoldTheFords
+import LordOfTheRings.Quest.Cards.BattleForDunland
+import LordOfTheRings.Quest.Cards.TheRavenClan
+import LordOfTheRings.Quest.Cards.TheLastStage
+import LordOfTheRings.Quest.Cards.TheRoadToTharbad
+import LordOfTheRings.Quest.Cards.AWellLaidTrap
+import LordOfTheRings.Quest.Cards.NoWayOut
+import LordOfTheRings.Quest.Cards.DoubleDealings
+import LordOfTheRings.Quest.Cards.EscapeFromTharbad
+import LordOfTheRings.Quest.Cards.TheRuinsOfOstInEdhil
+import LordOfTheRings.Quest.Cards.TheEnemysServant
+import LordOfTheRings.Quest.Cards.FleeingFromTharbad
+import LordOfTheRings.Quest.Cards.ThroughTheMarshNoEndInSight
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAWearyPassage
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAForgottenLand
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetImpassableMarshland
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetATreacherousSwamp
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetCreaturesOfAForgottenAge
+import LordOfTheRings.Quest.Cards.OutOfTheSwamp
+import LordOfTheRings.Quest.Cards.TheTrialsBegin
+import LordOfTheRings.Quest.Cards.TheTrialOfStrength
+import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
+import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
+import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -210,5 +242,37 @@ allQuests =
         , SomeQuestCard retakeTheCity
         , SomeQuestCard theAmbush
         , SomeQuestCard captured
+        , SomeQuestCard ordersFromOrthanc
+        , SomeQuestCard searchingForMugash
+        , SomeQuestCard theWizardsPrize
+        , SomeQuestCard intoTheWoods
+        , SomeQuestCard escapeFromFangorn
+        , SomeQuestCard theAngryForest
+        , SomeQuestCard fightAtTheFords
+        , SomeQuestCard dunlendingAttack
+        , SomeQuestCard holdTheFords
+        , SomeQuestCard battleForDunland
+        , SomeQuestCard theRavenClan
+        , SomeQuestCard theLastStage
+        , SomeQuestCard theRoadToTharbad
+        , SomeQuestCard aWellLaidTrap
+        , SomeQuestCard noWayOut
+        , SomeQuestCard doubleDealings
+        , SomeQuestCard escapeFromTharbad
+        , SomeQuestCard theRuinsOfOstInEdhil
+        , SomeQuestCard theEnemysServant
+        , SomeQuestCard fleeingFromTharbad
+        , SomeQuestCard throughTheMarshNoEndInSight
+        , SomeQuestCard throughTheMarshAWearyPassage
+        , SomeQuestCard throughTheMarshAForgottenLand
+        , SomeQuestCard lostInTheSwanfleetImpassableMarshland
+        , SomeQuestCard lostInTheSwanfleetATreacherousSwamp
+        , SomeQuestCard lostInTheSwanfleetCreaturesOfAForgottenAge
+        , SomeQuestCard outOfTheSwamp
+        , SomeQuestCard theTrialsBegin
+        , SomeQuestCard theTrialOfStrength
+        , SomeQuestCard theTrialOfPerseverance
+        , SomeQuestCard theTrialOfIntuition
+        , SomeQuestCard theAntleredCrownTheThreeTrials
         ]
     ]

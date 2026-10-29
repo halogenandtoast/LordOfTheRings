@@ -20,6 +20,6 @@ instance HasAbilities Nori where
 instance RunMessage Nori where
   runMessage msg h@(Nori attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      lowerThreat pid 1
+      lowerThreatBy attrs pid 1
       pure h
     _ -> Nori <$> runMessage msg attrs

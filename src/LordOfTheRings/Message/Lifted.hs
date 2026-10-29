@@ -11,13 +11,15 @@ module LordOfTheRings.Message.Lifted (
 import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardType, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types ()
-import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
+import LordOfTheRings.Frontend (Frontend)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Hero.Types ()
+import LordOfTheRings.Ally.Types (allyCardId)
+import LordOfTheRings.Hero.Types (heroCardId)
 import LordOfTheRings.I18n (intVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
@@ -26,6 +28,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
+import LordOfTheRings.Player.Types (discardableHand)
 import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase))
 import LordOfTheRings.Placement (
   Placement (ActiveLocation, AttachedTo, StagingArea),
@@ -40,7 +43,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, Traveled),
+  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled),
  )
 
 dealDamage
@@ -113,11 +116,30 @@ raiseThreatFromDoomed n = when (n > 0) $ eachPlayer \pid -> do
   raiseThreat pid n
   push $ CheckWindows [Window After $ ThreatRaisedByDoomed pid]
 
+-- | Reduce the player's threat, unless it cannot be, as The Empty Mug forbids.
 lowerThreat :: ReverseQueue m => PlayerId -> Int -> m ()
-lowerThreat pid n = push $ LowerThreat pid n
+lowerThreat pid n = do
+  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+  unless barred $ push $ LowerThreat pid n
 
+{- | The card reduces the player's threat, as 'lowerThreat', opening the window for it if
+it does reduce it: The Empty Mug answers a player card's.
+-}
+lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
+lowerThreatBy source pid n = do
+  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+  threat <- (.threat) <$> getPlayer pid
+  unless (barred || n <= 0 || threat <= 0) do
+    push $ LowerThreat pid n
+    push $ CheckWindows [Window After $ ThreatReduced pid (toSource source)]
+
+-- | The player draws N cards by a card's effect, unless card effects cannot make him draw.
+-- ponytail: 'CannotDrawCardsFromCardEffects' bars encounter card draws too, though No End
+-- in Sight names only player cards; no card of its encounter deck draws.
 drawCards :: ReverseQueue m => PlayerId -> Int -> m ()
-drawCards pid n = push $ DrawCards $ Drawing pid n
+drawCards pid n = do
+  barred <- elem CannotDrawCardsFromCardEffects <$> getModifiers (PlayerTarget pid)
+  unless barred $ push $ DrawCards $ Drawing pid n
 
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard
@@ -533,6 +555,11 @@ searchEncounterDeckAndDiscard
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
 searchEncounterDeckAndDiscard pid source = push . SearchEncounterDeckAndDiscard pid (toTarget source)
 
+-- | As 'searchEncounterDeckAndDiscard', the enemy found put into play engaged with the player.
+searchEncounterDeckAndDiscardToEngage
+  :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
+searchEncounterDeckAndDiscardToEngage pid source = push . SearchEncounterDeckAndDiscardToEngage pid (toTarget source)
+
 -- | Claim the objective onto the host, attaching it there.
 attachObjective :: (ReverseQueue m, Targetable host) => ObjectiveId -> host -> m ()
 attachObjective oid = push . ClaimObjective oid . toTarget
@@ -819,6 +846,19 @@ immediateAttack pid eid = do
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
 
+-- | The player divides the damage among characters they control, as "that player must deal
+-- X damage divided among characters he controls" reads; it is dealt once all is assigned.
+dealDamageDivided :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
+dealDamageDivided source pid n = push $ DealDamageDivided (toSource source) pid n []
+
+-- | The enemy makes an additional attack against the player once this attack resolves, as
+-- "attacking enemy makes an additional attack after this one" reads.
+additionalAttack
+  :: (HasGame m, MonadRandom m, Frontend m, HasQueue Message m) => PlayerId -> EnemyId -> QueueT Message m ()
+additionalAttack pid eid = do
+  again <- capture $ immediateAttack pid eid
+  afterAttack eid again
+
 -- | The player deals the damage to 1 character they control, as "each player must deal 3
 -- damage to 1 character he controls" reads.
 dealDamageToOneCharacter :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> Int -> m ()
@@ -842,7 +882,7 @@ removeAllProgress source = do
 
 -- | The player discards every card in their hand.
 discardHand :: ReverseQueue m => PlayerId -> m ()
-discardHand pid = traverse_ (discardFromHand pid) . (.hand) =<< getPlayer pid
+discardHand pid = traverse_ (discardFromHand pid) . discardableHand =<< getPlayer pid
 
 -- | The card leaves the encounter discard pile for the staging area, as "return the top 2
 -- Goblin enemies in the encounter discard pile to the staging area" reads.
@@ -935,3 +975,51 @@ lookAtTopOfEncounterDeckMayDiscard pid source cType =
     showing [EncounterCard top]
     when (cdCardType (toCardDef top) == cType) $ labeled "discardIt" $ discardTopOfEncounterDeck source 1
     labeled "leaveOnTop" (pure ())
+
+-- | The treachery leaves play for the player's hand, where it stays, as Ill Tidings reads.
+drawTreacheryIntoHand :: ReverseQueue m => PlayerId -> TreacheryId -> m ()
+drawTreacheryIntoHand pid = push . DrawTreacheryIntoHand pid
+-- | The player shuffles his discard pile into his deck.
+shuffleDiscardIntoDeck :: ReverseQueue m => PlayerId -> m ()
+shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
+
+-- | The players make engagement checks, from the first player, as in the encounter phase.
+makeEngagementChecks :: ReverseQueue m => m ()
+makeEngagementChecks = getLead >>= \lead -> push (EngagementCheck lead 0)
+{- | The player card behind the source leaves play, or its owner's discard pile, for good,
+as "remove that card from the game" reads of the card behind an effect.
+-}
+removeSourceCardFromGame :: ReverseQueue m => Source -> m ()
+removeSourceCardFromGame = \case
+  AbilitySource s _ -> removeSourceCardFromGame s
+  AllySource aid -> do
+    a <- getAlly aid
+    discard aid
+    removeFromDiscard a.owner (allyCardId $ toAttrs a)
+  HeroSource hid -> do
+    h <- getHero hid
+    discard hid
+    removeFromDiscard h.owner (heroCardId $ toAttrs h)
+  AttachmentSource aid ->
+    getsGame (lookup aid . (.entities.attachments)) >>= traverse_ \a -> do
+      discard aid
+      removeFromDiscard (toAttrs a).owner (toAttrs a).cardId
+  -- an event, in its owner's discard pile once played
+  CardIdSource cid -> eachPlayer \p -> removeFromDiscard p cid
+  _ -> pure ()
+-- | The cards go facedown underneath the target, out of play.
+placeUnderneath :: (ReverseQueue m, Targetable target) => target -> [Card] -> m ()
+placeUnderneath target = push . PlaceUnderneath (toTarget target)
+
+{- | Place damage tokens on the card, as encounter cards place them on a location, then
+check whether that defeats it.
+-}
+placeDamage
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
+placeDamage source target n = do
+  placeTokens source target Damage n
+  push $ CheckDefeated (toTarget target)
+-- | Advance to the stage, taken from the quest deck, as a stage that picks the next at
+-- random does.
+advanceToQuest :: ReverseQueue m => EncounterCard -> m ()
+advanceToQuest = push . AdvanceToQuest

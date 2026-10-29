@@ -163,6 +163,8 @@ data Message
   | -- | the lead clicks the revealed card to resolve its When Revealed effect
     AskToResolveWhenRevealed Target EncounterCard
   | FinishRevelation TreacheryId
+  | -- | the revealed enemy or location surges if it has surge now, printed or gained
+    ResolveSurge Target EncounterCard
   | {- | only the card's When Revealed effect resolves, as Lieutenant of Mordor's: it is
     not revealed, so no keyword, window or cancel touches it
     -}
@@ -204,6 +206,9 @@ data Message
     PayExhaustHeroCost PlayerId HeroMatcher [Message]
   | -- | the player deals 1 damage to a character they control other than the one given
     DamageAnotherCharacter Source PlayerId Target
+  | -- | the player divides the damage among characters they control, a point at a time,
+    -- the points assigned so far kept; it is dealt once all are assigned
+    DealDamageDivided Source PlayerId Int [Target]
   | DiscardRandomFromHand PlayerId Int
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target
@@ -433,6 +438,27 @@ data Message
     GiveFromHand PlayerId CardId PlayerId
   | -- | a card in the player's hand is shuffled into its owner's deck
     ShuffleFromHandIntoOwnersDeck PlayerId CardId
+  | -- | a player card from out of play goes to its owner's hand, as one a Search takes
+    PutInHand PlayerCard
+  | -- | a card leaves the player's hand for out of play, as for To Catch an Orc's
+    -- out-of-play deck
+    RemoveFromHand PlayerId CardId
+  | -- | as the combat phase begins, the enemies with hinder engaged with players remove progress
+    ResolveHinder
+  | -- | the player readies this many of the characters, one at a time, as Heart of Fangorn
+    -- lets no more than 5 refresh
+    RefreshUpTo PlayerId Int [Target]
+  | {- | the treachery leaves play for the player's hand, as Ill Tidings is drawn: an
+    encounter card in hand cannot leave it
+    -}
+    DrawTreacheryIntoHand PlayerId TreacheryId
+  | -- | as 'SearchEncounterDeckAndDiscard', the enemy found put into play engaged with the
+    -- player, as "searches ... for a Boar Clan enemy and puts it into play engaged with him"
+    SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
+  | {- | the cards go facedown underneath the target, out of play, as The Orcs' Search takes
+    them: from a player's hand, deck or discard pile, or a location in play
+    -}
+    PlaceUnderneath Target [Card]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

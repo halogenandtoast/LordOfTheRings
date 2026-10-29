@@ -79,7 +79,8 @@ instance RunMessage Player where
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
     BeginPhase ResourcePhase -> do
-      push $ DrawCards $ Drawing player.id 1
+      n <- fromMaybe 1 . headMay . mapMaybe (\case ResourcePhaseDraws k -> Just k; _ -> Nothing) <$> getModifiers player
+      pushWhen (n > 0) $ DrawCards $ Drawing player.id n
       pure player
     DrawCards drawing | drawing.player == player.id -> do
       blocked <- elem CannotDrawCards <$> getModifiers player
@@ -187,6 +188,10 @@ instance RunMessage Player where
       let (moved, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ moved <> kept
     RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
+    -- a card placed underneath another leaves wherever its owner had it
+    PlaceUnderneath _ cards -> do
+      let gone c = c.id `elem` map (.id) cards
+      pure $ player & handL %~ filter (not . gone) & deckL %~ filter (not . gone) & discardL %~ filter (not . gone)
     ShuffleDiscardIntoDeck pid | pid == player.id -> do
       deck <- shuffleM (player.deck <> player.discard)
       pure $ player & deckL .~ deck & discardL .~ []
@@ -272,14 +277,16 @@ instance RunMessage Player where
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
     DiscardRandomFromHand pid n | pid == player.id -> do
-      (discarded, kept) <- splitAt n <$> shuffleM player.hand
-      pure $ player & handL .~ kept & discardL %~ (discarded <>)
+      discarded <- take n <$> shuffleM (discardableHand player)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
+    RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
-      let (discarded, kept) = partition ((== cid) . (.id)) player.hand
-      pure $ player & handL .~ kept & discardL %~ (discarded <>)
+      let discarded = filter ((== cid) . (.id)) (discardableHand player)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
     UseAbility pid ab _
       | pid == player.id

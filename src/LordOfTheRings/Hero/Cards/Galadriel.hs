@@ -27,7 +27,7 @@ instance RunMessage Galadriel where
   runMessage msg h@(Galadriel attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       choosePlayerM pid attrs \p -> do
-        lowerThreat p 1
+        lowerThreatBy attrs p 1
         drawCards p 1
       pure h
     _ -> Galadriel <$> runMessage msg attrs

@@ -130,6 +130,52 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , methedras
+      , orcCave
+      , mugashsLair
+      , edgeOfFangorn
+      , heartOfFangorn
+      , theIslet
+      , fordsOfIsen
+      , theKingsRoad
+      , gapOfRohan
+      , ancientForestLocation
+      , tangledWoods
+      , brokenLandsLocation
+      , ravenChiefsCamp
+      , ravenWarCamp
+      , ravenVillage
+      , dunlandBattlefield
+      , ravenCountry
+      , munuvDuvRavine
+      , oldSouthRoad
+      , hithaeglirFoothills
+      , hillsOfDunland
+      , plainsOfEnedwaith
+      , hithaeglirStream
+      , theEmptyMug
+      , theCrossingAtTharbad
+      , streetsOfTharbad
+      , tharbadHideout
+      , ruinsOfTheSecondAge
+      , seedyInn
+      , hiddenAlleyway
+      , decrepitRooftops
+      , theSecretChamber
+      , ruinedPlaza
+      , collapsedTower
+      , ancientFoundation
+      , cityRemains
+      , fenOfReeds
+      , fingerOfGlanduin
+      , hiddenEyot
+      , sinkingBog
+      , hillBarrow
+      , caveBarrow
+      , stoneBarrow
+      , hallowedCircle
+      , cursedForest
+      , grimFoothills
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +981,301 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+methedras :: CardDef
+methedras =
+  (location "07027" "Methedras" ToCatchAnOrc 4 2 3)
+    { cdCardTraits = setFromList [Mountain]
+    }
+
+orcCave :: CardDef
+orcCave =
+  (location "07028" "Orc Cave" ToCatchAnOrc 3 3 4)
+    { cdCardTraits = setFromList [Mountain, Cave]
+    }
+
+mugashsLair :: CardDef
+mugashsLair =
+  (location "07029" "Mugash's Lair" ToCatchAnOrc 2 4 2)
+    { cdCardTraits = setFromList [Mountain, Cave]
+    , cdShadowEffect = True
+    }
+
+edgeOfFangorn :: CardDef
+edgeOfFangorn =
+  (location "07032" "Edge of Fangorn" IntoFangorn 1 2 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdVictoryPoints = Just 1
+    }
+
+heartOfFangorn :: CardDef
+heartOfFangorn =
+  (location "07036" "Heart of Fangorn" IntoFangorn 3 3 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+theIslet :: CardDef
+theIslet = unique (location "07017" "The Islet" TheFordsOfIsen 1 1 1) {cdCardTraits = setFromList [River]}
+
+fordsOfIsen :: CardDef
+fordsOfIsen = (location "07018" "Fords of Isen" TheFordsOfIsen 3 3 4) {cdCardTraits = setFromList [River]}
+
+theKingsRoad :: CardDef
+theKingsRoad = (location "07019" "The King's Road" TheFordsOfIsen 2 2 2) {cdCardTraits = setFromList [Road]}
+
+gapOfRohan :: CardDef
+gapOfRohan =
+  (location "07020" "Gap of Rohan" TheFordsOfIsen 4 2 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+ancientForestLocation :: CardDef
+ancientForestLocation =
+  (location "07050" "Ancient Forest" AncientForest 3 2 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+tangledWoods :: CardDef
+tangledWoods = (location "07051" "Tangled Woods" AncientForest 3 2 4) {cdCardTraits = setFromList [Forest]}
+
+brokenLandsLocation :: CardDef
+brokenLandsLocation =
+  (location "07054" "Broken Lands" BrokenLands 3 2 6)
+    { cdCardTraits = setFromList [Highlands]
+    , cdShadowEffect = True
+    }
+
+ravenChiefsCamp :: CardDef
+ravenChiefsCamp =
+  unique
+    (location "08152" "Raven Chief's Camp" TheAntleredCrown 1 4 9)
+      { cdCardTraits = setFromList [Dunland]
+      , cdKeywords = setFromList [Time 3]
+      , cdVictoryPoints = Just 3
+      }
+
+ravenWarCamp :: CardDef
+ravenWarCamp =
+  (location "08155" "Raven War-camp" TheAntleredCrown 4 2 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 3]
+    , cdEasyModeQuantity = Just 2
+    }
+
+ravenVillage :: CardDef
+ravenVillage =
+  (location "08156" "Raven Village" TheAntleredCrown 3 2 3)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 2]
+    , cdShadowEffect = True
+    }
+
+dunlandBattlefield :: CardDef
+dunlandBattlefield =
+  (location "08157" "Dunland Battlefield" TheAntleredCrown 3 3 5)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 3]
+    , cdShadowEffect = True
+    }
+
+ravenCountry :: CardDef
+ravenCountry =
+  (location "08158" "Raven Country" TheAntleredCrown 2 3 6)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 4]
+    , cdShadowEffect = True
+    }
+
+munuvDuvRavine :: CardDef
+munuvDuvRavine = unique (location "08015" "Munuv Dûv Ravine" TheDunlandTrap 1 4 6) {cdCardTraits = setFromList [Enedwaith, Hills, River]}
+
+oldSouthRoad :: CardDef
+oldSouthRoad = unique (location "08016" "Old South Road" TheDunlandTrap 1 1 4) {cdCardTraits = setFromList [Road]}
+
+-- | X threat, X the resource tokens on it: given by its own modifiers.
+hithaeglirFoothills :: CardDef
+hithaeglirFoothills =
+  (location "08019" "Hithaeglir Foothills" TheDunlandTrap 2 0 4)
+    { cdCardTraits = setFromList [Enedwaith, Hills]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+hillsOfDunland :: CardDef
+hillsOfDunland =
+  (location "08020" "Hills of Dunland" TheDunlandTrap 4 2 3)
+    { cdCardTraits = setFromList [Enedwaith, Hills]
+    , cdEasyModeQuantity = Just 2
+    }
+
+plainsOfEnedwaith :: CardDef
+plainsOfEnedwaith =
+  (location "08021" "Plains of Enedwaith" TheDunlandTrap 3 2 2)
+    { cdCardTraits = setFromList [Enedwaith, Plains]
+    , cdShadowEffect = True
+    }
+
+hithaeglirStream :: CardDef
+hithaeglirStream =
+  (location "08022" "Hithaeglir Stream" TheDunlandTrap 4 3 4)
+    { cdCardTraits = setFromList [Enedwaith, River]
+    , cdShadowEffect = True
+    }
+
+theEmptyMug :: CardDef
+theEmptyMug =
+  unique
+    (location "08069" "The Empty Mug" TroubleInTharbad 1 1 4)
+      { cdCardTraits = setFromList [City]
+      , cdVictoryPoints = Just 4
+      }
+
+-- | It gets +2 quest points for each player.
+theCrossingAtTharbad :: CardDef
+theCrossingAtTharbad =
+  unique
+    (location "08071" "The Crossing at Tharbad" TroubleInTharbad 1 2 10)
+      { cdCardTraits = setFromList [City, Ruins, River]
+      }
+
+streetsOfTharbad :: CardDef
+streetsOfTharbad =
+  (location "08074" "Streets of Tharbad" TroubleInTharbad 2 3 1)
+    { cdCardTraits = setFromList [City, Road]
+    }
+
+tharbadHideout :: CardDef
+tharbadHideout =
+  (location "08075" "Tharbad Hideout" TroubleInTharbad 2 1 1)
+    { cdCardTraits = setFromList [City]
+    , cdKeywords = setFromList [Surge]
+    }
+
+ruinsOfTheSecondAge :: CardDef
+ruinsOfTheSecondAge =
+  (location "08076" "Ruins of the Second Age" TroubleInTharbad 2 1 5)
+    { cdCardTraits = setFromList [City, Ruins]
+    , cdEasyModeQuantity = Just 1
+    }
+
+seedyInn :: CardDef
+seedyInn =
+  (location "08077" "Seedy Inn" TroubleInTharbad 2 3 3)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+hiddenAlleyway :: CardDef
+hiddenAlleyway =
+  (location "08078" "Hidden Alleyway" TroubleInTharbad 2 3 5)
+    { cdCardTraits = setFromList [City]
+    }
+
+decrepitRooftops :: CardDef
+decrepitRooftops =
+  (location "08079" "Decrepit Rooftops" TroubleInTharbad 2 2 3)
+    { cdCardTraits = setFromList [City]
+    }
+
+-- | X threat, X the number of players: given by its own modifiers.
+theSecretChamber :: CardDef
+theSecretChamber =
+  unique
+    (location "08126" "The Secret Chamber" CelebrimborsSecret 1 0 6)
+      { cdCardTraits = setFromList [OstInEdhil, Ruins]
+      , cdVictoryPoints = Just 3
+      }
+
+ruinedPlaza :: CardDef
+ruinedPlaza =
+  (location "08130" "Ruined Plaza" CelebrimborsSecret 3 2 2)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdShadowEffect = True
+    }
+
+collapsedTower :: CardDef
+collapsedTower =
+  (location "08131" "Collapsed Tower" CelebrimborsSecret 2 1 4)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdKeywords = setFromList [Surge, Scour]
+    , cdShadowEffect = True
+    }
+
+ancientFoundation :: CardDef
+ancientFoundation =
+  (location "08132" "Ancient Foundation" CelebrimborsSecret 4 2 4)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdKeywords = setFromList [Scour]
+    }
+
+cityRemains :: CardDef
+cityRemains =
+  (location "08133" "City Remains" CelebrimborsSecret 4 3 3)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+fenOfReeds :: CardDef
+fenOfReeds =
+  (location "08106" "Fen of Reeds" TheNinInEilph 3 2 3)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+fingerOfGlanduin :: CardDef
+fingerOfGlanduin =
+  (location "08107" "Finger of Glanduin" TheNinInEilph 3 3 3)
+    { cdCardTraits = setFromList [River, Marsh]
+    , cdShadowEffect = True
+    }
+
+hiddenEyot :: CardDef
+hiddenEyot = (location "08108" "Hidden Eyot" TheNinInEilph 2 3 4) {cdCardTraits = setFromList [Marsh]}
+
+sinkingBog :: CardDef
+sinkingBog =
+  (location "08109" "Sinking Bog" TheNinInEilph 3 1 5)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
+    }
+
+hillBarrow :: CardDef
+hillBarrow = (location "08046" "Hill Barrow" TheThreeTrials 1 4 6) {cdCardTraits = setFromList [Barrow, Forest, Hills]}
+
+caveBarrow :: CardDef
+caveBarrow = (location "08047" "Cave Barrow" TheThreeTrials 1 3 8) {cdCardTraits = setFromList [Barrow, Forest, Hills]}
+
+stoneBarrow :: CardDef
+stoneBarrow = (location "08048" "Stone Barrow" TheThreeTrials 1 2 10) {cdCardTraits = setFromList [Barrow, Forest, Hills]}
+
+-- | X threat, X the number of players: given by its own modifiers.
+hallowedCircle :: CardDef
+hallowedCircle =
+  (location "08049" "Hallowed Circle" TheThreeTrials 1 0 12)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdVictoryPoints = Just 5
+    }
+
+cursedForest :: CardDef
+cursedForest =
+  (location "08051" "Cursed Forest" TheThreeTrials 2 3 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of players: given by its own modifiers.
+grimFoothills :: CardDef
+grimFoothills =
+  (location "08052" "Grim Foothills" TheThreeTrials 3 0 3)
+    { cdCardTraits = setFromList [Hills]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 2
+    }

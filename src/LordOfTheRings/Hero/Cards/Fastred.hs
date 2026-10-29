@@ -23,6 +23,6 @@ instance RunMessage Fastred where
       enemies <- filterM (selectAny . EnemyWithId) [eid | Window _ (DefendedAttack _ eid) <- windows]
       for_ enemies \eid -> do
         placeEnemy eid StagingArea
-        lowerThreat attrs.owner 2
+        lowerThreatBy attrs attrs.owner 2
       pure h
     _ -> Fastred <$> runMessage msg attrs

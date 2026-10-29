@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -110,6 +110,38 @@ allQuestCards =
       , retakeTheCity
       , theAmbush
       , captured
+      , ordersFromOrthanc
+      , searchingForMugash
+      , theWizardsPrize
+      , intoTheWoods
+      , escapeFromFangorn
+      , theAngryForest
+      , fightAtTheFords
+      , dunlendingAttack
+      , holdTheFords
+      , battleForDunland
+      , theRavenClan
+      , theLastStage
+      , theRoadToTharbad
+      , aWellLaidTrap
+      , noWayOut
+      , doubleDealings
+      , escapeFromTharbad
+      , theRuinsOfOstInEdhil
+      , theEnemysServant
+      , fleeingFromTharbad
+      , throughTheMarshNoEndInSight
+      , throughTheMarshAWearyPassage
+      , throughTheMarshAForgottenLand
+      , lostInTheSwanfleetImpassableMarshland
+      , lostInTheSwanfleetATreacherousSwamp
+      , lostInTheSwanfleetCreaturesOfAForgottenAge
+      , outOfTheSwamp
+      , theTrialsBegin
+      , theTrialOfStrength
+      , theTrialOfPerseverance
+      , theTrialOfIntuition
+      , theAntleredCrownTheThreeTrials
       ]
 
 theDrippingWalls :: CardDef
@@ -380,3 +412,116 @@ theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
 
 captured :: CardDef
 captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}
+
+ordersFromOrthanc :: CardDef
+ordersFromOrthanc = quest "07062" "Orders from Orthanc" ToCatchAnOrc 1 0
+
+searchingForMugash :: CardDef
+searchingForMugash = (quest "07063" "Searching for Mugash" ToCatchAnOrc 2 0) {cdKeywords = setFromList [Time 2]}
+
+theWizardsPrize :: CardDef
+theWizardsPrize = (quest "07064" "The Wizard's Prize" ToCatchAnOrc 3 15) {cdKeywords = setFromList [Time 3]}
+
+intoTheWoods :: CardDef
+intoTheWoods = (quest "07065" "Into the Woods" IntoFangorn 1 9) {cdKeywords = setFromList [Time 4]}
+
+escapeFromFangorn :: CardDef
+escapeFromFangorn = (quest "07066" "Escape from Fangorn" IntoFangorn 2 12) {cdKeywords = setFromList [Time 4]}
+
+-- | Its quest points are "-": it advances back to stage 2 on 6 progress with Mugash on a hero.
+theAngryForest :: CardDef
+theAngryForest = (quest "07067" "The Angry Forest" IntoFangorn 3 0) {cdKeywords = setFromList [Time 3]}
+
+fightAtTheFords :: CardDef
+fightAtTheFords = (quest "07059" "Fight at the Fords" TheFordsOfIsen 1 6) {cdKeywords = setFromList [Time 5]}
+
+dunlendingAttack :: CardDef
+dunlendingAttack = (quest "07060" "Dunlending Attack" TheFordsOfIsen 2 14) {cdKeywords = setFromList [Time 2]}
+
+holdTheFords :: CardDef
+holdTheFords = (quest "07061" "Hold the Fords" TheFordsOfIsen 3 16) {cdKeywords = setFromList [Time 3]}
+
+battleForDunland :: CardDef
+battleForDunland = (quest "08147" "Battle for Dunland" TheAntleredCrown 1 10) {cdKeywords = setFromList [Time 3]}
+
+theRavenClan :: CardDef
+theRavenClan = (quest "08148" "The Raven Clan" TheAntleredCrown 2 15) {cdKeywords = setFromList [Time 3]}
+
+-- | Its quest points are "-": the players win once Raven Chief is in the victory display.
+theLastStage :: CardDef
+theLastStage = (quest "08149" "The Last Stage" TheAntleredCrown 3 0) {cdKeywords = setFromList [Time 2]}
+
+theRoadToTharbad :: CardDef
+theRoadToTharbad = (quest "08011" "The Road to Tharbad" TheDunlandTrap 1 18) {cdKeywords = setFromList [Time 2]}
+
+-- | Its quest points are "-": it advances at the end of the combat phase.
+aWellLaidTrap :: CardDef
+aWellLaidTrap = quest "08012" "A Well Laid Trap" TheDunlandTrap 2 0
+
+-- | Its quest points are "-". Time X, X 5 times the number of players: gained from its
+-- own modifiers.
+noWayOut :: CardDef
+noWayOut = quest "08013" "No Way Out" TheDunlandTrap 3 0
+
+doubleDealings :: CardDef
+doubleDealings = (quest "08066" "Double Dealings" TroubleInTharbad 1 0) {cdKeywords = setFromList [Time 4]}
+
+escapeFromTharbad :: CardDef
+escapeFromTharbad = (quest "08067" "Escape from Tharbad" TroubleInTharbad 2 0) {cdKeywords = setFromList [Time 3]}
+
+theRuinsOfOstInEdhil :: CardDef
+theRuinsOfOstInEdhil = (quest "08122" "The Ruins of Ost-in-Edhil" CelebrimborsSecret 1 14) {cdKeywords = setFromList [Time 3]}
+
+theEnemysServant :: CardDef
+theEnemysServant = (quest "08123" "The Enemy's Servant" CelebrimborsSecret 2 12) {cdKeywords = setFromList [Time 3]}
+
+fleeingFromTharbad :: CardDef
+fleeingFromTharbad = quest "08094" "Fleeing from Tharbad" TheNinInEilph 1 0
+
+-- | The stage 2s of The Nîn-in-Eilph: Time 3, and the players wander among them at random.
+throughTheMarsh :: CardCode -> Text -> CardDef
+throughTheMarsh code subtitle =
+  (quest code (Name "Through the Marsh" (Just subtitle)) TheNinInEilph 2 13) {cdKeywords = setFromList [Time 3]}
+
+throughTheMarshNoEndInSight :: CardDef
+throughTheMarshNoEndInSight = throughTheMarsh "08095" "No End in Sight"
+
+throughTheMarshAWearyPassage :: CardDef
+throughTheMarshAWearyPassage = throughTheMarsh "08096" "A Weary Passage"
+
+throughTheMarshAForgottenLand :: CardDef
+throughTheMarshAForgottenLand = throughTheMarsh "08097" "A Forgotten Land"
+
+-- | The stage 3s of The Nîn-in-Eilph, as the stage 2s.
+lostInTheSwanfleet :: CardCode -> Text -> CardDef
+lostInTheSwanfleet code subtitle =
+  (quest code (Name "Lost in the Swanfleet" (Just subtitle)) TheNinInEilph 3 16) {cdKeywords = setFromList [Time 3]}
+
+lostInTheSwanfleetImpassableMarshland :: CardDef
+lostInTheSwanfleetImpassableMarshland = lostInTheSwanfleet "08098" "Impassable Marshland"
+
+lostInTheSwanfleetATreacherousSwamp :: CardDef
+lostInTheSwanfleetATreacherousSwamp = lostInTheSwanfleet "08099" "A Treacherous Swamp"
+
+lostInTheSwanfleetCreaturesOfAForgottenAge :: CardDef
+lostInTheSwanfleetCreaturesOfAForgottenAge = lostInTheSwanfleet "08100" "Creatures of a Forgotten Age"
+
+-- | No quest points: the players win by defeating Ancient Marsh-dweller.
+outOfTheSwamp :: CardDef
+outOfTheSwamp =
+  (quest "08101" "Out of the Swamp" TheNinInEilph 4 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Time 2]}
+
+theTrialsBegin :: CardDef
+theTrialsBegin = quest "08035" "The Trials Begin" TheThreeTrials 1 0
+
+theTrialOfStrength :: CardDef
+theTrialOfStrength = quest "08036" "The Trial of Strength" TheThreeTrials 2 0
+
+theTrialOfPerseverance :: CardDef
+theTrialOfPerseverance = quest "08037" "The Trial of Perseverance" TheThreeTrials 2 0
+
+theTrialOfIntuition :: CardDef
+theTrialOfIntuition = quest "08038" "The Trial of Intuition" TheThreeTrials 2 0
+
+theAntleredCrownTheThreeTrials :: CardDef
+theAntleredCrownTheThreeTrials = quest "08039" "The Antlered Crown" TheThreeTrials 3 1

@@ -296,6 +296,35 @@ data ModifierType
     ShuffleIntoOwnersDeckAtEndOfRound
   | -- | on a hero: a player spent resources from its pool this round
     SpentResourcesThisRound
+  | -- | on an enemy: defeated, it stays where it is for its own Forced effect to place it,
+    -- as Mugash is attached to a hero
+    StaysInPlayWhenDefeated
+  | -- | on a player: they refresh no more than this many characters in the refresh phase,
+    -- as Heart of Fangorn reads
+    RefreshAtMost Int
+  | -- | on a player: they draw this many cards in the resource phase instead of 1, as
+    -- Hithaeglir Stream reads (0: they draw none, as Plains of Enedwaith)
+    ResourcePhaseDraws Int
+  | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
+    CannotReduceThreat
+  | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
+    -- Double Dealings lowers it by 10
+    EliminationThreatModifier Int
+  | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
+    -- Seedy Inn's shadow reads
+    AttackDamageRaisesThreatOf PlayerId
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is placed on the active location, as Collapsed Tower's shadow reads
+    ExcessDamageToActiveLocation
+  | -- | on a player: before he commits his first character to the quest he discards a
+    -- card at random from his hand, and with none he cannot commit, as A Weary Passage reads
+    DiscardRandomToCommit
+  | -- | on a player: card effects cannot make him draw cards, as No End in Sight reads; the
+    -- draw of the resource phase is not one
+    CannotDrawCardsFromCardEffects
+  | -- | on a location in the staging area: progress is placed on it before it can be placed
+    -- on the active location, as Grim Foothills reads
+    TakesProgressBeforeActiveLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

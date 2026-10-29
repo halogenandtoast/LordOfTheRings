@@ -165,6 +165,14 @@ data WindowMatcher
     AnyExploredWindow Timing
   | -- | the character destroyed
     TargetDestroyedWindow Timing Target
+  | -- | a player card effect reduced any player's threat, as The Empty Mug reads
+    ThreatReducedByPlayerCardWindow Timing
+  | -- | the card entered the staging area, as Ruined Plaza reads
+    CardEntersStagingAreaWindow Timing Target
+  | -- | the players advanced to a quest stage, as Fen of Reeds reads
+    AdvancedToStageWindow Timing
+  | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
+    MatchingEnemyAttacksWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -245,6 +253,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
   (AnyExploredWindow t, Explored _) -> t == timing
   (TargetDestroyedWindow t target, CharacterDestroyed target' _) -> t == timing && target == target'
+  (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
+  (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
+  (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -262,4 +273,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (SurgeCardRevealedWindow {}, _) -> False
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
+  (MatchingEnemyAttacksWindow {}, _) -> False
   _ -> False

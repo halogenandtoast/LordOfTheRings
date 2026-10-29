@@ -31,6 +31,6 @@ instance RunMessage ElrondsCounsel where
         questionLabeled "elrondsCounsel.give"
         causedBy attrs
         targets others \c -> phaseModifier attrs c (WillpowerModifier 1)
-      lowerThreat pid 3
+      lowerThreatBy attrs pid 3
       pure e
     _ -> ElrondsCounsel <$> runMessage msg attrs

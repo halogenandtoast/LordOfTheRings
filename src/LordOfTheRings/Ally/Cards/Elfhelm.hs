@@ -24,6 +24,6 @@ instance HasAbilities Elfhelm where
 instance RunMessage Elfhelm where
   runMessage msg s@(Elfhelm a) = case msg of
     UseCardAbility pid (isSource a -> True) _ _ -> do
-      lowerThreat pid 1
+      lowerThreatBy a pid 1
       pure s
     _ -> Elfhelm <$> runMessage msg a

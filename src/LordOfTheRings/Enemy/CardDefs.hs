@@ -127,6 +127,41 @@ allEnemyCards =
       , orcAmbusher
       , brutalUruk
       , evilCrow
+      , mugashEnemy
+      , mugashsGuard
+      , methedrasOrc
+      , darkHeartedHuorn
+      , angryHuorn
+      , deadlyHuorn
+      , orcSkirmisher
+      , orcHunter
+      , orcHound
+      , dunlandProwler
+      , dunlendingBandit
+      , dunlandRaider
+      , dunlandTribesman
+      , dunlandChieftain
+      , dunlandBerserker
+      , prowlingWolf
+      , ravenChief
+      , ravenWarrior
+      , ravenSkirmisher
+      , chiefTurchTheDunlandTrap
+      , boarClanStalker
+      , boarClanWarrior
+      , bellachTroubleInTharbad
+      , spyFromMordor
+      , bellachsMarauder
+      , bellachCelebrimborsSecret
+      , bellachsScout
+      , prowlingOrc
+      , ancientMarshDweller
+      , giantSwampAdder
+      , neekerbreekers
+      , boarsGuardian
+      , wolfsGuardian
+      , ravensGuardian
+      , spiritOfTheWild
       ]
 
 namelessThing :: CardDef
@@ -982,4 +1017,276 @@ evilCrow =
   (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+-- | The players' Mugash: shuffled into an out-of-play deck at setup, never the encounter
+-- deck. Into Fangorn has an objective of the name.
+mugashEnemy :: CardDef
+mugashEnemy =
+  unique
+    (enemy "07024" "Mugash" ToCatchAnOrc 1 1 4 7 4 8)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      }
+
+-- | Shuffled into the out-of-play decks at setup, the copies left over set aside.
+mugashsGuard :: CardDef
+mugashsGuard =
+  (enemy "07025" "Mugash's Guard" ToCatchAnOrc 3 40 3 6 3 6)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdVictoryPoints = Just 3
+    }
+
+methedrasOrc :: CardDef
+methedrasOrc =
+  (enemy "07026" "Methedras Orc" ToCatchAnOrc 3 30 3 5 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+darkHeartedHuorn :: CardDef
+darkHeartedHuorn =
+  (enemy "07033" "Dark-Hearted Huorn" IntoFangorn 4 1 2 4 4 5)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 3
+    }
+
+angryHuorn :: CardDef
+angryHuorn =
+  (enemy "07034" "Angry Huorn" IntoFangorn 3 38 3 5 4 8)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 2
+    }
+
+deadlyHuorn :: CardDef
+deadlyHuorn =
+  (enemy "07035" "Deadly Huorn" IntoFangorn 3 34 2 3 4 6)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 2
+    }
+
+orcSkirmisher :: CardDef
+orcSkirmisher =
+  (enemy "07038" "Orc Skirmisher" MistyMountainOrcs 3 33 3 4 2 4)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+orcHunter :: CardDef
+orcHunter =
+  (enemy "07039" "Orc Hunter" MistyMountainOrcs 3 35 2 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+orcHound :: CardDef
+orcHound =
+  (enemy "07040" "Orc Hound" MistyMountainOrcs 2 20 1 2 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Surge and +1 threat while players hold enough cards: given by its own modifiers.
+dunlandProwler :: CardDef
+dunlandProwler = (enemy "07042" "Dunland Prowler" DunlandRaiders 3 30 1 2 3 3) {cdCardTraits = setFromList [Dunland]}
+
+dunlendingBandit :: CardDef
+dunlendingBandit =
+  (enemy "07043" "Dunlending Bandit" DunlandRaiders 2 33 2 1 2 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    }
+
+dunlandRaider :: CardDef
+dunlandRaider =
+  (enemy "07044" "Dunland Raider" DunlandRaiders 2 35 3 5 3 5)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+dunlandTribesman :: CardDef
+dunlandTribesman =
+  (enemy "07046" "Dunland Tribesman" DunlandWarriors 2 37 0 4 2 3)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+dunlandChieftain :: CardDef
+dunlandChieftain =
+  (enemy "07047" "Dunland Chieftain" DunlandWarriors 2 35 3 5 3 6)
+    { cdCardTraits = setFromList [Dunland]
+    , cdEasyModeQuantity = Just 0
+    }
+
+dunlandBerserker :: CardDef
+dunlandBerserker =
+  (enemy "07048" "Dunland Berserker" DunlandWarriors 3 25 2 2 1 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    }
+
+prowlingWolf :: CardDef
+prowlingWolf =
+  (enemy "07053" "Prowling Wolf" BrokenLands 3 28 3 1 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+ravenChief :: CardDef
+ravenChief =
+  unique
+    (enemy "08151" "Raven Chief" TheAntleredCrown 1 15 4 5 5 9)
+      { cdCardTraits = setFromList [Dunland, RavenClan]
+      , cdVictoryPoints = Just 3
+      }
+
+ravenWarrior :: CardDef
+ravenWarrior =
+  (enemy "08153" "Raven Warrior" TheAntleredCrown 4 36 3 4 2 5)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+ravenSkirmisher :: CardDef
+ravenSkirmisher =
+  (enemy "08154" "Raven Skirmisher" TheAntleredCrown 3 26 2 3 2 2)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- | Cannot leave play: not even destroyed, so it is indestructible.
+chiefTurchTheDunlandTrap :: CardDef
+chiefTurchTheDunlandTrap =
+  unique
+    (enemy "08014" "Chief Turch" TheDunlandTrap 1 50 3 5 3 5)
+      { cdCardTraits = setFromList [Dunland, BoarClan]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+boarClanStalker :: CardDef
+boarClanStalker =
+  (enemy "08017" "Boar Clan Stalker" TheDunlandTrap 3 28 3 0 0 5)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdEasyModeQuantity = Just 2
+    }
+
+boarClanWarrior :: CardDef
+boarClanWarrior =
+  (enemy "08018" "Boar Clan Warrior" TheDunlandTrap 4 20 2 3 1 4)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of players.
+bellachTroubleInTharbad :: CardDef
+bellachTroubleInTharbad =
+  unique
+    (enemy "08070" "Bellach" TroubleInTharbad 1 50 0 5 4 7)
+      { cdCardTraits = setFromList [Mordor, Spy]
+      }
+
+spyFromMordor :: CardDef
+spyFromMordor =
+  (enemy "08072" "Spy from Mordor" TroubleInTharbad 4 40 2 3 2 4)
+    { cdCardTraits = setFromList [Mordor, Orc, Spy]
+    }
+
+bellachsMarauder :: CardDef
+bellachsMarauder =
+  (enemy "08073" "Bellach's Marauder" TroubleInTharbad 2 30 3 5 4 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | X threat, X the cards underneath The Orcs' Search: given by its own modifiers.
+bellachCelebrimborsSecret :: CardDef
+bellachCelebrimborsSecret =
+  unique
+    (enemy "08124" "Bellach" CelebrimborsSecret 1 50 0 5 4 7)
+      { cdCardTraits = setFromList [Mordor, Spy]
+      , cdKeywords = setFromList [Scour]
+      , cdVictoryPoints = Just 5
+      }
+
+bellachsScout :: CardDef
+bellachsScout =
+  (enemy "08128" "Bellach's Scout" CelebrimborsSecret 4 40 2 3 2 4)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdKeywords = setFromList [Scour]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+prowlingOrc :: CardDef
+prowlingOrc =
+  (enemy "08129" "Prowling Orc" CelebrimborsSecret 2 45 3 5 3 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdKeywords = setFromList [Scour]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Set aside at setup, out of play, until a stage adds it to the staging area.
+ancientMarshDweller :: CardDef
+ancientMarshDweller =
+  (enemy "08103" "Ancient Marsh-dweller" TheNinInEilph 1 45 3 6 4 9)
+    { cdCardTraits = setFromList [Creature]
+    , cdVictoryPoints = Just 5
+    }
+
+giantSwampAdder :: CardDef
+giantSwampAdder =
+  (enemy "08104" "Giant Swamp Adder" TheNinInEilph 4 35 3 3 3 6)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 3
+    }
+
+neekerbreekers :: CardDef
+neekerbreekers =
+  (enemy "08105" "Neekerbreekers" TheNinInEilph 3 20 2 1 1 6)
+    { cdCardTraits = setFromList [Creature, Insect]
+    , cdShadowEffect = True
+    }
+
+boarsGuardian :: CardDef
+boarsGuardian =
+  (enemy "08040" "Boar's Guardian" TheThreeTrials 1 50 1 4 4 10)
+    { cdCardTraits = setFromList [Guardian, Boar]
+    , cdKeywords = setFromList [Time 2]
+    , cdVictoryPoints = Just 3
+    }
+
+wolfsGuardian :: CardDef
+wolfsGuardian =
+  (enemy "08041" "Wolf's Guardian" TheThreeTrials 1 50 2 5 3 12)
+    { cdCardTraits = setFromList [Guardian, Wolf]
+    , cdKeywords = setFromList [Time 3]
+    , cdVictoryPoints = Just 3
+    }
+
+ravensGuardian :: CardDef
+ravensGuardian =
+  (enemy "08042" "Raven's Guardian" TheThreeTrials 1 50 3 3 5 8)
+    { cdCardTraits = setFromList [Guardian, Raven]
+    , cdKeywords = setFromList [Time 4]
+    , cdVictoryPoints = Just 3
+    }
+
+spiritOfTheWild :: CardDef
+spiritOfTheWild =
+  (enemy "08050" "Spirit of the Wild" TheThreeTrials 5 28 1 1 2 4)
+    { cdCardTraits = setFromList [Undead, SpiritTrait]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 4
     }

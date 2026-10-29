@@ -888,5 +888,135 @@
   },
   "gwaihir": {
     "chooseEagle": "Choose an Eagle ally in your discard pile to put into play"
+  },
+  "toCatchAnOrc": {
+    "search": "Search: choose 1 player card to take into your hand; the rest are discarded"
+  },
+  "mugashEnemy": {
+    "attach": "Mugash: attach him to a hero you control, as a Captive"
+  },
+  "refreshUpTo": "Choose a character to ready ({count} left to ready)",
+  "mugash": {
+    "exhaust": "Choose a hero to exhaust and attach Mugash to"
+  },
+  "intoFangorn": {
+    "huornEngaged": "Choose a Huorn enemy to put into play engaged with you",
+    "revealFromDiscard": "Choose an enemy or objective in the encounter discard pile to reveal"
+  },
+  "theFordsOfIsen": {
+    "searchDunland": "Choose a Dunland enemy to reveal and add to the staging area",
+    "assignDamage": "Assign 1 of {n} damage to a character you control"
+  },
+  "downFromTheHills": {
+    "choose": "Down from the Hills: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "search": "Search for a Dunland enemy and reveal it"
+  },
+  "dealDamageDivided": "Assign 1 of {n} damage to a character you control",
+  "removeTimeCounterFromQuest": "Remove 1 time counter from the current quest",
+  "orcSkirmisher": {
+    "choose": "Deal 3 damage to a character you control, or remove 1 time counter from the current quest",
+    "damage": "Deal 3 damage to a character you control"
+  },
+  "orcHunter": {
+    "choose": "Reveal an additional encounter card, or remove 1 time counter from the current quest",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "takeCover": {
+    "choose": "Deal 1 damage to each exhausted character, or remove 1 time counter from the current quest",
+    "damage": "Deal 1 damage to each exhausted character"
+  },
+  "turnedAround": {
+    "choose": "Remove 1 time counter from a card in play, or return the active location to the staging area",
+    "returnLocation": "Return the active location to the staging area"
+  },
+  "offTrack": {
+    "attach": "Attach Off Track to a location"
+  },
+  "inNeedOfRest": {
+    "attach": "Remove a hero from the quest and attach In Need of Rest to it"
+  },
+  "tangledWoods": {
+    "exhaustHero": "Exhaust a hero to travel to this Forest location"
+  },
+  "theAntleredCrown": {
+    "chooseRavenEnemy": "Choose an enemy from the Raven deck to add to the staging area",
+    "assignDamage": "Assign {n} damage among characters you control: choose one to deal 1 to",
+    "removeTimeCounter": "Remove {n} time counters from locations in play: choose one to remove 1 from"
+  },
+  "ravenSkirmisher": {
+    "choose": "Raven Skirmisher: remove 1 time counter from the active location, or reveal an additional encounter card",
+    "removeTimeCounter": "Remove 1 time counter from the active location",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "aWellLaidTrap": {
+    "keepAlly": "Choose 1 ally to keep: each other ally you control is discarded"
+  },
+  "constantTail": {
+    "choose": "Constant Tail: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "spies": "Each Spy enemy in the staging area gets +2 threat until the end of the phase"
+  },
+  "cornered": {
+    "choose": "Cornered: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "enemies": "Each enemy gets -20 engagement cost and +1 attack until the end of the round"
+  },
+  "getThatDwarf": {
+    "choose": "Get That Dwarf!: choose the enemy that engages you and attacks Nalir"
+  },
+  "escapeFromTharbad": {
+    "choose": "Escape from Tharbad: choose one",
+    "raiseThreat": "Raise each player's threat by 3",
+    "bellachAttacks": "Bellach makes an immediate attack against Nalir"
+  },
+  "celebrimborsSecret": {
+    "scourOrder": "Choose the next Scour effect to resolve",
+    "assignDamage": "Place 1 damage on a location ({n} left to assign)"
+  },
+  "celebrimborsMould": {
+    "attach": "Attach Celebrimbor's Mould to a hero you control"
+  },
+  "theRuinsOfOstInEdhil": {
+    "addLocation": "Add an Ost-in-Edhil location to the staging area"
+  },
+  "ruinedPlaza": {
+    "assign": "Assign 1 damage to a character you control"
+  },
+  "bellachsScout": {
+    "choose": "Bellach's Scout: choose one",
+    "damage": "Place 3 damage on the active location",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "prowlingOrc": {
+    "engage": "Choose the player with the highest threat for Prowling Orc to engage"
+  },
+  "discovered": {
+    "choose": "Discovered!: choose one",
+    "scour": "Trigger each Scour effect in play",
+    "hand": "Each player places a random card from hand underneath The Orcs' Search"
+  },
+  "spiesFromMordor": {
+    "discard": "Discard a non-objective attachment you control"
+  },
+  "readyUpTo": "Choose a character to ready ({n} left)",
+  "neekerbreekers": {
+    "damageAlly": "Choose an ally you control to take 2 damage"
+  },
+  "remnantsOfElderDays": {
+    "search": "Choose a Creature enemy to put into play engaged with you"
+  },
+  "progressFirst": "Choose the location to place progress on before the active location",
+  "threeTrials": {
+    "chooseTrial": "Choose the trial to advance to"
+  },
+  "boarsGuardian": {
+    "discard": "Boar's Guardian: discard an ally you control"
+  },
+  "caveBarrow": {
+    "discard": "Cave Barrow: discard an ally, until only 5 remain in play"
+  },
+  "cursedForest": {
+    "removeTimeCounter": "Cursed Forest: remove a time counter from an enemy"
   }
 }

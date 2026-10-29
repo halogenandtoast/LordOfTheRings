@@ -24,6 +24,9 @@ data Keyword
   | -- | on an enemy: it heals this much damage as the refresh phase begins
     Regenerate Int
   | Restricted
+  | -- | does nothing by itself: the card's Scour effect resolves when a card says to trigger
+    -- it (Celebrimbor's Secret)
+    Scour
   | -- | on a player card: it costs this much less while its player's threat is 20 or lower
     Secrecy Int
   | Sentinel
@@ -33,5 +36,9 @@ data Keyword
   | -- | on a quest, location or enemy: it gets this many time counters as it is revealed,
     -- and loses 1 at the end of each refresh phase
     Time Int
+  | -- | on an enemy: engaged with a player, it is dealt no shadow card and makes no attack
+    -- in the combat phase; as that phase begins, its player removes 1 progress from the
+    -- current quest, or from the active location once the quest has none
+    Hinder
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

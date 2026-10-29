@@ -379,6 +379,16 @@ timeCountersIn es = maybe 0 (countTokens TimeCounter . snd) . timeCard es
 getTimeCounters :: HasGame m => Target -> m Int
 getTimeCounters t = getsGame ((`timeCountersIn` t) . gameEntities)
 
+-- | Whether a time counter can be removed from the card: it has one, and nothing bars it, as
+-- an "either ... or remove 1 time counter" choice asks.
+canRemoveTimeCounter :: HasGame m => Target -> m Bool
+canRemoveTimeCounter t = do
+  mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+  (&& CannotRemoveTimeCounters `notElem` mods) . (> 0) <$> getTimeCounters t
+
+canRemoveTimeCounterFromCurrentQuest :: HasGame m => m Bool
+canRemoveTimeCounterFromCurrentQuest = maybe (pure False) canRemoveTimeCounter =<< getCurrentQuest
+
 {- | The card's Time X value, printed or gained (a computed X is a 'GainKeyword' of 'Time'
 the card gives itself, as Archery X): 0 for a card without it.
 -}
