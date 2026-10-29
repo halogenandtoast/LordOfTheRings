@@ -137,6 +137,12 @@ spec = describe "Shadow and Flame" do
     getDamage (toTarget eid) `shouldReturn` 5
     heroCommitted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` False
 
+  it "heals nothing with Inner Shadow when Durin's Bane has less than 5 damage, as it is not able" . flameTest $ \_ -> do
+    eid <- bane
+    run $ PlaceTokens GameSource (toTarget eid) Damage 3
+    reveal [Treacheries.innerShadow, Locations.oldForestRoad]
+    getDamage (toTarget eid) `shouldReturn` 3
+
   it "takes no progress on Second Deep while Durin's Bane is undamaged" . flameTest $ \_ -> do
     eid <- bane
     run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.secondDeep

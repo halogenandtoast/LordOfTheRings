@@ -18,6 +18,7 @@ instance RunMessage InnerShadow where
   runMessage msg t@(InnerShadow attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       bane <- getDurinsBane
-      for_ bane \eid -> unlessQuestingHeroLeaves attrs $ healDamage attrs eid 5
+      -- "if able": with less than 5 damage on it the effect is ignored (ruling 3.101)
+      for_ bane \eid -> unlessQuestingHeroLeaves attrs $ whenM ((>= 5) <$> getDamage (toTarget eid)) $ healDamage attrs eid 5
       pure t
     _ -> InnerShadow <$> runMessage msg attrs

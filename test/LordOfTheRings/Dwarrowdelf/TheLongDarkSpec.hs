@@ -109,6 +109,20 @@ spec = describe "The Long Dark" do
     staged <- getsGame (map toCardCode . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies))
     sort staged `shouldBe` sort [toCardCode Enemies.goblinSneak, toCardCode Enemies.goblinWarlord]
 
+  it "returns no Goblin when Abandoned Mine is lost with only 1 in the discard pile, as it is not able" . darkTest $ \_ -> do
+    stage Locations.abandonedMine
+    pile <- traverse genEncounterCard [Enemies.goblinSneak, Treacheries.fatigue]
+    run $ AddToEncounterDiscard pile
+    run $ TriggerLostEffects GameSource
+    getsGame (length . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies)) `shouldReturn` 0
+
+  it "has Cave Spider discard nothing from a hand of fewer than 4 cards, as the first player is not able" . darkTest $ \pid -> do
+    _ <- putCardIntoHand pid Events.dwarvenTomb
+    _ <- putCardIntoHand pid Events.dwarvenTomb
+    reveal [Enemies.caveSpider]
+    isNothing <$> getQuestion pid `shouldReturn` True
+    length . (.hand) <$> getPlayer pid `shouldReturn` 3
+
   it "triggers Lost effects when the players quest unsuccessfully" . darkTest $ \_ -> do
     _ <- putQuestStage Quests.continuingEastward
     stage Locations.silentCaverns

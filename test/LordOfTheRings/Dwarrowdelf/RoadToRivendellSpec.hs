@@ -1,5 +1,7 @@
 module LordOfTheRings.Dwarrowdelf.RoadToRivendellSpec (spec) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Matcher (getAttachmentsControlledBy)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -109,6 +111,17 @@ spec = describe "Road to Rivendell" do
     run $ CreateEffect $ Effect GameSource (toTarget spearman) [GainKeyword Ambush] UntilEndOfRound
     run $ EngageEnemy pid spearman
     shadowCount spearman `shouldReturn` 0
+
+  it "has Orc Raiders discard no attachment from a player who controls only 1, as he is not able" . rivendellTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    stone <- putAttachmentOn pid Attachments.celebriansStone beravor
+    case stone of
+      AttachmentTarget aid -> run $ AttachCard aid beravor
+      _ -> error "not an attachment"
+    run . AddToStaging =<< genEncounterCard Enemies.orcRaiders
+    raiders <- enemyOf Enemies.orcRaiders
+    run $ EngageEnemy pid raiders
+    getAttachmentsControlledBy pid >>= (`shouldSatisfy` ((== 1) . length))
 
   it "removes 1 progress placed on Pathless Country" . rivendellTest $ \_ -> do
     activeLocation Locations.pathlessCountry
