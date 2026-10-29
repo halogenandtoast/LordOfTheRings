@@ -134,6 +134,10 @@ allEventCards =
       , swiftAndSilent
       , noiselessMovement
       , courageAwakened
+      , islandAmidPerils
+      , followMe
+      , shadowsGiveWay
+      , freeToChoose
       ]
 
 everVigilant :: CardDef
@@ -515,3 +519,15 @@ noiselessMovement = event "08033" "Noiseless Movement" Lore (StaticCost 1)
 
 courageAwakened :: CardDef
 courageAwakened = event "08061" "Courage Awakened" Spirit (StaticCost 1)
+
+islandAmidPerils :: CardDef
+islandAmidPerils = event "08090" "Island Amid Perils" Spirit (StaticCost 0)
+
+followMe :: CardDef
+followMe = event "08085" "Follow Me!" Leadership (StaticCost 1)
+
+shadowsGiveWay :: CardDef
+shadowsGiveWay = (event "08143" "Shadows Give Way" Spirit (StaticCost 3)) {cdDistinctPayers = Just 3}
+
+freeToChoose :: CardDef
+freeToChoose = event "08062" "Free to Choose" Spirit (StaticCost 0)

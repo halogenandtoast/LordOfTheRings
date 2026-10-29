@@ -26,8 +26,10 @@ library
       LordOfTheRings.Ally.Cards.BeorningBeekeeper
       LordOfTheRings.Ally.Cards.Bofur
       LordOfTheRings.Ally.Cards.Bombur
+      LordOfTheRings.Ally.Cards.BoomingEnt
       LordOfTheRings.Ally.Cards.BrokIronfist
       LordOfTheRings.Ally.Cards.Celador
+      LordOfTheRings.Ally.Cards.CelduinTraveler
       LordOfTheRings.Ally.Cards.CitadelCustodian
       LordOfTheRings.Ally.Cards.Damrod
       LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
@@ -81,6 +83,7 @@ library
       LordOfTheRings.Ally.Cards.IsengardMessenger
       LordOfTheRings.Ally.Cards.IthilienArcher
       LordOfTheRings.Ally.Cards.IthilienGuardian
+      LordOfTheRings.Ally.Cards.IthilienLookout
       LordOfTheRings.Ally.Cards.IthilienTracker
       LordOfTheRings.Ally.Cards.Jubayr
       LordOfTheRings.Ally.Cards.KeenEyedTook
@@ -111,6 +114,7 @@ library
       LordOfTheRings.Ally.Cards.RiddermarkKnight
       LordOfTheRings.Ally.Cards.RiderOfTheMark
       LordOfTheRings.Ally.Cards.RivendellMinstrel
+      LordOfTheRings.Ally.Cards.RivendellScout
       LordOfTheRings.Ally.Cards.Rumil
       LordOfTheRings.Ally.Cards.Saruman
       LordOfTheRings.Ally.Cards.SilvanRefugee
@@ -126,8 +130,10 @@ library
       LordOfTheRings.Ally.Cards.VassalOfTheWindlord
       LordOfTheRings.Ally.Cards.VeteranAxehand
       LordOfTheRings.Ally.Cards.VeteranOfNanduhirion
+      LordOfTheRings.Ally.Cards.WanderingEnt
       LordOfTheRings.Ally.Cards.WanderingTook
       LordOfTheRings.Ally.Cards.WardenOfHealing
+      LordOfTheRings.Ally.Cards.WardenOfHelmsDeep
       LordOfTheRings.Ally.Cards.WarriorOfLossarnach
       LordOfTheRings.Ally.Cards.WatcherOfTheBruinen
       LordOfTheRings.Ally.Cards.WestfoldHorseBreaker
@@ -157,6 +163,7 @@ library
       LordOfTheRings.Attachment.Cards.CaptainOfGondor
       LordOfTheRings.Attachment.Cards.CelebriansStone
       LordOfTheRings.Attachment.Cards.CitadelPlate
+      LordOfTheRings.Attachment.Cards.CloakOfLorien
       LordOfTheRings.Attachment.Cards.Cram
       LordOfTheRings.Attachment.Cards.DarkKnowledge
       LordOfTheRings.Attachment.Cards.DunedainCache
@@ -167,6 +174,7 @@ library
       LordOfTheRings.Attachment.Cards.DwarfPipe
       LordOfTheRings.Attachment.Cards.DwarrowdelfAxe
       LordOfTheRings.Attachment.Cards.DwarvenAxe
+      LordOfTheRings.Attachment.Cards.ElvenMail
       LordOfTheRings.Attachment.Cards.EverMyHeartRises
       LordOfTheRings.Attachment.Cards.FastHitch
       LordOfTheRings.Attachment.Cards.Firefoot
@@ -412,10 +420,12 @@ library
       LordOfTheRings.Event.Cards.FeignedVoices
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.FoeHammer
+      LordOfTheRings.Event.Cards.FollowMe
       LordOfTheRings.Event.Cards.ForestPatrol
       LordOfTheRings.Event.Cards.ForGondor
       LordOfTheRings.Event.Cards.ForthEorlingas
       LordOfTheRings.Event.Cards.FortuneOrFate
+      LordOfTheRings.Event.Cards.FreeToChoose
       LordOfTheRings.Event.Cards.FreshTracks
       LordOfTheRings.Event.Cards.GainingStrength
       LordOfTheRings.Event.Cards.GandalfsSearch
@@ -433,6 +443,7 @@ library
       LordOfTheRings.Event.Cards.HobbitSense
       LordOfTheRings.Event.Cards.HostOfGaladhrim
       LordOfTheRings.Event.Cards.Infighting
+      LordOfTheRings.Event.Cards.IslandAmidPerils
       LordOfTheRings.Event.Cards.KhazadKhazad
       LordOfTheRings.Event.Cards.LayOfNimrodel
       LordOfTheRings.Event.Cards.LegacyOfNumenor
@@ -468,6 +479,7 @@ library
       LordOfTheRings.Event.Cards.SecondBreakfast
       LordOfTheRings.Event.Cards.SecretPaths
       LordOfTheRings.Event.Cards.ShadowOfThePast
+      LordOfTheRings.Event.Cards.ShadowsGiveWay
       LordOfTheRings.Event.Cards.ShortCut
       LordOfTheRings.Event.Cards.SmallTarget
       LordOfTheRings.Event.Cards.SneakAttack
@@ -552,6 +564,7 @@ library
       LordOfTheRings.Hero.Cards.Hama
       LordOfTheRings.Hero.Cards.Hirgon
       LordOfTheRings.Hero.Cards.HirluinTheFair
+      LordOfTheRings.Hero.Cards.Idraen
       LordOfTheRings.Hero.Cards.Legolas
       LordOfTheRings.Hero.Cards.Lothiriel
       LordOfTheRings.Hero.Cards.Mablung

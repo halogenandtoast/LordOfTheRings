@@ -97,6 +97,8 @@ import LordOfTheRings.Attachment.Cards.PoisonedStakes
 import LordOfTheRings.Attachment.Cards.ScrollOfIsildur
 import LordOfTheRings.Attachment.Cards.KeysOfOrthanc
 import LordOfTheRings.Attachment.Cards.SilverLamp
+import LordOfTheRings.Attachment.Cards.ElvenMail
+import LordOfTheRings.Attachment.Cards.CloakOfLorien
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -220,5 +222,7 @@ allAttachments =
         , SomeAttachmentCard scrollOfIsildur
         , SomeAttachmentCard keysOfOrthanc
         , SomeAttachmentCard silverLamp
+        , SomeAttachmentCard elvenMail
+        , SomeAttachmentCard cloakOfLorien
         ]
     ]

@@ -129,6 +129,12 @@ import LordOfTheRings.Ally.Cards.Anborn
 import LordOfTheRings.Ally.Cards.OrthancGuard
 import LordOfTheRings.Ally.Cards.IsengardMessenger
 import LordOfTheRings.Ally.Cards.Saruman
+import LordOfTheRings.Ally.Cards.RivendellScout
+import LordOfTheRings.Ally.Cards.WardenOfHelmsDeep
+import LordOfTheRings.Ally.Cards.WanderingEnt
+import LordOfTheRings.Ally.Cards.BoomingEnt
+import LordOfTheRings.Ally.Cards.IthilienLookout
+import LordOfTheRings.Ally.Cards.CelduinTraveler
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -285,5 +291,11 @@ allAllies =
         , SomeAllyCard orthancGuard
         , SomeAllyCard isengardMessenger
         , SomeAllyCard saruman
+        , SomeAllyCard rivendellScout
+        , SomeAllyCard wardenOfHelmsDeep
+        , SomeAllyCard wanderingEnt
+        , SomeAllyCard boomingEnt
+        , SomeAllyCard ithilienLookout
+        , SomeAllyCard celduinTraveler
         ]
     ]

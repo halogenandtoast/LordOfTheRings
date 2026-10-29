@@ -60,6 +60,7 @@ allHeroCards =
       , caldara
       , theoden
       , grima
+      , idraen
       ]
 
 aragorn :: CardDef
@@ -351,4 +352,10 @@ grima :: CardDef
 grima =
   (hero "07002" "Gríma" Lore 9 2 1 2 3)
     { cdCardTraits = setFromList [Isengard, Rohan]
+    }
+
+idraen :: CardDef
+idraen =
+  (hero "08025" "Idraen" Spirit 11 2 3 2 4)
+    { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     }

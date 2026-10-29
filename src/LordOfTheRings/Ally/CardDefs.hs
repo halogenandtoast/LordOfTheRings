@@ -128,6 +128,12 @@ allAllyCards =
       , orthancGuard
       , isengardMessenger
       , saruman
+      , rivendellScout
+      , wardenOfHelmsDeep
+      , wanderingEnt
+      , boomingEnt
+      , ithilienLookout
+      , celduinTraveler
       ]
 
 guardOfTheCitadel :: CardDef
@@ -875,4 +881,44 @@ saruman =
     { cdUnique = True
     , cdCardTraits = setFromList [Istari, Isengard]
     , cdKeywords = setFromList [Doomed 3]
+    }
+
+rivendellScout :: CardDef
+rivendellScout =
+  (ally "08026" "Rivendell Scout" Leadership (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Noldor, Scout]
+    , cdKeywords = setFromList [Secrecy 2]
+    }
+
+wardenOfHelmsDeep :: CardDef
+wardenOfHelmsDeep =
+  (ally "08138" "Warden of Helm's Deep" Leadership (StaticCost 3) 0 1 3 2)
+    { cdCardTraits = setFromList [Rohan, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+wanderingEnt :: CardDef
+wanderingEnt =
+  (ally "08119" "Wandering Ent" Lore (StaticCost 2) 2 2 2 3)
+    { cdCardTraits = setFromList [Ent]
+    }
+
+boomingEnt :: CardDef
+boomingEnt =
+  (ally "08141" "Booming Ent" Tactics (StaticCost 2) 0 2 2 3)
+    { cdCardTraits = setFromList [Ent]
+    }
+
+ithilienLookout :: CardDef
+ithilienLookout =
+  (ally "08008" "Ithilien Lookout" Lore (StaticCost 3) 1 2 0 2)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    , cdKeywords = setFromList [Secrecy 2]
+    }
+
+celduinTraveler :: CardDef
+celduinTraveler =
+  (ally "08089" "Celduin Traveler" Spirit (StaticCost 3) 2 0 1 2)
+    { cdCardTraits = setFromList [Dale, Scout]
+    , cdKeywords = setFromList [Secrecy 2]
     }

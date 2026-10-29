@@ -104,6 +104,8 @@ allAttachmentCards =
       , scrollOfIsildur
       , keysOfOrthanc
       , silverLamp
+      , elvenMail
+      , cloakOfLorien
       ]
 
 stewardOfGondor :: CardDef
@@ -706,4 +708,18 @@ silverLamp :: CardDef
 silverLamp =
   (attachment "07009" "Silver Lamp" Spirit (StaticCost 2))
     { cdCardTraits = setFromList [Item]
+    }
+
+elvenMail :: CardDef
+elvenMail =
+  (attachment "08029" "Elven Mail" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Armor, Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+cloakOfLorien :: CardDef
+cloakOfLorien =
+  (attachment "08120" "Cloak of Lórien" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
     }
