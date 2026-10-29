@@ -6,6 +6,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.ActiveCost (playCard)
 import LordOfTheRings.Card (toCardDef)
 import LordOfTheRings.Matcher.Window (WindowMatcher (EventPlayedWindow), windowMatches)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getAttackStrength, getDefense, getHitPoints, getWillpower)
@@ -209,6 +210,22 @@ spec = describe "Dwarrowdelf player cards" do
     (resourcesOf =<< hero eowyn) `shouldReturn` 0
     run $ CheckWindows [mkAfter QuestedSuccessfully]
     map (.id) <$> handOf pid `shouldReturn` [card.id]
+
+  it "Bofur put into play after the players quested successfully returns to hand at once" . gameTest $ \pid -> do
+    card <- putCardIntoHand pid Allies.bofur
+    giveResources eowyn 1
+    setPhase QuestPhase
+    run $ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
+    actions pid
+    chooseTarget pid (CardIdTarget card.id)
+    passActions pid
+    map (.id) <$> handOf pid `shouldReturn` [card.id]
+
+  it "marks the phase in which the players quest successfully, as Bofur reads it" . gameTest $ \_ -> do
+    setPhase QuestPhase
+    run . CommitToQuest =<< hero eowyn
+    run QuestResolution
+    getModifiers GameTarget >>= (`shouldSatisfy` elem QuestedSuccessfullyThisPhase)
 
   it "Renewed Friendship lowers the threat of a player who attached a card to your hero" . twoPlayerTest (coreDeck "spirit") $ \one two -> do
     rf <- putCardIntoHand one Events.renewedFriendship

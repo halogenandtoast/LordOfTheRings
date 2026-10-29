@@ -2,6 +2,7 @@ module LordOfTheRings.Ally.Cards.Bofur (bofur) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Cards
 import LordOfTheRings.Ally.Import.Lifted
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Sphere (Sphere (Spirit))
 
@@ -32,6 +33,12 @@ instance RunMessage Bofur where
       spendResources pid Spirit 1
       putIntoPlayCommitted pid cid
       phaseModifier a (CardIdTarget cid) ReturnToHandIfQuestedSuccessfully
+      doStep 1 msg
+      pure s
+    -- put into play once the players quested successfully, he goes straight back (rulings
+    -- 3.131 and 3.211); the Bofur in play reads this
+    DoStep 1 (UseHandAction _ cid) | cid == a.allyCardId -> do
+      whenM (elem QuestedSuccessfullyThisPhase <$> getModifiers GameTarget) $ returnToHand a
       pure s
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       returnToHand a
