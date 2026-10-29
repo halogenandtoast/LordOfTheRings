@@ -154,23 +154,10 @@ instance RunMessage ScenarioAttrs where
     AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)
-    SearchEncounterDeckAndDiscard pid source matcher -> do
-      let fromDeck = filter (cardMatches matcher) attrs.encounterDeck
-          fromDiscard = filter (cardMatches matcher) attrs.encounterDiscard
-          take' remove y = targetLabel y [remove y, AddToStaging y, ShuffleDeck EncounterDeck]
-          choices =
-            map (take' RemoveFromEncounterDeck) fromDeck
-              <> map (take' RemoveFromEncounterDiscard) fromDiscard
-      push
-        $ Ask pid
-        $ QuestionLabel
-          (if null choices then (ikey "label.searchFoundNothing") else (ikey "label.searchChoose"))
-          (Just source)
-          []
-        $ SearchCards (map EncounterCard $ attrs.encounterDeck <> attrs.encounterDiscard)
-        $ ChooseOne
-        $ if null choices then [Label (ikey "label.continue") [ShuffleDeck EncounterDeck]] else choices
-      pure attrs
+    SearchEncounterDeckAndDiscard pid source matcher -> search pid source matcher AddToStaging
+    SearchEncounterDeckAndDiscardToEngage pid source matcher -> search pid source matcher (PutEnemyIntoPlayEngaged pid)
+    -- a set-aside enemy put into play engaged, as No Way Out puts Chief Turch
+    PutEnemyIntoPlayEngaged _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     DebugSearchEncounterDeck pid -> do
       push
         $ Ask pid
@@ -216,3 +203,22 @@ instance RunMessage ScenarioAttrs where
     _ -> pure attrs
    where
     hiddenOf pid = Map.findWithDefault [] pid attrs.hiddenCards
+    -- the player searches the encounter deck and discard pile, the card found going where
+    -- the message puts it, then the deck is shuffled
+    search pid source matcher put = do
+      let fromDeck = filter (cardMatches matcher) attrs.encounterDeck
+          fromDiscard = filter (cardMatches matcher) attrs.encounterDiscard
+          take' remove y = targetLabel y [remove y, put y, ShuffleDeck EncounterDeck]
+          choices =
+            map (take' RemoveFromEncounterDeck) fromDeck
+              <> map (take' RemoveFromEncounterDiscard) fromDiscard
+      push
+        $ Ask pid
+        $ QuestionLabel
+          (if null choices then (ikey "label.searchFoundNothing") else (ikey "label.searchChoose"))
+          (Just source)
+          []
+        $ SearchCards (map EncounterCard $ attrs.encounterDeck <> attrs.encounterDiscard)
+        $ ChooseOne
+        $ if null choices then [Label (ikey "label.continue") [ShuffleDeck EncounterDeck]] else choices
+      pure attrs

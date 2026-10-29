@@ -146,6 +146,9 @@ allEnemyCards =
       , ravenChief
       , ravenWarrior
       , ravenSkirmisher
+      , chiefTurchTheDunlandTrap
+      , boarClanStalker
+      , boarClanWarrior
       ]
 
 namelessThing :: CardDef
@@ -1146,4 +1149,27 @@ ravenSkirmisher =
     , cdShadowEffect = True
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 2
+    }
+
+-- | Cannot leave play: not even destroyed, so it is indestructible.
+chiefTurchTheDunlandTrap :: CardDef
+chiefTurchTheDunlandTrap =
+  unique
+    (enemy "08014" "Chief Turch" TheDunlandTrap 1 50 3 5 3 5)
+      { cdCardTraits = setFromList [Dunland, BoarClan]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+boarClanStalker :: CardDef
+boarClanStalker =
+  (enemy "08017" "Boar Clan Stalker" TheDunlandTrap 3 28 3 0 0 5)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdEasyModeQuantity = Just 2
+    }
+
+boarClanWarrior :: CardDef
+boarClanWarrior =
+  (enemy "08018" "Boar Clan Warrior" TheDunlandTrap 4 20 2 3 1 4)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdShadowEffect = True
     }

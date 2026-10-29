@@ -101,6 +101,9 @@ import LordOfTheRings.Quest.Cards.HoldTheFords
 import LordOfTheRings.Quest.Cards.BattleForDunland
 import LordOfTheRings.Quest.Cards.TheRavenClan
 import LordOfTheRings.Quest.Cards.TheLastStage
+import LordOfTheRings.Quest.Cards.TheRoadToTharbad
+import LordOfTheRings.Quest.Cards.AWellLaidTrap
+import LordOfTheRings.Quest.Cards.NoWayOut
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -234,5 +237,8 @@ allQuests =
         , SomeQuestCard battleForDunland
         , SomeQuestCard theRavenClan
         , SomeQuestCard theLastStage
+        , SomeQuestCard theRoadToTharbad
+        , SomeQuestCard aWellLaidTrap
+        , SomeQuestCard noWayOut
         ]
     ]

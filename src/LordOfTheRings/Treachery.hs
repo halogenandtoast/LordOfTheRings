@@ -125,6 +125,8 @@ import LordOfTheRings.Treachery.Cards.InNeedOfRest
 import LordOfTheRings.Treachery.Cards.RaisingTheCry
 import LordOfTheRings.Treachery.Cards.FierceFolk
 import LordOfTheRings.Treachery.Cards.DrivenBack
+import LordOfTheRings.Treachery.Cards.FrenziedAttack
+import LordOfTheRings.Treachery.Cards.DunlendingAmbush
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -274,5 +276,7 @@ allTreacherys =
         , SomeTreacheryCard raisingTheCry
         , SomeTreacheryCard fierceFolk
         , SomeTreacheryCard drivenBack
+        , SomeTreacheryCard frenziedAttack
+        , SomeTreacheryCard dunlendingAmbush
         ]
     ]

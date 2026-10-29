@@ -122,6 +122,9 @@ allQuestCards =
       , battleForDunland
       , theRavenClan
       , theLastStage
+      , theRoadToTharbad
+      , aWellLaidTrap
+      , noWayOut
       ]
 
 theDrippingWalls :: CardDef
@@ -430,3 +433,15 @@ theRavenClan = (quest "08148" "The Raven Clan" TheAntleredCrown 2 15) {cdKeyword
 -- | Its quest points are "-": the players win once Raven Chief is in the victory display.
 theLastStage :: CardDef
 theLastStage = (quest "08149" "The Last Stage" TheAntleredCrown 3 0) {cdKeywords = setFromList [Time 2]}
+
+theRoadToTharbad :: CardDef
+theRoadToTharbad = (quest "08011" "The Road to Tharbad" TheDunlandTrap 1 18) {cdKeywords = setFromList [Time 2]}
+
+-- | Its quest points are "-": it advances at the end of the combat phase.
+aWellLaidTrap :: CardDef
+aWellLaidTrap = quest "08012" "A Well Laid Trap" TheDunlandTrap 2 0
+
+-- | Its quest points are "-". Time X, X 5 times the number of players: gained from its
+-- own modifiers.
+noWayOut :: CardDef
+noWayOut = quest "08013" "No Way Out" TheDunlandTrap 3 0

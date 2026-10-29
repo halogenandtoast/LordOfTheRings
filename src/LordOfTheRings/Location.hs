@@ -137,6 +137,12 @@ import LordOfTheRings.Location.Cards.RavenWarCamp
 import LordOfTheRings.Location.Cards.RavenVillage
 import LordOfTheRings.Location.Cards.DunlandBattlefield
 import LordOfTheRings.Location.Cards.RavenCountry
+import LordOfTheRings.Location.Cards.MunuvDuvRavine
+import LordOfTheRings.Location.Cards.OldSouthRoad
+import LordOfTheRings.Location.Cards.HithaeglirFoothills
+import LordOfTheRings.Location.Cards.HillsOfDunland
+import LordOfTheRings.Location.Cards.PlainsOfEnedwaith
+import LordOfTheRings.Location.Cards.HithaeglirStream
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -301,5 +307,11 @@ allLocations =
         , SomeLocationCard ravenVillage
         , SomeLocationCard dunlandBattlefield
         , SomeLocationCard ravenCountry
+        , SomeLocationCard munuvDuvRavine
+        , SomeLocationCard oldSouthRoad
+        , SomeLocationCard hithaeglirFoothills
+        , SomeLocationCard hillsOfDunland
+        , SomeLocationCard plainsOfEnedwaith
+        , SomeLocationCard hithaeglirStream
         ]
     ]

@@ -140,6 +140,9 @@ import LordOfTheRings.Enemy.Cards.ProwlingWolf
 import LordOfTheRings.Enemy.Cards.RavenChief
 import LordOfTheRings.Enemy.Cards.RavenWarrior
 import LordOfTheRings.Enemy.Cards.RavenSkirmisher
+import LordOfTheRings.Enemy.Cards.ChiefTurchTheDunlandTrap
+import LordOfTheRings.Enemy.Cards.BoarClanStalker
+import LordOfTheRings.Enemy.Cards.BoarClanWarrior
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -304,5 +307,8 @@ allEnemys =
         , SomeEnemyCard ravenChief
         , SomeEnemyCard ravenWarrior
         , SomeEnemyCard ravenSkirmisher
+        , SomeEnemyCard chiefTurchTheDunlandTrap
+        , SomeEnemyCard boarClanStalker
+        , SomeEnemyCard boarClanWarrior
         ]
     ]

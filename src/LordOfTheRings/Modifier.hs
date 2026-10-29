@@ -291,6 +291,9 @@ data ModifierType
   | -- | on a player: they refresh no more than this many characters in the refresh phase,
     -- as Heart of Fangorn reads
     RefreshAtMost Int
+  | -- | on a player: they draw this many cards in the resource phase instead of 1, as
+    -- Hithaeglir Stream reads (0: they draw none, as Plains of Enedwaith)
+    ResourcePhaseDraws Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

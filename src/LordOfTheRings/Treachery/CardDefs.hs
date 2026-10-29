@@ -132,6 +132,8 @@ allTreacheryCards =
       , raisingTheCry
       , fierceFolk
       , drivenBack
+      , frenziedAttack
+      , dunlendingAmbush
       ]
 
 deepDeepDark :: CardDef
@@ -802,3 +804,13 @@ fierceFolk =
 
 drivenBack :: CardDef
 drivenBack = treachery "08161" "Driven Back" TheAntleredCrown 2
+
+frenziedAttack :: CardDef
+frenziedAttack = (treachery "08023" "Frenzied Attack" TheDunlandTrap 3) {cdShadowEffect = True}
+
+dunlendingAmbush :: CardDef
+dunlendingAmbush =
+  (treachery "08024" "Dunlending Ambush" TheDunlandTrap 3)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }

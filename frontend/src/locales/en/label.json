@@ -914,5 +914,8 @@
     "choose": "Raven Skirmisher: remove 1 time counter from the active location, or reveal an additional encounter card",
     "removeTimeCounter": "Remove 1 time counter from the active location",
     "reveal": "Reveal an additional encounter card"
+  },
+  "aWellLaidTrap": {
+    "keepAlly": "Choose 1 ally to keep: each other ally you control is discarded"
   }
 }

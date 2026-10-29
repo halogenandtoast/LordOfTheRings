@@ -535,6 +535,11 @@ searchEncounterDeckAndDiscard
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
 searchEncounterDeckAndDiscard pid source = push . SearchEncounterDeckAndDiscard pid (toTarget source)
 
+-- | As 'searchEncounterDeckAndDiscard', the enemy found put into play engaged with the player.
+searchEncounterDeckAndDiscardToEngage
+  :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
+searchEncounterDeckAndDiscardToEngage pid source = push . SearchEncounterDeckAndDiscardToEngage pid (toTarget source)
+
 -- | Claim the objective onto the host, attaching it there.
 attachObjective :: (ReverseQueue m, Targetable host) => ObjectiveId -> host -> m ()
 attachObjective oid = push . ClaimObjective oid . toTarget
@@ -926,3 +931,10 @@ placeAlly aid = push . PlaceAlly aid
 -- | The treachery leaves play for the player's hand, where it stays, as Ill Tidings reads.
 drawTreacheryIntoHand :: ReverseQueue m => PlayerId -> TreacheryId -> m ()
 drawTreacheryIntoHand pid = push . DrawTreacheryIntoHand pid
+-- | The player shuffles his discard pile into his deck.
+shuffleDiscardIntoDeck :: ReverseQueue m => PlayerId -> m ()
+shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
+
+-- | The players make engagement checks, from the first player, as in the encounter phase.
+makeEngagementChecks :: ReverseQueue m => m ()
+makeEngagementChecks = getLead >>= \lead -> push (EngagementCheck lead 0)

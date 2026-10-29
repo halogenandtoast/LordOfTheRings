@@ -445,6 +445,9 @@ data Message
     encounter card in hand cannot leave it
     -}
     DrawTreacheryIntoHand PlayerId TreacheryId
+  | -- | as 'SearchEncounterDeckAndDiscard', the enemy found put into play engaged with the
+    -- player, as "searches ... for a Boar Clan enemy and puts it into play engaged with him"
+    SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
