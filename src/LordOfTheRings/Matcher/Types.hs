@@ -21,6 +21,8 @@ data PlayerMatcher
     PlayerWithThreatAtLeast Int
   | PlayerWithCardsInHand Int
   | PlayerMatchAll [PlayerMatcher]
+  | -- | a player with a hidden card in their play area, as The Blood of Gondor deals them
+    PlayerWithHiddenCards
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

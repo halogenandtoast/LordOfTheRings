@@ -463,6 +463,9 @@ data Message
     PlaceUnderneath Target [Card]
   | -- | as 'PayExhaustHeroCost', a hero or an ally the matchers pick out
     PayExhaustCharacterCost PlayerId HeroMatcher AllyMatcher [Message]
+  | -- | as 'CreateEnemyEngaged', the enemy not yet engaging: it is engaged by a message of
+    -- its own, as Faramir's damage comes first
+    CreateEnemy EnemyId EncounterCard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
