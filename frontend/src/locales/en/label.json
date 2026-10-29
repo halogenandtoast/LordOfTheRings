@@ -855,5 +855,17 @@
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
   },
-  "progressFirst": "Choose the location to place progress on before the active location"
+  "progressFirst": "Choose the location to place progress on before the active location",
+  "threeTrials": {
+    "chooseTrial": "Choose the trial to advance to"
+  },
+  "boarsGuardian": {
+    "discard": "Boar's Guardian: discard an ally you control"
+  },
+  "caveBarrow": {
+    "discard": "Cave Barrow: discard an ally, until only 5 remain in play"
+  },
+  "cursedForest": {
+    "removeTimeCounter": "Cursed Forest: remove a time counter from an enemy"
+  }
 }

@@ -89,6 +89,11 @@ import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Cards.RetakeTheCity
 import LordOfTheRings.Quest.Cards.TheAmbush
 import LordOfTheRings.Quest.Cards.Captured
+import LordOfTheRings.Quest.Cards.TheTrialsBegin
+import LordOfTheRings.Quest.Cards.TheTrialOfStrength
+import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
+import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
+import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -210,5 +215,10 @@ allQuests =
         , SomeQuestCard retakeTheCity
         , SomeQuestCard theAmbush
         , SomeQuestCard captured
+        , SomeQuestCard theTrialsBegin
+        , SomeQuestCard theTrialOfStrength
+        , SomeQuestCard theTrialOfPerseverance
+        , SomeQuestCard theTrialOfIntuition
+        , SomeQuestCard theAntleredCrownTheThreeTrials
         ]
     ]
