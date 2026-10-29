@@ -109,6 +109,9 @@ import LordOfTheRings.Treachery.Cards.CounterAttack
 import LordOfTheRings.Treachery.Cards.LyingInWait
 import LordOfTheRings.Treachery.Cards.MordorLooms
 import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
+import LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
+import LordOfTheRings.Treachery.Cards.TheGuardiansFury
+import LordOfTheRings.Treachery.Cards.WildTenacity
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -242,5 +245,8 @@ allTreacherys =
         , SomeTreacheryCard lyingInWait
         , SomeTreacheryCard mordorLooms
         , SomeTreacheryCard conflictAtTheCrossroads
+        , SomeTreacheryCard curseOfTheWildMen
+        , SomeTreacheryCard theGuardiansFury
+        , SomeTreacheryCard wildTenacity
         ]
     ]
