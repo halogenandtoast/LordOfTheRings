@@ -1022,5 +1022,8 @@
   "locateTest": {
     "discard": "Locate test: discard a card from your hand to discard the top card of the encounter deck",
     "fail": "Stop, failing the test"
+  },
+  "fellVoices": {
+    "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   }
 }

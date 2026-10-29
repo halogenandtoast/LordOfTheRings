@@ -144,13 +144,15 @@ spec = describe "The Redhorn Gate" do
     run . AddToStaging =<< genEncounterCard Locations.caradhras
     getEnemyAttack goblin `shouldReturn` 4
 
-  it "returns 2 Snow treacheries with Fell Voices, without surging" . redhornTest $ \_ -> do
+  it "returns 2 Snow treacheries with Fell Voices, the first player choosing the top, without surging" . redhornTest $ \pid -> do
     _ <- setEncounterDeck [Treacheries.fellVoices, Enemies.mountainTroll]
     setEncounterDiscard [Treacheries.snowstorm, Enemies.mountainGoblin, Treacheries.freezingCold]
+    cold <- fromJustNote "no Freezing Cold" . find ((== toCardCode Treacheries.freezingCold) . toCardCode) <$> getEncounterDiscard
     run RevealEncounterCard
     resolveRevealed
+    chooseTarget pid cold
     map toCardCode <$> getEncounterDeck
-      `shouldReturn` map toCardCode [Treacheries.snowstorm, Treacheries.freezingCold, Enemies.mountainTroll]
+      `shouldReturn` map toCardCode [Treacheries.freezingCold, Treacheries.snowstorm, Enemies.mountainTroll]
 
   it "surges Fell Voices when it returns fewer than 2 Snow treacheries" . redhornTest $ \_ -> do
     _ <- setEncounterDeck [Treacheries.fellVoices]
