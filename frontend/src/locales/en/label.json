@@ -854,5 +854,8 @@
   },
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
+  },
+  "powerOfOrthanc": {
+    "discard": "Power of Orthanc: you may choose a Condition attachment to discard"
   }
 }

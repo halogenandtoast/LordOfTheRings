@@ -78,6 +78,7 @@ library
       LordOfTheRings.Ally.Cards.HorsebackArcher
       LordOfTheRings.Ally.Cards.HunterOfLamedon
       LordOfTheRings.Ally.Cards.ImladrisStargazer
+      LordOfTheRings.Ally.Cards.IsengardMessenger
       LordOfTheRings.Ally.Cards.IthilienArcher
       LordOfTheRings.Ally.Cards.IthilienGuardian
       LordOfTheRings.Ally.Cards.IthilienTracker
@@ -102,6 +103,7 @@ library
       LordOfTheRings.Ally.Cards.NaithGuide
       LordOfTheRings.Ally.Cards.NorthernTracker
       LordOfTheRings.Ally.Cards.Orophin
+      LordOfTheRings.Ally.Cards.OrthancGuard
       LordOfTheRings.Ally.Cards.PelargirShipCaptain
       LordOfTheRings.Ally.Cards.PelargirShipwright
       LordOfTheRings.Ally.Cards.Radagast
@@ -178,6 +180,7 @@ library
       LordOfTheRings.Attachment.Cards.HornOfTheMark
       LordOfTheRings.Attachment.Cards.IthilienPit
       LordOfTheRings.Attachment.Cards.KeepingCount
+      LordOfTheRings.Attachment.Cards.KeysOfOrthanc
       LordOfTheRings.Attachment.Cards.KingUnderTheMountain
       LordOfTheRings.Attachment.Cards.LegacyOfDurin
       LordOfTheRings.Attachment.Cards.Lembas
@@ -396,6 +399,7 @@ library
       LordOfTheRings.Event.Cards.ConeyInATrap
       LordOfTheRings.Event.Cards.DaeronsRunes
       LordOfTheRings.Event.Cards.DawnTakeYouAll
+      LordOfTheRings.Event.Cards.DeepKnowledge
       LordOfTheRings.Event.Cards.DurinsSong
       LordOfTheRings.Event.Cards.DwarvenTomb
       LordOfTheRings.Event.Cards.ElrondsCounsel
@@ -428,6 +432,7 @@ library
       LordOfTheRings.Event.Cards.Infighting
       LordOfTheRings.Event.Cards.KhazadKhazad
       LordOfTheRings.Event.Cards.LayOfNimrodel
+      LordOfTheRings.Event.Cards.LegacyOfNumenor
       LordOfTheRings.Event.Cards.LightTheBeacons
       LordOfTheRings.Event.Cards.LoreOfImladris
       LordOfTheRings.Event.Cards.LoriensWealth
@@ -446,6 +451,7 @@ library
       LordOfTheRings.Event.Cards.PartingGifts
       LordOfTheRings.Event.Cards.PeaceAndThought
       LordOfTheRings.Event.Cards.PillarsOfTheKings
+      LordOfTheRings.Event.Cards.PowerOfOrthanc
       LordOfTheRings.Event.Cards.PursuingTheEnemy
       LordOfTheRings.Event.Cards.QuickStrike
       LordOfTheRings.Event.Cards.RadagastsCunning
@@ -473,7 +479,9 @@ library
       LordOfTheRings.Event.Cards.TheGaladhrimsGreeting
       LordOfTheRings.Event.Cards.TheHammerStroke
       LordOfTheRings.Event.Cards.TheMusterOfRohan
+      LordOfTheRings.Event.Cards.TheSeeingStone
       LordOfTheRings.Event.Cards.TheTreePeople
+      LordOfTheRings.Event.Cards.TheWizardsVoice
       LordOfTheRings.Event.Cards.ThicketOfSpears
       LordOfTheRings.Event.Cards.TimelyAid
       LordOfTheRings.Event.Cards.ToTheEyrie
@@ -482,6 +490,7 @@ library
       LordOfTheRings.Event.Cards.UntroubledByDarkness
       LordOfTheRings.Event.Cards.ValiantSacrifice
       LordOfTheRings.Event.Cards.WaitNoLonger
+      LordOfTheRings.Event.Cards.WatersOfNimrodel
       LordOfTheRings.Event.Cards.WealthOfGondor
       LordOfTheRings.Event.Cards.WeAreNotIdle
       LordOfTheRings.Event.Cards.WeDoNotSleep
@@ -533,6 +542,7 @@ library
       LordOfTheRings.Hero.Cards.Gloin
       LordOfTheRings.Hero.Cards.Glorfindel
       LordOfTheRings.Hero.Cards.GlorfindelSpirit
+      LordOfTheRings.Hero.Cards.Grima
       LordOfTheRings.Hero.Cards.HaldirOfLorien
       LordOfTheRings.Hero.Cards.Hama
       LordOfTheRings.Hero.Cards.Hirgon
@@ -1193,6 +1203,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec
       TestImport
       Paths_LordOfTheRings
   hs-source-dirs:

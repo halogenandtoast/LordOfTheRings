@@ -59,6 +59,7 @@ allHeroCards =
       , pippin
       , caldara
       , theoden
+      , grima
       ]
 
 aragorn :: CardDef
@@ -344,4 +345,10 @@ theoden =
   (hero "06134" "Théoden" Tactics 12 2 3 2 4)
     { cdCardTraits = setFromList [Noble, Rohan, Warrior]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+grima :: CardDef
+grima =
+  (hero "07002" "Gríma" Lore 9 2 1 2 3)
+    { cdCardTraits = setFromList [Isengard, Rohan]
     }

@@ -126,6 +126,8 @@ import LordOfTheRings.Ally.Cards.KnightOfMinasTirith
 import LordOfTheRings.Ally.Cards.PelargirShipwright
 import LordOfTheRings.Ally.Cards.Emery
 import LordOfTheRings.Ally.Cards.Anborn
+import LordOfTheRings.Ally.Cards.OrthancGuard
+import LordOfTheRings.Ally.Cards.IsengardMessenger
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -279,5 +281,7 @@ allAllies =
         , SomeAllyCard pelargirShipwright
         , SomeAllyCard emery
         , SomeAllyCard anborn
+        , SomeAllyCard orthancGuard
+        , SomeAllyCard isengardMessenger
         ]
     ]

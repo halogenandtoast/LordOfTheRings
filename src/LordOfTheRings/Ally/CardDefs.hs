@@ -125,6 +125,8 @@ allAllyCards =
       , pelargirShipwright
       , emery
       , anborn
+      , orthancGuard
+      , isengardMessenger
       ]
 
 guardOfTheCitadel :: CardDef
@@ -852,4 +854,16 @@ anborn =
   (ally "06114" "Anborn" Lore (StaticCost 4) 1 3 1 3)
     { cdUnique = True
     , cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
+orthancGuard :: CardDef
+orthancGuard =
+  (ally "07004" "Orthanc Guard" Leadership (StaticCost 2) 1 0 2 2)
+    { cdCardTraits = setFromList [Isengard]
+    }
+
+isengardMessenger :: CardDef
+isengardMessenger =
+  (ally "07005" "Isengard Messenger" Lore (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Isengard]
     }

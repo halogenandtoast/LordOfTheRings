@@ -4,7 +4,7 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
-import LordOfTheRings.Keyword (Keyword)
+import LordOfTheRings.Keyword (Keyword (Doomed))
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
@@ -219,6 +219,8 @@ data CardMatcher
   | NotCard CardMatcher
   | CardMatchAll [CardMatcher]
   | CardMatchAny [CardMatcher]
+  | -- | a card printed with the Doomed keyword, Doomed X among them
+    CardWithDoomed
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -247,3 +249,4 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   NotCard m -> not $ cardMatches m def
   CardMatchAll ms -> all (`cardMatches` def) ms
   CardMatchAny ms -> any (`cardMatches` def) ms
+  CardWithDoomed -> any (\case Doomed _ -> True; _ -> False) (cdKeywords def)

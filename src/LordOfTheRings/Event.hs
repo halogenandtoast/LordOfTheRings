@@ -114,6 +114,12 @@ import LordOfTheRings.Event.Cards.TheHammerStroke
 import LordOfTheRings.Event.Cards.ChildrenOfTheSea
 import LordOfTheRings.Event.Cards.WellEquipped
 import LordOfTheRings.Event.Cards.LayOfNimrodel
+import LordOfTheRings.Event.Cards.LegacyOfNumenor
+import LordOfTheRings.Event.Cards.DeepKnowledge
+import LordOfTheRings.Event.Cards.TheWizardsVoice
+import LordOfTheRings.Event.Cards.PowerOfOrthanc
+import LordOfTheRings.Event.Cards.TheSeeingStone
+import LordOfTheRings.Event.Cards.WatersOfNimrodel
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -241,5 +247,11 @@ allEvents =
         , SomeEventCard childrenOfTheSea
         , SomeEventCard wellEquipped
         , SomeEventCard layOfNimrodel
+        , SomeEventCard legacyOfNumenor
+        , SomeEventCard deepKnowledge
+        , SomeEventCard theWizardsVoice
+        , SomeEventCard powerOfOrthanc
+        , SomeEventCard theSeeingStone
+        , SomeEventCard watersOfNimrodel
         ]
     ]

@@ -125,6 +125,12 @@ allEventCards =
       , childrenOfTheSea
       , wellEquipped
       , layOfNimrodel
+      , legacyOfNumenor
+      , deepKnowledge
+      , theWizardsVoice
+      , powerOfOrthanc
+      , theSeeingStone
+      , watersOfNimrodel
       ]
 
 everVigilant :: CardDef
@@ -471,3 +477,29 @@ wellEquipped = event "06116" "Well-Equipped" Neutral (StaticCost 0)
 
 layOfNimrodel :: CardDef
 layOfNimrodel = (event "06140" "Lay of Nimrodel" Spirit (StaticCost 1)) {cdCardTraits = setFromList [Song]}
+
+legacyOfNumenor :: CardDef
+legacyOfNumenor = (event "07011" "Legacy of Númenor" Leadership (StaticCost 0)) {cdKeywords = setFromList [Doomed 4]}
+
+deepKnowledge :: CardDef
+deepKnowledge = (event "07012" "Deep Knowledge" Lore (StaticCost 0)) {cdKeywords = setFromList [Doomed 2]}
+
+theWizardsVoice :: CardDef
+theWizardsVoice =
+  (event "07013" "The Wizards's Voice" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Spell]
+    , cdKeywords = setFromList [Doomed 3]
+    }
+
+powerOfOrthanc :: CardDef
+powerOfOrthanc =
+  (event "07014" "Power of Orthanc" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Spell]
+    , cdKeywords = setFromList [Doomed 2]
+    }
+
+theSeeingStone :: CardDef
+theSeeingStone = (event "07015" "The Seeing-stone" Neutral (StaticCost 0)) {cdKeywords = setFromList [Doomed 1]}
+
+watersOfNimrodel :: CardDef
+watersOfNimrodel = (event "08145" "Waters of Nimrodel" Lore (StaticCost 3)) {cdKeywords = setFromList [Doomed 3]}

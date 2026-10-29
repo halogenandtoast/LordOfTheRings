@@ -52,6 +52,7 @@ import LordOfTheRings.Hero.Cards.Mirlonde
 import LordOfTheRings.Hero.Cards.Pippin
 import LordOfTheRings.Hero.Cards.Caldara
 import LordOfTheRings.Hero.Cards.Theoden
+import LordOfTheRings.Hero.Cards.Grima
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -130,5 +131,6 @@ allHeroes =
         , SomeHeroCard pippin
         , SomeHeroCard caldara
         , SomeHeroCard theoden
+        , SomeHeroCard grima
         ]
     ]

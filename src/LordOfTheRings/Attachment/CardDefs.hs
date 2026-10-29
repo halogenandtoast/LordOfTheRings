@@ -102,6 +102,7 @@ allAttachmentCards =
       , tomeOfAtanatar
       , poisonedStakes
       , scrollOfIsildur
+      , keysOfOrthanc
       ]
 
 stewardOfGondor :: CardDef
@@ -691,4 +692,11 @@ scrollOfIsildur =
   (attachment "06142" "Scroll of Isildur" Lore (StaticCost 4))
     { cdUnique = True
     , cdCardTraits = setFromList [Record]
+    }
+
+keysOfOrthanc :: CardDef
+keysOfOrthanc =
+  (attachment "07010" "Keys of Orthanc" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Item]
     }
