@@ -119,6 +119,9 @@ allQuestCards =
       , fightAtTheFords
       , dunlendingAttack
       , holdTheFords
+      , battleForDunland
+      , theRavenClan
+      , theLastStage
       ]
 
 theDrippingWalls :: CardDef
@@ -417,3 +420,13 @@ dunlendingAttack = (quest "07060" "Dunlending Attack" TheFordsOfIsen 2 14) {cdKe
 
 holdTheFords :: CardDef
 holdTheFords = (quest "07061" "Hold the Fords" TheFordsOfIsen 3 16) {cdKeywords = setFromList [Time 3]}
+
+battleForDunland :: CardDef
+battleForDunland = (quest "08147" "Battle for Dunland" TheAntleredCrown 1 10) {cdKeywords = setFromList [Time 3]}
+
+theRavenClan :: CardDef
+theRavenClan = (quest "08148" "The Raven Clan" TheAntleredCrown 2 15) {cdKeywords = setFromList [Time 3]}
+
+-- | Its quest points are "-": the players win once Raven Chief is in the victory display.
+theLastStage :: CardDef
+theLastStage = (quest "08149" "The Last Stage" TheAntleredCrown 3 0) {cdKeywords = setFromList [Time 2]}

@@ -50,6 +50,7 @@ allObjectiveCards =
       , lordAlcaronTheBloodOfGondor
       , mugashObjective
       , grimaTheFordsOfIsen
+      , chiefTurchTheAntleredCrown
       ]
 
 durinsAxe :: CardDef
@@ -293,4 +294,13 @@ grimaTheFordsOfIsen =
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
     { cdUnique = True
     , cdCardTraits = setFromList [Rohan]
+    }
+
+chiefTurchTheAntleredCrown :: CardDef
+chiefTurchTheAntleredCrown =
+  ((objective "08150" "Chief Turch" TheAntleredCrown 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 2, cdHitPoints = Just 5 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

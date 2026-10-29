@@ -137,6 +137,9 @@ import LordOfTheRings.Enemy.Cards.DunlandTribesman
 import LordOfTheRings.Enemy.Cards.DunlandChieftain
 import LordOfTheRings.Enemy.Cards.DunlandBerserker
 import LordOfTheRings.Enemy.Cards.ProwlingWolf
+import LordOfTheRings.Enemy.Cards.RavenChief
+import LordOfTheRings.Enemy.Cards.RavenWarrior
+import LordOfTheRings.Enemy.Cards.RavenSkirmisher
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -298,5 +301,8 @@ allEnemys =
         , SomeEnemyCard dunlandChieftain
         , SomeEnemyCard dunlandBerserker
         , SomeEnemyCard prowlingWolf
+        , SomeEnemyCard ravenChief
+        , SomeEnemyCard ravenWarrior
+        , SomeEnemyCard ravenSkirmisher
         ]
     ]

@@ -129,6 +129,9 @@ allTreacheryCards =
       , lowOnProvisions
       , offTrack
       , inNeedOfRest
+      , raisingTheCry
+      , fierceFolk
+      , drivenBack
       ]
 
 deepDeepDark :: CardDef
@@ -785,3 +788,17 @@ offTrack = (treachery "07057" "Off Track" WearyTravelers 2) {cdKeywords = setFro
 
 inNeedOfRest :: CardDef
 inNeedOfRest = (treachery "07058" "In Need of Rest" WearyTravelers 2) {cdEasyModeQuantity = Just 1}
+
+raisingTheCry :: CardDef
+raisingTheCry = (treachery "08159" "Raising the Cry" TheAntleredCrown 3) {cdEasyModeQuantity = Just 2}
+
+fierceFolk :: CardDef
+fierceFolk =
+  (treachery "08160" "Fierce Folk" TheAntleredCrown 2)
+    { cdKeywords = setFromList [Doomed 3]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+drivenBack :: CardDef
+drivenBack = treachery "08161" "Driven Back" TheAntleredCrown 2

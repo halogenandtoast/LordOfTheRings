@@ -122,6 +122,9 @@ import LordOfTheRings.Treachery.Cards.TakeCover
 import LordOfTheRings.Treachery.Cards.LowOnProvisions
 import LordOfTheRings.Treachery.Cards.OffTrack
 import LordOfTheRings.Treachery.Cards.InNeedOfRest
+import LordOfTheRings.Treachery.Cards.RaisingTheCry
+import LordOfTheRings.Treachery.Cards.FierceFolk
+import LordOfTheRings.Treachery.Cards.DrivenBack
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -268,5 +271,8 @@ allTreacherys =
         , SomeTreacheryCard lowOnProvisions
         , SomeTreacheryCard offTrack
         , SomeTreacheryCard inNeedOfRest
+        , SomeTreacheryCard raisingTheCry
+        , SomeTreacheryCard fierceFolk
+        , SomeTreacheryCard drivenBack
         ]
     ]

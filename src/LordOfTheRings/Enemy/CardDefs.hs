@@ -143,6 +143,9 @@ allEnemyCards =
       , dunlandChieftain
       , dunlandBerserker
       , prowlingWolf
+      , ravenChief
+      , ravenWarrior
+      , ravenSkirmisher
       ]
 
 namelessThing :: CardDef
@@ -1118,4 +1121,29 @@ prowlingWolf =
   (enemy "07053" "Prowling Wolf" BrokenLands 3 28 3 1 1 3)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+ravenChief :: CardDef
+ravenChief =
+  unique
+    (enemy "08151" "Raven Chief" TheAntleredCrown 1 15 4 5 5 9)
+      { cdCardTraits = setFromList [Dunland, RavenClan]
+      , cdVictoryPoints = Just 3
+      }
+
+ravenWarrior :: CardDef
+ravenWarrior =
+  (enemy "08153" "Raven Warrior" TheAntleredCrown 4 36 3 4 2 5)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+ravenSkirmisher :: CardDef
+ravenSkirmisher =
+  (enemy "08154" "Raven Skirmisher" TheAntleredCrown 3 26 2 3 2 2)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
     }

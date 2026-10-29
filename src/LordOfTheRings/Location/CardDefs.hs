@@ -142,6 +142,11 @@ allLocationCards =
       , ancientForestLocation
       , tangledWoods
       , brokenLandsLocation
+      , ravenChiefsCamp
+      , ravenWarCamp
+      , ravenVillage
+      , dunlandBattlefield
+      , ravenCountry
       ]
 
 drownedTreasury :: CardDef
@@ -1013,5 +1018,46 @@ brokenLandsLocation :: CardDef
 brokenLandsLocation =
   (location "07054" "Broken Lands" BrokenLands 3 2 6)
     { cdCardTraits = setFromList [Highlands]
+    , cdShadowEffect = True
+    }
+
+ravenChiefsCamp :: CardDef
+ravenChiefsCamp =
+  unique
+    (location "08152" "Raven Chief's Camp" TheAntleredCrown 1 4 9)
+      { cdCardTraits = setFromList [Dunland]
+      , cdKeywords = setFromList [Time 3]
+      , cdVictoryPoints = Just 3
+      }
+
+ravenWarCamp :: CardDef
+ravenWarCamp =
+  (location "08155" "Raven War-camp" TheAntleredCrown 4 2 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 3]
+    , cdEasyModeQuantity = Just 2
+    }
+
+ravenVillage :: CardDef
+ravenVillage =
+  (location "08156" "Raven Village" TheAntleredCrown 3 2 3)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 2]
+    , cdShadowEffect = True
+    }
+
+dunlandBattlefield :: CardDef
+dunlandBattlefield =
+  (location "08157" "Dunland Battlefield" TheAntleredCrown 3 3 5)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 3]
+    , cdShadowEffect = True
+    }
+
+ravenCountry :: CardDef
+ravenCountry =
+  (location "08158" "Raven Country" TheAntleredCrown 2 3 6)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 4]
     , cdShadowEffect = True
     }

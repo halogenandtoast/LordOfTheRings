@@ -132,6 +132,11 @@ import LordOfTheRings.Location.Cards.GapOfRohan
 import LordOfTheRings.Location.Cards.AncientForestLocation
 import LordOfTheRings.Location.Cards.TangledWoods
 import LordOfTheRings.Location.Cards.BrokenLandsLocation
+import LordOfTheRings.Location.Cards.RavenChiefsCamp
+import LordOfTheRings.Location.Cards.RavenWarCamp
+import LordOfTheRings.Location.Cards.RavenVillage
+import LordOfTheRings.Location.Cards.DunlandBattlefield
+import LordOfTheRings.Location.Cards.RavenCountry
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -291,5 +296,10 @@ allLocations =
         , SomeLocationCard ancientForestLocation
         , SomeLocationCard tangledWoods
         , SomeLocationCard brokenLandsLocation
+        , SomeLocationCard ravenChiefsCamp
+        , SomeLocationCard ravenWarCamp
+        , SomeLocationCard ravenVillage
+        , SomeLocationCard dunlandBattlefield
+        , SomeLocationCard ravenCountry
         ]
     ]

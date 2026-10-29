@@ -28,6 +28,7 @@ library
       LordOfTheRings.Ally.Cards.Bombur
       LordOfTheRings.Ally.Cards.BrokIronfist
       LordOfTheRings.Ally.Cards.Celador
+      LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
       LordOfTheRings.Ally.Cards.CitadelCustodian
       LordOfTheRings.Ally.Cards.Damrod
       LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
@@ -361,6 +362,9 @@ library
       LordOfTheRings.Enemy.Cards.Pickpocket
       LordOfTheRings.Enemy.Cards.ProwlingWolf
       LordOfTheRings.Enemy.Cards.RangingGoblin
+      LordOfTheRings.Enemy.Cards.RavenChief
+      LordOfTheRings.Enemy.Cards.RavenSkirmisher
+      LordOfTheRings.Enemy.Cards.RavenWarrior
       LordOfTheRings.Enemy.Cards.RockAdder
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.SiegeRaft
@@ -595,6 +599,7 @@ library
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DrownedTreasury
       LordOfTheRings.Location.Cards.DryWatercourse
+      LordOfTheRings.Location.Cards.DunlandBattlefield
       LordOfTheRings.Location.Cards.DwarvenForge
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
@@ -643,6 +648,10 @@ library
       LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.RaurosFalls
+      LordOfTheRings.Location.Cards.RavenChiefsCamp
+      LordOfTheRings.Location.Cards.RavenCountry
+      LordOfTheRings.Location.Cards.RavenVillage
+      LordOfTheRings.Location.Cards.RavenWarCamp
       LordOfTheRings.Location.Cards.Rhosgobel
       LordOfTheRings.Location.Cards.RiverLangflood
       LordOfTheRings.Location.Cards.RiverNinglor
@@ -728,6 +737,7 @@ library
       LordOfTheRings.Objective.Cards.BookOfMazarbul
       LordOfTheRings.Objective.Cards.CaveTorch
       LordOfTheRings.Objective.Cards.Celador
+      LordOfTheRings.Objective.Cards.ChiefTurchTheAntleredCrown
       LordOfTheRings.Objective.Cards.DeadVillagers
       LordOfTheRings.Objective.Cards.DungeonTorch
       LordOfTheRings.Objective.Cards.DurinsAxe
@@ -780,6 +790,7 @@ library
       LordOfTheRings.Quest.Cards.APresenceInTheDark
       LordOfTheRings.Quest.Cards.AWayUp
       LordOfTheRings.Quest.Cards.AWrongTurn
+      LordOfTheRings.Quest.Cards.BattleForDunland
       LordOfTheRings.Quest.Cards.BelowTheMines
       LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
@@ -837,12 +848,14 @@ library
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
       LordOfTheRings.Quest.Cards.TheHuntBegins
       LordOfTheRings.Quest.Cards.TheLastBattle
+      LordOfTheRings.Quest.Cards.TheLastStage
       LordOfTheRings.Quest.Cards.TheLeapingFishQuest
       LordOfTheRings.Quest.Cards.TheMorgulRider
       LordOfTheRings.Quest.Cards.TheMountainsPeaks
       LordOfTheRings.Quest.Cards.TheNecromancersTower
       LordOfTheRings.Quest.Cards.ThePassageOut
       LordOfTheRings.Quest.Cards.ThePursuit
+      LordOfTheRings.Quest.Cards.TheRavenClan
       LordOfTheRings.Quest.Cards.TheRearGuard
       LordOfTheRings.Quest.Cards.TheRearguardTheMorgulVale
       LordOfTheRings.Quest.Cards.TheSeethingLake
@@ -889,6 +902,8 @@ library
       LordOfTheRings.Scenario.Scenarios.RoadToRivendell
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheAntleredCrown
+      LordOfTheRings.Scenario.Scenarios.TheAntleredCrown.Helpers
       LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor
       LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes
@@ -944,6 +959,7 @@ library
       LordOfTheRings.Treachery.Cards.Despair
       LordOfTheRings.Treachery.Cards.DisturbedWaters
       LordOfTheRings.Treachery.Cards.DownFromTheHills
+      LordOfTheRings.Treachery.Cards.DrivenBack
       LordOfTheRings.Treachery.Cards.DrivenByShadow
       LordOfTheRings.Treachery.Cards.EvilStorm
       LordOfTheRings.Treachery.Cards.Exhaustion
@@ -954,6 +970,7 @@ library
       LordOfTheRings.Treachery.Cards.Fatigue
       LordOfTheRings.Treachery.Cards.FellVoices
       LordOfTheRings.Treachery.Cards.FesteringWounds
+      LordOfTheRings.Treachery.Cards.FierceFolk
       LordOfTheRings.Treachery.Cards.FierySword
       LordOfTheRings.Treachery.Cards.FiresInTheDeep
       LordOfTheRings.Treachery.Cards.Flooding
@@ -1001,6 +1018,7 @@ library
       LordOfTheRings.Treachery.Cards.PillagingAndBurning
       LordOfTheRings.Treachery.Cards.PinnedDown
       LordOfTheRings.Treachery.Cards.PursuedByShadow
+      LordOfTheRings.Treachery.Cards.RaisingTheCry
       LordOfTheRings.Treachery.Cards.RoastedSlowly
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.Sacked
@@ -1238,6 +1256,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.RefreshPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.RevealSpec
+      LordOfTheRings.RingMaker.TheAntleredCrownSpec
       LordOfTheRings.SerializationSpec
       LordOfTheRings.SetupSpec
       LordOfTheRings.ShadowsOfMirkwood.AJourneyToRhosgobelSpec

@@ -98,6 +98,9 @@ import LordOfTheRings.Quest.Cards.TheAngryForest
 import LordOfTheRings.Quest.Cards.FightAtTheFords
 import LordOfTheRings.Quest.Cards.DunlendingAttack
 import LordOfTheRings.Quest.Cards.HoldTheFords
+import LordOfTheRings.Quest.Cards.BattleForDunland
+import LordOfTheRings.Quest.Cards.TheRavenClan
+import LordOfTheRings.Quest.Cards.TheLastStage
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -228,5 +231,8 @@ allQuests =
         , SomeQuestCard fightAtTheFords
         , SomeQuestCard dunlendingAttack
         , SomeQuestCard holdTheFords
+        , SomeQuestCard battleForDunland
+        , SomeQuestCard theRavenClan
+        , SomeQuestCard theLastStage
         ]
     ]
