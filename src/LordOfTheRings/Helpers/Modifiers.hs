@@ -48,11 +48,25 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           [(AllyTarget (toId a), ms) | a <- toList es.allies, Just ms <- [Map.lookup (CardIdTarget $ allyCardId $ toAttrs a) fromEffects]]
-      -- a card whose text box is blank gives no modifiers from its constant effects, as
-      -- Arkham's applyBlank; lasting effects it already created stay
-      blanked = Map.keysSet $ Map.filter (any ((== Blank) . modifierType)) fromEntities
+      -- each card attached to a card considered out of play is too (FAQ 2.75), as Saruman's
+      -- chosen enemy's guarded objective
+      outOfPlay = Map.filter notNull $ Map.map (filter ((`elem` [ConsideredOutOfPlay, Blank]) . modifierType)) fromEffects
+      outOfPlayHost p = case p of
+        AttachedTo host | Just ms <- Map.lookup host outOfPlay, any ((== ConsideredOutOfPlay) . modifierType) ms -> Just ms
+        _ -> Nothing
+      attachedOut =
+        Map.fromListWith (<>)
+          $ [(toTarget x, ms) | x <- toList es.attachments, Just ms <- [outOfPlayHost x.placement]]
+          <> [(toTarget x, ms) | x <- toList es.objectives, Just ms <- [outOfPlayHost x.placement]]
+          <> [(toTarget x, ms) | x <- toList es.treacheries, Just ms <- [outOfPlayHost x.placement]]
+          <> [(toTarget x, ms) | x <- toList es.enemies, Just ms <- [outOfPlayHost x.placement]]
+      -- a card whose text box is blank, by its own text or a lasting effect, gives no
+      -- modifiers from its constant effects, as Arkham's applyBlank; lasting effects it
+      -- already created stay
+      blankIn = Map.keysSet . Map.filter (any ((== Blank) . modifierType))
+      blanked = blankIn fromEntities <> blankIn fromEffects <> blankIn attachedOut
       ownText m = maybe False (`member` blanked) (sourceTarget $ modifierSource m)
-      all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed]
+      all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, attachedOut]
       -- a card immune to player card effects keeps none of their modifiers, but its own, as
       -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
