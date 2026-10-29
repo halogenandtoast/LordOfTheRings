@@ -120,6 +120,12 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.HillBarrow
+import LordOfTheRings.Location.Cards.CaveBarrow
+import LordOfTheRings.Location.Cards.StoneBarrow
+import LordOfTheRings.Location.Cards.HallowedCircle
+import LordOfTheRings.Location.Cards.CursedForest
+import LordOfTheRings.Location.Cards.GrimFoothills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +273,11 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard hillBarrow
+        , SomeLocationCard caveBarrow
+        , SomeLocationCard stoneBarrow
+        , SomeLocationCard hallowedCircle
+        , SomeLocationCard cursedForest
+        , SomeLocationCard grimFoothills
         ]
     ]
