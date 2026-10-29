@@ -33,7 +33,8 @@ instance RunMessage Murzag where
       pure e
     DoStep 1 (PutEnemyIntoPlayEngaged pid card) -> do
       revealed <- getsGame (filter ((== card.id) . enemyCardId . toAttrs) . toList . (.entities.enemies))
-      for_ revealed \other ->
+      for_ revealed \other -> do
         unless (other.placement == EngagedWith pid) $ engageEnemy pid (toId other)
+        attacksThisStep pid (toId other)
       pure e
     _ -> Murzag <$> runMessage msg attrs

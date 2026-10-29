@@ -7,6 +7,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
+import LordOfTheRings.Phase (Phase (CombatPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theMorgulVale)
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
@@ -168,6 +169,20 @@ spec = describe "The Morgul Vale" do
     run $ EnemyAttack pid murzag
     takeUndefended pid "01012"
     placementOf Enemies.morgulSorcerer `shouldReturn` Just (EngagedWith pid)
+
+  it "has the enemy Murzag engages in the Resolve Enemy Attacks step attack in it, unshadowed" . valeTest $ \pid -> do
+    murzag <- staged Enemies.murzag
+    run $ EngageEnemy pid murzag
+    _ <- setEncounterDeck [Enemies.morgulSorcerer, Locations.morgulVale]
+    putGame . (phaseL .~ CombatPhase) =<< getGame
+    push $ PlayerAttacks pid
+    run $ EnemyAttacks pid
+    takeUndefended pid "01012"
+    sorcerer <- enemyOf Enemies.morgulSorcerer
+    -- the Sorcerer attacks next, its prompt about it
+    Just (QuestionLabel _ source _ _) <- getQuestion pid
+    source `shouldBe` Just (toTarget sorcerer)
+    fmap (.shadowCards) (getEnemy sorcerer) >>= (`shouldSatisfy` null)
 
   it "has Lord Alcaron attack again when his shadow card has no effect" . valeTest $ \pid -> do
     _ <- tower
