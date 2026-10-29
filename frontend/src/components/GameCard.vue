@@ -140,6 +140,7 @@ const toggleUnless = (attached: CardView) => {
         <!-- inside the card so it travels in the card's view transition snapshot -->
         <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
         <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
+        <span v-if="card.time" class="token time">{{ card.time }}</span>
         <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
         <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
           <span class="versus">
@@ -438,6 +439,8 @@ const toggleUnless = (attached: CardView) => {
 .attack-progress .track > span { flex: none; background: var(--fill); transition: flex-basis 0.2s ease; }
 .attack-progress .adding { opacity: 0.45; }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
+/* time counters are resource tokens, kept apart from the card's resources */
+.time { background-image: url('/images/tokens/resource.png'); place-self: end start; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; }
 /* under the damage token, the hit points left */
 .health-left {

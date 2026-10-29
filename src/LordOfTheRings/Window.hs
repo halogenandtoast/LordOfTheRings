@@ -98,6 +98,10 @@ data WindowType
     EnemyDefeated EnemyId
   | -- | the enemy's attack destroyed the character: who controlled it
     CharacterDestroyedByAttack EnemyId Target PlayerId
+  | -- | this many time counters were removed from the card
+    TimeCountersRemoved Target Int
+  | -- | the last time counter was removed from the card
+    LastTimeCounterRemoved Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

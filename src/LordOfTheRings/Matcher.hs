@@ -23,13 +23,13 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Name
 import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveTokens))
 import LordOfTheRings.Placement
-import LordOfTheRings.Quest.Types (QuestAttrs (questOwner))
+import LordOfTheRings.Quest.Types (QuestAttrs (questOwner, questTokens))
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Source (Source)
 import LordOfTheRings.Target
-import LordOfTheRings.Token (Token (Damage, Resource), countTokens)
+import LordOfTheRings.Token (Token (Damage, Resource, TimeCounter), Tokens, countTokens)
 import LordOfTheRings.Trait
 
 instance Query PlayerMatcher where
@@ -348,12 +348,39 @@ hasKeyword k target def = do
   -- Arkham applies removes after adds
   pure $ LoseKeyword k `notElem` mods && (GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods))
 
+-- | A keyword's value on the card, printed or gained, as an X a card computes reads.
+keywordValue :: HasGame m => (Keyword -> Maybe Int) -> Target -> CardDef -> m Int
+keywordValue value target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  let printed = [n | Blank `notElem` mods, Just n <- map value (toList (cdKeywords def))]
+  pure $ sum $ printed <> [n | GainKeyword k <- mods, Just n <- [value k]]
+
 -- | The archery the card has, printed or gained, as Archery X reads.
 getArchery :: HasGame m => Target -> CardDef -> m Int
-getArchery target def = do
-  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  let printed = [n | Blank `notElem` mods, Archery n <- toList (cdKeywords def)]
-  pure $ sum $ printed <> [n | GainKeyword (Archery n) <- mods]
+getArchery = keywordValue \case Archery n -> Just n; _ -> Nothing
+
+-- | The quest stage, location or enemy in play, as its card and its tokens.
+timeCard :: Entities -> Target -> Maybe (CardDef, Tokens)
+timeCard es = \case
+  QuestTarget qid -> (\q -> (toCardDef q, questTokens $ toAttrs q)) <$> Map.lookup qid es.quests
+  LocationTarget lid -> (\l -> (toCardDef l, locationTokens $ toAttrs l)) <$> Map.lookup lid es.locations
+  EnemyTarget eid -> (\e -> (toCardDef e, enemyTokens $ toAttrs e)) <$> Map.lookup eid es.enemies
+  _ -> Nothing
+
+-- | The time counters on the card.
+timeCountersIn :: Entities -> Target -> Int
+timeCountersIn es = maybe 0 (countTokens TimeCounter . snd) . timeCard es
+
+getTimeCounters :: HasGame m => Target -> m Int
+getTimeCounters t = getsGame ((`timeCountersIn` t) . gameEntities)
+
+{- | The card's Time X value, printed or gained (a computed X is a 'GainKeyword' of 'Time'
+the card gives itself, as Archery X): 0 for a card without it.
+-}
+getTimeX :: HasGame m => Target -> m Int
+getTimeX t =
+  getsGame ((`timeCard` t) . gameEntities)
+    >>= maybe (pure 0) (keywordValue (\case Time n -> Just n; _ -> Nothing) t . fst)
 
 -- | The archery of every card in play, the current quest's too, and any bonus, which the players deal
 -- among the characters in play as the combat phase begins.

@@ -19,7 +19,7 @@ export interface CardDef {
 
 export type Target = { tag: string; contents?: string }
 export type Placement = { tag: string; contents?: string | Target }
-export type Tokens = Partial<Record<'Damage' | 'Progress' | 'Resource' | 'Villager', number>>
+export type Tokens = Partial<Record<'Damage' | 'Progress' | 'Resource' | 'Villager' | 'TimeCounter', number>>
 
 export interface Entity {
   id: string

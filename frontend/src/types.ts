@@ -14,6 +14,8 @@ export interface CardView {
   hitPoints: number | null
   willpower: number | null
   resources: number | null
+  /** Time counters (Time X): resource tokens that are not resources. */
+  time?: number | null
   damage: number
   exhausted: boolean
   committed: boolean

@@ -151,6 +151,12 @@ data WindowMatcher
     SurgeCardRevealedWindow Timing
   | -- | a matching hero declared as a defender
     HeroDefenderDeclaredWindow Timing HeroMatcher
+  | -- | any number of time counters removed from the card, or from any card
+    TimeCountersRemovedWindow Timing (Maybe Target)
+  | -- | any number of time counters removed from a quest stage, the current quest
+    TimeCountersRemovedFromQuestWindow Timing
+  | -- | the last time counter removed from the card
+    LastTimeCounterRemovedWindow Timing Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -224,6 +230,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
   (CharacterDestroyedByAttackWindow t who, CharacterDestroyedByAttack eid _ _) -> t == timing && maybe True (== eid) who
+  (TimeCountersRemovedWindow t who, TimeCountersRemoved target _) -> t == timing && maybe True (== target) who
+  (TimeCountersRemovedFromQuestWindow t, TimeCountersRemoved (QuestTarget _) _) -> t == timing
+  (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

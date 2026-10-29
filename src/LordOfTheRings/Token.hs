@@ -9,6 +9,8 @@ data Token
   | Resource
   | -- | a villager (Encounter at Amon Dîn): a resource token that does not count as a resource
     Villager
+  | -- | a time counter (Time X): a resource token that does not count as a resource
+    TimeCounter
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 

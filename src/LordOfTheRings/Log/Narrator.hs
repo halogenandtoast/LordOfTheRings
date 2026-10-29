@@ -27,7 +27,9 @@ import LordOfTheRings.Id
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
-import LordOfTheRings.Matcher (getArcheryTotal, getDamage)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getTimeCounters)
+import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -110,6 +112,7 @@ narrationFor = \case
       -- dealt with as damage, where the source is known
       Damage -> pure []
       Villager -> tokens "log.villagersPlaced"
+      TimeCounter -> tokens "log.timeCountersPlaced"
    where
     tokens key = whenRef target \t -> one $ mechanic [ikeyPart key ["target" ~> t, "count" ~> n]]
   RemoveTokens _ target token n | n > 0 -> case token of
@@ -117,6 +120,10 @@ narrationFor = \case
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]
     Damage -> Nothing
     Villager -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.villagersRemoved" ["target" ~> t, "count" ~> n]]
+    TimeCounter -> Just $ whenRef target \t -> do
+      barred <- elem CannotRemoveTimeCounters <$> getModifiers target
+      removed <- min n <$> getTimeCounters target
+      pure [mechanic [ikeyPart "log.timeCountersRemoved" ["target" ~> t, "count" ~> removed]] | removed > 0, not barred]
   -- what a card does to characters; elsewhere readying and exhausting are routine
   Ready target -> Just $ duringCard $ simply "log.readies" target
   Exhaust target -> Just $ duringCard $ simply "log.exhausts" target

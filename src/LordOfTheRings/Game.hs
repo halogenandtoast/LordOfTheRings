@@ -215,7 +215,24 @@ runEntities msg entities =
     >>= traverseOf (objectivesL . traverse) (runEach msg)
 
 runGame :: Message -> Game -> GameT Game
-runGame msg g = case removedEnemy msg of
+runGame msg g = case msg of
+  RemoveTokens _ target TimeCounter _ -> do
+    barred <- elem CannotRemoveTimeCounters <$> getModifiers target
+    if barred
+      then pure g
+      else do
+        g' <- runGame' msg g
+        let before = timeCountersIn g.entities target
+            after = timeCountersIn g'.entities target
+        pushWhen (after < before)
+          $ CheckWindows
+          $ mkAfter (TimeCountersRemoved target (before - after))
+          : [mkAfter (LastTimeCounterRemoved target) | after == 0]
+        pure g'
+  _ -> runGame'' msg g
+
+runGame'' :: Message -> Game -> GameT Game
+runGame'' msg g = case removedEnemy msg of
   -- an enemy that cannot leave play unless destroyed, as The Morgul Vale's Captains, stays
   Just eid -> do
     stays <- elem CannotLeavePlay <$> getModifiers (EnemyTarget eid)
@@ -265,10 +282,20 @@ runInPlay msg g =
     >>= traverseOf entitiesL (runEntities msg)
     >>= traverseOf scenarioL (runEach msg)
     >>= runGameMessage msg
-    >>= \g' -> case msg of
-      -- the window goes in front of the phase's own steps
-      BeginPhase phase -> g' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
-      _ -> pure g'
+    >>= \g' -> do
+      -- an enemy or location entering play, or a stage turning to its B side, gets its
+      -- Time X in time counters
+      let entered :: Ord k => Map k v -> Map k v -> [k]
+          entered old new = Map.keys (Map.difference new old)
+          wasFlipped qid = maybe False (.flipped) (Map.lookup qid g.entities.quests)
+      pushAll
+        $ map (PlaceTimeCounters . EnemyTarget) (entered g.entities.enemies g'.entities.enemies)
+        <> map (PlaceTimeCounters . LocationTarget) (entered g.entities.locations g'.entities.locations)
+        <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, q.flipped, not (wasFlipped $ toId q)]
+      case msg of
+        -- the window goes in front of the phase's own steps
+        BeginPhase phase -> g' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
+        _ -> pure g'
 
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
@@ -1103,6 +1130,10 @@ runGameMessage msg g = case msg of
             <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
+  PlaceTimeCounters target -> do
+    x <- getTimeX target
+    pushWhen (x > 0) $ PlaceTokens GameSource target TimeCounter x
+    pure g
   PlaceTokens _ target Progress n | n > 0, isQuestOrLocation target -> do
     push $ CheckWindows [mkAfter $ ProgressPlaced target n]
     pure g
@@ -1177,6 +1208,12 @@ runGameMessage msg g = case msg of
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
     push $ CheckWindows [mkWhen $ PhaseEnds phase]
+    -- at the end of each refresh phase each card with Time X loses 1 time counter, if able
+    when (phase == RefreshPhase) do
+      let es = g.entities
+          cards = map toTarget (toList es.quests) <> map toTarget (toList es.locations) <> map toTarget (toList es.enemies)
+      timed <- flip filterM cards \t -> (&& timeCountersIn es t > 0) . (> 0) <$> getTimeX t
+      pushAll [RemoveTokens GameSource t TimeCounter 1 | t <- timed]
     when (phase == CombatPhase) do
       returning <-
         filterM

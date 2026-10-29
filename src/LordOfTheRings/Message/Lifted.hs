@@ -71,6 +71,26 @@ removeTokens source target token n = push $ RemoveTokens (toSource source) (toTa
 placeProgressOnCurrentQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 placeProgressOnCurrentQuest source n = traverse_ (\q -> placeProgress source q n) =<< getCurrentQuest
 
+-- | Place time counters on the card, as "place 3 time counters on this stage" reads.
+placeTimeCounters
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
+placeTimeCounters source target = placeTokens source target TimeCounter
+
+{- | Remove time counters from the card, if able: removing its last opens the window its
+Forced answers.
+-}
+removeTimeCounters
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
+removeTimeCounters source target = removeTokens source target TimeCounter
+
+-- | As "add 1 time counter to the current quest" reads.
+placeTimeCountersOnCurrentQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+placeTimeCountersOnCurrentQuest source n = traverse_ (\q -> placeTimeCounters source q n) =<< getCurrentQuest
+
+-- | As "remove 1 time counter from the current quest" reads.
+removeTimeCountersFromCurrentQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+removeTimeCountersFromCurrentQuest source n = traverse_ (\q -> removeTimeCounters source q n) =<< getCurrentQuest
+
 removeProgressFromQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromQuest source n = push $ RemoveProgressFromQuest (toSource source) n
 

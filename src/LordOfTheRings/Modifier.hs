@@ -276,6 +276,9 @@ data ModifierType
   | -- | on the game: the next encounter card revealed, if of this type, is discarded
     -- without resolving, as Minas Tirith Lampwright's
     DiscardNextRevealed CardType
+  | -- | on a card: no time counter can be removed from it, as Tharbad Hideout reads for
+    -- the current quest
+    CannotRemoveTimeCounters
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -30,5 +30,8 @@ data Keyword
   | -- | on a quest: characters quest with their defense instead of their willpower
     Siege
   | Surge
+  | -- | on a quest, location or enemy: it gets this many time counters as it is revealed,
+    -- and loses 1 at the end of each refresh phase
+    Time Int
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

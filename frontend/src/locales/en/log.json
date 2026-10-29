@@ -43,6 +43,8 @@
   "spendsResources": "{target} spends a resource | {target} spends {count} resources",
   "villagersPlaced": "A villager is placed on {target} | {count} villagers are placed on {target}",
   "villagersRemoved": "A villager leaves {target} | {count} villagers leave {target}",
+  "timeCountersPlaced": "A time counter is placed on {target} | {count} time counters are placed on {target}",
+  "timeCountersRemoved": "A time counter is removed from {target} | {count} time counters are removed from {target}",
 
   "readies": "{target} readies",
   "exhausts": "{target} exhausts",

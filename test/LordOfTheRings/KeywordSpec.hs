@@ -7,8 +7,11 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Attachment (attachmentCriteriaFor, cardHosts)
 import LordOfTheRings.Helpers.Window (passesCriteria)
-import LordOfTheRings.Matcher (getAttachmentsControlledBy)
-import LordOfTheRings.Modifier (ModifierType (MayDeclareMultipleDefenders))
+import LordOfTheRings.Keyword (Keyword (Time))
+import LordOfTheRings.Matcher (getAttachmentsControlledBy, getTimeCounters)
+import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters, GainKeyword, MayDeclareMultipleDefenders))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Window (Window (..), WindowType (LastTimeCounterRemoved, TimeCountersRemoved), Timing (After))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase
 import TestImport
@@ -179,6 +182,39 @@ spec = describe "Keywords and limits" do
       getsGame (length . (.entities.enemies)) `shouldReturn` 0
       chooseAbilityOf two brand
       heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` False
+
+  describe "Time X" do
+    -- a stage with Time 2, as No Way Out computes its X
+    let timedStage = do
+          q <- putQuestStage Quests.fliesAndSpiders
+          run $ CreateEffect $ Effect GameSource q [GainKeyword (Time 2)] UntilEndOfRound
+          run $ Flip q
+          pure q
+        windowsQueued = concat . mapMaybe (\case CheckWindows ws -> Just ws; _ -> Nothing) <$> peekQueue
+
+    it "puts X time counters on a stage as it turns to its B side" . gameTest $ \_ -> do
+      q <- timedStage
+      getTimeCounters q `shouldReturn` 2
+
+    it "removes 1 at the end of the refresh phase, the last opening its window" . gameTest $ \_ -> do
+      q <- timedStage
+      run $ RemoveTokens GameSource q TimeCounter 1
+      runOnly $ EndPhase RefreshPhase
+      peekQueue >>= (`shouldSatisfy` elem (RemoveTokens GameSource q TimeCounter 1))
+      setQueue []
+      runOnly $ RemoveTokens GameSource q TimeCounter 1
+      getTimeCounters q `shouldReturn` 0
+      windowsQueued `shouldReturn` [Window After (TimeCountersRemoved q 1), Window After (LastTimeCounterRemoved q)]
+      -- none are left to remove, so no window opens
+      setQueue []
+      runOnly $ RemoveTokens GameSource q TimeCounter 1
+      windowsQueued `shouldReturn` []
+
+    it "keeps them on a card they cannot be removed from" . gameTest $ \_ -> do
+      q <- timedStage
+      run $ CreateEffect $ Effect GameSource q [CannotRemoveTimeCounters] UntilEndOfRound
+      run $ RemoveTokens GameSource q TimeCounter 1
+      getTimeCounters q `shouldReturn` 2
 
   describe "Deck building" do
     it "passes every starter deck" $ io do

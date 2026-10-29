@@ -393,6 +393,8 @@ data Message
   | Ready Target
   | PlaceTokens Source Target Token Int
   | RemoveTokens Source Target Token Int
+  | -- | the card, revealed or turned to its B side, gets its Time X in time counters
+    PlaceTimeCounters Target
   | Run [Message]
   | -- | the messages, unless the card has left play by the time they run
     WhileInPlay Target [Message]

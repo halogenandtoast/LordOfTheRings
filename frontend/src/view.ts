@@ -119,6 +119,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       target,
       // villagers are resource tokens on the table
       resources: e.tokens.Resource ?? e.tokens.Villager ?? null,
+      time: e.tokens.TimeCounter ?? null,
       damage: e.tokens.Damage ?? 0,
       progress: e.tokens.Progress ?? null,
       exhausted: e.exhausted ?? false,
