@@ -188,6 +188,16 @@ spec = describe "Peril in Pelargir" do
     chooseTarget pid traitor
     getDamage ally `shouldReturn` 1
 
+  it "keeps the scroll on its hero damaged by Umbar Assassin's Forced effect, not an attack" . pelargirTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    scrollOn beravor
+    assassin <- staged Enemies.umbarAssassin
+    run $ OptionalEngagement pid
+    chooseTarget pid (EnemyTarget assassin)
+    chooseTarget pid beravor
+    getDamage beravor `shouldReturn` 3
+    placementOf Objectives.alcaronsScroll `shouldReturn` Just (AttachedTo beravor)
+
   it "counts Umbar Assassin's archery in the staging area" . pelargirTest $ \_ -> do
     _ <- staged Enemies.umbarAssassin
     getArcheryTotal `shouldReturn` 2
