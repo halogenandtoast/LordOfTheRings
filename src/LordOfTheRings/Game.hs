@@ -1448,6 +1448,16 @@ runGameMessage msg g = case msg of
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
   -- ponytail: what is attached to it stays behind, none of Cair Andros's locations take any
   RemoveFromGame (LocationTarget lid) -> pure $ g & entitiesL . locationsL %~ Map.delete lid
+  -- a location placed underneath a card leaves play, its tokens and attachments discarded
+  PlaceUnderneath _ cards -> do
+    let gone = [l | l <- toList g.entities.locations, (toCard l).id `elem` map (.id) cards]
+        on' :: HasField "placement" a Placement => a -> Bool
+        on' a = a.placement `elem` map (AttachedTo . toTarget) gone
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, on' a]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, on' t]
+      <> [Discard (toTarget o) | o <- toList g.entities.objectives, on' o]
+    pure $ g & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)

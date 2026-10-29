@@ -907,3 +907,16 @@ whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture act
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+-- | The cards go facedown underneath the target, out of play.
+placeUnderneath :: (ReverseQueue m, Targetable target) => target -> [Card] -> m ()
+placeUnderneath target = push . PlaceUnderneath (toTarget target)
+
+{- | Place damage tokens on the card, as encounter cards place them on a location, then
+check whether that defeats it.
+-}
+placeDamage
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
+placeDamage source target n = do
+  placeTokens source target Damage n
+  push $ CheckDefeated (toTarget target)

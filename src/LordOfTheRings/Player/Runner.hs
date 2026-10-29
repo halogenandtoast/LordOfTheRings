@@ -187,6 +187,10 @@ instance RunMessage Player where
       let (moved, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ moved <> kept
     RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
+    -- a card placed underneath another leaves wherever its owner had it
+    PlaceUnderneath _ cards -> do
+      let gone c = c.id `elem` map (.id) cards
+      pure $ player & handL %~ filter (not . gone) & deckL %~ filter (not . gone) & discardL %~ filter (not . gone)
     ShuffleDiscardIntoDeck pid | pid == player.id -> do
       deck <- shuffleM (player.deck <> player.discard)
       pure $ player & deckL .~ deck & discardL .~ []

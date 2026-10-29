@@ -426,6 +426,10 @@ data Message
     DiscardHiddenCard PlayerId EncounterCard
   | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
     PlaceAlly AllyId Placement
+  | {- | the cards go facedown underneath the target, out of play, as The Orcs' Search takes
+    them: from a player's hand, deck or discard pile, or a location in play
+    -}
+    PlaceUnderneath Target [Card]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
