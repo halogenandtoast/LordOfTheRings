@@ -119,5 +119,6 @@
   "pinned": "Pinned",
   "say": "Say",
   "sayPlaceholder": "Say something to the table",
-  "jumpToLatest": "New messages · Jump to latest"
+  "jumpToLatest": "New messages · Jump to latest",
+  "eliminationLevelLowered": "Each player's threat elimination level drops by {count}"
 }
