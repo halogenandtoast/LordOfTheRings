@@ -4,7 +4,7 @@
 -- > chooseOneM pid do
 -- >   questionLabeled "gandalf.chooseOne"
 -- >   causedBy attrs
--- >   labeled "gandalf.draw" $ drawCards pid 3
+-- >   labeled "gandalf.draw" $ drawCards attrs pid 3
 -- >   targets enemies \e -> dealDamage attrs e 4
 module LordOfTheRings.Message.Lifted.Choose (module LordOfTheRings.Message.Lifted.Choose) where
 

@@ -14,6 +14,6 @@ campfireTales = event CampfireTales Cards.campfireTales
 instance RunMessage CampfireTales where
   runMessage msg e@(CampfireTales attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      eachPlayer \p -> drawCards p 1
+      eachPlayer \p -> drawCards attrs p 1
       pure e
     _ -> CampfireTales <$> runMessage msg attrs

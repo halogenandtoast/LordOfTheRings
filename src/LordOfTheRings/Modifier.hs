@@ -315,9 +315,9 @@ data ModifierType
   | -- | on a player: before he commits his first character to the quest he discards a
     -- card at random from his hand, and with none he cannot commit, as A Weary Passage reads
     DiscardRandomToCommit
-  | -- | on a player: card effects cannot make him draw cards, as No End in Sight reads; the
-    -- draw of the resource phase is not one
-    CannotDrawCardsFromCardEffects
+  | -- | on a player: player card effects cannot make him draw cards, as No End in Sight
+    -- reads; the draw of the resource phase is not one, nor is an encounter card's
+    CannotDrawCardsFromPlayerCardEffects
   | -- | on a location in the staging area: progress is placed on it before it can be placed
     -- on the active location, as Grim Foothills reads
     TakesProgressBeforeActiveLocation

@@ -21,7 +21,7 @@ instance RunMessage TakingInitiative where
       characters <- length <$> charactersControlledBy pid
       discardTopOfDeck pid 1
       for_ top \c -> when (maybe 0 costAsResources c.cost >= characters) do
-        drawCards pid 2
+        drawCards attrs pid 2
         enemies <- select AnyEnemy
         chooseOneM pid do
           questionLabeled "takingInitiative.damage"

@@ -152,13 +152,12 @@ lowerThreatBy source pid n = do
     push $ LowerThreat pid n
     push $ CheckWindows [Window After $ ThreatReduced pid (toSource source)]
 
--- | The player draws N cards by a card's effect, unless card effects cannot make him draw.
--- ponytail: 'CannotDrawCardsFromCardEffects' bars encounter card draws too, though No End
--- in Sight names only player cards; no card of its encounter deck draws.
-drawCards :: ReverseQueue m => PlayerId -> Int -> m ()
-drawCards pid n = do
-  barred <- elem CannotDrawCardsFromCardEffects <$> getModifiers (PlayerTarget pid)
-  unless barred $ push $ DrawCards $ Drawing pid n
+-- | The player draws N cards by the source's effect, unless player card effects cannot
+-- make him draw and it is a player card.
+drawCards :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
+drawCards source pid n = do
+  barred <- elem CannotDrawCardsFromPlayerCardEffects <$> getModifiers (PlayerTarget pid)
+  unless (barred && isPlayerCardSource (toSource source)) $ push $ DrawCards $ Drawing pid n
 
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard

@@ -24,6 +24,6 @@ instance HasAbilities LegacyOfDurin where
 instance RunMessage LegacyOfDurin where
   runMessage msg s@(LegacyOfDurin a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      drawCards pid 1
+      drawCards a pid 1
       pure s
     _ -> LegacyOfDurin <$> runMessage msg a

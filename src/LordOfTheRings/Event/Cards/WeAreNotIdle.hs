@@ -31,7 +31,7 @@ instance RunMessage WeAreNotIdle where
                 questionLabeledWith "weAreNotIdle.chooseHero" [intVar "count" x]
                 causedBy attrs
                 targets heroes \h -> placeResources attrs h x
-              drawCards pid 1
+              drawCards attrs pid 1
       exhaustMore 0 dwarves
       pure e
     _ -> WeAreNotIdle <$> runMessage msg attrs

@@ -24,7 +24,7 @@ instance HasAbilities SongOfEarendil where
 instance RunMessage SongOfEarendil where
   runMessage msg s@(SongOfEarendil a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      drawCards pid 1
+      drawCards a pid 1
       pure s
     UseCardAbility _ (isSource a -> True) 2 windows -> do
       for_ (take 1 [p | Window _ (ThreatRaised p) <- windows]) \p -> lowerThreatBy a p 1

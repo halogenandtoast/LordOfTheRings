@@ -31,6 +31,6 @@ instance RunMessage PeaceAndThought where
             causedBy attrs
             targets (filter (/= h) heroes) \h' -> do
               exhaust h'
-              drawCards pid 5
+              drawCards attrs pid 5
       pure e
     _ -> PeaceAndThought <$> runMessage msg attrs

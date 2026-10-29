@@ -14,6 +14,6 @@ deepKnowledge = event DeepKnowledge Cards.deepKnowledge
 instance RunMessage DeepKnowledge where
   runMessage msg e@(DeepKnowledge attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      eachPlayer \p -> drawCards p 2
+      eachPlayer \p -> drawCards attrs p 2
       pure e
     _ -> DeepKnowledge <$> runMessage msg attrs

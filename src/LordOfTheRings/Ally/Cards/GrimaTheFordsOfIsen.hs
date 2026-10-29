@@ -24,7 +24,7 @@ instance HasAbilities GrimaTheFordsOfIsen where
 instance RunMessage GrimaTheFordsOfIsen where
   runMessage msg s@(GrimaTheFordsOfIsen a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      drawCards pid 1
+      drawCards a pid 1
       pure s
     UseCardAbility _ (isSource a -> True) 2 _ -> do
       gameOver Lost

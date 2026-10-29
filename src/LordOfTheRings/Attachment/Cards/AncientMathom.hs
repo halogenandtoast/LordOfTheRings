@@ -19,6 +19,6 @@ instance RunMessage AncientMathom where
   runMessage msg s@(AncientMathom a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       lead <- getLead
-      drawCards lead 3
+      drawCards a lead 3
       pure s
     _ -> AncientMathom <$> runMessage msg a

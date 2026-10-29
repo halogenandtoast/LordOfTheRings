@@ -44,7 +44,7 @@ instance RunMessage TheRoadToTharbad where
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       eachPlayer \p -> do
         discardHand p
-        drawCards p 2
+        drawCards attrs p 2
       placeTimeCounters attrs attrs 2
       pure q
     _ -> TheRoadToTharbad <$> runMessage msg attrs

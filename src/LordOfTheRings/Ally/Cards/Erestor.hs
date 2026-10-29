@@ -22,6 +22,6 @@ instance HasAbilities Erestor where
 instance RunMessage Erestor where
   runMessage msg s@(Erestor a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      drawCards pid 1
+      drawCards a pid 1
       pure s
     _ -> Erestor <$> runMessage msg a
