@@ -1266,6 +1266,13 @@ runGameMessage msg g = case msg of
         barred <- elem CannotGainResourcesFromCardEffects <$> getModifiers target
         unless barred $ push $ CheckWindows [mkAfter $ GainedResources target]
         pure g
+  -- an Orc Guard that would return to the staging area goes to its owner's discard pile
+  -- instead (FAQ errata, Out of the Dungeons)
+  PlaceEnemy eid StagingArea
+    | Just e <- Map.lookup eid g.entities.enemies
+    , toCardCode e == toCardCode orcGuard -> do
+        push $ Discard (toTarget eid)
+        pure g
   PlaceEnemy eid StagingArea -> do
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
     pure g
@@ -1553,7 +1560,8 @@ runGameMessage msg g = case msg of
         attacker <- newEnemy card
         pushAll
           [ RemoveShadowCard host cid
-          , PlaceEnemy attacker.id (EngagedWith pid)
+          , -- it never engages the player (Wolf Rider rulings)
+            PlaceEnemy attacker.id (AttackingFromShadow pid)
           , CreateEffect
               $ Effect
                 (toSource attacker)
@@ -1775,7 +1783,8 @@ runGameMessage msg g = case msg of
       [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
     pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
   SwapHero hid card | Just old <- Map.lookup hid g.entities.heroes -> do
-    new <- newHero old.owner card
+    -- it trades places with the old hero, ready or exhausted as that one was (ruling)
+    new <- overAttrs (\a -> a {heroExhausted = heroExhausted (toAttrs old)}) <$> newHero old.owner card
     let on' :: HasField "placement" a Placement => a -> Bool
         on' a = a.placement == AttachedTo (toTarget old)
         newHost = AttachedTo (toTarget new)

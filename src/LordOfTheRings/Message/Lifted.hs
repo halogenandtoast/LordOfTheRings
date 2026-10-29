@@ -18,6 +18,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Hero.Types (heroCardId)
 import LordOfTheRings.I18n (intVar)
@@ -73,6 +74,24 @@ removeTokens source target token n = push $ RemoveTokens (toSource source) (toTa
 -- | Progress straight onto the current quest stage, past any active location.
 placeProgressOnCurrentQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 placeProgressOnCurrentQuest source n = traverse_ (\q -> placeProgress source q n) =<< getCurrentQuest
+
+{- | Progress a card places on the current quest: the active location takes it first and
+the rest goes to the quest (FAQ 2.02). An active location immune to the card ignores it,
+and none of it reaches the quest (FAQ 2.41).
+-}
+placeProgressOnQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+placeProgressOnQuest source n =
+  select IsActiveLocation >>= \case
+    [] -> placeProgressOnCurrentQuest source n
+    lid : _ -> do
+      mods <- getModifiers lid
+      let immune = ImmuneToCardEffects `elem` mods || (isPlayerCardSource (toSource source) && ImmuneToPlayerCardEffects `elem` mods)
+      unless immune do
+        l <- getLocation lid
+        room <- max 0 . subtract l.progress <$> getLocationQuestPoints lid
+        let k = min n room
+        when (k > 0) $ placeProgress source lid k
+        when (n > k) $ placeProgressOnCurrentQuest source (n - k)
 
 -- | Place time counters on the card, as "place 3 time counters on this stage" reads.
 placeTimeCounters
