@@ -6,6 +6,8 @@ import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (CostModifier))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
@@ -66,6 +68,14 @@ spec = describe "Against the Shadow player cards" do
       _ <- playWith pid hirluin 1 Allies.knightsOfTheSwan
       allyCount `shouldReturn` 1
       (getAttack =<< hero hirluin) `shouldReturn` 2
+
+  describe "Records" do
+    it "cost less only for heroes with the printed icon, not a gained one" . withHeroes [theoden, gimli, beravor] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfBattle =<< hero beravor
+      card <- putCardIntoHand pid Attachments.bookOfEldacar
+      run $ PlaceTokens GameSource GameTarget Resource 0
+      -- Théoden and Gimli are printed tactics; Beravor's gained icon does not count
+      getModifiers (CardIdTarget card.id) >>= (`shouldSatisfy` elem (CostModifier (-2)))
 
   describe "Book of Eldacar" do
     it "costs 1 less for each tactics hero, and plays a tactics event from the discard pile to the bottom of the deck" . withHeroes [theoden, gimli, legolas] $ \pid -> do

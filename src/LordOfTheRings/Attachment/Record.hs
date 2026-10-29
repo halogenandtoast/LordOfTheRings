@@ -20,7 +20,7 @@ which the player's runner does as such a card is played.
 recordModifiers :: HasModifiersM m => Sphere -> AttachmentAttrs -> m ()
 recordModifiers sphere a = case a.placement of
   Unplaced -> do
-    n <- length <$> select (HeroControlledBy (PlayerWithId a.owner) <> HeroWithSphere sphere)
+    n <- length <$> select (HeroControlledBy (PlayerWithId a.owner) <> HeroWithPrintedSphere sphere)
     when (n > 0) $ modified a (CardIdTarget a.cardId) [CostModifier (negate n)]
   AttachedTo _ -> modified a (PlayerTarget a.controller) [MayPlayFromDiscard $ CardWithType EventType <> CardWithSphere sphere]
   _ -> pure ()
