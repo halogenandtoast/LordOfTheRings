@@ -280,6 +280,15 @@ spec = describe "The Dunland Trap" do
     takeUndefended pid "01012"
     outcome `shouldReturn` Just Won
 
+  it "lets the player order his enemies' attacks at No Way Out" . trapTest $ \pid -> do
+    q <- putQuestStage Quests.noWayOut
+    run $ PlaceTokens GameSource q TimeCounter 1
+    _ <- engaged pid Enemies.boarClanWarrior
+    _ <- engaged pid Enemies.boarClanStalker
+    _ <- setEncounterDeck [Locations.plainsOfEnedwaith, Locations.plainsOfEnedwaith]
+    run $ RemoveTokens GameSource q TimeCounter 1
+    getQuestion pid >>= (`shouldSatisfy` maybe False (\case QuestionLabel l _ _ _ -> l == "$label.chooseNextAttack"; _ -> False))
+
   it "is lost if a hero falls to No Way Out's last attacks" . trapTest $ \pid -> do
     q <- putQuestStage Quests.noWayOut
     run $ PlaceTokens GameSource q TimeCounter 1
