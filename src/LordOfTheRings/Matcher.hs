@@ -429,6 +429,18 @@ currentQuestHas k =
       maybe (pure False) (hasKeyword k t . toCardDef) . Map.lookup qid =<< getsGame (entitiesQuests . gameEntities)
     _ -> pure False
 
+-- | Whether the current quest has any keyword, printed or gained, as "if the current quest
+-- card has a keyword" reads.
+currentQuestHasAKeyword :: HasGame m => m Bool
+currentQuestHasAKeyword =
+  getCurrentQuest >>= \case
+    Just t@(QuestTarget qid) -> do
+      mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+      printed <- maybe [] (toList . cdKeywords . toCardDef) . Map.lookup qid <$> getsGame (entitiesQuests . gameEntities)
+      let kept = [k | Blank `notElem` mods, k <- printed] <> [k | GainKeyword k <- mods]
+      pure $ any (\k -> LoseKeyword k `notElem` mods) kept
+    _ -> pure False
+
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
 
