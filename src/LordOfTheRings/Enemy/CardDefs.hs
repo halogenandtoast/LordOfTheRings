@@ -155,6 +155,9 @@ allEnemyCards =
       , bellachCelebrimborsSecret
       , bellachsScout
       , prowlingOrc
+      , ancientMarshDweller
+      , giantSwampAdder
+      , neekerbreekers
       ]
 
 namelessThing :: CardDef
@@ -1228,4 +1231,26 @@ prowlingOrc =
     { cdCardTraits = setFromList [Mordor, Orc]
     , cdKeywords = setFromList [Scour]
     , cdEasyModeQuantity = Just 1
+    }
+
+-- | Set aside at setup, out of play, until a stage adds it to the staging area.
+ancientMarshDweller :: CardDef
+ancientMarshDweller =
+  (enemy "08103" "Ancient Marsh-dweller" TheNinInEilph 1 45 3 6 4 9)
+    { cdCardTraits = setFromList [Creature]
+    , cdVictoryPoints = Just 5
+    }
+
+giantSwampAdder :: CardDef
+giantSwampAdder =
+  (enemy "08104" "Giant Swamp Adder" TheNinInEilph 4 35 3 3 3 6)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 3
+    }
+
+neekerbreekers :: CardDef
+neekerbreekers =
+  (enemy "08105" "Neekerbreekers" TheNinInEilph 3 20 2 1 1 6)
+    { cdCardTraits = setFromList [Creature, Insect]
+    , cdShadowEffect = True
     }

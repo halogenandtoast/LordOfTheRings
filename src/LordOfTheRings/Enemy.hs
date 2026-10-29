@@ -149,6 +149,9 @@ import LordOfTheRings.Enemy.Cards.BellachsMarauder
 import LordOfTheRings.Enemy.Cards.BellachCelebrimborsSecret
 import LordOfTheRings.Enemy.Cards.BellachsScout
 import LordOfTheRings.Enemy.Cards.ProwlingOrc
+import LordOfTheRings.Enemy.Cards.AncientMarshDweller
+import LordOfTheRings.Enemy.Cards.GiantSwampAdder
+import LordOfTheRings.Enemy.Cards.Neekerbreekers
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -322,5 +325,8 @@ allEnemys =
         , SomeEnemyCard bellachCelebrimborsSecret
         , SomeEnemyCard bellachsScout
         , SomeEnemyCard prowlingOrc
+        , SomeEnemyCard ancientMarshDweller
+        , SomeEnemyCard giantSwampAdder
+        , SomeEnemyCard neekerbreekers
         ]
     ]

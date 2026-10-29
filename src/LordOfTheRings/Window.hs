@@ -108,6 +108,8 @@ data WindowType
     CardsDrawn PlayerId Int
   | -- | a card effect reduced the player's threat: the player, and the card's source
     ThreatReduced PlayerId Source
+  | -- | the players advanced to a quest stage, its When Revealed resolved
+    AdvancedToStage
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

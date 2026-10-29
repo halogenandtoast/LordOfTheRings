@@ -54,6 +54,7 @@ allObjectiveCards =
       , nalirTroubleInTharbad
       , theOrcsSearch
       , celebrimborsMould
+      , nalirTheNinInEilph
       ]
 
 durinsAxe :: CardDef
@@ -326,3 +327,12 @@ celebrimborsMould =
     (objective "08127" "Celebrimbor's Mould" CelebrimborsSecret 1)
       { cdCardTraits = setFromList [Artifact, Item]
       }
+
+nalirTheNinInEilph :: CardDef
+nalirTheNinInEilph =
+  ((objective "08102" "Nalir" TheNinInEilph 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

@@ -141,6 +141,8 @@ allTreacheryCards =
       , discovered
       , desecratedRuins
       , spiesFromMordor
+      , shiftingMarshland
+      , remnantsOfElderDays
       ]
 
 deepDeepDark :: CardDef
@@ -854,3 +856,14 @@ desecratedRuins = (treachery "08135" "Desecrated Ruins" CelebrimborsSecret 3) {c
 
 spiesFromMordor :: CardDef
 spiesFromMordor = (treachery "08136" "Spies from Mordor" CelebrimborsSecret 2) {cdShadowEffect = True}
+
+shiftingMarshland :: CardDef
+shiftingMarshland =
+  (treachery "08110" "Shifting Marshland" TheNinInEilph 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+remnantsOfElderDays :: CardDef
+remnantsOfElderDays = (treachery "08111" "Remnants of Elder Days" TheNinInEilph 1) {cdEasyModeQuantity = Just 0}

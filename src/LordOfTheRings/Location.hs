@@ -156,6 +156,10 @@ import LordOfTheRings.Location.Cards.RuinedPlaza
 import LordOfTheRings.Location.Cards.CollapsedTower
 import LordOfTheRings.Location.Cards.AncientFoundation
 import LordOfTheRings.Location.Cards.CityRemains
+import LordOfTheRings.Location.Cards.FenOfReeds
+import LordOfTheRings.Location.Cards.FingerOfGlanduin
+import LordOfTheRings.Location.Cards.HiddenEyot
+import LordOfTheRings.Location.Cards.SinkingBog
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -339,5 +343,9 @@ allLocations =
         , SomeLocationCard collapsedTower
         , SomeLocationCard ancientFoundation
         , SomeLocationCard cityRemains
+        , SomeLocationCard fenOfReeds
+        , SomeLocationCard fingerOfGlanduin
+        , SomeLocationCard hiddenEyot
+        , SomeLocationCard sinkingBog
         ]
     ]

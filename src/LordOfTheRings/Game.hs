@@ -1117,8 +1117,16 @@ runGameMessage msg g = case msg of
   CommitCharacters pid -> do
     heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
     allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
-    barred <- elem CannotCommitCharacters <$> getModifiers (PlayerTarget pid)
-    let committable c = do
+    playerMods <- getModifiers (PlayerTarget pid)
+    player <- getPlayer pid
+    -- characters already committed have paid any toll for committing
+    committed <-
+      selectCharacters
+        (HeroControlledBy (PlayerWithId pid) <> CommittedHero)
+        (AllyControlledBy (PlayerWithId pid) <> CommittedAlly)
+    let toll = [DiscardRandomFromHand pid 1 | DiscardRandomToCommit `elem` playerMods, null committed]
+        barred = CannotCommitCharacters `elem` playerMods || (notNull toll && null player.hand)
+        committable c = do
           mods <- getModifiers c
           free <- doesNotExhaustToCommit c =<< characterCardDef c
           pure $ CannotCommitToQuest `notElem` mods && (free || CannotExhaust `notElem` mods)
@@ -1134,18 +1142,13 @@ runGameMessage msg g = case msg of
     -- player's actions are offered alongside committing it
     actions <- getActionAbilities pid
     mustCommitAll <- elem MustCommitAll <$> getModifiers GameTarget
-    player <- getPlayer pid
     early <- filterM (\c -> andM [pure $ playsBeforeCommitting pid c, canPlay player c]) player.hand
     -- a player commits their characters at once, so responses to committing, as Aragorn's
     -- and Théodred's, wait until they are done and are then taken in any order
-    committed <-
-      selectCharacters
-        (HeroControlledBy (PlayerWithId pid) <> CommittedHero)
-        (AllyControlledBy (PlayerWithId pid) <> CommittedAlly)
     -- asked even with no one left to commit, so the player moves on to staging
     push
       $ questionLabelWith (ikey "label.commitCharacters") Nothing quests pid
-      $ [ targetLabel c [CommitToQuest c, CommitCharacters pid]
+      $ [ targetLabel c (toll <> [CommitToQuest c, CommitCharacters pid])
         | c <- characters
         ]
       <> [AbilityLabel pid ab [] [CommitCharacters pid] | ab <- actions]

@@ -305,6 +305,12 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on the active location, as Collapsed Tower's shadow reads
     ExcessDamageToActiveLocation
+  | -- | on a player: before he commits his first character to the quest he discards a
+    -- card at random from his hand, and with none he cannot commit, as A Weary Passage reads
+    DiscardRandomToCommit
+  | -- | on a player: card effects cannot make him draw cards, as No End in Sight reads; the
+    -- draw of the resource phase is not one
+    CannotDrawCardsFromCardEffects
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

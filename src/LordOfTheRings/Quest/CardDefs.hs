@@ -129,6 +129,14 @@ allQuestCards =
       , escapeFromTharbad
       , theRuinsOfOstInEdhil
       , theEnemysServant
+      , fleeingFromTharbad
+      , throughTheMarshNoEndInSight
+      , throughTheMarshAWearyPassage
+      , throughTheMarshAForgottenLand
+      , lostInTheSwanfleetImpassableMarshland
+      , lostInTheSwanfleetATreacherousSwamp
+      , lostInTheSwanfleetCreaturesOfAForgottenAge
+      , outOfTheSwamp
       ]
 
 theDrippingWalls :: CardDef
@@ -461,3 +469,39 @@ theRuinsOfOstInEdhil = (quest "08122" "The Ruins of Ost-in-Edhil" CelebrimborsSe
 
 theEnemysServant :: CardDef
 theEnemysServant = (quest "08123" "The Enemy's Servant" CelebrimborsSecret 2 12) {cdKeywords = setFromList [Time 3]}
+
+fleeingFromTharbad :: CardDef
+fleeingFromTharbad = quest "08094" "Fleeing from Tharbad" TheNinInEilph 1 0
+
+-- | The stage 2s of The Nîn-in-Eilph: Time 3, and the players wander among them at random.
+throughTheMarsh :: CardCode -> Text -> CardDef
+throughTheMarsh code subtitle =
+  (quest code (Name "Through the Marsh" (Just subtitle)) TheNinInEilph 2 13) {cdKeywords = setFromList [Time 3]}
+
+throughTheMarshNoEndInSight :: CardDef
+throughTheMarshNoEndInSight = throughTheMarsh "08095" "No End in Sight"
+
+throughTheMarshAWearyPassage :: CardDef
+throughTheMarshAWearyPassage = throughTheMarsh "08096" "A Weary Passage"
+
+throughTheMarshAForgottenLand :: CardDef
+throughTheMarshAForgottenLand = throughTheMarsh "08097" "A Forgotten Land"
+
+-- | The stage 3s of The Nîn-in-Eilph, as the stage 2s.
+lostInTheSwanfleet :: CardCode -> Text -> CardDef
+lostInTheSwanfleet code subtitle =
+  (quest code (Name "Lost in the Swanfleet" (Just subtitle)) TheNinInEilph 3 16) {cdKeywords = setFromList [Time 3]}
+
+lostInTheSwanfleetImpassableMarshland :: CardDef
+lostInTheSwanfleetImpassableMarshland = lostInTheSwanfleet "08098" "Impassable Marshland"
+
+lostInTheSwanfleetATreacherousSwamp :: CardDef
+lostInTheSwanfleetATreacherousSwamp = lostInTheSwanfleet "08099" "A Treacherous Swamp"
+
+lostInTheSwanfleetCreaturesOfAForgottenAge :: CardDef
+lostInTheSwanfleetCreaturesOfAForgottenAge = lostInTheSwanfleet "08100" "Creatures of a Forgotten Age"
+
+-- | No quest points: the players win by defeating Ancient Marsh-dweller.
+outOfTheSwamp :: CardDef
+outOfTheSwamp =
+  (quest "08101" "Out of the Swamp" TheNinInEilph 4 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Time 2]}

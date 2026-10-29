@@ -134,6 +134,8 @@ import LordOfTheRings.Treachery.Cards.GetThatDwarf
 import LordOfTheRings.Treachery.Cards.Discovered
 import LordOfTheRings.Treachery.Cards.DesecratedRuins
 import LordOfTheRings.Treachery.Cards.SpiesFromMordor
+import LordOfTheRings.Treachery.Cards.ShiftingMarshland
+import LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -292,5 +294,7 @@ allTreacherys =
         , SomeTreacheryCard discovered
         , SomeTreacheryCard desecratedRuins
         , SomeTreacheryCard spiesFromMordor
+        , SomeTreacheryCard shiftingMarshland
+        , SomeTreacheryCard remnantsOfElderDays
         ]
     ]

@@ -108,6 +108,14 @@ import LordOfTheRings.Quest.Cards.DoubleDealings
 import LordOfTheRings.Quest.Cards.EscapeFromTharbad
 import LordOfTheRings.Quest.Cards.TheRuinsOfOstInEdhil
 import LordOfTheRings.Quest.Cards.TheEnemysServant
+import LordOfTheRings.Quest.Cards.FleeingFromTharbad
+import LordOfTheRings.Quest.Cards.ThroughTheMarshNoEndInSight
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAWearyPassage
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAForgottenLand
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetImpassableMarshland
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetATreacherousSwamp
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetCreaturesOfAForgottenAge
+import LordOfTheRings.Quest.Cards.OutOfTheSwamp
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -248,5 +256,13 @@ allQuests =
         , SomeQuestCard escapeFromTharbad
         , SomeQuestCard theRuinsOfOstInEdhil
         , SomeQuestCard theEnemysServant
+        , SomeQuestCard fleeingFromTharbad
+        , SomeQuestCard throughTheMarshNoEndInSight
+        , SomeQuestCard throughTheMarshAWearyPassage
+        , SomeQuestCard throughTheMarshAForgottenLand
+        , SomeQuestCard lostInTheSwanfleetImpassableMarshland
+        , SomeQuestCard lostInTheSwanfleetATreacherousSwamp
+        , SomeQuestCard lostInTheSwanfleetCreaturesOfAForgottenAge
+        , SomeQuestCard outOfTheSwamp
         ]
     ]

@@ -166,6 +166,10 @@ allLocationCards =
       , collapsedTower
       , ancientFoundation
       , cityRemains
+      , fenOfReeds
+      , fingerOfGlanduin
+      , hiddenEyot
+      , sinkingBog
       ]
 
 drownedTreasury :: CardDef
@@ -1210,4 +1214,29 @@ cityRemains =
     { cdCardTraits = setFromList [OstInEdhil, Ruins]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+fenOfReeds :: CardDef
+fenOfReeds =
+  (location "08106" "Fen of Reeds" TheNinInEilph 3 2 3)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+fingerOfGlanduin :: CardDef
+fingerOfGlanduin =
+  (location "08107" "Finger of Glanduin" TheNinInEilph 3 3 3)
+    { cdCardTraits = setFromList [River, Marsh]
+    , cdShadowEffect = True
+    }
+
+hiddenEyot :: CardDef
+hiddenEyot = (location "08108" "Hidden Eyot" TheNinInEilph 2 3 4) {cdCardTraits = setFromList [Marsh]}
+
+sinkingBog :: CardDef
+sinkingBog =
+  (location "08109" "Sinking Bog" TheNinInEilph 3 1 5)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
     }
