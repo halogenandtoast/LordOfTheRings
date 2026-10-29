@@ -120,6 +120,9 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.AncientForestLocation
+import LordOfTheRings.Location.Cards.TangledWoods
+import LordOfTheRings.Location.Cards.BrokenLandsLocation
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +270,8 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard ancientForestLocation
+        , SomeLocationCard tangledWoods
+        , SomeLocationCard brokenLandsLocation
         ]
     ]
