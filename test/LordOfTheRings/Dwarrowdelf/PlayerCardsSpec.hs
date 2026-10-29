@@ -608,6 +608,19 @@ spec = describe "Dwarrowdelf player cards" do
     heroExhausted . toAttrs <$> getHeroWithCode beravor `shouldReturn` False
     isInPlay miruvor `shouldReturn` False
 
+  it "Miruvor goes on top of the deck of the player resolving it, not its owner's" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    legolas <- heroOf two "01005"
+    miruvor <- putAttachmentOn one Attachments.miruvor legolas
+    case miruvor of
+      AttachmentTarget aid -> run $ AttachCard aid legolas
+      _ -> error "not an attachment"
+    actions two
+    chooseAbilityOf two miruvor
+    chooseLabel "$label.miruvor.resource" two
+    chooseLabel "$label.miruvor.topOfDeck" two
+    map toCardCode . take 1 . (.deck) <$> getPlayer two `shouldReturn` [toCardCode Attachments.miruvor]
+    map toCardCode . (.discard) <$> getPlayer one `shouldReturn` []
+
   it "Master of the Forge searches the top 5 for an attachment" . gameTest $ \pid -> do
     master <- putAllyIntoPlay pid Allies.masterOfTheForge
     wanted <- onTopOfDeck pid Attachments.ringMail
