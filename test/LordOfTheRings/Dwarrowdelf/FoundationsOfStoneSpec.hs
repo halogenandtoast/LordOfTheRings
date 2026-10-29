@@ -122,6 +122,11 @@ spec = describe "Foundations of Stone" do
     getsGame (any ((== "01007") . toCardCode) . toList . (.entities.heroes)) `shouldReturn` True
     (.hand) <$> getPlayer pid >>= (`shouldSatisfy` all ((/= "01007") . toCardCode))
 
+  it "does not eliminate a player whose last hero Lost and Alone shuffles into his deck" . gameTestIn foundationsOfStone testDeck {heroes = ["01012"]} $ \pid -> do
+    reveal [Treacheries.lostAndAlone]
+    run CheckEliminations
+    (.eliminated) <$> getPlayer pid `shouldReturn` False
+
   it "lets only ranged characters fight Moria Bats, stronger for each other enemy engaged" . fosTest $ \pid -> do
     reveal [Enemies.moriaBats]
     bats <- enemyOf Enemies.moriaBats

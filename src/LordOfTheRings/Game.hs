@@ -412,7 +412,8 @@ runGameMessage msg g = case msg of
       -- the level may move, as Double Dealings lowers it
       level <- (eliminationThreat +) . sum . mapMaybe (\case EliminationThreatModifier n -> Just n; _ -> Nothing) <$> getModifiers (PlayerTarget player.id)
       pure
-        $ guard (not player.eliminated && (player.threat >= level || null heroes))
+        -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
+        $ guard (not player.eliminated && (player.threat >= level || (null heroes && not (any ((== HeroType) . (.cardType)) player.deck))))
         $> player.id
     pushAll $ map EliminatePlayer eliminated
     pure g
