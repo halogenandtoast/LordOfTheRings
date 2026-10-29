@@ -64,6 +64,7 @@ spec = describe "Misty Mountains" do
     eid' <- engagedWithShadow pid Enemies.blackUruks
     _ <- setEncounterDeck [Locations.kneesOfTheMountain, Locations.wargLair]
     run $ ResolveShadow eid' pid []
+    resolveShadowsInOrder pid
     shadowCount eid' `shouldReturn` 3
     revealed <- getsGame (maybe [] (enemyShadowRevealed . toAttrs) . lookup eid' . (.entities.enemies))
     length revealed `shouldBe` 3

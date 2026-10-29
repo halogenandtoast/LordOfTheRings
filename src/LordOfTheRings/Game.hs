@@ -1039,13 +1039,12 @@ runGameMessage msg g = case msg of
     pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)
     pure g
   ResolveShadow eid pid defenders -> do
-    for_ (Map.lookup eid g.entities.enemies) \enemy ->
+    for_ (Map.lookup eid g.entities.enemies) \enemy -> do
       -- each shadow card turns face up, and one with an effect resolves it; one already face
       -- up resolved in an earlier attack, as an enemy attacking again has, unless it was
       -- dealt face up
-      pushAll
-        $ concat
-          [ RevealShadowCard eid (ecId card)
+      let resolving card =
+            RevealShadowCard eid (ecId card)
               : if cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
@@ -1053,9 +1052,21 @@ runGameMessage msg g = case msg of
                   , ResolveShadowCard (ecId card) eid pid defenders
                   ]
                 else []
-          | card <- enemy.shadowCards
-          , card.id `notElem` (toAttrs enemy).enemyShadowRevealed || card.id `elem` (toAttrs enemy).enemyShadowFaceUp
-          ]
+          pending =
+            [ card
+            | card <- enemy.shadowCards
+            , card.id `notElem` (toAttrs enemy).enemyShadowRevealed || card.id `elem` (toAttrs enemy).enemyShadowFaceUp
+            ]
+      case pending of
+        [] -> pure ()
+        [card] -> pushAll (resolving card)
+        -- they turn over one at a time, in the order the first player decides (ruling 3.388);
+        -- this resolution goes on with the rest once that one has resolved
+        _ -> do
+          lead <- getLead
+          push
+            $ questionLabelWith (ikey "label.chooseShadowCard") (Just $ toTarget eid) [] lead
+            $ [targetLabel (CardIdTarget card.id) (resolving card <> [ResolveShadow eid pid defenders]) | card <- pending]
     pure g
   RevealShadowCard eid cid -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
