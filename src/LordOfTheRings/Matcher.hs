@@ -288,12 +288,6 @@ heroPaysFor sphere h = do
 heroCanSpend :: HasGame m => Hero -> m Bool
 heroCanSpend h = notElem CannotSpendResources . map modifierType . Map.findWithDefault [] (toTarget h) <$> getsGame gameModifiers
 
--- | The hero's resource icons: its printed sphere's and those it gains (Song of Wisdom).
-heroResourceIcons :: HasGame m => Hero -> m [Sphere]
-heroResourceIcons h = do
-  own <- map modifierType . Map.findWithDefault [] (toTarget h) <$> getsGame gameModifiers
-  pure $ filter (/= Neutral) $ ordNub $ h.sphere : [s | GainResourceIcon s <- own]
-
 -- | Resources of the sphere the player's heroes could spend.
 getResourcesOfSphere :: HasGame m => PlayerId -> Sphere -> m Int
 getResourcesOfSphere pid sphere = do

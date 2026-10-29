@@ -16,10 +16,8 @@ orcVanguard = enemy OrcVanguard Cards.orcVanguard
 -- pools of heroes who have a leadership, spirit, or lore resource icon, printed or gained.
 instance HasModifiersFor OrcVanguard where
   getModifiersFor (OrcVanguard a) = when (a.placement == StagingArea) do
-    heroes <- traverse getHero =<< select AnyHero
-    for_ heroes \h -> do
-      icons <- heroResourceIcons h
-      when (any (`elem` [Leadership, Spirit, Lore]) icons) $ modified a h [CannotSpendResources]
+    heroes <- concatMapM (select . HeroWithSphere) [Leadership, Spirit, Lore]
+    for_ (ordNub heroes) \h -> modified a h [CannotSpendResources]
 
 -- | Shadow: Deal the attacking enemy two additional shadow cards.
 instance RunMessage OrcVanguard where
