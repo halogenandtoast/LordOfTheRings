@@ -130,6 +130,12 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , munuvDuvRavine
+      , oldSouthRoad
+      , hithaeglirFoothills
+      , hillsOfDunland
+      , plainsOfEnedwaith
+      , hithaeglirStream
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +941,39 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+munuvDuvRavine :: CardDef
+munuvDuvRavine = unique (location "08015" "Munuv Dûv Ravine" TheDunlandTrap 1 4 6) {cdCardTraits = setFromList [Enedwaith, Hills, River]}
+
+oldSouthRoad :: CardDef
+oldSouthRoad = unique (location "08016" "Old South Road" TheDunlandTrap 1 1 4) {cdCardTraits = setFromList [Road]}
+
+-- | X threat, X the resource tokens on it: given by its own modifiers.
+hithaeglirFoothills :: CardDef
+hithaeglirFoothills =
+  (location "08019" "Hithaeglir Foothills" TheDunlandTrap 2 0 4)
+    { cdCardTraits = setFromList [Enedwaith, Hills]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+hillsOfDunland :: CardDef
+hillsOfDunland =
+  (location "08020" "Hills of Dunland" TheDunlandTrap 4 2 3)
+    { cdCardTraits = setFromList [Enedwaith, Hills]
+    , cdEasyModeQuantity = Just 2
+    }
+
+plainsOfEnedwaith :: CardDef
+plainsOfEnedwaith =
+  (location "08021" "Plains of Enedwaith" TheDunlandTrap 3 2 2)
+    { cdCardTraits = setFromList [Enedwaith, Plains]
+    , cdShadowEffect = True
+    }
+
+hithaeglirStream :: CardDef
+hithaeglirStream =
+  (location "08022" "Hithaeglir Stream" TheDunlandTrap 4 3 4)
+    { cdCardTraits = setFromList [Enedwaith, River]
+    , cdShadowEffect = True
+    }

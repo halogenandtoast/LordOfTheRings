@@ -120,6 +120,12 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.MunuvDuvRavine
+import LordOfTheRings.Location.Cards.OldSouthRoad
+import LordOfTheRings.Location.Cards.HithaeglirFoothills
+import LordOfTheRings.Location.Cards.HillsOfDunland
+import LordOfTheRings.Location.Cards.PlainsOfEnedwaith
+import LordOfTheRings.Location.Cards.HithaeglirStream
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +273,11 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard munuvDuvRavine
+        , SomeLocationCard oldSouthRoad
+        , SomeLocationCard hithaeglirFoothills
+        , SomeLocationCard hillsOfDunland
+        , SomeLocationCard plainsOfEnedwaith
+        , SomeLocationCard hithaeglirStream
         ]
     ]

@@ -116,6 +116,8 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , frenziedAttack
+      , dunlendingAmbush
       ]
 
 deepDeepDark :: CardDef
@@ -712,4 +714,14 @@ conflictAtTheCrossroads =
   (treachery "06131" "Conflict at the Crossroads" TheBloodOfGondor 2)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+frenziedAttack :: CardDef
+frenziedAttack = (treachery "08023" "Frenzied Attack" TheDunlandTrap 3) {cdShadowEffect = True}
+
+dunlendingAmbush :: CardDef
+dunlendingAmbush =
+  (treachery "08024" "Dunlending Ambush" TheDunlandTrap 3)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
     }
