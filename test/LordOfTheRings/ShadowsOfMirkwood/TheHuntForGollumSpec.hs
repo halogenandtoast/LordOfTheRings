@@ -187,6 +187,8 @@ spec = describe "The Hunt for Gollum" do
     all (\e -> any ((== (PlayerCard e).id) . (.id)) hand) eagles `shouldBe` True
 
   it "has Bilbo Baggins draw the first player an extra card in the resource phase" . gameTestIn theHuntForGollum bilboDeck $ \pid -> do
+    -- the constant abilities are read in once a message has run
+    run $ Run []
     hand <- length . (.hand) <$> getPlayer pid
     run $ BeginPhase ResourcePhase
     length . (.hand) <$> getPlayer pid `shouldReturn` hand + 2

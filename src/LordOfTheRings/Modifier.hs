@@ -326,6 +326,9 @@ data ModifierType
     ProgressAsDamageTo Target
   | -- | on a character: it was dealt damage while defending the attack being resolved
     DamagedWhileDefending
+  | -- | on a player: they draw this many more cards in the resource phase, in the same
+    -- draw, as Bilbo Baggins reads
+    AdditionalResourcePhaseDraws Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
