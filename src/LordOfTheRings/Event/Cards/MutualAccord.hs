@@ -1,7 +1,11 @@
 module LordOfTheRings.Event.Cards.MutualAccord (mutualAccord) where
 
+import LordOfTheRings.Card (HasCardDef (..))
+import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
+import LordOfTheRings.Game.Base (gameEntities)
+import LordOfTheRings.Placement (Placement (Unplaced))
 import LordOfTheRings.Trait (Trait (Gondor, Rohan))
 
 newtype MutualAccord = MutualAccord EventAttrs
@@ -16,11 +20,25 @@ mutualAccord = event MutualAccord Cards.mutualAccord
 instance RunMessage MutualAccord where
   runMessage msg e@(MutualAccord attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      -- ponytail: the characters in play as it resolves; attachments, and cards entering
-      -- play later this phase, keep their own traits
-      gondor <- selectCharacters (HeroWithTrait Gondor) (AllyWithTrait Gondor)
-      rohan <- selectCharacters (HeroWithTrait Rohan) (AllyWithTrait Rohan)
-      for_ gondor \c -> phaseModifier attrs c (GainTrait Rohan)
-      for_ rohan \c -> phaseModifier attrs c (GainTrait Gondor)
+      -- the cards in play as it resolves: a player card's lasting effect is not
+      -- recalculated (FAQ 1.55)
+      es <- getsGame gameEntities
+      let card' :: (Targetable a, HasCardDef a) => a -> (Target, CardDef)
+          card' a = (toTarget a, toCardDef a)
+          placed :: (Targetable a, HasCardDef a, HasField "placement" a Placement) => [a] -> [(Target, CardDef)]
+          placed xs = [card' x | x <- xs, x.placement /= Unplaced]
+          cards =
+            map card' (toList es.heroes)
+              <> map card' (toList es.allies)
+              <> placed (toList es.attachments)
+              <> placed (toList es.objectives)
+              <> placed (toList es.enemies)
+              <> placed (toList es.locations)
+              <> placed (toList es.treacheries)
+      for_ cards \(t, def) -> do
+        gondor <- hasTrait Gondor t def
+        rohan <- hasTrait Rohan t def
+        when gondor $ phaseModifier attrs t (GainTrait Rohan)
+        when rohan $ phaseModifier attrs t (GainTrait Gondor)
       pure e
     _ -> MutualAccord <$> runMessage msg attrs

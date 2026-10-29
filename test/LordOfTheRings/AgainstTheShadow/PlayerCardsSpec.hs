@@ -5,7 +5,10 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
-import LordOfTheRings.Helpers.Character (getAttack, getDefense)
+import LordOfTheRings.Helpers.Character (getAttack, getDefense, getWillpower)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Effect (Effect (..))
+import LordOfTheRings.Modifier (ModifierType (CostModifier, DiscardNextRevealed))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
@@ -67,6 +70,14 @@ spec = describe "Against the Shadow player cards" do
       allyCount `shouldReturn` 1
       (getAttack =<< hero hirluin) `shouldReturn` 2
 
+  describe "Records" do
+    it "cost less only for heroes with the printed icon, not a gained one" . withHeroes [theoden, gimli, beravor] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfBattle =<< hero beravor
+      card <- putCardIntoHand pid Attachments.bookOfEldacar
+      run $ PlaceTokens GameSource GameTarget Resource 0
+      -- Théoden and Gimli are printed tactics; Beravor's gained icon does not count
+      getModifiers (CardIdTarget card.id) >>= (`shouldSatisfy` elem (CostModifier (-2)))
+
   describe "Book of Eldacar" do
     it "costs 1 less for each tactics hero, and plays a tactics event from the discard pile to the bottom of the deck" . withHeroes [theoden, gimli, legolas] $ \pid -> do
       blade <- putInDiscard pid Events.bladeMastery
@@ -117,6 +128,15 @@ spec = describe "Against the Shadow player cards" do
       map (.id) <$> getEncounterDiscard `shouldReturn` [road.id]
       getsGame (length . (.entities.locations)) `shouldReturn` 0
 
+    it "waits past the end of the round for the next card revealed" . gameTest $ \pid -> do
+      lampwright <- putAllyIntoPlay pid Allies.minasTirithLampwright
+      _ <- setEncounterDeck [Enemies.mirkwoodBats]
+      run RevealEncounterCard
+      chooseAbilityOf pid lampwright
+      chooseLabel "$label.minasTirithLampwright.location" pid
+      run EndRound
+      getsGame (any (any (\case DiscardNextRevealed _ -> True; _ -> False) . effectModifiers) . gameEffects) `shouldReturn` True
+
   describe "Hobbit-sense" do
     it "stops the engaged enemies attacking, and the player attacking" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
       eid <- stage Enemies.forestSpider
@@ -142,7 +162,25 @@ spec = describe "Against the Shadow player cards" do
       sort . map (.id) . (.hand) <$> getPlayer pid `shouldReturn` sort [warrior.id, knights.id]
       (getHeroResources . toId =<< getHeroWithCode hirluin) `shouldReturn` 0
 
+    it "returns no ally played for no cost, as X is 0" . withHeroes [hirluin, beravor, eowyn] $ \pid -> do
+      warrior <- putInDiscard pid Allies.warriorOfLossarnach
+      card <- genPlayerCard Events.menOfTheWest (Just pid)
+      hirluin' <- getHeroWithCode hirluin
+      run $ PlaceTokens GameSource (toTarget hirluin') Resource 2
+      run $ PlayAtNoCost pid card
+      map (.id) . (.hand) <$> getPlayer pid `shouldReturn` []
+      map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [card.id, warrior.id]
+
   describe "Emery" do
+    it "cannot be put into play with fewer than 3 cards in the deck to discard" . withHeroes [pippin, frodo, eowyn] $ \pid -> do
+      g <- getGame
+      putGame $ g & playersL . ix pid . deckL .~ []
+      _ <- putOnDeck pid [Events.aTestOfWill, Events.aTestOfWill]
+      card <- putCardIntoHand pid Allies.emery
+      run $ ActionWindow pid
+      offered <- maybe False (any \case TargetLabel (CardIdTarget cid) _ -> cid == card.id; _ -> False) . fmap questionChoices <$> getQuestion pid
+      offered `shouldBe` False
+
     it "is put into play for the top 3 cards of the deck, and discarded if one is off-sphere" . withHeroes [pippin, frodo, eowyn] $ \pid -> do
       _ <- putOnDeck pid [Events.aTestOfWill, Events.aTestOfWill, Events.bladeMastery]
       card <- putCardIntoHand pid Allies.emery
@@ -173,6 +211,22 @@ spec = describe "Against the Shadow player cards" do
       allyCount `shouldReturn` 1
       getsGame (length . (.entities.heroes)) `shouldReturn` 2
 
+    it "counts only printed spirit icons, not gained ones" . withHeroes [caldara, frodo, beravor] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfTravel =<< hero beravor
+      refugee <- putInDiscard pid Allies.silvanRefugee
+      _ <- putInDiscard pid Allies.ethirSwordsman
+      run $ ActionWindow pid
+      chooseAbilityOf pid =<< hero caldara
+      chooseTarget pid (CardIdTarget refugee.id)
+      -- Frodo's printed icon brings one ally; Beravor's gained one brings none
+      allyCount `shouldReturn` 1
+
+  describe "Mithrandir's Advice" do
+    it "draws 1 card for each hero with a printed lore icon only" . withHeroes [beravor, eowyn, gimli] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfWisdom =<< hero eowyn
+      _ <- playWith pid beravor 1 Events.mithrandirsAdvice
+      length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
   describe "Small Target" do
     it "turns the attack on a Hobbit onto another engaged enemy when the shadow card has no effect" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
       attacker <- stage Enemies.forestSpider
@@ -195,6 +249,62 @@ spec = describe "Against the Shadow player cards" do
       -- Forest Spider's 2 attack against Black Forest Bats' 0 defense destroys them
       enemyPlacement' other `shouldReturn` Unplaced
 
+    it "reveals the shadow card chosen, the others resolving, and reckons the damage at the damage step" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
+      attacker <- stage Enemies.forestSpider
+      other <- stage Enemies.forestSpider
+      run $ EngageEnemy pid attacker
+      chooseLabel "$label.pass" pid
+      run $ EngageEnemy pid other
+      chooseLabel "$label.pass" pid
+      card <- putCardIntoHand pid Events.smallTarget
+      p <- hero pippin
+      run $ PlaceTokens GameSource p Resource 1
+      [road, _] <- setEncounterDeck [Locations.oldForestRoad, Enemies.easternCrows]
+      run $ DealShadowCard attacker
+      run $ DealShadowCard attacker
+      run $ DeclareDefenders pid attacker []
+      chooseTarget pid p
+      chooseTarget pid (CardIdTarget card.id)
+      chooseTarget pid other
+      chooseTarget pid (CardIdTarget road.id)
+      passActions pid
+      getCharacterDamage p `shouldReturn` 0
+      -- Forest Spider's 3 attack (+1 for engaging), +1 from Eastern Crows' shadow, against
+      -- the other's 1 defense
+      getCharacterDamage (EnemyTarget other) `shouldReturn` 3
+
+    it "resolves the attack as normal against an enemy dealt no shadow card" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
+      attacker <- stage Enemies.forestSpider
+      other <- stage Enemies.blackForestBats
+      run $ EngageEnemy pid attacker
+      chooseLabel "$label.pass" pid
+      run $ EngageEnemy pid other
+      chooseLabel "$label.pass" pid
+      card <- putCardIntoHand pid Events.smallTarget
+      p <- hero pippin
+      run $ PlaceTokens GameSource p Resource 1
+      _ <- setEncounterDeck []
+      run $ DeclareDefenders pid attacker []
+      chooseTarget pid p
+      chooseTarget pid (CardIdTarget card.id)
+      chooseTarget pid other
+      passActions pid
+      enemyPlacement' other `shouldReturn` EngagedWith pid
+
+    it "is offered against an attack from the staging area with one enemy engaged" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
+      attacker <- stage Enemies.forestSpider
+      other <- stage Enemies.blackForestBats
+      run $ EngageEnemy pid other
+      chooseLabel "$label.pass" pid
+      card <- putCardIntoHand pid Events.smallTarget
+      p <- hero pippin
+      run $ PlaceTokens GameSource p Resource 1
+      _ <- setEncounterDeck []
+      run $ DeclareDefenders pid attacker []
+      chooseTarget pid p
+      offered <- maybe False (any \case TargetLabel t _ -> t == CardIdTarget card.id; _ -> False) . fmap questionChoices <$> getQuestion pid
+      offered `shouldBe` True
+
   describe "Well-Equipped" do
     it "attaches a discarded attachment to a Dwarf" . withHeroes [gimli, legolas, theoden] $ \pid -> do
       [_, axe] <- putOnDeck pid [Events.bladeMastery, Attachments.dwarvenAxe]
@@ -202,6 +312,13 @@ spec = describe "Against the Shadow player cards" do
       _ <- playWith pid gimli 0 Events.wellEquipped
       chooseTarget pid (CardIdTarget axe.id)
       getAttack g `shouldReturn` 4
+
+  describe "Théoden" do
+    it "gives +1 willpower only to heroes with the printed tactics icon, not a gained one" . withHeroes [theoden, gimli, beravor] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfBattle =<< hero beravor
+      run $ PlaceTokens GameSource GameTarget Resource 0
+      (getWillpower =<< hero gimli) `shouldReturn` 3
+      (getWillpower =<< hero beravor) `shouldReturn` 2
 
   describe "Mirlonde" do
     it "lowers the starting threat of each lore hero by 1" . withHeroes ["06032", beravor, bilbo] $ \pid -> do

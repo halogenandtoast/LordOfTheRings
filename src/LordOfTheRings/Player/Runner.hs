@@ -41,7 +41,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
-  WindowType (CardsDrawn, DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  WindowType (CardsDrawn, DiscardedFromDeck, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
  )
 
@@ -79,8 +79,11 @@ instance RunMessage Player where
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
     BeginPhase ResourcePhase -> do
-      n <- fromMaybe 1 . headMay . mapMaybe (\case ResourcePhaseDraws k -> Just k; _ -> Nothing) <$> getModifiers player
-      pushWhen (n > 0) $ DrawCards $ Drawing player.id n
+      mods <- getModifiers player
+      let n = fromMaybe 1 $ headMay [k | ResourcePhaseDraws k <- mods]
+          -- an additional card is part of the same draw, none when there is none
+          extra = sum [k | AdditionalResourcePhaseDraws k <- mods]
+      pushWhen (n > 0) $ DrawCards $ Drawing player.id (n + extra)
       pure player
     DrawCards drawing | drawing.player == player.id -> do
       blocked <- elem CannotDrawCards <$> getModifiers player
@@ -153,8 +156,16 @@ instance RunMessage Player where
         EncounterCard _ -> error "not an attachment"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     PlayEvent pid card _ | pid == player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    -- an event whose cost is X, played for no cost, has X of 0 and so does nothing, as
+    -- Men of the West played with Vilya (ruling)
+    PlayAtNoCost pid card
+      | pid == player.id
+      , cdCardType (toCardDef card) == EventType
+      , cdCost (toCardDef card) == Just DynamicCost -> do
+          push $ CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]
+          pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
-      pushAll $ playCard pid card []
+      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]]
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do
@@ -269,6 +280,7 @@ instance RunMessage Player where
     PutDiscardOnTopOfDeck pid cid | pid == player.id -> do
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & deckL %~ (moved <>)
+    PutOnTopOfDeck pid card | pid == player.id -> pure $ player & deckL %~ (card :)
     ShuffleFromDiscardIntoDeck pid cid | pid == player.id -> do
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)

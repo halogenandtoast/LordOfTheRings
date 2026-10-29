@@ -17,7 +17,7 @@ lordAlcaron = ally LordAlcaron Cards.lordAlcaron
 -- | Response: After a villager token is discarded, exhaust Lord Alcaron to place that
 -- villager token on a location instead.
 -- If Lord Alcaron leaves play, the players have lost the game.
--- ponytail: the Response is asked as each token is discarded, not in a response window;
+-- The Response is asked as each token is discarded, in place of a response window;
 -- no other card answers a discarded villager
 instance RunMessage LordAlcaron where
   runMessage msg s@(LordAlcaron a) = case msg of

@@ -1,6 +1,7 @@
 module LordOfTheRings.Treachery.Cards.LocalTrouble (localTrouble) where
 
 import LordOfTheRings.Card (cdThreatCost, toCardDef)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
@@ -16,9 +17,8 @@ localTrouble = treachery LocalTrouble Cards.localTrouble
 -- copy of Local Trouble attached. (Counts as a Condition attachment with the text: "When
 -- attached hero exhausts, readies, or triggers an ability, raise its controller's threat
 -- by 1.")
--- ponytail: read off the hero's exhausting, its readying in the refresh phase and its
--- abilities as they are used; a hero readied by a card effect outside the refresh phase
--- opens no window, so it raises nothing.
+-- Read off the hero's exhausting window, each Ready that finds it exhausted (the refresh
+-- phase or a card effect, as Cram) and its abilities as they are used.
 instance RunMessage LocalTrouble where
   runMessage msg t@(LocalTrouble attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
@@ -33,8 +33,13 @@ instance RunMessage LocalTrouble where
         targets [h | h <- free, cost h == highest] \h -> attachTreachery attrs.treacheryId h
       pure t
     CheckWindows ws | AttachedTo host <- attrs.placement -> do
-      let n = length [() | Window After (Exhausted h) <- ws, h == host] + length [() | Window After (Readied h _) <- ws, h == host]
-      trouble host n
+      trouble host $ length [() | Window After (Exhausted h) <- ws, h == host]
+      LocalTrouble <$> runMessage msg attrs
+    -- the game still holds the hero as it was before this Ready
+    Ready target | AttachedTo host@(HeroTarget hid) <- attrs.placement, target == host -> do
+      exhausted <- selectAny $ HeroWithId hid <> ExhaustedHero
+      blocked <- elem CannotReady <$> getModifiers host
+      trouble host $ fromEnum (exhausted && not blocked)
       LocalTrouble <$> runMessage msg attrs
     UseAbility _ ab _ | AttachedTo host <- attrs.placement, sourceTarget ab.abilitySource == Just host -> do
       trouble host 1

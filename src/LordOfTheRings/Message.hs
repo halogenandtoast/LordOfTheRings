@@ -6,7 +6,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Log.Block
-import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher)
+import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, HeroMatcher)
 import LordOfTheRings.Modifier (ModifierType)
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -348,8 +348,9 @@ data Message
   | EngageEnemy PlayerId EnemyId
   | -- | the combat phase begins: the archery in play is dealt among the characters
     ResolveArchery
-  | -- | the first player deals this much archery damage, 1 at a time, among the characters
-    ArcheryDamage Int
+  | -- | the first player assigns this much archery damage, 1 at a time, among the
+    -- characters, the points assigned so far kept; it is dealt once all are assigned
+    ArcheryDamage Int [Target]
   | DealShadowCards
   | DealShadowCard EnemyId
   | AttachShadowCard EnemyId EncounterCard
@@ -460,6 +461,22 @@ data Message
     them: from a player's hand, deck or discard pile, or a location in play
     -}
     PlaceUnderneath Target [Card]
+  | -- | as 'PayExhaustHeroCost', a hero or an ally the matchers pick out
+    PayExhaustCharacterCost PlayerId HeroMatcher AllyMatcher [Message]
+  | -- | as 'CreateEnemyEngaged', the enemy not yet engaging: it is engaged by a message of
+    -- its own, as Faramir's damage comes first
+    CreateEnemy EnemyId EncounterCard
+  | -- | the card, already taken from wherever it was, goes on top of the player's deck, as
+    -- Miruvor goes on its controller's deck rather than its owner's
+    PutOnTopOfDeck PlayerId Card
+  | -- | the card leaves the victory display, as Caradhras does to become the active location
+    RemoveFromVictoryDisplay Card
+  | -- | the enemy's attack resolves against another target, as Small Target turns it on
+    -- another enemy: see 'LordOfTheRings.Message.Lifted.redirectAttack'
+    RedirectAttack EnemyId Target
+  | -- | the progress that would have been placed on the source's quest card, canceled: see
+    -- 'QuestProgressCanceledBy'
+    ProgressCanceled Source Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

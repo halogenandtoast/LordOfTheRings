@@ -15,7 +15,7 @@ overgrownTrail = location OvergrownTrail Cards.overgrownTrail
 -- | Action: Exhaust a Ranger character to place 3 progress tokens on Overgrown Trail.
 instance HasAbilities OvergrownTrail where
   getAbilities (OvergrownTrail a) =
-    [anyPlayer $ restricted a 1 (CharactersAtLeast 1 (rangerHero <> ReadyHero) (rangerAlly <> ReadyAlly)) $ ActionAbility Free]
+    [anyPlayer $ mkAbility a 1 $ ActionAbility $ ExhaustCharacterCost rangerHero rangerAlly]
    where
     rangerHero = HeroControlledBy ActivePlayer <> HeroWithTrait Ranger
     rangerAlly = AllyControlledBy ActivePlayer <> AllyWithTrait Ranger
@@ -24,18 +24,9 @@ instance HasAbilities OvergrownTrail where
 -- enemy's threat.
 instance RunMessage OvergrownTrail where
   runMessage msg l@(OvergrownTrail a) = case msg of
-    -- ponytail: the Ranger is exhausted as the ability resolves, not paid as a cost
-    UseCardAbility pid (isSource a -> True) 1 _ -> do
-      rangers <-
-        selectCharacters
-          (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait Ranger <> ReadyHero)
-          (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait Ranger <> ReadyAlly)
-      chooseOrRunOneM pid do
-        questionLabeled "overgrownTrail.exhaust"
-        causedBy a
-        targets rangers \r -> do
-          exhaust r
-          placeProgress a a 3
+    -- the Ranger is exhausted as the cost is paid
+    UseCardAbility _ (isSource a -> True) 1 _ -> do
+      placeProgress a a 3
       pure l
     ResolveShadowEffect cid eid _ _ | cid == a.cardId -> do
       removeProgressFromQuest a =<< getEnemyThreat eid

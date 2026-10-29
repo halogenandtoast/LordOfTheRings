@@ -71,15 +71,6 @@ instance RunMessage TheAntleredCrown where
     ScenarioSpecific "raven.shuffleDiscard" _ -> do
       deck <- shuffleM (meta.ravenDiscard <> meta.ravenDeck)
       pure $ withMeta meta {ravenDeck = deck, ravenDiscard = []}
-    ScenarioSpecific "assignDamage" (parseMaybe parseJSON -> Just (source :: Source, pid, n :: Int)) -> do
-      characters <- charactersControlledBy pid
-      chooseOneM pid do
-        questionLabeledWith "theAntleredCrown.assignDamage" [intVar "n" n]
-        traverse_ causedBy (sourceTarget source)
-        targets characters \c -> do
-          dealDamage source c 1
-          assignDamage source pid (n - 1)
-      pure $ TheAntleredCrown attrs
     ScenarioSpecific "removeTimeCounters" (parseMaybe parseJSON -> Just (source :: Source, pid, n :: Int)) -> do
       timed <- filterM (fmap (> 0) . getTimeCounters . toTarget) =<< select AnyLocation
       chooseOrRunOneM pid do

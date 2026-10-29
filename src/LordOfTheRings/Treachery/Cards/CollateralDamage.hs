@@ -20,10 +20,16 @@ collateralDamage = treachery CollateralDamage Cards.collateralDamage
 -- attached, if able.
 instance RunMessage CollateralDamage where
   runMessage msg t@(CollateralDamage attrs) = case msg of
+    -- sentence by sentence: a copy the first 2 discard counts for the second (ruling); each
+    -- batch's locations raise the threat as it is discarded
     WhenRevealed (isTarget attrs -> True) -> do
+      discardTopOfEncounterDeck attrs 2
+      doStep 1 msg
+      pure t
+    DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       pile <- getsGame ((.encounterDiscard) . toAttrs . (.scenario))
       let copies = length [c | c <- pile, toCardCode c == toCardCode Cards.collateralDamage]
-      discardTopOfEncounterDeck attrs (2 + 2 * copies)
+      when (copies > 0) $ discardTopOfEncounterDeck attrs (2 * copies)
       pure t
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
       let locations = length [c | c <- cards, cdCardType (toCardDef c) == LocationType]

@@ -222,6 +222,13 @@ spec = describe "Trouble in Tharbad" do
     spies <- getsGame (filter ((== toCardCode Enemies.spyFromMordor) . toCardCode) . toList . (.entities.enemies))
     length spies `shouldBe` 2
 
+  it "keeps The Crossing at Tharbad in the staging area" . tharbadTest $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Locations.theCrossingAtTharbad
+    crossing <- locationOf Locations.theCrossingAtTharbad
+    run $ PlaceLocation crossing ActiveLocation
+    run $ ReturnToTopOfEncounterDeck (LocationTarget crossing)
+    placementOf Locations.theCrossingAtTharbad `shouldReturn` Just StagingArea
+
   it "places the stage's progress on The Crossing at Tharbad, won as it is explored" . tharbadTest $ \pid -> do
     toEscape pid
     q <- toTarget <$> getActiveQuest

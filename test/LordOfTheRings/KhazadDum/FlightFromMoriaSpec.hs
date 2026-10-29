@@ -152,6 +152,16 @@ spec = describe "Flight from Moria" do
     getsGame (.outcome) `shouldReturn` Nothing
     (.progress) <$> getActiveQuest `shouldReturn` 1
 
+  it "puts Abandoned Tools' progress on the active location before Escape from Darkness" . flightTest $ \pid -> do
+    stage <- flippedStage Quests.escapeFromDarkness
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run . (`PutObjectiveIntoPlayAttached` beravor) =<< genEncounterCard Objectives.abandonedTools
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.zigilMineshaft
+    run $ BeginPhase RefreshPhase
+    chooseAbilityOf pid stage
+    (.progress) <$> getActiveQuest `shouldReturn` 0
+    getsGame (map (.progress) . toList . (.entities.locations)) `shouldReturn` [1]
+
   it "has Chance Encounter engage the top enemy of the discard pile with the first player" . flightTest $ \pid -> do
     goblin <- genEncounterCard Enemies.strayGoblin
     run $ AddToEncounterDiscard [goblin]

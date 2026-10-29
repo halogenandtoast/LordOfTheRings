@@ -208,7 +208,8 @@ ithilienGuardian =
   ((objective "05026" "Ithilien Guardian" IntoIthilien 2)
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 2, cdDefense = Just 1, cdHitPoints = Just 2 })
     { cdCardTraits = setFromList [Gondor, Ranger]
-    , cdKeywords = setFromList [Surge]
+    , -- its surge is its When Revealed's, not printed
+      cdWhenRevealed = True
     , cdShadowEffect = True
     }
 

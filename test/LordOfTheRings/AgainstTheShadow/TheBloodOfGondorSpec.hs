@@ -287,6 +287,24 @@ spec = describe "The Blood of Gondor" do
     getDamage (toTarget numenorean) `shouldReturn` 3
     hiddenOf pid `shouldReturn` []
 
+  it "destroys a hidden Evil Crow with Faramir's damage before it engages, so it takes no hidden card" . bloodTest $ \pid -> do
+    stage Objectives.faramirObjective
+    faramir <- allyOf Objectives.faramirObjective
+    hide pid [Enemies.evilCrow]
+    _ <- setEncounterDeck [Locations.southernRoad]
+    putGame . (phaseL .~ CombatPhase) =<< getGame
+    run $ ActionWindow pid
+    chooseAbilityOf pid faramir
+    placementOf Enemies.evilCrow `shouldReturn` Nothing
+    hiddenOf pid `shouldReturn` []
+
+  it "offers Faramir's Combat Action only while someone has a hidden card" . bloodTest $ \pid -> do
+    stage Objectives.faramirObjective
+    faramir <- allyOf Objectives.faramirObjective
+    putGame . (phaseL .~ CombatPhase) =<< getGame
+    run $ ActionWindow pid
+    offersAbilityOf pid faramir `shouldReturn` False
+
   it "returns an engaged enemy to the staging area with Lord Alcaron's Action" . bloodTest $ \pid -> do
     stage Objectives.lordAlcaronTheBloodOfGondor
     alcaron <- allyOf Objectives.lordAlcaronTheBloodOfGondor

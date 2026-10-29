@@ -4,7 +4,6 @@ import LordOfTheRings.Card (Card (EncounterCard), CardType (LocationType))
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
-import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
 import LordOfTheRings.Trait (Trait (Osgiliath))
 
@@ -18,13 +17,13 @@ westGate = location WestGate Cards.westGate
 -- | Action: If there is no active location, search the encounter deck and discard pile for
 -- an Osgiliath location, reveal it and add it to the staging area. Then, make West Gate the
 -- active location. Shuffle the encounter deck.
--- ponytail: offered only while West Gate is in the staging area; under a player's control
--- it would only cost them the location
+-- Offered under a player's control too, which then loses it as it becomes active (ruling:
+-- a controlled Osgiliath location may still be made active).
 -- Forced: After the player who controls West Gate lets an attack go undefended, return
 -- West Gate to the staging area.
 instance HasAbilities WestGate where
   getAbilities (WestGate a) =
-    [anyPlayer $ restricted a 1 (NotCriterion $ exists IsActiveLocation) $ ActionAbility Free | a.placement == StagingArea]
+    [anyPlayer $ restricted a 1 (NotCriterion $ exists IsActiveLocation) $ ActionAbility Free]
       <> returnsWhenUndefended a 2
 
 instance RunMessage WestGate where

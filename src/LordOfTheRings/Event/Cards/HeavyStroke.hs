@@ -11,7 +11,8 @@ newtype HeavyStroke = HeavyStroke EventAttrs
   deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
--- | Response: After a Dwarf deals X damage to an enemy during combat, deal an additional
+-- | No more than 1 copy of Heavy Stroke can be played each phase, by the whole group.
+-- Response: After a Dwarf deals X damage to an enemy during combat, deal an additional
 -- X damage to that enemy. (Limit once per phase.) The players choose which attackers'
 -- attack beats the enemy's defense, so X is the most a Dwarf among the attackers can
 -- deal: its attack, up to the damage the whole attack dealt.
@@ -22,12 +23,12 @@ heavyStroke =
       & windowL
       ?~ AttackDealtDamageWithTraitWindow After Dwarf
       & criteriaL
-      .~ (DuringPhase CombatPhase <> TargetLacksModifier (PlayerTarget a.owner) (PlayedThisPhase $ toCardCode Cards.heavyStroke))
+      .~ (DuringPhase CombatPhase <> TargetLacksModifier GameTarget (PlayedThisPhase $ toCardCode Cards.heavyStroke))
 
 instance RunMessage HeavyStroke where
   runMessage msg e@(HeavyStroke attrs) = case msg of
-    PlayEvent pid card windows | card.id == toId attrs -> do
-      phaseModifier attrs (PlayerTarget pid) (PlayedThisPhase $ toCardCode Cards.heavyStroke)
+    PlayEvent _ card windows | card.id == toId attrs -> do
+      phaseModifier attrs GameTarget (PlayedThisPhase $ toCardCode Cards.heavyStroke)
       for_ (take 1 [(eid, as, x) | Window _ (AttackDealtDamage eid as x) <- windows]) \(eid, as, x) -> do
         dwarves <- selectCharacters (HeroWithTrait Dwarf) (AllyWithTrait Dwarf)
         enemy <- toCardDef <$> getEnemy eid

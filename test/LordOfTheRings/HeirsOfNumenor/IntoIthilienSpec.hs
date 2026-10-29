@@ -1,13 +1,16 @@
 module LordOfTheRings.HeirsOfNumenor.IntoIthilienSpec (spec) where
 
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getCommittedWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat)
-import LordOfTheRings.Keyword (Keyword (Siege))
+import LordOfTheRings.Keyword (Keyword (Ranged, Siege))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal)
-import LordOfTheRings.Modifier (ModifierType (EngagementCostModifier, NoEngagementChecks))
+import LordOfTheRings.Modifier (ModifierType (EngagementCostModifier, GainKeyword, NoEngagementChecks))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -95,6 +98,18 @@ spec = describe "Into Ithilien" do
     getEnemyThreat company `shouldReturn` 3
     getEnemyAttack company `shouldReturn` 5
 
+  it "gives +2 attack with Southron Company's shadow while the quest has any keyword" . ithilienTest $ \pid -> do
+    quest <- putQuestStage Quests.theHiddenWay
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Ranged] UntilEndOfRound
+    run . AddToStaging =<< genEncounterCard Enemies.forestBat
+    bat <- enemyOf Enemies.forestBat
+    run $ EngageEnemy pid bat
+    attack <- getEnemyAttack bat
+    card <- genEncounterCard Enemies.southronCompany
+    run $ AttachShadowCard bat card
+    run $ ResolveShadowCard card.id bat pid []
+    getEnemyAttack bat `shouldReturn` attack + 2
+
   it "bypasses stage 2 when stage 1 is completed with Celador in the staging area, and gives him to the first player" . ithilienTest $ \pid -> do
     flipFirstQuest pid
     completeStage pid
@@ -173,6 +188,13 @@ spec = describe "Into Ithilien" do
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
     prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)
 
+  it "has Haradrim Elite attack the first player as it enters play engaged" . ithilienTest $ \pid -> do
+    _ <- setEncounterDeck [Locations.secludedGlade]
+    run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.haradrimElite
+    passActions pid
+    Just (QuestionLabel prompt _ _ _) <- getQuestion pid
+    prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)
+
   it "has each player remove 1 character from the quest with Lost Company" . ithilienTest $ \pid -> do
     b <- beravor
     e <- eowyn
@@ -199,6 +221,14 @@ spec = describe "Into Ithilien" do
     ((.threat) <$> getPlayer pid) `shouldReturn` threat + 2
     placementOf Locations.secludedGlade `shouldReturn` Just StagingArea
 
+  it "surges with Watcher in the Woods once its threat brings Approaching Cair Andros siege (ruling)" . ithilienTest $ \pid -> do
+    _ <- putQuestStage Quests.approachingCairAndros
+    run . CommitToQuest =<< beravor
+    threat <- (.threat) <$> getPlayer pid
+    run $ RaiseThreat pid (36 - threat)
+    reveal [Treacheries.watcherInTheWoods, Locations.secludedGlade]
+    placementOf Locations.secludedGlade `shouldReturn` Just StagingArea
+
   it "gives Morgul Spider +1 attack for each character not committed" . ithilienTest $ \_ -> do
     run . CommitToQuest =<< beravor
     reveal [Enemies.morgulSpider]
@@ -212,6 +242,26 @@ spec = describe "Into Ithilien" do
     placementOf Objectives.ithilienGuardian `shouldReturn` Just StagingArea
     placementOf Locations.secludedGlade `shouldReturn` Just StagingArea
     getCommittedWillpower `shouldReturn` 2
+
+  it "does not surge with Ithilien Guardian's When Revealed canceled" . ithilienTest $ \pid -> do
+    _ <- putQuestStage Quests.theHiddenWay
+    tow <- putCardIntoHand pid Events.aTestOfWill
+    spirit <- eowyn
+    run $ PlaceTokens GameSource spirit Resource 1
+    reveal [Objectives.ithilienGuardian, Locations.secludedGlade]
+    chooseTarget pid (CardIdTarget tow.id)
+    placementOf Locations.secludedGlade `shouldReturn` Nothing
+
+  it "exhausts a Ranger as Overgrown Trail's cost to place 3 progress on it" . ithilienTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Locations.overgrownTrail
+    trail <- getsGame (fromJustNote "no trail" . headMay . map toId . toList . (.entities.locations))
+    -- Beravor is a Ranger too, so the cost asks which
+    tracker <- putAllyIntoPlay pid Allies.ithilienTracker
+    run $ ActionWindow pid
+    chooseAbilityOf pid (LocationTarget trail)
+    chooseTarget pid tracker
+    getsGame (fmap (.progress) . lookup trail . (.entities.locations)) `shouldReturn` Just 3
+    getsGame (any (\a -> toTarget a == tracker && allyExhausted (toAttrs a)) . toList . (.entities.allies)) `shouldReturn` True
 
   it "adds a Harad enemy to the staging area with Southron Support" . ithilienTest $ \pid -> do
     elite <- genEncounterCard Enemies.haradrimElite

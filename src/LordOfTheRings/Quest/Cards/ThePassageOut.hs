@@ -1,6 +1,8 @@
 module LordOfTheRings.Quest.Cards.ThePassageOut (thePassageOut) where
 
-import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Card (HasCardCode, toCardCode)
+import LordOfTheRings.Entities (entitiesEnemies)
+import LordOfTheRings.Scenario.Types (scenarioSetAside)
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Enemy.Types (enemyTokens)
@@ -53,7 +55,18 @@ instance RunMessage ThePassageOut where
       pure q
     _ -> stage
    where
-    stage = ThePassageOut <$> runConditionalStage druInVictoryDisplay msg attrs
+    stage = ThePassageOut <$> runConditionalStage mayWin msg attrs
+
+{- | His "cannot win" holds only while he is in play: in the victory display, or destroyed
+by damage and discarded, he no longer stops it (ruling); set aside, he is still to come.
+-}
+mayWin :: HasGame m => m Bool
+mayWin = do
+  let dru :: HasCardCode c => c -> Bool
+      dru c = toCardCode c == toCardCode Enemies.druBuriDru
+  inPlay <- getsGame (any dru . toList . entitiesEnemies . (.entities))
+  aside <- getsGame (any dru . scenarioSetAside . toAttrs . (.scenario))
+  pure $ not inPlay && not aside
 
 druInVictoryDisplay :: HasGame m => m Bool
 druInVictoryDisplay =

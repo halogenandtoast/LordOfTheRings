@@ -159,6 +159,10 @@ spec = describe "Peril in Pelargir" do
     map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.harborThug]
     threatOf pid `shouldReturn` threat + 4
 
+  it "counts a Collateral Damage its first 2 cards discard for the additional cards (ruling)" . pelargirTest $ \_ -> do
+    reveal [Treacheries.collateralDamage, Treacheries.collateralDamage, Enemies.pickpocket, Enemies.zealousTraitor, Enemies.harborThug, Enemies.pickpocket]
+    map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.pickpocket]
+
   it "raises each player's threat by 1 for each location discarded while Harbor Storehouse is in play" . pelargirTest $ \pid -> do
     run . AddToStaging =<< genEncounterCard Locations.harborStorehouse
     _ <- setEncounterDeck [Locations.cityStreet, Enemies.zealousTraitor]
@@ -188,6 +192,16 @@ spec = describe "Peril in Pelargir" do
     chooseTarget pid traitor
     getDamage ally `shouldReturn` 1
 
+  it "keeps the scroll on its hero damaged by Umbar Assassin's Forced effect, not an attack" . pelargirTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    scrollOn beravor
+    assassin <- staged Enemies.umbarAssassin
+    run $ OptionalEngagement pid
+    chooseTarget pid (EnemyTarget assassin)
+    chooseTarget pid beravor
+    getDamage beravor `shouldReturn` 3
+    placementOf Objectives.alcaronsScroll `shouldReturn` Just (AttachedTo beravor)
+
   it "counts Umbar Assassin's archery in the staging area" . pelargirTest $ \_ -> do
     _ <- staged Enemies.umbarAssassin
     getArcheryTotal `shouldReturn` 2
@@ -205,4 +219,15 @@ spec = describe "Peril in Pelargir" do
     placementOf Treacheries.localTrouble `shouldReturn` Just (AttachedTo beravor)
     threat <- threatOf pid
     run $ Exhaust beravor
+    threatOf pid `shouldReturn` threat + 1
+
+  it "raises threat as the Local Trouble hero is readied by a card effect" . pelargirTest $ \pid -> do
+    reveal [Treacheries.localTrouble]
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ Exhaust beravor
+    threat <- threatOf pid
+    run $ Ready beravor
+    threatOf pid `shouldReturn` threat + 1
+    -- readying a hero already ready is no readying
+    run $ Ready beravor
     threatOf pid `shouldReturn` threat + 1

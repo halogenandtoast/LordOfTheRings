@@ -1,6 +1,11 @@
 module LordOfTheRings.AgainstTheShadow.TheStewardsFearSpec (spec) where
 
+import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Frontend (FrontendMessage (..))
+import LordOfTheRings.Game.Public (publicGame)
+import LordOfTheRings.Log.Entry
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card (CardType (EnemyType), cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -116,14 +121,32 @@ spec = describe "The Steward's Fear" do
     placementOf Enemies.zealousTraitor `shouldReturn` Just StagingArea
     Map.null . (.underneath) <$> meta `shouldReturn` True
 
+  it "shows how many underworld cards are under a location, not which, and logs them stacked" $ do
+   (player, heroes) <- either (error . show) pure =<< loadPlayer "tester" testDeck
+   logged <- newIORef []
+   env <- newGameEnv (newGameIn theStewardsFear player heroes) (\case Logged e -> modifyIORef' logged (e :); _ -> pure ()) 1
+   runGameT env do
+    _ <- setUnderworld [Enemies.zealousTraitor, Objectives.aPrisoner]
+    staged Locations.sewers
+    sewers <- (.cardId) . toAttrs <$> (getLocation =<< locationOf Locations.sewers)
+    seen <- getsGame publicGame
+    let field k = \case Object o -> KeyMap.lookup k o; _ -> Nothing
+    field "underneath" seen `shouldBe` Just (toJSON (Map.singleton sewers (1 :: Int)))
+    (field "scenario" seen >>= field "meta") `shouldBe` Nothing
+    said <- concatMap (\e -> [k | LogI18n k _ <- e.logEntryBody]) <$> readIORef logged
+    said `shouldSatisfy` elem "log.placedUnderneath"
+
   it "places the top underworld card under the active location when Sewers is revealed" . fearTest $ \_ -> do
     run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.cityStreet
     street <- locationOf Locations.cityStreet
     streetCard <- (.cardId) . toAttrs <$> getLocation street
     _ <- setUnderworld [Enemies.pickpocket, Enemies.zealousTraitor]
     reveal [Locations.sewers]
+    sewersCard <- (.cardId) . toAttrs <$> (getLocation =<< locationOf Locations.sewers)
     m <- meta
-    map toCardCode <$> Map.lookup streetCard m.underneath `shouldBe` Just [toCardCode Enemies.zealousTraitor]
+    -- its When Revealed comes before its own Underworld 1 (ALeP 3.073)
+    map toCardCode <$> Map.lookup streetCard m.underneath `shouldBe` Just [toCardCode Enemies.pickpocket]
+    map toCardCode <$> Map.lookup sewersCard m.underneath `shouldBe` Just [toCardCode Enemies.zealousTraitor]
     m.underworldDeck `shouldBe` []
 
   it "advances from Conspiracy once a fourth active location is explored" . fearTest $ \_ -> do
@@ -283,6 +306,12 @@ spec = describe "The Steward's Fear" do
     run $ CheckWindows [Window When RoundEnds]
     getsGame (.outcome) `shouldReturn` Just Lost
 
+  it "loses the game as Up in Flames enters play with a deck already empty" . fearTest $ \pid -> do
+    g <- getGame
+    putGame $ g & playersL . ix pid . deckL .~ []
+    staged Objectives.upInFlames
+    getsGame (.outcome) `shouldReturn` Just Lost
+
   it "raises each player's threat by 2 at the end of the round with Poisoned Counsels" . fearTest $ \pid -> do
     staged Objectives.poisonedCounsels
     threat <- (.threat) <$> getPlayer pid
@@ -323,6 +352,12 @@ spec = describe "The Steward's Fear" do
     run $ TravelTo houses
     heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
 
+  it "exhausts every character as Houses of the Dead is made active another way" . fearTest $ \_ -> do
+    staged Locations.housesOfTheDead
+    houses <- locationOf Locations.housesOfTheDead
+    run $ PlaceLocation houses ActiveLocation
+    heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
   it "has The Hand of Castamir reveal the top encounter card after it attacks, then discard it" . fearTest $ \pid -> do
     staged Enemies.theHandOfCastamir
     eid <- enemyOf Enemies.theHandOfCastamir
@@ -335,6 +370,14 @@ spec = describe "The Steward's Fear" do
   it "has Telemnar's Bane attack the first player after an event is played" . fearTest $ \pid -> do
     staged Enemies.telemnarsBane
     _ <- playWith pid "01002" 5 Events.grimResolve
+    passActions pid
+    Just (QuestionLabel prompt _ _ _) <- getQuestion pid
+    prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)
+
+  it "has Telemnar's Bane attack after an event played from outside the hand too" . fearTest $ \pid -> do
+    staged Enemies.telemnarsBane
+    card <- genPlayerCard Events.grimResolve (Just pid)
+    run $ PlayAtNoCost pid card
     passActions pid
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
     prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)

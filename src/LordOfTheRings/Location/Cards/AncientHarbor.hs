@@ -3,7 +3,7 @@ module LordOfTheRings.Location.Cards.AncientHarbor (ancientHarbor) where
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Phase (Phase (CombatPhase))
-import LordOfTheRings.Placement (Placement (StagingArea))
+import LordOfTheRings.Placement (Placement (Unplaced))
 import LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
 
 newtype AncientHarbor = AncientHarbor LocationAttrs
@@ -18,14 +18,14 @@ instance HasModifiersFor AncientHarbor where
   getModifiersFor (AncientHarbor a) = modified a a [CannotBeTraveledTo]
 
 -- | Combat Action: Exhaust a hero to place 1 progress token on Ancient Harbor.
--- ponytail: offered only while it is in the staging area, the one place it can be
--- explored from; under a player's control the progress would explore it again
+-- Offered under a player's control too: progress may still be placed there, and exploring
+-- it gives it to the first player (ruling).
 -- Forced: After the player who controls Ancient Harbor lets an attack go undefended,
 -- return Ancient Harbor to the staging area.
 instance HasAbilities AncientHarbor where
   getAbilities (AncientHarbor a) =
     [ anyPlayer $ restricted a 1 (DuringPhase CombatPhase) $ ActionAbility (ExhaustHeroCost $ HeroControlledBy ActivePlayer)
-    | a.placement == StagingArea
+    | a.placement /= Unplaced
     ]
       <> returnsWhenUndefended a 2
 

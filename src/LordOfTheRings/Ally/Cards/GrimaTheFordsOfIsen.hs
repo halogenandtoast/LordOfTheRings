@@ -14,16 +14,19 @@ grimaTheFordsOfIsen = ally GrimaTheFordsOfIsen Cards.grimaTheFordsOfIsen
 
 -- | Action: Exhaust Gríma to draw a card.
 instance HasAbilities GrimaTheFordsOfIsen where
-  getAbilities (GrimaTheFordsOfIsen a) = [mkAbility a 1 $ ActionAbility (ExhaustCost $ toTarget a)]
+  getAbilities (GrimaTheFordsOfIsen a) =
+    [ mkAbility a 1 $ ActionAbility (ExhaustCost $ toTarget a)
+    , mkAbility a 2 $ forced $ LeftPlayWindow After (toTarget a)
+    ]
 
--- | If Gríma leaves play, the players lose the game.
--- ponytail: as Faramir's, only his discard (destroyed among it) is read as his leaving.
+-- | If Gríma leaves play, the players lose the game: read off the window he leaves play in,
+-- however he leaves.
 instance RunMessage GrimaTheFordsOfIsen where
   runMessage msg s@(GrimaTheFordsOfIsen a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       drawCards pid 1
       pure s
-    Discard (isTarget a -> True) -> do
+    UseCardAbility _ (isSource a -> True) 2 _ -> do
       gameOver Lost
       pure s
     _ -> GrimaTheFordsOfIsen <$> runMessage msg a

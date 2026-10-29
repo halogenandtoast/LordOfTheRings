@@ -2,9 +2,9 @@ module LordOfTheRings.Helpers.Window (module LordOfTheRings.Helpers.Window) wher
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
-import LordOfTheRings.Ally.Types (allyCardId, allyTokens)
+import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdVictoryPoints, cdWhenRevealed, toCardDef)
+import LordOfTheRings.Card (cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
@@ -82,7 +82,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     | t == timing ->
         anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
   (EnemyWithTraitRevealedWindow t trait, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
-  (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m <$> getModifiers eid
+  (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
@@ -91,6 +91,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
       TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
+      ObjectiveTarget i -> toCardDef <$> Map.lookup i es.objectives
       _ -> Nothing
   -- only while the enemy is still in play, to be dealt more
   (AttackDealtDamageWithTraitWindow t trait, AttackDealtDamage eid attackers _) | t == timing ->
@@ -128,7 +129,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
           TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
           _ -> Nothing
     maybe (pure False) (hasKeyword Surge target) def
-  (HeroDefenderDeclaredWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
+  (HeroDefenderDeclaredWindow t m other, DeclaredAsDefender (HeroTarget hid) eid) | t == timing ->
+    andM [selectAny (HeroWithId hid <> m), selectAny (other <> not_ (EnemyWithId eid))]
   -- only while the enemy is still in play
   (AttackDealtDamageByWindow t who, AttackDealtDamage eid attackers n)
     | t == timing && who `elem` attackers && n > 0 -> selectAny (EnemyWithId eid)
@@ -173,15 +175,20 @@ withinLimitOf ab controller = case ab.abilityLimit of
       , u.usedAbilityIndex == ab.abilityIndex
       ]
 
-{- | The source an ability's uses are counted against: a once-per-game limit follows the
-ally's card, as the ally comes back into play under a new id.
+{- | The source an ability's uses are counted against: a once-per-game limit is counted
+across every copy of the card, as the card coming back into play, or another copy of it,
+is limited by the uses before (each player's own, for a player limit).
 -}
 limitSource :: HasGame m => Ability -> m Source
-limitSource ab = case (abilityLimitType ab.abilityLimit, ab.abilitySource) of
-  (Just PerGame, AllySource aid) ->
-    maybe ab.abilitySource (CardIdSource . allyCardId . toAttrs)
-      . Map.lookup aid
-      <$> getsGame (entitiesAllies . gameEntities)
+limitSource ab = case abilityLimitType ab.abilityLimit of
+  Just PerGame -> do
+    es <- getsGame gameEntities
+    let code = case ab.abilitySource of
+          AllySource aid -> toCardCode <$> Map.lookup aid es.allies
+          HeroSource hid -> toCardCode <$> Map.lookup hid es.heroes
+          AttachmentSource aid -> toCardCode <$> Map.lookup aid es.attachments
+          _ -> Nothing
+    pure $ maybe ab.abilitySource CardCodeSource code
   _ -> pure ab.abilitySource
 
 passesCriteria :: HasGame m => Criterion -> m Bool
@@ -247,6 +254,7 @@ canPay = \case
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
   Costs cs -> allM canPay cs
+  ExhaustCharacterCost hm am -> notNull <$> exhaustableCharacters hm am
 
 -- | As 'canPay', for the player paying, whom 'ActivePlayer' matches.
 canPayFor :: HasGame m => PlayerId -> AbilityCost -> m Bool
@@ -260,12 +268,17 @@ asPlayer pid q = runReadGame q . (\g -> g {gameActivePlayer = pid}) <$> getGame
 exhaustableHeroes :: HasGame m => HeroMatcher -> m [HeroId]
 exhaustableHeroes m = filterM (\h -> notElem CannotExhaust <$> getModifiers (HeroTarget h)) =<< select (m <> ReadyHero)
 
+-- | The ready heroes and allies matching that can exhaust.
+exhaustableCharacters :: HasGame m => HeroMatcher -> AllyMatcher -> m [Target]
+exhaustableCharacters hm am = filterM (fmap (notElem CannotExhaust) . getModifiers) =<< selectCharacters (hm <> ReadyHero) (am <> ReadyAlly)
+
 {- | The messages that pay the cost, then the rest: a cost paid by a choice holds the rest
 until it is made.
 -}
 payCost :: PlayerId -> AbilityCost -> [Message] -> [Message]
 payCost pid cost rest = case cost of
   ExhaustHeroCost m -> [PayExhaustHeroCost pid m rest]
+  ExhaustCharacterCost hm am -> [PayExhaustCharacterCost pid hm am rest]
   Costs cs -> foldr (payCost pid) rest cs
   _ -> costMessages (PlayerSource pid) cost <> rest
 
@@ -281,6 +294,7 @@ costMessages source = \case
   SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
   ExhaustHeroCost _ -> [] -- chosen as it is paid, by 'payCost'
   Costs cs -> concatMap (costMessages source) cs
+  ExhaustCharacterCost _ _ -> []
 
 -- | The player who controls an ability's source, if anyone does.
 abilityController :: HasGame m => Ability -> m (Maybe PlayerId)

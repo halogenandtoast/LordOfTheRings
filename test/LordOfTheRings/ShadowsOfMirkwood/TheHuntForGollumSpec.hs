@@ -67,6 +67,16 @@ spec = describe "The Hunt for Gollum" do
     length <$> getEncounterDiscard `shouldReturn` 2
     map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.huntersFromMordor]
 
+  it "reveals 1 of the top 3 at The Hunt Begins before the progress that defeats it" . huntTest $ \pid -> do
+    stage <- putQuestStage Quests.theHuntBegins
+    run $ PlaceTokens GameSource stage Progress 7
+    _ <- setEncounterDeck [Locations.theEavesOfMirkwood, Locations.riverNinglor, Locations.theOldFord, Enemies.huntersFromMordor]
+    questWith "01007"
+    chooseOptionMatching "reveal Eaves" pid \case
+      TargetLabel (CardIdTarget _) _ -> True
+      _ -> False
+    length <$> getEncounterDiscard `shouldReturn` 2
+
   it "shuffles the Signs of Gollum into the encounter deck at setup" . huntTest $ \_ -> do
     run Setup
     codes <- map toCardCode <$> getEncounterDeck
@@ -177,6 +187,8 @@ spec = describe "The Hunt for Gollum" do
     all (\e -> any ((== (PlayerCard e).id) . (.id)) hand) eagles `shouldBe` True
 
   it "has Bilbo Baggins draw the first player an extra card in the resource phase" . gameTestIn theHuntForGollum bilboDeck $ \pid -> do
+    -- the constant abilities are read in once a message has run
+    run $ Run []
     hand <- length . (.hand) <$> getPlayer pid
     run $ BeginPhase ResourcePhase
     length . (.hand) <$> getPlayer pid `shouldReturn` hand + 2

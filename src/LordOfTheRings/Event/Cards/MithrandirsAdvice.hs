@@ -12,12 +12,12 @@ newtype MithrandirsAdvice = MithrandirsAdvice EventAttrs
 mithrandirsAdvice :: EventCard MithrandirsAdvice
 mithrandirsAdvice =
   eventWith MithrandirsAdvice Cards.mithrandirsAdvice \a ->
-    a & criteriaL .~ exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithSphere Lore)
+    a & criteriaL .~ exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithPrintedSphere Lore)
 
 instance RunMessage MithrandirsAdvice where
   runMessage msg e@(MithrandirsAdvice attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithSphere Lore)
+      n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithPrintedSphere Lore)
       drawCards pid n
       pure e
     _ -> MithrandirsAdvice <$> runMessage msg attrs

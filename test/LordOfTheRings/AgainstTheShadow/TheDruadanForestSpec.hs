@@ -1,6 +1,7 @@
 module LordOfTheRings.AgainstTheShadow.TheDruadanForestSpec (spec) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -151,6 +152,13 @@ spec = describe "The Drúadan Forest" do
     (getDamage . toTarget =<< heroWithCode "01007") `shouldReturn` 1
     placementOf Locations.gardenOfPoisons `shouldReturn` Nothing
 
+  it "surges Men in the Dark when the damage chosen is never taken" . forestTest $ \_ -> do
+    for_ ["01012", "01007", "01002"] \c -> do
+      h <- heroWithCode c
+      run $ CreateEffect $ Effect GameSource (toTarget h) [CannotTakeDamage] UntilEndOfRound
+    reveal [Treacheries.menInTheDark, Locations.gardenOfPoisons]
+    placementOf Locations.gardenOfPoisons `shouldReturn` Just StagingArea
+
   it "surges Men in the Dark once every hero pays" . forestTest $ \pid -> do
     for_ ["01012", "01007", "01002"] \c -> giveResources c 1
     reveal [Treacheries.menInTheDark, Locations.gardenOfPoisons]
@@ -161,6 +169,17 @@ spec = describe "The Drúadan Forest" do
     eowyn <- heroWithCode "01007"
     run $ CommitToQuest (toTarget eowyn)
     reveal [Treacheries.starsInSky]
+    heroCommitted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False
+
+  it "resolves Stars in Sky's prowl before its When Revealed effect" . forestTest $ \pid -> do
+    eowyn <- giveResources "01007" 2
+    run $ CommitToQuest (toTarget eowyn)
+    reveal [Treacheries.starsInSky]
+    -- prowl 2 takes both of Éowyn's resources, so she has none to pay with after
+    chooseTarget pid eowyn
+    chooseTarget pid eowyn
+    getHeroResources eowyn `shouldReturn` 0
+    resolveRevealed
     heroCommitted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False
 
   it "discards the attachments of a player who cannot pay for them with Leaves on Tree" . forestTest $ \pid -> do
@@ -214,6 +233,13 @@ spec = describe "The Drúadan Forest" do
     dru <- enemyOf Enemies.druBuriDru
     run $ PlaceTokens GameSource (toTarget dru) Progress 6
     victoryDisplay `shouldReturn` [toCardCode Enemies.druBuriDru]
+    getsGame (.outcome) `shouldReturn` Just Won
+
+  it "may be won once Drû-buri-Drû is destroyed by damage, as he is no longer in play" . forestTest $ \pid -> do
+    quest <- passageOut pid
+    dru <- enemyOf Enemies.druBuriDru
+    run $ DealDamage GameSource (toTarget dru) 6
+    run $ PlaceTokens GameSource quest Progress 14
     getsGame (.outcome) `shouldReturn` Just Won
 
   it "raises each character's willpower and defense while Drû-buri-Drû is in the victory display" . forestTest $ \pid -> do

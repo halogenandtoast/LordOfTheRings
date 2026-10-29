@@ -1,5 +1,6 @@
 module LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec (spec) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (CardCost (StaticCost), cdCost, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
@@ -9,7 +10,9 @@ import LordOfTheRings.Keyword (Keyword (Battle, Siege))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal)
-import LordOfTheRings.Modifier (ModifierType (CannotBeDefendedByAllies, CannotSpendResources))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDefendedByAllies, CannotSpendResources, ThreatModifier))
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theSiegeOfCairAndros)
@@ -87,9 +90,17 @@ spec = describe "The Siege of Cair Andros" do
     flipFirstQuest pid
     banks <- locationOf Locations.theBanks
     run $ PlaceTokens GameSource (toTarget banks) Progress 3
+    chooseLabel "$label.battleground.remove" pid
     placementOf Locations.theBanks `shouldReturn` Nothing
     questDeck >>= (`shouldSatisfy` notElem (toCardCode Quests.reinforcingTheBanks))
     getsGame ((.victoryPoints) . toAttrs . (.scenario)) `shouldReturn` 1
+
+  it "may keep stage 2 in the quest deck as The Banks is explored" . siegeTest $ \pid -> do
+    flipFirstQuest pid
+    banks <- locationOf Locations.theBanks
+    run $ PlaceTokens GameSource (toTarget banks) Progress 3
+    chooseLabel "$label.battleground.keep" pid
+    questDeck >>= (`shouldSatisfy` elem (toCardCode Quests.reinforcingTheBanks))
 
   it "deals undefended damage to the lowest threat Battleground" . siegeTest $ \pid -> do
     flipFirstQuest pid
@@ -122,6 +133,15 @@ spec = describe "The Siege of Cair Andros" do
     reveal [Enemies.siegeRaft]
     damageOn Locations.theApproach `shouldReturn` 2
     damageOn Locations.theCitadel `shouldReturn` 0
+
+  it "lets the first player choose among tied lowest threat Battlegrounds for Siege Raft" . siegeTest $ \pid -> do
+    citadel <- stage Locations.theCitadel
+    _ <- stage Locations.theApproach
+    run $ CreateEffect $ Effect GameSource (toTarget citadel) [ThreatModifier (-1)] UntilEndOfRound
+    reveal [Enemies.siegeRaft]
+    chooseTarget pid citadel
+    damageOn Locations.theCitadel `shouldReturn` 2
+    damageOn Locations.theApproach `shouldReturn` 0
 
   it "damages The Citadel with Orc Scramblers' shadow, or else raises the attack" . siegeTest $ \pid -> do
     raft <- engaged pid Enemies.siegeRaft [Enemies.orcScramblers]
@@ -204,12 +224,19 @@ spec = describe "The Siege of Cair Andros" do
     -- Beravor's lore, Éowyn's spirit and Théodred's leadership
     getArcheryTotal `shouldReturn` 3
 
-  it "keeps leadership, spirit and tactics heroes from spending while Orc Vanguard is in the staging area" . siegeTest $ \_ -> do
+  it "keeps leadership, spirit and lore heroes from spending while Orc Vanguard is in the staging area" . siegeTest $ \_ -> do
     run . AddToStaging =<< genEncounterCard Enemies.orcVanguard
     theodred <- toTarget <$> getHeroWithCode "01002"
     beravor <- toTarget <$> getHeroWithCode "01012"
     getModifiers theodred >>= (`shouldSatisfy` elem CannotSpendResources)
-    getModifiers beravor >>= (`shouldSatisfy` notElem CannotSpendResources)
+    getModifiers beravor >>= (`shouldSatisfy` elem CannotSpendResources)
+
+  it "counts the resource icons heroes gain for Orc Arbalesters' archery" . siegeTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    _ <- putAttachmentOn pid Attachments.songOfBattle beravor
+    run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters
+    -- Song of Battle gives Beravor the tactics icon
+    getArcheryTotal `shouldReturn` 4
 
   it "takes no progress on Orc War Camp in the staging area while an Orc enemy is in play" . siegeTest $ \_ -> do
     camp <- stage Locations.orcWarCamp
@@ -234,6 +261,20 @@ spec = describe "The Siege of Cair Andros" do
     staged <- getsGame \g -> length [l | l <- toList g.entities.locations, l.placement == StagingArea] + length [e | e <- toList g.entities.enemies, e.placement == StagingArea]
     staged `shouldBe` 2
     (.threat) <$> getPlayer pid `shouldReturn` threat + 3
+
+  it "shuffles the staging area's objectives away with The Power of Mordor, uncanceled" . siegeTest $ \pid -> do
+    run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.alcaronsScroll
+    scroll <- getsGame (map toId . toList . (.entities.objectives))
+    tow <- putCardIntoHand pid Events.aTestOfWill
+    spirit <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource spirit Resource 1
+    _ <- setEncounterDeck [Treacheries.thePowerOfMordor, Locations.theBanks]
+    run RevealEncounterCard
+    resolveRevealed
+    -- the scroll went back into the deck: whether revealed again or not, it is a new card
+    -- in play
+    getsGame (map toId . toList . (.entities.objectives)) >>= (`shouldSatisfy` (\os -> all (`notElem` scroll) os))
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [tow.id]
 
   -- \* Ravaging Orcs
 

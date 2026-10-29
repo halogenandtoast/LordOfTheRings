@@ -3,6 +3,7 @@ module LordOfTheRings.Scenario.Scenarios.TheStewardsFear (theStewardsFear) where
 import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Classes.HasQueue (peekQueue)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Entities (entitiesLocations)
 import LordOfTheRings.Game.Base (gameEntities)
@@ -59,8 +60,17 @@ instance RunMessage TheStewardsFear where
         & setAsideL .~ villain <> plot <> roots
         & metaL .~ toJSON (Meta deck mempty)
     CheckWindows ws -> do
-      -- Underworld X, as a location enters the staging area
-      meta <- foldM stackUnder (getMeta attrs) [lid | Window After (EntersStagingArea (LocationTarget lid)) <- ws]
+      -- Underworld X, as a location enters the staging area; one being revealed with a
+      -- When Revealed effect resolves that first, its Underworld after (ALeP 3.073, Sewers)
+      queued <- lift peekQueue
+      let revealing lid = any (\case CheckWindows ws' -> Window After (Revealed (LocationTarget lid)) `elem` ws'; _ -> False) queued
+          waits lid = andM [pure (revealing lid), cdWhenRevealed . toCardDef <$> getLocation lid]
+      entering <- filterM (fmap not . waits) [lid | Window After (EntersStagingArea (LocationTarget lid)) <- ws]
+      revealed <-
+        filterM
+          (\lid -> andM [isJust <$> locationCard lid, cdWhenRevealed . toCardDef <$> getLocation lid])
+          [lid | Window After (Revealed (LocationTarget lid)) <- ws]
+      meta <- foldM stackUnder (getMeta attrs) (entering <> revealed)
       TheStewardsFear <$> runMessage msg (withMeta meta)
     -- Underworld X, as a location enters play as the active location, once it is in play
     PutIntoPlayAsActiveLocation _ -> do
@@ -95,12 +105,16 @@ instance RunMessage TheStewardsFear where
     stackUnder meta lid = do
       n <- underworldValue . toCardCode =<< getLocation lid
       if n > 0 then placeUnder lid n meta else pure meta
+    -- the cards are stacked at once, as the keyword reads, before what answers the
+    -- location entering play (ALeP 3.063); the message they are placed with tells the log,
+    -- nothing else answering it
     placeUnder lid n meta =
-      locationCard lid <&> \case
-        Just cid ->
+      locationCard lid >>= \case
+        Just cid -> do
           let (top, rest) = splitAt n meta.underworldDeck
-           in meta {underworldDeck = rest, underneath = Map.insertWith (flip (<>)) cid top meta.underneath}
-        Nothing -> meta
+          unless (null top) $ placeUnderneath lid (map EncounterCard top)
+          pure meta {underworldDeck = rest, underneath = Map.insertWith (flip (<>)) cid top meta.underneath}
+        Nothing -> pure meta
     -- the cards under the location are revealed one at a time into the staging area
     leaving lid = do
       let meta = getMeta attrs

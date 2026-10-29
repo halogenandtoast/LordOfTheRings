@@ -3,7 +3,7 @@ module LordOfTheRings.Enemy.Cards.OrcVanguard (orcVanguard) where
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
-import LordOfTheRings.Sphere (Sphere (Leadership, Spirit, Tactics))
+import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Spirit))
 
 newtype OrcVanguard = OrcVanguard EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities)
@@ -13,12 +13,11 @@ orcVanguard :: EnemyCard OrcVanguard
 orcVanguard = enemy OrcVanguard Cards.orcVanguard
 
 -- | While Orc Vanguard is in the staging area, resources cannot be spent from the resource
--- pools of heroes who have a leadership, spirit, or tactics resource icon.
--- ponytail: a hero's printed sphere only, not the icons it gains
+-- pools of heroes who have a leadership, spirit, or lore resource icon, printed or gained.
 instance HasModifiersFor OrcVanguard where
   getModifiersFor (OrcVanguard a) = when (a.placement == StagingArea) do
-    heroes <- traverse getHero =<< select AnyHero
-    for_ heroes \h -> when (h.sphere `elem` [Leadership, Spirit, Tactics]) $ modified a h [CannotSpendResources]
+    heroes <- concatMapM (select . HeroWithSphere) [Leadership, Spirit, Lore]
+    for_ (ordNub heroes) \h -> modified a h [CannotSpendResources]
 
 -- | Shadow: Deal the attacking enemy two additional shadow cards.
 instance RunMessage OrcVanguard where

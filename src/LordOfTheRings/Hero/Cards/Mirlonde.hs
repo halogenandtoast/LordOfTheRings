@@ -14,5 +14,5 @@ mirlonde = hero Mirlonde Cards.mirlonde
 -- | Each hero you control with a printed lore resource icon gets -1 threat cost.
 instance HasModifiersFor Mirlonde where
   getModifiersFor (Mirlonde a) = do
-    heroes <- select (HeroControlledBy (PlayerWithId a.owner) <> HeroWithSphere Lore)
+    heroes <- select (HeroControlledBy (PlayerWithId a.owner) <> HeroWithPrintedSphere Lore)
     for_ heroes \h -> modified a h [ThreatModifier (-1)]

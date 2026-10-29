@@ -91,6 +91,15 @@ spec = describe "Conflict at the Carrock" do
     getsGame (map (\a -> (toCardCode a, a.placement)) . toList . (.entities.allies))
       `shouldReturn` [(toCardCode Objectives.grimbeornTheOld, InPlayArea pid)]
 
+  it "has Grimbeorn the Old follow the first player token" . twoPlayerTest testDeck $ \one two -> do
+    run . AddToStaging =<< genEncounterCard Objectives.grimbeornTheOld
+    grimbeorn <- getsGame (toTarget . fromJustNote "no Grimbeorn" . headMay . toList . (.entities.objectives))
+    run $ PlaceTokens GameSource grimbeorn Resource 8
+    let placements = getsGame (map (.placement) . toList . (.entities.allies))
+    placements `shouldReturn` [InPlayArea one]
+    run $ SetFirstPlayer two
+    placements `shouldReturn` [InPlayArea two]
+
   it "discards a character Muck Adder damages" . carrockTest $ \_ -> do
     _ <- setEncounterDeck [Enemies.muckAdder]
     run RevealEncounterCard

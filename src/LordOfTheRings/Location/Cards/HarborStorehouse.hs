@@ -14,7 +14,7 @@ harborStorehouse = location HarborStorehouse Cards.harborStorehouse
 
 -- | Forced: Each time a location is discarded from the top of the encounter deck, raise
 -- each player's threat by 1.
--- ponytail: read off the discard itself; no window opens for a card discarded from the
+-- Read off the discard itself, as no window opens for a card discarded from the
 -- encounter deck.
 -- Shadow: Deal attacking enemy an additional shadow card for each Thug enemy in play.
 instance RunMessage HarborStorehouse where

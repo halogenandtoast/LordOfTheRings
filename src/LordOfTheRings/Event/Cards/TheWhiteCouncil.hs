@@ -12,7 +12,7 @@ newtype TheWhiteCouncil = TheWhiteCouncil EventAttrs
 theWhiteCouncil :: EventCard TheWhiteCouncil
 theWhiteCouncil = event TheWhiteCouncil Cards.theWhiteCouncil
 
--- | X is the number of players in the game: its cost of 0 is raised by as much.
+-- | X is the number of players in the game: its cost of X, paid as 0, is raised by as much.
 instance HasModifiersFor TheWhiteCouncil where
   getModifiersFor (TheWhiteCouncil a) = do
     players <- length <$> getRemainingPlayers

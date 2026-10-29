@@ -12,8 +12,9 @@ newtype HelmOfSecrecy = HelmOfSecrecy EventAttrs
 
 -- | Action: Choose a hero you control and discard all tokens from it. Select a different
 -- non-fellowship, non-baggins hero from your collection with a threat cost less than or
--- equal to the chosen hero. Swap those heroes, moving all eligible attachments to the hero
--- from your collection.
+-- equal to the chosen hero. Swap those heroes, moving all eligible attachments and damage
+-- tokens to the hero from your collection. (Errata; its damage was discarded with its tokens,
+-- so the hero swapped in comes in fully healed, ready or exhausted as the one it replaces.)
 --
 -- ponytail: your collection is every hero the engine knows that the unique rule lets into
 -- play; there are no fellowship or baggins heroes yet to leave out.

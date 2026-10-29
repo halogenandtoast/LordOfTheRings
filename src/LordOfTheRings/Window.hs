@@ -113,6 +113,8 @@ data WindowType
     AdvancedToStage
   | -- | an attack the character defended has resolved, and it took no damage defending it
     DefendedWithoutDamage Target EnemyId
+  | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
+    PlayedCard PlayerId CardCode
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

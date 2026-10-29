@@ -45,14 +45,21 @@ instance RunMessage NoWayOut where
       doStep 1 msg
       pure q
     -- each enemy attacks the player it is engaged with, in turn order, dealt a shadow card
-    -- as an attack outside the combat phase is
-    -- ponytail: a player's engaged enemies attack in the order they are found, not in an
-    -- order he picks; nothing in the scenario depends on that order.
+    -- as an attack outside the combat phase is; each player picks the order of his
     DoStep 1 (UseCardAbility _ (isSource attrs -> True) 1 _) -> do
-      eachPlayer \p -> traverse_ (immediateAttack p) =<< select (EnemyEngagedWith $ PlayerWithId p)
+      eachPlayer \p -> inOrder p =<< select (EnemyEngagedWith $ PlayerWithId p)
       winGame
       pure q
     Destroy _ (HeroTarget _) -> do
       gameOver Lost
       NoWayOut <$> runMessage msg attrs
     _ -> NoWayOut <$> runMessage msg attrs
+
+-- | The player's enemies attack him one at a time, in the order he picks.
+inOrder :: ReverseQueue m => PlayerId -> [EnemyId] -> m ()
+inOrder p = \case
+  [] -> pure ()
+  [e] -> immediateAttack p e
+  es -> chooseOneM p do
+    questionLabeled "chooseNextAttack"
+    targets es \e -> immediateAttack p e >> inOrder p (filter (/= e) es)

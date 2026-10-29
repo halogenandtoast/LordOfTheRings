@@ -2,6 +2,7 @@ module LordOfTheRings.Treachery.Cards.TheForestsMalice (theForestsMalice) where
 
 import LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers (searchForHuornEngaged)
 import LordOfTheRings.Trait (Trait (Huorn))
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -19,14 +20,17 @@ instance HasModifiersFor TheForestsMalice where
 -- | When Revealed: Each Huorn enemy engaged with a player makes an immediate attack. If no
 -- attack was made as a result of this effect, each player must search the encounter deck
 -- and discard pile for a Huorn enemy and put it into play engaged with him.
--- ponytail: an engaged Huorn counts as attacking even if a card stops its attack later
+--
+-- A Huorn that cannot attack the player it is engaged with makes no attack.
 instance RunMessage TheForestsMalice where
   runMessage msg t@(TheForestsMalice attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      engaged <- selectAny (EnemyWithTrait Huorn <> EnemyEngagedWith AnyPlayer)
-      eachPlayer \pid ->
-        if engaged
-          then traverse_ (immediateAttack pid) =<< select (EnemyWithTrait Huorn <> EnemyEngagedWith (PlayerWithId pid))
-          else searchForHuornEngaged pid
+      players <- getRemainingPlayers
+      attacks <- for players \pid -> do
+        huorns <- select (EnemyWithTrait Huorn <> EnemyEngagedWith (PlayerWithId pid))
+        (pid,) <$> filterM (fmap (\ms -> CannotAttack `notElem` ms && CannotAttackPlayer pid `notElem` ms) . getModifiers) huorns
+      if any (notNull . snd) attacks
+        then for_ attacks \(pid, huorns) -> traverse_ (immediateAttack pid) huorns
+        else eachPlayer searchForHuornEngaged
       pure t
     _ -> TheForestsMalice <$> runMessage msg attrs

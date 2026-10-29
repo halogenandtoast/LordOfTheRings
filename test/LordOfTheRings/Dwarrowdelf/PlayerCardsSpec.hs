@@ -6,6 +6,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.ActiveCost (playCard)
 import LordOfTheRings.Card (toCardDef)
 import LordOfTheRings.Matcher.Window (WindowMatcher (EventPlayedWindow), windowMatches)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getAttackStrength, getDefense, getHitPoints, getWillpower)
@@ -17,10 +18,11 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Attachment (AttachmentAttrs (..))
 import LordOfTheRings.Matcher (getEnemy, hasKeyword, selectAny)
 import LordOfTheRings.Matcher.Types (EnemyMatcher (EnemyWithEngagementCostAboveThreatOf, EnemyWithId))
-import LordOfTheRings.Sphere (Sphere (Leadership))
+import LordOfTheRings.Sphere (Sphere (Leadership, Lore))
 import LordOfTheRings.Message.Lifted (cancelEvent)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase, RefreshPhase, ResourcePhase))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioVictoryDisplay))
 import LordOfTheRings.Window
 import TestImport
@@ -210,6 +212,22 @@ spec = describe "Dwarrowdelf player cards" do
     run $ CheckWindows [mkAfter QuestedSuccessfully]
     map (.id) <$> handOf pid `shouldReturn` [card.id]
 
+  it "Bofur put into play after the players quested successfully returns to hand at once" . gameTest $ \pid -> do
+    card <- putCardIntoHand pid Allies.bofur
+    giveResources eowyn 1
+    setPhase QuestPhase
+    run $ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
+    actions pid
+    chooseTarget pid (CardIdTarget card.id)
+    passActions pid
+    map (.id) <$> handOf pid `shouldReturn` [card.id]
+
+  it "marks the phase in which the players quest successfully, as Bofur reads it" . gameTest $ \_ -> do
+    setPhase QuestPhase
+    run . CommitToQuest =<< hero eowyn
+    run QuestResolution
+    getModifiers GameTarget >>= (`shouldSatisfy` elem QuestedSuccessfullyThisPhase)
+
   it "Renewed Friendship lowers the threat of a player who attached a card to your hero" . twoPlayerTest (coreDeck "spirit") $ \one two -> do
     rf <- putCardIntoHand one Events.renewedFriendship
     b <- heroOf one beravor
@@ -254,6 +272,27 @@ spec = describe "Dwarrowdelf player cards" do
     costModifier pid sight `shouldReturn` -2
     cheap <- PlayerCard <$> genPlayerCard Events.renewedFriendship (Just pid)
     costModifier pid cheap `shouldReturn` -2
+
+  it "Good Meal lowers an event of a sphere its hero has gained" . gameTest $ \pid -> do
+    setThreat pid 30
+    frodo <- putHero pid Heroes.frodoBaggins
+    run $ CreateEffect $ Effect GameSource frodo [GainResourceIcon Lore] UntilEndOfPhase
+    meal <- putAttachmentOn pid Attachments.goodMeal frodo
+    actions pid
+    chooseAbilityOf pid meal
+    runes <- PlayerCard <$> genPlayerCard Events.daeronsRunes (Just pid)
+    costModifier pid runes `shouldReturn` -2
+
+  it "Longbeard Elder's progress goes on the active location before the quest" . gameTest $ \pid -> do
+    _ <- putQuestStage Quests.fliesAndSpiders
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.mountainsOfMirkwood
+    _ <- setEncounterDeck [Locations.mountainsOfMirkwood]
+    elder <- putAllyIntoPlay pid Allies.longbeardElder
+    run $ CheckWindows [mkAfter $ CommittedToQuest elder]
+    chooseAbilityOf pid elder
+    chooseLabel "$label.continue" pid
+    (.progress) <$> getActiveQuest `shouldReturn` 0
+    getsGame (map (.progress) . filter ((== ActiveLocation) . (.placement)) . toList . (.entities.locations)) `shouldReturn` [1]
 
   it "Rivendell Blade gives the enemy its character attacks -2 defense" . gameTest $ \pid -> do
     elrohir <- putHero pid Heroes.elrohir
@@ -498,7 +537,7 @@ spec = describe "Dwarrowdelf player cards" do
   it "Love of Tales adds a resource to its hero after a Song is played" . gameTest $ \pid -> do
     b <- hero beravor
     love <- putAttachmentOn pid Attachments.loveOfTales b
-    run $ CheckWindows [mkAfter $ PlayedCardFromHand pid (toCardCode Attachments.songOfEarendil)]
+    run $ CheckWindows [mkAfter $ PlayedCard pid (toCardCode Attachments.songOfEarendil)]
     chooseAbilityOf pid love
     resourcesOf b `shouldReturn` 1
 
@@ -538,6 +577,21 @@ spec = describe "Dwarrowdelf player cards" do
     run $ CheckWindows [mkAfter $ AttackDealtDamage eid [bofur] dwarf]
     chooseTarget pid (CardIdTarget card.id)
     getDamage (toTarget eid) `shouldReturn` dwarf
+
+  it "Heavy Stroke: no more than 1 copy is played each phase, by the whole group" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    elladan <- putHero one Heroes.elladan
+    run $ PlaceTokens GameSource elladan Resource 1
+    gimli <- heroOf two "01004"
+    run $ PlaceTokens GameSource gimli Resource 1
+    mine <- putCardIntoHand one Events.heavyStroke
+    theirs <- putCardIntoHand two Events.heavyStroke
+    eid <- staged Enemies.hillTroll
+    setPhase CombatPhase
+    run $ CheckWindows [mkAfter $ AttackDealtDamage eid [gimli] 2]
+    chooseTarget one (CardIdTarget mine.id)
+    run $ CheckWindows [mkAfter $ AttackDealtDamage eid [gimli] 2]
+    question <- getQuestion two
+    [() | Just q <- [question], TargetLabel (CardIdTarget cid) _ <- questionChoices q, cid == theirs.id] `shouldBe` []
 
   it "Imladris Stargazer lets a player put the top 5 cards of their deck back in any order" . gameTest $ \pid -> do
     star <- putAllyIntoPlay pid Allies.imladrisStargazer
@@ -592,6 +646,19 @@ spec = describe "Dwarrowdelf player cards" do
     resourcesOf b `shouldReturn` 1
     heroExhausted . toAttrs <$> getHeroWithCode beravor `shouldReturn` False
     isInPlay miruvor `shouldReturn` False
+
+  it "Miruvor goes on top of the deck of the player resolving it, not its owner's" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    legolas <- heroOf two "01005"
+    miruvor <- putAttachmentOn one Attachments.miruvor legolas
+    case miruvor of
+      AttachmentTarget aid -> run $ AttachCard aid legolas
+      _ -> error "not an attachment"
+    actions two
+    chooseAbilityOf two miruvor
+    chooseLabel "$label.miruvor.resource" two
+    chooseLabel "$label.miruvor.topOfDeck" two
+    map toCardCode . take 1 . (.deck) <$> getPlayer two `shouldReturn` [toCardCode Attachments.miruvor]
+    map toCardCode . (.discard) <$> getPlayer one `shouldReturn` []
 
   it "Master of the Forge searches the top 5 for an attachment" . gameTest $ \pid -> do
     master <- putAllyIntoPlay pid Allies.masterOfTheForge

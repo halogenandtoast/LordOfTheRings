@@ -14,8 +14,8 @@ drivenBack = treachery DrivenBack Cards.drivenBack
 -- | When Revealed: Remove all progress from each location in the staging area. Increase
 -- the total threat in the staging area by 1 for each progress removed this way. If no
 -- progress was removed by this effect, Driven Back gains surge.
--- ponytail: the increase lasts until the end of the phase, the quest it is revealed for;
--- the card names no duration.
+-- The card names no duration: the increase counts toward the quest it is revealed for, so
+-- it lasts until the end of the phase.
 instance RunMessage DrivenBack where
   runMessage msg t@(DrivenBack attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

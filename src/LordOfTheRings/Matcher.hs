@@ -48,6 +48,8 @@ matchPlayer matcher player = case matcher of
   PlayerWithThreatAtLeast n -> pure $ player.threat >= n
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
+  PlayerWithCardsInDeck n -> pure $ length player.deck >= n
+  PlayerWithHiddenCards -> getsGame (notNull . Map.findWithDefault [] player.id . (.hiddenCards) . toAttrs . gameScenario)
 
 data Character = HeroCharacter Hero | AllyCharacter Ally
 
@@ -95,7 +97,13 @@ matchHero matcher hero = case matcher of
   HeroControlledBy pm -> if heroPrisoner (toAttrs hero) then pure False else elem hero.owner <$> select pm
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
-  HeroWithSphere sphere -> pure $ hero.sphere == sphere
+  -- a hero belongs to the sphere of each resource icon it gains too, as Song of Wisdom's
+  HeroWithSphere sphere ->
+    (hero.sphere == sphere ||)
+      . elem (GainResourceIcon sphere)
+      . map modifierType
+      . Map.findWithDefault [] (toTarget hero)
+      <$> getsGame gameModifiers
   HeroWithKeyword k -> hasKeyword k (toTarget hero) (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
@@ -126,6 +134,7 @@ matchHero matcher hero = case matcher of
           . gameEntities
       )
   HeroWithResources -> pure $ hero.resources > 0
+  HeroWithPrintedSphere sphere -> pure $ hero.sphere == sphere
   HeroWithResourcesAtLeast n -> pure $ hero.resources >= n
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
@@ -226,6 +235,7 @@ matchLocation matcher location = case matcher of
   LocationControlledBy pm -> case location.placement of
     InPlayArea pid -> elem pid <$> select pm
     _ -> pure False
+  LocationWithIdBelow lid -> pure $ location.id < lid
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -420,6 +430,18 @@ currentQuestHas k =
       maybe (pure False) (hasKeyword k t . toCardDef) . Map.lookup qid =<< getsGame (entitiesQuests . gameEntities)
     _ -> pure False
 
+-- | Whether the current quest has any keyword, printed or gained, as "if the current quest
+-- card has a keyword" reads.
+currentQuestHasAKeyword :: HasGame m => m Bool
+currentQuestHasAKeyword =
+  getCurrentQuest >>= \case
+    Just t@(QuestTarget qid) -> do
+      mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+      printed <- maybe [] (toList . cdKeywords . toCardDef) . Map.lookup qid <$> getsGame (entitiesQuests . gameEntities)
+      let kept = [k | Blank `notElem` mods, k <- printed] <> [k | GainKeyword k <- mods]
+      pure $ any (\k -> LoseKeyword k `notElem` mods) kept
+    _ -> pure False
+
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
 
@@ -479,15 +501,17 @@ selectCharacters heroes allies = (<>) <$> (map toTarget <$> select heroes) <*> (
 charactersControlledBy :: HasGame m => PlayerId -> m [Target]
 charactersControlledBy pid = selectCharacters (HeroControlledBy $ PlayerWithId pid) (AllyControlledBy $ PlayerWithId pid)
 
+-- | Every card attached to the host: player attachments, and encounter cards attached as
+-- conditions or claimed objectives too, as "discard 1 attachment" may take them (Driven by
+-- Shadow, Black Uruks rulings).
 getAttachmentsOn :: HasGame m => Target -> m [Target]
-getAttachmentsOn host =
-  getsGame
-    ( map toTarget
-        . filter ((== AttachedTo host) . (.placement))
-        . toList
-        . entitiesAttachments
-        . gameEntities
-    )
+getAttachmentsOn host = getsGame \g ->
+  let es = gameEntities g
+      on' :: HasField "placement" x Placement => x -> Bool
+      on' x = x.placement == AttachedTo host
+   in [toTarget a | a <- toList (entitiesAttachments es), on' a]
+        <> [toTarget t | t <- toList (entitiesTreacheries es), on' t]
+        <> [toTarget o | o <- toList (entitiesObjectives es), on' o]
 
 {- | The characters the enemy's attack destroyed, as "if this attack destroys a character"
 reads: while the attack resolves, and once it is over until the enemy attacks again. Only
@@ -529,16 +553,21 @@ getAttachmentsControlledBy pid = do
 {- | The cards attached to the host with the trait: attachments, objectives and encounter
 cards attached as conditions.
 -}
-attachedWithTrait :: HasGame m => Trait -> Target -> m [Target]
+attachedWithTrait :: forall m. HasGame m => Trait -> Target -> m [Target]
 attachedWithTrait trait host = do
   es <- getsGame gameEntities
   let on :: HasField "placement" a Placement => a -> Bool
       on a = a.placement == AttachedTo host
-  pure
-    $ [toTarget a | a <- toList es.attachments, on a, trait `member` cdCardTraits (toCardDef a)]
-    <> [toTarget o | o <- toList es.objectives, on o, trait `member` cdCardTraits (toCardDef o)]
-    <> [toTarget t | t <- toList es.treacheries, on t, trait `member` cdCardTraits (toCardDef t)]
-    <> [toTarget e | e <- toList es.enemies, on e, trait `member` cdCardTraits (toCardDef e)]
+      -- printed or gained, as Mutual Accord gives
+      with :: (Targetable a, HasCardDef a) => [a] -> m [Target]
+      with = fmap (map toTarget) . filterM (\a -> hasTrait trait (toTarget a) (toCardDef a))
+  concat
+    <$> sequence
+      [ with (filter on $ toList es.attachments)
+      , with (filter on $ toList es.objectives)
+      , with (filter on $ toList es.treacheries)
+      , with (filter on $ toList es.enemies)
+      ]
 
 {- | Every card attached to the host: attachments, objectives and encounter cards attached
 as conditions.
@@ -574,12 +603,8 @@ abilityUsed source idx = getsGame \g ->
 -- | Objectives in play with the trait: in the staging area or attached.
 objectivesWithTrait :: HasGame m => Trait -> m [Objective]
 objectivesWithTrait trait =
-  getsGame
-    ( filter (\o -> trait `member` cdCardTraits (toCardDef o) && o.placement /= Unplaced)
-        . toList
-        . entitiesObjectives
-        . gameEntities
-    )
+  filterM (\o -> hasTrait trait (toTarget o) (toCardDef o))
+    =<< getsGame (filter ((/= Unplaced) . (.placement)) . toList . entitiesObjectives . gameEntities)
 
 -- | Players still in the game, in turn order from the first player.
 getRemainingPlayers :: HasGame m => m [PlayerId]

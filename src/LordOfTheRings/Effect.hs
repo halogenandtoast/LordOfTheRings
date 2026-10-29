@@ -10,6 +10,9 @@ data EffectDuration
   | UntilEndOfRound
   | -- | until the attack being made resolves
     UntilEndOfAttack
+  | -- | until the card that made it spends it, as Minas Tirith Lampwright's "the next
+    -- encounter card revealed"
+    UntilSpent
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

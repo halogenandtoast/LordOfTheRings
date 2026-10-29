@@ -14,7 +14,7 @@ telemnarsBane = enemy TelemnarsBane Cards.telemnarsBane
 -- | Forced: When Telemnar's Bane attacks, discard the top 3 cards of each player's deck.
 -- Forced: After a player plays an event card, Telemnar's Bane makes an immediate attack
 -- against the first player.
--- ponytail: read off events played from hand; one played from elsewhere does not trigger it.
+-- Any event played counts, from hand or from elsewhere (a Record's discard pile, Vilya).
 instance HasAbilities TelemnarsBane where
   getAbilities (TelemnarsBane a) =
     [ mkAbility a 1 $ forced $ EnemyAttacksWindow When a.id

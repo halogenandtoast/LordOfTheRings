@@ -2,13 +2,15 @@ module LordOfTheRings.HeirsOfNumenor.PlayerCardsSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
+import LordOfTheRings.Modifier (ModifierType (CannotDrawCards))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getDefense)
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (HeroMatcher (..), selectAny)
+import LordOfTheRings.Matcher (HeroMatcher (..), attachedWithTrait, selectAny)
 import LordOfTheRings.Phase
 import LordOfTheRings.Trait (Trait (Gondor, Rohan))
 import TestImport
@@ -53,6 +55,12 @@ spec = describe "Heirs of Numenor player cards" do
       heroHas boromirCode Rohan `shouldReturn` True
       heroHas eowynCode Gondor `shouldReturn` True
       heroHas beravorCode Gondor `shouldReturn` False
+
+    it "gives Gondor attachments the Rohan trait too" . honTest $ \pid -> do
+      beravor <- hero beravorCode
+      _ <- putAttachmentOn pid Attachments.stewardOfGondor beravor
+      _ <- playWith pid boromirCode 0 Events.mutualAccord
+      attachedWithTrait Rohan beravor >>= (`shouldSatisfy` (not . null))
 
   describe "Wealth of Gondor" do
     it "adds 1 resource to a Gondor hero" . honTest $ \pid -> do
@@ -104,6 +112,17 @@ spec = describe "Heirs of Numenor player cards" do
       chooseTarget pid (CardIdTarget card.id)
       map (.id) <$> getEncounterDeck `shouldReturn` [road.id]
 
+    it "returns a location immune to player card effects, as it has left play" . honTest $ \pid -> do
+      _ <- setEncounterDeck []
+      card <- putCardIntoHand pid Events.aWatchfulPeace
+      eowyn <- hero eowynCode
+      run $ PlaceTokens GameSource eowyn Resource 1
+      glade <- stage Locations.secludedGlade
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      run $ PlaceTokens GameSource (toTarget lid) Progress 3
+      chooseTarget pid (CardIdTarget card.id)
+      map (.id) <$> getEncounterDeck `shouldReturn` [glade.id]
+
   describe "Blood of Númenor" do
     it "gives its hero +1 defense for each resource left after spending 1" . honTest $ \pid -> do
       boromir <- hero boromirCode
@@ -118,6 +137,15 @@ spec = describe "Heirs of Numenor player cards" do
       top <- PlayerCard <$> genPlayerCard Allies.hunterOfLamedon (Just pid)
       g <- getGame
       putGame $ g & playersL . ix pid . deckL %~ (top :)
+      _ <- playWith pid beravorCode 2 Allies.hunterOfLamedon
+      chooseAbility pid
+      map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [top.id]
+
+    it "adds the card to hand while drawing is barred, as adding is not drawing" . honTest $ \pid -> do
+      top <- PlayerCard <$> genPlayerCard Allies.hunterOfLamedon (Just pid)
+      g <- getGame
+      putGame $ g & playersL . ix pid . deckL %~ (top :)
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDrawCards] UntilEndOfRound
       _ <- playWith pid beravorCode 2 Allies.hunterOfLamedon
       chooseAbility pid
       map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [top.id]

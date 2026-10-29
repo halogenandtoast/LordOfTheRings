@@ -238,6 +238,16 @@ spec = describe "The One Deck and Seastan's Boromir" do
     getsGame (any (\a -> toTarget a == mirror && attachmentExhausted (toAttrs a)) . toList . (.entities.attachments))
       `shouldReturn` True
 
+  it "Mirror of Galadriel discards nothing when its search finds no card (FAQ 3.235)" . gameTest $ \pid -> do
+    galadriel <- putHero pid Heroes.galadriel
+    mirror <- putAttachmentOn pid Attachments.mirrorOfGaladriel galadriel
+    g <- getGame
+    putGame $ g & playersL . ix pid . deckL .~ []
+    _ <- putCardIntoHand pid Events.hastyStroke
+    run $ ActionWindow pid
+    chooseAbilityOf pid mirror
+    length <$> handOf pid `shouldReturn` 1
+
   it "A Good Harvest lets any sphere's resources pay for the named sphere's cards" . gameTest $ \pid -> do
     setThreat pid 30
     giveResources theodred 2

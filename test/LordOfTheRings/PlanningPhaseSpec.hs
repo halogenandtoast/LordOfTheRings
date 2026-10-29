@@ -5,7 +5,7 @@ import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Keyword (Keyword (Doomed))
 import LordOfTheRings.Matcher (CardMatcher (AnyCard))
-import LordOfTheRings.Modifier (ModifierType (GainKeyword, LowerNextCostOf, NextCardGainsDoomed))
+import LordOfTheRings.Modifier (ModifierType (GainKeyword, LowerNextCostOf, NextCardGainsDoomed, PlayedACardThisRound))
 import LordOfTheRings.Phase
 import TestImport
 
@@ -55,4 +55,5 @@ spec = describe "Planning phase" do
       was <- threat pid
       _ <- playWith pid "01002" 1 Allies.guardOfTheCitadel
       threat pid `shouldReturn` was + 1
-      getsGame (filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` []
+      -- the spent effect is gone; what is left marks the card played
+      getsGame (map effectModifiers . filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` [[PlayedACardThisRound]]

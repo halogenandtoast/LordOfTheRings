@@ -16,23 +16,23 @@ hillsOfDunland = location HillsOfDunland Cards.hillsOfDunland
 
 -- | While Hills of Dunland is in the staging area, it gains: "Forced: After a player
 -- draws any number of cards, discard the top card of the encounter deck. If the discarded
--- card is a Dunland enemy, put it into play engaged with that player."
+-- card is a Dunland enemy, put it into play engaged with that player. This ability does
+-- not stack with other copies of Hills of Dunland."
+--
+-- Only the copy in the staging area with the least id has it, standing for them all.
 instance HasAbilities HillsOfDunland where
   getAbilities (HillsOfDunland a) =
-    [mkAbility a 1 $ forced $ DrewCardsWindow After Nothing | a.placement == StagingArea]
+    [ restricted a 1 (NotCriterion $ LocationExists $ LocationInStagingArea <> LocationWithCardCode (toCardCode a) <> LocationWithIdBelow a.id)
+      $ forced
+      $ DrewCardsWindow After Nothing
+    | a.placement == StagingArea
+    ]
 
--- | This ability does not stack with other copies of Hills of Dunland: each copy's
--- triggers, but only one copy in the staging area, the one with the least id, resolves it.
--- ponytail: so with several copies out the lead is asked to order Forced effects of
--- which all but one do nothing; the outcome is the rules', only the prompt is extra.
--- Travel: Each player draws a card to travel here.
+-- | Travel: Each player draws a card to travel here.
 instance RunMessage HillsOfDunland where
   runMessage msg l@(HillsOfDunland a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 ws -> do
-      copies <- select (LocationInStagingArea <> LocationWithCardCode (toCardCode a))
-      when (minimumMay copies == Just a.id)
-        $ for_ [pid | Window _ (CardsDrawn pid _) <- ws]
-        $ \pid -> discardTopOfEncounterDeckFor a (PlayerTarget pid) 1
+      for_ [pid | Window _ (CardsDrawn pid _) <- ws] \pid -> discardTopOfEncounterDeckFor a (PlayerTarget pid) 1
       pure l
     DiscardedTopOfEncounterDeck (isSource a -> True) (PlayerTarget pid) cards -> do
       for_ (filter (cardMatches $ enemyWithTrait Dunland) cards) \card -> do

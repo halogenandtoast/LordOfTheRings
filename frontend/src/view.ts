@@ -141,7 +141,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   // shadow cards sit under the enemy they were dealt to, face down until they resolve
   const shadowsOf = (pid: string) =>
     Object.values(entities.enemies)
-      .filter(isAt('EngagedWith', pid))
+      .filter((e) => isAt('EngagedWith', pid)(e) || isAt('AttackingFromShadow', pid)(e))
       .flatMap((e) =>
         (e.shadowCards ?? []).map((shadow) => {
           const revealed = (e.shadowRevealed ?? []).includes(shadow.id)
@@ -156,13 +156,23 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     // games saved before a kind existed do not have it
     Object.values(entities[kind] ?? {}).filter(test).map((e) => fromEntity(e, kind))
 
+  // the cards facedown under a card lie under it as one stack, counted, as the underworld
+  // cards under a location (The Steward's Fear) and those under The Orcs' Search
+  const stackUnder = (host: CardView) => {
+    const count = game.underneath?.[host.id] ?? 0
+    return count ? [card('', `underneath-${host.id}`, { facedown: 'encounter', name: ikey('log.cardsUnderneath', { count }), attachedTo: host.id })] : []
+  }
+
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))
     // claimed objectives, condition treacheries and enemies attached as Grasping Tentacle is sit on their hosts like attachments
     // and allies under a quest card, as Captured! holds Faramir
-    return [...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true)].filter(
-      (a) => a.attachedTo !== null && ids.has(a.attachedTo),
-    )
+    return [
+      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true)].filter(
+        (a) => a.attachedTo !== null && ids.has(a.attachedTo),
+      ),
+      ...cards.flatMap(stackUnder),
+    ]
   }
 
   const withAttachments = (cards: CardView[]) => [...cards, ...attachmentsOn(cards)]
@@ -199,7 +209,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ...withAttachments(characters),
         ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
       ],
-      engaged: [...withAttachments(placed('enemies', isAt('EngagedWith', pid))), ...shadowsOf(pid)],
+      engaged: [
+        ...withAttachments(placed('enemies', isAt('EngagedWith', pid))),
+        ...withAttachments(placed('enemies', isAt('AttackingFromShadow', pid))),
+        ...shadowsOf(pid),
+      ],
     }
   })
 

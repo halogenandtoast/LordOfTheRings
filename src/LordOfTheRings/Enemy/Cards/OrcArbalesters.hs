@@ -3,7 +3,7 @@ module LordOfTheRings.Enemy.Cards.OrcArbalesters (orcArbalesters) where
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Keyword (Keyword (Archery))
-import LordOfTheRings.Sphere (Sphere (Neutral))
+import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Spirit, Tactics))
 
 newtype OrcArbalesters = OrcArbalesters EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities)
@@ -13,12 +13,10 @@ orcArbalesters :: EnemyCard OrcArbalesters
 orcArbalesters = enemy OrcArbalesters Cards.orcArbalesters
 
 -- | Archery X. X is the number of different resource icons (leadership, lore, spirit, or
--- tactics) on heroes in play.
--- ponytail: a hero's printed sphere only, not the icons it gains
+-- tactics) on heroes in play, printed or gained.
 instance HasModifiersFor OrcArbalesters where
   getModifiersFor (OrcArbalesters a) = do
-    spheres <- map (.sphere) <$> (traverse getHero =<< select AnyHero)
-    let x = length $ ordNub $ filter (/= Neutral) spheres
+    x <- length <$> filterM (selectAny . HeroWithSphere) [Leadership, Lore, Spirit, Tactics]
     when (x > 0) $ modified a a [GainKeyword (Archery x)]
 
 -- | Shadow: attacking enemy gets +2 attack.

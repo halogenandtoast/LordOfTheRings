@@ -23,14 +23,14 @@ instance HasAbilities Caldara where
         $ restricted
           a
           1
-          (exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithSphere Spirit <> NotHero (HeroWithId a.id)) <> CardInDiscard a.owner spiritAlly)
+          (exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithPrintedSphere Spirit <> NotHero (HeroWithId a.id)) <> CardInDiscard a.owner spiritAlly)
         $ ActionAbility Free
     ]
 
 instance RunMessage Caldara where
   runMessage msg s@(Caldara a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithSphere Spirit <> NotHero (HeroWithId a.id))
+      n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithPrintedSphere Spirit <> NotHero (HeroWithId a.id))
       allies <- filterM passesUnique . filter (cardMatches spiritAlly) . (.discard) =<< getPlayer pid
       discard a
       -- each chosen at a time, the next from those the unique rule still lets in

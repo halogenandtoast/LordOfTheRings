@@ -7,6 +7,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
+import LordOfTheRings.Phase (Phase (CombatPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theMorgulVale)
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
@@ -100,6 +101,18 @@ spec = describe "The Morgul Vale" do
     getDamage (toTarget murzag) `shouldReturn` 0
     getDamage (toTarget guard') `shouldReturn` 3
 
+  it "ends the attack and has the attacker attack the next player with Morgul Bodyguard's shadow" $ twoPlayerTest testDeck \p1 p2 -> do
+    eid <- staged Enemies.morgulSorcerer
+    run $ EngageEnemy p1 eid
+    run . AttachShadowCard eid =<< genEncounterCard Enemies.morgulBodyguard
+    run $ UndefendedAttack p1 eid
+    passActions p1
+    passActions p2
+    (.placement) <$> getEnemy eid `shouldReturn` EngagedWith p2
+    heroes <- getsGame (map toTarget . filter ((== p1) . (.owner)) . toList . (.entities.heroes))
+    -- the first attack ended without its damage
+    sum <$> traverse getDamage heroes `shouldReturn` 0
+
   it "reduces any damage dealt to Nazgûl of Minas Morgul to 1, and wins as it is defeated" . valeTest $ \_ -> do
     _ <- putQuestStage Quests.theMorgulRider
     nazgul <- staged Enemies.nazgulOfMinasMorgul
@@ -156,6 +169,20 @@ spec = describe "The Morgul Vale" do
     run $ EnemyAttack pid murzag
     takeUndefended pid "01012"
     placementOf Enemies.morgulSorcerer `shouldReturn` Just (EngagedWith pid)
+
+  it "has the enemy Murzag engages in the Resolve Enemy Attacks step attack in it, unshadowed" . valeTest $ \pid -> do
+    murzag <- staged Enemies.murzag
+    run $ EngageEnemy pid murzag
+    _ <- setEncounterDeck [Enemies.morgulSorcerer, Locations.morgulVale]
+    putGame . (phaseL .~ CombatPhase) =<< getGame
+    push $ PlayerAttacks pid
+    run $ EnemyAttacks pid
+    takeUndefended pid "01012"
+    sorcerer <- enemyOf Enemies.morgulSorcerer
+    -- the Sorcerer attacks next, its prompt about it
+    Just (QuestionLabel _ source _ _) <- getQuestion pid
+    source `shouldBe` Just (toTarget sorcerer)
+    fmap (.shadowCards) (getEnemy sorcerer) >>= (`shouldSatisfy` null)
 
   it "has Lord Alcaron attack again when his shadow card has no effect" . valeTest $ \pid -> do
     _ <- tower
@@ -231,6 +258,8 @@ spec = describe "The Morgul Vale" do
     run $ EnemyAttack pid tracker
     passActions pid
     chooseTarget pid scout
+    passActions pid
+    resolveShadowsInOrder pid
     passActions pid
     chooseTarget pid . toTarget =<< getHeroWithCode "01002"
     passActions pid

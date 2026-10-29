@@ -23,13 +23,12 @@ instance RunMessage InNeedOfRest where
       free <- filterM (fmap null . treacheriesOn attrs.treacheryCardCode . toTarget) =<< select AnyHero
       questing <- filterM (\h -> selectAny (HeroWithId h <> CommittedHero)) free
       lead <- getLead
-      -- a hero on the quest is removed from it; with none, it still attaches to a hero, as
-      -- much of the effect as can be resolved
+      -- with no hero on the quest it attaches to none (FAQ 3.281)
       chooseOrRunOneM lead do
         questionLabeled "inNeedOfRest.attach"
         causedBy attrs
-        targets (if null questing then free else questing) \h -> do
-          when (h `elem` questing) $ removeFromQuest h
+        targets questing \h -> do
+          removeFromQuest h
           attachTreachery attrs.treacheryId h
       pure t
     -- a time counter at a time, each its 1 damage

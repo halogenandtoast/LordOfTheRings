@@ -49,6 +49,8 @@ spec = do
       run $ ResolveShadow eid pid []
       riders <- enemiesWith Enemies.wolfRider
       length riders `shouldBe` 1
+      -- it attacks, but never engages the player (rulings)
+      getsGame (\g -> [enemyPlacement (toAttrs e) | (k, e) <- mapToList g.entities.enemies, k `elem` riders]) `shouldReturn` [AttackingFromShadow pid]
       passActions pid
       prompt pid `shouldReturn` Just (ikeyWith "label.declareDefender" (cardVar "enemy" Enemies.wolfRider))
 
@@ -178,6 +180,11 @@ spec = do
     it "gives each location in the staging area +1 threat" . gameTest $ \_ -> do
       reveal Locations.forestGate []
       reveal Treacheries.treacherousFog []
+      (getLocationThreat =<< theLocation) `shouldReturn` 3
+
+    it "also gives a location revealed later in the phase +1 threat (FAQ 2.43)" . gameTest $ \_ -> do
+      reveal Treacheries.treacherousFog []
+      reveal Locations.forestGate []
       (getLocationThreat =<< theLocation) `shouldReturn` 3
 
   describe "The Brown Lands" do

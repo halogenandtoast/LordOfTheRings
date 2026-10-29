@@ -125,9 +125,15 @@ spec = describe "The Dunland Trap" do
     run . AddToStaging =<< genEncounterCard Locations.hillsOfDunland
     _ <- setEncounterDeck [Locations.plainsOfEnedwaith, Locations.plainsOfEnedwaith]
     run $ DrawCards $ Drawing pid 1
-    -- the lead orders the two copies' Forced effects
-    replicateM_ 2 $ chooseAbility pid
+    -- one copy stands for both, so the lead orders nothing
+    getQuestion pid `shouldReturn` Nothing
     length <$> getEncounterDiscard `shouldReturn` 1
+
+  it "discards for the draws its Travel cost makes, as it is still in the staging area" . trapTest $ \pid -> do
+    hills <- staged Locations.hillsOfDunland
+    _ <- setEncounterDeck [Enemies.boarClanStalker]
+    run $ TravelTo hills
+    placementOf Enemies.boarClanStalker `shouldReturn` Just (EngagedWith pid)
 
   it "has each player draw to travel to Hills of Dunland" . trapTest $ \pid -> do
     hills <- staged Locations.hillsOfDunland
@@ -247,6 +253,13 @@ spec = describe "The Dunland Trap" do
     offered <- maybe False (any \case TargetLabel t _ -> t == toTarget turch; _ -> False) . fmap questionChoices <$> getQuestion one
     offered `shouldBe` False
 
+  it "has Chief Turch engage the first player whoever a card would have engage him" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    run $ SetFirstPlayer one
+    run . AddToStaging =<< genEncounterCard Enemies.chiefTurchTheDunlandTrap
+    turch <- enemyOf Enemies.chiefTurchTheDunlandTrap
+    run $ EngageEnemy two turch
+    placementOf Enemies.chiefTurchTheDunlandTrap `shouldReturn` Just (EngagedWith one)
+
   it "is lost as a hero is destroyed at No Way Out" . trapTest $ \_ -> do
     _ <- putQuestStage Quests.noWayOut
     hero <- toTarget <$> getHeroWithCode "01012"
@@ -266,6 +279,15 @@ spec = describe "The Dunland Trap" do
     outcome `shouldReturn` Nothing
     takeUndefended pid "01012"
     outcome `shouldReturn` Just Won
+
+  it "lets the player order his enemies' attacks at No Way Out" . trapTest $ \pid -> do
+    q <- putQuestStage Quests.noWayOut
+    run $ PlaceTokens GameSource q TimeCounter 1
+    _ <- engaged pid Enemies.boarClanWarrior
+    _ <- engaged pid Enemies.boarClanStalker
+    _ <- setEncounterDeck [Locations.plainsOfEnedwaith, Locations.plainsOfEnedwaith]
+    run $ RemoveTokens GameSource q TimeCounter 1
+    getQuestion pid >>= (`shouldSatisfy` maybe False (\case QuestionLabel l _ _ _ -> l == "$label.chooseNextAttack"; _ -> False))
 
   it "is lost if a hero falls to No Way Out's last attacks" . trapTest $ \pid -> do
     q <- putQuestStage Quests.noWayOut

@@ -10,7 +10,10 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
-import LordOfTheRings.Target (Target, toTarget)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound))
+import LordOfTheRings.Source (Source (GameSource))
+import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
 import LordOfTheRings.Window
 
 data Cost = ResourceCost Sphere CardCost | Free
@@ -49,7 +52,9 @@ instance Entity ActiveCost where
   overAttrs f a = f a
 
 cardCost :: Card -> Cost
-cardCost card = ResourceCost (fromMaybe Neutral $ cdSphere def) (fromMaybe (StaticCost 0) $ cdCost def)
+cardCost card = ResourceCost (fromMaybe Neutral $ cdSphere def) $ case cdCost def of
+  Just XCost -> StaticCost 0
+  cost -> fromMaybe (StaticCost 0) cost
  where
   def = toCardDef card
 
@@ -72,21 +77,26 @@ instance RunMessage ActiveCost where
       Free -> do
         push $ PaidCost acId
         pure ac
-      ResourceCost _ DynamicCost -> do
-        push $ PaidCost acId
-        pure ac
       ResourceCost sphere (StaticCost n) -> do
         let spend = case cdDistinctPayers (toCardDef ac.activeCostCard) of
               Just _ -> SpendResourcesFromDistinctHeroes ac.activeCostPlayer sphere n []
               Nothing -> SpendResources ac.activeCostPlayer sphere n
         pushAll [spend, PayCost acId]
         pure $ ac & costCostL .~ Free
+      -- a chosen X the card pays as it resolves ('cardCost' turns an 'XCost' static)
+      ResourceCost _ _ -> do
+        push $ PaidCost acId
+        pure ac
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
+          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisRound] UntilEndOfRound
           pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
-          pushWhen ac.activeCostFromHand
-            $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card), mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card)]
+          push
+            $ CheckWindows
+            $ [mkAfter $ PlayedFromHand (toTarget card) | ac.activeCostFromHand]
+            <> [mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card) | ac.activeCostFromHand]
+            <> [mkAfter $ PlayedCard ac.activeCostPlayer (toCardCode card)]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

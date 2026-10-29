@@ -167,12 +167,22 @@ spec = describe "The Nîn-in-Eilph" do
     _ <- revealStage pid Quests.throughTheMarshNoEndInSight
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotDrawCardsFromCardEffects)
     eowyn <- getHeroWithCode "01007"
-    getModifiers (toTarget eowyn) >>= (`shouldSatisfy` elem CannotGainResourcesFromCardEffects)
+    run $ PlaceTokens (HeroSource eowyn.id) (toTarget eowyn) Resource 1
+    getHeroResources eowyn.id `shouldReturn` 0
+    -- an encounter card's effect still may
+    run $ PlaceTokens ScenarioSource (toTarget eowyn) Resource 1
+    getHeroResources eowyn.id `shouldReturn` 1
 
   it "lets each player play only 1 card each round under A Forgotten Land" . ninTest $ \pid -> do
     _ <- revealStage pid Quests.throughTheMarshAForgottenLand
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` notElem (CannotPlay AnyCard))
     _ <- playWith pid "01002" 2 Allies.guardOfTheCitadel
+    getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
+
+  it "counts a card played earlier in the round under A Forgotten Land" . ninTest $ \pid -> do
+    _ <- playWith pid "01002" 2 Allies.guardOfTheCitadel
+    passActions pid
+    _ <- revealStage pid Quests.throughTheMarshAForgottenLand
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
 
   it "gives enemies in the staging area -20 engagement cost under Creatures of a Forgotten Age" . ninTest $ \pid -> do

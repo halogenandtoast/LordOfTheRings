@@ -9,7 +9,8 @@ newtype IthilienGuardian = IthilienGuardian ObjectiveAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 -- | When Revealed: Add Ithilien Guardian to the staging area and Ithilien Guardian gains
--- surge. (A revealed objective goes to the staging area; its surge is printed in its def.)
+-- surge. (A revealed objective goes to the staging area; a canceled When Revealed gives
+-- no surge.)
 ithilienGuardian :: ObjectiveCard IthilienGuardian
 ithilienGuardian = objective IthilienGuardian Cards.ithilienGuardian
 
@@ -20,6 +21,9 @@ instance HasModifiersFor IthilienGuardian where
 -- | Shadow: Deal 2 damage to the attacking enemy.
 instance RunMessage IthilienGuardian where
   runMessage msg o@(IthilienGuardian attrs) = case msg of
+    WhenRevealed (isTarget attrs -> True) -> do
+      revealEncounterCard
+      pure o
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       dealDamage attrs eid 2
       pure o

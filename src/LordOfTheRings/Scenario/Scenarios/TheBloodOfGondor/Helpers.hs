@@ -9,6 +9,7 @@ module LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers (
   turnFaceup,
   turnHiddenCardsFaceup,
   turnFaceupResolving,
+  turnFaceupDamaging,
 ) where
 
 import Data.Map.Strict qualified as Map
@@ -23,7 +24,9 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
+import LordOfTheRings.Source
 import LordOfTheRings.Target
+import LordOfTheRings.Window (WindowType (EntersPlay), mkAfter)
 
 -- | The hidden cards in the player's play area, the first taken first.
 getHiddenCards :: HasGame m => PlayerId -> m [EncounterCard]
@@ -38,7 +41,7 @@ takeHiddenCard :: ReverseQueue m => PlayerId -> m ()
 takeHiddenCard = push . TakeHiddenCard
 
 {- | The player discards 1 hidden card, as The Dark Woods reads.
-ponytail: the first taken; they are facedown, so there is nothing to choose between
+The first taken: they are facedown and cannot be looked at, so any is as good as another.
 -}
 discardHiddenCard :: ReverseQueue m => PlayerId -> m ()
 discardHiddenCard pid = traverse_ (push . DiscardHiddenCard pid) . take 1 =<< getHiddenCards pid
@@ -59,6 +62,23 @@ as they do stays facedown (FAQ). The enemies that engage the player are given ba
 -}
 turnHiddenCardsFaceup :: ReverseQueue m => PlayerId -> m [EnemyId]
 turnHiddenCardsFaceup pid = catMaybes <$> (traverse (turnFaceup pid) =<< getHiddenCards pid)
+
+{- | The hidden card turns faceup, as Faramir turns it: an enemy is dealt the damage before
+it engages the player, and one destroyed by it never engages (ruling).
+-}
+turnFaceupDamaging :: (ReverseQueue m, Sourceable source) => source -> Int -> PlayerId -> EncounterCard -> m ()
+turnFaceupDamaging source n pid card
+  | cdCardType (toCardDef card) == EnemyType = do
+      eid <- getRandom
+      push
+        $ TurnHiddenCardFaceup
+          pid
+          card
+          [ CreateEnemy eid card
+          , DealDamage (toSource source) (EnemyTarget eid) n
+          , WhileInPlay (EnemyTarget eid) [EngageEnemy pid eid, CheckWindows [mkAfter $ EntersPlay $ EnemyTarget eid]]
+          ]
+  | otherwise = void $ turnFaceup pid card
 
 {- | The hidden card turns faceup as Lying in Wait turns it: its When Revealed effects
 resolve, a location going to the staging area; an enemy still engages the player.

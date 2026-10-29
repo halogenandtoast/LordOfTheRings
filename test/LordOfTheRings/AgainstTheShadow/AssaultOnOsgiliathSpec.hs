@@ -171,6 +171,12 @@ spec = describe "Assault on Osgiliath" do
     run $ PlaceLocation quarter StagingArea
     placementOf Locations.ruinedTower `shouldReturn` Just StagingArea
 
+  it "returns Ruined Tower once a location its controller controls is discarded" . osgiliathTest $ \pid -> do
+    _ <- controlled pid Locations.ruinedTower
+    quarter <- controlled pid Locations.westQuarter
+    run $ Discard (toTarget quarter)
+    placementOf Locations.ruinedTower `shouldReturn` Just StagingArea
+
   it "gives the current quest battle or siege while East or West Quarter is active" . osgiliathTest $ \_ -> do
     _ <- retake
     east <- stage Locations.eastQuarter
@@ -192,6 +198,13 @@ spec = describe "Assault on Osgiliath" do
     scout <- putAllyIntoPlay pid Allies.guardOfTheCitadel
     run $ Discard scout
     placementOf Locations.ruinedSquare `shouldReturn` Just StagingArea
+
+  it "places progress on Ruined Square under a player's control too (ruling)" . osgiliathTest $ \pid -> do
+    square <- controlled pid Locations.ruinedSquare
+    eid <- engaged pid Enemies.southronPhalanx
+    run $ DealDamage GameSource (toTarget eid) 3
+    chooseAbilityOf pid square
+    (.progress) <$> getLocation square `shouldReturn` 1
 
   it "has each player return his highest threat location or raise his threat with Counter-attack" . osgiliathTest $ \pid -> do
     _ <- controlled pid Locations.westQuarter
@@ -279,6 +292,12 @@ spec = describe "Assault on Osgiliath" do
     resolveRevealed
     placementOf Locations.eastQuarter `shouldReturn` Just StagingArea
     placementOf Locations.westGate `shouldReturn` Just ActiveLocation
+
+  it "offers West Gate's action under a player's control too (ruling)" . osgiliathTest $ \pid -> do
+    gate <- controlled pid Locations.westGate
+    _ <- setEncounterDeck [Locations.eastQuarter]
+    run $ ActionWindow pid
+    offersAbilityOf pid gate `shouldReturn` True
 
   it "adds the topmost Orc enemy in the encounter discard pile to the staging area with Uruk Lieutenant" . osgiliathTest $ \_ -> do
     run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.urukSoldier

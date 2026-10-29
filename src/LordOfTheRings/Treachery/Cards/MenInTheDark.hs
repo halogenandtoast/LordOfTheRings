@@ -19,12 +19,13 @@ instance RunMessage MenInTheDark where
   runMessage msg t@(MenInTheDark attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       heroes <- select AnyHero
-      for_ heroes \h -> heroPaysOr attrs h "menInTheDark.takeDamage" do
-        dealDamage attrs h 1
-        -- a damage token on this card counts the heroes that chose the damage
-        -- ponytail: damage chosen and then canceled still counts as taken
-        placeTokens attrs attrs Damage 1
+      for_ heroes \h -> heroPaysOr attrs h "menInTheDark.takeDamage" $ dealDamage attrs h 1
       doStep 1 msg
+      pure t
+    -- a damage token on this card counts the heroes that took its damage, as it is dealt:
+    -- damage canceled before then is not taken
+    DoStep 1 (DealDamage (isSource attrs -> True) (HeroTarget _) n) | n > 0 -> do
+      placeTokens attrs attrs Damage 1
       pure t
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       when (countTokens Damage attrs.treacheryTokens == 0) revealEncounterCard

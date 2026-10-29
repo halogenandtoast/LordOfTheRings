@@ -578,6 +578,14 @@ refuseSharedHeroes deckLists = case sharedHeroes deckLists of
       status400
       (ikeyWith "error.sharedHeroes" [textVar "heroes" (intercalate ", " titles)])
 
+refuseBarredHeroes :: Text -> [DeckList] -> Handler ()
+refuseBarredHeroes scenarioId deckLists = case barredHeroes scenarioId deckLists of
+  [] -> pure ()
+  titles ->
+    sendResponseStatus
+      status400
+      (ikeyWith "error.barredHeroes" [textVar "heroes" (intercalate ", " titles)])
+
 -- | Your seats in multi-handed solo, numbered when there are several.
 soloSeats :: Text -> NonEmpty DeckList -> NonEmpty (Text, DeckList)
 soloSeats name = \case
@@ -639,6 +647,7 @@ postGamesR = do
   let choices = fromMaybe [new.deck] new.decks
   deckLists <- traverse (resolveDeck userId) choices
   refuseSharedHeroes $ fromMaybe starterDeck <$> deckLists
+  refuseBarredHeroes scenarioId $ fromMaybe starterDeck <$> deckLists
   let easyMode = fromMaybe False new.easyMode
       seatCount = fromMaybe (length deckLists) new.seats
       -- seats left open are for friends, and the game waits for them
@@ -697,6 +706,7 @@ postJoinR gid = do
   when (row.lotrGameUserId /= userId && any ((== userId) . (.lotrSeatUserId) . entityVal) seated)
     $ sendResponseStatus status409 (ikey "error.alreadySeated")
   refuseSharedHeroes . (fromMaybe starterDeck deckList :) . map snd =<< friendSeats gid
+  refuseBarredHeroes row.lotrGameScenario [fromMaybe starterDeck deckList]
   case [0 .. row.lotrGameSeats - 1] \\ map ((.lotrSeatPosition) . entityVal) seated of
     [] -> sendResponseStatus status409 (ikey "error.noFreeSeat")
     (position : rest) -> do

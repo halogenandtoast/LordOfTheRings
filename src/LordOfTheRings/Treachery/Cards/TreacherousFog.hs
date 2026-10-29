@@ -16,10 +16,10 @@ treacherousFog = treachery TreacherousFog Cards.treacherousFog
 instance RunMessage TreacherousFog where
   runMessage msg t@(TreacherousFog attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      locations <- select LocationInStagingArea
       order <- getPlayerOrder
       high <- filterM (fmap ((>= 35) . (.threat)) . getPlayer) order
-      for_ locations \l -> phaseModifier attrs l (ThreatModifier 1)
+      -- a lasting effect: a location revealed later this phase gets it too (FAQ 2.43)
+      phaseModifier attrs GameTarget (EachLocationInStagingArea $ ThreatModifier 1)
       for_ high \p -> push $ ChooseAndDiscardFromHand p (toSource attrs) 1
       pure t
     _ -> TreacherousFog <$> runMessage msg attrs

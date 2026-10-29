@@ -17,7 +17,7 @@ eaglesOfTheMistyMountains = ally EaglesOfTheMistyMountains Cards.eaglesOfTheMist
 instance HasModifiersFor EaglesOfTheMistyMountains where
   getModifiersFor (EaglesOfTheMistyMountains a) = do
     let n = length a.allyFacedown
-    when (n > 0) $ modified a a [AttackModifier n, DefenseModifier n]
+    modified a a $ CannotHaveRestrictedAttachments : [m | n > 0, m <- [AttackModifier n, DefenseModifier n]]
 
 -- | Response: After another Eagle character leaves play, you may attach that card facedown
 -- to Eagles of the Misty Mountains.

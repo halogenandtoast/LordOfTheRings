@@ -20,6 +20,11 @@ instance RunMessage WatcherInTheWoods where
     WhenRevealed (isTarget attrs -> True) -> do
       questing <- length <$> getCommittedCharacters
       eachPlayer \pid -> encounterRaisesThreat pid questing
+      -- line by line: the keyword is checked once the threat is raised, as Approaching Cair
+      -- Andros gains siege at 37 (ruling)
+      doStep 1 msg
+      pure t
+    DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       war <- (||) <$> currentQuestHas Battle <*> currentQuestHas Siege
       when war revealEncounterCard
       pure t

@@ -15,7 +15,8 @@ lightTheBeacons = event LightTheBeacons Cards.lightTheBeacons
 instance RunMessage LightTheBeacons where
   runMessage msg e@(LightTheBeacons attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      -- ponytail: the characters in play as it resolves, not those entering play later
+      -- the characters in play as it resolves: a player card's lasting effect is not
+      -- recalculated (FAQ 1.55)
       characters <- selectCharacters AnyHero AnyAlly
       for_ characters \c -> roundModifiers attrs c [DefenseModifier 2, DoesNotExhaustToDefend]
       pure e

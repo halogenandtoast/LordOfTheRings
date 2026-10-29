@@ -7,7 +7,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getTimeCounters)
-import LordOfTheRings.Modifier (ModifierType (CannotReady))
+import LordOfTheRings.Modifier (ModifierType (CannotReady, EngagedAnEnemyThisRound))
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Phase (Phase (EncounterPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -15,7 +15,7 @@ import LordOfTheRings.Scenario (lookupScenario, toCatchAnOrc)
 import LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (mugashHost, outOfPlayDeckOf)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside), metaL, questDeckL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (WindowType (CharacterDestroyedByAttack, EnemyAttacking, PhaseBegins, QuestedSuccessfully), mkAfter, mkWhen)
+import LordOfTheRings.Window (WindowType (EnemyAttacking, PhaseBegins, QuestedSuccessfully), mkAfter, mkWhen)
 import TestImport
 
 orcTest :: (PlayerId -> GameT ()) -> IO ()
@@ -72,6 +72,10 @@ capture pid = do
   run $ Destroy GameSource (EnemyTarget mugash)
   chooseTarget pid hero
   pure (mugash, hero)
+
+-- | The window after questing successfully, then the progress it places, as the quest resolves.
+questSuccessfully :: Int -> GameT ()
+questSuccessfully n = push (PlaceProgressOnQuest n) >> run (CheckWindows [mkAfter QuestedSuccessfully])
 
 questOn :: CardDef -> GameT Target
 questOn def = do
@@ -145,12 +149,26 @@ spec = describe "To Catch an Orc" do
     _ <- capture pid
     placementOf Enemies.mugashsGuard `shouldReturn` Just (EngagedWith pid)
 
+  it "has Mugash's Guard engage the player holding Mugash whoever a card would have engage it" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    mugash <- engaged one Enemies.mugashEnemy
+    run $ Destroy GameSource (EnemyTarget mugash)
+    chooseTarget one =<< heroOf one "01012"
+    stage Enemies.mugashsGuard
+    guard' <- enemyOf Enemies.mugashsGuard
+    run $ EngageEnemy two guard'
+    placementOf Enemies.mugashsGuard `shouldReturn` Just (EngagedWith one)
+    -- the other player never engaged it, even for a moment
+    getModifiers (PlayerTarget two) >>= (`shouldSatisfy` notElem EngagedAnEnemyThisRound)
+
   it "returns Mugash to the staging area after Mugash's Guard destroys a character" . orcTest $ \pid -> do
     stage Enemies.mugashsGuard
     _ <- capture pid
     guard' <- enemyOf Enemies.mugashsGuard
-    hero <- toTarget <$> getHeroWithCode "01007"
-    run $ CheckWindows [mkAfter $ CharacterDestroyedByAttack guard' hero pid]
+    run $ EnemyAttack pid guard'
+    passActions pid
+    chooseLabel "$label.takeAttackUndefended" pid
+    passActions pid
+    chooseTarget pid =<< getHeroWithCode "01007"
     placementOf Enemies.mugashEnemy `shouldReturn` Just StagingArea
 
   it "shuffles a random card from the defending player's hand into his out-of-play deck as Methedras Orc attacks" . orcTest $ \pid -> do
@@ -184,13 +202,23 @@ spec = describe "To Catch an Orc" do
     prize <- genEncounterCard Quests.theWizardsPrize
     g <- getGame
     putGame $ g & scenarioL %~ overAttrs (questDeckL .~ [prize])
-    run $ CheckWindows [mkAfter QuestedSuccessfully]
+    questSuccessfully 2
     chooseAbilityOf pid q
     getTimeCounters q `shouldReturn` 3
+    (.progress) <$> getActiveQuest `shouldReturn` 0
     stage Enemies.mugashEnemy
-    run $ CheckWindows [mkAfter QuestedSuccessfully]
+    questSuccessfully 2
     chooseAbilityOf pid q
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theWizardsPrize
+
+  it "places no time counter on Searching for Mugash when the active location takes all the progress" . orcTest $ \pid -> do
+    q <- questOn Quests.searchingForMugash
+    stage Locations.orcCave
+    lid <- locationOf Locations.orcCave
+    run $ PlaceLocation lid ActiveLocation
+    questSuccessfully 1
+    chooseAbilityOf pid q
+    getTimeCounters q `shouldReturn` 2
 
   it "reveals 2 encounter cards per player once Searching for Mugash's last time counter goes" . orcTest $ \_ -> do
     q <- questOn Quests.searchingForMugash

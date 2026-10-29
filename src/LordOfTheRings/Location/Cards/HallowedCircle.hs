@@ -27,9 +27,8 @@ instance HasAbilities HallowedCircle where
   getAbilities (HallowedCircle a) = [mkAbility a 1 $ forced $ TraveledWindow After a.id]
 
 -- | Travel: The players must exhaust 3 Key objectives.
--- ponytail: the Keys exhaust after the "after the players travel here" window has opened,
--- as every Travel effect resolves in this engine; nothing in the scenario reads whether a
--- Key is exhausted in between, so the Guardians' attacks come out the same.
+-- The Keys exhaust as the Travel cost is paid, before the location becomes active and the
+-- "after the players travel here" window opens.
 instance RunMessage HallowedCircle where
   runMessage msg l@(HallowedCircle a) = case msg of
     TravelTo lid | lid == a.id -> do

@@ -2,12 +2,14 @@ module LordOfTheRings.Core.CombatCardsSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.I18n (cardVar, ikeyWith)
+import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects))
 import LordOfTheRings.Phase
 import TestImport
 
@@ -33,6 +35,15 @@ hero code = toTarget <$> getHeroWithCode code
 
 playFromHand :: PlayerId -> Card -> GameT ()
 playFromHand pid card = chooseTarget pid (CardIdTarget card.id)
+
+-- | Gladden Fields (3 quest points) as the active location.
+activeGladdenFields :: GameT LocationId
+activeGladdenFields = do
+  _ <- setEncounterDeck [Locations.gladdenFields]
+  run RevealEncounterCard
+  lid <- getsGame (fromJustNote "no location" . headMay . map toId . filter ((== toCardCode Locations.gladdenFields) . toCardCode) . toList . (.entities.locations))
+  run $ TravelTo lid
+  pure lid
 
 fund :: CardCode -> Int -> GameT ()
 fund code n = hero code >>= \h -> run (PlaceTokens GameSource h Resource n)
@@ -163,6 +174,22 @@ spec = do
       run $ Discard (toTarget eid)
       run $ AttackResolved eid (Just pid) [legolas] mempty
       offersAbilityOf pid legolas `shouldReturn` False
+
+    it "places its progress on the active location first, the rest on the quest (FAQ 2.02)" . tacticsTest $ \pid -> do
+      flipFirstQuest pid
+      lid <- activeGladdenFields
+      run $ PlaceTokens GameSource (toTarget lid) Progress 2
+      run . (\h -> UseCardAbility pid (HeroSource h.id) 1 []) =<< getHeroWithCode "01005"
+      getsGame (elem lid . map toId . toList . (.entities.locations)) `shouldReturn` False
+      (.progress) <$> getActiveQuest `shouldReturn` 1
+
+    it "places no progress past an active location immune to player cards (FAQ 2.41)" . tacticsTest $ \pid -> do
+      flipFirstQuest pid
+      lid <- activeGladdenFields
+      run $ CreateEffect $ Effect GameSource (toTarget lid) [ImmuneToPlayerCardEffects] UntilEndOfRound
+      run . (\h -> UseCardAbility pid (HeroSource h.id) 1 []) =<< getHeroWithCode "01005"
+      (.progress) <$> getLocation lid `shouldReturn` 0
+      (.progress) <$> getActiveQuest `shouldReturn` 0
 
   describe "Thalin" do
     it "deals 1 damage to each enemy revealed while he is committed" . tacticsTest $ \pid -> do

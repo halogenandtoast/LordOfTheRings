@@ -7,7 +7,7 @@ newtype EredLuinMiner = EredLuinMiner AllyAttrs
   deriving anyclass (IsAlly, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
--- | Response: After Ered Luin Miner is discarded from your deck, put it into play under
+-- | Response: After Ered Luin Miner is discarded from the top of your deck, put it into play under
 -- your control.
 eredLuinMiner :: AllyCard EredLuinMiner
 eredLuinMiner =

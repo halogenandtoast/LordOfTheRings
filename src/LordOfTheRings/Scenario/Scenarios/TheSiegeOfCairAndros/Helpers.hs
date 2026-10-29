@@ -7,7 +7,11 @@ module LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros.Helpers (
 ) where
 
 import LordOfTheRings.Card (CardDef, cdCardCode, cdQuestPoints, toCardDef)
-import LordOfTheRings.Classes.HasGame (HasGame)
+import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Classes.Entity (toAttrs)
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
+import LordOfTheRings.Game.Base (gameScenario)
+import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
@@ -23,12 +27,13 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Damage))
 import LordOfTheRings.Trait (Trait (Battleground))
 
--- | The Battleground location in play with the lowest threat.
--- ponytail: the first of any tied, the players do not choose among them
-lowestThreatBattleground :: HasGame m => m (Maybe LocationId)
+-- | The Battleground locations in play with the lowest threat: one, or those tied, for the
+-- players to choose among.
+lowestThreatBattleground :: HasGame m => m [LocationId]
 lowestThreatBattleground = do
   threats <- traverse (\l -> (,l) <$> getLocationThreat l) =<< select (LocationWithTrait Battleground)
-  pure $ snd <$> headMay (sortOn fst threats)
+  let lowest = foldr (min . fst) maxBound threats
+  pure [l | (t, l) <- threats, t == lowest]
 
 -- | "Shadow: Deal 2 damage to the location if it is in play. Otherwise, attacking enemy
 -- gets +2 attack."
@@ -48,8 +53,15 @@ runBattleground stage msg attrs = case msg of
     attrs' <- runMessage msg attrs
     when (attrs'.damage >= fromMaybe 0 (cdQuestPoints $ toCardDef attrs)) $ removeFromGame attrs
     pure attrs'
-  -- ponytail: the Response always helps the players, so it is taken without asking
+  -- the Response is the first player's to take, if the stage is still in the quest deck
   AddToVictoryDisplay (isTarget attrs -> True) -> do
-    removeFromQuestDeck stage
+    able <- getsGame (any ((== cdCardCode stage) . toCardCode) . (.questDeck) . toAttrs . gameScenario)
+    when able do
+      lead <- getLead
+      chooseOneM lead do
+        questionLabeled "battleground.removeStage"
+        causedBy attrs
+        labeled "battleground.remove" $ removeFromQuestDeck stage
+        labeled "battleground.keep" $ pure ()
     runMessage msg attrs
   _ -> runMessage msg attrs

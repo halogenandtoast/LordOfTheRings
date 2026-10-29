@@ -151,6 +151,15 @@ spec = describe "Dwarves of Durin" do
       length <$> discardIds pid `shouldReturn` 2
       length <$> deckIds pid `shouldReturn` 1
 
+    it "shuffles nothing back when fewer than 3 cards were discarded (ruling)" . dodTest $ \pid -> do
+      _ <- setDeck pid [Attachments.cram, Attachments.cram]
+      prospector <- putAllyIntoPlay pid Allies.eredNimraisProspector
+      chooseAbilityOf pid prospector
+      length <$> discardIds pid `shouldReturn` 2
+      length <$> deckIds pid `shouldReturn` 0
+      -- not asked to choose one
+      isJust <$> getQuestion pid `shouldReturn` False
+
   describe "Hidden Cache" do
     it "adds 2 resources to a hero after it is discarded from your deck" . dodTest $ \pid -> do
       cache <- setDeck pid [Events.hiddenCache, Attachments.cram]

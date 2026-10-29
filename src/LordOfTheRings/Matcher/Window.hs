@@ -2,7 +2,7 @@ module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) wher
 
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, cardMatches)
-import LordOfTheRings.Modifier (ModifierType)
+import LordOfTheRings.Modifier (Modifier)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -44,8 +44,9 @@ data WindowMatcher
     EnemyWithTraitRevealedWindow Timing Trait
   | -- | any enemy engaged with any player, as Knees of the Mountain reads
     AnyEnemyEngagedWindow Timing
-  | -- | an enemy with the modifier engaged a player, as Goblin Gate's ambusher does
-    EnemyWithModifierEngagedWindow Timing ModifierType
+  | -- | an enemy with the modifier, from that source, engaged a player, as Goblin Gate's
+    -- ambusher does
+    EnemyWithModifierEngagedWindow Timing Modifier
   | TreacheryRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
@@ -149,8 +150,9 @@ data WindowMatcher
     HeroGainedResourcesWindow Timing PlayerId
   | -- | an encounter card with surge revealed from the encounter deck
     SurgeCardRevealedWindow Timing
-  | -- | a matching hero declared as a defender
-    HeroDefenderDeclaredWindow Timing HeroMatcher
+  | -- | a matching hero declared as a defender, while an enemy other than the attacker
+    -- matches
+    HeroDefenderDeclaredWindow Timing HeroMatcher EnemyMatcher
   | -- | any number of time counters removed from the card, or from any card
     TimeCountersRemovedWindow Timing (Maybe Target)
   | -- | any number of time counters removed from a quest stage, the current quest
@@ -246,7 +248,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
-  (CardPlayedWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
+  (CardPlayedWindow t m, PlayedCard _ code) -> t == timing && cardMatches m code
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
