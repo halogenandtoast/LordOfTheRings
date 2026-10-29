@@ -325,6 +325,11 @@ data ModifierType
   | -- | on a location in the staging area: progress is placed on it before it can be placed
     -- on the active location, as Grim Foothills reads
     TakesProgressBeforeActiveLocation
+  | -- | on the game: progress questing successfully would place on the quest is dealt as
+    -- damage to the enemy instead, as Ride Them Down reads
+    ProgressAsDamageTo Target
+  | -- | on a character: it was dealt damage while defending the attack being resolved
+    DamagedWhileDefending
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

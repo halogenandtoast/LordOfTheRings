@@ -165,6 +165,11 @@ data WindowMatcher
     AnyExploredWindow Timing
   | -- | the character destroyed
     TargetDestroyedWindow Timing Target
+  | -- | any encounter card revealed from the encounter deck, as Don't Be Hasty! answers
+    -- before its keywords and When Revealed effects resolve
+    EncounterCardRevealedWindow Timing
+  | -- | the character defended an attack, taking no damage while defending it
+    DefendedWithoutDamageWindow Timing Target
   | -- | a player card effect reduced any player's threat, as The Empty Mug reads
     ThreatReducedByPlayerCardWindow Timing
   | -- | the card entered the staging area, as Ruined Plaza reads
@@ -253,6 +258,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
   (AnyExploredWindow t, Explored _) -> t == timing
   (TargetDestroyedWindow t target, CharacterDestroyed target' _) -> t == timing && target == target'
+  (EncounterCardRevealedWindow t, Revealed _) -> t == timing
+  (DefendedWithoutDamageWindow t target, DefendedWithoutDamage target' _) -> t == timing && target == target'
   (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
   (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   (AdvancedToStageWindow t, AdvancedToStage) -> t == timing

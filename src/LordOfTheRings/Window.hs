@@ -110,6 +110,8 @@ data WindowType
     ThreatReduced PlayerId Source
   | -- | the players advanced to a quest stage, its When Revealed resolved
     AdvancedToStage
+  | -- | an attack the character defended has resolved, and it took no damage defending it
+    DefendedWithoutDamage Target EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

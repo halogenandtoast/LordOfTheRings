@@ -456,11 +456,13 @@ runGameMessage msg g = case msg of
     raising <- case source of
       EnemySource eid -> (\ms -> [pid | AttackDamageRaisesThreatOf pid <- ms]) <$> getModifiers eid
       _ -> pure []
+    defending <- elem Defending <$> getModifiers target
     pushAll
-      $ [ PlaceTokens source target Damage n
-        , CheckWindows [mkAfter $ DealtDamage target n]
-        , CheckDefeated target
-        ]
+      $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
+      <> [ PlaceTokens source target Damage n
+         , CheckWindows [mkAfter $ DealtDamage target n]
+         , CheckDefeated target
+         ]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
     pure g
   HealDamage source target n | n > 0 -> do
@@ -717,6 +719,7 @@ runGameMessage msg g = case msg of
       <> [ResolveShadow eid pid [defender]]
       <> windows
       <> [ AttackDamage eid defender
+         , AttackDefended pid eid [defender]
          , CheckWindows [mkAfter $ EnemyAttacking eid pid, mkAfter $ DefendedAttack defender eid]
          ]
       <> windows
@@ -765,6 +768,7 @@ runGameMessage msg g = case msg of
           <> [ResolveShadow eid pid chosen]
           <> windows
           <> [ DefendedByMany pid eid chosen
+             , AttackDefended pid eid chosen
              , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
              ]
           <> windows
@@ -1270,7 +1274,13 @@ runGameMessage msg g = case msg of
           _ -> do
             let (left, onLocations) = mapAccumL (\m (lid, _, room) -> let k = min m room in (m - k, place lid k)) n rooms
                 overflow = if all (\(_, remaining, room) -> room == remaining) rooms then left else 0
-            pushAll $ concat onLocations <> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
+            -- what would go to the quest may be damage to an enemy instead, as Ride Them Down reads
+            instead <- filter (inPlay g) . (\ms -> [t | ProgressAsDamageTo t <- ms]) <$> getModifiers GameTarget
+            pushAll
+              $ concat onLocations
+              <> case instead of
+                t : _ -> [DealDamage GameSource t overflow | overflow > 0]
+                [] -> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
         pure g
   PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do
@@ -1457,6 +1467,11 @@ runGameMessage msg g = case msg of
     let owner = (toAttrs a).owner
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer owner
     pure $ g & entitiesL . attachmentsL %~ Map.delete aid & playersL . ix owner . deckL .~ deck
+  -- just before the attack's After windows, while what lasted for it still does
+  AttackDefended _ eid defenders -> do
+    undamaged <- filterM (fmap (notElem DamagedWhileDefending) . getModifiers) defenders
+    pushWhen (notNull undamaged) $ CheckWindows [mkAfter $ DefendedWithoutDamage d eid | d <- undamaged]
+    pure g
   GiveFromHand giver cid receiver -> do
     let given = [c | c <- maybe [] (.hand) (Map.lookup giver g.players), c.id == cid]
     pure $ g & playersL . ix giver . handL %~ filter ((/= cid) . (.id)) & playersL . ix receiver . handL %~ (<> given)

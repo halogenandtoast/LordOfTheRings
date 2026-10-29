@@ -438,6 +438,9 @@ data Message
     GiveFromHand PlayerId CardId PlayerId
   | -- | a card in the player's hand is shuffled into its owner's deck
     ShuffleFromHandIntoOwnersDeck PlayerId CardId
+  | -- | the enemy's attack on the player has resolved, defended by these: a window for each
+    -- that took no damage defending it, before the attack's own After windows
+    AttackDefended PlayerId EnemyId [Target]
   | -- | a player card from out of play goes to its owner's hand, as one a Search takes
     PutInHand PlayerCard
   | -- | a card leaves the player's hand for out of play, as for To Catch an Orc's
