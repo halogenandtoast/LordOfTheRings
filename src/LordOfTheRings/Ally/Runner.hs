@@ -3,7 +3,6 @@
 module LordOfTheRings.Ally.Runner (module X) where
 
 import LordOfTheRings.Ally.Types as X
-import LordOfTheRings.Card.CardDef (HasCardDef (..))
 import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
@@ -25,7 +24,7 @@ instance RunMessage AllyAttrs where
       (attackingL .~ True) <$> exhausting (not spared) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
-      free <- doesNotExhaustToCommit (toTarget attrs) (toCardDef attrs)
+      free <- doesNotExhaustToCommit (toTarget attrs)
       (committedL .~ True) <$> exhausting (not free) attrs
     -- an ally put into play committed is aimed at by its card
     CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> pure $ attrs & exhaustedL .~ True & committedL .~ True

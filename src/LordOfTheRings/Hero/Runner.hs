@@ -2,7 +2,6 @@
 
 module LordOfTheRings.Hero.Runner (module X) where
 
-import LordOfTheRings.Card.CardDef (HasCardDef (..))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
@@ -42,7 +41,7 @@ instance RunMessage HeroAttrs where
       (attackingL .~ True) <$> exhausting (not spared) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
-      free <- doesNotExhaustToCommit (toTarget attrs) (toCardDef attrs)
+      free <- doesNotExhaustToCommit (toTarget attrs)
       (committedL .~ True) <$> exhausting (not free) attrs
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False

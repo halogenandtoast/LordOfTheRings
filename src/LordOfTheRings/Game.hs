@@ -1419,7 +1419,7 @@ runGameMessage msg g = case msg of
         barred = CannotCommitCharacters `elem` playerMods || (notNull toll && null player.hand)
         committable c = do
           mods <- getModifiers c
-          free <- doesNotExhaustToCommit c =<< characterCardDef c
+          free <- doesNotExhaustToCommit c
           pure $ CannotCommitToQuest `notElem` mods && (free || CannotExhaust `notElem` mods)
     characters <-
       if barred

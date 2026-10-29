@@ -210,9 +210,6 @@ data ModifierType
     DamageRedirectedTo Target
   | -- | on a character: it commits to the quest without exhausting
     DoesNotExhaustToCommit
-  | -- | on the game: characters with the trait commit to the quest without exhausting,
-    -- those that come into play or gain it later too
-    TraitDoesNotExhaustToCommit Trait
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
   | -- | on an encounter card: its When Revealed effect cannot be canceled
