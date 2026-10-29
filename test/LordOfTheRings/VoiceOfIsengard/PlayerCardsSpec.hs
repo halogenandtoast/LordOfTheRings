@@ -5,7 +5,8 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
-import LordOfTheRings.Helpers.Staging (getEnemyAttack)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
+import LordOfTheRings.Matcher (EnemyMatcher (..), select)
 import LordOfTheRings.Phase
 import TestImport
 
@@ -111,3 +112,20 @@ spec = describe "The Voice of Isengard player cards" do
       _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
       run $ DealShadowCard eid
       shadowRevealed eid `shouldReturn` []
+
+  describe "Saruman" do
+    it "puts a non-unique staging enemy out of play while he is in play" . voiTest $ \pid -> do
+      card <- genEncounterCard Enemies.blackForestBats
+      run $ AddToStaging card
+      eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+      threat0 <- getStagingThreat
+      was <- threat pid
+      saruman <- putAllyIntoPlay pid Allies.saruman
+      threat pid `shouldReturn` was + 3
+      chooseAbilityOf pid saruman
+      chooseTarget pid eid
+      getStagingThreat `shouldReturn` 0
+      select EnemyInStagingArea `shouldReturn` []
+      run $ Discard saruman
+      getStagingThreat `shouldReturn` threat0
+      select EnemyInStagingArea `shouldReturn` [eid]

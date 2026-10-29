@@ -857,5 +857,8 @@
   },
   "powerOfOrthanc": {
     "discard": "Power of Orthanc: you may choose a Condition attachment to discard"
+  },
+  "saruman": {
+    "choose": "Choose a non-unique enemy or location in the staging area to be out of play while Saruman is"
   }
 }

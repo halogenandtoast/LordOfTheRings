@@ -127,6 +127,7 @@ allAllyCards =
       , anborn
       , orthancGuard
       , isengardMessenger
+      , saruman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -866,4 +867,12 @@ isengardMessenger :: CardDef
 isengardMessenger =
   (ally "07005" "Isengard Messenger" Lore (StaticCost 2) 1 0 1 2)
     { cdCardTraits = setFromList [Isengard]
+    }
+
+saruman :: CardDef
+saruman =
+  (ally "07003" "Saruman" Neutral (StaticCost 3) 3 5 4 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Istari, Isengard]
+    , cdKeywords = setFromList [Doomed 3]
     }
