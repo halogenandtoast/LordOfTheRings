@@ -1219,7 +1219,9 @@ runGameMessage msg g = case msg of
     players <- getPlayerOrder
     if
       | willpower > threat ->
-          pushAll [PlaceProgressOnQuest (willpower - threat), CheckWindows [mkAfter QuestedSuccessfully]]
+          -- what questing successfully triggers resolves before the progress is placed
+          -- (FAQ 1.24), as The Hunt Begins' Forced effect
+          pushAll [CheckWindows [mkAfter QuestedSuccessfully], PlaceProgressOnQuest (willpower - threat)]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
