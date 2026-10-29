@@ -3,7 +3,6 @@ module LordOfTheRings.Enemy.Cards.DruadanElite (druadanElite) where
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheDruadanForest.Helpers (returnToStagingUnlessAnyPlayerPays)
-import LordOfTheRings.Sphere (Sphere (Neutral))
 
 newtype DruadanElite = DruadanElite EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities, HasModifiersFor)
@@ -19,7 +18,7 @@ instance RunMessage DruadanElite where
   runMessage msg e@(DruadanElite attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
-      spendGroupResources lead Neutral . length =<< getRemainingPlayers
+      discardGroupResources lead . length =<< getRemainingPlayers
       pure e
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       returnToStagingUnlessAnyPlayerPays attrs eid

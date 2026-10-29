@@ -367,6 +367,9 @@ data Message
   | DefendedByMany PlayerId EnemyId [Target]
   | -- | the players as a group spend resources of a sphere, from any of their heroes
     SpendGroupResources PlayerId Sphere Int
+  | -- | the players as a group discard resources from any of their heroes' pools, as
+    -- many as they can up to the number, as prowl reads: not spent, so any hero's go
+    DiscardGroupResources PlayerId Int
   | -- | spend resources of a sphere, at most 1 from each hero, from heroes not yet used
     SpendResourcesFromDistinctHeroes PlayerId Sphere Int [HeroId]
   | UndefendedAttack PlayerId EnemyId

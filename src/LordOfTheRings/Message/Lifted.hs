@@ -272,6 +272,11 @@ spendResources pid sphere n = push $ SpendResources pid sphere n
 spendGroupResources :: ReverseQueue m => PlayerId -> Sphere -> Int -> m ()
 spendGroupResources pid sphere n = push $ SpendGroupResources pid sphere n
 
+-- | The players as a group discard resources from their heroes' pools, the player
+-- picking from whose, as prowl reads.
+discardGroupResources :: ReverseQueue m => PlayerId -> Int -> m ()
+discardGroupResources pid n = push $ DiscardGroupResources pid n
+
 removeFromDiscard :: ReverseQueue m => PlayerId -> CardId -> m ()
 removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
 

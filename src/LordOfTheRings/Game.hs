@@ -1225,6 +1225,15 @@ runGameMessage msg g = case msg of
         | h <- payers
         ]
     pure g
+  DiscardGroupResources pid n | n > 0 -> do
+    heroes <- filter ((> 0) . (.resources)) <$> (traverse getHero =<< select AnyHero)
+    unless (null heroes)
+      $ push
+      $ questionLabel (ikeyWith "label.discardMore" [intVar "count" n]) pid
+      $ [ targetLabel h [RemoveTokens (PlayerSource pid) (toTarget h) Resource 1, DiscardGroupResources pid (n - 1)]
+        | h <- heroes
+        ]
+    pure g
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
     push $ case others of
@@ -1923,9 +1932,9 @@ runGameMessage msg g = case msg of
             , n > 0
             , p <- players
             ]
-        -- ponytail: prowl's resources are spent, so a hero barred from spending keeps
-        -- its own; no prowl encounter set shares a deck with such a card
-        prowl = [SpendGroupResources lead Neutral n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
+        -- the players as a group discard the resources from their heroes' pools (The
+        -- Drúadan Forest rules)
+        prowl = [DiscardGroupResources lead n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
