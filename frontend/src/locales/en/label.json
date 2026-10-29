@@ -1030,5 +1030,6 @@
   },
   "fellVoices": {
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
-  }
+  },
+  "chooseAreaToJoin": "Choose a player to join"
 }

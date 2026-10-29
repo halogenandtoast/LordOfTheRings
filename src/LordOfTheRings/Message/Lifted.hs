@@ -1080,3 +1080,17 @@ longer attacking the player (FAQ 3.072), so no window opens after it attacks him
 -}
 redirectAttack :: (ReverseQueue m, Targetable target) => EnemyId -> target -> m ()
 redirectAttack eid = push . RedirectAttack eid . toTarget
+
+{- | "Create your own staging area": the players split into areas of their own, one for
+each group, the first player's first. See 'LordOfTheRings.Game.Base.Separation'.
+-}
+separatePlayers :: ReverseQueue m => [[PlayerId]] -> m ()
+separatePlayers = push . SeparatePlayers
+
+-- | What follows resolves in the area holding the player, while the players are separated.
+focusAreaOf :: ReverseQueue m => PlayerId -> m ()
+focusAreaOf = push . FocusArea
+
+-- | The players of the area in focus join another area at the beginning of the travel phase.
+joinAnotherPlayer :: ReverseQueue m => m ()
+joinAnotherPlayer = push JoinAtTravel

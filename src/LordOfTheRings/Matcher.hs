@@ -256,8 +256,17 @@ passesUnique card
         [ selectNone $ AllyWithTitle card.name
         , selectNone $ HeroWithTitle card.name
         , getsGame $ all ((/= card.name) . cdName . toCardDef) . toList . (.entities.attachments)
+        , -- separated players still keep to it across their areas (FAQ 2.36)
+          getsGame $ all (notElem card.name . titles) . heldEntities
         ]
   | otherwise = pure True
+
+-- | The titles of the player cards in play.
+titles :: Entities -> [Name]
+titles es =
+  map (cdName . toCardDef) (toList es.heroes)
+    <> map (cdName . toCardDef) (toList es.allies)
+    <> map (cdName . toCardDef) (toList es.attachments)
 
 -- | Whether the character is defending the attack being resolved.
 isDefending :: HasGame m => Target -> m Bool
@@ -489,7 +498,9 @@ getLastPlayer = maybe getLead pure . lastMay =<< getRemainingPlayers
 -- | Players in turn order, starting with the first player.
 getPlayerOrder :: HasGame m => m [PlayerId]
 getPlayerOrder = do
-  order <- getsGame gamePlayerOrder
+  -- separated, only the players in the area in focus
+  present <- getsGame gamePlayers
+  order <- getsGame (filter (`Map.member` present) . gamePlayerOrder)
   firstPlayer <- getsGame gameFirstPlayer
   let (before, after) = break (== firstPlayer) order
   pure $ after <> before
