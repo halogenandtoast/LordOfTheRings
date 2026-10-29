@@ -73,6 +73,10 @@ capture pid = do
   chooseTarget pid hero
   pure (mugash, hero)
 
+-- | The window after questing successfully, then the progress it places, as the quest resolves.
+questSuccessfully :: Int -> GameT ()
+questSuccessfully n = push (PlaceProgressOnQuest n) >> run (CheckWindows [mkAfter QuestedSuccessfully])
+
 questOn :: CardDef -> GameT Target
 questOn def = do
   q <- putQuestStage def
@@ -187,13 +191,23 @@ spec = describe "To Catch an Orc" do
     prize <- genEncounterCard Quests.theWizardsPrize
     g <- getGame
     putGame $ g & scenarioL %~ overAttrs (questDeckL .~ [prize])
-    run $ CheckWindows [mkAfter QuestedSuccessfully]
+    questSuccessfully 2
     chooseAbilityOf pid q
     getTimeCounters q `shouldReturn` 3
+    (.progress) <$> getActiveQuest `shouldReturn` 0
     stage Enemies.mugashEnemy
-    run $ CheckWindows [mkAfter QuestedSuccessfully]
+    questSuccessfully 2
     chooseAbilityOf pid q
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theWizardsPrize
+
+  it "places no time counter on Searching for Mugash when the active location takes all the progress" . orcTest $ \pid -> do
+    q <- questOn Quests.searchingForMugash
+    stage Locations.orcCave
+    lid <- locationOf Locations.orcCave
+    run $ PlaceLocation lid ActiveLocation
+    questSuccessfully 1
+    chooseAbilityOf pid q
+    getTimeCounters q `shouldReturn` 2
 
   it "reveals 2 encounter cards per player once Searching for Mugash's last time counter goes" . orcTest $ \_ -> do
     q <- questOn Quests.searchingForMugash
