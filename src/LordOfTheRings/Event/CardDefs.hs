@@ -125,6 +125,25 @@ allEventCards =
       , childrenOfTheSea
       , wellEquipped
       , layOfNimrodel
+      , legacyOfNumenor
+      , deepKnowledge
+      , theWizardsVoice
+      , powerOfOrthanc
+      , theSeeingStone
+      , watersOfNimrodel
+      , swiftAndSilent
+      , noiselessMovement
+      , courageAwakened
+      , islandAmidPerils
+      , followMe
+      , shadowsGiveWay
+      , freeToChoose
+      , closeCall
+      , theWhiteCouncil
+      , messageFromElrond
+      , tightenOurBelts
+      , rideThemDown
+      , dontBeHasty
       ]
 
 everVigilant :: CardDef
@@ -471,3 +490,68 @@ wellEquipped = event "06116" "Well-Equipped" Neutral (StaticCost 0)
 
 layOfNimrodel :: CardDef
 layOfNimrodel = (event "06140" "Lay of Nimrodel" Spirit (StaticCost 1)) {cdCardTraits = setFromList [Song]}
+
+legacyOfNumenor :: CardDef
+legacyOfNumenor = (event "07011" "Legacy of Númenor" Leadership (StaticCost 0)) {cdKeywords = setFromList [Doomed 4]}
+
+deepKnowledge :: CardDef
+deepKnowledge = (event "07012" "Deep Knowledge" Lore (StaticCost 0)) {cdKeywords = setFromList [Doomed 2]}
+
+theWizardsVoice :: CardDef
+theWizardsVoice =
+  (event "07013" "The Wizards's Voice" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Spell]
+    , cdKeywords = setFromList [Doomed 3]
+    }
+
+powerOfOrthanc :: CardDef
+powerOfOrthanc =
+  (event "07014" "Power of Orthanc" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Spell]
+    , cdKeywords = setFromList [Doomed 2]
+    }
+
+theSeeingStone :: CardDef
+theSeeingStone = (event "07015" "The Seeing-stone" Neutral (StaticCost 0)) {cdKeywords = setFromList [Doomed 1]}
+
+watersOfNimrodel :: CardDef
+watersOfNimrodel = (event "08145" "Waters of Nimrodel" Lore (StaticCost 3)) {cdKeywords = setFromList [Doomed 3]}
+
+swiftAndSilent :: CardDef
+swiftAndSilent = event "08003" "Swift and Silent" Leadership (StaticCost 1)
+
+noiselessMovement :: CardDef
+noiselessMovement = event "08033" "Noiseless Movement" Lore (StaticCost 1)
+
+courageAwakened :: CardDef
+courageAwakened = event "08061" "Courage Awakened" Spirit (StaticCost 1)
+
+islandAmidPerils :: CardDef
+islandAmidPerils = event "08090" "Island Amid Perils" Spirit (StaticCost 0)
+
+followMe :: CardDef
+followMe = event "08085" "Follow Me!" Leadership (StaticCost 1)
+
+shadowsGiveWay :: CardDef
+shadowsGiveWay = (event "08143" "Shadows Give Way" Spirit (StaticCost 3)) {cdDistinctPayers = Just 3}
+
+freeToChoose :: CardDef
+freeToChoose = event "08062" "Free to Choose" Spirit (StaticCost 0)
+
+closeCall :: CardDef
+closeCall = (event "08005" "Close Call" Tactics (StaticCost 0)) {cdKeywords = setFromList [Doomed 0]}
+
+theWhiteCouncil :: CardDef
+theWhiteCouncil = event "08010" "The White Council" Neutral (StaticCost 0)
+
+messageFromElrond :: CardDef
+messageFromElrond = event "08032" "Message from Elrond" Lore (StaticCost 0)
+
+tightenOurBelts :: CardDef
+tightenOurBelts = event "08086" "Tighten Our Belts" Leadership (StaticCost 0)
+
+rideThemDown :: CardDef
+rideThemDown = event "08142" "Ride Them Down" Spirit (StaticCost 2)
+
+dontBeHasty :: CardDef
+dontBeHasty = event "08144" "Don't Be Hasty!" Lore (StaticCost 0)

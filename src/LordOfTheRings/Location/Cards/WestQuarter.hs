@@ -23,6 +23,9 @@ instance HasModifiersFor WestQuarter where
 instance RunMessage WestQuarter where
   runMessage msg l@(WestQuarter a) = case msg of
     ResolveShadowEffect cid eid _ _ | cid == a.cardId -> do
-      destroyingReturnsLocation a eid
+      ifThisAttackDestroys eid msg
+      pure l
+    DoStep 1 (ResolveShadowEffect cid eid _ _) | cid == a.cardId -> do
+      destroyedReturnLocations a eid
       pure l
     _ -> WestQuarter <$> runMessage msg a

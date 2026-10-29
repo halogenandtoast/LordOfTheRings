@@ -34,7 +34,7 @@ instance RunMessage TheSeethingLake where
       shuffleEncounterDiscardIntoDeck (CardWithTrait Tentacle)
       pure q
     -- The Watcher destroyed goes to the victory display
-    Destroy (EnemyTarget _) -> do
+    Destroy _ (EnemyTarget _) -> do
       checkStage attrs.id
       TheSeethingLake <$> runConditionalStage condition msg attrs
     _ -> TheSeethingLake <$> runConditionalStage condition msg attrs

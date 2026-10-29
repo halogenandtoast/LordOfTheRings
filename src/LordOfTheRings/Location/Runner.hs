@@ -8,7 +8,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, questPointsOf)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (ImmuneToCardEffects, ImmuneToPlayerCardEffects, NoProgressFromPlayerCards))
+import LordOfTheRings.Modifier (ModifierType (ImmuneToCardEffects, ImmuneToPlayerCardEffects, NoProgressFromPlayerCards, ProgressLimit))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -32,6 +32,8 @@ instance RunMessage LocationAttrs where
             if isJust (cdVictoryPoints $ toCardDef attrs)
               then AddToVictoryDisplay (toTarget attrs)
               else Discard (toTarget attrs)
+          , -- after it is explored, as Idraen answers
+            CheckWindows [mkAfter $ Explored attrs.id]
           ]
       pure attrs'
     RemoveTokens _ (isTarget attrs -> True) token n -> do
@@ -43,7 +45,11 @@ instance RunMessage LocationAttrs where
       let barred = case msg of
             PlaceTokens _ _ Progress _ -> NoProgressFromPlayerCards `elem` mods
             _ -> False
-          immune = ImmuneToCardEffects `elem` mods || (isPlayerCardSource source && (ImmuneToPlayerCardEffects `elem` mods || barred))
+          -- no card places progress on a location that takes no more, as Broken Lands bars it
+          noMore = case msg of
+            PlaceTokens _ _ Progress _ -> ProgressLimit 0 `elem` mods
+            _ -> False
+          immune = ImmuneToCardEffects `elem` mods || noMore || (isPlayerCardSource source && (ImmuneToPlayerCardEffects `elem` mods || barred))
       -- the message again, from a source the guard lets by
       if immune then pure attrs else runMessage (asGame msg) attrs
     asGame = \case

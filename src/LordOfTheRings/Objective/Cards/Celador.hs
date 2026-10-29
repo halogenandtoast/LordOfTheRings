@@ -32,7 +32,7 @@ instance RunMessage Celador where
     UseCardAbility _ (isSource attrs -> True) _ _ -> do
       dealDamage attrs attrs 1
       pure o
-    Destroy (isTarget attrs -> True) -> do
+    Destroy _ (isTarget attrs -> True) -> do
       removeFromEncounterDiscard $ MkEncounterCard attrs.cardId (toCardCode attrs)
       pure o
     _ -> Celador <$> runMessage msg attrs

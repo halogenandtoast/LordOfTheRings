@@ -23,13 +23,13 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Name
 import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveTokens))
 import LordOfTheRings.Placement
-import LordOfTheRings.Quest.Types (QuestAttrs (questOwner))
+import LordOfTheRings.Quest.Types (QuestAttrs (questOwner, questTokens))
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
-import LordOfTheRings.Source (Source)
+import LordOfTheRings.Source (Source (EnemyAttackSource))
 import LordOfTheRings.Target
-import LordOfTheRings.Token (Token (Damage, Resource), countTokens)
+import LordOfTheRings.Token (Token (Damage, Resource, TimeCounter), Tokens, countTokens)
 import LordOfTheRings.Trait
 
 instance Query PlayerMatcher where
@@ -165,13 +165,14 @@ matchAlly matcher ally = case matcher of
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms
   AllyMatchAny ms -> anyM (`matchAlly` ally) ms
+  ObjectiveAlly -> pure $ cdCardType (toCardDef ally) == ObjectiveAllyType
 
 instance Query EnemyMatcher where
   type QueryElement EnemyMatcher = EnemyId
   select matcher = do
     -- an enemy attached to a character, as Grasping Tentacle becomes, is an attachment
     enemies <- getsGame (filter (not . attached . (.placement)) . toList . entitiesEnemies . gameEntities)
-    map toId <$> filterM (matchEnemy matcher) enemies
+    map toId <$> filterM (\e -> andM [notOutOfPlay (toTarget e), matchEnemy matcher e]) enemies
    where
     attached = \case
       AttachedTo _ -> True
@@ -208,7 +209,7 @@ instance Query LocationMatcher where
   type QueryElement LocationMatcher = LocationId
   select matcher = do
     locations <- getsGame (toList . entitiesLocations . gameEntities)
-    map toId <$> filterM (matchLocation matcher) locations
+    map toId <$> filterM (\l -> andM [notOutOfPlay (toTarget l), matchLocation matcher l]) locations
 
 matchLocation :: HasGame m => LocationMatcher -> Location -> m Bool
 matchLocation matcher location = case matcher of
@@ -225,6 +226,10 @@ matchLocation matcher location = case matcher of
   LocationControlledBy pm -> case location.placement of
     InPlayArea pid -> elem pid <$> select pm
     _ -> pure False
+
+-- | Not considered out of play, as Saruman's chosen card is.
+notOutOfPlay :: HasGame m => Target -> m Bool
+notOutOfPlay t = notElem ConsideredOutOfPlay . map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
 
 immuneToPlayerCards :: HasGame m => Target -> m Bool
 immuneToPlayerCards t =
@@ -348,12 +353,49 @@ hasKeyword k target def = do
   -- Arkham applies removes after adds
   pure $ LoseKeyword k `notElem` mods && (GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods))
 
+-- | A keyword's value on the card, printed or gained, as an X a card computes reads.
+keywordValue :: HasGame m => (Keyword -> Maybe Int) -> Target -> CardDef -> m Int
+keywordValue value target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  let printed = [n | Blank `notElem` mods, Just n <- map value (toList (cdKeywords def))]
+  pure $ sum $ printed <> [n | GainKeyword k <- mods, Just n <- [value k]]
+
 -- | The archery the card has, printed or gained, as Archery X reads.
 getArchery :: HasGame m => Target -> CardDef -> m Int
-getArchery target def = do
-  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  let printed = [n | Blank `notElem` mods, Archery n <- toList (cdKeywords def)]
-  pure $ sum $ printed <> [n | GainKeyword (Archery n) <- mods]
+getArchery = keywordValue \case Archery n -> Just n; _ -> Nothing
+
+-- | The quest stage, location or enemy in play, as its card and its tokens.
+timeCard :: Entities -> Target -> Maybe (CardDef, Tokens)
+timeCard es = \case
+  QuestTarget qid -> (\q -> (toCardDef q, questTokens $ toAttrs q)) <$> Map.lookup qid es.quests
+  LocationTarget lid -> (\l -> (toCardDef l, locationTokens $ toAttrs l)) <$> Map.lookup lid es.locations
+  EnemyTarget eid -> (\e -> (toCardDef e, enemyTokens $ toAttrs e)) <$> Map.lookup eid es.enemies
+  _ -> Nothing
+
+-- | The time counters on the card.
+timeCountersIn :: Entities -> Target -> Int
+timeCountersIn es = maybe 0 (countTokens TimeCounter . snd) . timeCard es
+
+getTimeCounters :: HasGame m => Target -> m Int
+getTimeCounters t = getsGame ((`timeCountersIn` t) . gameEntities)
+
+-- | Whether a time counter can be removed from the card: it has one, and nothing bars it, as
+-- an "either ... or remove 1 time counter" choice asks.
+canRemoveTimeCounter :: HasGame m => Target -> m Bool
+canRemoveTimeCounter t = do
+  mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+  (&& CannotRemoveTimeCounters `notElem` mods) . (> 0) <$> getTimeCounters t
+
+canRemoveTimeCounterFromCurrentQuest :: HasGame m => m Bool
+canRemoveTimeCounterFromCurrentQuest = maybe (pure False) canRemoveTimeCounter =<< getCurrentQuest
+
+{- | The card's Time X value, printed or gained (a computed X is a 'GainKeyword' of 'Time'
+the card gives itself, as Archery X): 0 for a card without it.
+-}
+getTimeX :: HasGame m => Target -> m Int
+getTimeX t =
+  getsGame ((`timeCard` t) . gameEntities)
+    >>= maybe (pure 0) (keywordValue (\case Time n -> Just n; _ -> Nothing) t . fst)
 
 -- | The archery of every card in play, the current quest's too, and any bonus, which the players deal
 -- among the characters in play as the combat phase begins.
@@ -446,6 +488,23 @@ getAttachmentsOn host =
         . entitiesAttachments
         . gameEntities
     )
+
+{- | The characters the enemy's attack destroyed, as "if this attack destroys a character"
+reads: while the attack resolves, and once it is over until the enemy attacks again. Only
+those its damage destroyed count, as the attacking character's damage must destroy an
+enemy for Foe-hammer (FAQ): not one its shadow card's damage destroyed, a card effect, nor
+one that left play another way during the attack.
+-}
+attackDestroyed :: HasGame m => EnemyId -> m [AttackDestroyed]
+attackDestroyed eid = getsGame (filter ((== EnemyAttackSource eid) . attackDestroyedBy) . gameAttackDestroyed)
+
+-- | Whether the enemy's attack destroyed a character: see 'attackDestroyed'.
+attackDestroyedACharacter :: HasGame m => EnemyId -> m Bool
+attackDestroyedACharacter = fmap notNull . attackDestroyed
+
+-- | The allies the enemy's attack destroyed: see 'attackDestroyed'.
+attackDestroyedAllies :: HasGame m => EnemyId -> m [AttackDestroyed]
+attackDestroyedAllies = fmap (filter \d -> case d.target of AllyTarget _ -> True; _ -> False) . attackDestroyed
 
 -- | The player who controls the character, if it is one.
 characterController :: HasGame m => Target -> m (Maybe PlayerId)

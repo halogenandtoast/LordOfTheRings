@@ -14,9 +14,13 @@ export interface CardView {
   hitPoints: number | null
   willpower: number | null
   resources: number | null
+  /** Time counters (Time X): resource tokens that are not resources. */
+  time?: number | null
   damage: number
   exhausted: boolean
   committed: boolean
+  /** Considered out of play though on the table, as the card Saruman chooses. */
+  outOfPlay?: boolean
   progress: number | null
   questPoints: number | null
   /** The spheres of its resource icons: its own, then any it has gained. */

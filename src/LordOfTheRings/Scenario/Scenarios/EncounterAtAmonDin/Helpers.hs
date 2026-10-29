@@ -14,10 +14,8 @@ module LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (
   rescuedVillagerCount,
   discardVillagers,
   discardRescuedVillagers,
-  villagerShadow,
   villagerDies,
   alcaronMayRedirect,
-  afterAttackIfDestroyed,
 ) where
 
 import Data.Map.Strict qualified as Map
@@ -27,7 +25,6 @@ import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Entities (entitiesLocations, entitiesObjectives, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities)
-import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Types (LocationAttrs, locationTokens, tokensL)
 import LordOfTheRings.Matcher
@@ -37,7 +34,6 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Objective.Types (objectiveTokens)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Types (questTokens)
-import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -97,21 +93,3 @@ alcaronMayRedirect =
   (&&)
     <$> selectAny (AllyWithCardCode (toCardCode Objectives.lordAlcaron) <> ReadyAlly)
     <*> selectAny AnyLocation
-
-{- | Once the enemy's attack has resolved, if any of the characters it could destroy has
-left play, as "if this attack destroys a character" reads.
--- ponytail: a character that left play during the attack another way counts as destroyed
--}
-afterAttackIfDestroyed :: EnemyId -> [Target] -> QueueT Message GameT () -> QueueT Message GameT ()
-afterAttackIfDestroyed eid characters action = do
-  msgs <- lift $ capture action
-  afterAttack eid [IfAnyLeftPlay characters msgs]
-
-{- | "Shadow: If this attack destroys a character, discard 1 villager token from Rescued
-Villagers.": the characters it could destroy are its defenders, or, undefended, the
-heroes of the player it attacks.
--}
-villagerShadow :: Sourceable source => source -> EnemyId -> PlayerId -> [Target] -> QueueT Message GameT ()
-villagerShadow source eid pid defenders = do
-  characters <- if null defenders then map toTarget <$> select (HeroControlledBy $ PlayerWithId pid) else pure defenders
-  afterAttackIfDestroyed eid characters $ discardRescuedVillagers source 1

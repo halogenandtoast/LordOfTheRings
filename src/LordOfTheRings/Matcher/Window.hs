@@ -151,6 +151,33 @@ data WindowMatcher
     SurgeCardRevealedWindow Timing
   | -- | a matching hero declared as a defender
     HeroDefenderDeclaredWindow Timing HeroMatcher
+  | -- | any number of time counters removed from the card, or from any card
+    TimeCountersRemovedWindow Timing (Maybe Target)
+  | -- | any number of time counters removed from a quest stage, the current quest
+    TimeCountersRemovedFromQuestWindow Timing
+  | -- | the last time counter removed from the card
+    LastTimeCounterRemovedWindow Timing Target
+  | -- | the player raised his threat from the Doomed keyword
+    ThreatRaisedByDoomedWindow Timing PlayerId
+  | -- | the player, or any player, drew any number of cards
+    DrewCardsWindow Timing (Maybe PlayerId)
+  | -- | any location explored
+    AnyExploredWindow Timing
+  | -- | the character destroyed
+    TargetDestroyedWindow Timing Target
+  | -- | any encounter card revealed from the encounter deck, as Don't Be Hasty! answers
+    -- before its keywords and When Revealed effects resolve
+    EncounterCardRevealedWindow Timing
+  | -- | the character defended an attack, taking no damage while defending it
+    DefendedWithoutDamageWindow Timing Target
+  | -- | a player card effect reduced any player's threat, as The Empty Mug reads
+    ThreatReducedByPlayerCardWindow Timing
+  | -- | the card entered the staging area, as Ruined Plaza reads
+    CardEntersStagingAreaWindow Timing Target
+  | -- | the players advanced to a quest stage, as Fen of Reeds reads
+    AdvancedToStageWindow Timing
+  | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
+    MatchingEnemyAttacksWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -214,7 +241,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDealtDamageWindow t, DealtDamage (HeroTarget _) _) -> t == timing
   (LeftPlayWindow t target, LeftPlay target' _ _) -> t == timing && target == target'
   (AttackedAloneWithExcessWindow t target, AttackedAlone target' _ n) -> t == timing && target == target' && n > 0
-  (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid') -> t == timing && pid == pid'
+  (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid' _) -> t == timing && pid == pid'
   (OtherPlayerRaisedThreatWindow t pid, ThreatRaised pid') -> t == timing && pid /= pid'
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
@@ -224,6 +251,18 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
   (CharacterDestroyedByAttackWindow t who, CharacterDestroyedByAttack eid _ _) -> t == timing && maybe True (== eid) who
+  (TimeCountersRemovedWindow t who, TimeCountersRemoved target _) -> t == timing && maybe True (== target) who
+  (TimeCountersRemovedFromQuestWindow t, TimeCountersRemoved (QuestTarget _) _) -> t == timing
+  (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'
+  (ThreatRaisedByDoomedWindow t pid, ThreatRaisedByDoomed pid') -> t == timing && pid == pid'
+  (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
+  (AnyExploredWindow t, Explored _) -> t == timing
+  (TargetDestroyedWindow t target, CharacterDestroyed target' _) -> t == timing && target == target'
+  (EncounterCardRevealedWindow t, Revealed _) -> t == timing
+  (DefendedWithoutDamageWindow t target, DefendedWithoutDamage target' _) -> t == timing && target == target'
+  (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
+  (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
+  (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -241,4 +280,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (SurgeCardRevealedWindow {}, _) -> False
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
+  (MatchingEnemyAttacksWindow {}, _) -> False
   _ -> False

@@ -2,6 +2,10 @@ module LordOfTheRings.PlanningPhaseSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
+import LordOfTheRings.Keyword (Keyword (Doomed))
+import LordOfTheRings.Matcher (CardMatcher (AnyCard))
+import LordOfTheRings.Modifier (ModifierType (GainKeyword, LowerNextCostOf, NextCardGainsDoomed))
 import LordOfTheRings.Phase
 import TestImport
 
@@ -32,3 +36,23 @@ spec = describe "Planning phase" do
     run $ BeginPhase PlanningPhase
     question <- getQuestion pid
     [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget card)
+
+  describe "Doomed" do
+    let threat pid = (.threat) <$> getPlayer pid
+
+    it "raises each player's threat by what a card gained as it is played" . gameTest $ \pid -> do
+      card <- putCardIntoHand pid Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource (CardIdTarget card.id) [GainKeyword (Doomed 2)] UntilEndOfRound
+      theodred <- getHeroWithCode "01002"
+      run $ PlaceTokens GameSource (toTarget theodred) Resource 2
+      was <- threat pid
+      run $ BeginPhase PlanningPhase
+      chooseTarget pid (CardIdTarget card.id)
+      threat pid `shouldReturn` was + 2
+
+    it "gives the next card played from hand the Doomed of a spent effect, as Gríma's" . gameTest $ \pid -> do
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [LowerNextCostOf AnyCard 1, NextCardGainsDoomed 1] UntilEndOfRound
+      was <- threat pid
+      _ <- playWith pid "01002" 1 Allies.guardOfTheCitadel
+      threat pid `shouldReturn` was + 1
+      getsGame (filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` []

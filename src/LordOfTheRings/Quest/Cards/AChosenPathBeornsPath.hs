@@ -34,6 +34,6 @@ instance RunMessage AChosenPathBeornsPath where
    where
     spawn = EnemyWithCardCode (toCardCode Enemies.ungoliantsSpawn)
     spawnLeaving = \case
-      Destroy (EnemyTarget eid) -> Just eid
+      Destroy _ (EnemyTarget eid) -> Just eid
       Discard (EnemyTarget eid) -> Just eid
       _ -> Nothing

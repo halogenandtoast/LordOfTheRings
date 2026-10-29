@@ -109,6 +109,36 @@ import LordOfTheRings.Treachery.Cards.CounterAttack
 import LordOfTheRings.Treachery.Cards.LyingInWait
 import LordOfTheRings.Treachery.Cards.MordorLooms
 import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
+import LordOfTheRings.Treachery.Cards.OrcTerritory
+import LordOfTheRings.Treachery.Cards.TheForestsMalice
+import LordOfTheRings.Treachery.Cards.PillagingAndBurning
+import LordOfTheRings.Treachery.Cards.DownFromTheHills
+import LordOfTheRings.Treachery.Cards.IllTidings
+import LordOfTheRings.Treachery.Cards.OrcHuntingParty
+import LordOfTheRings.Treachery.Cards.OldHatreds
+import LordOfTheRings.Treachery.Cards.WildMenOfDunland
+import LordOfTheRings.Treachery.Cards.TurnedAround
+import LordOfTheRings.Treachery.Cards.TakeCover
+import LordOfTheRings.Treachery.Cards.LowOnProvisions
+import LordOfTheRings.Treachery.Cards.OffTrack
+import LordOfTheRings.Treachery.Cards.InNeedOfRest
+import LordOfTheRings.Treachery.Cards.RaisingTheCry
+import LordOfTheRings.Treachery.Cards.FierceFolk
+import LordOfTheRings.Treachery.Cards.DrivenBack
+import LordOfTheRings.Treachery.Cards.FrenziedAttack
+import LordOfTheRings.Treachery.Cards.DunlendingAmbush
+import LordOfTheRings.Treachery.Cards.ConstantTail
+import LordOfTheRings.Treachery.Cards.ConspicuousLot
+import LordOfTheRings.Treachery.Cards.Cornered
+import LordOfTheRings.Treachery.Cards.GetThatDwarf
+import LordOfTheRings.Treachery.Cards.Discovered
+import LordOfTheRings.Treachery.Cards.DesecratedRuins
+import LordOfTheRings.Treachery.Cards.SpiesFromMordor
+import LordOfTheRings.Treachery.Cards.ShiftingMarshland
+import LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
+import LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
+import LordOfTheRings.Treachery.Cards.TheGuardiansFury
+import LordOfTheRings.Treachery.Cards.WildTenacity
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -242,5 +272,35 @@ allTreacherys =
         , SomeTreacheryCard lyingInWait
         , SomeTreacheryCard mordorLooms
         , SomeTreacheryCard conflictAtTheCrossroads
+        , SomeTreacheryCard orcTerritory
+        , SomeTreacheryCard theForestsMalice
+        , SomeTreacheryCard pillagingAndBurning
+        , SomeTreacheryCard downFromTheHills
+        , SomeTreacheryCard illTidings
+        , SomeTreacheryCard orcHuntingParty
+        , SomeTreacheryCard oldHatreds
+        , SomeTreacheryCard wildMenOfDunland
+        , SomeTreacheryCard turnedAround
+        , SomeTreacheryCard takeCover
+        , SomeTreacheryCard lowOnProvisions
+        , SomeTreacheryCard offTrack
+        , SomeTreacheryCard inNeedOfRest
+        , SomeTreacheryCard raisingTheCry
+        , SomeTreacheryCard fierceFolk
+        , SomeTreacheryCard drivenBack
+        , SomeTreacheryCard frenziedAttack
+        , SomeTreacheryCard dunlendingAmbush
+        , SomeTreacheryCard constantTail
+        , SomeTreacheryCard conspicuousLot
+        , SomeTreacheryCard cornered
+        , SomeTreacheryCard getThatDwarf
+        , SomeTreacheryCard discovered
+        , SomeTreacheryCard desecratedRuins
+        , SomeTreacheryCard spiesFromMordor
+        , SomeTreacheryCard shiftingMarshland
+        , SomeTreacheryCard remnantsOfElderDays
+        , SomeTreacheryCard curseOfTheWildMen
+        , SomeTreacheryCard theGuardiansFury
+        , SomeTreacheryCard wildTenacity
         ]
     ]

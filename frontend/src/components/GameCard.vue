@@ -122,7 +122,7 @@ const toggleUnless = (attached: CardView) => {
       <div
         ref="cardRef"
         class="card"
-        :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, flipping }"
+        :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, flipping }"
         :style="{ viewTransitionName: `card-${card.id}` }"
         :title="tr(card.name)"
         :data-card-id="card.id"
@@ -140,6 +140,8 @@ const toggleUnless = (attached: CardView) => {
         <!-- inside the card so it travels in the card's view transition snapshot -->
         <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
         <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
+        <span v-if="card.time" class="token time">{{ card.time }}</span>
+        <span v-if="card.outOfPlay" class="out-of-play-label">{{ $t('game.outOfPlay') }}</span>
         <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
         <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
           <span class="versus">
@@ -382,6 +384,21 @@ const toggleUnless = (attached: CardView) => {
   from { opacity: 0; translate: 0 -60%; scale: 1.6; }
   to { opacity: 1; translate: 0 0; scale: 1; }
 }
+/* considered out of play though still on the table, as the card Saruman chooses */
+.card.out-of-play img { filter: grayscale(1) brightness(0.55); }
+.out-of-play-label {
+  z-index: 3;
+  grid-area: 1 / 1;
+  place-self: center;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgb(20 16 10 / 0.88);
+  color: var(--cream);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 /* hovering a defender, near its top: its defense and the damage it would take, before
    shadow effects */
 .defend-preview {
@@ -438,6 +455,8 @@ const toggleUnless = (attached: CardView) => {
 .attack-progress .track > span { flex: none; background: var(--fill); transition: flex-basis 0.2s ease; }
 .attack-progress .adding { opacity: 0.45; }
 .progress { background-image: url('/images/tokens/progress.png'); place-self: center; }
+/* time counters are resource tokens, kept apart from the card's resources */
+.time { background-image: url('/images/tokens/resource.png'); place-self: end start; }
 .damage { background-image: url('/images/tokens/damage.png'); place-self: start end; }
 /* under the damage token, the hit points left */
 .health-left {

@@ -184,6 +184,59 @@ spec = describe "The Morgul Vale" do
     takeUndefended pid "01007"
     towerProgress `shouldReturn` 1
 
+  -- "If this attack destroys a character" counts only a character the attack's own damage
+  -- destroys: see 'attackDestroyed'
+  it "places progress with Morgul Vale's shadow once its attack's damage destroys the defender" . valeTest $ \pid -> do
+    _ <- tower
+    tracker <- staged Enemies.morgulTracker
+    run $ EngageEnemy pid tracker
+    scout <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    run $ PlaceTokens GameSource scout Damage 1
+    _ <- setEncounterDeck [Locations.morgulVale]
+    run $ DealShadowCard tracker
+    run $ EnemyAttack pid tracker
+    passActions pid
+    chooseTarget pid scout
+    passActions pid
+    towerProgress `shouldReturn` 1
+
+  it "places no progress with Morgul Vale's shadow for a defender discarded some other way during the attack" . valeTest $ \pid -> do
+    _ <- tower
+    tracker <- staged Enemies.morgulTracker
+    run $ EngageEnemy pid tracker
+    scout <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    _ <- setEncounterDeck [Locations.morgulVale]
+    run $ DealShadowCard tracker
+    run $ EnemyAttack pid tracker
+    passActions pid
+    chooseTarget pid scout
+    -- the defender leaves play before the damage, which goes to a hero
+    runOnly $ Discard scout
+    passActions pid
+    chooseTarget pid . toTarget =<< getHeroWithCode "01002"
+    passActions pid
+    towerProgress `shouldReturn` 0
+
+  -- the FAQ's Foe-hammer ruling: destroying takes the attack's damage, from its strength; a
+  -- shadow effect's damage is the shadow card's effect, not the attack's
+  it "places no progress with Morgul Vale's shadow for a defender another shadow card's damage destroys" . valeTest $ \pid -> do
+    _ <- tower
+    tracker <- staged Enemies.morgulTracker
+    run $ EngageEnemy pid tracker
+    scout <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    run $ PlaceTokens GameSource scout Damage 1
+    _ <- setEncounterDeck [Locations.morgulVale, Treacheries.festeringWounds]
+    run $ DealShadowCard tracker
+    run $ DealShadowCard tracker
+    run $ EnemyAttack pid tracker
+    passActions pid
+    chooseTarget pid scout
+    passActions pid
+    chooseTarget pid . toTarget =<< getHeroWithCode "01002"
+    passActions pid
+    getsGame (any ((== scout) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+    towerProgress `shouldReturn` 0
+
   it "lets the defending player treat the attack as undefended with Morgul Sorcerer's shadow" . valeTest $ \pid -> do
     _ <- tower
     tracker <- staged Enemies.morgulTracker

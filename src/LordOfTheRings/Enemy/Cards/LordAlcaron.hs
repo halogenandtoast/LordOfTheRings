@@ -31,7 +31,6 @@ instance RunMessage LordAlcaron where
       , cid `notElem` attrs.enemyShadowRevealed
       , not (cdShadowEffect $ toCardDef card)
       , Just pid <- placementController attrs.placement -> do
-          again <- capture $ immediateAttack pid attrs.id
-          afterAttack attrs.id again
+          additionalAttack pid attrs.id
           LordAlcaron <$> runMessage msg attrs
     _ -> LordAlcaron <$> runMessage msg attrs

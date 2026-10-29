@@ -102,6 +102,15 @@ allAttachmentCards =
       , tomeOfAtanatar
       , poisonedStakes
       , scrollOfIsildur
+      , keysOfOrthanc
+      , silverLamp
+      , elvenMail
+      , cloakOfLorien
+      , leafBrooch
+      , defenderOfTheWest
+      , theFallOfGilGalad
+      , wardenOfArnor
+      , theDaysRising
       ]
 
 stewardOfGondor :: CardDef
@@ -691,4 +700,66 @@ scrollOfIsildur =
   (attachment "06142" "Scroll of Isildur" Lore (StaticCost 4))
     { cdUnique = True
     , cdCardTraits = setFromList [Record]
+    }
+
+keysOfOrthanc :: CardDef
+keysOfOrthanc =
+  (attachment "07010" "Keys of Orthanc" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Item]
+    }
+
+silverLamp :: CardDef
+silverLamp =
+  (attachment "07009" "Silver Lamp" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item]
+    }
+
+elvenMail :: CardDef
+elvenMail =
+  (attachment "08029" "Elven Mail" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Armor, Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+cloakOfLorien :: CardDef
+cloakOfLorien =
+  (attachment "08120" "Cloak of Lórien" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+leafBrooch :: CardDef
+leafBrooch =
+  (attachment "08034" "Leaf Brooch" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+defenderOfTheWest :: CardDef
+defenderOfTheWest =
+  (attachment "08093" "Defender of the West" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+theFallOfGilGalad :: CardDef
+theFallOfGilGalad =
+  (attachment "08007" "The Fall of Gil-Galad" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    , cdDeckLimit = 1
+    }
+
+wardenOfArnor :: CardDef
+wardenOfArnor =
+  (attachment "08031" "Warden of Arnor" Spirit (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+theDaysRising :: CardDef
+theDaysRising =
+  (attachment "08139" "The Day's Rising" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Song]
     }

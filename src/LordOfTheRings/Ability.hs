@@ -51,3 +51,8 @@ forced = ForcedAbility
 
 silent :: WindowMatcher -> AbilityType
 silent = SilentForcedAbility
+
+-- | After the last time counter is removed from the card, as nearly every Time X card's
+-- Forced reads.
+lastTimeCounterRemoved :: (Targetable a) => a -> WindowMatcher
+lastTimeCounterRemoved = LastTimeCounterRemovedWindow After . toTarget

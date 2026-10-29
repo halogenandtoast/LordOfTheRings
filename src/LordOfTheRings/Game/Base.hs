@@ -4,6 +4,7 @@ module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
+import LordOfTheRings.Card (Card)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Id
@@ -17,6 +18,7 @@ import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types
+import LordOfTheRings.Source (Source)
 import LordOfTheRings.Target
 
 data Game = Game
@@ -41,8 +43,34 @@ data Game = Game
   , gameLeftPlay :: Map AllyId Ally
   -- ^ Allies that just left play, kept until the window for their leaving closes so
   -- their own abilities can answer it.
+  , gameAttackDestroyed :: [AttackDestroyed]
+  -- ^ What attacks' damage destroyed: an enemy's attack's, kept until that enemy attacks
+  -- again, and a player's attack's on an enemy, until the attack has resolved.
   }
   deriving stock (Show, Generic)
+
+{- | A card an attack's damage destroyed, as "if this attack destroys a character" reads:
+the attack, as its damage's source ('EnemyAttackSource', or 'PlayerAttackSource' for an
+attack on an enemy), the card destroyed and who controlled it, and the card itself, for
+what reads it once it has left play (Desecrated Ruins, the ally's cost).
+-}
+data AttackDestroyed = AttackDestroyed
+  { attackDestroyedBy :: Source
+  , attackDestroyedTarget :: Target
+  , attackDestroyedController :: Maybe PlayerId
+  , attackDestroyedCard :: Card
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+instance HasField "target" AttackDestroyed Target where
+  getField = attackDestroyedTarget
+
+instance HasField "controller" AttackDestroyed (Maybe PlayerId) where
+  getField = attackDestroyedController
+
+instance HasField "card" AttackDestroyed Card where
+  getField = attackDestroyedCard
 
 makeLensesWith suffixedFields ''Game
 

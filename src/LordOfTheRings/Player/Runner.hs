@@ -23,12 +23,13 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, threatOf)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Secrecy))
+import LordOfTheRings.Keyword (Keyword (Doomed, Secrecy))
 import LordOfTheRings.Id (AllyId (..), PlayerId)
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Message.Lifted (raiseThreatFromDoomed)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -40,7 +41,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
-  WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  WindowType (CardsDrawn, DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
  )
 
@@ -78,7 +79,8 @@ instance RunMessage Player where
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
     BeginPhase ResourcePhase -> do
-      push $ DrawCards $ Drawing player.id 1
+      n <- fromMaybe 1 . headMay . mapMaybe (\case ResourcePhaseDraws k -> Just k; _ -> Nothing) <$> getModifiers player
+      pushWhen (n > 0) $ DrawCards $ Drawing player.id n
       pure player
     DrawCards drawing | drawing.player == player.id -> do
       blocked <- elem CannotDrawCards <$> getModifiers player
@@ -98,6 +100,7 @@ instance RunMessage Player where
         then pure player
         else do
           pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+          pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
           pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase)
@@ -137,7 +140,10 @@ instance RunMessage Player where
       pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case
-        PlayerCard card -> push $ PlayAlly pid card
+        PlayerCard card -> do
+          -- put into play, a card with Doomed raises each player's threat as one played does
+          raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef card)]
+          push $ PlayAlly pid card
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     -- attached without being played, as Plundered Armoury lets one be
@@ -182,6 +188,10 @@ instance RunMessage Player where
       let (moved, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ moved <> kept
     RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
+    -- a card placed underneath another leaves wherever its owner had it
+    PlaceUnderneath _ cards -> do
+      let gone c = c.id `elem` map (.id) cards
+      pure $ player & handL %~ filter (not . gone) & deckL %~ filter (not . gone) & discardL %~ filter (not . gone)
     ShuffleDiscardIntoDeck pid | pid == player.id -> do
       deck <- shuffleM (player.deck <> player.discard)
       pure $ player & deckL .~ deck & discardL .~ []
@@ -267,14 +277,16 @@ instance RunMessage Player where
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
     DiscardRandomFromHand pid n | pid == player.id -> do
-      (discarded, kept) <- splitAt n <$> shuffleM player.hand
-      pure $ player & handL .~ kept & discardL %~ (discarded <>)
+      discarded <- take n <$> shuffleM (discardableHand player)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
+    RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
-      let (discarded, kept) = partition ((== cid) . (.id)) player.hand
-      pure $ player & handL .~ kept & discardL %~ (discarded <>)
+      let discarded = filter ((== cid) . (.id)) (discardableHand player)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
     UseAbility pid ab _
       | pid == player.id

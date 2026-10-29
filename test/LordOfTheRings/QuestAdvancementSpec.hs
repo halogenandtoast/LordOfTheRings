@@ -100,7 +100,7 @@ spec = describe "Quest advancement" do
       resolveWhenRevealed pid
       chooseTarget pid spawnCard
       getsGame (.outcome) `shouldReturn` Nothing
-      run . Destroy . toTarget =<< spawn
+      run . Destroy GameSource . toTarget =<< spawn
       getsGame (.outcome) `shouldReturn` Just Won
 
   describe "Beorn's Path" do
@@ -114,7 +114,7 @@ spec = describe "Quest advancement" do
       completeQuest
       toCardCode <$> getActiveQuest `shouldReturn` "01122"
       getsGame (.outcome) `shouldReturn` Nothing
-      run . Destroy . toTarget =<< spawn
+      run . Destroy GameSource . toTarget =<< spawn
       getsGame (.outcome) `shouldReturn` Just Won
 
   it "wins the game when the final stage is completed" . gameTest $ \pid -> do

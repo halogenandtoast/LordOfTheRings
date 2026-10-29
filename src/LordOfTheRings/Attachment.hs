@@ -95,6 +95,15 @@ import LordOfTheRings.Attachment.Cards.Palantir
 import LordOfTheRings.Attachment.Cards.TomeOfAtanatar
 import LordOfTheRings.Attachment.Cards.PoisonedStakes
 import LordOfTheRings.Attachment.Cards.ScrollOfIsildur
+import LordOfTheRings.Attachment.Cards.KeysOfOrthanc
+import LordOfTheRings.Attachment.Cards.SilverLamp
+import LordOfTheRings.Attachment.Cards.ElvenMail
+import LordOfTheRings.Attachment.Cards.CloakOfLorien
+import LordOfTheRings.Attachment.Cards.LeafBrooch
+import LordOfTheRings.Attachment.Cards.DefenderOfTheWest
+import LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
+import LordOfTheRings.Attachment.Cards.WardenOfArnor
+import LordOfTheRings.Attachment.Cards.TheDaysRising
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -216,5 +225,14 @@ allAttachments =
         , SomeAttachmentCard tomeOfAtanatar
         , SomeAttachmentCard poisonedStakes
         , SomeAttachmentCard scrollOfIsildur
+        , SomeAttachmentCard keysOfOrthanc
+        , SomeAttachmentCard silverLamp
+        , SomeAttachmentCard elvenMail
+        , SomeAttachmentCard cloakOfLorien
+        , SomeAttachmentCard leafBrooch
+        , SomeAttachmentCard defenderOfTheWest
+        , SomeAttachmentCard theFallOfGilGalad
+        , SomeAttachmentCard wardenOfArnor
+        , SomeAttachmentCard theDaysRising
         ]
     ]

@@ -26,6 +26,6 @@ instance RunMessage EverMyHeartRises where
   runMessage msg s@(EverMyHeartRises a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       withHost a ready
-      lowerThreat pid 1
+      lowerThreatBy a pid 1
       pure s
     _ -> EverMyHeartRises <$> runMessage msg a

@@ -18,6 +18,6 @@ instance HasAbilities GaladrielsHandmaiden where
 instance RunMessage GaladrielsHandmaiden where
   runMessage msg s@(GaladrielsHandmaiden a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      choosePlayerM pid a \p -> lowerThreat p 1
+      choosePlayerM pid a \p -> lowerThreatBy a p 1
       pure s
     _ -> GaladrielsHandmaiden <$> runMessage msg a

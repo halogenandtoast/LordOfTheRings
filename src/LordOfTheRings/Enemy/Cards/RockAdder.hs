@@ -23,7 +23,7 @@ instance HasModifiersFor RockAdder where
 instance RunMessage RockAdder where
   runMessage msg e@(RockAdder attrs) = case msg of
     -- the damage is dealt, not canceled
-    DoStep 1 (DealDamage (EnemySource eid) _ n) | eid == attrs.id, n > 0 -> do
+    DoStep 1 (DealDamage (sourceEnemy -> Just eid) _ n) | eid == attrs.id, n > 0 -> do
       roundModifier attrs attrs DealtDamageThisRound
       RockAdder <$> runMessage msg attrs
     ResolveShadowEffect cid _ pid defenders | cid == attrs.cardId -> do

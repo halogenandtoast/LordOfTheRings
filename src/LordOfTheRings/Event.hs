@@ -114,6 +114,25 @@ import LordOfTheRings.Event.Cards.TheHammerStroke
 import LordOfTheRings.Event.Cards.ChildrenOfTheSea
 import LordOfTheRings.Event.Cards.WellEquipped
 import LordOfTheRings.Event.Cards.LayOfNimrodel
+import LordOfTheRings.Event.Cards.LegacyOfNumenor
+import LordOfTheRings.Event.Cards.DeepKnowledge
+import LordOfTheRings.Event.Cards.TheWizardsVoice
+import LordOfTheRings.Event.Cards.PowerOfOrthanc
+import LordOfTheRings.Event.Cards.TheSeeingStone
+import LordOfTheRings.Event.Cards.WatersOfNimrodel
+import LordOfTheRings.Event.Cards.SwiftAndSilent
+import LordOfTheRings.Event.Cards.NoiselessMovement
+import LordOfTheRings.Event.Cards.CourageAwakened
+import LordOfTheRings.Event.Cards.IslandAmidPerils
+import LordOfTheRings.Event.Cards.FollowMe
+import LordOfTheRings.Event.Cards.ShadowsGiveWay
+import LordOfTheRings.Event.Cards.FreeToChoose
+import LordOfTheRings.Event.Cards.CloseCall
+import LordOfTheRings.Event.Cards.TheWhiteCouncil
+import LordOfTheRings.Event.Cards.MessageFromElrond
+import LordOfTheRings.Event.Cards.TightenOurBelts
+import LordOfTheRings.Event.Cards.RideThemDown
+import LordOfTheRings.Event.Cards.DontBeHasty
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -241,5 +260,24 @@ allEvents =
         , SomeEventCard childrenOfTheSea
         , SomeEventCard wellEquipped
         , SomeEventCard layOfNimrodel
+        , SomeEventCard legacyOfNumenor
+        , SomeEventCard deepKnowledge
+        , SomeEventCard theWizardsVoice
+        , SomeEventCard powerOfOrthanc
+        , SomeEventCard theSeeingStone
+        , SomeEventCard watersOfNimrodel
+        , SomeEventCard swiftAndSilent
+        , SomeEventCard noiselessMovement
+        , SomeEventCard courageAwakened
+        , SomeEventCard islandAmidPerils
+        , SomeEventCard followMe
+        , SomeEventCard shadowsGiveWay
+        , SomeEventCard freeToChoose
+        , SomeEventCard closeCall
+        , SomeEventCard theWhiteCouncil
+        , SomeEventCard messageFromElrond
+        , SomeEventCard tightenOurBelts
+        , SomeEventCard rideThemDown
+        , SomeEventCard dontBeHasty
         ]
     ]

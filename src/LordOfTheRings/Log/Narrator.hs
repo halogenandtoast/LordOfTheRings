@@ -15,11 +15,13 @@ Three rules:
 -}
 module LordOfTheRings.Log.Narrator (narrationFor) where
 
+import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
+import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
@@ -27,7 +29,9 @@ import LordOfTheRings.Id
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
-import LordOfTheRings.Matcher (getArcheryTotal, getDamage)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getTimeCounters)
+import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -88,6 +92,8 @@ narrationFor = \case
   -- \* Threat
   RaiseThreat pid n | n > 0 -> Just $ threatChange "log.threatRaised" pid n (+ n)
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
+  ScenarioSpecific "tharbad.lowerElimination" _ ->
+    Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> (10 :: Int)]]
   EliminatePlayer pid -> Just do
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]
@@ -107,9 +113,12 @@ narrationFor = \case
       -- every hero's resource for the round says nothing the board does not
       Resource | source == GameSource && phase == ResourcePhase -> pure []
       Resource -> tokens "log.gainsResources"
+      -- damage placed on a location, as Celebrimbor's Secret's encounter cards place it
+      Damage | LocationTarget _ <- target -> tokens "log.damagePlaced"
       -- dealt with as damage, where the source is known
       Damage -> pure []
       Villager -> tokens "log.villagersPlaced"
+      TimeCounter -> tokens "log.timeCountersPlaced"
    where
     tokens key = whenRef target \t -> one $ mechanic [ikeyPart key ["target" ~> t, "count" ~> n]]
   RemoveTokens _ target token n | n > 0 -> case token of
@@ -117,11 +126,15 @@ narrationFor = \case
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]
     Damage -> Nothing
     Villager -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.villagersRemoved" ["target" ~> t, "count" ~> n]]
+    TimeCounter -> Just $ whenRef target \t -> do
+      barred <- elem CannotRemoveTimeCounters <$> getModifiers target
+      removed <- min n <$> getTimeCounters target
+      pure [mechanic [ikeyPart "log.timeCountersRemoved" ["target" ~> t, "count" ~> removed]] | removed > 0, not barred]
   -- what a card does to characters; elsewhere readying and exhausting are routine
   Ready target -> Just $ duringCard $ simply "log.readies" target
   Exhaust target -> Just $ duringCard $ simply "log.exhausts" target
   -- \* Leaving play
-  Destroy target -> Just $ whenRef target \t ->
+  Destroy _ target -> Just $ whenRef target \t ->
     -- a character going down is bad; an enemy going down is the point
     one
       $ toned (case target of EnemyTarget _ -> Good; _ -> Bad)
@@ -170,15 +183,12 @@ narrationFor = \case
     one $ mechanic [ikeyPart "log.turnsHiddenCardFaceup" ["player" ~> who, "card" ~> EncounterCard card]]
   DiscardHiddenCard pid card -> Just $ whenHidden pid card \who ->
     one $ mechanic [ikeyPart "log.discardsHiddenCard" ["player" ~> who, "card" ~> EncounterCard card]]
+  DrawTreacheryIntoHand pid tid -> Just $ whenRef (toTarget tid) \t -> do
+    who <- playerRefFor pid
+    one $ toned Bad $ mechanic [ikeyPart "log.drawsIntoHand" ["player" ~> who, "card" ~> t]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
-  RevealShadowCard eid cid -> Just $ whenRef (toTarget eid) \e -> do
-    mCard <-
-      getsGame (\g -> find ((== cid) . (.id)) . (.shadowCards) =<< Map.lookup eid g.entities.enemies)
-    pure
-      [ mechanic [ikeyPart key ["enemy" ~> e, "card" ~> EncounterCard card]]
-      | Just card <- [mCard]
-      , let key = if cdShadowEffect (toCardDef card) then "log.shadowRevealed" else "log.shadowRevealedNoEffect"
-      ]
+  RevealShadowCard eid cid -> Just $ shadowFaceUp eid cid
+  TurnShadowCardFaceUp eid cid -> Just $ shadowFaceUp eid cid
   AttachTreachery tid target -> Just $ attached (toTarget tid) target
   PlaceEnemy eid (AttachedTo target) -> Just $ attached (toTarget eid) target
   PlaceAlly aid (AttachedTo target) -> Just $ attached (toTarget aid) target
@@ -236,7 +246,7 @@ narrationFor = \case
   DiscardFromHand pid cid -> Just $ withPlayer pid \player who ->
     pure
       [ mechanic [ikeyPart "log.discardsFromHand" ["player" ~> who, "card" ~> card]]
-      | card <- filter ((== cid) . (.id)) player.hand
+      | card <- filter ((== cid) . (.id)) (discardableHand player)
       ]
   DiscardRandomFromHand pid n | n > 0 -> Just $ withPlayer pid \_ who ->
     one $ mechanic [ikeyPart "log.discardsAtRandom" ["player" ~> who, "count" ~> n]]
@@ -251,6 +261,9 @@ narrationFor = \case
       [ mechanic [ikeyPart "log.movesToBottomOfDeck" ["player" ~> who, "card" ~> card]]
       | card <- filter ((== cid) . (.id)) player.deck
       ]
+  PutInHand card | Just pid <- card.owner -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.takesIntoHand" ["player" ~> who, "card" ~> PlayerCard card]]
   PlayAtNoCost _ card -> Just $ one $ mechanic [ikeyPart "log.playedAtNoCost" ["card" ~> PlayerCard card]]
   -- \* Locations the players control, as Osgiliath's
   PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
@@ -260,6 +273,10 @@ narrationFor = \case
       (InPlayArea _, StagingArea) -> one $ toned Bad $ mechanic [ikeyPart "log.returnedToStaging" ["location" ~> l]]
       _ -> pure []
   PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
+  ScenarioSpecific "scour" (parseMaybe parseJSON -> Just target) -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.scour" ["target" ~> t]]
+  PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing
  where
   takesControl :: (HasGame m, ToLogPart a) => PlayerId -> a -> m [LogEntry]
@@ -273,6 +290,19 @@ one = pure . pure
 -- | Say something only when the target can be named.
 whenRef :: HasGame m => Target -> (LogRef -> m [LogEntry]) -> m [LogEntry]
 whenRef target f = targetRefFor target >>= maybe (pure []) f
+
+-- | A shadow card dealt to the enemy turning face up; one dealt face up, as Silver Lamp
+-- deals it, was told then.
+shadowFaceUp :: HasGame m => EnemyId -> CardId -> m [LogEntry]
+shadowFaceUp eid cid = whenRef (toTarget eid) \e -> do
+  mEnemy <- getsGame (Map.lookup eid . entitiesEnemies . gameEntities)
+  pure
+    [ mechanic [ikeyPart key ["enemy" ~> e, "card" ~> EncounterCard card]]
+    | Just en <- [mEnemy]
+    , cid `notElem` (toAttrs en).enemyShadowRevealed
+    , card <- take 1 $ filter ((== cid) . (.id)) en.shadowCards
+    , let key = if cdShadowEffect (toCardDef card) then "log.shadowRevealed" else "log.shadowRevealedNoEffect"
+    ]
 
 -- | Say something only while the card is still hidden in the player's play area.
 whenHidden :: HasGame m => PlayerId -> EncounterCard -> (LogRef -> m [LogEntry]) -> m [LogEntry]
@@ -367,8 +397,11 @@ closeBlock bid = do
     (outer, block : _) | Just gid <- logBlockPath (outer <> [block]) -> case block.logBlockKind of
       PlayerAttackBlock _ eid _ -> do
         enemies <- getsGame (entitiesEnemies . gameEntities)
+        -- destroyed by the attack's damage, not gone some other way during it
+        destroyed <- getsGame (any ((== EnemyTarget eid) . (.target)) . gameAttackDestroyed)
         case Map.lookup eid enemies of
-          Nothing -> pure [closesGroup gid $ toned Good $ test [ikeyPart "log.attackDestroys" []]]
+          _ | destroyed -> pure [closesGroup gid $ toned Good $ test [ikeyPart "log.attackDestroys" []]]
+          Nothing -> pure []
           Just en -> do
             hitPoints <- getEnemyHitPoints eid
             let e = entityRef RefEnemy eid en

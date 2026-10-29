@@ -5,6 +5,7 @@
   "attack": "Attack {value}",
   "defense": "Defense {value}",
   "healthLeft": "{value} hit points left",
+  "outOfPlay": "Out of play",
   "combat": {
     "damage": "Takes {value} damage",
     "defeated": "defeated"

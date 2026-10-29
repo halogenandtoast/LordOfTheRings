@@ -155,6 +155,15 @@ spec = do
       chooseAbilityOf pid legolas
       (.progress) <$> getActiveQuest `shouldReturn` 2
 
+    it "is not offered for an enemy that left play some other way during the attack" . tacticsTest $ \pid -> do
+      flipFirstQuest pid
+      eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
+      run $ EngageEnemy pid eid
+      legolas <- hero "01005"
+      run $ Discard (toTarget eid)
+      run $ AttackResolved eid (Just pid) [legolas] mempty
+      offersAbilityOf pid legolas `shouldReturn` False
+
   describe "Thalin" do
     it "deals 1 damage to each enemy revealed while he is committed" . tacticsTest $ \pid -> do
       _ <- setEncounterDeck [Enemies.forestSpider]

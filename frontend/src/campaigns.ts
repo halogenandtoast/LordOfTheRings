@@ -73,6 +73,15 @@ const implemented: Record<string, Gateable> = {
   'the-stewards-fear': { alpha: true },
   'assault-on-osgiliath': { alpha: true },
   'the-blood-of-gondor': { alpha: true },
+  'to-catch-an-orc': { alpha: true },
+  'into-fangorn': { alpha: true },
+  'the-fords-of-isen': { alpha: true },
+  'the-antlered-crown': { alpha: true },
+  'the-dunland-trap': { alpha: true },
+  'trouble-in-tharbad': { alpha: true },
+  'celebrimbors-secret': { alpha: true },
+  'the-nin-in-eilph': { alpha: true },
+  'the-three-trials': { alpha: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

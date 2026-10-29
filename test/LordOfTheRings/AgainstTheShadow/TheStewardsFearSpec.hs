@@ -16,7 +16,7 @@ import LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers (Meta (..), get
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside), metaL)
 import LordOfTheRings.Trait (Trait (Clue, Plot, Villain))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (When), Window (..), WindowType (RoundEnds))
+import LordOfTheRings.Window (Timing (When), Window (..), WindowType (EnemyAttacking, RoundEnds), mkAfter)
 import TestImport
 
 fearTest :: (PlayerId -> GameT ()) -> IO ()
@@ -159,7 +159,7 @@ spec = describe "The Steward's Fear" do
     quest <- toTarget <$> getActiveQuest
     run $ PlaceTokens GameSource quest Progress 15
     getsGame (.outcome) `shouldReturn` Nothing
-    for_ villains \v -> run $ Destroy (toTarget v)
+    for_ villains \v -> run $ Destroy GameSource (toTarget v)
     getsGame (.outcome) `shouldReturn` Just Won
 
   it "claims A Prisoner into the victory display, placing 2 resources on the quest" . fearTest $ \pid -> do
@@ -251,6 +251,16 @@ spec = describe "The Steward's Fear" do
     run $ DealDamage GameSource beravor 3
     undefendedAttackOn pid eid beravor
     getsGame (.outcome) `shouldReturn` Just Lost
+
+  it "does not lose the game with Unholy Alliance for a hero destroyed some other way while an attack resolves" . fearTest $ \pid -> do
+    staged Objectives.unholyAlliance
+    staged Enemies.underworldDissident
+    eid <- enemyOf Enemies.underworldDissident
+    run $ EngageEnemy pid eid
+    -- the attack's damage is dealt and its After window waits as the hero is destroyed
+    push $ CheckWindows [mkAfter $ EnemyAttacking eid pid]
+    run . (\h -> DealDamage GameSource h 10) . toTarget =<< getHeroWithCode "01007"
+    getsGame (.outcome) `shouldReturn` Nothing
 
   it "reveals an extra card each staging step with Unholy Alliance" . fearTest $ \pid -> do
     staged Objectives.unholyAlliance

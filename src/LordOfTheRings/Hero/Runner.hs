@@ -8,7 +8,8 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotReady, CollectsAdditionalResources, DoesNotExhaustToAttack))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotReady, CollectsAdditionalResources, DoesNotExhaustToAttack, SpentResourcesThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -49,6 +50,10 @@ instance RunMessage HeroAttrs where
       pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
+    -- a player spending resources from its pool, as Tighten Our Belts reads
+    RemoveTokens (PlayerSource _) (isTarget attrs -> True) Resource n | n > 0 && attrs.resources > 0 -> do
+      push $ CreateEffect $ Effect GameSource (toTarget attrs) [SpentResourcesThisRound] UntilEndOfRound
+      pure $ attrs & tokensL %~ subtractTokens Resource n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs

@@ -48,6 +48,16 @@ allObjectiveCards =
       , poisonedCounsels
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
+      , mugashObjective
+      , grimaTheFordsOfIsen
+      , chiefTurchTheAntleredCrown
+      , nalirTroubleInTharbad
+      , theOrcsSearch
+      , celebrimborsMould
+      , nalirTheNinInEilph
+      , keyOfTheBoar
+      , keyOfTheWolf
+      , keyOfTheRaven
       ]
 
 durinsAxe :: CardDef
@@ -276,3 +286,73 @@ lordAlcaronTheBloodOfGondor =
     , cdCardTraits = setFromList [Gondor, Noble]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
+
+mugashObjective :: CardDef
+mugashObjective =
+  (objective "07031" "Mugash" IntoFangorn 1)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdKeywords = setFromList [Guarded]
+    }
+
+-- | The Fords of Isen's objective ally, not the hero.
+grimaTheFordsOfIsen :: CardDef
+grimaTheFordsOfIsen =
+  ((objective "07016" "Gríma" TheFordsOfIsen 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan]
+    }
+
+chiefTurchTheAntleredCrown :: CardDef
+chiefTurchTheAntleredCrown =
+  ((objective "08150" "Chief Turch" TheAntleredCrown 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 2, cdHitPoints = Just 5 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+nalirTroubleInTharbad :: CardDef
+nalirTroubleInTharbad =
+  ((objective "08068" "Nalir" TroubleInTharbad 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+theOrcsSearch :: CardDef
+theOrcsSearch = objective "08125" "The Orcs' Search" CelebrimborsSecret 1
+
+celebrimborsMould :: CardDef
+celebrimborsMould =
+  unique
+    (objective "08127" "Celebrimbor's Mould" CelebrimborsSecret 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      }
+
+nalirTheNinInEilph :: CardDef
+nalirTheNinInEilph =
+  ((objective "08102" "Nalir" TheNinInEilph 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | A Key of The Three Trials: the first player claims it as soon as it is unattached.
+threeTrialsKey :: CardCode -> Name -> Trait -> CardDef
+threeTrialsKey code name trait =
+  (objective code name TheThreeTrials 1)
+    { cdCardTraits = setFromList [Item, Key, trait]
+    , cdShadowEffect = True
+    }
+
+keyOfTheBoar :: CardDef
+keyOfTheBoar = threeTrialsKey "08043" "Key of the Boar" Boar
+
+keyOfTheWolf :: CardDef
+keyOfTheWolf = threeTrialsKey "08044" "Key of the Wolf" Wolf
+
+keyOfTheRaven :: CardDef
+keyOfTheRaven = threeTrialsKey "08045" "Key of the Raven" Raven

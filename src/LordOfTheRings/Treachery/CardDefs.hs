@@ -116,6 +116,36 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , orcTerritory
+      , theForestsMalice
+      , pillagingAndBurning
+      , downFromTheHills
+      , illTidings
+      , orcHuntingParty
+      , oldHatreds
+      , wildMenOfDunland
+      , turnedAround
+      , takeCover
+      , lowOnProvisions
+      , offTrack
+      , inNeedOfRest
+      , raisingTheCry
+      , fierceFolk
+      , drivenBack
+      , frenziedAttack
+      , dunlendingAmbush
+      , constantTail
+      , conspicuousLot
+      , cornered
+      , getThatDwarf
+      , discovered
+      , desecratedRuins
+      , spiesFromMordor
+      , shiftingMarshland
+      , remnantsOfElderDays
+      , curseOfTheWildMen
+      , theGuardiansFury
+      , wildTenacity
       ]
 
 deepDeepDark :: CardDef
@@ -712,4 +742,152 @@ conflictAtTheCrossroads =
   (treachery "06131" "Conflict at the Crossroads" TheBloodOfGondor 2)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+orcTerritory :: CardDef
+orcTerritory = (treachery "07030" "Orc Territory" ToCatchAnOrc 2) {cdEasyModeQuantity = Just 0}
+
+theForestsMalice :: CardDef
+theForestsMalice = (treachery "07037" "The Forest's Malice" IntoFangorn 4) {cdEasyModeQuantity = Just 1}
+
+pillagingAndBurning :: CardDef
+pillagingAndBurning =
+  (treachery "07021" "Pillaging and Burning" TheFordsOfIsen 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+downFromTheHills :: CardDef
+downFromTheHills = (treachery "07022" "Down from the Hills" TheFordsOfIsen 1) {cdEasyModeQuantity = Just 0}
+
+illTidings :: CardDef
+illTidings = treachery "07023" "Ill Tidings" TheFordsOfIsen 2
+
+orcHuntingParty :: CardDef
+orcHuntingParty = treachery "07041" "Orc Hunting Party" MistyMountainOrcs 2
+
+oldHatreds :: CardDef
+oldHatreds =
+  (treachery "07045" "Old Hatreds" DunlandRaiders 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+wildMenOfDunland :: CardDef
+wildMenOfDunland =
+  (treachery "07049" "Wild Men of Dunland" DunlandWarriors 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+turnedAround :: CardDef
+turnedAround = (treachery "07052" "Turned Around" AncientForest 3) {cdShadowEffect = True}
+
+takeCover :: CardDef
+takeCover =
+  (treachery "07055" "Take Cover!" BrokenLands 3)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 2
+    }
+
+lowOnProvisions :: CardDef
+lowOnProvisions =
+  (treachery "07056" "Low on Provisions" WearyTravelers 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+offTrack :: CardDef
+offTrack = (treachery "07057" "Off Track" WearyTravelers 2) {cdKeywords = setFromList [Surge]}
+
+inNeedOfRest :: CardDef
+inNeedOfRest = (treachery "07058" "In Need of Rest" WearyTravelers 2) {cdEasyModeQuantity = Just 1}
+
+raisingTheCry :: CardDef
+raisingTheCry = (treachery "08159" "Raising the Cry" TheAntleredCrown 3) {cdEasyModeQuantity = Just 2}
+
+fierceFolk :: CardDef
+fierceFolk =
+  (treachery "08160" "Fierce Folk" TheAntleredCrown 2)
+    { cdKeywords = setFromList [Doomed 3]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+drivenBack :: CardDef
+drivenBack = treachery "08161" "Driven Back" TheAntleredCrown 2
+
+frenziedAttack :: CardDef
+frenziedAttack = (treachery "08023" "Frenzied Attack" TheDunlandTrap 3) {cdShadowEffect = True}
+
+dunlendingAmbush :: CardDef
+dunlendingAmbush =
+  (treachery "08024" "Dunlending Ambush" TheDunlandTrap 3)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+constantTail :: CardDef
+constantTail = treachery "08080" "Constant Tail" TroubleInTharbad 2
+
+conspicuousLot :: CardDef
+conspicuousLot =
+  (treachery "08081" "Conspicuous Lot" TroubleInTharbad 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+cornered :: CardDef
+cornered = (treachery "08082" "Cornered" TroubleInTharbad 2) {cdShadowEffect = True}
+
+getThatDwarf :: CardDef
+getThatDwarf =
+  (treachery "08083" "Get That Dwarf!" TroubleInTharbad 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+discovered :: CardDef
+discovered =
+  (treachery "08134" "Discovered!" CelebrimborsSecret 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+desecratedRuins :: CardDef
+desecratedRuins = (treachery "08135" "Desecrated Ruins" CelebrimborsSecret 3) {cdShadowEffect = True}
+
+spiesFromMordor :: CardDef
+spiesFromMordor = (treachery "08136" "Spies from Mordor" CelebrimborsSecret 2) {cdShadowEffect = True}
+
+shiftingMarshland :: CardDef
+shiftingMarshland =
+  (treachery "08110" "Shifting Marshland" TheNinInEilph 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+remnantsOfElderDays :: CardDef
+remnantsOfElderDays = (treachery "08111" "Remnants of Elder Days" TheNinInEilph 1) {cdEasyModeQuantity = Just 0}
+
+curseOfTheWildMen :: CardDef
+curseOfTheWildMen =
+  (treachery "08053" "Curse of the Wild Men" TheThreeTrials 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+theGuardiansFury :: CardDef
+theGuardiansFury =
+  (treachery "08054" "The Guardian's Fury" TheThreeTrials 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+wildTenacity :: CardDef
+wildTenacity =
+  (treachery "08055" "Wild Tenacity" TheThreeTrials 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

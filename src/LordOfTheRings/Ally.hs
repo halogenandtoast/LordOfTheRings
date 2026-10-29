@@ -126,6 +126,25 @@ import LordOfTheRings.Ally.Cards.KnightOfMinasTirith
 import LordOfTheRings.Ally.Cards.PelargirShipwright
 import LordOfTheRings.Ally.Cards.Emery
 import LordOfTheRings.Ally.Cards.Anborn
+import LordOfTheRings.Ally.Cards.OrthancGuard
+import LordOfTheRings.Ally.Cards.IsengardMessenger
+import LordOfTheRings.Ally.Cards.Saruman
+import LordOfTheRings.Ally.Cards.RivendellScout
+import LordOfTheRings.Ally.Cards.WardenOfHelmsDeep
+import LordOfTheRings.Ally.Cards.WanderingEnt
+import LordOfTheRings.Ally.Cards.BoomingEnt
+import LordOfTheRings.Ally.Cards.IthilienLookout
+import LordOfTheRings.Ally.Cards.CelduinTraveler
+import LordOfTheRings.Ally.Cards.GreyfloodWanderer
+import LordOfTheRings.Ally.Cards.HeraldOfAnorien
+import LordOfTheRings.Ally.Cards.HennethAnnunGuard
+import LordOfTheRings.Ally.Cards.MirkwoodPioneer
+import LordOfTheRings.Ally.Cards.BlueMountainTrader
+import LordOfTheRings.Ally.Cards.Gwaihir
+import LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
+import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
+import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
+import LordOfTheRings.Ally.Cards.NalirTheNinInEilph
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -279,5 +298,24 @@ allAllies =
         , SomeAllyCard pelargirShipwright
         , SomeAllyCard emery
         , SomeAllyCard anborn
+        , SomeAllyCard orthancGuard
+        , SomeAllyCard isengardMessenger
+        , SomeAllyCard saruman
+        , SomeAllyCard rivendellScout
+        , SomeAllyCard wardenOfHelmsDeep
+        , SomeAllyCard wanderingEnt
+        , SomeAllyCard boomingEnt
+        , SomeAllyCard ithilienLookout
+        , SomeAllyCard celduinTraveler
+        , SomeAllyCard greyfloodWanderer
+        , SomeAllyCard heraldOfAnorien
+        , SomeAllyCard hennethAnnunGuard
+        , SomeAllyCard mirkwoodPioneer
+        , SomeAllyCard blueMountainTrader
+        , SomeAllyCard gwaihir
+        , SomeAllyCard grimaTheFordsOfIsen
+        , SomeAllyCard chiefTurchTheAntleredCrown
+        , SomeAllyCard nalirTroubleInTharbad
+        , SomeAllyCard nalirTheNinInEilph
         ]
     ]

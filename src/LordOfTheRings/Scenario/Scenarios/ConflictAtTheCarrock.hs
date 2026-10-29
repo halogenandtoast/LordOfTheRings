@@ -29,7 +29,7 @@ instance RunMessage ConflictAtTheCarrock where
     -- Louis, Morris, Stuart and Rupert: Response: After defeating this enemy, you may
     -- choose and discard 1 "Sacked!" card from play. Asked as the Troll goes, while it can
     -- still be told apart.
-    Destroy (EnemyTarget eid) -> do
+    Destroy _ (EnemyTarget eid) -> do
       present <- selectAny (EnemyWithId eid)
       troll <- if present then (`elem` uniqueTrolls) . toCardCode <$> getEnemy eid else pure False
       sacked <- getsGame \g -> [t | t <- toList g.entities.treacheries, toCardCode t == toCardCode Treacheries.sacked]

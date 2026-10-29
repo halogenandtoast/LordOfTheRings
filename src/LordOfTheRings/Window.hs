@@ -72,8 +72,8 @@ data WindowType
   | -- | a character attacked an enemy alone: the damage the attack dealt beyond what the
     -- enemy had left
     AttackedAlone Target EnemyId Int
-  | -- | an encounter or quest card's effect raised the player's threat
-    ThreatRaisedByEncounter PlayerId
+  | -- | an encounter or quest card's effect raised the player's threat, by this much
+    ThreatRaisedByEncounter PlayerId Int
   | -- | a character readied during the refresh phase, with its traits
     Readied Target (Set Trait)
   | -- | damage was healed from a character, by the source
@@ -96,8 +96,23 @@ data WindowType
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it
     EnemyDefeated EnemyId
-  | -- | the enemy's attack destroyed the character: who controlled it
+  | -- | the enemy's attack's damage destroyed the character, after it is destroyed: who
+    -- controlled it. Not its shadow card's damage, nor its leaving play another way.
     CharacterDestroyedByAttack EnemyId Target PlayerId
+  | -- | this many time counters were removed from the card
+    TimeCountersRemoved Target Int
+  | -- | the last time counter was removed from the card
+    LastTimeCounterRemoved Target
+  | -- | the player raised his threat from the Doomed keyword
+    ThreatRaisedByDoomed PlayerId
+  | -- | the player drew this many cards, by one draw
+    CardsDrawn PlayerId Int
+  | -- | a card effect reduced the player's threat: the player, and the card's source
+    ThreatReduced PlayerId Source
+  | -- | the players advanced to a quest stage, its When Revealed resolved
+    AdvancedToStage
+  | -- | an attack the character defended has resolved, and it took no damage defending it
+    DefendedWithoutDamage Target EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

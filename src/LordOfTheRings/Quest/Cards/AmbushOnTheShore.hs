@@ -38,7 +38,7 @@ instance RunMessage AmbushOnTheShore where
     _ -> AmbushOnTheShore <$> runMessage msg attrs
    where
     leaving = \case
-      Destroy (EnemyTarget eid) -> Just eid
+      Destroy _ (EnemyTarget eid) -> Just eid
       Discard (EnemyTarget eid) -> Just eid
       ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
       _ -> Nothing

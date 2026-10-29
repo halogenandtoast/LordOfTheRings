@@ -125,6 +125,21 @@ allAllyCards =
       , pelargirShipwright
       , emery
       , anborn
+      , orthancGuard
+      , isengardMessenger
+      , saruman
+      , rivendellScout
+      , wardenOfHelmsDeep
+      , wanderingEnt
+      , boomingEnt
+      , ithilienLookout
+      , celduinTraveler
+      , greyfloodWanderer
+      , heraldOfAnorien
+      , hennethAnnunGuard
+      , mirkwoodPioneer
+      , blueMountainTrader
+      , gwaihir
       ]
 
 guardOfTheCitadel :: CardDef
@@ -852,4 +867,101 @@ anborn =
   (ally "06114" "Anborn" Lore (StaticCost 4) 1 3 1 3)
     { cdUnique = True
     , cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
+orthancGuard :: CardDef
+orthancGuard =
+  (ally "07004" "Orthanc Guard" Leadership (StaticCost 2) 1 0 2 2)
+    { cdCardTraits = setFromList [Isengard]
+    }
+
+isengardMessenger :: CardDef
+isengardMessenger =
+  (ally "07005" "Isengard Messenger" Lore (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Isengard]
+    }
+
+saruman :: CardDef
+saruman =
+  (ally "07003" "Saruman" Neutral (StaticCost 3) 3 5 4 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Istari, Isengard]
+    , cdKeywords = setFromList [Doomed 3]
+    }
+
+rivendellScout :: CardDef
+rivendellScout =
+  (ally "08026" "Rivendell Scout" Leadership (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Noldor, Scout]
+    , cdKeywords = setFromList [Secrecy 2]
+    }
+
+wardenOfHelmsDeep :: CardDef
+wardenOfHelmsDeep =
+  (ally "08138" "Warden of Helm's Deep" Leadership (StaticCost 3) 0 1 3 2)
+    { cdCardTraits = setFromList [Rohan, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+wanderingEnt :: CardDef
+wanderingEnt =
+  (ally "08119" "Wandering Ent" Lore (StaticCost 2) 2 2 2 3)
+    { cdCardTraits = setFromList [Ent]
+    }
+
+boomingEnt :: CardDef
+boomingEnt =
+  (ally "08141" "Booming Ent" Tactics (StaticCost 2) 0 2 2 3)
+    { cdCardTraits = setFromList [Ent]
+    }
+
+ithilienLookout :: CardDef
+ithilienLookout =
+  (ally "08008" "Ithilien Lookout" Lore (StaticCost 3) 1 2 0 2)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    , cdKeywords = setFromList [Secrecy 2]
+    }
+
+celduinTraveler :: CardDef
+celduinTraveler =
+  (ally "08089" "Celduin Traveler" Spirit (StaticCost 3) 2 0 1 2)
+    { cdCardTraits = setFromList [Dale, Scout]
+    , cdKeywords = setFromList [Secrecy 2]
+    }
+
+greyfloodWanderer :: CardDef
+greyfloodWanderer =
+  (ally "08030" "Greyflood Wanderer" Spirit (StaticCost 3) 2 1 0 2)
+    { cdCardTraits = setFromList [Dunedain, Scout]
+    }
+
+heraldOfAnorien :: CardDef
+heraldOfAnorien =
+  (ally "08057" "Herald of Anórien" Leadership (StaticCost 2) 1 0 1 1)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+hennethAnnunGuard :: CardDef
+hennethAnnunGuard =
+  (ally "08115" "Henneth Annûn Guard" Tactics (StaticCost 3) 0 2 2 2)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+mirkwoodPioneer :: CardDef
+mirkwoodPioneer =
+  (ally "08091" "Mirkwood Pioneer" Lore (StaticCost 2) 1 0 0 2)
+    { cdCardTraits = setFromList [Woodman]
+    }
+
+blueMountainTrader :: CardDef
+blueMountainTrader =
+  (ally "08006" "Blue Mountain Trader" Spirit (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+gwaihir :: CardDef
+gwaihir =
+  (ally "08059" "Gwaihir" Tactics (StaticCost 5) 2 3 1 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Eagle]
     }

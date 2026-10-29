@@ -27,6 +27,6 @@ instance RunMessage SongOfEarendil where
       drawCards pid 1
       pure s
     UseCardAbility _ (isSource a -> True) 2 windows -> do
-      for_ (take 1 [p | Window _ (ThreatRaised p) <- windows]) \p -> lowerThreat p 1
+      for_ (take 1 [p | Window _ (ThreatRaised p) <- windows]) \p -> lowerThreatBy a p 1
       pure s
     _ -> SongOfEarendil <$> runMessage msg a

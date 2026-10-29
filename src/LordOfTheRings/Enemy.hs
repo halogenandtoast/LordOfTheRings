@@ -121,6 +121,41 @@ import LordOfTheRings.Enemy.Cards.BlackNumenorean
 import LordOfTheRings.Enemy.Cards.OrcAmbusher
 import LordOfTheRings.Enemy.Cards.BrutalUruk
 import LordOfTheRings.Enemy.Cards.EvilCrow
+import LordOfTheRings.Enemy.Cards.MugashEnemy
+import LordOfTheRings.Enemy.Cards.MugashsGuard
+import LordOfTheRings.Enemy.Cards.MethedrasOrc
+import LordOfTheRings.Enemy.Cards.DarkHeartedHuorn
+import LordOfTheRings.Enemy.Cards.AngryHuorn
+import LordOfTheRings.Enemy.Cards.DeadlyHuorn
+import LordOfTheRings.Enemy.Cards.OrcSkirmisher
+import LordOfTheRings.Enemy.Cards.OrcHunter
+import LordOfTheRings.Enemy.Cards.OrcHound
+import LordOfTheRings.Enemy.Cards.DunlandProwler
+import LordOfTheRings.Enemy.Cards.DunlendingBandit
+import LordOfTheRings.Enemy.Cards.DunlandRaider
+import LordOfTheRings.Enemy.Cards.DunlandTribesman
+import LordOfTheRings.Enemy.Cards.DunlandChieftain
+import LordOfTheRings.Enemy.Cards.DunlandBerserker
+import LordOfTheRings.Enemy.Cards.ProwlingWolf
+import LordOfTheRings.Enemy.Cards.RavenChief
+import LordOfTheRings.Enemy.Cards.RavenWarrior
+import LordOfTheRings.Enemy.Cards.RavenSkirmisher
+import LordOfTheRings.Enemy.Cards.ChiefTurchTheDunlandTrap
+import LordOfTheRings.Enemy.Cards.BoarClanStalker
+import LordOfTheRings.Enemy.Cards.BoarClanWarrior
+import LordOfTheRings.Enemy.Cards.BellachTroubleInTharbad
+import LordOfTheRings.Enemy.Cards.SpyFromMordor
+import LordOfTheRings.Enemy.Cards.BellachsMarauder
+import LordOfTheRings.Enemy.Cards.BellachCelebrimborsSecret
+import LordOfTheRings.Enemy.Cards.BellachsScout
+import LordOfTheRings.Enemy.Cards.ProwlingOrc
+import LordOfTheRings.Enemy.Cards.AncientMarshDweller
+import LordOfTheRings.Enemy.Cards.GiantSwampAdder
+import LordOfTheRings.Enemy.Cards.Neekerbreekers
+import LordOfTheRings.Enemy.Cards.BoarsGuardian
+import LordOfTheRings.Enemy.Cards.WolfsGuardian
+import LordOfTheRings.Enemy.Cards.RavensGuardian
+import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -266,5 +301,40 @@ allEnemys =
         , SomeEnemyCard orcAmbusher
         , SomeEnemyCard brutalUruk
         , SomeEnemyCard evilCrow
+        , SomeEnemyCard mugashEnemy
+        , SomeEnemyCard mugashsGuard
+        , SomeEnemyCard methedrasOrc
+        , SomeEnemyCard darkHeartedHuorn
+        , SomeEnemyCard angryHuorn
+        , SomeEnemyCard deadlyHuorn
+        , SomeEnemyCard orcSkirmisher
+        , SomeEnemyCard orcHunter
+        , SomeEnemyCard orcHound
+        , SomeEnemyCard dunlandProwler
+        , SomeEnemyCard dunlendingBandit
+        , SomeEnemyCard dunlandRaider
+        , SomeEnemyCard dunlandTribesman
+        , SomeEnemyCard dunlandChieftain
+        , SomeEnemyCard dunlandBerserker
+        , SomeEnemyCard prowlingWolf
+        , SomeEnemyCard ravenChief
+        , SomeEnemyCard ravenWarrior
+        , SomeEnemyCard ravenSkirmisher
+        , SomeEnemyCard chiefTurchTheDunlandTrap
+        , SomeEnemyCard boarClanStalker
+        , SomeEnemyCard boarClanWarrior
+        , SomeEnemyCard bellachTroubleInTharbad
+        , SomeEnemyCard spyFromMordor
+        , SomeEnemyCard bellachsMarauder
+        , SomeEnemyCard bellachCelebrimborsSecret
+        , SomeEnemyCard bellachsScout
+        , SomeEnemyCard prowlingOrc
+        , SomeEnemyCard ancientMarshDweller
+        , SomeEnemyCard giantSwampAdder
+        , SomeEnemyCard neekerbreekers
+        , SomeEnemyCard boarsGuardian
+        , SomeEnemyCard wolfsGuardian
+        , SomeEnemyCard ravensGuardian
+        , SomeEnemyCard spiritOfTheWild
         ]
     ]

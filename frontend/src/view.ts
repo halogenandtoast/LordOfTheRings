@@ -107,6 +107,12 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       .flatMap(([, modifiers]) => modifiers)
       .flatMap((m) => (m.modifierType.tag === 'GainResourceIcon' ? [m.modifierType.contents as string] : []))
 
+  // considered out of play while on the table, as the card Saruman chooses
+  const heldOutOfPlay = (target: Target) =>
+    (game.modifiers ?? []).some(
+      ([t, modifiers]) => t.tag === target.tag && t.contents === target.contents && modifiers.some((m) => m.modifierType.tag === 'ConsideredOutOfPlay'),
+    )
+
   // a guarded objective is attached to the card guarding it for as long as that card is in play
   const guardInPlay = (guard: string | null | undefined) =>
     guard && [...Object.values(entities.enemies), ...Object.values(entities.locations), ...Object.values(entities.treacheries ?? {})].some((e) => e.cardId === guard) ? guard : null
@@ -119,10 +125,12 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       target,
       // villagers are resource tokens on the table
       resources: e.tokens.Resource ?? e.tokens.Villager ?? null,
+      time: e.tokens.TimeCounter ?? null,
       damage: e.tokens.Damage ?? 0,
       progress: e.tokens.Progress ?? null,
       exhausted: e.exhausted ?? false,
       committed: e.committed ?? false,
+      outOfPlay: heldOutOfPlay(target),
       flipped: e.flipped ?? false,
       facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' ? 'player' : undefined,
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard),
