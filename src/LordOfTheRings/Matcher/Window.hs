@@ -157,6 +157,8 @@ data WindowMatcher
     TimeCountersRemovedFromQuestWindow Timing
   | -- | the last time counter removed from the card
     LastTimeCounterRemovedWindow Timing Target
+  | -- | the player, or any player, drew any number of cards
+    DrewCardsWindow Timing (Maybe PlayerId)
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -233,6 +235,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TimeCountersRemovedWindow t who, TimeCountersRemoved target _) -> t == timing && maybe True (== target) who
   (TimeCountersRemovedFromQuestWindow t, TimeCountersRemoved (QuestTarget _) _) -> t == timing
   (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'
+  (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

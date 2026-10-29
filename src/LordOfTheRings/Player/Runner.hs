@@ -40,7 +40,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
-  WindowType (DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  WindowType (CardsDrawn, DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
  )
 
@@ -98,6 +98,7 @@ instance RunMessage Player where
         then pure player
         else do
           pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+          pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
           pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase)

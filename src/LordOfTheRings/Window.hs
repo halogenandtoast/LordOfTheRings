@@ -102,6 +102,8 @@ data WindowType
     TimeCountersRemoved Target Int
   | -- | the last time counter was removed from the card
     LastTimeCounterRemoved Target
+  | -- | the player drew this many cards, by one draw
+    CardsDrawn PlayerId Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
