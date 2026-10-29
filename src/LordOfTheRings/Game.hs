@@ -465,7 +465,8 @@ runGameMessage msg g = case msg of
   Destroy target@(EnemyTarget eid) -> do
     enemy <- getEnemy eid
     push $ CheckWindows [mkAfter $ EnemyDefeated eid]
-    case cdVictoryPoints (toCardDef enemy) of
+    stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
+    if stays then pure g else case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
         pure

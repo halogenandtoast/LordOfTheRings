@@ -285,6 +285,9 @@ data ModifierType
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int
+  | -- | on an enemy: defeated, it stays where it is for its own Forced effect to place it,
+    -- as Mugash is attached to a hero
+    StaysInPlayWhenDefeated
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
