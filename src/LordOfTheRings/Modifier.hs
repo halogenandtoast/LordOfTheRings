@@ -328,6 +328,8 @@ data ModifierType
     DamagedWhileDefending
   | -- | on the game: a hero committed to the quest this round, as The Rear Guard reads
     HeroCommittedThisRound
+  | -- | on the game: the players quested successfully this phase, as Bofur reads
+    QuestedSuccessfullyThisPhase
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

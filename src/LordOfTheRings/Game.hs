@@ -1220,7 +1220,11 @@ runGameMessage msg g = case msg of
     players <- getPlayerOrder
     if
       | willpower > threat ->
-          pushAll [PlaceProgressOnQuest (willpower - threat), CheckWindows [mkAfter QuestedSuccessfully]]
+          pushAll
+            [ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
+            , PlaceProgressOnQuest (willpower - threat)
+            , CheckWindows [mkAfter QuestedSuccessfully]
+            ]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
