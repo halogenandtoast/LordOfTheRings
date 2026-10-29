@@ -20,7 +20,7 @@ fierceFolk = treachery FierceFolk Cards.fierceFolk
 instance RunMessage FierceFolk where
   runMessage msg t@(FierceFolk attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      eachPlayer \pid -> drawCards pid 3
+      eachPlayer \pid -> drawCards attrs pid 3
       roundModifier attrs GameTarget (CannotPlay $ CardWithType EventType)
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do

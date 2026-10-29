@@ -173,12 +173,13 @@ spec = describe "Dwarrowdelf player cards" do
     getsGame (any ((== ally.id) . allyCardId . toAttrs) . toList . (.entities.allies)) `shouldReturn` True
     (resourcesOf =<< hero theodred) `shouldReturn` 0
 
-  it "Unseen Strike gives +3 attack against an enemy whose engagement cost is above your threat" . gameTest $ \pid -> do
+  -- Gimli gives the 0 cost Tactics event its resource match
+  it "Unseen Strike gives +3 attack against an enemy whose engagement cost is above your threat" . gameTestWith testDeck {heroes = [beravor, "01004", theodred]} $ \pid -> do
     setThreat pid 5
     eid <- staged Enemies.wolfRider
     b <- hero beravor
     base <- getAttack b
-    _ <- playWith pid beravor 0 Events.unseenStrike
+    _ <- playWith pid "01004" 0 Events.unseenStrike
     chooseTarget pid b
     def <- toCardDef <$> getEnemy eid
     getAttackStrength [b] eid def `shouldReturn` base + 3

@@ -22,7 +22,7 @@ instance RunMessage Gandalf where
       chooseOneM p do
         questionLabeled "gandalf.chooseOne"
         causedBy attrs
-        labeled "gandalf.draw" $ drawCards p 3
+        labeled "gandalf.draw" $ drawCards attrs p 3
         unless (null enemies) $ labeled "gandalf.damage" $ chooseOneM p do
           questionLabeled "gandalf.chooseEnemy"
           causedBy attrs

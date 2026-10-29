@@ -153,7 +153,20 @@ runNext =
       putGame g
       putGame =<< withHandModifiers =<< preloadModifiers g
       discardAtNoWillpower
+      endWaitingGame
       pure True
+
+-- | A game that could not end, as Ghulat's, ends with the outcome that waited once it can.
+endWaitingGame :: GameT ()
+endWaitingGame = do
+  g <- getGame
+  let waiting = [o | e <- gameEffects g, GameEndsWith o <- effectModifiers e]
+      isWaiting = any (\case GameEndsWith _ -> True; _ -> False) . effectModifiers
+  for_ (headMay waiting) \outcome -> do
+    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    unless cannotEnd do
+      putGame $ g & effectsL %~ filter (not . isWaiting)
+      push $ GameOver outcome
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -392,6 +405,7 @@ leavingCharacter g = \case
   Discard t | character t -> Just t
   ReturnToHand t | character t -> Just t
   ShuffleIntoOwnersDeck t | character t -> Just t
+  RemoveFromGame t@(HeroTarget _) | character t -> Just t
   _ -> Nothing
  where
   character = \case
@@ -588,8 +602,14 @@ runGameMessage msg g = case msg of
       <> [GameOver Lost | null remaining]
     pure g
   GameOver outcome -> do
-    clearQueue
-    pure $ g & outcomeL ?~ outcome
+    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    -- the outcome waits while the game cannot end, unless no player is left to play on;
+    -- see 'endWaitingGame'
+    if cannotEnd && any (not . (.eliminated)) g.players
+      then g <$ push (CreateEffect $ Effect GameSource GameTarget [GameEndsWith outcome] UntilSpent)
+      else do
+        clearQueue
+        pure $ g & outcomeL ?~ outcome
   -- an ally put into play by its card, as Emery is, discarded by its card
   Discard (CardIdTarget cid)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
@@ -810,7 +830,8 @@ runGameMessage msg g = case msg of
     pure g
   EngageEnemy pid eid -> do
     pushAll
-      [ PlaceEnemy eid (EngagedWith pid)
+      [ CheckWindows [mkWhen $ EnemyEngaged eid pid]
+      , PlaceEnemy eid (EngagedWith pid)
       , CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
       , CheckWindows [mkAfter $ EnemyEngaged eid pid]
       ]
@@ -1355,6 +1376,15 @@ runGameMessage msg g = case msg of
         | h <- payers
         ]
     pure g
+  DiscardGroupResources pid n | n > 0 -> do
+    heroes <- filter ((> 0) . (.resources)) <$> (traverse getHero =<< select AnyHero)
+    unless (null heroes)
+      $ push
+      $ questionLabel (ikeyWith "label.discardMore" [intVar "count" n]) pid
+      $ [ targetLabel h [RemoveTokens (PlayerSource pid) (toTarget h) Resource 1, DiscardGroupResources pid (n - 1)]
+        | h <- heroes
+        ]
+    pure g
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
     push $ case others of
@@ -1635,6 +1665,11 @@ runGameMessage msg g = case msg of
       & entitiesL
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  -- attached as one played is, but not played
+  PutAttachmentIntoPlay pid card -> do
+    runQueueT $ raiseThreatFromDoomed $ printedDoomed card
+    push $ PlayAttachment pid card
+    pure g
   PutSideQuestIntoPlay pid card -> do
     sideQuest <- newSideQuest pid card
     pure $ g & entitiesL . questsL %~ insertEntity sideQuest
@@ -1831,6 +1866,12 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
+  -- a hero leaves play for good, not for its owner's discard pile, its attachments
+  -- discarded as they would be were it discarded
+  RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
+    g' <- leftPlay g target
+    pushAll $ discardAttached g target
+    pure $ g' & entitiesL . heroesL %~ Map.delete hid
   -- what is attached to it leaves play with it, as it would were it discarded
   RemoveFromGame target@(LocationTarget lid) -> do
     pushAll $ discardAttached g target
@@ -2042,13 +2083,13 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
   -- the next card revealed is discarded unresolved if it is of the type named, as Minas
   -- Tirith Lampwright reads; either way the effect is spent
-  RevealCard card
+  (revealedCard -> Just (_, card))
     | Just e <- find (any isDiscardNextRevealed . effectModifiers) (gameEffects g) -> do
         let g' = g & effectsL %~ filter (/= e)
         if cdCardType (toCardDef card) `elem` [t | DiscardNextRevealed t <- effectModifiers e]
           then g' <$ push (AddToEncounterDiscard [card])
           else runGameMessage msg g'
-  RevealCard card -> do
+  (revealedCard -> Just (engaging, card)) -> do
     let def = toCardDef card
     players <- getPlayerOrder
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
@@ -2059,17 +2100,23 @@ runGameMessage msg g = case msg of
             , n > 0
             , p <- players
             ]
-        -- ponytail: prowl's resources are spent, so a hero barred from spending keeps
-        -- its own; no prowl encounter set shares a deck with such a card
-        prowl = [SpendGroupResources lead Neutral n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
+        -- the players as a group discard the resources from their heroes' pools (The
+        -- Drúadan Forest rules)
+        prowl = [DiscardGroupResources lead n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
-            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType]]
+            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType], isNothing engaging]
             <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
+      -- an enemy revealed to be put into play engaged never enters the staging area
+      EnemyType | Just pid <- engaging -> do
+        enemy <- newEnemy card
+        pushAll . ([EngageEnemy pid (toId enemy), CheckWindows [mkAfter $ EntersPlay $ toTarget enemy]] <>) . (<> [WhileInPlay (toTarget enemy) [ResolveSurge (toTarget enemy) card]])
+          =<< revealing (toTarget enemy)
+        pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = Unplaced}) enemy)
       EnemyType -> do
         enemy <- newEnemy card
         pushAll . (<> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
@@ -2773,6 +2820,13 @@ payFor g pid card fromHand windows host discount = do
 -- | The Doomed a card is printed with.
 printedDoomed :: HasCardDef a => a -> Int
 printedDoomed a = sum [n | Doomed n <- toList (cdKeywords $ toCardDef a)]
+
+-- | The card a message reveals, with the player it is put into play engaged with, if any.
+revealedCard :: Message -> Maybe (Maybe PlayerId, EncounterCard)
+revealedCard = \case
+  RevealCard card -> Just (Nothing, card)
+  RevealCardEngaged pid card -> Just (Just pid, card)
+  _ -> Nothing
 
 isDiscardNextRevealed :: ModifierType -> Bool
 isDiscardNextRevealed = \case

@@ -130,10 +130,35 @@ spec = describe "Elves of Lórien" do
       _ <- onTopOfDeck pid Allies.greenwoodArcher
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid vilya
-      chooseLabel "$label.playIt" pid
+      chooseLabel "$label.putItIntoPlay" pid
       passResponses pid
       alliesInPlay `shouldReturn` [toCardCode Allies.greenwoodArcher]
       isExhausted elrond `shouldReturn` True
+
+    it "puts an ally into play rather than playing it (ruling)" . elvesTest $ \pid -> do
+      run $ CreateEffect $ Effect GameSource GameTarget [OneAllyPerRound] UntilEndOfRound
+      elrond <- elrondInPlay pid
+      vilya <- putAttachmentOn pid Attachments.vilya elrond
+      _ <- onTopOfDeck pid Allies.greenwoodArcher
+      run $ BeginPhase PlanningPhase
+      chooseAbilityOf pid vilya
+      chooseLabel "$label.putItIntoPlay" pid
+      passResponses pid
+      alliesInPlay `shouldReturn` [toCardCode Allies.greenwoodArcher]
+      -- the ally was not played, so another may still be
+      getModifiers GameTarget >>= (`shouldSatisfy` notElem AllyPlayedThisRound)
+
+    it "puts an attachment into play on a host its player chooses" . elvesTest $ \pid -> do
+      elrond <- elrondInPlay pid
+      vilya <- putAttachmentOn pid Attachments.vilya elrond
+      _ <- onTopOfDeck pid Attachments.stewardOfGondor
+      run $ BeginPhase PlanningPhase
+      chooseAbilityOf pid vilya
+      chooseLabel "$label.putItIntoPlay" pid
+      celeborn <- hero celebornCode
+      chooseTarget pid celeborn
+      getsGame (map (.placement) . filter ((== toCardCode Attachments.stewardOfGondor) . toCardCode) . toList . (.entities.attachments))
+        `shouldReturn` [AttachedTo celeborn]
 
     it "moves the card to the bottom of the deck instead" . elvesTest $ \pid -> do
       elrond <- elrondInPlay pid
@@ -292,7 +317,8 @@ spec = describe "Elves of Lórien" do
       isExhausted defender `shouldReturn` False
 
   describe "Pursuing the Enemy" do
-    it "returns a Silvan ally to deal 1 damage to each engaged enemy" . elvesTest $ \pid -> do
+    -- Legolas gives the 0 cost Tactics event its resource match
+    it "returns a Silvan ally to deal 1 damage to each engaged enemy" . gameTestWith (coreDeck "elves-of-lorien") {heroes = [celebornCode, galadrielCode, "01005"]} $ \pid -> do
       _ <- allyInPlay pid Allies.greenwoodArcher
       eid <- enemyIn Enemies.hillTroll
       run $ EngageEnemy pid eid

@@ -15,6 +15,6 @@ instance RunMessage ValiantSacrifice where
   runMessage msg e@(ValiantSacrifice attrs) = case msg of
     PlayEvent _ card windows | card.id == toId attrs -> do
       for_ (headMay [controller | Window _ (LeftPlay (AllyTarget _) controller _) <- windows]) \controller ->
-        drawCards controller 2
+        drawCards attrs controller 2
       pure e
     _ -> ValiantSacrifice <$> runMessage msg attrs

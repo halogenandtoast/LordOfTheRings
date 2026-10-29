@@ -43,6 +43,7 @@ import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
   WindowType (CardsDrawn, DiscardedFromDeck, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
+  mkWhen,
  )
 
 instance RunMessage Player where
@@ -72,9 +73,15 @@ instance RunMessage Player where
       send $ ShuffleIntoDeck $ map (.id) player.hand
       (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
       pure $ player & handL .~ hand & deckL .~ deck
+    -- a raise opens a window before it, as Harbor Thug's Forced effect answers
+    RaiseThreat pid n | pid == player.id, n > 0 -> do
+      pushAll [CheckWindows [mkWhen $ ThreatRaised pid], DoRaiseThreat pid n]
+      pure player
     RaiseThreat pid n | pid == player.id -> do
       push CheckEliminations
-      pushWhen (n > 0) $ CheckWindows [mkAfter $ ThreatRaised pid]
+      pure $ player & threatL %~ max 0 . (+ n)
+    DoRaiseThreat pid n | pid == player.id -> do
+      pushAll [CheckEliminations, CheckWindows [mkAfter $ ThreatRaised pid]]
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
@@ -182,12 +189,19 @@ instance RunMessage Player where
       for_ (headMay player.deck) \case
         top@(PlayerCard pc) -> do
           able <- canPlayAtNoCost top
+          -- an ally or attachment is put into play, not played: only an event is played
+          -- (ruling, Vilya)
+          let putIntoPlay = top.cardType `elem` [AllyType, AttachmentType]
+              resolve = case top.cardType of
+                AllyType -> [PutAllyIntoPlayUnder pid pc]
+                AttachmentType -> [PutAttachmentIntoPlay pid pc]
+                _ -> [PlayAtNoCost pid pc]
           push
             $ Ask pid
             $ QuestionLabel (ikey "label.playAtNoCost") (sourceTarget source) []
             $ SearchCards [top]
             $ ChooseOne
-            $ [Label (ikey "label.playIt") [RemoveFromDeck pid pc.id, PlayAtNoCost pid pc] | able]
+            $ [Label (ikey $ if putIntoPlay then "label.putItIntoPlay" else "label.playIt") (RemoveFromDeck pid pc.id : resolve) | able]
             <> [Label (ikey "label.moveToBottomOfDeck") [MoveToBottomOfDeck pid pc.id]]
         EncounterCard _ -> pure ()
       pure player
@@ -405,12 +419,19 @@ canAfford p c = case (c.cost, c.sphere) of
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
       filterM (\h -> andM [heroCanSpend h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
+    fromAllies <- sum . map snd <$> allyPayersFor p.id c
+    -- a card that costs 0 still needs a resource match (FAQ 2.39, 2.61): a hero with its
+    -- resource icon, which paying with resources of another sphere (A Good Harvest) isn't
+    matched <- (sphere == Neutral ||) <$> anyM (matchesSphere sphere) heroes
+    let needed = costAsResources cost + extra
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
-      Nothing -> do
-        fromAllies <- sum . map snd <$> allyPayersFor p.id c
-        pure $ sum (map (.resources) payers) + fromAllies >= costAsResources cost + extra
+      Nothing
+        | needed <= 0 -> pure $ matched || fromAllies > 0
+        | otherwise -> pure $ sum (map (.resources) payers) + fromAllies >= needed
   _ -> pure False
+ where
+  matchesSphere sphere h = (\own -> h.sphere == sphere || GainResourceIcon sphere `elem` own) <$> getModifiers h
 
 {- | What modifiers add to the cost of the card the player would play: the game's, the
 player's own and the card's (negative when they lower it), less its secrecy while the

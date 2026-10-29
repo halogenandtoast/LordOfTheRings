@@ -17,7 +17,7 @@ frenziedAttack = treachery FrenziedAttack Cards.frenziedAttack
 instance RunMessage FrenziedAttack where
   runMessage msg t@(FrenziedAttack attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      eachPlayer \p -> drawCards p 1
+      eachPlayer \p -> drawCards attrs p 1
       doStep 1 msg
       pure t
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do

@@ -28,6 +28,6 @@ instance RunMessage FordsOfIsen where
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       eachPlayer \p -> do
         hand <- length . (.hand) <$> getPlayer p
-        when (hand < 5) $ drawCards p (5 - hand)
+        when (hand < 5) $ drawCards a p (5 - hand)
       pure l
     _ -> FordsOfIsen <$> runMessage msg a

@@ -25,7 +25,7 @@ instance RunMessage PillarsOfTheKings where
       if threat < 40
         then do
           raiseThreat pid (40 - threat)
-          drawCards pid $ if 40 - threat >= 10 then 4 else 1
+          drawCards attrs pid $ if 40 - threat >= 10 then 4 else 1
         else lowerThreatBy attrs pid (threat - 40)
       pure e
     _ -> PillarsOfTheKings <$> runMessage msg attrs

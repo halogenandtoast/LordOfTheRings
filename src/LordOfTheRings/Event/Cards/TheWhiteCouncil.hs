@@ -52,7 +52,7 @@ instance RunMessage TheWhiteCouncil where
               targets heroes \h -> placeResources attrs h 1
             next 1
           when (open 2) $ labeled "theWhiteCouncil.draw" do
-            drawCards p 1
+            drawCards attrs p 1
             next 2
           when (open 3 && notNull discardPile) $ labeled "theWhiteCouncil.shuffle" do
             chooseOrRunOneM p do

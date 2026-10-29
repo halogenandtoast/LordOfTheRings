@@ -217,7 +217,8 @@ spec = describe "The Ring-maker cycle player cards" do
       [t | TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
 
   describe "Close Call" do
-    it "cancels X damage just dealt to a hero, raising each threat by X" . gameTest $ \pid -> do
+    -- Gimli gives the 0 cost Tactics event its resource match
+    it "cancels X damage just dealt to a hero, raising each threat by X" . gameTestWith testDeck {heroes = [beravorCode, "01004", theodredCode]} $ \pid -> do
       beravor <- hero beravorCode
       card <- putCardIntoHand pid Events.closeCall
       run $ PlaceTokens GameSource beravor Damage 2

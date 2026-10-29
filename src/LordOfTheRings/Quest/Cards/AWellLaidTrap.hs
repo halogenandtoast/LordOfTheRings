@@ -49,7 +49,7 @@ instance RunMessage AWellLaidTrap where
       eachPlayerSearchesToEngage attrs BoarClan
       eachPlayer \p -> do
         shuffleDiscardIntoDeck p
-        drawCards p 1
+        drawCards attrs p 1
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       completeQuest attrs.id

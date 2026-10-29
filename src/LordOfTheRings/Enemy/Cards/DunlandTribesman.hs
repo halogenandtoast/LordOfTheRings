@@ -20,7 +20,7 @@ instance HasAbilities DunlandTribesman where
 instance RunMessage DunlandTribesman where
   runMessage msg e@(DunlandTribesman attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      eachPlayer \pid -> drawCards pid 1
+      eachPlayer \pid -> drawCards attrs pid 1
       pure e
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       roundModifier attrs attrs (ThreatModifier 1)

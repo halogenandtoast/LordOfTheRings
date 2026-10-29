@@ -22,6 +22,6 @@ instance HasAbilities HornOfTheMark where
 instance RunMessage HornOfTheMark where
   runMessage msg s@(HornOfTheMark a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      drawCards pid 1
+      drawCards a pid 1
       pure s
     _ -> HornOfTheMark <$> runMessage msg a

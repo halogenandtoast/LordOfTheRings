@@ -18,6 +18,6 @@ instance RunMessage ForestGate where
   runMessage msg l@(ForestGate a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       lead <- getLead
-      drawCards lead 2
+      drawCards a lead 2
       pure l
     _ -> ForestGate <$> runMessage msg a

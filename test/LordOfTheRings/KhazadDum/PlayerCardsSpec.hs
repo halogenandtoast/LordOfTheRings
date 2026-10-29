@@ -83,10 +83,11 @@ spec = describe "Khazad-dûm player cards" do
     chooseAbilityOf pid axe
     getsGame (fmap (.damage) . find ((== eid) . toId) . toList . (.entities.enemies)) `shouldReturn` Just 1
 
-  it "Khazâd! Khazâd! gives a Dwarf +3 attack" . kdTest $ \pid -> do
+  -- Gimli, a Tactics Dwarf, gives the 0 cost event its resource match
+  it "Khazâd! Khazâd! gives a Dwarf +3 attack" . gameTestWith (coreDeck "dwarves-of-durin") {heroes = [dainCode, oriCode, "01004"]} $ \pid -> do
     ori <- hero oriCode
     base <- stat getAttack ori
-    _ <- playWith pid dainCode 0 Events.khazadKhazad
+    _ <- playWith pid "01004" 0 Events.khazadKhazad
     chooseTarget pid ori
     getAttack ori `shouldReturn` base + 3
 

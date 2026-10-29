@@ -22,7 +22,7 @@ instance RunMessage TheFourthStar where
       eachPlayer \pid -> chooseOneM pid do
         questionLabeled "theFourthStar.draw"
         causedBy a
-        labeled "theFourthStar.drawCard" $ drawCards pid 1
+        labeled "theFourthStar.drawCard" $ drawCards a pid 1
         labeled "pass" $ pure ()
       pure l
     _ -> TheFourthStar <$> runMessage msg a

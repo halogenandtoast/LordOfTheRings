@@ -106,6 +106,13 @@ spec = describe "The Drúadan Forest" do
     -- Drúadan Thief's surge
     placementOf Locations.gardenOfPoisons `shouldReturn` Just StagingArea
 
+  it "discards prowl's resources even from a hero that cannot spend them" . forestTest $ \pid -> do
+    beravor <- giveResources "01012" 2
+    run $ CreateEffect $ Effect GameSource (HeroTarget beravor) [CannotSpendResources] UntilEndOfRound
+    reveal [Enemies.druadanThief, Locations.gardenOfPoisons]
+    chooseTarget pid (HeroTarget beravor)
+    getHeroResources beravor `shouldReturn` 1
+
   it "prowls for each player with Drúadan Elite" . forestTest $ \pid -> do
     beravor <- giveResources "01012" 2
     reveal [Enemies.druadanElite]

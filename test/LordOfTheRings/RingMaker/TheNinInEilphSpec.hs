@@ -7,6 +7,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (CardMatcher (AnyCard), getTimeCounters)
+import LordOfTheRings.Message.Lifted (drawCards)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
@@ -165,13 +166,25 @@ spec = describe "The Nîn-in-Eilph" do
 
   it "bars player card effects from drawing or gaining resources under No End in Sight" . ninTest $ \pid -> do
     _ <- revealStage pid Quests.throughTheMarshNoEndInSight
-    getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotDrawCardsFromCardEffects)
+    getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotDrawCardsFromPlayerCardEffects)
     eowyn <- getHeroWithCode "01007"
     run $ PlaceTokens (HeroSource eowyn.id) (toTarget eowyn) Resource 1
     getHeroResources eowyn.id `shouldReturn` 0
     -- an encounter card's effect still may
     run $ PlaceTokens ScenarioSource (toTarget eowyn) Resource 1
     getHeroResources eowyn.id `shouldReturn` 1
+
+  it "bars only player card effects from drawing under No End in Sight" . ninTest $ \pid -> do
+    _ <- revealStage pid Quests.throughTheMarshNoEndInSight
+    eowyn <- getHeroWithCode "01007"
+    hand <- length . (.hand) <$> getPlayer pid
+    runQueueT $ drawCards (HeroSource eowyn.id) pid 1
+    void mainLoop
+    length . (.hand) <$> getPlayer pid `shouldReturn` hand
+    -- an encounter card's effect still may
+    runQueueT $ drawCards ScenarioSource pid 1
+    void mainLoop
+    length . (.hand) <$> getPlayer pid `shouldReturn` hand + 1
 
   it "lets each player play only 1 card each round under A Forgotten Land" . ninTest $ \pid -> do
     _ <- revealStage pid Quests.throughTheMarshAForgottenLand

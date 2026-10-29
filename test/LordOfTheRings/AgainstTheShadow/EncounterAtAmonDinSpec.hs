@@ -174,6 +174,18 @@ spec = describe "Encounter at Amon Dîn" do
     deadVillagerCount `shouldReturn` 4
     (getDamage . toTarget =<< getHeroWithCode "01007") `shouldReturn` 0
 
+  it "holds a loss back while Ghulat is in play, until he leaves play" . amonDinTest $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Enemies.ghulat
+    run $ GameOver Lost
+    getsGame (.outcome) `shouldReturn` Nothing
+    run . Destroy GameSource . toTarget =<< enemyOf Enemies.ghulat
+    getsGame (.outcome) `shouldReturn` Just Lost
+
+  it "ends the game with every player eliminated, Ghulat in play or not" . amonDinTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Enemies.ghulat
+    run $ EliminatePlayer pid
+    getsGame (.outcome) `shouldReturn` Just Lost
+
   it "cannot end the game while Ghulat is in play, then compares the villagers" . amonDinTest $ \pid -> do
     _ <- objectives 3
     quest <- putQuestStage Quests.protectTheVillagers

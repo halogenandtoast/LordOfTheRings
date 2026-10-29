@@ -15,12 +15,10 @@ instance HasAbilities ThroughTheMarshNoEndInSight where
   getAbilities (ThroughTheMarshNoEndInSight a) = wanderingStage a
 
 -- | Player card effects cannot be used to gain resources or draw cards.
--- ponytail: encounter card effects are barred from drawing too, as 'drawCards' knows no
--- source (see its own marker); none in this encounter deck draws.
 instance HasModifiersFor ThroughTheMarshNoEndInSight where
   getModifiersFor (ThroughTheMarshNoEndInSight a) = when a.flipped do
     players <- getRemainingPlayers
-    for_ players \p -> modified a (PlayerTarget p) [CannotDrawCardsFromCardEffects]
+    for_ players \p -> modified a (PlayerTarget p) [CannotDrawCardsFromPlayerCardEffects]
     heroes <- select AnyHero
     for_ heroes \h -> modified a h [CannotGainResourcesFromPlayerCardEffects]
 

@@ -40,6 +40,6 @@ instance RunMessage HillsOfDunland where
         putEnemyIntoPlayEngaged pid card
       pure l
     TravelTo lid | lid == a.id -> do
-      eachPlayer \p -> drawCards p 1
+      eachPlayer \p -> drawCards a p 1
       pure l
     _ -> HillsOfDunland <$> runMessage msg a

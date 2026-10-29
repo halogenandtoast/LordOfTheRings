@@ -255,6 +255,9 @@ canPay = \case
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
   Costs cs -> allM canPay cs
   ExhaustCharacterCost hm am -> notNull <$> exhaustableCharacters hm am
+  SpendResourcesCost sphere n -> do
+    pid <- getsGame gameActivePlayer
+    (>= n) <$> getResourcesOfSphere pid sphere
 
 -- | As 'canPay', for the player paying, whom 'ActivePlayer' matches.
 canPayFor :: HasGame m => PlayerId -> AbilityCost -> m Bool
@@ -295,6 +298,9 @@ costMessages source = \case
   ExhaustHeroCost _ -> [] -- chosen as it is paid, by 'payCost'
   Costs cs -> concatMap (costMessages source) cs
   ExhaustCharacterCost _ _ -> []
+  SpendResourcesCost sphere n -> case source of
+    PlayerSource pid -> [SpendResources pid sphere n]
+    _ -> []
 
 -- | The player who controls an ability's source, if anyone does.
 abilityController :: HasGame m => Ability -> m (Maybe PlayerId)

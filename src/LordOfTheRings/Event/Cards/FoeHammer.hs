@@ -31,6 +31,6 @@ instance RunMessage FoeHammer where
         causedBy attrs
         targets readyWeapons \w -> do
           exhaust w
-          drawCards pid 3
+          drawCards attrs pid 3
       pure e
     _ -> FoeHammer <$> runMessage msg attrs
