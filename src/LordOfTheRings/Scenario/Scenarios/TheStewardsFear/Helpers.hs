@@ -1,6 +1,5 @@
 -- | What the cards of The Steward's Fear share: the underworld deck and the cards stacked
--- facedown under locations, the tokens on the current quest, and the attack dealing its
--- damage.
+-- facedown under locations, and the tokens on the current quest.
 module LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers (
   Meta (..),
   getMeta,
@@ -10,9 +9,6 @@ module LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers (
   shuffleUnderworldIntoEncounterDeck,
   removeTokenFromQuest,
   removeAllTokensFromQuest,
-  attackDealingDamage,
-  armFalseLead,
-  falseLeadArmed,
   claimClue,
   investigation,
   runInvestigation,
@@ -24,7 +20,7 @@ import LordOfTheRings.Ability
 import LordOfTheRings.Card (CardCode, EncounterCard, toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
-import LordOfTheRings.Classes.HasQueue (HasQueue, peekQueue, push)
+import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Entities (entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities)
@@ -112,52 +108,6 @@ removeAllTokensFromQuest :: (ReverseQueue m, Sourceable source) => source -> m (
 removeAllTokensFromQuest source = do
   tokens <- currentQuestTokens
   for_ tokens \(q, token, n) -> removeTokens source q token n
-
-{- | The enemy whose attack is dealing its damage, read off the game's queue: the window
-after its attack still waits there, with no step before the attack's damage ahead of it.
-A character destroyed now is destroyed by that attack.
-ponytail: only the attack's damage destroys; a character a shadow effect's damage destroys
-during the attack does not count. Read the attack's cause off the damage if a card needs it.
--}
-attackDealingDamage :: (MonadTrans t, HasQueue Message m) => t m (Maybe EnemyId)
-attackDealingDamage = lift $ go <$> peekQueue
- where
-  go = \case
-    [] -> Nothing
-    CheckWindows ws : rest -> case [eid | Window After (EnemyAttacking eid _) <- ws] of
-      eid : _ -> Just eid
-      [] -> go rest
-    msg : rest
-      | beforeDamage msg -> Nothing
-      | otherwise -> go rest
-  beforeDamage = \case
-    DeclareDefenders {} -> True
-    DeclareSentinels {} -> True
-    DefendWith {} -> True
-    UndefendedAttack {} -> True
-    ResolveShadow {} -> True
-    ResolveShadowCard {} -> True
-    AttackDamage {} -> True
-    DefendedByMany {} -> True
-    UndefendedDamage {} -> True
-    _ -> False
-
-falseLeadMarker :: EnemyId -> CardId -> Message
-falseLeadMarker eid cid = ScenarioSpecific "falseLead" (toJSON (eid, cid))
-
-{- | False Lead's shadow, resolved, lasts for the attack: its mark waits on the queue until
-the attack is over.
--}
-armFalseLead :: (MonadTrans t, HasQueue Message m) => EnemyId -> CardId -> t m ()
-armFalseLead eid cid = afterAttack eid [falseLeadMarker eid cid]
-
--- | The False Lead whose shadow lasts for the enemy's attack, if one does.
-falseLeadArmed :: (MonadTrans t, HasQueue Message m) => EnemyId -> t m (Maybe CardId)
-falseLeadArmed eid = lift $ headMay . mapMaybe marked <$> peekQueue
- where
-  marked = \case
-    ScenarioSpecific "falseLead" v | Just (eid', cid) <- parseMaybe parseJSON v, eid' == eid -> Just cid
-    _ -> Nothing
 
 {- | A Clue claimed into the victory display: "add it to the victory display, and place N
 resource tokens on the current quest."
