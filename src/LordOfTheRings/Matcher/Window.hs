@@ -149,8 +149,9 @@ data WindowMatcher
     HeroGainedResourcesWindow Timing PlayerId
   | -- | an encounter card with surge revealed from the encounter deck
     SurgeCardRevealedWindow Timing
-  | -- | a matching hero declared as a defender
-    HeroDefenderDeclaredWindow Timing HeroMatcher
+  | -- | a matching hero declared as a defender, while an enemy other than the attacker
+    -- matches
+    HeroDefenderDeclaredWindow Timing HeroMatcher EnemyMatcher
   | -- | any number of time counters removed from the card, or from any card
     TimeCountersRemovedWindow Timing (Maybe Target)
   | -- | any number of time counters removed from a quest stage, the current quest

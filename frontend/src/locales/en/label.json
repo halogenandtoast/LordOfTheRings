@@ -816,7 +816,8 @@
     "treachery": "Treachery"
   },
   "smallTarget": {
-    "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against"
+    "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against",
+    "chooseShadow": "Choose the attacking enemy's shadow card to reveal"
   },
   "menOfTheWest": {
     "choose": "Choose an Outlands ally to return to your hand, for 1 leadership resource",

@@ -128,7 +128,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
           TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
           _ -> Nothing
     maybe (pure False) (hasKeyword Surge target) def
-  (HeroDefenderDeclaredWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
+  (HeroDefenderDeclaredWindow t m other, DeclaredAsDefender (HeroTarget hid) eid) | t == timing ->
+    andM [selectAny (HeroWithId hid <> m), selectAny (other <> not_ (EnemyWithId eid))]
   -- only while the enemy is still in play
   (AttackDealtDamageByWindow t who, AttackDealtDamage eid attackers n)
     | t == timing && who `elem` attackers && n > 0 -> selectAny (EnemyWithId eid)
