@@ -248,6 +248,7 @@ canPay = \case
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
   Costs cs -> allM canPay cs
+  ExhaustCharacterCost hm am -> notNull <$> exhaustableCharacters hm am
 
 -- | As 'canPay', for the player paying, whom 'ActivePlayer' matches.
 canPayFor :: HasGame m => PlayerId -> AbilityCost -> m Bool
@@ -261,12 +262,17 @@ asPlayer pid q = runReadGame q . (\g -> g {gameActivePlayer = pid}) <$> getGame
 exhaustableHeroes :: HasGame m => HeroMatcher -> m [HeroId]
 exhaustableHeroes m = filterM (\h -> notElem CannotExhaust <$> getModifiers (HeroTarget h)) =<< select (m <> ReadyHero)
 
+-- | The ready heroes and allies matching that can exhaust.
+exhaustableCharacters :: HasGame m => HeroMatcher -> AllyMatcher -> m [Target]
+exhaustableCharacters hm am = filterM (fmap (notElem CannotExhaust) . getModifiers) =<< selectCharacters (hm <> ReadyHero) (am <> ReadyAlly)
+
 {- | The messages that pay the cost, then the rest: a cost paid by a choice holds the rest
 until it is made.
 -}
 payCost :: PlayerId -> AbilityCost -> [Message] -> [Message]
 payCost pid cost rest = case cost of
   ExhaustHeroCost m -> [PayExhaustHeroCost pid m rest]
+  ExhaustCharacterCost hm am -> [PayExhaustCharacterCost pid hm am rest]
   Costs cs -> foldr (payCost pid) rest cs
   _ -> costMessages (PlayerSource pid) cost <> rest
 
@@ -282,6 +288,7 @@ costMessages source = \case
   SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
   ExhaustHeroCost _ -> [] -- chosen as it is paid, by 'payCost'
   Costs cs -> concatMap (costMessages source) cs
+  ExhaustCharacterCost _ _ -> []
 
 -- | The player who controls an ability's source, if anyone does.
 abilityController :: HasGame m => Ability -> m (Maybe PlayerId)

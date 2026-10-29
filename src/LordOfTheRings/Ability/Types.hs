@@ -3,7 +3,7 @@ module LordOfTheRings.Ability.Types (module LordOfTheRings.Ability.Types) where
 import LordOfTheRings.Criteria
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Json (withDefaults)
-import LordOfTheRings.Matcher.Types (HeroMatcher)
+import LordOfTheRings.Matcher.Types (AllyMatcher, HeroMatcher)
 import LordOfTheRings.Matcher.Window
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -22,6 +22,9 @@ data AbilityCost
     -- ExhaustAssetCost; 'ActivePlayer' in it is the player paying
     ExhaustHeroCost HeroMatcher
   | Costs [AbilityCost]
+  | -- | as 'ExhaustHeroCost', a hero or an ally the matchers pick out, as "Exhaust a Ranger
+    -- character"
+    ExhaustCharacterCost HeroMatcher AllyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

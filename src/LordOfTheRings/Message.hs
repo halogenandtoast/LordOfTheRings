@@ -6,7 +6,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Log.Block
-import LordOfTheRings.Matcher.Types (CardMatcher, HeroMatcher)
+import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, HeroMatcher)
 import LordOfTheRings.Modifier (ModifierType)
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -460,6 +460,8 @@ data Message
     them: from a player's hand, deck or discard pile, or a location in play
     -}
     PlaceUnderneath Target [Card]
+  | -- | as 'PayExhaustHeroCost', a hero or an ally the matchers pick out
+    PayExhaustCharacterCost PlayerId HeroMatcher AllyMatcher [Message]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

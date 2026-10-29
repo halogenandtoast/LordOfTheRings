@@ -1127,6 +1127,15 @@ runGameMessage msg g = case msg of
       $ questionLabelWith (ikey "label.chooseAndExhaustHero") Nothing [] pid
         [targetLabel h (Exhaust (toTarget h) : map (paidWith h) rest) | h <- heroes]
     pure g
+  PayExhaustCharacterCost pid hm am rest -> do
+    characters <- asPlayer pid (exhaustableCharacters hm am)
+    let paidWith c = \case
+          UseCardAbility p s i ws -> UseCardAbility p s i (ws <> [mkAfter $ Exhausted c])
+          m -> m
+    push
+      $ questionLabelWith (ikey "label.chooseAndExhaustCharacter") Nothing [] pid
+        [targetLabel c (Exhaust c : map (paidWith c) rest) | c <- characters]
+    pure g
   -- the group pays, the player picking whose heroes' resources, 1 at a time
   SpendGroupResources pid sphere n | n > 0 -> do
     heroes <- traverse getHero =<< select AnyHero
