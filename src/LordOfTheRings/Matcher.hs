@@ -535,16 +535,21 @@ getAttachmentsControlledBy pid = do
 {- | The cards attached to the host with the trait: attachments, objectives and encounter
 cards attached as conditions.
 -}
-attachedWithTrait :: HasGame m => Trait -> Target -> m [Target]
+attachedWithTrait :: forall m. HasGame m => Trait -> Target -> m [Target]
 attachedWithTrait trait host = do
   es <- getsGame gameEntities
   let on :: HasField "placement" a Placement => a -> Bool
       on a = a.placement == AttachedTo host
-  pure
-    $ [toTarget a | a <- toList es.attachments, on a, trait `member` cdCardTraits (toCardDef a)]
-    <> [toTarget o | o <- toList es.objectives, on o, trait `member` cdCardTraits (toCardDef o)]
-    <> [toTarget t | t <- toList es.treacheries, on t, trait `member` cdCardTraits (toCardDef t)]
-    <> [toTarget e | e <- toList es.enemies, on e, trait `member` cdCardTraits (toCardDef e)]
+      -- printed or gained, as Mutual Accord gives
+      with :: (Targetable a, HasCardDef a) => [a] -> m [Target]
+      with = fmap (map toTarget) . filterM (\a -> hasTrait trait (toTarget a) (toCardDef a))
+  concat
+    <$> sequence
+      [ with (filter on $ toList es.attachments)
+      , with (filter on $ toList es.objectives)
+      , with (filter on $ toList es.treacheries)
+      , with (filter on $ toList es.enemies)
+      ]
 
 {- | Every card attached to the host: attachments, objectives and encounter cards attached
 as conditions.
@@ -580,12 +585,8 @@ abilityUsed source idx = getsGame \g ->
 -- | Objectives in play with the trait: in the staging area or attached.
 objectivesWithTrait :: HasGame m => Trait -> m [Objective]
 objectivesWithTrait trait =
-  getsGame
-    ( filter (\o -> trait `member` cdCardTraits (toCardDef o) && o.placement /= Unplaced)
-        . toList
-        . entitiesObjectives
-        . gameEntities
-    )
+  filterM (\o -> hasTrait trait (toTarget o) (toCardDef o))
+    =<< getsGame (filter ((/= Unplaced) . (.placement)) . toList . entitiesObjectives . gameEntities)
 
 -- | Players still in the game, in turn order from the first player.
 getRemainingPlayers :: HasGame m => m [PlayerId]
