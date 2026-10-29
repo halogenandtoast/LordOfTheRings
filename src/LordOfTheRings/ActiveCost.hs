@@ -49,7 +49,9 @@ instance Entity ActiveCost where
   overAttrs f a = f a
 
 cardCost :: Card -> Cost
-cardCost card = ResourceCost (fromMaybe Neutral $ cdSphere def) (fromMaybe (StaticCost 0) $ cdCost def)
+cardCost card = ResourceCost (fromMaybe Neutral $ cdSphere def) $ case cdCost def of
+  Just XCost -> StaticCost 0
+  cost -> fromMaybe (StaticCost 0) cost
  where
   def = toCardDef card
 
@@ -72,15 +74,16 @@ instance RunMessage ActiveCost where
       Free -> do
         push $ PaidCost acId
         pure ac
-      ResourceCost _ DynamicCost -> do
-        push $ PaidCost acId
-        pure ac
       ResourceCost sphere (StaticCost n) -> do
         let spend = case cdDistinctPayers (toCardDef ac.activeCostCard) of
               Just _ -> SpendResourcesFromDistinctHeroes ac.activeCostPlayer sphere n []
               Nothing -> SpendResources ac.activeCostPlayer sphere n
         pushAll [spend, PayCost acId]
         pure $ ac & costCostL .~ Free
+      -- a chosen X the card pays as it resolves ('cardCost' turns an 'XCost' static)
+      ResourceCost _ _ -> do
+        push $ PaidCost acId
+        pure ac
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
