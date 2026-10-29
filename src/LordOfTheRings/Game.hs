@@ -344,16 +344,32 @@ runGameMessage msg g = case msg of
     heroes <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) =<< select ExhaustedHero
     allies <- select ExhaustedAlly
     players <- getPlayerOrder
+    -- a player who may refresh no more characters than some, as Heart of Fangorn reads,
+    -- chooses which, if they would refresh more
+    limits <- for players \pid -> (pid,) . (\ms -> minimumMay [n | RefreshAtMost n <- ms]) <$> getModifiers (PlayerTarget pid)
+    let characters = map toTarget heroes <> map toTarget allies
+        controller = \case
+          HeroTarget hid -> (.owner) <$> Map.lookup hid g.entities.heroes
+          AllyTarget aid -> placementController . (.placement) =<< Map.lookup aid g.entities.allies
+          _ -> Nothing
+        limited =
+          [ (pid, n, cs)
+          | (pid, Just n) <- limits
+          , let cs = [c | c <- characters, controller c == Just pid]
+          , length cs > n
+          ]
+        held = concat [cs | (_, _, cs) <- limited]
     let passToken = case drop 1 players of
           (next : _) -> [SetFirstPlayer next]
           [] -> []
     -- each character readied opens its own window, for responses to it readying
-    readied <- for (map toTarget heroes <> map toTarget allies) \c -> do
+    readied <- for (filter (`notElem` held) characters) \c -> do
       traits <- characterTraits c
       pure [Ready c, CheckWindows [mkAfter $ Readied c traits]]
     pushAll
       $ concat regenerating
       <> concat readied
+      <> [RefreshUpTo pid n cs | (pid, n, cs) <- limited]
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
       <> [RaiseThreat pid 1 | pid <- players]
@@ -362,6 +378,12 @@ runGameMessage msg g = case msg of
       <> map OptionalActionWindow players
     pure $ g & phaseL .~ RefreshPhase
   SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid
+  RefreshUpTo pid n cs | n > 0, notNull cs -> do
+    choices <- for cs \c -> do
+      traits <- characterTraits c
+      pure $ targetLabel c [Ready c, CheckWindows [mkAfter $ Readied c traits], RefreshUpTo pid (n - 1) (filter (/= c) cs)]
+    push $ questionLabel (ikeyWith "label.refreshUpTo" [intVar "count" n]) pid choices
+    pure g
   CheckEliminations -> do
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
