@@ -9,9 +9,10 @@ import LordOfTheRings.Keyword (Keyword (Battle, Siege))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal)
 import LordOfTheRings.Outcome (Outcome (Won))
-import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (assaultOnOsgiliath, lookupScenario)
+import LordOfTheRings.Scenario.Types (encounterDiscardL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
 import TestImport
@@ -272,6 +273,16 @@ spec = describe "Assault on Osgiliath" do
     placementOf Locations.westQuarter `shouldReturn` Just (InPlayArea pid)
     map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Enemies.urukSoldier))
     placementOf Locations.ruinedTower `shouldReturn` Nothing
+
+  it "discards on past an emptied encounter deck to the Osgiliath location shuffled back with Street Fighting" . osgiliathTest $ \pid -> do
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    g <- getGame
+    quarter <- genEncounterCard Locations.westQuarter
+    putGame $ g & scenarioL %~ overAttrs (encounterDiscardL .~ [quarter])
+    reveal [Treacheries.streetFighting, Enemies.urukSoldier]
+    beravor <- heroOf pid "01012"
+    chooseTarget pid beravor
+    placementOf Locations.westQuarter `shouldReturn` Just (InPlayArea pid)
 
   it "spends 2 resources, or 1 beside another Osgiliath location, for progress on The Old Bridge" . osgiliathTest $ \pid -> do
     bridge <- stage Locations.theOldBridge
