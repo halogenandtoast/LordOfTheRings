@@ -206,3 +206,14 @@ spec = describe "Peril in Pelargir" do
     threat <- threatOf pid
     run $ Exhaust beravor
     threatOf pid `shouldReturn` threat + 1
+
+  it "raises threat as the Local Trouble hero is readied by a card effect" . pelargirTest $ \pid -> do
+    reveal [Treacheries.localTrouble]
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ Exhaust beravor
+    threat <- threatOf pid
+    run $ Ready beravor
+    threatOf pid `shouldReturn` threat + 1
+    -- readying a hero already ready is no readying
+    run $ Ready beravor
+    threatOf pid `shouldReturn` threat + 1
