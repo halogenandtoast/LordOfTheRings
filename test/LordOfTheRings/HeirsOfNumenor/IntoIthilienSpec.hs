@@ -175,6 +175,13 @@ spec = describe "Into Ithilien" do
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
     prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)
 
+  it "has Haradrim Elite attack the first player as it enters play engaged" . ithilienTest $ \pid -> do
+    _ <- setEncounterDeck [Locations.secludedGlade]
+    run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.haradrimElite
+    passActions pid
+    Just (QuestionLabel prompt _ _ _) <- getQuestion pid
+    prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)
+
   it "has each player remove 1 character from the quest with Lost Company" . ithilienTest $ \pid -> do
     b <- beravor
     e <- eowyn

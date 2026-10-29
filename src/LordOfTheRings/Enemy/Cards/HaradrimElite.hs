@@ -16,9 +16,15 @@ haradrimElite = enemy HaradrimElite Cards.haradrimElite
 -- that attack.)
 instance RunMessage HaradrimElite where
   runMessage msg e@(HaradrimElite attrs) = case msg of
-    -- ponytail: entering play into the staging area is read off its ambush check, which
-    -- every enemy revealed or added to the staging area makes, and none returning there
+    -- entering play into the staging area is read off its ambush check, which every enemy
+    -- revealed or added to the staging area makes, and none returning there
     AmbushEngagementCheck eid | eid == attrs.id -> do
+      lead <- getLead
+      immediateAttack lead attrs.id
+      HaradrimElite <$> runMessage msg attrs
+    -- put into play engaged, it still attacks the first player, as from the staging area
+    -- (ruling)
+    CheckWindows ws | Window After (EntersPlay (toTarget attrs)) `elem` ws -> do
       lead <- getLead
       immediateAttack lead attrs.id
       HaradrimElite <$> runMessage msg attrs
