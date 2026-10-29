@@ -158,6 +158,10 @@ allEnemyCards =
       , ancientMarshDweller
       , giantSwampAdder
       , neekerbreekers
+      , boarsGuardian
+      , wolfsGuardian
+      , ravensGuardian
+      , spiritOfTheWild
       ]
 
 namelessThing :: CardDef
@@ -1253,4 +1257,36 @@ neekerbreekers =
   (enemy "08105" "Neekerbreekers" TheNinInEilph 3 20 2 1 1 6)
     { cdCardTraits = setFromList [Creature, Insect]
     , cdShadowEffect = True
+    }
+
+boarsGuardian :: CardDef
+boarsGuardian =
+  (enemy "08040" "Boar's Guardian" TheThreeTrials 1 50 1 4 4 10)
+    { cdCardTraits = setFromList [Guardian, Boar]
+    , cdKeywords = setFromList [Time 2]
+    , cdVictoryPoints = Just 3
+    }
+
+wolfsGuardian :: CardDef
+wolfsGuardian =
+  (enemy "08041" "Wolf's Guardian" TheThreeTrials 1 50 2 5 3 12)
+    { cdCardTraits = setFromList [Guardian, Wolf]
+    , cdKeywords = setFromList [Time 3]
+    , cdVictoryPoints = Just 3
+    }
+
+ravensGuardian :: CardDef
+ravensGuardian =
+  (enemy "08042" "Raven's Guardian" TheThreeTrials 1 50 3 3 5 8)
+    { cdCardTraits = setFromList [Guardian, Raven]
+    , cdKeywords = setFromList [Time 4]
+    , cdVictoryPoints = Just 3
+    }
+
+spiritOfTheWild :: CardDef
+spiritOfTheWild =
+  (enemy "08050" "Spirit of the Wild" TheThreeTrials 5 28 1 1 2 4)
+    { cdCardTraits = setFromList [Undead, SpiritTrait]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 4
     }

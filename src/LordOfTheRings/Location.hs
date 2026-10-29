@@ -160,6 +160,12 @@ import LordOfTheRings.Location.Cards.FenOfReeds
 import LordOfTheRings.Location.Cards.FingerOfGlanduin
 import LordOfTheRings.Location.Cards.HiddenEyot
 import LordOfTheRings.Location.Cards.SinkingBog
+import LordOfTheRings.Location.Cards.HillBarrow
+import LordOfTheRings.Location.Cards.CaveBarrow
+import LordOfTheRings.Location.Cards.StoneBarrow
+import LordOfTheRings.Location.Cards.HallowedCircle
+import LordOfTheRings.Location.Cards.CursedForest
+import LordOfTheRings.Location.Cards.GrimFoothills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -347,5 +353,11 @@ allLocations =
         , SomeLocationCard fingerOfGlanduin
         , SomeLocationCard hiddenEyot
         , SomeLocationCard sinkingBog
+        , SomeLocationCard hillBarrow
+        , SomeLocationCard caveBarrow
+        , SomeLocationCard stoneBarrow
+        , SomeLocationCard hallowedCircle
+        , SomeLocationCard cursedForest
+        , SomeLocationCard grimFoothills
         ]
     ]

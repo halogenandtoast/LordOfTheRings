@@ -136,6 +136,9 @@ import LordOfTheRings.Treachery.Cards.DesecratedRuins
 import LordOfTheRings.Treachery.Cards.SpiesFromMordor
 import LordOfTheRings.Treachery.Cards.ShiftingMarshland
 import LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
+import LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
+import LordOfTheRings.Treachery.Cards.TheGuardiansFury
+import LordOfTheRings.Treachery.Cards.WildTenacity
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -296,5 +299,8 @@ allTreacherys =
         , SomeTreacheryCard spiesFromMordor
         , SomeTreacheryCard shiftingMarshland
         , SomeTreacheryCard remnantsOfElderDays
+        , SomeTreacheryCard curseOfTheWildMen
+        , SomeTreacheryCard theGuardiansFury
+        , SomeTreacheryCard wildTenacity
         ]
     ]

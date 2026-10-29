@@ -167,6 +167,8 @@ data WindowMatcher
     CardEntersStagingAreaWindow Timing Target
   | -- | the players advanced to a quest stage, as Fen of Reeds reads
     AdvancedToStageWindow Timing
+  | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
+    MatchingEnemyAttacksWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -265,4 +267,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (SurgeCardRevealedWindow {}, _) -> False
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
+  (MatchingEnemyAttacksWindow {}, _) -> False
   _ -> False

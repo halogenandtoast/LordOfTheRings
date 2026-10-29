@@ -143,6 +143,9 @@ allTreacheryCards =
       , spiesFromMordor
       , shiftingMarshland
       , remnantsOfElderDays
+      , curseOfTheWildMen
+      , theGuardiansFury
+      , wildTenacity
       ]
 
 deepDeepDark :: CardDef
@@ -867,3 +870,24 @@ shiftingMarshland =
 
 remnantsOfElderDays :: CardDef
 remnantsOfElderDays = (treachery "08111" "Remnants of Elder Days" TheNinInEilph 1) {cdEasyModeQuantity = Just 0}
+
+curseOfTheWildMen :: CardDef
+curseOfTheWildMen =
+  (treachery "08053" "Curse of the Wild Men" TheThreeTrials 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+theGuardiansFury :: CardDef
+theGuardiansFury =
+  (treachery "08054" "The Guardian's Fury" TheThreeTrials 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+wildTenacity :: CardDef
+wildTenacity =
+  (treachery "08055" "Wild Tenacity" TheThreeTrials 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }

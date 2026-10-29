@@ -81,6 +81,7 @@ const implemented: Record<string, Gateable> = {
   'trouble-in-tharbad': { alpha: true },
   'celebrimbors-secret': { alpha: true },
   'the-nin-in-eilph': { alpha: true },
+  'the-three-trials': { alpha: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

@@ -137,6 +137,11 @@ allQuestCards =
       , lostInTheSwanfleetATreacherousSwamp
       , lostInTheSwanfleetCreaturesOfAForgottenAge
       , outOfTheSwamp
+      , theTrialsBegin
+      , theTrialOfStrength
+      , theTrialOfPerseverance
+      , theTrialOfIntuition
+      , theAntleredCrownTheThreeTrials
       ]
 
 theDrippingWalls :: CardDef
@@ -505,3 +510,18 @@ lostInTheSwanfleetCreaturesOfAForgottenAge = lostInTheSwanfleet "08100" "Creatur
 outOfTheSwamp :: CardDef
 outOfTheSwamp =
   (quest "08101" "Out of the Swamp" TheNinInEilph 4 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Time 2]}
+
+theTrialsBegin :: CardDef
+theTrialsBegin = quest "08035" "The Trials Begin" TheThreeTrials 1 0
+
+theTrialOfStrength :: CardDef
+theTrialOfStrength = quest "08036" "The Trial of Strength" TheThreeTrials 2 0
+
+theTrialOfPerseverance :: CardDef
+theTrialOfPerseverance = quest "08037" "The Trial of Perseverance" TheThreeTrials 2 0
+
+theTrialOfIntuition :: CardDef
+theTrialOfIntuition = quest "08038" "The Trial of Intuition" TheThreeTrials 2 0
+
+theAntleredCrownTheThreeTrials :: CardDef
+theAntleredCrownTheThreeTrials = quest "08039" "The Antlered Crown" TheThreeTrials 3 1

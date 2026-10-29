@@ -152,6 +152,10 @@ import LordOfTheRings.Enemy.Cards.ProwlingOrc
 import LordOfTheRings.Enemy.Cards.AncientMarshDweller
 import LordOfTheRings.Enemy.Cards.GiantSwampAdder
 import LordOfTheRings.Enemy.Cards.Neekerbreekers
+import LordOfTheRings.Enemy.Cards.BoarsGuardian
+import LordOfTheRings.Enemy.Cards.WolfsGuardian
+import LordOfTheRings.Enemy.Cards.RavensGuardian
+import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -328,5 +332,9 @@ allEnemys =
         , SomeEnemyCard ancientMarshDweller
         , SomeEnemyCard giantSwampAdder
         , SomeEnemyCard neekerbreekers
+        , SomeEnemyCard boarsGuardian
+        , SomeEnemyCard wolfsGuardian
+        , SomeEnemyCard ravensGuardian
+        , SomeEnemyCard spiritOfTheWild
         ]
     ]

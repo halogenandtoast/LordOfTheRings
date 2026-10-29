@@ -971,5 +971,18 @@
   },
   "remnantsOfElderDays": {
     "search": "Choose a Creature enemy to put into play engaged with you"
+  },
+  "progressFirst": "Choose the location to place progress on before the active location",
+  "threeTrials": {
+    "chooseTrial": "Choose the trial to advance to"
+  },
+  "boarsGuardian": {
+    "discard": "Boar's Guardian: discard an ally you control"
+  },
+  "caveBarrow": {
+    "discard": "Cave Barrow: discard an ally, until only 5 remain in play"
+  },
+  "cursedForest": {
+    "removeTimeCounter": "Cursed Forest: remove a time counter from an enemy"
   }
 }

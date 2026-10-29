@@ -116,6 +116,11 @@ import LordOfTheRings.Quest.Cards.LostInTheSwanfleetImpassableMarshland
 import LordOfTheRings.Quest.Cards.LostInTheSwanfleetATreacherousSwamp
 import LordOfTheRings.Quest.Cards.LostInTheSwanfleetCreaturesOfAForgottenAge
 import LordOfTheRings.Quest.Cards.OutOfTheSwamp
+import LordOfTheRings.Quest.Cards.TheTrialsBegin
+import LordOfTheRings.Quest.Cards.TheTrialOfStrength
+import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
+import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
+import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -264,5 +269,10 @@ allQuests =
         , SomeQuestCard lostInTheSwanfleetATreacherousSwamp
         , SomeQuestCard lostInTheSwanfleetCreaturesOfAForgottenAge
         , SomeQuestCard outOfTheSwamp
+        , SomeQuestCard theTrialsBegin
+        , SomeQuestCard theTrialOfStrength
+        , SomeQuestCard theTrialOfPerseverance
+        , SomeQuestCard theTrialOfIntuition
+        , SomeQuestCard theAntleredCrownTheThreeTrials
         ]
     ]

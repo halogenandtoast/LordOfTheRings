@@ -311,6 +311,9 @@ data ModifierType
   | -- | on a player: card effects cannot make him draw cards, as No End in Sight reads; the
     -- draw of the resource phase is not one
     CannotDrawCardsFromCardEffects
+  | -- | on a location in the staging area: progress is placed on it before it can be placed
+    -- on the active location, as Grim Foothills reads
+    TakesProgressBeforeActiveLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
