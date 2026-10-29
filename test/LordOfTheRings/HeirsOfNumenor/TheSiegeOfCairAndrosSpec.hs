@@ -11,6 +11,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal)
 import LordOfTheRings.Modifier (ModifierType (CannotBeDefendedByAllies, CannotSpendResources))
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theSiegeOfCairAndros)
@@ -242,6 +243,20 @@ spec = describe "The Siege of Cair Andros" do
     staged <- getsGame \g -> length [l | l <- toList g.entities.locations, l.placement == StagingArea] + length [e | e <- toList g.entities.enemies, e.placement == StagingArea]
     staged `shouldBe` 2
     (.threat) <$> getPlayer pid `shouldReturn` threat + 3
+
+  it "shuffles the staging area's objectives away with The Power of Mordor, uncanceled" . siegeTest $ \pid -> do
+    run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.alcaronsScroll
+    scroll <- getsGame (map toId . toList . (.entities.objectives))
+    tow <- putCardIntoHand pid Events.aTestOfWill
+    spirit <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource spirit Resource 1
+    _ <- setEncounterDeck [Treacheries.thePowerOfMordor, Locations.theBanks]
+    run RevealEncounterCard
+    resolveRevealed
+    -- the scroll went back into the deck: whether revealed again or not, it is a new card
+    -- in play
+    getsGame (map toId . toList . (.entities.objectives)) >>= (`shouldSatisfy` (\os -> all (`notElem` scroll) os))
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [tow.id]
 
   -- \* Ravaging Orcs
 
