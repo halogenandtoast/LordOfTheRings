@@ -156,6 +156,13 @@ instance RunMessage Player where
         EncounterCard _ -> error "not an attachment"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     PlayEvent pid card _ | pid == player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    -- an event whose cost is X, played for no cost, has X of 0 and so does nothing, as
+    -- Men of the West played with Vilya (ruling)
+    PlayAtNoCost pid card
+      | pid == player.id
+      , cdCardType (toCardDef card) == EventType
+      , cdCost (toCardDef card) == Just DynamicCost ->
+          pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
       pushAll $ playCard pid card []
       pure player

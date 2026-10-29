@@ -142,6 +142,15 @@ spec = describe "Against the Shadow player cards" do
       sort . map (.id) . (.hand) <$> getPlayer pid `shouldReturn` sort [warrior.id, knights.id]
       (getHeroResources . toId =<< getHeroWithCode hirluin) `shouldReturn` 0
 
+    it "returns no ally played for no cost, as X is 0" . withHeroes [hirluin, beravor, eowyn] $ \pid -> do
+      warrior <- putInDiscard pid Allies.warriorOfLossarnach
+      card <- genPlayerCard Events.menOfTheWest (Just pid)
+      hirluin' <- getHeroWithCode hirluin
+      run $ PlaceTokens GameSource (toTarget hirluin') Resource 2
+      run $ PlayAtNoCost pid card
+      map (.id) . (.hand) <$> getPlayer pid `shouldReturn` []
+      map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [card.id, warrior.id]
+
   describe "Emery" do
     it "is put into play for the top 3 cards of the deck, and discarded if one is off-sphere" . withHeroes [pippin, frodo, eowyn] $ \pid -> do
       _ <- putOnDeck pid [Events.aTestOfWill, Events.aTestOfWill, Events.bladeMastery]
