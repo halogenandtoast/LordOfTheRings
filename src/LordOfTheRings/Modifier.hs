@@ -333,6 +333,9 @@ data ModifierType
     -- gives this is canceled instead, as Searching for Mugash reads; the card is told how
     -- much by 'ProgressCanceled'
     QuestProgressCanceledBy Source
+  | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
+    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play
+    CannotLeaveStagingArea
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int

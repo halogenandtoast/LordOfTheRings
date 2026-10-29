@@ -260,7 +260,22 @@ runGame'' msg g = case removedEnemy msg of
   Just eid -> do
     stays <- elem CannotLeavePlay <$> getModifiers (EnemyTarget eid)
     if stays then pure g else runGame' msg g
-  Nothing -> runGame' msg g
+  Nothing -> case movedLocation msg of
+    -- a location that cannot leave the staging area, as The Crossing at Tharbad, stays
+    Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement == StagingArea -> do
+      stays <- elem CannotLeaveStagingArea <$> getModifiers (LocationTarget lid)
+      if stays then pure g else runGame' msg g
+    _ -> runGame' msg g
+
+-- | The location a message moves out of where it is, other than by exploring it.
+movedLocation :: Message -> Maybe LocationId
+movedLocation = \case
+  PlaceLocation lid p | p /= StagingArea -> Just lid
+  ReturnToTopOfEncounterDeck (LocationTarget lid) -> Just lid
+  ReturnToBottomOfEncounterDeck (LocationTarget lid) -> Just lid
+  ShuffleIntoEncounterDeck (LocationTarget lid) -> Just lid
+  RemoveFromGame (LocationTarget lid) -> Just lid
+  _ -> Nothing
 
 -- | The enemy a message takes out of play other than by destroying it.
 removedEnemy :: Message -> Maybe EnemyId
