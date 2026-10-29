@@ -101,6 +101,20 @@ spec = describe "The Long Dark" do
     chooseTarget pid (CardIdTarget card.id)
     progressOn passage `shouldReturn` 3
 
+  it "makes Twisting Passage's locate test before Cave Torch's Forced effect discards" . darkTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run . (`PutObjectiveIntoPlayAttached` beravor) =<< genEncounterCard Objectives.caveTorch
+    torch <- getsGame (fromJustNote "no torch" . fmap toTarget . find ((== toCardCode Objectives.caveTorch) . toCardCode) . toList . (.entities.objectives))
+    stage Locations.twistingPassage
+    card <- putCardIntoHand pid Events.dwarvenTomb
+    _ <- setEncounterDeck [Enemies.goblinSneak, Locations.abandonedMine]
+    run $ ActionWindow pid
+    chooseAbilityOf pid torch
+    void $ answerQuestion pid 3
+    -- the locate test discards Goblin Sneak and fails; Cave Torch then discards the location
+    chooseTarget pid (CardIdTarget card.id)
+    getsGame (length . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies)) `shouldReturn` 0
+
   it "returns the top 2 Goblin enemies of the discard pile to the staging area when Abandoned Mine is lost" . darkTest $ \_ -> do
     stage Locations.abandonedMine
     pile <- traverse genEncounterCard [Enemies.goblinSneak, Treacheries.fatigue, Enemies.goblinWarlord, Enemies.goblinSneak]
