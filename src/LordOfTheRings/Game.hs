@@ -1567,16 +1567,17 @@ runGameMessage msg g = case msg of
       %~ insertEntity (overAttrs (\a -> a {enemyPlacement = EngagedWith pid}) guard')
       & scenarioL
       %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
+  -- an enemy put into play engaged enters play, as Haradrim Elite reads
   PutEnemyIntoPlayEngaged pid card -> do
     enemy <- newEnemy card
-    push $ EngageEnemy pid enemy.id
+    pushAll [EngageEnemy pid enemy.id, CheckWindows [mkAfter $ EntersPlay $ toTarget enemy]]
     pure
       $ g
       & entitiesL
       . enemiesL
       %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
   CreateEnemyEngaged pid eid card -> do
-    push $ EngageEnemy pid eid
+    pushAll [EngageEnemy pid eid, CheckWindows [mkAfter $ EntersPlay $ EnemyTarget eid]]
     pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) (createEnemy card eid))
   PutIntoPlayAsActiveLocation card -> do
     thisLocation <- newLocation card
