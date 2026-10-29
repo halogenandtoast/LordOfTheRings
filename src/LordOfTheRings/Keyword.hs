@@ -24,6 +24,9 @@ data Keyword
   | -- | on an enemy: it heals this much damage as the refresh phase begins
     Regenerate Int
   | Restricted
+  | -- | does nothing by itself: the card's Scour effect resolves when a card says to trigger
+    -- it (Celebrimbor's Secret)
+    Scour
   | -- | on a player card: it costs this much less while its player's threat is 20 or lower
     Secrecy Int
   | Sentinel
