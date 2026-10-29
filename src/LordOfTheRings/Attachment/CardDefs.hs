@@ -110,6 +110,7 @@ allAttachmentCards =
       , defenderOfTheWest
       , theFallOfGilGalad
       , wardenOfArnor
+      , theDaysRising
       ]
 
 stewardOfGondor :: CardDef
@@ -754,4 +755,11 @@ wardenOfArnor =
   (attachment "08031" "Warden of Arnor" Spirit (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Title]
+    }
+
+theDaysRising :: CardDef
+theDaysRising =
+  (attachment "08139" "The Day's Rising" Leadership (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Song]
     }

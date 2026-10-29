@@ -60,6 +60,21 @@ putInDiscard pid def = do
   putGame $ g & playersL . ix pid . discardL %~ (card :)
   pure card
 
+erkenbrandCode :: CardCode
+erkenbrandCode = "08137"
+
+-- | Erkenbrand (leadership, sentinel), Beravor (lore) and Éowyn (spirit).
+erkenbrandTest :: (PlayerId -> GameT ()) -> IO ()
+erkenbrandTest = gameTestWith (DeckList [erkenbrandCode, beravorCode, eowynCode] testDeck.cards)
+
+engagedEnemy :: PlayerId -> CardDef -> GameT EnemyId
+engagedEnemy pid def = do
+  card <- genEncounterCard def
+  run $ AddToStaging card
+  eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+  run $ EngageEnemy pid eid
+  pure eid
+
 spec :: Spec
 spec = describe "The Ring-maker cycle player cards" do
   describe "Swift and Silent" do
@@ -291,3 +306,54 @@ spec = describe "The Ring-maker cycle player cards" do
       run EndRound
       inHand two gift.id `shouldReturn` False
       elem gift.id . map (.id) . (.deck) <$> getPlayer one `shouldReturn` True
+
+  describe "Erkenbrand" do
+    it "takes 1 damage to cancel a shadow effect while he defends" . erkenbrandTest $ \pid -> do
+      erk <- hero erkenbrandCode
+      eid <- engagedEnemy pid Enemies.blackForestBats
+      _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
+      run $ DealShadowCard eid
+      run $ DefendWith pid eid erk
+      passActions pid
+      chooseAbilityOf pid erk
+      passActions pid
+      -- the bats' 1 attack, not raised by the cancelled shadow, against his 3 defense
+      getCharacterDamage erk `shouldReturn` 1
+
+  describe "The Day's Rising" do
+    it "adds a resource after its hero defends an attack without taking damage" . erkenbrandTest $ \pid -> do
+      erk <- hero erkenbrandCode
+      rising <- putAttachmentOn pid Attachments.theDaysRising erk
+      eid <- engagedEnemy pid Enemies.blackForestBats
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ DefendWith pid eid erk
+      passActions pid
+      passActions pid
+      chooseAbilityOf pid rising
+      (getHeroResources . toId =<< getHeroWithCode erkenbrandCode) `shouldReturn` 1
+
+  describe "Ride Them Down" do
+    it "deals the progress questing would place on the quest to the chosen enemy" . gameTest $ \pid -> do
+      card <- genEncounterCard Enemies.forestSpider
+      run $ AddToStaging card
+      eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+      ride <- putCardIntoHand pid Events.rideThemDown
+      hero eowynCode >>= \e -> run (PlaceTokens GameSource e Resource 2)
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      run $ ActionWindow pid
+      chooseTarget pid (CardIdTarget ride.id)
+      passActions pid
+      run $ PlaceProgressOnQuest 2
+      getCharacterDamage (toTarget eid) `shouldReturn` 2
+
+  describe "Don't Be Hasty!" do
+    it "readies a committed character and removes it from the quest as a card is revealed" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      run $ CommitToQuest beravor
+      card <- putCardIntoHand pid Events.dontBeHasty
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      run RevealEncounterCard
+      chooseTarget pid (CardIdTarget card.id)
+      isExhausted beravor `shouldReturn` False
+      heroCommitted . toAttrs <$> getHeroWithCode beravorCode `shouldReturn` False

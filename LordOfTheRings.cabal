@@ -246,6 +246,7 @@ library
       LordOfTheRings.Attachment.Cards.SupportOfTheEagles
       LordOfTheRings.Attachment.Cards.SwordOfMorthond
       LordOfTheRings.Attachment.Cards.SwordThatWasBroken
+      LordOfTheRings.Attachment.Cards.TheDaysRising
       LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
       LordOfTheRings.Attachment.Cards.TheRedArrow
@@ -461,6 +462,7 @@ library
       LordOfTheRings.Event.Cards.DaeronsRunes
       LordOfTheRings.Event.Cards.DawnTakeYouAll
       LordOfTheRings.Event.Cards.DeepKnowledge
+      LordOfTheRings.Event.Cards.DontBeHasty
       LordOfTheRings.Event.Cards.DurinsSong
       LordOfTheRings.Event.Cards.DwarvenTomb
       LordOfTheRings.Event.Cards.ElrondsCounsel
@@ -524,6 +526,7 @@ library
       LordOfTheRings.Event.Cards.RainOfArrows
       LordOfTheRings.Event.Cards.RearGuard
       LordOfTheRings.Event.Cards.RenewedFriendship
+      LordOfTheRings.Event.Cards.RideThemDown
       LordOfTheRings.Event.Cards.RideToRuin
       LordOfTheRings.Event.Cards.RiskSomeLight
       LordOfTheRings.Event.Cards.RumourFromTheEarth
@@ -604,6 +607,7 @@ library
       LordOfTheRings.Hero.Cards.Eomer
       LordOfTheRings.Hero.Cards.Eowyn
       LordOfTheRings.Hero.Cards.EowynTactics
+      LordOfTheRings.Hero.Cards.Erkenbrand
       LordOfTheRings.Hero.Cards.Faramir
       LordOfTheRings.Hero.Cards.Fastred
       LordOfTheRings.Hero.Cards.FrodoBaggins

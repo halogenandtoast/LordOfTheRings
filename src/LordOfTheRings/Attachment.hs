@@ -103,6 +103,7 @@ import LordOfTheRings.Attachment.Cards.LeafBrooch
 import LordOfTheRings.Attachment.Cards.DefenderOfTheWest
 import LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
 import LordOfTheRings.Attachment.Cards.WardenOfArnor
+import LordOfTheRings.Attachment.Cards.TheDaysRising
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -232,5 +233,6 @@ allAttachments =
         , SomeAttachmentCard defenderOfTheWest
         , SomeAttachmentCard theFallOfGilGalad
         , SomeAttachmentCard wardenOfArnor
+        , SomeAttachmentCard theDaysRising
         ]
     ]

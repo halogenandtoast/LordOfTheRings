@@ -142,6 +142,8 @@ allEventCards =
       , theWhiteCouncil
       , messageFromElrond
       , tightenOurBelts
+      , rideThemDown
+      , dontBeHasty
       ]
 
 everVigilant :: CardDef
@@ -547,3 +549,9 @@ messageFromElrond = event "08032" "Message from Elrond" Lore (StaticCost 0)
 
 tightenOurBelts :: CardDef
 tightenOurBelts = event "08086" "Tighten Our Belts" Leadership (StaticCost 0)
+
+rideThemDown :: CardDef
+rideThemDown = event "08142" "Ride Them Down" Spirit (StaticCost 2)
+
+dontBeHasty :: CardDef
+dontBeHasty = event "08144" "Don't Be Hasty!" Lore (StaticCost 0)

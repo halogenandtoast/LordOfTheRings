@@ -61,6 +61,7 @@ allHeroCards =
       , theoden
       , grima
       , idraen
+      , erkenbrand
       ]
 
 aragorn :: CardDef
@@ -358,4 +359,11 @@ idraen :: CardDef
 idraen =
   (hero "08025" "Idraen" Spirit 11 2 3 2 4)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
+    }
+
+erkenbrand :: CardDef
+erkenbrand =
+  (hero "08137" "Erkenbrand" Leadership 10 1 2 3 4)
+    { cdCardTraits = setFromList [Rohan, Warrior]
+    , cdKeywords = setFromList [Sentinel]
     }

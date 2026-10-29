@@ -131,6 +131,8 @@ import LordOfTheRings.Event.Cards.CloseCall
 import LordOfTheRings.Event.Cards.TheWhiteCouncil
 import LordOfTheRings.Event.Cards.MessageFromElrond
 import LordOfTheRings.Event.Cards.TightenOurBelts
+import LordOfTheRings.Event.Cards.RideThemDown
+import LordOfTheRings.Event.Cards.DontBeHasty
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -275,5 +277,7 @@ allEvents =
         , SomeEventCard theWhiteCouncil
         , SomeEventCard messageFromElrond
         , SomeEventCard tightenOurBelts
+        , SomeEventCard rideThemDown
+        , SomeEventCard dontBeHasty
         ]
     ]
