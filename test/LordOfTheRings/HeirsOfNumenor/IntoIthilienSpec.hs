@@ -208,6 +208,14 @@ spec = describe "Into Ithilien" do
     ((.threat) <$> getPlayer pid) `shouldReturn` threat + 2
     placementOf Locations.secludedGlade `shouldReturn` Just StagingArea
 
+  it "surges with Watcher in the Woods once its threat brings Approaching Cair Andros siege (ruling)" . ithilienTest $ \pid -> do
+    _ <- putQuestStage Quests.approachingCairAndros
+    run . CommitToQuest =<< beravor
+    threat <- (.threat) <$> getPlayer pid
+    run $ RaiseThreat pid (36 - threat)
+    reveal [Treacheries.watcherInTheWoods, Locations.secludedGlade]
+    placementOf Locations.secludedGlade `shouldReturn` Just StagingArea
+
   it "gives Morgul Spider +1 attack for each character not committed" . ithilienTest $ \_ -> do
     run . CommitToQuest =<< beravor
     reveal [Enemies.morgulSpider]
