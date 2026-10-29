@@ -853,7 +853,13 @@ runGameMessage msg g = case msg of
       if null redirected
         then (<> watchmen) . map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
         else pure []
-    for_ (take 1 redirected) \t -> pushAll =<< attackDamage pid eid t attack
+    -- with several it may go to, as tied Battlegrounds at The Defense, the player chooses
+    case ordNub redirected of
+      [t] -> pushAll =<< attackDamage pid eid t attack
+      ts@(_ : _) -> do
+        options <- for ts \t -> targetLabel t <$> attackDamage pid eid t attack
+        push $ questionLabelWith (ikey "label.undefendedDamage") (Just $ toTarget eid) [] pid options
+      [] -> pure ()
     choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid h attack
     unless (null heroes)
       $ push
