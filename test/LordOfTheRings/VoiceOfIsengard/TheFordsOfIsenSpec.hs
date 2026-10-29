@@ -168,7 +168,10 @@ spec = describe "The Fords of Isen" do
     fillHand pid 2
     hero <- heroOf pid "01012"
     run $ RemoveTokens GameSource q TimeCounter 2
-    replicateM_ 2 $ chooseTarget pid hero
+    -- assigned first, then dealt together, as Dunland Raider's (FAQ 3.117)
+    chooseTarget pid hero
+    getCharacterDamage hero `shouldReturn` 0
+    chooseTarget pid hero
     getCharacterDamage hero `shouldReturn` 2
     getTimeCounters q `shouldReturn` 2
 
