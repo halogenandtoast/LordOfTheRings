@@ -1,5 +1,5 @@
-{- | Foundations of Stone. The players share one staging area and stage throughout, stage 4
-too: see "LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers".
+{- | Foundations of Stone. At stage 4 each player has a staging area and a stage of his
+own: see "LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers".
 -}
 module LordOfTheRings.Scenario.Scenarios.FoundationsOfStone (foundationsOfStone) where
 

@@ -3,8 +3,8 @@ Revealed effects: see "LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Help
 
 Forced: After the last progress token is placed on this stage, join another player at
 the beginning of the travel phase. If you cannot join another player, all players continue
-on to stage 5 together. (The players share one staging area and stage, so they move on to
-the next drawn stage 4, and after the last to stage 5.)
+on to stage 5 together. (Joining is the engine's, at the beginning of the travel phase;
+once the players are together again, the stage advances to stage 5 as any other does.)
 -}
 module LordOfTheRings.Quest.Cards.BelowTheMines (
   belowTheMines,
@@ -13,11 +13,13 @@ module LordOfTheRings.Quest.Cards.BelowTheMines (
   oldOneLair,
 ) where
 
+import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Game.Base (gameSeparation)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype BelowTheMines = BelowTheMines QuestAttrs
-  deriving anyclass (IsQuest, HasAbilities, HasModifiersFor, RunMessage)
+  deriving anyclass (IsQuest, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 -- | Sheltered Rocks.
@@ -32,3 +34,14 @@ theShiveringBank = quest BelowTheMines Cards.theShiveringBank
 
 oldOneLair :: QuestCard BelowTheMines
 oldOneLair = quest BelowTheMines Cards.oldOneLair
+
+instance RunMessage BelowTheMines where
+  runMessage msg (BelowTheMines attrs) = case msg of
+    PlaceTokens _ (isTarget attrs -> True) Progress n -> do
+      separated <- getsGame (isJust . gameSeparation)
+      if separated
+        then do
+          when (attrs.progress < attrs.questPoints && attrs.progress + n >= attrs.questPoints) joinAnotherPlayer
+          pure $ BelowTheMines $ attrs & tokensL %~ addTokens Progress n
+        else BelowTheMines <$> runMessage msg attrs
+    _ -> BelowTheMines <$> runMessage msg attrs
