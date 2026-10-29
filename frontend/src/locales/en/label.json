@@ -860,5 +860,11 @@
   },
   "saruman": {
     "choose": "Choose a non-unique enemy or location in the staging area to be out of play while Saruman is"
+  },
+  "heraldOfAnorien": {
+    "chooseAlly": "You may put into play an ally from your hand with a printed cost of 2 or lower"
+  },
+  "mirkwoodPioneer": {
+    "choose": "Choose a card in the staging area: it does not contribute its threat this round"
   }
 }

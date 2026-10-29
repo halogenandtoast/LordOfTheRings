@@ -5,6 +5,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
+import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import LordOfTheRings.Window (WindowType (ThreatRaisedByEncounter), mkAfter)
@@ -37,6 +38,12 @@ isExhausted = \case
 
 inHand :: PlayerId -> CardId -> GameT Bool
 inHand pid cid = elem cid . map (.id) . (.hand) <$> getPlayer pid
+
+allyWithCard :: CardId -> GameT Target
+allyWithCard cid = getsGame (toTarget . fromJustNote "ally did not enter play" . find ((== cid) . allyCardId . toAttrs) . toList . (.entities.allies))
+
+locationProgress :: GameT [Int]
+locationProgress = getsGame (map (countTokens Progress . locationTokens . toAttrs) . toList . (.entities.locations))
 
 spec :: Spec
 spec = describe "The Ring-maker cycle player cards" do
@@ -125,3 +132,31 @@ spec = describe "The Ring-maker cycle player cards" do
       chooseTarget two (CardIdTarget card.id)
       getLead `shouldReturn` two
       length . (.hand) <$> getPlayer two `shouldReturn` hand
+
+  describe "Greyflood Wanderer" do
+    it "given doomed 2, places 1 progress on each location in play after it is played" . gameTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+      was <- threat pid
+      card <- playWith pid eowynCode 3 Allies.greyfloodWanderer
+      chooseLabel "$label.giveItDoomed" pid
+      threat pid `shouldReturn` was + 2
+      chooseAbilityOf pid =<< allyWithCard card.id
+      locationProgress `shouldReturn` [1]
+
+    it "not given doomed, gains nothing" . gameTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+      was <- threat pid
+      card <- playWith pid eowynCode 3 Allies.greyfloodWanderer
+      chooseLabel "$label.doNotGiveDoomed" pid
+      threat pid `shouldReturn` was
+      wanderer <- allyWithCard card.id
+      (`shouldBe` False) =<< offersAbilityOf pid wanderer
+
+  describe "Herald of Anórien" do
+    it "given doomed 2, lets a player put a cheap ally from hand into play" . gameTest $ \pid -> do
+      cheap <- putCardIntoHand pid Allies.galadhonArcher
+      card <- playWith pid theodredCode 2 Allies.heraldOfAnorien
+      chooseLabel "$label.giveItDoomed" pid
+      chooseAbilityOf pid =<< allyWithCard card.id
+      chooseTarget pid (CardIdTarget cheap.id)
+      getsGame (length . (.entities.allies)) `shouldReturn` 2

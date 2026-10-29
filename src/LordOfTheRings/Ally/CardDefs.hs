@@ -134,6 +134,10 @@ allAllyCards =
       , boomingEnt
       , ithilienLookout
       , celduinTraveler
+      , greyfloodWanderer
+      , heraldOfAnorien
+      , hennethAnnunGuard
+      , mirkwoodPioneer
       ]
 
 guardOfTheCitadel :: CardDef
@@ -921,4 +925,28 @@ celduinTraveler =
   (ally "08089" "Celduin Traveler" Spirit (StaticCost 3) 2 0 1 2)
     { cdCardTraits = setFromList [Dale, Scout]
     , cdKeywords = setFromList [Secrecy 2]
+    }
+
+greyfloodWanderer :: CardDef
+greyfloodWanderer =
+  (ally "08030" "Greyflood Wanderer" Spirit (StaticCost 3) 2 1 0 2)
+    { cdCardTraits = setFromList [Dunedain, Scout]
+    }
+
+heraldOfAnorien :: CardDef
+heraldOfAnorien =
+  (ally "08057" "Herald of Anórien" Leadership (StaticCost 2) 1 0 1 1)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+hennethAnnunGuard :: CardDef
+hennethAnnunGuard =
+  (ally "08115" "Henneth Annûn Guard" Tactics (StaticCost 3) 0 2 2 2)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+mirkwoodPioneer :: CardDef
+mirkwoodPioneer =
+  (ally "08091" "Mirkwood Pioneer" Lore (StaticCost 2) 1 0 0 2)
+    { cdCardTraits = setFromList [Woodman]
     }

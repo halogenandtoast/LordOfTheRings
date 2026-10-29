@@ -135,6 +135,10 @@ import LordOfTheRings.Ally.Cards.WanderingEnt
 import LordOfTheRings.Ally.Cards.BoomingEnt
 import LordOfTheRings.Ally.Cards.IthilienLookout
 import LordOfTheRings.Ally.Cards.CelduinTraveler
+import LordOfTheRings.Ally.Cards.GreyfloodWanderer
+import LordOfTheRings.Ally.Cards.HeraldOfAnorien
+import LordOfTheRings.Ally.Cards.HennethAnnunGuard
+import LordOfTheRings.Ally.Cards.MirkwoodPioneer
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -297,5 +301,9 @@ allAllies =
         , SomeAllyCard boomingEnt
         , SomeAllyCard ithilienLookout
         , SomeAllyCard celduinTraveler
+        , SomeAllyCard greyfloodWanderer
+        , SomeAllyCard heraldOfAnorien
+        , SomeAllyCard hennethAnnunGuard
+        , SomeAllyCard mirkwoodPioneer
         ]
     ]
