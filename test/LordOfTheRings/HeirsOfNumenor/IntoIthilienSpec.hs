@@ -1,6 +1,7 @@
 module LordOfTheRings.HeirsOfNumenor.IntoIthilienSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getCommittedWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat)
@@ -212,6 +213,15 @@ spec = describe "Into Ithilien" do
     placementOf Objectives.ithilienGuardian `shouldReturn` Just StagingArea
     placementOf Locations.secludedGlade `shouldReturn` Just StagingArea
     getCommittedWillpower `shouldReturn` 2
+
+  it "does not surge with Ithilien Guardian's When Revealed canceled" . ithilienTest $ \pid -> do
+    _ <- putQuestStage Quests.theHiddenWay
+    tow <- putCardIntoHand pid Events.aTestOfWill
+    spirit <- eowyn
+    run $ PlaceTokens GameSource spirit Resource 1
+    reveal [Objectives.ithilienGuardian, Locations.secludedGlade]
+    chooseTarget pid (CardIdTarget tow.id)
+    placementOf Locations.secludedGlade `shouldReturn` Nothing
 
   it "adds a Harad enemy to the staging area with Southron Support" . ithilienTest $ \pid -> do
     elite <- genEncounterCard Enemies.haradrimElite
