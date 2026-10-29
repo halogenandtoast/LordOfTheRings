@@ -159,6 +159,10 @@ spec = describe "Peril in Pelargir" do
     map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.harborThug]
     threatOf pid `shouldReturn` threat + 4
 
+  it "counts a Collateral Damage its first 2 cards discard for the additional cards (ruling)" . pelargirTest $ \_ -> do
+    reveal [Treacheries.collateralDamage, Treacheries.collateralDamage, Enemies.pickpocket, Enemies.zealousTraitor, Enemies.harborThug, Enemies.pickpocket]
+    map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.pickpocket]
+
   it "raises each player's threat by 1 for each location discarded while Harbor Storehouse is in play" . pelargirTest $ \pid -> do
     run . AddToStaging =<< genEncounterCard Locations.harborStorehouse
     _ <- setEncounterDeck [Locations.cityStreet, Enemies.zealousTraitor]
