@@ -120,6 +120,9 @@ import LordOfTheRings.Event.Cards.TheWizardsVoice
 import LordOfTheRings.Event.Cards.PowerOfOrthanc
 import LordOfTheRings.Event.Cards.TheSeeingStone
 import LordOfTheRings.Event.Cards.WatersOfNimrodel
+import LordOfTheRings.Event.Cards.SwiftAndSilent
+import LordOfTheRings.Event.Cards.NoiselessMovement
+import LordOfTheRings.Event.Cards.CourageAwakened
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -253,5 +256,8 @@ allEvents =
         , SomeEventCard powerOfOrthanc
         , SomeEventCard theSeeingStone
         , SomeEventCard watersOfNimrodel
+        , SomeEventCard swiftAndSilent
+        , SomeEventCard noiselessMovement
+        , SomeEventCard courageAwakened
         ]
     ]

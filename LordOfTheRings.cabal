@@ -399,6 +399,7 @@ library
       LordOfTheRings.Event.Cards.ChildrenOfTheSea
       LordOfTheRings.Event.Cards.CommonCause
       LordOfTheRings.Event.Cards.ConeyInATrap
+      LordOfTheRings.Event.Cards.CourageAwakened
       LordOfTheRings.Event.Cards.DaeronsRunes
       LordOfTheRings.Event.Cards.DawnTakeYouAll
       LordOfTheRings.Event.Cards.DeepKnowledge
@@ -447,6 +448,7 @@ library
       LordOfTheRings.Event.Cards.MutualAccord
       LordOfTheRings.Event.Cards.NeedDrivesThem
       LordOfTheRings.Event.Cards.NeedfulToKnow
+      LordOfTheRings.Event.Cards.NoiselessMovement
       LordOfTheRings.Event.Cards.OathOfEorl
       LordOfTheRings.Event.Cards.OutOfSight
       LordOfTheRings.Event.Cards.OutOfTheWild
@@ -474,6 +476,7 @@ library
       LordOfTheRings.Event.Cards.StrengthOfArms
       LordOfTheRings.Event.Cards.StrengthOfWill
       LordOfTheRings.Event.Cards.StridersPath
+      LordOfTheRings.Event.Cards.SwiftAndSilent
       LordOfTheRings.Event.Cards.SwiftStrike
       LordOfTheRings.Event.Cards.TakingInitiative
       LordOfTheRings.Event.Cards.TheEaglesAreComing
@@ -1191,6 +1194,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.RefreshPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.RevealSpec
+      LordOfTheRings.RingMaker.PlayerCardsSpec
       LordOfTheRings.SerializationSpec
       LordOfTheRings.SetupSpec
       LordOfTheRings.ShadowsOfMirkwood.AJourneyToRhosgobelSpec

@@ -911,3 +911,14 @@ placeAlly aid = push . PlaceAlly aid
 -- | The shadow card just dealt to the enemy is dealt face up, as Silver Lamp reads.
 turnShadowCardFaceUp :: ReverseQueue m => EnemyId -> CardId -> m ()
 turnShadowCardFaceUp eid = push . TurnShadowCardFaceUp eid
+
+{- | "Then, if your threat is 20 or less and this is the first time you played a copy of
+it this round, return this card to your hand instead of discarding it", as Swift and
+Silent reads: the event, already in its owner's discard pile, goes back to his hand.
+-}
+returnIfFirstCopyThisRound :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+returnIfFirstCopyThisRound pid card = do
+  played <- elem (PlayedThisRound $ toCardCode card) <$> getModifiers (PlayerTarget pid)
+  threat <- (.threat) <$> getPlayer pid
+  roundModifier (CardIdSource card.id) (PlayerTarget pid) (PlayedThisRound $ toCardCode card)
+  when (not played && threat <= 20) $ returnFromDiscardToHand pid card.id

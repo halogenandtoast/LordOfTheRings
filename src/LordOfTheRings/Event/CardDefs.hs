@@ -131,6 +131,9 @@ allEventCards =
       , powerOfOrthanc
       , theSeeingStone
       , watersOfNimrodel
+      , swiftAndSilent
+      , noiselessMovement
+      , courageAwakened
       ]
 
 everVigilant :: CardDef
@@ -503,3 +506,12 @@ theSeeingStone = (event "07015" "The Seeing-stone" Neutral (StaticCost 0)) {cdKe
 
 watersOfNimrodel :: CardDef
 watersOfNimrodel = (event "08145" "Waters of Nimrodel" Lore (StaticCost 3)) {cdKeywords = setFromList [Doomed 3]}
+
+swiftAndSilent :: CardDef
+swiftAndSilent = event "08003" "Swift and Silent" Leadership (StaticCost 1)
+
+noiselessMovement :: CardDef
+noiselessMovement = event "08033" "Noiseless Movement" Lore (StaticCost 1)
+
+courageAwakened :: CardDef
+courageAwakened = event "08061" "Courage Awakened" Spirit (StaticCost 1)
