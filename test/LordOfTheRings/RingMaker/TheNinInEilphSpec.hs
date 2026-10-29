@@ -179,6 +179,12 @@ spec = describe "The Nîn-in-Eilph" do
     _ <- playWith pid "01002" 2 Allies.guardOfTheCitadel
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
 
+  it "counts a card played earlier in the round under A Forgotten Land" . ninTest $ \pid -> do
+    _ <- playWith pid "01002" 2 Allies.guardOfTheCitadel
+    passActions pid
+    _ <- revealStage pid Quests.throughTheMarshAForgottenLand
+    getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
+
   it "gives enemies in the staging area -20 engagement cost under Creatures of a Forgotten Age" . ninTest $ \pid -> do
     _ <- revealStage pid Quests.lostInTheSwanfleetCreaturesOfAForgottenAge
     adder <- staged Enemies.giantSwampAdder
