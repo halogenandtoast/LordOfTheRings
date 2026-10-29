@@ -116,6 +116,10 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , constantTail
+      , conspicuousLot
+      , cornered
+      , getThatDwarf
       ]
 
 deepDeepDark :: CardDef
@@ -712,4 +716,24 @@ conflictAtTheCrossroads =
   (treachery "06131" "Conflict at the Crossroads" TheBloodOfGondor 2)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+constantTail :: CardDef
+constantTail = treachery "08080" "Constant Tail" TroubleInTharbad 2
+
+conspicuousLot :: CardDef
+conspicuousLot =
+  (treachery "08081" "Conspicuous Lot" TroubleInTharbad 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+cornered :: CardDef
+cornered = (treachery "08082" "Cornered" TroubleInTharbad 2) {cdShadowEffect = True}
+
+getThatDwarf :: CardDef
+getThatDwarf =
+  (treachery "08083" "Get That Dwarf!" TroubleInTharbad 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

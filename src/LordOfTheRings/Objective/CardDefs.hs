@@ -48,6 +48,7 @@ allObjectiveCards =
       , poisonedCounsels
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
+      , nalirTroubleInTharbad
       ]
 
 durinsAxe :: CardDef
@@ -274,5 +275,14 @@ lordAlcaronTheBloodOfGondor =
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
     { cdUnique = True
     , cdCardTraits = setFromList [Gondor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+nalirTroubleInTharbad :: CardDef
+nalirTroubleInTharbad =
+  ((objective "08068" "Nalir" TroubleInTharbad 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

@@ -127,6 +127,9 @@ allEnemyCards =
       , orcAmbusher
       , brutalUruk
       , evilCrow
+      , bellachTroubleInTharbad
+      , spyFromMordor
+      , bellachsMarauder
       ]
 
 namelessThing :: CardDef
@@ -982,4 +985,26 @@ evilCrow =
   (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of players.
+bellachTroubleInTharbad :: CardDef
+bellachTroubleInTharbad =
+  unique
+    (enemy "08070" "Bellach" TroubleInTharbad 1 50 0 5 4 7)
+      { cdCardTraits = setFromList [Mordor, Spy]
+      }
+
+spyFromMordor :: CardDef
+spyFromMordor =
+  (enemy "08072" "Spy from Mordor" TroubleInTharbad 4 40 2 3 2 4)
+    { cdCardTraits = setFromList [Mordor, Orc, Spy]
+    }
+
+bellachsMarauder :: CardDef
+bellachsMarauder =
+  (enemy "08073" "Bellach's Marauder" TroubleInTharbad 2 30 3 5 4 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
