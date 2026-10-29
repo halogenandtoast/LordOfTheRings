@@ -15,7 +15,7 @@ import LordOfTheRings.Scenario (lookupScenario, toCatchAnOrc)
 import LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (mugashHost, outOfPlayDeckOf)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside), metaL, questDeckL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (WindowType (CharacterDestroyedByAttack, EnemyAttacking, PhaseBegins, QuestedSuccessfully), mkAfter, mkWhen)
+import LordOfTheRings.Window (WindowType (EnemyAttacking, PhaseBegins, QuestedSuccessfully), mkAfter, mkWhen)
 import TestImport
 
 orcTest :: (PlayerId -> GameT ()) -> IO ()
@@ -149,8 +149,11 @@ spec = describe "To Catch an Orc" do
     stage Enemies.mugashsGuard
     _ <- capture pid
     guard' <- enemyOf Enemies.mugashsGuard
-    hero <- toTarget <$> getHeroWithCode "01007"
-    run $ CheckWindows [mkAfter $ CharacterDestroyedByAttack guard' hero pid]
+    run $ EnemyAttack pid guard'
+    passActions pid
+    chooseLabel "$label.takeAttackUndefended" pid
+    passActions pid
+    chooseTarget pid =<< getHeroWithCode "01007"
     placementOf Enemies.mugashEnemy `shouldReturn` Just StagingArea
 
   it "shuffles a random card from the defending player's hand into his out-of-play deck as Methedras Orc attacks" . orcTest $ \pid -> do
