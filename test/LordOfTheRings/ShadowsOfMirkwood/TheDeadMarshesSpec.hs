@@ -3,6 +3,7 @@ module LordOfTheRings.ShadowsOfMirkwood.TheDeadMarshesSpec (spec) where
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -29,6 +30,7 @@ commitAndDeal :: PlayerId -> CardCode -> GameT ()
 commitAndDeal pid code = do
   chooseTarget pid =<< getHeroWithCode code
   chooseLabel "$label.doneCommittingToEscape" pid
+  passActions pid
 
 spec :: Spec
 spec = describe "The Dead Marshes" do
@@ -65,6 +67,33 @@ spec = describe "The Dead Marshes" do
     resolveRevealed
     commitAndDeal pid "01007"
     gollumResources `shouldReturn` 1
+
+  it "lets the players act after committing to an escape test, before the cards are dealt" . marshesTest $ \pid -> do
+    _ <- putGollum
+    _ <- putCardIntoHand pid Events.aTestOfWill
+    _ <- setEncounterDeck [Treacheries.nightfall, Locations.fensAndMires]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid =<< getHeroWithCode "01007"
+    chooseLabel "$label.doneCommittingToEscape" pid
+    -- Éowyn may discard the card for +1 willpower
+    (\case Just (QuestionLabel l _ _ _) -> Just l; _ -> Nothing) <$> getQuestion pid `shouldReturn` Just "$label.takeAction"
+    length <$> getEncounterDeck `shouldReturn` 1
+
+  it "does not count the Impassable Bog itself among the staging area's locations" . marshesTest $ \_ -> do
+    _ <- putGollum
+    _ <- setEncounterDeck [Locations.impassableBog]
+    run RevealEncounterCard
+    resolveRevealed
+    gollumResources `shouldReturn` 0
+
+  it "resets to Into the Marshes when The Capture is defeated with Gollum not in play" . marshesTest $ \pid -> do
+    _ <- setEncounterDeck [Locations.fensAndMires]
+    stage <- putQuestStage Quests.theCapture
+    run $ PlaceTokens GameSource stage Progress 3
+    commitAndDeal pid "01007"
+    getsGame (.outcome) `shouldReturn` Nothing
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.intoTheMarshes
 
   it "shuffles Gollum into the encounter deck at 8 resources" . marshesTest $ \_ -> do
     gollum <- putGollum

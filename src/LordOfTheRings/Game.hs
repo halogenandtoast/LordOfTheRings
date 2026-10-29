@@ -1687,6 +1687,7 @@ runGameMessage msg g = case msg of
     | Just o <- Map.lookup oid g.entities.objectives ->
         pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard o :))
   MakeEscapeTest t -> do
+    order <- getPlayerOrder
     ready <-
       filter (`notElem` t.escapeCommitted)
         <$> selectCharacters
@@ -1703,7 +1704,9 @@ runGameMessage msg g = case msg of
         ]
       <> [ Label (ikey "label.doneCommittingToEscape") $ case t.escapeParty of
              next : rest -> [MakeEscapeTest t {escapePlayer = next, escapeParty = rest}]
-             [] -> [ResolveEscapeTest t]
+             -- the players may act once the characters are committed, before the cards
+             -- are dealt, the test's only action window
+             [] -> map OptionalActionWindow order <> [ResolveEscapeTest t]
          ]
     pure g
   ResolveEscapeTest t -> do
