@@ -136,6 +136,22 @@ spec = describe "Combat phase" do
     -- battle questing still counts attack
     getAttack eowyn `shouldReturn` 1
 
+  it "lets a character that cannot exhaust defend when it defends without exhausting" . gameTest $ \pid -> do
+    eid <- toId <$> engageSpider pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ CreateEffect $ Effect GameSource eowyn [CannotExhaust, DoesNotExhaustToDefend] UntilEndOfRound
+    run $ DeclareDefenders pid eid []
+    defenders <- maybe [] (\q -> [t | TargetLabel t _ <- questionChoices q]) <$> getQuestion pid
+    defenders `shouldSatisfy` elem eowyn
+
+  it "does not let a character that cannot exhaust defend when defending would exhaust it" . gameTest $ \pid -> do
+    eid <- toId <$> engageSpider pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ CreateEffect $ Effect GameSource eowyn [CannotExhaust] UntilEndOfRound
+    run $ DeclareDefenders pid eid []
+    defenders <- maybe [] (\q -> [t | TargetLabel t _ <- questionChoices q]) <$> getQuestion pid
+    defenders `shouldSatisfy` notElem eowyn
+
   it "finishes a shadow's if-this-attack-destroys once its enemy has left play after the damage" . gameTest $ \pid -> do
     eid <- toId <$> engageSpider pid
     eowyn <- toTarget <$> getHeroWithCode "01007"

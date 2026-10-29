@@ -2274,21 +2274,22 @@ stagingAttackers :: [Target] -> GameT [Target]
 stagingAttackers = filterM (fmap (elem CanAttackStagingArea) . getModifiers)
 
 -- | The player's characters that may attack or defend.
--- ponytail: one that cannot exhaust is left out even when it would not exhaust to fight
 readyCharacters :: PlayerId -> GameT [Target]
 readyCharacters pid = do
   heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
   allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
-  filterM (fmap (\ms -> CannotAttackOrDefend `notElem` ms && CannotExhaust `notElem` ms) . getModifiers)
+  filterM (fmap (notElem CannotAttackOrDefend) . getModifiers)
     $ map toTarget heroes
     <> map toTarget allies
 
--- | The player's characters that may attack.
+-- | The player's characters that may attack: one that cannot exhaust only if it attacks
+-- without exhausting.
 readyAttackers :: PlayerId -> GameT [Target]
 readyAttackers pid = do
   -- a player who cannot declare attacks, as Hobbit-sense reads
   barred <- elem CannotAttack <$> getModifiers (PlayerTarget pid)
-  if barred then pure [] else filterM (fmap (notElem CannotAttack) . getModifiers) =<< readyCharacters pid
+  let free ms = CannotExhaust `notElem` ms || DoesNotExhaustToAttack `elem` ms
+  if barred then pure [] else filterM (fmap (\ms -> CannotAttack `notElem` ms && free ms) . getModifiers) =<< readyCharacters pid
 
 {- | Shadow cards are not in play, so the card's own module resolves the effect
 through a temporary instance of it.
@@ -2385,14 +2386,17 @@ canFight eid c = do
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
     ]
 
--- | Whether the character may defend against the enemy's attack.
+-- | Whether the character may defend against the enemy's attack: one that cannot exhaust
+-- only if it defends without exhausting.
 canDefend :: EnemyId -> Target -> GameT Bool
 canDefend eid c = do
   noAllies <- elem CannotBeDefendedByAllies <$> getModifiers eid
+  stuck <- elem CannotExhaust <$> getModifiers c
+  exhausts <- if stuck then exhaustToDefend c eid else pure False
   let isAlly = case c of
         AllyTarget _ -> True
         _ -> False
-  if noAllies && isAlly then pure False else canFight eid c
+  if (noAllies && isAlly) || exhausts then pure False else canFight eid c
 
 -- | Whether declaring the character as a defender against the enemy exhausts it.
 exhaustToDefend :: Target -> EnemyId -> GameT Bool
