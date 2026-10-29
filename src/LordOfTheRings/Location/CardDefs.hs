@@ -130,6 +130,10 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , theIslet
+      , fordsOfIsen
+      , theKingsRoad
+      , gapOfRohan
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +939,20 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+theIslet :: CardDef
+theIslet = unique (location "07017" "The Islet" TheFordsOfIsen 1 1 1) {cdCardTraits = setFromList [River]}
+
+fordsOfIsen :: CardDef
+fordsOfIsen = (location "07018" "Fords of Isen" TheFordsOfIsen 3 3 4) {cdCardTraits = setFromList [River]}
+
+theKingsRoad :: CardDef
+theKingsRoad = (location "07019" "The King's Road" TheFordsOfIsen 2 2 2) {cdCardTraits = setFromList [Road]}
+
+gapOfRohan :: CardDef
+gapOfRohan =
+  (location "07020" "Gap of Rohan" TheFordsOfIsen 4 2 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }

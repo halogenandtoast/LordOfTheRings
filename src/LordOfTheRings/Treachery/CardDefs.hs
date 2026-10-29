@@ -116,6 +116,9 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , pillagingAndBurning
+      , downFromTheHills
+      , illTidings
       ]
 
 deepDeepDark :: CardDef
@@ -713,3 +716,16 @@ conflictAtTheCrossroads =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+pillagingAndBurning :: CardDef
+pillagingAndBurning =
+  (treachery "07021" "Pillaging and Burning" TheFordsOfIsen 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+downFromTheHills :: CardDef
+downFromTheHills = (treachery "07022" "Down from the Hills" TheFordsOfIsen 1) {cdEasyModeQuantity = Just 0}
+
+illTidings :: CardDef
+illTidings = treachery "07023" "Ill Tidings" TheFordsOfIsen 2

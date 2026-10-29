@@ -48,6 +48,7 @@ allObjectiveCards =
       , poisonedCounsels
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
+      , grimaTheFordsOfIsen
       ]
 
 durinsAxe :: CardDef
@@ -275,4 +276,13 @@ lordAlcaronTheBloodOfGondor =
     { cdUnique = True
     , cdCardTraits = setFromList [Gondor, Noble]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | The Fords of Isen's objective ally, not the hero.
+grimaTheFordsOfIsen :: CardDef
+grimaTheFordsOfIsen =
+  ((objective "07016" "Gríma" TheFordsOfIsen 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan]
     }
