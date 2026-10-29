@@ -107,6 +107,7 @@ allAttachmentCards =
       , elvenMail
       , cloakOfLorien
       , leafBrooch
+      , defenderOfTheWest
       ]
 
 stewardOfGondor :: CardDef
@@ -730,4 +731,11 @@ leafBrooch =
   (attachment "08034" "Leaf Brooch" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Item]
     , cdLimitOnePerHost = True
+    }
+
+defenderOfTheWest :: CardDef
+defenderOfTheWest =
+  (attachment "08093" "Defender of the West" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
     }

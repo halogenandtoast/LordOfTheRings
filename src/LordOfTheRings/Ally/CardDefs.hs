@@ -138,6 +138,7 @@ allAllyCards =
       , heraldOfAnorien
       , hennethAnnunGuard
       , mirkwoodPioneer
+      , blueMountainTrader
       ]
 
 guardOfTheCitadel :: CardDef
@@ -949,4 +950,10 @@ mirkwoodPioneer :: CardDef
 mirkwoodPioneer =
   (ally "08091" "Mirkwood Pioneer" Lore (StaticCost 2) 1 0 0 2)
     { cdCardTraits = setFromList [Woodman]
+    }
+
+blueMountainTrader :: CardDef
+blueMountainTrader =
+  (ally "08006" "Blue Mountain Trader" Spirit (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Dwarf]
     }

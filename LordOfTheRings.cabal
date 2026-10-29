@@ -24,6 +24,7 @@ library
       LordOfTheRings.Ally.Cards.ArwenUndomielObjective
       LordOfTheRings.Ally.Cards.Beorn
       LordOfTheRings.Ally.Cards.BeorningBeekeeper
+      LordOfTheRings.Ally.Cards.BlueMountainTrader
       LordOfTheRings.Ally.Cards.Bofur
       LordOfTheRings.Ally.Cards.Bombur
       LordOfTheRings.Ally.Cards.BoomingEnt
@@ -170,6 +171,7 @@ library
       LordOfTheRings.Attachment.Cards.CloakOfLorien
       LordOfTheRings.Attachment.Cards.Cram
       LordOfTheRings.Attachment.Cards.DarkKnowledge
+      LordOfTheRings.Attachment.Cards.DefenderOfTheWest
       LordOfTheRings.Attachment.Cards.DunedainCache
       LordOfTheRings.Attachment.Cards.DunedainMark
       LordOfTheRings.Attachment.Cards.DunedainQuest

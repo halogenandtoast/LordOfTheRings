@@ -5,6 +5,8 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (UndefendedDamageMayGoTo))
 import LordOfTheRings.I18n (ikeyWith, intVar)
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -45,6 +47,11 @@ allyWithCard cid = getsGame (toTarget . fromJustNote "ally did not enter play" .
 
 locationProgress :: GameT [Int]
 locationProgress = getsGame (map (countTokens Progress . locationTokens . toAttrs) . toList . (.entities.locations))
+
+allyController :: Target -> GameT (Maybe Placement)
+allyController = \case
+  AllyTarget aid -> fmap (allyPlacement . toAttrs) . lookup aid . mapToList <$> getsGame (.entities.allies)
+  _ -> pure Nothing
 
 spec :: Spec
 spec = describe "The Ring-maker cycle player cards" do
@@ -185,3 +192,30 @@ spec = describe "The Ring-maker cycle player cards" do
       chooseLabel (ikeyWith "label.xEquals" [intVar "x" 2]) pid
       getCharacterDamage beravor `shouldReturn` 0
       threat pid `shouldReturn` was + 2
+
+  describe "Blue Mountain Trader" do
+    it "goes to another player, who moves a resource to one of your heroes" . twoPlayerTest testDeck $ \one two -> do
+      trader <- putAllyIntoPlay one Allies.blueMountainTrader
+      theirs <- heroOf two theodredCode
+      run $ PlaceTokens GameSource theirs Resource 1
+      mine <- heroOf one beravorCode
+      run $ BeginPhase PlanningPhase
+      -- the players' planning windows come in no set order
+      passActions two
+      chooseAbilityOf one trader
+      chooseTarget two theirs
+      chooseTarget two mine
+      allyController trader `shouldReturn` Just (InPlayArea two)
+      case mine of
+        HeroTarget h -> getHeroResources h `shouldReturn` 1
+        _ -> error "not a hero"
+
+  describe "Defender of the West" do
+    it "gives the first player control of the ally, who may give it undefended damage" . twoPlayerTest testDeck $ \one two -> do
+      henamarth <- putAllyIntoPlay two Allies.henamarthRiversong
+      defender <- putAttachmentOn two Attachments.defenderOfTheWest henamarth
+      case defender of
+        AttachmentTarget aid -> run $ AttachCard aid henamarth
+        _ -> error "not an attachment"
+      allyController henamarth `shouldReturn` Just (InPlayArea one)
+      getModifiers (PlayerTarget one) >>= (`shouldSatisfy` elem (UndefendedDamageMayGoTo henamarth))

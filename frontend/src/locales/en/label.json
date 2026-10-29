@@ -869,5 +869,9 @@
   },
   "closeCall": {
     "cancel": "Close Call: choose X, the damage to cancel (Doomed X)"
+  },
+  "blueMountainTrader": {
+    "move": "Move 1 resource from a hero you control to a hero of Blue Mountain Trader's last controller, or discard it",
+    "discard": "Discard Blue Mountain Trader"
   }
 }
