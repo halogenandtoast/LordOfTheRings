@@ -2,9 +2,9 @@ module LordOfTheRings.Helpers.Window (module LordOfTheRings.Helpers.Window) wher
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
-import LordOfTheRings.Ally.Types (allyCardId, allyTokens)
+import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdVictoryPoints, cdWhenRevealed, toCardDef)
+import LordOfTheRings.Card (cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
@@ -174,15 +174,20 @@ withinLimitOf ab controller = case ab.abilityLimit of
       , u.usedAbilityIndex == ab.abilityIndex
       ]
 
-{- | The source an ability's uses are counted against: a once-per-game limit follows the
-ally's card, as the ally comes back into play under a new id.
+{- | The source an ability's uses are counted against: a once-per-game limit is counted
+across every copy of the card, as the card coming back into play, or another copy of it,
+is limited by the uses before (each player's own, for a player limit).
 -}
 limitSource :: HasGame m => Ability -> m Source
-limitSource ab = case (abilityLimitType ab.abilityLimit, ab.abilitySource) of
-  (Just PerGame, AllySource aid) ->
-    maybe ab.abilitySource (CardIdSource . allyCardId . toAttrs)
-      . Map.lookup aid
-      <$> getsGame (entitiesAllies . gameEntities)
+limitSource ab = case abilityLimitType ab.abilityLimit of
+  Just PerGame -> do
+    es <- getsGame gameEntities
+    let code = case ab.abilitySource of
+          AllySource aid -> toCardCode <$> Map.lookup aid es.allies
+          HeroSource hid -> toCardCode <$> Map.lookup hid es.heroes
+          AttachmentSource aid -> toCardCode <$> Map.lookup aid es.attachments
+          _ -> Nothing
+    pure $ maybe ab.abilitySource CardCodeSource code
   _ -> pure ab.abilitySource
 
 passesCriteria :: HasGame m => Criterion -> m Bool

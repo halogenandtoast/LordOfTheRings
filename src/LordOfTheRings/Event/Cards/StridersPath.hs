@@ -11,6 +11,8 @@ newtype StridersPath = StridersPath EventAttrs
 -- | Response: After a location is revealed from the encounter deck, immediately travel to
 -- that location without resolving its Travel effect. If another location is currently
 -- active, return it to the staging area.
+--
+-- An active location immune to player card effects stays, and both are active.
 stridersPath :: EventCard StridersPath
 stridersPath = eventWith StridersPath Cards.stridersPath (windowL ?~ LocationRevealedWindow After)
 
@@ -18,7 +20,7 @@ instance RunMessage StridersPath where
   runMessage msg e@(StridersPath attrs) = case msg of
     PlayEvent _ card windows | card.id == toId attrs -> do
       for_ [lid | Window _ (Revealed (LocationTarget lid)) <- windows] \lid -> do
-        active <- select IsActiveLocation
+        active <- select (IsActiveLocation <> LocationNotImmuneToPlayerCards)
         for_ active \old -> placeLocation old StagingArea
         travelWithoutCost lid
       pure e

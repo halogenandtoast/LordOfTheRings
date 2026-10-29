@@ -30,10 +30,13 @@ attachmentCriteriaFor card =
 -- cannot have restricted attachments.
 cardHosts :: (HasGame m) => CardCode -> m [Target]
 cardHosts code = do
+  -- with its text blank, an attachment has no "Attach to" to be attached by, as Amon Lhaw
+  -- blanks them
+  blank <- elem BlankAttachments <$> getModifiers GameTarget
   attached <- getsGame (toList . (.entities.attachments))
   let copyOn host = any (\a -> a.placement == AttachedTo host && cdName (toCardDef a) == cdName def) attached
   candidates <- attachmentHosts (attachMatcherFor code)
-  flip filterM [h | h <- candidates, not (cdLimitOnePerHost def && copyOn h)] \host ->
+  flip filterM [h | not blank, h <- candidates, not (cdLimitOnePerHost def && copyOn h)] \host ->
     if Restricted `member` cdKeywords def then notElem CannotHaveRestrictedAttachments <$> getModifiers host else pure True
  where
   def = toCardDef code

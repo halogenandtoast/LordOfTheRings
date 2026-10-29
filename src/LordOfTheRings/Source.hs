@@ -1,5 +1,6 @@
 module LordOfTheRings.Source (module LordOfTheRings.Source) where
 
+import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
@@ -23,6 +24,8 @@ data Source
   | CardIdSource CardId
   | ScenarioSource
   | GameSource
+  | -- | every copy of a card, as a "once per game" limit counts the uses of
+    CardCodeSource CardCode
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -55,6 +58,7 @@ sourceTarget = \case
   PlayerAttackSource _ -> Nothing
   ScenarioSource -> Nothing
   GameSource -> Nothing
+  CardCodeSource _ -> Nothing
 
 -- | The enemy dealing damage from this source: by its attack, or by another of its effects.
 sourceEnemy :: Source -> Maybe EnemyId

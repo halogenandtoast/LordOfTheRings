@@ -329,6 +329,9 @@ data ModifierType
   | -- | on an enemy: whatever would have it engage another player, it engages this one
     -- instead, as Chief Turch engages the first player
     EngagesOnly PlayerId
+  | -- | on a player: they draw this many more cards in the resource phase, in the same
+    -- draw, as Bilbo Baggins reads
+    AdditionalResourcePhaseDraws Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
