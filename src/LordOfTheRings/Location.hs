@@ -120,6 +120,11 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.RavenChiefsCamp
+import LordOfTheRings.Location.Cards.RavenWarCamp
+import LordOfTheRings.Location.Cards.RavenVillage
+import LordOfTheRings.Location.Cards.DunlandBattlefield
+import LordOfTheRings.Location.Cards.RavenCountry
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +272,10 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard ravenChiefsCamp
+        , SomeLocationCard ravenWarCamp
+        , SomeLocationCard ravenVillage
+        , SomeLocationCard dunlandBattlefield
+        , SomeLocationCard ravenCountry
         ]
     ]
