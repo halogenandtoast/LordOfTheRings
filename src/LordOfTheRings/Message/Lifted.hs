@@ -912,3 +912,11 @@ whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture act
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+-- | The player shuffles his discard pile into his deck.
+shuffleDiscardIntoDeck :: ReverseQueue m => PlayerId -> m ()
+shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
+
+-- | The players make engagement checks, from the first player, as in the encounter phase.
+makeEngagementChecks :: ReverseQueue m => m ()
+makeEngagementChecks = getLead >>= \lead -> push (EngagementCheck lead 0)
