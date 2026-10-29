@@ -109,6 +109,9 @@ import LordOfTheRings.Treachery.Cards.CounterAttack
 import LordOfTheRings.Treachery.Cards.LyingInWait
 import LordOfTheRings.Treachery.Cards.MordorLooms
 import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
+import LordOfTheRings.Treachery.Cards.PillagingAndBurning
+import LordOfTheRings.Treachery.Cards.DownFromTheHills
+import LordOfTheRings.Treachery.Cards.IllTidings
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -242,5 +245,8 @@ allTreacherys =
         , SomeTreacheryCard lyingInWait
         , SomeTreacheryCard mordorLooms
         , SomeTreacheryCard conflictAtTheCrossroads
+        , SomeTreacheryCard pillagingAndBurning
+        , SomeTreacheryCard downFromTheHills
+        , SomeTreacheryCard illTidings
         ]
     ]

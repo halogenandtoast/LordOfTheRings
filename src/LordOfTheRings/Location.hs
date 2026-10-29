@@ -120,6 +120,10 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.TheIslet
+import LordOfTheRings.Location.Cards.FordsOfIsen
+import LordOfTheRings.Location.Cards.TheKingsRoad
+import LordOfTheRings.Location.Cards.GapOfRohan
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +271,9 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard theIslet
+        , SomeLocationCard fordsOfIsen
+        , SomeLocationCard theKingsRoad
+        , SomeLocationCard gapOfRohan
         ]
     ]
