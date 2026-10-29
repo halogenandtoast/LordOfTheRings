@@ -285,6 +285,9 @@ data ModifierType
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int
+  | -- | on a player: they draw this many cards in the resource phase instead of 1, as
+    -- Hithaeglir Stream reads (0: they draw none, as Plains of Enedwaith)
+    ResourcePhaseDraws Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
