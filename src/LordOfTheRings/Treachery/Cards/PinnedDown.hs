@@ -23,6 +23,9 @@ instance RunMessage PinnedDown where
       when (x < 4) revealEncounterCard
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
-      destroyingReturnsLocation attrs eid
+      ifThisAttackDestroys eid msg
+      pure t
+    DoStep 1 (ResolveShadowEffect cid eid _ _) | cid == attrs.cardId -> do
+      destroyedReturnLocations attrs eid
       pure t
     _ -> PinnedDown <$> runMessage msg attrs

@@ -245,8 +245,10 @@ spec = describe "Assault on Osgiliath" do
     _ <- setEncounterDeck [Locations.eastQuarter]
     run $ DealShadowCard eid
     scout <- putAllyIntoPlay pid Allies.guardOfTheCitadel
-    run $ ResolveShadow eid pid [scout]
-    run $ AttackDamage eid scout
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid scout
+    passActions pid
     placementOf Locations.westQuarter `shouldReturn` Just StagingArea
     placementOf Locations.ancientHarbor `shouldReturn` Just (InPlayArea pid)
 

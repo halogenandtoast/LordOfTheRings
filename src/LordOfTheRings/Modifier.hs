@@ -256,10 +256,6 @@ data ModifierType
     CannotLeavePlay
   | -- | on a character or enemy: any amount of damage dealt to it is reduced to this much
     DamageReducedTo Int
-  | -- | on an attacking enemy: if the attack destroys a character, its controller returns
-    -- the location he controls with the highest threat to the staging area, as Osgiliath's
-    -- shadows read
-    DestroyingReturnsLocation
   | -- | on the game: matching enemies engaged with players add their threat to the staging
     -- area too, as Conflict at the Crossroads reads
     EngagedEnemiesAddThreat EnemyMatcher

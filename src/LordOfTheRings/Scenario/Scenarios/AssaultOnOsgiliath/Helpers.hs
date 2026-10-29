@@ -9,7 +9,7 @@ module LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers (
   returnHighestThreatLocation,
   returnALocation,
   returnsWhenUndefended,
-  destroyingReturnsLocation,
+  destroyedReturnLocations,
 ) where
 
 import LordOfTheRings.Ability
@@ -19,10 +19,9 @@ import LordOfTheRings.Id
 import LordOfTheRings.Location.Types (LocationAttrs)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
-import LordOfTheRings.Modifier (ModifierType (DestroyingReturnsLocation))
 import LordOfTheRings.Placement (Placement (InPlayArea, StagingArea))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Source (Source (GameSource), Sourceable)
+import LordOfTheRings.Source (Source (GameSource))
 import LordOfTheRings.Target (Targetable)
 import LordOfTheRings.Timing (Timing (After))
 import LordOfTheRings.Token (Token (Progress))
@@ -75,7 +74,8 @@ returnsWhenUndefended :: LocationAttrs -> Int -> [Ability]
 returnsWhenUndefended a idx = [mkAbility a idx $ forced $ AttackUndefendedWindow After pid | InPlayArea pid <- [a.placement]]
 
 -- | The shadow "If this attack destroys a character, that character's controller must
--- return a location he controls with the highest threat to the staging area": Retake the
--- City resolves it once the attack destroys one.
-destroyingReturnsLocation :: (ReverseQueue m, Sourceable source) => source -> EnemyId -> m ()
-destroyingReturnsLocation source eid = attackModifier source eid DestroyingReturnsLocation
+-- return a location he controls with the highest threat to the staging area", once the
+-- enemy's attack is over: once for each character it destroyed.
+destroyedReturnLocations :: (ReverseQueue m, Targetable source) => source -> EnemyId -> m ()
+destroyedReturnLocations source eid =
+  traverse_ (returnHighestThreatLocation source) . mapMaybe (.controller) =<< attackDestroyed eid
