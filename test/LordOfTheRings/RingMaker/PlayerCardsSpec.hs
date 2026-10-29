@@ -285,6 +285,25 @@ spec = describe "The Ring-maker cycle player cards" do
       run RevealEncounterCard
       sum <$> locationProgress `shouldReturn` 1
 
+    it "explores Tharbad Hideout as it is revealed, so its surge does not resolve (FAQ 3.188)" . idraenTest $ \pid -> do
+      idraen <- hero idraenCode
+      _ <- putAttachmentOn pid Attachments.wardenOfArnor idraen
+      run $ CommitToQuest idraen
+      _ <- setEncounterDeck [Locations.tharbadHideout, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      locationProgress `shouldReturn` []
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "places its progress on Streets of Tharbad before it reaches the staging area (FAQ 3.188)" . idraenTest $ \pid -> do
+      idraen <- hero idraenCode
+      _ <- putAttachmentOn pid Attachments.wardenOfArnor idraen
+      run $ CommitToQuest idraen
+      _ <- setEncounterDeck [Locations.streetsOfTharbad]
+      run RevealEncounterCard
+      resolveRevealed
+      locationProgress `shouldReturn` []
+
   describe "Gwaihir" do
     it "puts an Eagle from the discard pile into play, back to hand at the end of the round" . gameTest $ \pid -> do
       eagle <- putInDiscard pid Allies.wingedGuardian
