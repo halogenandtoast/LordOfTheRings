@@ -255,6 +255,7 @@ library
       LordOfTheRings.EncounterSet
       LordOfTheRings.Enemy
       LordOfTheRings.Enemy.CardDefs
+      LordOfTheRings.Enemy.Cards.AngryHuorn
       LordOfTheRings.Enemy.Cards.AttercopAttercop
       LordOfTheRings.Enemy.Cards.BatteringRam
       LordOfTheRings.Enemy.Cards.BlackForestBats
@@ -269,7 +270,9 @@ library
       LordOfTheRings.Enemy.Cards.ChieftanUfthak
       LordOfTheRings.Enemy.Cards.CravenEagle
       LordOfTheRings.Enemy.Cards.Crebain
+      LordOfTheRings.Enemy.Cards.DarkHeartedHuorn
       LordOfTheRings.Enemy.Cards.DaughterOfBeruthiel
+      LordOfTheRings.Enemy.Cards.DeadlyHuorn
       LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
       LordOfTheRings.Enemy.Cards.DolGuldurOrcs
       LordOfTheRings.Enemy.Cards.DruadanDrummer
@@ -579,6 +582,7 @@ library
       LordOfTheRings.Location.Cards.DwarvenForge
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
+      LordOfTheRings.Location.Cards.EdgeOfFangorn
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
       LordOfTheRings.Location.Cards.Fanuidhol
@@ -595,6 +599,7 @@ library
       LordOfTheRings.Location.Cards.GondorianHamlet
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.HarborStorehouse
+      LordOfTheRings.Location.Cards.HeartOfFangorn
       LordOfTheRings.Location.Cards.HousesOfTheDead
       LordOfTheRings.Location.Cards.ImpassableBog
       LordOfTheRings.Location.Cards.IthilienRoad
@@ -712,6 +717,7 @@ library
       LordOfTheRings.Objective.Cards.IthilienGuardian
       LordOfTheRings.Objective.Cards.LordAlcaron
       LordOfTheRings.Objective.Cards.LordAlcaronTheBloodOfGondor
+      LordOfTheRings.Objective.Cards.MugashObjective
       LordOfTheRings.Objective.Cards.PoisonedCounsels
       LordOfTheRings.Objective.Cards.RescuedVillagers
       LordOfTheRings.Objective.Cards.SecretMap
@@ -759,6 +765,7 @@ library
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
       LordOfTheRings.Quest.Cards.EscapeFromDarkness
+      LordOfTheRings.Quest.Cards.EscapeFromFangorn
       LordOfTheRings.Quest.Cards.EscapeToTheQuays
       LordOfTheRings.Quest.Cards.FightingInTheStreets
       LordOfTheRings.Quest.Cards.FliesAndSpiders
@@ -769,6 +776,7 @@ library
       LordOfTheRings.Quest.Cards.HeadingDown
       LordOfTheRings.Quest.Cards.HeadingUp
       LordOfTheRings.Quest.Cards.IntoTheMarshes
+      LordOfTheRings.Quest.Cards.IntoTheWoods
       LordOfTheRings.Quest.Cards.JourneyInTheBlackPit
       LordOfTheRings.Quest.Cards.LastLordOfMoria
       LordOfTheRings.Quest.Cards.NarrowPaths
@@ -787,6 +795,7 @@ library
       LordOfTheRings.Quest.Cards.Snowdrifts
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
       LordOfTheRings.Quest.Cards.TheAmbush
+      LordOfTheRings.Quest.Cards.TheAngryForest
       LordOfTheRings.Quest.Cards.TheBetrayal
       LordOfTheRings.Quest.Cards.TheCapture
       LordOfTheRings.Quest.Cards.TheConfrontation
@@ -835,6 +844,8 @@ library
       LordOfTheRings.Scenario.Scenarios.FlightFromMoria.Helpers
       LordOfTheRings.Scenario.Scenarios.FoundationsOfStone
       LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers
+      LordOfTheRings.Scenario.Scenarios.IntoFangorn
+      LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers
       LordOfTheRings.Scenario.Scenarios.IntoIthilien
       LordOfTheRings.Scenario.Scenarios.IntoThePit
       LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers
@@ -963,6 +974,7 @@ library
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.TerrorDrivesThem
       LordOfTheRings.Treachery.Cards.TheDeadCityLooms
+      LordOfTheRings.Treachery.Cards.TheForestsMalice
       LordOfTheRings.Treachery.Cards.TheLightsOfTheDead
       LordOfTheRings.Treachery.Cards.TheMastersMalice
       LordOfTheRings.Treachery.Cards.TheNecromancersReach
@@ -1193,6 +1205,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
       TestImport
       Paths_LordOfTheRings
   hs-source-dirs:

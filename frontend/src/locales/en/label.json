@@ -855,5 +855,12 @@
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
   },
-  "refreshUpTo": "Choose a character to ready ({count} left to ready)"
+  "refreshUpTo": "Choose a character to ready ({count} left to ready)",
+  "mugash": {
+    "exhaust": "Choose a hero to exhaust and attach Mugash to"
+  },
+  "intoFangorn": {
+    "huornEngaged": "Choose a Huorn enemy to put into play engaged with you",
+    "revealFromDiscard": "Choose an enemy or objective in the encounter discard pile to reveal"
+  }
 }
