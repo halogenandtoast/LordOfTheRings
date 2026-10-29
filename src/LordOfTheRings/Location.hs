@@ -120,6 +120,14 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.TheEmptyMug
+import LordOfTheRings.Location.Cards.TheCrossingAtTharbad
+import LordOfTheRings.Location.Cards.StreetsOfTharbad
+import LordOfTheRings.Location.Cards.TharbadHideout
+import LordOfTheRings.Location.Cards.RuinsOfTheSecondAge
+import LordOfTheRings.Location.Cards.SeedyInn
+import LordOfTheRings.Location.Cards.HiddenAlleyway
+import LordOfTheRings.Location.Cards.DecrepitRooftops
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +275,13 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard theEmptyMug
+        , SomeLocationCard theCrossingAtTharbad
+        , SomeLocationCard streetsOfTharbad
+        , SomeLocationCard tharbadHideout
+        , SomeLocationCard ruinsOfTheSecondAge
+        , SomeLocationCard seedyInn
+        , SomeLocationCard hiddenAlleyway
+        , SomeLocationCard decrepitRooftops
         ]
     ]
