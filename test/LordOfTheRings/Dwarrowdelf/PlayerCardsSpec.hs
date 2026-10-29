@@ -539,6 +539,21 @@ spec = describe "Dwarrowdelf player cards" do
     chooseTarget pid (CardIdTarget card.id)
     getDamage (toTarget eid) `shouldReturn` dwarf
 
+  it "Heavy Stroke: no more than 1 copy is played each phase, by the whole group" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    elladan <- putHero one Heroes.elladan
+    run $ PlaceTokens GameSource elladan Resource 1
+    gimli <- heroOf two "01004"
+    run $ PlaceTokens GameSource gimli Resource 1
+    mine <- putCardIntoHand one Events.heavyStroke
+    theirs <- putCardIntoHand two Events.heavyStroke
+    eid <- staged Enemies.hillTroll
+    setPhase CombatPhase
+    run $ CheckWindows [mkAfter $ AttackDealtDamage eid [gimli] 2]
+    chooseTarget one (CardIdTarget mine.id)
+    run $ CheckWindows [mkAfter $ AttackDealtDamage eid [gimli] 2]
+    question <- getQuestion two
+    [() | Just q <- [question], TargetLabel (CardIdTarget cid) _ <- questionChoices q, cid == theirs.id] `shouldBe` []
+
   it "Imladris Stargazer lets a player put the top 5 cards of their deck back in any order" . gameTest $ \pid -> do
     star <- putAllyIntoPlay pid Allies.imladrisStargazer
     top <- take 5 . (.deck) <$> getPlayer pid
