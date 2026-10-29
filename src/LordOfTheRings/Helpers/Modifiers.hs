@@ -34,10 +34,15 @@ preloadModifiers g = do
       -- a card whose host has just left play is about to follow it, and adds nothing
       unless blank $ traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.attachments)
       traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.objectives)
-  let fromEffects =
+  let -- what is out of play only while its source is in play, as Saruman's chosen card,
+      -- comes back as the source leaves
+      lasting e =
+        ConsideredOutOfPlay `notElem` effectModifiers e
+          || maybe True (hostInPlay es . AttachedTo) (sourceTarget $ effectSource e)
+      fromEffects =
         Map.fromListWith
           (<>)
-          [(effectTarget e, map (Modifier (effectSource e)) (effectModifiers e)) | e <- gameEffects g]
+          [(effectTarget e, map (Modifier (effectSource e)) (effectModifiers e)) | e <- gameEffects g, lasting e]
       -- an effect on a card follows it into play as an ally
       followed =
         Map.fromListWith

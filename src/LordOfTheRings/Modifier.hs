@@ -285,6 +285,9 @@ data ModifierType
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int
+  | -- | on an enemy or location: it is considered out of play, while the card giving it this
+    -- is in play, as Saruman's chosen card; no matcher finds it
+    ConsideredOutOfPlay
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

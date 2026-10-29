@@ -171,7 +171,7 @@ instance Query EnemyMatcher where
   select matcher = do
     -- an enemy attached to a character, as Grasping Tentacle becomes, is an attachment
     enemies <- getsGame (filter (not . attached . (.placement)) . toList . entitiesEnemies . gameEntities)
-    map toId <$> filterM (matchEnemy matcher) enemies
+    map toId <$> filterM (\e -> andM [notOutOfPlay (toTarget e), matchEnemy matcher e]) enemies
    where
     attached = \case
       AttachedTo _ -> True
@@ -208,7 +208,7 @@ instance Query LocationMatcher where
   type QueryElement LocationMatcher = LocationId
   select matcher = do
     locations <- getsGame (toList . entitiesLocations . gameEntities)
-    map toId <$> filterM (matchLocation matcher) locations
+    map toId <$> filterM (\l -> andM [notOutOfPlay (toTarget l), matchLocation matcher l]) locations
 
 matchLocation :: HasGame m => LocationMatcher -> Location -> m Bool
 matchLocation matcher location = case matcher of
@@ -225,6 +225,10 @@ matchLocation matcher location = case matcher of
   LocationControlledBy pm -> case location.placement of
     InPlayArea pid -> elem pid <$> select pm
     _ -> pure False
+
+-- | Not considered out of play, as Saruman's chosen card is.
+notOutOfPlay :: HasGame m => Target -> m Bool
+notOutOfPlay t = notElem ConsideredOutOfPlay . map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
 
 immuneToPlayerCards :: HasGame m => Target -> m Bool
 immuneToPlayerCards t =
