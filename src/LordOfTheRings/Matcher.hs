@@ -226,6 +226,7 @@ matchLocation matcher location = case matcher of
   LocationControlledBy pm -> case location.placement of
     InPlayArea pid -> elem pid <$> select pm
     _ -> pure False
+  LocationWithIdBelow lid -> pure $ location.id < lid
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
