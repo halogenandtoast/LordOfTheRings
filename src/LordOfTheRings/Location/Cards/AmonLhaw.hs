@@ -13,8 +13,10 @@ amonLhaw = location AmonLhaw Cards.amonLhaw
 
 -- | X is double the number of players in the game. While Amon Lhaw is the active location,
 -- treat all attachments as if their printed text boxes were blank.
+--
+-- Once explored it is no longer active, so an Ancient Mathom on it answers its exploring.
 instance HasModifiersFor AmonLhaw where
   getModifiersFor (AmonLhaw a) = do
     players <- length <$> getRemainingPlayers
     modified a a [ThreatModifier (2 * players)]
-    when (a.placement == ActiveLocation) $ modified a GameTarget [BlankAttachments]
+    when (a.placement == ActiveLocation && a.progress < a.questPoints) $ modified a GameTarget [BlankAttachments]

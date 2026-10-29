@@ -79,8 +79,11 @@ instance RunMessage Player where
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
     BeginPhase ResourcePhase -> do
-      n <- fromMaybe 1 . headMay . mapMaybe (\case ResourcePhaseDraws k -> Just k; _ -> Nothing) <$> getModifiers player
-      pushWhen (n > 0) $ DrawCards $ Drawing player.id n
+      mods <- getModifiers player
+      let n = fromMaybe 1 $ headMay [k | ResourcePhaseDraws k <- mods]
+          -- an additional card is part of the same draw, none when there is none
+          extra = sum [k | AdditionalResourcePhaseDraws k <- mods]
+      pushWhen (n > 0) $ DrawCards $ Drawing player.id (n + extra)
       pure player
     DrawCards drawing | drawing.player == player.id -> do
       blocked <- elem CannotDrawCards <$> getModifiers player

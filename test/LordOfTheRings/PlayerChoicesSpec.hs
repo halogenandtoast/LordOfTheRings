@@ -164,6 +164,8 @@ spec = describe "Player choices" do
       chooseLabel "$label.doneCommittingToEscape" one
       chooseTarget two =<< hero "03002"
       chooseLabel "$label.doneCommittingToEscape" two
+      passActions one
+      passActions two
       length <$> getEncounterDeck `shouldReturn` 1
 
   it "removes Radagast from the game after he heals Wilyador" . gameTestIn aJourneyToRhosgobel testDeck $ \pid -> do

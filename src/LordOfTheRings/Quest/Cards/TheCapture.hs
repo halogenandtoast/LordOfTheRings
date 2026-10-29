@@ -17,6 +17,9 @@ must pass an Escape test, dealing 1 card from the encounter deck for each resour
 on Gollum, to capture him. If Gollum is not captured at this time, reset the quest deck
 to stage 1B. If this final Escape test is passed, the players have captured Gollum and
 won the game.
+
+With Gollum not in play the test is still taken, but he is not captured, and the quest
+deck is reset.
 -}
 instance RunMessage TheCapture where
   runMessage msg (TheCapture attrs) = case msg of
@@ -25,13 +28,8 @@ instance RunMessage TheCapture where
       gollum <- getGollum
       resources <- maybe (pure 0) (fmap (.resources) . getObjective) gollum
       stage1 <- genEncounterCard Cards.intoTheMarshes
+      let reset = resetToStage stage1 [MkEncounterCard attrs.cardId (toCardCode attrs)]
       choosePlayerM lead attrs \p ->
-        escapeTest
-          p
-          attrs
-          resources
-          EscapeWillpower
-          (resetToStage stage1 [MkEncounterCard attrs.cardId (toCardCode attrs)])
-          winGame
+        escapeTest p attrs resources EscapeWillpower reset (if isJust gollum then winGame else reset)
       pure $ TheCapture $ attrs & tokensL %~ addTokens Progress n
     _ -> TheCapture <$> runMessage msg attrs

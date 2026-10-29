@@ -441,17 +441,23 @@ runGameMessage msg g = case msg of
     let redirected = ordNub $ filter (inPlay g) [t | DamageRedirectedTo t <- mods]
     lead <- getLead
     -- before it is dealt, a Forced effect may cancel it, as Patrol Leader's: see 'cancelDamage'
-    unless (CannotTakeDamage `elem` mods) $ pushAll $ case redirected of
-      [t] -> [DealDamage source t n]
+    -- damage redirected is applied where it goes, not redirected again, as two Songs of
+    -- Mocking each choosing the other's hero
+    let dealTo t = do
+          mods' <- getModifiers t
+          -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1
+          let n' = foldr min n [k | DamageReducedTo k <- mods']
+          pure
+            $ if CannotTakeDamage `elem` mods'
+              then []
+              else [CheckWindows [mkWhen $ DealtDamage t n'], DoStep 1 (DealDamage source t n')]
+    unless (CannotTakeDamage `elem` mods) $ pushAll =<< case redirected of
+      [t] -> dealTo t
       -- the first player picks which takes it, as "dealt to 1 Morgul Bodyguard" reads
-      _ : _ ->
-        [ questionLabelWith (ikey "label.chooseDamageRedirect") (Just target) [] lead
-            [targetLabel t [DealDamage source t n] | t <- redirected]
-        ]
-      [] ->
-        -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1
-        let n' = foldr min n [k | DamageReducedTo k <- mods]
-         in [CheckWindows [mkWhen $ DealtDamage target n'], DoStep 1 (DealDamage source target n')]
+      _ : _ -> do
+        choices <- for redirected \t -> targetLabel t <$> dealTo t
+        pure [questionLabelWith (ikey "label.chooseDamageRedirect") (Just target) [] lead choices]
+      [] -> dealTo target
     pure g
   DoStep 1 (DealDamage source target n) -> do
     -- the damage an enemy deals may raise a player's threat as much, as Seedy Inn's shadow
@@ -1098,7 +1104,13 @@ runGameMessage msg g = case msg of
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
     pure g
   DealDamageDivided source pid n assigned -> do
-    characters <- charactersControlledBy pid
+    -- no more is assigned to a character than its remaining hit points, as Frodo's (FAQ):
+    -- damage that finds none left over is not assigned
+    controlled <- charactersControlledBy pid
+    characters <- flip filterM controlled \c -> do
+      hp <- getHitPoints c
+      damage <- getDamage c
+      pure $ damage + length (filter (== c) assigned) < hp
     if n > 0 && notNull characters
       then
         push
@@ -1228,7 +1240,9 @@ runGameMessage msg g = case msg of
     players <- getPlayerOrder
     if
       | willpower > threat ->
-          pushAll [PlaceProgressOnQuest (willpower - threat), CheckWindows [mkAfter QuestedSuccessfully]]
+          -- what questing successfully triggers resolves before the progress is placed
+          -- (FAQ 1.24), as The Hunt Begins' Forced effect
+          pushAll [CheckWindows [mkAfter QuestedSuccessfully], PlaceProgressOnQuest (willpower - threat)]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
@@ -1685,6 +1699,7 @@ runGameMessage msg g = case msg of
     | Just o <- Map.lookup oid g.entities.objectives ->
         pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard o :))
   MakeEscapeTest t -> do
+    order <- getPlayerOrder
     ready <-
       filter (`notElem` t.escapeCommitted)
         <$> selectCharacters
@@ -1701,7 +1716,9 @@ runGameMessage msg g = case msg of
         ]
       <> [ Label (ikey "label.doneCommittingToEscape") $ case t.escapeParty of
              next : rest -> [MakeEscapeTest t {escapePlayer = next, escapeParty = rest}]
-             [] -> [ResolveEscapeTest t]
+             -- the players may act once the characters are committed, before the cards
+             -- are dealt, the test's only action window
+             [] -> map OptionalActionWindow order <> [ResolveEscapeTest t]
          ]
     pure g
   ResolveEscapeTest t -> do

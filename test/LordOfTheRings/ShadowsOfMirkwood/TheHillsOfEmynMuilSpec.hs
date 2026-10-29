@@ -1,6 +1,8 @@
 module LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Outcome
@@ -33,6 +35,21 @@ spec = describe "The Hills of Emyn Muil" do
     lid <- revealLocation Locations.theHighlands
     run $ PlaceTokens GameSource (toTarget lid) Progress 1
     getsGame (map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` [toCardCode Locations.theHighlands]
+
+  it "lets an Ancient Mathom on the active Amon Lhaw answer its exploring" . emynMuilTest $ \pid -> do
+    lid <- revealLocation Locations.amonLhaw
+    run $ PlaceLocation lid ActiveLocation
+    mathom <- putAttachmentOn pid Attachments.ancientMathom (toTarget lid)
+    hand <- length . (.hand) <$> getPlayer pid
+    run $ PlaceTokens GameSource (toTarget lid) Progress 5
+    chooseAbilityOf pid mathom
+    length . (.hand) <$> getPlayer pid `shouldReturn` hand + 3
+
+  it "has no attachment played while Amon Lhaw is the active location" . emynMuilTest $ \_ -> do
+    lid <- revealLocation Locations.amonLhaw
+    notNull <$> cardHosts (toCardCode Attachments.ancientMathom) `shouldReturn` True
+    run $ PlaceLocation lid ActiveLocation
+    cardHosts (toCardCode Attachments.ancientMathom) `shouldReturn` []
 
   it "cannot be defeated without 20 victory points" . emynMuilTest $ \_ -> do
     stage <- putQuestStage Quests.theHillsOfEmynMuil
