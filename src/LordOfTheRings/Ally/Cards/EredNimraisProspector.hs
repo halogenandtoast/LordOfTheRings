@@ -19,9 +19,11 @@ instance HasAbilities EredNimraisProspector where
 instance RunMessage EredNimraisProspector where
   runMessage msg s@(EredNimraisProspector a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
+      deck <- length . (.deck) <$> getPlayer pid
       discardTopOfDeck pid 3
-      -- the discard pile is looked at once the cards, and what they trigger, are there
-      push $ DoStep 1 msg
+      -- the discard pile is looked at once the cards, and what they trigger, are there;
+      -- "Then" needs all 3 discarded, so a shorter deck stops there (ruling)
+      when (deck >= 3) $ push $ DoStep 1 msg
       pure s
     DoStep 1 (UseCardAbility pid (isSource a -> True) 1 _) -> do
       discarded <- (.discard) <$> getPlayer pid
