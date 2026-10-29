@@ -167,6 +167,21 @@ spec = describe "Shadow and Flame" do
     run $ EndPhase QuestPhase
     (.progress) <$> getActiveQuest `shouldReturn` 4
 
+  it "places The Rear Guard's 4 progress for a hero that committed and has since left the quest" . flameTest $ \_ -> do
+    _ <- bane
+    _ <- putQuestStage Quests.theRearGuard
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ CommitToQuest beravor
+    run $ RemoveFromQuest beravor
+    run $ EndPhase QuestPhase
+    (.progress) <$> getActiveQuest `shouldReturn` 4
+
+  it "places no progress on The Rear Guard when no hero committed this round" . flameTest $ \_ -> do
+    _ <- bane
+    _ <- putQuestStage Quests.theRearGuard
+    run $ EndPhase QuestPhase
+    (.progress) <$> getActiveQuest `shouldReturn` 0
+
   it "advances from The Rear Guard once Durin's Bane has no hit points left, and it attacks the first player" . flameTest $ \pid -> do
     eid <- bane
     _ <- putQuestStage Quests.theRearGuard

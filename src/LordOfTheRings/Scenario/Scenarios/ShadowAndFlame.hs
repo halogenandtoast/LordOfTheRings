@@ -2,7 +2,9 @@ module LordOfTheRings.Scenario.Scenarios.ShadowAndFlame (shadowAndFlame) where
 
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Modifier (ModifierType (HeroCommittedThisRound))
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Source (Source (GameSource))
 
 newtype ShadowAndFlame = ShadowAndFlame ScenarioAttrs
   deriving anyclass (IsScenario)
@@ -22,4 +24,8 @@ instance RunMessage ShadowAndFlame where
       laterStages <- traverse genEncounterCard [Quests.theRearGuard, Quests.lastLordOfMoria]
       putQuestIntoPlay firstStage
       pure $ ShadowAndFlame $ attrs & encounterDeckL .~ encounterDeck & questDeckL .~ laterStages
+    -- a hero committed this round, as The Rear Guard reads, even one since removed
+    CommitToQuest (HeroTarget _) -> do
+      roundModifier GameSource GameTarget HeroCommittedThisRound
+      ShadowAndFlame <$> runMessage msg attrs
     _ -> ShadowAndFlame <$> runMessage msg attrs
