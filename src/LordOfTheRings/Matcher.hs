@@ -95,7 +95,13 @@ matchHero matcher hero = case matcher of
   HeroControlledBy pm -> if heroPrisoner (toAttrs hero) then pure False else elem hero.owner <$> select pm
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
-  HeroWithSphere sphere -> pure $ hero.sphere == sphere
+  -- a hero belongs to the sphere of each resource icon it gains too, as Song of Wisdom's
+  HeroWithSphere sphere ->
+    (hero.sphere == sphere ||)
+      . elem (GainResourceIcon sphere)
+      . map modifierType
+      . Map.findWithDefault [] (toTarget hero)
+      <$> getsGame gameModifiers
   HeroWithKeyword k -> hasKeyword k (toTarget hero) (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
