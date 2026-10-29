@@ -39,7 +39,10 @@ instance RunMessage EscapeFromDarkness where
         causedBy attrs
         targets heroes \h -> do
           exhaust h
-          placeProgress tools attrs 1
+          -- the active location takes it first, as Abandoned Tools does not bypass it
+          -- (rulings 3.017 and 3.163)
+          active <- selectOne IsActiveLocation
+          maybe (placeProgress tools attrs 1) (\l -> placeProgress tools l 1) active
       pure q
     PlaceTokens source (isTarget attrs -> True) Progress n
       | source /= tools -> pure q
