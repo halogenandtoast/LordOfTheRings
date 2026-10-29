@@ -1857,8 +1857,9 @@ runGameMessage msg g = case msg of
         treachery <- newTreachery card
         pushAll . (<> [FinishRevelation (toId treachery)]) =<< whenRevealed (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
-      -- ponytail: an enemy or location turned faceup goes to the staging area, as Lying
-      -- in Wait's locations; a card wanting it elsewhere moves it after
+      -- an enemy or location goes to the staging area, as each card resolving one this
+      -- way reads (The North Stair, Lying in Wait's locations); one wanting it elsewhere
+      -- would move it after
       EnemyType -> do
         enemy <- newEnemy card
         pushAll =<< whenRevealed (toTarget enemy)
