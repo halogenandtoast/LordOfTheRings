@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -110,6 +110,9 @@ allQuestCards =
       , retakeTheCity
       , theAmbush
       , captured
+      , battleForDunland
+      , theRavenClan
+      , theLastStage
       ]
 
 theDrippingWalls :: CardDef
@@ -380,3 +383,13 @@ theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
 
 captured :: CardDef
 captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}
+
+battleForDunland :: CardDef
+battleForDunland = (quest "08147" "Battle for Dunland" TheAntleredCrown 1 10) {cdKeywords = setFromList [Time 3]}
+
+theRavenClan :: CardDef
+theRavenClan = (quest "08148" "The Raven Clan" TheAntleredCrown 2 15) {cdKeywords = setFromList [Time 3]}
+
+-- | Its quest points are "-": the players win once Raven Chief is in the victory display.
+theLastStage :: CardDef
+theLastStage = (quest "08149" "The Last Stage" TheAntleredCrown 3 0) {cdKeywords = setFromList [Time 2]}

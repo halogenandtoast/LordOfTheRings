@@ -48,6 +48,7 @@ allObjectiveCards =
       , poisonedCounsels
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
+      , chiefTurchTheAntleredCrown
       ]
 
 durinsAxe :: CardDef
@@ -274,5 +275,14 @@ lordAlcaronTheBloodOfGondor =
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3 })
     { cdUnique = True
     , cdCardTraits = setFromList [Gondor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+chiefTurchTheAntleredCrown :: CardDef
+chiefTurchTheAntleredCrown =
+  ((objective "08150" "Chief Turch" TheAntleredCrown 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 2, cdHitPoints = Just 5 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunland, BoarClan]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

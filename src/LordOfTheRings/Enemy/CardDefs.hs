@@ -127,6 +127,9 @@ allEnemyCards =
       , orcAmbusher
       , brutalUruk
       , evilCrow
+      , ravenChief
+      , ravenWarrior
+      , ravenSkirmisher
       ]
 
 namelessThing :: CardDef
@@ -982,4 +985,29 @@ evilCrow =
   (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+ravenChief :: CardDef
+ravenChief =
+  unique
+    (enemy "08151" "Raven Chief" TheAntleredCrown 1 15 4 5 5 9)
+      { cdCardTraits = setFromList [Dunland, RavenClan]
+      , cdVictoryPoints = Just 3
+      }
+
+ravenWarrior :: CardDef
+ravenWarrior =
+  (enemy "08153" "Raven Warrior" TheAntleredCrown 4 36 3 4 2 5)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+ravenSkirmisher :: CardDef
+ravenSkirmisher =
+  (enemy "08154" "Raven Skirmisher" TheAntleredCrown 3 26 2 3 2 2)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
     }

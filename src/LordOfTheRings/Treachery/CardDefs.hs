@@ -116,6 +116,9 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , raisingTheCry
+      , fierceFolk
+      , drivenBack
       ]
 
 deepDeepDark :: CardDef
@@ -713,3 +716,17 @@ conflictAtTheCrossroads =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+raisingTheCry :: CardDef
+raisingTheCry = (treachery "08159" "Raising the Cry" TheAntleredCrown 3) {cdEasyModeQuantity = Just 2}
+
+fierceFolk :: CardDef
+fierceFolk =
+  (treachery "08160" "Fierce Folk" TheAntleredCrown 2)
+    { cdKeywords = setFromList [Doomed 3]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+drivenBack :: CardDef
+drivenBack = treachery "08161" "Driven Back" TheAntleredCrown 2
