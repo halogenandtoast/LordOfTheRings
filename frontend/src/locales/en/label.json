@@ -866,5 +866,8 @@
   },
   "mirkwoodPioneer": {
     "choose": "Choose a card in the staging area: it does not contribute its threat this round"
+  },
+  "closeCall": {
+    "cancel": "Close Call: choose X, the damage to cancel (Doomed X)"
   }
 }

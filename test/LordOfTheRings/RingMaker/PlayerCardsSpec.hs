@@ -5,10 +5,11 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
+import LordOfTheRings.I18n (ikeyWith, intVar)
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
-import LordOfTheRings.Window (WindowType (ThreatRaisedByEncounter), mkAfter)
+import LordOfTheRings.Window (WindowType (DealtDamage, ThreatRaisedByEncounter), mkAfter)
 import TestImport
 
 beravorCode, eowynCode, theodredCode, idraenCode :: CardCode
@@ -172,3 +173,15 @@ spec = describe "The Ring-maker cycle player cards" do
       inHand pid card.id `shouldReturn` True
       Just q <- getQuestion pid
       [t | TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)
+
+  describe "Close Call" do
+    it "cancels X damage just dealt to a hero, raising each threat by X" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      card <- putCardIntoHand pid Events.closeCall
+      run $ PlaceTokens GameSource beravor Damage 2
+      was <- threat pid
+      run $ CheckWindows [mkAfter $ DealtDamage beravor 2]
+      chooseTarget pid (CardIdTarget card.id)
+      chooseLabel (ikeyWith "label.xEquals" [intVar "x" 2]) pid
+      getCharacterDamage beravor `shouldReturn` 0
+      threat pid `shouldReturn` was + 2

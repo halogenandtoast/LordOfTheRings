@@ -127,6 +127,7 @@ import LordOfTheRings.Event.Cards.IslandAmidPerils
 import LordOfTheRings.Event.Cards.FollowMe
 import LordOfTheRings.Event.Cards.ShadowsGiveWay
 import LordOfTheRings.Event.Cards.FreeToChoose
+import LordOfTheRings.Event.Cards.CloseCall
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -267,5 +268,6 @@ allEvents =
         , SomeEventCard followMe
         , SomeEventCard shadowsGiveWay
         , SomeEventCard freeToChoose
+        , SomeEventCard closeCall
         ]
     ]

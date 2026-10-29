@@ -410,6 +410,7 @@ library
       LordOfTheRings.Event.Cards.CampfireTales
       LordOfTheRings.Event.Cards.ChargeOfTheRohirrim
       LordOfTheRings.Event.Cards.ChildrenOfTheSea
+      LordOfTheRings.Event.Cards.CloseCall
       LordOfTheRings.Event.Cards.CommonCause
       LordOfTheRings.Event.Cards.ConeyInATrap
       LordOfTheRings.Event.Cards.CourageAwakened

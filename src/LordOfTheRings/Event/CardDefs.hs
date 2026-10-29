@@ -138,6 +138,7 @@ allEventCards =
       , followMe
       , shadowsGiveWay
       , freeToChoose
+      , closeCall
       ]
 
 everVigilant :: CardDef
@@ -531,3 +532,6 @@ shadowsGiveWay = (event "08143" "Shadows Give Way" Spirit (StaticCost 3)) {cdDis
 
 freeToChoose :: CardDef
 freeToChoose = event "08062" "Free to Choose" Spirit (StaticCost 0)
+
+closeCall :: CardDef
+closeCall = (event "08005" "Close Call" Tactics (StaticCost 0)) {cdKeywords = setFromList [Doomed 0]}
