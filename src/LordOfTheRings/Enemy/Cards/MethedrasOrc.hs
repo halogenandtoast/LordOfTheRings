@@ -2,7 +2,7 @@ module LordOfTheRings.Enemy.Cards.MethedrasOrc (methedrasOrc) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (afterAttackIfDestroyed, shuffleRandomCardIntoOutOfPlayDeck)
+import LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (shuffleRandomCardIntoOutOfPlayDeck)
 
 newtype MethedrasOrc = MethedrasOrc EnemyAttrs
   deriving anyclass (IsEnemy, HasModifiersFor)
@@ -23,7 +23,10 @@ instance RunMessage MethedrasOrc where
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
       for_ [pid | Window _ (EnemyAttacking _ pid) <- ws] shuffleRandomCardIntoOutOfPlayDeck
       pure e
-    ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
-      afterAttackIfDestroyed eid pid defenders $ removeTimeCountersFromCurrentQuest attrs 1
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      ifThisAttackDestroys eid msg
+      pure e
+    DoStep 1 (ResolveShadowEffect cid _ _ _) | cid == attrs.cardId -> do
+      removeTimeCountersFromCurrentQuest attrs 1
       pure e
     _ -> MethedrasOrc <$> runMessage msg attrs

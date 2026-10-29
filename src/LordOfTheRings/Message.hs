@@ -402,10 +402,6 @@ data Message
   | Run [Message]
   | -- | the messages, unless the card has left play by the time they run
     WhileInPlay Target [Message]
-  | {- | the messages, if any of the targets has left play by the time they run, as "if this
-    attack destroys a character" reads once the attack has resolved
-    -}
-    IfAnyLeftPlay [Target] [Message]
   | -- | the messages, if the enemy's attack has destroyed a character, as "if this attack
     -- destroys a character" reads once the attack is over (see 'attackDestroyed')
     IfAttackDestroyed EnemyId [Message]

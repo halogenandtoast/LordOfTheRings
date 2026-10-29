@@ -317,9 +317,6 @@ runGameMessage msg g = case msg of
   WhileInPlay t msgs -> do
     when (inPlay g t) $ pushAll msgs
     pure g
-  IfAnyLeftPlay ts msgs -> do
-    when (any (not . inPlay g) ts) $ pushAll msgs
-    pure g
   IfAttackDestroyed eid msgs -> do
     whenM (attackDestroyedACharacter eid) $ pushAll msgs
     pure g
