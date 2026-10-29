@@ -95,6 +95,9 @@ import LordOfTheRings.Quest.Cards.TheWizardsPrize
 import LordOfTheRings.Quest.Cards.IntoTheWoods
 import LordOfTheRings.Quest.Cards.EscapeFromFangorn
 import LordOfTheRings.Quest.Cards.TheAngryForest
+import LordOfTheRings.Quest.Cards.FightAtTheFords
+import LordOfTheRings.Quest.Cards.DunlendingAttack
+import LordOfTheRings.Quest.Cards.HoldTheFords
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -222,5 +225,8 @@ allQuests =
         , SomeQuestCard intoTheWoods
         , SomeQuestCard escapeFromFangorn
         , SomeQuestCard theAngryForest
+        , SomeQuestCard fightAtTheFords
+        , SomeQuestCard dunlendingAttack
+        , SomeQuestCard holdTheFords
         ]
     ]

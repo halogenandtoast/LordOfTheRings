@@ -125,6 +125,10 @@ import LordOfTheRings.Location.Cards.OrcCave
 import LordOfTheRings.Location.Cards.MugashsLair
 import LordOfTheRings.Location.Cards.EdgeOfFangorn
 import LordOfTheRings.Location.Cards.HeartOfFangorn
+import LordOfTheRings.Location.Cards.TheIslet
+import LordOfTheRings.Location.Cards.FordsOfIsen
+import LordOfTheRings.Location.Cards.TheKingsRoad
+import LordOfTheRings.Location.Cards.GapOfRohan
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -277,5 +281,9 @@ allLocations =
         , SomeLocationCard mugashsLair
         , SomeLocationCard edgeOfFangorn
         , SomeLocationCard heartOfFangorn
+        , SomeLocationCard theIslet
+        , SomeLocationCard fordsOfIsen
+        , SomeLocationCard theKingsRoad
+        , SomeLocationCard gapOfRohan
         ]
     ]

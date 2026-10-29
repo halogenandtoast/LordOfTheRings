@@ -445,7 +445,7 @@ runGameMessage msg g = case msg of
     pure g
   ChooseAndDiscardFromHand pid source n | n > 0 -> do
     player <- getPlayer pid
-    unless (null player.hand)
+    unless (null $ discardableHand player)
       $ push
       $ questionLabelWith
         (ikey "label.chooseCardToDiscardFromHand")
@@ -455,18 +455,18 @@ runGameMessage msg g = case msg of
         [ targetLabel
             (CardIdTarget c.id)
             [DiscardFromHand pid c.id, ChooseAndDiscardFromHand pid source (n - 1)]
-        | c <- player.hand
+        | c <- discardableHand player
         ]
     pure g
   EachDiscardAnyFromHand source (pid : rest) discarded -> do
     player <- getPlayer pid
     push
-      $ if null player.hand
+      $ if null (discardableHand player)
         then EachDiscardAnyFromHand source rest discarded
         else
           questionLabelWith (ikey "label.discardAnyFromHand") (sourceTarget source) [] pid
             $ [ targetLabel (CardIdTarget c.id) [DiscardFromHand pid c.id, EachDiscardAnyFromHand source (pid : rest) (discarded <> [c])]
-              | c <- player.hand
+              | c <- discardableHand player
               ]
             <> [Label (ikey "label.doneDiscarding") [EachDiscardAnyFromHand source rest discarded]]
     pure g
@@ -1802,6 +1802,9 @@ runGameMessage msg g = case msg of
       %~ Map.delete tid
       & scenarioL
       %~ overAttrs (encounterDeckL .~ deck)
+  DrawTreacheryIntoHand pid tid | Just t <- Map.lookup tid g.entities.treacheries -> do
+    let card = EncounterCard $ MkEncounterCard (treacheryCardId $ toAttrs t) (toCardCode t)
+    pure $ g & entitiesL . treacheriesL %~ Map.delete tid & playersL . ix pid . handL %~ (<> [card])
   -- an enemy leaves play for the encounter deck, its attachments and shadow cards discarded
   ShuffleIntoEncounterDeck target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
     pushAll

@@ -49,6 +49,7 @@ allObjectiveCards =
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
       , mugashObjective
+      , grimaTheFordsOfIsen
       ]
 
 durinsAxe :: CardDef
@@ -283,4 +284,13 @@ mugashObjective =
   (objective "07031" "Mugash" IntoFangorn 1)
     { cdCardTraits = setFromList [Orc, Uruk]
     , cdKeywords = setFromList [Guarded]
+    }
+
+-- | The Fords of Isen's objective ally, not the hero.
+grimaTheFordsOfIsen :: CardDef
+grimaTheFordsOfIsen =
+  ((objective "07016" "Gríma" TheFordsOfIsen 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan]
     }

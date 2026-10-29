@@ -118,6 +118,9 @@ allTreacheryCards =
       , conflictAtTheCrossroads
       , orcTerritory
       , theForestsMalice
+      , pillagingAndBurning
+      , downFromTheHills
+      , illTidings
       ]
 
 deepDeepDark :: CardDef
@@ -721,3 +724,16 @@ orcTerritory = (treachery "07030" "Orc Territory" ToCatchAnOrc 2) {cdEasyModeQua
 
 theForestsMalice :: CardDef
 theForestsMalice = (treachery "07037" "The Forest's Malice" IntoFangorn 4) {cdEasyModeQuantity = Just 1}
+
+pillagingAndBurning :: CardDef
+pillagingAndBurning =
+  (treachery "07021" "Pillaging and Burning" TheFordsOfIsen 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+downFromTheHills :: CardDef
+downFromTheHills = (treachery "07022" "Down from the Hills" TheFordsOfIsen 1) {cdEasyModeQuantity = Just 0}
+
+illTidings :: CardDef
+illTidings = treachery "07023" "Ill Tidings" TheFordsOfIsen 2

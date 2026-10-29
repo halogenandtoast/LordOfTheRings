@@ -272,16 +272,16 @@ instance RunMessage Player where
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
     DiscardRandomFromHand pid n | pid == player.id -> do
-      (discarded, kept) <- splitAt n <$> shuffleM player.hand
-      pure $ player & handL .~ kept & discardL %~ (discarded <>)
+      discarded <- take n <$> shuffleM (discardableHand player)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
-      let (discarded, kept) = partition ((== cid) . (.id)) player.hand
-      pure $ player & handL .~ kept & discardL %~ (discarded <>)
+      let discarded = filter ((== cid) . (.id)) (discardableHand player)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
     UseAbility pid ab _
       | pid == player.id

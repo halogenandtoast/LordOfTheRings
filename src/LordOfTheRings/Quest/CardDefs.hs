@@ -116,6 +116,9 @@ allQuestCards =
       , intoTheWoods
       , escapeFromFangorn
       , theAngryForest
+      , fightAtTheFords
+      , dunlendingAttack
+      , holdTheFords
       ]
 
 theDrippingWalls :: CardDef
@@ -405,3 +408,12 @@ escapeFromFangorn = (quest "07066" "Escape from Fangorn" IntoFangorn 2 12) {cdKe
 -- | Its quest points are "-": it advances back to stage 2 on 6 progress with Mugash on a hero.
 theAngryForest :: CardDef
 theAngryForest = (quest "07067" "The Angry Forest" IntoFangorn 3 0) {cdKeywords = setFromList [Time 3]}
+
+fightAtTheFords :: CardDef
+fightAtTheFords = (quest "07059" "Fight at the Fords" TheFordsOfIsen 1 6) {cdKeywords = setFromList [Time 5]}
+
+dunlendingAttack :: CardDef
+dunlendingAttack = (quest "07060" "Dunlending Attack" TheFordsOfIsen 2 14) {cdKeywords = setFromList [Time 2]}
+
+holdTheFords :: CardDef
+holdTheFords = (quest "07061" "Hold the Fords" TheFordsOfIsen 3 16) {cdKeywords = setFromList [Time 3]}

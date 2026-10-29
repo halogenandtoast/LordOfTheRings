@@ -135,6 +135,10 @@ allLocationCards =
       , mugashsLair
       , edgeOfFangorn
       , heartOfFangorn
+      , theIslet
+      , fordsOfIsen
+      , theKingsRoad
+      , gapOfRohan
       ]
 
 drownedTreasury :: CardDef
@@ -972,4 +976,21 @@ heartOfFangorn =
   (location "07036" "Heart of Fangorn" IntoFangorn 3 3 3)
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
+    }
+
+theIslet :: CardDef
+theIslet = unique (location "07017" "The Islet" TheFordsOfIsen 1 1 1) {cdCardTraits = setFromList [River]}
+
+fordsOfIsen :: CardDef
+fordsOfIsen = (location "07018" "Fords of Isen" TheFordsOfIsen 3 3 4) {cdCardTraits = setFromList [River]}
+
+theKingsRoad :: CardDef
+theKingsRoad = (location "07019" "The King's Road" TheFordsOfIsen 2 2 2) {cdCardTraits = setFromList [Road]}
+
+gapOfRohan :: CardDef
+gapOfRohan =
+  (location "07020" "Gap of Rohan" TheFordsOfIsen 4 2 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

@@ -436,6 +436,10 @@ data Message
   | -- | the player readies this many of the characters, one at a time, as Heart of Fangorn
     -- lets no more than 5 refresh
     RefreshUpTo PlayerId Int [Target]
+  | {- | the treachery leaves play for the player's hand, as Ill Tidings is drawn: an
+    encounter card in hand cannot leave it
+    -}
+    DrawTreacheryIntoHand PlayerId TreacheryId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
