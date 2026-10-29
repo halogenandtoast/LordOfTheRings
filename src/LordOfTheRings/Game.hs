@@ -1249,6 +1249,13 @@ runGameMessage msg g = case msg of
         barred <- elem CannotGainResourcesFromCardEffects <$> getModifiers target
         unless barred $ push $ CheckWindows [mkAfter $ GainedResources target]
         pure g
+  -- an Orc Guard that would return to the staging area goes to its owner's discard pile
+  -- instead (FAQ errata, Out of the Dungeons)
+  PlaceEnemy eid StagingArea
+    | Just e <- Map.lookup eid g.entities.enemies
+    , toCardCode e == toCardCode orcGuard -> do
+        push $ Discard (toTarget eid)
+        pure g
   PlaceEnemy eid StagingArea -> do
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
     pure g
