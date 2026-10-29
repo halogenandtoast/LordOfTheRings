@@ -8,6 +8,7 @@ import LordOfTheRings.Helpers.Character (getAttack, getAttackStrength, getDefens
 import LordOfTheRings.Modifier
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
+import LordOfTheRings.Window (WindowType (EnemyAttacking), mkAfter)
 import TestImport
 
 -- | Engage the Forest Spider from Flies and Spiders setup: 2 attack, +1 from its Forced
@@ -134,3 +135,37 @@ spec = describe "Combat phase" do
     getAttackStrength [eowyn] (toId enemy) (toCardDef enemy) `shouldReturn` 4
     -- battle questing still counts attack
     getAttack eowyn `shouldReturn` 1
+
+  it "lets a character that cannot exhaust defend when it defends without exhausting" . gameTest $ \pid -> do
+    eid <- toId <$> engageSpider pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ CreateEffect $ Effect GameSource eowyn [CannotExhaust, DoesNotExhaustToDefend] UntilEndOfRound
+    run $ DeclareDefenders pid eid []
+    defenders <- maybe [] (\q -> [t | TargetLabel t _ <- questionChoices q]) <$> getQuestion pid
+    defenders `shouldSatisfy` elem eowyn
+
+  it "does not let a character that cannot exhaust defend when defending would exhaust it" . gameTest $ \pid -> do
+    eid <- toId <$> engageSpider pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ CreateEffect $ Effect GameSource eowyn [CannotExhaust] UntilEndOfRound
+    run $ DeclareDefenders pid eid []
+    defenders <- maybe [] (\q -> [t | TargetLabel t _ <- questionChoices q]) <$> getQuestion pid
+    defenders `shouldSatisfy` notElem eowyn
+
+  it "finishes a shadow's if-this-attack-destroys once its enemy has left play after the damage" . gameTest $ \pid -> do
+    eid <- toId <$> engageSpider pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ DealDamage GameSource eowyn 2
+    _ <- setEncounterDeck [Locations.fingerOfGlanduin]
+    run $ DealShadowCard eid
+    quest <- toTarget <$> getActiveQuest
+    run $ PlaceTokens GameSource quest Progress 2
+    run
+      $ Run
+        [ ResolveShadow eid pid [eowyn]
+        , AttackDamage eid eowyn
+        , Discard (EnemyTarget eid)
+        , CheckWindows [mkAfter $ EnemyAttacking eid pid]
+        ]
+    getsGame (length . (.entities.heroes)) `shouldReturn` 2
+    (.progress) <$> getActiveQuest `shouldReturn` 0

@@ -6,6 +6,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Trait (Trait (Gondor))
 import LordOfTheRings.Helpers.Character
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement
 import TestImport
@@ -89,3 +90,11 @@ spec = describe "Attachments" do
     chooseTarget pid theodred
     question <- getQuestion pid
     [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget two)
+
+  it "leave play when the location they are attached to is removed from the game" . gameTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+    road <- getsGame (toTarget . fromJustNote "no location" . headMay . toList . (.entities.locations))
+    _ <- putAttachmentOn pid Attachments.ancientMathom road
+    run $ RemoveFromGame road
+    getsGame (length . (.entities.attachments)) `shouldReturn` 0
+    map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Attachments.ancientMathom]

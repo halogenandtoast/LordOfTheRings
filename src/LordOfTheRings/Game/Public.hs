@@ -3,7 +3,10 @@ module LordOfTheRings.Game.Public (publicGame, publicGameFor) where
 import Data.Aeson.Key qualified as Key
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.Types (parseMaybe)
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Card
 import LordOfTheRings.Helpers.Attachment
@@ -11,6 +14,8 @@ import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
+import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Target
 import LordOfTheRings.Prelude
 
@@ -38,6 +43,8 @@ publicGameFor seesHand g = hideDecks $ toJSON g
         $ KeyMap.insert "hitPoints" (toJSON $ runReadGame hitPoints g)
         $ KeyMap.insert "attackStrength" (toJSON $ runReadGame attackStrength g)
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
+        $ KeyMap.insert "underneath" (toJSON underneath)
+        $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
         $ adjust hideScenario "scenario" o
@@ -83,6 +90,16 @@ publicGameFor seesHand g = hideDecks $ toJSON g
       , c <- p.hand
       , c.cardType == AttachmentType
       ]
+  -- the cards facedown under each card, counted, by its card id: those under an
+  -- objective, as The Orcs' Search, and those a scenario keeps under its cards in its
+  -- meta's "underneath", as The Steward's Fear's underworld cards under its locations
+  underneath :: Map CardId Int
+  underneath =
+    Map.filter (> 0)
+      $ Map.unionWith
+        (+)
+        (mapFromList [(o.objectiveCardId, length o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives g.entities)])
+        (maybe mempty (fmap length) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [Value])))
   hidePlayer = withSize "deck" "deckSize"
   hideHand = \case
     Object o | Just (Array cards) <- KeyMap.lookup "hand" o ->
@@ -92,7 +109,11 @@ publicGameFor seesHand g = hideDecks $ toJSON g
   hideSearch = \case
     Object o -> Object $ adjust hideSearch "question" $ if KeyMap.member "cards" o then KeyMap.insert "cards" (Array mempty) o else o
     v -> v
-  hideScenario = hideHidden . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  -- a scenario's own state holds what is facedown, as the underworld deck
+  hideScenario = hideMeta . hideHidden . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideMeta = \case
+    Object o -> Object $ KeyMap.delete "meta" o
+    v -> v
   -- hidden cards are facedown: only their ids are sent, so the board can lay them out
   hideHidden = \case
     Object o -> Object $ adjust (overEntries \(_ :: PlayerId) -> idsOnly) "hiddenCards" o
@@ -105,6 +126,12 @@ publicGameFor seesHand g = hideDecks $ toJSON g
       Object $ KeyMap.insert sizeKey (toJSON $ length cards) $ KeyMap.delete key o
     v -> v
   adjust f k o = maybe o (\v -> KeyMap.insert k (f v) o) (KeyMap.lookup k o)
+  inside k f = \case
+    Object o -> Object $ adjust f k o
+    v -> v
+  overValues f = \case
+    Object o -> Object $ fmap f o
+    v -> v
   -- keyed by player
   overEntries f = \case
     Object o -> Object $ KeyMap.mapWithKey (\k -> maybe id f (parseMaybe parseJSON (String $ Key.toText k))) o

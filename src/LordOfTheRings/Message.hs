@@ -348,8 +348,9 @@ data Message
   | EngageEnemy PlayerId EnemyId
   | -- | the combat phase begins: the archery in play is dealt among the characters
     ResolveArchery
-  | -- | the first player deals this much archery damage, 1 at a time, among the characters
-    ArcheryDamage Int
+  | -- | the first player assigns this much archery damage, 1 at a time, among the
+    -- characters, the points assigned so far kept; it is dealt once all are assigned
+    ArcheryDamage Int [Target]
   | DealShadowCards
   | DealShadowCard EnemyId
   | AttachShadowCard EnemyId EncounterCard
