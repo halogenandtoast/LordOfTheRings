@@ -127,6 +127,16 @@ import LordOfTheRings.Enemy.Cards.MethedrasOrc
 import LordOfTheRings.Enemy.Cards.DarkHeartedHuorn
 import LordOfTheRings.Enemy.Cards.AngryHuorn
 import LordOfTheRings.Enemy.Cards.DeadlyHuorn
+import LordOfTheRings.Enemy.Cards.OrcSkirmisher
+import LordOfTheRings.Enemy.Cards.OrcHunter
+import LordOfTheRings.Enemy.Cards.OrcHound
+import LordOfTheRings.Enemy.Cards.DunlandProwler
+import LordOfTheRings.Enemy.Cards.DunlendingBandit
+import LordOfTheRings.Enemy.Cards.DunlandRaider
+import LordOfTheRings.Enemy.Cards.DunlandTribesman
+import LordOfTheRings.Enemy.Cards.DunlandChieftain
+import LordOfTheRings.Enemy.Cards.DunlandBerserker
+import LordOfTheRings.Enemy.Cards.ProwlingWolf
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -278,5 +288,15 @@ allEnemys =
         , SomeEnemyCard darkHeartedHuorn
         , SomeEnemyCard angryHuorn
         , SomeEnemyCard deadlyHuorn
+        , SomeEnemyCard orcSkirmisher
+        , SomeEnemyCard orcHunter
+        , SomeEnemyCard orcHound
+        , SomeEnemyCard dunlandProwler
+        , SomeEnemyCard dunlendingBandit
+        , SomeEnemyCard dunlandRaider
+        , SomeEnemyCard dunlandTribesman
+        , SomeEnemyCard dunlandChieftain
+        , SomeEnemyCard dunlandBerserker
+        , SomeEnemyCard prowlingWolf
         ]
     ]

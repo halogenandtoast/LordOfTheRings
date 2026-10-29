@@ -129,6 +129,9 @@ import LordOfTheRings.Location.Cards.TheIslet
 import LordOfTheRings.Location.Cards.FordsOfIsen
 import LordOfTheRings.Location.Cards.TheKingsRoad
 import LordOfTheRings.Location.Cards.GapOfRohan
+import LordOfTheRings.Location.Cards.AncientForestLocation
+import LordOfTheRings.Location.Cards.TangledWoods
+import LordOfTheRings.Location.Cards.BrokenLandsLocation
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -285,5 +288,8 @@ allLocations =
         , SomeLocationCard fordsOfIsen
         , SomeLocationCard theKingsRoad
         , SomeLocationCard gapOfRohan
+        , SomeLocationCard ancientForestLocation
+        , SomeLocationCard tangledWoods
+        , SomeLocationCard brokenLandsLocation
         ]
     ]

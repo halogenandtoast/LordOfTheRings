@@ -139,6 +139,9 @@ allLocationCards =
       , fordsOfIsen
       , theKingsRoad
       , gapOfRohan
+      , ancientForestLocation
+      , tangledWoods
+      , brokenLandsLocation
       ]
 
 drownedTreasury :: CardDef
@@ -993,4 +996,22 @@ gapOfRohan =
     { cdCardTraits = setFromList [Valley]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+ancientForestLocation :: CardDef
+ancientForestLocation =
+  (location "07050" "Ancient Forest" AncientForest 3 2 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+tangledWoods :: CardDef
+tangledWoods = (location "07051" "Tangled Woods" AncientForest 3 2 4) {cdCardTraits = setFromList [Forest]}
+
+brokenLandsLocation :: CardDef
+brokenLandsLocation =
+  (location "07054" "Broken Lands" BrokenLands 3 2 6)
+    { cdCardTraits = setFromList [Highlands]
+    , cdShadowEffect = True
     }

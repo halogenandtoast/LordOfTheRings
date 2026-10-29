@@ -877,5 +877,32 @@
     "choose": "Down from the Hills: choose one",
     "removeTimeCounter": "Remove 1 time counter from the current quest",
     "search": "Search for a Dunland enemy and reveal it"
+  },
+  "dealDamageDivided": "Assign 1 of {n} damage to a character you control",
+  "removeTimeCounterFromQuest": "Remove 1 time counter from the current quest",
+  "orcSkirmisher": {
+    "choose": "Deal 3 damage to a character you control, or remove 1 time counter from the current quest",
+    "damage": "Deal 3 damage to a character you control"
+  },
+  "orcHunter": {
+    "choose": "Reveal an additional encounter card, or remove 1 time counter from the current quest",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "takeCover": {
+    "choose": "Deal 1 damage to each exhausted character, or remove 1 time counter from the current quest",
+    "damage": "Deal 1 damage to each exhausted character"
+  },
+  "turnedAround": {
+    "choose": "Remove 1 time counter from a card in play, or return the active location to the staging area",
+    "returnLocation": "Return the active location to the staging area"
+  },
+  "offTrack": {
+    "attach": "Attach Off Track to a location"
+  },
+  "inNeedOfRest": {
+    "attach": "Remove a hero from the quest and attach In Need of Rest to it"
+  },
+  "tangledWoods": {
+    "exhaustHero": "Exhaust a hero to travel to this Forest location"
   }
 }

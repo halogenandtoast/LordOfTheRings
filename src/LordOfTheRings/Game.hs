@@ -1046,6 +1046,15 @@ runGameMessage msg g = case msg of
         pid
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
     pure g
+  DealDamageDivided source pid n assigned -> do
+    characters <- charactersControlledBy pid
+    if n > 0 && notNull characters
+      then
+        push
+          $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
+            [targetLabel c [DealDamageDivided source pid (n - 1) (c : assigned)] | c <- characters]
+      else pushAll [DealDamage source c k | (c, k) <- Map.toList (Map.fromListWith (+) [(c, 1) | c <- assigned])]
+    pure g
   ChooseAndExhaustHero source pid -> do
     ready <- map toTarget <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
     unless (null ready)
@@ -1497,10 +1506,11 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
     pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   -- a side quest defeated goes to the victory display, and the quest stays where it is
-  CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isJust (questOwner $ toAttrs q) ->
+  CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isJust (questOwner $ toAttrs q) -> do
+    pushAll $ discardAttachedToQuest g qid
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
   CompleteQuest qid -> do
-    push AdvanceQuest
+    pushAll $ discardAttachedToQuest g qid <> [AdvanceQuest]
     -- a stage with victory points goes to the victory display, as Search for an Exit's
     let won = [toCard q | q <- toList (Map.lookup qid g.entities.quests), isJust (cdVictoryPoints $ toCardDef q)]
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (won <>))
@@ -1701,7 +1711,7 @@ runGameMessage msg g = case msg of
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
-        pushAll . (<> [WhileInPlay (toTarget enemy) (AmbushEngagementCheck (toId enemy) : surge)])
+        pushAll . (<> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
           =<< revealing (toTarget enemy)
         pure
           $ g
@@ -1710,7 +1720,7 @@ runGameMessage msg g = case msg of
           %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
       LocationType -> do
         location <- newLocation card
-        pushAll . (<> surge) =<< revealing (toTarget location)
+        pushAll . (<> [ResolveSurge (toTarget location) card]) =<< revealing (toTarget location)
         pure
           $ g
           & entitiesL
@@ -1757,6 +1767,10 @@ runGameMessage msg g = case msg of
         []
         lead
         [targetLabel t [WhenRevealed t]]
+    pure g
+  ResolveSurge t card -> do
+    surges <- hasKeyword Surge t (toCardDef card)
+    pushWhen surges RevealEncounterCard
     pure g
   FinishRevelation tid -> do
     -- a treachery that did not attach itself to something is discarded once it resolves
@@ -2256,6 +2270,10 @@ exhaustToDefend d eid = do
           [t | DoesNotExhaustToDefendAgainst t <- mods]
 
 -- | Whether a character is still in play.
+-- | The encounter cards attached to the stage as conditions, as Old Hatreds, leave play with it.
+discardAttachedToQuest :: Game -> QuestId -> [Message]
+discardAttachedToQuest g qid = [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+
 inPlay :: Game -> Target -> Bool
 inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes

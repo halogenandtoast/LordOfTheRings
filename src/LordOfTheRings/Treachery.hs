@@ -114,6 +114,14 @@ import LordOfTheRings.Treachery.Cards.TheForestsMalice
 import LordOfTheRings.Treachery.Cards.PillagingAndBurning
 import LordOfTheRings.Treachery.Cards.DownFromTheHills
 import LordOfTheRings.Treachery.Cards.IllTidings
+import LordOfTheRings.Treachery.Cards.OrcHuntingParty
+import LordOfTheRings.Treachery.Cards.OldHatreds
+import LordOfTheRings.Treachery.Cards.WildMenOfDunland
+import LordOfTheRings.Treachery.Cards.TurnedAround
+import LordOfTheRings.Treachery.Cards.TakeCover
+import LordOfTheRings.Treachery.Cards.LowOnProvisions
+import LordOfTheRings.Treachery.Cards.OffTrack
+import LordOfTheRings.Treachery.Cards.InNeedOfRest
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -252,5 +260,13 @@ allTreacherys =
         , SomeTreacheryCard pillagingAndBurning
         , SomeTreacheryCard downFromTheHills
         , SomeTreacheryCard illTidings
+        , SomeTreacheryCard orcHuntingParty
+        , SomeTreacheryCard oldHatreds
+        , SomeTreacheryCard wildMenOfDunland
+        , SomeTreacheryCard turnedAround
+        , SomeTreacheryCard takeCover
+        , SomeTreacheryCard lowOnProvisions
+        , SomeTreacheryCard offTrack
+        , SomeTreacheryCard inNeedOfRest
         ]
     ]
