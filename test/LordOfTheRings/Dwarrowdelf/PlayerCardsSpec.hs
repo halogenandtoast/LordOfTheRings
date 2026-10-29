@@ -486,17 +486,21 @@ spec = describe "Dwarrowdelf player cards" do
     getHitPoints frodo `shouldReturn` hp + 1
     getDefense frodo `shouldReturn` def + 1
 
-  it "Out of Sight stops enemies engaged with you attacking you this phase" . gameTest $ \pid -> do
+  it "Out of Sight stops the enemies engaged with you as it is played, not ones engaging later (FAQ 1.55)" . gameTest $ \pid -> do
     eid <- staged Enemies.wolfRider
     run $ EngageEnemy pid eid
     _ <- playWith pid eowyn 5 Events.outOfSight
-    later <- staged Enemies.hillTroll
-    run $ EngageEnemy pid later
-    -- one engaged after it was played is stopped too: neither attacks, so the player is
-    -- not asked which attacks next and is left in the phase's action window
-    run $ EnemyAttacks pid
+    -- the planning window waits, so the later enemy comes in past it
+    troll <- genEncounterCard Enemies.hillTroll
+    _ <- runDebug $ AddToStaging troll
+    later <- getsGame (fromJustNote "no Hill Troll" . find ((== troll.id) . (.cardId) . toAttrs) . toList . (.entities.enemies)) <&> toId
+    _ <- runDebug $ EngageEnemy pid later
+    getModifiers (toTarget eid) >>= (`shouldSatisfy` elem (CannotAttackPlayer pid))
+    getModifiers (toTarget later) >>= (`shouldSatisfy` notElem (CannotAttackPlayer pid))
+    -- the Hill Troll still attacks
+    _ <- runDebug $ EnemyAttacks pid
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
-    prompt `shouldBe` "$label.planningActions"
+    liftIO $ prompt `shouldNotBe` "$label.planningActions"
 
   it "Ever My Heart Rises readies its Dwarf and lowers your threat after travel to a Mountain" . gameTest $ \pid -> do
     bofur <- putAllyIntoPlay pid Allies.bofur
