@@ -113,6 +113,9 @@ allQuestCards =
       , ordersFromOrthanc
       , searchingForMugash
       , theWizardsPrize
+      , intoTheWoods
+      , escapeFromFangorn
+      , theAngryForest
       ]
 
 theDrippingWalls :: CardDef
@@ -392,3 +395,13 @@ searchingForMugash = (quest "07063" "Searching for Mugash" ToCatchAnOrc 2 0) {cd
 
 theWizardsPrize :: CardDef
 theWizardsPrize = (quest "07064" "The Wizard's Prize" ToCatchAnOrc 3 15) {cdKeywords = setFromList [Time 3]}
+
+intoTheWoods :: CardDef
+intoTheWoods = (quest "07065" "Into the Woods" IntoFangorn 1 9) {cdKeywords = setFromList [Time 4]}
+
+escapeFromFangorn :: CardDef
+escapeFromFangorn = (quest "07066" "Escape from Fangorn" IntoFangorn 2 12) {cdKeywords = setFromList [Time 4]}
+
+-- | Its quest points are "-": it advances back to stage 2 on 6 progress with Mugash on a hero.
+theAngryForest :: CardDef
+theAngryForest = (quest "07067" "The Angry Forest" IntoFangorn 3 0) {cdKeywords = setFromList [Time 3]}

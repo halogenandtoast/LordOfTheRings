@@ -92,6 +92,9 @@ import LordOfTheRings.Quest.Cards.Captured
 import LordOfTheRings.Quest.Cards.OrdersFromOrthanc
 import LordOfTheRings.Quest.Cards.SearchingForMugash
 import LordOfTheRings.Quest.Cards.TheWizardsPrize
+import LordOfTheRings.Quest.Cards.IntoTheWoods
+import LordOfTheRings.Quest.Cards.EscapeFromFangorn
+import LordOfTheRings.Quest.Cards.TheAngryForest
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -216,5 +219,8 @@ allQuests =
         , SomeQuestCard ordersFromOrthanc
         , SomeQuestCard searchingForMugash
         , SomeQuestCard theWizardsPrize
+        , SomeQuestCard intoTheWoods
+        , SomeQuestCard escapeFromFangorn
+        , SomeQuestCard theAngryForest
         ]
     ]

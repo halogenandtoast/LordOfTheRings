@@ -117,6 +117,7 @@ allTreacheryCards =
       , mordorLooms
       , conflictAtTheCrossroads
       , orcTerritory
+      , theForestsMalice
       ]
 
 deepDeepDark :: CardDef
@@ -717,3 +718,6 @@ conflictAtTheCrossroads =
 
 orcTerritory :: CardDef
 orcTerritory = (treachery "07030" "Orc Territory" ToCatchAnOrc 2) {cdEasyModeQuantity = Just 0}
+
+theForestsMalice :: CardDef
+theForestsMalice = (treachery "07037" "The Forest's Malice" IntoFangorn 4) {cdEasyModeQuantity = Just 1}

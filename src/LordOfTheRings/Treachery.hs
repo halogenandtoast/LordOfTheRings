@@ -110,6 +110,7 @@ import LordOfTheRings.Treachery.Cards.LyingInWait
 import LordOfTheRings.Treachery.Cards.MordorLooms
 import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
 import LordOfTheRings.Treachery.Cards.OrcTerritory
+import LordOfTheRings.Treachery.Cards.TheForestsMalice
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -244,5 +245,6 @@ allTreacherys =
         , SomeTreacheryCard mordorLooms
         , SomeTreacheryCard conflictAtTheCrossroads
         , SomeTreacheryCard orcTerritory
+        , SomeTreacheryCard theForestsMalice
         ]
     ]

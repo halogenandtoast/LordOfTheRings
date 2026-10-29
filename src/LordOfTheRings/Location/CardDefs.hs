@@ -133,6 +133,8 @@ allLocationCards =
       , methedras
       , orcCave
       , mugashsLair
+      , edgeOfFangorn
+      , heartOfFangorn
       ]
 
 drownedTreasury :: CardDef
@@ -955,5 +957,19 @@ mugashsLair :: CardDef
 mugashsLair =
   (location "07029" "Mugash's Lair" ToCatchAnOrc 2 4 2)
     { cdCardTraits = setFromList [Mountain, Cave]
+    , cdShadowEffect = True
+    }
+
+edgeOfFangorn :: CardDef
+edgeOfFangorn =
+  (location "07032" "Edge of Fangorn" IntoFangorn 1 2 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdVictoryPoints = Just 1
+    }
+
+heartOfFangorn :: CardDef
+heartOfFangorn =
+  (location "07036" "Heart of Fangorn" IntoFangorn 3 3 3)
+    { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }

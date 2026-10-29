@@ -130,6 +130,9 @@ allEnemyCards =
       , mugashEnemy
       , mugashsGuard
       , methedrasOrc
+      , darkHeartedHuorn
+      , angryHuorn
+      , deadlyHuorn
       ]
 
 namelessThing :: CardDef
@@ -1009,4 +1012,28 @@ methedrasOrc =
   (enemy "07026" "Methedras Orc" ToCatchAnOrc 3 30 3 5 3 5)
     { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
+    }
+
+darkHeartedHuorn :: CardDef
+darkHeartedHuorn =
+  (enemy "07033" "Dark-Hearted Huorn" IntoFangorn 4 1 2 4 4 5)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 3
+    }
+
+angryHuorn :: CardDef
+angryHuorn =
+  (enemy "07034" "Angry Huorn" IntoFangorn 3 38 3 5 4 8)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 2
+    }
+
+deadlyHuorn :: CardDef
+deadlyHuorn =
+  (enemy "07035" "Deadly Huorn" IntoFangorn 3 34 2 3 4 6)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 2
     }

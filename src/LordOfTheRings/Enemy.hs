@@ -124,6 +124,9 @@ import LordOfTheRings.Enemy.Cards.EvilCrow
 import LordOfTheRings.Enemy.Cards.MugashEnemy
 import LordOfTheRings.Enemy.Cards.MugashsGuard
 import LordOfTheRings.Enemy.Cards.MethedrasOrc
+import LordOfTheRings.Enemy.Cards.DarkHeartedHuorn
+import LordOfTheRings.Enemy.Cards.AngryHuorn
+import LordOfTheRings.Enemy.Cards.DeadlyHuorn
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -272,5 +275,8 @@ allEnemys =
         , SomeEnemyCard mugashEnemy
         , SomeEnemyCard mugashsGuard
         , SomeEnemyCard methedrasOrc
+        , SomeEnemyCard darkHeartedHuorn
+        , SomeEnemyCard angryHuorn
+        , SomeEnemyCard deadlyHuorn
         ]
     ]

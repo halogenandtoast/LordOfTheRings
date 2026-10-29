@@ -48,6 +48,7 @@ allObjectiveCards =
       , poisonedCounsels
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
+      , mugashObjective
       ]
 
 durinsAxe :: CardDef
@@ -275,4 +276,11 @@ lordAlcaronTheBloodOfGondor =
     { cdUnique = True
     , cdCardTraits = setFromList [Gondor, Noble]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+mugashObjective :: CardDef
+mugashObjective =
+  (objective "07031" "Mugash" IntoFangorn 1)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdKeywords = setFromList [Guarded]
     }

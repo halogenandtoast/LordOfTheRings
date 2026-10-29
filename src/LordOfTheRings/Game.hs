@@ -344,16 +344,32 @@ runGameMessage msg g = case msg of
     heroes <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) =<< select ExhaustedHero
     allies <- select ExhaustedAlly
     players <- getPlayerOrder
+    -- a player who may refresh no more characters than some, as Heart of Fangorn reads,
+    -- chooses which, if they would refresh more
+    limits <- for players \pid -> (pid,) . (\ms -> minimumMay [n | RefreshAtMost n <- ms]) <$> getModifiers (PlayerTarget pid)
+    let characters = map toTarget heroes <> map toTarget allies
+        controller = \case
+          HeroTarget hid -> (.owner) <$> Map.lookup hid g.entities.heroes
+          AllyTarget aid -> placementController . (.placement) =<< Map.lookup aid g.entities.allies
+          _ -> Nothing
+        limited =
+          [ (pid, n, cs)
+          | (pid, Just n) <- limits
+          , let cs = [c | c <- characters, controller c == Just pid]
+          , length cs > n
+          ]
+        held = concat [cs | (_, _, cs) <- limited]
     let passToken = case drop 1 players of
           (next : _) -> [SetFirstPlayer next]
           [] -> []
     -- each character readied opens its own window, for responses to it readying
-    readied <- for (map toTarget heroes <> map toTarget allies) \c -> do
+    readied <- for (filter (`notElem` held) characters) \c -> do
       traits <- characterTraits c
       pure [Ready c, CheckWindows [mkAfter $ Readied c traits]]
     pushAll
       $ concat regenerating
       <> concat readied
+      <> [RefreshUpTo pid n cs | (pid, n, cs) <- limited]
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
       <> [RaiseThreat pid 1 | pid <- players]
@@ -362,6 +378,12 @@ runGameMessage msg g = case msg of
       <> map OptionalActionWindow players
     pure $ g & phaseL .~ RefreshPhase
   SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid
+  RefreshUpTo pid n cs | n > 0, notNull cs -> do
+    choices <- for cs \c -> do
+      traits <- characterTraits c
+      pure $ targetLabel c [Ready c, CheckWindows [mkAfter $ Readied c traits], RefreshUpTo pid (n - 1) (filter (/= c) cs)]
+    push $ questionLabel (ikeyWith "label.refreshUpTo" [intVar "count" n]) pid choices
+    pure g
   CheckEliminations -> do
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
@@ -586,12 +608,23 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    pushAll $ ResolveArchery : DealShadowCards
+    pushAll $ ResolveArchery : ResolveHinder : DealShadowCards
       : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order
     pure $ g & phaseL .~ CombatPhase
   ResolveArchery -> do
     total <- getArcheryTotal
     pushWhen (total > 0) $ ArcheryDamage total
+    pure g
+  -- each enemy with hinder engaged with a player removes 1 progress from the current quest,
+  -- from the active location once the quest has none
+  ResolveHinder -> do
+    n <- length <$> (filterM (hinders g) =<< select (EnemyEngagedWith AnyPlayer))
+    current <- getCurrentQuest
+    let questProgress = sum [q.progress | q <- toList g.entities.quests, Just (toTarget q) == current]
+        rest = n - min n questProgress
+    pushWhen (min n questProgress > 0) $ RemoveProgressFromQuest GameSource n
+    for_ (find ((== ActiveLocation) . (.placement)) (toList g.entities.locations)) \l ->
+      pushWhen (rest > 0 && l.progress > 0) $ RemoveTokens GameSource (toTarget l) Progress (min rest l.progress)
     pure g
   -- ponytail: the first player divides it for the group
   ArcheryDamage n | n > 0 -> do
@@ -608,7 +641,8 @@ runGameMessage msg g = case msg of
   DealShadowCards -> do
     order <- getPlayerOrder
     -- one engaged with each player from the staging area is dealt one for each attack
-    enemies <- filterM (fmap not . engagedWithEach) =<< concatMapM engagedByCost order
+    -- an enemy with hinder is dealt none
+    enemies <- filterM (\e -> not <$> orM [engagedWithEach e, hinders g e]) =<< concatMapM engagedByCost order
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
@@ -621,7 +655,7 @@ runGameMessage msg g = case msg of
     enemies <-
       filterM
         (fmap (\ms -> CannotAttack `notElem` ms && CannotAttackPlayer pid `notElem` ms) . getModifiers)
-        [e | e <- candidates, e `elem` engaged]
+        =<< filterM (fmap not . hinders g) [e | e <- candidates, e `elem` engaged]
     -- one engaged with each player is dealt a new shadow card for each attack, discarded after
     let attack eid = do
           each <- engagedWithEach eid
@@ -1479,6 +1513,8 @@ runGameMessage msg g = case msg of
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      -- an objective it guarded, as Mugash on Edge of Fangorn, goes free to the staging area
+      <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
     pure
       $ g
       & entitiesL
@@ -1808,6 +1844,12 @@ runGameMessage msg g = case msg of
         . objectivesL
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
+
+-- | Whether the enemy has the hinder keyword.
+hinders :: Game -> EnemyId -> GameT Bool
+hinders g eid = case Map.lookup eid g.entities.enemies of
+  Just e -> hasKeyword Hinder (toTarget eid) (toCardDef e)
+  Nothing -> pure False
 
 -- | An encounter card in play goes back into the encounter deck where the function puts it,
 -- the cards attached to it discarded.

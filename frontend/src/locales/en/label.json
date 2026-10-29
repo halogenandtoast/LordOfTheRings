@@ -860,5 +860,13 @@
   },
   "mugashEnemy": {
     "attach": "Mugash: attach him to a hero you control, as a Captive"
+  },
+  "refreshUpTo": "Choose a character to ready ({count} left to ready)",
+  "mugash": {
+    "exhaust": "Choose a hero to exhaust and attach Mugash to"
+  },
+  "intoFangorn": {
+    "huornEngaged": "Choose a Huorn enemy to put into play engaged with you",
+    "revealFromDiscard": "Choose an enemy or objective in the encounter discard pile to reveal"
   }
 }

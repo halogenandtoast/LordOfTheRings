@@ -123,6 +123,8 @@ import LordOfTheRings.Location.Cards.TheDarkWoods
 import LordOfTheRings.Location.Cards.Methedras
 import LordOfTheRings.Location.Cards.OrcCave
 import LordOfTheRings.Location.Cards.MugashsLair
+import LordOfTheRings.Location.Cards.EdgeOfFangorn
+import LordOfTheRings.Location.Cards.HeartOfFangorn
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -273,5 +275,7 @@ allLocations =
         , SomeLocationCard methedras
         , SomeLocationCard orcCave
         , SomeLocationCard mugashsLair
+        , SomeLocationCard edgeOfFangorn
+        , SomeLocationCard heartOfFangorn
         ]
     ]

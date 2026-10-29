@@ -431,6 +431,11 @@ data Message
   | -- | a card leaves the player's hand for out of play, as for To Catch an Orc's
     -- out-of-play deck
     RemoveFromHand PlayerId CardId
+  | -- | as the combat phase begins, the enemies with hinder engaged with players remove progress
+    ResolveHinder
+  | -- | the player readies this many of the characters, one at a time, as Heart of Fangorn
+    -- lets no more than 5 refresh
+    RefreshUpTo PlayerId Int [Target]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

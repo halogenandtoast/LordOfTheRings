@@ -288,6 +288,9 @@ data ModifierType
   | -- | on an enemy: defeated, it stays where it is for its own Forced effect to place it,
     -- as Mugash is attached to a hero
     StaysInPlayWhenDefeated
+  | -- | on a player: they refresh no more than this many characters in the refresh phase,
+    -- as Heart of Fangorn reads
+    RefreshAtMost Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
