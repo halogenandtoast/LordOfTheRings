@@ -13,11 +13,13 @@ aBurningBrand :: AttachmentCard ABurningBrand
 aBurningBrand =
   attachment ABurningBrand Cards.aBurningBrand & attachTo (AttachToCharacterMatching (HeroWithSphere Lore) (AllyWithSphere Lore))
 
--- | Response: Exhaust A Burning Brand to cancel a shadow effect just triggered during an
--- attack that attached character is defending.
+-- | While attached character is defending, cancel any shadow effects on cards dealt to the
+-- attacking enemy. (The text of its later printings, which replaced "Response: Exhaust A
+-- Burning Brand to cancel a shadow effect just triggered during an attack that attached
+-- character is defending.")
 instance HasAbilities ABurningBrand where
   getAbilities (ABurningBrand a) =
-    [ restricted a 1 EncounterEffectsCancelable $ ResponseAbility (ShadowEffectAgainstWindow When host) (exhaustCost a)
+    [ restricted a 1 EncounterEffectsCancelable $ silent (ShadowEffectAgainstWindow When host)
     | AttachedTo host <- [a.placement]
     ]
 
