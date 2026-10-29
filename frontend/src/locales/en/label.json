@@ -873,5 +873,20 @@
   "blueMountainTrader": {
     "move": "Move 1 resource from a hero you control to a hero of Blue Mountain Trader's last controller, or discard it",
     "discard": "Discard Blue Mountain Trader"
+  },
+  "theWhiteCouncil": {
+    "choose": "The White Council: choose an option no player has chosen",
+    "ready": "Ready a hero you control",
+    "resource": "Add 1 resource to a hero you control",
+    "draw": "Draw 1 card",
+    "shuffle": "Shuffle 1 card from your discard pile into your deck",
+    "chooseCard": "Choose a card in your discard pile to shuffle into your deck"
+  },
+  "messageFromElrond": {
+    "choose": "You may choose a card in your hand to add to another player's hand",
+    "givePlayer": "Choose the player to add it to"
+  },
+  "gwaihir": {
+    "chooseEagle": "Choose an Eagle ally in your discard pile to put into play"
   }
 }

@@ -128,6 +128,9 @@ import LordOfTheRings.Event.Cards.FollowMe
 import LordOfTheRings.Event.Cards.ShadowsGiveWay
 import LordOfTheRings.Event.Cards.FreeToChoose
 import LordOfTheRings.Event.Cards.CloseCall
+import LordOfTheRings.Event.Cards.TheWhiteCouncil
+import LordOfTheRings.Event.Cards.MessageFromElrond
+import LordOfTheRings.Event.Cards.TightenOurBelts
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -269,5 +272,8 @@ allEvents =
         , SomeEventCard shadowsGiveWay
         , SomeEventCard freeToChoose
         , SomeEventCard closeCall
+        , SomeEventCard theWhiteCouncil
+        , SomeEventCard messageFromElrond
+        , SomeEventCard tightenOurBelts
         ]
     ]

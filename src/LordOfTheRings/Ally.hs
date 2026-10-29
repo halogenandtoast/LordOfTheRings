@@ -140,6 +140,7 @@ import LordOfTheRings.Ally.Cards.HeraldOfAnorien
 import LordOfTheRings.Ally.Cards.HennethAnnunGuard
 import LordOfTheRings.Ally.Cards.MirkwoodPioneer
 import LordOfTheRings.Ally.Cards.BlueMountainTrader
+import LordOfTheRings.Ally.Cards.Gwaihir
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -307,5 +308,6 @@ allAllies =
         , SomeAllyCard hennethAnnunGuard
         , SomeAllyCard mirkwoodPioneer
         , SomeAllyCard blueMountainTrader
+        , SomeAllyCard gwaihir
         ]
     ]

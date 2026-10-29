@@ -139,6 +139,7 @@ allAllyCards =
       , hennethAnnunGuard
       , mirkwoodPioneer
       , blueMountainTrader
+      , gwaihir
       ]
 
 guardOfTheCitadel :: CardDef
@@ -956,4 +957,11 @@ blueMountainTrader :: CardDef
 blueMountainTrader =
   (ally "08006" "Blue Mountain Trader" Spirit (StaticCost 2) 1 0 1 2)
     { cdCardTraits = setFromList [Dwarf]
+    }
+
+gwaihir :: CardDef
+gwaihir =
+  (ally "08059" "Gwaihir" Tactics (StaticCost 5) 2 3 1 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Eagle]
     }

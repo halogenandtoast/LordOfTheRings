@@ -139,6 +139,9 @@ allEventCards =
       , shadowsGiveWay
       , freeToChoose
       , closeCall
+      , theWhiteCouncil
+      , messageFromElrond
+      , tightenOurBelts
       ]
 
 everVigilant :: CardDef
@@ -535,3 +538,12 @@ freeToChoose = event "08062" "Free to Choose" Spirit (StaticCost 0)
 
 closeCall :: CardDef
 closeCall = (event "08005" "Close Call" Tactics (StaticCost 0)) {cdKeywords = setFromList [Doomed 0]}
+
+theWhiteCouncil :: CardDef
+theWhiteCouncil = event "08010" "The White Council" Neutral (StaticCost 0)
+
+messageFromElrond :: CardDef
+messageFromElrond = event "08032" "Message from Elrond" Lore (StaticCost 0)
+
+tightenOurBelts :: CardDef
+tightenOurBelts = event "08086" "Tighten Our Belts" Leadership (StaticCost 0)

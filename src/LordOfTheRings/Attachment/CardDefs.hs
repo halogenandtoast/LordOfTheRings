@@ -108,6 +108,8 @@ allAttachmentCards =
       , cloakOfLorien
       , leafBrooch
       , defenderOfTheWest
+      , theFallOfGilGalad
+      , wardenOfArnor
       ]
 
 stewardOfGondor :: CardDef
@@ -736,6 +738,20 @@ leafBrooch =
 defenderOfTheWest :: CardDef
 defenderOfTheWest =
   (attachment "08093" "Defender of the West" Neutral (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+theFallOfGilGalad :: CardDef
+theFallOfGilGalad =
+  (attachment "08007" "The Fall of Gil-Galad" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    , cdDeckLimit = 1
+    }
+
+wardenOfArnor :: CardDef
+wardenOfArnor =
+  (attachment "08031" "Warden of Arnor" Spirit (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Title]
     }

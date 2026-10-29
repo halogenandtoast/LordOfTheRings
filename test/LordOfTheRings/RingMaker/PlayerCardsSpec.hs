@@ -53,6 +53,13 @@ allyController = \case
   AllyTarget aid -> fmap (allyPlacement . toAttrs) . lookup aid . mapToList <$> getsGame (.entities.allies)
   _ -> pure Nothing
 
+putInDiscard :: PlayerId -> CardDef -> GameT Card
+putInDiscard pid def = do
+  card <- PlayerCard <$> genPlayerCard def (Just pid)
+  g <- getGame
+  putGame $ g & playersL . ix pid . discardL %~ (card :)
+  pure card
+
 spec :: Spec
 spec = describe "The Ring-maker cycle player cards" do
   describe "Swift and Silent" do
@@ -219,3 +226,68 @@ spec = describe "The Ring-maker cycle player cards" do
         _ -> error "not an attachment"
       allyController henamarth `shouldReturn` Just (InPlayArea one)
       getModifiers (PlayerTarget one) >>= (`shouldSatisfy` elem (UndefendedDamageMayGoTo henamarth))
+
+  describe "The Fall of Gil-Galad" do
+    it "goes to the victory display as its hero is destroyed, reducing threat by its threat cost" . gameTest $ \pid -> do
+      setThreat pid 30
+      beravor <- hero beravorCode
+      fall <- putAttachmentOn pid Attachments.theFallOfGilGalad beravor
+      run $ DealDamage GameSource beravor 4
+      chooseAbilityOf pid fall
+      threat pid `shouldReturn` 20
+      getsGame (length . (.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` 1
+
+  describe "The White Council" do
+    it "costs 1 a player, and the player chooses an option" . gameTest $ \pid -> do
+      handSize <- length . (.hand) <$> getPlayer pid
+      _ <- playWith pid theodredCode 1 Events.theWhiteCouncil
+      chooseLabel "$label.theWhiteCouncil.draw" pid
+      length . (.hand) <$> getPlayer pid `shouldReturn` handSize + 1
+      (getHeroResources . toId =<< getHeroWithCode theodredCode) `shouldReturn` 0
+
+  describe "Tighten Our Belts" do
+    it "gives a resource to each hero that spent none this round" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      run $ PlaceTokens GameSource beravor Resource 1
+      run $ RemoveTokens (PlayerSource pid) beravor Resource 1
+      card <- putCardIntoHand pid Events.tightenOurBelts
+      putGame . (phaseL .~ RefreshPhase) =<< getGame
+      run $ ActionWindow pid
+      chooseTarget pid (CardIdTarget card.id)
+      (getHeroResources . toId =<< getHeroWithCode beravorCode) `shouldReturn` 0
+      (getHeroResources . toId =<< getHeroWithCode eowynCode) `shouldReturn` 1
+      (getHeroResources . toId =<< getHeroWithCode theodredCode) `shouldReturn` 1
+
+  describe "Warden of Arnor" do
+    it "places 1 progress on the first location revealed each round while its hero is committed" . idraenTest $ \pid -> do
+      idraen <- hero idraenCode
+      _ <- putAttachmentOn pid Attachments.wardenOfArnor idraen
+      run $ CommitToQuest idraen
+      _ <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      run RevealEncounterCard
+      locationProgress `shouldReturn` [1]
+      run RevealEncounterCard
+      sum <$> locationProgress `shouldReturn` 1
+
+  describe "Gwaihir" do
+    it "puts an Eagle from the discard pile into play, back to hand at the end of the round" . gameTest $ \pid -> do
+      eagle <- putInDiscard pid Allies.wingedGuardian
+      gwaihir <- putAllyIntoPlay pid Allies.gwaihir
+      chooseAbilityOf pid gwaihir
+      getsGame (length . (.entities.allies)) `shouldReturn` 2
+      run EndRound
+      inHand pid eagle.id `shouldReturn` True
+      getsGame (length . (.entities.allies)) `shouldReturn` 1
+
+  describe "Message from Elrond" do
+    it "passes a card to another player's hand, shuffled into its owner's deck at the end of the round" . twoPlayerTest testDeck $ \one two -> do
+      gift <- putCardIntoHand one Events.closeCall
+      card <- putCardIntoHand one Events.messageFromElrond
+      run $ PlayCard one card.id
+      chooseTarget one one
+      chooseTarget one (CardIdTarget gift.id)
+      inHand two gift.id `shouldReturn` True
+      inHand one gift.id `shouldReturn` False
+      run EndRound
+      inHand two gift.id `shouldReturn` False
+      elem gift.id . map (.id) . (.deck) <$> getPlayer one `shouldReturn` True

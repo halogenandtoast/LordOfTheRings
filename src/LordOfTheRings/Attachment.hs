@@ -101,6 +101,8 @@ import LordOfTheRings.Attachment.Cards.ElvenMail
 import LordOfTheRings.Attachment.Cards.CloakOfLorien
 import LordOfTheRings.Attachment.Cards.LeafBrooch
 import LordOfTheRings.Attachment.Cards.DefenderOfTheWest
+import LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
+import LordOfTheRings.Attachment.Cards.WardenOfArnor
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -228,5 +230,7 @@ allAttachments =
         , SomeAttachmentCard cloakOfLorien
         , SomeAttachmentCard leafBrooch
         , SomeAttachmentCard defenderOfTheWest
+        , SomeAttachmentCard theFallOfGilGalad
+        , SomeAttachmentCard wardenOfArnor
         ]
     ]

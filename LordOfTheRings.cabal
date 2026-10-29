@@ -76,6 +76,7 @@ library
       LordOfTheRings.Ally.Cards.GrimbeornTheOld
       LordOfTheRings.Ally.Cards.GuardOfTheCitadel
       LordOfTheRings.Ally.Cards.Guthlaf
+      LordOfTheRings.Ally.Cards.Gwaihir
       LordOfTheRings.Ally.Cards.HaldirOfLorien
       LordOfTheRings.Ally.Cards.HarborMaster
       LordOfTheRings.Ally.Cards.HenamarthRiversong
@@ -241,6 +242,7 @@ library
       LordOfTheRings.Attachment.Cards.SupportOfTheEagles
       LordOfTheRings.Attachment.Cards.SwordOfMorthond
       LordOfTheRings.Attachment.Cards.SwordThatWasBroken
+      LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
       LordOfTheRings.Attachment.Cards.TheRedArrow
       LordOfTheRings.Attachment.Cards.ThrorsMap
@@ -250,6 +252,7 @@ library
       LordOfTheRings.Attachment.Cards.Vilya
       LordOfTheRings.Attachment.Cards.VisionaryLeadership
       LordOfTheRings.Attachment.Cards.WarAxe
+      LordOfTheRings.Attachment.Cards.WardenOfArnor
       LordOfTheRings.Attachment.Cards.Wingfoot
       LordOfTheRings.Attachment.Import.Lifted
       LordOfTheRings.Attachment.Record
@@ -462,6 +465,7 @@ library
       LordOfTheRings.Event.Cards.MendorsSupport
       LordOfTheRings.Event.Cards.MeneldorsFlight
       LordOfTheRings.Event.Cards.MenOfTheWest
+      LordOfTheRings.Event.Cards.MessageFromElrond
       LordOfTheRings.Event.Cards.MithrandirsAdvice
       LordOfTheRings.Event.Cards.MusteringTheRohirrim
       LordOfTheRings.Event.Cards.MutualAccord
@@ -506,8 +510,10 @@ library
       LordOfTheRings.Event.Cards.TheMusterOfRohan
       LordOfTheRings.Event.Cards.TheSeeingStone
       LordOfTheRings.Event.Cards.TheTreePeople
+      LordOfTheRings.Event.Cards.TheWhiteCouncil
       LordOfTheRings.Event.Cards.TheWizardsVoice
       LordOfTheRings.Event.Cards.ThicketOfSpears
+      LordOfTheRings.Event.Cards.TightenOurBelts
       LordOfTheRings.Event.Cards.TimelyAid
       LordOfTheRings.Event.Cards.ToTheEyrie
       LordOfTheRings.Event.Cards.TrainedForWar
