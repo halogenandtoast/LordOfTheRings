@@ -240,6 +240,25 @@ spec = describe "The Blood of Gondor" do
     hiddenOf pid `shouldReturn` []
     discardCodes >>= (`shouldSatisfy` elem (toCardCode Locations.southernRoad))
 
+  it "leaves the hidden cards alone with Mordor Looms' shadow when lethal damage is moved off the hero" . bloodTest $ \pid -> do
+    dori <- putAllyIntoPlay pid Allies.dori
+    eid <- engaged pid Enemies.easternCrows
+    hide pid [Locations.southernRoad]
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource beravor Damage 3
+    _ <- setEncounterDeck [Treacheries.mordorLooms]
+    run $ DealShadowCard eid
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseLabel "$label.takeAttackUndefended" pid
+    passActions pid
+    chooseTarget pid beravor
+    -- the damage that would destroy Beravor goes to Dori instead
+    chooseAbilityOf pid dori
+    passActions pid
+    getCharacterDamage beravor `shouldReturn` 3
+    hiddenOf pid `shouldReturn` [toCardCode Locations.southernRoad]
+
   it "has engaged Orcs add their threat for the phase with Conflict at the Crossroads" . bloodTest $ \pid -> do
     _ <- engaged pid Enemies.brutalUruk
     _ <- setEncounterDeck [Treacheries.conflictAtTheCrossroads, Locations.southernRoad]
