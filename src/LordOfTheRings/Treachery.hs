@@ -109,6 +109,10 @@ import LordOfTheRings.Treachery.Cards.CounterAttack
 import LordOfTheRings.Treachery.Cards.LyingInWait
 import LordOfTheRings.Treachery.Cards.MordorLooms
 import LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
+import LordOfTheRings.Treachery.Cards.ConstantTail
+import LordOfTheRings.Treachery.Cards.ConspicuousLot
+import LordOfTheRings.Treachery.Cards.Cornered
+import LordOfTheRings.Treachery.Cards.GetThatDwarf
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -242,5 +246,9 @@ allTreacherys =
         , SomeTreacheryCard lyingInWait
         , SomeTreacheryCard mordorLooms
         , SomeTreacheryCard conflictAtTheCrossroads
+        , SomeTreacheryCard constantTail
+        , SomeTreacheryCard conspicuousLot
+        , SomeTreacheryCard cornered
+        , SomeTreacheryCard getThatDwarf
         ]
     ]
