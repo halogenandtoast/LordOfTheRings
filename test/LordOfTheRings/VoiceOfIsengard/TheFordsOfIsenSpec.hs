@@ -9,6 +9,7 @@ import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theFordsOfIsen)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Decklist (barredHeroes)
 import TestImport
 
 fordsTest :: (PlayerId -> GameT ()) -> IO ()
@@ -71,6 +72,10 @@ spec :: Spec
 spec = describe "The Fords of Isen" do
   it "is a scenario the game can be dealt" . fordsTest $ \_ ->
     isJust (lookupScenario "the-fords-of-isen") `shouldBe` True
+
+  it "bars the Gríma hero, as its Gríma objective-ally is unique" . fordsTest $ \_ -> do
+    barredHeroes "the-fords-of-isen" [DeckList ["07002", "01012", "01007"] []] `shouldBe` ["Gríma"]
+    barredHeroes "to-catch-an-orc" [DeckList ["07002", "01012", "01007"] []] `shouldBe` []
 
   it "stages The Islet with Gríma attached, and gives the stage 5 time counters" . fordsTest $ \pid -> do
     setup pid
