@@ -258,6 +258,9 @@ narrationFor = \case
       [ mechanic [ikeyPart "log.movesToBottomOfDeck" ["player" ~> who, "card" ~> card]]
       | card <- filter ((== cid) . (.id)) player.deck
       ]
+  PutInHand card | Just pid <- card.owner -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.takesIntoHand" ["player" ~> who, "card" ~> PlayerCard card]]
   PlayAtNoCost _ card -> Just $ one $ mechanic [ikeyPart "log.playedAtNoCost" ["card" ~> PlayerCard card]]
   -- \* Locations the players control, as Osgiliath's
   PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do

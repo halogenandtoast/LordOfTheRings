@@ -277,6 +277,8 @@ instance RunMessage Player where
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
+    RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
       let (discarded, kept) = partition ((== cid) . (.id)) player.hand
       pure $ player & handL .~ kept & discardL %~ (discarded <>)

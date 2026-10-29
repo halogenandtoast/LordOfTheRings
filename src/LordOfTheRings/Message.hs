@@ -426,6 +426,11 @@ data Message
     DiscardHiddenCard PlayerId EncounterCard
   | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
     PlaceAlly AllyId Placement
+  | -- | a player card from out of play goes to its owner's hand, as one a Search takes
+    PutInHand PlayerCard
+  | -- | a card leaves the player's hand for out of play, as for To Catch an Orc's
+    -- out-of-play deck
+    RemoveFromHand PlayerId CardId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
