@@ -247,6 +247,13 @@ spec = describe "The Dunland Trap" do
     offered <- maybe False (any \case TargetLabel t _ -> t == toTarget turch; _ -> False) . fmap questionChoices <$> getQuestion one
     offered `shouldBe` False
 
+  it "has Chief Turch engage the first player whoever a card would have engage him" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    run $ SetFirstPlayer one
+    run . AddToStaging =<< genEncounterCard Enemies.chiefTurchTheDunlandTrap
+    turch <- enemyOf Enemies.chiefTurchTheDunlandTrap
+    run $ EngageEnemy two turch
+    placementOf Enemies.chiefTurchTheDunlandTrap `shouldReturn` Just (EngagedWith one)
+
   it "is lost as a hero is destroyed at No Way Out" . trapTest $ \_ -> do
     _ <- putQuestStage Quests.noWayOut
     hero <- toTarget <$> getHeroWithCode "01012"
