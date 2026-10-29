@@ -948,7 +948,8 @@ runGameMessage msg g = case msg of
   ResolveShadow eid pid defenders -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       -- each shadow card turns face up, and one with an effect resolves it; one already face
-      -- up resolved in an earlier attack, as an enemy attacking again has
+      -- up resolved in an earlier attack, as an enemy attacking again has, unless it was
+      -- dealt face up
       pushAll
         $ concat
           [ RevealShadowCard eid (ecId card)
@@ -960,10 +961,14 @@ runGameMessage msg g = case msg of
                   ]
                 else []
           | card <- enemy.shadowCards
-          , card.id `notElem` (toAttrs enemy).enemyShadowRevealed
+          , card.id `notElem` (toAttrs enemy).enemyShadowRevealed || card.id `elem` (toAttrs enemy).enemyShadowFaceUp
           ]
     pure g
   RevealShadowCard eid cid -> do
+    for_ (Map.lookup eid g.entities.enemies) \enemy ->
+      when (any ((== cid) . ecId) enemy.shadowCards) $ send $ FlipCard cid
+    pure g
+  TurnShadowCardFaceUp eid cid -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       when (any ((== cid) . ecId) enemy.shadowCards) $ send $ FlipCard cid
     pure g

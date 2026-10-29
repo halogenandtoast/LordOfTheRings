@@ -426,6 +426,9 @@ data Message
     DiscardHiddenCard PlayerId EncounterCard
   | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
     PlaceAlly AllyId Placement
+  | -- | the shadow card just dealt to the enemy is dealt face up, as Silver Lamp reads: it
+    -- still resolves as the enemy attacks
+    TurnShadowCardFaceUp EnemyId CardId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

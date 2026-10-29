@@ -20,6 +20,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
+import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
@@ -178,14 +179,8 @@ narrationFor = \case
   DiscardHiddenCard pid card -> Just $ whenHidden pid card \who ->
     one $ mechanic [ikeyPart "log.discardsHiddenCard" ["player" ~> who, "card" ~> EncounterCard card]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
-  RevealShadowCard eid cid -> Just $ whenRef (toTarget eid) \e -> do
-    mCard <-
-      getsGame (\g -> find ((== cid) . (.id)) . (.shadowCards) =<< Map.lookup eid g.entities.enemies)
-    pure
-      [ mechanic [ikeyPart key ["enemy" ~> e, "card" ~> EncounterCard card]]
-      | Just card <- [mCard]
-      , let key = if cdShadowEffect (toCardDef card) then "log.shadowRevealed" else "log.shadowRevealedNoEffect"
-      ]
+  RevealShadowCard eid cid -> Just $ shadowFaceUp eid cid
+  TurnShadowCardFaceUp eid cid -> Just $ shadowFaceUp eid cid
   AttachTreachery tid target -> Just $ attached (toTarget tid) target
   PlaceEnemy eid (AttachedTo target) -> Just $ attached (toTarget eid) target
   PlaceAlly aid (AttachedTo target) -> Just $ attached (toTarget aid) target
@@ -280,6 +275,19 @@ one = pure . pure
 -- | Say something only when the target can be named.
 whenRef :: HasGame m => Target -> (LogRef -> m [LogEntry]) -> m [LogEntry]
 whenRef target f = targetRefFor target >>= maybe (pure []) f
+
+-- | A shadow card dealt to the enemy turning face up; one dealt face up, as Silver Lamp
+-- deals it, was told then.
+shadowFaceUp :: HasGame m => EnemyId -> CardId -> m [LogEntry]
+shadowFaceUp eid cid = whenRef (toTarget eid) \e -> do
+  mEnemy <- getsGame (Map.lookup eid . entitiesEnemies . gameEntities)
+  pure
+    [ mechanic [ikeyPart key ["enemy" ~> e, "card" ~> EncounterCard card]]
+    | Just en <- [mEnemy]
+    , cid `notElem` (toAttrs en).enemyShadowRevealed
+    , card <- take 1 $ filter ((== cid) . (.id)) en.shadowCards
+    , let key = if cdShadowEffect (toCardDef card) then "log.shadowRevealed" else "log.shadowRevealedNoEffect"
+    ]
 
 -- | Say something only while the card is still hidden in the player's play area.
 whenHidden :: HasGame m => PlayerId -> EncounterCard -> (LogRef -> m [LogEntry]) -> m [LogEntry]

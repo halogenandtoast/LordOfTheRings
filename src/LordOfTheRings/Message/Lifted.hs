@@ -907,3 +907,7 @@ whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture act
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+-- | The shadow card just dealt to the enemy is dealt face up, as Silver Lamp reads.
+turnShadowCardFaceUp :: ReverseQueue m => EnemyId -> CardId -> m ()
+turnShadowCardFaceUp eid = push . TurnShadowCardFaceUp eid
