@@ -1494,6 +1494,11 @@ runGameMessage msg g = case msg of
       & entitiesL
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  -- attached as one played is, but not played
+  PutAttachmentIntoPlay pid card -> do
+    runQueueT $ raiseThreatFromDoomed $ printedDoomed card
+    push $ PlayAttachment pid card
+    pure g
   PutSideQuestIntoPlay pid card -> do
     sideQuest <- newSideQuest pid card
     pure $ g & entitiesL . questsL %~ insertEntity sideQuest

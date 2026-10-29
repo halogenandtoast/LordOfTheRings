@@ -125,6 +125,8 @@ data Message
   | -- | an ally card put into play under the player's control, keeping its owner
     PutAllyIntoPlayUnder PlayerId PlayerCard
   | PutHeroIntoPlay PlayerId PlayerCard
+  | -- | an attachment card, already taken from where it was, put into play by the player
+    PutAttachmentIntoPlay PlayerId PlayerCard
   | -- | a player side quest, played, goes to the staging area
     PutSideQuestIntoPlay PlayerId PlayerCard
   | ShuffleDiscardIntoDeck PlayerId
