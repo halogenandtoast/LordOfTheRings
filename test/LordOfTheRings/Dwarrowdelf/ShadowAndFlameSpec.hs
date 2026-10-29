@@ -147,6 +147,13 @@ spec = describe "Shadow and Flame" do
     run $ PlaceTokens GameSource (toTarget deep) Progress 2
     (.progress) <$> getLocation deep `shouldReturn` 2
 
+  it "passes no questing progress on past Second Deep while Durin's Bane is undamaged" . flameTest $ \_ -> do
+    _ <- bane
+    _ <- putQuestStage Quests.nearingTheGate
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.secondDeep
+    run $ PlaceProgressOnQuest 20
+    (.progress) <$> getActiveQuest `shouldReturn` 0
+
   it "shuffles Ranging Goblin and the top of the discard pile back in after a character leaves play" . flameTest $ \pid -> do
     reveal [Enemies.rangingGoblin]
     beravor <- toTarget <$> getHeroWithCode "01012"
