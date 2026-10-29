@@ -49,3 +49,23 @@ spec = describe "Damage" do
     run $ AttackDamage eid eowyn
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
     prompt `shouldBe` "$label.undefendedDamage"
+
+  it "assigns all the archery damage before dealing it, none past a character's hit points" . gameTest $ \pid -> do
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ ArcheryDamage 4 []
+    replicateM_ 3 (chooseTarget pid eowyn)
+    -- assigned, not yet dealt, and Éowyn has no hit points left to take more
+    getDamage eowyn `shouldReturn` 0
+    targets <- maybe [] (\q -> [t | TargetLabel t _ <- questionChoices q]) <$> getQuestion pid
+    targets `shouldSatisfy` \ts -> notNull ts && eowyn `notElem` ts
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    chooseTarget pid beravor
+    getDamage beravor `shouldReturn` 1
+    getsGame (length . (.entities.heroes)) `shouldReturn` 2
+
+  it "assigns damage divided among characters no further than a character's hit points" . gameTest $ \pid -> do
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ DealDamageDivided GameSource pid 4 []
+    replicateM_ 3 (chooseTarget pid eowyn)
+    targets <- maybe [] (\q -> [t | TargetLabel t _ <- questionChoices q]) <$> getQuestion pid
+    targets `shouldSatisfy` \ts -> notNull ts && eowyn `notElem` ts

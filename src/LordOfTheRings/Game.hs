@@ -656,7 +656,7 @@ runGameMessage msg g = case msg of
     pure $ g & phaseL .~ CombatPhase
   ResolveArchery -> do
     total <- getArcheryTotal
-    pushWhen (total > 0) $ ArcheryDamage total
+    pushWhen (total > 0) $ ArcheryDamage total []
     pure g
   -- each enemy with hinder engaged with a player removes 1 progress from the current quest,
   -- from the active location once the quest has none
@@ -669,17 +669,23 @@ runGameMessage msg g = case msg of
     for_ (find ((== ActiveLocation) . (.placement)) (toList g.entities.locations)) \l ->
       pushWhen (rest > 0 && l.progress > 0) $ RemoveTokens GameSource (toTarget l) Progress (min rest l.progress)
     pure g
-  -- ponytail: the first player divides it for the group
-  ArcheryDamage n | n > 0 -> do
+  -- the players divide it as they see fit, the first player having the final say, so the
+  -- first player assigns it; it is all assigned, then dealt at once (ALeP 3.088)
+  ArcheryDamage n assigned -> do
     lead <- getLead
     alliesOnly <- elem ArcheryDamageToAllies <$> getModifiers GameTarget
     -- the players deal it to characters they control, not to one no one does, as captured
-    allies <- map toTarget <$> select (AllyControlledBy AnyPlayer)
-    characters <- if alliesOnly && notNull allies then pure allies else selectCharacters AnyHero (AllyControlledBy AnyPlayer)
-    unless (null characters)
-      $ push
-      $ questionLabel (ikeyWith "label.assignArcheryDamage" [intVar "count" n]) lead
-      $ [targetLabel c [DealDamage GameSource c 1, ArcheryDamage (n - 1)] | c <- characters]
+    allies <- withHitPointsLeft assigned . map toTarget =<< select (AllyControlledBy AnyPlayer)
+    characters <-
+      if alliesOnly && notNull allies
+        then pure allies
+        else withHitPointsLeft assigned =<< selectCharacters AnyHero (AllyControlledBy AnyPlayer)
+    push
+      $ if n > 0 && notNull characters
+        then
+          questionLabel (ikeyWith "label.assignArcheryDamage" [intVar "count" n]) lead
+            $ [targetLabel c [ArcheryDamage (n - 1) (c : assigned)] | c <- characters]
+        else Run $ dealAssigned GameSource assigned
     pure g
   DealShadowCards -> do
     order <- getPlayerOrder
@@ -1098,13 +1104,13 @@ runGameMessage msg g = case msg of
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
     pure g
   DealDamageDivided source pid n assigned -> do
-    characters <- charactersControlledBy pid
+    characters <- withHitPointsLeft assigned =<< charactersControlledBy pid
     if n > 0 && notNull characters
       then
         push
           $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
             [targetLabel c [DealDamageDivided source pid (n - 1) (c : assigned)] | c <- characters]
-      else pushAll [DealDamage source c k | (c, k) <- Map.toList (Map.fromListWith (+) [(c, 1) | c <- assigned])]
+      else pushAll $ dealAssigned source assigned
     pure g
   ChooseAndExhaustHero source pid -> do
     ready <- map toTarget <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
@@ -2221,6 +2227,19 @@ seatAfter :: [PlayerId] -> PlayerId -> PlayerId
 seatAfter order pid = case dropWhile (/= pid) order of
   (_ : next : _) -> next
   _ -> fromMaybe pid (headMay order)
+
+{- | The characters that may take another point of the damage being assigned: damage
+assigned among characters cannot be assigned past a character's remaining hit points
+(ALeP 3.088, 3.132, 3.263).
+-}
+withHitPointsLeft :: [Target] -> [Target] -> GameT [Target]
+withHitPointsLeft assigned = filterM \c -> do
+  left <- (-) <$> getHitPoints c <*> getDamage c
+  pure $ left > length (filter (== c) assigned)
+
+-- | The damage assigned among characters, a point at a time, dealt once all is assigned.
+dealAssigned :: Source -> [Target] -> [Message]
+dealAssigned source assigned = [DealDamage source c k | (c, k) <- Map.toList (Map.fromListWith (+) [(c, 1) | c <- assigned])]
 
 -- | Enemies engaged with a player, highest engagement cost first.
 engagedByCost :: PlayerId -> GameT [EnemyId]
