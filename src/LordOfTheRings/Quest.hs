@@ -89,6 +89,9 @@ import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Cards.RetakeTheCity
 import LordOfTheRings.Quest.Cards.TheAmbush
 import LordOfTheRings.Quest.Cards.Captured
+import LordOfTheRings.Quest.Cards.OrdersFromOrthanc
+import LordOfTheRings.Quest.Cards.SearchingForMugash
+import LordOfTheRings.Quest.Cards.TheWizardsPrize
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -210,5 +213,8 @@ allQuests =
         , SomeQuestCard retakeTheCity
         , SomeQuestCard theAmbush
         , SomeQuestCard captured
+        , SomeQuestCard ordersFromOrthanc
+        , SomeQuestCard searchingForMugash
+        , SomeQuestCard theWizardsPrize
         ]
     ]
