@@ -525,7 +525,7 @@ runGameMessage msg g = case msg of
     if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
-        pushAll [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+        pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target
         pure
           $ g
           & entitiesL
@@ -1066,10 +1066,13 @@ runGameMessage msg g = case msg of
         resolveShadowEffect card (ResolveShadowEffect cid eid pid defenders)
     pure g
   -- a later step of a shadow effect, as "if this attack destroys a character" reads once
-  -- the attack is over, which the shadow card, built again, resolves
+  -- the attack is over, which the shadow card, built again, resolves. The effect resolved
+  -- as the card was revealed, so it still finishes once the card has been discarded, with
+  -- its enemy leaving play after the damage (ALeP 3.043, 3.068); an attack its enemy left
+  -- before the damage ended there (FAQ 2.54) and destroyed no one
   DoStep _ (ResolveShadowEffect cid eid _ _) -> do
-    for_ (Map.lookup eid g.entities.enemies) \enemy ->
-      for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> resolveShadowEffect card msg
+    let dealt = maybe [] (.shadowCards) (Map.lookup eid g.entities.enemies)
+    for_ (find ((== cid) . ecId) (dealt <> (toAttrs g.scenario).encounterDiscard)) \card -> resolveShadowEffect card msg
     pure g
   ShuffleIntoEncounterDeck (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
     deck <-
@@ -1585,8 +1588,10 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
-  -- ponytail: what is attached to it stays behind, none of Cair Andros's locations take any
-  RemoveFromGame (LocationTarget lid) -> pure $ g & entitiesL . locationsL %~ Map.delete lid
+  -- what is attached to it leaves play with it, as it would were it discarded
+  RemoveFromGame target@(LocationTarget lid) -> do
+    pushAll $ discardAttached g target
+    pure $ g & entitiesL . locationsL %~ Map.delete lid
   -- a location placed underneath a card leaves play, its tokens and attachments discarded
   PlaceUnderneath _ cards -> do
     let gone = [l | l <- toList g.entities.locations, (toCard l).id `elem` map (.id) cards]
@@ -1987,6 +1992,7 @@ returnToEncounterDeck place target g = do
   case target of
     EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
       withAttached
+      pushAll $ discardShadowsOf g target
       pure
         $ g
         & entitiesL
@@ -2049,12 +2055,7 @@ discardFromPlay target g = case target of
   fromEntity l k = case Map.lookup k (g.entities ^. l) of
     Nothing -> pure g
     Just entity -> do
-      -- attachments, and encounter cards attached as conditions, leave play with their host
-      pushAll
-        $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
-        <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
-        <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
-        <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
+      pushAll $ discardAttached g target
       mods <- getModifiers target
       let removed = g & entitiesL . l %~ Map.delete k
           orcGuards = (toAttrs g.scenario).scenarioOrcGuards
@@ -2078,6 +2079,22 @@ discardFromPlay target g = case target of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
     EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
     _ -> id
+
+-- | Attachments, and encounter cards attached as conditions, leave play with their host,
+-- and an enemy's shadow cards are discarded with it (ALeP 3.068).
+discardAttached :: Game -> Target -> [Message]
+discardAttached g target =
+  [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+    <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+    <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+    <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
+    <> discardShadowsOf g target
+
+-- | The shadow cards dealt to an enemy leaving play, discarded with it.
+discardShadowsOf :: Game -> Target -> [Message]
+discardShadowsOf g = \case
+  EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, notNull e.shadowCards -> [AddToEncounterDiscard e.shadowCards]
+  _ -> []
 
 {- | Open the window for a character leaving play, while it can still be looked at. An
 ally is kept aside until the window closes, so its own abilities can answer it.
