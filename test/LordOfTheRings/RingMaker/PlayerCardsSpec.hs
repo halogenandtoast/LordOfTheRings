@@ -160,3 +160,15 @@ spec = describe "The Ring-maker cycle player cards" do
       chooseAbilityOf pid =<< allyWithCard card.id
       chooseTarget pid (CardIdTarget cheap.id)
       getsGame (length . (.entities.allies)) `shouldReturn` 2
+
+  describe "Leaf Brooch" do
+    it "lowers the first event of its hero's sphere each round by 1 while threat is 20 or less" . gameTest $ \pid -> do
+      setThreat pid 20
+      eowyn <- hero eowynCode
+      _ <- putAttachmentOn pid Attachments.leafBrooch eowyn
+      card <- playWith pid eowynCode 0 Events.courageAwakened
+      chooseTarget pid eowyn
+      -- returned to hand, it now costs its full 1
+      inHand pid card.id `shouldReturn` True
+      Just q <- getQuestion pid
+      [t | TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget card.id)

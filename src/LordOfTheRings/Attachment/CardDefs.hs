@@ -106,6 +106,7 @@ allAttachmentCards =
       , silverLamp
       , elvenMail
       , cloakOfLorien
+      , leafBrooch
       ]
 
 stewardOfGondor :: CardDef
@@ -720,6 +721,13 @@ elvenMail =
 cloakOfLorien :: CardDef
 cloakOfLorien =
   (attachment "08120" "Cloak of Lórien" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+leafBrooch :: CardDef
+leafBrooch =
+  (attachment "08034" "Leaf Brooch" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Item]
     , cdLimitOnePerHost = True
     }
