@@ -116,6 +116,7 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , orcTerritory
       ]
 
 deepDeepDark :: CardDef
@@ -713,3 +714,6 @@ conflictAtTheCrossroads =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+orcTerritory :: CardDef
+orcTerritory = (treachery "07030" "Orc Territory" ToCatchAnOrc 2) {cdEasyModeQuantity = Just 0}

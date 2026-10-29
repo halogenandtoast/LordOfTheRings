@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -110,6 +110,9 @@ allQuestCards =
       , retakeTheCity
       , theAmbush
       , captured
+      , ordersFromOrthanc
+      , searchingForMugash
+      , theWizardsPrize
       ]
 
 theDrippingWalls :: CardDef
@@ -380,3 +383,12 @@ theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
 
 captured :: CardDef
 captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}
+
+ordersFromOrthanc :: CardDef
+ordersFromOrthanc = quest "07062" "Orders from Orthanc" ToCatchAnOrc 1 0
+
+searchingForMugash :: CardDef
+searchingForMugash = (quest "07063" "Searching for Mugash" ToCatchAnOrc 2 0) {cdKeywords = setFromList [Time 2]}
+
+theWizardsPrize :: CardDef
+theWizardsPrize = (quest "07064" "The Wizard's Prize" ToCatchAnOrc 3 15) {cdKeywords = setFromList [Time 3]}

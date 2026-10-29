@@ -127,6 +127,9 @@ allEnemyCards =
       , orcAmbusher
       , brutalUruk
       , evilCrow
+      , mugashEnemy
+      , mugashsGuard
+      , methedrasOrc
       ]
 
 namelessThing :: CardDef
@@ -981,5 +984,29 @@ evilCrow :: CardDef
 evilCrow =
   (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+-- | The players' Mugash: shuffled into an out-of-play deck at setup, never the encounter
+-- deck. Into Fangorn has an objective of the name.
+mugashEnemy :: CardDef
+mugashEnemy =
+  unique
+    (enemy "07024" "Mugash" ToCatchAnOrc 1 1 4 7 4 8)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      }
+
+-- | Shuffled into the out-of-play decks at setup, the copies left over set aside.
+mugashsGuard :: CardDef
+mugashsGuard =
+  (enemy "07025" "Mugash's Guard" ToCatchAnOrc 3 40 3 6 3 6)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdVictoryPoints = Just 3
+    }
+
+methedrasOrc :: CardDef
+methedrasOrc =
+  (enemy "07026" "Methedras Orc" ToCatchAnOrc 3 30 3 5 3 5)
+    { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
     }

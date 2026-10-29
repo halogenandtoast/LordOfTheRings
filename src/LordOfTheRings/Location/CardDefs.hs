@@ -130,6 +130,9 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , methedras
+      , orcCave
+      , mugashsLair
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +938,22 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+methedras :: CardDef
+methedras =
+  (location "07027" "Methedras" ToCatchAnOrc 4 2 3)
+    { cdCardTraits = setFromList [Mountain]
+    }
+
+orcCave :: CardDef
+orcCave =
+  (location "07028" "Orc Cave" ToCatchAnOrc 3 3 4)
+    { cdCardTraits = setFromList [Mountain, Cave]
+    }
+
+mugashsLair :: CardDef
+mugashsLair =
+  (location "07029" "Mugash's Lair" ToCatchAnOrc 2 4 2)
+    { cdCardTraits = setFromList [Mountain, Cave]
+    , cdShadowEffect = True
+    }
