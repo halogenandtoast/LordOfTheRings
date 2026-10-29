@@ -70,6 +70,8 @@ data Message
   | EndPhase Phase
   | BeginRound
   | RaiseThreat PlayerId Int
+  | -- | the threat raise itself, once the window before it has closed
+    DoRaiseThreat PlayerId Int
   | CheckEliminations
   | EliminatePlayer PlayerId
   | GameOver Outcome

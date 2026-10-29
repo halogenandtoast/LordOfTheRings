@@ -679,7 +679,8 @@ runGameMessage msg g = case msg of
     pure g
   EngageEnemy pid eid -> do
     pushAll
-      [ PlaceEnemy eid (EngagedWith pid)
+      [ CheckWindows [mkWhen $ EnemyEngaged eid pid]
+      , PlaceEnemy eid (EngagedWith pid)
       , CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
       , CheckWindows [mkAfter $ EnemyEngaged eid pid]
       ]

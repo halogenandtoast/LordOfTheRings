@@ -43,6 +43,7 @@ import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
   WindowType (CardsDrawn, DiscardedFromDeck, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
+  mkWhen,
  )
 
 instance RunMessage Player where
@@ -72,9 +73,15 @@ instance RunMessage Player where
       send $ ShuffleIntoDeck $ map (.id) player.hand
       (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
       pure $ player & handL .~ hand & deckL .~ deck
+    -- a raise opens a window before it, as Harbor Thug's Forced effect answers
+    RaiseThreat pid n | pid == player.id, n > 0 -> do
+      pushAll [CheckWindows [mkWhen $ ThreatRaised pid], DoRaiseThreat pid n]
+      pure player
     RaiseThreat pid n | pid == player.id -> do
       push CheckEliminations
-      pushWhen (n > 0) $ CheckWindows [mkAfter $ ThreatRaised pid]
+      pure $ player & threatL %~ max 0 . (+ n)
+    DoRaiseThreat pid n | pid == player.id -> do
+      pushAll [CheckEliminations, CheckWindows [mkAfter $ ThreatRaised pid]]
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
