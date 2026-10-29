@@ -2,11 +2,45 @@ module LordOfTheRings.RevealSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
+import LordOfTheRings.Scenario.Types (encounterDiscardL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
+setEncounterDiscard :: [CardDef] -> GameT [EncounterCard]
+setEncounterDiscard defs = do
+  cards <- traverse genEncounterCard defs
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (encounterDiscardL .~ cards)
+  pure cards
+
 spec :: Spec
 spec = describe "Revealing encounter cards" do
+  it "resets an encounter deck emptied in the quest phase at once, before the card resolves" . gameTest $ \_ -> do
+    _ <- setEncounterDeck [Enemies.forestSpider]
+    [road] <- setEncounterDiscard [Locations.oldForestRoad]
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    run RevealEncounterCard
+    getEncounterDeck `shouldReturn` [road]
+    getEncounterDiscard `shouldReturn` []
+
+  it "reveals nothing from an empty encounter deck outside the quest phase" . gameTest $ \_ -> do
+    _ <- setEncounterDeck []
+    _ <- setEncounterDiscard [Enemies.forestSpider]
+    putGame . (phaseL .~ PlanningPhase) =<< getGame
+    run RevealEncounterCard
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0
+    length <$> getEncounterDiscard `shouldReturn` 1
+
+  it "discards on from the reset deck as it empties partway in the quest phase (ruling, Collateral Damage)" . gameTest $ \_ -> do
+    _ <- setEncounterDeck [Enemies.forestSpider]
+    _ <- setEncounterDiscard [Locations.oldForestRoad, Locations.oldForestRoad, Enemies.forestSpider]
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    -- the 1 card, then 2 of the 4 the deck is reset to
+    run $ DiscardTopOfEncounterDeck GameSource GameTarget 3
+    length <$> getEncounterDeck `shouldReturn` 2
+    length <$> getEncounterDiscard `shouldReturn` 2
+
   it "puts a revealed enemy into the staging area" . gameTest $ \_ -> do
     _ <- setEncounterDeck [Enemies.forestSpider]
     run RevealEncounterCard

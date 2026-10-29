@@ -4,6 +4,7 @@ module LordOfTheRings.Scenario.Runner (module LordOfTheRings.Scenario.Runner, mo
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card hiding (hero)
+import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.EncounterSet (EncounterSet)
@@ -12,7 +13,9 @@ import LordOfTheRings.Keyword (Keyword (Guarded))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
+import LordOfTheRings.Game.Base (gamePhase)
 import LordOfTheRings.Outcome
+import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types as X
@@ -34,7 +37,7 @@ gatherEncounterSet attrs encounterSet =
     fromMaybe 1 $ (guard attrs.easyMode *> cdEasyModeQuantity def) <|> cdEncounterSetQuantity def
 
 instance RunMessage ScenarioAttrs where
-  runMessage msg attrs = case msg of
+  runMessage msg attrs = resetEmptyEncounterDeck =<< case msg of
     -- the scenario gathers its encounter deck at step 1; shuffle it before any setup reveals
     DoStep 2 Setup -> do
       encounterDeck <- shuffleM attrs.encounterDeck
@@ -66,12 +69,7 @@ instance RunMessage ScenarioAttrs where
       (card : rest) -> do
         push $ RevealCard card
         pure $ attrs & encounterDeckL .~ rest
-      []
-        | null attrs.encounterDiscard -> pure attrs
-        | otherwise -> do
-            deck <- shuffleM attrs.encounterDiscard
-            push RevealEncounterCard
-            pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+      [] -> pure attrs
     DealShadowCard eid -> case attrs.encounterDeck of
       (card : rest) -> do
         push $ AttachShadowCard eid card
@@ -105,10 +103,20 @@ instance RunMessage ScenarioAttrs where
           ]
       pure $ attrs & encounterDeckL .~ rest
     PutOnBottomOfEncounterDeck cards -> pure $ attrs & encounterDeckL %~ (<> cards)
+    -- the deck reset as it empties partway, the rest are discarded from it (ruling, Collateral
+    -- Damage)
     DiscardTopOfEncounterDeck source target n -> do
-      let (top, rest) = splitAt n attrs.encounterDeck
-      push $ DiscardedTopOfEncounterDeck source target top
-      pure $ attrs & encounterDeckL .~ rest & encounterDiscardL %~ (top <>)
+      let discardFrom k a acc = do
+            let (top, rest) = splitAt k a.encounterDeck
+                a' = a & encounterDeckL .~ rest & encounterDiscardL %~ (top <>)
+                left = k - length top
+            a'' <- resetEmptyEncounterDeck a'
+            if left > 0 && notNull a''.encounterDeck
+              then discardFrom left a'' (acc <> top)
+              else pure (a'', acc <> top)
+      (attrs', discarded) <- discardFrom n attrs []
+      push $ DiscardedTopOfEncounterDeck source target discarded
+      pure attrs'
     ResetToStage _ rest -> pure $ attrs & questDeckL .~ rest
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
       top : rest -> pure $ attrs & encounterDeckL .~ rest <> [top]
@@ -204,6 +212,15 @@ instance RunMessage ScenarioAttrs where
     EliminatePlayer pid -> pure $ attrs & hiddenCardsL %~ Map.delete pid & encounterDiscardL %~ (hiddenOf pid <>)
     _ -> pure attrs
    where
+    -- "If the encounter deck is ever empty during the quest phase, the encounter discard
+    -- pile is shuffled and reset back into the encounter deck."
+    resetEmptyEncounterDeck a = do
+      phase <- getsGame gamePhase
+      if phase == QuestPhase && null a.encounterDeck && notNull a.encounterDiscard
+        then do
+          deck <- shuffleM a.encounterDiscard
+          pure $ a & encounterDeckL .~ deck & encounterDiscardL .~ []
+        else pure a
     hiddenOf pid = Map.findWithDefault [] pid attrs.hiddenCards
     -- the player searches the encounter deck and discard pile, the card found going where
     -- the message puts it, then the deck is shuffled
