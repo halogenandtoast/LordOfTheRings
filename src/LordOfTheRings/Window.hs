@@ -72,8 +72,8 @@ data WindowType
   | -- | a character attacked an enemy alone: the damage the attack dealt beyond what the
     -- enemy had left
     AttackedAlone Target EnemyId Int
-  | -- | an encounter or quest card's effect raised the player's threat
-    ThreatRaisedByEncounter PlayerId
+  | -- | an encounter or quest card's effect raised the player's threat, by this much
+    ThreatRaisedByEncounter PlayerId Int
   | -- | a character readied during the refresh phase, with its traits
     Readied Target (Set Trait)
   | -- | damage was healed from a character, by the source

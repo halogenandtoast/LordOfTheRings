@@ -32,6 +32,8 @@ instance RunMessage LocationAttrs where
             if isJust (cdVictoryPoints $ toCardDef attrs)
               then AddToVictoryDisplay (toTarget attrs)
               else Discard (toTarget attrs)
+          , -- after it is explored, as Idraen answers
+            CheckWindows [mkAfter $ Explored attrs.id]
           ]
       pure attrs'
     RemoveTokens _ (isTarget attrs -> True) token n -> do

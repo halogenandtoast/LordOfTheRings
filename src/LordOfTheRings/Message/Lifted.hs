@@ -8,7 +8,7 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import LordOfTheRings.Card (Card (..), CardDef, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard)
+import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardType, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Classes.HasGame (getsGame)
@@ -103,7 +103,7 @@ Elfhelm answers.
 encounterRaisesThreat :: ReverseQueue m => PlayerId -> Int -> m ()
 encounterRaisesThreat pid n = when (n > 0) do
   push $ RaiseThreat pid n
-  push $ CheckWindows [Window After $ ThreatRaisedByEncounter pid]
+  push $ CheckWindows [Window After $ ThreatRaisedByEncounter pid n]
 
 {- | Each player raises his threat by N from the Doomed keyword, opening his window for
 it, as a player card with Doomed N played does; Close Call reads it with its X.
@@ -922,3 +922,16 @@ returnIfFirstCopyThisRound pid card = do
   threat <- (.threat) <$> getPlayer pid
   roundModifier (CardIdSource card.id) (PlayerTarget pid) (PlayedThisRound $ toCardCode card)
   when (not played && threat <= 20) $ returnFromDiscardToHand pid card.id
+
+{- | The player looks at the top card of the encounter deck and, if it is of the type, may
+discard it, as Ithilien Lookout reads for an enemy.
+-}
+lookAtTopOfEncounterDeckMayDiscard
+  :: (ReverseQueue m, Sourceable source, Targetable source) => PlayerId -> source -> CardType -> m ()
+lookAtTopOfEncounterDeckMayDiscard pid source cType =
+  getTopOfEncounterDeck >>= traverse_ \top -> chooseOneM pid do
+    questionLabeled "topOfEncounterDeck"
+    causedBy source
+    showing [EncounterCard top]
+    when (cdCardType (toCardDef top) == cType) $ labeled "discardIt" $ discardTopOfEncounterDeck source 1
+    labeled "leaveOnTop" (pure ())

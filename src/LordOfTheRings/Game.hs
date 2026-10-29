@@ -1652,7 +1652,7 @@ runGameMessage msg g = case msg of
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
         doomed =
           concat
-            [ [RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p, mkAfter $ ThreatRaisedByDoomed p]]
+            [ [RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n, mkAfter $ ThreatRaisedByDoomed p]]
             | Doomed n <- toList (cdKeywords def)
             , n > 0
             , p <- players
@@ -2124,7 +2124,7 @@ attackDamage pid eid target n = do
   controller <- characterController target
   pure $ DealDamage (EnemySource eid) target n
     : [CheckDestroyedByAttack eid target c | Just c <- [controller]]
-    <> concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excessToThreat, excess > 0]
+    <> concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
     <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemySource eid) pid target)
 
 -- | The player's characters that may yet be declared as attackers against the enemy.

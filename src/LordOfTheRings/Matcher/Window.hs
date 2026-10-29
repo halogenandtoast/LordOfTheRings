@@ -161,6 +161,8 @@ data WindowMatcher
     ThreatRaisedByDoomedWindow Timing PlayerId
   | -- | the player, or any player, drew any number of cards
     DrewCardsWindow Timing (Maybe PlayerId)
+  | -- | any location explored
+    AnyExploredWindow Timing
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -224,7 +226,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDealtDamageWindow t, DealtDamage (HeroTarget _) _) -> t == timing
   (LeftPlayWindow t target, LeftPlay target' _ _) -> t == timing && target == target'
   (AttackedAloneWithExcessWindow t target, AttackedAlone target' _ n) -> t == timing && target == target' && n > 0
-  (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid') -> t == timing && pid == pid'
+  (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid' _) -> t == timing && pid == pid'
   (OtherPlayerRaisedThreatWindow t pid, ThreatRaised pid') -> t == timing && pid /= pid'
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
@@ -239,6 +241,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'
   (ThreatRaisedByDoomedWindow t pid, ThreatRaisedByDoomed pid') -> t == timing && pid == pid'
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
+  (AnyExploredWindow t, Explored _) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
