@@ -109,6 +109,8 @@ data AllyMatcher
   | AllyMatchAll [AllyMatcher]
   | -- | an ally matching any of them
     AllyMatchAny [AllyMatcher]
+  | -- | an objective ally, an encounter card
+    ObjectiveAlly
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

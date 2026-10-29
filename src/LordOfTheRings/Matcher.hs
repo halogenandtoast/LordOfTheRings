@@ -165,6 +165,7 @@ matchAlly matcher ally = case matcher of
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms
   AllyMatchAny ms -> anyM (`matchAlly` ally) ms
+  ObjectiveAlly -> pure $ cdCardType (toCardDef ally) == ObjectiveAllyType
 
 instance Query EnemyMatcher where
   type QueryElement EnemyMatcher = EnemyId
