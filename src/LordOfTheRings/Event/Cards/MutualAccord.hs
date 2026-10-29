@@ -20,8 +20,8 @@ mutualAccord = event MutualAccord Cards.mutualAccord
 instance RunMessage MutualAccord where
   runMessage msg e@(MutualAccord attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      -- the cards in play as it resolves, as a lasting effect reaches no card entering
-      -- play after it
+      -- the cards in play as it resolves: a player card's lasting effect is not
+      -- recalculated (FAQ 1.55)
       es <- getsGame gameEntities
       let card' :: (Targetable a, HasCardDef a) => a -> (Target, CardDef)
           card' a = (toTarget a, toCardDef a)
