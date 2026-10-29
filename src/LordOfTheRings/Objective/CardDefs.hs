@@ -48,6 +48,8 @@ allObjectiveCards =
       , poisonedCounsels
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
+      , theOrcsSearch
+      , celebrimborsMould
       ]
 
 durinsAxe :: CardDef
@@ -276,3 +278,13 @@ lordAlcaronTheBloodOfGondor =
     , cdCardTraits = setFromList [Gondor, Noble]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
+
+theOrcsSearch :: CardDef
+theOrcsSearch = objective "08125" "The Orcs' Search" CelebrimborsSecret 1
+
+celebrimborsMould :: CardDef
+celebrimborsMould =
+  unique
+    (objective "08127" "Celebrimbor's Mould" CelebrimborsSecret 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      }

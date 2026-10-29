@@ -127,6 +127,9 @@ allEnemyCards =
       , orcAmbusher
       , brutalUruk
       , evilCrow
+      , bellachCelebrimborsSecret
+      , bellachsScout
+      , prowlingOrc
       ]
 
 namelessThing :: CardDef
@@ -982,4 +985,32 @@ evilCrow =
   (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+-- | X threat, X the cards underneath The Orcs' Search: given by its own modifiers.
+bellachCelebrimborsSecret :: CardDef
+bellachCelebrimborsSecret =
+  unique
+    (enemy "08124" "Bellach" CelebrimborsSecret 1 50 0 5 4 7)
+      { cdCardTraits = setFromList [Mordor, Spy]
+      , cdKeywords = setFromList [Scour]
+      , cdVictoryPoints = Just 5
+      }
+
+bellachsScout :: CardDef
+bellachsScout =
+  (enemy "08128" "Bellach's Scout" CelebrimborsSecret 4 40 2 3 2 4)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdKeywords = setFromList [Scour]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+prowlingOrc :: CardDef
+prowlingOrc =
+  (enemy "08129" "Prowling Orc" CelebrimborsSecret 2 45 3 5 3 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdKeywords = setFromList [Scour]
+    , cdEasyModeQuantity = Just 1
     }

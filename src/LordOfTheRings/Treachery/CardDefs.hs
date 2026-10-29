@@ -116,6 +116,9 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , discovered
+      , desecratedRuins
+      , spiesFromMordor
       ]
 
 deepDeepDark :: CardDef
@@ -713,3 +716,16 @@ conflictAtTheCrossroads =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+discovered :: CardDef
+discovered =
+  (treachery "08134" "Discovered!" CelebrimborsSecret 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+desecratedRuins :: CardDef
+desecratedRuins = (treachery "08135" "Desecrated Ruins" CelebrimborsSecret 3) {cdShadowEffect = True}
+
+spiesFromMordor :: CardDef
+spiesFromMordor = (treachery "08136" "Spies from Mordor" CelebrimborsSecret 2) {cdShadowEffect = True}

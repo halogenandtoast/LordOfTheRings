@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -110,6 +110,8 @@ allQuestCards =
       , retakeTheCity
       , theAmbush
       , captured
+      , theRuinsOfOstInEdhil
+      , theEnemysServant
       ]
 
 theDrippingWalls :: CardDef
@@ -380,3 +382,9 @@ theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
 
 captured :: CardDef
 captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}
+
+theRuinsOfOstInEdhil :: CardDef
+theRuinsOfOstInEdhil = (quest "08122" "The Ruins of Ost-in-Edhil" CelebrimborsSecret 1 14) {cdKeywords = setFromList [Time 3]}
+
+theEnemysServant :: CardDef
+theEnemysServant = (quest "08123" "The Enemy's Servant" CelebrimborsSecret 2 12) {cdKeywords = setFromList [Time 3]}
