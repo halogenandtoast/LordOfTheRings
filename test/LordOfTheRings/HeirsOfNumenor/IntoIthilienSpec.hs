@@ -6,10 +6,11 @@ import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getCommittedWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat)
-import LordOfTheRings.Keyword (Keyword (Siege))
+import LordOfTheRings.Keyword (Keyword (Ranged, Siege))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal)
-import LordOfTheRings.Modifier (ModifierType (EngagementCostModifier, NoEngagementChecks))
+import LordOfTheRings.Modifier (ModifierType (EngagementCostModifier, GainKeyword, NoEngagementChecks))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -96,6 +97,18 @@ spec = describe "Into Ithilien" do
     _ <- putQuestStage Quests.ambushInIthilien
     getEnemyThreat company `shouldReturn` 3
     getEnemyAttack company `shouldReturn` 5
+
+  it "gives +2 attack with Southron Company's shadow while the quest has any keyword" . ithilienTest $ \pid -> do
+    quest <- putQuestStage Quests.theHiddenWay
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Ranged] UntilEndOfRound
+    run . AddToStaging =<< genEncounterCard Enemies.forestBat
+    bat <- enemyOf Enemies.forestBat
+    run $ EngageEnemy pid bat
+    attack <- getEnemyAttack bat
+    card <- genEncounterCard Enemies.southronCompany
+    run $ AttachShadowCard bat card
+    run $ ResolveShadowCard card.id bat pid []
+    getEnemyAttack bat `shouldReturn` attack + 2
 
   it "bypasses stage 2 when stage 1 is completed with Celador in the staging area, and gives him to the first player" . ithilienTest $ \pid -> do
     flipFirstQuest pid

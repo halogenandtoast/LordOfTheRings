@@ -23,8 +23,7 @@ instance HasModifiersFor SouthronCompany where
 instance RunMessage SouthronCompany where
   runMessage msg e@(SouthronCompany attrs) = case msg of
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
-      -- ponytail: the stages of this cycle's keywords are battle and siege; archery comes with siege
-      keyword <- (||) <$> currentQuestHas Battle <*> currentQuestHas Siege
+      keyword <- currentQuestHasAKeyword
       enemyGetsAttack attrs eid (if keyword then 2 else 1)
       pure e
     _ -> SouthronCompany <$> runMessage msg attrs
