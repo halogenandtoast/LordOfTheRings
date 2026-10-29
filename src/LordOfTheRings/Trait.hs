@@ -7,16 +7,21 @@ data Trait
   | Armor
   | Artifact
   | Balrog
+  | Barrow
   | Battleground
   | Beorning
   | Besieger
+  | Boar
+  | BoarClan
   | Boon
   | Bridge
   | Brigand
   | Burden
   | CairAndros
   | Captain
+  | Captive
   | Captured
+  | Cave
   | City
   | Clue
   | Condition
@@ -29,9 +34,11 @@ data Trait
   | DolGuldur
   | Dunedain
   | Dungeon
+  | Dunland
   | Dwarf
   | Eagle
   | EmynMuil
+  | Enedwaith
   | Ent
   | Escape
   | Flame
@@ -41,16 +48,22 @@ data Trait
   | Gollum
   | Gondor
   | Gossip
+  | Guardian
   | Harad
   | Hazard
   | Healer
+  | Highlands
   | Hills
   | Hobbit
+  | Huorn
   | Insect
+  | Isengard
   | Istari
   | Item
   | Ithilien
+  | Key
   | Light
+  | Marsh
   | Marshland
   | Mathom
   | Minstrel
@@ -63,16 +76,21 @@ data Trait
   | Noldor
   | Orc
   | Osgiliath
+  | OstInEdhil
   | Outlands
   | Pipe
+  | Plains
   | Plot
   | Ranger
+  | Raven
+  | RavenClan
   | Record
   | Ring
   | River
   | Riverland
   | Road
   | Rohan
+  | Ruins
   | Scout
   | Scroll
   | Shadow
@@ -81,7 +99,11 @@ data Trait
   | Skill
   | Snow
   | Song
+  | Spell
+  | -- | the Spirit trait, named apart from the sphere
+    SpiritTrait
   | Spider
+  | Spy
   | Stair
   | Steward
   | Stronghold
@@ -105,6 +127,8 @@ data Trait
   | Warrior
   | Wasteland
   | Weapon
+  | Wolf
+  | Woodman
   | Wose
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

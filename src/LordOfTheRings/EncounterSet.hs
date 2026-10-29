@@ -4,22 +4,29 @@ import LordOfTheRings.Prelude
 
 data EncounterSet
   = AJourneyToRhosgobel
+  | AncientForest
   | AssaultOnOsgiliath
   | Brigands
+  | BrokenLands
   | BroodingForest
+  | CelebrimborsSecret
   | ConflictAtTheCarrock
   | CreaturesOfTheForest
   | DeepsOfMoria
   | DolGuldurOrcs
+  | DunlandRaiders
+  | DunlandWarriors
   | EncounterAtAmonDin
   | EscapeFromDolGuldur
   | FlightFromMoria
   | FoundationsOfStone
   | GoblinsOfTheDeep
   | HazardsOfThePit
+  | IntoFangorn
   | IntoIthilien
   | IntoThePit
   | JourneyAlongTheAnduin
+  | MistyMountainOrcs
   | MistyMountains
   | MordorElite
   | PassageThroughMirkwood
@@ -34,19 +41,27 @@ data EncounterSet
   | Southrons
   | SpidersOfMirkwood
   | StreetsOfGondor
+  | TheAntleredCrown
   | TheBloodOfGondor
   | TheDeadMarshes
   | TheDruadanForest
+  | TheDunlandTrap
+  | TheFordsOfIsen
   | TheHillsOfEmynMuil
   | TheHuntForGollum
   | TheLongDark
   | TheMorgulVale
+  | TheNinInEilph
   | TheRedhornGate
   | TheSeventhLevel
   | TheSiegeOfCairAndros
   | TheStewardsFear
+  | TheThreeTrials
   | TheWatcherInTheWater
+  | ToCatchAnOrc
+  | TroubleInTharbad
   | TwistsAndTurns
+  | WearyTravelers
   | Wilderlands
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
