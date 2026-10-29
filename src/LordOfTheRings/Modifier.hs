@@ -326,6 +326,9 @@ data ModifierType
     ProgressAsDamageTo Target
   | -- | on a character: it was dealt damage while defending the attack being resolved
     DamagedWhileDefending
+  | -- | on the game: each location in the staging area takes the modifier, one that
+    -- enters it later too, for as long as the effect lasts, as Treacherous Fog reads
+    EachLocationInStagingArea ModifierType
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

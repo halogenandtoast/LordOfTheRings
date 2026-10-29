@@ -180,6 +180,11 @@ spec = do
       reveal Treacheries.treacherousFog []
       (getLocationThreat =<< theLocation) `shouldReturn` 3
 
+    it "also gives a location revealed later in the phase +1 threat (FAQ 2.43)" . gameTest $ \_ -> do
+      reveal Treacheries.treacherousFog []
+      reveal Locations.forestGate []
+      (getLocationThreat =<< theLocation) `shouldReturn` 3
+
   describe "The Brown Lands" do
     it "gets 1 progress after the players travel there, which explores it" . gameTest $ \_ -> do
       reveal Locations.theBrownLands []
