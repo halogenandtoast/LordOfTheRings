@@ -130,6 +130,10 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , fenOfReeds
+      , fingerOfGlanduin
+      , hiddenEyot
+      , sinkingBog
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +939,28 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+fenOfReeds :: CardDef
+fenOfReeds =
+  (location "08106" "Fen of Reeds" TheNinInEilph 3 2 3)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+fingerOfGlanduin :: CardDef
+fingerOfGlanduin =
+  (location "08107" "Finger of Glanduin" TheNinInEilph 3 3 3)
+    { cdCardTraits = setFromList [River, Marsh]
+    , cdShadowEffect = True
+    }
+
+hiddenEyot :: CardDef
+hiddenEyot = (location "08108" "Hidden Eyot" TheNinInEilph 2 3 4) {cdCardTraits = setFromList [Marsh]}
+
+sinkingBog :: CardDef
+sinkingBog =
+  (location "08109" "Sinking Bog" TheNinInEilph 3 1 5)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
+    }

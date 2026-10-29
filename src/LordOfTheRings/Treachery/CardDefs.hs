@@ -116,6 +116,8 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , shiftingMarshland
+      , remnantsOfElderDays
       ]
 
 deepDeepDark :: CardDef
@@ -713,3 +715,14 @@ conflictAtTheCrossroads =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+shiftingMarshland :: CardDef
+shiftingMarshland =
+  (treachery "08110" "Shifting Marshland" TheNinInEilph 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+remnantsOfElderDays :: CardDef
+remnantsOfElderDays = (treachery "08111" "Remnants of Elder Days" TheNinInEilph 1) {cdEasyModeQuantity = Just 0}
