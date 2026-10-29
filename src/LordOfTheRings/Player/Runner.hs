@@ -41,7 +41,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
-  WindowType (CardsDrawn, DiscardedFromDeck, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  WindowType (CardsDrawn, DiscardedFromDeck, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   mkAfter,
  )
 
@@ -161,10 +161,11 @@ instance RunMessage Player where
     PlayAtNoCost pid card
       | pid == player.id
       , cdCardType (toCardDef card) == EventType
-      , cdCost (toCardDef card) == Just DynamicCost ->
+      , cdCost (toCardDef card) == Just DynamicCost -> do
+          push $ CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]
           pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
-      pushAll $ playCard pid card []
+      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]]
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do

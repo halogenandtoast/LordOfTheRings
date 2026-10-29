@@ -85,8 +85,11 @@ instance RunMessage ActiveCost where
       case ac.activeCostCard of
         PlayerCard card -> do
           pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
-          pushWhen ac.activeCostFromHand
-            $ CheckWindows [mkAfter $ PlayedFromHand (toTarget card), mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card)]
+          push
+            $ CheckWindows
+            $ [mkAfter $ PlayedFromHand (toTarget card) | ac.activeCostFromHand]
+            <> [mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card) | ac.activeCostFromHand]
+            <> [mkAfter $ PlayedCard ac.activeCostPlayer (toCardCode card)]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

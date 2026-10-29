@@ -246,7 +246,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
-  (CardPlayedWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
+  (CardPlayedWindow t m, PlayedCard _ code) -> t == timing && cardMatches m code
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
