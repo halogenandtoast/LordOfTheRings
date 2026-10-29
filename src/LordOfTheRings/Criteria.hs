@@ -83,7 +83,7 @@ instance Exists AllyMatcher where
 -- | Each hero the player controls has the sphere's printed resource icon, as "Play only
 -- if each hero you control has a printed [lore] resource icon" reads.
 eachHeroHasPrintedIcon :: PlayerId -> Sphere -> Criterion
-eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithSphere sphere))
+eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithPrintedSphere sphere))
 
 -- | The player controls a matching ally, as a card that returns one to hand needs.
 controlsAlly :: PlayerId -> AllyMatcher -> Criterion

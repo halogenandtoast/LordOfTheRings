@@ -68,6 +68,8 @@ data HeroMatcher
   | HeroMatchAll [HeroMatcher]
   | -- | a hero matching any of them
     HeroMatchAny [HeroMatcher]
+  | -- | a hero whose printed resource icon is the sphere's, not one it gains
+    HeroWithPrintedSphere Sphere
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -132,6 +132,7 @@ matchHero matcher hero = case matcher of
           . gameEntities
       )
   HeroWithResources -> pure $ hero.resources > 0
+  HeroWithPrintedSphere sphere -> pure $ hero.sphere == sphere
   HeroWithResourcesAtLeast n -> pure $ hero.resources >= n
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
