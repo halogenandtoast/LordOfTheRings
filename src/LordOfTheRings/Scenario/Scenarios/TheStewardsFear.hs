@@ -3,6 +3,7 @@ module LordOfTheRings.Scenario.Scenarios.TheStewardsFear (theStewardsFear) where
 import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Classes.HasQueue (peekQueue)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Entities (entitiesLocations)
 import LordOfTheRings.Game.Base (gameEntities)
@@ -59,8 +60,17 @@ instance RunMessage TheStewardsFear where
         & setAsideL .~ villain <> plot <> roots
         & metaL .~ toJSON (Meta deck mempty)
     CheckWindows ws -> do
-      -- Underworld X, as a location enters the staging area
-      meta <- foldM stackUnder (getMeta attrs) [lid | Window After (EntersStagingArea (LocationTarget lid)) <- ws]
+      -- Underworld X, as a location enters the staging area; one being revealed with a
+      -- When Revealed effect resolves that first, its Underworld after (ALeP 3.073, Sewers)
+      queued <- lift peekQueue
+      let revealing lid = any (\case CheckWindows ws' -> Window After (Revealed (LocationTarget lid)) `elem` ws'; _ -> False) queued
+          waits lid = andM [pure (revealing lid), cdWhenRevealed . toCardDef <$> getLocation lid]
+      entering <- filterM (fmap not . waits) [lid | Window After (EntersStagingArea (LocationTarget lid)) <- ws]
+      revealed <-
+        filterM
+          (\lid -> andM [isJust <$> locationCard lid, cdWhenRevealed . toCardDef <$> getLocation lid])
+          [lid | Window After (Revealed (LocationTarget lid)) <- ws]
+      meta <- foldM stackUnder (getMeta attrs) (entering <> revealed)
       TheStewardsFear <$> runMessage msg (withMeta meta)
     -- Underworld X, as a location enters play as the active location, once it is in play
     PutIntoPlayAsActiveLocation _ -> do

@@ -142,8 +142,11 @@ spec = describe "The Steward's Fear" do
     streetCard <- (.cardId) . toAttrs <$> getLocation street
     _ <- setUnderworld [Enemies.pickpocket, Enemies.zealousTraitor]
     reveal [Locations.sewers]
+    sewersCard <- (.cardId) . toAttrs <$> (getLocation =<< locationOf Locations.sewers)
     m <- meta
-    map toCardCode <$> Map.lookup streetCard m.underneath `shouldBe` Just [toCardCode Enemies.zealousTraitor]
+    -- its When Revealed comes before its own Underworld 1 (ALeP 3.073)
+    map toCardCode <$> Map.lookup streetCard m.underneath `shouldBe` Just [toCardCode Enemies.pickpocket]
+    map toCardCode <$> Map.lookup sewersCard m.underneath `shouldBe` Just [toCardCode Enemies.zealousTraitor]
     m.underworldDeck `shouldBe` []
 
   it "advances from Conspiracy once a fourth active location is explored" . fearTest $ \_ -> do
