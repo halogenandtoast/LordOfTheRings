@@ -7,7 +7,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getTimeCounters)
-import LordOfTheRings.Modifier (ModifierType (CannotReady))
+import LordOfTheRings.Modifier (ModifierType (CannotReady, EngagedAnEnemyThisRound))
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Phase (Phase (EncounterPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -148,6 +148,17 @@ spec = describe "To Catch an Orc" do
     stage Enemies.mugashsGuard
     _ <- capture pid
     placementOf Enemies.mugashsGuard `shouldReturn` Just (EngagedWith pid)
+
+  it "has Mugash's Guard engage the player holding Mugash whoever a card would have engage it" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+    mugash <- engaged one Enemies.mugashEnemy
+    run $ Destroy GameSource (EnemyTarget mugash)
+    chooseTarget one =<< heroOf one "01012"
+    stage Enemies.mugashsGuard
+    guard' <- enemyOf Enemies.mugashsGuard
+    run $ EngageEnemy two guard'
+    placementOf Enemies.mugashsGuard `shouldReturn` Just (EngagedWith one)
+    -- the other player never engaged it, even for a moment
+    getModifiers (PlayerTarget two) >>= (`shouldSatisfy` notElem EngagedAnEnemyThisRound)
 
   it "returns Mugash to the staging area after Mugash's Guard destroys a character" . orcTest $ \pid -> do
     stage Enemies.mugashsGuard
