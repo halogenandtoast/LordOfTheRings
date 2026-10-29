@@ -92,6 +92,14 @@ spec = describe "The Redhorn Gate" do
     placementOf Locations.caradhras `shouldReturn` Just ActiveLocation
     placementOf Locations.rockyCrags `shouldReturn` Nothing
 
+  it "brings Caradhras back from the victory display as the active location at Snowdrifts" . redhornTest $ \_ -> do
+    quest <- putQuestStage Quests.snowdrifts
+    peak <- EncounterCard <$> genEncounterCard Locations.caradhras
+    putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (peak :))) =<< getGame
+    run $ PlaceTokens GameSource quest Progress 11
+    placementOf Locations.caradhras `shouldReturn` Just ActiveLocation
+    getsGame ((.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` []
+
   it "discards a character whose willpower drops to 0 at The Mountains' Peaks" . redhornTest $ \_ -> do
     _ <- putQuestStage Quests.theMountainsPeaks
     theodred <- toTarget <$> getHeroWithCode "01002"
