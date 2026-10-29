@@ -7,7 +7,11 @@ module LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros.Helpers (
 ) where
 
 import LordOfTheRings.Card (CardDef, cdCardCode, cdQuestPoints, toCardDef)
-import LordOfTheRings.Classes.HasGame (HasGame)
+import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Classes.Entity (toAttrs)
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
+import LordOfTheRings.Game.Base (gameScenario)
+import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
@@ -49,8 +53,15 @@ runBattleground stage msg attrs = case msg of
     attrs' <- runMessage msg attrs
     when (attrs'.damage >= fromMaybe 0 (cdQuestPoints $ toCardDef attrs)) $ removeFromGame attrs
     pure attrs'
-  -- ponytail: the Response always helps the players, so it is taken without asking
+  -- the Response is the first player's to take, if the stage is still in the quest deck
   AddToVictoryDisplay (isTarget attrs -> True) -> do
-    removeFromQuestDeck stage
+    able <- getsGame (any ((== cdCardCode stage) . toCardCode) . (.questDeck) . toAttrs . gameScenario)
+    when able do
+      lead <- getLead
+      chooseOneM lead do
+        questionLabeled "battleground.removeStage"
+        causedBy attrs
+        labeled "battleground.remove" $ removeFromQuestDeck stage
+        labeled "battleground.keep" $ pure ()
     runMessage msg attrs
   _ -> runMessage msg attrs

@@ -1018,5 +1018,10 @@
   },
   "siegeRaft": {
     "choose": "Siege Raft: choose the lowest threat Battleground to deal 2 damage to"
+  },
+  "battleground": {
+    "removeStage": "Remove its stage from the quest deck?",
+    "remove": "Remove the stage",
+    "keep": "Keep the stage"
   }
 }

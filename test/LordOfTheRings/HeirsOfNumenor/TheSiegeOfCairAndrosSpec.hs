@@ -90,9 +90,17 @@ spec = describe "The Siege of Cair Andros" do
     flipFirstQuest pid
     banks <- locationOf Locations.theBanks
     run $ PlaceTokens GameSource (toTarget banks) Progress 3
+    chooseLabel "$label.battleground.remove" pid
     placementOf Locations.theBanks `shouldReturn` Nothing
     questDeck >>= (`shouldSatisfy` notElem (toCardCode Quests.reinforcingTheBanks))
     getsGame ((.victoryPoints) . toAttrs . (.scenario)) `shouldReturn` 1
+
+  it "may keep stage 2 in the quest deck as The Banks is explored" . siegeTest $ \pid -> do
+    flipFirstQuest pid
+    banks <- locationOf Locations.theBanks
+    run $ PlaceTokens GameSource (toTarget banks) Progress 3
+    chooseLabel "$label.battleground.keep" pid
+    questDeck >>= (`shouldSatisfy` elem (toCardCode Quests.reinforcingTheBanks))
 
   it "deals undefended damage to the lowest threat Battleground" . siegeTest $ \pid -> do
     flipFirstQuest pid
