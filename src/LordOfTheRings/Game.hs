@@ -1453,6 +1453,7 @@ runGameMessage msg g = case msg of
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
     -- an objective's When Revealed, as Durin's Greaves attaching itself
     pushWhen (cdWhenRevealed (toCardDef card)) $ WhenRevealed (toTarget thisObjective)
+    push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]
     pure
       $ g
       & entitiesL
@@ -1801,6 +1802,7 @@ runGameMessage msg g = case msg of
         %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) thisLocation)
     _ -> do
       thisObjective <- newObjective card
+      push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]
       pure
         $ g
         & entitiesL

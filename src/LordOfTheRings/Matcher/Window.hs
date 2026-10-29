@@ -161,6 +161,10 @@ data WindowMatcher
     ThreatRaisedByDoomedWindow Timing PlayerId
   | -- | the player, or any player, drew any number of cards
     DrewCardsWindow Timing (Maybe PlayerId)
+  | -- | the card entered the staging area, as an objective claimed as it does
+    EntersStagingAreaWindow Timing Target
+  | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
+    MatchingEnemyAttacksWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -239,6 +243,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'
   (ThreatRaisedByDoomedWindow t pid, ThreatRaisedByDoomed pid') -> t == timing && pid == pid'
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
+  (EntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -256,4 +261,5 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (SurgeCardRevealedWindow {}, _) -> False
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
+  (MatchingEnemyAttacksWindow {}, _) -> False
   _ -> False
