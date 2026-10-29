@@ -120,6 +120,11 @@ import LordOfTheRings.Location.Cards.RuinedTower
 import LordOfTheRings.Location.Cards.TheCrossroads
 import LordOfTheRings.Location.Cards.IthilienRoads
 import LordOfTheRings.Location.Cards.TheDarkWoods
+import LordOfTheRings.Location.Cards.TheSecretChamber
+import LordOfTheRings.Location.Cards.RuinedPlaza
+import LordOfTheRings.Location.Cards.CollapsedTower
+import LordOfTheRings.Location.Cards.AncientFoundation
+import LordOfTheRings.Location.Cards.CityRemains
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -267,5 +272,10 @@ allLocations =
         , SomeLocationCard northernRoad
         , SomeLocationCard easternRoad
         , SomeLocationCard theDarkWoods
+        , SomeLocationCard theSecretChamber
+        , SomeLocationCard ruinedPlaza
+        , SomeLocationCard collapsedTower
+        , SomeLocationCard ancientFoundation
+        , SomeLocationCard cityRemains
         ]
     ]
