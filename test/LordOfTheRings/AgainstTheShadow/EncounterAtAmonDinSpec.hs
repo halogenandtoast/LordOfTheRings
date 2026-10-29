@@ -134,6 +134,15 @@ spec = describe "Encounter at Amon Dîn" do
     run $ CheckWindows [mkAfter RoundEnds]
     deadVillagerCount `shouldReturn` 1
 
+  it "has Orc Ravager surge when Lord Alcaron places its villager instead" . amonDinTest $ \pid -> do
+    setUp pid
+    secluded <- locationOf Locations.secludedFarmhouse
+    reveal [Enemies.orcRavager, Locations.gondorianHamlet]
+    chooseTarget pid secluded
+    resolveRevealed
+    deadVillagerCount `shouldReturn` 0
+    getsGame (length . (.entities.locations)) `shouldReturn` 3
+
   it "kills the villager when Lord Alcaron's controller declines" . amonDinTest $ \pid -> do
     setUp pid
     run $ CheckWindows [mkAfter RoundEnds]
