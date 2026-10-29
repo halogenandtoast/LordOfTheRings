@@ -55,6 +55,19 @@ spec = describe "Misty Mountains" do
     chooseTarget pid blade
     getsGame (map toTarget . toList . (.entities.attachments)) `shouldReturn` [plate]
 
+  it "has Black Uruks discard an encounter card attached to a questing character" . gameTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ CommitToQuest beravor
+    _ <- setEncounterDeck [Treacheries.watchfulEyes]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid beravor
+    eyes <- getsGame (map toTarget . toList . (.entities.treacheries))
+    reveal [Enemies.blackUruks]
+    asked <- isJust <$> getQuestion pid
+    when asked $ for_ eyes (chooseTarget pid)
+    getsGame (length . toList . (.entities.treacheries)) `shouldReturn` 0
+
   it "deals 2 more shadow cards with Black Uruks' shadow, only when undefended" . gameTest $ \pid -> do
     eid <- engagedWithShadow pid Enemies.blackUruks
     _ <- setEncounterDeck [Locations.kneesOfTheMountain, Locations.wargLair]
