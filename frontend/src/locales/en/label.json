@@ -479,6 +479,7 @@
   },
   "playAtNoCost": "Play this card at no cost?",
   "playIt": "Play it",
+  "putItIntoPlay": "Put it into play",
   "moveToBottomOfDeck": "Move it to the bottom of your deck",
   "putOnTopOfDeck": "Put a card back on top of the deck (the last one chosen ends on top)",
   "returnAllyToHand": "Return an ally you control to your hand",

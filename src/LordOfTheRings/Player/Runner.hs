@@ -182,12 +182,19 @@ instance RunMessage Player where
       for_ (headMay player.deck) \case
         top@(PlayerCard pc) -> do
           able <- canPlayAtNoCost top
+          -- an ally or attachment is put into play, not played: only an event is played
+          -- (ruling, Vilya)
+          let putIntoPlay = top.cardType `elem` [AllyType, AttachmentType]
+              resolve = case top.cardType of
+                AllyType -> [PutAllyIntoPlayUnder pid pc]
+                AttachmentType -> [PutAttachmentIntoPlay pid pc]
+                _ -> [PlayAtNoCost pid pc]
           push
             $ Ask pid
             $ QuestionLabel (ikey "label.playAtNoCost") (sourceTarget source) []
             $ SearchCards [top]
             $ ChooseOne
-            $ [Label (ikey "label.playIt") [RemoveFromDeck pid pc.id, PlayAtNoCost pid pc] | able]
+            $ [Label (ikey $ if putIntoPlay then "label.putItIntoPlay" else "label.playIt") (RemoveFromDeck pid pc.id : resolve) | able]
             <> [Label (ikey "label.moveToBottomOfDeck") [MoveToBottomOfDeck pid pc.id]]
         EncounterCard _ -> pure ()
       pure player

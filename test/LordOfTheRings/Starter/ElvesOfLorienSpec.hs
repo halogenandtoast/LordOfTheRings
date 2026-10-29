@@ -130,10 +130,35 @@ spec = describe "Elves of Lórien" do
       _ <- onTopOfDeck pid Allies.greenwoodArcher
       run $ BeginPhase PlanningPhase
       chooseAbilityOf pid vilya
-      chooseLabel "$label.playIt" pid
+      chooseLabel "$label.putItIntoPlay" pid
       passResponses pid
       alliesInPlay `shouldReturn` [toCardCode Allies.greenwoodArcher]
       isExhausted elrond `shouldReturn` True
+
+    it "puts an ally into play rather than playing it (ruling)" . elvesTest $ \pid -> do
+      run $ CreateEffect $ Effect GameSource GameTarget [OneAllyPerRound] UntilEndOfRound
+      elrond <- elrondInPlay pid
+      vilya <- putAttachmentOn pid Attachments.vilya elrond
+      _ <- onTopOfDeck pid Allies.greenwoodArcher
+      run $ BeginPhase PlanningPhase
+      chooseAbilityOf pid vilya
+      chooseLabel "$label.putItIntoPlay" pid
+      passResponses pid
+      alliesInPlay `shouldReturn` [toCardCode Allies.greenwoodArcher]
+      -- the ally was not played, so another may still be
+      getModifiers GameTarget >>= (`shouldSatisfy` notElem AllyPlayedThisRound)
+
+    it "puts an attachment into play on a host its player chooses" . elvesTest $ \pid -> do
+      elrond <- elrondInPlay pid
+      vilya <- putAttachmentOn pid Attachments.vilya elrond
+      _ <- onTopOfDeck pid Attachments.stewardOfGondor
+      run $ BeginPhase PlanningPhase
+      chooseAbilityOf pid vilya
+      chooseLabel "$label.putItIntoPlay" pid
+      celeborn <- hero celebornCode
+      chooseTarget pid celeborn
+      getsGame (map (.placement) . filter ((== toCardCode Attachments.stewardOfGondor) . toCardCode) . toList . (.entities.attachments))
+        `shouldReturn` [AttachedTo celeborn]
 
     it "moves the card to the bottom of the deck instead" . elvesTest $ \pid -> do
       elrond <- elrondInPlay pid
