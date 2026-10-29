@@ -1330,12 +1330,18 @@ runGameMessage msg g = case msg of
             let (left, onLocations) = mapAccumL (\m (lid, _, room) -> let k = min m room in (m - k, place lid k)) n rooms
                 overflow = if all (\(_, remaining, room) -> room == remaining) rooms then left else 0
             -- what would go to the quest may be damage to an enemy instead, as Ride Them Down reads
-            instead <- filter (inPlay g) . (\ms -> [t | ProgressAsDamageTo t <- ms]) <$> getModifiers GameTarget
+            gameMods <- getModifiers GameTarget
+            let instead = filter (inPlay g) [t | ProgressAsDamageTo t <- gameMods]
+                canceledBy q = find ((== Just q) . sourceTarget) [s | QuestProgressCanceledBy s <- gameMods]
             pushAll
               $ concat onLocations
               <> case instead of
                 t : _ -> [DealDamage GameSource t overflow | overflow > 0]
-                [] -> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
+                [] ->
+                  [ maybe (PlaceTokens GameSource q Progress overflow) (`ProgressCanceled` overflow) (canceledBy q)
+                  | q <- quests
+                  , overflow > 0
+                  ]
         pure g
   PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do

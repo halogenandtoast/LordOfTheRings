@@ -329,6 +329,10 @@ data ModifierType
   | -- | on an enemy: whatever would have it engage another player, it engages this one
     -- instead, as Chief Turch engages the first player
     EngagesOnly PlayerId
+  | -- | on the game: progress questing successfully would place on the quest card that
+    -- gives this is canceled instead, as Searching for Mugash reads; the card is told how
+    -- much by 'ProgressCanceled'
+    QuestProgressCanceledBy Source
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
