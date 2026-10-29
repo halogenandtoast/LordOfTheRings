@@ -1664,7 +1664,7 @@ runGameMessage msg g = case msg of
     case cdCardType def of
       EnemyType -> do
         enemy <- newEnemy card
-        pushAll . (<> [WhileInPlay (toTarget enemy) (AmbushEngagementCheck (toId enemy) : surge)])
+        pushAll . (<> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
           =<< revealing (toTarget enemy)
         pure
           $ g
@@ -1673,7 +1673,7 @@ runGameMessage msg g = case msg of
           %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
       LocationType -> do
         location <- newLocation card
-        pushAll . (<> surge) =<< revealing (toTarget location)
+        pushAll . (<> [ResolveSurge (toTarget location) card]) =<< revealing (toTarget location)
         pure
           $ g
           & entitiesL
@@ -1720,6 +1720,10 @@ runGameMessage msg g = case msg of
         []
         lead
         [targetLabel t [WhenRevealed t]]
+    pure g
+  ResolveSurge t card -> do
+    surges <- hasKeyword Surge t (toCardDef card)
+    pushWhen surges RevealEncounterCard
     pure g
   FinishRevelation tid -> do
     -- a treachery that did not attach itself to something is discarded once it resolves
