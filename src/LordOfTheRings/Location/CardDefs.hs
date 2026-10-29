@@ -130,6 +130,8 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , edgeOfFangorn
+      , heartOfFangorn
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +937,17 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+edgeOfFangorn :: CardDef
+edgeOfFangorn =
+  (location "07032" "Edge of Fangorn" IntoFangorn 1 2 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdVictoryPoints = Just 1
+    }
+
+heartOfFangorn :: CardDef
+heartOfFangorn =
+  (location "07036" "Heart of Fangorn" IntoFangorn 3 3 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }

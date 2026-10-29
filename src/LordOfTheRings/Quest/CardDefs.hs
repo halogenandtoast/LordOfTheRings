@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -110,6 +110,9 @@ allQuestCards =
       , retakeTheCity
       , theAmbush
       , captured
+      , intoTheWoods
+      , escapeFromFangorn
+      , theAngryForest
       ]
 
 theDrippingWalls :: CardDef
@@ -380,3 +383,13 @@ theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
 
 captured :: CardDef
 captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}
+
+intoTheWoods :: CardDef
+intoTheWoods = (quest "07065" "Into the Woods" IntoFangorn 1 9) {cdKeywords = setFromList [Time 4]}
+
+escapeFromFangorn :: CardDef
+escapeFromFangorn = (quest "07066" "Escape from Fangorn" IntoFangorn 2 12) {cdKeywords = setFromList [Time 4]}
+
+-- | Its quest points are "-": it advances back to stage 2 on 6 progress with Mugash on a hero.
+theAngryForest :: CardDef
+theAngryForest = (quest "07067" "The Angry Forest" IntoFangorn 3 0) {cdKeywords = setFromList [Time 3]}

@@ -116,6 +116,7 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , theForestsMalice
       ]
 
 deepDeepDark :: CardDef
@@ -713,3 +714,6 @@ conflictAtTheCrossroads =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+theForestsMalice :: CardDef
+theForestsMalice = (treachery "07037" "The Forest's Malice" IntoFangorn 4) {cdEasyModeQuantity = Just 1}

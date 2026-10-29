@@ -127,6 +127,9 @@ allEnemyCards =
       , orcAmbusher
       , brutalUruk
       , evilCrow
+      , darkHeartedHuorn
+      , angryHuorn
+      , deadlyHuorn
       ]
 
 namelessThing :: CardDef
@@ -982,4 +985,28 @@ evilCrow =
   (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+darkHeartedHuorn :: CardDef
+darkHeartedHuorn =
+  (enemy "07033" "Dark-Hearted Huorn" IntoFangorn 4 1 2 4 4 5)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 3
+    }
+
+angryHuorn :: CardDef
+angryHuorn =
+  (enemy "07034" "Angry Huorn" IntoFangorn 3 38 3 5 4 8)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 2
+    }
+
+deadlyHuorn :: CardDef
+deadlyHuorn =
+  (enemy "07035" "Deadly Huorn" IntoFangorn 3 34 2 3 4 6)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdEasyModeQuantity = Just 2
     }
