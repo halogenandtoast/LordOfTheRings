@@ -227,6 +227,13 @@ spec = describe "The Drúadan Forest" do
     victoryDisplay `shouldReturn` [toCardCode Enemies.druBuriDru]
     getsGame (.outcome) `shouldReturn` Just Won
 
+  it "may be won once Drû-buri-Drû is destroyed by damage, as he is no longer in play" . forestTest $ \pid -> do
+    quest <- passageOut pid
+    dru <- enemyOf Enemies.druBuriDru
+    run $ DealDamage GameSource (toTarget dru) 6
+    run $ PlaceTokens GameSource quest Progress 14
+    getsGame (.outcome) `shouldReturn` Just Won
+
   it "raises each character's willpower and defense while Drû-buri-Drû is in the victory display" . forestTest $ \pid -> do
     _ <- passageOut pid
     eowyn <- toTarget <$> heroWithCode "01007"
