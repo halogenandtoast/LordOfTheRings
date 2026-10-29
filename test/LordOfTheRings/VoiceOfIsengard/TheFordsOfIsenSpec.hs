@@ -110,6 +110,13 @@ spec = describe "The Fords of Isen" do
     run $ Discard (toTarget grima)
     outcome `shouldReturn` Just Lost
 
+  it "is lost if Gríma the ally leaves play other than by discard" . fordsTest $ \pid -> do
+    setup pid
+    run . Discard . toTarget =<< locationOf Locations.theIslet
+    grima <- fromJustNote "no Gríma" <$> grimaAlly
+    run $ ShuffleIntoOwnersDeck (toTarget grima)
+    outcome `shouldReturn` Just Lost
+
   it "bars resources from card effects while Fords of Isen is staged, and fills hands to 5 as it becomes active" . fordsTest $ \pid -> do
     fords <- staged Locations.fordsOfIsen
     hero <- getHeroWithCode "01012"
