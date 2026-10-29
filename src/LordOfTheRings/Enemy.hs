@@ -121,6 +121,10 @@ import LordOfTheRings.Enemy.Cards.BlackNumenorean
 import LordOfTheRings.Enemy.Cards.OrcAmbusher
 import LordOfTheRings.Enemy.Cards.BrutalUruk
 import LordOfTheRings.Enemy.Cards.EvilCrow
+import LordOfTheRings.Enemy.Cards.BoarsGuardian
+import LordOfTheRings.Enemy.Cards.WolfsGuardian
+import LordOfTheRings.Enemy.Cards.RavensGuardian
+import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -266,5 +270,9 @@ allEnemys =
         , SomeEnemyCard orcAmbusher
         , SomeEnemyCard brutalUruk
         , SomeEnemyCard evilCrow
+        , SomeEnemyCard boarsGuardian
+        , SomeEnemyCard wolfsGuardian
+        , SomeEnemyCard ravensGuardian
+        , SomeEnemyCard spiritOfTheWild
         ]
     ]
