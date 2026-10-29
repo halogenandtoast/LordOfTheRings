@@ -239,6 +239,12 @@ runGame msg g = case msg of
     if active && notNull firsts
       then g <$ (push =<< progressFirst source n firsts \k -> [PlaceTokens source target Progress k | k > 0])
       else runGame'' msg g
+  -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
+  -- it becomes the active location, so it is still in the staging area as it is paid (as
+  -- Hills of Dunland's draws are, FAQ 3.123)
+  TravelTo _ -> do
+    push $ DoStep 1 msg
+    runGame'' msg g
   -- an enemy that engages only one player, as Chief Turch the first player, engages him
   -- whoever it would have engaged
   EngageEnemy pid eid -> do
@@ -596,7 +602,7 @@ runGameMessage msg g = case msg of
             <> [Label (ikey "label.doNotTravel") []]
         else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
     pure g
-  TravelTo lid -> do
+  DoStep 1 (TravelTo lid) -> do
     pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
     pure g
   BeginPhase EncounterPhase -> do
