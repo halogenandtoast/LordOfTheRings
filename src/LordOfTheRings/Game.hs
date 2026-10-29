@@ -1104,7 +1104,13 @@ runGameMessage msg g = case msg of
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
     pure g
   DealDamageDivided source pid n assigned -> do
-    characters <- charactersControlledBy pid
+    -- no more is assigned to a character than its remaining hit points, as Frodo's (FAQ):
+    -- damage that finds none left over is not assigned
+    controlled <- charactersControlledBy pid
+    characters <- flip filterM controlled \c -> do
+      hp <- getHitPoints c
+      damage <- getDamage c
+      pure $ damage + length (filter (== c) assigned) < hp
     if n > 0 && notNull characters
       then
         push
