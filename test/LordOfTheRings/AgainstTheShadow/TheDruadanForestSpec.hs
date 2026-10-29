@@ -163,6 +163,17 @@ spec = describe "The Drúadan Forest" do
     reveal [Treacheries.starsInSky]
     heroCommitted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False
 
+  it "resolves Stars in Sky's prowl before its When Revealed effect" . forestTest $ \pid -> do
+    eowyn <- giveResources "01007" 2
+    run $ CommitToQuest (toTarget eowyn)
+    reveal [Treacheries.starsInSky]
+    -- prowl 2 takes both of Éowyn's resources, so she has none to pay with after
+    chooseTarget pid eowyn
+    chooseTarget pid eowyn
+    getHeroResources eowyn `shouldReturn` 0
+    resolveRevealed
+    heroCommitted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False
+
   it "discards the attachments of a player who cannot pay for them with Leaves on Tree" . forestTest $ \pid -> do
     beravor <- heroWithCode "01012"
     _ <- putAttachmentOn pid Attachments.citadelPlate (toTarget beravor)

@@ -1810,14 +1810,15 @@ runGameMessage msg g = case msg of
             , n > 0
             , p <- players
             ]
-            -- ponytail: prowl's resources are spent, so a hero barred from spending keeps
-            -- its own; no prowl encounter set shares a deck with such a card
-            <> [SpendGroupResources lead Neutral n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
+        -- ponytail: prowl's resources are spent, so a hero barred from spending keeps
+        -- its own; no prowl encounter set shares a deck with such a card
+        prowl = [SpendGroupResources lead Neutral n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
+        -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
             $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType]]
-            <> [CheckWindows [mkWhen $ Revealed t], whenRevealed t, WhileInPlay t doomed]
+            <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       EnemyType -> do
