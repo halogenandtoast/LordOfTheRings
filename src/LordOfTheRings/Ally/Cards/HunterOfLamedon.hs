@@ -20,8 +20,7 @@ instance RunMessage HunterOfLamedon where
   runMessage msg s@(HunterOfLamedon a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       top <- headMay . (.deck) <$> getPlayer pid
-      -- ponytail: adding the top card to hand is a draw, so whatever stops drawing stops
-      -- it too
-      for_ top \c -> if cardMatches (CardWithTrait Outlands) c then drawCards pid 1 else discardTopOfDeck pid 1
+      -- added to hand, not drawn, so what stops drawing does not stop it
+      for_ top \c -> if cardMatches (CardWithTrait Outlands) c then takeFromDeck pid c else discardTopOfDeck pid 1
       pure s
     _ -> HunterOfLamedon <$> runMessage msg a

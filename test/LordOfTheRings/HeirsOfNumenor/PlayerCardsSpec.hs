@@ -2,7 +2,9 @@ module LordOfTheRings.HeirsOfNumenor.PlayerCardsSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
+import LordOfTheRings.Modifier (ModifierType (CannotDrawCards))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getDefense)
@@ -129,6 +131,15 @@ spec = describe "Heirs of Numenor player cards" do
       top <- PlayerCard <$> genPlayerCard Allies.hunterOfLamedon (Just pid)
       g <- getGame
       putGame $ g & playersL . ix pid . deckL %~ (top :)
+      _ <- playWith pid beravorCode 2 Allies.hunterOfLamedon
+      chooseAbility pid
+      map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [top.id]
+
+    it "adds the card to hand while drawing is barred, as adding is not drawing" . honTest $ \pid -> do
+      top <- PlayerCard <$> genPlayerCard Allies.hunterOfLamedon (Just pid)
+      g <- getGame
+      putGame $ g & playersL . ix pid . deckL %~ (top :)
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDrawCards] UntilEndOfRound
       _ <- playWith pid beravorCode 2 Allies.hunterOfLamedon
       chooseAbility pid
       map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [top.id]
