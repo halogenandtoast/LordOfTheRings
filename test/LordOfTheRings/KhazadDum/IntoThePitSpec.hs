@@ -61,6 +61,13 @@ spec = describe "Into the Pit" do
     run $ PlaceTokens GameSource (toTarget gate) Progress 7
     placementOf Locations.firstHall `shouldReturn` Just StagingArea
 
+  it "leaves East-gate active as Dreadful Gap becomes active too, East-gate being immune" . pitTest $ \_ -> do
+    _ <- putQuestStage Quests.enteringTheMines
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.eastGate
+    reveal [Locations.dreadfulGap]
+    placementOf Locations.eastGate `shouldReturn` Just ActiveLocation
+    placementOf Locations.dreadfulGap `shouldReturn` Just ActiveLocation
+
   it "removes the progress on the quest with Cave In, and surges when there is none" . pitTest $ \_ -> do
     quest <- putQuestStage Quests.enteringTheMines
     run $ PlaceTokens GameSource quest Progress 3

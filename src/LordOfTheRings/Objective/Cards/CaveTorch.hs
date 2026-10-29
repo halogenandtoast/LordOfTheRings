@@ -19,12 +19,14 @@ caveTorch = objective CaveTorch Cards.caveTorch
 -- Action: Exhaust Cave Torch to place up to 3 progress on a Dark location.
 -- Forced: After Cave Torch exhausts, discard the top card of the encounter deck. If that
 -- card is an enemy, add it to the staging area.
+-- The exhaust is paid as the Action resolves, after its progress is placed: its Forced
+-- effect follows the progress, and a Twisting Passage's locate test before it (ruling
+-- 3.097).
 instance HasAbilities CaveTorch where
   getAbilities (CaveTorch a) = case a.placement of
     AttachedTo _ ->
-      [ restricted a 1 (exists $ LocationWithTrait Dark) $ ActionAbility (exhaustCost a)
-      , mkAbility a 2 $ forced $ ExhaustedWindow After (toTarget a)
-      ]
+      [restricted a 1 (exists $ LocationWithTrait Dark) $ ActionAbility Free | not a.exhausted]
+        <> [mkAbility a 2 $ forced $ ExhaustedWindow After (toTarget a)]
     _ -> []
 
 instance RunMessage CaveTorch where
@@ -37,8 +39,9 @@ instance RunMessage CaveTorch where
         targets dark \l -> do
           -- no more than the location has room for
           left <- (-) <$> getLocationQuestPoints l <*> ((.progress) <$> getLocation l)
-          chooseAmountM pid "caveTorch.progress" attrs 0 (max 0 $ min 3 left) \n ->
+          chooseAmountM pid "caveTorch.progress" attrs 0 (max 0 $ min 3 left) \n -> do
             when (n > 0) $ placeProgress attrs l n
+            exhaust attrs
       pure o
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       discardTopOfEncounterDeck attrs 1

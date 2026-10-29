@@ -21,9 +21,10 @@ instance RunMessage OrcRaiders where
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
       for_ [pid | Window _ (EnemyEngaged _ pid) <- ws] \pid -> do
         attachments <- getAttachmentsControlledBy pid
-        if length attachments <= 2
+        -- "if able": with fewer than 2 the effect is ignored (ruling 3.101)
+        if length attachments == 2
           then for_ attachments discard
-          else chooseOneM pid do
+          else when (length attachments > 2) $ chooseOneM pid do
             questionLabeled "chooseCardToDiscard"
             causedBy attrs
             targets attachments \chosen -> do

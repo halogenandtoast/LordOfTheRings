@@ -412,7 +412,8 @@ runGameMessage msg g = case msg of
       -- the level may move, as Double Dealings lowers it
       level <- (eliminationThreat +) . sum . mapMaybe (\case EliminationThreatModifier n -> Just n; _ -> Nothing) <$> getModifiers (PlayerTarget player.id)
       pure
-        $ guard (not player.eliminated && (player.threat >= level || null heroes))
+        -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
+        $ guard (not player.eliminated && (player.threat >= level || (null heroes && not (any ((== HeroType) . (.cardType)) player.deck))))
         $> player.id
     pushAll $ map EliminatePlayer eliminated
     pure g
@@ -1247,7 +1248,11 @@ runGameMessage msg g = case msg of
       | willpower > threat ->
           -- what questing successfully triggers resolves before the progress is placed
           -- (FAQ 1.24), as The Hunt Begins' Forced effect
-          pushAll [CheckWindows [mkAfter QuestedSuccessfully], PlaceProgressOnQuest (willpower - threat)]
+          pushAll
+            [ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
+            , CheckWindows [mkAfter QuestedSuccessfully]
+            , PlaceProgressOnQuest (willpower - threat)
+            ]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'

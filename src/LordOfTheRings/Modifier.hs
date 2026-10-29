@@ -332,6 +332,10 @@ data ModifierType
   | -- | on the game: each location in the staging area takes the modifier, one that
     -- enters it later too, for as long as the effect lasts, as Treacherous Fog reads
     EachLocationInStagingArea ModifierType
+  | -- | on the game: a hero committed to the quest this round, as The Rear Guard reads
+    HeroCommittedThisRound
+  | -- | on the game: the players quested successfully this phase, as Bofur reads
+    QuestedSuccessfullyThisPhase
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

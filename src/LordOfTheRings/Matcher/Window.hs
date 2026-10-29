@@ -2,7 +2,7 @@ module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) wher
 
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, cardMatches)
-import LordOfTheRings.Modifier (ModifierType)
+import LordOfTheRings.Modifier (Modifier)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -44,8 +44,9 @@ data WindowMatcher
     EnemyWithTraitRevealedWindow Timing Trait
   | -- | any enemy engaged with any player, as Knees of the Mountain reads
     AnyEnemyEngagedWindow Timing
-  | -- | an enemy with the modifier engaged a player, as Goblin Gate's ambusher does
-    EnemyWithModifierEngagedWindow Timing ModifierType
+  | -- | an enemy with the modifier, from that source, engaged a player, as Goblin Gate's
+    -- ambusher does
+    EnemyWithModifierEngagedWindow Timing Modifier
   | TreacheryRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId

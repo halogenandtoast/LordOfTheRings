@@ -19,7 +19,9 @@ instance RunMessage BlackUruks where
       lead <- getLead
       heroes <- map toTarget <$> select CommittedHero
       allies <- map toTarget <$> select CommittedAlly
-      chooseAndDiscard attrs lead . concat =<< traverse getAttachmentsOn (heroes <> allies)
+      -- encounter cards attached as conditions too, as no "player card" or "you control"
+      -- narrows it (ruling 3.154)
+      chooseAndDiscard attrs lead . concat =<< traverse getAllAttachmentsOn (heroes <> allies)
       pure e
     ResolveShadowEffect cid eid pid [] | cid == attrs.cardId -> do
       dealShadowCardsDuringAttack eid pid [] 2

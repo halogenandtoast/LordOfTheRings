@@ -1,5 +1,6 @@
 module LordOfTheRings.Quest.Cards.TheRearGuard (theRearGuard) where
 
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -20,10 +21,9 @@ instance RunMessage TheRearGuard where
     Flip (isTarget attrs -> True) -> do
       checkStage attrs.id
       TheRearGuard <$> runMessage msg attrs
-    -- read as the phase ends, before the heroes leave the quest
-    -- ponytail: a hero removed from the quest earlier in the phase is not counted
+    -- the scenario marks a hero's committing, as one may have left the quest since
     EndPhase QuestPhase -> do
-      committed <- selectAny CommittedHero
+      committed <- elem HeroCommittedThisRound <$> getModifiers GameTarget
       when committed $ placeProgress attrs attrs 4
       TheRearGuard <$> runMessage msg attrs
     PlaceTokens _ (EnemyTarget _) Damage _ -> do

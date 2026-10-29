@@ -1,5 +1,6 @@
 module LordOfTheRings.Location.Cards.DreadfulGap (dreadfulGap) where
 
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
@@ -22,7 +23,9 @@ instance HasModifiersFor DreadfulGap where
 instance RunMessage DreadfulGap where
   runMessage msg l@(DreadfulGap a) = case msg of
     WhenRevealed (isTarget a -> True) -> do
-      active <- select IsActiveLocation
+      -- one immune to card effects, as East-gate, stays: there are two active locations
+      -- (ruling 3.128)
+      active <- filterM (fmap (notElem ImmuneToCardEffects) . getModifiers) =<< select IsActiveLocation
       for_ active \other -> placeLocation other StagingArea
       travelWithoutCost a.id
       pure l

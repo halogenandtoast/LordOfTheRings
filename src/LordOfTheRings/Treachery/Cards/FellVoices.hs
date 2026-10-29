@@ -1,5 +1,6 @@
 module LordOfTheRings.Treachery.Cards.FellVoices (fellVoices) where
 
+import LordOfTheRings.Card (Card (EncounterCard))
 import LordOfTheRings.Card.CardType (CardType (TreacheryType))
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Trait (Trait (Snow))
@@ -21,8 +22,15 @@ instance RunMessage FellVoices where
     WhenRevealed (isTarget attrs -> True) -> do
       pile <- getsGame ((.encounterDiscard) . toAttrs . (.scenario))
       let snow = take 2 $ filter (cardMatches $ CardWithTrait Snow) pile
-      -- the topmost goes back last, to stay on top
-      for_ (reverse snow) moveToTopOfEncounterDeck
+      -- no order is given, so the first player chooses the one left on top (ruling 3.038)
+      lead <- getLead
+      chooseOrRunOneM lead do
+        questionLabeled "fellVoices.top"
+        causedBy attrs
+        showing (map EncounterCard snow)
+        targets snow \top -> do
+          for_ (filter (/= top) snow) moveToTopOfEncounterDeck
+          moveToTopOfEncounterDeck top
       when (length (filter (cardMatches $ CardWithType TreacheryType) snow) < 2) revealEncounterCard
       pure t
     _ -> FellVoices <$> runMessage msg attrs

@@ -461,6 +461,11 @@ data Message
     them: from a player's hand, deck or discard pile, or a location in play
     -}
     PlaceUnderneath Target [Card]
+  | -- | the card, already taken from wherever it was, goes on top of the player's deck, as
+    -- Miruvor goes on its controller's deck rather than its owner's
+    PutOnTopOfDeck PlayerId Card
+  | -- | the card leaves the victory display, as Caradhras does to become the active location
+    RemoveFromVictoryDisplay Card
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

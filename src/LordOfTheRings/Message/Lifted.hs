@@ -531,6 +531,9 @@ returnToHand = push . ReturnToHand . toTarget
 addToVictoryDisplay :: (ReverseQueue m, Targetable target) => target -> m ()
 addToVictoryDisplay = push . AddToVictoryDisplay . toTarget
 
+removeFromVictoryDisplay :: ReverseQueue m => Card -> m ()
+removeFromVictoryDisplay = push . RemoveFromVictoryDisplay
+
 destroy :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()
 destroy source = push . Destroy (toSource source) . toTarget
 
