@@ -479,15 +479,17 @@ selectCharacters heroes allies = (<>) <$> (map toTarget <$> select heroes) <*> (
 charactersControlledBy :: HasGame m => PlayerId -> m [Target]
 charactersControlledBy pid = selectCharacters (HeroControlledBy $ PlayerWithId pid) (AllyControlledBy $ PlayerWithId pid)
 
+-- | Every card attached to the host: player attachments, and encounter cards attached as
+-- conditions or claimed objectives too, as "discard 1 attachment" may take them (Driven by
+-- Shadow, Black Uruks rulings).
 getAttachmentsOn :: HasGame m => Target -> m [Target]
-getAttachmentsOn host =
-  getsGame
-    ( map toTarget
-        . filter ((== AttachedTo host) . (.placement))
-        . toList
-        . entitiesAttachments
-        . gameEntities
-    )
+getAttachmentsOn host = getsGame \g ->
+  let es = gameEntities g
+      on' :: HasField "placement" x Placement => x -> Bool
+      on' x = x.placement == AttachedTo host
+   in [toTarget a | a <- toList (entitiesAttachments es), on' a]
+        <> [toTarget t | t <- toList (entitiesTreacheries es), on' t]
+        <> [toTarget o | o <- toList (entitiesObjectives es), on' o]
 
 {- | The characters the enemy's attack destroyed, as "if this attack destroys a character"
 reads: while the attack resolves, and once it is over until the enemy attacks again. Only
