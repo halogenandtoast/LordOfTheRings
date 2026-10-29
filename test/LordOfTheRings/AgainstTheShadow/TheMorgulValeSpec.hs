@@ -76,6 +76,15 @@ spec = describe "The Morgul Vale" do
     map toCardCode (player.deck <> player.hand)
       `shouldSatisfy` notElem (toCardCode Allies.faramir)
 
+  it "removes a Faramir hero from the game at setup, his threat staying" . gameTestIn theMorgulVale testDeck {heroes = ["06081", "01007", "01002"]} $ \pid -> do
+    flipFirstQuest pid
+    getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem "06081")
+    player <- getPlayer pid
+    map toCardCode player.discard `shouldSatisfy` notElem "06081"
+    player.eliminated `shouldBe` False
+    -- Faramir 11, Éowyn 9, Théodred 8
+    player.threat `shouldBe` 28
+
   it "is lost once To the Tower has 10 progress" . valeTest $ \_ -> do
     oid <- tower
     run $ PlaceTokens GameSource (toTarget oid) Progress 9
