@@ -195,6 +195,62 @@ spec = describe "Against the Shadow player cards" do
       -- Forest Spider's 2 attack against Black Forest Bats' 0 defense destroys them
       enemyPlacement' other `shouldReturn` Unplaced
 
+    it "reveals the shadow card chosen, the others resolving, and reckons the damage at the damage step" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
+      attacker <- stage Enemies.forestSpider
+      other <- stage Enemies.forestSpider
+      run $ EngageEnemy pid attacker
+      chooseLabel "$label.pass" pid
+      run $ EngageEnemy pid other
+      chooseLabel "$label.pass" pid
+      card <- putCardIntoHand pid Events.smallTarget
+      p <- hero pippin
+      run $ PlaceTokens GameSource p Resource 1
+      [road, _] <- setEncounterDeck [Locations.oldForestRoad, Enemies.easternCrows]
+      run $ DealShadowCard attacker
+      run $ DealShadowCard attacker
+      run $ DeclareDefenders pid attacker []
+      chooseTarget pid p
+      chooseTarget pid (CardIdTarget card.id)
+      chooseTarget pid other
+      chooseTarget pid (CardIdTarget road.id)
+      passActions pid
+      getCharacterDamage p `shouldReturn` 0
+      -- Forest Spider's 3 attack (+1 for engaging), +1 from Eastern Crows' shadow, against
+      -- the other's 1 defense
+      getCharacterDamage (EnemyTarget other) `shouldReturn` 3
+
+    it "resolves the attack as normal against an enemy dealt no shadow card" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
+      attacker <- stage Enemies.forestSpider
+      other <- stage Enemies.blackForestBats
+      run $ EngageEnemy pid attacker
+      chooseLabel "$label.pass" pid
+      run $ EngageEnemy pid other
+      chooseLabel "$label.pass" pid
+      card <- putCardIntoHand pid Events.smallTarget
+      p <- hero pippin
+      run $ PlaceTokens GameSource p Resource 1
+      _ <- setEncounterDeck []
+      run $ DeclareDefenders pid attacker []
+      chooseTarget pid p
+      chooseTarget pid (CardIdTarget card.id)
+      chooseTarget pid other
+      passActions pid
+      enemyPlacement' other `shouldReturn` EngagedWith pid
+
+    it "is offered against an attack from the staging area with one enemy engaged" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
+      attacker <- stage Enemies.forestSpider
+      other <- stage Enemies.blackForestBats
+      run $ EngageEnemy pid other
+      chooseLabel "$label.pass" pid
+      card <- putCardIntoHand pid Events.smallTarget
+      p <- hero pippin
+      run $ PlaceTokens GameSource p Resource 1
+      _ <- setEncounterDeck []
+      run $ DeclareDefenders pid attacker []
+      chooseTarget pid p
+      offered <- maybe False (any \case TargetLabel t _ -> t == CardIdTarget card.id; _ -> False) . fmap questionChoices <$> getQuestion pid
+      offered `shouldBe` True
+
   describe "Well-Equipped" do
     it "attaches a discarded attachment to a Dwarf" . withHeroes [gimli, legolas, theoden] $ \pid -> do
       [_, axe] <- putOnDeck pid [Events.bladeMastery, Attachments.dwarvenAxe]

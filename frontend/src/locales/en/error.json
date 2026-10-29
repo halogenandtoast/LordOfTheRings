@@ -1,5 +1,6 @@
 {
   "sharedHeroes": "Heroes are unique, and more than one deck brings {heroes}.",
+  "barredHeroes": "This scenario's rules keep {heroes} out of play.",
   "notWaitingForPlayers": "This game is not waiting for players.",
   "alreadySeated": "You already have a seat at this game.",
   "noFreeSeat": "Every seat at this game is taken.",

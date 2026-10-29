@@ -817,7 +817,8 @@
     "treachery": "Treachery"
   },
   "smallTarget": {
-    "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against"
+    "chooseEnemy": "Choose another enemy engaged with you for the attack to be resolved against",
+    "chooseShadow": "Choose the attacking enemy's shadow card to reveal"
   },
   "menOfTheWest": {
     "choose": "Choose an Outlands ally to return to your hand, for 1 leadership resource",
@@ -905,8 +906,7 @@
     "revealFromDiscard": "Choose an enemy or objective in the encounter discard pile to reveal"
   },
   "theFordsOfIsen": {
-    "searchDunland": "Choose a Dunland enemy to reveal and add to the staging area",
-    "assignDamage": "Assign 1 of {n} damage to a character you control"
+    "searchDunland": "Choose a Dunland enemy to reveal and add to the staging area"
   },
   "downFromTheHills": {
     "choose": "Down from the Hills: choose one",
@@ -942,7 +942,6 @@
   },
   "theAntleredCrown": {
     "chooseRavenEnemy": "Choose an enemy from the Raven deck to add to the staging area",
-    "assignDamage": "Assign {n} damage among characters you control: choose one to deal 1 to",
     "removeTimeCounter": "Remove {n} time counters from locations in play: choose one to remove 1 from"
   },
   "ravenSkirmisher": {

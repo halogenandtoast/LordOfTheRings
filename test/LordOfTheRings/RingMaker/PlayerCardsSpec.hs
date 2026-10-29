@@ -246,14 +246,15 @@ spec = describe "The Ring-maker cycle player cards" do
         _ -> error "not a hero"
 
   describe "Defender of the West" do
-    it "gives the first player control of the ally, who may give it undefended damage" . twoPlayerTest testDeck $ \one two -> do
+    it "gives the first player control of the ally, and its player may give it undefended damage" . twoPlayerTest testDeck $ \one two -> do
       henamarth <- putAllyIntoPlay two Allies.henamarthRiversong
       defender <- putAttachmentOn two Attachments.defenderOfTheWest henamarth
       case defender of
         AttachmentTarget aid -> run $ AttachCard aid henamarth
         _ -> error "not an attachment"
       allyController henamarth `shouldReturn` Just (InPlayArea one)
-      getModifiers (PlayerTarget one) >>= (`shouldSatisfy` elem (UndefendedDamageMayGoTo henamarth))
+      getModifiers (PlayerTarget two) >>= (`shouldSatisfy` elem (UndefendedDamageMayGoTo henamarth))
+      getModifiers (PlayerTarget one) >>= (`shouldSatisfy` notElem (UndefendedDamageMayGoTo henamarth))
 
   describe "The Fall of Gil-Galad" do
     it "goes to the victory display as its hero is destroyed, reducing threat by its threat cost" . gameTest $ \pid -> do
@@ -296,6 +297,25 @@ spec = describe "The Ring-maker cycle player cards" do
       locationProgress `shouldReturn` [1]
       run RevealEncounterCard
       sum <$> locationProgress `shouldReturn` 1
+
+    it "explores Tharbad Hideout as it is revealed, so its surge does not resolve (FAQ 3.188)" . idraenTest $ \pid -> do
+      idraen <- hero idraenCode
+      _ <- putAttachmentOn pid Attachments.wardenOfArnor idraen
+      run $ CommitToQuest idraen
+      _ <- setEncounterDeck [Locations.tharbadHideout, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      locationProgress `shouldReturn` []
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "places its progress on Streets of Tharbad before it reaches the staging area (FAQ 3.188)" . idraenTest $ \pid -> do
+      idraen <- hero idraenCode
+      _ <- putAttachmentOn pid Attachments.wardenOfArnor idraen
+      run $ CommitToQuest idraen
+      _ <- setEncounterDeck [Locations.streetsOfTharbad]
+      run RevealEncounterCard
+      resolveRevealed
+      locationProgress `shouldReturn` []
 
   describe "Gwaihir" do
     it "puts an Eagle from the discard pile into play, back to hand at the end of the round" . gameTest $ \pid -> do

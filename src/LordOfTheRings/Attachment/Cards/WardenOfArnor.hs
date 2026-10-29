@@ -14,10 +14,11 @@ wardenOfArnor = attachment WardenOfArnor Cards.wardenOfArnor & attachTo (AttachT
 
 -- | While attached character is committed to the quest, place 1 progress on the first
 -- location revealed by the encounter deck each round. That is the first revealed each
--- round, its hero committed or not.
+-- round, its hero committed or not. As Thalin's, it resolves as the location is revealed,
+-- before its When Revealed effects and keywords (FAQ 3.188).
 instance HasAbilities WardenOfArnor where
   getAbilities (WardenOfArnor a) =
-    [ limited (GroupLimit PerRound 1) $ mkAbility a 1 $ silent $ LocationRevealedWindow After
+    [ limited (GroupLimit PerRound 1) $ mkAbility a 1 $ silent $ LocationRevealedWindow When
     | AttachedTo _ <- [a.placement]
     ]
 

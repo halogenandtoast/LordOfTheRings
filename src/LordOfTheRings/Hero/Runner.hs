@@ -9,7 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotReady, CollectsAdditionalResources, DoesNotExhaustToAttack, SpentResourcesThisRound))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotGainResourcesFromPlayerCardEffects, CannotReady, CollectsAdditionalResources, DoesNotExhaustToAttack, SpentResourcesThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -31,7 +31,8 @@ instance RunMessage HeroAttrs where
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
     -- the resource phase's resources come from the game, not a card effect
     PlaceTokens source (isTarget attrs -> True) Resource n | source /= GameSource -> do
-      barred <- elem CannotGainResourcesFromCardEffects <$> getModifiers attrs
+      mods <- getModifiers attrs
+      let barred = CannotGainResourcesFromCardEffects `elem` mods || (isPlayerCardSource source && CannotGainResourcesFromPlayerCardEffects `elem` mods)
       pure $ if barred then attrs else attrs & tokensL %~ addTokens Resource n
     Exhaust (isTarget attrs -> True) -> do
       blocked <- elem CannotExhaust <$> getModifiers attrs

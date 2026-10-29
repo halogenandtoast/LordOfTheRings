@@ -10,7 +10,10 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
 
-data CardCost = StaticCost Int | DynamicCost
+-- | A printed X is 'DynamicCost' when the player chooses it as the card is paid for, or
+-- 'XCost' when the card's own text sets it, as The White Council's number of players: it
+-- is paid as 0 raised by the card's modifiers. Out of play, either X is 0.
+data CardCost = StaticCost Int | DynamicCost | XCost
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

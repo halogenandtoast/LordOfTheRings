@@ -83,6 +83,8 @@ narrationFor = \case
   DefendedByMany _ _ defenders@(_ : _ : _) -> Just do
     refs <- catMaybes <$> traverse targetRefFor defenders
     one $ action [ikeyPart "log.defendMany" ["defenders" ~> refs]]
+  RedirectAttack eid target -> Just $ whenRef (toTarget eid) \e -> whenRef target \t ->
+    one $ action [ikeyPart "log.attackRedirected" ["enemy" ~> e, "target" ~> t]]
   UndefendedAttack pid _ -> Just do
     who <- playerRefFor pid
     one $ toned Bad $ action [ikeyPart "log.undefended" ["player" ~> who]]

@@ -10,6 +10,8 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase (Phase (..))
 import LordOfTheRings.Scenario (intoFangorn, lookupScenario, questDeckL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Effect (EffectDuration (UntilEndOfRound), Effect (..))
+import LordOfTheRings.Modifier (ModifierType (CannotAttack))
 import TestImport
 
 fangornTest :: (PlayerId -> GameT ()) -> IO ()
@@ -178,6 +180,16 @@ spec = describe "Into Fangorn" do
     huorn <- headMay . filter ((== toCardCode Enemies.angryHuorn) . toCardCode) <$> getEncounterDeck
     chooseTarget pid (fromJustNote "no huorn" huorn)
     placementOf Enemies.angryHuorn `shouldReturn` Just (EngagedWith pid)
+
+  it "searches for a Huorn when the engaged Huorn cannot attack, with The Forest's Malice" . fangornTest $ \pid -> do
+    eid <- engaged pid Enemies.angryHuorn
+    run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [CannotAttack] UntilEndOfRound
+    _ <- setEncounterDeck [Treacheries.theForestsMalice, Enemies.deadlyHuorn]
+    run RevealEncounterCard
+    resolveRevealed
+    huorn <- headMay . filter ((== toCardCode Enemies.deadlyHuorn) . toCardCode) <$> getEncounterDeck
+    chooseTarget pid (fromJustNote "no huorn" huorn)
+    placementOf Enemies.deadlyHuorn `shouldReturn` Just (EngagedWith pid)
 
   it "has engaged Huorns attack instead, with The Forest's Malice" . fangornTest $ \pid -> do
     _ <- engaged pid Enemies.angryHuorn

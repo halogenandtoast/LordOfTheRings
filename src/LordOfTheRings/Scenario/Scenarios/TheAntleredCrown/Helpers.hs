@@ -100,9 +100,10 @@ chooseRavenEnemy = push . ScenarioSpecific "raven.choose" . toJSON
 shuffleRavenDiscardIntoDeck :: ReverseQueue m => m ()
 shuffleRavenDiscardIntoDeck = push $ ScenarioSpecific "raven.shuffleDiscard" Null
 
--- | The player assigns the damage among the characters he controls, 1 at a time.
+-- | The player assigns the damage among the characters he controls, then it is dealt, as
+-- "must deal X damage divided among" is (FAQ 3.117).
 assignDamage :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
-assignDamage source pid n = when (n > 0) $ push $ ScenarioSpecific "assignDamage" (toJSON (toSource source, pid, n))
+assignDamage = dealDamageDivided
 
 -- | The player removes this many time counters from the locations in play, 1 at a time,
 -- choosing which they come from.

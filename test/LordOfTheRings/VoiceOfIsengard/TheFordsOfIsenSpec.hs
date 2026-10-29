@@ -9,6 +9,7 @@ import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theFordsOfIsen)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Decklist (barredHeroes)
 import TestImport
 
 fordsTest :: (PlayerId -> GameT ()) -> IO ()
@@ -72,6 +73,10 @@ spec = describe "The Fords of Isen" do
   it "is a scenario the game can be dealt" . fordsTest $ \_ ->
     isJust (lookupScenario "the-fords-of-isen") `shouldBe` True
 
+  it "bars the Gríma hero, as its Gríma objective-ally is unique" . fordsTest $ \_ -> do
+    barredHeroes "the-fords-of-isen" [DeckList ["07002", "01012", "01007"] []] `shouldBe` ["Gríma"]
+    barredHeroes "to-catch-an-orc" [DeckList ["07002", "01012", "01007"] []] `shouldBe` []
+
   it "stages The Islet with Gríma attached, and gives the stage 5 time counters" . fordsTest $ \pid -> do
     setup pid
     islet <- locationOf Locations.theIslet
@@ -108,6 +113,13 @@ spec = describe "The Fords of Isen" do
     length <$> handOf pid `shouldReturn` drawn + 1
     passActions pid
     run $ Discard (toTarget grima)
+    outcome `shouldReturn` Just Lost
+
+  it "is lost if Gríma the ally leaves play other than by discard" . fordsTest $ \pid -> do
+    setup pid
+    run . Discard . toTarget =<< locationOf Locations.theIslet
+    grima <- fromJustNote "no Gríma" <$> grimaAlly
+    run $ ShuffleIntoOwnersDeck (toTarget grima)
     outcome `shouldReturn` Just Lost
 
   it "bars resources from card effects while Fords of Isen is staged, and fills hands to 5 as it becomes active" . fordsTest $ \pid -> do
@@ -156,7 +168,10 @@ spec = describe "The Fords of Isen" do
     fillHand pid 2
     hero <- heroOf pid "01012"
     run $ RemoveTokens GameSource q TimeCounter 2
-    replicateM_ 2 $ chooseTarget pid hero
+    -- assigned first, then dealt together, as Dunland Raider's (FAQ 3.117)
+    chooseTarget pid hero
+    getCharacterDamage hero `shouldReturn` 0
+    chooseTarget pid hero
     getCharacterDamage hero `shouldReturn` 2
     getTimeCounters q `shouldReturn` 2
 

@@ -6,7 +6,10 @@ import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Modifier (ModifierType (Blank, ConsideredOutOfPlay))
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Matcher (EnemyMatcher (..), getTimeCounters, select)
 import LordOfTheRings.Phase
 import TestImport
@@ -130,6 +133,29 @@ spec = describe "The Voice of Isengard player cards" do
       run $ Discard saruman
       getStagingThreat `shouldReturn` threat0
       select EnemyInStagingArea `shouldReturn` [eid]
+
+    it "blanks the constant effects of a location he holds out of play" . voiTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Locations.fordsOfIsen
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      saruman <- putAllyIntoPlay pid Allies.saruman
+      chooseAbilityOf pid saruman
+      chooseTarget pid lid
+      beravor <- getHeroWithCode beravorCode
+      run $ PlaceTokens (PlayerSource pid) (toTarget beravor) Resource 1
+      getHeroResources beravor.id `shouldReturn` 1
+
+    it "holds the cards attached to his choice out of play with it" . voiTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.blackForestBats
+      eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+      run . AddToStaging =<< genEncounterCard Objectives.athelas
+      oid <- getsGame (fromJustNote "no objective" . headMay . map toId . toList . (.entities.objectives))
+      run $ PlaceObjective oid (AttachedTo $ EnemyTarget eid)
+      saruman <- putAllyIntoPlay pid Allies.saruman
+      chooseAbilityOf pid saruman
+      chooseTarget pid eid
+      getModifiers (ObjectiveTarget oid) `shouldReturn` [ConsideredOutOfPlay, Blank]
+      run $ Discard saruman
+      getModifiers (ObjectiveTarget oid) `shouldReturn` []
 
     it "keeps the time counters of a location he holds out of play" . voiTest $ \pid -> do
       run . AddToStaging =<< genEncounterCard Locations.dunlandBattlefield

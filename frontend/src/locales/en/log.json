@@ -28,6 +28,7 @@
   "defends": "{defender} defends",
   "defendMany": "{defenders} defend",
   "undefended": "{player} takes the attack undefended",
+  "attackRedirected": "{enemy}'s attack is resolved against {target}",
   "mulligan": "{player} takes a mulligan",
 
   "threatRaised": "{player}'s threat rises by {count}, to {total}",

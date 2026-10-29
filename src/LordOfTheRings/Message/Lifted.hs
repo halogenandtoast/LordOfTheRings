@@ -1054,3 +1054,10 @@ placeDamage source target n = do
 -- random does.
 advanceToQuest :: ReverseQueue m => EncounterCard -> m ()
 advanceToQuest = push . AdvanceToQuest
+
+{- | Resolve the enemy's attack against another target, as Small Target turns it on another
+enemy: its damage step deals that target the damage, reckoned then, and the enemy is no
+longer attacking the player (FAQ 3.072), so no window opens after it attacks him.
+-}
+redirectAttack :: (ReverseQueue m, Targetable target) => EnemyId -> target -> m ()
+redirectAttack eid = push . RedirectAttack eid . toTarget

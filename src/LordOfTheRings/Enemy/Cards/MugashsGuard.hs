@@ -3,10 +3,10 @@ module LordOfTheRings.Enemy.Cards.MugashsGuard (mugashsGuard) where
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
-import LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (engageCaptor, getMugash, mugashHost)
+import LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (engageCaptor, getMugash, mugashCaptor, mugashHost)
 
 newtype MugashsGuard = MugashsGuard EnemyAttrs
-  deriving anyclass (IsEnemy, HasModifiersFor)
+  deriving anyclass IsEnemy
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 mugashsGuard :: EnemyCard MugashsGuard
@@ -18,10 +18,13 @@ instance HasAbilities MugashsGuard where
   getAbilities (MugashsGuard a) = [mkAbility a 1 $ forced $ CharacterDestroyedByAttackWindow After (Just a.id)]
 
 {- | While a player controls a hero with Mugash attached, Mugash's Guard engages that
-player: as it enters play, and as Mugash is attached (see Mugash).
-ponytail: checked as each window opens, not after every message; anything moving it off
-that player opens a window soon after, and it engages then.
+player: as it enters play, and as Mugash is attached (see Mugash), checked as each window
+opens, as anything moving it opens one; whatever would have another player engage it has
+that player engage it.
 -}
+instance HasModifiersFor MugashsGuard where
+  getModifiersFor (MugashsGuard a) = mugashCaptor >>= traverse_ \p -> modified a a [EngagesOnly p]
+
 instance RunMessage MugashsGuard where
   runMessage msg e@(MugashsGuard attrs) = case msg of
     CheckWindows _ -> do

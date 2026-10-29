@@ -256,6 +256,12 @@ spec = describe "The Voice of Isengard's shared encounter sets" do
       run $ EndPhase RefreshPhase
       getTimeCounters q `shouldReturn` 2
 
+    it "In Need of Rest attaches to no hero when none is on the quest" . gameTest $ \_ -> do
+      _ <- timedQuest 3
+      reveal [Treacheries.inNeedOfRest]
+      placed <- treacheryPlacement Treacheries.inNeedOfRest
+      placed `shouldSatisfy` \case Just (AttachedTo _) -> False; _ -> True
+
     it "In Need of Rest takes a hero off the quest and damages it as time counters leave the quest" . gameTest $ \_ -> do
       q <- timedQuest 3
       h <- firstHero

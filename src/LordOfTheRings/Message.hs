@@ -466,6 +466,12 @@ data Message
     PutOnTopOfDeck PlayerId Card
   | -- | the card leaves the victory display, as Caradhras does to become the active location
     RemoveFromVictoryDisplay Card
+  | -- | the enemy's attack resolves against another target, as Small Target turns it on
+    -- another enemy: see 'LordOfTheRings.Message.Lifted.redirectAttack'
+    RedirectAttack EnemyId Target
+  | -- | the progress that would have been placed on the source's quest card, canceled: see
+    -- 'QuestProgressCanceledBy'
+    ProgressCanceled Source Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -326,6 +326,21 @@ data ModifierType
     ProgressAsDamageTo Target
   | -- | on a character: it was dealt damage while defending the attack being resolved
     DamagedWhileDefending
+  | -- | on an enemy: whatever would have it engage another player, it engages this one
+    -- instead, as Chief Turch engages the first player
+    EngagesOnly PlayerId
+  | -- | on the game: progress questing successfully would place on the quest card that
+    -- gives this is canceled instead, as Searching for Mugash reads; the card is told how
+    -- much by 'ProgressCanceled'
+    QuestProgressCanceledBy Source
+  | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
+    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play
+    CannotLeaveStagingArea
+  | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
+    -- encounter card effects still may
+    CannotGainResourcesFromPlayerCardEffects
+  | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
+    PlayedACardThisRound
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
