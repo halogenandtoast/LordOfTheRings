@@ -152,7 +152,20 @@ runNext =
       putGame g
       putGame =<< withHandModifiers =<< preloadModifiers g
       discardAtNoWillpower
+      endWaitingGame
       pure True
+
+-- | A game that could not end, as Ghulat's, ends with the outcome that waited once it can.
+endWaitingGame :: GameT ()
+endWaitingGame = do
+  g <- getGame
+  let waiting = [o | e <- gameEffects g, GameEndsWith o <- effectModifiers e]
+      isWaiting = any (\case GameEndsWith _ -> True; _ -> False) . effectModifiers
+  for_ (headMay waiting) \outcome -> do
+    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    unless cannotEnd do
+      putGame $ g & effectsL %~ filter (not . isWaiting)
+      push $ GameOver outcome
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -457,8 +470,14 @@ runGameMessage msg g = case msg of
       <> [GameOver Lost | null remaining]
     pure g
   GameOver outcome -> do
-    clearQueue
-    pure $ g & outcomeL ?~ outcome
+    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    -- the outcome waits while the game cannot end, unless no player is left to play on;
+    -- see 'endWaitingGame'
+    if cannotEnd && any (not . (.eliminated)) g.players
+      then g <$ push (CreateEffect $ Effect GameSource GameTarget [GameEndsWith outcome] UntilSpent)
+      else do
+        clearQueue
+        pure $ g & outcomeL ?~ outcome
   -- an ally put into play by its card, as Emery is, discarded by its card
   Discard (CardIdTarget cid)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->

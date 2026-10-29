@@ -5,6 +5,7 @@ import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, PlayerMatcher)
+import LordOfTheRings.Outcome (Outcome)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
@@ -351,6 +352,11 @@ data ModifierType
     HeroCommittedThisRound
   | -- | on the game: the players quested successfully this phase, as Bofur reads
     QuestedSuccessfullyThisPhase
+  | -- | on the game: it cannot end, a win or loss waiting until nothing gives this, as
+    -- Ghulat reads
+    GameCannotEnd
+  | -- | on the game: the outcome the game ends with once it can end
+    GameEndsWith Outcome
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
