@@ -172,6 +172,15 @@ spec = describe "Against the Shadow player cards" do
       map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [card.id, warrior.id]
 
   describe "Emery" do
+    it "cannot be put into play with fewer than 3 cards in the deck to discard" . withHeroes [pippin, frodo, eowyn] $ \pid -> do
+      g <- getGame
+      putGame $ g & playersL . ix pid . deckL .~ []
+      _ <- putOnDeck pid [Events.aTestOfWill, Events.aTestOfWill]
+      card <- putCardIntoHand pid Allies.emery
+      run $ ActionWindow pid
+      offered <- maybe False (any \case TargetLabel (CardIdTarget cid) _ -> cid == card.id; _ -> False) . fmap questionChoices <$> getQuestion pid
+      offered `shouldBe` False
+
     it "is put into play for the top 3 cards of the deck, and discarded if one is off-sphere" . withHeroes [pippin, frodo, eowyn] $ \pid -> do
       _ <- putOnDeck pid [Events.aTestOfWill, Events.aTestOfWill, Events.bladeMastery]
       card <- putCardIntoHand pid Allies.emery

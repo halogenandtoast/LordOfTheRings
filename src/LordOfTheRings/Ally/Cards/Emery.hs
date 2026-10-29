@@ -13,13 +13,13 @@ newtype Emery = Emery AllyAttrs
 -- under any player's control. Then, if any of the discarded cards have the tactics, lore
 -- or leadership sphere, discard Emery.
 emery :: AllyCard Emery
-emery = ally (\a -> Emery a {allyHandAction = Just NoCriteria}) Cards.emery
+emery = ally (\a -> Emery a {allyHandAction = Just $ PlayerExists (ActivePlayer <> PlayerWithCardsInDeck 3)}) Cards.emery
 
 instance RunMessage Emery where
   runMessage msg s@(Emery a) = case msg of
     UseHandAction pid cid | cid == a.allyCardId -> do
       player <- getPlayer pid
-      -- ponytail: with fewer than 3 cards in the deck it discards those there are
+      -- the 3 cards are its cost, so it is offered only with 3 to discard
       let discarded = take 3 player.deck
           offSphere = any ((`elem` map Just [Tactics, Lore, Leadership]) . cdSphere . toCardDef) discarded
       discardTopOfDeck pid 3
