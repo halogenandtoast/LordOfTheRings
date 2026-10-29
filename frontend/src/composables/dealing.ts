@@ -68,8 +68,16 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
     const wasDiscarded = new Set(was.discard.map((card) => card.id))
     const isDiscarded = new Set(player.discard.map((card) => card.id))
 
-    // departures: hand and play cards that went into the discard, or left the board for the deck
-    // ponytail: anything else that leaves the board (removed from the game, say) is taken for the deck too
+    const wasHeld = new Set([...was.hand, ...was.inPlay].map((card) => card.id))
+    const held = [...player.hand, ...player.inPlay.filter((c) => !encounterTypes.has(c.type))]
+
+    // departures: hand and play cards that went into the discard, or left the board for the
+    // deck. The deck took in as many as it grew by, with those drawn from it, less the discard
+    // cards that left the board (shuffled in, as a rule); a card past that count left the
+    // board for somewhere else, as one removed from the game, and is not dealt
+    const drawn = held.filter((card) => !wasHeld.has(card.id) && !wasDiscarded.has(card.id)).length
+    const fromDiscard = was.discard.filter((card) => !isDiscarded.has(card.id) && !onBoard.has(card.id)).length
+    let intoDeck = player.deckSize - was.deckSize + drawn - fromDiscard
     for (const card of [...was.hand, ...was.inPlay]) {
       if (shuffledBack.has(card.id) && onBoard.has(card.id)) {
         // shuffled back and drawn straight out again: one card cannot make both trips under
@@ -80,14 +88,13 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
         arriving.push(move(deck, card, true, `back-${card.id}`))
       } else if (isDiscarded.has(card.id)) {
         if (!wasDiscarded.has(card.id)) arriving.push(move(discard, card, false))
-      } else if (!onBoard.has(card.id)) arriving.push(move(deck, card, true))
+      } else if (!onBoard.has(card.id) && (shuffledBack.has(card.id) || intoDeck-- > 0)) arriving.push(move(deck, card, true))
     }
     if (arriving.some((m) => m.pile === deck)) shuffling.push(player.playerId)
 
     // arrivals: anything new to the hand or play area came from the discard or else the deck
     // (encounter cards attached in play came from the encounter deck, below)
-    const wasHeld = new Set([...was.hand, ...was.inPlay].map((card) => card.id))
-    for (const card of [...player.hand, ...player.inPlay.filter((c) => !encounterTypes.has(c.type))]) {
+    for (const card of held) {
       // the top of the discard, say, morphs on its own, and a card already there but off
       // screen, in a seat not shown, has not moved
       if ((onScreen(card.id) || wasHeld.has(card.id)) && !shuffledBack.has(card.id)) continue
@@ -148,7 +155,8 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
       leaving.forEach((m) => m.ghost.remove())
       renamed.forEach((shown) => shown.style.setProperty('view-transition-name', `card-${shown.dataset.cardId}`))
     },
-    // ponytail: a card that left for somewhere else drawn on screen (an attachment, say) is skipped here
+    // a card that went somewhere drawn on screen, as the top of the discard, needs no stand-in:
+    // it is its own end of the move
     land: () => {
       arriving.filter((m) => m.name.startsWith('back-') || !onScreen(m.card.id)).forEach(lay)
       const riffling = () => shuffling.flatMap((pid) => pileAt(`deck-${pid}`) ?? []).forEach(riffle)
