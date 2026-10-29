@@ -230,6 +230,14 @@ runGame msg g = case msg of
           $ mkAfter (TimeCountersRemoved target (before - after))
           : [mkAfter (LastTimeCounterRemoved target) | after == 0]
         pure g'
+  -- progress for the active location goes first to a location in the staging area that
+  -- takes it before, as Grim Foothills
+  PlaceTokens source target@(LocationTarget lid) Progress n | n > 0 -> do
+    firsts <- takingProgressFirst
+    active <- selectAny (LocationWithId lid <> IsActiveLocation)
+    if active && notNull firsts
+      then g <$ (push =<< progressFirst source n firsts \k -> [PlaceTokens source target Progress k | k > 0])
+      else runGame'' msg g
   _ -> runGame'' msg g
 
 runGame'' :: Message -> Game -> GameT Game
@@ -1158,36 +1166,40 @@ runGameMessage msg g = case msg of
     pure g
   PlaceProgressOnQuest n -> do
     actives <- select IsActiveLocation
-    -- what each active location still takes; one that takes only so much, as Perilous
-    -- Swamp, is not explored by the rest, which is lost
-    rooms <- for actives \lid -> do
-      l <- getLocation lid
-      remaining <- subtract l.progress <$> getLocationQuestPoints lid
-      limits <- (\ms -> [k | ProgressLimit k <- ms]) <$> getModifiers lid
-      pure (lid, remaining, max 0 $ foldr min remaining limits)
-    -- the rest goes to the side quest quested against, else to the quest cards
-    quests <- maybe getMainQuests (pure . pure) =<< getCurrentSideQuest
-    let place lid k = [PlaceTokens GameSource (toTarget lid) Progress k | k > 0]
-    case rooms of
-      -- with two active locations the first player divides the progress between them
-      -- (FAQ 1.34); none passes on to the quest until both are explored
-      [(a, _, roomA), (b, _, roomB)] | n < roomA + roomB -> do
-        lead <- getLead
-        first <- getLocation a
-        let lo = max 0 (n - roomB)
-            hi = min n roomA
-        push
-          $ if lo == hi
-            then Run (place a lo <> place b (n - lo))
-            else
-              Ask lead
-                $ QuestionLabel (ikeyWith "label.divideProgress" (cardVar "location" first)) Nothing [toTarget a, toTarget b]
-                $ ChooseAmount lo [Label (ikeyWith "label.amount" [intVar "n" k]) (place a k <> place b (n - k)) | k <- [lo .. hi]]
-      _ -> do
-        let (left, onLocations) = mapAccumL (\m (lid, _, room) -> let k = min m room in (m - k, place lid k)) n rooms
-            overflow = if all (\(_, remaining, room) -> room == remaining) rooms then left else 0
-        pushAll $ concat onLocations <> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
-    pure g
+    firsts <- if null actives then pure [] else takingProgressFirst
+    if notNull firsts
+      then g <$ (push =<< progressFirst GameSource n firsts \k -> [PlaceProgressOnQuest k | k > 0])
+      else do
+        -- what each active location still takes; one that takes only so much, as Perilous
+        -- Swamp, is not explored by the rest, which is lost
+        rooms <- for actives \lid -> do
+          l <- getLocation lid
+          remaining <- subtract l.progress <$> getLocationQuestPoints lid
+          limits <- (\ms -> [k | ProgressLimit k <- ms]) <$> getModifiers lid
+          pure (lid, remaining, max 0 $ foldr min remaining limits)
+        -- the rest goes to the side quest quested against, else to the quest cards
+        quests <- maybe getMainQuests (pure . pure) =<< getCurrentSideQuest
+        let place lid k = [PlaceTokens GameSource (toTarget lid) Progress k | k > 0]
+        case rooms of
+          -- with two active locations the first player divides the progress between them
+          -- (FAQ 1.34); none passes on to the quest until both are explored
+          [(a, _, roomA), (b, _, roomB)] | n < roomA + roomB -> do
+            lead <- getLead
+            first <- getLocation a
+            let lo = max 0 (n - roomB)
+                hi = min n roomA
+            push
+              $ if lo == hi
+                then Run (place a lo <> place b (n - lo))
+                else
+                  Ask lead
+                    $ QuestionLabel (ikeyWith "label.divideProgress" (cardVar "location" first)) Nothing [toTarget a, toTarget b]
+                    $ ChooseAmount lo [Label (ikeyWith "label.amount" [intVar "n" k]) (place a k <> place b (n - k)) | k <- [lo .. hi]]
+          _ -> do
+            let (left, onLocations) = mapAccumL (\m (lid, _, room) -> let k = min m room in (m - k, place lid k)) n rooms
+                overflow = if all (\(_, remaining, room) -> room == remaining) rooms then left else 0
+            pushAll $ concat onLocations <> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
+        pure g
   PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do
         -- a host that lowers the cost is chosen before paying
@@ -2320,3 +2332,27 @@ isQuestOrLocation = \case
   QuestTarget _ -> True
   LocationTarget _ -> True
   _ -> False
+
+-- | The locations in the staging area that take progress before the active location, as
+-- Grim Foothills, with the progress each still takes.
+takingProgressFirst :: GameT [(LocationId, Int)]
+takingProgressFirst = do
+  staged <- select LocationInStagingArea
+  flip mapMaybeM staged \lid -> do
+    first <- elem TakesProgressBeforeActiveLocation <$> getModifiers lid
+    l <- getLocation lid
+    room <- subtract l.progress <$> getLocationQuestPoints lid
+    pure $ guard (first && room > 0) $> (lid, room)
+
+{- | Place the progress on one of the locations that take it first, the first player
+choosing which, and the rest as the function says.
+-}
+progressFirst :: Source -> Int -> [(LocationId, Int)] -> (Int -> [Message]) -> GameT Message
+progressFirst source n firsts rest = do
+  lead <- getLead
+  let place (lid, room) = let k = min n room in PlaceTokens source (toTarget lid) Progress k : rest (n - k)
+  pure $ case firsts of
+    [first] -> Run (place first)
+    _ ->
+      questionLabelWith (ikey "label.progressFirst") Nothing (map (toTarget . fst) firsts) lead
+        $ [targetLabel lid (place first) | first@(lid, _) <- firsts]
