@@ -131,6 +131,9 @@ import LordOfTheRings.Treachery.Cards.ConstantTail
 import LordOfTheRings.Treachery.Cards.ConspicuousLot
 import LordOfTheRings.Treachery.Cards.Cornered
 import LordOfTheRings.Treachery.Cards.GetThatDwarf
+import LordOfTheRings.Treachery.Cards.Discovered
+import LordOfTheRings.Treachery.Cards.DesecratedRuins
+import LordOfTheRings.Treachery.Cards.SpiesFromMordor
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -286,5 +289,8 @@ allTreacherys =
         , SomeTreacheryCard conspicuousLot
         , SomeTreacheryCard cornered
         , SomeTreacheryCard getThatDwarf
+        , SomeTreacheryCard discovered
+        , SomeTreacheryCard desecratedRuins
+        , SomeTreacheryCard spiesFromMordor
         ]
     ]

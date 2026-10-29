@@ -152,6 +152,9 @@ allEnemyCards =
       , bellachTroubleInTharbad
       , spyFromMordor
       , bellachsMarauder
+      , bellachCelebrimborsSecret
+      , bellachsScout
+      , prowlingOrc
       ]
 
 namelessThing :: CardDef
@@ -1196,5 +1199,33 @@ bellachsMarauder =
   (enemy "08073" "Bellach's Marauder" TroubleInTharbad 2 30 3 5 4 5)
     { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | X threat, X the cards underneath The Orcs' Search: given by its own modifiers.
+bellachCelebrimborsSecret :: CardDef
+bellachCelebrimborsSecret =
+  unique
+    (enemy "08124" "Bellach" CelebrimborsSecret 1 50 0 5 4 7)
+      { cdCardTraits = setFromList [Mordor, Spy]
+      , cdKeywords = setFromList [Scour]
+      , cdVictoryPoints = Just 5
+      }
+
+bellachsScout :: CardDef
+bellachsScout =
+  (enemy "08128" "Bellach's Scout" CelebrimborsSecret 4 40 2 3 2 4)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdKeywords = setFromList [Scour]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+prowlingOrc :: CardDef
+prowlingOrc =
+  (enemy "08129" "Prowling Orc" CelebrimborsSecret 2 45 3 5 3 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdKeywords = setFromList [Scour]
     , cdEasyModeQuantity = Just 1
     }

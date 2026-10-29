@@ -151,6 +151,11 @@ import LordOfTheRings.Location.Cards.RuinsOfTheSecondAge
 import LordOfTheRings.Location.Cards.SeedyInn
 import LordOfTheRings.Location.Cards.HiddenAlleyway
 import LordOfTheRings.Location.Cards.DecrepitRooftops
+import LordOfTheRings.Location.Cards.TheSecretChamber
+import LordOfTheRings.Location.Cards.RuinedPlaza
+import LordOfTheRings.Location.Cards.CollapsedTower
+import LordOfTheRings.Location.Cards.AncientFoundation
+import LordOfTheRings.Location.Cards.CityRemains
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -329,5 +334,10 @@ allLocations =
         , SomeLocationCard seedyInn
         , SomeLocationCard hiddenAlleyway
         , SomeLocationCard decrepitRooftops
+        , SomeLocationCard theSecretChamber
+        , SomeLocationCard ruinedPlaza
+        , SomeLocationCard collapsedTower
+        , SomeLocationCard ancientFoundation
+        , SomeLocationCard cityRemains
         ]
     ]

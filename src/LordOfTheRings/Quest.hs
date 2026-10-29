@@ -106,6 +106,8 @@ import LordOfTheRings.Quest.Cards.AWellLaidTrap
 import LordOfTheRings.Quest.Cards.NoWayOut
 import LordOfTheRings.Quest.Cards.DoubleDealings
 import LordOfTheRings.Quest.Cards.EscapeFromTharbad
+import LordOfTheRings.Quest.Cards.TheRuinsOfOstInEdhil
+import LordOfTheRings.Quest.Cards.TheEnemysServant
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -244,5 +246,7 @@ allQuests =
         , SomeQuestCard noWayOut
         , SomeQuestCard doubleDealings
         , SomeQuestCard escapeFromTharbad
+        , SomeQuestCard theRuinsOfOstInEdhil
+        , SomeQuestCard theEnemysServant
         ]
     ]

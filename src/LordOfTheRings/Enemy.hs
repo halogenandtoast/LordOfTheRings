@@ -146,6 +146,9 @@ import LordOfTheRings.Enemy.Cards.BoarClanWarrior
 import LordOfTheRings.Enemy.Cards.BellachTroubleInTharbad
 import LordOfTheRings.Enemy.Cards.SpyFromMordor
 import LordOfTheRings.Enemy.Cards.BellachsMarauder
+import LordOfTheRings.Enemy.Cards.BellachCelebrimborsSecret
+import LordOfTheRings.Enemy.Cards.BellachsScout
+import LordOfTheRings.Enemy.Cards.ProwlingOrc
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -316,5 +319,8 @@ allEnemys =
         , SomeEnemyCard bellachTroubleInTharbad
         , SomeEnemyCard spyFromMordor
         , SomeEnemyCard bellachsMarauder
+        , SomeEnemyCard bellachCelebrimborsSecret
+        , SomeEnemyCard bellachsScout
+        , SomeEnemyCard prowlingOrc
         ]
     ]

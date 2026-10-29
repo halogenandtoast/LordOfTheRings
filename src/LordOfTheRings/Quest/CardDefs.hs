@@ -127,6 +127,8 @@ allQuestCards =
       , noWayOut
       , doubleDealings
       , escapeFromTharbad
+      , theRuinsOfOstInEdhil
+      , theEnemysServant
       ]
 
 theDrippingWalls :: CardDef
@@ -453,3 +455,9 @@ doubleDealings = (quest "08066" "Double Dealings" TroubleInTharbad 1 0) {cdKeywo
 
 escapeFromTharbad :: CardDef
 escapeFromTharbad = (quest "08067" "Escape from Tharbad" TroubleInTharbad 2 0) {cdKeywords = setFromList [Time 3]}
+
+theRuinsOfOstInEdhil :: CardDef
+theRuinsOfOstInEdhil = (quest "08122" "The Ruins of Ost-in-Edhil" CelebrimborsSecret 1 14) {cdKeywords = setFromList [Time 3]}
+
+theEnemysServant :: CardDef
+theEnemysServant = (quest "08123" "The Enemy's Servant" CelebrimborsSecret 2 12) {cdKeywords = setFromList [Time 3]}

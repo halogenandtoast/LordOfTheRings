@@ -161,6 +161,11 @@ allLocationCards =
       , seedyInn
       , hiddenAlleyway
       , decrepitRooftops
+      , theSecretChamber
+      , ruinedPlaza
+      , collapsedTower
+      , ancientFoundation
+      , cityRemains
       ]
 
 drownedTreasury :: CardDef
@@ -1166,4 +1171,43 @@ decrepitRooftops :: CardDef
 decrepitRooftops =
   (location "08079" "Decrepit Rooftops" TroubleInTharbad 2 2 3)
     { cdCardTraits = setFromList [City]
+    }
+
+-- | X threat, X the number of players: given by its own modifiers.
+theSecretChamber :: CardDef
+theSecretChamber =
+  unique
+    (location "08126" "The Secret Chamber" CelebrimborsSecret 1 0 6)
+      { cdCardTraits = setFromList [OstInEdhil, Ruins]
+      , cdVictoryPoints = Just 3
+      }
+
+ruinedPlaza :: CardDef
+ruinedPlaza =
+  (location "08130" "Ruined Plaza" CelebrimborsSecret 3 2 2)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdShadowEffect = True
+    }
+
+collapsedTower :: CardDef
+collapsedTower =
+  (location "08131" "Collapsed Tower" CelebrimborsSecret 2 1 4)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdKeywords = setFromList [Surge, Scour]
+    , cdShadowEffect = True
+    }
+
+ancientFoundation :: CardDef
+ancientFoundation =
+  (location "08132" "Ancient Foundation" CelebrimborsSecret 4 2 4)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdKeywords = setFromList [Scour]
+    }
+
+cityRemains :: CardDef
+cityRemains =
+  (location "08133" "City Remains" CelebrimborsSecret 4 3 3)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

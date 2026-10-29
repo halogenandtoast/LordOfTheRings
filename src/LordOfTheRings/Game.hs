@@ -1499,6 +1499,16 @@ runGameMessage msg g = case msg of
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
   -- ponytail: what is attached to it stays behind, none of Cair Andros's locations take any
   RemoveFromGame (LocationTarget lid) -> pure $ g & entitiesL . locationsL %~ Map.delete lid
+  -- a location placed underneath a card leaves play, its tokens and attachments discarded
+  PlaceUnderneath _ cards -> do
+    let gone = [l | l <- toList g.entities.locations, (toCard l).id `elem` map (.id) cards]
+        on' :: HasField "placement" a Placement => a -> Bool
+        on' a = a.placement `elem` map (AttachedTo . toTarget) gone
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, on' a]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, on' t]
+      <> [Discard (toTarget o) | o <- toList g.entities.objectives, on' o]
+    pure $ g & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
@@ -2179,15 +2189,18 @@ attackDamage pid eid target n = do
   mods <- getModifiers eid
   let excessToThreat = ExcessDamageToThreat `elem` mods
       excessToOthers = ExcessDamageToOtherCharacters `elem` mods
+      excessToLocation = ExcessDamageToActiveLocation `elem` mods
   excess <-
-    if excessToThreat || excessToOthers
+    if excessToThreat || excessToOthers || excessToLocation
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   controller <- characterController target
+  active <- select IsActiveLocation
   pure $ DealDamage (EnemySource eid) target n
     : [CheckDestroyedByAttack eid target c | Just c <- [controller]]
     <> concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excessToThreat, excess > 0]
     <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemySource eid) pid target)
+    <> concat [[PlaceTokens (EnemySource eid) (LocationTarget l) Damage excess, CheckDefeated (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

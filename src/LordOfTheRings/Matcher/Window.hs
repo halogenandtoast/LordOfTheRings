@@ -163,6 +163,8 @@ data WindowMatcher
     DrewCardsWindow Timing (Maybe PlayerId)
   | -- | a player card effect reduced any player's threat, as The Empty Mug reads
     ThreatReducedByPlayerCardWindow Timing
+  | -- | the card entered the staging area, as Ruined Plaza reads
+    CardEntersStagingAreaWindow Timing Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -242,6 +244,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ThreatRaisedByDoomedWindow t pid, ThreatRaisedByDoomed pid') -> t == timing && pid == pid'
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
   (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
+  (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

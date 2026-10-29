@@ -45,6 +45,8 @@ data ObjectiveAttrs = ObjectiveAttrs
   -- ^ the encounter card guarding it; it cannot be claimed while that card is in play
   , objectiveExhausted :: Bool
   -- ^ one attached to a hero may exhaust, as Cave Torch does
+  , objectiveUnderneath :: [Card]
+  -- ^ the cards facedown underneath it, out of play, as The Orcs' Search's
   }
   deriving stock (Show, Eq, Generic)
 
@@ -54,7 +56,7 @@ instance ToJSON ObjectiveAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "objective")
 
 instance FromJSON ObjectiveAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "objective") . withDefaults [("exhausted", toJSON False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "objective") . withDefaults [("exhausted", toJSON False), ("underneath", toJSON ([] :: [Card]))]
 
 objective :: (ObjectiveAttrs -> a) -> CardDef -> ObjectiveCard a
 objective f cardDef =
@@ -70,6 +72,7 @@ objective f cardDef =
             , objectiveTokens = mempty
             , objectiveGuard = Nothing
             , objectiveExhausted = False
+            , objectiveUnderneath = []
             }
     }
 

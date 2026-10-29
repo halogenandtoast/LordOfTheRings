@@ -302,6 +302,9 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
     -- Seedy Inn's shadow reads
     AttackDamageRaisesThreatOf PlayerId
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is placed on the active location, as Collapsed Tower's shadow reads
+    ExcessDamageToActiveLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

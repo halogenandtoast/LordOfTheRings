@@ -974,3 +974,15 @@ removeSourceCardFromGame = \case
   -- an event, in its owner's discard pile once played
   CardIdSource cid -> eachPlayer \p -> removeFromDiscard p cid
   _ -> pure ()
+-- | The cards go facedown underneath the target, out of play.
+placeUnderneath :: (ReverseQueue m, Targetable target) => target -> [Card] -> m ()
+placeUnderneath target = push . PlaceUnderneath (toTarget target)
+
+{- | Place damage tokens on the card, as encounter cards place them on a location, then
+check whether that defeats it.
+-}
+placeDamage
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
+placeDamage source target n = do
+  placeTokens source target Damage n
+  push $ CheckDefeated (toTarget target)

@@ -52,6 +52,8 @@ allObjectiveCards =
       , grimaTheFordsOfIsen
       , chiefTurchTheAntleredCrown
       , nalirTroubleInTharbad
+      , theOrcsSearch
+      , celebrimborsMould
       ]
 
 durinsAxe :: CardDef
@@ -314,3 +316,13 @@ nalirTroubleInTharbad =
     , cdCardTraits = setFromList [Dwarf]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
+
+theOrcsSearch :: CardDef
+theOrcsSearch = objective "08125" "The Orcs' Search" CelebrimborsSecret 1
+
+celebrimborsMould :: CardDef
+celebrimborsMould =
+  unique
+    (objective "08127" "Celebrimbor's Mould" CelebrimborsSecret 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      }

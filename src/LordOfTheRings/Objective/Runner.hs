@@ -21,6 +21,7 @@ instance RunMessage ObjectiveAttrs where
       push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
       pure $ attrs & exhaustedL .~ True
     Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
+    PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

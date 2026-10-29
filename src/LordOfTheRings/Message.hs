@@ -448,6 +448,10 @@ data Message
   | -- | as 'SearchEncounterDeckAndDiscard', the enemy found put into play engaged with the
     -- player, as "searches ... for a Boar Clan enemy and puts it into play engaged with him"
     SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
+  | {- | the cards go facedown underneath the target, out of play, as The Orcs' Search takes
+    them: from a player's hand, deck or discard pile, or a location in play
+    -}
+    PlaceUnderneath Target [Card]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

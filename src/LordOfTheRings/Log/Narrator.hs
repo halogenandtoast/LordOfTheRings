@@ -15,6 +15,7 @@ Three rules:
 -}
 module LordOfTheRings.Log.Narrator (narrationFor) where
 
+import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -111,6 +112,8 @@ narrationFor = \case
       -- every hero's resource for the round says nothing the board does not
       Resource | source == GameSource && phase == ResourcePhase -> pure []
       Resource -> tokens "log.gainsResources"
+      -- damage placed on a location, as Celebrimbor's Secret's encounter cards place it
+      Damage | LocationTarget _ <- target -> tokens "log.damagePlaced"
       -- dealt with as damage, where the source is known
       Damage -> pure []
       Villager -> tokens "log.villagersPlaced"
@@ -275,6 +278,10 @@ narrationFor = \case
       (InPlayArea _, StagingArea) -> one $ toned Bad $ mechanic [ikeyPart "log.returnedToStaging" ["location" ~> l]]
       _ -> pure []
   PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
+  ScenarioSpecific "scour" (parseMaybe parseJSON -> Just target) -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.scour" ["target" ~> t]]
+  PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing
  where
   takesControl :: (HasGame m, ToLogPart a) => PlayerId -> a -> m [LogEntry]
