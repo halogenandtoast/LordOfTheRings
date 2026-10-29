@@ -27,7 +27,7 @@ instance RunMessage Gandalf where
           questionLabeled "gandalf.chooseEnemy"
           causedBy attrs
           targets enemies \e -> dealDamage attrs e 4
-        labeled "gandalf.threat" $ lowerThreat p 5
+        labeled "gandalf.threat" $ lowerThreatBy attrs p 5
       pure g
     -- At the end of the round, discard Gandalf from play.
     EndRound -> do

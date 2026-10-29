@@ -29,7 +29,7 @@ instance RunMessage WanderingTook where
         questionLabeled "wanderingTook.giveControl"
         causedBy a
         targets others \p -> do
-          lowerThreat pid 3
+          lowerThreatBy a pid 3
           takeControl a.id p
           raiseThreat p 3
       pure s

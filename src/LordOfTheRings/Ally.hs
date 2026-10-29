@@ -128,6 +128,7 @@ import LordOfTheRings.Ally.Cards.Emery
 import LordOfTheRings.Ally.Cards.Anborn
 import LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
 import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
+import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -283,5 +284,6 @@ allAllies =
         , SomeAllyCard anborn
         , SomeAllyCard grimaTheFordsOfIsen
         , SomeAllyCard chiefTurchTheAntleredCrown
+        , SomeAllyCard nalirTroubleInTharbad
         ]
     ]

@@ -917,5 +917,23 @@
   },
   "aWellLaidTrap": {
     "keepAlly": "Choose 1 ally to keep: each other ally you control is discarded"
+  },
+  "constantTail": {
+    "choose": "Constant Tail: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "spies": "Each Spy enemy in the staging area gets +2 threat until the end of the phase"
+  },
+  "cornered": {
+    "choose": "Cornered: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "enemies": "Each enemy gets -20 engagement cost and +1 attack until the end of the round"
+  },
+  "getThatDwarf": {
+    "choose": "Get That Dwarf!: choose the enemy that engages you and attacks Nalir"
+  },
+  "escapeFromTharbad": {
+    "choose": "Escape from Tharbad: choose one",
+    "raiseThreat": "Raise each player's threat by 3",
+    "bellachAttacks": "Bellach makes an immediate attack against Nalir"
   }
 }

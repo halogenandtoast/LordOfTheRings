@@ -20,6 +20,6 @@ instance RunMessage NeedfulToKnow where
       raiseThreat pid 1
       lookAtTopOfEncounterDeck pid attrs False
       top <- getTopOfEncounterDeck
-      for_ (cdThreat . toCardDef =<< top) \x -> when (x > 0) $ lowerThreat pid x
+      for_ (cdThreat . toCardDef =<< top) \x -> when (x > 0) $ lowerThreatBy attrs pid x
       pure e
     _ -> NeedfulToKnow <$> runMessage msg attrs

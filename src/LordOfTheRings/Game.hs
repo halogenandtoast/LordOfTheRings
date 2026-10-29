@@ -387,8 +387,10 @@ runGameMessage msg g = case msg of
   CheckEliminations -> do
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
+      -- the level may move, as Double Dealings lowers it
+      level <- (eliminationThreat +) . sum . mapMaybe (\case EliminationThreatModifier n -> Just n; _ -> Nothing) <$> getModifiers (PlayerTarget player.id)
       pure
-        $ guard (not player.eliminated && (player.threat >= eliminationThreat || null heroes))
+        $ guard (not player.eliminated && (player.threat >= level || null heroes))
         $> player.id
     pushAll $ map EliminatePlayer eliminated
     pure g
@@ -430,11 +432,16 @@ runGameMessage msg g = case msg of
          in [CheckWindows [mkWhen $ DealtDamage target n'], DoStep 1 (DealDamage source target n')]
     pure g
   DoStep 1 (DealDamage source target n) -> do
+    -- the damage an enemy deals may raise a player's threat as much, as Seedy Inn's shadow
+    raising <- case source of
+      EnemySource eid -> (\ms -> [pid | AttackDamageRaisesThreatOf pid <- ms]) <$> getModifiers eid
+      _ -> pure []
     pushAll
-      [ PlaceTokens source target Damage n
-      , CheckWindows [mkAfter $ DealtDamage target n]
-      , CheckDefeated target
-      ]
+      $ [ PlaceTokens source target Damage n
+        , CheckWindows [mkAfter $ DealtDamage target n]
+        , CheckDefeated target
+        ]
+      <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | pid <- raising]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target

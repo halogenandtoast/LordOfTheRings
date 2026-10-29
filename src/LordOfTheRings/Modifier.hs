@@ -294,6 +294,14 @@ data ModifierType
   | -- | on a player: they draw this many cards in the resource phase instead of 1, as
     -- Hithaeglir Stream reads (0: they draw none, as Plains of Enedwaith)
     ResourcePhaseDraws Int
+  | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
+    CannotReduceThreat
+  | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
+    -- Double Dealings lowers it by 10
+    EliminationThreatModifier Int
+  | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
+    -- Seedy Inn's shadow reads
+    AttackDamageRaisesThreatOf PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

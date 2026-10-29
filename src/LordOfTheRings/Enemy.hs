@@ -143,6 +143,9 @@ import LordOfTheRings.Enemy.Cards.RavenSkirmisher
 import LordOfTheRings.Enemy.Cards.ChiefTurchTheDunlandTrap
 import LordOfTheRings.Enemy.Cards.BoarClanStalker
 import LordOfTheRings.Enemy.Cards.BoarClanWarrior
+import LordOfTheRings.Enemy.Cards.BellachTroubleInTharbad
+import LordOfTheRings.Enemy.Cards.SpyFromMordor
+import LordOfTheRings.Enemy.Cards.BellachsMarauder
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -310,5 +313,8 @@ allEnemys =
         , SomeEnemyCard chiefTurchTheDunlandTrap
         , SomeEnemyCard boarClanStalker
         , SomeEnemyCard boarClanWarrior
+        , SomeEnemyCard bellachTroubleInTharbad
+        , SomeEnemyCard spyFromMordor
+        , SomeEnemyCard bellachsMarauder
         ]
     ]

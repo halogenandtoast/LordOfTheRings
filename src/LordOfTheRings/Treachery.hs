@@ -127,6 +127,10 @@ import LordOfTheRings.Treachery.Cards.FierceFolk
 import LordOfTheRings.Treachery.Cards.DrivenBack
 import LordOfTheRings.Treachery.Cards.FrenziedAttack
 import LordOfTheRings.Treachery.Cards.DunlendingAmbush
+import LordOfTheRings.Treachery.Cards.ConstantTail
+import LordOfTheRings.Treachery.Cards.ConspicuousLot
+import LordOfTheRings.Treachery.Cards.Cornered
+import LordOfTheRings.Treachery.Cards.GetThatDwarf
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -278,5 +282,9 @@ allTreacherys =
         , SomeTreacheryCard drivenBack
         , SomeTreacheryCard frenziedAttack
         , SomeTreacheryCard dunlendingAmbush
+        , SomeTreacheryCard constantTail
+        , SomeTreacheryCard conspicuousLot
+        , SomeTreacheryCard cornered
+        , SomeTreacheryCard getThatDwarf
         ]
     ]

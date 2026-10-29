@@ -125,6 +125,8 @@ allQuestCards =
       , theRoadToTharbad
       , aWellLaidTrap
       , noWayOut
+      , doubleDealings
+      , escapeFromTharbad
       ]
 
 theDrippingWalls :: CardDef
@@ -445,3 +447,9 @@ aWellLaidTrap = quest "08012" "A Well Laid Trap" TheDunlandTrap 2 0
 -- own modifiers.
 noWayOut :: CardDef
 noWayOut = quest "08013" "No Way Out" TheDunlandTrap 3 0
+
+doubleDealings :: CardDef
+doubleDealings = (quest "08066" "Double Dealings" TroubleInTharbad 1 0) {cdKeywords = setFromList [Time 4]}
+
+escapeFromTharbad :: CardDef
+escapeFromTharbad = (quest "08067" "Escape from Tharbad" TroubleInTharbad 2 0) {cdKeywords = setFromList [Time 3]}

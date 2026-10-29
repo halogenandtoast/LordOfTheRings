@@ -104,6 +104,8 @@ import LordOfTheRings.Quest.Cards.TheLastStage
 import LordOfTheRings.Quest.Cards.TheRoadToTharbad
 import LordOfTheRings.Quest.Cards.AWellLaidTrap
 import LordOfTheRings.Quest.Cards.NoWayOut
+import LordOfTheRings.Quest.Cards.DoubleDealings
+import LordOfTheRings.Quest.Cards.EscapeFromTharbad
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -240,5 +242,7 @@ allQuests =
         , SomeQuestCard theRoadToTharbad
         , SomeQuestCard aWellLaidTrap
         , SomeQuestCard noWayOut
+        , SomeQuestCard doubleDealings
+        , SomeQuestCard escapeFromTharbad
         ]
     ]

@@ -153,6 +153,14 @@ allLocationCards =
       , hillsOfDunland
       , plainsOfEnedwaith
       , hithaeglirStream
+      , theEmptyMug
+      , theCrossingAtTharbad
+      , streetsOfTharbad
+      , tharbadHideout
+      , ruinsOfTheSecondAge
+      , seedyInn
+      , hiddenAlleyway
+      , decrepitRooftops
       ]
 
 drownedTreasury :: CardDef
@@ -1102,4 +1110,60 @@ hithaeglirStream =
   (location "08022" "Hithaeglir Stream" TheDunlandTrap 4 3 4)
     { cdCardTraits = setFromList [Enedwaith, River]
     , cdShadowEffect = True
+    }
+
+theEmptyMug :: CardDef
+theEmptyMug =
+  unique
+    (location "08069" "The Empty Mug" TroubleInTharbad 1 1 4)
+      { cdCardTraits = setFromList [City]
+      , cdVictoryPoints = Just 4
+      }
+
+-- | It gets +2 quest points for each player.
+theCrossingAtTharbad :: CardDef
+theCrossingAtTharbad =
+  unique
+    (location "08071" "The Crossing at Tharbad" TroubleInTharbad 1 2 10)
+      { cdCardTraits = setFromList [City, Ruins, River]
+      }
+
+streetsOfTharbad :: CardDef
+streetsOfTharbad =
+  (location "08074" "Streets of Tharbad" TroubleInTharbad 2 3 1)
+    { cdCardTraits = setFromList [City, Road]
+    }
+
+tharbadHideout :: CardDef
+tharbadHideout =
+  (location "08075" "Tharbad Hideout" TroubleInTharbad 2 1 1)
+    { cdCardTraits = setFromList [City]
+    , cdKeywords = setFromList [Surge]
+    }
+
+ruinsOfTheSecondAge :: CardDef
+ruinsOfTheSecondAge =
+  (location "08076" "Ruins of the Second Age" TroubleInTharbad 2 1 5)
+    { cdCardTraits = setFromList [City, Ruins]
+    , cdEasyModeQuantity = Just 1
+    }
+
+seedyInn :: CardDef
+seedyInn =
+  (location "08077" "Seedy Inn" TroubleInTharbad 2 3 3)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+hiddenAlleyway :: CardDef
+hiddenAlleyway =
+  (location "08078" "Hidden Alleyway" TroubleInTharbad 2 3 5)
+    { cdCardTraits = setFromList [City]
+    }
+
+decrepitRooftops :: CardDef
+decrepitRooftops =
+  (location "08079" "Decrepit Rooftops" TroubleInTharbad 2 2 3)
+    { cdCardTraits = setFromList [City]
     }

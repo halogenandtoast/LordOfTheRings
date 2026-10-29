@@ -20,6 +20,6 @@ instance RunMessage Damrod where
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       n <- length <$> select EnemyInStagingArea
       discard a
-      lowerThreat pid n
+      lowerThreatBy a pid n
       pure s
     _ -> Damrod <$> runMessage msg a

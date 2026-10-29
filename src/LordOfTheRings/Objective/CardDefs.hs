@@ -51,6 +51,7 @@ allObjectiveCards =
       , mugashObjective
       , grimaTheFordsOfIsen
       , chiefTurchTheAntleredCrown
+      , nalirTroubleInTharbad
       ]
 
 durinsAxe :: CardDef
@@ -302,5 +303,14 @@ chiefTurchTheAntleredCrown =
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 2, cdHitPoints = Just 5 })
     { cdUnique = True
     , cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+nalirTroubleInTharbad :: CardDef
+nalirTroubleInTharbad =
+  ((objective "08068" "Nalir" TroubleInTharbad 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 1, cdDefense = Just 2, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

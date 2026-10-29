@@ -134,6 +134,10 @@ allTreacheryCards =
       , drivenBack
       , frenziedAttack
       , dunlendingAmbush
+      , constantTail
+      , conspicuousLot
+      , cornered
+      , getThatDwarf
       ]
 
 deepDeepDark :: CardDef
@@ -812,5 +816,25 @@ dunlendingAmbush :: CardDef
 dunlendingAmbush =
   (treachery "08024" "Dunlending Ambush" TheDunlandTrap 3)
     { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+constantTail :: CardDef
+constantTail = treachery "08080" "Constant Tail" TroubleInTharbad 2
+
+conspicuousLot :: CardDef
+conspicuousLot =
+  (treachery "08081" "Conspicuous Lot" TroubleInTharbad 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+cornered :: CardDef
+cornered = (treachery "08082" "Cornered" TroubleInTharbad 2) {cdShadowEffect = True}
+
+getThatDwarf :: CardDef
+getThatDwarf =
+  (treachery "08083" "Get That Dwarf!" TroubleInTharbad 2)
+    { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
