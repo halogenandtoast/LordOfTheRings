@@ -1760,7 +1760,8 @@ runGameMessage msg g = case msg of
       [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
     pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
   SwapHero hid card | Just old <- Map.lookup hid g.entities.heroes -> do
-    new <- newHero old.owner card
+    -- it trades places with the old hero, ready or exhausted as that one was (ruling)
+    new <- overAttrs (\a -> a {heroExhausted = heroExhausted (toAttrs old)}) <$> newHero old.owner card
     let on' :: HasField "placement" a Placement => a -> Bool
         on' a = a.placement == AttachedTo (toTarget old)
         newHost = AttachedTo (toTarget new)
