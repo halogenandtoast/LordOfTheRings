@@ -1512,6 +1512,8 @@ runGameMessage msg g = case msg of
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      -- an objective it guarded, as Mugash on Edge of Fangorn, goes free to the staging area
+      <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
     pure
       $ g
       & entitiesL
