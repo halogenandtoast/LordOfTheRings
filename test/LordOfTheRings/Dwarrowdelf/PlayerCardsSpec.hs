@@ -18,7 +18,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Attachment (AttachmentAttrs (..))
 import LordOfTheRings.Matcher (getEnemy, hasKeyword, selectAny)
 import LordOfTheRings.Matcher.Types (EnemyMatcher (EnemyWithEngagementCostAboveThreatOf, EnemyWithId))
-import LordOfTheRings.Sphere (Sphere (Leadership))
+import LordOfTheRings.Sphere (Sphere (Leadership, Lore))
 import LordOfTheRings.Message.Lifted (cancelEvent)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase, RefreshPhase, ResourcePhase))
@@ -271,6 +271,16 @@ spec = describe "Dwarrowdelf player cards" do
     costModifier pid sight `shouldReturn` -2
     cheap <- PlayerCard <$> genPlayerCard Events.renewedFriendship (Just pid)
     costModifier pid cheap `shouldReturn` -2
+
+  it "Good Meal lowers an event of a sphere its hero has gained" . gameTest $ \pid -> do
+    setThreat pid 30
+    frodo <- putHero pid Heroes.frodoBaggins
+    run $ CreateEffect $ Effect GameSource frodo [GainResourceIcon Lore] UntilEndOfPhase
+    meal <- putAttachmentOn pid Attachments.goodMeal frodo
+    actions pid
+    chooseAbilityOf pid meal
+    runes <- PlayerCard <$> genPlayerCard Events.daeronsRunes (Just pid)
+    costModifier pid runes `shouldReturn` -2
 
   it "Rivendell Blade gives the enemy its character attacks -2 defense" . gameTest $ \pid -> do
     elrohir <- putHero pid Heroes.elrohir
