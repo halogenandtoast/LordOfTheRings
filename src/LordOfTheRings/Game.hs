@@ -332,6 +332,18 @@ runGameMessage msg g = case msg of
     unless (isJust g.outcome) do
       leaving <- filterM (fmap (elem DiscardAtEndOfRound) . getModifiers) (toList g.entities.allies)
       pushAll [Discard (toTarget a) | a <- leaving]
+      returning <- filterM (fmap (elem ReturnToHandAtEndOfRound) . getModifiers) (toList g.entities.allies)
+      pushAll [ReturnToHand (toTarget a) | a <- returning, toId a `notElem` map toId leaving]
+      -- a card passed by Message from Elrond, in a hand or in play
+      let shuffled :: Targetable t => t -> GameT Bool
+          shuffled = fmap (elem ShuffleIntoOwnersDeckAtEndOfRound) . getModifiers
+      allies <- filterM shuffled (toList g.entities.allies)
+      attachments <- filterM (shuffled . CardIdTarget . attachmentCardId . toAttrs) (toList g.entities.attachments)
+      inHands <- filterM (shuffled . CardIdTarget . snd) [(pid, c.id) | (pid, p) <- mapToList g.players, c <- p.hand]
+      pushAll
+        $ [ShuffleIntoOwnersDeck (toTarget a) | a <- allies, toId a `notElem` map toId (leaving <> returning)]
+        <> [ShuffleIntoOwnersDeck (toTarget a) | a <- attachments]
+        <> [ShuffleFromHandIntoOwnersDeck pid cid | (pid, cid) <- inHands]
       push $ CheckWindows [mkWhen RoundEnds]
       pushEnd BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
@@ -486,7 +498,8 @@ runGameMessage msg g = case msg of
           AllyTarget aid -> toCard <$> Map.lookup aid g.entities.allies
           _ -> Nothing
     pushAll
-      $ [Discard target, CheckEliminations]
+      $ [CheckWindows [mkWhen $ CharacterDestroyed target c] | Just c <- [card]]
+      <> [Discard target, CheckEliminations]
       <> [CheckWindows [mkAfter $ CharacterDestroyed target c] | Just c <- [card]]
     pure g
   BeginPhase PlanningPhase -> do
@@ -1372,6 +1385,25 @@ runGameMessage msg g = case msg of
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+  ShuffleIntoOwnersDeck (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
+    let owner = (toAttrs a).owner
+    deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer owner
+    pure $ g & entitiesL . attachmentsL %~ Map.delete aid & playersL . ix owner . deckL .~ deck
+  GiveFromHand giver cid receiver -> do
+    let given = [c | c <- maybe [] (.hand) (Map.lookup giver g.players), c.id == cid]
+    pure $ g & playersL . ix giver . handL %~ filter ((/= cid) . (.id)) & playersL . ix receiver . handL %~ (<> given)
+  ShuffleFromHandIntoOwnersDeck holder cid -> do
+    let held = [c | c <- maybe [] (.hand) (Map.lookup holder g.players), c.id == cid]
+        g' = g & playersL . ix holder . handL %~ filter ((/= cid) . (.id))
+    foldM
+      ( \acc c -> case c of
+          PlayerCard pc | Just owner <- pc.owner -> do
+            deck <- shuffleM (c : maybe [] (.deck) (Map.lookup owner acc.players))
+            pure $ acc & playersL . ix owner . deckL .~ deck
+          _ -> pure acc
+      )
+      g'
+      held
   -- a hero shuffled into its owner's deck, as Lost and Alone has it, is put into play as it is drawn
   ShuffleIntoOwnersDeck target@(HeroTarget hid) | Just h <- Map.lookup hid g.entities.heroes -> do
     g' <- leftPlay g target

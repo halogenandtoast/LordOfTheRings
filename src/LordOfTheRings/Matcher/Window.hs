@@ -163,6 +163,8 @@ data WindowMatcher
     DrewCardsWindow Timing (Maybe PlayerId)
   | -- | any location explored
     AnyExploredWindow Timing
+  | -- | the character destroyed
+    TargetDestroyedWindow Timing Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -242,6 +244,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ThreatRaisedByDoomedWindow t pid, ThreatRaisedByDoomed pid') -> t == timing && pid == pid'
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
   (AnyExploredWindow t, Explored _) -> t == timing
+  (TargetDestroyedWindow t target, CharacterDestroyed target' _) -> t == timing && target == target'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

@@ -288,6 +288,14 @@ data ModifierType
   | -- | on an enemy or location: it is considered out of play, while the card giving it this
     -- is in play, as Saruman's chosen card; no matcher finds it
     ConsideredOutOfPlay
+  | -- | on an ally, or its card: it returns to its owner's hand at the end of the round, as
+    -- the Eagle Gwaihir puts into play does
+    ReturnToHandAtEndOfRound
+  | -- | on a card in hand or in play, as its card id: at the end of the round it is shuffled
+    -- into its owner's deck, as the card Message from Elrond passes is
+    ShuffleIntoOwnersDeckAtEndOfRound
+  | -- | on a hero: a player spent resources from its pool this round
+    SpentResourcesThisRound
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

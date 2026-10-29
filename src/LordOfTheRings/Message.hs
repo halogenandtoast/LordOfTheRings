@@ -429,6 +429,10 @@ data Message
   | -- | the shadow card just dealt to the enemy is dealt face up, as Silver Lamp reads: it
     -- still resolves as the enemy attacks
     TurnShadowCardFaceUp EnemyId CardId
+  | -- | a card in the first player's hand goes to the second player's hand
+    GiveFromHand PlayerId CardId PlayerId
+  | -- | a card in the player's hand is shuffled into its owner's deck
+    ShuffleFromHandIntoOwnersDeck PlayerId CardId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
