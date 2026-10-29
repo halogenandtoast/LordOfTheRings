@@ -855,5 +855,11 @@
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
   },
-  "readyUpTo": "Choose a character to ready ({n} left)"
+  "readyUpTo": "Choose a character to ready ({n} left)",
+  "neekerbreekers": {
+    "damageAlly": "Choose an ally you control to take 2 damage"
+  },
+  "remnantsOfElderDays": {
+    "search": "Choose a Creature enemy to put into play engaged with you"
+  }
 }
