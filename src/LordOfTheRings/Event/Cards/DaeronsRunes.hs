@@ -14,7 +14,7 @@ daeronsRunes = event DaeronsRunes Cards.daeronsRunes
 instance RunMessage DaeronsRunes where
   runMessage msg e@(DaeronsRunes attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      drawCards pid 2
+      drawCards attrs pid 2
       chooseAndDiscardFromHand pid attrs 1
       pure e
     _ -> DaeronsRunes <$> runMessage msg attrs

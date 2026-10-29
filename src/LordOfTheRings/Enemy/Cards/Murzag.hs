@@ -18,18 +18,19 @@ murzag = enemy Murzag Cards.murzag
 instance HasAbilities Murzag where
   getAbilities (Murzag a) = [mkAbility a 1 $ forced $ EnemyAttacksWindow After a.id]
 
--- | The card is revealed as any other, its When Revealed resolving; an enemy then engages
--- the defending player, read back as a later step carrying it.
--- ponytail: the enemy passes through the staging area as it is revealed, and its surge,
--- if any, resolves before it engages; an empty deck reshuffled to reveal engages nothing.
+-- | The card is revealed, its When Revealed resolving; an enemy goes straight into play
+-- engaged with the defending player, and attacks him this step, read back as a later step
+-- carrying it.
 instance RunMessage Murzag where
   runMessage msg e@(Murzag attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
       for_ (take 1 [pid | Window _ (EnemyAttacking _ pid) <- ws]) \pid -> do
         top <- getsGame (headMay . (.encounterDeck) . toAttrs . (.scenario))
-        revealEncounterCard
-        for_ top \card ->
-          when (cdCardType (toCardDef card) == EnemyType) $ doStep 1 (PutEnemyIntoPlayEngaged pid card)
+        case top of
+          Just card | cdCardType (toCardDef card) == EnemyType -> do
+            revealEncounterCardEngaged pid card
+            doStep 1 (PutEnemyIntoPlayEngaged pid card)
+          _ -> revealEncounterCard
       pure e
     DoStep 1 (PutEnemyIntoPlayEngaged pid card) -> do
       revealed <- getsGame (filter ((== card.id) . enemyCardId . toAttrs) . toList . (.entities.enemies))

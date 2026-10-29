@@ -23,6 +23,6 @@ instance RunMessage Ori where
         selectCharacters
           (HeroControlledBy you <> HeroWithTrait Dwarf)
           (AllyControlledBy you <> AllyWithTrait Dwarf)
-      when (length dwarves >= 5) $ drawCards attrs.heroOwner 1
+      when (length dwarves >= 5) $ drawCards attrs attrs.heroOwner 1
       Ori <$> runMessage msg attrs
     _ -> Ori <$> runMessage msg attrs

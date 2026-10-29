@@ -7,7 +7,6 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
-import LordOfTheRings.Card.CardDef (CardDef (..))
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
@@ -84,14 +83,9 @@ preloadModifiers g = do
       unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (isPlayerCardSource $ modifierSource m)) ms else ms
   pure $ g {gameModifiers = Map.mapWithKey unaffected all'}
 
--- | Whether the character commits to the quest without exhausting: by its own modifiers,
--- or the game's for a trait it has, printed or gained.
-doesNotExhaustToCommit :: (HasGame m) => Target -> CardDef -> m Bool
-doesNotExhaustToCommit target def = do
-  own <- getModifiers target
-  game <- getModifiers GameTarget
-  let traits = cdCardTraits def <> setFromList [t | GainTrait t <- own]
-  pure $ DoesNotExhaustToCommit `elem` own || or [t `member` traits | TraitDoesNotExhaustToCommit t <- game]
+-- | Whether the character commits to the quest without exhausting.
+doesNotExhaustToCommit :: (HasGame m) => Target -> m Bool
+doesNotExhaustToCommit target = elem DoesNotExhaustToCommit <$> getModifiers target
 
 getModifiers :: (HasGame m, Targetable a) => a -> m [ModifierType]
 getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers

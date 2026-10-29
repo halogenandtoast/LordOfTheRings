@@ -17,6 +17,6 @@ instance RunMessage ElvenLight where
   runMessage msg e@(ElvenLight attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       returnFromDiscardToHand pid card.id
-      drawCards pid 1
+      drawCards attrs pid 1
       pure e
     _ -> ElvenLight <$> runMessage msg attrs

@@ -75,11 +75,21 @@ export interface ScenarioView {
   /** what is under the quest card, as Captured! holds Faramir */
   questAttachments: CardView[]
   staging: CardView[]
+  /** While the players are separated, the other areas: each one's players, quest, active location and staging area. */
+  otherAreas: AreaView[]
   encounterDeck: number
   encounterDiscard: number
   discard: CardView[]
   victory: CardView[]
   victoryPoints: number
+}
+
+export interface AreaView {
+  players: string[]
+  quest: CardView | null
+  activeLocation: CardView | null
+  staging: CardView[]
+  threat: number
 }
 
 export interface PlayerView {

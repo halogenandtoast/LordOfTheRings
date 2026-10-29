@@ -36,7 +36,7 @@ instance RunMessage DrownedTreasury where
         chooseOneM pid do
           questionLabeled "drownedTreasury.choose"
           causedBy a
-          labeled "drownedTreasury.draw" $ drawCards pid 2
+          labeled "drownedTreasury.draw" $ drawCards a pid 2
           unless (null heroes) $ targets objectives \o ->
             chooseOrRunOneM pid do
               questionLabeled "drownedTreasury.hero"

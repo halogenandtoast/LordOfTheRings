@@ -24,6 +24,6 @@ instance RunMessage WargLair where
       searchEncounterDeckAndDiscard lead a (cardIs Enemies.mountainWarg)
       pure l
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      eachPlayer \p -> drawCards p 1
+      eachPlayer \p -> drawCards a p 1
       pure l
     _ -> WargLair <$> runMessage msg a

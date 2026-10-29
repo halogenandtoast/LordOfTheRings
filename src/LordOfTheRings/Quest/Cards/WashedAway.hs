@@ -24,9 +24,8 @@ washedAway = quest WashedAway Cards.washedAway
 -- cards from the game.
 --
 -- An objective leaves play to the staging area when discarded, and none is an enemy or a
--- treachery, so they are removed from the game. The drawn stages are resolved as the
--- scenario's helpers say: the first is put into play, the others follow it in the quest
--- deck, ahead of stage 5.
+-- treachery, so they are removed from the game. Each player then has a staging area and
+-- a stage 4 of his own: see "LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers".
 instance RunMessage WashedAway where
   runMessage msg q@(WashedAway attrs) = case msg of
     Flip (isTarget attrs -> True) -> do
@@ -52,10 +51,13 @@ instance RunMessage WashedAway where
         [c | c <- scenarioSetAside scenario, cdEncounterSet (toCardDef c) == Just FoundationsOfStone]
       players <- getRemainingPlayers
       drawn <- zip players <$> shuffleM stageFours
-      cards <- traverse (genEncounterCard . snd) drawn
-      case cards of
-        next : others -> resetToStage next (others <> scenario.questDeck)
-        [] -> advanceQuest
-      for_ drawn $ uncurry (stageFourRevealed attrs)
+      -- each player creates his own staging area, and resolves his stage there
+      separatePlayers (map (pure . fst) drawn)
+      for_ drawn \(pid, stage) -> do
+        focusAreaOf pid
+        card <- genEncounterCard stage
+        resetToStage card scenario.questDeck
+        stageFourRevealed attrs pid stage
+      for_ (take 1 players) focusAreaOf
       pure q
     _ -> WashedAway <$> runMessage msg attrs

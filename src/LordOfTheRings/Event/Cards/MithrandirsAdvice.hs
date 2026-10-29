@@ -18,6 +18,6 @@ instance RunMessage MithrandirsAdvice where
   runMessage msg e@(MithrandirsAdvice attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithPrintedSphere Lore)
-      drawCards pid n
+      drawCards attrs pid n
       pure e
     _ -> MithrandirsAdvice <$> runMessage msg attrs

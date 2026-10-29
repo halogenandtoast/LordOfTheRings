@@ -111,11 +111,15 @@ spec = describe "Player choices" do
       run $ CommitToQuest guard'
       isExhausted guard' `shouldReturn` True
 
-  it "spares a Rohan character entering play after We Do Not Sleep" . gameTest $ \pid -> do
-    playEvent pid Events.weDoNotSleep
+  it "spares the Rohan characters in play as We Do Not Sleep is played, not one entering after (FAQ 1.55)" . gameTest $ \pid -> do
     rider <- putAllyIntoPlay pid Allies.westfoldHorseBreaker
+    playEvent pid Events.weDoNotSleep
+    lateRider <- putAllyIntoPlay pid Allies.westfoldHorseBreaker
+    getsGame (length . (.entities.allies)) `shouldReturn` 2
     run $ CommitToQuest rider
+    run $ CommitToQuest lateRider
     isExhausted rider `shouldReturn` False
+    isExhausted lateRider `shouldReturn` True
 
   it "returns Gildor Inglorion's cards in the order chosen" . gameTest $ \pid -> do
     [c3, c2, c1] <- traverse (onTopOfDeck pid) [Allies.guardOfTheCitadel, Allies.gondorianSpearman, Allies.wanderingTook]

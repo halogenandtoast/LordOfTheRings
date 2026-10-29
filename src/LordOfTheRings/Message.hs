@@ -70,6 +70,8 @@ data Message
   | EndPhase Phase
   | BeginRound
   | RaiseThreat PlayerId Int
+  | -- | the threat raise itself, once the window before it has closed
+    DoRaiseThreat PlayerId Int
   | CheckEliminations
   | EliminatePlayer PlayerId
   | GameOver Outcome
@@ -125,6 +127,8 @@ data Message
   | -- | an ally card put into play under the player's control, keeping its owner
     PutAllyIntoPlayUnder PlayerId PlayerCard
   | PutHeroIntoPlay PlayerId PlayerCard
+  | -- | an attachment card, already taken from where it was, put into play by the player
+    PutAttachmentIntoPlay PlayerId PlayerCard
   | -- | a player side quest, played, goes to the staging area
     PutSideQuestIntoPlay PlayerId PlayerCard
   | ShuffleDiscardIntoDeck PlayerId
@@ -161,6 +165,9 @@ data Message
   | AddToStaging EncounterCard
   | RevealEncounterCard
   | RevealCard EncounterCard
+  | -- | the card is revealed, and an enemy put into play engaged with the player, as
+    -- Murzag reads; any other card resolves as 'RevealCard'
+    RevealCardEngaged PlayerId EncounterCard
   | WhenRevealed Target
   | -- | the lead clicks the revealed card to resolve its When Revealed effect
     AskToResolveWhenRevealed Target EncounterCard
@@ -365,6 +372,9 @@ data Message
   | DefendedByMany PlayerId EnemyId [Target]
   | -- | the players as a group spend resources of a sphere, from any of their heroes
     SpendGroupResources PlayerId Sphere Int
+  | -- | the players as a group discard resources from any of their heroes' pools, as
+    -- many as they can up to the number, as prowl reads: not spent, so any hero's go
+    DiscardGroupResources PlayerId Int
   | -- | spend resources of a sphere, at most 1 from each hero, from heroes not yet used
     SpendResourcesFromDistinctHeroes PlayerId Sphere Int [HeroId]
   | UndefendedAttack PlayerId EnemyId
@@ -477,6 +487,19 @@ data Message
   | -- | the progress that would have been placed on the source's quest card, canceled: see
     -- 'QuestProgressCanceledBy'
     ProgressCanceled Source Int
+  | {- | the players split into areas of their own, each with its own staging area, one
+    for each group: see 'LordOfTheRings.Game.Base.Separation'. The encounter cards no
+    player holds stay with the first group.
+    -}
+    SeparatePlayers [[PlayerId]]
+  | -- | the area holding the player comes into focus, to resolve what follows
+    FocusArea PlayerId
+  | -- | the area in focus is to join another at the beginning of the travel phase
+    JoinAtTravel
+  | -- | the areas to join another do so, in turn order, at the beginning of the travel phase
+    JoinAreas
+  | -- | the first player's area joins the second's
+    JoinArea PlayerId PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

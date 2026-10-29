@@ -22,7 +22,7 @@ instance RunMessage HiddenCache where
   runMessage msg e@(HiddenCache attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       spendResources pid Neutral 1
-      drawCards pid 1
+      drawCards attrs pid 1
       pure e
     RespondFromDiscard pid card _ | card.id == toId attrs -> do
       heroes <- select (HeroControlledBy $ PlayerWithId pid)

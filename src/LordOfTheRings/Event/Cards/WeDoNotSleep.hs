@@ -9,13 +9,15 @@ newtype WeDoNotSleep = WeDoNotSleep EventAttrs
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Until the end of the phase, Rohan characters do not exhaust to commit to
--- quests.
+-- quests: those in play as it is played, a lasting effect of a player card being worked out
+-- once (FAQ 1.55).
 weDoNotSleep :: EventCard WeDoNotSleep
 weDoNotSleep = event WeDoNotSleep Cards.weDoNotSleep
 
 instance RunMessage WeDoNotSleep where
   runMessage msg e@(WeDoNotSleep attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      phaseModifier attrs GameTarget (TraitDoesNotExhaustToCommit Rohan)
+      rohan <- selectCharacters (HeroWithTrait Rohan) (AllyWithTrait Rohan)
+      for_ rohan \c -> phaseModifier attrs c DoesNotExhaustToCommit
       pure e
     _ -> WeDoNotSleep <$> runMessage msg attrs

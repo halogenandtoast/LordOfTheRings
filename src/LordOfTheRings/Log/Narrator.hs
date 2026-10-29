@@ -70,6 +70,7 @@ narrationFor = \case
     pure [action [ikeyPart "log.putsIntoPlay" ["player" ~> who, "card" ~> c]] | Just c <- [card]]
   PutAllyIntoPlayUnder _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   PutHeroIntoPlay _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
+  PutAttachmentIntoPlay _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   SwapHero _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> PlayerCard card]]
   CommitToQuest target -> Just $ whenRef target \c -> do
     (name, strength) <- questingStat
@@ -99,6 +100,13 @@ narrationFor = \case
   EliminatePlayer pid -> Just do
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]
+  SeparatePlayers (_ : _ : _) -> Just $ one $ mechanic [ikeyPart "log.separated" []]
+  -- an eliminated player's area leaves with him, joining no one
+  JoinArea joining target -> Just do
+    eliminated <- getsGame (maybe True (.eliminated) . Map.lookup joining . allPlayers)
+    who <- playerRefFor joining
+    other <- playerRefFor target
+    pure [mechanic [ikeyPart "log.joins" ["player" ~> who, "other" ~> other]] | not eliminated]
   -- \* Damage and tokens
   DoStep 1 (DealDamage source target n) | n > 0 -> Just $ whenRef target \t -> do
     mSource <- sourceRefFor source

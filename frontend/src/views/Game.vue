@@ -248,6 +248,16 @@ watch(question, (asked) => {
             :flipping="flipping"
             @choose="choose"
           />
+          <CardBand
+            v-for="(area, i) in scenario.otherAreas"
+            :key="i"
+            class="staging"
+            :label="$t('game.areaStaging', { players: area.players.join(', '), threat: area.threat })"
+            :cards="[...(area.quest ? [area.quest] : []), ...(area.activeLocation ? [area.activeLocation] : []), ...area.staging]"
+            :choices="choices"
+            :flipping="flipping"
+            @choose="choose"
+          />
           <section class="band victory">
             <span class="band-label">{{ $t('game.bands.victory') }}</span>
             <DiscardPile :cards="scenario.victory" back="victory" kind="victory" />

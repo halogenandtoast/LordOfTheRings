@@ -27,7 +27,8 @@ instance HasModifiersFor MugashsGuard where
 
 instance RunMessage MugashsGuard where
   runMessage msg e@(MugashsGuard attrs) = case msg of
-    CheckWindows _ -> do
+    -- not in the window before its own engagement, which is already under way
+    CheckWindows ws | null [() | Window When (EnemyEngaged eid _) <- ws, eid == attrs.id] -> do
       engageCaptor attrs.id
       MugashsGuard <$> runMessage msg attrs
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do

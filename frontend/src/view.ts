@@ -217,7 +217,16 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     }
   })
 
-  const staging = [
+  // separated, the board's scenario is the area in focus, and the other areas are shown
+  // beside it, each with its own quest, active location and staging area
+  const areas = game.areas ?? []
+  const inArea = (cards: string[] | undefined) => {
+    const ids = new Set(cards ?? [])
+    return (c: CardView) => areas.length === 0 || ids.has(c.id)
+  }
+  const inFocus = inArea(areas.find((a) => a.focused)?.cards)
+
+  const allStaging = [
     ...placed('enemies', isAt('StagingArea')),
     ...placed('locations', isAt('StagingArea')),
     // a guarded one comes in with its guard's attachments, wherever the guard is
@@ -229,6 +238,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     // a player side quest waits in staging until it is defeated
     ...placed('quests', (q) => !!q.owner),
   ]
+  const staging = allStaging.filter(inFocus)
 
   const damageTo = (id: string | null, messages: Message[]): number =>
     messages.reduce((sum, m) => {
@@ -281,8 +291,22 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched, amount }
   }
 
-  const [activeLocation, ...otherActiveLocations] = placed('locations', isAt('ActiveLocation'))
-  const [quest] = placed('quests', (q) => !q.owner)
+  const activeLocations = placed('locations', isAt('ActiveLocation'))
+  const quests = placed('quests', (q) => !q.owner)
+  const [activeLocation, ...otherActiveLocations] = activeLocations.filter(inFocus)
+  const [quest] = quests.filter(inFocus)
+  const otherAreas = areas
+    .filter((a) => !a.focused)
+    .map((a) => {
+      const here = inArea(a.cards)
+      return {
+        players: a.players.map((pid) => game.players[pid]?.name ?? pid),
+        quest: quests.find(here) ?? null,
+        activeLocation: activeLocations.find(here) ?? null,
+        staging: withAttachments(allStaging.filter(here)),
+        threat: a.threat,
+      }
+    })
 
   const [asked] = Object.entries(game.question)
 
@@ -307,6 +331,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       activeLocationAttachments: attachmentsOn(activeLocation ? [activeLocation] : []),
       otherActiveLocations: otherActiveLocations.map((card) => ({ card, attachments: attachmentsOn([card]) })),
       staging: withAttachments(staging),
+      otherAreas,
       encounterDeck: game.scenario.encounterDeckSize,
       encounterDiscard: game.scenario.encounterDiscard.length,
       discard: game.scenario.encounterDiscard.map((c) => card(c.cardCode, c.id)),

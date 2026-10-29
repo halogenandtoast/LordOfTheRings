@@ -5,6 +5,7 @@ import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, PlayerMatcher)
+import LordOfTheRings.Outcome (Outcome)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
@@ -46,8 +47,6 @@ data ModifierType
     AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others
     CannotAttackPlayer PlayerId
-  | -- | on a player: the enemies engaged with them cannot attack them, as Out of Sight reads
-    EngagedEnemiesCannotAttack
   | CannotAttackOrDefend
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies
@@ -211,9 +210,6 @@ data ModifierType
     DamageRedirectedTo Target
   | -- | on a character: it commits to the quest without exhausting
     DoesNotExhaustToCommit
-  | -- | on the game: characters with the trait commit to the quest without exhausting,
-    -- those that come into play or gain it later too
-    TraitDoesNotExhaustToCommit Trait
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
   | -- | on an encounter card: its When Revealed effect cannot be canceled
@@ -315,9 +311,9 @@ data ModifierType
   | -- | on a player: before he commits his first character to the quest he discards a
     -- card at random from his hand, and with none he cannot commit, as A Weary Passage reads
     DiscardRandomToCommit
-  | -- | on a player: card effects cannot make him draw cards, as No End in Sight reads; the
-    -- draw of the resource phase is not one
-    CannotDrawCardsFromCardEffects
+  | -- | on a player: player card effects cannot make him draw cards, as No End in Sight
+    -- reads; the draw of the resource phase is not one, nor is an encounter card's
+    CannotDrawCardsFromPlayerCardEffects
   | -- | on a location in the staging area: progress is placed on it before it can be placed
     -- on the active location, as Grim Foothills reads
     TakesProgressBeforeActiveLocation
@@ -351,6 +347,11 @@ data ModifierType
     HeroCommittedThisRound
   | -- | on the game: the players quested successfully this phase, as Bofur reads
     QuestedSuccessfullyThisPhase
+  | -- | on the game: it cannot end, a win or loss waiting until nothing gives this, as
+    -- Ghulat reads
+    GameCannotEnd
+  | -- | on the game: the outcome the game ends with once it can end
+    GameEndsWith Outcome
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

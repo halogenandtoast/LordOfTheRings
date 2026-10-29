@@ -23,6 +23,9 @@ hobbitSense =
 instance RunMessage HobbitSense where
   runMessage msg e@(HobbitSense attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      roundModifiers attrs (PlayerTarget pid) [EngagedEnemiesCannotAttack, CannotAttack]
+      -- the enemies engaged with you as it is played, worked out once (FAQ 1.55)
+      enemies <- select (EnemyEngagedWith $ PlayerWithId pid)
+      for_ enemies \eid -> roundModifier attrs eid CannotAttack
+      roundModifier attrs (PlayerTarget pid) CannotAttack
       pure e
     _ -> HobbitSense <$> runMessage msg attrs

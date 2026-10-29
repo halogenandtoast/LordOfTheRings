@@ -6,13 +6,14 @@ import LordOfTheRings.Card (cdCardCode, cdEncounterSet, toCardDef)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.EncounterSet (EncounterSet (FoundationsOfStone))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Character (getAttack)
+import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyHitPoints)
 import LordOfTheRings.Keyword (Keyword (Ranged))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (OnlyFoughtByKeyword))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Matcher (getEnemy, passesUnique)
 import LordOfTheRings.Phase (Phase (RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (foundationsOfStone)
@@ -20,14 +21,23 @@ import LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers (stageFours)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioQuestDeck, scenarioSetAside), questDeckL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
+import Data.Aeson (Result (..))
+import Data.Aeson.Key qualified as Key
+import Data.Aeson.KeyMap qualified as KeyMap
+import LordOfTheRings.Game.Public (publicGameFor)
+import Data.Map.Strict qualified as Map
 
 fosTest :: (PlayerId -> GameT ()) -> IO ()
 fosTest = gameTestIn foundationsOfStone testDeck
 
 -- | A table of two in Foundations of Stone, both with the test deck.
 fosTwoPlayerTest :: (PlayerId -> PlayerId -> GameT ()) -> IO ()
-fosTwoPlayerTest body = do
-  seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", testDeck)])
+fosTwoPlayerTest = fosTableTest testDeck testDeck
+
+-- | A table of two in Foundations of Stone, with the decks given.
+fosTableTest :: DeckList -> DeckList -> (PlayerId -> PlayerId -> GameT ()) -> IO ()
+fosTableTest deckOne deckTwo body = do
+  seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", deckOne) :| [("two", deckTwo)])
   env <- newGameEnv (newTableIn foundationsOfStone seats) (const $ pure ()) 1
   runGameT env do
     order <- getsGame (.playerOrder)
@@ -54,6 +64,17 @@ setDeck pid defs = do
 
 questCodes :: GameT [CardCode]
 questCodes = getsGame (map toCardCode . toList . (.entities.quests))
+
+-- | The players in each area, in turn order, or none while the players are together.
+areas :: GameT [[PlayerId]]
+areas = getsGame \g -> maybe [] (map areaPlayers . areasInTurnOrder g) (gameSeparation g)
+
+-- | Each player alone in an area of his own, the one in focus.
+separateEach :: PlayerId -> PlayerId -> GameT ()
+separateEach one two = run $ SeparatePlayers [[one], [two]]
+
+enemyCodes :: GameT [CardCode]
+enemyCodes = getsGame (map toCardCode . toList . (.entities.enemies))
 
 questDeck :: GameT [CardCode]
 questDeck = getsGame (map toCardCode . scenarioQuestDeck . toAttrs . (.scenario))
@@ -186,24 +207,110 @@ spec = describe "Foundations of Stone" do
     sort (map toCardCode (deck <> discard) <> enemies <> locations)
       `shouldBe` sort (map cdCardCode [Enemies.moriaBats, Treacheries.evilStorm, Enemies.namelessThing])
 
-  it "draws a different stage 4 for each player, taken in turn before stage 5" . fosTwoPlayerTest $ \one _ -> do
+  it "gives each player a staging area and a stage 4 of his own, as the only player there" . fosTwoPlayerTest $ \one two -> do
     quest <- putQuestStage Quests.washedAway
     setQuestDeck [Quests.outOfTheDepths]
     _ <- setEncounterDeck []
     run $ Flip quest
     resolveWhenRevealed one
-    (first', second', stage5) <-
-      (,) <$> questCodes <*> questDeck >>= \case
-        ([a], [b, c]) -> pure (a, b, c)
-        other -> error $ "unexpected stages " <> show other
-    first' `shouldSatisfy` (`elem` map cdCardCode stageFours)
-    second' `shouldSatisfy` (`elem` map cdCardCode stageFours)
-    first' `shouldSatisfy` (/= second')
-    stage5 `shouldBe` toCardCode Quests.outOfTheDepths
-    -- the first drawn stage defeated, the group moves on to the next
+    areas `shouldReturn` [[one], [two]]
+    questDeck `shouldReturn` [toCardCode Quests.outOfTheDepths]
+    first' <- questCodes
+    first' `shouldSatisfy` all (`elem` map cdCardCode stageFours)
+    length first' `shouldBe` 1
+    getsGame (Map.keys . (.players)) `shouldReturn` [one]
+    getLead `shouldReturn` one
+    -- a card revealed goes to the staging area of the area in focus alone
+    reveal [Enemies.moriaBats]
+    enemyCodes `shouldReturn` [toCardCode Enemies.moriaBats]
+    run $ FocusArea two
+    enemyCodes `shouldReturn` []
+    getLead `shouldReturn` two
+    second' <- questCodes
+    length second' `shouldBe` 1
+    second' `shouldSatisfy` (/= first')
+
+  it "shows every area to the players, and keeps the areas when the game is saved" . fosTwoPlayerTest $ \one two -> do
+    separateEach one two
+    seen <- getsGame (publicGameFor (== one))
+    let key k = case seen of
+          Object o -> KeyMap.lookup k o
+          _ -> Nothing
+        players = case key "players" of
+          Just (Object ps) -> ps
+          _ -> mempty
+    sort (map Key.toText $ KeyMap.keys players) `shouldBe` sort (map tshow [one, two])
+    (\case Just (Array as) -> length as; _ -> 0) (key "areas") `shouldBe` 2
+    key "separation" `shouldBe` Nothing
+    saved <- getsGame toJSON
+    case fromJSON saved of
+      Success (g :: Game) -> maybe [] (map areaPlayers . separationAreas) (gameSeparation g) `shouldBe` [[one], [two]]
+      Error e -> error e
+
+  it "keeps the uniqueness rule across the separated areas (FAQ 2.36)" . fosTwoPlayerTest $ \one two -> do
+    separateEach one two
+    run $ FocusArea two
+    _ <- putAllyIntoPlay two Allies.gandalf
+    run $ FocusArea one
+    gandalf <- PlayerCard <$> genPlayerCard Allies.gandalf (Just one)
+    passesUnique gandalf `shouldReturn` False
+
+  it "has Elladan and Elrohir lose their bonuses while separated (ALeP 3.040)" . fosTableTest (testDeck {heroes = ["04001"]}) (testDeck {heroes = ["04028"]}) $ \one two -> do
+    elrohir <- heroOf one "04001"
+    run $ Run []
+    getDefense elrohir `shouldReturn` 3
+    separateEach one two
+    getDefense elrohir `shouldReturn` 1
+    -- together again, the bonus returns
+    run $ JoinArea two one
+    areas `shouldReturn` []
+    getDefense elrohir `shouldReturn` 3
+
+  it "makes each separated player the first player of his area, the token still passing" . fosTwoPlayerTest $ \one two -> do
+    separateEach one two
+    run $ FocusArea two
+    getLead `shouldReturn` two
+    -- each area ends the refresh phase and the round in turn, then the token passes
+    run $ BeginPhase RefreshPhase
+    passActions two
+    run $ EndPhase RefreshPhase
+    getsGame (fmap separationFirstPlayer . gameSeparation) `shouldReturn` Just two
+    getsGame (Map.keys . (.players)) `shouldReturn` [two]
+    getLead `shouldReturn` two
+
+  it "has a player whose stage 4 is defeated join another at the beginning of the travel phase" . fosTwoPlayerTest $ \one two -> do
+    separateEach one two
+    _ <- putQuestStage Quests.oldOneLair
+    run $ FocusArea two
+    _ <- putQuestStage Quests.theShiveringBank
+    reveal [Enemies.moriaBats]
+    reveal [Enemies.namelessThing]
+    run . EngageEnemy two =<< enemyOf Enemies.namelessThing
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.branchingPaths
     current <- toTarget <$> getActiveQuest
-    run $ PlaceTokens GameSource current Progress 17
-    questCodes `shouldReturn` [second']
+    run $ PlaceTokens GameSource current Progress 7
+    -- the stage stays until its players join another
+    questCodes `shouldReturn` [toCardCode Quests.theShiveringBank]
+    run JoinAreas
+    areas `shouldReturn` []
+    questCodes `shouldReturn` [toCardCode Quests.oldOneLair]
+    sort <$> enemyCodes `shouldReturn` sort [toCardCode Enemies.moriaBats, toCardCode Enemies.namelessThing]
+    nameless <- enemyOf Enemies.namelessThing
+    (.placement) <$> getEnemy nameless `shouldReturn` EngagedWith two
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Locations.branchingPaths]
+
+  it "has the players continue on to stage 5 together once no one is left to join" . fosTwoPlayerTest $ \one two -> do
+    setQuestDeck [Quests.outOfTheDepths]
+    _ <- setEncounterDeck []
+    separateEach one two
+    oneStage <- putQuestStage Quests.oldOneLair
+    run $ PlaceTokens GameSource oneStage Progress 5
+    run $ FocusArea two
+    twoStage <- putQuestStage Quests.theShiveringBank
+    run $ PlaceTokens GameSource twoStage Progress 7
+    run JoinAreas
+    areas `shouldReturn` []
+    questCodes `shouldReturn` [toCardCode Quests.outOfTheDepths]
 
   it "lets no player commit more allies than heroes to Out of the Depths" . fosTest $ \pid -> do
     _ <- putQuestStage Quests.outOfTheDepths

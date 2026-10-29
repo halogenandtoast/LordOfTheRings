@@ -17,7 +17,7 @@ pillagingAndBurning = treachery PillagingAndBurning Cards.pillagingAndBurning
 instance RunMessage PillagingAndBurning where
   runMessage msg t@(PillagingAndBurning attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      eachPlayer \p -> drawCards p 1
+      eachPlayer \p -> drawCards attrs p 1
       -- the hands are counted once the cards are drawn
       doStep 1 msg
       pure t

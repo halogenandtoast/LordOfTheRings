@@ -8,7 +8,7 @@ import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense, getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Effect (Effect (..))
-import LordOfTheRings.Modifier (ModifierType (CostModifier, DiscardNextRevealed))
+import LordOfTheRings.Modifier (ModifierType (CannotAttack, CostModifier, DiscardNextRevealed, NoEngagementChecks))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
@@ -151,6 +151,35 @@ spec = describe "Against the Shadow player cards" do
       passActions pid
       getQuestion pid `shouldReturn` Nothing
       getCharacterDamage p `shouldReturn` 0
+
+    it "stops only the enemies engaged as it is played, not ones engaging later (FAQ 1.55)" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
+      eid <- stage Enemies.forestSpider
+      run $ EngageEnemy pid eid
+      chooseLabel "$label.pass" pid
+      card <- putCardIntoHand pid Events.hobbitSense
+      p <- hero pippin
+      run $ PlaceTokens GameSource p Resource 2
+      _ <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ BeginPhase CombatPhase
+      chooseTarget pid (CardIdTarget card.id)
+      -- the action window waits, so the later enemy comes in past it
+      spider <- genEncounterCard Enemies.forestSpider
+      _ <- runDebug $ AddToStaging spider
+      later <- getsGame (fromJustNote "no spider" . find ((== spider.id) . enemyCardId . toAttrs) . toList . (.entities.enemies)) <&> toId
+      _ <- runDebug $ EngageEnemy pid later
+      getModifiers (toTarget eid) >>= (`shouldSatisfy` elem CannotAttack)
+      getModifiers (toTarget later) >>= (`shouldSatisfy` notElem CannotAttack)
+
+  describe "Advance Warning" do
+    it "stops engagement checks only for enemies in play as it is played (FAQ 1.55)" . withHeroes ["06032", beravor, bilbo] $ \pid -> do
+      early <- stage Enemies.forestSpider
+      _ <- playWith pid beravor 2 Events.advanceWarning
+      -- the planning window waits, so the later enemy comes in past it
+      spider <- genEncounterCard Enemies.forestSpider
+      _ <- runDebug $ AddToStaging spider
+      later <- getsGame (fromJustNote "no spider" . find ((== spider.id) . enemyCardId . toAttrs) . toList . (.entities.enemies)) <&> toId
+      getModifiers (toTarget early) >>= (`shouldSatisfy` elem NoEngagementChecks)
+      getModifiers (toTarget later) >>= (`shouldSatisfy` notElem NoEngagementChecks)
 
   describe "Men of the West" do
     it "returns an Outlands ally from the discard pile to hand for each leadership resource" . withHeroes [hirluin, beravor, eowyn] $ \pid -> do

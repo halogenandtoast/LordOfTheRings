@@ -1,11 +1,16 @@
 {- | What the cards of Foundations of Stone share: the Nameless enemies' facedown cards, and
 the stage 4s the players draw at Washed Away!.
 
-Stage 4 gives each player a staging area and a stage of his own, and the engine has one of
-each. The players share them instead: each player draws a random stage 4 and its When
-Revealed effect resolves for him at once, into the one staging area, then the group
-quests through the drawn stages in turn, the first player's first, before stage 5. Joining
-another player is moving on to the next drawn stage. Solo this is the card as printed.
+At stage 4 each player creates his own staging area, as the rules insert says, and
+quests through the stage 4 he drew there: see 'LordOfTheRings.Game.Base.Separation'. Each
+area has its own staging area, active location and stage, and resolves each phase in
+turn, as if its players alone were in the game; the uniqueness rule still holds across
+the areas (FAQ 2.36), so Elladan and Elrohir lose their bonuses while apart (ALeP 3.040),
+and each player is the first player of his own area while the token still passes
+(ALeP 3.030). A player whose stage is defeated joins another at the beginning of the
+travel phase, taking the encounter cards in his staging area and those engaged with him,
+his active location discarded; once no one is left to join, the players continue on to
+stage 5 together.
 -}
 module LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers (
   attachFromTopOfDeck,
@@ -44,8 +49,8 @@ namelessX none attrs
 stageFours :: [CardDef]
 stageFours = [Quests.belowTheMines, Quests.theEndlessCaves, Quests.theShiveringBank, Quests.oldOneLair]
 
-{- | The When Revealed effect of the stage 4 the player drew, resolved for him. "Create your
-own staging area" is the shared one.
+{- | The When Revealed effect of the stage 4 the player drew, resolved for him in his own
+area, which Washed Away! has created.
 -}
 stageFourRevealed :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> CardDef -> m ()
 stageFourRevealed source pid stage

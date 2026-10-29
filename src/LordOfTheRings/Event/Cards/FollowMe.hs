@@ -15,6 +15,6 @@ instance RunMessage FollowMe where
   runMessage msg e@(FollowMe attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       push $ SetFirstPlayer pid
-      drawCards pid 1
+      drawCards attrs pid 1
       pure e
     _ -> FollowMe <$> runMessage msg attrs

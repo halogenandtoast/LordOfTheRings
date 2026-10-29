@@ -22,7 +22,7 @@ instance RunMessage CaveSpider where
   runMessage msg e@(CaveSpider attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
-      drawCards lead 1
+      drawCards attrs lead 1
       doStep 1 msg
       pure e
     -- "if able": with fewer than 4 cards in hand the discard is ignored (ruling 3.101)

@@ -32,7 +32,7 @@ instance RunMessage Palantir where
       cards <- take 3 . (.encounterDeck) . toAttrs <$> getsGame (.scenario)
       let named types = do
             let matching = length [c | c <- cards, cdCardType (toCardDef c) `elem` types]
-            drawCards pid matching
+            drawCards a pid matching
             raiseThreat pid (2 * (length cards - matching))
       chooseOneM pid do
         questionLabeled "palantir.name"
