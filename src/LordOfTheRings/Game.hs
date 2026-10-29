@@ -239,6 +239,13 @@ runGame msg g = case msg of
     if active && notNull firsts
       then g <$ (push =<< progressFirst source n firsts \k -> [PlaceTokens source target Progress k | k > 0])
       else runGame'' msg g
+  -- an enemy that engages only one player, as Chief Turch the first player, engages him
+  -- whoever it would have engaged
+  EngageEnemy pid eid -> do
+    only <- (\ms -> [p | EngagesOnly p <- ms]) <$> getModifiers (EnemyTarget eid)
+    case only of
+      p : _ | p /= pid -> g <$ push (EngageEnemy p eid)
+      _ -> runGame'' msg g
   _ -> runGame'' msg g
 
 runGame'' :: Message -> Game -> GameT Game

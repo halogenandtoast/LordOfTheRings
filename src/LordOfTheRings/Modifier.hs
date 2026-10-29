@@ -326,6 +326,9 @@ data ModifierType
     ProgressAsDamageTo Target
   | -- | on a character: it was dealt damage while defending the attack being resolved
     DamagedWhileDefending
+  | -- | on an enemy: whatever would have it engage another player, it engages this one
+    -- instead, as Chief Turch engages the first player
+    EngagesOnly PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
