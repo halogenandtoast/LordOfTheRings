@@ -30,9 +30,8 @@ instance RunMessage Saruman where
         filterM (fmap (not . cdUnique . toCardDef) . getLocation)
           =<< select (LocationInStagingArea <> LocationNotImmuneToPlayerCards)
       -- the card's text is blank while it is out of play; the effect ends as Saruman leaves
-      -- ponytail: no matcher finds it, but the board still shows it in the staging area, and
-      -- what walks every enemy or location without a matcher (regenerate at the start of the
-      -- refresh phase, time counters at its end) still touches it
+      -- no matcher finds it, regenerate and time counters pass it by, and the board shows it
+      -- greyed out as out of play
       chooseOneM pid do
         questionLabeled "saruman.choose"
         causedBy a

@@ -6,7 +6,8 @@ import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
-import LordOfTheRings.Matcher (EnemyMatcher (..), select)
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher (EnemyMatcher (..), getTimeCounters, select)
 import LordOfTheRings.Phase
 import TestImport
 
@@ -129,3 +130,13 @@ spec = describe "The Voice of Isengard player cards" do
       run $ Discard saruman
       getStagingThreat `shouldReturn` threat0
       select EnemyInStagingArea `shouldReturn` [eid]
+
+    it "keeps the time counters of a location he holds out of play" . voiTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Locations.dunlandBattlefield
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      getTimeCounters (toTarget lid) `shouldReturn` 3
+      saruman <- putAllyIntoPlay pid Allies.saruman
+      chooseAbilityOf pid saruman
+      chooseTarget pid lid
+      run $ EndPhase RefreshPhase
+      getTimeCounters (toTarget lid) `shouldReturn` 3

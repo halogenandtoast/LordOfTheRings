@@ -356,8 +356,9 @@ runGameMessage msg g = case msg of
       pushEnd BeginRound
     pure $ g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
   BeginPhase RefreshPhase -> do
-    -- an enemy with regenerate heals as much damage
-    regenerating <- for (toList g.entities.enemies) \e -> do
+    -- an enemy with regenerate heals as much damage, unless Saruman holds it out of play
+    present <- filterM (notOutOfPlay . toTarget) (toList g.entities.enemies)
+    regenerating <- for present \e -> do
       mods <- getModifiers e
       let printed = [n | Blank `notElem` mods, Regenerate n <- toList (cdKeywords $ toCardDef e)]
       pure [HealDamage (toSource e) (toTarget e) n | n <- printed <> [n | GainKeyword (Regenerate n) <- mods]]
@@ -1321,7 +1322,8 @@ runGameMessage msg g = case msg of
     when (phase == RefreshPhase) do
       let es = g.entities
           cards = map toTarget (toList es.quests) <> map toTarget (toList es.locations) <> map toTarget (toList es.enemies)
-      timed <- flip filterM cards \t -> (&& timeCountersIn es t > 0) . (> 0) <$> getTimeX t
+      -- not a card Saruman holds out of play
+      timed <- flip filterM cards \t -> andM [notOutOfPlay t, (&& timeCountersIn es t > 0) . (> 0) <$> getTimeX t]
       pushAll [RemoveTokens GameSource t TimeCounter 1 | t <- timed]
     when (phase == CombatPhase) do
       returning <-
