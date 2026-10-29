@@ -12,7 +12,9 @@ secondDeep :: LocationCard SecondDeep
 secondDeep = location SecondDeep Cards.secondDeep
 
 -- | While Durin's Bane has no damage on it, progress tokens cannot be placed on Second Deep.
--- ponytail: the progress is lost, not passed on to the quest; revisit if a ruling says otherwise
+-- The progress is lost, not passed on to the quest: the active location passes on only
+-- the progress past its quest points, once explored, and Second Deep cannot be explored
+-- while it takes none.
 instance RunMessage SecondDeep where
   runMessage msg l@(SecondDeep attrs) = case msg of
     PlaceTokens _ (isTarget attrs -> True) Progress _ -> do
