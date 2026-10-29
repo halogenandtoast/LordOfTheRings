@@ -426,6 +426,8 @@ data Message
     DiscardHiddenCard PlayerId EncounterCard
   | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
     PlaceAlly AllyId Placement
+  | -- | as the combat phase begins, the enemies with hinder engaged with players remove progress
+    ResolveHinder
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

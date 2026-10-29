@@ -585,12 +585,23 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    pushAll $ ResolveArchery : DealShadowCards
+    pushAll $ ResolveArchery : ResolveHinder : DealShadowCards
       : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order
     pure $ g & phaseL .~ CombatPhase
   ResolveArchery -> do
     total <- getArcheryTotal
     pushWhen (total > 0) $ ArcheryDamage total
+    pure g
+  -- each enemy with hinder engaged with a player removes 1 progress from the current quest,
+  -- from the active location once the quest has none
+  ResolveHinder -> do
+    n <- length <$> (filterM (hinders g) =<< select (EnemyEngagedWith AnyPlayer))
+    current <- getCurrentQuest
+    let questProgress = sum [q.progress | q <- toList g.entities.quests, Just (toTarget q) == current]
+        rest = n - min n questProgress
+    pushWhen (min n questProgress > 0) $ RemoveProgressFromQuest GameSource n
+    for_ (find ((== ActiveLocation) . (.placement)) (toList g.entities.locations)) \l ->
+      pushWhen (rest > 0 && l.progress > 0) $ RemoveTokens GameSource (toTarget l) Progress (min rest l.progress)
     pure g
   -- ponytail: the first player divides it for the group
   ArcheryDamage n | n > 0 -> do
@@ -607,7 +618,8 @@ runGameMessage msg g = case msg of
   DealShadowCards -> do
     order <- getPlayerOrder
     -- one engaged with each player from the staging area is dealt one for each attack
-    enemies <- filterM (fmap not . engagedWithEach) =<< concatMapM engagedByCost order
+    -- an enemy with hinder is dealt none
+    enemies <- filterM (\e -> not <$> orM [engagedWithEach e, hinders g e]) =<< concatMapM engagedByCost order
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
@@ -620,7 +632,7 @@ runGameMessage msg g = case msg of
     enemies <-
       filterM
         (fmap (\ms -> CannotAttack `notElem` ms && CannotAttackPlayer pid `notElem` ms) . getModifiers)
-        [e | e <- candidates, e `elem` engaged]
+        =<< filterM (fmap not . hinders g) [e | e <- candidates, e `elem` engaged]
     -- one engaged with each player is dealt a new shadow card for each attack, discarded after
     let attack eid = do
           each <- engagedWithEach eid
@@ -1807,6 +1819,12 @@ runGameMessage msg g = case msg of
         . objectivesL
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
+
+-- | Whether the enemy has the hinder keyword.
+hinders :: Game -> EnemyId -> GameT Bool
+hinders g eid = case Map.lookup eid g.entities.enemies of
+  Just e -> hasKeyword Hinder (toTarget eid) (toCardDef e)
+  Nothing -> pure False
 
 -- | An encounter card in play goes back into the encounter deck where the function puts it,
 -- the cards attached to it discarded.
