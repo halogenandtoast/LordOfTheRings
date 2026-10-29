@@ -1,6 +1,7 @@
 module LordOfTheRings.AgainstTheShadow.TheDruadanForestSpec (spec) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -150,6 +151,13 @@ spec = describe "The Drúadan Forest" do
     getDamage (toTarget beravor) `shouldReturn` 0
     (getDamage . toTarget =<< heroWithCode "01007") `shouldReturn` 1
     placementOf Locations.gardenOfPoisons `shouldReturn` Nothing
+
+  it "surges Men in the Dark when the damage chosen is never taken" . forestTest $ \_ -> do
+    for_ ["01012", "01007", "01002"] \c -> do
+      h <- heroWithCode c
+      run $ CreateEffect $ Effect GameSource (toTarget h) [CannotTakeDamage] UntilEndOfRound
+    reveal [Treacheries.menInTheDark, Locations.gardenOfPoisons]
+    placementOf Locations.gardenOfPoisons `shouldReturn` Just StagingArea
 
   it "surges Men in the Dark once every hero pays" . forestTest $ \pid -> do
     for_ ["01012", "01007", "01002"] \c -> giveResources c 1
