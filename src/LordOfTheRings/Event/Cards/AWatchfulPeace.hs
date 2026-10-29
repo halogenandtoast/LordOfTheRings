@@ -14,9 +14,11 @@ aWatchfulPeace = eventWith AWatchfulPeace Cards.aWatchfulPeace (windowL ?~ Explo
 
 instance RunMessage AWatchfulPeace where
   runMessage msg e@(AWatchfulPeace attrs) = case msg of
-    -- ponytail: played as the location is explored, so it goes to the top of the deck as
-    -- it leaves play in place of the discard pile
+    -- played as the location is explored, the effect waits on its card and returns it to
+    -- the top of the deck once it has left play, where its immunity no longer applies (FAQ)
     PlayEvent _ card windows | card.id == toId attrs -> do
-      for_ [lid | Window _ (Explored lid) <- windows] \lid -> phaseModifier attrs lid LeavesPlayToTopOfEncounterDeck
+      for_ [lid | Window _ (Explored lid) <- windows] \lid -> do
+        location <- getLocation lid
+        phaseModifier attrs (CardIdTarget (toAttrs location).cardId) LeavesPlayToTopOfEncounterDeck
       pure e
     _ -> AWatchfulPeace <$> runMessage msg attrs

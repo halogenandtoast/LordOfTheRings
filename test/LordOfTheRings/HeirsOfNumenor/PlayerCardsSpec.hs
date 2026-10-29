@@ -104,6 +104,17 @@ spec = describe "Heirs of Numenor player cards" do
       chooseTarget pid (CardIdTarget card.id)
       map (.id) <$> getEncounterDeck `shouldReturn` [road.id]
 
+    it "returns a location immune to player card effects, as it has left play" . honTest $ \pid -> do
+      _ <- setEncounterDeck []
+      card <- putCardIntoHand pid Events.aWatchfulPeace
+      eowyn <- hero eowynCode
+      run $ PlaceTokens GameSource eowyn Resource 1
+      glade <- stage Locations.secludedGlade
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      run $ PlaceTokens GameSource (toTarget lid) Progress 3
+      chooseTarget pid (CardIdTarget card.id)
+      map (.id) <$> getEncounterDeck `shouldReturn` [glade.id]
+
   describe "Blood of Númenor" do
     it "gives its hero +1 defense for each resource left after spending 1" . honTest $ \pid -> do
       boromir <- hero boromirCode
