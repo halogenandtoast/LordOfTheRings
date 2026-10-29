@@ -329,3 +329,13 @@ spec = describe "Defenders of Gondor" do
     getsGame (sort . map toCardCode . toList . (.entities.heroes)) `shouldReturn` sort [boromir, imrahil, "05001"]
     b <- hero "05001"
     placementOf shield `shouldReturn` AttachedTo b
+
+  it "Helm of Secrecy swaps in a hero exhausted as the one it replaces (ruling)" . dogTest $ \pid -> do
+    m <- hero mablung
+    run $ Exhaust m
+    _ <- playWith pid boromir 4 Events.helmOfSecrecy
+    chooseTarget pid m
+    chooseOptionMatching "swap in Beregond" pid \case
+      TargetLabel _ [SwapHero _ c] -> toCardCode c == "05001"
+      _ -> False
+    (exhausted =<< hero "05001") `shouldReturn` True

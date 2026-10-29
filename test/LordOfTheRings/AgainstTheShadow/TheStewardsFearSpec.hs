@@ -1,6 +1,11 @@
 module LordOfTheRings.AgainstTheShadow.TheStewardsFearSpec (spec) where
 
+import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Frontend (FrontendMessage (..))
+import LordOfTheRings.Game.Public (publicGame)
+import LordOfTheRings.Log.Entry
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card (CardType (EnemyType), cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -115,6 +120,21 @@ spec = describe "The Steward's Fear" do
     run $ Discard (toTarget sewers)
     placementOf Enemies.zealousTraitor `shouldReturn` Just StagingArea
     Map.null . (.underneath) <$> meta `shouldReturn` True
+
+  it "shows how many underworld cards are under a location, not which, and logs them stacked" $ do
+   (player, heroes) <- either (error . show) pure =<< loadPlayer "tester" testDeck
+   logged <- newIORef []
+   env <- newGameEnv (newGameIn theStewardsFear player heroes) (\case Logged e -> modifyIORef' logged (e :); _ -> pure ()) 1
+   runGameT env do
+    _ <- setUnderworld [Enemies.zealousTraitor, Objectives.aPrisoner]
+    staged Locations.sewers
+    sewers <- (.cardId) . toAttrs <$> (getLocation =<< locationOf Locations.sewers)
+    seen <- getsGame publicGame
+    let field k = \case Object o -> KeyMap.lookup k o; _ -> Nothing
+    field "underneath" seen `shouldBe` Just (toJSON (Map.singleton sewers (1 :: Int)))
+    (field "scenario" seen >>= field "meta") `shouldBe` Nothing
+    said <- concatMap (\e -> [k | LogI18n k _ <- e.logEntryBody]) <$> readIORef logged
+    said `shouldSatisfy` elem "log.placedUnderneath"
 
   it "places the top underworld card under the active location when Sewers is revealed" . fearTest $ \_ -> do
     run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.cityStreet

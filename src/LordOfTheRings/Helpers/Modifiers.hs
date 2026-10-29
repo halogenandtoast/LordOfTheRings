@@ -66,7 +66,18 @@ preloadModifiers g = do
       blankIn = Map.keysSet . Map.filter (any ((== Blank) . modifierType))
       blanked = blankIn fromEntities <> blankIn fromEffects <> blankIn attachedOut
       ownText m = maybe False (`member` blanked) (sourceTarget $ modifierSource m)
-      all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, attachedOut]
+      -- a lasting effect on each location in the staging area reaches one that enters it
+      -- after the effect began (FAQ 2.43)
+      staged =
+        Map.fromListWith
+          (<>)
+          [ (toTarget (toId l), [Modifier (effectSource e) m])
+          | e <- gameEffects g
+          , EachLocationInStagingArea m <- effectModifiers e
+          , l <- toList es.locations
+          , l.placement == StagingArea
+          ]
+      all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, attachedOut]
       -- a card immune to player card effects keeps none of their modifiers, but its own, as
       -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms

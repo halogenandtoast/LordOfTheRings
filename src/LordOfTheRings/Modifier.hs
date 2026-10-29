@@ -344,6 +344,9 @@ data ModifierType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
+  | -- | on the game: each location in the staging area takes the modifier, one that
+    -- enters it later too, for as long as the effect lasts, as Treacherous Fog reads
+    EachLocationInStagingArea ModifierType
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

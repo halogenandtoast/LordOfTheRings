@@ -13,7 +13,7 @@ newtype DwarfPipe = DwarfPipe AttachmentAttrs
 dwarfPipe :: AttachmentCard DwarfPipe
 dwarfPipe = attachment DwarfPipe Cards.dwarfPipe & attachTo (AttachToCharacterMatching (HeroWithTrait Dwarf) (AllyWithTrait Dwarf))
 
--- | Response: After a card is discarded from your deck, exhaust Dwarf Pipe to place that
+-- | Response: After a card is discarded from the top of your deck, exhaust Dwarf Pipe to place that
 -- card on the bottom of your deck.
 instance HasAbilities DwarfPipe where
   getAbilities (DwarfPipe a) =

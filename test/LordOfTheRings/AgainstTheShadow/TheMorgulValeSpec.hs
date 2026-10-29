@@ -232,6 +232,8 @@ spec = describe "The Morgul Vale" do
     passActions pid
     chooseTarget pid scout
     passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
     chooseTarget pid . toTarget =<< getHeroWithCode "01002"
     passActions pid
     getsGame (any ((== scout) . toTarget) . toList . (.entities.allies)) `shouldReturn` False

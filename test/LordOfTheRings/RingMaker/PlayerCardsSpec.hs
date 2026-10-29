@@ -182,6 +182,19 @@ spec = describe "The Ring-maker cycle player cards" do
       wanderer <- allyWithCard card.id
       (`shouldBe` False) =<< offersAbilityOf pid wanderer
 
+    it "loses the doomed it was given as it is played again" . gameTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+      card <- playWith pid eowynCode 3 Allies.greyfloodWanderer
+      chooseLabel "$label.giveItDoomed" pid
+      chooseAbilityOf pid =<< allyWithCard card.id
+      -- back to hand and played again from the planning window
+      payer <- getHeroWithCode eowynCode
+      wanderer <- allyWithCard card.id
+      void $ runDebug $ Run [ReturnToHand wanderer, PlaceTokens GameSource (toTarget payer) Resource 3]
+      chooseTarget pid (CardIdTarget card.id)
+      chooseLabel "$label.doNotGiveDoomed" pid
+      (`shouldBe` False) =<< offersAbilityOf pid =<< allyWithCard card.id
+
   describe "Herald of Anórien" do
     it "given doomed 2, lets a player put a cheap ally from hand into play" . gameTest $ \pid -> do
       cheap <- putCardIntoHand pid Allies.galadhonArcher

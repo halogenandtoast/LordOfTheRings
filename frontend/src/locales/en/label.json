@@ -744,6 +744,7 @@
     "exhaustHero": "Exhaust a hero to travel to Ancestral Clearing"
   },
   "chooseDamageRedirect": "Choose which card takes the damage instead",
+  "chooseShadowCard": "Choose the next shadow card to turn over and resolve",
   "morgulSorcerer": {
     "choose": "Morgul Sorcerer: place 1 progress on To the Tower or take this attack undefended",
     "progress": "Place 1 progress on To the Tower",

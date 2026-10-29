@@ -18,6 +18,6 @@ instance HasAbilities Legolas where
 instance RunMessage Legolas where
   runMessage msg h@(Legolas attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      placeProgressOnCurrentQuest attrs 2
+      placeProgressOnQuest attrs 2
       pure h
     _ -> Legolas <$> runMessage msg attrs

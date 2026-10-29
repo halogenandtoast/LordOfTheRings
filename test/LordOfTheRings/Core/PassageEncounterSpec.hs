@@ -192,6 +192,20 @@ spec = do
       exhausted "01007" `shouldReturn` False
       (.resources) <$> getHeroWithCode "01007" `shouldReturn` 0
 
+  describe "Driven by Shadow" do
+    it "as a shadow may discard an encounter card attached to the defender" . gameTest $ \pid -> do
+      reveal Treacheries.caughtInAWeb []
+      eowyn <- hero "01007"
+      chooseTarget pid eowyn
+      reveal Enemies.hummerhorns []
+      eid <- theEnemy
+      [shadow] <- traverse genEncounterCard [Treacheries.drivenByShadow]
+      run $ AttachShadowCard eid shadow
+      run $ ResolveShadow eid pid [eowyn]
+      web <- getsGame (toTarget . fromJustNote "no web" . headMay . toList . (.entities.treacheries))
+      chooseTarget pid web
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+
   describe "Ungoliant's Swarm" do
     it "makes the player it engages exhaust 2 characters" . gameTest $ \pid -> do
       reveal Enemies.ungoliantsSwarm []

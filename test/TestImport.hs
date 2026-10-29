@@ -171,6 +171,14 @@ passActions pid =
         Nothing -> pure ()
     _ -> pure ()
 
+-- | Turn over the enemy's shadow cards in the order they were dealt, as the first player
+-- is asked when there are several.
+resolveShadowsInOrder :: PlayerId -> GameT ()
+resolveShadowsInOrder pid =
+  getQuestion pid >>= \case
+    Just (QuestionLabel "$label.chooseShadowCard" _ _ _) -> answerQuestion pid 0 >> resolveShadowsInOrder pid
+    _ -> pure ()
+
 -- | Put an ally from hand into play under the player's control, returning it as a target.
 -- Any response to it entering play is left open.
 putAllyIntoPlay :: PlayerId -> CardDef -> GameT Target
