@@ -8,7 +8,9 @@ import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (PlayerMatcher (AnyPlayer))
 import LordOfTheRings.Modifier (ModifierType (CannotBeOptionallyEngagedBy))
+import LordOfTheRings.Phase (Phase (CombatPhase))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
 import TestImport
 
 enemyOf :: CardDef -> GameT EnemyId
@@ -67,6 +69,23 @@ spec = describe "Misty Mountains" do
     asked <- isJust <$> getQuestion pid
     when asked $ for_ eyes (chooseTarget pid)
     getsGame (length . toList . (.entities.treacheries)) `shouldReturn` 0
+
+  it "does not trigger a Watchful Eyes attached as the combat phase ends, as it was not in play then" . gameTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    _ <- setEncounterDeck [Treacheries.watchfulEyes]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid beravor
+    run $ Exhaust beravor
+    run $ Exhaust eowyn
+    _ <- setEncounterDeck [Treacheries.watchfulEyes, Locations.kneesOfTheMountain, Locations.wargLair]
+    run $ CheckWindows [mkWhen $ PhaseEnds CombatPhase]
+    resolveRevealed
+    asked <- isJust <$> getQuestion pid
+    when asked $ chooseTarget pid eowyn
+    resolveRevealed
+    length <$> getEncounterDeck `shouldReturn` 2
 
   it "deals 2 more shadow cards with Black Uruks' shadow, only when undefended" . gameTest $ \pid -> do
     eid <- engagedWithShadow pid Enemies.blackUruks
