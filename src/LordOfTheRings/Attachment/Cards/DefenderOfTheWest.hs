@@ -14,12 +14,11 @@ defenderOfTheWest =
   attachment DefenderOfTheWest Cards.defenderOfTheWest & attachTo (AttachToAlly $ UniqueAlly <> not_ ObjectiveAlly)
 
 -- | Damage from undefended attacks against you may be assigned to attached ally.
--- ponytail: "you" read as the player controlling the attached ally, the first player
+-- "You" is the player controlling Defender of the West, who played it, whoever controls the
+-- ally.
 instance HasModifiersFor DefenderOfTheWest where
   getModifiersFor (DefenderOfTheWest a) = case a.placement of
-    AttachedTo host@(AllyTarget aid) -> do
-      controller <- placementController . (.placement) <$> getAlly aid
-      for_ controller \pid -> modified a (PlayerTarget pid) [UndefendedDamageMayGoTo host]
+    AttachedTo host@(AllyTarget _) -> modified a (PlayerTarget a.controller) [UndefendedDamageMayGoTo host]
     _ -> pure ()
 
 -- | The first player gains control of attached ally, as long as it is attached: as it

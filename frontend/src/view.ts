@@ -141,7 +141,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   // shadow cards sit under the enemy they were dealt to, face down until they resolve
   const shadowsOf = (pid: string) =>
     Object.values(entities.enemies)
-      .filter(isAt('EngagedWith', pid))
+      .filter((e) => isAt('EngagedWith', pid)(e) || isAt('AttackingFromShadow', pid)(e))
       .flatMap((e) =>
         (e.shadowCards ?? []).map((shadow) => {
           const revealed = (e.shadowRevealed ?? []).includes(shadow.id)
@@ -209,7 +209,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ...withAttachments(characters),
         ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
       ],
-      engaged: [...withAttachments(placed('enemies', isAt('EngagedWith', pid))), ...shadowsOf(pid)],
+      engaged: [
+        ...withAttachments(placed('enemies', isAt('EngagedWith', pid))),
+        ...withAttachments(placed('enemies', isAt('AttackingFromShadow', pid))),
+        ...shadowsOf(pid),
+      ],
     }
   })
 

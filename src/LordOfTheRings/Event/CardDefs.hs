@@ -542,7 +542,7 @@ closeCall :: CardDef
 closeCall = (event "08005" "Close Call" Tactics (StaticCost 0)) {cdKeywords = setFromList [Doomed 0]}
 
 theWhiteCouncil :: CardDef
-theWhiteCouncil = event "08010" "The White Council" Neutral (StaticCost 0)
+theWhiteCouncil = event "08010" "The White Council" Neutral XCost
 
 messageFromElrond :: CardDef
 messageFromElrond = event "08032" "Message from Elrond" Lore (StaticCost 0)

@@ -19,7 +19,6 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Entities (entitiesEnemies, entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities, gameScenario)
-import LordOfTheRings.I18n (intVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -79,10 +78,10 @@ searchToRevealDunlandEnemy pid source = do
     targets (filter (cardMatches dunlandEnemy) scenario.encounterDiscard) revealFromEncounterDiscard
   shuffleEncounterDeck
 
--- | The player assigns the damage among the characters he controls, 1 at a time.
+-- | The player assigns the damage among the characters he controls, then it is dealt: the
+-- same as Dunland Raider's "must deal X damage divided among" (FAQ 3.117).
 assignDamageAmongCharacters :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
-assignDamageAmongCharacters source pid n =
-  when (n > 0) $ push $ ScenarioSpecific "assignDamage" (toJSON (toSource source, pid, n))
+assignDamageAmongCharacters = dealDamageDivided
 
 -- | The scenario's own steps, each read again as it runs.
 runFordsOfIsenStep :: ReverseQueue m => Text -> Value -> m ()
@@ -94,12 +93,4 @@ runFordsOfIsenStep key v = case key of
     for_ (uncons players) \(pid, rest) -> do
       searchEncounterDeckAndDiscard pid (source :: Target) (dunlandEnemy <> NotCard (CardMatchAny $ map CardWithCode barred))
       push $ ScenarioSpecific "dunlandSearch" (toJSON (source, rest :: [PlayerId], barred, Map.keys now))
-  "assignDamage" | Just (source :: Source, pid, n) <- parseMaybe parseJSON v -> do
-    characters <- charactersControlledBy pid
-    chooseOneM pid do
-      questionLabeledWith "theFordsOfIsen.assignDamage" [intVar "n" (n :: Int)]
-      traverse_ causedBy (sourceTarget source)
-      targets characters \c -> do
-        dealDamage source c 1
-        assignDamageAmongCharacters source pid (n - 1)
   _ -> pure ()

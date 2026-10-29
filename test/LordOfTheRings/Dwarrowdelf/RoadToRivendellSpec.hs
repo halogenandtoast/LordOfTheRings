@@ -1,9 +1,13 @@
 module LordOfTheRings.Dwarrowdelf.RoadToRivendellSpec (spec) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Matcher (getAttachmentsControlledBy)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Modifier (ModifierType (CannotBeHealed, CannotCancelEncounterEffects))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Keyword (Keyword (Ambush))
+import LordOfTheRings.Modifier (ModifierType (CannotBeHealed, CannotCancelEncounterEffects, GainKeyword))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -89,6 +93,35 @@ spec = describe "Road to Rivendell" do
     reveal [Enemies.wildBear]
     reveal [Enemies.goblinSpearman]
     enemyPlacement Enemies.goblinSpearman `shouldReturn` Just StagingArea
+
+  it "counts an enemy revealed before Goblin Gate became active as the round's first" . rivendellTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Locations.goblinGate
+    gate <- locationOf Locations.goblinGate
+    reveal [Enemies.goblinSpearman]
+    run $ PlaceLocation gate ActiveLocation
+    run $ RaiseThreat pid 27
+    reveal [Enemies.goblinSpearman]
+    getsGame (map (.placement) . filter ((== toCardCode Enemies.goblinSpearman) . toCardCode) . toList . (.entities.enemies))
+      `shouldReturn` [StagingArea, StagingArea]
+
+  it "makes no immediate attack at Goblin Gate for an enemy given ambush by something else" . rivendellTest $ \pid -> do
+    activeLocation Locations.goblinGate
+    run . AddToStaging =<< genEncounterCard Enemies.goblinSpearman
+    spearman <- enemyOf Enemies.goblinSpearman
+    run $ CreateEffect $ Effect GameSource (toTarget spearman) [GainKeyword Ambush] UntilEndOfRound
+    run $ EngageEnemy pid spearman
+    shadowCount spearman `shouldReturn` 0
+
+  it "has Orc Raiders discard no attachment from a player who controls only 1, as he is not able" . rivendellTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    stone <- putAttachmentOn pid Attachments.celebriansStone beravor
+    case stone of
+      AttachmentTarget aid -> run $ AttachCard aid beravor
+      _ -> error "not an attachment"
+    run . AddToStaging =<< genEncounterCard Enemies.orcRaiders
+    raiders <- enemyOf Enemies.orcRaiders
+    run $ EngageEnemy pid raiders
+    getAttachmentsControlledBy pid >>= (`shouldSatisfy` ((== 1) . length))
 
   it "removes 1 progress placed on Pathless Country" . rivendellTest $ \_ -> do
     activeLocation Locations.pathlessCountry

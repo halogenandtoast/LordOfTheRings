@@ -2,6 +2,7 @@ module LordOfTheRings.Attachment.Cards.GoodMeal (goodMeal) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Card (CardType (EventType))
 import LordOfTheRings.Trait (Trait (Hobbit))
 
@@ -22,8 +23,11 @@ instance RunMessage GoodMeal where
   runMessage msg s@(GoodMeal a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       for_ [hid | AttachedTo (HeroTarget hid) <- [a.placement]] \hid -> do
-        sphere <- (.sphere) <$> getHero hid
+        -- a sphere icon the hero gains is a sphere it belongs to (ruling 3.065)
+        printed <- (.sphere) <$> getHero hid
+        gained <- (\ms -> [s' | GainResourceIcon s' <- ms]) <$> getModifiers (HeroTarget hid)
         discard a
-        roundModifier a (PlayerTarget pid) (LowerNextCostOf (CardWithType EventType <> CardWithSphere sphere) 2)
+        roundModifier a (PlayerTarget pid)
+          $ LowerNextCostOf (CardWithType EventType <> CardMatchAny (map CardWithSphere $ printed : gained)) 2
       pure s
     _ -> GoodMeal <$> runMessage msg a

@@ -21,7 +21,10 @@ instance HasAbilities MirrorOfGaladriel where
 instance RunMessage MirrorOfGaladriel where
   runMessage msg s@(MirrorOfGaladriel a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
+      -- with fewer than 10 it searches those there are; the discard follows only a card
+      -- added to hand, none from an empty deck (FAQ 3.235)
+      deck <- (.deck) <$> getPlayer pid
       searchDeck pid a 10 AnyCard False
-      discardRandomFromHand pid 1
+      unless (null deck) $ discardRandomFromHand pid 1
       pure s
     _ -> MirrorOfGaladriel <$> runMessage msg a

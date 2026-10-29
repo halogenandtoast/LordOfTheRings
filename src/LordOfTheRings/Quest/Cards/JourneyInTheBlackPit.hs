@@ -41,8 +41,9 @@ instance RunMessage JourneyInTheBlackPit where
       attachCaveTorch attrs
       players <- length <$> getRemainingPlayers
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      -- ponytail: the cards above them would be shuffled straight back, so only the
-      -- locations leave the deck
+      -- the cards discarded above them are shuffled straight back, and nothing reads them
+      -- in the discard pile meanwhile (it is empty at setup), so only the locations leave
+      -- the deck
       let locations = take (max 1 $ players - 1) $ filter ((== LocationType) . cdCardType . toCardDef) deck
       for_ locations \l -> do
         removeFromEncounterDeck l

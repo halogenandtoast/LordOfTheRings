@@ -82,7 +82,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     | t == timing ->
         anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
   (EnemyWithTraitRevealedWindow t trait, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
-  (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m <$> getModifiers eid
+  (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
@@ -129,7 +129,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
           TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
           _ -> Nothing
     maybe (pure False) (hasKeyword Surge target) def
-  (HeroDefenderDeclaredWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
+  (HeroDefenderDeclaredWindow t m other, DeclaredAsDefender (HeroTarget hid) eid) | t == timing ->
+    andM [selectAny (HeroWithId hid <> m), selectAny (other <> not_ (EnemyWithId eid))]
   -- only while the enemy is still in play
   (AttackDealtDamageByWindow t who, AttackDealtDamage eid attackers n)
     | t == timing && who `elem` attackers && n > 0 -> selectAny (EnemyWithId eid)

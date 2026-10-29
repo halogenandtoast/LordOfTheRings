@@ -82,3 +82,11 @@ spec = do
       reveal Locations.towerGate []
       run . TravelTo =<< getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
       getsGame (length . filter ((== "OrcGuard") . toCardCode) . toList . (.entities.enemies)) `shouldReturn` 1
+
+  describe "Orc Guard" do
+    it "returned to the staging area goes to its owner's discard pile instead (FAQ)" . escapeTest $ \pid -> do
+      run $ PlaceOrcGuard pid
+      guards <- getsGame (map toId . filter ((== "OrcGuard") . toCardCode) . toList . (.entities.enemies))
+      for_ guards \eid -> run $ PlaceEnemy eid StagingArea
+      getsGame (length . filter ((== "OrcGuard") . toCardCode) . toList . (.entities.enemies)) `shouldReturn` 0
+      length . (.discard) <$> getPlayer pid `shouldReturn` 1

@@ -22,7 +22,9 @@ instance RunMessage DeepDeepDark where
       lead <- getLead
       deck <- (.deck) <$> getPlayer lead
       nameless <- select (EnemyWithTrait Nameless)
-      for_ (zip nameless [pc | PlayerCard pc <- deck]) \(eid, pc) -> do
+      let cards = [pc | PlayerCard pc <- deck]
+      -- "if able": without a card for each Nameless enemy the effect is ignored (ruling 3.101)
+      when (length cards >= length nameless) $ for_ (zip nameless cards) \(eid, pc) -> do
         removeFromDeck lead pc.id
         attachFacedown eid pc
       pure t

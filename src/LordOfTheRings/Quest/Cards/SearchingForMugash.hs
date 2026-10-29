@@ -18,9 +18,10 @@ searchingForMugash = quest SearchingForMugash Cards.searchingForMugash
 -- Response: After questing successfully, cancel all progress that would be placed on this
 -- stage. Then, place 1 time counter on this stage. Or, if Mugash is in play, advance to
 -- stage 3.
--- ponytail: the progress is placed as the quest resolves and the window after it opens
--- only then, so the Response removes the progress on the stage rather than cancel it; the
--- stage has no quest points, so its progress does nothing meanwhile.
+--
+-- The window after questing successfully opens before the progress is placed (FAQ 1.24),
+-- so the Response cancels what would land on this stage; the "Then" needs at least 1
+-- progress canceled, none if an active location takes it all (FAQ 3.114).
 instance HasAbilities SearchingForMugash where
   getAbilities (SearchingForMugash a) =
     [ mkAbility a 1 $ forced $ lastTimeCounterRemoved a
@@ -36,7 +37,9 @@ instance RunMessage SearchingForMugash where
       placeTimeCounters attrs attrs 2
       pure q
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
-      when (attrs.progress > 0) $ removeTokens attrs attrs Progress attrs.progress
+      phaseModifier attrs GameTarget (QuestProgressCanceledBy $ toSource attrs)
+      pure q
+    ProgressCanceled (isSource attrs -> True) n | n > 0 -> do
       mugash <- getMugash
       if isJust mugash then completeQuest attrs.id else placeTimeCounters attrs attrs 1
       pure q

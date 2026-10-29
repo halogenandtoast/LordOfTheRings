@@ -126,6 +126,7 @@ costAsResources :: CardCost -> Int
 costAsResources = \case
   StaticCost n -> n
   DynamicCost -> 0
+  XCost -> 0
 
 genPlayerCard :: MonadRandom m => CardDef -> Maybe PlayerId -> m PlayerCard
 genPlayerCard def owner = do

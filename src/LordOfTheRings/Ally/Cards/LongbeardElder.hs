@@ -22,7 +22,7 @@ instance RunMessage LongbeardElder where
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       lookAtTopOfEncounterDeck pid a False
       getTopOfEncounterDeck >>= \case
-        Just top | cdCardType (toCardDef top) == LocationType -> placeProgressOnCurrentQuest a 1
+        Just top | cdCardType (toCardDef top) == LocationType -> placeProgressOnQuest a 1
         _ -> phaseModifier a a (WillpowerModifier (-1))
       pure s
     _ -> LongbeardElder <$> runMessage msg a

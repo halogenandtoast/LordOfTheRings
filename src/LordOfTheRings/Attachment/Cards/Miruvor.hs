@@ -2,6 +2,7 @@ module LordOfTheRings.Attachment.Cards.Miruvor (miruvor) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
+import LordOfTheRings.Card (toCard)
 
 newtype Miruvor = Miruvor AttachmentAttrs
   deriving anyclass (IsAttachment, HasModifiersFor)
@@ -27,7 +28,12 @@ instance RunMessage Miruvor where
               1 -> ready host
               2 -> placeResources a host 1
               3 -> roundModifier a host (WillpowerModifier 1)
-              _ -> push $ PutDiscardOnTopOfDeck a.owner a.cardId
+              -- the deck of the player resolving it, its owner or not (ruling 3.027)
+              _
+                | pid == a.owner -> push $ PutDiscardOnTopOfDeck pid a.cardId
+                | otherwise -> do
+                    removeFromDiscard a.owner a.cardId
+                    push $ PutOnTopOfDeck pid (toCard a)
             key :: Int -> Text
             key = \case
               1 -> "miruvor.ready"

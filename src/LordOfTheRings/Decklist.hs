@@ -58,6 +58,16 @@ sharedHeroes deckLists = [title | (title, n) <- mapToList counts, n > (1 :: Int)
   counts = Map.fromListWith (+) [(title, 1) | dl <- deckLists, title <- ordNub (mapMaybe heroTitle dl.heroes)]
   heroTitle code = (\(Name title _) -> title) . (.cdName) <$> Map.lookup code allPlayerCards
 
+-- | Hero titles the decks bring that the scenario's rules keep out of play: The Fords of
+-- Isen's Gríma objective-ally is unique, so no player can use the Gríma hero there.
+barredHeroes :: Text -> [DeckList] -> [Text]
+barredHeroes scenarioId deckLists = [t | t <- barred, t `elem` titles]
+ where
+  barred = case scenarioId of
+    "the-fords-of-isen" -> ["Gríma"]
+    _ -> []
+  titles = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) dl.heroes, let Name title _ = d.cdName]
+
 -- | Why the deck breaks the deckbuilding rules, if it does: 1 to 3 heroes with no two
 -- sharing a title, and no more copies of a title than its deck limit, 3 for most cards
 -- and 1 for those limited to 1 per deck. Cards the game does not know are not counted.

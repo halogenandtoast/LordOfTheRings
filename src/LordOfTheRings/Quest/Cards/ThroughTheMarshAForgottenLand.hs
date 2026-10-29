@@ -13,18 +13,14 @@ newtype ThroughTheMarshAForgottenLand = ThroughTheMarshAForgottenLand QuestAttrs
 throughTheMarshAForgottenLand :: QuestCard ThroughTheMarshAForgottenLand
 throughTheMarshAForgottenLand = quest ThroughTheMarshAForgottenLand Cards.throughTheMarshAForgottenLand
 
--- | A card played from hand marks its player, with an effect of no modifiers that lasts
--- the round.
 instance HasAbilities ThroughTheMarshAForgottenLand where
-  getAbilities (ThroughTheMarshAForgottenLand a) =
-    wanderingStage a <> [mkAbility a 1 $ silent $ CardPlayedWindow After AnyCard | a.flipped]
+  getAbilities (ThroughTheMarshAForgottenLand a) = wanderingStage a
 
--- | Each player cannot play more than 1 card each round.
--- ponytail: only cards played from hand while this stage is in play count; one played
--- earlier in the round, or from the discard pile, does not.
+-- | Each player cannot play more than 1 card each round: any card he played this round,
+-- from wherever, before this stage too, counts.
 instance HasModifiersFor ThroughTheMarshAForgottenLand where
   getModifiersFor (ThroughTheMarshAForgottenLand a) = when a.flipped do
-    played <- getsGame \g -> [p | Effect source (PlayerTarget p) _ _ <- gameEffects g, isSource a source]
+    played <- getsGame \g -> [p | Effect _ (PlayerTarget p) ms _ <- gameEffects g, PlayedACardThisRound `elem` ms]
     for_ (nub played) \p -> modified a (PlayerTarget p) [CannotPlay AnyCard]
 
 -- | When Revealed: Raise each player's threat by 1.
@@ -34,8 +30,5 @@ instance RunMessage ThroughTheMarshAForgottenLand where
   runMessage msg q@(ThroughTheMarshAForgottenLand attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       eachPlayer \p -> encounterRaisesThreat p 1
-      pure q
-    UseCardAbility _ (isSource attrs -> True) 1 ws -> do
-      for_ [p | Window _ (PlayedCardFromHand p _) <- ws] \p -> roundModifiers attrs (PlayerTarget p) []
       pure q
     _ -> ThroughTheMarshAForgottenLand <$> runWanderingStage msg attrs

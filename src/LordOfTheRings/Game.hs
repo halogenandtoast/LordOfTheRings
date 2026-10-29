@@ -239,6 +239,19 @@ runGame msg g = case msg of
     if active && notNull firsts
       then g <$ (push =<< progressFirst source n firsts \k -> [PlaceTokens source target Progress k | k > 0])
       else runGame'' msg g
+  -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
+  -- it becomes the active location, so it is still in the staging area as it is paid (as
+  -- Hills of Dunland's draws are, FAQ 3.123)
+  TravelTo _ -> do
+    push $ DoStep 1 msg
+    runGame'' msg g
+  -- an enemy that engages only one player, as Chief Turch the first player, engages him
+  -- whoever it would have engaged
+  EngageEnemy pid eid -> do
+    only <- (\ms -> [p | EngagesOnly p <- ms]) <$> getModifiers (EnemyTarget eid)
+    case only of
+      p : _ | p /= pid -> g <$ push (EngageEnemy p eid)
+      _ -> runGame'' msg g
   _ -> runGame'' msg g
 
 runGame'' :: Message -> Game -> GameT Game
@@ -247,7 +260,22 @@ runGame'' msg g = case removedEnemy msg of
   Just eid -> do
     stays <- elem CannotLeavePlay <$> getModifiers (EnemyTarget eid)
     if stays then pure g else runGame' msg g
-  Nothing -> runGame' msg g
+  Nothing -> case movedLocation msg of
+    -- a location that cannot leave the staging area, as The Crossing at Tharbad, stays
+    Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement == StagingArea -> do
+      stays <- elem CannotLeaveStagingArea <$> getModifiers (LocationTarget lid)
+      if stays then pure g else runGame' msg g
+    _ -> runGame' msg g
+
+-- | The location a message moves out of where it is, other than by exploring it.
+movedLocation :: Message -> Maybe LocationId
+movedLocation = \case
+  PlaceLocation lid p | p /= StagingArea -> Just lid
+  ReturnToTopOfEncounterDeck (LocationTarget lid) -> Just lid
+  ReturnToBottomOfEncounterDeck (LocationTarget lid) -> Just lid
+  ShuffleIntoEncounterDeck (LocationTarget lid) -> Just lid
+  RemoveFromGame (LocationTarget lid) -> Just lid
+  _ -> Nothing
 
 -- | The enemy a message takes out of play other than by destroying it.
 removedEnemy :: Message -> Maybe EnemyId
@@ -412,7 +440,8 @@ runGameMessage msg g = case msg of
       -- the level may move, as Double Dealings lowers it
       level <- (eliminationThreat +) . sum . mapMaybe (\case EliminationThreatModifier n -> Just n; _ -> Nothing) <$> getModifiers (PlayerTarget player.id)
       pure
-        $ guard (not player.eliminated && (player.threat >= level || null heroes))
+        -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
+        $ guard (not player.eliminated && (player.threat >= level || (null heroes && not (any ((== HeroType) . (.cardType)) player.deck))))
         $> player.id
     pushAll $ map EliminatePlayer eliminated
     pure g
@@ -595,7 +624,7 @@ runGameMessage msg g = case msg of
             <> [Label (ikey "label.doNotTravel") []]
         else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
     pure g
-  TravelTo lid -> do
+  DoStep 1 (TravelTo lid) -> do
     pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
     pure g
   BeginPhase EncounterPhase -> do
@@ -1032,6 +1061,22 @@ runGameMessage msg g = case msg of
     pushWhen (any byThisAttack $ gameAttackDestroyed g) $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
       : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
     pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
+  RedirectAttack eid target -> do
+    let attacking = \case
+          Window After (EnemyAttacking eid' _) -> eid' == eid
+          _ -> False
+    withQueue_ $ map \case
+      AttackDamage eid' _ | eid' == eid -> AttackDamage eid target
+      DefendedByMany _ eid' _ | eid' == eid -> AttackDamage eid target
+      CheckWindows ws -> CheckWindows (filter (not . attacking) ws)
+      m -> m
+    pure g
+  -- an attack turned on another enemy, as Small Target's, deals that enemy its damage
+  AttackDamage eid target@(EnemyTarget other) -> do
+    when (inPlay g target) do
+      damage <- (-) <$> getEnemyAttack eid <*> getEnemyDefense other
+      push $ DealDamage (EnemyAttackSource eid) target (max 0 damage)
+    pure g
   -- a defender that left play before the damage leaves the attack undefended
   AttackDamage eid defender | not (inPlay g defender) -> do
     lead <- getLead
@@ -1046,13 +1091,12 @@ runGameMessage msg g = case msg of
     pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)
     pure g
   ResolveShadow eid pid defenders -> do
-    for_ (Map.lookup eid g.entities.enemies) \enemy ->
+    for_ (Map.lookup eid g.entities.enemies) \enemy -> do
       -- each shadow card turns face up, and one with an effect resolves it; one already face
       -- up resolved in an earlier attack, as an enemy attacking again has, unless it was
       -- dealt face up
-      pushAll
-        $ concat
-          [ RevealShadowCard eid (ecId card)
+      let resolving card =
+            RevealShadowCard eid (ecId card)
               : if cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
@@ -1060,9 +1104,21 @@ runGameMessage msg g = case msg of
                   , ResolveShadowCard (ecId card) eid pid defenders
                   ]
                 else []
-          | card <- enemy.shadowCards
-          , card.id `notElem` (toAttrs enemy).enemyShadowRevealed || card.id `elem` (toAttrs enemy).enemyShadowFaceUp
-          ]
+          pending =
+            [ card
+            | card <- enemy.shadowCards
+            , card.id `notElem` (toAttrs enemy).enemyShadowRevealed || card.id `elem` (toAttrs enemy).enemyShadowFaceUp
+            ]
+      case pending of
+        [] -> pure ()
+        [card] -> pushAll (resolving card)
+        -- they turn over one at a time, in the order the first player decides (ruling 3.388);
+        -- this resolution goes on with the rest once that one has resolved
+        _ -> do
+          lead <- getLead
+          push
+            $ questionLabelWith (ikey "label.chooseShadowCard") (Just $ toTarget eid) [] lead
+            $ [targetLabel (CardIdTarget card.id) (resolving card <> [ResolveShadow eid pid defenders]) | card <- pending]
     pure g
   RevealShadowCard eid cid -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
@@ -1252,7 +1308,11 @@ runGameMessage msg g = case msg of
       | willpower > threat ->
           -- what questing successfully triggers resolves before the progress is placed
           -- (FAQ 1.24), as The Hunt Begins' Forced effect
-          pushAll [CheckWindows [mkAfter QuestedSuccessfully], PlaceProgressOnQuest (willpower - threat)]
+          pushAll
+            [ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
+            , CheckWindows [mkAfter QuestedSuccessfully]
+            , PlaceProgressOnQuest (willpower - threat)
+            ]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
@@ -1279,8 +1339,16 @@ runGameMessage msg g = case msg of
   PlaceTokens source target@(HeroTarget _) Resource n
     | n > 0
     , source /= GameSource -> do
-        barred <- elem CannotGainResourcesFromCardEffects <$> getModifiers target
+        mods <- getModifiers target
+        let barred = CannotGainResourcesFromCardEffects `elem` mods || (isPlayerCardSource source && CannotGainResourcesFromPlayerCardEffects `elem` mods)
         unless barred $ push $ CheckWindows [mkAfter $ GainedResources target]
+        pure g
+  -- an Orc Guard that would return to the staging area goes to its owner's discard pile
+  -- instead (FAQ errata, Out of the Dungeons)
+  PlaceEnemy eid StagingArea
+    | Just e <- Map.lookup eid g.entities.enemies
+    , toCardCode e == toCardCode orcGuard -> do
+        push $ Discard (toTarget eid)
         pure g
   PlaceEnemy eid StagingArea -> do
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
@@ -1320,12 +1388,18 @@ runGameMessage msg g = case msg of
             let (left, onLocations) = mapAccumL (\m (lid, _, room) -> let k = min m room in (m - k, place lid k)) n rooms
                 overflow = if all (\(_, remaining, room) -> room == remaining) rooms then left else 0
             -- what would go to the quest may be damage to an enemy instead, as Ride Them Down reads
-            instead <- filter (inPlay g) . (\ms -> [t | ProgressAsDamageTo t <- ms]) <$> getModifiers GameTarget
+            gameMods <- getModifiers GameTarget
+            let instead = filter (inPlay g) [t | ProgressAsDamageTo t <- gameMods]
+                canceledBy q = find ((== Just q) . sourceTarget) [s | QuestProgressCanceledBy s <- gameMods]
             pushAll
               $ concat onLocations
               <> case instead of
                 t : _ -> [DealDamage GameSource t overflow | overflow > 0]
-                [] -> [PlaceTokens GameSource q Progress overflow | q <- quests, overflow > 0]
+                [] ->
+                  [ maybe (PlaceTokens GameSource q Progress overflow) (`ProgressCanceled` overflow) (canceledBy q)
+                  | q <- quests
+                  , overflow > 0
+                  ]
         pure g
   PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do
@@ -1569,7 +1643,8 @@ runGameMessage msg g = case msg of
         attacker <- newEnemy card
         pushAll
           [ RemoveShadowCard host cid
-          , PlaceEnemy attacker.id (EngagedWith pid)
+          , -- it never engages the player (Wolf Rider rulings)
+            PlaceEnemy attacker.id (AttackingFromShadow pid)
           , CreateEffect
               $ Effect
                 (toSource attacker)
@@ -1796,7 +1871,8 @@ runGameMessage msg g = case msg of
       [AttachCard (toId attachment) host, CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]]
     pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
   SwapHero hid card | Just old <- Map.lookup hid g.entities.heroes -> do
-    new <- newHero old.owner card
+    -- it trades places with the old hero, ready or exhausted as that one was (ruling)
+    new <- overAttrs (\a -> a {heroExhausted = heroExhausted (toAttrs old)}) <$> newHero old.owner card
     let on' :: HasField "placement" a Placement => a -> Bool
         on' a = a.placement == AttachedTo (toTarget old)
         newHost = AttachedTo (toTarget new)

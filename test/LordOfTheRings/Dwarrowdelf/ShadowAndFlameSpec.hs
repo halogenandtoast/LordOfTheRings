@@ -137,6 +137,12 @@ spec = describe "Shadow and Flame" do
     getDamage (toTarget eid) `shouldReturn` 5
     heroCommitted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` False
 
+  it "heals nothing with Inner Shadow when Durin's Bane has less than 5 damage, as it is not able" . flameTest $ \_ -> do
+    eid <- bane
+    run $ PlaceTokens GameSource (toTarget eid) Damage 3
+    reveal [Treacheries.innerShadow, Locations.oldForestRoad]
+    getDamage (toTarget eid) `shouldReturn` 3
+
   it "takes no progress on Second Deep while Durin's Bane is undamaged" . flameTest $ \_ -> do
     eid <- bane
     run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.secondDeep
@@ -146,6 +152,13 @@ spec = describe "Shadow and Flame" do
     run $ PlaceTokens GameSource (toTarget eid) Damage 1
     run $ PlaceTokens GameSource (toTarget deep) Progress 2
     (.progress) <$> getLocation deep `shouldReturn` 2
+
+  it "passes no questing progress on past Second Deep while Durin's Bane is undamaged" . flameTest $ \_ -> do
+    _ <- bane
+    _ <- putQuestStage Quests.nearingTheGate
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.secondDeep
+    run $ PlaceProgressOnQuest 20
+    (.progress) <$> getActiveQuest `shouldReturn` 0
 
   it "shuffles Ranging Goblin and the top of the discard pile back in after a character leaves play" . flameTest $ \pid -> do
     reveal [Enemies.rangingGoblin]
@@ -166,6 +179,21 @@ spec = describe "Shadow and Flame" do
     run . CommitToQuest . toTarget =<< getHeroWithCode "01012"
     run $ EndPhase QuestPhase
     (.progress) <$> getActiveQuest `shouldReturn` 4
+
+  it "places The Rear Guard's 4 progress for a hero that committed and has since left the quest" . flameTest $ \_ -> do
+    _ <- bane
+    _ <- putQuestStage Quests.theRearGuard
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ CommitToQuest beravor
+    run $ RemoveFromQuest beravor
+    run $ EndPhase QuestPhase
+    (.progress) <$> getActiveQuest `shouldReturn` 4
+
+  it "places no progress on The Rear Guard when no hero committed this round" . flameTest $ \_ -> do
+    _ <- bane
+    _ <- putQuestStage Quests.theRearGuard
+    run $ EndPhase QuestPhase
+    (.progress) <$> getActiveQuest `shouldReturn` 0
 
   it "advances from The Rear Guard once Durin's Bane has no hit points left, and it attacks the first player" . flameTest $ \pid -> do
     eid <- bane

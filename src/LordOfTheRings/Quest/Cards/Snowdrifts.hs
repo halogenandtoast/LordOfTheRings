@@ -1,6 +1,6 @@
 module LordOfTheRings.Quest.Cards.Snowdrifts (snowdrifts) where
 
-import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Card (Card (EncounterCard), toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -36,5 +36,11 @@ instance RunMessage Snowdrifts where
           active <- select IsActiveLocation
           for_ (filter (`notElem` caradhras) active) discard
           for_ caradhras makeActive
+          -- explored already, it comes back from the victory display (FAQ 2.31)
+          when (null caradhras) do
+            victory <- getsGame ((.victoryDisplay) . toAttrs . (.scenario))
+            for_ (take 1 [c | EncounterCard c <- victory, toCardCode c == toCardCode Locations.caradhras]) \c -> do
+              removeFromVictoryDisplay (EncounterCard c)
+              putIntoPlayAsActiveLocation c
           Snowdrifts <$> runMessage msg attrs
     _ -> Snowdrifts <$> runMessage msg attrs

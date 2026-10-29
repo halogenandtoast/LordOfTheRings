@@ -13,7 +13,7 @@ theFordsOfIsen :: Scenario
 theFordsOfIsen = Scenario $ scenario TheFordsOfIsen "the-fords-of-isen" "The Fords of Isen"
 
 -- | The Fords of Isen, Dunland Raiders and Dunland Warriors make up the encounter deck.
--- ponytail: the rules sheet bars the Gríma hero from this scenario; a deck may still bring him.
+-- The rules sheet bars the Gríma hero from this scenario: see 'barredHeroes'.
 instance RunMessage TheFordsOfIsen where
   runMessage msg (TheFordsOfIsen attrs) = case msg of
     DoStep 1 Setup -> do

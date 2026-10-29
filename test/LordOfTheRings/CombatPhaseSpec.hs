@@ -31,6 +31,16 @@ spec = describe "Combat phase" do
     run DealShadowCards
     (.shadowCards) <$> spider `shouldReturn` shadow
 
+  it "has the first player choose the order an enemy's shadow cards turn over (ruling 3.388)" . gameTest $ \pid -> do
+    e <- engageSpider pid
+    [road, mountains] <- setEncounterDeck [Locations.oldForestRoad, Locations.mountainsOfMirkwood]
+    run $ DealShadowCard (toId e)
+    run $ DealShadowCard (toId e)
+    run $ ResolveShadow (toId e) pid []
+    chooseTarget pid (CardIdTarget mountains.id)
+    -- the last turns over without a question; the newest reveal comes first
+    enemyShadowRevealed . toAttrs <$> spider `shouldReturn` [road.id, mountains.id]
+
   it "deals the attack minus the defender's defense to the defender" . gameTest $ \pid -> do
     _ <- engageSpider pid
     _ <- setEncounterDeck [Locations.oldForestRoad]

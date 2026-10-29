@@ -19,6 +19,8 @@ instance RunMessage AbandonedMine where
   runMessage msg l@(AbandonedMine attrs) = case msg of
     TriggerLostEffects _ -> do
       pile <- getsGame ((.encounterDiscard) . toAttrs . (.scenario))
-      traverse_ addToStagingFromDiscard $ take 2 $ filter (cardMatches $ CardWithTrait Goblin <> CardWithType EnemyType) pile
+      let goblins = take 2 $ filter (cardMatches $ CardWithTrait Goblin <> CardWithType EnemyType) pile
+      -- "if able": with fewer than 2 the effect is ignored (ruling 3.101)
+      when (length goblins == 2) $ traverse_ addToStagingFromDiscard goblins
       pure l
     _ -> AbandonedMine <$> runMessage msg attrs
