@@ -49,6 +49,8 @@ spec = do
       run $ ResolveShadow eid pid []
       riders <- enemiesWith Enemies.wolfRider
       length riders `shouldBe` 1
+      -- it attacks, but never engages the player (rulings)
+      getsGame (\g -> [enemyPlacement (toAttrs e) | (k, e) <- mapToList g.entities.enemies, k `elem` riders]) `shouldReturn` [AttackingFromShadow pid]
       passActions pid
       prompt pid `shouldReturn` Just (ikeyWith "label.declareDefender" (cardVar "enemy" Enemies.wolfRider))
 
