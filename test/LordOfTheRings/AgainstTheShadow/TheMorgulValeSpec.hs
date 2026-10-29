@@ -12,7 +12,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theMorgulVale)
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (When), Window (..), WindowType (RoundEnds))
+import LordOfTheRings.Window (Timing (When), Window (..), WindowType (EntersStagingArea, RoundEnds))
 import TestImport
 
 valeTest :: (PlayerId -> GameT ()) -> IO ()
@@ -168,6 +168,16 @@ spec = describe "The Morgul Vale" do
     _ <- setEncounterDeck [Enemies.morgulSorcerer]
     run $ EnemyAttack pid murzag
     takeUndefended pid "01012"
+    placementOf Enemies.morgulSorcerer `shouldReturn` Just (EngagedWith pid)
+
+  it "puts the enemy Murzag reveals into play engaged, never entering the staging area" . valeTest $ \pid -> do
+    card <- genEncounterCard Enemies.morgulSorcerer
+    runOnly $ RevealCardEngaged pid card
+    queued <- peekQueue
+    [() | CheckWindows ws <- queued, Window _ (EntersStagingArea _) <- ws] `shouldBe` []
+    -- engaged before its reveal resolves, its surge among it
+    takeWhile (\case CheckWindows _ -> False; _ -> True) queued `shouldSatisfy` any (\case EngageEnemy p _ -> p == pid; _ -> False)
+    void mainLoop
     placementOf Enemies.morgulSorcerer `shouldReturn` Just (EngagedWith pid)
 
   it "has the enemy Murzag engages in the Resolve Enemy Attacks step attack in it, unshadowed" . valeTest $ \pid -> do
