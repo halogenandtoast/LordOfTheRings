@@ -290,6 +290,9 @@ data ModifierType
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
     -- Double Dealings lowers it by 10
     EliminationThreatModifier Int
+  | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
+    -- Seedy Inn's shadow reads
+    AttackDamageRaisesThreatOf PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

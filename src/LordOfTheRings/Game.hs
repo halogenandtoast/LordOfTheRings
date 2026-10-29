@@ -410,11 +410,16 @@ runGameMessage msg g = case msg of
          in [CheckWindows [mkWhen $ DealtDamage target n'], DoStep 1 (DealDamage source target n')]
     pure g
   DoStep 1 (DealDamage source target n) -> do
+    -- the damage an enemy deals may raise a player's threat as much, as Seedy Inn's shadow
+    raising <- case source of
+      EnemySource eid -> (\ms -> [pid | AttackDamageRaisesThreatOf pid <- ms]) <$> getModifiers eid
+      _ -> pure []
     pushAll
-      [ PlaceTokens source target Damage n
-      , CheckWindows [mkAfter $ DealtDamage target n]
-      , CheckDefeated target
-      ]
+      $ [ PlaceTokens source target Damage n
+        , CheckWindows [mkAfter $ DealtDamage target n]
+        , CheckDefeated target
+        ]
+      <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | pid <- raising]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
