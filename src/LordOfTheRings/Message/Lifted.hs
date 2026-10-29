@@ -40,7 +40,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByEncounter, Traveled),
+  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, Traveled),
  )
 
 dealDamage
@@ -104,6 +104,14 @@ encounterRaisesThreat :: ReverseQueue m => PlayerId -> Int -> m ()
 encounterRaisesThreat pid n = when (n > 0) do
   push $ RaiseThreat pid n
   push $ CheckWindows [Window After $ ThreatRaisedByEncounter pid]
+
+{- | Each player raises his threat by N from the Doomed keyword, opening his window for
+it, as a player card with Doomed N played does; Close Call reads it with its X.
+-}
+raiseThreatFromDoomed :: ReverseQueue m => Int -> m ()
+raiseThreatFromDoomed n = when (n > 0) $ eachPlayer \pid -> do
+  raiseThreat pid n
+  push $ CheckWindows [Window After $ ThreatRaisedByDoomed pid]
 
 lowerThreat :: ReverseQueue m => PlayerId -> Int -> m ()
 lowerThreat pid n = push $ LowerThreat pid n

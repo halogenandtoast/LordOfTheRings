@@ -28,6 +28,8 @@ data ActiveCost = ActiveCost
   -- ^ the host an attachment was chosen to go on before it was paid for
   , activeCostFromHand :: Bool
   -- ^ played from its owner's hand, not from the discard pile
+  , activeCostDoomed :: Int
+  -- ^ the Doomed it gained from an effect spent on it, as Gríma's
   }
   deriving stock (Show, Eq, Generic)
 
@@ -37,7 +39,7 @@ instance ToJSON ActiveCost where
   toJSON = genericToJSON (aesonOptions $ Just "activeCost")
 
 instance FromJSON ActiveCost where
-  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost") . withDefaults [("fromHand", toJSON True)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost") . withDefaults [("fromHand", toJSON True), ("doomed", toJSON (0 :: Int))]
 
 instance Entity ActiveCost where
   type EntityId ActiveCost = CostId

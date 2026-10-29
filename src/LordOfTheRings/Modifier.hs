@@ -279,6 +279,12 @@ data ModifierType
   | -- | on a card: no time counter can be removed from it, as Tharbad Hideout reads for
     -- the current quest
     CannotRemoveTimeCounters
+  | -- | on a player, or on the game for every player: the next card played from hand
+    -- gains Doomed N, as Gríma's Action reads; spent with it
+    NextCardGainsDoomed Int
+  | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
+    -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
+    MayGainDoomed Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

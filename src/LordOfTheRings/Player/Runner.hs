@@ -23,12 +23,13 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, threatOf)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Secrecy))
+import LordOfTheRings.Keyword (Keyword (Doomed, Secrecy))
 import LordOfTheRings.Id (AllyId (..), PlayerId)
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Message.Lifted (raiseThreatFromDoomed)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -138,7 +139,10 @@ instance RunMessage Player where
       pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case
-        PlayerCard card -> push $ PlayAlly pid card
+        PlayerCard card -> do
+          -- put into play, a card with Doomed raises each player's threat as one played does
+          raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef card)]
+          push $ PlayAlly pid card
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
     -- attached without being played, as Plundered Armoury lets one be

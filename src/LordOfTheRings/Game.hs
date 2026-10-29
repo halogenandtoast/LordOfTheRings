@@ -43,6 +43,7 @@ import LordOfTheRings.Log.Refs (sendLogInOpenBlock)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
+import LordOfTheRings.Message.Lifted (raiseThreatFromDoomed)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Outcome
@@ -1204,7 +1205,19 @@ runGameMessage msg g = case msg of
           else payFor g pid card fromHand windows Nothing 0
     | otherwise -> payFor g pid card fromHand windows Nothing 0
   PayToAttach pid card fromHand windows host -> payFor g pid card fromHand windows (Just host) =<< attachDiscount card host
-  PaidCost costId -> pure $ g & activeCostsL %~ Map.delete costId
+  PaidCost costId -> do
+    -- a card with Doomed, printed or gained, raises each player's threat as it is played
+    for_ (Map.lookup costId (gameActiveCosts g)) \ac -> do
+      gained <- getModifiers (CardIdTarget ac.activeCostCard.id)
+      runQueueT
+        $ raiseThreatFromDoomed
+        $ printedDoomed ac.activeCostCard
+        + sum [n | GainKeyword (Doomed n) <- gained]
+        + ac.activeCostDoomed
+    pure $ g & activeCostsL %~ Map.delete costId
+  PlayAtNoCost _ card -> do
+    runQueueT $ raiseThreatFromDoomed $ printedDoomed card
+    pure g
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
     push $ CheckWindows [mkWhen $ PhaseEnds phase]
@@ -1257,6 +1270,7 @@ runGameMessage msg g = case msg of
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- newAlly (fromMaybe pid card.owner) card
+    runQueueT $ raiseThreatFromDoomed $ printedDoomed card
     push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly
     pure
@@ -1633,7 +1647,7 @@ runGameMessage msg g = case msg of
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
         doomed =
           concat
-            [ [RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p]]
+            [ [RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p, mkAfter $ ThreatRaisedByDoomed p]]
             | Doomed n <- toList (cdKeywords def)
             , n > 0
             , p <- players
@@ -2214,6 +2228,17 @@ payFor g pid card fromHand windows host discount = do
   let ownMods = Map.findWithDefault [] (CardIdTarget card.id) own
       ownExtra = sum [k | Modifier _ (CostModifier k) <- ownMods]
   extra <- (+ ownExtra) . subtract discount <$> costModifier pid card
+  -- a reduction of the next matching card's cost is spent on this one, and the Doomed
+  -- that comes with it, as Gríma's
+  let spent e =
+        effectTarget e
+          `elem` [PlayerTarget pid, GameTarget]
+          && or
+            ( [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
+                <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e]
+                <> [fromHand | NextCardGainsDoomed _ <- effectModifiers e]
+            )
+      spentEffects = filter spent (gameEffects g)
   let activeCost =
         ActiveCost
           { activeCostId = costId
@@ -2223,6 +2248,7 @@ payFor g pid card fromHand windows host discount = do
           , activeCostWindows = windows
           , activeCostHost = host
           , activeCostFromHand = fromHand
+          , activeCostDoomed = sum [n | e <- spentEffects, NextCardGainsDoomed n <- effectModifiers e]
           }
   -- resources on allies, as Radagast's, may pay for the cards they are for
   payers <- allyPayersFor pid card
@@ -2258,12 +2284,26 @@ payFor g pid card fromHand windows host discount = do
         , Label (ikey "label.payFullCost") [pay n]
         ]
     [] -> pay n
-  -- a reduction of the next matching card's cost is spent on this one
-  let spent e =
-        effectTarget e
-          `elem` [PlayerTarget pid, GameTarget]
-          && or ([cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e] <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e])
+  -- a card its player may give Doomed as they play it from hand, as Greyflood Wanderer,
+  -- asks first; what it gains it keeps for the round, for its abilities to read
+  -- ponytail: played again from hand this round, it would keep the Doomed it gained
+  for_ (headMay [k | fromHand, Modifier _ (MayGainDoomed k) <- ownMods]) \k ->
+    push
+      $ questionLabelWith
+        (ikeyWith "label.giveDoomed" [intVar "count" k])
+        (Just $ CardIdTarget card.id)
+        []
+        pid
+        [ Label
+            (ikey "label.giveItDoomed")
+            [CreateEffect $ Effect (CardIdSource card.id) (CardIdTarget card.id) [GainKeyword (Doomed k)] UntilEndOfRound]
+        , Label (ikey "label.doNotGiveDoomed") []
+        ]
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (not . spent)
+
+-- | The Doomed a card is printed with.
+printedDoomed :: HasCardDef a => a -> Int
+printedDoomed a = sum [n | Doomed n <- toList (cdKeywords $ toCardDef a)]
 
 isDiscardNextRevealed :: ModifierType -> Bool
 isDiscardNextRevealed = \case
