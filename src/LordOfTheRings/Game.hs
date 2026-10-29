@@ -1462,9 +1462,11 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
     pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   -- a side quest defeated goes to the victory display, and the quest stays where it is
-  CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isJust (questOwner $ toAttrs q) ->
+  CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isJust (questOwner $ toAttrs q) -> do
+    pushAll $ discardAttachedToQuest g qid
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
   CompleteQuest qid -> do
+    pushAll $ discardAttachedToQuest g qid
     push AdvanceQuest
     -- a stage with victory points goes to the victory display, as Search for an Exit's
     let won = [toCard q | q <- toList (Map.lookup qid g.entities.quests), isJust (cdVictoryPoints $ toCardDef q)]
@@ -2214,6 +2216,10 @@ exhaustToDefend d eid = do
           [t | DoesNotExhaustToDefendAgainst t <- mods]
 
 -- | Whether a character is still in play.
+-- | The encounter cards attached to the stage as conditions, as Old Hatreds, leave play with it.
+discardAttachedToQuest :: Game -> QuestId -> [Message]
+discardAttachedToQuest g qid = [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+
 inPlay :: Game -> Target -> Bool
 inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes
