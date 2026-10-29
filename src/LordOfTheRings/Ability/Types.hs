@@ -25,6 +25,9 @@ data AbilityCost
   | -- | as 'ExhaustHeroCost', a hero or an ally the matchers pick out, as "Exhaust a Ranger
     -- character"
     ExhaustCharacterCost HeroMatcher AllyMatcher
+  | -- | as 'SphereResourceCost', spent by whichever player uses the ability, as The Old
+    -- Bridge's any player may
+    SpendResourcesCost Sphere Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
