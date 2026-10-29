@@ -48,6 +48,9 @@ allObjectiveCards =
       , poisonedCounsels
       , faramirObjective
       , lordAlcaronTheBloodOfGondor
+      , keyOfTheBoar
+      , keyOfTheWolf
+      , keyOfTheRaven
       ]
 
 durinsAxe :: CardDef
@@ -276,3 +279,20 @@ lordAlcaronTheBloodOfGondor =
     , cdCardTraits = setFromList [Gondor, Noble]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
+
+-- | A Key of The Three Trials: the first player claims it as soon as it is unattached.
+threeTrialsKey :: CardCode -> Name -> Trait -> CardDef
+threeTrialsKey code name trait =
+  (objective code name TheThreeTrials 1)
+    { cdCardTraits = setFromList [Item, Key, trait]
+    , cdShadowEffect = True
+    }
+
+keyOfTheBoar :: CardDef
+keyOfTheBoar = threeTrialsKey "08043" "Key of the Boar" Boar
+
+keyOfTheWolf :: CardDef
+keyOfTheWolf = threeTrialsKey "08044" "Key of the Wolf" Wolf
+
+keyOfTheRaven :: CardDef
+keyOfTheRaven = threeTrialsKey "08045" "Key of the Raven" Raven

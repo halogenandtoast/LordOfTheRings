@@ -116,6 +116,9 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , curseOfTheWildMen
+      , theGuardiansFury
+      , wildTenacity
       ]
 
 deepDeepDark :: CardDef
@@ -712,4 +715,25 @@ conflictAtTheCrossroads =
   (treachery "06131" "Conflict at the Crossroads" TheBloodOfGondor 2)
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
+    }
+
+curseOfTheWildMen :: CardDef
+curseOfTheWildMen =
+  (treachery "08053" "Curse of the Wild Men" TheThreeTrials 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+theGuardiansFury :: CardDef
+theGuardiansFury =
+  (treachery "08054" "The Guardian's Fury" TheThreeTrials 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+wildTenacity :: CardDef
+wildTenacity =
+  (treachery "08055" "Wild Tenacity" TheThreeTrials 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

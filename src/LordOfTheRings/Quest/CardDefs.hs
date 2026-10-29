@@ -110,6 +110,11 @@ allQuestCards =
       , retakeTheCity
       , theAmbush
       , captured
+      , theTrialsBegin
+      , theTrialOfStrength
+      , theTrialOfPerseverance
+      , theTrialOfIntuition
+      , theAntleredCrownTheThreeTrials
       ]
 
 theDrippingWalls :: CardDef
@@ -380,3 +385,18 @@ theAmbush = quest "06117" "The Ambush" TheBloodOfGondor 1 11
 
 captured :: CardDef
 captured = (quest "06118" "Captured!" TheBloodOfGondor 2 15) {cdKeywords = setFromList [Battle]}
+
+theTrialsBegin :: CardDef
+theTrialsBegin = quest "08035" "The Trials Begin" TheThreeTrials 1 0
+
+theTrialOfStrength :: CardDef
+theTrialOfStrength = quest "08036" "The Trial of Strength" TheThreeTrials 2 0
+
+theTrialOfPerseverance :: CardDef
+theTrialOfPerseverance = quest "08037" "The Trial of Perseverance" TheThreeTrials 2 0
+
+theTrialOfIntuition :: CardDef
+theTrialOfIntuition = quest "08038" "The Trial of Intuition" TheThreeTrials 2 0
+
+theAntleredCrownTheThreeTrials :: CardDef
+theAntleredCrownTheThreeTrials = quest "08039" "The Antlered Crown" TheThreeTrials 3 1

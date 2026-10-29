@@ -130,6 +130,12 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , hillBarrow
+      , caveBarrow
+      , stoneBarrow
+      , hallowedCircle
+      , cursedForest
+      , grimFoothills
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +941,36 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+hillBarrow :: CardDef
+hillBarrow = (location "08046" "Hill Barrow" TheThreeTrials 1 4 6) {cdCardTraits = setFromList [Barrow, Forest, Hills]}
+
+caveBarrow :: CardDef
+caveBarrow = (location "08047" "Cave Barrow" TheThreeTrials 1 3 8) {cdCardTraits = setFromList [Barrow, Forest, Hills]}
+
+stoneBarrow :: CardDef
+stoneBarrow = (location "08048" "Stone Barrow" TheThreeTrials 1 2 10) {cdCardTraits = setFromList [Barrow, Forest, Hills]}
+
+-- | X threat, X the number of players: given by its own modifiers.
+hallowedCircle :: CardDef
+hallowedCircle =
+  (location "08049" "Hallowed Circle" TheThreeTrials 1 0 12)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdVictoryPoints = Just 5
+    }
+
+cursedForest :: CardDef
+cursedForest =
+  (location "08051" "Cursed Forest" TheThreeTrials 2 3 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of players: given by its own modifiers.
+grimFoothills :: CardDef
+grimFoothills =
+  (location "08052" "Grim Foothills" TheThreeTrials 3 0 3)
+    { cdCardTraits = setFromList [Hills]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 2
+    }
