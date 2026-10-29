@@ -26,6 +26,6 @@ instance HasAbilities BladeOfGondolin where
 instance RunMessage BladeOfGondolin where
   runMessage msg s@(BladeOfGondolin a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      placeProgressOnCurrentQuest a 1
+      placeProgressOnQuest a 1
       pure s
     _ -> BladeOfGondolin <$> runMessage msg a
