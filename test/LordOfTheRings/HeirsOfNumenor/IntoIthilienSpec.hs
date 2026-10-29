@@ -1,5 +1,6 @@
 module LordOfTheRings.HeirsOfNumenor.IntoIthilienSpec (spec) where
 
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getCommittedWillpower)
@@ -222,6 +223,17 @@ spec = describe "Into Ithilien" do
     reveal [Objectives.ithilienGuardian, Locations.secludedGlade]
     chooseTarget pid (CardIdTarget tow.id)
     placementOf Locations.secludedGlade `shouldReturn` Nothing
+
+  it "exhausts a Ranger as Overgrown Trail's cost to place 3 progress on it" . ithilienTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Locations.overgrownTrail
+    trail <- getsGame (fromJustNote "no trail" . headMay . map toId . toList . (.entities.locations))
+    -- Beravor is a Ranger too, so the cost asks which
+    tracker <- putAllyIntoPlay pid Allies.ithilienTracker
+    run $ ActionWindow pid
+    chooseAbilityOf pid (LocationTarget trail)
+    chooseTarget pid tracker
+    getsGame (fmap (.progress) . lookup trail . (.entities.locations)) `shouldReturn` Just 3
+    getsGame (any (\a -> toTarget a == tracker && allyExhausted (toAttrs a)) . toList . (.entities.allies)) `shouldReturn` True
 
   it "adds a Harad enemy to the staging area with Southron Support" . ithilienTest $ \pid -> do
     elite <- genEncounterCard Enemies.haradrimElite
