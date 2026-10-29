@@ -1037,3 +1037,17 @@ advanceToQuest = push . AdvanceToQuest
 -- of Lamedon adds it.
 takeFromDeck :: ReverseQueue m => PlayerId -> Card -> m ()
 takeFromDeck pid card = push $ TakeFromDeck pid card.id
+
+{- | An enemy that engages the player during their Resolve Enemy Attacks step attacks in
+that step too, dealt no shadow card (ruling), as Murzag's revealed enemy: it joins the
+enemies still to attack, or attacks once they have.
+-}
+attacksThisStep :: (MonadTrans t, HasQueue Message m) => PlayerId -> EnemyId -> t m ()
+attacksThisStep pid eid = lift $ withQueue_ \q ->
+  if PlayerAttacks pid `notElem` q || EnemyAttacks pid `elem` q
+    then q
+    else case break (\case ChooseEnemyAttack p _ -> p == pid; _ -> False) q of
+      (before, ChooseEnemyAttack p cs : after) -> before <> (ChooseEnemyAttack p (cs <> [eid]) : after)
+      _ ->
+        let (before, after) = break (\case EnemyAttacks _ -> True; PlayerAttacks _ -> True; _ -> False) q
+         in before <> [ChooseEnemyAttack pid [eid]] <> after
