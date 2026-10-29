@@ -23,7 +23,7 @@ instance HasModifiersFor DoubleDealings where
 -- player's threat elimination level by 10 for the remainder of the game. Then, place 4 time
 -- counters on this stage.
 instance HasAbilities DoubleDealings where
-  getAbilities (DoubleDealings a) = [mkAbility a 1 $ forced $ lastTimeCounterRemoved a, emptyMugAbility a 2]
+  getAbilities (DoubleDealings a) = [mkAbility a 1 $ forced $ lastTimeCounterRemoved a, emptyMugAbility a 2, mkAbility a 3 $ forced $ ProgressPlacedWindow After (toTarget a)]
 
 -- | Setup: Set Bellach and The Crossing at Tharbad aside, out of play. Search the encounter
 -- deck for 1 copy of Spy from Mordor per player, and add them to the staging area. Make The
@@ -32,8 +32,7 @@ instance HasAbilities DoubleDealings where
 -- Forced: After one or more progress is placed on this quest, cancel all progress and reduce
 -- each player's threat by an equal amount. When all players have 0 threat, immediately
 -- proceed to stage 2.
--- ponytail: the progress never lands on the stage, as nothing reads it between its placing
--- and its canceling.
+-- The stage has no quest points, so the progress cannot defeat it before it is canceled.
 instance RunMessage DoubleDealings where
   runMessage msg q@(DoubleDealings attrs) = case msg of
     DoStep 7 Setup -> do
@@ -64,8 +63,9 @@ instance RunMessage DoubleDealings where
     UseCardAbility _ (isSource attrs -> True) 2 ws -> do
       removeCardThatReducedThreat ws
       pure q
-    PlaceTokens _ (isTarget attrs -> True) Progress n -> do
-      eachPlayer \p -> lowerThreat p n
+    UseCardAbility _ (isSource attrs -> True) 3 _ | attrs.progress > 0 -> do
+      removeTokens attrs attrs Progress attrs.progress
+      eachPlayer \p -> lowerThreat p attrs.progress
       pure q
     -- a reduced threat may be the last at 0
     LowerThreat {} -> do
