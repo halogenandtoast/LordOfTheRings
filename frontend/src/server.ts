@@ -105,6 +105,8 @@ export interface ServerGame {
   activeCosts: Record<string, { player: string; card: Card }>
   committedWillpower: number
   stagingThreat: number
+  /** While the players are separated: each area's players and cards in play, in turn order, the one in focus marked. */
+  areas?: { players: string[]; focused: boolean; threat: number; cards: string[] }[]
   /** The cards adding to the staging threat. */
   threatening?: string[]
   /** The stats of each card in play as modified, in printed order, by card id. */

@@ -21,7 +21,8 @@ import LordOfTheRings.Target
 
 playerRefFor :: (HasGame m) => PlayerId -> m LogRef
 playerRefFor pid = do
-  players <- getsGame gamePlayers
+  -- separated, he may be in another area
+  players <- getsGame allPlayers
   pure $ playerRef pid $ maybe (idText pid) (.name) (Map.lookup pid players)
 
 -- | A chip for what a target points at, when it is something a reader would recognise.

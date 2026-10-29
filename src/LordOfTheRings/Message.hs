@@ -487,6 +487,19 @@ data Message
   | -- | the progress that would have been placed on the source's quest card, canceled: see
     -- 'QuestProgressCanceledBy'
     ProgressCanceled Source Int
+  | {- | the players split into areas of their own, each with its own staging area, one
+    for each group: see 'LordOfTheRings.Game.Base.Separation'. The encounter cards no
+    player holds stay with the first group.
+    -}
+    SeparatePlayers [[PlayerId]]
+  | -- | the area holding the player comes into focus, to resolve what follows
+    FocusArea PlayerId
+  | -- | the area in focus is to join another at the beginning of the travel phase
+    JoinAtTravel
+  | -- | the areas to join another do so, in turn order, at the beginning of the travel phase
+    JoinAreas
+  | -- | the first player's area joins the second's
+    JoinArea PlayerId PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

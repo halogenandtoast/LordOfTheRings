@@ -493,7 +493,7 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , scenario = scenarioName (toAttrs g.scenario)
         , round = g.round
         , phase = g.phase
-        , threat = sum [p.threat | p <- toList g.players]
+        , threat = sum [p.threat | p <- toList (allPlayers g)]
         , outcome = g.outcome
         , victoryPoints = (toAttrs g.scenario).victoryPoints
         , waiting = False
@@ -506,7 +506,7 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
                 [ HeroSummary (toCardCode h) (cdSphere $ toCardDef h) | h <- toList g.entities.heroes, h.owner == pid
                 ]
             | pid <- g.playerOrder
-            , Just p <- [Map.lookup pid g.players]
+            , Just p <- [Map.lookup pid (allPlayers g)]
             ]
         }
 
