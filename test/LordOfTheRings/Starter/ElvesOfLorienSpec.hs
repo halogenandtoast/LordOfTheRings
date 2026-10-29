@@ -292,7 +292,8 @@ spec = describe "Elves of Lórien" do
       isExhausted defender `shouldReturn` False
 
   describe "Pursuing the Enemy" do
-    it "returns a Silvan ally to deal 1 damage to each engaged enemy" . elvesTest $ \pid -> do
+    -- Legolas gives the 0 cost Tactics event its resource match
+    it "returns a Silvan ally to deal 1 damage to each engaged enemy" . gameTestWith (coreDeck "elves-of-lorien") {heroes = [celebornCode, galadrielCode, "01005"]} $ \pid -> do
       _ <- allyInPlay pid Allies.greenwoodArcher
       eid <- enemyIn Enemies.hillTroll
       run $ EngageEnemy pid eid

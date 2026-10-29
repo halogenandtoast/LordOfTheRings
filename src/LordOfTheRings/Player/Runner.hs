@@ -405,12 +405,19 @@ canAfford p c = case (c.cost, c.sphere) of
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
       filterM (\h -> andM [heroCanSpend h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
+    fromAllies <- sum . map snd <$> allyPayersFor p.id c
+    -- a card that costs 0 still needs a resource match (FAQ 2.39, 2.61): a hero with its
+    -- resource icon, which paying with resources of another sphere (A Good Harvest) isn't
+    matched <- (sphere == Neutral ||) <$> anyM (matchesSphere sphere) heroes
+    let needed = costAsResources cost + extra
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
-      Nothing -> do
-        fromAllies <- sum . map snd <$> allyPayersFor p.id c
-        pure $ sum (map (.resources) payers) + fromAllies >= costAsResources cost + extra
+      Nothing
+        | needed <= 0 -> pure $ matched || fromAllies > 0
+        | otherwise -> pure $ sum (map (.resources) payers) + fromAllies >= needed
   _ -> pure False
+ where
+  matchesSphere sphere h = (\own -> h.sphere == sphere || GainResourceIcon sphere `elem` own) <$> getModifiers h
 
 {- | What modifiers add to the cost of the card the player would play: the game's, the
 player's own and the card's (negative when they lower it), less its secrecy while the

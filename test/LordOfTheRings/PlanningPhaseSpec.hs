@@ -4,9 +4,10 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Keyword (Keyword (Doomed))
-import LordOfTheRings.Matcher (CardMatcher (AnyCard))
-import LordOfTheRings.Modifier (ModifierType (GainKeyword, LowerNextCostOf, NextCardGainsDoomed, PlayedACardThisRound))
+import LordOfTheRings.Matcher (CardMatcher (AnyCard, CardWithSphere), HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), select)
+import LordOfTheRings.Modifier (ModifierType (GainKeyword, GainResourceIconFor, LowerNextCostOf, NextCardGainsDoomed, PlayedACardThisRound))
 import LordOfTheRings.Phase
+import LordOfTheRings.Sphere (Sphere (Tactics))
 import TestImport
 
 spec :: Spec
@@ -28,6 +29,26 @@ spec = describe "Planning phase" do
     question <- getQuestion pid
     let offered = [t | Just q <- [question], TargetLabel t _ <- questionChoices q]
     offered `shouldSatisfy` notElem (toTarget card)
+
+  it "does not offer a 0 cost card without a hero of its sphere (FAQ 2.39)" . gameTest $ \pid -> do
+    card <- putCardIntoHand pid Events.unseenStrike
+    run $ BeginPhase PlanningPhase
+    question <- getQuestion pid
+    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget card)
+
+  it "offers a 0 cost card with a hero of its sphere" . gameTestWith testDeck {heroes = ["01012", "01004", "01002"]} $ \pid -> do
+    card <- putCardIntoHand pid Events.unseenStrike
+    run $ BeginPhase PlanningPhase
+    question <- getQuestion pid
+    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` elem (toTarget card)
+
+  it "does not offer a 0 cost card through A Good Harvest's named sphere (FAQ 2.61)" . gameTest $ \pid -> do
+    card <- putCardIntoHand pid Events.unseenStrike
+    heroes <- select (HeroControlledBy $ PlayerWithId pid)
+    for_ heroes \h -> run $ CreateEffect $ Effect GameSource (toTarget h) [GainResourceIconFor (CardWithSphere Tactics) Tactics] UntilEndOfPhase
+    run $ BeginPhase PlanningPhase
+    question <- getQuestion pid
+    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (toTarget card)
 
   it "does not offer events" . gameTest $ \pid -> do
     card <- putCardIntoHand pid Events.everVigilant

@@ -175,7 +175,8 @@ spec = describe "The Hunt for Gollum" do
     run $ BeginPhase PlanningPhase
     offered `shouldReturn` False
 
-  it "takes any number of Eagles from the top 5 with The Eagles Are Coming!" . huntTest $ \pid -> do
+  -- Gimli gives the 0 cost Tactics event its resource match
+  it "takes any number of Eagles from the top 5 with The Eagles Are Coming!" . gameTestIn theHuntForGollum testDeck {heroes = ["01012", "01004", "01002"]} $ \pid -> do
     eagles <- traverse (\d -> genPlayerCard d (Just pid)) [Allies.wingedGuardian, Allies.wingedGuardian]
     g <- getGame
     putGame $ g & playersL . ix pid . deckL %~ (map PlayerCard eagles <>)
