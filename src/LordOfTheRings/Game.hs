@@ -1594,9 +1594,11 @@ runGameMessage msg g = case msg of
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
-    -- an objective's When Revealed, as Durin's Greaves attaching itself
-    pushWhen (cdWhenRevealed (toCardDef card)) $ WhenRevealed (toTarget thisObjective)
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]
+    -- an objective's When Revealed, as Durin's Greaves attaching itself, after the window
+    -- that can cancel it, as an enemy's
+    when (cdWhenRevealed (toCardDef card))
+      $ pushAll [CheckWindows [mkWhen $ Revealed (toTarget thisObjective)], WhenRevealed (toTarget thisObjective)]
     pure
       $ g
       & entitiesL

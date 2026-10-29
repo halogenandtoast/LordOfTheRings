@@ -91,6 +91,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
       TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
+      ObjectiveTarget i -> toCardDef <$> Map.lookup i es.objectives
       _ -> Nothing
   -- only while the enemy is still in play, to be dealt more
   (AttackDealtDamageWithTraitWindow t trait, AttackDealtDamage eid attackers _) | t == timing ->
