@@ -854,5 +854,34 @@
   },
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
+  },
+  "celebrimborsSecret": {
+    "scourOrder": "Choose the next Scour effect to resolve",
+    "assignDamage": "Place 1 damage on a location ({n} left to assign)"
+  },
+  "celebrimborsMould": {
+    "attach": "Attach Celebrimbor's Mould to a hero you control"
+  },
+  "theRuinsOfOstInEdhil": {
+    "addLocation": "Add an Ost-in-Edhil location to the staging area"
+  },
+  "ruinedPlaza": {
+    "assign": "Assign 1 damage to a character you control"
+  },
+  "bellachsScout": {
+    "choose": "Bellach's Scout: choose one",
+    "damage": "Place 3 damage on the active location",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "prowlingOrc": {
+    "engage": "Choose the player with the highest threat for Prowling Orc to engage"
+  },
+  "discovered": {
+    "choose": "Discovered!: choose one",
+    "scour": "Trigger each Scour effect in play",
+    "hand": "Each player places a random card from hand underneath The Orcs' Search"
+  },
+  "spiesFromMordor": {
+    "discard": "Discard a non-objective attachment you control"
   }
 }

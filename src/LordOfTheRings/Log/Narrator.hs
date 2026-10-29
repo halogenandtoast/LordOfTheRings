@@ -15,6 +15,7 @@ Three rules:
 -}
 module LordOfTheRings.Log.Narrator (narrationFor) where
 
+import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -269,6 +270,8 @@ narrationFor = \case
       (InPlayArea _, StagingArea) -> one $ toned Bad $ mechanic [ikeyPart "log.returnedToStaging" ["location" ~> l]]
       _ -> pure []
   PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
+  ScenarioSpecific "scour" (parseMaybe parseJSON -> Just target) -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.scour" ["target" ~> t]]
   PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing
