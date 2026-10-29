@@ -18,6 +18,6 @@ instance HasAbilities Dwalin where
 instance RunMessage Dwalin where
   runMessage msg h@(Dwalin attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      lowerThreat pid 2
+      lowerThreatBy attrs pid 2
       pure h
     _ -> Dwalin <$> runMessage msg attrs

@@ -27,6 +27,6 @@ instance RunMessage RenewedFriendship where
             causedBy attrs
             targets exhausted ready
           labeled "renewedFriendship.draw" $ drawCards p 1
-          labeled "renewedFriendship.lowerThreat" $ lowerThreat p 2
+          labeled "renewedFriendship.lowerThreat" $ lowerThreatBy attrs p 2
       pure e
     _ -> RenewedFriendship <$> runMessage msg attrs

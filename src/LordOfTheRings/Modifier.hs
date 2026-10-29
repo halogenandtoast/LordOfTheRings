@@ -285,6 +285,11 @@ data ModifierType
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int
+  | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
+    CannotReduceThreat
+  | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
+    -- Double Dealings lowers it by 10
+    EliminationThreatModifier Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

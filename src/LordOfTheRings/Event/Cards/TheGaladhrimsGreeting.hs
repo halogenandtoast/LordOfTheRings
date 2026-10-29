@@ -17,7 +17,7 @@ instance RunMessage TheGaladhrimsGreeting where
       chooseOneM pid do
         questionLabeled "theGaladhrimsGreeting.title"
         causedBy attrs
-        labeled "theGaladhrimsGreeting.one" $ choosePlayerM pid attrs \p -> lowerThreat p 6
-        labeled "theGaladhrimsGreeting.each" $ eachPlayer \p -> lowerThreat p 2
+        labeled "theGaladhrimsGreeting.one" $ choosePlayerM pid attrs \p -> lowerThreatBy attrs p 6
+        labeled "theGaladhrimsGreeting.each" $ eachPlayer \p -> lowerThreatBy attrs p 2
       pure e
     _ -> TheGaladhrimsGreeting <$> runMessage msg attrs

@@ -17,7 +17,8 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Hero.Types ()
+import LordOfTheRings.Ally.Types (allyCardId)
+import LordOfTheRings.Hero.Types (heroCardId)
 import LordOfTheRings.I18n (intVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
@@ -40,7 +41,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, Traveled),
+  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled),
  )
 
 dealDamage
@@ -113,8 +114,22 @@ raiseThreatFromDoomed n = when (n > 0) $ eachPlayer \pid -> do
   raiseThreat pid n
   push $ CheckWindows [Window After $ ThreatRaisedByDoomed pid]
 
+-- | Reduce the player's threat, unless it cannot be, as The Empty Mug forbids.
 lowerThreat :: ReverseQueue m => PlayerId -> Int -> m ()
-lowerThreat pid n = push $ LowerThreat pid n
+lowerThreat pid n = do
+  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+  unless barred $ push $ LowerThreat pid n
+
+{- | The card reduces the player's threat, as 'lowerThreat', opening the window for it if
+it does reduce it: The Empty Mug answers a player card's.
+-}
+lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
+lowerThreatBy source pid n = do
+  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+  threat <- (.threat) <$> getPlayer pid
+  unless (barred || n <= 0 || threat <= 0) do
+    push $ LowerThreat pid n
+    push $ CheckWindows [Window After $ ThreatReduced pid (toSource source)]
 
 drawCards :: ReverseQueue m => PlayerId -> Int -> m ()
 drawCards pid n = push $ DrawCards $ Drawing pid n
@@ -907,3 +922,25 @@ whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture act
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+{- | The player card behind the source leaves play, or its owner's discard pile, for good,
+as "remove that card from the game" reads of the card behind an effect.
+-}
+removeSourceCardFromGame :: ReverseQueue m => Source -> m ()
+removeSourceCardFromGame = \case
+  AbilitySource s _ -> removeSourceCardFromGame s
+  AllySource aid -> do
+    a <- getAlly aid
+    discard aid
+    removeFromDiscard a.owner (allyCardId $ toAttrs a)
+  HeroSource hid -> do
+    h <- getHero hid
+    discard hid
+    removeFromDiscard h.owner (heroCardId $ toAttrs h)
+  AttachmentSource aid ->
+    getsGame (lookup aid . (.entities.attachments)) >>= traverse_ \a -> do
+      discard aid
+      removeFromDiscard (toAttrs a).owner (toAttrs a).cardId
+  -- an event, in its owner's discard pile once played
+  CardIdSource cid -> eachPlayer \p -> removeFromDiscard p cid
+  _ -> pure ()

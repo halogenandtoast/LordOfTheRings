@@ -20,7 +20,7 @@ instance RunMessage EowynTactics where
   runMessage msg h@(EowynTactics attrs) = case msg of
     -- Setup: Reduce your threat by 3, once the heroes' threat has set it.
     DoStep 3 Setup -> do
-      lowerThreat attrs.owner 3
+      lowerThreatBy attrs attrs.owner 3
       EowynTactics <$> runMessage msg attrs
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       ready attrs
