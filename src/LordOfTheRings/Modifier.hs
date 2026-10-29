@@ -326,6 +326,8 @@ data ModifierType
     ProgressAsDamageTo Target
   | -- | on a character: it was dealt damage while defending the attack being resolved
     DamagedWhileDefending
+  | -- | on the game: a hero committed to the quest this round, as The Rear Guard reads
+    HeroCommittedThisRound
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
