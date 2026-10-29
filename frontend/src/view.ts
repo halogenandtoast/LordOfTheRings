@@ -156,13 +156,23 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     // games saved before a kind existed do not have it
     Object.values(entities[kind] ?? {}).filter(test).map((e) => fromEntity(e, kind))
 
+  // the cards facedown under a card lie under it as one stack, counted, as the underworld
+  // cards under a location (The Steward's Fear) and those under The Orcs' Search
+  const stackUnder = (host: CardView) => {
+    const count = game.underneath?.[host.id] ?? 0
+    return count ? [card('', `underneath-${host.id}`, { facedown: 'encounter', name: ikey('log.cardsUnderneath', { count }), attachedTo: host.id })] : []
+  }
+
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))
     // claimed objectives, condition treacheries and enemies attached as Grasping Tentacle is sit on their hosts like attachments
     // and allies under a quest card, as Captured! holds Faramir
-    return [...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true)].filter(
-      (a) => a.attachedTo !== null && ids.has(a.attachedTo),
-    )
+    return [
+      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true)].filter(
+        (a) => a.attachedTo !== null && ids.has(a.attachedTo),
+      ),
+      ...cards.flatMap(stackUnder),
+    ]
   }
 
   const withAttachments = (cards: CardView[]) => [...cards, ...attachmentsOn(cards)]

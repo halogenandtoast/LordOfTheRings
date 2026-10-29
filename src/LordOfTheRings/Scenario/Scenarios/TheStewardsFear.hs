@@ -95,12 +95,16 @@ instance RunMessage TheStewardsFear where
     stackUnder meta lid = do
       n <- underworldValue . toCardCode =<< getLocation lid
       if n > 0 then placeUnder lid n meta else pure meta
+    -- the cards are stacked at once, as the keyword reads, before what answers the
+    -- location entering play (ALeP 3.063); the message they are placed with tells the log,
+    -- nothing else answering it
     placeUnder lid n meta =
-      locationCard lid <&> \case
-        Just cid ->
+      locationCard lid >>= \case
+        Just cid -> do
           let (top, rest) = splitAt n meta.underworldDeck
-           in meta {underworldDeck = rest, underneath = Map.insertWith (flip (<>)) cid top meta.underneath}
-        Nothing -> meta
+          unless (null top) $ placeUnderneath lid (map EncounterCard top)
+          pure meta {underworldDeck = rest, underneath = Map.insertWith (flip (<>)) cid top meta.underneath}
+        Nothing -> pure meta
     -- the cards under the location are revealed one at a time into the staging area
     leaving lid = do
       let meta = getMeta attrs
