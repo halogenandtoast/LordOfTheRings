@@ -352,6 +352,12 @@ spec = describe "The Steward's Fear" do
     run $ TravelTo houses
     heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
 
+  it "exhausts every character as Houses of the Dead is made active another way" . fearTest $ \_ -> do
+    staged Locations.housesOfTheDead
+    houses <- locationOf Locations.housesOfTheDead
+    run $ PlaceLocation houses ActiveLocation
+    heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
   it "has The Hand of Castamir reveal the top encounter card after it attacks, then discard it" . fearTest $ \pid -> do
     staged Enemies.theHandOfCastamir
     eid <- enemyOf Enemies.theHandOfCastamir

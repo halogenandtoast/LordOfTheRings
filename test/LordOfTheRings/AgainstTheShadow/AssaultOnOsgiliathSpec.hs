@@ -293,6 +293,12 @@ spec = describe "Assault on Osgiliath" do
     placementOf Locations.eastQuarter `shouldReturn` Just StagingArea
     placementOf Locations.westGate `shouldReturn` Just ActiveLocation
 
+  it "offers West Gate's action under a player's control too (ruling)" . osgiliathTest $ \pid -> do
+    gate <- controlled pid Locations.westGate
+    _ <- setEncounterDeck [Locations.eastQuarter]
+    run $ ActionWindow pid
+    offersAbilityOf pid gate `shouldReturn` True
+
   it "adds the topmost Orc enemy in the encounter discard pile to the staging area with Uruk Lieutenant" . osgiliathTest $ \_ -> do
     run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.urukSoldier
     reveal [Enemies.urukLieutenant]
