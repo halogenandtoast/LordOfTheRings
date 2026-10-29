@@ -11,7 +11,8 @@ module LordOfTheRings.Message.Lifted (
 import LordOfTheRings.Card (Card (..), CardDef, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types ()
-import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
+import LordOfTheRings.Frontend (Frontend)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
@@ -818,6 +819,19 @@ immediateAttack pid eid = do
   push $ EnemyAttack pid eid
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
+
+-- | The player divides the damage among characters they control, as "that player must deal
+-- X damage divided among characters he controls" reads; it is dealt once all is assigned.
+dealDamageDivided :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
+dealDamageDivided source pid n = push $ DealDamageDivided (toSource source) pid n []
+
+-- | The enemy makes an additional attack against the player once this attack resolves, as
+-- "attacking enemy makes an additional attack after this one" reads.
+additionalAttack
+  :: (HasGame m, MonadRandom m, Frontend m, HasQueue Message m) => PlayerId -> EnemyId -> QueueT Message m ()
+additionalAttack pid eid = do
+  again <- capture $ immediateAttack pid eid
+  afterAttack eid again
 
 -- | The player deals the damage to 1 character they control, as "each player must deal 3
 -- damage to 1 character he controls" reads.

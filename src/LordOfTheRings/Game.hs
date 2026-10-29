@@ -1011,6 +1011,15 @@ runGameMessage msg g = case msg of
         pid
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
     pure g
+  DealDamageDivided source pid n assigned -> do
+    characters <- charactersControlledBy pid
+    if n > 0 && notNull characters
+      then
+        push
+          $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
+            [targetLabel c [DealDamageDivided source pid (n - 1) (c : assigned)] | c <- characters]
+      else pushAll [DealDamage source c k | (c, k) <- Map.toList (Map.fromListWith (+) [(c, 1) | c <- assigned])]
+    pure g
   ChooseAndExhaustHero source pid -> do
     ready <- map toTarget <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
     unless (null ready)
