@@ -14,9 +14,9 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Source
 
-{- | The first player makes a locate test: the top card of the encounter deck is
-discarded, and what follows a fail and a pass are actions of their own. The scenario
-resolves it.
+{- | The first player makes a locate test: he discards cards from his hand, each to
+discard the top card of the encounter deck, until one carries the pass icon or he stops.
+What follows a fail and a pass are actions of their own. The scenario resolves it.
 -}
 locateTest
   :: (ReverseQueue m, Sourceable source) => source -> QueueT Message m () -> QueueT Message m () -> m ()

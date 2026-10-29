@@ -1018,5 +1018,9 @@
   },
   "cursedForest": {
     "removeTimeCounter": "Cursed Forest: remove a time counter from an enemy"
+  },
+  "locateTest": {
+    "discard": "Locate test: discard a card from your hand to discard the top card of the encounter deck",
+    "fail": "Stop, failing the test"
   }
 }

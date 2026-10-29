@@ -2,7 +2,10 @@ module LordOfTheRings.Scenario.Scenarios.TheLongDark (theLongDark) where
 
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Matcher (getLead, getPlayer)
+import LordOfTheRings.Player.Types (discardableHand)
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Source (sourceTarget)
 import LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers (passesLocateTest)
 
 newtype TheLongDark = TheLongDark ScenarioAttrs
@@ -23,11 +26,24 @@ instance RunMessage TheLongDark where
       laterStages <- traverse genEncounterCard [Quests.continuingEastward]
       putQuestIntoPlay firstStage
       pure $ TheLongDark $ attrs & encounterDeckL .~ encounterDeck & questDeckL .~ laterStages
-    -- the top card is discarded; the test is passed if it carries the pass icon
-    LocateTest source onFail onPass -> case attrs.encounterDeck of
+    -- The first player may discard a card from his hand to discard the top card of the
+    -- encounter deck, again and again until one carries the pass icon. Once he runs out
+    -- of cards or stops, the test is failed.
+    LocateTest source onFail _ -> do
+      lead <- getLead
+      hand <- discardableHand <$> getPlayer lead
+      chooseOrRunOneM lead do
+        questionLabeled "locateTest.discard"
+        traverse_ causedBy (sourceTarget source)
+        targets hand \c -> do
+          discardFromHand lead c
+          push $ DoStep 1 msg
+        labeled "locateTest.fail" $ pushAll onFail
+      pure $ TheLongDark attrs
+    DoStep 1 test@(LocateTest source _ onPass) -> case attrs.encounterDeck of
       top : _ -> do
         push $ DiscardTopOfEncounterDeck source GameTarget 1
-        pushAll $ if passesLocateTest top then onPass else onFail
+        if passesLocateTest top then pushAll onPass else push test
         pure $ TheLongDark attrs
       []
         | notNull attrs.encounterDiscard -> do
@@ -35,7 +51,7 @@ instance RunMessage TheLongDark where
             push msg
             pure $ TheLongDark $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
         | otherwise -> do
-            -- ponytail: nothing left to discard, so nothing is lost
-            pushAll onPass
+            -- nothing is discarded, so no pass icon either
+            push test
             pure $ TheLongDark attrs
     _ -> TheLongDark <$> runMessage msg attrs

@@ -1,6 +1,7 @@
 module LordOfTheRings.Dwarrowdelf.TheLongDarkSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (CannotBeAttacked, DefenseModifier, ThreatModifier))
@@ -57,29 +58,47 @@ spec = describe "The Long Dark" do
     length staged `shouldBe` 1
     for_ staged \l -> getModifiers (toTarget l) >>= (`shouldSatisfy` elem (ThreatModifier 1))
 
-  it "fails Foul Air's locate test on a card without the pass icon: 2 damage to all, and Lost" . darkTest $ \_ -> do
+  it "fails Foul Air's locate test when the first player stops: 2 damage to all, and Lost" . darkTest $ \pid -> do
     stage Locations.silentCaverns
+    _ <- putCardIntoHand pid Events.dwarvenTomb
     reveal [Treacheries.foulAir, Enemies.goblinSneak]
+    chooseLabel "$label.locateTest.fail" pid
     beravor <- toTarget <$> getHeroWithCode "01012"
     getCharacterDamage beravor `shouldReturn` 2
     beravorExhausted `shouldReturn` True
+    length <$> getEncounterDeck `shouldReturn` 1
 
-  it "passes Foul Air's locate test on a card with the pass icon" . darkTest $ \_ -> do
+  it "discards a card from hand for each encounter card discarded, until one with the pass icon" . darkTest $ \pid -> do
     stage Locations.silentCaverns
-    reveal [Treacheries.foulAir, Locations.abandonedMine]
+    one <- putCardIntoHand pid Events.dwarvenTomb
+    two <- putCardIntoHand pid Events.dwarvenTomb
+    reveal [Treacheries.foulAir, Enemies.goblinSneak, Locations.abandonedMine]
+    chooseTarget pid (CardIdTarget one.id)
+    chooseTarget pid (CardIdTarget two.id)
     beravor <- toTarget <$> getHeroWithCode "01012"
     getCharacterDamage beravor `shouldReturn` 0
     beravorExhausted `shouldReturn` False
+    (.hand) <$> getPlayer pid `shouldReturn` []
     map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Locations.abandonedMine))
 
-  it "places progress on Twisting Passage only when its locate test passes" . darkTest $ \_ -> do
+  it "cannot pass a locate test with nothing left to discard from the encounter deck" . darkTest $ \pid -> do
+    stage Locations.silentCaverns
+    card <- putCardIntoHand pid Events.dwarvenTomb
+    reveal [Treacheries.foulAir]
+    chooseTarget pid (CardIdTarget card.id)
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    getCharacterDamage beravor `shouldReturn` 2
+
+  it "places progress on Twisting Passage only when its locate test passes" . darkTest $ \pid -> do
     run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.twistingPassage
     passage <- locationOf Locations.twistingPassage
     _ <- setEncounterDeck [Treacheries.fatigue]
     run $ PlaceProgressOnQuest 3
     progressOn passage `shouldReturn` 0
     _ <- setEncounterDeck [Treacheries.foulAir]
+    card <- putCardIntoHand pid Events.dwarvenTomb
     run $ PlaceProgressOnQuest 3
+    chooseTarget pid (CardIdTarget card.id)
     progressOn passage `shouldReturn` 3
 
   it "returns the top 2 Goblin enemies of the discard pile to the staging area when Abandoned Mine is lost" . darkTest $ \_ -> do
