@@ -2122,15 +2122,18 @@ attackDamage pid eid target n = do
   mods <- getModifiers eid
   let excessToThreat = ExcessDamageToThreat `elem` mods
       excessToOthers = ExcessDamageToOtherCharacters `elem` mods
+      excessToLocation = ExcessDamageToActiveLocation `elem` mods
   excess <-
-    if excessToThreat || excessToOthers
+    if excessToThreat || excessToOthers || excessToLocation
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   controller <- characterController target
+  active <- select IsActiveLocation
   pure $ DealDamage (EnemySource eid) target n
     : [CheckDestroyedByAttack eid target c | Just c <- [controller]]
     <> concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid]] | excessToThreat, excess > 0]
     <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemySource eid) pid target)
+    <> concat [[PlaceTokens (EnemySource eid) (LocationTarget l) Damage excess, CheckDefeated (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

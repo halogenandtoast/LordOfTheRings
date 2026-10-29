@@ -285,6 +285,9 @@ data ModifierType
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is placed on the active location, as Collapsed Tower's shadow reads
+    ExcessDamageToActiveLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
