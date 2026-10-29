@@ -2051,6 +2051,7 @@ discardFromPlay target g = case target of
         <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
       mods <- getModifiers target
       let removed = g & entitiesL . l %~ Map.delete k
+          waiting ec e = effectTarget e == CardIdTarget ec.id && LeavesPlayToTopOfEncounterDeck `elem` effectModifiers e
           orcGuards = (toAttrs g.scenario).scenarioOrcGuards
       case toCard entity of
         -- an Orc Guard leaves its player card in that player's discard pile
@@ -2064,6 +2065,10 @@ discardFromPlay target g = case target of
         EncounterCard ec
           | LeavesPlayToTopOfEncounterDeck `elem` mods ->
               pure $ removed & scenarioL %~ overAttrs (encounterDeckL %~ (ec :))
+          -- an effect waiting on the card itself, as A Watchful Peace's, resolves once it
+          -- has left play, where what it was immune to in play no longer stops it
+          | any (waiting ec) (gameEffects g) ->
+              pure $ removed & effectsL %~ filter (not . waiting ec) & scenarioL %~ overAttrs (encounterDeckL %~ (ec :))
           | ShuffledIntoEncounterDeckWhenDefeated `elem` mods -> do
               deck <- shuffleM (ec : (toAttrs g.scenario).encounterDeck)
               pure $ removed & scenarioL %~ overAttrs (encounterDeckL .~ deck)
