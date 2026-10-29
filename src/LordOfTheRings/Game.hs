@@ -1543,7 +1543,8 @@ runGameMessage msg g = case msg of
         attacker <- newEnemy card
         pushAll
           [ RemoveShadowCard host cid
-          , PlaceEnemy attacker.id (EngagedWith pid)
+          , -- it never engages the player (Wolf Rider rulings)
+            PlaceEnemy attacker.id (AttackingFromShadow pid)
           , CreateEffect
               $ Effect
                 (toSource attacker)
