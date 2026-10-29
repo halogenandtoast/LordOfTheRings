@@ -467,6 +467,8 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EnemyDefeated eid]
     case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
+        -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
+        pushAll [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
         let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
         pure
           $ g
