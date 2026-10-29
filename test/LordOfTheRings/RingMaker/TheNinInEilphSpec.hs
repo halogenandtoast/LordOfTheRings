@@ -167,7 +167,11 @@ spec = describe "The Nîn-in-Eilph" do
     _ <- revealStage pid Quests.throughTheMarshNoEndInSight
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotDrawCardsFromCardEffects)
     eowyn <- getHeroWithCode "01007"
-    getModifiers (toTarget eowyn) >>= (`shouldSatisfy` elem CannotGainResourcesFromCardEffects)
+    run $ PlaceTokens (HeroSource eowyn.id) (toTarget eowyn) Resource 1
+    getHeroResources eowyn.id `shouldReturn` 0
+    -- an encounter card's effect still may
+    run $ PlaceTokens ScenarioSource (toTarget eowyn) Resource 1
+    getHeroResources eowyn.id `shouldReturn` 1
 
   it "lets each player play only 1 card each round under A Forgotten Land" . ninTest $ \pid -> do
     _ <- revealStage pid Quests.throughTheMarshAForgottenLand

@@ -15,14 +15,14 @@ instance HasAbilities ThroughTheMarshNoEndInSight where
   getAbilities (ThroughTheMarshNoEndInSight a) = wanderingStage a
 
 -- | Player card effects cannot be used to gain resources or draw cards.
--- ponytail: encounter card effects are barred too; none in this encounter deck gives
--- resources or draws.
+-- ponytail: encounter card effects are barred from drawing too, as 'drawCards' knows no
+-- source (see its own marker); none in this encounter deck draws.
 instance HasModifiersFor ThroughTheMarshNoEndInSight where
   getModifiersFor (ThroughTheMarshNoEndInSight a) = when a.flipped do
     players <- getRemainingPlayers
     for_ players \p -> modified a (PlayerTarget p) [CannotDrawCardsFromCardEffects]
     heroes <- select AnyHero
-    for_ heroes \h -> modified a h [CannotGainResourcesFromCardEffects]
+    for_ heroes \h -> modified a h [CannotGainResourcesFromPlayerCardEffects]
 
 -- | When Revealed: Raise each player's threat by 1.
 -- Forced: When the players defeat this stage, advance to a random stage 3A (the scenario
