@@ -21,9 +21,9 @@ instance RunMessage MinasTirithLampwright where
   runMessage msg s@(MinasTirithLampwright a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       discard a
-      -- ponytail: the effect waits for the next card until the end of the round; the
-      -- surge that triggered it reveals that card at once
-      let name t = roundModifier a GameTarget (DiscardNextRevealed t)
+      -- the effect waits for the next card however long it takes, spent as it is
+      -- revealed; the surge that triggered it reveals that card at once
+      let name t = createEffect a GameTarget [DiscardNextRevealed t] UntilSpent
       chooseOneM pid do
         questionLabeled "minasTirithLampwright.name"
         causedBy a

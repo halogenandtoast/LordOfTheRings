@@ -7,7 +7,8 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (CostModifier))
+import LordOfTheRings.Effect (Effect (..))
+import LordOfTheRings.Modifier (ModifierType (CostModifier, DiscardNextRevealed))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import TestImport
@@ -126,6 +127,15 @@ spec = describe "Against the Shadow player cards" do
       allyCount `shouldReturn` 0
       map (.id) <$> getEncounterDiscard `shouldReturn` [road.id]
       getsGame (length . (.entities.locations)) `shouldReturn` 0
+
+    it "waits past the end of the round for the next card revealed" . gameTest $ \pid -> do
+      lampwright <- putAllyIntoPlay pid Allies.minasTirithLampwright
+      _ <- setEncounterDeck [Enemies.mirkwoodBats]
+      run RevealEncounterCard
+      chooseAbilityOf pid lampwright
+      chooseLabel "$label.minasTirithLampwright.location" pid
+      run EndRound
+      getsGame (any (any (\case DiscardNextRevealed _ -> True; _ -> False) . effectModifiers) . gameEffects) `shouldReturn` True
 
   describe "Hobbit-sense" do
     it "stops the engaged enemies attacking, and the player attacking" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
