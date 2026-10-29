@@ -854,5 +854,14 @@
   },
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
+  },
+  "theFordsOfIsen": {
+    "searchDunland": "Choose a Dunland enemy to reveal and add to the staging area",
+    "assignDamage": "Assign 1 of {n} damage to a character you control"
+  },
+  "downFromTheHills": {
+    "choose": "Down from the Hills: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "search": "Search for a Dunland enemy and reveal it"
   }
 }

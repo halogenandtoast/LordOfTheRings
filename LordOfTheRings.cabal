@@ -69,6 +69,7 @@ library
       LordOfTheRings.Ally.Cards.Glorfindel
       LordOfTheRings.Ally.Cards.GondorianSpearman
       LordOfTheRings.Ally.Cards.GreenwoodArcher
+      LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
       LordOfTheRings.Ally.Cards.GrimbeornTheOld
       LordOfTheRings.Ally.Cards.GuardOfTheCitadel
       LordOfTheRings.Ally.Cards.Guthlaf
@@ -584,9 +585,11 @@ library
       LordOfTheRings.Location.Cards.Fanuidhol
       LordOfTheRings.Location.Cards.FensAndMires
       LordOfTheRings.Location.Cards.FirstHall
+      LordOfTheRings.Location.Cards.FordsOfIsen
       LordOfTheRings.Location.Cards.ForestGate
       LordOfTheRings.Location.Cards.ForestGrove
       LordOfTheRings.Location.Cards.FouledWell
+      LordOfTheRings.Location.Cards.GapOfRohan
       LordOfTheRings.Location.Cards.GardenOfPoisons
       LordOfTheRings.Location.Cards.GladdenFields
       LordOfTheRings.Location.Cards.GladeOfCleansing
@@ -650,7 +653,9 @@ library
       LordOfTheRings.Location.Cards.TheFourthStar
       LordOfTheRings.Location.Cards.TheHeartOfTheMarshes
       LordOfTheRings.Location.Cards.TheHighlands
+      LordOfTheRings.Location.Cards.TheIslet
       LordOfTheRings.Location.Cards.TheKingsLibrary
+      LordOfTheRings.Location.Cards.TheKingsRoad
       LordOfTheRings.Location.Cards.TheLeapingFish
       LordOfTheRings.Location.Cards.TheMountainsRoots
       LordOfTheRings.Location.Cards.TheNorthStair
@@ -708,6 +713,7 @@ library
       LordOfTheRings.Objective.Cards.GandalfsMap
       LordOfTheRings.Objective.Cards.GollumReturnToMirkwood
       LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
+      LordOfTheRings.Objective.Cards.GrimaTheFordsOfIsen
       LordOfTheRings.Objective.Cards.GrimbeornTheOld
       LordOfTheRings.Objective.Cards.IthilienGuardian
       LordOfTheRings.Objective.Cards.LordAlcaron
@@ -756,10 +762,12 @@ library
       LordOfTheRings.Quest.Cards.Captured
       LordOfTheRings.Quest.Cards.Conspiracy
       LordOfTheRings.Quest.Cards.ContinuingEastward
+      LordOfTheRings.Quest.Cards.DunlendingAttack
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
       LordOfTheRings.Quest.Cards.EscapeFromDarkness
       LordOfTheRings.Quest.Cards.EscapeToTheQuays
+      LordOfTheRings.Quest.Cards.FightAtTheFords
       LordOfTheRings.Quest.Cards.FightingInTheStreets
       LordOfTheRings.Quest.Cards.FliesAndSpiders
       LordOfTheRings.Quest.Cards.GatherInformation
@@ -768,6 +776,7 @@ library
       LordOfTheRings.Quest.Cards.HastyCouncil
       LordOfTheRings.Quest.Cards.HeadingDown
       LordOfTheRings.Quest.Cards.HeadingUp
+      LordOfTheRings.Quest.Cards.HoldTheFords
       LordOfTheRings.Quest.Cards.IntoTheMarshes
       LordOfTheRings.Quest.Cards.JourneyInTheBlackPit
       LordOfTheRings.Quest.Cards.LastLordOfMoria
@@ -853,6 +862,8 @@ library
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDruadanForest
       LordOfTheRings.Scenario.Scenarios.TheDruadanForest.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheFordsOfIsen
+      LordOfTheRings.Scenario.Scenarios.TheFordsOfIsen.Helpers
       LordOfTheRings.Scenario.Scenarios.TheHillsOfEmynMuil
       LordOfTheRings.Scenario.Scenarios.TheHuntForGollum
       LordOfTheRings.Scenario.Scenarios.TheLongDark
@@ -897,6 +908,7 @@ library
       LordOfTheRings.Treachery.Cards.DeepDeepDark
       LordOfTheRings.Treachery.Cards.Despair
       LordOfTheRings.Treachery.Cards.DisturbedWaters
+      LordOfTheRings.Treachery.Cards.DownFromTheHills
       LordOfTheRings.Treachery.Cards.DrivenByShadow
       LordOfTheRings.Treachery.Cards.EvilStorm
       LordOfTheRings.Treachery.Cards.Exhaustion
@@ -918,6 +930,7 @@ library
       LordOfTheRings.Treachery.Cards.GollumsBite
       LordOfTheRings.Treachery.Cards.HiddenThreat
       LordOfTheRings.Treachery.Cards.IllPurpose
+      LordOfTheRings.Treachery.Cards.IllTidings
       LordOfTheRings.Treachery.Cards.ImpassableChasm
       LordOfTheRings.Treachery.Cards.ImpenetrableFog
       LordOfTheRings.Treachery.Cards.InnerFlame
@@ -944,6 +957,7 @@ library
       LordOfTheRings.Treachery.Cards.OrcAmbush
       LordOfTheRings.Treachery.Cards.OrcAssault
       LordOfTheRings.Treachery.Cards.Panicked
+      LordOfTheRings.Treachery.Cards.PillagingAndBurning
       LordOfTheRings.Treachery.Cards.PinnedDown
       LordOfTheRings.Treachery.Cards.PursuedByShadow
       LordOfTheRings.Treachery.Cards.RoastedSlowly
@@ -1193,6 +1207,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.VoiceOfIsengard.TheFordsOfIsenSpec
       TestImport
       Paths_LordOfTheRings
   hs-source-dirs:

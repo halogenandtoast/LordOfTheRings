@@ -89,6 +89,9 @@ import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Cards.RetakeTheCity
 import LordOfTheRings.Quest.Cards.TheAmbush
 import LordOfTheRings.Quest.Cards.Captured
+import LordOfTheRings.Quest.Cards.FightAtTheFords
+import LordOfTheRings.Quest.Cards.DunlendingAttack
+import LordOfTheRings.Quest.Cards.HoldTheFords
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -210,5 +213,8 @@ allQuests =
         , SomeQuestCard retakeTheCity
         , SomeQuestCard theAmbush
         , SomeQuestCard captured
+        , SomeQuestCard fightAtTheFords
+        , SomeQuestCard dunlendingAttack
+        , SomeQuestCard holdTheFords
         ]
     ]
