@@ -100,6 +100,18 @@ spec = describe "The Morgul Vale" do
     getDamage (toTarget murzag) `shouldReturn` 0
     getDamage (toTarget guard') `shouldReturn` 3
 
+  it "ends the attack and has the attacker attack the next player with Morgul Bodyguard's shadow" $ twoPlayerTest testDeck \p1 p2 -> do
+    eid <- staged Enemies.morgulSorcerer
+    run $ EngageEnemy p1 eid
+    run . AttachShadowCard eid =<< genEncounterCard Enemies.morgulBodyguard
+    run $ UndefendedAttack p1 eid
+    passActions p1
+    passActions p2
+    (.placement) <$> getEnemy eid `shouldReturn` EngagedWith p2
+    heroes <- getsGame (map toTarget . filter ((== p1) . (.owner)) . toList . (.entities.heroes))
+    -- the first attack ended without its damage
+    sum <$> traverse getDamage heroes `shouldReturn` 0
+
   it "reduces any damage dealt to Nazgûl of Minas Morgul to 1, and wins as it is defeated" . valeTest $ \_ -> do
     _ <- putQuestStage Quests.theMorgulRider
     nazgul <- staged Enemies.nazgulOfMinasMorgul
