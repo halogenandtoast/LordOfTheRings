@@ -116,6 +116,14 @@ allTreacheryCards =
       , lyingInWait
       , mordorLooms
       , conflictAtTheCrossroads
+      , orcHuntingParty
+      , oldHatreds
+      , wildMenOfDunland
+      , turnedAround
+      , takeCover
+      , lowOnProvisions
+      , offTrack
+      , inNeedOfRest
       ]
 
 deepDeepDark :: CardDef
@@ -713,3 +721,43 @@ conflictAtTheCrossroads =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 0
     }
+
+orcHuntingParty :: CardDef
+orcHuntingParty = treachery "07041" "Orc Hunting Party" MistyMountainOrcs 2
+
+oldHatreds :: CardDef
+oldHatreds =
+  (treachery "07045" "Old Hatreds" DunlandRaiders 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+wildMenOfDunland :: CardDef
+wildMenOfDunland =
+  (treachery "07049" "Wild Men of Dunland" DunlandWarriors 2)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+turnedAround :: CardDef
+turnedAround = (treachery "07052" "Turned Around" AncientForest 3) {cdShadowEffect = True}
+
+takeCover :: CardDef
+takeCover =
+  (treachery "07055" "Take Cover!" BrokenLands 3)
+    { cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 2
+    }
+
+lowOnProvisions :: CardDef
+lowOnProvisions =
+  (treachery "07056" "Low on Provisions" WearyTravelers 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+offTrack :: CardDef
+offTrack = (treachery "07057" "Off Track" WearyTravelers 2) {cdKeywords = setFromList [Surge]}
+
+inNeedOfRest :: CardDef
+inNeedOfRest = (treachery "07058" "In Need of Rest" WearyTravelers 2) {cdEasyModeQuantity = Just 1}

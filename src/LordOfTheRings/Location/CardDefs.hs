@@ -130,6 +130,9 @@ allLocationCards =
       , northernRoad
       , easternRoad
       , theDarkWoods
+      , ancientForestLocation
+      , tangledWoods
+      , brokenLandsLocation
       ]
 
 drownedTreasury :: CardDef
@@ -935,3 +938,21 @@ easternRoad = (location "06127" "Eastern Road" TheBloodOfGondor 1 4 2) {cdCardTr
 -- | Archery X, X the number of players: gained from its own modifiers.
 theDarkWoods :: CardDef
 theDarkWoods = (location "06128" "The Dark Woods" TheBloodOfGondor 4 2 2) {cdCardTraits = setFromList [Forest]}
+
+ancientForestLocation :: CardDef
+ancientForestLocation =
+  (location "07050" "Ancient Forest" AncientForest 3 2 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+tangledWoods :: CardDef
+tangledWoods = (location "07051" "Tangled Woods" AncientForest 3 2 4) {cdCardTraits = setFromList [Forest]}
+
+brokenLandsLocation :: CardDef
+brokenLandsLocation =
+  (location "07054" "Broken Lands" BrokenLands 3 2 6)
+    { cdCardTraits = setFromList [Highlands]
+    , cdShadowEffect = True
+    }

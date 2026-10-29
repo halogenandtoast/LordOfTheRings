@@ -127,6 +127,16 @@ allEnemyCards =
       , orcAmbusher
       , brutalUruk
       , evilCrow
+      , orcSkirmisher
+      , orcHunter
+      , orcHound
+      , dunlandProwler
+      , dunlendingBandit
+      , dunlandRaider
+      , dunlandTribesman
+      , dunlandChieftain
+      , dunlandBerserker
+      , prowlingWolf
       ]
 
 namelessThing :: CardDef
@@ -980,6 +990,78 @@ brutalUruk =
 evilCrow :: CardDef
 evilCrow =
   (enemy "06122" "Evil Crow" TheBloodOfGondor 2 5 1 1 0 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+orcSkirmisher :: CardDef
+orcSkirmisher =
+  (enemy "07038" "Orc Skirmisher" MistyMountainOrcs 3 33 3 4 2 4)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+orcHunter :: CardDef
+orcHunter =
+  (enemy "07039" "Orc Hunter" MistyMountainOrcs 3 35 2 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+orcHound :: CardDef
+orcHound =
+  (enemy "07040" "Orc Hound" MistyMountainOrcs 2 20 1 2 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Surge and +1 threat while players hold enough cards: given by its own modifiers.
+dunlandProwler :: CardDef
+dunlandProwler = (enemy "07042" "Dunland Prowler" DunlandRaiders 3 30 1 2 3 3) {cdCardTraits = setFromList [Dunland]}
+
+dunlendingBandit :: CardDef
+dunlendingBandit =
+  (enemy "07043" "Dunlending Bandit" DunlandRaiders 2 33 2 1 2 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    }
+
+dunlandRaider :: CardDef
+dunlandRaider =
+  (enemy "07044" "Dunland Raider" DunlandRaiders 2 35 3 5 3 5)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+dunlandTribesman :: CardDef
+dunlandTribesman =
+  (enemy "07046" "Dunland Tribesman" DunlandWarriors 2 37 0 4 2 3)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+dunlandChieftain :: CardDef
+dunlandChieftain =
+  (enemy "07047" "Dunland Chieftain" DunlandWarriors 2 35 3 5 3 6)
+    { cdCardTraits = setFromList [Dunland]
+    , cdEasyModeQuantity = Just 0
+    }
+
+dunlandBerserker :: CardDef
+dunlandBerserker =
+  (enemy "07048" "Dunland Berserker" DunlandWarriors 3 25 2 2 1 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    }
+
+prowlingWolf :: CardDef
+prowlingWolf =
+  (enemy "07053" "Prowling Wolf" BrokenLands 3 28 3 1 1 3)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
     }
