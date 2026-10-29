@@ -460,6 +460,9 @@ data Message
     them: from a player's hand, deck or discard pile, or a location in play
     -}
     PlaceUnderneath Target [Card]
+  | -- | the enemy's attack resolves against another target, as Small Target turns it on
+    -- another enemy: see 'LordOfTheRings.Message.Lifted.redirectAttack'
+    RedirectAttack EnemyId Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -1013,6 +1013,22 @@ runGameMessage msg g = case msg of
     pushWhen (any byThisAttack $ gameAttackDestroyed g) $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
       : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
     pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
+  RedirectAttack eid target -> do
+    let attacking = \case
+          Window After (EnemyAttacking eid' _) -> eid' == eid
+          _ -> False
+    withQueue_ $ map \case
+      AttackDamage eid' _ | eid' == eid -> AttackDamage eid target
+      DefendedByMany _ eid' _ | eid' == eid -> AttackDamage eid target
+      CheckWindows ws -> CheckWindows (filter (not . attacking) ws)
+      m -> m
+    pure g
+  -- an attack turned on another enemy, as Small Target's, deals that enemy its damage
+  AttackDamage eid target@(EnemyTarget other) -> do
+    when (inPlay g target) do
+      damage <- (-) <$> getEnemyAttack eid <*> getEnemyDefense other
+      push $ DealDamage (EnemyAttackSource eid) target (max 0 damage)
+    pure g
   -- a defender that left play before the damage leaves the attack undefended
   AttackDamage eid defender | not (inPlay g defender) -> do
     lead <- getLead
