@@ -1032,3 +1032,8 @@ placeDamage source target n = do
 -- random does.
 advanceToQuest :: ReverseQueue m => EncounterCard -> m ()
 advanceToQuest = push . AdvanceToQuest
+
+-- | A card from the player's deck goes to their hand, added rather than drawn, as Hunter
+-- of Lamedon adds it.
+takeFromDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+takeFromDeck pid card = push $ TakeFromDeck pid card.id
