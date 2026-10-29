@@ -854,5 +854,15 @@
   },
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
+  },
+  "theAntleredCrown": {
+    "chooseRavenEnemy": "Choose an enemy from the Raven deck to add to the staging area",
+    "assignDamage": "Assign {n} damage among characters you control: choose one to deal 1 to",
+    "removeTimeCounter": "Remove {n} time counters from locations in play: choose one to remove 1 from"
+  },
+  "ravenSkirmisher": {
+    "choose": "Raven Skirmisher: remove 1 time counter from the active location, or reveal an additional encounter card",
+    "removeTimeCounter": "Remove 1 time counter from the active location",
+    "reveal": "Reveal an additional encounter card"
   }
 }
