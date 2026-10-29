@@ -17,7 +17,6 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase)
-import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Hero.Types ()
 import LordOfTheRings.I18n (intVar)
@@ -924,12 +923,6 @@ whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture act
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
 
--- | The enemy makes an additional attack against the player once this attack is over, dealt
--- a shadow card for it, as Lord Alcaron and Heart of Fangorn's shadow read.
-additionalAttack :: PlayerId -> EnemyId -> QueueT Message GameT ()
-additionalAttack pid eid = do
-  again <- capture $ immediateAttack pid eid
-  afterAttack eid again
 -- | The treachery leaves play for the player's hand, where it stays, as Ill Tidings reads.
 drawTreacheryIntoHand :: ReverseQueue m => PlayerId -> TreacheryId -> m ()
 drawTreacheryIntoHand pid = push . DrawTreacheryIntoHand pid

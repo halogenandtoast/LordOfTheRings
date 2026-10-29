@@ -17,11 +17,14 @@ fordsTest = gameTestIn theFordsOfIsen testDeck
 outcome :: GameT (Maybe Outcome)
 outcome = getsGame (.outcome)
 
--- | The searches for Dunland enemies find none: those sets are not in these tests.
+-- | The searches for Dunland enemies take the first one offered, or find none.
 searchFindsNothing :: PlayerId -> GameT ()
 searchFindsNothing pid =
   getQuestion pid >>= \case
     Just (QuestionLabel "$label.searchFoundNothing" _ _ _) -> chooseLabel "$label.continue" pid >> searchFindsNothing pid
+    Just (QuestionLabel l _ _ _)
+      | l `elem` ["$label.theFordsOfIsen.searchDunland", "$label.searchChoose"] ->
+          chooseOptionMatching "a Dunland enemy" pid (const True) >> searchFindsNothing pid
     _ -> pure ()
 
 setup :: PlayerId -> GameT ()
