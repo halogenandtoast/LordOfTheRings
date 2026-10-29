@@ -161,6 +161,8 @@ data WindowMatcher
     ThreatRaisedByDoomedWindow Timing PlayerId
   | -- | the player, or any player, drew any number of cards
     DrewCardsWindow Timing (Maybe PlayerId)
+  | -- | the players advanced to a quest stage, as Fen of Reeds reads
+    AdvancedToStageWindow Timing
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -239,6 +241,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'
   (ThreatRaisedByDoomedWindow t pid, ThreatRaisedByDoomed pid') -> t == timing && pid == pid'
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
+  (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

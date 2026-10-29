@@ -106,6 +106,8 @@ data WindowType
     ThreatRaisedByDoomed PlayerId
   | -- | the player drew this many cards, by one draw
     CardsDrawn PlayerId Int
+  | -- | the players advanced to a quest stage, its When Revealed resolved
+    AdvancedToStage
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
