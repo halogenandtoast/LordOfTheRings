@@ -31,7 +31,7 @@ instance RunMessage TheMorgulRider where
       addSetAsideToStaging (cardIs Locations.theWhiteBridge)
       eachPlayer $ const revealEncounterCard
       pure q
-    Destroy (EnemyTarget eid) -> do
+    Destroy _ (EnemyTarget eid) -> do
       whenM (isCaptain Enemies.nazgulOfMinasMorgul eid) winGame
       TheMorgulRider <$> runMessage msg attrs
     _ -> TheMorgulRider <$> runMessage msg attrs

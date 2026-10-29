@@ -36,7 +36,7 @@ instance RunMessage OutOfTheSwamp where
       attackEachPlayer
       placeTimeCounters attrs attrs 2
       pure q
-    Destroy (EnemyTarget eid) -> do
+    Destroy _ (EnemyTarget eid) -> do
       whenM ((== Just eid) <$> getMarshDweller) winGame
       OutOfTheSwamp <$> runMessage msg attrs
     _ -> OutOfTheSwamp <$> runMessage msg attrs

@@ -3,8 +3,6 @@ module LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor (theBloodOfGondor) whe
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers (attackDestroys, mordorLoomsMarks, turnHiddenCardsFaceup)
-import LordOfTheRings.Source (Source (EnemySource))
 
 newtype TheBloodOfGondor = TheBloodOfGondor ScenarioAttrs
   deriving anyclass (IsScenario)
@@ -22,9 +20,4 @@ instance RunMessage TheBloodOfGondor where
       laterStages <- traverse genEncounterCard [Quests.captured]
       putQuestIntoPlay firstStage
       pure $ TheBloodOfGondor $ attrs & encounterDeckL .~ encounterDeck & questDeckL .~ laterStages
-    -- Mordor Looms' shadow: "If this attack destroys a character, that character's
-    -- controller turns each of his hidden cards faceup."
-    DoStep 1 (DealDamage (EnemySource eid) target n) -> do
-      whenM (mordorLoomsMarks eid) $ attackDestroys target n >>= traverse_ (void . turnHiddenCardsFaceup)
-      TheBloodOfGondor <$> runMessage msg attrs
     _ -> TheBloodOfGondor <$> runMessage msg attrs

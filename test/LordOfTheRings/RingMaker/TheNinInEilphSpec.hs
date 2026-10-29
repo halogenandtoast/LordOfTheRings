@@ -193,7 +193,7 @@ spec = describe "The Nîn-in-Eilph" do
     _ <- putQuestStage Quests.outOfTheSwamp
     eid <- staged Enemies.ancientMarshDweller
     outcome `shouldReturn` Nothing
-    run $ Destroy (toTarget eid)
+    run $ Destroy GameSource (toTarget eid)
     outcome `shouldReturn` Just Won
 
   it "raises Nalir's controller's threat as the refresh phase begins, and loses the game as he leaves play" . ninTest $ \pid -> do

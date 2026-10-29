@@ -26,7 +26,7 @@ instance RunMessage TheBetrayal where
     WhenRevealed (isTarget attrs -> True) -> do
       addSetAsideToStaging (cardIs Enemies.lordAlcaron)
       pure q
-    Destroy (EnemyTarget eid) -> do
+    Destroy _ (EnemyTarget eid) -> do
       whenM (isCaptain Enemies.lordAlcaron eid) $ completeQuest attrs.id
       TheBetrayal <$> runMessage msg attrs
     _ -> TheBetrayal <$> runMessage msg attrs

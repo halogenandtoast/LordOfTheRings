@@ -38,7 +38,7 @@ instance RunMessage TheRearguardTheMorgulVale where
         removeFromEncounterDeck card
         addToStaging card
       pure $ TheRearguardTheMorgulVale $ attrs {questFlipped = True}
-    Destroy (EnemyTarget eid) -> do
+    Destroy _ (EnemyTarget eid) -> do
       whenM (isCaptain Enemies.murzag eid) $ completeQuest attrs.id
       TheRearguardTheMorgulVale <$> runMessage msg attrs
     _ -> TheRearguardTheMorgulVale <$> runMessage msg attrs

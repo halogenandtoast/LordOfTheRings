@@ -12,7 +12,6 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
-import LordOfTheRings.Source (Source (CardIdSource))
 import LordOfTheRings.Trait (Trait (Clue, Plot, Villain))
 import LordOfTheRings.Window
 
@@ -62,11 +61,6 @@ instance RunMessage TheStewardsFear where
     CheckWindows ws -> do
       -- Underworld X, as a location enters the staging area
       meta <- foldM stackUnder (getMeta attrs) [lid | Window After (EntersStagingArea (LocationTarget lid)) <- ws]
-      -- False Lead's shadow: "If this attack destroys a character, remove all tokens from
-      -- the current quest."
-      when (notNull [() | Window After (CharacterDestroyed _ _) <- ws]) do
-        attacking <- attackDealingDamage
-        for_ attacking \eid -> falseLeadArmed eid >>= traverse_ (removeAllTokensFromQuest . CardIdSource)
       TheStewardsFear <$> runMessage msg (withMeta meta)
     -- Underworld X, as a location enters play as the active location, once it is in play
     PutIntoPlayAsActiveLocation _ -> do

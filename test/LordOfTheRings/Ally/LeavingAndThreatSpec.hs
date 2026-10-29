@@ -30,14 +30,14 @@ spec = do
   describe "Landroval" do
     it "puts a destroyed hero back into play, once per game" . gameTest $ \pid -> do
       landroval <- putAllyIntoPlay pid Allies.landroval
-      run . Destroy =<< hero "01012"
+      run . Destroy GameSource =<< hero "01012"
       chooseAbilityOf pid landroval
       (.damage) <$> getHeroWithCode "01012" `shouldReturn` 1
       -- played again from hand, he no longer answers a hero's destruction
       card <- getsGame (fromJustNote "not in hand" . find ((== toCardCode Allies.landroval) . toCardCode) . (.hand) . fromJustNote "no player" . headMay . toList . (.players))
       run $ PutAllyIntoPlay pid card.id
       again <- getsGame (toTarget . fromJustNote "not in play" . headMay . toList . (.entities.allies))
-      run . Destroy =<< hero "01007"
+      run . Destroy GameSource =<< hero "01007"
       offersAbilityOf pid again `shouldReturn` False
 
   describe "Elfhelm" do

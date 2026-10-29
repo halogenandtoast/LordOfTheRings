@@ -12,7 +12,6 @@ module LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (
   mugashHost,
   mugashCaptor,
   engageCaptor,
-  afterAttackIfDestroyed,
 ) where
 
 import Data.Aeson.Types (parseMaybe)
@@ -25,14 +24,12 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Enemy.Types (Enemy)
 import LordOfTheRings.Entities (entitiesEnemies)
 import LordOfTheRings.Game.Base (gameEntities, gameScenario)
-import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Placement (Placement (AttachedTo, EngagedWith))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Target
 
@@ -87,16 +84,3 @@ engageCaptor eid = do
   captor <- mugashCaptor
   placement <- (.placement) <$> getEnemy eid
   for_ captor \p -> when (placement /= EngagedWith p) $ engageEnemy p eid
-
-{- | Once the enemy's attack has resolved, if any of the characters it could destroy has
-left play, as "if this attack destroys a character" reads: its defenders, or, undefended,
-the heroes of the player it attacks.
--- ponytail: a character that left play during the attack another way counts as destroyed,
-as Encounter at Amon Dîn's has it
--}
-afterAttackIfDestroyed
-  :: EnemyId -> PlayerId -> [Target] -> QueueT Message GameT () -> QueueT Message GameT ()
-afterAttackIfDestroyed eid pid defenders action = do
-  characters <- if null defenders then map toTarget <$> select (HeroControlledBy $ PlayerWithId pid) else pure defenders
-  msgs <- lift $ capture action
-  afterAttack eid [IfAnyLeftPlay characters msgs]

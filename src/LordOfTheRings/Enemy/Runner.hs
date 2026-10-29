@@ -39,7 +39,7 @@ instance RunMessage EnemyAttrs where
     DiscardShadowCards eid | eid == attrs.id && notNull attrs.shadowCards -> discardShadows
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (<> [card])
     -- the cards facedown under it go to their owners' discard piles as it leaves play
-    Destroy (isTarget attrs -> True) -> leaving
+    Destroy _ (isTarget attrs -> True) -> leaving
     Discard (isTarget attrs -> True) -> leaving
     ReturnToTopOfEncounterDeck (isTarget attrs -> True) -> leaving
     ReturnToBottomOfEncounterDeck (isTarget attrs -> True) -> leaving

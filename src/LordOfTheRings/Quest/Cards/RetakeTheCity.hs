@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.RetakeTheCity (retakeTheCity) where
 
 import LordOfTheRings.Card (CardType (EnemyType))
 import LordOfTheRings.Frontend
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -59,11 +58,6 @@ instance RunMessage RetakeTheCity where
             _ -> False
           lead <- getLead
           takeControlOfLocation lead lid
-      -- the Osgiliath shadows' "if this attack destroys a character, that character's
-      -- controller must return a location he controls with the highest threat"
-      for_ [(eid, pid) | Window After (CharacterDestroyedByAttack eid _ pid) <- ws] \(eid, pid) -> do
-        returns <- length . filter (== DestroyingReturnsLocation) <$> getModifiers eid
-        replicateM_ returns $ returnHighestThreatLocation attrs pid
       RetakeTheCity <$> runMessage msg attrs
     -- an eliminated player's Osgiliath locations return to the staging area (rules sheet)
     EliminatePlayer pid -> do

@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.TrappedInside (trappedInside) where
 
-import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (discardVillagers, villagerShadow)
+import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (discardRescuedVillagers, discardVillagers)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -23,7 +23,10 @@ instance RunMessage TrappedInside where
       discarded <- sum <$> (traverse (\l -> discardVillagers attrs l players) =<< select IsActiveLocation)
       when (discarded == 0) revealEncounterCard
       pure t
-    ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
-      villagerShadow attrs eid pid defenders
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      ifThisAttackDestroys eid msg
+      pure t
+    DoStep 1 (ResolveShadowEffect cid _ _ _) | cid == attrs.cardId -> do
+      discardRescuedVillagers attrs 1
       pure t
     _ -> TrappedInside <$> runMessage msg attrs

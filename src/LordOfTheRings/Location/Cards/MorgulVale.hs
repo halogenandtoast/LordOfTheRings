@@ -18,10 +18,6 @@ instance HasAbilities MorgulVale where
   getAbilities (MorgulVale a) = [mkAbility a 1 $ forced RoundEndsWindow]
 
 -- | Shadow: If this attack destroys a character, place 1 progress token on To the Tower.
--- Once the attack is over the shadow reads whether any character it could have destroyed,
--- a defender or, undefended, one of the attacked player's, has left play.
--- ponytail: a character the attack could destroy that left play during it some other way,
--- as a defender discarded by a player card, counts as destroyed.
 instance RunMessage MorgulVale where
   runMessage msg l@(MorgulVale a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
@@ -32,12 +28,10 @@ instance RunMessage MorgulVale where
           causedBy a
           targets engaged \e -> placeEnemy e StagingArea
       pure l
-    ResolveShadowEffect cid eid pid defenders | cid == a.cardId -> do
-      exposed <- if null defenders then charactersControlledBy pid else pure defenders
-      afterAttack eid [DoStep 1 (ResolveShadowEffect cid eid pid exposed)]
+    ResolveShadowEffect cid eid _ _ | cid == a.cardId -> do
+      ifThisAttackDestroys eid msg
       pure l
-    DoStep 1 (ResolveShadowEffect cid _ _ exposed) | cid == a.cardId -> do
-      remaining <- selectCharacters AnyHero AnyAlly
-      when (any (`notElem` remaining) exposed) $ placeOnTower a 1
+    DoStep 1 (ResolveShadowEffect cid _ _ _) | cid == a.cardId -> do
+      placeOnTower a 1
       pure l
     _ -> MorgulVale <$> runMessage msg a

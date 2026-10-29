@@ -47,7 +47,7 @@ instance RunMessage GoblinPatrol where
     CheckStage qid | qid == attrs.id -> do
       whenM (selectNone AnyEnemy) $ push (CompleteQuest attrs.id)
       pure q
-    Destroy (EnemyTarget _) -> recheck
+    Destroy _ (EnemyTarget _) -> recheck
     Discard (EnemyTarget _) -> recheck
     ReturnToTopOfEncounterDeck (EnemyTarget _) -> recheck
     ShuffleIntoEncounterDeck (EnemyTarget _) -> recheck

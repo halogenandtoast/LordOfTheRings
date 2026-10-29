@@ -24,7 +24,7 @@ instance RunMessage TheOrcsSearch where
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       eachPlayer \pid -> encounterRaisesThreat pid (length attrs.objectiveUnderneath)
       pure o
-    CheckDefeated (LocationTarget lid) -> do
+    CheckDefeated _ (LocationTarget lid) -> do
       searched <- selectAny (LocationWithId lid)
       when searched do
         l <- getLocation lid

@@ -96,7 +96,8 @@ data WindowType
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it
     EnemyDefeated EnemyId
-  | -- | the enemy's attack destroyed the character: who controlled it
+  | -- | the enemy's attack's damage destroyed the character, after it is destroyed: who
+    -- controlled it. Not its shadow card's damage, nor its leaving play another way.
     CharacterDestroyedByAttack EnemyId Target PlayerId
   | -- | this many time counters were removed from the card
     TimeCountersRemoved Target Int

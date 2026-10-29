@@ -95,8 +95,10 @@ data Message
     the cards discarded so far; the source reads them back once no player is left to ask
     -}
     EachDiscardAnyFromHand Source [PlayerId] [Card]
-  | CheckDefeated Target
-  | Destroy Target
+  | -- | whether the damage the source just dealt has destroyed the card
+    CheckDefeated Source Target
+  | -- | the card is destroyed by the source: an attack's, for one its damage destroys
+    Destroy Source Target
   | PlaceEnemy EnemyId Placement
   | PlaceLocation LocationId Placement
   | SetFirstPlayer PlayerId
@@ -376,9 +378,6 @@ data Message
   | -- | resolve one shadow card dealt to the enemy, unless it was cancelled
     ResolveShadowCard CardId EnemyId PlayerId [Target]
   | AttackDamage EnemyId Target
-  | -- | the enemy's attack has dealt the character its damage: was it destroyed? and who
-    -- controlled it
-    CheckDestroyedByAttack EnemyId Target PlayerId
   | AddToEncounterDiscard [EncounterCard]
   | PlayerAttacks PlayerId
   | -- | the player chooses which of these enemies to attack next
@@ -403,10 +402,9 @@ data Message
   | Run [Message]
   | -- | the messages, unless the card has left play by the time they run
     WhileInPlay Target [Message]
-  | {- | the messages, if any of the targets has left play by the time they run, as "if this
-    attack destroys a character" reads once the attack has resolved
-    -}
-    IfAnyLeftPlay [Target] [Message]
+  | -- | the messages, if the enemy's attack has destroyed a character, as "if this attack
+    -- destroys a character" reads once the attack is over (see 'attackDestroyed')
+    IfAttackDestroyed EnemyId [Message]
   | DrawCards Drawing
   | Mulligan PlayerId
   | -- | log only: what is narrated until the block closes is filed under it

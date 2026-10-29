@@ -15,24 +15,22 @@ desecratedRuins = treachery DesecratedRuins Cards.desecratedRuins
 -- | When Revealed: Place 3 damage on the active location. If there is no active location,
 -- Desecrated Ruins gains Surge.
 -- Shadow: Attacking enemy gets +1 attack. If this attack destroys an ally, place X damage on
--- the active location. X is that ally's cost. Once the attack is over the shadow reads, for
--- each ally it could have destroyed, whether it has left play, its cost noted beforehand.
--- ponytail: an ally the attack could destroy that left play during it some other way counts
--- as destroyed, as Morgul Vale's shadow reads it.
+-- the active location. X is that ally's cost.
 instance RunMessage DesecratedRuins where
   runMessage msg t@(DesecratedRuins attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       active <- selectAny IsActiveLocation
       if active then placeDamageOnActiveLocation attrs 3 else revealEncounterCard
       pure t
-    ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       enemyGetsAttack (CardIdSource cid) eid 1
-      exposed <- if null defenders then charactersControlledBy pid else pure defenders
-      allies <- for [aid | AllyTarget aid <- exposed] \aid -> (aid,) . cost . toCardDef <$> getAlly aid
-      afterAttack eid [IfAnyLeftPlay [AllyTarget aid] [DoStep x (ResolveShadowEffect cid eid pid [])] | (aid, x) <- allies, x > 0]
+      ifThisAttackDestroys eid msg
       pure t
-    DoStep x (ResolveShadowEffect cid _ _ []) | cid == attrs.cardId -> do
-      placeDamageOnActiveLocation (CardIdSource cid) x
+    DoStep 1 (ResolveShadowEffect cid eid _ _) | cid == attrs.cardId -> do
+      allies <- attackDestroyedAllies eid
+      for_ allies \d -> do
+        let x = cost (toCardDef d.card)
+        when (x > 0) $ placeDamageOnActiveLocation (CardIdSource cid) x
       pure t
     _ -> DesecratedRuins <$> runMessage msg attrs
    where

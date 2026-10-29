@@ -76,7 +76,7 @@ spec = describe "Peril in Pelargir" do
     run $ DealDamage GameSource beravor 1
     placementOf Objectives.alcaronsScroll `shouldReturn` Just (AttachedTo beravor)
     run $ EngageEnemy pid thug
-    run $ DealDamage (EnemySource thug) beravor 1
+    run $ DealDamage (EnemyAttackSource thug) beravor 1
     placementOf Objectives.alcaronsScroll `shouldReturn` Just (AttachedTo $ toTarget thug)
     run $ Discard (toTarget thug)
     placementOf Objectives.alcaronsScroll `shouldReturn` Just StagingArea

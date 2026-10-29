@@ -35,7 +35,7 @@ instance RunMessage RadagastsRequest where
       ws <- select wilyador
       for_ ws \w -> do
         placeTokens attrs w Damage players
-        checkDefeated w
+        checkDefeated attrs w
       revealOneOfTopEncounterCards pid attrs 3
       pure q
     UseCardAbility _ (isSource attrs -> True) 2 windows -> do

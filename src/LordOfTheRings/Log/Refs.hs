@@ -48,6 +48,7 @@ targetRefFor target = do
 sourceRefFor :: (HasGame m) => Source -> m (Maybe LogRef)
 sourceRefFor = \case
   PlayerSource pid -> Just <$> playerRefFor pid
+  PlayerAttackSource pid -> Just <$> playerRefFor pid
   source -> maybe (pure Nothing) targetRefFor (sourceTarget source)
 
 -- | A card by id wherever it is not in play: a hand, a deck, a discard pile, the
