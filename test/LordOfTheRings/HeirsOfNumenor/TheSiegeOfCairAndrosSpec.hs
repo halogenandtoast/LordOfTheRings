@@ -1,5 +1,6 @@
 module LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec (spec) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (CardCost (StaticCost), cdCost, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
@@ -204,12 +205,19 @@ spec = describe "The Siege of Cair Andros" do
     -- Beravor's lore, Éowyn's spirit and Théodred's leadership
     getArcheryTotal `shouldReturn` 3
 
-  it "keeps leadership, spirit and tactics heroes from spending while Orc Vanguard is in the staging area" . siegeTest $ \_ -> do
+  it "keeps leadership, spirit and lore heroes from spending while Orc Vanguard is in the staging area" . siegeTest $ \_ -> do
     run . AddToStaging =<< genEncounterCard Enemies.orcVanguard
     theodred <- toTarget <$> getHeroWithCode "01002"
     beravor <- toTarget <$> getHeroWithCode "01012"
     getModifiers theodred >>= (`shouldSatisfy` elem CannotSpendResources)
-    getModifiers beravor >>= (`shouldSatisfy` notElem CannotSpendResources)
+    getModifiers beravor >>= (`shouldSatisfy` elem CannotSpendResources)
+
+  it "counts the resource icons heroes gain for Orc Arbalesters' archery" . siegeTest $ \pid -> do
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    _ <- putAttachmentOn pid Attachments.songOfBattle beravor
+    run . AddToStaging =<< genEncounterCard Enemies.orcArbalesters
+    -- Song of Battle gives Beravor the tactics icon
+    getArcheryTotal `shouldReturn` 4
 
   it "takes no progress on Orc War Camp in the staging area while an Orc enemy is in play" . siegeTest $ \_ -> do
     camp <- stage Locations.orcWarCamp
