@@ -173,6 +173,22 @@ spec = describe "Against the Shadow player cards" do
       allyCount `shouldReturn` 1
       getsGame (length . (.entities.heroes)) `shouldReturn` 2
 
+    it "counts only printed spirit icons, not gained ones" . withHeroes [caldara, frodo, beravor] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfTravel =<< hero beravor
+      refugee <- putInDiscard pid Allies.silvanRefugee
+      _ <- putInDiscard pid Allies.ethirSwordsman
+      run $ ActionWindow pid
+      chooseAbilityOf pid =<< hero caldara
+      chooseTarget pid (CardIdTarget refugee.id)
+      -- Frodo's printed icon brings one ally; Beravor's gained one brings none
+      allyCount `shouldReturn` 1
+
+  describe "Mithrandir's Advice" do
+    it "draws 1 card for each hero with a printed lore icon only" . withHeroes [beravor, eowyn, gimli] $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.songOfWisdom =<< hero eowyn
+      _ <- playWith pid beravor 1 Events.mithrandirsAdvice
+      length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
   describe "Small Target" do
     it "turns the attack on a Hobbit onto another engaged enemy when the shadow card has no effect" . withHeroes [pippin, frodo, bilbo] $ \pid -> do
       attacker <- stage Enemies.forestSpider

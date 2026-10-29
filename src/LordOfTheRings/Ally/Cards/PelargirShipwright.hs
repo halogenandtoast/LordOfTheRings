@@ -16,5 +16,5 @@ pelargirShipwright = ally PelargirShipwright Cards.pelargirShipwright
 -- resource icon.
 instance HasModifiersFor PelargirShipwright where
   getModifiersFor (PelargirShipwright a) = for_ (placementController a.placement) \pid -> do
-    n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithSphere Spirit)
+    n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithPrintedSphere Spirit)
     when (n > 0) $ modifySelf a [WillpowerModifier n]
