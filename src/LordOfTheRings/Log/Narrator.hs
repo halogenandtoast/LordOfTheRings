@@ -177,6 +177,9 @@ narrationFor = \case
     one $ mechanic [ikeyPart "log.turnsHiddenCardFaceup" ["player" ~> who, "card" ~> EncounterCard card]]
   DiscardHiddenCard pid card -> Just $ whenHidden pid card \who ->
     one $ mechanic [ikeyPart "log.discardsHiddenCard" ["player" ~> who, "card" ~> EncounterCard card]]
+  DrawTreacheryIntoHand pid tid -> Just $ whenRef (toTarget tid) \t -> do
+    who <- playerRefFor pid
+    one $ toned Bad $ mechanic [ikeyPart "log.drawsIntoHand" ["player" ~> who, "card" ~> t]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
   RevealShadowCard eid cid -> Just $ whenRef (toTarget eid) \e -> do
     mCard <-
@@ -243,7 +246,7 @@ narrationFor = \case
   DiscardFromHand pid cid -> Just $ withPlayer pid \player who ->
     pure
       [ mechanic [ikeyPart "log.discardsFromHand" ["player" ~> who, "card" ~> card]]
-      | card <- filter ((== cid) . (.id)) player.hand
+      | card <- filter ((== cid) . (.id)) (discardableHand player)
       ]
   DiscardRandomFromHand pid n | n > 0 -> Just $ withPlayer pid \_ who ->
     one $ mechanic [ikeyPart "log.discardsAtRandom" ["player" ~> who, "count" ~> n]]

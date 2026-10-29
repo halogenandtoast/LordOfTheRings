@@ -86,3 +86,9 @@ instance HasField "usedAbilities" Player [UsedAbility] where
 
 instance HasField "eliminated" Player Bool where
   getField = playerEliminated
+
+{- | The cards in the player's hand that can leave it: an encounter card drawn into it, as
+Ill Tidings, cannot.
+-}
+discardableHand :: Player -> [Card]
+discardableHand p = [c | c@(PlayerCard _) <- p.hand]

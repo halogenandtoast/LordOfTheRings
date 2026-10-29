@@ -426,6 +426,10 @@ data Message
     DiscardHiddenCard PlayerId EncounterCard
   | -- | the ally is placed elsewhere, as Captured! puts Faramir under itself
     PlaceAlly AllyId Placement
+  | {- | the treachery leaves play for the player's hand, as Ill Tidings is drawn: an
+    encounter card in hand cannot leave it
+    -}
+    DrawTreacheryIntoHand PlayerId TreacheryId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

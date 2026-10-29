@@ -26,6 +26,7 @@ import LordOfTheRings.Message.Lifted.Choose as X
 import LordOfTheRings.Message.Lifted.Queue as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
+import LordOfTheRings.Player.Types (discardableHand)
 import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase))
 import LordOfTheRings.Placement (
   Placement (ActiveLocation, AttachedTo, StagingArea),
@@ -842,7 +843,7 @@ removeAllProgress source = do
 
 -- | The player discards every card in their hand.
 discardHand :: ReverseQueue m => PlayerId -> m ()
-discardHand pid = traverse_ (discardFromHand pid) . (.hand) =<< getPlayer pid
+discardHand pid = traverse_ (discardFromHand pid) . discardableHand =<< getPlayer pid
 
 -- | The card leaves the encounter discard pile for the staging area, as "return the top 2
 -- Goblin enemies in the encounter discard pile to the staging area" reads.
@@ -907,3 +908,7 @@ whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture act
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+-- | The treachery leaves play for the player's hand, where it stays, as Ill Tidings reads.
+drawTreacheryIntoHand :: ReverseQueue m => PlayerId -> TreacheryId -> m ()
+drawTreacheryIntoHand pid = push . DrawTreacheryIntoHand pid
