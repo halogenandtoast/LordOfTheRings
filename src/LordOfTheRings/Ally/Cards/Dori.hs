@@ -25,6 +25,6 @@ instance RunMessage Dori where
           -- the hero's damage is checked after this, so it is spared what Dori takes
           removeTokens a hero' Damage n
           placeTokens a a Damage n
-          push $ CheckDefeated (toTarget a)
+          checkDefeated a a
       pure s
     _ -> Dori <$> runMessage msg a

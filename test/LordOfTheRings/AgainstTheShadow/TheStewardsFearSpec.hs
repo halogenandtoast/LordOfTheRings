@@ -159,7 +159,7 @@ spec = describe "The Steward's Fear" do
     quest <- toTarget <$> getActiveQuest
     run $ PlaceTokens GameSource quest Progress 15
     getsGame (.outcome) `shouldReturn` Nothing
-    for_ villains \v -> run $ Destroy (toTarget v)
+    for_ villains \v -> run $ Destroy GameSource (toTarget v)
     getsGame (.outcome) `shouldReturn` Just Won
 
   it "claims A Prisoner into the victory display, placing 2 resources on the quest" . fearTest $ \pid -> do

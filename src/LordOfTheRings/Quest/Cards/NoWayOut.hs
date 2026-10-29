@@ -52,7 +52,7 @@ instance RunMessage NoWayOut where
       eachPlayer \p -> traverse_ (immediateAttack p) =<< select (EnemyEngagedWith $ PlayerWithId p)
       winGame
       pure q
-    Destroy (HeroTarget _) -> do
+    Destroy _ (HeroTarget _) -> do
       gameOver Lost
       NoWayOut <$> runMessage msg attrs
     _ -> NoWayOut <$> runMessage msg attrs

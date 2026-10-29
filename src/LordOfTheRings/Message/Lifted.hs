@@ -480,6 +480,14 @@ afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
   _ -> False
 
+{- | "If this attack destroys a character": the shadow's next step, 'DoStep' 1 of its
+'ResolveShadowEffect', once the enemy's attack is over, if its damage destroyed one. The
+shadow card, built again, resolves it then, and may read what was destroyed with
+'attackDestroyed'.
+-}
+ifThisAttackDestroys :: (MonadTrans t, HasQueue Message m) => EnemyId -> Message -> t m ()
+ifThisAttackDestroys eid shadow = afterAttack eid [IfAttackDestroyed eid [DoStep 1 shadow]]
+
 {- | Until the end of the phase, the enemy cannot attack the player it is engaged with now,
 as "that enemy cannot attack that player this phase" reads.
 -}
@@ -504,11 +512,12 @@ returnToHand = push . ReturnToHand . toTarget
 addToVictoryDisplay :: (ReverseQueue m, Targetable target) => target -> m ()
 addToVictoryDisplay = push . AddToVictoryDisplay . toTarget
 
-destroy :: (ReverseQueue m, Targetable target) => target -> m ()
-destroy = push . Destroy . toTarget
+destroy :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()
+destroy source = push . Destroy (toSource source) . toTarget
 
-checkDefeated :: (ReverseQueue m, Targetable target) => target -> m ()
-checkDefeated = push . CheckDefeated . toTarget
+-- | Whether the damage the source just placed on the card destroys it.
+checkDefeated :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()
+checkDefeated source = push . CheckDefeated (toSource source) . toTarget
 
 shuffleIntoEncounterDeck :: (ReverseQueue m, Targetable target) => target -> m ()
 shuffleIntoEncounterDeck = push . ShuffleIntoEncounterDeck . toTarget
@@ -1018,7 +1027,7 @@ placeDamage
   :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
 placeDamage source target n = do
   placeTokens source target Damage n
-  push $ CheckDefeated (toTarget target)
+  checkDefeated source target
 -- | Advance to the stage, taken from the quest deck, as a stage that picks the next at
 -- random does.
 advanceToQuest :: ReverseQueue m => EncounterCard -> m ()

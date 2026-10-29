@@ -27,7 +27,7 @@ import LordOfTheRings.Quest.Types (QuestAttrs (questOwner, questTokens))
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
-import LordOfTheRings.Source (Source)
+import LordOfTheRings.Source (Source (EnemyAttackSource))
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Damage, Resource, TimeCounter), Tokens, countTokens)
 import LordOfTheRings.Trait
@@ -488,6 +488,23 @@ getAttachmentsOn host =
         . entitiesAttachments
         . gameEntities
     )
+
+{- | The characters the enemy's attack destroyed, as "if this attack destroys a character"
+reads: while the attack resolves, and once it is over until the enemy attacks again. Only
+those its damage destroyed count, as the attacking character's damage must destroy an
+enemy for Foe-hammer (FAQ): not one its shadow card's damage destroyed, a card effect, nor
+one that left play another way during the attack.
+-}
+attackDestroyed :: HasGame m => EnemyId -> m [AttackDestroyed]
+attackDestroyed eid = getsGame (filter ((== EnemyAttackSource eid) . attackDestroyedBy) . gameAttackDestroyed)
+
+-- | Whether the enemy's attack destroyed a character: see 'attackDestroyed'.
+attackDestroyedACharacter :: HasGame m => EnemyId -> m Bool
+attackDestroyedACharacter = fmap notNull . attackDestroyed
+
+-- | The allies the enemy's attack destroyed: see 'attackDestroyed'.
+attackDestroyedAllies :: HasGame m => EnemyId -> m [AttackDestroyed]
+attackDestroyedAllies = fmap (filter \d -> case d.target of AllyTarget _ -> True; _ -> False) . attackDestroyed
 
 -- | The player who controls the character, if it is one.
 characterController :: HasGame m => Target -> m (Maybe PlayerId)

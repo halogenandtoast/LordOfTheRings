@@ -1,5 +1,5 @@
 {- | What the cards of The Blood of Gondor share: the hidden cards, encounter cards
-facedown in a player's play area (rules sheet), and the attacks that destroy a character.
+facedown in a player's play area (rules sheet).
 -}
 module LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers (
   getHiddenCards,
@@ -9,29 +9,21 @@ module LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers (
   turnFaceup,
   turnHiddenCardsFaceup,
   turnFaceupResolving,
-  attackDestroys,
-  mordorLoomsMarks,
 ) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (CardType (EnemyType), EncounterCard, cdCardType, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (CardType (EnemyType), EncounterCard, cdCardType, cdWhenRevealed, toCardDef)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
-import LordOfTheRings.Effect (Effect (..))
-import LordOfTheRings.Entities (entitiesEnemies)
-import LordOfTheRings.Game.Base (gameEffects, gameEntities, gameScenario)
-import LordOfTheRings.Helpers.Character (getHitPoints)
+import LordOfTheRings.Game.Base (gameScenario)
 import LordOfTheRings.Id
 import LordOfTheRings.Enemy.Types ()
-import LordOfTheRings.Matcher (characterController, getDamage)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
-import LordOfTheRings.Source
 import LordOfTheRings.Target
-import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 -- | The hidden cards in the player's play area, the first taken first.
 getHiddenCards :: HasGame m => PlayerId -> m [EncounterCard]
@@ -82,31 +74,3 @@ turnFaceupResolving pid card
   | otherwise = push $ TurnHiddenCardFaceup pid card [ResolveWhenRevealedOf card]
  where
   def = toCardDef card
-
-{- | The player whose character the attack damage destroys, as it is dealt, for "if this
-attack destroys a character": the damage is placed and the character destroyed straight
-after, with no window between to save it.
--}
-attackDestroys :: HasGame m => Target -> Int -> m (Maybe PlayerId)
-attackDestroys target n =
-  characterController target >>= \case
-    Nothing -> pure Nothing
-    Just pid -> do
-      lethal <- (\damage hp -> damage + n >= hp) <$> getDamage target <*> getHitPoints target
-      pure $ guard lethal $> pid
-
-{- | Whether Mordor Looms' shadow resolved for the attack the enemy is making: the shadow
-marks the attack with an effect of its own, from its card, until the attack ends.
--}
-mordorLoomsMarks :: HasGame m => EnemyId -> m Bool
-mordorLoomsMarks eid = do
-  looms <-
-    getsGame
-      $ map (CardIdSource . (.id))
-      . filter ((== toCardCode Treacheries.mordorLooms) . toCardCode)
-      . maybe [] (.shadowCards)
-      . Map.lookup eid
-      . entitiesEnemies
-      . gameEntities
-  effects <- getsGame gameEffects
-  pure $ any (\e -> e.effectTarget == EnemyTarget eid && e.effectSource `elem` looms) effects

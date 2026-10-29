@@ -173,7 +173,7 @@ spec = describe "Encounter at Amon Dîn" do
     run . AddToStaging =<< genEncounterCard Enemies.ghulat
     run $ PlaceTokens GameSource quest Progress 15
     getsGame (.outcome) `shouldReturn` Nothing
-    run . Destroy . toTarget =<< enemyOf Enemies.ghulat
+    run . Destroy GameSource . toTarget =<< enemyOf Enemies.ghulat
     getsGame (.outcome) `shouldReturn` Just Won
 
   it "loses at the end of the game unless more villagers were rescued than died" . amonDinTest $ \_ -> do

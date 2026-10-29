@@ -134,7 +134,7 @@ narrationFor = \case
   Ready target -> Just $ duringCard $ simply "log.readies" target
   Exhaust target -> Just $ duringCard $ simply "log.exhausts" target
   -- \* Leaving play
-  Destroy target -> Just $ whenRef target \t ->
+  Destroy _ target -> Just $ whenRef target \t ->
     -- a character going down is bad; an enemy going down is the point
     one
       $ toned (case target of EnemyTarget _ -> Good; _ -> Bad)
@@ -397,8 +397,11 @@ closeBlock bid = do
     (outer, block : _) | Just gid <- logBlockPath (outer <> [block]) -> case block.logBlockKind of
       PlayerAttackBlock _ eid _ -> do
         enemies <- getsGame (entitiesEnemies . gameEntities)
+        -- destroyed by the attack's damage, not gone some other way during it
+        destroyed <- getsGame (any ((== EnemyTarget eid) . (.target)) . gameAttackDestroyed)
         case Map.lookup eid enemies of
-          Nothing -> pure [closesGroup gid $ toned Good $ test [ikeyPart "log.attackDestroys" []]]
+          _ | destroyed -> pure [closesGroup gid $ toned Good $ test [ikeyPart "log.attackDestroys" []]]
+          Nothing -> pure []
           Just en -> do
             hitPoints <- getEnemyHitPoints eid
             let e = entityRef RefEnemy eid en

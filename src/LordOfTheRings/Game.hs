@@ -88,6 +88,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameLastCommittedWillpower = Nothing
     , gameLogBlocks = []
     , gameLeftPlay = mempty
+    , gameAttackDestroyed = []
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -196,7 +197,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object [])]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("attackDestroyed", toJSON ([] :: [Value]))]
 
 {- | Run the message on one thing in play, putting what it pushes on the queue once it is
 done.
@@ -318,6 +319,9 @@ runGameMessage msg g = case msg of
     pure g
   IfAnyLeftPlay ts msgs -> do
     when (any (not . inPlay g) ts) $ pushAll msgs
+    pure g
+  IfAttackDestroyed eid msgs -> do
+    whenM (attackDestroyedACharacter eid) $ pushAll msgs
     pure g
   OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
   -- an ally that has just left play answers its own leaving
@@ -454,14 +458,14 @@ runGameMessage msg g = case msg of
   DoStep 1 (DealDamage source target n) -> do
     -- the damage an enemy deals may raise a player's threat as much, as Seedy Inn's shadow
     raising <- case source of
-      EnemySource eid -> (\ms -> [pid | AttackDamageRaisesThreatOf pid <- ms]) <$> getModifiers eid
+      EnemyAttackSource eid -> (\ms -> [pid | AttackDamageRaisesThreatOf pid <- ms]) <$> getModifiers eid
       _ -> pure []
     defending <- elem Defending <$> getModifiers target
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
       <> [ PlaceTokens source target Damage n
          , CheckWindows [mkAfter $ DealtDamage target n]
-         , CheckDefeated target
+         , CheckDefeated source target
          ]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
     pure g
@@ -499,7 +503,7 @@ runGameMessage msg g = case msg of
               ]
             <> [Label (ikey "label.doneDiscarding") [EachDiscardAnyFromHand source rest discarded]]
     pure g
-  CheckDefeated target -> do
+  CheckDefeated source target -> do
     -- damage dealt in a batch can reach a card an earlier part of it already destroyed
     destroyed <- case target of
       HeroTarget hid | Map.member hid g.entities.heroes -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
@@ -511,17 +515,19 @@ runGameMessage msg g = case msg of
       ObjectiveTarget oid | Just o <- Map.lookup oid g.entities.objectives, isJust (cdHitPoints $ toCardDef o) ->
         (>=) <$> getDamage target <*> getHitPoints target
       _ -> pure False
-    when destroyed $ push (Destroy target)
+    when destroyed $ push (Destroy source target)
     pure g
-  Destroy target@(EnemyTarget eid) -> do
+  Destroy source target@(EnemyTarget eid) -> do
     enemy <- getEnemy eid
     push $ CheckWindows [mkAfter $ EnemyDefeated eid]
     stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
-    if stays then pure g else case cdVictoryPoints (toCardDef enemy) of
+    let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
+        -- what a player's attack destroyed, for the attack to read as it resolves
+        recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card | PlayerAttackSource _ <- [source]])
+    if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
         pushAll [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
-        let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
         pure
           $ g
           & entitiesL
@@ -531,19 +537,26 @@ runGameMessage msg g = case msg of
           %~ overAttrs (victoryDisplayL %~ (card :))
       Nothing -> discardTarget target g
   -- an objective ally destroyed in the staging area goes to the encounter discard pile
-  Destroy (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
+  Destroy _ (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
     push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid
-  Destroy target -> do
-    let card = case target of
-          HeroTarget hid -> toCard <$> Map.lookup hid g.entities.heroes
-          AllyTarget aid -> toCard <$> Map.lookup aid g.entities.allies
-          _ -> Nothing
+  Destroy source target -> do
+    let (card, controller) = case target of
+          HeroTarget hid | Just h <- Map.lookup hid g.entities.heroes -> (Just $ toCard h, Just h.owner)
+          AllyTarget aid | Just a <- Map.lookup aid g.entities.allies -> (Just $ toCard a, placementController a.placement)
+          _ -> (Nothing, Nothing)
+        -- one an enemy's attack destroyed with its damage, as "if this attack destroys a
+        -- character" reads: not one its shadow card's damage destroyed (see 'attackDestroyed')
+        byAttack = [(eid, c, pid) | EnemyAttackSource eid <- [source], Just c <- [card], Just pid <- [controller]]
     pushAll
       $ [CheckWindows [mkWhen $ CharacterDestroyed target c] | Just c <- [card]]
       <> [Discard target, CheckEliminations]
-      <> [CheckWindows [mkAfter $ CharacterDestroyed target c] | Just c <- [card]]
-    pure g
+      <> [ CheckWindows
+             $ mkAfter (CharacterDestroyed target c)
+             : [mkAfter $ CharacterDestroyedByAttack eid target pid | (eid, _, pid) <- byAttack]
+         | Just c <- [card]
+         ]
+    pure $ g & attackDestroyedL %~ (<> [AttackDestroyed (EnemyAttackSource eid) target (Just pid) c | (eid, c, pid) <- byAttack])
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]
@@ -708,7 +721,8 @@ runGameMessage msg g = case msg of
       =<< inLogBlock
         (EnemyAttackBlock pid eid)
         (CheckWindows [mkWhen $ EnemyAttacking eid pid] : windows <> [DeclareDefenders pid eid []])
-    pure g
+    -- what its last attack destroyed is forgotten as it makes a new one
+    pure $ g & attackDestroyedL %~ filter ((/= EnemyAttackSource eid) . attackDestroyedBy)
   DefendWith pid eid defender -> do
     windows <- actionWindows
     pushAll
@@ -938,6 +952,7 @@ runGameMessage msg g = case msg of
     attackers <- selectCharacters AttackingHero AttackingAlly
     pushAll $ [CheckWindows [mkWhen $ EnemyAttacked eid] | notNull attackers, Map.member eid g.entities.enemies] <> [DoStep 1 msg]
     pure g
+  -- what the last attack on an enemy destroyed is forgotten as the next resolves
   DoStep 1 (ResolveAttack pid eid) -> do
     -- ranged characters of other players among them
     attackers <- selectCharacters AttackingHero AttackingAlly
@@ -975,7 +990,7 @@ runGameMessage msg g = case msg of
               =<< inLogBlock
                 (PlayerAttackBlock pid eid attackers)
                 ( map StopAttacking attackers
-                    <> [DealDamage (PlayerSource pid) (toTarget eid) (attack - defense) | damaging]
+                    <> [DealDamage (PlayerAttackSource pid) (toTarget eid) (attack - defense) | damaging]
                     <> [ PlaceTokens (PlayerSource pid) (toTarget eid) Progress (attack - defense)
                        | asProgress
                        , attack > defense
@@ -992,10 +1007,12 @@ runGameMessage msg g = case msg of
                            <> [mkAfter $ AttackedAlone a eid excess | [a] <- [attackers]]
                        ]
                 )
-    pure g
+    pure $ g & attackDestroyedL %~ filter (not . isPlayerAttack . attackDestroyedBy)
   AttackResolved eid engaged attackers traits -> do
-    destroyed <- not <$> selectAny (EnemyWithId eid)
-    pushWhen destroyed $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
+    -- only the attack's own damage destroying the enemy counts, not its leaving play some
+    -- other way during the attack
+    let byThisAttack d = d.target == EnemyTarget eid && isPlayerAttack (attackDestroyedBy d)
+    pushWhen (any byThisAttack $ gameAttackDestroyed g) $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
       : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
     pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   -- a defender that left play before the damage leaves the attack undefended
@@ -1003,9 +1020,6 @@ runGameMessage msg g = case msg of
     lead <- getLead
     engaged <- placementController . (.placement) <$> getEnemy eid
     push $ UndefendedDamage (fromMaybe lead engaged) eid
-    pure g
-  CheckDestroyedByAttack eid target pid -> do
-    pushWhen (not $ inPlay g target) $ CheckWindows [mkAfter $ CharacterDestroyedByAttack eid target pid]
     pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
@@ -2265,13 +2279,11 @@ attackDamage pid eid target n = do
     if excessToThreat || excessToOthers || excessToLocation
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
-  controller <- characterController target
   active <- select IsActiveLocation
-  pure $ DealDamage (EnemySource eid) target n
-    : [CheckDestroyedByAttack eid target c | Just c <- [controller]]
-    <> concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
-    <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemySource eid) pid target)
-    <> concat [[PlaceTokens (EnemySource eid) (LocationTarget l) Damage excess, CheckDefeated (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
+  pure $ DealDamage (EnemyAttackSource eid) target n
+    : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
+    <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
+    <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
@@ -2364,6 +2376,12 @@ exhaustToDefend d eid = do
 -- | The encounter cards attached to the stage as conditions, as Old Hatreds, leave play with it.
 discardAttachedToQuest :: Game -> QuestId -> [Message]
 discardAttachedToQuest g qid = [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+
+-- | Whether the source is a player's attack on an enemy, its damage.
+isPlayerAttack :: Source -> Bool
+isPlayerAttack = \case
+  PlayerAttackSource _ -> True
+  _ -> False
 
 inPlay :: Game -> Target -> Bool
 inPlay g = \case

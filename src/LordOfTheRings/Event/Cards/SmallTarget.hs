@@ -45,6 +45,6 @@ instance RunMessage SmallTarget where
                 -- attack's damage step
                 damage <- (-) <$> getEnemyAttack eid <*> getEnemyDefense other
                 cancelMatching (== AttackDamage eid defender)
-                dealDamage (EnemySource eid) other (max 0 damage)
+                dealDamage (EnemyAttackSource eid) other (max 0 damage)
       pure e
     _ -> SmallTarget <$> runMessage msg attrs

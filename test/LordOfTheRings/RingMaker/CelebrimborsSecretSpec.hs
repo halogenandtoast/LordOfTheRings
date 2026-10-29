@@ -86,10 +86,10 @@ spec = describe "Celebrimbor's Secret" do
     bellach <- enemyOf Enemies.bellachCelebrimborsSecret
     lid <- active Locations.cityRemains
     run $ PlaceTokens GameSource (toTarget lid) Damage 2
-    run $ CheckDefeated (toTarget lid)
+    run $ CheckDefeated GameSource (toTarget lid)
     placementOf Locations.cityRemains `shouldReturn` Just ActiveLocation
     run $ PlaceTokens GameSource (toTarget lid) Damage 1
-    run $ CheckDefeated (toTarget lid)
+    run $ CheckDefeated GameSource (toTarget lid)
     placementOf Locations.cityRemains `shouldReturn` Nothing
     cardsUnderOrcsSearch `shouldReturn` 1
     getEnemyThreat bellach `shouldReturn` 1
@@ -108,7 +108,7 @@ spec = describe "Celebrimbor's Secret" do
     staged Locations.theSecretChamber
     lid <- locationOf Locations.theSecretChamber
     run $ PlaceTokens GameSource (toTarget lid) Damage 6
-    run $ CheckDefeated (toTarget lid)
+    run $ CheckDefeated GameSource (toTarget lid)
     outcome `shouldReturn` Just Lost
 
   it "gives The Secret Chamber's Mould to a hero of the first player as it is explored, and loses if that hero leaves play" . csTest $ \pid -> do
@@ -121,7 +121,7 @@ spec = describe "Celebrimbor's Secret" do
     chooseTarget pid eowyn
     placementOf Objectives.celebrimborsMould `shouldReturn` Just (AttachedTo eowyn)
     outcome `shouldReturn` Nothing
-    run $ Destroy eowyn
+    run $ Destroy GameSource eowyn
     outcome `shouldReturn` Just Lost
 
   it "keeps Bellach from being engaged on the first stage" . csTest $ \pid -> do

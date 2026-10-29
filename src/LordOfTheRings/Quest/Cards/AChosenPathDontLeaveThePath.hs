@@ -25,7 +25,7 @@ instance RunMessage AChosenPathDontLeaveThePath where
       eachPlayer \pid -> push $ SearchEncounterDeckAndDiscard pid (toTarget attrs) (CardWithTrait Spider)
       pure q
     -- The players must find and defeat Ungoliant's Spawn to win this game.
-    Destroy (EnemyTarget eid) -> do
+    Destroy _ (EnemyTarget eid) -> do
       defeated <- selectAny (EnemyWithId eid <> EnemyWithCardCode (toCardCode Enemies.ungoliantsSpawn))
       when defeated winGame
       AChosenPathDontLeaveThePath <$> runMessage msg attrs

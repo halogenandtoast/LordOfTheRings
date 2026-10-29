@@ -90,7 +90,7 @@ spec = describe "Foundations of Stone" do
     getEnemyHitPoints eid `shouldReturn` 4
     map toCardCode . (.deck) <$> getPlayer pid `shouldReturn` [toCardCode Allies.snowbournScout]
     -- destroyed, the cards under it go to their owner's discard pile
-    run $ Destroy (EnemyTarget eid)
+    run $ Destroy GameSource (EnemyTarget eid)
     map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` ((== 2) . length))
 
   it "has an Elder Nameless Thing take 3 cards, and be 4 with none" . fosTest $ \pid -> do

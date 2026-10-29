@@ -69,7 +69,7 @@ runBlockedStage blocker msg attrs = case msg of
   _ -> runMessage msg attrs
  where
   leaving = case msg of
-    Destroy (EnemyTarget eid) -> Just eid
+    Destroy _ (EnemyTarget eid) -> Just eid
     Discard (EnemyTarget eid) -> Just eid
     ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
     _ -> Nothing

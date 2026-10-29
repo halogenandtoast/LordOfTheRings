@@ -69,7 +69,7 @@ capture :: PlayerId -> GameT (EnemyId, Target)
 capture pid = do
   mugash <- engaged pid Enemies.mugashEnemy
   hero <- toTarget <$> getHeroWithCode "01012"
-  run $ Destroy (EnemyTarget mugash)
+  run $ Destroy GameSource (EnemyTarget mugash)
   chooseTarget pid hero
   pure (mugash, hero)
 
