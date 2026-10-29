@@ -311,6 +311,7 @@ library
       LordOfTheRings.Enemy.Cards.Louis
       LordOfTheRings.Enemy.Cards.MaraudingOrc
       LordOfTheRings.Enemy.Cards.MarshAdder
+      LordOfTheRings.Enemy.Cards.MethedrasOrc
       LordOfTheRings.Enemy.Cards.MirkwoodBats
       LordOfTheRings.Enemy.Cards.MirkwoodFlock
       LordOfTheRings.Enemy.Cards.MistyMountainGoblins
@@ -324,6 +325,8 @@ library
       LordOfTheRings.Enemy.Cards.MountainTroll
       LordOfTheRings.Enemy.Cards.MountainWarg
       LordOfTheRings.Enemy.Cards.MuckAdder
+      LordOfTheRings.Enemy.Cards.MugashEnemy
+      LordOfTheRings.Enemy.Cards.MugashsGuard
       LordOfTheRings.Enemy.Cards.Mumak
       LordOfTheRings.Enemy.Cards.Murzag
       LordOfTheRings.Enemy.Cards.NamelessThing
@@ -603,13 +606,16 @@ library
       LordOfTheRings.Location.Cards.LightlessPassage
       LordOfTheRings.Location.Cards.MakeshiftPassage
       LordOfTheRings.Location.Cards.MarketSquare
+      LordOfTheRings.Location.Cards.Methedras
       LordOfTheRings.Location.Cards.MithrilLode
       LordOfTheRings.Location.Cards.MorgulRoad
       LordOfTheRings.Location.Cards.MorgulVale
       LordOfTheRings.Location.Cards.MountainsOfMirkwood
+      LordOfTheRings.Location.Cards.MugashsLair
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.OakWoodGrove
       LordOfTheRings.Location.Cards.OldForestRoad
+      LordOfTheRings.Location.Cards.OrcCave
       LordOfTheRings.Location.Cards.OrcWarCamp
       LordOfTheRings.Location.Cards.OvergrownTrail
       LordOfTheRings.Location.Cards.PathlessCountry
@@ -775,6 +781,7 @@ library
       LordOfTheRings.Quest.Cards.NearingTheGate
       LordOfTheRings.Quest.Cards.OnTheTrail
       LordOfTheRings.Quest.Cards.OrcOutpost
+      LordOfTheRings.Quest.Cards.OrdersFromOrthanc
       LordOfTheRings.Quest.Cards.OutOfTheDepths
       LordOfTheRings.Quest.Cards.OutOfTheDungeons
       LordOfTheRings.Quest.Cards.ProtectTheVillagers
@@ -784,6 +791,7 @@ library
       LordOfTheRings.Quest.Cards.ReturnToRhosgobel
       LordOfTheRings.Quest.Cards.SavageryOfTheOrcs
       LordOfTheRings.Quest.Cards.SearchForTheChamber
+      LordOfTheRings.Quest.Cards.SearchingForMugash
       LordOfTheRings.Quest.Cards.Snowdrifts
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
       LordOfTheRings.Quest.Cards.TheAmbush
@@ -808,6 +816,7 @@ library
       LordOfTheRings.Quest.Cards.TheRearguardTheMorgulVale
       LordOfTheRings.Quest.Cards.TheSeethingLake
       LordOfTheRings.Quest.Cards.TheWatersEdge
+      LordOfTheRings.Quest.Cards.TheWizardsPrize
       LordOfTheRings.Quest.Cards.TheWoundedEagle
       LordOfTheRings.Quest.Cards.ThroughTheCaverns
       LordOfTheRings.Quest.Cards.ThroughTheForest
@@ -867,6 +876,8 @@ library
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater.Helpers
+      LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc
+      LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers
       LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
       LordOfTheRings.Sphere
@@ -943,6 +954,7 @@ library
       LordOfTheRings.Treachery.Cards.OldWivesTales
       LordOfTheRings.Treachery.Cards.OrcAmbush
       LordOfTheRings.Treachery.Cards.OrcAssault
+      LordOfTheRings.Treachery.Cards.OrcTerritory
       LordOfTheRings.Treachery.Cards.Panicked
       LordOfTheRings.Treachery.Cards.PinnedDown
       LordOfTheRings.Treachery.Cards.PursuedByShadow
@@ -1193,6 +1205,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.VoiceOfIsengard.ToCatchAnOrcSpec
       TestImport
       Paths_LordOfTheRings
   hs-source-dirs:

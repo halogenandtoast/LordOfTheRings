@@ -854,5 +854,11 @@
   },
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
+  },
+  "toCatchAnOrc": {
+    "search": "Search: choose 1 player card to take into your hand; the rest are discarded"
+  },
+  "mugashEnemy": {
+    "attach": "Mugash: attach him to a hero you control, as a Captive"
   }
 }
