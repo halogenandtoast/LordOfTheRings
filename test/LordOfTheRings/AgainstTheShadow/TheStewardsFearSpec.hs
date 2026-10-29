@@ -368,6 +368,14 @@ spec = describe "The Steward's Fear" do
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
     prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)
 
+  it "has Telemnar's Bane attack after an event played from outside the hand too" . fearTest $ \pid -> do
+    staged Enemies.telemnarsBane
+    card <- genPlayerCard Events.grimResolve (Just pid)
+    run $ PlayAtNoCost pid card
+    passActions pid
+    Just (QuestionLabel prompt _ _ _) <- getQuestion pid
+    prompt `shouldSatisfy` ("$label.declareDefender" `isPrefixOf`)
+
   it "discards the top 3 cards of each deck as Telemnar's Bane attacks" . fearTest $ \pid -> do
     staged Enemies.telemnarsBane
     eid <- enemyOf Enemies.telemnarsBane
