@@ -89,6 +89,14 @@ import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Cards.RetakeTheCity
 import LordOfTheRings.Quest.Cards.TheAmbush
 import LordOfTheRings.Quest.Cards.Captured
+import LordOfTheRings.Quest.Cards.FleeingFromTharbad
+import LordOfTheRings.Quest.Cards.ThroughTheMarshNoEndInSight
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAWearyPassage
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAForgottenLand
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetImpassableMarshland
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetATreacherousSwamp
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetCreaturesOfAForgottenAge
+import LordOfTheRings.Quest.Cards.OutOfTheSwamp
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -210,5 +218,13 @@ allQuests =
         , SomeQuestCard retakeTheCity
         , SomeQuestCard theAmbush
         , SomeQuestCard captured
+        , SomeQuestCard fleeingFromTharbad
+        , SomeQuestCard throughTheMarshNoEndInSight
+        , SomeQuestCard throughTheMarshAWearyPassage
+        , SomeQuestCard throughTheMarshAForgottenLand
+        , SomeQuestCard lostInTheSwanfleetImpassableMarshland
+        , SomeQuestCard lostInTheSwanfleetATreacherousSwamp
+        , SomeQuestCard lostInTheSwanfleetCreaturesOfAForgottenAge
+        , SomeQuestCard outOfTheSwamp
         ]
     ]
