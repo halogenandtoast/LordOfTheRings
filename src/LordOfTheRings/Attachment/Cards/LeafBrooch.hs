@@ -25,8 +25,8 @@ used _ = PlayedThisRound (toCardCode Cards.leafBrooch)
 
 -- | The first event card you play each round that matches attached hero's printed sphere
 -- gains secrecy 1.
--- ponytail: as the cost secrecy 1 takes off while your threat is 20 or less; nothing reads
--- it as a keyword
+-- Read as the cost secrecy 1 takes off while your threat is 20 or less, as the player's
+-- costModifier takes it off a card with the keyword; nothing else reads secrecy.
 instance HasModifiersFor LeafBrooch where
   getModifiersFor (LeafBrooch a) = do
     -- read from the effects, as the modifiers are being gathered
