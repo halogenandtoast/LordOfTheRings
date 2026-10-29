@@ -165,6 +165,9 @@ data Message
   | AddToStaging EncounterCard
   | RevealEncounterCard
   | RevealCard EncounterCard
+  | -- | the card is revealed, and an enemy put into play engaged with the player, as
+    -- Murzag reads; any other card resolves as 'RevealCard'
+    RevealCardEngaged PlayerId EncounterCard
   | WhenRevealed Target
   | -- | the lead clicks the revealed card to resolve its When Revealed effect
     AskToResolveWhenRevealed Target EncounterCard

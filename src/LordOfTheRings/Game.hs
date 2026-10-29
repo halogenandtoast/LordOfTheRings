@@ -1916,13 +1916,13 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
   -- the next card revealed is discarded unresolved if it is of the type named, as Minas
   -- Tirith Lampwright reads; either way the effect is spent
-  RevealCard card
+  (revealedCard -> Just (_, card))
     | Just e <- find (any isDiscardNextRevealed . effectModifiers) (gameEffects g) -> do
         let g' = g & effectsL %~ filter (/= e)
         if cdCardType (toCardDef card) `elem` [t | DiscardNextRevealed t <- effectModifiers e]
           then g' <$ push (AddToEncounterDiscard [card])
           else runGameMessage msg g'
-  RevealCard card -> do
+  (revealedCard -> Just (engaging, card)) -> do
     let def = toCardDef card
     players <- getPlayerOrder
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
@@ -1940,10 +1940,16 @@ runGameMessage msg g = case msg of
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
-            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType]]
+            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType], isNothing engaging]
             <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
+      -- an enemy revealed to be put into play engaged never enters the staging area
+      EnemyType | Just pid <- engaging -> do
+        enemy <- newEnemy card
+        pushAll . ([EngageEnemy pid (toId enemy), CheckWindows [mkAfter $ EntersPlay $ toTarget enemy]] <>) . (<> [WhileInPlay (toTarget enemy) [ResolveSurge (toTarget enemy) card]])
+          =<< revealing (toTarget enemy)
+        pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = Unplaced}) enemy)
       EnemyType -> do
         enemy <- newEnemy card
         pushAll . (<> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
@@ -2647,6 +2653,13 @@ payFor g pid card fromHand windows host discount = do
 -- | The Doomed a card is printed with.
 printedDoomed :: HasCardDef a => a -> Int
 printedDoomed a = sum [n | Doomed n <- toList (cdKeywords $ toCardDef a)]
+
+-- | The card a message reveals, with the player it is put into play engaged with, if any.
+revealedCard :: Message -> Maybe (Maybe PlayerId, EncounterCard)
+revealedCard = \case
+  RevealCard card -> Just (Nothing, card)
+  RevealCardEngaged pid card -> Just (Just pid, card)
+  _ -> Nothing
 
 isDiscardNextRevealed :: ModifierType -> Bool
 isDiscardNextRevealed = \case
