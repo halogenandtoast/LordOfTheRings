@@ -89,6 +89,9 @@ import LordOfTheRings.Quest.Cards.TheConfrontation
 import LordOfTheRings.Quest.Cards.RetakeTheCity
 import LordOfTheRings.Quest.Cards.TheAmbush
 import LordOfTheRings.Quest.Cards.Captured
+import LordOfTheRings.Quest.Cards.BattleForDunland
+import LordOfTheRings.Quest.Cards.TheRavenClan
+import LordOfTheRings.Quest.Cards.TheLastStage
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -210,5 +213,8 @@ allQuests =
         , SomeQuestCard retakeTheCity
         , SomeQuestCard theAmbush
         , SomeQuestCard captured
+        , SomeQuestCard battleForDunland
+        , SomeQuestCard theRavenClan
+        , SomeQuestCard theLastStage
         ]
     ]
