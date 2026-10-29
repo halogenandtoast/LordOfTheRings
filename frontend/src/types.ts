@@ -19,6 +19,8 @@ export interface CardView {
   damage: number
   exhausted: boolean
   committed: boolean
+  /** Considered out of play though on the table, as the card Saruman chooses. */
+  outOfPlay?: boolean
   progress: number | null
   questPoints: number | null
   /** The spheres of its resource icons: its own, then any it has gained. */
