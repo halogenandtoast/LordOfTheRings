@@ -116,8 +116,13 @@ raiseThreatFromDoomed n = when (n > 0) $ eachPlayer \pid -> do
 lowerThreat :: ReverseQueue m => PlayerId -> Int -> m ()
 lowerThreat pid n = push $ LowerThreat pid n
 
+-- | The player draws N cards by a card's effect, unless card effects cannot make him draw.
+-- ponytail: 'CannotDrawCardsFromCardEffects' bars encounter card draws too, though No End
+-- in Sight names only player cards; no card of its encounter deck draws.
 drawCards :: ReverseQueue m => PlayerId -> Int -> m ()
-drawCards pid n = push $ DrawCards $ Drawing pid n
+drawCards pid n = do
+  barred <- elem CannotDrawCardsFromCardEffects <$> getModifiers (PlayerTarget pid)
+  unless barred $ push $ DrawCards $ Drawing pid n
 
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard
@@ -907,3 +912,8 @@ whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture act
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+-- | Advance to the stage, taken from the quest deck, as a stage that picks the next at
+-- random does.
+advanceToQuest :: ReverseQueue m => EncounterCard -> m ()
+advanceToQuest = push . AdvanceToQuest
