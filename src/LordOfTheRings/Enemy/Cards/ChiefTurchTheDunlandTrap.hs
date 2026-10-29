@@ -25,6 +25,9 @@ instance HasAbilities ChiefTurchTheDunlandTrap where
   getAbilities (ChiefTurchTheDunlandTrap a) = [mkAbility a 1 $ forced $ AnyEnemyEngagedWindow After]
 
 -- | As the first player token passes, he engages its new holder.
+-- ponytail: a player card that has another player engage him directly (not by an
+-- engagement check or optional engagement) is not redirected to the first player; he
+-- moves to the first player only as the token next passes.
 instance RunMessage ChiefTurchTheDunlandTrap where
   runMessage msg e@(ChiefTurchTheDunlandTrap attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do

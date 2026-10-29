@@ -44,7 +44,10 @@ instance RunMessage NoWayOut where
       makeEngagementChecks
       doStep 1 msg
       pure q
-    -- each enemy attacks the player it is engaged with, in turn order
+    -- each enemy attacks the player it is engaged with, in turn order, dealt a shadow card
+    -- as an attack outside the combat phase is
+    -- ponytail: a player's engaged enemies attack in the order they are found, not in an
+    -- order he picks; nothing in the scenario depends on that order.
     DoStep 1 (UseCardAbility _ (isSource attrs -> True) 1 _) -> do
       eachPlayer \p -> traverse_ (immediateAttack p) =<< select (EnemyEngagedWith $ PlayerWithId p)
       winGame

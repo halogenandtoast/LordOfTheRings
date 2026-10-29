@@ -23,6 +23,8 @@ instance HasAbilities HillsOfDunland where
 
 -- | This ability does not stack with other copies of Hills of Dunland: each copy's
 -- triggers, but only one copy in the staging area, the one with the least id, resolves it.
+-- ponytail: so with several copies out the lead is asked to order Forced effects of
+-- which all but one do nothing; the outcome is the rules', only the prompt is extra.
 -- Travel: Each player draws a card to travel here.
 instance RunMessage HillsOfDunland where
   runMessage msg l@(HillsOfDunland a) = case msg of
