@@ -3,7 +3,7 @@ module LordOfTheRings.Location.Cards.TheOldBridge (theOldBridge) where
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Phase (Phase (PlanningPhase))
-import LordOfTheRings.Placement (Placement (StagingArea))
+import LordOfTheRings.Placement (Placement (Unplaced))
 import LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
 import LordOfTheRings.Sphere (Sphere (Neutral))
 import LordOfTheRings.Trait (Trait (Osgiliath))
@@ -21,9 +21,10 @@ instance HasModifiersFor TheOldBridge where
 
 -- | Planning Action: Spend 2 resources to place 1 progress token on The Old Bridge. (1
 -- resource instead if there is another Osgiliath location in the staging area.)
--- ponytail: offered only while it is in the staging area, the one place it can be
--- explored from; and the resources are spent as it resolves, not paid as its cost, which
--- nothing can come between
+-- Offered under a player's control too: progress may still be placed there, and exploring
+-- it gives it to the first player (ruling).
+-- ponytail: the resources are spent as it resolves, not paid as its cost, which nothing
+-- can come between; a resource cost names one player, and any player may use this
 -- Forced: After the player who controls The Old Bridge lets an attack go undefended,
 -- return The Old Bridge to the staging area.
 instance HasAbilities TheOldBridge where
@@ -39,7 +40,7 @@ instance HasAbilities TheOldBridge where
                 ]
           )
         $ ActionAbility Free
-    | a.placement == StagingArea
+    | a.placement /= Unplaced
     ]
       <> returnsWhenUndefended a 2
 

@@ -199,6 +199,13 @@ spec = describe "Assault on Osgiliath" do
     run $ Discard scout
     placementOf Locations.ruinedSquare `shouldReturn` Just StagingArea
 
+  it "places progress on Ruined Square under a player's control too (ruling)" . osgiliathTest $ \pid -> do
+    square <- controlled pid Locations.ruinedSquare
+    eid <- engaged pid Enemies.southronPhalanx
+    run $ DealDamage GameSource (toTarget eid) 3
+    chooseAbilityOf pid square
+    (.progress) <$> getLocation square `shouldReturn` 1
+
   it "has each player return his highest threat location or raise his threat with Counter-attack" . osgiliathTest $ \pid -> do
     _ <- controlled pid Locations.westQuarter
     _ <- controlled pid Locations.ruinedSquare

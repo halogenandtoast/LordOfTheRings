@@ -14,14 +14,14 @@ ruinedSquare = location RuinedSquare Cards.ruinedSquare
 
 -- | Surge.
 -- Response: After an enemy is defeated, place 1 progress token on Ruined Square.
--- ponytail: not offered while a player controls it, where the progress would only
--- explore it again
+-- Offered under a player's control too: progress may still be placed there, and exploring
+-- it gives it to the first player (ruling).
 -- Forced: If a player controls Ruined Square when a character leaves play, return Ruined
 -- Square to the staging area.
 instance HasAbilities RuinedSquare where
-  getAbilities (RuinedSquare a) = case a.placement of
-    InPlayArea _ -> [mkAbility a 2 $ forced $ CharacterLeftPlayWindow After AnyCard]
-    _ -> [mkAbility a 1 $ response $ EnemyDefeatedWindow After]
+  getAbilities (RuinedSquare a) =
+    mkAbility a 1 (response $ EnemyDefeatedWindow After)
+      : [mkAbility a 2 $ forced $ CharacterLeftPlayWindow After AnyCard | InPlayArea _ <- [a.placement]]
 
 instance RunMessage RuinedSquare where
   runMessage msg l@(RuinedSquare a) = case msg of
