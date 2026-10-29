@@ -22,10 +22,12 @@ instance HasModifiersFor RuinedTower where
 
 -- | Forced: After the player who controls Ruined Tower loses control of a location, return
 -- Ruined Tower to the staging area.
--- ponytail: read off the location moving out of its play area; no window opens for it
+-- Read off the location moving out of its play area or being discarded from it; no window
+-- opens for losing control.
 instance RunMessage RuinedTower where
   runMessage msg (RuinedTower a) = case msg of
-    -- ponytail: the first player chooses the character, whoever controls it
+    -- the players pay the travel cost together, so the first player, who decides to travel,
+    -- chooses whose character exhausts
     TravelTo lid | lid == a.id -> do
       active <- select IsActiveLocation
       unless (null active) do
@@ -39,5 +41,9 @@ instance RunMessage RuinedTower where
     PlaceLocation lid placement | lid /= a.id, controller@(InPlayArea _) <- a.placement -> do
       from <- (.placement) <$> getLocation lid
       when (from == controller && placement /= controller) $ returnToStaging a.id
+      RuinedTower <$> runMessage msg a
+    Discard (LocationTarget lid) | lid /= a.id, controller@(InPlayArea _) <- a.placement -> do
+      from <- (.placement) <$> getLocation lid
+      when (from == controller) $ returnToStaging a.id
       RuinedTower <$> runMessage msg a
     _ -> RuinedTower <$> runMessage msg a

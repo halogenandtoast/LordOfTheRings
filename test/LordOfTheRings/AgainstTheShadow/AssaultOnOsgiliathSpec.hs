@@ -171,6 +171,12 @@ spec = describe "Assault on Osgiliath" do
     run $ PlaceLocation quarter StagingArea
     placementOf Locations.ruinedTower `shouldReturn` Just StagingArea
 
+  it "returns Ruined Tower once a location its controller controls is discarded" . osgiliathTest $ \pid -> do
+    _ <- controlled pid Locations.ruinedTower
+    quarter <- controlled pid Locations.westQuarter
+    run $ Discard (toTarget quarter)
+    placementOf Locations.ruinedTower `shouldReturn` Just StagingArea
+
   it "gives the current quest battle or siege while East or West Quarter is active" . osgiliathTest $ \_ -> do
     _ <- retake
     east <- stage Locations.eastQuarter
