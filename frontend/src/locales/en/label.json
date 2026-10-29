@@ -1015,5 +1015,8 @@
   },
   "cursedForest": {
     "removeTimeCounter": "Cursed Forest: remove a time counter from an enemy"
+  },
+  "siegeRaft": {
+    "choose": "Siege Raft: choose the lowest threat Battleground to deal 2 damage to"
   }
 }

@@ -20,7 +20,11 @@ instance RunMessage SiegeRaft where
   runMessage msg e@(SiegeRaft attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       lowest <- lowestThreatBattleground
-      for_ lowest \l -> dealDamage attrs l 2
+      lead <- getLead
+      chooseOrRunOneM lead do
+        questionLabeled "siegeRaft.choose"
+        causedBy attrs
+        targets lowest \l -> dealDamage attrs l 2
       pure e
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       besiegerShadow attrs Locations.theBanks eid

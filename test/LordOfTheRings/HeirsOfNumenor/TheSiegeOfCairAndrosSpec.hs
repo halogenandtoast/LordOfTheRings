@@ -10,7 +10,8 @@ import LordOfTheRings.Keyword (Keyword (Battle, Siege))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal)
-import LordOfTheRings.Modifier (ModifierType (CannotBeDefendedByAllies, CannotSpendResources))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDefendedByAllies, CannotSpendResources, ThreatModifier))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -124,6 +125,15 @@ spec = describe "The Siege of Cair Andros" do
     reveal [Enemies.siegeRaft]
     damageOn Locations.theApproach `shouldReturn` 2
     damageOn Locations.theCitadel `shouldReturn` 0
+
+  it "lets the first player choose among tied lowest threat Battlegrounds for Siege Raft" . siegeTest $ \pid -> do
+    citadel <- stage Locations.theCitadel
+    _ <- stage Locations.theApproach
+    run $ CreateEffect $ Effect GameSource (toTarget citadel) [ThreatModifier (-1)] UntilEndOfRound
+    reveal [Enemies.siegeRaft]
+    chooseTarget pid citadel
+    damageOn Locations.theCitadel `shouldReturn` 2
+    damageOn Locations.theApproach `shouldReturn` 0
 
   it "damages The Citadel with Orc Scramblers' shadow, or else raises the attack" . siegeTest $ \pid -> do
     raft <- engaged pid Enemies.siegeRaft [Enemies.orcScramblers]

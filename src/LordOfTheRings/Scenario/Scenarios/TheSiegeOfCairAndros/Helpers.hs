@@ -23,12 +23,13 @@ import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Damage))
 import LordOfTheRings.Trait (Trait (Battleground))
 
--- | The Battleground location in play with the lowest threat.
--- ponytail: the first of any tied, the players do not choose among them
-lowestThreatBattleground :: HasGame m => m (Maybe LocationId)
+-- | The Battleground locations in play with the lowest threat: one, or those tied, for the
+-- players to choose among.
+lowestThreatBattleground :: HasGame m => m [LocationId]
 lowestThreatBattleground = do
   threats <- traverse (\l -> (,l) <$> getLocationThreat l) =<< select (LocationWithTrait Battleground)
-  pure $ snd <$> headMay (sortOn fst threats)
+  let lowest = foldr (min . fst) maxBound threats
+  pure [l | (t, l) <- threats, t == lowest]
 
 -- | "Shadow: Deal 2 damage to the location if it is in play. Otherwise, attacking enemy
 -- gets +2 attack."
