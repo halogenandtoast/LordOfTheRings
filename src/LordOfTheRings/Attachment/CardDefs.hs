@@ -103,6 +103,7 @@ allAttachmentCards =
       , poisonedStakes
       , scrollOfIsildur
       , keysOfOrthanc
+      , silverLamp
       ]
 
 stewardOfGondor :: CardDef
@@ -699,4 +700,10 @@ keysOfOrthanc =
   (attachment "07010" "Keys of Orthanc" Neutral (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Item]
+    }
+
+silverLamp :: CardDef
+silverLamp =
+  (attachment "07009" "Silver Lamp" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item]
     }

@@ -2,7 +2,10 @@ module LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Enemy (EnemyAttrs (..))
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Phase
 import TestImport
 
@@ -36,6 +39,17 @@ onTopOfDeck pid def = do
 
 inHand :: PlayerId -> CardId -> GameT Bool
 inHand pid cid = elem cid . map (.id) . (.hand) <$> getPlayer pid
+
+engaged :: PlayerId -> CardDef -> GameT EnemyId
+engaged pid def = do
+  card <- genEncounterCard def
+  run $ AddToStaging card
+  eid <- getsGame (fromJustNote "no enemy" . find ((== card.id) . enemyCardId . toAttrs) . toList . (.entities.enemies)) <&> toId
+  run $ EngageEnemy pid eid
+  pure eid
+
+shadowRevealed :: EnemyId -> GameT [CardId]
+shadowRevealed eid = getsGame (maybe [] (enemyShadowRevealed . toAttrs) . lookup eid . mapToList . (.entities.enemies))
 
 spec :: Spec
 spec = describe "The Voice of Isengard player cards" do
@@ -77,3 +91,23 @@ spec = describe "The Voice of Isengard player cards" do
       threat pid `shouldReturn` was + 1
       chooseTarget pid (CardIdTarget knowledge.id)
       inHand pid knowledge.id `shouldReturn` True
+
+  describe "Silver Lamp" do
+    it "deals shadow cards face up while its hero is ready, and they still resolve" . voiTest $ \pid -> do
+      _ <- putAttachmentOn pid Attachments.silverLamp =<< hero eowynCode
+      eid <- engaged pid Enemies.blackForestBats
+      [orcs] <- setEncounterDeck [Enemies.dolGuldurOrcs]
+      run $ DealShadowCard eid
+      shadowRevealed eid `shouldReturn` [orcs.id]
+      attack <- getEnemyAttack eid
+      run $ ResolveShadow eid pid []
+      getEnemyAttack eid `shouldReturn` attack + 3
+
+    it "leaves them face down while its hero is exhausted" . voiTest $ \pid -> do
+      eowyn <- hero eowynCode
+      _ <- putAttachmentOn pid Attachments.silverLamp eowyn
+      run $ Exhaust eowyn
+      eid <- engaged pid Enemies.blackForestBats
+      _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
+      run $ DealShadowCard eid
+      shadowRevealed eid `shouldReturn` []

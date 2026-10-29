@@ -96,6 +96,7 @@ import LordOfTheRings.Attachment.Cards.TomeOfAtanatar
 import LordOfTheRings.Attachment.Cards.PoisonedStakes
 import LordOfTheRings.Attachment.Cards.ScrollOfIsildur
 import LordOfTheRings.Attachment.Cards.KeysOfOrthanc
+import LordOfTheRings.Attachment.Cards.SilverLamp
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -218,5 +219,6 @@ allAttachments =
         , SomeAttachmentCard poisonedStakes
         , SomeAttachmentCard scrollOfIsildur
         , SomeAttachmentCard keysOfOrthanc
+        , SomeAttachmentCard silverLamp
         ]
     ]
