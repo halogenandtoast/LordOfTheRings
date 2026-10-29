@@ -16,6 +16,6 @@ freeToChoose =
 instance RunMessage FreeToChoose where
   runMessage msg e@(FreeToChoose attrs) = case msg of
     PlayEvent pid card windows | card.id == toId attrs -> do
-      for_ (take 1 [n | Window _ (ThreatRaisedByEncounter p n) <- windows, p == pid]) (lowerThreat pid)
+      for_ (take 1 [n | Window _ (ThreatRaisedByEncounter p n) <- windows, p == pid]) (lowerThreatBy attrs pid)
       pure e
     _ -> FreeToChoose <$> runMessage msg attrs

@@ -25,7 +25,7 @@ instance RunMessage IslandAmidPerils where
         targets allies \aid -> do
           printed <- toCardDef <$> getAlly aid
           returnToHand aid
-          lowerThreat pid $ case cdCost printed of
+          lowerThreatBy attrs pid $ case cdCost printed of
             Just (StaticCost n) -> n
             _ -> 0
       pure e

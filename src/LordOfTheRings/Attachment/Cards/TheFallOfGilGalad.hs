@@ -25,7 +25,7 @@ instance RunMessage TheFallOfGilGalad where
         AttachedTo (HeroTarget hid) -> do
           x <- fromMaybe 0 . cdThreatCost . toCardDef <$> getHero hid
           addToVictoryDisplay a
-          lowerThreat pid x
+          lowerThreatBy a pid x
         _ -> pure ()
       pure s
     _ -> TheFallOfGilGalad <$> runMessage msg a
