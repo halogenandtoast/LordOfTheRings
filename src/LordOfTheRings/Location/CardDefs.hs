@@ -235,6 +235,12 @@ allLocationCards =
       , floodedRuins
       , drownedGraves
       , cursedTemple
+      , helmOfTheStormcaller
+      , forecastleDeck
+      , weatherDeck
+      , cargoHold
+      , crewQuarters
+      , quarterDeck
       ]
 
 drownedTreasury :: CardDef
@@ -1711,3 +1717,45 @@ drownedGraves = uncharted (location "11073" "Drowned Graves" RuinsOfNumenor 2 2 
 
 cursedTemple :: CardDef
 cursedTemple = uncharted (location "11074" "Cursed Temple" RuinsOfNumenor 2 1 3) {cdCardTraits = setFromList [Ruins]}
+
+-- * The Stormcaller: the decks of the ship the players fight over (The Thing in the Depths)
+
+-- | Immune to player card effects: its module says so.
+helmOfTheStormcaller :: CardDef
+helmOfTheStormcaller =
+  unique
+    (location "12042" "Helm of the Stormcaller" TheStormcaller 1 2 1)
+      { cdCardTraits = setFromList [Ship, Deck]
+      , cdVictoryPoints = Just 5
+      }
+
+forecastleDeck :: CardDef
+forecastleDeck = (location "12043" "Forecastle Deck" TheStormcaller 2 3 5) {cdCardTraits = setFromList [Ship, Deck]}
+
+weatherDeck :: CardDef
+weatherDeck =
+  (location "12044" "Weather Deck" TheStormcaller 2 2 3)
+    { cdCardTraits = setFromList [Ship, Deck]
+    , cdShadowEffect = True
+    }
+
+cargoHold :: CardDef
+cargoHold =
+  (location "12045" "Cargo Hold" TheStormcaller 2 2 2)
+    { cdCardTraits = setFromList [Ship]
+    , cdShadowEffect = True
+    }
+
+crewQuarters :: CardDef
+crewQuarters =
+  (location "12046" "Crew Quarters" TheStormcaller 2 1 4)
+    { cdCardTraits = setFromList [Ship]
+    , cdShadowEffect = True
+    }
+
+quarterDeck :: CardDef
+quarterDeck =
+  (location "12047" "Quarter Deck" TheStormcaller 2 4 3)
+    { cdCardTraits = setFromList [Ship, Deck]
+    , cdShadowEffect = True
+    }

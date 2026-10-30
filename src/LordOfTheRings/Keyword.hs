@@ -24,6 +24,11 @@ data Keyword
     Encounter
   | -- | an objective ally the first player gains control of as it enters play
     FirstPlayerGainsControl
+  | -- | on a Tentacle enemy: revealed, it attaches facedown to the location in play its
+    -- parenthetical picks, grappled: out of the staging area, unengageable, immune to
+    -- player card effects, its location +2 threat, until the location becomes active or
+    -- is explored (The Thing in the Depths)
+    Grapple GrappleLocation
   | Guarded
   | -- | an objective ally the last player gains control of as it enters play
     LastPlayerGainsControl
@@ -61,5 +66,14 @@ data Keyword
     -- in the combat phase; as that phase begins, its player removes 1 progress from the
     -- current quest, or from the active location once the quest has none
     Hinder
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | The location a Grapple enemy attaches to, by its printed threat or quest points.
+data GrappleLocation
+  = LowestPrintedThreat
+  | HighestPrintedThreat
+  | LowestPrintedQuestPoints
+  | HighestPrintedQuestPoints
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

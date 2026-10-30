@@ -218,6 +218,9 @@ allQuestCards =
       , corsairPursuit
       , exploreTheIsland
       , aFatefulDiscovery
+      , takeTheShip
+      , changeOfPlans
+      , defendTheShip
       ]
 
 theDrippingWalls :: CardDef
@@ -789,3 +792,16 @@ exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
 -- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
 aFatefulDiscovery :: CardDef
 aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}
+
+-- * The Thing in the Depths
+
+takeTheShip :: CardDef
+takeTheShip = quest "12039" "Take the Ship!" TheThingInTheDepths 1 4
+
+-- | No quest points: its When Revealed effect advances to stage 3.
+changeOfPlans :: CardDef
+changeOfPlans = (quest "12040" "Change of Plans" TheThingInTheDepths 2 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: the players win as The Thing in the Depths is destroyed.
+defendTheShip :: CardDef
+defendTheShip = (quest "12041" "Defend the Ship!" TheThingInTheDepths 3 0) {cdQuestPoints = Nothing}

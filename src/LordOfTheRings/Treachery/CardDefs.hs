@@ -188,6 +188,9 @@ allTreacheryCards =
       , ruinsOfAgesPast
       , curseOfTheDownfallen
       , aimlessWandering
+      , holdSteady
+      , fromTheDepths
+      , lashingTentacles
       ]
 
 deepDeepDark :: CardDef
@@ -1178,3 +1181,12 @@ curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
+
+holdSteady :: CardDef
+holdSteady = (treachery "12048" "Hold Steady!" TheStormcaller 2) {cdShadowEffect = True}
+
+fromTheDepths :: CardDef
+fromTheDepths = (treachery "12055" "From the Depths" TheThingInTheDepths 3) {cdShadowEffect = True}
+
+lashingTentacles :: CardDef
+lashingTentacles = (treachery "12056" "Lashing Tentacles" TheThingInTheDepths 2) {cdShadowEffect = True}
