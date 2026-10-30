@@ -1,15 +1,12 @@
 module LordOfTheRings.RingMaker.TheNinInEilphSpec (spec) where
 
-import Data.Aeson.Types (parseMaybe)
-import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Game.Public (publicGame)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Log.Entry (LogRef (..), LogRefKind (RefQuest))
+import LordOfTheRings.Log.Entry (LogRefKind (RefQuest))
 import LordOfTheRings.Matcher (CardMatcher (AnyCard), getTimeCounters)
 import LordOfTheRings.Message.Lifted (drawCards)
 import LordOfTheRings.Modifier (ModifierType (..))
@@ -197,9 +194,7 @@ spec = describe "The Nîn-in-Eilph" do
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
     -- the board greys the card in hand, naming the stage
     gandalf <- putCardIntoHand pid Allies.gandalf
-    seen <- getsGame publicGame
-    let prohibitions = parseMaybe (withObject "game" (.: "playProhibitions")) seen :: Maybe (Map CardId [LogRef])
-    (map (.logRefKind) <$> (Map.lookup gandalf.id =<< prohibitions)) `shouldBe` Just [RefQuest]
+    publicHandBlockers gandalf `shouldReturn` Just [RefQuest]
 
   it "counts a card played earlier in the round under A Forgotten Land" . ninTest $ \pid -> do
     _ <- playWith pid "01002" 2 Allies.guardOfTheCitadel

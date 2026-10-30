@@ -2,6 +2,7 @@ module LordOfTheRings.Core.EscapeFromDolGuldurSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Log.Entry (LogRefKind (RefQuest))
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase
@@ -53,6 +54,8 @@ spec = describe "Escape from Dol Guldur" do
     run $ BeginPhase PlanningPhase
     question <- getQuestion pid
     [() | Just q <- [question], TargetLabel (CardIdTarget cid) _ <- questionChoices q, cid == two.id] `shouldBe` []
+    -- and the board greys it, naming the stage
+    publicHandBlockers two `shouldReturn` Just [RefQuest]
 
   it "holds the players at The Necromancer's Tower until they claim an objective" . escapeTest $ \pid -> do
     stage <- putQuestStage Quests.theNecromancersTower

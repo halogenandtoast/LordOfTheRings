@@ -3,6 +3,7 @@ module TestImport (
   module TestImport,
 ) where
 
+import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame as X
 import LordOfTheRings.Classes.HasQueue as X
@@ -16,7 +17,9 @@ import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Ally as X (AllyAttrs (..))
 import LordOfTheRings.Attachment (AttachmentAttrs (..), newAttachment)
 
+import LordOfTheRings.Game.Public (publicGame)
 import LordOfTheRings.Helpers.Modifiers (preloadModifiers)
+import LordOfTheRings.Log.Entry (LogRef (..), LogRefKind)
 import LordOfTheRings.Entities (attachmentsL)
 import LordOfTheRings.Phase (Phase (PlanningPhase))
 import LordOfTheRings.Placement as X (Placement (..))
@@ -81,6 +84,13 @@ chooseTarget :: (HasCallStack, Targetable a) => PlayerId -> a -> GameT ()
 chooseTarget pid (toTarget -> target) = chooseOptionMatching "choose target" pid \case
   TargetLabel target' _ -> target == target'
   _ -> False
+
+-- | What the board is told forbids playing the card in hand, by kind: Nothing when free.
+publicHandBlockers :: Card -> GameT (Maybe [LogRefKind])
+publicHandBlockers card = do
+  seen <- getsGame publicGame
+  let prohibitions = parseMaybe (withObject "game" (.: "playProhibitions")) seen :: Maybe (Map CardId [LogRef])
+  pure $ map (.logRefKind) <$> (Map.lookup card.id =<< prohibitions)
 
 putCardIntoHand :: PlayerId -> CardDef -> GameT Card
 putCardIntoHand pid def = do

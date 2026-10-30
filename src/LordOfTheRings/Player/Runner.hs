@@ -510,7 +510,7 @@ attachableHosts c
 
 correctPhase :: HasGame m => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
-  AllyType -> andM [isPhase PlanningPhase, allyAllowed]
+  AllyType -> isPhase PlanningPhase
   AttachmentType -> isPhase PlanningPhase
   PlayerSideQuestType -> isPhase PlanningPhase
   -- an action event can be played in any action window; responses are offered by theirs
@@ -560,9 +560,3 @@ iconFor c sphere h =
 
 startingHandSize :: Int
 startingHandSize = 6
-
--- | Whether an ally may be played under a one-ally-per-round rule.
-allyAllowed :: HasGame m => m Bool
-allyAllowed = do
-  mods <- getModifiers GameTarget
-  pure $ not (OneAllyPerRound `elem` mods && AllyPlayedThisRound `elem` mods)
