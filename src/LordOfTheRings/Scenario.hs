@@ -54,11 +54,12 @@ import LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur as X
 import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram as X
 import LordOfTheRings.Scenario.Scenarios.VoyageAcrossBelegaer as X
 import LordOfTheRings.Scenario.Scenarios.TheFateOfNumenor as X
+import LordOfTheRings.Scenario.Scenarios.RaidOnTheGreyHavens as X
 import LordOfTheRings.Scenario.Types as X
 
 -- | The scenarios a game can be dealt, by id.
 allScenarios :: [Scenario]
-allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel, theLongDark, roadToRivendell, theRedhornGate, foundationsOfStone, shadowAndFlame, theWatcherInTheWater, theSiegeOfCairAndros, intoIthilien, perilInPelargir, encounterAtAmonDin, theDruadanForest, theMorgulVale, theStewardsFear, assaultOnOsgiliath, theBloodOfGondor, toCatchAnOrc, intoFangorn, theFordsOfIsen, theAntleredCrown, theDunlandTrap, troubleInTharbad, celebrimborsSecret, theNinInEilph, theThreeTrials, theBattleOfCarnDum, intrudersInChetwood, theWeatherHills, theWastesOfEriador, acrossTheEttenmoors, deadmensDike, theDreadRealm, theTreacheryOfRhudaur, escapeFromMountGram, voyageAcrossBelegaer, theFateOfNumenor]
+allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel, theLongDark, roadToRivendell, theRedhornGate, foundationsOfStone, shadowAndFlame, theWatcherInTheWater, theSiegeOfCairAndros, intoIthilien, perilInPelargir, encounterAtAmonDin, theDruadanForest, theMorgulVale, theStewardsFear, assaultOnOsgiliath, theBloodOfGondor, toCatchAnOrc, intoFangorn, theFordsOfIsen, theAntleredCrown, theDunlandTrap, troubleInTharbad, celebrimborsSecret, theNinInEilph, theThreeTrials, theBattleOfCarnDum, intrudersInChetwood, theWeatherHills, theWastesOfEriador, acrossTheEttenmoors, deadmensDike, theDreadRealm, theTreacheryOfRhudaur, escapeFromMountGram, voyageAcrossBelegaer, theFateOfNumenor, raidOnTheGreyHavens]
 
 lookupScenario :: ScenarioId -> Maybe Scenario
 lookupScenario sid = find ((== sid) . toId) allScenarios
