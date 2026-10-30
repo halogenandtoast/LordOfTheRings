@@ -235,6 +235,10 @@ allEnemyCards =
       , faithlessDesecrator
       , islandWatcher
       , profaneDead
+      , raiderFlagship
+      , corsairSkirmisher
+      , siegeShip
+      , heavyCruiser
       ]
 
 namelessThing :: CardDef
@@ -1883,3 +1887,39 @@ islandWatcher = (enemy "12076" "Island Watcher" TempleOfTheDeceived 2 46 3 4 1 5
 
 profaneDead :: CardDef
 profaneDead = (enemy "12077" "Profane Dead" TempleOfTheDeceived 2 35 1 2 3 3) {cdCardTraits = setFromList [Undead]}
+
+-- * A Storm on Cobas Haven
+
+raiderFlagship :: CardDef
+raiderFlagship =
+  (enemy "12124" "Raider Flagship" AStormOnCobasHaven 1 50 3 5 3 18)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    , cdVictoryPoints = Just 20
+    }
+
+-- | Its other side is the Ship objective the players may take it as, once destroyed.
+corsairSkirmisher :: CardDef
+corsairSkirmisher =
+  (enemy "12125" "Corsair Skirmisher" AStormOnCobasHaven 2 28 3 4 4 6)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    , cdOtherSide = Just "12125-ship"
+    }
+
+siegeShip :: CardDef
+siegeShip =
+  (enemy "12126" "Siege Ship" AStormOnCobasHaven 3 46 2 5 5 7)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Archery 2]
+    }
+
+heavyCruiser :: CardDef
+heavyCruiser =
+  (enemy "12127" "Heavy Cruiser" AStormOnCobasHaven 1 42 5 7 5 8)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 2]
+    , cdSailingIcons = 1
+    , cdWhenRevealed = True
+    }

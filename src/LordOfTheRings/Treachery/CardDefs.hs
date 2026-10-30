@@ -203,6 +203,9 @@ allTreacheryCards =
       , furiousRainstorm
       , dwindlingSupplies
       , sunkenRuins
+      , rammingSpeed
+      , takingOnWater
+      , theRaidersAssault
       ]
 
 deepDeepDark :: CardDef
@@ -1249,3 +1252,14 @@ dwindlingSupplies = (treachery "12080" "Dwindling Supplies" TempleOfTheDeceived 
 
 sunkenRuins :: CardDef
 sunkenRuins = (treachery "12081" "Sunken Ruins" TempleOfTheDeceived 3) {cdKeywords = setFromList [Doomed 1]}
+
+-- * A Storm on Cobas Haven
+
+rammingSpeed :: CardDef
+rammingSpeed = (treachery "12131" "Ramming Speed!" AStormOnCobasHaven 2) {cdSailingIcons = 1}
+
+takingOnWater :: CardDef
+takingOnWater = (treachery "12132" "Taking on Water" AStormOnCobasHaven 2) {cdShadowEffect = True}
+
+theRaidersAssault :: CardDef
+theRaidersAssault = (treachery "12133" "The Raiders' Assault" AStormOnCobasHaven 2) {cdSailingIcons = 1}

@@ -173,5 +173,6 @@
   "stormcallerProgress": "The Stormcaller places {count} progress on its quest stage",
   "stormcallerAdvances": "The Stormcaller advances to {quest}",
   "stormcallerCaughtUp": "The players are at the Stormcaller's stage: the cards in its area are in the staging area",
-  "stormcallerArea": "The Stormcaller's area"
+  "stormcallerArea": "The Stormcaller's area",
+  "guardsObjective": "{guard} guards {objective}"
 }

@@ -229,6 +229,10 @@ import LordOfTheRings.Enemy.Cards.TempleGuardian
 import LordOfTheRings.Enemy.Cards.FaithlessDesecrator
 import LordOfTheRings.Enemy.Cards.IslandWatcher
 import LordOfTheRings.Enemy.Cards.ProfaneDead
+import LordOfTheRings.Enemy.Cards.RaiderFlagship
+import LordOfTheRings.Enemy.Cards.CorsairSkirmisher
+import LordOfTheRings.Enemy.Cards.SiegeShip
+import LordOfTheRings.Enemy.Cards.HeavyCruiser
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -483,5 +487,9 @@ allEnemys =
         , SomeEnemyCard faithlessDesecrator
         , SomeEnemyCard islandWatcher
         , SomeEnemyCard profaneDead
+        , SomeEnemyCard raiderFlagship
+        , SomeEnemyCard corsairSkirmisher
+        , SomeEnemyCard siegeShip
+        , SomeEnemyCard heavyCruiser
         ]
     ]

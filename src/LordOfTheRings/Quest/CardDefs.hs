@@ -233,6 +233,9 @@ allQuestCards =
       , theGrotto
       , sahirsBetrayal
       , searchingTheIsland
+      , outmaneuverTheEnemy
+      , battleInTheBay
+      , breakThroughTheFleet
       ]
 
 theDrippingWalls :: CardDef
@@ -861,3 +864,14 @@ sahirsBetrayal = (quest "12093" "Sahír's Betrayal" TheDrownedRuins 2 0) {cdQues
 -- | No quest points: the players win at The Grotto's Entrance.
 searchingTheIsland :: CardDef
 searchingTheIsland = (quest "12067" "Searching the Island" TempleOfTheDeceived 1 0) {cdQuestPoints = Nothing}
+
+-- * A Storm on Cobas Haven: each stage has the Sailing keyword
+
+outmaneuverTheEnemy :: CardDef
+outmaneuverTheEnemy = (quest "12120" "Outmaneuver the Enemy" AStormOnCobasHaven 1 10) {cdKeywords = setFromList [Sailing]}
+
+battleInTheBay :: CardDef
+battleInTheBay = (quest "12121" "Battle in the Bay" AStormOnCobasHaven 2 16) {cdKeywords = setFromList [Sailing]}
+
+breakThroughTheFleet :: CardDef
+breakThroughTheFleet = (quest "12122" "Break Through the Fleet!" AStormOnCobasHaven 3 5) {cdKeywords = setFromList [Sailing]}

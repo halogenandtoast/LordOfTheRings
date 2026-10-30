@@ -39,6 +39,7 @@ data Trait
   | Deck
   | DeadMarshes
   | Disaster
+  | DolAmroth
   | DolGuldur
   | Dunedain
   | Dungeon

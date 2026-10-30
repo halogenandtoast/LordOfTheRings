@@ -196,6 +196,9 @@ import LordOfTheRings.Treachery.Cards.DeeperIntoTheRuins
 import LordOfTheRings.Treachery.Cards.FuriousRainstorm
 import LordOfTheRings.Treachery.Cards.DwindlingSupplies
 import LordOfTheRings.Treachery.Cards.SunkenRuins
+import LordOfTheRings.Treachery.Cards.RammingSpeed
+import LordOfTheRings.Treachery.Cards.TakingOnWater
+import LordOfTheRings.Treachery.Cards.TheRaidersAssault
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -416,5 +419,8 @@ allTreacherys =
         , SomeTreacheryCard furiousRainstorm
         , SomeTreacheryCard dwindlingSupplies
         , SomeTreacheryCard sunkenRuins
+        , SomeTreacheryCard rammingSpeed
+        , SomeTreacheryCard takingOnWater
+        , SomeTreacheryCard theRaidersAssault
         ]
     ]

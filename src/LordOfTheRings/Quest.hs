@@ -184,6 +184,9 @@ import LordOfTheRings.Quest.Cards.DefendTheShip
 import LordOfTheRings.Quest.Cards.TheGrotto
 import LordOfTheRings.Quest.Cards.SahirsBetrayal
 import LordOfTheRings.Quest.Cards.SearchingTheIsland
+import LordOfTheRings.Quest.Cards.OutmaneuverTheEnemy
+import LordOfTheRings.Quest.Cards.BattleInTheBay
+import LordOfTheRings.Quest.Cards.BreakThroughTheFleet
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -400,5 +403,8 @@ allQuests =
         , SomeQuestCard theGrotto
         , SomeQuestCard sahirsBetrayal
         , SomeQuestCard searchingTheIsland
+        , SomeQuestCard outmaneuverTheEnemy
+        , SomeQuestCard battleInTheBay
+        , SomeQuestCard breakThroughTheFleet
         ]
     ]

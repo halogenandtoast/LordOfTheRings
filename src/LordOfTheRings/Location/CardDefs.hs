@@ -267,6 +267,9 @@ allLocationCards =
       , jaggedCliffs
       , windingCaverns
       , junglePath
+      , coastOfAnfalas
+      , belfalasIslet
+      , cobasHaven
       ]
 
 drownedTreasury :: CardDef
@@ -1983,3 +1986,27 @@ windingCaverns = onTheIsland (location "12073" "Winding Caverns" TempleOfTheDece
 
 junglePath :: CardDef
 junglePath = onTheIsland (location "12074" "Jungle Path" TempleOfTheDeceived 2 3 3) {cdCardTraits = setFromList [Forest]}
+
+-- * A Storm on Cobas Haven
+
+coastOfAnfalas :: CardDef
+coastOfAnfalas =
+  (location "12128" "Coast of Anfalas" AStormOnCobasHaven 3 3 3)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+belfalasIslet :: CardDef
+belfalasIslet =
+  (location "12129" "Belfalas Islet" AStormOnCobasHaven 2 1 5)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdVictoryPoints = Just 1
+    }
+
+cobasHaven :: CardDef
+cobasHaven =
+  (location "12130" "Cobas Haven" AStormOnCobasHaven 2 2 4)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdShadowEffect = True
+    }

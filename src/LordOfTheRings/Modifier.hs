@@ -448,6 +448,12 @@ data ModifierType
   | -- | on an enemy: the player's characters cannot attack it, as Umbar Captain reads for
     -- Ship enemies
     CannotBeAttackedByCharactersOf PlayerId
+  | -- | on an enemy: only Ship objectives can be declared as attackers against it, as
+    -- Raider Flagship reads
+    OnlyAttackedByShipObjectives
+  | -- | on an enemy: each damage its attack deals adds 1 to the total threat in the
+    -- staging area until the end of the phase, as Ramming Speed! reads
+    AttackDamageAddsStagingThreat
   | -- | on a player: his deck cannot be searched, as Soulless Cadaver reads: a search of it
     -- finds nothing
     CannotSearchDeck

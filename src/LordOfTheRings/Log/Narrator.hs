@@ -240,6 +240,13 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.drawsIntoHand" ["player" ~> who, "card" ~> t]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
+  -- an encounter card in play set to guard an objective, as Heavy Cruiser attaches to one
+  -- (one revealed by the Guarded keyword is not yet in play, its reveal told instead)
+  SetObjectiveGuard oid cid -> Just do
+    es <- getsGame gameEntities
+    let guard' = headMay $ [toTarget e | e <- toList es.enemies, (toCard e).id == cid] <> [toTarget l | l <- toList es.locations, (toCard l).id == cid]
+    flip (maybe (pure [])) guard' \t -> whenRef (ObjectiveTarget oid) \o -> whenRef t \g ->
+      one $ mechanic [ikeyPart "log.guardsObjective" ["guard" ~> g, "objective" ~> o]]
   -- an enemy with two sides turns over, as Thaurdir does
   Flip (EnemyTarget eid) -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.enemyFlips" ["enemy" ~> e]]
   -- an objective ally turning to its enemy side, as Captain Sahír's

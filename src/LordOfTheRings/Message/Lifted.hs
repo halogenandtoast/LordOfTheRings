@@ -853,6 +853,14 @@ partyEscapeTest source n stat onFail onPass = do
 placeObjective :: ReverseQueue m => ObjectiveId -> Placement -> m ()
 placeObjective oid = push . PlaceObjective oid
 
+-- | The card guards the objective, as an encounter card attached to it does.
+guardObjectiveWith :: ReverseQueue m => ObjectiveId -> CardId -> m ()
+guardObjectiveWith oid = push . SetObjectiveGuard oid
+
+-- | Resolve the objective's Guarded keyword: the next encounter card guards it.
+resolveGuarded :: ReverseQueue m => ObjectiveId -> m ()
+resolveGuarded = push . GuardObjective
+
 -- | The card goes facedown under the ally, or the Nameless enemy.
 attachFacedown :: (ReverseQueue m, Targetable target) => target -> PlayerCard -> m ()
 attachFacedown target = push . AttachFacedown (toTarget target)
@@ -1304,6 +1312,11 @@ prepareCorsairDeck = push PrepareCorsairDeck
 -- | "Players prepare their fleet", the heading starting on-course.
 prepareFleet :: ReverseQueue m => m ()
 prepareFleet = push PrepareFleet
+
+-- | The Ship objective comes into play under the player, as The Beacon gives a set-aside
+-- Dol Amroth Warship.
+putShipIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+putShipIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 
 -- | The player reveals the top card of the Corsair deck and engages it, for the source.
 revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()

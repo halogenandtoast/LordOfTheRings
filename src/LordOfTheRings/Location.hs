@@ -255,6 +255,9 @@ import LordOfTheRings.Location.Cards.TempleHalls
 import LordOfTheRings.Location.Cards.JaggedCliffs
 import LordOfTheRings.Location.Cards.WindingCaverns
 import LordOfTheRings.Location.Cards.JunglePath
+import LordOfTheRings.Location.Cards.CoastOfAnfalas
+import LordOfTheRings.Location.Cards.BelfalasIslet
+import LordOfTheRings.Location.Cards.CobasHaven
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -551,5 +554,8 @@ allLocations =
         , SomeLocationCard jaggedCliffs
         , SomeLocationCard windingCaverns
         , SomeLocationCard junglePath
+        , SomeLocationCard coastOfAnfalas
+        , SomeLocationCard belfalasIslet
+        , SomeLocationCard cobasHaven
         ]
     ]
