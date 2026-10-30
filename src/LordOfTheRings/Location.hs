@@ -166,6 +166,9 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.EriadorWastes
+import LordOfTheRings.Location.Cards.WargsDen
+import LordOfTheRings.Location.Cards.NorthDowns
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -359,5 +362,8 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard eriadorWastes
+        , SomeLocationCard wargsDen
+        , SomeLocationCard northDowns
         ]
     ]
