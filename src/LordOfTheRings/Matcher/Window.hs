@@ -185,6 +185,8 @@ data WindowMatcher
     AdvancedToStageWindow Timing
   | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
     MatchingEnemyAttacksWindow Timing EnemyMatcher
+  | -- | any captured cards rescued (Escape from Mount Gram)
+    CapturedCardsRescuedWindow Timing
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -275,6 +277,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
   (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
+  (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

@@ -115,6 +115,9 @@ data WindowType
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
     PlayedCard PlayerId CardCode
+  | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
+    -- (Escape from Mount Gram)
+    CapturedCardsRescued Card [Card]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
