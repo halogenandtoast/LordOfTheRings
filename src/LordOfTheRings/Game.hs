@@ -255,7 +255,9 @@ separate groups g
             , entitiesObjectives = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.objectives
             }
       , areaHeldEffects = filter (\e -> maybe True (== i) (effectGroup e)) (gameEffects g)
-      , areaStatus = AreaStarted
+      -- separated before the first round, as Unexpected Rescue does, each area is yet
+      -- to begin the phase
+      , areaStatus = if g.round == 0 then AreaWaiting else AreaStarted
       , areaJoining = False
       }
    where
