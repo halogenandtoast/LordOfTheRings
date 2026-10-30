@@ -492,6 +492,10 @@ shuffleFromDiscardIntoDeck pid cid = push $ ShuffleFromDiscardIntoDeck pid cid
 shuffleTopOfDiscardIntoDeck :: ReverseQueue m => PlayerId -> Int -> m ()
 shuffleTopOfDiscardIntoDeck pid n = push $ ShuffleTopOfDiscardIntoDeck pid n
 
+-- | An ally card in the player's hand is put into play, not played.
+putAllyIntoPlayFromHand :: ReverseQueue m => PlayerId -> CardId -> m ()
+putAllyIntoPlayFromHand pid = push . PutAllyIntoPlay pid
+
 {- | An ally card, already taken from where it was, goes into play under the player's
 control.
 -}
@@ -693,6 +697,10 @@ removeFromGame = push . RemoveFromGame . toTarget
 shuffleIntoOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
 shuffleIntoOwnersDeck = push . ShuffleIntoOwnersDeck . toTarget
 
+-- | The ally leaves play for the bottom of its owner's deck, as Curious Brandybuck.
+putOnBottomOfOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
+putOnBottomOfOwnersDeck = push . PutOnBottomOfOwnersDeck . toTarget
+
 putObjectiveAllyIntoPlay :: ReverseQueue m => ObjectiveId -> PlayerId -> m ()
 putObjectiveAllyIntoPlay oid = push . PutObjectiveAllyIntoPlay oid
 
@@ -847,6 +855,10 @@ discardShadowCard :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
 discardShadowCard eid card = do
   push $ RemoveShadowCard eid card.id
   push $ AddToEncounterDiscard [card]
+
+-- | The encounter card, already taken from where it was, goes on top of the encounter deck.
+putOnTopOfEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
+putOnTopOfEncounterDeck = push . PutOnTopOfEncounterDeck
 
 -- | The encounter card leaves the discard pile for the top of the encounter deck.
 moveToTopOfEncounterDeck :: ReverseQueue m => EncounterCard -> m ()

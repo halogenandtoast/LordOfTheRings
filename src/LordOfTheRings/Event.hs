@@ -151,6 +151,10 @@ import LordOfTheRings.Event.Cards.HopeRekindled
 import LordOfTheRings.Event.Cards.Reinforcements
 import LordOfTheRings.Event.Cards.HornsCry
 import LordOfTheRings.Event.Cards.TheDoorIsClosed
+import LordOfTheRings.Event.Cards.RangerSummons
+import LordOfTheRings.Event.Cards.TirelessHunters
+import LordOfTheRings.Event.Cards.ExpertTrackers
+import LordOfTheRings.Event.Cards.RallyingCry
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -315,5 +319,9 @@ allEvents =
         , SomeEventCard reinforcements
         , SomeEventCard hornsCry
         , SomeEventCard theDoorIsClosed
+        , SomeEventCard rangerSummons
+        , SomeEventCard tirelessHunters
+        , SomeEventCard expertTrackers
+        , SomeEventCard rallyingCry
         ]
     ]

@@ -441,6 +441,7 @@ leavingCharacter g = \case
   Discard t | character t -> Just t
   ReturnToHand t | character t -> Just t
   ShuffleIntoOwnersDeck t | character t -> Just t
+  PutOnBottomOfOwnersDeck t | character t -> Just t
   RemoveFromGame t@(HeroTarget _) | character t -> Just t
   _ -> Nothing
  where
@@ -762,7 +763,12 @@ runGameMessage msg g = case msg of
       _ -> pure False
     when destroyed $ push (Destroy source target)
     pure g
-  Destroy source target@(EnemyTarget eid) -> do
+  -- the When window first, while the enemy and what is attached to it are still in play,
+  -- as Secret Vigil answers
+  Destroy _ (EnemyTarget eid) | Map.member eid g.entities.enemies -> do
+    pushAll [CheckWindows [mkWhen $ EnemyDefeated eid], DoStep 1 msg]
+    pure g
+  DoStep 1 (Destroy source target@(EnemyTarget eid)) | Map.member eid g.entities.enemies -> do
     enemy <- getEnemy eid
     stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
     let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
@@ -852,7 +858,9 @@ runGameMessage msg g = case msg of
       <> [EngagementCheck pid 0 | pid <- take 1 order]
       <> map OptionalActionWindow order
     pure $ g & phaseL .~ EncounterPhase
-  OptionalEngagement pid -> do
+  -- a player who may engage an additional enemy, as Halbarad lets, is asked again once
+  (optionalEngagement -> Just (pid, first)) -> do
+    again <- (first &&) . elem OptionallyEngagesAdditionalEnemy <$> getModifiers (PlayerTarget pid)
     staged <- select EnemyInStagingArea
     -- some enemies may only be engaged once they are alone in the staging area
     barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
@@ -866,7 +874,7 @@ runGameMessage msg g = case msg of
     unless (null enemies)
       $ push
       $ questionLabel (ikey "label.optionalEngagement") pid
-      $ [ targetLabel eid [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]]
+      $ [ targetLabel eid $ [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]] <> [DoStep 1 (OptionalEngagement pid) | again]
         | eid <- enemies
         ]
       <> [Label (ikey "label.doNotEngage") []]
@@ -949,7 +957,7 @@ runGameMessage msg g = case msg of
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
-    push . ChooseEnemyAttack pid =<< engagedByCost pid
+    pushAll . (CreateEffect (Effect GameSource GameTarget [ResolvingEnemyAttacks] UntilEndOfPhase) :) . pure . ChooseEnemyAttack pid =<< engagedByCost pid
     pure g
   ChooseEnemyAttack pid candidates -> do
     -- checked again before each attack: a card played between attacks may stop one
@@ -1839,6 +1847,11 @@ runGameMessage msg g = case msg of
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+  PutOnBottomOfOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
+    g' <- leftPlay g target
+    pushAll
+      [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+    pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
     let owner = (toAttrs a).owner
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer owner
@@ -2289,6 +2302,16 @@ runGameMessage msg g = case msg of
         pushAll . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
+      -- a player card with the Encounter keyword, as Ranger of the North: it enters play
+      -- under the first player, its When Revealed effect giving it to a player
+      AllyType | Just owner <- find (any ((== card.id) . (.id)) . (.setAsideCards)) (toList g.players) -> do
+        lead <- getLead
+        aid <- getRandom
+        let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
+        -- ponytail: no window for it entering play, as the player it goes to is chosen as it resolves
+        pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
+          =<< revealing (toTarget thisAlly)
+        pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
@@ -2539,6 +2562,14 @@ discardFromPlay target g = case target of
           | ShuffledIntoEncounterDeckWhenDefeated `elem` mods -> do
               deck <- shuffleM (ec : (toAttrs g.scenario).encounterDeck)
               pure $ removed & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+        PlayerCard pc
+          | AllyTarget _ <- target
+          , Just owner <- pcOwner pc -> do
+              toHand <- elem AlliesLeavePlayToHand <$> getModifiers GameTarget
+              pure
+                $ if toHand
+                  then removed & playersL . ix owner . handL %~ (<> [PlayerCard pc])
+                  else addToDiscard (PlayerCard pc) removed
         card -> pure $ addToDiscard card removed
   addToDiscard card = case card of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
@@ -2680,9 +2711,9 @@ handResponses pid windows continue = do
                 ]
             pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PlayCardInWindow pid pc.id windows, continue]
       AllyType -> do
-        ok <-
-          andM [matches (allyHandWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid), passesUnique card]
-        pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PutAllyIntoPlay pid pc.id, continue]
+        let attrs = toAttrs $ createAlly pc (AllyId UUID.nil) pid
+        ok <- andM [matches (allyHandWindow attrs), passesCriteria (allyHandCriteria attrs), passesUnique card]
+        pure $ guard ok $> targetLabel (CardIdTarget pc.id) [UseHandAction pid pc.id, continue]
       _ -> pure Nothing
     EncounterCard _ -> pure Nothing
 
@@ -3029,6 +3060,13 @@ payFor g pid card fromHand windows host discount = do
 -- | The Doomed a card is printed with.
 printedDoomed :: HasCardDef a => a -> Int
 printedDoomed a = sum [n | Doomed n <- toList (cdKeywords $ toCardDef a)]
+
+-- | The player an optional engagement asks, and whether it is the first he is asked.
+optionalEngagement :: Message -> Maybe (PlayerId, Bool)
+optionalEngagement = \case
+  OptionalEngagement pid -> Just (pid, True)
+  DoStep 1 (OptionalEngagement pid) -> Just (pid, False)
+  _ -> Nothing
 
 -- | The card a message reveals, with the player it is put into play engaged with, if any.
 revealedCard :: Message -> Maybe (Maybe PlayerId, EncounterCard)

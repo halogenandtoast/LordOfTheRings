@@ -406,6 +406,17 @@ data ModifierType
   | -- | on the game: player card effects cannot take a card out of a player's discard
     -- pile, as The Power of Angmar reads
     DiscardPilesLocked
+  | -- | on a player: he may optionally engage 1 additional enemy in the encounter phase,
+    -- as Halbarad reads
+    OptionallyEngagesAdditionalEnemy
+  | -- | on a character: its willpower cannot be reduced, as Star Brooch reads
+    CannotHaveWillpowerReduced
+  | -- | on the game: the resolving enemy attacks step of the combat phase has begun, as
+    -- Tireless Hunters reads
+    ResolvingEnemyAttacks
+  | -- | on the game: each ally that leaves play goes to its owner's hand instead of the
+    -- discard pile, as Rallying Cry's Valour Action reads
+    AlliesLeavePlayToHand
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

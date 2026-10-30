@@ -114,6 +114,12 @@ import LordOfTheRings.Attachment.Cards.SteedOfImladris
 import LordOfTheRings.Attachment.Cards.ElvenSpear
 import LordOfTheRings.Attachment.Cards.SilverHarp
 import LordOfTheRings.Attachment.Cards.ElfFriend
+import LordOfTheRings.Attachment.Cards.HeirOfValandil
+import LordOfTheRings.Attachment.Cards.Athelas
+import LordOfTheRings.Attachment.Cards.SecretVigil
+import LordOfTheRings.Attachment.Cards.StarBrooch
+import LordOfTheRings.Attachment.Cards.RavenWingedHelm
+import LordOfTheRings.Attachment.Cards.HobbitPony
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -254,5 +260,11 @@ allAttachments =
         , SomeAttachmentCard elvenSpear
         , SomeAttachmentCard silverHarp
         , SomeAttachmentCard elfFriend
+        , SomeAttachmentCard heirOfValandil
+        , SomeAttachmentCard athelas
+        , SomeAttachmentCard secretVigil
+        , SomeAttachmentCard starBrooch
+        , SomeAttachmentCard ravenWingedHelm
+        , SomeAttachmentCard hobbitPony
         ]
     ]

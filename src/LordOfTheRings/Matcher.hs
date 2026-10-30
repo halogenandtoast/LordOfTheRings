@@ -457,6 +457,11 @@ currentQuestHasAKeyword =
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
 
+-- | The player whose set-aside cards hold the card, as a Ranger of the North shuffled
+-- into the encounter deck stays its owner's.
+setAsideOwner :: HasGame m => CardId -> m (Maybe PlayerId)
+setAsideOwner cid = fmap (.id) . find (any ((== cid) . (.id)) . (.setAsideCards)) . toList <$> getsGame gamePlayers
+
 getHero :: (HasCallStack, HasGame m) => HeroId -> m Hero
 getHero hid =
   fromJustNote ("missing hero " <> show hid)

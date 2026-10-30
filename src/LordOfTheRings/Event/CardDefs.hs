@@ -162,6 +162,10 @@ allEventCards =
       , reinforcements
       , hornsCry
       , theDoorIsClosed
+      , rangerSummons
+      , tirelessHunters
+      , expertTrackers
+      , rallyingCry
       ]
 
 everVigilant :: CardDef
@@ -630,3 +634,15 @@ hornsCry = event "10088" "Horn's Cry" Tactics (StaticCost 2)
 
 theDoorIsClosed :: CardDef
 theDoorIsClosed = event "10092" "The Door is Closed!" Lore (StaticCost 1)
+
+rangerSummons :: CardDef
+rangerSummons = (event "09007" "Ranger Summons" Leadership (StaticCost 1)) {cdCardTraits = setFromList [Signal]}
+
+tirelessHunters :: CardDef
+tirelessHunters = event "09008" "Tireless Hunters" Tactics (StaticCost 1)
+
+expertTrackers :: CardDef
+expertTrackers = event "09009" "Expert Trackers" Lore (StaticCost 0)
+
+rallyingCry :: CardDef
+rallyingCry = event "10003" "Rallying Cry" Leadership (StaticCost 2)

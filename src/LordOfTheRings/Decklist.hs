@@ -5,6 +5,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Hero
 import LordOfTheRings.Json (withDefaults)
+import LordOfTheRings.Keyword (Keyword (Encounter))
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
@@ -104,6 +105,8 @@ loadPlayer name dl = do
           <*> (concat <$> traverse (\(cCode, n) -> replicate n <$> lookupPlayerCardDef cCode) dl.cards)
   for defs \(heroDefs, cardDefs) -> do
     heroes <- traverse (newHero pid <=< (`genPlayerCard` Just pid)) heroDefs
-    deck <- traverse (fmap PlayerCard . (`genPlayerCard` Just pid)) cardDefs
+    cards <- traverse (fmap PlayerCard . (`genPlayerCard` Just pid)) cardDefs
+    -- a card with the Encounter keyword is set aside out of play, not dealt into the deck
+    let (setAside, deck) = partition (member Encounter . cdKeywords . toCardDef) cards
     pure
-      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes}, heroes)
+      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes, playerSetAsideCards = setAside}, heroes)

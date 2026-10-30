@@ -333,7 +333,9 @@ runPlayer msg player = case msg of
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
-    PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    -- a set-aside card with the Encounter keyword, discarded from the encounter deck, is
+    -- set aside no more
+    PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :) & setAsideCardsL %~ filter ((/= card.id) . (.id))
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
@@ -522,6 +524,7 @@ correctPhase (EncounterCard _) = pure False
 actionEventPlayable :: HasGame m => PlayerCard -> m Bool
 actionEventPlayable card = case card.owner >>= lookupEvent (toCardCode card) card.id of
   Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
+  Just e | Just criteria <- (toAttrs e).eventActionCriteria -> passesCriteria criteria
   _ -> pure False
 
 {- | Whether a card could be played with nothing to pay for it, at any time: as the

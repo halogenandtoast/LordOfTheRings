@@ -66,6 +66,7 @@ import LordOfTheRings.Quest.Cards.GatherInformation
 import LordOfTheRings.Quest.Cards.DoubleBack
 import LordOfTheRings.Quest.Cards.DelayTheEnemy
 import LordOfTheRings.Quest.Cards.SendForAid
+import LordOfTheRings.Quest.Cards.ScoutAhead
 import LordOfTheRings.Quest.Cards.TheDefense
 import LordOfTheRings.Quest.Cards.ReinforcingTheBanks
 import LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
@@ -257,6 +258,7 @@ allQuests =
         , SomeQuestCard doubleBack
         , SomeQuestCard delayTheEnemy
         , SomeQuestCard sendForAid
+        , SomeQuestCard scoutAhead
         , SomeQuestCard theDefense
         , SomeQuestCard reinforcingTheBanks
         , SomeQuestCard breakthroughAtTheApproach

@@ -29,7 +29,10 @@ characterStat printed mods target = do
   modifiedValue mods target (fromMaybe 0 $ printed def)
 
 getWillpower, getAttack, getDefense, getHitPoints :: (HasGame m) => Target -> m Int
-getWillpower = characterStat cdWillpower willpowerOf
+getWillpower target = do
+  -- one that cannot have its willpower reduced, as Star Brooch's hero, ignores what would
+  floored <- elem CannotHaveWillpowerReduced <$> getModifiers target
+  characterStat cdWillpower (if floored then (\m -> willpowerOf m >>= \n -> n <$ guard (n > 0)) else willpowerOf) target
 getAttack target = do
   blank <- elem DoesNotCountAttack <$> getModifiers target
   if blank then pure 0 else characterStat cdAttack attackOf target
