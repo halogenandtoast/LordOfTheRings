@@ -156,6 +156,10 @@ import LordOfTheRings.Enemy.Cards.BoarsGuardian
 import LordOfTheRings.Enemy.Cards.WolfsGuardian
 import LordOfTheRings.Enemy.Cards.RavensGuardian
 import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
+import LordOfTheRings.Enemy.Cards.Thaurdir
+import LordOfTheRings.Enemy.Cards.CarnDumGarrison
+import LordOfTheRings.Enemy.Cards.OrcGrunts
+import LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -336,5 +340,10 @@ allEnemys =
         , SomeEnemyCard wolfsGuardian
         , SomeEnemyCard ravensGuardian
         , SomeEnemyCard spiritOfTheWild
+        , SomeEnemyCard thaurdirCaptain
+        , SomeEnemyCard thaurdirChampion
+        , SomeEnemyCard carnDumGarrison
+        , SomeEnemyCard orcGrunts
+        , SomeEnemyCard werewolfOfAngmar
         ]
     ]
