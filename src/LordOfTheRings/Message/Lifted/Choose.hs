@@ -17,6 +17,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.I18n
 import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects))
 import LordOfTheRings.Id
+import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerWithThreatAtLeast), selectAny)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted.Queue
 import LordOfTheRings.Prelude
@@ -120,6 +121,18 @@ labeledWith :: (ReverseQueue m) => Text -> [I18nVar] -> QueueT Message m () -> C
 labeledWith key vars action = do
   msgs <- lift $ capture action
   ChooseT $ lift $ tell [Label (ikeyWith ("label." <> key) vars) msgs]
+
+-- | A card's Valour trigger as a choice, offered only while the player's threat is 40 or
+-- higher; beside the card's other trigger in 'chooseOrRunOneM', the player below 40 is
+-- not asked:
+--
+-- > chooseOrRunOneM pid do
+-- >   labeled "hornsCry.action" $ ...
+-- >   valourLabeled pid $ ...
+valourLabeled :: (ReverseQueue m) => PlayerId -> QueueT Message m () -> ChooseT m ()
+valourLabeled pid action = do
+  high <- lift $ selectAny (PlayerWithId pid <> PlayerWithThreatAtLeast 40)
+  when high $ labeled "valour" action
 
 -- | A choice made by clicking the target. A card immune to player card effects is not
 -- offered when a player card, the one 'causedBy' names, is causing the question.

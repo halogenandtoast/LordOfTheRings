@@ -23,7 +23,7 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Name
 import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveTokens))
 import LordOfTheRings.Placement
-import LordOfTheRings.Quest.Types (QuestAttrs (questOwner, questTokens))
+import LordOfTheRings.Quest.Types (QuestAttrs (questTokens), isEncounterSideQuest, isSideQuest)
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
@@ -665,7 +665,7 @@ getCurrentQuest = do
 
 -- | The quest cards in play, side quests left out.
 getMainQuests :: HasGame m => m [Target]
-getMainQuests = getsGame (map toTarget . filter (isNothing . questOwner . toAttrs) . toList . entitiesQuests . gameEntities)
+getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
 
 -- | The side quest in the staging area chosen as the current quest this phase, if any.
 getCurrentSideQuest :: HasGame m => m (Maybe Target)
@@ -675,13 +675,38 @@ getCurrentSideQuest = do
   pure $ headMay
     [ toTarget q
     | q <- quests
-    , isJust (questOwner $ toAttrs q)
+    , isSideQuest q
     , CurrentQuest `elem` map modifierType (Map.findWithDefault [] (toTarget q) mods)
     ]
 
--- | The player side quests in the staging area.
+-- | The side quests in the staging area, the players' and the encounter deck's.
 getSideQuests :: HasGame m => m [Target]
-getSideQuests = getsGame (map toTarget . filter (isJust . questOwner . toAttrs) . toList . entitiesQuests . gameEntities)
+getSideQuests = getsGame (map toTarget . filter isSideQuest . toList . entitiesQuests . gameEntities)
+
+-- | The encounter side quests in play, as "if there are no encounter side quests in play"
+-- reads.
+getEncounterSideQuests :: HasGame m => m [Target]
+getEncounterSideQuests = getsGame (map toTarget . filter isEncounterSideQuest . toList . entitiesQuests . gameEntities)
+
+-- | Every quest card in play, the main quest and each side quest, as "X is the number of
+-- quest cards in play" reads.
+getQuestCards :: HasGame m => m [Target]
+getQuestCards = getsGame (map toTarget . toList . entitiesQuests . gameEntities)
+
+-- | The number of quest cards in play.
+questCardsInPlay :: HasGame m => m Int
+questCardsInPlay = length <$> getQuestCards
+
+-- | The progress placed on the quest card this round, as "if no progress was placed on Lie
+-- Low this round" reads.
+progressPlacedThisRound :: HasGame m => Target -> m Int
+progressPlacedThisRound t = do
+  mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+  pure $ sum [n | ProgressPlacedThisRound n <- mods]
+
+-- | The current quest is a side quest, as "if the current quest is a side quest" reads.
+currentQuestIsSideQuest :: HasGame m => m Bool
+currentQuestIsSideQuest = isJust <$> getCurrentSideQuest
 
 -- | The top card of the encounter deck, if there is one.
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)

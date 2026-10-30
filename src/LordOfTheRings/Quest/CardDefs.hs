@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -142,6 +142,7 @@ allQuestCards =
       , theTrialOfPerseverance
       , theTrialOfIntuition
       , theAntleredCrownTheThreeTrials
+      , searchTheRuins
       ]
 
 theDrippingWalls :: CardDef
@@ -525,3 +526,10 @@ theTrialOfIntuition = quest "08038" "The Trial of Intuition" TheThreeTrials 2 0
 
 theAntleredCrownTheThreeTrials :: CardDef
 theAntleredCrownTheThreeTrials = quest "08039" "The Antlered Crown" TheThreeTrials 3 1
+
+searchTheRuins :: CardDef
+searchTheRuins =
+  (encounterSideQuest "09059" "Search the Ruins" RuinsOfArnor 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }

@@ -48,6 +48,11 @@ data WindowMatcher
     -- ambusher does
     EnemyWithModifierEngagedWindow Timing Modifier
   | TreacheryRevealedWindow Timing
+  | -- | a treachery with the trait revealed from the encounter deck, as Thaurdir answers a
+    -- Sorcery one
+    TreacheryWithTraitRevealedWindow Timing Trait
+  | -- | an encounter side quest revealed from the encounter deck, as Iârion answers
+    SideQuestRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
   | -- | any location worth no victory points explored
@@ -213,6 +218,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AllyDestroyedWindow t, CharacterDestroyed (AllyTarget _) _) -> t == timing
   (EnemyRevealedWindow t, Revealed (EnemyTarget _)) -> t == timing
   (TreacheryRevealedWindow t, Revealed (TreacheryTarget _)) -> t == timing
+  (TreacheryWithTraitRevealedWindow {}, _) -> False
+  (SideQuestRevealedWindow t, Revealed (QuestTarget _)) -> t == timing
   (ShadowEffectWindow t, ShadowEffectTriggered _ _) -> t == timing
   (ExploredWindow t lid, Explored lid') -> t == timing && lid == lid'
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'

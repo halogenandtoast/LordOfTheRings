@@ -241,6 +241,7 @@ narrationFor = \case
         then toned Bad $ test [ikeyPart "log.escapeFails" [], versus]
         else toned Good $ test [ikeyPart "log.escapePasses" [], versus]
   CompleteQuest qid -> Just $ whenRef (toTarget qid) \q -> one $ toned Good $ mechanic [ikeyPart "log.questComplete" ["quest" ~> q]]
+  SetCurrentQuest t -> Just $ whenRef t \q -> one $ mechanic [ikeyPart "log.currentQuest" ["quest" ~> q]]
   ShuffleIntoQuestDeck card -> Just $ one $ mechanic [ikeyPart "log.shuffledIntoQuestDeck" ["card" ~> EncounterCard card]]
   PutOnBottomOfQuestDeck card -> Just $ one $ mechanic [ikeyPart "log.putOnBottomOfQuestDeck" ["card" ~> EncounterCard card]]
   RemoveFromQuestDeck card -> Just $ one $ toned Good $ mechanic [ikeyPart "log.removedFromQuestDeck" ["card" ~> EncounterCard card]]

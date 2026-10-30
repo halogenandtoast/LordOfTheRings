@@ -339,6 +339,17 @@ runGame msg g = case msg of
     if active && notNull firsts
       then g <$ (push =<< progressFirst source n firsts \k -> [PlaceTokens source target Progress k | k > 0])
       else runGame'' msg g
+  -- a quest card takes no more progress than it may this round, as Orc Rearguard limits
+  -- the current quest to, and keeps count of what it took
+  PlaceTokens source target@(QuestTarget _) Progress n | n > 0 -> do
+    mods <- getModifiers target
+    placed <- progressPlacedThisRound target
+    let room = foldr min n [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
+    if room < n
+      then g <$ pushWhen (room > 0) (PlaceTokens source target Progress room)
+      else do
+        push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound n] UntilEndOfRound
+        runGame'' msg g
   -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
   -- it becomes the active location, so it is still in the staging area as it is paid (as
   -- Hills of Dunland's draws are, FAQ 3.123)
@@ -422,15 +433,24 @@ runInPlay msg g =
     >>= traverseOf scenarioL (runEach msg)
     >>= runGameMessage msg
     >>= \g' -> do
-      -- an enemy or location entering play, or a stage turning to its B side, gets its
-      -- Time X in time counters
+      -- an enemy, location or side quest entering play, or a stage turning to its B side,
+      -- gets its Time X in time counters; the cards of another area coming into focus, or
+      -- joining this one, are already in play
       let entered :: Ord k => Map k v -> Map k v -> [k]
           entered old new = Map.keys (Map.difference new old)
           wasFlipped qid = maybe False (.flipped) (Map.lookup qid g.entities.quests)
-      pushAll
+          enteredSideQuest q = isSideQuest q && not (Map.member (toId q) g.entities.quests)
+          movingAreas = case msg of
+            FocusArea _ -> True
+            JoinArea {} -> True
+            SeparatePlayers _ -> True
+            _ -> False
+      unless movingAreas
+        $ pushAll
         $ map (PlaceTimeCounters . EnemyTarget) (entered g.entities.enemies g'.entities.enemies)
         <> map (PlaceTimeCounters . LocationTarget) (entered g.entities.locations g'.entities.locations)
         <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, q.flipped, not (wasFlipped $ toId q)]
+        <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, enteredSideQuest q]
       case msg of
         -- the window goes in front of the phase's own steps
         BeginPhase phase -> g' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
@@ -554,7 +574,7 @@ runGameMessage msg g = case msg of
           pushAll
             $ concat [joinTo a j | a <- before <> after]
             <> [FocusArea (lead j)]
-            <> take 1 [CompleteQuest (toId q) | q <- toList (entitiesOf j).quests, isNothing (questOwner $ toAttrs q)]
+            <> take 1 [CompleteQuest (toId q) | q <- toList (entitiesOf j).quests, not (isSideQuest q)]
         [t] -> pushAll $ joinTo j t <> [JoinAreas]
         targets ->
           pushAll
@@ -747,12 +767,15 @@ runGameMessage msg g = case msg of
     pure $ g & phaseL .~ PlanningPhase
   BeginPhase QuestPhase -> do
     order <- getPlayerOrder
-    -- the first player may choose a side quest in the staging area to quest against
-    sideQuests <- getSideQuests
+    -- the first player may choose a side quest in the staging area to quest against, but
+    -- not a quest card that cannot be the current quest, as Secrets of Rhudaur
+    let choosable = filterM (fmap (notElem CannotBeCurrentQuest) . getModifiers)
+    mainQuests <- choosable =<< getMainQuests
+    sideQuests <- choosable =<< getSideQuests
     let chooseQuest =
           [ questionLabel (ikey "label.chooseCurrentQuest") lead
-            $ Label (ikey "label.questAgainstMainQuest") []
-            : [targetLabel q [CreateEffect $ Effect GameSource q [CurrentQuest] UntilEndOfPhase] | q <- sideQuests]
+            $ [Label (ikey "label.questAgainstMainQuest") [] | notNull mainQuests]
+            <> [targetLabel q [SetCurrentQuest q] | q <- sideQuests]
           | notNull sideQuests
           , lead <- take 1 order
           ]
@@ -1866,6 +1889,10 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
+  -- a side quest removed from the game, as Stop the Executioners! removes itself
+  RemoveFromGame target@(QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
+    pushAll $ discardAttached g target
+    pure $ g & entitiesL . questsL %~ Map.delete qid
   -- a hero leaves play for good, not for its owner's discard pile, its attachments
   -- discarded as they would be were it discarded
   RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
@@ -1903,7 +1930,11 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
     pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   -- a side quest defeated goes to the victory display, and the quest stays where it is
-  CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isJust (questOwner $ toAttrs q) -> do
+  SetCurrentQuest t -> do
+    sideQuests <- getSideQuests
+    let chosen = [Effect GameSource t [CurrentQuest] UntilEndOfPhase | t `elem` sideQuests]
+    pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
+  CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ discardAttachedToQuest g qid
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
   CompleteQuest qid -> do
@@ -1933,11 +1964,17 @@ runGameMessage msg g = case msg of
   -- a card from the encounter deck, or a player's discard pile, as Out of the Wild takes them
   AddToVictoryDisplay (CardIdTarget cid) -> do
     let fromDeck = [EncounterCard c | c <- (toAttrs g.scenario).encounterDeck, c.id == cid]
+        -- a destroyed enemy or an explored location, as None Return and Leave No Trace add
+        fromEncounterDiscard = [EncounterCard c | c <- (toAttrs g.scenario).encounterDiscard, c.id == cid]
         fromDiscards = [c | p <- toList g.players, c <- p.discard, c.id == cid]
     pure
       $ g
       & scenarioL
-      %~ overAttrs ((encounterDeckL %~ filter ((/= cid) . (.id))) . (victoryDisplayL %~ ((fromDeck <> fromDiscards) <>)))
+      %~ overAttrs
+        ( (encounterDeckL %~ filter ((/= cid) . (.id)))
+            . (encounterDiscardL %~ filter ((/= cid) . (.id)))
+            . (victoryDisplayL %~ ((fromDeck <> fromEncounterDiscard <> fromDiscards) <>))
+        )
       & playersL
       . traverse
       . discardL
@@ -2012,7 +2049,7 @@ runGameMessage msg g = case msg of
     getGame
   ResetToStage card _ -> do
     pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
-    pure $ g & entitiesL . questsL %~ Map.filter (isJust . questOwner . toAttrs)
+    pure $ g & entitiesL . questsL %~ Map.filter isSideQuest
   PlayAttachment pid card -> do
     attachment <- newAttachment pid card
     let entered = CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]
@@ -2107,7 +2144,7 @@ runGameMessage msg g = case msg of
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
-            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType], isNothing engaging]
+            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
             <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
@@ -2142,6 +2179,12 @@ runGameMessage msg g = case msg of
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
+      -- an encounter side quest goes to the staging area, where the players may quest
+      -- against it
+      EncounterSideQuestType -> do
+        sideQuest <- newQuest card
+        pushAll . (<> [ResolveSurge (toTarget sideQuest) card]) =<< revealing (toTarget sideQuest)
+        pure $ g & entitiesL . questsL %~ insertEntity sideQuest
       _ -> do
         pushAll =<< inLogBlock (RevealBlock card) []
         pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
@@ -2262,6 +2305,10 @@ runGameMessage msg g = case msg of
         & entitiesL
         . locationsL
         %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) thisLocation)
+    EncounterSideQuestType -> do
+      sideQuest <- newQuest card
+      push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget sideQuest)]
+      pure $ g & entitiesL . questsL %~ insertEntity sideQuest
     _ -> do
       thisObjective <- newObjective card
       push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]
@@ -2343,6 +2390,8 @@ discardFromPlay target g = case target of
   LocationTarget lid -> fromEntity locationsL lid
   TreacheryTarget tid -> fromEntity treacheriesL tid
   AttachmentTarget aid -> fromEntity attachmentsL aid
+  -- a side quest discarded from the staging area, as an encounter card's effect may
+  QuestTarget qid | maybe False isSideQuest (Map.lookup qid g.entities.quests) -> fromEntity questsL qid
   -- an objective that leaves its hero, or is discarded, goes back to the staging area
   ObjectiveTarget oid -> do
     toTop <- elem LeavesPlayToTopOfEncounterDeck <$> getModifiers target

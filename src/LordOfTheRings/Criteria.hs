@@ -45,6 +45,9 @@ data Criterion
     DistinctCharacters [(HeroMatcher, AllyMatcher)]
   | -- | a matching card is in the victory display
     CardInVictoryDisplay CardMatcher
+  | -- | fewer than this many matching cards are in the victory display, as "Limit 3 copies
+    -- of None Return in the victory display" reads
+    FewerInVictoryDisplay Int CardMatcher
   | -- | a matching card is in the player's discard pile
     CardInDiscard PlayerId CardMatcher
   | Criteria [Criterion]
@@ -84,6 +87,10 @@ instance Exists AllyMatcher where
 -- if each hero you control has a printed [lore] resource icon" reads.
 eachHeroHasPrintedIcon :: PlayerId -> Sphere -> Criterion
 eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithPrintedSphere sphere))
+
+-- | The player may resolve a Valour trigger: his threat is 40 or higher.
+valour :: PlayerId -> Criterion
+valour pid = PlayerExists (PlayerWithId pid <> PlayerWithThreatAtLeast 40)
 
 -- | The player's cards follow the FAQ's errata, as a card's errata'd ability needs.
 usesErrata :: PlayerId -> Criterion

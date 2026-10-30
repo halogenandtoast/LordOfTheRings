@@ -244,6 +244,15 @@ data ModifierType
     ReturnToHandIfQuestedSuccessfully
   | -- | on a side quest: the players quest against it this phase, as the current quest
     CurrentQuest
+  | -- | on a quest card: the players cannot choose it as the current quest in the quest
+    -- phase, as Secrets of Rhudaur reads
+    CannotBeCurrentQuest
+  | -- | on a quest card: at most this much progress can be placed on it each round, as
+    -- Orc Rearguard gives the current quest
+    ProgressPerRoundLimit Int
+  | -- | on a quest card, by an effect until the end of the round: this much progress was
+    -- placed on it this round (see 'progressPlacedThisRound')
+    ProgressPlacedThisRound Int
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType

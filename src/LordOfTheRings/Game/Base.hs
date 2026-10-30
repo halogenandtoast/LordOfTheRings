@@ -7,7 +7,6 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Card (Card)
-import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Id
@@ -19,7 +18,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
-import LordOfTheRings.Quest.Types (QuestAttrs (questOwner))
+import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source (Source)
@@ -179,7 +178,7 @@ joinArea joining target g0 = case gameSeparation g of
             joined =
               g
                 { gamePlayers = gamePlayers g <> areaHeldPlayers j
-                , gameEntities = gameEntities g <> es {entitiesQuests = Map.filter (isJust . questOwner . toAttrs) (entitiesQuests es)}
+                , gameEntities = gameEntities g <> es {entitiesQuests = Map.filter isSideQuest (entitiesQuests es)}
                 , gameEffects = gameEffects g <> areaHeldEffects j
                 }
          in case areas of

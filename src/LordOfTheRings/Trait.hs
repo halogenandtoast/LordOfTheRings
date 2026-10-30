@@ -5,12 +5,14 @@ import LordOfTheRings.Prelude
 data Trait
   = Archer
   | Armor
+  | Arnor
   | Artifact
   | Balrog
   | Barrow
   | Battleground
   | Beorning
   | Besieger
+  | Blight
   | Boar
   | BoarClan
   | Boon
@@ -21,7 +23,9 @@ data Trait
   | Captain
   | Captive
   | Captured
+  | CarnDum
   | Cave
+  | Champion
   | City
   | Clue
   | Condition
@@ -41,9 +45,12 @@ data Trait
   | Enedwaith
   | Ent
   | Escape
+  | Ettenmoors
   | Flame
   | Forest
+  | Fornost
   | Gate
+  | Giant
   | Goblin
   | Gollum
   | Gondor
@@ -57,6 +64,7 @@ data Trait
   | Hobbit
   | Huorn
   | Insect
+  | Instrument
   | Isengard
   | Istari
   | Item
@@ -67,8 +75,10 @@ data Trait
   | Marshland
   | Mathom
   | Minstrel
+  | Mission
   | Mordor
   | Mount
+  | MountGram
   | Mountain
   | Nameless
   | Nazgul
@@ -99,10 +109,12 @@ data Trait
   | Skill
   | Snow
   | Song
+  | Sorcerer
+  | Sorcery
   | Spell
+  | Spider
   | -- | the Spirit trait, named apart from the sphere
     SpiritTrait
-  | Spider
   | Spy
   | Stair
   | Steward
@@ -112,6 +124,8 @@ data Trait
   | Tantrum
   | Tentacle
   | Thug
+  | -- | the Time trait, named apart from the keyword
+    TimeTrait
   | Title
   | Tools
   | Traitor
@@ -124,11 +138,16 @@ data Trait
   | Uruk
   | Valley
   | Villain
+  | Warg
   | Warrior
   | Wasteland
   | Weapon
+  | Weather
+  | Werewolf
+  | Wight
   | Wolf
   | Woodman
   | Wose
+  | Wraith
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

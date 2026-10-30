@@ -182,6 +182,9 @@ data Message
     ResolveWhenRevealedOf EncounterCard
   | PutQuestIntoPlay EncounterCard
   | CompleteQuest QuestId
+  | -- | the quest card becomes the current quest until the end of the phase: a side quest in
+    -- the staging area, or the main quest, putting aside any side quest chosen before
+    SetCurrentQuest Target
   | AdvanceQuest
   | -- | a quest card, in play or in the victory display, is shuffled into the quest deck
     ShuffleIntoQuestDeck EncounterCard

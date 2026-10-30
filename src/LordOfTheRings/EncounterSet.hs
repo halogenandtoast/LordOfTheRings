@@ -4,7 +4,9 @@ import LordOfTheRings.Prelude
 
 data EncounterSet
   = AJourneyToRhosgobel
+  | AcrossTheEttenmoors
   | AncientForest
+  | AngmarOrcs
   | AssaultOnOsgiliath
   | Brigands
   | BrokenLands
@@ -12,19 +14,26 @@ data EncounterSet
   | CelebrimborsSecret
   | ConflictAtTheCarrock
   | CreaturesOfTheForest
+  | CursedDead
+  | DarkSorcery
+  | DeadmensDike
   | DeepsOfMoria
   | DolGuldurOrcs
   | DunlandRaiders
   | DunlandWarriors
   | EncounterAtAmonDin
+  | EriadorWilds
   | EscapeFromDolGuldur
+  | EscapeFromMountGram
   | FlightFromMoria
+  | FoulWeather
   | FoundationsOfStone
   | GoblinsOfTheDeep
   | HazardsOfThePit
   | IntoFangorn
   | IntoIthilien
   | IntoThePit
+  | IntrudersInChetwood
   | JourneyAlongTheAnduin
   | MistyMountainOrcs
   | MistyMountains
@@ -36,20 +45,24 @@ data EncounterSet
   | RavagingOrcs
   | ReturnToMirkwood
   | RoadToRivendell
+  | RuinsOfArnor
   | SauronsReach
   | ShadowAndFlame
   | Southrons
   | SpidersOfMirkwood
   | StreetsOfGondor
   | TheAntleredCrown
+  | TheBattleOfCarnDum
   | TheBloodOfGondor
   | TheDeadMarshes
+  | TheDreadRealm
   | TheDruadanForest
   | TheDunlandTrap
   | TheFordsOfIsen
   | TheHillsOfEmynMuil
   | TheHuntForGollum
   | TheLongDark
+  | TheLostRealm
   | TheMorgulVale
   | TheNinInEilph
   | TheRedhornGate
@@ -57,7 +70,10 @@ data EncounterSet
   | TheSiegeOfCairAndros
   | TheStewardsFear
   | TheThreeTrials
+  | TheTreacheryOfRhudaur
+  | TheWastesOfEriador
   | TheWatcherInTheWater
+  | TheWeatherHills
   | ToCatchAnOrc
   | TroubleInTharbad
   | TwistsAndTurns

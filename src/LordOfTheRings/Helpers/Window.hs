@@ -82,6 +82,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     | t == timing ->
         anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
   (EnemyWithTraitRevealedWindow t trait, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
+  (TreacheryWithTraitRevealedWindow t trait, Revealed target@(TreacheryTarget tid)) | t == timing ->
+    maybe (pure False) (hasTrait trait target . toCardDef) . Map.lookup tid . (.treacheries) =<< getsGame gameEntities
   (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
@@ -92,6 +94,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
       TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
       ObjectiveTarget i -> toCardDef <$> Map.lookup i es.objectives
+      QuestTarget i -> toCardDef <$> Map.lookup i es.quests
       _ -> Nothing
   -- only while the enemy is still in play, to be dealt more
   (AttackDealtDamageWithTraitWindow t trait, AttackDealtDamage eid attackers _) | t == timing ->
@@ -127,6 +130,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
           EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
           LocationTarget i -> toCardDef <$> Map.lookup i es.locations
           TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
+          QuestTarget i -> toCardDef <$> Map.lookup i es.quests
           _ -> Nothing
     maybe (pure False) (hasKeyword Surge target) def
   (HeroDefenderDeclaredWindow t m other, DeclaredAsDefender (HeroTarget hid) eid) | t == timing ->
@@ -226,6 +230,7 @@ passesCriteria = \case
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
+  FewerInVictoryDisplay n m -> getsGame ((< n) . length . filter (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m

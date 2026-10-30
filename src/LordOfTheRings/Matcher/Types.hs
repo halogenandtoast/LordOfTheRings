@@ -234,6 +234,8 @@ data CardMatcher
   | CardMatchAny [CardMatcher]
   | -- | a card printed with the Doomed keyword, Doomed X among them
     CardWithDoomed
+  | -- | a card printed with a Valour trigger, as Hope Rekindled reads
+    CardWithValour
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -263,3 +265,8 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardMatchAll ms -> all (`cardMatches` def) ms
   CardMatchAny ms -> any (`cardMatches` def) ms
   CardWithDoomed -> any (\case Doomed _ -> True; _ -> False) (cdKeywords def)
+  CardWithValour -> cdCardCode def `elem` valourCards
+
+-- | The player cards printed with a Valour trigger.
+valourCards :: [CardCode]
+valourCards = ["10003", "10004", "10063", "10088", "10117", "10119", "10144", "17058", "17084", "17110", "17113", "17118"]

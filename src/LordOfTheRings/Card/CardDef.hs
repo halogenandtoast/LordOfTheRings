@@ -184,6 +184,12 @@ quest cCode name encounterSet stage questPoints =
     , cdDoubleSided = True
     }
 
+-- | An encounter side quest, printed as "Side Quest", or as a quest card with the Side Quest
+-- trait: one copy, single-sided. Its victory points, if any, go on with a record update.
+encounterSideQuest :: CardCode -> Name -> EncounterSet -> Int -> CardDef
+encounterSideQuest cCode name encounterSet questPoints =
+  (encounterCard cCode name EncounterSideQuestType encounterSet 1) {cdQuestPoints = Just questPoints}
+
 objective :: CardCode -> Name -> EncounterSet -> Int -> CardDef
 objective cCode name encounterSet quantity = encounterCard cCode name ObjectiveType encounterSet quantity
 

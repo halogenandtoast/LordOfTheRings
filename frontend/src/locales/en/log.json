@@ -103,6 +103,7 @@
   "escapeVersus": "{total} against escape {escape}",
   "lostEffects": "Lost: every Lost effect in play triggers",
   "questComplete": "{quest} is complete",
+  "currentQuest": "{quest} is the current quest",
   "questStage": "{quest}",
 
   "drawsCards": "{player} draws {cards}",
