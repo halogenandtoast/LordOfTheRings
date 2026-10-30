@@ -122,6 +122,11 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+import LordOfTheRings.Quest.Cards.OrcRearguard
+import LordOfTheRings.Quest.Cards.RescueIarion
+import LordOfTheRings.Quest.Cards.OrcAmbush
+import LordOfTheRings.Quest.Cards.LostInTheWilderness
+import LordOfTheRings.Quest.Cards.StopTheWarParty
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -276,5 +281,10 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+        , SomeQuestCard orcRearguard
+        , SomeQuestCard rescueIarion
+        , SomeQuestCard orcAmbush
+        , SomeQuestCard lostInTheWilderness
+        , SomeQuestCard stopTheWarParty
         ]
     ]
