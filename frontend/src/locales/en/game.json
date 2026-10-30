@@ -49,7 +49,7 @@
     "startNow": "Start now, on your own | Start now with {n} players",
     "leave": "Leave your seat | Leave your seats",
     "takeAnother": "Take another seat",
-    "errata": "Play the deck's cards with the FAQ's errata",
+    "errata": "Play the deck's cards with the current errata",
     "start": "Start the game"
   },
   "seats": {
