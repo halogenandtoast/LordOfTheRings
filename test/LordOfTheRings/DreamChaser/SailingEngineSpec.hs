@@ -11,7 +11,10 @@ import LordOfTheRings.Matcher (getBoarding)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
-import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Card (CardType (AllyType))
+import LordOfTheRings.Matcher.Types (CardMatcher (CardWithType))
+import LordOfTheRings.Phase (Phase (QuestPhase, ResourcePhase))
+import LordOfTheRings.Window (WindowType (PhaseBegins), mkAfter)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (voyageAcrossBelegaer)
 import LordOfTheRings.Scenario.Types (corsairDeckL, headingL)
@@ -210,6 +213,19 @@ spec = describe "The Dream-chaser engine" do
       sort <$> getsGame (map toCardCode . toList . (.entities.allies)) `shouldReturn` sort (map toCardCode [Objectives.dreamChaser, Objectives.dawnStar])
       heading `shouldReturn` Just Sunny
       (.threat) <$> getPlayer pid `shouldReturn` threat + 3
+
+    it "has Nárelenya lower the cost of the first ally each round, and Silver Wing give each hero +1 attack" . sailingTest $ \pid -> do
+      _ <- ship pid Objectives.narelenya
+      _ <- ship pid Objectives.silverWing
+      run $ CheckWindows [mkAfter $ PhaseBegins ResourcePhase]
+      getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (ReduceNextCostOf (CardWithType AllyType) 1))
+      (getModifiers =<< beravor) >>= (`shouldSatisfy` elem (AttackModifier 1))
+
+    it "eliminates the player whose Dawn Star is destroyed, the ship leaving the game" . sailingTest $ \pid -> do
+      dawnStar <- ship pid Objectives.dawnStar
+      run $ DealDamage GameSource dawnStar 16
+      (.eliminated) <$> getPlayer pid `shouldReturn` True
+      getEncounterDiscard >>= (`shouldSatisfy` notElem (toCardCode Objectives.dawnStar) . map toCardCode)
 
     it "loses the game as the Dream-chaser is destroyed" . sailingTest $ \pid -> do
       dreamChaser <- ship pid Objectives.dreamChaser
