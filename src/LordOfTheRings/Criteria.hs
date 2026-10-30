@@ -32,6 +32,8 @@ data Criterion
     AffordableAllyInHand PlayerId Sphere Int Int
   | -- | in the quest phase, before any character is committed
     BeforeCommitting
+  | -- | in the quest phase, before its staging step, as "Play only before the staging step"
+    BeforeStaging
   | -- | nothing stops a player card cancelling an encounter card's effects
     EncounterEffectsCancelable
   | NotCriterion Criterion

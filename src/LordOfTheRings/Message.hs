@@ -401,6 +401,12 @@ data Message
   | -- | the players as a group discard resources from any of their heroes' pools, as
     -- many as they can up to the number, as prowl reads: not spent, so any hero's go
     DiscardGroupResources PlayerId Int
+  | -- | spend resources of a sphere, all of them from a single hero's pool
+    SpendResourcesFromOneHero PlayerId Sphere Int
+  | {- | the player may exhaust a ready character he controls with the trait to lower the
+    cost being paid by 1, again and again, then pays the rest: see 'ReducedByExhausting'
+    -}
+    ExhaustToReduceCost PlayerId CostId Trait
   | -- | spend resources of a sphere, at most 1 from each hero, from heroes not yet used
     SpendResourcesFromDistinctHeroes PlayerId Sphere Int [HeroId]
   | UndefendedAttack PlayerId EnemyId

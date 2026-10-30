@@ -12,8 +12,9 @@ import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound))
-import LordOfTheRings.Source (Source (GameSource))
-import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
+import LordOfTheRings.Source (Source (GameSource, PlayerSource))
+import LordOfTheRings.Target (Target (HeroTarget, PlayerTarget), toTarget)
+import LordOfTheRings.Token (Token (Resource))
 import LordOfTheRings.Window
 
 data Cost = ResourceCost Sphere CardCost | Free
@@ -33,6 +34,8 @@ data ActiveCost = ActiveCost
   -- ^ played from its owner's hand, not from the discard pile
   , activeCostDoomed :: Int
   -- ^ the Doomed it gained from an effect spent on it, as Gríma's
+  , activeCostPaidFrom :: [Target]
+  -- ^ the cards whose resources paid for it, as Linhir Sea-captain reads
   }
   deriving stock (Show, Eq, Generic)
 
@@ -42,7 +45,7 @@ instance ToJSON ActiveCost where
   toJSON = genericToJSON (aesonOptions $ Just "activeCost")
 
 instance FromJSON ActiveCost where
-  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost") . withDefaults [("fromHand", toJSON True), ("doomed", toJSON (0 :: Int))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost") . withDefaults [("fromHand", toJSON True), ("doomed", toJSON (0 :: Int)), ("paidFrom", toJSON ([] :: [Target]))]
 
 instance Entity ActiveCost where
   type EntityId ActiveCost = CostId
@@ -78,15 +81,19 @@ instance RunMessage ActiveCost where
         push $ PaidCost acId
         pure ac
       ResourceCost sphere (StaticCost n) -> do
-        let spend = case cdDistinctPayers (toCardDef ac.activeCostCard) of
+        let def = toCardDef ac.activeCostCard
+            spend = case cdDistinctPayers def of
               Just _ -> SpendResourcesFromDistinctHeroes ac.activeCostPlayer sphere n []
-              Nothing -> SpendResources ac.activeCostPlayer sphere n
+              Nothing
+                | cdSinglePayer def -> SpendResourcesFromOneHero ac.activeCostPlayer sphere n
+                | otherwise -> SpendResources ac.activeCostPlayer sphere n
         pushAll [spend, PayCost acId]
         pure $ ac & costCostL .~ Free
       -- a chosen X the card pays as it resolves ('cardCost' turns an 'XCost' static)
       ResourceCost _ _ -> do
         push $ PaidCost acId
         pure ac
+    RemoveTokens (PlayerSource pid) payer Resource n | pid == ac.activeCostPlayer && n > 0 -> pure $ ac & costPaidFromL %~ (<> [payer])
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
@@ -97,6 +104,10 @@ instance RunMessage ActiveCost where
             $ [mkAfter $ PlayedFromHand (toTarget card) | ac.activeCostFromHand]
             <> [mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card) | ac.activeCostFromHand]
             <> [mkAfter $ PlayedCard ac.activeCostPlayer (toCardCode card)]
+            <> [ mkAfter $ PaidFromSingleHero (toTarget card) hid
+               | ac.activeCostFromHand
+               , [HeroTarget hid] <- [ordNub ac.activeCostPaidFrom]
+               ]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

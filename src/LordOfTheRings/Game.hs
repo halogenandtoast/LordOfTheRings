@@ -43,7 +43,7 @@ import LordOfTheRings.Log.Refs (sendLogInOpenBlock)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (raiseThreatFromDoomed)
+import LordOfTheRings.Message.Lifted (drawCards, raiseThreatFromDoomed)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Outcome
@@ -518,6 +518,9 @@ runGameMessage msg g = case msg of
     -- each area ends the round in turn
     let (step, g') = eachAreaThen (const [EndRound]) id BeginRound g
     unless (isJust g.outcome) do
+      -- a player who played Justice Shall Be Done this round leaves the game
+      eliminated <- filterM (fmap (elem EliminatedAtEndOfRound) . getModifiers . PlayerTarget) (Map.keys g.players)
+      pushAll $ map EliminatePlayer eliminated
       leaving <- filterM (fmap (elem DiscardAtEndOfRound) . getModifiers) (toList g.entities.allies)
       pushAll [Discard (toTarget a) | a <- leaving]
       returning <- filterM (fmap (elem ReturnToHandAtEndOfRound) . getModifiers) (toList g.entities.allies)
@@ -1008,9 +1011,13 @@ runGameMessage msg g = case msg of
   DeclareDefenders pid eid chosen -> do
     -- an attack that cannot be defended, as Striking Tentacle's may be, is undefended
     undefendable <- elem CannotBeDefended <$> getModifiers eid
-    many <- elem MayDeclareMultipleDefenders <$> getModifiers (PlayerTarget pid)
+    playerMods <- getModifiers (PlayerTarget pid)
+    -- or up to so many, as Hold the Line lets
+    let limit = minimumMay [n | MayDeclareUpToDefenders n <- playerMods]
+        many = MayDeclareMultipleDefenders `elem` playerMods || isJust limit
+        full = maybe False (length chosen >=) limit
     others <- filter (/= pid) <$> getPlayerOrder
-    defenders <- filter (`notElem` chosen) <$> (filterM (canDefend eid) =<< readyCharacters pid)
+    defenders <- if full then pure [] else filter (`notElem` chosen) <$> (filterM (canDefend eid) =<< readyCharacters pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
     let exhaust' d = [Exhaust d | Just True <- [lookup d exhausts]]
@@ -1286,8 +1293,16 @@ runGameMessage msg g = case msg of
     -- only the attack's own damage destroying the enemy counts, not its leaving play some
     -- other way during the attack
     let byThisAttack d = d.target == EnemyTarget eid && isPlayerAttack (attackDestroyedBy d)
-    pushWhen (any byThisAttack $ gameAttackDestroyed g) $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
+        destroyed = any byThisAttack $ gameAttackDestroyed g
+    pushWhen destroyed $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
       : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
+    -- the attacking player draws for it, as Knife-work lets
+    when destroyed do
+      attacking <- ordNub . catMaybes <$> traverse characterController attackers
+      for_ attacking \pid -> do
+        mods <- Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
+        for_ [m.modifierSource | m <- mods, m.modifierType == DrawsOnDestroyingEnemy] \source ->
+          runQueueT $ drawCards source pid 1
     pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   RedirectAttack eid target -> do
     let attacking = \case
@@ -1535,6 +1550,7 @@ runGameMessage msg g = case msg of
          ]
     pure g
   Staging -> do
+    push $ CreateEffect $ Effect GameSource GameTarget [StagingStepBegun] UntilEndOfPhase
     mods <- getModifiers GameTarget
     let extra = sum [n | AdditionalStagingReveals n <- mods]
         fewer = sum [n | FewerStagingReveals n <- mods]
@@ -1861,6 +1877,8 @@ runGameMessage msg g = case msg of
   -- just before the attack's After windows, while what lasted for it still does
   AttackDefended _ eid defenders -> do
     undamaged <- filterM (fmap (notElem DamagedWhileDefending) . getModifiers) defenders
+    readying <- elem ReadyUndamagedDefenders <$> getModifiers GameTarget
+    pushAll [Ready d | readying, d <- undamaged, inPlay g d]
     pushWhen (notNull undamaged) $ CheckWindows [mkAfter $ DefendedWithoutDamage d eid | d <- undamaged]
     pure g
   GiveFromHand giver cid receiver -> do
@@ -2136,6 +2154,22 @@ runGameMessage msg g = case msg of
              -- are dealt, the test's only action window
              [] -> map OptionalActionWindow order <> [ResolveEscapeTest t]
          ]
+    pure g
+  ExhaustToReduceCost pid costId trait -> do
+    healers <-
+      exhaustableCharacters
+        (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait)
+        (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait)
+    let owed = maybe 0 (staticCost . (.activeCostCost)) (Map.lookup costId (gameActiveCosts g))
+    push
+      $ if null healers || owed <= 0
+        then PayCost costId
+        else
+          questionLabel (ikeyWith "label.exhaustToReduceCost" [intVar "count" owed]) pid
+            $ [ targetLabel c [Exhaust c, ReduceActiveCost costId 1, ExhaustToReduceCost pid costId trait]
+              | c <- healers
+              ]
+            <> [Label (ikey "label.payRemainingCost") [PayCost costId]]
     pure g
   ResolveEscapeTest t -> do
     (total, escape) <- escapeTestTotals t
@@ -2744,6 +2778,7 @@ playsBeforeCommitting pid = \case
  where
   before = \case
     BeforeCommitting -> True
+    BeforeStaging -> True
     Criteria cs -> any before cs
     _ -> False
 
@@ -3030,6 +3065,7 @@ payFor g pid card fromHand windows host discount = do
           , activeCostHost = host
           , activeCostFromHand = fromHand
           , activeCostDoomed = sum [n | e <- spentEffects, NextCardGainsDoomed n <- effectModifiers e]
+          , activeCostPaidFrom = []
           }
   -- resources on allies, as Radagast's, may pay for the cards they are for
   payers <- allyPayersFor pid card
@@ -3064,7 +3100,10 @@ payFor g pid card fromHand windows host discount = do
             [DiscardTopOfDeck pid k, ReduceActiveCost costId k, pay (max 0 $ n - k)]
         , Label (ikey "label.payFullCost") [pay n]
         ]
-    [] -> pay n
+    [] -> case [t | Modifier _ (ReducedByExhausting t) <- ownMods] of
+      -- one that costs less for characters exhausted, as The Houses of Healing, asks first
+      t : _ -> ExhaustToReduceCost pid costId t
+      [] -> pay n
   -- a card its player may give Doomed as they play it from hand, as Greyflood Wanderer,
   -- asks first; what it gains it keeps for the round, for its abilities to read, and
   -- loses as it is played again, a new card

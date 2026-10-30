@@ -3,7 +3,8 @@
 module LordOfTheRings.Attachment.Runner (module X) where
 
 import LordOfTheRings.Attachment.Types as X
-import LordOfTheRings.Classes.HasQueue (pushWhen)
+import LordOfTheRings.Card (cdCardTraits, toCardDef)
+import LordOfTheRings.Classes.HasQueue (push, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (characterController)
@@ -20,6 +21,7 @@ instance RunMessage AttachmentAttrs where
   runMessage msg attrs = case msg of
     AttachCard aid host | aid == attrs.id -> do
       controller <- characterController host
+      push $ CheckWindows [mkAfter $ Attached (toTarget attrs) host (cdCardTraits $ toCardDef attrs)]
       pure $ attrs & placementL .~ AttachedTo host & controllerL .~ controller
     -- a Trap waiting in the staging area attaches to the next enemy that can take it
     CheckWindows ws

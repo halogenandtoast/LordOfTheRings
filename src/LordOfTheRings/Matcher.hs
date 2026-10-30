@@ -207,6 +207,7 @@ matchEnemy matcher enemy = case matcher of
   UniqueEnemy -> pure $ cdUnique (toCardDef enemy)
   EnemyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget enemy)
   EnemyNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget enemy)
+  EnemyWithAnyAttachment -> notNull <$> getAttachmentsOn (toTarget enemy)
   EnemyWithEngagementCostAboveThreatOf pid -> do
     mods <- map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
     threat <- (.threat) <$> getPlayer pid

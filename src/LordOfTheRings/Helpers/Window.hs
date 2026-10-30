@@ -19,7 +19,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, WhenRevealedCannotBeCanceled),
-  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, TravelableWithActiveLocation),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelableWithActiveLocation),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -148,6 +148,12 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
         pure $ any (\d -> d.target == EnemyTarget eid && maybe False (>= n) (cdHitPoints $ toCardDef d.card)) destroyed
   (ExploredMatchingWindow t m, Explored lid) | t == timing -> cardMatches m . toCardDef <$> getLocation lid
   (HeroDeclaredAsDefenderWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
+  (CharacterDefenderDeclaredWindow t hm am em, DeclaredAsDefender c eid) | t == timing -> do
+    character <- case c of
+      HeroTarget hid -> selectAny (HeroWithId hid <> hm)
+      AllyTarget aid -> selectAny (AllyWithId aid <> am)
+      _ -> pure False
+    andM [pure character, selectAny (EnemyWithId eid <> em)]
   (RevealedTitleInVictoryDisplayWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
     shown <- getsGame (map (title . toCardDef) . (.victoryDisplay) . toAttrs . gameScenario)
@@ -244,6 +250,8 @@ passesCriteria = \case
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
   BeforeCommitting ->
     andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
+  BeforeStaging ->
+    andM [(== QuestPhase) <$> getsGame gamePhase, notElem StagingStepBegun <$> getModifiers GameTarget]
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
   NotCriterion c -> not <$> passesCriteria c
   TargetHasModifier t m -> elem m <$> getModifiers t

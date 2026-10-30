@@ -134,6 +134,12 @@ data WindowType
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
     -- (Escape from Mount Gram)
     CapturedCardsRescued Card [Card]
+  | -- | the attachment was attached to the host, as it entered play or moved: its traits
+    Attached Target Target (Set Trait)
+  | -- | the committed character was removed from the quest
+    RemovedFromQuest Target
+  | -- | the card played from hand had all its cost paid from the one hero's pool
+    PaidFromSingleHero Target HeroId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

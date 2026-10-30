@@ -29,6 +29,7 @@ data Trait
   | City
   | Clue
   | Condition
+  | Corsair
   | Craftsman
   | Creature
   | Dale
@@ -104,6 +105,7 @@ data Trait
   | Scout
   | Scroll
   | Shadow
+  | Shirriff
   | Signal
   | Silvan
   | Skill
