@@ -19,7 +19,7 @@ import LordOfTheRings.Event
 import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Attachment
-import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, threatOf)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhibitions, threatOf)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
@@ -406,9 +406,7 @@ canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, no
 
 -- | Whether the game forbids playing the card.
 cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
-cannotPlay pid c =
-  any (\case CannotPlay m -> cardMatches m c; _ -> False)
-    <$> ((<>) <$> getModifiers GameTarget <*> getModifiers (PlayerTarget pid))
+cannotPlay pid c = notNull <$> playProhibitions pid c
 
 canAfford :: HasGame m => Player -> Card -> m Bool
 canAfford p c = case (c.cost, c.sphere) of

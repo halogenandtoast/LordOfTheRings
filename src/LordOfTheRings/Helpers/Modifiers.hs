@@ -3,6 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Card (Card)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -10,6 +11,8 @@ import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Matcher.Types (cardMatches)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
@@ -89,6 +92,14 @@ doesNotExhaustToCommit target = elem DoesNotExhaustToCommit <$> getModifiers tar
 
 getModifiers :: (HasGame m, Targetable a) => a -> m [ModifierType]
 getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
+
+-- | What forbids the player playing the card: a 'CannotPlay' on the game or on them,
+-- kept whole so the board can name the source.
+playProhibitions :: (HasGame m) => PlayerId -> Card -> m [Modifier]
+playProhibitions pid c = do
+  mods <- getsGame gameModifiers
+  let on t = Map.findWithDefault [] t mods
+  pure [m | m@(Modifier _ (CannotPlay matcher)) <- on GameTarget <> on (PlayerTarget pid), cardMatches matcher c]
 
 -- | Whether the card ignores what the source does to it, as East-gate ignores Cave In.
 immuneToSource :: (HasGame m, Targetable a) => Source -> a -> m Bool

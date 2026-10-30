@@ -11,9 +11,13 @@ import LordOfTheRings.Game.Base
 import LordOfTheRings.Card
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Character
+import LordOfTheRings.Helpers.Modifiers (playProhibitions)
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
+import LordOfTheRings.Log.Entry (LogRef)
+import LordOfTheRings.Log.Refs (sourceRefFor)
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier (Modifier (..))
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
 import LordOfTheRings.Quest.Types (QuestAttrs (..))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
@@ -71,6 +75,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "hitPoints" (toJSON $ foldMap (runReadGame hitPoints) areaViews)
         $ KeyMap.insert "attackStrength" (toJSON $ runReadGame attackStrength g)
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
+        $ KeyMap.insert "playProhibitions" (toJSON prohibitions)
         $ KeyMap.insert "underneath" (toJSON underneath)
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
@@ -118,6 +123,19 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       , seesHand p.id
       , c <- p.hand
       , c.cardType == AttachmentType
+      ]
+  -- the cards in hand an effect forbids playing, with what is forbidding them: empty
+  -- when it cannot be named, the card is still forbidden
+  prohibitions :: Map CardId [LogRef]
+  prohibitions =
+    mapFromList
+      [ (c.id, runReadGame (nub . catMaybes <$> traverse (sourceRefFor . modifierSource) mods) v)
+      | v <- areaViews
+      , p <- toList v.players
+      , seesHand p.id
+      , c <- p.hand
+      , let mods = runReadGame (playProhibitions p.id c) v
+      , notNull mods
       ]
   -- the cards facedown under each card, counted, by its card id: those under an
   -- objective, as The Orcs' Search, and those a scenario keeps under its cards in its
