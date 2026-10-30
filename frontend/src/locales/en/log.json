@@ -79,6 +79,7 @@
   "discardsHiddenCard": "{player} discards a hidden card: {card}",
   "hiddenCard": "Hidden card",
   "dealtShadow": "{enemy} is dealt a shadow card",
+  "enemyFlips": "{enemy} flips to its other side",
   "shadowRevealed": "Shadow card for {enemy}: {card}",
   "shadowRevealedNoEffect": "Shadow card for {enemy}: {card} (no shadow effect)",
   "shadowCard": "Shadow card",

@@ -361,6 +361,15 @@ data ModifierType
     GameCannotEnd
   | -- | on the game: the outcome the game ends with once it can end
     GameEndsWith Outcome
+  | -- | on a quest card: progress placed on it is reduced by this much each time, as Orc
+    -- Grunts reduces it on the current quest
+    ProgressReducedBy Int
+  | -- | on the game: shadow cards still unresolved are not discarded at the end of the
+    -- combat phase, as The Clutches of Carn Dûm reads
+    KeepUnresolvedShadowCards
+  | -- | on the game: each shadow card with no shadow effect has one, which the modifier's
+    -- source resolves as 'ResolveShadowCard', as Mountains of Angmar gives
+    ShadowlessCardsGainEffect
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

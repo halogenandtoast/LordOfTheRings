@@ -6,8 +6,10 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Card (Card (EncounterCard))
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.Types as X
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Message
 import LordOfTheRings.I18n (ikey)
+import LordOfTheRings.Modifier (ModifierType (KeepUnresolvedShadowCards))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Question
@@ -35,7 +37,18 @@ instance RunMessage EnemyAttrs where
     RemoveShadowCard eid cid | eid == attrs.id -> pure $ attrs & shadowCardsL %~ filter ((/= cid) . (.id))
     RevealShadowCard eid cid | eid == attrs.id -> pure $ attrs & shadowRevealedL %~ (cid :) & shadowFaceUpL %~ filter (/= cid)
     TurnShadowCardFaceUp eid cid | eid == attrs.id -> pure $ attrs & shadowRevealedL %~ (cid :) & shadowFaceUpL %~ (cid :)
-    EndPhase CombatPhase | notNull attrs.shadowCards -> discardShadows
+    -- the unresolved ones may stay, as The Clutches of Carn Dûm reads: those resolved, face
+    -- up and no longer waiting to, go
+    EndPhase CombatPhase | notNull attrs.shadowCards -> do
+      keep <- elem KeepUnresolvedShadowCards <$> getModifiers GameTarget
+      let resolved c = c.id `elem` attrs.enemyShadowRevealed && c.id `notElem` attrs.enemyShadowFaceUp
+      if keep
+        then do
+          let (gone, kept) = partition resolved attrs.shadowCards
+          pushWhen (notNull gone) $ AddToEncounterDiscard gone
+          let stays = (`elem` map (.id) kept)
+          pure $ attrs & shadowCardsL .~ kept & shadowRevealedL %~ filter stays & shadowFaceUpL %~ filter stays
+        else discardShadows
     DiscardShadowCards eid | eid == attrs.id && notNull attrs.shadowCards -> discardShadows
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (<> [card])
     -- the cards facedown under it go to their owners' discard piles as it leaves play

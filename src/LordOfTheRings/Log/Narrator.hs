@@ -205,6 +205,8 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.drawsIntoHand" ["player" ~> who, "card" ~> t]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
+  -- an enemy with two sides turns over, as Thaurdir does
+  Flip (EnemyTarget eid) -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.enemyFlips" ["enemy" ~> e]]
   RevealShadowCard eid cid -> Just $ shadowFaceUp eid cid
   TurnShadowCardFaceUp eid cid -> Just $ shadowFaceUp eid cid
   AttachTreachery tid target -> Just $ attached (toTarget tid) target

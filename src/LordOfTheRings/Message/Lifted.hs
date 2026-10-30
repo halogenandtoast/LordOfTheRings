@@ -917,6 +917,11 @@ immediateAttack pid eid = do
 dealDamageDivided :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 dealDamageDivided source pid n = push $ DealDamageDivided (toSource source) pid n []
 
+-- | As 'dealDamageDivided', among the given characters of the player's only, as "distribute
+-- damage among questing characters he controls" reads.
+dealDamageDividedAmong :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> [Target] -> Int -> m ()
+dealDamageDividedAmong source pid among n = push $ DealDamageDividedAmong (toSource source) pid among n []
+
 -- | The enemy makes an additional attack against the player once this attack resolves, as
 -- "attacking enemy makes an additional attack after this one" reads.
 additionalAttack
@@ -1127,3 +1132,10 @@ focusAreaOf = push . FocusArea
 -- | The players of the area in focus join another area at the beginning of the travel phase.
 joinAnotherPlayer :: ReverseQueue m => m ()
 joinAnotherPlayer = push JoinAtTravel
+
+-- | The card leaves the player's deck for their discard pile, as "search your deck for a copy
+-- and discard it" reads.
+discardFromDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+discardFromDeck pid card = do
+  push $ RemoveFromDeck pid card.id
+  push $ PutInDiscard card

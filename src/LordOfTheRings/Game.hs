@@ -341,15 +341,18 @@ runGame msg g = case msg of
       else runGame'' msg g
   -- a quest card takes no more progress than it may this round, as Orc Rearguard limits
   -- the current quest to, and keeps count of what it took
+  -- and less is placed on one whose progress is reduced, as Orc Grunts reduce the current
+  -- quest's
   PlaceTokens source target@(QuestTarget _) Progress n | n > 0 -> do
     mods <- getModifiers target
     placed <- progressPlacedThisRound target
-    let room = foldr min n [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
-    if room < n
-      then g <$ pushWhen (room > 0) (PlaceTokens source target Progress room)
+    let reduced = max 0 (n - sum [k | ProgressReducedBy k <- mods])
+        room = foldr min reduced [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
+    if room <= 0
+      then pure g
       else do
-        push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound n] UntilEndOfRound
-        runGame'' msg g
+        push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound room] UntilEndOfRound
+        runGame'' (PlaceTokens source target Progress room) g
   -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
   -- it becomes the active location, so it is still in the staging area as it is paid (as
   -- Hills of Dunland's draws are, FAQ 3.123)
@@ -713,8 +716,10 @@ runGameMessage msg g = case msg of
       HeroTarget hid | Map.member hid g.entities.heroes -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
       AllyTarget aid | Map.member aid g.entities.allies -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
       -- an indestructible enemy keeps taking damage past its hit points
-      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, Indestructible `notMember` cdKeywords (toCardDef e) ->
-        (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      -- one that lost the keyword, as Thaurdir may, is destroyed as any other
+      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
+        indestructible <- hasKeyword Indestructible target (toCardDef e)
+        if indestructible then pure False else (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
       -- an objective ally in the staging area, as Celador
       ObjectiveTarget oid | Just o <- Map.lookup oid g.entities.objectives, isJust (cdHitPoints $ toCardDef o) ->
         (>=) <$> getDamage target <*> getHitPoints target
@@ -1265,13 +1270,15 @@ runGameMessage msg g = case msg of
     pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)
     pure g
   ResolveShadow eid pid defenders -> do
+    -- a shadow card with no effect may be given one, as Mountains of Angmar gives
+    gained <- elem ShadowlessCardsGainEffect <$> getModifiers GameTarget
     for_ (Map.lookup eid g.entities.enemies) \enemy -> do
       -- each shadow card turns face up, and one with an effect resolves it; one already face
       -- up resolved in an earlier attack, as an enemy attacking again has, unless it was
       -- dealt face up
       let resolving card =
             RevealShadowCard eid (ecId card)
-              : if cdShadowEffect (toCardDef card)
+              : if gained || cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
                       : [mkWhen $ ShadowEffectAgainst d | d <- defenders]
@@ -1351,12 +1358,11 @@ runGameMessage msg g = case msg of
     pure g
   DealDamageDivided source pid n assigned -> do
     characters <- withHitPointsLeft assigned =<< charactersControlledBy pid
-    if n > 0 && notNull characters
-      then
-        push
-          $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
-            [targetLabel c [DealDamageDivided source pid (n - 1) (c : assigned)] | c <- characters]
-      else pushAll $ dealAssigned source assigned
+    divideDamage source pid n assigned characters (DealDamageDivided source pid)
+    pure g
+  DealDamageDividedAmong source pid among n assigned -> do
+    characters <- withHitPointsLeft assigned . filter (`elem` among) =<< charactersControlledBy pid
+    divideDamage source pid n assigned characters (DealDamageDividedAmong source pid among)
     pure g
   ChooseAndExhaustHero source pid -> do
     ready <- map toTarget <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
@@ -2607,6 +2613,16 @@ withHitPointsLeft assigned = filterM \c -> do
   pure $ left > length (filter (== c) assigned)
 
 -- | The damage assigned among characters, a point at a time, dealt once all is assigned.
+-- | The player assigns the next point of the damage to one of the characters, or, with all
+-- assigned or none left to take it, it is dealt.
+divideDamage :: Source -> PlayerId -> Int -> [Target] -> [Target] -> (Int -> [Target] -> Message) -> GameT ()
+divideDamage source pid n assigned characters next
+  | n > 0 && notNull characters =
+      push
+        $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
+          [targetLabel c [next (n - 1) (c : assigned)] | c <- characters]
+  | otherwise = pushAll $ dealAssigned source assigned
+
 dealAssigned :: Source -> [Target] -> [Message]
 dealAssigned source assigned = [DealDamage source c k | (c, k) <- Map.toList (Map.fromListWith (+) [(c, 1) | c <- assigned])]
 
