@@ -590,6 +590,15 @@ data Message
     are shuffled so that the players do not know which one is which
     -}
     ShuffleUnchartedLocations
+  | -- | the location turns over keeping its progress, as Shrine to Morgoth floods
+    FlipKeepingProgress LocationId
+  | -- | the top cards of the Grotto deck go to the staging area, Grotto side faceup
+    AddFromGrottoDeck Int
+  | -- | the top card of the Grotto deck goes to the staging area Underwater side faceup, as
+    -- Ancient Depths reads
+    AddUnderwaterFromGrottoDeck
+  | -- | the location leaves play for the Grotto deck, Grotto side up, which is shuffled
+    ShuffleIntoGrottoDeck LocationId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

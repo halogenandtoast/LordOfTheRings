@@ -16,6 +16,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Trait (Trait (Grotto, Underwater))
 
 class
   ( Typeable a
@@ -200,6 +201,19 @@ locationDeckCard a = MkEncounterCard (locationCardId a) code
  where
   code = case a.otherSide of
     Just other | isUncharted a -> other
+    _ -> locationCardCode a
+
+-- | A card of The Drowned Ruins' Grotto deck, either side faceup: it cannot enter the
+-- discard pile or the encounter deck, returning to the Grotto deck instead.
+isGrottoCard :: LocationAttrs -> Bool
+isGrottoCard a = isJust a.otherSide && any (`member` cdCardTraits (toCardDef a)) [Grotto, Underwater]
+
+-- | A Grotto deck card as it goes back into the deck: Grotto side up.
+grottoDeckCard :: LocationAttrs -> EncounterCard
+grottoDeckCard a = MkEncounterCard (locationCardId a) code
+ where
+  code = case a.otherSide of
+    Just other | Grotto `notMember` cdCardTraits (toCardDef a) -> other
     _ -> locationCardCode a
 
 -- | Turned over to its other side, its progress removed and what was seen of it forgotten.

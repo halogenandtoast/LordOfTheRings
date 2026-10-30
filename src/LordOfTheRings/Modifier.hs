@@ -451,6 +451,8 @@ data ModifierType
   | -- | on a player: his deck cannot be searched, as Soulless Cadaver reads: a search of it
     -- finds nothing
     CannotSearchDeck
+  | -- | on a location: it cannot be flipped, as Powerful Undertow reads for the active one
+    CannotBeFlipped
   | -- | on a player: his threat counts as no more than this, as Vanish from Sight reads
     ThreatCountsAsAtMost Int
   | -- | on the game: the quest phase's staging step is over, as Elevenses reads

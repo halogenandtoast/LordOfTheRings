@@ -255,6 +255,9 @@ narrationFor = \case
     one $ mechanic [ikeyPart "log.looksAtFacedownSide" ["player" ~> who, "location" ~> l]]
   ShuffleIntoUnchartedDeck lid -> Just $ whenRef (toTarget lid) \l -> one $ mechanic [ikeyPart "log.shuffledIntoUnchartedDeck" ["location" ~> l]]
   ShuffleUnchartedLocations -> Just $ one $ mechanic [ikeyPart "log.unchartedShuffled" []]
+  -- Shrine to Morgoth floods, its progress kept: narrated as any location turning over
+  FlipKeepingProgress lid -> narrationFor (Flip $ LocationTarget lid)
+  ShuffleIntoGrottoDeck lid -> Just $ whenRef (toTarget lid) \l -> one $ mechanic [ikeyPart "log.shuffledIntoGrottoDeck" ["location" ~> l]]
   RevealShadowCard eid cid -> Just $ shadowFaceUp eid cid
   TurnShadowCardFaceUp eid cid -> Just $ shadowFaceUp eid cid
   AttachTreachery tid target -> Just $ attached (toTarget tid) target

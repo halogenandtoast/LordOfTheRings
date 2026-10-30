@@ -400,9 +400,13 @@ runGame msg g = case msg of
   -- returns to the Uncharted deck (The Grey Havens rules insert)
   Discard (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
   ShuffleIntoEncounterDeck (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
+  -- nor can a Grotto deck card: it returns to the Grotto deck (The Drowned Ruins)
+  Discard (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
+  ShuffleIntoEncounterDeck (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
   _ -> runGame'' msg g
  where
   unchartedCard lid = maybe False (isUnchartedCard . toAttrs) (Map.lookup lid g.entities.locations)
+  grottoCard lid = maybe False (isGrottoCard . toAttrs) (Map.lookup lid g.entities.locations)
 
 runGame'' :: Message -> Game -> GameT Game
 runGame'' msg g = case removedEnemy msg of
@@ -2550,6 +2554,25 @@ runGameMessage msg g = case msg of
   Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
     push $ CheckWindows [mkAfter $ LocationFlipped lid]
     pure $ g & entitiesL . locationsL %~ Map.insert lid l
+  -- as Shrine to Morgoth floods: turned over, its progress back on the side it turns to
+  FlipKeepingProgress lid | Just l <- Map.lookup lid g.entities.locations, Just l' <- turnLocationOver l -> do
+    push $ CheckWindows [mkAfter $ LocationFlipped lid]
+    let progress = countTokens Progress (locationTokens $ toAttrs l)
+    pure $ g & entitiesL . locationsL %~ Map.insert lid (overAttrs (\a -> a {locationTokens = addTokens Progress progress (locationTokens a)}) l')
+  AddFromGrottoDeck n -> do
+    let (top, rest) = splitAt n (toAttrs g.scenario).grottoDeck
+    pushAll $ map AddToStaging top
+    pure $ g & scenarioL %~ overAttrs (grottoDeckL .~ rest)
+  -- the card enters play with its other side faceup
+  AddUnderwaterFromGrottoDeck -> case (toAttrs g.scenario).grottoDeck of
+    top : rest -> do
+      push $ AddToStaging $ maybe top (MkEncounterCard top.id) (cdOtherSide $ toCardDef top)
+      pure $ g & scenarioL %~ overAttrs (grottoDeckL .~ rest)
+    [] -> pure g
+  ShuffleIntoGrottoDeck lid | Just l <- Map.lookup lid g.entities.locations -> do
+    pushAll $ discardAttached g (LocationTarget lid)
+    deck <- shuffleM (grottoDeckCard (toAttrs l) : (toAttrs g.scenario).grottoDeck)
+    pure $ g & entitiesL . locationsL %~ Map.delete lid & scenarioL %~ overAttrs (grottoDeckL .~ deck)
   LookAtFacedownSide pid lid ->
     pure $ g & entitiesL . locationsL . ix lid %~ overAttrs (\a -> a {locationLookedAt = ordNub (pid : a.lookedAt)})
   AddFromUnchartedDeck n -> do
@@ -2612,6 +2635,15 @@ runGameMessage msg g = case msg of
       <> freeGuarded g target
     deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+  -- an enemy leaves play for good, as Captain Sahír after his betrayal, what was on it
+  -- discarded
+  RemoveFromGame target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
+    pushAll
+      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+      <> freeGuarded g target
+    pure $ g & entitiesL . enemiesL %~ Map.delete eid
   AddToStaging card | gainsController (toCardDef card) -> do
     thisObjective <- newObjective card
     controller <- objectiveAllyController (toCardDef card)

@@ -1316,7 +1316,24 @@ objective-ally and back (under the player his objective-ally side names), all to
 removed.
 -}
 flipOver :: (ReverseQueue m, Targetable target) => target -> m ()
-flipOver = push . Flip . toTarget
+flipOver target = unlessM (elem CannotBeFlipped <$> getModifiers (toTarget target)) $ push $ Flip (toTarget target)
+
+-- | As 'flipOver' a location, its progress kept, as Shrine to Morgoth floods.
+flipOverKeepingProgress :: ReverseQueue m => LocationId -> m ()
+flipOverKeepingProgress lid = unlessM (elem CannotBeFlipped <$> getModifiers (LocationTarget lid)) $ push $ FlipKeepingProgress lid
+
+-- | The top cards of the Grotto deck go to the staging area, Grotto side faceup.
+addFromGrottoDeck :: ReverseQueue m => Int -> m ()
+addFromGrottoDeck n = when (n > 0) $ push $ AddFromGrottoDeck n
+
+-- | The top card of the Grotto deck goes to the staging area, flipped to its Underwater side.
+addUnderwaterFromGrottoDeck :: ReverseQueue m => m ()
+addUnderwaterFromGrottoDeck = push AddUnderwaterFromGrottoDeck
+
+-- | The card's ability resolves as if triggered, as Powerful Undertow resolves a location's
+-- Forced effect "as if it is the end of the quest phase".
+resolveAbility :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
+resolveAbility pid source n = push $ UseCardAbility pid (toSource source) n []
 
 -- | The player looks at the facedown side of the location; only he is shown it.
 lookAtFacedownSide :: ReverseQueue m => PlayerId -> LocationId -> m ()
