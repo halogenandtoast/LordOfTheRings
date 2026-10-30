@@ -233,6 +233,10 @@ import LordOfTheRings.Enemy.Cards.RaiderFlagship
 import LordOfTheRings.Enemy.Cards.CorsairSkirmisher
 import LordOfTheRings.Enemy.Cards.SiegeShip
 import LordOfTheRings.Enemy.Cards.HeavyCruiser
+import LordOfTheRings.Enemy.Cards.StormcallerTheCityOfCorsairs
+import LordOfTheRings.Enemy.Cards.SlaveShip
+import LordOfTheRings.Enemy.Cards.UmbarSlaver
+import LordOfTheRings.Enemy.Cards.CaptainSahirTheCityOfCorsairs
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -491,5 +495,9 @@ allEnemys =
         , SomeEnemyCard corsairSkirmisher
         , SomeEnemyCard siegeShip
         , SomeEnemyCard heavyCruiser
+        , SomeEnemyCard stormcallerTheCityOfCorsairs
+        , SomeEnemyCard slaveShip
+        , SomeEnemyCard umbarSlaver
+        , SomeEnemyCard captainSahirTheCityOfCorsairs
         ]
     ]

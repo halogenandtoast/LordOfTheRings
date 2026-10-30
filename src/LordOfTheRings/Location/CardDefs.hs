@@ -270,6 +270,13 @@ allLocationCards =
       , coastOfAnfalas
       , belfalasIslet
       , cobasHaven
+      , southernBelfalas
+      , corsairWaters
+      , watchTower
+      , theShatteredMonument
+      , streetsOfUmbar
+      , cityOfCorsairs
+      , umbarHarbor
       ]
 
 drownedTreasury :: CardDef
@@ -1993,6 +2000,14 @@ coastOfAnfalas :: CardDef
 coastOfAnfalas =
   (location "12128" "Coast of Anfalas" AStormOnCobasHaven 3 3 3)
     { cdCardTraits = setFromList [Coastland, Ocean]
+    }
+
+-- * The City of Corsairs: Coast of Umbar and The City of Corsairs
+
+southernBelfalas :: CardDef
+southernBelfalas =
+  (location "12154" "Southern Belfalas" CoastOfUmbar 2 3 5)
+    { cdCardTraits = setFromList [Ocean, Coastland]
     , cdSailingIcons = 1
     , cdShadowEffect = True
     }
@@ -2008,5 +2023,45 @@ cobasHaven :: CardDef
 cobasHaven =
   (location "12130" "Cobas Haven" AStormOnCobasHaven 2 2 4)
     { cdCardTraits = setFromList [Coastland, Ocean]
+    }
+
+corsairWaters :: CardDef
+corsairWaters =
+  (location "12155" "Corsair Waters" CoastOfUmbar 2 4 3)
+    { cdCardTraits = setFromList [Ocean, Coastland]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+watchTower :: CardDef
+watchTower =
+  (location "12156" "Watch Tower" CoastOfUmbar 2 2 3)
+    { cdCardTraits = setFromList [Umbar, Coastland]
+    , cdShadowEffect = True
+    }
+
+theShatteredMonument :: CardDef
+theShatteredMonument =
+  unique
+    (location "12159" "The Shattered Monument" TheCityOfCorsairs 1 4 8)
+      { cdCardTraits = setFromList [Umbar]
+      , cdVictoryPoints = Just 5
+      }
+
+streetsOfUmbar :: CardDef
+streetsOfUmbar =
+  (location "12160" "Streets of Umbar" TheCityOfCorsairs 3 1 5)
+    { cdCardTraits = setFromList [Umbar, City]
+    , cdShadowEffect = True
+    }
+
+-- | Its threat is X, printed as 0: see its card.
+cityOfCorsairs :: CardDef
+cityOfCorsairs = (location "12161" "City of Corsairs" TheCityOfCorsairs 2 0 4) {cdCardTraits = setFromList [Umbar, City]}
+
+umbarHarbor :: CardDef
+umbarHarbor =
+  (location "12162" "Umbar Harbor" TheCityOfCorsairs 3 4 4)
+    { cdCardTraits = setFromList [Umbar, City]
     , cdShadowEffect = True
     }

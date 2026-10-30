@@ -239,6 +239,10 @@ allEnemyCards =
       , corsairSkirmisher
       , siegeShip
       , heavyCruiser
+      , stormcallerTheCityOfCorsairs
+      , slaveShip
+      , umbarSlaver
+      , captainSahirTheCityOfCorsairs
       ]
 
 namelessThing :: CardDef
@@ -1923,3 +1927,31 @@ heavyCruiser =
     , cdSailingIcons = 1
     , cdWhenRevealed = True
     }
+
+-- * The City of Corsairs: Coast of Umbar and The City of Corsairs
+
+-- | Not the Stormcaller of The Thing in the Depths: this one is a Ship enemy.
+stormcallerTheCityOfCorsairs :: CardDef
+stormcallerTheCityOfCorsairs =
+  unique
+    (enemy "12151" "Stormcaller" CoastOfUmbar 1 20 2 6 6 16)
+      { cdCardTraits = setFromList [Corsair, Ship]
+      , cdKeywords = setFromList [Boarding 1]
+      , cdVictoryPoints = Just 10
+      }
+
+slaveShip :: CardDef
+slaveShip =
+  (enemy "12152" "Slave Ship" CoastOfUmbar 2 32 3 7 5 5)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    }
+
+umbarSlaver :: CardDef
+umbarSlaver = (enemy "12153" "Umbar Slaver" CoastOfUmbar 3 28 2 2 3 5) {cdCardTraits = setFromList [Corsair, Raider]}
+
+-- | Not The Stormcaller Elite's Captain Sahír: this one is single-sided, and shuffled in
+-- with The City of Corsairs.
+captainSahirTheCityOfCorsairs :: CardDef
+captainSahirTheCityOfCorsairs =
+  unique (enemy "12158" "Captain Sahír" TheCityOfCorsairs 1 4 6 6 2 8) {cdCardTraits = setFromList [Corsair, Raider, Corrupt]}

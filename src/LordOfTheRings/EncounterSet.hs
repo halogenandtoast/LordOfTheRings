@@ -14,6 +14,7 @@ data EncounterSet
   | BroodingForest
   | CelebrimborsSecret
   | ConflictAtTheCarrock
+  | CoastOfUmbar
   | CorsairPirates
   | CorsairRaiders
   | CreaturesOfTheForest
@@ -63,6 +64,7 @@ data EncounterSet
   | TheAntleredCrown
   | TheBattleOfCarnDum
   | TheBloodOfGondor
+  | TheCityOfCorsairs
   | TheDeadMarshes
   | TheDreadRealm
   | TheDreamChasersFleet

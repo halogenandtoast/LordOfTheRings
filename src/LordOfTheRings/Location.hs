@@ -258,6 +258,13 @@ import LordOfTheRings.Location.Cards.JunglePath
 import LordOfTheRings.Location.Cards.CoastOfAnfalas
 import LordOfTheRings.Location.Cards.BelfalasIslet
 import LordOfTheRings.Location.Cards.CobasHaven
+import LordOfTheRings.Location.Cards.SouthernBelfalas
+import LordOfTheRings.Location.Cards.CorsairWaters
+import LordOfTheRings.Location.Cards.WatchTower
+import LordOfTheRings.Location.Cards.TheShatteredMonument
+import LordOfTheRings.Location.Cards.StreetsOfUmbar
+import LordOfTheRings.Location.Cards.CityOfCorsairs
+import LordOfTheRings.Location.Cards.UmbarHarbor
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -557,5 +564,12 @@ allLocations =
         , SomeLocationCard coastOfAnfalas
         , SomeLocationCard belfalasIslet
         , SomeLocationCard cobasHaven
+        , SomeLocationCard southernBelfalas
+        , SomeLocationCard corsairWaters
+        , SomeLocationCard watchTower
+        , SomeLocationCard theShatteredMonument
+        , SomeLocationCard streetsOfUmbar
+        , SomeLocationCard cityOfCorsairs
+        , SomeLocationCard umbarHarbor
         ]
     ]

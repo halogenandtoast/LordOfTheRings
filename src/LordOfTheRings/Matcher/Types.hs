@@ -172,6 +172,8 @@ data EnemyMatcher
     EnemyWithAnyAttachment
   | -- | an enemy whose engagement cost is higher than the player's threat
     EnemyWithEngagementCostAboveThreatOf PlayerId
+  | -- | an enemy with at least 1 resource token on it, as The Shattered Monument reads
+    EnemyWithResources
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]

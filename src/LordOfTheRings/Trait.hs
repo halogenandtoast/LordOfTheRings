@@ -31,6 +31,7 @@ data Trait
   | Clue
   | Coastland
   | Condition
+  | Corrupt
   | Corsair
   | Craftsman
   | Creature
@@ -142,6 +143,7 @@ data Trait
   | Traitor
   | Trap
   | Troll
+  | Umbar
   | Undead
   | Underground
   | Underwater

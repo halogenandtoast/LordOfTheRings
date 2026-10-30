@@ -206,6 +206,10 @@ allTreacheryCards =
       , rammingSpeed
       , takingOnWater
       , theRaidersAssault
+      , serpentsTail
+      , foesOfEcthelion
+      , umbarPatrol
+      , furyAndMalice
       ]
 
 deepDeepDark :: CardDef
@@ -1263,3 +1267,17 @@ takingOnWater = (treachery "12132" "Taking on Water" AStormOnCobasHaven 2) {cdSh
 
 theRaidersAssault :: CardDef
 theRaidersAssault = (treachery "12133" "The Raiders' Assault" AStormOnCobasHaven 2) {cdSailingIcons = 1}
+
+-- * The City of Corsairs: Coast of Umbar and The City of Corsairs
+
+serpentsTail :: CardDef
+serpentsTail = treachery "12157" "Serpent's Tail" CoastOfUmbar 2
+
+foesOfEcthelion :: CardDef
+foesOfEcthelion = treachery "12163" "Foes of Ecthelion" TheCityOfCorsairs 2
+
+umbarPatrol :: CardDef
+umbarPatrol = treachery "12164" "Umbar Patrol" TheCityOfCorsairs 2
+
+furyAndMalice :: CardDef
+furyAndMalice = treachery "12165" "Fury and Malice" TheCityOfCorsairs 3

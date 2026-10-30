@@ -236,6 +236,10 @@ allQuestCards =
       , outmaneuverTheEnemy
       , battleInTheBay
       , breakThroughTheFleet
+      , theCoastOfUmbar
+      , fateOfTheDreamChaser
+      , theHavenOfUmbar
+      , finalConfrontation
       ]
 
 theDrippingWalls :: CardDef
@@ -875,3 +879,18 @@ battleInTheBay = (quest "12121" "Battle in the Bay" AStormOnCobasHaven 2 16) {cd
 
 breakThroughTheFleet :: CardDef
 breakThroughTheFleet = (quest "12122" "Break Through the Fleet!" AStormOnCobasHaven 3 5) {cdKeywords = setFromList [Sailing]}
+
+-- * The City of Corsairs: the first two stages are Coast of Umbar's, the last two The City
+-- of Corsairs'
+
+theCoastOfUmbar :: CardDef
+theCoastOfUmbar = (quest "12147" "The Coast of Umbar" CoastOfUmbar 1 15) {cdKeywords = setFromList [Sailing]}
+
+fateOfTheDreamChaser :: CardDef
+fateOfTheDreamChaser = quest "12148" "Fate of the Dream-chaser" CoastOfUmbar 2 0
+
+theHavenOfUmbar :: CardDef
+theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
+
+finalConfrontation :: CardDef
+finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0

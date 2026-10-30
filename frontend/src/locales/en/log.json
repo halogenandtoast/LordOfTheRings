@@ -174,5 +174,6 @@
   "stormcallerAdvances": "The Stormcaller advances to {quest}",
   "stormcallerCaughtUp": "The players are at the Stormcaller's stage: the cards in its area are in the staging area",
   "stormcallerArea": "The Stormcaller's area",
-  "guardsObjective": "{guard} guards {objective}"
+  "guardsObjective": "{guard} guards {objective}",
+  "secondEncounterDeckActive": "The second encounter deck becomes the active encounter deck, the first set aside"
 }

@@ -199,6 +199,10 @@ import LordOfTheRings.Treachery.Cards.SunkenRuins
 import LordOfTheRings.Treachery.Cards.RammingSpeed
 import LordOfTheRings.Treachery.Cards.TakingOnWater
 import LordOfTheRings.Treachery.Cards.TheRaidersAssault
+import LordOfTheRings.Treachery.Cards.SerpentsTail
+import LordOfTheRings.Treachery.Cards.FoesOfEcthelion
+import LordOfTheRings.Treachery.Cards.UmbarPatrol
+import LordOfTheRings.Treachery.Cards.FuryAndMalice
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -422,5 +426,9 @@ allTreacherys =
         , SomeTreacheryCard rammingSpeed
         , SomeTreacheryCard takingOnWater
         , SomeTreacheryCard theRaidersAssault
+        , SomeTreacheryCard serpentsTail
+        , SomeTreacheryCard foesOfEcthelion
+        , SomeTreacheryCard umbarPatrol
+        , SomeTreacheryCard furyAndMalice
         ]
     ]
