@@ -942,6 +942,7 @@ library
       LordOfTheRings.Quest.Cards.SavageryOfTheOrcs
       LordOfTheRings.Quest.Cards.SearchForTheChamber
       LordOfTheRings.Quest.Cards.SearchingForMugash
+      LordOfTheRings.Quest.Cards.SearchTheRuins
       LordOfTheRings.Quest.Cards.Snowdrifts
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
       LordOfTheRings.Quest.Cards.TheAmbush
@@ -1392,6 +1393,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.KhazadDum.TheSeventhLevelSpec
       LordOfTheRings.KhazadDumEngineSpec
       LordOfTheRings.LogSpec
+      LordOfTheRings.LostRealmEngineSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.PlayerChoicesSpec
