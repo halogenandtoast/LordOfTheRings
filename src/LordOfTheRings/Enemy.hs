@@ -164,6 +164,7 @@ import LordOfTheRings.Enemy.Cards.OrcWarParty
 import LordOfTheRings.Enemy.Cards.AngmarOrc
 import LordOfTheRings.Enemy.Cards.AngmarMarauder
 import LordOfTheRings.Enemy.Cards.AngmarCaptain
+import LordOfTheRings.Enemy.Cards.CorneredOrc
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -353,5 +354,6 @@ allEnemys =
         , SomeEnemyCard angmarOrc
         , SomeEnemyCard angmarMarauder
         , SomeEnemyCard angmarCaptain
+        , SomeEnemyCard corneredOrc
         ]
     ]

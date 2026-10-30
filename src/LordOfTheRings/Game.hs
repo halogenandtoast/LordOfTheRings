@@ -1361,8 +1361,13 @@ runGameMessage msg g = case msg of
     divideDamage source pid n assigned characters (DealDamageDivided source pid)
     pure g
   DealDamageDividedAmong source pid among n assigned -> do
-    characters <- withHitPointsLeft assigned . filter (`elem` among) =<< charactersControlledBy pid
-    divideDamage source pid n assigned characters (DealDamageDividedAmong source pid among)
+    characters <- withHitPointsLeft assigned $ filter (inPlay g) among
+    if n > 0 && notNull characters
+      then
+        push
+          $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
+            [targetLabel c [DealDamageDividedAmong source pid among (n - 1) (c : assigned)] | c <- characters]
+      else pushAll $ dealAssigned source assigned
     pure g
   ChooseAndExhaustHero source pid -> do
     ready <- map toTarget <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
@@ -1524,6 +1529,8 @@ runGameMessage msg g = case msg of
         g <$ push (PlaceTokens source (toTarget h) token n)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
         g <$ push (PlaceTokens source (toTarget a) token n)
+    | Just o <- find ((== cid) . objectiveCardId . toAttrs) (toList g.entities.objectives) ->
+        g <$ push (PlaceTokens source (toTarget o) token n)
   -- the resource phase's resources come from the game, not a card effect
   PlaceTokens source target@(HeroTarget _) Resource n
     | n > 0

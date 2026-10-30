@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardType, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
-import LordOfTheRings.Scenario.Types ()
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Frontend (Frontend)
 import LordOfTheRings.Classes.HasQueue
@@ -926,11 +926,6 @@ immediateAttack pid eid = do
 dealDamageDivided :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 dealDamageDivided source pid n = push $ DealDamageDivided (toSource source) pid n []
 
--- | As 'dealDamageDivided', among the given characters of the player's only, as "distribute
--- damage among questing characters he controls" reads.
-dealDamageDividedAmong :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> [Target] -> Int -> m ()
-dealDamageDividedAmong source pid among n = push $ DealDamageDividedAmong (toSource source) pid among n []
-
 -- | The enemy makes an additional attack against the player once this attack resolves, as
 -- "attacking enemy makes an additional attack after this one" reads.
 additionalAttack
@@ -938,6 +933,43 @@ additionalAttack
 additionalAttack pid eid = do
   again <- capture $ immediateAttack pid eid
   afterAttack eid again
+
+-- | The player divides the damage among the characters given, as "assign X damage among
+-- characters committed to the quest" reads; it is dealt once all is assigned.
+dealDamageDividedAmong
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> PlayerId -> [target] -> Int -> m ()
+dealDamageDividedAmong source pid among n = push $ DealDamageDividedAmong (toSource source) pid (map toTarget among) n []
+
+-- | The player deals the damage to 1 hero they control, as "each player deals 1 damage to a
+-- hero he controls" reads.
+dealDamageToOneHero :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> Int -> m ()
+dealDamageToOneHero source pid n = do
+  heroes <- select (HeroControlledBy $ PlayerWithId pid)
+  chooseOrRunOneM pid do
+    questionLabeledWith "dealDamageToOneHero" [intVar "n" n]
+    causedBy source
+    targets heroes \h -> dealDamage source h n
+
+-- | The matching set-aside cards are revealed, as "reveal Orc Ambush and add it to the
+-- staging area" reads.
+revealSetAsideMatching :: ReverseQueue m => CardMatcher -> m ()
+revealSetAsideMatching matcher = do
+  setAside' <- getsGame ((.scenarioSetAside) . toAttrs . (.scenario))
+  traverse_ (push . RevealCard) $ filter (cardMatches matcher) setAside'
+
+{- | End the current phase, as "End the current phase" reads: what is left of it on the
+game's queue is dropped, up to its end. A log block it opened still closes.
+-}
+endCurrentPhase :: (MonadTrans t, HasQueue Message m, HasGame m) => t m ()
+endCurrentPhase = do
+  phase <- lift $ getsGame gamePhase
+  lift $ withQueue_ \q -> case break (== EndPhase phase) q of
+    (before, after@(_ : _)) -> filter isClose before <> after
+    _ -> q
+ where
+  isClose = \case
+    CloseLogBlock _ -> True
+    _ -> False
 
 -- | The player deals the damage to 1 character they control, as "each player must deal 3
 -- damage to 1 character he controls" reads.

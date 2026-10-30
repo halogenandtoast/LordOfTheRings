@@ -130,6 +130,10 @@ import LordOfTheRings.Quest.Cards.RescueIarion
 import LordOfTheRings.Quest.Cards.OrcAmbush
 import LordOfTheRings.Quest.Cards.LostInTheWilderness
 import LordOfTheRings.Quest.Cards.StopTheWarParty
+import LordOfTheRings.Quest.Cards.FindShelter
+import LordOfTheRings.Quest.Cards.MakeCamp
+import LordOfTheRings.Quest.Cards.ScatteredAmongTheHills
+import LordOfTheRings.Quest.Cards.CorneredAnimals
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -292,5 +296,9 @@ allQuests =
         , SomeQuestCard orcAmbush
         , SomeQuestCard lostInTheWilderness
         , SomeQuestCard stopTheWarParty
+        , SomeQuestCard findShelter
+        , SomeQuestCard makeCamp
+        , SomeQuestCard scatteredAmongTheHills
+        , SomeQuestCard corneredAnimals
         ]
     ]

@@ -1059,5 +1059,17 @@
     "search": "Search the encounter deck and discard pile for an encounter side quest and reveal it",
     "chooseSideQuest": "Pressing Needs: choose an encounter side quest to reveal",
     "currentQuest": "Choose a different quest card to be the current quest until the end of the phase"
+  },
+  "dealDamageToOneHero": "Deal {n} damage to a hero you control",
+  "corneredAnimals": {
+    "choose": "Cornered Animals: discard a resource token from Savage Counter-attack, or reveal an additional encounter card this phase",
+    "discard": "Discard 1 resource token from Savage Counter-attack",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "shelteredValley": {
+    "heal": "Choose a character to heal all damage from"
+  },
+  "makeCamp": {
+    "heal": "Choose a hero to heal up to 3 damage from"
   }
 }

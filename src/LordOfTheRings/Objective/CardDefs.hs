@@ -59,6 +59,8 @@ allObjectiveCards =
       , keyOfTheWolf
       , keyOfTheRaven
       , iarion
+      , huntingTheOrcs
+      , savageCounterattack
       ]
 
 durinsAxe :: CardDef
@@ -369,3 +371,11 @@ iarion =
     , cdCardTraits = setFromList [Dunedain, Ranger]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
+
+huntingTheOrcs :: CardDef
+huntingTheOrcs = (objective "09071" "Hunting the Orcs" TheWeatherHills 1) {cdCardTraits = setFromList [Mission]}
+
+-- | Hunting the Orcs' other side: no copy of its own in the encounter set, it comes into
+-- play as Hunting the Orcs flips.
+savageCounterattack :: CardDef
+savageCounterattack = (objective "09072" "Savage Counter-attack" TheWeatherHills 0) {cdCardTraits = setFromList [Mission]}

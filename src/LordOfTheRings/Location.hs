@@ -175,6 +175,11 @@ import LordOfTheRings.Location.Cards.BordersOfBreeLand
 import LordOfTheRings.Location.Cards.OutlyingHomestead
 import LordOfTheRings.Location.Cards.RuggedCountry
 import LordOfTheRings.Location.Cards.ShroudedHills
+import LordOfTheRings.Location.Cards.AmonForn
+import LordOfTheRings.Location.Cards.WeatheredHilltop
+import LordOfTheRings.Location.Cards.ExposedRidge
+import LordOfTheRings.Location.Cards.ShelteredValley
+import LordOfTheRings.Location.Cards.ConcealedOrcCamp
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -377,5 +382,10 @@ allLocations =
         , SomeLocationCard outlyingHomestead
         , SomeLocationCard ruggedCountry
         , SomeLocationCard shroudedHills
+        , SomeLocationCard amonForn
+        , SomeLocationCard weatheredHilltop
+        , SomeLocationCard exposedRidge
+        , SomeLocationCard shelteredValley
+        , SomeLocationCard concealedOrcCamp
         ]
     ]

@@ -185,6 +185,11 @@ allLocationCards =
       , outlyingHomestead
       , ruggedCountry
       , shroudedHills
+      , amonForn
+      , weatheredHilltop
+      , exposedRidge
+      , shelteredValley
+      , concealedOrcCamp
       ]
 
 drownedTreasury :: CardDef
@@ -1355,3 +1360,28 @@ shroudedHills =
     { cdCardTraits = setFromList [Arnor, Hills]
     , cdEasyModeQuantity = Just 1
     }
+
+amonForn :: CardDef
+amonForn =
+  (unique $ location "09026" "Amon Forn" TheWeatherHills 1 4 6)
+    { cdCardTraits = setFromList [Arnor, Ruins]
+    , cdVictoryPoints = Just 3
+    }
+
+-- | +1 threat for each resource token on it: given by its own modifiers.
+weatheredHilltop :: CardDef
+weatheredHilltop = (location "09027" "Weathered Hilltop" TheWeatherHills 3 1 5) {cdCardTraits = setFromList [Arnor, Hills]}
+
+exposedRidge :: CardDef
+exposedRidge =
+  (location "09028" "Exposed Ridge" TheWeatherHills 3 3 3)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+shelteredValley :: CardDef
+shelteredValley = (location "09029" "Sheltered Valley" TheWeatherHills 2 2 4) {cdCardTraits = setFromList [Arnor, Hills]}
+
+concealedOrcCamp :: CardDef
+concealedOrcCamp = (location "09030" "Concealed Orc-camp" TheWeatherHills 3 2 2) {cdCardTraits = setFromList [Arnor, Hills]}

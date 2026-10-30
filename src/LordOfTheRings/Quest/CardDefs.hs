@@ -151,6 +151,10 @@ allQuestCards =
       , orcAmbush
       , lostInTheWilderness
       , stopTheWarParty
+      , findShelter
+      , makeCamp
+      , scatteredAmongTheHills
+      , corneredAnimals
       ]
 
 theDrippingWalls :: CardDef
@@ -578,3 +582,24 @@ lostInTheWilderness =
 
 stopTheWarParty :: CardDef
 stopTheWarParty = quest "09068" "Stop the War Party" IntrudersInChetwood 1 30
+
+findShelter :: CardDef
+findShelter =
+  (encounterSideQuest "09032" "Find Shelter" TheWeatherHills 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge, Time 4]
+    }
+
+makeCamp :: CardDef
+makeCamp =
+  (encounterSideQuest "09055" "Make Camp" FoulWeather 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | No quest points: the players leave it as Hunting the Orcs flips.
+scatteredAmongTheHills :: CardDef
+scatteredAmongTheHills = (quest "09069" "Scattered Among the Hills" TheWeatherHills 1 0) {cdQuestPoints = Nothing}
+
+corneredAnimals :: CardDef
+corneredAnimals = quest "09070" "Cornered Animals" TheWeatherHills 2 20

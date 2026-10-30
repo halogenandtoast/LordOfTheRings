@@ -146,6 +146,10 @@ import LordOfTheRings.Treachery.Cards.SuddenAssault
 import LordOfTheRings.Treachery.Cards.SurprisingSpeed
 import LordOfTheRings.Treachery.Cards.PressingNeeds
 import LordOfTheRings.Treachery.Cards.WeightOfResponsibility
+import LordOfTheRings.Treachery.Cards.IceStorm
+import LordOfTheRings.Treachery.Cards.BitingWind
+import LordOfTheRings.Treachery.Cards.FreezingBlast
+import LordOfTheRings.Treachery.Cards.ColdFromAngmar
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -316,5 +320,9 @@ allTreacherys =
         , SomeTreacheryCard surprisingSpeed
         , SomeTreacheryCard pressingNeeds
         , SomeTreacheryCard weightOfResponsibility
+        , SomeTreacheryCard iceStorm
+        , SomeTreacheryCard bitingWind
+        , SomeTreacheryCard freezingBlast
+        , SomeTreacheryCard coldFromAngmar
         ]
     ]
