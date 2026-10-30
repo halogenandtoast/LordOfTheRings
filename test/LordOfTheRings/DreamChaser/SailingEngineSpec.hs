@@ -24,8 +24,9 @@ sailingTest = gameTestIn voyageAcrossBelegaer testDeck
 -- | The heading set as given, the modifiers read again from it.
 setHeading :: Heading -> GameT ()
 setHeading h = do
-  g <- getGame
-  putGame =<< preloadModifiers (g & scenarioL %~ overAttrs (headingL ?~ h))
+  g <- (scenarioL %~ overAttrs (headingL ?~ h)) <$> getGame
+  putGame g
+  putGame =<< preloadModifiers g
 
 heading :: GameT (Maybe Heading)
 heading = getsGame ((.heading) . toAttrs . (.scenario))
