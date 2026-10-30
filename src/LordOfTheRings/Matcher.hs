@@ -507,6 +507,10 @@ getPlayerOrder = do
   pure $ after <> before
 
 -- | Heroes and allies matching the given matchers, as targets.
+-- | Whether the player's cards follow the FAQ's errata, as a card reads it as it resolves.
+playsWithErrata :: HasGame m => PlayerId -> m Bool
+playsWithErrata pid = selectAny (PlayerWithId pid <> PlayerUsingErrata)
+
 selectCharacters :: HasGame m => HeroMatcher -> AllyMatcher -> m [Target]
 selectCharacters heroes allies = (<>) <$> (map toTarget <$> select heroes) <*> (map toTarget <$> select allies)
 

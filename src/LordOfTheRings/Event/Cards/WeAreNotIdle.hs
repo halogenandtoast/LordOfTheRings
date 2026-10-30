@@ -9,17 +9,21 @@ newtype WeAreNotIdle = WeAreNotIdle EventAttrs
   deriving newtype (Show, Eq, Entity)
 
 -- | Action: Exhaust X Dwarf heroes to add X resources to a hero's resource pool and draw
--- 1 card.
+-- 1 card. (FAQ 1.9 errata; as printed, X Dwarf characters.)
 weAreNotIdle :: EventCard WeAreNotIdle
 weAreNotIdle = event WeAreNotIdle Cards.weAreNotIdle
 
 instance RunMessage WeAreNotIdle where
   runMessage msg e@(WeAreNotIdle attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      dwarves <- select (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait Dwarf <> ReadyHero)
+      errata <- playsWithErrata pid
+      dwarves <-
+        selectCharacters
+          (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait Dwarf <> ReadyHero)
+          (if errata then not_ AnyAlly else AllyControlledBy (PlayerWithId pid) <> AllyWithTrait Dwarf <> ReadyAlly)
       heroes <- select AnyHero
       -- each hero exhausted asks again, until the player is done
-      let exhaustMore :: (ReverseQueue n) => Int -> [HeroId] -> n ()
+      let exhaustMore :: (ReverseQueue n) => Int -> [Target] -> n ()
           exhaustMore x remaining = chooseOneM pid do
             questionLabeledWith "weAreNotIdle.exhaust" [intVar "count" x]
             causedBy attrs

@@ -89,6 +89,12 @@ putCardIntoHand pid def = do
   putGame $ g & playersL . ix pid . handL %~ (card :)
   pure card
 
+-- | Play the player's cards as printed, as a deck loaded without the FAQ's errata.
+withoutErrata :: PlayerId -> GameT ()
+withoutErrata pid = do
+  g <- getGame
+  putGame $ g & playersL . ix pid . errataL .~ False
+
 getHeroWithCode :: (HasCallStack) => CardCode -> GameT Hero
 getHeroWithCode code =
   fromJustNote ("no hero " <> show code) . find ((== code) . toCardCode) . toList <$> getsGame (.entities.heroes)
