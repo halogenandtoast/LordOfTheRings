@@ -1296,3 +1296,42 @@ discardBottomOfDeck pid = do
     PlayerCard pc -> discardFromDeck pid pc
     _ -> pure ()
   pure bottom
+
+-- | A card in the player's deck goes to the bottom of it, as one looked at from the top.
+moveToBottomOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+moveToBottomOfDeck pid card = push $ MoveToBottomOfDeck pid card.id
+
+-- | A destroyed ally, from its owner's discard pile, goes to the bottom of his deck, as
+-- "place that ally on the bottom of its owner's deck" reads; an encounter card does not.
+allyToBottomOfDeck :: ReverseQueue m => Card -> m ()
+allyToBottomOfDeck = \case
+  PlayerCard pc | Just owner <- pc.owner -> putDiscardOnBottomOfDeck owner pc.id
+  _ -> pure ()
+
+{- | Cancel this much of the damage about to be dealt to the target, from the window before
+it is dealt, as Captain Sahír's resources cancel it point for point: the rest is still
+dealt. See 'cancelDamage'.
+-}
+cancelSomeDamage
+  :: (MonadTrans t, HasQueue Message m, HasQueue Message (t m), Targetable target) => target -> Int -> t m ()
+cancelSomeDamage target k = do
+  canceled <- lift $ popMessagesMatching \case
+    DoStep 1 (DealDamage _ t _) -> t == toTarget target
+    _ -> False
+  for_ canceled \case
+    DoStep 1 (DealDamage source t n) | n > k -> push $ DoStep 1 (DealDamage source t (n - k))
+    _ -> pure ()
+
+-- | The player discards each event in his hand.
+discardEventsFromHand :: ReverseQueue m => PlayerId -> m ()
+discardEventsFromHand = push . DiscardEventsFromHand
+
+-- | The player spends 1 resource, of any sphere, from a hero he controls, as "Spend 1
+-- resource from a hero you control" reads.
+spendResourceFromAHero :: (ReverseQueue m, Sourceable source, Targetable source) => PlayerId -> source -> m ()
+spendResourceFromAHero pid source = do
+  heroes <- filterM (heroCanSpend <=< getHero) =<< select (HeroControlledBy (PlayerWithId pid) <> HeroWithResources)
+  chooseOrRunOneM pid do
+    questionLabeled "spendResourceFromAHero"
+    causedBy source
+    targets heroes \h -> removeTokens source h Resource 1

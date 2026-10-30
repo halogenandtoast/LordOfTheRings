@@ -193,6 +193,12 @@ import LordOfTheRings.Enemy.Cards.GoblinPursuer
 import LordOfTheRings.Enemy.Cards.ThaurdirTheTreacheryOfRhudaur
 import LordOfTheRings.Enemy.Cards.WightOfRhudaur
 import LordOfTheRings.Enemy.Cards.TraitorousWight
+import LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
+import LordOfTheRings.Enemy.Cards.DrownedDead
+import LordOfTheRings.Enemy.Cards.SoullessCadaver
+import LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
+import LordOfTheRings.Enemy.Cards.CaptainSahir
+import LordOfTheRings.Enemy.Cards.Naasiyah
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -411,5 +417,11 @@ allEnemys =
         , SomeEnemyCard thaurdirTheTreacheryOfRhudaur
         , SomeEnemyCard wightOfRhudaur
         , SomeEnemyCard traitorousWight
+        , SomeEnemyCard servantOfTheDeceiver
+        , SomeEnemyCard drownedDead
+        , SomeEnemyCard soullessCadaver
+        , SomeEnemyCard throngsOfUnfaithful
+        , SomeEnemyCard captainSahir
+        , SomeEnemyCard naasiyah
         ]
     ]

@@ -210,6 +210,14 @@ import LordOfTheRings.Location.Cards.ForbiddenDescent
 import LordOfTheRings.Location.Cards.EerieHalls
 import LordOfTheRings.Location.Cards.GhostlyRuins
 import LordOfTheRings.Location.Cards.DecrepitRemains
+import LordOfTheRings.Location.Cards.LostIsland
+import LordOfTheRings.Location.Cards.ShrineToMorgoth
+import LordOfTheRings.Location.Cards.LushJungle
+import LordOfTheRings.Location.Cards.ForbiddenCoast
+import LordOfTheRings.Location.Cards.SteepPlateau
+import LordOfTheRings.Location.Cards.FloodedRuins
+import LordOfTheRings.Location.Cards.DrownedGraves
+import LordOfTheRings.Location.Cards.CursedTemple
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -460,5 +468,13 @@ allLocations =
         , SomeLocationCard eerieHalls
         , SomeLocationCard ghostlyRuins
         , SomeLocationCard decrepitRemains
+        , SomeLocationCard lostIsland
+        , SomeLocationCard shrineToMorgoth
+        , SomeLocationCard lushJungle
+        , SomeLocationCard forbiddenCoast
+        , SomeLocationCard steepPlateau
+        , SomeLocationCard floodedRuins
+        , SomeLocationCard drownedGraves
+        , SomeLocationCard cursedTemple
         ]
     ]

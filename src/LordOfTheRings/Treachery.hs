@@ -171,6 +171,11 @@ import LordOfTheRings.Treachery.Cards.CenturiesOfSorrow
 import LordOfTheRings.Treachery.Cards.CurseOfTheYears
 import LordOfTheRings.Treachery.Cards.DarkCovenant
 import LordOfTheRings.Treachery.Cards.HauntingFog
+import LordOfTheRings.Treachery.Cards.MysteriousFog
+import LordOfTheRings.Treachery.Cards.LingeringMalevolence
+import LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
+import LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
+import LordOfTheRings.Treachery.Cards.AimlessWandering
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -366,5 +371,10 @@ allTreacherys =
         , SomeTreacheryCard curseOfTheYears
         , SomeTreacheryCard darkCovenant
         , SomeTreacheryCard hauntingFog
+        , SomeTreacheryCard mysteriousFog
+        , SomeTreacheryCard lingeringMalevolence
+        , SomeTreacheryCard ruinsOfAgesPast
+        , SomeTreacheryCard curseOfTheDownfallen
+        , SomeTreacheryCard aimlessWandering
         ]
     ]
