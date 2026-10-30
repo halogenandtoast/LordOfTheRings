@@ -133,6 +133,8 @@ allAttachmentCards =
       , runeMaster
       , vigilantGuard
       , windfola
+      , rangerSpear
+      , princeOfDolAmroth
       ]
 
 stewardOfGondor :: CardDef
@@ -936,4 +938,18 @@ windfola =
     (attachment "12116" "Windfola" Spirit (StaticCost 1))
       { cdCardTraits = setFromList [Mount]
       , cdKeywords = setFromList [Restricted]
+      }
+
+rangerSpear :: CardDef
+rangerSpear =
+  (attachment "12145" "Ranger Spear" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+princeOfDolAmroth :: CardDef
+princeOfDolAmroth =
+  unique
+    (attachment "12146" "Prince of Dol Amroth" Neutral (StaticCost 3))
+      { cdCardTraits = setFromList [Title]
       }

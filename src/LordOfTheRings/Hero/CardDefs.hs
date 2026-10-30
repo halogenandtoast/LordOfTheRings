@@ -71,6 +71,7 @@ allHeroCards =
       , merrySpirit
       , argalad
       , naasiyah
+      , princeImrahilTactics
       ]
 
 aragorn :: CardDef
@@ -431,4 +432,10 @@ naasiyah :: CardDef
 naasiyah =
   (hero "12109" "Na'asiyah" Tactics 8 1 2 2 4)
     { cdCardTraits = setFromList [Corsair, Warrior]
+    }
+
+princeImrahilTactics :: CardDef
+princeImrahilTactics =
+  (hero "12138" "Prince Imrahil" Tactics 11 2 3 2 4)
+    { cdCardTraits = setFromList [Gondor, Noble, Warrior]
     }

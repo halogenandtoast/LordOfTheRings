@@ -172,6 +172,8 @@ allEventCards =
       , knifeWork
       , theHousesOfHealing
       , justiceShallBeDone
+      , holdTheLine
+      , inspiringPresence
       ]
 
 everVigilant :: CardDef
@@ -674,3 +676,9 @@ justiceShallBeDone =
     { cdVictoryPoints = Just 1
     , cdDeckLimit = 1
     }
+
+holdTheLine :: CardDef
+holdTheLine = event "12140" "Hold the Line" Leadership (StaticCost 0)
+
+inspiringPresence :: CardDef
+inspiringPresence = event "12143" "Inspiring Presence" Spirit (StaticCost 2)

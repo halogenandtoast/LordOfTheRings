@@ -126,6 +126,8 @@ import LordOfTheRings.Attachment.Cards.Strider
 import LordOfTheRings.Attachment.Cards.RuneMaster
 import LordOfTheRings.Attachment.Cards.VigilantGuard
 import LordOfTheRings.Attachment.Cards.Windfola
+import LordOfTheRings.Attachment.Cards.RangerSpear
+import LordOfTheRings.Attachment.Cards.PrinceOfDolAmroth
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -278,5 +280,7 @@ allAttachments =
         , SomeAttachmentCard runeMaster
         , SomeAttachmentCard vigilantGuard
         , SomeAttachmentCard windfola
+        , SomeAttachmentCard rangerSpear
+        , SomeAttachmentCard princeOfDolAmroth
         ]
     ]

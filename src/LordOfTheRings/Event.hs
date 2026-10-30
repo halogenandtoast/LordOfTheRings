@@ -161,6 +161,8 @@ import LordOfTheRings.Event.Cards.TerribleToBehold
 import LordOfTheRings.Event.Cards.KnifeWork
 import LordOfTheRings.Event.Cards.TheHousesOfHealing
 import LordOfTheRings.Event.Cards.JusticeShallBeDone
+import LordOfTheRings.Event.Cards.HoldTheLine
+import LordOfTheRings.Event.Cards.InspiringPresence
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -335,5 +337,7 @@ allEvents =
         , SomeEventCard knifeWork
         , SomeEventCard theHousesOfHealing
         , SomeEventCard justiceShallBeDone
+        , SomeEventCard holdTheLine
+        , SomeEventCard inspiringPresence
         ]
     ]

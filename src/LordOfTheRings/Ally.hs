@@ -178,6 +178,10 @@ import LordOfTheRings.Ally.Cards.RobinSmallburrow
 import LordOfTheRings.Ally.Cards.VeteranSwordElf
 import LordOfTheRings.Ally.Cards.LinhirSeaCaptain
 import LordOfTheRings.Ally.Cards.Ioreth
+import LordOfTheRings.Ally.Cards.KnightOfTheWhiteTower
+import LordOfTheRings.Ally.Cards.SoldierOfDolAmroth
+import LordOfTheRings.Ally.Cards.Sulien
+import LordOfTheRings.Ally.Cards.GuardianOfIthilien
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -383,5 +387,9 @@ allAllies =
         , SomeAllyCard veteranSwordElf
         , SomeAllyCard linhirSeaCaptain
         , SomeAllyCard ioreth
+        , SomeAllyCard knightOfTheWhiteTower
+        , SomeAllyCard soldierOfDolAmroth
+        , SomeAllyCard sulien
+        , SomeAllyCard guardianOfIthilien
         ]
     ]
