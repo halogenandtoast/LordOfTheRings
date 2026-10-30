@@ -44,6 +44,8 @@ export interface CardView {
   errata?: boolean
   /** The code of its facedown side, which this player has looked at (an Uncharted location). */
   otherSide?: string
+  /** The image to show instead of its own, as the Stormcaller's stages show their D side. */
+  image?: string
 }
 
 export interface ChoiceView {
@@ -96,6 +98,9 @@ export interface ScenarioView {
   /** The Corsair deck's size, while there is one, and its discard pile. */
   corsairDeck: number | null
   corsairDiscard: CardView[]
+  /** The Stormcaller's quest stage, with its progress, and the cards in its area (Flight of the Stormcaller). */
+  stormcallerStage: CardView | null
+  stormcallerArea: CardView[]
 }
 
 export interface AreaView {
@@ -143,8 +148,8 @@ export interface TallyView {
   lastWillpower: number | null
 }
 
-export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' | 'errata'>) =>
-  card.facedown ? `/images/${card.facedown}.jpg` : `/images/cards/${errataImage(`${card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
+export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' | 'errata' | 'image'>) =>
+  card.facedown ? `/images/${card.facedown}.jpg` : card.image ? `/images/cards/${card.image}.avif` : `/images/cards/${errataImage(`${card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

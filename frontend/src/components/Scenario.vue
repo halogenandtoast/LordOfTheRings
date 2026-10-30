@@ -76,6 +76,21 @@ const settings = [
       :flipping="isFlipping(other.card)"
       @choose="emit('choose', $event)"
     />
+    <!-- the Stormcaller's area: its own quest stage, and the cards not yet in the staging area -->
+    <div v-if="scenario.stormcallerStage" class="stormcaller-area">
+      <span class="heading-label">{{ $t('log.stormcallerArea') }}</span>
+      <div class="stormcaller-cards">
+        <GameCard :card="scenario.stormcallerStage" rotated :choices="choices" @choose="emit('choose', $event)" />
+        <GameCard
+          v-for="c in scenario.stormcallerArea"
+          :key="c.id"
+          :card="c"
+          :choices="choices"
+          :flipping="isFlipping(c)"
+          @choose="emit('choose', $event)"
+        />
+      </div>
+    </div>
   </section>
 </template>
 
@@ -86,6 +101,8 @@ const settings = [
 .heading-track { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .heading-track li { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 4px; font-size: 0.9rem; opacity: 0.4; }
 .heading-track li.current { opacity: 1; border-color: currentColor; color: var(--text); }
+.stormcaller-area { display: flex; flex-direction: column; gap: 4px; padding-left: 8px; border-left: 1px dashed var(--line-strong); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.stormcaller-cards { display: flex; gap: 6px; align-items: flex-start; }
 .location-placeholder {
   display: flex;
   align-items: center;
