@@ -171,6 +171,11 @@ import LordOfTheRings.Treachery.Cards.CenturiesOfSorrow
 import LordOfTheRings.Treachery.Cards.CurseOfTheYears
 import LordOfTheRings.Treachery.Cards.DarkCovenant
 import LordOfTheRings.Treachery.Cards.HauntingFog
+import LordOfTheRings.Treachery.Cards.ThrownOffCourse
+import LordOfTheRings.Treachery.Cards.SuddenStorms
+import LordOfTheRings.Treachery.Cards.WindsOfWrath
+import LordOfTheRings.Treachery.Cards.BoardingParty
+import LordOfTheRings.Treachery.Cards.BattleHardened
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -366,5 +371,10 @@ allTreacherys =
         , SomeTreacheryCard curseOfTheYears
         , SomeTreacheryCard darkCovenant
         , SomeTreacheryCard hauntingFog
+        , SomeTreacheryCard thrownOffCourse
+        , SomeTreacheryCard suddenStorms
+        , SomeTreacheryCard windsOfWrath
+        , SomeTreacheryCard boardingParty
+        , SomeTreacheryCard battleHardened
         ]
     ]
