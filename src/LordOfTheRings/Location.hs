@@ -224,6 +224,12 @@ import LordOfTheRings.Location.Cards.SteepPlateau
 import LordOfTheRings.Location.Cards.FloodedRuins
 import LordOfTheRings.Location.Cards.DrownedGraves
 import LordOfTheRings.Location.Cards.CursedTemple
+import LordOfTheRings.Location.Cards.HelmOfTheStormcaller
+import LordOfTheRings.Location.Cards.ForecastleDeck
+import LordOfTheRings.Location.Cards.WeatherDeck
+import LordOfTheRings.Location.Cards.CargoHold
+import LordOfTheRings.Location.Cards.CrewQuarters
+import LordOfTheRings.Location.Cards.QuarterDeck
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -488,5 +494,11 @@ allLocations =
         , SomeLocationCard floodedRuins
         , SomeLocationCard drownedGraves
         , SomeLocationCard cursedTemple
+        , SomeLocationCard helmOfTheStormcaller
+        , SomeLocationCard forecastleDeck
+        , SomeLocationCard weatherDeck
+        , SomeLocationCard cargoHold
+        , SomeLocationCard crewQuarters
+        , SomeLocationCard quarterDeck
         ]
     ]

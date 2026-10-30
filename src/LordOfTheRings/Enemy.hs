@@ -209,6 +209,12 @@ import LordOfTheRings.Enemy.Cards.SoullessCadaver
 import LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
 import LordOfTheRings.Enemy.Cards.CaptainSahir
 import LordOfTheRings.Enemy.Cards.Naasiyah
+import LordOfTheRings.Enemy.Cards.TheThingInTheDepths
+import LordOfTheRings.Enemy.Cards.EyeOfTheBeast
+import LordOfTheRings.Enemy.Cards.ThrashingArm
+import LordOfTheRings.Enemy.Cards.CrushingArm
+import LordOfTheRings.Enemy.Cards.GraspingArm
+import LordOfTheRings.Enemy.Cards.GiantArm
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -443,5 +449,11 @@ allEnemys =
         , SomeEnemyCard throngsOfUnfaithful
         , SomeEnemyCard captainSahir
         , SomeEnemyCard naasiyah
+        , SomeEnemyCard theThingInTheDepths
+        , SomeEnemyCard eyeOfTheBeast
+        , SomeEnemyCard thrashingArm
+        , SomeEnemyCard crushingArm
+        , SomeEnemyCard graspingArm
+        , SomeEnemyCard giantArm
         ]
     ]
