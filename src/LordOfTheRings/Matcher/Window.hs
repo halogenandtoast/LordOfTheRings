@@ -225,6 +225,12 @@ data WindowMatcher
     BecomesWindow TimeOfDay
   | -- | any captured cards rescued (Escape from Mount Gram)
     CapturedCardsRescuedWindow Timing
+  | -- | the player drew cards at the beginning of the resource phase, as Círdan the
+    -- Shipwright reads
+    DrewForResourcePhaseWindow Timing PlayerId
+  | -- | the player drew their setup hand, as Galdor of the Havens answers instead of a
+    -- mulligan
+    SetupHandDrawnWindow Timing PlayerId
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -328,6 +334,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (BecomesWindow time, Became time') -> time == time'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
+  (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
+  (SetupHandDrawnWindow t pid, SetupHandDrawn pid') -> t == timing && pid == pid'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

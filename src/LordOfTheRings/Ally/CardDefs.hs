@@ -163,6 +163,10 @@ allAllyCards =
       , curiousBrandybuck
       , eastRoadRanger
       , rangerOfCardolan
+      , mithlondSeaWatcher
+      , wardenOfTheHavens
+      , lindonNavigator
+      , sailorOfLune
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1138,4 +1142,28 @@ rangerOfCardolan :: CardDef
 rangerOfCardolan =
   (ally "10010" "Ranger of Cardolan" Neutral (StaticCost 4) 2 2 2 3)
     { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+mithlondSeaWatcher :: CardDef
+mithlondSeaWatcher =
+  (ally "11003" "Mithlond Sea-watcher" Tactics (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Noldor, Warrior]
+    }
+
+wardenOfTheHavens :: CardDef
+wardenOfTheHavens =
+  (ally "11006" "Warden of the Havens" Leadership (StaticCost 2) 0 1 1 3)
+    { cdCardTraits = setFromList [Noldor, Warrior]
+    }
+
+lindonNavigator :: CardDef
+lindonNavigator =
+  (ally "11009" "Lindon Navigator" Lore (StaticCost 2) 2 1 1 2)
+    { cdCardTraits = setFromList [Noldor, Scout]
+    }
+
+sailorOfLune :: CardDef
+sailorOfLune =
+  (ally "11012" "Sailor of Lune" Spirit (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Noldor, Scout]
     }

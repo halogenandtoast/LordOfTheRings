@@ -1037,6 +1037,22 @@ runGameMessage msg g = case msg of
             $ [targetLabel d (exhaust' d <> [DefendWith pid eid d]) | d <- defenders]
             <> [Label (ikey "label.takeAttackUndefended") [DeclareSentinels pid eid [] others]]
     pure g
+  DeclareAsDefender pid eid d -> do
+    undefendable <- elem CannotBeDefended <$> getModifiers eid
+    able <- canFight eid d
+    unless (undefendable || not able) do
+      pushAll [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid]]
+      -- the declaration still to come is the card's instead
+      withQueue_ \q -> case break pending q of
+        (before, DeclareDefenders _ _ chosen : after) -> before <> (DeclareSentinels pid eid (chosen <> [d]) [] : after)
+        (before, DeclareSentinels _ _ chosen [] : after) -> before <> (DeclareSentinels pid eid (chosen <> [d]) [] : after)
+        _ -> q
+    pure g
+   where
+    pending = \case
+      DeclareDefenders pid' eid' _ -> pid == pid' && eid == eid'
+      DeclareSentinels pid' eid' _ [] -> pid == pid' && eid == eid'
+      _ -> False
   -- then each other player, in turn, may defend with a sentinel of theirs: one, unless
   -- the attacked player may declare several
   DeclareSentinels pid eid chosen [] -> do
@@ -1489,8 +1505,17 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
-    heroes <- select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
-    allies <- select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
+    -- one that can commit while exhausted, as Lindon Navigator, need not be ready
+    let commitsExhausted :: Targetable t => t -> GameT Bool
+        commitsExhausted c = elem CanCommitWhileExhausted <$> getModifiers c
+    heroes <-
+      (<>)
+        <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero <> not_ CommittedHero)
+        <*> (filterM commitsExhausted =<< select (HeroControlledBy (PlayerWithId pid) <> ExhaustedHero <> not_ CommittedHero))
+    allies <-
+      (<>)
+        <$> select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly <> not_ CommittedAlly)
+        <*> (filterM commitsExhausted =<< select (AllyControlledBy (PlayerWithId pid) <> ExhaustedAlly <> not_ CommittedAlly))
     playerMods <- getModifiers (PlayerTarget pid)
     player <- getPlayer pid
     -- characters already committed have paid any toll for committing
@@ -1641,15 +1666,29 @@ runGameMessage msg g = case msg of
             gameMods <- getModifiers GameTarget
             let instead = filter (inPlay g) [t | ProgressAsDamageTo t <- gameMods]
                 canceledBy q = find ((== Just q) . sourceTarget) [s | QuestProgressCanceledBy s <- gameMods]
+                onQuests k =
+                  [ maybe (PlaceTokens GameSource q Progress k) (`ProgressCanceled` k) (canceledBy q)
+                  | q <- quests
+                  , k > 0
+                  ]
+            -- a location in the staging area may take it before the quest, as Explorer's
+            -- Almanac's, the first player choosing
+            almanacs <- if overflow > 0 && null instead then mayTakeQuestingProgress else pure []
+            lead <- getLead
             pushAll
               $ concat onLocations
               <> case instead of
                 t : _ -> [DealDamage GameSource t overflow | overflow > 0]
-                [] ->
-                  [ maybe (PlaceTokens GameSource q Progress overflow) (`ProgressCanceled` overflow) (canceledBy q)
-                  | q <- quests
-                  , overflow > 0
-                  ]
+                []
+                  | null almanacs -> onQuests overflow
+                  | otherwise ->
+                      [ questionLabelWith (ikey "label.questingProgress") Nothing (map (toTarget . fst) almanacs) lead
+                          $ [ targetLabel lid (PlaceTokens GameSource (toTarget lid) Progress k : onQuests (overflow - k))
+                            | (lid, room) <- almanacs
+                            , let k = min overflow room
+                            ]
+                          <> [Label (ikey "label.placeOnQuest") (onQuests overflow)]
+                      ]
         pure g
   PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do
@@ -3123,6 +3162,17 @@ takingProgressFirst = do
     l <- getLocation lid
     room <- subtract l.progress <$> getLocationQuestPoints lid
     pure $ guard (first && room > 0) $> (lid, room)
+
+-- | The locations in the staging area that may take questing progress before the quest,
+-- as Explorer's Almanac's, with the progress each still takes.
+mayTakeQuestingProgress :: GameT [(LocationId, Int)]
+mayTakeQuestingProgress = do
+  staged <- select LocationInStagingArea
+  flip mapMaybeM staged \lid -> do
+    may <- elem MayTakeQuestingProgress <$> getModifiers lid
+    l <- getLocation lid
+    room <- subtract l.progress <$> getLocationQuestPoints lid
+    pure $ guard (may && room > 0) $> (lid, room)
 
 {- | Place the progress on one of the locations that take it first, the first player
 choosing which, and the rest as the function says.

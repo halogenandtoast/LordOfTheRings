@@ -88,8 +88,12 @@ questingStat = do
 getCommittedWillpower :: (HasGame m) => m Int
 getCommittedWillpower = do
   (_, strength) <- questingStat
+  -- one questing with its attack, as Grappling Hook's, does so whatever the quest's keyword
+  let strength' c = do
+        attack <- elem QuestsWithAttack <$> getModifiers c
+        if attack then getAttack c else strength c
   sum
-    <$> ( traverse strength
+    <$> ( traverse strength'
             =<< filterM (fmap (notElem DoesNotCountWillpower) . getModifiers)
             =<< getCommittedCharacters
         )

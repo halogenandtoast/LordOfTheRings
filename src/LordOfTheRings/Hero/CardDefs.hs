@@ -69,6 +69,8 @@ allHeroCards =
       , aragornTactics
       , halbarad
       , merrySpirit
+      , cirdanTheShipwright
+      , galdorOfTheHavensHero
       ]
 
 aragorn :: CardDef
@@ -416,4 +418,16 @@ merrySpirit :: CardDef
 merrySpirit =
   (hero "10001" "Merry" Spirit 6 2 1 1 2)
     { cdCardTraits = setFromList [Hobbit]
+    }
+
+cirdanTheShipwright :: CardDef
+cirdanTheShipwright =
+  (hero "11001" "Círdan the Shipwright" Spirit 12 4 2 2 4)
+    { cdCardTraits = setFromList [Noldor, Noble]
+    }
+
+galdorOfTheHavensHero :: CardDef
+galdorOfTheHavensHero =
+  (hero "11002" "Galdor of the Havens" Lore 9 2 2 1 4)
+    { cdCardTraits = setFromList [Noldor]
     }

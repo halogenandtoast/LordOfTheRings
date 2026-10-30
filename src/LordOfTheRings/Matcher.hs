@@ -457,6 +457,17 @@ currentQuestHasAKeyword =
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
 
+-- | Whether the top card of the player's discard pile is of the type, as "while the top
+-- card of your discard pile is an ally" reads.
+topOfDiscardIs :: HasGame m => CardType -> PlayerId -> m Bool
+topOfDiscardIs t pid = maybe False ((== t) . (.cardType)) . headMay . (.discard) <$> getPlayer pid
+
+-- | The copies of the card in its player's discard pile, the card itself aside, as
+-- "resolve that effect again for each copy of it currently in your discard pile" reads.
+copiesInDiscard :: HasGame m => PlayerId -> PlayerCard -> m Int
+copiesInDiscard pid card =
+  length . filter (\c -> toCardCode c == toCardCode card && c.id /= card.id) . (.discard) <$> getPlayer pid
+
 -- | The player whose set-aside cards hold the card, as a Ranger of the North shuffled
 -- into the encounter deck stays its owner's.
 setAsideOwner :: HasGame m => CardId -> m (Maybe PlayerId)

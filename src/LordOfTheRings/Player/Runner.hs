@@ -44,7 +44,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
   Window (Window),
-  WindowType (CardsDrawn, DiscardedFromDeck, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  WindowType (CardsDrawn, DiscardedFromDeck, DrewForResourcePhase, SetupHandDrawn, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
   Timing (After),
   mkAfter,
   mkWhen,
@@ -78,6 +78,8 @@ runPlayer msg player = case msg of
       threat <- sum <$> traverse (\h -> modifiedValue threatOf h h.threat) heroes
       pure $ player & threatL .~ threat & startingThreatL .~ threat
     DoStep 5 Setup -> do
+      -- a response instead of a mulligan, as Galdor of the Havens', takes the question away
+      push $ CheckWindows [mkAfter $ SetupHandDrawn player.id]
       push
         $ questionLabel
           (ikey "label.keepStartingHand")
@@ -112,6 +114,9 @@ runPlayer msg player = case msg of
           -- an additional card is part of the same draw, none when there is none
           extra = sum [k | AdditionalResourcePhaseDraws k <- mods]
       pushWhen (n > 0) $ DrawCards $ Drawing player.id (n + extra)
+      -- the cards that draw takes, for what answers them, as Círdan the Shipwright: those
+      -- still in hand after it
+      pushWhen (n > 0) $ CheckWindows [mkAfter $ DrewForResourcePhase player.id (map (.id) $ take (n + extra) player.deck)]
       pure player
     DrawCards drawing | drawing.player == player.id -> do
       blocked <- elem CannotDrawCards <$> getModifiers player
