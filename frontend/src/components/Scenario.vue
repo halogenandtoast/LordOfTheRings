@@ -57,8 +57,20 @@ const settings = [
       :flipping="isFlipping(scenario.quest)"
       @choose="emit('choose', $event)"
     />
+    <!-- the Island Map in its 3x5 grid, in place of the active location's slot -->
+    <div v-if="scenario.islandMap.length" class="island-map">
+      <div
+        v-for="cell in scenario.islandMap"
+        :key="cell.card.id"
+        class="island-cell"
+        :class="{ active: cell.active, staged: cell.staged }"
+        :style="{ gridColumn: cell.column + 1, gridRow: cell.row + 1 }"
+      >
+        <GameCard :card="cell.card" :attachments="cell.attachments" :choices="choices" :flipping="isFlipping(cell.card)" @choose="emit('choose', $event)" />
+      </div>
+    </div>
     <GameCard
-      v-if="scenario.activeLocation"
+      v-else-if="scenario.activeLocation"
       :card="scenario.activeLocation"
       :attachments="scenario.activeLocationAttachments"
       :choices="choices"
@@ -86,6 +98,10 @@ const settings = [
 .heading-track { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .heading-track li { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 4px; font-size: 0.9rem; opacity: 0.4; }
 .heading-track li.current { opacity: 1; border-color: currentColor; color: var(--text); }
+.island-map { display: grid; grid-template-columns: repeat(5, auto); grid-template-rows: repeat(3, auto); gap: 6px; }
+.island-cell { border: 2px solid transparent; border-radius: 8px; padding: 2px; opacity: 0.75; }
+.island-cell.staged { opacity: 1; border-color: var(--line-strong); }
+.island-cell.active { opacity: 1; border-color: var(--text); }
 .location-placeholder {
   display: flex;
   align-items: center;

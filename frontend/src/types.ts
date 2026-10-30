@@ -80,6 +80,8 @@ export interface ScenarioView {
   activeLocationAttachments: CardView[]
   /** A second active location, as Ruined Tower makes, with its attachments. */
   otherActiveLocations: { card: CardView; attachments: CardView[] }[]
+  /** The Island Map's locations in their places, the active one and those in the staging area around it marked (Temple of the Deceived). */
+  islandMap: IslandMapCell[]
   /** what is under the quest card, as Captured! holds Faramir */
   questAttachments: CardView[]
   staging: CardView[]
@@ -96,6 +98,15 @@ export interface ScenarioView {
   /** The Corsair deck's size, while there is one, and its discard pile. */
   corsairDeck: number | null
   corsairDiscard: CardView[]
+}
+
+export interface IslandMapCell {
+  card: CardView
+  attachments: CardView[]
+  column: number
+  row: number
+  active: boolean
+  staged: boolean
 }
 
 export interface AreaView {

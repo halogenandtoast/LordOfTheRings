@@ -40,6 +40,8 @@ export interface Entity {
   guard?: string | null
   /** A location's facedown side, as an Uncharted location hides it: sent only to the players who have looked at it. */
   otherSide?: string | null
+  /** A location's place on the Island Map (Temple of the Deceived). */
+  position?: { column: number; row: number } | null
 }
 
 export interface Card {
