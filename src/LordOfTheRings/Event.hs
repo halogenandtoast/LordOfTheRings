@@ -155,6 +155,10 @@ import LordOfTheRings.Event.Cards.RangerSummons
 import LordOfTheRings.Event.Cards.TirelessHunters
 import LordOfTheRings.Event.Cards.ExpertTrackers
 import LordOfTheRings.Event.Cards.RallyingCry
+import LordOfTheRings.Event.Cards.SkywardVolley
+import LordOfTheRings.Event.Cards.AnchorWatch
+import LordOfTheRings.Event.Cards.TheEveningStar
+import LordOfTheRings.Event.Cards.ElwingsFlight
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -323,5 +327,9 @@ allEvents =
         , SomeEventCard tirelessHunters
         , SomeEventCard expertTrackers
         , SomeEventCard rallyingCry
+        , SomeEventCard skywardVolley
+        , SomeEventCard anchorWatch
+        , SomeEventCard theEveningStar
+        , SomeEventCard elwingsFlight
         ]
     ]

@@ -120,6 +120,11 @@ import LordOfTheRings.Attachment.Cards.SecretVigil
 import LordOfTheRings.Attachment.Cards.StarBrooch
 import LordOfTheRings.Attachment.Cards.RavenWingedHelm
 import LordOfTheRings.Attachment.Cards.HobbitPony
+import LordOfTheRings.Attachment.Cards.GrapplingHook
+import LordOfTheRings.Attachment.Cards.MarinersCompass
+import LordOfTheRings.Attachment.Cards.ExplorersAlmanac
+import LordOfTheRings.Attachment.Cards.ToTheSeaToTheSea
+import LordOfTheRings.Attachment.Cards.Narya
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -266,5 +271,10 @@ allAttachments =
         , SomeAttachmentCard starBrooch
         , SomeAttachmentCard ravenWingedHelm
         , SomeAttachmentCard hobbitPony
+        , SomeAttachmentCard grapplingHook
+        , SomeAttachmentCard marinersCompass
+        , SomeAttachmentCard explorersAlmanac
+        , SomeAttachmentCard toTheSeaToTheSea
+        , SomeAttachmentCard narya
         ]
     ]

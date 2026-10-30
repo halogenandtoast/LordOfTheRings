@@ -127,6 +127,11 @@ allAttachmentCards =
       , starBrooch
       , ravenWingedHelm
       , hobbitPony
+      , grapplingHook
+      , marinersCompass
+      , explorersAlmanac
+      , toTheSeaToTheSea
+      , narya
       ]
 
 stewardOfGondor :: CardDef
@@ -889,3 +894,35 @@ hobbitPony =
     { cdCardTraits = setFromList [Mount]
     , cdKeywords = setFromList [Restricted]
     }
+
+grapplingHook :: CardDef
+grapplingHook =
+  (attachment "11005" "Grappling Hook" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    }
+
+marinersCompass :: CardDef
+marinersCompass =
+  (attachment "11008" "Mariner's Compass" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    }
+
+explorersAlmanac :: CardDef
+explorersAlmanac =
+  (attachment "11011" "Explorer's Almanac" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    }
+
+toTheSeaToTheSea :: CardDef
+toTheSeaToTheSea =
+  unique
+    (attachment "11014" "To the Sea, to the Sea!" Spirit (StaticCost 1))
+      { cdCardTraits = setFromList [Song]
+      }
+
+narya :: CardDef
+narya =
+  unique
+    (attachment "11015" "Narya" Neutral (StaticCost 2))
+      { cdCardTraits = setFromList [Ring, Artifact]
+      }

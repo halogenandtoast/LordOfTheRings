@@ -166,6 +166,10 @@ allEventCards =
       , tirelessHunters
       , expertTrackers
       , rallyingCry
+      , skywardVolley
+      , anchorWatch
+      , theEveningStar
+      , elwingsFlight
       ]
 
 everVigilant :: CardDef
@@ -646,3 +650,15 @@ expertTrackers = event "09009" "Expert Trackers" Lore (StaticCost 0)
 
 rallyingCry :: CardDef
 rallyingCry = event "10003" "Rallying Cry" Leadership (StaticCost 2)
+
+skywardVolley :: CardDef
+skywardVolley = event "11004" "Skyward Volley" Tactics (StaticCost 2)
+
+anchorWatch :: CardDef
+anchorWatch = event "11007" "Anchor Watch" Leadership (StaticCost 2)
+
+theEveningStar :: CardDef
+theEveningStar = event "11010" "The Evening Star" Lore (StaticCost 2)
+
+elwingsFlight :: CardDef
+elwingsFlight = event "11013" "Elwing's Flight" Spirit (StaticCost 2)

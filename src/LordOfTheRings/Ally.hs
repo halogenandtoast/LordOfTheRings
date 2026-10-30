@@ -172,6 +172,10 @@ import LordOfTheRings.Ally.Cards.GaladhrimWeaver
 import LordOfTheRings.Ally.Cards.GaldorOfTheHavens
 import LordOfTheRings.Ally.Cards.AmarthiulAcrossTheEttenmoors
 import LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
+import LordOfTheRings.Ally.Cards.MithlondSeaWatcher
+import LordOfTheRings.Ally.Cards.WardenOfTheHavens
+import LordOfTheRings.Ally.Cards.LindonNavigator
+import LordOfTheRings.Ally.Cards.SailorOfLune
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -371,5 +375,9 @@ allAllies =
         , SomeAllyCard galadhrimWeaver
         , SomeAllyCard galdorOfTheHavens
         , SomeAllyCard amarthiulAcrossTheEttenmoors
+        , SomeAllyCard mithlondSeaWatcher
+        , SomeAllyCard wardenOfTheHavens
+        , SomeAllyCard lindonNavigator
+        , SomeAllyCard sailorOfLune
         ]
     ]
