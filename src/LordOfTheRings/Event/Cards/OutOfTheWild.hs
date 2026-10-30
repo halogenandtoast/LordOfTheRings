@@ -14,7 +14,7 @@ newtype OutOfTheWild = OutOfTheWild EventAttrs
 -- | Secrecy 2, on its card def.
 -- Action: Search the top 5 cards of the encounter deck for any 1 non-objective card worth
 -- no victory points and add it to your victory display. Shuffle the encounter deck. Add
--- Out of the Wild to the victory display.
+-- Out of the Wild to the victory display. (FAQ 1.9 errata added the last sentence.)
 outOfTheWild :: EventCard OutOfTheWild
 outOfTheWild = event OutOfTheWild Cards.outOfTheWild
 
@@ -32,6 +32,6 @@ instance RunMessage OutOfTheWild where
         targets (filter eligible top) addToVictoryDisplay
         labeled "outOfTheWild.none" (pure ())
       shuffleEncounterDeck
-      addToVictoryDisplay card
+      whenM (playsWithErrata pid) $ addToVictoryDisplay card
       pure e
     _ -> OutOfTheWild <$> runMessage msg attrs
