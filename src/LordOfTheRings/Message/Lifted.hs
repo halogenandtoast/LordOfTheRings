@@ -44,7 +44,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled),
+  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
  )
 
 dealDamage
@@ -276,11 +276,14 @@ cancelMatching = lift . void . popMessagesMatching
 {- | Cancel the When Revealed effects of a card just revealed, and with them the lead's
 click to resolve them.
 -}
-cancelWhenRevealed :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
-cancelWhenRevealed t = cancelMatching \case
-  WhenRevealed t' -> t == t'
-  AskToResolveWhenRevealed t' _ -> t == t'
-  _ -> False
+cancelWhenRevealed :: (MonadTrans t, HasQueue Message m, HasQueue Message (t m)) => Target -> t m ()
+cancelWhenRevealed t = do
+  canceled <- lift $ popMessagesMatching \case
+    WhenRevealed t' -> t == t'
+    AskToResolveWhenRevealed t' _ -> t == t'
+    _ -> False
+  -- the window after it, as Ruins of Arnor answers
+  pushWhen (notNull canceled) $ CheckWindows [Window After $ WhenRevealedCanceled t]
 
 {- | Cancel damage about to be dealt to the target, from the window before it is dealt, as
 "before Patrol Leader is dealt damage ... cancel that damage" reads.
@@ -451,6 +454,10 @@ putDiscardOnBottomOfDeck pid cid = push $ PutDiscardOnBottomOfDeck pid cid
 -- | A card in the player's discard pile is shuffled into their deck.
 shuffleFromDiscardIntoDeck :: ReverseQueue m => PlayerId -> CardId -> m ()
 shuffleFromDiscardIntoDeck pid cid = push $ ShuffleFromDiscardIntoDeck pid cid
+
+-- | The top N cards of the player's discard pile are shuffled into their deck.
+shuffleTopOfDiscardIntoDeck :: ReverseQueue m => PlayerId -> Int -> m ()
+shuffleTopOfDiscardIntoDeck pid n = push $ ShuffleTopOfDiscardIntoDeck pid n
 
 {- | An ally card, already taken from where it was, goes into play under the player's
 control.

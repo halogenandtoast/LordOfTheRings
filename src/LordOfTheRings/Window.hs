@@ -115,6 +115,8 @@ data WindowType
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
     PlayedCard PlayerId CardCode
+  | -- | the When Revealed effects of the card just revealed were canceled
+    WhenRevealedCanceled Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

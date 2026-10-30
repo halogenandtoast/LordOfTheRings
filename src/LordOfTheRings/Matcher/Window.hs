@@ -1,7 +1,7 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, cardMatches)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
 import LordOfTheRings.Modifier (Modifier)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
@@ -105,6 +105,11 @@ data WindowMatcher
     AllyEnteredPlayWindow Timing (Maybe PlayerId) (Maybe Trait)
   | -- | a card, or any card, discarded from the top of the player's deck
     DiscardedFromDeckWindow Timing PlayerId (Maybe CardId)
+  | -- | any number of cards discarded from the top of a matching player's deck, as Fornost
+    -- Square reads for the first player
+    PlayerDiscardedFromDeckWindow Timing PlayerMatcher
+  | -- | the When Revealed effects of a treachery canceled, as Ruins of Arnor reads
+    TreacheryWhenRevealedCanceledWindow Timing
   | -- | the player played a matching card from their hand
     PlayedCardFromHandWindow Timing PlayerId CardMatcher
   | -- | any hero dealt damage
@@ -275,6 +280,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
   (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
+  (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -293,6 +299,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
+  (PlayerDiscardedFromDeckWindow {}, _) -> False
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False
