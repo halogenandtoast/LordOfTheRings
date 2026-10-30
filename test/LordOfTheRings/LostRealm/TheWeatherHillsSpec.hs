@@ -112,8 +112,11 @@ spec = describe "The Weather Hills" do
   it "makes the Orc deck, sets Amon Forn aside, and stages Exposed Ridge, Hunting the Orcs and a Weathered Hilltop" . hillsTest $ \pid -> do
     run Setup
     chooseLabel "$label.keepHand" pid
-    -- the Concealed Orc-camps went to the Orc deck as the encounter deck was gathered
-    orcDeckCodes `shouldReturn` replicate 3 (toCardCode Locations.concealedOrcCamp)
+    -- the Concealed Orc-camps and the Angmar Orcs enemies went to the Orc deck as the
+    -- encounter deck was gathered: 11 cards, 3 of them the camps
+    orcDeck <- orcDeckCodes
+    length orcDeck `shouldBe` 11
+    filter (== toCardCode Locations.concealedOrcCamp) orcDeck `shouldBe` replicate 3 (toCardCode Locations.concealedOrcCamp)
     _ <- setEncounterDeck [Locations.amonForn, Locations.exposedRidge, Objectives.huntingTheOrcs, Locations.weatheredHilltop, Locations.weatheredHilltop]
     chooseOptionMatching "flip the quest" pid (const True)
     placementOf Locations.exposedRidge `shouldReturn` Just ActiveLocation

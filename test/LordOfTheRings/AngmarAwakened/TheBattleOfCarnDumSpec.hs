@@ -300,7 +300,8 @@ spec = describe "The Battle of Carn Dûm" do
     run $ PlaceTokens GameSource charge Progress 1
     thaurdirSide `shouldReturn` Just (toCardCode Enemies.thaurdirChampion)
     undefended pid
-    mods <- getModifiers . toTarget =<< getHeroWithCode "01007"
+    -- the undefended attack may have destroyed a hero, so read one still in play
+    mods <- getModifiers . toTarget =<< getsGame (fromJustNote "no hero" . headMay . toList . (.entities.heroes))
     mods `shouldSatisfy` elem (WillpowerModifier (-2))
     run $ PlaceTokens GameSource charge Progress 4
     passActions pid
