@@ -464,8 +464,29 @@ broadcastAnimated animate gid row g entries = do
   table <- tableFor gid row
   atomically $ writeTChan chan $ Updated row table g entries animate
 
-summary :: Entity LotrGame -> Maybe GameSummary
-summary (Entity gid row) | awaitingPlayers row = do
+{- | The games summed up, with the decks dealt at each game with friends (null for the
+starter deck), in seat order, read at once for all of them.
+-}
+summaries :: MonadIO m => [Entity LotrGame] -> ReaderT SqlBackend m [GameSummary]
+summaries games = do
+  seats <- selectList [LotrSeatGameId <-. [gid | Entity gid row <- games, row.lotrGameWithFriends]] [Asc LotrSeatPosition]
+  let decks = Map.fromListWith (flip (<>)) [(seat.lotrSeatGameId, [seat.lotrSeatDeck]) | Entity _ seat <- seats]
+  pure $ mapMaybe (\game -> summary (Map.findWithDefault [] (entityKey game) decks) game) games
+
+{- | The heroes of the decks a game was dealt, a seat each, as reset deals them again.
+An imported game keeps no deck, so it reads as the starter deck.
+-}
+dealtHeroes :: LotrGame -> [Maybe Value] -> [[CardCode]]
+dealtHeroes row friendDecks = case decks of
+  Success deckLists -> map (.heroes) deckLists
+  Error _ -> []
+ where
+  decks
+    | row.lotrGameWithFriends = traverse (maybe (pure starterDeck) fromJSON) friendDecks
+    | otherwise = maybe (pure [starterDeck]) (fromJSON . seatDecks) row.lotrGameDeck
+
+summary :: [Maybe Value] -> Entity LotrGame -> Maybe GameSummary
+summary _ (Entity gid row) | awaitingPlayers row = do
   scenario <- lookupScenario (ScenarioId row.lotrGameScenario)
   pure
     GameSummary
@@ -482,7 +503,7 @@ summary (Entity gid row) | awaitingPlayers row = do
       , easyMode = row.lotrGameEasyMode
       , seats = []
       }
-summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
+summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
   Error _ -> Nothing
   Success (g :: Game) ->
     Just
@@ -504,23 +525,28 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
                 p.threat
                 p.eliminated
                 -- the heroes the deck began with, so a lost game still shows them; a
-                -- game saved before they were kept has only those still in play
-                ( if null p.startingHeroes
-                    then [HeroSummary (toCardCode h) (cdSphere $ toCardDef h) | h <- toList g.entities.heroes, h.owner == pid]
-                    else [HeroSummary c (cdSphere =<< Map.lookup c allPlayerCards) | c <- p.startingHeroes]
+                -- game saved before they were kept shows those still in play, or, with
+                -- none left, the deck it was dealt (an imported one's is not kept)
+                ( case [HeroSummary (toCardCode h) (cdSphere $ toCardDef h) | h <- toList g.entities.heroes, h.owner == pid] of
+                    stillInPlay
+                      | notNull p.startingHeroes -> byCode p.startingHeroes
+                      | notNull stillInPlay -> stillInPlay
+                      | otherwise -> byCode dealt
                 )
-            | pid <- g.playerOrder
+            | (pid, dealt) <- zip g.playerOrder (dealtHeroes row friendDecks <> repeat [])
             , Just p <- [Map.lookup pid (allPlayers g)]
             ]
         }
+ where
+  byCode codes = [HeroSummary c (cdSphere =<< Map.lookup c allPlayerCards) | c <- codes]
 
 getGamesR :: Handler Value
 getGamesR = do
   userId <- requireUserId
   games <- runDB do
     seatedAt <- map ((.lotrSeatGameId) . entityVal) <$> selectList [LotrSeatUserId ==. userId] []
-    selectList ([LotrGameUserId ==. userId] ||. [LotrGameId <-. seatedAt]) [Desc LotrGameUpdatedAt]
-  pure $ toJSON $ mapMaybe summary games
+    summaries =<< selectList ([LotrGameUserId ==. userId] ||. [LotrGameId <-. seatedAt]) [Desc LotrGameUpdatedAt]
+  pure $ toJSON games
 
 {- | A deck to deal: one of the core starter decks by sphere, or one of the user's decks.
 | A starter, one of your decks, or a deck loaded for this game alone and not kept.
@@ -811,10 +837,11 @@ getSpectatableR = do
   userId <- lookupUserId
   games <-
     runDB
-      $ selectList
+      $ summaries
+      =<< selectList
         ((LotrGameAllowSpectators ==. True) : maybe [] (\u -> [LotrGameUserId !=. u]) userId)
         [Desc LotrGameUpdatedAt, LimitTo 50]
-  pure $ toJSON $ filter (isNothing . (.outcome)) $ mapMaybe summary games
+  pure $ toJSON $ filter (isNothing . (.outcome)) games
 
 data AdminDashboard = AdminDashboard
   { users :: Int
@@ -837,14 +864,14 @@ getAdminR = do
     games <- Database.Persist.Postgresql.count ([] :: [Filter LotrGame])
     active <-
       rawSql "SELECT COUNT(DISTINCT user_id) FROM lotr_games WHERE updated_at >= ?" [toPersistValue since]
-    recent <- selectList [] [Desc LotrGameUpdatedAt, LimitTo 20]
+    recent <- summaries =<< selectList [] [Desc LotrGameUpdatedAt, LimitTo 20]
     pure
       $ toJSON
         AdminDashboard
           { users
           , activeUsers = sum (map unSingle active)
           , games
-          , recentGames = mapMaybe summary recent
+          , recentGames = recent
           }
 
 data Answer = Answer
