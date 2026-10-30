@@ -837,7 +837,9 @@ runGameMessage msg g = case msg of
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
     -- an enemy can be spared engagement checks against it, as a trap does
     checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
-    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- checked, cost <= player.threat] of
+    -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
+    costed <- for checked \(eid, cost) -> (\ms -> (eid, cost + sum [n | EngagementCostAgainst p n <- ms, p == pid])) <$> getModifiers eid
+    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- costed, cost <= player.threat] of
       ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
     pure g

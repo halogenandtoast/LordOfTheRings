@@ -115,6 +115,13 @@ data WindowType
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
     PlayedCard PlayerId CardCode
+  | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
+    Became TimeOfDay
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | Whether it is Day or Night, as The Wastes of Eriador's Time objective shows.
+data TimeOfDay = Daytime | Nighttime
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

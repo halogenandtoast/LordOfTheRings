@@ -126,6 +126,8 @@
   "jumpToLatest": "New messages · Jump to latest",
   "drawsIntoHand": "{player} draws {card} into their hand",
   "eliminationLevelLowered": "Each player's threat elimination level drops by {count}",
+  "becomesDay": "It becomes Day",
+  "becomesNight": "It becomes Night",
   "placedUnderneath": "A card is placed facedown underneath {target} | {count} cards are placed facedown underneath {target}",
   "damagePlaced": "{count} damage is placed on {target}",
   "scour": "Scour: {target}'s Scour effect triggers",

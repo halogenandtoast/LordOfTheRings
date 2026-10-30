@@ -22,6 +22,9 @@ data ModifierType
   | HitPointModifier Int
   | ThreatModifier Int
   | EngagementCostModifier Int
+  | -- | on an enemy: its engagement cost is this much higher as the player makes an
+    -- engagement check against it, as Hunting Pack's is lower
+    EngagementCostAgainst PlayerId Int
   | GainTrait Trait
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
