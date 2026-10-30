@@ -220,19 +220,27 @@ toParsedDeck db source override deck =
         Just n | not (T.null n) -> n
         _ -> T.strip deck.name
     , description = deck.description
-    , startingThreat = deck.startingThreat
+    , startingThreat = deck.startingThreat <|> heroThreat db (map (.cardCode) heroes)
     , source
     , sourceId = tshow <$> deck.ringsdbDeckId
     , sourceUrl = deck.url
-    , heroes = slotsFrom deck.heroes
+    , heroes
     , slots = slotsFrom (Map.difference deck.slots deck.heroes)
     , sideslots = slotsFrom deck.sideslots
     }
  where
+  heroes = slotsFrom deck.heroes
   -- keyed by card code, which is printing order: the order a deck list reads in
   slotsFrom m = [slot db code (lookupRingsdbCode code db <|> ours code) quantity | (code, quantity) <- Map.toAscList m]
   -- a file written against our own database names our codes instead
   ours code = code <$ lookupCard code db
+
+-- | The heroes' threat summed, for a deck whose source does not say (a shared RingsDB
+-- deck, a JSON file), when every hero is known.
+heroThreat :: CardDb -> [Maybe Text] -> Maybe Int
+heroThreat db = \case
+  [] -> Nothing
+  codes -> sum <$> traverse (>>= (`cardThreatCost` db)) codes
 
 slot :: CardDb -> Text -> Maybe Text -> Int -> Slot
 slot db sourceCode cardCode quantity = Slot {quantity, sourceCode, cardCode, card = flip lookupCard db =<< cardCode}
@@ -372,7 +380,7 @@ listDecks db userId = do
       DeckSummary
         { deckId = fromSqlKey key
         , name = d.lotrDeckName
-        , startingThreat = d.lotrDeckStartingThreat
+        , startingThreat = d.lotrDeckStartingThreat <|> heroThreat db [s.lotrDeckSlotCardCode | s <- slots, s.lotrDeckSlotKind == "hero"]
         , source = d.lotrDeckSource
         , sourceUrl = d.lotrDeckSourceUrl
         , heroes =
@@ -402,7 +410,7 @@ loadDeck db userId key =
             { deckId = fromSqlKey key
             , name = d.lotrDeckName
             , description = d.lotrDeckDescription
-            , startingThreat = d.lotrDeckStartingThreat
+            , startingThreat = d.lotrDeckStartingThreat <|> heroThreat db (map (.cardCode) (section "hero"))
             , source = d.lotrDeckSource
             , sourceId = d.lotrDeckSourceId
             , sourceUrl = d.lotrDeckSourceUrl

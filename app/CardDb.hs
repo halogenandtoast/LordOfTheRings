@@ -1,7 +1,7 @@
 -- | The card browser's database (@cards.json@), read once at startup so decks can
 -- be resolved against it. The cards are kept as the JSON they arrived as, because
 -- the deck page renders them with the same code the browser does.
-module CardDb (CardDb, loadCardDb, lookupCard, lookupRingsdbCode, cardName, cardRingsdbCode, cardSphere) where
+module CardDb (CardDb, loadCardDb, lookupCard, lookupRingsdbCode, cardName, cardRingsdbCode, cardSphere, cardThreatCost) where
 
 import Data.Aeson.Types (Parser, parseMaybe)
 import Data.Char (isDigit)
@@ -85,3 +85,7 @@ cardName code db = (.name) . fst <$> Map.lookup code db.byCode
 
 cardSphere :: Text -> CardDb -> Maybe Text
 cardSphere code db = parseMaybe (withObject "card" (.: "sphere")) . snd =<< Map.lookup code db.byCode
+
+-- | A hero's threat cost, when it is a number.
+cardThreatCost :: Text -> CardDb -> Maybe Int
+cardThreatCost code db = parseMaybe (withObject "card" (.: "threatCost")) . snd =<< Map.lookup code db.byCode
