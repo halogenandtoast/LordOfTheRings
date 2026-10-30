@@ -166,6 +166,11 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.ChetwoodForest
+import LordOfTheRings.Location.Cards.BordersOfBreeLand
+import LordOfTheRings.Location.Cards.OutlyingHomestead
+import LordOfTheRings.Location.Cards.RuggedCountry
+import LordOfTheRings.Location.Cards.ShroudedHills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -359,5 +364,10 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard chetwoodForest
+        , SomeLocationCard bordersOfBreeLand
+        , SomeLocationCard outlyingHomestead
+        , SomeLocationCard ruggedCountry
+        , SomeLocationCard shroudedHills
         ]
     ]
