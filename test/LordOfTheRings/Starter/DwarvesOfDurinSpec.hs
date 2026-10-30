@@ -91,6 +91,11 @@ spec = describe "Dwarves of Durin" do
       run $ BeginPhase ResourcePhase
       length <$> handIds pid `shouldReturn` (initial + 2)
 
+    it "draws no more with fewer than 5 Dwarf characters" . dodTest $ \pid -> do
+      initial <- length <$> handIds pid
+      run $ BeginPhase ResourcePhase
+      length <$> handIds pid `shouldReturn` (initial + 1)
+
   describe "Zigil Miner" do
     it "adds a resource for each discarded card that costs the named number" . dodTest $ \pid -> do
       miner <- putAllyIntoPlay pid Allies.zigilMiner
