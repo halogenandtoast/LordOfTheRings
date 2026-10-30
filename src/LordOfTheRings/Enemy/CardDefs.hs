@@ -162,6 +162,10 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , daechanar
+      , dwimmerlaik
+      , witchOfAngmar
+      , wraithOfCarnDum
       ]
 
 namelessThing :: CardDef
@@ -1289,4 +1293,33 @@ spiritOfTheWild =
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
+    }
+
+daechanar :: CardDef
+daechanar =
+  (enemy "10153" "Daechanar" TheDreadRealm 1 1 5 4 5 12)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Undead, Dunedain, Sorcerer]
+    , cdVictoryPoints = Just 10
+    }
+
+dwimmerlaik :: CardDef
+dwimmerlaik =
+  (enemy "10155" "Dwimmerlaik" TheDreadRealm 3 34 4 5 0 9)
+    { cdCardTraits = setFromList [Undead, Wraith]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+witchOfAngmar :: CardDef
+witchOfAngmar =
+  (enemy "10156" "Witch of Angmar" TheDreadRealm 3 26 3 2 2 4)
+    { cdCardTraits = setFromList [Undead, Sorcerer]
+    , cdEasyModeQuantity = Just 2
+    }
+
+wraithOfCarnDum :: CardDef
+wraithOfCarnDum =
+  (enemy "10157" "Wraith of Carn Dûm" TheDreadRealm 2 18 2 4 0 5)
+    { cdCardTraits = setFromList [Undead, Wraith]
     }
