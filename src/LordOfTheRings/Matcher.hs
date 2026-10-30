@@ -14,6 +14,7 @@ import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Heading as X
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -747,3 +748,46 @@ getNextPlayer pid = do
 controlledCharactersWithTrait :: HasGame m => PlayerId -> Trait -> m [Target]
 controlledCharactersWithTrait pid trait =
   selectCharacters (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait) (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait)
+
+-- * The Dream-chaser's heading and its ships (Dream-chaser rules)
+
+-- | The heading, once the players have prepared their fleet.
+getHeading :: HasGame m => m (Maybe Heading)
+getHeading = getsGame ((.heading) . toAttrs . gameScenario)
+
+-- | Whether the heading reads as the matcher says; with no heading, it reads as nothing.
+headingMatches :: HasGame m => HeadingMatcher -> m Bool
+headingMatches m = maybe False (headingIs m) <$> getHeading
+
+-- | "If you are on-course": the heading is at its best setting.
+isOnCourse :: HasGame m => m Bool
+isOnCourse = headingMatches OnCourseHeading
+
+-- | "If you are off-course": the heading is at any setting but the best.
+isOffCourse :: HasGame m => m Bool
+isOffCourse = headingMatches OffCourseHeading
+
+-- | "If your heading is at the worst setting".
+atWorstHeading :: HasGame m => m Bool
+atWorstHeading = headingMatches WorstHeading
+
+-- | A Ship objective: an objective ally with the Ship trait, which counts as an ally and a
+-- character.
+shipObjective :: AllyMatcher
+shipObjective = ObjectiveAlly <> AllyWithTrait Ship
+
+shipEnemy :: EnemyMatcher
+shipEnemy = EnemyWithTrait Ship
+
+-- | The Ship objectives the player controls.
+shipObjectivesOf :: HasGame m => PlayerId -> m [AllyId]
+shipObjectivesOf pid = select (shipObjective <> AllyControlledBy (PlayerWithId pid))
+
+-- | The enemy's Boarding X: printed and gained, as Calphon's Divination gives it, then
+-- raised or lowered, as Cobas Haven reduces it; never below 0.
+getBoarding :: HasGame m => EnemyId -> m Int
+getBoarding eid = do
+  e <- getEnemy eid
+  base <- keywordValue (\case Boarding n -> Just n; _ -> Nothing) (toTarget eid) (toCardDef e)
+  mods <- map modifierType . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
+  pure $ max 0 $ base + sum [n | BoardingModifier n <- mods]

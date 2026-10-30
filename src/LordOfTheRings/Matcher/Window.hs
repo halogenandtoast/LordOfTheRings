@@ -225,6 +225,8 @@ data WindowMatcher
     BecomesWindow TimeOfDay
   | -- | any captured cards rescued (Escape from Mount Gram)
     CapturedCardsRescuedWindow Timing
+  | -- | a player committed characters to a Sailing test, as Swift Raider answers
+    CommittedToSailingTestWindow Timing
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -328,6 +330,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (BecomesWindow time, Became time') -> time == time'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
+  (CommittedToSailingTestWindow t, CommittedToSailingTest {}) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

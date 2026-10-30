@@ -1248,3 +1248,25 @@ discardFromDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 discardFromDeck pid card = do
   push $ RemoveFromDeck pid card.id
   push $ PutInDiscard card
+
+-- * Sailing (Dream-chaser rules)
+
+-- | Shift the heading one setting off-course, as Rolling Seas' Travel cost reads.
+shiftHeadingOffCourse :: (ReverseQueue m, Sourceable source) => source -> m ()
+shiftHeadingOffCourse source = push $ ShiftHeading (toSource source) ShiftOffCourse
+
+-- | Shift the heading one setting on-course, as a sailing success icon does.
+shiftHeadingOnCourse :: (ReverseQueue m, Sourceable source) => source -> m ()
+shiftHeadingOnCourse source = push $ ShiftHeading (toSource source) ShiftOnCourse
+
+-- | "Prepare the Corsair deck": each non-Ship enemy leaves the encounter deck for it.
+prepareCorsairDeck :: ReverseQueue m => m ()
+prepareCorsairDeck = push PrepareCorsairDeck
+
+-- | "Players prepare their fleet", the heading starting on-course.
+prepareFleet :: ReverseQueue m => m ()
+prepareFleet = push PrepareFleet
+
+-- | The player reveals the top card of the Corsair deck and engages it, for the source.
+revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+revealFromCorsairDeck source pid = push $ RevealFromCorsairDeck (toSource source) pid

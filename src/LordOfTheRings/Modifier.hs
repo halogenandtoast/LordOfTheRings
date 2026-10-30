@@ -420,6 +420,26 @@ data ModifierType
   | -- | on the game: each ally that leaves play goes to its owner's hand instead of the
     -- discard pile, as Rallying Cry's Valour Action reads
     AlliesLeavePlayToHand
+  | -- | on the game: each Sailing test looks at this many more cards, as Calm Waters reads
+    SailingTestAdditionalCards Int
+  | -- | on the game: the first sailing success icon each Sailing test finds is canceled,
+    -- as Rough Waters reads
+    CancelFirstSailingIcon
+  | -- | on a character: it can be committed to a Sailing test whoever controls it, as the
+    -- Dream-chaser
+    CommittableToAnySailingTest
+  | -- | on a character: committed to a Sailing test it counts as this many characters, as
+    -- the Dream-chaser counts as 2
+    CountsAsSailingCharacters Int
+  | -- | on a Ship enemy: its Boarding X is raised (lowered, when negative) by this much,
+    -- as Cobas Haven reduces it
+    BoardingModifier Int
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is dealt to a Ship objective the defending player controls, as Sudden Storms' shadow
+    ExcessDamageToShipObjective
+  | -- | on an enemy: the player's characters cannot attack it, as Umbar Captain reads for
+    -- Ship enemies
+    CannotBeAttackedByCharactersOf PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

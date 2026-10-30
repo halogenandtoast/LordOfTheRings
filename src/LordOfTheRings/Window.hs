@@ -134,6 +134,8 @@ data WindowType
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
     -- (Escape from Mount Gram)
     CapturedCardsRescued Card [Card]
+  | -- | the player committed these characters to a Sailing test (Dream-chaser rules)
+    CommittedToSailingTest PlayerId [Target]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

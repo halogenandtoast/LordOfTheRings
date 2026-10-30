@@ -829,7 +829,10 @@ runGameMessage msg g = case msg of
           , lead <- take 1 order
           ]
     skipped <- elem SkipQuestPhase <$> getModifiers GameTarget
-    unless skipped $ pushAll $ chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
+    -- a stage with the Sailing keyword has the first player make a Sailing test before
+    -- characters commit (Dream-chaser rules)
+    let sailing = [SailingTest | any (\q -> not (isSideQuest q) && Sailing `member` cdKeywords (toCardDef q)) g.entities.quests]
+    unless skipped $ pushAll $ sailing <> chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
     pure $ g & phaseL .~ QuestPhase
   BeginPhase TravelPhase -> do
     -- the players' actions come first, as Thrór's Map's, then the lead may travel
@@ -906,12 +909,16 @@ runGameMessage msg g = case msg of
       for_ (find (\p -> p.threat >= cost && CannotEngagePlayer p.id `notElem` mods) players) \p -> push (EngageEnemy p.id eid)
     pure g
   EngageEnemy pid eid -> do
+    -- a Ship enemy engaging from the staging area resolves its Boarding X (Dream-chaser rules)
+    let fromStaging = maybe False ((== StagingArea) . (.placement)) (Map.lookup eid g.entities.enemies)
     pushAll
-      [ CheckWindows [mkWhen $ EnemyEngaged eid pid]
-      , PlaceEnemy eid (EngagedWith pid)
-      , CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
-      , CheckWindows [mkAfter $ EnemyEngaged eid pid]
-      ]
+      $ [ CheckWindows [mkWhen $ EnemyEngaged eid pid]
+        , PlaceEnemy eid (EngagedWith pid)
+        ]
+      <> [ResolveBoarding pid eid | fromStaging]
+      <> [ CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
+         , CheckWindows [mkAfter $ EnemyEngaged eid pid]
+         ]
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
@@ -1106,10 +1113,14 @@ runGameMessage msg g = case msg of
         <$> ((<>) <$> getModifiers eid <*> getModifiers (PlayerTarget pid))
     -- or a character the player may give it to instead of a hero, as White Tower Watchman
     watchmen <- filter (inPlay g) . (\ms -> [t | UndefendedDamageMayGoTo t <- ms]) <$> getModifiers (PlayerTarget pid)
+    -- a Ship enemy's goes to a Ship objective the player controls (Dream-chaser rules)
+    ship <- selectAny (EnemyWithId eid <> shipEnemy)
+    ships <- if ship then map toTarget <$> shipObjectivesOf pid else pure []
     heroes <-
-      if null redirected
-        then (<> watchmen) . map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
-        else pure []
+      if
+        | notNull redirected -> pure []
+        | notNull ships -> pure ships
+        | otherwise -> (<> watchmen) . map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
     -- with several it may go to, as tied Battlegrounds at The Defense, the player chooses
     case ordNub redirected of
       [t] -> pushAll =<< attackDamage pid eid t attack
@@ -2391,6 +2402,13 @@ runGameMessage msg g = case msg of
       . objectivesL
       . traverse
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
+  -- as a Ship objective of the fleet comes into play (Dream-chaser rules)
+  PutObjectiveAllyIntoPlayUnder pid card -> do
+    aid <- getRandom
+    let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly (toCardCode card) card.id aid pid
+    push $ enteredPlayThisRound thisAlly
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
+    pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly =
           -- the damage it took in the staging area stays on it, as Celador's
@@ -2856,13 +2874,21 @@ attackDamage pid eid target n = do
       excessToOthers = ExcessDamageToOtherCharacters `elem` mods
       excessToLocation = ExcessDamageToActiveLocation `elem` mods
       excessToQuests = ExcessDamageRemovesQuestProgress `elem` mods
+      excessToShip = ExcessDamageToShipObjective `elem` mods
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
   quests <- getsGame (toList . entitiesQuests . gameEntities)
   es <- getsGame gameEntities
+  ships <- filter (/= target) . map toTarget <$> shipObjectivesOf pid
+  let toShip =
+        [ chooseOrRunOne pid [targetLabel s [DealDamage (EnemyAttackSource eid) s excess] | s <- ships]
+        | excessToShip
+        , excess > 0
+        , notNull ships
+        ]
   let captured = case target of
         HeroTarget h -> toCard <$> Map.lookup h es.heroes
         AllyTarget a -> toCard <$> Map.lookup a es.allies
@@ -2876,6 +2902,7 @@ attackDamage pid eid target n = do
         <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
         <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
         <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
+        <> toShip
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
@@ -2888,7 +2915,9 @@ ownAttackers pid eid = do
       fromStaging cs = (<>) <$> stagingAttackers cs <*> if AttackableInStagingAreaByRanged `elem` mods then withKeyword Ranged cs else pure []
   -- one who does not exhaust to attack is still declared only once
   attacking <- selectCharacters AttackingHero AttackingAlly
-  filter (`notElem` attacking)
+  -- none of them, as Umbar Captain bars them from Ship enemies
+  let barred = CannotBeAttackedByCharactersOf pid `elem` mods
+  filter (\c -> not barred && c `notElem` attacking)
     . ordNub
     <$> ( filterM (canFight eid)
             =<< (if staged && not open' then fromStaging else pure)
@@ -2907,7 +2936,8 @@ mayAttack' :: PlayerId -> EnemyId -> GameT [Target]
 mayAttack' pid eid = do
   own <- ownAttackers pid eid
   engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
-  others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
+  mods <- getModifiers eid
+  others <- if engaged then filter (\p -> p /= pid && CannotBeAttackedByCharactersOf p `notElem` mods) <$> getPlayerOrder else pure []
   ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
   pure $ own <> ranged
 
@@ -2938,7 +2968,9 @@ canFight eid c = do
   mods <- getModifiers eid
   def <- characterCardDef c
   andM
-    [ allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
+    [ -- a Ship objective fights only Ship enemies (Dream-chaser rules)
+      orM [not <$> isShipObjective c, selectAny (EnemyWithId eid <> shipEnemy)]
+    , allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
     , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True
     ]
@@ -2953,7 +2985,15 @@ canDefend eid c = do
   let isAlly = case c of
         AllyTarget _ -> True
         _ -> False
-  if (noAllies && isAlly) || exhausts then pure False else canFight eid c
+  -- only a Ship objective defends against a Ship enemy (Dream-chaser rules)
+  shipOnly <- andM [selectAny (EnemyWithId eid <> shipEnemy), not <$> isShipObjective c]
+  if (noAllies && isAlly) || exhausts || shipOnly then pure False else canFight eid c
+
+-- | Whether the character is a Ship objective (Dream-chaser rules).
+isShipObjective :: Target -> GameT Bool
+isShipObjective = \case
+  AllyTarget aid -> selectAny (AllyWithId aid <> shipObjective)
+  _ -> pure False
 
 -- | Whether declaring the character as a defender against the enemy exhausts it.
 exhaustToDefend :: Target -> EnemyId -> GameT Bool

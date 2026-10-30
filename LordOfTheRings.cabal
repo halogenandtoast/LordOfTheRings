@@ -679,6 +679,7 @@ library
       LordOfTheRings.Game.Base
       LordOfTheRings.Game.Public
       LordOfTheRings.GameT
+      LordOfTheRings.Heading
       LordOfTheRings.Helpers.Attachment
       LordOfTheRings.Helpers.Character
       LordOfTheRings.Helpers.Modifiers
@@ -1203,6 +1204,7 @@ library
       LordOfTheRings.Scenario
       LordOfTheRings.Scenario.Import.Lifted
       LordOfTheRings.Scenario.Runner
+      LordOfTheRings.Scenario.Sailing
       LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors
       LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors.Helpers
       LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel
