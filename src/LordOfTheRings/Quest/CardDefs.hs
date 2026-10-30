@@ -7,15 +7,37 @@ import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword (Keyword (Battle, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Sphere (Sphere (Neutral))
+import LordOfTheRings.Sphere (Sphere (Leadership, Neutral, Spirit, Tactics))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid]
 
 gatherInformation :: CardDef
 gatherInformation =
   (playerSideQuest "09014" "Gather Information" Neutral (StaticCost 0) 4)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
+
+doubleBack :: CardDef
+doubleBack =
+  (playerSideQuest "10034" "Double Back" Spirit (StaticCost 0) 4)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
+
+delayTheEnemy :: CardDef
+delayTheEnemy =
+  (playerSideQuest "10058" "Delay the Enemy" Tactics (StaticCost 0) 8)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    , cdKeywords = setFromList [Battle]
+    }
+
+sendForAid :: CardDef
+sendForAid =
+  (playerSideQuest "10086" "Send for Aid" Leadership (StaticCost 1) 6)
     { cdVictoryPoints = Just 1
     , cdDeckLimit = 1
     }

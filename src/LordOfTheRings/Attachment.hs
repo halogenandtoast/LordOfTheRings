@@ -104,6 +104,11 @@ import LordOfTheRings.Attachment.Cards.DefenderOfTheWest
 import LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
 import LordOfTheRings.Attachment.Cards.WardenOfArnor
 import LordOfTheRings.Attachment.Cards.TheDaysRising
+import LordOfTheRings.Attachment.Cards.RangerProvisions
+import LordOfTheRings.Attachment.Cards.SteedOfImladris
+import LordOfTheRings.Attachment.Cards.ElvenSpear
+import LordOfTheRings.Attachment.Cards.SilverHarp
+import LordOfTheRings.Attachment.Cards.ElfFriend
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -234,5 +239,10 @@ allAttachments =
         , SomeAttachmentCard theFallOfGilGalad
         , SomeAttachmentCard wardenOfArnor
         , SomeAttachmentCard theDaysRising
+        , SomeAttachmentCard rangerProvisions
+        , SomeAttachmentCard steedOfImladris
+        , SomeAttachmentCard elvenSpear
+        , SomeAttachmentCard silverHarp
+        , SomeAttachmentCard elfFriend
         ]
     ]

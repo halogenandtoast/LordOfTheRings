@@ -145,6 +145,13 @@ import LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
 import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
 import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
 import LordOfTheRings.Ally.Cards.NalirTheNinInEilph
+import LordOfTheRings.Ally.Cards.VeteranOfOsgiliath
+import LordOfTheRings.Ally.Cards.DerndingleWarrior
+import LordOfTheRings.Ally.Cards.ElvenJeweler
+import LordOfTheRings.Ally.Cards.LongbeardSentry
+import LordOfTheRings.Ally.Cards.WellinghallPreserver
+import LordOfTheRings.Ally.Cards.GaladhrimWeaver
+import LordOfTheRings.Ally.Cards.GaldorOfTheHavens
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -317,5 +324,12 @@ allAllies =
         , SomeAllyCard chiefTurchTheAntleredCrown
         , SomeAllyCard nalirTroubleInTharbad
         , SomeAllyCard nalirTheNinInEilph
+        , SomeAllyCard veteranOfOsgiliath
+        , SomeAllyCard derndingleWarrior
+        , SomeAllyCard elvenJeweler
+        , SomeAllyCard longbeardSentry
+        , SomeAllyCard wellinghallPreserver
+        , SomeAllyCard galadhrimWeaver
+        , SomeAllyCard galdorOfTheHavens
         ]
     ]

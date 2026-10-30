@@ -62,6 +62,9 @@ allHeroCards =
       , grima
       , idraen
       , erkenbrand
+      , rossiel
+      , dori
+      , erestor
       ]
 
 aragorn :: CardDef
@@ -366,4 +369,23 @@ erkenbrand =
   (hero "08137" "Erkenbrand" Leadership 10 1 2 3 4)
     { cdCardTraits = setFromList [Rohan, Warrior]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+rossiel :: CardDef
+rossiel =
+  (hero "10028" "Rossiel" Lore 8 2 1 2 3)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+dori :: CardDef
+dori =
+  (hero "10054" "Dori" Tactics 10 1 2 2 5)
+    { cdCardTraits = setFromList [Dwarf]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+erestor :: CardDef
+erestor =
+  (hero "10084" "Erestor" Lore 10 2 2 2 4)
+    { cdCardTraits = setFromList [Noldor]
     }

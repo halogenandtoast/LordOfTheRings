@@ -133,6 +133,18 @@ import LordOfTheRings.Event.Cards.MessageFromElrond
 import LordOfTheRings.Event.Cards.TightenOurBelts
 import LordOfTheRings.Event.Cards.RideThemDown
 import LordOfTheRings.Event.Cards.DontBeHasty
+import LordOfTheRings.Event.Cards.DescendantsOfKings
+import LordOfTheRings.Event.Cards.BoomedAndTrumpeted
+import LordOfTheRings.Event.Cards.LeaveNoTrace
+import LordOfTheRings.Event.Cards.DistantStars
+import LordOfTheRings.Event.Cards.KeenAsLances
+import LordOfTheRings.Event.Cards.DunedainMessage
+import LordOfTheRings.Event.Cards.FairAndPerilous
+import LordOfTheRings.Event.Cards.NoneReturn
+import LordOfTheRings.Event.Cards.HopeRekindled
+import LordOfTheRings.Event.Cards.Reinforcements
+import LordOfTheRings.Event.Cards.HornsCry
+import LordOfTheRings.Event.Cards.TheDoorIsClosed
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -279,5 +291,17 @@ allEvents =
         , SomeEventCard tightenOurBelts
         , SomeEventCard rideThemDown
         , SomeEventCard dontBeHasty
+        , SomeEventCard descendantsOfKings
+        , SomeEventCard boomedAndTrumpeted
+        , SomeEventCard leaveNoTrace
+        , SomeEventCard distantStars
+        , SomeEventCard keenAsLances
+        , SomeEventCard dunedainMessage
+        , SomeEventCard fairAndPerilous
+        , SomeEventCard noneReturn
+        , SomeEventCard hopeRekindled
+        , SomeEventCard reinforcements
+        , SomeEventCard hornsCry
+        , SomeEventCard theDoorIsClosed
         ]
     ]

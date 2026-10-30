@@ -111,6 +111,11 @@ allAttachmentCards =
       , theFallOfGilGalad
       , wardenOfArnor
       , theDaysRising
+      , rangerProvisions
+      , steedOfImladris
+      , elvenSpear
+      , silverHarp
+      , elfFriend
       ]
 
 stewardOfGondor :: CardDef
@@ -762,4 +767,38 @@ theDaysRising =
   (attachment "08139" "The Day's Rising" Leadership (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Song]
+    }
+
+rangerProvisions :: CardDef
+rangerProvisions =
+  (attachment "10055" "Ranger Provisions" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+steedOfImladris :: CardDef
+steedOfImladris =
+  (attachment "10059" "Steed of Imladris" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+elvenSpear :: CardDef
+elvenSpear =
+  (attachment "10087" "Elven Spear" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+silverHarp :: CardDef
+silverHarp =
+  (attachment "10090" "Silver Harp" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Instrument]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+elfFriend :: CardDef
+elfFriend =
+  (attachment "10093" "Elf-friend" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Title]
     }
