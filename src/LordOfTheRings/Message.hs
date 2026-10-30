@@ -223,6 +223,9 @@ data Message
   | -- | the player divides the damage among characters they control, a point at a time,
     -- the points assigned so far kept; it is dealt once all are assigned
     DealDamageDivided Source PlayerId Int [Target]
+  | -- | as 'DealDamageDivided', among the characters given: the player divides the damage,
+    -- the points assigned so far kept
+    DealDamageDividedAmong Source PlayerId [Target] Int [Target]
   | DiscardRandomFromHand PlayerId Int
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target

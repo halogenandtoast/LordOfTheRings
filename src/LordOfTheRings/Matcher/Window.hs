@@ -22,6 +22,8 @@ data WindowMatcher
     PlayerEngagedEnemyWindow Timing PlayerId
   | OptionallyEngagedWindow Timing PlayerId
   | EnemyEntersStagingAreaWindow Timing
+  | -- | an enemy with the trait added to the staging area, as Amon Forn reads
+    EnemyWithTraitEntersStagingAreaWindow Timing Trait
   | GainedResourcesWindow Timing Target
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
@@ -279,6 +281,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
   (EnemyWithTraitRevealedWindow {}, _) -> False
+  (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
   (AttackDealtDamageWithTraitWindow {}, _) -> False
