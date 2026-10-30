@@ -64,6 +64,7 @@ allObjectiveCards =
       , iarion
       , huntingTheOrcs
       , savageCounterattack
+      , amarthiulAcrossTheEttenmoors
       ]
 
 durinsAxe :: CardDef
@@ -399,3 +400,12 @@ huntingTheOrcs = (objective "09071" "Hunting the Orcs" TheWeatherHills 1) {cdCar
 -- play as Hunting the Orcs flips.
 savageCounterattack :: CardDef
 savageCounterattack = (objective "09072" "Savage Counter-attack" TheWeatherHills 0) {cdCardTraits = setFromList [Mission]}
+
+amarthiulAcrossTheEttenmoors :: CardDef
+amarthiulAcrossTheEttenmoors =
+  ((objective "10067" "Amarthiúl" AcrossTheEttenmoors 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

@@ -195,6 +195,7 @@ data LocationMatcher
   | LocationInStagingArea
   | IsActiveLocation
   | LocationWithTrait Trait
+  | LocationWithKeyword Keyword
   | LocationWithCardCode CardCode
   | -- | a location player card effects can reach
     LocationNotImmuneToPlayerCards

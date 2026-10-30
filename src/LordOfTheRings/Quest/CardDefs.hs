@@ -180,6 +180,12 @@ allQuestCards =
       , makeCamp
       , scatteredAmongTheHills
       , corneredAnimals
+      , intoTheEttenmoors
+      , aMiserableJourney
+      , journeysEnd
+      , lieLow
+      , forageForFood
+      , scavengeForSupplies
       ]
 
 theDrippingWalls :: CardDef
@@ -636,3 +642,21 @@ scatteredAmongTheHills = (quest "09069" "Scattered Among the Hills" TheWeatherHi
 
 corneredAnimals :: CardDef
 corneredAnimals = quest "09070" "Cornered Animals" TheWeatherHills 2 20
+
+intoTheEttenmoors :: CardDef
+intoTheEttenmoors = quest "10064" "Into the Ettenmoors" AcrossTheEttenmoors 1 10
+
+aMiserableJourney :: CardDef
+aMiserableJourney = quest "10065" "A Miserable Journey" AcrossTheEttenmoors 2 20
+
+journeysEnd :: CardDef
+journeysEnd = quest "10066" "Journey's End" AcrossTheEttenmoors 3 17
+
+lieLow :: CardDef
+lieLow = (encounterSideQuest "10081" "Lie Low" AcrossTheEttenmoors 8) {cdVictoryPoints = Just 10}
+
+forageForFood :: CardDef
+forageForFood = (encounterSideQuest "10082" "Forage for Food" AcrossTheEttenmoors 6) {cdVictoryPoints = Just 10}
+
+scavengeForSupplies :: CardDef
+scavengeForSupplies = (encounterSideQuest "10083" "Scavenge for Supplies" AcrossTheEttenmoors 7) {cdVictoryPoints = Just 10}

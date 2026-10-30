@@ -171,6 +171,11 @@ import LordOfTheRings.Enemy.Cards.AngmarOrc
 import LordOfTheRings.Enemy.Cards.AngmarMarauder
 import LordOfTheRings.Enemy.Cards.AngmarCaptain
 import LordOfTheRings.Enemy.Cards.CorneredOrc
+import LordOfTheRings.Enemy.Cards.SavageTrollspawn
+import LordOfTheRings.Enemy.Cards.ColdfellGiant
+import LordOfTheRings.Enemy.Cards.CruelMountainTroll
+import LordOfTheRings.Enemy.Cards.RuthlessHillTroll
+import LordOfTheRings.Enemy.Cards.GoblinPursuer
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -367,5 +372,10 @@ allEnemys =
         , SomeEnemyCard angmarMarauder
         , SomeEnemyCard angmarCaptain
         , SomeEnemyCard corneredOrc
+        , SomeEnemyCard savageTrollspawn
+        , SomeEnemyCard coldfellGiant
+        , SomeEnemyCard cruelMountainTroll
+        , SomeEnemyCard ruthlessHillTroll
+        , SomeEnemyCard goblinPursuer
         ]
     ]

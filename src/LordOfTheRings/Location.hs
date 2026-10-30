@@ -183,6 +183,12 @@ import LordOfTheRings.Location.Cards.WeatheredHilltop
 import LordOfTheRings.Location.Cards.ExposedRidge
 import LordOfTheRings.Location.Cards.ShelteredValley
 import LordOfTheRings.Location.Cards.ConcealedOrcCamp
+import LordOfTheRings.Location.Cards.SecludedCave
+import LordOfTheRings.Location.Cards.TheHoarwell
+import LordOfTheRings.Location.Cards.AbandonedCamp
+import LordOfTheRings.Location.Cards.PatchOfWoods
+import LordOfTheRings.Location.Cards.TrollFells
+import LordOfTheRings.Location.Cards.BarrenMoorland
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -393,5 +399,11 @@ allLocations =
         , SomeLocationCard exposedRidge
         , SomeLocationCard shelteredValley
         , SomeLocationCard concealedOrcCamp
+        , SomeLocationCard secludedCave
+        , SomeLocationCard theHoarwell
+        , SomeLocationCard abandonedCamp
+        , SomeLocationCard patchOfWoods
+        , SomeLocationCard trollFells
+        , SomeLocationCard barrenMoorland
         ]
     ]

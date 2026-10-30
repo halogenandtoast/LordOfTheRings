@@ -3,7 +3,6 @@ module LordOfTheRings.Objective.Cards.Daybreak (daybreak, nightfall) where
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (returnEngagedEnemiesToStaging)
 
 -- | The Time objective of The Wastes of Eriador: one card, Daybreak on one side and
 -- Nightfall on the other, the side faceup kept as its card code.

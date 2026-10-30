@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.ConstantTail (constantTail) where
 
-import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (canRemoveQuestTimeCounter, returnEngagedEnemiesToStaging)
+import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (canRemoveQuestTimeCounter)
 import LordOfTheRings.Trait (Trait (Spy))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted

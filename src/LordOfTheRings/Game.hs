@@ -737,7 +737,7 @@ runGameMessage msg g = case msg of
     if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
-        pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target
+        pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target <> freeGuarded g target
         pure
           $ g
           & entitiesL
@@ -1972,6 +1972,7 @@ runGameMessage msg g = case msg of
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       -- an objective it guarded, as Mugash on Edge of Fangorn, goes free to the staging area
       <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+      <> freeGuarded g target
     pure
       $ g
       & entitiesL
@@ -2005,6 +2006,7 @@ runGameMessage msg g = case msg of
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+      <> freeGuarded g target
     pure
       $ g
       & entitiesL
@@ -2216,7 +2218,10 @@ runGameMessage msg g = case msg of
           %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
       LocationType -> do
         location <- newLocation card
-        pushAll . (<> [ResolveSurge (toTarget location) card]) =<< revealing (toTarget location)
+        -- a guarded one, as Across the Ettenmoors' objective-locations, is guarded by the
+        -- next card before its surge
+        let guarded = [GuardLocation (toId location) | Guarded `member` cdKeywords def]
+        pushAll . (<> guarded <> [ResolveSurge (toTarget location) card]) =<< revealing (toTarget location)
         pure
           $ g
           & entitiesL
@@ -2279,6 +2284,7 @@ runGameMessage msg g = case msg of
     -- a treachery that did not attach itself to something is discarded once it resolves
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->
       when (treachery.placement == Unplaced) $ push (Discard $ toTarget treachery)
+    pushAll $ freeGuarded g (TreacheryTarget tid)
     -- its effects have resolved or been canceled, so it guards nothing any more
     let cid = (.cardId) . toAttrs <$> Map.lookup tid g.entities.treacheries
         guarding o = isJust cid && (toAttrs o).objectiveGuard == cid
@@ -2297,7 +2303,7 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
   ShuffleIntoEncounterDeck target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
-    pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+    pushAll $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target] <> freeGuarded g target
     deck <-
       shuffleM
         (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) : (toAttrs g.scenario).encounterDeck)
@@ -2328,6 +2334,7 @@ runGameMessage msg g = case msg of
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+      <> freeGuarded g target
     deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
   AddToStaging card | FirstPlayerGainsControl `member` cdKeywords (toCardDef card) -> do
@@ -2384,7 +2391,8 @@ returnToEncounterDeck place target g = do
   let toDeck card = scenarioL %~ overAttrs (encounterDeckL %~ place card)
       withAttached =
         pushAll
-          [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+          $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+          <> freeGuarded g target
   case target of
     EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
       withAttached
@@ -2489,6 +2497,27 @@ discardAttached g target =
     <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
     <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
     <> discardShadowsOf g target
+    <> freeGuarded g target
+
+{- | The locations the card guards go free to the staging area as it leaves play, as an
+objective-location of Across the Ettenmoors returns once its guard is dealt with.
+-}
+freeGuarded :: Game -> Target -> [Message]
+freeGuarded g target =
+  [ PlaceLocation (toId l) StagingArea
+  | Just cid <- [guardCard]
+  , l <- toList g.entities.locations
+  , l.placement == AttachedTo (CardIdTarget cid)
+  ]
+ where
+  cardIdIn :: IsCard v => Ord k => Map k v -> k -> Maybe CardId
+  cardIdIn m k = (.id) . toCard <$> Map.lookup k m
+  guardCard = case target of
+    EnemyTarget eid -> cardIdIn g.entities.enemies eid
+    LocationTarget lid -> cardIdIn g.entities.locations lid
+    QuestTarget qid -> cardIdIn g.entities.quests qid
+    TreacheryTarget tid -> cardIdIn g.entities.treacheries tid
+    _ -> Nothing
 
 -- | The shadow cards dealt to an enemy leaving play, discarded with it.
 discardShadowsOf :: Game -> Target -> [Message]
@@ -2721,15 +2750,18 @@ attackDamage pid eid target n = do
   let excessToThreat = ExcessDamageToThreat `elem` mods
       excessToOthers = ExcessDamageToOtherCharacters `elem` mods
       excessToLocation = ExcessDamageToActiveLocation `elem` mods
+      excessToQuests = ExcessDamageRemovesQuestProgress `elem` mods
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
+  quests <- getsGame (toList . entitiesQuests . gameEntities)
   pure $ DealDamage (EnemyAttackSource eid) target n
     : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
     <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
     <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
+    <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
@@ -2794,6 +2826,7 @@ canFight eid c = do
   andM
     [ allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
+    , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True
     ]
 
 -- | Whether the character may defend against the enemy's attack: one that cannot exhaust
@@ -2821,12 +2854,12 @@ exhaustToDefend d eid = do
           (\t -> hasTrait t (toTarget eid) (toCardDef enemy))
           [t | DoesNotExhaustToDefendAgainst t <- mods]
 
--- | Whether a character is still in play.
 -- | The encounter cards attached to the stage as conditions, as Old Hatreds, leave play with it.
 discardAttachedToQuest :: Game -> QuestId -> [Message]
 discardAttachedToQuest g qid =
   [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
     <> [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo (QuestTarget qid)]
+    <> freeGuarded g (QuestTarget qid)
 
 -- | What was attached to, or lasting on, a character is on the one it became.
 retargetCharacter :: Target -> Target -> Game -> Game
@@ -2843,6 +2876,7 @@ isPlayerAttack = \case
   PlayerAttackSource _ -> True
   _ -> False
 
+-- | Whether a character is still in play.
 inPlay :: Game -> Target -> Bool
 inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes

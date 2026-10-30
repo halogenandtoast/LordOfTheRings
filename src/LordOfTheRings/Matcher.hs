@@ -227,6 +227,7 @@ matchLocation matcher location = case matcher of
   LocationInStagingArea -> pure $ location.placement == StagingArea
   IsActiveLocation -> pure $ location.placement == ActiveLocation
   LocationWithTrait trait -> hasTrait trait (toTarget location) (toCardDef location)
+  LocationWithKeyword k -> hasKeyword k (toTarget location) (toCardDef location)
   LocationWithCardCode code -> pure $ toCardCode location == code
   LocationNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget location)
   AnyLocation -> pure True

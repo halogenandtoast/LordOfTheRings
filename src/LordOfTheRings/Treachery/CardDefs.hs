@@ -159,6 +159,8 @@ allTreacheryCards =
       , bitingWind
       , freezingBlast
       , coldFromAngmar
+      , aradorsBane
+      , noRest
       ]
 
 deepDeepDark :: CardDef
@@ -988,3 +990,9 @@ coldFromAngmar =
     { cdCardTraits = setFromList [Weather]
     , cdEasyModeQuantity = Just 2
     }
+
+aradorsBane :: CardDef
+aradorsBane = (treachery "10079" "Arador's Bane" AcrossTheEttenmoors 2) {cdEasyModeQuantity = Just 1}
+
+noRest :: CardDef
+noRest = treachery "10080" "No Rest" AcrossTheEttenmoors 3

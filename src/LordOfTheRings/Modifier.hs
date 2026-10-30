@@ -320,6 +320,13 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on the active location, as Collapsed Tower's shadow reads
     ExcessDamageToActiveLocation
+  | -- | on an enemy: for each point of damage its attack deals past the character's
+    -- remaining hit points, 1 progress is removed from each quest card in play, as Cruel
+    -- Mountain-troll reads
+    ExcessDamageRemovesQuestProgress
+  | -- | on an enemy: damaged characters cannot attack it or defend against it, as Goblin
+    -- Pursuer reads
+    NotFoughtByDamaged
   | -- | on a player: before he commits his first character to the quest he discards a
     -- card at random from his hand, and with none he cannot commit, as A Weary Passage reads
     DiscardRandomToCommit

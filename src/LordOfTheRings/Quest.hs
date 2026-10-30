@@ -140,6 +140,12 @@ import LordOfTheRings.Quest.Cards.FindShelter
 import LordOfTheRings.Quest.Cards.MakeCamp
 import LordOfTheRings.Quest.Cards.ScatteredAmongTheHills
 import LordOfTheRings.Quest.Cards.CorneredAnimals
+import LordOfTheRings.Quest.Cards.IntoTheEttenmoors
+import LordOfTheRings.Quest.Cards.AMiserableJourney
+import LordOfTheRings.Quest.Cards.JourneysEnd
+import LordOfTheRings.Quest.Cards.LieLow
+import LordOfTheRings.Quest.Cards.ForageForFood
+import LordOfTheRings.Quest.Cards.ScavengeForSupplies
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -312,5 +318,11 @@ allQuests =
         , SomeQuestCard makeCamp
         , SomeQuestCard scatteredAmongTheHills
         , SomeQuestCard corneredAnimals
+        , SomeQuestCard intoTheEttenmoors
+        , SomeQuestCard aMiserableJourney
+        , SomeQuestCard journeysEnd
+        , SomeQuestCard lieLow
+        , SomeQuestCard forageForFood
+        , SomeQuestCard scavengeForSupplies
         ]
     ]

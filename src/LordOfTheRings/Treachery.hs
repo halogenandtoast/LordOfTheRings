@@ -152,6 +152,8 @@ import LordOfTheRings.Treachery.Cards.IceStorm
 import LordOfTheRings.Treachery.Cards.BitingWind
 import LordOfTheRings.Treachery.Cards.FreezingBlast
 import LordOfTheRings.Treachery.Cards.ColdFromAngmar
+import LordOfTheRings.Treachery.Cards.AradorsBane
+import LordOfTheRings.Treachery.Cards.NoRest
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -328,5 +330,7 @@ allTreacherys =
         , SomeTreacheryCard bitingWind
         , SomeTreacheryCard freezingBlast
         , SomeTreacheryCard coldFromAngmar
+        , SomeTreacheryCard aradorsBane
+        , SomeTreacheryCard noRest
         ]
     ]
