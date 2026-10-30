@@ -342,14 +342,36 @@ runGame msg g = case msg of
   -- a quest card takes no more progress than it may this round, as Orc Rearguard limits
   -- the current quest to, and keeps count of what it took
   PlaceTokens source target@(QuestTarget _) Progress n | n > 0 -> do
-    mods <- getModifiers target
-    placed <- progressPlacedThisRound target
-    let room = foldr min n [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
-    if room < n
-      then g <$ pushWhen (room > 0) (PlaceTokens source target Progress room)
-      else do
-        push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound n] UntilEndOfRound
-        runGame'' msg g
+    -- the first progress each round goes to a location that takes it first, as Forbidden
+    -- Descent, which counts what it took
+    takers <- select LocationInStagingArea
+    diverted <- flip mapMaybeM takers \lid -> do
+      firsts <- (\ms -> [k | TakesQuestProgressFirst k <- ms]) <$> getModifiers lid
+      taken <- progressPlacedThisRound (toTarget lid)
+      l <- getLocation lid
+      room <- subtract l.progress <$> getLocationQuestPoints lid
+      let k = foldr min (min n room) [max 0 (f - taken) | f <- firsts]
+      pure $ guard (notNull firsts && k > 0) $> (lid, k)
+    case diverted of
+      (lid, k) : _ ->
+        g
+          <$ pushAll
+            ( [ CreateEffect $ Effect GameSource (toTarget lid) [ProgressPlacedThisRound k] UntilEndOfRound
+              , PlaceTokens source (toTarget lid) Progress k
+              ]
+                <> [PlaceTokens source target Progress (n - k) | n > k]
+            )
+      [] -> placeOnQuest
+   where
+    placeOnQuest = do
+        mods <- getModifiers target
+        placed <- progressPlacedThisRound target
+        let room = foldr min n [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
+        if room < n
+          then g <$ pushWhen (room > 0) (PlaceTokens source target Progress room)
+          else do
+            push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound n] UntilEndOfRound
+            runGame'' msg g
   -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
   -- it becomes the active location, so it is still in the staging area as it is paid (as
   -- Hills of Dunland's draws are, FAQ 3.123)
@@ -661,9 +683,18 @@ runGameMessage msg g = case msg of
     pure g
   DoStep 1 (DealDamage source target n) -> do
     -- the damage an enemy deals may raise a player's threat as much, as Seedy Inn's shadow
-    raising <- case source of
-      EnemyAttackSource eid -> (\ms -> [pid | AttackDamageRaisesThreatOf pid <- ms]) <$> getModifiers eid
+    attackMods <- case source of
+      EnemyAttackSource eid -> getModifiers eid
       _ -> pure []
+    let raising = [pid | AttackDamageRaisesThreatOf pid <- attackMods]
+        -- each point of it removes 1 progress from each quest card, as Traitorous Wight's
+        -- shadow reads
+        removing =
+          [ RemoveTokens source (toTarget q) Progress (min n q.progress)
+          | AttackDamageRemovesProgress `elem` attackMods
+          , q <- toList g.entities.quests
+          , q.progress > 0
+          ]
     defending <- elem Defending <$> getModifiers target
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
@@ -672,6 +703,7 @@ runGameMessage msg g = case msg of
          , CheckDefeated source target
          ]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
+      <> removing
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
@@ -1029,7 +1061,7 @@ runGameMessage msg g = case msg of
   DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
   DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
     attack <- getEnemyAttack eid
-    defense <- sum <$> traverse getDefense defenders
+    defense <- sum <$> traverse (getDefenseAgainst eid) defenders
     choices <- for defenders \d -> targetLabel d <$> attackDamage pid eid d (attack - defense)
     push $ chooseOrRunOne pid choices
     pure g
@@ -1259,7 +1291,7 @@ runGameMessage msg g = case msg of
     pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
-    defense <- getDefense defender
+    defense <- getDefenseAgainst eid defender
     engaged <- placementController . (.placement) <$> getEnemy eid
     lead <- getLead
     pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)

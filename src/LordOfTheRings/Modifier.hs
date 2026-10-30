@@ -314,6 +314,18 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
     -- Seedy Inn's shadow reads
     AttackDamageRaisesThreatOf PlayerId
+  | -- | on an enemy: each point of damage its attack deals removes 1 progress from each
+    -- quest card in play, as Traitorous Wight's shadow reads
+    AttackDamageRemovesProgress
+  | -- | on a location in the staging area: the first this much progress that would be placed
+    -- on a quest card each round is placed on it instead, as Forbidden Descent reads
+    TakesQuestProgressFirst Int
+  | -- | on a character: while defending against an enemy with the trait, its defense is
+    -- raised by this much, as Orders from Angmar reads
+    DefenseBonusAgainst Trait Int
+  | -- | on the game: as the encounter discard pile is reset into the empty deck, its topmost
+    -- matching card goes to the staging area first, as Ghostly Ruins reads
+    ReturnBeforeEncounterDeckResets CardMatcher
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on the active location, as Collapsed Tower's shadow reads
     ExcessDamageToActiveLocation

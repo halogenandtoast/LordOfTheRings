@@ -14,6 +14,8 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
 import LordOfTheRings.Game.Base (gamePhase)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Prelude
@@ -218,7 +220,11 @@ instance RunMessage ScenarioAttrs where
       phase <- getsGame gamePhase
       if phase == QuestPhase && null a.encounterDeck && notNull a.encounterDiscard
         then do
-          deck <- shuffleM a.encounterDiscard
+          -- the topmost matching card goes to the staging area first, as Ghostly Ruins reads
+          matchers <- (\ms -> [m | ReturnBeforeEncounterDeckResets m <- ms]) <$> getModifiers GameTarget
+          let returned = take 1 [c | c <- a.encounterDiscard, any (`cardMatches` c) matchers]
+          traverse_ (push . AddToStaging) returned
+          deck <- shuffleM $ filter (`notElem` returned) a.encounterDiscard
           pure $ a & encounterDeckL .~ deck & encounterDiscardL .~ []
         else pure a
     hiddenOf pid = Map.findWithDefault [] pid attrs.hiddenCards

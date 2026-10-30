@@ -42,6 +42,16 @@ getDefense target = do
     | otherwise -> characterStat cdDefense defenseOf target
 getHitPoints = characterStat cdHitPoints hitPointsOf
 
+-- | The defense a character defends against the enemy with, with its bonuses against the
+-- enemy's traits, as Orders from Angmar's against Undead.
+getDefenseAgainst :: (HasGame m) => EnemyId -> Target -> m Int
+getDefenseAgainst eid defender = do
+  defense <- getDefense defender
+  mods <- getModifiers defender
+  enemy <- toCardDef <$> getEnemy eid
+  bonus <- sum <$> for [(trait, n) | DefenseBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
+  pure $ defense + bonus
+
 -- | The attack the characters given make together against an enemy, with their bonuses
 -- against its traits.
 getAttackStrength :: (HasGame m) => [Target] -> EnemyId -> CardDef -> m Int
