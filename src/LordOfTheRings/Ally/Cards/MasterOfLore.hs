@@ -13,14 +13,17 @@ masterOfLore :: AllyCard MasterOfLore
 masterOfLore = ally MasterOfLore Cards.masterOfLore
 
 -- | Action: Exhaust Master of Lore to name a card type. Lower the cost for you to play the
--- next lore card of that type by 1 until the end of the phase (to a minimum of 1).
+-- next lore card of that type by 1 until the end of the phase (to a minimum of 1). (FAQ
+-- 1.9 errata; as printed, every lore card of that type.)
 instance HasAbilities MasterOfLore where
   getAbilities (MasterOfLore a) = [mkAbility a 1 $ ActionAbility (ExhaustCost $ toTarget a)]
 
 instance RunMessage MasterOfLore where
   runMessage msg s@(MasterOfLore a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      let lower t = phaseModifier a (PlayerTarget pid) (ReduceNextCostOf (CardWithType t <> CardWithSphere Lore) 1)
+      errata <- playsWithErrata a.owner
+      -- ponytail: as printed it may lower a 1-cost card to 0; give ReduceCostOf a floor if that matters
+      let lower t = phaseModifier a (PlayerTarget pid) $ (if errata then ReduceNextCostOf else ReduceCostOf) (CardWithType t <> CardWithSphere Lore) 1
       chooseOneM pid do
         questionLabeled "masterOfLore.name"
         causedBy a

@@ -14,7 +14,8 @@ zigilMiner = ally ZigilMiner Cards.zigilMiner
 -- | Action: Exhaust Zigil Miner and name a number to discard the top 2 cards of your
 -- deck. If at least one of those cards has cost equal to the named number, choose a hero
 -- you control. For each card that matches the named number, add 1 resource to that
--- hero's resource pool.
+-- hero's resource pool. (FAQ 1.9 errata; as printed, that hero adds resources equal to the
+-- named number.)
 instance HasAbilities ZigilMiner where
   getAbilities (ZigilMiner a) = [mkAbility a 1 $ ActionAbility (ExhaustCost $ toTarget a)]
 
@@ -24,6 +25,7 @@ instance RunMessage ZigilMiner where
       top <- take 2 . (.deck) <$> getPlayer pid
       heroes <- select (HeroControlledBy $ PlayerWithId pid)
       let costs = [x | c <- top, Just (StaticCost x) <- [cdCost (toCardDef c)]]
+      errata <- playsWithErrata a.owner
       chooseOneM pid do
         questionLabeled "zigilMiner.nameNumber"
         causedBy a
@@ -33,6 +35,6 @@ instance RunMessage ZigilMiner where
           when (matching > 0) $ chooseOneM pid do
             questionLabeled "zigilMiner.chooseHero"
             causedBy a
-            targets heroes \h -> placeResources a h matching
+            targets heroes \h -> placeResources a h if errata then matching else n
       pure s
     _ -> ZigilMiner <$> runMessage msg a
