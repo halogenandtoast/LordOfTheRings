@@ -10,6 +10,7 @@
   "doneDiscarding": "Done discarding",
   "travelToLocation": "Travel to a location?",
   "doNotTravel": "Do not travel",
+  "lookAtFacedownSide": "Choose an Uncharted location to look at its facedown side",
   "mustTravel": "You must travel to a location",
   "optionalEngagement": "Engage an enemy from the staging area?",
   "doNotEngage": "Do not engage",
@@ -87,6 +88,7 @@
     "tactics": "Tactics"
   },
   "discardResourceFromAHero": "Discard 1 resource from one of your heroes' resource pools",
+  "spendResourceFromAHero": "Spend 1 resource from a hero you control",
   "alcaronsScroll": {
     "attach": "Attach Alcaron's Scroll to a hero"
   },
@@ -1318,5 +1320,39 @@
   },
   "voyageAcrossBelegaer": {
     "chooseStage": "On-course: choose the stage to advance to; the other goes to the bottom of the quest deck"
+  },
+  "lushJungle": {
+    "choose": "Lush Jungle: return it to the staging area unless each player exhausts each ready hero he controls",
+    "exhaust": "Exhaust each ready hero",
+    "return": "Return Lush Jungle to the staging area"
+  },
+  "forbiddenCoast": {
+    "draw": "Forbidden Coast: you may draw a card",
+    "drawCard": "Draw a card",
+    "doNotDraw": "Do not draw",
+    "bottom": "Forbidden Coast: choose a card from your hand to place on the bottom of your deck"
+  },
+  "drownedGraves": {
+    "choose": "Drowned Graves: choose an Undead enemy discarded to add to the staging area"
+  },
+  "mysteriousFog": {
+    "choose": "Mysterious Fog: choose one",
+    "exhaust": "Each player exhausts a character he controls",
+    "threat": "Each Lost Island in the staging area gets +1 threat until the end of the phase"
+  },
+  "aimlessWandering": {
+    "remove": "Aimless Wandering: remove characters from the quest ({count} willpower still to remove)",
+    "look": "Aimless Wandering: give it doomed 2 to look at the facedown side of an Uncharted location?",
+    "doomed": "Give it doomed 2 and look",
+    "decline": "Do not look"
+  },
+  "calphon": {
+    "switch": "Calphon: the bottom card of your deck. Switch it with a card in your hand?",
+    "keep": "Leave it there"
+  },
+  "naasiyah": {
+    "choose": "Na'asiyah: give her +2 attack or +2 defense for this attack",
+    "attack": "+2 attack",
+    "defense": "+2 defense"
   }
 }

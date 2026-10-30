@@ -176,6 +176,11 @@ import LordOfTheRings.Treachery.Cards.SuddenStorms
 import LordOfTheRings.Treachery.Cards.WindsOfWrath
 import LordOfTheRings.Treachery.Cards.BoardingParty
 import LordOfTheRings.Treachery.Cards.BattleHardened
+import LordOfTheRings.Treachery.Cards.MysteriousFog
+import LordOfTheRings.Treachery.Cards.LingeringMalevolence
+import LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
+import LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
+import LordOfTheRings.Treachery.Cards.AimlessWandering
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -376,5 +381,10 @@ allTreacherys =
         , SomeTreacheryCard windsOfWrath
         , SomeTreacheryCard boardingParty
         , SomeTreacheryCard battleHardened
+        , SomeTreacheryCard mysteriousFog
+        , SomeTreacheryCard lingeringMalevolence
+        , SomeTreacheryCard ruinsOfAgesPast
+        , SomeTreacheryCard curseOfTheDownfallen
+        , SomeTreacheryCard aimlessWandering
         ]
     ]

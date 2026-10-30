@@ -111,6 +111,13 @@ const showProhibition = (event: PointerEvent) => {
   if (source) overlay.show(source, event.currentTarget as HTMLElement, false, event.pointerType === 'touch')
 }
 
+// the facedown side this player has looked at, as an Uncharted location's, in a corner:
+// hovered, it is read like a card
+const facedown = computed((): CardView | null => (card.otherSide ? { ...card, code: card.otherSide, otherSide: undefined } : null))
+const showFacedown = (event: PointerEvent) => {
+  if (facedown.value) overlay.show(facedown.value, event.currentTarget as HTMLElement, false, event.pointerType === 'touch')
+}
+
 const toggleUnless = (attached: CardView) => {
   if (!choiceFor(attached)) {
     expanded.value = !expanded.value
@@ -166,6 +173,15 @@ const toggleUnless = (attached: CardView) => {
         >
           <Ban :stroke-width="3" aria-hidden="true" />
         </span>
+        <img
+          v-if="facedown"
+          class="facedown-peek"
+          :src="cardImage(facedown)"
+          :alt="$t('game.facedownSide')"
+          :title="$t('game.facedownSide')"
+          @pointerenter.stop="$event.pointerType === 'mouse' && showFacedown($event)"
+          @pointerleave.stop="$event.pointerType === 'mouse' && showOverlay()"
+        />
         <span v-if="card.outOfPlay" class="out-of-play-label">{{ $t('game.outOfPlay') }}</span>
         <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
         <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
@@ -425,6 +441,17 @@ const toggleUnless = (attached: CardView) => {
   cursor: help;
 }
 .prohibited-badge svg { display: block; width: 100%; height: auto; }
+/* the facedown side its player has looked at, small in a corner */
+.card img.facedown-peek {
+  z-index: 3;
+  grid-area: 1 / 1;
+  place-self: end start;
+  margin: 4px;
+  width: 38%;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.8);
+  outline: 2px solid var(--cream);
+}
 .out-of-play-label {
   z-index: 3;
   grid-area: 1 / 1;

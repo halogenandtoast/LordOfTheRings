@@ -170,6 +170,8 @@ import LordOfTheRings.Quest.Cards.CursedMists
 import LordOfTheRings.Quest.Cards.CalphonsDivination
 import LordOfTheRings.Quest.Cards.TheStarsGuidance
 import LordOfTheRings.Quest.Cards.CorsairPursuit
+import LordOfTheRings.Quest.Cards.ExploreTheIsland
+import LordOfTheRings.Quest.Cards.AFatefulDiscovery
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -372,5 +374,7 @@ allQuests =
         , SomeQuestCard calphonsDivination
         , SomeQuestCard theStarsGuidance
         , SomeQuestCard corsairPursuit
+        , SomeQuestCard exploreTheIsland
+        , SomeQuestCard aFatefulDiscovery
         ]
     ]

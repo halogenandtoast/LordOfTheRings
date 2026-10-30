@@ -141,6 +141,10 @@ data WindowType
     SetupHandDrawn PlayerId
   | -- | the player committed these characters to a Sailing test (Dream-chaser rules)
     CommittedToSailingTest PlayerId [Target]
+  | -- | a location was turned over to its other side, as an Uncharted location is
+    LocationFlipped LocationId
+  | -- | a location became the active location, however it did
+    BecameActiveLocation LocationId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

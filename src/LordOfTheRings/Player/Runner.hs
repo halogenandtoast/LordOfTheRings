@@ -53,7 +53,12 @@ import LordOfTheRings.Window (
 instance RunMessage Player where
   runMessage msg player = do
     locked <- elem DiscardPilesLocked <$> getModifiers GameTarget
-    player' <- if locked && takesFromDiscard then pure player else runPlayer msg player
+    -- a deck that cannot be searched, as Soulless Cadaver's, gives up nothing to a search
+    barred <- case msg of
+      ChooseFromSearch pid _ _ _ _ | pid == player.id -> elem CannotSearchDeck <$> getModifiers (PlayerTarget pid)
+      ChooseFromSearchIntoPlay pid _ _ _ _ _ | pid == player.id -> elem CannotSearchDeck <$> getModifiers (PlayerTarget pid)
+      _ -> pure False
+    player' <- if (locked && takesFromDiscard) || barred then pure player else runPlayer msg player
     -- a deck run out may eliminate its player, as Deadmen's Dike reads
     when (notNull player.deck && null player'.deck) $ push CheckEliminations
     pure player'
@@ -321,6 +326,9 @@ runPlayer msg player = case msg of
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       pure $ player & discardL .~ kept & deckL %~ (moved <>)
     PutOnTopOfDeck pid card | pid == player.id -> pure $ player & deckL %~ (card :)
+    PutFromHandOnBottomOfDeck pid cid | pid == player.id -> do
+      let (moved, kept) = partition ((== cid) . (.id)) player.hand
+      pure $ player & handL .~ kept & deckL <>~ moved
     ShuffleFromDiscardIntoDeck pid cid | pid == player.id -> do
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)

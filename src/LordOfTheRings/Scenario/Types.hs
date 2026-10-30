@@ -50,6 +50,9 @@ data ScenarioAttrs = ScenarioAttrs
   -- encounter deck (Dream-chaser rules)
   , scenarioCorsairDiscard :: [EncounterCard]
   -- ^ the Corsair deck's own discard pile
+  , scenarioUnchartedDeck :: [EncounterCard]
+  -- ^ the Uncharted deck, top first (The Fate of Númenor): its locations enter play Lost
+  -- Island side faceup, and return to it rather than the discard pile
   }
   deriving stock (Show, Eq, Generic)
 
@@ -59,7 +62,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard]))]
 
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =
@@ -79,6 +82,7 @@ scenario f sid name =
       , scenarioHeading = Nothing
       , scenarioCorsairDeck = Nothing
       , scenarioCorsairDiscard = []
+      , scenarioUnchartedDeck = []
       }
 
 instance Entity ScenarioAttrs where
@@ -140,3 +144,5 @@ instance HasField "corsairDeck" ScenarioAttrs (Maybe [EncounterCard]) where
 
 instance HasField "corsairDiscard" ScenarioAttrs [EncounterCard] where
   getField = scenarioCorsairDiscard
+instance HasField "unchartedDeck" ScenarioAttrs [EncounterCard] where
+  getField = scenarioUnchartedDeck

@@ -216,6 +216,8 @@ allQuestCards =
       , calphonsDivination
       , theStarsGuidance
       , corsairPursuit
+      , exploreTheIsland
+      , aFatefulDiscovery
       ]
 
 theDrippingWalls :: CardDef
@@ -780,3 +782,10 @@ theStarsGuidance = (quest "11020" "The Star's Guidance" VoyageAcrossBelegaer 2 4
 
 corsairPursuit :: CardDef
 corsairPursuit = (quest "11021" "Corsair Pursuit" VoyageAcrossBelegaer 3 10) {cdKeywords = setFromList [Sailing]}
+
+exploreTheIsland :: CardDef
+exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
+
+-- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
+aFatefulDiscovery :: CardDef
+aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}

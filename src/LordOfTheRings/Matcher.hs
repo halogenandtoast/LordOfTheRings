@@ -802,3 +802,11 @@ getBoarding eid = do
   base <- keywordValue (\case Boarding n -> Just n; _ -> Nothing) (toTarget eid) (toCardDef e)
   mods <- map modifierType . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
   pure $ max 0 $ base + sum [n | BoardingModifier n <- mods]
+-- | An Uncharted location: one with its Lost Island side faceup (The Grey Havens rules insert).
+unchartedLocation :: LocationMatcher
+unchartedLocation = LocationWithKeyword Uncharted
+
+-- | The card's printed cost, as "printed cost 2 or less" reads: an X, or a card with none,
+-- counts as 0.
+printedCostOf :: HasCardDef a => a -> Int
+printedCostOf = maybe 0 costAsResources . cdCost . toCardDef

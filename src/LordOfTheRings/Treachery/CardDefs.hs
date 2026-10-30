@@ -183,6 +183,11 @@ allTreacheryCards =
       , windsOfWrath
       , boardingParty
       , battleHardened
+      , mysteriousFog
+      , lingeringMalevolence
+      , ruinsOfAgesPast
+      , curseOfTheDownfallen
+      , aimlessWandering
       ]
 
 deepDeepDark :: CardDef
@@ -1158,3 +1163,18 @@ battleHardened =
   (treachery "11067" "Battle-Hardened" CorsairRaiders 2)
     { cdShadowEffect = True
     }
+
+mysteriousFog :: CardDef
+mysteriousFog = (treachery "11033" "Mysterious Fog" TheFateOfNumenor 2) {cdShadowEffect = True}
+
+lingeringMalevolence :: CardDef
+lingeringMalevolence = (treachery "11034" "Lingering Malevolence" TheFateOfNumenor 2) {cdShadowEffect = True}
+
+ruinsOfAgesPast :: CardDef
+ruinsOfAgesPast = (treachery "11035" "Ruins of Ages Past" TheFateOfNumenor 2) {cdKeywords = setFromList [Doomed 2]}
+
+curseOfTheDownfallen :: CardDef
+curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 2) {cdShadowEffect = True}
+
+aimlessWandering :: CardDef
+aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3

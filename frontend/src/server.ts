@@ -38,6 +38,8 @@ export interface Entity {
   shadowRevealed?: string[]
   /** The encounter card guarding an objective. */
   guard?: string | null
+  /** A location's facedown side, as an Uncharted location hides it: sent only to the players who have looked at it. */
+  otherSide?: string | null
 }
 
 export interface Card {

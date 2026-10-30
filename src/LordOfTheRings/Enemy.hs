@@ -203,6 +203,12 @@ import LordOfTheRings.Enemy.Cards.UmbarCaptain
 import LordOfTheRings.Enemy.Cards.UmbarRaider
 import LordOfTheRings.Enemy.Cards.CorsairInfiltrator
 import LordOfTheRings.Enemy.Cards.RaidLeader
+import LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
+import LordOfTheRings.Enemy.Cards.DrownedDead
+import LordOfTheRings.Enemy.Cards.SoullessCadaver
+import LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
+import LordOfTheRings.Enemy.Cards.CaptainSahir
+import LordOfTheRings.Enemy.Cards.Naasiyah
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -431,5 +437,11 @@ allEnemys =
         , SomeEnemyCard umbarRaider
         , SomeEnemyCard corsairInfiltrator
         , SomeEnemyCard raidLeader
+        , SomeEnemyCard servantOfTheDeceiver
+        , SomeEnemyCard drownedDead
+        , SomeEnemyCard soullessCadaver
+        , SomeEnemyCard throngsOfUnfaithful
+        , SomeEnemyCard captainSahir
+        , SomeEnemyCard naasiyah
         ]
     ]

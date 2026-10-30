@@ -42,6 +42,8 @@ export interface CardView {
   prohibited?: LogRef[]
   /** Shown as the FAQ's errata reads: its owner plays with errata, or it is an encounter card. */
   errata?: boolean
+  /** The code of its facedown side, which this player has looked at (an Uncharted location). */
+  otherSide?: string
 }
 
 export interface ChoiceView {

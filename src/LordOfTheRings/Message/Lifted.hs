@@ -1301,3 +1301,89 @@ takeResourceFromAHero a pid = do
     targets heroes \h -> do
       removeTokens a h Resource 1
       placeResources a a 1
+{- | Turn the card over to its other side: a location, as an Uncharted one is flipped, or a
+card whose other side is another kind of card, as Captain Sahír turns from enemy to
+objective-ally and back (under the player his objective-ally side names), all tokens
+removed.
+-}
+flipOver :: (ReverseQueue m, Targetable target) => target -> m ()
+flipOver = push . Flip . toTarget
+
+-- | The player looks at the facedown side of the location; only he is shown it.
+lookAtFacedownSide :: ReverseQueue m => PlayerId -> LocationId -> m ()
+lookAtFacedownSide pid = push . LookAtFacedownSide pid
+
+-- | The player chooses an Uncharted location in the staging area and looks at its
+-- facedown side, as Steep Plateau's Response reads.
+lookAtAnUnchartedLocation :: (ReverseQueue m, Targetable source) => PlayerId -> source -> m ()
+lookAtAnUnchartedLocation pid source = do
+  locations <- select (LocationInStagingArea <> unchartedLocation)
+  chooseOrRunOneM pid do
+    questionLabeled "lookAtFacedownSide"
+    causedBy source
+    targets locations (lookAtFacedownSide pid)
+
+-- | The top cards of the Uncharted deck go to the staging area, Lost Island side faceup.
+addFromUnchartedDeck :: ReverseQueue m => Int -> m ()
+addFromUnchartedDeck n = when (n > 0) $ push $ AddFromUnchartedDeck n
+
+{- | Remove all progress from each Uncharted location in the staging area and shuffle them
+so that the players do not know which one is which.
+-}
+shuffleUnchartedLocations :: ReverseQueue m => m ()
+shuffleUnchartedLocations = push ShuffleUnchartedLocations
+
+-- | The card in the player's hand goes to the bottom of his deck.
+putFromHandOnBottomOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+putFromHandOnBottomOfDeck pid card = push $ PutFromHandOnBottomOfDeck pid card.id
+
+{- | Discard the bottom card of the player's deck, as "discard the bottom card of your deck.
+If that card's printed cost is 2 or less, ..." reads: the card discarded, if any, for the
+effect to read.
+-}
+discardBottomOfDeck :: ReverseQueue m => PlayerId -> m (Maybe Card)
+discardBottomOfDeck pid = do
+  bottom <- lastMay . (.deck) <$> getPlayer pid
+  for_ bottom \case
+    PlayerCard pc -> discardFromDeck pid pc
+    _ -> pure ()
+  pure bottom
+
+-- | A card in the player's deck goes to the bottom of it, as one looked at from the top.
+moveToBottomOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+moveToBottomOfDeck pid card = push $ MoveToBottomOfDeck pid card.id
+
+-- | A destroyed ally, from its owner's discard pile, goes to the bottom of his deck, as
+-- "place that ally on the bottom of its owner's deck" reads; an encounter card does not.
+allyToBottomOfDeck :: ReverseQueue m => Card -> m ()
+allyToBottomOfDeck = \case
+  PlayerCard pc | Just owner <- pc.owner -> putDiscardOnBottomOfDeck owner pc.id
+  _ -> pure ()
+
+{- | Cancel this much of the damage about to be dealt to the target, from the window before
+it is dealt, as Captain Sahír's resources cancel it point for point: the rest is still
+dealt. See 'cancelDamage'.
+-}
+cancelSomeDamage
+  :: (MonadTrans t, HasQueue Message m, HasQueue Message (t m), Targetable target) => target -> Int -> t m ()
+cancelSomeDamage target k = do
+  canceled <- lift $ popMessagesMatching \case
+    DoStep 1 (DealDamage _ t _) -> t == toTarget target
+    _ -> False
+  for_ canceled \case
+    DoStep 1 (DealDamage source t n) | n > k -> push $ DoStep 1 (DealDamage source t (n - k))
+    _ -> pure ()
+
+-- | The player discards each event in his hand.
+discardEventsFromHand :: ReverseQueue m => PlayerId -> m ()
+discardEventsFromHand = push . DiscardEventsFromHand
+
+-- | The player spends 1 resource, of any sphere, from a hero he controls, as "Spend 1
+-- resource from a hero you control" reads.
+spendResourceFromAHero :: (ReverseQueue m, Sourceable source, Targetable source) => PlayerId -> source -> m ()
+spendResourceFromAHero pid source = do
+  heroes <- filterM (heroCanSpend <=< getHero) =<< select (HeroControlledBy (PlayerWithId pid) <> HeroWithResources)
+  chooseOrRunOneM pid do
+    questionLabeled "spendResourceFromAHero"
+    causedBy source
+    targets heroes \h -> removeTokens source h Resource 1

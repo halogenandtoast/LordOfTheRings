@@ -216,6 +216,14 @@ import LordOfTheRings.Location.Cards.CalmWaters
 import LordOfTheRings.Location.Cards.RollingSeas
 import LordOfTheRings.Location.Cards.RoughWaters
 import LordOfTheRings.Location.Cards.Waterspout
+import LordOfTheRings.Location.Cards.LostIsland
+import LordOfTheRings.Location.Cards.ShrineToMorgoth
+import LordOfTheRings.Location.Cards.LushJungle
+import LordOfTheRings.Location.Cards.ForbiddenCoast
+import LordOfTheRings.Location.Cards.SteepPlateau
+import LordOfTheRings.Location.Cards.FloodedRuins
+import LordOfTheRings.Location.Cards.DrownedGraves
+import LordOfTheRings.Location.Cards.CursedTemple
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -238,8 +246,21 @@ lookupLocation cardCode cardId ident = case Map.lookup cardCode allLocations of
   Just (SomeLocationCard builder) -> Location $ cbCardBuilder builder cardId ident
   Nothing -> error $ "Unknown location: " <> show cardCode
 
+-- | A location card entering play: an Uncharted one enters Lost Island side faceup.
 newLocation :: (MonadRandom m) => EncounterCard -> m Location
-newLocation card = createLocation card <$> getRandom
+newLocation card = enterFaceUp . createLocation card <$> getRandom
+
+-- | The location with the side it enters play with faceup: an Uncharted one's Lost Island
+-- side.
+enterFaceUp :: Location -> Location
+enterFaceUp l = fromMaybe l do
+  other <- cdOtherSide (toCardDef l)
+  guard (isUncharted other)
+  turnLocationOver l
+
+-- | The location turned over to its other side, if it has one.
+turnLocationOver :: Location -> Maybe Location
+turnLocationOver = flipLocation lookupLocation . toAttrs
 
 allLocations :: Map CardCode SomeLocationCard
 allLocations =
@@ -459,5 +480,13 @@ allLocations =
         , SomeLocationCard rollingSeas
         , SomeLocationCard roughWaters
         , SomeLocationCard waterspout
+        , SomeLocationCard lostIsland
+        , SomeLocationCard shrineToMorgoth
+        , SomeLocationCard lushJungle
+        , SomeLocationCard forbiddenCoast
+        , SomeLocationCard steepPlateau
+        , SomeLocationCard floodedRuins
+        , SomeLocationCard drownedGraves
+        , SomeLocationCard cursedTemple
         ]
     ]

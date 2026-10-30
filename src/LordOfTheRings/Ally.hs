@@ -180,6 +180,9 @@ import LordOfTheRings.Ally.Cards.MithlondSeaWatcher
 import LordOfTheRings.Ally.Cards.WardenOfTheHavens
 import LordOfTheRings.Ally.Cards.LindonNavigator
 import LordOfTheRings.Ally.Cards.SailorOfLune
+import LordOfTheRings.Ally.Cards.Calphon
+import LordOfTheRings.Ally.Cards.CaptainSahir
+import LordOfTheRings.Ally.Cards.Naasiyah
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -387,5 +390,8 @@ allAllies =
         , SomeAllyCard dawnStar
         , SomeAllyCard narelenya
         , SomeAllyCard silverWing
+        , SomeAllyCard calphon
+        , SomeAllyCard captainSahir
+        , SomeAllyCard naasiyah
         ]
     ]

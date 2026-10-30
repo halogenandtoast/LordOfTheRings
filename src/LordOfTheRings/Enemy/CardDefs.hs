@@ -209,6 +209,12 @@ allEnemyCards =
       , umbarRaider
       , corsairInfiltrator
       , raidLeader
+      , servantOfTheDeceiver
+      , drownedDead
+      , soullessCadaver
+      , throngsOfUnfaithful
+      , captainSahir
+      , naasiyah
       ]
 
 namelessThing :: CardDef
@@ -1680,3 +1686,44 @@ raidLeader =
   (enemy "11066" "Raid Leader" CorsairRaiders 2 40 3 5 1 5)
     { cdCardTraits = setFromList [Corsair, Raider]
     }
+
+servantOfTheDeceiver :: CardDef
+servantOfTheDeceiver = (enemy "11029" "Servant of the Deceiver" TheFateOfNumenor 3 35 3 3 4 3) {cdCardTraits = setFromList [Undead]}
+
+drownedDead :: CardDef
+drownedDead =
+  (enemy "11068" "Drowned Dead" DrownedDead 3 32 2 4 3 3)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+soullessCadaver :: CardDef
+soullessCadaver = (enemy "11069" "Soulless Cadaver" DrownedDead 2 38 3 3 2 4) {cdCardTraits = setFromList [Undead]}
+
+throngsOfUnfaithful :: CardDef
+throngsOfUnfaithful =
+  (enemy "11070" "Throngs of Unfaithful" DrownedDead 2 26 1 2 0 4)
+    { cdCardTraits = setFromList [Undead]
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | The enemy side of The Stormcaller Elite's Captain Sahír: never shuffled into the
+-- encounter deck, his scenarios put him into play. Flipped, he is 'captainSahirObjective'.
+captainSahir :: CardDef
+captainSahir =
+  unique
+    (enemy "11076" "Captain Sahír" TheStormcallerElite 1 4 6 6 2 5)
+      { cdCardTraits = setFromList [Corsair, Raider]
+      , cdVictoryPoints = Just 6
+      , cdOtherSide = Just "11077"
+      }
+
+-- | The enemy side of Na'asiyah: flipped, she is 'naasiyahObjective'.
+naasiyah :: CardDef
+naasiyah =
+  unique
+    (enemy "11078" "Na'asiyah" TheStormcallerElite 1 8 1 2 2 4)
+      { cdCardTraits = setFromList [Corsair, Raider]
+      , cdVictoryPoints = Just 4
+      , cdOtherSide = Just "11079"
+      }

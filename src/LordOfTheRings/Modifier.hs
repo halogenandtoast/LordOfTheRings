@@ -448,6 +448,9 @@ data ModifierType
   | -- | on an enemy: the player's characters cannot attack it, as Umbar Captain reads for
     -- Ship enemies
     CannotBeAttackedByCharactersOf PlayerId
+  | -- | on a player: his deck cannot be searched, as Soulless Cadaver reads: a search of it
+    -- finds nothing
+    CannotSearchDeck
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

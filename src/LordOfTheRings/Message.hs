@@ -566,6 +566,19 @@ data Message
     ChooseFleetShip [PlayerId] [EncounterCard]
   | -- | an objective ally card, taken from where it was, enters play under the player
     PutObjectiveAllyIntoPlayUnder PlayerId EncounterCard
+  | -- | a card in the player's hand goes to the bottom of his deck
+    PutFromHandOnBottomOfDeck PlayerId CardId
+  | -- | the player looks at the facedown side of the location, as an Uncharted location's
+    -- Lost Island side hides it
+    LookAtFacedownSide PlayerId LocationId
+  | -- | the top cards of the Uncharted deck go to the staging area, Lost Island side faceup
+    AddFromUnchartedDeck Int
+  | -- | the location leaves play for the Uncharted deck, which is shuffled
+    ShuffleIntoUnchartedDeck LocationId
+  | {- | the progress is removed from each Uncharted location in the staging area, and they
+    are shuffled so that the players do not know which one is which
+    -}
+    ShuffleUnchartedLocations
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -21,6 +21,7 @@ data EncounterSet
   | DeadmensDike
   | DeepsOfMoria
   | DolGuldurOrcs
+  | DrownedDead
   | DunlandRaiders
   | DunlandWarriors
   | EncounterAtAmonDin
@@ -48,6 +49,7 @@ data EncounterSet
   | ReturnToMirkwood
   | RoadToRivendell
   | RuinsOfArnor
+  | RuinsOfNumenor
   | SauronsReach
   | ShadowAndFlame
   | Southrons
@@ -62,6 +64,7 @@ data EncounterSet
   | TheDreamChasersFleet
   | TheDruadanForest
   | TheDunlandTrap
+  | TheFateOfNumenor
   | TheFordsOfIsen
   | TheHillsOfEmynMuil
   | TheHuntForGollum
@@ -73,6 +76,7 @@ data EncounterSet
   | TheSeventhLevel
   | TheSiegeOfCairAndros
   | TheStewardsFear
+  | TheStormcallerElite
   | TheThreeTrials
   | TheTreacheryOfRhudaur
   | TheWastesOfEriador

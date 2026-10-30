@@ -80,6 +80,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "captured" (toJSON $ fmap length (fromMeta "captured" :: Map CardId [Value]))
         $ KeyMap.insert "capturedDecks" (toJSON $ fmap length (fromMeta "capturedDecks" :: Map PlayerId [Value]))
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
+        $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
         $ adjust hideScenario "scenario" o
@@ -156,6 +157,12 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   -- cards, under each card and in each player's captured deck
   fromMeta :: FromJSON a => Monoid a => Key.Key -> a
   fromMeta k = fromMaybe mempty $ parseMaybe (withObject "meta" (.: k)) (scenarioMeta $ toAttrs g.scenario)
+  -- a location's facedown side is sent only to those who have looked at it
+  hideOtherSide = \case
+    Object o
+      | not (any seesHand (fromMaybe [] $ parseMaybe parseJSON =<< KeyMap.lookup "lookedAt" o :: [PlayerId])) ->
+          Object $ KeyMap.delete "otherSide" o
+    v -> v
   hidePlayer = withSize "deck" "deckSize"
   hideHand = \case
     Object o | Just (Array cards) <- KeyMap.lookup "hand" o ->
@@ -166,7 +173,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     Object o -> Object $ adjust hideSearch "question" $ if KeyMap.member "cards" o then KeyMap.insert "cards" (Array mempty) o else o
     v -> v
   -- a scenario's own state holds what is facedown, as the underworld deck
-  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o
     v -> v

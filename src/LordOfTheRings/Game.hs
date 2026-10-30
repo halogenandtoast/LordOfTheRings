@@ -389,7 +389,20 @@ runGame msg g = case msg of
     case only of
       p : _ | p /= pid -> g <$ push (EngageEnemy p eid)
       _ -> runGame'' msg g
+  -- a location becoming the active location, however it does, opens its windows once it is
+  PlaceLocation lid ActiveLocation
+    | Just l <- Map.lookup lid g.entities.locations
+    , l.placement /= ActiveLocation -> do
+        g' <- runGame'' msg g
+        pushAll [CheckWindows [mkWhen $ BecameActiveLocation lid], CheckWindows [mkAfter $ BecameActiveLocation lid]]
+        pure g'
+  -- an Uncharted location's card cannot enter the discard pile or the encounter deck: it
+  -- returns to the Uncharted deck (The Grey Havens rules insert)
+  Discard (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
+  ShuffleIntoEncounterDeck (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
   _ -> runGame'' msg g
+ where
+  unchartedCard lid = maybe False (isUnchartedCard . toAttrs) (Map.lookup lid g.entities.locations)
 
 runGame'' :: Message -> Game -> GameT Game
 runGame'' msg g = case removedEnemy msg of
@@ -2452,6 +2465,48 @@ runGameMessage msg g = case msg of
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
+  -- a card whose other side is another kind of card turns over, as Captain Sahír from enemy
+  -- to objective-ally and back: it does not leave play, but what was on it is discarded and
+  -- its tokens go, and the side it turns to is under the player that side names
+  Flip (EnemyTarget eid)
+    | Just e <- Map.lookup eid g.entities.enemies
+    , Just other <- cdOtherSide (toCardDef e)
+    , cdCardType (toCardDef other) == ObjectiveAllyType -> do
+        pid <- objectiveAllyController (toCardDef other)
+        pushAll $ discardAttached g (EnemyTarget eid)
+        let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly other (toCard e).id (AllyId $ unEnemyId eid) pid
+        pure $ g & entitiesL . enemiesL %~ Map.delete eid & entitiesL . alliesL %~ insertEntity thisAlly
+  -- and back to its enemy side, in the staging area
+  Flip (AllyTarget aid)
+    | Just a <- Map.lookup aid g.entities.allies
+    , Just other <- cdOtherSide (toCardDef a)
+    , cdCardType (toCardDef other) == EnemyType -> do
+        pushAll $ discardAttached g (AllyTarget aid)
+        let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard a).id (EnemyId $ unAllyId aid)
+        pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
+  -- a double-sided location turns over, as an Uncharted location does
+  Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
+    push $ CheckWindows [mkAfter $ LocationFlipped lid]
+    pure $ g & entitiesL . locationsL %~ Map.insert lid l
+  LookAtFacedownSide pid lid ->
+    pure $ g & entitiesL . locationsL . ix lid %~ overAttrs (\a -> a {locationLookedAt = ordNub (pid : a.lookedAt)})
+  AddFromUnchartedDeck n -> do
+    let (top, rest) = splitAt n (toAttrs g.scenario).unchartedDeck
+    pushAll $ map AddToStaging top
+    pure $ g & scenarioL %~ overAttrs (unchartedDeckL .~ rest)
+  ShuffleIntoUnchartedDeck lid | Just l <- Map.lookup lid g.entities.locations -> do
+    pushAll $ discardAttached g (LocationTarget lid)
+    deck <- shuffleM (locationDeckCard (toAttrs l) : (toAttrs g.scenario).unchartedDeck)
+    pure $ g & entitiesL . locationsL %~ Map.delete lid & scenarioL %~ overAttrs (unchartedDeckL .~ deck)
+  -- each keeps its place in the staging area, but the cards are dealt among them afresh,
+  -- each with a new card id, so nothing seen of one follows its card
+  ShuffleUnchartedLocations -> do
+    let staged = [l | l <- toList g.entities.locations, l.placement == StagingArea, isUncharted l]
+    codes <- shuffleM $ map (toCardCode . locationDeckCard . toAttrs) staged
+    dealt <- for (zip staged codes) \(l, code) -> do
+      cid <- getRandom
+      pure $ overAttrs (\a -> a {locationPlacement = StagingArea}) $ enterFaceUp $ createLocation (MkEncounterCard cid code) (toId l)
+    pure $ g & entitiesL . locationsL %~ \ls -> foldr (\l -> Map.insert (toId l) l) ls dealt
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly =
           -- the damage it took in the staging area stays on it, as Celador's
@@ -2495,10 +2550,10 @@ runGameMessage msg g = case msg of
       <> freeGuarded g target
     deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
-  AddToStaging card | FirstPlayerGainsControl `member` cdKeywords (toCardDef card) -> do
+  AddToStaging card | gainsController (toCardDef card) -> do
     thisObjective <- newObjective card
-    lead <- getLead
-    push $ PutObjectiveAllyIntoPlay (toId thisObjective) lead
+    controller <- objectiveAllyController (toCardDef card)
+    push $ PutObjectiveAllyIntoPlay (toId thisObjective) controller
     pure
       $ g
       & entitiesL
@@ -2534,6 +2589,16 @@ runGameMessage msg g = case msg of
         . objectivesL
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
+
+-- | An objective ally that a player gains control of as it enters play.
+gainsController :: CardDef -> Bool
+gainsController def = any (`member` cdKeywords def) [FirstPlayerGainsControl, LastPlayerGainsControl]
+
+-- | The player an objective ally goes to: the last player, when it reads so, or the first.
+objectiveAllyController :: CardDef -> GameT PlayerId
+objectiveAllyController def
+  | LastPlayerGainsControl `member` cdKeywords def = getLastPlayer
+  | otherwise = getLead
 
 -- | Whether the enemy has the hinder keyword.
 hinders :: Game -> EnemyId -> GameT Bool
