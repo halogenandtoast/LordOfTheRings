@@ -2,7 +2,7 @@
 inserts): the heading and the Sailing test, the Corsair deck and the Boarding keyword,
 and preparing the fleet. A scenario runs them by falling through to its attrs.
 -}
-module LordOfTheRings.Scenario.Sailing (runSailing, isCorsairDeckCard, fleet) where
+module LordOfTheRings.Scenario.Sailing (runSailing, isCorsairDeckCard, discardEncounterCard, fleet) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
@@ -29,6 +29,13 @@ isCorsairDeckCard :: EncounterCard -> Bool
 isCorsairDeckCard card = cdCardType def == EnemyType && Ship `notMember` cdCardTraits def
  where
   def = toCardDef card
+
+-- | The encounter card goes to the encounter discard pile, or, a card of the Corsair deck
+-- while there is one, to the Corsair discard pile.
+discardEncounterCard :: EncounterCard -> ScenarioAttrs -> ScenarioAttrs
+discardEncounterCard card attrs
+  | isJust attrs.corsairDeck && isCorsairDeckCard card = attrs & corsairDiscardL %~ (card :)
+  | otherwise = attrs & encounterDiscardL %~ (card :)
 
 -- | The Ship objectives of The Dream-chaser's Fleet, the Dream-chaser first.
 fleet :: [CardDef]

@@ -21,7 +21,7 @@ import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
-import LordOfTheRings.Scenario.Sailing (isCorsairDeckCard, runSailing)
+import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (sourceTarget)
 import LordOfTheRings.Target
@@ -186,11 +186,7 @@ instance RunMessage ScenarioAttrs where
       owned <- for cards \c -> (c,) <$> setAsideOwner c.id
       pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
       -- a card of the Corsair deck goes to its own discard pile, while there is one
-      let corsair c = isJust attrs.corsairDeck && isCorsairDeckCard c
-      pure
-        $ attrs
-        & encounterDiscardL %~ ([c | (c, Nothing) <- owned, not (corsair c)] <>)
-        & corsairDiscardL %~ ([c | (c, Nothing) <- owned, corsair c] <>)
+      pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned]
     -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in
     ShuffleIntoEncounterDeck (CardIdTarget cid) -> do
       owned <- getsGame (concatMap (.setAsideCards) . toList . gamePlayers)

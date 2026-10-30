@@ -54,6 +54,7 @@ import LordOfTheRings.Prelude hiding (first, many)
 import LordOfTheRings.Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario
+import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -2611,7 +2612,8 @@ discardFromPlay target g = case target of
         card -> pure $ addToDiscard card removed
   addToDiscard card = case card of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
-    EncounterCard ec -> scenarioL %~ overAttrs (encounterDiscardL %~ (ec :))
+    -- a card of the Corsair deck to its own discard pile (Dream-chaser rules)
+    EncounterCard ec -> scenarioL %~ overAttrs (discardEncounterCard ec)
     _ -> id
 
 -- | Attachments, and encounter cards attached as conditions, leave play with their host,
