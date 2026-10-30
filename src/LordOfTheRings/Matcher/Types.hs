@@ -236,6 +236,8 @@ data CardMatcher
     CardWithDoomed
   | -- | a card printed with a Valour trigger, as Hope Rekindled reads
     CardWithValour
+  | -- | a unique card, as "a non-unique location" reads it negated
+    UniqueCard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -266,6 +268,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardMatchAny ms -> any (`cardMatches` def) ms
   CardWithDoomed -> any (\case Doomed _ -> True; _ -> False) (cdKeywords def)
   CardWithValour -> cdCardCode def `elem` valourCards
+  UniqueCard -> cdUnique def
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]

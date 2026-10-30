@@ -723,11 +723,11 @@ runGameMessage msg g = case msg of
     pure g
   Destroy source target@(EnemyTarget eid) -> do
     enemy <- getEnemy eid
-    push $ CheckWindows [mkAfter $ EnemyDefeated eid]
     stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
     let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
         -- what a player's attack destroyed, for the attack to read as it resolves
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card | PlayerAttackSource _ <- [source]])
+    push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials

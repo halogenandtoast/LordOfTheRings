@@ -115,6 +115,12 @@ data WindowType
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
     PlayedCard PlayerId CardCode
+  | -- | an enemy destroyed, as its card, which has left play by now
+    EnemyDestroyed Card
+  | -- | a card discarded from the player's hand, as its card id
+    DiscardedFromHand PlayerId CardId
+  | -- | an exhausted card readied, by anything, in any phase
+    BecameReady Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
