@@ -271,6 +271,17 @@ spec = describe "Dwarves of Durin" do
       resources dainCode `shouldReturn` 2
       length <$> handIds pid `shouldReturn` (initial + 1)
 
+    it "exhausts Dwarf allies too" . dodTest $ \pid -> do
+      miner <- putAllyIntoPlay pid Allies.zigilMiner
+      _ <- playWith pid dainCode 0 Events.weAreNotIdle
+      chooseTarget pid miner
+      chooseTarget pid =<< hero oriCode
+      chooseLabel "$label.weAreNotIdle.done" pid
+      chooseTarget pid =<< hero dainCode
+      resources dainCode `shouldReturn` 2
+      getsGame (map (allyExhausted . toAttrs) . find ((== miner) . toTarget) . toList . (.entities.allies))
+        `shouldReturn` Just True
+
   describe "Cram" do
     it "is discarded to ready the attached hero" . dodTest $ \pid -> do
       dain <- hero dainCode
