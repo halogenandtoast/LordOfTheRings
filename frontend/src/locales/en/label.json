@@ -1036,7 +1036,6 @@
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
   "chooseAreaToJoin": "Choose a player to join",
-<<<<<<< HEAD
   "unnaturalFog": {
     "choose": "Unnatural Fog: discard from your deck or remove your characters from the quest",
     "discard": "Discard the top {count} cards of your deck",
@@ -1051,7 +1050,7 @@
     "choose": "A Fell Wraith: discard the top 3 cards of your deck or return Thaurdir to the staging area",
     "discard": "Discard the top 3 cards of your deck",
     "returnThaurdir": "Return Thaurdir to the staging area"
-=======
+  },
   "angmarOrc": {
     "choose": "Angmar Orc: choose one",
     "discardAlly": "Discard 1 ally from play",
@@ -1075,6 +1074,5 @@
     "search": "Search the encounter deck and discard pile for an encounter side quest and reveal it",
     "chooseSideQuest": "Pressing Needs: choose an encounter side quest to reveal",
     "currentQuest": "Choose a different quest card to be the current quest until the end of the phase"
->>>>>>> main
   }
 }
