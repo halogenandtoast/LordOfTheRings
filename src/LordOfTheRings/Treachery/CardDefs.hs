@@ -146,6 +146,8 @@ allTreacheryCards =
       , curseOfTheWildMen
       , theGuardiansFury
       , wildTenacity
+      , suddenDarkness
+      , predatoryWolves
       ]
 
 deepDeepDark :: CardDef
@@ -891,3 +893,14 @@ wildTenacity =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+
+suddenDarkness :: CardDef
+suddenDarkness =
+  (treachery "10026" "Sudden Darkness" TheWastesOfEriador 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+predatoryWolves :: CardDef
+predatoryWolves = (treachery "10027" "Predatory Wolves" TheWastesOfEriador 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}

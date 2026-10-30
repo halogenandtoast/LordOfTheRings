@@ -162,6 +162,12 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , packLeader
+      , northernWarg
+      , bloodThirstyWarg
+      , huntingPack
+      , whiteWarg
+      , wolfOfAngmar
       ]
 
 namelessThing :: CardDef
@@ -1289,4 +1295,44 @@ spiritOfTheWild =
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
+    }
+
+-- | Set aside at setup, out of play, until Battle with the Pack adds it to the staging area.
+packLeader :: CardDef
+packLeader =
+  unique
+    (enemy "10017" "Pack Leader" TheWastesOfEriador 1 1 4 5 4 8)
+      { cdCardTraits = setFromList [Creature, Warg]
+      , cdVictoryPoints = Just 3
+      }
+
+northernWarg :: CardDef
+northernWarg =
+  (enemy "10018" "Northern Warg" TheWastesOfEriador 4 30 2 3 1 4)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+bloodThirstyWarg :: CardDef
+bloodThirstyWarg = (enemy "10019" "Blood-thirsty Warg" TheWastesOfEriador 2 35 2 4 2 5) {cdCardTraits = setFromList [Creature, Warg], cdEasyModeQuantity = Just 1}
+
+huntingPack :: CardDef
+huntingPack = (enemy "10020" "Hunting Pack" TheWastesOfEriador 2 40 3 6 3 6) {cdCardTraits = setFromList [Creature, Warg], cdEasyModeQuantity = Just 1}
+
+whiteWarg :: CardDef
+whiteWarg =
+  (enemy "10021" "White Warg" TheWastesOfEriador 3 20 2 2 3 3)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdShadowEffect = True
+    }
+
+wolfOfAngmar :: CardDef
+wolfOfAngmar =
+  (enemy "10022" "Wolf of Angmar" TheWastesOfEriador 3 25 1 2 1 3)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

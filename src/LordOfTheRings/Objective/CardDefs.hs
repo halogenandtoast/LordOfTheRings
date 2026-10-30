@@ -58,6 +58,9 @@ allObjectiveCards =
       , keyOfTheBoar
       , keyOfTheWolf
       , keyOfTheRaven
+      , daybreak
+      , nightfall
+      , amarthiul
       ]
 
 durinsAxe :: CardDef
@@ -357,3 +360,20 @@ keyOfTheWolf = threeTrialsKey "08044" "Key of the Wolf" Wolf
 
 keyOfTheRaven :: CardDef
 keyOfTheRaven = threeTrialsKey "08045" "Key of the Raven" Raven
+
+-- | The Time objective, Daybreak faceup: flipped, it is 'nightfall'.
+daybreak :: CardDef
+daybreak = (objective "10011" "Daybreak" TheWastesOfEriador 1) {cdCardTraits = setFromList [TimeTrait]}
+
+-- | The Time objective's other side: no copy of it is gathered, Daybreak turns into it.
+nightfall :: CardDef
+nightfall = (objective "10012" "Nightfall" TheWastesOfEriador 0) {cdCardTraits = setFromList [TimeTrait]}
+
+amarthiul :: CardDef
+amarthiul =
+  ((objective "10016" "Amarthiúl" TheWastesOfEriador 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

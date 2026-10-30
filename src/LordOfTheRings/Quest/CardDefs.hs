@@ -143,6 +143,9 @@ allQuestCards =
       , theTrialOfIntuition
       , theAntleredCrownTheThreeTrials
       , searchTheRuins
+      , acrossTheWastes
+      , howlingAtNight
+      , battleWithThePack
       ]
 
 theDrippingWalls :: CardDef
@@ -533,3 +536,12 @@ searchTheRuins =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+acrossTheWastes :: CardDef
+acrossTheWastes = quest "10013" "Across the Wastes" TheWastesOfEriador 1 20
+
+howlingAtNight :: CardDef
+howlingAtNight = quest "10014" "Howling at Night" TheWastesOfEriador 2 15
+
+battleWithThePack :: CardDef
+battleWithThePack = quest "10015" "Battle with the Pack" TheWastesOfEriador 3 5

@@ -176,6 +176,9 @@ allLocationCards =
       , hallowedCircle
       , cursedForest
       , grimFoothills
+      , eriadorWastes
+      , wargsDen
+      , northDowns
       ]
 
 drownedTreasury :: CardDef
@@ -1278,4 +1281,17 @@ grimFoothills =
     { cdCardTraits = setFromList [Hills]
     , cdKeywords = setFromList [Doomed 2]
     , cdEasyModeQuantity = Just 2
+    }
+
+eriadorWastes :: CardDef
+eriadorWastes = (location "10023" "Eriador Wastes" TheWastesOfEriador 2 3 5) {cdCardTraits = setFromList [Arnor, Plains], cdEasyModeQuantity = Just 1}
+
+wargsDen :: CardDef
+wargsDen = (location "10024" "Warg's Den" TheWastesOfEriador 2 4 1) {cdCardTraits = setFromList [Arnor], cdEasyModeQuantity = Just 1}
+
+northDowns :: CardDef
+northDowns =
+  (location "10025" "North Downs" TheWastesOfEriador 3 1 4)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    , cdShadowEffect = True
     }
