@@ -146,6 +146,10 @@ allTreacheryCards =
       , curseOfTheWildMen
       , theGuardiansFury
       , wildTenacity
+      , iceStorm
+      , bitingWind
+      , freezingBlast
+      , coldFromAngmar
       ]
 
 deepDeepDark :: CardDef
@@ -889,5 +893,37 @@ wildTenacity :: CardDef
 wildTenacity =
   (treachery "08055" "Wild Tenacity" TheThreeTrials 3)
     { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+iceStorm :: CardDef
+iceStorm =
+  (treachery "09031" "Ice Storm" TheWeatherHills 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+bitingWind :: CardDef
+bitingWind =
+  (treachery "09052" "Biting Wind" FoulWeather 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+freezingBlast :: CardDef
+freezingBlast =
+  (treachery "09053" "Freezing Blast" FoulWeather 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+coldFromAngmar :: CardDef
+coldFromAngmar =
+  (treachery "09054" "Cold from Angmar" FoulWeather 3)
+    { cdCardTraits = setFromList [Weather]
     , cdEasyModeQuantity = Just 2
     }

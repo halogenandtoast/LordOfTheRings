@@ -162,6 +162,7 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , corneredOrc
       ]
 
 namelessThing :: CardDef
@@ -1287,6 +1288,13 @@ spiritOfTheWild :: CardDef
 spiritOfTheWild =
   (enemy "08050" "Spirit of the Wild" TheThreeTrials 5 28 1 1 2 4)
     { cdCardTraits = setFromList [Undead, SpiritTrait]
+    , cdShadowEffect = True
+    }
+
+corneredOrc :: CardDef
+corneredOrc =
+  (enemy "09025" "Cornered Orc" TheWeatherHills 5 20 2 2 1 2)
+    { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
     }
