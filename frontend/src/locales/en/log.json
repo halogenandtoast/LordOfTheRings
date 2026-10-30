@@ -161,5 +161,6 @@
   "sailingIconCanceled": "the first is canceled",
   "corsairDeckPrepared": "The Corsair deck is prepared",
   "corsairDeck": "Corsair deck: {count} cards",
-  "corsairDiscard": "Corsair discard pile"
+  "corsairDiscard": "Corsair discard pile",
+  "guardsObjective": "{guard} guards {objective}"
 }

@@ -731,6 +731,8 @@ runGameMessage msg g = case msg of
          ]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
       <> removing
+      -- each point of it adds 1 to the staging area's threat this phase, as Ramming Speed!
+      <> [CreateEffect $ Effect source GameTarget [StagingThreatBonus n] UntilEndOfPhase | AttackDamageAddsStagingThreat `elem` attackMods]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
@@ -3146,6 +3148,8 @@ canFight eid c = do
   andM
     [ -- a Ship objective fights only Ship enemies (Dream-chaser rules)
       orM [not <$> isShipObjective c, selectAny (EnemyWithId eid <> shipEnemy)]
+    , -- and only a Ship objective fights one such as Raider Flagship
+      if OnlyAttackedByShipObjectives `elem` mods then isShipObjective c else pure True
     , allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
     , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True

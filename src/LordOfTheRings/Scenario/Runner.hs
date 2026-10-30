@@ -199,6 +199,8 @@ instance RunMessage ScenarioAttrs where
     SearchEncounterDeckAndDiscardToEngage pid source matcher -> search pid source matcher (PutEnemyIntoPlayEngaged pid)
     -- a set-aside enemy put into play engaged, as No Way Out puts Chief Turch
     PutEnemyIntoPlayEngaged _ card -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- a set-aside Ship objective put into play, as The Beacon gives a Dol Amroth Warship
+    PutObjectiveAllyIntoPlayUnder _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     DebugSearchEncounterDeck pid -> do
       push
         $ Ask pid
