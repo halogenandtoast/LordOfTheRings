@@ -36,6 +36,8 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
       <DiscardPile :cards="player.discard" back="player" :choices="choices" @choose="emit('choose', $event)" :data-pile="`discard-${player.playerId}`" />
       <div class="deck">
         <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
+        <!-- the captured deck (Escape from Mount Gram) -->
+        <CardBack v-if="player.capturedDeckSize" :count="player.capturedDeckSize" back="player" :title="$t('log.capturedDeck', { count: player.capturedDeckSize })" />
         <div v-if="debugging" class="deck-debug">
           <button type="button" :disabled="player.deckSize === 0" @click="send({ tag: 'DrawCards', contents: { player: player.playerId, count: 1 } })">{{ $t('game.debug.draw') }}</button>
           <button type="button" :disabled="player.deckSize === 0" @click="send({ tag: 'DebugSearchDeck', contents: player.playerId })">{{ $t('game.debug.search') }}</button>
