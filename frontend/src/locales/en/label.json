@@ -1381,6 +1381,24 @@
   "voyageAcrossBelegaer": {
     "chooseStage": "On-course: choose the stage to advance to; the other goes to the bottom of the quest deck"
   },
+  "dealDamageToAflameLocation": "Choose an Aflame location to deal {n} damage to",
+  "pillagedShip": {
+    "choose": "Pillaged Ship: choose one",
+    "damage": "Deal 3 damage to Pillaged Ship",
+    "enemy": "Add the topmost enemy in the encounter discard pile to the staging area"
+  },
+  "corsairArsonist": {
+    "choose": "Corsair Arsonist: choose one",
+    "damage": "Deal 2 damage to an Aflame location in play",
+    "search": "Search for an Aflame location with the highest Aflame value and add it to the staging area"
+  },
+  "putToTheTorch": {
+    "choose": "Put to the Torch: deal 3 damage to a character you control or to an Aflame location in play",
+    "shadow": "Put to the Torch: deal 3 damage to the active location or 1 damage to the defending character"
+  },
+  "sahirsAdvance": {
+    "removeDamage": "Sahír's Advance: choose a location to remove 1 damage from instead of placing progress"
+  },
   "lushJungle": {
     "choose": "Lush Jungle: return it to the staging area unless each player exhausts each ready hero he controls",
     "exhaust": "Exhaust each ready hero",

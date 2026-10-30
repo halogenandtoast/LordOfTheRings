@@ -214,6 +214,13 @@ import LordOfTheRings.Location.Cards.StarlitSea
 import LordOfTheRings.Location.Cards.FogBank
 import LordOfTheRings.Location.Cards.CalmWaters
 import LordOfTheRings.Location.Cards.RollingSeas
+import LordOfTheRings.Location.Cards.DreamChaserLocation
+import LordOfTheRings.Location.Cards.MithlondHarbor
+import LordOfTheRings.Location.Cards.BurningPiers
+import LordOfTheRings.Location.Cards.PillagedShip
+import LordOfTheRings.Location.Cards.WhiteShip
+import LordOfTheRings.Location.Cards.ElvenWaveRunner
+import LordOfTheRings.Location.Cards.ElvenCaravel
 import LordOfTheRings.Location.Cards.RoughWaters
 import LordOfTheRings.Location.Cards.Waterspout
 import LordOfTheRings.Location.Cards.LostIsland
@@ -478,6 +485,13 @@ allLocations =
         , SomeLocationCard fogBank
         , SomeLocationCard calmWaters
         , SomeLocationCard rollingSeas
+        , SomeLocationCard dreamChaserLocation
+        , SomeLocationCard mithlondHarbor
+        , SomeLocationCard burningPiers
+        , SomeLocationCard pillagedShip
+        , SomeLocationCard whiteShip
+        , SomeLocationCard elvenWaveRunner
+        , SomeLocationCard elvenCaravel
         , SomeLocationCard roughWaters
         , SomeLocationCard waterspout
         , SomeLocationCard lostIsland

@@ -76,6 +76,7 @@ allObjectiveCards =
       , calphon
       , captainSahirObjective
       , naasiyahObjective
+      , theHavensBurn
       ]
 
 durinsAxe :: CardDef
@@ -512,3 +513,6 @@ naasiyahObjective =
     , cdKeywords = setFromList [LastPlayerGainsControl]
     , cdOtherSide = Just "11078"
     }
+
+theHavensBurn :: CardDef
+theHavensBurn = objective "11038" "The Havens Burn" RaidOnTheGreyHavens 1

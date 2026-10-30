@@ -1310,6 +1310,35 @@ takeResourceFromAHero a pid = do
     targets heroes \h -> do
       removeTokens a h Resource 1
       placeResources a a 1
+
+-- | Deal the damage to the Aflame location in play with the lowest Aflame value, the first
+-- player choosing among those tied (Raid on the Grey Havens).
+dealDamageToLowestAflame :: (ReverseQueue m, Sourceable source, Targetable source) => source -> Int -> m ()
+dealDamageToLowestAflame source n = when (n > 0) do
+  burning <- getAflameLocations
+  for_ (minimumMay $ map snd burning) \lowest -> do
+    lead <- getLead
+    chooseOrRunOneM lead do
+      questionLabeledWith "dealDamageToAflameLocation" [intVar "n" n]
+      causedBy source
+      targets [lid | (lid, x) <- burning, x == lowest] \lid -> dealDamage source lid n
+
+-- | The player deals the damage to an Aflame location in play of their choice.
+dealDamageToAnAflameLocation :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> Int -> m ()
+dealDamageToAnAflameLocation source pid n = do
+  burning <- map fst <$> getAflameLocations
+  chooseOrRunOneM pid do
+    questionLabeledWith "dealDamageToAflameLocation" [intVar "n" n]
+    causedBy source
+    targets burning \lid -> dealDamage source lid n
+
+-- | The shadow card dealt to the enemy goes to the staging area, as "Shadow: Add Burning
+-- Piers to the staging area" reads of a location.
+addShadowCardToStaging :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
+addShadowCardToStaging eid card = do
+  push $ RemoveShadowCard eid card.id
+  addToStaging card
+
 {- | Turn the card over to its other side: a location, as an Uncharted one is flipped, or a
 card whose other side is another kind of card, as Captain Sahír turns from enemy to
 objective-ally and back (under the player his objective-ally side names), all tokens

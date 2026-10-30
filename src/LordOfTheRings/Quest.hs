@@ -172,6 +172,8 @@ import LordOfTheRings.Quest.Cards.TheStarsGuidance
 import LordOfTheRings.Quest.Cards.CorsairPursuit
 import LordOfTheRings.Quest.Cards.ExploreTheIsland
 import LordOfTheRings.Quest.Cards.AFatefulDiscovery
+import LordOfTheRings.Quest.Cards.TheCorsairsAssault
+import LordOfTheRings.Quest.Cards.SahirsAdvance
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -376,5 +378,7 @@ allQuests =
         , SomeQuestCard corsairPursuit
         , SomeQuestCard exploreTheIsland
         , SomeQuestCard aFatefulDiscovery
+        , SomeQuestCard theCorsairsAssault
+        , SomeQuestCard sahirsAdvance
         ]
     ]

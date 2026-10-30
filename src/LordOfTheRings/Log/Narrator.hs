@@ -165,6 +165,8 @@ narrationFor = \case
         Just s | immune -> ikeyPart "log.immuneTo" ["target" ~> t, "source" ~> s]
         _ -> ikeyPart "log.progressRemoved" ["target" ~> t, "progress" ~> stat "progress" n]
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]
+    -- damage taken off a location, as Sahír's Advance removes it in place of progress
+    Damage | LocationTarget _ <- target -> Just $ whenRef target \t -> one $ toned Good $ mechanic [ikeyPart "log.damageRemoved" ["target" ~> t, "count" ~> n]]
     Damage -> Nothing
     Villager -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.villagersRemoved" ["target" ~> t, "count" ~> n]]
     TimeCounter -> Just $ whenRef target \t -> do
@@ -350,6 +352,10 @@ narrationFor = \case
   -- Escape from Mount Gram's captured cards, rescued from underneath the card
   ScenarioSpecific "mountGram.rescue" (parseMaybe parseJSON -> Just (host :: Card, cards :: [PlayerCard])) ->
     Just $ one $ toned Good $ mechanic [ikeyPart "log.capturedRescued" ["card" ~> host, "count" ~> length cards]]
+  -- a location leaving play for underneath a card, as one Aflame burns down under The
+  -- Havens Burn
+  PlaceUnderneath target [card] | cdCardType (toCardDef card) == LocationType -> Just $ whenRef target \t ->
+    one $ toned Bad $ mechanic [ikeyPart "log.locationPlacedUnderneath" ["location" ~> card, "target" ~> t]]
   PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing

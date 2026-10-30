@@ -176,6 +176,8 @@ import LordOfTheRings.Treachery.Cards.SuddenStorms
 import LordOfTheRings.Treachery.Cards.WindsOfWrath
 import LordOfTheRings.Treachery.Cards.BoardingParty
 import LordOfTheRings.Treachery.Cards.BattleHardened
+import LordOfTheRings.Treachery.Cards.PutToTheTorch
+import LordOfTheRings.Treachery.Cards.TheFiresSpread
 import LordOfTheRings.Treachery.Cards.MysteriousFog
 import LordOfTheRings.Treachery.Cards.LingeringMalevolence
 import LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
@@ -381,6 +383,8 @@ allTreacherys =
         , SomeTreacheryCard windsOfWrath
         , SomeTreacheryCard boardingParty
         , SomeTreacheryCard battleHardened
+        , SomeTreacheryCard putToTheTorch
+        , SomeTreacheryCard theFiresSpread
         , SomeTreacheryCard mysteriousFog
         , SomeTreacheryCard lingeringMalevolence
         , SomeTreacheryCard ruinsOfAgesPast

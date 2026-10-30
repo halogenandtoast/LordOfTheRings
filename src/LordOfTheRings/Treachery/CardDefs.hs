@@ -188,6 +188,8 @@ allTreacheryCards =
       , ruinsOfAgesPast
       , curseOfTheDownfallen
       , aimlessWandering
+      , putToTheTorch
+      , theFiresSpread
       ]
 
 deepDeepDark :: CardDef
@@ -1178,3 +1180,13 @@ curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
+
+putToTheTorch :: CardDef
+putToTheTorch = (treachery "11048" "Put to the Torch" RaidOnTheGreyHavens 2) {cdShadowEffect = True}
+
+theFiresSpread :: CardDef
+theFiresSpread =
+  (treachery "11049" "The Fires Spread" RaidOnTheGreyHavens 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    }

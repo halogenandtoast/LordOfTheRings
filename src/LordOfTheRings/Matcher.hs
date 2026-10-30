@@ -814,6 +814,16 @@ getBoarding eid = do
   base <- keywordValue (\case Boarding n -> Just n; _ -> Nothing) (toTarget eid) (toCardDef e)
   mods <- map modifierType . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
   pure $ max 0 $ base + sum [n | BoardingModifier n <- mods]
+
+-- | The location's Aflame X, 0 when it has none (Raid on the Grey Havens).
+getAflame :: HasGame m => LocationId -> m Int
+getAflame lid = do
+  l <- getLocation lid
+  keywordValue (\case Aflame n -> Just n; _ -> Nothing) (toTarget lid) (toCardDef l)
+
+-- | Each location in play with the Aflame keyword, with its Aflame X.
+getAflameLocations :: HasGame m => m [(LocationId, Int)]
+getAflameLocations = filter ((> 0) . snd) <$> (traverse (\lid -> (lid,) <$> getAflame lid) =<< select AnyLocation)
 -- | An Uncharted location: one with its Lost Island side faceup (The Grey Havens rules insert).
 unchartedLocation :: LocationMatcher
 unchartedLocation = LocationWithKeyword Uncharted

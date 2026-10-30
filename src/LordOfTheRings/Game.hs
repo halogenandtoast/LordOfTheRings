@@ -549,6 +549,9 @@ runGameMessage msg g = case msg of
         $ [ShuffleIntoOwnersDeck (toTarget a) | a <- allies, toId a `notElem` map toId (leaving <> returning)]
         <> [ShuffleIntoOwnersDeck (toTarget a) | a <- attachments]
         <> [ShuffleFromHandIntoOwnersDeck pid cid | (pid, cid) <- inHands]
+      -- each Aflame location in the staging area takes 1 damage (Raid on the Grey Havens)
+      burning <- filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea
+      pushAll [DealDamage GameSource (LocationTarget lid) 1 | lid <- burning]
       push $ CheckWindows [mkWhen RoundEnds]
       pushEnd step
     pure $ g' & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
