@@ -202,6 +202,8 @@ import LordOfTheRings.Enemy.Cards.ViciousMarauder
 import LordOfTheRings.Enemy.Cards.UmbarCaptain
 import LordOfTheRings.Enemy.Cards.UmbarRaider
 import LordOfTheRings.Enemy.Cards.CorsairInfiltrator
+import LordOfTheRings.Enemy.Cards.CorsairArsonist
+import LordOfTheRings.Enemy.Cards.SahirsRavager
 import LordOfTheRings.Enemy.Cards.RaidLeader
 import LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
 import LordOfTheRings.Enemy.Cards.DrownedDead
@@ -436,6 +438,8 @@ allEnemys =
         , SomeEnemyCard umbarCaptain
         , SomeEnemyCard umbarRaider
         , SomeEnemyCard corsairInfiltrator
+        , SomeEnemyCard corsairArsonist
+        , SomeEnemyCard sahirsRavager
         , SomeEnemyCard raidLeader
         , SomeEnemyCard servantOfTheDeceiver
         , SomeEnemyCard drownedDead
