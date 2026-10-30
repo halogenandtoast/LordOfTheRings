@@ -115,7 +115,7 @@ narrationFor = \case
     refs <- catMaybes <$> traverse targetRefFor committed
     one $ action [if null refs then ikeyPart "log.sailingTestNoCommits" [] else ikeyPart "log.sailingTestCommits" ["characters" ~> refs]]
   SailingTestResult top found canceled -> Just $ one $ toned (if found > canceled then Good else Bad) $ test
-    $ ikeyPart "log.sailingTestResult" ["cards" ~> map EncounterCard top, "found" ~> found]
+    $ ikeyPart "log.sailingTestResult" ["cards" ~> map EncounterCard top, "count" ~> found]
     : [ikeyPart "log.sailingIconCanceled" [] | canceled > 0]
   PrepareCorsairDeck -> Just $ one $ mechanic [ikeyPart "log.corsairDeckPrepared" []]
   PutObjectiveAllyIntoPlayUnder _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> EncounterCard card]]
