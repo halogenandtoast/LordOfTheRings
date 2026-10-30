@@ -188,6 +188,10 @@ allTreacheryCards =
       , ruinsOfAgesPast
       , curseOfTheDownfallen
       , aimlessWandering
+      , deeperIntoTheRuins
+      , furiousRainstorm
+      , dwindlingSupplies
+      , sunkenRuins
       ]
 
 deepDeepDark :: CardDef
@@ -1178,3 +1182,15 @@ curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
+
+deeperIntoTheRuins :: CardDef
+deeperIntoTheRuins = treachery "12078" "Deeper into the Ruins" TempleOfTheDeceived 4
+
+furiousRainstorm :: CardDef
+furiousRainstorm = (treachery "12079" "Furious Rainstorm" TempleOfTheDeceived 3) {cdShadowEffect = True}
+
+dwindlingSupplies :: CardDef
+dwindlingSupplies = (treachery "12080" "Dwindling Supplies" TempleOfTheDeceived 3) {cdShadowEffect = True}
+
+sunkenRuins :: CardDef
+sunkenRuins = (treachery "12081" "Sunken Ruins" TempleOfTheDeceived 3) {cdKeywords = setFromList [Doomed 1]}

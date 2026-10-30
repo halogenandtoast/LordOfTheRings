@@ -235,6 +235,13 @@ allLocationCards =
       , floodedRuins
       , drownedGraves
       , cursedTemple
+      , lostIslandTempleOfTheDeceived
+      , templeOfTheDeceived
+      , theGrottosEntrance
+      , templeHalls
+      , jaggedCliffs
+      , windingCaverns
+      , junglePath
       ]
 
 drownedTreasury :: CardDef
@@ -1711,3 +1718,43 @@ drownedGraves = uncharted (location "11073" "Drowned Graves" RuinsOfNumenor 2 2 
 
 cursedTemple :: CardDef
 cursedTemple = uncharted (location "11074" "Cursed Temple" RuinsOfNumenor 2 1 3) {cdCardTraits = setFromList [Ruins]}
+
+-- | The Lost Island side of Temple of the Deceived's own Uncharted locations: no copy is
+-- gathered, each of them enters play with it faceup.
+lostIslandTempleOfTheDeceived :: CardDef
+lostIslandTempleOfTheDeceived =
+  (location "temple-of-the-deceived-lost-island" "Lost Island" TempleOfTheDeceived 0 2 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Uncharted]
+    }
+
+-- | The Uncharted side of the three Temple locations, the Island Map's rightmost column.
+templeOfTheDeceived :: CardDef
+templeOfTheDeceived =
+  (location "temple-of-the-deceived-temple-of-the-deceived" "Temple of the Deceived" TempleOfTheDeceived 0 2 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Uncharted]
+    }
+
+-- | A Temple location: under a Temple of the Deceived side.
+inTheTemple :: CardDef -> CardDef
+inTheTemple def = def {cdOtherSide = Just (cdCardCode templeOfTheDeceived), cdCardTraits = setFromList [Ruins]}
+
+-- | An Uncharted location of Temple of the Deceived: under its own Lost Island side.
+onTheIsland :: CardDef -> CardDef
+onTheIsland def = def {cdOtherSide = Just (cdCardCode lostIslandTempleOfTheDeceived)}
+
+theGrottosEntrance :: CardDef
+theGrottosEntrance = inTheTemple $ unique $ location "12068" "The Grotto's Entrance" TempleOfTheDeceived 1 2 8
+
+templeHalls :: CardDef
+templeHalls = inTheTemple $ location "12069" "Temple Halls" TempleOfTheDeceived 2 5 5
+
+jaggedCliffs :: CardDef
+jaggedCliffs = onTheIsland (location "12072" "Jagged Cliffs" TempleOfTheDeceived 2 4 4) {cdCardTraits = setFromList [Mountain]}
+
+windingCaverns :: CardDef
+windingCaverns = onTheIsland (location "12073" "Winding Caverns" TempleOfTheDeceived 2 2 6) {cdCardTraits = setFromList [Underground]}
+
+junglePath :: CardDef
+junglePath = onTheIsland (location "12074" "Jungle Path" TempleOfTheDeceived 2 3 3) {cdCardTraits = setFromList [Forest]}

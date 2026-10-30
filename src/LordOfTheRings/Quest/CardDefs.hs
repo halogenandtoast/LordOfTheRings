@@ -218,6 +218,7 @@ allQuestCards =
       , corsairPursuit
       , exploreTheIsland
       , aFatefulDiscovery
+      , searchingTheIsland
       ]
 
 theDrippingWalls :: CardDef
@@ -789,3 +790,7 @@ exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
 -- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
 aFatefulDiscovery :: CardDef
 aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: the players win at The Grotto's Entrance.
+searchingTheIsland :: CardDef
+searchingTheIsland = (quest "12067" "Searching the Island" TempleOfTheDeceived 1 0) {cdQuestPoints = Nothing}

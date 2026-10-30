@@ -76,6 +76,7 @@ allObjectiveCards =
       , calphon
       , captainSahirObjective
       , naasiyahObjective
+      , gateKey
       ]
 
 durinsAxe :: CardDef
@@ -512,3 +513,6 @@ naasiyahObjective =
     , cdKeywords = setFromList [LastPlayerGainsControl]
     , cdOtherSide = Just "11078"
     }
+
+gateKey :: CardDef
+gateKey = unique (objective "12071" "Gate Key" TempleOfTheDeceived 1) {cdCardTraits = setFromList [Item, Artifact]}

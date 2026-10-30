@@ -56,6 +56,7 @@ data EncounterSet
   | SpidersOfMirkwood
   | StormyWeather
   | StreetsOfGondor
+  | TempleOfTheDeceived
   | TheAntleredCrown
   | TheBattleOfCarnDum
   | TheBloodOfGondor
