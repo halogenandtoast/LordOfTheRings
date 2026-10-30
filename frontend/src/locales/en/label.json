@@ -3,6 +3,7 @@
   "chooseCurrentQuest": "Choose the quest to quest against this phase",
   "questAgainstMainQuest": "The main quest",
   "chooseNewCurrentQuest": "Choose a new quest card to be the current quest",
+  "valour": "Valour: resolve the Valour trigger instead",
   "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
   "discardAnyFromHand": "Discard a card from your hand?",

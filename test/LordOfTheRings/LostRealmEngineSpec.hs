@@ -13,7 +13,11 @@ import LordOfTheRings.Matcher (
 import LordOfTheRings.Matcher.Window (WindowMatcher (SideQuestRevealedWindow), windowMatches)
 import LordOfTheRings.Message.Lifted (
   chooseNewCurrentQuest,
+  chooseOrRunOneM,
+  labeled,
+  raiseThreat,
   removeProgressFromEachQuest,
+  valourLabeled,
  )
 import LordOfTheRings.Modifier (ModifierType (CannotBeCurrentQuest, ProgressPerRoundLimit))
 import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase))
@@ -125,3 +129,20 @@ spec = describe "The Lost Realm engine" do
       void mainLoop
       progressOn main `shouldReturn` 0
       progressOn side `shouldReturn` 1
+
+  describe "Valour" do
+    let trigger pid = runQueueT $ chooseOrRunOneM pid do
+          labeled "questAgainstMainQuest" $ raiseThreat pid 1
+          valourLabeled pid $ raiseThreat pid 5
+    it "resolves a card's other trigger without asking below 40 threat" . gameTest $ \pid -> do
+      threat0 <- threatOf pid
+      trigger pid
+      void mainLoop
+      threatOf pid `shouldReturn` threat0 + 1
+
+    it "offers the Valour trigger at 40 threat or higher" . gameTest $ \pid -> do
+      run . RaiseThreat pid . (40 -) =<< threatOf pid
+      trigger pid
+      void mainLoop
+      chooseLabel "$label.valour" pid
+      threatOf pid `shouldReturn` 45
