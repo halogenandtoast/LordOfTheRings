@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.TheRuinsOfOstInEdhil (theRuinsOfOstInEdhil) wh
 import LordOfTheRings.Card (Card (EncounterCard), CardDef (..), CardType (LocationType), toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -36,8 +35,7 @@ instance RunMessage TheRuinsOfOstInEdhil where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- encounterDeck
       for_ (mapMaybe (firstCopy deck) [Enemies.bellachCelebrimborsSecret, Objectives.theOrcsSearch, Locations.theSecretChamber]) \card -> do
         removeFromEncounterDeck card
@@ -45,9 +43,10 @@ instance RunMessage TheRuinsOfOstInEdhil where
       doStep 1 msg
       eachPlayer \pid -> doStep 2 (WithTarget (PlayerTarget pid) msg)
       shuffleEncounterDeck
-      pure $ TheRuinsOfOstInEdhil $ attrs {questFlipped = True}
+      turnOver attrs
+      pure q
     -- Celebrimbor's Mould, onto The Secret Chamber now in the staging area
-    DoStep 1 (Flip (isTarget attrs -> True)) -> do
+    DoStep 1 (PerformSetup (isTarget attrs -> True)) -> do
       mould <- (`firstCopy` Objectives.celebrimborsMould) <$> encounterDeck
       chamber <- select (LocationWithCardCode $ toCardCode Locations.theSecretChamber)
       for_ ((,) <$> mould <*> headMay chamber) \(card, lid) -> do
@@ -55,7 +54,7 @@ instance RunMessage TheRuinsOfOstInEdhil where
         putObjectiveIntoPlayAttached card lid
       pure q
     -- the player adds an Ost-in-Edhil location, its title different from those added
-    DoStep 2 (WithTarget (PlayerTarget pid) (Flip (isTarget attrs -> True))) -> do
+    DoStep 2 (WithTarget (PlayerTarget pid) (PerformSetup (isTarget attrs -> True))) -> do
       added <- traverse getLocation =<< select (LocationInStagingArea <> LocationWithTrait OstInEdhil)
       let taken = map (cdName . toCardDef) added
           ostInEdhil c =

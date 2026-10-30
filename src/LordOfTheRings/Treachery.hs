@@ -145,6 +145,10 @@ import LordOfTheRings.Treachery.Cards.RestlessEvil
 import LordOfTheRings.Treachery.Cards.TerrorOfTheNorth
 import LordOfTheRings.Treachery.Cards.DarkSorcery
 import LordOfTheRings.Treachery.Cards.HeavyCurse
+import LordOfTheRings.Treachery.Cards.SuddenAssault
+import LordOfTheRings.Treachery.Cards.SurprisingSpeed
+import LordOfTheRings.Treachery.Cards.PressingNeeds
+import LordOfTheRings.Treachery.Cards.WeightOfResponsibility
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -314,5 +318,9 @@ allTreacherys =
         , SomeTreacheryCard terrorOfTheNorth
         , SomeTreacheryCard darkSorcery
         , SomeTreacheryCard heavyCurse
+        , SomeTreacheryCard suddenAssault
+        , SomeTreacheryCard surprisingSpeed
+        , SomeTreacheryCard pressingNeeds
+        , SomeTreacheryCard weightOfResponsibility
         ]
     ]

@@ -152,6 +152,10 @@ allTreacheryCards =
       , terrorOfTheNorth
       , darkSorcery
       , heavyCurse
+      , suddenAssault
+      , surprisingSpeed
+      , pressingNeeds
+      , weightOfResponsibility
       ]
 
 deepDeepDark :: CardDef
@@ -490,7 +494,6 @@ orcAmbush =
     , cdEasyModeQuantity = Just 0
     }
 
-
 fellVoices :: CardDef
 fellVoices = treachery "04020" "Fell Voices" TheRedhornGate 2
 
@@ -518,7 +521,6 @@ avalanche =
   (treachery "04024" "Avalanche!" TheRedhornGate 1)
     { cdCardTraits = setFromList [Snow]
     }
-
 
 firesInTheDeep :: CardDef
 firesInTheDeep =
@@ -559,7 +561,6 @@ manyThongedWhip =
     { cdCardTraits = setFromList [Weapon, Flame]
     , cdUnique = True
     }
-
 
 illPurpose :: CardDef
 illPurpose = (treachery "04070" "Ill Purpose" TheWatcherInTheWater 1) {cdShadowEffect = True}
@@ -934,5 +935,27 @@ heavyCurse =
   (treachery "09066" "Heavy Curse" DarkSorcery 3)
     { cdCardTraits = setFromList [Sorcery]
     , cdKeywords = setFromList [Surge]
+
+suddenAssault :: CardDef
+suddenAssault = (treachery "09021" "Sudden Assault" IntrudersInChetwood 2) {cdEasyModeQuantity = Just 0}
+
+surprisingSpeed :: CardDef
+surprisingSpeed =
+  (treachery "09022" "Surprising Speed" IntrudersInChetwood 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+pressingNeeds :: CardDef
+pressingNeeds =
+  (treachery "09049" "Pressing Needs" EriadorWilds 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 1
+    }
+
+weightOfResponsibility :: CardDef
+weightOfResponsibility =
+  (treachery "09050" "Weight of Responsibility" EriadorWilds 2)
+    { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }

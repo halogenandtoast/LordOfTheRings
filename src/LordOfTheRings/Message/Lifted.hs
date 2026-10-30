@@ -409,6 +409,10 @@ attachTreachery tid = push . AttachTreachery tid . toTarget
 chooseAndExhaust :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 chooseAndExhaust source pid n = push $ ChooseAndExhaust (toSource source) pid n
 
+-- | The player chooses and exhausts a ready hero they control, if they have one.
+chooseAndExhaustHero :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+chooseAndExhaustHero source = push . ChooseAndExhaustHero (toSource source)
+
 {- | The player searches the top N cards of their deck for matching cards to take into
 hand, any number of them or only 1, then shuffles their deck.
 -}
@@ -569,6 +573,11 @@ cancelShadowEffects windows =
 
 returnToHand :: (ReverseQueue m, Targetable target) => target -> m ()
 returnToHand = push . ReturnToHand . toTarget
+
+-- | A player card from out of play goes to its owner's hand, as Lost in the Wilderness
+-- returns the cards underneath it.
+putInHand :: ReverseQueue m => PlayerCard -> m ()
+putInHand = push . PutInHand
 
 addToVictoryDisplay :: (ReverseQueue m, Targetable target) => target -> m ()
 addToVictoryDisplay = push . AddToVictoryDisplay . toTarget

@@ -143,11 +143,19 @@ allQuestCards =
       , theTrialOfIntuition
       , theAntleredCrownTheThreeTrials
       , searchTheRuins
+<<<<<<< HEAD
       , theShadesOfAngmar
       , aFellWraith
       , theShadowWorld
       , sealTheTomb
       , thePowerOfAngmar
+=======
+      , orcRearguard
+      , rescueIarion
+      , orcAmbush
+      , lostInTheWilderness
+      , stopTheWarParty
+>>>>>>> main
       ]
 
 theDrippingWalls :: CardDef
@@ -539,6 +547,7 @@ searchTheRuins =
     , cdKeywords = setFromList [Surge]
     }
 
+<<<<<<< HEAD
 theShadesOfAngmar :: CardDef
 theShadesOfAngmar = quest "09073" "The Shades of Angmar" DeadmensDike 1 11
 
@@ -561,3 +570,32 @@ thePowerOfAngmar =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+=======
+orcRearguard :: CardDef
+orcRearguard = (encounterSideQuest "09023" "Orc Rearguard" IntrudersInChetwood 3) {cdVictoryPoints = Just 10}
+
+rescueIarion :: CardDef
+rescueIarion =
+  (encounterSideQuest "09024" "Rescue Iârion" IntrudersInChetwood 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Time 4]
+    , cdWhenRevealed = True
+    }
+
+orcAmbush :: CardDef
+orcAmbush =
+  (encounterSideQuest "09046" "Orc Ambush" AngmarOrcs 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+lostInTheWilderness :: CardDef
+lostInTheWilderness =
+  (encounterSideQuest "09051" "Lost in the Wilderness" EriadorWilds 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+stopTheWarParty :: CardDef
+stopTheWarParty = quest "09068" "Stop the War Party" IntrudersInChetwood 1 30
+>>>>>>> main

@@ -122,11 +122,19 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+<<<<<<< HEAD
 import LordOfTheRings.Quest.Cards.TheShadesOfAngmar
 import LordOfTheRings.Quest.Cards.AFellWraith
 import LordOfTheRings.Quest.Cards.TheShadowWorld
 import LordOfTheRings.Quest.Cards.SealTheTomb
 import LordOfTheRings.Quest.Cards.ThePowerOfAngmar
+=======
+import LordOfTheRings.Quest.Cards.OrcRearguard
+import LordOfTheRings.Quest.Cards.RescueIarion
+import LordOfTheRings.Quest.Cards.OrcAmbush
+import LordOfTheRings.Quest.Cards.LostInTheWilderness
+import LordOfTheRings.Quest.Cards.StopTheWarParty
+>>>>>>> main
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -281,10 +289,18 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+<<<<<<< HEAD
         , SomeQuestCard theShadesOfAngmar
         , SomeQuestCard aFellWraith
         , SomeQuestCard theShadowWorld
         , SomeQuestCard sealTheTomb
         , SomeQuestCard thePowerOfAngmar
+=======
+        , SomeQuestCard orcRearguard
+        , SomeQuestCard rescueIarion
+        , SomeQuestCard orcAmbush
+        , SomeQuestCard lostInTheWilderness
+        , SomeQuestCard stopTheWarParty
+>>>>>>> main
         ]
     ]

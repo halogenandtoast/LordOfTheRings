@@ -156,11 +156,18 @@ import LordOfTheRings.Enemy.Cards.BoarsGuardian
 import LordOfTheRings.Enemy.Cards.WolfsGuardian
 import LordOfTheRings.Enemy.Cards.RavensGuardian
 import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
+<<<<<<< HEAD
 import LordOfTheRings.Enemy.Cards.Thaurdir
 import LordOfTheRings.Enemy.Cards.ThaurdirsDamned
 import LordOfTheRings.Enemy.Cards.BalefulShade
 import LordOfTheRings.Enemy.Cards.DeadLord
 import LordOfTheRings.Enemy.Cards.CursedDead
+=======
+import LordOfTheRings.Enemy.Cards.OrcWarParty
+import LordOfTheRings.Enemy.Cards.AngmarOrc
+import LordOfTheRings.Enemy.Cards.AngmarMarauder
+import LordOfTheRings.Enemy.Cards.AngmarCaptain
+>>>>>>> main
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -341,10 +348,17 @@ allEnemys =
         , SomeEnemyCard wolfsGuardian
         , SomeEnemyCard ravensGuardian
         , SomeEnemyCard spiritOfTheWild
+<<<<<<< HEAD
         , SomeEnemyCard thaurdir
         , SomeEnemyCard thaurdirsDamned
         , SomeEnemyCard balefulShade
         , SomeEnemyCard deadLord
         , SomeEnemyCard cursedDead
+=======
+        , SomeEnemyCard orcWarParty
+        , SomeEnemyCard angmarOrc
+        , SomeEnemyCard angmarMarauder
+        , SomeEnemyCard angmarCaptain
+>>>>>>> main
         ]
     ]

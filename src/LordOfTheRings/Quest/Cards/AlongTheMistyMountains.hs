@@ -19,9 +19,10 @@ instance RunMessage AlongTheMistyMountains where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
+    PerformSetup (isTarget attrs -> True) -> do
       lead <- getLead
       searchEncounterDeckToStaging lead (cardIs Objectives.arwenUndomielRoadToRivendell)
       eachPlayer $ const revealEncounterCard
-      AlongTheMistyMountains <$> runMessage msg attrs
+      turnOver attrs
+      pure q
     _ -> AlongTheMistyMountains <$> runMessage msg attrs

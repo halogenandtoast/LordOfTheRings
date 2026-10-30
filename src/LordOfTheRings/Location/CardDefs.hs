@@ -176,6 +176,7 @@ allLocationCards =
       , hallowedCircle
       , cursedForest
       , grimFoothills
+<<<<<<< HEAD
       , brokenBattlements
       , norburyTombs
       , fornostSquare
@@ -183,6 +184,13 @@ allLocationCards =
       , deadmensGate
       , ruinsOfArnor
       , ancientCauseway
+=======
+      , chetwoodForest
+      , bordersOfBreeLand
+      , outlyingHomestead
+      , ruggedCountry
+      , shroudedHills
+>>>>>>> main
       ]
 
 drownedTreasury :: CardDef
@@ -1287,6 +1295,7 @@ grimFoothills =
     , cdEasyModeQuantity = Just 2
     }
 
+<<<<<<< HEAD
 brokenBattlements :: CardDef
 brokenBattlements =
   (location "09036" "Broken Battlements" DeadmensDike 3 2 6)
@@ -1306,10 +1315,17 @@ hauntedKeep :: CardDef
 hauntedKeep =
   (location "09039" "Haunted Keep" DeadmensDike 3 3 3)
     { cdCardTraits = setFromList [Fornost, Ruins]
+=======
+chetwoodForest :: CardDef
+chetwoodForest =
+  (location "09018" "Chetwood Forest" IntrudersInChetwood 3 3 3)
+    { cdCardTraits = setFromList [Arnor, Forest]
+>>>>>>> main
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
 
+<<<<<<< HEAD
 deadmensGate :: CardDef
 deadmensGate =
   (location "09040" "Deadmen's Gate" DeadmensDike 2 4 4)
@@ -1328,3 +1344,34 @@ ruinsOfArnor =
 
 ancientCauseway :: CardDef
 ancientCauseway = (location "09057" "Ancient Causeway" RuinsOfArnor 2 3 2) {cdCardTraits = setFromList [Arnor, Ruins]}
+=======
+bordersOfBreeLand :: CardDef
+bordersOfBreeLand =
+  (location "09019" "Borders of Bree-land" IntrudersInChetwood 2 2 4)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+outlyingHomestead :: CardDef
+outlyingHomestead =
+  (location "09020" "Outlying Homestead" IntrudersInChetwood 3 2 8)
+    { cdCardTraits = setFromList [Arnor]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdEasyModeQuantity = Just 2
+    }
+
+ruggedCountry :: CardDef
+ruggedCountry =
+  (location "09047" "Rugged Country" EriadorWilds 3 2 3)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of quest cards in play: gained from its own modifiers.
+shroudedHills :: CardDef
+shroudedHills =
+  (location "09048" "Shrouded Hills" EriadorWilds 2 0 5)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    , cdEasyModeQuantity = Just 1
+    }
+>>>>>>> main

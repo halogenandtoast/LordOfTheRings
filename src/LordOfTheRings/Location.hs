@@ -166,6 +166,7 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+<<<<<<< HEAD
 import LordOfTheRings.Location.Cards.BrokenBattlements
 import LordOfTheRings.Location.Cards.NorburyTombs
 import LordOfTheRings.Location.Cards.FornostSquare
@@ -173,6 +174,13 @@ import LordOfTheRings.Location.Cards.HauntedKeep
 import LordOfTheRings.Location.Cards.DeadmensGate
 import LordOfTheRings.Location.Cards.RuinsOfArnor
 import LordOfTheRings.Location.Cards.AncientCauseway
+=======
+import LordOfTheRings.Location.Cards.ChetwoodForest
+import LordOfTheRings.Location.Cards.BordersOfBreeLand
+import LordOfTheRings.Location.Cards.OutlyingHomestead
+import LordOfTheRings.Location.Cards.RuggedCountry
+import LordOfTheRings.Location.Cards.ShroudedHills
+>>>>>>> main
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -366,6 +374,7 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+<<<<<<< HEAD
         , SomeLocationCard brokenBattlements
         , SomeLocationCard norburyTombs
         , SomeLocationCard fornostSquare
@@ -373,5 +382,12 @@ allLocations =
         , SomeLocationCard deadmensGate
         , SomeLocationCard ruinsOfArnor
         , SomeLocationCard ancientCauseway
+=======
+        , SomeLocationCard chetwoodForest
+        , SomeLocationCard bordersOfBreeLand
+        , SomeLocationCard outlyingHomestead
+        , SomeLocationCard ruggedCountry
+        , SomeLocationCard shroudedHills
+>>>>>>> main
         ]
     ]

@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.TheAmbush (theAmbush) where
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase))
@@ -35,8 +34,7 @@ instance RunMessage TheAmbush where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let setUp = map toCardCode [Locations.theCrossroads, Enemies.blackNumenorean, Objectives.faramirObjective, Objectives.lordAlcaronTheBloodOfGondor]
       -- the objective allies come under the first player's control as they are added
@@ -45,7 +43,8 @@ instance RunMessage TheAmbush where
         addToStaging card
       shuffleEncounterDeck
       revealEncounterCards . length =<< getRemainingPlayers
-      pure $ TheAmbush $ attrs {questFlipped = True}
+      turnOver attrs
+      pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       eachPlayer takeHiddenCard
       pure q

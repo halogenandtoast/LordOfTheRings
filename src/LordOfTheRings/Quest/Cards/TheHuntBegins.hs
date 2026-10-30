@@ -1,6 +1,5 @@
 module LordOfTheRings.Quest.Cards.TheHuntBegins (theHuntBegins) where
 
-import LordOfTheRings.Frontend
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
@@ -24,10 +23,10 @@ instance RunMessage TheHuntBegins where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       eachPlayer $ const revealEncounterCard
-      pure $ TheHuntBegins $ attrs {questFlipped = True}
+      turnOver attrs
+      pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       lead <- getLead
       revealOneOfTopEncounterCards lead attrs 3
