@@ -1788,6 +1788,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.DebugSpec
       LordOfTheRings.DeckCardsSpec
       LordOfTheRings.DreamChaser.AStormOnCobasHavenPlayerCardsSpec
+      LordOfTheRings.DreamChaser.AStormOnCobasHavenSpec
       LordOfTheRings.DreamChaser.FlightOfTheStormcallerPlayerCardsSpec
       LordOfTheRings.DreamChaser.GreyHavensPlayerCardsSpec
       LordOfTheRings.DreamChaser.SailingEngineSpec
