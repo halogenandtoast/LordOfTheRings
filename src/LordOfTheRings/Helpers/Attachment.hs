@@ -52,6 +52,8 @@ hosts = \case
   AttachToAlly m -> map toTarget <$> select m
   AttachToEnemy m -> map toTarget <$> select m
   AttachToLocation m -> map toTarget <$> select m
+  AttachToQuest -> getQuestCards
+  AttachToPlayer -> map PlayerTarget <$> getRemainingPlayers
   PlayIntoStagingArea -> pure []
 
 -- | What the host's modifiers take off the cost of attaching the card to it.

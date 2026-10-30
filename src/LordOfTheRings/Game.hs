@@ -592,13 +592,14 @@ runGameMessage msg g = case msg of
   CheckEliminations -> do
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
-      -- the level may move, as Double Dealings lowers it
-      level <- (eliminationThreat +) . sum . mapMaybe (\case EliminationThreatModifier n -> Just n; _ -> Nothing) <$> getModifiers (PlayerTarget player.id)
-      pure
-        -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
-        $ guard (not player.eliminated && (player.threat >= level || (null heroes && not (any ((== HeroType) . (.cardType)) player.deck))))
-        $> player.id
-    pushAll $ map EliminatePlayer eliminated
+      level <- getEliminationLevel player.id
+      -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
+      let noHeroes = null heroes && not (any ((== HeroType) . (.cardType)) player.deck)
+          byThreat = player.threat >= level
+      pure $ guard (not player.eliminated && (byThreat || noHeroes)) $> (player.id, byThreat && not noHeroes)
+    -- one reaching the elimination level opens a window first, as Favor of the Valar
+    -- answers to stop it
+    pushAll $ concat [[CheckWindows [mkWhen $ EliminatedByThreat pid] | byThreat] <> [EliminatePlayer pid] | (pid, byThreat) <- eliminated]
     pure g
   EliminatePlayer pid -> do
     heroes <- select (HeroControlledBy $ PlayerWithId pid)
@@ -779,7 +780,8 @@ runGameMessage msg g = case msg of
           | notNull sideQuests
           , lead <- take 1 order
           ]
-    pushAll $ chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
+    skipped <- elem SkipQuestPhase <$> getModifiers GameTarget
+    unless skipped $ pushAll $ chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
     pure $ g & phaseL .~ QuestPhase
   BeginPhase TravelPhase -> do
     -- the players' actions come first, as Thrór's Map's, then the lead may travel
@@ -1499,10 +1501,12 @@ runGameMessage msg g = case msg of
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
-          pushAll
-            $ CheckWindows [mkWhen QuestedUnsuccessfully]
-            : [RaiseThreat pid (threat - willpower) | pid <- players]
-            <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
+          do
+            spared <- elem NoThreatFromQuestingUnsuccessfully <$> getModifiers GameTarget
+            pushAll
+              $ CheckWindows [mkWhen QuestedUnsuccessfully]
+              : [RaiseThreat pid (threat - willpower) | not spared, pid <- players]
+              <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
   PlaceTimeCounters target -> do
@@ -1935,10 +1939,10 @@ runGameMessage msg g = case msg of
     let chosen = [Effect GameSource t [CurrentQuest] UntilEndOfPhase | t `elem` sideQuests]
     pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
-    pushAll $ discardAttachedToQuest g qid
+    pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
   CompleteQuest qid -> do
-    pushAll $ discardAttachedToQuest g qid <> [AdvanceQuest]
+    pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid <> [AdvanceQuest]
     -- a stage with victory points goes to the victory display, as Search for an Exit's
     let won = [toCard q | q <- toList (Map.lookup qid g.entities.quests), isJust (cdVictoryPoints $ toCardDef q)]
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (won <>))
@@ -2115,6 +2119,38 @@ runGameMessage msg g = case msg of
         $ if toTarget new `elem` hosts then AttachCard (toId a) (toTarget new) else Discard (toTarget a)
     pushAll $ moves <> [CheckWindows [mkAfter $ EntersPlay $ toTarget new]]
     getGame
+  AllyBecomesHero aid | Just a <- Map.lookup aid g.entities.allies -> do
+    hid <- getRandom
+    let attrs = toAttrs a
+        controller = fromMaybe attrs.allyOwner (placementController a.placement)
+        new =
+          overAttrs
+            ( \h ->
+                h
+                  { heroTokens = allyTokens attrs
+                  , heroExhausted = allyExhausted attrs
+                  , heroCommitted = allyCommitted attrs
+                  , heroAttacking = allyAttacking attrs
+                  }
+            )
+            $ lookupHero (toCardCode a) attrs.allyCardId hid controller
+    pure $ retargetCharacter (toTarget a) (toTarget new) $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . heroesL %~ insertEntity new
+  HeroBecomesAlly hid | Just h <- Map.lookup hid g.entities.heroes, cdCardType (toCardDef h) == AllyType -> do
+    aid <- getRandom
+    let attrs = toAttrs h
+        new =
+          overAttrs
+            ( \a ->
+                a
+                  { allyPlacement = InPlayArea attrs.heroOwner
+                  , allyTokens = heroTokens attrs
+                  , allyExhausted = heroExhausted attrs
+                  , allyCommitted = heroCommitted attrs
+                  , allyAttacking = heroAttacking attrs
+                  }
+            )
+            $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner
+    pure $ retargetCharacter (toTarget h) (toTarget new) $ g & entitiesL . heroesL %~ Map.delete hid & entitiesL . alliesL %~ insertEntity new
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
@@ -2374,9 +2410,6 @@ announce = \case
         $ send
         $ FlipCard attrs.questCardId
   _ -> pure ()
-
-eliminationThreat :: Int
-eliminationThreat = 50
 
 -- | Remove an entity from play and put its card in the right discard pile.
 discardTarget :: Target -> Game -> GameT Game
@@ -2766,7 +2799,18 @@ exhaustToDefend d eid = do
 -- | Whether a character is still in play.
 -- | The encounter cards attached to the stage as conditions, as Old Hatreds, leave play with it.
 discardAttachedToQuest :: Game -> QuestId -> [Message]
-discardAttachedToQuest g qid = [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+discardAttachedToQuest g qid =
+  [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+    <> [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo (QuestTarget qid)]
+
+-- | What was attached to, or lasting on, a character is on the one it became.
+retargetCharacter :: Target -> Target -> Game -> Game
+retargetCharacter old new g =
+  g
+    & entitiesL . attachmentsL . traverse %~ (\a -> if a.placement == AttachedTo old then overAttrs (\x -> x {attachmentPlacement = AttachedTo new}) a else a)
+    & entitiesL . treacheriesL . traverse %~ (\t -> if t.placement == AttachedTo old then overAttrs (\x -> x {treacheryPlacement = AttachedTo new}) t else t)
+    & entitiesL . objectivesL . traverse %~ (\o -> if o.placement == AttachedTo old then overAttrs (\x -> x {objectivePlacement = AttachedTo new}) o else o)
+    & effectsL . traverse %~ (\e -> if effectTarget e == old then e {effectTarget = new} else e)
 
 -- | Whether the source is a player's attack on an enemy, its damage.
 isPlayerAttack :: Source -> Bool

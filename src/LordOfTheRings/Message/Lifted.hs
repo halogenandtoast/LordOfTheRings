@@ -8,7 +8,7 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardType, toCardDef)
+import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
@@ -44,7 +44,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled),
+  WindowType (AllyDiscardedByCardEffect, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled),
  )
 
 dealDamage
@@ -202,8 +202,21 @@ shuffle the deck.
 searchEncounterDeckToStaging :: ReverseQueue m => PlayerId -> CardMatcher -> m ()
 searchEncounterDeckToStaging pid matcher = push $ Search pid EncounterDeck matcher ToStaging Shuffle
 
+{- | A card effect discards the card from play. An ally so discarded opens a window once it
+is gone, with its traits as it left, as Éothain answers; one destroyed by damage is
+discarded by the game, not this.
+-}
 discard :: (ReverseQueue m, Targetable target) => target -> m ()
-discard = push . Discard . toTarget
+discard (toTarget -> t) = do
+  push $ Discard t
+  case t of
+    AllyTarget aid -> do
+      present <- selectAny (AllyWithId aid)
+      when present do
+        def <- toCardDef <$> getAlly aid
+        gained <- mapMaybe (\case GainTrait x -> Just x; _ -> Nothing) <$> getModifiers t
+        push $ CheckWindows [Window After $ AllyDiscardedByCardEffect t (cdCardTraits def <> setFromList gained)]
+    _ -> pure ()
 
 ready :: (ReverseQueue m, Targetable target) => target -> m ()
 ready = push . Ready . toTarget

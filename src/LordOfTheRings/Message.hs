@@ -213,6 +213,11 @@ data Message
     attachments it can
     -}
     SwapHero HeroId PlayerCard
+  | -- | the ally loses the ally card type and gains the hero card type, as Sword-thain
+    -- gives it, keeping its tokens, state and what is attached to it
+    AllyBecomesHero AllyId
+  | -- | the hero an ally became goes back to being an ally
+    HeroBecomesAlly HeroId
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then

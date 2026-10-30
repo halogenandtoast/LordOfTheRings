@@ -623,6 +623,13 @@ objectivesWithTrait trait =
     =<< getsGame (filter ((/= Unplaced) . (.placement)) . toList . entitiesObjectives . gameEntities)
 
 -- | Players still in the game, in turn order from the first player.
+-- | The threat at which the player is eliminated, which may move, as Double Dealings
+-- lowers it.
+getEliminationLevel :: HasGame m => PlayerId -> m Int
+getEliminationLevel pid = do
+  mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
+  pure $ 50 + sum [n | EliminationThreatModifier n <- mods]
+
 getRemainingPlayers :: HasGame m => m [PlayerId]
 getRemainingPlayers = filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
 

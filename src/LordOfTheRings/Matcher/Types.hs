@@ -144,6 +144,10 @@ data AttachMatcher
   | AttachToAlly AllyMatcher
   | AttachToEnemy EnemyMatcher
   | AttachToLocation LocationMatcher
+  | -- | a quest card in play, a side quest among them, as The Long Defeat
+    AttachToQuest
+  | -- | a player's threat dial, as Favor of the Valar
+    AttachToPlayer
   | -- | played into the staging area unattached, as a Trap
     PlayIntoStagingArea
   deriving stock (Show, Eq, Generic)

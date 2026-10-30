@@ -361,6 +361,11 @@ data ModifierType
     GameCannotEnd
   | -- | on the game: the outcome the game ends with once it can end
     GameEndsWith Outcome
+  | -- | on the game: questing unsuccessfully raises no player's threat, as Doom Hangs
+    -- Still reads
+    NoThreatFromQuestingUnsuccessfully
+  | -- | on the game: the quest phase is skipped, as Doom Hangs Still reads
+    SkipQuestPhase
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
