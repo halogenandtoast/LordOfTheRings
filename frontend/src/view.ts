@@ -15,6 +15,7 @@ const cardTypes: Record<string, string> = {
   ObjectiveType: 'Objective',
   ObjectiveAllyType: 'Objective Ally',
   PlayerSideQuestType: 'Player Side Quest',
+  EncounterSideQuestType: 'Encounter Side Quest',
 }
 
 const phases: Record<string, string> = {
@@ -50,6 +51,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   if (!data.started || !game) return { started: false, round: 0, phase: null, outcome: null, over: false, question: null, attachmentHosts: {}, scenario: null, players: [], tally: null }
 
   const def = (code: string): Partial<CardDef> => defs[code] ?? {}
+  // a side quest, a player's or one revealed from the encounter deck, waits in staging
+  const isSideQuest = (e: Entity) => ['PlayerSideQuestType', 'EncounterSideQuestType'].includes(def(e.cardCode).cardType ?? '')
   const threatening = new Set(game.threatening ?? [])
   const entities = game.entities
 
@@ -245,8 +248,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ...placed('attachments', isAt('StagingArea')),
     // a treachery shows in staging while it resolves, until it attaches or is discarded
     ...placed('treacheries', isAt('Unplaced')),
-    // a player side quest waits in staging until it is defeated
-    ...placed('quests', (q) => !!q.owner),
+    // a side quest waits in staging until it is defeated
+    ...placed('quests', isSideQuest),
   ]
   const staging = allStaging.filter(inFocus)
 
@@ -302,7 +305,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   }
 
   const activeLocations = placed('locations', isAt('ActiveLocation'))
-  const quests = placed('quests', (q) => !q.owner)
+  const quests = placed('quests', (q) => !isSideQuest(q))
   const [activeLocation, ...otherActiveLocations] = activeLocations.filter(inFocus)
   const [quest] = quests.filter(inFocus)
   const otherAreas = areas

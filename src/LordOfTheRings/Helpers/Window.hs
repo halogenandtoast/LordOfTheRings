@@ -92,6 +92,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
       TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
       ObjectiveTarget i -> toCardDef <$> Map.lookup i es.objectives
+      QuestTarget i -> toCardDef <$> Map.lookup i es.quests
       _ -> Nothing
   -- only while the enemy is still in play, to be dealt more
   (AttackDealtDamageWithTraitWindow t trait, AttackDealtDamage eid attackers _) | t == timing ->
@@ -127,6 +128,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
           EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
           LocationTarget i -> toCardDef <$> Map.lookup i es.locations
           TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
+          QuestTarget i -> toCardDef <$> Map.lookup i es.quests
           _ -> Nothing
     maybe (pure False) (hasKeyword Surge target) def
   (HeroDefenderDeclaredWindow t m other, DeclaredAsDefender (HeroTarget hid) eid) | t == timing ->

@@ -17,8 +17,15 @@ data CardType
   | CampaignType
   | -- | a side quest from a player's deck, played into the staging area
     PlayerSideQuestType
+  | -- | a side quest shuffled into the encounter deck, revealed into the staging area
+    EncounterSideQuestType
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | A side quest, from a player's deck or the encounter deck: one the players may quest
+-- against in place of the main quest.
+isSideQuestType :: CardType -> Bool
+isSideQuestType = (`elem` [PlayerSideQuestType, EncounterSideQuestType])
 
 isPlayerCardType :: CardType -> Bool
 isPlayerCardType = (`elem` [HeroType, AllyType, AttachmentType, EventType, PlayerSideQuestType])

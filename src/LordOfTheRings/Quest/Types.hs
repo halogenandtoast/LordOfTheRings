@@ -117,6 +117,15 @@ instance HasCardDef QuestAttrs where
 instance HasCardDef Quest where
   toCardDef = toCardDef . toAttrs
 
+-- | A side quest, a player's or an encounter one, waits in the staging area until the
+-- players quest against it; any other quest card is the main quest.
+isSideQuest :: HasCardDef a => a -> Bool
+isSideQuest = isSideQuestType . cdCardType . toCardDef
+
+-- | A side quest revealed from the encounter deck.
+isEncounterSideQuest :: HasCardDef a => a -> Bool
+isEncounterSideQuest = (== EncounterSideQuestType) . cdCardType . toCardDef
+
 instance Targetable QuestAttrs where
   toTarget = QuestTarget . questId
   isTarget attrs (CardIdTarget cid) = cid == questCardId attrs
