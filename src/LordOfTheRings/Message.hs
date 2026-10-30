@@ -3,6 +3,7 @@ module LordOfTheRings.Message (module LordOfTheRings.Message) where
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Card
 import LordOfTheRings.Effect
+import LordOfTheRings.Heading (HeadingShift)
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Log.Block
@@ -535,6 +536,36 @@ data Message
     any others declared so
     -}
     DeclareAsDefender PlayerId EnemyId Target
+  | -- | the heading shifts one setting on-course or off-course (Dream-chaser rules)
+    ShiftHeading Source HeadingShift
+  | {- | the first player makes a Sailing test, as a stage with the Sailing keyword reads at
+    the start of the quest phase: the heading shifts off-course, then characters commit
+    -}
+    SailingTest
+  | -- | the first player commits characters to the Sailing test, one at a time, with those
+    -- committed so far
+    CommitToSailingTest PlayerId [Target]
+  | -- | the committed characters say how many cards from the top of the encounter deck
+    -- are looked at
+    ResolveSailingTest [Target]
+  | -- | the cards the Sailing test looked at: the success icons found, and those canceled
+    SailingTestResult [EncounterCard] Int Int
+  | -- | the non-Ship enemies leave the encounter deck for the Corsair deck, shuffled
+    PrepareCorsairDeck
+  | -- | the top card of the Corsair deck is revealed and put into play engaged with the
+    -- player, for the source, its discard pile reshuffled first if it has run out
+    RevealFromCorsairDeck Source PlayerId
+  | -- | the card the source revealed from the Corsair deck, as Light Cruiser reads it
+    RevealedFromCorsairDeck Source PlayerId EncounterCard
+  | -- | the Ship enemy engaged the player from the staging area: its Boarding X resolves
+    ResolveBoarding PlayerId EnemyId
+  | -- | each player takes a Ship objective of The Dream-chaser's Fleet, one the
+    -- Dream-chaser, as "Players prepare their fleet" reads
+    PrepareFleet
+  | -- | the first of the players chooses one of the ships left, then the rest in turn
+    ChooseFleetShip [PlayerId] [EncounterCard]
+  | -- | an objective ally card, taken from where it was, enters play under the player
+    PutObjectiveAllyIntoPlayUnder PlayerId EncounterCard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -11,6 +11,9 @@ data Keyword
     Archery Int
   | -- | on a quest: characters quest with their attack instead of their willpower
     Battle
+  | -- | on a Ship enemy: engaging a player from the staging area, it reveals this many cards
+    -- of the Corsair deck, put into play engaged with him (Dream-chaser rules)
+    Boarding Int
   | -- | on an encounter card: as it is revealed it captures this many cards from the top of
     -- its player's captured deck underneath it (Escape from Mount Gram resolves it)
     Capture Int
@@ -39,6 +42,9 @@ data Keyword
     Scour
   | -- | on a player card: it costs this much less while its player's threat is 20 or lower
     Secrecy Int
+  | -- | on a quest stage: the first player makes a Sailing test at the start of each quest
+    -- phase (Dream-chaser rules)
+    Sailing
   | Sentinel
   | -- | on a quest: characters quest with their defense instead of their willpower
     Siege

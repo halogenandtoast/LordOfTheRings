@@ -54,6 +54,8 @@ data CardDef = CardDef
   -- ^ the card must be paid for from this many different heroes' pools
   , cdEscape :: Maybe Int
   -- ^ what the card adds to an escape test it is dealt for
+  , cdSailingIcons :: Int
+  -- ^ the sailing success icons printed on the encounter card, found by a Sailing test
   , cdDeckLimit :: Int
   -- ^ the copies of its title a deck may hold
   , cdLimitOnePerHost :: Bool
@@ -107,6 +109,7 @@ emptyCardDef cCode name cType =
     , cdWhenRevealed = False
     , cdDistinctPayers = Nothing
     , cdEscape = Nothing
+    , cdSailingIcons = 0
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
     , cdPlayableFrom = FromHand

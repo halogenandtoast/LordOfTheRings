@@ -63,6 +63,7 @@
     "collapse": "Back to one seat"
   },
   "noActiveLocation": "No active location",
+  "heading": "Heading",
   "bands": {
     "scenario": "scenario",
     "staging": "staging",

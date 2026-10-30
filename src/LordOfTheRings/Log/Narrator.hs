@@ -23,6 +23,7 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Heading
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
@@ -101,6 +102,24 @@ narrationFor = \case
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> (10 :: Int)]]
   -- \* Day and Night, as The Wastes of Eriador's Time objective flips
   CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
+  -- \* The heading and the Sailing test (Dream-chaser rules)
+  ShiftHeading _ shift -> Just do
+    heading <- getsGame ((.heading) . toAttrs . gameScenario)
+    pure
+      [ toned (if shift == ShiftOnCourse then Good else Bad)
+        $ mechanic [ikeyPart (if h' == h then "log.headingStays" else "log.headingShifts") ["heading" ~> headingPart h']]
+      | Just h <- [heading]
+      , let h' = shiftHeading shift h
+      ]
+  SailingTest -> Just $ one $ mechanic [ikeyPart "log.sailingTest" []]
+  ResolveSailingTest committed -> Just do
+    refs <- catMaybes <$> traverse targetRefFor committed
+    one $ action [if null refs then ikeyPart "log.sailingTestNoCommits" [] else ikeyPart "log.sailingTestCommits" ["characters" ~> refs]]
+  SailingTestResult top found canceled -> Just $ one $ toned (if found > canceled then Good else Bad) $ test
+    $ ikeyPart "log.sailingTestResult" ["cards" ~> map EncounterCard top, "count" ~> found]
+    : [ikeyPart "log.sailingIconCanceled" [] | canceled > 0]
+  PrepareCorsairDeck -> Just $ one $ mechanic [ikeyPart "log.corsairDeckPrepared" []]
+  PutObjectiveAllyIntoPlayUnder _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> EncounterCard card]]
   EliminatePlayer pid -> Just do
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]
@@ -452,3 +471,7 @@ closeBlock bid = do
               ]
       _ -> pure []
     _ -> pure []
+
+-- | The heading's setting, named.
+headingPart :: Heading -> LogPart
+headingPart h = ikeyPart ("log.heading." <> toLower (tshow h)) []

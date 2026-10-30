@@ -140,5 +140,21 @@
   "setAsideOutOfPlay": "{target} is set aside, out of play",
   "capturedRescued": "A captured card is rescued from underneath {card} | {count} captured cards are rescued from underneath {card}",
   "capturedUnderneath": "A captured card underneath | {count} captured cards underneath",
-  "capturedDeck": "Captured deck: {count} cards"
+  "capturedDeck": "Captured deck: {count} cards",
+  "headingShifts": "The heading shifts to {heading}",
+  "headingStays": "The heading stays at {heading}",
+  "heading": {
+    "sunny": "on-course",
+    "cloudy": "cloudy (off-course)",
+    "rainy": "rainy (off-course)",
+    "stormy": "stormy (off-course, the worst setting)"
+  },
+  "sailingTest": "The first player makes a Sailing test",
+  "sailingTestCommits": "{characters} commit to the Sailing test",
+  "sailingTestNoCommits": "No character commits to the Sailing test",
+  "sailingTestResult": "The Sailing test looks at {cards}: a sailing success icon | The Sailing test looks at {cards}: {count} sailing success icons",
+  "sailingIconCanceled": "the first is canceled",
+  "corsairDeckPrepared": "The Corsair deck is prepared",
+  "corsairDeck": "Corsair deck: {count} cards",
+  "corsairDiscard": "Corsair discard pile"
 }

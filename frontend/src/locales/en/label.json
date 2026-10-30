@@ -1289,5 +1289,34 @@
   "narya": {
     "ally": "Narya: choose an ally to ready",
     "done": "Ready no more allies"
+  },
+  "shiftHeadingOffCourse": "Shift your heading off-course",
+  "takeResourceFromAHero": "Choose a hero to move 1 resource from",
+  "sailingTest": {
+    "commit": "Sailing test: exhaust a character to commit it ({count} committed)",
+    "done": "Done committing to the Sailing test",
+    "result": "Sailing test: {count} cards looked at, {found} sailing success icons found ({canceled} canceled)"
+  },
+  "fleet": {
+    "dreamChaser": "Prepare your fleet: choose the player who takes the Dream-chaser",
+    "chooseShip": "Prepare your fleet: choose your Ship objective"
+  },
+  "cunningPirate": {
+    "discard": "Cunning Pirate: choose an attachment you control to discard"
+  },
+  "thrownOffCourse": {
+    "choose": "Thrown Off Course: choose one",
+    "progress": "Remove all progress from the current quest and raise each player's threat by 4"
+  },
+  "suddenStorms": {
+    "choose": "Sudden Storms: choose one",
+    "damage": "Deal 1 damage to each exhausted character"
+  },
+  "windsOfWrath": {
+    "choose": "Winds of Wrath: choose one",
+    "undefended": "Treat this attack as undefended"
+  },
+  "voyageAcrossBelegaer": {
+    "chooseStage": "On-course: choose the stage to advance to; the other goes to the bottom of the quest deck"
   }
 }

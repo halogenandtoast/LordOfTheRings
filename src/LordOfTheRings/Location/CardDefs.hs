@@ -221,6 +221,12 @@ allLocationCards =
       , eerieHalls
       , ghostlyRuins
       , decrepitRemains
+      , starlitSea
+      , fogBank
+      , calmWaters
+      , rollingSeas
+      , roughWaters
+      , waterspout
       ]
 
 drownedTreasury :: CardDef
@@ -1605,4 +1611,51 @@ decrepitRemains =
   (location "10104" "Decrepit Remains" TheTreacheryOfRhudaur 2 1 3)
     { cdCardTraits = setFromList [Ruins]
     , cdShadowEffect = True
+    }
+
+-- * The Dream-chaser cycle: Voyage Across Belegaer, Vast Oceans, Stormy Weather
+
+starlitSea :: CardDef
+starlitSea =
+  (location "11023" "Starlit Sea" VoyageAcrossBelegaer 2 3 2)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+fogBank :: CardDef
+fogBank =
+  (location "11024" "Fog Bank" VoyageAcrossBelegaer 2 2 5)
+    { cdCardTraits = setFromList [Ocean]
+    , cdShadowEffect = True
+    }
+
+calmWaters :: CardDef
+calmWaters =
+  (location "11050" "Calm Waters" VastOceans 2 1 4)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 2
+    , cdShadowEffect = True
+    }
+
+rollingSeas :: CardDef
+rollingSeas =
+  (location "11051" "Rolling Seas" VastOceans 3 4 3)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+roughWaters :: CardDef
+roughWaters =
+  (location "11053" "Rough Waters" StormyWeather 2 2 3)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+waterspout :: CardDef
+waterspout =
+  (location "11054" "Waterspout" StormyWeather 2 2 4)
+    { cdCardTraits = setFromList [Ocean]
     }

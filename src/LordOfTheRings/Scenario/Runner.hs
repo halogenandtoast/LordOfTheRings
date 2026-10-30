@@ -21,6 +21,7 @@ import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
+import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (sourceTarget)
 import LordOfTheRings.Target
@@ -184,7 +185,8 @@ instance RunMessage ScenarioAttrs where
     AddToEncounterDiscard cards -> do
       owned <- for cards \c -> (c,) <$> setAsideOwner c.id
       pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
-      pure $ attrs & encounterDiscardL %~ ([c | (c, Nothing) <- owned] <>)
+      -- a card of the Corsair deck goes to its own discard pile, while there is one
+      pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned]
     -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in
     ShuffleIntoEncounterDeck (CardIdTarget cid) -> do
       owned <- getsGame (concatMap (.setAsideCards) . toList . gamePlayers)
@@ -239,7 +241,7 @@ instance RunMessage ScenarioAttrs where
       pure $ attrs & hiddenCardsL . ix pid %~ filter (/= card) & encounterDiscardL %~ (card :)
     -- an eliminated player's hidden cards are discarded
     EliminatePlayer pid -> pure $ attrs & hiddenCardsL %~ Map.delete pid & encounterDiscardL %~ (hiddenOf pid <>)
-    _ -> pure attrs
+    _ -> runSailing msg attrs
    where
     -- "If the encounter deck is ever empty during the quest phase, the encounter discard
     -- pile is shuffled and reset back into the encounter deck."

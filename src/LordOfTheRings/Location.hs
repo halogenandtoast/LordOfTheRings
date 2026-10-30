@@ -210,6 +210,12 @@ import LordOfTheRings.Location.Cards.ForbiddenDescent
 import LordOfTheRings.Location.Cards.EerieHalls
 import LordOfTheRings.Location.Cards.GhostlyRuins
 import LordOfTheRings.Location.Cards.DecrepitRemains
+import LordOfTheRings.Location.Cards.StarlitSea
+import LordOfTheRings.Location.Cards.FogBank
+import LordOfTheRings.Location.Cards.CalmWaters
+import LordOfTheRings.Location.Cards.RollingSeas
+import LordOfTheRings.Location.Cards.RoughWaters
+import LordOfTheRings.Location.Cards.Waterspout
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -447,5 +453,11 @@ allLocations =
         , SomeLocationCard eerieHalls
         , SomeLocationCard ghostlyRuins
         , SomeLocationCard decrepitRemains
+        , SomeLocationCard starlitSea
+        , SomeLocationCard fogBank
+        , SomeLocationCard calmWaters
+        , SomeLocationCard rollingSeas
+        , SomeLocationCard roughWaters
+        , SomeLocationCard waterspout
         ]
     ]

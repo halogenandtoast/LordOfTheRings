@@ -199,6 +199,16 @@ allEnemyCards =
       , thaurdirTheTreacheryOfRhudaur
       , wightOfRhudaur
       , traitorousWight
+      , scoutingShip
+      , lightCruiser
+      , corsairWarship
+      , southronSailor
+      , cunningPirate
+      , viciousMarauder
+      , umbarCaptain
+      , umbarRaider
+      , corsairInfiltrator
+      , raidLeader
       ]
 
 namelessThing :: CardDef
@@ -1603,4 +1613,70 @@ traitorousWight =
     { cdCardTraits = setFromList [Undead, Wight]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+-- * The Dream-chaser cycle: Voyage Across Belegaer, Umbar Navy, Corsair Pirates, Corsair Raiders
+
+scoutingShip :: CardDef
+scoutingShip =
+  (enemy "11022" "Scouting Ship" VoyageAcrossBelegaer 3 35 2 5 2 7)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    }
+
+lightCruiser :: CardDef
+lightCruiser =
+  (enemy "11057" "Light Cruiser" UmbarNavy 2 37 4 6 5 7)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 2]
+    }
+
+corsairWarship :: CardDef
+corsairWarship =
+  (enemy "11058" "Corsair Warship" UmbarNavy 2 44 3 8 4 9)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 3]
+    , cdVictoryPoints = Just 6
+    }
+
+southronSailor :: CardDef
+southronSailor =
+  (enemy "11060" "Southron Sailor" CorsairPirates 2 28 0 2 1 4)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+cunningPirate :: CardDef
+cunningPirate =
+  (enemy "11061" "Cunning Pirate" CorsairPirates 3 36 1 2 2 4)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+viciousMarauder :: CardDef
+viciousMarauder =
+  (enemy "11062" "Vicious Marauder" CorsairPirates 2 12 2 3 3 3)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+umbarCaptain :: CardDef
+umbarCaptain =
+  (enemy "11063" "Umbar Captain" CorsairPirates 2 40 4 5 3 5)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+umbarRaider :: CardDef
+umbarRaider =
+  (enemy "11064" "Umbar Raider" CorsairRaiders 3 24 2 3 2 4)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+corsairInfiltrator :: CardDef
+corsairInfiltrator =
+  (enemy "11065" "Corsair Infiltrator" CorsairRaiders 2 16 2 3 3 2)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+raidLeader :: CardDef
+raidLeader =
+  (enemy "11066" "Raid Leader" CorsairRaiders 2 40 3 5 1 5)
+    { cdCardTraits = setFromList [Corsair, Raider]
     }

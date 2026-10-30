@@ -1,0 +1,53 @@
+module LordOfTheRings.Scenario.Scenarios.VoyageAcrossBelegaer (voyageAcrossBelegaer) where
+
+import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Matcher (getLead, isOnCourse)
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.Import.Lifted
+
+newtype VoyageAcrossBelegaer = VoyageAcrossBelegaer ScenarioAttrs
+  deriving anyclass (IsScenario)
+  deriving newtype (Show, Eq, ToJSON, Entity)
+
+voyageAcrossBelegaer :: Scenario
+voyageAcrossBelegaer = Scenario $ scenario VoyageAcrossBelegaer "voyage-across-belegaer" "Voyage Across Belegaer"
+
+{- | The encounter deck is built from the Voyage Across Belegaer, Vast Oceans, Stormy
+Weather, Umbar Navy and Corsair Pirates sets; The Dream-chaser's Fleet is prepared by the
+first stage. The stage 2 cards are shuffled so their order is random, stage 3 left on the
+bottom.
+-}
+instance RunMessage VoyageAcrossBelegaer where
+  runMessage msg (VoyageAcrossBelegaer attrs) = case msg of
+    DoStep 1 Setup -> do
+      encounterDeck <-
+        concatMapM
+          (gatherEncounterSet attrs)
+          [ EncounterSet.VoyageAcrossBelegaer
+          , EncounterSet.VastOceans
+          , EncounterSet.StormyWeather
+          , EncounterSet.UmbarNavy
+          , EncounterSet.CorsairPirates
+          ]
+      firstStage <- genEncounterCard Quests.departureFromTheHavens
+      secondStages <- shuffleM =<< traverse genEncounterCard [Quests.intoTheStorm, Quests.cursedMists, Quests.calphonsDivination, Quests.theStarsGuidance]
+      lastStage <- genEncounterCard Quests.corsairPursuit
+      putQuestIntoPlay firstStage
+      pure $ VoyageAcrossBelegaer $ attrs & encounterDeckL .~ encounterDeck & questDeckL .~ secondStages <> [lastStage]
+    -- When a stage is defeated, if you are on-course, look at the top 2 stages of the quest
+    -- deck and advance to one of your choice, placing the other on the bottom of the quest
+    -- deck. Otherwise, advance to the top stage of the quest deck.
+    AdvanceQuest | top@(_ : _ : _) <- take 2 attrs.questDeck -> do
+      onCourse <- isOnCourse
+      if onCourse
+        then do
+          lead <- getLead
+          chooseOneM lead do
+            questionLabeled "voyageAcrossBelegaer.chooseStage"
+            showing (map EncounterCard top)
+            targets top \chosen -> do
+              for_ (filter (/= chosen) top) (putOnBottomOfQuestDeck . EncounterCard)
+              advanceToQuest chosen
+          pure $ VoyageAcrossBelegaer attrs
+        else VoyageAcrossBelegaer <$> runMessage msg attrs
+    _ -> VoyageAcrossBelegaer <$> runMessage msg attrs

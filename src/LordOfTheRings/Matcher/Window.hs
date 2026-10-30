@@ -231,6 +231,8 @@ data WindowMatcher
   | -- | the player drew their setup hand, as Galdor of the Havens answers instead of a
     -- mulligan
     SetupHandDrawnWindow Timing PlayerId
+  | -- | a player committed characters to a Sailing test, as Swift Raider answers
+    CommittedToSailingTestWindow Timing
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -336,6 +338,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
   (SetupHandDrawnWindow t pid, SetupHandDrawn pid') -> t == timing && pid == pid'
+  (CommittedToSailingTestWindow t, CommittedToSailingTest {}) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

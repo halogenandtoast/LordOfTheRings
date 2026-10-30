@@ -255,6 +255,7 @@ passesCriteria = \case
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m
+  HeadingMatches m -> headingMatches m
   AnyCriteria cs -> anyM passesCriteria cs
 
 -- | Whether each list can give a character not taken by an earlier one.

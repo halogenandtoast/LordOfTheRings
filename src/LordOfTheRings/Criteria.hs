@@ -1,6 +1,7 @@
 module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 
 import LordOfTheRings.Card.CardType
+import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
 import LordOfTheRings.Modifier (ModifierType)
@@ -54,6 +55,8 @@ data Criterion
   | AnyCriteria [Criterion]
   | -- | at least this many enemies match
     EnemiesAtLeast Int EnemyMatcher
+  | -- | the heading reads as the matcher says, as "if you are on-course"
+    HeadingMatches HeadingMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

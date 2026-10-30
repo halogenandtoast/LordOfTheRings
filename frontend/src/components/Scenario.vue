@@ -16,6 +16,14 @@ const emit = defineEmits<{ choose: [index: number] }>()
 const { active: debugging, send } = useDebug()
 
 const isFlipping = (card: CardView) => flipping.has(card.id)
+
+// the heading's four settings, on-course first (Dream-chaser rules)
+const settings = [
+  { key: 'sunny', icon: '☀' },
+  { key: 'cloudy', icon: '☁' },
+  { key: 'rainy', icon: '☂' },
+  { key: 'stormy', icon: '↯' },
+]
 </script>
 
 <template>
@@ -28,6 +36,17 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
         <button type="button" :disabled="scenario.encounterDeck === 0" @click="send({ tag: 'RevealEncounterCard' })">{{ $t('game.debug.reveal') }}</button>
         <button type="button" :disabled="scenario.encounterDeck === 0" @click="send({ tag: 'DebugSearchEncounterDeck', contents: playerId })">{{ $t('game.debug.search') }}</button>
       </div>
+    </div>
+    <!-- the Corsair deck beside the encounter deck, with its own discard pile -->
+    <template v-if="scenario.corsairDeck !== null">
+      <DiscardPile :cards="scenario.corsairDiscard" back="encounter" :choices="choices" @choose="emit('choose', $event)" data-pile="discard-corsair" />
+      <CardBack :count="scenario.corsairDeck" back="encounter" :title="$t('log.corsairDeck', { count: scenario.corsairDeck })" data-pile="deck-corsair" />
+    </template>
+    <div v-if="scenario.heading" class="heading" :title="$t(`log.heading.${scenario.heading}`)">
+      <span class="heading-label">{{ $t('game.heading') }}</span>
+      <ol class="heading-track">
+        <li v-for="s in settings" :key="s.key" :class="{ current: s.key === scenario.heading }">{{ s.icon }}</li>
+      </ol>
     </div>
     <GameCard
       v-if="scenario.quest"
@@ -63,6 +82,10 @@ const isFlipping = (card: CardView) => flipping.has(card.id)
 <style scoped>
 .scenario { flex: 0 0 auto; }
 .deck { display: flex; flex-direction: column; gap: 4px; }
+.heading { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.heading-track { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.heading-track li { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 4px; font-size: 0.9rem; opacity: 0.4; }
+.heading-track li.current { opacity: 1; border-color: currentColor; color: var(--text); }
 .location-placeholder {
   display: flex;
   align-items: center;

@@ -5,6 +5,7 @@ module LordOfTheRings.Scenario.Types (module LordOfTheRings.Scenario.Types) wher
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Heading (Heading)
 import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Prelude
@@ -42,6 +43,13 @@ data ScenarioAttrs = ScenarioAttrs
   -- ^ what only one scenario keeps, as Arkham's meta: its module reads and writes it
   , scenarioHiddenCards :: Map PlayerId [EncounterCard]
   -- ^ the encounter cards facedown in each player's play area (The Blood of Gondor)
+  , scenarioHeading :: Maybe Heading
+  -- ^ the Dream-chaser's heading, once the players have prepared their fleet
+  , scenarioCorsairDeck :: Maybe [EncounterCard]
+  -- ^ the Corsair deck, top first, once prepared: the non-Ship enemies taken out of the
+  -- encounter deck (Dream-chaser rules)
+  , scenarioCorsairDiscard :: [EncounterCard]
+  -- ^ the Corsair deck's own discard pile
   }
   deriving stock (Show, Eq, Generic)
 
@@ -51,7 +59,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object [])]
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard]))]
 
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =
@@ -68,6 +76,9 @@ scenario f sid name =
       , scenarioEasyMode = False
       , scenarioMeta = Null
       , scenarioHiddenCards = mempty
+      , scenarioHeading = Nothing
+      , scenarioCorsairDeck = Nothing
+      , scenarioCorsairDiscard = []
       }
 
 instance Entity ScenarioAttrs where
@@ -120,3 +131,12 @@ instance HasField "meta" ScenarioAttrs Value where
 
 instance HasField "hiddenCards" ScenarioAttrs (Map PlayerId [EncounterCard]) where
   getField = scenarioHiddenCards
+
+instance HasField "heading" ScenarioAttrs (Maybe Heading) where
+  getField = scenarioHeading
+
+instance HasField "corsairDeck" ScenarioAttrs (Maybe [EncounterCard]) where
+  getField = scenarioCorsairDeck
+
+instance HasField "corsairDiscard" ScenarioAttrs [EncounterCard] where
+  getField = scenarioCorsairDiscard

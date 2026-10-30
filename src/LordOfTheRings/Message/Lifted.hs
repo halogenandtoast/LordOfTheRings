@@ -1268,3 +1268,36 @@ skipMulligan :: (MonadTrans t, HasQueue Message m) => PlayerId -> t m ()
 skipMulligan pid = cancelMatching \case
   Ask pid' (QuestionLabel l _ _ _) -> pid == pid' && l == ikey "label.keepStartingHand"
   _ -> False
+-- * Sailing (Dream-chaser rules)
+
+-- | Shift the heading one setting off-course, as Rolling Seas' Travel cost reads.
+shiftHeadingOffCourse :: (ReverseQueue m, Sourceable source) => source -> m ()
+shiftHeadingOffCourse source = push $ ShiftHeading (toSource source) ShiftOffCourse
+
+-- | Shift the heading one setting on-course, as a sailing success icon does.
+shiftHeadingOnCourse :: (ReverseQueue m, Sourceable source) => source -> m ()
+shiftHeadingOnCourse source = push $ ShiftHeading (toSource source) ShiftOnCourse
+
+-- | "Prepare the Corsair deck": each non-Ship enemy leaves the encounter deck for it.
+prepareCorsairDeck :: ReverseQueue m => m ()
+prepareCorsairDeck = push PrepareCorsairDeck
+
+-- | "Players prepare their fleet", the heading starting on-course.
+prepareFleet :: ReverseQueue m => m ()
+prepareFleet = push PrepareFleet
+
+-- | The player reveals the top card of the Corsair deck and engages it, for the source.
+revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+revealFromCorsairDeck source pid = push $ RevealFromCorsairDeck (toSource source) pid
+
+-- | The player moves 1 resource from one of his heroes' pools to the card, as Umbar Raider
+-- takes it; nothing, with no resources to move.
+takeResourceFromAHero :: (ReverseQueue m, Sourceable a, Targetable a) => a -> PlayerId -> m ()
+takeResourceFromAHero a pid = do
+  heroes <- select (HeroControlledBy (PlayerWithId pid) <> HeroWithResources)
+  chooseOrRunOneM pid do
+    questionLabeled "takeResourceFromAHero"
+    causedBy a
+    targets heroes \h -> do
+      removeTokens a h Resource 1
+      placeResources a a 1

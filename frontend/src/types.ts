@@ -89,6 +89,11 @@ export interface ScenarioView {
   victory: CardView[]
   setAside: CardView[]
   victoryPoints: number
+  /** The Dream-chaser's heading, lower-cased, once the fleet is prepared. */
+  heading: string | null
+  /** The Corsair deck's size, while there is one, and its discard pile. */
+  corsairDeck: number | null
+  corsairDiscard: CardView[]
 }
 
 export interface AreaView {
