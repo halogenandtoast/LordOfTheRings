@@ -193,6 +193,16 @@ import LordOfTheRings.Enemy.Cards.GoblinPursuer
 import LordOfTheRings.Enemy.Cards.ThaurdirTheTreacheryOfRhudaur
 import LordOfTheRings.Enemy.Cards.WightOfRhudaur
 import LordOfTheRings.Enemy.Cards.TraitorousWight
+import LordOfTheRings.Enemy.Cards.ScoutingShip
+import LordOfTheRings.Enemy.Cards.LightCruiser
+import LordOfTheRings.Enemy.Cards.CorsairWarship
+import LordOfTheRings.Enemy.Cards.SouthronSailor
+import LordOfTheRings.Enemy.Cards.CunningPirate
+import LordOfTheRings.Enemy.Cards.ViciousMarauder
+import LordOfTheRings.Enemy.Cards.UmbarCaptain
+import LordOfTheRings.Enemy.Cards.UmbarRaider
+import LordOfTheRings.Enemy.Cards.CorsairInfiltrator
+import LordOfTheRings.Enemy.Cards.RaidLeader
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -411,5 +421,15 @@ allEnemys =
         , SomeEnemyCard thaurdirTheTreacheryOfRhudaur
         , SomeEnemyCard wightOfRhudaur
         , SomeEnemyCard traitorousWight
+        , SomeEnemyCard scoutingShip
+        , SomeEnemyCard lightCruiser
+        , SomeEnemyCard corsairWarship
+        , SomeEnemyCard southronSailor
+        , SomeEnemyCard cunningPirate
+        , SomeEnemyCard viciousMarauder
+        , SomeEnemyCard umbarCaptain
+        , SomeEnemyCard umbarRaider
+        , SomeEnemyCard corsairInfiltrator
+        , SomeEnemyCard raidLeader
         ]
     ]

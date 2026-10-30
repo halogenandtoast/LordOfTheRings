@@ -1596,6 +1596,9 @@ runGameMessage msg g = case msg of
         g <$ push (PlaceTokens source (toTarget a) token n)
     | Just o <- find ((== cid) . objectiveCardId . toAttrs) (toList g.entities.objectives) ->
         g <$ push (PlaceTokens source (toTarget o) token n)
+    -- an enemy that enters play with tokens, as Light Cruiser's boarders
+    | Just e <- find ((== cid) . enemyCardId . toAttrs) (toList g.entities.enemies) ->
+        g <$ push (PlaceTokens source (toTarget e) token n)
   -- the resource phase's resources come from the game, not a card effect
   PlaceTokens source target@(HeroTarget _) Resource n
     | n > 0
