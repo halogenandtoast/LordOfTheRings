@@ -140,6 +140,10 @@ import LordOfTheRings.Quest.Cards.AFellWraith
 import LordOfTheRings.Quest.Cards.TheShadowWorld
 import LordOfTheRings.Quest.Cards.SealTheTomb
 import LordOfTheRings.Quest.Cards.ThePowerOfAngmar
+import LordOfTheRings.Quest.Cards.UnexpectedRescue
+import LordOfTheRings.Quest.Cards.GornakhsDungeons
+import LordOfTheRings.Quest.Cards.FlightFromMountGram
+import LordOfTheRings.Quest.Cards.StopTheExecutioners
 import LordOfTheRings.Quest.Cards.OrcRearguard
 import LordOfTheRings.Quest.Cards.RescueIarion
 import LordOfTheRings.Quest.Cards.OrcAmbush
@@ -332,6 +336,10 @@ allQuests =
         , SomeQuestCard theShadowWorld
         , SomeQuestCard sealTheTomb
         , SomeQuestCard thePowerOfAngmar
+        , SomeQuestCard unexpectedRescue
+        , SomeQuestCard gornakhsDungeons
+        , SomeQuestCard flightFromMountGram
+        , SomeQuestCard stopTheExecutioners
         , SomeQuestCard orcRearguard
         , SomeQuestCard rescueIarion
         , SomeQuestCard orcAmbush

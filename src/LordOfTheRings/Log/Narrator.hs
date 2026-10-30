@@ -189,6 +189,7 @@ narrationFor = \case
   PutObjectiveIntoPlayAttached card host -> Just $ whenRef host \h ->
     one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> EncounterCard card, "target" ~> h]]
   RemoveFromGame target -> Just $ simply "log.removedFromGame" target
+  SetAsideHero hid -> Just $ simply "log.setAsideOutOfPlay" (HeroTarget hid)
   PutIntoPlayAsActiveLocation card -> Just $ one $ mechanic [ikeyPart "log.becomesActive" ["location" ~> EncounterCard card]]
   DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
     top <- getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
@@ -311,6 +312,9 @@ narrationFor = \case
   PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
   ScenarioSpecific "scour" (parseMaybe parseJSON -> Just target) -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.scour" ["target" ~> t]]
+  -- Escape from Mount Gram's captured cards, rescued from underneath the card
+  ScenarioSpecific "mountGram.rescue" (parseMaybe parseJSON -> Just (host :: Card, cards :: [PlayerCard])) ->
+    Just $ one $ toned Good $ mechanic [ikeyPart "log.capturedRescued" ["card" ~> host, "count" ~> length cards]]
   PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing

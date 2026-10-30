@@ -154,6 +154,10 @@ allTreacheryCards =
       , daechanarsWill
       , suddenDarkness
       , predatoryWolves
+      , soundTheAlarm
+      , feebleAndWeary
+      , captivesOfGornakh
+      , interrogation
       , suddenAssault
       , surprisingSpeed
       , pressingNeeds
@@ -948,6 +952,26 @@ suddenDarkness =
 
 predatoryWolves :: CardDef
 predatoryWolves = (treachery "10027" "Predatory Wolves" TheWastesOfEriador 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+soundTheAlarm :: CardDef
+soundTheAlarm =
+  (treachery "10049" "Sound the Alarm!" EscapeFromMountGram 2)
+    { cdKeywords = setFromList [Doomed 3]
+    , cdEasyModeQuantity = Just 1
+    }
+
+feebleAndWeary :: CardDef
+feebleAndWeary = (treachery "10050" "Feeble and Weary" EscapeFromMountGram 2) {cdShadowEffect = True}
+
+captivesOfGornakh :: CardDef
+captivesOfGornakh =
+  (treachery "10051" "Captives of Gornákh" EscapeFromMountGram 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+interrogation :: CardDef
+interrogation = (treachery "10052" "Interrogation" EscapeFromMountGram 2) {cdShadowEffect = True}
+
 suddenAssault :: CardDef
 suddenAssault = (treachery "09021" "Sudden Assault" IntrudersInChetwood 2) {cdEasyModeQuantity = Just 0}
 

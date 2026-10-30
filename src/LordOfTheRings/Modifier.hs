@@ -72,6 +72,9 @@ data ModifierType
   | -- | on the game: attacks on enemies place progress on them instead of damage, as The
     -- Passage Out reads
     ProgressInsteadOfAttackDamage
+  | -- | on an enemy: its attack that would damage a character captures that character
+    -- underneath it instead, as Cruel Torturer reads (Escape from Mount Gram)
+    CaptureInsteadOfAttackDamage
   | -- | on a hero: resources from card effects are not placed in its pool, as Garden of
     -- Poisons reads
     CannotGainResourcesFromCardEffects

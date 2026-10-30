@@ -131,6 +131,9 @@ data WindowType
     Became TimeOfDay
   | -- | the When Revealed effects of the card just revealed were canceled
     WhenRevealedCanceled Target
+  | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
+    -- (Escape from Mount Gram)
+    CapturedCardsRescued Card [Card]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

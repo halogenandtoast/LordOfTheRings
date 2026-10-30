@@ -511,7 +511,9 @@ runGameMessage msg g = case msg of
     pure g
   BeginRound -> do
     pushAll [BeginPhase minBound, EndPhase minBound]
-    pure $ g & roundL +~ 1
+    -- no area has begun the round's first phase, those separated before the first round
+    -- too, as at Unexpected Rescue
+    pure $ g & roundL +~ 1 & separationL %~ fmap (\s -> s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]})
   EndRound -> do
     -- each area ends the round in turn
     let (step, g') = eachAreaThen (const [EndRound]) id BeginRound g
@@ -1984,6 +1986,7 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ Map.delete qid
   -- a hero leaves play for good, not for its owner's discard pile, its attachments
   -- discarded as they would be were it discarded
+  SetAsideHero hid -> runGameMessage (RemoveFromGame $ HeroTarget hid) g
   RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
     g' <- leftPlay g target
     pushAll $ discardAttached g target
@@ -1992,16 +1995,30 @@ runGameMessage msg g = case msg of
   RemoveFromGame target@(LocationTarget lid) -> do
     pushAll $ discardAttached g target
     pure $ g & entitiesL . locationsL %~ Map.delete lid
-  -- a location placed underneath a card leaves play, its tokens and attachments discarded
+  -- a location placed underneath a card leaves play, its tokens and attachments discarded;
+  -- so does a character or an attachment captured from play (Escape from Mount Gram)
   PlaceUnderneath _ cards -> do
-    let gone = [l | l <- toList g.entities.locations, (toCard l).id `elem` map (.id) cards]
+    let under :: IsCard a => a -> Bool
+        under c = (toCard c).id `elem` map (.id) cards
+        gone = filter under (toList g.entities.locations)
+        heroes = filter under (toList g.entities.heroes)
+        allies = filter under (toList g.entities.allies)
+        characters = map toTarget heroes <> map toTarget allies
         on' :: HasField "placement" a Placement => a -> Bool
         on' a = a.placement `elem` map (AttachedTo . toTarget) gone
+    g' <- foldM leftPlay g characters
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, on' a]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, on' t]
       <> [Discard (toTarget o) | o <- toList g.entities.objectives, on' o]
-    pure $ g & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
+      <> concatMap (discardAttached g) characters
+      <> [CheckEliminations | notNull heroes]
+    pure
+      $ g'
+      & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
+      & entitiesL . heroesL %~ Map.filter (not . under)
+      & entitiesL . alliesL %~ Map.filter (not . under)
+      & entitiesL . attachmentsL %~ Map.filter (not . under)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
@@ -2845,11 +2862,20 @@ attackDamage pid eid target n = do
       else pure 0
   active <- select IsActiveLocation
   quests <- getsGame (toList . entitiesQuests . gameEntities)
-  pure $ DealDamage (EnemyAttackSource eid) target n
-    : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
-    <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
-    <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
-    <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
+  es <- getsGame gameEntities
+  let captured = case target of
+        HeroTarget h -> toCard <$> Map.lookup h es.heroes
+        AllyTarget a -> toCard <$> Map.lookup a es.allies
+        _ -> Nothing
+  pure $ case captured of
+    -- it captures the character instead, as Cruel Torturer reads
+    Just card | CaptureInsteadOfAttackDamage `elem` mods, n > 0 -> [PlaceUnderneath (EnemyTarget eid) [card]]
+    _ ->
+      DealDamage (EnemyAttackSource eid) target n
+        : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
+        <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
+        <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
+        <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

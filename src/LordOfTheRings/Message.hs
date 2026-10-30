@@ -526,6 +526,9 @@ data Message
     JoinAreas
   | -- | the first player's area joins the second's
     JoinArea PlayerId PlayerId
+  | -- | the hero leaves play, set aside out of play, as Unexpected Rescue sets aside the
+    -- heroes not chosen to start
+    SetAsideHero HeroId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

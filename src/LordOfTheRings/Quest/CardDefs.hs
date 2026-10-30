@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
@@ -181,6 +181,10 @@ allQuestCards =
       , acrossTheWastes
       , howlingAtNight
       , battleWithThePack
+      , unexpectedRescue
+      , gornakhsDungeons
+      , flightFromMountGram
+      , stopTheExecutioners
       , orcRearguard
       , rescueIarion
       , orcAmbush
@@ -614,6 +618,23 @@ howlingAtNight = quest "10014" "Howling at Night" TheWastesOfEriador 2 15
 
 battleWithThePack :: CardDef
 battleWithThePack = quest "10015" "Battle with the Pack" TheWastesOfEriador 3 5
+
+unexpectedRescue :: CardDef
+unexpectedRescue = quest "10038" "Unexpected Rescue" EscapeFromMountGram 1 0
+
+-- | Four copies, one for each player's own stage 2.
+gornakhsDungeons :: CardDef
+gornakhsDungeons = (quest "10039" "Gornákh's Dungeons" EscapeFromMountGram 2 0) {cdKeywords = setFromList [Capture 7]}
+
+flightFromMountGram :: CardDef
+flightFromMountGram = quest "10040" "Flight from Mount Gram" EscapeFromMountGram 3 14
+
+stopTheExecutioners :: CardDef
+stopTheExecutioners =
+  (encounterSideQuest "10053" "Stop the Executioners!" EscapeFromMountGram 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Capture 5, Time 4]
+    }
 orcRearguard :: CardDef
 orcRearguard = (encounterSideQuest "09023" "Orc Rearguard" IntrudersInChetwood 3) {cdVictoryPoints = Just 10}
 

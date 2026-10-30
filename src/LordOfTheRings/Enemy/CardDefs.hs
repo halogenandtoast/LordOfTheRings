@@ -173,6 +173,10 @@ allEnemyCards =
       , huntingPack
       , whiteWarg
       , wolfOfAngmar
+      , jailorGornakh
+      , cruelTorturer
+      , dungeonGuard
+      , goblinTormentor
       , orcWarParty
       , angmarOrc
       , angmarMarauder
@@ -1414,6 +1418,37 @@ wolfOfAngmar =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+jailorGornakh :: CardDef
+jailorGornakh =
+  unique
+    (enemy "10041" "Jailor Gornákh" EscapeFromMountGram 1 44 3 5 3 8)
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdVictoryPoints = Just 5
+      }
+
+cruelTorturer :: CardDef
+cruelTorturer =
+  (enemy "10043" "Cruel Torturer" EscapeFromMountGram 2 36 2 3 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+dungeonGuard :: CardDef
+dungeonGuard =
+  (enemy "10044" "Dungeon Guard" EscapeFromMountGram 3 16 1 2 1 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | X attack, X the number of cards in play with captured cards underneath them.
+goblinTormentor :: CardDef
+goblinTormentor =
+  (enemy "10045" "Goblin Tormentor" EscapeFromMountGram 2 28 2 0 1 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
 orcWarParty :: CardDef
 orcWarParty =
   (enemy "09017" "Orc War Party" IntrudersInChetwood 3 40 3 6 3 6)

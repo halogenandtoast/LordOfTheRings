@@ -180,6 +180,10 @@ import LordOfTheRings.Location.Cards.HauntedKeep
 import LordOfTheRings.Location.Cards.DeadmensGate
 import LordOfTheRings.Location.Cards.RuinsOfArnor
 import LordOfTheRings.Location.Cards.AncientCauseway
+import LordOfTheRings.Location.Cards.SouthernGate
+import LordOfTheRings.Location.Cards.PrisonCell
+import LordOfTheRings.Location.Cards.PatrolRoom
+import LordOfTheRings.Location.Cards.TunnelsOfMountGram
 import LordOfTheRings.Location.Cards.ChetwoodForest
 import LordOfTheRings.Location.Cards.BordersOfBreeLand
 import LordOfTheRings.Location.Cards.OutlyingHomestead
@@ -413,6 +417,10 @@ allLocations =
         , SomeLocationCard deadmensGate
         , SomeLocationCard ruinsOfArnor
         , SomeLocationCard ancientCauseway
+        , SomeLocationCard southernGate
+        , SomeLocationCard prisonCell
+        , SomeLocationCard patrolRoom
+        , SomeLocationCard tunnelsOfMountGram
         , SomeLocationCard chetwoodForest
         , SomeLocationCard bordersOfBreeLand
         , SomeLocationCard outlyingHomestead

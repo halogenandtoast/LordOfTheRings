@@ -150,6 +150,10 @@ import LordOfTheRings.Treachery.Cards.RestlessEvil
 import LordOfTheRings.Treachery.Cards.TerrorOfTheNorth
 import LordOfTheRings.Treachery.Cards.DarkSorcery
 import LordOfTheRings.Treachery.Cards.HeavyCurse
+import LordOfTheRings.Treachery.Cards.SoundTheAlarm
+import LordOfTheRings.Treachery.Cards.FeebleAndWeary
+import LordOfTheRings.Treachery.Cards.CaptivesOfGornakh
+import LordOfTheRings.Treachery.Cards.Interrogation
 import LordOfTheRings.Treachery.Cards.SuddenAssault
 import LordOfTheRings.Treachery.Cards.SurprisingSpeed
 import LordOfTheRings.Treachery.Cards.PressingNeeds
@@ -341,6 +345,10 @@ allTreacherys =
         , SomeTreacheryCard terrorOfTheNorth
         , SomeTreacheryCard darkSorcery
         , SomeTreacheryCard heavyCurse
+        , SomeTreacheryCard soundTheAlarm
+        , SomeTreacheryCard feebleAndWeary
+        , SomeTreacheryCard captivesOfGornakh
+        , SomeTreacheryCard interrogation
         , SomeTreacheryCard suddenAssault
         , SomeTreacheryCard surprisingSpeed
         , SomeTreacheryCard pressingNeeds

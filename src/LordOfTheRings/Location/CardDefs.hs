@@ -189,6 +189,10 @@ allLocationCards =
       , eriadorWastes
       , wargsDen
       , northDowns
+      , southernGate
+      , prisonCell
+      , patrolRoom
+      , tunnelsOfMountGram
       , chetwoodForest
       , bordersOfBreeLand
       , outlyingHomestead
@@ -1360,6 +1364,37 @@ northDowns :: CardDef
 northDowns =
   (location "10025" "North Downs" TheWastesOfEriador 3 1 4)
     { cdCardTraits = setFromList [Arnor, Hills]
+    , cdShadowEffect = True
+    }
+southernGate :: CardDef
+southernGate =
+  unique
+    (location "10042" "Southern Gate" EscapeFromMountGram 1 3 8)
+      { cdCardTraits = setFromList [MountGram]
+      , cdVictoryPoints = Just 2
+      }
+
+prisonCell :: CardDef
+prisonCell =
+  (location "10046" "Prison Cell" EscapeFromMountGram 4 1 3)
+    { cdCardTraits = setFromList [MountGram, Underground]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+patrolRoom :: CardDef
+patrolRoom =
+  (location "10047" "Patrol Room" EscapeFromMountGram 2 3 2)
+    { cdCardTraits = setFromList [MountGram, Underground]
+    , cdKeywords = setFromList [Capture 2]
+    , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of cards captured underneath it.
+tunnelsOfMountGram :: CardDef
+tunnelsOfMountGram =
+  (location "10048" "Tunnels of Mount Gram" EscapeFromMountGram 2 0 4)
+    { cdCardTraits = setFromList [MountGram, Underground]
+    , cdKeywords = setFromList [Capture 1]
     , cdShadowEffect = True
     }
 chetwoodForest :: CardDef

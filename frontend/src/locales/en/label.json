@@ -1236,5 +1236,24 @@
   },
   "quietTheSpirits": {
     "engage": "Quiet the Spirits: choose the player with the highest threat for the Undead enemy to engage"
+  },
+  "engageHighestThreat": "Choose the player with the highest threat for the enemy to engage",
+  "unexpectedRescue": {
+    "startingHero": "Unexpected Rescue: choose your starting hero; the others go to your captured deck"
+  },
+  "dungeonGuard": {
+    "putIntoPlay": "Dungeon Guard: put 1 of the rescued cards into play at no cost?"
+  },
+  "prisonCell": {
+    "putIntoPlay": "Prison Cell: choose a captured card to put into play at no cost"
+  },
+  "feebleAndWeary": {
+    "choose": "Feeble and Weary: choose one",
+    "damage": "Deal 1 damage to each exhausted character you control",
+    "removeFromQuest": "Remove each exhausted character you control from the quest"
+  },
+  "captivesOfGornakh": {
+    "ally": "Captives of Gornákh: choose one of your allies to be captured",
+    "host": "Captives of Gornákh: choose the encounter card with the highest threat to capture it"
   }
 }

@@ -136,5 +136,9 @@
   "damagePlaced": "{count} damage is placed on {target}",
   "scour": "Scour: {target}'s Scour effect triggers",
   "separated": "The players are separated, each with a staging area of their own",
-  "joins": "{player} joins {other}"
+  "joins": "{player} joins {other}",
+  "setAsideOutOfPlay": "{target} is set aside, out of play",
+  "capturedRescued": "A captured card is rescued from underneath {card} | {count} captured cards are rescued from underneath {card}",
+  "capturedUnderneath": "A captured card underneath | {count} captured cards underneath",
+  "capturedDeck": "Captured deck: {count} cards"
 }

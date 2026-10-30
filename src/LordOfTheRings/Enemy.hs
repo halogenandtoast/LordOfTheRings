@@ -176,6 +176,10 @@ import LordOfTheRings.Enemy.Cards.ThaurdirsDamned
 import LordOfTheRings.Enemy.Cards.BalefulShade
 import LordOfTheRings.Enemy.Cards.DeadLord
 import LordOfTheRings.Enemy.Cards.CursedDead
+import LordOfTheRings.Enemy.Cards.JailorGornakh
+import LordOfTheRings.Enemy.Cards.CruelTorturer
+import LordOfTheRings.Enemy.Cards.DungeonGuard
+import LordOfTheRings.Enemy.Cards.GoblinTormentor
 import LordOfTheRings.Enemy.Cards.OrcWarParty
 import LordOfTheRings.Enemy.Cards.AngmarOrc
 import LordOfTheRings.Enemy.Cards.AngmarMarauder
@@ -390,6 +394,10 @@ allEnemys =
         , SomeEnemyCard balefulShade
         , SomeEnemyCard deadLord
         , SomeEnemyCard cursedDead
+        , SomeEnemyCard jailorGornakh
+        , SomeEnemyCard cruelTorturer
+        , SomeEnemyCard dungeonGuard
+        , SomeEnemyCard goblinTormentor
         , SomeEnemyCard orcWarParty
         , SomeEnemyCard angmarOrc
         , SomeEnemyCard angmarMarauder
