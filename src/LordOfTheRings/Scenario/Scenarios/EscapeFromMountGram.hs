@@ -91,7 +91,7 @@ instance RunMessage EscapeFromMountGram where
       push $ CheckWindows [mkWhen $ CapturedCardsRescued host (map PlayerCard cards)]
       for_ cards \pc -> case cdCardType (toCardDef pc) of
         HeroType -> putIntoPlayAtNoCost pc
-        _ -> push $ PutInHand pc
+        _ -> putInHand pc
       push $ CheckWindows [mkAfter $ CapturedCardsRescued host (map PlayerCard cards)]
       -- Dungeon Guard: Response: After the captured card(s) underneath Dungeon Guard are
       -- rescued, the players may put 1 of them into play at no cost. It has left play, so

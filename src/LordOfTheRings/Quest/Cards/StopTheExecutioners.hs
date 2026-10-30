@@ -30,4 +30,6 @@ instance RunMessage StopTheExecutioners where
         let characters = [c | c <- held, c.owner == Just pid, cdCardType (toCardDef c) `elem` [HeroType, AllyType]]
         encounterRaisesThreat pid (3 * length characters)
       pure q
+    -- the scenario keeps the cards captured underneath it
+    PlaceUnderneath (isTarget attrs -> True) _ -> pure q
     _ -> StopTheExecutioners <$> runMessage msg attrs

@@ -49,4 +49,6 @@ instance RunMessage GornakhsDungeons where
       separated <- getsGame (isJust . gameSeparation)
       when none $ if separated then joinAnotherPlayer else completeQuest attrs.id
       pure q
+    -- the scenario keeps the cards captured underneath it
+    PlaceUnderneath (isTarget attrs -> True) _ -> pure q
     _ -> GornakhsDungeons <$> runMessage msg attrs
