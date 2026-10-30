@@ -224,6 +224,9 @@ import LordOfTheRings.Location.Cards.SteepPlateau
 import LordOfTheRings.Location.Cards.FloodedRuins
 import LordOfTheRings.Location.Cards.DrownedGraves
 import LordOfTheRings.Location.Cards.CursedTemple
+import LordOfTheRings.Location.Cards.JaggedReef
+import LordOfTheRings.Location.Cards.HiddenCove
+import LordOfTheRings.Location.Cards.VastCoastland
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -488,5 +491,8 @@ allLocations =
         , SomeLocationCard floodedRuins
         , SomeLocationCard drownedGraves
         , SomeLocationCard cursedTemple
+        , SomeLocationCard jaggedReef
+        , SomeLocationCard hiddenCove
+        , SomeLocationCard vastCoastland
         ]
     ]
