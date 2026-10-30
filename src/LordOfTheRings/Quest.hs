@@ -164,6 +164,8 @@ import LordOfTheRings.Quest.Cards.ThaurdirsPursuit
 import LordOfTheRings.Quest.Cards.QuietTheSpirits
 import LordOfTheRings.Quest.Cards.SiftThroughTheDebris
 import LordOfTheRings.Quest.Cards.DecipherAncientTexts
+import LordOfTheRings.Quest.Cards.ExploreTheIsland
+import LordOfTheRings.Quest.Cards.AFatefulDiscovery
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -360,5 +362,7 @@ allQuests =
         , SomeQuestCard quietTheSpirits
         , SomeQuestCard siftThroughTheDebris
         , SomeQuestCard decipherAncientTexts
+        , SomeQuestCard exploreTheIsland
+        , SomeQuestCard aFatefulDiscovery
         ]
     ]
