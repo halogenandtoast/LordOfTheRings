@@ -172,6 +172,10 @@ import LordOfTheRings.Quest.Cards.TheStarsGuidance
 import LordOfTheRings.Quest.Cards.CorsairPursuit
 import LordOfTheRings.Quest.Cards.ExploreTheIsland
 import LordOfTheRings.Quest.Cards.AFatefulDiscovery
+import LordOfTheRings.Quest.Cards.SwiftDeparture
+import LordOfTheRings.Quest.Cards.FullSailAhead
+import LordOfTheRings.Quest.Cards.TheWeatherTurnsFoul
+import LordOfTheRings.Quest.Cards.TheCapeOfAndrast
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -376,5 +380,9 @@ allQuests =
         , SomeQuestCard corsairPursuit
         , SomeQuestCard exploreTheIsland
         , SomeQuestCard aFatefulDiscovery
+        , SomeQuestCard swiftDeparture
+        , SomeQuestCard fullSailAhead
+        , SomeQuestCard theWeatherTurnsFoul
+        , SomeQuestCard theCapeOfAndrast
         ]
     ]
