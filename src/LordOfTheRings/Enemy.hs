@@ -186,6 +186,9 @@ import LordOfTheRings.Enemy.Cards.ColdfellGiant
 import LordOfTheRings.Enemy.Cards.CruelMountainTroll
 import LordOfTheRings.Enemy.Cards.RuthlessHillTroll
 import LordOfTheRings.Enemy.Cards.GoblinPursuer
+import LordOfTheRings.Enemy.Cards.ThaurdirTheTreacheryOfRhudaur
+import LordOfTheRings.Enemy.Cards.WightOfRhudaur
+import LordOfTheRings.Enemy.Cards.TraitorousWight
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -397,5 +400,8 @@ allEnemys =
         , SomeEnemyCard cruelMountainTroll
         , SomeEnemyCard ruthlessHillTroll
         , SomeEnemyCard goblinPursuer
+        , SomeEnemyCard thaurdirTheTreacheryOfRhudaur
+        , SomeEnemyCard wightOfRhudaur
+        , SomeEnemyCard traitorousWight
         ]
     ]

@@ -194,6 +194,11 @@ allQuestCards =
       , theShadowWorld
       , sealTheTomb
       , thePowerOfAngmar
+      , secretsOfRhudaur
+      , thaurdirsPursuit
+      , quietTheSpirits
+      , siftThroughTheDebris
+      , decipherAncientTexts
       ]
 
 theDrippingWalls :: CardDef
@@ -702,3 +707,22 @@ angmarAwakened = (quest "10151" "Angmar Awakened" TheDreadRealm 2 0) {cdQuestPoi
 -- | No quest points: the players win once no location is left in play.
 daechanarsFall :: CardDef
 daechanarsFall = (quest "10152" "Daechanar's Fall" TheDreadRealm 3 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: it advances as its side quests are gone, or its time runs out.
+secretsOfRhudaur :: CardDef
+secretsOfRhudaur = (quest "10094" "Secrets of Rhudaur" TheTreacheryOfRhudaur 1 0) {cdKeywords = setFromList [Time 5]}
+
+thaurdirsPursuit :: CardDef
+thaurdirsPursuit = quest "10095" "Thaurdir's Pursuit" TheTreacheryOfRhudaur 2 30
+
+-- | Flipped to Daechanar's Brand once defeated.
+quietTheSpirits :: CardDef
+quietTheSpirits = encounterSideQuest "10109" "Quiet the Spirits" TheTreacheryOfRhudaur 16
+
+-- | Flipped to Heirloom of Iârchon once defeated.
+siftThroughTheDebris :: CardDef
+siftThroughTheDebris = encounterSideQuest "10111" "Sift through the Debris" TheTreacheryOfRhudaur 18
+
+-- | Flipped to Orders from Angmar once defeated.
+decipherAncientTexts :: CardDef
+decipherAncientTexts = encounterSideQuest "10113" "Decipher Ancient Texts" TheTreacheryOfRhudaur 14

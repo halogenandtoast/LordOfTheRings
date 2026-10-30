@@ -192,6 +192,9 @@ allEnemyCards =
       , dwimmerlaik
       , witchOfAngmar
       , wraithOfCarnDum
+      , thaurdirTheTreacheryOfRhudaur
+      , wightOfRhudaur
+      , traitorousWight
       ]
 
 namelessThing :: CardDef
@@ -1541,4 +1544,28 @@ wraithOfCarnDum :: CardDef
 wraithOfCarnDum =
   (enemy "10157" "Wraith of Carn Dûm" TheDreadRealm 2 18 2 4 0 5)
     { cdCardTraits = setFromList [Undead, Wraith]
+    }
+
+-- | Indestructible. Cannot have attachments, from its own modifiers.
+thaurdirTheTreacheryOfRhudaur :: CardDef
+thaurdirTheTreacheryOfRhudaur =
+  unique
+    (enemy "10098" "Thaurdir" TheTreacheryOfRhudaur 1 1 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+-- | Surge or Doomed 2, by the current quest's progress, from its own card.
+wightOfRhudaur :: CardDef
+wightOfRhudaur =
+  (enemy "10099" "Wight of Rhudaur" TheTreacheryOfRhudaur 2 23 2 3 3 5)
+    { cdCardTraits = setFromList [Undead, Wight]
+    }
+
+traitorousWight :: CardDef
+traitorousWight =
+  (enemy "10100" "Traitorous Wight" TheTreacheryOfRhudaur 3 32 2 4 2 4)
+    { cdCardTraits = setFromList [Undead, Wight]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

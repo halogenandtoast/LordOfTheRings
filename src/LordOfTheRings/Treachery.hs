@@ -163,6 +163,10 @@ import LordOfTheRings.Treachery.Cards.NoRest
 import LordOfTheRings.Treachery.Cards.Possession
 import LordOfTheRings.Treachery.Cards.AFellDread
 import LordOfTheRings.Treachery.Cards.DeathAndCalamity
+import LordOfTheRings.Treachery.Cards.CenturiesOfSorrow
+import LordOfTheRings.Treachery.Cards.CurseOfTheYears
+import LordOfTheRings.Treachery.Cards.DarkCovenant
+import LordOfTheRings.Treachery.Cards.HauntingFog
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -350,5 +354,9 @@ allTreacherys =
         , SomeTreacheryCard possession
         , SomeTreacheryCard aFellDread
         , SomeTreacheryCard deathAndCalamity
+        , SomeTreacheryCard centuriesOfSorrow
+        , SomeTreacheryCard curseOfTheYears
+        , SomeTreacheryCard darkCovenant
+        , SomeTreacheryCard hauntingFog
         ]
     ]

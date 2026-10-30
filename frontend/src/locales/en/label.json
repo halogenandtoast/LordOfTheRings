@@ -1203,5 +1203,17 @@
   "daechanarsFall": {
     "addLocation": "Choose a location to add to the staging area",
     "placeProgress": "Place progress on locations in the staging area: choose one to place 1 on ({n} left)"
+  },
+  "theGreatHall": {
+    "choose": "The Great Hall: choose an Undead enemy you discarded to add to the staging area"
+  },
+  "darkCovenant": {
+    "choose": "Dark Covenant: choose one",
+    "removeProgress": "Remove the progress from among the quests in play",
+    "assignDamage": "Assign the damage among characters you control",
+    "removeProgressFrom": "Dark Covenant: remove 1 progress from a quest"
+  },
+  "quietTheSpirits": {
+    "engage": "Quiet the Spirits: choose the player with the highest threat for the Undead enemy to engage"
   }
 }

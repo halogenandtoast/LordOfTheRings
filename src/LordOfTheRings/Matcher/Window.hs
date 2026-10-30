@@ -128,6 +128,8 @@ data WindowMatcher
     ThreatRaisedByEncounterWindow Timing PlayerId
   | -- | a player other than the given one raised his threat
     OtherPlayerRaisedThreatWindow Timing PlayerId
+  | -- | an enemy engaged a player other than the given one, as Amarthiúl answers
+    OtherPlayerEngagedEnemyWindow Timing PlayerId
   | ChangedControlWindow Timing Target
   | -- | any player plays an event
     EventPlayedWindow Timing
@@ -287,6 +289,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackedAloneWithExcessWindow t target, AttackedAlone target' _ n) -> t == timing && target == target' && n > 0
   (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid' _) -> t == timing && pid == pid'
   (OtherPlayerRaisedThreatWindow t pid, ThreatRaised pid') -> t == timing && pid /= pid'
+  (OtherPlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid /= pid'
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing

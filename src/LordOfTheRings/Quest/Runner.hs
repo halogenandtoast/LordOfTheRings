@@ -8,6 +8,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.GameT (GameT)
+import LordOfTheRings.Helpers.Modifiers (modifiedValue, questPointsOf)
 import LordOfTheRings.I18n
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -23,8 +24,8 @@ instance RunMessage QuestAttrs where
   runMessage msg attrs = case msg of
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       let attrs' = attrs & tokensL %~ addTokens token n
-      when (token == Progress && attrs'.questPoints > 0 && attrs'.progress >= attrs'.questPoints)
-        $ push (CompleteQuest attrs.id)
+      done <- hasEnoughProgress attrs'
+      when (token == Progress && done) $ push (CompleteQuest attrs.id)
       pure attrs'
     -- a stage that does its setup as it turns over
     PerformSetup (isTarget attrs -> True) -> do
@@ -37,6 +38,18 @@ instance RunMessage QuestAttrs where
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
+
+{- | The stage's quest points, its modifiers applied, as Haunting Fog's +6 and Thaurdir's
+Pursuit's -5 for each Clue read.
+-}
+getQuestPoints :: HasGame m => QuestAttrs -> m Int
+getQuestPoints attrs = modifiedValue questPointsOf attrs attrs.questPoints
+
+-- | A stage with quest points printed has as much progress as it now has quest points.
+hasEnoughProgress :: HasGame m => QuestAttrs -> m Bool
+hasEnoughProgress attrs
+  | attrs.questPoints > 0 = (attrs.progress >=) <$> getQuestPoints attrs
+  | otherwise = pure False
 
 -- | The lead clicks the first stage to perform its setup, which the stage handles as
 -- 'PerformSetup' on itself before it turns over.
@@ -73,7 +86,8 @@ runBlockedStage blocker msg attrs = case msg of
     isBlocker <- selectAny (EnemyWithId eid <> blocker)
     -- the one leaving is still counted: no other blocker may stay behind
     blockers <- length <$> select blocker
-    when (isBlocker && blockers == 1 && attrs.questPoints > 0 && attrs.progress >= attrs.questPoints)
+    done <- hasEnoughProgress attrs
+    when (isBlocker && blockers == 1 && done)
       $ push (CompleteQuest attrs.id)
     runMessage msg attrs
   _ -> runMessage msg attrs
@@ -96,7 +110,8 @@ runConditionalStage condition msg attrs = case msg of
     if met then runMessage msg attrs else pure $ attrs & tokensL %~ addTokens Progress n
   CheckStage qid | qid == attrs.id -> do
     met <- condition
-    when (met && attrs.questPoints > 0 && attrs.progress >= attrs.questPoints)
+    done <- hasEnoughProgress attrs
+    when (met && done)
       $ push (CompleteQuest attrs.id)
     pure attrs
   ClaimObjective {} -> recheck

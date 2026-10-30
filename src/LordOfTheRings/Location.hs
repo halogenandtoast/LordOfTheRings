@@ -201,6 +201,11 @@ import LordOfTheRings.Location.Cards.SinisterDungeon
 import LordOfTheRings.Location.Cards.TombsOfCarnDum
 import LordOfTheRings.Location.Cards.DarkHalls
 import LordOfTheRings.Location.Cards.UnholyCrypt
+import LordOfTheRings.Location.Cards.TheGreatHall
+import LordOfTheRings.Location.Cards.ForbiddenDescent
+import LordOfTheRings.Location.Cards.EerieHalls
+import LordOfTheRings.Location.Cards.GhostlyRuins
+import LordOfTheRings.Location.Cards.DecrepitRemains
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -429,5 +434,10 @@ allLocations =
         , SomeLocationCard tombsOfCarnDum
         , SomeLocationCard darkHalls
         , SomeLocationCard unholyCrypt
+        , SomeLocationCard theGreatHall
+        , SomeLocationCard forbiddenDescent
+        , SomeLocationCard eerieHalls
+        , SomeLocationCard ghostlyRuins
+        , SomeLocationCard decrepitRemains
         ]
     ]

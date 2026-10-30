@@ -154,6 +154,11 @@ import LordOfTheRings.Quest.Cards.JourneysEnd
 import LordOfTheRings.Quest.Cards.LieLow
 import LordOfTheRings.Quest.Cards.ForageForFood
 import LordOfTheRings.Quest.Cards.ScavengeForSupplies
+import LordOfTheRings.Quest.Cards.SecretsOfRhudaur
+import LordOfTheRings.Quest.Cards.ThaurdirsPursuit
+import LordOfTheRings.Quest.Cards.QuietTheSpirits
+import LordOfTheRings.Quest.Cards.SiftThroughTheDebris
+import LordOfTheRings.Quest.Cards.DecipherAncientTexts
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -340,5 +345,10 @@ allQuests =
         , SomeQuestCard lieLow
         , SomeQuestCard forageForFood
         , SomeQuestCard scavengeForSupplies
+        , SomeQuestCard secretsOfRhudaur
+        , SomeQuestCard thaurdirsPursuit
+        , SomeQuestCard quietTheSpirits
+        , SomeQuestCard siftThroughTheDebris
+        , SomeQuestCard decipherAncientTexts
         ]
     ]
