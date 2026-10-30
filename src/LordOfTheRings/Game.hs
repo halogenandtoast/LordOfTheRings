@@ -255,9 +255,7 @@ separate groups g
             , entitiesObjectives = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.objectives
             }
       , areaHeldEffects = filter (\e -> maybe True (== i) (effectGroup e)) (gameEffects g)
-      -- separated before the first round, as Unexpected Rescue does, each area is yet
-      -- to begin the phase
-      , areaStatus = if g.round == 0 then AreaWaiting else AreaStarted
+      , areaStatus = AreaStarted
       , areaJoining = False
       }
    where
@@ -487,7 +485,9 @@ runGameMessage msg g = case msg of
     pure g
   BeginRound -> do
     pushAll [BeginPhase minBound, EndPhase minBound]
-    pure $ g & roundL +~ 1
+    -- no area has begun the round's first phase, those separated before the first round
+    -- too, as at Unexpected Rescue
+    pure $ g & roundL +~ 1 & separationL %~ fmap (\s -> s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]})
   EndRound -> do
     -- each area ends the round in turn
     let (step, g') = eachAreaThen (const [EndRound]) id BeginRound g
