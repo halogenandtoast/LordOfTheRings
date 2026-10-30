@@ -539,6 +539,20 @@
     "searchAgain": "Spend 3 to search the whole deck for another card",
     "done": "Don't spend"
   },
+  "denethorLeadership": {
+    "moveTo": "Denethor: choose another Gondor hero to move 1 resource to"
+  },
+  "azainSilverbeard": {
+    "damage": "Azain Silverbeard: choose an enemy sharing a Trait to deal 2 damage to"
+  },
+  "tidesOfFate": {
+    "spend": "Spend 2 tactics resources as a group to ready the defender?",
+    "ready": "Spend 2 to ready the defender, with +3 attack",
+    "done": "Don't spend"
+  },
+  "imladrisCaregiver": {
+    "heal": "Imladris Caregiver: choose a character to heal 1 damage from"
+  },
   "nenya": {
     "give": "Add Galadriel's willpower to another character"
   },

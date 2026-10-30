@@ -127,6 +127,8 @@ allAttachmentCards =
       , starBrooch
       , ravenWingedHelm
       , hobbitPony
+      , rodOfTheSteward
+      , inServiceOfTheSteward
       ]
 
 stewardOfGondor :: CardDef
@@ -888,4 +890,17 @@ hobbitPony =
   (attachment "10007" "Hobbit Pony" Spirit (StaticCost 0))
     { cdCardTraits = setFromList [Mount]
     , cdKeywords = setFromList [Restricted]
+    }
+
+rodOfTheSteward :: CardDef
+rodOfTheSteward =
+  (attachment "12002" "Rod of the Steward" Leadership (StaticCost 0))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Item]
+    }
+
+inServiceOfTheSteward :: CardDef
+inServiceOfTheSteward =
+  (attachment "12003" "In Service of the Steward" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Title]
     }

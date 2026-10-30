@@ -172,6 +172,9 @@ import LordOfTheRings.Ally.Cards.GaladhrimWeaver
 import LordOfTheRings.Ally.Cards.GaldorOfTheHavens
 import LordOfTheRings.Ally.Cards.AmarthiulAcrossTheEttenmoors
 import LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
+import LordOfTheRings.Ally.Cards.AzainSilverbeard
+import LordOfTheRings.Ally.Cards.ImladrisCaregiver
+import LordOfTheRings.Ally.Cards.GuardianOfRivendell
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -371,5 +374,8 @@ allAllies =
         , SomeAllyCard galadhrimWeaver
         , SomeAllyCard galdorOfTheHavens
         , SomeAllyCard amarthiulAcrossTheEttenmoors
+        , SomeAllyCard azainSilverbeard
+        , SomeAllyCard imladrisCaregiver
+        , SomeAllyCard guardianOfRivendell
         ]
     ]

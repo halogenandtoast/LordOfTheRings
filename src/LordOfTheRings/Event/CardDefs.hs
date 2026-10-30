@@ -166,6 +166,9 @@ allEventCards =
       , tirelessHunters
       , expertTrackers
       , rallyingCry
+      , lastStand
+      , tidesOfFate
+      , vanishFromSight
       ]
 
 everVigilant :: CardDef
@@ -646,3 +649,12 @@ expertTrackers = event "09009" "Expert Trackers" Lore (StaticCost 0)
 
 rallyingCry :: CardDef
 rallyingCry = event "10003" "Rallying Cry" Leadership (StaticCost 2)
+
+lastStand :: CardDef
+lastStand = event "12005" "Last Stand" Tactics (StaticCost 0)
+
+tidesOfFate :: CardDef
+tidesOfFate = event "12007" "Tides of Fate" Spirit (StaticCost 0)
+
+vanishFromSight :: CardDef
+vanishFromSight = event "12011" "Vanish from Sight" Neutral (StaticCost 0)

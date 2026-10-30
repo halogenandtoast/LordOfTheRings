@@ -163,6 +163,9 @@ allAllyCards =
       , curiousBrandybuck
       , eastRoadRanger
       , rangerOfCardolan
+      , azainSilverbeard
+      , imladrisCaregiver
+      , guardianOfRivendell
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1138,4 +1141,24 @@ rangerOfCardolan :: CardDef
 rangerOfCardolan =
   (ally "10010" "Ranger of Cardolan" Neutral (StaticCost 4) 2 2 2 3)
     { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+azainSilverbeard :: CardDef
+azainSilverbeard =
+  (ally "12004" "Azain Silverbeard" Tactics (StaticCost 3) 0 3 2 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf, Warrior]
+    }
+
+imladrisCaregiver :: CardDef
+imladrisCaregiver =
+  (ally "12008" "Imladris Caregiver" Lore (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Noldor, Healer]
+    }
+
+guardianOfRivendell :: CardDef
+guardianOfRivendell =
+  (ally "12010" "Guardian of Rivendell" Neutral (StaticCost 3) 1 2 3 3)
+    { cdCardTraits = setFromList [Noldor, Warrior]
+    , cdAdditionalCost = Just (DiscardCardsFromHand 2)
     }

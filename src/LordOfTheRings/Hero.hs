@@ -64,6 +64,7 @@ import LordOfTheRings.Hero.Cards.Erestor
 import LordOfTheRings.Hero.Cards.AragornTactics
 import LordOfTheRings.Hero.Cards.Halbarad
 import LordOfTheRings.Hero.Cards.MerrySpirit
+import LordOfTheRings.Hero.Cards.DenethorLeadership
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Hero.Types qualified as HeroTypes
@@ -167,5 +168,6 @@ allHeroes =
         , SomeHeroCard aragornTactics
         , SomeHeroCard halbarad
         , SomeHeroCard merrySpirit
+        , SomeHeroCard denethorLeadership
         ]
     ]

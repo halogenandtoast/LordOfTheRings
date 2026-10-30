@@ -155,6 +155,9 @@ import LordOfTheRings.Event.Cards.RangerSummons
 import LordOfTheRings.Event.Cards.TirelessHunters
 import LordOfTheRings.Event.Cards.ExpertTrackers
 import LordOfTheRings.Event.Cards.RallyingCry
+import LordOfTheRings.Event.Cards.LastStand
+import LordOfTheRings.Event.Cards.TidesOfFate
+import LordOfTheRings.Event.Cards.VanishFromSight
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -323,5 +326,8 @@ allEvents =
         , SomeEventCard tirelessHunters
         , SomeEventCard expertTrackers
         , SomeEventCard rallyingCry
+        , SomeEventCard lastStand
+        , SomeEventCard tidesOfFate
+        , SomeEventCard vanishFromSight
         ]
     ]

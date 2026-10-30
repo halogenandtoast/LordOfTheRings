@@ -69,6 +69,7 @@ allHeroCards =
       , aragornTactics
       , halbarad
       , merrySpirit
+      , denethorLeadership
       ]
 
 aragorn :: CardDef
@@ -416,4 +417,10 @@ merrySpirit :: CardDef
 merrySpirit =
   (hero "10001" "Merry" Spirit 6 2 1 1 2)
     { cdCardTraits = setFromList [Hobbit]
+    }
+
+denethorLeadership :: CardDef
+denethorLeadership =
+  (hero "12001" "Denethor" Leadership 8 1 1 3 3)
+    { cdCardTraits = setFromList [Gondor, Noble, Steward]
     }
