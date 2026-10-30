@@ -236,6 +236,8 @@ data CardMatcher
     CardWithDoomed
   | -- | a card printed with a Valour trigger, as Hope Rekindled reads
     CardWithValour
+  | -- | a card of the title, whatever its subtitle: a copy, as Heavy Curse reads
+    CardWithTitle Text
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -266,6 +268,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardMatchAny ms -> any (`cardMatches` def) ms
   CardWithDoomed -> any (\case Doomed _ -> True; _ -> False) (cdKeywords def)
   CardWithValour -> cdCardCode def `elem` valourCards
+  CardWithTitle title -> let Name t _ = cdName def in t == title
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]
