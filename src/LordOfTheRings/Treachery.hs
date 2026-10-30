@@ -181,6 +181,10 @@ import LordOfTheRings.Treachery.Cards.LingeringMalevolence
 import LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
 import LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
 import LordOfTheRings.Treachery.Cards.AimlessWandering
+import LordOfTheRings.Treachery.Cards.PowerfulUndertow
+import LordOfTheRings.Treachery.Cards.IntoTheAbyss
+import LordOfTheRings.Treachery.Cards.TanglingAndGrasping
+import LordOfTheRings.Treachery.Cards.AncientDepths
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -386,5 +390,9 @@ allTreacherys =
         , SomeTreacheryCard ruinsOfAgesPast
         , SomeTreacheryCard curseOfTheDownfallen
         , SomeTreacheryCard aimlessWandering
+        , SomeTreacheryCard powerfulUndertow
+        , SomeTreacheryCard intoTheAbyss
+        , SomeTreacheryCard tanglingAndGrasping
+        , SomeTreacheryCard ancientDepths
         ]
     ]

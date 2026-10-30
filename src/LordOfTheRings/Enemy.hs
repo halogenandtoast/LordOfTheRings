@@ -209,6 +209,8 @@ import LordOfTheRings.Enemy.Cards.SoullessCadaver
 import LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
 import LordOfTheRings.Enemy.Cards.CaptainSahir
 import LordOfTheRings.Enemy.Cards.Naasiyah
+import LordOfTheRings.Enemy.Cards.SeaScorpion
+import LordOfTheRings.Enemy.Cards.CaveEel
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -443,5 +445,7 @@ allEnemys =
         , SomeEnemyCard throngsOfUnfaithful
         , SomeEnemyCard captainSahir
         , SomeEnemyCard naasiyah
+        , SomeEnemyCard seaScorpion
+        , SomeEnemyCard caveEel
         ]
     ]

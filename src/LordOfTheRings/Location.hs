@@ -224,6 +224,15 @@ import LordOfTheRings.Location.Cards.SteepPlateau
 import LordOfTheRings.Location.Cards.FloodedRuins
 import LordOfTheRings.Location.Cards.DrownedGraves
 import LordOfTheRings.Location.Cards.CursedTemple
+import LordOfTheRings.Location.Cards.ShrineToMorgothTheDrownedRuins
+import LordOfTheRings.Location.Cards.ShrineToMorgothUnderwater
+import LordOfTheRings.Location.Cards.UnderseaGrotto
+import LordOfTheRings.Location.Cards.CursedCaverns
+import LordOfTheRings.Location.Cards.WaterLoggedHalls
+import LordOfTheRings.Location.Cards.DarkAbyss
+import LordOfTheRings.Location.Cards.TwistingHollow
+import LordOfTheRings.Location.Cards.SunkenTemple
+import LordOfTheRings.Location.Cards.DrownedCave
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -488,5 +497,14 @@ allLocations =
         , SomeLocationCard floodedRuins
         , SomeLocationCard drownedGraves
         , SomeLocationCard cursedTemple
+        , SomeLocationCard shrineToMorgothTheDrownedRuins
+        , SomeLocationCard shrineToMorgothUnderwater
+        , SomeLocationCard underseaGrotto
+        , SomeLocationCard cursedCaverns
+        , SomeLocationCard waterLoggedHalls
+        , SomeLocationCard darkAbyss
+        , SomeLocationCard twistingHollow
+        , SomeLocationCard sunkenTemple
+        , SomeLocationCard drownedCave
         ]
     ]

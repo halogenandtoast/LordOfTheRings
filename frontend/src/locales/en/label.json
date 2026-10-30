@@ -208,6 +208,32 @@
     "draw": "Draw 2 cards",
     "hero": "Choose a hero to claim the objective"
   },
+  "theDrownedRuins": {
+    "mayFlip": "You may flip it to its Grotto side",
+    "flip": "Flip it to its Grotto side",
+    "stay": "Leave it Underwater"
+  },
+  "cursedCaverns": {
+    "draw": "Cursed Caverns: raise your threat by 2 to draw the bottom card of your deck?",
+    "raise": "Raise your threat by 2 and draw",
+    "decline": "Decline"
+  },
+  "drownedCave": {
+    "return": "Drowned Cave: you may return it to the staging area",
+    "toStaging": "Return Drowned Cave to the staging area",
+    "stay": "Leave it active"
+  },
+  "intoTheAbyss": {
+    "choose": "Into the Abyss: choose a card type; each other card in your hand is discarded",
+    "ally": "Ally",
+    "attachment": "Attachment",
+    "event": "Event",
+    "sideQuest": "Side quest",
+    "other": "Other"
+  },
+  "tanglingAndGrasping": {
+    "remove": "Tangling and Grasping: remove one of your characters from the quest"
+  },
   "mithrilLode": {
     "exhaust": "Exhaust a character to place progress equal to its willpower on the quest"
   },
