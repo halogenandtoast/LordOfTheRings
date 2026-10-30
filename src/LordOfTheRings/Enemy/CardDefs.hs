@@ -162,6 +162,10 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , orcWarParty
+      , angmarOrc
+      , angmarMarauder
+      , angmarCaptain
       ]
 
 namelessThing :: CardDef
@@ -1289,4 +1293,34 @@ spiritOfTheWild =
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
+    }
+
+orcWarParty :: CardDef
+orcWarParty =
+  (enemy "09017" "Orc War Party" IntrudersInChetwood 3 40 3 6 3 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdEasyModeQuantity = Just 1
+    }
+
+angmarOrc :: CardDef
+angmarOrc =
+  (enemy "09043" "Angmar Orc" AngmarOrcs 3 25 2 2 3 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+angmarMarauder :: CardDef
+angmarMarauder =
+  (enemy "09044" "Angmar Marauder" AngmarOrcs 3 30 3 3 2 4)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+angmarCaptain :: CardDef
+angmarCaptain =
+  (enemy "09045" "Angmar Captain" AngmarOrcs 2 35 3 5 2 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdEasyModeQuantity = Just 1
     }

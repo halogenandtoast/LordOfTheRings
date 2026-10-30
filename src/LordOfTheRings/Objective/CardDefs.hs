@@ -58,6 +58,7 @@ allObjectiveCards =
       , keyOfTheBoar
       , keyOfTheWolf
       , keyOfTheRaven
+      , iarion
       ]
 
 durinsAxe :: CardDef
@@ -357,3 +358,14 @@ keyOfTheWolf = threeTrialsKey "08044" "Key of the Wolf" Wolf
 
 keyOfTheRaven :: CardDef
 keyOfTheRaven = threeTrialsKey "08045" "Key of the Raven" Raven
+
+-- | X willpower, attack and defense, X the number of quest cards in play: gained from its
+-- own modifiers.
+iarion :: CardDef
+iarion =
+  ((objective "09016" "Iârion" TheLostRealm 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 0, cdDefense = Just 0, cdHitPoints = Just 4 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
