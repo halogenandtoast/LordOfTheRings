@@ -160,6 +160,9 @@ import LordOfTheRings.Treachery.Cards.FreezingBlast
 import LordOfTheRings.Treachery.Cards.ColdFromAngmar
 import LordOfTheRings.Treachery.Cards.AradorsBane
 import LordOfTheRings.Treachery.Cards.NoRest
+import LordOfTheRings.Treachery.Cards.Possession
+import LordOfTheRings.Treachery.Cards.AFellDread
+import LordOfTheRings.Treachery.Cards.DeathAndCalamity
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -344,5 +347,8 @@ allTreacherys =
         , SomeTreacheryCard coldFromAngmar
         , SomeTreacheryCard aradorsBane
         , SomeTreacheryCard noRest
+        , SomeTreacheryCard possession
+        , SomeTreacheryCard aFellDread
+        , SomeTreacheryCard deathAndCalamity
         ]
     ]

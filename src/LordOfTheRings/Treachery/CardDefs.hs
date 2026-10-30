@@ -130,6 +130,9 @@ allTreacheryCards =
       , offTrack
       , inNeedOfRest
       , raisingTheCry
+      , possession
+      , aFellDread
+      , deathAndCalamity
       , fierceFolk
       , drivenBack
       , frenziedAttack
@@ -1040,4 +1043,23 @@ heavyCurse =
     { cdCardTraits = setFromList [Sorcery]
     , cdKeywords = setFromList [Surge]
     , cdEasyModeQuantity = Just 1
+    }
+
+possession :: CardDef
+possession =
+  (treachery "10162" "Possession" TheDreadRealm 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdEasyModeQuantity = Just 0
+    }
+
+aFellDread :: CardDef
+aFellDread = (treachery "10163" "A Fell Dread" TheDreadRealm 2) {cdCardTraits = setFromList [Sorcery]}
+
+deathAndCalamity :: CardDef
+deathAndCalamity =
+  (treachery "10164" "Death and Calamity" TheDreadRealm 4)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

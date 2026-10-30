@@ -144,6 +144,11 @@ allLocationCards =
       , tangledWoods
       , brokenLandsLocation
       , ravenChiefsCamp
+      , altarOfMidwinter
+      , sinisterDungeon
+      , tombsOfCarnDum
+      , darkHalls
+      , unholyCrypt
       , ravenWarCamp
       , ravenVillage
       , dunlandBattlefield
@@ -1492,3 +1497,39 @@ ruinsOfArnor =
 
 ancientCauseway :: CardDef
 ancientCauseway = (location "09057" "Ancient Causeway" RuinsOfArnor 2 3 2) {cdCardTraits = setFromList [Arnor, Ruins]}
+
+altarOfMidwinter :: CardDef
+altarOfMidwinter =
+  (location "10154" "Altar of Midwinter" TheDreadRealm 1 5 9)
+    { cdUnique = True
+    , cdCardTraits = setFromList [CarnDum, Underground]
+    , cdVictoryPoints = Just 5
+    }
+
+sinisterDungeon :: CardDef
+sinisterDungeon =
+  (location "10158" "Sinister Dungeon" TheDreadRealm 3 4 1)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }
+
+tombsOfCarnDum :: CardDef
+tombsOfCarnDum =
+  (location "10159" "Tombs of Carn Dûm" TheDreadRealm 3 3 3)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdEasyModeQuantity = Just 0
+    }
+
+darkHalls :: CardDef
+darkHalls =
+  (location "10160" "Dark Halls" TheDreadRealm 2 2 4)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }
+
+unholyCrypt :: CardDef
+unholyCrypt =
+  (location "10161" "Unholy Crypt" TheDreadRealm 3 1 7)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }

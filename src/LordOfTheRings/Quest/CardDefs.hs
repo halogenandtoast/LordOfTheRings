@@ -144,6 +144,9 @@ allQuestCards =
       , battleForDunland
       , theRavenClan
       , theLastStage
+      , theCatacombsOfCarnDum
+      , angmarAwakened
+      , daechanarsFall
       , theRoadToTharbad
       , aWellLaidTrap
       , noWayOut
@@ -688,3 +691,14 @@ thePowerOfAngmar =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+theCatacombsOfCarnDum :: CardDef
+theCatacombsOfCarnDum = quest "10150" "The Catacombs of Carn Dûm" TheDreadRealm 1 18
+
+-- | No quest points: the players advance once Daechanar is defeated.
+angmarAwakened :: CardDef
+angmarAwakened = (quest "10151" "Angmar Awakened" TheDreadRealm 2 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: the players win once no location is left in play.
+daechanarsFall :: CardDef
+daechanarsFall = (quest "10152" "Daechanar's Fall" TheDreadRealm 3 0) {cdQuestPoints = Nothing}

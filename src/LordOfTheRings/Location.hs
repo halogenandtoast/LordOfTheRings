@@ -196,6 +196,11 @@ import LordOfTheRings.Location.Cards.AbandonedCamp
 import LordOfTheRings.Location.Cards.PatchOfWoods
 import LordOfTheRings.Location.Cards.TrollFells
 import LordOfTheRings.Location.Cards.BarrenMoorland
+import LordOfTheRings.Location.Cards.AltarOfMidwinter
+import LordOfTheRings.Location.Cards.SinisterDungeon
+import LordOfTheRings.Location.Cards.TombsOfCarnDum
+import LordOfTheRings.Location.Cards.DarkHalls
+import LordOfTheRings.Location.Cards.UnholyCrypt
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -419,5 +424,10 @@ allLocations =
         , SomeLocationCard patchOfWoods
         , SomeLocationCard trollFells
         , SomeLocationCard barrenMoorland
+        , SomeLocationCard altarOfMidwinter
+        , SomeLocationCard sinisterDungeon
+        , SomeLocationCard tombsOfCarnDum
+        , SomeLocationCard darkHalls
+        , SomeLocationCard unholyCrypt
         ]
     ]

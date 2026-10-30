@@ -158,6 +158,9 @@ data ModifierType
   | -- | on a character: it defends against enemies with the trait without exhausting
     DoesNotExhaustToDefendAgainst Trait
   | CannotCommitToQuest
+  | -- | on a character: during the quest phase it must commit to the quest, if able, as A
+    -- Fell Dread reads
+    MustCommitToQuest
   | -- | on a card in play: its abilities cannot be used, nor its Forced effects trigger
     CannotTriggerAbilities
   | -- | on a card in play: its printed text box is treated as blank, as Arkham's: it has no

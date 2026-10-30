@@ -145,7 +145,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       committed: e.committed ?? false,
       outOfPlay: heldOutOfPlay(target),
       flipped: e.flipped ?? false,
-      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' ? 'player' : undefined,
+      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' || e.cardCode === 'ReanimatedDead' ? 'player' : undefined,
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard),
       counting: [...(e.committed ? ['willpower'] : []), ...(threatening.has(e.cardId) ? ['threat'] : [])],
     })

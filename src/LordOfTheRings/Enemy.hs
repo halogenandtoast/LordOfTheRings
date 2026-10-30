@@ -31,6 +31,11 @@ import LordOfTheRings.Enemy.Cards.UngoliantsSwarm
 import LordOfTheRings.Enemy.Cards.Wargs
 import LordOfTheRings.Enemy.Cards.WolfRider
 import LordOfTheRings.Enemy.Cards.OrcGuard
+import LordOfTheRings.Enemy.Cards.ReanimatedDead
+import LordOfTheRings.Enemy.Cards.Daechanar
+import LordOfTheRings.Enemy.Cards.Dwimmerlaik
+import LordOfTheRings.Enemy.Cards.WitchOfAngmar
+import LordOfTheRings.Enemy.Cards.WraithOfCarnDum
 import LordOfTheRings.Enemy.Cards.GoblintownScavengers
 import LordOfTheRings.Enemy.Cards.HuntersFromMordor
 import LordOfTheRings.Enemy.Cards.Louis
@@ -220,6 +225,11 @@ allEnemys =
         , SomeEnemyCard ungoliantsSpawn
         , SomeEnemyCard wolfRider
         , SomeEnemyCard orcGuard
+        , SomeEnemyCard reanimatedDead
+        , SomeEnemyCard daechanar
+        , SomeEnemyCard dwimmerlaik
+        , SomeEnemyCard witchOfAngmar
+        , SomeEnemyCard wraithOfCarnDum
         , SomeEnemyCard hillTroll
         , SomeEnemyCard goblinSniper
         , SomeEnemyCard marshAdder
