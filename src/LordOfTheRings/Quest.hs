@@ -122,6 +122,10 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+import LordOfTheRings.Quest.Cards.FindShelter
+import LordOfTheRings.Quest.Cards.MakeCamp
+import LordOfTheRings.Quest.Cards.ScatteredAmongTheHills
+import LordOfTheRings.Quest.Cards.CorneredAnimals
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -276,5 +280,9 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+        , SomeQuestCard findShelter
+        , SomeQuestCard makeCamp
+        , SomeQuestCard scatteredAmongTheHills
+        , SomeQuestCard corneredAnimals
         ]
     ]

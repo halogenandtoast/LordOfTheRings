@@ -166,6 +166,11 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.AmonForn
+import LordOfTheRings.Location.Cards.WeatheredHilltop
+import LordOfTheRings.Location.Cards.ExposedRidge
+import LordOfTheRings.Location.Cards.ShelteredValley
+import LordOfTheRings.Location.Cards.ConcealedOrcCamp
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -359,5 +364,10 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard amonForn
+        , SomeLocationCard weatheredHilltop
+        , SomeLocationCard exposedRidge
+        , SomeLocationCard shelteredValley
+        , SomeLocationCard concealedOrcCamp
         ]
     ]

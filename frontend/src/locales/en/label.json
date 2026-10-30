@@ -5,6 +5,7 @@
   "chooseNewCurrentQuest": "Choose a new quest card to be the current quest",
   "valour": "Valour: resolve the Valour trigger instead",
   "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
+  "dealDamageToOneHero": "Deal {n} damage to a hero you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
   "discardAnyFromHand": "Discard a card from your hand?",
   "doneDiscarding": "Done discarding",
@@ -1034,6 +1035,17 @@
   },
   "fellVoices": {
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
+  },
+  "corneredAnimals": {
+    "choose": "Cornered Animals: discard a resource token from Savage Counter-attack, or reveal an additional encounter card this phase",
+    "discard": "Discard 1 resource token from Savage Counter-attack",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "shelteredValley": {
+    "heal": "Choose a character to heal all damage from"
+  },
+  "makeCamp": {
+    "heal": "Choose a hero to heal up to 3 damage from"
   },
   "chooseAreaToJoin": "Choose a player to join"
 }

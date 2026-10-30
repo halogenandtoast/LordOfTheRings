@@ -156,6 +156,7 @@ import LordOfTheRings.Enemy.Cards.BoarsGuardian
 import LordOfTheRings.Enemy.Cards.WolfsGuardian
 import LordOfTheRings.Enemy.Cards.RavensGuardian
 import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
+import LordOfTheRings.Enemy.Cards.CorneredOrc
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -336,5 +337,6 @@ allEnemys =
         , SomeEnemyCard wolfsGuardian
         , SomeEnemyCard ravensGuardian
         , SomeEnemyCard spiritOfTheWild
+        , SomeEnemyCard corneredOrc
         ]
     ]
