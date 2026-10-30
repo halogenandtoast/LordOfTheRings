@@ -5,10 +5,10 @@ module LordOfTheRings.Location.Runner (module X) where
 import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, questPointsOf)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedValue, questPointsOf)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (ImmuneToCardEffects, ImmuneToPlayerCardEffects, NoProgressFromPlayerCards, ProgressLimit))
+import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -49,7 +49,7 @@ instance RunMessage LocationAttrs where
           noMore = case msg of
             PlaceTokens _ _ Progress _ -> ProgressLimit 0 `elem` mods
             _ -> False
-          immune = ImmuneToCardEffects `elem` mods || noMore || (isPlayerCardSource source && (ImmuneToPlayerCardEffects `elem` mods || barred))
+      immune <- (|| noMore || (isPlayerCardSource source && barred)) <$> immuneToSource source attrs
       -- the message again, from a source the guard lets by
       if immune then pure attrs else runMessage (asGame msg) attrs
     asGame = \case

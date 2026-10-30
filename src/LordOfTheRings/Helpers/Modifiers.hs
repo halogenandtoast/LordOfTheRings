@@ -13,7 +13,7 @@ import LordOfTheRings.Game.Base
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Source (isPlayerCardSource, sourceTarget)
+import LordOfTheRings.Source (Source (GameSource), isPlayerCardSource, sourceTarget)
 import LordOfTheRings.Target
 
 -- | Collect every constant ability and lasting effect into the modifier cache.
@@ -89,6 +89,13 @@ doesNotExhaustToCommit target = elem DoesNotExhaustToCommit <$> getModifiers tar
 
 getModifiers :: (HasGame m, Targetable a) => a -> m [ModifierType]
 getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
+
+-- | Whether the card ignores what the source does to it, as East-gate ignores Cave In.
+immuneToSource :: (HasGame m, Targetable a) => Source -> a -> m Bool
+immuneToSource GameSource _ = pure False
+immuneToSource source a = do
+  mods <- getModifiers a
+  pure $ ImmuneToCardEffects `elem` mods || (isPlayerCardSource source && ImmuneToPlayerCardEffects `elem` mods)
 
 -- | A printed value with the target's modifiers applied, floored at 0.
 modifiedValue :: (HasGame m, Targetable a) => (ModifierType -> Maybe Int) -> a -> Int -> m Int
