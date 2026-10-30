@@ -339,6 +339,17 @@ runGame msg g = case msg of
     if active && notNull firsts
       then g <$ (push =<< progressFirst source n firsts \k -> [PlaceTokens source target Progress k | k > 0])
       else runGame'' msg g
+  -- a quest card takes no more progress than it may this round, as Orc Rearguard limits
+  -- the current quest to, and keeps count of what it took
+  PlaceTokens source target@(QuestTarget _) Progress n | n > 0 -> do
+    mods <- getModifiers target
+    placed <- progressPlacedThisRound target
+    let room = foldr min n [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
+    if room < n
+      then g <$ pushWhen (room > 0) (PlaceTokens source target Progress room)
+      else do
+        push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound n] UntilEndOfRound
+        runGame'' msg g
   -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
   -- it becomes the active location, so it is still in the staging area as it is paid (as
   -- Hills of Dunland's draws are, FAQ 3.123)

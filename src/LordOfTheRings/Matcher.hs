@@ -697,6 +697,13 @@ getQuestCards = getsGame (map toTarget . toList . entitiesQuests . gameEntities)
 questCardsInPlay :: HasGame m => m Int
 questCardsInPlay = length <$> getQuestCards
 
+-- | The progress placed on the quest card this round, as "if no progress was placed on Lie
+-- Low this round" reads.
+progressPlacedThisRound :: HasGame m => Target -> m Int
+progressPlacedThisRound t = do
+  mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+  pure $ sum [n | ProgressPlacedThisRound n <- mods]
+
 -- | The current quest is a side quest, as "if the current quest is a side quest" reads.
 currentQuestIsSideQuest :: HasGame m => m Bool
 currentQuestIsSideQuest = isJust <$> getCurrentSideQuest

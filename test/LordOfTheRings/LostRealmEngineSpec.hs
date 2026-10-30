@@ -7,13 +7,15 @@ import LordOfTheRings.Matcher (
   getCurrentQuest,
   getEncounterSideQuests,
   getSideQuests,
+  progressPlacedThisRound,
   questCardsInPlay,
  )
 import LordOfTheRings.Matcher.Window (WindowMatcher (SideQuestRevealedWindow), windowMatches)
 import LordOfTheRings.Message.Lifted (
   chooseNewCurrentQuest,
+  removeProgressFromEachQuest,
  )
-import LordOfTheRings.Modifier (ModifierType (CannotBeCurrentQuest))
+import LordOfTheRings.Modifier (ModifierType (CannotBeCurrentQuest, ProgressPerRoundLimit))
 import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
@@ -105,3 +107,21 @@ spec = describe "The Lost Realm engine" do
       run $ Discard side
       getSideQuests `shouldReturn` []
       map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Quests.searchTheRuins]
+
+  describe "Progress on quest cards" do
+    it "is counted each round, and kept to a quest card's limit for the round" . gameTest $ \_ -> do
+      main <- putQuestStage Quests.fliesAndSpiders
+      run $ CreateEffect $ Effect GameSource main [ProgressPerRoundLimit 3] UntilEndOfRound
+      run $ PlaceTokens GameSource main Progress 2
+      run $ PlaceTokens GameSource main Progress 2
+      progressOn main `shouldReturn` 3
+      progressPlacedThisRound main `shouldReturn` 3
+
+    it "is removed from each quest card in play" . gameTest $ \_ -> do
+      (main, side) <- withSideQuest
+      run $ PlaceTokens GameSource main Progress 1
+      run $ PlaceTokens GameSource side Progress 3
+      runQueueT $ removeProgressFromEachQuest GameSource 2
+      void mainLoop
+      progressOn main `shouldReturn` 0
+      progressOn side `shouldReturn` 1

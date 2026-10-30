@@ -116,6 +116,13 @@ removeTimeCountersFromCurrentQuest source n = traverse_ (\q -> removeTimeCounter
 removeProgressFromQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromQuest source n = push $ RemoveProgressFromQuest (toSource source) n
 
+-- | Remove this much progress from each quest card in play, the main quest and each side
+-- quest, as "remove 2 progress from each quest card in play" reads.
+removeProgressFromEachQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+removeProgressFromEachQuest source n = do
+  quests <- getsGame (toList . entitiesQuests . gameEntities)
+  for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress (min n q.progress)
+
 -- | The quest card becomes the current quest until the end of the phase: a side quest in
 -- the staging area, or the main quest, putting aside a side quest chosen before.
 setCurrentQuest :: (ReverseQueue m, Targetable target) => target -> m ()
