@@ -200,6 +200,13 @@ allLocationCards =
       , patchOfWoods
       , trollFells
       , barrenMoorland
+      , brokenBattlements
+      , norburyTombs
+      , fornostSquare
+      , hauntedKeep
+      , deadmensGate
+      , ruinsOfArnor
+      , ancientCauseway
       ]
 
 drownedTreasury :: CardDef
@@ -1443,3 +1450,45 @@ barrenMoorland =
     { cdCardTraits = setFromList [Ettenmoors]
     , cdEasyModeQuantity = Just 0
     }
+
+brokenBattlements :: CardDef
+brokenBattlements =
+  (location "09036" "Broken Battlements" DeadmensDike 3 2 6)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdKeywords = setFromList [Time 3]
+    , cdEasyModeQuantity = Just 2
+    }
+
+norburyTombs :: CardDef
+norburyTombs = (location "09037" "Norbury Tombs" DeadmensDike 2 2 5) {cdCardTraits = setFromList [Fornost, Ruins]}
+
+-- | It gets +1 threat for each resource token on it: from its own modifiers.
+fornostSquare :: CardDef
+fornostSquare = (location "09038" "Fornost Square" DeadmensDike 3 1 4) {cdCardTraits = setFromList [Fornost, Ruins]}
+
+hauntedKeep :: CardDef
+hauntedKeep =
+  (location "09039" "Haunted Keep" DeadmensDike 3 3 3)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+deadmensGate :: CardDef
+deadmensGate =
+  (location "09040" "Deadmen's Gate" DeadmensDike 2 4 4)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+ruinsOfArnor :: CardDef
+ruinsOfArnor =
+  (location "09056" "Ruins of Arnor" RuinsOfArnor 3 2 3)
+    { cdCardTraits = setFromList [Arnor, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+ancientCauseway :: CardDef
+ancientCauseway = (location "09057" "Ancient Causeway" RuinsOfArnor 2 3 2) {cdCardTraits = setFromList [Arnor, Ruins]}

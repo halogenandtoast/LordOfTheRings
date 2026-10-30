@@ -144,6 +144,12 @@ import LordOfTheRings.Treachery.Cards.VileAffliction
 import LordOfTheRings.Treachery.Cards.DaechanarsWill
 import LordOfTheRings.Treachery.Cards.SuddenDarkness
 import LordOfTheRings.Treachery.Cards.PredatoryWolves
+import LordOfTheRings.Treachery.Cards.UnnaturalFog
+import LordOfTheRings.Treachery.Cards.TragicDiscovery
+import LordOfTheRings.Treachery.Cards.RestlessEvil
+import LordOfTheRings.Treachery.Cards.TerrorOfTheNorth
+import LordOfTheRings.Treachery.Cards.DarkSorcery
+import LordOfTheRings.Treachery.Cards.HeavyCurse
 import LordOfTheRings.Treachery.Cards.SuddenAssault
 import LordOfTheRings.Treachery.Cards.SurprisingSpeed
 import LordOfTheRings.Treachery.Cards.PressingNeeds
@@ -322,6 +328,12 @@ allTreacherys =
         , SomeTreacheryCard daechanarsWill
         , SomeTreacheryCard suddenDarkness
         , SomeTreacheryCard predatoryWolves
+        , SomeTreacheryCard unnaturalFog
+        , SomeTreacheryCard tragicDiscovery
+        , SomeTreacheryCard restlessEvil
+        , SomeTreacheryCard terrorOfTheNorth
+        , SomeTreacheryCard darkSorcery
+        , SomeTreacheryCard heavyCurse
         , SomeTreacheryCard suddenAssault
         , SomeTreacheryCard surprisingSpeed
         , SomeTreacheryCard pressingNeeds

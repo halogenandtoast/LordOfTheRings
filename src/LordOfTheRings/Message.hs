@@ -285,6 +285,9 @@ data Message
     PutDiscardOnTopOfDeck PlayerId CardId
   | -- | a card in the player's discard pile is shuffled into their deck
     ShuffleFromDiscardIntoDeck PlayerId CardId
+  | -- | the top cards of the player's discard pile are shuffled into their deck, as Norbury
+    -- Tombs reads: an encounter card's effect, which nothing barring player cards stops
+    ShuffleTopOfDiscardIntoDeck PlayerId Int
   | {- | a card in its owner's discard pile responds to the windows, as Hidden Cache does:
     the card is built again to resolve it
     -}

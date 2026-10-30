@@ -84,6 +84,7 @@ const implemented: Record<string, Gateable> = {
   'the-three-trials': { alpha: true },
   'the-battle-of-carn-dum': { alpha: true },
   'the-wastes-of-eriador': { alpha: true },
+  'deadmens-dike': { alpha: true },
   'intruders-in-chetwood': { alpha: true },
   'the-weather-hills': { alpha: true },
   'across-the-ettenmoors': { alpha: true },

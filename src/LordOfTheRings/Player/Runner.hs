@@ -18,6 +18,7 @@ import LordOfTheRings.Entities (entitiesTreacheries)
 import LordOfTheRings.Event
 import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
+import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, threatOf)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
@@ -35,6 +36,7 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Player.Types as X
 import LordOfTheRings.Prelude hiding (swap)
+import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -49,7 +51,24 @@ import LordOfTheRings.Window (
  )
 
 instance RunMessage Player where
-  runMessage msg player = case msg of
+  runMessage msg player = do
+    locked <- elem DiscardPilesLocked <$> getModifiers GameTarget
+    player' <- if locked && takesFromDiscard then pure player else runPlayer msg player
+    -- a deck run out may eliminate its player, as Deadmen's Dike reads
+    when (notNull player.deck && null player'.deck) $ push CheckEliminations
+    pure player'
+   where
+    -- what a player card effect does to take a card out of the discard pile
+    takesFromDiscard = case msg of
+      ReturnFromDiscardToHand pid _ -> pid == player.id
+      PutDiscardOnBottomOfDeck pid _ -> pid == player.id
+      PutDiscardOnTopOfDeck pid _ -> pid == player.id
+      ShuffleFromDiscardIntoDeck pid _ -> pid == player.id
+      ShuffleDiscardIntoDeck pid -> pid == player.id
+      _ -> False
+
+runPlayer :: Message -> Player -> QueueT Message GameT Player
+runPlayer msg player = case msg of
     DoStep 1 Setup -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -304,6 +323,10 @@ instance RunMessage Player where
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
+    ShuffleTopOfDiscardIntoDeck pid n | pid == player.id -> do
+      let (moved, kept) = splitAt n player.discard
+      deck <- shuffleM (moved <> player.deck)
+      pure $ player & discardL .~ kept & deckL .~ deck
     DiscardRandomFromHand pid n | pid == player.id -> do
       discarded <- take n <$> shuffleM (discardableHand player)
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
@@ -395,9 +418,11 @@ handActions p = flip filterM p.hand \case
 playableCards :: HasGame m => Player -> m [Card]
 playableCards p = do
   viaRecord <- traverse (discardPlayers p.id) p.discard
+  -- no card leaves a discard pile The Power of Angmar holds, played or not
+  locked <- elem DiscardPilesLocked <$> getModifiers GameTarget
   filterM (canPlay p)
     $ filter (from [FromHand, FromHandOrDiscard]) p.hand
-    <> [c | (c, rs) <- zip p.discard viaRecord, from [FromHandOrDiscard, FromDiscardOnly] c || notNull rs]
+    <> [c | not locked, (c, rs) <- zip p.discard viaRecord, from [FromHandOrDiscard, FromDiscardOnly] c || notNull rs]
  where
   from zones c = cdPlayableFrom (toCardDef c) `elem` zones
 

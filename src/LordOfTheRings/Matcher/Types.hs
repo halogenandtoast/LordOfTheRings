@@ -244,6 +244,8 @@ data CardMatcher
     CardWithValour
   | -- | a unique card, as "a non-unique location" reads it negated
     UniqueCard
+  | -- | a card of the title, whatever its subtitle: a copy, as Heavy Curse reads
+    CardWithTitle Text
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -275,6 +277,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardWithDoomed -> any (\case Doomed _ -> True; _ -> False) (cdKeywords def)
   CardWithValour -> cdCardCode def `elem` valourCards
   UniqueCard -> cdUnique def
+  CardWithTitle title -> let Name t _ = cdName def in t == title
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]

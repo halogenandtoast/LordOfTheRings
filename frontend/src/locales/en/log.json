@@ -115,6 +115,7 @@
   "discardsAtRandom": "{player} discards a card at random | {player} discards {count} cards at random",
   "returnsFromDiscard": "{player} returns {card} to hand",
   "shufflesDiscardIntoDeck": "{player} shuffles their discard pile into their deck",
+  "shufflesTopOfDiscardIntoDeck": "{player} shuffles the top {count} cards of their discard pile into their deck",
 
   "stat": "{value}{icon}",
   "listSeparator": ", ",

@@ -161,6 +161,12 @@ allTreacheryCards =
       , coldFromAngmar
       , aradorsBane
       , noRest
+      , unnaturalFog
+      , tragicDiscovery
+      , restlessEvil
+      , terrorOfTheNorth
+      , darkSorcery
+      , heavyCurse
       ]
 
 deepDeepDark :: CardDef
@@ -996,3 +1002,42 @@ aradorsBane = (treachery "10079" "Arador's Bane" AcrossTheEttenmoors 2) {cdEasyM
 
 noRest :: CardDef
 noRest = treachery "10080" "No Rest" AcrossTheEttenmoors 3
+
+unnaturalFog :: CardDef
+unnaturalFog =
+  (treachery "09041" "Unnatural Fog" DeadmensDike 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 1
+    }
+
+tragicDiscovery :: CardDef
+tragicDiscovery = (treachery "09058" "Tragic Discovery" RuinsOfArnor 2) {cdShadowEffect = True}
+
+restlessEvil :: CardDef
+restlessEvil = (treachery "09062" "Restless Evil" CursedDead 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+terrorOfTheNorth :: CardDef
+terrorOfTheNorth =
+  (treachery "09064" "Terror of the North" DarkSorcery 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+darkSorcery :: CardDef
+darkSorcery =
+  (treachery "09065" "Dark Sorcery" DarkSorcery 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+heavyCurse :: CardDef
+heavyCurse =
+  (treachery "09066" "Heavy Curse" DarkSorcery 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }

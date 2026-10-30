@@ -173,6 +173,13 @@ import LordOfTheRings.Location.Cards.FortressWalls
 import LordOfTheRings.Location.Cards.EriadorWastes
 import LordOfTheRings.Location.Cards.WargsDen
 import LordOfTheRings.Location.Cards.NorthDowns
+import LordOfTheRings.Location.Cards.BrokenBattlements
+import LordOfTheRings.Location.Cards.NorburyTombs
+import LordOfTheRings.Location.Cards.FornostSquare
+import LordOfTheRings.Location.Cards.HauntedKeep
+import LordOfTheRings.Location.Cards.DeadmensGate
+import LordOfTheRings.Location.Cards.RuinsOfArnor
+import LordOfTheRings.Location.Cards.AncientCauseway
 import LordOfTheRings.Location.Cards.ChetwoodForest
 import LordOfTheRings.Location.Cards.BordersOfBreeLand
 import LordOfTheRings.Location.Cards.OutlyingHomestead
@@ -389,6 +396,13 @@ allLocations =
         , SomeLocationCard eriadorWastes
         , SomeLocationCard wargsDen
         , SomeLocationCard northDowns
+        , SomeLocationCard brokenBattlements
+        , SomeLocationCard norburyTombs
+        , SomeLocationCard fornostSquare
+        , SomeLocationCard hauntedKeep
+        , SomeLocationCard deadmensGate
+        , SomeLocationCard ruinsOfArnor
+        , SomeLocationCard ancientCauseway
         , SomeLocationCard chetwoodForest
         , SomeLocationCard bordersOfBreeLand
         , SomeLocationCard outlyingHomestead

@@ -385,6 +385,12 @@ data ModifierType
     NoThreatFromQuestingUnsuccessfully
   | -- | on the game: the quest phase is skipped, as Doom Hangs Still reads
     SkipQuestPhase
+  | -- | on the game: a player with no cards in his deck is eliminated, as Deadmen's Dike's
+    -- stages read
+    EliminatedWithEmptyDeck
+  | -- | on the game: player card effects cannot take a card out of a player's discard
+    -- pile, as The Power of Angmar reads
+    DiscardPilesLocked
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

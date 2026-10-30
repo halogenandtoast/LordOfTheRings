@@ -186,6 +186,11 @@ allQuestCards =
       , lieLow
       , forageForFood
       , scavengeForSupplies
+      , theShadesOfAngmar
+      , aFellWraith
+      , theShadowWorld
+      , sealTheTomb
+      , thePowerOfAngmar
       ]
 
 theDrippingWalls :: CardDef
@@ -660,3 +665,26 @@ forageForFood = (encounterSideQuest "10082" "Forage for Food" AcrossTheEttenmoor
 
 scavengeForSupplies :: CardDef
 scavengeForSupplies = (encounterSideQuest "10083" "Scavenge for Supplies" AcrossTheEttenmoors 7) {cdVictoryPoints = Just 10}
+
+theShadesOfAngmar :: CardDef
+theShadesOfAngmar = quest "09073" "The Shades of Angmar" DeadmensDike 1 11
+
+aFellWraith :: CardDef
+aFellWraith = quest "09074" "A Fell Wraith" DeadmensDike 2 13
+
+theShadowWorld :: CardDef
+theShadowWorld = (encounterSideQuest "09042" "The Shadow World" DeadmensDike 5) {cdKeywords = setFromList [Surge]}
+
+sealTheTomb :: CardDef
+sealTheTomb =
+  (encounterSideQuest "09063" "Seal the Tomb" CursedDead 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+thePowerOfAngmar :: CardDef
+thePowerOfAngmar =
+  (encounterSideQuest "09067" "The Power of Angmar" DarkSorcery 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }

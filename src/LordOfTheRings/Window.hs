@@ -129,6 +129,8 @@ data WindowType
     BecameReady Target
   | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
     Became TimeOfDay
+  | -- | the When Revealed effects of the card just revealed were canceled
+    WhenRevealedCanceled Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

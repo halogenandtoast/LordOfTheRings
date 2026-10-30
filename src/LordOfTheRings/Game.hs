@@ -593,13 +593,16 @@ runGameMessage msg g = case msg of
     push $ questionLabel (ikeyWith "label.refreshUpTo" [intVar "count" n]) pid choices
     pure g
   CheckEliminations -> do
+    emptyDeck <- elem EliminatedWithEmptyDeck <$> getModifiers GameTarget
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
       level <- getEliminationLevel player.id
       -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
       let noHeroes = null heroes && not (any ((== HeroType) . (.cardType)) player.deck)
           byThreat = player.threat >= level
-      pure $ guard (not player.eliminated && (byThreat || noHeroes)) $> (player.id, byThreat && not noHeroes)
+          -- Deadmen's Dike eliminates a player whose deck runs out
+          byEmptyDeck = emptyDeck && null player.deck
+      pure $ guard (not player.eliminated && (byThreat || noHeroes || byEmptyDeck)) $> (player.id, byThreat && not noHeroes)
     -- one reaching the elimination level opens a window first, as Favor of the Valar
     -- answers to stop it
     pushAll $ concat [[CheckWindows [mkWhen $ EliminatedByThreat pid] | byThreat] <> [EliminatePlayer pid] | (pid, byThreat) <- eliminated]

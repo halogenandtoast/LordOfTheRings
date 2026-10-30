@@ -166,6 +166,11 @@ import LordOfTheRings.Enemy.Cards.BloodThirstyWarg
 import LordOfTheRings.Enemy.Cards.HuntingPack
 import LordOfTheRings.Enemy.Cards.WhiteWarg
 import LordOfTheRings.Enemy.Cards.WolfOfAngmar
+import LordOfTheRings.Enemy.Cards.ThaurdirDeadmensDike
+import LordOfTheRings.Enemy.Cards.ThaurdirsDamned
+import LordOfTheRings.Enemy.Cards.BalefulShade
+import LordOfTheRings.Enemy.Cards.DeadLord
+import LordOfTheRings.Enemy.Cards.CursedDead
 import LordOfTheRings.Enemy.Cards.OrcWarParty
 import LordOfTheRings.Enemy.Cards.AngmarOrc
 import LordOfTheRings.Enemy.Cards.AngmarMarauder
@@ -367,6 +372,11 @@ allEnemys =
         , SomeEnemyCard huntingPack
         , SomeEnemyCard whiteWarg
         , SomeEnemyCard wolfOfAngmar
+        , SomeEnemyCard thaurdirDeadmensDike
+        , SomeEnemyCard thaurdirsDamned
+        , SomeEnemyCard balefulShade
+        , SomeEnemyCard deadLord
+        , SomeEnemyCard cursedDead
         , SomeEnemyCard orcWarParty
         , SomeEnemyCard angmarOrc
         , SomeEnemyCard angmarMarauder
