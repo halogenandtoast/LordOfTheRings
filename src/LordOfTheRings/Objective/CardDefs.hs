@@ -69,6 +69,9 @@ allObjectiveCards =
       , daechanarsBrand
       , heirloomOfIarchon
       , ordersFromAngmar
+      , calphon
+      , captainSahirObjective
+      , naasiyahObjective
       ]
 
 durinsAxe :: CardDef
@@ -434,3 +437,35 @@ heirloomOfIarchon = (objective "10112" "Heirloom of Iârchon" TheTreacheryOfRhud
 -- | The other side of Decipher Ancient Texts, never in the encounter deck.
 ordersFromAngmar :: CardDef
 ordersFromAngmar = (objective "10114" "Orders from Angmar" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}
+
+calphon :: CardDef
+calphon =
+  ((objective "11028" "Calphon" TheFateOfNumenor 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 0, cdDefense = Just 1, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Noble]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | The objective-ally side of Captain Sahír: no copy is gathered, his enemy side turns
+-- into it, or his scenarios put him into play this side faceup.
+captainSahirObjective :: CardDef
+captainSahirObjective =
+  ((objective "11077" "Captain Sahír" TheStormcallerElite 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 0, cdDefense = Just 2, cdHitPoints = Just 5 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Corsair, Raider]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    , cdOtherSide = Just "11076"
+    }
+
+-- | The objective-ally side of Na'asiyah.
+naasiyahObjective :: CardDef
+naasiyahObjective =
+  ((objective "11079" "Na'asiyah" TheStormcallerElite 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 4 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Corsair, Raider]
+    , cdKeywords = setFromList [LastPlayerGainsControl]
+    , cdOtherSide = Just "11078"
+    }

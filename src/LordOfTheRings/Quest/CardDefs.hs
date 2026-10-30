@@ -210,6 +210,8 @@ allQuestCards =
       , quietTheSpirits
       , siftThroughTheDebris
       , decipherAncientTexts
+      , exploreTheIsland
+      , aFatefulDiscovery
       ]
 
 theDrippingWalls :: CardDef
@@ -754,3 +756,10 @@ siftThroughTheDebris = encounterSideQuest "10111" "Sift through the Debris" TheT
 -- | Flipped to Orders from Angmar once defeated.
 decipherAncientTexts :: CardDef
 decipherAncientTexts = encounterSideQuest "10113" "Decipher Ancient Texts" TheTreacheryOfRhudaur 14
+
+exploreTheIsland :: CardDef
+exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
+
+-- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
+aFatefulDiscovery :: CardDef
+aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}

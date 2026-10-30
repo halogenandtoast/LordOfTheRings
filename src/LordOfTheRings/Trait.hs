@@ -27,8 +27,10 @@ data Trait
   | Cave
   | Champion
   | City
+  | Coastland
   | Clue
   | Condition
+  | Corsair
   | Craftsman
   | Creature
   | Dale
@@ -91,6 +93,7 @@ data Trait
   | Pipe
   | Plains
   | Plot
+  | Raider
   | Ranger
   | Raven
   | RavenClan

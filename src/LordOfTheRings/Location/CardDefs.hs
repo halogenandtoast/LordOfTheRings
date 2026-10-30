@@ -221,6 +221,14 @@ allLocationCards =
       , eerieHalls
       , ghostlyRuins
       , decrepitRemains
+      , lostIsland
+      , shrineToMorgoth
+      , lushJungle
+      , forbiddenCoast
+      , steepPlateau
+      , floodedRuins
+      , drownedGraves
+      , cursedTemple
       ]
 
 drownedTreasury :: CardDef
@@ -1606,3 +1614,48 @@ decrepitRemains =
     { cdCardTraits = setFromList [Ruins]
     , cdShadowEffect = True
     }
+
+-- | The Lost Island side of The Fate of Númenor's and Ruins of Numenor's Uncharted
+-- locations: no copy is gathered, each of them enters play with it faceup.
+lostIsland :: CardDef
+lostIsland =
+  (location "the-grey-havens-lost-island" "Lost Island" TheFateOfNumenor 0 2 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Uncharted]
+    }
+
+-- | An Uncharted location: under a Lost Island side.
+uncharted :: CardDef -> CardDef
+uncharted def = def {cdOtherSide = Just (cdCardCode lostIsland)}
+
+shrineToMorgoth :: CardDef
+shrineToMorgoth =
+  uncharted
+    $ unique
+      (location "11027" "Shrine to Morgoth" TheFateOfNumenor 1 5 8)
+        { cdCardTraits = setFromList [Ruins]
+        , cdVictoryPoints = Just 5
+        }
+
+lushJungle :: CardDef
+lushJungle = uncharted (location "11030" "Lush Jungle" TheFateOfNumenor 2 4 4) {cdCardTraits = setFromList [Forest]}
+
+forbiddenCoast :: CardDef
+forbiddenCoast = uncharted (location "11031" "Forbidden Coast" TheFateOfNumenor 2 1 6) {cdCardTraits = setFromList [Coastland]}
+
+steepPlateau :: CardDef
+steepPlateau =
+  uncharted
+    (location "11032" "Steep Plateau" TheFateOfNumenor 3 1 3)
+      { cdCardTraits = setFromList [Coastland]
+      , cdShadowEffect = True
+      }
+
+floodedRuins :: CardDef
+floodedRuins = uncharted (location "11072" "Flooded Ruins" RuinsOfNumenor 2 3 5) {cdCardTraits = setFromList [Ruins]}
+
+drownedGraves :: CardDef
+drownedGraves = uncharted (location "11073" "Drowned Graves" RuinsOfNumenor 2 2 2) {cdCardTraits = setFromList [Ruins]}
+
+cursedTemple :: CardDef
+cursedTemple = uncharted (location "11074" "Cursed Temple" RuinsOfNumenor 2 1 3) {cdCardTraits = setFromList [Ruins]}
