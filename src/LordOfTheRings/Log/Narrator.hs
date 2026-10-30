@@ -29,7 +29,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
 import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getTimeCounters)
 import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
 import LordOfTheRings.Message
@@ -131,8 +131,16 @@ narrationFor = \case
       TimeCounter -> tokens "log.timeCountersPlaced"
    where
     tokens key = whenRef target \t -> one $ mechanic [ikeyPart key ["target" ~> t, "count" ~> n]]
-  RemoveTokens _ target token n | n > 0 -> case token of
-    Progress -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.progressRemoved" ["target" ~> t, "progress" ~> stat "progress" n]]
+  RemoveTokens source target token n | n > 0 -> case token of
+    Progress -> Just $ whenRef target \t -> do
+      -- a location immune to the source keeps its progress, as East-gate against Cave In
+      immune <- case target of
+        LocationTarget _ -> immuneToSource source target
+        _ -> pure False
+      mSource <- sourceRefFor source
+      one $ mechanic $ pure $ case mSource of
+        Just s | immune -> ikeyPart "log.immuneTo" ["target" ~> t, "source" ~> s]
+        _ -> ikeyPart "log.progressRemoved" ["target" ~> t, "progress" ~> stat "progress" n]
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]
     Damage -> Nothing
     Villager -> Just $ whenRef target \t -> one $ mechanic [ikeyPart "log.villagersRemoved" ["target" ~> t, "count" ~> n]]

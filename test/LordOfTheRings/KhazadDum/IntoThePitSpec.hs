@@ -76,6 +76,15 @@ spec = describe "Into the Pit" do
     reveal [Treacheries.caveIn, Enemies.goblinScout]
     placementOf Enemies.goblinScout `shouldReturn` Just StagingArea
 
+  it "leaves East-gate's progress to Cave In, which surges as it removed none" . pitTest $ \_ -> do
+    _ <- putQuestStage Quests.enteringTheMines
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.eastGate
+    gate <- locationOf Locations.eastGate
+    run $ PlaceTokens GameSource (toTarget gate) Progress 4
+    reveal [Treacheries.caveIn, Enemies.goblinScout]
+    (.progress) <$> getLocation gate `shouldReturn` 4
+    placementOf Enemies.goblinScout `shouldReturn` Just StagingArea
+
   it "cancels damage to Patrol Leader when the discarded card is an enemy" . pitTest $ \_ -> do
     reveal [Enemies.patrolLeader]
     leader <- enemyOf Enemies.patrolLeader

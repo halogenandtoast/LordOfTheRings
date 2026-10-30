@@ -2,8 +2,12 @@ module LordOfTheRings.LogSpec (spec) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Frontend (FrontendMessage (..))
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Log.Entry
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
 -- | A test game whose log is kept, newest first.
@@ -59,3 +63,16 @@ spec = describe "Game log" do
     case drawn of
       LogEntry {logEntryBody = [LogI18n _ vars]} : _ -> (Map.lookup "cards" vars <&> \case LogList cs -> length cs; _ -> 0) `shouldBe` Just 2
       _ -> liftIO (expectationFailure "no draw logged")
+
+  it "says a location immune to the card keeps its progress, as East-gate against Cave In" . loggedTest $ \logged _ -> do
+    _ <- putQuestStage Quests.enteringTheMines
+    run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.eastGate
+    gate <- getsGame (fromJustNote "no East-gate" . headMay . toList . (.entities.locations))
+    run $ PlaceTokens GameSource (toTarget gate) Progress 4
+    _ <- setEncounterDeck [Treacheries.caveIn, Enemies.goblinScout]
+    writeIORef logged []
+    run RevealEncounterCard
+    resolveRevealed
+    said <- mapMaybe keyOf <$> entries logged
+    said `shouldSatisfy` elem "log.immuneTo"
+    said `shouldSatisfy` notElem "log.progressRemoved"

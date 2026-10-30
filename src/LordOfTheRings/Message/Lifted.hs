@@ -17,7 +17,7 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase)
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Hero.Types (heroCardId)
@@ -84,8 +84,7 @@ placeProgressOnQuest source n =
   select IsActiveLocation >>= \case
     [] -> placeProgressOnCurrentQuest source n
     lid : _ -> do
-      mods <- getModifiers lid
-      let immune = ImmuneToCardEffects `elem` mods || (isPlayerCardSource (toSource source) && ImmuneToPlayerCardEffects `elem` mods)
+      immune <- immuneToSource (toSource source) lid
       unless immune do
         l <- getLocation lid
         room <- max 0 . subtract l.progress <$> getLocationQuestPoints lid
@@ -912,15 +911,13 @@ dealDamageToOneCharacter source pid n = do
     targets characters \c -> dealDamage source c n
 
 -- | Remove all progress tokens from play: from the quest and every location, but those
--- immune to card effects.
+-- immune to card effects, which keep theirs as they take it.
 removeAllProgress :: (ReverseQueue m, Sourceable source) => source -> m ()
 removeAllProgress source = do
   quests <- getsGame (toList . entitiesQuests . gameEntities)
   for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress q.progress
   locations <- getsGame (toList . entitiesLocations . gameEntities)
-  for_ locations \l -> do
-    immune <- elem ImmuneToCardEffects <$> getModifiers l
-    when (l.progress > 0 && not immune) $ removeTokens source l Progress l.progress
+  for_ locations \l -> when (l.progress > 0) $ removeTokens source l Progress l.progress
 
 -- | The player discards every card in their hand.
 discardHand :: ReverseQueue m => PlayerId -> m ()

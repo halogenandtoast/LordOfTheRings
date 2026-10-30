@@ -40,6 +40,7 @@
   "heals": "{target} heals {count} damage",
   "progress": "{progress} on {target}",
   "progressRemoved": "{progress} removed from {target}",
+  "immuneTo": "{target} is immune to {source}",
   "gainsResources": "{target} gains a resource | {target} gains {count} resources",
   "spendsResources": "{target} spends a resource | {target} spends {count} resources",
   "villagersPlaced": "A villager is placed on {target} | {count} villagers are placed on {target}",
