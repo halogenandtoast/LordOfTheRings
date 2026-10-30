@@ -141,6 +141,16 @@ import LordOfTheRings.Ally.Cards.HennethAnnunGuard
 import LordOfTheRings.Ally.Cards.MirkwoodPioneer
 import LordOfTheRings.Ally.Cards.BlueMountainTrader
 import LordOfTheRings.Ally.Cards.Gwaihir
+import LordOfTheRings.Ally.Cards.WeatherHillsWatchman
+import LordOfTheRings.Ally.Cards.DunedainHunter
+import LordOfTheRings.Ally.Cards.SarnFordSentry
+import LordOfTheRings.Ally.Cards.WardenOfAnnuminas
+import LordOfTheRings.Ally.Cards.RangerOfTheNorth
+import LordOfTheRings.Ally.Cards.Ingold
+import LordOfTheRings.Ally.Cards.HonourGuard
+import LordOfTheRings.Ally.Cards.CuriousBrandybuck
+import LordOfTheRings.Ally.Cards.EastRoadRanger
+import LordOfTheRings.Ally.Cards.RangerOfCardolan
 import LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
 import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
 import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
@@ -313,6 +323,16 @@ allAllies =
         , SomeAllyCard mirkwoodPioneer
         , SomeAllyCard blueMountainTrader
         , SomeAllyCard gwaihir
+        , SomeAllyCard weatherHillsWatchman
+        , SomeAllyCard dunedainHunter
+        , SomeAllyCard sarnFordSentry
+        , SomeAllyCard wardenOfAnnuminas
+        , SomeAllyCard rangerOfTheNorth
+        , SomeAllyCard ingold
+        , SomeAllyCard honourGuard
+        , SomeAllyCard curiousBrandybuck
+        , SomeAllyCard eastRoadRanger
+        , SomeAllyCard rangerOfCardolan
         , SomeAllyCard grimaTheFordsOfIsen
         , SomeAllyCard chiefTurchTheAntleredCrown
         , SomeAllyCard nalirTroubleInTharbad

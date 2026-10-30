@@ -7,11 +7,18 @@ import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword (Keyword (Battle, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Sphere (Sphere (Neutral))
+import LordOfTheRings.Sphere (Sphere (Lore, Neutral))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, scoutAhead]
+
+scoutAhead :: CardDef
+scoutAhead =
+  (playerSideQuest "10009" "Scout Ahead" Lore (StaticCost 0) 4)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
 
 gatherInformation :: CardDef
 gatherInformation =

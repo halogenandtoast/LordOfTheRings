@@ -140,6 +140,16 @@ allAllyCards =
       , mirkwoodPioneer
       , blueMountainTrader
       , gwaihir
+      , weatherHillsWatchman
+      , dunedainHunter
+      , sarnFordSentry
+      , wardenOfAnnuminas
+      , rangerOfTheNorth
+      , ingold
+      , honourGuard
+      , curiousBrandybuck
+      , eastRoadRanger
+      , rangerOfCardolan
       ]
 
 guardOfTheCitadel :: CardDef
@@ -964,4 +974,70 @@ gwaihir =
   (ally "08059" "Gwaihir" Tactics (StaticCost 5) 2 3 1 4)
     { cdUnique = True
     , cdCardTraits = setFromList [Creature, Eagle]
+    }
+
+weatherHillsWatchman :: CardDef
+weatherHillsWatchman =
+  (ally "09003" "Weather Hills Watchman" Leadership (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Dunedain]
+    }
+
+dunedainHunter :: CardDef
+dunedainHunter =
+  (ally "09004" "Dúnedain Hunter" Tactics (StaticCost 0) 1 3 1 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+sarnFordSentry :: CardDef
+sarnFordSentry =
+  (ally "09005" "Sarn Ford Sentry" Lore (StaticCost 3) 2 1 0 2)
+    { cdCardTraits = setFromList [Dunedain, Scout]
+    }
+
+wardenOfAnnuminas :: CardDef
+wardenOfAnnuminas =
+  (ally "09006" "Warden of Annúminas" Spirit (StaticCost 4) 0 2 2 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+-- | Encounter: set aside from its owner's deck, it enters play only as Ranger Summons
+-- shuffles it into the encounter deck and it is revealed. It has no cost.
+rangerOfTheNorth :: CardDef
+rangerOfTheNorth =
+  (ally "09015" "Ranger of the North" Neutral (StaticCost 0) 2 2 2 3)
+    { cdCost = Nothing
+    , cdCardTraits = setFromList [Dunedain, Ranger]
+    , cdKeywords = setFromList [Encounter, Surge, Ranged, Sentinel]
+    , cdWhenRevealed = True
+    }
+
+ingold :: CardDef
+ingold =
+  unique
+    (ally "10002" "Ingold" Leadership (StaticCost 3) 0 1 1 3)
+      { cdCardTraits = setFromList [Gondor]
+      }
+
+honourGuard :: CardDef
+honourGuard =
+  (ally "10004" "Honour Guard" Tactics (StaticCost 2) 0 0 1 3)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+curiousBrandybuck :: CardDef
+curiousBrandybuck =
+  (ally "10006" "Curious Brandybuck" Spirit (StaticCost 2) 2 0 0 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+eastRoadRanger :: CardDef
+eastRoadRanger =
+  (ally "10008" "East Road Ranger" Lore (StaticCost 3) 1 2 1 3)
+    { cdCardTraits = setFromList [Dunedain, Scout]
+    }
+
+rangerOfCardolan :: CardDef
+rangerOfCardolan =
+  (ally "10010" "Ranger of Cardolan" Neutral (StaticCost 4) 2 2 2 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
     }

@@ -111,6 +111,12 @@ allAttachmentCards =
       , theFallOfGilGalad
       , wardenOfArnor
       , theDaysRising
+      , heirOfValandil
+      , athelas
+      , secretVigil
+      , starBrooch
+      , ravenWingedHelm
+      , hobbitPony
       ]
 
 stewardOfGondor :: CardDef
@@ -762,4 +768,45 @@ theDaysRising =
   (attachment "08139" "The Day's Rising" Leadership (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Song]
+    }
+
+heirOfValandil :: CardDef
+heirOfValandil =
+  unique
+    (attachment "09010" "Heir of Valandil" Leadership (StaticCost 2))
+      { cdCardTraits = setFromList [Title]
+      }
+
+athelas :: CardDef
+athelas =
+  (attachment "09011" "Athelas" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    }
+
+secretVigil :: CardDef
+secretVigil =
+  (attachment "09012" "Secret Vigil" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+starBrooch :: CardDef
+starBrooch =
+  (attachment "09013" "Star Brooch" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+ravenWingedHelm :: CardDef
+ravenWingedHelm =
+  (attachment "10005" "Raven-winged Helm" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdLimitOnePerHost = True
+    }
+
+hobbitPony :: CardDef
+hobbitPony =
+  (attachment "10007" "Hobbit Pony" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
     }

@@ -288,7 +288,10 @@
     "heal": "Heal a Creature"
   },
   "athelas": {
-    "exhaust": "Exhaust a hero to claim Athelas"
+    "exhaust": "Exhaust a hero to claim Athelas",
+    "heal": "Athelas: choose a character to heal all damage from",
+    "discardCondition": "Athelas: you may discard a Condition attachment from that character",
+    "keep": "Discard none"
   },
   "moveSignal": "Attach it to another hero",
   "aFrightenedBeast": {
@@ -485,6 +488,24 @@
   "putItIntoPlay": "Put it into play",
   "moveToBottomOfDeck": "Move it to the bottom of your deck",
   "putOnTopOfDeck": "Put a card back on top of the deck (the last one chosen ends on top)",
+  "putOnTopOfEncounterDeck": "Put a card back on top of the encounter deck (the last one chosen ends on top)",
+  "chooseEnemyToEngage": "Choose an enemy to engage",
+  "dunedainHunter": {
+    "search": "Dúnedain Hunter: choose a non-unique enemy to put into play engaged with you"
+  },
+  "rangerOfTheNorth": {
+    "damageOrProgress": "Ranger of the North: deal 2 damage to an enemy or place 2 progress on a location"
+  },
+  "rangerSummons": {
+    "shuffle": "Ranger Summons: choose a Ranger of the North to shuffle into the encounter deck"
+  },
+  "expertTrackers": {
+    "exhaust": "Expert Trackers: exhaust a Scout or Ranger character",
+    "location": "Expert Trackers: choose a location to place progress on"
+  },
+  "scoutAhead": {
+    "search": "Scout Ahead: choose a card to add to the victory display"
+  },
   "returnAllyToHand": "Return an ally you control to your hand",
   "chooseHero": "Choose a hero",
   "chooseEnemy": "Choose an enemy",

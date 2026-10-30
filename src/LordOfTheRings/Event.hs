@@ -133,6 +133,10 @@ import LordOfTheRings.Event.Cards.MessageFromElrond
 import LordOfTheRings.Event.Cards.TightenOurBelts
 import LordOfTheRings.Event.Cards.RideThemDown
 import LordOfTheRings.Event.Cards.DontBeHasty
+import LordOfTheRings.Event.Cards.RangerSummons
+import LordOfTheRings.Event.Cards.TirelessHunters
+import LordOfTheRings.Event.Cards.ExpertTrackers
+import LordOfTheRings.Event.Cards.RallyingCry
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -279,5 +283,9 @@ allEvents =
         , SomeEventCard tightenOurBelts
         , SomeEventCard rideThemDown
         , SomeEventCard dontBeHasty
+        , SomeEventCard rangerSummons
+        , SomeEventCard tirelessHunters
+        , SomeEventCard expertTrackers
+        , SomeEventCard rallyingCry
         ]
     ]

@@ -144,6 +144,10 @@ allEventCards =
       , tightenOurBelts
       , rideThemDown
       , dontBeHasty
+      , rangerSummons
+      , tirelessHunters
+      , expertTrackers
+      , rallyingCry
       ]
 
 everVigilant :: CardDef
@@ -555,3 +559,15 @@ rideThemDown = event "08142" "Ride Them Down" Spirit (StaticCost 2)
 
 dontBeHasty :: CardDef
 dontBeHasty = event "08144" "Don't Be Hasty!" Lore (StaticCost 0)
+
+rangerSummons :: CardDef
+rangerSummons = (event "09007" "Ranger Summons" Leadership (StaticCost 1)) {cdCardTraits = setFromList [Signal]}
+
+tirelessHunters :: CardDef
+tirelessHunters = event "09008" "Tireless Hunters" Tactics (StaticCost 1)
+
+expertTrackers :: CardDef
+expertTrackers = event "09009" "Expert Trackers" Lore (StaticCost 0)
+
+rallyingCry :: CardDef
+rallyingCry = event "10003" "Rallying Cry" Leadership (StaticCost 2)

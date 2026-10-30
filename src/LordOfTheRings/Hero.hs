@@ -55,6 +55,9 @@ import LordOfTheRings.Hero.Cards.Theoden
 import LordOfTheRings.Hero.Cards.Grima
 import LordOfTheRings.Hero.Cards.Idraen
 import LordOfTheRings.Hero.Cards.Erkenbrand
+import LordOfTheRings.Hero.Cards.AragornTactics
+import LordOfTheRings.Hero.Cards.Halbarad
+import LordOfTheRings.Hero.Cards.MerrySpirit
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -136,5 +139,8 @@ allHeroes =
         , SomeHeroCard grima
         , SomeHeroCard idraen
         , SomeHeroCard erkenbrand
+        , SomeHeroCard aragornTactics
+        , SomeHeroCard halbarad
+        , SomeHeroCard merrySpirit
         ]
     ]
