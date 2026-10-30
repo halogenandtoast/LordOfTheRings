@@ -172,6 +172,10 @@ import LordOfTheRings.Quest.Cards.TheStarsGuidance
 import LordOfTheRings.Quest.Cards.CorsairPursuit
 import LordOfTheRings.Quest.Cards.ExploreTheIsland
 import LordOfTheRings.Quest.Cards.AFatefulDiscovery
+import LordOfTheRings.Quest.Cards.TheCoastOfUmbar
+import LordOfTheRings.Quest.Cards.FateOfTheDreamChaser
+import LordOfTheRings.Quest.Cards.TheHavenOfUmbar
+import LordOfTheRings.Quest.Cards.FinalConfrontation
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -376,5 +380,9 @@ allQuests =
         , SomeQuestCard corsairPursuit
         , SomeQuestCard exploreTheIsland
         , SomeQuestCard aFatefulDiscovery
+        , SomeQuestCard theCoastOfUmbar
+        , SomeQuestCard fateOfTheDreamChaser
+        , SomeQuestCard theHavenOfUmbar
+        , SomeQuestCard finalConfrontation
         ]
     ]

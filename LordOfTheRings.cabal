@@ -1210,8 +1210,10 @@ library
       LordOfTheRings.Quest.Cards.EscapeFromTharbad
       LordOfTheRings.Quest.Cards.EscapeToTheQuays
       LordOfTheRings.Quest.Cards.ExploreTheIsland
+      LordOfTheRings.Quest.Cards.FateOfTheDreamChaser
       LordOfTheRings.Quest.Cards.FightAtTheFords
       LordOfTheRings.Quest.Cards.FightingInTheStreets
+      LordOfTheRings.Quest.Cards.FinalConfrontation
       LordOfTheRings.Quest.Cards.FindShelter
       LordOfTheRings.Quest.Cards.FleeingFromTharbad
       LordOfTheRings.Quest.Cards.FliesAndSpiders
@@ -1282,12 +1284,14 @@ library
       LordOfTheRings.Quest.Cards.TheCapture
       LordOfTheRings.Quest.Cards.TheCatacombsOfCarnDum
       LordOfTheRings.Quest.Cards.TheClutchesOfCarnDum
+      LordOfTheRings.Quest.Cards.TheCoastOfUmbar
       LordOfTheRings.Quest.Cards.TheConfrontation
       LordOfTheRings.Quest.Cards.TheDefense
       LordOfTheRings.Quest.Cards.TheDrippingWalls
       LordOfTheRings.Quest.Cards.TheEnemysServant
       LordOfTheRings.Quest.Cards.TheFateOfBalin
       LordOfTheRings.Quest.Cards.TheGrandDesign
+      LordOfTheRings.Quest.Cards.TheHavenOfUmbar
       LordOfTheRings.Quest.Cards.TheHiddenWay
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
       LordOfTheRings.Quest.Cards.TheHuntBegins
@@ -1376,6 +1380,8 @@ library
       LordOfTheRings.Scenario.Scenarios.TheBattleOfCarnDum.Helpers
       LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor
       LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheCityOfCorsairs
+      LordOfTheRings.Scenario.Scenarios.TheCityOfCorsairs.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes
       LordOfTheRings.Scenario.Scenarios.TheDeadMarshes.Helpers
       LordOfTheRings.Scenario.Scenarios.TheDreadRealm
