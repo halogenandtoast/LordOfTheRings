@@ -9,6 +9,7 @@ import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects, ThreatModifier))
 import LordOfTheRings.Name
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
@@ -92,8 +93,16 @@ instance Entity Enemy where
   toAttrs (Enemy a) = toAttrs a
   overAttrs f (Enemy a) = Enemy $ overAttrs f a
 
+-- | A grappled enemy, attached facedown to a location, is immune to player card effects
+-- and gives its location +2 threat (The Thing in the Depths).
 instance HasModifiersFor Enemy where
-  getModifiersFor (Enemy a) = getModifiersFor a
+  getModifiersFor (Enemy a) = do
+    case (toAttrs a).enemyPlacement of
+      AttachedTo grappled@(LocationTarget _) -> do
+        modified (toAttrs a) grappled [ThreatModifier 2]
+        modifySelf (toAttrs a) [ImmuneToPlayerCardEffects]
+      _ -> pure ()
+    getModifiersFor a
 
 instance HasAbilities Enemy where
   getAbilities (Enemy a) = getAbilities a

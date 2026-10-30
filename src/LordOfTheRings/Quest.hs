@@ -178,6 +178,9 @@ import LordOfTheRings.Quest.Cards.SwiftDeparture
 import LordOfTheRings.Quest.Cards.FullSailAhead
 import LordOfTheRings.Quest.Cards.TheWeatherTurnsFoul
 import LordOfTheRings.Quest.Cards.TheCapeOfAndrast
+import LordOfTheRings.Quest.Cards.TakeTheShip
+import LordOfTheRings.Quest.Cards.ChangeOfPlans
+import LordOfTheRings.Quest.Cards.DefendTheShip
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -388,5 +391,8 @@ allQuests =
         , SomeQuestCard fullSailAhead
         , SomeQuestCard theWeatherTurnsFoul
         , SomeQuestCard theCapeOfAndrast
+        , SomeQuestCard takeTheShip
+        , SomeQuestCard changeOfPlans
+        , SomeQuestCard defendTheShip
         ]
     ]

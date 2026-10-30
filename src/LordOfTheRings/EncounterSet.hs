@@ -78,7 +78,11 @@ data EncounterSet
   | TheSeventhLevel
   | TheSiegeOfCairAndros
   | TheStewardsFear
+  | -- | Helm of the Stormcaller and the decks of the Stormcaller, which cards.json lumps
+    -- under The Thing in the Depths
+    TheStormcaller
   | TheStormcallerElite
+  | TheThingInTheDepths
   | TheThreeTrials
   | TheTreacheryOfRhudaur
   | TheWastesOfEriador

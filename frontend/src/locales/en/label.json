@@ -1114,6 +1114,7 @@
     "search": "Choose a Creature enemy to put into play engaged with you"
   },
   "progressFirst": "Choose the location to place progress on before the active location",
+  "grapple": "Grapple: choose the location the enemy attaches to",
   "questingProgress": "Choose a location to place the questing progress on before the quest",
   "placeOnQuest": "Place it on the quest",
   "threeTrials": {
@@ -1427,6 +1428,11 @@
   "calphon": {
     "switch": "Calphon: the bottom card of your deck. Switch it with a card in your hand?",
     "keep": "Leave it there"
+  },
+  "giantArm": {
+    "choose": "Giant Arm: after this attack, choose one",
+    "engage": "Put Giant Arm into play engaged with you and deal it a shadow card",
+    "grapple": "Resolve Giant Arm's Grapple keyword"
   },
   "naasiyah": {
     "choose": "Na'asiyah: give her +2 attack or +2 defense for this attack",

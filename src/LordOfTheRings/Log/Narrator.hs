@@ -260,6 +260,16 @@ narrationFor = \case
   RevealShadowCard eid cid -> Just $ shadowFaceUp eid cid
   TurnShadowCardFaceUp eid cid -> Just $ shadowFaceUp eid cid
   AttachTreachery tid target -> Just $ attached (toTarget tid) target
+  -- a Grapple enemy attaching facedown to its location, and letting go of it (The Thing
+  -- in the Depths)
+  PlaceEnemy eid (AttachedTo grappled@(LocationTarget _)) -> Just $ whenRef (toTarget eid) \e -> whenRef grappled \l ->
+    one $ toned Bad $ mechanic [ikeyPart "log.grapples" ["enemy" ~> e, "location" ~> l]]
+  PlaceEnemy eid StagingArea -> Just do
+    enemies <- getsGame (entitiesEnemies . gameEntities)
+    case (.placement) <$> Map.lookup eid enemies of
+      Just (AttachedTo grappled@(LocationTarget _)) -> whenRef (toTarget eid) \e -> whenRef grappled \l ->
+        one $ mechanic [ikeyPart "log.letsGo" ["enemy" ~> e, "location" ~> l]]
+      _ -> pure []
   PlaceEnemy eid (AttachedTo target) -> Just $ attached (toTarget eid) target
   PlaceAlly aid (AttachedTo target) -> Just $ attached (toTarget aid) target
   AttachCard aid target -> Just $ attached (toTarget aid) target

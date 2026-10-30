@@ -234,6 +234,12 @@ import LordOfTheRings.Location.Cards.CursedTemple
 import LordOfTheRings.Location.Cards.JaggedReef
 import LordOfTheRings.Location.Cards.HiddenCove
 import LordOfTheRings.Location.Cards.VastCoastland
+import LordOfTheRings.Location.Cards.HelmOfTheStormcaller
+import LordOfTheRings.Location.Cards.ForecastleDeck
+import LordOfTheRings.Location.Cards.WeatherDeck
+import LordOfTheRings.Location.Cards.CargoHold
+import LordOfTheRings.Location.Cards.CrewQuarters
+import LordOfTheRings.Location.Cards.QuarterDeck
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -508,5 +514,11 @@ allLocations =
         , SomeLocationCard jaggedReef
         , SomeLocationCard hiddenCove
         , SomeLocationCard vastCoastland
+        , SomeLocationCard helmOfTheStormcaller
+        , SomeLocationCard forecastleDeck
+        , SomeLocationCard weatherDeck
+        , SomeLocationCard cargoHold
+        , SomeLocationCard crewQuarters
+        , SomeLocationCard quarterDeck
         ]
     ]

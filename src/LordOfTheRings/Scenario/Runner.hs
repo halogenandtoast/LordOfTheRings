@@ -197,6 +197,7 @@ instance RunMessage ScenarioAttrs where
     RemoveFromVictoryDisplay card -> pure $ attrs & victoryDisplayL %~ filter ((/= card.id) . (.id))
     SearchEncounterDeckAndDiscard pid source matcher -> search pid source matcher AddToStaging
     SearchEncounterDeckAndDiscardToEngage pid source matcher -> search pid source matcher (PutEnemyIntoPlayEngaged pid)
+    SearchEncounterDeckAndDiscardToReveal pid source matcher -> search pid source matcher RevealCard
     -- a set-aside enemy put into play engaged, as No Way Out puts Chief Turch
     PutEnemyIntoPlayEngaged _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     DebugSearchEncounterDeck pid -> do

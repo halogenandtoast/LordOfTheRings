@@ -192,6 +192,9 @@ allTreacheryCards =
       , theFiresSpread
       , manOverboard
       , ragingSquall
+      , holdSteady
+      , fromTheDepths
+      , lashingTentacles
       ]
 
 deepDeepDark :: CardDef
@@ -1201,3 +1204,12 @@ manOverboard = (treachery "12028" "Man Overboard!" FlightOfTheStormcaller 2) {cd
 
 ragingSquall :: CardDef
 ragingSquall = (treachery "12029" "Raging Squall" FlightOfTheStormcaller 2) {cdKeywords = setFromList [Doomed 2]}
+
+holdSteady :: CardDef
+holdSteady = (treachery "12048" "Hold Steady!" TheStormcaller 2) {cdShadowEffect = True}
+
+fromTheDepths :: CardDef
+fromTheDepths = (treachery "12055" "From the Depths" TheThingInTheDepths 3) {cdShadowEffect = True}
+
+lashingTentacles :: CardDef
+lashingTentacles = (treachery "12056" "Lashing Tentacles" TheThingInTheDepths 2) {cdShadowEffect = True}

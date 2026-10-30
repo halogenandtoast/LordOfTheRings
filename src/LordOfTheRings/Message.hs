@@ -505,6 +505,8 @@ data Message
   | -- | as 'SearchEncounterDeckAndDiscard', the enemy found put into play engaged with the
     -- player, as "searches ... for a Boar Clan enemy and puts it into play engaged with him"
     SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
+  | -- | as 'SearchEncounterDeckAndDiscard', the card found revealed, as Forecastle Deck reads
+    SearchEncounterDeckAndDiscardToReveal PlayerId Target CardMatcher
   | {- | the cards go facedown underneath the target, out of play, as The Orcs' Search takes
     them: from a player's hand, deck or discard pile, or a location in play
     -}
@@ -590,6 +592,14 @@ data Message
     are shuffled so that the players do not know which one is which
     -}
     ShuffleUnchartedLocations
+  | {- | the enemy's Grapple keyword resolves: it attaches facedown to the location in play
+    its parenthetical picks, the first player choosing among those tied; with none in
+    play, one not yet placed goes to the staging area (The Thing in the Depths)
+    -}
+    ResolveGrapple EnemyId
+  | -- | an enemy card, taken from where it was, as a discarded or a shadow card, comes into
+    -- play to resolve its Grapple keyword
+    GrappleCard EncounterCard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

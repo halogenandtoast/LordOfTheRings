@@ -672,6 +672,11 @@ searchEncounterDeckAndDiscard
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
 searchEncounterDeckAndDiscard pid source = push . SearchEncounterDeckAndDiscard pid (toTarget source)
 
+-- | As 'searchEncounterDeckAndDiscard', the card found revealed, as Forecastle Deck reads.
+searchEncounterDeckAndDiscardToReveal
+  :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
+searchEncounterDeckAndDiscardToReveal pid source = push . SearchEncounterDeckAndDiscardToReveal pid (toTarget source)
+
 -- | As 'searchEncounterDeckAndDiscard', the enemy found put into play engaged with the player.
 searchEncounterDeckAndDiscardToEngage
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
@@ -1479,3 +1484,33 @@ cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
     Window _ (DefendedAttack _ e) -> e == eid
     Window _ (DeclaredAsDefender _ e) -> e == eid
     _ -> False
+
+-- | Resolve the enemy's Grapple keyword, as Grasping Arm's shadow reads (The Thing in the
+-- Depths).
+resolveGrapple :: ReverseQueue m => EnemyId -> m ()
+resolveGrapple = push . ResolveGrapple
+
+-- | The enemy card, taken from where it was, resolves its Grapple keyword, as From the
+-- Depths reads for the enemies it discards.
+grappleCard :: ReverseQueue m => EncounterCard -> m ()
+grappleCard = push . GrappleCard
+
+-- | The shadow card dealt to the enemy leaves it to resolve its own Grapple keyword, as
+-- Grasping Arm's shadow reads.
+grappleShadowCard :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
+grappleShadowCard eid card = do
+  removeShadowCard eid card.id
+  grappleCard card
+
+-- | The shadow card leaves the enemy it was dealt to, out of play, for the card taking it
+-- to put somewhere, as Giant Arm's shadow takes itself.
+removeShadowCard :: ReverseQueue m => EnemyId -> CardId -> m ()
+removeShadowCard eid = push . RemoveShadowCard eid
+
+-- | An enemy card, taken from where it was, comes into play engaged with the player, as
+-- the enemy it returns, for the card putting it there to act on it after.
+createEnemyEngaged :: ReverseQueue m => PlayerId -> EncounterCard -> m EnemyId
+createEnemyEngaged pid card = do
+  eid <- getRandom
+  push $ CreateEnemyEngaged pid eid card
+  pure eid

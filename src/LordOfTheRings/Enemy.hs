@@ -217,6 +217,12 @@ import LordOfTheRings.Enemy.Cards.SwiftRaider
 import LordOfTheRings.Enemy.Cards.CorsairSkiff
 import LordOfTheRings.Enemy.Cards.CorsairSeafarer
 import LordOfTheRings.Enemy.Cards.SerpentsBlade
+import LordOfTheRings.Enemy.Cards.TheThingInTheDepths
+import LordOfTheRings.Enemy.Cards.EyeOfTheBeast
+import LordOfTheRings.Enemy.Cards.ThrashingArm
+import LordOfTheRings.Enemy.Cards.CrushingArm
+import LordOfTheRings.Enemy.Cards.GraspingArm
+import LordOfTheRings.Enemy.Cards.GiantArm
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -459,5 +465,11 @@ allEnemys =
         , SomeEnemyCard corsairSkiff
         , SomeEnemyCard corsairSeafarer
         , SomeEnemyCard serpentsBlade
+        , SomeEnemyCard theThingInTheDepths
+        , SomeEnemyCard eyeOfTheBeast
+        , SomeEnemyCard thrashingArm
+        , SomeEnemyCard crushingArm
+        , SomeEnemyCard graspingArm
+        , SomeEnemyCard giantArm
         ]
     ]

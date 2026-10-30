@@ -223,6 +223,12 @@ allEnemyCards =
       , corsairSkiff
       , corsairSeafarer
       , serpentsBlade
+      , theThingInTheDepths
+      , eyeOfTheBeast
+      , thrashingArm
+      , crushingArm
+      , graspingArm
+      , giantArm
       ]
 
 namelessThing :: CardDef
@@ -1792,4 +1798,50 @@ serpentsBlade :: CardDef
 serpentsBlade =
   (enemy "12024" "Serpent's Blade" FlightOfTheStormcaller 2 10 3 3 3 4)
     { cdCardTraits = setFromList [Corsair]
+    }
+
+-- | Immune to player card effects, and cannot be engaged: its module says so.
+theThingInTheDepths :: CardDef
+theThingInTheDepths =
+  unique
+    (enemy "12049" "The Thing in the Depths" TheThingInTheDepths 1 50 2 5 0 8)
+      { cdCardTraits = setFromList [Creature]
+      , cdVictoryPoints = Just 10
+      }
+
+eyeOfTheBeast :: CardDef
+eyeOfTheBeast =
+  (enemy "12050" "Eye of the Beast" TheThingInTheDepths 2 0 2 0 5 5)
+    { cdCardTraits = setFromList [Creature, Body]
+    , cdKeywords = setFromList [Surge]
+    }
+
+thrashingArm :: CardDef
+thrashingArm =
+  (enemy "12051" "Thrashing Arm" TheThingInTheDepths 2 23 3 5 1 7)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Grapple LowestPrintedThreat]
+    }
+
+crushingArm :: CardDef
+crushingArm =
+  (enemy "12052" "Crushing Arm" TheThingInTheDepths 3 17 1 3 1 5)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Surge, Grapple HighestPrintedQuestPoints]
+    }
+
+graspingArm :: CardDef
+graspingArm =
+  (enemy "12053" "Grasping Arm" TheThingInTheDepths 3 20 2 4 1 4)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Grapple HighestPrintedThreat]
+    , cdShadowEffect = True
+    }
+
+giantArm :: CardDef
+giantArm =
+  (enemy "12054" "Giant Arm" TheThingInTheDepths 3 13 1 4 1 6)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Grapple LowestPrintedQuestPoints]
+    , cdShadowEffect = True
     }

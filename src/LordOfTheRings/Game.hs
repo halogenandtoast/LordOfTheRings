@@ -394,8 +394,13 @@ runGame msg g = case msg of
     | Just l <- Map.lookup lid g.entities.locations
     , l.placement /= ActiveLocation -> do
         g' <- runGame'' msg g
-        pushAll [CheckWindows [mkWhen $ BecameActiveLocation lid], CheckWindows [mkAfter $ BecameActiveLocation lid]]
+        -- the enemies grappling it let go first (The Thing in the Depths)
+        pushAll $ letGoOf g lid <> [CheckWindows [mkWhen $ BecameActiveLocation lid], CheckWindows [mkAfter $ BecameActiveLocation lid]]
         pure g'
+  -- and as it is explored, before it leaves play
+  CheckWindows ws | explored@(_ : _) <- [lid | Window When (Explored lid) <- ws] -> do
+    pushAll $ concatMap (letGoOf g) explored
+    runGame'' msg g
   -- an Uncharted location's card cannot enter the discard pile or the encounter deck: it
   -- returns to the Uncharted deck (The Grey Havens rules insert)
   Discard (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
@@ -2078,6 +2083,27 @@ runGameMessage msg g = case msg of
       & entitiesL
       . enemiesL
       %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
+  -- taken from the encounter discard pile, if it lies there, as From the Depths discards it
+  GrappleCard card -> do
+    enemy <- newEnemy card
+    push $ ResolveGrapple enemy.id
+    pure $ g & entitiesL . enemiesL %~ insertEntity enemy & scenarioL %~ overAttrs (encounterDiscardL %~ filter (/= card))
+  ResolveGrapple eid | Just e <- Map.lookup eid g.entities.enemies -> do
+    lead <- getLead
+    let inPlay' l = l.placement `elem` [StagingArea, ActiveLocation]
+        locations = filter inPlay' (toList g.entities.locations)
+        picked = case [w | Grapple w <- toList (cdKeywords $ toCardDef e)] of
+          w : _ -> do
+            let value l = fromMaybe 0 $ printedFor w (toCardDef l)
+                best = (if lowest w then minimumMay else maximumMay) (map value locations)
+            [toId l | l <- locations, Just (value l) == best]
+          _ -> []
+        grapple lid = PlaceEnemy eid (AttachedTo $ LocationTarget lid)
+    case picked of
+      [] -> pushWhen (e.placement == Unplaced) $ PlaceEnemy eid StagingArea
+      [lid] -> push $ grapple lid
+      tied -> push $ questionLabelWith (ikey "label.grapple") (Just $ toTarget eid) [] lead [targetLabel lid [grapple lid] | lid <- tied]
+    pure g
   CreateEnemy eid card ->
     pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) (createEnemy card eid))
   CreateEnemyEngaged pid eid card -> do
@@ -2095,6 +2121,10 @@ runGameMessage msg g = case msg of
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
   -- a treachery attached as a condition leaves play for good, as Daechanar removes a Sorcery card
   RemoveFromGame (TreacheryTarget tid) -> pure $ g & entitiesL . treacheriesL %~ Map.delete tid
+  -- an enemy leaves play for good, as Change of Plans removes the Corsair Raiders
+  RemoveFromGame target@(EnemyTarget eid) | Map.member eid g.entities.enemies -> do
+    pushAll $ discardAttached g target
+    pure $ g & entitiesL . enemiesL %~ Map.delete eid
   -- a side quest removed from the game, as Stop the Executioners! removes itself
   RemoveFromGame target@(QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ discardAttached g target
@@ -2428,7 +2458,8 @@ runGameMessage msg g = case msg of
         pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = Unplaced}) enemy)
       EnemyType -> do
         enemy <- newEnemy card
-        pushAll . (<> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
+        let grapples = [ResolveGrapple (toId enemy) | any isGrapple (cdKeywords def)]
+        pushAll . (<> grapples <> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
           =<< revealing (toTarget enemy)
         pure
           $ g
@@ -2784,6 +2815,22 @@ discardFromPlay target g = case target of
     -- a card of the Corsair deck to its own discard pile (Dream-chaser rules)
     EncounterCard ec -> scenarioL %~ overAttrs (discardEncounterCard ec)
     _ -> id
+
+-- | The enemies grappling the location let go of it, for the staging area (The Thing in
+-- the Depths).
+letGoOf :: Game -> LocationId -> [Message]
+letGoOf g lid = [PlaceEnemy (toId e) StagingArea | e <- toList g.entities.enemies, e.placement == AttachedTo (LocationTarget lid)]
+
+-- | The printed value a Grapple keyword reads, and whether it seeks the lowest.
+printedFor :: GrappleLocation -> CardDef -> Maybe Int
+printedFor = \case
+  LowestPrintedThreat -> cdThreat
+  HighestPrintedThreat -> cdThreat
+  LowestPrintedQuestPoints -> cdQuestPoints
+  HighestPrintedQuestPoints -> cdQuestPoints
+
+lowest :: GrappleLocation -> Bool
+lowest = (`elem` [LowestPrintedThreat, LowestPrintedQuestPoints])
 
 -- | Attachments, and encounter cards attached as conditions, leave play with their host,
 -- and an enemy's shadow cards are discarded with it (ALeP 3.068).

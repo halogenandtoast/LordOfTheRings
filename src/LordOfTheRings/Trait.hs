@@ -15,6 +15,7 @@ data Trait
   | Blight
   | Boar
   | BoarClan
+  | Body
   | Boon
   | Bridge
   | Brigand
@@ -35,6 +36,7 @@ data Trait
   | Creature
   | Dale
   | Dark
+  | Deck
   | DeadMarshes
   | Disaster
   | DolGuldur
