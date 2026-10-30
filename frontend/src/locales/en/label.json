@@ -1035,5 +1035,20 @@
   "fellVoices": {
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
-  "chooseAreaToJoin": "Choose a player to join"
+  "chooseAreaToJoin": "Choose a player to join",
+  "unnaturalFog": {
+    "choose": "Unnatural Fog: discard from your deck or remove your characters from the quest",
+    "discard": "Discard the top {count} cards of your deck",
+    "removeFromQuest": "Remove each character you control from the quest"
+  },
+  "tragicDiscovery": {
+    "choose": "Tragic Discovery: raise your threat by 3 or take this attack undefended",
+    "raiseThreat": "Raise your threat by 3",
+    "undefended": "Treat this attack as undefended"
+  },
+  "aFellWraith": {
+    "choose": "A Fell Wraith: discard the top 3 cards of your deck or return Thaurdir to the staging area",
+    "discard": "Discard the top 3 cards of your deck",
+    "returnThaurdir": "Return Thaurdir to the staging area"
+  }
 }
