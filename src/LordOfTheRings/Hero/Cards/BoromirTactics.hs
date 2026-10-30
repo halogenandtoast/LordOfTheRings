@@ -12,11 +12,13 @@ boromirTactics = hero BoromirTactics Cards.boromirTactics
 
 -- | Action: Raise your threat by 1 to ready Boromir. (Limit once per phase.)
 -- Action: Discard Boromir to deal 2 damage to each enemy engaged with a single player.
+-- (FAQ 1.9 errata added the limit.)
 instance HasAbilities BoromirTactics where
   getAbilities (BoromirTactics a) =
-    [ limited (PlayerLimit PerPhase 1) $ restricted a 1 (exists $ HeroWithId a.id <> ExhaustedHero) $ ActionAbility (RaiseThreatCost 1)
-    , restricted a 2 (exists $ EnemyEngagedWith AnyPlayer) $ ActionAbility Free
-    ]
+    errataOr a.owner (limited (PlayerLimit PerPhase 1) readyHim) readyHim
+      <> [restricted a 2 (exists $ EnemyEngagedWith AnyPlayer) $ ActionAbility Free]
+   where
+    readyHim = restricted a 1 (exists $ HeroWithId a.id <> ExhaustedHero) $ ActionAbility (RaiseThreatCost 1)
 
 instance RunMessage BoromirTactics where
   runMessage msg h@(BoromirTactics attrs) = case msg of

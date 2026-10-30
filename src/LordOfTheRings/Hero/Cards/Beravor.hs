@@ -11,9 +11,11 @@ beravor :: HeroCard Beravor
 beravor = hero Beravor Cards.beravor
 
 -- | Action: Exhaust Beravor to choose a player. That player draws 2 cards. Limit once
--- per round.
+-- per round. (FAQ 1.9 errata added the limit.)
 instance HasAbilities Beravor where
-  getAbilities (Beravor a) = [limited (GroupLimit PerRound 1) $ mkAbility a 1 $ ActionAbility (ExhaustCost $ toTarget a)]
+  getAbilities (Beravor a) = errataOr a.owner (limited (GroupLimit PerRound 1) draw) draw
+   where
+    draw = mkAbility a 1 $ ActionAbility (ExhaustCost $ toTarget a)
 
 instance RunMessage Beravor where
   runMessage msg h@(Beravor attrs) = case msg of

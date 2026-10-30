@@ -17,15 +17,16 @@ spiritAlly = CardWithType AllyType <> CardWithSphere Spirit
 
 -- | Action: Discard Caldara to put 1 spirit ally from your discard pile into play for each
 -- other hero you control with a printed spirit resource icon. (Limit once per game.)
+-- (FAQ 1.9 errata added the limit.)
 instance HasAbilities Caldara where
-  getAbilities (Caldara a) =
-    [ limited (PlayerLimit PerGame 1)
-        $ restricted
-          a
-          1
-          (exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithPrintedSphere Spirit <> NotHero (HeroWithId a.id)) <> CardInDiscard a.owner spiritAlly)
+  getAbilities (Caldara a) = errataOr a.owner (limited (PlayerLimit PerGame 1) rally) rally
+   where
+    rally =
+      restricted
+        a
+        1
+        (exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithPrintedSphere Spirit <> NotHero (HeroWithId a.id)) <> CardInDiscard a.owner spiritAlly)
         $ ActionAbility Free
-    ]
 
 instance RunMessage Caldara where
   runMessage msg s@(Caldara a) = case msg of

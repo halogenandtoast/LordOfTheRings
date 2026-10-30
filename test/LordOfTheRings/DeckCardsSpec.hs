@@ -26,6 +26,17 @@ beravor = "01012"
 eowyn = "01007"
 theodred = "01002"
 
+-- | Use Beravor's action, ready her, and see whether it is offered again.
+beravorDrawsTwice :: PlayerId -> GameT Bool
+beravorDrawsTwice pid = do
+  b <- hero beravor
+  run $ ActionWindow pid
+  chooseAbilityOf pid b
+  passActions pid
+  run $ Ready b
+  run $ ActionWindow pid
+  offersAbilityOf pid b
+
 hero :: CardCode -> GameT Target
 hero code = toTarget <$> getHeroWithCode code
 
@@ -215,6 +226,13 @@ spec = describe "The One Deck and Seastan's Boromir" do
     chooseAbilityOf pid blood
     resourcesOf b `shouldReturn` 2
     getDefense b `shouldReturn` base + 2
+
+  it "Beravor draws once per round with errata" . gameTest $ \pid ->
+    beravorDrawsTwice pid `shouldReturn` False
+
+  it "Beravor draws again once readied, as printed" . gameTest $ \pid -> do
+    withoutErrata pid
+    beravorDrawsTwice pid `shouldReturn` True
 
   it "Gondorian Fire spends a resource for +1 attack for each one left" . gameTest $ \pid -> do
     b <- hero beravor

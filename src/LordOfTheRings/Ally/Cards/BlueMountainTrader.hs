@@ -13,10 +13,11 @@ blueMountainTrader = ally BlueMountainTrader Cards.blueMountainTrader
 -- | Action: Choose another player. That player gains control of Blue Mountain Trader. Then,
 -- that player moves 1 resource from the resource pool of a hero he controls to the
 -- resource pool of a hero you control, or Blue Mountain Trader is discarded. (Limit once
--- per round.)
+-- per round.) (FAQ 1.9 errata added the limit.)
 instance HasAbilities BlueMountainTrader where
-  getAbilities (BlueMountainTrader a) =
-    [limited (GroupLimit PerRound 1) $ restricted a 1 (PlayerExists $ NotPlayer ActivePlayer) $ ActionAbility Free]
+  getAbilities (BlueMountainTrader a) = errataOr a.owner (limited (GroupLimit PerRound 1) pass) pass
+   where
+    pass = restricted a 1 (PlayerExists $ NotPlayer ActivePlayer) $ ActionAbility Free
 
 instance RunMessage BlueMountainTrader where
   runMessage msg s@(BlueMountainTrader a) = case msg of

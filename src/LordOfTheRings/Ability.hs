@@ -4,6 +4,7 @@ import LordOfTheRings.Ability.Types as X
 import LordOfTheRings.Classes.HasAbilities as X
 import LordOfTheRings.Criteria as X
 import LordOfTheRings.Matcher.Window as X
+import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -22,6 +23,14 @@ anyPlayer ab = ab {abilityAnyPlayer = True}
 
 limited :: AbilityLimit -> Ability -> Ability
 limited l ab = ab {abilityLimit = l}
+
+-- | An ability the FAQ's errata changed: as errata'd for a card whose owner plays with
+-- errata, else as printed. Give both the same index.
+errataOr :: PlayerId -> Ability -> Ability -> [Ability]
+errataOr pid errata printed =
+  [ errata {abilityCriteria = abilityCriteria errata <> usesErrata pid}
+  , printed {abilityCriteria = abilityCriteria printed <> withoutErrata pid}
+  ]
 
 response :: WindowMatcher -> AbilityType
 response w = ResponseAbility w Free

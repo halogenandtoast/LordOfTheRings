@@ -11,12 +11,14 @@ protectorOfLorien :: AttachmentCard ProtectorOfLorien
 protectorOfLorien = attachment ProtectorOfLorien Cards.protectorOfLorien
 
 -- | Action: Discard a card from your hand to give attached hero +1 defense or +1
--- willpower until the end of the phase. Limit 3 times per phase.
+-- willpower until the end of the phase. Limit 3 times per phase. (FAQ 1.9 errata added the
+-- limit.)
 instance HasAbilities ProtectorOfLorien where
-  getAbilities (ProtectorOfLorien a) =
-    [ limited (GroupLimit PerPhase 3) $ mkAbility a 1 $ ActionAbility (DiscardFromHandCost a.controller 1)
-    | AttachedTo _ <- [a.placement]
-    ]
+  getAbilities (ProtectorOfLorien a) = case a.placement of
+    AttachedTo _ -> errataOr a.owner (limited (GroupLimit PerPhase 3) boost) boost
+    _ -> []
+   where
+    boost = mkAbility a 1 $ ActionAbility (DiscardFromHandCost a.controller 1)
 
 instance RunMessage ProtectorOfLorien where
   runMessage msg s@(ProtectorOfLorien a) = case msg of

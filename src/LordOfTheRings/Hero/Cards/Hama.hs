@@ -17,13 +17,13 @@ tacticsEvent = CardWithType EventType <> CardWithSphere Tactics
 
 -- | Response: After Háma is declared as an attacker, return a tactics event from your
 -- discard pile to your hand. Then, choose and discard 1 card from your hand. (Limit 3
--- times per game for the group.)
+-- times per game for the group.) (FAQ 1.9 errata added the limit.)
 instance HasAbilities Hama where
-  getAbilities (Hama a) =
-    [ limited (GroupLimit PerGame 3)
-        $ restricted a 1 (CardInDiscard a.owner tacticsEvent)
+  getAbilities (Hama a) = errataOr a.owner (limited (GroupLimit PerGame 3) recur) recur
+   where
+    recur =
+      restricted a 1 (CardInDiscard a.owner tacticsEvent)
         $ response (AttackerDeclaredWindow After (Just $ toTarget a))
-    ]
 
 instance RunMessage Hama where
   runMessage msg h@(Hama attrs) = case msg of
