@@ -62,6 +62,7 @@ data EncounterSet
   | TheDeadMarshes
   | TheDreadRealm
   | TheDreamChasersFleet
+  | TheDrownedRuins
   | TheDruadanForest
   | TheDunlandTrap
   | TheFateOfNumenor

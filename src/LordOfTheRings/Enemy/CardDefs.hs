@@ -215,6 +215,8 @@ allEnemyCards =
       , throngsOfUnfaithful
       , captainSahir
       , naasiyah
+      , seaScorpion
+      , caveEel
       ]
 
 namelessThing :: CardDef
@@ -1727,3 +1729,13 @@ naasiyah =
       , cdVictoryPoints = Just 4
       , cdOtherSide = Just "11079"
       }
+
+seaScorpion :: CardDef
+seaScorpion =
+  (enemy "12096" "Sea-scorpion" TheDrownedRuins 3 30 2 2 2 4)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+caveEel :: CardDef
+caveEel = (enemy "12097" "Cave Eel" TheDrownedRuins 3 20 3 3 4 2) {cdCardTraits = setFromList [Creature]}

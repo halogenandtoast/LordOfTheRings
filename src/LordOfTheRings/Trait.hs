@@ -58,6 +58,7 @@ data Trait
   | Gondor
   | Gossip
   | GreyHavens
+  | Grotto
   | Guardian
   | Harad
   | Hazard

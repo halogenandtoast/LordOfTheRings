@@ -188,6 +188,10 @@ allTreacheryCards =
       , ruinsOfAgesPast
       , curseOfTheDownfallen
       , aimlessWandering
+      , powerfulUndertow
+      , intoTheAbyss
+      , tanglingAndGrasping
+      , ancientDepths
       ]
 
 deepDeepDark :: CardDef
@@ -1178,3 +1182,19 @@ curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
+
+powerfulUndertow :: CardDef
+powerfulUndertow = (treachery "12105" "Powerful Undertow" TheDrownedRuins 3) {cdCardTraits = setFromList [Hazard]}
+
+intoTheAbyss :: CardDef
+intoTheAbyss = (treachery "12106" "Into the Abyss" TheDrownedRuins 3) {cdShadowEffect = True}
+
+tanglingAndGrasping :: CardDef
+tanglingAndGrasping =
+  (treachery "12107" "Tangling and Grasping" TheDrownedRuins 4)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    }
+
+ancientDepths :: CardDef
+ancientDepths = (treachery "12108" "Ancient Depths" TheDrownedRuins 3) {cdShadowEffect = True}

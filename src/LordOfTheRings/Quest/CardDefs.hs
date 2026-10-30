@@ -218,6 +218,8 @@ allQuestCards =
       , corsairPursuit
       , exploreTheIsland
       , aFatefulDiscovery
+      , theGrotto
+      , sahirsBetrayal
       ]
 
 theDrippingWalls :: CardDef
@@ -789,3 +791,10 @@ exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
 -- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
 aFatefulDiscovery :: CardDef
 aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}
+
+theGrotto :: CardDef
+theGrotto = quest "12092" "The Grotto" TheDrownedRuins 1 15
+
+-- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
+sahirsBetrayal :: CardDef
+sahirsBetrayal = (quest "12093" "Sahír's Betrayal" TheDrownedRuins 2 0) {cdQuestPoints = Nothing}
