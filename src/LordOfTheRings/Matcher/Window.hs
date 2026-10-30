@@ -233,6 +233,8 @@ data WindowMatcher
     DefenderWithTraitDestroyedWindow Timing Trait
   | -- | the player committed his characters to the quest, as Scouting Party reads
     PlayerCommittedCharactersWindow Timing PlayerId
+  | -- | the card was paid for from a single hero's pool, as Master Ironsmith reads
+    PaidFromOneHeroWindow Timing Target
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -337,6 +339,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (ShadowIncreasedAttackWindow t, ShadowIncreasedAttack {}) -> t == timing
+  (PaidFromOneHeroWindow t target, PaidFrom target' payers) -> t == timing && target == target' && case ordNub payers of
+    [HeroTarget _] -> True
+    _ -> False
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
