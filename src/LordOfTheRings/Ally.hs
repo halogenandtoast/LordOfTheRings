@@ -145,6 +145,7 @@ import LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
 import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
 import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
 import LordOfTheRings.Ally.Cards.NalirTheNinInEilph
+import LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -316,6 +317,7 @@ allAllies =
         , SomeAllyCard grimaTheFordsOfIsen
         , SomeAllyCard chiefTurchTheAntleredCrown
         , SomeAllyCard nalirTroubleInTharbad
+        , SomeAllyCard amarthiulTheTreacheryOfRhudaur
         , SomeAllyCard nalirTheNinInEilph
         ]
     ]

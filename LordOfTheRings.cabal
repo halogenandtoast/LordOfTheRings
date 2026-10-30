@@ -17,6 +17,7 @@ library
       LordOfTheRings.ActiveCost
       LordOfTheRings.Ally
       LordOfTheRings.Ally.CardDefs
+      LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
       LordOfTheRings.Ally.Cards.Anborn
       LordOfTheRings.Ally.Cards.AnfalasHerdsman
       LordOfTheRings.Ally.Cards.AngborTheFearless
@@ -418,10 +419,12 @@ library
       LordOfTheRings.Enemy.Cards.StrikingTentacle
       LordOfTheRings.Enemy.Cards.Stuart
       LordOfTheRings.Enemy.Cards.TelemnarsBane
+      LordOfTheRings.Enemy.Cards.Thaurdir
       LordOfTheRings.Enemy.Cards.TheHandOfCastamir
       LordOfTheRings.Enemy.Cards.TheNamelessFear
       LordOfTheRings.Enemy.Cards.TheWatcher
       LordOfTheRings.Enemy.Cards.ThrashingTentacle
+      LordOfTheRings.Enemy.Cards.TraitorousWight
       LordOfTheRings.Enemy.Cards.UmbarAssassin
       LordOfTheRings.Enemy.Cards.UnderworldDissident
       LordOfTheRings.Enemy.Cards.UngoliantsSpawn
@@ -429,6 +432,7 @@ library
       LordOfTheRings.Enemy.Cards.UrukLieutenant
       LordOfTheRings.Enemy.Cards.UrukSoldier
       LordOfTheRings.Enemy.Cards.Wargs
+      LordOfTheRings.Enemy.Cards.WightOfRhudaur
       LordOfTheRings.Enemy.Cards.WildBear
       LordOfTheRings.Enemy.Cards.WolfRider
       LordOfTheRings.Enemy.Cards.WolfsGuardian
@@ -823,6 +827,7 @@ library
       LordOfTheRings.Objective.CardDefs
       LordOfTheRings.Objective.Cards.AbandonedTools
       LordOfTheRings.Objective.Cards.AlcaronsScroll
+      LordOfTheRings.Objective.Cards.AmarthiulTheTreacheryOfRhudaur
       LordOfTheRings.Objective.Cards.APrisoner
       LordOfTheRings.Objective.Cards.ArwenUndomielObjective
       LordOfTheRings.Objective.Cards.AScrapOfHistory
@@ -832,6 +837,7 @@ library
       LordOfTheRings.Objective.Cards.Celador
       LordOfTheRings.Objective.Cards.CelebrimborsMould
       LordOfTheRings.Objective.Cards.ChiefTurchTheAntleredCrown
+      LordOfTheRings.Objective.Cards.DaechanarsBrand
       LordOfTheRings.Objective.Cards.DeadVillagers
       LordOfTheRings.Objective.Cards.DungeonTorch
       LordOfTheRings.Objective.Cards.DurinsAxe
@@ -843,6 +849,7 @@ library
       LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
       LordOfTheRings.Objective.Cards.GrimaTheFordsOfIsen
       LordOfTheRings.Objective.Cards.GrimbeornTheOld
+      LordOfTheRings.Objective.Cards.HeirloomOfIarchon
       LordOfTheRings.Objective.Cards.IthilienGuardian
       LordOfTheRings.Objective.Cards.KeyOfTheBoar
       LordOfTheRings.Objective.Cards.KeyOfTheRaven
@@ -852,6 +859,7 @@ library
       LordOfTheRings.Objective.Cards.MugashObjective
       LordOfTheRings.Objective.Cards.NalirTheNinInEilph
       LordOfTheRings.Objective.Cards.NalirTroubleInTharbad
+      LordOfTheRings.Objective.Cards.OrdersFromAngmar
       LordOfTheRings.Objective.Cards.PoisonedCounsels
       LordOfTheRings.Objective.Cards.RescuedVillagers
       LordOfTheRings.Objective.Cards.SecretMap
@@ -1053,6 +1061,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
       LordOfTheRings.Scenario.Scenarios.TheThreeTrials
       LordOfTheRings.Scenario.Scenarios.TheThreeTrials.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur.Helpers
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater.Helpers
       LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc
