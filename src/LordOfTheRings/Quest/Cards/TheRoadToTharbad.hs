@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.TheRoadToTharbad (theRoadToTharbad) where
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -31,8 +30,7 @@ instance RunMessage TheRoadToTharbad where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let copies def = filter ((== toCardCode def) . toCardCode) deck
       traverse_ setAside $ concatMap copies [Enemies.chiefTurchTheDunlandTrap, Locations.munuvDuvRavine]
@@ -40,7 +38,8 @@ instance RunMessage TheRoadToTharbad where
         removeFromEncounterDeck card
         putIntoPlayAsActiveLocation card
       eachPlayerSearchesToEngage attrs BoarClan
-      pure $ TheRoadToTharbad $ attrs {questFlipped = True}
+      turnOver attrs
+      pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       eachPlayer \p -> do
         discardHand p
