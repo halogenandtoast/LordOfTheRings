@@ -1260,5 +1260,17 @@
   "captivesOfGornakh": {
     "ally": "Captives of Gornákh: choose one of your allies to be captured",
     "host": "Captives of Gornákh: choose the encounter card with the highest threat to capture it"
+  },
+  "battleFury": {
+    "hero": "Battle-fury: exhaust a hero you control to attack",
+    "enemy": "Battle-fury: choose the enemy to attack"
+  },
+  "woodlandCourier": {
+    "location": "Woodland Courier: place progress on a location"
+  },
+  "interrogation": {
+    "enemy": "Interrogation: choose an enemy with a Trap attached",
+    "discard": "Interrogation: you may discard 1 of these cards",
+    "keep": "Discard none"
   }
 }

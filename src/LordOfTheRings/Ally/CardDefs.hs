@@ -163,6 +163,9 @@ allAllyCards =
       , curiousBrandybuck
       , eastRoadRanger
       , rangerOfCardolan
+      , dwarvenSellsword
+      , woodlandCourier
+      , robinSmallburrow
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1139,3 +1142,22 @@ rangerOfCardolan =
   (ally "10010" "Ranger of Cardolan" Neutral (StaticCost 4) 2 2 2 3)
     { cdCardTraits = setFromList [Dunedain, Ranger]
     }
+
+dwarvenSellsword :: CardDef
+dwarvenSellsword =
+  (ally "12083" "Dwarven Sellsword" Leadership (StaticCost 1) 2 2 2 3)
+    { cdCardTraits = setFromList [Dwarf, Warrior]
+    }
+
+woodlandCourier :: CardDef
+woodlandCourier =
+  (ally "12087" "Woodland Courier" Spirit (StaticCost 2) 1 1 0 1)
+    { cdCardTraits = setFromList [Silvan, Scout]
+    }
+
+robinSmallburrow :: CardDef
+robinSmallburrow =
+  unique
+    (ally "12089" "Robin Smallburrow" Lore (StaticCost 2) 2 0 1 2)
+      { cdCardTraits = setFromList [Hobbit, Shirriff]
+      }

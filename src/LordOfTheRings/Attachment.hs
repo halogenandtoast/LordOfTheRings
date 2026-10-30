@@ -120,6 +120,9 @@ import LordOfTheRings.Attachment.Cards.SecretVigil
 import LordOfTheRings.Attachment.Cards.StarBrooch
 import LordOfTheRings.Attachment.Cards.RavenWingedHelm
 import LordOfTheRings.Attachment.Cards.HobbitPony
+import LordOfTheRings.Attachment.Cards.DunedainRemedy
+import LordOfTheRings.Attachment.Cards.Hithlain
+import LordOfTheRings.Attachment.Cards.Strider
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -266,5 +269,8 @@ allAttachments =
         , SomeAttachmentCard starBrooch
         , SomeAttachmentCard ravenWingedHelm
         , SomeAttachmentCard hobbitPony
+        , SomeAttachmentCard dunedainRemedy
+        , SomeAttachmentCard hithlain
+        , SomeAttachmentCard strider
         ]
     ]

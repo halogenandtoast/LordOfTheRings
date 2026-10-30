@@ -166,6 +166,8 @@ allEventCards =
       , tirelessHunters
       , expertTrackers
       , rallyingCry
+      , battleFury
+      , interrogation
       ]
 
 everVigilant :: CardDef
@@ -646,3 +648,9 @@ expertTrackers = event "09009" "Expert Trackers" Lore (StaticCost 0)
 
 rallyingCry :: CardDef
 rallyingCry = event "10003" "Rallying Cry" Leadership (StaticCost 2)
+
+battleFury :: CardDef
+battleFury = event "12086" "Battle-fury" Tactics (StaticCost 1)
+
+interrogation :: CardDef
+interrogation = event "12090" "Interrogation" Lore (StaticCost 1)

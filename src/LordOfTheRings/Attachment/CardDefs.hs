@@ -127,6 +127,9 @@ allAttachmentCards =
       , starBrooch
       , ravenWingedHelm
       , hobbitPony
+      , dunedainRemedy
+      , hithlain
+      , strider
       ]
 
 stewardOfGondor :: CardDef
@@ -889,3 +892,23 @@ hobbitPony =
     { cdCardTraits = setFromList [Mount]
     , cdKeywords = setFromList [Restricted]
     }
+
+dunedainRemedy :: CardDef
+dunedainRemedy =
+  (attachment "12084" "Dúnedain Remedy" Leadership (StaticCost 0))
+    { cdCardTraits = setFromList [Signal]
+    }
+
+hithlain :: CardDef
+hithlain =
+  (attachment "12088" "Hithlain" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+strider :: CardDef
+strider =
+  unique
+    (attachment "12091" "Strider" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Title]
+      }

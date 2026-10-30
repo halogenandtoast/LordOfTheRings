@@ -69,6 +69,7 @@ allHeroCards =
       , aragornTactics
       , halbarad
       , merrySpirit
+      , argalad
       ]
 
 aragorn :: CardDef
@@ -416,4 +417,11 @@ merrySpirit :: CardDef
 merrySpirit =
   (hero "10001" "Merry" Spirit 6 2 1 1 2)
     { cdCardTraits = setFromList [Hobbit]
+    }
+
+argalad :: CardDef
+argalad =
+  (hero "12082" "Argalad" Lore 9 2 2 1 4)
+    { cdCardTraits = setFromList [Silvan, Scout]
+    , cdKeywords = setFromList [Ranged]
     }
