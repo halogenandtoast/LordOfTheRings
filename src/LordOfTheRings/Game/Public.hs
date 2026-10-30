@@ -79,6 +79,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "underneath" (toJSON underneath)
         $ KeyMap.insert "captured" (toJSON $ fmap length (fromMeta "captured" :: Map CardId [Value]))
         $ KeyMap.insert "capturedDecks" (toJSON $ fmap length (fromMeta "capturedDecks" :: Map PlayerId [Value]))
+        -- the Stormcaller's quest stage and its progress (Flight of the Stormcaller)
+        $ KeyMap.insert "stormcallerStage" (metaValue "stormcallerStage")
+        $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
@@ -157,6 +160,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   -- cards, under each card and in each player's captured deck
   fromMeta :: FromJSON a => Monoid a => Key.Key -> a
   fromMeta k = fromMaybe mempty $ parseMaybe (withObject "meta" (.: k)) (scenarioMeta $ toAttrs g.scenario)
+  metaValue :: Key.Key -> Value
+  metaValue k = fromMaybe Null $ parseMaybe (withObject "meta" (.: k)) (scenarioMeta $ toAttrs g.scenario)
   -- a location's facedown side is sent only to those who have looked at it
   hideOtherSide = \case
     Object o

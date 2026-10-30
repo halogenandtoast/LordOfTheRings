@@ -363,6 +363,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       heading: game.scenario.heading?.toLowerCase() ?? null,
       corsairDeck: game.scenario.corsairDeckSize ?? null,
       corsairDiscard: (game.scenario.corsairDiscard ?? []).map((c) => card(c.cardCode, c.id)),
+      stormcallerStage: game.stormcallerStage
+        ? card(game.stormcallerStage.cardCode, game.stormcallerStage.id, { flipped: true, image: `${game.stormcallerStage.cardCode}-d`, progress: game.stormcallerProgress ?? 0 })
+        : null,
+      stormcallerArea: withAttachments([...placed('enemies', isAt('StormcallerArea')), ...placed('locations', isAt('StormcallerArea'))]),
     },
     players,
     tally: { willpower: game.committedWillpower, threat: game.stagingThreat, lastWillpower: game.lastCommittedWillpower },

@@ -211,6 +211,12 @@ import LordOfTheRings.Enemy.Cards.SoullessCadaver
 import LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
 import LordOfTheRings.Enemy.Cards.CaptainSahir
 import LordOfTheRings.Enemy.Cards.Naasiyah
+import LordOfTheRings.Enemy.Cards.Stormcaller
+import LordOfTheRings.Enemy.Cards.SahirsEscort
+import LordOfTheRings.Enemy.Cards.SwiftRaider
+import LordOfTheRings.Enemy.Cards.CorsairSkiff
+import LordOfTheRings.Enemy.Cards.CorsairSeafarer
+import LordOfTheRings.Enemy.Cards.SerpentsBlade
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -447,5 +453,11 @@ allEnemys =
         , SomeEnemyCard throngsOfUnfaithful
         , SomeEnemyCard captainSahir
         , SomeEnemyCard naasiyah
+        , SomeEnemyCard stormcaller
+        , SomeEnemyCard sahirsEscort
+        , SomeEnemyCard swiftRaider
+        , SomeEnemyCard corsairSkiff
+        , SomeEnemyCard corsairSeafarer
+        , SomeEnemyCard serpentsBlade
         ]
     ]

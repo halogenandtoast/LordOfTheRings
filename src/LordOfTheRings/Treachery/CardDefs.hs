@@ -190,6 +190,8 @@ allTreacheryCards =
       , aimlessWandering
       , putToTheTorch
       , theFiresSpread
+      , manOverboard
+      , ragingSquall
       ]
 
 deepDeepDark :: CardDef
@@ -964,6 +966,7 @@ suddenDarkness =
 
 predatoryWolves :: CardDef
 predatoryWolves = (treachery "10027" "Predatory Wolves" TheWastesOfEriador 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
 soundTheAlarm :: CardDef
 soundTheAlarm =
   (treachery "10049" "Sound the Alarm!" EscapeFromMountGram 2)
@@ -1190,3 +1193,11 @@ theFiresSpread =
     { cdKeywords = setFromList [Doomed 2]
     , cdShadowEffect = True
     }
+
+-- * Flight of the Stormcaller
+
+manOverboard :: CardDef
+manOverboard = (treachery "12028" "Man Overboard!" FlightOfTheStormcaller 2) {cdShadowEffect = True}
+
+ragingSquall :: CardDef
+ragingSquall = (treachery "12029" "Raging Squall" FlightOfTheStormcaller 2) {cdKeywords = setFromList [Doomed 2]}

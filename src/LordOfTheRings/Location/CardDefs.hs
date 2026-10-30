@@ -242,6 +242,9 @@ allLocationCards =
       , whiteShip
       , elvenWaveRunner
       , elvenCaravel
+      , jaggedReef
+      , hiddenCove
+      , vastCoastland
       ]
 
 drownedTreasury :: CardDef
@@ -1387,6 +1390,7 @@ northDowns =
     { cdCardTraits = setFromList [Arnor, Hills]
     , cdShadowEffect = True
     }
+
 southernGate :: CardDef
 southernGate =
   unique
@@ -1418,6 +1422,7 @@ tunnelsOfMountGram =
     , cdKeywords = setFromList [Capture 1]
     , cdShadowEffect = True
     }
+
 chetwoodForest :: CardDef
 chetwoodForest =
   (location "09018" "Chetwood Forest" IntrudersInChetwood 3 3 3)
@@ -1674,6 +1679,7 @@ waterspout =
   (location "11054" "Waterspout" StormyWeather 2 2 4)
     { cdCardTraits = setFromList [Ocean]
     }
+
 -- | The Lost Island side of The Fate of Númenor's and Ruins of Numenor's Uncharted
 -- locations: no copy is gathered, each of them enters play with it faceup.
 lostIsland :: CardDef
@@ -1775,4 +1781,25 @@ elvenCaravel =
   (location "11047" "Elven Caravel" RaidOnTheGreyHavens 2 3 5)
     { cdCardTraits = setFromList [GreyHavens, Ship]
     , cdKeywords = setFromList [Aflame 4]
+    }
+
+-- * Flight of the Stormcaller
+
+jaggedReef :: CardDef
+jaggedReef =
+  (location "12025" "Jagged Reef" FlightOfTheStormcaller 2 1 4)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdKeywords = setFromList [Surge]
+    }
+
+hiddenCove :: CardDef
+hiddenCove = (location "12026" "Hidden Cove" FlightOfTheStormcaller 2 3 3) {cdCardTraits = setFromList [Coastland, Ocean]}
+
+vastCoastland :: CardDef
+vastCoastland =
+  (location "12027" "Vast Coastland" FlightOfTheStormcaller 2 6 4)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
     }

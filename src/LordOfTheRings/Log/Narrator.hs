@@ -339,6 +339,14 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.takesIntoHand" ["player" ~> who, "card" ~> PlayerCard card]]
   PlayAtNoCost _ card -> Just $ one $ mechanic [ikeyPart "log.playedAtNoCost" ["card" ~> PlayerCard card]]
+  -- \* The Stormcaller's area and its quest stage (Flight of the Stormcaller)
+  PlaceEnemy eid StormcallerArea -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.toStormcallerArea" ["card" ~> e]]
+  PlaceLocation lid StormcallerArea -> Just $ whenRef (toTarget lid) \l -> one $ mechanic [ikeyPart "log.toStormcallerArea" ["card" ~> l]]
+  ScenarioSpecific "stormcaller.progress" (parseMaybe parseJSON -> Just (n :: Int)) ->
+    Just $ one $ toned Bad $ mechanic [ikeyPart "log.stormcallerProgress" ["count" ~> n]]
+  ScenarioSpecific "stormcaller.advanced" (parseMaybe parseJSON -> Just card) ->
+    Just $ one $ toned Bad $ structure [ikeyPart "log.stormcallerAdvances" ["quest" ~> EncounterCard card]]
+  ScenarioSpecific "stormcaller.join" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.stormcallerCaughtUp" []]
   -- \* Locations the players control, as Osgiliath's
   PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
     from <- maybe Unplaced (.placement) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)

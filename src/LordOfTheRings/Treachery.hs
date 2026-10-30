@@ -183,6 +183,8 @@ import LordOfTheRings.Treachery.Cards.LingeringMalevolence
 import LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
 import LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
 import LordOfTheRings.Treachery.Cards.AimlessWandering
+import LordOfTheRings.Treachery.Cards.ManOverboard
+import LordOfTheRings.Treachery.Cards.RagingSquall
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -390,5 +392,7 @@ allTreacherys =
         , SomeTreacheryCard ruinsOfAgesPast
         , SomeTreacheryCard curseOfTheDownfallen
         , SomeTreacheryCard aimlessWandering
+        , SomeTreacheryCard manOverboard
+        , SomeTreacheryCard ragingSquall
         ]
     ]

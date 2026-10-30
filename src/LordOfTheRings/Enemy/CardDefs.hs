@@ -217,6 +217,12 @@ allEnemyCards =
       , naasiyah
       , corsairArsonist
       , sahirsRavager
+      , stormcaller
+      , sahirsEscort
+      , swiftRaider
+      , corsairSkiff
+      , corsairSeafarer
+      , serpentsBlade
       ]
 
 namelessThing :: CardDef
@@ -1436,6 +1442,7 @@ wolfOfAngmar =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+
 jailorGornakh :: CardDef
 jailorGornakh =
   unique
@@ -1739,3 +1746,50 @@ corsairArsonist =
 
 sahirsRavager :: CardDef
 sahirsRavager = (enemy "11041" "Sahír's Ravager" RaidOnTheGreyHavens 3 36 3 4 3 5) {cdCardTraits = setFromList [Corsair, Raider]}
+
+-- * Flight of the Stormcaller
+
+-- | Never in the encounter deck: the first stage's setup puts it in the Stormcaller's area.
+stormcaller :: CardDef
+stormcaller =
+  unique
+    (enemy "12019" "Stormcaller" FlightOfTheStormcaller 1 50 2 6 6 18)
+      { cdCardTraits = setFromList [Corsair, Ship]
+      , cdKeywords = setFromList [Boarding 2]
+      , cdVictoryPoints = Just 10
+      }
+
+sahirsEscort :: CardDef
+sahirsEscort =
+  (enemy "12020" "Sahír's Escort" FlightOfTheStormcaller 3 46 2 4 3 6)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    , cdWhenRevealed = True
+    }
+
+swiftRaider :: CardDef
+swiftRaider =
+  (enemy "12021" "Swift Raider" FlightOfTheStormcaller 2 38 3 5 4 8)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 2]
+    }
+
+corsairSkiff :: CardDef
+corsairSkiff =
+  (enemy "12022" "Corsair Skiff" FlightOfTheStormcaller 2 24 1 2 2 5)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Surge]
+    , cdSailingIcons = 1
+    }
+
+corsairSeafarer :: CardDef
+corsairSeafarer =
+  (enemy "12023" "Corsair Seafarer" FlightOfTheStormcaller 2 26 2 2 2 3)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+serpentsBlade :: CardDef
+serpentsBlade =
+  (enemy "12024" "Serpent's Blade" FlightOfTheStormcaller 2 10 3 3 3 4)
+    { cdCardTraits = setFromList [Corsair]
+    }

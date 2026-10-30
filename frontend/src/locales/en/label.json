@@ -1447,5 +1447,13 @@
   },
   "theHousesOfHealing": {
     "hero": "The Houses of Healing: choose a hero in a discard pile to put back into play"
+  },
+  "corsairSkiff": {
+    "choose": "Corsair Skiff engages you: choose one",
+    "threat": "Raise your threat by 3",
+    "boarding": "Corsair Skiff gains Boarding 1"
+  },
+  "manOverboard": {
+    "discard": "Man Overboard!: discard a questing character"
   }
 }

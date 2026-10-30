@@ -29,6 +29,7 @@ data EncounterSet
   | EscapeFromDolGuldur
   | EscapeFromMountGram
   | FlightFromMoria
+  | FlightOfTheStormcaller
   | FoulWeather
   | FoundationsOfStone
   | GoblinsOfTheDeep
