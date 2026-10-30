@@ -162,6 +162,11 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , thaurdir
+      , thaurdirsDamned
+      , balefulShade
+      , deadLord
+      , cursedDead
       ]
 
 namelessThing :: CardDef
@@ -1288,5 +1293,40 @@ spiritOfTheWild =
   (enemy "08050" "Spirit of the Wild" TheThreeTrials 5 28 1 1 2 4)
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 4
+    }
+
+thaurdir :: CardDef
+thaurdir =
+  unique
+    (enemy "09033" "Thaurdir" DeadmensDike 1 1 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+thaurdirsDamned :: CardDef
+thaurdirsDamned = (enemy "09034" "Thaurdir's Damned" DeadmensDike 3 35 3 5 2 6) {cdCardTraits = setFromList [Undead, Wraith], cdEasyModeQuantity = Just 1}
+
+balefulShade :: CardDef
+balefulShade =
+  (enemy "09035" "Baleful Shade" DeadmensDike 4 30 2 2 1 5)
+    { cdCardTraits = setFromList [Undead, Wraith]
+    , cdShadowEffect = True
+    }
+
+deadLord :: CardDef
+deadLord =
+  (enemy "09060" "Dead Lord" CursedDead 2 33 3 4 2 3)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+cursedDead :: CardDef
+cursedDead =
+  (enemy "09061" "Cursed Dead" CursedDead 5 27 1 3 1 2)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 4
     }
