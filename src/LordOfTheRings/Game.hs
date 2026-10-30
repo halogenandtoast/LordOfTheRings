@@ -749,12 +749,15 @@ runGameMessage msg g = case msg of
     pure $ g & phaseL .~ PlanningPhase
   BeginPhase QuestPhase -> do
     order <- getPlayerOrder
-    -- the first player may choose a side quest in the staging area to quest against
-    sideQuests <- getSideQuests
+    -- the first player may choose a side quest in the staging area to quest against, but
+    -- not a quest card that cannot be the current quest, as Secrets of Rhudaur
+    let choosable = filterM (fmap (notElem CannotBeCurrentQuest) . getModifiers)
+    mainQuests <- choosable =<< getMainQuests
+    sideQuests <- choosable =<< getSideQuests
     let chooseQuest =
           [ questionLabel (ikey "label.chooseCurrentQuest") lead
-            $ Label (ikey "label.questAgainstMainQuest") []
-            : [targetLabel q [CreateEffect $ Effect GameSource q [CurrentQuest] UntilEndOfPhase] | q <- sideQuests]
+            $ [Label (ikey "label.questAgainstMainQuest") [] | notNull mainQuests]
+            <> [targetLabel q [SetCurrentQuest q] | q <- sideQuests]
           | notNull sideQuests
           , lead <- take 1 order
           ]
@@ -1909,6 +1912,10 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
     pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   -- a side quest defeated goes to the victory display, and the quest stays where it is
+  SetCurrentQuest t -> do
+    sideQuests <- getSideQuests
+    let chosen = [Effect GameSource t [CurrentQuest] UntilEndOfPhase | t `elem` sideQuests]
+    pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ discardAttachedToQuest g qid
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))

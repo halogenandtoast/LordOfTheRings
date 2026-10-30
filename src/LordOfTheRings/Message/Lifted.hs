@@ -116,6 +116,24 @@ removeTimeCountersFromCurrentQuest source n = traverse_ (\q -> removeTimeCounter
 removeProgressFromQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromQuest source n = push $ RemoveProgressFromQuest (toSource source) n
 
+-- | The quest card becomes the current quest until the end of the phase: a side quest in
+-- the staging area, or the main quest, putting aside a side quest chosen before.
+setCurrentQuest :: (ReverseQueue m, Targetable target) => target -> m ()
+setCurrentQuest = push . SetCurrentQuest . toTarget
+
+{- | The player chooses a quest card in play other than the current quest to be the current
+quest until the end of the phase, as Pressing Needs and Centuries of Sorrow read; one that
+cannot be the current quest, as Secrets of Rhudaur, is not offered.
+-}
+chooseNewCurrentQuest :: (ReverseQueue m, Targetable source) => PlayerId -> source -> m ()
+chooseNewCurrentQuest pid source = do
+  current <- getCurrentQuest
+  quests <- filterM (fmap (notElem CannotBeCurrentQuest) . getModifiers) . filter ((/= current) . Just) =<< getQuestCards
+  chooseOneM pid do
+    questionLabeled "chooseNewCurrentQuest"
+    causedBy source
+    targets quests setCurrentQuest
+
 raiseThreat :: ReverseQueue m => PlayerId -> Int -> m ()
 raiseThreat pid n = push $ RaiseThreat pid n
 

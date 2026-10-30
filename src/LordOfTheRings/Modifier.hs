@@ -244,6 +244,9 @@ data ModifierType
     ReturnToHandIfQuestedSuccessfully
   | -- | on a side quest: the players quest against it this phase, as the current quest
     CurrentQuest
+  | -- | on a quest card: the players cannot choose it as the current quest in the quest
+    -- phase, as Secrets of Rhudaur reads
+    CannotBeCurrentQuest
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
