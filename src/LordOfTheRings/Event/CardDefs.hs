@@ -150,6 +150,18 @@ allEventCards =
       , quickEars
       , hourOfWrath
       , taleOfTinuviel
+      , descendantsOfKings
+      , boomedAndTrumpeted
+      , leaveNoTrace
+      , distantStars
+      , keenAsLances
+      , dunedainMessage
+      , fairAndPerilous
+      , noneReturn
+      , hopeRekindled
+      , reinforcements
+      , hornsCry
+      , theDoorIsClosed
       ]
 
 everVigilant :: CardDef
@@ -582,3 +594,39 @@ taleOfTinuviel =
   (event "10146" "Tale of Tinúviel" Spirit (StaticCost 1))
     { cdCardTraits = setFromList [Song]
     }
+
+descendantsOfKings :: CardDef
+descendantsOfKings = event "10030" "Descendants of Kings" Leadership (StaticCost 1)
+
+boomedAndTrumpeted :: CardDef
+boomedAndTrumpeted = (event "10032" "Boomed and Trumpeted" Tactics (StaticCost 1)) {cdCardTraits = setFromList [Ent]}
+
+leaveNoTrace :: CardDef
+leaveNoTrace = event "10035" "Leave No Trace" Lore (StaticCost 1)
+
+distantStars :: CardDef
+distantStars = event "10036" "Distant Stars" Lore (StaticCost 0)
+
+keenAsLances :: CardDef
+keenAsLances = event "10037" "Keen as Lances" Neutral (StaticCost 5)
+
+dunedainMessage :: CardDef
+dunedainMessage = (event "10056" "Dúnedain Message" Leadership (StaticCost 1)) {cdCardTraits = setFromList [Signal]}
+
+fairAndPerilous :: CardDef
+fairAndPerilous = event "10060" "Fair and Perilous" Spirit (StaticCost 1)
+
+noneReturn :: CardDef
+noneReturn = event "10062" "None Return" Lore (StaticCost 1)
+
+hopeRekindled :: CardDef
+hopeRekindled = (event "10063" "Hope Rekindled" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Song]}
+
+reinforcements :: CardDef
+reinforcements = (event "10085" "Reinforcements" Leadership (StaticCost 3)) {cdDistinctPayers = Just 3}
+
+hornsCry :: CardDef
+hornsCry = event "10088" "Horn's Cry" Tactics (StaticCost 2)
+
+theDoorIsClosed :: CardDef
+theDoorIsClosed = event "10092" "The Door is Closed!" Lore (StaticCost 1)

@@ -63,6 +63,9 @@ allHeroCards =
       , idraen
       , erkenbrand
       , amarthiul
+      , rossiel
+      , dori
+      , erestor
       ]
 
 aragorn :: CardDef
@@ -373,4 +376,23 @@ amarthiul :: CardDef
 amarthiul =
   (hero "10115" "Amarthiúl" Leadership 10 1 3 3 3)
     { cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    }
+
+rossiel :: CardDef
+rossiel =
+  (hero "10028" "Rossiel" Lore 8 2 1 2 3)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+dori :: CardDef
+dori =
+  (hero "10054" "Dori" Tactics 10 1 2 2 5)
+    { cdCardTraits = setFromList [Dwarf]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+erestor :: CardDef
+erestor =
+  (hero "10084" "Erestor" Lore 10 2 2 2 4)
+    { cdCardTraits = setFromList [Noldor]
     }

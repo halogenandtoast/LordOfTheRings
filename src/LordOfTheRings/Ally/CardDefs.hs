@@ -146,6 +146,13 @@ allAllyCards =
       , eothain
       , fornostBowman
       , galadhrimHealer
+      , veteranOfOsgiliath
+      , derndingleWarrior
+      , elvenJeweler
+      , longbeardSentry
+      , wellinghallPreserver
+      , galadhrimWeaver
+      , galdorOfTheHavens
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1011,4 +1018,48 @@ galadhrimHealer :: CardDef
 galadhrimHealer =
   (ally "10147" "Galadhrim Healer" Lore (StaticCost 2) 1 0 1 1)
     { cdCardTraits = setFromList [Silvan, Healer]
+    }
+
+veteranOfOsgiliath :: CardDef
+veteranOfOsgiliath =
+  (ally "10029" "Veteran of Osgiliath" Leadership (StaticCost 3) 1 2 1 2)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+derndingleWarrior :: CardDef
+derndingleWarrior =
+  (ally "10031" "Derndingle Warrior" Tactics (StaticCost 2) 1 1 2 3)
+    { cdCardTraits = setFromList [Ent, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+elvenJeweler :: CardDef
+elvenJeweler =
+  (ally "10033" "Elven Jeweler" Spirit (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Noldor, Craftsman]
+    }
+
+longbeardSentry :: CardDef
+longbeardSentry =
+  (ally "10057" "Longbeard Sentry" Tactics (StaticCost 3) 0 1 2 3)
+    { cdCardTraits = setFromList [Dwarf, Warrior]
+    }
+
+wellinghallPreserver :: CardDef
+wellinghallPreserver =
+  (ally "10061" "Wellinghall Preserver" Lore (StaticCost 3) 3 2 2 3)
+    { cdCardTraits = setFromList [Ent]
+    }
+
+galadhrimWeaver :: CardDef
+galadhrimWeaver =
+  (ally "10089" "Galadhrim Weaver" Spirit (StaticCost 1) 1 0 0 1)
+    { cdCardTraits = setFromList [Silvan, Craftsman]
+    }
+
+galdorOfTheHavens :: CardDef
+galdorOfTheHavens =
+  (ally "10091" "Galdor of the Havens" Lore (StaticCost 4) 2 2 1 4)
+    { cdCardTraits = setFromList [Noldor]
+    , cdUnique = True
     }

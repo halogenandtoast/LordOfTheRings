@@ -1094,5 +1094,29 @@
   },
   "makeCamp": {
     "heal": "Choose a hero to heal up to 3 damage from"
+  },
+  "descendantsOfKings": {
+    "ready": "Descendants of Kings: ready a Dúnedain character ({count} left)"
+  },
+  "delayTheEnemy": {
+    "discard": "Delay the Enemy: discard a non-unique enemy engaged with you?"
+  },
+  "distantStars": {
+    "choose": "Distant Stars: choose a non-unique location to make the active location"
+  },
+  "keenAsLances": {
+    "choose": "Keen as Lances: choose one",
+    "resources": "Add 2 resources to a hero's resource pool",
+    "draw": "Draw 3 cards",
+    "threat": "Reduce your threat by 4"
+  },
+  "hopeRekindled": {
+    "reduce": "Reduce the cost of the next Valour event you play this phase by 2"
+  },
+  "reinforcements": {
+    "choose": "Reinforcements: put an ally into play from a hand ({count} left)"
+  },
+  "hornsCry": {
+    "allEnemies": "All enemies get -1 attack until the end of the phase"
   }
 }

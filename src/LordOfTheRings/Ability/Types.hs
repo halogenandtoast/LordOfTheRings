@@ -42,6 +42,8 @@ data AbilityType
 -- | How often an ability may be used, as in Arkham: by each player, or by the group.
 data AbilityLimitType
   = PerPhase
+  | -- | until the enemy's attack resolves, as "Limit once per attack"
+    PerAttack
   | PerRound
   | -- | never reset, as "Limit once per game"
     PerGame

@@ -58,6 +58,9 @@ import LordOfTheRings.Hero.Cards.Grima
 import LordOfTheRings.Hero.Cards.Idraen
 import LordOfTheRings.Hero.Cards.Erkenbrand
 import LordOfTheRings.Hero.Cards.Amarthiul
+import LordOfTheRings.Hero.Cards.Rossiel
+import LordOfTheRings.Hero.Cards.Dori
+import LordOfTheRings.Hero.Cards.Erestor
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Hero.Types qualified as HeroTypes
@@ -155,5 +158,8 @@ allHeroes =
         , SomeHeroCard idraen
         , SomeHeroCard erkenbrand
         , SomeHeroCard amarthiul
+        , SomeHeroCard rossiel
+        , SomeHeroCard dori
+        , SomeHeroCard erestor
         ]
     ]

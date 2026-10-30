@@ -152,6 +152,13 @@ import LordOfTheRings.Ally.Cards.Lindir
 import LordOfTheRings.Ally.Cards.Eothain
 import LordOfTheRings.Ally.Cards.FornostBowman
 import LordOfTheRings.Ally.Cards.GaladhrimHealer
+import LordOfTheRings.Ally.Cards.VeteranOfOsgiliath
+import LordOfTheRings.Ally.Cards.DerndingleWarrior
+import LordOfTheRings.Ally.Cards.ElvenJeweler
+import LordOfTheRings.Ally.Cards.LongbeardSentry
+import LordOfTheRings.Ally.Cards.WellinghallPreserver
+import LordOfTheRings.Ally.Cards.GaladhrimWeaver
+import LordOfTheRings.Ally.Cards.GaldorOfTheHavens
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -331,5 +338,12 @@ allAllies =
         , SomeAllyCard eothain
         , SomeAllyCard fornostBowman
         , SomeAllyCard galadhrimHealer
+        , SomeAllyCard veteranOfOsgiliath
+        , SomeAllyCard derndingleWarrior
+        , SomeAllyCard elvenJeweler
+        , SomeAllyCard longbeardSentry
+        , SomeAllyCard wellinghallPreserver
+        , SomeAllyCard galadhrimWeaver
+        , SomeAllyCard galdorOfTheHavens
         ]
     ]

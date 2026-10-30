@@ -12,7 +12,7 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (Exhausted), mkAfter)
+import LordOfTheRings.Window (WindowType (BecameReady, Exhausted), mkAfter)
 
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
@@ -32,6 +32,7 @@ instance RunMessage AllyAttrs where
     RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
       blocked <- elem CannotReady <$> getModifiers attrs
+      when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
     PlaceAlly aid placement | aid == attrs.allyId -> pure $ attrs & placementL .~ placement

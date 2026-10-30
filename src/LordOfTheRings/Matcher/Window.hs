@@ -197,6 +197,19 @@ data WindowMatcher
   | -- | an attack the character took part in destroyed an enemy with at least this many
     -- printed hit points, as Sword of Númenor reads
     EnemyWithPrintedHitPointsDestroyedByAttackWindow Timing Int Target
+  | -- | a matching enemy destroyed, as None Return reads "a non-unique enemy"
+    EnemyDestroyedWindow Timing CardMatcher
+  | -- | a matching location explored, as Leave No Trace reads "a non-unique location"
+    ExploredMatchingWindow Timing CardMatcher
+  | -- | a card discarded from the player's hand, as Silver Harp answers
+    DiscardedFromHandWindow Timing PlayerId
+  | -- | the card readied, by anything, as Wellinghall Preserver answers
+    BecameReadyWindow Timing Target
+  | -- | a matching hero declared as a defender, as Dori answers another hero
+    HeroDeclaredAsDefenderWindow Timing HeroMatcher
+  | -- | an encounter card revealed whose title is in the victory display, as The Door is
+    -- Closed! answers
+    RevealedTitleInVictoryDisplayWindow Timing
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -290,6 +303,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EliminatedByThreatWindow t pid, EliminatedByThreat pid') -> t == timing && pid == pid'
   (QuestDefeatedWindow t target, QuestDefeated target') -> t == timing && target == target'
   (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
+  (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
+  (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
+  (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -310,6 +326,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
   (EnemyWithPrintedHitPointsDestroyedByAttackWindow {}, _) -> False
+  (ExploredMatchingWindow {}, _) -> False
+  (HeroDeclaredAsDefenderWindow {}, _) -> False
+  (RevealedTitleInVictoryDisplayWindow {}, _) -> False
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False

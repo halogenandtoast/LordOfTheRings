@@ -109,6 +109,11 @@ import LordOfTheRings.Attachment.Cards.FavorOfTheValar
 import LordOfTheRings.Attachment.Cards.SwordOfNumenor
 import LordOfTheRings.Attachment.Cards.WeatherStainedCloak
 import LordOfTheRings.Attachment.Cards.SwordThain
+import LordOfTheRings.Attachment.Cards.RangerProvisions
+import LordOfTheRings.Attachment.Cards.SteedOfImladris
+import LordOfTheRings.Attachment.Cards.ElvenSpear
+import LordOfTheRings.Attachment.Cards.SilverHarp
+import LordOfTheRings.Attachment.Cards.ElfFriend
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -244,5 +249,10 @@ allAttachments =
         , SomeAttachmentCard swordOfNumenor
         , SomeAttachmentCard weatherStainedCloak
         , SomeAttachmentCard swordThain
+        , SomeAttachmentCard rangerProvisions
+        , SomeAttachmentCard steedOfImladris
+        , SomeAttachmentCard elvenSpear
+        , SomeAttachmentCard silverHarp
+        , SomeAttachmentCard elfFriend
         ]
     ]

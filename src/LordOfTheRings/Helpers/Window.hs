@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdHitPoints, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
@@ -16,6 +16,7 @@ import LordOfTheRings.Keyword (Keyword (Surge))
 import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, TravelableWithActiveLocation),
@@ -144,11 +145,24 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     | t == timing && who `elem` attackers -> do
         destroyed <- getsGame gameAttackDestroyed
         pure $ any (\d -> d.target == EnemyTarget eid && maybe False (>= n) (cdHitPoints $ toCardDef d.card)) destroyed
+  (ExploredMatchingWindow t m, Explored lid) | t == timing -> cardMatches m . toCardDef <$> getLocation lid
+  (HeroDeclaredAsDefenderWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
+  (RevealedTitleInVictoryDisplayWindow t, Revealed target) | t == timing -> do
+    es <- getsGame gameEntities
+    shown <- getsGame (map (title . toCardDef) . (.victoryDisplay) . toAttrs . gameScenario)
+    pure $ maybe False ((`elem` shown) . title) case target of
+      EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
+      LocationTarget i -> toCardDef <$> Map.lookup i es.locations
+      TreacheryTarget i -> toCardDef <$> Map.lookup i es.treacheries
+      ObjectiveTarget i -> toCardDef <$> Map.lookup i es.objectives
+      QuestTarget i -> toCardDef <$> Map.lookup i es.quests
+      _ -> Nothing
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
   _ -> pure $ windowMatches matcher w
  where
+  title def = case cdName def of Name t _ -> t
   hostDef = \case
     HeroTarget hid -> toCardDef <$> getHero hid
     AllyTarget aid -> toCardDef <$> getAlly aid

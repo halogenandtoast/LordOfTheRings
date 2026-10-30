@@ -208,6 +208,7 @@ data LocationMatcher
   | -- | a location whose id sorts before the given one's: of several copies, the first
     -- stands for them all, as an ability that does not stack is triggered by one
     LocationWithIdBelow LocationId
+  | UniqueLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -240,6 +241,8 @@ data CardMatcher
     CardWithDoomed
   | -- | a card printed with a Valour trigger, as Hope Rekindled reads
     CardWithValour
+  | -- | a unique card, as "a non-unique location" reads it negated
+    UniqueCard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -270,6 +273,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardMatchAny ms -> any (`cardMatches` def) ms
   CardWithDoomed -> any (\case Doomed _ -> True; _ -> False) (cdKeywords def)
   CardWithValour -> cdCardCode def `elem` valourCards
+  UniqueCard -> cdUnique def
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]
