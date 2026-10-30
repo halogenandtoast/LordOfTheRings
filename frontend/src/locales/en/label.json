@@ -1035,5 +1035,17 @@
   "fellVoices": {
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
-  "chooseAreaToJoin": "Choose a player to join"
+  "chooseAreaToJoin": "Choose a player to join",
+  "theGreatHall": {
+    "choose": "The Great Hall: choose an Undead enemy you discarded to add to the staging area"
+  },
+  "darkCovenant": {
+    "choose": "Dark Covenant: choose one",
+    "removeProgress": "Remove the progress from among the quests in play",
+    "assignDamage": "Assign the damage among characters you control",
+    "removeProgressFrom": "Dark Covenant: remove 1 progress from a quest"
+  },
+  "quietTheSpirits": {
+    "engage": "Quiet the Spirits: choose the player with the highest threat for the Undead enemy to engage"
+  }
 }

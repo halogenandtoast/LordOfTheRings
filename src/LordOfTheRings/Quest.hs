@@ -122,6 +122,11 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+import LordOfTheRings.Quest.Cards.SecretsOfRhudaur
+import LordOfTheRings.Quest.Cards.ThaurdirsPursuit
+import LordOfTheRings.Quest.Cards.QuietTheSpirits
+import LordOfTheRings.Quest.Cards.SiftThroughTheDebris
+import LordOfTheRings.Quest.Cards.DecipherAncientTexts
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -276,5 +281,10 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+        , SomeQuestCard secretsOfRhudaur
+        , SomeQuestCard thaurdirsPursuit
+        , SomeQuestCard quietTheSpirits
+        , SomeQuestCard siftThroughTheDebris
+        , SomeQuestCard decipherAncientTexts
         ]
     ]

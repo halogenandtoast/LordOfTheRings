@@ -912,6 +912,7 @@ library
       LordOfTheRings.Quest.Cards.Captured
       LordOfTheRings.Quest.Cards.Conspiracy
       LordOfTheRings.Quest.Cards.ContinuingEastward
+      LordOfTheRings.Quest.Cards.DecipherAncientTexts
       LordOfTheRings.Quest.Cards.DoubleDealings
       LordOfTheRings.Quest.Cards.DunlendingAttack
       LordOfTheRings.Quest.Cards.EnteringTheMines
@@ -948,6 +949,7 @@ library
       LordOfTheRings.Quest.Cards.OutOfTheDungeons
       LordOfTheRings.Quest.Cards.OutOfTheSwamp
       LordOfTheRings.Quest.Cards.ProtectTheVillagers
+      LordOfTheRings.Quest.Cards.QuietTheSpirits
       LordOfTheRings.Quest.Cards.RadagastsRequest
       LordOfTheRings.Quest.Cards.ReinforcingTheBanks
       LordOfTheRings.Quest.Cards.RetakeTheCity
@@ -956,8 +958,11 @@ library
       LordOfTheRings.Quest.Cards.SearchForTheChamber
       LordOfTheRings.Quest.Cards.SearchingForMugash
       LordOfTheRings.Quest.Cards.SearchTheRuins
+      LordOfTheRings.Quest.Cards.SecretsOfRhudaur
+      LordOfTheRings.Quest.Cards.SiftThroughTheDebris
       LordOfTheRings.Quest.Cards.Snowdrifts
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
+      LordOfTheRings.Quest.Cards.ThaurdirsPursuit
       LordOfTheRings.Quest.Cards.TheAmbush
       LordOfTheRings.Quest.Cards.TheAngryForest
       LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
@@ -1066,6 +1071,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
       LordOfTheRings.Scenario.Scenarios.TheThreeTrials
       LordOfTheRings.Scenario.Scenarios.TheThreeTrials.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur
       LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur.Helpers
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater.Helpers
