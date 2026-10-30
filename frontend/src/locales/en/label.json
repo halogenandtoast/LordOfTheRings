@@ -1035,5 +1035,27 @@
   "fellVoices": {
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
-  "chooseAreaToJoin": "Choose a player to join"
+  "chooseAreaToJoin": "Choose a player to join",
+  "daechanar": {
+    "removeSorcery": "Daechanar: choose a Sorcery card to remove from the game"
+  },
+  "wraithOfCarnDum": {
+    "attach": "Attach Wraith of Carn Dûm to a character in play"
+  },
+  "possession": {
+    "destroy": "Possession: choose the highest cost ally to destroy"
+  },
+  "aFellDread": {
+    "choosePlayer": "A Fell Dread: choose the player with the highest threat",
+    "attach": "Attach A Fell Dread to a hero you control without A Fell Dread attached"
+  },
+  "altarOfMidwinter": {
+    "choose": "Altar of Midwinter: reveal 1 additional encounter card, or reanimate the top card of your deck",
+    "reveal": "Reveal 1 additional encounter card",
+    "reanimate": "Reanimate the top card of your deck"
+  },
+  "daechanarsFall": {
+    "addLocation": "Choose a location to add to the staging area",
+    "placeProgress": "Place progress on locations in the staging area: choose one to place 1 on ({n} left)"
+  }
 }
