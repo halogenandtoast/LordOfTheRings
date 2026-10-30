@@ -98,7 +98,12 @@ watch(() => you.value?.playerId, () => {
   playSeatId.value = null
 })
 const seatOr = (id: string | null) => players.value.find((player) => player.playerId === id) ?? you.value
-const threatSeat = computed(() => seatOr(threatSeatId.value))
+// unless one is picked, a question about an enemy engaged with someone else, as joining a
+// ranged attack, shows theirs
+const targetSeatId = computed(() =>
+  players.value.find((player) => player.engaged.some((card) => question.value?.targetIds.includes(card.id)))?.playerId ?? null,
+)
+const threatSeat = computed(() => seatOr(threatSeatId.value ?? targetSeatId.value))
 const playSeat = computed(() => seatOr(playSeatId.value))
 
 const withAttachments = (cards: CardView[], hosts: CardView[]) => [

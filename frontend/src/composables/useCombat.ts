@@ -52,7 +52,8 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
         return { [hovered.id]: { defend: { defense: null, damage: dealing, defeated: dealing >= remaining(hovered) } } }
       }
 
-      const enemy = prompt === '$label.declareAttackers' ? byId.get(q.targetIds[0]) : undefined
+      const attacking = prompt === '$label.declareAttackers' || prompt === '$label.joinAttackRanged'
+      const enemy = attacking ? byId.get(q.targetIds[0]) : undefined
       if (enemy) {
         const strength = enemy.attackStrength ?? 0
         const defense = stat(enemy, 'defense')
