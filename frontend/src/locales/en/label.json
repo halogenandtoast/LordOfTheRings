@@ -1059,6 +1059,21 @@
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
   "chooseAreaToJoin": "Choose a player to join",
+  "theWastesOfEriador": {
+    "searchWarg": "Choose a Warg enemy to reveal"
+  },
+  "eriadorWastes": {
+    "engage": "Eriador Wastes: choose a Warg enemy to engage"
+  },
+  "predatoryWolves": {
+    "choose": "Predatory Wolves: choose one",
+    "discardAlly": "Discard the highest cost ally you control",
+    "chooseAlly": "Choose the ally to discard",
+    "search": "Search for a Warg enemy and add it to the staging area"
+  },
+  "howlingAtNight": {
+    "discardAlly": "Howling at Night: choose a non-objective ally to discard"
+  },
   "angmarOrc": {
     "choose": "Angmar Orc: choose one",
     "discardAlly": "Discard 1 ally from play",

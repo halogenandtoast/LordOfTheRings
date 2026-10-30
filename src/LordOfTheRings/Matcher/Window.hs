@@ -210,6 +210,8 @@ data WindowMatcher
   | -- | an encounter card revealed whose title is in the victory display, as The Door is
     -- Closed! answers
     RevealedTitleInVictoryDisplayWindow Timing
+  | -- | it became Day or Night, as "when it becomes Night" reads
+    BecomesWindow TimeOfDay
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -306,6 +308,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
+  (BecomesWindow time, Became time') -> time == time'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

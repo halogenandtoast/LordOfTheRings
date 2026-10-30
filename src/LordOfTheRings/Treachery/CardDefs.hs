@@ -149,6 +149,8 @@ allTreacheryCards =
       , theSkyDarkens
       , vileAffliction
       , daechanarsWill
+      , suddenDarkness
+      , predatoryWolves
       , suddenAssault
       , surprisingSpeed
       , pressingNeeds
@@ -921,6 +923,16 @@ vileAffliction =
 daechanarsWill :: CardDef
 daechanarsWill = (treachery "10138" "Daechanar's Will" TheBattleOfCarnDum 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
+suddenDarkness :: CardDef
+suddenDarkness =
+  (treachery "10026" "Sudden Darkness" TheWastesOfEriador 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+predatoryWolves :: CardDef
+predatoryWolves = (treachery "10027" "Predatory Wolves" TheWastesOfEriador 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
 suddenAssault :: CardDef
 suddenAssault = (treachery "09021" "Sudden Assault" IntrudersInChetwood 2) {cdEasyModeQuantity = Just 0}
 

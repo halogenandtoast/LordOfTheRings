@@ -128,6 +128,9 @@ import LordOfTheRings.Quest.Cards.SearchTheRuins
 import LordOfTheRings.Quest.Cards.TheClutchesOfCarnDum
 import LordOfTheRings.Quest.Cards.MidwintersCrux
 import LordOfTheRings.Quest.Cards.FuriousCharge
+import LordOfTheRings.Quest.Cards.AcrossTheWastes
+import LordOfTheRings.Quest.Cards.HowlingAtNight
+import LordOfTheRings.Quest.Cards.BattleWithThePack
 import LordOfTheRings.Quest.Cards.OrcRearguard
 import LordOfTheRings.Quest.Cards.RescueIarion
 import LordOfTheRings.Quest.Cards.OrcAmbush
@@ -297,6 +300,9 @@ allQuests =
         , SomeQuestCard theClutchesOfCarnDum
         , SomeQuestCard midwintersCrux
         , SomeQuestCard furiousCharge
+        , SomeQuestCard acrossTheWastes
+        , SomeQuestCard howlingAtNight
+        , SomeQuestCard battleWithThePack
         , SomeQuestCard orcRearguard
         , SomeQuestCard rescueIarion
         , SomeQuestCard orcAmbush

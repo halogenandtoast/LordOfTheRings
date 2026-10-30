@@ -42,6 +42,7 @@ import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window (TimeOfDay (..), Window (..), WindowType (Became))
 
 {- | What a message adds to the log, if anything. The match is pure, so a message that
 says nothing costs nothing; only a narrating one reads the game.
@@ -97,6 +98,8 @@ narrationFor = \case
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
   ScenarioSpecific "tharbad.lowerElimination" _ ->
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> (10 :: Int)]]
+  -- \* Day and Night, as The Wastes of Eriador's Time objective flips
+  CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
   EliminatePlayer pid -> Just do
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]

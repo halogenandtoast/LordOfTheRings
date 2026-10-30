@@ -142,6 +142,8 @@ import LordOfTheRings.Treachery.Cards.WildTenacity
 import LordOfTheRings.Treachery.Cards.TheSkyDarkens
 import LordOfTheRings.Treachery.Cards.VileAffliction
 import LordOfTheRings.Treachery.Cards.DaechanarsWill
+import LordOfTheRings.Treachery.Cards.SuddenDarkness
+import LordOfTheRings.Treachery.Cards.PredatoryWolves
 import LordOfTheRings.Treachery.Cards.SuddenAssault
 import LordOfTheRings.Treachery.Cards.SurprisingSpeed
 import LordOfTheRings.Treachery.Cards.PressingNeeds
@@ -316,6 +318,8 @@ allTreacherys =
         , SomeTreacheryCard theSkyDarkens
         , SomeTreacheryCard vileAffliction
         , SomeTreacheryCard daechanarsWill
+        , SomeTreacheryCard suddenDarkness
+        , SomeTreacheryCard predatoryWolves
         , SomeTreacheryCard suddenAssault
         , SomeTreacheryCard surprisingSpeed
         , SomeTreacheryCard pressingNeeds

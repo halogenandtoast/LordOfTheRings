@@ -170,6 +170,9 @@ import LordOfTheRings.Location.Cards.AccursedBattlefield
 import LordOfTheRings.Location.Cards.MountainsOfAngmar
 import LordOfTheRings.Location.Cards.BlightOfCarnDum
 import LordOfTheRings.Location.Cards.FortressWalls
+import LordOfTheRings.Location.Cards.EriadorWastes
+import LordOfTheRings.Location.Cards.WargsDen
+import LordOfTheRings.Location.Cards.NorthDowns
 import LordOfTheRings.Location.Cards.ChetwoodForest
 import LordOfTheRings.Location.Cards.BordersOfBreeLand
 import LordOfTheRings.Location.Cards.OutlyingHomestead
@@ -377,6 +380,9 @@ allLocations =
         , SomeLocationCard mountainsOfAngmar
         , SomeLocationCard blightOfCarnDum
         , SomeLocationCard fortressWalls
+        , SomeLocationCard eriadorWastes
+        , SomeLocationCard wargsDen
+        , SomeLocationCard northDowns
         , SomeLocationCard chetwoodForest
         , SomeLocationCard bordersOfBreeLand
         , SomeLocationCard outlyingHomestead

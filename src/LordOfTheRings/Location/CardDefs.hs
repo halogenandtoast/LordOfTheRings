@@ -180,6 +180,9 @@ allLocationCards =
       , mountainsOfAngmar
       , blightOfCarnDum
       , fortressWalls
+      , eriadorWastes
+      , wargsDen
+      , northDowns
       , chetwoodForest
       , bordersOfBreeLand
       , outlyingHomestead
@@ -1323,6 +1326,18 @@ fortressWalls =
     , cdEasyModeQuantity = Just 1
     }
 
+eriadorWastes :: CardDef
+eriadorWastes = (location "10023" "Eriador Wastes" TheWastesOfEriador 2 3 5) {cdCardTraits = setFromList [Arnor, Plains], cdEasyModeQuantity = Just 1}
+
+wargsDen :: CardDef
+wargsDen = (location "10024" "Warg's Den" TheWastesOfEriador 2 4 1) {cdCardTraits = setFromList [Arnor], cdEasyModeQuantity = Just 1}
+
+northDowns :: CardDef
+northDowns =
+  (location "10025" "North Downs" TheWastesOfEriador 3 1 4)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    , cdShadowEffect = True
+    }
 chetwoodForest :: CardDef
 chetwoodForest =
   (location "09018" "Chetwood Forest" IntrudersInChetwood 3 3 3)

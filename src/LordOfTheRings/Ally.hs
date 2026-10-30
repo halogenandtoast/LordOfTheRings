@@ -145,6 +145,7 @@ import LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
 import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
 import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
 import LordOfTheRings.Ally.Cards.NalirTheNinInEilph
+import LordOfTheRings.Ally.Cards.Amarthiul
 import LordOfTheRings.Ally.Cards.Iarion
 import LordOfTheRings.Ally.Cards.GuardianOfArnor
 import LordOfTheRings.Ally.Cards.Beechbone
@@ -331,6 +332,7 @@ allAllies =
         , SomeAllyCard chiefTurchTheAntleredCrown
         , SomeAllyCard nalirTroubleInTharbad
         , SomeAllyCard nalirTheNinInEilph
+        , SomeAllyCard amarthiul
         , SomeAllyCard iarion
         , SomeAllyCard guardianOfArnor
         , SomeAllyCard beechbone

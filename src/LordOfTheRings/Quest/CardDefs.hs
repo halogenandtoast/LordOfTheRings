@@ -168,6 +168,9 @@ allQuestCards =
       , theClutchesOfCarnDum
       , midwintersCrux
       , furiousCharge
+      , acrossTheWastes
+      , howlingAtNight
+      , battleWithThePack
       , orcRearguard
       , rescueIarion
       , orcAmbush
@@ -577,6 +580,14 @@ midwintersCrux = quest "10126" "Midwinter's Crux" TheBattleOfCarnDum 2 15
 furiousCharge :: CardDef
 furiousCharge = (encounterSideQuest "10139" "Furious Charge" TheBattleOfCarnDum 5) {cdVictoryPoints = Just 10}
 
+acrossTheWastes :: CardDef
+acrossTheWastes = quest "10013" "Across the Wastes" TheWastesOfEriador 1 20
+
+howlingAtNight :: CardDef
+howlingAtNight = quest "10014" "Howling at Night" TheWastesOfEriador 2 15
+
+battleWithThePack :: CardDef
+battleWithThePack = quest "10015" "Battle with the Pack" TheWastesOfEriador 3 5
 orcRearguard :: CardDef
 orcRearguard = (encounterSideQuest "09023" "Orc Rearguard" IntrudersInChetwood 3) {cdVictoryPoints = Just 10}
 

@@ -127,6 +127,13 @@ data WindowType
     DiscardedFromHand PlayerId CardId
   | -- | an exhausted card readied, by anything, in any phase
     BecameReady Target
+  | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
+    Became TimeOfDay
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | Whether it is Day or Night, as The Wastes of Eriador's Time objective shows.
+data TimeOfDay = Daytime | Nighttime
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

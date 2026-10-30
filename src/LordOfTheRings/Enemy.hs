@@ -160,6 +160,12 @@ import LordOfTheRings.Enemy.Cards.Thaurdir
 import LordOfTheRings.Enemy.Cards.CarnDumGarrison
 import LordOfTheRings.Enemy.Cards.OrcGrunts
 import LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
+import LordOfTheRings.Enemy.Cards.PackLeader
+import LordOfTheRings.Enemy.Cards.NorthernWarg
+import LordOfTheRings.Enemy.Cards.BloodThirstyWarg
+import LordOfTheRings.Enemy.Cards.HuntingPack
+import LordOfTheRings.Enemy.Cards.WhiteWarg
+import LordOfTheRings.Enemy.Cards.WolfOfAngmar
 import LordOfTheRings.Enemy.Cards.OrcWarParty
 import LordOfTheRings.Enemy.Cards.AngmarOrc
 import LordOfTheRings.Enemy.Cards.AngmarMarauder
@@ -350,6 +356,12 @@ allEnemys =
         , SomeEnemyCard carnDumGarrison
         , SomeEnemyCard orcGrunts
         , SomeEnemyCard werewolfOfAngmar
+        , SomeEnemyCard packLeader
+        , SomeEnemyCard northernWarg
+        , SomeEnemyCard bloodThirstyWarg
+        , SomeEnemyCard huntingPack
+        , SomeEnemyCard whiteWarg
+        , SomeEnemyCard wolfOfAngmar
         , SomeEnemyCard orcWarParty
         , SomeEnemyCard angmarOrc
         , SomeEnemyCard angmarMarauder
