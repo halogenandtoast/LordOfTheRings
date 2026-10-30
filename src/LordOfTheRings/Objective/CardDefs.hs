@@ -58,6 +58,7 @@ allObjectiveCards =
       , keyOfTheBoar
       , keyOfTheWolf
       , keyOfTheRaven
+      , amarthiulAcrossTheEttenmoors
       ]
 
 durinsAxe :: CardDef
@@ -357,3 +358,12 @@ keyOfTheWolf = threeTrialsKey "08044" "Key of the Wolf" Wolf
 
 keyOfTheRaven :: CardDef
 keyOfTheRaven = threeTrialsKey "08045" "Key of the Raven" Raven
+
+amarthiulAcrossTheEttenmoors :: CardDef
+amarthiulAcrossTheEttenmoors =
+  ((objective "10067" "Amarthiúl" AcrossTheEttenmoors 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

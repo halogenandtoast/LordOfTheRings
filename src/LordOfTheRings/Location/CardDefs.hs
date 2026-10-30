@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Trait
 
@@ -176,6 +177,12 @@ allLocationCards =
       , hallowedCircle
       , cursedForest
       , grimFoothills
+      , secludedCave
+      , theHoarwell
+      , abandonedCamp
+      , patchOfWoods
+      , trollFells
+      , barrenMoorland
       ]
 
 drownedTreasury :: CardDef
@@ -1278,4 +1285,40 @@ grimFoothills =
     { cdCardTraits = setFromList [Hills]
     , cdKeywords = setFromList [Doomed 2]
     , cdEasyModeQuantity = Just 2
+    }
+
+-- | An objective-location of Across the Ettenmoors: guarded, safe, and immune to player
+-- card effects, worth 5 victory points.
+safeLocation :: CardCode -> Name -> Int -> [Trait] -> CardDef
+safeLocation code name questPoints traits =
+  (location code name AcrossTheEttenmoors 1 0 questPoints)
+    { cdCardTraits = setFromList (Ettenmoors : traits)
+    , cdKeywords = setFromList [Guarded, Safe]
+    , cdVictoryPoints = Just 5
+    }
+
+secludedCave :: CardDef
+secludedCave = safeLocation "10068" "Secluded Cave" 7 [Cave]
+
+theHoarwell :: CardDef
+theHoarwell = safeLocation "10069" "The Hoarwell" 3 [River]
+
+abandonedCamp :: CardDef
+abandonedCamp = safeLocation "10070" "Abandoned Camp" 1 []
+
+patchOfWoods :: CardDef
+patchOfWoods = safeLocation "10071" "Patch of Woods" 5 [Forest]
+
+trollFells :: CardDef
+trollFells =
+  (location "10077" "Troll-fells" AcrossTheEttenmoors 2 1 6)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdWhenRevealed = True
+    }
+
+barrenMoorland :: CardDef
+barrenMoorland =
+  (location "10078" "Barren Moorland" AcrossTheEttenmoors 2 2 4)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdEasyModeQuantity = Just 0
     }

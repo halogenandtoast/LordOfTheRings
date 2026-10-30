@@ -162,6 +162,11 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , savageTrollspawn
+      , coldfellGiant
+      , cruelMountainTroll
+      , ruthlessHillTroll
+      , goblinPursuer
       ]
 
 namelessThing :: CardDef
@@ -1289,4 +1294,42 @@ spiritOfTheWild =
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
+    }
+
+-- | It gets +1 attack for each damaged character the engaged player controls: from its
+-- own modifiers.
+savageTrollspawn :: CardDef
+savageTrollspawn =
+  (enemy "10072" "Savage Trollspawn" AcrossTheEttenmoors 4 36 1 2 3 6)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    }
+
+coldfellGiant :: CardDef
+coldfellGiant =
+  (enemy "10073" "Coldfell Giant" AcrossTheEttenmoors 2 41 3 5 4 7)
+    { cdCardTraits = setFromList [Giant]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+cruelMountainTroll :: CardDef
+cruelMountainTroll =
+  (enemy "10074" "Cruel Mountain-troll" AcrossTheEttenmoors 2 46 3 6 2 9)
+    { cdCardTraits = setFromList [Troll]
+    , cdEasyModeQuantity = Just 0
+    }
+
+ruthlessHillTroll :: CardDef
+ruthlessHillTroll =
+  (enemy "10075" "Ruthless Hill-troll" AcrossTheEttenmoors 2 31 2 4 1 12)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    }
+
+goblinPursuer :: CardDef
+goblinPursuer =
+  (enemy "10076" "Goblin Pursuer" AcrossTheEttenmoors 2 16 2 2 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
     }
