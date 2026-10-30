@@ -21,9 +21,12 @@ instance RunMessage APresenceInTheDark where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
+    PerformSetup (isTarget attrs -> True) -> do
       lead <- getLead
       searchEncounterDeckToStaging lead (cardIs Enemies.theNamelessFear)
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       eachPlayer $ const revealEncounterCard
       addToVictoryDisplay attrs
       advanceQuest

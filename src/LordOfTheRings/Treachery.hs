@@ -141,6 +141,10 @@ import LordOfTheRings.Treachery.Cards.TheGuardiansFury
 import LordOfTheRings.Treachery.Cards.WildTenacity
 import LordOfTheRings.Treachery.Cards.SuddenDarkness
 import LordOfTheRings.Treachery.Cards.PredatoryWolves
+import LordOfTheRings.Treachery.Cards.SuddenAssault
+import LordOfTheRings.Treachery.Cards.SurprisingSpeed
+import LordOfTheRings.Treachery.Cards.PressingNeeds
+import LordOfTheRings.Treachery.Cards.WeightOfResponsibility
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -306,5 +310,9 @@ allTreacherys =
         , SomeTreacheryCard wildTenacity
         , SomeTreacheryCard suddenDarkness
         , SomeTreacheryCard predatoryWolves
+        , SomeTreacheryCard suddenAssault
+        , SomeTreacheryCard surprisingSpeed
+        , SomeTreacheryCard pressingNeeds
+        , SomeTreacheryCard weightOfResponsibility
         ]
     ]

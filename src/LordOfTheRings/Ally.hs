@@ -146,6 +146,7 @@ import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
 import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
 import LordOfTheRings.Ally.Cards.NalirTheNinInEilph
 import LordOfTheRings.Ally.Cards.Amarthiul
+import LordOfTheRings.Ally.Cards.Iarion
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -319,5 +320,6 @@ allAllies =
         , SomeAllyCard nalirTroubleInTharbad
         , SomeAllyCard nalirTheNinInEilph
         , SomeAllyCard amarthiul
+        , SomeAllyCard iarion
         ]
     ]

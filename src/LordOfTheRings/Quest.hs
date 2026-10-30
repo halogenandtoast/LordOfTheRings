@@ -125,6 +125,11 @@ import LordOfTheRings.Quest.Cards.SearchTheRuins
 import LordOfTheRings.Quest.Cards.AcrossTheWastes
 import LordOfTheRings.Quest.Cards.HowlingAtNight
 import LordOfTheRings.Quest.Cards.BattleWithThePack
+import LordOfTheRings.Quest.Cards.OrcRearguard
+import LordOfTheRings.Quest.Cards.RescueIarion
+import LordOfTheRings.Quest.Cards.OrcAmbush
+import LordOfTheRings.Quest.Cards.LostInTheWilderness
+import LordOfTheRings.Quest.Cards.StopTheWarParty
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -282,5 +287,10 @@ allQuests =
         , SomeQuestCard acrossTheWastes
         , SomeQuestCard howlingAtNight
         , SomeQuestCard battleWithThePack
+        , SomeQuestCard orcRearguard
+        , SomeQuestCard rescueIarion
+        , SomeQuestCard orcAmbush
+        , SomeQuestCard lostInTheWilderness
+        , SomeQuestCard stopTheWarParty
         ]
     ]

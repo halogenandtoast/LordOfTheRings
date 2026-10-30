@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.SearchForTheChamber (searchForTheChamber) wher
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Frontend
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -22,8 +21,7 @@ instance RunMessage SearchForTheChamber where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       lead <- getLead
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       for_ (find ((== toCardCode Objectives.bookOfMazarbul) . toCardCode) deck) \book -> do
@@ -34,6 +32,9 @@ instance RunMessage SearchForTheChamber where
           causedBy attrs
           targets heroes (putObjectiveIntoPlayAttached book)
       shuffleEncounterDeck
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       eachPlayer $ const revealEncounterCard
       pure $ SearchForTheChamber $ attrs {questFlipped = True}
     _ -> SearchForTheChamber <$> runMessage msg attrs

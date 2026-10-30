@@ -169,6 +169,11 @@ import LordOfTheRings.Location.Cards.GrimFoothills
 import LordOfTheRings.Location.Cards.EriadorWastes
 import LordOfTheRings.Location.Cards.WargsDen
 import LordOfTheRings.Location.Cards.NorthDowns
+import LordOfTheRings.Location.Cards.ChetwoodForest
+import LordOfTheRings.Location.Cards.BordersOfBreeLand
+import LordOfTheRings.Location.Cards.OutlyingHomestead
+import LordOfTheRings.Location.Cards.RuggedCountry
+import LordOfTheRings.Location.Cards.ShroudedHills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -365,5 +370,10 @@ allLocations =
         , SomeLocationCard eriadorWastes
         , SomeLocationCard wargsDen
         , SomeLocationCard northDowns
+        , SomeLocationCard chetwoodForest
+        , SomeLocationCard bordersOfBreeLand
+        , SomeLocationCard outlyingHomestead
+        , SomeLocationCard ruggedCountry
+        , SomeLocationCard shroudedHills
         ]
     ]

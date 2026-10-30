@@ -61,6 +61,7 @@ allObjectiveCards =
       , daybreak
       , nightfall
       , amarthiul
+      , iarion
       ]
 
 durinsAxe :: CardDef
@@ -375,5 +376,16 @@ amarthiul =
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
     { cdUnique = True
     , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | X willpower, attack and defense, X the number of quest cards in play: gained from its
+-- own modifiers.
+iarion :: CardDef
+iarion =
+  ((objective "09016" "Iârion" TheLostRealm 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 0, cdDefense = Just 0, cdHitPoints = Just 4 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.ToTheRiver (toTheRiver) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
 import LordOfTheRings.Matcher
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -24,9 +23,11 @@ instance RunMessage ToTheRiver where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       eachPlayer $ const revealEncounterCard
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       askToResolveWhenRevealed attrs
       pure $ ToTheRiver $ attrs {questFlipped = True}
     WhenRevealed (isTarget attrs -> True) -> do

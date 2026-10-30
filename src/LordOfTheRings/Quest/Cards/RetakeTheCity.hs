@@ -1,7 +1,6 @@
 module LordOfTheRings.Quest.Cards.RetakeTheCity (retakeTheCity) where
 
 import LordOfTheRings.Card (CardType (EnemyType))
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -39,13 +38,13 @@ instance RunMessage RetakeTheCity where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       -- each search shuffles the encounter deck after it
       eachPlayer \p -> do
         searchEncounterDeckToStaging p (CardWithType EnemyType)
         searchEncounterDeckToStaging p uniqueLocations
-      pure $ RetakeTheCity $ attrs {questFlipped = True}
+      turnOver attrs
+      pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       winGame
       pure q

@@ -162,6 +162,10 @@ import LordOfTheRings.Enemy.Cards.BloodThirstyWarg
 import LordOfTheRings.Enemy.Cards.HuntingPack
 import LordOfTheRings.Enemy.Cards.WhiteWarg
 import LordOfTheRings.Enemy.Cards.WolfOfAngmar
+import LordOfTheRings.Enemy.Cards.OrcWarParty
+import LordOfTheRings.Enemy.Cards.AngmarOrc
+import LordOfTheRings.Enemy.Cards.AngmarMarauder
+import LordOfTheRings.Enemy.Cards.AngmarCaptain
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -348,5 +352,9 @@ allEnemys =
         , SomeEnemyCard huntingPack
         , SomeEnemyCard whiteWarg
         , SomeEnemyCard wolfOfAngmar
+        , SomeEnemyCard orcWarParty
+        , SomeEnemyCard angmarOrc
+        , SomeEnemyCard angmarMarauder
+        , SomeEnemyCard angmarCaptain
         ]
     ]

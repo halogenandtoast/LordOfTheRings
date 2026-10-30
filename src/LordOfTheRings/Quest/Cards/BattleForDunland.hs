@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.BattleForDunland (battleForDunland) where
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -34,8 +33,7 @@ instance RunMessage BattleForDunland where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let copies def = filter ((== toCardCode def) . toCardCode) deck
           firstOf def f = for_ (take 1 $ copies def) \card -> do
@@ -48,7 +46,8 @@ instance RunMessage BattleForDunland where
       firstOf Locations.ravenWarCamp addToStaging
       eachPlayer chooseRavenEnemy
       shuffleEncounterDeck
-      pure $ BattleForDunland $ attrs {questFlipped = True}
+      turnOver attrs
+      pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       removeTimeCounterFromEachLocation attrs
       placeTimeCounters attrs attrs 3
