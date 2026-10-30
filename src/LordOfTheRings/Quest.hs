@@ -164,6 +164,12 @@ import LordOfTheRings.Quest.Cards.ThaurdirsPursuit
 import LordOfTheRings.Quest.Cards.QuietTheSpirits
 import LordOfTheRings.Quest.Cards.SiftThroughTheDebris
 import LordOfTheRings.Quest.Cards.DecipherAncientTexts
+import LordOfTheRings.Quest.Cards.DepartureFromTheHavens
+import LordOfTheRings.Quest.Cards.IntoTheStorm
+import LordOfTheRings.Quest.Cards.CursedMists
+import LordOfTheRings.Quest.Cards.CalphonsDivination
+import LordOfTheRings.Quest.Cards.TheStarsGuidance
+import LordOfTheRings.Quest.Cards.CorsairPursuit
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -360,5 +366,11 @@ allQuests =
         , SomeQuestCard quietTheSpirits
         , SomeQuestCard siftThroughTheDebris
         , SomeQuestCard decipherAncientTexts
+        , SomeQuestCard departureFromTheHavens
+        , SomeQuestCard intoTheStorm
+        , SomeQuestCard cursedMists
+        , SomeQuestCard calphonsDivination
+        , SomeQuestCard theStarsGuidance
+        , SomeQuestCard corsairPursuit
         ]
     ]

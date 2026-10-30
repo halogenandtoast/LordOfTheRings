@@ -1086,13 +1086,17 @@ library
       LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
       LordOfTheRings.Quest.Cards.BreakthroughAtTheCitadel
+      LordOfTheRings.Quest.Cards.CalphonsDivination
       LordOfTheRings.Quest.Cards.Captured
       LordOfTheRings.Quest.Cards.Conspiracy
       LordOfTheRings.Quest.Cards.ContinuingEastward
       LordOfTheRings.Quest.Cards.CorneredAnimals
+      LordOfTheRings.Quest.Cards.CorsairPursuit
+      LordOfTheRings.Quest.Cards.CursedMists
       LordOfTheRings.Quest.Cards.DaechanarsFall
       LordOfTheRings.Quest.Cards.DecipherAncientTexts
       LordOfTheRings.Quest.Cards.DelayTheEnemy
+      LordOfTheRings.Quest.Cards.DepartureFromTheHavens
       LordOfTheRings.Quest.Cards.DoubleBack
       LordOfTheRings.Quest.Cards.DoubleDealings
       LordOfTheRings.Quest.Cards.DunlendingAttack
@@ -1121,6 +1125,7 @@ library
       LordOfTheRings.Quest.Cards.HowlingAtNight
       LordOfTheRings.Quest.Cards.IntoTheEttenmoors
       LordOfTheRings.Quest.Cards.IntoTheMarshes
+      LordOfTheRings.Quest.Cards.IntoTheStorm
       LordOfTheRings.Quest.Cards.IntoTheWoods
       LordOfTheRings.Quest.Cards.JourneyInTheBlackPit
       LordOfTheRings.Quest.Cards.JourneysEnd
@@ -1199,6 +1204,7 @@ library
       LordOfTheRings.Quest.Cards.TheSeethingLake
       LordOfTheRings.Quest.Cards.TheShadesOfAngmar
       LordOfTheRings.Quest.Cards.TheShadowWorld
+      LordOfTheRings.Quest.Cards.TheStarsGuidance
       LordOfTheRings.Quest.Cards.TheTrialOfIntuition
       LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
       LordOfTheRings.Quest.Cards.TheTrialOfStrength
@@ -1304,6 +1310,7 @@ library
       LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers
       LordOfTheRings.Scenario.Scenarios.TroubleInTharbad
       LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers
+      LordOfTheRings.Scenario.Scenarios.VoyageAcrossBelegaer
       LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
       LordOfTheRings.Sphere
