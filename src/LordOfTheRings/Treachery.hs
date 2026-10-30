@@ -139,6 +139,8 @@ import LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
 import LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
 import LordOfTheRings.Treachery.Cards.TheGuardiansFury
 import LordOfTheRings.Treachery.Cards.WildTenacity
+import LordOfTheRings.Treachery.Cards.AradorsBane
+import LordOfTheRings.Treachery.Cards.NoRest
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -302,5 +304,7 @@ allTreacherys =
         , SomeTreacheryCard curseOfTheWildMen
         , SomeTreacheryCard theGuardiansFury
         , SomeTreacheryCard wildTenacity
+        , SomeTreacheryCard aradorsBane
+        , SomeTreacheryCard noRest
         ]
     ]
