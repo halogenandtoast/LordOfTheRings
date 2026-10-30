@@ -479,6 +479,12 @@ data ModifierType
     ReducedByExhausting Trait
   | -- | on the game: the staging step of this quest phase has begun
     StagingStepBegun
+  | -- | on a location on the Island Map adjacent to the active location: it is not
+    -- considered to be in the staging area, as Jagged Cliffs reads
+    NotInStagingArea
+  | -- | on the active location on the Island Map: the players may travel from it to a
+    -- location up to so many locations away, as Winding Caverns reads
+    TravelRange Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
