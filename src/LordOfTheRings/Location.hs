@@ -232,8 +232,21 @@ lookupLocation cardCode cardId ident = case Map.lookup cardCode allLocations of
   Just (SomeLocationCard builder) -> Location $ cbCardBuilder builder cardId ident
   Nothing -> error $ "Unknown location: " <> show cardCode
 
+-- | A location card entering play: an Uncharted one enters Lost Island side faceup.
 newLocation :: (MonadRandom m) => EncounterCard -> m Location
-newLocation card = createLocation card <$> getRandom
+newLocation card = enterFaceUp . createLocation card <$> getRandom
+
+-- | The location with the side it enters play with faceup: an Uncharted one's Lost Island
+-- side.
+enterFaceUp :: Location -> Location
+enterFaceUp l = fromMaybe l do
+  other <- cdOtherSide (toCardDef l)
+  guard (isUncharted other)
+  turnLocationOver l
+
+-- | The location turned over to its other side, if it has one.
+turnLocationOver :: Location -> Maybe Location
+turnLocationOver = flipLocation lookupLocation . toAttrs
 
 allLocations :: Map CardCode SomeLocationCard
 allLocations =

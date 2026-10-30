@@ -747,3 +747,7 @@ getNextPlayer pid = do
 controlledCharactersWithTrait :: HasGame m => PlayerId -> Trait -> m [Target]
 controlledCharactersWithTrait pid trait =
   selectCharacters (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait) (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait)
+
+-- | An Uncharted location: one with its Lost Island side faceup (The Grey Havens rules insert).
+unchartedLocation :: LocationMatcher
+unchartedLocation = LocationWithKeyword Uncharted

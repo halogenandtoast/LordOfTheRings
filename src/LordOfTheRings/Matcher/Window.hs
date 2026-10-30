@@ -225,6 +225,11 @@ data WindowMatcher
     BecomesWindow TimeOfDay
   | -- | any captured cards rescued (Escape from Mount Gram)
     CapturedCardsRescuedWindow Timing
+  | -- | a matching location was turned over to its other side: read as it now is, as
+    -- "after X is flipped over while active" reads
+    LocationFlippedWindow Timing LocationMatcher
+  | -- | a matching location became the active location
+    LocationBecameActiveWindow Timing LocationMatcher
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -352,6 +357,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDeclaredAsDefenderWindow {}, _) -> False
   (RevealedTitleInVictoryDisplayWindow {}, _) -> False
   (PlayerDiscardedFromDeckWindow {}, _) -> False
+  (LocationFlippedWindow {}, _) -> False
+  (LocationBecameActiveWindow {}, _) -> False
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False

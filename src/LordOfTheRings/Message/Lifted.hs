@@ -1248,3 +1248,35 @@ discardFromDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 discardFromDeck pid card = do
   push $ RemoveFromDeck pid card.id
   push $ PutInDiscard card
+
+{- | Turn the card over to its other side: a location, as an Uncharted one is flipped, or a
+card whose other side is another kind of card, as Captain Sahír turns from enemy to
+objective-ally and back (under the player his objective-ally side names), all tokens
+removed.
+-}
+flipOver :: (ReverseQueue m, Targetable target) => target -> m ()
+flipOver = push . Flip . toTarget
+
+-- | The player looks at the facedown side of the location; only he is shown it.
+lookAtFacedownSide :: ReverseQueue m => PlayerId -> LocationId -> m ()
+lookAtFacedownSide pid = push . LookAtFacedownSide pid
+
+-- | The player chooses an Uncharted location in the staging area and looks at its
+-- facedown side, as Steep Plateau's Response reads.
+lookAtAnUnchartedLocation :: (ReverseQueue m, Targetable source) => PlayerId -> source -> m ()
+lookAtAnUnchartedLocation pid source = do
+  locations <- select (LocationInStagingArea <> unchartedLocation)
+  chooseOrRunOneM pid do
+    questionLabeled "lookAtFacedownSide"
+    causedBy source
+    targets locations (lookAtFacedownSide pid)
+
+-- | The top cards of the Uncharted deck go to the staging area, Lost Island side faceup.
+addFromUnchartedDeck :: ReverseQueue m => Int -> m ()
+addFromUnchartedDeck n = when (n > 0) $ push $ AddFromUnchartedDeck n
+
+{- | Remove all progress from each Uncharted location in the staging area and shuffle them
+so that the players do not know which one is which.
+-}
+shuffleUnchartedLocations :: ReverseQueue m => m ()
+shuffleUnchartedLocations = push ShuffleUnchartedLocations

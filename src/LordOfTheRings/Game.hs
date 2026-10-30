@@ -388,7 +388,20 @@ runGame msg g = case msg of
     case only of
       p : _ | p /= pid -> g <$ push (EngageEnemy p eid)
       _ -> runGame'' msg g
+  -- a location becoming the active location, however it does, opens its windows once it is
+  PlaceLocation lid ActiveLocation
+    | Just l <- Map.lookup lid g.entities.locations
+    , l.placement /= ActiveLocation -> do
+        g' <- runGame'' msg g
+        pushAll [CheckWindows [mkWhen $ BecameActiveLocation lid], CheckWindows [mkAfter $ BecameActiveLocation lid]]
+        pure g'
+  -- an Uncharted location's card cannot enter the discard pile or the encounter deck: it
+  -- returns to the Uncharted deck (The Grey Havens rules insert)
+  Discard (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
+  ShuffleIntoEncounterDeck (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
   _ -> runGame'' msg g
+ where
+  unchartedCard lid = maybe False (isUnchartedCard . toAttrs) (Map.lookup lid g.entities.locations)
 
 runGame'' :: Message -> Game -> GameT Game
 runGame'' msg g = case removedEnemy msg of
@@ -2391,6 +2404,29 @@ runGameMessage msg g = case msg of
       . objectivesL
       . traverse
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
+  -- a double-sided location turns over, as an Uncharted location does
+  Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
+    push $ CheckWindows [mkAfter $ LocationFlipped lid]
+    pure $ g & entitiesL . locationsL %~ Map.insert lid l
+  LookAtFacedownSide pid lid ->
+    pure $ g & entitiesL . locationsL . ix lid %~ overAttrs (\a -> a {locationLookedAt = ordNub (pid : a.lookedAt)})
+  AddFromUnchartedDeck n -> do
+    let (top, rest) = splitAt n (toAttrs g.scenario).unchartedDeck
+    pushAll $ map AddToStaging top
+    pure $ g & scenarioL %~ overAttrs (unchartedDeckL .~ rest)
+  ShuffleIntoUnchartedDeck lid | Just l <- Map.lookup lid g.entities.locations -> do
+    pushAll $ discardAttached g (LocationTarget lid)
+    deck <- shuffleM (locationDeckCard (toAttrs l) : (toAttrs g.scenario).unchartedDeck)
+    pure $ g & entitiesL . locationsL %~ Map.delete lid & scenarioL %~ overAttrs (unchartedDeckL .~ deck)
+  -- each keeps its place in the staging area, but the cards are dealt among them afresh,
+  -- each with a new card id, so nothing seen of one follows its card
+  ShuffleUnchartedLocations -> do
+    let staged = [l | l <- toList g.entities.locations, l.placement == StagingArea, isUncharted l]
+    codes <- shuffleM $ map (toCardCode . locationDeckCard . toAttrs) staged
+    dealt <- for (zip staged codes) \(l, code) -> do
+      cid <- getRandom
+      pure $ overAttrs (\a -> a {locationPlacement = StagingArea}) $ enterFaceUp $ createLocation (MkEncounterCard cid code) (toId l)
+    pure $ g & entitiesL . locationsL %~ \ls -> foldr (\l -> Map.insert (toId l) l) ls dealt
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly =
           -- the damage it took in the staging area stays on it, as Celador's

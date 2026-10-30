@@ -9,6 +9,7 @@ import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import LordOfTheRings.Keyword (Keyword (Uncharted))
 import LordOfTheRings.Name
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
@@ -41,6 +42,11 @@ data LocationAttrs = LocationAttrs
   , locationCardCode :: CardCode
   , locationPlacement :: Placement
   , locationTokens :: Tokens
+  , locationOtherSide :: Maybe CardCode
+  -- ^ the side facedown, of a double-sided location turned over as it entered play or
+  -- since: its card code is the side faceup
+  , locationLookedAt :: [PlayerId]
+  -- ^ the players who have looked at its facedown side since it was last turned over
   }
   deriving stock (Show, Eq, Generic)
 
@@ -50,7 +56,7 @@ instance ToJSON LocationAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "location")
 
 instance FromJSON LocationAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "location")
+  parseJSON = genericParseJSON (aesonOptions $ Just "location") . withDefaults [("otherSide", Null), ("lookedAt", toJSON ([] :: [PlayerId]))]
 
 location :: (LocationAttrs -> a) -> CardDef -> LocationCard a
 location f cardDef =
@@ -64,6 +70,8 @@ location f cardDef =
             , locationCardCode = cdCardCode cardDef
             , locationPlacement = Unplaced
             , locationTokens = mempty
+            , locationOtherSide = Nothing
+            , locationLookedAt = []
             }
     }
 
@@ -167,3 +175,44 @@ instance HasField "damage" LocationAttrs Int where
 
 instance HasField "cardId" LocationAttrs CardId where
   getField = locationCardId
+
+-- | The side facedown: the one it was turned over from, or the other side printed.
+instance HasField "otherSide" LocationAttrs (Maybe CardCode) where
+  getField a = locationOtherSide a <|> cdOtherSide (toCardDef a)
+
+instance HasField "lookedAt" LocationAttrs [PlayerId] where
+  getField = locationLookedAt
+
+-- | With its Lost Island side faceup: an Uncharted location (The Grey Havens rules insert).
+isUncharted :: HasCardDef a => a -> Bool
+isUncharted = member Uncharted . cdKeywords . toCardDef
+
+-- | An Uncharted location's card, whichever side is faceup: it returns to the Uncharted
+-- deck rather than the discard pile or the encounter deck.
+isUnchartedCard :: LocationAttrs -> Bool
+isUnchartedCard a = isUncharted a || maybe False isUncharted a.otherSide
+
+{- | The location card itself, as it goes into a deck: an Uncharted one's card is the side
+under its Lost Island side.
+-}
+locationDeckCard :: LocationAttrs -> EncounterCard
+locationDeckCard a = MkEncounterCard (locationCardId a) code
+ where
+  code = case a.otherSide of
+    Just other | isUncharted a -> other
+    _ -> locationCardCode a
+
+-- | Turned over to its other side, its progress removed and what was seen of it forgotten.
+-- The card builds it afresh from that side, keeping where it is and its other tokens.
+flipLocation :: (CardCode -> CardId -> LocationId -> Location) -> LocationAttrs -> Maybe Location
+flipLocation build a = a.otherSide <&> \other ->
+  overAttrs
+    ( const
+        a
+          { locationCardCode = other
+          , locationOtherSide = Just (locationCardCode a)
+          , locationTokens = removeAllTokens Progress (locationTokens a)
+          , locationLookedAt = []
+          }
+    )
+    (build other (locationCardId a) (locationId a))

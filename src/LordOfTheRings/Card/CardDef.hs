@@ -60,6 +60,9 @@ data CardDef = CardDef
   -- ^ an attachment limited to 1 per character: no host takes a second copy of its title
   , cdPlayableFrom :: PlayableFrom
   -- ^ where its owner may play it from, as Glorfindel can be played from the discard pile
+  , cdOtherSide :: Maybe CardCode
+  -- ^ a double-sided card's other side, as Captain Sahír's objective-ally side, or an
+  -- Uncharted location's Lost Island side
   }
   deriving stock (Show, Eq, Generic)
 
@@ -110,6 +113,7 @@ emptyCardDef cCode name cType =
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
     , cdPlayableFrom = FromHand
+    , cdOtherSide = Nothing
     }
 
 unique :: CardDef -> CardDef

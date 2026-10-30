@@ -6,6 +6,7 @@
   "defense": "Defense {value}",
   "healthLeft": "{value} hit points left",
   "outOfPlay": "Out of play",
+  "facedownSide": "Its facedown side, which you have looked at",
   "cannotPlay": "An effect is preventing you from playing this card",
   "cannotPlayBecause": "{source} is preventing you from playing this card",
   "combat": {

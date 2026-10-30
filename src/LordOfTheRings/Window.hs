@@ -134,6 +134,10 @@ data WindowType
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
     -- (Escape from Mount Gram)
     CapturedCardsRescued Card [Card]
+  | -- | a location was turned over to its other side, as an Uncharted location is
+    LocationFlipped LocationId
+  | -- | a location became the active location, however it did
+    BecameActiveLocation LocationId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

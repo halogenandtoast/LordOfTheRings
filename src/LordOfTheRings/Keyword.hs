@@ -22,6 +22,8 @@ data Keyword
   | -- | an objective ally the first player gains control of as it enters play
     FirstPlayerGainsControl
   | Guarded
+  | -- | an objective ally the last player gains control of as it enters play
+    LastPlayerGainsControl
   | -- | on an enemy: damage never destroys it, as Durin's Bane
     Indestructible
   | -- | as the card is revealed from the encounter deck, the players as a group discard
@@ -43,6 +45,9 @@ data Keyword
   | -- | on a quest: characters quest with their defense instead of their willpower
     Siege
   | Surge
+  | -- | on a location: it enters play with this side faceup, its other side facedown, and
+    -- is flipped to it (The Grey Havens rules insert)
+    Uncharted
   | -- | on a quest, location or enemy: it gets this many time counters as it is revealed,
     -- and loses 1 at the end of each refresh phase
     Time Int
