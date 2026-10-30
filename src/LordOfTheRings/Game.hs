@@ -2176,6 +2176,16 @@ runGameMessage msg g = case msg of
         pushAll . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
+      -- a player card with the Encounter keyword, as Ranger of the North: it enters play
+      -- under the first player, its When Revealed effect giving it to a player
+      AllyType | Just owner <- find (any ((== card.id) . (.id)) . (.setAsideCards)) (toList g.players) -> do
+        lead <- getLead
+        aid <- getRandom
+        let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
+        -- ponytail: no window for it entering play, as the player it goes to is chosen as it resolves
+        pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
+          =<< revealing (toTarget thisAlly)
+        pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g

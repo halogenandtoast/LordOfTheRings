@@ -13,7 +13,7 @@ import LordOfTheRings.Keyword (Keyword (Guarded))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
-import LordOfTheRings.Game.Base (gamePhase)
+import LordOfTheRings.Game.Base (gamePhase, gamePlayers)
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Prelude
@@ -160,7 +160,16 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM ([c | EncounterCard c <- matching] <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & victoryDisplayL .~ rest
     PutOnTopOfEncounterDeck card -> pure $ attrs & encounterDeckL %~ (card :)
-    AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
+    -- a player card with the Encounter keyword goes to its owner's discard pile instead
+    AddToEncounterDiscard cards -> do
+      owned <- for cards \c -> (c,) <$> setAsideOwner c.id
+      pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
+      pure $ attrs & encounterDiscardL %~ ([c | (c, Nothing) <- owned] <>)
+    -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in
+    ShuffleIntoEncounterDeck (CardIdTarget cid) -> do
+      owned <- getsGame (concatMap (.setAsideCards) . toList . gamePlayers)
+      deck <- shuffleM $ [MkEncounterCard cid (toCardCode c) | c <- owned, c.id == cid] <> attrs.encounterDeck
+      pure $ attrs & encounterDeckL .~ deck
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)
     RemoveFromVictoryDisplay card -> pure $ attrs & victoryDisplayL %~ filter ((/= card.id) . (.id))
