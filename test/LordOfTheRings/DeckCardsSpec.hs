@@ -128,7 +128,9 @@ spec = describe "The One Deck and Seastan's Boromir" do
     tb <- putAllyIntoPlay pid Allies.treebeard
     allyExhausted <$> ally tb `shouldReturn` True
     run $ BeginPhase ResourcePhase
+    passActions pid
     run $ BeginPhase ResourcePhase
+    passActions pid
     allyResources tb `shouldReturn` 2
     run $ ActionWindow pid
     chooseAbilityOf pid tb

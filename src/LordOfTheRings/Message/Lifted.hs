@@ -934,6 +934,14 @@ a Weapon or Armour attachment from his hand" reads; 'cardHosts' gives where it m
 attachFromHand :: (ReverseQueue m, Targetable host) => PlayerId -> Card -> host -> m ()
 attachFromHand pid card = push . PutAttachmentIntoPlayFromHand pid card.id . toTarget
 
+{- | The player attaches a card from their discard pile to the host without paying for it,
+as Master Ironsmith reads; 'cardHosts' gives where it may go.
+-}
+attachFromDiscard :: (ReverseQueue m, Targetable host) => PlayerId -> PlayerCard -> host -> m ()
+attachFromDiscard pid card host = do
+  removeFromDiscard pid card.id
+  push $ PlayAttachmentOn pid card (toTarget host)
+
 -- | The player chooses and discards N cards from their hand.
 chooseAndDiscardFromHand :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
 chooseAndDiscardFromHand pid source n = push $ ChooseAndDiscardFromHand pid (toSource source) n
@@ -976,13 +984,13 @@ Gornákh read.
 -}
 engageHighestThreatAndAttack :: (ReverseQueue m, Targetable source) => source -> EnemyId -> m ()
 engageHighestThreatAndAttack source eid = do
-  players <- traverse getPlayer =<< getRemainingPlayers
-  let highest = foldr (max . (.threat)) 0 players
+  players <- traverse (\p -> (p,) <$> getThreat p) =<< getRemainingPlayers
+  let highest = foldr (max . snd) 0 players
   lead <- getLead
   chooseOrRunOneM lead do
     questionLabeled "engageHighestThreat"
     causedBy source
-    targets [p.id | p <- players, p.threat == highest] \pid -> do
+    targets [p | (p, threat) <- players, threat == highest] \pid -> do
       engageEnemy pid eid
       immediateAttack pid eid
 

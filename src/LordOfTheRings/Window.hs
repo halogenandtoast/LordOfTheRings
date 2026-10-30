@@ -145,6 +145,10 @@ data WindowType
     LocationFlipped LocationId
   | -- | a location became the active location, however it did
     BecameActiveLocation LocationId
+  | -- | the shadow card's effect raised its enemy's attack
+    ShadowIncreasedAttack CardId EnemyId
+  | -- | the card was paid for from these heroes' and allies' pools, as Master Ironsmith reads
+    PaidFrom Target [Target]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

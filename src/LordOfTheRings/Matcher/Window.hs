@@ -238,6 +238,16 @@ data WindowMatcher
     LocationFlippedWindow Timing LocationMatcher
   | -- | a matching location became the active location
     LocationBecameActiveWindow Timing LocationMatcher
+  | -- | a matching player raised his threat, as Sam Gamgee answers "a player"
+    ThreatRaisedWindow Timing PlayerMatcher
+  | -- | a shadow card's effect raised an enemy's attack, as Tides of Fate reads
+    ShadowIncreasedAttackWindow Timing
+  | -- | an enemy's attack destroyed a character with the trait defending it, as Last Stand
+    DefenderWithTraitDestroyedWindow Timing Trait
+  | -- | the player committed his characters to the quest, as Scouting Party reads
+    PlayerCommittedCharactersWindow Timing PlayerId
+  | -- | the card was paid for from a single hero's pool, as Master Ironsmith reads
+    PaidFromOneHeroWindow Timing Target
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -344,6 +354,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
   (SetupHandDrawnWindow t pid, SetupHandDrawn pid') -> t == timing && pid == pid'
   (CommittedToSailingTestWindow t, CommittedToSailingTest {}) -> t == timing
+  (ShadowIncreasedAttackWindow t, ShadowIncreasedAttack {}) -> t == timing
+  (PaidFromOneHeroWindow t target, PaidFrom target' payers) -> t == timing && target == target' && case ordNub payers of
+    [HeroTarget _] -> True
+    _ -> False
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -370,6 +384,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PlayerDiscardedFromDeckWindow {}, _) -> False
   (LocationFlippedWindow {}, _) -> False
   (LocationBecameActiveWindow {}, _) -> False
+  (ThreatRaisedWindow {}, _) -> False
+  (DefenderWithTraitDestroyedWindow {}, _) -> False
+  (PlayerCommittedCharactersWindow {}, _) -> False
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False

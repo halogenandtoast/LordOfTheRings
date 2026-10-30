@@ -824,6 +824,12 @@ runGameMessage msg g = case msg of
          | Just c <- [card]
          ]
     pure $ g & attackDestroyedL %~ (<> [AttackDestroyed (EnemyAttackSource eid) target (Just pid) c | (eid, c, pid) <- byAttack])
+  -- the heroes collect and the players draw, then each player has an action window, for
+  -- Resource Actions as Captain's Wisdom's
+  BeginPhase ResourcePhase -> do
+    order <- getPlayerOrder
+    pushAll $ DoPhase ResourcePhase : map OptionalActionWindow order
+    pure $ g & phaseL .~ ResourcePhase
   BeginPhase PlanningPhase -> do
     players <- getPlayers
     pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]
@@ -875,6 +881,7 @@ runGameMessage msg g = case msg of
       $ map OptionalEngagement order
       <> map OptionalActionWindow order
       <> [EngagementCheck pid 0 | pid <- take 1 order]
+      <> [CreateEffect $ Effect GameSource GameTarget [AfterEngagementChecks] UntilEndOfPhase]
       <> map OptionalActionWindow order
     pure $ g & phaseL .~ EncounterPhase
   -- a player who may engage an additional enemy, as Halbarad lets, is asked again once
@@ -902,13 +909,13 @@ runGameMessage msg g = case msg of
     skip <- elem NoEngagementChecks <$> getModifiers GameTarget
     order <- getPlayerOrder
     let next = seatAfter order pid
-    player <- getPlayer pid
+    threat <- getThreat pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
     -- an enemy can be spared engagement checks against it, as a trap does
     checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
     -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
     costed <- for checked \(eid, cost) -> (\ms -> (eid, cost + sum [n | EngagementCostAgainst p n <- ms, p == pid])) <$> getModifiers eid
-    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- costed, cost <= player.threat] of
+    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- costed, cost <= threat] of
       ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
     pure g
@@ -919,8 +926,8 @@ runGameMessage msg g = case msg of
     let checked = ambush && IgnoreAmbush `notElem` gameMods && NoEngagementChecks `notElem` (gameMods <> mods)
     when checked do
       cost <- getEngagementCost eid
-      players <- traverse getPlayer =<< getPlayerOrder
-      for_ (find (\p -> p.threat >= cost && CannotEngagePlayer p.id `notElem` mods) players) \p -> push (EngageEnemy p.id eid)
+      players <- traverse (\p -> (p,) <$> getThreat p) =<< getPlayerOrder
+      for_ (find (\(p, threat) -> threat >= cost && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
     pure g
   EngageEnemy pid eid -> do
     -- a Ship enemy engaging from the staging area resolves its Boarding X (Dream-chaser rules)
@@ -931,6 +938,7 @@ runGameMessage msg g = case msg of
         ]
       <> [ResolveBoarding pid eid | fromStaging]
       <> [ CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
+         , CreateEffect $ Effect GameSource GameTarget [EnemyEngagedThisPhase] UntilEndOfPhase
          , CheckWindows [mkAfter $ EnemyEngaged eid pid]
          ]
     pure g
@@ -1403,7 +1411,15 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
       for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
         push $ CheckWindows [mkAfter $ ShadowEffectResolved cid eid]
+        push . CheckShadowRaisedAttack cid eid =<< getEnemyAttack eid
         resolveShadowEffect card (ResolveShadowEffect cid eid pid defenders)
+    pure g
+  -- the shadow effect has resolved: one that raised its enemy's attack opens a window, as
+  -- Tides of Fate answers
+  CheckShadowRaisedAttack cid eid before -> do
+    when (Map.member eid g.entities.enemies) do
+      after <- getEnemyAttack eid
+      pushWhen (after > before) $ CheckWindows [mkWhen $ ShadowIncreasedAttack cid eid]
     pure g
   -- a later step of a shadow effect, as "if this attack destroys a character" reads once
   -- the attack is over, which the shadow card, built again, resolves. The effect resolved
@@ -1528,7 +1544,6 @@ runGameMessage msg g = case msg of
         pid
         [targetLabel t [Discard t] | t <- targets]
     pure g
-  BeginPhase phase -> pure $ g & phaseL .~ phase
   CommitCharacters pid -> do
     -- one that can commit while exhausted, as Lindon Navigator, need not be ready
     let commitsExhausted :: Targetable t => t -> GameT Bool
@@ -1590,11 +1605,16 @@ runGameMessage msg g = case msg of
         fewer = sum [n | FewerStagingReveals n <- mods]
         players = length [() | player <- toList g.players, not player.eliminated]
         reveals = max 0 $ max 1 (players + extra) - fewer
-    unless (SkipStagingStep `elem` mods)
-      $ pushAll
-      $ CheckWindows [mkAfter StagingStepBegins]
-      : replicate reveals RevealEncounterCard
-      <> [CheckWindows [mkWhen StagingStepEnds]]
+    -- what is played "after the staging step", as Elevenses, waits for its end
+    pushAll
+      $ ( if SkipStagingStep `elem` mods
+            then []
+            else
+              CheckWindows [mkAfter StagingStepBegins]
+                : replicate reveals RevealEncounterCard
+                <> [CheckWindows [mkWhen StagingStepEnds]]
+        )
+      <> [CreateEffect $ Effect GameSource GameTarget [AfterStagingStep] UntilEndOfPhase]
     pure g
   QuestResolution -> do
     willpower <- getCommittedWillpower
@@ -1859,10 +1879,17 @@ runGameMessage msg g = case msg of
     | passes < length order
     , (pid : _) <- order -> do
         abilities <- getWindowAbilities windows
-        available <-
+        own <-
           filterM
             (\ab -> (== Just pid) <$> abilityController ab)
-            [ab | ab <- abilities, isResponseAbility ab, abilityKey ab `notElem` used]
+            [ab | ab <- abilities, isResponseAbility ab, not ab.abilityAnyPlayer, abilityKey ab `notElem` used]
+        -- one any player may trigger, as Azain Silverbeard's, is offered to each, read as
+        -- the player it is offered to
+        anyone <-
+          filterM (withinLimitFor pid)
+            . filter (\ab -> isResponseAbility ab && ab.abilityAnyPlayer && abilityKey ab `notElem` used)
+            =<< asPlayer pid (getWindowAbilities windows)
+        let available = own <> anyone
         fromHand <- handResponses pid windows (ResponseWindow windows order used 0)
         -- a card responding from the discard pile stays there, so it is marked as used
         fromDiscard <- discardResponses pid windows used \cid -> ResponseWindow windows order ((CardIdSource cid, 0) : used) 0
@@ -2259,6 +2286,7 @@ runGameMessage msg g = case msg of
     | Just o <- Map.lookup oid g.entities.objectives
     , isRestricted o ->
         g <$ checkRestricted g host
+  CheckRestricted host -> g <$ checkRestricted g host
   PlayAttachmentOn pid card host -> do
     attachment <- newAttachment pid card
     pushAll
@@ -2806,22 +2834,26 @@ withKeyword k = filterM (\t -> hasKeyword k t =<< characterCardDef t)
 isRestricted :: HasCardDef a => a -> Bool
 isRestricted = member Restricted . cdKeywords . toCardDef
 
--- | With a third restricted card on the character, its controller discards one of them.
+{- | With more than 2 restricted cards on the character, its controller discards one of
+them, and again until 2 are left; a card may count as 2, as Raiment of War.
+-}
 checkRestricted :: Game -> Target -> GameT ()
 checkRestricted g host = do
-  let restrictedOn =
-        [toTarget x | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
-          <> [toTarget o | o <- toList g.entities.objectives, o.placement == AttachedTo host, isRestricted o]
+  let slots :: HasCardDef a => a -> Int
+      slots = cdRestrictedSlots . toCardDef
+      restrictedOn =
+        [(toTarget x, slots x) | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
+          <> [(toTarget o, slots o) | o <- toList g.entities.objectives, o.placement == AttachedTo host, isRestricted o]
   controller <- characterController host
   for_ controller \pid ->
-    when (length restrictedOn > 2)
+    when (sum (map snd restrictedOn) > 2)
       $ push
       $ questionLabelWith
         (ikey "label.discardRestricted")
         (Just host)
         []
         pid
-        [targetLabel x [Discard x] | x <- restrictedOn]
+        [targetLabel x [Discard x, CheckRestricted host] | (x, _) <- restrictedOn]
 
 -- | Mark the ally as having entered play this round.
 enteredPlayThisRound :: Ally -> Message
@@ -3179,6 +3211,7 @@ payFor g pid card fromHand windows host discount = do
           , activeCostHost = host
           , activeCostFromHand = fromHand
           , activeCostDoomed = sum [n | e <- spentEffects, NextCardGainsDoomed n <- effectModifiers e]
+          , activeCostPaidFrom = []
           }
   -- resources on allies, as Radagast's, may pay for the cards they are for
   payers <- allyPayersFor pid card

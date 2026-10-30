@@ -23,7 +23,7 @@ instance HasAbilities Radagast where
 
 instance RunMessage Radagast where
   runMessage msg s@(Radagast a) = case msg of
-    BeginPhase ResourcePhase -> do
+    DoPhase ResourcePhase -> do
       placeResources a a 1
       Radagast <$> runMessage msg a
     UseCardAbility pid (isSource a -> True) 1 _ -> do

@@ -132,6 +132,12 @@ allAttachmentCards =
       , explorersAlmanac
       , toTheSeaToTheSea
       , narya
+      , rodOfTheSteward
+      , inServiceOfTheSteward
+      , raimentOfWar
+      , guardedCeaselessly
+      , armoredDestrier
+      , entanglingNets
       ]
 
 stewardOfGondor :: CardDef
@@ -926,3 +932,43 @@ narya =
     (attachment "11015" "Narya" Neutral (StaticCost 2))
       { cdCardTraits = setFromList [Ring, Artifact]
       }
+
+rodOfTheSteward :: CardDef
+rodOfTheSteward =
+  (attachment "12002" "Rod of the Steward" Leadership (StaticCost 0))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Item]
+    }
+
+inServiceOfTheSteward :: CardDef
+inServiceOfTheSteward =
+  (attachment "12003" "In Service of the Steward" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Title]
+    }
+
+raimentOfWar :: CardDef
+raimentOfWar =
+  (attachment "12034" "Raiment of War" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdRestrictedSlots = 2
+    }
+
+guardedCeaselessly :: CardDef
+guardedCeaselessly =
+  (attachment "12038" "Guarded Ceaselessly" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+armoredDestrier :: CardDef
+armoredDestrier =
+  (attachment "12059" "Armored Destrier" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+entanglingNets :: CardDef
+entanglingNets =
+  (attachment "12064" "Entangling Nets" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Trap]
+    }

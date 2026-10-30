@@ -12,8 +12,9 @@ import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound))
-import LordOfTheRings.Source (Source (GameSource))
+import LordOfTheRings.Source (Source (GameSource, PlayerSource))
 import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
+import LordOfTheRings.Token (Token (Resource))
 import LordOfTheRings.Window
 
 data Cost = ResourceCost Sphere CardCost | Free
@@ -33,6 +34,8 @@ data ActiveCost = ActiveCost
   -- ^ played from its owner's hand, not from the discard pile
   , activeCostDoomed :: Int
   -- ^ the Doomed it gained from an effect spent on it, as Gríma's
+  , activeCostPaidFrom :: [Target]
+  -- ^ the heroes and allies whose resources paid for it, once for each resource
   }
   deriving stock (Show, Eq, Generic)
 
@@ -42,7 +45,7 @@ instance ToJSON ActiveCost where
   toJSON = genericToJSON (aesonOptions $ Just "activeCost")
 
 instance FromJSON ActiveCost where
-  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost") . withDefaults [("fromHand", toJSON True), ("doomed", toJSON (0 :: Int))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "activeCost") . withDefaults [("fromHand", toJSON True), ("doomed", toJSON (0 :: Int)), ("paidFrom", toJSON ([] :: [Target]))]
 
 instance Entity ActiveCost where
   type EntityId ActiveCost = CostId
@@ -73,6 +76,8 @@ staticCost = \case
 instance RunMessage ActiveCost where
   runMessage msg ac = case msg of
     ReduceActiveCost acId n | acId == ac.activeCostId -> pure $ ac & costCostL %~ raiseCost (negate n)
+    -- its player's resources spent while it is paid for pay for it
+    RemoveTokens (PlayerSource pid) target Resource n | pid == ac.activeCostPlayer -> pure $ ac & costPaidFromL <>~ replicate n target
     PayCost acId | acId == ac.activeCostId -> case ac.activeCostCost of
       Free -> do
         push $ PaidCost acId
@@ -97,6 +102,7 @@ instance RunMessage ActiveCost where
             $ [mkAfter $ PlayedFromHand (toTarget card) | ac.activeCostFromHand]
             <> [mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card) | ac.activeCostFromHand]
             <> [mkAfter $ PlayedCard ac.activeCostPlayer (toCardCode card)]
+            <> [mkAfter $ PaidFrom (toTarget card) ac.activeCostPaidFrom]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

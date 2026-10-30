@@ -113,7 +113,7 @@ runPlayer msg player = case msg of
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
       pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
-    BeginPhase ResourcePhase -> do
+    DoPhase ResourcePhase -> do
       mods <- getModifiers player
       let n = fromMaybe 1 $ headMay [k | ResourcePhaseDraws k <- mods]
           -- an additional card is part of the same draw, none when there is none
@@ -174,7 +174,10 @@ runPlayer msg player = case msg of
       -- a card in the discard pile a Record lets be played: the Record is discarded for it,
       -- and the card goes to the bottom of the deck after
       records <- if fromHand || ownDiscard then pure [] else discardPlayers pid card
-      played <- inLogBlock (PlayBlock pid card) [PayForCard pid card fromHand windows]
+      -- what it costs from hand besides its resources is paid first, as Guardian of
+      -- Rivendell's discards
+      let additional = [ChooseAndDiscardFromHand pid (CardIdSource cid) n | fromHand, Just (DiscardCardsFromHand n) <- [cdAdditionalCost (toCardDef card)]]
+      played <- inLogBlock (PlayBlock pid card) (additional <> [PayForCard pid card fromHand windows])
       push $ case records of
         [] -> Run played
         _ -> chooseOrRunOne pid [targetLabel r (Discard r : played <> [PutDiscardOnBottomOfDeck pid cid]) | r <- records]
@@ -449,7 +452,13 @@ discardPlayers pid c = do
   pure [t | Modifier source (MayPlayFromDiscard m) <- mods, cardMatches m c, Just t <- [sourceTarget source]]
 
 canPlay :: HasGame m => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, not <$> cannotPlay p.id c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, pure (canPayAdditional p c), not <$> cannotPlay p.id c]
+
+-- | Whether the player has what the card costs from hand besides its resources.
+canPayAdditional :: Player -> Card -> Bool
+canPayAdditional p c = case cdAdditionalCost (toCardDef c) of
+  Just (DiscardCardsFromHand n) | c.id `elem` map (.id) p.hand -> length [x | x <- discardableHand p, x.id /= c.id] >= n
+  _ -> True
 
 -- | Whether the game forbids playing the card.
 cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
@@ -488,7 +497,7 @@ costModifier pid c = do
     concat
       <$> sequence
         [getModifiers GameTarget, getModifiers (PlayerTarget pid), getModifiers (CardIdTarget c.id)]
-  threat <- (.threat) <$> getPlayer pid
+  threat <- getThreat pid
   let secrecy = if threat <= 20 then sum [n | Secrecy n <- toList (cdKeywords $ toCardDef c)] else 0
   pure $ subtract secrecy $ sum $ flip mapMaybe mods \case
     IncreaseCost m n | cardMatches m c -> Just n

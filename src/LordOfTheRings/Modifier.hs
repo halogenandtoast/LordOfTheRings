@@ -451,6 +451,15 @@ data ModifierType
   | -- | on a player: his deck cannot be searched, as Soulless Cadaver reads: a search of it
     -- finds nothing
     CannotSearchDeck
+  | -- | on a player: his threat counts as no more than this, as Vanish from Sight reads
+    ThreatCountsAsAtMost Int
+  | -- | on the game: the quest phase's staging step is over, as Elevenses reads
+    AfterStagingStep
+  | -- | on the game: the encounter phase's engagement checks are made, as Arrows from the
+    -- Trees reads
+    AfterEngagementChecks
+  | -- | on the game: an enemy was engaged this phase, as Arrows from the Trees reads
+    EnemyEngagedThisPhase
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

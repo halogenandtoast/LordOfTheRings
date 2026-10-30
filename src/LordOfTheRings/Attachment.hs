@@ -125,6 +125,12 @@ import LordOfTheRings.Attachment.Cards.MarinersCompass
 import LordOfTheRings.Attachment.Cards.ExplorersAlmanac
 import LordOfTheRings.Attachment.Cards.ToTheSeaToTheSea
 import LordOfTheRings.Attachment.Cards.Narya
+import LordOfTheRings.Attachment.Cards.RodOfTheSteward
+import LordOfTheRings.Attachment.Cards.InServiceOfTheSteward
+import LordOfTheRings.Attachment.Cards.RaimentOfWar
+import LordOfTheRings.Attachment.Cards.GuardedCeaselessly
+import LordOfTheRings.Attachment.Cards.ArmoredDestrier
+import LordOfTheRings.Attachment.Cards.EntanglingNets
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -276,5 +282,11 @@ allAttachments =
         , SomeAttachmentCard explorersAlmanac
         , SomeAttachmentCard toTheSeaToTheSea
         , SomeAttachmentCard narya
+        , SomeAttachmentCard rodOfTheSteward
+        , SomeAttachmentCard inServiceOfTheSteward
+        , SomeAttachmentCard raimentOfWar
+        , SomeAttachmentCard guardedCeaselessly
+        , SomeAttachmentCard armoredDestrier
+        , SomeAttachmentCard entanglingNets
         ]
     ]

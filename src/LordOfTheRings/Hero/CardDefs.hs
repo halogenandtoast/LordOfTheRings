@@ -71,6 +71,9 @@ allHeroCards =
       , merrySpirit
       , cirdanTheShipwright
       , galdorOfTheHavensHero
+      , denethorLeadership
+      , lanwyn
+      , elfhelmLeadership
       ]
 
 aragorn :: CardDef
@@ -430,4 +433,23 @@ galdorOfTheHavensHero :: CardDef
 galdorOfTheHavensHero =
   (hero "11002" "Galdor of the Havens" Lore 9 2 2 1 4)
     { cdCardTraits = setFromList [Noldor]
+    }
+
+denethorLeadership :: CardDef
+denethorLeadership =
+  (hero "12001" "Denethor" Leadership 8 1 1 3 3)
+    { cdCardTraits = setFromList [Gondor, Noble, Steward]
+    }
+
+lanwyn :: CardDef
+lanwyn =
+  (hero "12030" "Lanwyn" Spirit 9 2 3 1 3)
+    { cdCardTraits = setFromList [Dale, Scout]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+elfhelmLeadership :: CardDef
+elfhelmLeadership =
+  (hero "12057" "Elfhelm" Leadership 10 2 2 2 4)
+    { cdCardTraits = setFromList [Rohan, Scout, Warrior]
     }

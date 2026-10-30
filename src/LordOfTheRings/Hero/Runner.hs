@@ -18,7 +18,7 @@ import LordOfTheRings.Window (WindowType (Exhausted), mkAfter)
 
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
-    BeginPhase ResourcePhase -> do
+    DoPhase ResourcePhase -> do
       mods <- getModifiers attrs
       let collected = 1 + sum [n | CollectsAdditionalResources n <- mods]
       unless (attrs.heroPrisoner || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected

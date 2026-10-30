@@ -170,6 +170,14 @@ allEventCards =
       , anchorWatch
       , theEveningStar
       , elwingsFlight
+      , lastStand
+      , tidesOfFate
+      , vanishFromSight
+      , captainsWisdom
+      , elevenses
+      , revealedInWrath
+      , scoutingParty
+      , arrowsFromTheTrees
       ]
 
 everVigilant :: CardDef
@@ -662,3 +670,27 @@ theEveningStar = event "11010" "The Evening Star" Lore (StaticCost 2)
 
 elwingsFlight :: CardDef
 elwingsFlight = event "11013" "Elwing's Flight" Spirit (StaticCost 2)
+
+lastStand :: CardDef
+lastStand = event "12005" "Last Stand" Tactics (StaticCost 0)
+
+tidesOfFate :: CardDef
+tidesOfFate = event "12007" "Tides of Fate" Spirit (StaticCost 0)
+
+vanishFromSight :: CardDef
+vanishFromSight = event "12011" "Vanish from Sight" Neutral (StaticCost 0)
+
+captainsWisdom :: CardDef
+captainsWisdom = event "12032" "Captain's Wisdom" Leadership (StaticCost 0)
+
+elevenses :: CardDef
+elevenses = event "12036" "Elevenses" Spirit (StaticCost 1)
+
+revealedInWrath :: CardDef
+revealedInWrath = event "12061" "Revealed in Wrath" Tactics (StaticCost 1)
+
+scoutingParty :: CardDef
+scoutingParty = event "12063" "Scouting Party" Spirit (StaticCost 2)
+
+arrowsFromTheTrees :: CardDef
+arrowsFromTheTrees = event "12065" "Arrows from the Trees" Lore (StaticCost 1)

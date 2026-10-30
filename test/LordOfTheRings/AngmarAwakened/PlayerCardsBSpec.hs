@@ -326,6 +326,7 @@ spec = describe "Angmar Awakened player cards: Mount Gram, the Ettenmoors and Rh
       refresh
       was <- handSize pid
       run $ BeginPhase ResourcePhase
+      passActions pid
       handSize pid `shouldReturn` was + 4
       run $ CheckWindows [mkWhen RoundEnds]
       handSize pid `shouldReturn` 0

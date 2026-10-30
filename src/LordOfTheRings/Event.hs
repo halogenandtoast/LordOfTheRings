@@ -159,6 +159,14 @@ import LordOfTheRings.Event.Cards.SkywardVolley
 import LordOfTheRings.Event.Cards.AnchorWatch
 import LordOfTheRings.Event.Cards.TheEveningStar
 import LordOfTheRings.Event.Cards.ElwingsFlight
+import LordOfTheRings.Event.Cards.LastStand
+import LordOfTheRings.Event.Cards.TidesOfFate
+import LordOfTheRings.Event.Cards.VanishFromSight
+import LordOfTheRings.Event.Cards.CaptainsWisdom
+import LordOfTheRings.Event.Cards.Elevenses
+import LordOfTheRings.Event.Cards.RevealedInWrath
+import LordOfTheRings.Event.Cards.ScoutingParty
+import LordOfTheRings.Event.Cards.ArrowsFromTheTrees
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -331,5 +339,13 @@ allEvents =
         , SomeEventCard anchorWatch
         , SomeEventCard theEveningStar
         , SomeEventCard elwingsFlight
+        , SomeEventCard lastStand
+        , SomeEventCard tidesOfFate
+        , SomeEventCard vanishFromSight
+        , SomeEventCard captainsWisdom
+        , SomeEventCard elevenses
+        , SomeEventCard revealedInWrath
+        , SomeEventCard scoutingParty
+        , SomeEventCard arrowsFromTheTrees
         ]
     ]

@@ -183,6 +183,16 @@ import LordOfTheRings.Ally.Cards.SailorOfLune
 import LordOfTheRings.Ally.Cards.Calphon
 import LordOfTheRings.Ally.Cards.CaptainSahir
 import LordOfTheRings.Ally.Cards.Naasiyah
+import LordOfTheRings.Ally.Cards.AzainSilverbeard
+import LordOfTheRings.Ally.Cards.ImladrisCaregiver
+import LordOfTheRings.Ally.Cards.GuardianOfRivendell
+import LordOfTheRings.Ally.Cards.Eldahir
+import LordOfTheRings.Ally.Cards.MasterIronsmith
+import LordOfTheRings.Ally.Cards.SamGamgee
+import LordOfTheRings.Ally.Cards.MirkwoodExplorer
+import LordOfTheRings.Ally.Cards.Ceorl
+import LordOfTheRings.Ally.Cards.Deorwine
+import LordOfTheRings.Ally.Cards.RhovanionOutrider
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -393,5 +403,15 @@ allAllies =
         , SomeAllyCard calphon
         , SomeAllyCard captainSahir
         , SomeAllyCard naasiyah
+        , SomeAllyCard azainSilverbeard
+        , SomeAllyCard imladrisCaregiver
+        , SomeAllyCard guardianOfRivendell
+        , SomeAllyCard eldahir
+        , SomeAllyCard masterIronsmith
+        , SomeAllyCard samGamgee
+        , SomeAllyCard mirkwoodExplorer
+        , SomeAllyCard ceorl
+        , SomeAllyCard deorwine
+        , SomeAllyCard rhovanionOutrider
         ]
     ]

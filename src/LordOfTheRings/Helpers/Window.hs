@@ -4,7 +4,8 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
@@ -18,7 +19,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
-  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, WhenRevealedCannotBeCanceled),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, TravelableWithActiveLocation),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
@@ -160,6 +161,16 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       ObjectiveTarget i -> toCardDef <$> Map.lookup i es.objectives
       QuestTarget i -> toCardDef <$> Map.lookup i es.quests
       _ -> Nothing
+  (ThreatRaisedWindow t m, ThreatRaised pid) | t == timing -> selectAny (PlayerWithId pid <> m)
+  -- the character is gone: it was defending as the attack's effects still say, and its
+  -- traits are its card's, read from what the attack destroyed
+  (DefenderWithTraitDestroyedWindow t trait, CharacterDestroyedByAttack _ target _) | t == timing -> do
+    effects <- getsGame gameEffects
+    destroyed <- getsGame gameAttackDestroyed
+    pure
+      $ any (\e -> e.effectTarget == target && Defending `elem` e.effectModifiers) effects
+      && any (\d -> d.target == target && trait `member` cdCardTraits (toCardDef d.card)) destroyed
+  (PlayerCommittedCharactersWindow t pid, CommittedToQuest target) | t == timing -> (== Just pid) <$> characterController target
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w

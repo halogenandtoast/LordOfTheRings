@@ -541,6 +541,61 @@
     "searchAgain": "Spend 3 to search the whole deck for another card",
     "done": "Don't spend"
   },
+  "denethorLeadership": {
+    "moveTo": "Denethor: choose another Gondor hero to move 1 resource to"
+  },
+  "azainSilverbeard": {
+    "damage": "Azain Silverbeard: choose an enemy sharing a Trait to deal 2 damage to"
+  },
+  "tidesOfFate": {
+    "spend": "Spend 2 tactics resources as a group to ready the defender?",
+    "ready": "Spend 2 to ready the defender, with +3 attack",
+    "done": "Don't spend"
+  },
+  "imladrisCaregiver": {
+    "heal": "Imladris Caregiver: choose a character to heal 1 damage from"
+  },
+  "lanwyn": {
+    "choose": "Lanwyn: choose one",
+    "ready": "Ready Lanwyn",
+    "willpower": "Lanwyn gets +2 willpower until the end of the phase"
+  },
+  "eldahir": {
+    "enemy": "Eldahir: choose an engaged enemy to look at a shadow card of",
+    "shadow": "Eldahir: choose a facedown shadow card to look at"
+  },
+  "captainsWisdom": {
+    "exhaust": "Captain's Wisdom: choose a Noble hero to exhaust"
+  },
+  "masterIronsmith": {
+    "attach": "Master Ironsmith: choose a Weapon or Armor attachment to attach to the hero"
+  },
+  "elevenses": {
+    "choose": "Elevenses: choose questing Hobbit characters to ready and remove from the quest",
+    "done": "Done choosing"
+  },
+  "mirkwoodExplorer": {
+    "location": "Mirkwood Explorer: choose a location to move its progress to"
+  },
+  "ceorl": {
+    "giveControl": "Ceorl: you may give control of Ceorl to another player",
+    "keep": "Keep control"
+  },
+  "armoredDestrier": {
+    "enemy": "Armored Destrier: choose another engaged enemy to discard a shadow card from",
+    "shadow": "Armored Destrier: choose a shadow card to discard"
+  },
+  "revealedInWrath": {
+    "enemy": "Revealed in Wrath: choose a non-unique enemy to blank until the end of the phase"
+  },
+  "rhovanionOutrider": {
+    "location": "Rhovanion Outrider: choose a location in the staging area to place 1 progress on"
+  },
+  "arrowsFromTheTrees": {
+    "spend": "Spend 3 tactics resources as a group to deal 2 more damage to each enemy in the staging area?",
+    "damage": "Spend 3 to deal 2 more damage to each",
+    "done": "Don't spend"
+  },
   "nenya": {
     "give": "Add Galadriel's willpower to another character"
   },
