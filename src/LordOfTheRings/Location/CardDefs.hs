@@ -176,6 +176,10 @@ allLocationCards =
       , hallowedCircle
       , cursedForest
       , grimFoothills
+      , accursedBattlefield
+      , mountainsOfAngmar
+      , blightOfCarnDum
+      , fortressWalls
       ]
 
 drownedTreasury :: CardDef
@@ -1278,4 +1282,33 @@ grimFoothills =
     { cdCardTraits = setFromList [Hills]
     , cdKeywords = setFromList [Doomed 2]
     , cdEasyModeQuantity = Just 2
+    }
+
+accursedBattlefield :: CardDef
+accursedBattlefield =
+  (location "10132" "Accursed Battlefield" TheBattleOfCarnDum 3 2 3)
+    { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
+    }
+
+mountainsOfAngmar :: CardDef
+mountainsOfAngmar =
+  (location "10133" "Mountains of Angmar" TheBattleOfCarnDum 2 3 5)
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+blightOfCarnDum :: CardDef
+blightOfCarnDum =
+  (location "10134" "Blight of Carn Dûm" TheBattleOfCarnDum 3 3 3)
+    { cdCardTraits = setFromList [Blight, Plains]
+    , cdShadowEffect = True
+    }
+
+fortressWalls :: CardDef
+fortressWalls =
+  (location "10135" "Fortress Walls" TheBattleOfCarnDum 3 4 3)
+    { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

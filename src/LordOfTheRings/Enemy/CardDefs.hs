@@ -162,6 +162,11 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , thaurdirCaptain
+      , thaurdirChampion
+      , carnDumGarrison
+      , orcGrunts
+      , werewolfOfAngmar
       ]
 
 namelessThing :: CardDef
@@ -1289,4 +1294,48 @@ spiritOfTheWild =
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
+    }
+
+-- | Indestructible. Cannot have attachments. Its Captain side; it starts in the staging
+-- area as the scenario sets up, so it is never shuffled into the encounter deck.
+thaurdirCaptain :: CardDef
+thaurdirCaptain =
+  unique
+    (enemy "10127" "Thaurdir" TheBattleOfCarnDum 1 50 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith, Captain]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+-- | Thaurdir's Champion side, the same card flipped: no copy of its own in the encounter
+-- deck.
+thaurdirChampion :: CardDef
+thaurdirChampion =
+  unique
+    (enemy "10128" "Thaurdir" TheBattleOfCarnDum 0 50 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith, Champion]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+carnDumGarrison :: CardDef
+carnDumGarrison =
+  (enemy "10129" "Carn Dûm Garrison" TheBattleOfCarnDum 4 40 1 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+orcGrunts :: CardDef
+orcGrunts =
+  (enemy "10130" "Orc Grunts" TheBattleOfCarnDum 4 8 1 2 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Doomed 1, Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+werewolfOfAngmar :: CardDef
+werewolfOfAngmar =
+  (enemy "10131" "Werewolf of Angmar" TheBattleOfCarnDum 2 35 2 5 4 6)
+    { cdCardTraits = setFromList [Creature, Werewolf]
+    , cdEasyModeQuantity = Just 0
     }

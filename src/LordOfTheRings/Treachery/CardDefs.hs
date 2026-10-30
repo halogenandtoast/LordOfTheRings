@@ -146,6 +146,9 @@ allTreacheryCards =
       , curseOfTheWildMen
       , theGuardiansFury
       , wildTenacity
+      , theSkyDarkens
+      , vileAffliction
+      , daechanarsWill
       ]
 
 deepDeepDark :: CardDef
@@ -891,3 +894,21 @@ wildTenacity =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+
+theSkyDarkens :: CardDef
+theSkyDarkens =
+  (treachery "10136" "The Sky Darkens" TheBattleOfCarnDum 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+vileAffliction :: CardDef
+vileAffliction =
+  (treachery "10137" "Vile Affliction" TheBattleOfCarnDum 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    }
+
+daechanarsWill :: CardDef
+daechanarsWill = (treachery "10138" "Daechanar's Will" TheBattleOfCarnDum 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

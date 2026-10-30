@@ -143,6 +143,9 @@ allQuestCards =
       , theTrialOfIntuition
       , theAntleredCrownTheThreeTrials
       , searchTheRuins
+      , theClutchesOfCarnDum
+      , midwintersCrux
+      , furiousCharge
       ]
 
 theDrippingWalls :: CardDef
@@ -533,3 +536,12 @@ searchTheRuins =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+theClutchesOfCarnDum :: CardDef
+theClutchesOfCarnDum = quest "10125" "The Clutches of Carn Dûm" TheBattleOfCarnDum 1 15
+
+midwintersCrux :: CardDef
+midwintersCrux = quest "10126" "Midwinter's Crux" TheBattleOfCarnDum 2 15
+
+furiousCharge :: CardDef
+furiousCharge = (encounterSideQuest "10139" "Furious Charge" TheBattleOfCarnDum 5) {cdVictoryPoints = Just 10}
