@@ -11,8 +11,12 @@ hornOfGondor :: AttachmentCard HornOfGondor
 hornOfGondor = attachment HornOfGondor Cards.hornOfGondor
 
 -- | Response: After a character is destroyed, add 1 resource to attached hero's pool.
+-- (FAQ 1.9 errata; as printed, after a character leaves play.)
 instance HasAbilities HornOfGondor where
-  getAbilities (HornOfGondor a) = [mkAbility a 1 $ response $ CharacterDestroyedWindow After | AttachedTo _ <- [a.placement]]
+  getAbilities (HornOfGondor a) =
+    [ mkAbility a 1 $ response $ ErrataWindow a.owner (CharacterDestroyedWindow After) (CharacterLeftPlayWindow After AnyCard)
+    | AttachedTo _ <- [a.placement]
+    ]
 
 instance RunMessage HornOfGondor where
   runMessage msg s@(HornOfGondor a) = case msg of

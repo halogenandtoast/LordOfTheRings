@@ -14,12 +14,11 @@ legacyOfDurin :: AttachmentCard LegacyOfDurin
 legacyOfDurin = attachment LegacyOfDurin Cards.legacyOfDurin & attachTo (AttachToHero $ HeroWithTrait Dwarf)
 
 -- | Response: After you play a Dwarf character from your hand, exhaust Legacy of Durin to
--- draw 1 card.
+-- draw 1 card. (Errata added the exhaust.)
 instance HasAbilities LegacyOfDurin where
-  getAbilities (LegacyOfDurin a) =
-    [ mkAbility a 1
-        $ ResponseAbility (PlayedCardFromHandWindow After a.controller $ CardWithTrait Dwarf <> CardWithType AllyType) (ExhaustCost $ toTarget a)
-    ]
+  getAbilities (LegacyOfDurin a) = errataOr a.owner (dwarf $ ExhaustCost $ toTarget a) (dwarf Free)
+   where
+    dwarf = mkAbility a 1 . ResponseAbility (PlayedCardFromHandWindow After a.controller $ CardWithTrait Dwarf <> CardWithType AllyType)
 
 instance RunMessage LegacyOfDurin where
   runMessage msg s@(LegacyOfDurin a) = case msg of

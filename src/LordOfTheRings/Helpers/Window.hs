@@ -134,6 +134,9 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   -- only while the enemy is still in play
   (AttackDealtDamageByWindow t who, AttackDealtDamage eid attackers n)
     | t == timing && who `elem` attackers && n > 0 -> selectAny (EnemyWithId eid)
+  (ErrataWindow pid errata printed, _) -> do
+    followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
+    windowMatchesM (if followsErrata then errata else printed) w
   _ -> pure $ windowMatches matcher w
  where
   hostDef = \case

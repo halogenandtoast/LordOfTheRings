@@ -250,6 +250,15 @@ spec = do
       chooseAbilityOf pid horn
       (.resources) <$> getHeroWithCode "01004" `shouldReturn` 1
 
+    it "answers a character leaving play however it goes, as printed" . tacticsTest $ \pid -> do
+      withoutErrata pid
+      gimli <- hero "01004"
+      horn <- putAttachmentOn pid Attachments.hornOfGondor gimli
+      axehand <- putAllyIntoPlay pid Allies.veteranAxehand
+      run $ ReturnToHand axehand
+      chooseAbilityOf pid horn
+      (.resources) <$> getHeroWithCode "01004" `shouldReturn` 1
+
   describe "Quick Strike" do
     it "exhausts a character to attack an engaged enemy at once" . tacticsTest $ \pid -> do
       eid <- engageSpider pid

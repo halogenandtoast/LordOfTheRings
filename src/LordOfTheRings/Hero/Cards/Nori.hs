@@ -13,9 +13,16 @@ nori :: HeroCard Nori
 nori = hero Nori Cards.nori
 
 -- | Response: After you play a Dwarf character from your hand, reduce your threat by 1.
+-- (FAQ 1.9 errata; as printed, after a Dwarf ally enters play under your control.)
 instance HasAbilities Nori where
   getAbilities (Nori a) =
-    [mkAbility a 1 $ response $ PlayedCardFromHandWindow After a.heroOwner (CardWithTrait Dwarf <> CardWithType AllyType)]
+    [ mkAbility a 1
+        $ response
+        $ ErrataWindow
+          a.heroOwner
+          (PlayedCardFromHandWindow After a.heroOwner (CardWithTrait Dwarf <> CardWithType AllyType))
+          (AllyEnteredPlayWindow After (Just a.heroOwner) (Just Dwarf))
+    ]
 
 instance RunMessage Nori where
   runMessage msg h@(Nori attrs) = case msg of

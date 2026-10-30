@@ -180,6 +180,9 @@ data WindowMatcher
     AdvancedToStageWindow Timing
   | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
     MatchingEnemyAttacksWindow Timing EnemyMatcher
+  | -- | the first window when the player plays with the FAQ's errata, else the second, as
+    -- the window a card's errata changed
+    ErrataWindow PlayerId WindowMatcher WindowMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -283,4 +286,6 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
+  -- read with the player's errata in 'windowMatchesM'
+  (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False

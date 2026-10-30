@@ -14,14 +14,18 @@ throrsMap = attachment ThrorsMap Cards.throrsMap
 
 -- | Travel Action: Discard Thrór's Map to choose a location in the staging area. Make
 -- that location the active location. (If there is another active location, return it to
--- the staging area.)
+-- the staging area.) (Errata; as printed, "Action: Exhaust Thrór's Map", in any phase.)
 instance HasAbilities ThrorsMap where
-  getAbilities (ThrorsMap a) = [restricted a 1 (DuringPhase TravelPhase <> exists LocationInStagingArea) $ ActionAbility Free]
+  getAbilities (ThrorsMap a) =
+    errataOr
+      a.owner
+      (restricted a 1 (DuringPhase TravelPhase <> exists LocationInStagingArea) $ ActionAbility Free)
+      (restricted a 1 (exists LocationInStagingArea) $ ActionAbility (ExhaustCost $ toTarget a))
 
 instance RunMessage ThrorsMap where
   runMessage msg s@(ThrorsMap a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      whenM (playsWithErrata a.owner) $ discard a
       staged <- select LocationInStagingArea
       active <- select IsActiveLocation
       chooseOneM pid do

@@ -8,9 +8,12 @@ newtype AWatchfulPeace = AWatchfulPeace EventAttrs
   deriving newtype (Show, Eq, Entity)
 
 -- | Response: After a location worth no victory points leaves play as an explored
--- location, return it to the top of the encounter deck.
+-- location, return it to the top of the encounter deck. (FAQ 1.9 errata; as printed, any
+-- location.)
 aWatchfulPeace :: EventCard AWatchfulPeace
-aWatchfulPeace = eventWith AWatchfulPeace Cards.aWatchfulPeace (windowL ?~ ExploredWithoutVictoryWindow When)
+aWatchfulPeace =
+  eventWith AWatchfulPeace Cards.aWatchfulPeace \a ->
+    a & windowL ?~ ErrataWindow a.owner (ExploredWithoutVictoryWindow When) (AnyExploredWindow When)
 
 instance RunMessage AWatchfulPeace where
   runMessage msg e@(AWatchfulPeace attrs) = case msg of

@@ -14,12 +14,13 @@ loveOfTales :: AttachmentCard LoveOfTales
 loveOfTales = attachment LoveOfTales Cards.loveOfTales & attachTo (AttachToHero $ HeroWithSphere Lore)
 
 -- | Response: After a Song card is played, exhaust Love of Tales to add 1 resource to
--- attached hero's resource pool.
+-- attached hero's resource pool. (FAQ 1.9 errata added the exhaust.)
 instance HasAbilities LoveOfTales where
-  getAbilities (LoveOfTales a) =
-    [ mkAbility a 1 $ ResponseAbility (CardPlayedWindow After $ CardWithTrait Song) (exhaustCost a)
-    | AttachedTo _ <- [a.placement]
-    ]
+  getAbilities (LoveOfTales a) = case a.placement of
+    AttachedTo _ -> errataOr a.owner (song $ exhaustCost a) (song Free)
+    _ -> []
+   where
+    song = mkAbility a 1 . ResponseAbility (CardPlayedWindow After $ CardWithTrait Song)
 
 instance RunMessage LoveOfTales where
   runMessage msg s@(LoveOfTales a) = case msg of

@@ -14,7 +14,7 @@ wingfoot = attachment Wingfoot Cards.wingfoot & attachTo (AttachToHero $ HeroWit
 
 -- | Attach to a Ranger hero. Response: After attached hero commits to a quest, name
 -- enemy, location or treachery. If a card of the named type is revealed during this
--- quest phase, exhaust Wingfoot to ready attached hero.
+-- quest phase, exhaust Wingfoot to ready attached hero. (FAQ 1.9 errata added the exhaust.)
 --
 -- The named type stays on Wingfoot until the end of the phase; each type's reveal is an
 -- ability of its own, open only while that type is named.
@@ -22,13 +22,14 @@ instance HasAbilities Wingfoot where
   getAbilities (Wingfoot a) = case a.placement of
     AttachedTo host@(HeroTarget hid) ->
       mkAbility a 1 (response $ CommittedToQuestWindow After host)
-        : [ restricted a n (TargetHasModifier (toTarget a) (NamedCardType cType) <> exists (HeroWithId hid <> ExhaustedHero))
-            $ ResponseAbility window (ExhaustCost $ toTarget a)
+        : [ ability
           | (n, cType, window) <-
               [ (2, EnemyType, EnemyRevealedWindow After)
               , (3, LocationType, LocationRevealedWindow After)
               , (4, TreacheryType, TreacheryRevealedWindow After)
               ]
+          , let named = restricted a n (TargetHasModifier (toTarget a) (NamedCardType cType) <> exists (HeroWithId hid <> ExhaustedHero)) . ResponseAbility window
+          , ability <- errataOr a.owner (named $ ExhaustCost $ toTarget a) (named Free)
           ]
     _ -> []
 
