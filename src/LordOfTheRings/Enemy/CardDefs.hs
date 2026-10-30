@@ -1315,4 +1315,5 @@ traitorousWight =
   (enemy "10100" "Traitorous Wight" TheTreacheryOfRhudaur 3 32 2 4 2 4)
     { cdCardTraits = setFromList [Undead, Wight]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

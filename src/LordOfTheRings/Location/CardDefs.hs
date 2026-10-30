@@ -1301,10 +1301,15 @@ eerieHalls =
   (location "10102" "Eerie Halls" TheTreacheryOfRhudaur 2 5 4)
     { cdCardTraits = setFromList [Ruins]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 ghostlyRuins :: CardDef
-ghostlyRuins = (location "10103" "Ghostly Ruins" TheTreacheryOfRhudaur 2 4 4) {cdCardTraits = setFromList [Ruins]}
+ghostlyRuins =
+  (location "10103" "Ghostly Ruins" TheTreacheryOfRhudaur 2 4 4)
+    { cdCardTraits = setFromList [Ruins]
+    , cdEasyModeQuantity = Just 0
+    }
 
 decrepitRemains :: CardDef
 decrepitRemains =

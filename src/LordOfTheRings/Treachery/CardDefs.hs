@@ -901,6 +901,7 @@ centuriesOfSorrow =
   (treachery "10105" "Centuries of Sorrow" TheTreacheryOfRhudaur 2)
     { cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 curseOfTheYears :: CardDef
@@ -908,6 +909,7 @@ curseOfTheYears =
   (treachery "10106" "Curse of the Years" TheTreacheryOfRhudaur 3)
     { cdCardTraits = setFromList [Sorcery]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 darkCovenant :: CardDef
