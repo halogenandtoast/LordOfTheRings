@@ -83,7 +83,7 @@ setUp :: PlayerId -> [CardDef] -> GameT ()
 setUp pid rest = do
   run Setup
   chooseLabel "$label.keepHand" pid
-  _ <- setEncounterDeck ([Enemies.packLeader, Objectives.daybreak, Objectives.amarthiul] <> rest)
+  _ <- setEncounterDeck ([Enemies.packLeader, Objectives.daybreak, Objectives.amarthiul, Locations.shroudedHills] <> rest)
   chooseOptionMatching "flip the quest" pid (const True)
 
 -- | On to the stage, its When Revealed resolved.
@@ -98,12 +98,13 @@ spec = describe "The Wastes of Eriador" do
   it "is a scenario the game can be dealt" . wastesTest $ \_ ->
     isJust (lookupScenario "the-wastes-of-eriador") `shouldBe` True
 
-  it "sets Pack Leader aside, stages Daybreak, gives Amarthiúl to the first player and reveals a card" . wastesTest $ \pid -> do
+  it "sets Pack Leader aside, makes Shrouded Hills active, stages Daybreak, gives Amarthiúl to the first player and reveals a card" . wastesTest $ \pid -> do
     setUp pid [Locations.northDowns]
     aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
     map toCardCode aside `shouldSatisfy` elem (toCardCode Enemies.packLeader)
     placementOf Objectives.daybreak `shouldReturn` Just StagingArea
     placementOf Objectives.amarthiul `shouldReturn` Just (InPlayArea pid)
+    placementOf Locations.shroudedHills `shouldReturn` Just ActiveLocation
     placementOf Locations.northDowns `shouldReturn` Just StagingArea
     isDay `shouldReturn` True
     (.flipped) <$> getActiveQuest `shouldReturn` True

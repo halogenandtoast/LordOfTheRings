@@ -3,6 +3,7 @@ module LordOfTheRings.Quest.Cards.AcrossTheWastes (acrossTheWastes) where
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -29,7 +30,6 @@ instance HasAbilities AcrossTheWastes where
 -- Add the Time objective to the staging area with Daybreak faceup. The first player takes
 -- control of Amarthiúl. Shuffle the encounter deck. Reveal 1 card from the encounter deck
 -- per player.
--- Shrouded Hills is Eriador Wilds' (The Lost Realm 048), found by its code.
 instance RunMessage AcrossTheWastes where
   runMessage msg q@(AcrossTheWastes attrs) = case msg of
     DoStep 7 Setup -> do
@@ -39,7 +39,7 @@ instance RunMessage AcrossTheWastes where
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let copies code = filter ((== code) . toCardCode) deck
       traverse_ setAside $ copies (toCardCode Enemies.packLeader)
-      for_ (take 1 $ copies "09048") \c -> do
+      for_ (take 1 $ copies (toCardCode Locations.shroudedHills)) \c -> do
         removeFromEncounterDeck c
         putIntoPlayAsActiveLocation c
       -- Amarthiúl joins the first player as he comes out
