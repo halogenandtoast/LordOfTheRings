@@ -4,6 +4,7 @@ import LordOfTheRings.Prelude
 
 data EncounterSet
   = AJourneyToRhosgobel
+  | AStormOnCobasHaven
   | AcrossTheEttenmoors
   | AncientForest
   | AngmarOrcs

@@ -235,6 +235,9 @@ allLocationCards =
       , floodedRuins
       , drownedGraves
       , cursedTemple
+      , coastOfAnfalas
+      , belfalasIslet
+      , cobasHaven
       ]
 
 drownedTreasury :: CardDef
@@ -1711,3 +1714,27 @@ drownedGraves = uncharted (location "11073" "Drowned Graves" RuinsOfNumenor 2 2 
 
 cursedTemple :: CardDef
 cursedTemple = uncharted (location "11074" "Cursed Temple" RuinsOfNumenor 2 1 3) {cdCardTraits = setFromList [Ruins]}
+
+-- * A Storm on Cobas Haven
+
+coastOfAnfalas :: CardDef
+coastOfAnfalas =
+  (location "12128" "Coast of Anfalas" AStormOnCobasHaven 3 3 3)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+belfalasIslet :: CardDef
+belfalasIslet =
+  (location "12129" "Belfalas Islet" AStormOnCobasHaven 2 1 5)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdVictoryPoints = Just 1
+    }
+
+cobasHaven :: CardDef
+cobasHaven =
+  (location "12130" "Cobas Haven" AStormOnCobasHaven 2 2 4)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdShadowEffect = True
+    }

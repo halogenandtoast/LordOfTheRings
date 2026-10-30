@@ -37,6 +37,7 @@ data Trait
   | Dark
   | DeadMarshes
   | Disaster
+  | DolAmroth
   | DolGuldur
   | Dunedain
   | Dungeon

@@ -218,6 +218,9 @@ allQuestCards =
       , corsairPursuit
       , exploreTheIsland
       , aFatefulDiscovery
+      , outmaneuverTheEnemy
+      , battleInTheBay
+      , breakThroughTheFleet
       ]
 
 theDrippingWalls :: CardDef
@@ -789,3 +792,14 @@ exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
 -- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
 aFatefulDiscovery :: CardDef
 aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}
+
+-- * A Storm on Cobas Haven: each stage has the Sailing keyword
+
+outmaneuverTheEnemy :: CardDef
+outmaneuverTheEnemy = (quest "12120" "Outmaneuver the Enemy" AStormOnCobasHaven 1 10) {cdKeywords = setFromList [Sailing]}
+
+battleInTheBay :: CardDef
+battleInTheBay = (quest "12121" "Battle in the Bay" AStormOnCobasHaven 2 16) {cdKeywords = setFromList [Sailing]}
+
+breakThroughTheFleet :: CardDef
+breakThroughTheFleet = (quest "12122" "Break Through the Fleet!" AStormOnCobasHaven 3 5) {cdKeywords = setFromList [Sailing]}

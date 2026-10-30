@@ -76,6 +76,12 @@ allObjectiveCards =
       , calphon
       , captainSahirObjective
       , naasiyahObjective
+      , dolAmrothWarship
+      , corsairSkirmisherShip
+      , seaWardTower
+      , towerOfTheGull
+      , theBeacon
+      , towerOfTheHeron
       ]
 
 durinsAxe :: CardDef
@@ -512,3 +518,47 @@ naasiyahObjective =
     , cdKeywords = setFromList [LastPlayerGainsControl]
     , cdOtherSide = Just "11078"
     }
+
+-- * A Storm on Cobas Haven
+
+-- | Set aside at setup; The Beacon gives one to a player.
+dolAmrothWarship :: CardDef
+dolAmrothWarship =
+  (objective "12123" "Dol Amroth Warship" AStormOnCobasHaven 2)
+    { cdCardType = ObjectiveAllyType
+    , cdWillpower = Just 2
+    , cdAttack = Just 2
+    , cdDefense = Just 2
+    , cdHitPoints = Just 8
+    , cdCardTraits = setFromList [Gondor, Ship]
+    }
+
+-- | Corsair Skirmisher taken by the players as a Ship objective, with willpower equal to
+-- its threat: no copy is gathered, the enemy turns into it.
+corsairSkirmisherShip :: CardDef
+corsairSkirmisherShip =
+  ((objective "12125-ship" "Corsair Skirmisher" AStormOnCobasHaven 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 4, cdDefense = Just 4, cdHitPoints = Just 6 })
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdOtherSide = Just "12125"
+    }
+
+dolAmrothTower :: CardCode -> Name -> CardDef
+dolAmrothTower code name =
+  (objective code name AStormOnCobasHaven 1)
+    { cdUnique = True
+    , cdCardTraits = setFromList [DolAmroth]
+    , cdKeywords = setFromList [Guarded]
+    }
+
+seaWardTower :: CardDef
+seaWardTower = dolAmrothTower "12134" "Sea-ward Tower"
+
+towerOfTheGull :: CardDef
+towerOfTheGull = dolAmrothTower "12135" "Tower of the Gull"
+
+theBeacon :: CardDef
+theBeacon = dolAmrothTower "12136" "The Beacon"
+
+towerOfTheHeron :: CardDef
+towerOfTheHeron = dolAmrothTower "12137" "Tower of the Heron"

@@ -188,6 +188,9 @@ allTreacheryCards =
       , ruinsOfAgesPast
       , curseOfTheDownfallen
       , aimlessWandering
+      , rammingSpeed
+      , takingOnWater
+      , theRaidersAssault
       ]
 
 deepDeepDark :: CardDef
@@ -1178,3 +1181,14 @@ curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
+
+-- * A Storm on Cobas Haven
+
+rammingSpeed :: CardDef
+rammingSpeed = (treachery "12131" "Ramming Speed!" AStormOnCobasHaven 2) {cdSailingIcons = 1}
+
+takingOnWater :: CardDef
+takingOnWater = (treachery "12132" "Taking on Water" AStormOnCobasHaven 2) {cdShadowEffect = True}
+
+theRaidersAssault :: CardDef
+theRaidersAssault = (treachery "12133" "The Raiders' Assault" AStormOnCobasHaven 2) {cdSailingIcons = 1}
