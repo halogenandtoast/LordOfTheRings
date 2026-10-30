@@ -1280,3 +1280,19 @@ so that the players do not know which one is which.
 -}
 shuffleUnchartedLocations :: ReverseQueue m => m ()
 shuffleUnchartedLocations = push ShuffleUnchartedLocations
+
+-- | The card in the player's hand goes to the bottom of his deck.
+putFromHandOnBottomOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+putFromHandOnBottomOfDeck pid card = push $ PutFromHandOnBottomOfDeck pid card.id
+
+{- | Discard the bottom card of the player's deck, as "discard the bottom card of your deck.
+If that card's printed cost is 2 or less, ..." reads: the card discarded, if any, for the
+effect to read.
+-}
+discardBottomOfDeck :: ReverseQueue m => PlayerId -> m (Maybe Card)
+discardBottomOfDeck pid = do
+  bottom <- lastMay . (.deck) <$> getPlayer pid
+  for_ bottom \case
+    PlayerCard pc -> discardFromDeck pid pc
+    _ -> pure ()
+  pure bottom

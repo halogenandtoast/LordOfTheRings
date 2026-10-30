@@ -751,3 +751,8 @@ controlledCharactersWithTrait pid trait =
 -- | An Uncharted location: one with its Lost Island side faceup (The Grey Havens rules insert).
 unchartedLocation :: LocationMatcher
 unchartedLocation = LocationWithKeyword Uncharted
+
+-- | The card's printed cost, as "printed cost 2 or less" reads: an X, or a card with none,
+-- counts as 0.
+printedCostOf :: HasCardDef a => a -> Int
+printedCostOf = maybe 0 costAsResources . cdCost . toCardDef

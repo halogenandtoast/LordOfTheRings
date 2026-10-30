@@ -529,6 +529,8 @@ data Message
   | -- | the hero leaves play, set aside out of play, as Unexpected Rescue sets aside the
     -- heroes not chosen to start
     SetAsideHero HeroId
+  | -- | a card in the player's hand goes to the bottom of his deck
+    PutFromHandOnBottomOfDeck PlayerId CardId
   | -- | the player looks at the facedown side of the location, as an Uncharted location's
     -- Lost Island side hides it
     LookAtFacedownSide PlayerId LocationId

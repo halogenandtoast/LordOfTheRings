@@ -420,6 +420,9 @@ data ModifierType
   | -- | on the game: each ally that leaves play goes to its owner's hand instead of the
     -- discard pile, as Rallying Cry's Valour Action reads
     AlliesLeavePlayToHand
+  | -- | on a player: his deck cannot be searched, as Soulless Cadaver reads: a search of it
+    -- finds nothing
+    CannotSearchDeck
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
