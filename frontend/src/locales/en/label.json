@@ -1035,5 +1035,38 @@
   "fellVoices": {
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
-  "chooseAreaToJoin": "Choose a player to join"
+  "chooseAreaToJoin": "Choose a player to join",
+  "abandonedCamp": {
+    "return": "Return a card from your discard pile to your hand?",
+    "none": "Return nothing"
+  },
+  "barrenMoorland": {
+    "choose": "Exhaust the ally or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
+  },
+  "coldfellGiant": {
+    "damage": "Choose a character to deal 1 damage to"
+  },
+  "ruthlessHillTroll": {
+    "shuffle": "Choose a safe location to shuffle into the encounter deck"
+  },
+  "noRest": {
+    "attach": "Choose a hero to attach No Rest to"
+  },
+  "aradorsBane": {
+    "choose": "Engage an enemy with a higher engagement cost than your threat, or search for a Troll or Giant",
+    "search": "Search for a Troll or Giant enemy"
+  },
+  "lieLow": {
+    "shuffle": "Choose an enemy in the staging area to shuffle into the encounter deck"
+  },
+  "scavengeForSupplies": {
+    "engage": "Choose the player with the highest threat to engage the Troll",
+    "play": "Play a card from your hand at no cost?",
+    "none": "Play nothing"
+  },
+  "trollFells": {
+    "search": "Choose a safe location for Troll-fells to guard"
+  }
 }

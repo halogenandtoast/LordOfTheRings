@@ -122,6 +122,12 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+import LordOfTheRings.Quest.Cards.IntoTheEttenmoors
+import LordOfTheRings.Quest.Cards.AMiserableJourney
+import LordOfTheRings.Quest.Cards.JourneysEnd
+import LordOfTheRings.Quest.Cards.LieLow
+import LordOfTheRings.Quest.Cards.ForageForFood
+import LordOfTheRings.Quest.Cards.ScavengeForSupplies
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -276,5 +282,11 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+        , SomeQuestCard intoTheEttenmoors
+        , SomeQuestCard aMiserableJourney
+        , SomeQuestCard journeysEnd
+        , SomeQuestCard lieLow
+        , SomeQuestCard forageForFood
+        , SomeQuestCard scavengeForSupplies
         ]
     ]
