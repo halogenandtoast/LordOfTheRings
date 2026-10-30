@@ -1793,6 +1793,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.DreamChaser.SailingEngineSpec
       LordOfTheRings.DreamChaser.TempleOfTheDeceivedPlayerCardsSpec
       LordOfTheRings.DreamChaser.TheCityOfCorsairsPlayerCardsSpec
+      LordOfTheRings.DreamChaser.TheCityOfCorsairsSpec
       LordOfTheRings.DreamChaser.TheDrownedRuinsPlayerCardsSpec
       LordOfTheRings.DreamChaser.TheFateOfNumenorSpec
       LordOfTheRings.DreamChaser.TheThingInTheDepthsPlayerCardsSpec
