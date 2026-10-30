@@ -170,6 +170,9 @@ allAllyCards =
       , masterIronsmith
       , samGamgee
       , mirkwoodExplorer
+      , ceorl
+      , deorwine
+      , rhovanionOutrider
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1192,4 +1195,25 @@ mirkwoodExplorer :: CardDef
 mirkwoodExplorer =
   (ally "12037" "Mirkwood Explorer" Lore (StaticCost 3) 2 1 0 2)
     { cdCardTraits = setFromList [Woodman, Scout]
+    }
+
+ceorl :: CardDef
+ceorl =
+  (ally "12058" "Ceorl" Leadership (StaticCost 2) 1 2 0 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan, Scout]
+    }
+
+deorwine :: CardDef
+deorwine =
+  (ally "12060" "Déorwine" Tactics (StaticCost 4) 0 1 3 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+rhovanionOutrider :: CardDef
+rhovanionOutrider =
+  (ally "12062" "Rhovanion Outrider" Spirit (StaticCost 3) 1 2 1 2)
+    { cdCardTraits = setFromList [Dale, Scout]
     }

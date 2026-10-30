@@ -171,6 +171,9 @@ allEventCards =
       , vanishFromSight
       , captainsWisdom
       , elevenses
+      , revealedInWrath
+      , scoutingParty
+      , arrowsFromTheTrees
       ]
 
 everVigilant :: CardDef
@@ -666,3 +669,12 @@ captainsWisdom = event "12032" "Captain's Wisdom" Leadership (StaticCost 0)
 
 elevenses :: CardDef
 elevenses = event "12036" "Elevenses" Spirit (StaticCost 1)
+
+revealedInWrath :: CardDef
+revealedInWrath = event "12061" "Revealed in Wrath" Tactics (StaticCost 1)
+
+scoutingParty :: CardDef
+scoutingParty = event "12063" "Scouting Party" Spirit (StaticCost 2)
+
+arrowsFromTheTrees :: CardDef
+arrowsFromTheTrees = event "12065" "Arrows from the Trees" Lore (StaticCost 1)

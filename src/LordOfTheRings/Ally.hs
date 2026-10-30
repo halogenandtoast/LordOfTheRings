@@ -179,6 +179,9 @@ import LordOfTheRings.Ally.Cards.Eldahir
 import LordOfTheRings.Ally.Cards.MasterIronsmith
 import LordOfTheRings.Ally.Cards.SamGamgee
 import LordOfTheRings.Ally.Cards.MirkwoodExplorer
+import LordOfTheRings.Ally.Cards.Ceorl
+import LordOfTheRings.Ally.Cards.Deorwine
+import LordOfTheRings.Ally.Cards.RhovanionOutrider
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -385,5 +388,8 @@ allAllies =
         , SomeAllyCard masterIronsmith
         , SomeAllyCard samGamgee
         , SomeAllyCard mirkwoodExplorer
+        , SomeAllyCard ceorl
+        , SomeAllyCard deorwine
+        , SomeAllyCard rhovanionOutrider
         ]
     ]

@@ -124,6 +124,8 @@ import LordOfTheRings.Attachment.Cards.RodOfTheSteward
 import LordOfTheRings.Attachment.Cards.InServiceOfTheSteward
 import LordOfTheRings.Attachment.Cards.RaimentOfWar
 import LordOfTheRings.Attachment.Cards.GuardedCeaselessly
+import LordOfTheRings.Attachment.Cards.ArmoredDestrier
+import LordOfTheRings.Attachment.Cards.EntanglingNets
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -274,5 +276,7 @@ allAttachments =
         , SomeAttachmentCard inServiceOfTheSteward
         , SomeAttachmentCard raimentOfWar
         , SomeAttachmentCard guardedCeaselessly
+        , SomeAttachmentCard armoredDestrier
+        , SomeAttachmentCard entanglingNets
         ]
     ]

@@ -131,6 +131,8 @@ allAttachmentCards =
       , inServiceOfTheSteward
       , raimentOfWar
       , guardedCeaselessly
+      , armoredDestrier
+      , entanglingNets
       ]
 
 stewardOfGondor :: CardDef
@@ -919,4 +921,17 @@ guardedCeaselessly :: CardDef
 guardedCeaselessly =
   (attachment "12038" "Guarded Ceaselessly" Lore (StaticCost 0))
     { cdCardTraits = setFromList [Condition]
+    }
+
+armoredDestrier :: CardDef
+armoredDestrier =
+  (attachment "12059" "Armored Destrier" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+entanglingNets :: CardDef
+entanglingNets =
+  (attachment "12064" "Entangling Nets" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Trap]
     }
