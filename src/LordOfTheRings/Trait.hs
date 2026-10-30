@@ -28,7 +28,9 @@ data Trait
   | Champion
   | City
   | Clue
+  | Coastland
   | Condition
+  | Corsair
   | Craftsman
   | Creature
   | Dale
@@ -55,6 +57,7 @@ data Trait
   | Gollum
   | Gondor
   | Gossip
+  | GreyHavens
   | Guardian
   | Harad
   | Hazard
@@ -84,6 +87,7 @@ data Trait
   | Nazgul
   | Noble
   | Noldor
+  | Ocean
   | Orc
   | Osgiliath
   | OstInEdhil
@@ -91,6 +95,7 @@ data Trait
   | Pipe
   | Plains
   | Plot
+  | Raider
   | Ranger
   | Raven
   | RavenClan
@@ -104,6 +109,7 @@ data Trait
   | Scout
   | Scroll
   | Shadow
+  | Ship
   | Signal
   | Silvan
   | Skill

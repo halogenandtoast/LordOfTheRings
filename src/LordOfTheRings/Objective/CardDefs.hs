@@ -69,6 +69,10 @@ allObjectiveCards =
       , daechanarsBrand
       , heirloomOfIarchon
       , ordersFromAngmar
+      , dreamChaser
+      , dawnStar
+      , narelenya
+      , silverWing
       ]
 
 durinsAxe :: CardDef
@@ -434,3 +438,42 @@ heirloomOfIarchon = (objective "10112" "Heirloom of Iârchon" TheTreacheryOfRhud
 -- | The other side of Decipher Ancient Texts, never in the encounter deck.
 ordersFromAngmar :: CardDef
 ordersFromAngmar = (objective "10114" "Orders from Angmar" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}
+
+-- * The Dream-chaser's Fleet: Ship objectives, immune to player card effects by their own
+-- modifiers, under the players' control from setup
+
+dreamChaser :: CardDef
+dreamChaser =
+  ((objective "11080" "Dream-chaser" TheDreamChasersFleet 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 5, cdAttack = Just 4, cdDefense = Just 4, cdHitPoints = Just 18 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [GreyHavens, Ship]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+dawnStar :: CardDef
+dawnStar =
+  ((objective "11081" "Dawn Star" TheDreamChasersFleet 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 3, cdDefense = Just 4, cdHitPoints = Just 16 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Ship]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+narelenya :: CardDef
+narelenya =
+  ((objective "11082" "Nárelenya" TheDreamChasersFleet 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 3, cdDefense = Just 5, cdHitPoints = Just 16 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [GreyHavens, Ship]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+silverWing :: CardDef
+silverWing =
+  ((objective "11083" "Silver Wing" TheDreamChasersFleet 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 4, cdDefense = Just 2, cdHitPoints = Just 14 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor, Ship]
+    , cdKeywords = setFromList [Sentinel, Ranged]
+    }

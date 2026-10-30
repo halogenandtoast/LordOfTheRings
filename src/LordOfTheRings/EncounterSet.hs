@@ -13,6 +13,8 @@ data EncounterSet
   | BroodingForest
   | CelebrimborsSecret
   | ConflictAtTheCarrock
+  | CorsairPirates
+  | CorsairRaiders
   | CreaturesOfTheForest
   | CursedDead
   | DarkSorcery
@@ -50,12 +52,14 @@ data EncounterSet
   | ShadowAndFlame
   | Southrons
   | SpidersOfMirkwood
+  | StormyWeather
   | StreetsOfGondor
   | TheAntleredCrown
   | TheBattleOfCarnDum
   | TheBloodOfGondor
   | TheDeadMarshes
   | TheDreadRealm
+  | TheDreamChasersFleet
   | TheDruadanForest
   | TheDunlandTrap
   | TheFordsOfIsen
@@ -77,6 +81,9 @@ data EncounterSet
   | ToCatchAnOrc
   | TroubleInTharbad
   | TwistsAndTurns
+  | UmbarNavy
+  | VastOceans
+  | VoyageAcrossBelegaer
   | WearyTravelers
   | Wilderlands
   deriving stock (Show, Eq, Ord, Generic)

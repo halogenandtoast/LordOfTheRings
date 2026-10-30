@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Capture, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, Sailing, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
@@ -210,6 +210,12 @@ allQuestCards =
       , quietTheSpirits
       , siftThroughTheDebris
       , decipherAncientTexts
+      , departureFromTheHavens
+      , intoTheStorm
+      , cursedMists
+      , calphonsDivination
+      , theStarsGuidance
+      , corsairPursuit
       ]
 
 theDrippingWalls :: CardDef
@@ -754,3 +760,23 @@ siftThroughTheDebris = encounterSideQuest "10111" "Sift through the Debris" TheT
 -- | Flipped to Orders from Angmar once defeated.
 decipherAncientTexts :: CardDef
 decipherAncientTexts = encounterSideQuest "10113" "Decipher Ancient Texts" TheTreacheryOfRhudaur 14
+
+-- * Voyage Across Belegaer: each stage has the Sailing keyword
+
+departureFromTheHavens :: CardDef
+departureFromTheHavens = (quest "11016" "Departure from the Havens" VoyageAcrossBelegaer 1 8) {cdKeywords = setFromList [Sailing]}
+
+intoTheStorm :: CardDef
+intoTheStorm = (quest "11017" "Into the Storm" VoyageAcrossBelegaer 2 2) {cdKeywords = setFromList [Sailing]}
+
+cursedMists :: CardDef
+cursedMists = (quest "11018" "Cursed Mists" VoyageAcrossBelegaer 2 6) {cdKeywords = setFromList [Sailing]}
+
+calphonsDivination :: CardDef
+calphonsDivination = (quest "11019" "Calphon's Divination" VoyageAcrossBelegaer 2 4) {cdKeywords = setFromList [Sailing]}
+
+theStarsGuidance :: CardDef
+theStarsGuidance = (quest "11020" "The Star's Guidance" VoyageAcrossBelegaer 2 4) {cdKeywords = setFromList [Sailing]}
+
+corsairPursuit :: CardDef
+corsairPursuit = (quest "11021" "Corsair Pursuit" VoyageAcrossBelegaer 3 10) {cdKeywords = setFromList [Sailing]}

@@ -178,6 +178,11 @@ allTreacheryCards =
       , curseOfTheYears
       , darkCovenant
       , hauntingFog
+      , thrownOffCourse
+      , suddenStorms
+      , windsOfWrath
+      , boardingParty
+      , battleHardened
       ]
 
 deepDeepDark :: CardDef
@@ -1117,3 +1122,39 @@ darkCovenant =
 
 hauntingFog :: CardDef
 hauntingFog = (treachery "10108" "Haunting Fog" TheTreacheryOfRhudaur 3) {cdCardTraits = setFromList [Sorcery]}
+
+-- * The Dream-chaser cycle: Vast Oceans, Stormy Weather, Umbar Navy, Corsair Raiders
+
+thrownOffCourse :: CardDef
+thrownOffCourse =
+  (treachery "11052" "Thrown Off Course" VastOceans 2)
+    { cdShadowEffect = True
+    , cdSailingIcons = 1
+    }
+
+suddenStorms :: CardDef
+suddenStorms =
+  (treachery "11055" "Sudden Storms" StormyWeather 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+windsOfWrath :: CardDef
+windsOfWrath =
+  (treachery "11056" "Winds of Wrath" StormyWeather 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdSailingIcons = 1
+    }
+
+boardingParty :: CardDef
+boardingParty =
+  (treachery "11059" "Boarding Party" UmbarNavy 2)
+    { cdShadowEffect = True
+    }
+
+battleHardened :: CardDef
+battleHardened =
+  (treachery "11067" "Battle-Hardened" CorsairRaiders 2)
+    { cdShadowEffect = True
+    }
