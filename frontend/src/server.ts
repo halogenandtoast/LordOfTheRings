@@ -98,6 +98,11 @@ export interface ServerGame {
     setAside: Card[]
     /** The ids of the hidden cards facedown in each player's play area (The Blood of Gondor). */
     hiddenCards?: Record<string, string[]>
+    /** The Dream-chaser's heading, once the fleet is prepared: Sunny, Cloudy, Rainy or Stormy. */
+    heading?: string | null
+    /** The Corsair deck's size, once prepared, and its own discard pile (Dream-chaser rules). */
+    corsairDeckSize?: number
+    corsairDiscard?: Card[]
   }
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
