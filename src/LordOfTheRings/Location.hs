@@ -166,6 +166,13 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.BrokenBattlements
+import LordOfTheRings.Location.Cards.NorburyTombs
+import LordOfTheRings.Location.Cards.FornostSquare
+import LordOfTheRings.Location.Cards.HauntedKeep
+import LordOfTheRings.Location.Cards.DeadmensGate
+import LordOfTheRings.Location.Cards.RuinsOfArnor
+import LordOfTheRings.Location.Cards.AncientCauseway
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -359,5 +366,12 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard brokenBattlements
+        , SomeLocationCard norburyTombs
+        , SomeLocationCard fornostSquare
+        , SomeLocationCard hauntedKeep
+        , SomeLocationCard deadmensGate
+        , SomeLocationCard ruinsOfArnor
+        , SomeLocationCard ancientCauseway
         ]
     ]
