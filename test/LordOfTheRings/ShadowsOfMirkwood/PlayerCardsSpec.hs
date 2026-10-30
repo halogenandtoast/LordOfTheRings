@@ -1,6 +1,7 @@
 module LordOfTheRings.ShadowsOfMirkwood.PlayerCardsSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Attachment (AttachmentAttrs (..))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -37,7 +38,21 @@ heroInPlay t = getsGame \g -> any ((== t) . toTarget) (toList g.entities.heroes)
 spec :: Spec
 spec = describe "Shadows of Mirkwood player cards" do
   describe "A Burning Brand" do
-    it "cancels the shadow effects of the attack its character defends, without exhausting" . gameTest $ \pid -> do
+    it "exhausts to cancel a shadow effect of the attack its character defends" . gameTest $ \pid -> do
+      b <- beravor
+      brand <- putAttachmentOn pid Attachments.aBurningBrand b
+      eid <- engagedEnemy pid Enemies.dolGuldurOrcs
+      _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
+      run $ DealShadowCard eid
+      run $ DefendWith pid eid b
+      passActions pid
+      chooseAbilityOf pid brand
+      passActions pid
+      getCharacterDamage b `shouldReturn` 0
+      getsGame (fmap (attachmentExhausted . toAttrs) . find ((== brand) . toTarget) . toList . (.entities.attachments)) `shouldReturn` Just True
+
+    it "cancels the shadow effects of the attack its character defends, without exhausting, as printed" . gameTest $ \pid -> do
+      withoutErrata pid
       b <- beravor
       _ <- putAttachmentOn pid Attachments.aBurningBrand b
       eid <- engagedEnemy pid Enemies.dolGuldurOrcs
