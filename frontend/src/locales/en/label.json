@@ -553,6 +553,28 @@
   "imladrisCaregiver": {
     "heal": "Imladris Caregiver: choose a character to heal 1 damage from"
   },
+  "lanwyn": {
+    "choose": "Lanwyn: choose one",
+    "ready": "Ready Lanwyn",
+    "willpower": "Lanwyn gets +2 willpower until the end of the phase"
+  },
+  "eldahir": {
+    "enemy": "Eldahir: choose an engaged enemy to look at a shadow card of",
+    "shadow": "Eldahir: choose a facedown shadow card to look at"
+  },
+  "captainsWisdom": {
+    "exhaust": "Captain's Wisdom: choose a Noble hero to exhaust"
+  },
+  "masterIronsmith": {
+    "attach": "Master Ironsmith: choose a Weapon or Armor attachment to attach to the hero"
+  },
+  "elevenses": {
+    "choose": "Elevenses: choose questing Hobbit characters to ready and remove from the quest",
+    "done": "Done choosing"
+  },
+  "mirkwoodExplorer": {
+    "location": "Mirkwood Explorer: choose a location to move its progress to"
+  },
   "nenya": {
     "give": "Add Galadriel's willpower to another character"
   },

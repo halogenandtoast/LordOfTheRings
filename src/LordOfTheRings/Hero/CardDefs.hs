@@ -70,6 +70,7 @@ allHeroCards =
       , halbarad
       , merrySpirit
       , denethorLeadership
+      , lanwyn
       ]
 
 aragorn :: CardDef
@@ -423,4 +424,11 @@ denethorLeadership :: CardDef
 denethorLeadership =
   (hero "12001" "Denethor" Leadership 8 1 1 3 3)
     { cdCardTraits = setFromList [Gondor, Noble, Steward]
+    }
+
+lanwyn :: CardDef
+lanwyn =
+  (hero "12030" "Lanwyn" Spirit 9 2 3 1 3)
+    { cdCardTraits = setFromList [Dale, Scout]
+    , cdKeywords = setFromList [Ranged]
     }

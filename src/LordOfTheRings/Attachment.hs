@@ -122,6 +122,8 @@ import LordOfTheRings.Attachment.Cards.RavenWingedHelm
 import LordOfTheRings.Attachment.Cards.HobbitPony
 import LordOfTheRings.Attachment.Cards.RodOfTheSteward
 import LordOfTheRings.Attachment.Cards.InServiceOfTheSteward
+import LordOfTheRings.Attachment.Cards.RaimentOfWar
+import LordOfTheRings.Attachment.Cards.GuardedCeaselessly
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -270,5 +272,7 @@ allAttachments =
         , SomeAttachmentCard hobbitPony
         , SomeAttachmentCard rodOfTheSteward
         , SomeAttachmentCard inServiceOfTheSteward
+        , SomeAttachmentCard raimentOfWar
+        , SomeAttachmentCard guardedCeaselessly
         ]
     ]

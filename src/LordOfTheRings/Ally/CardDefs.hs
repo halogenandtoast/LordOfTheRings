@@ -166,6 +166,10 @@ allAllyCards =
       , azainSilverbeard
       , imladrisCaregiver
       , guardianOfRivendell
+      , eldahir
+      , masterIronsmith
+      , samGamgee
+      , mirkwoodExplorer
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1161,4 +1165,31 @@ guardianOfRivendell =
   (ally "12010" "Guardian of Rivendell" Neutral (StaticCost 3) 1 2 3 3)
     { cdCardTraits = setFromList [Noldor, Warrior]
     , cdAdditionalCost = Just (DiscardCardsFromHand 2)
+    }
+
+eldahir :: CardDef
+eldahir =
+  (ally "12031" "Eldahir" Leadership (StaticCost 4) 1 2 2 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Noble]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+masterIronsmith :: CardDef
+masterIronsmith =
+  (ally "12033" "Master Ironsmith" Tactics (StaticCost 3) 1 1 1 2)
+    { cdCardTraits = setFromList [Gondor, Craftsman]
+    }
+
+samGamgee :: CardDef
+samGamgee =
+  (ally "12035" "Sam Gamgee" Spirit (StaticCost 3) 2 1 1 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Hobbit]
+    }
+
+mirkwoodExplorer :: CardDef
+mirkwoodExplorer =
+  (ally "12037" "Mirkwood Explorer" Lore (StaticCost 3) 2 1 0 2)
+    { cdCardTraits = setFromList [Woodman, Scout]
     }

@@ -129,6 +129,8 @@ allAttachmentCards =
       , hobbitPony
       , rodOfTheSteward
       , inServiceOfTheSteward
+      , raimentOfWar
+      , guardedCeaselessly
       ]
 
 stewardOfGondor :: CardDef
@@ -903,4 +905,18 @@ inServiceOfTheSteward :: CardDef
 inServiceOfTheSteward =
   (attachment "12003" "In Service of the Steward" Leadership (StaticCost 1))
     { cdCardTraits = setFromList [Title]
+    }
+
+raimentOfWar :: CardDef
+raimentOfWar =
+  (attachment "12034" "Raiment of War" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdRestrictedSlots = 2
+    }
+
+guardedCeaselessly :: CardDef
+guardedCeaselessly =
+  (attachment "12038" "Guarded Ceaselessly" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
     }

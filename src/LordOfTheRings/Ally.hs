@@ -175,6 +175,10 @@ import LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
 import LordOfTheRings.Ally.Cards.AzainSilverbeard
 import LordOfTheRings.Ally.Cards.ImladrisCaregiver
 import LordOfTheRings.Ally.Cards.GuardianOfRivendell
+import LordOfTheRings.Ally.Cards.Eldahir
+import LordOfTheRings.Ally.Cards.MasterIronsmith
+import LordOfTheRings.Ally.Cards.SamGamgee
+import LordOfTheRings.Ally.Cards.MirkwoodExplorer
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -377,5 +381,9 @@ allAllies =
         , SomeAllyCard azainSilverbeard
         , SomeAllyCard imladrisCaregiver
         , SomeAllyCard guardianOfRivendell
+        , SomeAllyCard eldahir
+        , SomeAllyCard masterIronsmith
+        , SomeAllyCard samGamgee
+        , SomeAllyCard mirkwoodExplorer
         ]
     ]

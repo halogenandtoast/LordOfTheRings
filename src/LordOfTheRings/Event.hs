@@ -158,6 +158,8 @@ import LordOfTheRings.Event.Cards.RallyingCry
 import LordOfTheRings.Event.Cards.LastStand
 import LordOfTheRings.Event.Cards.TidesOfFate
 import LordOfTheRings.Event.Cards.VanishFromSight
+import LordOfTheRings.Event.Cards.CaptainsWisdom
+import LordOfTheRings.Event.Cards.Elevenses
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -329,5 +331,7 @@ allEvents =
         , SomeEventCard lastStand
         , SomeEventCard tidesOfFate
         , SomeEventCard vanishFromSight
+        , SomeEventCard captainsWisdom
+        , SomeEventCard elevenses
         ]
     ]
