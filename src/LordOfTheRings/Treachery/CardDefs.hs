@@ -188,6 +188,8 @@ allTreacheryCards =
       , ruinsOfAgesPast
       , curseOfTheDownfallen
       , aimlessWandering
+      , manOverboard
+      , ragingSquall
       ]
 
 deepDeepDark :: CardDef
@@ -1178,3 +1180,11 @@ curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
+
+-- * Flight of the Stormcaller
+
+manOverboard :: CardDef
+manOverboard = (treachery "12028" "Man Overboard!" FlightOfTheStormcaller 2) {cdShadowEffect = True}
+
+ragingSquall :: CardDef
+ragingSquall = (treachery "12029" "Raging Squall" FlightOfTheStormcaller 2) {cdKeywords = setFromList [Doomed 2]}

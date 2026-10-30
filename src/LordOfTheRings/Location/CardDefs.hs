@@ -235,6 +235,9 @@ allLocationCards =
       , floodedRuins
       , drownedGraves
       , cursedTemple
+      , jaggedReef
+      , hiddenCove
+      , vastCoastland
       ]
 
 drownedTreasury :: CardDef
@@ -1711,3 +1714,24 @@ drownedGraves = uncharted (location "11073" "Drowned Graves" RuinsOfNumenor 2 2 
 
 cursedTemple :: CardDef
 cursedTemple = uncharted (location "11074" "Cursed Temple" RuinsOfNumenor 2 1 3) {cdCardTraits = setFromList [Ruins]}
+
+-- * Flight of the Stormcaller
+
+jaggedReef :: CardDef
+jaggedReef =
+  (location "12025" "Jagged Reef" FlightOfTheStormcaller 2 1 4)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdKeywords = setFromList [Surge]
+    }
+
+hiddenCove :: CardDef
+hiddenCove = (location "12026" "Hidden Cove" FlightOfTheStormcaller 2 3 3) {cdCardTraits = setFromList [Coastland, Ocean]}
+
+vastCoastland :: CardDef
+vastCoastland =
+  (location "12027" "Vast Coastland" FlightOfTheStormcaller 2 6 4)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdSailingIcons = 1
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }

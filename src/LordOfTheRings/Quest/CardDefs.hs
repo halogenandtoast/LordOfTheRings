@@ -218,6 +218,13 @@ allQuestCards =
       , corsairPursuit
       , exploreTheIsland
       , aFatefulDiscovery
+      , swiftDeparture
+      , fullSailAhead
+      , theWeatherTurnsFoul
+      , theCapeOfAndrast
+      , fullSailAheadStormcaller
+      , theWeatherTurnsFoulStormcaller
+      , theCapeOfAndrastStormcaller
       ]
 
 theDrippingWalls :: CardDef
@@ -789,3 +796,27 @@ exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
 -- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
 aFatefulDiscovery :: CardDef
 aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}
+
+-- * Flight of the Stormcaller: the players' stages have the Sailing keyword; the
+-- Stormcaller's own stages, 2C to 4C, make up the Stormcaller's quest deck (sides C and D)
+
+swiftDeparture :: CardDef
+swiftDeparture = (quest "12012" "Swift Departure" FlightOfTheStormcaller 1 8) {cdKeywords = setFromList [Sailing]}
+
+fullSailAhead :: CardDef
+fullSailAhead = (quest "12013" "Full Sail Ahead!" FlightOfTheStormcaller 2 12) {cdKeywords = setFromList [Sailing]}
+
+theWeatherTurnsFoul :: CardDef
+theWeatherTurnsFoul = (quest "12014" "The Weather Turns Foul" FlightOfTheStormcaller 3 18) {cdKeywords = setFromList [Sailing]}
+
+theCapeOfAndrast :: CardDef
+theCapeOfAndrast = (quest "12015" "The Cape of Andrast" FlightOfTheStormcaller 4 24) {cdKeywords = setFromList [Sailing]}
+
+fullSailAheadStormcaller :: CardDef
+fullSailAheadStormcaller = quest "12016" "Full Sail Ahead!" FlightOfTheStormcaller 2 12
+
+theWeatherTurnsFoulStormcaller :: CardDef
+theWeatherTurnsFoulStormcaller = quest "12017" "The Weather Turns Foul" FlightOfTheStormcaller 3 18
+
+theCapeOfAndrastStormcaller :: CardDef
+theCapeOfAndrastStormcaller = quest "12018" "The Cape of Andrast" FlightOfTheStormcaller 4 24
