@@ -592,7 +592,7 @@
     "exhaust": "Exhaust a Dwarf character to place progress on the active location"
   },
   "weAreNotIdle": {
-    "exhaust": "Exhaust Dwarf characters ({count} so far)",
+    "exhaust": "Exhaust Dwarf heroes ({count} so far)",
     "done": "Done exhausting",
     "chooseHero": "Choose a hero to add {count} resources to"
   },
