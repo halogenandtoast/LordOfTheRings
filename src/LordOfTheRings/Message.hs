@@ -233,6 +233,10 @@ data Message
     staging area to guard it, any other card is revealed
     -}
     GuardObjective ObjectiveId
+  | -- | a guarded location revealed, as Across the Ettenmoors' objective-locations: the next
+    -- encounter card is revealed guarding it, the location attached to that card until it
+    -- leaves play
+    GuardLocation LocationId
   | PutObjectiveIntoPlay EncounterCard
   | -- | an objective card comes into play attached to the hero, as a setup attaches it
     PutObjectiveIntoPlayAttached EncounterCard Target

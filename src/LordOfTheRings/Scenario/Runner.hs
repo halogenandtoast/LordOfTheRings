@@ -16,6 +16,7 @@ import LordOfTheRings.Message.Lifted (placeResources)
 import LordOfTheRings.Game.Base (gamePhase)
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types as X
@@ -139,6 +140,21 @@ instance RunMessage ScenarioAttrs where
         | otherwise -> do
             deck <- shuffleM attrs.encounterDiscard
             push $ GuardObjective oid
+            pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+    -- the next encounter card guards the location, attached to it as it is revealed so its
+    -- own effects see it guarding (Troll-fells); any other card is only revealed
+    GuardLocation lid -> case attrs.encounterDeck of
+      card : rest -> do
+        push
+          $ if cdCardType (toCardDef card) `elem` [EnemyType, LocationType, TreacheryType, EncounterSideQuestType]
+            then Run [PlaceLocation lid (AttachedTo $ CardIdTarget card.id), RevealCard card]
+            else RevealCard card
+        pure $ attrs & encounterDeckL .~ rest
+      []
+        | null attrs.encounterDiscard -> pure attrs
+        | otherwise -> do
+            deck <- shuffleM attrs.encounterDiscard
+            push $ GuardLocation lid
             pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
     AddSetAsideToStaging matcher -> do
       let (matching, rest) = partition (cardMatches matcher) attrs.scenarioSetAside

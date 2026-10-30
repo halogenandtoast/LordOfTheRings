@@ -179,9 +179,9 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))
     // claimed objectives, condition treacheries and enemies attached as Grasping Tentacle is sit on their hosts like attachments
-    // and allies under a quest card, as Captured! holds Faramir
+    // and allies under a quest card, as Captured! holds Faramir, and guarded locations on their guards (Across the Ettenmoors)
     return [
-      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true)].filter(
+      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true), ...placed('locations', isAt('AttachedTo'))].filter(
         (a) => a.attachedTo !== null && ids.has(a.attachedTo),
       ),
       ...cards.flatMap(stackUnder),
