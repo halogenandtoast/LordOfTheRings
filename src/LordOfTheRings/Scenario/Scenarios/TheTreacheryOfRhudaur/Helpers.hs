@@ -10,6 +10,7 @@ module LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur.Helpers (
   runClue,
   removeProgressPerDamage,
   currentQuestProgress,
+  progressOn,
 ) where
 
 import LordOfTheRings.Ability
@@ -96,10 +97,13 @@ runClue msg attrs = case msg of
 removeProgressPerDamage :: (ReverseQueue m, Sourceable source) => source -> EnemyId -> m ()
 removeProgressPerDamage source eid = attackModifier source eid AttackDamageRemovesProgress
 
+-- | The progress on the quest card.
+progressOn :: HasGame m => Target -> m Int
+progressOn t = do
+  quests <- getsGame (toList . entitiesQuests . gameEntities)
+  pure $ sum [q.progress | q <- quests, toTarget q == t]
+
 -- | The progress on the current quest, as "while the current quest has 1 or more progress"
 -- reads.
 currentQuestProgress :: HasGame m => m Int
-currentQuestProgress = do
-  current <- getCurrentQuest
-  quests <- getsGame (toList . entitiesQuests . gameEntities)
-  pure $ sum [q.progress | q <- quests, Just (toTarget q) == current]
+currentQuestProgress = maybe (pure 0) progressOn =<< getCurrentQuest
