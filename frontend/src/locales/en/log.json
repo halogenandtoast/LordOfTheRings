@@ -87,6 +87,7 @@
   "shuffledIntoUnchartedDeck": "{location} is shuffled back into the Uncharted deck",
   "unchartedShuffled": "The Uncharted locations in the staging area are shuffled",
   "shuffledIntoGrottoDeck": "{location} is shuffled back into the Grotto deck",
+  "islandMapPrepared": "The Island Map is laid out: {count} Uncharted locations, Lost Island and Temple sides faceup",
   "allyFlips": "{ally} flips to its enemy side",
   "shadowRevealed": "Shadow card for {enemy}: {card}",
   "shadowRevealedNoEffect": "Shadow card for {enemy}: {card} (no shadow effect)",

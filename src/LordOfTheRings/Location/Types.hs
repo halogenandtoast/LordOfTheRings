@@ -10,6 +10,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Keyword (Keyword (Uncharted))
+import LordOfTheRings.Location.Grid (Pos)
 import LordOfTheRings.Name
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
@@ -48,6 +49,8 @@ data LocationAttrs = LocationAttrs
   -- since: its card code is the side faceup
   , locationLookedAt :: [PlayerId]
   -- ^ the players who have looked at its facedown side since it was last turned over
+  , locationPosition :: Maybe Pos
+  -- ^ where it lies on the Island Map (Temple of the Deceived)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -57,7 +60,7 @@ instance ToJSON LocationAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "location")
 
 instance FromJSON LocationAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "location") . withDefaults [("otherSide", Null), ("lookedAt", toJSON ([] :: [PlayerId]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "location") . withDefaults [("otherSide", Null), ("lookedAt", toJSON ([] :: [PlayerId])), ("position", Null)]
 
 location :: (LocationAttrs -> a) -> CardDef -> LocationCard a
 location f cardDef =
@@ -73,6 +76,7 @@ location f cardDef =
             , locationTokens = mempty
             , locationOtherSide = Nothing
             , locationLookedAt = []
+            , locationPosition = Nothing
             }
     }
 
@@ -183,6 +187,12 @@ instance HasField "otherSide" LocationAttrs (Maybe CardCode) where
 
 instance HasField "lookedAt" LocationAttrs [PlayerId] where
   getField = locationLookedAt
+
+instance HasField "position" LocationAttrs (Maybe Pos) where
+  getField = locationPosition
+
+instance HasField "position" Location (Maybe Pos) where
+  getField = (.position) . toAttrs
 
 -- | With its Lost Island side faceup: an Uncharted location (The Grey Havens rules insert).
 isUncharted :: HasCardDef a => a -> Bool

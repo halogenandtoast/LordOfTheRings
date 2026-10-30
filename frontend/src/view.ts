@@ -253,9 +253,12 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   }
   const inFocus = inArea(areas.find((a) => a.focused)?.cards)
 
+  // the Island Map's locations stay in their places (Temple of the Deceived): shown there,
+  // not in the staging area or the active location's slot
+  const offMap = (e: Entity) => !e.position
   const allStaging = [
     ...placed('enemies', isAt('StagingArea')),
-    ...placed('locations', isAt('StagingArea')),
+    ...placed('locations', (e) => isAt('StagingArea')(e) && offMap(e)),
     // a guarded one comes in with its guard's attachments, wherever the guard is
     ...placed('objectives', isAt('StagingArea')).filter((o) => o.attachedTo === null),
     // a Trap waits in staging until an enemy walks into it
@@ -318,7 +321,12 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched, amount }
   }
 
-  const activeLocations = placed('locations', isAt('ActiveLocation'))
+  const activeLocations = placed('locations', (e) => isAt('ActiveLocation')(e) && offMap(e))
+  const islandMap = Object.values(entities.locations ?? {}).flatMap((e) => {
+    if (!e.position) return []
+    const card = fromEntity(e, 'locations')
+    return [{ card, attachments: attachmentsOn([card]), ...e.position, active: isAt('ActiveLocation')(e), staged: isAt('StagingArea')(e) }]
+  })
   const quests = placed('quests', (q) => !isSideQuest(q))
   const [activeLocation, ...otherActiveLocations] = activeLocations.filter(inFocus)
   const [quest] = quests.filter(inFocus)
@@ -357,6 +365,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       activeLocation: activeLocation ?? null,
       activeLocationAttachments: attachmentsOn(activeLocation ? [activeLocation] : []),
       otherActiveLocations: otherActiveLocations.map((card) => ({ card, attachments: attachmentsOn([card]) })),
+      islandMap,
       staging: withAttachments(staging),
       otherAreas,
       encounterDeck: game.scenario.encounterDeckSize,

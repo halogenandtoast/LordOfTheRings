@@ -37,6 +37,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Keyword
 import LordOfTheRings.Location hiding (location)
+import LordOfTheRings.Location.Grid (adjacentPositions)
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Narrator
 import LordOfTheRings.Log.Refs (sendLogInOpenBlock)
@@ -393,9 +394,16 @@ runGame msg g = case msg of
   PlaceLocation lid ActiveLocation
     | Just l <- Map.lookup lid g.entities.locations
     , l.placement /= ActiveLocation -> do
-        g' <- runGame'' msg g
+        -- on the Island Map the location traveled from stays in its place, its progress
+        -- removed, and the staging area is the locations around the new one
+        let onMap = isJust l.position
+            leave x
+              | isJust x.position && x.placement == ActiveLocation =
+                  overAttrs (\a -> a {locationPlacement = OnIslandMap, locationTokens = removeAllTokens Progress a.locationTokens}) x
+              | otherwise = x
+        g' <- runGame'' msg (if onMap then g & entitiesL . locationsL %~ fmap leave else g)
         -- the enemies grappling it let go first (The Thing in the Depths)
-        pushAll $ letGoOf g lid <> [CheckWindows [mkWhen $ BecameActiveLocation lid], CheckWindows [mkAfter $ BecameActiveLocation lid]]
+        pushAll $ letGoOf g lid <> [ArrangeIslandMap | onMap] <> [CheckWindows [mkWhen $ BecameActiveLocation lid], CheckWindows [mkAfter $ BecameActiveLocation lid]]
         pure g'
   -- and as it is explored, before it leaves play
   CheckWindows ws | explored@(_ : _) <- [lid | Window When (Explored lid) <- ws] -> do
@@ -2588,7 +2596,7 @@ runGameMessage msg g = case msg of
         pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
   -- a double-sided location turns over, as an Uncharted location does
   Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
-    push $ CheckWindows [mkAfter $ LocationFlipped lid]
+    pushAll $ [ArrangeIslandMap | isJust l.position] <> [CheckWindows [mkAfter $ LocationFlipped lid]]
     pure $ g & entitiesL . locationsL %~ Map.insert lid l
   -- as Shrine to Morgoth floods: turned over, its progress back on the side it turns to
   FlipKeepingProgress lid | Just l <- Map.lookup lid g.entities.locations, Just l' <- turnLocationOver l -> do
@@ -2626,8 +2634,25 @@ runGameMessage msg g = case msg of
     codes <- shuffleM $ map (toCardCode . locationDeckCard . toAttrs) staged
     dealt <- for (zip staged codes) \(l, code) -> do
       cid <- getRandom
-      pure $ overAttrs (\a -> a {locationPlacement = StagingArea}) $ enterFaceUp $ createLocation (MkEncounterCard cid code) (toId l)
+      pure $ overAttrs (\a -> a {locationPlacement = StagingArea, locationPosition = l.position}) $ enterFaceUp $ createLocation (MkEncounterCard cid code) (toId l)
     pure $ g & entitiesL . locationsL %~ \ls -> foldr (\l -> Map.insert (toId l) l) ls dealt
+  PrepareIslandMap cards -> do
+    laid <- for cards \(pos, card) -> overAttrs (\a -> a {locationPlacement = OnIslandMap, locationPosition = Just pos}) <$> newLocation card
+    pure $ g & entitiesL . locationsL %~ \ls -> foldr (\l -> Map.insert (toId l) l) ls laid
+  ArrangeIslandMap -> do
+    let laid = filter (isJust . (.position)) (toList g.entities.locations)
+        actives = [p | l <- laid, l.placement == ActiveLocation, Just p <- [l.position]]
+        aroundActive l = maybe False (\p -> any ((p `elem`) . adjacentPositions) actives) l.position
+    placements <- for laid \l -> do
+      excluded <- elem NotInStagingArea <$> getModifiers (toTarget l)
+      pure
+        ( toId l
+        , if
+            | l.placement == ActiveLocation -> ActiveLocation
+            | aroundActive l && not excluded -> StagingArea
+            | otherwise -> OnIslandMap
+        )
+    pure $ g & entitiesL . locationsL %~ \ls -> foldr (\(lid, p) -> Map.adjust (overAttrs (\a -> a {locationPlacement = p})) lid) ls placements
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
     let thisAlly =
           -- the damage it took in the staging area stays on it, as Celador's

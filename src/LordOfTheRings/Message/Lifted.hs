@@ -989,16 +989,21 @@ the first player choosing among players tied for it, as Prowling Orc's Scour and
 Gornákh read.
 -}
 engageHighestThreatAndAttack :: (ReverseQueue m, Targetable source) => source -> EnemyId -> m ()
-engageHighestThreatAndAttack source eid = do
+engageHighestThreatAndAttack source eid = withHighestThreatPlayer source \pid -> do
+  engageEnemy pid eid
+  immediateAttack pid eid
+
+-- | What the player with the highest threat is to do, the first player choosing among
+-- players tied for it.
+withHighestThreatPlayer :: (ReverseQueue m, Targetable source) => source -> (PlayerId -> QueueT Message m ()) -> m ()
+withHighestThreatPlayer source f = do
   players <- traverse (\p -> (p,) <$> getThreat p) =<< getRemainingPlayers
   let highest = foldr (max . snd) 0 players
   lead <- getLead
   chooseOrRunOneM lead do
     questionLabeled "engageHighestThreat"
     causedBy source
-    targets [p | (p, threat) <- players, threat == highest] \pid -> do
-      engageEnemy pid eid
-      immediateAttack pid eid
+    targets [p | (p, threat) <- players, threat == highest] f
 
 -- | The hero leaves play, set aside out of play.
 setAsideHero :: ReverseQueue m => HeroId -> m ()

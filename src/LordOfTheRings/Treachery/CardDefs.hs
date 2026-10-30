@@ -199,6 +199,10 @@ allTreacheryCards =
       , intoTheAbyss
       , tanglingAndGrasping
       , ancientDepths
+      , deeperIntoTheRuins
+      , furiousRainstorm
+      , dwindlingSupplies
+      , sunkenRuins
       ]
 
 deepDeepDark :: CardDef
@@ -1233,3 +1237,15 @@ tanglingAndGrasping =
 
 ancientDepths :: CardDef
 ancientDepths = (treachery "12108" "Ancient Depths" TheDrownedRuins 3) {cdShadowEffect = True}
+
+deeperIntoTheRuins :: CardDef
+deeperIntoTheRuins = treachery "12078" "Deeper into the Ruins" TempleOfTheDeceived 4
+
+furiousRainstorm :: CardDef
+furiousRainstorm = (treachery "12079" "Furious Rainstorm" TempleOfTheDeceived 3) {cdShadowEffect = True}
+
+dwindlingSupplies :: CardDef
+dwindlingSupplies = (treachery "12080" "Dwindling Supplies" TempleOfTheDeceived 3) {cdShadowEffect = True}
+
+sunkenRuins :: CardDef
+sunkenRuins = (treachery "12081" "Sunken Ruins" TempleOfTheDeceived 3) {cdKeywords = setFromList [Doomed 1]}

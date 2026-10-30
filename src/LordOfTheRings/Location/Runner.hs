@@ -24,8 +24,9 @@ instance RunMessage LocationAttrs where
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       let attrs' = attrs & tokensL %~ addTokens token n
       questPoints <- modifiedValue questPointsOf attrs attrs'.questPoints
-      -- a location with as much progress as its quest points is explored
-      when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints)
+      -- a location with as much progress as its quest points is explored, but one on the
+      -- Island Map stays in its place (Temple of the Deceived)
+      when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints && isNothing attrs.position)
         $ pushAll
           [ CheckWindows [mkWhen $ Explored attrs.id]
           , -- a location with victory points goes to the victory display

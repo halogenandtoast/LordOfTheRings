@@ -77,6 +77,7 @@ allObjectiveCards =
       , captainSahirObjective
       , naasiyahObjective
       , theHavensBurn
+      , gateKey
       ]
 
 durinsAxe :: CardDef
@@ -516,3 +517,6 @@ naasiyahObjective =
 
 theHavensBurn :: CardDef
 theHavensBurn = objective "11038" "The Havens Burn" RaidOnTheGreyHavens 1
+
+gateKey :: CardDef
+gateKey = unique (objective "12071" "Gate Key" TempleOfTheDeceived 1) {cdCardTraits = setFromList [Item, Artifact]}

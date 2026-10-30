@@ -231,6 +231,10 @@ allEnemyCards =
       , giantArm
       , seaScorpion
       , caveEel
+      , templeGuardian
+      , faithlessDesecrator
+      , islandWatcher
+      , profaneDead
       ]
 
 namelessThing :: CardDef
@@ -1857,3 +1861,25 @@ seaScorpion =
 
 caveEel :: CardDef
 caveEel = (enemy "12097" "Cave Eel" TheDrownedRuins 3 20 3 3 4 2) {cdCardTraits = setFromList [Creature]}
+
+-- | X threat, X the number of players: its card gives itself the rest.
+templeGuardian :: CardDef
+templeGuardian =
+  unique
+    (enemy "12070" "Temple Guardian" TempleOfTheDeceived 1 50 0 6 4 10)
+      { cdCardTraits = setFromList [Undead]
+      , cdVictoryPoints = Just 4
+      }
+
+faithlessDesecrator :: CardDef
+faithlessDesecrator =
+  (enemy "12075" "Faithless Desecrator" TempleOfTheDeceived 3 25 2 2 2 4)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+islandWatcher :: CardDef
+islandWatcher = (enemy "12076" "Island Watcher" TempleOfTheDeceived 2 46 3 4 1 5) {cdCardTraits = setFromList [Undead]}
+
+profaneDead :: CardDef
+profaneDead = (enemy "12077" "Profane Dead" TempleOfTheDeceived 2 35 1 2 3 3) {cdCardTraits = setFromList [Undead]}

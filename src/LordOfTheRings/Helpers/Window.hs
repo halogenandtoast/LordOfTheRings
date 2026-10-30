@@ -12,6 +12,8 @@ import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
+import LordOfTheRings.Location.Grid (distance)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (Surge))
 import LordOfTheRings.Location.Types (locationCardId)
@@ -20,7 +22,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
-  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelableWithActiveLocation),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -424,11 +426,23 @@ abilityKey ab = (ab.abilitySource, ab.abilityIndex)
 
 -- | The locations the travel phase may go to: none while a location is active, but one
 -- that may become a second active location, as Ruined Tower.
+-- On the Island Map, a location next to the active one once it has as much progress as
+-- its quest points (Temple of the Deceived).
 travelableLocations :: HasGame m => m [LocationId]
 travelableLocations = do
-  active <- length <$> select IsActiveLocation
+  actives <- traverse getLocation =<< select IsActiveLocation
   staged <- filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
-  case active of
-    0 -> pure staged
-    1 -> filterM (fmap (elem TravelableWithActiveLocation) . getModifiers) staged
+  case actives of
+    [l] | Just pos <- l.position -> islandTravel l pos
+    [] -> pure staged
+    [_] -> filterM (fmap (elem TravelableWithActiveLocation) . getModifiers) staged
     _ -> pure []
+ where
+  islandTravel l pos = do
+    questPoints <- getLocationQuestPoints l.id
+    range <- (\ms -> foldr max 1 [n | TravelRange n <- ms]) <$> getModifiers l.id
+    let near x = maybe False (\p -> p /= pos && distance p pos <= range) x.position
+    laid <- getsGame (filter near . toList . entitiesLocations . gameEntities)
+    if l.progress < questPoints
+      then pure []
+      else filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) (map toId laid)

@@ -192,6 +192,10 @@ import LordOfTheRings.Treachery.Cards.PowerfulUndertow
 import LordOfTheRings.Treachery.Cards.IntoTheAbyss
 import LordOfTheRings.Treachery.Cards.TanglingAndGrasping
 import LordOfTheRings.Treachery.Cards.AncientDepths
+import LordOfTheRings.Treachery.Cards.DeeperIntoTheRuins
+import LordOfTheRings.Treachery.Cards.FuriousRainstorm
+import LordOfTheRings.Treachery.Cards.DwindlingSupplies
+import LordOfTheRings.Treachery.Cards.SunkenRuins
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -408,5 +412,9 @@ allTreacherys =
         , SomeTreacheryCard intoTheAbyss
         , SomeTreacheryCard tanglingAndGrasping
         , SomeTreacheryCard ancientDepths
+        , SomeTreacheryCard deeperIntoTheRuins
+        , SomeTreacheryCard furiousRainstorm
+        , SomeTreacheryCard dwindlingSupplies
+        , SomeTreacheryCard sunkenRuins
         ]
     ]

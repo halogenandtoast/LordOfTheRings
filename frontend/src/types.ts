@@ -82,6 +82,8 @@ export interface ScenarioView {
   activeLocationAttachments: CardView[]
   /** A second active location, as Ruined Tower makes, with its attachments. */
   otherActiveLocations: { card: CardView; attachments: CardView[] }[]
+  /** The Island Map's locations in their places, the active one and those in the staging area around it marked (Temple of the Deceived). */
+  islandMap: IslandMapCell[]
   /** what is under the quest card, as Captured! holds Faramir */
   questAttachments: CardView[]
   staging: CardView[]
@@ -101,6 +103,15 @@ export interface ScenarioView {
   /** The Stormcaller's quest stage, with its progress, and the cards in its area (Flight of the Stormcaller). */
   stormcallerStage: CardView | null
   stormcallerArea: CardView[]
+}
+
+export interface IslandMapCell {
+  card: CardView
+  attachments: CardView[]
+  column: number
+  row: number
+  active: boolean
+  staged: boolean
 }
 
 export interface AreaView {

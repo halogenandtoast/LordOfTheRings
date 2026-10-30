@@ -225,6 +225,10 @@ import LordOfTheRings.Enemy.Cards.GraspingArm
 import LordOfTheRings.Enemy.Cards.GiantArm
 import LordOfTheRings.Enemy.Cards.SeaScorpion
 import LordOfTheRings.Enemy.Cards.CaveEel
+import LordOfTheRings.Enemy.Cards.TempleGuardian
+import LordOfTheRings.Enemy.Cards.FaithlessDesecrator
+import LordOfTheRings.Enemy.Cards.IslandWatcher
+import LordOfTheRings.Enemy.Cards.ProfaneDead
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -475,5 +479,9 @@ allEnemys =
         , SomeEnemyCard giantArm
         , SomeEnemyCard seaScorpion
         , SomeEnemyCard caveEel
+        , SomeEnemyCard templeGuardian
+        , SomeEnemyCard faithlessDesecrator
+        , SomeEnemyCard islandWatcher
+        , SomeEnemyCard profaneDead
         ]
     ]

@@ -6,6 +6,7 @@ import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
+import LordOfTheRings.Location.Grid (Pos)
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, HeroMatcher)
 import LordOfTheRings.Modifier (ModifierType)
@@ -609,6 +610,12 @@ data Message
     AddUnderwaterFromGrottoDeck
   | -- | the location leaves play for the Grotto deck, Grotto side up, which is shuffled
     ShuffleIntoGrottoDeck LocationId
+  | -- | the Uncharted location cards are laid out as the Island Map, each in its place, Lost
+    -- Island or Temple side faceup (Temple of the Deceived)
+    PrepareIslandMap [(Pos, EncounterCard)]
+  | -- | the locations on the Island Map orthogonally adjacent to the active location are
+    -- in the staging area, the others are not, as the active location changes or turns over
+    ArrangeIslandMap
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

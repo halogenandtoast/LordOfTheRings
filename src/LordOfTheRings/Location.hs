@@ -249,6 +249,12 @@ import LordOfTheRings.Location.Cards.DarkAbyss
 import LordOfTheRings.Location.Cards.TwistingHollow
 import LordOfTheRings.Location.Cards.SunkenTemple
 import LordOfTheRings.Location.Cards.DrownedCave
+import LordOfTheRings.Location.Cards.TempleOfTheDeceived
+import LordOfTheRings.Location.Cards.TheGrottosEntrance
+import LordOfTheRings.Location.Cards.TempleHalls
+import LordOfTheRings.Location.Cards.JaggedCliffs
+import LordOfTheRings.Location.Cards.WindingCaverns
+import LordOfTheRings.Location.Cards.JunglePath
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -538,5 +544,12 @@ allLocations =
         , SomeLocationCard twistingHollow
         , SomeLocationCard sunkenTemple
         , SomeLocationCard drownedCave
+        , SomeLocationCard lostIslandTempleOfTheDeceived
+        , SomeLocationCard templeOfTheDeceived
+        , SomeLocationCard theGrottosEntrance
+        , SomeLocationCard templeHalls
+        , SomeLocationCard jaggedCliffs
+        , SomeLocationCard windingCaverns
+        , SomeLocationCard junglePath
         ]
     ]
