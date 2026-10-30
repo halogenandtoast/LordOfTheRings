@@ -188,6 +188,10 @@ allTreacheryCards =
       , ruinsOfAgesPast
       , curseOfTheDownfallen
       , aimlessWandering
+      , serpentsTail
+      , foesOfEcthelion
+      , umbarPatrol
+      , furyAndMalice
       ]
 
 deepDeepDark :: CardDef
@@ -1178,3 +1182,17 @@ curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
+
+-- * The City of Corsairs: Coast of Umbar and The City of Corsairs
+
+serpentsTail :: CardDef
+serpentsTail = treachery "12157" "Serpent's Tail" CoastOfUmbar 2
+
+foesOfEcthelion :: CardDef
+foesOfEcthelion = treachery "12163" "Foes of Ecthelion" TheCityOfCorsairs 2
+
+umbarPatrol :: CardDef
+umbarPatrol = treachery "12164" "Umbar Patrol" TheCityOfCorsairs 2
+
+furyAndMalice :: CardDef
+furyAndMalice = treachery "12165" "Fury and Malice" TheCityOfCorsairs 3

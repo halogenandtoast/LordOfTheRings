@@ -218,6 +218,10 @@ allQuestCards =
       , corsairPursuit
       , exploreTheIsland
       , aFatefulDiscovery
+      , theCoastOfUmbar
+      , fateOfTheDreamChaser
+      , theHavenOfUmbar
+      , finalConfrontation
       ]
 
 theDrippingWalls :: CardDef
@@ -789,3 +793,18 @@ exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
 -- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
 aFatefulDiscovery :: CardDef
 aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}
+
+-- * The City of Corsairs: the first two stages are Coast of Umbar's, the last two The City
+-- of Corsairs'
+
+theCoastOfUmbar :: CardDef
+theCoastOfUmbar = (quest "12147" "The Coast of Umbar" CoastOfUmbar 1 15) {cdKeywords = setFromList [Sailing]}
+
+fateOfTheDreamChaser :: CardDef
+fateOfTheDreamChaser = quest "12148" "Fate of the Dream-chaser" CoastOfUmbar 2 0
+
+theHavenOfUmbar :: CardDef
+theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
+
+finalConfrontation :: CardDef
+finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
