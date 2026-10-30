@@ -1,6 +1,6 @@
 // The shapes the server sends. The game is sent whole; ./view.ts turns it into the views the board draws.
 
-import type { LogEntry } from './gameLog'
+import type { LogEntry, LogRef } from './gameLog'
 
 export interface CardDef {
   cardCode: string
@@ -101,6 +101,8 @@ export interface ServerGame {
   }
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
+  /** The cards in a hand an effect forbids playing, with what is forbidding them. */
+  playProhibitions?: Record<string, LogRef[]>
   entities: Record<'heroes' | 'allies' | 'enemies' | 'locations' | 'attachments' | 'quests' | 'treacheries' | 'objectives', Record<string, Entity>>
   /** Allies that just left play, kept while their own responses to leaving are asked. */
   leftPlay?: Record<string, Entity>

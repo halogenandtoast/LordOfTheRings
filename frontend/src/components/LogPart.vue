@@ -3,8 +3,7 @@
 // translated sentence still carries its card chips.
 import { computed } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
-import type { LogPart, LogRef } from '../gameLog'
-import type { CardView } from '../types'
+import { refPreview, type LogPart, type LogRef } from '../gameLog'
 
 const props = defineProps<{ part: LogPart }>()
 
@@ -21,19 +20,8 @@ const plural = computed(() => {
   return count?.tag === 'LogNumber' ? count.contents : undefined
 })
 
-// What the overlay needs to draw the card: a prisoner face down, a quest's other side.
-const preview = (ref: LogRef): CardView | null =>
-  ref.cardCode
-    ? ({
-        code: ref.cardCode,
-        name: ref.name,
-        flipped: ref.kind === 'RefQuest' && ref.faceDown,
-        facedown: ref.kind === 'RefHero' && ref.faceDown ? 'player' : undefined,
-      } as CardView)
-    : null
-
 const show = (ref: LogRef, event: PointerEvent) => {
-  const card = preview(ref)
+  const card = refPreview(ref)
   if (card) overlay.show(card, event.currentTarget as HTMLElement, false, event.pointerType === 'touch')
 }
 </script>

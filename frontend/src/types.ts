@@ -1,4 +1,5 @@
 import { errataImage } from './errata'
+import type { LogRef } from './gameLog'
 import type { Target } from './server'
 
 export interface CardView {
@@ -37,6 +38,8 @@ export interface CardView {
   counting: string[]
   /** While attackers are declared, the attack they would make on it, bonuses included. */
   attackStrength?: number
+  /** In hand, an effect forbids playing it: what is forbidding it, which may be unnamed. */
+  prohibited?: LogRef[]
   /** Shown as the FAQ's errata reads: its owner plays with errata, or it is an encounter card. */
   errata?: boolean
 }

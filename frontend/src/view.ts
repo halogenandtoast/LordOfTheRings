@@ -211,7 +211,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       deckSize: p.deckSize,
       discardSize: p.discard.length,
       hand: keepOrder(previous?.players.find((v) => v.playerId === pid)?.hand, [
-        ...p.hand.map((c) => card(c.cardCode, c.id)),
+        ...p.hand.map((c) => card(c.cardCode, c.id, { prohibited: game.playProhibitions?.[c.id] })),
         // played but not yet in play: being paid for, or an attachment waiting for its host
         ...Object.values(game.activeCosts ?? {}).filter((cost) => cost.player === pid).map((cost) => card(cost.card.cardCode, cost.card.id, { playing: true })),
         ...Object.values(entities.attachments).filter((a) => a.owner === pid && a.placement?.tag === 'Unplaced').map((a) => card(a.cardCode, a.cardId, { playing: true })),

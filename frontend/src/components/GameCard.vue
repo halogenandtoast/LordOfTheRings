@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { Ban } from 'lucide-vue-next'
 import { useCardOverlay } from '../composables/useCardOverlay'
 import { useDebug } from '../composables/useDebug'
 import { useHighlights } from '../composables/useHighlights'
 import { hoveredId, useCombat, type CombatPreview } from '../composables/useCombat'
 import { useServerText } from '../i18n'
+import { refPreview } from '../gameLog'
 import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
 import ChoiceMenu from './ChoiceMenu.vue'
 
@@ -21,6 +24,7 @@ const { card, choices = [], attachments = [], rotated = false, flipping = false,
 }>()
 
 const tr = useServerText()
+const { t } = useI18n()
 const emit = defineEmits<{ choose: [index: number] }>()
 
 const overlay = useCardOverlay()
@@ -96,6 +100,17 @@ watch(
   },
 )
 
+// An effect forbids playing it: greyed, and a mark naming what, hovered for its card, as
+// Arkham's ProhibitedBadge. The first is the one shown; the title names them all.
+const prohibitedTitle = computed(() => {
+  const names = (card.prohibited ?? []).map((ref) => tr(ref.name)).join(', ')
+  return names ? t('game.cannotPlayBecause', { source: names }) : t('game.cannotPlay')
+})
+const showProhibition = (event: PointerEvent) => {
+  const source = card.prohibited?.[0] && refPreview(card.prohibited[0])
+  if (source) overlay.show(source, event.currentTarget as HTMLElement, false, event.pointerType === 'touch')
+}
+
 const toggleUnless = (attached: CardView) => {
   if (!choiceFor(attached)) {
     expanded.value = !expanded.value
@@ -122,7 +137,7 @@ const toggleUnless = (attached: CardView) => {
       <div
         ref="cardRef"
         class="card"
-        :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, flipping }"
+        :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, prohibited: card.prohibited, flipping }"
         :style="{ viewTransitionName: `card-${card.id}` }"
         :title="tr(card.name)"
         :data-card-id="card.id"
@@ -141,6 +156,16 @@ const toggleUnless = (attached: CardView) => {
         <span v-if="banner" class="attached-name" :class="{ exhausted: card.exhausted }">{{ tr(card.name) }}</span>
         <span v-if="card.resources" :key="`resources-${placed.resources}`" class="token resources" :class="{ placed: placed.resources }" :style="{ '--sphere-tint': sphereTint }">{{ card.resources }}</span>
         <span v-if="card.time" class="token time">{{ card.time }}</span>
+        <span
+          v-if="card.prohibited"
+          class="prohibited-badge"
+          :title="prohibitedTitle"
+          :aria-label="prohibitedTitle"
+          @pointerenter="$event.pointerType === 'mouse' && showProhibition($event)"
+          @pointerleave="$event.pointerType === 'mouse' && showOverlay()"
+        >
+          <Ban :stroke-width="3" aria-hidden="true" />
+        </span>
         <span v-if="card.outOfPlay" class="out-of-play-label">{{ $t('game.outOfPlay') }}</span>
         <span v-if="card.progress" :key="`progress-${placed.progress}`" class="token progress" :class="{ placed: placed.progress }">{{ card.progress }}</span>
         <span v-if="preview.defend" class="defend-preview" :class="{ defeated: preview.defend.defeated }">
@@ -386,6 +411,20 @@ const toggleUnless = (attached: CardView) => {
 }
 /* considered out of play though still on the table, as the card Saruman chooses */
 .card.out-of-play img { filter: grayscale(1) brightness(0.55); }
+/* readable at a glance without hiding the card: the art stays, it just stops looking live */
+.card.prohibited img { filter: grayscale(0.6) brightness(0.8); }
+.prohibited-badge {
+  z-index: 3;
+  grid-area: 1 / 1;
+  place-self: start end;
+  margin: 4px;
+  width: calc(var(--card-width) / 6);
+  min-width: 16px;
+  color: #e05252;
+  filter: drop-shadow(0 1px 3px rgb(0 0 0 / 0.8));
+  cursor: help;
+}
+.prohibited-badge svg { display: block; width: 100%; height: auto; }
 .out-of-play-label {
   z-index: 3;
   grid-area: 1 / 1;

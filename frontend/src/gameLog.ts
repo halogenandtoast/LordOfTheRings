@@ -1,6 +1,8 @@
 // The structured game log, as LordOfTheRings.Log.Entry sends it. Mirrors Arkham's
 // types/GameLog.ts: parts arrive already parsed, so rendering is a v-for.
 
+import type { CardView } from './types'
+
 export type LogRefKind =
   | 'RefCard'
   | 'RefPlayer'
@@ -23,6 +25,17 @@ export interface LogRef {
   entityId: string | null
   faceDown: boolean
 }
+
+// What the overlay needs to draw the card: a prisoner face down, a quest's other side.
+export const refPreview = (ref: LogRef): CardView | null =>
+  ref.cardCode
+    ? ({
+        code: ref.cardCode,
+        name: ref.name,
+        flipped: ref.kind === 'RefQuest' && ref.faceDown,
+        facedown: ref.kind === 'RefHero' && ref.faceDown ? 'player' : undefined,
+      } as CardView)
+    : null
 
 export type LogPart =
   | { tag: 'LogText'; contents: string }
