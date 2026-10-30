@@ -166,6 +166,12 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.SecludedCave
+import LordOfTheRings.Location.Cards.TheHoarwell
+import LordOfTheRings.Location.Cards.AbandonedCamp
+import LordOfTheRings.Location.Cards.PatchOfWoods
+import LordOfTheRings.Location.Cards.TrollFells
+import LordOfTheRings.Location.Cards.BarrenMoorland
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -359,5 +365,11 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard secludedCave
+        , SomeLocationCard theHoarwell
+        , SomeLocationCard abandonedCamp
+        , SomeLocationCard patchOfWoods
+        , SomeLocationCard trollFells
+        , SomeLocationCard barrenMoorland
         ]
     ]
