@@ -42,12 +42,13 @@ import LordOfTheRings.Scenario.Scenarios.TheDunlandTrap as X
 import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad as X
 import LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret as X
 import LordOfTheRings.Scenario.Scenarios.TheNinInEilph as X
+import LordOfTheRings.Scenario.Scenarios.TheBattleOfCarnDum as X
 import LordOfTheRings.Scenario.Scenarios.TheThreeTrials as X
 import LordOfTheRings.Scenario.Types as X
 
 -- | The scenarios a game can be dealt, by id.
 allScenarios :: [Scenario]
-allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel, theLongDark, roadToRivendell, theRedhornGate, foundationsOfStone, shadowAndFlame, theWatcherInTheWater, theSiegeOfCairAndros, intoIthilien, perilInPelargir, encounterAtAmonDin, theDruadanForest, theMorgulVale, theStewardsFear, assaultOnOsgiliath, theBloodOfGondor, toCatchAnOrc, intoFangorn, theFordsOfIsen, theAntleredCrown, theDunlandTrap, troubleInTharbad, celebrimborsSecret, theNinInEilph, theThreeTrials]
+allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel, theLongDark, roadToRivendell, theRedhornGate, foundationsOfStone, shadowAndFlame, theWatcherInTheWater, theSiegeOfCairAndros, intoIthilien, perilInPelargir, encounterAtAmonDin, theDruadanForest, theMorgulVale, theStewardsFear, assaultOnOsgiliath, theBloodOfGondor, toCatchAnOrc, intoFangorn, theFordsOfIsen, theAntleredCrown, theDunlandTrap, troubleInTharbad, celebrimborsSecret, theNinInEilph, theThreeTrials, theBattleOfCarnDum]
 
 lookupScenario :: ScenarioId -> Maybe Scenario
 lookupScenario sid = find ((== sid) . toId) allScenarios
