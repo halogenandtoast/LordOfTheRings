@@ -209,6 +209,10 @@ import LordOfTheRings.Enemy.Cards.SoullessCadaver
 import LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
 import LordOfTheRings.Enemy.Cards.CaptainSahir
 import LordOfTheRings.Enemy.Cards.Naasiyah
+import LordOfTheRings.Enemy.Cards.StormcallerTheCityOfCorsairs
+import LordOfTheRings.Enemy.Cards.SlaveShip
+import LordOfTheRings.Enemy.Cards.UmbarSlaver
+import LordOfTheRings.Enemy.Cards.CaptainSahirTheCityOfCorsairs
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -443,5 +447,9 @@ allEnemys =
         , SomeEnemyCard throngsOfUnfaithful
         , SomeEnemyCard captainSahir
         , SomeEnemyCard naasiyah
+        , SomeEnemyCard stormcallerTheCityOfCorsairs
+        , SomeEnemyCard slaveShip
+        , SomeEnemyCard umbarSlaver
+        , SomeEnemyCard captainSahirTheCityOfCorsairs
         ]
     ]

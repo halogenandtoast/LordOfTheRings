@@ -181,6 +181,10 @@ import LordOfTheRings.Treachery.Cards.LingeringMalevolence
 import LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
 import LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
 import LordOfTheRings.Treachery.Cards.AimlessWandering
+import LordOfTheRings.Treachery.Cards.SerpentsTail
+import LordOfTheRings.Treachery.Cards.FoesOfEcthelion
+import LordOfTheRings.Treachery.Cards.UmbarPatrol
+import LordOfTheRings.Treachery.Cards.FuryAndMalice
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -386,5 +390,9 @@ allTreacherys =
         , SomeTreacheryCard ruinsOfAgesPast
         , SomeTreacheryCard curseOfTheDownfallen
         , SomeTreacheryCard aimlessWandering
+        , SomeTreacheryCard serpentsTail
+        , SomeTreacheryCard foesOfEcthelion
+        , SomeTreacheryCard umbarPatrol
+        , SomeTreacheryCard furyAndMalice
         ]
     ]

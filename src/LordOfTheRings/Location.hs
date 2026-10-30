@@ -224,6 +224,13 @@ import LordOfTheRings.Location.Cards.SteepPlateau
 import LordOfTheRings.Location.Cards.FloodedRuins
 import LordOfTheRings.Location.Cards.DrownedGraves
 import LordOfTheRings.Location.Cards.CursedTemple
+import LordOfTheRings.Location.Cards.SouthernBelfalas
+import LordOfTheRings.Location.Cards.CorsairWaters
+import LordOfTheRings.Location.Cards.WatchTower
+import LordOfTheRings.Location.Cards.TheShatteredMonument
+import LordOfTheRings.Location.Cards.StreetsOfUmbar
+import LordOfTheRings.Location.Cards.CityOfCorsairs
+import LordOfTheRings.Location.Cards.UmbarHarbor
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -488,5 +495,12 @@ allLocations =
         , SomeLocationCard floodedRuins
         , SomeLocationCard drownedGraves
         , SomeLocationCard cursedTemple
+        , SomeLocationCard southernBelfalas
+        , SomeLocationCard corsairWaters
+        , SomeLocationCard watchTower
+        , SomeLocationCard theShatteredMonument
+        , SomeLocationCard streetsOfUmbar
+        , SomeLocationCard cityOfCorsairs
+        , SomeLocationCard umbarHarbor
         ]
     ]

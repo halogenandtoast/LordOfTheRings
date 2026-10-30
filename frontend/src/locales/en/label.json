@@ -1429,5 +1429,30 @@
   },
   "theHousesOfHealing": {
     "hero": "The Houses of Healing: choose a hero in a discard pile to put back into play"
+  },
+  "stormcaller": {
+    "choose": "Stormcaller: choose one",
+    "return": "Return the Stormcaller to the staging area"
+  },
+  "southernBelfalas": {
+    "discard": "Southern Belfalas: choose an ally you control to discard"
+  },
+  "corsairWaters": {
+    "choose": "Corsair Waters: choose one",
+    "undefended": "Treat this attack as undefended"
+  },
+  "watchTower": {
+    "raider": "Watch Tower: choose a Raider enemy to add the resources to"
+  },
+  "streetsOfUmbar": {
+    "choose": "Streets of Umbar: travel to a Streets of Umbar, or add 2 resources to a Raider enemy",
+    "raider": "Add 2 resources to a Raider enemy",
+    "chooseRaider": "Streets of Umbar: choose a Raider enemy to add 2 resources to"
+  },
+  "foesOfEcthelion": {
+    "raider": "Foes of Ecthelion: choose a Raider enemy in the staging area to add 2 resources to"
+  },
+  "umbarPatrol": {
+    "return": "Umbar Patrol: choose an enemy engaged with you to return to the staging area"
   }
 }
