@@ -11,7 +11,14 @@ data Keyword
     Archery Int
   | -- | on a quest: characters quest with their attack instead of their willpower
     Battle
+  | -- | on an encounter card: as it is revealed it captures this many cards from the top of
+    -- its player's captured deck underneath it (Escape from Mount Gram resolves it)
+    Capture Int
   | Doomed Int
+  | -- | on a player card: it is shuffled into the encounter deck, not a player's deck, and
+    -- resolves as an encounter card when revealed, as Ranger of the North (its cards
+    -- resolve it)
+    Encounter
   | -- | an objective ally the first player gains control of as it enters play
     FirstPlayerGainsControl
   | Guarded
@@ -24,6 +31,9 @@ data Keyword
   | -- | on an enemy: it heals this much damage as the refresh phase begins
     Regenerate Int
   | Restricted
+  | -- | on a location: what Across the Ettenmoors' cards ask for, as "a location with the
+    -- safe keyword" reads (its cards resolve it)
+    Safe
   | -- | does nothing by itself: the card's Scour effect resolves when a card says to trigger
     -- it (Celebrimbor's Secret)
     Scour
