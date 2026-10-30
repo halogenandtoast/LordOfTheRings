@@ -134,6 +134,11 @@ data WindowType
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
     -- (Escape from Mount Gram)
     CapturedCardsRescued Card [Card]
+  | -- | the player drew these cards at the beginning of the resource phase, as Círdan the
+    -- Shipwright reads
+    DrewForResourcePhase PlayerId [CardId]
+  | -- | the player drew their setup hand, before deciding whether to mulligan
+    SetupHandDrawn PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

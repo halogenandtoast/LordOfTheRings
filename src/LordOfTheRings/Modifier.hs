@@ -420,6 +420,14 @@ data ModifierType
   | -- | on the game: each ally that leaves play goes to its owner's hand instead of the
     -- discard pile, as Rallying Cry's Valour Action reads
     AlliesLeavePlayToHand
+  | -- | on a character: it quests with its attack instead of its willpower, or instead of
+    -- its defense under siege, as Grappling Hook reads
+    QuestsWithAttack
+  | -- | on a character: it can commit to quests while exhausted, as Lindon Navigator reads
+    CanCommitWhileExhausted
+  | -- | on a location in the staging area: progress from questing successfully may be
+    -- placed on it before it is placed on the current quest, as Explorer's Almanac reads
+    MayTakeQuestingProgress
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

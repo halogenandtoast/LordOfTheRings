@@ -1052,6 +1052,8 @@
     "search": "Choose a Creature enemy to put into play engaged with you"
   },
   "progressFirst": "Choose the location to place progress on before the active location",
+  "questingProgress": "Choose a location to place the questing progress on before the quest",
+  "placeOnQuest": "Place it on the quest",
   "threeTrials": {
     "chooseTrial": "Choose the trial to advance to"
   },

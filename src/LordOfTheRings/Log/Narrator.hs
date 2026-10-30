@@ -82,6 +82,7 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ action [ikeyPart "log.engages" ["enemy" ~> e, "player" ~> who]]
   DefendWith _ _ defender -> Just $ whenRef defender \d -> one $ action [ikeyPart "log.defends" ["defender" ~> d]]
+  DeclareAsDefender _ _ defender -> Just $ whenRef defender \d -> one $ action [ikeyPart "log.defends" ["defender" ~> d]]
   DefendedByMany _ _ defenders@(_ : _ : _) -> Just do
     refs <- catMaybes <$> traverse targetRefFor defenders
     one $ action [ikeyPart "log.defendMany" ["defenders" ~> refs]]

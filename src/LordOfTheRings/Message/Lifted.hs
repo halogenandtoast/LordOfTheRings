@@ -21,7 +21,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Hero.Types (heroCardId)
-import LordOfTheRings.I18n (intVar)
+import LordOfTheRings.I18n (ikey, intVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -37,6 +37,7 @@ import LordOfTheRings.Placement (
  )
 import LordOfTheRings.Prelude hiding (count)
 import LordOfTheRings.Queue
+import LordOfTheRings.Question (Question (QuestionLabel))
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Target
@@ -1248,3 +1249,22 @@ discardFromDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 discardFromDeck pid card = do
   push $ RemoveFromDeck pid card.id
   push $ PutInDiscard card
+
+{- | The character defends the enemy's attack on the player, exhausted or not, declared
+from the window after the enemy is declared as an attacker, as Anchor Watch reads; it
+defends in place of the player's own declaration.
+-}
+declareAsDefender :: (ReverseQueue m, Targetable target) => PlayerId -> EnemyId -> target -> m ()
+declareAsDefender pid eid = push . DeclareAsDefender pid eid . toTarget
+
+-- | The player may discard any number of cards from his hand, which the source reads
+-- back as 'EachDiscardAnyFromHand' with no player left to ask, as Galdor of the Havens.
+mayDiscardFromHand :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+mayDiscardFromHand source pid = push $ EachDiscardAnyFromHand (toSource source) [pid] []
+
+-- | The player keeps his setup hand without being asked to mulligan, from the window
+-- after drawing it, as Galdor of the Havens' response is taken instead of a mulligan.
+skipMulligan :: (MonadTrans t, HasQueue Message m) => PlayerId -> t m ()
+skipMulligan pid = cancelMatching \case
+  Ask pid' (QuestionLabel l _ _ _) -> pid == pid' && l == ikey "label.keepStartingHand"
+  _ -> False
