@@ -204,6 +204,7 @@ data LocationMatcher
   | -- | a location whose id sorts before the given one's: of several copies, the first
     -- stands for them all, as an ability that does not stack is triggered by one
     LocationWithIdBelow LocationId
+  | UniqueLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
