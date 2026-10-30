@@ -176,6 +176,11 @@ allLocationCards =
       , hallowedCircle
       , cursedForest
       , grimFoothills
+      , theGreatHall
+      , forbiddenDescent
+      , eerieHalls
+      , ghostlyRuins
+      , decrepitRemains
       ]
 
 drownedTreasury :: CardDef
@@ -1278,4 +1283,32 @@ grimFoothills =
     { cdCardTraits = setFromList [Hills]
     , cdKeywords = setFromList [Doomed 2]
     , cdEasyModeQuantity = Just 2
+    }
+
+theGreatHall :: CardDef
+theGreatHall =
+  unique
+    (location "10097" "The Great Hall" TheTreacheryOfRhudaur 1 4 8)
+      { cdCardTraits = setFromList [Ruins]
+      , cdVictoryPoints = Just 2
+      }
+
+forbiddenDescent :: CardDef
+forbiddenDescent = (location "10101" "Forbidden Descent" TheTreacheryOfRhudaur 2 2 6) {cdCardTraits = setFromList [Ruins]}
+
+eerieHalls :: CardDef
+eerieHalls =
+  (location "10102" "Eerie Halls" TheTreacheryOfRhudaur 2 5 4)
+    { cdCardTraits = setFromList [Ruins]
+    , cdShadowEffect = True
+    }
+
+ghostlyRuins :: CardDef
+ghostlyRuins = (location "10103" "Ghostly Ruins" TheTreacheryOfRhudaur 2 4 4) {cdCardTraits = setFromList [Ruins]}
+
+decrepitRemains :: CardDef
+decrepitRemains =
+  (location "10104" "Decrepit Remains" TheTreacheryOfRhudaur 2 1 3)
+    { cdCardTraits = setFromList [Ruins]
+    , cdShadowEffect = True
     }

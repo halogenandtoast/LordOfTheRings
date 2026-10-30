@@ -162,6 +162,9 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , thaurdir
+      , wightOfRhudaur
+      , traitorousWight
       ]
 
 namelessThing :: CardDef
@@ -1289,4 +1292,27 @@ spiritOfTheWild =
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
+    }
+
+-- | Indestructible. Cannot have attachments, from its own modifiers.
+thaurdir :: CardDef
+thaurdir =
+  unique
+    (enemy "10098" "Thaurdir" TheTreacheryOfRhudaur 1 1 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+-- | Surge or Doomed 2, by the current quest's progress, from its own card.
+wightOfRhudaur :: CardDef
+wightOfRhudaur =
+  (enemy "10099" "Wight of Rhudaur" TheTreacheryOfRhudaur 2 23 2 3 3 5)
+    { cdCardTraits = setFromList [Undead, Wight]
+    }
+
+traitorousWight :: CardDef
+traitorousWight =
+  (enemy "10100" "Traitorous Wight" TheTreacheryOfRhudaur 3 32 2 4 2 4)
+    { cdCardTraits = setFromList [Undead, Wight]
+    , cdShadowEffect = True
     }

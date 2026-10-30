@@ -58,6 +58,10 @@ allObjectiveCards =
       , keyOfTheBoar
       , keyOfTheWolf
       , keyOfTheRaven
+      , amarthiulTheTreacheryOfRhudaur
+      , daechanarsBrand
+      , heirloomOfIarchon
+      , ordersFromAngmar
       ]
 
 durinsAxe :: CardDef
@@ -357,3 +361,24 @@ keyOfTheWolf = threeTrialsKey "08044" "Key of the Wolf" Wolf
 
 keyOfTheRaven :: CardDef
 keyOfTheRaven = threeTrialsKey "08045" "Key of the Raven" Raven
+
+amarthiulTheTreacheryOfRhudaur :: CardDef
+amarthiulTheTreacheryOfRhudaur =
+  ((objective "10096" "Amarthiúl" TheTreacheryOfRhudaur 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | The other side of Quiet the Spirits, never in the encounter deck.
+daechanarsBrand :: CardDef
+daechanarsBrand = (objective "10110" "Daechanar's Brand" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}
+
+-- | The other side of Sift through the Debris, never in the encounter deck.
+heirloomOfIarchon :: CardDef
+heirloomOfIarchon = (objective "10112" "Heirloom of Iârchon" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}
+
+-- | The other side of Decipher Ancient Texts, never in the encounter deck.
+ordersFromAngmar :: CardDef
+ordersFromAngmar = (objective "10114" "Orders from Angmar" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}
