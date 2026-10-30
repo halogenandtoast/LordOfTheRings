@@ -101,6 +101,9 @@ import LordOfTheRings.Quest.Cards.HoldTheFords
 import LordOfTheRings.Quest.Cards.BattleForDunland
 import LordOfTheRings.Quest.Cards.TheRavenClan
 import LordOfTheRings.Quest.Cards.TheLastStage
+import LordOfTheRings.Quest.Cards.TheCatacombsOfCarnDum
+import LordOfTheRings.Quest.Cards.AngmarAwakened
+import LordOfTheRings.Quest.Cards.DaechanarsFall
 import LordOfTheRings.Quest.Cards.TheRoadToTharbad
 import LordOfTheRings.Quest.Cards.AWellLaidTrap
 import LordOfTheRings.Quest.Cards.NoWayOut
@@ -255,6 +258,9 @@ allQuests =
         , SomeQuestCard battleForDunland
         , SomeQuestCard theRavenClan
         , SomeQuestCard theLastStage
+        , SomeQuestCard theCatacombsOfCarnDum
+        , SomeQuestCard angmarAwakened
+        , SomeQuestCard daechanarsFall
         , SomeQuestCard theRoadToTharbad
         , SomeQuestCard aWellLaidTrap
         , SomeQuestCard noWayOut

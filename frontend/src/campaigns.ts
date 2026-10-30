@@ -77,6 +77,7 @@ const implemented: Record<string, Gateable> = {
   'into-fangorn': { alpha: true },
   'the-fords-of-isen': { alpha: true },
   'the-antlered-crown': { alpha: true },
+  'the-dread-realm': { alpha: true },
   'the-dunland-trap': { alpha: true },
   'trouble-in-tharbad': { alpha: true },
   'celebrimbors-secret': { alpha: true },
