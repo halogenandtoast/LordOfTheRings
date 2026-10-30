@@ -131,6 +131,14 @@ import LordOfTheRings.Attachment.Cards.RaimentOfWar
 import LordOfTheRings.Attachment.Cards.GuardedCeaselessly
 import LordOfTheRings.Attachment.Cards.ArmoredDestrier
 import LordOfTheRings.Attachment.Cards.EntanglingNets
+import LordOfTheRings.Attachment.Cards.DunedainRemedy
+import LordOfTheRings.Attachment.Cards.Hithlain
+import LordOfTheRings.Attachment.Cards.Strider
+import LordOfTheRings.Attachment.Cards.RuneMaster
+import LordOfTheRings.Attachment.Cards.VigilantGuard
+import LordOfTheRings.Attachment.Cards.Windfola
+import LordOfTheRings.Attachment.Cards.RangerSpear
+import LordOfTheRings.Attachment.Cards.PrinceOfDolAmroth
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -288,5 +296,13 @@ allAttachments =
         , SomeAttachmentCard guardedCeaselessly
         , SomeAttachmentCard armoredDestrier
         , SomeAttachmentCard entanglingNets
+        , SomeAttachmentCard dunedainRemedy
+        , SomeAttachmentCard hithlain
+        , SomeAttachmentCard strider
+        , SomeAttachmentCard runeMaster
+        , SomeAttachmentCard vigilantGuard
+        , SomeAttachmentCard windfola
+        , SomeAttachmentCard rangerSpear
+        , SomeAttachmentCard princeOfDolAmroth
         ]
     ]

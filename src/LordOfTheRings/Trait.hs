@@ -110,6 +110,7 @@ data Trait
   | Scroll
   | Shadow
   | Ship
+  | Shirriff
   | Signal
   | Silvan
   | Skill

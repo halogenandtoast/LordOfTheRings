@@ -149,6 +149,10 @@ data WindowType
     ShadowIncreasedAttack CardId EnemyId
   | -- | the card was paid for from these heroes' and allies' pools, as Master Ironsmith reads
     PaidFrom Target [Target]
+  | -- | the attachment was attached to the host, as it entered play or moved: its traits
+    Attached Target Target (Set Trait)
+  | -- | the committed character was removed from the quest
+    RemovedFromQuest Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

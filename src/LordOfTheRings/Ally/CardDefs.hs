@@ -177,6 +177,16 @@ allAllyCards =
       , ceorl
       , deorwine
       , rhovanionOutrider
+      , dwarvenSellsword
+      , woodlandCourier
+      , robinSmallburrow
+      , veteranSwordElf
+      , linhirSeaCaptain
+      , ioreth
+      , knightOfTheWhiteTower
+      , soldierOfDolAmroth
+      , sulien
+      , guardianOfIthilien
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1244,4 +1254,68 @@ rhovanionOutrider :: CardDef
 rhovanionOutrider =
   (ally "12062" "Rhovanion Outrider" Spirit (StaticCost 3) 1 2 1 2)
     { cdCardTraits = setFromList [Dale, Scout]
+    }
+
+dwarvenSellsword :: CardDef
+dwarvenSellsword =
+  (ally "12083" "Dwarven Sellsword" Leadership (StaticCost 1) 2 2 2 3)
+    { cdCardTraits = setFromList [Dwarf, Warrior]
+    }
+
+woodlandCourier :: CardDef
+woodlandCourier =
+  (ally "12087" "Woodland Courier" Spirit (StaticCost 2) 1 1 0 1)
+    { cdCardTraits = setFromList [Silvan, Scout]
+    }
+
+robinSmallburrow :: CardDef
+robinSmallburrow =
+  unique
+    (ally "12089" "Robin Smallburrow" Lore (StaticCost 2) 2 0 1 2)
+      { cdCardTraits = setFromList [Hobbit, Shirriff]
+      }
+
+veteranSwordElf :: CardDef
+veteranSwordElf =
+  (ally "12112" "Veteran Sword-elf" Tactics (StaticCost 3) 1 1 1 3)
+    { cdCardTraits = setFromList [Noldor, Warrior]
+    }
+
+linhirSeaCaptain :: CardDef
+linhirSeaCaptain =
+  (ally "12115" "Linhir Sea-captain" Spirit (StaticCost 3) 2 0 1 2)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+ioreth :: CardDef
+ioreth =
+  unique
+    (ally "12117" "Ioreth" Lore (StaticCost 0) 0 0 0 1)
+      { cdCardTraits = setFromList [Gondor, Healer]
+      }
+
+knightOfTheWhiteTower :: CardDef
+knightOfTheWhiteTower =
+  (ally "12139" "Knight of the White Tower" Leadership (StaticCost 4) 2 2 3 3)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    , cdSinglePayer = True
+    }
+
+soldierOfDolAmroth :: CardDef
+soldierOfDolAmroth =
+  (ally "12141" "Soldier of Dol Amroth" Tactics (StaticCost 2) 0 1 1 2)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+sulien :: CardDef
+sulien =
+  unique
+    (ally "12142" "Súlien" Spirit (StaticCost 4) 3 0 2 2)
+      { cdCardTraits = setFromList [Dunedain, Scout]
+      }
+
+guardianOfIthilien :: CardDef
+guardianOfIthilien =
+  (ally "12144" "Guardian of Ithilien" Lore (StaticCost 1) 0 1 0 1)
+    { cdCardTraits = setFromList [Gondor, Ranger]
     }

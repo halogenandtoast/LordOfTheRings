@@ -178,6 +178,14 @@ allEventCards =
       , revealedInWrath
       , scoutingParty
       , arrowsFromTheTrees
+      , battleFury
+      , interrogation
+      , terribleToBehold
+      , knifeWork
+      , theHousesOfHealing
+      , justiceShallBeDone
+      , holdTheLine
+      , inspiringPresence
       ]
 
 everVigilant :: CardDef
@@ -694,3 +702,31 @@ scoutingParty = event "12063" "Scouting Party" Spirit (StaticCost 2)
 
 arrowsFromTheTrees :: CardDef
 arrowsFromTheTrees = event "12065" "Arrows from the Trees" Lore (StaticCost 1)
+
+battleFury :: CardDef
+battleFury = event "12086" "Battle-fury" Tactics (StaticCost 1)
+
+interrogation :: CardDef
+interrogation = event "12090" "Interrogation" Lore (StaticCost 1)
+
+terribleToBehold :: CardDef
+terribleToBehold = event "12111" "Terrible to Behold" Leadership (StaticCost 1)
+
+knifeWork :: CardDef
+knifeWork = event "12114" "Knife-work" Tactics (StaticCost 1)
+
+theHousesOfHealing :: CardDef
+theHousesOfHealing = event "12118" "The Houses of Healing" Lore (StaticCost 5)
+
+justiceShallBeDone :: CardDef
+justiceShallBeDone =
+  (event "12119" "Justice Shall Be Done" Neutral (StaticCost 0))
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
+
+holdTheLine :: CardDef
+holdTheLine = event "12140" "Hold the Line" Leadership (StaticCost 0)
+
+inspiringPresence :: CardDef
+inspiringPresence = event "12143" "Inspiring Presence" Spirit (StaticCost 2)

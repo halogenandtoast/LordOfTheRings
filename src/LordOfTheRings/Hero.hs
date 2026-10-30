@@ -69,6 +69,9 @@ import LordOfTheRings.Hero.Cards.GaldorOfTheHavensHero
 import LordOfTheRings.Hero.Cards.DenethorLeadership
 import LordOfTheRings.Hero.Cards.Lanwyn
 import LordOfTheRings.Hero.Cards.ElfhelmLeadership
+import LordOfTheRings.Hero.Cards.Argalad
+import LordOfTheRings.Hero.Cards.Naasiyah
+import LordOfTheRings.Hero.Cards.PrinceImrahilTactics
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Hero.Types qualified as HeroTypes
@@ -177,5 +180,8 @@ allHeroes =
         , SomeHeroCard denethorLeadership
         , SomeHeroCard lanwyn
         , SomeHeroCard elfhelmLeadership
+        , SomeHeroCard argalad
+        , SomeHeroCard naasiyah
+        , SomeHeroCard princeImrahilTactics
         ]
     ]

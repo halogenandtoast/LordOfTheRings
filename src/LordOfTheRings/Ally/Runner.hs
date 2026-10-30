@@ -3,7 +3,7 @@
 module LordOfTheRings.Ally.Runner (module X) where
 
 import LordOfTheRings.Ally.Types as X
-import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll)
+import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
@@ -12,7 +12,7 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (BecameReady, Exhausted), mkAfter)
+import LordOfTheRings.Window (WindowType (BecameReady, Exhausted, RemovedFromQuest), mkAfter)
 
 instance RunMessage AllyAttrs where
   runMessage msg attrs = case msg of
@@ -29,7 +29,9 @@ instance RunMessage AllyAttrs where
     -- an ally put into play committed is aimed at by its card
     CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> pure $ attrs & exhaustedL .~ True & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
-    RemoveFromQuest (isTarget attrs -> True) -> pure $ attrs & committedL .~ False
+    RemoveFromQuest (isTarget attrs -> True) -> do
+      pushWhen attrs.allyCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
+      pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
       blocked <- elem CannotReady <$> getModifiers attrs
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]

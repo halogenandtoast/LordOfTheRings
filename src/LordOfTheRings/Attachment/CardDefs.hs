@@ -138,6 +138,14 @@ allAttachmentCards =
       , guardedCeaselessly
       , armoredDestrier
       , entanglingNets
+      , dunedainRemedy
+      , hithlain
+      , strider
+      , runeMaster
+      , vigilantGuard
+      , windfola
+      , rangerSpear
+      , princeOfDolAmroth
       ]
 
 stewardOfGondor :: CardDef
@@ -972,3 +980,59 @@ entanglingNets =
   (attachment "12064" "Entangling Nets" Lore (StaticCost 1))
     { cdCardTraits = setFromList [Trap]
     }
+
+dunedainRemedy :: CardDef
+dunedainRemedy =
+  (attachment "12084" "Dúnedain Remedy" Leadership (StaticCost 0))
+    { cdCardTraits = setFromList [Signal]
+    }
+
+hithlain :: CardDef
+hithlain =
+  (attachment "12088" "Hithlain" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+strider :: CardDef
+strider =
+  unique
+    (attachment "12091" "Strider" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Title]
+      }
+
+runeMaster :: CardDef
+runeMaster =
+  unique
+    (attachment "12110" "Rune-master" Leadership (StaticCost 1))
+      { cdCardTraits = setFromList [Title]
+      }
+
+vigilantGuard :: CardDef
+vigilantGuard =
+  (attachment "12113" "Vigilant Guard" Tactics (StaticCost 3))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+windfola :: CardDef
+windfola =
+  unique
+    (attachment "12116" "Windfola" Spirit (StaticCost 1))
+      { cdCardTraits = setFromList [Mount]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+rangerSpear :: CardDef
+rangerSpear =
+  (attachment "12145" "Ranger Spear" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+princeOfDolAmroth :: CardDef
+princeOfDolAmroth =
+  unique
+    (attachment "12146" "Prince of Dol Amroth" Neutral (StaticCost 3))
+      { cdCardTraits = setFromList [Title]
+      }

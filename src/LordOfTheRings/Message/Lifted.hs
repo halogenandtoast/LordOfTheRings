@@ -22,6 +22,7 @@ import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Hero.Types (heroCardId)
 import LordOfTheRings.I18n (ikey, intVar)
+import LordOfTheRings.I18n (textVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -45,7 +46,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
  )
 
 dealDamage
@@ -1395,3 +1396,57 @@ spendResourceFromAHero pid source = do
     questionLabeled "spendResourceFromAHero"
     causedBy source
     targets heroes \h -> removeTokens source h Resource 1
+{- | The players as a group may spend resources of the sphere for what follows, the player
+asked; without enough among them, they cannot.
+-}
+groupMaySpend
+  :: (ReverseQueue m, Targetable source) => PlayerId -> source -> Sphere -> Int -> QueueT Message m () -> m ()
+groupMaySpend pid source sphere n onSpend = groupMaySpendOr pid source sphere n onSpend (pure ())
+
+-- | As 'groupMaySpend', with what follows if they do not, as "unless the players spend".
+groupMaySpendOr
+  :: (ReverseQueue m, Targetable source)
+  => PlayerId -> source -> Sphere -> Int -> QueueT Message m () -> QueueT Message m () -> m ()
+groupMaySpendOr pid source sphere n onSpend onDecline = do
+  total <- sum <$> (traverse (`getResourcesOfSphere` sphere) =<< getRemainingPlayers)
+  if total >= n
+    then chooseOneM pid do
+      questionLabeledWith "groupMaySpend" [intVar "count" n, textVar "sphere" (toLower $ tshow sphere)]
+      causedBy source
+      labeled "groupSpend" do
+        spendGroupResources pid sphere n
+        onSpend
+      labeled "groupDoNotSpend" onDecline
+    else pushAll =<< capture onDecline
+
+-- | The damage about to be dealt to the target is lowered by so much, none left dealing none.
+reduceDamage :: (MonadTrans t, HasQueue Message m, Targetable target) => target -> Int -> t m ()
+reduceDamage (toTarget -> target) k = lift $ withQueue_ $ mapMaybe \case
+  DoStep 1 (DealDamage s t n) | t == target -> guard (n > k) $> DoStep 1 (DealDamage s t (n - k))
+  m -> Just m
+
+{- | Cancel the enemy's attack: what is left of it does not resolve, though its end still
+comes, for what lasts until then.
+-}
+cancelAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> t m ()
+cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
+  ResolveShadow e _ _ | e == eid -> Nothing
+  AttackDamage e _ | e == eid -> Nothing
+  DefendWith _ e _ | e == eid -> Nothing
+  DeclareDefenders _ e _ | e == eid -> Nothing
+  DeclareSentinels _ e _ _ | e == eid -> Nothing
+  DefendedByMany _ e _ | e == eid -> Nothing
+  UndefendedAttack _ e | e == eid -> Nothing
+  UndefendedDamage _ e | e == eid -> Nothing
+  AttackDefended _ e _ | e == eid -> Nothing
+  -- ponytail: the window after it attacks stays, so its "for this attack" effects end
+  CheckWindows ws | any ending ws -> Just $ CheckWindows (filter (not . defended) ws)
+  m -> Just m
+ where
+  ending = \case
+    Window After (EnemyAttacking e _) -> e == eid
+    _ -> False
+  defended = \case
+    Window _ (DefendedAttack _ e) -> e == eid
+    Window _ (DeclaredAsDefender _ e) -> e == eid
+    _ -> False

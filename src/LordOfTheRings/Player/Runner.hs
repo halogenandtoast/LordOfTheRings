@@ -21,7 +21,7 @@ import LordOfTheRings.Game.Base
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhibitions, threatOf)
-import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
+import LordOfTheRings.Helpers.Window (exhaustableCharacters, getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Doomed, Secrecy))
@@ -293,7 +293,7 @@ runPlayer msg player = case msg of
       pure player
     ChooseFromSearchIntoPlay pid source cards matcher n mods | pid == player.id && n > 0 -> do
       let inDeck = filter ((`elem` map (.id) player.deck) . (.id)) cards
-      allies <- filterM passesUnique [c | c <- inDeck, c.cardType == AllyType, cardMatches matcher c]
+      allies <- filterM passesUnique =<< filterM (matchCard matcher) [c | c <- inDeck, c.cardType == AllyType]
       push
         $ Ask pid
         $ QuestionLabel (ikey "label.searchPutIntoPlay") (sourceTarget source) []
@@ -387,6 +387,11 @@ runPlayer msg player = case msg of
           | x <- payers
           ]
       pure player
+    SpendResourcesFromOneHero pid sphere n | pid == player.id && n > 0 -> do
+      payers <- filter ((>= n) . (.resources)) <$> payingHeroes sphere player
+      push
+        $ chooseOrRunOne pid [targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource n] | x <- payers]
+      pure player
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
@@ -472,7 +477,7 @@ canAfford p c = case (c.cost, c.sphere) of
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
-      filterM (\h -> andM [heroCanSpend h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
+      filterM (\h -> andM [heroCanSpend h, not <$> barredFrom c h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
     fromAllies <- sum . map snd <$> allyPayersFor p.id c
     -- a card that costs 0 still needs a resource match (FAQ 2.39, 2.61): a hero with its
     -- resource icon, which paying with resources of another sphere (A Good Harvest) isn't
@@ -480,6 +485,7 @@ canAfford p c = case (c.cost, c.sphere) of
     let needed = costAsResources cost + extra
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
+      Nothing | cdSinglePayer (toCardDef c) -> pure $ any ((>= needed) . (.resources)) payers
       Nothing
         | needed <= 0 -> pure $ matched || fromAllies > 0
         | otherwise -> pure $ sum (map (.resources) payers) + fromAllies >= needed
@@ -499,7 +505,10 @@ costModifier pid c = do
         [getModifiers GameTarget, getModifiers (PlayerTarget pid), getModifiers (CardIdTarget c.id)]
   threat <- getThreat pid
   let secrecy = if threat <= 20 then sum [n | Secrecy n <- toList (cdKeywords $ toCardDef c)] else 0
-  pure $ subtract secrecy $ sum $ flip mapMaybe mods \case
+  -- the characters it may exhaust to cost less count too, as The Houses of Healing's Healers
+  exhaustable <- for [t | ReducedByExhausting t <- mods] \t ->
+    length <$> exhaustableCharacters (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait t) (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait t)
+  pure $ subtract (secrecy + sum exhaustable) $ sum $ flip mapMaybe mods \case
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
     CostModifier n -> Just n
@@ -569,11 +578,13 @@ resourcesInSphere sphere player = do
 a resource icon it has gained gives it.
 -}
 paysFor :: HasGame m => Sphere -> Hero -> m Bool
-paysFor sphere h = orM [heroPaysFor sphere h, andM [heroCanSpend h, paying]]
- where
-  paying = do
-    cards <- getsGame (map (.activeCostCard) . toList . gameActiveCosts)
-    orM [iconFor c sphere h | c <- cards]
+paysFor sphere h = do
+  cards <- getsGame (map (.activeCostCard) . toList . gameActiveCosts)
+  andM [not <$> anyM (`barredFrom` h) cards, orM [heroPaysFor sphere h, andM [heroCanSpend h, orM [iconFor c sphere h | c <- cards]]]]
+
+-- | Whether the hero's resources cannot pay for the card, as Na'asiyah's for allies.
+barredFrom :: HasGame m => Card -> Hero -> m Bool
+barredFrom c h = any (\case CannotPayFor m -> cardMatches m c; _ -> False) <$> getModifiers h
 
 -- | Whether the hero has the sphere's resource icon while paying for the card.
 iconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool

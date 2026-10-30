@@ -58,6 +58,8 @@ data CardDef = CardDef
   -- ^ an encounter card with a shadow effect, as opposed to a blank shadow card
   , cdDistinctPayers :: Maybe Int
   -- ^ the card must be paid for from this many different heroes' pools
+  , cdSinglePayer :: Bool
+  -- ^ the card's cost must be paid from a single hero's pool, as Knight of the White Tower's
   , cdEscape :: Maybe Int
   -- ^ what the card adds to an escape test it is dealt for
   , cdSailingIcons :: Int
@@ -122,6 +124,7 @@ emptyCardDef cCode name cType =
     , cdShadowEffect = False
     , cdWhenRevealed = False
     , cdDistinctPayers = Nothing
+    , cdSinglePayer = False
     , cdEscape = Nothing
     , cdSailingIcons = 0
     , cdDeckLimit = 3

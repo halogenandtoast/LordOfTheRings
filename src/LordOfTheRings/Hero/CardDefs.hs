@@ -74,6 +74,9 @@ allHeroCards =
       , denethorLeadership
       , lanwyn
       , elfhelmLeadership
+      , argalad
+      , naasiyah
+      , princeImrahilTactics
       ]
 
 aragorn :: CardDef
@@ -452,4 +455,23 @@ elfhelmLeadership :: CardDef
 elfhelmLeadership =
   (hero "12057" "Elfhelm" Leadership 10 2 2 2 4)
     { cdCardTraits = setFromList [Rohan, Scout, Warrior]
+    }
+
+argalad :: CardDef
+argalad =
+  (hero "12082" "Argalad" Lore 9 2 2 1 4)
+    { cdCardTraits = setFromList [Silvan, Scout]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+naasiyah :: CardDef
+naasiyah =
+  (hero "12109" "Na'asiyah" Tactics 8 1 2 2 4)
+    { cdCardTraits = setFromList [Corsair, Warrior]
+    }
+
+princeImrahilTactics :: CardDef
+princeImrahilTactics =
+  (hero "12138" "Prince Imrahil" Tactics 11 2 3 2 4)
+    { cdCardTraits = setFromList [Gondor, Noble, Warrior]
     }

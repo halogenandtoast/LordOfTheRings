@@ -460,6 +460,25 @@ data ModifierType
     AfterEngagementChecks
   | -- | on the game: an enemy was engaged this phase, as Arrows from the Trees reads
     EnemyEngagedThisPhase
+  | -- | on a hero: its resources cannot pay for matching cards, as Na'asiyah's for allies
+    CannotPayFor CardMatcher
+  | -- | on a player: he may declare up to this many defenders against the attack, as Hold
+    -- the Line reads
+    MayDeclareUpToDefenders Int
+  | -- | on the game: each character defending the attack that takes no damage from it
+    -- readies, as Hold the Line reads
+    ReadyUndamagedDefenders
+  | -- | on a player: he is eliminated at the end of the round, as Justice Shall Be Done reads
+    EliminatedAtEndOfRound
+  | -- | on a player: he draws 1 card each time he attacks and destroys an enemy, as
+    -- Knife-work reads
+    DrawsOnDestroyingEnemy
+  | -- | on a card in hand, as its card id: its player may exhaust ready characters he
+    -- controls with the trait as he plays it, each lowering its cost by 1, as The Houses of
+    -- Healing reads for Healers
+    ReducedByExhausting Trait
+  | -- | on the game: the staging step of this quest phase has begun
+    StagingStepBegun
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

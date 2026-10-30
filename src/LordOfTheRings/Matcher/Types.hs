@@ -168,6 +168,8 @@ data EnemyMatcher
     EnemyWithAttached Trait
   | -- | an enemy player card effects can reach
     EnemyNotImmuneToPlayerCards
+  | -- | an enemy with any card attached to it, as Ranger Spear reads
+    EnemyWithAnyAttachment
   | -- | an enemy whose engagement cost is higher than the player's threat
     EnemyWithEngagementCostAboveThreatOf PlayerId
   | AnyEnemy

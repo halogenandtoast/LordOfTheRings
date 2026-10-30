@@ -167,6 +167,14 @@ import LordOfTheRings.Event.Cards.Elevenses
 import LordOfTheRings.Event.Cards.RevealedInWrath
 import LordOfTheRings.Event.Cards.ScoutingParty
 import LordOfTheRings.Event.Cards.ArrowsFromTheTrees
+import LordOfTheRings.Event.Cards.BattleFury
+import LordOfTheRings.Event.Cards.Interrogation
+import LordOfTheRings.Event.Cards.TerribleToBehold
+import LordOfTheRings.Event.Cards.KnifeWork
+import LordOfTheRings.Event.Cards.TheHousesOfHealing
+import LordOfTheRings.Event.Cards.JusticeShallBeDone
+import LordOfTheRings.Event.Cards.HoldTheLine
+import LordOfTheRings.Event.Cards.InspiringPresence
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -347,5 +355,13 @@ allEvents =
         , SomeEventCard revealedInWrath
         , SomeEventCard scoutingParty
         , SomeEventCard arrowsFromTheTrees
+        , SomeEventCard battleFury
+        , SomeEventCard interrogation
+        , SomeEventCard terribleToBehold
+        , SomeEventCard knifeWork
+        , SomeEventCard theHousesOfHealing
+        , SomeEventCard justiceShallBeDone
+        , SomeEventCard holdTheLine
+        , SomeEventCard inspiringPresence
         ]
     ]

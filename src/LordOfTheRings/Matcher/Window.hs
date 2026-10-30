@@ -1,7 +1,7 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
+import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
 import LordOfTheRings.Modifier (Modifier)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
@@ -246,8 +246,23 @@ data WindowMatcher
     DefenderWithTraitDestroyedWindow Timing Trait
   | -- | the player committed his characters to the quest, as Scouting Party reads
     PlayerCommittedCharactersWindow Timing PlayerId
-  | -- | the card was paid for from a single hero's pool, as Master Ironsmith reads
+  | -- | the card played from hand was paid for from a single hero's pool, as Master
+    -- Ironsmith and Linhir Sea-captain read
     PaidFromOneHeroWindow Timing Target
+  | -- | the attachment was attached to a hero, as Dúnedain Remedy answers its own
+    AttachedToHeroWindow Timing Target
+  | -- | an attachment with the trait was attached to a hero, as Rune-master answers a Signal
+    TraitAttachedToHeroWindow Timing Trait
+  | -- | the character was removed from the quest, as Windfola answers
+    RemovedFromQuestWindow Timing Target
+  | -- | any player played a matching card from his hand, as Hithlain answers a Silvan ally
+    AnyPlayedCardFromHandWindow Timing CardMatcher
+  | -- | a character other than the given one would be dealt damage, as Vigilant Guard
+    -- answers
+    AnotherCharacterDealtDamageWindow Timing Target
+  | -- | a matching character declared as a defender against a matching enemy, as Terrible
+    -- to Behold answers a Noble against an engaged enemy
+    CharacterDefenderDeclaredWindow Timing HeroMatcher AllyMatcher EnemyMatcher
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -358,6 +373,12 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PaidFromOneHeroWindow t target, PaidFrom target' payers) -> t == timing && target == target' && case ordNub payers of
     [HeroTarget _] -> True
     _ -> False
+  (AttachedToHeroWindow t a, Attached a' (HeroTarget _) _) -> t == timing && a == a'
+  (TraitAttachedToHeroWindow t trait, Attached _ (HeroTarget _) traits) -> t == timing && trait `member` traits
+  (RemovedFromQuestWindow t c, RemovedFromQuest c') -> t == timing && c == c'
+  (AnyPlayedCardFromHandWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
+  (AnotherCharacterDealtDamageWindow t other, DealtDamage c@(HeroTarget _) _) -> t == timing && c /= other
+  (AnotherCharacterDealtDamageWindow t other, DealtDamage c@(AllyTarget _) _) -> t == timing && c /= other
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -387,6 +408,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ThreatRaisedWindow {}, _) -> False
   (DefenderWithTraitDestroyedWindow {}, _) -> False
   (PlayerCommittedCharactersWindow {}, _) -> False
+  (CharacterDefenderDeclaredWindow {}, _) -> False
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False
