@@ -2,7 +2,8 @@ module LordOfTheRings.LostRealmEngineSpec (spec) where
 
 import LordOfTheRings.Criteria (Criterion (FewerInVictoryDisplay))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
-import LordOfTheRings.Helpers.Window (passesCriteria)
+import LordOfTheRings.Entities (treacheriesL)
+import LordOfTheRings.Helpers.Window (passesCriteria, windowMatchesM)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (
   currentQuestIsSideQuest,
@@ -13,7 +14,7 @@ import LordOfTheRings.Matcher (
   questCardsInPlay,
  )
 import LordOfTheRings.Matcher.Types (cardIs)
-import LordOfTheRings.Matcher.Window (WindowMatcher (SideQuestRevealedWindow), windowMatches)
+import LordOfTheRings.Matcher.Window (WindowMatcher (SideQuestRevealedWindow, TreacheryWithTraitRevealedWindow), windowMatches)
 import LordOfTheRings.Message.Lifted (
   chooseNewCurrentQuest,
   chooseOrRunOneM,
@@ -26,6 +27,9 @@ import LordOfTheRings.Modifier (ModifierType (CannotBeCurrentQuest, ProgressPerR
 import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
+import LordOfTheRings.Trait (Trait (Hazard, Sorcery))
+import LordOfTheRings.Treachery (newTreachery)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Timing (After), WindowType (PhaseEnds, Revealed), mkAfter, mkWhen)
 import TestImport
 
@@ -132,6 +136,13 @@ spec = describe "The Lost Realm engine" do
       void mainLoop
       progressOn main `shouldReturn` 0
       progressOn side `shouldReturn` 1
+
+  describe "Revealed treacheries" do
+    it "open the window for a treachery of the trait" . gameTest $ \_ -> do
+      t <- newTreachery =<< genEncounterCard Treacheries.caveIn
+      putGame . (entitiesL . treacheriesL %~ insertEntity t) =<< getGame
+      windowMatchesM (TreacheryWithTraitRevealedWindow After Hazard) (mkAfter $ Revealed $ toTarget t) `shouldReturn` True
+      windowMatchesM (TreacheryWithTraitRevealedWindow After Sorcery) (mkAfter $ Revealed $ toTarget t) `shouldReturn` False
 
   describe "Valour" do
     let trigger pid = runQueueT $ chooseOrRunOneM pid do
