@@ -106,4 +106,4 @@ loadPlayer name dl = do
     heroes <- traverse (newHero pid <=< (`genPlayerCard` Just pid)) heroDefs
     deck <- traverse (fmap PlayerCard . (`genPlayerCard` Just pid)) cardDefs
     pure
-      ((newPlayer pid name deck) {playerErrata = dl.errata}, heroes)
+      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes}, heroes)

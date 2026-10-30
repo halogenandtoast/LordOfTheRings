@@ -503,8 +503,12 @@ summary (Entity gid row) = case fromJSON row.lotrGameCurrentData of
                 p.name
                 p.threat
                 p.eliminated
-                [ HeroSummary (toCardCode h) (cdSphere $ toCardDef h) | h <- toList g.entities.heroes, h.owner == pid
-                ]
+                -- the heroes the deck began with, so a lost game still shows them; a
+                -- game saved before they were kept has only those still in play
+                ( if null p.startingHeroes
+                    then [HeroSummary (toCardCode h) (cdSphere $ toCardDef h) | h <- toList g.entities.heroes, h.owner == pid]
+                    else [HeroSummary c (cdSphere =<< Map.lookup c allPlayerCards) | c <- p.startingHeroes]
+                )
             | pid <- g.playerOrder
             , Just p <- [Map.lookup pid (allPlayers g)]
             ]

@@ -24,6 +24,8 @@ data Player = Player
   , playerUsedAbilities :: [UsedAbility]
   , playerErrata :: Bool
   -- ^ the player's cards follow the FAQ's errata, as their deck was loaded
+  , playerStartingHeroes :: [CardCode]
+  -- ^ the heroes the player's deck began with, as the games list shows them
   }
   deriving stock (Show, Eq, Generic)
 
@@ -33,7 +35,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode]))]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -48,6 +50,7 @@ newPlayer pid name deck =
     , playerEliminated = False
     , playerUsedAbilities = []
     , playerErrata = True
+    , playerStartingHeroes = []
     }
 
 instance Entity Player where
@@ -92,6 +95,9 @@ instance HasField "usedAbilities" Player [UsedAbility] where
 
 instance HasField "eliminated" Player Bool where
   getField = playerEliminated
+
+instance HasField "startingHeroes" Player [CardCode] where
+  getField = playerStartingHeroes
 
 {- | The cards in the player's hand that can leave it: an encounter card drawn into it, as
 Ill Tidings, cannot.
