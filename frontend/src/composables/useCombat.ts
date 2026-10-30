@@ -39,9 +39,10 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
         return { [hovered.id]: { defend: { defense, damage, defeated: damage >= remaining(hovered) } } }
       }
 
-      // an undefended attack's full damage, on the hero it would go to
+      // an undefended attack's full damage, on the hero it would go to, with its bonuses
+      // for going undefended, as Goblin Swordsman's
       if (prompt === '$label.undefendedDamage' && q.sourceId && hovered) {
-        const damage = stat(byId.get(q.sourceId), 'attack')
+        const damage = q.choices.find((c) => c.targetId === hovered.id)?.damage ?? stat(byId.get(q.sourceId), 'attack')
         return { [hovered.id]: { defend: { defense: null, damage, defeated: damage >= remaining(hovered) } } }
       }
 
