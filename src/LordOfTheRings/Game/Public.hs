@@ -6,7 +6,7 @@ import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
-import LordOfTheRings.Entities (entitiesObjectives)
+import LordOfTheRings.Entities (entitiesObjectives, entitiesQuests)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Card
 import LordOfTheRings.Helpers.Attachment
@@ -15,6 +15,7 @@ import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
+import LordOfTheRings.Quest.Types (QuestAttrs (..))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Target
 import LordOfTheRings.Prelude
@@ -126,7 +127,10 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     Map.filter (> 0)
       $ Map.unionWith
         (+)
-        (mapFromList [(o.objectiveCardId, length o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)])
+        ( mapFromList
+            $ [(o.objectiveCardId, length o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)]
+            <> [(q.questCardId, length q.questUnderneath) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
+        )
         (maybe mempty (fmap length) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [Value])))
   hidePlayer = withSize "deck" "deckSize"
   hideHand = \case
