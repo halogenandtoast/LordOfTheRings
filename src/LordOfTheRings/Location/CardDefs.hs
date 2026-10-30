@@ -251,6 +251,15 @@ allLocationCards =
       , cargoHold
       , crewQuarters
       , quarterDeck
+      , shrineToMorgothTheDrownedRuins
+      , shrineToMorgothUnderwater
+      , underseaGrotto
+      , cursedCaverns
+      , waterLoggedHalls
+      , darkAbyss
+      , twistingHollow
+      , sunkenTemple
+      , drownedCave
       ]
 
 drownedTreasury :: CardDef
@@ -1851,3 +1860,79 @@ quarterDeck =
     { cdCardTraits = setFromList [Ship, Deck]
     , cdShadowEffect = True
     }
+
+-- | The Drowned Ruins' Shrine to Morgoth, Grotto side: set aside until Sahír's Betrayal.
+shrineToMorgothTheDrownedRuins :: CardDef
+shrineToMorgothTheDrownedRuins =
+  unique
+    (location "12094" "Shrine to Morgoth" TheDrownedRuins 1 5 18)
+      { cdCardTraits = setFromList [Ruins, Underground, Grotto]
+      , cdVictoryPoints = Just 5
+      , cdOtherSide = Just "12095"
+      }
+
+-- | Its Underwater side: no copy is gathered, the Grotto side turns into it.
+shrineToMorgothUnderwater :: CardDef
+shrineToMorgothUnderwater =
+  unique
+    (location "12095" "Shrine to Morgoth" TheDrownedRuins 0 5 18)
+      { cdCardTraits = setFromList [Ruins, Underground, Underwater]
+      , cdVictoryPoints = Just 5
+      , cdOtherSide = Just "12094"
+      }
+
+{- | The Grotto deck's cards, Grotto side up: each has one Underwater side, gathered with
+none of its own. The scans pair Water-logged Halls with Dark Abyss and Sunken Temple with
+Cursed Caverns, against the quantities Hall of Beorn gives (3 Undersea Grotto / Dark Abyss,
+3 Cursed Caverns / Twisting Hollow, 2 Water-logged Halls / Sunken Temple), which these
+follow, the two Ruins sides together.
+-}
+
+underseaGrotto :: CardDef
+underseaGrotto =
+  (location "12098" "Undersea Grotto" TheDrownedRuins 3 2 3)
+    { cdCardTraits = setFromList [Underground, Grotto]
+    , cdOtherSide = Just "12101"
+    }
+
+cursedCaverns :: CardDef
+cursedCaverns =
+  (location "12099" "Cursed Caverns" TheDrownedRuins 3 3 5)
+    { cdCardTraits = setFromList [Underground, Grotto]
+    , cdOtherSide = Just "12102"
+    }
+
+waterLoggedHalls :: CardDef
+waterLoggedHalls =
+  (location "12100" "Water-logged Halls" TheDrownedRuins 2 2 4)
+    { cdCardTraits = setFromList [Ruins, Underground, Grotto]
+    , cdOtherSide = Just "12103"
+    }
+
+darkAbyss :: CardDef
+darkAbyss =
+  (location "12101" "Dark Abyss" TheDrownedRuins 0 5 12)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    , cdVictoryPoints = Just 2
+    , cdOtherSide = Just "12098"
+    }
+
+twistingHollow :: CardDef
+twistingHollow =
+  (location "12102" "Twisting Hollow" TheDrownedRuins 0 4 14)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    , cdVictoryPoints = Just 2
+    , cdOtherSide = Just "12099"
+    }
+
+sunkenTemple :: CardDef
+sunkenTemple =
+  (location "12103" "Sunken Temple" TheDrownedRuins 0 3 10)
+    { cdCardTraits = setFromList [Ruins, Underground, Underwater]
+    , cdVictoryPoints = Just 2
+    , cdOtherSide = Just "12100"
+    }
+
+-- | Single-sided, in the encounter deck.
+drownedCave :: CardDef
+drownedCave = (location "12104" "Drowned Cave" TheDrownedRuins 2 3 4) {cdCardTraits = setFromList [Underground, Underwater]}

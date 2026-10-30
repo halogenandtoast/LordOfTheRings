@@ -230,6 +230,8 @@ allQuestCards =
       , takeTheShip
       , changeOfPlans
       , defendTheShip
+      , theGrotto
+      , sahirsBetrayal
       ]
 
 theDrippingWalls :: CardDef
@@ -847,3 +849,10 @@ changeOfPlans = (quest "12040" "Change of Plans" TheThingInTheDepths 2 0) {cdQue
 -- | No quest points: the players win as The Thing in the Depths is destroyed.
 defendTheShip :: CardDef
 defendTheShip = (quest "12041" "Defend the Ship!" TheThingInTheDepths 3 0) {cdQuestPoints = Nothing}
+
+theGrotto :: CardDef
+theGrotto = quest "12092" "The Grotto" TheDrownedRuins 1 15
+
+-- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
+sahirsBetrayal :: CardDef
+sahirsBetrayal = (quest "12093" "Sahír's Betrayal" TheDrownedRuins 2 0) {cdQuestPoints = Nothing}

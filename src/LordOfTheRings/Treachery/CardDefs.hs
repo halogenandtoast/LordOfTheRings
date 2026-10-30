@@ -195,6 +195,10 @@ allTreacheryCards =
       , holdSteady
       , fromTheDepths
       , lashingTentacles
+      , powerfulUndertow
+      , intoTheAbyss
+      , tanglingAndGrasping
+      , ancientDepths
       ]
 
 deepDeepDark :: CardDef
@@ -1213,3 +1217,19 @@ fromTheDepths = (treachery "12055" "From the Depths" TheThingInTheDepths 3) {cdS
 
 lashingTentacles :: CardDef
 lashingTentacles = (treachery "12056" "Lashing Tentacles" TheThingInTheDepths 2) {cdShadowEffect = True}
+
+powerfulUndertow :: CardDef
+powerfulUndertow = (treachery "12105" "Powerful Undertow" TheDrownedRuins 3) {cdCardTraits = setFromList [Hazard]}
+
+intoTheAbyss :: CardDef
+intoTheAbyss = (treachery "12106" "Into the Abyss" TheDrownedRuins 3) {cdShadowEffect = True}
+
+tanglingAndGrasping :: CardDef
+tanglingAndGrasping =
+  (treachery "12107" "Tangling and Grasping" TheDrownedRuins 4)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    }
+
+ancientDepths :: CardDef
+ancientDepths = (treachery "12108" "Ancient Depths" TheDrownedRuins 3) {cdShadowEffect = True}

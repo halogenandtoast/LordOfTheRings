@@ -188,6 +188,10 @@ import LordOfTheRings.Treachery.Cards.RagingSquall
 import LordOfTheRings.Treachery.Cards.HoldSteady
 import LordOfTheRings.Treachery.Cards.FromTheDepths
 import LordOfTheRings.Treachery.Cards.LashingTentacles
+import LordOfTheRings.Treachery.Cards.PowerfulUndertow
+import LordOfTheRings.Treachery.Cards.IntoTheAbyss
+import LordOfTheRings.Treachery.Cards.TanglingAndGrasping
+import LordOfTheRings.Treachery.Cards.AncientDepths
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -400,5 +404,9 @@ allTreacherys =
         , SomeTreacheryCard holdSteady
         , SomeTreacheryCard fromTheDepths
         , SomeTreacheryCard lashingTentacles
+        , SomeTreacheryCard powerfulUndertow
+        , SomeTreacheryCard intoTheAbyss
+        , SomeTreacheryCard tanglingAndGrasping
+        , SomeTreacheryCard ancientDepths
         ]
     ]

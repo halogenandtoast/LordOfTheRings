@@ -223,6 +223,8 @@ import LordOfTheRings.Enemy.Cards.ThrashingArm
 import LordOfTheRings.Enemy.Cards.CrushingArm
 import LordOfTheRings.Enemy.Cards.GraspingArm
 import LordOfTheRings.Enemy.Cards.GiantArm
+import LordOfTheRings.Enemy.Cards.SeaScorpion
+import LordOfTheRings.Enemy.Cards.CaveEel
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -471,5 +473,7 @@ allEnemys =
         , SomeEnemyCard crushingArm
         , SomeEnemyCard graspingArm
         , SomeEnemyCard giantArm
+        , SomeEnemyCard seaScorpion
+        , SomeEnemyCard caveEel
         ]
     ]

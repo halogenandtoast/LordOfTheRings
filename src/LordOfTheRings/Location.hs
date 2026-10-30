@@ -240,6 +240,15 @@ import LordOfTheRings.Location.Cards.WeatherDeck
 import LordOfTheRings.Location.Cards.CargoHold
 import LordOfTheRings.Location.Cards.CrewQuarters
 import LordOfTheRings.Location.Cards.QuarterDeck
+import LordOfTheRings.Location.Cards.ShrineToMorgothTheDrownedRuins
+import LordOfTheRings.Location.Cards.ShrineToMorgothUnderwater
+import LordOfTheRings.Location.Cards.UnderseaGrotto
+import LordOfTheRings.Location.Cards.CursedCaverns
+import LordOfTheRings.Location.Cards.WaterLoggedHalls
+import LordOfTheRings.Location.Cards.DarkAbyss
+import LordOfTheRings.Location.Cards.TwistingHollow
+import LordOfTheRings.Location.Cards.SunkenTemple
+import LordOfTheRings.Location.Cards.DrownedCave
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -520,5 +529,14 @@ allLocations =
         , SomeLocationCard cargoHold
         , SomeLocationCard crewQuarters
         , SomeLocationCard quarterDeck
+        , SomeLocationCard shrineToMorgothTheDrownedRuins
+        , SomeLocationCard shrineToMorgothUnderwater
+        , SomeLocationCard underseaGrotto
+        , SomeLocationCard cursedCaverns
+        , SomeLocationCard waterLoggedHalls
+        , SomeLocationCard darkAbyss
+        , SomeLocationCard twistingHollow
+        , SomeLocationCard sunkenTemple
+        , SomeLocationCard drownedCave
         ]
     ]

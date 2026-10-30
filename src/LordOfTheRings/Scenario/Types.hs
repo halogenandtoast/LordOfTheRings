@@ -53,6 +53,9 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioUnchartedDeck :: [EncounterCard]
   -- ^ the Uncharted deck, top first (The Fate of Númenor): its locations enter play Lost
   -- Island side faceup, and return to it rather than the discard pile
+  , scenarioGrottoDeck :: [EncounterCard]
+  -- ^ the Grotto deck, top first (The Drowned Ruins): double-sided locations, Grotto side
+  -- up, an explored Grotto side shuffled back into it
   }
   deriving stock (Show, Eq, Generic)
 
@@ -62,7 +65,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard]))]
 
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =
@@ -83,6 +86,7 @@ scenario f sid name =
       , scenarioCorsairDeck = Nothing
       , scenarioCorsairDiscard = []
       , scenarioUnchartedDeck = []
+      , scenarioGrottoDeck = []
       }
 
 instance Entity ScenarioAttrs where
@@ -146,3 +150,6 @@ instance HasField "corsairDiscard" ScenarioAttrs [EncounterCard] where
   getField = scenarioCorsairDiscard
 instance HasField "unchartedDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioUnchartedDeck
+
+instance HasField "grottoDeck" ScenarioAttrs [EncounterCard] where
+  getField = scenarioGrottoDeck

@@ -178,7 +178,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     Object o -> Object $ adjust hideSearch "question" $ if KeyMap.member "cards" o then KeyMap.insert "cards" (Array mempty) o else o
     v -> v
   -- a scenario's own state holds what is facedown, as the underworld deck
-  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o
     v -> v

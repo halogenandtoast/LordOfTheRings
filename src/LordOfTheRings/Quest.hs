@@ -181,6 +181,8 @@ import LordOfTheRings.Quest.Cards.TheCapeOfAndrast
 import LordOfTheRings.Quest.Cards.TakeTheShip
 import LordOfTheRings.Quest.Cards.ChangeOfPlans
 import LordOfTheRings.Quest.Cards.DefendTheShip
+import LordOfTheRings.Quest.Cards.TheGrotto
+import LordOfTheRings.Quest.Cards.SahirsBetrayal
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -394,5 +396,7 @@ allQuests =
         , SomeQuestCard takeTheShip
         , SomeQuestCard changeOfPlans
         , SomeQuestCard defendTheShip
+        , SomeQuestCard theGrotto
+        , SomeQuestCard sahirsBetrayal
         ]
     ]
