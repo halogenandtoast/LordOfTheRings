@@ -1,6 +1,5 @@
 module LordOfTheRings.Quest.Cards.TheDrippingWalls (theDrippingWalls) where
 
-import LordOfTheRings.Frontend
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers (attachCaveTorch)
@@ -22,9 +21,11 @@ instance RunMessage TheDrippingWalls where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       attachCaveTorch attrs
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       eachPlayer $ const revealEncounterCard
       pure $ TheDrippingWalls $ attrs {questFlipped = True}
     _ -> TheDrippingWalls <$> runMessage msg attrs

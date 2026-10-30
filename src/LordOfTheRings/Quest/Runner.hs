@@ -26,6 +26,10 @@ instance RunMessage QuestAttrs where
       when (token == Progress && attrs'.questPoints > 0 && attrs'.progress >= attrs'.questPoints)
         $ push (CompleteQuest attrs.id)
       pure attrs'
+    -- a stage that does its setup as it turns over
+    PerformSetup (isTarget attrs -> True) -> do
+      turnOver attrs
+      pure attrs
     Flip (isTarget attrs -> True) -> pure $ attrs & flippedL .~ True
     -- a stage put into play unflipped is clicked by its card, before it has an id to show
     Flip (CardIdTarget cid) | cid == attrs.questCardId -> pure $ attrs & flippedL .~ True
@@ -33,9 +37,14 @@ instance RunMessage QuestAttrs where
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
 
--- | The lead clicks the first stage to perform its setup, which flips it.
+-- | The lead clicks the first stage to perform its setup, which the stage handles as
+-- 'PerformSetup' on itself before it turns over.
 askToPerformSetup :: ReverseQueue m => QuestAttrs -> m ()
-askToPerformSetup attrs = leadClicks "performSetup" attrs (Flip $ toTarget attrs)
+askToPerformSetup attrs = leadClicks "performSetup" attrs (PerformSetup $ toTarget attrs)
+
+-- | The stage turns over to side B, once its side A setup has resolved.
+turnOver :: ReverseQueue m => QuestAttrs -> m ()
+turnOver attrs = push $ Flip (toTarget attrs)
 
 {- | The lead clicks the stage to resolve its When Revealed effect, which the stage
 handles as 'WhenRevealed' on itself.

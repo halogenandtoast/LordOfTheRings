@@ -161,6 +161,8 @@ data Message
   | DoStep Int Message
   | Ask PlayerId (Question Message)
   | Flip Target
+  | -- | the lead clicks the first stage: its setup resolves on side A, then it turns over
+    PerformSetup Target
   | Search PlayerId DeckSignifier CardMatcher CardHandler DeckHandler
   | AddToStaging EncounterCard
   | RevealEncounterCard

@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.JourneyInTheBlackPit (journeyInTheBlackPit) wh
 import LordOfTheRings.Card (cdCardType, toCardDef)
 import LordOfTheRings.Card.CardType (CardType (LocationType))
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Frontend
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers (attachCaveTorch)
@@ -36,9 +35,11 @@ instance RunMessage JourneyInTheBlackPit where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       attachCaveTorch attrs
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       players <- length <$> getRemainingPlayers
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       -- the cards discarded above them are shuffled straight back, and nothing reads them

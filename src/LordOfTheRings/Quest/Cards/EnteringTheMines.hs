@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.EnteringTheMines (enteringTheMines) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -27,8 +26,7 @@ instance RunMessage EnteringTheMines where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let find' def = find ((== toCardCode def) . toCardCode) deck
       for_ (find' Locations.eastGate) \gate -> do
@@ -37,6 +35,9 @@ instance RunMessage EnteringTheMines where
       attachCaveTorch attrs
       traverse_ setAside $ mapMaybe find' [Locations.firstHall, Locations.bridgeOfKhazadDum]
       shuffleEncounterDeck
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       eachPlayer $ const revealEncounterCard
       pure $ EnteringTheMines $ attrs {questFlipped = True}
     _ -> EnteringTheMines <$> runConditionalStage condition msg attrs

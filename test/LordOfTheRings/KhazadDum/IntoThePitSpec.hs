@@ -45,8 +45,11 @@ spec :: Spec
 spec = describe "Into the Pit" do
   it "starts at East-gate with Cave Torch on the chosen hero, First Hall and the Bridge set aside" . pitTest $ \pid -> do
     flipFirstQuest pid
+    -- the stage shows its setup side while the first player picks the hero
+    (.flipped) <$> getActiveQuest `shouldReturn` False
     beravor <- toTarget <$> getHeroWithCode "01012"
     chooseTarget pid beravor
+    (.flipped) <$> getActiveQuest `shouldReturn` True
     placementOf Locations.eastGate `shouldReturn` Just ActiveLocation
     placementOf Objectives.caveTorch `shouldReturn` Just (AttachedTo beravor)
     setAside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
