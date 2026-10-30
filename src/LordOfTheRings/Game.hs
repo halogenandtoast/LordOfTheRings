@@ -1897,6 +1897,7 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ Map.delete qid
   -- a hero leaves play for good, not for its owner's discard pile, its attachments
   -- discarded as they would be were it discarded
+  SetAsideHero hid -> runGameMessage (RemoveFromGame $ HeroTarget hid) g
   RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
     g' <- leftPlay g target
     pushAll $ discardAttached g target

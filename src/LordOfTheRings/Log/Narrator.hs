@@ -185,6 +185,7 @@ narrationFor = \case
   PutObjectiveIntoPlayAttached card host -> Just $ whenRef host \h ->
     one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> EncounterCard card, "target" ~> h]]
   RemoveFromGame target -> Just $ simply "log.removedFromGame" target
+  SetAsideHero hid -> Just $ simply "log.setAsideOutOfPlay" (HeroTarget hid)
   PutIntoPlayAsActiveLocation card -> Just $ one $ mechanic [ikeyPart "log.becomesActive" ["location" ~> EncounterCard card]]
   DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
     top <- getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
