@@ -434,12 +434,19 @@ runInPlay msg g =
     >>= runGameMessage msg
     >>= \g' -> do
       -- an enemy, location or side quest entering play, or a stage turning to its B side,
-      -- gets its Time X in time counters
+      -- gets its Time X in time counters; the cards of another area coming into focus, or
+      -- joining this one, are already in play
       let entered :: Ord k => Map k v -> Map k v -> [k]
           entered old new = Map.keys (Map.difference new old)
           wasFlipped qid = maybe False (.flipped) (Map.lookup qid g.entities.quests)
           enteredSideQuest q = isSideQuest q && not (Map.member (toId q) g.entities.quests)
-      pushAll
+          movingAreas = case msg of
+            FocusArea _ -> True
+            JoinArea {} -> True
+            SeparatePlayers _ -> True
+            _ -> False
+      unless movingAreas
+        $ pushAll
         $ map (PlaceTimeCounters . EnemyTarget) (entered g.entities.enemies g'.entities.enemies)
         <> map (PlaceTimeCounters . LocationTarget) (entered g.entities.locations g'.entities.locations)
         <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, q.flipped, not (wasFlipped $ toId q)]

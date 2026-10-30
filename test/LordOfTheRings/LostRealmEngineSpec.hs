@@ -10,6 +10,7 @@ import LordOfTheRings.Matcher (
   getCurrentQuest,
   getEncounterSideQuests,
   getSideQuests,
+  getTimeCounters,
   progressPlacedThisRound,
   questCardsInPlay,
  )
@@ -136,6 +137,16 @@ spec = describe "The Lost Realm engine" do
       void mainLoop
       progressOn main `shouldReturn` 0
       progressOn side `shouldReturn` 1
+
+  describe "Time counters" do
+    it "are not placed again as a separated area comes back into focus" . twoPlayerTest testDeck $ \one two -> do
+      run $ SeparatePlayers [[one], [two]]
+      run . AddToStaging =<< genEncounterCard Locations.ravenChiefsCamp
+      camp <- getsGame (toTarget . fromJustNote "no camp" . headMay . toList . (.entities.locations))
+      getTimeCounters camp `shouldReturn` 3
+      run $ FocusArea two
+      run $ FocusArea one
+      getTimeCounters camp `shouldReturn` 3
 
   describe "Revealed treacheries" do
     it "open the window for a treachery of the trait" . gameTest $ \_ -> do
