@@ -370,6 +370,11 @@ data ModifierType
   | -- | on the game: each shadow card with no shadow effect has one, which the modifier's
     -- source resolves as 'ResolveShadowCard', as Mountains of Angmar gives
     ShadowlessCardsGainEffect
+  | -- | on the game: questing unsuccessfully raises no player's threat, as Doom Hangs
+    -- Still reads
+    NoThreatFromQuestingUnsuccessfully
+  | -- | on the game: the quest phase is skipped, as Doom Hangs Still reads
+    SkipQuestPhase
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -140,6 +140,12 @@ allAllyCards =
       , mirkwoodPioneer
       , blueMountainTrader
       , gwaihir
+      , guardianOfArnor
+      , beechbone
+      , lindir
+      , eothain
+      , fornostBowman
+      , galadhrimHealer
       ]
 
 guardOfTheCitadel :: CardDef
@@ -964,4 +970,45 @@ gwaihir =
   (ally "08059" "Gwaihir" Tactics (StaticCost 5) 2 3 1 4)
     { cdUnique = True
     , cdCardTraits = setFromList [Creature, Eagle]
+    }
+
+guardianOfArnor :: CardDef
+guardianOfArnor =
+  (ally "10116" "Guardian of Arnor" Leadership (StaticCost 3) 1 1 1 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+beechbone :: CardDef
+beechbone =
+  (ally "10118" "Beechbone" Tactics (StaticCost 3) 2 2 1 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Ent]
+    }
+
+lindir :: CardDef
+lindir =
+  (ally "10120" "Lindir" Spirit (StaticCost 3) 2 1 2 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Noldor]
+    }
+
+eothain :: CardDef
+eothain =
+  (ally "10141" "Éothain" Leadership (StaticCost 4) 2 2 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Rohan, Warrior]
+    }
+
+fornostBowman :: CardDef
+fornostBowman =
+  (ally "10143" "Fornost Bowman" Tactics (StaticCost 3) 1 1 1 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+galadhrimHealer :: CardDef
+galadhrimHealer =
+  (ally "10147" "Galadhrim Healer" Lore (StaticCost 2) 1 0 1 1)
+    { cdCardTraits = setFromList [Silvan, Healer]
     }

@@ -187,6 +187,16 @@ data WindowMatcher
     AdvancedToStageWindow Timing
   | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
     MatchingEnemyAttacksWindow Timing EnemyMatcher
+  | -- | the player would be eliminated by reaching his threat elimination level, as Favor
+    -- of the Valar reads
+    EliminatedByThreatWindow Timing PlayerId
+  | -- | the quest card was defeated, as The Long Defeat reads
+    QuestDefeatedWindow Timing Target
+  | -- | a card effect discarded an ally with the trait from play, as Éothain reads
+    AllyWithTraitDiscardedByCardEffectWindow Timing Trait
+  | -- | an attack the character took part in destroyed an enemy with at least this many
+    -- printed hit points, as Sword of Númenor reads
+    EnemyWithPrintedHitPointsDestroyedByAttackWindow Timing Int Target
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -277,6 +287,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
   (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
+  (EliminatedByThreatWindow t pid, EliminatedByThreat pid') -> t == timing && pid == pid'
+  (QuestDefeatedWindow t target, QuestDefeated target') -> t == timing && target == target'
+  (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
@@ -296,6 +309,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
+  (EnemyWithPrintedHitPointsDestroyedByAttackWindow {}, _) -> False
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False

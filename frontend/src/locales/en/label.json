@@ -873,6 +873,29 @@
   "closeCall": {
     "cancel": "Close Call: choose X, the damage to cancel (Doomed X)"
   },
+  "theLongDefeat": {
+    "chooseOne": "The Long Defeat: draw 2 cards or heal up to 5 damage",
+    "draw": "Draw 2 cards",
+    "heal": "Heal up to 5 damage from among characters you control",
+    "healOne": "The Long Defeat: heal 1 damage from a character ({count} left)"
+  },
+  "doomHangsStill": {
+    "chooseOne": "Doom Hangs Still: choose 1",
+    "noThreat": "Until the end of the round, do not raise threat from questing unsuccessfully"
+  },
+  "holdYourGround": {
+    "chooseOne": "Hold Your Ground!: choose a sentinel character to ready"
+  },
+  "quickEars": {
+    "exhaust": "Quick Ears: exhaust a Dúnedain or Ranger hero"
+  },
+  "hourOfWrath": {
+    "chooseOne": "Hour of Wrath: choose a hero that does not exhaust to attack or defend this phase"
+  },
+  "taleOfTinuviel": {
+    "exhaust": "Tale of Tinúviel: exhaust a Noldor or Dúnedain character",
+    "ready": "Tale of Tinúviel: choose the character to ready"
+  },
   "blueMountainTrader": {
     "move": "Move 1 resource from a hero you control to a hero of Blue Mountain Trader's last controller, or discard it",
     "discard": "Discard Blue Mountain Trader"

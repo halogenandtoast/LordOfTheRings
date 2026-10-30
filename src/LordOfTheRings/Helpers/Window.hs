@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdHitPoints, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
@@ -139,6 +139,11 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   -- only while the enemy is still in play
   (AttackDealtDamageByWindow t who, AttackDealtDamage eid attackers n)
     | t == timing && who `elem` attackers && n > 0 -> selectAny (EnemyWithId eid)
+  -- the enemy is gone; its card is read from what this attack destroyed
+  (EnemyWithPrintedHitPointsDestroyedByAttackWindow t n who, EnemyDestroyedByAttack eid attackers _)
+    | t == timing && who `elem` attackers -> do
+        destroyed <- getsGame gameAttackDestroyed
+        pure $ any (\d -> d.target == EnemyTarget eid && maybe False (>= n) (cdHitPoints $ toCardDef d.card)) destroyed
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w

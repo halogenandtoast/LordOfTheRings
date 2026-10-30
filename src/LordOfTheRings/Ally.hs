@@ -146,6 +146,12 @@ import LordOfTheRings.Ally.Cards.ChiefTurchTheAntleredCrown
 import LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
 import LordOfTheRings.Ally.Cards.NalirTheNinInEilph
 import LordOfTheRings.Ally.Cards.Iarion
+import LordOfTheRings.Ally.Cards.GuardianOfArnor
+import LordOfTheRings.Ally.Cards.Beechbone
+import LordOfTheRings.Ally.Cards.Lindir
+import LordOfTheRings.Ally.Cards.Eothain
+import LordOfTheRings.Ally.Cards.FornostBowman
+import LordOfTheRings.Ally.Cards.GaladhrimHealer
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -319,5 +325,11 @@ allAllies =
         , SomeAllyCard nalirTroubleInTharbad
         , SomeAllyCard nalirTheNinInEilph
         , SomeAllyCard iarion
+        , SomeAllyCard guardianOfArnor
+        , SomeAllyCard beechbone
+        , SomeAllyCard lindir
+        , SomeAllyCard eothain
+        , SomeAllyCard fornostBowman
+        , SomeAllyCard galadhrimHealer
         ]
     ]

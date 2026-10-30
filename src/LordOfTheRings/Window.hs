@@ -115,6 +115,12 @@ data WindowType
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
     PlayedCard PlayerId CardCode
+  | -- | the player is about to be eliminated by reaching his threat elimination level
+    EliminatedByThreat PlayerId
+  | -- | a quest card was defeated, before what is attached to it is discarded
+    QuestDefeated Target
+  | -- | a card effect discarded the ally from play: its traits as it left
+    AllyDiscardedByCardEffect Target (Set Trait)
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

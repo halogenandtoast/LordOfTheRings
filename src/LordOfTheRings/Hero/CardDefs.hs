@@ -62,6 +62,7 @@ allHeroCards =
       , grima
       , idraen
       , erkenbrand
+      , amarthiul
       ]
 
 aragorn :: CardDef
@@ -366,4 +367,10 @@ erkenbrand =
   (hero "08137" "Erkenbrand" Leadership 10 1 2 3 4)
     { cdCardTraits = setFromList [Rohan, Warrior]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+amarthiul :: CardDef
+amarthiul =
+  (hero "10115" "Amarthiúl" Leadership 10 1 3 3 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
     }
