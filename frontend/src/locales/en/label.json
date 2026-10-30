@@ -855,6 +855,7 @@
     "chooseDwarf": "Choose the Dwarf character to attach it to",
     "none": "Attach none"
   },
+  "engageHighestThreat": "Choose the player with the highest threat for the enemy to engage",
   "layOfNimrodel": {
     "chooseHero": "Choose a spirit hero to get +1 willpower for each resource in its pool"
   },
@@ -988,9 +989,6 @@
     "choose": "Bellach's Scout: choose one",
     "damage": "Place 3 damage on the active location",
     "reveal": "Reveal an additional encounter card"
-  },
-  "prowlingOrc": {
-    "engage": "Choose the player with the highest threat for Prowling Orc to engage"
   },
   "discovered": {
     "choose": "Discovered!: choose one",

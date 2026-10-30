@@ -912,6 +912,26 @@ immediateAttack pid eid = do
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
 
+{- | The enemy engages the player with the highest threat and makes an immediate attack,
+the first player choosing among players tied for it, as Prowling Orc's Scour and Jailor
+Gornákh read.
+-}
+engageHighestThreatAndAttack :: (ReverseQueue m, Targetable source) => source -> EnemyId -> m ()
+engageHighestThreatAndAttack source eid = do
+  players <- traverse getPlayer =<< getRemainingPlayers
+  let highest = foldr (max . (.threat)) 0 players
+  lead <- getLead
+  chooseOrRunOneM lead do
+    questionLabeled "engageHighestThreat"
+    causedBy source
+    targets [p.id | p <- players, p.threat == highest] \pid -> do
+      engageEnemy pid eid
+      immediateAttack pid eid
+
+-- | The hero leaves play, set aside out of play.
+setAsideHero :: ReverseQueue m => HeroId -> m ()
+setAsideHero = push . SetAsideHero
+
 -- | The player divides the damage among characters they control, as "that player must deal
 -- X damage divided among characters he controls" reads; it is dealt once all is assigned.
 dealDamageDivided :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
