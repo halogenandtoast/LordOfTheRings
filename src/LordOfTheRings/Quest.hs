@@ -172,6 +172,9 @@ import LordOfTheRings.Quest.Cards.TheStarsGuidance
 import LordOfTheRings.Quest.Cards.CorsairPursuit
 import LordOfTheRings.Quest.Cards.ExploreTheIsland
 import LordOfTheRings.Quest.Cards.AFatefulDiscovery
+import LordOfTheRings.Quest.Cards.OutmaneuverTheEnemy
+import LordOfTheRings.Quest.Cards.BattleInTheBay
+import LordOfTheRings.Quest.Cards.BreakThroughTheFleet
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -376,5 +379,8 @@ allQuests =
         , SomeQuestCard corsairPursuit
         , SomeQuestCard exploreTheIsland
         , SomeQuestCard aFatefulDiscovery
+        , SomeQuestCard outmaneuverTheEnemy
+        , SomeQuestCard battleInTheBay
+        , SomeQuestCard breakThroughTheFleet
         ]
     ]

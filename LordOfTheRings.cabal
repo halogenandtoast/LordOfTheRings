@@ -1186,11 +1186,13 @@ library
       LordOfTheRings.Quest.Cards.AWellLaidTrap
       LordOfTheRings.Quest.Cards.AWrongTurn
       LordOfTheRings.Quest.Cards.BattleForDunland
+      LordOfTheRings.Quest.Cards.BattleInTheBay
       LordOfTheRings.Quest.Cards.BattleWithThePack
       LordOfTheRings.Quest.Cards.BelowTheMines
       LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
       LordOfTheRings.Quest.Cards.BreakthroughAtTheCitadel
+      LordOfTheRings.Quest.Cards.BreakThroughTheFleet
       LordOfTheRings.Quest.Cards.CalphonsDivination
       LordOfTheRings.Quest.Cards.Captured
       LordOfTheRings.Quest.Cards.Conspiracy
@@ -1251,6 +1253,7 @@ library
       LordOfTheRings.Quest.Cards.OrcOutpost
       LordOfTheRings.Quest.Cards.OrcRearguard
       LordOfTheRings.Quest.Cards.OrdersFromOrthanc
+      LordOfTheRings.Quest.Cards.OutmaneuverTheEnemy
       LordOfTheRings.Quest.Cards.OutOfTheDepths
       LordOfTheRings.Quest.Cards.OutOfTheDungeons
       LordOfTheRings.Quest.Cards.OutOfTheSwamp
@@ -1343,6 +1346,7 @@ library
       LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel
       LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath
       LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
+      LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven
       LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven.Helpers
       LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret
       LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers

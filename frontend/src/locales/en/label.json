@@ -1460,5 +1460,12 @@
   },
   "towerOfTheGull": {
     "damage": "Tower of the Gull: choose a non-unique Ship enemy to deal 2 damage to"
+  },
+  "outmaneuverTheEnemy": {
+    "objective": "Outmaneuver the Enemy: choose a Dol Amroth objective to add to the staging area",
+    "damage": "Outmaneuver the Enemy: choose a Ship objective you control to take 2 damage"
+  },
+  "battleInTheBay": {
+    "guard": "Battle in the Bay: choose a non-unique Ship enemy to guard the next unguarded objective"
   }
 }
