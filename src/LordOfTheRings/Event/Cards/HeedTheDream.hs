@@ -20,7 +20,7 @@ instance RunMessage HeedTheDream where
     PlayEvent pid card _ | card.id == toId attrs -> do
       choosePlayerM pid attrs \p -> do
         searchDeck p attrs 5 AnyCard False
-        leadership <- sum <$> (traverse (`getResourcesOfSphere` Leadership) =<< getRemainingPlayers)
+        leadership <- getGroupResourcesOfSphere Leadership
         when (leadership >= 3) $ chooseOneM pid do
           questionLabeled "heedTheDream.spend"
           causedBy attrs

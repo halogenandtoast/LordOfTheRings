@@ -134,6 +134,10 @@ data WindowType
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
     -- (Escape from Mount Gram)
     CapturedCardsRescued Card [Card]
+  | -- | the shadow card's effect raised its enemy's attack
+    ShadowIncreasedAttack CardId EnemyId
+  | -- | the card was paid for from these heroes' and allies' pools, as Master Ironsmith reads
+    PaidFrom Target [Target]
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -27,7 +27,7 @@ instance HasAbilities Treebeard where
 
 instance RunMessage Treebeard where
   runMessage msg s@(Treebeard a) = case msg of
-    BeginPhase ResourcePhase -> do
+    DoPhase ResourcePhase -> do
       placeResources a a 1
       Treebeard <$> runMessage msg a
     UseCardAbility pid (isSource a -> True) 1 _ -> do

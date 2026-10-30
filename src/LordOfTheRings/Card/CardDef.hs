@@ -17,6 +17,12 @@ data CardCost = StaticCost Int | DynamicCost | XCost
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+-- | What a player card asks besides its resources to be played from hand, as Arkham's
+-- additional costs.
+data AdditionalCost = DiscardCardsFromHand Int
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 -- | Where a player card may be played from.
 data PlayableFrom = FromHand | FromHandOrDiscard | FromDiscardOnly
   deriving stock (Show, Eq, Generic)
@@ -60,6 +66,11 @@ data CardDef = CardDef
   -- ^ an attachment limited to 1 per character: no host takes a second copy of its title
   , cdPlayableFrom :: PlayableFrom
   -- ^ where its owner may play it from, as Glorfindel can be played from the discard pile
+  , cdAdditionalCost :: Maybe AdditionalCost
+  -- ^ what playing it from hand costs besides its resources, as Guardian of Rivendell
+  , cdRestrictedSlots :: Int
+  -- ^ how many of a character's 2 restricted attachments a restricted card counts as, as
+  -- Raiment of War counts as 2
   }
   deriving stock (Show, Eq, Generic)
 
@@ -110,6 +121,8 @@ emptyCardDef cCode name cType =
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
     , cdPlayableFrom = FromHand
+    , cdAdditionalCost = Nothing
+    , cdRestrictedSlots = 1
     }
 
 unique :: CardDef -> CardDef

@@ -306,6 +306,7 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
       getDamage (toTarget asHero) `shouldReturn` 1
       attachmentOf Attachments.swordThain `shouldReturn` Just (AttachedTo $ toTarget asHero)
       run $ BeginPhase ResourcePhase
+      passActions pid
       getHeroResources asHero.id `shouldReturn` 1
       sword <- getsGame (toTarget . fromJustNote "sword" . find ((== toCardCode Attachments.swordThain) . toCardCode) . toList . (.entities.attachments))
       run $ Discard sword

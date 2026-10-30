@@ -34,9 +34,7 @@ instance RunMessage WellEquipped where
           chooseOrRunOneM pid do
             questionLabeled "wellEquipped.chooseDwarf"
             causedBy pc
-            targets hosts \host -> do
-              removeFromDiscard pid pc.id
-              push $ PlayAttachmentOn pid pc host
+            targets hosts (attachFromDiscard pid pc)
         labeled "wellEquipped.none" (pure ())
       pure e
     _ -> WellEquipped <$> runMessage msg attrs

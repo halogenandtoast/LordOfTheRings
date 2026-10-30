@@ -45,7 +45,7 @@ matchPlayer matcher player = case matcher of
   ActivePlayer -> (== player.id) <$> getsGame gameActivePlayer
   AnyPlayer -> pure True
   NotPlayer m -> not <$> matchPlayer m player
-  PlayerWithThreatAtLeast n -> pure $ player.threat >= n
+  PlayerWithThreatAtLeast n -> (>= n) <$> getThreat player.id
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
@@ -209,7 +209,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget enemy)
   EnemyWithEngagementCostAboveThreatOf pid -> do
     mods <- map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
-    threat <- (.threat) <$> getPlayer pid
+    threat <- getThreat pid
     pure $ max 0 (enemy.engagementCost + sum [n | EngagementCostModifier n <- mods]) > threat
   AnyEnemy -> pure True
   NotEnemy m -> not <$> matchEnemy m enemy
@@ -309,6 +309,10 @@ getResourcesOfSphere :: HasGame m => PlayerId -> Sphere -> m Int
 getResourcesOfSphere pid sphere = do
   heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
   sum . map (.resources) <$> filterM (heroPaysFor sphere) heroes
+
+-- | Resources of the sphere the players as a group could spend, as Heed the Dream asks.
+getGroupResourcesOfSphere :: HasGame m => Sphere -> m Int
+getGroupResourcesOfSphere sphere = sum <$> (traverse (`getResourcesOfSphere` sphere) =<< getRemainingPlayers)
 
 {- | Allies in any player's discard pile, with their owners and printed costs, that the
 player has the sphere's resources to pay for and the unique rule lets into play, as
@@ -456,6 +460,14 @@ currentQuestHasAKeyword =
 
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
+
+-- | The player's threat as cards read it: no higher than an effect treats it as, as Vanish
+-- from Sight treats it as 20. Raising or lowering it moves the dial itself.
+getThreat :: HasGame m => PlayerId -> m Int
+getThreat pid = do
+  threat <- (.threat) <$> getPlayer pid
+  mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
+  pure $ foldr min threat [n | ThreatCountsAsAtMost n <- mods]
 
 -- | The player whose set-aside cards hold the card, as a Ranger of the North shuffled
 -- into the encounter deck stays its owner's.

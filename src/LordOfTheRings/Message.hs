@@ -207,6 +207,8 @@ data Message
   | UseCardAbility PlayerId Source Int [Window]
   | CreateEffect Effect
   | AttachCard AttachmentId Target
+  | -- | the character's restricted cards are counted again, after one is discarded
+    CheckRestricted Target
   | PlayAttachment PlayerId PlayerCard
   | PlayAttachmentOn PlayerId PlayerCard Target
   | -- | an attachment in the player's hand is put into play on the host, not played
@@ -361,6 +363,9 @@ data Message
   | -- | a shadow card dealt to the enemy is added to the staging area as an enemy
     PutShadowEnemyIntoStaging EnemyId CardId
   | RemoveShadowCard EnemyId CardId
+  | -- | the shadow card's effect has resolved: the enemy's attack before it, to tell
+    -- whether it raised it
+    CheckShadowRaisedAttack CardId EnemyId Int
   | -- | the shadow cards dealt to the enemy go to the encounter discard pile, as after an
     -- immediate attack outside the combat phase
     DiscardShadowCards EnemyId
