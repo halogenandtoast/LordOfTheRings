@@ -143,19 +143,16 @@ allQuestCards =
       , theTrialOfIntuition
       , theAntleredCrownTheThreeTrials
       , searchTheRuins
-<<<<<<< HEAD
-      , theShadesOfAngmar
-      , aFellWraith
-      , theShadowWorld
-      , sealTheTomb
-      , thePowerOfAngmar
-=======
       , orcRearguard
       , rescueIarion
       , orcAmbush
       , lostInTheWilderness
       , stopTheWarParty
->>>>>>> main
+      , theShadesOfAngmar
+      , aFellWraith
+      , theShadowWorld
+      , sealTheTomb
+      , thePowerOfAngmar
       ]
 
 theDrippingWalls :: CardDef
@@ -547,30 +544,6 @@ searchTheRuins =
     , cdKeywords = setFromList [Surge]
     }
 
-<<<<<<< HEAD
-theShadesOfAngmar :: CardDef
-theShadesOfAngmar = quest "09073" "The Shades of Angmar" DeadmensDike 1 11
-
-aFellWraith :: CardDef
-aFellWraith = quest "09074" "A Fell Wraith" DeadmensDike 2 13
-
-theShadowWorld :: CardDef
-theShadowWorld = (encounterSideQuest "09042" "The Shadow World" DeadmensDike 5) {cdKeywords = setFromList [Surge]}
-
-sealTheTomb :: CardDef
-sealTheTomb =
-  (encounterSideQuest "09063" "Seal the Tomb" CursedDead 6)
-    { cdVictoryPoints = Just 10
-    , cdKeywords = setFromList [Surge]
-    }
-
-thePowerOfAngmar :: CardDef
-thePowerOfAngmar =
-  (encounterSideQuest "09067" "The Power of Angmar" DarkSorcery 8)
-    { cdVictoryPoints = Just 10
-    , cdKeywords = setFromList [Surge]
-    }
-=======
 orcRearguard :: CardDef
 orcRearguard = (encounterSideQuest "09023" "Orc Rearguard" IntrudersInChetwood 3) {cdVictoryPoints = Just 10}
 
@@ -598,4 +571,26 @@ lostInTheWilderness =
 
 stopTheWarParty :: CardDef
 stopTheWarParty = quest "09068" "Stop the War Party" IntrudersInChetwood 1 30
->>>>>>> main
+
+theShadesOfAngmar :: CardDef
+theShadesOfAngmar = quest "09073" "The Shades of Angmar" DeadmensDike 1 11
+
+aFellWraith :: CardDef
+aFellWraith = quest "09074" "A Fell Wraith" DeadmensDike 2 13
+
+theShadowWorld :: CardDef
+theShadowWorld = (encounterSideQuest "09042" "The Shadow World" DeadmensDike 5) {cdKeywords = setFromList [Surge]}
+
+sealTheTomb :: CardDef
+sealTheTomb =
+  (encounterSideQuest "09063" "Seal the Tomb" CursedDead 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+thePowerOfAngmar :: CardDef
+thePowerOfAngmar =
+  (encounterSideQuest "09067" "The Power of Angmar" DarkSorcery 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }

@@ -4,6 +4,7 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -28,8 +29,7 @@ instance HasAbilities TheShadesOfAngmar where
 -- When Revealed: Each player must search the encounter deck for a Baleful Shade and put it
 -- into play engaged with him. Shuffle the encounter deck and reveal 1 encounter card per
 -- player.
--- Iârion, of The Lost Realm's set, is found by his code; the first player gains control of
--- him as he comes out.
+-- The first player gains control of Iârion as he comes out.
 instance RunMessage TheShadesOfAngmar where
   runMessage msg q@(TheShadesOfAngmar attrs) = case msg of
     DoStep 7 Setup -> do
@@ -41,7 +41,7 @@ instance RunMessage TheShadesOfAngmar where
       let firstOf m = for_ (take 1 $ filter (cardMatches m) deck) \card -> do
             removeFromEncounterDeck card
             addToStaging card
-      firstOf (CardWithCode "09016")
+      firstOf (cardIs Objectives.iarion)
       traverse_ setAside $ filter (cardMatches $ cardIs Enemies.thaurdir) deck
       firstOf (cardIs Locations.fornostSquare)
       shuffleEncounterDeck
