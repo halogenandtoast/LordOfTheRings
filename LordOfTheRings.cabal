@@ -668,6 +668,7 @@ library
       LordOfTheRings.Location.Cards.CollapsedTower
       LordOfTheRings.Location.Cards.CursedForest
       LordOfTheRings.Location.Cards.DarkPit
+      LordOfTheRings.Location.Cards.DecrepitRemains
       LordOfTheRings.Location.Cards.DecrepitRooftops
       LordOfTheRings.Location.Cards.DoorsOfDurin
       LordOfTheRings.Location.Cards.DreadfulGap
@@ -678,6 +679,7 @@ library
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
       LordOfTheRings.Location.Cards.EdgeOfFangorn
+      LordOfTheRings.Location.Cards.EerieHalls
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
       LordOfTheRings.Location.Cards.Fanuidhol
@@ -685,12 +687,14 @@ library
       LordOfTheRings.Location.Cards.FensAndMires
       LordOfTheRings.Location.Cards.FingerOfGlanduin
       LordOfTheRings.Location.Cards.FirstHall
+      LordOfTheRings.Location.Cards.ForbiddenDescent
       LordOfTheRings.Location.Cards.FordsOfIsen
       LordOfTheRings.Location.Cards.ForestGate
       LordOfTheRings.Location.Cards.ForestGrove
       LordOfTheRings.Location.Cards.FouledWell
       LordOfTheRings.Location.Cards.GapOfRohan
       LordOfTheRings.Location.Cards.GardenOfPoisons
+      LordOfTheRings.Location.Cards.GhostlyRuins
       LordOfTheRings.Location.Cards.GladdenFields
       LordOfTheRings.Location.Cards.GladeOfCleansing
       LordOfTheRings.Location.Cards.GoblinGate
@@ -780,6 +784,7 @@ library
       LordOfTheRings.Location.Cards.TheEavesOfMirkwood
       LordOfTheRings.Location.Cards.TheEmptyMug
       LordOfTheRings.Location.Cards.TheFourthStar
+      LordOfTheRings.Location.Cards.TheGreatHall
       LordOfTheRings.Location.Cards.TheHeartOfTheMarshes
       LordOfTheRings.Location.Cards.TheHighlands
       LordOfTheRings.Location.Cards.TheIslet

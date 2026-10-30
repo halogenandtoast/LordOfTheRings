@@ -166,6 +166,11 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.TheGreatHall
+import LordOfTheRings.Location.Cards.ForbiddenDescent
+import LordOfTheRings.Location.Cards.EerieHalls
+import LordOfTheRings.Location.Cards.GhostlyRuins
+import LordOfTheRings.Location.Cards.DecrepitRemains
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -359,5 +364,10 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard theGreatHall
+        , SomeLocationCard forbiddenDescent
+        , SomeLocationCard eerieHalls
+        , SomeLocationCard ghostlyRuins
+        , SomeLocationCard decrepitRemains
         ]
     ]
