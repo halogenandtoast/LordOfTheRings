@@ -122,6 +122,9 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+import LordOfTheRings.Quest.Cards.TheClutchesOfCarnDum
+import LordOfTheRings.Quest.Cards.MidwintersCrux
+import LordOfTheRings.Quest.Cards.FuriousCharge
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -276,5 +279,8 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+        , SomeQuestCard theClutchesOfCarnDum
+        , SomeQuestCard midwintersCrux
+        , SomeQuestCard furiousCharge
         ]
     ]
