@@ -1,4 +1,4 @@
-module LordOfTheRings.Location.Cards.LostIsland (lostIsland) where
+module LordOfTheRings.Location.Cards.LostIsland (lostIsland, lostIslandTempleOfTheDeceived) where
 
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
@@ -11,6 +11,10 @@ newtype LostIsland = LostIsland LocationAttrs
 
 lostIsland :: LocationCard LostIsland
 lostIsland = location LostIsland Cards.lostIsland
+
+-- | Temple of the Deceived's own Lost Island side, the same text.
+lostIslandTempleOfTheDeceived :: LocationCard LostIsland
+lostIslandTempleOfTheDeceived = location LostIsland Cards.lostIslandTempleOfTheDeceived
 
 -- | Cannot have player card attachments.
 -- ponytail: no attachment at all, as no encounter card attaches to one
