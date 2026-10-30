@@ -40,6 +40,13 @@ isPlayerCardSource = \case
   CardIdSource _ -> True
   _ -> False
 
+-- | Whether the source is a player event: a player card known by its card id.
+isPlayerEventSource :: Source -> Bool
+isPlayerEventSource = \case
+  AbilitySource s _ -> isPlayerEventSource s
+  CardIdSource _ -> True
+  _ -> False
+
 -- | The card a source is, when it is one on the board.
 sourceTarget :: Source -> Maybe Target
 sourceTarget = \case

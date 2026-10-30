@@ -15,7 +15,7 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.I18n
-import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects))
+import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerWithThreatAtLeast), selectAny)
 import LordOfTheRings.Message
@@ -135,12 +135,17 @@ valourLabeled pid action = do
   when high $ labeled "valour" action
 
 -- | A choice made by clicking the target. A card immune to player card effects is not
--- offered when a player card, the one 'causedBy' names, is causing the question.
+-- offered when a player card, the one 'causedBy' names, is causing the question, nor one
+-- immune to player events when an event (its card id) is.
 targeting :: (ReverseQueue m, Targetable a) => a -> QueueT Message m () -> ChooseT m ()
 targeting a action = do
   source <- ChooseT $ gets (.chooseSource)
-  immune <- lift $ elem ImmuneToPlayerCardEffects <$> getModifiers a
-  unless (immune && maybe False isPlayerCardTarget source) do
+  mods <- lift $ getModifiers a
+  let immune = case source of
+        Just s -> (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s) || (ImmuneToPlayerEvents `elem` mods && isEvent s)
+        Nothing -> False
+      isEvent = \case CardIdTarget _ -> True; _ -> False
+  unless immune do
     msgs <- lift $ capture action
     ChooseT $ lift $ tell [targetLabel a msgs]
 

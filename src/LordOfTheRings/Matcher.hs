@@ -209,6 +209,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget enemy)
   EnemyNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget enemy)
   EnemyWithAnyAttachment -> notNull <$> getAttachmentsOn (toTarget enemy)
+  EnemyWithResources -> pure $ countTokens Resource (toAttrs enemy).enemyTokens > 0
   EnemyWithEngagementCostAboveThreatOf pid -> do
     mods <- map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
     threat <- getThreat pid

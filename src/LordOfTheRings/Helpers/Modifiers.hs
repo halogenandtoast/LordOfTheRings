@@ -16,7 +16,7 @@ import LordOfTheRings.Matcher.Types (cardMatches)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Source (Source (GameSource), isPlayerCardSource, sourceTarget)
+import LordOfTheRings.Source (Source (GameSource), isPlayerCardSource, isPlayerEventSource, sourceTarget)
 import LordOfTheRings.Target
 
 -- | Collect every constant ability and lasting effect into the modifier cache.
@@ -115,7 +115,10 @@ immuneToSource :: (HasGame m, Targetable a) => Source -> a -> m Bool
 immuneToSource GameSource _ = pure False
 immuneToSource source a = do
   mods <- getModifiers a
-  pure $ ImmuneToCardEffects `elem` mods || (isPlayerCardSource source && ImmuneToPlayerCardEffects `elem` mods)
+  pure
+    $ ImmuneToCardEffects `elem` mods
+    || (isPlayerCardSource source && ImmuneToPlayerCardEffects `elem` mods)
+    || (isPlayerEventSource source && ImmuneToPlayerEvents `elem` mods)
 
 -- | A printed value with the target's modifiers applied, floored at 0.
 modifiedValue :: (HasGame m, Targetable a) => (ModifierType -> Maybe Int) -> a -> Int -> m Int

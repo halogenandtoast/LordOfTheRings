@@ -33,6 +33,8 @@ data ModifierType
     DoesNotContributeThreat
   | -- | on a card in play: player card effects do not touch it
     ImmuneToPlayerCardEffects
+  | -- | on a card in play: player events do not touch it, as The Shattered Monument reads
+    ImmuneToPlayerEvents
   | -- | on a location: no card effect, player or encounter, places or removes its tokens
     ImmuneToCardEffects
   | -- | on a location: player card effects cannot place progress on it, as Retake the City
