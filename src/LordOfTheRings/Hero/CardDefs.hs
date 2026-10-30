@@ -70,6 +70,7 @@ allHeroCards =
       , halbarad
       , merrySpirit
       , argalad
+      , naasiyah
       ]
 
 aragorn :: CardDef
@@ -424,4 +425,10 @@ argalad =
   (hero "12082" "Argalad" Lore 9 2 2 1 4)
     { cdCardTraits = setFromList [Silvan, Scout]
     , cdKeywords = setFromList [Ranged]
+    }
+
+naasiyah :: CardDef
+naasiyah =
+  (hero "12109" "Na'asiyah" Tactics 8 1 2 2 4)
+    { cdCardTraits = setFromList [Corsair, Warrior]
     }

@@ -1272,5 +1272,13 @@
     "enemy": "Interrogation: choose an enemy with a Trap attached",
     "discard": "Interrogation: you may discard 1 of these cards",
     "keep": "Discard none"
+  },
+  "naasiyah": {
+    "choose": "Na'asiyah: +2 attack or +2 defense for this attack?",
+    "attack": "+2 attack",
+    "defense": "+2 defense"
+  },
+  "theHousesOfHealing": {
+    "hero": "The Houses of Healing: choose a hero in a discard pile to put back into play"
   }
 }

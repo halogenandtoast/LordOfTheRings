@@ -168,6 +168,10 @@ allEventCards =
       , rallyingCry
       , battleFury
       , interrogation
+      , terribleToBehold
+      , knifeWork
+      , theHousesOfHealing
+      , justiceShallBeDone
       ]
 
 everVigilant :: CardDef
@@ -654,3 +658,19 @@ battleFury = event "12086" "Battle-fury" Tactics (StaticCost 1)
 
 interrogation :: CardDef
 interrogation = event "12090" "Interrogation" Lore (StaticCost 1)
+
+terribleToBehold :: CardDef
+terribleToBehold = event "12111" "Terrible to Behold" Leadership (StaticCost 1)
+
+knifeWork :: CardDef
+knifeWork = event "12114" "Knife-work" Tactics (StaticCost 1)
+
+theHousesOfHealing :: CardDef
+theHousesOfHealing = event "12118" "The Houses of Healing" Lore (StaticCost 5)
+
+justiceShallBeDone :: CardDef
+justiceShallBeDone =
+  (event "12119" "Justice Shall Be Done" Neutral (StaticCost 0))
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }

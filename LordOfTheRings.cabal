@@ -106,6 +106,7 @@ library
       LordOfTheRings.Ally.Cards.Iarion
       LordOfTheRings.Ally.Cards.ImladrisStargazer
       LordOfTheRings.Ally.Cards.Ingold
+      LordOfTheRings.Ally.Cards.Ioreth
       LordOfTheRings.Ally.Cards.IsengardMessenger
       LordOfTheRings.Ally.Cards.IthilienArcher
       LordOfTheRings.Ally.Cards.IthilienGuardian
@@ -118,6 +119,7 @@ library
       LordOfTheRings.Ally.Cards.KnightsOfTheSwan
       LordOfTheRings.Ally.Cards.Landroval
       LordOfTheRings.Ally.Cards.Lindir
+      LordOfTheRings.Ally.Cards.LinhirSeaCaptain
       LordOfTheRings.Ally.Cards.LongbeardElder
       LordOfTheRings.Ally.Cards.LongbeardMapMaker
       LordOfTheRings.Ally.Cards.LongbeardOrcSlayer
@@ -166,6 +168,7 @@ library
       LordOfTheRings.Ally.Cards.VeteranAxehand
       LordOfTheRings.Ally.Cards.VeteranOfNanduhirion
       LordOfTheRings.Ally.Cards.VeteranOfOsgiliath
+      LordOfTheRings.Ally.Cards.VeteranSwordElf
       LordOfTheRings.Ally.Cards.WanderingEnt
       LordOfTheRings.Ally.Cards.WanderingTook
       LordOfTheRings.Ally.Cards.WardenOfAnnuminas
@@ -270,6 +273,7 @@ library
       LordOfTheRings.Attachment.Cards.RivendellBlade
       LordOfTheRings.Attachment.Cards.RivendellBow
       LordOfTheRings.Attachment.Cards.RohanWarhorse
+      LordOfTheRings.Attachment.Cards.RuneMaster
       LordOfTheRings.Attachment.Cards.ScrollOfIsildur
       LordOfTheRings.Attachment.Cards.SecretVigil
       LordOfTheRings.Attachment.Cards.SelfPreservation
@@ -302,11 +306,13 @@ library
       LordOfTheRings.Attachment.Cards.TomeOfAtanatar
       LordOfTheRings.Attachment.Cards.UnexpectedCourage
       LordOfTheRings.Attachment.Cards.ValiantSword
+      LordOfTheRings.Attachment.Cards.VigilantGuard
       LordOfTheRings.Attachment.Cards.Vilya
       LordOfTheRings.Attachment.Cards.VisionaryLeadership
       LordOfTheRings.Attachment.Cards.WarAxe
       LordOfTheRings.Attachment.Cards.WardenOfArnor
       LordOfTheRings.Attachment.Cards.WeatherStainedCloak
+      LordOfTheRings.Attachment.Cards.Windfola
       LordOfTheRings.Attachment.Cards.Wingfoot
       LordOfTheRings.Attachment.Import.Lifted
       LordOfTheRings.Attachment.Record
@@ -595,8 +601,10 @@ library
       LordOfTheRings.Event.Cards.Infighting
       LordOfTheRings.Event.Cards.Interrogation
       LordOfTheRings.Event.Cards.IslandAmidPerils
+      LordOfTheRings.Event.Cards.JusticeShallBeDone
       LordOfTheRings.Event.Cards.KeenAsLances
       LordOfTheRings.Event.Cards.KhazadKhazad
+      LordOfTheRings.Event.Cards.KnifeWork
       LordOfTheRings.Event.Cards.LayOfNimrodel
       LordOfTheRings.Event.Cards.LeaveNoTrace
       LordOfTheRings.Event.Cards.LegacyOfNumenor
@@ -653,11 +661,13 @@ library
       LordOfTheRings.Event.Cards.SwiftStrike
       LordOfTheRings.Event.Cards.TakingInitiative
       LordOfTheRings.Event.Cards.TaleOfTinuviel
+      LordOfTheRings.Event.Cards.TerribleToBehold
       LordOfTheRings.Event.Cards.TheDoorIsClosed
       LordOfTheRings.Event.Cards.TheEaglesAreComing
       LordOfTheRings.Event.Cards.TheEndComes
       LordOfTheRings.Event.Cards.TheGaladhrimsGreeting
       LordOfTheRings.Event.Cards.TheHammerStroke
+      LordOfTheRings.Event.Cards.TheHousesOfHealing
       LordOfTheRings.Event.Cards.TheMusterOfRohan
       LordOfTheRings.Event.Cards.TheSeeingStone
       LordOfTheRings.Event.Cards.TheTreePeople
@@ -743,6 +753,7 @@ library
       LordOfTheRings.Hero.Cards.Mablung
       LordOfTheRings.Hero.Cards.MerrySpirit
       LordOfTheRings.Hero.Cards.Mirlonde
+      LordOfTheRings.Hero.Cards.Naasiyah
       LordOfTheRings.Hero.Cards.Nori
       LordOfTheRings.Hero.Cards.Ori
       LordOfTheRings.Hero.Cards.Pippin
@@ -1641,6 +1652,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.DamageSpec
       LordOfTheRings.DebugSpec
       LordOfTheRings.DeckCardsSpec
+      LordOfTheRings.DreamChaser.AStormOnCobasHavenPlayerCardsSpec
       LordOfTheRings.DreamChaser.TheDrownedRuinsPlayerCardsSpec
       LordOfTheRings.Dwarrowdelf.FoundationsOfStoneSpec
       LordOfTheRings.Dwarrowdelf.PlayerCardsSpec

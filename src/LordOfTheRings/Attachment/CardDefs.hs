@@ -130,6 +130,9 @@ allAttachmentCards =
       , dunedainRemedy
       , hithlain
       , strider
+      , runeMaster
+      , vigilantGuard
+      , windfola
       ]
 
 stewardOfGondor :: CardDef
@@ -911,4 +914,26 @@ strider =
   unique
     (attachment "12091" "Strider" Neutral (StaticCost 1))
       { cdCardTraits = setFromList [Title]
+      }
+
+runeMaster :: CardDef
+runeMaster =
+  unique
+    (attachment "12110" "Rune-master" Leadership (StaticCost 1))
+      { cdCardTraits = setFromList [Title]
+      }
+
+vigilantGuard :: CardDef
+vigilantGuard =
+  (attachment "12113" "Vigilant Guard" Tactics (StaticCost 3))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+windfola :: CardDef
+windfola =
+  unique
+    (attachment "12116" "Windfola" Spirit (StaticCost 1))
+      { cdCardTraits = setFromList [Mount]
+      , cdKeywords = setFromList [Restricted]
       }

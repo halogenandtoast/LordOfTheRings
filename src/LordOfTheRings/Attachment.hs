@@ -123,6 +123,9 @@ import LordOfTheRings.Attachment.Cards.HobbitPony
 import LordOfTheRings.Attachment.Cards.DunedainRemedy
 import LordOfTheRings.Attachment.Cards.Hithlain
 import LordOfTheRings.Attachment.Cards.Strider
+import LordOfTheRings.Attachment.Cards.RuneMaster
+import LordOfTheRings.Attachment.Cards.VigilantGuard
+import LordOfTheRings.Attachment.Cards.Windfola
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -272,5 +275,8 @@ allAttachments =
         , SomeAttachmentCard dunedainRemedy
         , SomeAttachmentCard hithlain
         , SomeAttachmentCard strider
+        , SomeAttachmentCard runeMaster
+        , SomeAttachmentCard vigilantGuard
+        , SomeAttachmentCard windfola
         ]
     ]

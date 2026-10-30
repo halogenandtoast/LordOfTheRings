@@ -65,6 +65,7 @@ import LordOfTheRings.Hero.Cards.AragornTactics
 import LordOfTheRings.Hero.Cards.Halbarad
 import LordOfTheRings.Hero.Cards.MerrySpirit
 import LordOfTheRings.Hero.Cards.Argalad
+import LordOfTheRings.Hero.Cards.Naasiyah
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Hero.Types qualified as HeroTypes
@@ -169,5 +170,6 @@ allHeroes =
         , SomeHeroCard halbarad
         , SomeHeroCard merrySpirit
         , SomeHeroCard argalad
+        , SomeHeroCard naasiyah
         ]
     ]

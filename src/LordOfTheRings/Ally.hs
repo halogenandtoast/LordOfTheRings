@@ -175,6 +175,9 @@ import LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
 import LordOfTheRings.Ally.Cards.DwarvenSellsword
 import LordOfTheRings.Ally.Cards.WoodlandCourier
 import LordOfTheRings.Ally.Cards.RobinSmallburrow
+import LordOfTheRings.Ally.Cards.VeteranSwordElf
+import LordOfTheRings.Ally.Cards.LinhirSeaCaptain
+import LordOfTheRings.Ally.Cards.Ioreth
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -377,5 +380,8 @@ allAllies =
         , SomeAllyCard dwarvenSellsword
         , SomeAllyCard woodlandCourier
         , SomeAllyCard robinSmallburrow
+        , SomeAllyCard veteranSwordElf
+        , SomeAllyCard linhirSeaCaptain
+        , SomeAllyCard ioreth
         ]
     ]

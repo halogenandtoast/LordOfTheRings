@@ -157,6 +157,10 @@ import LordOfTheRings.Event.Cards.ExpertTrackers
 import LordOfTheRings.Event.Cards.RallyingCry
 import LordOfTheRings.Event.Cards.BattleFury
 import LordOfTheRings.Event.Cards.Interrogation
+import LordOfTheRings.Event.Cards.TerribleToBehold
+import LordOfTheRings.Event.Cards.KnifeWork
+import LordOfTheRings.Event.Cards.TheHousesOfHealing
+import LordOfTheRings.Event.Cards.JusticeShallBeDone
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -327,5 +331,9 @@ allEvents =
         , SomeEventCard rallyingCry
         , SomeEventCard battleFury
         , SomeEventCard interrogation
+        , SomeEventCard terribleToBehold
+        , SomeEventCard knifeWork
+        , SomeEventCard theHousesOfHealing
+        , SomeEventCard justiceShallBeDone
         ]
     ]

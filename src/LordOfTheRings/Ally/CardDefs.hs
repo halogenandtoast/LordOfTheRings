@@ -166,6 +166,9 @@ allAllyCards =
       , dwarvenSellsword
       , woodlandCourier
       , robinSmallburrow
+      , veteranSwordElf
+      , linhirSeaCaptain
+      , ioreth
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1160,4 +1163,23 @@ robinSmallburrow =
   unique
     (ally "12089" "Robin Smallburrow" Lore (StaticCost 2) 2 0 1 2)
       { cdCardTraits = setFromList [Hobbit, Shirriff]
+      }
+
+veteranSwordElf :: CardDef
+veteranSwordElf =
+  (ally "12112" "Veteran Sword-elf" Tactics (StaticCost 3) 1 1 1 3)
+    { cdCardTraits = setFromList [Noldor, Warrior]
+    }
+
+linhirSeaCaptain :: CardDef
+linhirSeaCaptain =
+  (ally "12115" "Linhir Sea-captain" Spirit (StaticCost 3) 2 0 1 2)
+    { cdCardTraits = setFromList [Gondor]
+    }
+
+ioreth :: CardDef
+ioreth =
+  unique
+    (ally "12117" "Ioreth" Lore (StaticCost 0) 0 0 0 1)
+      { cdCardTraits = setFromList [Gondor, Healer]
       }
