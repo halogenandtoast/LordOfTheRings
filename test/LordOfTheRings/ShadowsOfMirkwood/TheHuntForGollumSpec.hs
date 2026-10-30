@@ -194,4 +194,4 @@ spec = describe "The Hunt for Gollum" do
     run $ BeginPhase ResourcePhase
     length . (.hand) <$> getPlayer pid `shouldReturn` hand + 2
  where
-  bilboDeck = DeckList [toCardCode Heroes.bilboBaggins, "01007", "01002"] testDeck.cards
+  bilboDeck = deckList [toCardCode Heroes.bilboBaggins, "01007", "01002"] testDeck.cards

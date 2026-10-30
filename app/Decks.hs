@@ -37,6 +37,7 @@ import Database.Persist
 import Database.Persist.Sql (SqlBackend, fromSqlKey)
 import LordOfTheRings.Card (CardCode (..), allPlayerCards)
 import LordOfTheRings.Decklist (DeckList (..), deckProblem)
+import LordOfTheRings.Decklist qualified as Decklist
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
 import LordOfTheRings.Prelude hiding (asText)
 import Model
@@ -464,6 +465,6 @@ listFrom db heroes draw
   | null unknown = Right dealt
   | otherwise = Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
  where
-  dealt = DeckList (map (CardCode . code) heroes) [(CardCode (code l), n) | l@(_, _, n) <- draw]
+  dealt = Decklist.deckList (map (CardCode . code) heroes) [(CardCode (code l), n) | l@(_, _, n) <- draw]
   code (source, ours, _) = fromMaybe source (flip cardRingsdbCode db =<< ours)
   unknown = [fromMaybe (code l) (flip cardName db =<< ours) | l@(_, ours, _) <- heroes <> draw, not (Map.member (CardCode $ code l) allPlayerCards)]

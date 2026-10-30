@@ -10,7 +10,7 @@ import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, ge
 import LordOfTheRings.Classes.Entity as X (insertEntity, overAttrs, toAttrs, toId)
 import LordOfTheRings.Scenario.Types (encounterDeckL)
 import LordOfTheRings.Scenario as X (Scenario, escapeFromDolGuldur, journeyAlongTheAnduin, passageThroughMirkwood)
-import LordOfTheRings.Decklist as X (DeckList (..), starterDecks, starterDeck)
+import LordOfTheRings.Decklist as X (DeckList (..), deckList, starterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Hero as X (Hero, HeroAttrs (..))
 import LordOfTheRings.Ally as X (AllyAttrs (..))
@@ -48,7 +48,7 @@ gameTestWith deck body = do
 -- | Beravor, Éowyn and Théodred (27 starting threat) with a mix of allies, attachments and events.
 testDeck :: DeckList
 testDeck =
-  DeckList
+  deckList
     ["01012", "01007", "01002"]
     [ ("01013", 3), ("01014", 2), ("01015", 2), ("01016", 3), ("01017", 2), ("01031", 1)
     , ("01045", 2), ("01059", 2), ("01060", 1), ("01061", 2), ("01062", 2), ("01073", 3)

@@ -17,7 +17,7 @@ import TestImport
 
 -- | Boromir (leadership, Gondor), Beravor (lore) and Éowyn (spirit, Rohan).
 honTest :: (PlayerId -> GameT ()) -> IO ()
-honTest = gameTestWith (DeckList ["05002", "01012", "01007"] testDeck.cards)
+honTest = gameTestWith (deckList ["05002", "01012", "01007"] testDeck.cards)
 
 boromirCode, beravorCode, eowynCode :: CardCode
 boromirCode = "05002"

@@ -28,7 +28,7 @@ threat pid = (.threat) <$> getPlayer pid
 
 -- | Idraen (spirit, Ranger, Scout), Beravor (lore) and Théodred (leadership).
 idraenTest :: (PlayerId -> GameT ()) -> IO ()
-idraenTest = gameTestWith (DeckList [idraenCode, beravorCode, theodredCode] testDeck.cards)
+idraenTest = gameTestWith (deckList [idraenCode, beravorCode, theodredCode] testDeck.cards)
 
 setThreat :: PlayerId -> Int -> GameT ()
 setThreat pid n = putGame . (playersL . ix pid . threatL .~ n) =<< getGame
@@ -65,7 +65,7 @@ erkenbrandCode = "08137"
 
 -- | Erkenbrand (leadership, sentinel), Beravor (lore) and Éowyn (spirit).
 erkenbrandTest :: (PlayerId -> GameT ()) -> IO ()
-erkenbrandTest = gameTestWith (DeckList [erkenbrandCode, beravorCode, eowynCode] testDeck.cards)
+erkenbrandTest = gameTestWith (deckList [erkenbrandCode, beravorCode, eowynCode] testDeck.cards)
 
 engagedEnemy :: PlayerId -> CardDef -> GameT EnemyId
 engagedEnemy pid def = do

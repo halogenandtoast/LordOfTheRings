@@ -15,7 +15,7 @@ import TestImport
 
 -- | Heroes, by code, with the test deck's cards.
 withHeroes :: [CardCode] -> (PlayerId -> GameT ()) -> IO ()
-withHeroes heroes = gameTestWith (DeckList heroes testDeck.cards)
+withHeroes heroes = gameTestWith (deckList heroes testDeck.cards)
 
 hirluin, theoden, gimli, legolas, pippin, frodo, bilbo, eowyn, caldara, beravor :: CardCode
 hirluin = "06001"

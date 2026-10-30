@@ -25,6 +25,8 @@ data PlayerMatcher
     PlayerWithHiddenCards
   | -- | a player with at least this many cards in their deck, as a cost to discard them
     PlayerWithCardsInDeck Int
+  | -- | a player whose cards follow the FAQ's errata
+    PlayerUsingErrata
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

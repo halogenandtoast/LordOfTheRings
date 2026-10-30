@@ -49,6 +49,7 @@ matchPlayer matcher player = case matcher of
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
+  PlayerUsingErrata -> pure player.errata
   PlayerWithHiddenCards -> getsGame (notNull . Map.findWithDefault [] player.id . (.hiddenCards) . toAttrs . gameScenario)
 
 data Character = HeroCharacter Hero | AllyCharacter Ally

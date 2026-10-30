@@ -128,4 +128,4 @@ spec = describe "Conflict at the Carrock" do
     getDefense eowyn `shouldReturn` defense
 
  where
-  frodoDeck = DeckList [toCardCode Heroes.frodoBaggins, "01007", "01002"] testDeck.cards
+  frodoDeck = deckList [toCardCode Heroes.frodoBaggins, "01007", "01002"] testDeck.cards

@@ -33,7 +33,7 @@ import LordOfTheRings.Card (
 import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Decklist
+import LordOfTheRings.Decklist hiding (deckList)
 import LordOfTheRings.Frontend (FrontendMessage (..))
 import LordOfTheRings.Game
 import LordOfTheRings.Game.Public
@@ -521,13 +521,18 @@ getGamesR = do
 {- | A deck to deal: one of the core starter decks by sphere, or one of the user's decks.
 | A starter, one of your decks, or a deck loaded for this game alone and not kept.
 -}
-data DeckChoice = StarterDeck Text | ImportedDeck LotrDeckId | ListedDeck DeckList
+data DeckSource = StarterDeck Text | ImportedDeck LotrDeckId | ListedDeck DeckList
+
+-- | A deck and whether its cards follow the FAQ's errata (they do unless turned off).
+data DeckChoice = DeckChoice DeckSource Bool
 
 instance FromJSON DeckChoice where
-  parseJSON = withObject "DeckChoice" \o ->
-    (StarterDeck <$> o .: "starter")
-      <|> (ImportedDeck <$> o .: "deckId")
-      <|> (ListedDeck <$> o .: "list")
+  parseJSON = withObject "DeckChoice" \o -> do
+    source <-
+      (StarterDeck <$> o .: "starter")
+        <|> (ImportedDeck <$> o .: "deckId")
+        <|> (ListedDeck <$> o .: "list")
+    DeckChoice source <$> o .:? "errata" .!= True
 
 data NewGame = NewGame
   { name :: Text
@@ -556,18 +561,22 @@ newtype JoinGame = JoinGame {deck :: Maybe DeckChoice}
 resolveDeck :: UserId -> Maybe DeckChoice -> Handler (Maybe DeckList)
 resolveDeck userId = \case
   Nothing -> pure Nothing
-  Just (StarterDeck sphere) ->
+  Just (DeckChoice source errata) -> fmap (\dl -> dl {errata}) <$> resolveSource userId source
+
+resolveSource :: UserId -> DeckSource -> Handler (Maybe DeckList)
+resolveSource userId = \case
+  StarterDeck sphere ->
     maybe
       (sendResponseStatus status400 (ikeyWith "error.noStarterDeck" [textVar "sphere" sphere]))
       (pure . Just)
       $ lookup sphere starterDecks
-  Just (ImportedDeck deckId) -> do
+  ImportedDeck deckId -> do
     db <- getsYesod (.cardDb)
     deckList <- runDB (deckListFor db userId deckId) >>= either (sendResponseStatus status400) pure
     now <- liftIO getCurrentTime
     runDB $ update deckId [LotrDeckUsedAt =. Just now]
     pure $ Just deckList
-  Just (ListedDeck deckList) -> either (sendResponseStatus status400) (pure . Just) (checkedDeckList deckList)
+  ListedDeck deckList -> either (sendResponseStatus status400) (pure . Just) (checkedDeckList deckList)
 
 -- | Refuse decks that would put heroes with the same title at the table.
 refuseSharedHeroes :: [DeckList] -> Handler ()

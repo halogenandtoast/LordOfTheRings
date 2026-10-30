@@ -85,6 +85,14 @@ instance Exists AllyMatcher where
 eachHeroHasPrintedIcon :: PlayerId -> Sphere -> Criterion
 eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithPrintedSphere sphere))
 
+-- | The player's cards follow the FAQ's errata, as a card's errata'd ability needs.
+usesErrata :: PlayerId -> Criterion
+usesErrata pid = PlayerExists (PlayerWithId pid <> PlayerUsingErrata)
+
+-- | The player's cards are played as printed.
+withoutErrata :: PlayerId -> Criterion
+withoutErrata = NotCriterion . usesErrata
+
 -- | The player controls a matching ally, as a card that returns one to hand needs.
 controlsAlly :: PlayerId -> AllyMatcher -> Criterion
 controlsAlly pid m = AllyExists (AllyControlledBy (PlayerWithId pid) <> m)

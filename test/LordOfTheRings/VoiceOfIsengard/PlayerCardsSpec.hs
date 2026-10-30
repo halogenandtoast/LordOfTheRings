@@ -16,7 +16,7 @@ import TestImport
 
 -- | Gríma (lore), Beravor (lore) and Éowyn (spirit).
 voiTest :: (PlayerId -> GameT ()) -> IO ()
-voiTest = gameTestWith (DeckList [grimaCode, beravorCode, eowynCode] testDeck.cards)
+voiTest = gameTestWith (deckList [grimaCode, beravorCode, eowynCode] testDeck.cards)
 
 grimaCode, beravorCode, eowynCode :: CardCode
 grimaCode = "07002"

@@ -171,4 +171,4 @@ spec = describe "The Dead Marshes" do
     chooseTarget pid boromir
     offersAbilityOf pid boromir `shouldReturn` True
  where
-  boromirDeck = DeckList [toCardCode Heroes.boromirTactics, "01007", "01002"] testDeck.cards
+  boromirDeck = deckList [toCardCode Heroes.boromirTactics, "01007", "01002"] testDeck.cards

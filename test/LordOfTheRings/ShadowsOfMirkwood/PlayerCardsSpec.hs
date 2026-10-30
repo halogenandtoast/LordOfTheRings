@@ -121,5 +121,5 @@ spec = describe "Shadows of Mirkwood player cards" do
       eagles <- putAllyIntoPlay pid Allies.eaglesOfTheMistyMountains
       elem CannotHaveRestrictedAttachments <$> getModifiers eagles `shouldReturn` True
  where
-  bilboDeck = DeckList [toCardCode Heroes.bilboBaggins, "01007", "01002"] testDeck.cards
-  frodoDeck = DeckList [toCardCode Heroes.frodoBaggins, "01007", "01002"] testDeck.cards
+  bilboDeck = deckList [toCardCode Heroes.bilboBaggins, "01007", "01002"] testDeck.cards
+  frodoDeck = deckList [toCardCode Heroes.frodoBaggins, "01007", "01002"] testDeck.cards

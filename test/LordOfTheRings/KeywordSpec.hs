@@ -221,12 +221,12 @@ spec = describe "Keywords and limits" do
       [name | (name, deck) <- starterDecks, isJust (deckProblem deck)] `shouldBe` []
 
     it "allows 1 copy of a card limited to 1 per deck" $ io do
-      deckProblem (DeckList ["01001"] [("17143", 2)]) `shouldSatisfy` isJust
-      deckProblem (DeckList ["01001"] [("17143", 1)]) `shouldBe` Nothing
+      deckProblem (deckList ["01001"] [("17143", 2)]) `shouldSatisfy` isJust
+      deckProblem (deckList ["01001"] [("17143", 1)]) `shouldBe` Nothing
 
     it "allows 3 copies of a title" $ io do
-      deckProblem (DeckList ["01001"] [("01013", 4)]) `shouldSatisfy` isJust
+      deckProblem (deckList ["01001"] [("01013", 4)]) `shouldSatisfy` isJust
 
     it "allows 1 to 3 heroes with distinct titles" $ io do
-      deckProblem (DeckList ["01001", "01001"] []) `shouldSatisfy` isJust
-      deckProblem (DeckList ["01001", "01002", "01003", "01004"] []) `shouldSatisfy` isJust
+      deckProblem (deckList ["01001", "01001"] []) `shouldSatisfy` isJust
+      deckProblem (deckList ["01001", "01002", "01003", "01004"] []) `shouldSatisfy` isJust

@@ -22,6 +22,8 @@ data Player = Player
   -- ^ the threat the player began the game at, as Aragorn's Refresh Action reads
   , playerEliminated :: Bool
   , playerUsedAbilities :: [UsedAbility]
+  , playerErrata :: Bool
+  -- ^ the player's cards follow the FAQ's errata, as their deck was loaded
   }
   deriving stock (Show, Eq, Generic)
 
@@ -31,7 +33,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True)]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -45,6 +47,7 @@ newPlayer pid name deck =
     , playerStartingThreat = 0
     , playerEliminated = False
     , playerUsedAbilities = []
+    , playerErrata = True
     }
 
 instance Entity Player where
@@ -80,6 +83,9 @@ instance HasField "threat" Player Int where
 
 instance HasField "startingThreat" Player Int where
   getField = playerStartingThreat
+
+instance HasField "errata" Player Bool where
+  getField = playerErrata
 
 instance HasField "usedAbilities" Player [UsedAbility] where
   getField = playerUsedAbilities
