@@ -181,6 +181,9 @@ import LordOfTheRings.Treachery.Cards.LingeringMalevolence
 import LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
 import LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
 import LordOfTheRings.Treachery.Cards.AimlessWandering
+import LordOfTheRings.Treachery.Cards.RammingSpeed
+import LordOfTheRings.Treachery.Cards.TakingOnWater
+import LordOfTheRings.Treachery.Cards.TheRaidersAssault
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -386,5 +389,8 @@ allTreacherys =
         , SomeTreacheryCard ruinsOfAgesPast
         , SomeTreacheryCard curseOfTheDownfallen
         , SomeTreacheryCard aimlessWandering
+        , SomeTreacheryCard rammingSpeed
+        , SomeTreacheryCard takingOnWater
+        , SomeTreacheryCard theRaidersAssault
         ]
     ]

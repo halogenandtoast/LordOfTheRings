@@ -224,6 +224,9 @@ import LordOfTheRings.Location.Cards.SteepPlateau
 import LordOfTheRings.Location.Cards.FloodedRuins
 import LordOfTheRings.Location.Cards.DrownedGraves
 import LordOfTheRings.Location.Cards.CursedTemple
+import LordOfTheRings.Location.Cards.CoastOfAnfalas
+import LordOfTheRings.Location.Cards.BelfalasIslet
+import LordOfTheRings.Location.Cards.CobasHaven
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -488,5 +491,8 @@ allLocations =
         , SomeLocationCard floodedRuins
         , SomeLocationCard drownedGraves
         , SomeLocationCard cursedTemple
+        , SomeLocationCard coastOfAnfalas
+        , SomeLocationCard belfalasIslet
+        , SomeLocationCard cobasHaven
         ]
     ]

@@ -143,8 +143,14 @@ export interface TallyView {
   lastWillpower: number | null
 }
 
+// a card the engine plays as another kind of card under its own code, showing its printed
+// face: Corsair Skirmisher taken as a Ship objective
+const printedFace: Record<string, string> = { '12125-ship': '12125' }
+
 export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' | 'errata'>) =>
-  card.facedown ? `/images/${card.facedown}.jpg` : `/images/cards/${errataImage(`${card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
+  card.facedown
+    ? `/images/${card.facedown}.jpg`
+    : `/images/cards/${errataImage(`${printedFace[card.code] ?? card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

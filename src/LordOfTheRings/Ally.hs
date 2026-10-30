@@ -203,6 +203,8 @@ import LordOfTheRings.Ally.Cards.KnightOfTheWhiteTower
 import LordOfTheRings.Ally.Cards.SoldierOfDolAmroth
 import LordOfTheRings.Ally.Cards.Sulien
 import LordOfTheRings.Ally.Cards.GuardianOfIthilien
+import LordOfTheRings.Ally.Cards.DolAmrothWarship
+import LordOfTheRings.Ally.Cards.CorsairSkirmisherShip
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -433,5 +435,7 @@ allAllies =
         , SomeAllyCard soldierOfDolAmroth
         , SomeAllyCard sulien
         , SomeAllyCard guardianOfIthilien
+        , SomeAllyCard dolAmrothWarship
+        , SomeAllyCard corsairSkirmisherShip
         ]
     ]

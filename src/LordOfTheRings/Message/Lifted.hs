@@ -1303,6 +1303,11 @@ prepareCorsairDeck = push PrepareCorsairDeck
 prepareFleet :: ReverseQueue m => m ()
 prepareFleet = push PrepareFleet
 
+-- | The Ship objective comes into play under the player, as The Beacon gives a set-aside
+-- Dol Amroth Warship.
+putShipIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+putShipIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
+
 -- | The player reveals the top card of the Corsair deck and engages it, for the source.
 revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
 revealFromCorsairDeck source pid = push $ RevealFromCorsairDeck (toSource source) pid

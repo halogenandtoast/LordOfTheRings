@@ -1429,5 +1429,36 @@
   },
   "theHousesOfHealing": {
     "hero": "The Houses of Healing: choose a hero in a discard pile to put back into play"
+  },
+  "corsairSkirmisher": {
+    "take": "Corsair Skirmisher: discard allies with at least 3 willpower to take it as a Ship objective?",
+    "discard": "Discard allies to take Corsair Skirmisher",
+    "decline": "Let it be destroyed",
+    "chooseAlly": "Corsair Skirmisher: choose an ally to discard ({count} willpower still to discard)"
+  },
+  "siegeShip": {
+    "guard": "Siege Ship: choose an unguarded objective for it to guard"
+  },
+  "heavyCruiser": {
+    "objective": "Heavy Cruiser: choose a Dol Amroth objective for it to guard"
+  },
+  "coastOfAnfalas": {
+    "exhaust": "Coast of Anfalas: exhaust a Ship objective to travel there"
+  },
+  "belfalasIslet": {
+    "choose": "Belfalas Islet: choose a Ship enemy not guarding an objective to be out of play while it is active"
+  },
+  "rammingSpeed": {
+    "choose": "Ramming Speed!: choose the engaged Ship enemy that makes an immediate attack"
+  },
+  "takingOnWater": {
+    "attach": "Taking on Water: choose a Ship objective to attach it to"
+  },
+  "theRaidersAssault": {
+    "enemy": "The Raiders' Assault: choose a Ship enemy not guarding an objective",
+    "objective": "The Raiders' Assault: choose an unguarded objective for it to guard"
+  },
+  "towerOfTheGull": {
+    "damage": "Tower of the Gull: choose a non-unique Ship enemy to deal 2 damage to"
   }
 }
