@@ -1,3 +1,4 @@
+import { errataImage } from './errata'
 import type { Target } from './server'
 
 export interface CardView {
@@ -36,6 +37,8 @@ export interface CardView {
   counting: string[]
   /** While attackers are declared, the attack they would make on it, bonuses included. */
   attackStrength?: number
+  /** Shown as the FAQ's errata reads: its owner plays with errata, or it is an encounter card. */
+  errata?: boolean
 }
 
 export interface ChoiceView {
@@ -127,8 +130,8 @@ export interface TallyView {
   lastWillpower: number | null
 }
 
-export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown'>) =>
-  card.facedown ? `/images/${card.facedown}.jpg` : `/images/cards/${card.code}${card.flipped ? '-b' : ''}.avif`
+export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' | 'errata'>) =>
+  card.facedown ? `/images/${card.facedown}.jpg` : `/images/cards/${errataImage(`${card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

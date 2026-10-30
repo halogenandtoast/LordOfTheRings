@@ -32,8 +32,9 @@ export interface AdminDashboard {
 
 export const fetchAdminDashboard = () => apiFetch('/api/admin').then((r) => json<AdminDashboard>(r))
 
-/** A core starter deck by sphere, or one of the user's imported decks. */
-export type DeckChoice = { starter: string } | { deckId: number } | { list: DeckList }
+/** A core starter deck by sphere, or one of the user's imported decks, and whether its
+ * cards follow the FAQ's errata (the server takes them to unless told otherwise). */
+export type DeckChoice = ({ starter: string } | { deckId: number } | { list: DeckList }) & { errata?: boolean }
 
 export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean }) =>
   apiFetch('/api/games', {

@@ -44,7 +44,11 @@ onMounted(refresh)
 // a deck loaded for this game alone, not kept
 const loaded = ref<{ face: DeckFace; list: DeckList } | null>(null)
 const loading = ref(false)
-const choice = (): DeckChoice => (deck.value === 'loaded' && loaded.value ? { list: loaded.value.list } : toDeckChoice(deck.value))
+const errata = ref(true)
+const choice = (): DeckChoice => ({
+  ...(deck.value === 'loaded' && loaded.value ? { list: loaded.value.list } : toDeckChoice(deck.value)),
+  errata: errata.value,
+})
 </script>
 
 <template>
@@ -70,6 +74,11 @@ const choice = (): DeckChoice => (deck.value === 'loaded' && loaded.value ? { li
     <template v-if="!full && (owner || mine === 0)">
       <h3 v-if="!solo">{{ $t('game.lobby.chooseDeck') }}</h3>
       <DeckPicker v-model="deck" v-model:loading="loading" :decks="decks" :loaded="loaded?.face" @load="(face, list) => (loaded = { face, list })" @saved="refresh" />
+      <label v-if="!loading" class="switch">
+        <input v-model="errata" type="checkbox" role="switch" />
+        <span class="track" aria-hidden="true" />
+        {{ $t('game.lobby.errata') }}
+      </label>
       <button v-if="!loading" type="button" class="join" @click="emit('join', choice())">{{ $t(solo ? 'game.lobby.start' : mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
     </template>
     <template v-if="mine > 0">

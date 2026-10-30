@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PlayerView } from '../types'
+import { errataImage } from '../errata'
 
 /** How far round the hue wheel a seat's colour is turned from the zone's, so each seat has
     its own shade of it: 0, then 18° either side, then 36°. */
@@ -21,7 +22,10 @@ import { Columns2, FoldHorizontal } from 'lucide-vue-next'
 const props = defineProps<{ players: PlayerView[]; viewing: string | null; split: boolean }>()
 const emit = defineEmits<{ view: [playerId: string]; split: [] }>()
 
-const face = (player: PlayerView) => player.inPlay.find((card) => card.type === 'Hero')?.code
+const face = (player: PlayerView) => {
+  const hero = player.inPlay.find((card) => card.type === 'Hero')
+  return hero && errataImage(hero.code, hero.errata ?? true)
+}
 
 const segments: HTMLButtonElement[] = []
 const thumb = ref<{ left: number; width: number } | null>(null)

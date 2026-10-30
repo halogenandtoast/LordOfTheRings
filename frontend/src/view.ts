@@ -70,6 +70,15 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     return entity ? def(entity.cardCode).name ?? '' : ''
   }
 
+  // the cards of a player playing them as printed, by card id: every other card, the
+  // encounter deck's included, shows its errata
+  const printed = new Set<string>()
+  for (const p of Object.values(game.players).filter((p) => p.errata === false)) {
+    for (const c of [...(p.hand ?? []), ...p.discard]) printed.add(c.id)
+    for (const es of Object.values(entities)) for (const e of Object.values(es ?? {})) if (e.owner === p.id) printed.add(e.cardId)
+    for (const cost of Object.values(game.activeCosts ?? {})) if (cost.player === p.id) printed.add(cost.card.id)
+  }
+
   const card = (code: string, id: string, extra: Partial<CardView> = {}): CardView => {
     const d = def(code)
     return {
@@ -96,6 +105,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       stats: game.stats?.[id] ?? [],
       counting: [],
       attackStrength: game.attackStrength?.[id],
+      errata: !printed.has(id),
       ...extra,
     }
   }

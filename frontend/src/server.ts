@@ -77,6 +77,8 @@ export interface ServerPlayer {
   handSize?: number
   discard: Card[]
   deckSize: number
+  /** Whether the player's cards follow the FAQ's errata. */
+  errata?: boolean
 }
 
 export interface ServerGame {
