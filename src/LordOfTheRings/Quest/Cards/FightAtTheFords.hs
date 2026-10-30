@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.FightAtTheFords (fightAtTheFords) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -31,8 +30,7 @@ instance RunMessage FightAtTheFords where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let copy def = take 1 $ filter ((== toCardCode def) . toCardCode) deck
       for_ (copy Locations.theIslet) \islet -> do
@@ -41,8 +39,9 @@ instance RunMessage FightAtTheFords where
       -- Gríma is attached once The Islet is in play
       doStep 1 msg
       searchForDifferentDunlandEnemies attrs
-      pure $ FightAtTheFords $ attrs {questFlipped = True}
-    DoStep 1 (Flip (isTarget attrs -> True)) -> do
+      turnOver attrs
+      pure q
+    DoStep 1 (PerformSetup (isTarget attrs -> True)) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       islet <- select (LocationWithCardCode $ toCardCode Locations.theIslet)
       for_ (take 1 [c | c <- deck, toCardCode c == toCardCode Objectives.grimaTheFordsOfIsen]) \grima ->

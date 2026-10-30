@@ -160,6 +160,10 @@ import LordOfTheRings.Enemy.Cards.JailorGornakh
 import LordOfTheRings.Enemy.Cards.CruelTorturer
 import LordOfTheRings.Enemy.Cards.DungeonGuard
 import LordOfTheRings.Enemy.Cards.GoblinTormentor
+import LordOfTheRings.Enemy.Cards.OrcWarParty
+import LordOfTheRings.Enemy.Cards.AngmarOrc
+import LordOfTheRings.Enemy.Cards.AngmarMarauder
+import LordOfTheRings.Enemy.Cards.AngmarCaptain
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -344,5 +348,9 @@ allEnemys =
         , SomeEnemyCard cruelTorturer
         , SomeEnemyCard dungeonGuard
         , SomeEnemyCard goblinTormentor
+        , SomeEnemyCard orcWarParty
+        , SomeEnemyCard angmarOrc
+        , SomeEnemyCard angmarMarauder
+        , SomeEnemyCard angmarCaptain
         ]
     ]

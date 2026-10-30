@@ -180,6 +180,11 @@ allLocationCards =
       , prisonCell
       , patrolRoom
       , tunnelsOfMountGram
+      , chetwoodForest
+      , bordersOfBreeLand
+      , outlyingHomestead
+      , ruggedCountry
+      , shroudedHills
       ]
 
 drownedTreasury :: CardDef
@@ -1314,4 +1319,41 @@ tunnelsOfMountGram =
     { cdCardTraits = setFromList [MountGram, Underground]
     , cdKeywords = setFromList [Capture 1]
     , cdShadowEffect = True
+    }
+chetwoodForest :: CardDef
+chetwoodForest =
+  (location "09018" "Chetwood Forest" IntrudersInChetwood 3 3 3)
+    { cdCardTraits = setFromList [Arnor, Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+bordersOfBreeLand :: CardDef
+bordersOfBreeLand =
+  (location "09019" "Borders of Bree-land" IntrudersInChetwood 2 2 4)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+outlyingHomestead :: CardDef
+outlyingHomestead =
+  (location "09020" "Outlying Homestead" IntrudersInChetwood 3 2 8)
+    { cdCardTraits = setFromList [Arnor]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdEasyModeQuantity = Just 2
+    }
+
+ruggedCountry :: CardDef
+ruggedCountry =
+  (location "09047" "Rugged Country" EriadorWilds 3 2 3)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of quest cards in play: gained from its own modifiers.
+shroudedHills :: CardDef
+shroudedHills =
+  (location "09048" "Shrouded Hills" EriadorWilds 2 0 5)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    , cdEasyModeQuantity = Just 1
     }

@@ -126,6 +126,11 @@ import LordOfTheRings.Quest.Cards.UnexpectedRescue
 import LordOfTheRings.Quest.Cards.GornakhsDungeons
 import LordOfTheRings.Quest.Cards.FlightFromMountGram
 import LordOfTheRings.Quest.Cards.StopTheExecutioners
+import LordOfTheRings.Quest.Cards.OrcRearguard
+import LordOfTheRings.Quest.Cards.RescueIarion
+import LordOfTheRings.Quest.Cards.OrcAmbush
+import LordOfTheRings.Quest.Cards.LostInTheWilderness
+import LordOfTheRings.Quest.Cards.StopTheWarParty
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -284,5 +289,10 @@ allQuests =
         , SomeQuestCard gornakhsDungeons
         , SomeQuestCard flightFromMountGram
         , SomeQuestCard stopTheExecutioners
+        , SomeQuestCard orcRearguard
+        , SomeQuestCard rescueIarion
+        , SomeQuestCard orcAmbush
+        , SomeQuestCard lostInTheWilderness
+        , SomeQuestCard stopTheWarParty
         ]
     ]

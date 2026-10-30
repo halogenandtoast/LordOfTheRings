@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.SavageryOfTheOrcs (savageryOfTheOrcs) where
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -30,8 +29,7 @@ instance RunMessage SavageryOfTheOrcs where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let find' def = find ((== toCardCode def) . toCardCode) deck
       traverse_ setAside (find' Enemies.ghulat)
@@ -46,6 +44,9 @@ instance RunMessage SavageryOfTheOrcs where
         addToStaging o
       shuffleEncounterDeck
       eachPlayer $ const revealEncounterCard
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       placeTokens attrs attrs Villager 5
       pure $ SavageryOfTheOrcs $ attrs {questFlipped = True}
     PlaceTokens _ (isTarget attrs -> True) Progress n -> do

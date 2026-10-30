@@ -1033,5 +1033,29 @@
   "fellVoices": {
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
-  "chooseAreaToJoin": "Choose a player to join"
+  "chooseAreaToJoin": "Choose a player to join",
+  "angmarOrc": {
+    "choose": "Angmar Orc: choose one",
+    "discardAlly": "Discard 1 ally from play",
+    "chooseAlly": "Angmar Orc: choose an ally to discard",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "chetwoodForest": {
+    "engage": "Chetwood Forest: choose an enemy in the staging area to engage",
+    "choose": "Chetwood Forest: choose one",
+    "exhaustHero": "Exhaust a hero you control",
+    "returnEnemy": "Return the attacking enemy to the staging area after this attack"
+  },
+  "bordersOfBreeLand": {
+    "return": "Borders of Bree-land: choose an engaged enemy to return to the staging area"
+  },
+  "surprisingSpeed": {
+    "return": "Surprising Speed: choose an enemy engaged with you to return to the staging area"
+  },
+  "pressingNeeds": {
+    "choose": "Pressing Needs: choose one",
+    "search": "Search the encounter deck and discard pile for an encounter side quest and reveal it",
+    "chooseSideQuest": "Pressing Needs: choose an encounter side quest to reveal",
+    "currentQuest": "Choose a different quest card to be the current quest until the end of the phase"
+  }
 }

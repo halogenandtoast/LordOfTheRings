@@ -170,6 +170,11 @@ import LordOfTheRings.Location.Cards.SouthernGate
 import LordOfTheRings.Location.Cards.PrisonCell
 import LordOfTheRings.Location.Cards.PatrolRoom
 import LordOfTheRings.Location.Cards.TunnelsOfMountGram
+import LordOfTheRings.Location.Cards.ChetwoodForest
+import LordOfTheRings.Location.Cards.BordersOfBreeLand
+import LordOfTheRings.Location.Cards.OutlyingHomestead
+import LordOfTheRings.Location.Cards.RuggedCountry
+import LordOfTheRings.Location.Cards.ShroudedHills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -367,5 +372,10 @@ allLocations =
         , SomeLocationCard prisonCell
         , SomeLocationCard patrolRoom
         , SomeLocationCard tunnelsOfMountGram
+        , SomeLocationCard chetwoodForest
+        , SomeLocationCard bordersOfBreeLand
+        , SomeLocationCard outlyingHomestead
+        , SomeLocationCard ruggedCountry
+        , SomeLocationCard shroudedHills
         ]
     ]

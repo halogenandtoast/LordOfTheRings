@@ -143,6 +143,10 @@ import LordOfTheRings.Treachery.Cards.SoundTheAlarm
 import LordOfTheRings.Treachery.Cards.FeebleAndWeary
 import LordOfTheRings.Treachery.Cards.CaptivesOfGornakh
 import LordOfTheRings.Treachery.Cards.Interrogation
+import LordOfTheRings.Treachery.Cards.SuddenAssault
+import LordOfTheRings.Treachery.Cards.SurprisingSpeed
+import LordOfTheRings.Treachery.Cards.PressingNeeds
+import LordOfTheRings.Treachery.Cards.WeightOfResponsibility
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -310,5 +314,9 @@ allTreacherys =
         , SomeTreacheryCard feebleAndWeary
         , SomeTreacheryCard captivesOfGornakh
         , SomeTreacheryCard interrogation
+        , SomeTreacheryCard suddenAssault
+        , SomeTreacheryCard surprisingSpeed
+        , SomeTreacheryCard pressingNeeds
+        , SomeTreacheryCard weightOfResponsibility
         ]
     ]
