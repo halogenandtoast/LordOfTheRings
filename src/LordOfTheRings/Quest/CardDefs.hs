@@ -218,6 +218,8 @@ allQuestCards =
       , corsairPursuit
       , exploreTheIsland
       , aFatefulDiscovery
+      , theCorsairsAssault
+      , sahirsAdvance
       ]
 
 theDrippingWalls :: CardDef
@@ -789,3 +791,11 @@ exploreTheIsland = quest "11025" "Explore the Island" TheFateOfNumenor 1 20
 -- | No quest points: the players win as Shrine to Morgoth goes to the victory display.
 aFatefulDiscovery :: CardDef
 aFatefulDiscovery = (quest "11026" "A Fateful Discovery" TheFateOfNumenor 2 0) {cdQuestPoints = Nothing}
+
+theCorsairsAssault :: CardDef
+theCorsairsAssault = quest "11036" "The Corsair's Assault" RaidOnTheGreyHavens 1 18
+
+-- | No quest points: the players win once Captain Sahír is in the victory display and no
+-- location in play has damage.
+sahirsAdvance :: CardDef
+sahirsAdvance = (quest "11037" "Sahír's Advance" RaidOnTheGreyHavens 2 0) {cdQuestPoints = Nothing}

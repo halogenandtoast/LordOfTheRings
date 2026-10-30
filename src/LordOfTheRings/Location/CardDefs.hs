@@ -235,6 +235,13 @@ allLocationCards =
       , floodedRuins
       , drownedGraves
       , cursedTemple
+      , dreamChaserLocation
+      , mithlondHarbor
+      , burningPiers
+      , pillagedShip
+      , whiteShip
+      , elvenWaveRunner
+      , elvenCaravel
       ]
 
 drownedTreasury :: CardDef
@@ -1711,3 +1718,61 @@ drownedGraves = uncharted (location "11073" "Drowned Graves" RuinsOfNumenor 2 2 
 
 cursedTemple :: CardDef
 cursedTemple = uncharted (location "11074" "Cursed Temple" RuinsOfNumenor 2 1 3) {cdCardTraits = setFromList [Ruins]}
+
+-- | Raid on the Grey Havens' Dream-chaser, a location: not the fleet's Ship objective.
+dreamChaserLocation :: CardDef
+dreamChaserLocation =
+  unique
+    (location "11039" "Dream-chaser" RaidOnTheGreyHavens 1 2 0)
+      { cdQuestPoints = Nothing
+      , cdCardTraits = setFromList [GreyHavens, Ship]
+      , cdKeywords = setFromList [Aflame 12]
+      }
+
+mithlondHarbor :: CardDef
+mithlondHarbor =
+  (location "11042" "Mithlond Harbor" RaidOnTheGreyHavens 2 1 2)
+    { cdCardTraits = setFromList [GreyHavens]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+burningPiers :: CardDef
+burningPiers =
+  (location "11043" "Burning Piers" RaidOnTheGreyHavens 2 1 3)
+    { cdCardTraits = setFromList [GreyHavens]
+    , cdKeywords = setFromList [Aflame 5]
+    , cdShadowEffect = True
+    }
+
+pillagedShip :: CardDef
+pillagedShip =
+  (location "11044" "Pillaged Ship" RaidOnTheGreyHavens 2 2 4)
+    { cdCardTraits = setFromList [GreyHavens, Ship]
+    , cdKeywords = setFromList [Aflame 5]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+whiteShip :: CardDef
+whiteShip =
+  (location "11045" "White Ship" RaidOnTheGreyHavens 2 4 6)
+    { cdCardTraits = setFromList [GreyHavens, Ship]
+    , cdKeywords = setFromList [Aflame 4]
+    }
+
+elvenWaveRunner :: CardDef
+elvenWaveRunner =
+  (location "11046" "Elven Wave-runner" RaidOnTheGreyHavens 2 3 3)
+    { cdCardTraits = setFromList [GreyHavens, Ship]
+    , cdKeywords = setFromList [Aflame 3]
+    , cdVictoryPoints = Just 3
+    , cdShadowEffect = True
+    }
+
+elvenCaravel :: CardDef
+elvenCaravel =
+  (location "11047" "Elven Caravel" RaidOnTheGreyHavens 2 3 5)
+    { cdCardTraits = setFromList [GreyHavens, Ship]
+    , cdKeywords = setFromList [Aflame 4]
+    }

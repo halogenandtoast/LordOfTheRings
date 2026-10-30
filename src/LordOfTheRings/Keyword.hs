@@ -3,7 +3,10 @@ module LordOfTheRings.Keyword (module LordOfTheRings.Keyword) where
 import LordOfTheRings.Prelude
 
 data Keyword
-  = -- | as the enemy enters play, each player in turn order makes an engagement check
+  = -- | on a location: it takes 1 damage at the end of each round while in the staging
+    -- area, and is destroyed once it has this much (Raid on the Grey Havens)
+    Aflame Int
+  | -- | as the enemy enters play, each player in turn order makes an engagement check
     -- against it alone
     Ambush
   | -- | as the combat phase begins, while in the staging area or on the current quest,

@@ -45,6 +45,7 @@ data EncounterSet
   | PassageThroughMirkwoodCampaign
   | PerilInPelargir
   | PlunderingGoblins
+  | RaidOnTheGreyHavens
   | RavagingOrcs
   | ReturnToMirkwood
   | RoadToRivendell

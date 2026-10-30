@@ -215,6 +215,8 @@ allEnemyCards =
       , throngsOfUnfaithful
       , captainSahir
       , naasiyah
+      , corsairArsonist
+      , sahirsRavager
       ]
 
 namelessThing :: CardDef
@@ -1727,3 +1729,13 @@ naasiyah =
       , cdVictoryPoints = Just 4
       , cdOtherSide = Just "11079"
       }
+
+corsairArsonist :: CardDef
+corsairArsonist =
+  (enemy "11040" "Corsair Arsonist" RaidOnTheGreyHavens 3 28 2 2 1 3)
+    { cdCardTraits = setFromList [Corsair]
+    , cdWhenRevealed = True
+    }
+
+sahirsRavager :: CardDef
+sahirsRavager = (enemy "11041" "Sahír's Ravager" RaidOnTheGreyHavens 3 36 3 4 3 5) {cdCardTraits = setFromList [Corsair, Raider]}
