@@ -122,6 +122,8 @@ data Message
     ReturnFromDiscardToHand PlayerId CardId
   | -- | an ally leaves play and is shuffled into its owner's deck
     ShuffleIntoOwnersDeck Target
+  | -- | an ally leaves play for the bottom of its owner's deck, as Curious Brandybuck
+    PutOnBottomOfOwnersDeck Target
   | TakeControl AllyId PlayerId
   | RemoveFromDiscard PlayerId CardId
   | -- | an ally card put into play under the player's control, keeping its owner

@@ -492,6 +492,7 @@ correctPhase (EncounterCard _) = pure False
 actionEventPlayable :: HasGame m => PlayerCard -> m Bool
 actionEventPlayable card = case card.owner >>= lookupEvent (toCardCode card) card.id of
   Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
+  Just e | Just criteria <- (toAttrs e).eventActionCriteria -> passesCriteria criteria
   _ -> pure False
 
 {- | Whether a card could be played with nothing to pay for it, at any time: as the

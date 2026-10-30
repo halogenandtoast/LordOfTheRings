@@ -173,6 +173,7 @@ narrationFor = \case
     pure [mechanic [ikeyPart "log.discarded" ["target" ~> t]] | not (destroyed || resolved)]
   ReturnToHand target -> Just $ simply "log.returnsToHand" target
   ShuffleIntoOwnersDeck target -> Just $ simply "log.shuffledIntoOwnersDeck" target
+  PutOnBottomOfOwnersDeck target -> Just $ simply "log.putOnBottomOfOwnersDeck" target
   ShuffleIntoEncounterDeck target -> Just $ simply "log.shuffledIntoEncounterDeck" target
   ReturnToTopOfEncounterDeck target -> Just $ simply "log.returnedToTopOfEncounterDeck" target
   RemoveFromQuest target -> Just $ simply "log.removedFromQuest" target

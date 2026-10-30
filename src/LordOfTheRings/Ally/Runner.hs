@@ -35,10 +35,15 @@ instance RunMessage AllyAttrs where
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
     PlaceAlly aid placement | aid == attrs.allyId -> pure $ attrs & placementL .~ placement
+    -- the response of an ally in hand, as Brok Ironfist's, puts it into play
+    UseHandAction pid cid | cid == attrs.allyCardId, isJust attrs.allyHandWindow -> do
+      push $ PutAllyIntoPlay pid cid
+      pure attrs
     -- the cards facedown under it go to their owners' discard piles as it leaves play
     Discard (isTarget attrs -> True) -> leaving
     ReturnToHand (isTarget attrs -> True) -> leaving
     ShuffleIntoOwnersDeck (isTarget attrs -> True) -> leaving
+    PutOnBottomOfOwnersDeck (isTarget attrs -> True) -> leaving
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
