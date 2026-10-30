@@ -13,7 +13,7 @@ import CardImage from '@browser/components/CardImage.vue'
 import DeckSection from '@browser/components/DeckSection.vue'
 import { fetchDeck } from '@browser/lib/api'
 import { messageOf } from '@browser/stores/decks'
-import { computedThreat, drawDeckSize, unresolvedSlots, type Deck, type Slot } from '@browser/types/deck'
+import { drawDeckSize, unresolvedSlots, type Deck, type Slot } from '@browser/types/deck'
 import type { CardType } from '@browser/types/card'
 import { useServerText } from '../../i18n'
 
@@ -71,10 +71,7 @@ const byType = computed(() => {
     }))
 })
 
-const threat = computed(() => {
-  if (!deck.value) return null
-  return deck.value.startingThreat ?? computedThreat(deck.value)
-})
+const threat = computed(() => deck.value?.startingThreat ?? null)
 
 const unknown = computed(() => (deck.value ? unresolvedSlots(deck.value) : []))
 const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))

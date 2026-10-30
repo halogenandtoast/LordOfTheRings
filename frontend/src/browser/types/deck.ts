@@ -95,18 +95,3 @@ export function unresolvedSlots(deck: Deck): Slot[] {
 export function drawDeckSize(deck: Deck): number {
   return deck.slots.reduce((n, slot) => n + slot.quantity, 0)
 }
-
-/**
- * Starting threat, which is the sum of the heroes' threat costs.
- *
- * RingsDB sends its own figure and we keep it, but a deck from a JSON file may
- * not carry one, and it is worth showing either way.
- */
-export function computedThreat(deck: Deck): number | null {
-  const heroes = deck.heroes.map((slot) => slot.card)
-  if (heroes.some((card) => card === null)) return null
-  return heroes.reduce((total, card) => {
-    const cost = card?.threatCost
-    return typeof cost === 'number' ? total + cost : total
-  }, 0)
-}
