@@ -61,6 +61,11 @@ const measure = () => {
   placement.height = height
 }
 
+// A hovered element taken off the page never fires pointerleave, so watch for it going.
+const observer = new MutationObserver(() => {
+  if (anchor.value && !anchor.value.isConnected) hide()
+})
+
 const schedule = () => {
   if (frame !== null) cancelAnimationFrame(frame)
   frame = requestAnimationFrame(() => {
@@ -70,6 +75,7 @@ const schedule = () => {
 }
 
 const hide = () => {
+  observer.disconnect()
   card.value = null
   anchor.value = null
   pinned.value = false
@@ -111,6 +117,7 @@ export const useCardOverlay = () => (listen(), {
     anchor.value = element
     pinned.value = touched
     swallowClick = touched && pressing
+    observer.observe(document.body, { childList: true, subtree: true })
     measure()
   },
   hide,
