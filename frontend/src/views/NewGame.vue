@@ -352,7 +352,9 @@ header {
   color: var(--text);
   font: inherit;
 }
-.scenario-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+/* adventure packs' art is portrait and deluxe boxes' square: each sits whole in the
+   middle of the same square, padded out to it */
+.scenario-box img { width: 100%; aspect-ratio: 1; box-sizing: border-box; padding: 8px; object-fit: contain; display: block; }
 .scenario-box:not(:disabled):hover { border-color: var(--accent); }
 .scenario-box.unavailable img { filter: grayscale(100%); }
 .scenario-box.unavailable { cursor: not-allowed; opacity: 0.6; }
