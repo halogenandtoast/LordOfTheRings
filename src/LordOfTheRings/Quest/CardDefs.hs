@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Neutral))
@@ -143,6 +143,10 @@ allQuestCards =
       , theTrialOfIntuition
       , theAntleredCrownTheThreeTrials
       , searchTheRuins
+      , unexpectedRescue
+      , gornakhsDungeons
+      , flightFromMountGram
+      , stopTheExecutioners
       ]
 
 theDrippingWalls :: CardDef
@@ -532,4 +536,21 @@ searchTheRuins =
   (encounterSideQuest "09059" "Search the Ruins" RuinsOfArnor 8)
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
+    }
+
+unexpectedRescue :: CardDef
+unexpectedRescue = quest "10038" "Unexpected Rescue" EscapeFromMountGram 1 0
+
+-- | Four copies, one for each player's own stage 2.
+gornakhsDungeons :: CardDef
+gornakhsDungeons = (quest "10039" "Gornákh's Dungeons" EscapeFromMountGram 2 0) {cdKeywords = setFromList [Capture 7]}
+
+flightFromMountGram :: CardDef
+flightFromMountGram = quest "10040" "Flight from Mount Gram" EscapeFromMountGram 3 14
+
+stopTheExecutioners :: CardDef
+stopTheExecutioners =
+  (encounterSideQuest "10053" "Stop the Executioners!" EscapeFromMountGram 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Capture 5, Time 4]
     }
