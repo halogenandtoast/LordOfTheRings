@@ -2404,6 +2404,25 @@ runGameMessage msg g = case msg of
       . objectivesL
       . traverse
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
+  -- a card whose other side is another kind of card turns over, as Captain Sahír from enemy
+  -- to objective-ally and back: it does not leave play, but what was on it is discarded and
+  -- its tokens go, and the side it turns to is under the player that side names
+  Flip (EnemyTarget eid)
+    | Just e <- Map.lookup eid g.entities.enemies
+    , Just other <- cdOtherSide (toCardDef e)
+    , cdCardType (toCardDef other) == ObjectiveAllyType -> do
+        pid <- objectiveAllyController (toCardDef other)
+        pushAll $ discardAttached g (EnemyTarget eid)
+        let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly other (toCard e).id (AllyId $ unEnemyId eid) pid
+        pure $ g & entitiesL . enemiesL %~ Map.delete eid & entitiesL . alliesL %~ insertEntity thisAlly
+  -- and back to its enemy side, in the staging area
+  Flip (AllyTarget aid)
+    | Just a <- Map.lookup aid g.entities.allies
+    , Just other <- cdOtherSide (toCardDef a)
+    , cdCardType (toCardDef other) == EnemyType -> do
+        pushAll $ discardAttached g (AllyTarget aid)
+        let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard a).id (EnemyId $ unAllyId aid)
+        pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
   -- a double-sided location turns over, as an Uncharted location does
   Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
     push $ CheckWindows [mkAfter $ LocationFlipped lid]
@@ -2470,10 +2489,10 @@ runGameMessage msg g = case msg of
       <> freeGuarded g target
     deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
-  AddToStaging card | FirstPlayerGainsControl `member` cdKeywords (toCardDef card) -> do
+  AddToStaging card | gainsController (toCardDef card) -> do
     thisObjective <- newObjective card
-    lead <- getLead
-    push $ PutObjectiveAllyIntoPlay (toId thisObjective) lead
+    controller <- objectiveAllyController (toCardDef card)
+    push $ PutObjectiveAllyIntoPlay (toId thisObjective) controller
     pure
       $ g
       & entitiesL
@@ -2509,6 +2528,16 @@ runGameMessage msg g = case msg of
         . objectivesL
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
+
+-- | An objective ally that a player gains control of as it enters play.
+gainsController :: CardDef -> Bool
+gainsController def = any (`member` cdKeywords def) [FirstPlayerGainsControl, LastPlayerGainsControl]
+
+-- | The player an objective ally goes to: the last player, when it reads so, or the first.
+objectiveAllyController :: CardDef -> GameT PlayerId
+objectiveAllyController def
+  | LastPlayerGainsControl `member` cdKeywords def = getLastPlayer
+  | otherwise = getLead
 
 -- | Whether the enemy has the hinder keyword.
 hinders :: Game -> EnemyId -> GameT Bool

@@ -220,6 +220,8 @@ narrationFor = \case
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
   -- an enemy with two sides turns over, as Thaurdir does
   Flip (EnemyTarget eid) -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.enemyFlips" ["enemy" ~> e]]
+  -- an objective ally turning to its enemy side, as Captain Sahír's
+  Flip (AllyTarget aid) -> Just $ whenRef (toTarget aid) \a -> one $ mechanic [ikeyPart "log.allyFlips" ["ally" ~> a]]
   -- a location turns over, as an Uncharted one does: the side it turns to is named
   Flip (LocationTarget lid) -> Just do
     ls <- getsGame (entitiesLocations . gameEntities)
