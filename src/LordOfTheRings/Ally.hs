@@ -171,6 +171,10 @@ import LordOfTheRings.Ally.Cards.WellinghallPreserver
 import LordOfTheRings.Ally.Cards.GaladhrimWeaver
 import LordOfTheRings.Ally.Cards.GaldorOfTheHavens
 import LordOfTheRings.Ally.Cards.AmarthiulAcrossTheEttenmoors
+import LordOfTheRings.Ally.Cards.DawnStar
+import LordOfTheRings.Ally.Cards.DreamChaser
+import LordOfTheRings.Ally.Cards.Narelenya
+import LordOfTheRings.Ally.Cards.SilverWing
 import LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
@@ -371,5 +375,9 @@ allAllies =
         , SomeAllyCard galadhrimWeaver
         , SomeAllyCard galdorOfTheHavens
         , SomeAllyCard amarthiulAcrossTheEttenmoors
+        , SomeAllyCard dreamChaser
+        , SomeAllyCard dawnStar
+        , SomeAllyCard narelenya
+        , SomeAllyCard silverWing
         ]
     ]

@@ -40,12 +40,14 @@ library
       LordOfTheRings.Ally.Cards.CuriousBrandybuck
       LordOfTheRings.Ally.Cards.Damrod
       LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
+      LordOfTheRings.Ally.Cards.DawnStar
       LordOfTheRings.Ally.Cards.DefenderOfRammas
       LordOfTheRings.Ally.Cards.DefenderOfTheNaith
       LordOfTheRings.Ally.Cards.Denethor
       LordOfTheRings.Ally.Cards.DerndingleWarrior
       LordOfTheRings.Ally.Cards.DescendantOfThorondor
       LordOfTheRings.Ally.Cards.Dori
+      LordOfTheRings.Ally.Cards.DreamChaser
       LordOfTheRings.Ally.Cards.DunedainHunter
       LordOfTheRings.Ally.Cards.DunedainWanderer
       LordOfTheRings.Ally.Cards.DunedainWatcher
@@ -134,6 +136,7 @@ library
       LordOfTheRings.Ally.Cards.NaithGuide
       LordOfTheRings.Ally.Cards.NalirTheNinInEilph
       LordOfTheRings.Ally.Cards.NalirTroubleInTharbad
+      LordOfTheRings.Ally.Cards.Narelenya
       LordOfTheRings.Ally.Cards.NorthernTracker
       LordOfTheRings.Ally.Cards.Orophin
       LordOfTheRings.Ally.Cards.OrthancGuard
@@ -153,6 +156,7 @@ library
       LordOfTheRings.Ally.Cards.SilvanRefugee
       LordOfTheRings.Ally.Cards.SilvanTracker
       LordOfTheRings.Ally.Cards.SilverlodeArcher
+      LordOfTheRings.Ally.Cards.SilverWing
       LordOfTheRings.Ally.Cards.SnowbournScout
       LordOfTheRings.Ally.Cards.SoldierOfGondor
       LordOfTheRings.Ally.Cards.SonOfArnor
@@ -183,6 +187,7 @@ library
       LordOfTheRings.Ally.Cards.WingedGuardian
       LordOfTheRings.Ally.Cards.Yazan
       LordOfTheRings.Ally.Cards.ZigilMiner
+      LordOfTheRings.Ally.Fleet
       LordOfTheRings.Ally.Import.Lifted
       LordOfTheRings.Ally.Runner
       LordOfTheRings.Ally.Types
