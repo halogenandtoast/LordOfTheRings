@@ -194,6 +194,14 @@ narrationFor = \case
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.orcGuardEngages" ["player" ~> who]]
+  -- the card goes face down, so only whose it was is said
+  Reanimate cid _ -> Just do
+    owner <- getsGame \g -> headMay [p.id | p <- toList g.players, c <- p.deck <> p.hand <> p.discard, c.id == cid]
+    case owner of
+      Nothing -> pure []
+      Just pid -> do
+        who <- playerRefFor pid
+        one $ toned Bad $ mechanic [ikeyPart "log.reanimates" ["player" ~> who]]
   TakeHiddenCard pid -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.takesHiddenCard" ["player" ~> who]]

@@ -399,6 +399,16 @@ putQuestIntoPlayFlipped card = do
 placeOrcGuard :: ReverseQueue m => PlayerId -> m ()
 placeOrcGuard = push . PlaceOrcGuard
 
+{- | The player card, from its owner's deck, hand or discard pile, is reanimated: a
+Reanimated Dead enemy in the staging area (The Dread Realm). Its id is given back for
+what the card does to it next, as dealing it a shadow card.
+-}
+reanimate :: ReverseQueue m => CardId -> m EnemyId
+reanimate cid = do
+  eid <- getRandom
+  push $ Reanimate cid eid
+  pure eid
+
 attachTreachery :: (ReverseQueue m, Targetable target) => TreacheryId -> target -> m ()
 attachTreachery tid = push . AttachTreachery tid . toTarget
 

@@ -74,6 +74,7 @@
   "returnedToStaging": "{location} returns to the staging area",
   "placedInStaging": "{card} is placed in the staging area",
   "orcGuardEngages": "An Orc Guard engages {player}",
+  "reanimates": "One of {player}'s cards rises as a Reanimated Dead",
   "takesHiddenCard": "{player} takes a hidden card",
   "turnsHiddenCardFaceup": "{player} turns a hidden card faceup: {card}",
   "discardsHiddenCard": "{player} discards a hidden card: {card}",

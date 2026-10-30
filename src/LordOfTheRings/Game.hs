@@ -12,7 +12,7 @@ import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally
 import LordOfTheRings.Attachment hiding (attachment, attachTo)
 import LordOfTheRings.Card hiding (attachment, enemy, location, treachery)
-import LordOfTheRings.Card.Synthetic (orcGuard)
+import LordOfTheRings.Card.Synthetic (orcGuard, reanimatedDead)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
@@ -712,9 +712,11 @@ runGameMessage msg g = case msg of
     destroyed <- case target of
       HeroTarget hid | Map.member hid g.entities.heroes -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
       AllyTarget aid | Map.member aid g.entities.allies -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
-      -- an indestructible enemy keeps taking damage past its hit points
-      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, Indestructible `notMember` cdKeywords (toCardDef e) ->
-        (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      -- an indestructible enemy keeps taking damage past its hit points, as one that gains
+      -- it does, as Daechanar
+      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, Indestructible `notMember` cdKeywords (toCardDef e) -> do
+        gained <- elem (GainKeyword Indestructible) <$> getModifiers target
+        if gained then pure False else (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
       -- an objective ally in the staging area, as Celador
       ObjectiveTarget oid | Just o <- Map.lookup oid g.entities.objectives, isJust (cdHitPoints $ toCardDef o) ->
         (>=) <$> getDamage target <*> getHitPoints target
@@ -1456,6 +1458,7 @@ runGameMessage msg g = case msg of
     -- player's actions are offered alongside committing it
     actions <- getActionAbilities pid
     mustCommitAll <- elem MustCommitAll <$> getModifiers GameTarget
+    mustCommit <- filterM (fmap (elem MustCommitToQuest) . getModifiers) characters
     early <- filterM (\c -> andM [pure $ playsBeforeCommitting pid c, canPlay player c]) player.hand
     -- a player commits their characters at once, so responses to committing, as Aragorn's
     -- and Théodred's, wait until they are done and are then taken in any order
@@ -1469,6 +1472,8 @@ runGameMessage msg g = case msg of
       <> [targetLabel (CardIdTarget c.id) [PlayCard pid c.id, CommitCharacters pid] | c <- early]
       <> [ Label (ikey "label.doneCommitting") [CheckWindows [mkAfter $ CommittedToQuest c | c <- committed] | notNull committed]
          | not mustCommitAll || null characters
+         , -- a character that must commit, as A Fell Dread's hero, is committed first
+           null mustCommit
          ]
     pure g
   Staging -> do
@@ -1865,6 +1870,23 @@ runGameMessage msg g = case msg of
       %~ insertEntity (overAttrs (\a -> a {enemyPlacement = EngagedWith pid}) guard')
       & scenarioL
       %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
+  -- a reanimated card leaves its owner's deck, hand or discard pile for the staging area,
+  -- a Reanimated Dead; leaving play, it goes to its owner's discard pile as an Orc Guard does
+  Reanimate cid eid
+    | Just (owner, pc) <- headMay [(p.id, c) | p <- toList g.players, PlayerCard c <- p.deck <> p.hand <> p.discard, c.id == cid] -> do
+        let dead = createEnemy (MkEncounterCard cid (toCardCode reanimatedDead)) eid
+            without = filter ((/= cid) . (.id))
+        push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
+        pure
+          $ g
+          & playersL
+          . ix owner
+          %~ ((deckL %~ without) . (handL %~ without) . (discardL %~ without))
+          & entitiesL
+          . enemiesL
+          %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) dead)
+          & scenarioL
+          %~ overAttrs (orcGuardsL %~ Map.insert cid pc)
   -- an enemy put into play engaged enters play, as Haradrim Elite reads
   PutEnemyIntoPlayEngaged pid card -> do
     enemy <- newEnemy card
@@ -1889,6 +1911,8 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
+  -- a treachery attached as a condition leaves play for good, as Daechanar removes a Sorcery card
+  RemoveFromGame (TreacheryTarget tid) -> pure $ g & entitiesL . treacheriesL %~ Map.delete tid
   -- a side quest removed from the game, as Stop the Executioners! removes itself
   RemoveFromGame target@(QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ discardAttached g target

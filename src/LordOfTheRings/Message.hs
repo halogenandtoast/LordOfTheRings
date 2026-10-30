@@ -250,6 +250,10 @@ data Message
     -}
     PlaceOrcGuard PlayerId
   | EngageOrcGuard PlayerId PlayerCard
+  | {- | the player card leaves its owner's deck, hand or discard pile for the staging
+    area, face down as a Reanimated Dead enemy with this id (The Dread Realm)
+    -}
+    Reanimate CardId EnemyId
   | ShuffleIntoEncounterDeck Target
   | {- | a treachery dealt as a shadow card resolves its revelation as if revealed, here
     attaching itself where its placement says
