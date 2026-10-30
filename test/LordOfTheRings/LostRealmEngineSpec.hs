@@ -1,6 +1,8 @@
 module LordOfTheRings.LostRealmEngineSpec (spec) where
 
+import LordOfTheRings.Criteria (Criterion (FewerInVictoryDisplay))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
+import LordOfTheRings.Helpers.Window (passesCriteria)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (
   currentQuestIsSideQuest,
@@ -10,6 +12,7 @@ import LordOfTheRings.Matcher (
   progressPlacedThisRound,
   questCardsInPlay,
  )
+import LordOfTheRings.Matcher.Types (cardIs)
 import LordOfTheRings.Matcher.Window (WindowMatcher (SideQuestRevealedWindow), windowMatches)
 import LordOfTheRings.Message.Lifted (
   chooseNewCurrentQuest,
@@ -146,3 +149,13 @@ spec = describe "The Lost Realm engine" do
       void mainLoop
       chooseLabel "$label.valour" pid
       threatOf pid `shouldReturn` 45
+
+  describe "The victory display" do
+    it "takes a card from the encounter discard pile" . gameTest $ \_ -> do
+      card <- genEncounterCard Locations.oldForestRoad
+      run $ AddToEncounterDiscard [card]
+      run $ AddToVictoryDisplay (CardIdTarget card.id)
+      victoryDisplay `shouldReturn` [toCardCode Locations.oldForestRoad]
+      getEncounterDiscard `shouldReturn` []
+      passesCriteria (FewerInVictoryDisplay 1 $ cardIs Locations.oldForestRoad) `shouldReturn` False
+      passesCriteria (FewerInVictoryDisplay 2 $ cardIs Locations.oldForestRoad) `shouldReturn` True

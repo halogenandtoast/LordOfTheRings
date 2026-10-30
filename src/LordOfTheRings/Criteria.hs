@@ -45,6 +45,9 @@ data Criterion
     DistinctCharacters [(HeroMatcher, AllyMatcher)]
   | -- | a matching card is in the victory display
     CardInVictoryDisplay CardMatcher
+  | -- | fewer than this many matching cards are in the victory display, as "Limit 3 copies
+    -- of None Return in the victory display" reads
+    FewerInVictoryDisplay Int CardMatcher
   | -- | a matching card is in the player's discard pile
     CardInDiscard PlayerId CardMatcher
   | Criteria [Criterion]

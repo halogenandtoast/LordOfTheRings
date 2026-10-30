@@ -228,6 +228,7 @@ passesCriteria = \case
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
+  FewerInVictoryDisplay n m -> getsGame ((< n) . length . filter (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m

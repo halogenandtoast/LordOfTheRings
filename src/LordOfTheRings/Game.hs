@@ -1957,11 +1957,17 @@ runGameMessage msg g = case msg of
   -- a card from the encounter deck, or a player's discard pile, as Out of the Wild takes them
   AddToVictoryDisplay (CardIdTarget cid) -> do
     let fromDeck = [EncounterCard c | c <- (toAttrs g.scenario).encounterDeck, c.id == cid]
+        -- a destroyed enemy or an explored location, as None Return and Leave No Trace add
+        fromEncounterDiscard = [EncounterCard c | c <- (toAttrs g.scenario).encounterDiscard, c.id == cid]
         fromDiscards = [c | p <- toList g.players, c <- p.discard, c.id == cid]
     pure
       $ g
       & scenarioL
-      %~ overAttrs ((encounterDeckL %~ filter ((/= cid) . (.id))) . (victoryDisplayL %~ ((fromDeck <> fromDiscards) <>)))
+      %~ overAttrs
+        ( (encounterDeckL %~ filter ((/= cid) . (.id)))
+            . (encounterDiscardL %~ filter ((/= cid) . (.id)))
+            . (victoryDisplayL %~ ((fromDeck <> fromEncounterDiscard <> fromDiscards) <>))
+        )
       & playersL
       . traverse
       . discardL
