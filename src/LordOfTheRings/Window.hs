@@ -115,6 +115,30 @@ data WindowType
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
     PlayedCard PlayerId CardCode
+  | -- | the player is about to be eliminated by reaching his threat elimination level
+    EliminatedByThreat PlayerId
+  | -- | a quest card was defeated, before what is attached to it is discarded
+    QuestDefeated Target
+  | -- | a card effect discarded the ally from play: its traits as it left
+    AllyDiscardedByCardEffect Target (Set Trait)
+  | -- | an enemy destroyed, as its card, which has left play by now
+    EnemyDestroyed Card
+  | -- | a card discarded from the player's hand, as its card id
+    DiscardedFromHand PlayerId CardId
+  | -- | an exhausted card readied, by anything, in any phase
+    BecameReady Target
+  | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
+    Became TimeOfDay
+  | -- | the When Revealed effects of the card just revealed were canceled
+    WhenRevealedCanceled Target
+  | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
+    -- (Escape from Mount Gram)
+    CapturedCardsRescued Card [Card]
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | Whether it is Day or Night, as The Wastes of Eriador's Time objective shows.
+data TimeOfDay = Daytime | Nighttime
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

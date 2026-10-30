@@ -7,7 +7,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Criteria (Criterion)
+import LordOfTheRings.Criteria (Criterion (NoCriteria))
 import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Matcher.Window
@@ -48,7 +48,10 @@ data AllyAttrs = AllyAttrs
   , allyCommitted :: Bool
   , allyAttacking :: Bool
   , allyHandWindow :: Maybe WindowMatcher
-  -- ^ a window in which the ally can be put into play from its owner's hand
+  -- ^ a window in which the ally can be put into play from its owner's hand: the ally
+  -- answers 'UseHandAction', which puts it into play unless its card says otherwise
+  , allyHandCriteria :: Criterion
+  -- ^ what must hold for the hand window's response, as Ranger of Cardolan's Dúnedain hero
   , allyHandAction :: Maybe Criterion
   -- ^ an action the ally offers from its owner's hand while the criteria hold, as Bofur's;
   -- the ally answers 'UseHandAction'
@@ -65,7 +68,7 @@ instance ToJSON AllyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "ally")
 
 instance FromJSON AllyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard])), ("handAction", toJSON (Nothing :: Maybe Criterion))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard])), ("handAction", toJSON (Nothing :: Maybe Criterion)), ("handCriteria", toJSON NoCriteria)]
 
 ally :: (AllyAttrs -> a) -> CardDef -> AllyCard a
 ally f cardDef =
@@ -84,6 +87,7 @@ ally f cardDef =
             , allyCommitted = False
             , allyAttacking = False
             , allyHandWindow = Nothing
+            , allyHandCriteria = NoCriteria
             , allyHandAction = Nothing
             , allyFacedown = []
             , allyDiscardWindow = Nothing

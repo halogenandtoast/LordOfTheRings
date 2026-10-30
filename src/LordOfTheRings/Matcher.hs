@@ -227,6 +227,7 @@ matchLocation matcher location = case matcher of
   LocationInStagingArea -> pure $ location.placement == StagingArea
   IsActiveLocation -> pure $ location.placement == ActiveLocation
   LocationWithTrait trait -> hasTrait trait (toTarget location) (toCardDef location)
+  LocationWithKeyword k -> hasKeyword k (toTarget location) (toCardDef location)
   LocationWithCardCode code -> pure $ toCardCode location == code
   LocationNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget location)
   AnyLocation -> pure True
@@ -237,6 +238,7 @@ matchLocation matcher location = case matcher of
     InPlayArea pid -> elem pid <$> select pm
     _ -> pure False
   LocationWithIdBelow lid -> pure $ location.id < lid
+  UniqueLocation -> pure $ cdUnique (toCardDef location)
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -455,6 +457,11 @@ currentQuestHasAKeyword =
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
 
+-- | The player whose set-aside cards hold the card, as a Ranger of the North shuffled
+-- into the encounter deck stays its owner's.
+setAsideOwner :: HasGame m => CardId -> m (Maybe PlayerId)
+setAsideOwner cid = fmap (.id) . find (any ((== cid) . (.id)) . (.setAsideCards)) . toList <$> getsGame gamePlayers
+
 getHero :: (HasCallStack, HasGame m) => HeroId -> m Hero
 getHero hid =
   fromJustNote ("missing hero " <> show hid)
@@ -623,6 +630,13 @@ objectivesWithTrait trait =
     =<< getsGame (filter ((/= Unplaced) . (.placement)) . toList . entitiesObjectives . gameEntities)
 
 -- | Players still in the game, in turn order from the first player.
+-- | The threat at which the player is eliminated, which may move, as Double Dealings
+-- lowers it.
+getEliminationLevel :: HasGame m => PlayerId -> m Int
+getEliminationLevel pid = do
+  mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
+  pure $ 50 + sum [n | EliminationThreatModifier n <- mods]
+
 getRemainingPlayers :: HasGame m => m [PlayerId]
 getRemainingPlayers = filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
 

@@ -130,6 +130,9 @@ allTreacheryCards =
       , offTrack
       , inNeedOfRest
       , raisingTheCry
+      , possession
+      , aFellDread
+      , deathAndCalamity
       , fierceFolk
       , drivenBack
       , frenziedAttack
@@ -146,10 +149,35 @@ allTreacheryCards =
       , curseOfTheWildMen
       , theGuardiansFury
       , wildTenacity
+      , theSkyDarkens
+      , vileAffliction
+      , daechanarsWill
+      , suddenDarkness
+      , predatoryWolves
+      , soundTheAlarm
+      , feebleAndWeary
+      , captivesOfGornakh
+      , interrogation
       , suddenAssault
       , surprisingSpeed
       , pressingNeeds
       , weightOfResponsibility
+      , iceStorm
+      , bitingWind
+      , freezingBlast
+      , coldFromAngmar
+      , aradorsBane
+      , noRest
+      , unnaturalFog
+      , tragicDiscovery
+      , restlessEvil
+      , terrorOfTheNorth
+      , darkSorcery
+      , heavyCurse
+      , centuriesOfSorrow
+      , curseOfTheYears
+      , darkCovenant
+      , hauntingFog
       ]
 
 deepDeepDark :: CardDef
@@ -896,6 +924,54 @@ wildTenacity =
     , cdEasyModeQuantity = Just 2
     }
 
+theSkyDarkens :: CardDef
+theSkyDarkens =
+  (treachery "10136" "The Sky Darkens" TheBattleOfCarnDum 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+vileAffliction :: CardDef
+vileAffliction =
+  (treachery "10137" "Vile Affliction" TheBattleOfCarnDum 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    }
+
+daechanarsWill :: CardDef
+daechanarsWill = (treachery "10138" "Daechanar's Will" TheBattleOfCarnDum 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+suddenDarkness :: CardDef
+suddenDarkness =
+  (treachery "10026" "Sudden Darkness" TheWastesOfEriador 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+predatoryWolves :: CardDef
+predatoryWolves = (treachery "10027" "Predatory Wolves" TheWastesOfEriador 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+soundTheAlarm :: CardDef
+soundTheAlarm =
+  (treachery "10049" "Sound the Alarm!" EscapeFromMountGram 2)
+    { cdKeywords = setFromList [Doomed 3]
+    , cdEasyModeQuantity = Just 1
+    }
+
+feebleAndWeary :: CardDef
+feebleAndWeary = (treachery "10050" "Feeble and Weary" EscapeFromMountGram 2) {cdShadowEffect = True}
+
+captivesOfGornakh :: CardDef
+captivesOfGornakh =
+  (treachery "10051" "Captives of Gornákh" EscapeFromMountGram 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+interrogation :: CardDef
+interrogation = (treachery "10052" "Interrogation" EscapeFromMountGram 2) {cdShadowEffect = True}
+
 suddenAssault :: CardDef
 suddenAssault = (treachery "09021" "Sudden Assault" IntrudersInChetwood 2) {cdEasyModeQuantity = Just 0}
 
@@ -919,3 +995,125 @@ weightOfResponsibility =
     { cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+iceStorm :: CardDef
+iceStorm =
+  (treachery "09031" "Ice Storm" TheWeatherHills 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+bitingWind :: CardDef
+bitingWind =
+  (treachery "09052" "Biting Wind" FoulWeather 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+freezingBlast :: CardDef
+freezingBlast =
+  (treachery "09053" "Freezing Blast" FoulWeather 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+coldFromAngmar :: CardDef
+coldFromAngmar =
+  (treachery "09054" "Cold from Angmar" FoulWeather 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdEasyModeQuantity = Just 2
+    }
+
+aradorsBane :: CardDef
+aradorsBane = (treachery "10079" "Arador's Bane" AcrossTheEttenmoors 2) {cdEasyModeQuantity = Just 1}
+
+noRest :: CardDef
+noRest = treachery "10080" "No Rest" AcrossTheEttenmoors 3
+
+unnaturalFog :: CardDef
+unnaturalFog =
+  (treachery "09041" "Unnatural Fog" DeadmensDike 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 1
+    }
+
+tragicDiscovery :: CardDef
+tragicDiscovery = (treachery "09058" "Tragic Discovery" RuinsOfArnor 2) {cdShadowEffect = True}
+
+restlessEvil :: CardDef
+restlessEvil = (treachery "09062" "Restless Evil" CursedDead 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+terrorOfTheNorth :: CardDef
+terrorOfTheNorth =
+  (treachery "09064" "Terror of the North" DarkSorcery 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+darkSorcery :: CardDef
+darkSorcery =
+  (treachery "09065" "Dark Sorcery" DarkSorcery 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+heavyCurse :: CardDef
+heavyCurse =
+  (treachery "09066" "Heavy Curse" DarkSorcery 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+possession :: CardDef
+possession =
+  (treachery "10162" "Possession" TheDreadRealm 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdEasyModeQuantity = Just 0
+    }
+
+aFellDread :: CardDef
+aFellDread = (treachery "10163" "A Fell Dread" TheDreadRealm 2) {cdCardTraits = setFromList [Sorcery]}
+
+deathAndCalamity :: CardDef
+deathAndCalamity =
+  (treachery "10164" "Death and Calamity" TheDreadRealm 4)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+centuriesOfSorrow :: CardDef
+centuriesOfSorrow =
+  (treachery "10105" "Centuries of Sorrow" TheTreacheryOfRhudaur 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+curseOfTheYears :: CardDef
+curseOfTheYears =
+  (treachery "10106" "Curse of the Years" TheTreacheryOfRhudaur 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+darkCovenant :: CardDef
+darkCovenant =
+  (treachery "10107" "Dark Covenant" TheTreacheryOfRhudaur 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    }
+
+hauntingFog :: CardDef
+hauntingFog = (treachery "10108" "Haunting Fog" TheTreacheryOfRhudaur 3) {cdCardTraits = setFromList [Sorcery]}

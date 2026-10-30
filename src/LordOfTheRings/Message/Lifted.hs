@@ -8,9 +8,9 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
-import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardType, toCardDef)
+import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
-import LordOfTheRings.Scenario.Types ()
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Frontend (Frontend)
 import LordOfTheRings.Classes.HasQueue
@@ -44,7 +44,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled),
+  WindowType (AllyDiscardedByCardEffect, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
  )
 
 dealDamage
@@ -202,8 +202,21 @@ shuffle the deck.
 searchEncounterDeckToStaging :: ReverseQueue m => PlayerId -> CardMatcher -> m ()
 searchEncounterDeckToStaging pid matcher = push $ Search pid EncounterDeck matcher ToStaging Shuffle
 
+{- | A card effect discards the card from play. An ally so discarded opens a window once it
+is gone, with its traits as it left, as Éothain answers; one destroyed by damage is
+discarded by the game, not this.
+-}
 discard :: (ReverseQueue m, Targetable target) => target -> m ()
-discard = push . Discard . toTarget
+discard (toTarget -> t) = do
+  push $ Discard t
+  case t of
+    AllyTarget aid -> do
+      present <- selectAny (AllyWithId aid)
+      when present do
+        def <- toCardDef <$> getAlly aid
+        gained <- mapMaybe (\case GainTrait x -> Just x; _ -> Nothing) <$> getModifiers t
+        push $ CheckWindows [Window After $ AllyDiscardedByCardEffect t (cdCardTraits def <> setFromList gained)]
+    _ -> pure ()
 
 ready :: (ReverseQueue m, Targetable target) => target -> m ()
 ready = push . Ready . toTarget
@@ -276,11 +289,14 @@ cancelMatching = lift . void . popMessagesMatching
 {- | Cancel the When Revealed effects of a card just revealed, and with them the lead's
 click to resolve them.
 -}
-cancelWhenRevealed :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
-cancelWhenRevealed t = cancelMatching \case
-  WhenRevealed t' -> t == t'
-  AskToResolveWhenRevealed t' _ -> t == t'
-  _ -> False
+cancelWhenRevealed :: (MonadTrans t, HasQueue Message m, HasQueue Message (t m)) => Target -> t m ()
+cancelWhenRevealed t = do
+  canceled <- lift $ popMessagesMatching \case
+    WhenRevealed t' -> t == t'
+    AskToResolveWhenRevealed t' _ -> t == t'
+    _ -> False
+  -- the window after it, as Ruins of Arnor answers
+  pushWhen (notNull canceled) $ CheckWindows [Window After $ WhenRevealedCanceled t]
 
 {- | Cancel damage about to be dealt to the target, from the window before it is dealt, as
 "before Patrol Leader is dealt damage ... cancel that damage" reads.
@@ -313,6 +329,12 @@ removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
 
 placeEnemy :: ReverseQueue m => EnemyId -> Placement -> m ()
 placeEnemy eid placement = push $ PlaceEnemy eid placement
+
+-- | "Return all engaged enemies to the staging area."
+returnEngagedEnemiesToStaging :: ReverseQueue m => m ()
+returnEngagedEnemiesToStaging = do
+  engaged <- select (EnemyEngagedWith AnyPlayer)
+  for_ engaged \e -> placeEnemy e StagingArea
 
 {- | The player looks at the top card of the encounter deck; with @mayBottom@ they may
 then move it to the bottom.
@@ -399,6 +421,16 @@ putQuestIntoPlayFlipped card = do
 placeOrcGuard :: ReverseQueue m => PlayerId -> m ()
 placeOrcGuard = push . PlaceOrcGuard
 
+{- | The player card, from its owner's deck, hand or discard pile, is reanimated: a
+Reanimated Dead enemy in the staging area (The Dread Realm). Its id is given back for
+what the card does to it next, as dealing it a shadow card.
+-}
+reanimate :: ReverseQueue m => CardId -> m EnemyId
+reanimate cid = do
+  eid <- getRandom
+  push $ Reanimate cid eid
+  pure eid
+
 attachTreachery :: (ReverseQueue m, Targetable target) => TreacheryId -> target -> m ()
 attachTreachery tid = push . AttachTreachery tid . toTarget
 
@@ -455,6 +487,14 @@ putDiscardOnBottomOfDeck pid cid = push $ PutDiscardOnBottomOfDeck pid cid
 -- | A card in the player's discard pile is shuffled into their deck.
 shuffleFromDiscardIntoDeck :: ReverseQueue m => PlayerId -> CardId -> m ()
 shuffleFromDiscardIntoDeck pid cid = push $ ShuffleFromDiscardIntoDeck pid cid
+
+-- | The top N cards of the player's discard pile are shuffled into their deck.
+shuffleTopOfDiscardIntoDeck :: ReverseQueue m => PlayerId -> Int -> m ()
+shuffleTopOfDiscardIntoDeck pid n = push $ ShuffleTopOfDiscardIntoDeck pid n
+
+-- | An ally card in the player's hand is put into play, not played.
+putAllyIntoPlayFromHand :: ReverseQueue m => PlayerId -> CardId -> m ()
+putAllyIntoPlayFromHand pid = push . PutAllyIntoPlay pid
 
 {- | An ally card, already taken from where it was, goes into play under the player's
 control.
@@ -657,6 +697,10 @@ removeFromGame = push . RemoveFromGame . toTarget
 shuffleIntoOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
 shuffleIntoOwnersDeck = push . ShuffleIntoOwnersDeck . toTarget
 
+-- | The ally leaves play for the bottom of its owner's deck, as Curious Brandybuck.
+putOnBottomOfOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
+putOnBottomOfOwnersDeck = push . PutOnBottomOfOwnersDeck . toTarget
+
 putObjectiveAllyIntoPlay :: ReverseQueue m => ObjectiveId -> PlayerId -> m ()
 putObjectiveAllyIntoPlay oid = push . PutObjectiveAllyIntoPlay oid
 
@@ -812,6 +856,10 @@ discardShadowCard eid card = do
   push $ RemoveShadowCard eid card.id
   push $ AddToEncounterDiscard [card]
 
+-- | The encounter card, already taken from where it was, goes on top of the encounter deck.
+putOnTopOfEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
+putOnTopOfEncounterDeck = push . PutOnTopOfEncounterDeck
+
 -- | The encounter card leaves the discard pile for the top of the encounter deck.
 moveToTopOfEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
 moveToTopOfEncounterDeck card = do
@@ -921,6 +969,26 @@ immediateAttack pid eid = do
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
 
+{- | The enemy engages the player with the highest threat and makes an immediate attack,
+the first player choosing among players tied for it, as Prowling Orc's Scour and Jailor
+Gornákh read.
+-}
+engageHighestThreatAndAttack :: (ReverseQueue m, Targetable source) => source -> EnemyId -> m ()
+engageHighestThreatAndAttack source eid = do
+  players <- traverse getPlayer =<< getRemainingPlayers
+  let highest = foldr (max . (.threat)) 0 players
+  lead <- getLead
+  chooseOrRunOneM lead do
+    questionLabeled "engageHighestThreat"
+    causedBy source
+    targets [p.id | p <- players, p.threat == highest] \pid -> do
+      engageEnemy pid eid
+      immediateAttack pid eid
+
+-- | The hero leaves play, set aside out of play.
+setAsideHero :: ReverseQueue m => HeroId -> m ()
+setAsideHero = push . SetAsideHero
+
 -- | The player divides the damage among characters they control, as "that player must deal
 -- X damage divided among characters he controls" reads; it is dealt once all is assigned.
 dealDamageDivided :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
@@ -933,6 +1001,43 @@ additionalAttack
 additionalAttack pid eid = do
   again <- capture $ immediateAttack pid eid
   afterAttack eid again
+
+-- | The player divides the damage among the characters given, as "assign X damage among
+-- characters committed to the quest" reads; it is dealt once all is assigned.
+dealDamageDividedAmong
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> PlayerId -> [target] -> Int -> m ()
+dealDamageDividedAmong source pid among n = push $ DealDamageDividedAmong (toSource source) pid (map toTarget among) n []
+
+-- | The player deals the damage to 1 hero they control, as "each player deals 1 damage to a
+-- hero he controls" reads.
+dealDamageToOneHero :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> Int -> m ()
+dealDamageToOneHero source pid n = do
+  heroes <- select (HeroControlledBy $ PlayerWithId pid)
+  chooseOrRunOneM pid do
+    questionLabeledWith "dealDamageToOneHero" [intVar "n" n]
+    causedBy source
+    targets heroes \h -> dealDamage source h n
+
+-- | The matching set-aside cards are revealed, as "reveal Orc Ambush and add it to the
+-- staging area" reads.
+revealSetAsideMatching :: ReverseQueue m => CardMatcher -> m ()
+revealSetAsideMatching matcher = do
+  setAside' <- getsGame ((.scenarioSetAside) . toAttrs . (.scenario))
+  traverse_ (push . RevealCard) $ filter (cardMatches matcher) setAside'
+
+{- | End the current phase, as "End the current phase" reads: what is left of it on the
+game's queue is dropped, up to its end. A log block it opened still closes.
+-}
+endCurrentPhase :: (MonadTrans t, HasQueue Message m, HasGame m) => t m ()
+endCurrentPhase = do
+  phase <- lift $ getsGame gamePhase
+  lift $ withQueue_ \q -> case break (== EndPhase phase) q of
+    (before, after@(_ : _)) -> filter isClose before <> after
+    _ -> q
+ where
+  isClose = \case
+    CloseLogBlock _ -> True
+    _ -> False
 
 -- | The player deals the damage to 1 character they control, as "each player must deal 3
 -- damage to 1 character he controls" reads.
@@ -1136,3 +1241,10 @@ focusAreaOf = push . FocusArea
 -- | The players of the area in focus join another area at the beginning of the travel phase.
 joinAnotherPlayer :: ReverseQueue m => m ()
 joinAnotherPlayer = push JoinAtTravel
+
+-- | The card leaves the player's deck for their discard pile, as "search your deck for a copy
+-- and discard it" reads.
+discardFromDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+discardFromDeck pid card = do
+  push $ RemoveFromDeck pid card.id
+  push $ PutInDiscard card

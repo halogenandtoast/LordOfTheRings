@@ -42,6 +42,7 @@ import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Window (TimeOfDay (..), Window (..), WindowType (Became))
 
 {- | What a message adds to the log, if anything. The match is pure, so a message that
 says nothing costs nothing; only a narrating one reads the game.
@@ -97,6 +98,8 @@ narrationFor = \case
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
   ScenarioSpecific "tharbad.lowerElimination" _ ->
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> (10 :: Int)]]
+  -- \* Day and Night, as The Wastes of Eriador's Time objective flips
+  CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
   EliminatePlayer pid -> Just do
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]
@@ -173,6 +176,7 @@ narrationFor = \case
     pure [mechanic [ikeyPart "log.discarded" ["target" ~> t]] | not (destroyed || resolved)]
   ReturnToHand target -> Just $ simply "log.returnsToHand" target
   ShuffleIntoOwnersDeck target -> Just $ simply "log.shuffledIntoOwnersDeck" target
+  PutOnBottomOfOwnersDeck target -> Just $ simply "log.putOnBottomOfOwnersDeck" target
   ShuffleIntoEncounterDeck target -> Just $ simply "log.shuffledIntoEncounterDeck" target
   ReturnToTopOfEncounterDeck target -> Just $ simply "log.returnedToTopOfEncounterDeck" target
   RemoveFromQuest target -> Just $ simply "log.removedFromQuest" target
@@ -185,6 +189,7 @@ narrationFor = \case
   PutObjectiveIntoPlayAttached card host -> Just $ whenRef host \h ->
     one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> EncounterCard card, "target" ~> h]]
   RemoveFromGame target -> Just $ simply "log.removedFromGame" target
+  SetAsideHero hid -> Just $ simply "log.setAsideOutOfPlay" (HeroTarget hid)
   PutIntoPlayAsActiveLocation card -> Just $ one $ mechanic [ikeyPart "log.becomesActive" ["location" ~> EncounterCard card]]
   DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
     top <- getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
@@ -194,6 +199,14 @@ narrationFor = \case
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.orcGuardEngages" ["player" ~> who]]
+  -- the card goes face down, so only whose it was is said
+  Reanimate cid _ -> Just do
+    owner <- getsGame \g -> headMay [p.id | p <- toList g.players, c <- p.deck <> p.hand <> p.discard, c.id == cid]
+    case owner of
+      Nothing -> pure []
+      Just pid -> do
+        who <- playerRefFor pid
+        one $ toned Bad $ mechanic [ikeyPart "log.reanimates" ["player" ~> who]]
   TakeHiddenCard pid -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.takesHiddenCard" ["player" ~> who]]
@@ -205,6 +218,8 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.drawsIntoHand" ["player" ~> who, "card" ~> t]]
   AttachShadowCard eid _ -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.dealtShadow" ["enemy" ~> e]]
+  -- an enemy with two sides turns over, as Thaurdir does
+  Flip (EnemyTarget eid) -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.enemyFlips" ["enemy" ~> e]]
   RevealShadowCard eid cid -> Just $ shadowFaceUp eid cid
   TurnShadowCardFaceUp eid cid -> Just $ shadowFaceUp eid cid
   AttachTreachery tid target -> Just $ attached (toTarget tid) target
@@ -275,6 +290,9 @@ narrationFor = \case
       | card <- filter ((== cid) . (.id)) player.discard
       ]
   ShuffleDiscardIntoDeck pid -> Just $ withPlayer pid \_ who -> one $ mechanic [ikeyPart "log.shufflesDiscardIntoDeck" ["player" ~> who]]
+  ShuffleTopOfDiscardIntoDeck pid n -> Just $ withPlayer pid \player who ->
+    let moved = min n (length player.discard)
+     in if moved > 0 then one $ mechanic [ikeyPart "log.shufflesTopOfDiscardIntoDeck" ["player" ~> who, "count" ~> moved]] else pure []
   MoveToBottomOfDeck pid cid -> Just $ withPlayer pid \player who ->
     pure
       [ mechanic [ikeyPart "log.movesToBottomOfDeck" ["player" ~> who, "card" ~> card]]
@@ -294,6 +312,9 @@ narrationFor = \case
   PutLocationIntoPlay card (InPlayArea pid) -> Just $ takesControl pid (EncounterCard card)
   ScenarioSpecific "scour" (parseMaybe parseJSON -> Just target) -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.scour" ["target" ~> t]]
+  -- Escape from Mount Gram's captured cards, rescued from underneath the card
+  ScenarioSpecific "mountGram.rescue" (parseMaybe parseJSON -> Just (host :: Card, cards :: [PlayerCard])) ->
+    Just $ one $ toned Good $ mechanic [ikeyPart "log.capturedRescued" ["card" ~> host, "count" ~> length cards]]
   PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing

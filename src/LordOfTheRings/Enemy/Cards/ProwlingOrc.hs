@@ -25,15 +25,6 @@ instance RunMessage ProwlingOrc where
       placeDamageOnActiveLocation attrs 1
       pure e
     _ | isScour attrs msg -> do
-      unless (attrs.placement == Unplaced) do
-        players <- traverse getPlayer =<< getRemainingPlayers
-        let highest = foldr (max . (.threat)) 0 players
-        lead <- getLead
-        chooseOrRunOneM lead do
-          questionLabeled "prowlingOrc.engage"
-          causedBy attrs
-          targets [p.id | p <- players, p.threat == highest] \pid -> do
-            engageEnemy pid attrs.id
-            immediateAttack pid attrs.id
+      unless (attrs.placement == Unplaced) $ engageHighestThreatAndAttack attrs attrs.id
       pure e
     _ -> ProwlingOrc <$> runMessage msg attrs

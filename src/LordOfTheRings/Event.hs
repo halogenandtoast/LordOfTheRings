@@ -133,6 +133,28 @@ import LordOfTheRings.Event.Cards.MessageFromElrond
 import LordOfTheRings.Event.Cards.TightenOurBelts
 import LordOfTheRings.Event.Cards.RideThemDown
 import LordOfTheRings.Event.Cards.DontBeHasty
+import LordOfTheRings.Event.Cards.DoomHangsStill
+import LordOfTheRings.Event.Cards.HoldYourGround
+import LordOfTheRings.Event.Cards.LordsOfTheEldar
+import LordOfTheRings.Event.Cards.QuickEars
+import LordOfTheRings.Event.Cards.HourOfWrath
+import LordOfTheRings.Event.Cards.TaleOfTinuviel
+import LordOfTheRings.Event.Cards.DescendantsOfKings
+import LordOfTheRings.Event.Cards.BoomedAndTrumpeted
+import LordOfTheRings.Event.Cards.LeaveNoTrace
+import LordOfTheRings.Event.Cards.DistantStars
+import LordOfTheRings.Event.Cards.KeenAsLances
+import LordOfTheRings.Event.Cards.DunedainMessage
+import LordOfTheRings.Event.Cards.FairAndPerilous
+import LordOfTheRings.Event.Cards.NoneReturn
+import LordOfTheRings.Event.Cards.HopeRekindled
+import LordOfTheRings.Event.Cards.Reinforcements
+import LordOfTheRings.Event.Cards.HornsCry
+import LordOfTheRings.Event.Cards.TheDoorIsClosed
+import LordOfTheRings.Event.Cards.RangerSummons
+import LordOfTheRings.Event.Cards.TirelessHunters
+import LordOfTheRings.Event.Cards.ExpertTrackers
+import LordOfTheRings.Event.Cards.RallyingCry
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -279,5 +301,27 @@ allEvents =
         , SomeEventCard tightenOurBelts
         , SomeEventCard rideThemDown
         , SomeEventCard dontBeHasty
+        , SomeEventCard doomHangsStill
+        , SomeEventCard holdYourGround
+        , SomeEventCard lordsOfTheEldar
+        , SomeEventCard quickEars
+        , SomeEventCard hourOfWrath
+        , SomeEventCard taleOfTinuviel
+        , SomeEventCard descendantsOfKings
+        , SomeEventCard boomedAndTrumpeted
+        , SomeEventCard leaveNoTrace
+        , SomeEventCard distantStars
+        , SomeEventCard keenAsLances
+        , SomeEventCard dunedainMessage
+        , SomeEventCard fairAndPerilous
+        , SomeEventCard noneReturn
+        , SomeEventCard hopeRekindled
+        , SomeEventCard reinforcements
+        , SomeEventCard hornsCry
+        , SomeEventCard theDoorIsClosed
+        , SomeEventCard rangerSummons
+        , SomeEventCard tirelessHunters
+        , SomeEventCard expertTrackers
+        , SomeEventCard rallyingCry
         ]
     ]

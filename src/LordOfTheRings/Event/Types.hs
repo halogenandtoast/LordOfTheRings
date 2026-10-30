@@ -42,6 +42,10 @@ data EventAttrs = EventAttrs
   -- ^ what must be true for the event to be played
   , eventDiscardWindow :: Maybe WindowMatcher
   -- ^ a window in which the event responds from its owner's discard pile
+  , eventActionCriteria :: Maybe Criterion
+  {- ^ a response that is also an action, played as one while these hold, as Rallying
+  Cry's Valour Action: played so, its 'PlayEvent' has no windows
+  -}
   }
   deriving stock (Show, Eq, Generic)
 
@@ -65,6 +69,7 @@ eventWith f cardDef g =
               , eventWindow = Nothing
               , eventCriteria = NoCriteria
               , eventDiscardWindow = Nothing
+              , eventActionCriteria = Nothing
               }
     }
 

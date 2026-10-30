@@ -4,18 +4,47 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Sphere (Sphere (Neutral))
+import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead]
+
+scoutAhead :: CardDef
+scoutAhead =
+  (playerSideQuest "10009" "Scout Ahead" Lore (StaticCost 0) 4)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
 
 gatherInformation :: CardDef
 gatherInformation =
   (playerSideQuest "09014" "Gather Information" Neutral (StaticCost 0) 4)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
+
+doubleBack :: CardDef
+doubleBack =
+  (playerSideQuest "10034" "Double Back" Spirit (StaticCost 0) 4)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
+
+delayTheEnemy :: CardDef
+delayTheEnemy =
+  (playerSideQuest "10058" "Delay the Enemy" Tactics (StaticCost 0) 8)
+    { cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    , cdKeywords = setFromList [Battle]
+    }
+
+sendForAid :: CardDef
+sendForAid =
+  (playerSideQuest "10086" "Send for Aid" Leadership (StaticCost 1) 6)
     { cdVictoryPoints = Just 1
     , cdDeckLimit = 1
     }
@@ -122,6 +151,9 @@ allQuestCards =
       , battleForDunland
       , theRavenClan
       , theLastStage
+      , theCatacombsOfCarnDum
+      , angmarAwakened
+      , daechanarsFall
       , theRoadToTharbad
       , aWellLaidTrap
       , noWayOut
@@ -143,11 +175,41 @@ allQuestCards =
       , theTrialOfIntuition
       , theAntleredCrownTheThreeTrials
       , searchTheRuins
+      , theClutchesOfCarnDum
+      , midwintersCrux
+      , furiousCharge
+      , acrossTheWastes
+      , howlingAtNight
+      , battleWithThePack
+      , unexpectedRescue
+      , gornakhsDungeons
+      , flightFromMountGram
+      , stopTheExecutioners
       , orcRearguard
       , rescueIarion
       , orcAmbush
       , lostInTheWilderness
       , stopTheWarParty
+      , findShelter
+      , makeCamp
+      , scatteredAmongTheHills
+      , corneredAnimals
+      , intoTheEttenmoors
+      , aMiserableJourney
+      , journeysEnd
+      , lieLow
+      , forageForFood
+      , scavengeForSupplies
+      , theShadesOfAngmar
+      , aFellWraith
+      , theShadowWorld
+      , sealTheTomb
+      , thePowerOfAngmar
+      , secretsOfRhudaur
+      , thaurdirsPursuit
+      , quietTheSpirits
+      , siftThroughTheDebris
+      , decipherAncientTexts
       ]
 
 theDrippingWalls :: CardDef
@@ -539,6 +601,40 @@ searchTheRuins =
     , cdKeywords = setFromList [Surge]
     }
 
+theClutchesOfCarnDum :: CardDef
+theClutchesOfCarnDum = quest "10125" "The Clutches of Carn Dûm" TheBattleOfCarnDum 1 15
+
+midwintersCrux :: CardDef
+midwintersCrux = quest "10126" "Midwinter's Crux" TheBattleOfCarnDum 2 15
+
+furiousCharge :: CardDef
+furiousCharge = (encounterSideQuest "10139" "Furious Charge" TheBattleOfCarnDum 5) {cdVictoryPoints = Just 10}
+
+acrossTheWastes :: CardDef
+acrossTheWastes = quest "10013" "Across the Wastes" TheWastesOfEriador 1 20
+
+howlingAtNight :: CardDef
+howlingAtNight = quest "10014" "Howling at Night" TheWastesOfEriador 2 15
+
+battleWithThePack :: CardDef
+battleWithThePack = quest "10015" "Battle with the Pack" TheWastesOfEriador 3 5
+
+unexpectedRescue :: CardDef
+unexpectedRescue = quest "10038" "Unexpected Rescue" EscapeFromMountGram 1 0
+
+-- | Four copies, one for each player's own stage 2.
+gornakhsDungeons :: CardDef
+gornakhsDungeons = (quest "10039" "Gornákh's Dungeons" EscapeFromMountGram 2 0) {cdKeywords = setFromList [Capture 7]}
+
+flightFromMountGram :: CardDef
+flightFromMountGram = quest "10040" "Flight from Mount Gram" EscapeFromMountGram 3 14
+
+stopTheExecutioners :: CardDef
+stopTheExecutioners =
+  (encounterSideQuest "10053" "Stop the Executioners!" EscapeFromMountGram 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Capture 5, Time 4]
+    }
 orcRearguard :: CardDef
 orcRearguard = (encounterSideQuest "09023" "Orc Rearguard" IntrudersInChetwood 3) {cdVictoryPoints = Just 10}
 
@@ -566,3 +662,95 @@ lostInTheWilderness =
 
 stopTheWarParty :: CardDef
 stopTheWarParty = quest "09068" "Stop the War Party" IntrudersInChetwood 1 30
+
+findShelter :: CardDef
+findShelter =
+  (encounterSideQuest "09032" "Find Shelter" TheWeatherHills 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge, Time 4]
+    }
+
+makeCamp :: CardDef
+makeCamp =
+  (encounterSideQuest "09055" "Make Camp" FoulWeather 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | No quest points: the players leave it as Hunting the Orcs flips.
+scatteredAmongTheHills :: CardDef
+scatteredAmongTheHills = (quest "09069" "Scattered Among the Hills" TheWeatherHills 1 0) {cdQuestPoints = Nothing}
+
+corneredAnimals :: CardDef
+corneredAnimals = quest "09070" "Cornered Animals" TheWeatherHills 2 20
+
+intoTheEttenmoors :: CardDef
+intoTheEttenmoors = quest "10064" "Into the Ettenmoors" AcrossTheEttenmoors 1 10
+
+aMiserableJourney :: CardDef
+aMiserableJourney = quest "10065" "A Miserable Journey" AcrossTheEttenmoors 2 20
+
+journeysEnd :: CardDef
+journeysEnd = quest "10066" "Journey's End" AcrossTheEttenmoors 3 17
+
+lieLow :: CardDef
+lieLow = (encounterSideQuest "10081" "Lie Low" AcrossTheEttenmoors 8) {cdVictoryPoints = Just 10}
+
+forageForFood :: CardDef
+forageForFood = (encounterSideQuest "10082" "Forage for Food" AcrossTheEttenmoors 6) {cdVictoryPoints = Just 10}
+
+scavengeForSupplies :: CardDef
+scavengeForSupplies = (encounterSideQuest "10083" "Scavenge for Supplies" AcrossTheEttenmoors 7) {cdVictoryPoints = Just 10}
+
+theShadesOfAngmar :: CardDef
+theShadesOfAngmar = quest "09073" "The Shades of Angmar" DeadmensDike 1 11
+
+aFellWraith :: CardDef
+aFellWraith = quest "09074" "A Fell Wraith" DeadmensDike 2 13
+
+theShadowWorld :: CardDef
+theShadowWorld = (encounterSideQuest "09042" "The Shadow World" DeadmensDike 5) {cdKeywords = setFromList [Surge]}
+
+sealTheTomb :: CardDef
+sealTheTomb =
+  (encounterSideQuest "09063" "Seal the Tomb" CursedDead 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+thePowerOfAngmar :: CardDef
+thePowerOfAngmar =
+  (encounterSideQuest "09067" "The Power of Angmar" DarkSorcery 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+theCatacombsOfCarnDum :: CardDef
+theCatacombsOfCarnDum = quest "10150" "The Catacombs of Carn Dûm" TheDreadRealm 1 18
+
+-- | No quest points: the players advance once Daechanar is defeated.
+angmarAwakened :: CardDef
+angmarAwakened = (quest "10151" "Angmar Awakened" TheDreadRealm 2 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: the players win once no location is left in play.
+daechanarsFall :: CardDef
+daechanarsFall = (quest "10152" "Daechanar's Fall" TheDreadRealm 3 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: it advances as its side quests are gone, or its time runs out.
+secretsOfRhudaur :: CardDef
+secretsOfRhudaur = (quest "10094" "Secrets of Rhudaur" TheTreacheryOfRhudaur 1 0) {cdKeywords = setFromList [Time 5]}
+
+thaurdirsPursuit :: CardDef
+thaurdirsPursuit = quest "10095" "Thaurdir's Pursuit" TheTreacheryOfRhudaur 2 30
+
+-- | Flipped to Daechanar's Brand once defeated.
+quietTheSpirits :: CardDef
+quietTheSpirits = encounterSideQuest "10109" "Quiet the Spirits" TheTreacheryOfRhudaur 16
+
+-- | Flipped to Heirloom of Iârchon once defeated.
+siftThroughTheDebris :: CardDef
+siftThroughTheDebris = encounterSideQuest "10111" "Sift through the Debris" TheTreacheryOfRhudaur 18
+
+-- | Flipped to Orders from Angmar once defeated.
+decipherAncientTexts :: CardDef
+decipherAncientTexts = encounterSideQuest "10113" "Decipher Ancient Texts" TheTreacheryOfRhudaur 14

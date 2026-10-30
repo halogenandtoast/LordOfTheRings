@@ -1,7 +1,7 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, cardMatches)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
 import LordOfTheRings.Modifier (Modifier)
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
@@ -22,6 +22,8 @@ data WindowMatcher
     PlayerEngagedEnemyWindow Timing PlayerId
   | OptionallyEngagedWindow Timing PlayerId
   | EnemyEntersStagingAreaWindow Timing
+  | -- | an enemy with the trait added to the staging area, as Amon Forn reads
+    EnemyWithTraitEntersStagingAreaWindow Timing Trait
   | GainedResourcesWindow Timing Target
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
@@ -105,6 +107,11 @@ data WindowMatcher
     AllyEnteredPlayWindow Timing (Maybe PlayerId) (Maybe Trait)
   | -- | a card, or any card, discarded from the top of the player's deck
     DiscardedFromDeckWindow Timing PlayerId (Maybe CardId)
+  | -- | any number of cards discarded from the top of a matching player's deck, as Fornost
+    -- Square reads for the first player
+    PlayerDiscardedFromDeckWindow Timing PlayerMatcher
+  | -- | the When Revealed effects of a treachery canceled, as Ruins of Arnor reads
+    TreacheryWhenRevealedCanceledWindow Timing
   | -- | the player played a matching card from their hand
     PlayedCardFromHandWindow Timing PlayerId CardMatcher
   | -- | any hero dealt damage
@@ -121,6 +128,8 @@ data WindowMatcher
     ThreatRaisedByEncounterWindow Timing PlayerId
   | -- | a player other than the given one raised his threat
     OtherPlayerRaisedThreatWindow Timing PlayerId
+  | -- | an enemy engaged a player other than the given one, as Amarthiúl answers
+    OtherPlayerEngagedEnemyWindow Timing PlayerId
   | ChangedControlWindow Timing Target
   | -- | any player plays an event
     EventPlayedWindow Timing
@@ -145,6 +154,10 @@ data WindowMatcher
   | -- | the player let an attack go undefended
     AttackUndefendedWindow Timing PlayerId
   | EnemyDefeatedWindow Timing
+  | -- | the enemy was defeated, as "when attached enemy is destroyed" reads
+    ThisEnemyDefeatedWindow Timing EnemyId
+  | -- | any character dealt damage, as Honour Guard reads
+    CharacterDealtDamageWindow Timing
   | -- | the enemy's attack, or any enemy's, destroyed a character
     CharacterDestroyedByAttackWindow Timing (Maybe EnemyId)
   | -- | a character with the trait was dealt damage, as Gondorian Discipline reads
@@ -185,6 +198,33 @@ data WindowMatcher
     AdvancedToStageWindow Timing
   | -- | a matching enemy attacked any player, as a Guardian enemy at Hill Barrow
     MatchingEnemyAttacksWindow Timing EnemyMatcher
+  | -- | the player would be eliminated by reaching his threat elimination level, as Favor
+    -- of the Valar reads
+    EliminatedByThreatWindow Timing PlayerId
+  | -- | the quest card was defeated, as The Long Defeat reads
+    QuestDefeatedWindow Timing Target
+  | -- | a card effect discarded an ally with the trait from play, as Éothain reads
+    AllyWithTraitDiscardedByCardEffectWindow Timing Trait
+  | -- | an attack the character took part in destroyed an enemy with at least this many
+    -- printed hit points, as Sword of Númenor reads
+    EnemyWithPrintedHitPointsDestroyedByAttackWindow Timing Int Target
+  | -- | a matching enemy destroyed, as None Return reads "a non-unique enemy"
+    EnemyDestroyedWindow Timing CardMatcher
+  | -- | a matching location explored, as Leave No Trace reads "a non-unique location"
+    ExploredMatchingWindow Timing CardMatcher
+  | -- | a card discarded from the player's hand, as Silver Harp answers
+    DiscardedFromHandWindow Timing PlayerId
+  | -- | the card readied, by anything, as Wellinghall Preserver answers
+    BecameReadyWindow Timing Target
+  | -- | a matching hero declared as a defender, as Dori answers another hero
+    HeroDeclaredAsDefenderWindow Timing HeroMatcher
+  | -- | an encounter card revealed whose title is in the victory display, as The Door is
+    -- Closed! answers
+    RevealedTitleInVictoryDisplayWindow Timing
+  | -- | it became Day or Night, as "when it becomes Night" reads
+    BecomesWindow TimeOfDay
+  | -- | any captured cards rescued (Escape from Mount Gram)
+    CapturedCardsRescuedWindow Timing
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
@@ -255,6 +295,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackedAloneWithExcessWindow t target, AttackedAlone target' _ n) -> t == timing && target == target' && n > 0
   (ThreatRaisedByEncounterWindow t pid, ThreatRaisedByEncounter pid' _) -> t == timing && pid == pid'
   (OtherPlayerRaisedThreatWindow t pid, ThreatRaised pid') -> t == timing && pid /= pid'
+  (OtherPlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid /= pid'
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
@@ -262,6 +303,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
+  (ThisEnemyDefeatedWindow t eid, EnemyDefeated eid') -> t == timing && eid == eid'
+  (CharacterDealtDamageWindow t, DealtDamage (HeroTarget _) _) -> t == timing
+  (CharacterDealtDamageWindow t, DealtDamage (AllyTarget _) _) -> t == timing
   (CharacterDestroyedByAttackWindow t who, CharacterDestroyedByAttack eid _ _) -> t == timing && maybe True (== eid) who
   (TimeCountersRemovedWindow t who, TimeCountersRemoved target _) -> t == timing && maybe True (== target) who
   (TimeCountersRemovedFromQuestWindow t, TimeCountersRemoved (QuestTarget _) _) -> t == timing
@@ -275,10 +319,20 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
   (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
+  (EliminatedByThreatWindow t pid, EliminatedByThreat pid') -> t == timing && pid == pid'
+  (QuestDefeatedWindow t target, QuestDefeated target') -> t == timing && target == target'
+  (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
+  (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
+  (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
+  (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
+  (BecomesWindow time, Became time') -> time == time'
+  (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
+  (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
   (EnemyWithTraitRevealedWindow {}, _) -> False
+  (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
   (AttackDealtDamageWithTraitWindow {}, _) -> False
@@ -293,6 +347,11 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDefenderDeclaredWindow {}, _) -> False
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
+  (EnemyWithPrintedHitPointsDestroyedByAttackWindow {}, _) -> False
+  (ExploredMatchingWindow {}, _) -> False
+  (HeroDeclaredAsDefenderWindow {}, _) -> False
+  (RevealedTitleInVictoryDisplayWindow {}, _) -> False
+  (PlayerDiscardedFromDeckWindow {}, _) -> False
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False

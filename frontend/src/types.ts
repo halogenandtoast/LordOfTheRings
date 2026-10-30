@@ -107,6 +107,8 @@ export interface PlayerView {
   eliminated: boolean
   handSize: number
   deckSize: number
+  /** cards in the player's captured deck (Escape from Mount Gram) */
+  capturedDeckSize: number
   discardSize: number
   hand: CardView[]
   discard: CardView[]

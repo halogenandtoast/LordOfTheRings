@@ -12,7 +12,7 @@ import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally
 import LordOfTheRings.Attachment hiding (attachment, attachTo)
 import LordOfTheRings.Card hiding (attachment, enemy, location, treachery)
-import LordOfTheRings.Card.Synthetic (orcGuard)
+import LordOfTheRings.Card.Synthetic (orcGuard, reanimatedDead)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
@@ -341,15 +341,40 @@ runGame msg g = case msg of
       else runGame'' msg g
   -- a quest card takes no more progress than it may this round, as Orc Rearguard limits
   -- the current quest to, and keeps count of what it took
+  -- and less is placed on one whose progress is reduced, as Orc Grunts reduce the current
+  -- quest's
   PlaceTokens source target@(QuestTarget _) Progress n | n > 0 -> do
-    mods <- getModifiers target
-    placed <- progressPlacedThisRound target
-    let room = foldr min n [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
-    if room < n
-      then g <$ pushWhen (room > 0) (PlaceTokens source target Progress room)
-      else do
-        push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound n] UntilEndOfRound
-        runGame'' msg g
+    -- the first progress each round goes to a location that takes it first, as Forbidden
+    -- Descent, which counts what it took
+    takers <- select LocationInStagingArea
+    diverted <- flip mapMaybeM takers \lid -> do
+      firsts <- (\ms -> [k | TakesQuestProgressFirst k <- ms]) <$> getModifiers lid
+      taken <- progressPlacedThisRound (toTarget lid)
+      l <- getLocation lid
+      room <- subtract l.progress <$> getLocationQuestPoints lid
+      let k = foldr min (min n room) [max 0 (f - taken) | f <- firsts]
+      pure $ guard (notNull firsts && k > 0) $> (lid, k)
+    case diverted of
+      (lid, k) : _ ->
+        g
+          <$ pushAll
+            ( [ CreateEffect $ Effect GameSource (toTarget lid) [ProgressPlacedThisRound k] UntilEndOfRound
+              , PlaceTokens source (toTarget lid) Progress k
+              ]
+                <> [PlaceTokens source target Progress (n - k) | n > k]
+            )
+      [] -> placeOnQuest
+   where
+    placeOnQuest = do
+        mods <- getModifiers target
+        placed <- progressPlacedThisRound target
+        let reduced = max 0 (n - sum [k | ProgressReducedBy k <- mods])
+            room = foldr min reduced [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
+        if room <= 0
+          then pure g
+          else do
+            push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound room] UntilEndOfRound
+            runGame'' (PlaceTokens source target Progress room) g
   -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
   -- it becomes the active location, so it is still in the staging area as it is paid (as
   -- Hills of Dunland's draws are, FAQ 3.123)
@@ -416,6 +441,7 @@ leavingCharacter g = \case
   Discard t | character t -> Just t
   ReturnToHand t | character t -> Just t
   ShuffleIntoOwnersDeck t | character t -> Just t
+  PutOnBottomOfOwnersDeck t | character t -> Just t
   RemoveFromGame t@(HeroTarget _) | character t -> Just t
   _ -> Nothing
  where
@@ -485,7 +511,9 @@ runGameMessage msg g = case msg of
     pure g
   BeginRound -> do
     pushAll [BeginPhase minBound, EndPhase minBound]
-    pure $ g & roundL +~ 1
+    -- no area has begun the round's first phase, those separated before the first round
+    -- too, as at Unexpected Rescue
+    pure $ g & roundL +~ 1 & separationL %~ fmap (\s -> s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]})
   EndRound -> do
     -- each area ends the round in turn
     let (step, g') = eachAreaThen (const [EndRound]) id BeginRound g
@@ -590,15 +618,19 @@ runGameMessage msg g = case msg of
     push $ questionLabel (ikeyWith "label.refreshUpTo" [intVar "count" n]) pid choices
     pure g
   CheckEliminations -> do
+    emptyDeck <- elem EliminatedWithEmptyDeck <$> getModifiers GameTarget
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
-      -- the level may move, as Double Dealings lowers it
-      level <- (eliminationThreat +) . sum . mapMaybe (\case EliminationThreatModifier n -> Just n; _ -> Nothing) <$> getModifiers (PlayerTarget player.id)
-      pure
-        -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
-        $ guard (not player.eliminated && (player.threat >= level || (null heroes && not (any ((== HeroType) . (.cardType)) player.deck))))
-        $> player.id
-    pushAll $ map EliminatePlayer eliminated
+      level <- getEliminationLevel player.id
+      -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
+      let noHeroes = null heroes && not (any ((== HeroType) . (.cardType)) player.deck)
+          byThreat = player.threat >= level
+          -- Deadmen's Dike eliminates a player whose deck runs out
+          byEmptyDeck = emptyDeck && null player.deck
+      pure $ guard (not player.eliminated && (byThreat || noHeroes || byEmptyDeck)) $> (player.id, byThreat && not noHeroes)
+    -- one reaching the elimination level opens a window first, as Favor of the Valar
+    -- answers to stop it
+    pushAll $ concat [[CheckWindows [mkWhen $ EliminatedByThreat pid] | byThreat] <> [EliminatePlayer pid] | (pid, byThreat) <- eliminated]
     pure g
   EliminatePlayer pid -> do
     heroes <- select (HeroControlledBy $ PlayerWithId pid)
@@ -661,9 +693,18 @@ runGameMessage msg g = case msg of
     pure g
   DoStep 1 (DealDamage source target n) -> do
     -- the damage an enemy deals may raise a player's threat as much, as Seedy Inn's shadow
-    raising <- case source of
-      EnemyAttackSource eid -> (\ms -> [pid | AttackDamageRaisesThreatOf pid <- ms]) <$> getModifiers eid
+    attackMods <- case source of
+      EnemyAttackSource eid -> getModifiers eid
       _ -> pure []
+    let raising = [pid | AttackDamageRaisesThreatOf pid <- attackMods]
+        -- each point of it removes 1 progress from each quest card, as Traitorous Wight's
+        -- shadow reads
+        removing =
+          [ RemoveTokens source (toTarget q) Progress (min n q.progress)
+          | AttackDamageRemovesProgress `elem` attackMods
+          , q <- toList g.entities.quests
+          , q.progress > 0
+          ]
     defending <- elem Defending <$> getModifiers target
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
@@ -672,6 +713,7 @@ runGameMessage msg g = case msg of
          , CheckDefeated source target
          ]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
+      <> removing
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
@@ -712,26 +754,33 @@ runGameMessage msg g = case msg of
     destroyed <- case target of
       HeroTarget hid | Map.member hid g.entities.heroes -> (>=) . (.damage) <$> getHero hid <*> getHitPoints target
       AllyTarget aid | Map.member aid g.entities.allies -> (>=) . (.damage) <$> getAlly aid <*> getHitPoints target
-      -- an indestructible enemy keeps taking damage past its hit points
-      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, Indestructible `notMember` cdKeywords (toCardDef e) ->
-        (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
+      -- an indestructible enemy, printed or gained as Daechanar's, keeps taking damage past
+      -- its hit points; one that lost the keyword, as Thaurdir may, is destroyed as any other
+      EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
+        indestructible <- hasKeyword Indestructible target (toCardDef e)
+        if indestructible then pure False else (>=) . (.damage) <$> getEnemy eid <*> getEnemyHitPoints eid
       -- an objective ally in the staging area, as Celador
       ObjectiveTarget oid | Just o <- Map.lookup oid g.entities.objectives, isJust (cdHitPoints $ toCardDef o) ->
         (>=) <$> getDamage target <*> getHitPoints target
       _ -> pure False
     when destroyed $ push (Destroy source target)
     pure g
-  Destroy source target@(EnemyTarget eid) -> do
+  -- the When window first, while the enemy and what is attached to it are still in play,
+  -- as Secret Vigil answers
+  Destroy _ (EnemyTarget eid) | Map.member eid g.entities.enemies -> do
+    pushAll [CheckWindows [mkWhen $ EnemyDefeated eid], DoStep 1 msg]
+    pure g
+  DoStep 1 (Destroy source target@(EnemyTarget eid)) | Map.member eid g.entities.enemies -> do
     enemy <- getEnemy eid
-    push $ CheckWindows [mkAfter $ EnemyDefeated eid]
     stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
     let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
         -- what a player's attack destroyed, for the attack to read as it resolves
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card | PlayerAttackSource _ <- [source]])
+    push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
-        pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target
+        pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target <> freeGuarded g target
         pure
           $ g
           & entitiesL
@@ -779,7 +828,8 @@ runGameMessage msg g = case msg of
           | notNull sideQuests
           , lead <- take 1 order
           ]
-    pushAll $ chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
+    skipped <- elem SkipQuestPhase <$> getModifiers GameTarget
+    unless skipped $ pushAll $ chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
     pure $ g & phaseL .~ QuestPhase
   BeginPhase TravelPhase -> do
     -- the players' actions come first, as Thrór's Map's, then the lead may travel
@@ -810,7 +860,9 @@ runGameMessage msg g = case msg of
       <> [EngagementCheck pid 0 | pid <- take 1 order]
       <> map OptionalActionWindow order
     pure $ g & phaseL .~ EncounterPhase
-  OptionalEngagement pid -> do
+  -- a player who may engage an additional enemy, as Halbarad lets, is asked again once
+  (optionalEngagement -> Just (pid, first)) -> do
+    again <- (first &&) . elem OptionallyEngagesAdditionalEnemy <$> getModifiers (PlayerTarget pid)
     staged <- select EnemyInStagingArea
     -- some enemies may only be engaged once they are alone in the staging area
     barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
@@ -824,7 +876,7 @@ runGameMessage msg g = case msg of
     unless (null enemies)
       $ push
       $ questionLabel (ikey "label.optionalEngagement") pid
-      $ [ targetLabel eid [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]]
+      $ [ targetLabel eid $ [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]] <> [DoStep 1 (OptionalEngagement pid) | again]
         | eid <- enemies
         ]
       <> [Label (ikey "label.doNotEngage") []]
@@ -837,7 +889,9 @@ runGameMessage msg g = case msg of
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
     -- an enemy can be spared engagement checks against it, as a trap does
     checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
-    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- checked, cost <= player.threat] of
+    -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
+    costed <- for checked \(eid, cost) -> (\ms -> (eid, cost + sum [n | EngagementCostAgainst p n <- ms, p == pid])) <$> getModifiers eid
+    case sortOn (Down . snd) [c | not skip, c@(_, cost) <- costed, cost <= player.threat] of
       ((eid, _) : _) -> pushAll [EngageEnemy pid eid, EngagementCheck next 0]
       [] -> when (seatsPassed + 1 < length order) $ push (EngagementCheck next (seatsPassed + 1))
     pure g
@@ -905,7 +959,7 @@ runGameMessage msg g = case msg of
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
-    push . ChooseEnemyAttack pid =<< engagedByCost pid
+    pushAll . (CreateEffect (Effect GameSource GameTarget [ResolvingEnemyAttacks] UntilEndOfPhase) :) . pure . ChooseEnemyAttack pid =<< engagedByCost pid
     pure g
   ChooseEnemyAttack pid candidates -> do
     -- checked again before each attack: a card played between attacks may stop one
@@ -1029,7 +1083,7 @@ runGameMessage msg g = case msg of
   DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
   DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
     attack <- getEnemyAttack eid
-    defense <- sum <$> traverse getDefense defenders
+    defense <- sum <$> traverse (getDefenseAgainst eid) defenders
     choices <- for defenders \d -> targetLabel d <$> attackDamage pid eid d (attack - defense)
     push $ chooseOrRunOne pid choices
     pure g
@@ -1259,19 +1313,21 @@ runGameMessage msg g = case msg of
     pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
-    defense <- getDefense defender
+    defense <- getDefenseAgainst eid defender
     engaged <- placementController . (.placement) <$> getEnemy eid
     lead <- getLead
     pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)
     pure g
   ResolveShadow eid pid defenders -> do
+    -- a shadow card with no effect may be given one, as Mountains of Angmar gives
+    gained <- elem ShadowlessCardsGainEffect <$> getModifiers GameTarget
     for_ (Map.lookup eid g.entities.enemies) \enemy -> do
       -- each shadow card turns face up, and one with an effect resolves it; one already face
       -- up resolved in an earlier attack, as an enemy attacking again has, unless it was
       -- dealt face up
       let resolving card =
             RevealShadowCard eid (ecId card)
-              : if cdShadowEffect (toCardDef card)
+              : if gained || cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
                       : [mkWhen $ ShadowEffectAgainst d | d <- defenders]
@@ -1351,11 +1407,15 @@ runGameMessage msg g = case msg of
     pure g
   DealDamageDivided source pid n assigned -> do
     characters <- withHitPointsLeft assigned =<< charactersControlledBy pid
+    divideDamage source pid n assigned characters (DealDamageDivided source pid)
+    pure g
+  DealDamageDividedAmong source pid among n assigned -> do
+    characters <- withHitPointsLeft assigned $ filter (inPlay g) among
     if n > 0 && notNull characters
       then
         push
           $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
-            [targetLabel c [DealDamageDivided source pid (n - 1) (c : assigned)] | c <- characters]
+            [targetLabel c [DealDamageDividedAmong source pid among (n - 1) (c : assigned)] | c <- characters]
       else pushAll $ dealAssigned source assigned
     pure g
   ChooseAndExhaustHero source pid -> do
@@ -1456,6 +1516,7 @@ runGameMessage msg g = case msg of
     -- player's actions are offered alongside committing it
     actions <- getActionAbilities pid
     mustCommitAll <- elem MustCommitAll <$> getModifiers GameTarget
+    mustCommit <- filterM (fmap (elem MustCommitToQuest) . getModifiers) characters
     early <- filterM (\c -> andM [pure $ playsBeforeCommitting pid c, canPlay player c]) player.hand
     -- a player commits their characters at once, so responses to committing, as Aragorn's
     -- and Théodred's, wait until they are done and are then taken in any order
@@ -1469,6 +1530,8 @@ runGameMessage msg g = case msg of
       <> [targetLabel (CardIdTarget c.id) [PlayCard pid c.id, CommitCharacters pid] | c <- early]
       <> [ Label (ikey "label.doneCommitting") [CheckWindows [mkAfter $ CommittedToQuest c | c <- committed] | notNull committed]
          | not mustCommitAll || null characters
+         , -- a character that must commit, as A Fell Dread's hero, is committed first
+           null mustCommit
          ]
     pure g
   Staging -> do
@@ -1499,10 +1562,12 @@ runGameMessage msg g = case msg of
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
-          pushAll
-            $ CheckWindows [mkWhen QuestedUnsuccessfully]
-            : [RaiseThreat pid (threat - willpower) | pid <- players]
-            <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
+          do
+            spared <- elem NoThreatFromQuestingUnsuccessfully <$> getModifiers GameTarget
+            pushAll
+              $ CheckWindows [mkWhen QuestedUnsuccessfully]
+              : [RaiseThreat pid (threat - willpower) | not spared, pid <- players]
+              <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
   PlaceTimeCounters target -> do
@@ -1518,6 +1583,8 @@ runGameMessage msg g = case msg of
         g <$ push (PlaceTokens source (toTarget h) token n)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
         g <$ push (PlaceTokens source (toTarget a) token n)
+    | Just o <- find ((== cid) . objectiveCardId . toAttrs) (toList g.entities.objectives) ->
+        g <$ push (PlaceTokens source (toTarget o) token n)
   -- the resource phase's resources come from the game, not a card effect
   PlaceTokens source target@(HeroTarget _) Resource n
     | n > 0
@@ -1782,6 +1849,11 @@ runGameMessage msg g = case msg of
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
+  PutOnBottomOfOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
+    g' <- leftPlay g target
+    pushAll
+      [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+    pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
     let owner = (toAttrs a).owner
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer owner
@@ -1865,6 +1937,23 @@ runGameMessage msg g = case msg of
       %~ insertEntity (overAttrs (\a -> a {enemyPlacement = EngagedWith pid}) guard')
       & scenarioL
       %~ overAttrs (orcGuardsL %~ Map.insert card.id card)
+  -- a reanimated card leaves its owner's deck, hand or discard pile for the staging area,
+  -- a Reanimated Dead; leaving play, it goes to its owner's discard pile as an Orc Guard does
+  Reanimate cid eid
+    | Just (owner, pc) <- headMay [(p.id, c) | p <- toList g.players, PlayerCard c <- p.deck <> p.hand <> p.discard, c.id == cid] -> do
+        let dead = createEnemy (MkEncounterCard cid (toCardCode reanimatedDead)) eid
+            without = filter ((/= cid) . (.id))
+        push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
+        pure
+          $ g
+          & playersL
+          . ix owner
+          %~ ((deckL %~ without) . (handL %~ without) . (discardL %~ without))
+          & entitiesL
+          . enemiesL
+          %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) dead)
+          & scenarioL
+          %~ overAttrs (orcGuardsL %~ Map.insert cid pc)
   -- an enemy put into play engaged enters play, as Haradrim Elite reads
   PutEnemyIntoPlayEngaged pid card -> do
     enemy <- newEnemy card
@@ -1889,12 +1978,15 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
+  -- a treachery attached as a condition leaves play for good, as Daechanar removes a Sorcery card
+  RemoveFromGame (TreacheryTarget tid) -> pure $ g & entitiesL . treacheriesL %~ Map.delete tid
   -- a side quest removed from the game, as Stop the Executioners! removes itself
   RemoveFromGame target@(QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ discardAttached g target
     pure $ g & entitiesL . questsL %~ Map.delete qid
   -- a hero leaves play for good, not for its owner's discard pile, its attachments
   -- discarded as they would be were it discarded
+  SetAsideHero hid -> runGameMessage (RemoveFromGame $ HeroTarget hid) g
   RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
     g' <- leftPlay g target
     pushAll $ discardAttached g target
@@ -1903,16 +1995,30 @@ runGameMessage msg g = case msg of
   RemoveFromGame target@(LocationTarget lid) -> do
     pushAll $ discardAttached g target
     pure $ g & entitiesL . locationsL %~ Map.delete lid
-  -- a location placed underneath a card leaves play, its tokens and attachments discarded
+  -- a location placed underneath a card leaves play, its tokens and attachments discarded;
+  -- so does a character or an attachment captured from play (Escape from Mount Gram)
   PlaceUnderneath _ cards -> do
-    let gone = [l | l <- toList g.entities.locations, (toCard l).id `elem` map (.id) cards]
+    let under :: IsCard a => a -> Bool
+        under c = (toCard c).id `elem` map (.id) cards
+        gone = filter under (toList g.entities.locations)
+        heroes = filter under (toList g.entities.heroes)
+        allies = filter under (toList g.entities.allies)
+        characters = map toTarget heroes <> map toTarget allies
         on' :: HasField "placement" a Placement => a -> Bool
         on' a = a.placement `elem` map (AttachedTo . toTarget) gone
+    g' <- foldM leftPlay g characters
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, on' a]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, on' t]
       <> [Discard (toTarget o) | o <- toList g.entities.objectives, on' o]
-    pure $ g & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
+      <> concatMap (discardAttached g) characters
+      <> [CheckEliminations | notNull heroes]
+    pure
+      $ g'
+      & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
+      & entitiesL . heroesL %~ Map.filter (not . under)
+      & entitiesL . alliesL %~ Map.filter (not . under)
+      & entitiesL . attachmentsL %~ Map.filter (not . under)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
@@ -1935,10 +2041,10 @@ runGameMessage msg g = case msg of
     let chosen = [Effect GameSource t [CurrentQuest] UntilEndOfPhase | t `elem` sideQuests]
     pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
-    pushAll $ discardAttachedToQuest g qid
+    pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
   CompleteQuest qid -> do
-    pushAll $ discardAttachedToQuest g qid <> [AdvanceQuest]
+    pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid <> [AdvanceQuest]
     -- a stage with victory points goes to the victory display, as Search for an Exit's
     let won = [toCard q | q <- toList (Map.lookup qid g.entities.quests), isJust (cdVictoryPoints $ toCardDef q)]
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (won <>))
@@ -1953,6 +2059,7 @@ runGameMessage msg g = case msg of
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       -- an objective it guarded, as Mugash on Edge of Fangorn, goes free to the staging area
       <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+      <> freeGuarded g target
     pure
       $ g
       & entitiesL
@@ -1986,6 +2093,7 @@ runGameMessage msg g = case msg of
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+      <> freeGuarded g target
     pure
       $ g
       & entitiesL
@@ -2115,6 +2223,38 @@ runGameMessage msg g = case msg of
         $ if toTarget new `elem` hosts then AttachCard (toId a) (toTarget new) else Discard (toTarget a)
     pushAll $ moves <> [CheckWindows [mkAfter $ EntersPlay $ toTarget new]]
     getGame
+  AllyBecomesHero aid | Just a <- Map.lookup aid g.entities.allies -> do
+    hid <- getRandom
+    let attrs = toAttrs a
+        controller = fromMaybe attrs.allyOwner (placementController a.placement)
+        new =
+          overAttrs
+            ( \h ->
+                h
+                  { heroTokens = allyTokens attrs
+                  , heroExhausted = allyExhausted attrs
+                  , heroCommitted = allyCommitted attrs
+                  , heroAttacking = allyAttacking attrs
+                  }
+            )
+            $ lookupHero (toCardCode a) attrs.allyCardId hid controller
+    pure $ retargetCharacter (toTarget a) (toTarget new) $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . heroesL %~ insertEntity new
+  HeroBecomesAlly hid | Just h <- Map.lookup hid g.entities.heroes, cdCardType (toCardDef h) == AllyType -> do
+    aid <- getRandom
+    let attrs = toAttrs h
+        new =
+          overAttrs
+            ( \a ->
+                a
+                  { allyPlacement = InPlayArea attrs.heroOwner
+                  , allyTokens = heroTokens attrs
+                  , allyExhausted = heroExhausted attrs
+                  , allyCommitted = heroCommitted attrs
+                  , allyAttacking = heroAttacking attrs
+                  }
+            )
+            $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner
+    pure $ retargetCharacter (toTarget h) (toTarget new) $ g & entitiesL . heroesL %~ Map.delete hid & entitiesL . alliesL %~ insertEntity new
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
@@ -2165,7 +2305,10 @@ runGameMessage msg g = case msg of
           %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
       LocationType -> do
         location <- newLocation card
-        pushAll . (<> [ResolveSurge (toTarget location) card]) =<< revealing (toTarget location)
+        -- a guarded one, as Across the Ettenmoors' objective-locations, is guarded by the
+        -- next card before its surge
+        let guarded = [GuardLocation (toId location) | Guarded `member` cdKeywords def]
+        pushAll . (<> guarded <> [ResolveSurge (toTarget location) card]) =<< revealing (toTarget location)
         pure
           $ g
           & entitiesL
@@ -2176,6 +2319,16 @@ runGameMessage msg g = case msg of
         pushAll . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
+      -- a player card with the Encounter keyword, as Ranger of the North: it enters play
+      -- under the first player, its When Revealed effect giving it to a player
+      AllyType | Just owner <- find (any ((== card.id) . (.id)) . (.setAsideCards)) (toList g.players) -> do
+        lead <- getLead
+        aid <- getRandom
+        let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
+        -- ponytail: no window for it entering play, as the player it goes to is chosen as it resolves
+        pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
+          =<< revealing (toTarget thisAlly)
+        pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
@@ -2228,6 +2381,7 @@ runGameMessage msg g = case msg of
     -- a treachery that did not attach itself to something is discarded once it resolves
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->
       when (treachery.placement == Unplaced) $ push (Discard $ toTarget treachery)
+    pushAll $ freeGuarded g (TreacheryTarget tid)
     -- its effects have resolved or been canceled, so it guards nothing any more
     let cid = (.cardId) . toAttrs <$> Map.lookup tid g.entities.treacheries
         guarding o = isJust cid && (toAttrs o).objectiveGuard == cid
@@ -2246,7 +2400,7 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
   ShuffleIntoEncounterDeck target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
-    pushAll [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+    pushAll $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target] <> freeGuarded g target
     deck <-
       shuffleM
         (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) : (toAttrs g.scenario).encounterDeck)
@@ -2277,6 +2431,7 @@ runGameMessage msg g = case msg of
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
+      <> freeGuarded g target
     deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
     pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
   AddToStaging card | FirstPlayerGainsControl `member` cdKeywords (toCardDef card) -> do
@@ -2333,7 +2488,8 @@ returnToEncounterDeck place target g = do
   let toDeck card = scenarioL %~ overAttrs (encounterDeckL %~ place card)
       withAttached =
         pushAll
-          [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+          $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+          <> freeGuarded g target
   case target of
     EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
       withAttached
@@ -2374,9 +2530,6 @@ announce = \case
         $ send
         $ FlipCard attrs.questCardId
   _ -> pure ()
-
-eliminationThreat :: Int
-eliminationThreat = 50
 
 -- | Remove an entity from play and put its card in the right discard pile.
 discardTarget :: Target -> Game -> GameT Game
@@ -2426,6 +2579,14 @@ discardFromPlay target g = case target of
           | ShuffledIntoEncounterDeckWhenDefeated `elem` mods -> do
               deck <- shuffleM (ec : (toAttrs g.scenario).encounterDeck)
               pure $ removed & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+        PlayerCard pc
+          | AllyTarget _ <- target
+          , Just owner <- pcOwner pc -> do
+              toHand <- elem AlliesLeavePlayToHand <$> getModifiers GameTarget
+              pure
+                $ if toHand
+                  then removed & playersL . ix owner . handL %~ (<> [PlayerCard pc])
+                  else addToDiscard (PlayerCard pc) removed
         card -> pure $ addToDiscard card removed
   addToDiscard card = case card of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
@@ -2441,6 +2602,27 @@ discardAttached g target =
     <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
     <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
     <> discardShadowsOf g target
+    <> freeGuarded g target
+
+{- | The locations the card guards go free to the staging area as it leaves play, as an
+objective-location of Across the Ettenmoors returns once its guard is dealt with.
+-}
+freeGuarded :: Game -> Target -> [Message]
+freeGuarded g target =
+  [ PlaceLocation (toId l) StagingArea
+  | Just cid <- [guardCard]
+  , l <- toList g.entities.locations
+  , l.placement == AttachedTo (CardIdTarget cid)
+  ]
+ where
+  cardIdIn :: IsCard v => Ord k => Map k v -> k -> Maybe CardId
+  cardIdIn m k = (.id) . toCard <$> Map.lookup k m
+  guardCard = case target of
+    EnemyTarget eid -> cardIdIn g.entities.enemies eid
+    LocationTarget lid -> cardIdIn g.entities.locations lid
+    QuestTarget qid -> cardIdIn g.entities.quests qid
+    TreacheryTarget tid -> cardIdIn g.entities.treacheries tid
+    _ -> Nothing
 
 -- | The shadow cards dealt to an enemy leaving play, discarded with it.
 discardShadowsOf :: Game -> Target -> [Message]
@@ -2546,9 +2728,9 @@ handResponses pid windows continue = do
                 ]
             pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PlayCardInWindow pid pc.id windows, continue]
       AllyType -> do
-        ok <-
-          andM [matches (allyHandWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid), passesUnique card]
-        pure $ guard ok $> targetLabel (CardIdTarget pc.id) [PutAllyIntoPlay pid pc.id, continue]
+        let attrs = toAttrs $ createAlly pc (AllyId UUID.nil) pid
+        ok <- andM [matches (allyHandWindow attrs), passesCriteria (allyHandCriteria attrs), passesUnique card]
+        pure $ guard ok $> targetLabel (CardIdTarget pc.id) [UseHandAction pid pc.id, continue]
       _ -> pure Nothing
     EncounterCard _ -> pure Nothing
 
@@ -2607,6 +2789,16 @@ withHitPointsLeft assigned = filterM \c -> do
   pure $ left > length (filter (== c) assigned)
 
 -- | The damage assigned among characters, a point at a time, dealt once all is assigned.
+-- | The player assigns the next point of the damage to one of the characters, or, with all
+-- assigned or none left to take it, it is dealt.
+divideDamage :: Source -> PlayerId -> Int -> [Target] -> [Target] -> (Int -> [Target] -> Message) -> GameT ()
+divideDamage source pid n assigned characters next
+  | n > 0 && notNull characters =
+      push
+        $ questionLabelWith (ikeyWith "label.dealDamageDivided" [intVar "n" n]) (sourceTarget source) [] pid
+          [targetLabel c [next (n - 1) (c : assigned)] | c <- characters]
+  | otherwise = pushAll $ dealAssigned source assigned
+
 dealAssigned :: Source -> [Target] -> [Message]
 dealAssigned source assigned = [DealDamage source c k | (c, k) <- Map.toList (Map.fromListWith (+) [(c, 1) | c <- assigned])]
 
@@ -2663,15 +2855,27 @@ attackDamage pid eid target n = do
   let excessToThreat = ExcessDamageToThreat `elem` mods
       excessToOthers = ExcessDamageToOtherCharacters `elem` mods
       excessToLocation = ExcessDamageToActiveLocation `elem` mods
+      excessToQuests = ExcessDamageRemovesQuestProgress `elem` mods
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
-  pure $ DealDamage (EnemyAttackSource eid) target n
-    : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
-    <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
-    <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
+  quests <- getsGame (toList . entitiesQuests . gameEntities)
+  es <- getsGame gameEntities
+  let captured = case target of
+        HeroTarget h -> toCard <$> Map.lookup h es.heroes
+        AllyTarget a -> toCard <$> Map.lookup a es.allies
+        _ -> Nothing
+  pure $ case captured of
+    -- it captures the character instead, as Cruel Torturer reads
+    Just card | CaptureInsteadOfAttackDamage `elem` mods, n > 0 -> [PlaceUnderneath (EnemyTarget eid) [card]]
+    _ ->
+      DealDamage (EnemyAttackSource eid) target n
+        : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
+        <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
+        <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
+        <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
@@ -2736,6 +2940,7 @@ canFight eid c = do
   andM
     [ allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
+    , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True
     ]
 
 -- | Whether the character may defend against the enemy's attack: one that cannot exhaust
@@ -2763,10 +2968,21 @@ exhaustToDefend d eid = do
           (\t -> hasTrait t (toTarget eid) (toCardDef enemy))
           [t | DoesNotExhaustToDefendAgainst t <- mods]
 
--- | Whether a character is still in play.
 -- | The encounter cards attached to the stage as conditions, as Old Hatreds, leave play with it.
 discardAttachedToQuest :: Game -> QuestId -> [Message]
-discardAttachedToQuest g qid = [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+discardAttachedToQuest g qid =
+  [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+    <> [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo (QuestTarget qid)]
+    <> freeGuarded g (QuestTarget qid)
+
+-- | What was attached to, or lasting on, a character is on the one it became.
+retargetCharacter :: Target -> Target -> Game -> Game
+retargetCharacter old new g =
+  g
+    & entitiesL . attachmentsL . traverse %~ (\a -> if a.placement == AttachedTo old then overAttrs (\x -> x {attachmentPlacement = AttachedTo new}) a else a)
+    & entitiesL . treacheriesL . traverse %~ (\t -> if t.placement == AttachedTo old then overAttrs (\x -> x {treacheryPlacement = AttachedTo new}) t else t)
+    & entitiesL . objectivesL . traverse %~ (\o -> if o.placement == AttachedTo old then overAttrs (\x -> x {objectivePlacement = AttachedTo new}) o else o)
+    & effectsL . traverse %~ (\e -> if effectTarget e == old then e {effectTarget = new} else e)
 
 -- | Whether the source is a player's attack on an enemy, its damage.
 isPlayerAttack :: Source -> Bool
@@ -2774,6 +2990,7 @@ isPlayerAttack = \case
   PlayerAttackSource _ -> True
   _ -> False
 
+-- | Whether a character is still in play.
 inPlay :: Game -> Target -> Bool
 inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes
@@ -2869,6 +3086,13 @@ payFor g pid card fromHand windows host discount = do
 -- | The Doomed a card is printed with.
 printedDoomed :: HasCardDef a => a -> Int
 printedDoomed a = sum [n | Doomed n <- toList (cdKeywords $ toCardDef a)]
+
+-- | The player an optional engagement asks, and whether it is the first he is asked.
+optionalEngagement :: Message -> Maybe (PlayerId, Bool)
+optionalEngagement = \case
+  OptionalEngagement pid -> Just (pid, True)
+  DoStep 1 (OptionalEngagement pid) -> Just (pid, False)
+  _ -> Nothing
 
 -- | The card a message reveals, with the player it is put into play engaged with, if any.
 revealedCard :: Message -> Maybe (Maybe PlayerId, EncounterCard)

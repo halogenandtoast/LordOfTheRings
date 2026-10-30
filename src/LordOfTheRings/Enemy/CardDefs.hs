@@ -162,10 +162,43 @@ allEnemyCards =
       , wolfsGuardian
       , ravensGuardian
       , spiritOfTheWild
+      , thaurdirCaptain
+      , thaurdirChampion
+      , carnDumGarrison
+      , orcGrunts
+      , werewolfOfAngmar
+      , packLeader
+      , northernWarg
+      , bloodThirstyWarg
+      , huntingPack
+      , whiteWarg
+      , wolfOfAngmar
+      , jailorGornakh
+      , cruelTorturer
+      , dungeonGuard
+      , goblinTormentor
       , orcWarParty
       , angmarOrc
       , angmarMarauder
       , angmarCaptain
+      , corneredOrc
+      , savageTrollspawn
+      , coldfellGiant
+      , cruelMountainTroll
+      , ruthlessHillTroll
+      , goblinPursuer
+      , thaurdirDeadmensDike
+      , thaurdirsDamned
+      , balefulShade
+      , deadLord
+      , cursedDead
+      , daechanar
+      , dwimmerlaik
+      , witchOfAngmar
+      , wraithOfCarnDum
+      , thaurdirTheTreacheryOfRhudaur
+      , wightOfRhudaur
+      , traitorousWight
       ]
 
 namelessThing :: CardDef
@@ -1292,7 +1325,128 @@ spiritOfTheWild =
   (enemy "08050" "Spirit of the Wild" TheThreeTrials 5 28 1 1 2 4)
     { cdCardTraits = setFromList [Undead, SpiritTrait]
     , cdShadowEffect = True
+    }
+
+corneredOrc :: CardDef
+corneredOrc =
+  (enemy "09025" "Cornered Orc" TheWeatherHills 5 20 2 2 1 2)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
     , cdEasyModeQuantity = Just 4
+    }
+
+-- | Indestructible. Cannot have attachments. Its Captain side; it starts in the staging
+-- area as the scenario sets up, so it is never shuffled into the encounter deck.
+thaurdirCaptain :: CardDef
+thaurdirCaptain =
+  unique
+    (enemy "10127" "Thaurdir" TheBattleOfCarnDum 1 50 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith, Captain]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+-- | Thaurdir's Champion side, the same card flipped: no copy of its own in the encounter
+-- deck.
+thaurdirChampion :: CardDef
+thaurdirChampion =
+  unique
+    (enemy "10128" "Thaurdir" TheBattleOfCarnDum 0 50 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith, Champion]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+carnDumGarrison :: CardDef
+carnDumGarrison =
+  (enemy "10129" "Carn Dûm Garrison" TheBattleOfCarnDum 4 40 1 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+orcGrunts :: CardDef
+orcGrunts =
+  (enemy "10130" "Orc Grunts" TheBattleOfCarnDum 4 8 1 2 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Doomed 1, Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+werewolfOfAngmar :: CardDef
+werewolfOfAngmar =
+  (enemy "10131" "Werewolf of Angmar" TheBattleOfCarnDum 2 35 2 5 4 6)
+    { cdCardTraits = setFromList [Creature, Werewolf]
+    , cdEasyModeQuantity = Just 0
+    }
+
+-- | Set aside at setup, out of play, until Battle with the Pack adds it to the staging area.
+packLeader :: CardDef
+packLeader =
+  unique
+    (enemy "10017" "Pack Leader" TheWastesOfEriador 1 1 4 5 4 8)
+      { cdCardTraits = setFromList [Creature, Warg]
+      , cdVictoryPoints = Just 3
+      }
+
+northernWarg :: CardDef
+northernWarg =
+  (enemy "10018" "Northern Warg" TheWastesOfEriador 4 30 2 3 1 4)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+bloodThirstyWarg :: CardDef
+bloodThirstyWarg = (enemy "10019" "Blood-thirsty Warg" TheWastesOfEriador 2 35 2 4 2 5) {cdCardTraits = setFromList [Creature, Warg], cdEasyModeQuantity = Just 1}
+
+huntingPack :: CardDef
+huntingPack = (enemy "10020" "Hunting Pack" TheWastesOfEriador 2 40 3 6 3 6) {cdCardTraits = setFromList [Creature, Warg], cdEasyModeQuantity = Just 1}
+
+whiteWarg :: CardDef
+whiteWarg =
+  (enemy "10021" "White Warg" TheWastesOfEriador 3 20 2 2 3 3)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdShadowEffect = True
+    }
+
+wolfOfAngmar :: CardDef
+wolfOfAngmar =
+  (enemy "10022" "Wolf of Angmar" TheWastesOfEriador 3 25 1 2 1 3)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+jailorGornakh :: CardDef
+jailorGornakh =
+  unique
+    (enemy "10041" "Jailor Gornákh" EscapeFromMountGram 1 44 3 5 3 8)
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdVictoryPoints = Just 5
+      }
+
+cruelTorturer :: CardDef
+cruelTorturer =
+  (enemy "10043" "Cruel Torturer" EscapeFromMountGram 2 36 2 3 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+dungeonGuard :: CardDef
+dungeonGuard =
+  (enemy "10044" "Dungeon Guard" EscapeFromMountGram 3 16 1 2 1 2)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | X attack, X the number of cards in play with captured cards underneath them.
+goblinTormentor :: CardDef
+goblinTormentor =
+  (enemy "10045" "Goblin Tormentor" EscapeFromMountGram 2 28 2 0 1 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }
 
 orcWarParty :: CardDef
@@ -1323,4 +1477,130 @@ angmarCaptain =
   (enemy "09045" "Angmar Captain" AngmarOrcs 2 35 3 5 2 5)
     { cdCardTraits = setFromList [Orc]
     , cdEasyModeQuantity = Just 1
+    }
+
+-- | It gets +1 attack for each damaged character the engaged player controls: from its
+-- own modifiers.
+savageTrollspawn :: CardDef
+savageTrollspawn =
+  (enemy "10072" "Savage Trollspawn" AcrossTheEttenmoors 4 36 1 2 3 6)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    }
+
+coldfellGiant :: CardDef
+coldfellGiant =
+  (enemy "10073" "Coldfell Giant" AcrossTheEttenmoors 2 41 3 5 4 7)
+    { cdCardTraits = setFromList [Giant]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+cruelMountainTroll :: CardDef
+cruelMountainTroll =
+  (enemy "10074" "Cruel Mountain-troll" AcrossTheEttenmoors 2 46 3 6 2 9)
+    { cdCardTraits = setFromList [Troll]
+    , cdEasyModeQuantity = Just 0
+    }
+
+ruthlessHillTroll :: CardDef
+ruthlessHillTroll =
+  (enemy "10075" "Ruthless Hill-troll" AcrossTheEttenmoors 2 31 2 4 1 12)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    }
+
+goblinPursuer :: CardDef
+goblinPursuer =
+  (enemy "10076" "Goblin Pursuer" AcrossTheEttenmoors 2 16 2 2 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+thaurdirDeadmensDike :: CardDef
+thaurdirDeadmensDike =
+  unique
+    (enemy "09033" "Thaurdir" DeadmensDike 1 1 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+thaurdirsDamned :: CardDef
+thaurdirsDamned = (enemy "09034" "Thaurdir's Damned" DeadmensDike 3 35 3 5 2 6) {cdCardTraits = setFromList [Undead, Wraith], cdEasyModeQuantity = Just 1}
+
+balefulShade :: CardDef
+balefulShade =
+  (enemy "09035" "Baleful Shade" DeadmensDike 4 30 2 2 1 5)
+    { cdCardTraits = setFromList [Undead, Wraith]
+    , cdShadowEffect = True
+    }
+
+deadLord :: CardDef
+deadLord =
+  (enemy "09060" "Dead Lord" CursedDead 2 33 3 4 2 3)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+cursedDead :: CardDef
+cursedDead =
+  (enemy "09061" "Cursed Dead" CursedDead 5 27 1 3 1 2)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 4
+    }
+
+daechanar :: CardDef
+daechanar =
+  (enemy "10153" "Daechanar" TheDreadRealm 1 1 5 4 5 12)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Undead, Dunedain, Sorcerer]
+    , cdVictoryPoints = Just 10
+    }
+
+dwimmerlaik :: CardDef
+dwimmerlaik =
+  (enemy "10155" "Dwimmerlaik" TheDreadRealm 3 34 4 5 0 9)
+    { cdCardTraits = setFromList [Undead, Wraith]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+witchOfAngmar :: CardDef
+witchOfAngmar =
+  (enemy "10156" "Witch of Angmar" TheDreadRealm 3 26 3 2 2 4)
+    { cdCardTraits = setFromList [Undead, Sorcerer]
+    , cdEasyModeQuantity = Just 2
+    }
+
+wraithOfCarnDum :: CardDef
+wraithOfCarnDum =
+  (enemy "10157" "Wraith of Carn Dûm" TheDreadRealm 2 18 2 4 0 5)
+    { cdCardTraits = setFromList [Undead, Wraith]
+    }
+
+-- | Indestructible. Cannot have attachments, from its own modifiers.
+thaurdirTheTreacheryOfRhudaur :: CardDef
+thaurdirTheTreacheryOfRhudaur =
+  unique
+    (enemy "10098" "Thaurdir" TheTreacheryOfRhudaur 1 1 4 6 4 9)
+      { cdCardTraits = setFromList [Undead, Wraith]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+-- | Surge or Doomed 2, by the current quest's progress, from its own card.
+wightOfRhudaur :: CardDef
+wightOfRhudaur =
+  (enemy "10099" "Wight of Rhudaur" TheTreacheryOfRhudaur 2 23 2 3 3 5)
+    { cdCardTraits = setFromList [Undead, Wight]
+    }
+
+traitorousWight :: CardDef
+traitorousWight =
+  (enemy "10100" "Traitorous Wight" TheTreacheryOfRhudaur 3 32 2 4 2 4)
+    { cdCardTraits = setFromList [Undead, Wight]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

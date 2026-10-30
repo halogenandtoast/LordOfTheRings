@@ -288,7 +288,10 @@
     "heal": "Heal a Creature"
   },
   "athelas": {
-    "exhaust": "Exhaust a hero to claim Athelas"
+    "exhaust": "Exhaust a hero to claim Athelas",
+    "heal": "Athelas: choose a character to heal all damage from",
+    "discardCondition": "Athelas: you may discard a Condition attachment from that character",
+    "keep": "Discard none"
   },
   "moveSignal": "Attach it to another hero",
   "aFrightenedBeast": {
@@ -485,6 +488,24 @@
   "putItIntoPlay": "Put it into play",
   "moveToBottomOfDeck": "Move it to the bottom of your deck",
   "putOnTopOfDeck": "Put a card back on top of the deck (the last one chosen ends on top)",
+  "putOnTopOfEncounterDeck": "Put a card back on top of the encounter deck (the last one chosen ends on top)",
+  "chooseEnemyToEngage": "Choose an enemy to engage",
+  "dunedainHunter": {
+    "search": "Dúnedain Hunter: choose a non-unique enemy to put into play engaged with you"
+  },
+  "rangerOfTheNorth": {
+    "damageOrProgress": "Ranger of the North: deal 2 damage to an enemy or place 2 progress on a location"
+  },
+  "rangerSummons": {
+    "shuffle": "Ranger Summons: choose a Ranger of the North to shuffle into the encounter deck"
+  },
+  "expertTrackers": {
+    "exhaust": "Expert Trackers: exhaust a Scout or Ranger character",
+    "location": "Expert Trackers: choose a location to place progress on"
+  },
+  "scoutAhead": {
+    "search": "Scout Ahead: choose a card to add to the victory display"
+  },
   "returnAllyToHand": "Return an ally you control to your hand",
   "chooseHero": "Choose a hero",
   "chooseEnemy": "Choose an enemy",
@@ -873,6 +894,29 @@
   "closeCall": {
     "cancel": "Close Call: choose X, the damage to cancel (Doomed X)"
   },
+  "theLongDefeat": {
+    "chooseOne": "The Long Defeat: draw 2 cards or heal up to 5 damage",
+    "draw": "Draw 2 cards",
+    "heal": "Heal up to 5 damage from among characters you control",
+    "healOne": "The Long Defeat: heal 1 damage from a character ({count} left)"
+  },
+  "doomHangsStill": {
+    "chooseOne": "Doom Hangs Still: choose 1",
+    "noThreat": "Until the end of the round, do not raise threat from questing unsuccessfully"
+  },
+  "holdYourGround": {
+    "chooseOne": "Hold Your Ground!: choose a sentinel character to ready"
+  },
+  "quickEars": {
+    "exhaust": "Quick Ears: exhaust a Dúnedain or Ranger hero"
+  },
+  "hourOfWrath": {
+    "chooseOne": "Hour of Wrath: choose a hero that does not exhaust to attack or defend this phase"
+  },
+  "taleOfTinuviel": {
+    "exhaust": "Tale of Tinúviel: exhaust a Noldor or Dúnedain character",
+    "ready": "Tale of Tinúviel: choose the character to ready"
+  },
   "blueMountainTrader": {
     "move": "Move 1 resource from a hero you control to a hero of Blue Mountain Trader's last controller, or discard it",
     "discard": "Discard Blue Mountain Trader"
@@ -1036,6 +1080,21 @@
     "top": "Fell Voices: choose the Snow card to put on top of the encounter deck"
   },
   "chooseAreaToJoin": "Choose a player to join",
+  "theWastesOfEriador": {
+    "searchWarg": "Choose a Warg enemy to reveal"
+  },
+  "eriadorWastes": {
+    "engage": "Eriador Wastes: choose a Warg enemy to engage"
+  },
+  "predatoryWolves": {
+    "choose": "Predatory Wolves: choose one",
+    "discardAlly": "Discard the highest cost ally you control",
+    "chooseAlly": "Choose the ally to discard",
+    "search": "Search for a Warg enemy and add it to the staging area"
+  },
+  "howlingAtNight": {
+    "discardAlly": "Howling at Night: choose a non-objective ally to discard"
+  },
   "angmarOrc": {
     "choose": "Angmar Orc: choose one",
     "discardAlly": "Discard 1 ally from play",
@@ -1059,5 +1118,142 @@
     "search": "Search the encounter deck and discard pile for an encounter side quest and reveal it",
     "chooseSideQuest": "Pressing Needs: choose an encounter side quest to reveal",
     "currentQuest": "Choose a different quest card to be the current quest until the end of the phase"
+  },
+  "dealDamageToOneHero": "Deal {n} damage to a hero you control",
+  "corneredAnimals": {
+    "choose": "Cornered Animals: discard a resource token from Savage Counter-attack, or reveal an additional encounter card this phase",
+    "discard": "Discard 1 resource token from Savage Counter-attack",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "shelteredValley": {
+    "heal": "Choose a character to heal all damage from"
+  },
+  "makeCamp": {
+    "heal": "Choose a hero to heal up to 3 damage from"
+  },
+  "descendantsOfKings": {
+    "ready": "Descendants of Kings: ready a Dúnedain character ({count} left)"
+  },
+  "delayTheEnemy": {
+    "discard": "Delay the Enemy: discard a non-unique enemy engaged with you?"
+  },
+  "distantStars": {
+    "choose": "Distant Stars: choose a non-unique location to make the active location"
+  },
+  "keenAsLances": {
+    "choose": "Keen as Lances: choose one",
+    "resources": "Add 2 resources to a hero's resource pool",
+    "draw": "Draw 3 cards",
+    "threat": "Reduce your threat by 4"
+  },
+  "hopeRekindled": {
+    "reduce": "Reduce the cost of the next Valour event you play this phase by 2"
+  },
+  "reinforcements": {
+    "choose": "Reinforcements: put an ally into play from a hand ({count} left)"
+  },
+  "hornsCry": {
+    "allEnemies": "All enemies get -1 attack until the end of the phase"
+  },
+  "abandonedCamp": {
+    "return": "Return a card from your discard pile to your hand?",
+    "none": "Return nothing"
+  },
+  "barrenMoorland": {
+    "choose": "Exhaust the ally or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
+  },
+  "coldfellGiant": {
+    "damage": "Choose a character to deal 1 damage to"
+  },
+  "ruthlessHillTroll": {
+    "shuffle": "Choose a safe location to shuffle into the encounter deck"
+  },
+  "noRest": {
+    "attach": "Choose a hero to attach No Rest to"
+  },
+  "aradorsBane": {
+    "choose": "Engage an enemy with a higher engagement cost than your threat, or search for a Troll or Giant",
+    "search": "Search for a Troll or Giant enemy"
+  },
+  "lieLow": {
+    "shuffle": "Choose an enemy in the staging area to shuffle into the encounter deck"
+  },
+  "scavengeForSupplies": {
+    "engage": "Choose the player with the highest threat to engage the Troll",
+    "play": "Play a card from your hand at no cost?",
+    "none": "Play nothing"
+  },
+  "trollFells": {
+    "search": "Choose a safe location for Troll-fells to guard"
+  },
+  "unnaturalFog": {
+    "choose": "Unnatural Fog: discard from your deck or remove your characters from the quest",
+    "discard": "Discard the top {count} cards of your deck",
+    "removeFromQuest": "Remove each character you control from the quest"
+  },
+  "tragicDiscovery": {
+    "choose": "Tragic Discovery: raise your threat by 3 or take this attack undefended",
+    "raiseThreat": "Raise your threat by 3",
+    "undefended": "Treat this attack as undefended"
+  },
+  "aFellWraith": {
+    "choose": "A Fell Wraith: discard the top 3 cards of your deck or return Thaurdir to the staging area",
+    "discard": "Discard the top 3 cards of your deck",
+    "returnThaurdir": "Return Thaurdir to the staging area"
+  },
+  "daechanar": {
+    "removeSorcery": "Daechanar: choose a Sorcery card to remove from the game"
+  },
+  "wraithOfCarnDum": {
+    "attach": "Attach Wraith of Carn Dûm to a character in play"
+  },
+  "possession": {
+    "destroy": "Possession: choose the highest cost ally to destroy"
+  },
+  "aFellDread": {
+    "choosePlayer": "A Fell Dread: choose the player with the highest threat",
+    "attach": "Attach A Fell Dread to a hero you control without A Fell Dread attached"
+  },
+  "altarOfMidwinter": {
+    "choose": "Altar of Midwinter: reveal 1 additional encounter card, or reanimate the top card of your deck",
+    "reveal": "Reveal 1 additional encounter card",
+    "reanimate": "Reanimate the top card of your deck"
+  },
+  "daechanarsFall": {
+    "addLocation": "Choose a location to add to the staging area",
+    "placeProgress": "Place progress on locations in the staging area: choose one to place 1 on ({n} left)"
+  },
+  "theGreatHall": {
+    "choose": "The Great Hall: choose an Undead enemy you discarded to add to the staging area"
+  },
+  "darkCovenant": {
+    "choose": "Dark Covenant: choose one",
+    "removeProgress": "Remove the progress from among the quests in play",
+    "assignDamage": "Assign the damage among characters you control",
+    "removeProgressFrom": "Dark Covenant: remove 1 progress from a quest"
+  },
+  "quietTheSpirits": {
+    "engage": "Quiet the Spirits: choose the player with the highest threat for the Undead enemy to engage"
+  },
+  "engageHighestThreat": "Choose the player with the highest threat for the enemy to engage",
+  "unexpectedRescue": {
+    "startingHero": "Unexpected Rescue: choose your starting hero; the others go to your captured deck"
+  },
+  "dungeonGuard": {
+    "putIntoPlay": "Dungeon Guard: put 1 of the rescued cards into play at no cost?"
+  },
+  "prisonCell": {
+    "putIntoPlay": "Prison Cell: choose a captured card to put into play at no cost"
+  },
+  "feebleAndWeary": {
+    "choose": "Feeble and Weary: choose one",
+    "damage": "Deal 1 damage to each exhausted character you control",
+    "removeFromQuest": "Remove each exhausted character you control from the quest"
+  },
+  "captivesOfGornakh": {
+    "ally": "Captives of Gornákh: choose one of your allies to be captured",
+    "host": "Captives of Gornákh: choose the encounter card with the highest threat to capture it"
   }
 }

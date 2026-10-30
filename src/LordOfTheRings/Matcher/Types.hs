@@ -144,6 +144,10 @@ data AttachMatcher
   | AttachToAlly AllyMatcher
   | AttachToEnemy EnemyMatcher
   | AttachToLocation LocationMatcher
+  | -- | a quest card in play, a side quest among them, as The Long Defeat
+    AttachToQuest
+  | -- | a player's threat dial, as Favor of the Valar
+    AttachToPlayer
   | -- | played into the staging area unattached, as a Trap
     PlayIntoStagingArea
   deriving stock (Show, Eq, Generic)
@@ -191,6 +195,7 @@ data LocationMatcher
   | LocationInStagingArea
   | IsActiveLocation
   | LocationWithTrait Trait
+  | LocationWithKeyword Keyword
   | LocationWithCardCode CardCode
   | -- | a location player card effects can reach
     LocationNotImmuneToPlayerCards
@@ -204,6 +209,7 @@ data LocationMatcher
   | -- | a location whose id sorts before the given one's: of several copies, the first
     -- stands for them all, as an ability that does not stack is triggered by one
     LocationWithIdBelow LocationId
+  | UniqueLocation
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -236,6 +242,10 @@ data CardMatcher
     CardWithDoomed
   | -- | a card printed with a Valour trigger, as Hope Rekindled reads
     CardWithValour
+  | -- | a unique card, as "a non-unique location" reads it negated
+    UniqueCard
+  | -- | a card of the title, whatever its subtitle: a copy, as Heavy Curse reads
+    CardWithTitle Text
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -266,6 +276,8 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardMatchAny ms -> any (`cardMatches` def) ms
   CardWithDoomed -> any (\case Doomed _ -> True; _ -> False) (cdKeywords def)
   CardWithValour -> cdCardCode def `elem` valourCards
+  UniqueCard -> cdUnique def
+  CardWithTitle title -> let Name t _ = cdName def in t == title
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]

@@ -63,6 +63,10 @@ import LordOfTheRings.Quest.Cards.LastLordOfMoria
 import LordOfTheRings.Quest.Cards.ToTheWestDoor
 import LordOfTheRings.Quest.Cards.TheSeethingLake
 import LordOfTheRings.Quest.Cards.GatherInformation
+import LordOfTheRings.Quest.Cards.DoubleBack
+import LordOfTheRings.Quest.Cards.DelayTheEnemy
+import LordOfTheRings.Quest.Cards.SendForAid
+import LordOfTheRings.Quest.Cards.ScoutAhead
 import LordOfTheRings.Quest.Cards.TheDefense
 import LordOfTheRings.Quest.Cards.ReinforcingTheBanks
 import LordOfTheRings.Quest.Cards.BreakthroughAtTheApproach
@@ -101,6 +105,9 @@ import LordOfTheRings.Quest.Cards.HoldTheFords
 import LordOfTheRings.Quest.Cards.BattleForDunland
 import LordOfTheRings.Quest.Cards.TheRavenClan
 import LordOfTheRings.Quest.Cards.TheLastStage
+import LordOfTheRings.Quest.Cards.TheCatacombsOfCarnDum
+import LordOfTheRings.Quest.Cards.AngmarAwakened
+import LordOfTheRings.Quest.Cards.DaechanarsFall
 import LordOfTheRings.Quest.Cards.TheRoadToTharbad
 import LordOfTheRings.Quest.Cards.AWellLaidTrap
 import LordOfTheRings.Quest.Cards.NoWayOut
@@ -122,11 +129,41 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+import LordOfTheRings.Quest.Cards.TheClutchesOfCarnDum
+import LordOfTheRings.Quest.Cards.MidwintersCrux
+import LordOfTheRings.Quest.Cards.FuriousCharge
+import LordOfTheRings.Quest.Cards.AcrossTheWastes
+import LordOfTheRings.Quest.Cards.HowlingAtNight
+import LordOfTheRings.Quest.Cards.BattleWithThePack
+import LordOfTheRings.Quest.Cards.TheShadesOfAngmar
+import LordOfTheRings.Quest.Cards.AFellWraith
+import LordOfTheRings.Quest.Cards.TheShadowWorld
+import LordOfTheRings.Quest.Cards.SealTheTomb
+import LordOfTheRings.Quest.Cards.ThePowerOfAngmar
+import LordOfTheRings.Quest.Cards.UnexpectedRescue
+import LordOfTheRings.Quest.Cards.GornakhsDungeons
+import LordOfTheRings.Quest.Cards.FlightFromMountGram
+import LordOfTheRings.Quest.Cards.StopTheExecutioners
 import LordOfTheRings.Quest.Cards.OrcRearguard
 import LordOfTheRings.Quest.Cards.RescueIarion
 import LordOfTheRings.Quest.Cards.OrcAmbush
 import LordOfTheRings.Quest.Cards.LostInTheWilderness
 import LordOfTheRings.Quest.Cards.StopTheWarParty
+import LordOfTheRings.Quest.Cards.FindShelter
+import LordOfTheRings.Quest.Cards.MakeCamp
+import LordOfTheRings.Quest.Cards.ScatteredAmongTheHills
+import LordOfTheRings.Quest.Cards.CorneredAnimals
+import LordOfTheRings.Quest.Cards.IntoTheEttenmoors
+import LordOfTheRings.Quest.Cards.AMiserableJourney
+import LordOfTheRings.Quest.Cards.JourneysEnd
+import LordOfTheRings.Quest.Cards.LieLow
+import LordOfTheRings.Quest.Cards.ForageForFood
+import LordOfTheRings.Quest.Cards.ScavengeForSupplies
+import LordOfTheRings.Quest.Cards.SecretsOfRhudaur
+import LordOfTheRings.Quest.Cards.ThaurdirsPursuit
+import LordOfTheRings.Quest.Cards.QuietTheSpirits
+import LordOfTheRings.Quest.Cards.SiftThroughTheDebris
+import LordOfTheRings.Quest.Cards.DecipherAncientTexts
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -222,6 +259,10 @@ allQuests =
         , SomeQuestCard toTheWestDoor
         , SomeQuestCard theSeethingLake
         , SomeQuestCard gatherInformation
+        , SomeQuestCard doubleBack
+        , SomeQuestCard delayTheEnemy
+        , SomeQuestCard sendForAid
+        , SomeQuestCard scoutAhead
         , SomeQuestCard theDefense
         , SomeQuestCard reinforcingTheBanks
         , SomeQuestCard breakthroughAtTheApproach
@@ -260,6 +301,9 @@ allQuests =
         , SomeQuestCard battleForDunland
         , SomeQuestCard theRavenClan
         , SomeQuestCard theLastStage
+        , SomeQuestCard theCatacombsOfCarnDum
+        , SomeQuestCard angmarAwakened
+        , SomeQuestCard daechanarsFall
         , SomeQuestCard theRoadToTharbad
         , SomeQuestCard aWellLaidTrap
         , SomeQuestCard noWayOut
@@ -281,10 +325,40 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+        , SomeQuestCard theClutchesOfCarnDum
+        , SomeQuestCard midwintersCrux
+        , SomeQuestCard furiousCharge
+        , SomeQuestCard acrossTheWastes
+        , SomeQuestCard howlingAtNight
+        , SomeQuestCard battleWithThePack
+        , SomeQuestCard theShadesOfAngmar
+        , SomeQuestCard aFellWraith
+        , SomeQuestCard theShadowWorld
+        , SomeQuestCard sealTheTomb
+        , SomeQuestCard thePowerOfAngmar
+        , SomeQuestCard unexpectedRescue
+        , SomeQuestCard gornakhsDungeons
+        , SomeQuestCard flightFromMountGram
+        , SomeQuestCard stopTheExecutioners
         , SomeQuestCard orcRearguard
         , SomeQuestCard rescueIarion
         , SomeQuestCard orcAmbush
         , SomeQuestCard lostInTheWilderness
         , SomeQuestCard stopTheWarParty
+        , SomeQuestCard findShelter
+        , SomeQuestCard makeCamp
+        , SomeQuestCard scatteredAmongTheHills
+        , SomeQuestCard corneredAnimals
+        , SomeQuestCard intoTheEttenmoors
+        , SomeQuestCard aMiserableJourney
+        , SomeQuestCard journeysEnd
+        , SomeQuestCard lieLow
+        , SomeQuestCard forageForFood
+        , SomeQuestCard scavengeForSupplies
+        , SomeQuestCard secretsOfRhudaur
+        , SomeQuestCard thaurdirsPursuit
+        , SomeQuestCard quietTheSpirits
+        , SomeQuestCard siftThroughTheDebris
+        , SomeQuestCard decipherAncientTexts
         ]
     ]

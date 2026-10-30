@@ -26,6 +26,11 @@ data Player = Player
   -- ^ the player's cards follow the FAQ's errata, as their deck was loaded
   , playerStartingHeroes :: [CardCode]
   -- ^ the heroes the player's deck began with, as the games list shows them
+  , playerSetAsideCards :: [Card]
+  {- ^ the cards with the Encounter keyword the player's deck set aside, as Ranger of the
+  North: one Ranger Summons shuffles into the encounter deck stays here, known as the
+  player's, until it is revealed
+  -}
   }
   deriving stock (Show, Eq, Generic)
 
@@ -35,7 +40,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode])), ("setAsideCards", toJSON ([] :: [Card]))]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -51,6 +56,7 @@ newPlayer pid name deck =
     , playerUsedAbilities = []
     , playerErrata = True
     , playerStartingHeroes = []
+    , playerSetAsideCards = []
     }
 
 instance Entity Player where
@@ -98,6 +104,9 @@ instance HasField "eliminated" Player Bool where
 
 instance HasField "startingHeroes" Player [CardCode] where
   getField = playerStartingHeroes
+
+instance HasField "setAsideCards" Player [Card] where
+  getField = playerSetAsideCards
 
 {- | The cards in the player's hand that can leave it: an encounter card drawn into it, as
 Ill Tidings, cannot.

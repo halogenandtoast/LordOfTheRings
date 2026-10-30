@@ -18,6 +18,7 @@ import LordOfTheRings.Entities (entitiesTreacheries)
 import LordOfTheRings.Event
 import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
+import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhibitions, threatOf)
 import LordOfTheRings.Helpers.Window (getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
@@ -35,19 +36,39 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Player.Types as X
 import LordOfTheRings.Prelude hiding (swap)
+import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
-  WindowType (CardsDrawn, DiscardedFromDeck, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  Window (Window),
+  WindowType (CardsDrawn, DiscardedFromDeck, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  Timing (After),
   mkAfter,
   mkWhen,
  )
 
 instance RunMessage Player where
-  runMessage msg player = case msg of
+  runMessage msg player = do
+    locked <- elem DiscardPilesLocked <$> getModifiers GameTarget
+    player' <- if locked && takesFromDiscard then pure player else runPlayer msg player
+    -- a deck run out may eliminate its player, as Deadmen's Dike reads
+    when (notNull player.deck && null player'.deck) $ push CheckEliminations
+    pure player'
+   where
+    -- what a player card effect does to take a card out of the discard pile
+    takesFromDiscard = case msg of
+      ReturnFromDiscardToHand pid _ -> pid == player.id
+      PutDiscardOnBottomOfDeck pid _ -> pid == player.id
+      PutDiscardOnTopOfDeck pid _ -> pid == player.id
+      ShuffleFromDiscardIntoDeck pid _ -> pid == player.id
+      ShuffleDiscardIntoDeck pid -> pid == player.id
+      _ -> False
+
+runPlayer :: Message -> Player -> QueueT Message GameT Player
+runPlayer msg player = case msg of
     DoStep 1 Setup -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -302,16 +323,24 @@ instance RunMessage Player where
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
+    ShuffleTopOfDiscardIntoDeck pid n | pid == player.id -> do
+      let (moved, kept) = splitAt n player.discard
+      deck <- shuffleM (moved <> player.deck)
+      pure $ player & discardL .~ kept & deckL .~ deck
     DiscardRandomFromHand pid n | pid == player.id -> do
       discarded <- take n <$> shuffleM (discardableHand player)
+      pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
-    PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    -- a set-aside card with the Encounter keyword, discarded from the encounter deck, is
+    -- set aside no more
+    PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :) & setAsideCardsL %~ filter ((/= card.id) . (.id))
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
       let discarded = filter ((== cid) . (.id)) (discardableHand player)
+      pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid cid]
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
     UseAbility pid ab _
@@ -324,6 +353,9 @@ instance RunMessage Player where
                 Nothing -> UsedAbility source ab.abilityIndex limitType 1 : player.usedAbilities
           pure $ player & usedAbilitiesL .~ used
     EndPhase _ -> pure $ player & usedAbilitiesL %~ filter ((/= PerPhase) . (.usedAbilityLimitType))
+    -- an enemy's attack has resolved
+    CheckWindows ws | notNull [() | Window After (EnemyAttacking _ _) <- ws] ->
+      pure $ player & usedAbilitiesL %~ filter ((/= PerAttack) . (.usedAbilityLimitType))
     EndRound -> pure $ player & usedAbilitiesL %~ filter ((/= PerRound) . (.usedAbilityLimitType))
     SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id && n > 0 -> do
       payers <- filter ((`notElem` used) . (.id)) <$> payingHeroes sphere player
@@ -388,9 +420,11 @@ handActions p = flip filterM p.hand \case
 playableCards :: HasGame m => Player -> m [Card]
 playableCards p = do
   viaRecord <- traverse (discardPlayers p.id) p.discard
+  -- no card leaves a discard pile The Power of Angmar holds, played or not
+  locked <- elem DiscardPilesLocked <$> getModifiers GameTarget
   filterM (canPlay p)
     $ filter (from [FromHand, FromHandOrDiscard]) p.hand
-    <> [c | (c, rs) <- zip p.discard viaRecord, from [FromHandOrDiscard, FromDiscardOnly] c || notNull rs]
+    <> [c | not locked, (c, rs) <- zip p.discard viaRecord, from [FromHandOrDiscard, FromDiscardOnly] c || notNull rs]
  where
   from zones c = cdPlayableFrom (toCardDef c) `elem` zones
 
@@ -488,6 +522,7 @@ correctPhase (EncounterCard _) = pure False
 actionEventPlayable :: HasGame m => PlayerCard -> m Bool
 actionEventPlayable card = case card.owner >>= lookupEvent (toCardCode card) card.id of
   Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
+  Just e | Just criteria <- (toAttrs e).eventActionCriteria -> passesCriteria criteria
   _ -> pure False
 
 {- | Whether a card could be played with nothing to pay for it, at any time: as the

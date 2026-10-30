@@ -122,6 +122,8 @@ data Message
     ReturnFromDiscardToHand PlayerId CardId
   | -- | an ally leaves play and is shuffled into its owner's deck
     ShuffleIntoOwnersDeck Target
+  | -- | an ally leaves play for the bottom of its owner's deck, as Curious Brandybuck
+    PutOnBottomOfOwnersDeck Target
   | TakeControl AllyId PlayerId
   | RemoveFromDiscard PlayerId CardId
   | -- | an ally card put into play under the player's control, keeping its owner
@@ -213,6 +215,11 @@ data Message
     attachments it can
     -}
     SwapHero HeroId PlayerCard
+  | -- | the ally loses the ally card type and gains the hero card type, as Sword-thain
+    -- gives it, keeping its tokens, state and what is attached to it
+    AllyBecomesHero AllyId
+  | -- | the hero an ally became goes back to being an ally
+    HeroBecomesAlly HeroId
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then
@@ -223,6 +230,9 @@ data Message
   | -- | the player divides the damage among characters they control, a point at a time,
     -- the points assigned so far kept; it is dealt once all are assigned
     DealDamageDivided Source PlayerId Int [Target]
+  | -- | as 'DealDamageDivided', among the characters given: the player divides the damage,
+    -- the points assigned so far kept
+    DealDamageDividedAmong Source PlayerId [Target] Int [Target]
   | DiscardRandomFromHand PlayerId Int
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target
@@ -233,6 +243,10 @@ data Message
     staging area to guard it, any other card is revealed
     -}
     GuardObjective ObjectiveId
+  | -- | a guarded location revealed, as Across the Ettenmoors' objective-locations: the next
+    -- encounter card is revealed guarding it, the location attached to that card until it
+    -- leaves play
+    GuardLocation LocationId
   | PutObjectiveIntoPlay EncounterCard
   | -- | an objective card comes into play attached to the hero, as a setup attaches it
     PutObjectiveIntoPlayAttached EncounterCard Target
@@ -250,6 +264,10 @@ data Message
     -}
     PlaceOrcGuard PlayerId
   | EngageOrcGuard PlayerId PlayerCard
+  | {- | the player card leaves its owner's deck, hand or discard pile for the staging
+    area, face down as a Reanimated Dead enemy with this id (The Dread Realm)
+    -}
+    Reanimate CardId EnemyId
   | ShuffleIntoEncounterDeck Target
   | {- | a treachery dealt as a shadow card resolves its revelation as if revealed, here
     attaching itself where its placement says
@@ -273,6 +291,9 @@ data Message
     PutDiscardOnTopOfDeck PlayerId CardId
   | -- | a card in the player's discard pile is shuffled into their deck
     ShuffleFromDiscardIntoDeck PlayerId CardId
+  | -- | the top cards of the player's discard pile are shuffled into their deck, as Norbury
+    -- Tombs reads: an encounter card's effect, which nothing barring player cards stops
+    ShuffleTopOfDiscardIntoDeck PlayerId Int
   | {- | a card in its owner's discard pile responds to the windows, as Hidden Cache does:
     the card is built again to resolve it
     -}
@@ -505,6 +526,9 @@ data Message
     JoinAreas
   | -- | the first player's area joins the second's
     JoinArea PlayerId PlayerId
+  | -- | the hero leaves play, set aside out of play, as Unexpected Rescue sets aside the
+    -- heroes not chosen to start
+    SetAsideHero HeroId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

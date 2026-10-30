@@ -62,6 +62,13 @@ allHeroCards =
       , grima
       , idraen
       , erkenbrand
+      , amarthiul
+      , rossiel
+      , dori
+      , erestor
+      , aragornTactics
+      , halbarad
+      , merrySpirit
       ]
 
 aragorn :: CardDef
@@ -366,4 +373,47 @@ erkenbrand =
   (hero "08137" "Erkenbrand" Leadership 10 1 2 3 4)
     { cdCardTraits = setFromList [Rohan, Warrior]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+amarthiul :: CardDef
+amarthiul =
+  (hero "10115" "Amarthiúl" Leadership 10 1 3 3 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    }
+
+rossiel :: CardDef
+rossiel =
+  (hero "10028" "Rossiel" Lore 8 2 1 2 3)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+dori :: CardDef
+dori =
+  (hero "10054" "Dori" Tactics 10 1 2 2 5)
+    { cdCardTraits = setFromList [Dwarf]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+erestor :: CardDef
+erestor =
+  (hero "10084" "Erestor" Lore 10 2 2 2 4)
+    { cdCardTraits = setFromList [Noldor]
+    }
+
+aragornTactics :: CardDef
+aragornTactics =
+  (hero "09001" "Aragorn" Tactics 12 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    }
+
+halbarad :: CardDef
+halbarad =
+  (hero "09002" "Halbarad" Leadership 10 2 2 2 4)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+merrySpirit :: CardDef
+merrySpirit =
+  (hero "10001" "Merry" Spirit 6 2 1 1 2)
+    { cdCardTraits = setFromList [Hobbit]
     }

@@ -77,6 +77,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
         $ KeyMap.insert "playProhibitions" (toJSON prohibitions)
         $ KeyMap.insert "underneath" (toJSON underneath)
+        $ KeyMap.insert "captured" (toJSON $ fmap length (fromMeta "captured" :: Map CardId [Value]))
+        $ KeyMap.insert "capturedDecks" (toJSON $ fmap length (fromMeta "capturedDecks" :: Map PlayerId [Value]))
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
@@ -150,6 +152,10 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
             <> [(q.questCardId, length q.questUnderneath) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
         )
         (maybe mempty (fmap length) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [Value])))
+  -- what the scenario keeps by this key in its meta, as Escape from Mount Gram's captured
+  -- cards, under each card and in each player's captured deck
+  fromMeta :: FromJSON a => Monoid a => Key.Key -> a
+  fromMeta k = fromMaybe mempty $ parseMaybe (withObject "meta" (.: k)) (scenarioMeta $ toAttrs g.scenario)
   hidePlayer = withSize "deck" "deckSize"
   hideHand = \case
     Object o | Just (Array cards) <- KeyMap.lookup "hand" o ->

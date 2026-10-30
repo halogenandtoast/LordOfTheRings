@@ -58,7 +58,17 @@ allObjectiveCards =
       , keyOfTheBoar
       , keyOfTheWolf
       , keyOfTheRaven
+      , daybreak
+      , nightfall
+      , amarthiul
       , iarion
+      , huntingTheOrcs
+      , savageCounterattack
+      , amarthiulAcrossTheEttenmoors
+      , amarthiulTheTreacheryOfRhudaur
+      , daechanarsBrand
+      , heirloomOfIarchon
+      , ordersFromAngmar
       ]
 
 durinsAxe :: CardDef
@@ -359,6 +369,23 @@ keyOfTheWolf = threeTrialsKey "08044" "Key of the Wolf" Wolf
 keyOfTheRaven :: CardDef
 keyOfTheRaven = threeTrialsKey "08045" "Key of the Raven" Raven
 
+-- | The Time objective, Daybreak faceup: flipped, it is 'nightfall'.
+daybreak :: CardDef
+daybreak = (objective "10011" "Daybreak" TheWastesOfEriador 1) {cdCardTraits = setFromList [TimeTrait]}
+
+-- | The Time objective's other side: no copy of it is gathered, Daybreak turns into it.
+nightfall :: CardDef
+nightfall = (objective "10012" "Nightfall" TheWastesOfEriador 0) {cdCardTraits = setFromList [TimeTrait]}
+
+amarthiul :: CardDef
+amarthiul =
+  ((objective "10016" "Amarthiúl" TheWastesOfEriador 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
 -- | X willpower, attack and defense, X the number of quest cards in play: gained from its
 -- own modifiers.
 iarion :: CardDef
@@ -369,3 +396,41 @@ iarion =
     , cdCardTraits = setFromList [Dunedain, Ranger]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
+
+huntingTheOrcs :: CardDef
+huntingTheOrcs = (objective "09071" "Hunting the Orcs" TheWeatherHills 1) {cdCardTraits = setFromList [Mission]}
+
+-- | Hunting the Orcs' other side: no copy of its own in the encounter set, it comes into
+-- play as Hunting the Orcs flips.
+savageCounterattack :: CardDef
+savageCounterattack = (objective "09072" "Savage Counter-attack" TheWeatherHills 0) {cdCardTraits = setFromList [Mission]}
+
+amarthiulAcrossTheEttenmoors :: CardDef
+amarthiulAcrossTheEttenmoors =
+  ((objective "10067" "Amarthiúl" AcrossTheEttenmoors 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+amarthiulTheTreacheryOfRhudaur :: CardDef
+amarthiulTheTreacheryOfRhudaur =
+  ((objective "10096" "Amarthiúl" TheTreacheryOfRhudaur 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dunedain, Ranger, Warrior]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | The other side of Quiet the Spirits, never in the encounter deck.
+daechanarsBrand :: CardDef
+daechanarsBrand = (objective "10110" "Daechanar's Brand" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}
+
+-- | The other side of Sift through the Debris, never in the encounter deck.
+heirloomOfIarchon :: CardDef
+heirloomOfIarchon = (objective "10112" "Heirloom of Iârchon" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}
+
+-- | The other side of Decipher Ancient Texts, never in the encounter deck.
+ordersFromAngmar :: CardDef
+ordersFromAngmar = (objective "10114" "Orders from Angmar" TheTreacheryOfRhudaur 0) {cdCardTraits = setFromList [Clue]}

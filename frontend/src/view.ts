@@ -145,7 +145,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       committed: e.committed ?? false,
       outOfPlay: heldOutOfPlay(target),
       flipped: e.flipped ?? false,
-      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' ? 'player' : undefined,
+      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' || e.cardCode === 'ReanimatedDead' ? 'player' : undefined,
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard),
       counting: [...(e.committed ? ['willpower'] : []), ...(threatening.has(e.cardId) ? ['threat'] : [])],
     })
@@ -173,15 +173,20 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   // cards under a location (The Steward's Fear) and those under The Orcs' Search
   const stackUnder = (host: CardView) => {
     const count = game.underneath?.[host.id] ?? 0
-    return count ? [card('', `underneath-${host.id}`, { facedown: 'encounter', name: ikey('log.cardsUnderneath', { count }), attachedTo: host.id })] : []
+    // and the player cards captured under it (Escape from Mount Gram)
+    const captured = game.captured?.[host.id] ?? 0
+    return [
+      ...(count ? [card('', `underneath-${host.id}`, { facedown: 'encounter', name: ikey('log.cardsUnderneath', { count }), attachedTo: host.id })] : []),
+      ...(captured ? [card('', `captured-${host.id}`, { facedown: 'player', name: ikey('log.capturedUnderneath', { count: captured }), attachedTo: host.id })] : []),
+    ]
   }
 
   const attachmentsOn = (cards: CardView[]) => {
     const ids = new Set(cards.map((c) => c.id))
     // claimed objectives, condition treacheries and enemies attached as Grasping Tentacle is sit on their hosts like attachments
-    // and allies under a quest card, as Captured! holds Faramir
+    // and allies under a quest card, as Captured! holds Faramir, and guarded locations on their guards (Across the Ettenmoors)
     return [
-      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true)].filter(
+      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true), ...placed('locations', isAt('AttachedTo'))].filter(
         (a) => a.attachedTo !== null && ids.has(a.attachedTo),
       ),
       ...cards.flatMap(stackUnder),
@@ -209,6 +214,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       eliminated: p.eliminated,
       handSize: p.handSize ?? p.hand.length,
       deckSize: p.deckSize,
+      capturedDeckSize: game.capturedDecks?.[pid] ?? 0,
       discardSize: p.discard.length,
       hand: keepOrder(previous?.players.find((v) => v.playerId === pid)?.hand, [
         ...p.hand.map((c) => card(c.cardCode, c.id, { prohibited: game.playProhibitions?.[c.id] })),
@@ -220,6 +226,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       // hidden cards lie facedown in the player's play area (The Blood of Gondor)
       inPlay: [
         ...withAttachments(characters),
+        // an attachment on the player's threat dial, as Favor of the Valar
+        ...placed('attachments', (a) => a.placement?.tag === 'AttachedTo' && (a.placement.contents as Target)?.tag === 'PlayerTarget' && (a.placement.contents as Target).contents === pid),
         ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
       ],
       engaged: [

@@ -22,6 +22,9 @@ data ModifierType
   | HitPointModifier Int
   | ThreatModifier Int
   | EngagementCostModifier Int
+  | -- | on an enemy: its engagement cost is this much higher as the player makes an
+    -- engagement check against it, as Hunting Pack's is lower
+    EngagementCostAgainst PlayerId Int
   | GainTrait Trait
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
@@ -69,6 +72,9 @@ data ModifierType
   | -- | on the game: attacks on enemies place progress on them instead of damage, as The
     -- Passage Out reads
     ProgressInsteadOfAttackDamage
+  | -- | on an enemy: its attack that would damage a character captures that character
+    -- underneath it instead, as Cruel Torturer reads (Escape from Mount Gram)
+    CaptureInsteadOfAttackDamage
   | -- | on a hero: resources from card effects are not placed in its pool, as Garden of
     -- Poisons reads
     CannotGainResourcesFromCardEffects
@@ -155,6 +161,9 @@ data ModifierType
   | -- | on a character: it defends against enemies with the trait without exhausting
     DoesNotExhaustToDefendAgainst Trait
   | CannotCommitToQuest
+  | -- | on a character: during the quest phase it must commit to the quest, if able, as A
+    -- Fell Dread reads
+    MustCommitToQuest
   | -- | on a card in play: its abilities cannot be used, nor its Forced effects trigger
     CannotTriggerAbilities
   | -- | on a card in play: its printed text box is treated as blank, as Arkham's: it has no
@@ -314,9 +323,28 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
     -- Seedy Inn's shadow reads
     AttackDamageRaisesThreatOf PlayerId
+  | -- | on an enemy: each point of damage its attack deals removes 1 progress from each
+    -- quest card in play, as Traitorous Wight's shadow reads
+    AttackDamageRemovesProgress
+  | -- | on a location in the staging area: the first this much progress that would be placed
+    -- on a quest card each round is placed on it instead, as Forbidden Descent reads
+    TakesQuestProgressFirst Int
+  | -- | on a character: while defending against an enemy with the trait, its defense is
+    -- raised by this much, as Orders from Angmar reads
+    DefenseBonusAgainst Trait Int
+  | -- | on the game: as the encounter discard pile is reset into the empty deck, its topmost
+    -- matching card goes to the staging area first, as Ghostly Ruins reads
+    ReturnBeforeEncounterDeckResets CardMatcher
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on the active location, as Collapsed Tower's shadow reads
     ExcessDamageToActiveLocation
+  | -- | on an enemy: for each point of damage its attack deals past the character's
+    -- remaining hit points, 1 progress is removed from each quest card in play, as Cruel
+    -- Mountain-troll reads
+    ExcessDamageRemovesQuestProgress
+  | -- | on an enemy: damaged characters cannot attack it or defend against it, as Goblin
+    -- Pursuer reads
+    NotFoughtByDamaged
   | -- | on a player: before he commits his first character to the quest he discards a
     -- card at random from his hand, and with none he cannot commit, as A Weary Passage reads
     DiscardRandomToCommit
@@ -361,6 +389,37 @@ data ModifierType
     GameCannotEnd
   | -- | on the game: the outcome the game ends with once it can end
     GameEndsWith Outcome
+  | -- | on a quest card: progress placed on it is reduced by this much each time, as Orc
+    -- Grunts reduces it on the current quest
+    ProgressReducedBy Int
+  | -- | on the game: shadow cards still unresolved are not discarded at the end of the
+    -- combat phase, as The Clutches of Carn Dûm reads
+    KeepUnresolvedShadowCards
+  | -- | on the game: each shadow card with no shadow effect has one, which the modifier's
+    -- source resolves as 'ResolveShadowCard', as Mountains of Angmar gives
+    ShadowlessCardsGainEffect
+  | -- | on the game: questing unsuccessfully raises no player's threat, as Doom Hangs
+    -- Still reads
+    NoThreatFromQuestingUnsuccessfully
+  | -- | on the game: the quest phase is skipped, as Doom Hangs Still reads
+    SkipQuestPhase
+  | -- | on the game: a player with no cards in his deck is eliminated, as Deadmen's Dike's
+    -- stages read
+    EliminatedWithEmptyDeck
+  | -- | on the game: player card effects cannot take a card out of a player's discard
+    -- pile, as The Power of Angmar reads
+    DiscardPilesLocked
+  | -- | on a player: he may optionally engage 1 additional enemy in the encounter phase,
+    -- as Halbarad reads
+    OptionallyEngagesAdditionalEnemy
+  | -- | on a character: its willpower cannot be reduced, as Star Brooch reads
+    CannotHaveWillpowerReduced
+  | -- | on the game: the resolving enemy attacks step of the combat phase has begun, as
+    -- Tireless Hunters reads
+    ResolvingEnemyAttacks
+  | -- | on the game: each ally that leaves play goes to its owner's hand instead of the
+    -- discard pile, as Rallying Cry's Valour Action reads
+    AlliesLeavePlayToHand
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

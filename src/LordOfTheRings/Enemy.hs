@@ -31,6 +31,11 @@ import LordOfTheRings.Enemy.Cards.UngoliantsSwarm
 import LordOfTheRings.Enemy.Cards.Wargs
 import LordOfTheRings.Enemy.Cards.WolfRider
 import LordOfTheRings.Enemy.Cards.OrcGuard
+import LordOfTheRings.Enemy.Cards.ReanimatedDead
+import LordOfTheRings.Enemy.Cards.Daechanar
+import LordOfTheRings.Enemy.Cards.Dwimmerlaik
+import LordOfTheRings.Enemy.Cards.WitchOfAngmar
+import LordOfTheRings.Enemy.Cards.WraithOfCarnDum
 import LordOfTheRings.Enemy.Cards.GoblintownScavengers
 import LordOfTheRings.Enemy.Cards.HuntersFromMordor
 import LordOfTheRings.Enemy.Cards.Louis
@@ -156,10 +161,38 @@ import LordOfTheRings.Enemy.Cards.BoarsGuardian
 import LordOfTheRings.Enemy.Cards.WolfsGuardian
 import LordOfTheRings.Enemy.Cards.RavensGuardian
 import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
+import LordOfTheRings.Enemy.Cards.Thaurdir
+import LordOfTheRings.Enemy.Cards.CarnDumGarrison
+import LordOfTheRings.Enemy.Cards.OrcGrunts
+import LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
+import LordOfTheRings.Enemy.Cards.PackLeader
+import LordOfTheRings.Enemy.Cards.NorthernWarg
+import LordOfTheRings.Enemy.Cards.BloodThirstyWarg
+import LordOfTheRings.Enemy.Cards.HuntingPack
+import LordOfTheRings.Enemy.Cards.WhiteWarg
+import LordOfTheRings.Enemy.Cards.WolfOfAngmar
+import LordOfTheRings.Enemy.Cards.ThaurdirDeadmensDike
+import LordOfTheRings.Enemy.Cards.ThaurdirsDamned
+import LordOfTheRings.Enemy.Cards.BalefulShade
+import LordOfTheRings.Enemy.Cards.DeadLord
+import LordOfTheRings.Enemy.Cards.CursedDead
+import LordOfTheRings.Enemy.Cards.JailorGornakh
+import LordOfTheRings.Enemy.Cards.CruelTorturer
+import LordOfTheRings.Enemy.Cards.DungeonGuard
+import LordOfTheRings.Enemy.Cards.GoblinTormentor
 import LordOfTheRings.Enemy.Cards.OrcWarParty
 import LordOfTheRings.Enemy.Cards.AngmarOrc
 import LordOfTheRings.Enemy.Cards.AngmarMarauder
 import LordOfTheRings.Enemy.Cards.AngmarCaptain
+import LordOfTheRings.Enemy.Cards.CorneredOrc
+import LordOfTheRings.Enemy.Cards.SavageTrollspawn
+import LordOfTheRings.Enemy.Cards.ColdfellGiant
+import LordOfTheRings.Enemy.Cards.CruelMountainTroll
+import LordOfTheRings.Enemy.Cards.RuthlessHillTroll
+import LordOfTheRings.Enemy.Cards.GoblinPursuer
+import LordOfTheRings.Enemy.Cards.ThaurdirTheTreacheryOfRhudaur
+import LordOfTheRings.Enemy.Cards.WightOfRhudaur
+import LordOfTheRings.Enemy.Cards.TraitorousWight
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -199,6 +232,11 @@ allEnemys =
         , SomeEnemyCard ungoliantsSpawn
         , SomeEnemyCard wolfRider
         , SomeEnemyCard orcGuard
+        , SomeEnemyCard reanimatedDead
+        , SomeEnemyCard daechanar
+        , SomeEnemyCard dwimmerlaik
+        , SomeEnemyCard witchOfAngmar
+        , SomeEnemyCard wraithOfCarnDum
         , SomeEnemyCard hillTroll
         , SomeEnemyCard goblinSniper
         , SomeEnemyCard marshAdder
@@ -340,9 +378,38 @@ allEnemys =
         , SomeEnemyCard wolfsGuardian
         , SomeEnemyCard ravensGuardian
         , SomeEnemyCard spiritOfTheWild
+        , SomeEnemyCard thaurdirCaptain
+        , SomeEnemyCard thaurdirChampion
+        , SomeEnemyCard carnDumGarrison
+        , SomeEnemyCard orcGrunts
+        , SomeEnemyCard werewolfOfAngmar
+        , SomeEnemyCard packLeader
+        , SomeEnemyCard northernWarg
+        , SomeEnemyCard bloodThirstyWarg
+        , SomeEnemyCard huntingPack
+        , SomeEnemyCard whiteWarg
+        , SomeEnemyCard wolfOfAngmar
+        , SomeEnemyCard thaurdirDeadmensDike
+        , SomeEnemyCard thaurdirsDamned
+        , SomeEnemyCard balefulShade
+        , SomeEnemyCard deadLord
+        , SomeEnemyCard cursedDead
+        , SomeEnemyCard jailorGornakh
+        , SomeEnemyCard cruelTorturer
+        , SomeEnemyCard dungeonGuard
+        , SomeEnemyCard goblinTormentor
         , SomeEnemyCard orcWarParty
         , SomeEnemyCard angmarOrc
         , SomeEnemyCard angmarMarauder
         , SomeEnemyCard angmarCaptain
+        , SomeEnemyCard corneredOrc
+        , SomeEnemyCard savageTrollspawn
+        , SomeEnemyCard coldfellGiant
+        , SomeEnemyCard cruelMountainTroll
+        , SomeEnemyCard ruthlessHillTroll
+        , SomeEnemyCard goblinPursuer
+        , SomeEnemyCard thaurdirTheTreacheryOfRhudaur
+        , SomeEnemyCard wightOfRhudaur
+        , SomeEnemyCard traitorousWight
         ]
     ]

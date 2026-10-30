@@ -166,11 +166,50 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.AccursedBattlefield
+import LordOfTheRings.Location.Cards.MountainsOfAngmar
+import LordOfTheRings.Location.Cards.BlightOfCarnDum
+import LordOfTheRings.Location.Cards.FortressWalls
+import LordOfTheRings.Location.Cards.EriadorWastes
+import LordOfTheRings.Location.Cards.WargsDen
+import LordOfTheRings.Location.Cards.NorthDowns
+import LordOfTheRings.Location.Cards.BrokenBattlements
+import LordOfTheRings.Location.Cards.NorburyTombs
+import LordOfTheRings.Location.Cards.FornostSquare
+import LordOfTheRings.Location.Cards.HauntedKeep
+import LordOfTheRings.Location.Cards.DeadmensGate
+import LordOfTheRings.Location.Cards.RuinsOfArnor
+import LordOfTheRings.Location.Cards.AncientCauseway
+import LordOfTheRings.Location.Cards.SouthernGate
+import LordOfTheRings.Location.Cards.PrisonCell
+import LordOfTheRings.Location.Cards.PatrolRoom
+import LordOfTheRings.Location.Cards.TunnelsOfMountGram
 import LordOfTheRings.Location.Cards.ChetwoodForest
 import LordOfTheRings.Location.Cards.BordersOfBreeLand
 import LordOfTheRings.Location.Cards.OutlyingHomestead
 import LordOfTheRings.Location.Cards.RuggedCountry
 import LordOfTheRings.Location.Cards.ShroudedHills
+import LordOfTheRings.Location.Cards.AmonForn
+import LordOfTheRings.Location.Cards.WeatheredHilltop
+import LordOfTheRings.Location.Cards.ExposedRidge
+import LordOfTheRings.Location.Cards.ShelteredValley
+import LordOfTheRings.Location.Cards.ConcealedOrcCamp
+import LordOfTheRings.Location.Cards.SecludedCave
+import LordOfTheRings.Location.Cards.TheHoarwell
+import LordOfTheRings.Location.Cards.AbandonedCamp
+import LordOfTheRings.Location.Cards.PatchOfWoods
+import LordOfTheRings.Location.Cards.TrollFells
+import LordOfTheRings.Location.Cards.BarrenMoorland
+import LordOfTheRings.Location.Cards.AltarOfMidwinter
+import LordOfTheRings.Location.Cards.SinisterDungeon
+import LordOfTheRings.Location.Cards.TombsOfCarnDum
+import LordOfTheRings.Location.Cards.DarkHalls
+import LordOfTheRings.Location.Cards.UnholyCrypt
+import LordOfTheRings.Location.Cards.TheGreatHall
+import LordOfTheRings.Location.Cards.ForbiddenDescent
+import LordOfTheRings.Location.Cards.EerieHalls
+import LordOfTheRings.Location.Cards.GhostlyRuins
+import LordOfTheRings.Location.Cards.DecrepitRemains
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -364,10 +403,49 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard accursedBattlefield
+        , SomeLocationCard mountainsOfAngmar
+        , SomeLocationCard blightOfCarnDum
+        , SomeLocationCard fortressWalls
+        , SomeLocationCard eriadorWastes
+        , SomeLocationCard wargsDen
+        , SomeLocationCard northDowns
+        , SomeLocationCard brokenBattlements
+        , SomeLocationCard norburyTombs
+        , SomeLocationCard fornostSquare
+        , SomeLocationCard hauntedKeep
+        , SomeLocationCard deadmensGate
+        , SomeLocationCard ruinsOfArnor
+        , SomeLocationCard ancientCauseway
+        , SomeLocationCard southernGate
+        , SomeLocationCard prisonCell
+        , SomeLocationCard patrolRoom
+        , SomeLocationCard tunnelsOfMountGram
         , SomeLocationCard chetwoodForest
         , SomeLocationCard bordersOfBreeLand
         , SomeLocationCard outlyingHomestead
         , SomeLocationCard ruggedCountry
         , SomeLocationCard shroudedHills
+        , SomeLocationCard amonForn
+        , SomeLocationCard weatheredHilltop
+        , SomeLocationCard exposedRidge
+        , SomeLocationCard shelteredValley
+        , SomeLocationCard concealedOrcCamp
+        , SomeLocationCard secludedCave
+        , SomeLocationCard theHoarwell
+        , SomeLocationCard abandonedCamp
+        , SomeLocationCard patchOfWoods
+        , SomeLocationCard trollFells
+        , SomeLocationCard barrenMoorland
+        , SomeLocationCard altarOfMidwinter
+        , SomeLocationCard sinisterDungeon
+        , SomeLocationCard tombsOfCarnDum
+        , SomeLocationCard darkHalls
+        , SomeLocationCard unholyCrypt
+        , SomeLocationCard theGreatHall
+        , SomeLocationCard forbiddenDescent
+        , SomeLocationCard eerieHalls
+        , SomeLocationCard ghostlyRuins
+        , SomeLocationCard decrepitRemains
         ]
     ]

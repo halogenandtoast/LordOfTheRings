@@ -77,12 +77,20 @@ const implemented: Record<string, Gateable> = {
   'into-fangorn': { alpha: true },
   'the-fords-of-isen': { alpha: true },
   'the-antlered-crown': { alpha: true },
+  'the-dread-realm': { alpha: true },
   'the-dunland-trap': { alpha: true },
   'trouble-in-tharbad': { alpha: true },
   'celebrimbors-secret': { alpha: true },
   'the-nin-in-eilph': { alpha: true },
   'the-three-trials': { alpha: true },
+  'the-battle-of-carn-dum': { alpha: true },
+  'the-wastes-of-eriador': { alpha: true },
+  'deadmens-dike': { alpha: true },
   'intruders-in-chetwood': { alpha: true },
+  'the-weather-hills': { alpha: true },
+  'across-the-ettenmoors': { alpha: true },
+  'the-treachery-of-rhudaur': { alpha: true },
+  'escape-from-mount-gram': { alpha: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

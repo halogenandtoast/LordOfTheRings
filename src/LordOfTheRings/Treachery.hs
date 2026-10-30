@@ -139,10 +139,38 @@ import LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
 import LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
 import LordOfTheRings.Treachery.Cards.TheGuardiansFury
 import LordOfTheRings.Treachery.Cards.WildTenacity
+import LordOfTheRings.Treachery.Cards.TheSkyDarkens
+import LordOfTheRings.Treachery.Cards.VileAffliction
+import LordOfTheRings.Treachery.Cards.DaechanarsWill
+import LordOfTheRings.Treachery.Cards.SuddenDarkness
+import LordOfTheRings.Treachery.Cards.PredatoryWolves
+import LordOfTheRings.Treachery.Cards.UnnaturalFog
+import LordOfTheRings.Treachery.Cards.TragicDiscovery
+import LordOfTheRings.Treachery.Cards.RestlessEvil
+import LordOfTheRings.Treachery.Cards.TerrorOfTheNorth
+import LordOfTheRings.Treachery.Cards.DarkSorcery
+import LordOfTheRings.Treachery.Cards.HeavyCurse
+import LordOfTheRings.Treachery.Cards.SoundTheAlarm
+import LordOfTheRings.Treachery.Cards.FeebleAndWeary
+import LordOfTheRings.Treachery.Cards.CaptivesOfGornakh
+import LordOfTheRings.Treachery.Cards.Interrogation
 import LordOfTheRings.Treachery.Cards.SuddenAssault
 import LordOfTheRings.Treachery.Cards.SurprisingSpeed
 import LordOfTheRings.Treachery.Cards.PressingNeeds
 import LordOfTheRings.Treachery.Cards.WeightOfResponsibility
+import LordOfTheRings.Treachery.Cards.IceStorm
+import LordOfTheRings.Treachery.Cards.BitingWind
+import LordOfTheRings.Treachery.Cards.FreezingBlast
+import LordOfTheRings.Treachery.Cards.ColdFromAngmar
+import LordOfTheRings.Treachery.Cards.AradorsBane
+import LordOfTheRings.Treachery.Cards.NoRest
+import LordOfTheRings.Treachery.Cards.Possession
+import LordOfTheRings.Treachery.Cards.AFellDread
+import LordOfTheRings.Treachery.Cards.DeathAndCalamity
+import LordOfTheRings.Treachery.Cards.CenturiesOfSorrow
+import LordOfTheRings.Treachery.Cards.CurseOfTheYears
+import LordOfTheRings.Treachery.Cards.DarkCovenant
+import LordOfTheRings.Treachery.Cards.HauntingFog
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -306,9 +334,37 @@ allTreacherys =
         , SomeTreacheryCard curseOfTheWildMen
         , SomeTreacheryCard theGuardiansFury
         , SomeTreacheryCard wildTenacity
+        , SomeTreacheryCard theSkyDarkens
+        , SomeTreacheryCard vileAffliction
+        , SomeTreacheryCard daechanarsWill
+        , SomeTreacheryCard suddenDarkness
+        , SomeTreacheryCard predatoryWolves
+        , SomeTreacheryCard unnaturalFog
+        , SomeTreacheryCard tragicDiscovery
+        , SomeTreacheryCard restlessEvil
+        , SomeTreacheryCard terrorOfTheNorth
+        , SomeTreacheryCard darkSorcery
+        , SomeTreacheryCard heavyCurse
+        , SomeTreacheryCard soundTheAlarm
+        , SomeTreacheryCard feebleAndWeary
+        , SomeTreacheryCard captivesOfGornakh
+        , SomeTreacheryCard interrogation
         , SomeTreacheryCard suddenAssault
         , SomeTreacheryCard surprisingSpeed
         , SomeTreacheryCard pressingNeeds
         , SomeTreacheryCard weightOfResponsibility
+        , SomeTreacheryCard iceStorm
+        , SomeTreacheryCard bitingWind
+        , SomeTreacheryCard freezingBlast
+        , SomeTreacheryCard coldFromAngmar
+        , SomeTreacheryCard aradorsBane
+        , SomeTreacheryCard noRest
+        , SomeTreacheryCard possession
+        , SomeTreacheryCard aFellDread
+        , SomeTreacheryCard deathAndCalamity
+        , SomeTreacheryCard centuriesOfSorrow
+        , SomeTreacheryCard curseOfTheYears
+        , SomeTreacheryCard darkCovenant
+        , SomeTreacheryCard hauntingFog
         ]
     ]

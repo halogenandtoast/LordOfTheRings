@@ -111,6 +111,22 @@ allAttachmentCards =
       , theFallOfGilGalad
       , wardenOfArnor
       , theDaysRising
+      , theLongDefeat
+      , favorOfTheValar
+      , swordOfNumenor
+      , weatherStainedCloak
+      , swordThain
+      , rangerProvisions
+      , steedOfImladris
+      , elvenSpear
+      , silverHarp
+      , elfFriend
+      , heirOfValandil
+      , athelas
+      , secretVigil
+      , starBrooch
+      , ravenWingedHelm
+      , hobbitPony
       ]
 
 stewardOfGondor :: CardDef
@@ -762,4 +778,114 @@ theDaysRising =
   (attachment "08139" "The Day's Rising" Leadership (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Song]
+    }
+
+theLongDefeat :: CardDef
+theLongDefeat =
+  (attachment "10122" "The Long Defeat" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+favorOfTheValar :: CardDef
+favorOfTheValar =
+  (attachment "10124" "Favor of the Valar" Neutral (StaticCost 3))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+swordOfNumenor :: CardDef
+swordOfNumenor =
+  (attachment "10142" "Sword of Númenor" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+weatherStainedCloak :: CardDef
+weatherStainedCloak =
+  (attachment "10148" "Weather-stained Cloak" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+swordThain :: CardDef
+swordThain =
+  (attachment "10149" "Sword-thain" Neutral (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
+    }
+
+rangerProvisions :: CardDef
+rangerProvisions =
+  (attachment "10055" "Ranger Provisions" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+steedOfImladris :: CardDef
+steedOfImladris =
+  (attachment "10059" "Steed of Imladris" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+elvenSpear :: CardDef
+elvenSpear =
+  (attachment "10087" "Elven Spear" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+silverHarp :: CardDef
+silverHarp =
+  (attachment "10090" "Silver Harp" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Instrument]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+elfFriend :: CardDef
+elfFriend =
+  (attachment "10093" "Elf-friend" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Title]
+    }
+
+heirOfValandil :: CardDef
+heirOfValandil =
+  unique
+    (attachment "09010" "Heir of Valandil" Leadership (StaticCost 2))
+      { cdCardTraits = setFromList [Title]
+      }
+
+athelas :: CardDef
+athelas =
+  (attachment "09011" "Athelas" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    }
+
+secretVigil :: CardDef
+secretVigil =
+  (attachment "09012" "Secret Vigil" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+starBrooch :: CardDef
+starBrooch =
+  (attachment "09013" "Star Brooch" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+ravenWingedHelm :: CardDef
+ravenWingedHelm =
+  (attachment "10005" "Raven-winged Helm" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdLimitOnePerHost = True
+    }
+
+hobbitPony :: CardDef
+hobbitPony =
+  (attachment "10007" "Hobbit Pony" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
     }

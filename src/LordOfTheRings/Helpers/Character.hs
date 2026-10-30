@@ -29,7 +29,10 @@ characterStat printed mods target = do
   modifiedValue mods target (fromMaybe 0 $ printed def)
 
 getWillpower, getAttack, getDefense, getHitPoints :: (HasGame m) => Target -> m Int
-getWillpower = characterStat cdWillpower willpowerOf
+getWillpower target = do
+  -- one that cannot have its willpower reduced, as Star Brooch's hero, ignores what would
+  floored <- elem CannotHaveWillpowerReduced <$> getModifiers target
+  characterStat cdWillpower (if floored then (\m -> willpowerOf m >>= \n -> n <$ guard (n > 0)) else willpowerOf) target
 getAttack target = do
   blank <- elem DoesNotCountAttack <$> getModifiers target
   if blank then pure 0 else characterStat cdAttack attackOf target
@@ -41,6 +44,16 @@ getDefense target = do
     | willpower -> getWillpower target
     | otherwise -> characterStat cdDefense defenseOf target
 getHitPoints = characterStat cdHitPoints hitPointsOf
+
+-- | The defense a character defends against the enemy with, with its bonuses against the
+-- enemy's traits, as Orders from Angmar's against Undead.
+getDefenseAgainst :: (HasGame m) => EnemyId -> Target -> m Int
+getDefenseAgainst eid defender = do
+  defense <- getDefense defender
+  mods <- getModifiers defender
+  enemy <- toCardDef <$> getEnemy eid
+  bonus <- sum <$> for [(trait, n) | DefenseBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
+  pure $ defense + bonus
 
 -- | The attack the characters given make together against an enemy, with their bonuses
 -- against its traits.

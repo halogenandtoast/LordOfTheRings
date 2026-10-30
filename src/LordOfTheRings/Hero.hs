@@ -5,6 +5,8 @@ module LordOfTheRings.Hero (module LordOfTheRings.Hero, module X) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities
+import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Hero.Cards.Eomer
 import LordOfTheRings.Hero.Cards.Hirgon
@@ -55,8 +57,16 @@ import LordOfTheRings.Hero.Cards.Theoden
 import LordOfTheRings.Hero.Cards.Grima
 import LordOfTheRings.Hero.Cards.Idraen
 import LordOfTheRings.Hero.Cards.Erkenbrand
+import LordOfTheRings.Hero.Cards.Amarthiul
+import LordOfTheRings.Hero.Cards.Rossiel
+import LordOfTheRings.Hero.Cards.Dori
+import LordOfTheRings.Hero.Cards.Erestor
+import LordOfTheRings.Hero.Cards.AragornTactics
+import LordOfTheRings.Hero.Cards.Halbarad
+import LordOfTheRings.Hero.Cards.MerrySpirit
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
+import LordOfTheRings.Hero.Types qualified as HeroTypes
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
 
@@ -75,7 +85,21 @@ createHero card hid pid = lookupHero (toCardCode card) (pcId card) hid pid
 lookupHero :: (HasCallStack) => CardCode -> CardId -> HeroId -> PlayerId -> Hero
 lookupHero cardCode cardId hid pid = case Map.lookup cardCode allHeroes of
   Just (SomeHeroCard builder) -> Hero $ cbCardBuilder builder cardId (hid, pid)
-  Nothing -> error $ "Unknown hero: " <> show cardCode
+  Nothing
+    | cdCardType (toCardDef cardCode) == AllyType -> Hero $ cbCardBuilder (allyHero cardCode) cardId (hid, pid)
+    | otherwise -> error $ "Unknown hero: " <> show cardCode
+
+{- | An ally that has gained the hero card type, as Sword-thain gives it: a hero built from
+the ally's card, its stats, traits and sphere.
+-}
+newtype AllyHero = AllyHero HeroAttrs
+  deriving anyclass (IsHero, HasAbilities, HasModifiersFor, RunMessage)
+  deriving newtype (Show, Eq, ToJSON, Entity)
+
+-- ponytail: the ally's own text is not carried over, as its abilities are written for an
+-- ally; give AllyHero its card's abilities if a Sword-thain target ever needs them
+allyHero :: CardCode -> HeroCard AllyHero
+allyHero = HeroTypes.hero AllyHero . toCardDef
 
 newHero :: (MonadRandom m) => PlayerId -> PlayerCard -> m Hero
 newHero pid card = do
@@ -136,5 +160,12 @@ allHeroes =
         , SomeHeroCard grima
         , SomeHeroCard idraen
         , SomeHeroCard erkenbrand
+        , SomeHeroCard amarthiul
+        , SomeHeroCard rossiel
+        , SomeHeroCard dori
+        , SomeHeroCard erestor
+        , SomeHeroCard aragornTactics
+        , SomeHeroCard halbarad
+        , SomeHeroCard merrySpirit
         ]
     ]

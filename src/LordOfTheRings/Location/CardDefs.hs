@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Trait
 
@@ -143,6 +144,11 @@ allLocationCards =
       , tangledWoods
       , brokenLandsLocation
       , ravenChiefsCamp
+      , altarOfMidwinter
+      , sinisterDungeon
+      , tombsOfCarnDum
+      , darkHalls
+      , unholyCrypt
       , ravenWarCamp
       , ravenVillage
       , dunlandBattlefield
@@ -176,11 +182,45 @@ allLocationCards =
       , hallowedCircle
       , cursedForest
       , grimFoothills
+      , accursedBattlefield
+      , mountainsOfAngmar
+      , blightOfCarnDum
+      , fortressWalls
+      , eriadorWastes
+      , wargsDen
+      , northDowns
+      , southernGate
+      , prisonCell
+      , patrolRoom
+      , tunnelsOfMountGram
       , chetwoodForest
       , bordersOfBreeLand
       , outlyingHomestead
       , ruggedCountry
       , shroudedHills
+      , amonForn
+      , weatheredHilltop
+      , exposedRidge
+      , shelteredValley
+      , concealedOrcCamp
+      , secludedCave
+      , theHoarwell
+      , abandonedCamp
+      , patchOfWoods
+      , trollFells
+      , barrenMoorland
+      , brokenBattlements
+      , norburyTombs
+      , fornostSquare
+      , hauntedKeep
+      , deadmensGate
+      , ruinsOfArnor
+      , ancientCauseway
+      , theGreatHall
+      , forbiddenDescent
+      , eerieHalls
+      , ghostlyRuins
+      , decrepitRemains
       ]
 
 drownedTreasury :: CardDef
@@ -1285,6 +1325,78 @@ grimFoothills =
     , cdEasyModeQuantity = Just 2
     }
 
+accursedBattlefield :: CardDef
+accursedBattlefield =
+  (location "10132" "Accursed Battlefield" TheBattleOfCarnDum 3 2 3)
+    { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
+    }
+
+mountainsOfAngmar :: CardDef
+mountainsOfAngmar =
+  (location "10133" "Mountains of Angmar" TheBattleOfCarnDum 2 3 5)
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+blightOfCarnDum :: CardDef
+blightOfCarnDum =
+  (location "10134" "Blight of Carn Dûm" TheBattleOfCarnDum 3 3 3)
+    { cdCardTraits = setFromList [Blight, Plains]
+    , cdShadowEffect = True
+    }
+
+fortressWalls :: CardDef
+fortressWalls =
+  (location "10135" "Fortress Walls" TheBattleOfCarnDum 3 4 3)
+    { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+eriadorWastes :: CardDef
+eriadorWastes = (location "10023" "Eriador Wastes" TheWastesOfEriador 2 3 5) {cdCardTraits = setFromList [Arnor, Plains], cdEasyModeQuantity = Just 1}
+
+wargsDen :: CardDef
+wargsDen = (location "10024" "Warg's Den" TheWastesOfEriador 2 4 1) {cdCardTraits = setFromList [Arnor], cdEasyModeQuantity = Just 1}
+
+northDowns :: CardDef
+northDowns =
+  (location "10025" "North Downs" TheWastesOfEriador 3 1 4)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    , cdShadowEffect = True
+    }
+southernGate :: CardDef
+southernGate =
+  unique
+    (location "10042" "Southern Gate" EscapeFromMountGram 1 3 8)
+      { cdCardTraits = setFromList [MountGram]
+      , cdVictoryPoints = Just 2
+      }
+
+prisonCell :: CardDef
+prisonCell =
+  (location "10046" "Prison Cell" EscapeFromMountGram 4 1 3)
+    { cdCardTraits = setFromList [MountGram, Underground]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+patrolRoom :: CardDef
+patrolRoom =
+  (location "10047" "Patrol Room" EscapeFromMountGram 2 3 2)
+    { cdCardTraits = setFromList [MountGram, Underground]
+    , cdKeywords = setFromList [Capture 2]
+    , cdShadowEffect = True
+    }
+
+-- | X threat, X the number of cards captured underneath it.
+tunnelsOfMountGram :: CardDef
+tunnelsOfMountGram =
+  (location "10048" "Tunnels of Mount Gram" EscapeFromMountGram 2 0 4)
+    { cdCardTraits = setFromList [MountGram, Underground]
+    , cdKeywords = setFromList [Capture 1]
+    , cdShadowEffect = True
+    }
 chetwoodForest :: CardDef
 chetwoodForest =
   (location "09018" "Chetwood Forest" IntrudersInChetwood 3 3 3)
@@ -1321,4 +1433,176 @@ shroudedHills =
   (location "09048" "Shrouded Hills" EriadorWilds 2 0 5)
     { cdCardTraits = setFromList [Arnor, Hills]
     , cdEasyModeQuantity = Just 1
+    }
+
+amonForn :: CardDef
+amonForn =
+  (unique $ location "09026" "Amon Forn" TheWeatherHills 1 4 6)
+    { cdCardTraits = setFromList [Arnor, Ruins]
+    , cdVictoryPoints = Just 3
+    }
+
+-- | +1 threat for each resource token on it: given by its own modifiers.
+weatheredHilltop :: CardDef
+weatheredHilltop = (location "09027" "Weathered Hilltop" TheWeatherHills 3 1 5) {cdCardTraits = setFromList [Arnor, Hills]}
+
+exposedRidge :: CardDef
+exposedRidge =
+  (location "09028" "Exposed Ridge" TheWeatherHills 3 3 3)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+shelteredValley :: CardDef
+shelteredValley = (location "09029" "Sheltered Valley" TheWeatherHills 2 2 4) {cdCardTraits = setFromList [Arnor, Hills]}
+
+concealedOrcCamp :: CardDef
+concealedOrcCamp = (location "09030" "Concealed Orc-camp" TheWeatherHills 3 2 2) {cdCardTraits = setFromList [Arnor, Hills]}
+
+-- | An objective-location of Across the Ettenmoors: guarded, safe, and immune to player
+-- card effects, worth 5 victory points.
+safeLocation :: CardCode -> Name -> Int -> [Trait] -> CardDef
+safeLocation code name questPoints traits =
+  (location code name AcrossTheEttenmoors 1 0 questPoints)
+    { cdCardTraits = setFromList (Ettenmoors : traits)
+    , cdKeywords = setFromList [Guarded, Safe]
+    , cdVictoryPoints = Just 5
+    }
+
+secludedCave :: CardDef
+secludedCave = safeLocation "10068" "Secluded Cave" 7 [Cave]
+
+theHoarwell :: CardDef
+theHoarwell = safeLocation "10069" "The Hoarwell" 3 [River]
+
+abandonedCamp :: CardDef
+abandonedCamp = safeLocation "10070" "Abandoned Camp" 1 []
+
+patchOfWoods :: CardDef
+patchOfWoods = safeLocation "10071" "Patch of Woods" 5 [Forest]
+
+trollFells :: CardDef
+trollFells =
+  (location "10077" "Troll-fells" AcrossTheEttenmoors 2 1 6)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdWhenRevealed = True
+    }
+
+barrenMoorland :: CardDef
+barrenMoorland =
+  (location "10078" "Barren Moorland" AcrossTheEttenmoors 2 2 4)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdEasyModeQuantity = Just 0
+    }
+
+brokenBattlements :: CardDef
+brokenBattlements =
+  (location "09036" "Broken Battlements" DeadmensDike 3 2 6)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdKeywords = setFromList [Time 3]
+    , cdEasyModeQuantity = Just 2
+    }
+
+norburyTombs :: CardDef
+norburyTombs = (location "09037" "Norbury Tombs" DeadmensDike 2 2 5) {cdCardTraits = setFromList [Fornost, Ruins]}
+
+-- | It gets +1 threat for each resource token on it: from its own modifiers.
+fornostSquare :: CardDef
+fornostSquare = (location "09038" "Fornost Square" DeadmensDike 3 1 4) {cdCardTraits = setFromList [Fornost, Ruins]}
+
+hauntedKeep :: CardDef
+hauntedKeep =
+  (location "09039" "Haunted Keep" DeadmensDike 3 3 3)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+deadmensGate :: CardDef
+deadmensGate =
+  (location "09040" "Deadmen's Gate" DeadmensDike 2 4 4)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+ruinsOfArnor :: CardDef
+ruinsOfArnor =
+  (location "09056" "Ruins of Arnor" RuinsOfArnor 3 2 3)
+    { cdCardTraits = setFromList [Arnor, Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+ancientCauseway :: CardDef
+ancientCauseway = (location "09057" "Ancient Causeway" RuinsOfArnor 2 3 2) {cdCardTraits = setFromList [Arnor, Ruins]}
+
+altarOfMidwinter :: CardDef
+altarOfMidwinter =
+  (location "10154" "Altar of Midwinter" TheDreadRealm 1 5 9)
+    { cdUnique = True
+    , cdCardTraits = setFromList [CarnDum, Underground]
+    , cdVictoryPoints = Just 5
+    }
+
+sinisterDungeon :: CardDef
+sinisterDungeon =
+  (location "10158" "Sinister Dungeon" TheDreadRealm 3 4 1)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }
+
+tombsOfCarnDum :: CardDef
+tombsOfCarnDum =
+  (location "10159" "Tombs of Carn Dûm" TheDreadRealm 3 3 3)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdEasyModeQuantity = Just 0
+    }
+
+darkHalls :: CardDef
+darkHalls =
+  (location "10160" "Dark Halls" TheDreadRealm 2 2 4)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }
+
+unholyCrypt :: CardDef
+unholyCrypt =
+  (location "10161" "Unholy Crypt" TheDreadRealm 3 1 7)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }
+
+theGreatHall :: CardDef
+theGreatHall =
+  unique
+    (location "10097" "The Great Hall" TheTreacheryOfRhudaur 1 4 8)
+      { cdCardTraits = setFromList [Ruins]
+      , cdVictoryPoints = Just 2
+      }
+
+forbiddenDescent :: CardDef
+forbiddenDescent = (location "10101" "Forbidden Descent" TheTreacheryOfRhudaur 2 2 6) {cdCardTraits = setFromList [Ruins]}
+
+eerieHalls :: CardDef
+eerieHalls =
+  (location "10102" "Eerie Halls" TheTreacheryOfRhudaur 2 5 4)
+    { cdCardTraits = setFromList [Ruins]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+ghostlyRuins :: CardDef
+ghostlyRuins =
+  (location "10103" "Ghostly Ruins" TheTreacheryOfRhudaur 2 4 4)
+    { cdCardTraits = setFromList [Ruins]
+    , cdEasyModeQuantity = Just 0
+    }
+
+decrepitRemains :: CardDef
+decrepitRemains =
+  (location "10104" "Decrepit Remains" TheTreacheryOfRhudaur 2 1 3)
+    { cdCardTraits = setFromList [Ruins]
+    , cdShadowEffect = True
     }

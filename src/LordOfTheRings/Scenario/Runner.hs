@@ -13,9 +13,12 @@ import LordOfTheRings.Keyword (Keyword (Guarded))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
-import LordOfTheRings.Game.Base (gamePhase)
+import LordOfTheRings.Game.Base (gamePhase, gamePlayers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types as X
@@ -140,6 +143,21 @@ instance RunMessage ScenarioAttrs where
             deck <- shuffleM attrs.encounterDiscard
             push $ GuardObjective oid
             pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+    -- the next encounter card guards the location, attached to it as it is revealed so its
+    -- own effects see it guarding (Troll-fells); any other card is only revealed
+    GuardLocation lid -> case attrs.encounterDeck of
+      card : rest -> do
+        push
+          $ if cdCardType (toCardDef card) `elem` [EnemyType, LocationType, TreacheryType, EncounterSideQuestType]
+            then Run [PlaceLocation lid (AttachedTo $ CardIdTarget card.id), RevealCard card]
+            else RevealCard card
+        pure $ attrs & encounterDeckL .~ rest
+      []
+        | null attrs.encounterDiscard -> pure attrs
+        | otherwise -> do
+            deck <- shuffleM attrs.encounterDiscard
+            push $ GuardLocation lid
+            pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
     AddSetAsideToStaging matcher -> do
       let (matching, rest) = partition (cardMatches matcher) attrs.scenarioSetAside
       traverse_ (push . AddToStaging) matching
@@ -149,6 +167,8 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM (matching <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ rest
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
+    -- a set-aside card revealed, as Cornered Animals reveals Orc Ambush
+    RevealCard card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card put into play, as The Seething Lake makes Doors of Durin active
     PutIntoPlayAsActiveLocation card -> pure $ attrs & setAsideL %~ filter (/= card)
     ShuffleSetAsideIntoEncounterDeck cards -> do
@@ -160,7 +180,16 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM ([c | EncounterCard c <- matching] <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & victoryDisplayL .~ rest
     PutOnTopOfEncounterDeck card -> pure $ attrs & encounterDeckL %~ (card :)
-    AddToEncounterDiscard cards -> pure $ attrs & encounterDiscardL %~ (cards <>)
+    -- a player card with the Encounter keyword goes to its owner's discard pile instead
+    AddToEncounterDiscard cards -> do
+      owned <- for cards \c -> (c,) <$> setAsideOwner c.id
+      pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
+      pure $ attrs & encounterDiscardL %~ ([c | (c, Nothing) <- owned] <>)
+    -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in
+    ShuffleIntoEncounterDeck (CardIdTarget cid) -> do
+      owned <- getsGame (concatMap (.setAsideCards) . toList . gamePlayers)
+      deck <- shuffleM $ [MkEncounterCard cid (toCardCode c) | c <- owned, c.id == cid] <> attrs.encounterDeck
+      pure $ attrs & encounterDeckL .~ deck
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)
     RemoveFromVictoryDisplay card -> pure $ attrs & victoryDisplayL %~ filter ((/= card.id) . (.id))
@@ -218,7 +247,11 @@ instance RunMessage ScenarioAttrs where
       phase <- getsGame gamePhase
       if phase == QuestPhase && null a.encounterDeck && notNull a.encounterDiscard
         then do
-          deck <- shuffleM a.encounterDiscard
+          -- the topmost matching card goes to the staging area first, as Ghostly Ruins reads
+          matchers <- (\ms -> [m | ReturnBeforeEncounterDeckResets m <- ms]) <$> getModifiers GameTarget
+          let returned = take 1 [c | c <- a.encounterDiscard, any (`cardMatches` c) matchers]
+          traverse_ (push . AddToStaging) returned
+          deck <- shuffleM $ filter (`notElem` returned) a.encounterDiscard
           pure $ a & encounterDeckL .~ deck & encounterDiscardL .~ []
         else pure a
     hiddenOf pid = Map.findWithDefault [] pid attrs.hiddenCards
