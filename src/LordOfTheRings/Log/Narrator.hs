@@ -275,6 +275,9 @@ narrationFor = \case
       | card <- filter ((== cid) . (.id)) player.discard
       ]
   ShuffleDiscardIntoDeck pid -> Just $ withPlayer pid \_ who -> one $ mechanic [ikeyPart "log.shufflesDiscardIntoDeck" ["player" ~> who]]
+  ShuffleTopOfDiscardIntoDeck pid n -> Just $ withPlayer pid \player who ->
+    let moved = min n (length player.discard)
+     in if moved > 0 then one $ mechanic [ikeyPart "log.shufflesTopOfDiscardIntoDeck" ["player" ~> who, "count" ~> moved]] else pure []
   MoveToBottomOfDeck pid cid -> Just $ withPlayer pid \player who ->
     pure
       [ mechanic [ikeyPart "log.movesToBottomOfDeck" ["player" ~> who, "card" ~> card]]
