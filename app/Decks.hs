@@ -28,6 +28,8 @@ import Data.Aeson.Key qualified as Key
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.Types (Parser)
 import Data.Aeson qualified as Aeson
+import Data.ByteString qualified as BS
+import Data.ByteString.Char8 qualified as BS8
 import Data.Char (isDigit)
 import Data.Map.Strict qualified as Map
 import Data.Text qualified as T
@@ -286,30 +288,51 @@ ringsdbPage kind ident = case kind of
   Decklist -> "https://ringsdb.com/decklist/view/" <> ident
   SharedDeck -> "https://ringsdb.com/deck/view/" <> ident
 
--- | Fetch a deck by kind and id. The URL is built here, never taken from the user.
+-- | Fetch a deck by kind and id. The URLs are built here, never taken from the user.
 fetchRingsdbDeck :: Manager -> RingsdbDeckKind -> Text -> IO (Either ImportError Value)
 fetchRingsdbDeck manager kind ringsdbDeck = do
-  attempt <- tryAny do
-    request <- parseRequest (unpack (ringsdbApi kind ringsdbDeck))
-    httpLbs request {requestHeaders = [("accept", "application/json"), ("user-agent", "lotr")]} manager
-  pure case attempt of
-    Left err -> Left (FetchFailed (pack (takeWhile (/= '\n') (show err))))
-    Right response -> case statusCode (responseStatus response) of
-      404 -> Left (FetchFailed ("RingsDB has no public decklist " <> ringsdbDeck))
-      status
-        | status >= 400 -> Left (FetchFailed ("RingsDB answered " <> tshow status))
-        | otherwise -> case eitherDecode (responseBody response) of
-            -- RingsDB answers an unknown path with an HTML page and a 200
-            Left _ -> Left (FetchFailed ("RingsDB did not return a deck for " <> ringsdbDeck))
-            -- the shared-deck endpoint refuses with a 200 and a reason
-            Right (Object o)
-              | Just (Bool False) <- KeyMap.lookup "success" o ->
-                  Left (FetchFailed (fromMaybe "RingsDB refused that deck" (KeyMap.lookup "error" o >>= asText)))
-            Right value -> Right value
+  fetched <- fromApi
+  case (kind, fetched) of
+    -- the API wants the owner to share every deck, but a deck shared by link alone
+    -- still shows on its page
+    (SharedDeck, Left refused) -> maybe (Left refused) Right <$> fromPage
+    _ -> pure fetched
  where
+  fetch url accept = tryAny do
+    request <- parseRequest (unpack url)
+    httpLbs request {requestHeaders = [("accept", accept), ("user-agent", "lotr")]} manager
+  fromPage =
+    fetch (ringsdbPage kind ringsdbDeck) "text/html" <&> \case
+      Right response | statusCode (responseStatus response) == 200 -> embeddedDeck (BS.toStrict (responseBody response))
+      _ -> Nothing
+  fromApi =
+    fetch (ringsdbApi kind ringsdbDeck) "application/json" <&> \case
+      Left err -> Left (FetchFailed (pack (takeWhile (/= '\n') (show err))))
+      Right response -> case statusCode (responseStatus response) of
+        404 -> Left (FetchFailed ("RingsDB has no public decklist " <> ringsdbDeck))
+        status
+          | status >= 400 -> Left (FetchFailed ("RingsDB answered " <> tshow status))
+          | otherwise -> case eitherDecode (responseBody response) of
+              -- RingsDB answers an unknown path with an HTML page and a 200
+              Left _ -> Left (FetchFailed ("RingsDB did not return a deck for " <> ringsdbDeck))
+              -- the shared-deck endpoint refuses with a 200 and a reason
+              Right (Object o)
+                | Just (Bool False) <- KeyMap.lookup "success" o ->
+                    Left (FetchFailed (fromMaybe "RingsDB refused that deck" (KeyMap.lookup "error" o >>= asText)))
+              Right value -> Right value
   asText = \case
     String t -> Just t
     _ -> Nothing
+
+-- | The deck a RingsDB deck page hands its script, on one line as
+-- @app.deck.init({...});@, in the shape the API sends.
+embeddedDeck :: ByteString -> Maybe Value
+embeddedDeck page = do
+  let rest = snd (BS.breakSubstring marker page)
+  guard (not (BS.null rest))
+  decodeStrict =<< BS.stripSuffix ");" (BS8.strip (BS8.takeWhile (/= '\n') (BS.drop (BS.length marker) rest)))
+ where
+  marker = "app.deck.init("
 
 -- | The whole import: fetch if asked to, parse, resolve.
 importDeck :: Manager -> CardDb -> ImportRequest -> IO (Either ImportError ParsedDeck)
