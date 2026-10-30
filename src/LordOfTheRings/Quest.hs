@@ -122,6 +122,10 @@ import LordOfTheRings.Quest.Cards.TheTrialOfPerseverance
 import LordOfTheRings.Quest.Cards.TheTrialOfIntuition
 import LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
 import LordOfTheRings.Quest.Cards.SearchTheRuins
+import LordOfTheRings.Quest.Cards.UnexpectedRescue
+import LordOfTheRings.Quest.Cards.GornakhsDungeons
+import LordOfTheRings.Quest.Cards.FlightFromMountGram
+import LordOfTheRings.Quest.Cards.StopTheExecutioners
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -276,5 +280,9 @@ allQuests =
         , SomeQuestCard theTrialOfIntuition
         , SomeQuestCard theAntleredCrownTheThreeTrials
         , SomeQuestCard searchTheRuins
+        , SomeQuestCard unexpectedRescue
+        , SomeQuestCard gornakhsDungeons
+        , SomeQuestCard flightFromMountGram
+        , SomeQuestCard stopTheExecutioners
         ]
     ]

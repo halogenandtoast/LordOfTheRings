@@ -156,6 +156,10 @@ import LordOfTheRings.Enemy.Cards.BoarsGuardian
 import LordOfTheRings.Enemy.Cards.WolfsGuardian
 import LordOfTheRings.Enemy.Cards.RavensGuardian
 import LordOfTheRings.Enemy.Cards.SpiritOfTheWild
+import LordOfTheRings.Enemy.Cards.JailorGornakh
+import LordOfTheRings.Enemy.Cards.CruelTorturer
+import LordOfTheRings.Enemy.Cards.DungeonGuard
+import LordOfTheRings.Enemy.Cards.GoblinTormentor
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -336,5 +340,9 @@ allEnemys =
         , SomeEnemyCard wolfsGuardian
         , SomeEnemyCard ravensGuardian
         , SomeEnemyCard spiritOfTheWild
+        , SomeEnemyCard jailorGornakh
+        , SomeEnemyCard cruelTorturer
+        , SomeEnemyCard dungeonGuard
+        , SomeEnemyCard goblinTormentor
         ]
     ]

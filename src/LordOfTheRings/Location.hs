@@ -166,6 +166,10 @@ import LordOfTheRings.Location.Cards.StoneBarrow
 import LordOfTheRings.Location.Cards.HallowedCircle
 import LordOfTheRings.Location.Cards.CursedForest
 import LordOfTheRings.Location.Cards.GrimFoothills
+import LordOfTheRings.Location.Cards.SouthernGate
+import LordOfTheRings.Location.Cards.PrisonCell
+import LordOfTheRings.Location.Cards.PatrolRoom
+import LordOfTheRings.Location.Cards.TunnelsOfMountGram
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -359,5 +363,9 @@ allLocations =
         , SomeLocationCard hallowedCircle
         , SomeLocationCard cursedForest
         , SomeLocationCard grimFoothills
+        , SomeLocationCard southernGate
+        , SomeLocationCard prisonCell
+        , SomeLocationCard patrolRoom
+        , SomeLocationCard tunnelsOfMountGram
         ]
     ]

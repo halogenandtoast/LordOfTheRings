@@ -139,6 +139,10 @@ import LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
 import LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
 import LordOfTheRings.Treachery.Cards.TheGuardiansFury
 import LordOfTheRings.Treachery.Cards.WildTenacity
+import LordOfTheRings.Treachery.Cards.SoundTheAlarm
+import LordOfTheRings.Treachery.Cards.FeebleAndWeary
+import LordOfTheRings.Treachery.Cards.CaptivesOfGornakh
+import LordOfTheRings.Treachery.Cards.Interrogation
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -302,5 +306,9 @@ allTreacherys =
         , SomeTreacheryCard curseOfTheWildMen
         , SomeTreacheryCard theGuardiansFury
         , SomeTreacheryCard wildTenacity
+        , SomeTreacheryCard soundTheAlarm
+        , SomeTreacheryCard feebleAndWeary
+        , SomeTreacheryCard captivesOfGornakh
+        , SomeTreacheryCard interrogation
         ]
     ]
