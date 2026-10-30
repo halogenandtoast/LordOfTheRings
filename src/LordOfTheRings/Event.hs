@@ -133,6 +133,12 @@ import LordOfTheRings.Event.Cards.MessageFromElrond
 import LordOfTheRings.Event.Cards.TightenOurBelts
 import LordOfTheRings.Event.Cards.RideThemDown
 import LordOfTheRings.Event.Cards.DontBeHasty
+import LordOfTheRings.Event.Cards.DoomHangsStill
+import LordOfTheRings.Event.Cards.HoldYourGround
+import LordOfTheRings.Event.Cards.LordsOfTheEldar
+import LordOfTheRings.Event.Cards.QuickEars
+import LordOfTheRings.Event.Cards.HourOfWrath
+import LordOfTheRings.Event.Cards.TaleOfTinuviel
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -279,5 +285,11 @@ allEvents =
         , SomeEventCard tightenOurBelts
         , SomeEventCard rideThemDown
         , SomeEventCard dontBeHasty
+        , SomeEventCard doomHangsStill
+        , SomeEventCard holdYourGround
+        , SomeEventCard lordsOfTheEldar
+        , SomeEventCard quickEars
+        , SomeEventCard hourOfWrath
+        , SomeEventCard taleOfTinuviel
         ]
     ]

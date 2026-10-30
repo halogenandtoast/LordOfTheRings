@@ -104,6 +104,11 @@ import LordOfTheRings.Attachment.Cards.DefenderOfTheWest
 import LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
 import LordOfTheRings.Attachment.Cards.WardenOfArnor
 import LordOfTheRings.Attachment.Cards.TheDaysRising
+import LordOfTheRings.Attachment.Cards.TheLongDefeat
+import LordOfTheRings.Attachment.Cards.FavorOfTheValar
+import LordOfTheRings.Attachment.Cards.SwordOfNumenor
+import LordOfTheRings.Attachment.Cards.WeatherStainedCloak
+import LordOfTheRings.Attachment.Cards.SwordThain
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -234,5 +239,10 @@ allAttachments =
         , SomeAttachmentCard theFallOfGilGalad
         , SomeAttachmentCard wardenOfArnor
         , SomeAttachmentCard theDaysRising
+        , SomeAttachmentCard theLongDefeat
+        , SomeAttachmentCard favorOfTheValar
+        , SomeAttachmentCard swordOfNumenor
+        , SomeAttachmentCard weatherStainedCloak
+        , SomeAttachmentCard swordThain
         ]
     ]

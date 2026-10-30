@@ -144,6 +144,12 @@ allEventCards =
       , tightenOurBelts
       , rideThemDown
       , dontBeHasty
+      , doomHangsStill
+      , holdYourGround
+      , lordsOfTheEldar
+      , quickEars
+      , hourOfWrath
+      , taleOfTinuviel
       ]
 
 everVigilant :: CardDef
@@ -555,3 +561,24 @@ rideThemDown = event "08142" "Ride Them Down" Spirit (StaticCost 2)
 
 dontBeHasty :: CardDef
 dontBeHasty = event "08144" "Don't Be Hasty!" Lore (StaticCost 0)
+
+doomHangsStill :: CardDef
+doomHangsStill = event "10117" "Doom Hangs Still" Leadership (StaticCost 5)
+
+holdYourGround :: CardDef
+holdYourGround = event "10119" "Hold Your Ground!" Tactics (StaticCost 1)
+
+lordsOfTheEldar :: CardDef
+lordsOfTheEldar = (event "10121" "Lords of the Eldar" Spirit (StaticCost 3)) {cdPlayableFrom = FromDiscardOnly}
+
+quickEars :: CardDef
+quickEars = event "10123" "Quick Ears" Lore (StaticCost 1)
+
+hourOfWrath :: CardDef
+hourOfWrath = event "10144" "Hour of Wrath" Tactics (StaticCost 4)
+
+taleOfTinuviel :: CardDef
+taleOfTinuviel =
+  (event "10146" "Tale of Tinúviel" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }

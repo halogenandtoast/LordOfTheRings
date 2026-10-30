@@ -111,6 +111,11 @@ allAttachmentCards =
       , theFallOfGilGalad
       , wardenOfArnor
       , theDaysRising
+      , theLongDefeat
+      , favorOfTheValar
+      , swordOfNumenor
+      , weatherStainedCloak
+      , swordThain
       ]
 
 stewardOfGondor :: CardDef
@@ -762,4 +767,39 @@ theDaysRising =
   (attachment "08139" "The Day's Rising" Leadership (StaticCost 1))
     { cdUnique = True
     , cdCardTraits = setFromList [Song]
+    }
+
+theLongDefeat :: CardDef
+theLongDefeat =
+  (attachment "10122" "The Long Defeat" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+favorOfTheValar :: CardDef
+favorOfTheValar =
+  (attachment "10124" "Favor of the Valar" Neutral (StaticCost 3))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+swordOfNumenor :: CardDef
+swordOfNumenor =
+  (attachment "10142" "Sword of Númenor" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+weatherStainedCloak :: CardDef
+weatherStainedCloak =
+  (attachment "10148" "Weather-stained Cloak" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+swordThain :: CardDef
+swordThain =
+  (attachment "10149" "Sword-thain" Neutral (StaticCost 4))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Title]
     }
