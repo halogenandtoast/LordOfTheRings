@@ -77,3 +77,9 @@ data GrappleLocation
   | HighestPrintedQuestPoints
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | Whether the keyword is Grapple, whatever its parenthetical.
+isGrapple :: Keyword -> Bool
+isGrapple = \case
+  Grapple _ -> True
+  _ -> False

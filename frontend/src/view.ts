@@ -126,6 +126,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       ([t, modifiers]) => t.tag === target.tag && t.contents === target.contents && modifiers.some((m) => m.modifierType.tag === 'ConsideredOutOfPlay'),
     )
 
+  // a Grapple enemy lies facedown on the location it grapples (The Thing in the Depths)
+  const grappled = (e: Entity, kind: keyof ServerGame['entities']) =>
+    kind === 'enemies' && e.placement?.tag === 'AttachedTo' && (e.placement.contents as Target)?.tag === 'LocationTarget'
+
   // a guarded objective is attached to the card guarding it for as long as that card is in play
   const guardInPlay = (guard: string | null | undefined) =>
     guard && [...Object.values(entities.enemies), ...Object.values(entities.locations), ...Object.values(entities.treacheries ?? {})].some((e) => e.cardId === guard) ? guard : null
@@ -146,7 +150,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       outOfPlay: heldOutOfPlay(target),
       flipped: e.flipped ?? false,
       otherSide: e.otherSide ?? undefined,
-      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' || e.cardCode === 'ReanimatedDead' ? 'player' : undefined,
+      facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' || e.cardCode === 'ReanimatedDead' ? 'player' : grappled(e, kind) ? 'encounter' : undefined,
+      ...(grappled(e, kind) ? { name: ikey('log.grappled') } : {}),
       attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard),
       counting: [...(e.committed ? ['willpower'] : []), ...(threatening.has(e.cardId) ? ['threat'] : [])],
     })
