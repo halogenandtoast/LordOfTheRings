@@ -8,7 +8,6 @@ module LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (
   eliminationLevelsLowered,
   emptyMugAbility,
   removeCardThatReducedThreat,
-  returnEngagedEnemiesToStaging,
   canRemoveQuestTimeCounter,
   attackingEnemyGetsBonus,
 ) where
@@ -29,7 +28,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters, EliminationThreatModifier, UndefendedDamageTo))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Placement (Placement (StagingArea), placementController)
+import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (scenarioMeta)
 import LordOfTheRings.Source
@@ -82,12 +81,6 @@ emptyMugAbility a idx =
   restricted a idx (CardInVictoryDisplay $ cardIs Locations.theEmptyMug)
     $ forced
     $ ThreatReducedByPlayerCardWindow After
-
--- | "Return all engaged enemies to the staging area."
-returnEngagedEnemiesToStaging :: ReverseQueue m => m ()
-returnEngagedEnemiesToStaging = do
-  engaged <- select (EnemyEngagedWith AnyPlayer)
-  for_ engaged \e -> placeEnemy e StagingArea
 
 {- | Whether a time counter can be removed from the current quest, as "the first player
 either removes 1 time counter from the current quest or..." offers: one is there, and

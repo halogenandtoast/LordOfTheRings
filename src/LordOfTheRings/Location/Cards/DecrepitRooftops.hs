@@ -3,7 +3,6 @@ module LordOfTheRings.Location.Cards.DecrepitRooftops (decrepitRooftops) where
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (ActiveLocation))
-import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (returnEngagedEnemiesToStaging)
 
 newtype DecrepitRooftops = DecrepitRooftops LocationAttrs
   deriving anyclass (IsLocation)

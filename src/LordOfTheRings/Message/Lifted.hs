@@ -314,6 +314,12 @@ removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
 placeEnemy :: ReverseQueue m => EnemyId -> Placement -> m ()
 placeEnemy eid placement = push $ PlaceEnemy eid placement
 
+-- | "Return all engaged enemies to the staging area."
+returnEngagedEnemiesToStaging :: ReverseQueue m => m ()
+returnEngagedEnemiesToStaging = do
+  engaged <- select (EnemyEngagedWith AnyPlayer)
+  for_ engaged \e -> placeEnemy e StagingArea
+
 {- | The player looks at the top card of the encounter deck; with @mayBottom@ they may
 then move it to the bottom.
 -}
