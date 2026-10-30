@@ -43,6 +43,8 @@ data QuestAttrs = QuestAttrs
   , questOwner :: Maybe PlayerId
   -- ^ a player side quest's owner; it waits in the staging area until the players quest
   -- against it
+  , questUnderneath :: [Card]
+  -- ^ the cards facedown underneath it, out of play, as Lost in the Wilderness's
   }
   deriving stock (Show, Eq, Generic)
 
@@ -52,7 +54,7 @@ instance ToJSON QuestAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "quest")
 
 instance FromJSON QuestAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "quest") . withDefaults [("owner", toJSON (Nothing :: Maybe PlayerId))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "quest") . withDefaults [("owner", toJSON (Nothing :: Maybe PlayerId)), ("underneath", toJSON ([] :: [Card]))]
 
 quest :: (QuestAttrs -> a) -> CardDef -> QuestCard a
 quest f cardDef =
@@ -67,6 +69,7 @@ quest f cardDef =
             , questTokens = mempty
             , questFlipped = False
             , questOwner = Nothing
+            , questUnderneath = []
             }
     }
 
@@ -178,6 +181,9 @@ instance HasField "flipped" QuestAttrs Bool where
 
 instance HasField "flipped" Quest Bool where
   getField = (.flipped) . toAttrs
+
+instance HasField "underneath" QuestAttrs [Card] where
+  getField = questUnderneath
 
 instance HasField "cardId" QuestAttrs CardId where
   getField = questCardId

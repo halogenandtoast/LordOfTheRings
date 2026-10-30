@@ -149,6 +149,10 @@ allTreacheryCards =
       , theSkyDarkens
       , vileAffliction
       , daechanarsWill
+      , suddenAssault
+      , surprisingSpeed
+      , pressingNeeds
+      , weightOfResponsibility
       ]
 
 deepDeepDark :: CardDef
@@ -912,3 +916,27 @@ vileAffliction =
 
 daechanarsWill :: CardDef
 daechanarsWill = (treachery "10138" "Daechanar's Will" TheBattleOfCarnDum 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+suddenAssault :: CardDef
+suddenAssault = (treachery "09021" "Sudden Assault" IntrudersInChetwood 2) {cdEasyModeQuantity = Just 0}
+
+surprisingSpeed :: CardDef
+surprisingSpeed =
+  (treachery "09022" "Surprising Speed" IntrudersInChetwood 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+pressingNeeds :: CardDef
+pressingNeeds =
+  (treachery "09049" "Pressing Needs" EriadorWilds 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdEasyModeQuantity = Just 1
+    }
+
+weightOfResponsibility :: CardDef
+weightOfResponsibility =
+  (treachery "09050" "Weight of Responsibility" EriadorWilds 2)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }

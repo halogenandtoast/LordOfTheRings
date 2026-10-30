@@ -142,6 +142,10 @@ import LordOfTheRings.Treachery.Cards.WildTenacity
 import LordOfTheRings.Treachery.Cards.TheSkyDarkens
 import LordOfTheRings.Treachery.Cards.VileAffliction
 import LordOfTheRings.Treachery.Cards.DaechanarsWill
+import LordOfTheRings.Treachery.Cards.SuddenAssault
+import LordOfTheRings.Treachery.Cards.SurprisingSpeed
+import LordOfTheRings.Treachery.Cards.PressingNeeds
+import LordOfTheRings.Treachery.Cards.WeightOfResponsibility
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -308,5 +312,9 @@ allTreacherys =
         , SomeTreacheryCard theSkyDarkens
         , SomeTreacheryCard vileAffliction
         , SomeTreacheryCard daechanarsWill
+        , SomeTreacheryCard suddenAssault
+        , SomeTreacheryCard surprisingSpeed
+        , SomeTreacheryCard pressingNeeds
+        , SomeTreacheryCard weightOfResponsibility
         ]
     ]

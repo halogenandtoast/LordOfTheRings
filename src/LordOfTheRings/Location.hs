@@ -170,6 +170,11 @@ import LordOfTheRings.Location.Cards.AccursedBattlefield
 import LordOfTheRings.Location.Cards.MountainsOfAngmar
 import LordOfTheRings.Location.Cards.BlightOfCarnDum
 import LordOfTheRings.Location.Cards.FortressWalls
+import LordOfTheRings.Location.Cards.ChetwoodForest
+import LordOfTheRings.Location.Cards.BordersOfBreeLand
+import LordOfTheRings.Location.Cards.OutlyingHomestead
+import LordOfTheRings.Location.Cards.RuggedCountry
+import LordOfTheRings.Location.Cards.ShroudedHills
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -367,5 +372,10 @@ allLocations =
         , SomeLocationCard mountainsOfAngmar
         , SomeLocationCard blightOfCarnDum
         , SomeLocationCard fortressWalls
+        , SomeLocationCard chetwoodForest
+        , SomeLocationCard bordersOfBreeLand
+        , SomeLocationCard outlyingHomestead
+        , SomeLocationCard ruggedCountry
+        , SomeLocationCard shroudedHills
         ]
     ]

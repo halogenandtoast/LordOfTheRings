@@ -125,6 +125,11 @@ import LordOfTheRings.Quest.Cards.SearchTheRuins
 import LordOfTheRings.Quest.Cards.TheClutchesOfCarnDum
 import LordOfTheRings.Quest.Cards.MidwintersCrux
 import LordOfTheRings.Quest.Cards.FuriousCharge
+import LordOfTheRings.Quest.Cards.OrcRearguard
+import LordOfTheRings.Quest.Cards.RescueIarion
+import LordOfTheRings.Quest.Cards.OrcAmbush
+import LordOfTheRings.Quest.Cards.LostInTheWilderness
+import LordOfTheRings.Quest.Cards.StopTheWarParty
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -282,5 +287,10 @@ allQuests =
         , SomeQuestCard theClutchesOfCarnDum
         , SomeQuestCard midwintersCrux
         , SomeQuestCard furiousCharge
+        , SomeQuestCard orcRearguard
+        , SomeQuestCard rescueIarion
+        , SomeQuestCard orcAmbush
+        , SomeQuestCard lostInTheWilderness
+        , SomeQuestCard stopTheWarParty
         ]
     ]

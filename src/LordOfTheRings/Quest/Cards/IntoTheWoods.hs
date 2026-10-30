@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.IntoTheWoods (intoTheWoods) where
 
 import LordOfTheRings.Card (genEncounterCard, toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -30,8 +29,7 @@ instance RunMessage IntoTheWoods where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       edge <- headMay <$> copies Locations.edgeOfFangorn
       for_ edge \card -> do
         removeFromEncounterDeck card
@@ -40,8 +38,9 @@ instance RunMessage IntoTheWoods where
       shuffleEncounterDeck
       players <- length <$> getRemainingPlayers
       revealEncounterCards (players - 1)
-      IntoTheWoods <$> runMessage msg attrs
-    DoStep 1 (Flip (isTarget attrs -> True)) -> do
+      turnOver attrs
+      pure q
+    DoStep 1 (PerformSetup (isTarget attrs -> True)) -> do
       edge <- selectOne (LocationWithCardCode $ toCardCode Locations.edgeOfFangorn)
       mugash <- headMay <$> copies Objectives.mugashObjective
       for_ ((,) <$> edge <*> mugash) \(lid, card) -> do

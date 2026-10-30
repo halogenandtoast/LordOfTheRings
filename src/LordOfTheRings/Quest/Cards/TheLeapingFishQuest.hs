@@ -3,7 +3,6 @@ module LordOfTheRings.Quest.Cards.TheLeapingFishQuest (theLeapingFishQuest) wher
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Frontend
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -25,8 +24,7 @@ instance RunMessage TheLeapingFishQuest where
     DoStep 7 Setup -> do
       askToPerformSetup attrs
       pure q
-    Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      send $ FlipCard attrs.cardId
+    PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let find' def = find ((== toCardCode def) . toCardCode) deck
       for_ (find' Locations.theLeapingFish) \fish -> do
@@ -40,6 +38,9 @@ instance RunMessage TheLeapingFishQuest where
           questionLabeled "alcaronsScroll.attach"
           causedBy attrs
           targets heroes (putObjectiveIntoPlayAttached scroll)
+      turnOver attrs
+      pure q
+    Flip (isTarget attrs -> True) | not attrs.flipped -> do
       eachPlayer \p -> searchEncounterDeckToStaging p (cardIs Enemies.harborThug)
       pure $ TheLeapingFishQuest $ attrs {questFlipped = True}
     _ -> TheLeapingFishQuest <$> runMessage msg attrs

@@ -146,6 +146,11 @@ allQuestCards =
       , theClutchesOfCarnDum
       , midwintersCrux
       , furiousCharge
+      , orcRearguard
+      , rescueIarion
+      , orcAmbush
+      , lostInTheWilderness
+      , stopTheWarParty
       ]
 
 theDrippingWalls :: CardDef
@@ -545,3 +550,31 @@ midwintersCrux = quest "10126" "Midwinter's Crux" TheBattleOfCarnDum 2 15
 
 furiousCharge :: CardDef
 furiousCharge = (encounterSideQuest "10139" "Furious Charge" TheBattleOfCarnDum 5) {cdVictoryPoints = Just 10}
+
+orcRearguard :: CardDef
+orcRearguard = (encounterSideQuest "09023" "Orc Rearguard" IntrudersInChetwood 3) {cdVictoryPoints = Just 10}
+
+rescueIarion :: CardDef
+rescueIarion =
+  (encounterSideQuest "09024" "Rescue Iârion" IntrudersInChetwood 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Time 4]
+    , cdWhenRevealed = True
+    }
+
+orcAmbush :: CardDef
+orcAmbush =
+  (encounterSideQuest "09046" "Orc Ambush" AngmarOrcs 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+lostInTheWilderness :: CardDef
+lostInTheWilderness =
+  (encounterSideQuest "09051" "Lost in the Wilderness" EriadorWilds 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+stopTheWarParty :: CardDef
+stopTheWarParty = quest "09068" "Stop the War Party" IntrudersInChetwood 1 30

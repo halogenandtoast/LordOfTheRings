@@ -160,6 +160,10 @@ import LordOfTheRings.Enemy.Cards.Thaurdir
 import LordOfTheRings.Enemy.Cards.CarnDumGarrison
 import LordOfTheRings.Enemy.Cards.OrcGrunts
 import LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
+import LordOfTheRings.Enemy.Cards.OrcWarParty
+import LordOfTheRings.Enemy.Cards.AngmarOrc
+import LordOfTheRings.Enemy.Cards.AngmarMarauder
+import LordOfTheRings.Enemy.Cards.AngmarCaptain
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -345,5 +349,9 @@ allEnemys =
         , SomeEnemyCard carnDumGarrison
         , SomeEnemyCard orcGrunts
         , SomeEnemyCard werewolfOfAngmar
+        , SomeEnemyCard orcWarParty
+        , SomeEnemyCard angmarOrc
+        , SomeEnemyCard angmarMarauder
+        , SomeEnemyCard angmarCaptain
         ]
     ]
