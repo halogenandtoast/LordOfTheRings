@@ -95,6 +95,7 @@ export interface ServerGame {
     encounterDeckSize: number
     encounterDiscard: Card[]
     victoryDisplay: Card[]
+    setAside: Card[]
     /** The ids of the hidden cards facedown in each player's play area (The Blood of Gondor). */
     hiddenCards?: Record<string, string[]>
   }

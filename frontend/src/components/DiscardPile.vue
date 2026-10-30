@@ -8,7 +8,7 @@ const { cards, back, kind = 'discard', choices = [] } = defineProps<{
   cards: CardView[]
   choices?: ChoiceView[]
   back: 'player' | 'encounter' | 'victory'
-  kind?: 'discard' | 'victory'
+  kind?: 'discard' | 'victory' | 'setAside'
 }>()
 const emit = defineEmits<{ choose: [index: number] }>()
 

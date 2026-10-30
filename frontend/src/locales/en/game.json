@@ -65,6 +65,7 @@
     "scenario": "scenario",
     "staging": "staging",
     "victory": "victory",
+    "setAside": "set aside",
     "threatArea": "threat area",
     "heroes": "heroes",
     "playArea": "play area",
@@ -102,6 +103,10 @@
   "victory": {
     "title": "Victory display ({count}) — click to view",
     "header": "Victory display ({count})"
+  },
+  "setAside": {
+    "title": "Set aside ({count}) — click to view",
+    "header": "Set aside ({count})"
   },
   "tally": {
     "label": "Quest tally",

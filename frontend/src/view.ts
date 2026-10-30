@@ -346,6 +346,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       encounterDiscard: game.scenario.encounterDiscard.length,
       discard: game.scenario.encounterDiscard.map((c) => card(c.cardCode, c.id)),
       victory: game.scenario.victoryDisplay.map((c) => card(c.cardCode, c.id)),
+      setAside: game.scenario.setAside.map((c) => card(c.cardCode, c.id)),
       victoryPoints: game.scenario.victoryDisplay.reduce((total, c) => total + (def(c.cardCode).victoryPoints ?? 0), 0),
     },
     players,

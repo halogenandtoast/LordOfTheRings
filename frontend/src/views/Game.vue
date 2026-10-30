@@ -262,6 +262,10 @@ watch(question, (asked) => {
             <span class="band-label">{{ $t('game.bands.victory') }}</span>
             <DiscardPile :cards="scenario.victory" back="victory" kind="victory" />
           </section>
+          <section v-if="scenario.setAside.length" class="band victory set-aside">
+            <span class="band-label">{{ $t('game.bands.setAside') }}</span>
+            <DiscardPile :cards="scenario.setAside" back="encounter" kind="setAside" />
+          </section>
         </div>
 
         <!-- in front of the player, as engaged enemies sit on the table -->
