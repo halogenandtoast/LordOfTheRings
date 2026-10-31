@@ -10,6 +10,7 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
+import LordOfTheRings.Scenario.Scenarios.MirkwoodPaths (campaignPrisoner)
 
 newtype TheNecromancersTower = TheNecromancersTower QuestAttrs
   deriving anyclass (IsQuest, HasAbilities)
@@ -46,6 +47,9 @@ instance RunMessage TheNecromancersTower where
       pure $ TheNecromancersTower $ attrs {questFlipped = True}
     WhenRevealed (isTarget attrs -> True) -> do
       heroes <- select AnyHero
-      for_ (nonEmpty heroes) \hs -> push . TakePrisoner =<< uniform (toList hs)
+      -- in campaign mode, the prisoner the Campaign Log names (Escape from Dol Guldur's
+      -- campaign card)
+      named <- campaignPrisoner
+      for_ (nonEmpty heroes) \hs -> push . TakePrisoner =<< maybe (uniform (toList hs)) pure named
       pure q
     _ -> TheNecromancersTower <$> runConditionalStage ((>= 1) <$> claimedObjectives) msg attrs

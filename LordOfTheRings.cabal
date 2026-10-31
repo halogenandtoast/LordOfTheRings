@@ -1459,6 +1459,7 @@ library
       LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers
       LordOfTheRings.Scenario.Scenarios.IntrudersInChetwood
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
+      LordOfTheRings.Scenario.Scenarios.MirkwoodPaths
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
       LordOfTheRings.Scenario.Scenarios.PerilInPelargir
       LordOfTheRings.Scenario.Scenarios.PerilInPelargir.Helpers
@@ -1893,6 +1894,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.CombatPhaseSpec
       LordOfTheRings.Core.AlliesAndAttachmentsSpec
       LordOfTheRings.Core.AnduinEncounterSpec
+      LordOfTheRings.Core.CampaignSpec
       LordOfTheRings.Core.CancelSpec
       LordOfTheRings.Core.CombatCardsSpec
       LordOfTheRings.Core.EscapeEncounterSpec

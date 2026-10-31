@@ -1549,3 +1549,13 @@ createEnemyEngaged pid card = do
   eid <- getRandom
   push $ CreateEnemyEngaged pid eid card
   pure eid
+
+-- | The attachment card, from out of play, goes onto the host under the player without
+-- being played, as a campaign card attaches a boon.
+attachOutOfPlay :: (ReverseQueue m, Targetable host) => PlayerId -> PlayerCard -> host -> m ()
+attachOutOfPlay pid card = push . PlayAttachmentOn pid card . toTarget
+
+-- | The objective-ally card, from out of play, enters play under the player, as Mendor
+-- under the first player.
+putObjectiveAllyIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+putObjectiveAllyIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid

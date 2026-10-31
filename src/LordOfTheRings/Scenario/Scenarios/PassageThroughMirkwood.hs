@@ -1,9 +1,14 @@
 module LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood (passageThroughMirkwood) where
 
+import LordOfTheRings.Campaign
 import LordOfTheRings.EncounterSet qualified as EncounterSet
-import LordOfTheRings.Matcher (getLead)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Matcher (getLead, getPlayerOrder)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.MirkwoodPaths (putMendorIntoPlay)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype PassageThroughMirkwood = PassageThroughMirkwood ScenarioAttrs
   deriving anyclass (IsScenario)
@@ -32,14 +37,30 @@ instance RunMessage PassageThroughMirkwood where
       push . AdvanceToQuest =<< uniform stages
       pure $ PassageThroughMirkwood $ attrs & questDeckL .~ []
     -- The stage comes out on its first side, which both paths share, and the lead turns
-    -- it over to see which path it is.
+    -- it over to see which path it is; the campaign card's resolution reads which.
     AdvanceToQuest card | isChosenPath card -> do
       putQuestIntoPlay card
       lead <- getLead
       chooseOneM lead do
         questionLabeledWith "revealPath" []
         targeting card $ push $ Flip (toTarget card)
-      pure $ PassageThroughMirkwood attrs
+      pure $ PassageThroughMirkwood $ attrs {scenarioMeta = toJSON (toCardCode card)}
+    -- Campaign: Setup: Put Mendor into play, under the first player, chosen by now.
+    DoStep 4 Setup | isJust attrs.campaign -> do
+      putMendorIntoPlay
+      PassageThroughMirkwood <$> runMessage msg attrs
+    -- Resolution: Each player earns 1 copy of the Mendor's Support boon card. If Stage 3B
+    -- was Beorn's Path, add the Ungoliant's Swarm burden card to the Campaign Pool; if it
+    -- was Don't Leave the Path, the Lingering Venom burden card.
+    ResolveCampaign | Just l <- attrs.campaign -> do
+      seats <- length <$> getPlayerOrder
+      let support = [PoolCard (toCardCode Events.mendorsSupport) (Just seat) Nothing | seat <- [0 .. seats - 1]]
+          burden
+            | attrs.meta == toJSON (toCardCode Quests.aChosenPathBeornsPath) = [Enemies.ungoliantsSwarm]
+            | attrs.meta == toJSON (toCardCode Quests.aChosenPathDontLeaveThePath) = [Treacheries.lingeringVenom]
+            | otherwise = []
+          l' = foldl' (flip addToPool) l (support <> [PoolCard (toCardCode b) Nothing Nothing | b <- burden])
+      PassageThroughMirkwood <$> runMessage msg (attrs {scenarioCampaign = Just l'})
     _ -> PassageThroughMirkwood <$> runMessage msg attrs
    where
     isChosenPath = (`elem` map toCardCode [Quests.aChosenPathDontLeaveThePath, Quests.aChosenPathBeornsPath]) . toCardCode

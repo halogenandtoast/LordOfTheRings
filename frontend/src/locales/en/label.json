@@ -1567,5 +1567,8 @@
   },
   "umbarPatrol": {
     "return": "Umbar Patrol: choose an enemy engaged with you to return to the staging area"
+  },
+  "campaign": {
+    "attachTo": "Choose a hero to attach it to"
   }
 }
