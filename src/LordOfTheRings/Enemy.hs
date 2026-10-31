@@ -259,6 +259,9 @@ import LordOfTheRings.Enemy.Cards.DeadlyMarshAdder
 import LordOfTheRings.Enemy.Cards.SwarmsOfMosquitos
 import LordOfTheRings.Enemy.Cards.BellachsBodyguard
 import LordOfTheRings.Enemy.Cards.LittleSnuffler
+import LordOfTheRings.Enemy.Cards.DunlendingHorde
+import LordOfTheRings.Enemy.Cards.RavenClanElite
+import LordOfTheRings.Enemy.Cards.RavenClawDruid
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -543,5 +546,8 @@ allEnemys =
         , SomeEnemyCard swarmsOfMosquitos
         , SomeEnemyCard bellachsBodyguard
         , SomeEnemyCard littleSnuffler
+        , SomeEnemyCard dunlendingHorde
+        , SomeEnemyCard ravenClanElite
+        , SomeEnemyCard ravenClawDruid
         ]
     ]

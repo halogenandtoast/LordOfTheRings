@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 module LordOfTheRings.RingMaker.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
@@ -12,7 +11,8 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (EncounterPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (celebrimborsSecret, theDunlandTrap, theNinInEilph, theThreeTrials, troubleInTharbad)
+import LordOfTheRings.Scenario (celebrimborsSecret, theAntleredCrown, theDunlandTrap, theNinInEilph, theThreeTrials, troubleInTharbad)
+import LordOfTheRings.Scenario.Scenarios.TheAntleredCrown.Helpers qualified as Raven
 import LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers (cardsUnderOrcsSearch)
 import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (eliminationLowering)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck), modeL, scenarioMeta, victoryDisplayL)
@@ -334,3 +334,40 @@ spec = describe "The Ring-maker Nightmare Decks" do
       reveal Treacheries.closingIn [Locations.bonesOfHollin]
       cardsUnderOrcsSearch `shouldReturn` 1
       getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+  describe "The Antlered Crown" do
+    it "builds the nightmare deck, Dunlending Horde in the Raven deck" . nightmare theAntleredCrown $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.ravenSkirmisher, Locations.ravenWarCamp, Locations.ravenStronghold, Enemies.dunlendingHorde]
+        `shouldBe` [0, 1, 4, 0]
+      ravens <- getsGame (Raven.ravenDeck . Raven.getMeta . toAttrs . (.scenario))
+      map (`copies` ravens) [Enemies.dunlendingHorde, Enemies.dunlandProwler, Enemies.dunlendingBandit] `shouldBe` [2, 2, 0]
+
+    it "keeps player card effects from discarding a location with time counters" . nightmare theAntleredCrown $ \_ -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.ravenStronghold
+      lid <- locationOf Locations.ravenStronghold
+      run $ PlaceTokens GameSource (toTarget lid) TimeCounter 1
+      getModifiers lid >>= (`shouldSatisfy` elem CannotBeDiscardedByPlayerCards)
+
+    it "Dunlending Horde takes no non-combat damage" . nightmare theAntleredCrown $ \_ -> do
+      staged Enemies.dunlendingHorde
+      eid <- enemyOf Enemies.dunlendingHorde
+      run $ DealDamage GameSource (toTarget eid) 3
+      getDamage (toTarget eid) `shouldReturn` 0
+
+    it "Raven Claw Druid's shadow adds the active location's Time X to the attack" . nightmare theAntleredCrown $ \pid -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.ravenStronghold
+      eid <- engaged pid Enemies.dunlendingHorde
+      shadow pid eid Enemies.ravenClawDruid []
+      getEnemyAttack eid `shouldReturn` 9
+
+    it "Raven Talisman adds the first player's hand size to the staging threat" . nightmare theAntleredCrown $ \pid -> do
+      reveal Treacheries.ravenTalisman []
+      n <- handSize pid
+      getStagingThreat `shouldReturn` n
+
+    it "Gathering Forces adds the top 2 cards of the Raven deck to the staging area" . nightmare theAntleredCrown $ \_ -> do
+      run $ DoStep 1 Setup
+      reveal Treacheries.gatheringForces []
+      enemyCount `shouldReturn` 2

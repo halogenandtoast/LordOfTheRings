@@ -222,6 +222,8 @@ import LordOfTheRings.Treachery.Cards.RottenStench
 import LordOfTheRings.Treachery.Cards.HatefulSearch
 import LordOfTheRings.Treachery.Cards.SauronsAgent
 import LordOfTheRings.Treachery.Cards.ClosingIn
+import LordOfTheRings.Treachery.Cards.RavenTalisman
+import LordOfTheRings.Treachery.Cards.GatheringForces
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -468,5 +470,7 @@ allTreacherys =
         , SomeTreacheryCard hatefulSearch
         , SomeTreacheryCard sauronsAgent
         , SomeTreacheryCard closingIn
+        , SomeTreacheryCard ravenTalisman
+        , SomeTreacheryCard gatheringForces
         ]
     ]

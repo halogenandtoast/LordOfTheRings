@@ -456,6 +456,7 @@ library
       LordOfTheRings.Enemy.Cards.DunlandRaider
       LordOfTheRings.Enemy.Cards.DunlandTribesman
       LordOfTheRings.Enemy.Cards.DunlendingBandit
+      LordOfTheRings.Enemy.Cards.DunlendingHorde
       LordOfTheRings.Enemy.Cards.DurinsBane
       LordOfTheRings.Enemy.Cards.Dwimmerlaik
       LordOfTheRings.Enemy.Cards.EastBightPatrol
@@ -557,6 +558,8 @@ library
       LordOfTheRings.Enemy.Cards.RaidLeader
       LordOfTheRings.Enemy.Cards.RangingGoblin
       LordOfTheRings.Enemy.Cards.RavenChief
+      LordOfTheRings.Enemy.Cards.RavenClanElite
+      LordOfTheRings.Enemy.Cards.RavenClawDruid
       LordOfTheRings.Enemy.Cards.RavensGuardian
       LordOfTheRings.Enemy.Cards.RavenSkirmisher
       LordOfTheRings.Enemy.Cards.RavenSpirit
@@ -1013,6 +1016,7 @@ library
       LordOfTheRings.Location.Cards.HiddenAlleyway
       LordOfTheRings.Location.Cards.HiddenCove
       LordOfTheRings.Location.Cards.HiddenEyot
+      LordOfTheRings.Location.Cards.HighlandsOfDunland
       LordOfTheRings.Location.Cards.HillBarrow
       LordOfTheRings.Location.Cards.HillsOfDunland
       LordOfTheRings.Location.Cards.HithaeglirFoothills
@@ -1066,6 +1070,7 @@ library
       LordOfTheRings.Location.Cards.RaurosFalls
       LordOfTheRings.Location.Cards.RavenChiefsCamp
       LordOfTheRings.Location.Cards.RavenCountry
+      LordOfTheRings.Location.Cards.RavenStronghold
       LordOfTheRings.Location.Cards.RavenVillage
       LordOfTheRings.Location.Cards.RavenWarCamp
       LordOfTheRings.Location.Cards.Rhosgobel
@@ -1644,6 +1649,7 @@ library
       LordOfTheRings.Treachery.Cards.FromTheDepths
       LordOfTheRings.Treachery.Cards.FuriousRainstorm
       LordOfTheRings.Treachery.Cards.FuryAndMalice
+      LordOfTheRings.Treachery.Cards.GatheringForces
       LordOfTheRings.Treachery.Cards.GatheringGround
       LordOfTheRings.Treachery.Cards.GetThatDwarf
       LordOfTheRings.Treachery.Cards.GollumsAnguish
@@ -1708,6 +1714,7 @@ library
       LordOfTheRings.Treachery.Cards.RagingSquall
       LordOfTheRings.Treachery.Cards.RaisingTheCry
       LordOfTheRings.Treachery.Cards.RammingSpeed
+      LordOfTheRings.Treachery.Cards.RavenTalisman
       LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
       LordOfTheRings.Treachery.Cards.RestlessEvil
       LordOfTheRings.Treachery.Cards.RoastedSlowly

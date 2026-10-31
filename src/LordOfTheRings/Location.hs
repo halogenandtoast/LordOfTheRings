@@ -282,6 +282,8 @@ import LordOfTheRings.Location.Cards.DesolateMeadow
 import LordOfTheRings.Location.Cards.PeatBog
 import LordOfTheRings.Location.Cards.BonesOfHollin
 import LordOfTheRings.Location.Cards.DustyLabyrinth
+import LordOfTheRings.Location.Cards.RavenStronghold
+import LordOfTheRings.Location.Cards.HighlandsOfDunland
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -605,5 +607,7 @@ allLocations =
         , SomeLocationCard peatBog
         , SomeLocationCard bonesOfHollin
         , SomeLocationCard dustyLabyrinth
+        , SomeLocationCard ravenStronghold
+        , SomeLocationCard highlandsOfDunland
         ]
     ]

@@ -1647,5 +1647,15 @@
   },
   "dustyLabyrinth": {
     "place": "Choose a card from your hand to place facedown underneath The Orcs' Search"
+  },
+  "ravenClanElite": {
+    "choose": "Raven Clan Elite: choose one",
+    "removeTimeCounter": "Remove 1 time counter from a location in play",
+    "attack": "Raven Clan Elite makes an immediate attack against the first player"
+  },
+  "highlandsOfDunland": {
+    "choose": "Highlands of Dunland: choose one",
+    "removeTimeCounter": "Remove 1 time counter from a location in play",
+    "return": "Return the attacking enemy to the staging area after this attack"
   }
 }
