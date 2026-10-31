@@ -370,6 +370,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     started: true,
     round: game.round,
     phase: phases[game.phase] ?? game.phase,
+    score: game.score,
     outcome: game.outcome === 'Won' ? 'WON' : game.outcome === 'Lost' ? 'LOST' : null,
     over: game.outcome !== null,
     question: asked ? toQuestion(asked[0], asked[1]) : null,

@@ -87,6 +87,7 @@ export interface ServerPlayer {
 }
 
 export interface ServerGame {
+  score?: import('./types').ScoreView
   players: Record<string, ServerPlayer>
   playerOrder: string[]
   firstPlayer: string

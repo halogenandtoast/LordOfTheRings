@@ -7,7 +7,7 @@ import DiscardPile from './DiscardPile.vue'
 import GameCard from './GameCard.vue'
 import QuestionZone from './QuestionZone.vue'
 import ThreatDial from './ThreatDial.vue'
-import type { CardView, ChoiceView, PlayerView, QuestionView } from '../types'
+import type { CardView, ChoiceView, PlayerView, ScoreView, QuestionView } from '../types'
 import { useDebug } from '../composables/useDebug'
 
 const { player, choices, flipping, heroes = [] } = defineProps<{
@@ -18,6 +18,7 @@ const { player, choices, flipping, heroes = [] } = defineProps<{
   flipping: ReadonlySet<string>
   question: QuestionView | null
   outcome: 'WON' | 'LOST' | null
+  score?: ScoreView
   victoryPoints: number
 }>()
 const emit = defineEmits<{ choose: [index: number] }>()
@@ -71,7 +72,7 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
       </div>
     </div>
 
-    <QuestionZone :question="question" :outcome="outcome" :victory-points="victoryPoints" @choose="emit('choose', $event)" />
+    <QuestionZone :question="question" :outcome="outcome" :victory-points="victoryPoints" :score="score" @choose="emit('choose', $event)" />
   </section>
 </template>
 

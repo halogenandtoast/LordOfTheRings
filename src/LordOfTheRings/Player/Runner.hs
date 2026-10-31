@@ -116,7 +116,8 @@ runPlayer msg player = case msg of
       pushAll [CheckEliminations, CheckWindows [mkAfter $ ThreatRaised pid]]
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
-      pure $ player & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
+      level <- getEliminationLevel pid
+      pure $ player & threatL .~ level & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
     DoPhase ResourcePhase -> do
       mods <- getModifiers player
       let n = fromMaybe 1 $ headMay [k | ResourcePhaseDraws k <- mods]

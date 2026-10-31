@@ -101,6 +101,14 @@
       "Resource": "Resource"
     }
   },
+  "score": {
+    "threat": "Final threat",
+    "deadHeroes": "Threat cost of dead heroes",
+    "damage": "Damage on surviving heroes",
+    "victoryPoints": "Victory points earned",
+    "total": "Group score",
+    "lowerIsBetter": "Lower scores are better."
+  },
   "prompt": {
     "playersWin": "The players win",
     "playersLose": "The players lose",

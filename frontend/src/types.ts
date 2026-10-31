@@ -147,7 +147,17 @@ export interface PlayerView {
   engaged: CardView[]
 }
 
+export interface ScoreView {
+  threat: number
+  deadHeroes: number
+  damage: number
+  victoryPoints: number
+  total: number
+}
+
 export interface GameView {
+  score?: ScoreView
+
   started: boolean
   round: number
   phase: string | null

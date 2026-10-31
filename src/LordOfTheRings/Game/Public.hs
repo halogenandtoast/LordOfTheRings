@@ -64,9 +64,28 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       <> map ((.id) . toCard) (toList es.objectives)
       <> map ((.id) . toCard) (toList es.attachments)
       <> map ((.id) . toCard) (toList es.treacheries)
+  -- Dead heroes remain in their owner's discard; eliminated players also lose
+  -- heroes outside play (for example a hero shuffled into their deck).
+  scoring = object
+    [ "threat" .= finalThreat
+    , "deadHeroes" .= deadThreat
+    , "damage" .= damage
+    , "victoryPoints" .= victory
+    , "total" .= (finalThreat + deadThreat + damage - victory)
+    ]
+  finalThreat = sum [p.threat | p <- toList merged.players]
+  deadThreat = sum
+    [ fromMaybe 0 (cdThreatCost $ toCardDef c)
+    | p <- toList merged.players
+    , c <- p.discard <> (if p.eliminated then p.hand <> p.deck <> p.setAsideCards else [])
+    , cdCardType (toCardDef c) == HeroType
+    ]
+  damage = sum [h.damage | h <- toList merged.entities.heroes, maybe False (not . (.eliminated)) (Map.lookup h.owner merged.players)]
+  victory = (toAttrs g.scenario).victoryPoints
   hideDecks = \case
     Object o ->
       Object
+        $ KeyMap.insert "score" scoring
         $ KeyMap.delete "separation"
         $ KeyMap.insert "areas" (toJSON areas)
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)

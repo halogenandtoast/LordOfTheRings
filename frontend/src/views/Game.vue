@@ -375,7 +375,7 @@ watch(question, (asked) => {
             :flipping="flipping"
             :question="question"
             :outcome="outcome"
-            :victory-points="scenario?.victoryPoints ?? 0"
+            :score="game?.score" :victory-points="scenario?.victoryPoints ?? 0"
             @choose="choose"
           />
         </section>
@@ -392,7 +392,7 @@ watch(question, (asked) => {
 
     <PhaseTracker :phase="game?.phase ?? null" />
     <!-- on a small screen the question sits under the board, always in view -->
-    <QuestionZone v-if="started" class="docked-question" :question="question" :outcome="outcome" :victory-points="scenario?.victoryPoints ?? 0" @choose="choose" />
+    <QuestionZone v-if="started" class="docked-question" :question="question" :outcome="outcome" :score="game?.score" :victory-points="scenario?.victoryPoints ?? 0" @choose="choose" />
 
     <aside v-if="showSidebar" class="sidebar">
       <p v-if="error" class="error">

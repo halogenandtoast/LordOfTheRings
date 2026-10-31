@@ -2,14 +2,15 @@
 import { computed } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
 import { useServerText } from '../i18n'
-import type { ChoiceView, QuestionView } from '../types'
+import type { ChoiceView, ScoreView, QuestionView } from '../types'
 
 const tr = useServerText()
 const overlay = useCardOverlay()
 
-const { question, outcome = null, victoryPoints = 0 } = defineProps<{
+const { question, outcome = null, victoryPoints = 0, score } = defineProps<{
   question: QuestionView | null
   outcome?: 'WON' | 'LOST' | null
+  score?: ScoreView
   victoryPoints?: number
 }>()
 const emit = defineEmits<{ choose: [index: number] }>()
@@ -43,15 +44,26 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
         <span v-if="question.targetIds.length"><span class="swatch target"></span>{{ $t('game.prompt.target') }}</span>
       </p>
     </template>
-    <p v-else-if="outcome" class="prompt outcome" :class="outcome.toLowerCase()">
-      {{ $t(outcome === 'WON' ? 'game.prompt.playersWin' : 'game.prompt.playersLose') }}
-      &middot; {{ $t('game.prompt.victoryPoints', { value: victoryPoints }) }}
-    </p>
+    <template v-else-if="outcome">
+      <p class="prompt outcome" :class="outcome.toLowerCase()">
+        {{ $t(outcome === 'WON' ? 'game.prompt.playersWin' : 'game.prompt.playersLose') }}
+        &middot; {{ $t('game.prompt.victoryPoints', { value: victoryPoints }) }}
+      </p>
+      <dl v-if="outcome === 'WON' && score" class="score">
+        <template v-for="key in (['threat', 'deadHeroes', 'damage', 'victoryPoints', 'total'] as const)" :key="key">
+          <dt>{{ $t(`game.score.${key}`) }}</dt><dd>{{ key === 'victoryPoints' ? '−' : '' }}{{ score[key] }}</dd>
+        </template>
+      </dl>
+      <p v-if="outcome === 'WON' && score" class="hint">{{ $t('game.score.lowerIsBetter') }}</p>
+    </template>
     <p v-else class="prompt idle-text">{{ $t('game.prompt.waiting') }}</p>
   </div>
 </template>
 
 <style scoped>
+.score { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1rem; margin: 0; font-size: 0.8rem; }
+.score dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.score dt:nth-last-of-type(1), .score dd:last-child { border-top: 1px solid var(--line); padding-top: 0.3rem; font-weight: 700; }
 .swatch {
   display: inline-block;
   width: 0.6rem;
