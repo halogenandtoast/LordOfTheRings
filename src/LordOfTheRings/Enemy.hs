@@ -259,6 +259,8 @@ import LordOfTheRings.Enemy.Cards.UndeadThrall
 import LordOfTheRings.Enemy.Cards.ApostateOfAngmar
 import LordOfTheRings.Enemy.Cards.OrcWight
 import LordOfTheRings.Enemy.Cards.ThaurdirsElite
+import LordOfTheRings.Enemy.Cards.SilentGuardian
+import LordOfTheRings.Enemy.Cards.NecromancerOfCarnDum
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -543,5 +545,7 @@ allEnemys =
         , SomeEnemyCard apostateOfAngmar
         , SomeEnemyCard orcWight
         , SomeEnemyCard thaurdirsElite
+        , SomeEnemyCard silentGuardian
+        , SomeEnemyCard necromancerOfCarnDum
         ]
     ]

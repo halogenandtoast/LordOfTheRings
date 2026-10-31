@@ -294,6 +294,8 @@ allLocationCards =
       , secretAntechamber
       , strongholdTower
       , gatesOfCarnDum
+      , innerSanctum
+      , cursedHalls
       ]
 
 drownedTreasury :: CardDef
@@ -2206,5 +2208,20 @@ gatesOfCarnDum :: CardDef
 gatesOfCarnDum =
   (location "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-005" "Gates of Carn Dûm" TheBattleOfCarnDumNightmare 2 5 2)
     { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
+    }
+
+-- The Dread Realm Nightmare
+
+innerSanctum :: CardDef
+innerSanctum =
+  (location "the-dread-realm-nightmare-the-dread-realm-004" "Inner Sanctum" TheDreadRealmNightmare 2 6 4)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    }
+
+cursedHalls :: CardDef
+cursedHalls =
+  (location "the-dread-realm-nightmare-the-dread-realm-005" "Cursed Halls" TheDreadRealmNightmare 3 3 5)
+    { cdCardTraits = setFromList [CarnDum, Underground]
     , cdShadowEffect = True
     }

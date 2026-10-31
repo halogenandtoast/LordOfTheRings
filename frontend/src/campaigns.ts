@@ -79,7 +79,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'into-fangorn': {},
   'the-fords-of-isen': {},
   'the-antlered-crown': {},
-  'the-dread-realm': {},
+  'the-dread-realm': { nightmare: true },
   'the-dunland-trap': {},
   'trouble-in-tharbad': {},
   'celebrimbors-secret': {},

@@ -222,6 +222,9 @@ import LordOfTheRings.Treachery.Cards.LifeDrain
 import LordOfTheRings.Treachery.Cards.DeathAndDecay
 import LordOfTheRings.Treachery.Cards.HowlingOfWargs
 import LordOfTheRings.Treachery.Cards.BlackMare
+import LordOfTheRings.Treachery.Cards.PowerBeyondDeath
+import LordOfTheRings.Treachery.Cards.DaechanarsCurse
+import LordOfTheRings.Treachery.Cards.AllIsLost
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -468,5 +471,8 @@ allTreacherys =
         , SomeTreacheryCard deathAndDecay
         , SomeTreacheryCard howlingOfWargs
         , SomeTreacheryCard blackMare
+        , SomeTreacheryCard powerBeyondDeath
+        , SomeTreacheryCard daechanarsCurse
+        , SomeTreacheryCard allIsLost
         ]
     ]

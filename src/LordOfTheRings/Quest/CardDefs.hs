@@ -249,6 +249,7 @@ allQuestCards =
       , protectTheFlanks
       , rallyTheFighters
       , severTheHead
+      , theWitchKingsGift
       ]
 
 theDrippingWalls :: CardDef
@@ -971,4 +972,13 @@ severTheHead =
   (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-011" "Sever the Head" TheBattleOfCarnDumNightmare 6)
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Battle]
+    }
+
+-- The Dread Realm Nightmare
+
+-- | No victory points: defeated, it goes to the encounter discard pile.
+theWitchKingsGift :: CardDef
+theWitchKingsGift =
+  (encounterSideQuest "the-dread-realm-nightmare-the-dread-realm-009" "The Witch-king's Gift" TheDreadRealmNightmare 8)
+    { cdKeywords = setFromList [Time 5]
     }

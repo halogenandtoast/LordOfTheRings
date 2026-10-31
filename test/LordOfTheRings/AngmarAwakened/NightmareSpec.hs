@@ -1,10 +1,12 @@
 module LordOfTheRings.AngmarAwakened.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Card.Synthetic qualified as Synthetic
 import LordOfTheRings.Card (CardDef (cdKeywords), CardType (HeroType), cdCardType, toCard, toCardDef)
 import LordOfTheRings.Keyword (Keyword (Safe))
 import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -13,13 +15,13 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase))
-import LordOfTheRings.Scenario (acrossTheEttenmoors, escapeFromMountGram, theBattleOfCarnDum, theTreacheryOfRhudaur, theWastesOfEriador)
+import LordOfTheRings.Scenario (acrossTheEttenmoors, escapeFromMountGram, theBattleOfCarnDum, theDreadRealm, theTreacheryOfRhudaur, theWastesOfEriador)
 import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers (capturedDeck, capturedUnder)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheWastesOfEriador.Helpers (isNight)
 import LordOfTheRings.Scenario.Types (GameMode (..), encounterDeckL, modeL, scenarioSetAside)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, PhaseEnds, RoundEnds, ThreatRaisedByEncounter), mkAfter, mkWhen)
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, DeclaredAsAttacker, LastTimeCounterRemoved, PhaseEnds, PlayedFromHand, RoundEnds, ThreatRaisedByEncounter), mkAfter, mkWhen)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -496,3 +498,92 @@ spec = describe "Angmar Awakened Nightmare mode" do
       eowyn <- toTarget <$> getHeroWithCode "01007"
       chooseTarget pid eowyn
       getCharacterDamage eowyn `shouldReturn` 1
+
+  describe "The Dread Realm" do
+    let reanimated = getsGame (map toId . filter ((== toCardCode Synthetic.reanimatedDead) . toCardCode) . toList . (.entities.enemies))
+        onTop pid def = do
+          card <- PlayerCard <$> genPlayerCard def (Just pid)
+          g <- getGame
+          putGame $ g & playersL . ix pid . deckL %~ (card :)
+          pure card
+        inDiscard pid def = do
+          card <- PlayerCard <$> genPlayerCard def (Just pid)
+          g <- getGame
+          putGame $ g & playersL . ix pid . discardL %~ (card :)
+          pure card
+
+    it "builds the nightmare deck" . nightmare theDreadRealm $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.witchOfAngmar, Enemies.deadLord, Treacheries.terrorOfTheNorth, Enemies.silentGuardian, Quests.theWitchKingsGift]
+        `shouldBe` [0, 0, 0, 2, 1]
+
+    it "Silent Guardian reanimates the first event its player plays" . nightmare theDreadRealm $ \pid -> do
+      guardian <- staged Enemies.silentGuardian
+      run $ EngageEnemy pid guardian
+      -- played, the event lies in its player's discard pile
+      event <- inDiscard pid Events.everVigilant
+      run $ CheckWindows [mkAfter $ PlayedFromHand (CardIdTarget event.id)]
+      length <$> reanimated `shouldReturn` 1
+      other <- inDiscard pid Events.everVigilant
+      run $ CheckWindows [mkAfter $ PlayedFromHand (CardIdTarget other.id)]
+      length <$> reanimated `shouldReturn` 1
+
+    it "Necromancer of Carn Dûm reanimates the top of the deck in place of its attack" . nightmare theDreadRealm $ \pid -> do
+      necro <- staged Enemies.necromancerOfCarnDum
+      run $ EngageEnemy pid necro
+      _ <- onTop pid Allies.silverlodeArcher
+      run $ EnemyAttack pid necro
+      resolveForced pid
+      length <$> reanimated `shouldReturn` 1
+
+    it "Inner Sanctum takes no progress in the staging area, and resolves the Sorcery it discards" . nightmare theDreadRealm $ \_ -> do
+      _ <- putQuestStage Quests.theCatacombsOfCarnDum
+      sanctum <- stagedLocation Locations.innerSanctum
+      getModifiers (toTarget sanctum) >>= (`shouldSatisfy` elem (ProgressLimit 0))
+      _ <- setEncounterDeck [Treacheries.powerBeyondDeath, Locations.cursedHalls, Locations.cursedHalls]
+      run $ TravelTo sanctum
+      resolveRevealed
+      getsGame (map (.placement) . filter ((== toCardCode Treacheries.powerBeyondDeath) . toCardCode) . toList . (.entities.treacheries))
+        >>= (`shouldSatisfy` (\ps -> length ps == 1 && all (/= StagingArea) ps))
+
+    it "Power Beyond Death gives Daechanar +2 defense" . nightmare theDreadRealm $ \_ -> do
+      _ <- putQuestStage Quests.theCatacombsOfCarnDum
+      daechanar <- staged Enemies.daechanar
+      reveal [Treacheries.powerBeyondDeath, Locations.cursedHalls]
+      getModifiers (toTarget daechanar) >>= (`shouldSatisfy` elem (DefenseModifier 2))
+
+    it "Cursed Halls makes Sorcery attachments immune to player cards" . nightmare theDreadRealm $ \_ -> do
+      _ <- putQuestStage Quests.theCatacombsOfCarnDum
+      reveal [Treacheries.powerBeyondDeath, Locations.cursedHalls]
+      power <- getsGame (fromJustNote "no treachery" . headMay . map toTarget . toList . (.entities.treacheries))
+      getModifiers power >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)
+
+    it "Daechanar's Curse reanimates the next cards drawn" . nightmare theDreadRealm $ \pid -> do
+      reveal [Treacheries.daechanarsCurse, Locations.cursedHalls]
+      _ <- onTop pid Allies.silverlodeArcher
+      hand <- length . (.hand) <$> getPlayer pid
+      run $ DrawCards $ Drawing pid 1
+      length . (.hand) <$> getPlayer pid `shouldReturn` hand
+      length <$> reanimated `shouldReturn` 1
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+
+    it "All is Lost raises its player's threat as he attacks a Reanimated Dead" . nightmare theDreadRealm $ \pid -> do
+      reveal [Treacheries.allIsLost]
+      card <- onTop pid Allies.silverlodeArcher
+      eid <- getRandom
+      run $ Reanimate card.id eid
+      [dead] <- reanimated
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      threat <- threatOf pid
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker eowyn dead]
+      threatOf pid `shouldReturn` threat + 1
+
+    it "The Witch-king's Gift reanimates each discard pile as its time runs out" . nightmare theDreadRealm $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Quests.theWitchKingsGift
+      _ <- inDiscard pid Allies.silverlodeArcher
+      _ <- inDiscard pid Allies.guardOfTheCitadel
+      gift <- toTarget <$> questOf Quests.theWitchKingsGift
+      run $ CheckWindows [mkAfter $ LastTimeCounterRemoved gift]
+      resolveForced pid
+      length <$> reanimated `shouldReturn` 2

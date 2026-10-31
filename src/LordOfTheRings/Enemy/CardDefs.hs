@@ -265,6 +265,8 @@ allEnemyCards =
       , apostateOfAngmar
       , orcWight
       , thaurdirsElite
+      , silentGuardian
+      , necromancerOfCarnDum
       ]
 
 namelessThing :: CardDef
@@ -2145,4 +2147,19 @@ thaurdirsElite =
   (enemy "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-003" "Thaurdir's Elite" TheBattleOfCarnDumNightmare 2 45 2 5 4 6)
     { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
+    }
+
+-- The Dread Realm Nightmare
+
+-- | 10 hit points, as the card shows (cards.json has 1).
+silentGuardian :: CardDef
+silentGuardian =
+  (enemy "the-dread-realm-nightmare-the-dread-realm-002" "Silent Guardian" TheDreadRealmNightmare 2 36 4 2 4 10)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+necromancerOfCarnDum :: CardDef
+necromancerOfCarnDum =
+  (enemy "the-dread-realm-nightmare-the-dread-realm-003" "Necromancer of Carn Dûm" TheDreadRealmNightmare 3 28 2 0 3 3)
+    { cdCardTraits = setFromList [Sorcerer]
     }

@@ -229,6 +229,9 @@ allTreacheryCards =
       , deathAndDecay
       , howlingOfWargs
       , blackMare
+      , powerBeyondDeath
+      , daechanarsCurse
+      , allIsLost
       ]
 
 deepDeepDark :: CardDef
@@ -1404,3 +1407,27 @@ blackMare =
       { cdCardTraits = setFromList [Mount]
       , cdShadowEffect = True
       }
+
+-- The Dread Realm Nightmare
+
+powerBeyondDeath :: CardDef
+powerBeyondDeath =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-006" "Power Beyond Death" TheDreadRealmNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+daechanarsCurse :: CardDef
+daechanarsCurse =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-007" "Daechanar's Curse" TheDreadRealmNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    }
+
+allIsLost :: CardDef
+allIsLost =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-008" "All is Lost" TheDreadRealmNightmare 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    }

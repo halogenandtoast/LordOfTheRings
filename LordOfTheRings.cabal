@@ -523,6 +523,7 @@ library
       LordOfTheRings.Enemy.Cards.NamelessThing
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
       LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
+      LordOfTheRings.Enemy.Cards.NecromancerOfCarnDum
       LordOfTheRings.Enemy.Cards.Neekerbreekers
       LordOfTheRings.Enemy.Cards.NorthernWarg
       LordOfTheRings.Enemy.Cards.OrcAmbusher
@@ -573,6 +574,7 @@ library
       LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
       LordOfTheRings.Enemy.Cards.SiegeRaft
       LordOfTheRings.Enemy.Cards.SiegeShip
+      LordOfTheRings.Enemy.Cards.SilentGuardian
       LordOfTheRings.Enemy.Cards.SlaveShip
       LordOfTheRings.Enemy.Cards.SnowWarg
       LordOfTheRings.Enemy.Cards.SoullessCadaver
@@ -945,6 +947,7 @@ library
       LordOfTheRings.Location.Cards.CrewQuarters
       LordOfTheRings.Location.Cards.CursedCaverns
       LordOfTheRings.Location.Cards.CursedForest
+      LordOfTheRings.Location.Cards.CursedHalls
       LordOfTheRings.Location.Cards.CursedTemple
       LordOfTheRings.Location.Cards.DarkAbyss
       LordOfTheRings.Location.Cards.DarkHalls
@@ -1016,6 +1019,7 @@ library
       LordOfTheRings.Location.Cards.HithaeglirStream
       LordOfTheRings.Location.Cards.HousesOfTheDead
       LordOfTheRings.Location.Cards.ImpassableBog
+      LordOfTheRings.Location.Cards.InnerSanctum
       LordOfTheRings.Location.Cards.IthilienRoad
       LordOfTheRings.Location.Cards.IthilienRoads
       LordOfTheRings.Location.Cards.JaggedCliffs
@@ -1449,6 +1453,7 @@ library
       LordOfTheRings.Quest.Cards.TheTrialsBegin
       LordOfTheRings.Quest.Cards.TheWatersEdge
       LordOfTheRings.Quest.Cards.TheWeatherTurnsFoul
+      LordOfTheRings.Quest.Cards.TheWitchKingsGift
       LordOfTheRings.Quest.Cards.TheWizardsPrize
       LordOfTheRings.Quest.Cards.TheWoundedEagle
       LordOfTheRings.Quest.Cards.ThroughTheCaverns
@@ -1578,6 +1583,7 @@ library
       LordOfTheRings.Treachery.Cards.AFrightenedBeast
       LordOfTheRings.Treachery.Cards.AimlessWandering
       LordOfTheRings.Treachery.Cards.AKnifeInTheBack
+      LordOfTheRings.Treachery.Cards.AllIsLost
       LordOfTheRings.Treachery.Cards.AncientDepths
       LordOfTheRings.Treachery.Cards.AradorsBane
       LordOfTheRings.Treachery.Cards.Avalanche
@@ -1613,6 +1619,7 @@ library
       LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
       LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
       LordOfTheRings.Treachery.Cards.CurseOfTheYears
+      LordOfTheRings.Treachery.Cards.DaechanarsCurse
       LordOfTheRings.Treachery.Cards.DaechanarsWill
       LordOfTheRings.Treachery.Cards.DarkAndDreadful
       LordOfTheRings.Treachery.Cards.DarkCovenant
@@ -1711,6 +1718,7 @@ library
       LordOfTheRings.Treachery.Cards.PillagingAndBurning
       LordOfTheRings.Treachery.Cards.PinnedDown
       LordOfTheRings.Treachery.Cards.Possession
+      LordOfTheRings.Treachery.Cards.PowerBeyondDeath
       LordOfTheRings.Treachery.Cards.PowerfulUndertow
       LordOfTheRings.Treachery.Cards.PredatoryWolves
       LordOfTheRings.Treachery.Cards.PressingNeeds
