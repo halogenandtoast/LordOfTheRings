@@ -28,15 +28,15 @@ instance HasModifiersFor TheBlackSword where
       AttachedTo host@(EnemyTarget _) -> modified a host [AttackModifier 2, GainKeyword Indestructible]
       _ -> pure ()
 
-{- | The Black Sword enters play with 3 resources on it.
+{- | The Black Sword enters play with 3 resources on it: the campaign card that attaches it
+places them, no window opening for an objective put into play attached.
 The City of Corsairs' campaign card: Refresh Action: Exhaust a hero to move 1 resource from
 The Black Sword to that hero's resource pool. If The Black Sword has no resources on it,
 remove it from the game. (Group limit once per round.)
 -}
 instance HasAbilities TheBlackSword where
   getAbilities (TheBlackSword a) =
-    [ mkAbility a 1 $ silent $ entersPlay a
-    , limited (GroupLimit PerRound 1)
+    [ limited (GroupLimit PerRound 1)
         $ anyPlayer
         $ restricted a 2 (DuringPhase RefreshPhase)
         $ ActionAbility (ExhaustHeroCost $ HeroControlledBy ActivePlayer)
@@ -49,9 +49,6 @@ firstAttack = PlayedThisRound (CardCode "black-sword-attack")
 -- against each other player (in turn order).
 instance RunMessage TheBlackSword where
   runMessage msg s@(TheBlackSword a) = case msg of
-    UseCardAbility _ (isSource a -> True) 1 _ -> do
-      placeResources a a 3
-      pure s
     UseCardAbility _ (isSource a -> True) 2 windows -> do
       -- the hero exhausted to pay
       for_ [h | Window _ (Exhausted h) <- windows] \h -> placeResources a h 1

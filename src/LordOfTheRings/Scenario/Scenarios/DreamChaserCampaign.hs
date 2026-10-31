@@ -81,6 +81,10 @@ runCampaign l msg attrs = case msg of
     -- Raid on the Grey Havens: Spyglass and Black Key (boon) on Calphon
     for_ [Attachments.spyglass, Attachments.blackKey] \def -> attachToAlly l def (AllyWithCardCode $ toCardCode Objectives.calphon)
     pure attrs
+  ScenarioSpecific "campaign.blackSword" _ -> do
+    swords <- getsGame (filter ((== toCardCode Objectives.theBlackSword) . toCardCode) . toList . entitiesObjectives . gameEntities)
+    for_ swords \o -> placeResources ScenarioSource (toTarget o) 3
+    pure attrs
   ScenarioSpecific "campaign.sahirFlipped" _ | null (recorded SahirTurned l) -> do
     turned <- selectAny sahirAlly
     if turned
@@ -406,6 +410,8 @@ windows l ws attrs = case sid attrs of
         case sahirs of
           eid : _ -> do
             for_ defs \def -> (`putObjectiveIntoPlayAttached` EnemyTarget eid) =<< genEncounterCard (side l def)
+            -- The Black Sword enters play with 3 resources on it.
+            when (Objectives.theBlackSword `elem` defs) $ push (ScenarioSpecific "campaign.blackSword" Null)
             pure $ withLog (record SahirKeyed [toCardCode Enemies.captainSahir]) attrs
           [] -> pure attrs
 

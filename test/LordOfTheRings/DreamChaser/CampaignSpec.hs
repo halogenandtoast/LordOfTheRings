@@ -8,9 +8,10 @@ import LordOfTheRings.Campaign
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Objective.Types (objectiveTokens)
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (raidOnTheGreyHavens, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
+import LordOfTheRings.Scenario (raidOnTheGreyHavens, theCityOfCorsairs, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
 import LordOfTheRings.Scenario.Types (scenarioCampaignCardFlipped, victoryDisplayL)
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import Data.Aeson.Types (parseMaybe)
@@ -167,4 +168,14 @@ spec = describe "Dream-chaser campaign" do
       hand <- map toCardCode . (.hand) <$> getPlayer pid
       hand `shouldSatisfy` elem (toCardCode Events.comeTogether)
       recorded ChosenDuringSetup <$> getCampaignLog `shouldReturn` [toCardCode Events.comeTogether]
+
+  describe "The City of Corsairs" do
+    it "attaches Black Key (burden) and The Black Sword, with 3 resources, as Captain Sahír enters play" . campaignTestIn theCityOfCorsairs seated starterDeck $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Enemies.captainSahirTheCityOfCorsairs
+      sahir <- getsGame (fromJustNote "no Sahír" . fmap toId . find ((== toCardCode Enemies.captainSahirTheCityOfCorsairs) . toCardCode) . toList . (.entities.enemies))
+      run $ CheckWindows []
+      attached <- getsGame (filter ((== AttachedTo (toTarget sahir)) . (.placement)) . toList . (.entities.objectives))
+      sort (map toCardCode attached) `shouldBe` sort [toCardCode Objectives.blackKeyBurden, toCardCode Objectives.theBlackSword]
+      swords <- getsGame (filter ((== toCardCode Objectives.theBlackSword) . toCardCode) . toList . (.entities.objectives))
+      map (countTokens Resource . objectiveTokens . toAttrs) swords `shouldBe` [3]
 
