@@ -504,6 +504,11 @@ data ModifierType
   | -- | on the active location on the Island Map: the players may travel from it to a
     -- location up to so many locations away, as Winding Caverns reads
     TravelRange Int
+  | -- | on a character: it cannot attack or defend against matching enemies, as Cursed
+    -- Burden reads
+    CannotFight EnemyMatcher
+  | -- | on a character: it cannot attack matching enemies, as Trial of Ancestors reads
+    CannotAttackMatching EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
