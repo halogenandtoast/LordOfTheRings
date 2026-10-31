@@ -511,6 +511,9 @@ data ModifierType
     CannotAttackMatching EnemyMatcher
   | -- | on a card: its effect on "the first" card each phase has happened, as Dark Pathway reads
     FirstEffectUsed
+  | -- | on a location: progress placed on it at once is reduced to this much, as Celebrimbor's
+    -- Secret's nightmare setup card reads for the staging area
+    ProgressReducedTo Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
