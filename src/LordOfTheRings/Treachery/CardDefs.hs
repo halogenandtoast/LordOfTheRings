@@ -1634,6 +1634,9 @@ killThem = treachery "the-lost-realm-nightmare-invaders-in-chetwood-008" "Kill T
 rainWashedTracks :: CardDef
 rainWashedTracks =
   (treachery "the-lost-realm-nightmare-the-weather-hills-017" "Rain-washed Tracks" TheWeatherHillsNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
 
 -- The Wastes of Eriador Nightmare
 
@@ -1682,6 +1685,9 @@ infiltration =
 paralyzingFear :: CardDef
 paralyzingFear =
   (treachery "the-lost-realm-nightmare-deadmens-dike-025" "Paralyzing Fear" DeadmensDikeNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    }
 
 -- Escape from Mount Gram Nightmare
 
@@ -1966,6 +1972,7 @@ wickednessAndMischief :: CardDef
 wickednessAndMischief =
   (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-009" "Wickedness and Mischief" ReturnToMirkwoodNightmare 2)
     { cdCardTraits = setFromList [Tantrum]
+    , cdShadowEffect = True
     }
 
 -- The Morgul Vale Nightmare
@@ -2031,6 +2038,7 @@ falseAccusations :: CardDef
 falseAccusations =
   (treachery "the-stewards-fear-nightmare-the-stewards-fear-009" "False Accusations" TheStewardsFearNightmare 2)
     { cdCardTraits = setFromList [Scheme]
+    , cdShadowEffect = True
     }
 
 blindingBlizzard :: CardDef
@@ -2115,6 +2123,7 @@ flameOfUdun =
   (treachery "shadow-and-flame-nightmare-shadow-and-flame-006" "Flame of Udûn" ShadowAndFlameNightmare 2)
     { cdCardTraits = setFromList [Attack]
     , cdWhenRevealed = False
+    , cdShadowEffect = True
     }
 
 allIsLost :: CardDef

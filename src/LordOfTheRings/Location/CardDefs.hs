@@ -2453,6 +2453,9 @@ ithilienOverlook =
 denseThickets :: CardDef
 denseThickets =
   (location "heirs-of-numenor-nightmare-into-ithilien-006" "Dense Thickets" IntoIthilienNightmare 3 1 8)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
 
 -- | X threat, the Snow cards in the staging area: see its card module.
 icyCavern :: CardDef
@@ -2657,6 +2660,9 @@ northernChetwood =
 outskirtsOfArchet :: CardDef
 outskirtsOfArchet =
   (location "the-lost-realm-nightmare-invaders-in-chetwood-005" "Outskirts of Archet" IntrudersInChetwoodNightmare 2 5 3)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
 
 -- The Wastes of Eriador Nightmare
 
@@ -2734,6 +2740,9 @@ chamberOfRecords =
 deepMines :: CardDef
 deepMines =
   (location "khazad-dum-nightmare-the-seventh-level-007" "Deep-mines" TheSeventhLevelNightmare 3 2 6)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    }
 
 banksOfSirannon :: CardDef
 banksOfSirannon =
@@ -2764,6 +2773,9 @@ westernHall =
 shadowedCorridor :: CardDef
 shadowedCorridor =
   (location "khazad-dum-nightmare-flight-from-moria-007" "Shadowed Corridor" FlightFromMoriaNightmare 4 4 6)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdShadowEffect = True
+    }
 
 bottomlessChasm :: CardDef
 bottomlessChasm =
@@ -3061,6 +3073,7 @@ crumblingStairs :: CardDef
 crumblingStairs =
   (location "shadow-and-flame-nightmare-shadow-and-flame-010" "Crumbling Stairs" ShadowAndFlameNightmare 2 2 7)
     { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
     }
 
 snowyBadlands :: CardDef
