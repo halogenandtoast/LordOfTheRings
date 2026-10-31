@@ -291,6 +291,8 @@ allLocationCards =
       , devilsMirk
       , eilenach
       , stonewainValley
+      , besiegedHomestead
+      , overrunVillage
       ]
 
 drownedTreasury :: CardDef
@@ -2180,4 +2182,20 @@ stonewainValley :: CardDef
 stonewainValley =
   (location "the-druadan-forest-nightmare-the-druadan-forest-007" "Stonewain Valley" TheDruadanForestNightmare 2 1 6)
     { cdCardTraits = setFromList [Forest]
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+besiegedHomestead :: CardDef
+besiegedHomestead =
+  (location "encounter-at-amon-din-nightmare-encounter-at-amon-din-004" "Besieged Homestead" EncounterAtAmonDinNightmare 3 4 6)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+overrunVillage :: CardDef
+overrunVillage =
+  (location "encounter-at-amon-din-nightmare-encounter-at-amon-din-005" "Overrun Village" EncounterAtAmonDinNightmare 2 3 5)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
     }

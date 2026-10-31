@@ -9,12 +9,14 @@ import LordOfTheRings.Modifier (ModifierType (CannotBeTraveledTo, CannotCollectR
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (theBloodOfGondor, theDruadanForest, theMorgulVale)
+import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Scenario (encounterAtAmonDin, theBloodOfGondor, theDruadanForest, theMorgulVale)
+import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (deadVillagerCount, getVillagers, rescuedVillagerCount)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside), modeL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (When), Window (..), WindowType (AdvancedToStage, RoundEnds), mkAfter)
+import LordOfTheRings.Window (Timing (When), Window (..), WindowType (AdvancedToStage, PhaseBegins, RoundEnds), mkAfter)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -58,6 +60,13 @@ hide :: PlayerId -> [CardDef] -> GameT ()
 hide pid defs = do
   _ <- setEncounterDeck defs
   replicateM_ (length defs) $ run (TakeHiddenCard pid)
+
+-- | Rescued Villagers and Dead Villagers in the staging area, with villagers rescued.
+villagers :: Int -> GameT ()
+villagers rescued = do
+  for_ [Objectives.rescuedVillagers, Objectives.deadVillagers] \d -> run . AddToStaging =<< genEncounterCard d
+  oid <- getsGame (fmap toId . find ((== toCardCode Objectives.rescuedVillagers) . toCardCode) . toList . (.entities.objectives))
+  when (rescued > 0) $ for_ oid \o -> run $ PlaceTokens GameSource (ObjectiveTarget o) Villager rescued
 
 spec :: Spec
 spec = describe "Against the Shadow nightmare decks" do
@@ -279,3 +288,85 @@ spec = describe "Against the Shadow nightmare decks" do
       run $ DealDamage GameSource beravor 2
       run $ HealDamage GameSource beravor 2
       getCharacterDamage beravor `shouldReturn` 2
+
+  describe "Encounter at Amon Dîn" do
+    it "builds the nightmare deck" . nightmare encounterAtAmonDin $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.orcRavager, Locations.burningFarmhouse, Enemies.pillagingOrc, Locations.besiegedHomestead]
+        `shouldBe` [0, 2, 3, 3]
+
+    it "places 1 villager token on Rescued Villagers at setup" . nightmare encounterAtAmonDin $ \pid -> do
+      run Setup
+      chooseLabel "$label.keepHand" pid
+      _ <-
+        setEncounterDeck
+          [Enemies.ghulat, Objectives.lordAlcaron, Locations.burningFarmhouse, Objectives.rescuedVillagers, Objectives.deadVillagers, Locations.secludedFarmhouse]
+      chooseOptionMatching "flip the quest" pid (const True)
+      rescuedVillagerCount `shouldReturn` 1
+
+    it "discards a rescued villager or reveals a card as the quest phase begins" . nightmare encounterAtAmonDin $ \pid -> do
+      villagers 1
+      run $ CheckWindows [mkAfter $ PhaseBegins QuestPhase]
+      chooseLabel "$label.amonDin.discardVillager" pid
+      rescuedVillagerCount `shouldReturn` 0
+      deadVillagerCount `shouldReturn` 1
+
+    it "keeps damage off Ghulat until Protect the Villagers has 15 progress" . nightmare encounterAtAmonDin $ \_ -> do
+      quest <- putQuestStage Quests.protectTheVillagers
+      ghulat <- staged Enemies.ghulat
+      run $ DealDamage GameSource (toTarget ghulat) 1
+      (.damage) <$> getEnemy ghulat `shouldReturn` 0
+      run $ PlaceTokens GameSource quest Progress 15
+      run $ DealDamage GameSource (toTarget ghulat) 1
+      (.damage) <$> getEnemy ghulat `shouldReturn` 1
+
+    it "Pillaging Orc reveals another card when no villager is rescued" . nightmare encounterAtAmonDin $ \_ -> do
+      villagers 0
+      reveal Enemies.pillagingOrc [Locations.besiegedHomestead]
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+    it "Orc Raiders takes a rescued villager instead of attacking" . nightmare encounterAtAmonDin $ \pid -> do
+      villagers 1
+      reveal Enemies.orcRaidersNightmare []
+      chooseLabel "$label.amonDin.discardVillager" pid
+      rescuedVillagerCount `shouldReturn` 0
+
+    it "Trapped Villagers kills 3 villagers and adds them to the staging area's threat" . nightmare encounterAtAmonDin $ \_ -> do
+      villagers 0
+      reveal Treacheries.trappedVillagers []
+      deadVillagerCount `shouldReturn` 3
+      getStagingThreat `shouldReturn` 3
+
+    it "Run for your Lives! deals damage for each dead villager" . nightmare encounterAtAmonDin $ \pid -> do
+      villagers 1
+      reveal Treacheries.runForYourLives []
+      deadVillagerCount `shouldReturn` 1
+      beravor <- toTarget <$> getHeroWithCode "01002"
+      chooseTarget pid beravor
+      getCharacterDamage beravor `shouldReturn` 1
+
+    it "Besieged Homestead discards a villager from a staged location given progress" . nightmare encounterAtAmonDin $ \_ -> do
+      villagers 0
+      reveal Locations.besiegedHomestead []
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      run $ PlaceTokens GameSource (toTarget lid) Progress 1
+      getVillagers (toTarget lid) `shouldReturn` 1
+
+    it "Overrun Village kills a villager as the players travel there" . nightmare encounterAtAmonDin $ \_ -> do
+      villagers 0
+      reveal Locations.overrunVillage []
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      run $ TravelTo lid
+      deadVillagerCount `shouldReturn` 1
+
+    it "Those Now Sundered discards a rescued villager at the end of each round" . nightmare encounterAtAmonDin $ \_ -> do
+      villagers 2
+      reveal Treacheries.thoseNowSundered []
+      endRound
+      rescuedVillagerCount `shouldReturn` 1
+
+    it "Save Us! with no villagers rescued searches out an enemy" . nightmare encounterAtAmonDin $ \_ -> do
+      villagers 0
+      reveal Treacheries.saveUs [Locations.besiegedHomestead, Enemies.orcRaidersNightmare]
+      void $ enemyOf Enemies.orcRaidersNightmare

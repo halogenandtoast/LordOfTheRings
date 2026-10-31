@@ -224,6 +224,10 @@ allTreacheryCards =
       , suddenOnslaught
       , drumsOfTheWildMen
       , poisonDarts
+      , trappedVillagers
+      , runForYourLives
+      , saveUs
+      , thoseNowSundered
       ]
 
 deepDeepDark :: CardDef
@@ -1365,4 +1369,22 @@ poisonDarts =
   (treachery "the-druadan-forest-nightmare-the-druadan-forest-009" "Poison-darts" TheDruadanForestNightmare 3)
     { cdCardTraits = setFromList [Item]
     , cdKeywords = setFromList [Surge]
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+trappedVillagers :: CardDef
+trappedVillagers = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-006" "Trapped Villagers" EncounterAtAmonDinNightmare 3) {cdShadowEffect = True}
+
+runForYourLives :: CardDef
+runForYourLives = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-007" "Run for your Lives!" EncounterAtAmonDinNightmare 2) {cdShadowEffect = True}
+
+saveUs :: CardDef
+saveUs = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-008" "Save Us!" EncounterAtAmonDinNightmare 2) {cdShadowEffect = True}
+
+thoseNowSundered :: CardDef
+thoseNowSundered =
+  (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-009" "Those Now Sundered" EncounterAtAmonDinNightmare 2)
+    { cdCardTraits = setFromList [Panic]
+    , cdKeywords = setFromList [Surge, Doomed 1]
     }

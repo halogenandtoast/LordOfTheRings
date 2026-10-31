@@ -538,6 +538,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcHunter
       LordOfTheRings.Enemy.Cards.OrcRabble
       LordOfTheRings.Enemy.Cards.OrcRaiders
+      LordOfTheRings.Enemy.Cards.OrcRaidersNightmare
       LordOfTheRings.Enemy.Cards.OrcRavager
       LordOfTheRings.Enemy.Cards.OrcScramblers
       LordOfTheRings.Enemy.Cards.OrcSkirmisher
@@ -547,6 +548,7 @@ library
       LordOfTheRings.Enemy.Cards.PackLeader
       LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.Pickpocket
+      LordOfTheRings.Enemy.Cards.PillagingOrc
       LordOfTheRings.Enemy.Cards.ProfaneDead
       LordOfTheRings.Enemy.Cards.ProwlingOrc
       LordOfTheRings.Enemy.Cards.ProwlingWolf
@@ -917,6 +919,7 @@ library
       LordOfTheRings.Location.Cards.BarrenMoorland
       LordOfTheRings.Location.Cards.BeePastures
       LordOfTheRings.Location.Cards.BelfalasIslet
+      LordOfTheRings.Location.Cards.BesiegedHomestead
       LordOfTheRings.Location.Cards.BlightOfCarnDum
       LordOfTheRings.Location.Cards.BordersOfBreeLand
       LordOfTheRings.Location.Cards.BranchingPaths
@@ -1046,6 +1049,7 @@ library
       LordOfTheRings.Location.Cards.OrcWarCamp
       LordOfTheRings.Location.Cards.OutlyingHomestead
       LordOfTheRings.Location.Cards.OvergrownTrail
+      LordOfTheRings.Location.Cards.OverrunVillage
       LordOfTheRings.Location.Cards.PatchOfWoods
       LordOfTheRings.Location.Cards.PathlessCountry
       LordOfTheRings.Location.Cards.PatrolRoom
@@ -1703,7 +1707,9 @@ library
       LordOfTheRings.Treachery.Cards.RoastedSlowly
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
+      LordOfTheRings.Treachery.Cards.RunForYourLives
       LordOfTheRings.Treachery.Cards.Sacked
+      LordOfTheRings.Treachery.Cards.SaveUs
       LordOfTheRings.Treachery.Cards.ScourgeOfMordor
       LordOfTheRings.Treachery.Cards.SentinelOfShadow
       LordOfTheRings.Treachery.Cards.SerpentsTail
@@ -1746,10 +1752,12 @@ library
       LordOfTheRings.Treachery.Cards.TheSkyDarkens
       LordOfTheRings.Treachery.Cards.TheSpidersWeb
       LordOfTheRings.Treachery.Cards.TheTowerBeckons
+      LordOfTheRings.Treachery.Cards.ThoseNowSundered
       LordOfTheRings.Treachery.Cards.ThroughTheMist
       LordOfTheRings.Treachery.Cards.ThrownOffCourse
       LordOfTheRings.Treachery.Cards.TragicDiscovery
       LordOfTheRings.Treachery.Cards.TrappedInside
+      LordOfTheRings.Treachery.Cards.TrappedVillagers
       LordOfTheRings.Treachery.Cards.TreacherousFog
       LordOfTheRings.Treachery.Cards.TrollAttack
       LordOfTheRings.Treachery.Cards.TurnedAround

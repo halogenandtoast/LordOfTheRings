@@ -1558,3 +1558,10 @@ createEnemyEngaged pid card = do
   eid <- getRandom
   push $ CreateEnemyEngaged pid eid card
   pure eid
+
+-- | The card leaves the encounter deck and is revealed, as a search that reveals what it
+-- finds reads (Save Us!).
+revealFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
+revealFromEncounterDeck card = do
+  removeFromEncounterDeck card
+  push $ RevealCard card

@@ -256,6 +256,8 @@ import LordOfTheRings.Enemy.Cards.UrukMarksman
 import LordOfTheRings.Enemy.Cards.DruBuriDruNightmare
 import LordOfTheRings.Enemy.Cards.DruadanWarrior
 import LordOfTheRings.Enemy.Cards.DruadanStalker
+import LordOfTheRings.Enemy.Cards.OrcRaidersNightmare
+import LordOfTheRings.Enemy.Cards.PillagingOrc
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -537,5 +539,7 @@ allEnemys =
         , SomeEnemyCard druBuriDruNightmare
         , SomeEnemyCard druadanWarrior
         , SomeEnemyCard druadanStalker
+        , SomeEnemyCard orcRaidersNightmare
+        , SomeEnemyCard pillagingOrc
         ]
     ]

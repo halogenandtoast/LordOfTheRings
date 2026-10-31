@@ -262,6 +262,8 @@ allEnemyCards =
       , druBuriDruNightmare
       , druadanWarrior
       , druadanStalker
+      , orcRaidersNightmare
+      , pillagingOrc
       ]
 
 namelessThing :: CardDef
@@ -2117,5 +2119,23 @@ druadanStalker =
   (enemy "the-druadan-forest-nightmare-the-druadan-forest-004" "Drúadan Stalker" TheDruadanForestNightmare 3 43 4 3 2 3)
     { cdCardTraits = setFromList [Wose]
     , cdKeywords = setFromList [Archery 3]
+    , cdShadowEffect = True
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+orcRaidersNightmare :: CardDef
+orcRaidersNightmare =
+  (enemy "encounter-at-amon-din-nightmare-encounter-at-amon-din-002" "Orc Raiders" EncounterAtAmonDinNightmare 2 32 4 5 2 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+pillagingOrc :: CardDef
+pillagingOrc =
+  (enemy "encounter-at-amon-din-nightmare-encounter-at-amon-din-003" "Pillaging Orc" EncounterAtAmonDinNightmare 3 34 2 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
     , cdShadowEffect = True
     }

@@ -217,6 +217,10 @@ import LordOfTheRings.Treachery.Cards.SurroundedByShadow
 import LordOfTheRings.Treachery.Cards.SuddenOnslaught
 import LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
 import LordOfTheRings.Treachery.Cards.PoisonDarts
+import LordOfTheRings.Treachery.Cards.TrappedVillagers
+import LordOfTheRings.Treachery.Cards.RunForYourLives
+import LordOfTheRings.Treachery.Cards.SaveUs
+import LordOfTheRings.Treachery.Cards.ThoseNowSundered
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -458,5 +462,9 @@ allTreacherys =
         , SomeTreacheryCard suddenOnslaught
         , SomeTreacheryCard drumsOfTheWildMen
         , SomeTreacheryCard poisonDarts
+        , SomeTreacheryCard trappedVillagers
+        , SomeTreacheryCard runForYourLives
+        , SomeTreacheryCard saveUs
+        , SomeTreacheryCard thoseNowSundered
         ]
     ]

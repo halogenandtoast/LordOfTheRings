@@ -16,13 +16,15 @@ module LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (
   discardRescuedVillagers,
   villagerDies,
   alcaronMayRedirect,
+  rescuedVillagerOr,
 ) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card (CardDef, toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
-import LordOfTheRings.Classes.HasQueue (push)
+import LordOfTheRings.Classes.HasQueue (push, pushAll)
+import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Entities (entitiesLocations, entitiesObjectives, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Id
@@ -93,3 +95,18 @@ alcaronMayRedirect =
   (&&)
     <$> selectAny (AllyWithCardCode (toCardCode Objectives.lordAlcaron) <> ReadyAlly)
     <*> selectAny AnyLocation
+
+{- | "Either discard 1 villager token from Rescued Villagers, or ...": the player picks,
+and with no villager there to discard, the other happens.
+-}
+rescuedVillagerOr
+  :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> Text -> QueueT Message m () -> m ()
+rescuedVillagerOr source pid key orElse = do
+  rescued <- rescuedVillagerCount
+  if rescued > 0
+    then chooseOneM pid do
+      questionLabeled "amonDin.villagerOr"
+      causedBy source
+      labeled "amonDin.discardVillager" $ discardRescuedVillagers source 1
+      labeled key orElse
+    else pushAll =<< capture orElse

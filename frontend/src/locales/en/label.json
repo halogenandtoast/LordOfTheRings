@@ -1609,5 +1609,28 @@
   },
   "poisonDarts": {
     "attach": "Choose the enemy to attach Poison-darts to"
+  },
+  "amonDin": {
+    "villagerOr": "Discard 1 villager token from Rescued Villagers, or the alternative",
+    "discardVillager": "Discard 1 villager token from Rescued Villagers",
+    "reveal": "Reveal an encounter card"
+  },
+  "orcRaiders": {
+    "attack": "Orc Raiders makes an immediate attack against the first player"
+  },
+  "pillagingOrc": {
+    "reveal": "Reveal an additional encounter card"
+  },
+  "besiegedHomestead": {
+    "enemy": "Choose an enemy to reveal and engage"
+  },
+  "runForYourLives": {
+    "undefended": "Treat this attack as undefended"
+  },
+  "saveUs": {
+    "choose": "Save Us!: discard 2 villager tokens or search for an enemy",
+    "discardVillagers": "Discard 2 villager tokens from Rescued Villagers",
+    "search": "Search the encounter deck and discard pile for an enemy",
+    "enemy": "Choose an enemy to reveal"
   }
 }
