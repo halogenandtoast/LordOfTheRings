@@ -297,6 +297,9 @@ allLocationCards =
       , crumbledBattlements
       , easternQuarter
       , westernQuarter
+      , traitorsDen
+      , rathCelerdain
+      , archedTunnel
       ]
 
 drownedTreasury :: CardDef
@@ -2230,4 +2233,24 @@ westernQuarter :: CardDef
 westernQuarter =
   (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-007" "Western Quarter" AssaultOnOsgiliathNightmare 2 2 4)
     { cdCardTraits = setFromList [Osgiliath]
+    }
+
+-- The Steward's Fear Nightmare
+
+traitorsDen :: CardDef
+traitorsDen =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-006" "Traitors' Den" TheStewardsFearNightmare 2 3 6)
+    { cdCardTraits = setFromList [Underworld, City]
+    }
+
+rathCelerdain :: CardDef
+rathCelerdain =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-007" "Rath Celerdain" TheStewardsFearNightmare 2 2 5)
+    { cdCardTraits = setFromList [City]
+    }
+
+archedTunnel :: CardDef
+archedTunnel =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-008" "Arched Tunnel" TheStewardsFearNightmare 2 4 3)
+    { cdCardTraits = setFromList [Underworld, City]
     }

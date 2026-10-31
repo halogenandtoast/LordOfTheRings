@@ -231,6 +231,7 @@ allTreacheryCards =
       , relentlessAttack
       , overrunDefenses
       , pressedOnAllSides
+      , falseAccusations
       ]
 
 deepDeepDark :: CardDef
@@ -1402,3 +1403,12 @@ overrunDefenses = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliat
 
 pressedOnAllSides :: CardDef
 pressedOnAllSides = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-010" "Pressed on All Sides" AssaultOnOsgiliathNightmare 2) {cdShadowEffect = True}
+
+-- The Steward's Fear Nightmare
+
+falseAccusations :: CardDef
+falseAccusations =
+  (treachery "the-stewards-fear-nightmare-the-stewards-fear-009" "False Accusations" TheStewardsFearNightmare 2)
+    { cdCardTraits = setFromList [Scheme]
+    , cdShadowEffect = True
+    }

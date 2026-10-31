@@ -1639,5 +1639,16 @@
   },
   "westernQuarter": {
     "discard": "Choose the highest cost attachment you control to discard"
+  },
+  "falseAccusations": {
+    "choose": "False Accusations: raise your threat by 5 or exhaust each ready character you control",
+    "threat": "Raise your threat by 5",
+    "exhaust": "Exhaust each ready character you control"
+  },
+  "assassination": {
+    "attach": "Choose the hero to attach Assassination to"
+  },
+  "theCabalsChampion": {
+    "attach": "Choose the Villain to attach The Cabal's Champion to"
   }
 }

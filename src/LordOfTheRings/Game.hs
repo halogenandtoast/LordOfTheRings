@@ -2190,6 +2190,7 @@ runGameMessage msg g = case msg of
         gone = filter under (toList g.entities.locations)
         heroes = filter under (toList g.entities.heroes)
         allies = filter under (toList g.entities.allies)
+        enemies = filter under (toList g.entities.enemies)
         characters = map toTarget heroes <> map toTarget allies
         on' :: HasField "placement" a Placement => a -> Bool
         on' a = a.placement `elem` map (AttachedTo . toTarget) gone
@@ -2200,9 +2201,12 @@ runGameMessage msg g = case msg of
       <> [Discard (toTarget o) | o <- toList g.entities.objectives, on' o]
       <> concatMap (discardAttached g) characters
       <> [CheckEliminations | notNull heroes]
+      -- an enemy placed underneath a location leaves play, as Murderous Turncoat
+      <> concat [discardAttached g t <> discardShadowsOf g t <> freeGuarded g t | t <- map toTarget enemies]
     pure
       $ g'
       & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
+      & entitiesL . enemiesL %~ Map.filter (not . under)
       & entitiesL . heroesL %~ Map.filter (not . under)
       & entitiesL . alliesL %~ Map.filter (not . under)
       & entitiesL . attachmentsL %~ Map.filter (not . under)

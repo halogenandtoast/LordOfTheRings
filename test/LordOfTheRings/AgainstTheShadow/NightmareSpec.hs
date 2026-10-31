@@ -4,19 +4,20 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Matcher (getArcheryTotal, getEnemy)
+import LordOfTheRings.Matcher (getArcheryTotal, getEnemy, getObjective)
 import LordOfTheRings.Modifier (ModifierType (CannotBeTraveledTo, CannotCollectResources))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Phase (Phase (QuestPhase))
-import LordOfTheRings.Scenario (assaultOnOsgiliath, encounterAtAmonDin, theBloodOfGondor, theDruadanForest, theMorgulVale)
+import LordOfTheRings.Phase (Phase (CombatPhase, EncounterPhase, QuestPhase))
+import LordOfTheRings.Scenario (assaultOnOsgiliath, encounterAtAmonDin, theBloodOfGondor, theDruadanForest, theMorgulVale, theStewardsFear)
+import LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers (Meta (..), getMeta, underneathCount)
 import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (deadVillagerCount, getVillagers, rescuedVillagerCount)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
-import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside), modeL, victoryDisplayL)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside), metaL, modeL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (When), Window (..), WindowType (AdvancedToStage, PhaseBegins, RoundEnds), mkAfter)
+import LordOfTheRings.Window (Timing (When), Window (..), WindowType (AdvancedToStage, PhaseBegins, PhaseEnds, RoundEnds), mkAfter)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -75,6 +76,23 @@ stagedLocation :: CardDef -> GameT LocationId
 stagedLocation def = do
   run . AddToStaging =<< genEncounterCard def
   locationOf def
+
+fearMeta :: GameT Meta
+fearMeta = getsGame (getMeta . toAttrs . (.scenario))
+
+-- | The underworld deck, made of these cards.
+setUnderworld :: [CardDef] -> GameT [EncounterCard]
+setUnderworld defs = do
+  cards <- traverse genEncounterCard defs
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (metaL .~ toJSON (Meta cards mempty []))
+  pure cards
+
+objectiveOf :: CardDef -> GameT ObjectiveId
+objectiveOf def = getsGame (fromJustNote "no such objective" . fmap toId . find ((== toCardCode def) . toCardCode) . toList . (.entities.objectives))
+
+staged' :: CardDef -> GameT ()
+staged' def = run . AddToStaging =<< genEncounterCard def
 
 spec :: Spec
 spec = describe "Against the Shadow nightmare decks" do
@@ -436,3 +454,92 @@ spec = describe "Against the Shadow nightmare decks" do
       chooseTarget pid battlements
       run $ PlaceProgressOnQuest 1
       (.progress) <$> getLocation battlements `shouldReturn` 1
+
+  describe "The Steward's Fear" do
+    it "shuffles False Accusations into the underworld deck and keeps the removed Plots" . nightmare theStewardsFear $ \pid -> do
+      flipFirstQuest pid
+      resolveWhenRevealed pid
+      m <- fearMeta
+      let underworld = m.underworldDeck <> concat (toList m.underneath)
+      length underworld `shouldBe` 11
+      copies Treacheries.falseAccusations underworld `shouldBe` 2
+      copies Enemies.pickpocket underworld `shouldBe` 0
+      length m.removedPlots `shouldBe` 4
+
+    it "Murderous Turncoat goes under the active location at the end of the combat phase" . nightmare theStewardsFear $ \_ -> do
+      _ <- setUnderworld []
+      reveal Locations.rathCelerdain []
+      lid <- locationOf Locations.rathCelerdain
+      run $ PlaceLocation lid ActiveLocation
+      _ <- staged Enemies.murderousTurncoat
+      run $ CheckWindows [Window When (PhaseEnds CombatPhase)]
+      getsGame (length . (.entities.enemies)) `shouldReturn` 0
+      underneathCount lid `shouldReturn` 1
+
+    it "Faithless Conspirator takes no damage while the active location has a card under it" . nightmare theStewardsFear $ \_ -> do
+      _ <- setUnderworld [Enemies.lossarnachBandit]
+      reveal Locations.archedTunnel []
+      lid <- locationOf Locations.archedTunnel
+      run $ PlaceLocation lid ActiveLocation
+      conspirator <- staged Enemies.faithlessConspirator
+      run $ DealDamage GameSource (toTarget conspirator) 1
+      (.damage) <$> getEnemy conspirator `shouldReturn` 0
+
+    it "Arched Tunnel reveals what is under it and takes the next underworld card" . nightmare theStewardsFear $ \_ -> do
+      _ <- setUnderworld [Enemies.lossarnachBandit, Enemies.zealousTraitor]
+      reveal Locations.archedTunnel []
+      lid <- locationOf Locations.archedTunnel
+      run $ TravelTo lid
+      void $ enemyOf Enemies.lossarnachBandit
+      underneathCount lid `shouldReturn` 1
+      (.underworldDeck) <$> fearMeta `shouldReturn` []
+
+    it "Traitors' Den reveals a removed Plot at its fourth resource" . nightmare theStewardsFear $ \_ -> do
+      plot <- genEncounterCard Objectives.riseToPower
+      g <- getGame
+      putGame $ g & scenarioL %~ overAttrs (metaL .~ toJSON (Meta [] mempty [plot]))
+      reveal Locations.traitorsDen []
+      lid <- locationOf Locations.traitorsDen
+      run $ PlaceTokens GameSource (toTarget lid) Resource 3
+      endRound
+      void $ objectiveOf Objectives.riseToPower
+      (.removedPlots) <$> fearMeta `shouldReturn` []
+
+    it "Rath Celerdain reveals the top underworld card as the encounter phase begins" . nightmare theStewardsFear $ \_ -> do
+      _ <- setUnderworld [Enemies.lossarnachBandit]
+      reveal Locations.rathCelerdain []
+      run $ CheckWindows [mkAfter $ PhaseBegins EncounterPhase]
+      void $ enemyOf Enemies.lossarnachBandit
+
+    it "False Accusations raises a player's threat by 5 if he chooses" . nightmare theStewardsFear $ \pid -> do
+      was <- (.threat) <$> getPlayer pid
+      reveal Treacheries.falseAccusations []
+      chooseLabel "$label.falseAccusations.threat" pid
+      (.threat) <$> getPlayer pid `shouldReturn` was + 5
+
+    it "Rise to Power gains 2 resources each round and adds them to the quest phase's threat" . nightmare theStewardsFear $ \_ -> do
+      staged' Objectives.riseToPower
+      endRound
+      run $ BeginPhase QuestPhase
+      getStagingThreat `shouldReturn` 2
+
+    it "Assassination marks the hero with the highest threat cost and arms each enemy" . nightmare theStewardsFear $ \_ -> do
+      bandit <- staged Enemies.lossarnachBandit
+      unarmed <- getEnemyAttack bandit
+      staged' Objectives.assassination
+      gloin <- toTarget <$> getHeroWithCode "01012"
+      oid <- objectiveOf Objectives.assassination
+      (.placement) <$> getObjective oid `shouldReturn` AttachedTo gloin
+      getEnemyAttack bandit `shouldReturn` unarmed + 1
+
+    it "The Cabal's Champion goes to the Villain" . nightmare theStewardsFear $ \_ -> do
+      villain <- staged Enemies.daughterOfBeruthiel
+      staged' Objectives.theCabalsChampion
+      oid <- objectiveOf Objectives.theCabalsChampion
+      (.placement) <$> getObjective oid `shouldReturn` AttachedTo (toTarget villain)
+
+    it "shuffles a destroyed enemy into the underworld deck" . nightmare theStewardsFear $ \_ -> do
+      _ <- setUnderworld []
+      bandit <- staged Enemies.lossarnachBandit
+      run $ DealDamage GameSource (toTarget bandit) 5
+      map toCardCode . (.underworldDeck) <$> fearMeta `shouldReturn` [toCardCode Enemies.lossarnachBandit]

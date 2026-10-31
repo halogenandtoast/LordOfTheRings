@@ -266,6 +266,8 @@ allEnemyCards =
       , pillagingOrc
       , invadingOrc
       , haradrimWarrior
+      , murderousTurncoat
+      , faithlessConspirator
       ]
 
 namelessThing :: CardDef
@@ -2156,5 +2158,21 @@ haradrimWarrior :: CardDef
 haradrimWarrior =
   (enemy "assault-on-osgiliath-nightmare-assault-on-osgiliath-003" "Haradrim Warrior" AssaultOnOsgiliathNightmare 3 30 0 3 3 4)
     { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+-- The Steward's Fear Nightmare
+
+murderousTurncoat :: CardDef
+murderousTurncoat =
+  (enemy "the-stewards-fear-nightmare-the-stewards-fear-004" "Murderous Turncoat" TheStewardsFearNightmare 3 20 1 5 3 4)
+    { cdCardTraits = setFromList [Brigand]
+    , cdWhenRevealed = True
+    }
+
+faithlessConspirator :: CardDef
+faithlessConspirator =
+  (enemy "the-stewards-fear-nightmare-the-stewards-fear-005" "Faithless Conspirator" TheStewardsFearNightmare 3 40 4 4 2 4)
+    { cdCardTraits = setFromList [Brigand]
     , cdShadowEffect = True
     }

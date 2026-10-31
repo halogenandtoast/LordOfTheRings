@@ -285,6 +285,9 @@ import LordOfTheRings.Location.Cards.PalaceRemains
 import LordOfTheRings.Location.Cards.CrumbledBattlements
 import LordOfTheRings.Location.Cards.EasternQuarter
 import LordOfTheRings.Location.Cards.WesternQuarter
+import LordOfTheRings.Location.Cards.TraitorsDen
+import LordOfTheRings.Location.Cards.RathCelerdain
+import LordOfTheRings.Location.Cards.ArchedTunnel
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -611,5 +614,8 @@ allLocations =
         , SomeLocationCard crumbledBattlements
         , SomeLocationCard easternQuarter
         , SomeLocationCard westernQuarter
+        , SomeLocationCard traitorsDen
+        , SomeLocationCard rathCelerdain
+        , SomeLocationCard archedTunnel
         ]
     ]

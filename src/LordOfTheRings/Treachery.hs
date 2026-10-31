@@ -224,6 +224,7 @@ import LordOfTheRings.Treachery.Cards.ThoseNowSundered
 import LordOfTheRings.Treachery.Cards.RelentlessAttack
 import LordOfTheRings.Treachery.Cards.OverrunDefenses
 import LordOfTheRings.Treachery.Cards.PressedOnAllSides
+import LordOfTheRings.Treachery.Cards.FalseAccusations
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -472,5 +473,6 @@ allTreacherys =
         , SomeTreacheryCard relentlessAttack
         , SomeTreacheryCard overrunDefenses
         , SomeTreacheryCard pressedOnAllSides
+        , SomeTreacheryCard falseAccusations
         ]
     ]
