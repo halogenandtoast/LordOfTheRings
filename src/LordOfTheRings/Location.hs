@@ -279,6 +279,14 @@ import LordOfTheRings.Location.Cards.CormallenFields
 import LordOfTheRings.Location.Cards.BesiegedCourtyard
 import LordOfTheRings.Location.Cards.WallsOfCairAndros
 import LordOfTheRings.Location.Cards.AnduinWharf
+import LordOfTheRings.Location.Cards.WesternShore
+import LordOfTheRings.Location.Cards.EasternShore
+import LordOfTheRings.Location.Cards.IsenRiver
+import LordOfTheRings.Location.Cards.MethedrasPeak
+import LordOfTheRings.Location.Cards.OrcTrail
+import LordOfTheRings.Location.Cards.TangledForest
+import LordOfTheRings.Location.Cards.Entwood
+import LordOfTheRings.Location.Cards.DarkCornerOfFangorn
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -599,5 +607,13 @@ allLocations =
         , SomeLocationCard besiegedCourtyard
         , SomeLocationCard wallsOfCairAndros
         , SomeLocationCard anduinWharf
+        , SomeLocationCard westernShore
+        , SomeLocationCard easternShore
+        , SomeLocationCard isenRiver
+        , SomeLocationCard methedrasPeak
+        , SomeLocationCard orcTrail
+        , SomeLocationCard tangledForest
+        , SomeLocationCard entwood
+        , SomeLocationCard darkCornerOfFangorn
         ]
     ]

@@ -262,6 +262,15 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , dunlandAssassin
+      , vengefulHillman
+      , savageHillman
+      , vigilantOrc
+      , methedrasLookout
+      , guardWarg
+      , huornOfFangorn
+      , blockingHuorn
+      , wickedHuorn
       ]
 
 namelessThing :: CardDef
@@ -2095,6 +2104,37 @@ southronMountedArcher =
 orcSaboteur :: CardDef
 orcSaboteur =
   (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-003" "Orc Saboteur" TheSiegeOfCairAndrosNightmare 3 21 2 5 2 5)
+
+-- The Voice of Isengard Nightmare Decks
+
+dunlandAssassin :: CardDef
+dunlandAssassin =
+  (enemy "the-voice-of-isengard-nightmare-the-fords-of-isen-002" "Dunland Assassin" TheFordsOfIsenNightmare 2 45 3 3 3 5)
+    { cdCardTraits = setFromList [Dunland]
+    }
+
+vengefulHillman :: CardDef
+vengefulHillman =
+  (enemy "the-voice-of-isengard-nightmare-the-fords-of-isen-003" "Vengeful Hillman" TheFordsOfIsenNightmare 3 27 2 4 2 4)
+    { cdCardTraits = setFromList [Dunland]
+    }
+
+savageHillman :: CardDef
+savageHillman =
+  (enemy "the-voice-of-isengard-nightmare-the-fords-of-isen-004" "Savage Hillman" TheFordsOfIsenNightmare 3 20 1 2 1 3)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Surge]
+    }
+
+vigilantOrc :: CardDef
+vigilantOrc =
+  (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-002" "Vigilant Orc" ToCatchAnOrcNightmare 4 1 2 4 3 4)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+methedrasLookout :: CardDef
+methedrasLookout =
+  (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-003" "Methedras Lookout" ToCatchAnOrcNightmare 3 44 3 5 4 5)
     { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
     }
@@ -2103,5 +2143,35 @@ orcRavagerNightmare :: CardDef
 orcRavagerNightmare =
   (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-004" "Orc Ravager" TheSiegeOfCairAndrosNightmare 4 30 3 3 1 4)
     { cdCardTraits = setFromList [Orc]
+    }
+
+guardWarg :: CardDef
+guardWarg =
+  (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-004" "Guard Warg" ToCatchAnOrcNightmare 2 25 4 3 3 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+huornOfFangorn :: CardDef
+huornOfFangorn =
+  (enemy "the-voice-of-isengard-nightmare-into-fangorn-002" "Huorn of Fangorn" IntoFangornNightmare 3 23 3 4 3 6)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdShadowEffect = True
+    }
+
+blockingHuorn :: CardDef
+blockingHuorn =
+  (enemy "the-voice-of-isengard-nightmare-into-fangorn-003" "Blocking Huorn" IntoFangornNightmare 2 28 2 3 3 8)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdShadowEffect = True
+    }
+
+wickedHuorn :: CardDef
+wickedHuorn =
+  (enemy "the-voice-of-isengard-nightmare-into-fangorn-004" "Wicked Huorn" IntoFangornNightmare 2 33 3 6 4 7)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
     , cdShadowEffect = True
     }

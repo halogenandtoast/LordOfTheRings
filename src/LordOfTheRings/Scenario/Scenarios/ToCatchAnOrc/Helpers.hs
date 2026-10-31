@@ -7,6 +7,7 @@ module LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (
   setUpOutOfPlayDecks,
   searches,
   revealTopOfOutOfPlayDeck,
+  discardTopOfOutOfPlayDeck,
   shuffleRandomCardIntoOutOfPlayDeck,
   getMugash,
   mugashHost,
@@ -57,6 +58,11 @@ searches pid n = push $ ScenarioSpecific "outOfPlay.search" (toJSON (pid, n))
 -- added to the staging area and anything else discarded.
 revealTopOfOutOfPlayDeck :: ReverseQueue m => PlayerId -> m ()
 revealTopOfOutOfPlayDeck pid = push $ ScenarioSpecific "outOfPlay.reveal" (toJSON pid)
+
+-- | Mugash's Cunning: the player discards the top X cards of his out-of-play deck, each
+-- enemy among them added to the staging area.
+discardTopOfOutOfPlayDeck :: ReverseQueue m => PlayerId -> Int -> m ()
+discardTopOfOutOfPlayDeck pid n = push $ ScenarioSpecific "outOfPlay.discardTop" (toJSON (pid, n))
 
 -- | Methedras Orc: the player shuffles 1 random card from his hand into his out-of-play deck.
 shuffleRandomCardIntoOutOfPlayDeck :: ReverseQueue m => PlayerId -> m ()

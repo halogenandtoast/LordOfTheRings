@@ -38,6 +38,7 @@ data EncounterSet
   | GoblinsOfTheDeep
   | HazardsOfThePit
   | IntoFangorn
+  | IntoFangornNightmare
   | IntoIthilien
   | IntoIthilienNightmare
   | IntoThePit
@@ -79,6 +80,7 @@ data EncounterSet
   | TheDunlandTrap
   | TheFateOfNumenor
   | TheFordsOfIsen
+  | TheFordsOfIsenNightmare
   | TheHillsOfEmynMuil
   | TheHuntForGollum
   | TheLongDark
@@ -101,6 +103,7 @@ data EncounterSet
   | TheWatcherInTheWater
   | TheWeatherHills
   | ToCatchAnOrc
+  | ToCatchAnOrcNightmare
   | TroubleInTharbad
   | TwistsAndTurns
   | UmbarNavy

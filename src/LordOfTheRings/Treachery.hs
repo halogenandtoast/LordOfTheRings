@@ -217,6 +217,12 @@ import LordOfTheRings.Treachery.Cards.TheyreGettingAway
 import LordOfTheRings.Treachery.Cards.ObsidianArrows
 import LordOfTheRings.Treachery.Cards.SavageFray
 import LordOfTheRings.Treachery.Cards.RuinAndWroth
+import LordOfTheRings.Treachery.Cards.BrutalAssault
+import LordOfTheRings.Treachery.Cards.MugashsCunning
+import LordOfTheRings.Treachery.Cards.PatrollingOrcs
+import LordOfTheRings.Treachery.Cards.MugashsRage
+import LordOfTheRings.Treachery.Cards.StiflingWoods
+import LordOfTheRings.Treachery.Cards.FangornsAnger
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -458,5 +464,11 @@ allTreacherys =
         , SomeTreacheryCard obsidianArrows
         , SomeTreacheryCard savageFray
         , SomeTreacheryCard ruinAndWroth
+        , SomeTreacheryCard brutalAssault
+        , SomeTreacheryCard mugashsCunning
+        , SomeTreacheryCard patrollingOrcs
+        , SomeTreacheryCard mugashsRage
+        , SomeTreacheryCard stiflingWoods
+        , SomeTreacheryCard fangornsAnger
         ]
     ]

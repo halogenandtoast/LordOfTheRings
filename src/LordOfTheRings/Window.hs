@@ -153,6 +153,8 @@ data WindowType
     Attached Target Target (Set Trait)
   | -- | the committed character was removed from the quest
     RemovedFromQuest Target
+  | -- | the player discarded cards from his out-of-play deck (To Catch an Orc)
+    DiscardedFromOutOfPlayDeck PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

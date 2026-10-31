@@ -513,6 +513,8 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is dealt to this card, as Dense Thickets' shadow sends it to a Ranger objective
     ExcessDamageTo Target
+  | -- | on a player: they cannot discard cards from their hand, as Isen River reads
+    CannotDiscardFromHand
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

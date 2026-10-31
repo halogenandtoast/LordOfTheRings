@@ -23,6 +23,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
+  ModifierType (CannotDiscardFromHand),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -305,7 +306,8 @@ canPay = \case
   -- an ally's own pool, as Treebeard's
   ResourceCost (AllyTarget aid) n -> (>= n) . countTokens Resource . allyTokens . toAttrs <$> getAlly aid
   ResourceCost _ _ -> pure False
-  DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
+  DiscardFromHandCost pid n ->
+    andM [(>= n) . length . (.hand) <$> getPlayer pid, notElem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)]
   RaiseThreatCost _ -> pure True
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m

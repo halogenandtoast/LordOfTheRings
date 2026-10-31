@@ -224,6 +224,12 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , brutalAssault
+      , mugashsCunning
+      , patrollingOrcs
+      , mugashsRage
+      , stiflingWoods
+      , fangornsAnger
       ]
 
 deepDeepDark :: CardDef
@@ -1366,4 +1372,42 @@ ruinAndWroth =
   (treachery "heirs-of-numenor-nightmare-the-siege-of-cair-andros-008" "Ruin and Wroth" TheSiegeOfCairAndrosNightmare 3)
     { cdShadowEffect = True
     , cdKeywords = setFromList [Doomed 2]
+    }
+
+-- The Voice of Isengard Nightmare Decks
+
+brutalAssault :: CardDef
+brutalAssault =
+  (treachery "the-voice-of-isengard-nightmare-the-fords-of-isen-008" "Brutal Assault" TheFordsOfIsenNightmare 2)
+    { cdShadowEffect = True
+    }
+
+mugashsCunning :: CardDef
+mugashsCunning =
+  (treachery "the-voice-of-isengard-nightmare-to-catch-an-orc-007" "Mugash's Cunning" ToCatchAnOrcNightmare 2)
+    { cdShadowEffect = True
+    }
+
+patrollingOrcs :: CardDef
+patrollingOrcs =
+  (treachery "the-voice-of-isengard-nightmare-to-catch-an-orc-008" "Patrolling Orcs" ToCatchAnOrcNightmare 2)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+mugashsRage :: CardDef
+mugashsRage =
+  (treachery "the-voice-of-isengard-nightmare-to-catch-an-orc-009" "Mugash's Rage" ToCatchAnOrcNightmare 2)
+    { cdShadowEffect = True
+    }
+
+stiflingWoods :: CardDef
+stiflingWoods =
+  (treachery "the-voice-of-isengard-nightmare-into-fangorn-008" "Stifling Woods" IntoFangornNightmare 2)
+    { cdShadowEffect = True
+    }
+
+fangornsAnger :: CardDef
+fangornsAnger =
+  (treachery "the-voice-of-isengard-nightmare-into-fangorn-009" "Fangorn's Anger" IntoFangornNightmare 2)
+    { cdShadowEffect = True
     }

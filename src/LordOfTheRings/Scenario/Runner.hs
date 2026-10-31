@@ -219,6 +219,8 @@ instance RunMessage ScenarioAttrs where
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
     -- a set-aside card revealed, as Cornered Animals reveals Orc Ambush
     RevealCard card -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- a set-aside card added to the staging area, as Orc Trail adds one out-of-play Orc
+    AddToStaging card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card put into play, as The Seething Lake makes Doors of Durin active
     PutIntoPlayAsActiveLocation card -> pure $ attrs & setAsideL %~ filter (/= card)
     ShuffleSetAsideIntoEncounterDeck cards -> do
