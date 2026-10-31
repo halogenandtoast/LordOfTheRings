@@ -283,6 +283,8 @@ import LordOfTheRings.Location.Cards.BramblesAndThorns
 import LordOfTheRings.Location.Cards.SarnGebirRapids
 import LordOfTheRings.Location.Cards.TheMereOfDeadFaces
 import LordOfTheRings.Location.Cards.StagnantQuagmire
+import LordOfTheRings.Location.Cards.DeceptivePath
+import LordOfTheRings.Location.Cards.WebWall
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -607,5 +609,7 @@ allLocations =
         , SomeLocationCard sarnGebirRapids
         , SomeLocationCard theMereOfDeadFaces
         , SomeLocationCard stagnantQuagmire
+        , SomeLocationCard deceptivePath
+        , SomeLocationCard webWall
         ]
     ]

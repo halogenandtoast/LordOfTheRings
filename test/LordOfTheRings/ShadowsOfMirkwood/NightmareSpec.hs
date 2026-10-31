@@ -2,7 +2,8 @@ module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (CannotReduceThreat))
+import LordOfTheRings.Keyword (Keyword (Ranged))
+import LordOfTheRings.Modifier (ModifierType (CannotReduceThreat, LoseKeyword))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -10,7 +11,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase
-import LordOfTheRings.Scenario (aJourneyToRhosgobel, conflictAtTheCarrock, theDeadMarshes, theHillsOfEmynMuil, theHuntForGollum)
+import LordOfTheRings.Scenario (aJourneyToRhosgobel, conflictAtTheCarrock, returnToMirkwood, theDeadMarshes, theHillsOfEmynMuil, theHuntForGollum)
 import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (Explored, PhaseEnds), mkAfter, mkWhen)
@@ -241,3 +242,35 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.marshWight
       reveal Treacheries.devilryOfTheDarkLand []
       getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.marshWight]
+
+  describe "Return to Mirkwood" do
+    it "builds the nightmare deck" . nightmare returnToMirkwood $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 53
+      map (`copies` deck) [Locations.woodmansGlade, Enemies.goblinSniper, Enemies.webSpinner]
+        `shouldBe` [0, 0, 3]
+
+    it "adds Attercop, Attercop to the staging area as stage 4A is revealed" . nightmare returnToMirkwood $ \pid -> do
+      _ <- setEncounterDeck [Enemies.attercopAttercop]
+      run . AdvanceToQuest =<< genEncounterCard Quests.ambush
+      chooseOptionMatching "Attercop, Attercop" pid (const True)
+      getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.attercopAttercop]
+
+    it "Isolation takes the ranged keyword from every character" . nightmare returnToMirkwood $ \_ -> do
+      _ <- putQuestStage Quests.throughTheForest
+      reveal Treacheries.isolation [Locations.webWall]
+      (getModifiers =<< getHeroWithCode "01007") >>= (`shouldSatisfy` elem (LoseKeyword Ranged))
+
+    it "Web-wall reveals the topmost Spider enemy in the discard pile" . nightmare returnToMirkwood $ \_ -> do
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.attercopAttercop
+      reveal Locations.webWall []
+      getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.attercopAttercop]
+
+    it "Deceptive Path gives way to the next location in the encounter deck" . nightmare returnToMirkwood $ \_ -> do
+      reveal Locations.deceptivePath []
+      path <- theLocation
+      _ <- setEncounterDeck [Treacheries.isolation, Locations.webWall]
+      run $ TravelTo path
+      getsGame (map (\l -> (toCardCode l, (toAttrs l).placement)) . toList . (.entities.locations))
+        `shouldReturn` [(toCardCode Locations.webWall, ActiveLocation)]

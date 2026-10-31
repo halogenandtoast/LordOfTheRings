@@ -263,6 +263,9 @@ import LordOfTheRings.Enemy.Cards.ThingsInThePools
 import LordOfTheRings.Enemy.Cards.MarshWight
 import LordOfTheRings.Enemy.Cards.LostSoulOfLorien
 import LordOfTheRings.Enemy.Cards.IllFatedGuard
+import LordOfTheRings.Enemy.Cards.AmbushingOrcs
+import LordOfTheRings.Enemy.Cards.PursuingWargRider
+import LordOfTheRings.Enemy.Cards.WebSpinner
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -551,5 +554,8 @@ allEnemys =
         , SomeEnemyCard marshWight
         , SomeEnemyCard lostSoulOfLorien
         , SomeEnemyCard illFatedGuard
+        , SomeEnemyCard ambushingOrcs
+        , SomeEnemyCard pursuingWargRider
+        , SomeEnemyCard webSpinner
         ]
     ]

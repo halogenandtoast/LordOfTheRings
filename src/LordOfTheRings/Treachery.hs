@@ -224,6 +224,9 @@ import LordOfTheRings.Treachery.Cards.RetracedSteps
 import LordOfTheRings.Treachery.Cards.CandlesOfCorpses
 import LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
 import LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
+import LordOfTheRings.Treachery.Cards.Isolation
+import LordOfTheRings.Treachery.Cards.BefouledEquipment
+import LordOfTheRings.Treachery.Cards.WickednessAndMischief
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -472,5 +475,8 @@ allTreacherys =
         , SomeTreacheryCard candlesOfCorpses
         , SomeTreacheryCard swarmingMosquitoes
         , SomeTreacheryCard devilryOfTheDarkLand
+        , SomeTreacheryCard isolation
+        , SomeTreacheryCard befouledEquipment
+        , SomeTreacheryCard wickednessAndMischief
         ]
     ]

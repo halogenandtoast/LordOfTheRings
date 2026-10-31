@@ -1618,5 +1618,18 @@
   "candlesOfCorpses": {
     "choose": "Candles of Corpses: discard a hero you control, or raise your threat by 5",
     "threat": "Raise your threat by 5"
+  },
+  "returnToMirkwoodNightmare": {
+    "tantrum": "Exhaust a hero you control, or resolve the topmost Tantrum card in the discard pile",
+    "resolveTantrum": "Resolve the topmost Tantrum card"
+  },
+  "webSpinner": {
+    "choose": "Web-spinner: exhaust a hero you control, or it gains surge",
+    "surge": "Web-spinner gains surge"
+  },
+  "wickednessAndMischief": {
+    "choose": "Wickedness and Mischief: reveal the topmost Tantrum card in the discard pile, or 2 encounter cards",
+    "tantrum": "Reveal the topmost Tantrum card",
+    "reveal": "Reveal 2 encounter cards"
   }
 }
