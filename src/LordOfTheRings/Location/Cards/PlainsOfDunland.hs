@@ -22,6 +22,7 @@ instance HasModifiersFor PlainsOfDunland where
 
 -- | Travel: The first player engages the highest attack enemy in the staging area to
 -- travel here.
+-- ponytail: with no enemy in the staging area the players may still travel here
 instance RunMessage PlainsOfDunland where
   runMessage msg l@(PlainsOfDunland a) = case msg of
     TravelTo lid | lid == a.id -> do
