@@ -247,6 +247,22 @@ import LordOfTheRings.Enemy.Cards.BrownWaterRats
 import LordOfTheRings.Enemy.Cards.TortureMaster
 import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
+import LordOfTheRings.Enemy.Cards.RaiderOfTheStorm
+import LordOfTheRings.Enemy.Cards.TideRunner
+import LordOfTheRings.Enemy.Cards.VenomsBite
+import LordOfTheRings.Enemy.Cards.CorsairDuelist
+import LordOfTheRings.Enemy.Cards.SlitheringArm
+import LordOfTheRings.Enemy.Cards.CrashingArm
+import LordOfTheRings.Enemy.Cards.KingsKnight
+import LordOfTheRings.Enemy.Cards.CursedSoldier
+import LordOfTheRings.Enemy.Cards.SubmergedDead
+import LordOfTheRings.Enemy.Cards.GreatShark
+import LordOfTheRings.Enemy.Cards.UnderseaCaveTroll
+import LordOfTheRings.Enemy.Cards.RammingShip
+import LordOfTheRings.Enemy.Cards.FangOfSahir
+import LordOfTheRings.Enemy.Cards.PatrolShip
+import LordOfTheRings.Enemy.Cards.CorsairLoyalist
+import LordOfTheRings.Enemy.Cards.UmbarPatrolNightmare
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -519,5 +535,21 @@ allEnemys =
         , SomeEnemyCard tortureMaster
         , SomeEnemyCard crazedCaptive
         , SomeEnemyCard spiderOfDolGuldur
+        , SomeEnemyCard raiderOfTheStorm
+        , SomeEnemyCard tideRunner
+        , SomeEnemyCard venomsBite
+        , SomeEnemyCard corsairDuelist
+        , SomeEnemyCard slitheringArm
+        , SomeEnemyCard crashingArm
+        , SomeEnemyCard kingsKnight
+        , SomeEnemyCard cursedSoldier
+        , SomeEnemyCard submergedDead
+        , SomeEnemyCard greatShark
+        , SomeEnemyCard underseaCaveTroll
+        , SomeEnemyCard rammingShip
+        , SomeEnemyCard fangOfSahir
+        , SomeEnemyCard patrolShip
+        , SomeEnemyCard corsairLoyalist
+        , SomeEnemyCard umbarPatrolNightmare
         ]
     ]

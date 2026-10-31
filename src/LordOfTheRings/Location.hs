@@ -271,6 +271,24 @@ import LordOfTheRings.Location.Cards.AFloodedFord
 import LordOfTheRings.Location.Cards.GladdenMarshlands
 import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
+import LordOfTheRings.Location.Cards.SharpJetties
+import LordOfTheRings.Location.Cards.CliffsideInlet
+import LordOfTheRings.Location.Cards.CaptainsQuarters
+import LordOfTheRings.Location.Cards.AftCabin
+import LordOfTheRings.Location.Cards.EdgeOfTheTemple
+import LordOfTheRings.Location.Cards.DesecratedRuinsNightmare
+import LordOfTheRings.Location.Cards.TempleFoothills
+import LordOfTheRings.Location.Cards.CursedTempleNightmare
+import LordOfTheRings.Location.Cards.OvergrownPassage
+import LordOfTheRings.Location.Cards.SharpPrecipice
+import LordOfTheRings.Location.Cards.JaggedCavern
+import LordOfTheRings.Location.Cards.SubmergedCrawlway
+import LordOfTheRings.Location.Cards.FloodedCaverns
+import LordOfTheRings.Location.Cards.CityUnderSiege
+import LordOfTheRings.Location.Cards.SeaWall
+import LordOfTheRings.Location.Cards.WarTornWaters
+import LordOfTheRings.Location.Cards.WallsOfUmbar
+import LordOfTheRings.Location.Cards.UmbarBridge
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -583,5 +601,23 @@ allLocations =
         , SomeLocationCard gladdenMarshlands
         , SomeLocationCard tortureChamber
         , SomeLocationCard dungeonLabyrinth
+        , SomeLocationCard sharpJetties
+        , SomeLocationCard cliffsideInlet
+        , SomeLocationCard captainsQuarters
+        , SomeLocationCard aftCabin
+        , SomeLocationCard edgeOfTheTemple
+        , SomeLocationCard desecratedRuinsNightmare
+        , SomeLocationCard templeFoothills
+        , SomeLocationCard cursedTempleNightmare
+        , SomeLocationCard overgrownPassage
+        , SomeLocationCard sharpPrecipice
+        , SomeLocationCard jaggedCavern
+        , SomeLocationCard submergedCrawlway
+        , SomeLocationCard floodedCaverns
+        , SomeLocationCard cityUnderSiege
+        , SomeLocationCard seaWall
+        , SomeLocationCard warTornWaters
+        , SomeLocationCard wallsOfUmbar
+        , SomeLocationCard umbarBridge
         ]
     ]
