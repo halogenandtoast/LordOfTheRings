@@ -1588,5 +1588,8 @@
   },
   "shadowFall": {
     "attach": "Choose the location Shadow-fall attaches to"
+  },
+  "dismayAndFear": {
+    "remove": "Choose a character to remove from the quest"
   }
 }

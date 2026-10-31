@@ -192,6 +192,9 @@ import LordOfTheRings.Quest.Cards.FateOfTheDreamChaser
 import LordOfTheRings.Quest.Cards.TheHavenOfUmbar
 import LordOfTheRings.Quest.Cards.FinalConfrontation
 import LordOfTheRings.Quest.Cards.GoblinAmbush
+import LordOfTheRings.Quest.Cards.PursuedByShadowStage
+import LordOfTheRings.Quest.Cards.BlockedByFlame
+import LordOfTheRings.Quest.Cards.Ghash
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -416,5 +419,8 @@ allQuests =
         , SomeQuestCard theHavenOfUmbar
         , SomeQuestCard finalConfrontation
         , SomeQuestCard goblinAmbush
+        , SomeQuestCard pursuedByShadowStage
+        , SomeQuestCard blockedByFlame
+        , SomeQuestCard ghash
         ]
     ]

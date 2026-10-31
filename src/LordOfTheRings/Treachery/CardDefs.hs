@@ -1363,6 +1363,8 @@ dismayAndFear = (treachery "khazad-dum-nightmare-flight-from-moria-008" "Dismay 
 anEvilFortune :: CardDef
 anEvilFortune =
   (treachery "khazad-dum-nightmare-flight-from-moria-009" "An Evil Fortune" FlightFromMoriaNightmare 3)
-    { cdKeywords = setFromList [Surge, Doomed 1]
+    { cdCardTraits = setFromList [Shadow, Flame]
+    , cdKeywords = setFromList [Surge, Doomed 1]
     , cdShadowEffect = True
+    , cdVictoryPoints = Just 1
     }

@@ -276,6 +276,7 @@ import LordOfTheRings.Location.Cards.NarrowFissure
 import LordOfTheRings.Location.Cards.ChamberOfRecords
 import LordOfTheRings.Location.Cards.DeepMines
 import LordOfTheRings.Location.Cards.WesternHall
+import LordOfTheRings.Location.Cards.ShadowedCorridor
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -593,5 +594,6 @@ allLocations =
         , SomeLocationCard chamberOfRecords
         , SomeLocationCard deepMines
         , SomeLocationCard westernHall
+        , SomeLocationCard shadowedCorridor
         ]
     ]

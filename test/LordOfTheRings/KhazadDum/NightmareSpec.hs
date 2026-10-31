@@ -6,9 +6,14 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Outcome (Outcome (Won))
-import LordOfTheRings.Scenario (intoThePit, theSeventhLevel)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (EngagedWithEachPlayer))
+import LordOfTheRings.Matcher (HeroMatcher (CommittedHero), PlayerMatcher (AnyPlayer), selectAny)
+import LordOfTheRings.Phase
+import LordOfTheRings.Scenario (flightFromMoria, intoThePit, theSeventhLevel)
 import LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers (resourcesOn)
-import LordOfTheRings.Scenario.Types (GameMode (..), modeL, scenarioSetAside)
+import LordOfTheRings.Scenario.Types (GameMode (..), modeL, questDeckL, scenarioSetAside, victoryDisplayL)
+import LordOfTheRings.Window (WindowType (PhaseEnds, RoundEnds, StagingStepBegins), mkAfter, mkWhen)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
@@ -54,6 +59,31 @@ caveTorch = do
   beravor <- toTarget <$> getHeroWithCode "01012"
   run . (`PutObjectiveIntoPlayAttached` beravor) =<< genEncounterCard Objectives.caveTorch
   getsGame (fromJustNote "no torch" . fmap toTarget . headMay . toList . (.entities.objectives))
+
+setQuestDeck :: [CardDef] -> GameT ()
+setQuestDeck defs = do
+  cards <- traverse genEncounterCard defs
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (questDeckL .~ cards)
+
+addToVictory :: CardDef -> GameT ()
+addToVictory def = do
+  card <- EncounterCard <$> genEncounterCard def
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (victoryDisplayL %~ (card :))
+
+victoryDisplay :: GameT [CardCode]
+victoryDisplay = getsGame (map toCardCode . (.victoryDisplay) . toAttrs . (.scenario))
+
+-- | The Search for an Exit stage put into play, and flipped as the staging step begins.
+flippedStage :: CardDef -> GameT Target
+flippedStage def = do
+  stage <- putQuestStage def
+  run $ CheckWindows [mkAfter StagingStepBegins]
+  pure stage
+
+threat :: PlayerId -> GameT Int
+threat pid = (.threat) <$> getPlayer pid
 
 -- | Trigger the forced abilities waiting on the player, in the order offered.
 forcedAbilities :: PlayerId -> GameT ()
@@ -245,3 +275,97 @@ spec = describe "Khazad-dûm Nightmare mode" do
       reveal Treacheries.beatsAndEchoes [Enemies.goblinScout, Locations.upperHall, Enemies.pitGoblin, Enemies.orcTaskmaster]
       enemies `shouldReturn` sort (codes [Enemies.goblinScout, Enemies.pitGoblin])
       length <$> getEncounterDeck `shouldReturn` 1
+
+  describe "Flight from Moria" do
+    it "builds the nightmare deck, with the 3 nightmare stages in the quest deck" . nightmare flightFromMoria $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.strayGoblin, Enemies.goblinSpearman, Enemies.swarmingGoblins, Locations.theMountainsRoots, Treacheries.aFoeBeyond]
+        `shouldBe` [0, 4, 3, 1, 1]
+      quests <- questDeck
+      length quests `shouldBe` 10
+      quests `shouldSatisfy` \q -> all (`elem` q) (codes [Quests.pursuedByShadowStage, Quests.blockedByFlame, Quests.ghash])
+
+    it "shuffles a bypassed stage into the quest deck, Shadowed Corridor raising threat and Swarming Goblins bringing a Spearman" . nightmare flightFromMoria $ \pid -> do
+      reveal Enemies.swarmingGoblins [Locations.shadowedCorridor]
+      run . EngageEnemy pid =<< enemyOf Enemies.swarmingGoblins
+      spearman <- genEncounterCard Enemies.goblinSpearman
+      run $ AddToEncounterDiscard [spearman]
+      stage <- flippedStage Quests.headingDown
+      setQuestDeck [Quests.headingUp]
+      was <- threat pid
+      run $ CheckWindows [mkWhen $ PhaseEnds CombatPhase]
+      chooseAbilityOf pid stage
+      forcedAbilities pid
+      threat pid `shouldReturn` was + 2
+      enemies `shouldReturn` sort (codes [Enemies.swarmingGoblins, Enemies.goblinSpearman])
+      current <- toCardCode <$> getActiveQuest
+      sort . (current :) <$> questDeck `shouldReturn` sort (codes [Quests.headingDown, Quests.headingUp])
+
+    it "lets Abandoned Tools' Refresh Action at Escape from Darkness be triggered once each round" . nightmare flightFromMoria $ \pid -> do
+      stage <- flippedStage Quests.escapeFromDarkness
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      run . (`PutObjectiveIntoPlayAttached` beravor) =<< genEncounterCard Objectives.abandonedTools
+      run $ BeginPhase RefreshPhase
+      chooseAbilityOf pid stage
+      (.progress) <$> getActiveQuest `shouldReturn` 1
+      run $ Ready beravor
+      offersAbilityOf pid stage `shouldReturn` False
+
+    it "Pursued by Shadow takes 1 progress a round, and discards 5 at the end of the round" . nightmare flightFromMoria $ \pid -> do
+      stage <- flippedStage Quests.pursuedByShadowStage
+      run $ PlaceTokens GameSource stage Progress 3
+      (.progress) <$> getActiveQuest `shouldReturn` 1
+      _ <- setEncounterDeck (replicate 6 Locations.zigilMineshaft)
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.goblinSpearman
+      run $ CheckWindows [mkAfter RoundEnds]
+      forcedAbilities pid
+      length <$> getEncounterDeck `shouldReturn` 2
+
+    it "Blocked by Flame has The Nameless Fear engaged with each player, and advances at 10 damage on it" . nightmare flightFromMoria $ \_ -> do
+      reveal Enemies.theNamelessFear []
+      nf <- enemyOf Enemies.theNamelessFear
+      _ <- flippedStage Quests.blockedByFlame
+      setQuestDeck [Quests.headingUp]
+      getModifiers nf >>= (`shouldSatisfy` elem (EngagedWithEachPlayer AnyPlayer))
+      run $ DealDamage GameSource (toTarget nf) 10
+      getsGame (fmap (.damage) . lookup nf . (.entities.enemies)) `shouldReturn` Just 0
+      victoryDisplay `shouldReturn` codes [Quests.blockedByFlame]
+
+    it "Ghâsh! deals 1 damage to each questing character" . nightmare flightFromMoria $ \_ -> do
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      run $ CommitToQuest beravor
+      _ <- setEncounterDeck [Locations.zigilMineshaft]
+      _ <- flippedStage Quests.ghash
+      getCharacterDamage beravor `shouldReturn` 1
+
+    it "Coal-Black Orc's threat and attack are the victory points" . nightmare flightFromMoria $ \_ -> do
+      addToVictory Quests.aWrongTurn
+      reveal Enemies.coalBlackOrc []
+      eid <- enemyOf Enemies.coalBlackOrc
+      getEnemyThreat eid `shouldReturn` 2
+      getEnemyAttack eid `shouldReturn` 2
+
+    it "Dismay and Fear removes characters from the quest up to The Nameless Fear's threat" . nightmare flightFromMoria $ \pid -> do
+      addToVictory Quests.aWrongTurn
+      reveal Enemies.theNamelessFear []
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      run $ CommitToQuest beravor
+      reveal Treacheries.dismayAndFear []
+      chooseTarget pid beravor
+      selectAny CommittedHero `shouldReturn` False
+
+    it "An Evil Fortune adds itself to the victory display" . nightmare flightFromMoria $ \_ -> do
+      reveal Treacheries.anEvilFortune [Locations.zigilMineshaft]
+      victoryDisplay `shouldReturn` codes [Treacheries.anEvilFortune]
+      getsGame ((.victoryPoints) . toAttrs . (.scenario)) `shouldReturn` 1
+
+    it "Shadowed Corridor's shadow discards the defending hero's resources for more shadow cards" . nightmare flightFromMoria $ \pid -> do
+      reveal Enemies.goblinSpearman []
+      eid <- enemyOf Enemies.goblinSpearman
+      beravor <- getHeroWithCode "01012"
+      run $ PlaceTokens GameSource (toTarget beravor) Resource 2
+      _ <- setEncounterDeck [Locations.zigilMineshaft, Locations.zigilMineshaft]
+      shadow pid eid Locations.shadowedCorridor [toTarget beravor]
+      getHeroResources (toId beravor) `shouldReturn` 0
+      getsGame (maybe 0 (length . (.shadowCards)) . lookup eid . (.entities.enemies)) `shouldReturn` 3

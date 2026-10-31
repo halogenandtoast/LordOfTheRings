@@ -254,6 +254,8 @@ import LordOfTheRings.Enemy.Cards.OverseerMaurul
 import LordOfTheRings.Enemy.Cards.OrcTaskmaster
 import LordOfTheRings.Enemy.Cards.GoblinSkirmisher
 import LordOfTheRings.Enemy.Cards.PitGoblin
+import LordOfTheRings.Enemy.Cards.SwarmingGoblins
+import LordOfTheRings.Enemy.Cards.CoalBlackOrc
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -533,5 +535,7 @@ allEnemys =
         , SomeEnemyCard orcTaskmaster
         , SomeEnemyCard goblinSkirmisher
         , SomeEnemyCard pitGoblin
+        , SomeEnemyCard swarmingGoblins
+        , SomeEnemyCard coalBlackOrc
         ]
     ]

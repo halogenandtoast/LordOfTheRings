@@ -1,6 +1,7 @@
 -- | What Flight from Moria's cards share: The Nameless Fear, and the Search for an Exit
 -- stages that wait face down until the staging step.
 module LordOfTheRings.Scenario.Scenarios.FlightFromMoria.Helpers (
+  namelessFear,
   namelessFearAttack,
   namelessFearThreat,
   searchForAnExit,
@@ -13,6 +14,7 @@ import LordOfTheRings.Ability
 import LordOfTheRings.Card (CardDef, toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.GameT (GameT)
@@ -28,8 +30,10 @@ import LordOfTheRings.Queue
 import LordOfTheRings.Source (isSource)
 import LordOfTheRings.Target
 import LordOfTheRings.Timing (Timing (When))
+import LordOfTheRings.Window (WindowType (QuestBypassed), mkWhen)
 import LordOfTheRings.Token (Token (Progress))
 
+-- | The Nameless Fear, while it is in play.
 namelessFear :: HasGame m => m (Maybe EnemyId)
 namelessFear = headMay <$> select (EnemyWithCardCode $ toCardCode Enemies.theNamelessFear)
 
@@ -52,7 +56,8 @@ bypass :: QuestAttrs -> [Ability]
 bypass a = [mkAbility a 102 $ response $ PhaseEndsWindow When CombatPhase | a.flipped]
 
 {- | A Search for an Exit stage: side A takes no progress, it flips itself at the staging
-step, and bypassing it puts it on the bottom of the quest deck for the next.
+step, and bypassing it puts it on the bottom of the quest deck for the next, opening the
+window for what answers a bypass.
 -}
 runSearchForAnExit :: Message -> QuestAttrs -> QueueT Message GameT QuestAttrs
 runSearchForAnExit msg attrs = case msg of
@@ -60,8 +65,12 @@ runSearchForAnExit msg attrs = case msg of
   UseCardAbility _ (isSource attrs -> True) 101 _ -> do
     flipStage attrs
     pure attrs
+  -- Nightmare: "When a quest card is bypassed, shuffle it into the quest deck instead of
+  -- placing it on the bottom."
   UseCardAbility _ (isSource attrs -> True) 102 _ -> do
-    putOnBottomOfQuestDeck attrs
+    push $ CheckWindows [mkWhen $ QuestBypassed (toTarget attrs)]
+    nightmare <- inNightmareMode
+    if nightmare then shuffleIntoQuestDeck attrs else putOnBottomOfQuestDeck attrs
     advanceQuest
     pure attrs
   _ -> runMessage msg attrs
