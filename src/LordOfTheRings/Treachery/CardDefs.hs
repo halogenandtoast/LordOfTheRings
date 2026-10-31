@@ -218,6 +218,8 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , cunningWolves
+      , torrentOfHail
       ]
 
 deepDeepDark :: CardDef
@@ -1331,4 +1333,16 @@ darkInterrogation :: CardDef
 darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
+    }
+
+-- The Wastes of Eriador Nightmare
+
+cunningWolves :: CardDef
+cunningWolves = (treachery "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-005" "Cunning Wolves" TheWastesOfEriadorNightmare 3) {cdShadowEffect = True}
+
+torrentOfHail :: CardDef
+torrentOfHail =
+  (treachery "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-006" "Torrent of Hail" TheWastesOfEriadorNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
     }

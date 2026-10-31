@@ -1585,5 +1585,17 @@
   },
   "smokingBlood": {
     "moveDamage": "Choose the character to take the enemy's damage"
+  },
+  "packHunters": {
+    "search": "Choose a Warg enemy for Pack Hunters to put into play engaged with you"
+  },
+  "snowyBadlands": {
+    "damage": "Deal damage to an exhausted character you control to travel to Snowy Badlands"
+  },
+  "torrentOfHail": {
+    "discard": "Choose an attachment to discard for Torrent of Hail"
+  },
+  "forcedOffTrack": {
+    "discard": "Choose a Warg enemy in the staging area to discard"
   }
 }

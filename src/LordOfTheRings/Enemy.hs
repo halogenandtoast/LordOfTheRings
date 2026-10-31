@@ -247,6 +247,7 @@ import LordOfTheRings.Enemy.Cards.BrownWaterRats
 import LordOfTheRings.Enemy.Cards.TortureMaster
 import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
+import LordOfTheRings.Enemy.Cards.PackHunters
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -519,5 +520,6 @@ allEnemys =
         , SomeEnemyCard tortureMaster
         , SomeEnemyCard crazedCaptive
         , SomeEnemyCard spiderOfDolGuldur
+        , SomeEnemyCard packHunters
         ]
     ]

@@ -283,6 +283,8 @@ allLocationCards =
       , streetsOfUmbar
       , cityOfCorsairs
       , umbarHarbor
+      , shroudedWilderness
+      , snowyBadlands
       ]
 
 drownedTreasury :: CardDef
@@ -2111,4 +2113,19 @@ dungeonLabyrinth :: CardDef
 dungeonLabyrinth =
   (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
     { cdCardTraits = setFromList [DolGuldur]
+    }
+
+-- The Wastes of Eriador Nightmare
+
+shroudedWilderness :: CardDef
+shroudedWilderness =
+  (location "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-003" "Shrouded Wilderness" TheWastesOfEriadorNightmare 3 6 4)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+snowyBadlands :: CardDef
+snowyBadlands =
+  (location "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-004" "Snowy Badlands" TheWastesOfEriadorNightmare 3 3 5)
+    { cdCardTraits = setFromList [Arnor, Hills]
     }

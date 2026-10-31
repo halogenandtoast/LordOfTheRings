@@ -538,6 +538,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcSkirmisher
       LordOfTheRings.Enemy.Cards.OrcVanguard
       LordOfTheRings.Enemy.Cards.OrcWarParty
+      LordOfTheRings.Enemy.Cards.PackHunters
       LordOfTheRings.Enemy.Cards.PackLeader
       LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.Pickpocket
@@ -1072,9 +1073,11 @@ library
       LordOfTheRings.Location.Cards.ShrineToMorgothTheDrownedRuins
       LordOfTheRings.Location.Cards.ShrineToMorgothUnderwater
       LordOfTheRings.Location.Cards.ShroudedHills
+      LordOfTheRings.Location.Cards.ShroudedWilderness
       LordOfTheRings.Location.Cards.SilentCaverns
       LordOfTheRings.Location.Cards.SinisterDungeon
       LordOfTheRings.Location.Cards.SinkingBog
+      LordOfTheRings.Location.Cards.SnowyBadlands
       LordOfTheRings.Location.Cards.SouthernBelfalas
       LordOfTheRings.Location.Cards.SouthernGate
       LordOfTheRings.Location.Cards.StagnantCreek
@@ -1307,6 +1310,7 @@ library
       LordOfTheRings.Quest.Cards.FliesAndSpiders
       LordOfTheRings.Quest.Cards.FlightFromMountGram
       LordOfTheRings.Quest.Cards.ForageForFood
+      LordOfTheRings.Quest.Cards.ForcedOffTrack
       LordOfTheRings.Quest.Cards.FullSailAhead
       LordOfTheRings.Quest.Cards.FuriousCharge
       LordOfTheRings.Quest.Cards.GatherInformation
@@ -1330,6 +1334,7 @@ library
       LordOfTheRings.Quest.Cards.LostInTheSwanfleetCreaturesOfAForgottenAge
       LordOfTheRings.Quest.Cards.LostInTheSwanfleetImpassableMarshland
       LordOfTheRings.Quest.Cards.LostInTheWilderness
+      LordOfTheRings.Quest.Cards.MakeAStand
       LordOfTheRings.Quest.Cards.MakeCamp
       LordOfTheRings.Quest.Cards.MidwintersCrux
       LordOfTheRings.Quest.Cards.NarrowPaths
@@ -1573,6 +1578,7 @@ library
       LordOfTheRings.Treachery.Cards.CounterAttack
       LordOfTheRings.Treachery.Cards.CounterSpell
       LordOfTheRings.Treachery.Cards.CrumblingRuin
+      LordOfTheRings.Treachery.Cards.CunningWolves
       LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
       LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
       LordOfTheRings.Treachery.Cards.CurseOfTheYears
@@ -1725,6 +1731,7 @@ library
       LordOfTheRings.Treachery.Cards.TheSpidersWeb
       LordOfTheRings.Treachery.Cards.ThroughTheMist
       LordOfTheRings.Treachery.Cards.ThrownOffCourse
+      LordOfTheRings.Treachery.Cards.TorrentOfHail
       LordOfTheRings.Treachery.Cards.TragicDiscovery
       LordOfTheRings.Treachery.Cards.TrappedInside
       LordOfTheRings.Treachery.Cards.TreacherousFog
@@ -1902,6 +1909,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.AngmarAwakened.AcrossTheEttenmoorsSpec
       LordOfTheRings.AngmarAwakened.CarnDumAndDreadRealmPlayerCardsSpec
       LordOfTheRings.AngmarAwakened.EscapeFromMountGramSpec
+      LordOfTheRings.AngmarAwakened.NightmareSpec
       LordOfTheRings.AngmarAwakened.PlayerCardsBSpec
       LordOfTheRings.AngmarAwakened.TheBattleOfCarnDumSpec
       LordOfTheRings.AngmarAwakened.TheDreadRealmSpec

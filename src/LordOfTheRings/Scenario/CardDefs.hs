@@ -16,6 +16,12 @@ allNightmareCards =
       [ passageThroughMirkwoodNightmare
       , journeyAlongTheAnduinNightmare
       , escapeFromDolGuldurNightmare
+      , theWastesOfEriadorNightmare
+      , escapeFromMountGramNightmare
+      , acrossTheEttenmoorsNightmare
+      , theTreacheryOfRhudaurNightmare
+      , theBattleOfCarnDumNightmare
+      , theDreadRealmNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -26,3 +32,21 @@ journeyAlongTheAnduinNightmare = nightmareSetup "core-set-nightmare-journey-alon
 
 escapeFromDolGuldurNightmare :: CardDef
 escapeFromDolGuldurNightmare = nightmareSetup "core-set-nightmare-escape-from-dol-guldur-001" "Escape from Dol Guldur" EscapeFromDolGuldurNightmare
+
+theWastesOfEriadorNightmare :: CardDef
+theWastesOfEriadorNightmare = nightmareSetup "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-001" "The Wastes of Eriador" TheWastesOfEriadorNightmare
+
+escapeFromMountGramNightmare :: CardDef
+escapeFromMountGramNightmare = nightmareSetup "escape-from-mount-gram-nightmare-escape-from-mount-gram-001" "Escape from Mount Gram" EscapeFromMountGramNightmare
+
+acrossTheEttenmoorsNightmare :: CardDef
+acrossTheEttenmoorsNightmare = nightmareSetup "across-the-ettenmoors-nightmare-across-the-ettenmoors-001" "Across the Ettenmoors" AcrossTheEttenmoorsNightmare
+
+theTreacheryOfRhudaurNightmare :: CardDef
+theTreacheryOfRhudaurNightmare = nightmareSetup "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-001" "The Treachery of Rhudaur" TheTreacheryOfRhudaurNightmare
+
+theBattleOfCarnDumNightmare :: CardDef
+theBattleOfCarnDumNightmare = nightmareSetup "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-001" "The Battle of Carn Dûm" TheBattleOfCarnDumNightmare
+
+theDreadRealmNightmare :: CardDef
+theDreadRealmNightmare = nightmareSetup "the-dread-realm-nightmare-the-dread-realm-001" "The Dread Realm" TheDreadRealmNightmare

@@ -240,6 +240,8 @@ allQuestCards =
       , fateOfTheDreamChaser
       , theHavenOfUmbar
       , finalConfrontation
+      , makeAStand
+      , forcedOffTrack
       ]
 
 theDrippingWalls :: CardDef
@@ -894,3 +896,21 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
+
+-- The Wastes of Eriador Nightmare
+
+-- | No quest points: it leaves as its resource tokens say.
+makeAStand :: CardDef
+makeAStand =
+  (encounterSideQuest "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-007" "Make a Stand" TheWastesOfEriadorNightmare 0)
+    { cdQuestPoints = Nothing
+    , cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+forcedOffTrack :: CardDef
+forcedOffTrack =
+  (encounterSideQuest "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-008" "Forced Off Track" TheWastesOfEriadorNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }

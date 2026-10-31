@@ -253,6 +253,7 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , packHunters
       ]
 
 namelessThing :: CardDef
@@ -2038,4 +2039,12 @@ spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
     , cdShadowEffect = True
+    }
+
+-- The Wastes of Eriador Nightmare
+
+packHunters :: CardDef
+packHunters =
+  (enemy "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-002" "Pack Hunters" TheWastesOfEriadorNightmare 5 45 3 2 1 3)
+    { cdCardTraits = setFromList [Creature, Warg]
     }

@@ -6,6 +6,7 @@ data EncounterSet
   = AJourneyToRhosgobel
   | AStormOnCobasHaven
   | AcrossTheEttenmoors
+  | AcrossTheEttenmoorsNightmare
   | AncientForest
   | AngmarOrcs
   | AssaultOnOsgiliath
@@ -31,6 +32,7 @@ data EncounterSet
   | EscapeFromDolGuldur
   | EscapeFromDolGuldurNightmare
   | EscapeFromMountGram
+  | EscapeFromMountGramNightmare
   | FlightFromMoria
   | FlightOfTheStormcaller
   | FoulWeather
@@ -66,10 +68,12 @@ data EncounterSet
   | TempleOfTheDeceived
   | TheAntleredCrown
   | TheBattleOfCarnDum
+  | TheBattleOfCarnDumNightmare
   | TheBloodOfGondor
   | TheCityOfCorsairs
   | TheDeadMarshes
   | TheDreadRealm
+  | TheDreadRealmNightmare
   | TheDreamChasersFleet
   | TheDrownedRuins
   | TheDruadanForest
@@ -93,7 +97,9 @@ data EncounterSet
   | TheThingInTheDepths
   | TheThreeTrials
   | TheTreacheryOfRhudaur
+  | TheTreacheryOfRhudaurNightmare
   | TheWastesOfEriador
+  | TheWastesOfEriadorNightmare
   | TheWatcherInTheWater
   | TheWeatherHills
   | ToCatchAnOrc
