@@ -1602,5 +1602,32 @@
   },
   "sacredForest": {
     "removeTimeCounters": "Choose an enemy to remove each time counter from"
+  },
+  "bellachsHunter": {
+    "choose": "Bellach's Hunter engages you: choose one",
+    "removeTimeCounters": "Remove all time counters from the current quest",
+    "damage": "Deal 5 damage to a hero you control"
+  },
+  "orcSeeker": {
+    "choose": "Orc Seeker: choose one",
+    "lowerElimination": "Reduce each player's threat elimination level by 2",
+    "attack": "Orc Seeker engages the first player and makes an immediate attack"
+  },
+  "bloodHound": {
+    "choose": "Blood Hound: choose one",
+    "raiseThreat": "Raise your threat by 10",
+    "attack": "The attacking enemy makes an additional attack against you"
+  },
+  "darkPathway": {
+    "choose": "Dark Pathway: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "undefended": "Treat this attack as undefended"
+  },
+  "waylaidByAgents": {
+    "choose": "Waylaid by Agents: remove 1 time counter from the quest or discard an ally you control",
+    "removeTimeCounter": "Remove 1 time counter from the quest"
+  },
+  "tharbadPatrol": {
+    "attach": "Choose a non-unique location in the staging area for Tharbad Patrol"
   }
 }

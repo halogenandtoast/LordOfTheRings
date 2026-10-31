@@ -389,6 +389,7 @@ library
       LordOfTheRings.Enemy.Cards.BalefulShade
       LordOfTheRings.Enemy.Cards.BatteringRam
       LordOfTheRings.Enemy.Cards.BellachCelebrimborsSecret
+      LordOfTheRings.Enemy.Cards.BellachsHunter
       LordOfTheRings.Enemy.Cards.BellachsMarauder
       LordOfTheRings.Enemy.Cards.BellachsScout
       LordOfTheRings.Enemy.Cards.BellachTroubleInTharbad
@@ -396,6 +397,7 @@ library
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
       LordOfTheRings.Enemy.Cards.BlackNumenorean
       LordOfTheRings.Enemy.Cards.BlackUruks
+      LordOfTheRings.Enemy.Cards.BloodHound
       LordOfTheRings.Enemy.Cards.BloodThirstyWarg
       LordOfTheRings.Enemy.Cards.BoarClanAmbusher
       LordOfTheRings.Enemy.Cards.BoarClanSkirmisher
@@ -538,6 +540,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcRaiders
       LordOfTheRings.Enemy.Cards.OrcRavager
       LordOfTheRings.Enemy.Cards.OrcScramblers
+      LordOfTheRings.Enemy.Cards.OrcSeeker
       LordOfTheRings.Enemy.Cards.OrcSkirmisher
       LordOfTheRings.Enemy.Cards.OrcVanguard
       LordOfTheRings.Enemy.Cards.OrcWarParty
@@ -927,6 +930,7 @@ library
       LordOfTheRings.Location.Cards.Celebdil
       LordOfTheRings.Location.Cards.ChetwoodForest
       LordOfTheRings.Location.Cards.CityOfCorsairs
+      LordOfTheRings.Location.Cards.CityOfSpies
       LordOfTheRings.Location.Cards.CityRemains
       LordOfTheRings.Location.Cards.CityStreet
       LordOfTheRings.Location.Cards.CoastOfAnfalas
@@ -940,6 +944,7 @@ library
       LordOfTheRings.Location.Cards.CursedTemple
       LordOfTheRings.Location.Cards.DarkAbyss
       LordOfTheRings.Location.Cards.DarkHalls
+      LordOfTheRings.Location.Cards.DarkPathway
       LordOfTheRings.Location.Cards.DarkPit
       LordOfTheRings.Location.Cards.DeadmensGate
       LordOfTheRings.Location.Cards.DecrepitRemains
@@ -1725,6 +1730,7 @@ library
       LordOfTheRings.Treachery.Cards.TanglingAndGrasping
       LordOfTheRings.Treachery.Cards.TerrorDrivesThem
       LordOfTheRings.Treachery.Cards.TerrorOfTheNorth
+      LordOfTheRings.Treachery.Cards.TharbadPatrol
       LordOfTheRings.Treachery.Cards.TheDeadCityLooms
       LordOfTheRings.Treachery.Cards.TheFiresSpread
       LordOfTheRings.Treachery.Cards.TheForestsMalice
@@ -1754,6 +1760,7 @@ library
       LordOfTheRings.Treachery.Cards.WastedProvisions
       LordOfTheRings.Treachery.Cards.WatcherInTheWoods
       LordOfTheRings.Treachery.Cards.WatchfulEyes
+      LordOfTheRings.Treachery.Cards.WaylaidByAgents
       LordOfTheRings.Treachery.Cards.WeightOfResponsibility
       LordOfTheRings.Treachery.Cards.WhipLash
       LordOfTheRings.Treachery.Cards.WildMenOfDunland

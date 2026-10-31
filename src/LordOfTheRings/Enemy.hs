@@ -252,6 +252,9 @@ import LordOfTheRings.Enemy.Cards.BoarClanSkirmisher
 import LordOfTheRings.Enemy.Cards.WolfSpirit
 import LordOfTheRings.Enemy.Cards.BoarSpirit
 import LordOfTheRings.Enemy.Cards.RavenSpirit
+import LordOfTheRings.Enemy.Cards.BellachsHunter
+import LordOfTheRings.Enemy.Cards.OrcSeeker
+import LordOfTheRings.Enemy.Cards.BloodHound
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -529,5 +532,8 @@ allEnemys =
         , SomeEnemyCard wolfSpirit
         , SomeEnemyCard boarSpirit
         , SomeEnemyCard ravenSpirit
+        , SomeEnemyCard bellachsHunter
+        , SomeEnemyCard orcSeeker
+        , SomeEnemyCard bloodHound
         ]
     ]

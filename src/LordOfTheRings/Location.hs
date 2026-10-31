@@ -276,6 +276,8 @@ import LordOfTheRings.Location.Cards.MunuvDuvRiver
 import LordOfTheRings.Location.Cards.HithaeglirWoods
 import LordOfTheRings.Location.Cards.SacredForest
 import LordOfTheRings.Location.Cards.HauntedPillars
+import LordOfTheRings.Location.Cards.CityOfSpies
+import LordOfTheRings.Location.Cards.DarkPathway
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -593,5 +595,7 @@ allLocations =
         , SomeLocationCard hithaeglirWoods
         , SomeLocationCard sacredForest
         , SomeLocationCard hauntedPillars
+        , SomeLocationCard cityOfSpies
+        , SomeLocationCard darkPathway
         ]
     ]

@@ -215,6 +215,8 @@ import LordOfTheRings.Treachery.Cards.BoarClanAssault
 import LordOfTheRings.Treachery.Cards.StalkedByDunlendings
 import LordOfTheRings.Treachery.Cards.CursedBurden
 import LordOfTheRings.Treachery.Cards.TrialOfAncestors
+import LordOfTheRings.Treachery.Cards.WaylaidByAgents
+import LordOfTheRings.Treachery.Cards.TharbadPatrol
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -454,5 +456,7 @@ allTreacherys =
         , SomeTreacheryCard stalkedByDunlendings
         , SomeTreacheryCard cursedBurden
         , SomeTreacheryCard trialOfAncestors
+        , SomeTreacheryCard waylaidByAgents
+        , SomeTreacheryCard tharbadPatrol
         ]
     ]

@@ -509,6 +509,8 @@ data ModifierType
     CannotFight EnemyMatcher
   | -- | on a character: it cannot attack matching enemies, as Trial of Ancestors reads
     CannotAttackMatching EnemyMatcher
+  | -- | on a card: its effect on "the first" card each phase has happened, as Dark Pathway reads
+    FirstEffectUsed
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

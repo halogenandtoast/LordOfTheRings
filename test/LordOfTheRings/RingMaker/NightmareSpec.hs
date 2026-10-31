@@ -10,10 +10,11 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Phase (Phase (EncounterPhase))
+import LordOfTheRings.Phase (Phase (EncounterPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (theDunlandTrap, theThreeTrials)
-import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
+import LordOfTheRings.Scenario (theDunlandTrap, theThreeTrials, troubleInTharbad)
+import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (eliminationLowering)
+import LordOfTheRings.Scenario.Types (GameMode (..), modeL, scenarioMeta)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Timing (After), Window (..), WindowType (PhaseBegins))
 import TestImport
@@ -179,3 +180,56 @@ spec = describe "The Ring-maker Nightmare Decks" do
       reveal Treacheries.cursedBurden [Locations.sacredForest]
       answerAll pid
       getModifiers eowyn >>= (`shouldSatisfy` elem CannotCommitToQuest)
+
+  describe "Trouble in Tharbad" do
+    it "builds the nightmare deck" . nightmare troubleInTharbad $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Locations.tharbadHideout, Locations.hiddenAlleyway, Enemies.bellachsHunter, Treacheries.tharbadPatrol]
+        `shouldBe` [0, 0, 2, 3]
+
+    it "raises each player's starting threat by 5" . nightmare troubleInTharbad $ \pid -> do
+      was <- threat pid
+      run $ DoStep 8 Setup
+      threat pid `shouldReturn` was + 5
+
+    it "places no progress on The Crossing at Tharbad while Bellach is in play" . nightmare troubleInTharbad $ \_ -> do
+      staged Locations.theCrossingAtTharbad
+      staged Enemies.bellachTroubleInTharbad
+      crossing <- locationOf Locations.theCrossingAtTharbad
+      getModifiers crossing >>= (`shouldSatisfy` elem (ProgressLimit 0))
+
+    it "Orc Seeker's shadow lowers each elimination level by 5 when undefended" . nightmare troubleInTharbad $ \pid -> do
+      eid <- engaged pid Enemies.bloodHound
+      answerAll pid
+      shadow pid eid Enemies.orcSeeker []
+      getsGame (eliminationLowering . scenarioMeta . toAttrs . (.scenario)) `shouldReturn` 5
+
+    it "Blood Hound raises the threat by 5 as it engages" . nightmare troubleInTharbad $ \pid -> do
+      was <- threat pid
+      _ <- engaged pid Enemies.bloodHound
+      answerAll pid
+      threat pid `shouldReturn` was + 5
+
+    it "Waylaid by Agents gains doomed 3 with a threat of 20 or less" . nightmare troubleInTharbad $ \pid -> do
+      run $ LowerThreat pid 50
+      reveal Treacheries.waylaidByAgents []
+      answerAll pid
+      threat pid `shouldReturn` 3
+
+    it "Tharbad Patrol engages the enemies each player discards as they travel to its location" . nightmare troubleInTharbad $ \pid -> do
+      _ <- setEncounterDeck [Treacheries.tharbadPatrol, Locations.cityOfSpies, Enemies.orcSeeker, Locations.cityOfSpies]
+      staged Locations.darkPathway
+      run RevealEncounterCard >> resolveRevealed
+      answerAll pid
+      pathway <- locationOf Locations.darkPathway
+      run $ TravelTo pathway
+      answerAll pid
+      seeker <- enemyOf Enemies.orcSeeker
+      (.placement) <$> getEnemy seeker `shouldReturn` EngagedWith pid
+
+    it "Dark Pathway has the first treachery revealed in the quest phase surge" . nightmare troubleInTharbad $ \_ -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.darkPathway
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      reveal Treacheries.waylaidByAgents [Locations.cityOfSpies, Locations.cityOfSpies]
+      getsGame (length . (.entities.locations)) `shouldReturn` 2
