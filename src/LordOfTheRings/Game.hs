@@ -754,6 +754,7 @@ runGameMessage msg g = case msg of
       -- a hero it leaves standing is taken prisoner, as Torture Master's shadow reads
       <> [TakePrisoner hid | AttackDamageTakesPrisoner `elem` attackMods, HeroTarget hid <- [target]]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
+      <> [DiscardRandomFromHand pid n | AttackDamageDiscardsRandomFromHandOf pid <- attackMods]
       <> removing
       -- each point of it adds 1 to the staging area's threat this phase, as Ramming Speed!
       <> [CreateEffect $ Effect source GameTarget [StagingThreatBonus n] UntilEndOfPhase | AttackDamageAddsStagingThreat `elem` attackMods]
@@ -3160,8 +3161,9 @@ attackDamage pid eid target n = do
       excessToLocation = ExcessDamageToActiveLocation `elem` mods
       excessToQuests = ExcessDamageRemovesQuestProgress `elem` mods
       excessToShip = ExcessDamageToShipObjective `elem` mods
+      excessToDeck = ExcessDamageDiscardsFromDeck `elem` mods
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || excessToDeck
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3188,6 +3190,7 @@ attackDamage pid eid target n = do
         <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
         <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
         <> toShip
+        <> [DiscardTopOfDeck pid excess | excessToDeck, excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

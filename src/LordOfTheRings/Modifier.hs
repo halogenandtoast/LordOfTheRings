@@ -100,6 +100,9 @@ data ModifierType
   | -- | on an enemy: for each point of damage its attack deals past the character's remaining
     -- hit points, the player damages another character they control
     ExcessDamageToOtherCharacters
+  | -- | on an enemy: for each point of damage its attack deals past the character's remaining
+    -- hit points, the player discards the top card of their deck, as Undead Horde reads
+    ExcessDamageDiscardsFromDeck
   | CannotBeOptionallyEngagedWhileOthersInStaging
   | -- | on an enemy, or on the game for every enemy: matching players cannot optionally
     -- engage it
@@ -325,6 +328,9 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
     -- Seedy Inn's shadow reads
     AttackDamageRaisesThreatOf PlayerId
+  | -- | on an enemy: for each point of damage its attack deals, the player discards a card at
+    -- random from their hand, as Northern Chetwood's shadow reads
+    AttackDamageDiscardsRandomFromHandOf PlayerId
   | -- | on an enemy: each point of damage its attack deals removes 1 progress from each
     -- quest card in play, as Traitorous Wight's shadow reads
     AttackDamageRemovesProgress
