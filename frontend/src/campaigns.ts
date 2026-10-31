@@ -61,7 +61,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'flight-from-moria': {},
   'the-seventh-level': {},
   'the-long-dark': {},
-  'road-to-rivendell': {},
+  'road-to-rivendell': { nightmare: true },
   'the-redhorn-gate': { nightmare: true },
   'foundations-of-stone': {},
   'shadow-and-flame': {},

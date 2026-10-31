@@ -250,6 +250,10 @@ import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
 import LordOfTheRings.Enemy.Cards.WolfpeltGoblin
 import LordOfTheRings.Enemy.Cards.SilvertineMarauder
 import LordOfTheRings.Enemy.Cards.SnowGiant
+import LordOfTheRings.Enemy.Cards.UrukElfStalker
+import LordOfTheRings.Enemy.Cards.GoblinTrapper
+import LordOfTheRings.Enemy.Cards.RaidingParty
+import LordOfTheRings.Enemy.Cards.ViciousTrackers
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -525,5 +529,9 @@ allEnemys =
         , SomeEnemyCard wolfpeltGoblin
         , SomeEnemyCard silvertineMarauder
         , SomeEnemyCard snowGiant
+        , SomeEnemyCard urukElfStalker
+        , SomeEnemyCard goblinTrapper
+        , SomeEnemyCard raidingParty
+        , SomeEnemyCard viciousTrackers
         ]
     ]

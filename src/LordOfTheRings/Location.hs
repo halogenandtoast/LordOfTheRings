@@ -273,6 +273,8 @@ import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
 import LordOfTheRings.Location.Cards.IcyCavern
 import LordOfTheRings.Location.Cards.FrozenSilverlode
+import LordOfTheRings.Location.Cards.TreacherousBluffs
+import LordOfTheRings.Location.Cards.ConcealedWoods
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -587,5 +589,7 @@ allLocations =
         , SomeLocationCard dungeonLabyrinth
         , SomeLocationCard icyCavern
         , SomeLocationCard frozenSilverlode
+        , SomeLocationCard treacherousBluffs
+        , SomeLocationCard concealedWoods
         ]
     ]

@@ -3,9 +3,12 @@ module LordOfTheRings.Dwarrowdelf.NightmareSpec (spec) where
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (theRedhornGate)
-import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside), encounterDiscardL, modeL)
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Scenario (roadToRivendell, theRedhornGate)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck, scenarioSetAside), encounterDiscardL, modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
@@ -103,3 +106,61 @@ spec = describe "Dwarrowdelf nightmare decks" do
       reveal Treacheries.caradhrasTheCruel [Locations.rockyCrags]
       inPlayCount Enemies.snowWarg `shouldReturn` 1
       map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.rockyCrags]
+
+  describe "Road to Rivendell" do
+    it "builds the nightmare deck with Ambush in the Night for stage 2" . nightmare roadToRivendell $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 49
+      map (`copies` deck) [Enemies.goblinSpearman, Enemies.goblinTaskmaster, Enemies.urukElfStalker]
+        `shouldBe` [0, 3, 3]
+      questDeck <- getsGame (scenarioQuestDeck . toAttrs . (.scenario))
+      map toCardCode questDeck `shouldBe` map toCardCode [Quests.ambushInTheNight, Quests.approachingRivendell]
+
+    it "Ambush in the Night brings out Goblin Gate and an enemy, then guards Arwen" . nightmare roadToRivendell $ \pid -> do
+      reveal Objectives.arwenUndomielRoadToRivendell []
+      arwen <- getsGame (map toId . toList . (.entities.objectives))
+      for_ arwen \oid -> run $ PutObjectiveAllyIntoPlay oid pid
+      _ <- setEncounterDeck [Locations.goblinGate, Locations.pathlessCountry, Enemies.orcRaiders]
+      stage <- putQuestStage Quests.ambushInTheNight
+      run $ Flip stage
+      -- the enemy's and the stage's When Revealed effects
+      resolveRevealed
+      gate <- locationOf Locations.goblinGate
+      inPlayCount Enemies.orcRaiders `shouldReturn` 1
+      allies <- getsGame (toList . (.entities.allies))
+      map (.placement) allies `shouldBe` [AttachedTo (toTarget gate)]
+      run $ PlaceTokens GameSource stage Progress 3
+      (.progress) <$> getActiveQuest `shouldReturn` 0
+
+    it "Vicious Trackers makes its player's threat 20 higher for engagement checks" . nightmare roadToRivendell $ \pid -> do
+      reveal Enemies.viciousTrackers [Enemies.raidingParty]
+      tracker <- enemyOf Enemies.viciousTrackers
+      run $ EngageEnemy pid tracker
+      party <- enemyOf Enemies.raidingParty
+      run $ RaiseThreat pid 20
+      run $ EngagementCheck pid 0
+      (.placement) <$> getEnemy party `shouldReturn` EngagedWith pid
+
+    it "Tumultuous Assault returns the ambushers engaged for new engagement checks" . nightmare roadToRivendell $ \pid -> do
+      reveal Enemies.goblinTrapper []
+      trapper <- enemyOf Enemies.goblinTrapper
+      run $ EngageEnemy pid trapper
+      chooseTarget pid =<< (toTarget <$> getHeroWithCode "01007")
+      reveal Treacheries.tumultuousAssault []
+      (.placement) <$> getEnemy trapper `shouldReturn` StagingArea
+
+    it "an ambusher engaging in the quest phase adds its threat to the staging area" . nightmare roadToRivendell $ \pid -> do
+      reveal Enemies.goblinTrapper []
+      trapper <- enemyOf Enemies.goblinTrapper
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      run $ EngageEnemy pid trapper
+      chooseTarget pid =<< (toTarget <$> getHeroWithCode "01007")
+      getStagingThreat `shouldReturn` 3
+
+    it "Treacherous Bluffs gets +2 threat as an ambusher engages" . nightmare roadToRivendell $ \pid -> do
+      reveal Locations.treacherousBluffs []
+      reveal Enemies.raidingParty []
+      party <- enemyOf Enemies.raidingParty
+      run $ EngageEnemy pid party
+      getStagingThreat `shouldReturn` 3
