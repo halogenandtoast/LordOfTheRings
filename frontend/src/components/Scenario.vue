@@ -18,12 +18,10 @@ const { active: debugging, send } = useDebug()
 const isFlipping = (card: CardView) => flipping.has(card.id)
 
 // the heading's four settings, on-course first (Dream-chaser rules)
-const settings = [
-  { key: 'sunny', icon: '☀' },
-  { key: 'cloudy', icon: '☁' },
-  { key: 'rainy', icon: '☂' },
-  { key: 'stormy', icon: '↯' },
-]
+const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
+  key,
+  icon: { '--icon': `url('/images/icons/game/heading-${key}.png')` },
+}))
 </script>
 
 <template>
@@ -45,7 +43,7 @@ const settings = [
     <div v-if="scenario.heading" class="heading" :title="$t(`log.heading.${scenario.heading}`)">
       <span class="heading-label">{{ $t('game.heading') }}</span>
       <ol class="heading-track">
-        <li v-for="s in settings" :key="s.key" :class="{ current: s.key === scenario.heading }">{{ s.icon }}</li>
+        <li v-for="s in settings" :key="s.key" :class="{ current: s.key === scenario.heading }"><span class="icon" :style="s.icon" /></li>
       </ol>
     </div>
     <GameCard
