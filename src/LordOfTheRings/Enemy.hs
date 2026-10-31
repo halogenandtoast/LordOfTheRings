@@ -277,6 +277,15 @@ import LordOfTheRings.Enemy.Cards.RearguardAmbusher
 import LordOfTheRings.Enemy.Cards.AngmarRaider
 import LordOfTheRings.Enemy.Cards.UndeadHorde
 import LordOfTheRings.Enemy.Cards.CursedDeadNightmare
+import LordOfTheRings.Enemy.Cards.PatrolSentry
+import LordOfTheRings.Enemy.Cards.GoblinLurker
+import LordOfTheRings.Enemy.Cards.ShadowDweller
+import LordOfTheRings.Enemy.Cards.OverseerMaurul
+import LordOfTheRings.Enemy.Cards.OrcTaskmaster
+import LordOfTheRings.Enemy.Cards.GoblinSkirmisher
+import LordOfTheRings.Enemy.Cards.PitGoblin
+import LordOfTheRings.Enemy.Cards.SwarmingGoblins
+import LordOfTheRings.Enemy.Cards.CoalBlackOrc
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -579,5 +588,14 @@ allEnemys =
         , SomeEnemyCard angmarRaider
         , SomeEnemyCard undeadHorde
         , SomeEnemyCard cursedDeadNightmare
+        , SomeEnemyCard patrolSentry
+        , SomeEnemyCard goblinLurker
+        , SomeEnemyCard shadowDweller
+        , SomeEnemyCard overseerMaurul
+        , SomeEnemyCard orcTaskmaster
+        , SomeEnemyCard goblinSkirmisher
+        , SomeEnemyCard pitGoblin
+        , SomeEnemyCard swarmingGoblins
+        , SomeEnemyCard coalBlackOrc
         ]
     ]

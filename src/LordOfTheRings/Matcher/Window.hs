@@ -1,6 +1,7 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
 import LordOfTheRings.Card (Card (PlayerCard))
+import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
 import LordOfTheRings.Modifier (Modifier)
@@ -271,6 +272,14 @@ data WindowMatcher
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
+  | -- | an objective with the card code exhausted, as "After Cave Torch exhausts" reads
+    ObjectiveExhaustedWindow Timing CardCode
+  | -- | a matching enemy engaged a player, as "When a Goblin enemy engages a player" reads
+    MatchingEnemyEngagedWindow Timing EnemyMatcher
+  | -- | a matching enemy was dealt damage, as Orc Taskmaster answers a Goblin
+    MatchingEnemyDealtDamageWindow Timing EnemyMatcher
+  | -- | a quest card was bypassed
+    QuestBypassedWindow Timing
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -416,6 +425,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DefenderWithTraitDestroyedWindow {}, _) -> False
   (PlayerCommittedCharactersWindow {}, _) -> False
   (CharacterDefenderDeclaredWindow {}, _) -> False
+  (ObjectiveExhaustedWindow {}, _) -> False
+  (MatchingEnemyEngagedWindow {}, _) -> False
+  (MatchingEnemyDealtDamageWindow {}, _) -> False
+  (QuestBypassedWindow t, QuestBypassed _) -> t == timing
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
   _ -> False

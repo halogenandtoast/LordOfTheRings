@@ -155,6 +155,8 @@ data WindowType
     RemovedFromQuest Target
   | -- | the player discarded cards from his out-of-play deck (To Catch an Orc)
     DiscardedFromOutOfPlayDeck PlayerId
+  | -- | the players bypassed the quest card, as Flight from Moria's stages let them
+    QuestBypassed Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -33,6 +33,7 @@ data EncounterSet
   | EscapeFromDolGuldurNightmare
   | EscapeFromMountGram
   | FlightFromMoria
+  | FlightFromMoriaNightmare
   | FlightOfTheStormcaller
   | FoulWeather
   | FoundationsOfStone
@@ -43,6 +44,7 @@ data EncounterSet
   | IntoIthilien
   | IntoIthilienNightmare
   | IntoThePit
+  | IntoThePitNightmare
   | IntrudersInChetwood
   | IntrudersInChetwoodNightmare
   | JourneyAlongTheAnduin
@@ -93,6 +95,7 @@ data EncounterSet
   | TheNinInEilph
   | TheRedhornGate
   | TheSeventhLevel
+  | TheSeventhLevelNightmare
   | TheSiegeOfCairAndros
   | TheSiegeOfCairAndrosNightmare
   | TheStewardsFear

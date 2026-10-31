@@ -28,6 +28,9 @@ allNightmareCards =
       , intrudersInChetwoodNightmare
       , theWeatherHillsNightmare
       , deadmensDikeNightmare
+      , intoThePitNightmare
+      , theSeventhLevelNightmare
+      , flightFromMoriaNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -74,3 +77,12 @@ theWeatherHillsNightmare = nightmareSetup "the-lost-realm-nightmare-the-weather-
 
 deadmensDikeNightmare :: CardDef
 deadmensDikeNightmare = nightmareSetup "the-lost-realm-nightmare-deadmens-dike-019" "Deadmen's Dike" DeadmensDikeNightmare
+
+intoThePitNightmare :: CardDef
+intoThePitNightmare = nightmareSetup "khazad-dum-nightmare-into-the-pit-001" "Into the Pit" IntoThePitNightmare
+
+theSeventhLevelNightmare :: CardDef
+theSeventhLevelNightmare = nightmareSetup "khazad-dum-nightmare-the-seventh-level-001" "The Seventh Level" TheSeventhLevelNightmare
+
+flightFromMoriaNightmare :: CardDef
+flightFromMoriaNightmare = nightmareSetup "khazad-dum-nightmare-flight-from-moria-001" "Flight from Moria" FlightFromMoriaNightmare

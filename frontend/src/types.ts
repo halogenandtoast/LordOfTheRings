@@ -167,12 +167,24 @@ export interface TallyView {
 // face: Corsair Skirmisher taken as a Ship objective
 const printedFace: Record<string, string> = { '12125-ship': '12125' }
 
+/** Cards whose side A is another card's: every Search for an Exit shares 03070's. */
+const sharedSideA: Record<string, string> = Object.fromEntries(
+  [
+    '03071', '03072', '03073', '03074', '03075', '03076',
+    'khazad-dum-nightmare-flight-from-moria-002',
+    'khazad-dum-nightmare-flight-from-moria-003',
+    'khazad-dum-nightmare-flight-from-moria-004',
+  ].map((code) => [code, '03070']),
+)
+
 export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' | 'errata' | 'image'>) =>
   card.facedown
     ? `/images/${card.facedown}.jpg`
     : card.image
       ? `/images/cards/${card.image}.avif`
-      : `/images/cards/${errataImage(`${printedFace[card.code] ?? card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
+      : !card.flipped && sharedSideA[card.code]
+        ? `/images/cards/${sharedSideA[card.code]}.avif`
+        : `/images/cards/${errataImage(`${printedFace[card.code] ?? card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

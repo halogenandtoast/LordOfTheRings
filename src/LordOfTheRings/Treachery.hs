@@ -235,6 +235,11 @@ import LordOfTheRings.Treachery.Cards.KillThem
 import LordOfTheRings.Treachery.Cards.RainWashedTracks
 import LordOfTheRings.Treachery.Cards.ParalyzingFear
 import LordOfTheRings.Treachery.Cards.CurseOfAngmar
+import LordOfTheRings.Treachery.Cards.ShadowFall
+import LordOfTheRings.Treachery.Cards.BalinsDoom
+import LordOfTheRings.Treachery.Cards.BeatsAndEchoes
+import LordOfTheRings.Treachery.Cards.DismayAndFear
+import LordOfTheRings.Treachery.Cards.AnEvilFortune
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -494,5 +499,10 @@ allTreacherys =
         , SomeTreacheryCard rainWashedTracks
         , SomeTreacheryCard paralyzingFear
         , SomeTreacheryCard curseOfAngmar
+        , SomeTreacheryCard shadowFall
+        , SomeTreacheryCard balinsDoom
+        , SomeTreacheryCard beatsAndEchoes
+        , SomeTreacheryCard dismayAndFear
+        , SomeTreacheryCard anEvilFortune
         ]
     ]

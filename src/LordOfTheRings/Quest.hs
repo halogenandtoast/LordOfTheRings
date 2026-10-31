@@ -198,6 +198,10 @@ import LordOfTheRings.Quest.Cards.ShadowTheWarParty
 import LordOfTheRings.Quest.Cards.ProtectTheBreeLanders
 import LordOfTheRings.Quest.Cards.TrackTheOrcs
 import LordOfTheRings.Quest.Cards.GatherYourCourage
+import LordOfTheRings.Quest.Cards.GoblinAmbush
+import LordOfTheRings.Quest.Cards.PursuedByShadowStage
+import LordOfTheRings.Quest.Cards.BlockedByFlame
+import LordOfTheRings.Quest.Cards.Ghash
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -428,5 +432,9 @@ allQuests =
         , SomeQuestCard protectTheBreeLanders
         , SomeQuestCard trackTheOrcs
         , SomeQuestCard gatherYourCourage
+        , SomeQuestCard goblinAmbush
+        , SomeQuestCard pursuedByShadowStage
+        , SomeQuestCard blockedByFlame
+        , SomeQuestCard ghash
         ]
     ]

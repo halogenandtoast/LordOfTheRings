@@ -247,6 +247,10 @@ allQuestCards =
       , corsairConfrontation
       , lostAtSea
       , sahirsAdvanceNightmare
+      , goblinAmbush
+      , pursuedByShadowStage
+      , blockedByFlame
+      , ghash
       ]
 
 theDrippingWalls :: CardDef
@@ -954,3 +958,26 @@ gatherYourCourage =
     , cdKeywords = setFromList [Surge]
     , cdWhenRevealed = True
     }
+
+-- Khazad-dûm Nightmare Decks
+
+-- | X is 1 plus the number of players in the game: the stage counts them.
+goblinAmbush :: CardDef
+goblinAmbush = quest "khazad-dum-nightmare-into-the-pit-002" "Goblin Ambush" IntoThePitNightmare 2 1
+
+nightmareSearchForAnExit :: CardCode -> Text -> Maybe Int -> Maybe Int -> CardDef
+nightmareSearchForAnExit code subtitle questPoints victory =
+  (quest code (Name "Search for an Exit" (Just subtitle)) FlightFromMoriaNightmare 2 0)
+    { cdQuestPoints = questPoints
+    , cdVictoryPoints = victory
+    }
+
+pursuedByShadowStage :: CardDef
+pursuedByShadowStage = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-moria-002" "Pursued by Shadow" (Just 5) Nothing
+
+-- | No quest points: The Nameless Fear's damage defeats it.
+blockedByFlame :: CardDef
+blockedByFlame = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-moria-003" "Blocked by Flame" Nothing (Just 1)
+
+ghash :: CardDef
+ghash = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-moria-004" "Ghâsh!" (Just 1) (Just 1)

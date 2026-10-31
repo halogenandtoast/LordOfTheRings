@@ -183,6 +183,10 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       $ any (\e -> e.effectTarget == target && Defending `elem` e.effectModifiers) effects
       && any (\d -> d.target == target && trait `member` cdCardTraits (toCardDef d.card)) destroyed
   (PlayerCommittedCharactersWindow t pid, CommittedToQuest target) | t == timing -> (== Just pid) <$> characterController target
+  (ObjectiveExhaustedWindow t code, Exhausted (ObjectiveTarget oid)) | t == timing ->
+    maybe False ((== code) . toCardCode) . Map.lookup oid . (.objectives) <$> getsGame gameEntities
+  (MatchingEnemyEngagedWindow t m, EnemyEngaged eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingEnemyDealtDamageWindow t m, DealtDamage (EnemyTarget eid) _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
@@ -283,6 +287,7 @@ passesCriteria = \case
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
+  InNightmareMode -> inNightmareMode
   AnyCriteria cs -> anyM passesCriteria cs
 
 -- | Whether each list can give a character not taken by an earlier one.

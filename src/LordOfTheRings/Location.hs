@@ -304,6 +304,12 @@ import LordOfTheRings.Location.Cards.RuinedWatchTower
 import LordOfTheRings.Location.Cards.PalaceRuins
 import LordOfTheRings.Location.Cards.FornostStreet
 import LordOfTheRings.Location.Cards.DecrepitCity
+import LordOfTheRings.Location.Cards.TwistingShadows
+import LordOfTheRings.Location.Cards.NarrowFissure
+import LordOfTheRings.Location.Cards.ChamberOfRecords
+import LordOfTheRings.Location.Cards.DeepMines
+import LordOfTheRings.Location.Cards.WesternHall
+import LordOfTheRings.Location.Cards.ShadowedCorridor
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -654,5 +660,11 @@ allLocations =
         , SomeLocationCard palaceRuins
         , SomeLocationCard fornostStreet
         , SomeLocationCard decrepitCity
+        , SomeLocationCard twistingShadows
+        , SomeLocationCard narrowFissure
+        , SomeLocationCard chamberOfRecords
+        , SomeLocationCard deepMines
+        , SomeLocationCard westernHall
+        , SomeLocationCard shadowedCorridor
         ]
     ]

@@ -1706,5 +1706,11 @@
   },
   "palaceRuins": {
     "amount": "Palace Ruins: how many cards to discard from the top of your deck?"
+  },
+  "shadowFall": {
+    "attach": "Choose the location Shadow-fall attaches to"
+  },
+  "dismayAndFear": {
+    "remove": "Choose a character to remove from the quest"
   }
 }

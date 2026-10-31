@@ -1598,3 +1598,10 @@ attachOutOfPlay pid card = push . PlayAttachmentOn pid card . toTarget
 -- under the first player.
 putObjectiveAllyIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
 putObjectiveAllyIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
+-- | The shadow card dealt to the enemy is shuffled into the encounter deck, as "Shadow:
+-- Shuffle Shadow Dweller back into the encounter deck" reads.
+shuffleShadowCardIntoEncounterDeck :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
+shuffleShadowCardIntoEncounterDeck eid card = do
+  push $ RemoveShadowCard eid card.id
+  setAside card
+  shuffleSetAsideIntoEncounterDeck [card]
