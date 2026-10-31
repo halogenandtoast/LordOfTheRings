@@ -78,6 +78,9 @@ data GrappleLocation
   | HighestPrintedThreat
   | LowestPrintedQuestPoints
   | HighestPrintedQuestPoints
+  | -- | the location with the most enemies grappled with it, or the fewest
+    MostEnemiesGrappled
+  | FewestEnemiesGrappled
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

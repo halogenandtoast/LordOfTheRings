@@ -532,6 +532,15 @@ discardTopOfEncounterDeckFor
   :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
 discardTopOfEncounterDeckFor source target n = push $ DiscardTopOfEncounterDeck (toSource source) (toTarget target) n
 
+{- | Cards are discarded from the top of the encounter deck until one that matches is, as
+"discard cards from the top of the encounter deck until a Ship enemy is discarded" reads;
+the source reads them back from 'DiscardedTopOfEncounterDeck'.
+-}
+discardEncounterCardsUntil :: (ReverseQueue m, Sourceable a, Targetable a) => a -> CardMatcher -> m ()
+discardEncounterCardsUntil a matcher = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  discardTopOfEncounterDeck a $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
+
 -- | An encounter card, taken from where it was, becomes the active location, as a setup puts one.
 putIntoPlayAsActiveLocation :: ReverseQueue m => EncounterCard -> m ()
 putIntoPlayAsActiveLocation = push . PutIntoPlayAsActiveLocation

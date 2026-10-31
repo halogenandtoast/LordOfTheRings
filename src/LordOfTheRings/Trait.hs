@@ -11,6 +11,7 @@ data Trait
   | Barrow
   | Battleground
   | Beorning
+  | Besieged
   | Besieger
   | Blight
   | Boar
@@ -35,6 +36,7 @@ data Trait
   | Corsair
   | Craftsman
   | Creature
+  | Cursed
   | Dale
   | Dark
   | Deck
