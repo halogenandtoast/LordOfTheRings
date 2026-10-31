@@ -74,6 +74,7 @@ watch(
 <template>
   <dialog ref="dialog" class="story" :aria-label="name" @cancel.prevent="emit('close')" @close="emit('close')">
     <article v-if="part">
+      <div class="story-text">
       <h2>{{ name }}</h2>
       <template v-for="(section, i) in sections" :key="i">
         <template v-if="section.paragraphs?.length || section.rules?.length">
@@ -92,6 +93,7 @@ watch(
           <p v-for="(rule, j) in section.rules" :key="j"><strong>{{ rule.title }}.</strong> {{ rule.text }}</p>
         </template>
       </template>
+      </div>
       <div class="actions">
         <PrimaryButton :label="t('game.story.continue')" @click="emit('close')" />
       </div>
@@ -119,21 +121,27 @@ watch(
 article {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 20px;
   width: min(52rem, 100vw - 2rem);
-  max-height: 80vh;
-  overflow-y: auto;
+  max-height: 80dvh;
+  overflow: hidden;
   border: 1px solid var(--line-strong);
   border-radius: 5px;
   background: var(--panel);
   color: var(--text);
   box-shadow: 0 8px 24px var(--shadow);
 }
+.story-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px;
+}
 h2 { margin: 0; color: var(--title); font-size: 1.2rem; }
 h3 { margin: 8px 0 0; color: var(--title); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; }
 p { margin: 0; font-size: 0.9rem; line-height: 1.5; white-space: pre-line; }
 .flavor { font-style: italic; }
 .divider { width: 12rem; height: 1.2rem; align-self: center; margin: 6px 0; color: var(--title); opacity: 0.8; }
-.actions { display: flex; justify-content: flex-end; margin-top: 6px; }
+.actions { display: flex; flex-shrink: 0; justify-content: flex-end; padding: 12px 20px; border-top: 1px solid var(--line); }
 </style>

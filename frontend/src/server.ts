@@ -54,7 +54,7 @@ export interface UI {
   tag: 'Label' | 'TargetLabel' | 'AbilityLabel'
   label?: string
   target?: Target
-  ability?: { abilitySource: Target; abilityType: { tag: string } }
+  ability?: { abilitySource: Target; abilityIndex: number; abilityType: { tag: string } }
   messages?: Message[]
 }
 

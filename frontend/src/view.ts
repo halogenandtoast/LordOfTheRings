@@ -1,5 +1,5 @@
 import { ikey } from './i18n'
-import type { CardDef, Entity, GameData, Message, Question, ServerGame, Target, UI } from './server'
+import type { Card, CardDef, Entity, GameData, Message, Question, ServerGame, Target, UI } from './server'
 import type { CardView, ChoiceView, GameView, PlayerView, QuestionView } from './types'
 
 // ringsdb type names, as the board compares against them
@@ -298,6 +298,20 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       }
       q = q.question
     }
+    // Saved setup questions from before searches carried their cards still need a
+    // picker: their targets are in the encounter deck, outside the visible board.
+    if (searched === null && q.choices.length && q.choices.every((ui) => ui.tag === 'TargetLabel' && ui.target?.tag === 'CardIdTarget')) {
+      const found = q.choices.map((ui) => {
+        const message = ui.messages?.find((m) => m.tag === 'AddToStaging')
+        const c = message?.contents as Partial<Card> | undefined
+        return c && typeof c.id === 'string' && typeof c.cardCode === 'string' && c.id === ui.target?.contents
+          ? card(c.cardCode, c.id) : null
+      })
+      if (found.every((c) => c !== null)) {
+        searched = found
+        if (!prompt) prompt = ikey('label.searchChoose')
+      }
+    }
     const choices = q.choices.map((ui: UI, index): ChoiceView => {
       switch (ui.tag) {
         case 'Label':
@@ -313,10 +327,14 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
           // that shows the card
           const label = ikey(`label.ability.${kind}`, { name: targetName(sourceCard) })
           const cardId = targetCardId(sourceCard)
+          const sourceEntity = sourceCard && sourceCard.tag in targetKinds
+            ? entities[targetKinds[sourceCard.tag]]?.[sourceCard.contents ?? ''] : undefined
+          const tooltip = sourceEntity?.cardCode === '02095' && [1, 2].includes(ui.ability?.abilityIndex ?? 0)
+            ? ikey(`label.boromir.action${ui.ability!.abilityIndex}`) : undefined
           const departed = source?.tag === 'AllySource' && source.contents && game.leftPlay?.[source.contents]
           const seen = Object.values(game.players).some((p) => [...(p.hand ?? []), ...p.discard].some((c) => c.id === cardId))
           if (departed && !seen) return { index, label, targetId: null, action: label, card: card(departed.cardCode, departed.cardId) }
-          return { index, label, targetId: cardId, action: label }
+          return { index, label, targetId: cardId, action: label, tooltip }
         }
       }
     })

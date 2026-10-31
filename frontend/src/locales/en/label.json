@@ -261,6 +261,8 @@
   "escapeTest": "Commit characters to the escape test",
   "doneCommittingToEscape": "Done committing: deal the cards",
   "boromir": {
+    "action1": "Raise your threat by 1 to ready Boromir.",
+    "action2": "Discard Boromir to deal 2 damage to each enemy engaged with a single player.",
     "choosePlayer": "Deal 2 damage to each enemy engaged with a player"
   },
   "songOfMocking": {

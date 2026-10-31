@@ -13,7 +13,7 @@ const labels = computed<ChoiceView[]>(() => question.choices.filter((c) => c.tar
 </script>
 
 <template>
-  <section class="search-panel" :aria-label="$t('game.search.label')">
+  <section class="search-panel" role="dialog" :aria-label="tr(question.prompt) || $t('game.search.label')">
     <header>{{ tr(question.prompt) }} <span class="count">{{ $t('game.search.searched', { count: question.searched.length }) }}</span></header>
     <div class="cards">
       <GameCard

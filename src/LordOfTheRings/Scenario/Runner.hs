@@ -116,9 +116,11 @@ instance RunMessage ScenarioAttrs where
               pure $ attrs & encounterDeckL .~ encounterDeck
             else do
               push
-                $ chooseOne
-                  pid
-                  [targetLabel y [RemoveFromEncounterDeck y, AddToStaging y, ShuffleDeck EncounterDeck] | y <- x : xs]
+                $ Ask pid
+                $ QuestionLabel (ikey "label.searchChoose") Nothing []
+                $ SearchCards (map EncounterCard matches)
+                $ ChooseOne
+                  [targetLabel y [RemoveFromEncounterDeck y, AddToStaging y, ShuffleDeck EncounterDeck] | y <- matches]
               pure attrs
     RevealEncounterCard -> case attrs.encounterDeck of
       (card : rest) -> do

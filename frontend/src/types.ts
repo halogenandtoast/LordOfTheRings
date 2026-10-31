@@ -54,6 +54,8 @@ export interface ChoiceView {
   targetId: string | null
   /** What choosing it does, for a card's menu when it offers several choices. */
   action: string
+  /** Description of this particular ability, shown on its menu option. */
+  tooltip?: string
   /** The damage choosing it deals its own card, to preview where that leaves it. */
   damage?: number
   /** The card of a button choice whose card is out of sight, to preview it. */
