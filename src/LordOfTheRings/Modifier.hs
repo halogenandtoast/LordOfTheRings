@@ -337,6 +337,15 @@ data ModifierType
   | -- | on the game: as the encounter discard pile is reset into the empty deck, its topmost
     -- matching card goes to the staging area first, as Ghostly Ruins reads
     ReturnBeforeEncounterDeckResets CardMatcher
+  | -- | on an enemy: still in play as the phase ends, it raises the player's threat by this
+    -- much, as Crazed Captive's shadow reads
+    RaisesThreatAtEndOfPhase PlayerId Int
+  | -- | on an enemy: each hero its attack damages but does not destroy is taken prisoner, as
+    -- Torture Master's shadow reads
+    AttackDamageTakesPrisoner
+  | -- | on the game: the encounter discard pile is reset into the deck as soon as the deck
+    -- is empty, in any phase, as Journey Along the Anduin's nightmare setup card reads
+    EncounterDeckResetsWheneverEmpty
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on the active location, as Collapsed Tower's shadow reads
     ExcessDamageToActiveLocation

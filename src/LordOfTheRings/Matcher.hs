@@ -554,6 +554,10 @@ selectCharacters heroes allies = (<>) <$> (map toTarget <$> select heroes) <*> (
 charactersControlledBy :: HasGame m => PlayerId -> m [Target]
 charactersControlledBy pid = selectCharacters (HeroControlledBy $ PlayerWithId pid) (AllyControlledBy $ PlayerWithId pid)
 
+exhaustedCharactersOf :: HasGame m => PlayerId -> m [Target]
+exhaustedCharactersOf pid =
+  selectCharacters (ExhaustedHero <> HeroControlledBy (PlayerWithId pid)) (ExhaustedAlly <> AllyControlledBy (PlayerWithId pid))
+
 -- | Every card attached to the host: player attachments, and encounter cards attached as
 -- conditions or claimed objectives too, as "discard 1 attachment" may take them (Driven by
 -- Shadow, Black Uruks rulings).
@@ -711,6 +715,16 @@ getCurrentQuest = do
 getMainQuests :: HasGame m => m [Target]
 getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
 
+-- | The objectives in play no hero has claimed: those in the staging area.
+unclaimedObjectives :: HasGame m => m Int
+unclaimedObjectives = getsGame (length . filter ((== StagingArea) . (.placement)) . toList . entitiesObjectives . gameEntities)
+
+-- | The stage of the main quest in play, as "if the players are on stage 3" reads; 0 with
+-- none in play.
+getMainStage :: HasGame m => m Int
+getMainStage =
+  getsGame (fromMaybe 0 . headMay . mapMaybe (cdStage . toCardDef) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+
 -- | The side quest in the staging area chosen as the current quest this phase, if any.
 getCurrentSideQuest :: HasGame m => m (Maybe Target)
 getCurrentSideQuest = do
@@ -751,6 +765,10 @@ progressPlacedThisRound t = do
 -- | The current quest is a side quest, as "if the current quest is a side quest" reads.
 currentQuestIsSideQuest :: HasGame m => m Bool
 currentQuestIsSideQuest = isJust <$> getCurrentSideQuest
+
+-- | The encounter discard pile, topmost first.
+getEncounterDiscard :: HasGame m => m [EncounterCard]
+getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . gameScenario)
 
 -- | The top card of the encounter deck, if there is one.
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)

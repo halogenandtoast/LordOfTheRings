@@ -15,7 +15,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
 import LordOfTheRings.Game.Base (gamePhase, gamePlayers)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (ReturnBeforeEncounterDeckResets))
+import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -267,10 +267,12 @@ instance RunMessage ScenarioAttrs where
     -- pile is shuffled and reset back into the encounter deck."
     resetEmptyEncounterDeck a = do
       phase <- getsGame gamePhase
-      if phase == QuestPhase && null a.encounterDeck && notNull a.encounterDiscard
+      gameMods <- getModifiers GameTarget
+      let anyPhase = EncounterDeckResetsWheneverEmpty `elem` gameMods
+      if (phase == QuestPhase || anyPhase) && null a.encounterDeck && notNull a.encounterDiscard
         then do
           -- the topmost matching card goes to the staging area first, as Ghostly Ruins reads
-          matchers <- (\ms -> [m | ReturnBeforeEncounterDeckResets m <- ms]) <$> getModifiers GameTarget
+          let matchers = [m | ReturnBeforeEncounterDeckResets m <- gameMods]
           let returned = take 1 [c | c <- a.encounterDiscard, any (`cardMatches` c) matchers]
           traverse_ (push . AddToStaging) returned
           deck <- shuffleM $ filter (`notElem` returned) a.encounterDiscard
