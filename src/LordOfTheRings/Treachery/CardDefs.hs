@@ -220,6 +220,8 @@ allTreacheryCards =
       , furyAndMalice
       , cunningWolves
       , torrentOfHail
+      , cruelTorment
+      , goblinPatrolNightmare
       ]
 
 deepDeepDark :: CardDef
@@ -1346,3 +1348,11 @@ torrentOfHail =
     { cdCardTraits = setFromList [Weather]
     , cdShadowEffect = True
     }
+
+-- Escape from Mount Gram Nightmare
+
+cruelTorment :: CardDef
+cruelTorment = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gram-006" "Cruel Torment" EscapeFromMountGramNightmare 3) {cdKeywords = setFromList [Surge]}
+
+goblinPatrolNightmare :: CardDef
+goblinPatrolNightmare = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gram-007" "Goblin Patrol" EscapeFromMountGramNightmare 2) {cdShadowEffect = True}

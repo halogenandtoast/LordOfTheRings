@@ -285,6 +285,8 @@ allLocationCards =
       , umbarHarbor
       , shroudedWilderness
       , snowyBadlands
+      , prisonCellNightmare
+      , tortureChamberMountGram
       ]
 
 drownedTreasury :: CardDef
@@ -2128,4 +2130,21 @@ snowyBadlands :: CardDef
 snowyBadlands =
   (location "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-004" "Snowy Badlands" TheWastesOfEriadorNightmare 3 3 5)
     { cdCardTraits = setFromList [Arnor, Hills]
+    }
+
+-- Escape from Mount Gram Nightmare
+
+prisonCellNightmare :: CardDef
+prisonCellNightmare =
+  (location "escape-from-mount-gram-nightmare-escape-from-mount-gram-004" "Prison Cell" EscapeFromMountGramNightmare 4 2 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | X quest points, twice the cards captured underneath it.
+tortureChamberMountGram :: CardDef
+tortureChamberMountGram =
+  (location "escape-from-mount-gram-nightmare-escape-from-mount-gram-005" "Torture Chamber" EscapeFromMountGramNightmare 2 0 0)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Capture 1, Surge]
     }

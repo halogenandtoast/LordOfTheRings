@@ -193,6 +193,7 @@ import LordOfTheRings.Quest.Cards.TheHavenOfUmbar
 import LordOfTheRings.Quest.Cards.FinalConfrontation
 import LordOfTheRings.Quest.Cards.MakeAStand
 import LordOfTheRings.Quest.Cards.ForcedOffTrack
+import LordOfTheRings.Quest.Cards.RaidGolfimbulsVault
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -418,5 +419,6 @@ allQuests =
         , SomeQuestCard finalConfrontation
         , SomeQuestCard makeAStand
         , SomeQuestCard forcedOffTrack
+        , SomeQuestCard raidGolfimbulsVault
         ]
     ]

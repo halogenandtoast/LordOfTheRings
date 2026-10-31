@@ -254,6 +254,9 @@ allEnemyCards =
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
       , packHunters
+      , jailorGornakhNightmare
+      , prisonGuard
+      , orcOfThaurdir
       ]
 
 namelessThing :: CardDef
@@ -2047,4 +2050,29 @@ packHunters :: CardDef
 packHunters =
   (enemy "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-002" "Pack Hunters" TheWastesOfEriadorNightmare 5 45 3 2 1 3)
     { cdCardTraits = setFromList [Creature, Warg]
+    }
+
+-- Escape from Mount Gram Nightmare
+
+jailorGornakhNightmare :: CardDef
+jailorGornakhNightmare =
+  unique
+    (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-002" "Jailor Gornákh" EscapeFromMountGramNightmare 1 45 4 5 5 14)
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdVictoryPoints = Just 5
+      }
+
+prisonGuard :: CardDef
+prisonGuard =
+  (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-003" "Prison Guard" EscapeFromMountGramNightmare 3 26 2 2 1 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | Of the Angmar Orcs encounter set, as its icon shows: set aside with it.
+orcOfThaurdir :: CardDef
+orcOfThaurdir =
+  (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-009" "Orc of Thaurdir" EscapeFromMountGramNightmare 3 35 3 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
     }

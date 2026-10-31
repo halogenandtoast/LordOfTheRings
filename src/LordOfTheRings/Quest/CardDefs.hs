@@ -242,6 +242,7 @@ allQuestCards =
       , finalConfrontation
       , makeAStand
       , forcedOffTrack
+      , raidGolfimbulsVault
       ]
 
 theDrippingWalls :: CardDef
@@ -913,4 +914,13 @@ forcedOffTrack =
   (encounterSideQuest "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-008" "Forced Off Track" TheWastesOfEriadorNightmare 8)
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
+    }
+
+-- Escape from Mount Gram Nightmare
+
+raidGolfimbulsVault :: CardDef
+raidGolfimbulsVault =
+  (encounterSideQuest "escape-from-mount-gram-nightmare-escape-from-mount-gram-008" "Raid Golfimbul's Vault" EscapeFromMountGramNightmare 9)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge, Capture 3]
     }

@@ -504,6 +504,9 @@ data ModifierType
   | -- | on the active location on the Island Map: the players may travel from it to a
     -- location up to so many locations away, as Winding Caverns reads
     TravelRange Int
+  | -- | on an enemy: each point of its attack's damage discards the top card of the player's
+    -- captured deck, as Orc of Thaurdir's shadow reads (Escape from Mount Gram)
+    AttackDamageDiscardsCaptured PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

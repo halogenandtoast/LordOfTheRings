@@ -1597,5 +1597,14 @@
   },
   "forcedOffTrack": {
     "discard": "Choose a Warg enemy in the staging area to discard"
+  },
+  "goblinPatrolNightmare": {
+    "capture": "Goblin Patrol: capture random cards from your hand underneath the current quest",
+    "captureCount": "Capture {count}"
+  },
+  "orcOfThaurdir": {
+    "choose": "Orc of Thaurdir attacks you",
+    "discardCaptured": "Discard the top 2 cards of your captured deck",
+    "shadow": "Deal Orc of Thaurdir 2 additional shadow cards"
   }
 }

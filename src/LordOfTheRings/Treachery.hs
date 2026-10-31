@@ -213,6 +213,8 @@ import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
 import LordOfTheRings.Treachery.Cards.CunningWolves
 import LordOfTheRings.Treachery.Cards.TorrentOfHail
+import LordOfTheRings.Treachery.Cards.CruelTorment
+import LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -450,5 +452,7 @@ allTreacherys =
         , SomeTreacheryCard darkInterrogation
         , SomeTreacheryCard cunningWolves
         , SomeTreacheryCard torrentOfHail
+        , SomeTreacheryCard cruelTorment
+        , SomeTreacheryCard goblinPatrolNightmare
         ]
     ]
