@@ -39,6 +39,7 @@ data EncounterSet
   | HazardsOfThePit
   | IntoFangorn
   | IntoIthilien
+  | IntoIthilienNightmare
   | IntoThePit
   | IntrudersInChetwood
   | JourneyAlongTheAnduin
@@ -50,6 +51,7 @@ data EncounterSet
   | PassageThroughMirkwoodCampaign
   | PassageThroughMirkwoodNightmare
   | PerilInPelargir
+  | PerilInPelargirNightmare
   | PlunderingGoblins
   | RaidOnTheGreyHavens
   | RavagingOrcs
@@ -85,6 +87,7 @@ data EncounterSet
   | TheRedhornGate
   | TheSeventhLevel
   | TheSiegeOfCairAndros
+  | TheSiegeOfCairAndrosNightmare
   | TheStewardsFear
   | -- | Helm of the Stormcaller and the decks of the Stormcaller, which cards.json lumps
     -- under The Thing in the Depths

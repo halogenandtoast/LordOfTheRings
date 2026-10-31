@@ -6,13 +6,19 @@ module LordOfTheRings.Scenario.Scenarios.PerilInPelargir.Helpers (
   scrollOnHero,
   damageToScrollHero,
   wasOptionallyEngaged,
+  scrollEnemy,
+  enemyProgress,
 ) where
 
 import LordOfTheRings.Card (toCardCode)
-import LordOfTheRings.Classes.Entity (toId)
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (HasQueue, peekQueue)
+import LordOfTheRings.Enemy.Types (enemyTokens)
 import LordOfTheRings.Id (EnemyId, ObjectiveId, PlayerId)
+import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Token (Token (Progress), countTokens)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
@@ -63,3 +69,18 @@ wasOptionallyEngaged eid pid = lift $ any optionally <$> peekQueue
   optionally = \case
     CheckWindows ws -> Window After (OptionallyEngaged eid pid) `elem` ws
     _ -> False
+
+-- | The enemy Alcaron's Scroll is attached to (Nightmare: it escapes with it).
+scrollEnemy :: HasGame m => m (Maybe EnemyId)
+scrollEnemy =
+  getsGame \g ->
+    headMay
+      [ eid
+      | o <- toList g.entities.objectives
+      , toCardCode o == toCardCode Objectives.alcaronsScroll
+      , AttachedTo (EnemyTarget eid) <- [o.placement]
+      ]
+
+-- | The progress tokens on the enemy, as the Nightmare setup card counts them.
+enemyProgress :: HasGame m => EnemyId -> m Int
+enemyProgress eid = getsGame (maybe 0 (countTokens Progress . enemyTokens . toAttrs) . Map.lookup eid . (.entities.enemies))
