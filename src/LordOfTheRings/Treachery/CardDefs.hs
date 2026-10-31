@@ -218,6 +218,11 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , shadowFall
+      , balinsDoom
+      , beatsAndEchoes
+      , dismayAndFear
+      , anEvilFortune
       ]
 
 deepDeepDark :: CardDef
@@ -1331,4 +1336,33 @@ darkInterrogation :: CardDef
 darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
+    }
+
+-- Khazad-dûm Nightmare Decks
+
+shadowFall :: CardDef
+shadowFall =
+  (treachery "khazad-dum-nightmare-into-the-pit-008" "Shadow-fall" IntoThePitNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+balinsDoom :: CardDef
+balinsDoom =
+  (treachery "khazad-dum-nightmare-the-seventh-level-009" "Balin's Doom" TheSeventhLevelNightmare 3)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    , cdShadowEffect = True
+    }
+
+beatsAndEchoes :: CardDef
+beatsAndEchoes = treachery "khazad-dum-nightmare-the-seventh-level-010" "Beats and Echoes" TheSeventhLevelNightmare 2
+
+dismayAndFear :: CardDef
+dismayAndFear = (treachery "khazad-dum-nightmare-flight-from-moria-008" "Dismay and Fear" FlightFromMoriaNightmare 3) {cdShadowEffect = True}
+
+anEvilFortune :: CardDef
+anEvilFortune =
+  (treachery "khazad-dum-nightmare-flight-from-moria-009" "An Evil Fortune" FlightFromMoriaNightmare 3)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    , cdShadowEffect = True
     }

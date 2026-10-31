@@ -16,6 +16,9 @@ allNightmareCards =
       [ passageThroughMirkwoodNightmare
       , journeyAlongTheAnduinNightmare
       , escapeFromDolGuldurNightmare
+      , intoThePitNightmare
+      , theSeventhLevelNightmare
+      , flightFromMoriaNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -26,3 +29,12 @@ journeyAlongTheAnduinNightmare = nightmareSetup "core-set-nightmare-journey-alon
 
 escapeFromDolGuldurNightmare :: CardDef
 escapeFromDolGuldurNightmare = nightmareSetup "core-set-nightmare-escape-from-dol-guldur-001" "Escape from Dol Guldur" EscapeFromDolGuldurNightmare
+
+intoThePitNightmare :: CardDef
+intoThePitNightmare = nightmareSetup "khazad-dum-nightmare-into-the-pit-001" "Into the Pit" IntoThePitNightmare
+
+theSeventhLevelNightmare :: CardDef
+theSeventhLevelNightmare = nightmareSetup "khazad-dum-nightmare-the-seventh-level-001" "The Seventh Level" TheSeventhLevelNightmare
+
+flightFromMoriaNightmare :: CardDef
+flightFromMoriaNightmare = nightmareSetup "khazad-dum-nightmare-flight-from-moria-001" "Flight from Moria" FlightFromMoriaNightmare

@@ -283,6 +283,12 @@ allLocationCards =
       , streetsOfUmbar
       , cityOfCorsairs
       , umbarHarbor
+      , twistingShadows
+      , narrowFissure
+      , chamberOfRecords
+      , deepMines
+      , westernHall
+      , shadowedCorridor
       ]
 
 drownedTreasury :: CardDef
@@ -2111,4 +2117,49 @@ dungeonLabyrinth :: CardDef
 dungeonLabyrinth =
   (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
     { cdCardTraits = setFromList [DolGuldur]
+    }
+
+-- Khazad-dûm Nightmare Decks
+
+-- | X is the number of Dark locations in play.
+twistingShadows :: CardDef
+twistingShadows =
+  (location "khazad-dum-nightmare-into-the-pit-006" "Twisting Shadows" IntoThePitNightmare 3 0 0)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+narrowFissure :: CardDef
+narrowFissure =
+  (location "khazad-dum-nightmare-into-the-pit-007" "Narrow Fissure" IntoThePitNightmare 3 3 1)
+    { cdCardTraits = setFromList [Underground, Hazard]
+    , cdKeywords = setFromList [Doomed 1]
+    }
+
+chamberOfRecords :: CardDef
+chamberOfRecords =
+  (location "khazad-dum-nightmare-the-seventh-level-003" "Chamber of Records" TheSeventhLevelNightmare 1 5 8)
+    { cdCardTraits = setFromList [Underground]
+    , cdVictoryPoints = Just 5
+    }
+
+deepMines :: CardDef
+deepMines =
+  (location "khazad-dum-nightmare-the-seventh-level-007" "Deep-mines" TheSeventhLevelNightmare 3 2 6)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    }
+
+westernHall :: CardDef
+westernHall =
+  (location "khazad-dum-nightmare-the-seventh-level-008" "Western Hall" TheSeventhLevelNightmare 2 4 4)
+    { cdCardTraits = setFromList [Underground]
+    }
+
+shadowedCorridor :: CardDef
+shadowedCorridor =
+  (location "khazad-dum-nightmare-flight-from-moria-007" "Shadowed Corridor" FlightFromMoriaNightmare 4 4 6)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdShadowEffect = True
     }

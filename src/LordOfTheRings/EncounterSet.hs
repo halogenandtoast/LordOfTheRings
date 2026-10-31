@@ -32,6 +32,7 @@ data EncounterSet
   | EscapeFromDolGuldurNightmare
   | EscapeFromMountGram
   | FlightFromMoria
+  | FlightFromMoriaNightmare
   | FlightOfTheStormcaller
   | FoulWeather
   | FoundationsOfStone
@@ -40,6 +41,7 @@ data EncounterSet
   | IntoFangorn
   | IntoIthilien
   | IntoThePit
+  | IntoThePitNightmare
   | IntrudersInChetwood
   | JourneyAlongTheAnduin
   | JourneyAlongTheAnduinNightmare
@@ -84,6 +86,7 @@ data EncounterSet
   | TheNinInEilph
   | TheRedhornGate
   | TheSeventhLevel
+  | TheSeventhLevelNightmare
   | TheSiegeOfCairAndros
   | TheStewardsFear
   | -- | Helm of the Stormcaller and the decks of the Stormcaller, which cards.json lumps

@@ -253,6 +253,15 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , patrolSentry
+      , goblinLurker
+      , shadowDweller
+      , overseerMaurul
+      , orcTaskmaster
+      , goblinSkirmisher
+      , pitGoblin
+      , swarmingGoblins
+      , coalBlackOrc
       ]
 
 namelessThing :: CardDef
@@ -2037,5 +2046,74 @@ spiderOfDolGuldur :: CardDef
 spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
+    , cdShadowEffect = True
+    }
+
+-- Khazad-dûm Nightmare Decks
+
+patrolSentry :: CardDef
+patrolSentry =
+  (enemy "khazad-dum-nightmare-into-the-pit-003" "Patrol Sentry" IntoThePitNightmare 4 20 1 4 3 5)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+goblinLurker :: CardDef
+goblinLurker =
+  (enemy "khazad-dum-nightmare-into-the-pit-004" "Goblin Lurker" IntoThePitNightmare 3 50 3 2 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+shadowDweller :: CardDef
+shadowDweller =
+  (enemy "khazad-dum-nightmare-into-the-pit-005" "Shadow Dweller" IntoThePitNightmare 2 0 1 7 7 8)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+overseerMaurul :: CardDef
+overseerMaurul =
+  (enemy "khazad-dum-nightmare-the-seventh-level-002" "Overseer Maurûl" TheSeventhLevelNightmare 1 20 3 3 3 12)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdUnique = True
+    , cdVictoryPoints = Just 5
+    }
+
+orcTaskmaster :: CardDef
+orcTaskmaster =
+  (enemy "khazad-dum-nightmare-the-seventh-level-004" "Orc Taskmaster" TheSeventhLevelNightmare 2 44 1 4 4 6)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdWhenRevealed = True
+    }
+
+goblinSkirmisher :: CardDef
+goblinSkirmisher =
+  (enemy "khazad-dum-nightmare-the-seventh-level-005" "Goblin Skirmisher" TheSeventhLevelNightmare 3 15 2 4 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+pitGoblin :: CardDef
+pitGoblin =
+  (enemy "khazad-dum-nightmare-the-seventh-level-006" "Pit Goblin" TheSeventhLevelNightmare 2 36 3 2 1 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+swarmingGoblins :: CardDef
+swarmingGoblins =
+  (enemy "khazad-dum-nightmare-flight-from-moria-005" "Swarming Goblins" FlightFromMoriaNightmare 3 10 1 3 1 6)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | X is the number of victory points in the victory display.
+coalBlackOrc :: CardDef
+coalBlackOrc =
+  (enemy "khazad-dum-nightmare-flight-from-moria-006" "Coal-Black Orc" FlightFromMoriaNightmare 3 34 0 0 3 5)
+    { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
     }
