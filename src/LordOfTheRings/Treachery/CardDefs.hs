@@ -1622,6 +1622,9 @@ fangornsAnger =
 rogueWave :: CardDef
 rogueWave =
   (treachery "the-grey-havens-nightmare-voyage-across-belegaer-008" "Rogue Wave" VoyageAcrossBelegaerNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
 
 -- The Lost Realm Nightmare Decks
 

@@ -2173,6 +2173,7 @@ cobasHaven :: CardDef
 cobasHaven =
   (location "12130" "Cobas Haven" AStormOnCobasHaven 2 2 4)
     { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdShadowEffect = True
     }
 
 corsairWaters :: CardDef
@@ -2395,6 +2396,9 @@ docksideStreet = (location "heirs-of-numenor-nightmare-peril-in-pelargir-005" "D
 pelargirAlley :: CardDef
 pelargirAlley =
   (location "heirs-of-numenor-nightmare-peril-in-pelargir-006" "Pelargir Alley" PerilInPelargirNightmare 2 2 5)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    }
 
 -- The Ring-maker Nightmare Decks
 
@@ -2710,6 +2714,7 @@ decrepitCity :: CardDef
 decrepitCity =
   (location "the-lost-realm-nightmare-deadmens-dike-024" "Decrepit City" DeadmensDikeNightmare 3 5 5)
     { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
     }
 
 -- Khazad-dûm Nightmare Decks

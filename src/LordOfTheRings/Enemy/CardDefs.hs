@@ -2351,6 +2351,9 @@ southronMountedArcher =
 orcSaboteur :: CardDef
 orcSaboteur =
   (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-003" "Orc Saboteur" TheSiegeOfCairAndrosNightmare 3 21 2 5 2 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
 
 -- The Voice of Isengard Nightmare Decks
 
@@ -2382,6 +2385,9 @@ vigilantOrc =
 methedrasLookout :: CardDef
 methedrasLookout =
   (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-003" "Methedras Lookout" ToCatchAnOrcNightmare 3 44 3 5 4 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
 
 -- The Lost Realm Nightmare Decks
 
@@ -2410,11 +2416,15 @@ orcRavagerNightmare :: CardDef
 orcRavagerNightmare =
   (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-004" "Orc Ravager" TheSiegeOfCairAndrosNightmare 4 30 3 3 1 4)
     { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
     }
 
 guardWarg :: CardDef
 guardWarg =
   (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-004" "Guard Warg" ToCatchAnOrcNightmare 2 25 4 3 3 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
 
 -- The Ring-maker Nightmare Decks
 
@@ -2634,6 +2644,7 @@ coalBlackOrc :: CardDef
 coalBlackOrc =
   (enemy "khazad-dum-nightmare-flight-from-moria-006" "Coal-Black Orc" FlightFromMoriaNightmare 3 34 0 0 3 5)
     { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
     }
 
 deadlyMarshAdder :: CardDef
