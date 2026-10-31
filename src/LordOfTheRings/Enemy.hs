@@ -247,6 +247,9 @@ import LordOfTheRings.Enemy.Cards.BrownWaterRats
 import LordOfTheRings.Enemy.Cards.TortureMaster
 import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
+import LordOfTheRings.Enemy.Cards.WolfpeltGoblin
+import LordOfTheRings.Enemy.Cards.SilvertineMarauder
+import LordOfTheRings.Enemy.Cards.SnowGiant
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -519,5 +522,8 @@ allEnemys =
         , SomeEnemyCard tortureMaster
         , SomeEnemyCard crazedCaptive
         , SomeEnemyCard spiderOfDolGuldur
+        , SomeEnemyCard wolfpeltGoblin
+        , SomeEnemyCard silvertineMarauder
+        , SomeEnemyCard snowGiant
         ]
     ]

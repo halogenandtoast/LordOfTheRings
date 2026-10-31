@@ -1585,5 +1585,8 @@
   },
   "smokingBlood": {
     "moveDamage": "Choose the character to take the enemy's damage"
+  },
+  "snowGiant": {
+    "discard": "Choose the ally with the highest willpower to discard for Snow-Giant"
   }
 }
