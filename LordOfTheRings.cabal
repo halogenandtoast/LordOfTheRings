@@ -1964,6 +1964,8 @@ test-suite LordOfTheRings-test
       LordOfTheRings.DeckCardsSpec
       LordOfTheRings.DreamChaser.AStormOnCobasHavenPlayerCardsSpec
       LordOfTheRings.DreamChaser.AStormOnCobasHavenSpec
+      LordOfTheRings.DreamChaser.CampaignCardsSpec
+      LordOfTheRings.DreamChaser.CampaignSpec
       LordOfTheRings.DreamChaser.FlightOfTheStormcallerPlayerCardsSpec
       LordOfTheRings.DreamChaser.FlightOfTheStormcallerSpec
       LordOfTheRings.DreamChaser.GreyHavensPlayerCardsSpec
