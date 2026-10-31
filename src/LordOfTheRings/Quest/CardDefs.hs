@@ -240,6 +240,7 @@ allQuestCards =
       , fateOfTheDreamChaser
       , theHavenOfUmbar
       , finalConfrontation
+      , ambushInTheNight
       ]
 
 theDrippingWalls :: CardDef
@@ -894,3 +895,7 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
+
+-- | Road to Rivendell's nightmare stage 2, in place of Orc Outpost.
+ambushInTheNight :: CardDef
+ambushInTheNight = quest "road-to-rivendell-nightmare-road-to-rivendell-002" "Ambush in the Night" RoadToRivendellNightmare 2 12

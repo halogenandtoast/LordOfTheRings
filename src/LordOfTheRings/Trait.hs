@@ -4,6 +4,7 @@ import LordOfTheRings.Prelude
 
 data Trait
   = Archer
+  | Attack
   | Armor
   | Arnor
   | Artifact

@@ -253,6 +253,25 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , wolfpeltGoblin
+      , silvertineMarauder
+      , snowGiant
+      , urukElfStalker
+      , goblinTrapper
+      , raidingParty
+      , viciousTrackers
+      , theWatcherNightmare
+      , writhingTentacle
+      , chokingTentacle
+      , goblinStalker
+      , trapdoorSpider
+      , sentinelOfTheDeep
+      , mithrilSeeker
+      , giantCaveCentipede
+      , unspeakableThing
+      , primevalThing
+      , servantOfFlame
+      , captainOfMordor
       ]
 
 namelessThing :: CardDef
@@ -2037,5 +2056,136 @@ spiderOfDolGuldur :: CardDef
 spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
+    , cdShadowEffect = True
+    }
+
+wolfpeltGoblin :: CardDef
+wolfpeltGoblin =
+  (enemy "the-redhorn-gate-nightmare-the-redhorn-gate-002" "Wolfpelt Goblin" TheRedhornGateNightmare 3 20 2 3 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc, Snow]
+    , cdKeywords = setFromList [Surge]
+    }
+
+silvertineMarauder :: CardDef
+silvertineMarauder =
+  (enemy "the-redhorn-gate-nightmare-the-redhorn-gate-003" "Silvertine Marauder" TheRedhornGateNightmare 4 28 2 3 3 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+snowGiant :: CardDef
+snowGiant =
+  (enemy "the-redhorn-gate-nightmare-the-redhorn-gate-004" "Snow-Giant" TheRedhornGateNightmare 2 42 4 6 4 10)
+    { cdCardTraits = setFromList [Giant, Snow]
+    , cdVictoryPoints = Just 1
+    }
+
+urukElfStalker :: CardDef
+urukElfStalker =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-003" "Uruk Elf-stalker" RoadToRivendellNightmare 3 5 3 5 3 5)
+    { cdCardTraits = setFromList [Uruk, Orc]
+    , cdKeywords = setFromList [Ambush]
+    , cdShadowEffect = True
+    }
+
+goblinTrapper :: CardDef
+goblinTrapper =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-004" "Goblin Trapper" RoadToRivendellNightmare 3 30 3 3 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Ambush]
+    , cdShadowEffect = True
+    }
+
+raidingParty :: CardDef
+raidingParty =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-005" "Raiding Party" RoadToRivendellNightmare 2 34 2 5 1 7)
+    { cdCardTraits = setFromList [Mountain, Orc]
+    , cdKeywords = setFromList [Ambush]
+    }
+
+viciousTrackers :: CardDef
+viciousTrackers =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-006" "Vicious Trackers" RoadToRivendellNightmare 2 16 1 3 2 5)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Surge]
+    }
+
+theWatcherNightmare :: CardDef
+theWatcherNightmare =
+  (enemy "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-002" "The Watcher" TheWatcherInTheWaterNightmare 1 50 4 7 7 21)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Tentacle]
+    , cdVictoryPoints = Just 3
+    }
+
+writhingTentacle :: CardDef
+writhingTentacle =
+  (enemy "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-003" "Writhing Tentacle" TheWatcherInTheWaterNightmare 3 46 4 4 0 3)
+    { cdCardTraits = setFromList [Tentacle]
+    }
+
+chokingTentacle :: CardDef
+chokingTentacle =
+  (enemy "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-004" "Choking Tentacle" TheWatcherInTheWaterNightmare 4 10 2 5 1 4)
+    { cdCardTraits = setFromList [Tentacle]
+    }
+
+goblinStalker :: CardDef
+goblinStalker =
+  (enemy "the-long-dark-nightmare-the-long-dark-002" "Goblin Stalker" TheLongDarkNightmare 4 28 3 2 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+trapdoorSpider :: CardDef
+trapdoorSpider =
+  (enemy "the-long-dark-nightmare-the-long-dark-003" "Trapdoor Spider" TheLongDarkNightmare 3 42 4 5 3 6)
+    { cdCardTraits = setFromList [Creature, Spider]
+    }
+
+sentinelOfTheDeep :: CardDef
+sentinelOfTheDeep =
+  (enemy "the-long-dark-nightmare-the-long-dark-004" "Sentinel of the Deep" TheLongDarkNightmare 2 12 2 4 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+mithrilSeeker :: CardDef
+mithrilSeeker =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-002" "Mithril Seeker" FoundationsOfStoneNightmare 3 18 2 2 2 5)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+giantCaveCentipede :: CardDef
+giantCaveCentipede =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-003" "Giant Cave Centipede" FoundationsOfStoneNightmare 2 28 3 3 5 4)
+    { cdCardTraits = setFromList [Creature, Insect]
+    , cdWhenRevealed = True
+    }
+
+-- | X attack and hit points, 5 with nothing attached: see its card module.
+unspeakableThing :: CardDef
+unspeakableThing =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-004" "Unspeakable Thing" FoundationsOfStoneNightmare 3 15 5 0 5 0)
+    { cdCardTraits = setFromList [Nameless]
+    }
+
+-- | X attack and hit points, 6 with nothing attached: see its card module.
+primevalThing :: CardDef
+primevalThing =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-005" "Primeval Thing" FoundationsOfStoneNightmare 2 45 6 0 6 0)
+    { cdCardTraits = setFromList [Nameless]
+    }
+
+servantOfFlame :: CardDef
+servantOfFlame =
+  (enemy "shadow-and-flame-nightmare-shadow-and-flame-007" "Servant of Flame" ShadowAndFlameNightmare 3 12 3 3 2 5)
+    { cdCardTraits = setFromList [Mordor, Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+captainOfMordor :: CardDef
+captainOfMordor =
+  (enemy "shadow-and-flame-nightmare-shadow-and-flame-008" "Captain of Mordor" ShadowAndFlameNightmare 2 42 4 4 3 7)
+    { cdCardTraits = setFromList [Mordor, Orc, Uruk]
     , cdShadowEffect = True
     }
