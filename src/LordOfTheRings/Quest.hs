@@ -202,6 +202,8 @@ import LordOfTheRings.Quest.Cards.GoblinAmbush
 import LordOfTheRings.Quest.Cards.PursuedByShadowStage
 import LordOfTheRings.Quest.Cards.BlockedByFlame
 import LordOfTheRings.Quest.Cards.Ghash
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAnArduousJourney
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetDeadlyWaters
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -436,5 +438,7 @@ allQuests =
         , SomeQuestCard pursuedByShadowStage
         , SomeQuestCard blockedByFlame
         , SomeQuestCard ghash
+        , SomeQuestCard throughTheMarshAnArduousJourney
+        , SomeQuestCard lostInTheSwanfleetDeadlyWaters
         ]
     ]

@@ -8,7 +8,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedValue, questPointsOf)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit))
+import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit, ProgressReducedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -21,7 +21,8 @@ instance RunMessage LocationAttrs where
     -- tokens a player card would place or remove do not reach an immune location
     PlaceTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
     RemoveTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
-    PlaceTokens _ (isTarget attrs -> True) token n -> do
+    PlaceTokens _ (isTarget attrs -> True) token n0 -> do
+      n <- if token == Progress then (\ms -> foldr min n0 [k | ProgressReducedTo k <- ms]) <$> getModifiers attrs else pure n0
       let attrs' = attrs & tokensL %~ addTokens token n
       questPoints <- modifiedValue questPointsOf attrs attrs'.questPoints
       -- a location with as much progress as its quest points is explored, but one on the

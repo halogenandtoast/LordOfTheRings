@@ -173,6 +173,19 @@ allLocationCards =
       , hillsOfDunland
       , plainsOfEnedwaith
       , hithaeglirStream
+      , plainsOfDunland
+      , munuvDuvRiver
+      , hithaeglirWoods
+      , sacredForest
+      , hauntedPillars
+      , cityOfSpies
+      , darkPathway
+      , desolateMeadow
+      , peatBog
+      , bonesOfHollin
+      , dustyLabyrinth
+      , ravenStronghold
+      , highlandsOfDunland
       , theEmptyMug
       , theCrossingAtTharbad
       , streetsOfTharbad
@@ -2175,6 +2188,50 @@ docksideStreet = (location "heirs-of-numenor-nightmare-peril-in-pelargir-005" "D
 pelargirAlley :: CardDef
 pelargirAlley =
   (location "heirs-of-numenor-nightmare-peril-in-pelargir-006" "Pelargir Alley" PerilInPelargirNightmare 2 2 5)
+
+-- The Ring-maker Nightmare Decks
+
+plainsOfDunland :: CardDef
+plainsOfDunland =
+  (location "the-dunland-trap-nightmare-the-dunland-trap-004" "Plains of Dunland" TheDunlandTrapNightmare 2 4 5)
+    { cdCardTraits = setFromList [Enedwaith, Plains]
+    }
+
+munuvDuvRiver :: CardDef
+munuvDuvRiver =
+  (location "the-dunland-trap-nightmare-the-dunland-trap-005" "Munuv Dûv River" TheDunlandTrapNightmare 3 2 3)
+    { cdCardTraits = setFromList [Enedwaith, Hills, River]
+    , cdShadowEffect = True
+    }
+
+hithaeglirWoods :: CardDef
+hithaeglirWoods =
+  (location "the-dunland-trap-nightmare-the-dunland-trap-006" "Hithaeglir Woods" TheDunlandTrapNightmare 3 3 4)
+    { cdCardTraits = setFromList [Enedwaith, Forest, Hills]
+    }
+
+sacredForest :: CardDef
+sacredForest =
+  (location "the-three-trials-nightmare-the-three-trials-005" "Sacred Forest" TheThreeTrialsNightmare 3 3 5)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+hauntedPillars :: CardDef
+hauntedPillars =
+  (location "the-three-trials-nightmare-the-three-trials-006" "Haunted Pillars" TheThreeTrialsNightmare 2 2 3)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdWhenRevealed = True
+    }
+
+cityOfSpies :: CardDef
+cityOfSpies =
+  (location "trouble-in-tharbad-nightmare-trouble-in-tharbad-005" "City of Spies" TroubleInTharbadNightmare 3 2 5)
+    { cdCardTraits = setFromList [City, Ruins]
+    }
+
+darkPathway :: CardDef
+darkPathway =
+  (location "trouble-in-tharbad-nightmare-trouble-in-tharbad-006" "Dark Pathway" TroubleInTharbadNightmare 3 5 4)
     { cdCardTraits = setFromList [City]
     , cdShadowEffect = True
     }
@@ -2453,4 +2510,45 @@ shadowedCorridor =
   (location "khazad-dum-nightmare-flight-from-moria-007" "Shadowed Corridor" FlightFromMoriaNightmare 4 4 6)
     { cdCardTraits = setFromList [Underground, Dark]
     , cdShadowEffect = True
+    }
+
+desolateMeadow :: CardDef
+desolateMeadow =
+  (location "the-nin-in-eilph-nightmare-the-nin-in-eilph-004" "Desolate Meadow" TheNinInEilphNightmare 3 2 5)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
+    }
+
+peatBog :: CardDef
+peatBog =
+  (location "the-nin-in-eilph-nightmare-the-nin-in-eilph-005" "Peat Bog" TheNinInEilphNightmare 4 3 3)
+    { cdCardTraits = setFromList [Marsh]
+    }
+
+bonesOfHollin :: CardDef
+bonesOfHollin =
+  (location "celebrimbors-secret-nightmare-celebrimbors-secret-004" "Bones of Hollin" CelebrimborsSecretNightmare 3 3 4)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    }
+
+dustyLabyrinth :: CardDef
+dustyLabyrinth =
+  (location "celebrimbors-secret-nightmare-celebrimbors-secret-005" "Dusty Labyrinth" CelebrimborsSecretNightmare 3 2 5)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdKeywords = setFromList [Scour]
+    }
+
+ravenStronghold :: CardDef
+ravenStronghold =
+  (location "the-antlered-crown-nightmare-the-antlered-crown-005" "Raven Stronghold" TheAntleredCrownNightmare 4 2 5)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 3]
+    }
+
+highlandsOfDunland :: CardDef
+highlandsOfDunland =
+  (location "the-antlered-crown-nightmare-the-antlered-crown-006" "Highlands of Dunland" TheAntleredCrownNightmare 2 4 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    , cdKeywords = setFromList [Time 2]
     }

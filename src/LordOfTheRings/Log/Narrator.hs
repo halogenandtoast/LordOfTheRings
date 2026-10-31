@@ -98,8 +98,8 @@ narrationFor = \case
   -- \* Threat
   RaiseThreat pid n | n > 0 -> Just $ threatChange "log.threatRaised" pid n (+ n)
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
-  ScenarioSpecific "tharbad.lowerElimination" _ ->
-    Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> (10 :: Int)]]
+  ScenarioSpecific "tharbad.lowerElimination" v ->
+    Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> fromMaybe (10 :: Int) (parseMaybe parseJSON v)]]
   -- \* Day and Night, as The Wastes of Eriador's Time objective flips
   CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
   -- \* The heading and the Sailing test (Dream-chaser rules)

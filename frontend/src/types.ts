@@ -176,6 +176,11 @@ const sharedSideA: Record<string, string> = Object.fromEntries(
     'khazad-dum-nightmare-flight-from-moria-004',
   ].map((code) => [code, '03070']),
 )
+// a nightmare quest stage printed only as its B side, its A side the standard stage's
+const sharedFront: Record<string, string> = {
+  'the-nin-in-eilph-nightmare-the-nin-in-eilph-008': '08096',
+  'the-nin-in-eilph-nightmare-the-nin-in-eilph-009': '08098',
+}
 
 export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' | 'errata' | 'image'>) =>
   card.facedown
@@ -185,6 +190,7 @@ export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' |
       : !card.flipped && sharedSideA[card.code]
         ? `/images/cards/${sharedSideA[card.code]}.avif`
         : `/images/cards/${errataImage(`${printedFace[card.code] ?? card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
+      : `/images/cards/${errataImage(card.flipped ? `${printedFace[card.code] ?? card.code}-b` : (sharedFront[card.code] ?? printedFace[card.code] ?? card.code), card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

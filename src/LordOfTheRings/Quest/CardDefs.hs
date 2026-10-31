@@ -166,6 +166,8 @@ allQuestCards =
       , throughTheMarshAWearyPassage
       , throughTheMarshAForgottenLand
       , lostInTheSwanfleetImpassableMarshland
+      , throughTheMarshAnArduousJourney
+      , lostInTheSwanfleetDeadlyWaters
       , lostInTheSwanfleetATreacherousSwamp
       , lostInTheSwanfleetCreaturesOfAForgottenAge
       , outOfTheSwamp
@@ -981,3 +983,11 @@ blockedByFlame = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-mori
 
 ghash :: CardDef
 ghash = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-moria-004" "Ghâsh!" (Just 1) (Just 1)
+
+-- The Nîn-in-Eilph Nightmare Deck: B sides in place of A Weary Passage's and Impassable Marshland's
+
+throughTheMarshAnArduousJourney :: CardDef
+throughTheMarshAnArduousJourney = (throughTheMarsh "the-nin-in-eilph-nightmare-the-nin-in-eilph-008" "An Arduous Journey") {cdEncounterSet = Just TheNinInEilphNightmare}
+
+lostInTheSwanfleetDeadlyWaters :: CardDef
+lostInTheSwanfleetDeadlyWaters = (lostInTheSwanfleet "the-nin-in-eilph-nightmare-the-nin-in-eilph-009" "Deadly Waters") {cdEncounterSet = Just TheNinInEilphNightmare}

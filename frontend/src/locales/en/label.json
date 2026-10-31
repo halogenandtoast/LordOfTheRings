@@ -1105,7 +1105,8 @@
   },
   "celebrimborsSecret": {
     "scourOrder": "Choose the next Scour effect to resolve",
-    "assignDamage": "Place 1 damage on a location ({n} left to assign)"
+    "assignDamage": "Place 1 damage on a location ({n} left to assign)",
+    "nightmareScour": "Scour: choose a location in play to deal 1 damage to"
   },
   "celebrimborsMould": {
     "attach": "Attach Celebrimbor's Mould to a hero you control"
@@ -1712,5 +1713,76 @@
   },
   "dismayAndFear": {
     "remove": "Choose a character to remove from the quest"
+  },
+  "plainsOfDunland": {
+    "engage": "Choose the highest attack enemy in the staging area to engage"
+  },
+  "munuvDuvRiver": {
+    "shadow": "Choose an enemy engaged with you to deal a shadow card"
+  },
+  "cursedBurden": {
+    "attach": "Choose a hero with a Key attached for Cursed Burden"
+  },
+  "hauntedPillars": {
+    "choose": "Haunted Pillars: choose one",
+    "returnLocation": "Return the active location to the staging area",
+    "surge": "Haunted Pillars gains surge"
+  },
+  "sacredForest": {
+    "removeTimeCounters": "Choose an enemy to remove each time counter from"
+  },
+  "bellachsHunter": {
+    "choose": "Bellach's Hunter engages you: choose one",
+    "removeTimeCounters": "Remove all time counters from the current quest",
+    "damage": "Deal 5 damage to a hero you control"
+  },
+  "orcSeeker": {
+    "choose": "Orc Seeker: choose one",
+    "lowerElimination": "Reduce each player's threat elimination level by 2",
+    "attack": "Orc Seeker engages the first player and makes an immediate attack"
+  },
+  "bloodHound": {
+    "choose": "Blood Hound: choose one",
+    "raiseThreat": "Raise your threat by 10",
+    "attack": "The attacking enemy makes an additional attack against you"
+  },
+  "darkPathway": {
+    "choose": "Dark Pathway: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "undefended": "Treat this attack as undefended"
+  },
+  "waylaidByAgents": {
+    "choose": "Waylaid by Agents: remove 1 time counter from the quest or discard an ally you control",
+    "removeTimeCounter": "Remove 1 time counter from the quest"
+  },
+  "tharbadPatrol": {
+    "attach": "Choose a non-unique location in the staging area for Tharbad Patrol"
+  },
+  "deadlyMarshAdder": {
+    "discard": "Choose a damaged character you control to discard"
+  },
+  "quicksand": {
+    "choose": "Quicksand: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "removeFromQuest": "Remove each character with 3 or more willpower from the quest"
+  },
+  "littleSnuffler": {
+    "assign": "Place 1 damage on a location in the staging area ({n} left to assign)"
+  },
+  "bonesOfHollin": {
+    "damage": "Choose an Ost-in-Edhil location to place 2 damage on"
+  },
+  "dustyLabyrinth": {
+    "place": "Choose a card from your hand to place facedown underneath The Orcs' Search"
+  },
+  "ravenClanElite": {
+    "choose": "Raven Clan Elite: choose one",
+    "removeTimeCounter": "Remove 1 time counter from a location in play",
+    "attack": "Raven Clan Elite makes an immediate attack against the first player"
+  },
+  "highlandsOfDunland": {
+    "choose": "Highlands of Dunland: choose one",
+    "removeTimeCounter": "Remove 1 time counter from a location in play",
+    "return": "Return the attacking enemy to the staging area after this attack"
   }
 }

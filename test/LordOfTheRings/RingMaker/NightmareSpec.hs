@@ -1,0 +1,373 @@
+module LordOfTheRings.RingMaker.NightmareSpec (spec) where
+
+import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getWillpower)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost, getStagingThreat)
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher (getEnemy)
+import LordOfTheRings.Modifier (ModifierType (..))
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Phase (Phase (EncounterPhase, QuestPhase))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario (celebrimborsSecret, theAntleredCrown, theDunlandTrap, theNinInEilph, theThreeTrials, troubleInTharbad)
+import LordOfTheRings.Scenario.Scenarios.TheAntleredCrown.Helpers qualified as Raven
+import LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers (cardsUnderOrcsSearch)
+import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (eliminationLowering)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck), modeL, scenarioMeta, victoryDisplayL)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, PhaseBegins))
+import TestImport
+
+nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
+nightmare s = gameTestIn (overAttrs (modeL .~ NightmareMode) s) testDeck
+
+-- | Reveal a card from the encounter deck, with the given cards under it.
+reveal :: CardDef -> [CardDef] -> GameT ()
+reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard >> resolveRevealed
+
+copies :: CardDef -> [EncounterCard] -> Int
+copies def = length . filter ((== toCardCode def) . toCardCode)
+
+enemyOf :: CardDef -> GameT EnemyId
+enemyOf def = getsGame (fromJustNote "no such enemy" . fmap toId . find ((== toCardCode def) . toCardCode) . toList . (.entities.enemies))
+
+locationOf :: CardDef -> GameT LocationId
+locationOf def = getsGame (fromJustNote "no such location" . fmap toId . find ((== toCardCode def) . toCardCode) . toList . (.entities.locations))
+
+staged :: CardDef -> GameT ()
+staged def = run . AddToStaging =<< genEncounterCard def
+
+engaged :: PlayerId -> CardDef -> GameT EnemyId
+engaged pid def = do
+  staged def
+  eid <- enemyOf def
+  run $ EngageEnemy pid eid
+  pure eid
+
+shadow :: PlayerId -> EnemyId -> CardDef -> [Target] -> GameT ()
+shadow pid eid def defenders = do
+  card <- genEncounterCard def
+  run $ AttachShadowCard eid card
+  run $ ResolveShadow eid pid defenders
+
+-- | Answer each question the player is asked with its first choice.
+answerAll :: PlayerId -> GameT ()
+answerAll pid =
+  getQuestion pid >>= \case
+    Just _ -> chooseOptionMatching "first choice" pid (const True) >> answerAll pid
+    Nothing -> pure ()
+
+heroDamage :: GameT Int
+heroDamage = getsGame (sum . map (.damage) . toList . (.entities.heroes))
+
+threat :: PlayerId -> GameT Int
+threat pid = (.threat) <$> getPlayer pid
+
+handSize :: PlayerId -> GameT Int
+handSize pid = length . (.hand) <$> getPlayer pid
+
+enemyCount :: GameT Int
+enemyCount = getsGame (length . (.entities.enemies))
+
+spec :: Spec
+spec = describe "The Ring-maker Nightmare Decks" do
+  describe "The Dunland Trap" do
+    it "builds the nightmare deck" . nightmare theDunlandTrap $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.boarClanWarrior, Locations.hithaeglirStream, Treacheries.lowOnProvisions, Enemies.boarClanSkirmisher]
+        `shouldBe` [0, 0, 2, 4]
+
+    it "Boar Clan Skirmisher has the engaged player damage a hero as he draws" . nightmare theDunlandTrap $ \pid -> do
+      _ <- engaged pid Enemies.boarClanSkirmisher
+      run $ DrawCards $ Drawing pid 1
+      answerAll pid
+      heroDamage `shouldReturn` 1
+
+    it "Plains of Dunland lowers Dunland enemies' engagement cost by 20" . nightmare theDunlandTrap $ \_ -> do
+      staged Locations.plainsOfDunland
+      staged Enemies.boarClanAmbusher
+      (getEngagementCost =<< enemyOf Enemies.boarClanAmbusher) `shouldReturn` 10
+
+    it "Hithaeglir Woods keeps damage off Dunland enemies in the staging area" . nightmare theDunlandTrap $ \_ -> do
+      staged Locations.hithaeglirWoods
+      staged Enemies.boarClanAmbusher
+      eid <- enemyOf Enemies.boarClanAmbusher
+      getModifiers eid >>= (`shouldSatisfy` elem CannotTakeDamage)
+
+    it "Munuv Dûv River deals a shadow card to an engaged enemy as a player draws" . nightmare theDunlandTrap $ \pid -> do
+      staged Locations.munuvDuvRiver
+      eid <- engaged pid Enemies.boarClanAmbusher
+      _ <- setEncounterDeck [Treacheries.boarClanAssault]
+      run $ DrawCards $ Drawing pid 1
+      answerAll pid
+      length . (.shadowCards) <$> getEnemy eid `shouldReturn` 1
+
+    it "Boar Clan Assault surges with no engaged enemy" . nightmare theDunlandTrap $ \_ -> do
+      reveal Treacheries.boarClanAssault [Locations.plainsOfDunland]
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+    it "Stalked by Dunlendings adds the first player's hand size to the staging threat" . nightmare theDunlandTrap $ \pid -> do
+      reveal Treacheries.stalkedByDunlendings []
+      n <- handSize pid
+      getStagingThreat `shouldReturn` n
+
+    it "Stalked by Dunlendings' shadow engages the topmost enemy in the discard pile" . nightmare theDunlandTrap $ \pid -> do
+      eid <- engaged pid Enemies.boarClanAmbusher
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.boarClanSkirmisher
+      _ <- setEncounterDeck [Locations.plainsOfDunland]
+      shadow pid eid Treacheries.stalkedByDunlendings []
+      skirmisher <- enemyOf Enemies.boarClanSkirmisher
+      length . (.shadowCards) <$> getEnemy skirmisher `shouldReturn` 1
+
+  describe "The Three Trials" do
+    it "builds the nightmare deck" . nightmare theThreeTrials $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.spiritOfTheWild, Locations.grimFoothills, Locations.tangledWoods, Treacheries.turnedAround, Enemies.wolfSpirit]
+        `shouldBe` [2, 0, 2, 0, 3]
+
+    it "adds each engaged Guardian's threat to the staging area" . nightmare theThreeTrials $ \pid -> do
+      _ <- engaged pid Enemies.ravensGuardian
+      getStagingThreat `shouldReturn` 3
+
+    it "keeps damage off Guardians during the Trial of Intuition" . nightmare theThreeTrials $ \_ -> do
+      _ <- putQuestStage Quests.theTrialOfIntuition
+      staged Enemies.wolfsGuardian
+      eid <- enemyOf Enemies.wolfsGuardian
+      getModifiers eid >>= (`shouldSatisfy` elem CannotTakeDamage)
+
+    it "Wolf Spirit gives Wolf enemies +1 attack while Wolf's Guardian is in play" . nightmare theThreeTrials $ \_ -> do
+      staged Enemies.wolfSpirit
+      eid <- enemyOf Enemies.wolfSpirit
+      getEnemyAttack eid `shouldReturn` 5
+      staged Enemies.wolfsGuardian
+      getEnemyAttack eid `shouldReturn` 6
+
+    it "Wolf Spirit engages the player engaged with Wolf's Guardian as the encounter phase begins" . nightmare theThreeTrials $ \pid -> do
+      _ <- engaged pid Enemies.wolfsGuardian
+      staged Enemies.wolfSpirit
+      run $ CheckWindows [Window After (PhaseBegins EncounterPhase)]
+      answerAll pid
+      spirit <- enemyOf Enemies.wolfSpirit
+      (.placement) <$> getEnemy spirit `shouldReturn` EngagedWith pid
+
+    it "Haunted Pillars surges with no active location" . nightmare theThreeTrials $ \_ -> do
+      reveal Locations.hauntedPillars [Locations.sacredForest]
+      getsGame (length . (.entities.locations)) `shouldReturn` 2
+
+    it "Sacred Forest heals a Guardian 2 for each time counter removed from it" . nightmare theThreeTrials $ \_ -> do
+      staged Locations.sacredForest
+      staged Enemies.boarsGuardian
+      eid <- enemyOf Enemies.boarsGuardian
+      run $ PlaceTokens GameSource (toTarget eid) TimeCounter 2
+      run $ DealDamage GameSource (toTarget eid) 5
+      run $ RemoveTokens GameSource (toTarget eid) TimeCounter 1
+      getDamage (toTarget eid) `shouldReturn` 3
+
+    it "Trial of Ancestors gives non-unique characters -1 willpower" . nightmare theThreeTrials $ \pid -> do
+      _ <- putQuestStage Quests.theTrialOfStrength
+      ally <- putAllyIntoPlay pid Allies.wanderingTook
+      was <- getWillpower ally
+      reveal Treacheries.trialOfAncestors []
+      getWillpower ally `shouldReturn` was - 1
+
+    it "Cursed Burden keeps the hero with a Key from questing" . nightmare theThreeTrials $ \pid -> do
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      key <- genEncounterCard Objectives.keyOfTheBoar
+      run $ PutObjectiveIntoPlayAttached key eowyn
+      reveal Treacheries.cursedBurden [Locations.sacredForest]
+      answerAll pid
+      getModifiers eowyn >>= (`shouldSatisfy` elem CannotCommitToQuest)
+
+  describe "Trouble in Tharbad" do
+    it "builds the nightmare deck" . nightmare troubleInTharbad $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Locations.tharbadHideout, Locations.hiddenAlleyway, Enemies.bellachsHunter, Treacheries.tharbadPatrol]
+        `shouldBe` [0, 0, 2, 3]
+
+    it "raises each player's starting threat by 5" . nightmare troubleInTharbad $ \pid -> do
+      was <- threat pid
+      run $ DoStep 8 Setup
+      threat pid `shouldReturn` was + 5
+
+    it "places no progress on The Crossing at Tharbad while Bellach is in play" . nightmare troubleInTharbad $ \_ -> do
+      staged Locations.theCrossingAtTharbad
+      staged Enemies.bellachTroubleInTharbad
+      crossing <- locationOf Locations.theCrossingAtTharbad
+      getModifiers crossing >>= (`shouldSatisfy` elem (ProgressLimit 0))
+
+    it "Orc Seeker's shadow lowers each elimination level by 5 when undefended" . nightmare troubleInTharbad $ \pid -> do
+      eid <- engaged pid Enemies.bloodHound
+      answerAll pid
+      shadow pid eid Enemies.orcSeeker []
+      getsGame (eliminationLowering . scenarioMeta . toAttrs . (.scenario)) `shouldReturn` 5
+
+    it "Blood Hound raises the threat by 5 as it engages" . nightmare troubleInTharbad $ \pid -> do
+      was <- threat pid
+      _ <- engaged pid Enemies.bloodHound
+      answerAll pid
+      threat pid `shouldReturn` was + 5
+
+    it "Waylaid by Agents gains doomed 3 with a threat of 20 or less" . nightmare troubleInTharbad $ \pid -> do
+      run $ LowerThreat pid 50
+      reveal Treacheries.waylaidByAgents []
+      answerAll pid
+      threat pid `shouldReturn` 3
+
+    it "Tharbad Patrol engages the enemies each player discards as they travel to its location" . nightmare troubleInTharbad $ \pid -> do
+      _ <- setEncounterDeck [Treacheries.tharbadPatrol, Locations.cityOfSpies, Enemies.orcSeeker, Locations.cityOfSpies]
+      staged Locations.darkPathway
+      run RevealEncounterCard >> resolveRevealed
+      answerAll pid
+      pathway <- locationOf Locations.darkPathway
+      run $ TravelTo pathway
+      answerAll pid
+      seeker <- enemyOf Enemies.orcSeeker
+      (.placement) <$> getEnemy seeker `shouldReturn` EngagedWith pid
+
+    it "Dark Pathway has the first treachery revealed in the quest phase surge" . nightmare troubleInTharbad $ \_ -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.darkPathway
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      reveal Treacheries.waylaidByAgents [Locations.cityOfSpies, Locations.cityOfSpies]
+      getsGame (length . (.entities.locations)) `shouldReturn` 2
+
+  describe "The Nîn-in-Eilph" do
+    it "builds the nightmare deck, its stages in place of A Weary Passage and Impassable Marshland" . nightmare theNinInEilph $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.neekerbreekers, Locations.fingerOfGlanduin, Locations.hiddenEyot, Enemies.deadlyMarshAdder]
+        `shouldBe` [0, 0, 1, 3]
+      stages <- getsGame (map toCardCode . scenarioQuestDeck . toAttrs . (.scenario))
+      map toCardCode [Quests.throughTheMarshAnArduousJourney, Quests.lostInTheSwanfleetDeadlyWaters] `shouldSatisfy` all (`elem` stages)
+      map toCardCode [Quests.throughTheMarshAWearyPassage, Quests.lostInTheSwanfleetImpassableMarshland] `shouldSatisfy` all (`notElem` stages)
+
+    it "adds Ancient Marsh-dweller to the staging area as the players advance to a stage 2A" . nightmare theNinInEilph $ \pid -> do
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.ancientMarshDweller
+      run . AdvanceToQuest =<< genEncounterCard Quests.throughTheMarshNoEndInSight
+      answerAll pid
+      dweller <- enemyOf Enemies.ancientMarshDweller
+      (.placement) <$> getEnemy dweller `shouldReturn` StagingArea
+
+    it "returns Swarms of Mosquitoes from the victory display as the players advance" . nightmare theNinInEilph $ \_ -> do
+      swarm <- EncounterCard <$> genEncounterCard Enemies.swarmsOfMosquitos
+      putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (swarm :))) =<< getGame
+      run $ CheckWindows [Window After AdvancedToStage]
+      enemyCount `shouldReturn` 1
+
+    it "Peat Bog has each player discard a random card as the players advance" . nightmare theNinInEilph $ \pid -> do
+      staged Locations.peatBog
+      run $ DrawCards $ Drawing pid 2
+      n <- handSize pid
+      run $ CheckWindows [Window After AdvancedToStage]
+      answerAll pid
+      handSize pid `shouldReturn` n - 1
+
+    it "Rotten Stench returns the topmost location in the discard pile and raises the staging locations' threat" . nightmare theNinInEilph $ \_ -> do
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Locations.peatBog
+      reveal Treacheries.rottenStench []
+      getStagingThreat `shouldReturn` 4
+
+    it "Quicksand's shadow keeps the defender from readying" . nightmare theNinInEilph $ \pid -> do
+      eid <- engaged pid Enemies.deadlyMarshAdder
+      answerAll pid
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      shadow pid eid Treacheries.quicksand [eowyn]
+      getModifiers eowyn >>= (`shouldSatisfy` elem CannotReady)
+
+    it "An Arduous Journey has allies enter play exhausted" . nightmare theNinInEilph $ \pid -> do
+      quest <- putQuestStage Quests.throughTheMarshAnArduousJourney
+      run $ Flip quest
+      answerAll pid
+      took <- putAllyIntoPlay pid Allies.wanderingTook
+      getsGame (fmap (allyExhausted . toAttrs) . find ((== took) . toTarget) . toList . (.entities.allies)) `shouldReturn` Just True
+
+  describe "Celebrimbor's Secret" do
+    it "builds the nightmare deck" . nightmare celebrimborsSecret $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.prowlingWolf, Locations.brokenLandsLocation, Locations.bonesOfHollin, Treacheries.closingIn]
+        `shouldBe` [0, 0, 3, 2]
+
+    it "reduces progress placed on a location in the staging area to 1" . nightmare celebrimborsSecret $ \_ -> do
+      staged Locations.dustyLabyrinth
+      lid <- locationOf Locations.dustyLabyrinth
+      run $ PlaceTokens GameSource (toTarget lid) Progress 3
+      (.progress) <$> getLocation lid `shouldReturn` 1
+
+    it "its setup card's Scour deals 1 damage to a location in play" . nightmare celebrimborsSecret $ \pid -> do
+      staged Locations.dustyLabyrinth
+      lid <- locationOf Locations.dustyLabyrinth
+      run $ ScenarioSpecific "scour" (toJSON ScenarioTarget)
+      answerAll pid
+      getDamage (toTarget lid) `shouldReturn` 1
+
+    it "Bellach's Bodyguard keeps damage off Bellach" . nightmare celebrimborsSecret $ \_ -> do
+      staged Enemies.bellachCelebrimborsSecret
+      staged Enemies.bellachsBodyguard
+      bellach <- enemyOf Enemies.bellachCelebrimborsSecret
+      getModifiers bellach >>= (`shouldSatisfy` elem CannotTakeDamage)
+
+    it "Bones of Hollin raises each threat by the damage placed on it" . nightmare celebrimborsSecret $ \pid -> do
+      staged Locations.bonesOfHollin
+      lid <- locationOf Locations.bonesOfHollin
+      was <- threat pid
+      run $ PlaceTokens GameSource (toTarget lid) Damage 2
+      threat pid `shouldReturn` was + 2
+
+    it "Dusty Labyrinth gets +1 threat for each damage on it" . nightmare celebrimborsSecret $ \_ -> do
+      staged Locations.dustyLabyrinth
+      lid <- locationOf Locations.dustyLabyrinth
+      run $ PlaceTokens GameSource (toTarget lid) Damage 2
+      getStagingThreat `shouldReturn` 4
+
+    it "Hateful Search damages each staged location, +1 threat each" . nightmare celebrimborsSecret $ \_ -> do
+      staged Locations.bonesOfHollin
+      reveal Treacheries.hatefulSearch []
+      getStagingThreat `shouldReturn` 4
+
+    it "Closing In goes underneath The Orcs' Search and surges" . nightmare celebrimborsSecret $ \_ -> do
+      run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.theOrcsSearch
+      reveal Treacheries.closingIn [Locations.bonesOfHollin]
+      cardsUnderOrcsSearch `shouldReturn` 1
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+  describe "The Antlered Crown" do
+    it "builds the nightmare deck, Dunlending Horde in the Raven deck" . nightmare theAntleredCrown $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.ravenSkirmisher, Locations.ravenWarCamp, Locations.ravenStronghold, Enemies.dunlendingHorde]
+        `shouldBe` [0, 1, 4, 0]
+      ravens <- getsGame (Raven.ravenDeck . Raven.getMeta . toAttrs . (.scenario))
+      map (`copies` ravens) [Enemies.dunlendingHorde, Enemies.dunlandProwler, Enemies.dunlendingBandit] `shouldBe` [2, 2, 0]
+
+    it "keeps player card effects from discarding a location with time counters" . nightmare theAntleredCrown $ \_ -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.ravenStronghold
+      lid <- locationOf Locations.ravenStronghold
+      run $ PlaceTokens GameSource (toTarget lid) TimeCounter 1
+      getModifiers lid >>= (`shouldSatisfy` elem CannotBeDiscardedByPlayerCards)
+
+    it "Dunlending Horde takes no non-combat damage" . nightmare theAntleredCrown $ \_ -> do
+      staged Enemies.dunlendingHorde
+      eid <- enemyOf Enemies.dunlendingHorde
+      run $ DealDamage GameSource (toTarget eid) 3
+      getDamage (toTarget eid) `shouldReturn` 0
+
+    it "Raven Claw Druid's shadow adds the active location's Time X to the attack" . nightmare theAntleredCrown $ \pid -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.ravenStronghold
+      eid <- engaged pid Enemies.dunlendingHorde
+      shadow pid eid Enemies.ravenClawDruid []
+      getEnemyAttack eid `shouldReturn` 9
+
+    it "Raven Talisman adds the first player's hand size to the staging threat" . nightmare theAntleredCrown $ \pid -> do
+      reveal Treacheries.ravenTalisman []
+      n <- handSize pid
+      getStagingThreat `shouldReturn` n
+
+    it "Gathering Forces adds the top 2 cards of the Raven deck to the staging area" . nightmare theAntleredCrown $ \_ -> do
+      run $ DoStep 1 Setup
+      reveal Treacheries.gatheringForces []
+      enemyCount `shouldReturn` 2

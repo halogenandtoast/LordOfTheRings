@@ -286,6 +286,21 @@ import LordOfTheRings.Enemy.Cards.GoblinSkirmisher
 import LordOfTheRings.Enemy.Cards.PitGoblin
 import LordOfTheRings.Enemy.Cards.SwarmingGoblins
 import LordOfTheRings.Enemy.Cards.CoalBlackOrc
+import LordOfTheRings.Enemy.Cards.BoarClanAmbusher
+import LordOfTheRings.Enemy.Cards.BoarClanSkirmisher
+import LordOfTheRings.Enemy.Cards.WolfSpirit
+import LordOfTheRings.Enemy.Cards.BoarSpirit
+import LordOfTheRings.Enemy.Cards.RavenSpirit
+import LordOfTheRings.Enemy.Cards.BellachsHunter
+import LordOfTheRings.Enemy.Cards.OrcSeeker
+import LordOfTheRings.Enemy.Cards.BloodHound
+import LordOfTheRings.Enemy.Cards.DeadlyMarshAdder
+import LordOfTheRings.Enemy.Cards.SwarmsOfMosquitos
+import LordOfTheRings.Enemy.Cards.BellachsBodyguard
+import LordOfTheRings.Enemy.Cards.LittleSnuffler
+import LordOfTheRings.Enemy.Cards.DunlendingHorde
+import LordOfTheRings.Enemy.Cards.RavenClanElite
+import LordOfTheRings.Enemy.Cards.RavenClawDruid
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -597,5 +612,20 @@ allEnemys =
         , SomeEnemyCard pitGoblin
         , SomeEnemyCard swarmingGoblins
         , SomeEnemyCard coalBlackOrc
+        , SomeEnemyCard boarClanAmbusher
+        , SomeEnemyCard boarClanSkirmisher
+        , SomeEnemyCard wolfSpirit
+        , SomeEnemyCard boarSpirit
+        , SomeEnemyCard ravenSpirit
+        , SomeEnemyCard bellachsHunter
+        , SomeEnemyCard orcSeeker
+        , SomeEnemyCard bloodHound
+        , SomeEnemyCard deadlyMarshAdder
+        , SomeEnemyCard swarmsOfMosquitos
+        , SomeEnemyCard bellachsBodyguard
+        , SomeEnemyCard littleSnuffler
+        , SomeEnemyCard dunlendingHorde
+        , SomeEnemyCard ravenClanElite
+        , SomeEnemyCard ravenClawDruid
         ]
     ]

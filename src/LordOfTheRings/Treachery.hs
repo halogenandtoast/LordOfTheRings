@@ -240,6 +240,19 @@ import LordOfTheRings.Treachery.Cards.BalinsDoom
 import LordOfTheRings.Treachery.Cards.BeatsAndEchoes
 import LordOfTheRings.Treachery.Cards.DismayAndFear
 import LordOfTheRings.Treachery.Cards.AnEvilFortune
+import LordOfTheRings.Treachery.Cards.BoarClanAssault
+import LordOfTheRings.Treachery.Cards.StalkedByDunlendings
+import LordOfTheRings.Treachery.Cards.CursedBurden
+import LordOfTheRings.Treachery.Cards.TrialOfAncestors
+import LordOfTheRings.Treachery.Cards.WaylaidByAgents
+import LordOfTheRings.Treachery.Cards.TharbadPatrol
+import LordOfTheRings.Treachery.Cards.Quicksand
+import LordOfTheRings.Treachery.Cards.RottenStench
+import LordOfTheRings.Treachery.Cards.HatefulSearch
+import LordOfTheRings.Treachery.Cards.SauronsAgent
+import LordOfTheRings.Treachery.Cards.ClosingIn
+import LordOfTheRings.Treachery.Cards.RavenTalisman
+import LordOfTheRings.Treachery.Cards.GatheringForces
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -504,5 +517,18 @@ allTreacherys =
         , SomeTreacheryCard beatsAndEchoes
         , SomeTreacheryCard dismayAndFear
         , SomeTreacheryCard anEvilFortune
+        , SomeTreacheryCard boarClanAssault
+        , SomeTreacheryCard stalkedByDunlendings
+        , SomeTreacheryCard cursedBurden
+        , SomeTreacheryCard trialOfAncestors
+        , SomeTreacheryCard waylaidByAgents
+        , SomeTreacheryCard tharbadPatrol
+        , SomeTreacheryCard quicksand
+        , SomeTreacheryCard rottenStench
+        , SomeTreacheryCard hatefulSearch
+        , SomeTreacheryCard sauronsAgent
+        , SomeTreacheryCard closingIn
+        , SomeTreacheryCard ravenTalisman
+        , SomeTreacheryCard gatheringForces
         ]
     ]

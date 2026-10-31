@@ -723,8 +723,11 @@ runGameMessage msg g = case msg of
           mods' <- getModifiers t
           -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1
           let n' = foldr min n [k | DamageReducedTo k <- mods']
+              combat = case source of
+                PlayerAttackSource _ -> True
+                _ -> False
           pure
-            $ if CannotTakeDamage `elem` mods'
+            $ if CannotTakeDamage `elem` mods' || (CannotTakeNonCombatDamage `elem` mods' && not combat)
               then []
               else [CheckWindows [mkWhen $ DealtDamage t n'], DoStep 1 (DealDamage source t n')]
     unless (CannotTakeDamage `elem` mods) $ pushAll =<< case redirected of
@@ -1296,7 +1299,7 @@ runGameMessage msg g = case msg of
   DeclareRangedAttackers pid eid (other : rest) -> do
     attacking <- selectCharacters AttackingHero AttackingAlly
     ranged <-
-      filterM (canFight eid)
+      filterM (canAttack eid)
         . filter (`notElem` attacking)
         =<< withKeyword Ranged
         =<< readyAttackers other
@@ -3239,7 +3242,7 @@ ownAttackers pid eid = do
   let barred = CannotBeAttackedByCharactersOf pid `elem` mods
   filter (\c -> not barred && c `notElem` attacking)
     . ordNub
-    <$> ( filterM (canFight eid)
+    <$> ( filterM (canAttack eid)
             =<< (if staged && not open' then fromStaging else pure)
             =<< readyAttackers pid
         )
@@ -3258,7 +3261,7 @@ mayAttack' pid eid = do
   engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
   mods <- getModifiers eid
   others <- if engaged then filter (\p -> p /= pid && CannotBeAttackedByCharactersOf p `notElem` mods) <$> getPlayerOrder else pure []
-  ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
+  ranged <- filterM (canAttack eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
   pure $ own <> ranged
 
 -- | An action window for each player, in turn order, asked only of those with an action.
@@ -3286,6 +3289,7 @@ characters of a trait, or with a keyword, can.
 canFight :: EnemyId -> Target -> GameT Bool
 canFight eid c = do
   mods <- getModifiers eid
+  cmods <- getModifiers c
   def <- characterCardDef c
   andM
     [ -- a Ship objective fights only Ship enemies (Dream-chaser rules)
@@ -3295,7 +3299,16 @@ canFight eid c = do
     , allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
     , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True
+    , barredBy [m | CannotFight m <- cmods]
     ]
+ where
+  barredBy ms = not <$> anyM (\m -> selectAny (EnemyWithId eid <> m)) ms
+
+-- | Whether the character may attack the enemy: as 'canFight', unless it cannot attack it.
+canAttack :: EnemyId -> Target -> GameT Bool
+canAttack eid c = do
+  barred <- (\ms -> anyM (\m -> selectAny (EnemyWithId eid <> m)) [m | CannotAttackMatching m <- ms]) =<< getModifiers c
+  if barred then pure False else canFight eid c
 
 -- | Whether the character may defend against the enemy's attack: one that cannot exhaust
 -- only if it defends without exhausting.

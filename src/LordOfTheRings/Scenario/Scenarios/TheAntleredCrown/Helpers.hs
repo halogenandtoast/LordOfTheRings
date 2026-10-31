@@ -21,10 +21,11 @@ module LordOfTheRings.Scenario.Scenarios.TheAntleredCrown.Helpers (
 ) where
 
 import Data.Aeson.Types (parseMaybe)
-import LordOfTheRings.Card (CardType (EnemyType), EncounterCard, cdCardType, cdEncounterSet, toCardDef)
+import LordOfTheRings.Card (CardType (EnemyType), EncounterCard, cdCardType, cdEncounterSet, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame (HasGame)
 import LordOfTheRings.Classes.HasQueue (HasQueue, push)
 import LordOfTheRings.EncounterSet (EncounterSet (DunlandRaiders, DunlandWarriors))
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -60,10 +61,12 @@ data RavenDraw
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
--- | An enemy of Dunland Raiders or Dunland Warriors: the Raven deck is made of them.
+-- | An enemy of Dunland Raiders or Dunland Warriors: the Raven deck is made of them, and of
+-- the nightmare Dunlending Horde, which bears the Dunland Warriors icon.
 isRavenCard :: EncounterCard -> Bool
 isRavenCard card =
-  cdCardType def == EnemyType && cdEncounterSet def `elem` map Just [DunlandRaiders, DunlandWarriors]
+  cdCardType def == EnemyType
+    && (cdEncounterSet def `elem` map Just [DunlandRaiders, DunlandWarriors] || toCardCode card == toCardCode Enemies.dunlendingHorde)
  where
   def = toCardDef card
 

@@ -13,6 +13,7 @@ data EncounterSet
   | BrokenLands
   | BroodingForest
   | CelebrimborsSecret
+  | CelebrimborsSecretNightmare
   | ConflictAtTheCarrock
   | CoastOfUmbar
   | CorsairPirates
@@ -74,6 +75,7 @@ data EncounterSet
   | StreetsOfGondor
   | TempleOfTheDeceived
   | TheAntleredCrown
+  | TheAntleredCrownNightmare
   | TheBattleOfCarnDum
   | TheBloodOfGondor
   | TheCityOfCorsairs
@@ -83,6 +85,7 @@ data EncounterSet
   | TheDrownedRuins
   | TheDruadanForest
   | TheDunlandTrap
+  | TheDunlandTrapNightmare
   | TheFateOfNumenor
   | TheFateOfNumenorNightmare
   | TheFordsOfIsen
@@ -93,6 +96,7 @@ data EncounterSet
   | TheLostRealm
   | TheMorgulVale
   | TheNinInEilph
+  | TheNinInEilphNightmare
   | TheRedhornGate
   | TheSeventhLevel
   | TheSeventhLevelNightmare
@@ -105,6 +109,7 @@ data EncounterSet
   | TheStormcallerElite
   | TheThingInTheDepths
   | TheThreeTrials
+  | TheThreeTrialsNightmare
   | TheTreacheryOfRhudaur
   | TheWastesOfEriador
   | TheWatcherInTheWater
@@ -113,6 +118,7 @@ data EncounterSet
   | ToCatchAnOrc
   | ToCatchAnOrcNightmare
   | TroubleInTharbad
+  | TroubleInTharbadNightmare
   | TwistsAndTurns
   | UmbarNavy
   | VastOceans

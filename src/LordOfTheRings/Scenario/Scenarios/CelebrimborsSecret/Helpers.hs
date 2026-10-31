@@ -70,15 +70,17 @@ triggerEachScour = do
     questionLabeled "celebrimborsSecret.scourOrder"
     targets cards scour
 
--- | The enemies and locations in play with Scour, one Ancient Foundation among them.
+-- | The enemies and locations in play with Scour, one Ancient Foundation among them, and
+-- in nightmare mode the setup card's, which the scenario resolves.
 scourCardsInPlay :: HasGame m => m [Target]
 scourCardsInPlay = do
   es <- getsGame (toList . entitiesEnemies . gameEntities)
   ls <- getsGame (toList . entitiesLocations . gameEntities)
+  nightmare <- inNightmareMode
   let scouring :: CardDef -> Bool
       scouring def = Scour `member` cdKeywords def
       (foundations, others) = partition ((== toCardCode Locations.ancientFoundation) . toCardCode) [l | l <- ls, scouring (toCardDef l)]
-  pure $ [toTarget e | e <- es, scouring (toCardDef e)] <> map toTarget (take 1 foundations <> others)
+  pure $ [toTarget e | e <- es, scouring (toCardDef e)] <> map toTarget (take 1 foundations <> others) <> [ScenarioTarget | nightmare]
 
 -- | "Trigger the topmost Scour effect in the discard pile": the scenario resolves it.
 triggerTopmostScourInDiscard :: ReverseQueue m => m ()

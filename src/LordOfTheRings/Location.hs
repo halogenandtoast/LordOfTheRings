@@ -310,6 +310,19 @@ import LordOfTheRings.Location.Cards.ChamberOfRecords
 import LordOfTheRings.Location.Cards.DeepMines
 import LordOfTheRings.Location.Cards.WesternHall
 import LordOfTheRings.Location.Cards.ShadowedCorridor
+import LordOfTheRings.Location.Cards.PlainsOfDunland
+import LordOfTheRings.Location.Cards.MunuvDuvRiver
+import LordOfTheRings.Location.Cards.HithaeglirWoods
+import LordOfTheRings.Location.Cards.SacredForest
+import LordOfTheRings.Location.Cards.HauntedPillars
+import LordOfTheRings.Location.Cards.CityOfSpies
+import LordOfTheRings.Location.Cards.DarkPathway
+import LordOfTheRings.Location.Cards.DesolateMeadow
+import LordOfTheRings.Location.Cards.PeatBog
+import LordOfTheRings.Location.Cards.BonesOfHollin
+import LordOfTheRings.Location.Cards.DustyLabyrinth
+import LordOfTheRings.Location.Cards.RavenStronghold
+import LordOfTheRings.Location.Cards.HighlandsOfDunland
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -666,5 +679,18 @@ allLocations =
         , SomeLocationCard deepMines
         , SomeLocationCard westernHall
         , SomeLocationCard shadowedCorridor
+        , SomeLocationCard plainsOfDunland
+        , SomeLocationCard munuvDuvRiver
+        , SomeLocationCard hithaeglirWoods
+        , SomeLocationCard sacredForest
+        , SomeLocationCard hauntedPillars
+        , SomeLocationCard cityOfSpies
+        , SomeLocationCard darkPathway
+        , SomeLocationCard desolateMeadow
+        , SomeLocationCard peatBog
+        , SomeLocationCard bonesOfHollin
+        , SomeLocationCard dustyLabyrinth
+        , SomeLocationCard ravenStronghold
+        , SomeLocationCard highlandsOfDunland
         ]
     ]

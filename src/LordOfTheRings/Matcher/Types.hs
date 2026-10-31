@@ -214,6 +214,8 @@ data LocationMatcher
     -- stands for them all, as an ability that does not stack is triggered by one
     LocationWithIdBelow LocationId
   | UniqueLocation
+  | -- | a location player card effects may discard from play
+    LocationDiscardableByPlayerCards
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
