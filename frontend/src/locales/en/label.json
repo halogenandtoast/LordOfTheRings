@@ -1676,5 +1676,35 @@
   },
   "theCorsairsAssault": {
     "searchShip": "Choose a unique location to add to the staging area"
+  },
+  "aGreatHost": {
+    "choose": "A Great Host: reveal Orc Rearguard, or each player deals 4 damage to a character he controls",
+    "orcRearguard": "Search for Orc Rearguard and reveal it",
+    "damage": "Each player deals 4 damage to a character he controls"
+  },
+  "killThem": {
+    "choose": "Kill Them!: choose one",
+    "removeProgress": "Remove all progress from the main quest",
+    "attack": "Each Orc War Party in the staging area attacks the player with the highest threat"
+  },
+  "rainWashedTracks": {
+    "choose": "Rain-washed Tracks: choose one",
+    "mission": "Remove 1 resource token from the Mission objective",
+    "threat": "Add 8 to the total threat in the staging area this phase",
+    "attack": "The attacking enemy gets +3 attack"
+  },
+  "decrepitCity": {
+    "choose": "Decrepit City: choose one",
+    "discard": "Discard the top 3 cards of your deck",
+    "undefended": "This attack is considered undefended"
+  },
+  "paralyzingFear": {
+    "attach": "Choose the hero to attach Paralyzing Fear to",
+    "ready": "Paralyzing Fear: discard the top card of your deck to ready the hero?",
+    "discard": "Discard the top card of your deck and ready the hero",
+    "stayExhausted": "Leave the hero exhausted"
+  },
+  "palaceRuins": {
+    "amount": "Palace Ruins: how many cards to discard from the top of your deck?"
   }
 }

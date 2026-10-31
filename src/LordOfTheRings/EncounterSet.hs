@@ -21,6 +21,7 @@ data EncounterSet
   | CursedDead
   | DarkSorcery
   | DeadmensDike
+  | DeadmensDikeNightmare
   | DeepsOfMoria
   | DolGuldurOrcs
   | DrownedDead
@@ -43,6 +44,7 @@ data EncounterSet
   | IntoIthilienNightmare
   | IntoThePit
   | IntrudersInChetwood
+  | IntrudersInChetwoodNightmare
   | JourneyAlongTheAnduin
   | JourneyAlongTheAnduinNightmare
   | MistyMountainOrcs
@@ -104,6 +106,7 @@ data EncounterSet
   | TheWastesOfEriador
   | TheWatcherInTheWater
   | TheWeatherHills
+  | TheWeatherHillsNightmare
   | ToCatchAnOrc
   | ToCatchAnOrcNightmare
   | TroubleInTharbad

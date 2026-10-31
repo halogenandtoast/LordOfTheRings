@@ -15,6 +15,7 @@ data Trait
   | Blight
   | Boar
   | BoarClan
+  | Bree
   | Body
   | Boon
   | Bridge

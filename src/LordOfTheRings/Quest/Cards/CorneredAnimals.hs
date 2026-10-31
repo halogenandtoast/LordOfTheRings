@@ -53,6 +53,15 @@ instance RunMessage CorneredAnimals where
           when (tokens > 0) $ labeled "corneredAnimals.discard" $ removeTokens attrs m Resource 1
         labeled "corneredAnimals.reveal" $ phaseModifier attrs GameTarget (AdditionalStagingReveals 1)
       pure q
+    -- a Captive Villager freed may let the players win at last
+    PutObjectiveAllyIntoPlay {} -> do
+      push $ CheckStage attrs.id
+      CorneredAnimals <$> runStage msg attrs
     _ -> CorneredAnimals <$> runStage msg attrs
    where
-    runStage = runConditionalStage (not <$> selectAny (LocationWithCardCode $ toCardCode Locations.amonForn))
+    -- Nightmare: "The players cannot win the game while a Captive Villager is guarded by an
+    -- encounter card."
+    runStage = runConditionalStage do
+      amonForn <- selectAny (LocationWithCardCode $ toCardCode Locations.amonForn)
+      captive <- captiveVillagerHeld
+      pure $ not amonForn && not captive

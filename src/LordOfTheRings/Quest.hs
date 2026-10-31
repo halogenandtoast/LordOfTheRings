@@ -194,6 +194,10 @@ import LordOfTheRings.Quest.Cards.FinalConfrontation
 import LordOfTheRings.Quest.Cards.CorsairConfrontation
 import LordOfTheRings.Quest.Cards.LostAtSea
 import LordOfTheRings.Quest.Cards.SahirsAdvanceNightmare
+import LordOfTheRings.Quest.Cards.ShadowTheWarParty
+import LordOfTheRings.Quest.Cards.ProtectTheBreeLanders
+import LordOfTheRings.Quest.Cards.TrackTheOrcs
+import LordOfTheRings.Quest.Cards.GatherYourCourage
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -420,5 +424,9 @@ allQuests =
         , SomeQuestCard corsairConfrontation
         , SomeQuestCard lostAtSea
         , SomeQuestCard sahirsAdvanceNightmare
+        , SomeQuestCard shadowTheWarParty
+        , SomeQuestCard protectTheBreeLanders
+        , SomeQuestCard trackTheOrcs
+        , SomeQuestCard gatherYourCourage
         ]
     ]

@@ -759,6 +759,7 @@ runGameMessage msg g = case msg of
       -- a hero it leaves standing is taken prisoner, as Torture Master's shadow reads
       <> [TakePrisoner hid | AttackDamageTakesPrisoner `elem` attackMods, HeroTarget hid <- [target]]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
+      <> [DiscardRandomFromHand pid n | AttackDamageDiscardsRandomFromHandOf pid <- attackMods]
       <> removing
       -- each point of it adds 1 to the staging area's threat this phase, as Ramming Speed!
       <> [CreateEffect $ Effect source GameTarget [StagingThreatBonus n] UntilEndOfPhase | AttackDamageAddsStagingThreat `elem` attackMods]
@@ -3183,6 +3184,9 @@ attackDamage pid eid target n = do
       excessToAflame = ExcessDamageToAflameLocation `elem` mods
   excess <-
     if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || excessToAflame
+      excessToDeck = ExcessDamageDiscardsFromDeck `elem` mods
+  excess <-
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || excessToDeck
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3218,6 +3222,7 @@ attackDamage pid eid target n = do
         <> toShip
         <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
         <> toAflame
+        <> [DiscardTopOfDeck pid excess | excessToDeck, excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

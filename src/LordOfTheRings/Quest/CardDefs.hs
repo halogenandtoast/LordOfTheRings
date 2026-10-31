@@ -205,6 +205,10 @@ allQuestCards =
       , theShadowWorld
       , sealTheTomb
       , thePowerOfAngmar
+      , shadowTheWarParty
+      , protectTheBreeLanders
+      , trackTheOrcs
+      , gatherYourCourage
       , secretsOfRhudaur
       , thaurdirsPursuit
       , quietTheSpirits
@@ -919,3 +923,34 @@ lostAtSea =
 sahirsAdvanceNightmare :: CardDef
 sahirsAdvanceNightmare =
   (quest "the-grey-havens-nightmare-raid-on-the-grey-havens-002" "Sahír's Advance" RaidOnTheGreyHavensNightmare 2 0) {cdQuestPoints = Nothing}
+
+-- The Lost Realm Nightmare Decks
+
+shadowTheWarParty :: CardDef
+shadowTheWarParty =
+  (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-009" "Shadow the War Party" IntrudersInChetwoodNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+protectTheBreeLanders :: CardDef
+protectTheBreeLanders =
+  (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-010" "Protect the Bree-landers" IntrudersInChetwoodNightmare 10)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+trackTheOrcs :: CardDef
+trackTheOrcs =
+  (encounterSideQuest "the-lost-realm-nightmare-the-weather-hills-018" "Track the Orcs" TheWeatherHillsNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+gatherYourCourage :: CardDef
+gatherYourCourage =
+  (encounterSideQuest "the-lost-realm-nightmare-deadmens-dike-027" "Gather Your Courage" DeadmensDikeNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    }

@@ -25,6 +25,9 @@ allNightmareCards =
       , voyageAcrossBelegaerNightmare
       , theFateOfNumenorNightmare
       , raidOnTheGreyHavensNightmare
+      , intrudersInChetwoodNightmare
+      , theWeatherHillsNightmare
+      , deadmensDikeNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -62,3 +65,12 @@ theFateOfNumenorNightmare = nightmareSetup "the-grey-havens-nightmare-the-fate-o
 
 raidOnTheGreyHavensNightmare :: CardDef
 raidOnTheGreyHavensNightmare = nightmareSetup "the-grey-havens-nightmare-raid-on-the-grey-havens-001" "Raid on the Grey Havens" RaidOnTheGreyHavensNightmare
+
+intrudersInChetwoodNightmare :: CardDef
+intrudersInChetwoodNightmare = nightmareSetup "the-lost-realm-nightmare-invaders-in-chetwood-001" "Intruders in Chetwood" IntrudersInChetwoodNightmare
+
+theWeatherHillsNightmare :: CardDef
+theWeatherHillsNightmare = nightmareSetup "the-lost-realm-nightmare-the-weather-hills-011" "The Weather Hills" TheWeatherHillsNightmare
+
+deadmensDikeNightmare :: CardDef
+deadmensDikeNightmare = nightmareSetup "the-lost-realm-nightmare-deadmens-dike-019" "Deadmen's Dike" DeadmensDikeNightmare

@@ -230,6 +230,11 @@ import LordOfTheRings.Treachery.Cards.CorruptedFlora
 import LordOfTheRings.Treachery.Cards.CalphonsFolly
 import LordOfTheRings.Treachery.Cards.SuddenAssaultNightmare
 import LordOfTheRings.Treachery.Cards.Infiltration
+import LordOfTheRings.Treachery.Cards.AGreatHost
+import LordOfTheRings.Treachery.Cards.KillThem
+import LordOfTheRings.Treachery.Cards.RainWashedTracks
+import LordOfTheRings.Treachery.Cards.ParalyzingFear
+import LordOfTheRings.Treachery.Cards.CurseOfAngmar
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -484,5 +489,10 @@ allTreacherys =
         , SomeTreacheryCard calphonsFolly
         , SomeTreacheryCard suddenAssaultNightmare
         , SomeTreacheryCard infiltration
+        , SomeTreacheryCard aGreatHost
+        , SomeTreacheryCard killThem
+        , SomeTreacheryCard rainWashedTracks
+        , SomeTreacheryCard paralyzingFear
+        , SomeTreacheryCard curseOfAngmar
         ]
     ]

@@ -211,6 +211,12 @@ allEnemyCards =
       , balefulShade
       , deadLord
       , cursedDead
+      , orcAbductor
+      , soldierOfAngmar
+      , rearguardAmbusher
+      , angmarRaider
+      , undeadHorde
+      , cursedDeadNightmare
       , daechanar
       , dwimmerlaik
       , witchOfAngmar
@@ -2145,6 +2151,12 @@ vigilantOrc =
 methedrasLookout :: CardDef
 methedrasLookout =
   (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-003" "Methedras Lookout" ToCatchAnOrcNightmare 3 44 3 5 4 5)
+
+-- The Lost Realm Nightmare Decks
+
+orcAbductor :: CardDef
+orcAbductor =
+  (enemy "the-lost-realm-nightmare-invaders-in-chetwood-002" "Orc Abductor" IntrudersInChetwoodNightmare 3 45 2 4 4 5)
     { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
     }
@@ -2223,4 +2235,38 @@ eliteMarauder :: CardDef
 eliteMarauder =
   (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-005" "Elite Marauder" RaidOnTheGreyHavensNightmare 1 32 4 6 2 5)
     { cdCardTraits = setFromList [Corsair]
+    }
+
+soldierOfAngmar :: CardDef
+soldierOfAngmar =
+  (enemy "the-lost-realm-nightmare-invaders-in-chetwood-003" "Soldier of Angmar" IntrudersInChetwoodNightmare 2 28 2 5 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+rearguardAmbusher :: CardDef
+rearguardAmbusher =
+  (enemy "the-lost-realm-nightmare-the-weather-hills-013" "Rearguard Ambusher" TheWeatherHillsNightmare 3 17 1 4 2 4)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+angmarRaider :: CardDef
+angmarRaider =
+  (enemy "the-lost-realm-nightmare-the-weather-hills-014" "Angmar Raider" TheWeatherHillsNightmare 4 44 3 5 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+undeadHorde :: CardDef
+undeadHorde =
+  (enemy "the-lost-realm-nightmare-deadmens-dike-020" "Undead Horde" DeadmensDikeNightmare 2 34 4 6 3 8)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+cursedDeadNightmare :: CardDef
+cursedDeadNightmare =
+  (enemy "the-lost-realm-nightmare-deadmens-dike-021" "Cursed Dead" DeadmensDikeNightmare 2 27 1 3 1 2)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
     }

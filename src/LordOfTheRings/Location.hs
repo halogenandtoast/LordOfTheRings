@@ -296,6 +296,14 @@ import LordOfTheRings.Location.Cards.NarelenyaLocation
 import LordOfTheRings.Location.Cards.DawnStarLocation
 import LordOfTheRings.Location.Cards.SilverWingLocation
 import LordOfTheRings.Location.Cards.BurningTower
+import LordOfTheRings.Location.Cards.NorthernChetwood
+import LordOfTheRings.Location.Cards.OutskirtsOfArchet
+import LordOfTheRings.Location.Cards.GreenwayPath
+import LordOfTheRings.Location.Cards.WeatherTornValley
+import LordOfTheRings.Location.Cards.RuinedWatchTower
+import LordOfTheRings.Location.Cards.PalaceRuins
+import LordOfTheRings.Location.Cards.FornostStreet
+import LordOfTheRings.Location.Cards.DecrepitCity
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -638,5 +646,13 @@ allLocations =
         , SomeLocationCard drownedGravesNightmare
         , SomeLocationCard floodedRuinsNightmare
         , SomeLocationCard lushJungleNightmare
+        , SomeLocationCard northernChetwood
+        , SomeLocationCard outskirtsOfArchet
+        , SomeLocationCard greenwayPath
+        , SomeLocationCard weatherTornValley
+        , SomeLocationCard ruinedWatchTower
+        , SomeLocationCard palaceRuins
+        , SomeLocationCard fornostStreet
+        , SomeLocationCard decrepitCity
         ]
     ]

@@ -230,6 +230,14 @@ allLocationCards =
       , deadmensGate
       , ruinsOfArnor
       , ancientCauseway
+      , northernChetwood
+      , outskirtsOfArchet
+      , greenwayPath
+      , weatherTornValley
+      , ruinedWatchTower
+      , palaceRuins
+      , fornostStreet
+      , decrepitCity
       , theGreatHall
       , forbiddenDescent
       , eerieHalls
@@ -2339,4 +2347,60 @@ burningTower =
   (location "the-grey-havens-nightmare-raid-on-the-grey-havens-009" "Burning Tower" RaidOnTheGreyHavensNightmare 2 2 6)
     { cdCardTraits = setFromList [GreyHavens]
     , cdKeywords = setFromList [Aflame 5]
+    }
+
+-- The Lost Realm Nightmare Decks
+
+northernChetwood :: CardDef
+northernChetwood =
+  (location "the-lost-realm-nightmare-invaders-in-chetwood-004" "Northern Chetwood" IntrudersInChetwoodNightmare 3 4 6)
+    { cdCardTraits = setFromList [Arnor, Forest]
+    , cdShadowEffect = True
+    }
+
+outskirtsOfArchet :: CardDef
+outskirtsOfArchet =
+  (location "the-lost-realm-nightmare-invaders-in-chetwood-005" "Outskirts of Archet" IntrudersInChetwoodNightmare 2 5 3)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+greenwayPath :: CardDef
+greenwayPath =
+  (location "the-lost-realm-nightmare-invaders-in-chetwood-006" "Greenway Path" IntrudersInChetwoodNightmare 2 3 5)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+weatherTornValley :: CardDef
+weatherTornValley =
+  (location "the-lost-realm-nightmare-the-weather-hills-015" "Weather-torn Valley" TheWeatherHillsNightmare 2 5 5)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    }
+
+ruinedWatchTower :: CardDef
+ruinedWatchTower =
+  (location "the-lost-realm-nightmare-the-weather-hills-016" "Ruined Watch-tower" TheWeatherHillsNightmare 3 3 4)
+    { cdCardTraits = setFromList [Arnor, Ruins]
+    }
+
+palaceRuins :: CardDef
+palaceRuins =
+  (location "the-lost-realm-nightmare-deadmens-dike-022" "Palace Ruins" DeadmensDikeNightmare 2 9 9)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    }
+
+fornostStreet :: CardDef
+fornostStreet =
+  (location "the-lost-realm-nightmare-deadmens-dike-023" "Fornost Street" DeadmensDikeNightmare 4 1 6)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    }
+
+decrepitCity :: CardDef
+decrepitCity =
+  (location "the-lost-realm-nightmare-deadmens-dike-024" "Decrepit City" DeadmensDikeNightmare 3 5 5)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
     }

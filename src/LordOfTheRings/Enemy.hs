@@ -271,6 +271,12 @@ import LordOfTheRings.Enemy.Cards.GuardianOfTheGoldenKing
 import LordOfTheRings.Enemy.Cards.CorsairPillager
 import LordOfTheRings.Enemy.Cards.CorsairPyromaniac
 import LordOfTheRings.Enemy.Cards.EliteMarauder
+import LordOfTheRings.Enemy.Cards.OrcAbductor
+import LordOfTheRings.Enemy.Cards.SoldierOfAngmar
+import LordOfTheRings.Enemy.Cards.RearguardAmbusher
+import LordOfTheRings.Enemy.Cards.AngmarRaider
+import LordOfTheRings.Enemy.Cards.UndeadHorde
+import LordOfTheRings.Enemy.Cards.CursedDeadNightmare
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -567,5 +573,11 @@ allEnemys =
         , SomeEnemyCard corsairPillager
         , SomeEnemyCard corsairPyromaniac
         , SomeEnemyCard eliteMarauder
+        , SomeEnemyCard orcAbductor
+        , SomeEnemyCard soldierOfAngmar
+        , SomeEnemyCard rearguardAmbusher
+        , SomeEnemyCard angmarRaider
+        , SomeEnemyCard undeadHorde
+        , SomeEnemyCard cursedDeadNightmare
         ]
     ]

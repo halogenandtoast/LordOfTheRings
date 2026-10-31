@@ -479,6 +479,11 @@ discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
 shufflePlayerDeck :: ReverseQueue m => PlayerId -> m ()
 shufflePlayerDeck = push . ShufflePlayerDeck
 
+-- | A card from out of play goes on top of the player's deck, as Miruvor or the cards
+-- underneath Gather Your Courage.
+putOnTopOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+putOnTopOfDeck pid = push . PutOnTopOfDeck pid
+
 removeFromDeck :: ReverseQueue m => PlayerId -> CardId -> m ()
 removeFromDeck pid cid = push $ RemoveFromDeck pid cid
 
@@ -1061,6 +1066,25 @@ revealSetAsideMatching :: ReverseQueue m => CardMatcher -> m ()
 revealSetAsideMatching matcher = do
   setAside' <- getsGame ((.scenarioSetAside) . toAttrs . (.scenario))
   traverse_ (push . RevealCard) $ filter (cardMatches matcher) setAside'
+
+{- | Take the first matching card from the encounter deck, discard pile or victory display,
+then shuffle the encounter deck, as "search the encounter deck, discard pile and victory
+display for Rescue Iârion" reads: what is found is handed on, to be revealed or staged.
+-}
+searchEncounterCardsAndVictoryDisplay :: ReverseQueue m => CardMatcher -> (EncounterCard -> m ()) -> m ()
+searchEncounterCardsAndVictoryDisplay matcher f = do
+  s <- getsGame (toAttrs . (.scenario))
+  let found = find (cardMatches matcher)
+  case (found s.encounterDeck, found s.encounterDiscard, found [c | EncounterCard c <- s.victoryDisplay]) of
+    (Just c, _, _) -> removeFromEncounterDeck c >> f c
+    (_, Just c, _) -> removeFromEncounterDiscard c >> f c
+    (_, _, Just c) -> removeFromVictoryDisplay (EncounterCard c) >> f c
+    _ -> pure ()
+  shuffleEncounterDeck
+
+-- | As 'searchEncounterCardsAndVictoryDisplay', the card found revealed.
+searchAndRevealEncounterCard :: ReverseQueue m => CardMatcher -> m ()
+searchAndRevealEncounterCard matcher = searchEncounterCardsAndVictoryDisplay matcher (push . RevealCard)
 
 {- | End the current phase, as "End the current phase" reads: what is left of it on the
 game's queue is dropped, up to its end. A log block it opened still closes.
