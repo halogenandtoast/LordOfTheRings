@@ -197,7 +197,7 @@ dt { color: var(--text-muted); }
 dd { margin: 0; }
 .pool { list-style: none; padding: 0; display: grid; gap: 8px; }
 .pool li { display: flex; align-items: center; gap: 10px; }
-.pool img { width: 48px; border-radius: 3px; }
+.pool img { width: 48px; border-radius: 3px; color: transparent; }
 .pool .burden strong { color: var(--danger); }
 .boxes { margin-left: 8px; letter-spacing: 0.1em; }
 table { border-collapse: collapse; width: 100%; }

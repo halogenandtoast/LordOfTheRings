@@ -30,6 +30,7 @@ const source = computed(() => (card.value ? cardImage(card.value) : ''))
 
 <style scoped>
 .card-overlay {
+  color: transparent;
   position: fixed;
   z-index: 9999;
   border-radius: 12px;

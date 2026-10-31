@@ -341,7 +341,7 @@ const toggleUnless = (attached: CardView) => {
   width: calc(var(--card-width) / var(--card-aspect));
   aspect-ratio: calc(1 / 0.715);
 }
-.card img { width: 100%; border-radius: 7px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); }
+.card img { width: 100%; border-radius: 7px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); color: transparent; }
 /* a long press reads the card, not Safari's save-image menu */
 .card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 @media (hover: none) { .card img { -webkit-user-drag: none; } }
