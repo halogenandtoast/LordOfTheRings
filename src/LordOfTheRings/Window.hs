@@ -153,6 +153,8 @@ data WindowType
     Attached Target Target (Set Trait)
   | -- | the committed character was removed from the quest
     RemovedFromQuest Target
+  | -- | the character was committed to an escape test, as Things in the Pools answers
+    CommittedToEscapeTest Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

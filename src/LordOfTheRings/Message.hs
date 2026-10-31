@@ -40,7 +40,11 @@ data Drawing = Drawing
   deriving anyclass (FromJSON, ToJSON)
 
 -- | What characters count toward an escape test.
-data EscapeStat = EscapeWillpower | EscapeAttack
+data EscapeStat
+  = EscapeWillpower
+  | EscapeAttack
+  | -- | as Swarming Mosquitoes' test counts defense
+    EscapeDefense
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 

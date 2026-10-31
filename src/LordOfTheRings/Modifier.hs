@@ -514,6 +514,12 @@ data ModifierType
   | -- | on an enemy: characters with the keyword cannot attack it, as Pitch-dark
     -- Thicket's shadow reads for ranged
     CannotBeAttackedByKeyword Keyword
+  | -- | on the game: each escape test's dealt cards come to this much more, once, as
+    -- Stagnant Quagmire adds its Escape value
+    EscapeTestBonus Int
+  | -- | on a player: he commits no more than this many characters to each escape test,
+    -- as Ill-fated Guard reads
+    EscapeTestCommitLimit Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

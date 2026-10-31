@@ -2292,18 +2292,25 @@ runGameMessage msg g = case msg of
         pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard o :))
   MakeEscapeTest t -> do
     order <- getPlayerOrder
+    own <- charactersControlledBy t.escapePlayer
+    limits <- (\ms -> [k | EscapeTestCommitLimit k <- ms]) <$> getModifiers t.escapePlayer
+    -- one with a limit, as Ill-fated Guard sets, commits no more once he has reached it
+    let full = any (<= length (filter (`elem` own) t.escapeCommitted)) limits
     ready <-
-      filter (`notElem` t.escapeCommitted)
-        <$> selectCharacters
-          (HeroControlledBy (PlayerWithId t.escapePlayer) <> ReadyHero)
-          (AllyControlledBy (PlayerWithId t.escapePlayer) <> ReadyAlly)
+      if full
+        then pure []
+        else
+          filter (`notElem` t.escapeCommitted)
+            <$> selectCharacters
+              (HeroControlledBy (PlayerWithId t.escapePlayer) <> ReadyHero)
+              (AllyControlledBy (PlayerWithId t.escapePlayer) <> ReadyAlly)
     push
       $ questionLabelWith
         (ikey "label.escapeTest")
         (sourceTarget t.escapeSource)
         t.escapeCommitted
         t.escapePlayer
-      $ [ targetLabel c [Exhaust c, MakeEscapeTest t {escapeCommitted = t.escapeCommitted <> [c]}]
+      $ [ targetLabel c [Exhaust c, CheckWindows [mkAfter $ CommittedToEscapeTest c], MakeEscapeTest t {escapeCommitted = t.escapeCommitted <> [c]}]
         | c <- ready
         ]
       <> [ Label (ikey "label.doneCommittingToEscape") $ case t.escapeParty of
