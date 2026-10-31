@@ -1173,6 +1173,7 @@ suddenStorms =
   (treachery "11055" "Sudden Storms" StormyWeather 3)
     { cdCardTraits = setFromList [Weather]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 windsOfWrath :: CardDef
@@ -1181,31 +1182,34 @@ windsOfWrath =
     { cdCardTraits = setFromList [Weather]
     , cdShadowEffect = True
     , cdSailingIcons = 1
+    , cdEasyModeQuantity = Just 1
     }
 
 boardingParty :: CardDef
 boardingParty =
   (treachery "11059" "Boarding Party" UmbarNavy 2)
     { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 battleHardened :: CardDef
 battleHardened =
   (treachery "11067" "Battle-Hardened" CorsairRaiders 2)
     { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }
 
 mysteriousFog :: CardDef
 mysteriousFog = (treachery "11033" "Mysterious Fog" TheFateOfNumenor 2) {cdShadowEffect = True}
 
 lingeringMalevolence :: CardDef
-lingeringMalevolence = (treachery "11034" "Lingering Malevolence" TheFateOfNumenor 2) {cdShadowEffect = True}
+lingeringMalevolence = (treachery "11034" "Lingering Malevolence" TheFateOfNumenor 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 ruinsOfAgesPast :: CardDef
-ruinsOfAgesPast = (treachery "11035" "Ruins of Ages Past" TheFateOfNumenor 2) {cdKeywords = setFromList [Doomed 2]}
+ruinsOfAgesPast = (treachery "11035" "Ruins of Ages Past" TheFateOfNumenor 2) {cdKeywords = setFromList [Doomed 2], cdEasyModeQuantity = Just 1}
 
 curseOfTheDownfallen :: CardDef
-curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 2) {cdShadowEffect = True}
+curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3

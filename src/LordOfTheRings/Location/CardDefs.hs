@@ -1702,6 +1702,7 @@ rollingSeas =
     { cdCardTraits = setFromList [Ocean]
     , cdSailingIcons = 1
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 roughWaters :: CardDef
@@ -1716,6 +1717,7 @@ waterspout :: CardDef
 waterspout =
   (location "11054" "Waterspout" StormyWeather 2 2 4)
     { cdCardTraits = setFromList [Ocean]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The Lost Island side of The Fate of Númenor's and Ruins of Numenor's Uncharted
@@ -1779,6 +1781,7 @@ mithlondHarbor =
     { cdCardTraits = setFromList [GreyHavens]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 burningPiers :: CardDef
@@ -1803,6 +1806,7 @@ whiteShip =
   (location "11045" "White Ship" RaidOnTheGreyHavens 2 4 6)
     { cdCardTraits = setFromList [GreyHavens, Ship]
     , cdKeywords = setFromList [Aflame 4]
+    , cdEasyModeQuantity = Just 1
     }
 
 elvenWaveRunner :: CardDef
@@ -1819,6 +1823,7 @@ elvenCaravel =
   (location "11047" "Elven Caravel" RaidOnTheGreyHavens 2 3 5)
     { cdCardTraits = setFromList [GreyHavens, Ship]
     , cdKeywords = setFromList [Aflame 4]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * Flight of the Stormcaller
