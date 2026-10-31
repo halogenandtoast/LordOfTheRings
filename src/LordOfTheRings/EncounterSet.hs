@@ -56,6 +56,7 @@ data EncounterSet
   | PerilInPelargirNightmare
   | PlunderingGoblins
   | RaidOnTheGreyHavens
+  | RaidOnTheGreyHavensNightmare
   | RavagingOrcs
   | ReturnToMirkwood
   | RoadToRivendell
@@ -79,6 +80,7 @@ data EncounterSet
   | TheDruadanForest
   | TheDunlandTrap
   | TheFateOfNumenor
+  | TheFateOfNumenorNightmare
   | TheFordsOfIsen
   | TheFordsOfIsenNightmare
   | TheHillsOfEmynMuil
@@ -109,6 +111,7 @@ data EncounterSet
   | UmbarNavy
   | VastOceans
   | VoyageAcrossBelegaer
+  | VoyageAcrossBelegaerNightmare
   | WearyTravelers
   | Wilderlands
   deriving stock (Show, Eq, Ord, Generic)

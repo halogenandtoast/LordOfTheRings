@@ -1636,5 +1636,45 @@
     "choose": "Stifling Woods: remove 6 progress or 1 time counter from the current quest",
     "progress": "Remove 6 progress from the current quest",
     "timeCounter": "Remove 1 time counter from the current quest"
+  },
+  "sahirsPursuer": {
+    "choose": "Sahír's Pursuer: engage it, or shift your heading off-course",
+    "engage": "Engage Sahír's Pursuer"
+  },
+  "openWaters": {
+    "exhaust": "Choose a Ship objective to exhaust to travel to Open Waters"
+  },
+  "rogueWave": {
+    "choose": "Rogue Wave: exhaust a Ship objective you control, or distribute the damage among your characters",
+    "damage": "Distribute the damage among your characters"
+  },
+  "dreamsOfNumenor": {
+    "choose": "Dreams of Númenor: set your heading to the worst setting, or exhaust all allies in play",
+    "worst": "Set your heading to the worst setting",
+    "exhaust": "Exhaust all allies in play"
+  },
+  "guardianOfTheGoldenKing": {
+    "remove": "Choose a character to remove from the attack on Guardian of the Golden King"
+  },
+  "corruptedFlora": {
+    "remove": "Choose a character to remove from the quest"
+  },
+  "calphonsFolly": {
+    "flip": "Choose an Uncharted location in the staging area to flip over"
+  },
+  "suddenAssaultNightmare": {
+    "choose": "Sudden Assault: deal 2 damage to an Aflame location, or reveal the top card of the encounter deck",
+    "reveal": "Reveal the top card of the encounter deck",
+    "shadow": "Sudden Assault: deal 2 damage to an Aflame location, or the attacking enemy attacks again",
+    "attack": "The attacking enemy makes an additional attack"
+  },
+  "infiltration": {
+    "shadow": "Choose the Aflame location this attack's damage is dealt to"
+  },
+  "burningTower": {
+    "choose": "Burning Tower: choose a character to deal 1 damage to"
+  },
+  "theCorsairsAssault": {
+    "searchShip": "Choose a unique location to add to the staging area"
   }
 }

@@ -456,6 +456,9 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is dealt to a Ship objective the defending player controls, as Sudden Storms' shadow
     ExcessDamageToShipObjective
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is placed on an Aflame location in the staging area, as Elite Marauder reads
+    ExcessDamageToAflameLocation
   | -- | on an enemy: the player's characters cannot attack it, as Umbar Captain reads for
     -- Ship enemies
     CannotBeAttackedByCharactersOf PlayerId

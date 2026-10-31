@@ -299,6 +299,20 @@ allLocationCards =
       , tangledForest
       , entwood
       , darkCornerOfFangorn
+      , openWaters
+      , shatteredSea
+      , shrineToMorgothNightmare
+      , cursedTempleNightmare
+      , drownedGravesNightmare
+      , floodedRuinsNightmare
+      , lushJungleNightmare
+      , desecratedGrounds
+      , forsakenCity
+      , overgrownSteps
+      , narelenyaLocation
+      , dawnStarLocation
+      , silverWingLocation
+      , burningTower
       ]
 
 drownedTreasury :: CardDef
@@ -1718,6 +1732,7 @@ rollingSeas =
     { cdCardTraits = setFromList [Ocean]
     , cdSailingIcons = 1
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 roughWaters :: CardDef
@@ -1732,6 +1747,7 @@ waterspout :: CardDef
 waterspout =
   (location "11054" "Waterspout" StormyWeather 2 2 4)
     { cdCardTraits = setFromList [Ocean]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The Lost Island side of The Fate of Númenor's and Ruins of Numenor's Uncharted
@@ -1755,6 +1771,11 @@ shrineToMorgoth =
         { cdCardTraits = setFromList [Ruins]
         , cdVictoryPoints = Just 5
         }
+
+-- | The Fate of Númenor's Shrine to Morgoth: the standard card, or the Nightmare Deck's
+-- reprint in its place.
+fateOfNumenorShrines :: [CardDef]
+fateOfNumenorShrines = [shrineToMorgoth, shrineToMorgothNightmare]
 
 lushJungle :: CardDef
 lushJungle = uncharted (location "11030" "Lush Jungle" TheFateOfNumenor 2 4 4) {cdCardTraits = setFromList [Forest]}
@@ -1795,6 +1816,7 @@ mithlondHarbor =
     { cdCardTraits = setFromList [GreyHavens]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 burningPiers :: CardDef
@@ -1819,6 +1841,7 @@ whiteShip =
   (location "11045" "White Ship" RaidOnTheGreyHavens 2 4 6)
     { cdCardTraits = setFromList [GreyHavens, Ship]
     , cdKeywords = setFromList [Aflame 4]
+    , cdEasyModeQuantity = Just 1
     }
 
 elvenWaveRunner :: CardDef
@@ -1835,6 +1858,7 @@ elvenCaravel =
   (location "11047" "Elven Caravel" RaidOnTheGreyHavens 2 3 5)
     { cdCardTraits = setFromList [GreyHavens, Ship]
     , cdKeywords = setFromList [Aflame 4]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * Flight of the Stormcaller
@@ -2228,4 +2252,91 @@ darkCornerOfFangorn :: CardDef
 darkCornerOfFangorn =
   (location "the-voice-of-isengard-nightmare-into-fangorn-007" "Dark Corner of Fangorn" IntoFangornNightmare 2 3 5)
     { cdCardTraits = setFromList [Forest]
+    }
+
+-- The Grey Havens Nightmare Decks: The Fate of Númenor's reprinted Uncharted deck under the same Lost Island side
+
+openWaters :: CardDef
+openWaters =
+  (location "the-grey-havens-nightmare-voyage-across-belegaer-006" "Open Waters" VoyageAcrossBelegaerNightmare 2 2 6)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 1
+    }
+
+shatteredSea :: CardDef
+shatteredSea =
+  (location "the-grey-havens-nightmare-voyage-across-belegaer-007" "Shattered Sea" VoyageAcrossBelegaerNightmare 2 4 4)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 1
+    }
+
+shrineToMorgothNightmare :: CardDef
+shrineToMorgothNightmare =
+  uncharted
+    $ unique
+      (location "the-grey-havens-nightmare-the-fate-of-numenor-002" "Shrine to Morgoth" TheFateOfNumenorNightmare 1 5 8)
+        { cdCardTraits = setFromList [Ruins]
+        , cdVictoryPoints = Just 5
+        }
+
+cursedTempleNightmare :: CardDef
+cursedTempleNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-003" "Cursed Temple" TheFateOfNumenorNightmare 1 1 3) {cdCardTraits = setFromList [Ruins]}
+
+drownedGravesNightmare :: CardDef
+drownedGravesNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-004" "Drowned Graves" TheFateOfNumenorNightmare 2 2 2) {cdCardTraits = setFromList [Ruins]}
+
+floodedRuinsNightmare :: CardDef
+floodedRuinsNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-005" "Flooded Ruins" TheFateOfNumenorNightmare 1 3 5) {cdCardTraits = setFromList [Ruins]}
+
+lushJungleNightmare :: CardDef
+lushJungleNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-006" "Lush Jungle" TheFateOfNumenorNightmare 2 4 4) {cdCardTraits = setFromList [Forest]}
+
+desecratedGrounds :: CardDef
+desecratedGrounds =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-007" "Desecrated Grounds" TheFateOfNumenorNightmare 2 5 5) {cdCardTraits = setFromList [Ruins]}
+
+forsakenCity :: CardDef
+forsakenCity =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-008" "Forsaken City" TheFateOfNumenorNightmare 2 6 4) {cdCardTraits = setFromList [Ruins]}
+
+overgrownSteps :: CardDef
+overgrownSteps =
+  (location "the-grey-havens-nightmare-the-fate-of-numenor-010" "Overgrown Steps" TheFateOfNumenorNightmare 3 2 1) {cdCardTraits = setFromList [Forest, Ruins]}
+
+narelenyaLocation :: CardDef
+narelenyaLocation =
+  unique
+    (location "the-grey-havens-nightmare-raid-on-the-grey-havens-006" "Nárelenya" RaidOnTheGreyHavensNightmare 1 3 7)
+      { cdCardTraits = setFromList [GreyHavens, Ship]
+      , cdKeywords = setFromList [Aflame 10]
+      , cdVictoryPoints = Just 1
+      }
+
+dawnStarLocation :: CardDef
+dawnStarLocation =
+  unique
+    (location "the-grey-havens-nightmare-raid-on-the-grey-havens-007" "Dawn Star" RaidOnTheGreyHavensNightmare 1 3 6)
+      { cdCardTraits = setFromList [Gondor, Ship]
+      , cdKeywords = setFromList [Aflame 8]
+      , cdVictoryPoints = Just 1
+      }
+
+silverWingLocation :: CardDef
+silverWingLocation =
+  unique
+    (location "the-grey-havens-nightmare-raid-on-the-grey-havens-008" "Silver Wing" RaidOnTheGreyHavensNightmare 1 2 5)
+      { cdCardTraits = setFromList [Gondor, Ship]
+      , cdKeywords = setFromList [Aflame 6]
+      , cdVictoryPoints = Just 1
+      }
+
+burningTower :: CardDef
+burningTower =
+  (location "the-grey-havens-nightmare-raid-on-the-grey-havens-009" "Burning Tower" RaidOnTheGreyHavensNightmare 2 2 6)
+    { cdCardTraits = setFromList [GreyHavens]
+    , cdKeywords = setFromList [Aflame 5]
     }

@@ -1,4 +1,4 @@
-module LordOfTheRings.Location.Cards.FloodedRuins (floodedRuins) where
+module LordOfTheRings.Location.Cards.FloodedRuins (floodedRuins, floodedRuinsNightmare) where
 
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
@@ -11,6 +11,10 @@ newtype FloodedRuins = FloodedRuins LocationAttrs
 
 floodedRuins :: LocationCard FloodedRuins
 floodedRuins = location FloodedRuins Cards.floodedRuins
+
+-- | The Fate of Númenor Nightmare Deck's reprint, the same text.
+floodedRuinsNightmare :: LocationCard FloodedRuins
+floodedRuinsNightmare = location FloodedRuins Cards.floodedRuinsNightmare
 
 -- | While Flooded Ruins is the active location, it contributes its threat to the staging
 -- area.

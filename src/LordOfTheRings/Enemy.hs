@@ -265,6 +265,12 @@ import LordOfTheRings.Enemy.Cards.GuardWarg
 import LordOfTheRings.Enemy.Cards.HuornOfFangorn
 import LordOfTheRings.Enemy.Cards.BlockingHuorn
 import LordOfTheRings.Enemy.Cards.WickedHuorn
+import LordOfTheRings.Enemy.Cards.BrashCorsair
+import LordOfTheRings.Enemy.Cards.SahirsPursuer
+import LordOfTheRings.Enemy.Cards.GuardianOfTheGoldenKing
+import LordOfTheRings.Enemy.Cards.CorsairPillager
+import LordOfTheRings.Enemy.Cards.CorsairPyromaniac
+import LordOfTheRings.Enemy.Cards.EliteMarauder
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -555,5 +561,11 @@ allEnemys =
         , SomeEnemyCard huornOfFangorn
         , SomeEnemyCard blockingHuorn
         , SomeEnemyCard wickedHuorn
+        , SomeEnemyCard brashCorsair
+        , SomeEnemyCard sahirsPursuer
+        , SomeEnemyCard guardianOfTheGoldenKing
+        , SomeEnemyCard corsairPillager
+        , SomeEnemyCard corsairPyromaniac
+        , SomeEnemyCard eliteMarauder
         ]
     ]

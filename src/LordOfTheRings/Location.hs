@@ -287,6 +287,15 @@ import LordOfTheRings.Location.Cards.OrcTrail
 import LordOfTheRings.Location.Cards.TangledForest
 import LordOfTheRings.Location.Cards.Entwood
 import LordOfTheRings.Location.Cards.DarkCornerOfFangorn
+import LordOfTheRings.Location.Cards.OpenWaters
+import LordOfTheRings.Location.Cards.ShatteredSea
+import LordOfTheRings.Location.Cards.DesecratedGrounds
+import LordOfTheRings.Location.Cards.ForsakenCity
+import LordOfTheRings.Location.Cards.OvergrownSteps
+import LordOfTheRings.Location.Cards.NarelenyaLocation
+import LordOfTheRings.Location.Cards.DawnStarLocation
+import LordOfTheRings.Location.Cards.SilverWingLocation
+import LordOfTheRings.Location.Cards.BurningTower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -615,5 +624,19 @@ allLocations =
         , SomeLocationCard tangledForest
         , SomeLocationCard entwood
         , SomeLocationCard darkCornerOfFangorn
+        , SomeLocationCard openWaters
+        , SomeLocationCard shatteredSea
+        , SomeLocationCard desecratedGrounds
+        , SomeLocationCard forsakenCity
+        , SomeLocationCard overgrownSteps
+        , SomeLocationCard narelenyaLocation
+        , SomeLocationCard dawnStarLocation
+        , SomeLocationCard silverWingLocation
+        , SomeLocationCard burningTower
+        , SomeLocationCard shrineToMorgothNightmare
+        , SomeLocationCard cursedTempleNightmare
+        , SomeLocationCard drownedGravesNightmare
+        , SomeLocationCard floodedRuinsNightmare
+        , SomeLocationCard lushJungleNightmare
         ]
     ]

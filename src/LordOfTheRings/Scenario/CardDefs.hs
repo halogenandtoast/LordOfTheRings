@@ -22,6 +22,9 @@ allNightmareCards =
       , theFordsOfIsenNightmare
       , toCatchAnOrcNightmare
       , intoFangornNightmare
+      , voyageAcrossBelegaerNightmare
+      , theFateOfNumenorNightmare
+      , raidOnTheGreyHavensNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -50,3 +53,12 @@ toCatchAnOrcNightmare = nightmareSetup "the-voice-of-isengard-nightmare-to-catch
 
 intoFangornNightmare :: CardDef
 intoFangornNightmare = nightmareSetup "the-voice-of-isengard-nightmare-into-fangorn-001" "Into Fangorn" IntoFangornNightmare
+
+voyageAcrossBelegaerNightmare :: CardDef
+voyageAcrossBelegaerNightmare = nightmareSetup "the-grey-havens-nightmare-voyage-across-belegaer-001" "Voyage Across Belegaer" VoyageAcrossBelegaerNightmare
+
+theFateOfNumenorNightmare :: CardDef
+theFateOfNumenorNightmare = nightmareSetup "the-grey-havens-nightmare-the-fate-of-numenor-001" "The Fate of Númenor" TheFateOfNumenorNightmare
+
+raidOnTheGreyHavensNightmare :: CardDef
+raidOnTheGreyHavensNightmare = nightmareSetup "the-grey-havens-nightmare-raid-on-the-grey-havens-001" "Raid on the Grey Havens" RaidOnTheGreyHavensNightmare

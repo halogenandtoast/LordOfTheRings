@@ -271,6 +271,12 @@ allEnemyCards =
       , huornOfFangorn
       , blockingHuorn
       , wickedHuorn
+      , brashCorsair
+      , sahirsPursuer
+      , guardianOfTheGoldenKing
+      , corsairPillager
+      , corsairPyromaniac
+      , eliteMarauder
       ]
 
 namelessThing :: CardDef
@@ -1700,6 +1706,7 @@ corsairWarship =
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 3]
     , cdVictoryPoints = Just 6
+    , cdEasyModeQuantity = Just 0
     }
 
 southronSailor :: CardDef
@@ -1724,6 +1731,7 @@ umbarCaptain :: CardDef
 umbarCaptain =
   (enemy "11063" "Umbar Captain" CorsairPirates 2 40 4 5 3 5)
     { cdCardTraits = setFromList [Corsair]
+    , cdEasyModeQuantity = Just 0
     }
 
 umbarRaider :: CardDef
@@ -1742,10 +1750,11 @@ raidLeader :: CardDef
 raidLeader =
   (enemy "11066" "Raid Leader" CorsairRaiders 2 40 3 5 1 5)
     { cdCardTraits = setFromList [Corsair, Raider]
+    , cdEasyModeQuantity = Just 0
     }
 
 servantOfTheDeceiver :: CardDef
-servantOfTheDeceiver = (enemy "11029" "Servant of the Deceiver" TheFateOfNumenor 3 35 3 3 4 3) {cdCardTraits = setFromList [Undead]}
+servantOfTheDeceiver = (enemy "11029" "Servant of the Deceiver" TheFateOfNumenor 3 35 3 3 4 3) {cdCardTraits = setFromList [Undead], cdEasyModeQuantity = Just 2}
 
 drownedDead :: CardDef
 drownedDead =
@@ -1755,13 +1764,14 @@ drownedDead =
     }
 
 soullessCadaver :: CardDef
-soullessCadaver = (enemy "11069" "Soulless Cadaver" DrownedDead 2 38 3 3 2 4) {cdCardTraits = setFromList [Undead]}
+soullessCadaver = (enemy "11069" "Soulless Cadaver" DrownedDead 2 38 3 3 2 4) {cdCardTraits = setFromList [Undead], cdEasyModeQuantity = Just 1}
 
 throngsOfUnfaithful :: CardDef
 throngsOfUnfaithful =
   (enemy "11070" "Throngs of Unfaithful" DrownedDead 2 26 1 2 0 4)
     { cdCardTraits = setFromList [Undead]
     , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The enemy side of The Stormcaller Elite's Captain Sahír: never shuffled into the
@@ -1793,7 +1803,7 @@ corsairArsonist =
     }
 
 sahirsRavager :: CardDef
-sahirsRavager = (enemy "11041" "Sahír's Ravager" RaidOnTheGreyHavens 3 36 3 4 3 5) {cdCardTraits = setFromList [Corsair, Raider]}
+sahirsRavager = (enemy "11041" "Sahír's Ravager" RaidOnTheGreyHavens 3 36 3 4 3 5) {cdCardTraits = setFromList [Corsair, Raider], cdEasyModeQuantity = Just 1}
 
 -- * Flight of the Stormcaller
 
@@ -2174,4 +2184,43 @@ wickedHuorn =
     { cdCardTraits = setFromList [Huorn]
     , cdKeywords = setFromList [Hinder]
     , cdShadowEffect = True
+    }
+
+-- The Grey Havens Nightmare Decks
+
+brashCorsair :: CardDef
+brashCorsair =
+  (enemy "the-grey-havens-nightmare-voyage-across-belegaer-004" "Brash Corsair" VoyageAcrossBelegaerNightmare 3 16 3 3 4 3)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+sahirsPursuer :: CardDef
+sahirsPursuer =
+  (enemy "the-grey-havens-nightmare-voyage-across-belegaer-005" "Sahír's Pursuer" VoyageAcrossBelegaerNightmare 2 40 3 7 3 8)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    }
+
+guardianOfTheGoldenKing :: CardDef
+guardianOfTheGoldenKing =
+  (enemy "the-grey-havens-nightmare-the-fate-of-numenor-009" "Guardian of the Golden King" TheFateOfNumenorNightmare 2 41 4 6 4 10)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+corsairPillager :: CardDef
+corsairPillager =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-003" "Corsair Pillager" RaidOnTheGreyHavensNightmare 3 16 3 2 3 3)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+corsairPyromaniac :: CardDef
+corsairPyromaniac =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-004" "Corsair Pyromaniac" RaidOnTheGreyHavensNightmare 3 44 2 2 2 4)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+eliteMarauder :: CardDef
+eliteMarauder =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-005" "Elite Marauder" RaidOnTheGreyHavensNightmare 1 32 4 6 2 5)
+    { cdCardTraits = setFromList [Corsair]
     }

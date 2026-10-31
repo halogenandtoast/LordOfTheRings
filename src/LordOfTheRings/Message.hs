@@ -569,6 +569,9 @@ data Message
     ResolveSailingTest [Target]
   | -- | the cards the Sailing test looked at: the success icons found, and those canceled
     SailingTestResult [EncounterCard] Int Int
+  | -- | a card the Sailing test discarded, with the characters committed to it: one with an
+    -- asterisk by its sailing icon has a Forced effect for it (The Grey Havens Nightmare)
+    ResolveSailingDiscard EncounterCard [Target]
   | -- | the non-Ship enemies leave the encounter deck for the Corsair deck, shuffled
     PrepareCorsairDeck
   | -- | the top card of the Corsair deck is revealed and put into play engaged with the

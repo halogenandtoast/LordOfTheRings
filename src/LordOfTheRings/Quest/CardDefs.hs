@@ -240,6 +240,9 @@ allQuestCards =
       , fateOfTheDreamChaser
       , theHavenOfUmbar
       , finalConfrontation
+      , corsairConfrontation
+      , lostAtSea
+      , sahirsAdvanceNightmare
       ]
 
 theDrippingWalls :: CardDef
@@ -894,3 +897,25 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
+
+-- The Grey Havens Nightmare Decks
+
+corsairConfrontation :: CardDef
+corsairConfrontation =
+  (quest "the-grey-havens-nightmare-voyage-across-belegaer-002" "Corsair Confrontation" VoyageAcrossBelegaerNightmare 2 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Sailing]
+    , cdVictoryPoints = Just 3
+    }
+
+lostAtSea :: CardDef
+lostAtSea =
+  (quest "the-grey-havens-nightmare-voyage-across-belegaer-003" "Lost at Sea" VoyageAcrossBelegaerNightmare 2 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Sailing]
+    , cdVictoryPoints = Just 3
+    }
+
+sahirsAdvanceNightmare :: CardDef
+sahirsAdvanceNightmare =
+  (quest "the-grey-havens-nightmare-raid-on-the-grey-havens-002" "Sahír's Advance" RaidOnTheGreyHavensNightmare 2 0) {cdQuestPoints = Nothing}

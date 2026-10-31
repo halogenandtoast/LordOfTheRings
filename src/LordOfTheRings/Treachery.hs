@@ -223,6 +223,13 @@ import LordOfTheRings.Treachery.Cards.PatrollingOrcs
 import LordOfTheRings.Treachery.Cards.MugashsRage
 import LordOfTheRings.Treachery.Cards.StiflingWoods
 import LordOfTheRings.Treachery.Cards.FangornsAnger
+import LordOfTheRings.Treachery.Cards.RogueWave
+import LordOfTheRings.Treachery.Cards.DreamsOfNumenor
+import LordOfTheRings.Treachery.Cards.RagingSquallNightmare
+import LordOfTheRings.Treachery.Cards.CorruptedFlora
+import LordOfTheRings.Treachery.Cards.CalphonsFolly
+import LordOfTheRings.Treachery.Cards.SuddenAssaultNightmare
+import LordOfTheRings.Treachery.Cards.Infiltration
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -470,5 +477,12 @@ allTreacherys =
         , SomeTreacheryCard mugashsRage
         , SomeTreacheryCard stiflingWoods
         , SomeTreacheryCard fangornsAnger
+        , SomeTreacheryCard rogueWave
+        , SomeTreacheryCard dreamsOfNumenor
+        , SomeTreacheryCard ragingSquallNightmare
+        , SomeTreacheryCard corruptedFlora
+        , SomeTreacheryCard calphonsFolly
+        , SomeTreacheryCard suddenAssaultNightmare
+        , SomeTreacheryCard infiltration
         ]
     ]

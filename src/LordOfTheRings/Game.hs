@@ -1473,6 +1473,11 @@ runGameMessage msg g = case msg of
       after <- getEnemyAttack eid
       pushWhen (after > before) $ CheckWindows [mkWhen $ ShadowIncreasedAttack cid eid]
     pure g
+  -- the card, in the discard pile, is built again to resolve its Forced effect, as a
+  -- shadow card is
+  ResolveSailingDiscard card _ -> do
+    resolveShadowEffect card msg
+    pure g
   -- a later step of a shadow effect, as "if this attack destroys a character" reads once
   -- the attack is over, which the shadow card, built again, resolves. The effect resolved
   -- as the card was revealed, so it still finishes once the card has been discarded, with
@@ -3175,6 +3180,9 @@ attackDamage pid eid target n = do
       excessTo = [t | ExcessDamageTo t <- mods, t /= target]
   excess <-
     if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo
+      excessToAflame = ExcessDamageToAflameLocation `elem` mods
+  excess <-
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || excessToAflame
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3186,6 +3194,13 @@ attackDamage pid eid target n = do
         | excessToShip
         , excess > 0
         , notNull ships
+        ]
+  burning <- if excessToAflame then filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea else pure []
+  -- ponytail: all of it on one Aflame location of the player's choice
+  let toAflame =
+        [ chooseOrRunOne pid [targetLabel l [DealDamage (EnemyAttackSource eid) (LocationTarget l) excess] | l <- burning]
+        | excess > 0
+        , notNull burning
         ]
   let captured = case target of
         HeroTarget h -> toCard <$> Map.lookup h es.heroes
@@ -3202,6 +3217,7 @@ attackDamage pid eid target n = do
         <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
         <> toShip
         <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
+        <> toAflame
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
