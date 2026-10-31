@@ -355,6 +355,8 @@ runPlayer msg player = case msg of
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
+      -- ponytail: a card whose additional cost is a hand discard (cdAdditionalCost) can still be
+      -- played, the discard skipped; bar it in playProhibitions if that matters
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       let discarded = if barred then [] else filter ((== cid) . (.id)) (discardableHand player)
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid cid]
