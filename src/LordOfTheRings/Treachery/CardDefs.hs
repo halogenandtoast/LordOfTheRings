@@ -228,6 +228,9 @@ allTreacheryCards =
       , runForYourLives
       , saveUs
       , thoseNowSundered
+      , relentlessAttack
+      , overrunDefenses
+      , pressedOnAllSides
       ]
 
 deepDeepDark :: CardDef
@@ -1388,3 +1391,14 @@ thoseNowSundered =
     { cdCardTraits = setFromList [Panic]
     , cdKeywords = setFromList [Surge, Doomed 1]
     }
+
+-- Assault on Osgiliath Nightmare
+
+relentlessAttack :: CardDef
+relentlessAttack = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-008" "Relentless Attack" AssaultOnOsgiliathNightmare 2) {cdKeywords = setFromList [Doomed 1]}
+
+overrunDefenses :: CardDef
+overrunDefenses = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-009" "Overrun Defenses" AssaultOnOsgiliathNightmare 2) {cdShadowEffect = True}
+
+pressedOnAllSides :: CardDef
+pressedOnAllSides = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-010" "Pressed on All Sides" AssaultOnOsgiliathNightmare 2) {cdShadowEffect = True}

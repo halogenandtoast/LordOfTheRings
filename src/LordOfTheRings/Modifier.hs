@@ -513,6 +513,10 @@ data ModifierType
   | -- | on an enemy: to optionally engage it, the player spends this many resources, as
     -- Drúadan Stalker reads
     OptionalEngagementCost Int
+  | -- | on the game: the progress questing makes beyond the active location's quest points
+    -- goes to this location, not the quest, as Assault on Osgiliath's Nightmare setup card
+    -- reads
+    ProgressBeyondActiveTo Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

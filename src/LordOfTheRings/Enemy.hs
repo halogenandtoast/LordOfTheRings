@@ -258,6 +258,8 @@ import LordOfTheRings.Enemy.Cards.DruadanWarrior
 import LordOfTheRings.Enemy.Cards.DruadanStalker
 import LordOfTheRings.Enemy.Cards.OrcRaidersNightmare
 import LordOfTheRings.Enemy.Cards.PillagingOrc
+import LordOfTheRings.Enemy.Cards.InvadingOrc
+import LordOfTheRings.Enemy.Cards.HaradrimWarrior
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -541,5 +543,7 @@ allEnemys =
         , SomeEnemyCard druadanStalker
         , SomeEnemyCard orcRaidersNightmare
         , SomeEnemyCard pillagingOrc
+        , SomeEnemyCard invadingOrc
+        , SomeEnemyCard haradrimWarrior
         ]
     ]

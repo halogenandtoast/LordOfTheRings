@@ -484,12 +484,14 @@ library
       LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.GreatCaveTroll
       LordOfTheRings.Enemy.Cards.HaradrimElite
+      LordOfTheRings.Enemy.Cards.HaradrimWarrior
       LordOfTheRings.Enemy.Cards.HarborThug
       LordOfTheRings.Enemy.Cards.HeavyCruiser
       LordOfTheRings.Enemy.Cards.HillTroll
       LordOfTheRings.Enemy.Cards.Hummerhorns
       LordOfTheRings.Enemy.Cards.HuntersFromMordor
       LordOfTheRings.Enemy.Cards.HuntingPack
+      LordOfTheRings.Enemy.Cards.InvadingOrc
       LordOfTheRings.Enemy.Cards.IslandWatcher
       LordOfTheRings.Enemy.Cards.JailorGornakh
       LordOfTheRings.Enemy.Cards.KingSpider
@@ -943,6 +945,7 @@ library
       LordOfTheRings.Location.Cards.ConcealedOrcCamp
       LordOfTheRings.Location.Cards.CorsairWaters
       LordOfTheRings.Location.Cards.CrewQuarters
+      LordOfTheRings.Location.Cards.CrumbledBattlements
       LordOfTheRings.Location.Cards.CursedCaverns
       LordOfTheRings.Location.Cards.CursedForest
       LordOfTheRings.Location.Cards.CursedTemple
@@ -963,6 +966,7 @@ library
       LordOfTheRings.Location.Cards.DungeonLabyrinth
       LordOfTheRings.Location.Cards.DunlandBattlefield
       LordOfTheRings.Location.Cards.DwarvenForge
+      LordOfTheRings.Location.Cards.EasternQuarter
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
       LordOfTheRings.Location.Cards.EdgeOfFangorn
@@ -1050,6 +1054,7 @@ library
       LordOfTheRings.Location.Cards.OutlyingHomestead
       LordOfTheRings.Location.Cards.OvergrownTrail
       LordOfTheRings.Location.Cards.OverrunVillage
+      LordOfTheRings.Location.Cards.PalaceRemains
       LordOfTheRings.Location.Cards.PatchOfWoods
       LordOfTheRings.Location.Cards.PathlessCountry
       LordOfTheRings.Location.Cards.PatrolRoom
@@ -1166,6 +1171,7 @@ library
       LordOfTheRings.Location.Cards.Waterspout
       LordOfTheRings.Location.Cards.WeatherDeck
       LordOfTheRings.Location.Cards.WeatheredHilltop
+      LordOfTheRings.Location.Cards.WesternQuarter
       LordOfTheRings.Location.Cards.WestGate
       LordOfTheRings.Location.Cards.WestQuarter
       LordOfTheRings.Location.Cards.WhiteFloweredFields
@@ -1688,6 +1694,7 @@ library
       LordOfTheRings.Treachery.Cards.OrcAssault
       LordOfTheRings.Treachery.Cards.OrcHuntingParty
       LordOfTheRings.Treachery.Cards.OrcTerritory
+      LordOfTheRings.Treachery.Cards.OverrunDefenses
       LordOfTheRings.Treachery.Cards.Panicked
       LordOfTheRings.Treachery.Cards.PillagingAndBurning
       LordOfTheRings.Treachery.Cards.PinnedDown
@@ -1695,6 +1702,7 @@ library
       LordOfTheRings.Treachery.Cards.Possession
       LordOfTheRings.Treachery.Cards.PowerfulUndertow
       LordOfTheRings.Treachery.Cards.PredatoryWolves
+      LordOfTheRings.Treachery.Cards.PressedOnAllSides
       LordOfTheRings.Treachery.Cards.PressingNeeds
       LordOfTheRings.Treachery.Cards.PursuedByShadow
       LordOfTheRings.Treachery.Cards.PursuitOnTheShore
@@ -1702,6 +1710,7 @@ library
       LordOfTheRings.Treachery.Cards.RagingSquall
       LordOfTheRings.Treachery.Cards.RaisingTheCry
       LordOfTheRings.Treachery.Cards.RammingSpeed
+      LordOfTheRings.Treachery.Cards.RelentlessAttack
       LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
       LordOfTheRings.Treachery.Cards.RestlessEvil
       LordOfTheRings.Treachery.Cards.RoastedSlowly

@@ -1771,6 +1771,8 @@ runGameMessage msg g = case msg of
             -- what would go to the quest may be damage to an enemy instead, as Ride Them Down reads
             gameMods <- getModifiers GameTarget
             let instead = filter (inPlay g) [t | ProgressAsDamageTo t <- gameMods]
+                -- or progress on a location, as Assault on Osgiliath's Nightmare setup card reads
+                onto = filter (inPlay g) [t | ProgressBeyondActiveTo t <- gameMods]
                 canceledBy q = find ((== Just q) . sourceTarget) [s | QuestProgressCanceledBy s <- gameMods]
                 onQuests k =
                   [ maybe (PlaceTokens GameSource q Progress k) (`ProgressCanceled` k) (canceledBy q)
@@ -1786,6 +1788,7 @@ runGameMessage msg g = case msg of
               <> case instead of
                 t : _ -> [DealDamage GameSource t overflow | overflow > 0]
                 []
+                  | t : _ <- onto -> [PlaceTokens GameSource t Progress overflow | overflow > 0]
                   | null almanacs -> onQuests overflow
                   | otherwise ->
                       [ questionLabelWith (ikey "label.questingProgress") Nothing (map (toTarget . fst) almanacs) lead

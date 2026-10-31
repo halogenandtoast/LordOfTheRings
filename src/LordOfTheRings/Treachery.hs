@@ -221,6 +221,9 @@ import LordOfTheRings.Treachery.Cards.TrappedVillagers
 import LordOfTheRings.Treachery.Cards.RunForYourLives
 import LordOfTheRings.Treachery.Cards.SaveUs
 import LordOfTheRings.Treachery.Cards.ThoseNowSundered
+import LordOfTheRings.Treachery.Cards.RelentlessAttack
+import LordOfTheRings.Treachery.Cards.OverrunDefenses
+import LordOfTheRings.Treachery.Cards.PressedOnAllSides
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -466,5 +469,8 @@ allTreacherys =
         , SomeTreacheryCard runForYourLives
         , SomeTreacheryCard saveUs
         , SomeTreacheryCard thoseNowSundered
+        , SomeTreacheryCard relentlessAttack
+        , SomeTreacheryCard overrunDefenses
+        , SomeTreacheryCard pressedOnAllSides
         ]
     ]

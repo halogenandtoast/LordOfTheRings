@@ -264,6 +264,8 @@ allEnemyCards =
       , druadanStalker
       , orcRaidersNightmare
       , pillagingOrc
+      , invadingOrc
+      , haradrimWarrior
       ]
 
 namelessThing :: CardDef
@@ -2137,5 +2139,22 @@ pillagingOrc =
   (enemy "encounter-at-amon-din-nightmare-encounter-at-amon-din-003" "Pillaging Orc" EncounterAtAmonDinNightmare 3 34 2 4 3 5)
     { cdCardTraits = setFromList [Orc]
     , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- Assault on Osgiliath Nightmare
+
+invadingOrc :: CardDef
+invadingOrc =
+  (enemy "assault-on-osgiliath-nightmare-assault-on-osgiliath-002" "Invading Orc" AssaultOnOsgiliathNightmare 3 20 2 5 3 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and archery X, X the number of locations the first player controls.
+haradrimWarrior :: CardDef
+haradrimWarrior =
+  (enemy "assault-on-osgiliath-nightmare-assault-on-osgiliath-003" "Haradrim Warrior" AssaultOnOsgiliathNightmare 3 30 0 3 3 4)
+    { cdCardTraits = setFromList [Harad]
     , cdShadowEffect = True
     }

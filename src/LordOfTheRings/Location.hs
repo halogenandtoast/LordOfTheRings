@@ -281,6 +281,10 @@ import LordOfTheRings.Location.Cards.Eilenach
 import LordOfTheRings.Location.Cards.StonewainValley
 import LordOfTheRings.Location.Cards.BesiegedHomestead
 import LordOfTheRings.Location.Cards.OverrunVillage
+import LordOfTheRings.Location.Cards.PalaceRemains
+import LordOfTheRings.Location.Cards.CrumbledBattlements
+import LordOfTheRings.Location.Cards.EasternQuarter
+import LordOfTheRings.Location.Cards.WesternQuarter
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -603,5 +607,9 @@ allLocations =
         , SomeLocationCard stonewainValley
         , SomeLocationCard besiegedHomestead
         , SomeLocationCard overrunVillage
+        , SomeLocationCard palaceRemains
+        , SomeLocationCard crumbledBattlements
+        , SomeLocationCard easternQuarter
+        , SomeLocationCard westernQuarter
         ]
     ]

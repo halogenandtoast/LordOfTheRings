@@ -1632,5 +1632,12 @@
     "discardVillagers": "Discard 2 villager tokens from Rescued Villagers",
     "search": "Search the encounter deck and discard pile for an enemy",
     "enemy": "Choose an enemy to reveal"
+  },
+  "assaultOnOsgiliath": {
+    "response": "Choose a non-unique location to take the progress made beyond the active location this phase",
+    "skip": "Do not choose a location"
+  },
+  "westernQuarter": {
+    "discard": "Choose the highest cost attachment you control to discard"
   }
 }

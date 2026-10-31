@@ -1,7 +1,7 @@
 module LordOfTheRings.AgainstTheShadow.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (getArcheryTotal, getEnemy)
@@ -10,7 +10,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase (Phase (QuestPhase))
-import LordOfTheRings.Scenario (encounterAtAmonDin, theBloodOfGondor, theDruadanForest, theMorgulVale)
+import LordOfTheRings.Scenario (assaultOnOsgiliath, encounterAtAmonDin, theBloodOfGondor, theDruadanForest, theMorgulVale)
 import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (deadVillagerCount, getVillagers, rescuedVillagerCount)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
@@ -67,6 +67,14 @@ villagers rescued = do
   for_ [Objectives.rescuedVillagers, Objectives.deadVillagers] \d -> run . AddToStaging =<< genEncounterCard d
   oid <- getsGame (fmap toId . find ((== toCardCode Objectives.rescuedVillagers) . toCardCode) . toList . (.entities.objectives))
   when (rescued > 0) $ for_ oid \o -> run $ PlaceTokens GameSource (ObjectiveTarget o) Villager rescued
+
+locationOf :: CardDef -> GameT LocationId
+locationOf def = getsGame (fromJustNote "no such location" . fmap toId . find ((== toCardCode def) . toCardCode) . toList . (.entities.locations))
+
+stagedLocation :: CardDef -> GameT LocationId
+stagedLocation def = do
+  run . AddToStaging =<< genEncounterCard def
+  locationOf def
 
 spec :: Spec
 spec = describe "Against the Shadow nightmare decks" do
@@ -370,3 +378,61 @@ spec = describe "Against the Shadow nightmare decks" do
       villagers 0
       reveal Treacheries.saveUs [Locations.besiegedHomestead, Enemies.orcRaidersNightmare]
       void $ enemyOf Enemies.orcRaidersNightmare
+
+  describe "Assault on Osgiliath" do
+    it "builds the nightmare deck" . nightmare assaultOnOsgiliath $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.urukSoldier, Enemies.southronMercenaries, Locations.ruinedSquare, Enemies.invadingOrc, Locations.palaceRemains]
+        `shouldBe` [0, 0, 2, 3, 1]
+
+    it "adds Palace Remains to the staging area at setup" . nightmare assaultOnOsgiliath $ \_ -> do
+      run $ DoStep 1 Setup
+      run $ DoStep 8 Setup
+      lid <- locationOf Locations.palaceRemains
+      (.placement) <$> getLocation lid `shouldReturn` StagingArea
+
+    it "Palace Remains takes a resource as a player takes control of a location, its threat with them" . nightmare assaultOnOsgiliath $ \pid -> do
+      reveal Locations.palaceRemains []
+      quarter <- stagedLocation Locations.easternQuarter
+      run $ PlaceLocation quarter (InPlayArea pid)
+      palace <- locationOf Locations.palaceRemains
+      getLocationThreat palace `shouldReturn` 1
+      getModifiers palace >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+
+    it "Crumbled Battlements engages an enemy discarded from the deck as a player takes control of it" . nightmare assaultOnOsgiliath $ \pid -> do
+      battlements <- stagedLocation Locations.crumbledBattlements
+      _ <- setEncounterDeck [Treacheries.relentlessAttack, Enemies.invadingOrc]
+      run $ PlaceLocation battlements (InPlayArea pid)
+      orc <- enemyOf Enemies.invadingOrc
+      (.placement) <$> getEnemy orc `shouldReturn` EngagedWith pid
+
+    it "Haradrim Warrior's threat is the first player's locations" . nightmare assaultOnOsgiliath $ \pid -> do
+      quarter <- stagedLocation Locations.westernQuarter
+      run $ PlaceLocation quarter (InPlayArea pid)
+      warrior <- staged Enemies.haradrimWarrior
+      getEnemyThreat warrior `shouldReturn` 1
+
+    it "Overrun Defenses adds the controlled locations to the staging area's threat and is doomed under 4" . nightmare assaultOnOsgiliath $ \pid -> do
+      quarter <- stagedLocation Locations.westernQuarter
+      run $ PlaceLocation quarter (InPlayArea pid)
+      was <- (.threat) <$> getPlayer pid
+      reveal Treacheries.overrunDefenses []
+      getStagingThreat `shouldReturn` 1
+      (.threat) <$> getPlayer pid `shouldReturn` was + 2
+
+    it "Relentless Attack lowers engagement costs by the controlled locations" . nightmare assaultOnOsgiliath $ \pid -> do
+      _ <- putQuestStage Quests.retakeTheCity
+      quarter <- stagedLocation Locations.westernQuarter
+      run $ PlaceLocation quarter (InPlayArea pid)
+      reveal Treacheries.relentlessAttack []
+      orc <- staged Enemies.invadingOrc
+      getEngagementCost orc `shouldReturn` 19
+
+    it "sends progress beyond the active location to the chosen location" . nightmare assaultOnOsgiliath $ \pid -> do
+      for_ [Locations.crumbledBattlements, Locations.easternQuarter] \d -> void $ stagedLocation d
+      run $ CheckWindows [mkAfter $ PhaseBegins QuestPhase]
+      battlements <- locationOf Locations.crumbledBattlements
+      chooseTarget pid battlements
+      run $ PlaceProgressOnQuest 1
+      (.progress) <$> getLocation battlements `shouldReturn` 1

@@ -293,6 +293,10 @@ allLocationCards =
       , stonewainValley
       , besiegedHomestead
       , overrunVillage
+      , palaceRemains
+      , crumbledBattlements
+      , easternQuarter
+      , westernQuarter
       ]
 
 drownedTreasury :: CardDef
@@ -2198,4 +2202,32 @@ overrunVillage =
   (location "encounter-at-amon-din-nightmare-encounter-at-amon-din-005" "Overrun Village" EncounterAtAmonDinNightmare 2 3 5)
     { cdCardTraits = setFromList [Gondor]
     , cdVictoryPoints = Just 1
+    }
+
+-- Assault on Osgiliath Nightmare
+
+-- | X threat, X the resource tokens on it.
+palaceRemains :: CardDef
+palaceRemains =
+  unique
+    (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-004" "Palace Remains" AssaultOnOsgiliathNightmare 1 0 5)
+      { cdCardTraits = setFromList [Osgiliath]
+      }
+
+crumbledBattlements :: CardDef
+crumbledBattlements =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-005" "Crumbled Battlements" AssaultOnOsgiliathNightmare 2 3 2)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+easternQuarter :: CardDef
+easternQuarter =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-006" "Eastern Quarter" AssaultOnOsgiliathNightmare 2 3 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+westernQuarter :: CardDef
+westernQuarter =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-007" "Western Quarter" AssaultOnOsgiliathNightmare 2 2 4)
+    { cdCardTraits = setFromList [Osgiliath]
     }
