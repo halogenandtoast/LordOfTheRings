@@ -218,6 +218,22 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , theEnemysTrail
+      , restlessHunters
+      , theTrailGoesCold
+      , timeForSupper
+      , shotFromTheSky
+      , noxiousSupplies
+      , aHurryingDarkness
+      , blastOfSavageWind
+      , hazardousTerrain
+      , retracedSteps
+      , candlesOfCorpses
+      , swarmingMosquitoes
+      , devilryOfTheDarkLand
+      , isolation
+      , befouledEquipment
+      , wickednessAndMischief
       ]
 
 deepDeepDark :: CardDef
@@ -1331,4 +1347,107 @@ darkInterrogation :: CardDef
 darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
+    }
+
+-- Shadows of Mirkwood Nightmare Decks
+
+theEnemysTrail :: CardDef
+theEnemysTrail =
+  (treachery "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-007" "The Enemy's Trail" TheHuntForGollumNightmare 2)
+    { cdShadowEffect = True
+    }
+
+restlessHunters :: CardDef
+restlessHunters =
+  (treachery "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-008" "Restless Hunters" TheHuntForGollumNightmare 3)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+theTrailGoesCold :: CardDef
+theTrailGoesCold = treachery "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-009" "The Trail Goes Cold" TheHuntForGollumNightmare 2
+
+timeForSupper :: CardDef
+timeForSupper = treachery "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-010" "Time for Supper" ConflictAtTheCarrockNightmare 3
+
+shotFromTheSky :: CardDef
+shotFromTheSky =
+  (treachery "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-007" "Shot from the Sky" AJourneyToRhosgobelNightmare 3)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+noxiousSupplies :: CardDef
+noxiousSupplies =
+  (treachery "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-008" "Noxious Supplies" AJourneyToRhosgobelNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+aHurryingDarkness :: CardDef
+aHurryingDarkness =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-006" "A Hurrying Darkness" TheHillsOfEmynMuilNightmare 2)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    }
+
+blastOfSavageWind :: CardDef
+blastOfSavageWind =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-007" "Blast of Savage Wind" TheHillsOfEmynMuilNightmare 3)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    , cdKeywords = setFromList [Doomed 2]
+    }
+
+hazardousTerrain :: CardDef
+hazardousTerrain =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-008" "Hazardous Terrain" TheHillsOfEmynMuilNightmare 2)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge, Doomed 2]
+    }
+
+retracedSteps :: CardDef
+retracedSteps =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-009" "Retraced Steps" TheHillsOfEmynMuilNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    }
+
+candlesOfCorpses :: CardDef
+candlesOfCorpses =
+  (treachery "the-dead-marshes-nightmare-the-dead-marshes-008" "Candles of Corpses" TheDeadMarshesNightmare 1)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 5
+    }
+
+swarmingMosquitoes :: CardDef
+swarmingMosquitoes =
+  (treachery "the-dead-marshes-nightmare-the-dead-marshes-009" "Swarming Mosquitoes" TheDeadMarshesNightmare 2)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 3
+    }
+
+devilryOfTheDarkLand :: CardDef
+devilryOfTheDarkLand =
+  (treachery "the-dead-marshes-nightmare-the-dead-marshes-010" "Devilry of the Dark Land" TheDeadMarshesNightmare 1)
+    { cdCardTraits = setFromList [Corruption]
+    , cdEscape = Just 10
+    }
+
+isolation :: CardDef
+isolation =
+  (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-007" "Isolation" ReturnToMirkwoodNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    }
+
+befouledEquipment :: CardDef
+befouledEquipment =
+  (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-008" "Befouled Equipment" ReturnToMirkwoodNightmare 2)
+    { cdCardTraits = setFromList [Tantrum]
+    , cdShadowEffect = True
+    }
+
+wickednessAndMischief :: CardDef
+wickednessAndMischief =
+  (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-009" "Wickedness and Mischief" ReturnToMirkwoodNightmare 2)
+    { cdCardTraits = setFromList [Tantrum]
+    , cdShadowEffect = True
     }

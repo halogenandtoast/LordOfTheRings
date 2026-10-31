@@ -283,6 +283,20 @@ allLocationCards =
       , streetsOfUmbar
       , cityOfCorsairs
       , umbarHarbor
+      , watchedPath
+      , huntersLookout
+      , darkPools
+      , trollLair
+      , hivesAndHives
+      , darkWoodGrove
+      , labyrinthineWoods
+      , pitchDarkThicket
+      , bramblesAndThorns
+      , sarnGebirRapids
+      , theMereOfDeadFaces
+      , stagnantQuagmire
+      , deceptivePath
+      , webWall
       ]
 
 drownedTreasury :: CardDef
@@ -2111,4 +2125,104 @@ dungeonLabyrinth :: CardDef
 dungeonLabyrinth =
   (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
     { cdCardTraits = setFromList [DolGuldur]
+    }
+
+-- Shadows of Mirkwood Nightmare Decks
+
+watchedPath :: CardDef
+watchedPath =
+  (location "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-004" "Watched Path" TheHuntForGollumNightmare 2 3 4)
+    { cdCardTraits = setFromList [Forest, Road]
+    , cdShadowEffect = True
+    }
+
+huntersLookout :: CardDef
+huntersLookout =
+  (location "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-005" "Hunter's Lookout" TheHuntForGollumNightmare 2 2 6)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
+    }
+
+darkPools :: CardDef
+darkPools =
+  (location "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-006" "Dark Pools" TheHuntForGollumNightmare 3 3 2)
+    { cdCardTraits = setFromList [Marshland]
+    }
+
+trollLair :: CardDef
+trollLair =
+  (location "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-008" "Troll Lair" ConflictAtTheCarrockNightmare 3 2 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+hivesAndHives :: CardDef
+hivesAndHives =
+  (location "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-009" "Hives and Hives" ConflictAtTheCarrockNightmare 3 3 3)
+    { cdCardTraits = setFromList [WilderlandsTrait]
+    , cdShadowEffect = True
+    }
+
+darkWoodGrove :: CardDef
+darkWoodGrove =
+  (location "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-004" "Dark-wood Grove" AJourneyToRhosgobelNightmare 3 3 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+labyrinthineWoods :: CardDef
+labyrinthineWoods =
+  (location "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-005" "Labyrinthine Woods" AJourneyToRhosgobelNightmare 3 2 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+pitchDarkThicket :: CardDef
+pitchDarkThicket =
+  (location "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-006" "Pitch-dark Thicket" AJourneyToRhosgobelNightmare 2 4 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+bramblesAndThorns :: CardDef
+bramblesAndThorns =
+  (location "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-004" "Brambles and Thorns" TheHillsOfEmynMuilNightmare 3 3 5)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 3
+    }
+
+sarnGebirRapids :: CardDef
+sarnGebirRapids =
+  (location "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-005" "Sarn Gebir Rapids" TheHillsOfEmynMuilNightmare 2 5 5)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 2
+    }
+
+theMereOfDeadFaces :: CardDef
+theMereOfDeadFaces =
+  (unique (location "the-dead-marshes-nightmare-the-dead-marshes-002" "The Mere of Dead Faces" TheDeadMarshesNightmare 1 0 0))
+    { cdCardTraits = setFromList [DeadMarshes]
+    , cdQuestPoints = Nothing
+    }
+
+stagnantQuagmire :: CardDef
+stagnantQuagmire =
+  (location "the-dead-marshes-nightmare-the-dead-marshes-003" "Stagnant Quagmire" TheDeadMarshesNightmare 3 3 5)
+    { cdCardTraits = setFromList [DeadMarshes]
+    , cdEscape = Just 2
+    , cdShadowEffect = True
+    }
+
+deceptivePath :: CardDef
+deceptivePath =
+  (location "return-to-mirkwood-nightmare-return-to-mirkwood-005" "Deceptive Path" ReturnToMirkwoodNightmare 2 4 1)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+webWall :: CardDef
+webWall =
+  (location "return-to-mirkwood-nightmare-return-to-mirkwood-006" "Web-wall" ReturnToMirkwoodNightmare 3 3 6)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
     }

@@ -240,6 +240,7 @@ allQuestCards =
       , fateOfTheDreamChaser
       , theHavenOfUmbar
       , finalConfrontation
+      , grimbeornsFolly
       ]
 
 theDrippingWalls :: CardDef
@@ -894,3 +895,11 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
+
+-- Shadows of Mirkwood Nightmare Decks
+
+grimbeornsFolly :: CardDef
+grimbeornsFolly =
+  (quest "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-011" "Grimbeorn's Folly" ConflictAtTheCarrockNightmare 3 0)
+    { cdQuestPoints = Nothing
+    }
