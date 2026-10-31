@@ -8,6 +8,7 @@ data EncounterSet
   | AcrossTheEttenmoors
   | AncientForest
   | AngmarOrcs
+  | AngmarAwakenedCampaign
   | AssaultOnOsgiliath
   | Brigands
   | BrokenLands

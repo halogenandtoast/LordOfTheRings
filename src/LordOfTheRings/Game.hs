@@ -534,9 +534,10 @@ runGameMessage msg g = case msg of
   ForgetLeftPlay aid -> pure $ g & leftPlayL %~ Map.delete aid
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   -- step 8 follows the quest's own setup: a nightmare setup card's instructions, as its
-  -- "the game is now ready to begin" reads
+  -- "the game is now ready to begin" reads; step 9 a campaign card's setup that needs what
+  -- the quest put into play, as Iârion
   Setup -> do
-    pushAll [DoStep n Setup | n <- [1 .. 8]]
+    pushAll [DoStep n Setup | n <- [1 .. 9]]
     pure g
   DoStep 3 Setup -> do
     firstPlayer <- uniform g.playerOrder

@@ -1,6 +1,7 @@
 module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
 import LordOfTheRings.Ability.Types
+import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
 import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
@@ -82,6 +83,8 @@ data Message
     scenario holds. The game is over, so nothing pushed here runs.
     -}
     ResolveCampaign
+  | -- | in campaign mode, a card writes to the campaign log the scenario holds
+    UpdateCampaignLog CampaignLogUpdate
   | Discard Target
   | {- | a character leaves play now, the When window for its leaving having closed: the
     Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it

@@ -1271,14 +1271,14 @@ inCampaign row scenario players = case row.lotrGameCampaignId of
   Just cid -> do
     l <- decodeOrFail @CampaignLog "campaign log" . (.lotrCampaignLog) =<< runDB (get404 cid)
     l' <- either refuseFallen pure $ seatHeroes [dl.heroes | (_, dl) <- toList players] l
-    let withPool n (name, dl) = (name, dl {cards = dl.cards <> [(c, 1) | c <- seatPoolCards n l']})
+    let withPool n (name, dl) = (name, dl {cards = seatDeck n l' dl.cards})
     pure (overAttrs (\a -> a {scenarioCampaign = Just l'}) scenario, NE.zipWith withPool (0 :| [1 ..]) players)
 
 -- | Refuse a deck bringing a hero the campaign log lists as fallen.
 refuseFallenHeroes :: LotrGame -> [DeckList] -> Handler ()
 refuseFallenHeroes row deckLists = for_ row.lotrGameCampaignId \cid -> do
   l <- decodeOrFail @CampaignLog "campaign log" . (.lotrCampaignLog) =<< runDB (get404 cid)
-  case filter (`elem` l.fallenHeroes) (concatMap (.heroes) deckLists) of
+  case filter (`elem` (l.fallenHeroes <> lockedHeroes l)) (concatMap (.heroes) deckLists) of
     [] -> pure ()
     fallen -> refuseFallen fallen
 
