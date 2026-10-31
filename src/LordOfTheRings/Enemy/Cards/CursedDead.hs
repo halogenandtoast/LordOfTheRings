@@ -12,13 +12,13 @@ cursedDead :: EnemyCard CursedDead
 cursedDead = enemy CursedDead Cards.cursedDead
 
 -- | When Revealed: Put each copy of Cursed Dead in the discard pile into play in the
--- staging area.
+-- staging area: each card of its title, its Nightmare copies too.
 -- Shadow: Attacking enemy gets +1 attack (+2 attack instead if there is a copy of the
 -- defending character in its owner's discard pile).
 instance RunMessage CursedDead where
   runMessage msg e@(CursedDead attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      copies <- filter (cardMatches $ cardIs Cards.cursedDead) <$> encounterDiscardPile
+      copies <- filter (cardMatches $ CardWithTitle "Cursed Dead") <$> encounterDiscardPile
       traverse_ addToStagingFromDiscard copies
       pure e
     ResolveShadowEffect cid eid _ defenders | cid == attrs.cardId -> do

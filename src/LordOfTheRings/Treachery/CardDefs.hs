@@ -179,6 +179,11 @@ allTreacheryCards =
       , unnaturalFog
       , tragicDiscovery
       , restlessEvil
+      , aGreatHost
+      , killThem
+      , rainWashedTracks
+      , paralyzingFear
+      , curseOfAngmar
       , terrorOfTheNorth
       , darkSorcery
       , heavyCurse
@@ -1331,4 +1336,33 @@ darkInterrogation :: CardDef
 darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
+    }
+
+-- The Lost Realm Nightmare Decks
+
+aGreatHost :: CardDef
+aGreatHost = treachery "the-lost-realm-nightmare-invaders-in-chetwood-007" "A Great Host" IntrudersInChetwoodNightmare 2
+
+killThem :: CardDef
+killThem = treachery "the-lost-realm-nightmare-invaders-in-chetwood-008" "Kill Them!" IntrudersInChetwoodNightmare 3
+
+rainWashedTracks :: CardDef
+rainWashedTracks =
+  (treachery "the-lost-realm-nightmare-the-weather-hills-017" "Rain-washed Tracks" TheWeatherHillsNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+paralyzingFear :: CardDef
+paralyzingFear =
+  (treachery "the-lost-realm-nightmare-deadmens-dike-025" "Paralyzing Fear" DeadmensDikeNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    }
+
+curseOfAngmar :: CardDef
+curseOfAngmar =
+  (treachery "the-lost-realm-nightmare-deadmens-dike-026" "Curse of Angmar" DeadmensDikeNightmare 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 1]
     }

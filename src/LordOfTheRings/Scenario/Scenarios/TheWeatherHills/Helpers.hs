@@ -11,6 +11,8 @@ module LordOfTheRings.Scenario.Scenarios.TheWeatherHills.Helpers (
   getMissionObjective,
   missionResources,
   orcAmbush,
+  guardFromOrcDeck,
+  captiveVillagerHeld,
 ) where
 
 import Data.Aeson.Types (parseMaybe)
@@ -23,7 +25,9 @@ import LordOfTheRings.EncounterSet (EncounterSet (AngmarOrcs))
 import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Id
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Matcher (CardMatcher (CardWithCode))
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
@@ -42,11 +46,12 @@ getMeta :: ScenarioAttrs -> Meta
 getMeta attrs = fromMaybe (Meta []) $ parseMaybe parseJSON attrs.meta
 
 -- | The Orc deck (rules insert): each enemy of Angmar Orcs, and each copy of Concealed
--- Orc-camp.
+-- Orc-camp; in Nightmare mode each Captive Villager and Rearguard Ambusher too, as its
+-- setup card reads (only its deck has them).
 isOrcDeckCard :: EncounterCard -> Bool
 isOrcDeckCard card =
   (cdCardType def == EnemyType && cdEncounterSet def == Just AngmarOrcs)
-    || toCardCode card == toCardCode Locations.concealedOrcCamp
+    || toCardCode card `elem` map toCardCode [Locations.concealedOrcCamp, Objectives.captiveVillager, Enemies.rearguardAmbusher]
  where
   def = toCardDef card
 
@@ -54,6 +59,15 @@ isOrcDeckCard card =
 -- encounter deck.
 revealFromOrcDeck :: ReverseQueue m => Int -> m ()
 revealFromOrcDeck n = when (n > 0) $ push $ ScenarioSpecific "orcDeck.reveal" (toJSON n)
+
+-- | The top card of the Orc deck is revealed, guarding the Captive Villager.
+guardFromOrcDeck :: ReverseQueue m => ObjectiveId -> m ()
+guardFromOrcDeck = push . ScenarioSpecific "orcDeck.guard" . toJSON
+
+-- | A Captive Villager is still an objective: guarded, under no player's control.
+captiveVillagerHeld :: HasGame m => m Bool
+captiveVillagerHeld =
+  getsGame (any ((== toCardCode Objectives.captiveVillager) . toCardCode) . toList . entitiesObjectives . gameEntities)
 
 shuffleOrcDeckIntoEncounterDeck :: ReverseQueue m => m ()
 shuffleOrcDeckIntoEncounterDeck = push $ ScenarioSpecific "orcDeck.shuffleIn" Null

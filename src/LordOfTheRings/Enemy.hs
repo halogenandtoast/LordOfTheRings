@@ -247,6 +247,12 @@ import LordOfTheRings.Enemy.Cards.BrownWaterRats
 import LordOfTheRings.Enemy.Cards.TortureMaster
 import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
+import LordOfTheRings.Enemy.Cards.OrcAbductor
+import LordOfTheRings.Enemy.Cards.SoldierOfAngmar
+import LordOfTheRings.Enemy.Cards.RearguardAmbusher
+import LordOfTheRings.Enemy.Cards.AngmarRaider
+import LordOfTheRings.Enemy.Cards.UndeadHorde
+import LordOfTheRings.Enemy.Cards.CursedDeadNightmare
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -519,5 +525,11 @@ allEnemys =
         , SomeEnemyCard tortureMaster
         , SomeEnemyCard crazedCaptive
         , SomeEnemyCard spiderOfDolGuldur
+        , SomeEnemyCard orcAbductor
+        , SomeEnemyCard soldierOfAngmar
+        , SomeEnemyCard rearguardAmbusher
+        , SomeEnemyCard angmarRaider
+        , SomeEnemyCard undeadHorde
+        , SomeEnemyCard cursedDeadNightmare
         ]
     ]

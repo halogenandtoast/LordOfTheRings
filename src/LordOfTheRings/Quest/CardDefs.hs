@@ -205,6 +205,10 @@ allQuestCards =
       , theShadowWorld
       , sealTheTomb
       , thePowerOfAngmar
+      , shadowTheWarParty
+      , protectTheBreeLanders
+      , trackTheOrcs
+      , gatherYourCourage
       , secretsOfRhudaur
       , thaurdirsPursuit
       , quietTheSpirits
@@ -894,3 +898,34 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
+
+-- The Lost Realm Nightmare Decks
+
+shadowTheWarParty :: CardDef
+shadowTheWarParty =
+  (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-009" "Shadow the War Party" IntrudersInChetwoodNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+protectTheBreeLanders :: CardDef
+protectTheBreeLanders =
+  (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-010" "Protect the Bree-landers" IntrudersInChetwoodNightmare 10)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+trackTheOrcs :: CardDef
+trackTheOrcs =
+  (encounterSideQuest "the-lost-realm-nightmare-the-weather-hills-018" "Track the Orcs" TheWeatherHillsNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+gatherYourCourage :: CardDef
+gatherYourCourage =
+  (encounterSideQuest "the-lost-realm-nightmare-deadmens-dike-027" "Gather Your Courage" DeadmensDikeNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    }

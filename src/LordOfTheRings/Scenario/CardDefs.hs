@@ -16,6 +16,9 @@ allNightmareCards =
       [ passageThroughMirkwoodNightmare
       , journeyAlongTheAnduinNightmare
       , escapeFromDolGuldurNightmare
+      , intrudersInChetwoodNightmare
+      , theWeatherHillsNightmare
+      , deadmensDikeNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -26,3 +29,12 @@ journeyAlongTheAnduinNightmare = nightmareSetup "core-set-nightmare-journey-alon
 
 escapeFromDolGuldurNightmare :: CardDef
 escapeFromDolGuldurNightmare = nightmareSetup "core-set-nightmare-escape-from-dol-guldur-001" "Escape from Dol Guldur" EscapeFromDolGuldurNightmare
+
+intrudersInChetwoodNightmare :: CardDef
+intrudersInChetwoodNightmare = nightmareSetup "the-lost-realm-nightmare-invaders-in-chetwood-001" "Intruders in Chetwood" IntrudersInChetwoodNightmare
+
+theWeatherHillsNightmare :: CardDef
+theWeatherHillsNightmare = nightmareSetup "the-lost-realm-nightmare-the-weather-hills-011" "The Weather Hills" TheWeatherHillsNightmare
+
+deadmensDikeNightmare :: CardDef
+deadmensDikeNightmare = nightmareSetup "the-lost-realm-nightmare-deadmens-dike-019" "Deadmen's Dike" DeadmensDikeNightmare

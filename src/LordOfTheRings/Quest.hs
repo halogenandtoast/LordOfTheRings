@@ -191,6 +191,10 @@ import LordOfTheRings.Quest.Cards.TheCoastOfUmbar
 import LordOfTheRings.Quest.Cards.FateOfTheDreamChaser
 import LordOfTheRings.Quest.Cards.TheHavenOfUmbar
 import LordOfTheRings.Quest.Cards.FinalConfrontation
+import LordOfTheRings.Quest.Cards.ShadowTheWarParty
+import LordOfTheRings.Quest.Cards.ProtectTheBreeLanders
+import LordOfTheRings.Quest.Cards.TrackTheOrcs
+import LordOfTheRings.Quest.Cards.GatherYourCourage
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -414,5 +418,9 @@ allQuests =
         , SomeQuestCard fateOfTheDreamChaser
         , SomeQuestCard theHavenOfUmbar
         , SomeQuestCard finalConfrontation
+        , SomeQuestCard shadowTheWarParty
+        , SomeQuestCard protectTheBreeLanders
+        , SomeQuestCard trackTheOrcs
+        , SomeQuestCard gatherYourCourage
         ]
     ]

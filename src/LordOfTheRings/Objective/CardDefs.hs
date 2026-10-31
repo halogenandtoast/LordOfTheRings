@@ -64,6 +64,7 @@ allObjectiveCards =
       , iarion
       , huntingTheOrcs
       , savageCounterattack
+      , captiveVillager
       , amarthiulAcrossTheEttenmoors
       , amarthiulTheTreacheryOfRhudaur
       , daechanarsBrand
@@ -570,3 +571,14 @@ theBeacon = dolAmrothTower "12136" "The Beacon"
 
 towerOfTheHeron :: CardDef
 towerOfTheHeron = dolAmrothTower "12137" "Tower of the Heron"
+
+-- The Lost Realm Nightmare Decks
+
+-- | Shuffled into the Orc deck in Nightmare mode, it comes into play guarded by the Orc
+-- deck's top card: free of encounters, the first player gains control of it.
+captiveVillager :: CardDef
+captiveVillager =
+  ((objective "the-lost-realm-nightmare-the-weather-hills-012" "Captive Villager" TheWeatherHillsNightmare 3)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 0, cdDefense = Just 1, cdHitPoints = Just 2 })
+    { cdCardTraits = setFromList [Bree]
+    }

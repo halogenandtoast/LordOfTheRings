@@ -211,6 +211,11 @@ import LordOfTheRings.Treachery.Cards.SmokingBlood
 import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
+import LordOfTheRings.Treachery.Cards.AGreatHost
+import LordOfTheRings.Treachery.Cards.KillThem
+import LordOfTheRings.Treachery.Cards.RainWashedTracks
+import LordOfTheRings.Treachery.Cards.ParalyzingFear
+import LordOfTheRings.Treachery.Cards.CurseOfAngmar
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -446,5 +451,10 @@ allTreacherys =
         , SomeTreacheryCard sentinelOfShadow
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
+        , SomeTreacheryCard aGreatHost
+        , SomeTreacheryCard killThem
+        , SomeTreacheryCard rainWashedTracks
+        , SomeTreacheryCard paralyzingFear
+        , SomeTreacheryCard curseOfAngmar
         ]
     ]
