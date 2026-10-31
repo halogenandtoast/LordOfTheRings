@@ -22,6 +22,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           <span v-if="preview" class="title preview-title">{{ game.name }}</span>
           <RouterLink v-else class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
           <div v-if="game.easyMode" class="badge easy">{{ $t('home.easyMode') }}</div>
+          <div v-if="game.nightmare" class="badge nightmare">{{ $t('home.nightmare') }}</div>
           <div v-if="game.outcome" class="badge outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
             {{ $t(game.outcome === 'Won' ? 'home.won' : 'home.lost') }}
           </div>
@@ -138,6 +139,7 @@ a.title:hover { color: var(--accent-bright); text-decoration: underline; }
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
+.badge.nightmare { border: 1px solid #7a1f1f; color: #c94a4a; padding: 1px 7px; }
 .badge:is(.easy, .victory) { border: 1px solid var(--box-border); color: var(--text-muted); padding: 1px 7px; }
 .outcome.won { background: var(--success); color: var(--button-primary-text); }
 .outcome.lost { background: var(--danger); color: var(--text); }

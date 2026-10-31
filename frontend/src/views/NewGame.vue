@@ -38,7 +38,17 @@ const makeDefault = async () => {
   await updateSettings({ allowSpectatorsByDefault: allowSpectators.value })
   savedDefault.value = true
 }
-const easyMode = ref(false)
+// normal, easy or nightmare: one at a time, nightmare only where the scenario has its deck
+type Mode = 'normal' | 'easy' | 'nightmare'
+const mode = ref<Mode>('normal')
+const modes = computed(() =>
+  (['normal', 'easy', 'nightmare'] as const)
+    .filter((m) => m !== 'nightmare' || selectedScenario.value?.nightmare)
+    .map((value) => ({ value, label: t(`newGame.mode.${value}`) })),
+)
+watch(selectedScenario, (s) => {
+  if (mode.value === 'nightmare' && !s?.nightmare) mode.value = 'normal'
+})
 const error = ref<string | null>(null)
 
 // Seats are taken, each with a deck, once the game is made, where its link brings
@@ -90,7 +100,8 @@ const create = async () => {
       decks: [],
       seats: seatCount.value,
       allowSpectators: allowSpectators.value,
-      easyMode: easyMode.value,
+      easyMode: mode.value === 'easy',
+      nightmare: mode.value === 'nightmare',
     })
     await router.push(`/games/${id}`)
   } catch (e) {
@@ -183,13 +194,20 @@ const create = async () => {
                 >{{ n }}</button>
               </div>
             </div>
-            <div class="toggle-row">
-              <label class="switch">
-                <input v-model="easyMode" type="checkbox" role="switch" />
-                <span class="track" aria-hidden="true" />
-                {{ $t('newGame.easyMode') }}
-              </label>
-              <p class="hint">{{ $t('newGame.easyModeHint') }}</p>
+            <div class="option">
+              <span class="option-title">{{ $t('newGame.mode.title') }}</span>
+              <div class="segmented" role="radiogroup">
+                <button
+                  v-for="m in modes"
+                  :key="m.value"
+                  type="button"
+                  role="radio"
+                  :aria-checked="mode === m.value"
+                  :class="{ selected: mode === m.value }"
+                  @click="mode = m.value"
+                >{{ m.label }}</button>
+              </div>
+              <p class="hint">{{ $t(`newGame.mode.${mode}Hint`) }}</p>
             </div>
             <div class="toggle-row">
               <label class="switch">

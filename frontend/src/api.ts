@@ -36,7 +36,7 @@ export const fetchAdminDashboard = () => apiFetch('/api/admin').then((r) => json
  * cards follow the FAQ's errata (the server takes them to unless told otherwise). */
 export type DeckChoice = ({ starter: string } | { deckId: number } | { list: DeckList }) & { errata?: boolean }
 
-export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean }) =>
+export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean; nightmare?: boolean }) =>
   apiFetch('/api/games', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
