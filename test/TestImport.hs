@@ -9,7 +9,8 @@ import LordOfTheRings.Classes.HasGame as X
 import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.Entity as X (insertEntity, overAttrs, toAttrs, toId)
-import LordOfTheRings.Scenario.Types (encounterDeckL)
+import LordOfTheRings.Campaign (CampaignLog)
+import LordOfTheRings.Scenario.Types (encounterDeckL, scenarioCampaign)
 import LordOfTheRings.Scenario as X (Scenario, escapeFromDolGuldur, journeyAlongTheAnduin, passageThroughMirkwood)
 import LordOfTheRings.Decklist as X (DeckList (..), deckList, starterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
@@ -231,6 +232,15 @@ gameTestIn scenario deck body = do
   (player, heroes) <- either (error . show) pure =<< loadPlayer "tester" deck
   env <- newGameEnv (newGameIn scenario player heroes) (const $ pure ()) 1
   runGameT env (body player.id)
+
+-- | Run a test against a one player game of the scenario in campaign mode, with the
+-- campaign log as the scenario begins.
+campaignTestIn :: Scenario -> CampaignLog -> DeckList -> (PlayerId -> GameT ()) -> IO ()
+campaignTestIn scenario l = gameTestIn (overAttrs (\a -> a {scenarioCampaign = Just l}) scenario)
+
+-- | The campaign log the scenario holds, as resolved once it is won.
+getCampaignLog :: GameT CampaignLog
+getCampaignLog = getsGame (fromJustNote "not in campaign mode" . scenarioCampaign . toAttrs . (.scenario))
 
 -- | Put a quest stage straight into play, with nothing else in the quest deck.
 putQuestStage :: CardDef -> GameT Target
