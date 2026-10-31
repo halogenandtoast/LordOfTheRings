@@ -257,6 +257,8 @@ import LordOfTheRings.Enemy.Cards.RupertNightmare
 import LordOfTheRings.Enemy.Cards.StuartNightmare
 import LordOfTheRings.Enemy.Cards.GoblinEagleHunter
 import LordOfTheRings.Enemy.Cards.TreetopBirdEater
+import LordOfTheRings.Enemy.Cards.TunnelingNamelessThing
+import LordOfTheRings.Enemy.Cards.OrcInterceptor
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -539,5 +541,7 @@ allEnemys =
         , SomeEnemyCard stuartNightmare
         , SomeEnemyCard goblinEagleHunter
         , SomeEnemyCard treetopBirdEater
+        , SomeEnemyCard tunnelingNamelessThing
+        , SomeEnemyCard orcInterceptor
         ]
     ]

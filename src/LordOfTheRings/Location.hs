@@ -279,6 +279,8 @@ import LordOfTheRings.Location.Cards.HivesAndHives
 import LordOfTheRings.Location.Cards.DarkWoodGrove
 import LordOfTheRings.Location.Cards.LabyrinthineWoods
 import LordOfTheRings.Location.Cards.PitchDarkThicket
+import LordOfTheRings.Location.Cards.BramblesAndThorns
+import LordOfTheRings.Location.Cards.SarnGebirRapids
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -599,5 +601,7 @@ allLocations =
         , SomeLocationCard darkWoodGrove
         , SomeLocationCard labyrinthineWoods
         , SomeLocationCard pitchDarkThicket
+        , SomeLocationCard bramblesAndThorns
+        , SomeLocationCard sarnGebirRapids
         ]
     ]

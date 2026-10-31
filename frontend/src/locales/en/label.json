@@ -1606,5 +1606,10 @@
   },
   "shotFromTheSky": {
     "attach": "Shot from the Sky: choose an Eagle character to attach it to"
+  },
+  "aHurryingDarkness": {
+    "choose": "A Hurrying Darkness: raise your threat by 5, or reveal an encounter card",
+    "threat": "Raise your threat by 5",
+    "reveal": "Reveal an additional encounter card"
   }
 }

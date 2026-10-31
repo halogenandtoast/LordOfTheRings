@@ -217,6 +217,10 @@ import LordOfTheRings.Treachery.Cards.TheTrailGoesCold
 import LordOfTheRings.Treachery.Cards.TimeForSupper
 import LordOfTheRings.Treachery.Cards.ShotFromTheSky
 import LordOfTheRings.Treachery.Cards.NoxiousSupplies
+import LordOfTheRings.Treachery.Cards.AHurryingDarkness
+import LordOfTheRings.Treachery.Cards.BlastOfSavageWind
+import LordOfTheRings.Treachery.Cards.HazardousTerrain
+import LordOfTheRings.Treachery.Cards.RetracedSteps
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -458,5 +462,9 @@ allTreacherys =
         , SomeTreacheryCard timeForSupper
         , SomeTreacheryCard shotFromTheSky
         , SomeTreacheryCard noxiousSupplies
+        , SomeTreacheryCard aHurryingDarkness
+        , SomeTreacheryCard blastOfSavageWind
+        , SomeTreacheryCard hazardousTerrain
+        , SomeTreacheryCard retracedSteps
         ]
     ]

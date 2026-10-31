@@ -8,10 +8,10 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase
-import LordOfTheRings.Scenario (aJourneyToRhosgobel, conflictAtTheCarrock, theHuntForGollum)
+import LordOfTheRings.Scenario (aJourneyToRhosgobel, conflictAtTheCarrock, theHillsOfEmynMuil, theHuntForGollum)
 import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
+import LordOfTheRings.Window (WindowType (Explored, PhaseEnds), mkAfter, mkWhen)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -20,6 +20,12 @@ nightmare s = gameTestIn (overAttrs (modeL .~ NightmareMode) s) testDeck
 -- | Reveal a card from the encounter deck, with the given cards under it.
 reveal :: CardDef -> [CardDef] -> GameT ()
 reveal def rest = setEncounterDeck (def : rest) >> run RevealEncounterCard >> resolveRevealed
+
+theLocation :: GameT LocationId
+theLocation = getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+
+threat :: PlayerId -> GameT Int
+threat pid = (.threat) <$> getPlayer pid
 
 theEnemy :: GameT EnemyId
 theEnemy = getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
@@ -149,3 +155,39 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       reveal Locations.labyrinthineWoods []
       reveal Enemies.treetopBirdEater []
       (getEnemyAttack =<< theEnemy) `shouldReturn` 5
+
+  describe "The Hills of Emyn Muil" do
+    it "builds the nightmare deck" . nightmare theHillsOfEmynMuil $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 46
+      map (`copies` deck) [Locations.theHighlands, Enemies.dolGuldurOrcs, Enemies.tunnelingNamelessThing]
+        `shouldBe` [0, 1, 3]
+
+    it "places no more than 1 progress on a location in the staging area each round" . nightmare theHillsOfEmynMuil $ \_ -> do
+      reveal Locations.sarnGebirRapids []
+      lid <- theLocation
+      run $ PlaceTokens GameSource (toTarget lid) Progress 3
+      run $ PlaceTokens GameSource (toTarget lid) Progress 1
+      (.progress) <$> getLocation lid `shouldReturn` 1
+
+    it "Orc Interceptor grows as locations are explored" . nightmare theHillsOfEmynMuil $ \_ -> do
+      reveal Enemies.orcInterceptor []
+      reveal Locations.sarnGebirRapids []
+      lid <- theLocation
+      run $ CheckWindows [mkAfter $ Explored lid]
+      (getEnemyAttack =<< theEnemy) `shouldReturn` 3
+
+    it "Retraced Steps discards an Emyn Muil location from the victory display" . nightmare theHillsOfEmynMuil $ \_ -> do
+      reveal Locations.bramblesAndThorns []
+      lid <- theLocation
+      run $ AddToVictoryDisplay (toTarget lid)
+      reveal Treacheries.retracedSteps [Enemies.orcInterceptor]
+      getsGame ((.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` []
+      map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Locations.bramblesAndThorns))
+
+    it "A Hurrying Darkness raises a player's threat by 5 if he chooses" . nightmare theHillsOfEmynMuil $ \pid -> do
+      was <- threat pid
+      reveal Treacheries.aHurryingDarkness []
+      chooseLabel "$label.aHurryingDarkness.threat" pid
+      threat pid `shouldReturn` was + 5
