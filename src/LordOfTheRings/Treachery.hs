@@ -211,6 +211,9 @@ import LordOfTheRings.Treachery.Cards.SmokingBlood
 import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
+import LordOfTheRings.Treachery.Cards.TheEnemysTrail
+import LordOfTheRings.Treachery.Cards.RestlessHunters
+import LordOfTheRings.Treachery.Cards.TheTrailGoesCold
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -446,5 +449,8 @@ allTreacherys =
         , SomeTreacheryCard sentinelOfShadow
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
+        , SomeTreacheryCard theEnemysTrail
+        , SomeTreacheryCard restlessHunters
+        , SomeTreacheryCard theTrailGoesCold
         ]
     ]

@@ -1585,5 +1585,16 @@
   },
   "smokingBlood": {
     "moveDamage": "Choose the character to take the enemy's damage"
+  },
+  "theHuntForGollumNightmare": {
+    "clue": "Choose a Clue card to attach to a Mordor enemy",
+    "mordorEnemy": "Choose the Mordor enemy to attach the Clue card to"
+  },
+  "restlessHunters": {
+    "clue": "Restless Hunters: choose a Clue card attached to a hero",
+    "hero": "Restless Hunters: choose the hero with a Clue card to take this attack's damage"
+  },
+  "darkPools": {
+    "discard": "Dark Pools: discard your ally with the highest printed cost"
   }
 }
