@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.39.6.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -523,8 +523,8 @@ library
       LordOfTheRings.Enemy.Cards.HaradrimCaptain
       LordOfTheRings.Enemy.Cards.HaradrimElite
       LordOfTheRings.Enemy.Cards.HaradrimMarksman
-      LordOfTheRings.Enemy.Cards.HarborBrute
       LordOfTheRings.Enemy.Cards.HaradrimWarrior
+      LordOfTheRings.Enemy.Cards.HarborBrute
       LordOfTheRings.Enemy.Cards.HarborThug
       LordOfTheRings.Enemy.Cards.HeavyCruiser
       LordOfTheRings.Enemy.Cards.HillTroll
@@ -612,8 +612,8 @@ library
       LordOfTheRings.Enemy.Cards.PatrolShip
       LordOfTheRings.Enemy.Cards.PelargirRingleader
       LordOfTheRings.Enemy.Cards.Pickpocket
-      LordOfTheRings.Enemy.Cards.PitGoblin
       LordOfTheRings.Enemy.Cards.PillagingOrc
+      LordOfTheRings.Enemy.Cards.PitGoblin
       LordOfTheRings.Enemy.Cards.ProfaneDead
       LordOfTheRings.Enemy.Cards.ProwlingOrc
       LordOfTheRings.Enemy.Cards.ProwlingWolf
@@ -716,8 +716,8 @@ library
       LordOfTheRings.Enemy.Cards.ViciousMarauder
       LordOfTheRings.Enemy.Cards.VigilantOrc
       LordOfTheRings.Enemy.Cards.Wargs
-      LordOfTheRings.Enemy.Cards.WebSpinner
       LordOfTheRings.Enemy.Cards.WarriorOfNurn
+      LordOfTheRings.Enemy.Cards.WebSpinner
       LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
       LordOfTheRings.Enemy.Cards.WhiteWarg
       LordOfTheRings.Enemy.Cards.WickedHuorn
@@ -1078,8 +1078,8 @@ library
       LordOfTheRings.Location.Cards.DesecratedGrounds
       LordOfTheRings.Location.Cards.DesecratedRuinsNightmare
       LordOfTheRings.Location.Cards.DesolateMeadow
-      LordOfTheRings.Location.Cards.DocksideStreet
       LordOfTheRings.Location.Cards.DevilsMirk
+      LordOfTheRings.Location.Cards.DocksideStreet
       LordOfTheRings.Location.Cards.DoorsOfDurin
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DreamChaserLocation
@@ -1091,16 +1091,13 @@ library
       LordOfTheRings.Location.Cards.DunlandBattlefield
       LordOfTheRings.Location.Cards.DustyLabyrinth
       LordOfTheRings.Location.Cards.DwarvenForge
+      LordOfTheRings.Location.Cards.EasternQuarter
       LordOfTheRings.Location.Cards.EasternShore
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
       LordOfTheRings.Location.Cards.EdgeOfFangorn
-      LordOfTheRings.Location.Cards.EdgeOfTheTemple
-      LordOfTheRings.Location.Cards.EasternQuarter
-      LordOfTheRings.Location.Cards.EastGate
-      LordOfTheRings.Location.Cards.EastQuarter
-      LordOfTheRings.Location.Cards.EdgeOfFangorn
       LordOfTheRings.Location.Cards.EdgeOfIthilien
+      LordOfTheRings.Location.Cards.EdgeOfTheTemple
       LordOfTheRings.Location.Cards.EerieHalls
       LordOfTheRings.Location.Cards.Eilenach
       LordOfTheRings.Location.Cards.ElvenCaravel
@@ -1207,9 +1204,9 @@ library
       LordOfTheRings.Location.Cards.OvergrownPassage
       LordOfTheRings.Location.Cards.OvergrownSteps
       LordOfTheRings.Location.Cards.OvergrownTrail
-      LordOfTheRings.Location.Cards.PalaceRuins
       LordOfTheRings.Location.Cards.OverrunVillage
       LordOfTheRings.Location.Cards.PalaceRemains
+      LordOfTheRings.Location.Cards.PalaceRuins
       LordOfTheRings.Location.Cards.PatchOfWoods
       LordOfTheRings.Location.Cards.PathlessCountry
       LordOfTheRings.Location.Cards.PatrolRoom
@@ -1357,8 +1354,8 @@ library
       LordOfTheRings.Location.Cards.WeatherTornValley
       LordOfTheRings.Location.Cards.WebWall
       LordOfTheRings.Location.Cards.WesternHall
-      LordOfTheRings.Location.Cards.WesternShore
       LordOfTheRings.Location.Cards.WesternQuarter
+      LordOfTheRings.Location.Cards.WesternShore
       LordOfTheRings.Location.Cards.WestGate
       LordOfTheRings.Location.Cards.WestQuarter
       LordOfTheRings.Location.Cards.WhiteFloweredFields
@@ -1445,8 +1442,8 @@ library
       LordOfTheRings.Objective.Cards.ShadowKey
       LordOfTheRings.Objective.Cards.SignsOfGollum
       LordOfTheRings.Objective.Cards.TheBeacon
-      LordOfTheRings.Objective.Cards.TheCursedSword
       LordOfTheRings.Objective.Cards.TheCabalsChampion
+      LordOfTheRings.Objective.Cards.TheCursedSword
       LordOfTheRings.Objective.Cards.TheHavensBurn
       LordOfTheRings.Objective.Cards.TheOrcsSearch
       LordOfTheRings.Objective.Cards.ToTheTower
@@ -1935,9 +1932,9 @@ library
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
       LordOfTheRings.Treachery.Cards.NoRest
+      LordOfTheRings.Treachery.Cards.NoxiousFumes
       LordOfTheRings.Treachery.Cards.NoxiousSupplies
       LordOfTheRings.Treachery.Cards.ObsidianArrows
-      LordOfTheRings.Treachery.Cards.NoxiousFumes
       LordOfTheRings.Treachery.Cards.OffTrack
       LordOfTheRings.Treachery.Cards.OldHatreds
       LordOfTheRings.Treachery.Cards.OldWivesTales
@@ -2039,9 +2036,9 @@ library
       LordOfTheRings.Treachery.Cards.TheSkyDarkens
       LordOfTheRings.Treachery.Cards.TheSpidersWeb
       LordOfTheRings.Treachery.Cards.TheThievesPloy
+      LordOfTheRings.Treachery.Cards.TheTowerBeckons
       LordOfTheRings.Treachery.Cards.TheTrailGoesCold
       LordOfTheRings.Treachery.Cards.TheyreGettingAway
-      LordOfTheRings.Treachery.Cards.TheTowerBeckons
       LordOfTheRings.Treachery.Cards.ThoseNowSundered
       LordOfTheRings.Treachery.Cards.ThroughTheMist
       LordOfTheRings.Treachery.Cards.ThrownOffCourse
