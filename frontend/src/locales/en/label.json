@@ -1591,5 +1591,15 @@
   },
   "chokingTentacle": {
     "attach": "Choose a character for Choking Tentacle to take hold of"
+  },
+  "bottomlessChasm": {
+    "discard": "Bottomless Chasm: choose the player to discard a card from his hand"
+  },
+  "lostAndHelpless": {
+    "attach": "Choose a hero to attach Lost and Helpless to"
+  },
+  "theLongDark": {
+    "discardAlly": "Lost: choose an ally in play to discard",
+    "triggerLost": "Choose a Lost: effect in play to trigger"
   }
 }

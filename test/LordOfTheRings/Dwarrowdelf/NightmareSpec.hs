@@ -9,7 +9,8 @@ import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (QuestPhase))
-import LordOfTheRings.Scenario (roadToRivendell, theRedhornGate, theWatcherInTheWater)
+import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Scenario (roadToRivendell, theLongDark, theRedhornGate, theWatcherInTheWater)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck, scenarioSetAside), encounterDiscardL, modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -224,3 +225,39 @@ spec = describe "Dwarrowdelf nightmare decks" do
       reveal Locations.banksOfSirannon []
       reveal Enemies.chokingTentacle []
       (getEnemyDefense =<< enemyOf Enemies.chokingTentacle) `shouldReturn` 3
+
+  describe "The Long Dark" do
+    it "builds the nightmare deck" . nightmare theLongDark $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 56
+      map (`copies` deck) [Enemies.goblinSneak, Enemies.strayGoblin, Enemies.goblinStalker]
+        `shouldBe` [0, 1, 4]
+
+    it "its setup card's Lost: has the first player discard an ally" . nightmare theLongDark $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.snowbournScout
+      run $ TriggerLostEffects GameSource
+      getsGame (length . (.entities.allies)) `shouldReturn` 0
+
+    it "Dreadful Deep has each player trigger a Lost: effect, as Lost and Helpless's" . nightmare theLongDark $ \pid -> do
+      reveal Treacheries.lostAndHelpless [Locations.easternMines]
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      chooseTarget pid eowyn
+      helpless <- getsGame (map toTarget . toList . (.entities.treacheries))
+      reveal Treacheries.dreadfulDeep []
+      for_ helpless (chooseTarget pid)
+      getsGame (length . (.entities.heroes)) `shouldReturn` 2
+
+    it "Goblin Stalker gets +2 attack when dealt a shadow card with the pass icon" . nightmare theLongDark $ \pid -> do
+      reveal Enemies.goblinStalker []
+      eid <- enemyOf Enemies.goblinStalker
+      run $ EngageEnemy pid eid
+      run . AttachShadowCard eid =<< genEncounterCard Locations.dwarvenForge
+      getEnemyAttack eid `shouldReturn` 4
+
+    it "Trapdoor Spider discards the character it damages" . nightmare theLongDark $ \_ -> do
+      reveal Enemies.trapdoorSpider []
+      eid <- enemyOf Enemies.trapdoorSpider
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      run $ DealDamage (EnemyAttackSource eid) beravor 1
+      getsGame (length . (.entities.heroes)) `shouldReturn` 2

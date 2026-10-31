@@ -472,6 +472,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinSneak
       LordOfTheRings.Enemy.Cards.GoblinSniper
       LordOfTheRings.Enemy.Cards.GoblinSpearman
+      LordOfTheRings.Enemy.Cards.GoblinStalker
       LordOfTheRings.Enemy.Cards.GoblinSwordsman
       LordOfTheRings.Enemy.Cards.GoblinTaskmaster
       LordOfTheRings.Enemy.Cards.GoblinTormentor
@@ -563,6 +564,7 @@ library
       LordOfTheRings.Enemy.Cards.SavageTrollspawn
       LordOfTheRings.Enemy.Cards.ScoutingShip
       LordOfTheRings.Enemy.Cards.SeaScorpion
+      LordOfTheRings.Enemy.Cards.SentinelOfTheDeep
       LordOfTheRings.Enemy.Cards.SerpentsBlade
       LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
       LordOfTheRings.Enemy.Cards.SiegeRaft
@@ -603,6 +605,7 @@ library
       LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
       LordOfTheRings.Enemy.Cards.TortureMaster
       LordOfTheRings.Enemy.Cards.TraitorousWight
+      LordOfTheRings.Enemy.Cards.TrapdoorSpider
       LordOfTheRings.Enemy.Cards.UmbarAssassin
       LordOfTheRings.Enemy.Cards.UmbarCaptain
       LordOfTheRings.Enemy.Cards.UmbarRaider
@@ -920,6 +923,7 @@ library
       LordOfTheRings.Location.Cards.BelfalasIslet
       LordOfTheRings.Location.Cards.BlightOfCarnDum
       LordOfTheRings.Location.Cards.BordersOfBreeLand
+      LordOfTheRings.Location.Cards.BottomlessChasm
       LordOfTheRings.Location.Cards.BranchingPaths
       LordOfTheRings.Location.Cards.BridgeOfKhazadDum
       LordOfTheRings.Location.Cards.BrokenBattlements
@@ -961,6 +965,7 @@ library
       LordOfTheRings.Location.Cards.DungeonLabyrinth
       LordOfTheRings.Location.Cards.DunlandBattlefield
       LordOfTheRings.Location.Cards.DwarvenForge
+      LordOfTheRings.Location.Cards.EasternMines
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
       LordOfTheRings.Location.Cards.EdgeOfFangorn
@@ -1609,6 +1614,7 @@ library
       LordOfTheRings.Treachery.Cards.Discovered
       LordOfTheRings.Treachery.Cards.DisturbedWaters
       LordOfTheRings.Treachery.Cards.DownFromTheHills
+      LordOfTheRings.Treachery.Cards.DreadfulDeep
       LordOfTheRings.Treachery.Cards.DrivenBack
       LordOfTheRings.Treachery.Cards.DrivenByShadow
       LordOfTheRings.Treachery.Cards.DunlendingAmbush
@@ -1662,6 +1668,7 @@ library
       LordOfTheRings.Treachery.Cards.LingeringVenom
       LordOfTheRings.Treachery.Cards.LocalTrouble
       LordOfTheRings.Treachery.Cards.LostAndAlone
+      LordOfTheRings.Treachery.Cards.LostAndHelpless
       LordOfTheRings.Treachery.Cards.LostCompany
       LordOfTheRings.Treachery.Cards.LostInTheCity
       LordOfTheRings.Treachery.Cards.LowOnProvisions
