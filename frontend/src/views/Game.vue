@@ -166,10 +166,10 @@ const onKeydown = (event: KeyboardEvent) => {
     }
   }
 }
-// Space takes the only choice, or passes on a response.
+// Space takes the only choice, or passes on a response or action window.
 const spaceChoice = computed(() => {
   if (choices.value.length === 1) return choices.value[0].index
-  if (!isKey(question.value?.prompt, 'label.useResponse')) return null
+  if (!isKey(question.value?.prompt, 'label.useResponse') && !isKey(question.value?.prompt, 'label.takeAction')) return null
   return choices.value.find((choice) => isKey(choice.label, 'label.pass'))?.index ?? null
 })
 onMounted(() => document.addEventListener('keydown', onKeydown))
