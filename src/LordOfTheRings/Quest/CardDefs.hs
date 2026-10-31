@@ -8,6 +8,7 @@ import LordOfTheRings.Keyword (Keyword (Battle, Capture, Sailing, Siege, Surge, 
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
+import LordOfTheRings.Trait (Trait (Burden))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
@@ -55,6 +56,10 @@ allQuestCards =
     map
       (\def -> (cdCardCode def, def))
       [ fliesAndSpiders
+      , protectTheInnocent
+      , mysteriousOmens
+      , fendOffDespair
+      , lootTheDungeons
       , enteringTheMines
       , goblinPatrol
       , aWayUp
@@ -166,6 +171,8 @@ allQuestCards =
       , throughTheMarshAWearyPassage
       , throughTheMarshAForgottenLand
       , lostInTheSwanfleetImpassableMarshland
+      , throughTheMarshAnArduousJourney
+      , lostInTheSwanfleetDeadlyWaters
       , lostInTheSwanfleetATreacherousSwamp
       , lostInTheSwanfleetCreaturesOfAForgottenAge
       , outOfTheSwamp
@@ -205,6 +212,10 @@ allQuestCards =
       , theShadowWorld
       , sealTheTomb
       , thePowerOfAngmar
+      , shadowTheWarParty
+      , protectTheBreeLanders
+      , trackTheOrcs
+      , gatherYourCourage
       , secretsOfRhudaur
       , thaurdirsPursuit
       , quietTheSpirits
@@ -240,6 +251,25 @@ allQuestCards =
       , fateOfTheDreamChaser
       , theHavenOfUmbar
       , finalConfrontation
+      , corsairConfrontation
+      , lostAtSea
+      , sahirsAdvanceNightmare
+      , goblinAmbush
+      , pursuedByShadowStage
+      , blockedByFlame
+      , ghash
+      , grimbeornsFolly
+      , ambushInTheNight
+      , makeAStand
+      , forcedOffTrack
+      , raidGolfimbulsVault
+      , intoTheEttenmoorsNightmare
+      , isolated
+      , rescueFromTheTrolls
+      , protectTheFlanks
+      , rallyTheFighters
+      , severTheHead
+      , theWitchKingsGift
       ]
 
 theDrippingWalls :: CardDef
@@ -894,3 +924,194 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
+
+-- The Angmar Awakened campaign's side quests
+
+-- | No quest points: progress removes its damage instead, so it is never defeated. Its
+-- other side is Arnor Ravaged.
+protectTheInnocent :: CardDef
+protectTheInnocent = (encounterSideQuest "AAC158" "Protect the Innocent" AngmarAwakenedCampaign 0) {cdCardTraits = setFromList [Burden]}
+
+mysteriousOmens :: CardDef
+mysteriousOmens =
+  (encounterSideQuest "AAC160" "Mysterious Omens" AngmarAwakenedCampaign 9)
+    { cdVictoryPoints = Just 5
+    , cdKeywords = setFromList [Surge]
+    , cdCardTraits = setFromList [Burden]
+    }
+
+fendOffDespair :: CardDef
+fendOffDespair = (encounterSideQuest "AAC173" "Fend Off Despair" AngmarAwakenedCampaign 8) {cdVictoryPoints = Just 10, cdCardTraits = setFromList [Burden]}
+
+lootTheDungeons :: CardDef
+lootTheDungeons = (encounterSideQuest "AAC175" "Loot the Dungeons" AngmarAwakenedCampaign 4) {cdVictoryPoints = Just 10}
+-- The Grey Havens Nightmare Decks
+
+corsairConfrontation :: CardDef
+corsairConfrontation =
+  (quest "the-grey-havens-nightmare-voyage-across-belegaer-002" "Corsair Confrontation" VoyageAcrossBelegaerNightmare 2 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Sailing]
+    , cdVictoryPoints = Just 3
+    }
+
+lostAtSea :: CardDef
+lostAtSea =
+  (quest "the-grey-havens-nightmare-voyage-across-belegaer-003" "Lost at Sea" VoyageAcrossBelegaerNightmare 2 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Sailing]
+    , cdVictoryPoints = Just 3
+    }
+
+sahirsAdvanceNightmare :: CardDef
+sahirsAdvanceNightmare =
+  (quest "the-grey-havens-nightmare-raid-on-the-grey-havens-002" "Sahír's Advance" RaidOnTheGreyHavensNightmare 2 0) {cdQuestPoints = Nothing}
+
+-- The Lost Realm Nightmare Decks
+
+shadowTheWarParty :: CardDef
+shadowTheWarParty =
+  (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-009" "Shadow the War Party" IntrudersInChetwoodNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+protectTheBreeLanders :: CardDef
+protectTheBreeLanders =
+  (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-010" "Protect the Bree-landers" IntrudersInChetwoodNightmare 10)
+
+-- The Wastes of Eriador Nightmare
+
+-- | No quest points: it leaves as its resource tokens say.
+makeAStand :: CardDef
+makeAStand =
+  (encounterSideQuest "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-007" "Make a Stand" TheWastesOfEriadorNightmare 0)
+    { cdQuestPoints = Nothing
+    , cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+forcedOffTrack :: CardDef
+forcedOffTrack =
+  (encounterSideQuest "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-008" "Forced Off Track" TheWastesOfEriadorNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+trackTheOrcs :: CardDef
+trackTheOrcs =
+  (encounterSideQuest "the-lost-realm-nightmare-the-weather-hills-018" "Track the Orcs" TheWeatherHillsNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+gatherYourCourage :: CardDef
+gatherYourCourage =
+  (encounterSideQuest "the-lost-realm-nightmare-deadmens-dike-027" "Gather Your Courage" DeadmensDikeNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    }
+
+-- Khazad-dûm Nightmare Decks
+
+-- | X is 1 plus the number of players in the game: the stage counts them.
+goblinAmbush :: CardDef
+goblinAmbush = quest "khazad-dum-nightmare-into-the-pit-002" "Goblin Ambush" IntoThePitNightmare 2 1
+
+nightmareSearchForAnExit :: CardCode -> Text -> Maybe Int -> Maybe Int -> CardDef
+nightmareSearchForAnExit code subtitle questPoints victory =
+  (quest code (Name "Search for an Exit" (Just subtitle)) FlightFromMoriaNightmare 2 0)
+    { cdQuestPoints = questPoints
+    , cdVictoryPoints = victory
+    }
+
+pursuedByShadowStage :: CardDef
+pursuedByShadowStage = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-moria-002" "Pursued by Shadow" (Just 5) Nothing
+
+-- | No quest points: The Nameless Fear's damage defeats it.
+blockedByFlame :: CardDef
+blockedByFlame = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-moria-003" "Blocked by Flame" Nothing (Just 1)
+
+ghash :: CardDef
+ghash = nightmareSearchForAnExit "khazad-dum-nightmare-flight-from-moria-004" "Ghâsh!" (Just 1) (Just 1)
+
+-- The Nîn-in-Eilph Nightmare Deck: B sides in place of A Weary Passage's and Impassable Marshland's
+
+throughTheMarshAnArduousJourney :: CardDef
+throughTheMarshAnArduousJourney = (throughTheMarsh "the-nin-in-eilph-nightmare-the-nin-in-eilph-008" "An Arduous Journey") {cdEncounterSet = Just TheNinInEilphNightmare}
+
+lostInTheSwanfleetDeadlyWaters :: CardDef
+lostInTheSwanfleetDeadlyWaters = (lostInTheSwanfleet "the-nin-in-eilph-nightmare-the-nin-in-eilph-009" "Deadly Waters") {cdEncounterSet = Just TheNinInEilphNightmare}
+
+-- Shadows of Mirkwood Nightmare Decks
+
+grimbeornsFolly :: CardDef
+grimbeornsFolly =
+  (quest "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-011" "Grimbeorn's Folly" ConflictAtTheCarrockNightmare 3 0)
+    { cdQuestPoints = Nothing
+    }
+
+-- | Road to Rivendell's nightmare stage 2, in place of Orc Outpost.
+ambushInTheNight :: CardDef
+ambushInTheNight = quest "road-to-rivendell-nightmare-road-to-rivendell-002" "Ambush in the Night" RoadToRivendellNightmare 2 12
+
+-- Escape from Mount Gram Nightmare
+
+raidGolfimbulsVault :: CardDef
+raidGolfimbulsVault =
+  (encounterSideQuest "escape-from-mount-gram-nightmare-escape-from-mount-gram-008" "Raid Golfimbul's Vault" EscapeFromMountGramNightmare 9)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge, Capture 3]
+    }
+
+-- Across the Ettenmoors Nightmare
+
+intoTheEttenmoorsNightmare :: CardDef
+intoTheEttenmoorsNightmare = quest "across-the-ettenmoors-nightmare-across-the-ettenmoors-002" "Into the Ettenmoors" AcrossTheEttenmoorsNightmare 1 10
+
+isolated :: CardDef
+isolated =
+  (encounterSideQuest "across-the-ettenmoors-nightmare-across-the-ettenmoors-010" "Isolated" AcrossTheEttenmoorsNightmare 7)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+rescueFromTheTrolls :: CardDef
+rescueFromTheTrolls =
+  (encounterSideQuest "across-the-ettenmoors-nightmare-across-the-ettenmoors-011" "Rescue from the Trolls" AcrossTheEttenmoorsNightmare 15)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+protectTheFlanks :: CardDef
+protectTheFlanks =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-009" "Protect the Flanks" TheBattleOfCarnDumNightmare 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Siege]
+    }
+
+rallyTheFighters :: CardDef
+rallyTheFighters =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-010" "Rally the Fighters" TheBattleOfCarnDumNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+severTheHead :: CardDef
+severTheHead =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-011" "Sever the Head" TheBattleOfCarnDumNightmare 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Battle]
+    }
+
+-- The Dread Realm Nightmare
+
+-- | No victory points: defeated, it goes to the encounter discard pile.
+theWitchKingsGift :: CardDef
+theWitchKingsGift =
+  (encounterSideQuest "the-dread-realm-nightmare-the-dread-realm-009" "The Witch-king's Gift" TheDreadRealmNightmare 8)
+    { cdKeywords = setFromList [Time 5]
+    }

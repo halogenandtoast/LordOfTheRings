@@ -19,7 +19,7 @@ distantStars =
   eventWith DistantStars Cards.distantStars \a ->
     a
       & criteriaL
-      .~ ( exists (IsActiveLocation <> not_ UniqueLocation)
+      .~ ( exists (IsActiveLocation <> not_ UniqueLocation <> LocationDiscardableByPlayerCards)
              <> uncurry (CharactersAtLeast 1) (scouts a.owner)
          )
 
@@ -35,7 +35,7 @@ instance RunMessage DistantStars where
   runMessage msg e@(DistantStars attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       exhaustable <- uncurry selectCharacters (scouts pid)
-      active <- select (IsActiveLocation <> not_ UniqueLocation)
+      active <- select (IsActiveLocation <> not_ UniqueLocation <> LocationDiscardableByPlayerCards)
       scenario <- getsGame (toAttrs . gameScenario)
       let nonUnique :: EncounterCard -> Bool
           nonUnique c = cdCardType (toCardDef c) == LocationType && not (cdUnique $ toCardDef c)

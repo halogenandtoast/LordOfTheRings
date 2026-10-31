@@ -64,7 +64,8 @@ instance RunMessage ScenarioAttrs where
     -- the scenario gathers its encounter deck at step 1; shuffle it before any setup reveals
     -- in campaign mode the encounter cards of the Campaign Pool are shuffled in with it
     DoStep 2 Setup -> do
-      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, not (isPlayerCardDef def)]
+      -- (an objective, as Arnor Ravaged, comes into play as its own Setup text says)
+      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType]
       encounterDeck <- shuffleM (earned <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ encounterDeck
     DoStep 4 Setup -> do
@@ -85,6 +86,7 @@ instance RunMessage ScenarioAttrs where
     -- what every campaign records once a scenario is won: the score, and the heroes in
     -- their owners' discard piles fallen (Revised Core rulebook, "Scoring" and "The
     -- Fellowship of Heroes")
+    UpdateCampaignLog u -> pure $ attrs & campaignL %~ fmap (updateLog u)
     ResolveCampaign | Just l <- attrs.campaign -> do
       players <- getsGame (toList . allPlayers)
       heroes <- getsGame (toList . entitiesHeroes . gameEntities)
@@ -219,6 +221,8 @@ instance RunMessage ScenarioAttrs where
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
     -- a set-aside card revealed, as Cornered Animals reveals Orc Ambush
     RevealCard card -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- a set-aside card added to the staging area, as Orc Trail adds one out-of-play Orc
+    AddToStaging card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card put into play, as The Seething Lake makes Doors of Durin active
     PutIntoPlayAsActiveLocation card -> pure $ attrs & setAsideL %~ filter (/= card)
     ShuffleSetAsideIntoEncounterDeck cards -> do
@@ -249,6 +253,7 @@ instance RunMessage ScenarioAttrs where
     SearchEncounterDeckAndDiscardToReveal pid source matcher -> search pid source matcher RevealCard
     -- a set-aside enemy put into play engaged, as No Way Out puts Chief Turch
     PutEnemyIntoPlayEngaged _ card -> pure $ attrs & setAsideL %~ filter (/= card)
+    PutObjectiveIntoPlayAttached card _ -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside Ship objective put into play, as The Beacon gives a Dol Amroth Warship
     PutObjectiveAllyIntoPlayUnder _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     DebugSearchEncounterDeck pid -> do

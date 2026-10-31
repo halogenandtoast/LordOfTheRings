@@ -148,6 +148,10 @@ import LordOfTheRings.Quest.Cards.OrcRearguard
 import LordOfTheRings.Quest.Cards.RescueIarion
 import LordOfTheRings.Quest.Cards.OrcAmbush
 import LordOfTheRings.Quest.Cards.LostInTheWilderness
+import LordOfTheRings.Quest.Cards.ProtectTheInnocent
+import LordOfTheRings.Quest.Cards.MysteriousOmens
+import LordOfTheRings.Quest.Cards.FendOffDespair
+import LordOfTheRings.Quest.Cards.LootTheDungeons
 import LordOfTheRings.Quest.Cards.StopTheWarParty
 import LordOfTheRings.Quest.Cards.FindShelter
 import LordOfTheRings.Quest.Cards.MakeCamp
@@ -191,6 +195,31 @@ import LordOfTheRings.Quest.Cards.TheCoastOfUmbar
 import LordOfTheRings.Quest.Cards.FateOfTheDreamChaser
 import LordOfTheRings.Quest.Cards.TheHavenOfUmbar
 import LordOfTheRings.Quest.Cards.FinalConfrontation
+import LordOfTheRings.Quest.Cards.CorsairConfrontation
+import LordOfTheRings.Quest.Cards.LostAtSea
+import LordOfTheRings.Quest.Cards.SahirsAdvanceNightmare
+import LordOfTheRings.Quest.Cards.ShadowTheWarParty
+import LordOfTheRings.Quest.Cards.ProtectTheBreeLanders
+import LordOfTheRings.Quest.Cards.TrackTheOrcs
+import LordOfTheRings.Quest.Cards.GatherYourCourage
+import LordOfTheRings.Quest.Cards.GoblinAmbush
+import LordOfTheRings.Quest.Cards.PursuedByShadowStage
+import LordOfTheRings.Quest.Cards.BlockedByFlame
+import LordOfTheRings.Quest.Cards.Ghash
+import LordOfTheRings.Quest.Cards.ThroughTheMarshAnArduousJourney
+import LordOfTheRings.Quest.Cards.LostInTheSwanfleetDeadlyWaters
+import LordOfTheRings.Quest.Cards.GrimbeornsFolly
+import LordOfTheRings.Quest.Cards.AmbushInTheNight
+import LordOfTheRings.Quest.Cards.MakeAStand
+import LordOfTheRings.Quest.Cards.ForcedOffTrack
+import LordOfTheRings.Quest.Cards.RaidGolfimbulsVault
+import LordOfTheRings.Quest.Cards.IntoTheEttenmoorsNightmare
+import LordOfTheRings.Quest.Cards.Isolated
+import LordOfTheRings.Quest.Cards.RescueFromTheTrolls
+import LordOfTheRings.Quest.Cards.ProtectTheFlanks
+import LordOfTheRings.Quest.Cards.RallyTheFighters
+import LordOfTheRings.Quest.Cards.SeverTheHead
+import LordOfTheRings.Quest.Cards.TheWitchKingsGift
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -371,6 +400,10 @@ allQuests =
         , SomeQuestCard rescueIarion
         , SomeQuestCard orcAmbush
         , SomeQuestCard lostInTheWilderness
+        , SomeQuestCard protectTheInnocent
+        , SomeQuestCard mysteriousOmens
+        , SomeQuestCard fendOffDespair
+        , SomeQuestCard lootTheDungeons
         , SomeQuestCard stopTheWarParty
         , SomeQuestCard findShelter
         , SomeQuestCard makeCamp
@@ -414,5 +447,30 @@ allQuests =
         , SomeQuestCard fateOfTheDreamChaser
         , SomeQuestCard theHavenOfUmbar
         , SomeQuestCard finalConfrontation
+        , SomeQuestCard corsairConfrontation
+        , SomeQuestCard lostAtSea
+        , SomeQuestCard sahirsAdvanceNightmare
+        , SomeQuestCard shadowTheWarParty
+        , SomeQuestCard protectTheBreeLanders
+        , SomeQuestCard trackTheOrcs
+        , SomeQuestCard gatherYourCourage
+        , SomeQuestCard goblinAmbush
+        , SomeQuestCard pursuedByShadowStage
+        , SomeQuestCard blockedByFlame
+        , SomeQuestCard ghash
+        , SomeQuestCard throughTheMarshAnArduousJourney
+        , SomeQuestCard lostInTheSwanfleetDeadlyWaters
+        , SomeQuestCard grimbeornsFolly
+        , SomeQuestCard ambushInTheNight
+        , SomeQuestCard makeAStand
+        , SomeQuestCard forcedOffTrack
+        , SomeQuestCard raidGolfimbulsVault
+        , SomeQuestCard intoTheEttenmoorsNightmare
+        , SomeQuestCard isolated
+        , SomeQuestCard rescueFromTheTrolls
+        , SomeQuestCard protectTheFlanks
+        , SomeQuestCard rallyTheFighters
+        , SomeQuestCard severTheHead
+        , SomeQuestCard theWitchKingsGift
         ]
     ]

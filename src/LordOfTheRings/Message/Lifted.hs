@@ -8,6 +8,7 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
+import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -182,8 +183,9 @@ lowerThreatBy source pid n = do
 -- make him draw and it is a player card.
 drawCards :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 drawCards source pid n = do
-  barred <- elem CannotDrawCardsFromPlayerCardEffects <$> getModifiers (PlayerTarget pid)
-  unless (barred && isPlayerCardSource (toSource source)) $ push $ DrawCards $ Drawing pid n
+  mods <- getModifiers (PlayerTarget pid)
+  let barred = CannotDrawCardsFromCardEffects `elem` mods || (CannotDrawCardsFromPlayerCardEffects `elem` mods && isPlayerCardSource (toSource source))
+  unless barred $ push $ DrawCards $ Drawing pid n
 
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard
@@ -479,6 +481,11 @@ discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
 shufflePlayerDeck :: ReverseQueue m => PlayerId -> m ()
 shufflePlayerDeck = push . ShufflePlayerDeck
 
+-- | A card from out of play goes on top of the player's deck, as Miruvor or the cards
+-- underneath Gather Your Courage.
+putOnTopOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+putOnTopOfDeck pid = push . PutOnTopOfDeck pid
+
 removeFromDeck :: ReverseQueue m => PlayerId -> CardId -> m ()
 removeFromDeck pid cid = push $ RemoveFromDeck pid cid
 
@@ -531,6 +538,15 @@ discards the top card ... the discarding player" reads with each player.
 discardTopOfEncounterDeckFor
   :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> Int -> m ()
 discardTopOfEncounterDeckFor source target n = push $ DiscardTopOfEncounterDeck (toSource source) (toTarget target) n
+
+{- | Cards are discarded from the top of the encounter deck until one that matches is, as
+"discard cards from the top of the encounter deck until a Ship enemy is discarded" reads;
+the source reads them back from 'DiscardedTopOfEncounterDeck'.
+-}
+discardEncounterCardsUntil :: (ReverseQueue m, Sourceable a, Targetable a) => a -> CardMatcher -> m ()
+discardEncounterCardsUntil a matcher = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  discardTopOfEncounterDeck a $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
 
 -- | An encounter card, taken from where it was, becomes the active location, as a setup puts one.
 putIntoPlayAsActiveLocation :: ReverseQueue m => EncounterCard -> m ()
@@ -695,6 +711,11 @@ moveAttachment aid = push . AttachCard aid . toTarget
 -}
 putObjectiveIntoPlayAttached :: (ReverseQueue m, Targetable host) => EncounterCard -> host -> m ()
 putObjectiveIntoPlayAttached card = push . PutObjectiveIntoPlayAttached card . toTarget
+
+-- | An objective card, taken from where it was, comes into the staging area guarded by the
+-- card, as "attach it to a Mordor enemy" reads of a Clue card.
+putObjectiveIntoPlayGuardedBy :: ReverseQueue m => EncounterCard -> CardId -> m ()
+putObjectiveIntoPlayGuardedBy card = push . PutObjectiveIntoPlayGuardedBy card
 
 -- | The card leaves play for good: an objective or a location.
 removeFromGame :: (ReverseQueue m, Targetable target) => target -> m ()
@@ -904,6 +925,21 @@ dealShadowCardsDuringAttack
   :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> [Target] -> Int -> t m ()
 dealShadowCardsDuringAttack eid pid defenders n = do
   replicateM_ n $ dealShadowCard eid
+  resolveNewShadowCards eid pid defenders
+
+{- | As 'dealShadowCardsDuringAttack', the given cards from the encounter deck, as Flame of
+Udûn deals them there rather than from the Balrog deck.
+-}
+dealShadowCardsFromEncounterDeckDuringAttack
+  :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> [Target] -> [EncounterCard] -> t m ()
+dealShadowCardsFromEncounterDeckDuringAttack eid pid defenders cards = do
+  for_ cards \c -> push (RemoveFromEncounterDeck c) >> push (AttachShadowCard eid c)
+  resolveNewShadowCards eid pid defenders
+
+-- | The attacking enemy's shadow cards resolve again, the new ones with them.
+resolveNewShadowCards
+  :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> [Target] -> t m ()
+resolveNewShadowCards eid pid defenders = do
   cancelMatching \case
     RevealShadowCard eid' _ -> eid' == eid
     ResolveShadowCard _ eid' _ _ -> eid' == eid
@@ -1061,6 +1097,25 @@ revealSetAsideMatching :: ReverseQueue m => CardMatcher -> m ()
 revealSetAsideMatching matcher = do
   setAside' <- getsGame ((.scenarioSetAside) . toAttrs . (.scenario))
   traverse_ (push . RevealCard) $ filter (cardMatches matcher) setAside'
+
+{- | Take the first matching card from the encounter deck, discard pile or victory display,
+then shuffle the encounter deck, as "search the encounter deck, discard pile and victory
+display for Rescue Iârion" reads: what is found is handed on, to be revealed or staged.
+-}
+searchEncounterCardsAndVictoryDisplay :: ReverseQueue m => CardMatcher -> (EncounterCard -> m ()) -> m ()
+searchEncounterCardsAndVictoryDisplay matcher f = do
+  s <- getsGame (toAttrs . (.scenario))
+  let found = find (cardMatches matcher)
+  case (found s.encounterDeck, found s.encounterDiscard, found [c | EncounterCard c <- s.victoryDisplay]) of
+    (Just c, _, _) -> removeFromEncounterDeck c >> f c
+    (_, Just c, _) -> removeFromEncounterDiscard c >> f c
+    (_, _, Just c) -> removeFromVictoryDisplay (EncounterCard c) >> f c
+    _ -> pure ()
+  shuffleEncounterDeck
+
+-- | As 'searchEncounterCardsAndVictoryDisplay', the card found revealed.
+searchAndRevealEncounterCard :: ReverseQueue m => CardMatcher -> m ()
+searchAndRevealEncounterCard matcher = searchEncounterCardsAndVictoryDisplay matcher (push . RevealCard)
 
 {- | End the current phase, as "End the current phase" reads: what is left of it on the
 game's queue is dropped, up to its end. A log block it opened still closes.
@@ -1313,6 +1368,12 @@ shiftHeadingOffCourse source = push $ ShiftHeading (toSource source) ShiftOffCou
 -- | Shift the heading one setting on-course, as a sailing success icon does.
 shiftHeadingOnCourse :: (ReverseQueue m, Sourceable source) => source -> m ()
 shiftHeadingOnCourse source = push $ ShiftHeading (toSource source) ShiftOnCourse
+
+-- | "Set your heading to the worst setting": shifted off-course until it is there.
+setHeadingToWorst :: (ReverseQueue m, Sourceable source) => source -> m ()
+setHeadingToWorst source = do
+  heading <- getHeading
+  for_ heading \h -> replicateM_ (fromEnum (maxBound :: Heading) - fromEnum h) (shiftHeadingOffCourse source)
 
 -- | "Prepare the Corsair deck": each non-Ship enemy leaves the encounter deck for it.
 prepareCorsairDeck :: ReverseQueue m => m ()
@@ -1568,3 +1629,28 @@ attachOutOfPlay pid card = push . PlayAttachmentOn pid card . toTarget
 -- under the first player.
 putObjectiveAllyIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
 putObjectiveAllyIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
+
+-- | In campaign mode, write to the campaign log the scenario holds, as Mysterious Omens'
+-- boons join the Campaign Pool: kept if the scenario is won.
+updateCampaignLog :: ReverseQueue m => CampaignLogUpdate -> m ()
+updateCampaignLog = push . UpdateCampaignLog
+
+-- | The player card, from out of play, is shuffled into its owner's deck, as Iârion's
+-- Pendant once the players choose it.
+shuffleIntoDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+shuffleIntoDeck pid card = do
+  putInHand card
+  push $ ShuffleFromHandIntoOwnersDeck pid card.id
+-- | The shadow card dealt to the enemy is shuffled into the encounter deck, as "Shadow:
+-- Shuffle Shadow Dweller back into the encounter deck" reads.
+shuffleShadowCardIntoEncounterDeck :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
+shuffleShadowCardIntoEncounterDeck eid card = do
+  push $ RemoveShadowCard eid card.id
+  setAside card
+  shuffleSetAsideIntoEncounterDeck [card]
+-- | The card leaves the encounter deck and is revealed, as a search that reveals what it
+-- finds reads (Save Us!).
+revealFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
+revealFromEncounterDeck card = do
+  removeFromEncounterDeck card
+  push $ RevealCard card

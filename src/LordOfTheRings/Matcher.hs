@@ -215,6 +215,7 @@ matchEnemy matcher enemy = case matcher of
   AnyEnemy -> pure True
   NotEnemy m -> not <$> matchEnemy m enemy
   EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms
+  EnemyWithKeyword k -> hasKeyword k (toTarget enemy) (toCardDef enemy)
 
 instance Query LocationMatcher where
   type QueryElement LocationMatcher = LocationId
@@ -240,6 +241,7 @@ matchLocation matcher location = case matcher of
     _ -> pure False
   LocationWithIdBelow lid -> pure $ location.id < lid
   UniqueLocation -> pure $ cdUnique (toCardDef location)
+  LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -278,10 +280,10 @@ isDefending target = elem Defending . map modifierType . Map.findWithDefault [] 
 
 -- | A printed trait, or one a modifier grants.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
-hasTrait trait target def
-  | trait `member` cdCardTraits def = pure True
-  | otherwise =
-      elem (GainTrait trait) . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+hasTrait trait target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  -- one it lost, as Shot from the Sky takes the Eagle trait, it no longer has
+  pure $ LoseTrait trait `notElem` mods && (trait `member` cdCardTraits def || GainTrait trait `elem` mods)
 
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be
@@ -679,6 +681,8 @@ getDamage = \case
   AllyTarget aid -> maybe 0 (.damage) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
   EnemyTarget eid -> maybe 0 (.damage) . Map.lookup eid <$> getsGame (entitiesEnemies . gameEntities)
   LocationTarget lid -> maybe 0 ((.damage) . toAttrs) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
+  -- a side quest, as Protect the Innocent
+  QuestTarget qid -> maybe 0 (countTokens Damage . questTokens . toAttrs) . Map.lookup qid <$> getsGame (entitiesQuests . gameEntities)
   -- an objective ally the staging area commits, as Celador
   ObjectiveTarget oid ->
     maybe 0 (countTokens Damage . objectiveTokens . toAttrs) . Map.lookup oid <$> getsGame (entitiesObjectives . gameEntities)

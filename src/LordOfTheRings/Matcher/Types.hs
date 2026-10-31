@@ -177,6 +177,8 @@ data EnemyMatcher
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]
+  | -- | an enemy with the keyword, printed or gained, as "with the ambush keyword" reads
+    EnemyWithKeyword Keyword
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -214,6 +216,8 @@ data LocationMatcher
     -- stands for them all, as an ability that does not stack is triggered by one
     LocationWithIdBelow LocationId
   | UniqueLocation
+  | -- | a location player card effects may discard from play
+    LocationDiscardableByPlayerCards
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

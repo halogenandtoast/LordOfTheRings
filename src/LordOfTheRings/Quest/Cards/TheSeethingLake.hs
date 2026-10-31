@@ -27,7 +27,7 @@ instance RunMessage TheSeethingLake where
       askToResolveWhenRevealed attrs
       TheSeethingLake <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
-      addSetAsideToStaging (cardIs Enemies.theWatcher)
+      addSetAsideToStaging (CardMatchAny [cardIs Enemies.theWatcher, cardIs Enemies.theWatcherNightmare])
       traverse_ (`placeLocation` StagingArea) =<< select IsActiveLocation
       aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
       traverse_ putIntoPlayAsActiveLocation $ filter (cardMatches $ cardIs Locations.doorsOfDurin) aside
@@ -39,4 +39,11 @@ instance RunMessage TheSeethingLake where
       TheSeethingLake <$> runConditionalStage condition msg attrs
     _ -> TheSeethingLake <$> runConditionalStage condition msg attrs
    where
-    condition = getsGame ((>= 3) . (.victoryPoints) . toAttrs . (.scenario))
+    -- Nightmare: "The players cannot win the game unless both Doors of Durin and The
+    -- Watcher are in the victory display."
+    condition = do
+      victory <- getsGame ((.victoryDisplay) . toAttrs . (.scenario))
+      nightmare <- inNightmareMode
+      let has def = any (cardMatches $ cardIs def) victory
+      points <- getsGame ((.victoryPoints) . toAttrs . (.scenario))
+      pure $ points >= 3 && (not nightmare || (has Locations.doorsOfDurin && has Enemies.theWatcherNightmare))

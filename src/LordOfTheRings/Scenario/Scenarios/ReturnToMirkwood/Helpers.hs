@@ -16,6 +16,7 @@ import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Placement (Placement (InPlayArea))
 import LordOfTheRings.Prelude hiding (optional)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 -- | Gollum, while he is in play, and the player guarding him.
 gollum :: HasGame m => m (Maybe (ObjectiveId, Maybe PlayerId))
@@ -45,11 +46,14 @@ tantrumTargets = do
   if dry then getRemainingPlayers else maybeToList <$> getGuard
 
 {- | The player guarding Gollum chooses a new player to guard him, if able; when it is
-optional they may keep him. Not while The Spider's Ring is the active location.
+optional they may keep him. Not while The Spider's Ring is the active location, nor while
+Isolation is attached to the quest.
 -}
 passGollum :: ReverseQueue m => Bool -> m ()
 passGollum optional = do
-  locked <- selectAny (IsActiveLocation <> LocationWithCardCode (toCardCode Locations.theSpidersRing))
+  ring <- selectAny (IsActiveLocation <> LocationWithCardCode (toCardCode Locations.theSpidersRing))
+  isolated <- getsGame (any ((== toCardCode Treacheries.isolation) . toCardCode) . toList . (.entities.treacheries))
+  let locked = ring || isolated
   gollum >>= \case
     Just (oid, Just guard') | not locked -> do
       others <- filter (/= guard') <$> getRemainingPlayers

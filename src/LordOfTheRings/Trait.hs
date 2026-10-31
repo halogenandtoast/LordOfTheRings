@@ -4,6 +4,7 @@ import LordOfTheRings.Prelude
 
 data Trait
   = Archer
+  | Attack
   | Armor
   | Arnor
   | Artifact
@@ -11,10 +12,12 @@ data Trait
   | Barrow
   | Battleground
   | Beorning
+  | Besieged
   | Besieger
   | Blight
   | Boar
   | BoarClan
+  | Bree
   | Body
   | Boon
   | Bridge
@@ -34,7 +37,9 @@ data Trait
   | Corrupt
   | Corsair
   | Craftsman
+  | Corruption
   | Creature
+  | Cursed
   | Dale
   | Dark
   | Deck
@@ -100,6 +105,7 @@ data Trait
   | Osgiliath
   | OstInEdhil
   | Outlands
+  | Panic
   | Pipe
   | Plains
   | Plot
@@ -115,6 +121,7 @@ data Trait
   | Road
   | Rohan
   | Ruins
+  | Scheme
   | Scout
   | Scroll
   | Shadow
@@ -131,6 +138,7 @@ data Trait
   | Spider
   | -- | the Spirit trait, named apart from the sphere
     SpiritTrait
+  | Snaga
   | Spy
   | Stair
   | Steward
@@ -164,6 +172,8 @@ data Trait
   | Weather
   | Werewolf
   | Wight
+  | -- | the Wilderlands trait, named apart from the encounter set
+    WilderlandsTrait
   | Wolf
   | Woodman
   | Wose

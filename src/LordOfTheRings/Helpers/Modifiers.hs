@@ -86,7 +86,12 @@ preloadModifiers g = do
       -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
       unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (isPlayerCardSource $ modifierSource m)) ms else ms
-  pure $ g {gameModifiers = Map.mapWithKey unaffected all'}
+      -- no willpower from player cards, as Frozen Silverlode forbids
+      frozen = NoWillpowerFromPlayerCards `elem` map modifierType (Map.findWithDefault [] GameTarget all')
+      gained m = case m.modifierType of
+        WillpowerModifier n -> frozen && n > 0 && isPlayerCardSource m.modifierSource
+        _ -> False
+  pure $ g {gameModifiers = Map.mapWithKey (\t -> filter (not . gained) . unaffected t) all'}
 
 -- | Whether the character commits to the quest without exhausting.
 doesNotExhaustToCommit :: (HasGame m) => Target -> m Bool

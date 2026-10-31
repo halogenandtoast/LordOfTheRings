@@ -11,8 +11,8 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Objective.Types (objectiveTokens)
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (raidOnTheGreyHavens, theCityOfCorsairs, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
-import LordOfTheRings.Scenario.Types (scenarioCampaignCardFlipped, victoryDisplayL)
+import LordOfTheRings.Scenario (raidOnTheGreyHavens, templeOfTheDeceived, theCityOfCorsairs, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaignCardFlipped, scenarioMode, victoryDisplayL)
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -178,4 +178,17 @@ spec = describe "Dream-chaser campaign" do
       sort (map toCardCode attached) `shouldBe` sort [toCardCode Objectives.blackKeyBurden, toCardCode Objectives.theBlackSword]
       swords <- getsGame (filter ((== toCardCode Objectives.theBlackSword) . toCardCode) . toList . (.entities.objectives))
       map (countTokens Resource . objectiveTokens . toAttrs) swords `shouldBe` [3]
+
+  describe "in nightmare mode" do
+    it "keys Captain Sahír in The Thing in the Depths past the nightmare deck's own Forced effects" . campaignTestIn (overAttrs (\a -> a {scenarioMode = NightmareMode}) theThingInTheDepths) seated starterDeck $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Enemies.captainSahir
+      sahir <- getsGame (fromJustNote "no Sahír" . fmap toId . find ((== toCardCode Enemies.captainSahir) . toCardCode) . toList . (.entities.enemies))
+      run $ CheckWindows []
+      blackKeys <- getsGame (filter ((== toCardCode Objectives.blackKeyBurden) . toCardCode) . toList . (.entities.objectives))
+      map (.placement) blackKeys `shouldBe` [AttachedTo (toTarget sahir)]
+
+    it "counts Revenant's resource in Temple of the Deceived past the nightmare deck's own Forced effects" . campaignTestIn (overAttrs (\a -> a {scenarioMode = NightmareMode}) templeOfTheDeceived) seated starterDeck $ \_ -> do
+      revenant <- genEncounterCard Enemies.revenant
+      run $ CheckWindows [mkAfter $ EnemyDestroyed (EncounterCard revenant)]
+      (.cardResources) <$> getCampaignLog `shouldReturn` 1
 

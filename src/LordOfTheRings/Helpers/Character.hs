@@ -53,7 +53,8 @@ getDefenseAgainst eid defender = do
   mods <- getModifiers defender
   enemy <- toCardDef <$> getEnemy eid
   bonus <- sum <$> for [(trait, n) | DefenseBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
-  pure $ defense + bonus
+  byMatcher <- sum <$> for [(m, n) | DefenseBonusAgainstMatching m n <- mods] \(m, n) -> bool 0 n <$> selectAny (EnemyWithId eid <> m)
+  pure $ defense + bonus + byMatcher
 
 -- | The attack the characters given make together against an enemy, with their bonuses
 -- against its traits.
@@ -111,9 +112,13 @@ escapeTestTotals :: (HasGame m) => EscapeTest -> m (Int, Int)
 escapeTestTotals t = do
   total <- sum <$> traverse stat t.escapeCommitted
   deck <- getsGame (scenarioEncounterDeck . toAttrs . gameScenario)
-  bonus <- sum . mapMaybe (\case EscapeBonus n -> Just n; _ -> Nothing) <$> getModifiers GameTarget
-  pure (total, sum [fromMaybe 0 (cdEscape $ toCardDef c) + bonus | c <- take t.escapeCards deck])
+  mods <- getModifiers GameTarget
+  let bonus = sum [n | EscapeBonus n <- mods]
+      -- added once to the test, as Stagnant Quagmire adds its Escape value
+      testBonus = sum [n | EscapeTestBonus n <- mods]
+  pure (total, testBonus + sum [fromMaybe 0 (cdEscape $ toCardDef c) + bonus | c <- take t.escapeCards deck])
  where
   stat = case t.escapeStat of
     EscapeWillpower -> getWillpower
     EscapeAttack -> getAttack
+    EscapeDefense -> getDefense

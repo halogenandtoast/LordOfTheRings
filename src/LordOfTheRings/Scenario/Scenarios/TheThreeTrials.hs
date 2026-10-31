@@ -3,21 +3,52 @@ module LordOfTheRings.Scenario.Scenarios.TheThreeTrials (theThreeTrials) where
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier (ModifierType (CannotBeTraveledTo, CannotTakeDamage, EngagedEnemiesAddThreat, ImmuneToPlayerCardEffects))
 import LordOfTheRings.Placement (Placement (EngagedWith))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheThreeTrials.Helpers
 import LordOfTheRings.Trait (Trait (Barrow, Guardian, Key))
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window
 
 newtype TheThreeTrials = TheThreeTrials ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theThreeTrials :: Scenario
-theThreeTrials = Scenario $ scenario TheThreeTrials "the-three-trials" "The Three Trials"
+theThreeTrials =
+  Scenario
+    $ scenario (TheThreeTrials . (nightmareDeckL ?~ nightmare)) "the-three-trials" "The Three Trials"
+ where
+  nightmare =
+    nightmareDeck
+      Nightmare.theThreeTrialsNightmare
+      EncounterSet.TheThreeTrialsNightmare
+      [ (Enemies.spiritOfTheWild, 3)
+      , (Locations.grimFoothills, 3)
+      , (Locations.tangledWoods, 1)
+      , (Treacheries.turnedAround, 3)
+      ]
+
+{- | Nightmare: "Each engaged Guardian enemy contributes its threat to the total threat in
+the staging area. While the Trial of Intuition is the current trial, each Guardian enemy
+cannot be damaged, and each Barrow location cannot be the active location and is immune
+to player card effects."
+-}
+instance HasModifiersFor TheThreeTrials where
+  getModifiersFor (TheThreeTrials a) = when a.nightmare do
+    modified a GameTarget [EngagedEnemiesAddThreat (EnemyWithTrait Guardian)]
+    intuition <- getsGame (any ((== toCardCode Quests.theTrialOfIntuition) . toCardCode) . toList . (.entities.quests))
+    when intuition do
+      guardians <- select (EnemyWithTrait Guardian)
+      for_ guardians \g -> modified a g [CannotTakeDamage]
+      barrows <- select (LocationWithTrait Barrow)
+      for_ barrows \b -> modified a b [CannotBeTraveledTo, ImmuneToPlayerCardEffects]
 
 {- | Setup (The Trials Begin): Set aside all 3 Guardian enemies, all 3 Key objectives, all 3
 Barrow locations, and Hallowed Circle.
@@ -28,7 +59,7 @@ three are defeated. A Key discarded from the encounter deck goes to the staging 
 instance RunMessage TheThreeTrials where
   runMessage msg (TheThreeTrials attrs) = case msg of
     DoStep 1 Setup -> do
-      cards <- concatMapM (gatherEncounterSet attrs) [EncounterSet.TheThreeTrials, EncounterSet.AncientForest]
+      cards <- gatherEncounterSets attrs [EncounterSet.TheThreeTrials, EncounterSet.AncientForest]
       let setAsideCard c =
             cdEncounterSet (toCardDef c) == Just EncounterSet.TheThreeTrials
               && ( any (`member` cdCardTraits (toCardDef c)) [Guardian, Key, Barrow]

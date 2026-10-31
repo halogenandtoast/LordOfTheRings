@@ -7,31 +7,66 @@ module LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram (escapeFromMountGra
 
 import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Campaign (CampaignLogKey (LostInMountGram), record, recorded)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Keyword (Keyword (Capture))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Modifier (ModifierType (RefreshThreatRaise))
+import LordOfTheRings.Phase (Phase (CombatPhase))
+import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, attachPermanentBoons)
 import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window
+import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Entities (entitiesQuests)
+import LordOfTheRings.Game.Base (gameEntities)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (AttackDamageDiscardsCaptured))
+import LordOfTheRings.Source (Source (EnemyAttackSource))
+import LordOfTheRings.Trait (Trait (Item))
 
 newtype EscapeFromMountGram = EscapeFromMountGram ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 escapeFromMountGram :: Scenario
-escapeFromMountGram = Scenario $ scenario EscapeFromMountGram "escape-from-mount-gram" "Escape from Mount Gram"
+escapeFromMountGram =
+  Scenario
+    $ scenario (EscapeFromMountGram . (nightmareDeckL ?~ nightmare)) "escape-from-mount-gram" "Escape from Mount Gram"
+ where
+  nightmare =
+    nightmareDeck
+      Nightmare.escapeFromMountGramNightmare
+      EncounterSet.EscapeFromMountGramNightmare
+      [ (Locations.prisonCell, 4)
+      , (Enemies.dungeonGuard, 3)
+      , (Enemies.jailorGornakh, 1)
+      , (Treacheries.interrogation, 2)
+      , (Enemies.goblinTormentor, 2)
+      , (Enemies.cruelTorturer, 1)
+      ]
 
 -- | Setup: Set Southern Gate, Jailor Gornákh and the Angmar Orcs encounter set aside, out
--- of play. The rest of Unexpected Rescue's setup is its own.
+-- of play (the nightmare Jailor Gornákh and Orc of Thaurdir, of the Angmar Orcs set, with
+-- them). The rest of Unexpected Rescue's setup is its own.
+--
+-- Nightmare: "Forced: After choosing a starting hero and randomly setting another hero
+-- aside facedown, instead of the standard captured deck setup, shuffle any remaining heroes
+-- into your captured deck, then place the facedown set aside hero on the bottom of your
+-- captured deck." Its other sentence, that the players cannot win while a hero is
+-- captured, is Flight from Mount Gram's.
 instance RunMessage EscapeFromMountGram where
   runMessage msg (EscapeFromMountGram attrs) = case msg of
     DoStep 1 Setup -> do
-      cards <- concatMapM (gatherEncounterSet attrs) [EncounterSet.EscapeFromMountGram, EncounterSet.AngmarOrcs]
+      cards <- gatherEncounterSets attrs [EncounterSet.EscapeFromMountGram, EncounterSet.AngmarOrcs]
       let aside c =
-            toCardCode c `elem` map toCardCode [Locations.southernGate, Enemies.jailorGornakh]
+            toCardCode c
+              `elem` map toCardCode [Locations.southernGate, Enemies.jailorGornakh, Enemies.jailorGornakhNightmare, Enemies.orcOfThaurdir]
               || cdEncounterSet (toCardDef c) == Just EncounterSet.AngmarOrcs
           (setAsideCards, encounterDeck) = partition aside cards
       firstStage <- genEncounterCard Quests.unexpectedRescue
@@ -43,6 +78,46 @@ instance RunMessage EscapeFromMountGram where
         & encounterDeckL .~ encounterDeck
         & setAsideL .~ setAsideCards
         & questDeckL .~ laterStages
+    -- Campaign: Setup: Set aside any permanent boon attachments on heroes that are added to
+    -- a player's captured deck (they leave with their heroes). Add the Loot the Dungeons
+    -- side quest to the staging area, capturing the bottom 5 cards of each player's
+    -- captured deck underneath it. Flip this card over.
+    DoStep 9 Setup | isJust attrs.campaign -> do
+      angmarSetup attrs
+      card <- genEncounterCard Quests.lootTheDungeons
+      addToStaging card
+      push $ ScenarioSpecific "mountGram.captureBottom" (toJSON (CardIdTarget card.id, 5 :: Int))
+      EscapeFromMountGram <$> runMessage msg (attrs {scenarioCampaignCardFlipped = True})
+    ScenarioSpecific "mountGram.captureBottom" (parseMaybe parseJSON -> Just (t, n)) ->
+      capturedTarget t >>= \case
+        Just (host, card) -> do
+          let fromBottom m = m {capturedDecks = Map.map reverse m.capturedDecks}
+          withMeta . fromBottom <$> captureTop host card n (fromBottom meta)
+        Nothing -> pure $ EscapeFromMountGram attrs
+    -- Forced: Instead of raising their threat by 1 during the refresh phase, each player
+    -- raises their threat by the number of completed quest cards plus the number of side
+    -- quests in the victory display: counted as combat begins, for the refresh phase.
+    BeginPhase CombatPhase | isJust attrs.campaign -> do
+      stage <- getMainStage
+      let sideQuests = length [c | c <- attrs.victoryDisplay, cdCardType (toCardDef c) == EncounterSideQuestType]
+      eachPlayer \p -> roundModifier attrs (PlayerTarget p) (RefreshThreatRaise $ max 0 (stage - 1) + sideQuests)
+      EscapeFromMountGram <$> runMessage msg attrs
+    -- Forced: After a hero enters play, attach to that hero each set-aside permanent boon
+    -- attachment assigned to that character in the Campaign Log: once it is in play.
+    PutHeroIntoPlay _ pc | isJust attrs.campaign -> do
+      push $ ScenarioSpecific "campaign.permanentBoons" (toJSON $ toCardCode pc)
+      EscapeFromMountGram <$> runMessage msg attrs
+    ScenarioSpecific "campaign.permanentBoons" (parseMaybe parseJSON -> Just code) -> do
+      attachPermanentBoons attrs code
+      pure $ EscapeFromMountGram attrs
+    -- Resolution: Each player must make note of which unique cards are still in their
+    -- captured deck and not in play at the end of the game. Those cards cannot be included
+    -- in that player's deck for the rest of the campaign. (A hero still captured is not in
+    -- play, and falls.)
+    ResolveCampaign | Just l <- attrs.campaign -> do
+      let lost = [toCardCode pc | pc <- concat (Map.elems meta.capturedDecks), cdUnique (toCardDef pc), cdCardType (toCardDef pc) /= HeroType]
+          l' = record LostInMountGram (ordNub $ recorded LostInMountGram l <> lost) l
+      EscapeFromMountGram <$> runMessage msg (attrs {scenarioCampaign = Just l'})
     -- the player shuffles his hand into his deck, and his allies and Item, Mount and
     -- Artifact attachments make up his captured deck
     ScenarioSpecific "mountGram.prepare" (parseMaybe parseJSON -> Just pid) -> do
@@ -62,11 +137,12 @@ instance RunMessage EscapeFromMountGram where
       shuffled <- shuffleM [pc | PlayerCard pc <- map toCard others]
       let (top, rest) = splitAt 1 shuffled
       deck <- shuffleM (rest <> Map.findWithDefault [] pid meta.capturedDecks)
+      let captured = if attrs.nightmare then deck <> top else top <> deck
       for_ (find ((== hid) . toId) heroes) \h -> do
         placeResources attrs h 2
         threat <- (.threat) <$> getPlayer pid
         raiseThreat pid (fromMaybe 0 (cdThreatCost $ toCardDef h) - threat)
-      pure $ withMeta meta {capturedDecks = Map.insert pid (top <> deck) meta.capturedDecks}
+      pure $ withMeta meta {capturedDecks = Map.insert pid captured meta.capturedDecks}
     -- Capture X, as the card enters the staging area, before its When Revealed effect
     CheckWindows ws -> do
       meta' <- foldM captureKeyword meta [t | Window After (EntersStagingArea t) <- ws]
@@ -81,6 +157,7 @@ instance RunMessage EscapeFromMountGram where
         Just (_, host) -> do
           let held = Map.findWithDefault [] host.id meta.captured
               new = [pc | PlayerCard pc <- cards, pc.id `notElem` map (.id) held]
+          unless (null new) $ raidCaptures host.id
           EscapeFromMountGram <$> runMessage msg (withMeta' meta {captured = Map.insert host.id (held <> new) meta.captured})
         Nothing -> EscapeFromMountGram <$> runMessage msg attrs
     ScenarioSpecific "mountGram.rescueAtRandom" (parseMaybe parseJSON -> Just (cid, n)) -> do
@@ -89,8 +166,14 @@ instance RunMessage EscapeFromMountGram where
       pure $ withMeta meta {captured = Map.adjust (filter (`notElem` chosen)) cid meta.captured}
     ScenarioSpecific "mountGram.rescue" (parseMaybe parseJSON -> Just (host, cards :: [PlayerCard])) -> do
       push $ CheckWindows [mkWhen $ CapturedCardsRescued host (map PlayerCard cards)]
+      -- Raid Golfimbul's Vault: "Forced: When the captured cards underneath Raid
+      -- Golfimbul's Vault are rescued, put each rescued Item card into its owner's hand and
+      -- discard the rest."
+      -- ponytail: a hero rescued from it still comes back into play, not discarded
+      let vault = toCardCode host == toCardCode Quests.raidGolfimbulsVault
       for_ cards \pc -> case cdCardType (toCardDef pc) of
         HeroType -> putIntoPlayAtNoCost pc
+        _ | vault && Item `notMember` cdCardTraits (toCardDef pc) -> push $ PutInDiscard pc
         _ -> putInHand pc
       push $ CheckWindows [mkAfter $ CapturedCardsRescued host (map PlayerCard cards)]
       -- Dungeon Guard: Response: After the captured card(s) underneath Dungeon Guard are
@@ -107,6 +190,30 @@ instance RunMessage EscapeFromMountGram where
               for_ pc.owner \owner -> push $ RemoveFromHand owner pc.id
               putIntoPlayAtNoCost pc
       pure $ EscapeFromMountGram attrs
+    ScenarioSpecific "mountGram.rescueOne" (parseMaybe parseJSON -> Just (cid, one)) -> do
+      let (chosen, rest) = partition ((== one) . (.id)) (Map.findWithDefault [] cid meta.captured)
+      capturedTarget (CardIdTarget cid) >>= traverse_ \(_, host) -> rescue host chosen
+      pure $ withMeta meta {captured = Map.insert cid rest meta.captured}
+    ScenarioSpecific "mountGram.captureHeroes" (parseMaybe parseJSON -> Just t) ->
+      capturedTarget t >>= \case
+        Just (_, card) -> do
+          let isHero = (== HeroType) . cdCardType . toCardDef
+              heroes = concatMap (filter isHero) (Map.elems meta.capturedDecks)
+          unless (null heroes) do
+            placeUnderneath t (map PlayerCard heroes)
+          pure
+            $ withMeta
+              meta
+                { capturedDecks = Map.map (filter (not . isHero)) meta.capturedDecks
+                , captured = Map.insertWith (flip (<>)) card.id heroes meta.captured
+                }
+        Nothing -> pure $ EscapeFromMountGram attrs
+    -- Orc of Thaurdir's shadow: each point of the attack's damage discards the top card of
+    -- the defending player's captured deck
+    DoStep 1 (DealDamage (EnemyAttackSource eid) _ n) -> do
+      mods <- getModifiers eid
+      for_ [pid | AttackDamageDiscardsCaptured pid <- mods] \pid -> replicateM_ n (discardTopOfCapturedDeck pid)
+      EscapeFromMountGram <$> runMessage msg attrs
     ScenarioSpecific "mountGram.release" (parseMaybe parseJSON -> Just (host, cid)) -> do
       let held = Map.findWithDefault [] host meta.captured
       traverse_ putIntoPlayAtNoCost (find ((== cid) . (.id)) held)
@@ -149,8 +256,19 @@ instance RunMessage EscapeFromMountGram where
             let (top, rest) = splitAt n (Map.findWithDefault [] pid m'.capturedDecks)
              in (m' {capturedDecks = Map.insert pid rest m'.capturedDecks}, acc <> top)
           (m'', taken) = foldl' takeFrom (m, []) players
-      unless (null taken) $ placeUnderneath host (map PlayerCard taken)
+      unless (null taken) do
+        placeUnderneath host (map PlayerCard taken)
+        raidCaptures card.id
       pure m'' {captured = Map.insertWith (flip (<>)) card.id taken m''.captured}
+    -- Raid Golfimbul's Vault: "Forced: After a card is captured by another card effect,
+    -- capture a random card from each player's hand underneath Raid Golfimbul's Vault."
+    raidCaptures hostId = do
+      quests <- getsGame (toList . entitiesQuests . gameEntities)
+      for_ [q | q <- quests, toCardCode q == toCardCode Quests.raidGolfimbulsVault, (toAttrs q).cardId /= hostId] \vault ->
+        eachPlayer \p -> do
+          hand <- (.hand) <$> getPlayer p
+          picked <- take 1 <$> shuffleM [pc | PlayerCard pc <- hand]
+          captureFromHand p (toTarget vault) picked
     rescue host cards = unless (null cards) $ push $ ScenarioSpecific "mountGram.rescue" (toJSON (host, cards))
     leaving t =
       capturedTarget t >>= \case

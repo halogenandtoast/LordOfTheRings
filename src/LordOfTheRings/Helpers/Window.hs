@@ -23,6 +23,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
+  ModifierType (CannotDiscardFromHand),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -118,6 +119,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (LocationBecameActiveWindow t m, BecameActiveLocation lid) | t == timing -> selectAny (LocationWithId lid <> m)
   (EnemyAttacksPlayerWindow t pid m, EnemyAttacking eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyAttacksWindow t m, EnemyAttacking eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingEnemyRevealedWindow t m, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> m)
   (PlayerDiscardedFromDeckWindow t m, DiscardedFromDeck pid _) | t == timing -> selectAny (PlayerWithId pid <> m)
   -- the attachment played is in play by now, on its host
   (AttachmentPlayedOnHeroWindow t pid, PlayedFromHand (CardIdTarget cid)) | t == timing -> do
@@ -182,6 +184,10 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       $ any (\e -> e.effectTarget == target && Defending `elem` e.effectModifiers) effects
       && any (\d -> d.target == target && trait `member` cdCardTraits (toCardDef d.card)) destroyed
   (PlayerCommittedCharactersWindow t pid, CommittedToQuest target) | t == timing -> (== Just pid) <$> characterController target
+  (ObjectiveExhaustedWindow t code, Exhausted (ObjectiveTarget oid)) | t == timing ->
+    maybe False ((== code) . toCardCode) . Map.lookup oid . (.objectives) <$> getsGame gameEntities
+  (MatchingEnemyEngagedWindow t m, EnemyEngaged eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingEnemyDealtDamageWindow t m, DealtDamage (EnemyTarget eid) _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
@@ -282,6 +288,7 @@ passesCriteria = \case
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
+  InNightmareMode -> inNightmareMode
   AnyCriteria cs -> anyM passesCriteria cs
 
 -- | Whether each list can give a character not taken by an earlier one.
@@ -305,7 +312,8 @@ canPay = \case
   -- an ally's own pool, as Treebeard's
   ResourceCost (AllyTarget aid) n -> (>= n) . countTokens Resource . allyTokens . toAttrs <$> getAlly aid
   ResourceCost _ _ -> pure False
-  DiscardFromHandCost pid n -> (>= n) . length . (.hand) <$> getPlayer pid
+  DiscardFromHandCost pid n ->
+    andM [(>= n) . length . (.hand) <$> getPlayer pid, notElem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)]
   RaiseThreatCost _ -> pure True
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m

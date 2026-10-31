@@ -39,7 +39,7 @@ instance RunMessage ThePassageOut where
       askToResolveWhenRevealed attrs
       stage
     WhenRevealed (isTarget attrs -> True) -> do
-      addSetAsideToStaging (cardIs Enemies.druBuriDru)
+      addSetAsideToStaging (CardMatchAny [cardIs Enemies.druBuriDru, cardIs Enemies.druBuriDruNightmare])
       pure q
     -- the enemy counts its progress once it has taken it
     PlaceTokens _ (EnemyTarget _) Progress _ -> do
@@ -63,7 +63,7 @@ by damage and discarded, he no longer stops it (ruling); set aside, he is still 
 mayWin :: HasGame m => m Bool
 mayWin = do
   let dru :: HasCardCode c => c -> Bool
-      dru c = toCardCode c == toCardCode Enemies.druBuriDru
+      dru c = toCardCode c `elem` map toCardCode [Enemies.druBuriDru, Enemies.druBuriDruNightmare]
   inPlay <- getsGame (any dru . toList . entitiesEnemies . (.entities))
   aside <- getsGame (any dru . scenarioSetAside . toAttrs . (.scenario))
   pure $ not inPlay && not aside

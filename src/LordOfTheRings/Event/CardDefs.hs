@@ -14,6 +14,8 @@ allEventCards =
     map
       (\def -> (cdCardCode def, def))
       [ everVigilant
+      , determination
+      , loreOfAncientArnor
       , commonCause
       , forGondor
       , sneakAttack
@@ -775,3 +777,10 @@ commandSpirit = command "DCC203" Spirit
 
 commandTactics :: CardDef
 commandTactics = command "DCC204" Tactics
+-- The Angmar Awakened campaign's boons
+
+determination :: CardDef
+determination = (event "AAC172" "Determination" Neutral (StaticCost 1)) {cdCardTraits = setFromList [Boon]}
+
+loreOfAncientArnor :: CardDef
+loreOfAncientArnor = (event "AAC190" "Lore of Ancient Arnor" Neutral (StaticCost 3)) {cdCardTraits = setFromList [Boon]}

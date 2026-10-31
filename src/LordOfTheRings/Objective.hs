@@ -17,6 +17,10 @@ import LordOfTheRings.Objective.Cards.GrimbeornTheOld
 import LordOfTheRings.Objective.Cards.Athelas
 import LordOfTheRings.Objective.Cards.Wilyador
 import LordOfTheRings.Objective.Cards.Scarred
+import LordOfTheRings.Objective.Cards.ArnorRavaged
+import LordOfTheRings.Objective.Cards.ThaurdirsLegacy
+import LordOfTheRings.Objective.Cards.ThaurdirsMajesty
+import LordOfTheRings.Objective.Cards.ThaurdirsSpite
 import LordOfTheRings.Objective.Cards.GollumTheDeadMarshes
 import LordOfTheRings.Objective.Cards.GollumReturnToMirkwood
 import LordOfTheRings.Objective.Cards.AbandonedTools
@@ -50,6 +54,7 @@ import LordOfTheRings.Objective.Cards.TheHavensBurn
 import LordOfTheRings.Objective.Cards.CelebrimborsMould
 import LordOfTheRings.Objective.Cards.NalirTheNinInEilph
 import LordOfTheRings.Objective.Cards.Iarion
+import LordOfTheRings.Objective.Cards.CaptiveVillager
 import LordOfTheRings.Objective.Cards.KeyOfTheBoar
 import LordOfTheRings.Objective.Cards.KeyOfTheWolf
 import LordOfTheRings.Objective.Cards.KeyOfTheRaven
@@ -72,6 +77,12 @@ import LordOfTheRings.Objective.Cards.TowerOfTheHeron
 import LordOfTheRings.Objective.Cards.BlackKeyBurden
 import LordOfTheRings.Objective.Cards.TheBlackSword
 import LordOfTheRings.Objective.Cards.GavinObjective
+import LordOfTheRings.Objective.Cards.Aearlang
+import LordOfTheRings.Objective.Cards.DocksOfDolAmroth
+import LordOfTheRings.Objective.Cards.TheCursedSword
+import LordOfTheRings.Objective.Cards.RiseToPower
+import LordOfTheRings.Objective.Cards.Assassination
+import LordOfTheRings.Objective.Cards.TheCabalsChampion
 import LordOfTheRings.Objective.Runner ()
 import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Prelude
@@ -100,5 +111,5 @@ allObjectives :: Map CardCode SomeObjectiveCard
 allObjectives =
   Map.fromList
     [ (toCardCode builder, card)
-    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard caveTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard scarred, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood, SomeObjectiveCard abandonedTools, SomeObjectiveCard bookOfMazarbul, SomeObjectiveCard arwenUndomielTheRedhornGate, SomeObjectiveCard arwenUndomielRoadToRivendell, SomeObjectiveCard durinsGreaves, SomeObjectiveCard durinsAxe, SomeObjectiveCard durinsHelm, SomeObjectiveCard celador, SomeObjectiveCard ithilienGuardian, SomeObjectiveCard alcaronsScroll, SomeObjectiveCard rescuedVillagers, SomeObjectiveCard deadVillagers, SomeObjectiveCard lordAlcaron, SomeObjectiveCard toTheTower, SomeObjectiveCard aScrapOfHistory, SomeObjectiveCard secretMap, SomeObjectiveCard aPrisoner, SomeObjectiveCard unholyAlliance, SomeObjectiveCard upInFlames, SomeObjectiveCard poisonedCounsels, SomeObjectiveCard faramirObjective, SomeObjectiveCard lordAlcaronTheBloodOfGondor, SomeObjectiveCard mugashObjective, SomeObjectiveCard grimaTheFordsOfIsen, SomeObjectiveCard chiefTurchTheAntleredCrown, SomeObjectiveCard nalirTroubleInTharbad, SomeObjectiveCard theOrcsSearch, SomeObjectiveCard celebrimborsMould, SomeObjectiveCard nalirTheNinInEilph, SomeObjectiveCard keyOfTheBoar, SomeObjectiveCard keyOfTheWolf, SomeObjectiveCard keyOfTheRaven, SomeObjectiveCard iarion, SomeObjectiveCard huntingTheOrcs, SomeObjectiveCard savageCounterattack, SomeObjectiveCard daybreak, SomeObjectiveCard nightfall, SomeObjectiveCard amarthiul, SomeObjectiveCard amarthiulAcrossTheEttenmoors, SomeObjectiveCard amarthiulTheTreacheryOfRhudaur, SomeObjectiveCard daechanarsBrand, SomeObjectiveCard heirloomOfIarchon, SomeObjectiveCard ordersFromAngmar, SomeObjectiveCard calphon, SomeObjectiveCard captainSahirObjective, SomeObjectiveCard naasiyahObjective, SomeObjectiveCard theHavensBurn, SomeObjectiveCard gateKey, SomeObjectiveCard gateKeyUpgraded, SomeObjectiveCard seaWardTower, SomeObjectiveCard towerOfTheGull, SomeObjectiveCard theBeacon, SomeObjectiveCard towerOfTheHeron, SomeObjectiveCard blackKeyBurden, SomeObjectiveCard blackKeyBurdenUpgraded, SomeObjectiveCard theBlackSword, SomeObjectiveCard gavinObjective]
+    | card@(SomeObjectiveCard builder) <- [SomeObjectiveCard gandalfsMap, SomeObjectiveCard dungeonTorch, SomeObjectiveCard caveTorch, SomeObjectiveCard shadowKey, SomeObjectiveCard signsOfGollum, SomeObjectiveCard grimbeornTheOld, SomeObjectiveCard athelas, SomeObjectiveCard wilyador, SomeObjectiveCard scarred, SomeObjectiveCard gollumTheDeadMarshes, SomeObjectiveCard gollumReturnToMirkwood, SomeObjectiveCard abandonedTools, SomeObjectiveCard bookOfMazarbul, SomeObjectiveCard arwenUndomielTheRedhornGate, SomeObjectiveCard arwenUndomielRoadToRivendell, SomeObjectiveCard durinsGreaves, SomeObjectiveCard durinsAxe, SomeObjectiveCard durinsHelm, SomeObjectiveCard celador, SomeObjectiveCard ithilienGuardian, SomeObjectiveCard alcaronsScroll, SomeObjectiveCard rescuedVillagers, SomeObjectiveCard deadVillagers, SomeObjectiveCard lordAlcaron, SomeObjectiveCard toTheTower, SomeObjectiveCard aScrapOfHistory, SomeObjectiveCard secretMap, SomeObjectiveCard aPrisoner, SomeObjectiveCard unholyAlliance, SomeObjectiveCard upInFlames, SomeObjectiveCard poisonedCounsels, SomeObjectiveCard faramirObjective, SomeObjectiveCard lordAlcaronTheBloodOfGondor, SomeObjectiveCard mugashObjective, SomeObjectiveCard grimaTheFordsOfIsen, SomeObjectiveCard chiefTurchTheAntleredCrown, SomeObjectiveCard nalirTroubleInTharbad, SomeObjectiveCard theOrcsSearch, SomeObjectiveCard celebrimborsMould, SomeObjectiveCard nalirTheNinInEilph, SomeObjectiveCard keyOfTheBoar, SomeObjectiveCard keyOfTheWolf, SomeObjectiveCard keyOfTheRaven, SomeObjectiveCard iarion, SomeObjectiveCard huntingTheOrcs, SomeObjectiveCard savageCounterattack, SomeObjectiveCard daybreak, SomeObjectiveCard nightfall, SomeObjectiveCard amarthiul, SomeObjectiveCard amarthiulAcrossTheEttenmoors, SomeObjectiveCard amarthiulTheTreacheryOfRhudaur, SomeObjectiveCard daechanarsBrand, SomeObjectiveCard heirloomOfIarchon, SomeObjectiveCard ordersFromAngmar, SomeObjectiveCard calphon, SomeObjectiveCard captainSahirObjective, SomeObjectiveCard naasiyahObjective, SomeObjectiveCard theHavensBurn, SomeObjectiveCard gateKey, SomeObjectiveCard gateKeyUpgraded, SomeObjectiveCard seaWardTower, SomeObjectiveCard towerOfTheGull, SomeObjectiveCard theBeacon, SomeObjectiveCard towerOfTheHeron, SomeObjectiveCard captiveVillager, SomeObjectiveCard aearlang, SomeObjectiveCard docksOfDolAmroth, SomeObjectiveCard theCursedSword, SomeObjectiveCard riseToPower, SomeObjectiveCard assassination, SomeObjectiveCard theCabalsChampion, SomeObjectiveCard arnorRavaged, SomeObjectiveCard thaurdirsLegacy, SomeObjectiveCard thaurdirsMajesty, SomeObjectiveCard thaurdirsSpite, SomeObjectiveCard blackKeyBurden, SomeObjectiveCard blackKeyBurdenUpgraded, SomeObjectiveCard theBlackSword, SomeObjectiveCard gavinObjective]
     ]

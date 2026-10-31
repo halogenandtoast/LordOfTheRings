@@ -1,4 +1,4 @@
-module LordOfTheRings.Location.Cards.LushJungle (lushJungle) where
+module LordOfTheRings.Location.Cards.LushJungle (lushJungle, lushJungleNightmare) where
 
 import LordOfTheRings.Keyword (Keyword (Ranged))
 import LordOfTheRings.Location.CardDefs qualified as Cards
@@ -12,6 +12,10 @@ newtype LushJungle = LushJungle LocationAttrs
 
 lushJungle :: LocationCard LushJungle
 lushJungle = location LushJungle Cards.lushJungle
+
+-- | The Fate of Númenor Nightmare Deck's reprint, the same text.
+lushJungleNightmare :: LocationCard LushJungle
+lushJungleNightmare = location LushJungle Cards.lushJungleNightmare
 
 -- | While Lush Jungle is in the staging area, characters get -1 attack and lose ranged.
 instance HasModifiersFor LushJungle where

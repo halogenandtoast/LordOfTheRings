@@ -32,7 +32,16 @@ instance RunMessage AMiserableJourney where
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       discardUntilSideQuest attrs
       pure q
+    -- Nightmare: "Forced: When resolving the 'when revealed' effect on stage 2A or stage
+    -- 3A, also discard cards from the top of the encounter deck until a location with the
+    -- safe keyword is discarded. Attach that location to the newly revealed side quest, as
+    -- a guarded objective."
+    DiscardedTopOfEncounterDeck (isSource attrs -> True) (CardIdTarget sideQuest) cards -> do
+      guardWithSafe sideQuest cards
+      pure q
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
-      traverse_ revealFromEncounterDiscard (sideQuestsAmong cards)
+      let found = sideQuestsAmong cards
+      traverse_ revealFromEncounterDiscard found
+      whenM inNightmareMode $ for_ (take 1 found) \sq -> discardUntilSafeFor attrs sq.id
       pure q
     _ -> AMiserableJourney <$> runMessage msg attrs

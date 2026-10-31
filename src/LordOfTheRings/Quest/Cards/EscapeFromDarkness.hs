@@ -19,11 +19,17 @@ instance HasAbilities EscapeFromDarkness where
   getAbilities (EscapeFromDarkness a) =
     searchForAnExit a
       <> bypass a
-      <> [ anyPlayer
-             $ restricted a 1 (DuringPhase RefreshPhase <> exists toolsHolder)
-             $ ActionAbility Free
+      <> [ ability
          | a.flipped
+         , ability <-
+             [ anyPlayer $ restricted a 1 (refresh <> NotCriterion InNightmareMode) $ ActionAbility Free
+             , -- Nightmare: "While the Escape from Darkness quest card is in play, the
+               -- Refresh Action on Abandoned Tools can only be triggered once each round."
+               limited (GroupLimit PerRound 1) $ anyPlayer $ restricted a 1 (refresh <> InNightmareMode) $ ActionAbility Free
+             ]
          ]
+   where
+    refresh = DuringPhase RefreshPhase <> exists toolsHolder
 
 toolsHolder :: HeroMatcher
 toolsHolder = HeroControlledBy ActivePlayer <> ReadyHero <> HeroWithAttached Tools

@@ -26,7 +26,7 @@
   "noStarterDeck": "No {sphere} starter deck.",
   "unsupportedExport": "This export comes from an unsupported version.",
   "noSeatTaken": "Take a seat before starting the game.",
-  "fallenHeroes": "Fallen in this campaign, these heroes cannot be used again: {heroes}",
+  "fallenHeroes": "These heroes cannot be used in this scenario of the campaign (fallen, or not yet joined): {heroes}",
   "noSuchCampaign": "No such campaign.",
   "campaignInProgress": "Finish the scenario being played first.",
   "campaignOver": "The campaign is over.",

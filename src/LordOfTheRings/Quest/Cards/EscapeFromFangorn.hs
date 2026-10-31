@@ -3,7 +3,7 @@ module LordOfTheRings.Quest.Cards.EscapeFromFangorn (escapeFromFangorn) where
 import LordOfTheRings.Card (genEncounterCard)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers (huorn, mugashOnHero, shuffleMugashIntoEncounterDeck)
+import LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers (canDefeatStage, huorn, shuffleMugashIntoEncounterDeck)
 
 newtype EscapeFromFangorn = EscapeFromFangorn QuestAttrs
   deriving anyclass (IsQuest, HasModifiersFor)
@@ -35,4 +35,4 @@ instance RunMessage EscapeFromFangorn where
       stage3 <- genEncounterCard Cards.theAngryForest
       resetToStage stage3 []
       pure q
-    _ -> EscapeFromFangorn <$> runConditionalStage mugashOnHero msg attrs
+    _ -> EscapeFromFangorn <$> runConditionalStage canDefeatStage msg attrs

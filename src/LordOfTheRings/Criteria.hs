@@ -59,6 +59,8 @@ data Criterion
     EnemiesAtLeast Int EnemyMatcher
   | -- | the heading reads as the matcher says, as "if you are on-course"
     HeadingMatches HeadingMatcher
+  | -- | the game is dealt in nightmare mode, as a setup card changes a stage's ability
+    InNightmareMode
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

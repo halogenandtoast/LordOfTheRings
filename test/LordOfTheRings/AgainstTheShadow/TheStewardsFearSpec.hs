@@ -54,7 +54,7 @@ setUnderworld :: [CardDef] -> GameT [EncounterCard]
 setUnderworld defs = do
   cards <- traverse genEncounterCard defs
   g <- getGame
-  putGame $ g & scenarioL %~ overAttrs (metaL .~ toJSON (Meta cards mempty))
+  putGame $ g & scenarioL %~ overAttrs (metaL .~ toJSON (Meta cards mempty []))
   pure cards
 
 staged :: CardDef -> GameT ()

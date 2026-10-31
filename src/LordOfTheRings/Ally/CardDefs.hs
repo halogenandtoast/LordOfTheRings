@@ -14,6 +14,11 @@ allAllyCards =
     map
       (\def -> (cdCardCode def, def))
       [ guardOfTheCitadel
+      , berelind
+      , coruhaer
+      , laermuin
+      , elrondsChampion
+      , rivendellSkirmishers
       , faramir
       , sonOfArnor
       , snowbournScout
@@ -1324,3 +1329,19 @@ guardianOfIthilien =
 -- | A boon of the Dream-chaser campaign: X is half her level, rounded up.
 starla :: CardDef
 starla = unique (ally "DCC198" "Starla" Neutral (StaticCost 0) 0 0 0 4) {cdCardTraits = setFromList [Noldor, Scout, Boon]}
+-- The Angmar Awakened campaign's boons
+
+berelind :: CardDef
+berelind = (unique $ ally "AAC176" "Berelind" Neutral (StaticCost 1) 1 3 0 2) {cdCardTraits = setFromList [Dunedain, Ranger, Boon]}
+
+coruhaer :: CardDef
+coruhaer = (unique $ ally "AAC178" "Coruhaer" Neutral (StaticCost 0) 0 1 1 2) {cdCardTraits = setFromList [Dunedain, Ranger, Boon]}
+
+laermuin :: CardDef
+laermuin = (unique $ ally "AAC179" "Laermuin" Neutral (StaticCost 2) 2 2 0 4) {cdCardTraits = setFromList [Dunedain, Ranger, Boon]}
+
+elrondsChampion :: CardDef
+elrondsChampion = (ally "AAC189" "Elrond's Champion" Neutral (StaticCost 3) 2 3 1 5) {cdCardTraits = setFromList [Noldor, Warrior, Boon]}
+
+rivendellSkirmishers :: CardDef
+rivendellSkirmishers = (ally "AAC192" "Rivendell Skirmishers" Neutral (StaticCost 3) 2 2 3 3) {cdCardTraits = setFromList [Noldor, Warrior, Boon]}

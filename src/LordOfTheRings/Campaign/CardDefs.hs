@@ -27,6 +27,15 @@ allCampaignCards =
       , theDrownedRuinsCampaign
       , aStormOnCobasHavenCampaign
       , theCityOfCorsairsCampaign
+      , intrudersInChetwoodCampaign
+      , theWeatherHillsCampaign
+      , deadmensDikeCampaign
+      , theWastesOfEriadorCampaign
+      , escapeFromMountGramCampaign
+      , acrossTheEttenmoorsCampaign
+      , theTreacheryOfRhudaurCampaign
+      , theBattleOfCarnDumCampaign
+      , theDreadRealmCampaign
       ]
 
 -- | Double-sided, in no encounter set, so no encounter deck gathers it.
@@ -70,3 +79,31 @@ aStormOnCobasHavenCampaign = campaignCard "DCC209" "A Storm on Cobas Haven"
 
 theCityOfCorsairsCampaign :: CardDef
 theCityOfCorsairsCampaign = campaignCard "DCC215" "The City of Corsairs"
+-- The Angmar Awakened Campaign Expansion
+
+intrudersInChetwoodCampaign :: CardDef
+intrudersInChetwoodCampaign = campaignCard "AAC156" "Intruders in Chetwood"
+
+theWeatherHillsCampaign :: CardDef
+theWeatherHillsCampaign = campaignCard "AAC159" "The Weather Hills"
+
+deadmensDikeCampaign :: CardDef
+deadmensDikeCampaign = campaignCard "AAC166" "Deadmen's Dike"
+
+theWastesOfEriadorCampaign :: CardDef
+theWastesOfEriadorCampaign = campaignCard "AAC171" "The Wastes of Eriador"
+
+escapeFromMountGramCampaign :: CardDef
+escapeFromMountGramCampaign = campaignCard "AAC174" "Escape from Mount Gram"
+
+acrossTheEttenmoorsCampaign :: CardDef
+acrossTheEttenmoorsCampaign = campaignCard "AAC182" "Across the Ettenmoors"
+
+theTreacheryOfRhudaurCampaign :: CardDef
+theTreacheryOfRhudaurCampaign = campaignCard "AAC184" "The Treachery of Rhudaur"
+
+theBattleOfCarnDumCampaign :: CardDef
+theBattleOfCarnDumCampaign = campaignCard "AAC188" "The Battle of Carn Dûm"
+
+theDreadRealmCampaign :: CardDef
+theDreadRealmCampaign = campaignCard "AAC193" "The Dread Realm"

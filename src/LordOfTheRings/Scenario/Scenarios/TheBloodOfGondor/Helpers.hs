@@ -26,7 +26,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Source
 import LordOfTheRings.Target
-import LordOfTheRings.Window (WindowType (EntersPlay), mkAfter)
+import LordOfTheRings.Window (WindowType (EntersPlay, HiddenCardTurnedFaceup), mkAfter)
 
 -- | The hidden cards in the player's play area, the first taken first.
 getHiddenCards :: HasGame m => PlayerId -> m [EncounterCard]
@@ -53,7 +53,7 @@ turnFaceup :: ReverseQueue m => PlayerId -> EncounterCard -> m (Maybe EnemyId)
 turnFaceup pid card
   | cdCardType (toCardDef card) == EnemyType = do
       eid <- getRandom
-      push $ TurnHiddenCardFaceup pid card [CreateEnemyEngaged pid eid card]
+      push $ TurnHiddenCardFaceup pid card [CreateEnemyEngaged pid eid card, turnedFaceup eid]
       pure $ Just eid
   | otherwise = Nothing <$ push (TurnHiddenCardFaceup pid card [AddToEncounterDiscard [card]])
 
@@ -76,7 +76,7 @@ turnFaceupDamaging source n pid card
           card
           [ CreateEnemy eid card
           , DealDamage (toSource source) (EnemyTarget eid) n
-          , WhileInPlay (EnemyTarget eid) [EngageEnemy pid eid, CheckWindows [mkAfter $ EntersPlay $ EnemyTarget eid]]
+          , WhileInPlay (EnemyTarget eid) [EngageEnemy pid eid, CheckWindows [mkAfter $ EntersPlay $ EnemyTarget eid], turnedFaceup eid]
           ]
   | otherwise = void $ turnFaceup pid card
 
@@ -90,7 +90,12 @@ turnFaceupResolving pid card
       push
         $ TurnHiddenCardFaceup pid card
         $ CreateEnemyEngaged pid eid card
+        : turnedFaceup eid
         : [AskToResolveWhenRevealed (EnemyTarget eid) card | cdWhenRevealed def]
   | otherwise = push $ TurnHiddenCardFaceup pid card [ResolveWhenRevealedOf card]
  where
   def = toCardDef card
+
+-- | The window an enemy turned faceup as a hidden card opens, once it is in play.
+turnedFaceup :: EnemyId -> Message
+turnedFaceup eid = CheckWindows [mkAfter $ HiddenCardTurnedFaceup $ EnemyTarget eid]

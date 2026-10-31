@@ -253,6 +253,143 @@ import LordOfTheRings.Enemy.Cards.Revenant
 import LordOfTheRings.Enemy.Cards.Graxar
 import LordOfTheRings.Enemy.Cards.SeaSerpent
 import LordOfTheRings.Enemy.Cards.RecurringNightmare
+import LordOfTheRings.Enemy.Cards.CunningInformant
+import LordOfTheRings.Enemy.Cards.HarborBrute
+import LordOfTheRings.Enemy.Cards.PelargirRingleader
+import LordOfTheRings.Enemy.Cards.MumakElite
+import LordOfTheRings.Enemy.Cards.HaradrimMarksman
+import LordOfTheRings.Enemy.Cards.HaradrimCaptain
+import LordOfTheRings.Enemy.Cards.SouthronMountedArcher
+import LordOfTheRings.Enemy.Cards.OrcSaboteur
+import LordOfTheRings.Enemy.Cards.OrcRavagerNightmare
+import LordOfTheRings.Enemy.Cards.DunlandAssassin
+import LordOfTheRings.Enemy.Cards.VengefulHillman
+import LordOfTheRings.Enemy.Cards.SavageHillman
+import LordOfTheRings.Enemy.Cards.VigilantOrc
+import LordOfTheRings.Enemy.Cards.MethedrasLookout
+import LordOfTheRings.Enemy.Cards.GuardWarg
+import LordOfTheRings.Enemy.Cards.HuornOfFangorn
+import LordOfTheRings.Enemy.Cards.BlockingHuorn
+import LordOfTheRings.Enemy.Cards.WickedHuorn
+import LordOfTheRings.Enemy.Cards.BrashCorsair
+import LordOfTheRings.Enemy.Cards.SahirsPursuer
+import LordOfTheRings.Enemy.Cards.GuardianOfTheGoldenKing
+import LordOfTheRings.Enemy.Cards.CorsairPillager
+import LordOfTheRings.Enemy.Cards.CorsairPyromaniac
+import LordOfTheRings.Enemy.Cards.EliteMarauder
+import LordOfTheRings.Enemy.Cards.OrcAbductor
+import LordOfTheRings.Enemy.Cards.SoldierOfAngmar
+import LordOfTheRings.Enemy.Cards.RearguardAmbusher
+import LordOfTheRings.Enemy.Cards.AngmarRaider
+import LordOfTheRings.Enemy.Cards.UndeadHorde
+import LordOfTheRings.Enemy.Cards.CursedDeadNightmare
+import LordOfTheRings.Enemy.Cards.PatrolSentry
+import LordOfTheRings.Enemy.Cards.GoblinLurker
+import LordOfTheRings.Enemy.Cards.ShadowDweller
+import LordOfTheRings.Enemy.Cards.OverseerMaurul
+import LordOfTheRings.Enemy.Cards.OrcTaskmaster
+import LordOfTheRings.Enemy.Cards.GoblinSkirmisher
+import LordOfTheRings.Enemy.Cards.PitGoblin
+import LordOfTheRings.Enemy.Cards.SwarmingGoblins
+import LordOfTheRings.Enemy.Cards.CoalBlackOrc
+import LordOfTheRings.Enemy.Cards.BoarClanAmbusher
+import LordOfTheRings.Enemy.Cards.BoarClanSkirmisher
+import LordOfTheRings.Enemy.Cards.WolfSpirit
+import LordOfTheRings.Enemy.Cards.BoarSpirit
+import LordOfTheRings.Enemy.Cards.RavenSpirit
+import LordOfTheRings.Enemy.Cards.BellachsHunter
+import LordOfTheRings.Enemy.Cards.OrcSeeker
+import LordOfTheRings.Enemy.Cards.BloodHound
+import LordOfTheRings.Enemy.Cards.DeadlyMarshAdder
+import LordOfTheRings.Enemy.Cards.SwarmsOfMosquitos
+import LordOfTheRings.Enemy.Cards.BellachsBodyguard
+import LordOfTheRings.Enemy.Cards.LittleSnuffler
+import LordOfTheRings.Enemy.Cards.DunlendingHorde
+import LordOfTheRings.Enemy.Cards.RavenClanElite
+import LordOfTheRings.Enemy.Cards.RavenClawDruid
+import LordOfTheRings.Enemy.Cards.RaiderOfTheStorm
+import LordOfTheRings.Enemy.Cards.TideRunner
+import LordOfTheRings.Enemy.Cards.VenomsBite
+import LordOfTheRings.Enemy.Cards.CorsairDuelist
+import LordOfTheRings.Enemy.Cards.SlitheringArm
+import LordOfTheRings.Enemy.Cards.CrashingArm
+import LordOfTheRings.Enemy.Cards.KingsKnight
+import LordOfTheRings.Enemy.Cards.CursedSoldier
+import LordOfTheRings.Enemy.Cards.SubmergedDead
+import LordOfTheRings.Enemy.Cards.GreatShark
+import LordOfTheRings.Enemy.Cards.UnderseaCaveTroll
+import LordOfTheRings.Enemy.Cards.RammingShip
+import LordOfTheRings.Enemy.Cards.FangOfSahir
+import LordOfTheRings.Enemy.Cards.PatrolShip
+import LordOfTheRings.Enemy.Cards.CorsairLoyalist
+import LordOfTheRings.Enemy.Cards.UmbarPatrolNightmare
+import LordOfTheRings.Enemy.Cards.RavenousHawk
+import LordOfTheRings.Enemy.Cards.HuntingWarg
+import LordOfTheRings.Enemy.Cards.SavageHillTroll
+import LordOfTheRings.Enemy.Cards.RobAndBob
+import LordOfTheRings.Enemy.Cards.LouisNightmare
+import LordOfTheRings.Enemy.Cards.MorrisNightmare
+import LordOfTheRings.Enemy.Cards.RupertNightmare
+import LordOfTheRings.Enemy.Cards.StuartNightmare
+import LordOfTheRings.Enemy.Cards.GoblinEagleHunter
+import LordOfTheRings.Enemy.Cards.TreetopBirdEater
+import LordOfTheRings.Enemy.Cards.TunnelingNamelessThing
+import LordOfTheRings.Enemy.Cards.OrcInterceptor
+import LordOfTheRings.Enemy.Cards.ThingsInThePools
+import LordOfTheRings.Enemy.Cards.MarshWight
+import LordOfTheRings.Enemy.Cards.LostSoulOfLorien
+import LordOfTheRings.Enemy.Cards.IllFatedGuard
+import LordOfTheRings.Enemy.Cards.AmbushingOrcs
+import LordOfTheRings.Enemy.Cards.PursuingWargRider
+import LordOfTheRings.Enemy.Cards.WebSpinner
+import LordOfTheRings.Enemy.Cards.WarriorOfNurn
+import LordOfTheRings.Enemy.Cards.OrcCaptor
+import LordOfTheRings.Enemy.Cards.SentryOfTheWhiteBridge
+import LordOfTheRings.Enemy.Cards.BlackNumenoreanNightmare
+import LordOfTheRings.Enemy.Cards.OrcTrickster
+import LordOfTheRings.Enemy.Cards.UrukMarksman
+import LordOfTheRings.Enemy.Cards.DruBuriDruNightmare
+import LordOfTheRings.Enemy.Cards.DruadanWarrior
+import LordOfTheRings.Enemy.Cards.DruadanStalker
+import LordOfTheRings.Enemy.Cards.OrcRaidersNightmare
+import LordOfTheRings.Enemy.Cards.PillagingOrc
+import LordOfTheRings.Enemy.Cards.InvadingOrc
+import LordOfTheRings.Enemy.Cards.HaradrimWarrior
+import LordOfTheRings.Enemy.Cards.MurderousTurncoat
+import LordOfTheRings.Enemy.Cards.FaithlessConspirator
+import LordOfTheRings.Enemy.Cards.WolfpeltGoblin
+import LordOfTheRings.Enemy.Cards.SilvertineMarauder
+import LordOfTheRings.Enemy.Cards.SnowGiant
+import LordOfTheRings.Enemy.Cards.UrukElfStalker
+import LordOfTheRings.Enemy.Cards.GoblinTrapper
+import LordOfTheRings.Enemy.Cards.RaidingParty
+import LordOfTheRings.Enemy.Cards.ViciousTrackers
+import LordOfTheRings.Enemy.Cards.TheWatcherNightmare
+import LordOfTheRings.Enemy.Cards.WrithingTentacle
+import LordOfTheRings.Enemy.Cards.ChokingTentacle
+import LordOfTheRings.Enemy.Cards.GoblinStalker
+import LordOfTheRings.Enemy.Cards.TrapdoorSpider
+import LordOfTheRings.Enemy.Cards.SentinelOfTheDeep
+import LordOfTheRings.Enemy.Cards.MithrilSeeker
+import LordOfTheRings.Enemy.Cards.GiantCaveCentipede
+import LordOfTheRings.Enemy.Cards.UnspeakableThing
+import LordOfTheRings.Enemy.Cards.PrimevalThing
+import LordOfTheRings.Enemy.Cards.ServantOfFlame
+import LordOfTheRings.Enemy.Cards.CaptainOfMordor
+import LordOfTheRings.Enemy.Cards.PackHunters
+import LordOfTheRings.Enemy.Cards.JailorGornakhNightmare
+import LordOfTheRings.Enemy.Cards.PrisonGuard
+import LordOfTheRings.Enemy.Cards.OrcOfThaurdir
+import LordOfTheRings.Enemy.Cards.HoarwellRiverSerpent
+import LordOfTheRings.Enemy.Cards.ScavengingStoneTroll
+import LordOfTheRings.Enemy.Cards.GiantBeetle
+import LordOfTheRings.Enemy.Cards.ThaurdirsHunter
+import LordOfTheRings.Enemy.Cards.UndeadThrall
+import LordOfTheRings.Enemy.Cards.ApostateOfAngmar
+import LordOfTheRings.Enemy.Cards.OrcWight
+import LordOfTheRings.Enemy.Cards.ThaurdirsElite
+import LordOfTheRings.Enemy.Cards.SilentGuardian
+import LordOfTheRings.Enemy.Cards.NecromancerOfCarnDum
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -532,5 +669,142 @@ allEnemys =
         , SomeEnemyCard seaSerpent
         , SomeEnemyCard seaSerpentEnraged
         , SomeEnemyCard recurringNightmare
+        , SomeEnemyCard cunningInformant
+        , SomeEnemyCard harborBrute
+        , SomeEnemyCard pelargirRingleader
+        , SomeEnemyCard mumakElite
+        , SomeEnemyCard haradrimMarksman
+        , SomeEnemyCard haradrimCaptain
+        , SomeEnemyCard southronMountedArcher
+        , SomeEnemyCard orcSaboteur
+        , SomeEnemyCard orcRavagerNightmare
+        , SomeEnemyCard dunlandAssassin
+        , SomeEnemyCard vengefulHillman
+        , SomeEnemyCard savageHillman
+        , SomeEnemyCard vigilantOrc
+        , SomeEnemyCard methedrasLookout
+        , SomeEnemyCard guardWarg
+        , SomeEnemyCard huornOfFangorn
+        , SomeEnemyCard blockingHuorn
+        , SomeEnemyCard wickedHuorn
+        , SomeEnemyCard brashCorsair
+        , SomeEnemyCard sahirsPursuer
+        , SomeEnemyCard guardianOfTheGoldenKing
+        , SomeEnemyCard corsairPillager
+        , SomeEnemyCard corsairPyromaniac
+        , SomeEnemyCard eliteMarauder
+        , SomeEnemyCard orcAbductor
+        , SomeEnemyCard soldierOfAngmar
+        , SomeEnemyCard rearguardAmbusher
+        , SomeEnemyCard angmarRaider
+        , SomeEnemyCard undeadHorde
+        , SomeEnemyCard cursedDeadNightmare
+        , SomeEnemyCard patrolSentry
+        , SomeEnemyCard goblinLurker
+        , SomeEnemyCard shadowDweller
+        , SomeEnemyCard overseerMaurul
+        , SomeEnemyCard orcTaskmaster
+        , SomeEnemyCard goblinSkirmisher
+        , SomeEnemyCard pitGoblin
+        , SomeEnemyCard swarmingGoblins
+        , SomeEnemyCard coalBlackOrc
+        , SomeEnemyCard boarClanAmbusher
+        , SomeEnemyCard boarClanSkirmisher
+        , SomeEnemyCard wolfSpirit
+        , SomeEnemyCard boarSpirit
+        , SomeEnemyCard ravenSpirit
+        , SomeEnemyCard bellachsHunter
+        , SomeEnemyCard orcSeeker
+        , SomeEnemyCard bloodHound
+        , SomeEnemyCard deadlyMarshAdder
+        , SomeEnemyCard swarmsOfMosquitos
+        , SomeEnemyCard bellachsBodyguard
+        , SomeEnemyCard littleSnuffler
+        , SomeEnemyCard dunlendingHorde
+        , SomeEnemyCard ravenClanElite
+        , SomeEnemyCard ravenClawDruid
+        , SomeEnemyCard raiderOfTheStorm
+        , SomeEnemyCard tideRunner
+        , SomeEnemyCard venomsBite
+        , SomeEnemyCard corsairDuelist
+        , SomeEnemyCard slitheringArm
+        , SomeEnemyCard crashingArm
+        , SomeEnemyCard kingsKnight
+        , SomeEnemyCard cursedSoldier
+        , SomeEnemyCard submergedDead
+        , SomeEnemyCard greatShark
+        , SomeEnemyCard underseaCaveTroll
+        , SomeEnemyCard rammingShip
+        , SomeEnemyCard fangOfSahir
+        , SomeEnemyCard patrolShip
+        , SomeEnemyCard corsairLoyalist
+        , SomeEnemyCard umbarPatrolNightmare
+        , SomeEnemyCard ravenousHawk
+        , SomeEnemyCard huntingWarg
+        , SomeEnemyCard savageHillTroll
+        , SomeEnemyCard robAndBob
+        , SomeEnemyCard louisNightmare
+        , SomeEnemyCard morrisNightmare
+        , SomeEnemyCard rupertNightmare
+        , SomeEnemyCard stuartNightmare
+        , SomeEnemyCard goblinEagleHunter
+        , SomeEnemyCard treetopBirdEater
+        , SomeEnemyCard tunnelingNamelessThing
+        , SomeEnemyCard orcInterceptor
+        , SomeEnemyCard thingsInThePools
+        , SomeEnemyCard marshWight
+        , SomeEnemyCard lostSoulOfLorien
+        , SomeEnemyCard illFatedGuard
+        , SomeEnemyCard ambushingOrcs
+        , SomeEnemyCard pursuingWargRider
+        , SomeEnemyCard webSpinner
+        , SomeEnemyCard warriorOfNurn
+        , SomeEnemyCard orcCaptor
+        , SomeEnemyCard sentryOfTheWhiteBridge
+        , SomeEnemyCard blackNumenoreanNightmare
+        , SomeEnemyCard orcTrickster
+        , SomeEnemyCard urukMarksman
+        , SomeEnemyCard druBuriDruNightmare
+        , SomeEnemyCard druadanWarrior
+        , SomeEnemyCard druadanStalker
+        , SomeEnemyCard orcRaidersNightmare
+        , SomeEnemyCard pillagingOrc
+        , SomeEnemyCard invadingOrc
+        , SomeEnemyCard haradrimWarrior
+        , SomeEnemyCard murderousTurncoat
+        , SomeEnemyCard faithlessConspirator
+        , SomeEnemyCard wolfpeltGoblin
+        , SomeEnemyCard silvertineMarauder
+        , SomeEnemyCard snowGiant
+        , SomeEnemyCard urukElfStalker
+        , SomeEnemyCard goblinTrapper
+        , SomeEnemyCard raidingParty
+        , SomeEnemyCard viciousTrackers
+        , SomeEnemyCard theWatcherNightmare
+        , SomeEnemyCard writhingTentacle
+        , SomeEnemyCard chokingTentacle
+        , SomeEnemyCard goblinStalker
+        , SomeEnemyCard trapdoorSpider
+        , SomeEnemyCard sentinelOfTheDeep
+        , SomeEnemyCard mithrilSeeker
+        , SomeEnemyCard giantCaveCentipede
+        , SomeEnemyCard unspeakableThing
+        , SomeEnemyCard primevalThing
+        , SomeEnemyCard servantOfFlame
+        , SomeEnemyCard captainOfMordor
+        , SomeEnemyCard packHunters
+        , SomeEnemyCard jailorGornakhNightmare
+        , SomeEnemyCard prisonGuard
+        , SomeEnemyCard orcOfThaurdir
+        , SomeEnemyCard hoarwellRiverSerpent
+        , SomeEnemyCard scavengingStoneTroll
+        , SomeEnemyCard giantBeetle
+        , SomeEnemyCard thaurdirsHunter
+        , SomeEnemyCard undeadThrall
+        , SomeEnemyCard apostateOfAngmar
+        , SomeEnemyCard orcWight
+        , SomeEnemyCard thaurdirsElite
+        , SomeEnemyCard silentGuardian
+        , SomeEnemyCard necromancerOfCarnDum
         ]
     ]

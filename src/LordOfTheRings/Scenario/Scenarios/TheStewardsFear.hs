@@ -5,15 +5,21 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue (peekQueue)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Entities (entitiesLocations)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Types (locationCardId)
+import LordOfTheRings.Objective.Types (objectiveCardId)
+import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Matcher
+import LordOfTheRings.Phase (Phase (RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
 import LordOfTheRings.Trait (Trait (Clue, Plot, Villain))
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window
 
 newtype TheStewardsFear = TheStewardsFear ScenarioAttrs
@@ -21,7 +27,20 @@ newtype TheStewardsFear = TheStewardsFear ScenarioAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theStewardsFear :: Scenario
-theStewardsFear = Scenario $ scenario TheStewardsFear "the-stewards-fear" "The Steward's Fear"
+theStewardsFear =
+  Scenario
+    $ scenario (TheStewardsFear . (nightmareDeckL ?~ nightmare)) "the-stewards-fear" "The Steward's Fear"
+ where
+  -- the 2 new Plots join the 3 the hidden one is chosen from as Plots do
+  nightmare =
+    nightmareDeck
+      Nightmare.theStewardsFearNightmare
+      EncounterSet.TheStewardsFearNightmare
+      [ (Enemies.pickpocket, 3)
+      , (Locations.marketSquare, 2)
+      , (Enemies.underworldDissident, 3)
+      , (Locations.storehouse, 2)
+      ]
 
 {- | Setup (Conspiracy): Create the underworld deck from the enemies of Streets of Gondor and
 Brigands and the 3 Clue objectives. Set Roots of Mindolluin aside, out of play. Shuffle
@@ -37,18 +56,22 @@ instance RunMessage TheStewardsFear where
   runMessage msg (TheStewardsFear attrs) = case msg of
     DoStep 1 Setup -> do
       cards <-
-        concatMapM
-          (gatherEncounterSet attrs)
+        gatherEncounterSets
+          attrs
           [EncounterSet.TheStewardsFear, EncounterSet.Brigands, EncounterSet.StreetsOfGondor]
+      -- Nightmare: "Setup: Shuffle each copy of False Accusations into the underworld deck."
       let fromHeirs c = cdEncounterSet (toCardDef c) `elem` map Just [EncounterSet.Brigands, EncounterSet.StreetsOfGondor]
-          underworld c = (cdCardType (toCardDef c) == EnemyType && fromHeirs c) || cardMatches (CardWithTrait Clue) c
+          underworld c =
+            (cdCardType (toCardDef c) == EnemyType && fromHeirs c)
+              || cardMatches (CardWithTrait Clue) c
+              || toCardCode c == toCardCode Treacheries.falseAccusations
           (underworldCards, rest) = partition underworld cards
           (villains, rest') = partition (cardMatches $ CardWithTrait Villain) rest
           (plots, rest'') = partition (cardMatches $ CardWithTrait Plot) rest'
           (roots, encounterDeck) = partition ((== toCardCode Locations.rootsOfMindolluin) . toCardCode) rest''
       deck <- shuffleM underworldCards
       villain <- take 1 <$> shuffleM villains
-      plot <- take 1 <$> shuffleM plots
+      (plot, removedPlots) <- splitAt 1 <$> shuffleM plots
       firstStage <- genEncounterCard Quests.conspiracy
       laterStages <- traverse genEncounterCard [Quests.theGrandDesign, Quests.theConfrontation]
       putQuestIntoPlay firstStage
@@ -58,8 +81,9 @@ instance RunMessage TheStewardsFear where
         & encounterDeckL .~ encounterDeck
         & questDeckL .~ laterStages
         & setAsideL .~ villain <> plot <> roots
-        & metaL .~ toJSON (Meta deck mempty)
+        & metaL .~ toJSON (Meta deck mempty removedPlots)
     CheckWindows ws -> do
+      when attrs.nightmare $ nightmareWindows ws
       -- Underworld X, as a location enters the staging area; one being revealed with a
       -- When Revealed effect resolves that first, its Underworld after (ALeP 3.073, Sewers)
       queued <- lift peekQueue
@@ -85,9 +109,39 @@ instance RunMessage TheStewardsFear where
       let meta = getMeta attrs
       case meta.underworldDeck of
         card : rest -> do
-          if cardMatches (CardWithTrait Clue) card then push (AddToEncounterDiscard [card]) else addToStaging card
+          if cardMatches (CardWithTrait Clue) card then push (AddToEncounterDiscard [card]) else revealOrStage card
           pure $ TheStewardsFear $ withMeta meta {underworldDeck = rest}
         [] -> pure $ TheStewardsFear attrs
+    ScenarioSpecific "underworld.under" (parseMaybe parseJSON -> Just (lid, card)) ->
+      locationCard lid >>= \case
+        Just cid -> do
+          placeUnderneath lid [EncounterCard card]
+          let meta = getMeta attrs
+          pure $ TheStewardsFear $ withMeta meta {underneath = Map.insertWith (flip (<>)) cid [card] meta.underneath}
+        Nothing -> pure $ TheStewardsFear attrs
+    ScenarioSpecific "underworld.revealUnder" (parseMaybe parseJSON -> Just lid) -> do
+      let meta = getMeta attrs
+      cid <- locationCard lid
+      case cid >>= (`Map.lookup` meta.underneath) of
+        Just cards -> do
+          traverse_ revealOrStage cards
+          pure $ TheStewardsFear $ withMeta meta {underneath = Map.delete (fromJustNote "card" cid) meta.underneath}
+        Nothing -> pure $ TheStewardsFear attrs
+    ScenarioSpecific "underworld.plot" _ -> do
+      let meta = getMeta attrs
+      case meta.removedPlots of
+        [] -> pure $ TheStewardsFear attrs
+        plots -> do
+          plot <- uniform plots
+          addToStaging plot
+          pure $ TheStewardsFear $ withMeta meta {removedPlots = filter (/= plot) plots}
+    -- the card, out of play or in the encounter discard pile, is shuffled into the underworld
+    -- deck; one that should be in the discard pile and is not stays where it is
+    ScenarioSpecific "underworld.reclaim" (parseMaybe parseJSON -> Just (card, fromDiscard))
+      | not fromDiscard || card `elem` attrs.encounterDiscard -> do
+          let meta = getMeta attrs
+          deck <- shuffleM (card : meta.underworldDeck)
+          pure $ TheStewardsFear $ withMeta meta {underworldDeck = deck} & encounterDiscardL %~ filter (/= card)
     ScenarioSpecific "underworld.shuffle" _ -> do
       let meta = getMeta attrs
       deck <- shuffleM (meta.underworldDeck <> attrs.encounterDeck)
@@ -101,6 +155,25 @@ instance RunMessage TheStewardsFear where
     _ -> TheStewardsFear <$> runMessage msg attrs
    where
     withMeta meta = attrs & metaL .~ toJSON meta
+    -- a treachery from the underworld deck is revealed, its When Revealed resolving; the
+    -- rest go to the staging area
+    revealOrStage card
+      | cdCardType (toCardDef card) == TreacheryType = push $ RevealCard card
+      | otherwise = addToStaging card
+    -- Nightmare: "Forced: After an enemy is destroyed, shuffle it into the underworld deck
+    -- if you are not at stage 3." "Forced: At the beginning of the refresh phase, if there
+    -- is a Clue card in the staging area, shuffle it back into the underworld deck."
+    -- ponytail: an enemy is taken from the encounter discard pile; one with victory points
+    -- stays in the victory display
+    nightmareWindows ws = do
+      stage <- getMainStage
+      when (stage /= 3) $ for_ [c | Window After (EnemyDestroyed (EncounterCard c)) <- ws] (reclaim True)
+      when (Window After (PhaseBegins RefreshPhase) `elem` ws) do
+        clues <- getsGame (filter ((== StagingArea) . (.placement)) . filter (cardMatches (CardWithTrait Clue)) . toList . (.entities.objectives))
+        for_ clues \o -> do
+          removeFromGame (ObjectiveTarget $ toId o)
+          reclaim False (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o))
+    reclaim fromDiscard card = push $ ScenarioSpecific "underworld.reclaim" (toJSON (card, fromDiscard :: Bool))
     locationCard lid = fmap (locationCardId . toAttrs) <$> getsGame (Map.lookup lid . entitiesLocations . gameEntities)
     stackUnder meta lid = do
       n <- underworldValue . toCardCode =<< getLocation lid
@@ -121,6 +194,6 @@ instance RunMessage TheStewardsFear where
       cid <- locationCard lid
       case cid >>= (`Map.lookup` meta.underneath) of
         Just cards -> do
-          traverse_ addToStaging cards
+          traverse_ revealOrStage cards
           TheStewardsFear <$> runMessage msg (withMeta meta {underneath = Map.delete (fromJustNote "card" cid) meta.underneath})
         Nothing -> TheStewardsFear <$> runMessage msg attrs

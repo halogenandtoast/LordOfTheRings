@@ -1105,7 +1105,8 @@
   },
   "celebrimborsSecret": {
     "scourOrder": "Choose the next Scour effect to resolve",
-    "assignDamage": "Place 1 damage on a location ({n} left to assign)"
+    "assignDamage": "Place 1 damage on a location ({n} left to assign)",
+    "nightmareScour": "Scour: choose a location in play to deal 1 damage to"
   },
   "celebrimborsMould": {
     "attach": "Attach Celebrimbor's Mould to a hero you control"
@@ -1587,7 +1588,512 @@
     "moveDamage": "Choose the character to take the enemy's damage"
   },
   "campaign": {
-    "attachTo": "Choose a hero to attach it to"
+    "attachTo": "Choose a hero to attach it to",
+    "pendantOrCourage": "Deadmen's Dike: choose Iârion's Pendant or Amarthiúl's Courage for the Campaign Pool",
+    "iarionsPendant": "Iârion's Pendant, for a player's deck",
+    "amarthiulsCourage": "Amarthiúl's Courage, attached to Amarthiúl",
+    "chooseBoon": "You may choose a boon to add to your hand and the Campaign Pool",
+    "searchForBoon": "You may search your deck for a boon to add to your hand"
+  },
+  "protectTheInnocent": {
+    "resources": "Protect the Innocent: place 4 damage on it to add 1 resource to each of your heroes?",
+    "placeDamage": "Place 4 damage, take the resources"
+  },
+  "losingTime": {
+    "choose": "Losing Time: raise your threat by 3 or exhaust a hero",
+    "raiseThreat": "Raise your threat by 3"
+  },
+  "ruthless": {
+    "moveDamage": "Choose an enemy engaged with you to move the damage to"
+  },
+  "stalwart": {
+    "playAttachment": "Choose an attachment in your discard pile to play on the hero"
+  },
+  "daechanarsBrand": {
+    "choose": "Choose a Sorcery treachery to add to the victory display"
+  },
+  "ordersFromAngmar": {
+    "discard": "Choose a non-unique Undead enemy to discard"
+  },
+  "laermuin": {
+    "heal": "Choose a character to heal 1 damage from"
+  },
+  "determination": {
+    "attach": "Choose a unique character to attach Determination to"
+  },
+  "loreOfAncientArnor": {
+    "return": "Choose a card in your discard pile to return to your hand"
+  },
+  "mysteriousOmens": {
+    "chooseBoon": "Mysterious Omens: you may choose a boon to attach to a hero you control"
+  },
+  "lootTheDungeons": {
+    "chooseBoon": "Loot the Dungeons: you may choose a boon to add to your hand"
+  },
+  "thaurdirsBurden": {
+    "move": "Choose the hero Thaurdir's burden moves to"
+  },
+  "perilInPelargirNightmare": {
+    "attachScroll": "Choose the enemy with the highest defense to take Alcaron's Scroll"
+  },
+  "bedlamInTheStreets": {
+    "choose": "Remove a hero you control from the quest, or engage an enemy in the staging area (it attacks)"
+  },
+  "theThievesPloy": {
+    "enemy": "Choose the enemy engaged with you to take Alcaron's Scroll"
+  },
+  "theyreGettingAway": {
+    "choose": "They're Getting Away!",
+    "progress": "Place 1 progress on the enemy with Alcaron's Scroll",
+    "threat": "Each card in the staging area gets +2 threat until the end of the phase"
+  },
+  "savageFray": {
+    "choose": "Switch the current quest's keyword to",
+    "battle": "Battle",
+    "siege": "Siege"
+  },
+  "theSiegeOfCairAndrosNightmare": {
+    "battleground": "Choose a Battleground location"
+  },
+  "besiegedCourtyard": {
+    "choose": "Besieged Courtyard",
+    "attack": "The attacking enemy makes an additional attack after this one",
+    "damage": "Deal 10 damage to a Battleground location"
+  },
+  "methedrasLookout": {
+    "choose": "Methedras Lookout: exhaust a character you control, or return the attacking enemy to the staging area",
+    "exhaust": "Exhaust a character you control",
+    "return": "Return the attacking enemy to the staging area"
+  },
+  "orcTrail": {
+    "choose": "Orc Trail: choose an out-of-play Orc enemy to add to the staging area"
+  },
+  "patrollingOrcs": {
+    "choose": "Patrolling Orcs: exhaust a character you control, or remove 1 time counter from the current quest",
+    "exhaust": "Exhaust a character you control",
+    "timeCounter": "Remove 1 time counter from the current quest"
+  },
+  "entwood": {
+    "engage": "Entwood: choose the Huorn enemy to engage"
+  },
+  "stiflingWoods": {
+    "choose": "Stifling Woods: remove 6 progress or 1 time counter from the current quest",
+    "progress": "Remove 6 progress from the current quest",
+    "timeCounter": "Remove 1 time counter from the current quest"
+  },
+  "sahirsPursuer": {
+    "choose": "Sahír's Pursuer: engage it, or shift your heading off-course",
+    "engage": "Engage Sahír's Pursuer"
+  },
+  "openWaters": {
+    "exhaust": "Choose a Ship objective to exhaust to travel to Open Waters"
+  },
+  "rogueWave": {
+    "choose": "Rogue Wave: exhaust a Ship objective you control, or distribute the damage among your characters",
+    "damage": "Distribute the damage among your characters"
+  },
+  "dreamsOfNumenor": {
+    "choose": "Dreams of Númenor: set your heading to the worst setting, or exhaust all allies in play",
+    "worst": "Set your heading to the worst setting",
+    "exhaust": "Exhaust all allies in play"
+  },
+  "guardianOfTheGoldenKing": {
+    "remove": "Choose a character to remove from the attack on Guardian of the Golden King"
+  },
+  "corruptedFlora": {
+    "remove": "Choose a character to remove from the quest"
+  },
+  "calphonsFolly": {
+    "flip": "Choose an Uncharted location in the staging area to flip over"
+  },
+  "suddenAssaultNightmare": {
+    "choose": "Sudden Assault: deal 2 damage to an Aflame location, or reveal the top card of the encounter deck",
+    "reveal": "Reveal the top card of the encounter deck",
+    "shadow": "Sudden Assault: deal 2 damage to an Aflame location, or the attacking enemy attacks again",
+    "attack": "The attacking enemy makes an additional attack"
+  },
+  "infiltration": {
+    "shadow": "Choose the Aflame location this attack's damage is dealt to"
+  },
+  "burningTower": {
+    "choose": "Burning Tower: choose a character to deal 1 damage to"
+  },
+  "theCorsairsAssault": {
+    "searchShip": "Choose a unique location to add to the staging area"
+  },
+  "aGreatHost": {
+    "choose": "A Great Host: reveal Orc Rearguard, or each player deals 4 damage to a character he controls",
+    "orcRearguard": "Search for Orc Rearguard and reveal it",
+    "damage": "Each player deals 4 damage to a character he controls"
+  },
+  "killThem": {
+    "choose": "Kill Them!: choose one",
+    "removeProgress": "Remove all progress from the main quest",
+    "attack": "Each Orc War Party in the staging area attacks the player with the highest threat"
+  },
+  "rainWashedTracks": {
+    "choose": "Rain-washed Tracks: choose one",
+    "mission": "Remove 1 resource token from the Mission objective",
+    "threat": "Add 8 to the total threat in the staging area this phase",
+    "attack": "The attacking enemy gets +3 attack"
+  },
+  "decrepitCity": {
+    "choose": "Decrepit City: choose one",
+    "discard": "Discard the top 3 cards of your deck",
+    "undefended": "This attack is considered undefended"
+  },
+  "paralyzingFear": {
+    "attach": "Choose the hero to attach Paralyzing Fear to",
+    "ready": "Paralyzing Fear: discard the top card of your deck to ready the hero?",
+    "discard": "Discard the top card of your deck and ready the hero",
+    "stayExhausted": "Leave the hero exhausted"
+  },
+  "palaceRuins": {
+    "amount": "Palace Ruins: how many cards to discard from the top of your deck?"
+  },
+  "shadowFall": {
+    "attach": "Choose the location Shadow-fall attaches to"
+  },
+  "dismayAndFear": {
+    "remove": "Choose a character to remove from the quest"
+  },
+  "plainsOfDunland": {
+    "engage": "Choose the highest attack enemy in the staging area to engage"
+  },
+  "munuvDuvRiver": {
+    "shadow": "Choose an enemy engaged with you to deal a shadow card"
+  },
+  "cursedBurden": {
+    "attach": "Choose a hero with a Key attached for Cursed Burden"
+  },
+  "hauntedPillars": {
+    "choose": "Haunted Pillars: choose one",
+    "returnLocation": "Return the active location to the staging area",
+    "surge": "Haunted Pillars gains surge"
+  },
+  "sacredForest": {
+    "removeTimeCounters": "Choose an enemy to remove each time counter from"
+  },
+  "bellachsHunter": {
+    "choose": "Bellach's Hunter engages you: choose one",
+    "removeTimeCounters": "Remove all time counters from the current quest",
+    "damage": "Deal 5 damage to a hero you control"
+  },
+  "orcSeeker": {
+    "choose": "Orc Seeker: choose one",
+    "lowerElimination": "Reduce each player's threat elimination level by 2",
+    "attack": "Orc Seeker engages the first player and makes an immediate attack"
+  },
+  "bloodHound": {
+    "choose": "Blood Hound: choose one",
+    "raiseThreat": "Raise your threat by 10",
+    "attack": "The attacking enemy makes an additional attack against you"
+  },
+  "darkPathway": {
+    "choose": "Dark Pathway: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "undefended": "Treat this attack as undefended"
+  },
+  "waylaidByAgents": {
+    "choose": "Waylaid by Agents: remove 1 time counter from the quest or discard an ally you control",
+    "removeTimeCounter": "Remove 1 time counter from the quest"
+  },
+  "tharbadPatrol": {
+    "attach": "Choose a non-unique location in the staging area for Tharbad Patrol"
+  },
+  "deadlyMarshAdder": {
+    "discard": "Choose a damaged character you control to discard"
+  },
+  "quicksand": {
+    "choose": "Quicksand: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "removeFromQuest": "Remove each character with 3 or more willpower from the quest"
+  },
+  "littleSnuffler": {
+    "assign": "Place 1 damage on a location in the staging area ({n} left to assign)"
+  },
+  "bonesOfHollin": {
+    "damage": "Choose an Ost-in-Edhil location to place 2 damage on"
+  },
+  "dustyLabyrinth": {
+    "place": "Choose a card from your hand to place facedown underneath The Orcs' Search"
+  },
+  "ravenClanElite": {
+    "choose": "Raven Clan Elite: choose one",
+    "removeTimeCounter": "Remove 1 time counter from a location in play",
+    "attack": "Raven Clan Elite makes an immediate attack against the first player"
+  },
+  "highlandsOfDunland": {
+    "choose": "Highlands of Dunland: choose one",
+    "removeTimeCounter": "Remove 1 time counter from a location in play",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "tideRunner": {
+    "choose": "Tide-runner: choose a player to engage it, or add it to the Stormcaller's area with surge",
+    "stormcaller": "Add it to the Stormcaller's area; it gains surge"
+  },
+  "sharpJetties": {
+    "choose": "Sharp Jetties: remove the progress from the quest, or damage each Ship objective",
+    "removeProgress": "Remove as much progress from the current quest",
+    "damageShips": "Deal as much damage to each Ship objective"
+  },
+  "sahirsGettingAway": {
+    "choose": "Sahír's Getting Away!: shift your heading off-course, or add 8 threat to the staging area this phase",
+    "offCourse": "Shift your heading off-course",
+    "threat": "Add 8 threat to the staging area until the end of the phase"
+  },
+  "slitheringArm": {
+    "choose": "Slithering Arm: resolve its Grapple keyword, or treat this attack as undefended",
+    "grapple": "Resolve its Grapple keyword",
+    "undefended": "Treat this attack as undefended"
+  },
+  "deceitfulIsland": {
+    "switch": "Deceitful Island: choose the location to switch places with the active location"
+  },
+  "overgrownPassage": {
+    "mayFlip": "Overgrown Passage: flip it to its Underwater side?",
+    "flip": "Flip it",
+    "stay": "Leave it"
+  },
+  "floodedCaverns": {
+    "return": "Flooded Caverns: choose an Underwater location to return to the bottom of the Grotto deck"
+  },
+  "sulfurCloud": {
+    "number": "Sulfur Cloud: choose a number; each player raises his threat by it, and twice it is the most progress Underwater locations take this phase"
+  },
+  "brokenRudder": {
+    "attach": "Broken Rudder: choose a Ship objective to attach it to",
+    "keep": "Broken Rudder: how many success symbols to keep, dealing 1 damage to its Ship for each"
+  },
+  "grappled": {
+    "attach": "Grappled!: choose a Ship objective to attach it to"
+  },
+  "aearlang": {
+    "ready": "Aearlang: choose a hero to ready"
+  },
+  "docksOfDolAmroth": {
+    "heal": "Docks of Dol Amroth: choose a Ship objective to heal 2 damage from"
+  },
+  "fangOfSahir": {
+    "choose": "Fang of Sahír: deal 3 damage to a Ship objective you control, or it attacks you",
+    "attack": "Fang of Sahír makes an immediate attack"
+  },
+  "warTornWaters": {
+    "guard": "War-torn Waters: choose an unguarded objective for it to guard"
+  },
+  "corsairLoyalist": {
+    "choose": "Corsair Loyalist: the attacking Raider gets 2 resources, or attacks again",
+    "resources": "Add 2 resources to the attacking enemy",
+    "attack": "The attacking enemy makes an additional attack"
+  },
+  "umbarPatrolNightmare": {
+    "raider": "Umbar Patrol: choose the Raider enemy to add 2 resources to"
+  },
+  "inspiringFury": {
+    "enemy": "Inspiring Fury: choose the enemy with the highest attack to deal it to as a shadow card"
+  },
+  "slaveTrade": {
+    "ally": "Slave Trade: choose an ally you control to deal 2 damage to",
+    "raider": "Slave Trade: choose a Raider enemy to place the resources on",
+    "discard": "Slave Trade: choose an attachment you control to discard"
+  },
+  "patrolShip": {
+    "choose": "Patrol Ship: add it to the staging area, or cancel each success symbol found",
+    "stage": "Add Patrol Ship to the staging area",
+    "cancel": "Cancel all success symbols found"
+  },
+  "theHuntForGollumNightmare": {
+    "clue": "Choose a Clue card to attach to a Mordor enemy",
+    "mordorEnemy": "Choose the Mordor enemy to attach the Clue card to"
+  },
+  "restlessHunters": {
+    "clue": "Restless Hunters: choose a Clue card attached to a hero",
+    "hero": "Restless Hunters: choose the hero with a Clue card to take this attack's damage"
+  },
+  "darkPools": {
+    "discard": "Dark Pools: discard your ally with the highest printed cost"
+  },
+  "timeForSupper": {
+    "remove": "Time for Supper: choose a hero in a discard pile to remove from the game"
+  },
+  "aJourneyToRhosgobelNightmare": {
+    "athelas": "An Athelas card was placed in the discard pile",
+    "shuffle": "Shuffle it into the encounter deck"
+  },
+  "shotFromTheSky": {
+    "attach": "Shot from the Sky: choose an Eagle character to attach it to"
+  },
+  "aHurryingDarkness": {
+    "choose": "A Hurrying Darkness: raise your threat by 5, or reveal an encounter card",
+    "threat": "Raise your threat by 5",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "lostSoulOfLorien": {
+    "attach": "Lost Soul of Lórien: choose a hero to attach it to"
+  },
+  "candlesOfCorpses": {
+    "choose": "Candles of Corpses: discard a hero you control, or raise your threat by 5",
+    "threat": "Raise your threat by 5"
+  },
+  "returnToMirkwoodNightmare": {
+    "tantrum": "Exhaust a hero you control, or resolve the topmost Tantrum card in the discard pile",
+    "resolveTantrum": "Resolve the topmost Tantrum card"
+  },
+  "webSpinner": {
+    "choose": "Web-spinner: exhaust a hero you control, or it gains surge",
+    "surge": "Web-spinner gains surge"
+  },
+  "wickednessAndMischief": {
+    "choose": "Wickedness and Mischief: reveal the topmost Tantrum card in the discard pile, or 2 encounter cards",
+    "tantrum": "Reveal the topmost Tantrum card",
+    "reveal": "Reveal 2 encounter cards"
+  },
+  "banksOfMorgulduin": {
+    "captain": "Choose the Captain enemy to deal Banks of Morgulduin to as a shadow card"
+  },
+  "ephelDuath": {
+    "choose": "Ephel Dúath: place 1 progress on To the Tower or take this attack undefended"
+  },
+  "whiteFloweredFields": {
+    "choose": "White-Flowered Fields: exhaust a hero you control or place 1 progress on To the Tower",
+    "progress": "Place 1 progress on To the Tower"
+  },
+  "mountainsOfShadow": {
+    "choose": "Mountains of Shadow: take 2 hidden cards or take this attack undefended",
+    "take": "Take 2 hidden cards",
+    "undefended": "Treat this attack as undefended"
+  },
+  "surroundedByShadow": {
+    "choose": "Surrounded by Shadow: take hidden cards or remove heroes from the quest",
+    "take": "Take 1 hidden card for each questing hero you control",
+    "remove": "Remove 1 hero you control from the quest for each hidden card in your play area",
+    "removeHero": "Choose a hero to remove from the quest"
+  },
+  "poisonDarts": {
+    "attach": "Choose the enemy to attach Poison-darts to"
+  },
+  "amonDin": {
+    "villagerOr": "Discard 1 villager token from Rescued Villagers, or the alternative",
+    "discardVillager": "Discard 1 villager token from Rescued Villagers",
+    "reveal": "Reveal an encounter card"
+  },
+  "orcRaiders": {
+    "attack": "Orc Raiders makes an immediate attack against the first player"
+  },
+  "pillagingOrc": {
+    "reveal": "Reveal an additional encounter card"
+  },
+  "besiegedHomestead": {
+    "enemy": "Choose an enemy to reveal and engage"
+  },
+  "runForYourLives": {
+    "undefended": "Treat this attack as undefended"
+  },
+  "saveUs": {
+    "choose": "Save Us!: discard 2 villager tokens or search for an enemy",
+    "discardVillagers": "Discard 2 villager tokens from Rescued Villagers",
+    "search": "Search the encounter deck and discard pile for an enemy",
+    "enemy": "Choose an enemy to reveal"
+  },
+  "assaultOnOsgiliath": {
+    "response": "Choose a non-unique location to take the progress made beyond the active location this phase",
+    "skip": "Do not choose a location"
+  },
+  "westernQuarter": {
+    "discard": "Choose the highest cost attachment you control to discard"
+  },
+  "falseAccusations": {
+    "choose": "False Accusations: raise your threat by 5 or exhaust each ready character you control",
+    "threat": "Raise your threat by 5",
+    "exhaust": "Exhaust each ready character you control"
+  },
+  "assassination": {
+    "attach": "Choose the hero to attach Assassination to"
+  },
+  "theCabalsChampion": {
+    "attach": "Choose the Villain to attach The Cabal's Champion to"
+  },
+  "snowGiant": {
+    "discard": "Choose the ally with the highest willpower to discard for Snow-Giant"
+  },
+  "chokingTentacle": {
+    "attach": "Choose a character for Choking Tentacle to take hold of"
+  },
+  "bottomlessChasm": {
+    "discard": "Bottomless Chasm: choose the player to discard a card from his hand"
+  },
+  "lostAndHelpless": {
+    "attach": "Choose a hero to attach Lost and Helpless to"
+  },
+  "theLongDark": {
+    "discardAlly": "Lost: choose an ally in play to discard",
+    "triggerLost": "Choose a Lost: effect in play to trigger"
+  },
+  "giantCaveCentipede": {
+    "shuffle": "Choose the card of highest cost in your hand to shuffle into your deck"
+  },
+  "chillOfTheRoots": {
+    "choose": "Chill of the Roots: discard your hand, or raise your threat by its size",
+    "discardHand": "Discard your hand",
+    "raiseThreat": "Raise your threat by the cards in your hand"
+  },
+  "washedAway": {
+    "discardAlly": "Discard an ally until your allies' total cost is 6 or less"
+  },
+  "fieryDepths": {
+    "moveDamage": "Choose a hero to take 1 damage from Durin's Bane"
+  },
+  "packHunters": {
+    "search": "Choose a Warg enemy for Pack Hunters to put into play engaged with you"
+  },
+  "snowyBadlands": {
+    "damage": "Deal damage to an exhausted character you control to travel to Snowy Badlands"
+  },
+  "torrentOfHail": {
+    "discard": "Choose an attachment to discard for Torrent of Hail"
+  },
+  "forcedOffTrack": {
+    "discard": "Choose a Warg enemy in the staging area to discard"
+  },
+  "goblinPatrolNightmare": {
+    "capture": "Goblin Patrol: capture random cards from your hand underneath the current quest",
+    "captureCount": "Capture {count}"
+  },
+  "orcOfThaurdir": {
+    "choose": "Orc of Thaurdir attacks you",
+    "discardCaptured": "Discard the top 2 cards of your captured deck",
+    "shadow": "Deal Orc of Thaurdir 2 additional shadow cards"
+  },
+  "barrenAndDesolate": {
+    "attach": "Choose a side quest to attach Barren and Desolate to"
+  },
+  "rescueFromTheTrolls": {
+    "hero": "Choose your lowest threat cost hero to place underneath Rescue from the Trolls"
+  },
+  "thaurdirsHunter": {
+    "choose": "Thaurdir's Hunter attacks you",
+    "timeCounter": "Remove 1 time counter from the main quest",
+    "undefended": "Treat this attack as undefended",
+    "remove": "Thaurdir's Hunter: remove 1 time counter or 5 progress from a quest",
+    "removeTime": "Remove 1 time counter from {card}",
+    "removeProgress": "Remove 5 progress from {card}"
+  },
+  "malevolentForces": {
+    "remove": "Choose the questing character with the highest willpower to remove from the quest"
+  },
+  "thaurdirsElite": {
+    "discardAlly": "Choose an ally you control to discard",
+    "choose": "Thaurdir's Elite: raise your threat by 4, or discard an ally you control",
+    "threat": "Raise your threat by 4",
+    "ally": "Discard an ally you control"
+  },
+  "gatesOfCarnDum": {
+    "enemy": "Choose the enemy to deal Gates of Carn Dûm to as a shadow card"
+  },
+  "howlingOfWargs": {
+    "choose": "Howling of Wargs",
+    "shadow": "Deal 1 shadow card to each enemy in the staging area",
+    "search": "Search the encounter deck and discard pile for a side quest"
   },
   "armorPlating": {
     "discardShadow": "Armor Plating: choose another enemy to discard 1 of its shadow cards"

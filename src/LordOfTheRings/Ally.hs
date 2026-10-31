@@ -36,6 +36,11 @@ import LordOfTheRings.Ally.Cards.HaldirOfLorien
 import LordOfTheRings.Ally.Cards.Radagast
 import LordOfTheRings.Ally.Cards.Wilyador
 import LordOfTheRings.Ally.Cards.Mendor
+import LordOfTheRings.Ally.Cards.Berelind
+import LordOfTheRings.Ally.Cards.Coruhaer
+import LordOfTheRings.Ally.Cards.Laermuin
+import LordOfTheRings.Ally.Cards.ElrondsChampion
+import LordOfTheRings.Ally.Cards.RivendellSkirmishers
 import LordOfTheRings.Ally.Cards.ArwenUndomielObjective
 import LordOfTheRings.Ally.Cards.KeenEyedTook
 import LordOfTheRings.Ally.Cards.DescendantOfThorondor
@@ -209,6 +214,7 @@ import LordOfTheRings.Ally.Cards.CorsairSkirmisherShip
 import LordOfTheRings.Ally.Cards.Calaerion
 import LordOfTheRings.Ally.Cards.Gavin
 import LordOfTheRings.Ally.Cards.Starla
+import LordOfTheRings.Ally.Cards.CaptiveVillager
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -271,6 +277,11 @@ allAllies =
         , SomeAllyCard radagast
         , SomeAllyCard wilyador
         , SomeAllyCard mendor
+        , SomeAllyCard berelind
+        , SomeAllyCard coruhaer
+        , SomeAllyCard laermuin
+        , SomeAllyCard elrondsChampion
+        , SomeAllyCard rivendellSkirmishers
         , SomeAllyCard arwenUndomielTheRedhornGate
         , SomeAllyCard arwenUndomielRoadToRivendell
         , SomeAllyCard keenEyedTook
@@ -450,5 +461,6 @@ allAllies =
         , SomeAllyCard dawnStarUpgraded
         , SomeAllyCard silverWingUpgraded
         , SomeAllyCard narelenyaUpgraded
+        , SomeAllyCard captiveVillager
         ]
     ]
