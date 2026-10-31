@@ -47,7 +47,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
-import LordOfTheRings.Scenario.Types (easyModeL, scenarioName)
+import LordOfTheRings.Scenario.Types (GameMode (..), modeL, scenarioName)
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
@@ -156,6 +156,7 @@ data GameSummary = GameSummary
   , waiting :: Bool
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
   , easyMode :: Bool
+  , nightmare :: Bool
   , seats :: [SeatSummary]
   -- ^ who plays, in turn order, and with which heroes; none until the game is dealt
   }
@@ -501,6 +502,7 @@ summary _ (Entity gid row) | awaitingPlayers row = do
       , victoryPoints = 0
       , waiting = True
       , easyMode = row.lotrGameEasyMode
+      , nightmare = row.lotrGameNightmare
       , seats = []
       }
 summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
@@ -519,6 +521,7 @@ summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , victoryPoints = (toAttrs g.scenario).victoryPoints
         , waiting = False
         , easyMode = row.lotrGameEasyMode
+        , nightmare = row.lotrGameNightmare
         , seats =
             [ SeatSummary
                 p.name
@@ -579,6 +582,8 @@ data NewGame = NewGame
   -}
   , allowSpectators :: Maybe Bool
   , easyMode :: Maybe Bool
+  , nightmare :: Maybe Bool
+  -- ^ only for a scenario with a Nightmare Deck, and never with easy mode
   }
   deriving stock Generic
   deriving anyclass FromJSON
@@ -656,19 +661,26 @@ each named deck, in easy mode when the flag says so.
 -}
 startGame
   :: Scenario
-  -> Bool
+  -> GameMode
   -> NonEmpty (Text, DeckList)
   -> Int
   -> IO ((Game, [Message], StdGen), [FrontendMessage])
-startGame scenario easyMode players seed = do
+startGame scenario mode players seed = do
   seats <-
     either (error . show) pure
       . sequence
       $ evalRand (traverse (uncurry loadPlayer) players) (mkStdGen seed)
   (env, said) <-
-    envFor (newTableIn (overAttrs (easyModeL .~ easyMode) scenario) seats) [] (mkStdGen $ seed + 1)
+    envFor (newTableIn (overAttrs (modeL .~ mode) scenario) seats) [] (mkStdGen $ seed + 1)
   void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
   (,) <$> currentState env <*> (reverse <$> readIORef said)
+
+-- | The mode a game is dealt in, from its easy and nightmare flags.
+gameMode :: Bool -> Bool -> GameMode
+gameMode easy nightmare
+  | nightmare = NightmareMode
+  | easy = EasyMode
+  | otherwise = NormalMode
 
 postGamesR :: Handler Value
 postGamesR = do
@@ -688,9 +700,12 @@ postGamesR = do
   refuseSharedHeroes $ fromMaybe starterDeck <$> deckLists
   refuseBarredHeroes scenarioId $ fromMaybe starterDeck <$> deckLists
   let easyMode = fromMaybe False new.easyMode
+      nightmare = fromMaybe False new.nightmare
       seatCount = fromMaybe (length deckLists) new.seats
       -- seats left open are for friends, and the game waits for them
       friends = seatCount > length deckLists
+  when (nightmare && (easyMode || isNothing (toAttrs scenario).nightmareDeck))
+    $ sendResponseStatus status400 (ikey "error.noNightmareMode")
   when (seatCount < max 1 (length deckLists) || seatCount > 4)
     $ sendResponseStatus status400 (ikey "error.seatCount")
   now <- liftIO getCurrentTime
@@ -708,6 +723,7 @@ postGamesR = do
           , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
           , lotrGameWithFriends = friends
           , lotrGameEasyMode = easyMode
+          , lotrGameNightmare = nightmare
           , lotrGameSeats = seatCount
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
@@ -716,7 +732,7 @@ postGamesR = do
     Just dealt | not friends -> do
       ((g, queue, gen), said) <-
         liftIO
-          . startGame scenario easyMode (soloSeats playerName $ fromMaybe starterDeck <$> dealt)
+          . startGame scenario (gameMode easyMode nightmare) (soloSeats playerName $ fromMaybe starterDeck <$> dealt)
           =<< maybe (liftIO randomIO) pure new.seed
       runDB do
         gid <- insert $ newGame' (toJSON g) (toJSON queue) gen
@@ -786,7 +802,7 @@ deal gid row players = do
     maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure
       $ lookupScenario (ScenarioId row.lotrGameScenario)
   ((g, queue, gen), said) <-
-    liftIO . startGame scenario row.lotrGameEasyMode players =<< liftIO randomIO
+    liftIO . startGame scenario (gameMode row.lotrGameEasyMode row.lotrGameNightmare) players =<< liftIO randomIO
   now <- liftIO getCurrentTime
   (row', entries) <- runDB do
     deleteWhere [LotrStepGameId ==. gid]
@@ -1186,6 +1202,7 @@ postImportR = do
           , lotrGameAllowSpectators = False
           , lotrGameWithFriends = False
           , lotrGameEasyMode = (toAttrs imported.scenario).easyMode
+          , lotrGameNightmare = (toAttrs imported.scenario).nightmare
           , lotrGameSeats = length imported.playerOrder
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
