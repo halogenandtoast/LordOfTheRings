@@ -255,6 +255,8 @@ import LordOfTheRings.Enemy.Cards.RavenSpirit
 import LordOfTheRings.Enemy.Cards.BellachsHunter
 import LordOfTheRings.Enemy.Cards.OrcSeeker
 import LordOfTheRings.Enemy.Cards.BloodHound
+import LordOfTheRings.Enemy.Cards.DeadlyMarshAdder
+import LordOfTheRings.Enemy.Cards.SwarmsOfMosquitos
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -535,5 +537,7 @@ allEnemys =
         , SomeEnemyCard bellachsHunter
         , SomeEnemyCard orcSeeker
         , SomeEnemyCard bloodHound
+        , SomeEnemyCard deadlyMarshAdder
+        , SomeEnemyCard swarmsOfMosquitos
         ]
     ]

@@ -1629,5 +1629,13 @@
   },
   "tharbadPatrol": {
     "attach": "Choose a non-unique location in the staging area for Tharbad Patrol"
+  },
+  "deadlyMarshAdder": {
+    "discard": "Choose a damaged character you control to discard"
+  },
+  "quicksand": {
+    "choose": "Quicksand: choose one",
+    "removeTimeCounter": "Remove 1 time counter from the current quest",
+    "removeFromQuest": "Remove each character with 3 or more willpower from the quest"
   }
 }

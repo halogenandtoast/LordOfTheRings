@@ -278,6 +278,8 @@ import LordOfTheRings.Location.Cards.SacredForest
 import LordOfTheRings.Location.Cards.HauntedPillars
 import LordOfTheRings.Location.Cards.CityOfSpies
 import LordOfTheRings.Location.Cards.DarkPathway
+import LordOfTheRings.Location.Cards.DesolateMeadow
+import LordOfTheRings.Location.Cards.PeatBog
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -597,5 +599,7 @@ allLocations =
         , SomeLocationCard hauntedPillars
         , SomeLocationCard cityOfSpies
         , SomeLocationCard darkPathway
+        , SomeLocationCard desolateMeadow
+        , SomeLocationCard peatBog
         ]
     ]

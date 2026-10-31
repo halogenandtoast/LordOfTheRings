@@ -217,6 +217,8 @@ import LordOfTheRings.Treachery.Cards.CursedBurden
 import LordOfTheRings.Treachery.Cards.TrialOfAncestors
 import LordOfTheRings.Treachery.Cards.WaylaidByAgents
 import LordOfTheRings.Treachery.Cards.TharbadPatrol
+import LordOfTheRings.Treachery.Cards.Quicksand
+import LordOfTheRings.Treachery.Cards.RottenStench
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -458,5 +460,7 @@ allTreacherys =
         , SomeTreacheryCard trialOfAncestors
         , SomeTreacheryCard waylaidByAgents
         , SomeTreacheryCard tharbadPatrol
+        , SomeTreacheryCard quicksand
+        , SomeTreacheryCard rottenStench
         ]
     ]

@@ -12,11 +12,11 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (EncounterPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (theDunlandTrap, theThreeTrials, troubleInTharbad)
+import LordOfTheRings.Scenario (theDunlandTrap, theNinInEilph, theThreeTrials, troubleInTharbad)
 import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (eliminationLowering)
-import LordOfTheRings.Scenario.Types (GameMode (..), modeL, scenarioMeta)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck), modeL, scenarioMeta, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (PhaseBegins))
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, PhaseBegins))
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -233,3 +233,53 @@ spec = describe "The Ring-maker Nightmare Decks" do
       putGame . (phaseL .~ QuestPhase) =<< getGame
       reveal Treacheries.waylaidByAgents [Locations.cityOfSpies, Locations.cityOfSpies]
       getsGame (length . (.entities.locations)) `shouldReturn` 2
+
+  describe "The Nîn-in-Eilph" do
+    it "builds the nightmare deck, its stages in place of A Weary Passage and Impassable Marshland" . nightmare theNinInEilph $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.neekerbreekers, Locations.fingerOfGlanduin, Locations.hiddenEyot, Enemies.deadlyMarshAdder]
+        `shouldBe` [0, 0, 1, 3]
+      stages <- getsGame (map toCardCode . scenarioQuestDeck . toAttrs . (.scenario))
+      map toCardCode [Quests.throughTheMarshAnArduousJourney, Quests.lostInTheSwanfleetDeadlyWaters] `shouldSatisfy` all (`elem` stages)
+      map toCardCode [Quests.throughTheMarshAWearyPassage, Quests.lostInTheSwanfleetImpassableMarshland] `shouldSatisfy` all (`notElem` stages)
+
+    it "adds Ancient Marsh-dweller to the staging area as the players advance to a stage 2A" . nightmare theNinInEilph $ \pid -> do
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.ancientMarshDweller
+      run . AdvanceToQuest =<< genEncounterCard Quests.throughTheMarshNoEndInSight
+      answerAll pid
+      dweller <- enemyOf Enemies.ancientMarshDweller
+      (.placement) <$> getEnemy dweller `shouldReturn` StagingArea
+
+    it "returns Swarms of Mosquitoes from the victory display as the players advance" . nightmare theNinInEilph $ \_ -> do
+      swarm <- EncounterCard <$> genEncounterCard Enemies.swarmsOfMosquitos
+      putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (swarm :))) =<< getGame
+      run $ CheckWindows [Window After AdvancedToStage]
+      enemyCount `shouldReturn` 1
+
+    it "Peat Bog has each player discard a random card as the players advance" . nightmare theNinInEilph $ \pid -> do
+      staged Locations.peatBog
+      run $ DrawCards $ Drawing pid 2
+      n <- handSize pid
+      run $ CheckWindows [Window After AdvancedToStage]
+      answerAll pid
+      handSize pid `shouldReturn` n - 1
+
+    it "Rotten Stench returns the topmost location in the discard pile and raises the staging locations' threat" . nightmare theNinInEilph $ \_ -> do
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Locations.peatBog
+      reveal Treacheries.rottenStench []
+      getStagingThreat `shouldReturn` 4
+
+    it "Quicksand's shadow keeps the defender from readying" . nightmare theNinInEilph $ \pid -> do
+      eid <- engaged pid Enemies.deadlyMarshAdder
+      answerAll pid
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      shadow pid eid Treacheries.quicksand [eowyn]
+      getModifiers eowyn >>= (`shouldSatisfy` elem CannotReady)
+
+    it "An Arduous Journey has allies enter play exhausted" . nightmare theNinInEilph $ \pid -> do
+      quest <- putQuestStage Quests.throughTheMarshAnArduousJourney
+      run $ Flip quest
+      answerAll pid
+      took <- putAllyIntoPlay pid Allies.wanderingTook
+      getsGame (fmap (allyExhausted . toAttrs) . find ((== took) . toTarget) . toList . (.entities.allies)) `shouldReturn` Just True
