@@ -2388,6 +2388,9 @@ methedrasLookout =
 orcAbductor :: CardDef
 orcAbductor =
   (enemy "the-lost-realm-nightmare-invaders-in-chetwood-002" "Orc Abductor" IntrudersInChetwoodNightmare 3 45 2 4 4 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
 
 wolfpeltGoblin :: CardDef
 wolfpeltGoblin =
@@ -2766,6 +2769,9 @@ orcInterceptor =
 thingsInThePools :: CardDef
 thingsInThePools =
   (enemy "the-dead-marshes-nightmare-the-dead-marshes-004" "Things in the Pools" TheDeadMarshesNightmare 3 50 3 4 2 8)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
 
 -- The Wastes of Eriador Nightmare
 
@@ -2987,6 +2993,7 @@ faithlessConspirator :: CardDef
 faithlessConspirator =
   (enemy "the-stewards-fear-nightmare-the-stewards-fear-005" "Faithless Conspirator" TheStewardsFearNightmare 3 40 4 4 2 4)
     { cdCardTraits = setFromList [Brigand]
+    , cdShadowEffect = True
     }
 
 snowGiant :: CardDef

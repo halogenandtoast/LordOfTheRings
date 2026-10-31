@@ -954,6 +954,9 @@ shadowTheWarParty =
 protectTheBreeLanders :: CardDef
 protectTheBreeLanders =
   (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-010" "Protect the Bree-landers" IntrudersInChetwoodNightmare 10)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
 
 -- The Wastes of Eriador Nightmare
 
