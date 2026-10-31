@@ -372,6 +372,23 @@ allLocationCards =
       , stagnantQuagmire
       , deceptivePath
       , webWall
+      , banksOfMorgulduin
+      , ephelDuath
+      , whiteFloweredFields
+      , edgeOfIthilien
+      , mountainsOfShadow
+      , devilsMirk
+      , eilenach
+      , stonewainValley
+      , besiegedHomestead
+      , overrunVillage
+      , palaceRemains
+      , crumbledBattlements
+      , easternQuarter
+      , westernQuarter
+      , traitorsDen
+      , rathCelerdain
+      , archedTunnel
       ]
 
 drownedTreasury :: CardDef
@@ -2816,4 +2833,129 @@ webWall =
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     , cdWhenRevealed = True
+    }
+
+-- The Morgul Vale Nightmare
+
+banksOfMorgulduin :: CardDef
+banksOfMorgulduin =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-005" "Banks of Morgulduin" TheMorgulValeNightmare 2 4 4)
+    { cdCardTraits = setFromList [River]
+    , cdShadowEffect = True
+    }
+
+ephelDuath :: CardDef
+ephelDuath =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-006" "Ephel Dúath" TheMorgulValeNightmare 3 2 5)
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+whiteFloweredFields :: CardDef
+whiteFloweredFields =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-007" "White-Flowered Fields" TheMorgulValeNightmare 2 3 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    }
+
+-- The Blood of Gondor Nightmare
+
+-- | Archery X, X the highest number of hidden cards in any player's play area.
+edgeOfIthilien :: CardDef
+edgeOfIthilien =
+  (location "the-blood-of-gondor-nightmare-the-blood-of-gondor-005" "Edge of Ithilien" TheBloodOfGondorNightmare 3 3 6)
+    { cdCardTraits = setFromList [Ithilien, Forest]
+    , cdShadowEffect = True
+    }
+
+mountainsOfShadow :: CardDef
+mountainsOfShadow =
+  (location "the-blood-of-gondor-nightmare-the-blood-of-gondor-006" "Mountains of Shadow" TheBloodOfGondorNightmare 3 4 4)
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+-- The Drúadan Forest Nightmare
+
+devilsMirk :: CardDef
+devilsMirk =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-005" "Devil's Mirk" TheDruadanForestNightmare 3 3 3)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+eilenach :: CardDef
+eilenach =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-006" "Eilenach" TheDruadanForestNightmare 2 5 4)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdShadowEffect = True
+    }
+
+stonewainValley :: CardDef
+stonewainValley =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-007" "Stonewain Valley" TheDruadanForestNightmare 2 1 6)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+besiegedHomestead :: CardDef
+besiegedHomestead =
+  (location "encounter-at-amon-din-nightmare-encounter-at-amon-din-004" "Besieged Homestead" EncounterAtAmonDinNightmare 3 4 6)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+overrunVillage :: CardDef
+overrunVillage =
+  (location "encounter-at-amon-din-nightmare-encounter-at-amon-din-005" "Overrun Village" EncounterAtAmonDinNightmare 2 3 5)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+-- Assault on Osgiliath Nightmare
+
+-- | X threat, X the resource tokens on it.
+palaceRemains :: CardDef
+palaceRemains =
+  unique
+    (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-004" "Palace Remains" AssaultOnOsgiliathNightmare 1 0 5)
+      { cdCardTraits = setFromList [Osgiliath]
+      }
+
+crumbledBattlements :: CardDef
+crumbledBattlements =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-005" "Crumbled Battlements" AssaultOnOsgiliathNightmare 2 3 2)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+easternQuarter :: CardDef
+easternQuarter =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-006" "Eastern Quarter" AssaultOnOsgiliathNightmare 2 3 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+westernQuarter :: CardDef
+westernQuarter =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-007" "Western Quarter" AssaultOnOsgiliathNightmare 2 2 4)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+-- The Steward's Fear Nightmare
+
+traitorsDen :: CardDef
+traitorsDen =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-006" "Traitors' Den" TheStewardsFearNightmare 2 3 6)
+    { cdCardTraits = setFromList [Underworld, City]
+    }
+
+rathCelerdain :: CardDef
+rathCelerdain =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-007" "Rath Celerdain" TheStewardsFearNightmare 2 2 5)
+    { cdCardTraits = setFromList [City]
+    }
+
+archedTunnel :: CardDef
+archedTunnel =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-008" "Arched Tunnel" TheStewardsFearNightmare 2 4 3)
+    { cdCardTraits = setFromList [Underworld, City]
     }

@@ -355,6 +355,23 @@ import LordOfTheRings.Location.Cards.TheMereOfDeadFaces
 import LordOfTheRings.Location.Cards.StagnantQuagmire
 import LordOfTheRings.Location.Cards.DeceptivePath
 import LordOfTheRings.Location.Cards.WebWall
+import LordOfTheRings.Location.Cards.BanksOfMorgulduin
+import LordOfTheRings.Location.Cards.EphelDuath
+import LordOfTheRings.Location.Cards.WhiteFloweredFields
+import LordOfTheRings.Location.Cards.EdgeOfIthilien
+import LordOfTheRings.Location.Cards.MountainsOfShadow
+import LordOfTheRings.Location.Cards.DevilsMirk
+import LordOfTheRings.Location.Cards.Eilenach
+import LordOfTheRings.Location.Cards.StonewainValley
+import LordOfTheRings.Location.Cards.BesiegedHomestead
+import LordOfTheRings.Location.Cards.OverrunVillage
+import LordOfTheRings.Location.Cards.PalaceRemains
+import LordOfTheRings.Location.Cards.CrumbledBattlements
+import LordOfTheRings.Location.Cards.EasternQuarter
+import LordOfTheRings.Location.Cards.WesternQuarter
+import LordOfTheRings.Location.Cards.TraitorsDen
+import LordOfTheRings.Location.Cards.RathCelerdain
+import LordOfTheRings.Location.Cards.ArchedTunnel
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -756,5 +773,22 @@ allLocations =
         , SomeLocationCard stagnantQuagmire
         , SomeLocationCard deceptivePath
         , SomeLocationCard webWall
+        , SomeLocationCard banksOfMorgulduin
+        , SomeLocationCard ephelDuath
+        , SomeLocationCard whiteFloweredFields
+        , SomeLocationCard edgeOfIthilien
+        , SomeLocationCard mountainsOfShadow
+        , SomeLocationCard devilsMirk
+        , SomeLocationCard eilenach
+        , SomeLocationCard stonewainValley
+        , SomeLocationCard besiegedHomestead
+        , SomeLocationCard overrunVillage
+        , SomeLocationCard palaceRemains
+        , SomeLocationCard crumbledBattlements
+        , SomeLocationCard easternQuarter
+        , SomeLocationCard westernQuarter
+        , SomeLocationCard traitorsDen
+        , SomeLocationCard rathCelerdain
+        , SomeLocationCard archedTunnel
         ]
     ]

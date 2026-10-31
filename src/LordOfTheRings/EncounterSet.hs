@@ -11,6 +11,7 @@ data EncounterSet
   | AncientForest
   | AngmarOrcs
   | AssaultOnOsgiliath
+  | AssaultOnOsgiliathNightmare
   | Brigands
   | BrokenLands
   | BroodingForest
@@ -33,6 +34,7 @@ data EncounterSet
   | DunlandRaiders
   | DunlandWarriors
   | EncounterAtAmonDin
+  | EncounterAtAmonDinNightmare
   | EriadorWilds
   | EscapeFromDolGuldur
   | EscapeFromDolGuldurNightmare
@@ -85,6 +87,7 @@ data EncounterSet
   | TheAntleredCrownNightmare
   | TheBattleOfCarnDum
   | TheBloodOfGondor
+  | TheBloodOfGondorNightmare
   | TheCityOfCorsairs
   | TheCityOfCorsairsNightmare
   | TheDeadMarshes
@@ -94,6 +97,7 @@ data EncounterSet
   | TheDrownedRuins
   | TheDrownedRuinsNightmare
   | TheDruadanForest
+  | TheDruadanForestNightmare
   | TheDunlandTrap
   | TheDunlandTrapNightmare
   | TheFateOfNumenor
@@ -107,6 +111,7 @@ data EncounterSet
   | TheLongDark
   | TheLostRealm
   | TheMorgulVale
+  | TheMorgulValeNightmare
   | TheNinInEilph
   | TheNinInEilphNightmare
   | TheRedhornGate
@@ -115,6 +120,7 @@ data EncounterSet
   | TheSiegeOfCairAndros
   | TheSiegeOfCairAndrosNightmare
   | TheStewardsFear
+  | TheStewardsFearNightmare
   | -- | Helm of the Stormcaller and the decks of the Stormcaller, which cards.json lumps
     -- under The Thing in the Depths
     TheStormcaller

@@ -336,6 +336,21 @@ import LordOfTheRings.Enemy.Cards.IllFatedGuard
 import LordOfTheRings.Enemy.Cards.AmbushingOrcs
 import LordOfTheRings.Enemy.Cards.PursuingWargRider
 import LordOfTheRings.Enemy.Cards.WebSpinner
+import LordOfTheRings.Enemy.Cards.WarriorOfNurn
+import LordOfTheRings.Enemy.Cards.OrcCaptor
+import LordOfTheRings.Enemy.Cards.SentryOfTheWhiteBridge
+import LordOfTheRings.Enemy.Cards.BlackNumenoreanNightmare
+import LordOfTheRings.Enemy.Cards.OrcTrickster
+import LordOfTheRings.Enemy.Cards.UrukMarksman
+import LordOfTheRings.Enemy.Cards.DruBuriDruNightmare
+import LordOfTheRings.Enemy.Cards.DruadanWarrior
+import LordOfTheRings.Enemy.Cards.DruadanStalker
+import LordOfTheRings.Enemy.Cards.OrcRaidersNightmare
+import LordOfTheRings.Enemy.Cards.PillagingOrc
+import LordOfTheRings.Enemy.Cards.InvadingOrc
+import LordOfTheRings.Enemy.Cards.HaradrimWarrior
+import LordOfTheRings.Enemy.Cards.MurderousTurncoat
+import LordOfTheRings.Enemy.Cards.FaithlessConspirator
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -697,5 +712,20 @@ allEnemys =
         , SomeEnemyCard ambushingOrcs
         , SomeEnemyCard pursuingWargRider
         , SomeEnemyCard webSpinner
+        , SomeEnemyCard warriorOfNurn
+        , SomeEnemyCard orcCaptor
+        , SomeEnemyCard sentryOfTheWhiteBridge
+        , SomeEnemyCard blackNumenoreanNightmare
+        , SomeEnemyCard orcTrickster
+        , SomeEnemyCard urukMarksman
+        , SomeEnemyCard druBuriDruNightmare
+        , SomeEnemyCard druadanWarrior
+        , SomeEnemyCard druadanStalker
+        , SomeEnemyCard orcRaidersNightmare
+        , SomeEnemyCard pillagingOrc
+        , SomeEnemyCard invadingOrc
+        , SomeEnemyCard haradrimWarrior
+        , SomeEnemyCard murderousTurncoat
+        , SomeEnemyCard faithlessConspirator
         ]
     ]

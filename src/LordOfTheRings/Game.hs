@@ -165,10 +165,16 @@ endWaitingGame = do
   let waiting = [o | e <- gameEffects g, GameEndsWith o <- effectModifiers e]
       isWaiting = any (\case GameEndsWith _ -> True; _ -> False) . effectModifiers
   for_ (headMay waiting) \outcome -> do
-    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    cannotEnd <- gameCannotEndWith outcome
     unless cannotEnd do
       putGame $ g & effectsL %~ filter (not . isWaiting)
       push $ GameOver outcome
+
+-- | The game cannot end now with this outcome: it cannot end, or the players cannot win.
+gameCannotEndWith :: Outcome -> GameT Bool
+gameCannotEndWith outcome = do
+  mods <- getModifiers GameTarget
+  pure $ GameCannotEnd `elem` mods || (outcome == Won && PlayersCannotWin `elem` mods)
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -693,7 +699,7 @@ runGameMessage msg g = case msg of
       <> [GameOver Lost | null remaining]
     pure g
   GameOver outcome -> do
-    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    cannotEnd <- gameCannotEndWith outcome
     -- the outcome waits while the game cannot end, unless no player is left to play on;
     -- see 'endWaitingGame'
     if cannotEnd && any (not . (.eliminated)) g.players
@@ -933,18 +939,28 @@ runGameMessage msg g = case msg of
     staged <- select EnemyInStagingArea
     -- some enemies may only be engaged once they are alone in the staging area
     barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
-    enemies <- flip filterM staged \eid -> do
+    resources <- getResourcesOfSphere pid Neutral
+    enemies <- flip mapMaybeM staged \eid -> do
       mods <- getModifiers eid
       barred <- anyM (\m -> selectAny (PlayerWithId pid <> m)) $ barredBy <> [m | CannotBeOptionallyEngagedBy m <- mods]
+      -- the resources it costs to engage, as Drúadan Stalker's 2
+      let cost = sum [n | OptionalEngagementCost n <- mods]
       pure
-        $ not barred
-        && CannotEngagePlayer pid `notElem` mods
-        && (length staged <= 1 || CannotBeOptionallyEngagedWhileOthersInStaging `notElem` mods)
+        $ guard
+          ( not barred
+              && CannotEngagePlayer pid `notElem` mods
+              && (length staged <= 1 || CannotBeOptionallyEngagedWhileOthersInStaging `notElem` mods)
+              && cost <= resources
+          )
+        $> (eid, cost)
     unless (null enemies)
       $ push
       $ questionLabel (ikey "label.optionalEngagement") pid
-      $ [ targetLabel eid $ [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]] <> [DoStep 1 (OptionalEngagement pid) | again]
-        | eid <- enemies
+      $ [ targetLabel eid
+            $ [SpendResources pid Neutral cost | cost > 0]
+            <> [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]]
+            <> [DoStep 1 (OptionalEngagement pid) | again]
+        | (eid, cost) <- enemies
         ]
       <> [Label (ikey "label.doNotEngage") []]
     pure g
@@ -1779,6 +1795,8 @@ runGameMessage msg g = case msg of
             -- what would go to the quest may be damage to an enemy instead, as Ride Them Down reads
             gameMods <- getModifiers GameTarget
             let instead = filter (inPlay g) [t | ProgressAsDamageTo t <- gameMods]
+                -- or progress on a location, as Assault on Osgiliath's Nightmare setup card reads
+                onto = filter (inPlay g) [t | ProgressBeyondActiveTo t <- gameMods]
                 canceledBy q = find ((== Just q) . sourceTarget) [s | QuestProgressCanceledBy s <- gameMods]
                 onQuests k =
                   [ maybe (PlaceTokens GameSource q Progress k) (`ProgressCanceled` k) (canceledBy q)
@@ -1794,6 +1812,7 @@ runGameMessage msg g = case msg of
               <> case instead of
                 t : _ -> [DealDamage GameSource t overflow | overflow > 0]
                 []
+                  | t : _ <- onto -> [PlaceTokens GameSource t Progress overflow | overflow > 0]
                   | null almanacs -> onQuests overflow
                   | otherwise ->
                       [ questionLabelWith (ikey "label.questingProgress") Nothing (map (toTarget . fst) almanacs) lead
@@ -2202,6 +2221,7 @@ runGameMessage msg g = case msg of
         gone = filter under (toList g.entities.locations)
         heroes = filter under (toList g.entities.heroes)
         allies = filter under (toList g.entities.allies)
+        enemies = filter under (toList g.entities.enemies)
         characters = map toTarget heroes <> map toTarget allies
         on' :: HasField "placement" a Placement => a -> Bool
         on' a = a.placement `elem` map (AttachedTo . toTarget) gone
@@ -2212,9 +2232,12 @@ runGameMessage msg g = case msg of
       <> [Discard (toTarget o) | o <- toList g.entities.objectives, on' o]
       <> concatMap (discardAttached g) characters
       <> [CheckEliminations | notNull heroes]
+      -- an enemy placed underneath a location leaves play, as Murderous Turncoat
+      <> concat [discardAttached g t <> discardShadowsOf g t <> freeGuarded g t | t <- map toTarget enemies]
     pure
       $ g'
       & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
+      & entitiesL . enemiesL %~ Map.filter (not . under)
       & entitiesL . heroesL %~ Map.filter (not . under)
       & entitiesL . alliesL %~ Map.filter (not . under)
       & entitiesL . attachmentsL %~ Map.filter (not . under)
@@ -3335,6 +3358,9 @@ canFight eid c = do
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
     , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True
     , barredBy [m | CannotFight m <- cmods]
+    , case c of
+        HeroTarget hid | NotFoughtByHeroesWithoutResources `elem` mods -> (> 0) . (.resources) <$> getHero hid
+        _ -> pure True
     ]
  where
   barredBy ms = not <$> anyM (\m -> selectAny (EnemyWithId eid <> m)) ms

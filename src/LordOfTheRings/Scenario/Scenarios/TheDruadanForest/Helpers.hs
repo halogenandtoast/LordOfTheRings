@@ -3,9 +3,14 @@
 module LordOfTheRings.Scenario.Scenarios.TheDruadanForest.Helpers (
   heroPaysOr,
   returnToStagingUnlessAnyPlayerPays,
+  prowlValue,
 ) where
 
+import LordOfTheRings.Card (cdKeywords, toCardCode, toCardDef)
+import LordOfTheRings.Classes.HasGame (HasGame)
 import LordOfTheRings.Classes.HasQueue (pushAll)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Keyword (Keyword (Prowl))
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
@@ -59,3 +64,10 @@ returnToStagingUnlessAnyPlayerPays source eid = do
           labeled "payResource" $ spendResources p Neutral 1
           labeled "druadanForest.declineToPay" $ offer rest
         else offer rest
+
+-- | The enemy's prowl value: as printed, Drúadan Elite's X the number of players.
+prowlValue :: HasGame m => EnemyId -> m Int
+prowlValue eid = do
+  def <- toCardDef <$> getEnemy eid
+  players <- length <$> getRemainingPlayers
+  pure $ sum [n | Prowl n <- toList (cdKeywords def)] + (if toCardCode def == toCardCode Enemies.druadanElite then players else 0)

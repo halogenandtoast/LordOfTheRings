@@ -7,6 +7,10 @@ module LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers (
   placeUnderworldCards,
   revealUnderworldCard,
   shuffleUnderworldIntoEncounterDeck,
+  placeUnderLocation,
+  revealUnderneath,
+  revealRemovedPlot,
+  underneathCount,
   removeTokenFromQuest,
   removeAllTokensFromQuest,
   claimClue,
@@ -27,6 +31,7 @@ import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Id
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
@@ -44,19 +49,25 @@ import LordOfTheRings.Window
 data Meta = Meta
   { underworldDeck :: [EncounterCard]
   , underneath :: Map CardId [EncounterCard]
+  , removedPlots :: [EncounterCard]
+  -- ^ the Plot cards removed from the game during setup, as Traitors' Den reveals one
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+  deriving anyclass ToJSON
+
+-- | A game saved before the removed plots were kept has none.
+instance FromJSON Meta where
+  parseJSON = withObject "Meta" \o -> Meta <$> o .: "underworldDeck" <*> o .: "underneath" <*> o .:? "removedPlots" .!= []
 
 getMeta :: ScenarioAttrs -> Meta
-getMeta attrs = fromMaybe (Meta [] mempty) $ parseMaybe parseJSON attrs.meta
+getMeta attrs = fromMaybe (Meta [] mempty []) $ parseMaybe parseJSON attrs.meta
 
 {- | The location's Underworld X: as it enters play, this many cards from the underworld
 deck go facedown under it. The Fourth Star's X is the number of players.
 -}
 underworldValue :: HasGame m => CardCode -> m Int
 underworldValue code
-  | code `elem` map toCardCode [Locations.sewers, Locations.storehouse, Locations.rootsOfMindolluin] = pure 1
+  | code `elem` map toCardCode [Locations.sewers, Locations.storehouse, Locations.rootsOfMindolluin, Locations.traitorsDen, Locations.archedTunnel] = pure 1
   | code == toCardCode Locations.housesOfTheDead = pure 2
   | code == toCardCode Locations.theFourthStar = length <$> getRemainingPlayers
   | otherwise = pure 0
@@ -73,6 +84,28 @@ revealUnderworldCard = push $ ScenarioSpecific "underworld.reveal" Null
 
 shuffleUnderworldIntoEncounterDeck :: ReverseQueue m => m ()
 shuffleUnderworldIntoEncounterDeck = push $ ScenarioSpecific "underworld.shuffle" Null
+
+-- | The card goes facedown underneath the location, as Murderous Turncoat goes: an enemy
+-- leaves play for it.
+placeUnderLocation :: ReverseQueue m => LocationId -> EncounterCard -> m ()
+placeUnderLocation lid card = push $ ScenarioSpecific "underworld.under" (toJSON (lid, card))
+
+-- | The facedown cards underneath the location are revealed one at a time, the location
+-- staying in play, as Arched Tunnel's Travel reads.
+revealUnderneath :: ReverseQueue m => LocationId -> m ()
+revealUnderneath lid = push $ ScenarioSpecific "underworld.revealUnder" (toJSON lid)
+
+-- | One of the Plot cards removed from the game during setup, at random, is revealed and
+-- added to the staging area, as Traitors' Den reads.
+revealRemovedPlot :: ReverseQueue m => m ()
+revealRemovedPlot = push $ ScenarioSpecific "underworld.plot" Null
+
+-- | The facedown cards underneath the location.
+underneathCount :: HasGame m => LocationId -> m Int
+underneathCount lid = do
+  meta <- getsGame (getMeta . toAttrs . (.scenario))
+  cid <- locationCardId . toAttrs <$> getLocation lid
+  pure $ length $ Map.findWithDefault [] cid meta.underneath
 
 -- | The tokens on the current quest: the quest, and how many of each kind.
 currentQuestTokens :: HasGame m => m [(Target, Token, Int)]

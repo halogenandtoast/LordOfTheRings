@@ -283,6 +283,20 @@ import LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
 import LordOfTheRings.Treachery.Cards.Isolation
 import LordOfTheRings.Treachery.Cards.BefouledEquipment
 import LordOfTheRings.Treachery.Cards.WickednessAndMischief
+import LordOfTheRings.Treachery.Cards.TheTowerBeckons
+import LordOfTheRings.Treachery.Cards.NoxiousFumes
+import LordOfTheRings.Treachery.Cards.SurroundedByShadow
+import LordOfTheRings.Treachery.Cards.SuddenOnslaught
+import LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
+import LordOfTheRings.Treachery.Cards.PoisonDarts
+import LordOfTheRings.Treachery.Cards.TrappedVillagers
+import LordOfTheRings.Treachery.Cards.RunForYourLives
+import LordOfTheRings.Treachery.Cards.SaveUs
+import LordOfTheRings.Treachery.Cards.ThoseNowSundered
+import LordOfTheRings.Treachery.Cards.RelentlessAttack
+import LordOfTheRings.Treachery.Cards.OverrunDefenses
+import LordOfTheRings.Treachery.Cards.PressedOnAllSides
+import LordOfTheRings.Treachery.Cards.FalseAccusations
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -590,5 +604,19 @@ allTreacherys =
         , SomeTreacheryCard isolation
         , SomeTreacheryCard befouledEquipment
         , SomeTreacheryCard wickednessAndMischief
+        , SomeTreacheryCard theTowerBeckons
+        , SomeTreacheryCard noxiousFumes
+        , SomeTreacheryCard surroundedByShadow
+        , SomeTreacheryCard suddenOnslaught
+        , SomeTreacheryCard drumsOfTheWildMen
+        , SomeTreacheryCard poisonDarts
+        , SomeTreacheryCard trappedVillagers
+        , SomeTreacheryCard runForYourLives
+        , SomeTreacheryCard saveUs
+        , SomeTreacheryCard thoseNowSundered
+        , SomeTreacheryCard relentlessAttack
+        , SomeTreacheryCard overrunDefenses
+        , SomeTreacheryCard pressedOnAllSides
+        , SomeTreacheryCard falseAccusations
         ]
     ]

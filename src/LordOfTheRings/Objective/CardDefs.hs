@@ -89,6 +89,9 @@ allObjectiveCards =
       , towerOfTheGull
       , theBeacon
       , towerOfTheHeron
+      , riseToPower
+      , assassination
+      , theCabalsChampion
       ]
 
 durinsAxe :: CardDef
@@ -621,3 +624,18 @@ theCursedSword =
     (objective "the-city-of-corsairs-nightmare-the-city-of-corsairs-007" "The Cursed Sword" TheCityOfCorsairsNightmare 1)
       { cdCardTraits = setFromList [Artifact, Item, Cursed]
       }
+
+-- The Steward's Fear Nightmare
+
+riseToPower :: CardDef
+riseToPower = (objective "the-stewards-fear-nightmare-the-stewards-fear-002" "Rise to Power" TheStewardsFearNightmare 1) {cdCardTraits = setFromList [Plot]}
+
+assassination :: CardDef
+assassination = (objective "the-stewards-fear-nightmare-the-stewards-fear-003" "Assassination" TheStewardsFearNightmare 1) {cdCardTraits = setFromList [Plot]}
+
+theCabalsChampion :: CardDef
+theCabalsChampion =
+  (objective "the-stewards-fear-nightmare-the-stewards-fear-010" "The Cabal's Champion" TheStewardsFearNightmare 3)
+    { cdCardTraits = setFromList [Title]
+    , cdKeywords = setFromList [Surge, Doomed 1]
+    }

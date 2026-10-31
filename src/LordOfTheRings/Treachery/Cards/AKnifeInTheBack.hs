@@ -1,6 +1,10 @@
 module LordOfTheRings.Treachery.Cards.AKnifeInTheBack (aKnifeInTheBack) where
 
+import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Helpers.Character (getAttack)
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -25,7 +29,13 @@ instance RunMessage AKnifeInTheBack where
         Just _ -> do
           ally <- uniform allies
           x <- getAttack (toTarget ally)
-          heroes <- select (HeroControlledBy $ PlayerWithId lead)
+          heroes' <- select (HeroControlledBy $ PlayerWithId lead)
+          -- the hero with Assassination attached takes it (The Steward's Fear Nightmare)
+          marked <-
+            getsGame \g -> [h | o <- toList g.entities.objectives, toCardCode o == toCardCode Objectives.assassination, AttachedTo (HeroTarget h) <- [o.placement]]
+          let heroes = case filter (`elem` marked) heroes' of
+                [] -> heroes'
+                hs -> hs
           when (x > 0) $ chooseOrRunOneM lead do
             questionLabeledWith "aKnifeInTheBack.damage" [intVar "n" x]
             causedBy attrs

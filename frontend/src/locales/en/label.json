@@ -1904,5 +1904,70 @@
     "choose": "Wickedness and Mischief: reveal the topmost Tantrum card in the discard pile, or 2 encounter cards",
     "tantrum": "Reveal the topmost Tantrum card",
     "reveal": "Reveal 2 encounter cards"
+  },
+  "banksOfMorgulduin": {
+    "captain": "Choose the Captain enemy to deal Banks of Morgulduin to as a shadow card"
+  },
+  "ephelDuath": {
+    "choose": "Ephel Dúath: place 1 progress on To the Tower or take this attack undefended"
+  },
+  "whiteFloweredFields": {
+    "choose": "White-Flowered Fields: exhaust a hero you control or place 1 progress on To the Tower",
+    "progress": "Place 1 progress on To the Tower"
+  },
+  "mountainsOfShadow": {
+    "choose": "Mountains of Shadow: take 2 hidden cards or take this attack undefended",
+    "take": "Take 2 hidden cards",
+    "undefended": "Treat this attack as undefended"
+  },
+  "surroundedByShadow": {
+    "choose": "Surrounded by Shadow: take hidden cards or remove heroes from the quest",
+    "take": "Take 1 hidden card for each questing hero you control",
+    "remove": "Remove 1 hero you control from the quest for each hidden card in your play area",
+    "removeHero": "Choose a hero to remove from the quest"
+  },
+  "poisonDarts": {
+    "attach": "Choose the enemy to attach Poison-darts to"
+  },
+  "amonDin": {
+    "villagerOr": "Discard 1 villager token from Rescued Villagers, or the alternative",
+    "discardVillager": "Discard 1 villager token from Rescued Villagers",
+    "reveal": "Reveal an encounter card"
+  },
+  "orcRaiders": {
+    "attack": "Orc Raiders makes an immediate attack against the first player"
+  },
+  "pillagingOrc": {
+    "reveal": "Reveal an additional encounter card"
+  },
+  "besiegedHomestead": {
+    "enemy": "Choose an enemy to reveal and engage"
+  },
+  "runForYourLives": {
+    "undefended": "Treat this attack as undefended"
+  },
+  "saveUs": {
+    "choose": "Save Us!: discard 2 villager tokens or search for an enemy",
+    "discardVillagers": "Discard 2 villager tokens from Rescued Villagers",
+    "search": "Search the encounter deck and discard pile for an enemy",
+    "enemy": "Choose an enemy to reveal"
+  },
+  "assaultOnOsgiliath": {
+    "response": "Choose a non-unique location to take the progress made beyond the active location this phase",
+    "skip": "Do not choose a location"
+  },
+  "westernQuarter": {
+    "discard": "Choose the highest cost attachment you control to discard"
+  },
+  "falseAccusations": {
+    "choose": "False Accusations: raise your threat by 5 or exhaust each ready character you control",
+    "threat": "Raise your threat by 5",
+    "exhaust": "Exhaust each ready character you control"
+  },
+  "assassination": {
+    "attach": "Choose the hero to attach Assassination to"
+  },
+  "theCabalsChampion": {
+    "attach": "Choose the Villain to attach The Cabal's Champion to"
   }
 }

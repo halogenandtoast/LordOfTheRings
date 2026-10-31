@@ -159,6 +159,8 @@ data WindowType
     QuestBypassed Target
   | -- | the character was committed to an escape test, as Things in the Pools answers
     CommittedToEscapeTest Target
+  | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
+    HiddenCardTurnedFaceup Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

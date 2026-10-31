@@ -342,6 +342,21 @@ allEnemyCards =
       , ambushingOrcs
       , pursuingWargRider
       , webSpinner
+      , warriorOfNurn
+      , orcCaptor
+      , sentryOfTheWhiteBridge
+      , blackNumenoreanNightmare
+      , orcTrickster
+      , urukMarksman
+      , druBuriDruNightmare
+      , druadanWarrior
+      , druadanStalker
+      , orcRaidersNightmare
+      , pillagingOrc
+      , invadingOrc
+      , haradrimWarrior
+      , murderousTurncoat
+      , faithlessConspirator
       ]
 
 namelessThing :: CardDef
@@ -2748,4 +2763,126 @@ webSpinner =
     { cdCardTraits = setFromList [Creature, Spider]
     , cdShadowEffect = True
     , cdWhenRevealed = True
+    }
+
+-- The Morgul Vale Nightmare
+
+warriorOfNurn :: CardDef
+warriorOfNurn =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-002" "Warrior of Nurn" TheMorgulValeNightmare 3 18 2 4 3 5)
+    { cdCardTraits = setFromList [Traitor]
+    , cdShadowEffect = True
+    }
+
+orcCaptor :: CardDef
+orcCaptor =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-003" "Orc Captor" TheMorgulValeNightmare 3 50 4 3 3 4)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and X attack, X the progress on To the Tower.
+sentryOfTheWhiteBridge :: CardDef
+sentryOfTheWhiteBridge =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-004" "Sentry of the White Bridge" TheMorgulValeNightmare 2 37 0 0 4 5)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- The Blood of Gondor Nightmare
+
+-- | X threat, X the total number of hidden cards in the game.
+blackNumenoreanNightmare :: CardDef
+blackNumenoreanNightmare =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-002" "Black Númenórean" TheBloodOfGondorNightmare 1 35 0 5 4 9)
+    { cdCardTraits = setFromList [Mordor]
+    , cdVictoryPoints = Just 3
+    }
+
+orcTrickster :: CardDef
+orcTrickster =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-003" "Orc Trickster" TheBloodOfGondorNightmare 4 20 3 3 2 2)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+urukMarksman :: CardDef
+urukMarksman =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-004" "Uruk Marksman" TheBloodOfGondorNightmare 3 40 4 2 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdKeywords = setFromList [Archery 3]
+    }
+
+-- The Drúadan Forest Nightmare
+
+druBuriDruNightmare :: CardDef
+druBuriDruNightmare =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-002" "Drû-buri-Drû" TheDruadanForestNightmare 1 1 4 5 4 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdUnique = True
+    }
+
+druadanWarrior :: CardDef
+druadanWarrior =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-003" "Drúadan Warrior" TheDruadanForestNightmare 3 20 2 5 3 5)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Prowl 2]
+    }
+
+druadanStalker :: CardDef
+druadanStalker =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-004" "Drúadan Stalker" TheDruadanForestNightmare 3 43 4 3 2 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Archery 3]
+    , cdShadowEffect = True
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+orcRaidersNightmare :: CardDef
+orcRaidersNightmare =
+  (enemy "encounter-at-amon-din-nightmare-encounter-at-amon-din-002" "Orc Raiders" EncounterAtAmonDinNightmare 2 32 4 5 2 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+pillagingOrc :: CardDef
+pillagingOrc =
+  (enemy "encounter-at-amon-din-nightmare-encounter-at-amon-din-003" "Pillaging Orc" EncounterAtAmonDinNightmare 3 34 2 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- Assault on Osgiliath Nightmare
+
+invadingOrc :: CardDef
+invadingOrc =
+  (enemy "assault-on-osgiliath-nightmare-assault-on-osgiliath-002" "Invading Orc" AssaultOnOsgiliathNightmare 3 20 2 5 3 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and archery X, X the number of locations the first player controls.
+haradrimWarrior :: CardDef
+haradrimWarrior =
+  (enemy "assault-on-osgiliath-nightmare-assault-on-osgiliath-003" "Haradrim Warrior" AssaultOnOsgiliathNightmare 3 30 0 3 3 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+-- The Steward's Fear Nightmare
+
+murderousTurncoat :: CardDef
+murderousTurncoat =
+  (enemy "the-stewards-fear-nightmare-the-stewards-fear-004" "Murderous Turncoat" TheStewardsFearNightmare 3 20 1 5 3 4)
+    { cdCardTraits = setFromList [Brigand]
+    , cdWhenRevealed = True
+    }
+
+faithlessConspirator :: CardDef
+faithlessConspirator =
+  (enemy "the-stewards-fear-nightmare-the-stewards-fear-005" "Faithless Conspirator" TheStewardsFearNightmare 3 40 4 4 2 4)
+    { cdCardTraits = setFromList [Brigand]
+    , cdShadowEffect = True
     }

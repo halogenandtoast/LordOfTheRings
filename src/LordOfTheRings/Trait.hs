@@ -102,6 +102,7 @@ data Trait
   | Osgiliath
   | OstInEdhil
   | Outlands
+  | Panic
   | Pipe
   | Plains
   | Plot
@@ -117,6 +118,7 @@ data Trait
   | Road
   | Rohan
   | Ruins
+  | Scheme
   | Scout
   | Scroll
   | Shadow

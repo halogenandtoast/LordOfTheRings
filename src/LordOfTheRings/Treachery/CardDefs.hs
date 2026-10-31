@@ -290,6 +290,20 @@ allTreacheryCards =
       , isolation
       , befouledEquipment
       , wickednessAndMischief
+      , theTowerBeckons
+      , noxiousFumes
+      , surroundedByShadow
+      , suddenOnslaught
+      , drumsOfTheWildMen
+      , poisonDarts
+      , trappedVillagers
+      , runForYourLives
+      , saveUs
+      , thoseNowSundered
+      , relentlessAttack
+      , overrunDefenses
+      , pressedOnAllSides
+      , falseAccusations
       ]
 
 deepDeepDark :: CardDef
@@ -1844,5 +1858,70 @@ wickednessAndMischief :: CardDef
 wickednessAndMischief =
   (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-009" "Wickedness and Mischief" ReturnToMirkwoodNightmare 2)
     { cdCardTraits = setFromList [Tantrum]
+    }
+
+-- The Morgul Vale Nightmare
+
+theTowerBeckons :: CardDef
+theTowerBeckons = (treachery "the-morgul-vale-nightmare-the-morgul-vale-008" "The Tower Beckons" TheMorgulValeNightmare 2) {cdShadowEffect = True}
+
+noxiousFumes :: CardDef
+noxiousFumes = (treachery "the-morgul-vale-nightmare-the-morgul-vale-009" "Noxious Fumes" TheMorgulValeNightmare 2) {cdShadowEffect = True}
+
+-- The Blood of Gondor Nightmare
+
+surroundedByShadow :: CardDef
+surroundedByShadow = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gondor-007" "Surrounded by Shadow" TheBloodOfGondorNightmare 3) {cdKeywords = setFromList [Doomed 2]}
+
+suddenOnslaught :: CardDef
+suddenOnslaught = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gondor-008" "Sudden Onslaught" TheBloodOfGondorNightmare 2) {cdShadowEffect = True}
+
+-- The Drúadan Forest Nightmare
+
+drumsOfTheWildMen :: CardDef
+drumsOfTheWildMen = treachery "the-druadan-forest-nightmare-the-druadan-forest-008" "Drums of the Wild Men" TheDruadanForestNightmare 2
+
+poisonDarts :: CardDef
+poisonDarts =
+  (treachery "the-druadan-forest-nightmare-the-druadan-forest-009" "Poison-darts" TheDruadanForestNightmare 3)
+    { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+trappedVillagers :: CardDef
+trappedVillagers = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-006" "Trapped Villagers" EncounterAtAmonDinNightmare 3) {cdShadowEffect = True}
+
+runForYourLives :: CardDef
+runForYourLives = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-007" "Run for your Lives!" EncounterAtAmonDinNightmare 2) {cdShadowEffect = True}
+
+saveUs :: CardDef
+saveUs = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-008" "Save Us!" EncounterAtAmonDinNightmare 2) {cdShadowEffect = True}
+
+thoseNowSundered :: CardDef
+thoseNowSundered =
+  (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-009" "Those Now Sundered" EncounterAtAmonDinNightmare 2)
+    { cdCardTraits = setFromList [Panic]
+    , cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+-- Assault on Osgiliath Nightmare
+
+relentlessAttack :: CardDef
+relentlessAttack = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-008" "Relentless Attack" AssaultOnOsgiliathNightmare 2) {cdKeywords = setFromList [Doomed 1]}
+
+overrunDefenses :: CardDef
+overrunDefenses = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-009" "Overrun Defenses" AssaultOnOsgiliathNightmare 2) {cdShadowEffect = True}
+
+pressedOnAllSides :: CardDef
+pressedOnAllSides = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-010" "Pressed on All Sides" AssaultOnOsgiliathNightmare 2) {cdShadowEffect = True}
+
+-- The Steward's Fear Nightmare
+
+falseAccusations :: CardDef
+falseAccusations =
+  (treachery "the-stewards-fear-nightmare-the-stewards-fear-009" "False Accusations" TheStewardsFearNightmare 2)
+    { cdCardTraits = setFromList [Scheme]
     , cdShadowEffect = True
     }

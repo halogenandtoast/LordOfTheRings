@@ -556,6 +556,19 @@ data ModifierType
   | -- | on a player: he commits no more than this many characters to each escape test,
     -- as Ill-fated Guard reads
     EscapeTestCommitLimit Int
+  | -- | on the game: the players cannot win, a win waiting until nothing gives this, as
+    -- The Blood of Gondor's Nightmare setup card reads
+    PlayersCannotWin
+  | -- | on an enemy: a hero with no resources in its pool can neither attack nor defend
+    -- against it, as Drúadan Warrior reads
+    NotFoughtByHeroesWithoutResources
+  | -- | on an enemy: to optionally engage it, the player spends this many resources, as
+    -- Drúadan Stalker reads
+    OptionalEngagementCost Int
+  | -- | on the game: the progress questing makes beyond the active location's quest points
+    -- goes to this location, not the quest, as Assault on Osgiliath's Nightmare setup card
+    -- reads
+    ProgressBeyondActiveTo Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -26,7 +26,9 @@ instance RunMessage ThePursuit where
     Flip (isTarget attrs -> True) | not attrs.flipped -> do
       send $ FlipCard attrs.cardId
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      traverse_ setAside $ find ((== toCardCode Enemies.druBuriDru) . toCardCode) deck
+      -- the nightmare Drû-buri-Drû in place of the standard one
+      let dru = map toCardCode [Enemies.druBuriDru, Enemies.druBuriDruNightmare]
+      traverse_ setAside $ find ((`elem` dru) . toCardCode) deck
       shuffleEncounterDeck
       revealEncounterCards . length =<< getRemainingPlayers
       pure $ ThePursuit $ attrs {questFlipped = True}
