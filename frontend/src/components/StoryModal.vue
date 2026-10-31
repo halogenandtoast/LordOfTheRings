@@ -121,8 +121,8 @@ article {
   flex-direction: column;
   gap: 10px;
   padding: 20px;
-  width: min(36rem, 100vw - 2rem);
-  max-height: calc(100dvh - 2rem);
+  width: min(52rem, 100vw - 2rem);
+  max-height: 80vh;
   overflow-y: auto;
   border: 1px solid var(--line-strong);
   border-radius: 5px;
