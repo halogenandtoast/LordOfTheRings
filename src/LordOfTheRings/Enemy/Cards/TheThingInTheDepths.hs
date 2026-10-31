@@ -2,6 +2,7 @@ module LordOfTheRings.Enemy.Cards.TheThingInTheDepths (theThingInTheDepths) wher
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
+import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Staging (getEnemyThreat)
 import LordOfTheRings.Trait (Trait (Creature))
 
@@ -19,7 +20,10 @@ theThingInTheDepths = enemy TheThingInTheDepths Cards.theThingInTheDepths
 instance HasModifiersFor TheThingInTheDepths where
   getModifiersFor (TheThingInTheDepths a) = do
     players <- length <$> getRemainingPlayers
-    modifySelf a [ImmuneToPlayerCardEffects, CannotBeOptionallyEngagedBy AnyPlayer, CannotBeAttacked, HitPointModifier (3 * players)]
+    campaign <- isJust <$> getCampaignLog
+    modifySelf a $ [ImmuneToPlayerCardEffects, CannotBeOptionallyEngagedBy AnyPlayer, CannotBeAttacked, HitPointModifier (3 * players)]
+      -- its Campaign Mode only side: 3 threat, 6 attack, 4 hit points
+      <> [m | campaign, m <- [ThreatModifier 1, AttackModifier 1, HitPointModifier (-4)]]
 
 -- | Forced: When a Creature enemy is destroyed, deal damage to The Thing in the Depths
 -- equal to that enemy's threat.
@@ -28,7 +32,9 @@ instance RunMessage TheThingInTheDepths where
     CheckWindows ws -> do
       for_ [eid | Window When (EnemyDefeated eid) <- ws, eid /= attrs.id] \eid ->
         whenM (selectAny $ EnemyWithId eid <> EnemyWithTrait Creature) do
-          threat <- getEnemyThreat eid
+          -- its Campaign Mode only side deals 2
+          campaign <- isJust <$> getCampaignLog
+          threat <- if campaign then pure 2 else getEnemyThreat eid
           when (threat > 0) $ dealDamage attrs attrs threat
       TheThingInTheDepths <$> runMessage msg attrs
     _ -> TheThingInTheDepths <$> runMessage msg attrs

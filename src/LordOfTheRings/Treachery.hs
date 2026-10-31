@@ -211,6 +211,8 @@ import LordOfTheRings.Treachery.Cards.SmokingBlood
 import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
+import LordOfTheRings.Treachery.Cards.OminousFate
+import LordOfTheRings.Treachery.Cards.SendForHelp
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -446,5 +448,10 @@ allTreacherys =
         , SomeTreacheryCard sentinelOfShadow
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
+        , SomeTreacheryCard ominousFate
+        , SomeTreacheryCard sendForHelpLeadership
+        , SomeTreacheryCard sendForHelpTactics
+        , SomeTreacheryCard sendForHelpSpirit
+        , SomeTreacheryCard sendForHelpLore
         ]
     ]

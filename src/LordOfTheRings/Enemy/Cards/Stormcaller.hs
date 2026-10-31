@@ -3,6 +3,7 @@ module LordOfTheRings.Enemy.Cards.Stormcaller (stormcaller) where
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
+import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Placement (Placement (StormcallerArea))
 import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers
@@ -20,9 +21,18 @@ among them, are immune to player card effects (Flight of the Stormcaller rules).
 Stages 2C and 3C: If the players are off-course, the Stormcaller gets +2 threat. No more than
 4 damage (8 at stage 3C) may be placed on the Stormcaller each round.
 -}
+-- Campaign Mode only side (the Dream-chaser campaign): 7 attack, 20 hit points, no word
+-- against attachments, and: If you are at the Stormcaller's stage, no more than 9 progress
+-- can be placed on your quest each round.
+-- ponytail: the campaign side is the printed side's modifiers, its card the same.
 instance HasModifiersFor Stormcaller where
   getModifiersFor (Stormcaller a) = do
-    modifySelf a [CannotHaveAttachments]
+    campaign <- isJust <$> getCampaignLog
+    if campaign
+      then do
+        modifySelf a [AttackModifier 1, HitPointModifier 2]
+        whenM atStormcallersStage $ traverse_ (\q -> modified a q [ProgressPerRoundLimit 9]) =<< getMainQuests
+      else modifySelf a [CannotHaveAttachments]
     enemies <- getsGame (filter ((== StormcallerArea) . (.placement)) . toList . (.entities.enemies))
     for_ enemies \e -> modified a (toTarget e) [ImmuneToPlayerCardEffects]
     locations <- getsGame (filter ((== StormcallerArea) . (.placement)) . toList . (.entities.locations))

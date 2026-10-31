@@ -218,6 +218,11 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , ominousFate
+      , sendForHelpLeadership
+      , sendForHelpTactics
+      , sendForHelpSpirit
+      , sendForHelpLore
       ]
 
 deepDeepDark :: CardDef
@@ -1332,3 +1337,37 @@ darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
     }
+
+-- * The Dream-chaser Campaign Expansion
+
+ominousFate :: CardDef
+ominousFate =
+  (treachery "DCC176" "Ominous Fate" DreamChaserCampaign 1)
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Burden]
+    , cdKeywords = setFromList [Surge]
+    , cdSailingIcons = 1
+    }
+
+-- | A boon, printed as an event with an encounter card's text: set aside, Gavin shuffles
+-- one into the encounter deck.
+sendForHelp :: CardCode -> CardDef
+sendForHelp code =
+  (treachery code "Send for Help" DreamChaserCampaign 1)
+    { cdShadowEffect = True
+    , cdCardTraits = setFromList [Boon]
+    , cdKeywords = setFromList [Surge]
+    , cdSailingIcons = 1
+    }
+
+sendForHelpLeadership :: CardDef
+sendForHelpLeadership = sendForHelp "DCC211"
+
+sendForHelpTactics :: CardDef
+sendForHelpTactics = sendForHelp "DCC212"
+
+sendForHelpSpirit :: CardDef
+sendForHelpSpirit = sendForHelp "DCC213"
+
+sendForHelpLore :: CardDef
+sendForHelpLore = sendForHelp "DCC214"

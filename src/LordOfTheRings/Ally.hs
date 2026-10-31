@@ -206,6 +206,9 @@ import LordOfTheRings.Ally.Cards.Sulien
 import LordOfTheRings.Ally.Cards.GuardianOfIthilien
 import LordOfTheRings.Ally.Cards.DolAmrothWarship
 import LordOfTheRings.Ally.Cards.CorsairSkirmisherShip
+import LordOfTheRings.Ally.Cards.Calaerion
+import LordOfTheRings.Ally.Cards.Gavin
+import LordOfTheRings.Ally.Cards.Starla
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -439,5 +442,13 @@ allAllies =
         , SomeAllyCard guardianOfIthilien
         , SomeAllyCard dolAmrothWarship
         , SomeAllyCard corsairSkirmisherShip
+        , SomeAllyCard calaerion
+        , SomeAllyCard calaerionUpgraded
+        , SomeAllyCard gavin
+        , SomeAllyCard starla
+        , SomeAllyCard dreamChaserUpgraded
+        , SomeAllyCard dawnStarUpgraded
+        , SomeAllyCard silverWingUpgraded
+        , SomeAllyCard narelenyaUpgraded
         ]
     ]

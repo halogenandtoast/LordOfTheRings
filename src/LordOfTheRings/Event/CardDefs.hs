@@ -186,6 +186,15 @@ allEventCards =
       , justiceShallBeDone
       , holdTheLine
       , inspiringPresence
+      , galdorsCounselLeadership
+      , galdorsCounselTactics
+      , galdorsCounselSpirit
+      , galdorsCounselLore
+      , comeTogether
+      , commandLeadership
+      , commandLore
+      , commandSpirit
+      , commandTactics
       ]
 
 everVigilant :: CardDef
@@ -730,3 +739,39 @@ holdTheLine = event "12140" "Hold the Line" Leadership (StaticCost 0)
 
 inspiringPresence :: CardDef
 inspiringPresence = event "12143" "Inspiring Presence" Spirit (StaticCost 2)
+
+-- * The Dream-chaser Campaign Expansion: boons, scalable, each added to the victory
+-- display as it is played
+
+galdorsCounsel :: CardCode -> Sphere -> CardDef
+galdorsCounsel code sphere = (event code "Galdor's Counsel" sphere (StaticCost 0)) {cdCardTraits = setFromList [Boon], cdVictoryPoints = Just 1}
+
+galdorsCounselLeadership :: CardDef
+galdorsCounselLeadership = galdorsCounsel "DCC184" Leadership
+
+galdorsCounselTactics :: CardDef
+galdorsCounselTactics = galdorsCounsel "DCC185" Tactics
+
+galdorsCounselSpirit :: CardDef
+galdorsCounselSpirit = galdorsCounsel "DCC186" Spirit
+
+galdorsCounselLore :: CardDef
+galdorsCounselLore = galdorsCounsel "DCC187" Lore
+
+comeTogether :: CardDef
+comeTogether = (event "DCC195" "Come Together" Neutral (StaticCost 1)) {cdCardTraits = setFromList [Boon], cdVictoryPoints = Just 1}
+
+command :: CardCode -> Sphere -> CardDef
+command code sphere = (event code "Command" sphere (StaticCost 1)) {cdCardTraits = setFromList [Tactic, Boon], cdVictoryPoints = Just 1}
+
+commandLeadership :: CardDef
+commandLeadership = command "DCC201" Leadership
+
+commandLore :: CardDef
+commandLore = command "DCC202" Lore
+
+commandSpirit :: CardDef
+commandSpirit = command "DCC203" Spirit
+
+commandTactics :: CardDef
+commandTactics = command "DCC204" Tactics

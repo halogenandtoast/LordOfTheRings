@@ -253,6 +253,13 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , thunderstruck
+      , crowley
+      , revenant
+      , graxar
+      , seaSerpent
+      , seaSerpentEnraged
+      , recurringNightmare
       ]
 
 namelessThing :: CardDef
@@ -2039,3 +2046,50 @@ spiderOfDolGuldur =
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
     , cdShadowEffect = True
     }
+
+-- * The Dream-chaser Campaign Expansion: burdens
+
+thunderstruck :: CardDef
+thunderstruck =
+  unique
+    (enemy "DCC177" "Thunderstruck" DreamChaserCampaign 1 46 3 6 5 4)
+      { cdCardTraits = setFromList [Corsair, Ship, Elite, Burden]
+      , cdKeywords = setFromList [Archery 1, Boarding 2]
+      , cdVictoryPoints = Just 7
+      , cdShadowEffect = True
+      }
+
+-- | Shuffled into the Corsair deck.
+crowley :: CardDef
+crowley = unique (enemy "DCC178" "Crowley" DreamChaserCampaign 1 35 2 2 2 2) {cdCardTraits = setFromList [Corsair, Raider, Burden]}
+
+revenant :: CardDef
+revenant = unique (enemy "DCC181" "Revenant" DreamChaserCampaign 1 43 3 3 3 3) {cdCardTraits = setFromList [Undead, Burden]}
+
+graxar :: CardDef
+graxar =
+  unique (enemy "DCC188" "Graxar" DreamChaserCampaign 1 47 3 3 0 10)
+    { cdCardTraits = setFromList [Corsair, Raider, Burden]
+    , cdVictoryPoints = Just 8
+    }
+
+-- | Its Menacing side, X threat and defense the number of players: its card gives itself
+-- those.
+seaSerpent :: CardDef
+seaSerpent =
+  unique (enemy "DCC196" "Sea Serpent" DreamChaserCampaign 0 40 0 6 0 6)
+    { cdCardTraits = setFromList [Creature, Burden]
+    , cdOtherSide = Just "DCC196B"
+    }
+
+seaSerpentEnraged :: CardDef
+seaSerpentEnraged =
+  unique (enemy "DCC196B" "Sea Serpent" DreamChaserCampaign 0 0 0 8 0 8)
+    { cdCardTraits = setFromList [Creature, Burden]
+    , cdVictoryPoints = Just 8
+    , cdOtherSide = Just "DCC196"
+    }
+
+-- | Defense X, the number of players.
+recurringNightmare :: CardDef
+recurringNightmare = (enemy "DCC199" "Recurring Nightmare" DreamChaserCampaign 0 35 3 5 0 6) {cdCardTraits = setFromList [Undead, Burden]}
