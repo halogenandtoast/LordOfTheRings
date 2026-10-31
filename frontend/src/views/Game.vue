@@ -69,7 +69,7 @@ const fileBugAbout = (description = '') => {
 // resolution once won, each shown once on its own and again from the menu
 const storyId = computed(() => (scenario.value ? slug(scenario.value.name) : ''))
 const storyKeys = (part: StoryPart) =>
-  part === 'intro' ? ['intro', 'rules', 'tips'] : campaignId.value ? ['resolution', 'campaignResolution'] : ['resolution']
+  part === 'intro' ? ['intro', 'setup', 'rules', 'tips'] : campaignId.value ? ['resolution', 'campaignResolution'] : ['resolution']
 const hasStoryPart = (part: StoryPart) =>
   storyKeys(part).some((key) => Object.keys(tm(`story.${storyId.value}.${key}`)).length > 0)
 const storyPart = ref<StoryPart | null>(null)
@@ -256,7 +256,7 @@ watch(question, (asked) => {
     @toggle-sidebar="showSidebar = !showSidebar"
     @toggle-debug="debugging = !debugging"
   />
-  <StoryModal :scenario="storyId" :name="scenario?.name ?? ''" :part="storyPart" :campaign="!!campaignId" @close="storyPart = null" />
+  <StoryModal :scenario="storyId" :name="scenario?.name ?? ''" :part="storyPart" :campaign="!!campaignId" :mode="scenario?.mode" @close="storyPart = null" />
   <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />

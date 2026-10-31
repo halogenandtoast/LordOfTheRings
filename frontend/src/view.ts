@@ -378,6 +378,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       setAside: game.scenario.setAside.map((c) => card(c.cardCode, c.id)),
       victoryPoints: game.scenario.victoryDisplay.reduce((total, c) => total + (def(c.cardCode).victoryPoints ?? 0), 0),
       heading: game.scenario.heading?.toLowerCase() ?? null,
+      mode: game.scenario.mode ?? 'NormalMode',
       // its image is the flipped side, the one kept beside the quest deck
       nightmareCard:
         game.scenario.mode === 'NightmareMode' && game.scenario.nightmareDeck

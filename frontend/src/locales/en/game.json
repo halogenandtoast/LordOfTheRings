@@ -41,8 +41,11 @@
     "story": "Scenario story"
   },
   "story": {
+    "setup": "Setup",
     "rules": "Special rules",
     "tips": "Tips",
+    "easy": "Easy mode",
+    "nightmare": "Nightmare mode",
     "resolution": "Resolution",
     "continue": "Continue"
   },
