@@ -74,7 +74,8 @@ instance FromJSON Scenario where
   parseJSON v = do
     attrs <- parseJSON @ScenarioAttrs v
     case lookupScenario (scenarioId attrs) of
-      Just s -> pure $ overAttrs (const attrs) s
+      -- the nightmare deck is the scenario's own, not the saved game's
+      Just s -> pure $ overAttrs (\static -> attrs {scenarioNightmareDeck = scenarioNightmareDeck static}) s
       Nothing -> fail $ "Unknown scenario: " <> show (scenarioId attrs)
 
 instance RunMessage Scenario where

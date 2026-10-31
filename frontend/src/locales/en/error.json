@@ -6,6 +6,7 @@
   "noFreeSeat": "Every seat at this game is taken.",
   "notDealtYet": "The game has not been dealt yet.",
   "seatCount": "A game has from 1 to 4 players.",
+  "noNightmareMode": "This scenario has no Nightmare Deck, and nightmare mode cannot be played with easy mode.",
   "noDeckSource": "Give a RingsDB link or a deck JSON file.",
   "notRingsdbLink": "Not a RingsDB deck link: {url}",
   "fetchFailed": "Could not fetch that deck from RingsDB: {reason}",

@@ -83,6 +83,7 @@ data Trait
   | Marshland
   | Mathom
   | Minstrel
+  | Mirkwood
   | Mission
   | Mordor
   | Mount
@@ -102,6 +103,7 @@ data Trait
   | Plot
   | Raider
   | Ranger
+  | Rat
   | Raven
   | RavenClan
   | Record

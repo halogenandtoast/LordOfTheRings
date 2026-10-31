@@ -7,7 +7,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheWeatherHills.Helpers
 
 newtype TheWeatherHills = TheWeatherHills ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theWeatherHills :: Scenario

@@ -15,6 +15,12 @@ allLocationCards =
     map
       (\def -> (cdCardCode def, def))
       [ greatForestWeb
+      , abandonedCampNightmare
+      , gladeOfTheSpawn
+      , aFloodedFord
+      , gladdenMarshlands
+      , tortureChamber
+      , dungeonLabyrinth
       , dreadfulGap
       , fouledWell
       , goblinTunnels
@@ -2064,4 +2070,45 @@ umbarHarbor =
   (location "12162" "Umbar Harbor" TheCityOfCorsairs 3 4 4)
     { cdCardTraits = setFromList [Umbar, City]
     , cdShadowEffect = True
+    }
+
+-- Core Set Nightmare Decks
+
+abandonedCampNightmare :: CardDef
+abandonedCampNightmare =
+  (location "core-set-nightmare-passage-through-mirkwood-008" "Abandoned Camp" PassageThroughMirkwoodNightmare 3 2 2)
+    { cdCardTraits = setFromList [Mirkwood]
+    , cdShadowEffect = True
+    }
+
+gladeOfTheSpawn :: CardDef
+gladeOfTheSpawn =
+  (location "core-set-nightmare-passage-through-mirkwood-009" "Glade of the Spawn" PassageThroughMirkwoodNightmare 2 4 4)
+    { cdCardTraits = setFromList [Mirkwood]
+    }
+
+aFloodedFord :: CardDef
+aFloodedFord =
+  (location "core-set-nightmare-journey-along-the-anduin-005" "A Flooded Ford" JourneyAlongTheAnduinNightmare 2 3 6)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
+    }
+
+gladdenMarshlands :: CardDef
+gladdenMarshlands =
+  (location "core-set-nightmare-journey-along-the-anduin-006" "Gladden Marshlands" JourneyAlongTheAnduinNightmare 3 10 10)
+    { cdCardTraits = setFromList [Marshland]
+    , cdShadowEffect = True
+    }
+
+tortureChamber :: CardDef
+tortureChamber =
+  (location "core-set-nightmare-escape-from-dol-guldur-005" "Torture Chamber" EscapeFromDolGuldurNightmare 2 3 6)
+    { cdCardTraits = setFromList [DolGuldur]
+    }
+
+dungeonLabyrinth :: CardDef
+dungeonLabyrinth =
+  (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
+    { cdCardTraits = setFromList [DolGuldur]
     }

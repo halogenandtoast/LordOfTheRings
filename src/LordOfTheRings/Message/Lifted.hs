@@ -911,6 +911,15 @@ dealShadowCardsDuringAttack eid pid defenders n = do
     _ -> False
   resolveShadowCards eid pid defenders
 
+-- | Deal the attacking enemy a card from the encounter discard pile face up and resolve its
+-- shadow effect for this attack, as Backtrack! reads.
+dealAndResolveShadowCard :: ReverseQueue m => EnemyId -> PlayerId -> [Target] -> EncounterCard -> m ()
+dealAndResolveShadowCard eid pid defenders card = do
+  removeFromEncounterDiscard card
+  push $ AttachShadowCard eid card
+  push $ RevealShadowCard eid card.id
+  push $ ResolveShadowCard card.id eid pid defenders
+
 -- | Put the shadow card dealt to the enemy into play, engaged with the player.
 putShadowEnemyIntoPlay :: ReverseQueue m => EnemyId -> CardId -> PlayerId -> m ()
 putShadowEnemyIntoPlay eid cid = push . PutShadowEnemyIntoPlay eid cid

@@ -7,7 +7,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Source (Source (GameSource))
 
 newtype ShadowAndFlame = ShadowAndFlame ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 shadowAndFlame :: Scenario

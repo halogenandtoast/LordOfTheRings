@@ -49,7 +49,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
-import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioCampaign), easyModeL, scenarioName)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign), modeL, scenarioName)
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
@@ -163,6 +163,7 @@ data GameSummary = GameSummary
   , waiting :: Bool
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
   , easyMode :: Bool
+  , nightmare :: Bool
   , campaignId :: Maybe LotrCampaignId
   , seats :: [SeatSummary]
   -- ^ who plays, in turn order, and with which heroes; none until the game is dealt
@@ -510,6 +511,7 @@ summary _ (Entity gid row) | awaitingPlayers row = do
       , victoryPoints = 0
       , waiting = True
       , easyMode = row.lotrGameEasyMode
+      , nightmare = row.lotrGameNightmare
       , campaignId = row.lotrGameCampaignId
       , seats = []
       }
@@ -529,6 +531,7 @@ summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , victoryPoints = (toAttrs g.scenario).victoryPoints
         , waiting = False
         , easyMode = row.lotrGameEasyMode
+        , nightmare = row.lotrGameNightmare
         , campaignId = row.lotrGameCampaignId
         , seats =
             [ SeatSummary
@@ -590,6 +593,8 @@ data NewGame = NewGame
   -}
   , allowSpectators :: Maybe Bool
   , easyMode :: Maybe Bool
+  , nightmare :: Maybe Bool
+  -- ^ only for a scenario with a Nightmare Deck, and never with easy mode
   }
   deriving stock Generic
   deriving anyclass FromJSON
@@ -667,19 +672,26 @@ each named deck, in easy mode when the flag says so.
 -}
 startGame
   :: Scenario
-  -> Bool
+  -> GameMode
   -> NonEmpty (Text, DeckList)
   -> Int
   -> IO ((Game, [Message], StdGen), [FrontendMessage])
-startGame scenario easyMode players seed = do
+startGame scenario mode players seed = do
   seats <-
     either (error . show) pure
       . sequence
       $ evalRand (traverse (uncurry loadPlayer) players) (mkStdGen seed)
   (env, said) <-
-    envFor (newTableIn (overAttrs (easyModeL .~ easyMode) scenario) seats) [] (mkStdGen $ seed + 1)
+    envFor (newTableIn (overAttrs (modeL .~ mode) scenario) seats) [] (mkStdGen $ seed + 1)
   void $ runGameT env $ pushAll [Setup, BeginRound] >> mainLoop
   (,) <$> currentState env <*> (reverse <$> readIORef said)
+
+-- | The mode a game is dealt in, from its easy and nightmare flags.
+gameMode :: Bool -> Bool -> GameMode
+gameMode easy nightmare
+  | nightmare = NightmareMode
+  | easy = EasyMode
+  | otherwise = NormalMode
 
 postGamesR :: Handler Value
 postGamesR = do
@@ -699,9 +711,12 @@ postGamesR = do
   refuseSharedHeroes $ fromMaybe starterDeck <$> deckLists
   refuseBarredHeroes scenarioId $ fromMaybe starterDeck <$> deckLists
   let easyMode = fromMaybe False new.easyMode
+      nightmare = fromMaybe False new.nightmare
       seatCount = fromMaybe (length deckLists) new.seats
       -- seats left open are for friends, and the game waits for them
       friends = seatCount > length deckLists
+  when (nightmare && (easyMode || isNothing (toAttrs scenario).nightmareDeck))
+    $ sendResponseStatus status400 (ikey "error.noNightmareMode")
   when (seatCount < max 1 (length deckLists) || seatCount > 4)
     $ sendResponseStatus status400 (ikey "error.seatCount")
   now <- liftIO getCurrentTime
@@ -719,6 +734,7 @@ postGamesR = do
           , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
           , lotrGameWithFriends = friends
           , lotrGameEasyMode = easyMode
+          , lotrGameNightmare = nightmare
           , lotrGameCampaignId = Nothing
           , lotrGameSeats = seatCount
           , lotrGameCreatedAt = now
@@ -728,7 +744,7 @@ postGamesR = do
     Just dealt | not friends -> do
       ((g, queue, gen), said) <-
         liftIO
-          . startGame scenario easyMode (soloSeats playerName $ fromMaybe starterDeck <$> dealt)
+          . startGame scenario (gameMode easyMode nightmare) (soloSeats playerName $ fromMaybe starterDeck <$> dealt)
           =<< maybe (liftIO randomIO) pure new.seed
       runDB do
         gid <- insert $ newGame' (toJSON g) (toJSON queue) gen
@@ -800,7 +816,7 @@ deal gid row players' = do
       $ lookupScenario (ScenarioId row.lotrGameScenario)
   (scenario, players) <- inCampaign row scenario' players'
   ((g, queue, gen), said) <-
-    liftIO . startGame scenario row.lotrGameEasyMode players =<< liftIO randomIO
+    liftIO . startGame scenario (gameMode row.lotrGameEasyMode row.lotrGameNightmare) players =<< liftIO randomIO
   now <- liftIO getCurrentTime
   (row', entries) <- runDB do
     deleteWhere [LotrStepGameId ==. gid]
@@ -1200,6 +1216,7 @@ postImportR = do
           , lotrGameAllowSpectators = False
           , lotrGameWithFriends = False
           , lotrGameEasyMode = (toAttrs imported.scenario).easyMode
+          , lotrGameNightmare = (toAttrs imported.scenario).nightmare
           , lotrGameCampaignId = Nothing
           , lotrGameSeats = length imported.playerOrder
           , lotrGameCreatedAt = now
@@ -1277,13 +1294,14 @@ data NewCampaign = NewCampaign
   , seats :: Maybe Int
   , allowSpectators :: Maybe Bool
   , easyMode :: Maybe Bool
+  , nightmare :: Maybe Bool
   }
   deriving stock Generic
   deriving anyclass FromJSON
 
 -- | A scenario of the campaign, its game waiting in the lobby for its seats.
-campaignGame :: UserId -> Text -> LotrCampaignId -> Text -> ScenarioId -> Int -> Bool -> Bool -> UTCTime -> LotrGame
-campaignGame userId playerName cid campaignName sid seatCount spectators easy now =
+campaignGame :: UserId -> Text -> LotrCampaignId -> Text -> ScenarioId -> Int -> Bool -> Bool -> Bool -> UTCTime -> LotrGame
+campaignGame userId playerName cid campaignName sid seatCount spectators easy nightmare now =
   LotrGame
     { lotrGameUserId = userId
     , lotrGameName = campaignName <> ": " <> maybe sid.unScenarioId (scenarioName . toAttrs) (lookupScenario sid)
@@ -1298,6 +1316,7 @@ campaignGame userId playerName cid campaignName sid seatCount spectators easy no
     , lotrGameWithFriends = True
     , lotrGameSeats = seatCount
     , lotrGameEasyMode = easy
+    , lotrGameNightmare = nightmare
     , lotrGameCampaignId = Just cid
     , lotrGameCreatedAt = now
     , lotrGameUpdatedAt = now
@@ -1313,10 +1332,16 @@ postCampaignsR = do
       seatCount = fromMaybe 1 new.seats
   sid <- maybe (sendResponseStatus status400 (ikey "error.noSuchCampaign")) pure $ nextScenario l
   when (seatCount < 1 || seatCount > 4) $ sendResponseStatus status400 (ikey "error.seatCount")
+  -- a campaign in nightmare mode plays each of its scenarios with its Nightmare Deck
+  let easy = fromMaybe False new.easyMode
+      nightmare = fromMaybe False new.nightmare
+      scenarios = maybe [] (map fst . campaignDefScenarios) (lookupCampaign new.campaign)
+  when (nightmare && (easy || any (maybe True (isNothing . (.nightmareDeck) . toAttrs) . lookupScenario) scenarios))
+    $ sendResponseStatus status400 (ikey "error.noNightmareMode")
   now <- liftIO getCurrentTime
   (cid, gid) <- runDB do
     cid <- insert $ LotrCampaign userId new.name (toJSON l) now now
-    gid <- insert $ campaignGame userId user.userUsername cid new.name sid seatCount (fromMaybe False new.allowSpectators) (fromMaybe False new.easyMode) now
+    gid <- insert $ campaignGame userId user.userUsername cid new.name sid seatCount (fromMaybe False new.allowSpectators) easy nightmare now
     pure (cid, gid)
   pure $ object ["id" .= gid, "campaignId" .= cid]
 
@@ -1424,7 +1449,7 @@ postCampaignNextR cid = do
   now <- liftIO getCurrentTime
   gid <- runDB do
     update cid [LotrCampaignLog =. toJSON l, LotrCampaignUpdatedAt =. now]
-    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode now
+    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode row.lotrGameNightmare now
   pure $ object ["id" .= gid]
 
 main :: IO ()

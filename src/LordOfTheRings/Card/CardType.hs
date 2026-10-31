@@ -15,6 +15,8 @@ data CardType
   | ObjectiveType
   | ObjectiveAllyType
   | CampaignType
+  | -- | a Nightmare Deck's setup card, kept flipped beside the quest deck
+    NightmareType
   | -- | a side quest from a player's deck, played into the staging area
     PlayerSideQuestType
   | -- | a side quest shuffled into the encounter deck, revealed into the staging area

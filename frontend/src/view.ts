@@ -17,6 +17,7 @@ const cardTypes: Record<string, string> = {
   CampaignType: 'Campaign',
   PlayerSideQuestType: 'Player Side Quest',
   EncounterSideQuestType: 'Encounter Side Quest',
+  NightmareType: 'Nightmare',
 }
 
 const phases: Record<string, string> = {
@@ -376,6 +377,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       setAside: game.scenario.setAside.map((c) => card(c.cardCode, c.id)),
       victoryPoints: game.scenario.victoryDisplay.reduce((total, c) => total + (def(c.cardCode).victoryPoints ?? 0), 0),
       heading: game.scenario.heading?.toLowerCase() ?? null,
+      // its image is the flipped side, the one kept beside the quest deck
+      nightmareCard:
+        game.scenario.mode === 'NightmareMode' && game.scenario.nightmareDeck
+          ? card(game.scenario.nightmareDeck.setupCard, 'nightmare-setup')
+          : null,
       corsairDeck: game.scenario.corsairDeckSize ?? null,
       corsairDiscard: (game.scenario.corsairDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped }) : null,

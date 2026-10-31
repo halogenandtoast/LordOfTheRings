@@ -65,6 +65,7 @@
     "noFinishedGames": "No finished games yet.",
     "won": "Won",
     "easyMode": "Easy",
+    "nightmare": "Nightmare",
     "lost": "Lost",
     "victoryPoints": "{value} victory points",
     "vp": "{value} VP",
@@ -104,8 +105,15 @@
       "defenders-of-gondor": "Defenders of Gondor (Boromir, Prince Imrahil, Mablung)",
       "riders-of-rohan": "Riders of Rohan (Éomer, Hirgon, Lothíriel)"
     },
-    "easyMode": "Easy mode",
-    "easyModeHint": "Each hero starts with 1 extra resource, and the encounter deck leaves out the cards marked as difficult.",
+    "mode": {
+      "title": "Mode",
+      "normal": "Normal",
+      "normalHint": "The scenario as printed.",
+      "easy": "Easy",
+      "easyHint": "Each hero starts with 1 extra resource, and the encounter deck leaves out the cards marked as difficult.",
+      "nightmare": "Nightmare",
+      "nightmareHint": "The Nightmare Deck replaces some of the encounter cards, and its setup card stays in play all game."
+    },
     "allowSpectators": "Allow spectators",
     "allowSpectatorsHint": "List this game on the Watch page so anyone can watch it. Spectators see the table but cannot take any actions. This cannot be changed once the game has started.",
     "no": "No",

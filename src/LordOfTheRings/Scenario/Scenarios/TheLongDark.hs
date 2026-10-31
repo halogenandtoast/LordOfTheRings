@@ -9,7 +9,7 @@ import LordOfTheRings.Source (sourceTarget)
 import LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers (passesLocateTest)
 
 newtype TheLongDark = TheLongDark ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theLongDark :: Scenario

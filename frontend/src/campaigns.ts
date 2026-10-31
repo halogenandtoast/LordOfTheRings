@@ -10,6 +10,8 @@ export interface ScenarioOption extends Gateable {
   image: string
   /** The scenario's encounter set icon. */
   icon: string
+  /** The engine builds its Nightmare Deck, so it may be played in nightmare mode. */
+  nightmare?: boolean
 }
 
 export interface Campaign {
@@ -44,11 +46,11 @@ const fromBox = (code: string, names: string[]): ScenarioOption[] => names.map((
 const fromPacks = (packs: [string, string][]): ScenarioOption[] => packs.map(([code, name]) => scenario(code, name))
 
 // The scenarios the engine scripts, with how far along each is (see displayRules.ts);
-// the rest are unimplemented.
-const implemented: Record<string, Gateable> = {
-  'passage-through-mirkwood': {},
-  'journey-along-the-anduin': {},
-  'escape-from-dol-guldur': {},
+// the rest are unimplemented. `nightmare: true` once its Nightmare Deck is scripted.
+const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
+  'passage-through-mirkwood': { nightmare: true },
+  'journey-along-the-anduin': { nightmare: true },
+  'escape-from-dol-guldur': { nightmare: true },
   'the-hunt-for-gollum': {},
   'conflict-at-the-carrock': {},
   'a-journey-to-rhosgobel': {},

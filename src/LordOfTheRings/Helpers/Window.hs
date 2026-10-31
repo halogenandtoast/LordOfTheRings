@@ -37,6 +37,7 @@ getAllAbilities = do
   es <- getsGame gameEntities
   -- an ally that just left play answers only its own leaving, as Arkham's cards in discard
   departed <- getsGame gameLeftPlay
+  scenario <- getsGame gameScenario
   let leftPlayAbilities =
         [ ab
         | a <- toList departed
@@ -56,6 +57,8 @@ getAllAbilities = do
           , concatMap getAbilities (toList es.quests)
           , if blank then [] else concatMap getAbilities (toList es.attachments)
           , concatMap getAbilities (toList es.objectives)
+          , -- a nightmare setup card's, as Arkham's scenario gives its tarot cards'
+            getAbilities scenario
           , leftPlayAbilities
           ]
   -- a card a condition has blanked offers none

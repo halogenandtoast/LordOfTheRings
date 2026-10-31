@@ -13,7 +13,7 @@ import LordOfTheRings.Trait (Trait (Barrow, Guardian, Key))
 import LordOfTheRings.Window
 
 newtype TheThreeTrials = TheThreeTrials ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theThreeTrials :: Scenario

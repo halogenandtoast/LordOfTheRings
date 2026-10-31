@@ -6,7 +6,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheFordsOfIsen.Helpers (runFordsOfIsenStep)
 
 newtype TheFordsOfIsen = TheFordsOfIsen ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theFordsOfIsen :: Scenario

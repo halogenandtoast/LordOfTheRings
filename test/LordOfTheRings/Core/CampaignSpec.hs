@@ -11,7 +11,7 @@ import LordOfTheRings.Objective (ObjectiveAttrs (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (..))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario.Types (scenarioCampaignCardFlipped, scenarioMeta)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaignCardFlipped, scenarioMeta, scenarioMode)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import TestImport
@@ -148,3 +148,8 @@ spec = describe "Campaign mode" do
       heroPrisoner . toAttrs <$> getHeroWithCode "01002" `shouldReturn` True
       map (.placement) <$> mendors `shouldReturn` [AttachedTo (toTarget theodred.id)]
       getsGame (scenarioCampaignCardFlipped . toAttrs . (.scenario)) `shouldReturn` True
+
+    it "takes the named prisoner in nightmare mode too" . campaignTestIn (overAttrs (\a -> a {scenarioMode = NightmareMode}) escapeFromDolGuldur) prisoner starterDeck $ \_ -> do
+      _ <- putQuestStage Quests.theNecromancersTower
+      run . WhenRevealed . toTarget =<< getActiveQuest
+      getsGame (map toCardCode . filter (heroPrisoner . toAttrs) . toList . (.entities.heroes)) `shouldReturn` ["01002"]

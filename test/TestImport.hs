@@ -31,7 +31,7 @@ import LordOfTheRings.Token as X
 import LordOfTheRings.Game as X
 import LordOfTheRings.GameT as X
 import LordOfTheRings.Id as X
-import LordOfTheRings.Matcher as X (getDamage, getLead, getLocation, getPlayer)
+import LordOfTheRings.Matcher as X (getDamage, getEncounterDiscard, getLead, getLocation, getPlayer)
 import LordOfTheRings.Message as X
 import LordOfTheRings.Prelude as X
 import LordOfTheRings.Question as X
@@ -153,8 +153,6 @@ setEncounterDeck defs = do
   putGame $ g & scenarioL %~ overAttrs (encounterDeckL .~ cards)
   pure cards
 
-getEncounterDiscard :: GameT [EncounterCard]
-getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . (.scenario))
 
 getEncounterDeck :: GameT [EncounterCard]
 getEncounterDeck = getsGame ((.encounterDeck) . toAttrs . (.scenario))
