@@ -504,6 +504,12 @@ data ModifierType
   | -- | on the active location on the Island Map: the players may travel from it to a
     -- location up to so many locations away, as Winding Caverns reads
     TravelRange Int
+  | -- | on a card: progress that would be placed on it is placed on the target instead, as
+    -- Blinding Blizzard takes the quest's and Snow locations'
+    ProgressPlacedOnInstead Target
+  | -- | on the game: characters cannot gain willpower from player card effects, as Frozen
+    -- Silverlode reads
+    NoWillpowerFromPlayerCards
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

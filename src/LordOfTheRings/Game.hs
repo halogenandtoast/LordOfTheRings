@@ -320,6 +320,11 @@ runEntities msg entities =
 
 runGame :: Message -> Game -> GameT Game
 runGame msg g = case msg of
+  -- progress for a card that another takes instead, as Blinding Blizzard the quest's
+  PlaceTokens source target Progress n
+    | n > 0
+    , Just other <- progressRedirect g target ->
+        g <$ push (PlaceTokens source other Progress n)
   RemoveTokens _ target TimeCounter _ -> do
     barred <- elem CannotRemoveTimeCounters <$> getModifiers target
     if barred
@@ -3318,6 +3323,13 @@ isPlayerAttack = \case
   _ -> False
 
 -- | Whether a character is still in play.
+-- | Where progress placed on the card goes instead, as Blinding Blizzard takes it.
+progressRedirect :: Game -> Target -> Maybe Target
+progressRedirect g target =
+  find
+    (\t -> t /= target && inPlay g t)
+    [t | ProgressPlacedOnInstead t <- map modifierType (Map.findWithDefault [] target (gameModifiers g))]
+
 inPlay :: Game -> Target -> Bool
 inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes
