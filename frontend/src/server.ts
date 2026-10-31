@@ -107,6 +107,10 @@ export interface ServerGame {
     /** The Corsair deck's size, once prepared, and its own discard pile (Dream-chaser rules). */
     corsairDeckSize?: number
     corsairDiscard?: Card[]
+    /** NormalMode, EasyMode or NightmareMode; older games carry only easyMode. */
+    mode?: string
+    /** The scenario's Nightmare Deck, when it has one: its setup card is shown in nightmare mode. */
+    nightmareDeck?: { setupCard: string } | null
   }
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
@@ -180,6 +184,7 @@ export interface GameSummary {
   /** Waiting for friends to take the rest of the seats. */
   waiting: boolean
   easyMode: boolean
+  nightmare: boolean
   /** Who plays, in turn order, with their heroes; none until the game is dealt. */
   seats: { name: string; threat: number; eliminated: boolean; heroes: { code: string; sphere: string | null }[] }[]
 }

@@ -8,7 +8,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers (huorn)
 
 newtype IntoFangorn = IntoFangorn ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 intoFangorn :: Scenario

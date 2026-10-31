@@ -1567,5 +1567,23 @@
   },
   "umbarPatrol": {
     "return": "Umbar Patrol: choose an enemy engaged with you to return to the staging area"
+  },
+  "spidersOfMirkwood": {
+    "exhaust": "Choose a character to exhaust for Spiders of Mirkwood"
+  },
+  "theSpidersWeb": {
+    "attach": "Attach The Spider's Web to one of your heroes"
+  },
+  "anduinTrollSpawn": {
+    "engage": "Choose the player engaged with a Hill Troll for Anduin Troll Spawn to engage"
+  },
+  "gladdenMarshlands": {
+    "damage": "Deal 1 damage to a hero you control to lower Gladden Marshlands' threat by 1"
+  },
+  "pursuitOnTheShore": {
+    "return": "Choose the enemy to return to the staging area"
+  },
+  "smokingBlood": {
+    "moveDamage": "Choose the character to take the enemy's damage"
   }
 }

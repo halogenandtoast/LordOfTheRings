@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Game.Public (publicGameFor)
-import LordOfTheRings.Scenario.Types (easyModeL)
+import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
 import TestImport
 
 spec :: Spec
@@ -57,7 +57,7 @@ spec = describe "Setup" do
     map toCardCode locations `shouldBe` ["01099"]
 
   it "in easy mode, leaves the difficult copies out and gives each hero a resource" do
-    gameTestIn (overAttrs (easyModeL .~ True) passageThroughMirkwood) testDeck \_ -> do
+    gameTestIn (overAttrs (modeL .~ EasyMode) passageThroughMirkwood) testDeck \_ -> do
       run Setup
       deck <- getEncounterDeck
       let copies code = length $ filter ((== code) . toCardCode) deck

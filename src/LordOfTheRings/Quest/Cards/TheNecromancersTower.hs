@@ -45,7 +45,19 @@ instance RunMessage TheNecromancersTower where
       askToResolveWhenRevealed attrs
       pure $ TheNecromancersTower $ attrs {questFlipped = True}
     WhenRevealed (isTarget attrs -> True) -> do
-      heroes <- select AnyHero
-      for_ (nonEmpty heroes) \hs -> push . TakePrisoner =<< uniform (toList hs)
+      -- Nightmare: "Forced: When stage 1B is revealed, the number of random heroes captured
+      -- is determined by the number of players: 1-2 players = 1, 3 players = 2, 4 players =
+      -- 3. (A single player cannot have more than 1 hero captured by this effect.)"
+      nightmare <- inNightmareMode
+      if nightmare
+        then do
+          players <- getRemainingPlayers
+          captives <- take (max 1 (length players - 1)) <$> shuffleM players
+          for_ captives \p -> takeRandomPrisoner (HeroControlledBy $ PlayerWithId p)
+        else takeRandomPrisoner AnyHero
       pure q
     _ -> TheNecromancersTower <$> runConditionalStage ((>= 1) <$> claimedObjectives) msg attrs
+   where
+    takeRandomPrisoner matcher = do
+      heroes <- select matcher
+      for_ (nonEmpty heroes) \hs -> push . TakePrisoner =<< uniform (toList hs)

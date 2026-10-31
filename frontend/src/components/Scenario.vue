@@ -46,6 +46,7 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
         <li v-for="s in settings" :key="s.key" :class="{ current: s.key === scenario.heading }"><span class="icon" :style="s.icon" /></li>
       </ol>
     </div>
+    <GameCard v-if="scenario.nightmareCard" :card="scenario.nightmareCard" :choices="choices" @choose="emit('choose', $event)" />
     <GameCard
       v-if="scenario.quest"
       :card="scenario.quest"

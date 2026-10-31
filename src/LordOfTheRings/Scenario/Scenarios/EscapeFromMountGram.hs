@@ -18,7 +18,7 @@ import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers
 import LordOfTheRings.Window
 
 newtype EscapeFromMountGram = EscapeFromMountGram ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 escapeFromMountGram :: Scenario

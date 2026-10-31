@@ -533,8 +533,10 @@ runGameMessage msg g = case msg of
     pure $ g & leftPlayL . ix aid .~ a'
   ForgetLeftPlay aid -> pure $ g & leftPlayL %~ Map.delete aid
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
+  -- step 8 follows the quest's own setup: a nightmare setup card's instructions, as its
+  -- "the game is now ready to begin" reads
   Setup -> do
-    pushAll [DoStep n Setup | n <- [1 .. 7]]
+    pushAll [DoStep n Setup | n <- [1 .. 8]]
     pure g
   DoStep 3 Setup -> do
     firstPlayer <- uniform g.playerOrder
@@ -749,6 +751,8 @@ runGameMessage msg g = case msg of
          , CheckWindows [mkAfter $ DealtDamage target n]
          , CheckDefeated source target
          ]
+      -- a hero it leaves standing is taken prisoner, as Torture Master's shadow reads
+      <> [TakePrisoner hid | AttackDamageTakesPrisoner `elem` attackMods, HeroTarget hid <- [target]]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
       <> removing
       -- each point of it adds 1 to the staging area's threat this phase, as Ramming Speed!
@@ -1811,6 +1815,9 @@ runGameMessage msg g = case msg of
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndPhase phase -> do
     push $ CheckWindows [mkWhen $ PhaseEnds phase]
+    -- an enemy still in play raises a player's threat, as Crazed Captive's shadow reads
+    raising <- for (toList g.entities.enemies) \e -> (\ms -> [(p, n) | RaisesThreatAtEndOfPhase p n <- ms]) <$> getModifiers e
+    pushAll $ concat [[RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n]] | (p, n) <- concat raising]
     -- at the end of each refresh phase each card with Time X loses 1 time counter, if able
     when (phase == RefreshPhase) do
       let es = g.entities

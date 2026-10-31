@@ -21,6 +21,7 @@ import LordOfTheRings.Name
 import LordOfTheRings.Objective.CardDefs (allObjectiveCards)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.CardDefs (allPlayerSideQuestCards, allQuestCards)
+import LordOfTheRings.Scenario.CardDefs (allNightmareCards)
 import LordOfTheRings.Sphere as X
 import LordOfTheRings.Target
 import LordOfTheRings.Treachery.CardDefs (allTreacheryCards)
@@ -68,6 +69,7 @@ allEncounterCards =
     , allQuestCards
     , allObjectiveCards
     , syntheticCards
+    , allNightmareCards
     ]
 
 lookupCardDef :: CardCode -> Maybe CardDef

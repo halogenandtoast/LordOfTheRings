@@ -2,8 +2,12 @@
 
 module LordOfTheRings.Scenario.Types (module LordOfTheRings.Scenario.Types) where
 
+import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities
+import LordOfTheRings.Classes.HasModifiersFor
+import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Heading (Heading)
 import LordOfTheRings.Id
@@ -17,6 +21,8 @@ class
   , Show a
   , ToJSON a
   , RunMessage a
+  , HasAbilities a
+  , HasModifiersFor a
   , Entity a
   , EntityId a ~ ScenarioId
   , EntityAttrs a ~ ScenarioAttrs
@@ -24,6 +30,33 @@ class
   => IsScenario a
 
 data Scenario = forall a. (IsScenario a) => Scenario a
+
+-- | How hard the game is dealt: easy mode thins the encounter deck and gives each hero a
+-- resource, nightmare mode builds the scenario's nightmare deck.
+data GameMode = NormalMode | EasyMode | NightmareMode
+  deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | What a scenario's Nightmare Deck does to its encounter deck: the setup card, kept
+-- flipped beside the quest deck, the standard cards it removes (by code, how many copies),
+-- and the nightmare encounter set shuffled in.
+data NightmareDeck = NightmareDeck
+  { nightmareSetupCard :: CardCode
+  , nightmareSet :: EncounterSet
+  , nightmareRemovals :: [(CardCode, Int)]
+  }
+  deriving stock (Show, Eq, Generic)
+
+instance ToJSON NightmareDeck where
+  toJSON = genericToJSON (aesonOptions $ Just "nightmare")
+
+instance FromJSON NightmareDeck where
+  parseJSON = genericParseJSON (aesonOptions $ Just "nightmare")
+
+-- | A nightmare deck: the setup card, the nightmare set, and each standard card removed
+-- with the copies of it removed.
+nightmareDeck :: CardDef -> EncounterSet -> [(CardDef, Int)] -> NightmareDeck
+nightmareDeck setup set removals = NightmareDeck (toCardCode setup) set [(toCardCode d, n) | (d, n) <- removals]
 
 data ScenarioAttrs = ScenarioAttrs
   { scenarioId :: ScenarioId
@@ -37,8 +70,9 @@ data ScenarioAttrs = ScenarioAttrs
   -- ^ out of play until the scenario calls for them
   , scenarioOrcGuards :: Map CardId PlayerCard
   -- ^ the player card face down under each Orc Guard
-  , scenarioEasyMode :: Bool
-  -- ^ fewer copies of the difficult encounter cards, and a resource more for each hero
+  , scenarioMode :: GameMode
+  , scenarioNightmareDeck :: Maybe NightmareDeck
+  -- ^ static, from the scenario's definition: never read back from a saved game
   , scenarioMeta :: Value
   -- ^ what only one scenario keeps, as Arkham's meta: its module reads and writes it
   , scenarioHiddenCards :: Map PlayerId [EncounterCard]
@@ -65,7 +99,13 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("easyMode", toJSON False), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard]))] . withMode
+   where
+    -- a game saved before modes kept only whether it was easy
+    withMode = \case
+      Object o | not (KeyMap.member "mode" o) ->
+        Object $ KeyMap.insert "mode" (toJSON $ if KeyMap.lookup "easyMode" o == Just (Bool True) then EasyMode else NormalMode) o
+      v -> v
 
 scenario :: (ScenarioAttrs -> a) -> ScenarioId -> Text -> a
 scenario f sid name =
@@ -79,7 +119,8 @@ scenario f sid name =
       , scenarioVictoryDisplay = []
       , scenarioSetAside = []
       , scenarioOrcGuards = mempty
-      , scenarioEasyMode = False
+      , scenarioMode = NormalMode
+      , scenarioNightmareDeck = Nothing
       , scenarioMeta = Null
       , scenarioHiddenCards = mempty
       , scenarioHeading = Nothing
@@ -102,6 +143,12 @@ instance Entity Scenario where
   toId = toId . toAttrs
   toAttrs (Scenario a) = toAttrs a
   overAttrs f (Scenario a) = Scenario $ overAttrs f a
+
+instance HasAbilities Scenario where
+  getAbilities (Scenario a) = getAbilities a
+
+instance HasModifiersFor Scenario where
+  getModifiersFor (Scenario a) = getModifiersFor a
 
 instance Show Scenario where
   show (Scenario a) = show a
@@ -131,8 +178,17 @@ instance HasField "victoryDisplay" ScenarioAttrs [Card] where
 instance HasField "victoryPoints" ScenarioAttrs Int where
   getField = sum . mapMaybe (cdVictoryPoints . toCardDef) . scenarioVictoryDisplay
 
+instance HasField "mode" ScenarioAttrs GameMode where
+  getField = scenarioMode
+
 instance HasField "easyMode" ScenarioAttrs Bool where
-  getField = scenarioEasyMode
+  getField = (== EasyMode) . scenarioMode
+
+instance HasField "nightmare" ScenarioAttrs Bool where
+  getField = (== NightmareMode) . scenarioMode
+
+instance HasField "nightmareDeck" ScenarioAttrs (Maybe NightmareDeck) where
+  getField = scenarioNightmareDeck
 
 instance HasField "meta" ScenarioAttrs Value where
   getField = scenarioMeta

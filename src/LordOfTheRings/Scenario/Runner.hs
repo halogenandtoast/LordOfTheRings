@@ -15,7 +15,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
 import LordOfTheRings.Game.Base (gamePhase, gamePlayers)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (ReturnBeforeEncounterDeckResets))
+import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -32,13 +32,30 @@ gatherEncounterSet :: MonadRandom m => ScenarioAttrs -> EncounterSet -> m [Encou
 gatherEncounterSet attrs encounterSet =
   concatMapM
     (\def -> replicateM (copies def) (genEncounterCard def))
-    -- quest stages share the set but make up the quest deck, never the encounter deck
+    -- quest stages share the set but make up the quest deck, never the encounter deck, and
+    -- a nightmare setup card goes beside the quest deck
     $ filter
-      (\def -> cdEncounterSet def == Just encounterSet && cdCardType def /= QuestType)
+      (\def -> cdEncounterSet def == Just encounterSet && cdCardType def `notElem` [QuestType, NightmareType])
       (toList allEncounterCards)
  where
   copies def =
     fromMaybe 1 $ (guard attrs.easyMode *> cdEasyModeQuantity def) <|> cdEncounterSetQuantity def
+
+-- | The scenario's encounter deck from its encounter sets. In nightmare mode the
+-- nightmare deck's removals come out and its nightmare set goes in.
+gatherEncounterSets :: MonadRandom m => ScenarioAttrs -> [EncounterSet] -> m [EncounterCard]
+gatherEncounterSets attrs sets = case attrs.nightmareDeck of
+  Just nd | attrs.nightmare -> do
+    deck <- concatMapM (gatherEncounterSet attrs) (sets <> [nightmareSet nd])
+    pure $ foldl' removeCopies deck (nightmareRemovals nd)
+  _ -> concatMapM (gatherEncounterSet attrs) sets
+ where
+  removeCopies deck (code, n) =
+    let (copies, rest) = partition ((== code) . toCardCode) deck in drop n copies <> rest
+
+-- | The nightmare set's replacement for a standard card, as a quest stage, in nightmare mode.
+nightmareOr :: ScenarioAttrs -> CardDef -> CardDef -> CardDef
+nightmareOr attrs standard replacement = if attrs.nightmare then replacement else standard
 
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = resetEmptyEncounterDeck =<< case msg of
@@ -250,10 +267,12 @@ instance RunMessage ScenarioAttrs where
     -- pile is shuffled and reset back into the encounter deck."
     resetEmptyEncounterDeck a = do
       phase <- getsGame gamePhase
-      if phase == QuestPhase && null a.encounterDeck && notNull a.encounterDiscard
+      gameMods <- getModifiers GameTarget
+      let anyPhase = EncounterDeckResetsWheneverEmpty `elem` gameMods
+      if (phase == QuestPhase || anyPhase) && null a.encounterDeck && notNull a.encounterDiscard
         then do
           -- the topmost matching card goes to the staging area first, as Ghostly Ruins reads
-          matchers <- (\ms -> [m | ReturnBeforeEncounterDeckResets m <- ms]) <$> getModifiers GameTarget
+          let matchers = [m | ReturnBeforeEncounterDeckResets m <- gameMods]
           let returned = take 1 [c | c <- a.encounterDiscard, any (`cardMatches` c) matchers]
           traverse_ (push . AddToStaging) returned
           deck <- shuffleM $ filter (`notElem` returned) a.encounterDiscard

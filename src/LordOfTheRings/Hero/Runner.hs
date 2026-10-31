@@ -14,7 +14,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (Exhausted, RemovedFromQuest), mkAfter)
+import LordOfTheRings.Window (WindowType (BecameReady, Exhausted, RemovedFromQuest), mkAfter)
 
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
@@ -49,6 +49,7 @@ instance RunMessage HeroAttrs where
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
       blocked <- elem CannotReady <$> getModifiers attrs
+      when (attrs.heroExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n

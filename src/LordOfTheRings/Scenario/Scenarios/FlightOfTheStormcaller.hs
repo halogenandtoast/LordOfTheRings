@@ -22,7 +22,7 @@ import LordOfTheRings.Timing (Timing (When))
 import LordOfTheRings.Window (Window (..), WindowType (RoundEnds))
 
 newtype FlightOfTheStormcaller = FlightOfTheStormcaller ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 flightOfTheStormcaller :: Scenario

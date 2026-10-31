@@ -14,6 +14,14 @@ allTreacheryCards =
     map
       (\def -> (cdCardCode def, def))
       [ eyesOfTheForest
+      , theSpidersWeb
+      , backtrack
+      , pursuitOnTheShore
+      , trollAttack
+      , smokingBlood
+      , sentinelOfShadow
+      , catacombInspection
+      , darkInterrogation
       , caveIn
       , crumblingRuin
       , darkAndDreadful
@@ -1281,3 +1289,46 @@ umbarPatrol = treachery "12164" "Umbar Patrol" TheCityOfCorsairs 2
 
 furyAndMalice :: CardDef
 furyAndMalice = treachery "12165" "Fury and Malice" TheCityOfCorsairs 3
+
+-- Core Set Nightmare Decks
+
+theSpidersWeb :: CardDef
+theSpidersWeb = treachery "core-set-nightmare-passage-through-mirkwood-006" "The Spider's Web" PassageThroughMirkwoodNightmare 3
+
+backtrack :: CardDef
+backtrack =
+  (treachery "core-set-nightmare-passage-through-mirkwood-007" "Backtrack!" PassageThroughMirkwoodNightmare 2)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+pursuitOnTheShore :: CardDef
+pursuitOnTheShore = treachery "core-set-nightmare-journey-along-the-anduin-007" "Pursuit on the Shore" JourneyAlongTheAnduinNightmare 2
+
+trollAttack :: CardDef
+trollAttack =
+  (treachery "core-set-nightmare-journey-along-the-anduin-008" "Troll Attack" JourneyAlongTheAnduinNightmare 2)
+    { cdShadowEffect = True
+    }
+
+smokingBlood :: CardDef
+smokingBlood =
+  (treachery "core-set-nightmare-journey-along-the-anduin-009" "Smoking Blood" JourneyAlongTheAnduinNightmare 2)
+    { cdShadowEffect = True
+    }
+
+sentinelOfShadow :: CardDef
+sentinelOfShadow = treachery "core-set-nightmare-escape-from-dol-guldur-007" "Sentinel of Shadow" EscapeFromDolGuldurNightmare 2
+
+catacombInspection :: CardDef
+catacombInspection =
+  (treachery "core-set-nightmare-escape-from-dol-guldur-008" "Catacomb Inspection" EscapeFromDolGuldurNightmare 2)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+darkInterrogation :: CardDef
+darkInterrogation =
+  (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
+    { cdShadowEffect = True
+    }

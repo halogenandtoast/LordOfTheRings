@@ -14,6 +14,16 @@ allEnemyCards =
     map
       (\def -> (cdCardCode def, def))
       [ kingSpider
+      , ungoliantsSpawnNightmare
+      , ungoliantsBrood
+      , forestFlies
+      , spidersOfMirkwood
+      , marshlandOutlaws
+      , anduinTrollSpawn
+      , brownWaterRats
+      , tortureMaster
+      , crazedCaptive
+      , spiderOfDolGuldur
       , goblinScout
       , goblinSwordsman
       , patrolLeader
@@ -1955,3 +1965,77 @@ umbarSlaver = (enemy "12153" "Umbar Slaver" CoastOfUmbar 3 28 2 2 3 5) {cdCardTr
 captainSahirTheCityOfCorsairs :: CardDef
 captainSahirTheCityOfCorsairs =
   unique (enemy "12158" "Captain Sahír" TheCityOfCorsairs 1 4 6 6 2 8) {cdCardTraits = setFromList [Corsair, Raider, Corrupt]}
+
+-- Core Set Nightmare Decks
+
+ungoliantsSpawnNightmare :: CardDef
+ungoliantsSpawnNightmare =
+  (enemy "core-set-nightmare-passage-through-mirkwood-002" "Ungoliant's Spawn" PassageThroughMirkwoodNightmare 1 32 3 5 3 9)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+ungoliantsBrood :: CardDef
+ungoliantsBrood =
+  (enemy "core-set-nightmare-passage-through-mirkwood-003" "Ungoliant's Brood" PassageThroughMirkwoodNightmare 3 31 2 3 2 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    }
+
+forestFlies :: CardDef
+forestFlies =
+  (enemy "core-set-nightmare-passage-through-mirkwood-004" "Forest Flies" PassageThroughMirkwoodNightmare 3 27 4 1 0 3)
+    { cdCardTraits = setFromList [Creature, Insect]
+    , cdShadowEffect = True
+    }
+
+spidersOfMirkwood :: CardDef
+spidersOfMirkwood =
+  (enemy "core-set-nightmare-passage-through-mirkwood-005" "Spiders of Mirkwood" PassageThroughMirkwoodNightmare 2 18 3 2 2 4)
+    { cdCardTraits = setFromList [Spider]
+    , cdShadowEffect = True
+    }
+
+marshlandOutlaws :: CardDef
+marshlandOutlaws =
+  (enemy "core-set-nightmare-journey-along-the-anduin-002" "Marshland Outlaws" JourneyAlongTheAnduinNightmare 2 21 2 2 2 8)
+    { cdCardTraits = setFromList [Marshland]
+    , cdShadowEffect = True
+    }
+
+anduinTrollSpawn :: CardDef
+anduinTrollSpawn =
+  (enemy "core-set-nightmare-journey-along-the-anduin-003" "Anduin Troll Spawn" JourneyAlongTheAnduinNightmare 3 26 2 4 3 5)
+    { cdCardTraits = setFromList [Troll]
+    }
+
+brownWaterRats :: CardDef
+brownWaterRats =
+  (enemy "core-set-nightmare-journey-along-the-anduin-004" "Brown Water Rats" JourneyAlongTheAnduinNightmare 3 1 1 1 1 1)
+    { cdCardTraits = setFromList [Creature, Rat]
+    , cdShadowEffect = True
+    }
+
+tortureMaster :: CardDef
+tortureMaster =
+  (enemy "core-set-nightmare-escape-from-dol-guldur-002" "Torture Master" EscapeFromDolGuldurNightmare 3 45 5 1 2 4)
+    { cdCardTraits = setFromList [DolGuldur, Orc]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+crazedCaptive :: CardDef
+crazedCaptive =
+  (enemy "core-set-nightmare-escape-from-dol-guldur-003" "Crazed Captive" EscapeFromDolGuldurNightmare 2 13 2 1 3 1)
+    { cdCardTraits = setFromList [Captive]
+    , cdShadowEffect = True
+    , cdKeywords = setFromList [Doomed 1]
+    }
+
+spiderOfDolGuldur :: CardDef
+spiderOfDolGuldur =
+  (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
+    { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
+    , cdShadowEffect = True
+    }

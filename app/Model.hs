@@ -63,6 +63,9 @@ LotrGame sql=lotr_games
   -- | fewer of the difficult encounter cards and a resource more for each hero, dealt
   -- again the same way
   easyMode Bool default=false
+  -- | the scenario's Nightmare Deck in place of its standard encounter deck; never with
+  -- easy mode
+  nightmare Bool default=false
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show

@@ -8,7 +8,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype TheCityOfCorsairs = TheCityOfCorsairs ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theCityOfCorsairs :: Scenario

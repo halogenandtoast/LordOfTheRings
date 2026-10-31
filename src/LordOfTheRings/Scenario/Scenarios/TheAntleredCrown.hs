@@ -11,7 +11,7 @@ import LordOfTheRings.Scenario.Scenarios.TheAntleredCrown.Helpers
 import LordOfTheRings.Source (Source, sourceTarget)
 
 newtype TheAntleredCrown = TheAntleredCrown ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theAntleredCrown :: Scenario

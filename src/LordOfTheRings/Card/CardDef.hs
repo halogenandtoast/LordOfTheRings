@@ -216,5 +216,9 @@ encounterSideQuest cCode name encounterSet questPoints =
 objective :: CardCode -> Name -> EncounterSet -> Int -> CardDef
 objective cCode name encounterSet quantity = encounterCard cCode name ObjectiveType encounterSet quantity
 
+-- | A Nightmare Deck's setup card: never in the encounter deck, its text the scenario's.
+nightmareSetup :: CardCode -> Name -> EncounterSet -> CardDef
+nightmareSetup cCode name encounterSet = encounterCard cCode name NightmareType encounterSet 1
+
 isPlayerCardDef :: CardDef -> Bool
 isPlayerCardDef = isPlayerCardType . cdCardType

@@ -12,7 +12,7 @@ import LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers (getMarshDweller,
 import LordOfTheRings.Source (Source (GameSource))
 
 newtype TheNinInEilph = TheNinInEilph ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theNinInEilph :: Scenario
