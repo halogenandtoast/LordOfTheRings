@@ -113,8 +113,9 @@ const campaign = (id: string, name: string, code: string, scenarios: ScenarioOpt
 })
 
 // The boxes the engine plays in campaign mode, by the engine's campaign id (see
-// LordOfTheRings.Campaign): the Revised Core Set's Mirkwood Paths.
-export const campaignModes: Record<string, string> = { 'core-set': 'revised-core' }
+// LordOfTheRings.Campaign): the Revised Core Set's Mirkwood Paths, and Angmar Awakened, the
+// Lost Realm's scenarios with its cycle's.
+export const campaignModes: Record<string, string> = { 'core-set': 'revised-core', 'angmar-awakened': 'angmar-awakened' }
 
 export const campaigns: Campaign[] = [
   // the core set's cycle is Shadows of Mirkwood

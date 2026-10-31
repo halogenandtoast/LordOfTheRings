@@ -83,6 +83,8 @@ export interface CampaignLog {
   threatPenalty: number
   pool: PoolCard[]
   notes: Record<string, string[]>
+  /** Numbers noted for cards, by note, as the damage on Protect the Innocent. */
+  counts?: Record<string, Record<string, number>>
   completed: { scenario: string; score: number }[]
 }
 

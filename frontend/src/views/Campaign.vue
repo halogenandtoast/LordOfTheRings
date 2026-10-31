@@ -105,10 +105,13 @@ const goOn = async () => {
         </ul>
       </section>
 
-      <section v-if="Object.keys(log.notes).length" class="card">
+      <section v-if="Object.keys(log.notes).length || Object.keys(log.counts ?? {}).length" class="card">
         <h3 class="card-title">{{ $t('campaignMode.notes') }}</h3>
         <ul>
           <li v-for="(cards, key) in log.notes" :key="key">{{ $t(`campaignMode.note.${key}`, { cards: cards.map(name).join(', ') }) }}</li>
+          <li v-for="(counted, key) in log.counts ?? {}" :key="`count-${key}`">
+            {{ $t(`campaignMode.note.${key}`, { cards: Object.entries(counted).map(([code, n]) => `${name(code)} (${n})`).join(', ') }) }}
+          </li>
         </ul>
       </section>
 
