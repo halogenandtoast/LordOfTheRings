@@ -41,7 +41,7 @@ const makeDefault = async () => {
 type Mode = 'normal' | 'easy' | 'nightmare'
 const mode = ref<Mode>('normal')
 const modes = computed(() =>
-  (['normal', 'easy', 'nightmare'] as const)
+  (['easy', 'normal', 'nightmare'] as const)
     .filter((m) => m !== 'nightmare' || selectedScenario.value?.nightmare)
     .map((value) => ({ value, label: t(`newGame.mode.${value}`) })),
 )
