@@ -253,6 +253,12 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , brashCorsair
+      , sahirsPursuer
+      , guardianOfTheGoldenKing
+      , corsairPillager
+      , corsairPyromaniac
+      , eliteMarauder
       ]
 
 namelessThing :: CardDef
@@ -2042,4 +2048,43 @@ spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
     , cdShadowEffect = True
+    }
+
+-- The Grey Havens Nightmare Decks
+
+brashCorsair :: CardDef
+brashCorsair =
+  (enemy "the-grey-havens-nightmare-voyage-across-belegaer-004" "Brash Corsair" VoyageAcrossBelegaerNightmare 3 16 3 3 4 3)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+sahirsPursuer :: CardDef
+sahirsPursuer =
+  (enemy "the-grey-havens-nightmare-voyage-across-belegaer-005" "Sahír's Pursuer" VoyageAcrossBelegaerNightmare 2 40 3 7 3 8)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    }
+
+guardianOfTheGoldenKing :: CardDef
+guardianOfTheGoldenKing =
+  (enemy "the-grey-havens-nightmare-the-fate-of-numenor-009" "Guardian of the Golden King" TheFateOfNumenorNightmare 2 41 4 6 4 10)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+corsairPillager :: CardDef
+corsairPillager =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-003" "Corsair Pillager" RaidOnTheGreyHavensNightmare 3 16 3 2 3 3)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+corsairPyromaniac :: CardDef
+corsairPyromaniac =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-004" "Corsair Pyromaniac" RaidOnTheGreyHavensNightmare 3 44 2 2 2 4)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+eliteMarauder :: CardDef
+eliteMarauder =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-005" "Elite Marauder" RaidOnTheGreyHavensNightmare 1 32 4 6 2 5)
+    { cdCardTraits = setFromList [Corsair]
     }

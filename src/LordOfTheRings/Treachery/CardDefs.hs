@@ -218,6 +218,13 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , rogueWave
+      , dreamsOfNumenor
+      , ragingSquallNightmare
+      , corruptedFlora
+      , calphonsFolly
+      , suddenAssaultNightmare
+      , infiltration
       ]
 
 deepDeepDark :: CardDef
@@ -1336,3 +1343,44 @@ darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
     }
+
+-- The Grey Havens Nightmare Decks
+
+rogueWave :: CardDef
+rogueWave =
+  (treachery "the-grey-havens-nightmare-voyage-across-belegaer-008" "Rogue Wave" VoyageAcrossBelegaerNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+dreamsOfNumenor :: CardDef
+dreamsOfNumenor =
+  (treachery "the-grey-havens-nightmare-voyage-across-belegaer-009" "Dreams of Númenor" VoyageAcrossBelegaerNightmare 2)
+    { cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+ragingSquallNightmare :: CardDef
+ragingSquallNightmare =
+  (treachery "the-grey-havens-nightmare-voyage-across-belegaer-010" "Raging Squall" VoyageAcrossBelegaerNightmare 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdSailingIcons = 1
+    , cdWhenRevealed = False
+    }
+
+corruptedFlora :: CardDef
+corruptedFlora =
+  (treachery "the-grey-havens-nightmare-the-fate-of-numenor-011" "Corrupted Flora" TheFateOfNumenorNightmare 3) {cdCardTraits = setFromList [Hazard]}
+
+calphonsFolly :: CardDef
+calphonsFolly =
+  (treachery "the-grey-havens-nightmare-the-fate-of-numenor-012" "Calphon's Folly" TheFateOfNumenorNightmare 2) {cdShadowEffect = True}
+
+suddenAssaultNightmare :: CardDef
+suddenAssaultNightmare =
+  (treachery "the-grey-havens-nightmare-raid-on-the-grey-havens-010" "Sudden Assault" RaidOnTheGreyHavensNightmare 3) {cdShadowEffect = True}
+
+infiltration :: CardDef
+infiltration =
+  (treachery "the-grey-havens-nightmare-raid-on-the-grey-havens-011" "Infiltration" RaidOnTheGreyHavensNightmare 2) {cdShadowEffect = True}

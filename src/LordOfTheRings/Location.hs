@@ -271,6 +271,15 @@ import LordOfTheRings.Location.Cards.AFloodedFord
 import LordOfTheRings.Location.Cards.GladdenMarshlands
 import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
+import LordOfTheRings.Location.Cards.OpenWaters
+import LordOfTheRings.Location.Cards.ShatteredSea
+import LordOfTheRings.Location.Cards.DesecratedGrounds
+import LordOfTheRings.Location.Cards.ForsakenCity
+import LordOfTheRings.Location.Cards.OvergrownSteps
+import LordOfTheRings.Location.Cards.NarelenyaLocation
+import LordOfTheRings.Location.Cards.DawnStarLocation
+import LordOfTheRings.Location.Cards.SilverWingLocation
+import LordOfTheRings.Location.Cards.BurningTower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -583,5 +592,19 @@ allLocations =
         , SomeLocationCard gladdenMarshlands
         , SomeLocationCard tortureChamber
         , SomeLocationCard dungeonLabyrinth
+        , SomeLocationCard openWaters
+        , SomeLocationCard shatteredSea
+        , SomeLocationCard desecratedGrounds
+        , SomeLocationCard forsakenCity
+        , SomeLocationCard overgrownSteps
+        , SomeLocationCard narelenyaLocation
+        , SomeLocationCard dawnStarLocation
+        , SomeLocationCard silverWingLocation
+        , SomeLocationCard burningTower
+        , SomeLocationCard shrineToMorgothNightmare
+        , SomeLocationCard cursedTempleNightmare
+        , SomeLocationCard drownedGravesNightmare
+        , SomeLocationCard floodedRuinsNightmare
+        , SomeLocationCard lushJungleNightmare
         ]
     ]

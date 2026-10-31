@@ -1,6 +1,6 @@
 module LordOfTheRings.Quest.Cards.TheCorsairsAssault (theCorsairsAssault) where
 
-import LordOfTheRings.Card (CardType (LocationType), cdCardType, cdKeywords, toCardDef)
+import LordOfTheRings.Card (CardType (LocationType), EncounterCard, cdCardType, cdKeywords, cdUnique, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Keyword (Keyword (Aflame))
@@ -41,13 +41,24 @@ instance RunMessage TheCorsairsAssault where
     Flip (isTarget attrs -> True) | not attrs.flipped -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       players <- length <$> getRemainingPlayers
+      nightmare <- inNightmareMode
       let firstOf def = take 1 (filter (cardMatches $ cardIs def) deck)
           setup = concatMap firstOf [Objectives.theHavensBurn, Locations.dreamChaserLocation, Enemies.sahirsRavager]
           aflame c = cdCardType (toCardDef c) == LocationType && notNull [() | Aflame _ <- toList (cdKeywords $ toCardDef c)]
-          burning = take players $ filter (\c -> aflame c && c `notElem` setup) deck
+          -- ponytail: in nightmare mode the unique ships the players may search for are
+          -- never among the discarded Aflame locations
+          ships = [c | nightmare, c <- deck, cdUnique (toCardDef c), c `notElem` setup]
+          burning = take players $ filter (\c -> aflame c && c `notElem` setup && c `notElem` ships) deck
       for_ (setup <> burning) \c -> do
         removeFromEncounterDeck c
         addToStaging c
+      -- Nightmare: "Instead of adding the Dream-chaser to the staging area during setup,
+      -- each player must search the encounter deck for a different unique location and add
+      -- it to the staging area, one of which must be the Dream-chaser." The first player's
+      -- is the Dream-chaser; the others choose in turn.
+      when nightmare do
+        order <- getPlayerOrder
+        searchShips (drop 1 order) ships
       shuffleEncounterDeck
       TheCorsairsAssault <$> runMessage msg attrs
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
@@ -55,3 +66,13 @@ instance RunMessage TheCorsairsAssault where
       dealDamageToLowestAflame attrs corsairs
       pure q
     _ -> TheCorsairsAssault <$> runMessage msg attrs
+   where
+    searchShips :: ReverseQueue m => [PlayerId] -> [EncounterCard] -> m ()
+    searchShips (p : ps) ships = chooseOrRunOneM p do
+      questionLabeled "theCorsairsAssault.searchShip"
+      causedBy attrs
+      targets ships \c -> do
+        removeFromEncounterDeck c
+        addToStaging c
+        searchShips ps (filter (/= c) ships)
+    searchShips [] _ = pure ()

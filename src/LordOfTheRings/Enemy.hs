@@ -247,6 +247,12 @@ import LordOfTheRings.Enemy.Cards.BrownWaterRats
 import LordOfTheRings.Enemy.Cards.TortureMaster
 import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
+import LordOfTheRings.Enemy.Cards.BrashCorsair
+import LordOfTheRings.Enemy.Cards.SahirsPursuer
+import LordOfTheRings.Enemy.Cards.GuardianOfTheGoldenKing
+import LordOfTheRings.Enemy.Cards.CorsairPillager
+import LordOfTheRings.Enemy.Cards.CorsairPyromaniac
+import LordOfTheRings.Enemy.Cards.EliteMarauder
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -519,5 +525,11 @@ allEnemys =
         , SomeEnemyCard tortureMaster
         , SomeEnemyCard crazedCaptive
         , SomeEnemyCard spiderOfDolGuldur
+        , SomeEnemyCard brashCorsair
+        , SomeEnemyCard sahirsPursuer
+        , SomeEnemyCard guardianOfTheGoldenKing
+        , SomeEnemyCard corsairPillager
+        , SomeEnemyCard corsairPyromaniac
+        , SomeEnemyCard eliteMarauder
         ]
     ]

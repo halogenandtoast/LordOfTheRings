@@ -1,4 +1,4 @@
-module LordOfTheRings.Location.Cards.ShrineToMorgoth (shrineToMorgoth) where
+module LordOfTheRings.Location.Cards.ShrineToMorgoth (shrineToMorgoth, shrineToMorgothNightmare) where
 
 import LordOfTheRings.Card (CardType (EnemyType))
 import LordOfTheRings.Location.CardDefs qualified as Cards
@@ -13,6 +13,10 @@ newtype ShrineToMorgoth = ShrineToMorgoth LocationAttrs
 
 shrineToMorgoth :: LocationCard ShrineToMorgoth
 shrineToMorgoth = location ShrineToMorgoth Cards.shrineToMorgoth
+
+-- | The Fate of Númenor Nightmare Deck's reprint, the same text.
+shrineToMorgothNightmare :: LocationCard ShrineToMorgoth
+shrineToMorgothNightmare = location ShrineToMorgoth Cards.shrineToMorgothNightmare
 
 -- | While Shrine to Morgoth is the active location, players cannot draw cards or search
 -- their decks.

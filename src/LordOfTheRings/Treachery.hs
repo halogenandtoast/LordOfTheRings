@@ -211,6 +211,13 @@ import LordOfTheRings.Treachery.Cards.SmokingBlood
 import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
+import LordOfTheRings.Treachery.Cards.RogueWave
+import LordOfTheRings.Treachery.Cards.DreamsOfNumenor
+import LordOfTheRings.Treachery.Cards.RagingSquallNightmare
+import LordOfTheRings.Treachery.Cards.CorruptedFlora
+import LordOfTheRings.Treachery.Cards.CalphonsFolly
+import LordOfTheRings.Treachery.Cards.SuddenAssaultNightmare
+import LordOfTheRings.Treachery.Cards.Infiltration
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -446,5 +453,12 @@ allTreacherys =
         , SomeTreacheryCard sentinelOfShadow
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
+        , SomeTreacheryCard rogueWave
+        , SomeTreacheryCard dreamsOfNumenor
+        , SomeTreacheryCard ragingSquallNightmare
+        , SomeTreacheryCard corruptedFlora
+        , SomeTreacheryCard calphonsFolly
+        , SomeTreacheryCard suddenAssaultNightmare
+        , SomeTreacheryCard infiltration
         ]
     ]

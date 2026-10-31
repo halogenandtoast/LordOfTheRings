@@ -1,4 +1,4 @@
-module LordOfTheRings.Location.Cards.CursedTemple (cursedTemple) where
+module LordOfTheRings.Location.Cards.CursedTemple (cursedTemple, cursedTempleNightmare) where
 
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Location.CardDefs qualified as Cards
@@ -12,6 +12,10 @@ newtype CursedTemple = CursedTemple LocationAttrs
 
 cursedTemple :: LocationCard CursedTemple
 cursedTemple = location CursedTemple Cards.cursedTemple
+
+-- | The Fate of Númenor Nightmare Deck's reprint, the same text.
+cursedTempleNightmare :: LocationCard CursedTemple
+cursedTempleNightmare = location CursedTemple Cards.cursedTempleNightmare
 
 -- | While Cursed Temple is the active location, characters with less than 2 willpower do
 -- not ready during the refresh phase.

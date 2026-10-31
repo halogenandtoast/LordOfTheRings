@@ -2,15 +2,35 @@ module LordOfTheRings.Scenario.Scenarios.RaidOnTheGreyHavens (raidOnTheGreyHaven
 
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithCardCode), select)
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 
 newtype RaidOnTheGreyHavens = RaidOnTheGreyHavens ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 raidOnTheGreyHavens :: Scenario
-raidOnTheGreyHavens = Scenario $ scenario RaidOnTheGreyHavens "raid-on-the-grey-havens" "Raid on the Grey Havens"
+raidOnTheGreyHavens =
+  Scenario
+    $ scenario (RaidOnTheGreyHavens . (nightmareDeckL ?~ nightmare)) "raid-on-the-grey-havens" "Raid on the Grey Havens"
+ where
+  -- Sahír's Advance is replaced by the Nightmare Deck's stage 2
+  nightmare =
+    nightmareDeck
+      Nightmare.raidOnTheGreyHavensNightmare
+      EncounterSet.RaidOnTheGreyHavensNightmare
+      [(Enemies.corsairArsonist, 3), (Locations.elvenWaveRunner, 2), (Enemies.umbarRaider, 1)]
+
+-- | Nightmare: "Captain Sahír and Na'asiyah each gain: 'Cannot have attachments.'" Its
+-- setup instruction is the first stage's: "LordOfTheRings.Quest.Cards.TheCorsairsAssault".
+instance HasModifiersFor RaidOnTheGreyHavens where
+  getModifiersFor (RaidOnTheGreyHavens a) = when a.nightmare do
+    elite <- concatMapM (select . EnemyWithCardCode . toCardCode) [Enemies.captainSahir, Enemies.naasiyah]
+    for_ elite \e -> modified a e [CannotHaveAttachments]
 
 {- | The encounter deck is built from the Raid on the Grey Havens and Corsair Raiders sets.
 Captain Sahír and Na'asiyah of The Stormcaller Elite are set aside, enemy side faceup, for
@@ -20,10 +40,10 @@ Dream-chaser is a location here.
 instance RunMessage RaidOnTheGreyHavens where
   runMessage msg (RaidOnTheGreyHavens attrs) = case msg of
     DoStep 1 Setup -> do
-      encounterDeck <- concatMapM (gatherEncounterSet attrs) [EncounterSet.RaidOnTheGreyHavens, EncounterSet.CorsairRaiders]
+      encounterDeck <- gatherEncounterSets attrs [EncounterSet.RaidOnTheGreyHavens, EncounterSet.CorsairRaiders]
       elite <- traverse genEncounterCard [Enemies.captainSahir, Enemies.naasiyah]
       firstStage <- genEncounterCard Quests.theCorsairsAssault
-      laterStages <- traverse genEncounterCard [Quests.sahirsAdvance]
+      laterStages <- traverse genEncounterCard [nightmareOr attrs Quests.sahirsAdvance Quests.sahirsAdvanceNightmare]
       putQuestIntoPlay firstStage
       pure
         $ RaidOnTheGreyHavens
