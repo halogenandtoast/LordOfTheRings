@@ -286,6 +286,8 @@ allLocationCards =
       , banksOfMorgulduin
       , ephelDuath
       , whiteFloweredFields
+      , edgeOfIthilien
+      , mountainsOfShadow
       ]
 
 drownedTreasury :: CardDef
@@ -2136,5 +2138,22 @@ whiteFloweredFields :: CardDef
 whiteFloweredFields =
   (location "the-morgul-vale-nightmare-the-morgul-vale-007" "White-Flowered Fields" TheMorgulValeNightmare 2 3 3)
     { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    }
+
+-- The Blood of Gondor Nightmare
+
+-- | Archery X, X the highest number of hidden cards in any player's play area.
+edgeOfIthilien :: CardDef
+edgeOfIthilien =
+  (location "the-blood-of-gondor-nightmare-the-blood-of-gondor-005" "Edge of Ithilien" TheBloodOfGondorNightmare 3 3 6)
+    { cdCardTraits = setFromList [Ithilien, Forest]
+    , cdShadowEffect = True
+    }
+
+mountainsOfShadow :: CardDef
+mountainsOfShadow =
+  (location "the-blood-of-gondor-nightmare-the-blood-of-gondor-006" "Mountains of Shadow" TheBloodOfGondorNightmare 3 4 4)
+    { cdCardTraits = setFromList [Mountain]
     , cdShadowEffect = True
     }

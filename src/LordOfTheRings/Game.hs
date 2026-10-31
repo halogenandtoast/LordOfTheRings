@@ -165,10 +165,16 @@ endWaitingGame = do
   let waiting = [o | e <- gameEffects g, GameEndsWith o <- effectModifiers e]
       isWaiting = any (\case GameEndsWith _ -> True; _ -> False) . effectModifiers
   for_ (headMay waiting) \outcome -> do
-    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    cannotEnd <- gameCannotEndWith outcome
     unless cannotEnd do
       putGame $ g & effectsL %~ filter (not . isWaiting)
       push $ GameOver outcome
+
+-- | The game cannot end now with this outcome: it cannot end, or the players cannot win.
+gameCannotEndWith :: Outcome -> GameT Bool
+gameCannotEndWith outcome = do
+  mods <- getModifiers GameTarget
+  pure $ GameCannotEnd `elem` mods || (outcome == Won && PlayersCannotWin `elem` mods)
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -693,7 +699,7 @@ runGameMessage msg g = case msg of
       <> [GameOver Lost | null remaining]
     pure g
   GameOver outcome -> do
-    cannotEnd <- elem GameCannotEnd <$> getModifiers GameTarget
+    cannotEnd <- gameCannotEndWith outcome
     -- the outcome waits while the game cannot end, unless no player is left to play on;
     -- see 'endWaitingGame'
     if cannotEnd && any (not . (.eliminated)) g.players

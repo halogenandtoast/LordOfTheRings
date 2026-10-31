@@ -220,6 +220,8 @@ allTreacheryCards =
       , furyAndMalice
       , theTowerBeckons
       , noxiousFumes
+      , surroundedByShadow
+      , suddenOnslaught
       ]
 
 deepDeepDark :: CardDef
@@ -1342,3 +1344,11 @@ theTowerBeckons = (treachery "the-morgul-vale-nightmare-the-morgul-vale-008" "Th
 
 noxiousFumes :: CardDef
 noxiousFumes = (treachery "the-morgul-vale-nightmare-the-morgul-vale-009" "Noxious Fumes" TheMorgulValeNightmare 2) {cdShadowEffect = True}
+
+-- The Blood of Gondor Nightmare
+
+surroundedByShadow :: CardDef
+surroundedByShadow = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gondor-007" "Surrounded by Shadow" TheBloodOfGondorNightmare 3) {cdKeywords = setFromList [Doomed 2]}
+
+suddenOnslaught :: CardDef
+suddenOnslaught = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gondor-008" "Sudden Onslaught" TheBloodOfGondorNightmare 2) {cdShadowEffect = True}

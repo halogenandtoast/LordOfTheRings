@@ -395,6 +395,7 @@ library
       LordOfTheRings.Enemy.Cards.BlackForestBats
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
       LordOfTheRings.Enemy.Cards.BlackNumenorean
+      LordOfTheRings.Enemy.Cards.BlackNumenoreanNightmare
       LordOfTheRings.Enemy.Cards.BlackUruks
       LordOfTheRings.Enemy.Cards.BloodThirstyWarg
       LordOfTheRings.Enemy.Cards.BoarClanStalker
@@ -537,6 +538,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcRavager
       LordOfTheRings.Enemy.Cards.OrcScramblers
       LordOfTheRings.Enemy.Cards.OrcSkirmisher
+      LordOfTheRings.Enemy.Cards.OrcTrickster
       LordOfTheRings.Enemy.Cards.OrcVanguard
       LordOfTheRings.Enemy.Cards.OrcWarParty
       LordOfTheRings.Enemy.Cards.PackLeader
@@ -609,6 +611,7 @@ library
       LordOfTheRings.Enemy.Cards.UngoliantsSpawnNightmare
       LordOfTheRings.Enemy.Cards.UngoliantsSwarm
       LordOfTheRings.Enemy.Cards.UrukLieutenant
+      LordOfTheRings.Enemy.Cards.UrukMarksman
       LordOfTheRings.Enemy.Cards.UrukSoldier
       LordOfTheRings.Enemy.Cards.ViciousMarauder
       LordOfTheRings.Enemy.Cards.Wargs
@@ -956,6 +959,7 @@ library
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
       LordOfTheRings.Location.Cards.EdgeOfFangorn
+      LordOfTheRings.Location.Cards.EdgeOfIthilien
       LordOfTheRings.Location.Cards.EerieHalls
       LordOfTheRings.Location.Cards.ElvenCaravel
       LordOfTheRings.Location.Cards.ElvenWaveRunner
@@ -1024,6 +1028,7 @@ library
       LordOfTheRings.Location.Cards.MorgulVale
       LordOfTheRings.Location.Cards.MountainsOfAngmar
       LordOfTheRings.Location.Cards.MountainsOfMirkwood
+      LordOfTheRings.Location.Cards.MountainsOfShadow
       LordOfTheRings.Location.Cards.MugashsLair
       LordOfTheRings.Location.Cards.MunuvDuvRavine
       LordOfTheRings.Location.Cards.NecromancersPass
@@ -1709,10 +1714,12 @@ library
       LordOfTheRings.Treachery.Cards.StreetFighting
       LordOfTheRings.Treachery.Cards.SuddenAssault
       LordOfTheRings.Treachery.Cards.SuddenDarkness
+      LordOfTheRings.Treachery.Cards.SuddenOnslaught
       LordOfTheRings.Treachery.Cards.SuddenPitfall
       LordOfTheRings.Treachery.Cards.SuddenStorms
       LordOfTheRings.Treachery.Cards.SunkenRuins
       LordOfTheRings.Treachery.Cards.SurprisingSpeed
+      LordOfTheRings.Treachery.Cards.SurroundedByShadow
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.TakeCover
       LordOfTheRings.Treachery.Cards.TakingOnWater

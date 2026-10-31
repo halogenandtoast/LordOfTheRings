@@ -1,14 +1,16 @@
 module LordOfTheRings.AgainstTheShadow.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (getEnemy)
+import LordOfTheRings.Matcher (getArcheryTotal, getEnemy)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Scenario (theMorgulVale)
+import LordOfTheRings.Outcome (Outcome (Won))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario (theBloodOfGondor, theMorgulVale)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
-import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
+import LordOfTheRings.Scenario.Types (GameMode (..), modeL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Timing (When), Window (..), WindowType (RoundEnds))
 import TestImport
@@ -45,6 +47,15 @@ tower :: GameT ObjectiveId
 tower = do
   run . AddToStaging =<< genEncounterCard Objectives.toTheTower
   getsGame (fromJustNote "no tower" . fmap toId . headMay . toList . (.entities.objectives))
+
+hiddenOf :: PlayerId -> GameT [CardCode]
+hiddenOf pid = getsGame (map toCardCode . findWithDefault [] pid . (.hiddenCards) . toAttrs . (.scenario))
+
+-- | The player takes the cards as hidden cards, in order.
+hide :: PlayerId -> [CardDef] -> GameT ()
+hide pid defs = do
+  _ <- setEncounterDeck defs
+  replicateM_ (length defs) $ run (TakeHiddenCard pid)
 
 spec :: Spec
 spec = describe "Against the Shadow nightmare decks" do
@@ -117,3 +128,74 @@ spec = describe "Against the Shadow nightmare decks" do
       murzag <- staged Enemies.murzag
       shadow pid murzag Enemies.orcCaptor []
       getEnemyDefense murzag `shouldReturn` 5
+
+  describe "The Blood of Gondor" do
+    it "builds the nightmare deck, the nightmare Black Númenórean in place of the standard one" . nightmare theBloodOfGondor $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.blackNumenorean, Locations.theDarkWoods, Enemies.blackNumenoreanNightmare, Enemies.orcTrickster]
+        `shouldBe` [0, 0, 1, 4]
+
+    it "stages the nightmare Black Númenórean and gives each player a hidden card at setup" . nightmare theBloodOfGondor $ \pid -> do
+      flipFirstQuest pid
+      length <$> hiddenOf pid `shouldReturn` 1
+      bn <- enemyOf Enemies.blackNumenoreanNightmare
+      (.placement) <$> getEnemy bn `shouldReturn` StagingArea
+
+    it "cannot be won until The Cross-roads and Black Númenórean are in the victory display" . nightmare theBloodOfGondor $ \_ -> do
+      quest <- putQuestStage Quests.captured
+      run $ PlaceTokens GameSource quest Progress 15
+      getsGame (.outcome) `shouldReturn` Nothing
+      cards <- traverse (fmap EncounterCard . genEncounterCard) [Locations.theCrossroads, Enemies.blackNumenoreanNightmare]
+      putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (cards <>))) =<< getGame
+      run $ CheckWindows []
+      getsGame (.outcome) `shouldReturn` Just Won
+
+    it "Black Númenórean turns the hidden cards of the player it engages faceup" . nightmare theBloodOfGondor $ \pid -> do
+      bn <- staged Enemies.blackNumenoreanNightmare
+      hide pid [Locations.edgeOfIthilien, Locations.edgeOfIthilien]
+      getEnemyThreat bn `shouldReturn` 2
+      run $ EngageEnemy pid bn
+      hiddenOf pid `shouldReturn` []
+
+    it "Uruk Marksman turned faceup deals 3 damage and returns to the staging area" . nightmare theBloodOfGondor $ \pid -> do
+      bn <- staged Enemies.blackNumenoreanNightmare
+      hide pid [Enemies.urukMarksman]
+      run $ EngageEnemy pid bn
+      beravor <- toTarget <$> getHeroWithCode "01002"
+      chooseTarget pid beravor
+      getCharacterDamage beravor `shouldReturn` 3
+      uruk <- enemyOf Enemies.urukMarksman
+      (.placement) <$> getEnemy uruk `shouldReturn` StagingArea
+
+    it "Orc Trickster damaged becomes a hidden card instead" . nightmare theBloodOfGondor $ \pid -> do
+      trickster <- staged Enemies.orcTrickster
+      run $ DealDamage GameSource (toTarget trickster) 1
+      hiddenOf pid `shouldReturn` [toCardCode Enemies.orcTrickster]
+      getsGame (length . (.entities.enemies)) `shouldReturn` 0
+
+    it "Edge of Ithilien's archery is the most hidden cards any player has" . nightmare theBloodOfGondor $ \pid -> do
+      reveal Locations.edgeOfIthilien []
+      hide pid [Locations.mountainsOfShadow, Locations.mountainsOfShadow]
+      getArcheryTotal `shouldReturn` 2
+
+    it "Sudden Onslaught turns the hidden cards faceup and takes as many again" . nightmare theBloodOfGondor $ \pid -> do
+      hide pid [Locations.mountainsOfShadow, Locations.edgeOfIthilien]
+      reveal Treacheries.suddenOnslaught [Locations.theDarkWoods, Locations.theDarkWoods]
+      hiddenOf pid `shouldReturn` map toCardCode [Locations.theDarkWoods, Locations.theDarkWoods]
+
+    it "Mountains of Shadow active takes a hidden card for each turned faceup" . nightmare theBloodOfGondor $ \pid -> do
+      reveal Locations.mountainsOfShadow []
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      run $ PlaceLocation lid ActiveLocation
+      hide pid [Locations.edgeOfIthilien]
+      bn <- staged Enemies.blackNumenoreanNightmare
+      _ <- setEncounterDeck [Locations.theDarkWoods]
+      run $ EngageEnemy pid bn
+      hiddenOf pid `shouldReturn` [toCardCode Locations.theDarkWoods]
+
+    it "Surrounded by Shadow takes a hidden card for each questing hero" . nightmare theBloodOfGondor $ \pid -> do
+      run . CommitToQuest . toTarget =<< getHeroWithCode "01007"
+      reveal Treacheries.surroundedByShadow [Locations.theDarkWoods]
+      chooseLabel "$label.surroundedByShadow.take" pid
+      hiddenOf pid `shouldReturn` [toCardCode Locations.theDarkWoods]

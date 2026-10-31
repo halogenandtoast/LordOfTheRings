@@ -213,6 +213,8 @@ import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
 import LordOfTheRings.Treachery.Cards.TheTowerBeckons
 import LordOfTheRings.Treachery.Cards.NoxiousFumes
+import LordOfTheRings.Treachery.Cards.SurroundedByShadow
+import LordOfTheRings.Treachery.Cards.SuddenOnslaught
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -450,5 +452,7 @@ allTreacherys =
         , SomeTreacheryCard darkInterrogation
         , SomeTreacheryCard theTowerBeckons
         , SomeTreacheryCard noxiousFumes
+        , SomeTreacheryCard surroundedByShadow
+        , SomeTreacheryCard suddenOnslaught
         ]
     ]

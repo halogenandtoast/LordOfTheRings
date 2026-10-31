@@ -1595,5 +1595,16 @@
   "whiteFloweredFields": {
     "choose": "White-Flowered Fields: exhaust a hero you control or place 1 progress on To the Tower",
     "progress": "Place 1 progress on To the Tower"
+  },
+  "mountainsOfShadow": {
+    "choose": "Mountains of Shadow: take 2 hidden cards or take this attack undefended",
+    "take": "Take 2 hidden cards",
+    "undefended": "Treat this attack as undefended"
+  },
+  "surroundedByShadow": {
+    "choose": "Surrounded by Shadow: take hidden cards or remove heroes from the quest",
+    "take": "Take 1 hidden card for each questing hero you control",
+    "remove": "Remove 1 hero you control from the quest for each hidden card in your play area",
+    "removeHero": "Choose a hero to remove from the quest"
   }
 }

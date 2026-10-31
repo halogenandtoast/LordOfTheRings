@@ -153,6 +153,8 @@ data WindowType
     Attached Target Target (Set Trait)
   | -- | the committed character was removed from the quest
     RemovedFromQuest Target
+  | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
+    HiddenCardTurnedFaceup Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

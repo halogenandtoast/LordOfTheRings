@@ -504,6 +504,9 @@ data ModifierType
   | -- | on the active location on the Island Map: the players may travel from it to a
     -- location up to so many locations away, as Winding Caverns reads
     TravelRange Int
+  | -- | on the game: the players cannot win, a win waiting until nothing gives this, as
+    -- The Blood of Gondor's Nightmare setup card reads
+    PlayersCannotWin
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

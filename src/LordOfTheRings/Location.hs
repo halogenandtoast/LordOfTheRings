@@ -274,6 +274,8 @@ import LordOfTheRings.Location.Cards.DungeonLabyrinth
 import LordOfTheRings.Location.Cards.BanksOfMorgulduin
 import LordOfTheRings.Location.Cards.EphelDuath
 import LordOfTheRings.Location.Cards.WhiteFloweredFields
+import LordOfTheRings.Location.Cards.EdgeOfIthilien
+import LordOfTheRings.Location.Cards.MountainsOfShadow
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -589,5 +591,7 @@ allLocations =
         , SomeLocationCard banksOfMorgulduin
         , SomeLocationCard ephelDuath
         , SomeLocationCard whiteFloweredFields
+        , SomeLocationCard edgeOfIthilien
+        , SomeLocationCard mountainsOfShadow
         ]
     ]

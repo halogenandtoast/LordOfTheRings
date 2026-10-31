@@ -256,6 +256,9 @@ allEnemyCards =
       , warriorOfNurn
       , orcCaptor
       , sentryOfTheWhiteBridge
+      , blackNumenoreanNightmare
+      , orcTrickster
+      , urukMarksman
       ]
 
 namelessThing :: CardDef
@@ -2065,4 +2068,27 @@ sentryOfTheWhiteBridge =
   (enemy "the-morgul-vale-nightmare-the-morgul-vale-004" "Sentry of the White Bridge" TheMorgulValeNightmare 2 37 0 0 4 5)
     { cdCardTraits = setFromList [Orc, Mordor]
     , cdShadowEffect = True
+    }
+
+-- The Blood of Gondor Nightmare
+
+-- | X threat, X the total number of hidden cards in the game.
+blackNumenoreanNightmare :: CardDef
+blackNumenoreanNightmare =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-002" "Black Númenórean" TheBloodOfGondorNightmare 1 35 0 5 4 9)
+    { cdCardTraits = setFromList [Mordor]
+    , cdVictoryPoints = Just 3
+    }
+
+orcTrickster :: CardDef
+orcTrickster =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-003" "Orc Trickster" TheBloodOfGondorNightmare 4 20 3 3 2 2)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+urukMarksman :: CardDef
+urukMarksman =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-004" "Uruk Marksman" TheBloodOfGondorNightmare 3 40 4 2 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdKeywords = setFromList [Archery 3]
     }
