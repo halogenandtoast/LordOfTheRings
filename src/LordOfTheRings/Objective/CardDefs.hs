@@ -93,6 +93,17 @@ allObjectiveCards =
       , towerOfTheGull
       , theBeacon
       , towerOfTheHeron
+      , blackKeyBurden
+      , blackKeyBurdenUpgraded
+      , theBlackSword
+      , calaerion
+      , calaerionUpgraded
+      , gavin
+      , gateKeyUpgraded
+      , dreamChaserUpgraded
+      , dawnStarUpgraded
+      , narelenyaUpgraded
+      , silverWingUpgraded
       , riseToPower
       , assassination
       , theCabalsChampion
@@ -591,6 +602,57 @@ theBeacon = dolAmrothTower "12136" "The Beacon"
 towerOfTheHeron :: CardDef
 towerOfTheHeron = dolAmrothTower "12137" "Tower of the Heron"
 
+-- * The Dream-chaser Campaign Expansion
+
+upgradedObjective :: CardDef -> CardDef
+upgradedObjective def = def {cdCardCode = CardCode (unCardCode (cdCardCode def) <> "U"), cdCardTraits = insertSet Upgraded (cdCardTraits def)}
+
+-- | A burden attached to an enemy, as the campaign card's setup says.
+blackKeyBurden :: CardDef
+blackKeyBurden = unique (objective "DCC192" "Black Key" DreamChaserCampaign 0) {cdCardTraits = setFromList [Item, Artifact, Burden]}
+
+blackKeyBurdenUpgraded :: CardDef
+blackKeyBurdenUpgraded = upgradedObjective blackKeyBurden
+
+theBlackSword :: CardDef
+theBlackSword = unique (objective "DCC216" "The Black Sword" DreamChaserCampaign 0) {cdCardTraits = setFromList [Item, Weapon, Burden]}
+
+calaerion :: CardDef
+calaerion =
+  ((objective "DCC193" "Calaerion" DreamChaserCampaign 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 1, cdDefense = Just 1, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Noldor, Scout, Boon]
+    }
+
+calaerionUpgraded :: CardDef
+calaerionUpgraded = (upgradedObjective calaerion) {cdWillpower = Just 2, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 4}
+
+gavin :: CardDef
+gavin =
+  ((objective "DCC210" "Gavin" DreamChaserCampaign 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 1, cdDefense = Just 0, cdHitPoints = Just 2 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Scout, Boon]
+    , cdKeywords = setFromList [Surge, Ranged]
+    , cdWhenRevealed = True
+    , cdSailingIcons = 1
+    }
+
+gateKeyUpgraded :: CardDef
+gateKeyUpgraded = (upgradedObjective gateKey) {cdCardCode = "DCC078U"}
+
+dreamChaserUpgraded :: CardDef
+dreamChaserUpgraded = (upgradedObjective dreamChaser) {cdCardCode = "DCC136U", cdWillpower = Just 6, cdAttack = Just 5, cdDefense = Just 5, cdHitPoints = Just 19}
+
+dawnStarUpgraded :: CardDef
+dawnStarUpgraded = (upgradedObjective dawnStar) {cdCardCode = "DCC137U", cdWillpower = Just 4, cdAttack = Just 4, cdDefense = Just 5, cdHitPoints = Just 18}
+
+narelenyaUpgraded :: CardDef
+narelenyaUpgraded = (upgradedObjective narelenya) {cdCardCode = "DCC140U", cdWillpower = Just 4, cdAttack = Just 4, cdDefense = Just 6, cdHitPoints = Just 17}
+
+silverWingUpgraded :: CardDef
+silverWingUpgraded = (upgradedObjective silverWing) {cdCardCode = "DCC141U", cdWillpower = Just 3, cdAttack = Just 6, cdDefense = Just 3, cdHitPoints = Just 16}
 -- The Angmar Awakened campaign's burdens
 
 -- | Protect the Innocent's other side.

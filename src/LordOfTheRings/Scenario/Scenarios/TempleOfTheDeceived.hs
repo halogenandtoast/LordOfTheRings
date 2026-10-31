@@ -10,6 +10,7 @@ import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 import LordOfTheRings.Timing (Timing (When))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Window (..), WindowType (Explored))
@@ -80,7 +81,9 @@ instance RunMessage TempleOfTheDeceived where
         whenM (selectAny $ LocationWithId lid <> IsActiveLocation) do
           attached <- getsGame (filter ((== AttachedTo (LocationTarget lid)) . (.placement)) . toList . (.entities.attachments))
           for_ attached (discard . toTarget)
-      TempleOfTheDeceived <$> runMessage msg attrs
+      TempleOfTheDeceived <$> runDreamChaserCampaign msg attrs
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TempleOfTheDeceived <$> runDreamChaserCampaign msg attrs
     _ -> TempleOfTheDeceived <$> runMessage msg attrs
    where
     cardIsAny defs c = toCardCode c `elem` map toCardCode defs

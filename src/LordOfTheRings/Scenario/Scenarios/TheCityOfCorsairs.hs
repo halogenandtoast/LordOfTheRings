@@ -9,6 +9,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype TheCityOfCorsairs = TheCityOfCorsairs ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -116,4 +117,6 @@ instance RunMessage TheCityOfCorsairs where
         controllers <- traverse characterController [c | c@(AllyTarget _) <- committed]
         for_ (catMaybes controllers) \pid -> raiseThreat pid walls
       TheCityOfCorsairs <$> runMessage msg attrs
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheCityOfCorsairs <$> runDreamChaserCampaign msg attrs
     _ -> TheCityOfCorsairs <$> runMessage msg attrs

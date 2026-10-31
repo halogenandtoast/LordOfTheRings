@@ -86,6 +86,17 @@ export interface CampaignLog {
   /** Numbers noted for cards, by note, as the damage on Protect the Innocent. */
   counts?: Record<string, Record<string, number>>
   completed: { scenario: string; score: number }[]
+  /** Experience not yet spent (the Dream-chaser campaign). */
+  xp: number
+  /** The checkboxes marked by each scalable or upgradable card's title. */
+  marked: Record<string, number>
+}
+
+/** A card XP is spent on: one checkbox for each XP, its Upgraded side once all are marked. */
+export interface XpCard {
+  card: string
+  boxes: number
+  upgraded: string | null
 }
 
 export interface CampaignView {
@@ -98,6 +109,9 @@ export interface CampaignView {
   games: { id: string; scenario: string; outcome: 'Won' | 'Lost' | null }[]
   next: string | null
   status: 'playing' | 'won' | 'lost' | 'finished'
+  upgrades: XpCard[]
+  /** Between scenarios, the next one waiting in the lobby. */
+  canSpendXp: boolean
 }
 
 /** Start a campaign: its first scenario's game, waiting for its seats. */
@@ -109,6 +123,14 @@ export const createCampaign = (campaign: { name: string; campaign: string; seats
   }).then((r) => json<{ id: string; campaignId: string }>(r))
 
 export const fetchCampaign = (id: string) => apiFetch(`/api/campaigns/${id}`).then((r) => json<CampaignView>(r))
+
+/** Spend 1 XP to mark one of the card's checkboxes. */
+export const spendXp = (id: string, card: string) =>
+  apiFetch(`/api/campaigns/${id}/xp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ card }),
+  }).then((r) => json<CampaignLog>(r))
 
 /** The next scenario's game, or the last one's again when it was lost. */
 export const continueCampaign = (id: string) =>

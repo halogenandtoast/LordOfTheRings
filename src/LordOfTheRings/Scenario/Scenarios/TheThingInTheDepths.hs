@@ -7,6 +7,7 @@ import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithCardCode, EnemyWithId), ge
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 import LordOfTheRings.Timing (Timing (After))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Window (..), WindowType (EntersStagingArea))
@@ -69,5 +70,7 @@ instance RunMessage TheThingInTheDepths where
         whenM (selectAny $ EnemyWithId eid <> EnemyWithCardCode (toCardCode Enemies.theThingInTheDepths)) do
           players <- getRemainingPlayers
           for_ players \pid -> immediateAttack pid eid
-      TheThingInTheDepths <$> runMessage msg attrs
+      TheThingInTheDepths <$> runDreamChaserCampaign msg attrs
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheThingInTheDepths <$> runDreamChaserCampaign msg attrs
     _ -> TheThingInTheDepths <$> runMessage msg attrs

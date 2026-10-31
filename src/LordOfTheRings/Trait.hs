@@ -52,6 +52,7 @@ data Trait
   | Dunland
   | Dwarf
   | Eagle
+  | Elite
   | EmynMuil
   | Enedwaith
   | Ent
@@ -90,6 +91,7 @@ data Trait
   | Minstrel
   | Mirkwood
   | Mission
+  | Modification
   | Mordor
   | Mount
   | MountGram
@@ -143,6 +145,7 @@ data Trait
   | Stronghold
   | Summoner
   | Swamp
+  | Tactic
   | Tantrum
   | Tentacle
   | Thug
@@ -158,6 +161,7 @@ data Trait
   | Underground
   | Underwater
   | Underworld
+  | Upgraded
   | Uruk
   | Valley
   | Villain

@@ -23,6 +23,7 @@ import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers
 import LordOfTheRings.Source (Source (ScenarioSource))
 import LordOfTheRings.Timing (Timing (When))
 import LordOfTheRings.Window (Window (..), WindowType (RoundEnds))
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype FlightOfTheStormcaller = FlightOfTheStormcaller ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities)
@@ -154,6 +155,8 @@ instance RunMessage FlightOfTheStormcaller where
         push $ CreateEnemy eid card
         when onCourse $ addToStormcallerArea (EnemyTarget eid)
       pure $ FlightOfTheStormcaller $ attrs & encounterDiscardL %~ filter (`notElem` bites)
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> FlightOfTheStormcaller <$> runDreamChaserCampaign msg attrs
     _ -> FlightOfTheStormcaller <$> runMessage msg attrs
    where
     meta = getMeta attrs

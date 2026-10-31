@@ -11,6 +11,7 @@ import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 import LordOfTheRings.Source (Source (ScenarioSource))
 import LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven.Helpers (raiderFlagship)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -102,4 +103,6 @@ instance RunMessage AStormOnCobasHaven where
     SailingTestEnded top _ | attrs.nightmare -> do
       for_ [c | c <- top, cardMatches (cardIs Treacheries.brokenRudder) c, c `elem` attrs.encounterDiscard] revealFromEncounterDiscard
       AStormOnCobasHaven <$> runMessage msg attrs
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> AStormOnCobasHaven <$> runDreamChaserCampaign msg attrs
     _ -> AStormOnCobasHaven <$> runMessage msg attrs

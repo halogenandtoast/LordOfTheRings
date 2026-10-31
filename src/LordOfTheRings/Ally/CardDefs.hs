@@ -192,6 +192,7 @@ allAllyCards =
       , soldierOfDolAmroth
       , sulien
       , guardianOfIthilien
+      , starla
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1325,6 +1326,9 @@ guardianOfIthilien =
     { cdCardTraits = setFromList [Gondor, Ranger]
     }
 
+-- | A boon of the Dream-chaser campaign: X is half her level, rounded up.
+starla :: CardDef
+starla = unique (ally "DCC198" "Starla" Neutral (StaticCost 0) 0 0 0 4) {cdCardTraits = setFromList [Noldor, Scout, Boon]}
 -- The Angmar Awakened campaign's boons
 
 berelind :: CardDef

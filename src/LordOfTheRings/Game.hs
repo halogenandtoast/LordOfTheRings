@@ -546,7 +546,7 @@ runGameMessage msg g = case msg of
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   -- step 8 follows the quest's own setup: a nightmare setup card's instructions, as its
   -- "the game is now ready to begin" reads; step 9 a campaign card's setup that needs what
-  -- the quest put into play, as Iârion
+  -- the quest put into play, as Iârion, or the fleet, as the Dream-chaser campaign's boons
   Setup -> do
     pushAll [DoStep n Setup | n <- [1 .. 9]]
     pure g

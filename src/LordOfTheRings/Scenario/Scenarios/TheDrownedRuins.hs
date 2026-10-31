@@ -10,6 +10,7 @@ import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheDrownedRuins.Helpers (underwaterActive)
 import LordOfTheRings.Trait (Trait (Grotto))
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype TheDrownedRuins = TheDrownedRuins ScenarioAttrs
@@ -66,4 +67,6 @@ instance RunMessage TheDrownedRuins where
         & questDeckL .~ laterStages
         & setAsideL .~ shrine
         & grottoDeckL .~ shuffled
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheDrownedRuins <$> runDreamChaserCampaign msg attrs
     _ -> TheDrownedRuins <$> runMessage msg attrs

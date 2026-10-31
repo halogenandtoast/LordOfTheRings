@@ -11,6 +11,7 @@ penalty, the Campaign Pool and the fallen heroes, the scenario runner does.
 -}
 module LordOfTheRings.Campaign (module LordOfTheRings.Campaign) where
 
+import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Campaign.CardDefs qualified as Cards
 import LordOfTheRings.Card.CardDef (CardDef, cdCardCode)
@@ -46,6 +47,22 @@ data CampaignLogKey
   | -- | Mendor, added to the Campaign Pool for the next campaign (Escape from Dol
     -- Guldur's resolution)
     MendorJoinsTheNextCampaign
+  | -- | Graxar was in the victory display at the end of Raid on the Grey Havens: Parrying
+    -- Cutlass or Throwing Axe is chosen, and its hero, as the next scenario is set up
+    GraxarDefeated
+  | -- | the boons each player chose during this scenario's setup, as Galdor's Counsel: they
+    -- add 1 to Ominous Fate's X, and join the Campaign Pool once the scenario is won
+    ChosenDuringSetup
+  | -- | Captain Sahír has had his campaign card's attachments this scenario
+    SahirKeyed
+  | -- | Captain Sahír has turned over, and had what The Thing in the Depths' campaign card
+    -- gives as he does
+    SahirTurned
+  | -- | Temple of the Deceived's secrets, one under each Temple of the Deceived location
+    -- in its row of the Island Map, none once flipped
+    Secrets
+  | -- | the secrets flipped over
+    RevealedSecrets
   | -- | Angmar Awakened: the damage on Protect the Innocent, later Arnor Ravaged, as its
     -- campaign cards note it ('counted')
     ProtectTheInnocentDamage
@@ -86,6 +103,13 @@ data CampaignLog = CampaignLog
   , campaignLogPool :: [PoolCard]
   , campaignLogNotes :: Map CampaignLogKey [CardCode]
   , campaignLogCompleted :: [CompletedScenario]
+  , campaignLogXp :: Int
+  -- ^ experience not yet spent (Dream-chaser Campaign Rules, "Gaining XP")
+  , campaignLogMarked :: Map CardCode Int
+  -- ^ the checkboxes marked by each scalable or upgradable card's title
+  , campaignLogCardResources :: Int
+  -- ^ the resources on this scenario's campaign card, as Revenant places them: counted for
+  -- XP as it is resolved, none carried to the next
   , campaignLogCounts :: Map CampaignLogKey (Map CardCode Int)
   -- ^ numbers noted for cards, as the damage on Protect the Innocent
   }
@@ -106,8 +130,9 @@ instance FromJSON CompletedScenario where
 instance ToJSON CampaignLog where
   toJSON = genericToJSON (aesonOptions $ Just "campaignLog")
 
+-- | A log kept before XP was recorded has none.
 instance FromJSON CampaignLog where
-  parseJSON = genericParseJSON (aesonOptions $ Just "campaignLog") . withDefaults [("counts", object [])]
+  parseJSON = genericParseJSON (aesonOptions $ Just "campaignLog") . withDefaults [("xp", Number 0), ("marked", object []), ("cardResources", Number 0), ("counts", object [])]
 
 instance HasField "campaign" CampaignLog CampaignId where
   getField = campaignLogCampaign
@@ -130,6 +155,15 @@ instance HasField "notes" CampaignLog (Map CampaignLogKey [CardCode]) where
 instance HasField "completed" CampaignLog [CompletedScenario] where
   getField = campaignLogCompleted
 
+instance HasField "xp" CampaignLog Int where
+  getField = campaignLogXp
+
+instance HasField "marked" CampaignLog (Map CardCode Int) where
+  getField = campaignLogMarked
+
+instance HasField "cardResources" CampaignLog Int where
+  getField = campaignLogCardResources
+
 instance HasField "counts" CampaignLog (Map CampaignLogKey (Map CardCode Int)) where
   getField = campaignLogCounts
 
@@ -151,6 +185,25 @@ revisedCore =
     , ("escape-from-dol-guldur", Cards.escapeFromDolGuldurCampaign)
     ]
 
+-- | The Dream-chaser Campaign Expansion: The Grey Havens' three scenarios and the
+-- Dream-chaser cycle's six, one campaign.
+dreamChaser :: CampaignDef
+dreamChaser =
+  CampaignDef
+    "dream-chaser"
+    "The Dream-chaser Campaign"
+    [ ("voyage-across-belegaer", Cards.voyageAcrossBelegaerCampaign)
+    , ("the-fate-of-numenor", Cards.theFateOfNumenorCampaign)
+    , ("raid-on-the-grey-havens", Cards.raidOnTheGreyHavensCampaign)
+    , ("flight-of-the-stormcaller", Cards.flightOfTheStormcallerCampaign)
+    , ("the-thing-in-the-depths", Cards.theThingInTheDepthsCampaign)
+    , ("temple-of-the-deceived", Cards.templeOfTheDeceivedCampaign)
+    , ("the-drowned-ruins", Cards.theDrownedRuinsCampaign)
+    , ("a-storm-on-cobas-haven", Cards.aStormOnCobasHavenCampaign)
+    , ("the-city-of-corsairs", Cards.theCityOfCorsairsCampaign)
+    ]
+
+
 -- | The Angmar Awakened Campaign Expansion: The Lost Realm's scenarios and the Angmar
 -- Awakened cycle's, one campaign.
 angmarAwakened :: CampaignDef
@@ -170,13 +223,84 @@ angmarAwakened =
     ]
 
 allCampaigns :: [CampaignDef]
-allCampaigns = [revisedCore, angmarAwakened]
+allCampaigns = [revisedCore, angmarAwakened, dreamChaser]
 
 lookupCampaign :: CampaignId -> Maybe CampaignDef
 lookupCampaign cid = find ((== cid) . campaignDefId) allCampaigns
 
 newCampaignLog :: CampaignId -> CampaignLog
-newCampaignLog cid = CampaignLog cid [] [] 0 [] mempty [] mempty
+newCampaignLog cid = CampaignLog cid [] [] 0 [] mempty [] 0 mempty 0 mempty
+
+-- | The scenario's part number in its campaign, from 1, as Ominous Fate's X reads it.
+partNumber :: CampaignLog -> ScenarioId -> Int
+partNumber l sid = maybe 0 (+ 1) $ (elemIndex sid . map fst . campaignDefScenarios) =<< lookupCampaign l.campaign
+
+{- | What XP is spent on (Dream-chaser Campaign Rules, "Scalable & Upgradable Cards"):
+each card with as many checkboxes as its upgrade costs XP, the card upgraded once all
+are marked, its Upgraded side used from then on; a scalable card levels up with each.
+-}
+data XpCard = XpCard
+  { xpCard :: CardCode
+  , xpBoxes :: Int
+  , xpUpgraded :: Maybe CardCode
+  -- ^ the Upgraded side, once every box is marked
+  }
+  deriving stock (Show, Eq, Generic)
+
+instance ToJSON XpCard where
+  toJSON = genericToJSON (aesonOptions $ Just "xp")
+
+-- ponytail: the Campaign Log sheet's checkbox counts are not to hand; an upgradable card
+-- has as many as the XP cost printed on its Upgraded side, a scalable card 5.
+xpCards :: CampaignLog -> [XpCard]
+xpCards l = case l.campaign of
+  "dream-chaser" ->
+    [upgrade code n | (code, n) <- upgradable]
+      -- the Grey Havens' and the cycle's own cards, their Upgraded sides the expansion's
+      <> [XpCard "11080" 4 (Just "DCC136U"), XpCard "11081" 4 (Just "DCC137U"), XpCard "11082" 4 (Just "DCC140U"), XpCard "11083" 4 (Just "DCC141U"), XpCard "12071" 2 (Just "DCC078U")]
+      <> [XpCard code 5 Nothing | code <- scalable]
+      <> [XpCard "DCC211" 3 Nothing, XpCard "DCC212" 3 Nothing, XpCard "DCC213" 3 Nothing, XpCard "DCC214" 3 Nothing]
+      -- "Gavin returned", once A Storm on Cobas Haven is won
+      <> [XpCard "DCC210" 4 Nothing | "a-storm-on-cobas-haven" `elem` map completedScenario l.completed]
+  _ -> []
+ where
+  upgrade code n = XpCard code n (Just $ CardCode $ unCardCode code <> "U")
+  upgradable =
+    [ ("DCC172", 2), ("DCC173", 2), ("DCC174", 2), ("DCC175", 2)
+    , ("DCC180", 3), ("DCC183", 4), ("DCC189", 5), ("DCC190", 5)
+    , ("DCC192", 5), ("DCC193", 5)
+    ]
+  -- Galdor's Counsel, Come Together, Starla, Command and Círdan's Blessing
+  scalable = ["DCC184", "DCC185", "DCC186", "DCC187", "DCC195", "DCC198", "DCC201", "DCC202", "DCC203", "DCC204", "DCC205", "DCC206", "DCC207", "DCC208"]
+
+marked :: CardCode -> CampaignLog -> Int
+marked code = Map.findWithDefault 0 code . (.marked)
+
+-- | A scalable card's level: the boxes marked by its title.
+-- ponytail: a card with none marked plays at level 1, so a boon taken before XP is spent
+-- on it still does something.
+level :: CardCode -> CampaignLog -> Int
+level code l = max 1 (marked code l)
+
+isUpgraded :: CardCode -> CampaignLog -> Bool
+isUpgraded code l = any (\x -> xpCard x == code && marked code l >= xpBoxes x) (xpCards l)
+
+-- | The side of the card to use: its Upgraded side once upgraded.
+upgradedCode :: CampaignLog -> CardCode -> CardCode
+upgradedCode l code = fromMaybe code $ headMay [u | x <- xpCards l, xpCard x == code, Just u <- [xpUpgraded x], isUpgraded code l]
+
+{- | Spend 1 XP to mark one of the card's checkboxes. Its Upgraded side replaces it in
+the Campaign Pool once every box is marked. Nothing if there is no XP left or no box.
+-}
+spendXp :: CardCode -> CampaignLog -> Maybe CampaignLog
+spendXp code l = do
+  x <- find ((== code) . xpCard) (xpCards l)
+  guard $ l.xp > 0 && marked code l < xpBoxes x
+  let l' = l {campaignLogXp = l.xp - 1, campaignLogMarked = Map.insertWith (+) code 1 l.marked}
+  pure l' {campaignLogPool = [p {poolCardCode = upgradedCode l' p.code} | p <- l'.pool]}
+
+gainXp :: Int -> CampaignLog -> CampaignLog
+gainXp n l = l {campaignLogXp = max 0 (l.xp + n)}
 
 -- | The scenario to play next: the first not yet won. Nothing once the campaign is over.
 nextScenario :: CampaignLog -> Maybe ScenarioId

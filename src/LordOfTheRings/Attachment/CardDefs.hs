@@ -163,6 +163,26 @@ allAttachmentCards =
       , windfola
       , rangerSpear
       , princeOfDolAmroth
+      , armorPlating
+      , armorPlatingUpgraded
+      , ballista
+      , ballistaUpgraded
+      , enlargedQuarters
+      , enlargedQuartersUpgraded
+      , extraSails
+      , extraSailsUpgraded
+      , spyglass
+      , spyglassUpgraded
+      , blackKey
+      , blackKeyUpgraded
+      , parryingCutlass
+      , parryingCutlassUpgraded
+      , throwingAxe
+      , throwingAxeUpgraded
+      , cirdansBlessingLeadership
+      , cirdansBlessingTactics
+      , cirdansBlessingSpirit
+      , cirdansBlessingLore
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1069,6 +1089,79 @@ princeOfDolAmroth =
       { cdCardTraits = setFromList [Title]
       }
 
+-- * The Dream-chaser Campaign Expansion: boons, each removed from the game as it leaves
+-- play, their Upgraded sides once XP has upgraded them
+
+dccBoon :: CardCode -> Name -> [Trait] -> CardDef
+dccBoon code name traits = (attachment code name Neutral (StaticCost 0)) {cdCardTraits = setFromList (Boon : traits)}
+
+upgradedSide :: CardDef -> CardDef
+upgradedSide def = def {cdCardCode = CardCode (unCardCode (cdCardCode def) <> "U"), cdCardTraits = insertSet Upgraded (cdCardTraits def)}
+
+-- | A Modification boon, attached to a ship-objective as the campaign card's setup says.
+armorPlating :: CardDef
+armorPlating = dccBoon "DCC172" "Armor Plating" [Modification, Armor]
+
+armorPlatingUpgraded :: CardDef
+armorPlatingUpgraded = upgradedSide armorPlating
+
+ballista :: CardDef
+ballista = dccBoon "DCC173" "Ballista" [Modification, Weapon]
+
+ballistaUpgraded :: CardDef
+ballistaUpgraded = upgradedSide ballista
+
+enlargedQuarters :: CardDef
+enlargedQuarters = dccBoon "DCC174" "Enlarged Quarters" [Modification]
+
+enlargedQuartersUpgraded :: CardDef
+enlargedQuartersUpgraded = upgradedSide enlargedQuarters
+
+extraSails :: CardDef
+extraSails = dccBoon "DCC175" "Extra Sails" [Modification]
+
+extraSailsUpgraded :: CardDef
+extraSailsUpgraded = upgradedSide extraSails
+
+spyglass :: CardDef
+spyglass = dccBoon "DCC180" "Spyglass" [Item]
+
+spyglassUpgraded :: CardDef
+spyglassUpgraded = upgradedSide spyglass
+
+blackKey :: CardDef
+blackKey = unique $ dccBoon "DCC183" "Black Key" [Item, Artifact]
+
+blackKeyUpgraded :: CardDef
+blackKeyUpgraded = upgradedSide blackKey
+
+-- | Permanent: attached to the hero the Campaign Log records it on.
+parryingCutlass :: CardDef
+parryingCutlass = (dccBoon "DCC189" "Parrying Cutlass" [Item, Weapon]) {cdKeywords = setFromList [Restricted]}
+
+parryingCutlassUpgraded :: CardDef
+parryingCutlassUpgraded = upgradedSide parryingCutlass
+
+throwingAxe :: CardDef
+throwingAxe = (dccBoon "DCC190" "Throwing Axe" [Item, Weapon]) {cdKeywords = setFromList [Restricted]}
+
+throwingAxeUpgraded :: CardDef
+throwingAxeUpgraded = upgradedSide throwingAxe
+
+cirdansBlessing :: CardCode -> Sphere -> CardDef
+cirdansBlessing code sphere = (attachment code "Círdan's Blessing" sphere (StaticCost 1)) {cdCardTraits = setFromList [Condition, Boon]}
+
+cirdansBlessingLeadership :: CardDef
+cirdansBlessingLeadership = cirdansBlessing "DCC205" Leadership
+
+cirdansBlessingTactics :: CardDef
+cirdansBlessingTactics = cirdansBlessing "DCC206" Tactics
+
+cirdansBlessingSpirit :: CardDef
+cirdansBlessingSpirit = cirdansBlessing "DCC207" Spirit
+
+cirdansBlessingLore :: CardDef
+cirdansBlessingLore = cirdansBlessing "DCC208" Lore
 -- The Angmar Awakened campaign's boons
 
 iarionsPendant :: CardDef

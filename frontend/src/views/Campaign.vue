@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { continueCampaign, fetchCampaign, type CampaignView } from '../api'
+import { continueCampaign, fetchCampaign, spendXp, type CampaignView } from '../api'
 import { useServerText } from '../i18n'
 import type { CardDef } from '../server'
 
@@ -37,6 +37,22 @@ const total = computed(() => log.value?.completed.reduce((sum, c) => sum + c.sco
 const pool = computed(() => (log.value?.pool ?? []).map((p) => ({ ...p, burden: isBurden(p.code) })))
 const current = computed(() => campaign.value?.games[0] ?? null)
 const nextName = computed(() => (campaign.value?.next ? scenarioName(campaign.value.next) : ''))
+
+// The Dream-chaser campaign's XP: each card's checkboxes, one marked for each XP spent.
+const marked = (code: string) => log.value?.marked[code] ?? 0
+const spending = ref(false)
+const spend = async (code: string) => {
+  if (!campaign.value) return
+  spending.value = true
+  error.value = null
+  try {
+    campaign.value = { ...campaign.value, log: await spendXp(id, code) }
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    spending.value = false
+  }
+}
 
 const goOn = async () => {
   going.value = true
@@ -115,6 +131,27 @@ const goOn = async () => {
         </ul>
       </section>
 
+      <section v-if="campaign.upgrades.length" class="card">
+        <h3 class="card-title">{{ $t('campaignMode.experience') }}</h3>
+        <p>{{ $t('campaignMode.xpLeft', { xp: log.xp }) }}</p>
+        <p v-if="!campaign.canSpendXp" class="muted">{{ $t('campaignMode.spendBetween') }}</p>
+        <ul class="pool">
+          <li v-for="u in campaign.upgrades" :key="u.card">
+            <img :src="`/images/cards/thumb/${marked(u.card) >= u.boxes && u.upgraded ? u.upgraded : u.card}.avif`" :alt="name(u.card)" />
+            <span>
+              <strong>{{ name(u.card) }}</strong>
+              <span class="boxes">{{ '☑'.repeat(Math.min(marked(u.card), u.boxes)) }}{{ '☐'.repeat(Math.max(0, u.boxes - marked(u.card))) }}</span>
+            </span>
+            <button
+              v-if="campaign.canSpendXp && log.xp > 0 && marked(u.card) < u.boxes"
+              type="button"
+              :disabled="spending"
+              @click="spend(u.card)"
+            >{{ $t('campaignMode.spendXp') }}</button>
+          </li>
+        </ul>
+      </section>
+
       <section class="card">
         <h3 class="card-title">{{ $t('campaignMode.scenarios') }}</h3>
         <table>
@@ -162,6 +199,7 @@ dd { margin: 0; }
 .pool li { display: flex; align-items: center; gap: 10px; }
 .pool img { width: 48px; border-radius: 3px; }
 .pool .burden strong { color: var(--danger); }
+.boxes { margin-left: 8px; letter-spacing: 0.1em; }
 table { border-collapse: collapse; width: 100%; }
 td { padding: 4px 0; border-bottom: 1px solid var(--line-strong); }
 tfoot td { font-weight: 700; border-bottom: 0; }

@@ -247,6 +247,12 @@ import LordOfTheRings.Enemy.Cards.BrownWaterRats
 import LordOfTheRings.Enemy.Cards.TortureMaster
 import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
+import LordOfTheRings.Enemy.Cards.Thunderstruck
+import LordOfTheRings.Enemy.Cards.Crowley
+import LordOfTheRings.Enemy.Cards.Revenant
+import LordOfTheRings.Enemy.Cards.Graxar
+import LordOfTheRings.Enemy.Cards.SeaSerpent
+import LordOfTheRings.Enemy.Cards.RecurringNightmare
 import LordOfTheRings.Enemy.Cards.CunningInformant
 import LordOfTheRings.Enemy.Cards.HarborBrute
 import LordOfTheRings.Enemy.Cards.PelargirRingleader
@@ -656,6 +662,13 @@ allEnemys =
         , SomeEnemyCard tortureMaster
         , SomeEnemyCard crazedCaptive
         , SomeEnemyCard spiderOfDolGuldur
+        , SomeEnemyCard thunderstruck
+        , SomeEnemyCard crowley
+        , SomeEnemyCard revenant
+        , SomeEnemyCard graxar
+        , SomeEnemyCard seaSerpent
+        , SomeEnemyCard seaSerpentEnraged
+        , SomeEnemyCard recurringNightmare
         , SomeEnemyCard cunningInformant
         , SomeEnemyCard harborBrute
         , SomeEnemyCard pelargirRingleader

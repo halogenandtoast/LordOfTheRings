@@ -166,7 +166,13 @@
       "Determined": "Determined: {cards}",
       "LostInMountGram": "Left captured in Mount Gram, barred from every deck for the rest of the campaign: {cards}",
       "HeroDamage": "Damage on each hero at the end of The Battle of Carn Dûm, each beginning The Dread Realm with as much: {cards}",
-      "ChoosePendantOrCourage": "Choose Iârion's Pendant or Amarthiúl's Courage for the Campaign Pool as The Wastes of Eriador is set up."
+      "ChoosePendantOrCourage": "Choose Iârion's Pendant or Amarthiúl's Courage for the Campaign Pool as The Wastes of Eriador is set up.",
+      "GraxarDefeated": "Graxar was defeated: choose Parrying Cutlass or Throwing Axe, and its hero, as the next scenario is set up.",
+      "ChosenDuringSetup": "Chosen during setup: {cards}",
+      "SahirKeyed": "Captain Sahír has his Black Key.",
+      "SahirTurned": "Captain Sahír has turned over.",
+      "Secrets": "Secrets: {cards}",
+      "RevealedSecrets": "Secrets flipped: {cards}"
     },
     "scenarios": "Scenarios",
     "total": "Campaign total",
@@ -175,6 +181,10 @@
     "replay": "Play {scenario} again",
     "lost": "The scenario was lost: play it again to go on.",
     "finished": "The campaign is complete.",
-    "backToGame": "Back to {scenario}"
+    "backToGame": "Back to {scenario}",
+    "experience": "Experience",
+    "xpLeft": "{xp} XP to spend",
+    "spendBetween": "XP may be spent between scenarios, while the next one waits in the lobby.",
+    "spendXp": "Spend 1 XP"
   }
 }

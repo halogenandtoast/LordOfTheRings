@@ -177,6 +177,9 @@ import LordOfTheRings.Event.Cards.TheHousesOfHealing
 import LordOfTheRings.Event.Cards.JusticeShallBeDone
 import LordOfTheRings.Event.Cards.HoldTheLine
 import LordOfTheRings.Event.Cards.InspiringPresence
+import LordOfTheRings.Event.Cards.GaldorsCounsel
+import LordOfTheRings.Event.Cards.ComeTogether
+import LordOfTheRings.Event.Cards.Command
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -367,5 +370,14 @@ allEvents =
         , SomeEventCard justiceShallBeDone
         , SomeEventCard holdTheLine
         , SomeEventCard inspiringPresence
+        , SomeEventCard galdorsCounselLeadership
+        , SomeEventCard galdorsCounselTactics
+        , SomeEventCard galdorsCounselSpirit
+        , SomeEventCard galdorsCounselLore
+        , SomeEventCard comeTogether
+        , SomeEventCard commandLeadership
+        , SomeEventCard commandLore
+        , SomeEventCard commandSpirit
+        , SomeEventCard commandTactics
         ]
     ]

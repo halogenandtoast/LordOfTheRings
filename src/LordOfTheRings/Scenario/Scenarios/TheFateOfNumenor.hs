@@ -9,6 +9,7 @@ import LordOfTheRings.Phase (Phase (TravelPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype TheFateOfNumenor = TheFateOfNumenor ScenarioAttrs
@@ -89,4 +90,6 @@ instance RunMessage TheFateOfNumenor where
         shuffleUnchartedLocations
         doStep 1 (BeginPhase TravelPhase)
       TheFateOfNumenor <$> runMessage msg attrs
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheFateOfNumenor <$> runDreamChaserCampaign msg attrs
     _ -> TheFateOfNumenor <$> runMessage msg attrs

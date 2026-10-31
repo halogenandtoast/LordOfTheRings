@@ -1,7 +1,8 @@
-module LordOfTheRings.Ally.Cards.DawnStar (dawnStar) where
+module LordOfTheRings.Ally.Cards.DawnStar (dawnStar, dawnStarUpgraded) where
 
 import LordOfTheRings.Ally.Fleet
 import LordOfTheRings.Ally.Import.Lifted
+import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 
 newtype DawnStar = DawnStar AllyAttrs
@@ -11,6 +12,10 @@ newtype DawnStar = DawnStar AllyAttrs
 dawnStar :: AllyCard DawnStar
 dawnStar = ally DawnStar Cards.dawnStar
 
+-- | Its Upgraded side (the Dream-chaser campaign): it raises no starting threat.
+dawnStarUpgraded :: AllyCard DawnStar
+dawnStarUpgraded = ally DawnStar Cards.dawnStarUpgraded
+
 -- | Immune to player card effects. Draw 1 additional card during the resource phase.
 instance HasModifiersFor DawnStar where
   getModifiersFor (DawnStar a) = do
@@ -19,7 +24,7 @@ instance HasModifiersFor DawnStar where
 
 -- | Raise your starting threat by 3: as the fleet is prepared, it enters play.
 instance HasAbilities DawnStar where
-  getAbilities (DawnStar a) = [mkAbility a 1 $ silent $ EntersPlayWindow After (toTarget a)]
+  getAbilities (DawnStar a) = [mkAbility a 1 $ silent $ EntersPlayWindow After (toTarget a) | toCardCode a /= toCardCode Cards.dawnStarUpgraded]
 
 -- | If the Dawn Star is destroyed, its controller is eliminated from the game.
 instance RunMessage DawnStar where

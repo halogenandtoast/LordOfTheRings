@@ -67,6 +67,7 @@ data EncounterSet
   | PassageThroughMirkwood
   | PassageThroughMirkwoodCampaign
   | JourneyAlongTheAnduinCampaign
+  | DreamChaserCampaign
   | PassageThroughMirkwoodNightmare
   | PerilInPelargir
   | PerilInPelargirNightmare

@@ -1,4 +1,4 @@
-module LordOfTheRings.Objective.Cards.GateKey (gateKey) where
+module LordOfTheRings.Objective.Cards.GateKey (gateKey, gateKeyUpgraded) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -15,6 +15,14 @@ newtype GateKey = GateKey ObjectiveAttrs
 gateKey :: ObjectiveCard GateKey
 gateKey = objective GateKey Cards.gateKey
 
+-- | Its Upgraded side (the Dream-chaser campaign): looking costs no resources.
+-- ponytail: it looks at a Temple of the Deceived location only, not at a secret.
+gateKeyUpgraded :: ObjectiveCard GateKey
+gateKeyUpgraded = objective GateKey Cards.gateKeyUpgraded
+
+upgraded :: ObjectiveAttrs -> Bool
+upgraded a = toCardCode a == toCardCode Cards.gateKeyUpgraded
+
 -- | If unattached, return Gate Key to the staging area and it gains: "Action: Exhaust a
 -- hero to claim Gate Key and attach it to that hero."
 -- Action: Exhaust Gate Key and attached hero and spend 3 resources from attached hero's
@@ -28,7 +36,7 @@ instance HasAbilities GateKey where
             $ restricted
               a
               2
-              ( exists (HeroWithId hid <> HeroControlledBy ActivePlayer <> ReadyHero <> HeroWithResourcesAtLeast 3)
+              ( exists (HeroWithId hid <> HeroControlledBy ActivePlayer <> ReadyHero <> HeroWithResourcesAtLeast (if upgraded a then 0 else 3))
                   <> exists (LocationWithCardCode $ toCardCode Locations.templeOfTheDeceived)
               )
             $ ActionAbility Free
@@ -51,7 +59,7 @@ instance RunMessage GateKey where
       for_ [h | AttachedTo h@(HeroTarget _) <- [attrs.placement]] \h -> do
         exhaust attrs
         exhaust h
-        removeTokens attrs h Resource 3
+        unless (upgraded attrs) $ removeTokens attrs h Resource 3
         temples <- select (LocationWithCardCode $ toCardCode Locations.templeOfTheDeceived)
         chooseOneM pid do
           questionLabeled "gateKey.look"

@@ -1,7 +1,8 @@
-module LordOfTheRings.Ally.Cards.SilverWing (silverWing) where
+module LordOfTheRings.Ally.Cards.SilverWing (silverWing, silverWingUpgraded) where
 
 import LordOfTheRings.Ally.Fleet
 import LordOfTheRings.Ally.Import.Lifted
+import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 
 newtype SilverWing = SilverWing AllyAttrs
@@ -10,6 +11,10 @@ newtype SilverWing = SilverWing AllyAttrs
 
 silverWing :: AllyCard SilverWing
 silverWing = ally SilverWing Cards.silverWing
+
+-- | Its Upgraded side (the Dream-chaser campaign): reduce your starting threat by 6.
+silverWingUpgraded :: AllyCard SilverWing
+silverWingUpgraded = ally SilverWing Cards.silverWingUpgraded
 
 -- | Immune to player card effects. Each hero you control gets +1 attack.
 instance HasModifiersFor SilverWing where
@@ -27,6 +32,6 @@ instance HasAbilities SilverWing where
 instance RunMessage SilverWing where
   runMessage msg s@(SilverWing a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      for_ (shipController a) \pid -> lowerThreat pid 3
+      for_ (shipController a) \pid -> lowerThreat pid (if toCardCode a == toCardCode Cards.silverWingUpgraded then 6 else 3)
       pure s
     _ -> SilverWing <$> runShip (traverse_ eliminatePlayer (shipController a)) msg a

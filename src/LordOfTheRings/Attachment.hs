@@ -155,6 +155,15 @@ import LordOfTheRings.Attachment.Cards.VigilantGuard
 import LordOfTheRings.Attachment.Cards.Windfola
 import LordOfTheRings.Attachment.Cards.RangerSpear
 import LordOfTheRings.Attachment.Cards.PrinceOfDolAmroth
+import LordOfTheRings.Attachment.Cards.ArmorPlating
+import LordOfTheRings.Attachment.Cards.Ballista
+import LordOfTheRings.Attachment.Cards.EnlargedQuarters
+import LordOfTheRings.Attachment.Cards.ExtraSails
+import LordOfTheRings.Attachment.Cards.Spyglass
+import LordOfTheRings.Attachment.Cards.BlackKey
+import LordOfTheRings.Attachment.Cards.ParryingCutlass
+import LordOfTheRings.Attachment.Cards.ThrowingAxe
+import LordOfTheRings.Attachment.Cards.CirdansBlessing
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -336,5 +345,25 @@ allAttachments =
         , SomeAttachmentCard windfola
         , SomeAttachmentCard rangerSpear
         , SomeAttachmentCard princeOfDolAmroth
+        , SomeAttachmentCard armorPlating
+        , SomeAttachmentCard armorPlatingUpgraded
+        , SomeAttachmentCard ballista
+        , SomeAttachmentCard ballistaUpgraded
+        , SomeAttachmentCard enlargedQuarters
+        , SomeAttachmentCard enlargedQuartersUpgraded
+        , SomeAttachmentCard extraSails
+        , SomeAttachmentCard extraSailsUpgraded
+        , SomeAttachmentCard spyglass
+        , SomeAttachmentCard spyglassUpgraded
+        , SomeAttachmentCard blackKey
+        , SomeAttachmentCard blackKeyUpgraded
+        , SomeAttachmentCard parryingCutlass
+        , SomeAttachmentCard parryingCutlassUpgraded
+        , SomeAttachmentCard throwingAxe
+        , SomeAttachmentCard throwingAxeUpgraded
+        , SomeAttachmentCard cirdansBlessingLeadership
+        , SomeAttachmentCard cirdansBlessingTactics
+        , SomeAttachmentCard cirdansBlessingSpirit
+        , SomeAttachmentCard cirdansBlessingLore
         ]
     ]
