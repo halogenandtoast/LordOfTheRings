@@ -165,6 +165,7 @@
       "GraxarDefeated": "Graxar was defeated: choose Parrying Cutlass or Throwing Axe, and its hero, as the next scenario is set up.",
       "ChosenDuringSetup": "Chosen during setup: {cards}",
       "SahirKeyed": "Captain Sahír has his Black Key.",
+      "SahirTurned": "Captain Sahír has turned over.",
       "Secrets": "Secrets: {cards}",
       "RevealedSecrets": "Secrets flipped: {cards}"
     },

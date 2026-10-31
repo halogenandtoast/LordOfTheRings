@@ -9,7 +9,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
-import LordOfTheRings.Scenario (raidOnTheGreyHavens, theFateOfNumenor, voyageAcrossBelegaer)
+import LordOfTheRings.Scenario (raidOnTheGreyHavens, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
 import LordOfTheRings.Scenario.Types (scenarioCampaignCardFlipped, victoryDisplayL)
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import Data.Aeson.Types (parseMaybe)
@@ -142,3 +142,19 @@ spec = describe "Dream-chaser campaign" do
       l <- getCampaignLog
       l.pool `shouldBe` [PoolCard (toCardCode Attachments.throwingAxe) Nothing (Just "01002")]
       recorded GraxarDefeated l `shouldBe` []
+
+  describe "The Thing in the Depths" do
+    it "keys Captain Sahír as he enters play, and as he turns over gives the boon, Sea Serpent and Come Together" . campaignTestIn theThingInTheDepths seated starterDeck $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.captainSahir
+      sahir <- getsGame (fromJustNote "no Sahír" . fmap toId . find ((== toCardCode Enemies.captainSahir) . toCardCode) . toList . (.entities.enemies))
+      run $ CheckWindows []
+      blackKeys <- getsGame (filter ((== toCardCode Objectives.blackKeyBurden) . toCardCode) . toList . (.entities.objectives))
+      map (.placement) blackKeys `shouldBe` [AttachedTo (toTarget sahir)]
+      run $ Flip (toTarget sahir)
+      sahirAlly <- getsGame (fromJustNote "no Sahír ally" . fmap toId . find ((== toCardCode Objectives.captainSahirObjective) . toCardCode) . toList . (.entities.allies))
+      attachedTo Attachments.blackKey `shouldReturn` [toTarget sahirAlly]
+      getsGame (map toCardCode . toList . (.entities.enemies)) >>= (`shouldSatisfy` elem (toCardCode Enemies.seaSerpent))
+      hand <- map toCardCode . (.hand) <$> getPlayer pid
+      hand `shouldSatisfy` elem (toCardCode Events.comeTogether)
+      recorded ChosenDuringSetup <$> getCampaignLog `shouldReturn` [toCardCode Events.comeTogether]
+

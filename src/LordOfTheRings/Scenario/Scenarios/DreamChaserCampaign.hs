@@ -81,9 +81,13 @@ runCampaign l msg attrs = case msg of
     -- Raid on the Grey Havens: Spyglass and Black Key (boon) on Calphon
     for_ [Attachments.spyglass, Attachments.blackKey] \def -> attachToAlly l def (AllyWithCardCode $ toCardCode Objectives.calphon)
     pure attrs
-  ScenarioSpecific "campaign.sahirFlipped" _ -> do
-    sahirTurned l
-    pure attrs
+  ScenarioSpecific "campaign.sahirFlipped" _ | null (recorded SahirTurned l) -> do
+    turned <- selectAny sahirAlly
+    if turned
+      then do
+        sahirTurned l
+        pure $ withLog (record SahirTurned [toCardCode Objectives.captainSahirObjective]) attrs
+      else pure attrs
   -- Revenant: Forced: After Revenant is destroyed, ... Place 1 resource on the campaign card.
   CheckWindows ws -> do
     when (any ((== toCardCode Enemies.revenant) . toCardCode) [c | Window After (EnemyDestroyed c) <- ws])
@@ -91,9 +95,10 @@ runCampaign l msg attrs = case msg of
     attrs' <- windows l ws attrs
     runMessage msg attrs'
   -- The Thing in the Depths: Forced: After Captain Sahír flips over, ...
-  Flip (EnemyTarget eid) | sid attrs == "the-thing-in-the-depths" -> do
-    isSahir <- selectAny (EnemyWithId eid <> EnemyWithCardCode (toCardCode Enemies.captainSahir))
-    when isSahir $ push (ScenarioSpecific "campaign.sahirFlipped" Null)
+  -- (an enemy turned over is gone from play as this is seen: Captain Sahír's ally side is
+  -- looked for once it has)
+  Flip (EnemyTarget _) | sid attrs == "the-thing-in-the-depths" -> do
+    push (ScenarioSpecific "campaign.sahirFlipped" Null)
     runMessage msg attrs
   -- The City of Corsairs: Forced: When stage 2B is revealed, search the encounter deck and
   -- discard pile for each boon and non-Ship burden and shuffle them into the second
@@ -108,7 +113,7 @@ runCampaign l msg attrs = case msg of
       & setAsideL %~ (<> moved)
   ResolveCampaign -> do
     l' <- resolve l attrs
-    runMessage msg (attrs & campaignL ?~ l' {campaignLogCardResources = 0, campaignLogNotes = foldr Map.delete l'.notes [ChosenDuringSetup, SahirKeyed, Secrets, RevealedSecrets]})
+    runMessage msg (attrs & campaignL ?~ l' {campaignLogCardResources = 0, campaignLogNotes = foldr Map.delete l'.notes [ChosenDuringSetup, SahirKeyed, SahirTurned, Secrets, RevealedSecrets]})
   _ -> runMessage msg attrs
 
 -- * Setup
@@ -412,8 +417,11 @@ sahirTurned l = do
   attachToAlly l Attachments.blackKey sahirAlly
   addToStaging =<< genEncounterCard Enemies.seaSerpent
   lead <- getLead
-  card <- genPlayerCard Events.comeTogether Nothing
-  choosePlayerM lead ScenarioTarget \pid -> eachChoosesOne "dreamChaserCampaign.comeTogether" True [pid] [card]
+  choosePlayerM lead ScenarioTarget \pid -> do
+    seat <- seatOf pid
+    putInHand =<< genPlayerCard Events.comeTogether (Just pid)
+    push $ ScenarioSpecific "campaign.pool" (toJSON $ PoolCard (toCardCode Events.comeTogether) seat Nothing)
+    push $ ScenarioSpecific "campaign.chosen" (toJSON $ toCardCode Events.comeTogether)
 
 -- * Resolution
 

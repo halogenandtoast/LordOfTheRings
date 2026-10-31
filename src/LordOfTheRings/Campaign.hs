@@ -54,6 +54,9 @@ data CampaignLogKey
     ChosenDuringSetup
   | -- | Captain Sahír has had his campaign card's attachments this scenario
     SahirKeyed
+  | -- | Captain Sahír has turned over, and had what The Thing in the Depths' campaign card
+    -- gives as he does
+    SahirTurned
   | -- | Temple of the Deceived's secrets, one under each Temple of the Deceived location
     -- in its row of the Island Map, none once flipped
     Secrets
