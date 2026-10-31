@@ -36,6 +36,7 @@ const spectate = route.meta.spectate === true
 const {
   error, game, log, hasOlder, loadOlder, say, undoTo, flipping,
   started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join, leave, start,
+  campaignId,
 } = useGame(route.params.id as string, spectate)
 // With friends you play your own seats; otherwise every seat is yours.
 const withFriends = computed(() => table.value?.withFriends ?? false)
@@ -368,6 +369,8 @@ watch(question, (asked) => {
         <button v-if="!spectate" type="button" class="file-bug-link" @click="fileBugAbout(tr(error))">{{ $t('game.bar.fileBug') }}</button>
       </p>
       <p v-if="waitingOn && !spectate" class="announcement">{{ $t('game.waitingOn', { name: waitingOn.name }) }}</p>
+      <!-- in campaign mode, the campaign log, and the way on once the scenario is over -->
+      <RouterLink v-if="campaignId && !spectate" class="announcement campaign-link" :class="{ over: outcome }" :to="`/campaigns/${campaignId}`">{{ $t('campaignMode.log') }}</RouterLink>
       <GameLog
         :entries="log"
         :can-undo="!spectate && canUndo"
@@ -556,6 +559,8 @@ watch(question, (asked) => {
   padding-left: 0.5rem;
   white-space: pre-line;
 }
+.campaign-link { color: var(--accent); font-style: normal; }
+.campaign-link.over { font-weight: 700; opacity: 1; }
 
 
 </style>

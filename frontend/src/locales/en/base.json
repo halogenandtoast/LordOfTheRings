@@ -134,5 +134,34 @@
     "activeUsers": "Active users (14 days)",
     "games": "Games",
     "recentGames": "Recent games"
+  },
+  "campaignMode": {
+    "title": "Campaign Log",
+    "log": "Campaign log",
+    "start": "Play as a campaign",
+    "startHint": "Play {campaign} in order, one game each, the campaign log carrying your heroes, boons, burdens and threat penalty from one scenario to the next. A lost scenario is played again.",
+    "heroes": "Heroes",
+    "player": "Player {n}",
+    "notYetDealt": "Recorded once the first scenario is dealt.",
+    "fallenHeroes": "Fallen heroes",
+    "threatPenalty": "Threat penalty",
+    "campaignPool": "Campaign Pool",
+    "boon": "Boon",
+    "burden": "Burden",
+    "attachedTo": "on {hero}",
+    "none": "None",
+    "notes": "Notes",
+    "note": {
+      "Prisoner": "Taken prisoner at the beginning of Escape from Dol Guldur: {cards}",
+      "MendorJoinsTheNextCampaign": "Mendor joins your next campaign: put him into play at the start of each scenario, and each player may include 1 copy of Mendor's Support."
+    },
+    "scenarios": "Scenarios",
+    "total": "Campaign total",
+    "games": "Games",
+    "continue": "Play {scenario}",
+    "replay": "Play {scenario} again",
+    "lost": "The scenario was lost: play it again to go on.",
+    "finished": "The campaign is complete.",
+    "backToGame": "Back to {scenario}"
   }
 }

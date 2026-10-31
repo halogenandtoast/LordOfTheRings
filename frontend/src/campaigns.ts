@@ -110,6 +110,10 @@ const campaign = (id: string, name: string, code: string, scenarios: ScenarioOpt
   scenarios: scenarios.map((s) => ({ ...s, ...(implemented[s.id] ?? { unimplemented: true }) })),
 })
 
+// The boxes the engine plays in campaign mode, by the engine's campaign id (see
+// LordOfTheRings.Campaign): the Revised Core Set's Mirkwood Paths.
+export const campaignModes: Record<string, string> = { 'core-set': 'revised-core' }
+
 export const campaigns: Campaign[] = [
   // the core set's cycle is Shadows of Mirkwood
   campaign('core-set', 'Core Set', 'MEC01', [

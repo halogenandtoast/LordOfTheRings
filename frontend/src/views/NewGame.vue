@@ -2,9 +2,9 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { createGame } from '../api'
+import { createCampaign, createGame } from '../api'
 import { currentUser, updateSettings } from '../auth'
-import { campaigns as allCampaigns, type ScenarioOption } from '../campaigns'
+import { campaigns as allCampaigns, campaignModes, type ScenarioOption } from '../campaigns'
 import { alphaEnabled, filterDisplayable, isDevBuild } from '../displayRules'
 import { useServerText } from '../i18n'
 import { useShortcuts } from '../browser/lib/keys'
@@ -68,11 +68,21 @@ const chooseCampaign = (c: (typeof campaigns)[number]) =>
 
 const chooseScenario = (s: Shown) => step(() => (selectedScenario.value = s))
 
+// Campaign mode: the box's scenarios in order, from its first, as one campaign.
+const asCampaign = ref(false)
+const campaignMode = computed(() => (selectedCampaign.value ? campaignModes[selectedCampaign.value.id] ?? null : null))
+const chooseCampaignMode = () =>
+  step(() => {
+    asCampaign.value = true
+    selectedScenario.value = selectedCampaign.value?.scenarios[0] ?? null
+  })
+
 // a step back: from the game's options to the scenarios, from there to the campaigns
 const back = () =>
   step(() => {
     if (selectedScenario.value) selectedScenario.value = null
     else selectedCampaign.value = null
+    asCampaign.value = false
     error.value = null
   })
 useShortcuts([{ key: 'Escape', description: 'Go back a step.', run: () => selectedCampaign.value && back() }])
@@ -84,7 +94,15 @@ const create = async () => {
   creating.value = true
   error.value = null
   try {
-    const { id } = await createGame({
+    const { id } = asCampaign.value && campaignMode.value
+      ? await createCampaign({
+          name: gameName.value.trim() || selectedCampaign.value?.name || defaultName.value,
+          campaign: campaignMode.value,
+          seats: seatCount.value,
+          allowSpectators: allowSpectators.value,
+          easyMode: easyMode.value,
+        })
+      : await createGame({
       name: gameName.value.trim() || defaultName.value,
       scenario: selectedScenario.value?.id,
       decks: [],
@@ -136,6 +154,7 @@ const create = async () => {
           <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
           <img :src="selectedCampaign.image" alt="" :style="{ viewTransitionName: `campaign-${selectedCampaign.id}` }" />
           <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
+          <button v-if="campaignMode" type="button" class="campaign-mode" @click="chooseCampaignMode">{{ $t('campaignMode.start') }}</button>
         </div>
         <div class="card-body">
           <h3 class="card-title">{{ $t('common.scenario') }}</h3>
@@ -165,6 +184,7 @@ const create = async () => {
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ $t('common.game') }}</h3>
+            <p v-if="asCampaign && selectedCampaign" class="hint">{{ $t('campaignMode.startHint', { campaign: selectedCampaign.name }) }}</p>
             <label>
               {{ $t('newGame.gameName') }}
               <input v-model="gameName" type="text" :placeholder="defaultName" />
@@ -432,6 +452,8 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .segmented button:hover:not(.selected) { background: var(--surface-4); }
 .segmented button.selected { background: var(--accent); color: var(--button-primary-text); }
 
+.campaign-mode { padding: 10px; border: 1px solid var(--accent); border-radius: 3px; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+.campaign-mode:hover { background: var(--accent); color: var(--button-primary-text); }
 .make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }
