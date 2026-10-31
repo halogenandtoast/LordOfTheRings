@@ -4,6 +4,7 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype TheFateOfNumenor = TheFateOfNumenor ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -36,4 +37,6 @@ instance RunMessage TheFateOfNumenor where
         & questDeckL .~ laterStages
         & setAsideL .~ shrine
         & unchartedDeckL .~ unchartedDeck
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheFateOfNumenor <$> runDreamChaserCampaign msg attrs
     _ -> TheFateOfNumenor <$> runMessage msg attrs

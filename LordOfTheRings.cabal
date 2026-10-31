@@ -1485,6 +1485,7 @@ library
       LordOfTheRings.Scenario.Scenarios.ConflictAtTheCarrock
       LordOfTheRings.Scenario.Scenarios.DeadmensDike
       LordOfTheRings.Scenario.Scenarios.DeadmensDike.Helpers
+      LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign
       LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin
       LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers
       LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur

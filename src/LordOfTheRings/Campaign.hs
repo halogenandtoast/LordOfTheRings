@@ -52,6 +52,13 @@ data CampaignLogKey
   | -- | the boons each player chose during this scenario's setup, as Galdor's Counsel: they
     -- add 1 to Ominous Fate's X, and join the Campaign Pool once the scenario is won
     ChosenDuringSetup
+  | -- | Captain Sahír has had his campaign card's attachments this scenario
+    SahirKeyed
+  | -- | Temple of the Deceived's secrets, one under each Temple of the Deceived location
+    -- in its row of the Island Map, none once flipped
+    Secrets
+  | -- | the secrets flipped over
+    RevealedSecrets
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 

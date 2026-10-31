@@ -4,6 +4,7 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype RaidOnTheGreyHavens = RaidOnTheGreyHavens ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -31,4 +32,6 @@ instance RunMessage RaidOnTheGreyHavens where
         & encounterDeckL .~ encounterDeck
         & questDeckL .~ laterStages
         & setAsideL .~ elite
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> RaidOnTheGreyHavens <$> runDreamChaserCampaign msg attrs
     _ -> RaidOnTheGreyHavens <$> runMessage msg attrs

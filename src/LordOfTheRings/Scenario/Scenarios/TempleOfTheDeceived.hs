@@ -5,6 +5,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Grid (Pos (..))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype TempleOfTheDeceived = TempleOfTheDeceived ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -38,6 +39,8 @@ instance RunMessage TempleOfTheDeceived where
         <> zip [Pos 4 r | r <- [0 .. 2]] temples
       putQuestIntoPlay =<< genEncounterCard Quests.searchingTheIsland
       pure $ TempleOfTheDeceived $ attrs & encounterDeckL .~ encounterDeck
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TempleOfTheDeceived <$> runDreamChaserCampaign msg attrs
     _ -> TempleOfTheDeceived <$> runMessage msg attrs
    where
     cardIsAny defs c = toCardCode c `elem` map toCardCode defs

@@ -4,6 +4,7 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Matcher (getLead, isOnCourse)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype VoyageAcrossBelegaer = VoyageAcrossBelegaer ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -50,4 +51,6 @@ instance RunMessage VoyageAcrossBelegaer where
               advanceToQuest chosen
           pure $ VoyageAcrossBelegaer attrs
         else VoyageAcrossBelegaer <$> runMessage msg attrs
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> VoyageAcrossBelegaer <$> runDreamChaserCampaign msg attrs
     _ -> VoyageAcrossBelegaer <$> runMessage msg attrs

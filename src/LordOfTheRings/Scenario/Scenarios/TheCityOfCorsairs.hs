@@ -6,6 +6,7 @@ import LordOfTheRings.Matcher.Types (CardMatcher (CardMatchAny), cardIs, cardMat
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype TheCityOfCorsairs = TheCityOfCorsairs ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -57,4 +58,6 @@ instance RunMessage TheCityOfCorsairs where
         & setAsideL .~ []
         & corsairDeckL .~ Nothing
         & corsairDiscardL .~ []
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheCityOfCorsairs <$> runDreamChaserCampaign msg attrs
     _ -> TheCityOfCorsairs <$> runMessage msg attrs

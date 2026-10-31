@@ -3,6 +3,7 @@ module LordOfTheRings.Scenario.Scenarios.TheThingInTheDepths (theThingInTheDepth
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype TheThingInTheDepths = TheThingInTheDepths ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -29,4 +30,6 @@ instance RunMessage TheThingInTheDepths where
         & encounterDeckL .~ encounterDeck
         & questDeckL .~ laterStages
         & setAsideL .~ outOfPlay
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheThingInTheDepths <$> runDreamChaserCampaign msg attrs
     _ -> TheThingInTheDepths <$> runMessage msg attrs

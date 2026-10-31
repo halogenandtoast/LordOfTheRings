@@ -6,6 +6,7 @@ import LordOfTheRings.Matcher (CardMatcher (CardWithTrait), cardIs, cardMatches)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Trait (Trait (Grotto))
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype TheDrownedRuins = TheDrownedRuins ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -37,4 +38,6 @@ instance RunMessage TheDrownedRuins where
         & questDeckL .~ laterStages
         & setAsideL .~ shrine
         & grottoDeckL .~ shuffled
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> TheDrownedRuins <$> runDreamChaserCampaign msg attrs
     _ -> TheDrownedRuins <$> runMessage msg attrs

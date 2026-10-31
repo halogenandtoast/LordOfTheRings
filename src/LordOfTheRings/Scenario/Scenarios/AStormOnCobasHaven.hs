@@ -5,6 +5,7 @@ import LordOfTheRings.Matcher (cardIs, cardMatches)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
 
 newtype AStormOnCobasHaven = AStormOnCobasHaven ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
@@ -39,4 +40,6 @@ instance RunMessage AStormOnCobasHaven where
         & encounterDeckL .~ encounterDeck
         & questDeckL .~ laterStages
         & setAsideL .~ warships
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> AStormOnCobasHaven <$> runDreamChaserCampaign msg attrs
     _ -> AStormOnCobasHaven <$> runMessage msg attrs
