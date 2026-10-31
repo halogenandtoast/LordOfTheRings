@@ -148,6 +148,10 @@ import LordOfTheRings.Quest.Cards.OrcRearguard
 import LordOfTheRings.Quest.Cards.RescueIarion
 import LordOfTheRings.Quest.Cards.OrcAmbush
 import LordOfTheRings.Quest.Cards.LostInTheWilderness
+import LordOfTheRings.Quest.Cards.ProtectTheInnocent
+import LordOfTheRings.Quest.Cards.MysteriousOmens
+import LordOfTheRings.Quest.Cards.FendOffDespair
+import LordOfTheRings.Quest.Cards.LootTheDungeons
 import LordOfTheRings.Quest.Cards.StopTheWarParty
 import LordOfTheRings.Quest.Cards.FindShelter
 import LordOfTheRings.Quest.Cards.MakeCamp
@@ -371,6 +375,10 @@ allQuests =
         , SomeQuestCard rescueIarion
         , SomeQuestCard orcAmbush
         , SomeQuestCard lostInTheWilderness
+        , SomeQuestCard protectTheInnocent
+        , SomeQuestCard mysteriousOmens
+        , SomeQuestCard fendOffDespair
+        , SomeQuestCard lootTheDungeons
         , SomeQuestCard stopTheWarParty
         , SomeQuestCard findShelter
         , SomeQuestCard makeCamp
