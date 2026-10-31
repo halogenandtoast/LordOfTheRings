@@ -925,18 +925,28 @@ runGameMessage msg g = case msg of
     staged <- select EnemyInStagingArea
     -- some enemies may only be engaged once they are alone in the staging area
     barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
-    enemies <- flip filterM staged \eid -> do
+    resources <- getResourcesOfSphere pid Neutral
+    enemies <- flip mapMaybeM staged \eid -> do
       mods <- getModifiers eid
       barred <- anyM (\m -> selectAny (PlayerWithId pid <> m)) $ barredBy <> [m | CannotBeOptionallyEngagedBy m <- mods]
+      -- the resources it costs to engage, as Drúadan Stalker's 2
+      let cost = sum [n | OptionalEngagementCost n <- mods]
       pure
-        $ not barred
-        && CannotEngagePlayer pid `notElem` mods
-        && (length staged <= 1 || CannotBeOptionallyEngagedWhileOthersInStaging `notElem` mods)
+        $ guard
+          ( not barred
+              && CannotEngagePlayer pid `notElem` mods
+              && (length staged <= 1 || CannotBeOptionallyEngagedWhileOthersInStaging `notElem` mods)
+              && cost <= resources
+          )
+        $> (eid, cost)
     unless (null enemies)
       $ push
       $ questionLabel (ikey "label.optionalEngagement") pid
-      $ [ targetLabel eid $ [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]] <> [DoStep 1 (OptionalEngagement pid) | again]
-        | eid <- enemies
+      $ [ targetLabel eid
+            $ [SpendResources pid Neutral cost | cost > 0]
+            <> [EngageEnemy pid eid, CheckWindows [mkAfter $ OptionallyEngaged eid pid]]
+            <> [DoStep 1 (OptionalEngagement pid) | again]
+        | (eid, cost) <- enemies
         ]
       <> [Label (ikey "label.doNotEngage") []]
     pure g
@@ -3266,6 +3276,9 @@ canFight eid c = do
     , allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
     , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True
+    , case c of
+        HeroTarget hid | NotFoughtByHeroesWithoutResources `elem` mods -> (> 0) . (.resources) <$> getHero hid
+        _ -> pure True
     ]
 
 -- | Whether the character may defend against the enemy's attack: one that cannot exhaust

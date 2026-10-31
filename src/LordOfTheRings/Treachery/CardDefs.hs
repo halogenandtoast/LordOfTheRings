@@ -222,6 +222,8 @@ allTreacheryCards =
       , noxiousFumes
       , surroundedByShadow
       , suddenOnslaught
+      , drumsOfTheWildMen
+      , poisonDarts
       ]
 
 deepDeepDark :: CardDef
@@ -1352,3 +1354,15 @@ surroundedByShadow = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gond
 
 suddenOnslaught :: CardDef
 suddenOnslaught = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gondor-008" "Sudden Onslaught" TheBloodOfGondorNightmare 2) {cdShadowEffect = True}
+
+-- The Drúadan Forest Nightmare
+
+drumsOfTheWildMen :: CardDef
+drumsOfTheWildMen = treachery "the-druadan-forest-nightmare-the-druadan-forest-008" "Drums of the Wild Men" TheDruadanForestNightmare 2
+
+poisonDarts :: CardDef
+poisonDarts =
+  (treachery "the-druadan-forest-nightmare-the-druadan-forest-009" "Poison-darts" TheDruadanForestNightmare 3)
+    { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Surge]
+    }

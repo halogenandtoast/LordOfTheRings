@@ -259,6 +259,9 @@ allEnemyCards =
       , blackNumenoreanNightmare
       , orcTrickster
       , urukMarksman
+      , druBuriDruNightmare
+      , druadanWarrior
+      , druadanStalker
       ]
 
 namelessThing :: CardDef
@@ -2091,4 +2094,28 @@ urukMarksman =
   (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-004" "Uruk Marksman" TheBloodOfGondorNightmare 3 40 4 2 2 4)
     { cdCardTraits = setFromList [Orc, Uruk, Mordor]
     , cdKeywords = setFromList [Archery 3]
+    }
+
+-- The Drúadan Forest Nightmare
+
+druBuriDruNightmare :: CardDef
+druBuriDruNightmare =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-002" "Drû-buri-Drû" TheDruadanForestNightmare 1 1 4 5 4 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdUnique = True
+    }
+
+druadanWarrior :: CardDef
+druadanWarrior =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-003" "Drúadan Warrior" TheDruadanForestNightmare 3 20 2 5 3 5)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Prowl 2]
+    }
+
+druadanStalker :: CardDef
+druadanStalker =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-004" "Drúadan Stalker" TheDruadanForestNightmare 3 43 4 3 2 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Archery 3]
+    , cdShadowEffect = True
     }

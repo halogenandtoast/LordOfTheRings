@@ -288,6 +288,9 @@ allLocationCards =
       , whiteFloweredFields
       , edgeOfIthilien
       , mountainsOfShadow
+      , devilsMirk
+      , eilenach
+      , stonewainValley
       ]
 
 drownedTreasury :: CardDef
@@ -2156,4 +2159,25 @@ mountainsOfShadow =
   (location "the-blood-of-gondor-nightmare-the-blood-of-gondor-006" "Mountains of Shadow" TheBloodOfGondorNightmare 3 4 4)
     { cdCardTraits = setFromList [Mountain]
     , cdShadowEffect = True
+    }
+
+-- The Drúadan Forest Nightmare
+
+devilsMirk :: CardDef
+devilsMirk =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-005" "Devil's Mirk" TheDruadanForestNightmare 3 3 3)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+eilenach :: CardDef
+eilenach =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-006" "Eilenach" TheDruadanForestNightmare 2 5 4)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdShadowEffect = True
+    }
+
+stonewainValley :: CardDef
+stonewainValley =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-007" "Stonewain Valley" TheDruadanForestNightmare 2 1 6)
+    { cdCardTraits = setFromList [Forest]
     }

@@ -507,6 +507,12 @@ data ModifierType
   | -- | on the game: the players cannot win, a win waiting until nothing gives this, as
     -- The Blood of Gondor's Nightmare setup card reads
     PlayersCannotWin
+  | -- | on an enemy: a hero with no resources in its pool can neither attack nor defend
+    -- against it, as Drúadan Warrior reads
+    NotFoughtByHeroesWithoutResources
+  | -- | on an enemy: to optionally engage it, the player spends this many resources, as
+    -- Drúadan Stalker reads
+    OptionalEngagementCost Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

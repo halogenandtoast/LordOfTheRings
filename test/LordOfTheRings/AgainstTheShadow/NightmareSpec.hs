@@ -3,16 +3,18 @@ module LordOfTheRings.AgainstTheShadow.NightmareSpec (spec) where
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (getArcheryTotal, getEnemy)
+import LordOfTheRings.Modifier (ModifierType (CannotBeTraveledTo, CannotCollectResources))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (theBloodOfGondor, theMorgulVale)
+import LordOfTheRings.Scenario (theBloodOfGondor, theDruadanForest, theMorgulVale)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
-import LordOfTheRings.Scenario.Types (GameMode (..), modeL, victoryDisplayL)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside), modeL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (When), Window (..), WindowType (RoundEnds))
+import LordOfTheRings.Window (Timing (When), Window (..), WindowType (AdvancedToStage, RoundEnds), mkAfter)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -199,3 +201,81 @@ spec = describe "Against the Shadow nightmare decks" do
       reveal Treacheries.surroundedByShadow [Locations.theDarkWoods]
       chooseLabel "$label.surroundedByShadow.take" pid
       hiddenOf pid `shouldReturn` [toCardCode Locations.theDarkWoods]
+
+  describe "The Drúadan Forest" do
+    it "builds the nightmare deck, the nightmare Drû-buri-Drû in place of the standard one" . nightmare theDruadanForest $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.druBuriDru, Locations.secludedGlade, Enemies.druBuriDruNightmare, Enemies.druadanWarrior]
+        `shouldBe` [0, 0, 1, 3]
+
+    it "gives each hero 5 resources, stages Garden of Poisons and sets the nightmare Drû-buri-Drû aside" . nightmare theDruadanForest $ \pid -> do
+      flipFirstQuest pid
+      resolveRevealed
+      heroes <- getsGame (toList . (.entities.heroes))
+      map (.resources) heroes `shouldBe` [5, 5, 5]
+      getsGame (map toCardCode . toList . (.entities.locations)) >>= (`shouldSatisfy` elem (toCardCode Locations.gardenOfPoisons))
+      getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario)) `shouldReturn` [toCardCode Enemies.druBuriDruNightmare]
+
+    it "heroes collect no resources" . nightmare theDruadanForest $ \_ -> do
+      hid <- toId <$> getHeroWithCode "01012"
+      run $ CheckWindows []
+      getModifiers hid >>= (`shouldSatisfy` elem CannotCollectResources)
+
+    it "tops the heroes up to 3 resources once stage 2 is revealed" . nightmare theDruadanForest $ \_ -> do
+      _ <- putQuestStage Quests.anUntimelyEnd
+      run $ CheckWindows [mkAfter AdvancedToStage]
+      hid <- toId <$> getHeroWithCode "01012"
+      getHeroResources hid `shouldReturn` 3
+
+    it "Drû-buri-Drû takes no more than 1 damage each round" . nightmare theDruadanForest $ \_ -> do
+      dru <- staged Enemies.druBuriDruNightmare
+      run $ DealDamage GameSource (toTarget dru) 3
+      run $ DealDamage GameSource (toTarget dru) 1
+      (.damage) <$> getEnemy dru `shouldReturn` 1
+
+    it "Drúadan Stalker costs 2 resources to engage optionally" . nightmare theDruadanForest $ \pid -> do
+      stalker <- staged Enemies.druadanStalker
+      run $ OptionalEngagement pid
+      getQuestion pid `shouldReturn` Nothing
+      hid <- toId <$> getHeroWithCode "01012"
+      run $ PlaceTokens GameSource (toTarget hid) Resource 2
+      run $ OptionalEngagement pid
+      chooseTarget pid stalker
+      getHeroResources hid `shouldReturn` 0
+      (.placement) <$> getEnemy stalker `shouldReturn` EngagedWith pid
+
+    it "Drums of the Wild Men prowls for engaged enemies and returns the Woses" . nightmare theDruadanForest $ \pid -> do
+      warrior <- staged Enemies.druadanWarrior
+      run $ EngageEnemy pid warrior
+      hid <- toId <$> getHeroWithCode "01012"
+      run $ PlaceTokens GameSource (toTarget hid) Resource 2
+      reveal Treacheries.drumsOfTheWildMen []
+      replicateM_ 2 $ chooseTarget pid (HeroTarget hid)
+      getHeroResources hid `shouldReturn` 0
+      (.placement) <$> getEnemy warrior `shouldReturn` StagingArea
+
+    it "Poison-darts arms the enemy with the highest engagement cost" . nightmare theDruadanForest $ \_ -> do
+      _ <- staged Enemies.druadanWarrior
+      stalker <- staged Enemies.druadanStalker
+      reveal Treacheries.poisonDarts []
+      getEnemyAttack stalker `shouldReturn` 5
+
+    it "Stonewain Valley takes the first player's spent resources and gains their threat" . nightmare theDruadanForest $ \_ -> do
+      reveal Locations.stonewainValley []
+      hid <- toId <$> getHeroWithCode "01012"
+      run $ PlaceTokens GameSource (toTarget hid) Resource 2
+      run $ RemoveTokens GameSource (toTarget hid) Resource 2
+      getStagingThreat `shouldReturn` 3
+
+    it "Eilenach cannot be traveled to while a hero has no resources" . nightmare theDruadanForest $ \_ -> do
+      reveal Locations.eilenach []
+      lid <- getsGame (fromJustNote "no location" . headMay . map toId . toList . (.entities.locations))
+      getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+
+    it "Devil's Mirk in the staging area stops healing" . nightmare theDruadanForest $ \_ -> do
+      reveal Locations.devilsMirk []
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      run $ DealDamage GameSource beravor 2
+      run $ HealDamage GameSource beravor 2
+      getCharacterDamage beravor `shouldReturn` 2

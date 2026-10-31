@@ -215,6 +215,8 @@ import LordOfTheRings.Treachery.Cards.TheTowerBeckons
 import LordOfTheRings.Treachery.Cards.NoxiousFumes
 import LordOfTheRings.Treachery.Cards.SurroundedByShadow
 import LordOfTheRings.Treachery.Cards.SuddenOnslaught
+import LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
+import LordOfTheRings.Treachery.Cards.PoisonDarts
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -454,5 +456,7 @@ allTreacherys =
         , SomeTreacheryCard noxiousFumes
         , SomeTreacheryCard surroundedByShadow
         , SomeTreacheryCard suddenOnslaught
+        , SomeTreacheryCard drumsOfTheWildMen
+        , SomeTreacheryCard poisonDarts
         ]
     ]

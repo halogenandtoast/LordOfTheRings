@@ -1606,5 +1606,8 @@
     "take": "Take 1 hidden card for each questing hero you control",
     "remove": "Remove 1 hero you control from the quest for each hidden card in your play area",
     "removeHero": "Choose a hero to remove from the quest"
+  },
+  "poisonDarts": {
+    "attach": "Choose the enemy to attach Poison-darts to"
   }
 }

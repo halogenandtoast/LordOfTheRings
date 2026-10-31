@@ -253,6 +253,9 @@ import LordOfTheRings.Enemy.Cards.SentryOfTheWhiteBridge
 import LordOfTheRings.Enemy.Cards.BlackNumenoreanNightmare
 import LordOfTheRings.Enemy.Cards.OrcTrickster
 import LordOfTheRings.Enemy.Cards.UrukMarksman
+import LordOfTheRings.Enemy.Cards.DruBuriDruNightmare
+import LordOfTheRings.Enemy.Cards.DruadanWarrior
+import LordOfTheRings.Enemy.Cards.DruadanStalker
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -531,5 +534,8 @@ allEnemys =
         , SomeEnemyCard blackNumenoreanNightmare
         , SomeEnemyCard orcTrickster
         , SomeEnemyCard urukMarksman
+        , SomeEnemyCard druBuriDruNightmare
+        , SomeEnemyCard druadanWarrior
+        , SomeEnemyCard druadanStalker
         ]
     ]

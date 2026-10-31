@@ -276,6 +276,9 @@ import LordOfTheRings.Location.Cards.EphelDuath
 import LordOfTheRings.Location.Cards.WhiteFloweredFields
 import LordOfTheRings.Location.Cards.EdgeOfIthilien
 import LordOfTheRings.Location.Cards.MountainsOfShadow
+import LordOfTheRings.Location.Cards.DevilsMirk
+import LordOfTheRings.Location.Cards.Eilenach
+import LordOfTheRings.Location.Cards.StonewainValley
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -593,5 +596,8 @@ allLocations =
         , SomeLocationCard whiteFloweredFields
         , SomeLocationCard edgeOfIthilien
         , SomeLocationCard mountainsOfShadow
+        , SomeLocationCard devilsMirk
+        , SomeLocationCard eilenach
+        , SomeLocationCard stonewainValley
         ]
     ]

@@ -440,8 +440,11 @@ library
       LordOfTheRings.Enemy.Cards.DruadanDrummer
       LordOfTheRings.Enemy.Cards.DruadanElite
       LordOfTheRings.Enemy.Cards.DruadanHunter
+      LordOfTheRings.Enemy.Cards.DruadanStalker
       LordOfTheRings.Enemy.Cards.DruadanThief
+      LordOfTheRings.Enemy.Cards.DruadanWarrior
       LordOfTheRings.Enemy.Cards.DruBuriDru
+      LordOfTheRings.Enemy.Cards.DruBuriDruNightmare
       LordOfTheRings.Enemy.Cards.DungeonGuard
       LordOfTheRings.Enemy.Cards.DungeonJailor
       LordOfTheRings.Enemy.Cards.DunlandBerserker
@@ -946,6 +949,7 @@ library
       LordOfTheRings.Location.Cards.DeadmensGate
       LordOfTheRings.Location.Cards.DecrepitRemains
       LordOfTheRings.Location.Cards.DecrepitRooftops
+      LordOfTheRings.Location.Cards.DevilsMirk
       LordOfTheRings.Location.Cards.DoorsOfDurin
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DreamChaserLocation
@@ -961,6 +965,7 @@ library
       LordOfTheRings.Location.Cards.EdgeOfFangorn
       LordOfTheRings.Location.Cards.EdgeOfIthilien
       LordOfTheRings.Location.Cards.EerieHalls
+      LordOfTheRings.Location.Cards.Eilenach
       LordOfTheRings.Location.Cards.ElvenCaravel
       LordOfTheRings.Location.Cards.ElvenWaveRunner
       LordOfTheRings.Location.Cards.EnchantedStream
@@ -1093,6 +1098,7 @@ library
       LordOfTheRings.Location.Cards.StarlitSea
       LordOfTheRings.Location.Cards.SteepPlateau
       LordOfTheRings.Location.Cards.StoneBarrow
+      LordOfTheRings.Location.Cards.StonewainValley
       LordOfTheRings.Location.Cards.Storehouse
       LordOfTheRings.Location.Cards.StreetsOfTharbad
       LordOfTheRings.Location.Cards.StreetsOfUmbar
@@ -1602,6 +1608,7 @@ library
       LordOfTheRings.Treachery.Cards.DownFromTheHills
       LordOfTheRings.Treachery.Cards.DrivenBack
       LordOfTheRings.Treachery.Cards.DrivenByShadow
+      LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
       LordOfTheRings.Treachery.Cards.DunlendingAmbush
       LordOfTheRings.Treachery.Cards.DwindlingSupplies
       LordOfTheRings.Treachery.Cards.EvilStorm
@@ -1680,6 +1687,7 @@ library
       LordOfTheRings.Treachery.Cards.Panicked
       LordOfTheRings.Treachery.Cards.PillagingAndBurning
       LordOfTheRings.Treachery.Cards.PinnedDown
+      LordOfTheRings.Treachery.Cards.PoisonDarts
       LordOfTheRings.Treachery.Cards.Possession
       LordOfTheRings.Treachery.Cards.PowerfulUndertow
       LordOfTheRings.Treachery.Cards.PredatoryWolves
