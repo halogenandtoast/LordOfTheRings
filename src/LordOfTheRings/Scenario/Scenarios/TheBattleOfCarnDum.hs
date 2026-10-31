@@ -11,14 +11,14 @@ newtype TheBattleOfCarnDum = TheBattleOfCarnDum ScenarioAttrs
 theBattleOfCarnDum :: Scenario
 theBattleOfCarnDum = Scenario $ scenario TheBattleOfCarnDum "the-battle-of-carn-dum" "The Battle of Carn Dûm"
 
--- | The encounter deck is built from The Battle of Carn Dûm, Angmar Orcs and Cursed Dead.
+-- | The encounter deck is built from The Battle of Carn Dûm, Angmar Orcs and Dark Sorcery.
 instance RunMessage TheBattleOfCarnDum where
   runMessage msg (TheBattleOfCarnDum attrs) = case msg of
     DoStep 1 Setup -> do
       encounterDeck <-
         concatMapM
           (gatherEncounterSet attrs)
-          [EncounterSet.TheBattleOfCarnDum, EncounterSet.AngmarOrcs, EncounterSet.CursedDead]
+          [EncounterSet.TheBattleOfCarnDum, EncounterSet.AngmarOrcs, EncounterSet.DarkSorcery]
       firstStage <- genEncounterCard Quests.theClutchesOfCarnDum
       laterStages <- traverse genEncounterCard [Quests.midwintersCrux]
       putQuestIntoPlay firstStage
