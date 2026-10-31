@@ -18,6 +18,15 @@ allCampaignCards =
       [ passageThroughMirkwoodCampaign
       , journeyAlongTheAnduinCampaign
       , escapeFromDolGuldurCampaign
+      , voyageAcrossBelegaerCampaign
+      , theFateOfNumenorCampaign
+      , raidOnTheGreyHavensCampaign
+      , flightOfTheStormcallerCampaign
+      , theThingInTheDepthsCampaign
+      , templeOfTheDeceivedCampaign
+      , theDrownedRuinsCampaign
+      , aStormOnCobasHavenCampaign
+      , theCityOfCorsairsCampaign
       ]
 
 -- | Double-sided, in no encounter set, so no encounter deck gathers it.
@@ -32,3 +41,32 @@ journeyAlongTheAnduinCampaign = campaignCard "RC006" "Journey Along the Anduin"
 
 escapeFromDolGuldurCampaign :: CardDef
 escapeFromDolGuldurCampaign = campaignCard "RC009" "Escape from Dol Guldur"
+
+-- * The Dream-chaser Campaign Expansion
+
+voyageAcrossBelegaerCampaign :: CardDef
+voyageAcrossBelegaerCampaign = campaignCard "DCC171" "Voyage Across Belegaer"
+
+theFateOfNumenorCampaign :: CardDef
+theFateOfNumenorCampaign = campaignCard "DCC179" "The Fate of Númenor"
+
+raidOnTheGreyHavensCampaign :: CardDef
+raidOnTheGreyHavensCampaign = campaignCard "DCC182" "Raid on the Grey Havens"
+
+flightOfTheStormcallerCampaign :: CardDef
+flightOfTheStormcallerCampaign = campaignCard "DCC191" "Flight of the Stormcaller"
+
+theThingInTheDepthsCampaign :: CardDef
+theThingInTheDepthsCampaign = campaignCard "DCC194" "The Thing in the Depths"
+
+templeOfTheDeceivedCampaign :: CardDef
+templeOfTheDeceivedCampaign = campaignCard "DCC197" "Temple of the Deceived"
+
+theDrownedRuinsCampaign :: CardDef
+theDrownedRuinsCampaign = campaignCard "DCC200" "The Drowned Ruins"
+
+aStormOnCobasHavenCampaign :: CardDef
+aStormOnCobasHavenCampaign = campaignCard "DCC209" "A Storm on Cobas Haven"
+
+theCityOfCorsairsCampaign :: CardDef
+theCityOfCorsairsCampaign = campaignCard "DCC215" "The City of Corsairs"

@@ -5,6 +5,7 @@ and preparing the fleet. A scenario runs them by falling through to its attrs.
 module LordOfTheRings.Scenario.Sailing (runSailing, isCorsairDeckCard, discardEncounterCard, fleet) where
 
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Campaign (upgradedCode)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Classes.RunMessage ()
@@ -112,7 +113,8 @@ runSailing msg attrs = case msg of
   -- the heading starts on-course; a lone player takes the Dream-chaser and one other
   PrepareFleet -> do
     players <- getRemainingPlayers
-    ships <- traverse genEncounterCard fleet
+    -- in the Dream-chaser campaign, a ship's Upgraded side once XP has upgraded it
+    ships <- traverse genEncounterCard [maybe def (\l -> toCardDef $ upgradedCode l (toCardCode def)) attrs.campaign | def <- fleet]
     case ships of
       dreamChaser : others -> case players of
         [solo] -> do
