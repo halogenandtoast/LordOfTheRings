@@ -91,7 +91,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'intruders-in-chetwood': {},
   'the-weather-hills': {},
   'across-the-ettenmoors': { nightmare: true },
-  'the-treachery-of-rhudaur': {},
+  'the-treachery-of-rhudaur': { nightmare: true },
   'escape-from-mount-gram': { nightmare: true },
   'voyage-across-belegaer': { alpha: true },
   'the-fate-of-numenor': { alpha: true },

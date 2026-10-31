@@ -224,6 +224,8 @@ allTreacheryCards =
       , goblinPatrolNightmare
       , crashingThunder
       , barrenAndDesolate
+      , malevolentForces
+      , lifeDrain
       ]
 
 deepDeepDark :: CardDef
@@ -1370,3 +1372,16 @@ crashingThunder =
 
 barrenAndDesolate :: CardDef
 barrenAndDesolate = (treachery "across-the-ettenmoors-nightmare-across-the-ettenmoors-009" "Barren and Desolate" AcrossTheEttenmoorsNightmare 3) {cdKeywords = setFromList [Surge]}
+
+-- The Treachery of Rhudaur Nightmare
+
+malevolentForces :: CardDef
+malevolentForces = (treachery "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-006" "Malevolent Forces" TheTreacheryOfRhudaurNightmare 2) {cdShadowEffect = True}
+
+-- | Of the Decipher Ancient Texts encounter set, as its icon shows.
+lifeDrain :: CardDef
+lifeDrain =
+  (treachery "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-009" "Life Drain" TheTreacheryOfRhudaurNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    }

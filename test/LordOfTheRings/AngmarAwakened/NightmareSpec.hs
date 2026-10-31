@@ -13,13 +13,13 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase))
-import LordOfTheRings.Scenario (acrossTheEttenmoors, escapeFromMountGram, theWastesOfEriador)
+import LordOfTheRings.Scenario (acrossTheEttenmoors, escapeFromMountGram, theTreacheryOfRhudaur, theWastesOfEriador)
 import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers (capturedDeck, capturedUnder)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheWastesOfEriador.Helpers (isNight)
 import LordOfTheRings.Scenario.Types (GameMode (..), encounterDeckL, modeL, scenarioSetAside)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (RoundEnds))
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, RoundEnds, ThreatRaisedByEncounter), mkAfter)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -86,6 +86,13 @@ intoCapturedDeck :: PlayerId -> [CardDef] -> GameT ()
 intoCapturedDeck pid defs = do
   cards <- traverse (`genPlayerCard` Just pid) defs
   run $ ScenarioSpecific "mountGram.shuffleIn" (toJSON (pid, cards))
+
+-- | Deal the enemy the card as a shadow card and resolve it, against the defenders.
+shadow :: PlayerId -> EnemyId -> CardDef -> [Target] -> GameT ()
+shadow pid eid def defenders = do
+  card <- genEncounterCard def
+  run $ AttachShadowCard eid card
+  run $ ResolveShadow eid pid defenders
 
 timeShowing :: CardDef -> GameT ()
 timeShowing side = run . AddToStaging =<< genEncounterCard side
@@ -339,3 +346,77 @@ spec = describe "Angmar Awakened Nightmare mode" do
       rescue <- questOf Quests.rescueFromTheTrolls
       run $ CompleteQuest (toId rescue)
       getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` elem "01002")
+
+  describe "The Treachery of Rhudaur" do
+    it "builds the nightmare deck, each side quest's set aside" . nightmare theTreacheryOfRhudaur $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.cursedDead, Enemies.thaurdirsHunter, Enemies.apostateOfAngmar, Locations.secretAntechamber, Treacheries.lifeDrain]
+        `shouldBe` [0, 2, 0, 0, 0]
+      aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
+      map (`copies` aside) [Enemies.apostateOfAngmar, Locations.secretAntechamber, Treacheries.lifeDrain] `shouldBe` [3, 3, 3]
+
+    it "shuffles in the sets of the side quests not defeated as stage 2 begins" . nightmare theTreacheryOfRhudaur $ \_ -> do
+      run $ DoStep 1 Setup
+      _ <- putQuestStage Quests.thaurdirsPursuit
+      run . AddToStaging =<< genEncounterCard Objectives.daechanarsBrand
+      run $ CheckWindows [mkAfter AdvancedToStage]
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.apostateOfAngmar, Locations.secretAntechamber, Treacheries.lifeDrain] `shouldBe` [0, 3, 3]
+
+    it "Thaurdir's Hunter's shadow removes 5 progress from a quest when undefended" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      q <- putQuestStage Quests.thaurdirsPursuit
+      run $ PlaceTokens GameSource q Progress 7
+      warg <- staged Enemies.wightOfRhudaur
+      shadow pid warg Enemies.thaurdirsHunter []
+      (.progress) <$> getActiveQuest `shouldReturn` 2
+
+    it "Undead Thrall's shadow puts it into play engaged, dealt a shadow card" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      wight <- staged Enemies.wightOfRhudaur
+      _ <- setEncounterDeck [Locations.forgottenCourtyard]
+      shadow pid wight Enemies.undeadThrall [toTarget wight]
+      thrall <- enemyOf Enemies.undeadThrall
+      e <- getEnemy thrall
+      e.placement `shouldBe` EngagedWith pid
+      length e.shadowCards `shouldBe` 1
+
+    it "Forgotten Courtyard gains threat as Undead enemies enter play" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      court <- stagedLocation Locations.forgottenCourtyard
+      _ <- staged Enemies.wightOfRhudaur
+      resolveForced pid
+      getModifiers (toTarget court) >>= (`shouldSatisfy` elem (ThreatModifier 1))
+
+    it "Charred Cellar, active, deals 2 damage as an encounter card raises a threat" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      cellar <- stagedLocation Locations.charredCellar
+      run $ PlaceLocation cellar ActiveLocation
+      run $ CheckWindows [mkAfter $ ThreatRaisedByEncounter pid 1]
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      chooseTarget pid eowyn
+      getCharacterDamage eowyn `shouldReturn` 2
+
+    it "Malevolent Forces removes the strongest questing character, raising the threat by its willpower" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ CommitToQuest eowyn
+      threat <- threatOf pid
+      reveal [Treacheries.malevolentForces]
+      threatOf pid `shouldReturn` threat + 4
+
+    it "Secret Antechamber caps the main quest's progress and raises each threat by 3 to travel" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      q <- putQuestStage Quests.thaurdirsPursuit
+      room <- stagedLocation Locations.secretAntechamber
+      getModifiers q >>= (`shouldSatisfy` elem (ProgressPerRoundLimit 5))
+      threat <- threatOf pid
+      run $ TravelTo room
+      threatOf pid `shouldReturn` threat + 3
+
+    it "Apostate of Angmar keeps its player from attacking Thaurdir" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      thaurdir <- staged Enemies.thaurdirTheTreacheryOfRhudaur
+      apostate <- staged Enemies.apostateOfAngmar
+      run $ EngageEnemy pid apostate
+      getModifiers (toTarget thaurdir) >>= (`shouldSatisfy` elem (CannotBeAttackedByCharactersOf pid))
+
+    it "Life Drain is dealt to Thaurdir as a shadow card" . nightmare theTreacheryOfRhudaur $ \pid -> do
+      thaurdir <- staged Enemies.thaurdirTheTreacheryOfRhudaur
+      reveal [Treacheries.lifeDrain]
+      resolveForced pid
+      map toCardCode . (.shadowCards) <$> getEnemy thaurdir `shouldReturn` [toCardCode Treacheries.lifeDrain]

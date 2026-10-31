@@ -289,6 +289,9 @@ allLocationCards =
       , tortureChamberMountGram
       , rockyFoothills
       , vastTrollFells
+      , forgottenCourtyard
+      , charredCellar
+      , secretAntechamber
       ]
 
 drownedTreasury :: CardDef
@@ -2165,4 +2168,26 @@ vastTrollFells =
   (location "across-the-ettenmoors-nightmare-across-the-ettenmoors-007" "Vast Troll-fells" AcrossTheEttenmoorsNightmare 2 3 4)
     { cdCardTraits = setFromList [Ettenmoors]
     , cdShadowEffect = True
+    }
+
+-- The Treachery of Rhudaur Nightmare
+
+forgottenCourtyard :: CardDef
+forgottenCourtyard =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-004" "Forgotten Courtyard" TheTreacheryOfRhudaurNightmare 2 1 6)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+charredCellar :: CardDef
+charredCellar =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-005" "Charred Cellar" TheTreacheryOfRhudaurNightmare 2 5 4)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+-- | Of the Sift through the Debris encounter set, as its icon shows (cards.json has it as
+-- a treachery; the card is a location).
+secretAntechamber :: CardDef
+secretAntechamber =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-008" "Secret Antechamber" TheTreacheryOfRhudaurNightmare 3 2 5)
+    { cdCardTraits = setFromList [Ruins]
     }

@@ -277,6 +277,9 @@ import LordOfTheRings.Location.Cards.PrisonCellNightmare
 import LordOfTheRings.Location.Cards.TortureChamberMountGram
 import LordOfTheRings.Location.Cards.RockyFoothills
 import LordOfTheRings.Location.Cards.VastTrollFells
+import LordOfTheRings.Location.Cards.ForgottenCourtyard
+import LordOfTheRings.Location.Cards.CharredCellar
+import LordOfTheRings.Location.Cards.SecretAntechamber
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -595,5 +598,8 @@ allLocations =
         , SomeLocationCard tortureChamberMountGram
         , SomeLocationCard rockyFoothills
         , SomeLocationCard vastTrollFells
+        , SomeLocationCard forgottenCourtyard
+        , SomeLocationCard charredCellar
+        , SomeLocationCard secretAntechamber
         ]
     ]

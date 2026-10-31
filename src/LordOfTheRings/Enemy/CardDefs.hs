@@ -260,6 +260,9 @@ allEnemyCards =
       , hoarwellRiverSerpent
       , scavengingStoneTroll
       , giantBeetle
+      , thaurdirsHunter
+      , undeadThrall
+      , apostateOfAngmar
       ]
 
 namelessThing :: CardDef
@@ -2098,4 +2101,30 @@ giantBeetle :: CardDef
 giantBeetle =
   (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-005" "Giant Beetle" AcrossTheEttenmoorsNightmare 2 14 2 3 3 3)
     { cdCardTraits = setFromList [Creature, Insect]
+    }
+
+-- The Treachery of Rhudaur Nightmare
+
+thaurdirsHunter :: CardDef
+thaurdirsHunter =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-002" "Thaurdir's Hunter" TheTreacheryOfRhudaurNightmare 2 16 2 2 1 6)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+undeadThrall :: CardDef
+undeadThrall =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-003" "Undead Thrall" TheTreacheryOfRhudaurNightmare 2 1 2 2 2 2)
+    { cdCardTraits = setFromList [Undead]
+    , cdKeywords = setFromList [Indestructible, Surge]
+    , cdShadowEffect = True
+    }
+
+-- | Of the Quiet the Spirits encounter set, as its icon shows (cards.json has it as a
+-- treachery; the card is an enemy).
+apostateOfAngmar :: CardDef
+apostateOfAngmar =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-007" "Apostate of Angmar" TheTreacheryOfRhudaurNightmare 3 38 5 2 2 12)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
     }

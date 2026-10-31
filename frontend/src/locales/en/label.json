@@ -1612,5 +1612,16 @@
   },
   "rescueFromTheTrolls": {
     "hero": "Choose your lowest threat cost hero to place underneath Rescue from the Trolls"
+  },
+  "thaurdirsHunter": {
+    "choose": "Thaurdir's Hunter attacks you",
+    "timeCounter": "Remove 1 time counter from the main quest",
+    "undefended": "Treat this attack as undefended",
+    "remove": "Thaurdir's Hunter: remove 1 time counter or 5 progress from a quest",
+    "removeTime": "Remove 1 time counter from {card}",
+    "removeProgress": "Remove 5 progress from {card}"
+  },
+  "malevolentForces": {
+    "remove": "Choose the questing character with the highest willpower to remove from the quest"
   }
 }

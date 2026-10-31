@@ -254,6 +254,9 @@ import LordOfTheRings.Enemy.Cards.OrcOfThaurdir
 import LordOfTheRings.Enemy.Cards.HoarwellRiverSerpent
 import LordOfTheRings.Enemy.Cards.ScavengingStoneTroll
 import LordOfTheRings.Enemy.Cards.GiantBeetle
+import LordOfTheRings.Enemy.Cards.ThaurdirsHunter
+import LordOfTheRings.Enemy.Cards.UndeadThrall
+import LordOfTheRings.Enemy.Cards.ApostateOfAngmar
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -533,5 +536,8 @@ allEnemys =
         , SomeEnemyCard hoarwellRiverSerpent
         , SomeEnemyCard scavengingStoneTroll
         , SomeEnemyCard giantBeetle
+        , SomeEnemyCard thaurdirsHunter
+        , SomeEnemyCard undeadThrall
+        , SomeEnemyCard apostateOfAngmar
         ]
     ]

@@ -385,6 +385,7 @@ library
       LordOfTheRings.Enemy.Cards.AngmarMarauder
       LordOfTheRings.Enemy.Cards.AngmarOrc
       LordOfTheRings.Enemy.Cards.AngryHuorn
+      LordOfTheRings.Enemy.Cards.ApostateOfAngmar
       LordOfTheRings.Enemy.Cards.AttercopAttercop
       LordOfTheRings.Enemy.Cards.BalefulShade
       LordOfTheRings.Enemy.Cards.BatteringRam
@@ -594,6 +595,7 @@ library
       LordOfTheRings.Enemy.Cards.Thaurdir
       LordOfTheRings.Enemy.Cards.ThaurdirDeadmensDike
       LordOfTheRings.Enemy.Cards.ThaurdirsDamned
+      LordOfTheRings.Enemy.Cards.ThaurdirsHunter
       LordOfTheRings.Enemy.Cards.ThaurdirTheTreacheryOfRhudaur
       LordOfTheRings.Enemy.Cards.TheHandOfCastamir
       LordOfTheRings.Enemy.Cards.TheNamelessFear
@@ -608,6 +610,7 @@ library
       LordOfTheRings.Enemy.Cards.UmbarCaptain
       LordOfTheRings.Enemy.Cards.UmbarRaider
       LordOfTheRings.Enemy.Cards.UmbarSlaver
+      LordOfTheRings.Enemy.Cards.UndeadThrall
       LordOfTheRings.Enemy.Cards.UnderworldDissident
       LordOfTheRings.Enemy.Cards.UngoliantsBrood
       LordOfTheRings.Enemy.Cards.UngoliantsSpawn
@@ -927,6 +930,7 @@ library
       LordOfTheRings.Location.Cards.CargoHold
       LordOfTheRings.Location.Cards.CaveBarrow
       LordOfTheRings.Location.Cards.Celebdil
+      LordOfTheRings.Location.Cards.CharredCellar
       LordOfTheRings.Location.Cards.ChetwoodForest
       LordOfTheRings.Location.Cards.CityOfCorsairs
       LordOfTheRings.Location.Cards.CityRemains
@@ -979,6 +983,7 @@ library
       LordOfTheRings.Location.Cards.ForecastleDeck
       LordOfTheRings.Location.Cards.ForestGate
       LordOfTheRings.Location.Cards.ForestGrove
+      LordOfTheRings.Location.Cards.ForgottenCourtyard
       LordOfTheRings.Location.Cards.FornostSquare
       LordOfTheRings.Location.Cards.FortressWalls
       LordOfTheRings.Location.Cards.FouledWell
@@ -1074,6 +1079,7 @@ library
       LordOfTheRings.Location.Cards.SecludedGlade
       LordOfTheRings.Location.Cards.SecondDeep
       LordOfTheRings.Location.Cards.SecondHall
+      LordOfTheRings.Location.Cards.SecretAntechamber
       LordOfTheRings.Location.Cards.SeedyInn
       LordOfTheRings.Location.Cards.Sewers
       LordOfTheRings.Location.Cards.ShelteredValley
@@ -1662,6 +1668,7 @@ library
       LordOfTheRings.Treachery.Cards.LashingTentacles
       LordOfTheRings.Treachery.Cards.LeapingFlame
       LordOfTheRings.Treachery.Cards.LeavesOnTree
+      LordOfTheRings.Treachery.Cards.LifeDrain
       LordOfTheRings.Treachery.Cards.LingeringMalevolence
       LordOfTheRings.Treachery.Cards.LingeringVenom
       LordOfTheRings.Treachery.Cards.LocalTrouble
@@ -1671,6 +1678,7 @@ library
       LordOfTheRings.Treachery.Cards.LowOnProvisions
       LordOfTheRings.Treachery.Cards.LurkingInShadows
       LordOfTheRings.Treachery.Cards.LyingInWait
+      LordOfTheRings.Treachery.Cards.MalevolentForces
       LordOfTheRings.Treachery.Cards.ManOverboard
       LordOfTheRings.Treachery.Cards.ManyRoads
       LordOfTheRings.Treachery.Cards.ManyThongedWhip

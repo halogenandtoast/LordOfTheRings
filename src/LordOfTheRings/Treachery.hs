@@ -217,6 +217,8 @@ import LordOfTheRings.Treachery.Cards.CruelTorment
 import LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
 import LordOfTheRings.Treachery.Cards.CrashingThunder
 import LordOfTheRings.Treachery.Cards.BarrenAndDesolate
+import LordOfTheRings.Treachery.Cards.MalevolentForces
+import LordOfTheRings.Treachery.Cards.LifeDrain
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -458,5 +460,7 @@ allTreacherys =
         , SomeTreacheryCard goblinPatrolNightmare
         , SomeTreacheryCard crashingThunder
         , SomeTreacheryCard barrenAndDesolate
+        , SomeTreacheryCard malevolentForces
+        , SomeTreacheryCard lifeDrain
         ]
     ]
