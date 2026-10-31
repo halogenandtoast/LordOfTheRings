@@ -237,6 +237,16 @@ import LordOfTheRings.Enemy.Cards.StormcallerTheCityOfCorsairs
 import LordOfTheRings.Enemy.Cards.SlaveShip
 import LordOfTheRings.Enemy.Cards.UmbarSlaver
 import LordOfTheRings.Enemy.Cards.CaptainSahirTheCityOfCorsairs
+import LordOfTheRings.Enemy.Cards.UngoliantsSpawnNightmare
+import LordOfTheRings.Enemy.Cards.UngoliantsBrood
+import LordOfTheRings.Enemy.Cards.ForestFlies
+import LordOfTheRings.Enemy.Cards.SpidersOfMirkwood
+import LordOfTheRings.Enemy.Cards.MarshlandOutlaws
+import LordOfTheRings.Enemy.Cards.AnduinTrollSpawn
+import LordOfTheRings.Enemy.Cards.BrownWaterRats
+import LordOfTheRings.Enemy.Cards.TortureMaster
+import LordOfTheRings.Enemy.Cards.CrazedCaptive
+import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -499,5 +509,15 @@ allEnemys =
         , SomeEnemyCard slaveShip
         , SomeEnemyCard umbarSlaver
         , SomeEnemyCard captainSahirTheCityOfCorsairs
+        , SomeEnemyCard ungoliantsSpawnNightmare
+        , SomeEnemyCard ungoliantsBrood
+        , SomeEnemyCard forestFlies
+        , SomeEnemyCard spidersOfMirkwood
+        , SomeEnemyCard marshlandOutlaws
+        , SomeEnemyCard anduinTrollSpawn
+        , SomeEnemyCard brownWaterRats
+        , SomeEnemyCard tortureMaster
+        , SomeEnemyCard crazedCaptive
+        , SomeEnemyCard spiderOfDolGuldur
         ]
     ]

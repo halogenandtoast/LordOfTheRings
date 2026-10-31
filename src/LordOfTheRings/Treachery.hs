@@ -203,6 +203,14 @@ import LordOfTheRings.Treachery.Cards.SerpentsTail
 import LordOfTheRings.Treachery.Cards.FoesOfEcthelion
 import LordOfTheRings.Treachery.Cards.UmbarPatrol
 import LordOfTheRings.Treachery.Cards.FuryAndMalice
+import LordOfTheRings.Treachery.Cards.TheSpidersWeb
+import LordOfTheRings.Treachery.Cards.Backtrack
+import LordOfTheRings.Treachery.Cards.PursuitOnTheShore
+import LordOfTheRings.Treachery.Cards.TrollAttack
+import LordOfTheRings.Treachery.Cards.SmokingBlood
+import LordOfTheRings.Treachery.Cards.SentinelOfShadow
+import LordOfTheRings.Treachery.Cards.CatacombInspection
+import LordOfTheRings.Treachery.Cards.DarkInterrogation
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -430,5 +438,13 @@ allTreacherys =
         , SomeTreacheryCard foesOfEcthelion
         , SomeTreacheryCard umbarPatrol
         , SomeTreacheryCard furyAndMalice
+        , SomeTreacheryCard theSpidersWeb
+        , SomeTreacheryCard backtrack
+        , SomeTreacheryCard pursuitOnTheShore
+        , SomeTreacheryCard trollAttack
+        , SomeTreacheryCard smokingBlood
+        , SomeTreacheryCard sentinelOfShadow
+        , SomeTreacheryCard catacombInspection
+        , SomeTreacheryCard darkInterrogation
         ]
     ]

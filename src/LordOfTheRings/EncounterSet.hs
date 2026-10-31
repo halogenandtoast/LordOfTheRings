@@ -29,6 +29,7 @@ data EncounterSet
   | EncounterAtAmonDin
   | EriadorWilds
   | EscapeFromDolGuldur
+  | EscapeFromDolGuldurNightmare
   | EscapeFromMountGram
   | FlightFromMoria
   | FlightOfTheStormcaller
@@ -41,11 +42,13 @@ data EncounterSet
   | IntoThePit
   | IntrudersInChetwood
   | JourneyAlongTheAnduin
+  | JourneyAlongTheAnduinNightmare
   | MistyMountainOrcs
   | MistyMountains
   | MordorElite
   | PassageThroughMirkwood
   | PassageThroughMirkwoodCampaign
+  | PassageThroughMirkwoodNightmare
   | PerilInPelargir
   | PlunderingGoblins
   | RaidOnTheGreyHavens

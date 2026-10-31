@@ -265,6 +265,12 @@ import LordOfTheRings.Location.Cards.TheShatteredMonument
 import LordOfTheRings.Location.Cards.StreetsOfUmbar
 import LordOfTheRings.Location.Cards.CityOfCorsairs
 import LordOfTheRings.Location.Cards.UmbarHarbor
+import LordOfTheRings.Location.Cards.AbandonedCampNightmare
+import LordOfTheRings.Location.Cards.GladeOfTheSpawn
+import LordOfTheRings.Location.Cards.AFloodedFord
+import LordOfTheRings.Location.Cards.GladdenMarshlands
+import LordOfTheRings.Location.Cards.TortureChamber
+import LordOfTheRings.Location.Cards.DungeonLabyrinth
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -571,5 +577,11 @@ allLocations =
         , SomeLocationCard streetsOfUmbar
         , SomeLocationCard cityOfCorsairs
         , SomeLocationCard umbarHarbor
+        , SomeLocationCard abandonedCampNightmare
+        , SomeLocationCard gladeOfTheSpawn
+        , SomeLocationCard aFloodedFord
+        , SomeLocationCard gladdenMarshlands
+        , SomeLocationCard tortureChamber
+        , SomeLocationCard dungeonLabyrinth
         ]
     ]
