@@ -513,6 +513,12 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is dealt to the target instead, as Treacherous Bluffs' shadow sends it to Arwen
     ExcessDamageTo Target
+  | -- | on an enemy: for each point of damage its attack deals, the player discards a random
+    -- card from his hand, as Banks of Sirannon's shadow reads
+    AttackDamageDiscardsRandomFrom PlayerId
+  | -- | on an enemy: each point of damage its attack deals heals 1 damage from the target, as
+    -- The Dark Fire heals Durin's Bane
+    AttackDamageHeals Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -762,6 +762,8 @@ runGameMessage msg g = case msg of
       <> removing
       -- each point of it adds 1 to the staging area's threat this phase, as Ramming Speed!
       <> [CreateEffect $ Effect source GameTarget [StagingThreatBonus n] UntilEndOfPhase | AttackDamageAddsStagingThreat `elem` attackMods]
+      <> [DiscardRandomFromHand pid n | AttackDamageDiscardsRandomFrom pid <- attackMods]
+      <> [HealDamage source t n | AttackDamageHeals t <- attackMods]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
