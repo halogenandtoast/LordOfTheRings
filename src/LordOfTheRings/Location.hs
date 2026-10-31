@@ -384,6 +384,19 @@ import LordOfTheRings.Location.Cards.NestOfHorrors
 import LordOfTheRings.Location.Cards.ShiveringRiver
 import LordOfTheRings.Location.Cards.FieryDepths
 import LordOfTheRings.Location.Cards.CrumblingStairs
+import LordOfTheRings.Location.Cards.ShroudedWilderness
+import LordOfTheRings.Location.Cards.SnowyBadlands
+import LordOfTheRings.Location.Cards.PrisonCellNightmare
+import LordOfTheRings.Location.Cards.TortureChamberMountGram
+import LordOfTheRings.Location.Cards.RockyFoothills
+import LordOfTheRings.Location.Cards.VastTrollFells
+import LordOfTheRings.Location.Cards.ForgottenCourtyard
+import LordOfTheRings.Location.Cards.CharredCellar
+import LordOfTheRings.Location.Cards.SecretAntechamber
+import LordOfTheRings.Location.Cards.StrongholdTower
+import LordOfTheRings.Location.Cards.GatesOfCarnDum
+import LordOfTheRings.Location.Cards.InnerSanctum
+import LordOfTheRings.Location.Cards.CursedHalls
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -814,5 +827,18 @@ allLocations =
         , SomeLocationCard shiveringRiver
         , SomeLocationCard fieryDepths
         , SomeLocationCard crumblingStairs
+        , SomeLocationCard shroudedWilderness
+        , SomeLocationCard snowyBadlands
+        , SomeLocationCard prisonCellNightmare
+        , SomeLocationCard tortureChamberMountGram
+        , SomeLocationCard rockyFoothills
+        , SomeLocationCard vastTrollFells
+        , SomeLocationCard forgottenCourtyard
+        , SomeLocationCard charredCellar
+        , SomeLocationCard secretAntechamber
+        , SomeLocationCard strongholdTower
+        , SomeLocationCard gatesOfCarnDum
+        , SomeLocationCard innerSanctum
+        , SomeLocationCard cursedHalls
         ]
     ]

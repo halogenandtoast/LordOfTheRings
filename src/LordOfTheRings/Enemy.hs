@@ -370,6 +370,20 @@ import LordOfTheRings.Enemy.Cards.UnspeakableThing
 import LordOfTheRings.Enemy.Cards.PrimevalThing
 import LordOfTheRings.Enemy.Cards.ServantOfFlame
 import LordOfTheRings.Enemy.Cards.CaptainOfMordor
+import LordOfTheRings.Enemy.Cards.PackHunters
+import LordOfTheRings.Enemy.Cards.JailorGornakhNightmare
+import LordOfTheRings.Enemy.Cards.PrisonGuard
+import LordOfTheRings.Enemy.Cards.OrcOfThaurdir
+import LordOfTheRings.Enemy.Cards.HoarwellRiverSerpent
+import LordOfTheRings.Enemy.Cards.ScavengingStoneTroll
+import LordOfTheRings.Enemy.Cards.GiantBeetle
+import LordOfTheRings.Enemy.Cards.ThaurdirsHunter
+import LordOfTheRings.Enemy.Cards.UndeadThrall
+import LordOfTheRings.Enemy.Cards.ApostateOfAngmar
+import LordOfTheRings.Enemy.Cards.OrcWight
+import LordOfTheRings.Enemy.Cards.ThaurdirsElite
+import LordOfTheRings.Enemy.Cards.SilentGuardian
+import LordOfTheRings.Enemy.Cards.NecromancerOfCarnDum
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -765,5 +779,19 @@ allEnemys =
         , SomeEnemyCard primevalThing
         , SomeEnemyCard servantOfFlame
         , SomeEnemyCard captainOfMordor
+        , SomeEnemyCard packHunters
+        , SomeEnemyCard jailorGornakhNightmare
+        , SomeEnemyCard prisonGuard
+        , SomeEnemyCard orcOfThaurdir
+        , SomeEnemyCard hoarwellRiverSerpent
+        , SomeEnemyCard scavengingStoneTroll
+        , SomeEnemyCard giantBeetle
+        , SomeEnemyCard thaurdirsHunter
+        , SomeEnemyCard undeadThrall
+        , SomeEnemyCard apostateOfAngmar
+        , SomeEnemyCard orcWight
+        , SomeEnemyCard thaurdirsElite
+        , SomeEnemyCard silentGuardian
+        , SomeEnemyCard necromancerOfCarnDum
         ]
     ]

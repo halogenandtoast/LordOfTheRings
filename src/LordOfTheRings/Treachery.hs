@@ -310,6 +310,20 @@ import LordOfTheRings.Treachery.Cards.TheDarkFire
 import LordOfTheRings.Treachery.Cards.BlazingGrip
 import LordOfTheRings.Treachery.Cards.MorgothsBidding
 import LordOfTheRings.Treachery.Cards.FlameOfUdun
+import LordOfTheRings.Treachery.Cards.CunningWolves
+import LordOfTheRings.Treachery.Cards.TorrentOfHail
+import LordOfTheRings.Treachery.Cards.CruelTorment
+import LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
+import LordOfTheRings.Treachery.Cards.CrashingThunder
+import LordOfTheRings.Treachery.Cards.BarrenAndDesolate
+import LordOfTheRings.Treachery.Cards.MalevolentForces
+import LordOfTheRings.Treachery.Cards.LifeDrain
+import LordOfTheRings.Treachery.Cards.DeathAndDecay
+import LordOfTheRings.Treachery.Cards.HowlingOfWargs
+import LordOfTheRings.Treachery.Cards.BlackMare
+import LordOfTheRings.Treachery.Cards.PowerBeyondDeath
+import LordOfTheRings.Treachery.Cards.DaechanarsCurse
+import LordOfTheRings.Treachery.Cards.AllIsLost
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -644,5 +658,19 @@ allTreacherys =
         , SomeTreacheryCard blazingGrip
         , SomeTreacheryCard morgothsBidding
         , SomeTreacheryCard flameOfUdun
+        , SomeTreacheryCard cunningWolves
+        , SomeTreacheryCard torrentOfHail
+        , SomeTreacheryCard cruelTorment
+        , SomeTreacheryCard goblinPatrolNightmare
+        , SomeTreacheryCard crashingThunder
+        , SomeTreacheryCard barrenAndDesolate
+        , SomeTreacheryCard malevolentForces
+        , SomeTreacheryCard lifeDrain
+        , SomeTreacheryCard deathAndDecay
+        , SomeTreacheryCard howlingOfWargs
+        , SomeTreacheryCard blackMare
+        , SomeTreacheryCard powerBeyondDeath
+        , SomeTreacheryCard daechanarsCurse
+        , SomeTreacheryCard allIsLost
         ]
     ]

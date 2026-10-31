@@ -41,8 +41,9 @@ instance HasAbilities Daybreak where
 
 instance RunMessage Daybreak where
   runMessage msg o@(Daybreak attrs) = case msg of
+    -- Make a Stand can bar the flip back to Daybreak
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      push $ Flip (toTarget attrs)
+      flipOver attrs
       pure o
     UseCardAbility _ (isSource attrs -> True) 2 _
       | night attrs -> revealEncounterCard >> pure o

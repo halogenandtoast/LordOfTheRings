@@ -1999,5 +1999,57 @@
   },
   "fieryDepths": {
     "moveDamage": "Choose a hero to take 1 damage from Durin's Bane"
+  },
+  "packHunters": {
+    "search": "Choose a Warg enemy for Pack Hunters to put into play engaged with you"
+  },
+  "snowyBadlands": {
+    "damage": "Deal damage to an exhausted character you control to travel to Snowy Badlands"
+  },
+  "torrentOfHail": {
+    "discard": "Choose an attachment to discard for Torrent of Hail"
+  },
+  "forcedOffTrack": {
+    "discard": "Choose a Warg enemy in the staging area to discard"
+  },
+  "goblinPatrolNightmare": {
+    "capture": "Goblin Patrol: capture random cards from your hand underneath the current quest",
+    "captureCount": "Capture {count}"
+  },
+  "orcOfThaurdir": {
+    "choose": "Orc of Thaurdir attacks you",
+    "discardCaptured": "Discard the top 2 cards of your captured deck",
+    "shadow": "Deal Orc of Thaurdir 2 additional shadow cards"
+  },
+  "barrenAndDesolate": {
+    "attach": "Choose a side quest to attach Barren and Desolate to"
+  },
+  "rescueFromTheTrolls": {
+    "hero": "Choose your lowest threat cost hero to place underneath Rescue from the Trolls"
+  },
+  "thaurdirsHunter": {
+    "choose": "Thaurdir's Hunter attacks you",
+    "timeCounter": "Remove 1 time counter from the main quest",
+    "undefended": "Treat this attack as undefended",
+    "remove": "Thaurdir's Hunter: remove 1 time counter or 5 progress from a quest",
+    "removeTime": "Remove 1 time counter from {card}",
+    "removeProgress": "Remove 5 progress from {card}"
+  },
+  "malevolentForces": {
+    "remove": "Choose the questing character with the highest willpower to remove from the quest"
+  },
+  "thaurdirsElite": {
+    "discardAlly": "Choose an ally you control to discard",
+    "choose": "Thaurdir's Elite: raise your threat by 4, or discard an ally you control",
+    "threat": "Raise your threat by 4",
+    "ally": "Discard an ally you control"
+  },
+  "gatesOfCarnDum": {
+    "enemy": "Choose the enemy to deal Gates of Carn Dûm to as a shadow card"
+  },
+  "howlingOfWargs": {
+    "choose": "Howling of Wargs",
+    "shadow": "Deal 1 shadow card to each enemy in the staging area",
+    "search": "Search the encounter deck and discard pile for a side quest"
   }
 }

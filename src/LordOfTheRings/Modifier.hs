@@ -584,6 +584,12 @@ data ModifierType
   | -- | on an enemy: each point of damage its attack deals heals 1 damage from the target, as
     -- The Dark Fire heals Durin's Bane
     AttackDamageHeals Target
+  | -- | on an enemy: each point of its attack's damage discards the top card of the player's
+    -- captured deck, as Orc of Thaurdir's shadow reads (Escape from Mount Gram)
+    AttackDamageDiscardsCaptured PlayerId
+  | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
+    -- Isolated reads
+    CannotDrawCardsFromCardEffects
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

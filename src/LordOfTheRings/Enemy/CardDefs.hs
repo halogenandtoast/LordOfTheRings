@@ -376,6 +376,20 @@ allEnemyCards =
       , primevalThing
       , servantOfFlame
       , captainOfMordor
+      , packHunters
+      , jailorGornakhNightmare
+      , prisonGuard
+      , orcOfThaurdir
+      , hoarwellRiverSerpent
+      , scavengingStoneTroll
+      , giantBeetle
+      , thaurdirsHunter
+      , undeadThrall
+      , apostateOfAngmar
+      , orcWight
+      , thaurdirsElite
+      , silentGuardian
+      , necromancerOfCarnDum
       ]
 
 namelessThing :: CardDef
@@ -2752,6 +2766,65 @@ orcInterceptor =
 thingsInThePools :: CardDef
 thingsInThePools =
   (enemy "the-dead-marshes-nightmare-the-dead-marshes-004" "Things in the Pools" TheDeadMarshesNightmare 3 50 3 4 2 8)
+
+-- The Wastes of Eriador Nightmare
+
+packHunters :: CardDef
+packHunters =
+  (enemy "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-002" "Pack Hunters" TheWastesOfEriadorNightmare 5 45 3 2 1 3)
+    { cdCardTraits = setFromList [Creature, Warg]
+    }
+
+-- Escape from Mount Gram Nightmare
+
+jailorGornakhNightmare :: CardDef
+jailorGornakhNightmare =
+  unique
+    (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-002" "Jailor Gornákh" EscapeFromMountGramNightmare 1 45 4 5 5 14)
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdVictoryPoints = Just 5
+      }
+
+prisonGuard :: CardDef
+prisonGuard =
+  (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-003" "Prison Guard" EscapeFromMountGramNightmare 3 26 2 2 1 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | Of the Angmar Orcs encounter set, as its icon shows: set aside with it.
+orcOfThaurdir :: CardDef
+orcOfThaurdir =
+  (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-009" "Orc of Thaurdir" EscapeFromMountGramNightmare 3 35 3 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+-- Across the Ettenmoors Nightmare
+
+hoarwellRiverSerpent :: CardDef
+hoarwellRiverSerpent =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-003" "Hoarwell River Serpent" AcrossTheEttenmoorsNightmare 2 38 3 4 3 5)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+scavengingStoneTroll :: CardDef
+scavengingStoneTroll =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-004" "Scavenging Stone-troll" AcrossTheEttenmoorsNightmare 2 42 1 7 2 14)
+    { cdCardTraits = setFromList [Troll]
+    }
+
+giantBeetle :: CardDef
+giantBeetle =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-005" "Giant Beetle" AcrossTheEttenmoorsNightmare 2 14 2 3 3 3)
+    { cdCardTraits = setFromList [Creature, Insect]
+    }
+
+-- The Treachery of Rhudaur Nightmare
+
+thaurdirsHunter :: CardDef
+thaurdirsHunter =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-002" "Thaurdir's Hunter" TheTreacheryOfRhudaurNightmare 2 16 2 2 1 6)
     { cdCardTraits = setFromList [Undead]
     , cdShadowEffect = True
     }
@@ -3031,4 +3104,52 @@ captainOfMordor =
   (enemy "shadow-and-flame-nightmare-shadow-and-flame-008" "Captain of Mordor" ShadowAndFlameNightmare 2 42 4 4 3 7)
     { cdCardTraits = setFromList [Mordor, Orc, Uruk]
     , cdShadowEffect = True
+    }
+
+undeadThrall :: CardDef
+undeadThrall =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-003" "Undead Thrall" TheTreacheryOfRhudaurNightmare 2 1 2 2 2 2)
+    { cdCardTraits = setFromList [Undead]
+    , cdKeywords = setFromList [Indestructible, Surge]
+    , cdShadowEffect = True
+    }
+
+-- | Of the Quiet the Spirits encounter set, as its icon shows (cards.json has it as a
+-- treachery; the card is an enemy).
+apostateOfAngmar :: CardDef
+apostateOfAngmar =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-007" "Apostate of Angmar" TheTreacheryOfRhudaurNightmare 3 38 5 2 2 12)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+orcWight :: CardDef
+orcWight =
+  (enemy "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-002" "Orc Wight" TheBattleOfCarnDumNightmare 3 30 2 3 2 4)
+    { cdCardTraits = setFromList [Orc, Undead]
+    , cdShadowEffect = True
+    }
+
+thaurdirsElite :: CardDef
+thaurdirsElite =
+  (enemy "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-003" "Thaurdir's Elite" TheBattleOfCarnDumNightmare 2 45 2 5 4 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+-- The Dread Realm Nightmare
+
+-- | 10 hit points, as the card shows (cards.json has 1).
+silentGuardian :: CardDef
+silentGuardian =
+  (enemy "the-dread-realm-nightmare-the-dread-realm-002" "Silent Guardian" TheDreadRealmNightmare 2 36 4 2 4 10)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+necromancerOfCarnDum :: CardDef
+necromancerOfCarnDum =
+  (enemy "the-dread-realm-nightmare-the-dread-realm-003" "Necromancer of Carn Dûm" TheDreadRealmNightmare 3 28 2 0 3 3)
+    { cdCardTraits = setFromList [Sorcerer]
     }

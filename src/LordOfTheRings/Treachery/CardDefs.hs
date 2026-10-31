@@ -317,6 +317,20 @@ allTreacheryCards =
       , blazingGrip
       , morgothsBidding
       , flameOfUdun
+      , cunningWolves
+      , torrentOfHail
+      , cruelTorment
+      , goblinPatrolNightmare
+      , crashingThunder
+      , barrenAndDesolate
+      , malevolentForces
+      , lifeDrain
+      , deathAndDecay
+      , howlingOfWargs
+      , blackMare
+      , powerBeyondDeath
+      , daechanarsCurse
+      , allIsLost
       ]
 
 deepDeepDark :: CardDef
@@ -1611,6 +1625,15 @@ killThem = treachery "the-lost-realm-nightmare-invaders-in-chetwood-008" "Kill T
 rainWashedTracks :: CardDef
 rainWashedTracks =
   (treachery "the-lost-realm-nightmare-the-weather-hills-017" "Rain-washed Tracks" TheWeatherHillsNightmare 3)
+
+-- The Wastes of Eriador Nightmare
+
+cunningWolves :: CardDef
+cunningWolves = (treachery "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-005" "Cunning Wolves" TheWastesOfEriadorNightmare 3) {cdShadowEffect = True}
+
+torrentOfHail :: CardDef
+torrentOfHail =
+  (treachery "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-006" "Torrent of Hail" TheWastesOfEriadorNightmare 3)
     { cdCardTraits = setFromList [Weather]
     , cdShadowEffect = True
     }
@@ -1650,6 +1673,69 @@ infiltration =
 paralyzingFear :: CardDef
 paralyzingFear =
   (treachery "the-lost-realm-nightmare-deadmens-dike-025" "Paralyzing Fear" DeadmensDikeNightmare 3)
+
+-- Escape from Mount Gram Nightmare
+
+cruelTorment :: CardDef
+cruelTorment = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gram-006" "Cruel Torment" EscapeFromMountGramNightmare 3) {cdKeywords = setFromList [Surge]}
+
+goblinPatrolNightmare :: CardDef
+goblinPatrolNightmare = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gram-007" "Goblin Patrol" EscapeFromMountGramNightmare 2) {cdShadowEffect = True}
+
+-- Across the Ettenmoors Nightmare
+
+crashingThunder :: CardDef
+crashingThunder =
+  (treachery "across-the-ettenmoors-nightmare-across-the-ettenmoors-008" "Crashing Thunder" AcrossTheEttenmoorsNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+barrenAndDesolate :: CardDef
+barrenAndDesolate = (treachery "across-the-ettenmoors-nightmare-across-the-ettenmoors-009" "Barren and Desolate" AcrossTheEttenmoorsNightmare 3) {cdKeywords = setFromList [Surge]}
+
+-- The Treachery of Rhudaur Nightmare
+
+malevolentForces :: CardDef
+malevolentForces = (treachery "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-006" "Malevolent Forces" TheTreacheryOfRhudaurNightmare 2) {cdShadowEffect = True}
+
+-- | Of the Decipher Ancient Texts encounter set, as its icon shows.
+lifeDrain :: CardDef
+lifeDrain =
+  (treachery "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-009" "Life Drain" TheTreacheryOfRhudaurNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+deathAndDecay :: CardDef
+deathAndDecay = (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-006" "Death and Decay" TheBattleOfCarnDumNightmare 3) {cdCardTraits = setFromList [Sorcery]}
+
+howlingOfWargs :: CardDef
+howlingOfWargs = (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-007" "Howling of Wargs" TheBattleOfCarnDumNightmare 2) {cdShadowEffect = True}
+
+blackMare :: CardDef
+blackMare =
+  unique
+    (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-008" "Black Mare" TheBattleOfCarnDumNightmare 1)
+      { cdCardTraits = setFromList [Mount]
+      , cdShadowEffect = True
+      }
+
+-- The Dread Realm Nightmare
+
+powerBeyondDeath :: CardDef
+powerBeyondDeath =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-006" "Power Beyond Death" TheDreadRealmNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+daechanarsCurse :: CardDef
+daechanarsCurse =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-007" "Daechanar's Curse" TheDreadRealmNightmare 3)
     { cdCardTraits = setFromList [Sorcery]
     , cdKeywords = setFromList [Surge]
     }
@@ -2020,5 +2106,11 @@ flameOfUdun =
   (treachery "shadow-and-flame-nightmare-shadow-and-flame-006" "Flame of Udûn" ShadowAndFlameNightmare 2)
     { cdCardTraits = setFromList [Attack]
     , cdWhenRevealed = False
+    }
+
+allIsLost :: CardDef
+allIsLost =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-008" "All is Lost" TheDreadRealmNightmare 2)
+    { cdCardTraits = setFromList [Sorcery]
     , cdShadowEffect = True
     }

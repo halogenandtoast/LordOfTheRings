@@ -206,6 +206,16 @@ import LordOfTheRings.Quest.Cards.ThroughTheMarshAnArduousJourney
 import LordOfTheRings.Quest.Cards.LostInTheSwanfleetDeadlyWaters
 import LordOfTheRings.Quest.Cards.GrimbeornsFolly
 import LordOfTheRings.Quest.Cards.AmbushInTheNight
+import LordOfTheRings.Quest.Cards.MakeAStand
+import LordOfTheRings.Quest.Cards.ForcedOffTrack
+import LordOfTheRings.Quest.Cards.RaidGolfimbulsVault
+import LordOfTheRings.Quest.Cards.IntoTheEttenmoorsNightmare
+import LordOfTheRings.Quest.Cards.Isolated
+import LordOfTheRings.Quest.Cards.RescueFromTheTrolls
+import LordOfTheRings.Quest.Cards.ProtectTheFlanks
+import LordOfTheRings.Quest.Cards.RallyTheFighters
+import LordOfTheRings.Quest.Cards.SeverTheHead
+import LordOfTheRings.Quest.Cards.TheWitchKingsGift
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -444,5 +454,15 @@ allQuests =
         , SomeQuestCard lostInTheSwanfleetDeadlyWaters
         , SomeQuestCard grimbeornsFolly
         , SomeQuestCard ambushInTheNight
+        , SomeQuestCard makeAStand
+        , SomeQuestCard forcedOffTrack
+        , SomeQuestCard raidGolfimbulsVault
+        , SomeQuestCard intoTheEttenmoorsNightmare
+        , SomeQuestCard isolated
+        , SomeQuestCard rescueFromTheTrolls
+        , SomeQuestCard protectTheFlanks
+        , SomeQuestCard rallyTheFighters
+        , SomeQuestCard severTheHead
+        , SomeQuestCard theWitchKingsGift
         ]
     ]

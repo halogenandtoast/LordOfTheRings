@@ -255,6 +255,16 @@ allQuestCards =
       , ghash
       , grimbeornsFolly
       , ambushInTheNight
+      , makeAStand
+      , forcedOffTrack
+      , raidGolfimbulsVault
+      , intoTheEttenmoorsNightmare
+      , isolated
+      , rescueFromTheTrolls
+      , protectTheFlanks
+      , rallyTheFighters
+      , severTheHead
+      , theWitchKingsGift
       ]
 
 theDrippingWalls :: CardDef
@@ -944,6 +954,21 @@ shadowTheWarParty =
 protectTheBreeLanders :: CardDef
 protectTheBreeLanders =
   (encounterSideQuest "the-lost-realm-nightmare-invaders-in-chetwood-010" "Protect the Bree-landers" IntrudersInChetwoodNightmare 10)
+
+-- The Wastes of Eriador Nightmare
+
+-- | No quest points: it leaves as its resource tokens say.
+makeAStand :: CardDef
+makeAStand =
+  (encounterSideQuest "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-007" "Make a Stand" TheWastesOfEriadorNightmare 0)
+    { cdQuestPoints = Nothing
+    , cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+forcedOffTrack :: CardDef
+forcedOffTrack =
+  (encounterSideQuest "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-008" "Forced Off Track" TheWastesOfEriadorNightmare 8)
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
@@ -1005,3 +1030,63 @@ grimbeornsFolly =
 -- | Road to Rivendell's nightmare stage 2, in place of Orc Outpost.
 ambushInTheNight :: CardDef
 ambushInTheNight = quest "road-to-rivendell-nightmare-road-to-rivendell-002" "Ambush in the Night" RoadToRivendellNightmare 2 12
+
+-- Escape from Mount Gram Nightmare
+
+raidGolfimbulsVault :: CardDef
+raidGolfimbulsVault =
+  (encounterSideQuest "escape-from-mount-gram-nightmare-escape-from-mount-gram-008" "Raid Golfimbul's Vault" EscapeFromMountGramNightmare 9)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge, Capture 3]
+    }
+
+-- Across the Ettenmoors Nightmare
+
+intoTheEttenmoorsNightmare :: CardDef
+intoTheEttenmoorsNightmare = quest "across-the-ettenmoors-nightmare-across-the-ettenmoors-002" "Into the Ettenmoors" AcrossTheEttenmoorsNightmare 1 10
+
+isolated :: CardDef
+isolated =
+  (encounterSideQuest "across-the-ettenmoors-nightmare-across-the-ettenmoors-010" "Isolated" AcrossTheEttenmoorsNightmare 7)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+rescueFromTheTrolls :: CardDef
+rescueFromTheTrolls =
+  (encounterSideQuest "across-the-ettenmoors-nightmare-across-the-ettenmoors-011" "Rescue from the Trolls" AcrossTheEttenmoorsNightmare 15)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+protectTheFlanks :: CardDef
+protectTheFlanks =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-009" "Protect the Flanks" TheBattleOfCarnDumNightmare 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Siege]
+    }
+
+rallyTheFighters :: CardDef
+rallyTheFighters =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-010" "Rally the Fighters" TheBattleOfCarnDumNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+severTheHead :: CardDef
+severTheHead =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-011" "Sever the Head" TheBattleOfCarnDumNightmare 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Battle]
+    }
+
+-- The Dread Realm Nightmare
+
+-- | No victory points: defeated, it goes to the encounter discard pile.
+theWitchKingsGift :: CardDef
+theWitchKingsGift =
+  (encounterSideQuest "the-dread-realm-nightmare-the-dread-realm-009" "The Witch-king's Gift" TheDreadRealmNightmare 8)
+    { cdKeywords = setFromList [Time 5]
+    }

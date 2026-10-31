@@ -401,6 +401,19 @@ allLocationCards =
       , shiveringRiver
       , fieryDepths
       , crumblingStairs
+      , shroudedWilderness
+      , snowyBadlands
+      , prisonCellNightmare
+      , tortureChamberMountGram
+      , rockyFoothills
+      , vastTrollFells
+      , forgottenCourtyard
+      , charredCellar
+      , secretAntechamber
+      , strongholdTower
+      , gatesOfCarnDum
+      , innerSanctum
+      , cursedHalls
       ]
 
 drownedTreasury :: CardDef
@@ -2644,6 +2657,12 @@ northernChetwood =
 outskirtsOfArchet :: CardDef
 outskirtsOfArchet =
   (location "the-lost-realm-nightmare-invaders-in-chetwood-005" "Outskirts of Archet" IntrudersInChetwoodNightmare 2 5 3)
+
+-- The Wastes of Eriador Nightmare
+
+shroudedWilderness :: CardDef
+shroudedWilderness =
+  (location "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-003" "Shrouded Wilderness" TheWastesOfEriadorNightmare 3 6 4)
     { cdCardTraits = setFromList [Arnor]
     , cdShadowEffect = True
     }
@@ -3042,5 +3061,95 @@ crumblingStairs :: CardDef
 crumblingStairs =
   (location "shadow-and-flame-nightmare-shadow-and-flame-010" "Crumbling Stairs" ShadowAndFlameNightmare 2 2 7)
     { cdCardTraits = setFromList [Underground]
+    }
+
+snowyBadlands :: CardDef
+snowyBadlands =
+  (location "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-004" "Snowy Badlands" TheWastesOfEriadorNightmare 3 3 5)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    }
+
+-- Escape from Mount Gram Nightmare
+
+prisonCellNightmare :: CardDef
+prisonCellNightmare =
+  (location "escape-from-mount-gram-nightmare-escape-from-mount-gram-004" "Prison Cell" EscapeFromMountGramNightmare 4 2 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | X quest points, twice the cards captured underneath it.
+tortureChamberMountGram :: CardDef
+tortureChamberMountGram =
+  (location "escape-from-mount-gram-nightmare-escape-from-mount-gram-005" "Torture Chamber" EscapeFromMountGramNightmare 2 0 0)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Capture 1, Surge]
+    }
+
+-- Across the Ettenmoors Nightmare
+
+rockyFoothills :: CardDef
+rockyFoothills =
+  (location "across-the-ettenmoors-nightmare-across-the-ettenmoors-006" "Rocky Foothills" AcrossTheEttenmoorsNightmare 2 2 2)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdShadowEffect = True
+    }
+
+vastTrollFells :: CardDef
+vastTrollFells =
+  (location "across-the-ettenmoors-nightmare-across-the-ettenmoors-007" "Vast Troll-fells" AcrossTheEttenmoorsNightmare 2 3 4)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdShadowEffect = True
+    }
+
+-- The Treachery of Rhudaur Nightmare
+
+forgottenCourtyard :: CardDef
+forgottenCourtyard =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-004" "Forgotten Courtyard" TheTreacheryOfRhudaurNightmare 2 1 6)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+charredCellar :: CardDef
+charredCellar =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-005" "Charred Cellar" TheTreacheryOfRhudaurNightmare 2 5 4)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+-- | Of the Sift through the Debris encounter set, as its icon shows (cards.json has it as
+-- a treachery; the card is a location).
+secretAntechamber :: CardDef
+secretAntechamber =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-008" "Secret Antechamber" TheTreacheryOfRhudaurNightmare 3 2 5)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+strongholdTower :: CardDef
+strongholdTower =
+  (location "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-004" "Stronghold Tower" TheBattleOfCarnDumNightmare 3 3 4)
+    { cdCardTraits = setFromList [CarnDum]
+    }
+
+gatesOfCarnDum :: CardDef
+gatesOfCarnDum =
+  (location "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-005" "Gates of Carn Dûm" TheBattleOfCarnDumNightmare 2 5 2)
+    { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
+    }
+
+-- The Dread Realm Nightmare
+
+innerSanctum :: CardDef
+innerSanctum =
+  (location "the-dread-realm-nightmare-the-dread-realm-004" "Inner Sanctum" TheDreadRealmNightmare 2 6 4)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    }
+
+cursedHalls :: CardDef
+cursedHalls =
+  (location "the-dread-realm-nightmare-the-dread-realm-005" "Cursed Halls" TheDreadRealmNightmare 3 3 5)
+    { cdCardTraits = setFromList [CarnDum, Underground]
     , cdShadowEffect = True
     }
