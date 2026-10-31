@@ -761,7 +761,11 @@ runGameMessage msg g = case msg of
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
     mods <- getModifiers target
-    let healed = foldr min (min n damage) [k | HealLimit k <- mods]
+    -- ponytail: only an objective source is told apart by its card, as Athelas
+    let from = case source of
+          ObjectiveSource oid -> toCardCode <$> Map.lookup oid g.entities.objectives
+          _ -> Nothing
+        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= Just code]
     when (healed > 0 && CannotBeHealed `notElem` mods)
       $ pushAll [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
     pure g
@@ -3228,7 +3232,9 @@ mayAttack' pid eid = do
   mods <- getModifiers eid
   others <- if engaged then filter (\p -> p /= pid && CannotBeAttackedByCharactersOf p `notElem` mods) <$> getPlayerOrder else pure []
   ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
-  pure $ own <> ranged
+  -- none with a keyword it bars, as Pitch-dark Thicket's shadow bars ranged
+  let barred = [k | CannotBeAttackedByKeyword k <- mods]
+  filterM (\c -> characterCardDef c >>= \def -> not <$> anyM (\k -> hasKeyword k c def) barred) (own <> ranged)
 
 -- | An action window for each player, in turn order, asked only of those with an action.
 actionWindows :: GameT [Message]
