@@ -211,6 +211,12 @@ import LordOfTheRings.Treachery.Cards.SmokingBlood
 import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
+import LordOfTheRings.Treachery.Cards.BrutalAssault
+import LordOfTheRings.Treachery.Cards.MugashsCunning
+import LordOfTheRings.Treachery.Cards.PatrollingOrcs
+import LordOfTheRings.Treachery.Cards.MugashsRage
+import LordOfTheRings.Treachery.Cards.StiflingWoods
+import LordOfTheRings.Treachery.Cards.FangornsAnger
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -446,5 +452,11 @@ allTreacherys =
         , SomeTreacheryCard sentinelOfShadow
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
+        , SomeTreacheryCard brutalAssault
+        , SomeTreacheryCard mugashsCunning
+        , SomeTreacheryCard patrollingOrcs
+        , SomeTreacheryCard mugashsRage
+        , SomeTreacheryCard stiflingWoods
+        , SomeTreacheryCard fangornsAnger
         ]
     ]

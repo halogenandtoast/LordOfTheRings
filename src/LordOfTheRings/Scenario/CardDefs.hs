@@ -16,6 +16,9 @@ allNightmareCards =
       [ passageThroughMirkwoodNightmare
       , journeyAlongTheAnduinNightmare
       , escapeFromDolGuldurNightmare
+      , theFordsOfIsenNightmare
+      , toCatchAnOrcNightmare
+      , intoFangornNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -26,3 +29,12 @@ journeyAlongTheAnduinNightmare = nightmareSetup "core-set-nightmare-journey-alon
 
 escapeFromDolGuldurNightmare :: CardDef
 escapeFromDolGuldurNightmare = nightmareSetup "core-set-nightmare-escape-from-dol-guldur-001" "Escape from Dol Guldur" EscapeFromDolGuldurNightmare
+
+theFordsOfIsenNightmare :: CardDef
+theFordsOfIsenNightmare = nightmareSetup "the-voice-of-isengard-nightmare-the-fords-of-isen-001" "The Fords of Isen" TheFordsOfIsenNightmare
+
+toCatchAnOrcNightmare :: CardDef
+toCatchAnOrcNightmare = nightmareSetup "the-voice-of-isengard-nightmare-to-catch-an-orc-001" "To Catch an Orc" ToCatchAnOrcNightmare
+
+intoFangornNightmare :: CardDef
+intoFangornNightmare = nightmareSetup "the-voice-of-isengard-nightmare-into-fangorn-001" "Into Fangorn" IntoFangornNightmare

@@ -283,6 +283,14 @@ allLocationCards =
       , streetsOfUmbar
       , cityOfCorsairs
       , umbarHarbor
+      , westernShore
+      , easternShore
+      , isenRiver
+      , methedrasPeak
+      , orcTrail
+      , tangledForest
+      , entwood
+      , darkCornerOfFangorn
       ]
 
 drownedTreasury :: CardDef
@@ -2111,4 +2119,56 @@ dungeonLabyrinth :: CardDef
 dungeonLabyrinth =
   (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
     { cdCardTraits = setFromList [DolGuldur]
+    }
+
+-- The Voice of Isengard Nightmare Decks
+
+westernShore :: CardDef
+westernShore =
+  (location "the-voice-of-isengard-nightmare-the-fords-of-isen-005" "Western Shore" TheFordsOfIsenNightmare 3 0 4)
+    { cdCardTraits = setFromList [River, Valley]
+    , cdShadowEffect = True
+    }
+
+easternShore :: CardDef
+easternShore =
+  (location "the-voice-of-isengard-nightmare-the-fords-of-isen-006" "Eastern Shore" TheFordsOfIsenNightmare 3 3 4)
+    { cdCardTraits = setFromList [River, Valley]
+    , cdShadowEffect = True
+    }
+
+isenRiver :: CardDef
+isenRiver =
+  (location "the-voice-of-isengard-nightmare-the-fords-of-isen-007" "Isen River" TheFordsOfIsenNightmare 3 2 5)
+    { cdCardTraits = setFromList [River]
+    }
+
+methedrasPeak :: CardDef
+methedrasPeak =
+  (location "the-voice-of-isengard-nightmare-to-catch-an-orc-005" "Methedras Peak" ToCatchAnOrcNightmare 2 0 5)
+    { cdCardTraits = setFromList [Mountain]
+    }
+
+orcTrail :: CardDef
+orcTrail =
+  (location "the-voice-of-isengard-nightmare-to-catch-an-orc-006" "Orc Trail" ToCatchAnOrcNightmare 2 4 2)
+    { cdCardTraits = setFromList [Mountain]
+    }
+
+tangledForest :: CardDef
+tangledForest =
+  (location "the-voice-of-isengard-nightmare-into-fangorn-005" "Tangled Forest" IntoFangornNightmare 3 2 6)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+entwood :: CardDef
+entwood =
+  (location "the-voice-of-isengard-nightmare-into-fangorn-006" "Entwood" IntoFangornNightmare 3 3 4)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+darkCornerOfFangorn :: CardDef
+darkCornerOfFangorn =
+  (location "the-voice-of-isengard-nightmare-into-fangorn-007" "Dark Corner of Fangorn" IntoFangornNightmare 2 3 5)
+    { cdCardTraits = setFromList [Forest]
     }

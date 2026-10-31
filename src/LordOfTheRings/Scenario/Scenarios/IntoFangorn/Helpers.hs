@@ -2,13 +2,16 @@
 module LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers (
   huorn,
   mugashOnHero,
+  mugashHost,
+  canDefeatStage,
   shuffleMugashIntoEncounterDeck,
   searchForHuornEngaged,
   revealFromDiscard,
 ) where
 
 import LordOfTheRings.Card (CardType (EnemyType), toCardCode)
-import LordOfTheRings.Classes.Entity (toId)
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Id (PlayerId)
@@ -19,6 +22,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Target (Target (HeroTarget))
 import LordOfTheRings.Trait (Trait (Huorn))
 
@@ -36,6 +40,22 @@ mugashOnHero =
   mugash <&> \case
     Just o | AttachedTo (HeroTarget _) <- o.placement -> True
     _ -> False
+
+-- | The hero Mugash is attached to.
+mugashHost :: HasGame m => m (Maybe Target)
+mugashHost =
+  mugash <&> \case
+    Just o | AttachedTo host@(HeroTarget _) <- o.placement -> Just host
+    _ -> Nothing
+
+{- | Stages 1B and 2B cannot be defeated unless Mugash is attached to a hero; in Nightmare
+mode, nor unless Edge of Fangorn is in the victory display, as the setup card reads.
+-}
+canDefeatStage :: HasGame m => m Bool
+canDefeatStage = do
+  nightmare <- inNightmareMode
+  edge <- getsGame (any ((== toCardCode Locations.edgeOfFangorn) . toCardCode) . (.victoryDisplay) . toAttrs . (.scenario))
+  (&& (edge || not nightmare)) <$> mugashOnHero
 
 -- | "Shuffle Mugash into the encounter deck", from play or the encounter discard pile.
 shuffleMugashIntoEncounterDeck :: ReverseQueue m => m ()

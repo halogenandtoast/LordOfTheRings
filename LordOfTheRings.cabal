@@ -396,6 +396,7 @@ library
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
       LordOfTheRings.Enemy.Cards.BlackNumenorean
       LordOfTheRings.Enemy.Cards.BlackUruks
+      LordOfTheRings.Enemy.Cards.BlockingHuorn
       LordOfTheRings.Enemy.Cards.BloodThirstyWarg
       LordOfTheRings.Enemy.Cards.BoarClanStalker
       LordOfTheRings.Enemy.Cards.BoarClanWarrior
@@ -443,6 +444,7 @@ library
       LordOfTheRings.Enemy.Cards.DruBuriDru
       LordOfTheRings.Enemy.Cards.DungeonGuard
       LordOfTheRings.Enemy.Cards.DungeonJailor
+      LordOfTheRings.Enemy.Cards.DunlandAssassin
       LordOfTheRings.Enemy.Cards.DunlandBerserker
       LordOfTheRings.Enemy.Cards.DunlandChieftain
       LordOfTheRings.Enemy.Cards.DunlandProwler
@@ -479,6 +481,7 @@ library
       LordOfTheRings.Enemy.Cards.GraspingArm
       LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.GreatCaveTroll
+      LordOfTheRings.Enemy.Cards.GuardWarg
       LordOfTheRings.Enemy.Cards.HaradrimElite
       LordOfTheRings.Enemy.Cards.HarborThug
       LordOfTheRings.Enemy.Cards.HeavyCruiser
@@ -486,6 +489,7 @@ library
       LordOfTheRings.Enemy.Cards.Hummerhorns
       LordOfTheRings.Enemy.Cards.HuntersFromMordor
       LordOfTheRings.Enemy.Cards.HuntingPack
+      LordOfTheRings.Enemy.Cards.HuornOfFangorn
       LordOfTheRings.Enemy.Cards.IslandWatcher
       LordOfTheRings.Enemy.Cards.JailorGornakh
       LordOfTheRings.Enemy.Cards.KingSpider
@@ -497,6 +501,7 @@ library
       LordOfTheRings.Enemy.Cards.MaraudingOrc
       LordOfTheRings.Enemy.Cards.MarshAdder
       LordOfTheRings.Enemy.Cards.MarshlandOutlaws
+      LordOfTheRings.Enemy.Cards.MethedrasLookout
       LordOfTheRings.Enemy.Cards.MethedrasOrc
       LordOfTheRings.Enemy.Cards.MirkwoodBats
       LordOfTheRings.Enemy.Cards.MirkwoodFlock
@@ -557,6 +562,7 @@ library
       LordOfTheRings.Enemy.Cards.RuthlessHillTroll
       LordOfTheRings.Enemy.Cards.SahirsEscort
       LordOfTheRings.Enemy.Cards.SahirsRavager
+      LordOfTheRings.Enemy.Cards.SavageHillman
       LordOfTheRings.Enemy.Cards.SavageTrollspawn
       LordOfTheRings.Enemy.Cards.ScoutingShip
       LordOfTheRings.Enemy.Cards.SeaScorpion
@@ -608,10 +614,13 @@ library
       LordOfTheRings.Enemy.Cards.UngoliantsSwarm
       LordOfTheRings.Enemy.Cards.UrukLieutenant
       LordOfTheRings.Enemy.Cards.UrukSoldier
+      LordOfTheRings.Enemy.Cards.VengefulHillman
       LordOfTheRings.Enemy.Cards.ViciousMarauder
+      LordOfTheRings.Enemy.Cards.VigilantOrc
       LordOfTheRings.Enemy.Cards.Wargs
       LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
       LordOfTheRings.Enemy.Cards.WhiteWarg
+      LordOfTheRings.Enemy.Cards.WickedHuorn
       LordOfTheRings.Enemy.Cards.WightOfRhudaur
       LordOfTheRings.Enemy.Cards.WildBear
       LordOfTheRings.Enemy.Cards.WitchOfAngmar
@@ -934,6 +943,7 @@ library
       LordOfTheRings.Location.Cards.CursedForest
       LordOfTheRings.Location.Cards.CursedTemple
       LordOfTheRings.Location.Cards.DarkAbyss
+      LordOfTheRings.Location.Cards.DarkCornerOfFangorn
       LordOfTheRings.Location.Cards.DarkHalls
       LordOfTheRings.Location.Cards.DarkPit
       LordOfTheRings.Location.Cards.DeadmensGate
@@ -949,6 +959,7 @@ library
       LordOfTheRings.Location.Cards.DungeonLabyrinth
       LordOfTheRings.Location.Cards.DunlandBattlefield
       LordOfTheRings.Location.Cards.DwarvenForge
+      LordOfTheRings.Location.Cards.EasternShore
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
       LordOfTheRings.Location.Cards.EdgeOfFangorn
@@ -957,6 +968,7 @@ library
       LordOfTheRings.Location.Cards.ElvenWaveRunner
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
+      LordOfTheRings.Location.Cards.Entwood
       LordOfTheRings.Location.Cards.EriadorWastes
       LordOfTheRings.Location.Cards.ExposedRidge
       LordOfTheRings.Location.Cards.Fanuidhol
@@ -1001,6 +1013,7 @@ library
       LordOfTheRings.Location.Cards.HithaeglirStream
       LordOfTheRings.Location.Cards.HousesOfTheDead
       LordOfTheRings.Location.Cards.ImpassableBog
+      LordOfTheRings.Location.Cards.IsenRiver
       LordOfTheRings.Location.Cards.IthilienRoad
       LordOfTheRings.Location.Cards.IthilienRoads
       LordOfTheRings.Location.Cards.JaggedCliffs
@@ -1013,6 +1026,7 @@ library
       LordOfTheRings.Location.Cards.MakeshiftPassage
       LordOfTheRings.Location.Cards.MarketSquare
       LordOfTheRings.Location.Cards.Methedras
+      LordOfTheRings.Location.Cards.MethedrasPeak
       LordOfTheRings.Location.Cards.MithlondHarbor
       LordOfTheRings.Location.Cards.MithrilLode
       LordOfTheRings.Location.Cards.MorgulRoad
@@ -1028,6 +1042,7 @@ library
       LordOfTheRings.Location.Cards.OldForestRoad
       LordOfTheRings.Location.Cards.OldSouthRoad
       LordOfTheRings.Location.Cards.OrcCave
+      LordOfTheRings.Location.Cards.OrcTrail
       LordOfTheRings.Location.Cards.OrcWarCamp
       LordOfTheRings.Location.Cards.OutlyingHomestead
       LordOfTheRings.Location.Cards.OvergrownTrail
@@ -1087,6 +1102,7 @@ library
       LordOfTheRings.Location.Cards.StreetsOfTharbad
       LordOfTheRings.Location.Cards.StreetsOfUmbar
       LordOfTheRings.Location.Cards.SunkenTemple
+      LordOfTheRings.Location.Cards.TangledForest
       LordOfTheRings.Location.Cards.TangledWoods
       LordOfTheRings.Location.Cards.TempleHalls
       LordOfTheRings.Location.Cards.TempleOfTheDeceived
@@ -1146,6 +1162,7 @@ library
       LordOfTheRings.Location.Cards.Waterspout
       LordOfTheRings.Location.Cards.WeatherDeck
       LordOfTheRings.Location.Cards.WeatheredHilltop
+      LordOfTheRings.Location.Cards.WesternShore
       LordOfTheRings.Location.Cards.WestGate
       LordOfTheRings.Location.Cards.WestQuarter
       LordOfTheRings.Location.Cards.WhiteShip
@@ -1556,6 +1573,7 @@ library
       LordOfTheRings.Treachery.Cards.BitterWind
       LordOfTheRings.Treachery.Cards.BlockingWargs
       LordOfTheRings.Treachery.Cards.BoardingParty
+      LordOfTheRings.Treachery.Cards.BrutalAssault
       LordOfTheRings.Treachery.Cards.BurningLow
       LordOfTheRings.Treachery.Cards.BurntHomestead
       LordOfTheRings.Treachery.Cards.CaptivesOfGornakh
@@ -1599,6 +1617,7 @@ library
       LordOfTheRings.Treachery.Cards.FallenStones
       LordOfTheRings.Treachery.Cards.FalseLead
       LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
+      LordOfTheRings.Treachery.Cards.FangornsAnger
       LordOfTheRings.Treachery.Cards.Fatigue
       LordOfTheRings.Treachery.Cards.FeebleAndWeary
       LordOfTheRings.Treachery.Cards.FellVoices
@@ -1654,6 +1673,8 @@ library
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.MenInTheDark
       LordOfTheRings.Treachery.Cards.MordorLooms
+      LordOfTheRings.Treachery.Cards.MugashsCunning
+      LordOfTheRings.Treachery.Cards.MugashsRage
       LordOfTheRings.Treachery.Cards.MysteriousFog
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
@@ -1666,6 +1687,7 @@ library
       LordOfTheRings.Treachery.Cards.OrcHuntingParty
       LordOfTheRings.Treachery.Cards.OrcTerritory
       LordOfTheRings.Treachery.Cards.Panicked
+      LordOfTheRings.Treachery.Cards.PatrollingOrcs
       LordOfTheRings.Treachery.Cards.PillagingAndBurning
       LordOfTheRings.Treachery.Cards.PinnedDown
       LordOfTheRings.Treachery.Cards.Possession
@@ -1699,6 +1721,7 @@ library
       LordOfTheRings.Treachery.Cards.SouthronSupport
       LordOfTheRings.Treachery.Cards.SpiesFromMordor
       LordOfTheRings.Treachery.Cards.StarsInSky
+      LordOfTheRings.Treachery.Cards.StiflingWoods
       LordOfTheRings.Treachery.Cards.StreetFighting
       LordOfTheRings.Treachery.Cards.SuddenAssault
       LordOfTheRings.Treachery.Cards.SuddenDarkness
@@ -2002,6 +2025,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
+      LordOfTheRings.VoiceOfIsengard.NightmareSpec
       LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec
       LordOfTheRings.VoiceOfIsengard.SharedEncounterSetsSpec
       LordOfTheRings.VoiceOfIsengard.TheFordsOfIsenSpec

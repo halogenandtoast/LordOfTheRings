@@ -1585,5 +1585,26 @@
   },
   "smokingBlood": {
     "moveDamage": "Choose the character to take the enemy's damage"
+  },
+  "methedrasLookout": {
+    "choose": "Methedras Lookout: exhaust a character you control, or return the attacking enemy to the staging area",
+    "exhaust": "Exhaust a character you control",
+    "return": "Return the attacking enemy to the staging area"
+  },
+  "orcTrail": {
+    "choose": "Orc Trail: choose an out-of-play Orc enemy to add to the staging area"
+  },
+  "patrollingOrcs": {
+    "choose": "Patrolling Orcs: exhaust a character you control, or remove 1 time counter from the current quest",
+    "exhaust": "Exhaust a character you control",
+    "timeCounter": "Remove 1 time counter from the current quest"
+  },
+  "entwood": {
+    "engage": "Entwood: choose the Huorn enemy to engage"
+  },
+  "stiflingWoods": {
+    "choose": "Stifling Woods: remove 6 progress or 1 time counter from the current quest",
+    "progress": "Remove 6 progress from the current quest",
+    "timeCounter": "Remove 1 time counter from the current quest"
   }
 }

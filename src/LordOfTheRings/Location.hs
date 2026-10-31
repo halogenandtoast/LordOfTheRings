@@ -271,6 +271,14 @@ import LordOfTheRings.Location.Cards.AFloodedFord
 import LordOfTheRings.Location.Cards.GladdenMarshlands
 import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
+import LordOfTheRings.Location.Cards.WesternShore
+import LordOfTheRings.Location.Cards.EasternShore
+import LordOfTheRings.Location.Cards.IsenRiver
+import LordOfTheRings.Location.Cards.MethedrasPeak
+import LordOfTheRings.Location.Cards.OrcTrail
+import LordOfTheRings.Location.Cards.TangledForest
+import LordOfTheRings.Location.Cards.Entwood
+import LordOfTheRings.Location.Cards.DarkCornerOfFangorn
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -583,5 +591,13 @@ allLocations =
         , SomeLocationCard gladdenMarshlands
         , SomeLocationCard tortureChamber
         , SomeLocationCard dungeonLabyrinth
+        , SomeLocationCard westernShore
+        , SomeLocationCard easternShore
+        , SomeLocationCard isenRiver
+        , SomeLocationCard methedrasPeak
+        , SomeLocationCard orcTrail
+        , SomeLocationCard tangledForest
+        , SomeLocationCard entwood
+        , SomeLocationCard darkCornerOfFangorn
         ]
     ]
