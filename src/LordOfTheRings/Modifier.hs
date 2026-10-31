@@ -540,6 +540,22 @@ data ModifierType
   | -- | on an enemy: damage dealt to it other than by an attack is canceled, as Dunlending Horde
     -- reads
     CannotTakeNonCombatDamage
+  | -- | on an enemy: its defense cannot be reduced, as Rupert's in nightmare mode
+    CannotHaveDefenseReduced
+  | -- | on a character: it loses the trait, as Shot from the Sky takes the Eagle trait
+    LoseTrait Trait
+  | -- | on a character: an effect of any card but the one with this code heals it of no
+    -- more than this, as Noxious Supplies reads for Athelas
+    HealLimitExceptFrom Int CardCode
+  | -- | on an enemy: characters with the keyword cannot attack it, as Pitch-dark
+    -- Thicket's shadow reads for ranged
+    CannotBeAttackedByKeyword Keyword
+  | -- | on the game: each escape test's dealt cards come to this much more, once, as
+    -- Stagnant Quagmire adds its Escape value
+    EscapeTestBonus Int
+  | -- | on a player: he commits no more than this many characters to each escape test,
+    -- as Ill-fated Guard reads
+    EscapeTestCommitLimit Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

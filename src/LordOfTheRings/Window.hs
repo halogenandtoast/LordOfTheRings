@@ -157,6 +157,8 @@ data WindowType
     DiscardedFromOutOfPlayDeck PlayerId
   | -- | the players bypassed the quest card, as Flight from Moria's stages let them
     QuestBypassed Target
+  | -- | the character was committed to an escape test, as Things in the Pools answers
+    CommittedToEscapeTest Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

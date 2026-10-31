@@ -770,7 +770,11 @@ runGameMessage msg g = case msg of
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
     mods <- getModifiers target
-    let healed = foldr min (min n damage) [k | HealLimit k <- mods]
+    -- ponytail: only an objective source is told apart by its card, as Athelas
+    let from = case source of
+          ObjectiveSource oid -> toCardCode <$> Map.lookup oid g.entities.objectives
+          _ -> Nothing
+        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= Just code]
     when (healed > 0 && CannotBeHealed `notElem` mods)
       $ pushAll [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
     pure g
@@ -2159,6 +2163,10 @@ runGameMessage msg g = case msg of
   PutLocationIntoPlay card placement -> do
     thisLocation <- newLocation card
     pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = placement}) thisLocation)
+  PutObjectiveIntoPlayGuardedBy card cid -> do
+    thisObjective <- newObjective card
+    pushAll [SetObjectiveGuard (toId thisObjective) cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]]
+    pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   PutObjectiveIntoPlayAttached card host -> do
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
@@ -2311,18 +2319,25 @@ runGameMessage msg g = case msg of
         pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard o :))
   MakeEscapeTest t -> do
     order <- getPlayerOrder
+    own <- charactersControlledBy t.escapePlayer
+    limits <- (\ms -> [k | EscapeTestCommitLimit k <- ms]) <$> getModifiers t.escapePlayer
+    -- one with a limit, as Ill-fated Guard sets, commits no more once he has reached it
+    let full = any (<= length (filter (`elem` own) t.escapeCommitted)) limits
     ready <-
-      filter (`notElem` t.escapeCommitted)
-        <$> selectCharacters
-          (HeroControlledBy (PlayerWithId t.escapePlayer) <> ReadyHero)
-          (AllyControlledBy (PlayerWithId t.escapePlayer) <> ReadyAlly)
+      if full
+        then pure []
+        else
+          filter (`notElem` t.escapeCommitted)
+            <$> selectCharacters
+              (HeroControlledBy (PlayerWithId t.escapePlayer) <> ReadyHero)
+              (AllyControlledBy (PlayerWithId t.escapePlayer) <> ReadyAlly)
     push
       $ questionLabelWith
         (ikey "label.escapeTest")
         (sourceTarget t.escapeSource)
         t.escapeCommitted
         t.escapePlayer
-      $ [ targetLabel c [Exhaust c, MakeEscapeTest t {escapeCommitted = t.escapeCommitted <> [c]}]
+      $ [ targetLabel c [Exhaust c, CheckWindows [mkAfter $ CommittedToEscapeTest c], MakeEscapeTest t {escapeCommitted = t.escapeCommitted <> [c]}]
         | c <- ready
         ]
       <> [ Label (ikey "label.doneCommittingToEscape") $ case t.escapeParty of
@@ -3281,6 +3296,10 @@ mayAttack' pid eid = do
   others <- if engaged then filter (\p -> p /= pid && CannotBeAttackedByCharactersOf p `notElem` mods) <$> getPlayerOrder else pure []
   ranged <- filterM (canAttack eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
   pure $ own <> ranged
+  ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
+  -- none with a keyword it bars, as Pitch-dark Thicket's shadow bars ranged
+  let barred = [k | CannotBeAttackedByKeyword k <- mods]
+  filterM (\c -> characterCardDef c >>= \def -> not <$> anyM (\k -> hasKeyword k c def) barred) (own <> ranged)
 
 -- | An action window for each player, in turn order, asked only of those with an action.
 actionWindows :: GameT [Message]

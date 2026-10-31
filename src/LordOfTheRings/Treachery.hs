@@ -267,6 +267,22 @@ import LordOfTheRings.Treachery.Cards.Grappled
 import LordOfTheRings.Treachery.Cards.InspiringFury
 import LordOfTheRings.Treachery.Cards.RaiseTheAlarm
 import LordOfTheRings.Treachery.Cards.SlaveTrade
+import LordOfTheRings.Treachery.Cards.TheEnemysTrail
+import LordOfTheRings.Treachery.Cards.RestlessHunters
+import LordOfTheRings.Treachery.Cards.TheTrailGoesCold
+import LordOfTheRings.Treachery.Cards.TimeForSupper
+import LordOfTheRings.Treachery.Cards.ShotFromTheSky
+import LordOfTheRings.Treachery.Cards.NoxiousSupplies
+import LordOfTheRings.Treachery.Cards.AHurryingDarkness
+import LordOfTheRings.Treachery.Cards.BlastOfSavageWind
+import LordOfTheRings.Treachery.Cards.HazardousTerrain
+import LordOfTheRings.Treachery.Cards.RetracedSteps
+import LordOfTheRings.Treachery.Cards.CandlesOfCorpses
+import LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
+import LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
+import LordOfTheRings.Treachery.Cards.Isolation
+import LordOfTheRings.Treachery.Cards.BefouledEquipment
+import LordOfTheRings.Treachery.Cards.WickednessAndMischief
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -558,5 +574,21 @@ allTreacherys =
         , SomeTreacheryCard inspiringFury
         , SomeTreacheryCard raiseTheAlarm
         , SomeTreacheryCard slaveTrade
+        , SomeTreacheryCard theEnemysTrail
+        , SomeTreacheryCard restlessHunters
+        , SomeTreacheryCard theTrailGoesCold
+        , SomeTreacheryCard timeForSupper
+        , SomeTreacheryCard shotFromTheSky
+        , SomeTreacheryCard noxiousSupplies
+        , SomeTreacheryCard aHurryingDarkness
+        , SomeTreacheryCard blastOfSavageWind
+        , SomeTreacheryCard hazardousTerrain
+        , SomeTreacheryCard retracedSteps
+        , SomeTreacheryCard candlesOfCorpses
+        , SomeTreacheryCard swarmingMosquitoes
+        , SomeTreacheryCard devilryOfTheDarkLand
+        , SomeTreacheryCard isolation
+        , SomeTreacheryCard befouledEquipment
+        , SomeTreacheryCard wickednessAndMischief
         ]
     ]

@@ -4,6 +4,7 @@ import LordOfTheRings.Prelude
 
 data EncounterSet
   = AJourneyToRhosgobel
+  | AJourneyToRhosgobelNightmare
   | AStormOnCobasHaven
   | AStormOnCobasHavenNightmare
   | AcrossTheEttenmoors
@@ -16,6 +17,7 @@ data EncounterSet
   | CelebrimborsSecret
   | CelebrimborsSecretNightmare
   | ConflictAtTheCarrock
+  | ConflictAtTheCarrockNightmare
   | CoastOfUmbar
   | CoastOfUmbarNightmare
   | CorsairPirates
@@ -67,6 +69,7 @@ data EncounterSet
   | RaidOnTheGreyHavensNightmare
   | RavagingOrcs
   | ReturnToMirkwood
+  | ReturnToMirkwoodNightmare
   | RoadToRivendell
   | RuinsOfArnor
   | RuinsOfNumenor
@@ -85,6 +88,7 @@ data EncounterSet
   | TheCityOfCorsairs
   | TheCityOfCorsairsNightmare
   | TheDeadMarshes
+  | TheDeadMarshesNightmare
   | TheDreadRealm
   | TheDreamChasersFleet
   | TheDrownedRuins
@@ -97,7 +101,9 @@ data EncounterSet
   | TheFordsOfIsen
   | TheFordsOfIsenNightmare
   | TheHillsOfEmynMuil
+  | TheHillsOfEmynMuilNightmare
   | TheHuntForGollum
+  | TheHuntForGollumNightmare
   | TheLongDark
   | TheLostRealm
   | TheMorgulVale

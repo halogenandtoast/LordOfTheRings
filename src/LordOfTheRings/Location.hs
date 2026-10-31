@@ -341,6 +341,20 @@ import LordOfTheRings.Location.Cards.SeaWall
 import LordOfTheRings.Location.Cards.WarTornWaters
 import LordOfTheRings.Location.Cards.WallsOfUmbar
 import LordOfTheRings.Location.Cards.UmbarBridge
+import LordOfTheRings.Location.Cards.WatchedPath
+import LordOfTheRings.Location.Cards.HuntersLookout
+import LordOfTheRings.Location.Cards.DarkPools
+import LordOfTheRings.Location.Cards.TrollLair
+import LordOfTheRings.Location.Cards.HivesAndHives
+import LordOfTheRings.Location.Cards.DarkWoodGrove
+import LordOfTheRings.Location.Cards.LabyrinthineWoods
+import LordOfTheRings.Location.Cards.PitchDarkThicket
+import LordOfTheRings.Location.Cards.BramblesAndThorns
+import LordOfTheRings.Location.Cards.SarnGebirRapids
+import LordOfTheRings.Location.Cards.TheMereOfDeadFaces
+import LordOfTheRings.Location.Cards.StagnantQuagmire
+import LordOfTheRings.Location.Cards.DeceptivePath
+import LordOfTheRings.Location.Cards.WebWall
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -728,5 +742,19 @@ allLocations =
         , SomeLocationCard warTornWaters
         , SomeLocationCard wallsOfUmbar
         , SomeLocationCard umbarBridge
+        , SomeLocationCard watchedPath
+        , SomeLocationCard huntersLookout
+        , SomeLocationCard darkPools
+        , SomeLocationCard trollLair
+        , SomeLocationCard hivesAndHives
+        , SomeLocationCard darkWoodGrove
+        , SomeLocationCard labyrinthineWoods
+        , SomeLocationCard pitchDarkThicket
+        , SomeLocationCard bramblesAndThorns
+        , SomeLocationCard sarnGebirRapids
+        , SomeLocationCard theMereOfDeadFaces
+        , SomeLocationCard stagnantQuagmire
+        , SomeLocationCard deceptivePath
+        , SomeLocationCard webWall
         ]
     ]

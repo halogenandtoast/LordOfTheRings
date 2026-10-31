@@ -710,6 +710,11 @@ moveAttachment aid = push . AttachCard aid . toTarget
 putObjectiveIntoPlayAttached :: (ReverseQueue m, Targetable host) => EncounterCard -> host -> m ()
 putObjectiveIntoPlayAttached card = push . PutObjectiveIntoPlayAttached card . toTarget
 
+-- | An objective card, taken from where it was, comes into the staging area guarded by the
+-- card, as "attach it to a Mordor enemy" reads of a Clue card.
+putObjectiveIntoPlayGuardedBy :: ReverseQueue m => EncounterCard -> CardId -> m ()
+putObjectiveIntoPlayGuardedBy card = push . PutObjectiveIntoPlayGuardedBy card
+
 -- | The card leaves play for good: an objective or a location.
 removeFromGame :: (ReverseQueue m, Targetable target) => target -> m ()
 removeFromGame = push . RemoveFromGame . toTarget

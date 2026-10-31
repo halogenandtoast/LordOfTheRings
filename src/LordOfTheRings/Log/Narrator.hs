@@ -219,6 +219,7 @@ narrationFor = \case
     pure [mechanic [ikeyPart "log.discardedFromEncounterDeck" ["cards" ~> map EncounterCard top]] | notNull top]
   TriggerLostEffects _ -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.lostEffects" []]
   PutObjectiveIntoPlay card -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
+  PutObjectiveIntoPlayGuardedBy card _ -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.orcGuardEngages" ["player" ~> who]]

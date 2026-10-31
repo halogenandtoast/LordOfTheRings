@@ -36,6 +36,7 @@ data Trait
   | Corrupt
   | Corsair
   | Craftsman
+  | Corruption
   | Creature
   | Cursed
   | Dale
@@ -164,6 +165,8 @@ data Trait
   | Weather
   | Werewolf
   | Wight
+  | -- | the Wilderlands trait, named apart from the encounter set
+    WilderlandsTrait
   | Wolf
   | Woodman
   | Wose

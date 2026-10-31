@@ -317,6 +317,25 @@ import LordOfTheRings.Enemy.Cards.FangOfSahir
 import LordOfTheRings.Enemy.Cards.PatrolShip
 import LordOfTheRings.Enemy.Cards.CorsairLoyalist
 import LordOfTheRings.Enemy.Cards.UmbarPatrolNightmare
+import LordOfTheRings.Enemy.Cards.RavenousHawk
+import LordOfTheRings.Enemy.Cards.HuntingWarg
+import LordOfTheRings.Enemy.Cards.SavageHillTroll
+import LordOfTheRings.Enemy.Cards.RobAndBob
+import LordOfTheRings.Enemy.Cards.LouisNightmare
+import LordOfTheRings.Enemy.Cards.MorrisNightmare
+import LordOfTheRings.Enemy.Cards.RupertNightmare
+import LordOfTheRings.Enemy.Cards.StuartNightmare
+import LordOfTheRings.Enemy.Cards.GoblinEagleHunter
+import LordOfTheRings.Enemy.Cards.TreetopBirdEater
+import LordOfTheRings.Enemy.Cards.TunnelingNamelessThing
+import LordOfTheRings.Enemy.Cards.OrcInterceptor
+import LordOfTheRings.Enemy.Cards.ThingsInThePools
+import LordOfTheRings.Enemy.Cards.MarshWight
+import LordOfTheRings.Enemy.Cards.LostSoulOfLorien
+import LordOfTheRings.Enemy.Cards.IllFatedGuard
+import LordOfTheRings.Enemy.Cards.AmbushingOrcs
+import LordOfTheRings.Enemy.Cards.PursuingWargRider
+import LordOfTheRings.Enemy.Cards.WebSpinner
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -659,5 +678,24 @@ allEnemys =
         , SomeEnemyCard patrolShip
         , SomeEnemyCard corsairLoyalist
         , SomeEnemyCard umbarPatrolNightmare
+        , SomeEnemyCard ravenousHawk
+        , SomeEnemyCard huntingWarg
+        , SomeEnemyCard savageHillTroll
+        , SomeEnemyCard robAndBob
+        , SomeEnemyCard louisNightmare
+        , SomeEnemyCard morrisNightmare
+        , SomeEnemyCard rupertNightmare
+        , SomeEnemyCard stuartNightmare
+        , SomeEnemyCard goblinEagleHunter
+        , SomeEnemyCard treetopBirdEater
+        , SomeEnemyCard tunnelingNamelessThing
+        , SomeEnemyCard orcInterceptor
+        , SomeEnemyCard thingsInThePools
+        , SomeEnemyCard marshWight
+        , SomeEnemyCard lostSoulOfLorien
+        , SomeEnemyCard illFatedGuard
+        , SomeEnemyCard ambushingOrcs
+        , SomeEnemyCard pursuingWargRider
+        , SomeEnemyCard webSpinner
         ]
     ]

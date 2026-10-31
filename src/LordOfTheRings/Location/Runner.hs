@@ -9,6 +9,8 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedV
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit, ProgressReducedTo))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedThisRound))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -23,6 +25,25 @@ instance RunMessage LocationAttrs where
     RemoveTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
     PlaceTokens _ (isTarget attrs -> True) token n0 -> do
       n <- if token == Progress then (\ms -> foldr min n0 [k | ProgressReducedTo k <- ms]) <$> getModifiers attrs else pure n0
+    -- a location takes no more progress than it may this round, as The Hills of Emyn
+    -- Muil's nightmare text limits the staging area's, and keeps count of what it took
+    PlaceTokens source (isTarget attrs -> True) Progress n | n > 0 -> do
+      mods <- getModifiers attrs
+      let limits = [k | ProgressPerRoundLimit k <- mods]
+          placed = sum [k | ProgressPlacedThisRound k <- mods]
+          room = foldr (\k -> min (max 0 $ k - placed)) n limits
+      if
+        | null limits -> placeTokens Progress n
+        | room <= 0 -> pure attrs
+        | otherwise -> do
+            push $ CreateEffect $ Effect source (toTarget attrs) [ProgressPlacedThisRound room] UntilEndOfRound
+            placeTokens Progress room
+    PlaceTokens _ (isTarget attrs -> True) token n -> placeTokens token n
+    RemoveTokens _ (isTarget attrs -> True) token n -> do
+      pure $ attrs & tokensL %~ subtractTokens token n
+    _ -> pure attrs
+   where
+    placeTokens token n = do
       let attrs' = attrs & tokensL %~ addTokens token n
       questPoints <- modifiedValue questPointsOf attrs attrs'.questPoints
       -- a location with as much progress as its quest points is explored, but one on the
@@ -38,10 +59,6 @@ instance RunMessage LocationAttrs where
             CheckWindows [mkAfter $ Explored attrs.id]
           ]
       pure attrs'
-    RemoveTokens _ (isTarget attrs -> True) token n -> do
-      pure $ attrs & tokensL %~ subtractTokens token n
-    _ -> pure attrs
-   where
     unlessImmune source = do
       mods <- getModifiers attrs
       let barred = case msg of

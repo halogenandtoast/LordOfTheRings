@@ -279,10 +279,10 @@ isDefending target = elem Defending . map modifierType . Map.findWithDefault [] 
 
 -- | A printed trait, or one a modifier grants.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
-hasTrait trait target def
-  | trait `member` cdCardTraits def = pure True
-  | otherwise =
-      elem (GainTrait trait) . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+hasTrait trait target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  -- one it lost, as Shot from the Sky takes the Eagle trait, it no longer has
+  pure $ LoseTrait trait `notElem` mods && (trait `member` cdCardTraits def || GainTrait trait `elem` mods)
 
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be

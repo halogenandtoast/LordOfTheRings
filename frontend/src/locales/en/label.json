@@ -1858,5 +1858,51 @@
     "choose": "Patrol Ship: add it to the staging area, or cancel each success symbol found",
     "stage": "Add Patrol Ship to the staging area",
     "cancel": "Cancel all success symbols found"
+  },
+  "theHuntForGollumNightmare": {
+    "clue": "Choose a Clue card to attach to a Mordor enemy",
+    "mordorEnemy": "Choose the Mordor enemy to attach the Clue card to"
+  },
+  "restlessHunters": {
+    "clue": "Restless Hunters: choose a Clue card attached to a hero",
+    "hero": "Restless Hunters: choose the hero with a Clue card to take this attack's damage"
+  },
+  "darkPools": {
+    "discard": "Dark Pools: discard your ally with the highest printed cost"
+  },
+  "timeForSupper": {
+    "remove": "Time for Supper: choose a hero in a discard pile to remove from the game"
+  },
+  "aJourneyToRhosgobelNightmare": {
+    "athelas": "An Athelas card was placed in the discard pile",
+    "shuffle": "Shuffle it into the encounter deck"
+  },
+  "shotFromTheSky": {
+    "attach": "Shot from the Sky: choose an Eagle character to attach it to"
+  },
+  "aHurryingDarkness": {
+    "choose": "A Hurrying Darkness: raise your threat by 5, or reveal an encounter card",
+    "threat": "Raise your threat by 5",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "lostSoulOfLorien": {
+    "attach": "Lost Soul of Lórien: choose a hero to attach it to"
+  },
+  "candlesOfCorpses": {
+    "choose": "Candles of Corpses: discard a hero you control, or raise your threat by 5",
+    "threat": "Raise your threat by 5"
+  },
+  "returnToMirkwoodNightmare": {
+    "tantrum": "Exhaust a hero you control, or resolve the topmost Tantrum card in the discard pile",
+    "resolveTantrum": "Resolve the topmost Tantrum card"
+  },
+  "webSpinner": {
+    "choose": "Web-spinner: exhaust a hero you control, or it gains surge",
+    "surge": "Web-spinner gains surge"
+  },
+  "wickednessAndMischief": {
+    "choose": "Wickedness and Mischief: reveal the topmost Tantrum card in the discard pile, or 2 encounter cards",
+    "tantrum": "Reveal the topmost Tantrum card",
+    "reveal": "Reveal 2 encounter cards"
   }
 }

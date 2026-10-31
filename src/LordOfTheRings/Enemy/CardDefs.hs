@@ -323,6 +323,25 @@ allEnemyCards =
       , patrolShip
       , corsairLoyalist
       , umbarPatrolNightmare
+      , ravenousHawk
+      , huntingWarg
+      , savageHillTroll
+      , robAndBob
+      , louisNightmare
+      , morrisNightmare
+      , rupertNightmare
+      , stuartNightmare
+      , goblinEagleHunter
+      , treetopBirdEater
+      , tunnelingNamelessThing
+      , orcInterceptor
+      , thingsInThePools
+      , marshWight
+      , lostSoulOfLorien
+      , illFatedGuard
+      , ambushingOrcs
+      , pursuingWargRider
+      , webSpinner
       ]
 
 namelessThing :: CardDef
@@ -2602,4 +2621,131 @@ ravenClawDruid =
   (enemy "the-antlered-crown-nightmare-the-antlered-crown-004" "Raven Claw Druid" TheAntleredCrownNightmare 3 26 3 2 3 5)
     { cdCardTraits = setFromList [Dunland, RavenClan]
     , cdShadowEffect = True
+    }
+
+-- Shadows of Mirkwood Nightmare Decks
+
+ravenousHawk :: CardDef
+ravenousHawk =
+  (enemy "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-002" "Ravenous Hawk" TheHuntForGollumNightmare 3 42 2 3 3 3)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+huntingWarg :: CardDef
+huntingWarg =
+  (enemy "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-003" "Hunting Warg" TheHuntForGollumNightmare 2 15 1 3 2 3)
+    { cdCardTraits = setFromList [Creature, Mordor]
+    }
+
+savageHillTroll :: CardDef
+savageHillTroll =
+  (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-002" "Savage Hill-troll" ConflictAtTheCarrockNightmare 4 21 1 3 2 6)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    , cdVictoryPoints = Just 1
+    }
+
+robAndBob :: CardDef
+robAndBob =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-003" "Rob & Bob" ConflictAtTheCarrockNightmare 1 34 4 5 4 10))
+    { cdCardTraits = setFromList [Troll]
+    }
+
+louisNightmare :: CardDef
+louisNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-004" "Louis" ConflictAtTheCarrockNightmare 1 34 4 4 2 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+morrisNightmare :: CardDef
+morrisNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-005" "Morris" ConflictAtTheCarrockNightmare 1 34 3 5 2 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+rupertNightmare :: CardDef
+rupertNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-006" "Rupert" ConflictAtTheCarrockNightmare 1 34 2 5 3 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+stuartNightmare :: CardDef
+stuartNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-007" "Stuart" ConflictAtTheCarrockNightmare 1 34 2 4 4 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+goblinEagleHunter :: CardDef
+goblinEagleHunter =
+  (enemy "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-002" "Goblin Eagle-hunter" AJourneyToRhosgobelNightmare 3 48 2 5 3 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+treetopBirdEater :: CardDef
+treetopBirdEater =
+  (enemy "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-003" "Treetop Bird-eater" AJourneyToRhosgobelNightmare 2 11 2 4 3 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    }
+
+tunnelingNamelessThing :: CardDef
+tunnelingNamelessThing =
+  (enemy "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-002" "Tunneling Nameless Thing" TheHillsOfEmynMuilNightmare 3 50 4 6 4 10)
+    { cdCardTraits = setFromList [Nameless]
+    }
+
+orcInterceptor :: CardDef
+orcInterceptor =
+  (enemy "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-003" "Orc Interceptor" TheHillsOfEmynMuilNightmare 2 39 2 2 3 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    }
+
+thingsInThePools :: CardDef
+thingsInThePools =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-004" "Things in the Pools" TheDeadMarshesNightmare 3 50 3 4 2 8)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+marshWight :: CardDef
+marshWight =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-005" "Marsh-wight" TheDeadMarshesNightmare 2 40 4 3 2 5)
+    { cdCardTraits = setFromList [Undead, Wight]
+    }
+
+lostSoulOfLorien :: CardDef
+lostSoulOfLorien =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-006" "Lost Soul of Lórien" TheDeadMarshesNightmare 3 30 1 5 2 3)
+    { cdCardTraits = setFromList [SpiritTrait, Undead]
+    }
+
+illFatedGuard :: CardDef
+illFatedGuard =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-007" "Ill-fated Guard" TheDeadMarshesNightmare 3 18 2 2 3 7)
+    { cdCardTraits = setFromList [SpiritTrait, Undead]
+    , cdShadowEffect = True
+    }
+
+ambushingOrcs :: CardDef
+ambushingOrcs =
+  (enemy "return-to-mirkwood-nightmare-return-to-mirkwood-002" "Ambushing Orcs" ReturnToMirkwoodNightmare 3 28 2 4 3 7)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    }
+
+pursuingWargRider :: CardDef
+pursuingWargRider =
+  (enemy "return-to-mirkwood-nightmare-return-to-mirkwood-003" "Pursuing Warg-rider" ReturnToMirkwoodNightmare 2 48 3 4 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+webSpinner :: CardDef
+webSpinner =
+  (enemy "return-to-mirkwood-nightmare-return-to-mirkwood-004" "Web-spinner" ReturnToMirkwoodNightmare 3 33 3 3 2 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
     }

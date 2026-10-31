@@ -111,9 +111,13 @@ escapeTestTotals :: (HasGame m) => EscapeTest -> m (Int, Int)
 escapeTestTotals t = do
   total <- sum <$> traverse stat t.escapeCommitted
   deck <- getsGame (scenarioEncounterDeck . toAttrs . gameScenario)
-  bonus <- sum . mapMaybe (\case EscapeBonus n -> Just n; _ -> Nothing) <$> getModifiers GameTarget
-  pure (total, sum [fromMaybe 0 (cdEscape $ toCardDef c) + bonus | c <- take t.escapeCards deck])
+  mods <- getModifiers GameTarget
+  let bonus = sum [n | EscapeBonus n <- mods]
+      -- added once to the test, as Stagnant Quagmire adds its Escape value
+      testBonus = sum [n | EscapeTestBonus n <- mods]
+  pure (total, testBonus + sum [fromMaybe 0 (cdEscape $ toCardDef c) + bonus | c <- take t.escapeCards deck])
  where
   stat = case t.escapeStat of
     EscapeWillpower -> getWillpower
     EscapeAttack -> getAttack
+    EscapeDefense -> getDefense

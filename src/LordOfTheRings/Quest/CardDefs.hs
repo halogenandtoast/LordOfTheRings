@@ -253,6 +253,7 @@ allQuestCards =
       , pursuedByShadowStage
       , blockedByFlame
       , ghash
+      , grimbeornsFolly
       ]
 
 theDrippingWalls :: CardDef
@@ -991,3 +992,11 @@ throughTheMarshAnArduousJourney = (throughTheMarsh "the-nin-in-eilph-nightmare-t
 
 lostInTheSwanfleetDeadlyWaters :: CardDef
 lostInTheSwanfleetDeadlyWaters = (lostInTheSwanfleet "the-nin-in-eilph-nightmare-the-nin-in-eilph-009" "Deadly Waters") {cdEncounterSet = Just TheNinInEilphNightmare}
+
+-- Shadows of Mirkwood Nightmare Decks
+
+grimbeornsFolly :: CardDef
+grimbeornsFolly =
+  (quest "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-011" "Grimbeorn's Folly" ConflictAtTheCarrockNightmare 3 0)
+    { cdQuestPoints = Nothing
+    }
