@@ -1784,5 +1784,79 @@
     "choose": "Highlands of Dunland: choose one",
     "removeTimeCounter": "Remove 1 time counter from a location in play",
     "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "tideRunner": {
+    "choose": "Tide-runner: choose a player to engage it, or add it to the Stormcaller's area with surge",
+    "stormcaller": "Add it to the Stormcaller's area; it gains surge"
+  },
+  "sharpJetties": {
+    "choose": "Sharp Jetties: remove the progress from the quest, or damage each Ship objective",
+    "removeProgress": "Remove as much progress from the current quest",
+    "damageShips": "Deal as much damage to each Ship objective"
+  },
+  "sahirsGettingAway": {
+    "choose": "Sahír's Getting Away!: shift your heading off-course, or add 8 threat to the staging area this phase",
+    "offCourse": "Shift your heading off-course",
+    "threat": "Add 8 threat to the staging area until the end of the phase"
+  },
+  "slitheringArm": {
+    "choose": "Slithering Arm: resolve its Grapple keyword, or treat this attack as undefended",
+    "grapple": "Resolve its Grapple keyword",
+    "undefended": "Treat this attack as undefended"
+  },
+  "deceitfulIsland": {
+    "switch": "Deceitful Island: choose the location to switch places with the active location"
+  },
+  "overgrownPassage": {
+    "mayFlip": "Overgrown Passage: flip it to its Underwater side?",
+    "flip": "Flip it",
+    "stay": "Leave it"
+  },
+  "floodedCaverns": {
+    "return": "Flooded Caverns: choose an Underwater location to return to the bottom of the Grotto deck"
+  },
+  "sulfurCloud": {
+    "number": "Sulfur Cloud: choose a number; each player raises his threat by it, and twice it is the most progress Underwater locations take this phase"
+  },
+  "brokenRudder": {
+    "attach": "Broken Rudder: choose a Ship objective to attach it to",
+    "keep": "Broken Rudder: how many success symbols to keep, dealing 1 damage to its Ship for each"
+  },
+  "grappled": {
+    "attach": "Grappled!: choose a Ship objective to attach it to"
+  },
+  "aearlang": {
+    "ready": "Aearlang: choose a hero to ready"
+  },
+  "docksOfDolAmroth": {
+    "heal": "Docks of Dol Amroth: choose a Ship objective to heal 2 damage from"
+  },
+  "fangOfSahir": {
+    "choose": "Fang of Sahír: deal 3 damage to a Ship objective you control, or it attacks you",
+    "attack": "Fang of Sahír makes an immediate attack"
+  },
+  "warTornWaters": {
+    "guard": "War-torn Waters: choose an unguarded objective for it to guard"
+  },
+  "corsairLoyalist": {
+    "choose": "Corsair Loyalist: the attacking Raider gets 2 resources, or attacks again",
+    "resources": "Add 2 resources to the attacking enemy",
+    "attack": "The attacking enemy makes an additional attack"
+  },
+  "umbarPatrolNightmare": {
+    "raider": "Umbar Patrol: choose the Raider enemy to add 2 resources to"
+  },
+  "inspiringFury": {
+    "enemy": "Inspiring Fury: choose the enemy with the highest attack to deal it to as a shadow card"
+  },
+  "slaveTrade": {
+    "ally": "Slave Trade: choose an ally you control to deal 2 damage to",
+    "raider": "Slave Trade: choose a Raider enemy to place the resources on",
+    "discard": "Slave Trade: choose an attachment you control to discard"
+  },
+  "patrolShip": {
+    "choose": "Patrol Ship: add it to the staging area, or cancel each success symbol found",
+    "stage": "Add Patrol Ship to the staging area",
+    "cancel": "Cancel all success symbols found"
   }
 }

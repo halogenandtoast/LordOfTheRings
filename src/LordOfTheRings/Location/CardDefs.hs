@@ -340,6 +340,24 @@ allLocationCards =
       , deepMines
       , westernHall
       , shadowedCorridor
+      , sharpJetties
+      , cliffsideInlet
+      , captainsQuarters
+      , aftCabin
+      , edgeOfTheTemple
+      , desecratedRuinsNightmare
+      , templeFoothills
+      , cursedTempleNightmare
+      , overgrownPassage
+      , sharpPrecipice
+      , jaggedCavern
+      , submergedCrawlway
+      , floodedCaverns
+      , cityUnderSiege
+      , seaWall
+      , warTornWaters
+      , wallsOfUmbar
+      , umbarBridge
       ]
 
 drownedTreasury :: CardDef
@@ -1907,6 +1925,7 @@ vastCoastland =
     , cdSailingIcons = 1
     , cdShadowEffect = True
     , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * The Stormcaller: the decks of the ship the players fight over (The Thing in the Depths)
@@ -1921,7 +1940,7 @@ helmOfTheStormcaller =
       }
 
 forecastleDeck :: CardDef
-forecastleDeck = (location "12043" "Forecastle Deck" TheStormcaller 2 3 5) {cdCardTraits = setFromList [Ship, Deck]}
+forecastleDeck = (location "12043" "Forecastle Deck" TheStormcaller 2 3 5) {cdCardTraits = setFromList [Ship, Deck], cdEasyModeQuantity = Just 1}
 
 weatherDeck :: CardDef
 weatherDeck =
@@ -1949,6 +1968,7 @@ quarterDeck =
   (location "12047" "Quarter Deck" TheStormcaller 2 4 3)
     { cdCardTraits = setFromList [Ship, Deck]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The Drowned Ruins' Shrine to Morgoth, Grotto side: set aside until Sahír's Betrayal.
@@ -2073,6 +2093,7 @@ coastOfAnfalas :: CardDef
 coastOfAnfalas =
   (location "12128" "Coast of Anfalas" AStormOnCobasHaven 3 3 3)
     { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * The City of Corsairs: Coast of Umbar and The City of Corsairs
@@ -2104,6 +2125,7 @@ corsairWaters =
     { cdCardTraits = setFromList [Ocean, Coastland]
     , cdSailingIcons = 1
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 watchTower :: CardDef
@@ -2111,6 +2133,7 @@ watchTower =
   (location "12156" "Watch Tower" CoastOfUmbar 2 2 3)
     { cdCardTraits = setFromList [Umbar, Coastland]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 theShatteredMonument :: CardDef
@@ -2130,13 +2153,141 @@ streetsOfUmbar =
 
 -- | Its threat is X, printed as 0: see its card.
 cityOfCorsairs :: CardDef
-cityOfCorsairs = (location "12161" "City of Corsairs" TheCityOfCorsairs 2 0 4) {cdCardTraits = setFromList [Umbar, City]}
+cityOfCorsairs = (location "12161" "City of Corsairs" TheCityOfCorsairs 2 0 4) {cdCardTraits = setFromList [Umbar, City], cdEasyModeQuantity = Just 1}
 
 umbarHarbor :: CardDef
 umbarHarbor =
   (location "12162" "Umbar Harbor" TheCityOfCorsairs 3 4 4)
     { cdCardTraits = setFromList [Umbar, City]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- Dream-chaser Nightmare Decks
+
+sharpJetties :: CardDef
+sharpJetties =
+  (location "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-005" "Sharp Jetties" FlightOfTheStormcallerNightmare 3 2 6)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdWhenRevealed = True
+    }
+
+cliffsideInlet :: CardDef
+cliffsideInlet =
+  (location "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-006" "Cliffside Inlet" FlightOfTheStormcallerNightmare 3 4 3)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdSailingIcons = 1
+    }
+
+captainsQuarters :: CardDef
+captainsQuarters =
+  unique
+    (location "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-002" "Captain's Quarters" TheThingInTheDepthsNightmare 1 5 5)
+      { cdCardTraits = setFromList [Ship]
+      }
+
+aftCabin :: CardDef
+aftCabin =
+  (location "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-003" "Aft Cabin" TheThingInTheDepthsNightmare 3 3 3)
+    { cdCardTraits = setFromList [Ship, Deck]
+    }
+
+edgeOfTheTemple :: CardDef
+edgeOfTheTemple =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple" "Edge of the Temple" TempleOfTheDeceivedNightmare 0 3 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Uncharted]
+    }
+
+desecratedRuinsNightmare :: CardDef
+desecratedRuinsNightmare =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-002" "Desecrated Ruins" TempleOfTheDeceivedNightmare 2 4 6)
+    { cdCardTraits = setFromList [Ruins]
+    , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"
+    }
+
+templeFoothills :: CardDef
+templeFoothills =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-003" "Temple Foothills" TempleOfTheDeceivedNightmare 2 2 5)
+    { cdCardTraits = setFromList [Ruins]
+    , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"
+    }
+
+cursedTempleNightmare :: CardDef
+cursedTempleNightmare =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-004" "Cursed Temple" TempleOfTheDeceivedNightmare 2 3 4)
+    { cdCardTraits = setFromList [Ruins]
+    , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"
+    }
+
+overgrownPassage :: CardDef
+overgrownPassage =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-002" "Overgrown Passage" TheDrownedRuinsNightmare 2 5 5)
+    { cdCardTraits = setFromList [Underground, Grotto]
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-004"
+    }
+
+sharpPrecipice :: CardDef
+sharpPrecipice =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-003" "Sharp Precipice" TheDrownedRuinsNightmare 2 2 3)
+    { cdCardTraits = setFromList [Underground, Grotto]
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-005"
+    }
+
+jaggedCavern :: CardDef
+jaggedCavern =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-004" "Jagged Cavern" TheDrownedRuinsNightmare 0 6 8)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    , cdVictoryPoints = Just 2
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-002"
+    }
+
+submergedCrawlway :: CardDef
+submergedCrawlway =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-005" "Submerged Crawlway" TheDrownedRuinsNightmare 0 2 16)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    , cdVictoryPoints = Just 2
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-003"
+    }
+
+floodedCaverns :: CardDef
+floodedCaverns =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-009" "Flooded Caverns" TheDrownedRuinsNightmare 2 2 6)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    }
+
+cityUnderSiege :: CardDef
+cityUnderSiege =
+  (location "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-006" "City Under Siege" AStormOnCobasHavenNightmare 3 2 6)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdShadowEffect = True
+    }
+
+seaWall :: CardDef
+seaWall =
+  (location "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-007" "Sea-wall" AStormOnCobasHavenNightmare 3 2 2)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdShadowEffect = True
+    }
+
+warTornWaters :: CardDef
+warTornWaters =
+  (location "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-008" "War-torn Waters" AStormOnCobasHavenNightmare 2 3 5)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    }
+
+wallsOfUmbar :: CardDef
+wallsOfUmbar =
+  (location "the-city-of-corsairs-nightmare-the-city-of-corsairs-004" "Walls of Umbar" CoastOfUmbarNightmare 2 5 4)
+    { cdCardTraits = setFromList [Ocean, Coastland]
+    , cdSailingIcons = 1
+    }
+
+umbarBridge :: CardDef
+umbarBridge =
+  (location "the-city-of-corsairs-nightmare-the-city-of-corsairs-005" "Umbar Bridge" CoastOfUmbarNightmare 2 3 6)
+    { cdCardTraits = setFromList [Umbar, Coastland]
+    , cdSailingIcons = 1
     }
 
 -- Core Set Nightmare Decks

@@ -6,6 +6,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyTokens))
 import LordOfTheRings.Keyword (Keyword (Indestructible))
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -51,6 +52,10 @@ instance RunMessage FinalConfrontation where
       pure q
     -- the Raiders counted once the players have added theirs
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
+      -- Nightmare: The Cursed Sword, set aside with Captain Sahír, is attached to him
+      swords <- filter (cardMatches $ cardIs Objectives.theCursedSword) <$> getsGame (scenarioSetAside . toAttrs . (.scenario))
+      captain <- selectOne sahir
+      for_ captain \s -> for_ swords \sword -> putObjectiveIntoPlayAttached sword (EnemyTarget s)
       raiders <- select (EnemyWithTrait Raider)
       for_ raiders \r -> placeResources attrs r 1
       pure q

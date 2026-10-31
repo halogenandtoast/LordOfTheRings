@@ -200,6 +200,12 @@ instance HasField "damage" EnemyAttrs Int where
 instance HasField "damage" Enemy Int where
   getField = (.damage) . toAttrs
 
+instance HasField "resources" EnemyAttrs Int where
+  getField = countTokens Resource . enemyTokens
+
+instance HasField "resources" Enemy Int where
+  getField = (.resources) . toAttrs
+
 instance HasField "shadowCards" EnemyAttrs [EncounterCard] where
   getField = enemyShadowCards
 

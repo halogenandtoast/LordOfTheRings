@@ -572,6 +572,9 @@ data Message
   | -- | a card the Sailing test discarded, with the characters committed to it: one with an
     -- asterisk by its sailing icon has a Forced effect for it (The Grey Havens Nightmare)
     ResolveSailingDiscard EncounterCard [Target]
+  | -- | the Sailing test is over: the cards it discarded and the characters committed to
+    -- it, for a card's "*Forced: After this Sailing test ends" (Dream-chaser Nightmare)
+    SailingTestEnded [EncounterCard] [Target]
   | -- | the non-Ship enemies leave the encounter deck for the Corsair deck, shuffled
     PrepareCorsairDeck
   | -- | the top card of the Corsair deck is revealed and put into play engaged with the
@@ -618,12 +621,18 @@ data Message
     AddUnderwaterFromGrottoDeck
   | -- | the location leaves play for the Grotto deck, Grotto side up, which is shuffled
     ShuffleIntoGrottoDeck LocationId
+  | -- | the card, out of play, goes to the bottom of the Grotto deck, Grotto side up, as
+    -- Flooded Caverns returns one from the victory display
+    PutOnBottomOfGrottoDeck EncounterCard
   | -- | the Uncharted location cards are laid out as the Island Map, each in its place, Lost
     -- Island or Temple side faceup (Temple of the Deceived)
     PrepareIslandMap [(Pos, EncounterCard)]
   | -- | the locations on the Island Map orthogonally adjacent to the active location are
     -- in the staging area, the others are not, as the active location changes or turns over
     ArrangeIslandMap
+  | -- | the two locations on the Island Map switch places, as Deceitful Island switches the
+    -- active location with one next to it
+    SwapIslandMapPositions LocationId LocationId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

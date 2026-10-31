@@ -47,7 +47,10 @@ instance RunMessage OutmaneuverTheEnemy where
           removeFromEncounterDeck card
           addToStaging card
       shuffleEncounterDeck
-      towers <- dolAmrothObjectivesToSearch
+      -- Nightmare: "When choosing a Dol Amroth objective to put into play during setup,
+      -- players must choose randomly among all 6 Dol Amroth objectives."
+      nightmare <- inNightmareMode
+      towers <- (if nightmare then fmap (take 1) . shuffleM else pure) =<< dolAmrothObjectivesToSearch
       lead <- getLead
       chooseOrRunOneM lead do
         questionLabeled "outmaneuverTheEnemy.objective"

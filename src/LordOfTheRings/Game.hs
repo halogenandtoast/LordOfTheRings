@@ -59,7 +59,7 @@ import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Trait (Trait)
+import LordOfTheRings.Trait (Trait (Grotto))
 import LordOfTheRings.Treachery hiding (treachery)
 import LordOfTheRings.Window
 
@@ -2135,7 +2135,10 @@ runGameMessage msg g = case msg of
         locations = filter inPlay' (toList g.entities.locations)
         picked = case [w | Grapple w <- toList (cdKeywords $ toCardDef e)] of
           w : _ -> do
-            let value l = fromMaybe 0 $ printedFor w (toCardDef l)
+            let grappling l = length [x | x <- toList g.entities.enemies, x.placement == AttachedTo (LocationTarget $ toId l)]
+                value l
+                  | w `elem` [MostEnemiesGrappled, FewestEnemiesGrappled] = grappling l
+                  | otherwise = fromMaybe 0 $ printedFor w (toCardDef l)
                 best = (if lowest w then minimumMay else maximumMay) (map value locations)
             [toId l | l <- locations, Just (value l) == best]
           _ -> []
@@ -2646,6 +2649,12 @@ runGameMessage msg g = case msg of
       push $ AddToStaging $ maybe top (MkEncounterCard top.id) (cdOtherSide $ toCardDef top)
       pure $ g & scenarioL %~ overAttrs (grottoDeckL .~ rest)
     [] -> pure g
+  PutOnBottomOfGrottoDeck card -> do
+    let def = toCardDef card
+        grotto = case cdOtherSide def of
+          Just other | Grotto `notMember` cdCardTraits def -> MkEncounterCard card.id other
+          _ -> card
+    pure $ g & scenarioL %~ overAttrs (grottoDeckL %~ (<> [grotto]))
   ShuffleIntoGrottoDeck lid | Just l <- Map.lookup lid g.entities.locations -> do
     pushAll $ discardAttached g (LocationTarget lid)
     deck <- shuffleM (grottoDeckCard (toAttrs l) : (toAttrs g.scenario).grottoDeck)
@@ -2672,6 +2681,12 @@ runGameMessage msg g = case msg of
   PrepareIslandMap cards -> do
     laid <- for cards \(pos, card) -> overAttrs (\a -> a {locationPlacement = OnIslandMap, locationPosition = Just pos}) <$> newLocation card
     pure $ g & entitiesL . locationsL %~ \ls -> foldr (\l -> Map.insert (toId l) l) ls laid
+  SwapIslandMapPositions a b
+    | Just la <- Map.lookup a g.entities.locations
+    , Just lb <- Map.lookup b g.entities.locations -> do
+        push ArrangeIslandMap
+        let moveTo l = overAttrs (\x -> x {locationPosition = l.position})
+        pure $ g & entitiesL . locationsL %~ Map.adjust (moveTo lb) a . Map.adjust (moveTo la) b
   ArrangeIslandMap -> do
     let laid = filter (isJust . (.position)) (toList g.entities.locations)
         actives = [p | l <- laid, l.placement == ActiveLocation, Just p <- [l.position]]
@@ -2911,9 +2926,12 @@ printedFor = \case
   HighestPrintedThreat -> cdThreat
   LowestPrintedQuestPoints -> cdQuestPoints
   HighestPrintedQuestPoints -> cdQuestPoints
+  -- counted in play instead, not printed
+  MostEnemiesGrappled -> const Nothing
+  FewestEnemiesGrappled -> const Nothing
 
 lowest :: GrappleLocation -> Bool
-lowest = (`elem` [LowestPrintedThreat, LowestPrintedQuestPoints])
+lowest = (`elem` [LowestPrintedThreat, LowestPrintedQuestPoints, FewestEnemiesGrappled])
 
 -- | Attachments, and encounter cards attached as conditions, leave play with their host,
 -- and an enemy's shadow cards are discarded with it (ALeP 3.068).

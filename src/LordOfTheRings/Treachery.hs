@@ -253,6 +253,20 @@ import LordOfTheRings.Treachery.Cards.SauronsAgent
 import LordOfTheRings.Treachery.Cards.ClosingIn
 import LordOfTheRings.Treachery.Cards.RavenTalisman
 import LordOfTheRings.Treachery.Cards.GatheringForces
+import LordOfTheRings.Treachery.Cards.DarkAndStormy
+import LordOfTheRings.Treachery.Cards.SahirsGettingAway
+import LordOfTheRings.Treachery.Cards.TumultuousWaters
+import LordOfTheRings.Treachery.Cards.DeepMaelstrom
+import LordOfTheRings.Treachery.Cards.DeceitfulIsland
+import LordOfTheRings.Treachery.Cards.CallOfTheCurse
+import LordOfTheRings.Treachery.Cards.SuddenPrecipice
+import LordOfTheRings.Treachery.Cards.PitIntoTheDepths
+import LordOfTheRings.Treachery.Cards.SulfurCloud
+import LordOfTheRings.Treachery.Cards.BrokenRudder
+import LordOfTheRings.Treachery.Cards.Grappled
+import LordOfTheRings.Treachery.Cards.InspiringFury
+import LordOfTheRings.Treachery.Cards.RaiseTheAlarm
+import LordOfTheRings.Treachery.Cards.SlaveTrade
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -530,5 +544,19 @@ allTreacherys =
         , SomeTreacheryCard closingIn
         , SomeTreacheryCard ravenTalisman
         , SomeTreacheryCard gatheringForces
+        , SomeTreacheryCard darkAndStormy
+        , SomeTreacheryCard sahirsGettingAway
+        , SomeTreacheryCard tumultuousWaters
+        , SomeTreacheryCard deepMaelstrom
+        , SomeTreacheryCard deceitfulIsland
+        , SomeTreacheryCard callOfTheCurse
+        , SomeTreacheryCard suddenPrecipice
+        , SomeTreacheryCard pitIntoTheDepths
+        , SomeTreacheryCard sulfurCloud
+        , SomeTreacheryCard brokenRudder
+        , SomeTreacheryCard grappled
+        , SomeTreacheryCard inspiringFury
+        , SomeTreacheryCard raiseTheAlarm
+        , SomeTreacheryCard slaveTrade
         ]
     ]

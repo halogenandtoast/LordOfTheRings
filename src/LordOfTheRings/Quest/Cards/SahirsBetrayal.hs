@@ -43,9 +43,12 @@ instance RunMessage SahirsBetrayal where
       sahir <- getsGame (find ((== toCardCode Objectives.captainSahirObjective) . toCardCode) . toList . (.entities.allies))
       for_ sahir \s -> do
         lead <- getLead
+        -- Nightmare: he attacks each player in turn order instead of only the first player
+        nightmare <- inNightmareMode
+        players <- if nightmare then getRemainingPlayers else pure [lead]
         let eid = EnemyId (unAllyId $ toId s)
         flipOver (toId s)
-        immediateAttack lead eid
+        for_ players \p -> immediateAttack p eid
         removeFromGame eid
       eachPlayer \p -> searchEncounterDeckAndDiscard p attrs (CardWithType EnemyType <> CardWithTrait Undead)
       pure q

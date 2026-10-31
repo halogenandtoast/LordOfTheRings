@@ -10,11 +10,14 @@ import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getEnemyThreat)
+import LordOfTheRings.Helpers.Staging (getEnemyHitPoints, getEnemyThreat)
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier (ModifierType (QuestPointModifier))
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Placement (Placement (StagingArea, StormcallerArea))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers
 import LordOfTheRings.Source (Source (ScenarioSource))
@@ -22,11 +25,35 @@ import LordOfTheRings.Timing (Timing (When))
 import LordOfTheRings.Window (Window (..), WindowType (RoundEnds))
 
 newtype FlightOfTheStormcaller = FlightOfTheStormcaller ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 flightOfTheStormcaller :: Scenario
-flightOfTheStormcaller = Scenario $ scenario FlightOfTheStormcaller "flight-of-the-stormcaller" "Flight of the Stormcaller"
+flightOfTheStormcaller =
+  Scenario
+    $ scenario (FlightOfTheStormcaller . (nightmareDeckL ?~ nightmare)) "flight-of-the-stormcaller" "Flight of the Stormcaller"
+ where
+  nightmare =
+    nightmareDeck
+      Nightmare.flightOfTheStormcallerNightmare
+      EncounterSet.FlightOfTheStormcallerNightmare
+      [ (Locations.calmWaters, 2)
+      , (Enemies.corsairSkiff, 2)
+      , (Enemies.southronSailor, 2)
+      , (Enemies.serpentsBlade, 2)
+      , (Locations.hiddenCove, 1)
+      , (Locations.jaggedReef, 2)
+      ]
+
+-- | Nightmare: "While you are at the same stage as the Stormcaller, the main quest gets +X
+-- quest points, where X is the Stormcaller's remaining hit points."
+instance HasModifiersFor FlightOfTheStormcaller where
+  getModifiersFor (FlightOfTheStormcaller a) = when a.nightmare do
+    whenM atStormcallersStage do
+      stormcallers <- select (EnemyWithCardCode $ toCardCode Enemies.stormcaller)
+      x <- sum <$> for stormcallers \e -> (-) <$> getEnemyHitPoints e <*> ((.damage) <$> getEnemy e)
+      quests <- getMainQuests
+      for_ quests \q -> modified a q [QuestPointModifier x]
 
 {- | The encounter deck is built from the Flight of the Stormcaller, Vast Oceans, Stormy
 Weather and Corsair Pirates sets, the Stormcaller set aside for the Stormcaller's area;
@@ -36,8 +63,8 @@ instance RunMessage FlightOfTheStormcaller where
   runMessage msg (FlightOfTheStormcaller attrs) = case msg of
     DoStep 1 Setup -> do
       cards <-
-        concatMapM
-          (gatherEncounterSet attrs)
+        gatherEncounterSets
+          attrs
           [EncounterSet.FlightOfTheStormcaller, EncounterSet.VastOceans, EncounterSet.StormyWeather, EncounterSet.CorsairPirates]
       let (stormcaller, encounterDeck) = partition (cardMatches $ cardIs Enemies.stormcaller) cards
       firstStage <- genEncounterCard Quests.swiftDeparture
@@ -116,6 +143,17 @@ instance RunMessage FlightOfTheStormcaller where
       if defeated == stormcaller
         then winGame >> pure (FlightOfTheStormcaller attrs)
         else FlightOfTheStormcaller <$> runMessage msg attrs
+    -- Venom's Bite: *Forced: After this Sailing test ends, if you are off-course, put
+    -- Venom's Bite into play in the staging area. If you are on-course, put it into play in
+    -- the Stormcaller's area instead.
+    SailingTestEnded top _ | attrs.nightmare -> do
+      let bites = [c | c <- top, cardMatches (cardIs Enemies.venomsBite) c, c `elem` attrs.encounterDiscard]
+      onCourse <- isOnCourse
+      for_ bites \card -> do
+        eid <- getRandom
+        push $ CreateEnemy eid card
+        when onCourse $ addToStormcallerArea (EnemyTarget eid)
+      pure $ FlightOfTheStormcaller $ attrs & encounterDiscardL %~ filter (`notElem` bites)
     _ -> FlightOfTheStormcaller <$> runMessage msg attrs
    where
     meta = getMeta attrs

@@ -1,14 +1,14 @@
 module LordOfTheRings.Quest.Cards.DefendTheShip (defendTheShip) where
 
-import LordOfTheRings.Card (CardType (EnemyType), cdCardTraits, cdCardType, cdKeywords, toCardCode, toCardDef)
+import LordOfTheRings.Card (CardType (EnemyType, LocationType), cdCardTraits, cdCardType, cdKeywords, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Game.Base (gamePhase, gameScenario)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Keyword (isGrapple)
 import LordOfTheRings.Outcome (Outcome (Lost))
-import LordOfTheRings.Phase (Phase (TravelPhase))
-import LordOfTheRings.Placement (Placement (StagingArea))
+import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase, TravelPhase))
+import LordOfTheRings.Placement (Placement (AttachedTo, StagingArea))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
@@ -50,6 +50,12 @@ instance RunMessage DefendTheShip where
       let k = maybe (length deck) (+ 1) $ headMay $ drop players [i | (i, c) <- zip [0 ..] deck, tentacle c]
       discardTopOfEncounterDeck attrs k
       pure q
+    -- Nightmare: "Forced: At the beginning of the quest phase, if there are fewer locations
+    -- in play than the number of players, discard cards from the top of the encounter deck
+    -- until a location is discarded. Reveal that location."
+    DiscardedTopOfEncounterDeck (isSource attrs -> True) GameTarget cards -> do
+      for_ (filter ((== LocationType) . cdCardType . toCardDef) cards) revealFromEncounterDiscard
+      pure q
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
       for_ (filter (\c -> tentacle c && any isGrapple (cdKeywords $ toCardDef c)) cards) grappleCard
       pure q
@@ -58,6 +64,19 @@ instance RunMessage DefendTheShip where
       for_ active \l -> placeLocation l StagingArea
       DefendTheShip <$> runMessage msg attrs
     CheckWindows ws | attrs.flipped -> do
+      nightmare <- inNightmareMode
+      when (nightmare && Window After (PhaseBegins QuestPhase) `elem` ws) do
+        locations <- length <$> select AnyLocation
+        players <- length <$> getRemainingPlayers
+        when (locations < players) do
+          deck <- getsGame ((.scenarioEncounterDeck) . toAttrs . gameScenario)
+          let isLocation = (== LocationType) . cdCardType . toCardDef
+          discardTopOfEncounterDeckFor attrs GameTarget $ maybe (length deck) (+ 1) (findIndex isLocation deck)
+      -- Nightmare: "Forced: At the end of the refresh phase, resolve the grapple keyword on
+      -- each Tentacle enemy in play." Those grappled already hold on.
+      when (nightmare && Window When (PhaseEnds RefreshPhase) `elem` ws) do
+        tentacles <- filterM (fmap (not . grappled . (.placement)) . getEnemy) =<< select (EnemyWithTrait Tentacle)
+        for_ tentacles resolveGrapple
       when (any ((== RoundEnds) . windowType) ws) do
         threats <- traverse getLocationThreat =<< select (LocationWithTrait Ship)
         when (any (>= 9) threats) $ gameOver Lost
@@ -66,4 +85,7 @@ instance RunMessage DefendTheShip where
       DefendTheShip <$> runMessage msg attrs
     _ -> DefendTheShip <$> runMessage msg attrs
    where
+    grappled = \case
+      AttachedTo (LocationTarget _) -> True
+      _ -> False
     tentacle c = cdCardType (toCardDef c) == EnemyType && Tentacle `member` cdCardTraits (toCardDef c)
