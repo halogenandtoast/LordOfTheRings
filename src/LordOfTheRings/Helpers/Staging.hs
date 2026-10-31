@@ -63,4 +63,6 @@ getEnemyAttack eid = do
 getEnemyDefense :: (HasGame m) => EnemyId -> m Int
 getEnemyDefense eid = do
   enemy <- getEnemy eid
-  modifiedValue defenseOf (toTarget eid) enemy.defense
+  -- one whose defense cannot be reduced, as Rupert, ignores what would
+  floored <- elem CannotHaveDefenseReduced <$> getModifiers eid
+  modifiedValue (if floored then \m -> defenseOf m >>= \n -> n <$ guard (n > 0) else defenseOf) (toTarget eid) enemy.defense

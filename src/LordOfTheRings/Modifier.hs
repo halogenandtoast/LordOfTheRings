@@ -504,6 +504,8 @@ data ModifierType
   | -- | on the active location on the Island Map: the players may travel from it to a
     -- location up to so many locations away, as Winding Caverns reads
     TravelRange Int
+  | -- | on an enemy: its defense cannot be reduced, as Rupert's in nightmare mode
+    CannotHaveDefenseReduced
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
