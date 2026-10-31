@@ -212,6 +212,8 @@ import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
 import LordOfTheRings.Treachery.Cards.ShadowFall
+import LordOfTheRings.Treachery.Cards.BalinsDoom
+import LordOfTheRings.Treachery.Cards.BeatsAndEchoes
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -448,5 +450,7 @@ allTreacherys =
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
         , SomeTreacheryCard shadowFall
+        , SomeTreacheryCard balinsDoom
+        , SomeTreacheryCard beatsAndEchoes
         ]
     ]

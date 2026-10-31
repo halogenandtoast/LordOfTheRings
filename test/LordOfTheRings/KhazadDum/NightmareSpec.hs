@@ -1,12 +1,14 @@
 module LordOfTheRings.KhazadDum.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat, getLocationQuestPoints)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationQuestPoints)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (intoThePit)
-import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
+import LordOfTheRings.Outcome (Outcome (Won))
+import LordOfTheRings.Scenario (intoThePit, theSeventhLevel)
+import LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers (resourcesOn)
+import LordOfTheRings.Scenario.Types (GameMode (..), modeL, scenarioSetAside)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
@@ -156,3 +158,90 @@ spec = describe "Khazad-dûm Nightmare mode" do
       eid <- enemyOf Enemies.patrolSentry
       shadow pid eid Enemies.goblinLurker []
       getEnemyAttack eid `shouldReturn` 7
+
+  describe "The Seventh Level" do
+    it "builds the nightmare deck, Overseer Maurûl and Chamber of Records set aside" . nightmare theSeventhLevel $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 40
+      map (`copies` deck) [Enemies.goblinSwordsman, Enemies.goblinScout, Enemies.overseerMaurul, Treacheries.balinsDoom]
+        `shouldBe` [3, 1, 0, 3]
+      aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+      sort aside `shouldBe` sort (codes [Enemies.overseerMaurul, Locations.chamberOfRecords])
+
+    it "makes Chamber of Records active and brings out Overseer Maurûl as stage 2B is revealed" . nightmare theSeventhLevel $ \_ -> do
+      traverse_ (run . SetAside <=< genEncounterCard) [Enemies.overseerMaurul, Locations.chamberOfRecords]
+      upper <- active Locations.upperHall
+      doom <- genEncounterCard Treacheries.balinsDoom
+      run $ AddToEncounterDiscard [doom]
+      _ <- setEncounterDeck []
+      stage <- putQuestStage Quests.theFateOfBalin
+      run $ Flip stage
+      chamber <- locationOf Locations.chamberOfRecords
+      getsGame (fmap (.placement) . lookup chamber . (.entities.locations)) `shouldReturn` Just ActiveLocation
+      getsGame (fmap (.placement) . lookup upper . (.entities.locations)) `shouldReturn` Just StagingArea
+      enemies `shouldReturn` codes [Enemies.overseerMaurul]
+      map toCardCode <$> getEncounterDeck `shouldReturn` codes [Treacheries.balinsDoom]
+
+    it "wins at The Fate of Balin only with Overseer Maurûl in the victory display" . nightmare theSeventhLevel $ \pid -> do
+      reveal Enemies.overseerMaurul []
+      stage <- putQuestStage Quests.theFateOfBalin
+      run $ Flip stage
+      chooseTarget pid stage
+      run $ PlaceTokens GameSource stage Progress 17
+      getsGame (.outcome) `shouldReturn` Nothing
+      overseer <- enemyOf Enemies.overseerMaurul
+      run $ DealDamage GameSource (toTarget overseer) 12
+      getsGame (.outcome) `shouldReturn` Just Won
+
+    it "Overseer Maurûl gets the most resources on a Goblin to each stat, and Goblin Skirmisher once to attack" . nightmare theSeventhLevel $ \_ -> do
+      reveal Enemies.overseerMaurul []
+      reveal Enemies.pitGoblin []
+      overseer <- enemyOf Enemies.overseerMaurul
+      pit <- enemyOf Enemies.pitGoblin
+      resourcesOn pit `shouldReturn` 2
+      getEnemyThreat overseer `shouldReturn` 5
+      getEnemyDefense overseer `shouldReturn` 5
+      reveal Enemies.goblinSkirmisher []
+      reveal Enemies.goblinSkirmisher []
+      getEnemyAttack pit `shouldReturn` 4
+
+    it "Western Hall gives Goblins defense for their resources, and resources as the players travel there" . nightmare theSeventhLevel $ \_ -> do
+      reveal Enemies.goblinScout []
+      reveal Locations.westernHall []
+      scout <- enemyOf Enemies.goblinScout
+      hall <- locationOf Locations.westernHall
+      run $ TravelTo hall
+      resourcesOn scout `shouldReturn` 1
+      getEnemyDefense scout `shouldReturn` 1
+
+    it "Orc Taskmaster takes a resource from a Goblin to cancel its damage" . nightmare theSeventhLevel $ \_ -> do
+      reveal Enemies.goblinScout []
+      reveal Enemies.orcTaskmaster []
+      scout <- enemyOf Enemies.goblinScout
+      resourcesOn scout `shouldReturn` 1
+      run $ DealDamage GameSource (toTarget scout) 1
+      resourcesOn scout `shouldReturn` 0
+      getsGame (fmap (.damage) . lookup scout . (.entities.enemies)) `shouldReturn` Just 0
+
+    it "Chamber of Records gives a Goblin 2 resources as it engages" . nightmare theSeventhLevel $ \pid -> do
+      _ <- active Locations.chamberOfRecords
+      reveal Enemies.goblinScout []
+      scout <- enemyOf Enemies.goblinScout
+      run $ EngageEnemy pid scout
+      resourcesOn scout `shouldReturn` 2
+
+    it "Deep-mines in the staging area gives each Goblin entering it a resource" . nightmare theSeventhLevel $ \_ -> do
+      reveal Locations.deepMines []
+      reveal Enemies.goblinScout []
+      (resourcesOn =<< enemyOf Enemies.goblinScout) `shouldReturn` 1
+
+    it "Balin's Doom adds a resource to each Goblin" . nightmare theSeventhLevel $ \_ -> do
+      reveal Enemies.goblinScout []
+      reveal Treacheries.balinsDoom [Locations.upperHall]
+      (resourcesOn =<< enemyOf Enemies.goblinScout) `shouldReturn` 1
+
+    it "Beats and Echoes reveals 2 more cards than players engaged with Goblins, enemies to the staging area" . nightmare theSeventhLevel $ \_ -> do
+      reveal Treacheries.beatsAndEchoes [Enemies.goblinScout, Locations.upperHall, Enemies.pitGoblin, Enemies.orcTaskmaster]
+      enemies `shouldReturn` sort (codes [Enemies.goblinScout, Enemies.pitGoblin])
+      length <$> getEncounterDeck `shouldReturn` 1

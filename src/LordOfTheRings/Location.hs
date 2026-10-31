@@ -273,6 +273,9 @@ import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
 import LordOfTheRings.Location.Cards.TwistingShadows
 import LordOfTheRings.Location.Cards.NarrowFissure
+import LordOfTheRings.Location.Cards.ChamberOfRecords
+import LordOfTheRings.Location.Cards.DeepMines
+import LordOfTheRings.Location.Cards.WesternHall
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -587,5 +590,8 @@ allLocations =
         , SomeLocationCard dungeonLabyrinth
         , SomeLocationCard twistingShadows
         , SomeLocationCard narrowFissure
+        , SomeLocationCard chamberOfRecords
+        , SomeLocationCard deepMines
+        , SomeLocationCard westernHall
         ]
     ]

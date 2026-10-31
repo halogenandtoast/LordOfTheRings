@@ -469,6 +469,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinLurker
       LordOfTheRings.Enemy.Cards.GoblinPursuer
       LordOfTheRings.Enemy.Cards.GoblinScout
+      LordOfTheRings.Enemy.Cards.GoblinSkirmisher
       LordOfTheRings.Enemy.Cards.GoblinSneak
       LordOfTheRings.Enemy.Cards.GoblinSniper
       LordOfTheRings.Enemy.Cards.GoblinSpearman
@@ -537,12 +538,15 @@ library
       LordOfTheRings.Enemy.Cards.OrcRavager
       LordOfTheRings.Enemy.Cards.OrcScramblers
       LordOfTheRings.Enemy.Cards.OrcSkirmisher
+      LordOfTheRings.Enemy.Cards.OrcTaskmaster
       LordOfTheRings.Enemy.Cards.OrcVanguard
       LordOfTheRings.Enemy.Cards.OrcWarParty
+      LordOfTheRings.Enemy.Cards.OverseerMaurul
       LordOfTheRings.Enemy.Cards.PackLeader
       LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.PatrolSentry
       LordOfTheRings.Enemy.Cards.Pickpocket
+      LordOfTheRings.Enemy.Cards.PitGoblin
       LordOfTheRings.Enemy.Cards.ProfaneDead
       LordOfTheRings.Enemy.Cards.ProwlingOrc
       LordOfTheRings.Enemy.Cards.ProwlingWolf
@@ -923,6 +927,7 @@ library
       LordOfTheRings.Location.Cards.CargoHold
       LordOfTheRings.Location.Cards.CaveBarrow
       LordOfTheRings.Location.Cards.Celebdil
+      LordOfTheRings.Location.Cards.ChamberOfRecords
       LordOfTheRings.Location.Cards.ChetwoodForest
       LordOfTheRings.Location.Cards.CityOfCorsairs
       LordOfTheRings.Location.Cards.CityRemains
@@ -942,6 +947,7 @@ library
       LordOfTheRings.Location.Cards.DeadmensGate
       LordOfTheRings.Location.Cards.DecrepitRemains
       LordOfTheRings.Location.Cards.DecrepitRooftops
+      LordOfTheRings.Location.Cards.DeepMines
       LordOfTheRings.Location.Cards.DoorsOfDurin
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DreamChaserLocation
@@ -1151,6 +1157,7 @@ library
       LordOfTheRings.Location.Cards.Waterspout
       LordOfTheRings.Location.Cards.WeatherDeck
       LordOfTheRings.Location.Cards.WeatheredHilltop
+      LordOfTheRings.Location.Cards.WesternHall
       LordOfTheRings.Location.Cards.WestGate
       LordOfTheRings.Location.Cards.WestQuarter
       LordOfTheRings.Location.Cards.WhiteShip
@@ -1518,6 +1525,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRedhornGate
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
+      LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros.Helpers
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear
@@ -1557,7 +1565,9 @@ library
       LordOfTheRings.Treachery.Cards.Avalanche
       LordOfTheRings.Treachery.Cards.AWispOfPaleSheen
       LordOfTheRings.Treachery.Cards.Backtrack
+      LordOfTheRings.Treachery.Cards.BalinsDoom
       LordOfTheRings.Treachery.Cards.BattleHardened
+      LordOfTheRings.Treachery.Cards.BeatsAndEchoes
       LordOfTheRings.Treachery.Cards.BitingWind
       LordOfTheRings.Treachery.Cards.BitterWind
       LordOfTheRings.Treachery.Cards.BlockingWargs

@@ -250,6 +250,10 @@ import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
 import LordOfTheRings.Enemy.Cards.PatrolSentry
 import LordOfTheRings.Enemy.Cards.GoblinLurker
 import LordOfTheRings.Enemy.Cards.ShadowDweller
+import LordOfTheRings.Enemy.Cards.OverseerMaurul
+import LordOfTheRings.Enemy.Cards.OrcTaskmaster
+import LordOfTheRings.Enemy.Cards.GoblinSkirmisher
+import LordOfTheRings.Enemy.Cards.PitGoblin
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -525,5 +529,9 @@ allEnemys =
         , SomeEnemyCard patrolSentry
         , SomeEnemyCard goblinLurker
         , SomeEnemyCard shadowDweller
+        , SomeEnemyCard overseerMaurul
+        , SomeEnemyCard orcTaskmaster
+        , SomeEnemyCard goblinSkirmisher
+        , SomeEnemyCard pitGoblin
         ]
     ]
