@@ -221,6 +221,9 @@ import LordOfTheRings.Treachery.Cards.AHurryingDarkness
 import LordOfTheRings.Treachery.Cards.BlastOfSavageWind
 import LordOfTheRings.Treachery.Cards.HazardousTerrain
 import LordOfTheRings.Treachery.Cards.RetracedSteps
+import LordOfTheRings.Treachery.Cards.CandlesOfCorpses
+import LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
+import LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -466,5 +469,8 @@ allTreacherys =
         , SomeTreacheryCard blastOfSavageWind
         , SomeTreacheryCard hazardousTerrain
         , SomeTreacheryCard retracedSteps
+        , SomeTreacheryCard candlesOfCorpses
+        , SomeTreacheryCard swarmingMosquitoes
+        , SomeTreacheryCard devilryOfTheDarkLand
         ]
     ]

@@ -259,6 +259,10 @@ import LordOfTheRings.Enemy.Cards.GoblinEagleHunter
 import LordOfTheRings.Enemy.Cards.TreetopBirdEater
 import LordOfTheRings.Enemy.Cards.TunnelingNamelessThing
 import LordOfTheRings.Enemy.Cards.OrcInterceptor
+import LordOfTheRings.Enemy.Cards.ThingsInThePools
+import LordOfTheRings.Enemy.Cards.MarshWight
+import LordOfTheRings.Enemy.Cards.LostSoulOfLorien
+import LordOfTheRings.Enemy.Cards.IllFatedGuard
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -543,5 +547,9 @@ allEnemys =
         , SomeEnemyCard treetopBirdEater
         , SomeEnemyCard tunnelingNamelessThing
         , SomeEnemyCard orcInterceptor
+        , SomeEnemyCard thingsInThePools
+        , SomeEnemyCard marshWight
+        , SomeEnemyCard lostSoulOfLorien
+        , SomeEnemyCard illFatedGuard
         ]
     ]

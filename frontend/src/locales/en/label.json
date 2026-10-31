@@ -1611,5 +1611,12 @@
     "choose": "A Hurrying Darkness: raise your threat by 5, or reveal an encounter card",
     "threat": "Raise your threat by 5",
     "reveal": "Reveal an additional encounter card"
+  },
+  "lostSoulOfLorien": {
+    "attach": "Lost Soul of Lórien: choose a hero to attach it to"
+  },
+  "candlesOfCorpses": {
+    "choose": "Candles of Corpses: discard a hero you control, or raise your threat by 5",
+    "threat": "Raise your threat by 5"
   }
 }

@@ -1,6 +1,8 @@
 module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (CannotReduceThreat))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -8,7 +10,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase
-import LordOfTheRings.Scenario (aJourneyToRhosgobel, conflictAtTheCarrock, theHillsOfEmynMuil, theHuntForGollum)
+import LordOfTheRings.Scenario (aJourneyToRhosgobel, conflictAtTheCarrock, theDeadMarshes, theHillsOfEmynMuil, theHuntForGollum)
 import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (Explored, PhaseEnds), mkAfter, mkWhen)
@@ -191,3 +193,51 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       reveal Treacheries.aHurryingDarkness []
       chooseLabel "$label.aHurryingDarkness.threat" pid
       threat pid `shouldReturn` was + 5
+
+  describe "The Dead Marshes" do
+    it "builds the nightmare deck" . nightmare theDeadMarshes $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 45
+      map (`copies` deck) [Locations.fensAndMires, Enemies.giantMarshWorm, Locations.theMereOfDeadFaces, Enemies.thingsInThePools]
+        `shouldBe` [0, 2, 1, 3]
+
+    it "keeps the players from reducing their threat" . nightmare theDeadMarshes $ \pid -> do
+      run $ DoStep 1 Setup
+      getModifiers pid >>= (`shouldSatisfy` elem CannotReduceThreat)
+
+    it "The Mere of Dead Faces holds Gollum's resources until he enters play" . nightmare theDeadMarshes $ \_ -> do
+      reveal Locations.theMereOfDeadFaces []
+      mere <- theLocation
+      run $ PlaceTokens GameSource (toTarget mere) Resource 3
+      getStagingThreat `shouldReturn` 3
+      run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.gollumTheDeadMarshes
+      map (.resources) <$> objectives `shouldReturn` [5]
+      getStagingThreat `shouldReturn` 0
+
+    it "shuffles Gollum back into the encounter deck from the discard pile" . nightmare theDeadMarshes $ \_ -> do
+      _ <- setEncounterDeck [Enemies.thingsInThePools]
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Objectives.gollumTheDeadMarshes
+      getEncounterDiscard `shouldReturn` []
+      length <$> getEncounterDeck `shouldReturn` 2
+
+    it "Things in the Pools damages each character committed to an escape test" . nightmare theDeadMarshes $ \pid -> do
+      reveal Enemies.thingsInThePools []
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ MakeEscapeTest $ EscapeTest pid GameSource 1 EscapeWillpower [] [] [] []
+      chooseTarget pid eowyn
+      getCharacterDamage eowyn `shouldReturn` 1
+
+    it "Ill-fated Guard lets its player commit only 1 character to an escape test" . nightmare theDeadMarshes $ \pid -> do
+      reveal Enemies.illFatedGuard []
+      run . EngageEnemy pid =<< theEnemy
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ MakeEscapeTest $ EscapeTest pid GameSource 1 EscapeWillpower [] [] [] []
+      chooseTarget pid eowyn
+      Just question <- getQuestion pid
+      [t | TargetLabel t _ <- questionChoices question] `shouldBe` []
+
+    it "Devilry of the Dark Land returns Undead enemies from the discard pile" . nightmare theDeadMarshes $ \_ -> do
+      run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.marshWight
+      reveal Treacheries.devilryOfTheDarkLand []
+      getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.marshWight]
