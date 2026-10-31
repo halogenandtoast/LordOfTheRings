@@ -1588,5 +1588,112 @@
   },
   "campaign": {
     "attachTo": "Choose a hero to attach it to"
+  },
+  "armorPlating": {
+    "discardShadow": "Armor Plating: choose another enemy to discard 1 of its shadow cards"
+  },
+  "ballista": {
+    "damage": "Ballista: choose a non-unique enemy to deal 1 damage to and remove 1 resource from"
+  },
+  "spyglass": {
+    "choose": "Spyglass: choose one",
+    "shadow": "Look at a shadow card",
+    "whichShadow": "Spyglass: choose an enemy whose shadow card to look at",
+    "discardShadow": "Spyglass: you may discard the shadow card",
+    "discard": "Discard it",
+    "keep": "Leave it",
+    "deck": "Look at the top and bottom card of a deck",
+    "whichDeck": "Spyglass: choose whose deck to look at",
+    "topAndBottom": "Spyglass: the top and bottom card of the deck",
+    "progress": "Place progress on a location",
+    "whichLocation": "Spyglass: choose a location to place progress on (more if it is Uncharted)"
+  },
+  "throwingAxe": {
+    "choose": "Throwing Axe: choose one",
+    "one": "Deal 1 damage to an enemy",
+    "toss": "Toss Throwing Axe: deal 4 damage to the enemy it lands on",
+    "chooseEnemy": "Throwing Axe: choose an enemy"
+  },
+  "galdorsCounsel": {
+    "enemy": "Galdor's Counsel: choose a non-unique enemy to deal damage to",
+    "location": "Galdor's Counsel: choose a non-unique location in the staging area to place progress on",
+    "addToHand": "Galdor's Counsel: add any number of these cards to your hand",
+    "topOrBottom": "Galdor's Counsel: look at the top or the bottom of your deck",
+    "top": "The top of your deck",
+    "bottom": "The bottom of your deck"
+  },
+  "comeTogether": {
+    "choose": "Come Together: choose up to that many characters"
+  },
+  "command": {
+    "choose": "Command: choose up to that many options, each once",
+    "heroDefense": "A hero gets +2 defense until the end of the round",
+    "enemyDefense": "An enemy gets -2 defense until the end of the round",
+    "readyBlessed": "Ready a character with Círdan's Blessing on it",
+    "allyFromDiscard": "Put an ally from your discard pile into play",
+    "removeResources": "Remove resources from a non-unique enemy",
+    "blessingResources": "Add 2 resources to each Círdan's Blessing",
+    "bottomCard": "Add the bottom card of your deck to your hand",
+    "encounterDeck": "Look at the top 10 cards of the encounter deck",
+    "discardEncounter": "Command: discard any number of these encounter cards",
+    "heroWillpower": "A hero gets +2 willpower until the end of the round",
+    "blessedCommit": "Each character with Círdan's Blessing does not exhaust to quest this round",
+    "progress": "Place 2 progress on a non-unique location",
+    "spyglass": "Put Spyglass into play, attached to a hero",
+    "heroAttack": "A hero gets +2 attack until the end of the round",
+    "enemyAttack": "An enemy gets -2 attack until the end of the round",
+    "damage": "Deal 2 damage to an enemy",
+    "engage": "Command: you may engage that enemy",
+    "engageIt": "Engage it",
+    "dontEngage": "Leave it",
+    "readyAttachment": "Ready an attachment"
+  },
+  "ominousFate": {
+    "choose": "Ominous Fate: choose one (X is {x})",
+    "reveal": "Reveal an encounter card",
+    "threat": "Raise your threat by {x}",
+    "damage": "Deal {x} damage divided among characters you control",
+    "victory": "Ominous Fate: the players may add it to the victory display",
+    "addToVictory": "Add it to the victory display",
+    "leave": "Leave it in the discard pile"
+  },
+  "sendForHelp": {
+    "search": "Send for Help: choose a card among the top 10 of your deck to draw",
+    "nothing": "Take nothing",
+    "hero": "Send for Help: choose a hero to put into play",
+    "heroNamed": "{hero}",
+    "phase": "Send for Help: choose an additional phase",
+    "resource": "Resource",
+    "refresh": "Refresh"
+  },
+  "thunderstruck": {
+    "shadow": "Thunderstruck: choose one",
+    "staging": "Add Thunderstruck to the staging area",
+    "damage": "Deal 2 damage to the defending character"
+  },
+  "calaerion": {
+    "ready": "Calaerion: choose the ally to ready"
+  },
+  "gavin": {
+    "control": "Gavin: choose the player to take control of him"
+  },
+  "starla": {
+    "progress": "Starla: choose a location to place 1 progress on"
+  },
+  "dreamChaserCampaign": {
+    "modification": "Campaign: choose a Modification boon to attach to this ship-objective",
+    "shipForResource": "Campaign: you may deal 2 damage to this ship-objective to add 1 resource to a hero's resource pool",
+    "dealDamage": "Deal the damage",
+    "decline": "Decline",
+    "damageForThreat": "Campaign: choose characters you control to deal 1 damage to each, reducing your threat by 1 for each",
+    "galdorsCounsel": "Campaign: you may choose a copy of Galdor's Counsel to add to your hand",
+    "command": "Campaign: you may choose a copy of Command to add to your hand",
+    "cirdansBlessing": "Campaign: you may choose a copy of Círdan's Blessing to add to your hand",
+    "comeTogether": "Campaign: add Come Together to your hand",
+    "spyglass": "Campaign: one player may raise their threat by 4 to attach Spyglass to a hero",
+    "graxarsReward": "Campaign: Graxar was defeated. Choose Parrying Cutlass or Throwing Axe",
+    "parryingCutlass": "Parrying Cutlass",
+    "throwingAxe": "Throwing Axe",
+    "attachTo": "Campaign: choose the hero to attach it to"
   }
 }
