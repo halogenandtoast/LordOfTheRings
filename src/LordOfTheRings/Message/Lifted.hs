@@ -1558,3 +1558,11 @@ createEnemyEngaged pid card = do
   eid <- getRandom
   push $ CreateEnemyEngaged pid eid card
   pure eid
+
+-- | The shadow card dealt to the enemy is shuffled into the encounter deck, as "Shadow:
+-- Shuffle Shadow Dweller back into the encounter deck" reads.
+shuffleShadowCardIntoEncounterDeck :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
+shuffleShadowCardIntoEncounterDeck eid card = do
+  push $ RemoveShadowCard eid card.id
+  setAside card
+  shuffleSetAsideIntoEncounterDeck [card]

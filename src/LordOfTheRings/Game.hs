@@ -2278,6 +2278,10 @@ runGameMessage msg g = case msg of
           %~ Map.delete aid
           & scenarioL
           %~ overAttrs (victoryDisplayL %~ (toCard a :))
+  -- a treachery adding itself as it resolves, as An Evil Fortune does
+  AddToVictoryDisplay (TreacheryTarget tid)
+    | Just t <- Map.lookup tid g.entities.treacheries ->
+        pure $ g & entitiesL . treacheriesL %~ Map.delete tid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard t :))
   -- an objective claimed into the victory display, as a Clue of The Steward's Fear
   AddToVictoryDisplay (ObjectiveTarget oid)
     | Just o <- Map.lookup oid g.entities.objectives ->

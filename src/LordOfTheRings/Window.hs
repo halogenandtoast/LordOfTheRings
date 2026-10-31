@@ -153,6 +153,8 @@ data WindowType
     Attached Target Target (Set Trait)
   | -- | the committed character was removed from the quest
     RemovedFromQuest Target
+  | -- | the players bypassed the quest card, as Flight from Moria's stages let them
+    QuestBypassed Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
