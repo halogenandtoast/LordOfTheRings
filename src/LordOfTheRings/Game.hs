@@ -3253,9 +3253,6 @@ attackDamage pid eid target n = do
       excessToDeck = ExcessDamageDiscardsFromDeck `elem` mods
   excess <-
     if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo || excessToAflame || excessToDeck
-      excessTo = take 1 [t | ExcessDamageTo t <- mods, t /= target]
-  excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3292,7 +3289,6 @@ attackDamage pid eid target n = do
         <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
         <> toAflame
         <> [DiscardTopOfDeck pid excess | excessToDeck, excess > 0]
-        <> [DealDamage (EnemyAttackSource eid) t excess | t <- excessTo, excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

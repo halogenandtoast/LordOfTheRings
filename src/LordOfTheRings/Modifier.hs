@@ -575,9 +575,6 @@ data ModifierType
   | -- | on the game: characters cannot gain willpower from player card effects, as Frozen
     -- Silverlode reads
     NoWillpowerFromPlayerCards
-  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
-    -- is dealt to the target instead, as Treacherous Bluffs' shadow sends it to Arwen
-    ExcessDamageTo Target
   | -- | on an enemy: for each point of damage its attack deals, the player discards a random
     -- card from his hand, as Banks of Sirannon's shadow reads
     AttackDamageDiscardsRandomFrom PlayerId
