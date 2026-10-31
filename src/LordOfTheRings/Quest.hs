@@ -194,6 +194,9 @@ import LordOfTheRings.Quest.Cards.FinalConfrontation
 import LordOfTheRings.Quest.Cards.MakeAStand
 import LordOfTheRings.Quest.Cards.ForcedOffTrack
 import LordOfTheRings.Quest.Cards.RaidGolfimbulsVault
+import LordOfTheRings.Quest.Cards.IntoTheEttenmoorsNightmare
+import LordOfTheRings.Quest.Cards.Isolated
+import LordOfTheRings.Quest.Cards.RescueFromTheTrolls
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -420,5 +423,8 @@ allQuests =
         , SomeQuestCard makeAStand
         , SomeQuestCard forcedOffTrack
         , SomeQuestCard raidGolfimbulsVault
+        , SomeQuestCard intoTheEttenmoorsNightmare
+        , SomeQuestCard isolated
+        , SomeQuestCard rescueFromTheTrolls
         ]
     ]

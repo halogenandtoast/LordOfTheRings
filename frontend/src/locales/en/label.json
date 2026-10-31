@@ -1606,5 +1606,11 @@
     "choose": "Orc of Thaurdir attacks you",
     "discardCaptured": "Discard the top 2 cards of your captured deck",
     "shadow": "Deal Orc of Thaurdir 2 additional shadow cards"
+  },
+  "barrenAndDesolate": {
+    "attach": "Choose a side quest to attach Barren and Desolate to"
+  },
+  "rescueFromTheTrolls": {
+    "hero": "Choose your lowest threat cost hero to place underneath Rescue from the Trolls"
   }
 }

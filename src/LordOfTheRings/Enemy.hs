@@ -251,6 +251,9 @@ import LordOfTheRings.Enemy.Cards.PackHunters
 import LordOfTheRings.Enemy.Cards.JailorGornakhNightmare
 import LordOfTheRings.Enemy.Cards.PrisonGuard
 import LordOfTheRings.Enemy.Cards.OrcOfThaurdir
+import LordOfTheRings.Enemy.Cards.HoarwellRiverSerpent
+import LordOfTheRings.Enemy.Cards.ScavengingStoneTroll
+import LordOfTheRings.Enemy.Cards.GiantBeetle
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -527,5 +530,8 @@ allEnemys =
         , SomeEnemyCard jailorGornakhNightmare
         , SomeEnemyCard prisonGuard
         , SomeEnemyCard orcOfThaurdir
+        , SomeEnemyCard hoarwellRiverSerpent
+        , SomeEnemyCard scavengingStoneTroll
+        , SomeEnemyCard giantBeetle
         ]
     ]

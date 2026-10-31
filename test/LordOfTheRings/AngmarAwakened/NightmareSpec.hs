@@ -1,7 +1,9 @@
 module LordOfTheRings.AngmarAwakened.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
-import LordOfTheRings.Card (CardType (HeroType), cdCardType, toCard, toCardDef)
+import LordOfTheRings.Card (CardDef (cdKeywords), CardType (HeroType), cdCardType, toCard, toCardDef)
+import LordOfTheRings.Keyword (Keyword (Safe))
+import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -11,7 +13,7 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase))
-import LordOfTheRings.Scenario (escapeFromMountGram, theWastesOfEriador)
+import LordOfTheRings.Scenario (acrossTheEttenmoors, escapeFromMountGram, theWastesOfEriador)
 import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers (capturedDeck, capturedUnder)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheWastesOfEriador.Helpers (isNight)
@@ -67,6 +69,9 @@ cardOf def = do
     $ [(toCard l).id | l <- toList g.entities.locations, toCardCode l == code]
     <> [(toCard e).id | e <- toList g.entities.enemies, toCardCode e == code]
     <> [(toCard q).id | q <- toList g.entities.quests, toCardCode q == code]
+
+questOf :: CardDef -> GameT Quest
+questOf def = getsGame (fromJustNote "no such quest" . find ((== toCardCode def) . toCardCode) . toList . (.entities.quests))
 
 -- | An ally of the player's captured underneath the card.
 captureAlly :: PlayerId -> CardDef -> Target -> GameT Card
@@ -248,3 +253,89 @@ spec = describe "Angmar Awakened Nightmare mode" do
       cell <- stagedLocation Locations.prisonCellNightmare
       _ <- captureAlly pid Allies.guardOfTheCitadel (toTarget cell)
       length <$> (capturedUnder =<< cardOf Quests.raidGolfimbulsVault) `shouldReturn` 1
+
+  describe "Across the Ettenmoors" do
+    it "builds the nightmare deck, its own stage 1 in play" . nightmare acrossTheEttenmoors $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Locations.trollFells, Enemies.goblinPursuer, Enemies.giantBeetle, Quests.isolated]
+        `shouldBe` [0, 0, 2, 1]
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.intoTheEttenmoorsNightmare
+
+    it "stages a side quest guarding a safe location, and discards down to an enemy per player" . nightmare acrossTheEttenmoors $ \pid -> do
+      flipFirstQuest pid
+      sideQuests <- getsGame (filter isSideQuest . toList . (.entities.quests))
+      length sideQuests `shouldBe` 1
+      safe <- getsGame (filter (member Safe . cdKeywords . toCardDef) . toList . (.entities.locations))
+      map (.placement) safe `shouldBe` [AttachedTo (CardIdTarget (toCard q).id) | q <- sideQuests]
+      getsGame (length . (.entities.enemies)) `shouldReturn` 1
+
+    it "has stage 2A guard the side quest it reveals with a safe location" . nightmare acrossTheEttenmoors $ \_ -> do
+      q <- putQuestStage Quests.aMiserableJourney
+      _ <- setEncounterDeck [Quests.forageForFood, Enemies.goblinPursuer, Locations.secludedCave]
+      -- past its shuffle of the discard pile into the deck
+      run $ DoStep 1 (WhenRevealed q)
+      resolveRevealed
+      cave <- locationOf Locations.secludedCave
+      forage <- cardOf Quests.forageForFood
+      (.placement) <$> getLocation cave `shouldReturn` AttachedTo (CardIdTarget forage)
+
+    it "Scavenging Stone-troll bars travel to safe locations until damaged, and locks the discard piles" . nightmare acrossTheEttenmoors $ \_ -> do
+      cave <- stagedLocation Locations.secludedCave
+      troll <- staged Enemies.scavengingStoneTroll
+      getModifiers (toTarget cave) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+      getModifiers GameTarget >>= (`shouldSatisfy` elem DiscardPilesLocked)
+      run $ DealDamage GameSource (toTarget troll) 1
+      getModifiers (toTarget cave) >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
+
+    it "Hoarwell River Serpent engages as the players travel to a safe location, hurting the damaged" . nightmare acrossTheEttenmoors $ \pid -> do
+      cave <- stagedLocation Locations.secludedCave
+      _ <- staged Enemies.hoarwellRiverSerpent
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DealDamage GameSource eowyn 1
+      run $ TravelTo cave
+      resolveForced pid
+      getCharacterDamage eowyn `shouldReturn` 2
+
+    it "Rocky Foothills must be traveled to, with 2 quest points per quest" . nightmare acrossTheEttenmoors $ \_ -> do
+      _ <- putQuestStage Quests.aMiserableJourney
+      foothills <- stagedLocation Locations.rockyFoothills
+      getModifiers (toTarget foothills) >>= (`shouldSatisfy` \ms -> MustBeTraveledTo `elem` ms && QuestPointModifier 2 `elem` ms)
+
+    it "Vast Troll-fells stops heroes gaining resources by card effects" . nightmare acrossTheEttenmoors $ \_ -> do
+      _ <- stagedLocation Locations.vastTrollFells
+      eowyn <- getHeroWithCode "01007"
+      getModifiers (toTarget eowyn) >>= (`shouldSatisfy` elem CannotGainResourcesFromCardEffects)
+
+    it "Crashing Thunder exhausts each damaged character" . nightmare acrossTheEttenmoors $ \pid -> do
+      _ <- putQuestStage Quests.aMiserableJourney
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      reveal [Treacheries.crashingThunder]
+      chooseTarget pid eowyn
+      getCharacterDamage eowyn `shouldReturn` 1
+      heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` True
+
+    it "Barren and Desolate takes 1 willpower from each character while its side quest is current" . nightmare acrossTheEttenmoors $ \_ -> do
+      _ <- putQuestStage Quests.aMiserableJourney
+      run . AddToStaging =<< genEncounterCard Quests.lieLow
+      reveal [Treacheries.barrenAndDesolate, Locations.secludedCave]
+      lie <- toTarget <$> questOf Quests.lieLow
+      run $ SetCurrentQuest lie
+      -- the current quest is itself a modifier, read as the modifiers are next gathered
+      run $ CheckWindows []
+      eowyn <- getHeroWithCode "01007"
+      getModifiers (toTarget eowyn) >>= (`shouldSatisfy` elem (WillpowerModifier (-1)))
+
+    it "Isolated stops card effects drawing cards" . nightmare acrossTheEttenmoors $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Quests.isolated
+      hand <- length . (.hand) <$> getPlayer pid
+      run $ DrawCards $ Drawing pid 1
+      length . (.hand) <$> getPlayer pid `shouldReturn` hand + 1
+      getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotDrawCardsFromCardEffects)
+
+    it "Rescue from the Trolls takes the lowest threat cost hero until it is defeated" . nightmare acrossTheEttenmoors $ \_ -> do
+      reveal [Quests.rescueFromTheTrolls, Locations.secludedCave]
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem "01002")
+      rescue <- questOf Quests.rescueFromTheTrolls
+      run $ CompleteQuest (toId rescue)
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` elem "01002")

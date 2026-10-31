@@ -12,6 +12,9 @@ module LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors.Helpers (
   damagedCharactersOf,
   isBlank,
   guardedBy,
+  isSafeCard,
+  discardUntilSafeFor,
+  guardWithSafe,
 ) where
 
 import LordOfTheRings.Ability
@@ -101,3 +104,23 @@ isBlank a = elem Blank <$> getModifiers a
 guardedBy :: HasGame m => CardId -> m [LocationId]
 guardedBy cid =
   getsGame (map (.id) . filter ((== AttachedTo (CardIdTarget cid)) . (.placement)) . toList . entitiesLocations . gameEntities)
+
+-- | A location card with the safe keyword.
+isSafeCard :: EncounterCard -> Bool
+isSafeCard = member Safe . cdKeywords . toCardDef
+
+{- | Nightmare: "discard cards from the top of the encounter deck until a location with the
+safe keyword is discarded", for the side quest just revealed: the source reads the cards
+back as 'DiscardedTopOfEncounterDeck' with the side quest's card as the target, and calls
+'guardWithSafe'.
+-}
+discardUntilSafeFor :: (ReverseQueue m, Sourceable a) => a -> CardId -> m ()
+discardUntilSafeFor a sideQuest = do
+  deck <- getsGame (scenarioEncounterDeck . toAttrs . gameScenario)
+  discardTopOfEncounterDeckFor a (CardIdTarget sideQuest) $ maybe (length deck) (+ 1) (findIndex isSafeCard deck)
+
+-- | "Attach that location to the newly revealed side quest, as a guarded objective."
+guardWithSafe :: ReverseQueue m => CardId -> [EncounterCard] -> m ()
+guardWithSafe sideQuest cards = for_ (find isSafeCard cards) \l -> do
+  removeFromEncounterDiscard l
+  putLocationIntoPlay l (AttachedTo $ CardIdTarget sideQuest)

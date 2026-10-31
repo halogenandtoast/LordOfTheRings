@@ -275,6 +275,8 @@ import LordOfTheRings.Location.Cards.ShroudedWilderness
 import LordOfTheRings.Location.Cards.SnowyBadlands
 import LordOfTheRings.Location.Cards.PrisonCellNightmare
 import LordOfTheRings.Location.Cards.TortureChamberMountGram
+import LordOfTheRings.Location.Cards.RockyFoothills
+import LordOfTheRings.Location.Cards.VastTrollFells
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -591,5 +593,7 @@ allLocations =
         , SomeLocationCard snowyBadlands
         , SomeLocationCard prisonCellNightmare
         , SomeLocationCard tortureChamberMountGram
+        , SomeLocationCard rockyFoothills
+        , SomeLocationCard vastTrollFells
         ]
     ]

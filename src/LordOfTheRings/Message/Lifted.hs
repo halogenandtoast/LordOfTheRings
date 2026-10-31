@@ -182,8 +182,9 @@ lowerThreatBy source pid n = do
 -- make him draw and it is a player card.
 drawCards :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 drawCards source pid n = do
-  barred <- elem CannotDrawCardsFromPlayerCardEffects <$> getModifiers (PlayerTarget pid)
-  unless (barred && isPlayerCardSource (toSource source)) $ push $ DrawCards $ Drawing pid n
+  mods <- getModifiers (PlayerTarget pid)
+  let barred = CannotDrawCardsFromCardEffects `elem` mods || (CannotDrawCardsFromPlayerCardEffects `elem` mods && isPlayerCardSource (toSource source))
+  unless barred $ push $ DrawCards $ Drawing pid n
 
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard

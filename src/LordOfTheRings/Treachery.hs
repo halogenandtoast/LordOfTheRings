@@ -215,6 +215,8 @@ import LordOfTheRings.Treachery.Cards.CunningWolves
 import LordOfTheRings.Treachery.Cards.TorrentOfHail
 import LordOfTheRings.Treachery.Cards.CruelTorment
 import LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
+import LordOfTheRings.Treachery.Cards.CrashingThunder
+import LordOfTheRings.Treachery.Cards.BarrenAndDesolate
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -454,5 +456,7 @@ allTreacherys =
         , SomeTreacheryCard torrentOfHail
         , SomeTreacheryCard cruelTorment
         , SomeTreacheryCard goblinPatrolNightmare
+        , SomeTreacheryCard crashingThunder
+        , SomeTreacheryCard barrenAndDesolate
         ]
     ]

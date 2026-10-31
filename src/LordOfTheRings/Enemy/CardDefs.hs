@@ -257,6 +257,9 @@ allEnemyCards =
       , jailorGornakhNightmare
       , prisonGuard
       , orcOfThaurdir
+      , hoarwellRiverSerpent
+      , scavengingStoneTroll
+      , giantBeetle
       ]
 
 namelessThing :: CardDef
@@ -2075,4 +2078,24 @@ orcOfThaurdir =
   (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-009" "Orc of Thaurdir" EscapeFromMountGramNightmare 3 35 3 4 3 5)
     { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
+    }
+
+-- Across the Ettenmoors Nightmare
+
+hoarwellRiverSerpent :: CardDef
+hoarwellRiverSerpent =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-003" "Hoarwell River Serpent" AcrossTheEttenmoorsNightmare 2 38 3 4 3 5)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+scavengingStoneTroll :: CardDef
+scavengingStoneTroll =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-004" "Scavenging Stone-troll" AcrossTheEttenmoorsNightmare 2 42 1 7 2 14)
+    { cdCardTraits = setFromList [Troll]
+    }
+
+giantBeetle :: CardDef
+giantBeetle =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-005" "Giant Beetle" AcrossTheEttenmoorsNightmare 2 14 2 3 3 3)
+    { cdCardTraits = setFromList [Creature, Insect]
     }

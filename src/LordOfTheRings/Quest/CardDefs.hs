@@ -243,6 +243,9 @@ allQuestCards =
       , makeAStand
       , forcedOffTrack
       , raidGolfimbulsVault
+      , intoTheEttenmoorsNightmare
+      , isolated
+      , rescueFromTheTrolls
       ]
 
 theDrippingWalls :: CardDef
@@ -923,4 +926,23 @@ raidGolfimbulsVault =
   (encounterSideQuest "escape-from-mount-gram-nightmare-escape-from-mount-gram-008" "Raid Golfimbul's Vault" EscapeFromMountGramNightmare 9)
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge, Capture 3]
+    }
+
+-- Across the Ettenmoors Nightmare
+
+intoTheEttenmoorsNightmare :: CardDef
+intoTheEttenmoorsNightmare = quest "across-the-ettenmoors-nightmare-across-the-ettenmoors-002" "Into the Ettenmoors" AcrossTheEttenmoorsNightmare 1 10
+
+isolated :: CardDef
+isolated =
+  (encounterSideQuest "across-the-ettenmoors-nightmare-across-the-ettenmoors-010" "Isolated" AcrossTheEttenmoorsNightmare 7)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+rescueFromTheTrolls :: CardDef
+rescueFromTheTrolls =
+  (encounterSideQuest "across-the-ettenmoors-nightmare-across-the-ettenmoors-011" "Rescue from the Trolls" AcrossTheEttenmoorsNightmare 15)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
     }

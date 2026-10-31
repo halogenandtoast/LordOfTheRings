@@ -222,6 +222,8 @@ allTreacheryCards =
       , torrentOfHail
       , cruelTorment
       , goblinPatrolNightmare
+      , crashingThunder
+      , barrenAndDesolate
       ]
 
 deepDeepDark :: CardDef
@@ -1356,3 +1358,15 @@ cruelTorment = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gr
 
 goblinPatrolNightmare :: CardDef
 goblinPatrolNightmare = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gram-007" "Goblin Patrol" EscapeFromMountGramNightmare 2) {cdShadowEffect = True}
+
+-- Across the Ettenmoors Nightmare
+
+crashingThunder :: CardDef
+crashingThunder =
+  (treachery "across-the-ettenmoors-nightmare-across-the-ettenmoors-008" "Crashing Thunder" AcrossTheEttenmoorsNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+barrenAndDesolate :: CardDef
+barrenAndDesolate = (treachery "across-the-ettenmoors-nightmare-across-the-ettenmoors-009" "Barren and Desolate" AcrossTheEttenmoorsNightmare 3) {cdKeywords = setFromList [Surge]}

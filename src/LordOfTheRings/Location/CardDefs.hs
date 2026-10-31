@@ -287,6 +287,8 @@ allLocationCards =
       , snowyBadlands
       , prisonCellNightmare
       , tortureChamberMountGram
+      , rockyFoothills
+      , vastTrollFells
       ]
 
 drownedTreasury :: CardDef
@@ -2147,4 +2149,20 @@ tortureChamberMountGram =
   (location "escape-from-mount-gram-nightmare-escape-from-mount-gram-005" "Torture Chamber" EscapeFromMountGramNightmare 2 0 0)
     { cdCardTraits = setFromList [Underground]
     , cdKeywords = setFromList [Capture 1, Surge]
+    }
+
+-- Across the Ettenmoors Nightmare
+
+rockyFoothills :: CardDef
+rockyFoothills =
+  (location "across-the-ettenmoors-nightmare-across-the-ettenmoors-006" "Rocky Foothills" AcrossTheEttenmoorsNightmare 2 2 2)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdShadowEffect = True
+    }
+
+vastTrollFells :: CardDef
+vastTrollFells =
+  (location "across-the-ettenmoors-nightmare-across-the-ettenmoors-007" "Vast Troll-fells" AcrossTheEttenmoorsNightmare 2 3 4)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdShadowEffect = True
     }
