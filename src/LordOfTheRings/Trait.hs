@@ -129,6 +129,7 @@ data Trait
   | Spider
   | -- | the Spirit trait, named apart from the sphere
     SpiritTrait
+  | Snaga
   | Spy
   | Stair
   | Steward

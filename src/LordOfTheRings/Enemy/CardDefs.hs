@@ -159,6 +159,21 @@ allEnemyCards =
       , chiefTurchTheDunlandTrap
       , boarClanStalker
       , boarClanWarrior
+      , boarClanAmbusher
+      , boarClanSkirmisher
+      , wolfSpirit
+      , boarSpirit
+      , ravenSpirit
+      , bellachsHunter
+      , orcSeeker
+      , bloodHound
+      , deadlyMarshAdder
+      , swarmsOfMosquitos
+      , bellachsBodyguard
+      , littleSnuffler
+      , dunlendingHorde
+      , ravenClanElite
+      , ravenClawDruid
       , bellachTroubleInTharbad
       , spyFromMordor
       , bellachsMarauder
@@ -2037,5 +2052,109 @@ spiderOfDolGuldur :: CardDef
 spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
+    , cdShadowEffect = True
+    }
+
+-- The Ring-maker Nightmare Decks
+
+boarClanAmbusher :: CardDef
+boarClanAmbusher =
+  (enemy "the-dunland-trap-nightmare-the-dunland-trap-002" "Boar Clan Ambusher" TheDunlandTrapNightmare 3 30 3 5 2 5)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdShadowEffect = True
+    }
+
+boarClanSkirmisher :: CardDef
+boarClanSkirmisher =
+  (enemy "the-dunland-trap-nightmare-the-dunland-trap-003" "Boar Clan Skirmisher" TheDunlandTrapNightmare 4 20 2 3 2 4)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdShadowEffect = True
+    }
+
+wolfSpirit :: CardDef
+wolfSpirit =
+  (enemy "the-three-trials-nightmare-the-three-trials-002" "Wolf Spirit" TheThreeTrialsNightmare 3 30 2 5 1 6)
+    { cdCardTraits = setFromList [Undead, SpiritTrait, Wolf]
+    }
+
+boarSpirit :: CardDef
+boarSpirit =
+  (enemy "the-three-trials-nightmare-the-three-trials-003" "Boar Spirit" TheThreeTrialsNightmare 3 20 1 4 2 5)
+    { cdCardTraits = setFromList [Undead, SpiritTrait, Boar]
+    }
+
+ravenSpirit :: CardDef
+ravenSpirit =
+  (enemy "the-three-trials-nightmare-the-three-trials-004" "Raven Spirit" TheThreeTrialsNightmare 3 40 3 3 3 4)
+    { cdCardTraits = setFromList [Undead, SpiritTrait, Raven]
+    }
+
+bellachsHunter :: CardDef
+bellachsHunter =
+  (enemy "trouble-in-tharbad-nightmare-trouble-in-tharbad-002" "Bellach's Hunter" TroubleInTharbadNightmare 2 50 3 6 4 6)
+    { cdCardTraits = setFromList [Orc, Spy]
+    }
+
+orcSeeker :: CardDef
+orcSeeker =
+  (enemy "trouble-in-tharbad-nightmare-trouble-in-tharbad-003" "Orc Seeker" TroubleInTharbadNightmare 3 20 2 4 3 4)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+bloodHound :: CardDef
+bloodHound =
+  (enemy "trouble-in-tharbad-nightmare-trouble-in-tharbad-004" "Blood Hound" TroubleInTharbadNightmare 3 0 2 2 2 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+deadlyMarshAdder :: CardDef
+deadlyMarshAdder =
+  (enemy "the-nin-in-eilph-nightmare-the-nin-in-eilph-002" "Deadly Marsh Adder" TheNinInEilphNightmare 3 30 3 4 2 5)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+swarmsOfMosquitos :: CardDef
+swarmsOfMosquitos =
+  (enemy "the-nin-in-eilph-nightmare-the-nin-in-eilph-003" "Swarms of Mosquitoes" TheNinInEilphNightmare 3 25 2 3 1 7)
+    { cdCardTraits = setFromList [Creature, Insect]
+    , cdVictoryPoints = Just 1
+    }
+
+bellachsBodyguard :: CardDef
+bellachsBodyguard =
+  (enemy "celebrimbors-secret-nightmare-celebrimbors-secret-002" "Bellach's Bodyguard" CelebrimborsSecretNightmare 3 45 4 4 3 6)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    , cdKeywords = setFromList [Scour]
+    }
+
+littleSnuffler :: CardDef
+littleSnuffler =
+  (enemy "celebrimbors-secret-nightmare-celebrimbors-secret-003" "Little Snuffler" CelebrimborsSecretNightmare 3 15 3 3 2 3)
+    { cdCardTraits = setFromList [Orc, Snaga]
+    , cdWhenRevealed = True
+    , cdKeywords = setFromList [Scour]
+    }
+
+dunlendingHorde :: CardDef
+dunlendingHorde =
+  (enemy "the-antlered-crown-nightmare-the-antlered-crown-002" "Dunlending Horde" TheAntleredCrownNightmare 2 32 4 6 3 8)
+    { cdCardTraits = setFromList [Dunland]
+    }
+
+ravenClanElite :: CardDef
+ravenClanElite =
+  (enemy "the-antlered-crown-nightmare-the-antlered-crown-003" "Raven Clan Elite" TheAntleredCrownNightmare 4 28 2 4 2 4)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdWhenRevealed = True
+    }
+
+ravenClawDruid :: CardDef
+ravenClawDruid =
+  (enemy "the-antlered-crown-nightmare-the-antlered-crown-004" "Raven Claw Druid" TheAntleredCrownNightmare 3 26 3 2 3 5)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
     , cdShadowEffect = True
     }

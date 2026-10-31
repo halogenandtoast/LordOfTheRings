@@ -145,6 +145,19 @@ allTreacheryCards =
       , drivenBack
       , frenziedAttack
       , dunlendingAmbush
+      , boarClanAssault
+      , stalkedByDunlendings
+      , cursedBurden
+      , trialOfAncestors
+      , waylaidByAgents
+      , tharbadPatrol
+      , quicksand
+      , rottenStench
+      , hatefulSearch
+      , sauronsAgent
+      , closingIn
+      , ravenTalisman
+      , gatheringForces
       , constantTail
       , conspicuousLot
       , cornered
@@ -1330,5 +1343,84 @@ catacombInspection =
 darkInterrogation :: CardDef
 darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
+    { cdShadowEffect = True
+    }
+
+-- The Ring-maker Nightmare Decks
+
+boarClanAssault :: CardDef
+boarClanAssault =
+  (treachery "the-dunland-trap-nightmare-the-dunland-trap-007" "Boar Clan Assault" TheDunlandTrapNightmare 2)
+    { cdShadowEffect = True
+    }
+
+stalkedByDunlendings :: CardDef
+stalkedByDunlendings =
+  (treachery "the-dunland-trap-nightmare-the-dunland-trap-008" "Stalked by Dunlendings" TheDunlandTrapNightmare 2)
+    { cdShadowEffect = True
+    }
+
+cursedBurden :: CardDef
+cursedBurden =
+  (treachery "the-three-trials-nightmare-the-three-trials-007" "Cursed Burden" TheThreeTrialsNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+trialOfAncestors :: CardDef
+trialOfAncestors =
+  (treachery "the-three-trials-nightmare-the-three-trials-008" "Trial of Ancestors" TheThreeTrialsNightmare 2)
+
+waylaidByAgents :: CardDef
+waylaidByAgents =
+  (treachery "trouble-in-tharbad-nightmare-trouble-in-tharbad-007" "Waylaid by Agents" TroubleInTharbadNightmare 2)
+    { cdShadowEffect = True
+    }
+
+tharbadPatrol :: CardDef
+tharbadPatrol =
+  (treachery "trouble-in-tharbad-nightmare-trouble-in-tharbad-008" "Tharbad Patrol" TroubleInTharbadNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+quicksand :: CardDef
+quicksand =
+  (treachery "the-nin-in-eilph-nightmare-the-nin-in-eilph-006" "Quicksand" TheNinInEilphNightmare 2)
+    { cdShadowEffect = True
+    }
+
+rottenStench :: CardDef
+rottenStench =
+  (treachery "the-nin-in-eilph-nightmare-the-nin-in-eilph-007" "Rotten Stench" TheNinInEilphNightmare 2)
+    { cdShadowEffect = True
+    }
+
+hatefulSearch :: CardDef
+hatefulSearch =
+  (treachery "celebrimbors-secret-nightmare-celebrimbors-secret-006" "Hateful Search" CelebrimborsSecretNightmare 3)
+    { cdShadowEffect = True
+    }
+
+sauronsAgent :: CardDef
+sauronsAgent =
+  (treachery "celebrimbors-secret-nightmare-celebrimbors-secret-007" "Sauron's Agent" CelebrimborsSecretNightmare 2)
+    { cdShadowEffect = True
+    }
+
+closingIn :: CardDef
+closingIn =
+  (treachery "celebrimbors-secret-nightmare-celebrimbors-secret-008" "Closing In" CelebrimborsSecretNightmare 2)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+ravenTalisman :: CardDef
+ravenTalisman =
+  (treachery "the-antlered-crown-nightmare-the-antlered-crown-007" "Raven Talisman" TheAntleredCrownNightmare 2)
+    { cdShadowEffect = True
+    }
+
+gatheringForces :: CardDef
+gatheringForces =
+  (treachery "the-antlered-crown-nightmare-the-antlered-crown-008" "Gathering Forces" TheAntleredCrownNightmare 2)
     { cdShadowEffect = True
     }

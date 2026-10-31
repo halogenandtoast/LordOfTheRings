@@ -166,6 +166,8 @@ allQuestCards =
       , throughTheMarshAWearyPassage
       , throughTheMarshAForgottenLand
       , lostInTheSwanfleetImpassableMarshland
+      , throughTheMarshAnArduousJourney
+      , lostInTheSwanfleetDeadlyWaters
       , lostInTheSwanfleetATreacherousSwamp
       , lostInTheSwanfleetCreaturesOfAForgottenAge
       , outOfTheSwamp
@@ -894,3 +896,11 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
+
+-- The Nîn-in-Eilph Nightmare Deck: B sides in place of A Weary Passage's and Impassable Marshland's
+
+throughTheMarshAnArduousJourney :: CardDef
+throughTheMarshAnArduousJourney = (throughTheMarsh "the-nin-in-eilph-nightmare-the-nin-in-eilph-008" "An Arduous Journey") {cdEncounterSet = Just TheNinInEilphNightmare}
+
+lostInTheSwanfleetDeadlyWaters :: CardDef
+lostInTheSwanfleetDeadlyWaters = (lostInTheSwanfleet "the-nin-in-eilph-nightmare-the-nin-in-eilph-009" "Deadly Waters") {cdEncounterSet = Just TheNinInEilphNightmare}

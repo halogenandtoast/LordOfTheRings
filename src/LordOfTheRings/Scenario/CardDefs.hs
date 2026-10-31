@@ -16,6 +16,12 @@ allNightmareCards =
       [ passageThroughMirkwoodNightmare
       , journeyAlongTheAnduinNightmare
       , escapeFromDolGuldurNightmare
+      , theDunlandTrapNightmare
+      , theThreeTrialsNightmare
+      , troubleInTharbadNightmare
+      , theNinInEilphNightmare
+      , celebrimborsSecretNightmare
+      , theAntleredCrownNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -26,3 +32,23 @@ journeyAlongTheAnduinNightmare = nightmareSetup "core-set-nightmare-journey-alon
 
 escapeFromDolGuldurNightmare :: CardDef
 escapeFromDolGuldurNightmare = nightmareSetup "core-set-nightmare-escape-from-dol-guldur-001" "Escape from Dol Guldur" EscapeFromDolGuldurNightmare
+
+-- The Ring-maker Nightmare Decks
+
+theDunlandTrapNightmare :: CardDef
+theDunlandTrapNightmare = nightmareSetup "the-dunland-trap-nightmare-the-dunland-trap-001" "The Dunland Trap" TheDunlandTrapNightmare
+
+theThreeTrialsNightmare :: CardDef
+theThreeTrialsNightmare = nightmareSetup "the-three-trials-nightmare-the-three-trials-001" "The Three Trials" TheThreeTrialsNightmare
+
+troubleInTharbadNightmare :: CardDef
+troubleInTharbadNightmare = nightmareSetup "trouble-in-tharbad-nightmare-trouble-in-tharbad-001" "Trouble in Tharbad" TroubleInTharbadNightmare
+
+theNinInEilphNightmare :: CardDef
+theNinInEilphNightmare = nightmareSetup "the-nin-in-eilph-nightmare-the-nin-in-eilph-001" "The Nîn-in-Eilph" TheNinInEilphNightmare
+
+celebrimborsSecretNightmare :: CardDef
+celebrimborsSecretNightmare = nightmareSetup "celebrimbors-secret-nightmare-celebrimbors-secret-001" "Celebrimbor's Secret" CelebrimborsSecretNightmare
+
+theAntleredCrownNightmare :: CardDef
+theAntleredCrownNightmare = nightmareSetup "the-antlered-crown-nightmare-the-antlered-crown-001" "The Antlered Crown" TheAntleredCrownNightmare
