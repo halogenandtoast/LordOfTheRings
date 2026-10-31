@@ -19,9 +19,10 @@ module LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers (
   stageFourRevealed,
 ) where
 
-import LordOfTheRings.Card (Card (PlayerCard), CardDef (..), costAsResources, toCardDef)
+import LordOfTheRings.Card (Card (PlayerCard), CardDef (..), costAsResources, toCardCode, toCardDef)
 import LordOfTheRings.Enemy.Types (EnemyAttrs)
 import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Prelude
@@ -29,12 +30,20 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Trait (Trait (Nameless))
 
--- | The top cards of the player's deck go facedown under the enemy.
+{- | The top cards of the player's deck go facedown under the enemy: 1 more for each Nest of
+Horrors in the staging area, as its Forced effect reads for a Nameless enemy.
+-}
 attachFromTopOfDeck :: (ReverseQueue m, Targetable target) => PlayerId -> Int -> target -> m ()
 attachFromTopOfDeck pid n target = do
   deck <- (.deck) <$> getPlayer pid
-  for_ [pc | PlayerCard pc <- take n deck] \pc -> do
+  nests <- case toTarget target of
+    EnemyTarget eid -> do
+      nameless <- selectAny (EnemyWithId eid <> EnemyWithTrait Nameless)
+      if nameless then length <$> select (LocationInStagingArea <> LocationWithCardCode (toCardCode Locations.nestOfHorrors)) else pure 0
+    _ -> pure 0
+  for_ [pc | PlayerCard pc <- take (n + nests) deck] \pc -> do
     removeFromDeck pid pc.id
     attachFacedown target pc
 

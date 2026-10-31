@@ -260,6 +260,10 @@ import LordOfTheRings.Enemy.Cards.ChokingTentacle
 import LordOfTheRings.Enemy.Cards.GoblinStalker
 import LordOfTheRings.Enemy.Cards.TrapdoorSpider
 import LordOfTheRings.Enemy.Cards.SentinelOfTheDeep
+import LordOfTheRings.Enemy.Cards.MithrilSeeker
+import LordOfTheRings.Enemy.Cards.GiantCaveCentipede
+import LordOfTheRings.Enemy.Cards.UnspeakableThing
+import LordOfTheRings.Enemy.Cards.PrimevalThing
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -545,5 +549,9 @@ allEnemys =
         , SomeEnemyCard goblinStalker
         , SomeEnemyCard trapdoorSpider
         , SomeEnemyCard sentinelOfTheDeep
+        , SomeEnemyCard mithrilSeeker
+        , SomeEnemyCard giantCaveCentipede
+        , SomeEnemyCard unspeakableThing
+        , SomeEnemyCard primevalThing
         ]
     ]

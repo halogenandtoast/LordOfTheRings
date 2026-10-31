@@ -218,6 +218,7 @@ import LordOfTheRings.Treachery.Cards.PulledUnder
 import LordOfTheRings.Treachery.Cards.RipplingFromBeneath
 import LordOfTheRings.Treachery.Cards.DreadfulDeep
 import LordOfTheRings.Treachery.Cards.LostAndHelpless
+import LordOfTheRings.Treachery.Cards.ChillOfTheRoots
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -460,5 +461,6 @@ allTreacherys =
         , SomeTreacheryCard ripplingFromBeneath
         , SomeTreacheryCard dreadfulDeep
         , SomeTreacheryCard lostAndHelpless
+        , SomeTreacheryCard chillOfTheRoots
         ]
     ]

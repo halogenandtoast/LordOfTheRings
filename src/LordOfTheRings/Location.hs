@@ -279,6 +279,8 @@ import LordOfTheRings.Location.Cards.BanksOfSirannon
 import LordOfTheRings.Location.Cards.HideousDepths
 import LordOfTheRings.Location.Cards.EasternMines
 import LordOfTheRings.Location.Cards.BottomlessChasm
+import LordOfTheRings.Location.Cards.NestOfHorrors
+import LordOfTheRings.Location.Cards.ShiveringRiver
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -599,5 +601,7 @@ allLocations =
         , SomeLocationCard hideousDepths
         , SomeLocationCard easternMines
         , SomeLocationCard bottomlessChasm
+        , SomeLocationCard nestOfHorrors
+        , SomeLocationCard shiveringRiver
         ]
     ]

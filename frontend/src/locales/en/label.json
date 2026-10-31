@@ -1601,5 +1601,16 @@
   "theLongDark": {
     "discardAlly": "Lost: choose an ally in play to discard",
     "triggerLost": "Choose a Lost: effect in play to trigger"
+  },
+  "giantCaveCentipede": {
+    "shuffle": "Choose the card of highest cost in your hand to shuffle into your deck"
+  },
+  "chillOfTheRoots": {
+    "choose": "Chill of the Roots: discard your hand, or raise your threat by its size",
+    "discardHand": "Discard your hand",
+    "raiseThreat": "Raise your threat by the cards in your hand"
+  },
+  "washedAway": {
+    "discardAlly": "Discard an ally until your allies' total cost is 6 or less"
   }
 }

@@ -10,7 +10,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
-import LordOfTheRings.Scenario (roadToRivendell, theLongDark, theRedhornGate, theWatcherInTheWater)
+import LordOfTheRings.Scenario (foundationsOfStone, roadToRivendell, theLongDark, theRedhornGate, theWatcherInTheWater)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck, scenarioSetAside), encounterDiscardL, modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -49,6 +49,12 @@ shadow pid eid def defenders = do
   card <- genEncounterCard def
   run $ AttachShadowCard eid card
   run $ ResolveShadow eid pid defenders
+
+passResponses :: PlayerId -> GameT ()
+passResponses pid =
+  getQuestion pid >>= \case
+    Just (QuestionLabel "$label.useResponse" _ _ _) -> chooseLabel "$label.pass" pid >> passResponses pid
+    _ -> pure ()
 
 setAsideCards :: GameT [EncounterCard]
 setAsideCards = getsGame (scenarioSetAside . toAttrs . (.scenario))
@@ -261,3 +267,50 @@ spec = describe "Dwarrowdelf nightmare decks" do
       beravor <- toTarget <$> getHeroWithCode "01012"
       run $ DealDamage (EnemyAttackSource eid) beravor 1
       getsGame (length . (.entities.heroes)) `shouldReturn` 2
+
+  describe "Foundations of Stone" do
+    it "builds the nightmare deck, the nightmare set waiting with Foundations of Stone" . nightmare foundationsOfStone $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      aside <- setAsideCards
+      (length deck, length aside) `shouldBe` (28, 35)
+      map (`copies` aside) [Enemies.moriaBats, Enemies.unspeakableThing, Locations.drownedTreasury]
+        `shouldBe` [0, 3, 0]
+
+    it "Mithril Seeker gets +1 attack for each resource on it" . nightmare foundationsOfStone $ \_ -> do
+      reveal Enemies.mithrilSeeker []
+      eid <- enemyOf Enemies.mithrilSeeker
+      run $ PlaceTokens GameSource (toTarget eid) Resource 2
+      getEnemyAttack eid `shouldReturn` 4
+
+    it "Unspeakable Thing takes the top card of its player's deck as it engages" . nightmare foundationsOfStone $ \pid -> do
+      reveal Enemies.unspeakableThing []
+      eid <- enemyOf Enemies.unspeakableThing
+      getEnemyAttack eid `shouldReturn` 5
+      deckSize <- length . (.deck) <$> getPlayer pid
+      run $ EngageEnemy pid eid
+      length . (.deck) <$> getPlayer pid `shouldReturn` deckSize - 1
+
+    it "Primeval Thing takes cards from the first player's deck until they cost 6" . nightmare foundationsOfStone $ \pid -> do
+      reveal Enemies.primevalThing []
+      eid <- enemyOf Enemies.primevalThing
+      getEnemyAttack eid >>= (`shouldSatisfy` (>= 6))
+      deckSize <- length . (.deck) <$> getPlayer pid
+      deckSize `shouldSatisfy` (< 50)
+
+    it "Chill of the Roots surges when no hand is discarded" . nightmare foundationsOfStone $ \pid -> do
+      reveal Treacheries.chillOfTheRoots [Locations.nestOfHorrors]
+      chooseLabel "$label.chillOfTheRoots.raiseThreat" pid
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+    it "Washed Away! has each player discard allies down to a total cost of 6" . nightmare foundationsOfStone $ \pid -> do
+      gandalf <- putAllyIntoPlay pid Allies.gandalf
+      passResponses pid
+      _ <- putAllyIntoPlay pid Allies.snowbournScout
+      passResponses pid
+      _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      passResponses pid
+      stage <- putQuestStage Quests.washedAway
+      run $ DoStep 2 (WhenRevealed stage)
+      chooseTarget pid gandalf
+      getsGame (length . (.entities.allies)) `shouldReturn` 2
