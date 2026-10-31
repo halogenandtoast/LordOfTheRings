@@ -17,7 +17,7 @@ instance RunMessage AJourneyToRhosgobel where
       encounterDeck <-
         concatMapM
           (gatherEncounterSet attrs)
-          [EncounterSet.AJourneyToRhosgobel, EncounterSet.SpidersOfMirkwood, EncounterSet.Wilderlands]
+          [EncounterSet.AJourneyToRhosgobel, EncounterSet.SpidersOfMirkwood, EncounterSet.DolGuldurOrcs]
       firstStage <- genEncounterCard Quests.theWoundedEagle
       laterStages <- traverse genEncounterCard [Quests.radagastsRequest, Quests.returnToRhosgobel]
       putQuestIntoPlay firstStage

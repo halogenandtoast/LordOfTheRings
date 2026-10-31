@@ -14,7 +14,7 @@ theDeadMarshes = Scenario $ scenario TheDeadMarshes "the-dead-marshes" "The Dead
 instance RunMessage TheDeadMarshes where
   runMessage msg (TheDeadMarshes attrs) = case msg of
     DoStep 1 Setup -> do
-      encounterDeck <- concatMapM (gatherEncounterSet attrs) [EncounterSet.TheDeadMarshes, EncounterSet.SauronsReach]
+      encounterDeck <- concatMapM (gatherEncounterSet attrs) [EncounterSet.TheDeadMarshes, EncounterSet.SauronsReach, EncounterSet.Wilderlands]
       firstStage <- genEncounterCard Quests.intoTheMarshes
       laterStages <- traverse genEncounterCard [Quests.theCapture]
       putQuestIntoPlay firstStage

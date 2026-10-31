@@ -14,7 +14,8 @@ theHillsOfEmynMuil = Scenario $ scenario TheHillsOfEmynMuil "the-hills-of-emyn-m
 instance RunMessage TheHillsOfEmynMuil where
   runMessage msg (TheHillsOfEmynMuil attrs) = case msg of
     DoStep 1 Setup -> do
-      encounterDeck <- gatherEncounterSet attrs EncounterSet.TheHillsOfEmynMuil
+      encounterDeck <-
+        concatMapM (gatherEncounterSet attrs) [EncounterSet.TheHillsOfEmynMuil, EncounterSet.DolGuldurOrcs, EncounterSet.SauronsReach]
       putQuestIntoPlay =<< genEncounterCard Quests.theHillsOfEmynMuil
       pure $ TheHillsOfEmynMuil $ attrs & encounterDeckL .~ encounterDeck
     _ -> TheHillsOfEmynMuil <$> runMessage msg attrs

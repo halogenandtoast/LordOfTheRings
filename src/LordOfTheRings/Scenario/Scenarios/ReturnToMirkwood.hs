@@ -17,7 +17,7 @@ instance RunMessage ReturnToMirkwood where
       encounterDeck <-
         concatMapM
           (gatherEncounterSet attrs)
-          [EncounterSet.ReturnToMirkwood, EncounterSet.SpidersOfMirkwood, EncounterSet.Wilderlands, EncounterSet.DolGuldurOrcs]
+          [EncounterSet.ReturnToMirkwood, EncounterSet.SpidersOfMirkwood, EncounterSet.Wilderlands]
       firstStage <- genEncounterCard Quests.throughTheForest
       laterStages <- traverse genEncounterCard [Quests.escapeAttempt, Quests.toTheElvenKingsHalls, Quests.ambush]
       putQuestIntoPlay firstStage
