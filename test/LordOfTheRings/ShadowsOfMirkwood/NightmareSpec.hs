@@ -1,13 +1,14 @@
 module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Outcome (Outcome (Lost, Won))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase
-import LordOfTheRings.Scenario (theHuntForGollum)
+import LordOfTheRings.Scenario (conflictAtTheCarrock, theHuntForGollum)
 import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
@@ -76,3 +77,43 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       eid <- theEnemy
       getsGame (fmap (.placement) . lookup eid . map (\e -> (toId e, toAttrs e)) . toList . (.entities.enemies))
         `shouldReturn` Just (EngagedWith pid)
+
+  describe "Conflict at the Carrock" do
+    it "builds the nightmare deck, its own Trolls in place of the standard ones" . nightmare conflictAtTheCarrock $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 43
+      map (`copies` deck) [Enemies.louis, Enemies.louisNightmare, Enemies.robAndBob, Enemies.savageHillTroll, Locations.beePastures]
+        `shouldBe` [0, 1, 1, 4, 0]
+
+    it "places 1 progress on the quest when the players placed none this quest phase" . nightmare conflictAtTheCarrock $ \_ -> do
+      _ <- putQuestStage Quests.grimbeornsQuest
+      run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
+      (.progress) <$> getActiveQuest `shouldReturn` 1
+
+    it "gives each Troll +1 attack while Morris is in the victory display" . nightmare conflictAtTheCarrock $ \_ -> do
+      reveal Enemies.morrisNightmare []
+      morris <- theEnemy
+      run $ AddToVictoryDisplay (toTarget morris)
+      reveal Enemies.savageHillTroll []
+      troll <- theEnemy
+      getEnemyAttack troll `shouldReturn` 4
+
+    it "Grimbeorn's Folly adds Rob & Bob and a Troll, and is won when Rob & Bob fall" . nightmare conflictAtTheCarrock $ \pid -> do
+      run . SetAside =<< genEncounterCard Enemies.robAndBob
+      _ <- setEncounterDeck [Enemies.savageHillTroll]
+      folly <- putQuestStage Quests.grimbeornsFolly
+      run $ WhenRevealed folly
+      chooseOptionMatching "the Troll found" pid (const True)
+      names <- getsGame (map toCardCode . toList . (.entities.enemies))
+      sort names `shouldBe` sort (map toCardCode [Enemies.robAndBob, Enemies.savageHillTroll])
+      robAndBob <- getsGame (fromJustNote "no Rob & Bob" . headMay . map toId . filter ((== toCardCode Enemies.robAndBob) . toCardCode) . toList . (.entities.enemies))
+      run $ Destroy GameSource (toTarget robAndBob)
+      getsGame (.outcome) `shouldReturn` Just Won
+
+    it "Time for Supper heals the Trolls" . nightmare conflictAtTheCarrock $ \_ -> do
+      reveal Enemies.savageHillTroll []
+      troll <- theEnemy
+      run $ DealDamage GameSource (toTarget troll) 2
+      reveal Treacheries.timeForSupper []
+      getDamage (toTarget troll) `shouldReturn` 0

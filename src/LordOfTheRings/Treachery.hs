@@ -214,6 +214,7 @@ import LordOfTheRings.Treachery.Cards.DarkInterrogation
 import LordOfTheRings.Treachery.Cards.TheEnemysTrail
 import LordOfTheRings.Treachery.Cards.RestlessHunters
 import LordOfTheRings.Treachery.Cards.TheTrailGoesCold
+import LordOfTheRings.Treachery.Cards.TimeForSupper
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -452,5 +453,6 @@ allTreacherys =
         , SomeTreacheryCard theEnemysTrail
         , SomeTreacheryCard restlessHunters
         , SomeTreacheryCard theTrailGoesCold
+        , SomeTreacheryCard timeForSupper
         ]
     ]

@@ -191,6 +191,7 @@ import LordOfTheRings.Quest.Cards.TheCoastOfUmbar
 import LordOfTheRings.Quest.Cards.FateOfTheDreamChaser
 import LordOfTheRings.Quest.Cards.TheHavenOfUmbar
 import LordOfTheRings.Quest.Cards.FinalConfrontation
+import LordOfTheRings.Quest.Cards.GrimbeornsFolly
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -414,5 +415,6 @@ allQuests =
         , SomeQuestCard fateOfTheDreamChaser
         , SomeQuestCard theHavenOfUmbar
         , SomeQuestCard finalConfrontation
+        , SomeQuestCard grimbeornsFolly
         ]
     ]

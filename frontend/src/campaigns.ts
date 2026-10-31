@@ -52,7 +52,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'journey-along-the-anduin': { nightmare: true },
   'escape-from-dol-guldur': { nightmare: true },
   'the-hunt-for-gollum': { nightmare: true },
-  'conflict-at-the-carrock': {},
+  'conflict-at-the-carrock': { nightmare: true },
   'a-journey-to-rhosgobel': {},
   'the-hills-of-emyn-muil': {},
   'the-dead-marshes': {},

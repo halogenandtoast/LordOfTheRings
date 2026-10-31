@@ -1596,5 +1596,8 @@
   },
   "darkPools": {
     "discard": "Dark Pools: discard your ally with the highest printed cost"
+  },
+  "timeForSupper": {
+    "remove": "Time for Supper: choose a hero in a discard pile to remove from the game"
   }
 }

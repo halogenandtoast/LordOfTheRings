@@ -249,6 +249,12 @@ import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
 import LordOfTheRings.Enemy.Cards.RavenousHawk
 import LordOfTheRings.Enemy.Cards.HuntingWarg
+import LordOfTheRings.Enemy.Cards.SavageHillTroll
+import LordOfTheRings.Enemy.Cards.RobAndBob
+import LordOfTheRings.Enemy.Cards.LouisNightmare
+import LordOfTheRings.Enemy.Cards.MorrisNightmare
+import LordOfTheRings.Enemy.Cards.RupertNightmare
+import LordOfTheRings.Enemy.Cards.StuartNightmare
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -523,5 +529,11 @@ allEnemys =
         , SomeEnemyCard spiderOfDolGuldur
         , SomeEnemyCard ravenousHawk
         , SomeEnemyCard huntingWarg
+        , SomeEnemyCard savageHillTroll
+        , SomeEnemyCard robAndBob
+        , SomeEnemyCard louisNightmare
+        , SomeEnemyCard morrisNightmare
+        , SomeEnemyCard rupertNightmare
+        , SomeEnemyCard stuartNightmare
         ]
     ]

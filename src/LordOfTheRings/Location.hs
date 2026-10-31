@@ -274,6 +274,8 @@ import LordOfTheRings.Location.Cards.DungeonLabyrinth
 import LordOfTheRings.Location.Cards.WatchedPath
 import LordOfTheRings.Location.Cards.HuntersLookout
 import LordOfTheRings.Location.Cards.DarkPools
+import LordOfTheRings.Location.Cards.TrollLair
+import LordOfTheRings.Location.Cards.HivesAndHives
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -589,5 +591,7 @@ allLocations =
         , SomeLocationCard watchedPath
         , SomeLocationCard huntersLookout
         , SomeLocationCard darkPools
+        , SomeLocationCard trollLair
+        , SomeLocationCard hivesAndHives
         ]
     ]

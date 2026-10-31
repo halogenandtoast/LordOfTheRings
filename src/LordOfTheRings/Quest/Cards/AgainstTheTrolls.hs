@@ -1,5 +1,6 @@
 module LordOfTheRings.Quest.Cards.AgainstTheTrolls (againstTheTrolls) where
 
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Trait (Trait (Troll))
@@ -13,12 +14,15 @@ againstTheTrolls = quest AgainstTheTrolls Cards.againstTheTrolls
 
 -- | When Revealed: Place the unique Troll cards previously set aside into the staging
 -- area. Players cannot defeat this stage if there are any Troll enemies in play.
+-- Nightmare: "When Revealed: Place Louis, Morris, Rupert and Stuart into the staging area."
+-- Rob & Bob waits for Grimbeorn's Folly.
 instance RunMessage AgainstTheTrolls where
   runMessage msg q@(AgainstTheTrolls attrs) = case msg of
     Flip (isTarget attrs -> True) -> do
       askToResolveWhenRevealed attrs
       AgainstTheTrolls <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
-      addSetAsideToStaging (CardWithTrait Troll)
+      nightmare <- inNightmareMode
+      addSetAsideToStaging $ CardWithTrait Troll <> (if nightmare then NotCard (cardIs Enemies.robAndBob) else AnyCard)
       pure q
     _ -> AgainstTheTrolls <$> runBlockedStage (EnemyWithTrait Troll) msg attrs
