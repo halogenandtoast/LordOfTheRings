@@ -37,7 +37,14 @@
     "startOfPhase": "Start of phase",
     "startOfRound": "Start of round",
     "toggleSidebar": "Toggle sidebar",
-    "spectating": "Spectating"
+    "spectating": "Spectating",
+    "story": "Scenario story"
+  },
+  "story": {
+    "rules": "Special rules",
+    "tips": "Tips",
+    "resolution": "Resolution",
+    "continue": "Continue"
   },
   "waitingOn": "Waiting for {name}…",
   "lobby": {

@@ -4,12 +4,13 @@ import GameMenu from './GameMenu.vue'
 const undoShortcut = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘Z' : 'Ctrl+Z'
 
 // a guest at a friend's game can undo and export, but restarting and debugging are the owner's
-defineProps<{ canUndo: boolean; showSidebar: boolean; debugging: boolean; spectate: boolean; guest?: boolean }>()
+defineProps<{ canUndo: boolean; showSidebar: boolean; debugging: boolean; spectate: boolean; guest?: boolean; hasStory?: boolean }>()
 const emit = defineEmits<{
   reset: []
   undo: [to?: 'phase' | 'round']
   export: []
   fileBug: []
+  story: []
   toggleSidebar: []
   toggleDebug: []
 }>()
@@ -25,8 +26,14 @@ const emit = defineEmits<{
       </svg>
       {{ $t('common.game') }}
       <template #items>
+        <div v-if="!guest || hasStory" class="menu-section">{{ $t('common.scenario') }}</div>
+        <button v-if="hasStory" type="button" @click="emit('story')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+          </svg>
+          {{ $t('game.bar.story') }}
+        </button>
         <template v-if="!guest">
-        <div class="menu-section">{{ $t('common.scenario') }}</div>
         <button type="button" @click="emit('reset')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />

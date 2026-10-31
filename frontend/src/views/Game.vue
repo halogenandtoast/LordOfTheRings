@@ -22,6 +22,8 @@ import ZoneSeats from '../components/ZoneSeats.vue'
 import Lobby from '../components/Lobby.vue'
 import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
+import StoryModal, { type StoryPart } from '../components/StoryModal.vue'
+import { slug } from '../campaigns'
 import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
 import { table as tableStyle } from '../table'
@@ -30,7 +32,7 @@ import { provideHighlights } from '../composables/useHighlights'
 import { provideCombat } from '../composables/useCombat'
 
 const route = useRoute()
-const { t } = useI18n()
+const { t, tm } = useI18n()
 const tr = useServerText()
 const spectate = route.meta.spectate === true
 const {
@@ -62,6 +64,32 @@ const bugDescription = ref('')
 const fileBugAbout = (description = '') => {
   bugDescription.value = description
   filingBug.value = true
+}
+// the scenario's story from its rulebook: the introduction as the game begins, the
+// resolution once won, each shown once on its own and again from the menu
+const storyId = computed(() => (scenario.value ? slug(scenario.value.name) : ''))
+const storyKeys = (part: StoryPart) =>
+  part === 'intro' ? ['intro', 'rules', 'tips'] : campaignId.value ? ['resolution', 'campaignResolution'] : ['resolution']
+const hasStoryPart = (part: StoryPart) =>
+  storyKeys(part).some((key) => Object.keys(tm(`story.${storyId.value}.${key}`)).length > 0)
+const storyPart = ref<StoryPart | null>(null)
+const storySeen = `story:${route.params.id as string}`
+const showStoryOnce = (part: StoryPart) => {
+  const seen = (localStorage.getItem(storySeen) ?? '').split(',')
+  if (spectate || seen.includes(part) || !hasStoryPart(part)) return
+  localStorage.setItem(storySeen, [...seen, part].join(','))
+  storyPart.value = part
+}
+watch(
+  () => [started.value, game.value?.round, outcome.value, storyId.value] as const,
+  ([isStarted, round, over]) => {
+    if (over === 'WON') showStoryOnce('resolution')
+    else if (isStarted && !over && (round ?? 0) <= 1) showStoryOnce('intro')
+  },
+  { immediate: true },
+)
+const openStory = () => {
+  storyPart.value = outcome.value === 'WON' && hasStoryPart('resolution') ? 'resolution' : 'intro'
 }
 // on a narrower screen the sidebar is a drawer over the board, so it starts shut
 const showSidebar = ref(!matchMedia('(width < 1100px), (height < 500px)').matches)
@@ -219,13 +247,16 @@ watch(question, (asked) => {
     :debugging="debugging"
     :spectate="spectate"
     :guest="guest"
+    :has-story="hasStoryPart('intro') || hasStoryPart('resolution')"
     @reset="reset"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
     @file-bug="fileBugAbout()"
+    @story="openStory"
     @toggle-sidebar="showSidebar = !showSidebar"
     @toggle-debug="debugging = !debugging"
   />
+  <StoryModal :scenario="storyId" :name="scenario?.name ?? ''" :part="storyPart" :campaign="!!campaignId" @close="storyPart = null" />
   <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
