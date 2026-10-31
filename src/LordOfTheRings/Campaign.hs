@@ -46,7 +46,14 @@ data CampaignLogKey
     -- Guldur's resolution)
     MendorJoinsTheNextCampaign
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
-  deriving anyclass (ToJSON, FromJSON, ToJSONKey, FromJSONKey)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | Keyed by name in JSON, as the notes the frontend shows.
+instance ToJSONKey CampaignLogKey where
+  toJSONKey = genericToJSONKey defaultJSONKeyOptions
+
+instance FromJSONKey CampaignLogKey where
+  fromJSONKey = genericFromJSONKey defaultJSONKeyOptions
 
 data CompletedScenario = CompletedScenario
   { completedScenario :: ScenarioId
