@@ -514,6 +514,12 @@ data ModifierType
   | -- | on a location: progress placed on it at once is reduced to this much, as Celebrimbor's
     -- Secret's nightmare setup card reads for the staging area
     ProgressReducedTo Int
+  | -- | on a location: player card effects cannot discard it from play, as The Antlered Crown's
+    -- nightmare setup card reads for locations with time counters
+    CannotBeDiscardedByPlayerCards
+  | -- | on an enemy: damage dealt to it other than by an attack is canceled, as Dunlending Horde
+    -- reads
+    CannotTakeNonCombatDamage
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

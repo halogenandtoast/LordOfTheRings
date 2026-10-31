@@ -718,8 +718,11 @@ runGameMessage msg g = case msg of
           mods' <- getModifiers t
           -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1
           let n' = foldr min n [k | DamageReducedTo k <- mods']
+              combat = case source of
+                PlayerAttackSource _ -> True
+                _ -> False
           pure
-            $ if CannotTakeDamage `elem` mods'
+            $ if CannotTakeDamage `elem` mods' || (CannotTakeNonCombatDamage `elem` mods' && not combat)
               then []
               else [CheckWindows [mkWhen $ DealtDamage t n'], DoStep 1 (DealDamage source t n')]
     unless (CannotTakeDamage `elem` mods) $ pushAll =<< case redirected of
