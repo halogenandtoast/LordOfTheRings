@@ -217,6 +217,7 @@ matchEnemy matcher enemy = case matcher of
   AnyEnemy -> pure True
   NotEnemy m -> not <$> matchEnemy m enemy
   EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms
+  EnemyWithKeyword k -> hasKeyword k (toTarget enemy) (toCardDef enemy)
 
 instance Query LocationMatcher where
   type QueryElement LocationMatcher = LocationId

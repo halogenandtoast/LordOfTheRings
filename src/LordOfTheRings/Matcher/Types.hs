@@ -177,6 +177,8 @@ data EnemyMatcher
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]
+  | -- | an enemy with the keyword, printed or gained, as "with the ambush keyword" reads
+    EnemyWithKeyword Keyword
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

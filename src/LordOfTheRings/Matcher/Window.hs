@@ -266,6 +266,9 @@ data WindowMatcher
   | -- | the first window when the player plays with the FAQ's errata, else the second, as
     -- the window a card's errata changed
     ErrataWindow PlayerId WindowMatcher WindowMatcher
+  | -- | a matching enemy revealed from the encounter deck, as Concealed Woods reads one with
+    -- ambush
+    MatchingEnemyRevealedWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

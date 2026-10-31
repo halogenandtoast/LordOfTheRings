@@ -3165,8 +3165,9 @@ attackDamage pid eid target n = do
       excessToLocation = ExcessDamageToActiveLocation `elem` mods
       excessToQuests = ExcessDamageRemovesQuestProgress `elem` mods
       excessToShip = ExcessDamageToShipObjective `elem` mods
+      excessTo = take 1 [t | ExcessDamageTo t <- mods, t /= target]
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3193,6 +3194,7 @@ attackDamage pid eid target n = do
         <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
         <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
         <> toShip
+        <> [DealDamage (EnemyAttackSource eid) t excess | t <- excessTo, excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

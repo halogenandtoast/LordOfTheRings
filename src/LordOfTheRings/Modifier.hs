@@ -510,6 +510,9 @@ data ModifierType
   | -- | on the game: characters cannot gain willpower from player card effects, as Frozen
     -- Silverlode reads
     NoWillpowerFromPlayerCards
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is dealt to the target instead, as Treacherous Bluffs' shadow sends it to Arwen
+    ExcessDamageTo Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
