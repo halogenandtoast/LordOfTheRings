@@ -213,6 +213,8 @@ import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
 import LordOfTheRings.Treachery.Cards.BoarClanAssault
 import LordOfTheRings.Treachery.Cards.StalkedByDunlendings
+import LordOfTheRings.Treachery.Cards.CursedBurden
+import LordOfTheRings.Treachery.Cards.TrialOfAncestors
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -450,5 +452,7 @@ allTreacherys =
         , SomeTreacheryCard darkInterrogation
         , SomeTreacheryCard boarClanAssault
         , SomeTreacheryCard stalkedByDunlendings
+        , SomeTreacheryCard cursedBurden
+        , SomeTreacheryCard trialOfAncestors
         ]
     ]

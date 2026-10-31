@@ -1591,5 +1591,16 @@
   },
   "munuvDuvRiver": {
     "shadow": "Choose an enemy engaged with you to deal a shadow card"
+  },
+  "cursedBurden": {
+    "attach": "Choose a hero with a Key attached for Cursed Burden"
+  },
+  "hauntedPillars": {
+    "choose": "Haunted Pillars: choose one",
+    "returnLocation": "Return the active location to the staging area",
+    "surge": "Haunted Pillars gains surge"
+  },
+  "sacredForest": {
+    "removeTimeCounters": "Choose an enemy to remove each time counter from"
   }
 }

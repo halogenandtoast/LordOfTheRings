@@ -1,15 +1,21 @@
 {-# OPTIONS_GHC -Wno-unused-top-binds #-}
 module LordOfTheRings.RingMaker.NightmareSpec (spec) where
 
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Staging (getEngagementCost, getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Modifier (ModifierType (..))
-import LordOfTheRings.Scenario (theDunlandTrap)
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Phase (Phase (EncounterPhase))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario (theDunlandTrap, theThreeTrials)
 import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (PhaseBegins))
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -113,3 +119,63 @@ spec = describe "The Ring-maker Nightmare Decks" do
       shadow pid eid Treacheries.stalkedByDunlendings []
       skirmisher <- enemyOf Enemies.boarClanSkirmisher
       length . (.shadowCards) <$> getEnemy skirmisher `shouldReturn` 1
+
+  describe "The Three Trials" do
+    it "builds the nightmare deck" . nightmare theThreeTrials $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.spiritOfTheWild, Locations.grimFoothills, Locations.tangledWoods, Treacheries.turnedAround, Enemies.wolfSpirit]
+        `shouldBe` [2, 0, 2, 0, 3]
+
+    it "adds each engaged Guardian's threat to the staging area" . nightmare theThreeTrials $ \pid -> do
+      _ <- engaged pid Enemies.ravensGuardian
+      getStagingThreat `shouldReturn` 3
+
+    it "keeps damage off Guardians during the Trial of Intuition" . nightmare theThreeTrials $ \_ -> do
+      _ <- putQuestStage Quests.theTrialOfIntuition
+      staged Enemies.wolfsGuardian
+      eid <- enemyOf Enemies.wolfsGuardian
+      getModifiers eid >>= (`shouldSatisfy` elem CannotTakeDamage)
+
+    it "Wolf Spirit gives Wolf enemies +1 attack while Wolf's Guardian is in play" . nightmare theThreeTrials $ \_ -> do
+      staged Enemies.wolfSpirit
+      eid <- enemyOf Enemies.wolfSpirit
+      getEnemyAttack eid `shouldReturn` 5
+      staged Enemies.wolfsGuardian
+      getEnemyAttack eid `shouldReturn` 6
+
+    it "Wolf Spirit engages the player engaged with Wolf's Guardian as the encounter phase begins" . nightmare theThreeTrials $ \pid -> do
+      _ <- engaged pid Enemies.wolfsGuardian
+      staged Enemies.wolfSpirit
+      run $ CheckWindows [Window After (PhaseBegins EncounterPhase)]
+      answerAll pid
+      spirit <- enemyOf Enemies.wolfSpirit
+      (.placement) <$> getEnemy spirit `shouldReturn` EngagedWith pid
+
+    it "Haunted Pillars surges with no active location" . nightmare theThreeTrials $ \_ -> do
+      reveal Locations.hauntedPillars [Locations.sacredForest]
+      getsGame (length . (.entities.locations)) `shouldReturn` 2
+
+    it "Sacred Forest heals a Guardian 2 for each time counter removed from it" . nightmare theThreeTrials $ \_ -> do
+      staged Locations.sacredForest
+      staged Enemies.boarsGuardian
+      eid <- enemyOf Enemies.boarsGuardian
+      run $ PlaceTokens GameSource (toTarget eid) TimeCounter 2
+      run $ DealDamage GameSource (toTarget eid) 5
+      run $ RemoveTokens GameSource (toTarget eid) TimeCounter 1
+      getDamage (toTarget eid) `shouldReturn` 3
+
+    it "Trial of Ancestors gives non-unique characters -1 willpower" . nightmare theThreeTrials $ \pid -> do
+      _ <- putQuestStage Quests.theTrialOfStrength
+      ally <- putAllyIntoPlay pid Allies.wanderingTook
+      was <- getWillpower ally
+      reveal Treacheries.trialOfAncestors []
+      getWillpower ally `shouldReturn` was - 1
+
+    it "Cursed Burden keeps the hero with a Key from questing" . nightmare theThreeTrials $ \pid -> do
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      key <- genEncounterCard Objectives.keyOfTheBoar
+      run $ PutObjectiveIntoPlayAttached key eowyn
+      reveal Treacheries.cursedBurden [Locations.sacredForest]
+      answerAll pid
+      getModifiers eowyn >>= (`shouldSatisfy` elem CannotCommitToQuest)

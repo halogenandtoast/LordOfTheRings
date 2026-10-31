@@ -402,6 +402,7 @@ library
       LordOfTheRings.Enemy.Cards.BoarClanStalker
       LordOfTheRings.Enemy.Cards.BoarClanWarrior
       LordOfTheRings.Enemy.Cards.BoarsGuardian
+      LordOfTheRings.Enemy.Cards.BoarSpirit
       LordOfTheRings.Enemy.Cards.BrownWaterRats
       LordOfTheRings.Enemy.Cards.BrutalUruk
       LordOfTheRings.Enemy.Cards.CaptainSahir
@@ -552,6 +553,7 @@ library
       LordOfTheRings.Enemy.Cards.RavenChief
       LordOfTheRings.Enemy.Cards.RavensGuardian
       LordOfTheRings.Enemy.Cards.RavenSkirmisher
+      LordOfTheRings.Enemy.Cards.RavenSpirit
       LordOfTheRings.Enemy.Cards.RavenWarrior
       LordOfTheRings.Enemy.Cards.ReanimatedDead
       LordOfTheRings.Enemy.Cards.RockAdder
@@ -620,6 +622,7 @@ library
       LordOfTheRings.Enemy.Cards.WolfOfAngmar
       LordOfTheRings.Enemy.Cards.WolfRider
       LordOfTheRings.Enemy.Cards.WolfsGuardian
+      LordOfTheRings.Enemy.Cards.WolfSpirit
       LordOfTheRings.Enemy.Cards.WraithOfCarnDum
       LordOfTheRings.Enemy.Cards.ZealousTraitor
       LordOfTheRings.Enemy.Import.Lifted
@@ -992,6 +995,7 @@ library
       LordOfTheRings.Location.Cards.HallowedCircle
       LordOfTheRings.Location.Cards.HarborStorehouse
       LordOfTheRings.Location.Cards.HauntedKeep
+      LordOfTheRings.Location.Cards.HauntedPillars
       LordOfTheRings.Location.Cards.HeartOfFangorn
       LordOfTheRings.Location.Cards.HelmOfTheStormcaller
       LordOfTheRings.Location.Cards.HiddenAlleyway
@@ -1065,6 +1069,7 @@ library
       LordOfTheRings.Location.Cards.RuinedTower
       LordOfTheRings.Location.Cards.RuinsOfArnor
       LordOfTheRings.Location.Cards.RuinsOfTheSecondAge
+      LordOfTheRings.Location.Cards.SacredForest
       LordOfTheRings.Location.Cards.SecludedCave
       LordOfTheRings.Location.Cards.SecludedFarmhouse
       LordOfTheRings.Location.Cards.SecludedGlade
@@ -1579,6 +1584,7 @@ library
       LordOfTheRings.Treachery.Cards.CounterAttack
       LordOfTheRings.Treachery.Cards.CounterSpell
       LordOfTheRings.Treachery.Cards.CrumblingRuin
+      LordOfTheRings.Treachery.Cards.CursedBurden
       LordOfTheRings.Treachery.Cards.CurseOfTheDownfallen
       LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
       LordOfTheRings.Treachery.Cards.CurseOfTheYears
@@ -1735,6 +1741,7 @@ library
       LordOfTheRings.Treachery.Cards.TragicDiscovery
       LordOfTheRings.Treachery.Cards.TrappedInside
       LordOfTheRings.Treachery.Cards.TreacherousFog
+      LordOfTheRings.Treachery.Cards.TrialOfAncestors
       LordOfTheRings.Treachery.Cards.TrollAttack
       LordOfTheRings.Treachery.Cards.TurnedAround
       LordOfTheRings.Treachery.Cards.UmbarPatrol

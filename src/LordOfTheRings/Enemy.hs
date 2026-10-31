@@ -249,6 +249,9 @@ import LordOfTheRings.Enemy.Cards.CrazedCaptive
 import LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
 import LordOfTheRings.Enemy.Cards.BoarClanAmbusher
 import LordOfTheRings.Enemy.Cards.BoarClanSkirmisher
+import LordOfTheRings.Enemy.Cards.WolfSpirit
+import LordOfTheRings.Enemy.Cards.BoarSpirit
+import LordOfTheRings.Enemy.Cards.RavenSpirit
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -523,5 +526,8 @@ allEnemys =
         , SomeEnemyCard spiderOfDolGuldur
         , SomeEnemyCard boarClanAmbusher
         , SomeEnemyCard boarClanSkirmisher
+        , SomeEnemyCard wolfSpirit
+        , SomeEnemyCard boarSpirit
+        , SomeEnemyCard ravenSpirit
         ]
     ]
