@@ -466,6 +466,7 @@ library
       LordOfTheRings.Enemy.Cards.GiantSwampAdder
       LordOfTheRings.Enemy.Cards.GoblinArcher
       LordOfTheRings.Enemy.Cards.GoblinFollower
+      LordOfTheRings.Enemy.Cards.GoblinLurker
       LordOfTheRings.Enemy.Cards.GoblinPursuer
       LordOfTheRings.Enemy.Cards.GoblinScout
       LordOfTheRings.Enemy.Cards.GoblinSneak
@@ -540,6 +541,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcWarParty
       LordOfTheRings.Enemy.Cards.PackLeader
       LordOfTheRings.Enemy.Cards.PatrolLeader
+      LordOfTheRings.Enemy.Cards.PatrolSentry
       LordOfTheRings.Enemy.Cards.Pickpocket
       LordOfTheRings.Enemy.Cards.ProfaneDead
       LordOfTheRings.Enemy.Cards.ProwlingOrc
@@ -562,6 +564,7 @@ library
       LordOfTheRings.Enemy.Cards.SeaScorpion
       LordOfTheRings.Enemy.Cards.SerpentsBlade
       LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
+      LordOfTheRings.Enemy.Cards.ShadowDweller
       LordOfTheRings.Enemy.Cards.SiegeRaft
       LordOfTheRings.Enemy.Cards.SiegeShip
       LordOfTheRings.Enemy.Cards.SlaveShip
@@ -1021,6 +1024,7 @@ library
       LordOfTheRings.Location.Cards.MountainsOfMirkwood
       LordOfTheRings.Location.Cards.MugashsLair
       LordOfTheRings.Location.Cards.MunuvDuvRavine
+      LordOfTheRings.Location.Cards.NarrowFissure
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.NorburyTombs
       LordOfTheRings.Location.Cards.NorthDowns
@@ -1134,6 +1138,7 @@ library
       LordOfTheRings.Location.Cards.TurbulentWaters
       LordOfTheRings.Location.Cards.TwistingHollow
       LordOfTheRings.Location.Cards.TwistingPassage
+      LordOfTheRings.Location.Cards.TwistingShadows
       LordOfTheRings.Location.Cards.UmbarHarbor
       LordOfTheRings.Location.Cards.UnderseaGrotto
       LordOfTheRings.Location.Cards.UnholyCrypt
@@ -1310,6 +1315,7 @@ library
       LordOfTheRings.Quest.Cards.FullSailAhead
       LordOfTheRings.Quest.Cards.FuriousCharge
       LordOfTheRings.Quest.Cards.GatherInformation
+      LordOfTheRings.Quest.Cards.GoblinAmbush
       LordOfTheRings.Quest.Cards.GoblinPatrol
       LordOfTheRings.Quest.Cards.GornakhsDungeons
       LordOfTheRings.Quest.Cards.GrimbeornsQuest
@@ -1687,6 +1693,7 @@ library
       LordOfTheRings.Treachery.Cards.ScourgeOfMordor
       LordOfTheRings.Treachery.Cards.SentinelOfShadow
       LordOfTheRings.Treachery.Cards.SerpentsTail
+      LordOfTheRings.Treachery.Cards.ShadowFall
       LordOfTheRings.Treachery.Cards.ShadowOfFear
       LordOfTheRings.Treachery.Cards.ShiftingMarshland
       LordOfTheRings.Treachery.Cards.SignsOfConflict
@@ -1962,6 +1969,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec
       LordOfTheRings.KhazadDum.IntoThePitSpec
       LordOfTheRings.KhazadDum.MistyMountainsSpec
+      LordOfTheRings.KhazadDum.NightmareSpec
       LordOfTheRings.KhazadDum.PlayerCardsSpec
       LordOfTheRings.KhazadDum.TheSeventhLevelSpec
       LordOfTheRings.KhazadDumEngineSpec

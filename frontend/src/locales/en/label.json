@@ -1585,5 +1585,8 @@
   },
   "smokingBlood": {
     "moveDamage": "Choose the character to take the enemy's damage"
+  },
+  "shadowFall": {
+    "attach": "Choose the location Shadow-fall attaches to"
   }
 }
