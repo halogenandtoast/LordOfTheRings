@@ -254,6 +254,9 @@ data Message
   | PutObjectiveIntoPlay EncounterCard
   | -- | an objective card comes into play attached to the hero, as a setup attaches it
     PutObjectiveIntoPlayAttached EncounterCard Target
+  | -- | an objective card comes into the staging area guarded by the card, as The Enemy's
+    -- Trail attaches a Clue card to a Mordor enemy
+    PutObjectiveIntoPlayGuardedBy EncounterCard CardId
   | -- | the card leaves play for good; an objective, as Book of Mazarbul, or a location
     RemoveFromGame Target
   | -- | a stage leaves the quest deck unplayed, as exploring The Banks removes stage 2

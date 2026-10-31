@@ -2136,6 +2136,10 @@ runGameMessage msg g = case msg of
   PutLocationIntoPlay card placement -> do
     thisLocation <- newLocation card
     pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = placement}) thisLocation)
+  PutObjectiveIntoPlayGuardedBy card cid -> do
+    thisObjective <- newObjective card
+    pushAll [SetObjectiveGuard (toId thisObjective) cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]]
+    pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   PutObjectiveIntoPlayAttached card host -> do
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
