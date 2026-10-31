@@ -28,6 +28,10 @@ instance RunMessage Snowdrifts where
       players <- length <$> getRemainingPlayers
       setAside' <- getsGame (scenarioSetAside . toAttrs . (.scenario))
       shuffleSetAsideIntoEncounterDeck $ take (players + 1) $ filter (cardMatches $ cardIs Treacheries.snowstorm) setAside'
+      -- Nightmare: "Forced: When stage 2b is revealed, shuffle each set aside copy of
+      -- Blinding Blizzard into the encounter deck."
+      nightmare <- inNightmareMode
+      when nightmare $ shuffleSetAsideIntoEncounterDeck $ filter (cardMatches $ cardIs Treacheries.blindingBlizzard) setAside'
       pure q
     -- before the stage is defeated by its last progress
     PlaceTokens _ (isTarget attrs -> True) Progress n

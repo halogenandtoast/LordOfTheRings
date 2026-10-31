@@ -283,6 +283,9 @@ data WindowMatcher
   | -- | the enemy was turned faceup as a hidden card, as Orc Trickster answers (The Blood of
     -- Gondor)
     HiddenCardTurnedFaceupWindow Timing Target
+  | -- | a matching enemy revealed from the encounter deck, as Concealed Woods reads one with
+    -- ambush
+    MatchingEnemyRevealedWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

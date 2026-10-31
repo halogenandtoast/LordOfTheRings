@@ -389,6 +389,18 @@ allLocationCards =
       , traitorsDen
       , rathCelerdain
       , archedTunnel
+      , icyCavern
+      , frozenSilverlode
+      , treacherousBluffs
+      , concealedWoods
+      , banksOfSirannon
+      , hideousDepths
+      , easternMines
+      , bottomlessChasm
+      , nestOfHorrors
+      , shiveringRiver
+      , fieryDepths
+      , crumblingStairs
       ]
 
 drownedTreasury :: CardDef
@@ -2428,6 +2440,32 @@ ithilienOverlook =
 denseThickets :: CardDef
 denseThickets =
   (location "heirs-of-numenor-nightmare-into-ithilien-006" "Dense Thickets" IntoIthilienNightmare 3 1 8)
+
+-- | X threat, the Snow cards in the staging area: see its card module.
+icyCavern :: CardDef
+icyCavern =
+  (location "the-redhorn-gate-nightmare-the-redhorn-gate-005" "Icy Cavern" TheRedhornGateNightmare 3 0 6)
+    { cdCardTraits = setFromList [Mountain, Snow]
+    , cdShadowEffect = True
+    }
+
+frozenSilverlode :: CardDef
+frozenSilverlode =
+  (location "the-redhorn-gate-nightmare-the-redhorn-gate-006" "Frozen Silverlode" TheRedhornGateNightmare 3 3 3)
+    { cdCardTraits = setFromList [Mountain, River]
+    , cdShadowEffect = True
+    }
+
+treacherousBluffs :: CardDef
+treacherousBluffs =
+  (location "road-to-rivendell-nightmare-road-to-rivendell-007" "Treacherous Bluffs" RoadToRivendellNightmare 3 1 7)
+    { cdCardTraits = setFromList [Hills]
+    , cdShadowEffect = True
+    }
+
+concealedWoods :: CardDef
+concealedWoods =
+  (location "road-to-rivendell-nightmare-road-to-rivendell-008" "Concealed Woods" RoadToRivendellNightmare 3 4 4)
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }
@@ -2677,6 +2715,23 @@ chamberOfRecords =
 deepMines :: CardDef
 deepMines =
   (location "khazad-dum-nightmare-the-seventh-level-007" "Deep-mines" TheSeventhLevelNightmare 3 2 6)
+
+banksOfSirannon :: CardDef
+banksOfSirannon =
+  (location "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-005" "Banks of Sirannon" TheWatcherInTheWaterNightmare 3 3 3)
+    { cdCardTraits = setFromList [Mountain, Swamp]
+    , cdShadowEffect = True
+    }
+
+hideousDepths :: CardDef
+hideousDepths =
+  (location "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-006" "Hideous Depths" TheWatcherInTheWaterNightmare 3 3 5)
+    { cdCardTraits = setFromList [Swamp]
+    }
+
+easternMines :: CardDef
+easternMines =
+  (location "the-long-dark-nightmare-the-long-dark-005" "Eastern Mines" TheLongDarkNightmare 2 5 4)
     { cdCardTraits = setFromList [Underground]
     , cdShadowEffect = True
     }
@@ -2690,6 +2745,10 @@ westernHall =
 shadowedCorridor :: CardDef
 shadowedCorridor =
   (location "khazad-dum-nightmare-flight-from-moria-007" "Shadowed Corridor" FlightFromMoriaNightmare 4 4 6)
+
+bottomlessChasm :: CardDef
+bottomlessChasm =
+  (location "the-long-dark-nightmare-the-long-dark-006" "Bottomless Chasm" TheLongDarkNightmare 3 3 6)
     { cdCardTraits = setFromList [Underground, Dark]
     , cdShadowEffect = True
     }
@@ -2958,4 +3017,30 @@ archedTunnel :: CardDef
 archedTunnel =
   (location "the-stewards-fear-nightmare-the-stewards-fear-008" "Arched Tunnel" TheStewardsFearNightmare 2 4 3)
     { cdCardTraits = setFromList [Underworld, City]
+    }
+
+nestOfHorrors :: CardDef
+nestOfHorrors =
+  (location "foundations-of-stone-nightmare-foundations-of-stone-006" "Nest of Horrors" FoundationsOfStoneNightmare 3 4 4)
+    { cdCardTraits = setFromList [Underground, Dark]
+    }
+
+shiveringRiver :: CardDef
+shiveringRiver =
+  (location "foundations-of-stone-nightmare-foundations-of-stone-007" "Shivering River" FoundationsOfStoneNightmare 3 3 7)
+    { cdCardTraits = setFromList [Underground, River]
+    , cdShadowEffect = True
+    }
+
+fieryDepths :: CardDef
+fieryDepths =
+  (location "shadow-and-flame-nightmare-shadow-and-flame-009" "Fiery Depths" ShadowAndFlameNightmare 2 5 2)
+    { cdCardTraits = setFromList [Underground]
+    }
+
+crumblingStairs :: CardDef
+crumblingStairs =
+  (location "shadow-and-flame-nightmare-shadow-and-flame-010" "Crumbling Stairs" ShadowAndFlameNightmare 2 2 7)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
     }

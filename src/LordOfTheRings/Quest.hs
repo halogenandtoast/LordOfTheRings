@@ -205,6 +205,7 @@ import LordOfTheRings.Quest.Cards.Ghash
 import LordOfTheRings.Quest.Cards.ThroughTheMarshAnArduousJourney
 import LordOfTheRings.Quest.Cards.LostInTheSwanfleetDeadlyWaters
 import LordOfTheRings.Quest.Cards.GrimbeornsFolly
+import LordOfTheRings.Quest.Cards.AmbushInTheNight
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -442,5 +443,6 @@ allQuests =
         , SomeQuestCard throughTheMarshAnArduousJourney
         , SomeQuestCard lostInTheSwanfleetDeadlyWaters
         , SomeQuestCard grimbeornsFolly
+        , SomeQuestCard ambushInTheNight
         ]
     ]

@@ -1969,5 +1969,35 @@
   },
   "theCabalsChampion": {
     "attach": "Choose the Villain to attach The Cabal's Champion to"
+  },
+  "snowGiant": {
+    "discard": "Choose the ally with the highest willpower to discard for Snow-Giant"
+  },
+  "chokingTentacle": {
+    "attach": "Choose a character for Choking Tentacle to take hold of"
+  },
+  "bottomlessChasm": {
+    "discard": "Bottomless Chasm: choose the player to discard a card from his hand"
+  },
+  "lostAndHelpless": {
+    "attach": "Choose a hero to attach Lost and Helpless to"
+  },
+  "theLongDark": {
+    "discardAlly": "Lost: choose an ally in play to discard",
+    "triggerLost": "Choose a Lost: effect in play to trigger"
+  },
+  "giantCaveCentipede": {
+    "shuffle": "Choose the card of highest cost in your hand to shuffle into your deck"
+  },
+  "chillOfTheRoots": {
+    "choose": "Chill of the Roots: discard your hand, or raise your threat by its size",
+    "discardHand": "Discard your hand",
+    "raiseThreat": "Raise your threat by the cards in your hand"
+  },
+  "washedAway": {
+    "discardAlly": "Discard an ally until your allies' total cost is 6 or less"
+  },
+  "fieryDepths": {
+    "moveDamage": "Choose a hero to take 1 damage from Durin's Bane"
   }
 }

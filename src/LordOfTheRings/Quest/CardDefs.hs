@@ -254,6 +254,7 @@ allQuestCards =
       , blockedByFlame
       , ghash
       , grimbeornsFolly
+      , ambushInTheNight
       ]
 
 theDrippingWalls :: CardDef
@@ -1000,3 +1001,7 @@ grimbeornsFolly =
   (quest "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-011" "Grimbeorn's Folly" ConflictAtTheCarrockNightmare 3 0)
     { cdQuestPoints = Nothing
     }
+
+-- | Road to Rivendell's nightmare stage 2, in place of Orc Outpost.
+ambushInTheNight :: CardDef
+ambushInTheNight = quest "road-to-rivendell-nightmare-road-to-rivendell-002" "Ambush in the Night" RoadToRivendellNightmare 2 12

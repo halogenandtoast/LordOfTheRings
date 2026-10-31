@@ -569,6 +569,21 @@ data ModifierType
     -- goes to this location, not the quest, as Assault on Osgiliath's Nightmare setup card
     -- reads
     ProgressBeyondActiveTo Target
+  | -- | on a card: progress that would be placed on it is placed on the target instead, as
+    -- Blinding Blizzard takes the quest's and Snow locations'
+    ProgressPlacedOnInstead Target
+  | -- | on the game: characters cannot gain willpower from player card effects, as Frozen
+    -- Silverlode reads
+    NoWillpowerFromPlayerCards
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is dealt to the target instead, as Treacherous Bluffs' shadow sends it to Arwen
+    ExcessDamageTo Target
+  | -- | on an enemy: for each point of damage its attack deals, the player discards a random
+    -- card from his hand, as Banks of Sirannon's shadow reads
+    AttackDamageDiscardsRandomFrom PlayerId
+  | -- | on an enemy: each point of damage its attack deals heals 1 damage from the target, as
+    -- The Dark Fire heals Durin's Bane
+    AttackDamageHeals Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

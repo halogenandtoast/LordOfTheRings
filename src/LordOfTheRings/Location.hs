@@ -372,6 +372,18 @@ import LordOfTheRings.Location.Cards.WesternQuarter
 import LordOfTheRings.Location.Cards.TraitorsDen
 import LordOfTheRings.Location.Cards.RathCelerdain
 import LordOfTheRings.Location.Cards.ArchedTunnel
+import LordOfTheRings.Location.Cards.IcyCavern
+import LordOfTheRings.Location.Cards.FrozenSilverlode
+import LordOfTheRings.Location.Cards.TreacherousBluffs
+import LordOfTheRings.Location.Cards.ConcealedWoods
+import LordOfTheRings.Location.Cards.BanksOfSirannon
+import LordOfTheRings.Location.Cards.HideousDepths
+import LordOfTheRings.Location.Cards.EasternMines
+import LordOfTheRings.Location.Cards.BottomlessChasm
+import LordOfTheRings.Location.Cards.NestOfHorrors
+import LordOfTheRings.Location.Cards.ShiveringRiver
+import LordOfTheRings.Location.Cards.FieryDepths
+import LordOfTheRings.Location.Cards.CrumblingStairs
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -790,5 +802,17 @@ allLocations =
         , SomeLocationCard traitorsDen
         , SomeLocationCard rathCelerdain
         , SomeLocationCard archedTunnel
+        , SomeLocationCard icyCavern
+        , SomeLocationCard frozenSilverlode
+        , SomeLocationCard treacherousBluffs
+        , SomeLocationCard concealedWoods
+        , SomeLocationCard banksOfSirannon
+        , SomeLocationCard hideousDepths
+        , SomeLocationCard easternMines
+        , SomeLocationCard bottomlessChasm
+        , SomeLocationCard nestOfHorrors
+        , SomeLocationCard shiveringRiver
+        , SomeLocationCard fieryDepths
+        , SomeLocationCard crumblingStairs
         ]
     ]

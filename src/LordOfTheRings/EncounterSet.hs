@@ -45,6 +45,7 @@ data EncounterSet
   | FlightOfTheStormcallerNightmare
   | FoulWeather
   | FoundationsOfStone
+  | FoundationsOfStoneNightmare
   | GoblinsOfTheDeep
   | HazardsOfThePit
   | IntoFangorn
@@ -73,10 +74,12 @@ data EncounterSet
   | ReturnToMirkwood
   | ReturnToMirkwoodNightmare
   | RoadToRivendell
+  | RoadToRivendellNightmare
   | RuinsOfArnor
   | RuinsOfNumenor
   | SauronsReach
   | ShadowAndFlame
+  | ShadowAndFlameNightmare
   | Southrons
   | SpidersOfMirkwood
   | StormyWeather
@@ -109,12 +112,14 @@ data EncounterSet
   | TheHuntForGollum
   | TheHuntForGollumNightmare
   | TheLongDark
+  | TheLongDarkNightmare
   | TheLostRealm
   | TheMorgulVale
   | TheMorgulValeNightmare
   | TheNinInEilph
   | TheNinInEilphNightmare
   | TheRedhornGate
+  | TheRedhornGateNightmare
   | TheSeventhLevel
   | TheSeventhLevelNightmare
   | TheSiegeOfCairAndros
@@ -132,6 +137,7 @@ data EncounterSet
   | TheTreacheryOfRhudaur
   | TheWastesOfEriador
   | TheWatcherInTheWater
+  | TheWatcherInTheWaterNightmare
   | TheWeatherHills
   | TheWeatherHillsNightmare
   | ToCatchAnOrc

@@ -358,6 +358,11 @@ data Message
     LocateTest Source [Message] [Message]
   | -- | every "Lost:" effect in play triggers (The Long Dark)
     TriggerLostEffects Source
+  | -- | the "Lost:" effect of one card in play triggers, the scenario's for its setup card's
+    TriggerLostEffectOf Source Target
+  | -- | each player in turn chooses and triggers a "Lost:" effect in play, one not among
+    -- those already chosen (The Long Dark)
+    ChooseLostEffects Source [PlayerId] [Target]
   | {- | the player switches a card in hand with one in their deck, each taking the other's
     place
     -}

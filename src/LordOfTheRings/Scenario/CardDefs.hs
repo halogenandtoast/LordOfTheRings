@@ -55,6 +55,12 @@ allNightmareCards =
       , assaultOnOsgiliathNightmare
       , theBloodOfGondorNightmare
       , theMorgulValeNightmare
+      , theRedhornGateNightmare
+      , roadToRivendellNightmare
+      , theWatcherInTheWaterNightmare
+      , theLongDarkNightmare
+      , foundationsOfStoneNightmare
+      , shadowAndFlameNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -188,3 +194,21 @@ theBloodOfGondorNightmare = nightmareSetup "the-blood-of-gondor-nightmare-the-bl
 
 theMorgulValeNightmare :: CardDef
 theMorgulValeNightmare = nightmareSetup "the-morgul-vale-nightmare-the-morgul-vale-001" "The Morgul Vale" TheMorgulValeNightmare
+
+theRedhornGateNightmare :: CardDef
+theRedhornGateNightmare = nightmareSetup "the-redhorn-gate-nightmare-the-redhorn-gate-001" "The Redhorn Gate" TheRedhornGateNightmare
+
+roadToRivendellNightmare :: CardDef
+roadToRivendellNightmare = nightmareSetup "road-to-rivendell-nightmare-road-to-rivendell-001" "Road to Rivendell" RoadToRivendellNightmare
+
+theWatcherInTheWaterNightmare :: CardDef
+theWatcherInTheWaterNightmare = nightmareSetup "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-001" "The Watcher in the Water" TheWatcherInTheWaterNightmare
+
+theLongDarkNightmare :: CardDef
+theLongDarkNightmare = nightmareSetup "the-long-dark-nightmare-the-long-dark-001" "The Long Dark" TheLongDarkNightmare
+
+foundationsOfStoneNightmare :: CardDef
+foundationsOfStoneNightmare = nightmareSetup "foundations-of-stone-nightmare-foundations-of-stone-001" "Foundations of Stone" FoundationsOfStoneNightmare
+
+shadowAndFlameNightmare :: CardDef
+shadowAndFlameNightmare = nightmareSetup "shadow-and-flame-nightmare-shadow-and-flame-001" "Shadow and Flame" ShadowAndFlameNightmare

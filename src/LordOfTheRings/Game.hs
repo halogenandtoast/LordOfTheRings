@@ -326,6 +326,11 @@ runEntities msg entities =
 
 runGame :: Message -> Game -> GameT Game
 runGame msg g = case msg of
+  -- progress for a card that another takes instead, as Blinding Blizzard the quest's
+  PlaceTokens source target Progress n
+    | n > 0
+    , Just other <- progressRedirect g target ->
+        g <$ push (PlaceTokens source other Progress n)
   RemoveTokens _ target TimeCounter _ -> do
     barred <- elem CannotRemoveTimeCounters <$> getModifiers target
     if barred
@@ -772,6 +777,8 @@ runGameMessage msg g = case msg of
       <> removing
       -- each point of it adds 1 to the staging area's threat this phase, as Ramming Speed!
       <> [CreateEffect $ Effect source GameTarget [StagingThreatBonus n] UntilEndOfPhase | AttackDamageAddsStagingThreat `elem` attackMods]
+      <> [DiscardRandomFromHand pid n | AttackDamageDiscardsRandomFrom pid <- attackMods]
+      <> [HealDamage source t n | AttackDamageHeals t <- attackMods]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
@@ -3246,6 +3253,9 @@ attackDamage pid eid target n = do
       excessToDeck = ExcessDamageDiscardsFromDeck `elem` mods
   excess <-
     if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo || excessToAflame || excessToDeck
+      excessTo = take 1 [t | ExcessDamageTo t <- mods, t /= target]
+  excess <-
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3282,6 +3292,7 @@ attackDamage pid eid target n = do
         <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
         <> toAflame
         <> [DiscardTopOfDeck pid excess | excessToDeck, excess > 0]
+        <> [DealDamage (EnemyAttackSource eid) t excess | t <- excessTo, excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
@@ -3427,6 +3438,13 @@ isPlayerAttack = \case
   _ -> False
 
 -- | Whether a character is still in play.
+-- | Where progress placed on the card goes instead, as Blinding Blizzard takes it.
+progressRedirect :: Game -> Target -> Maybe Target
+progressRedirect g target =
+  find
+    (\t -> t /= target && inPlay g t)
+    [t | ProgressPlacedOnInstead t <- map modifierType (Map.findWithDefault [] target (gameModifiers g))]
+
 inPlay :: Game -> Target -> Bool
 inPlay g = \case
   HeroTarget hid -> Map.member hid g.entities.heroes

@@ -351,6 +351,25 @@ import LordOfTheRings.Enemy.Cards.InvadingOrc
 import LordOfTheRings.Enemy.Cards.HaradrimWarrior
 import LordOfTheRings.Enemy.Cards.MurderousTurncoat
 import LordOfTheRings.Enemy.Cards.FaithlessConspirator
+import LordOfTheRings.Enemy.Cards.WolfpeltGoblin
+import LordOfTheRings.Enemy.Cards.SilvertineMarauder
+import LordOfTheRings.Enemy.Cards.SnowGiant
+import LordOfTheRings.Enemy.Cards.UrukElfStalker
+import LordOfTheRings.Enemy.Cards.GoblinTrapper
+import LordOfTheRings.Enemy.Cards.RaidingParty
+import LordOfTheRings.Enemy.Cards.ViciousTrackers
+import LordOfTheRings.Enemy.Cards.TheWatcherNightmare
+import LordOfTheRings.Enemy.Cards.WrithingTentacle
+import LordOfTheRings.Enemy.Cards.ChokingTentacle
+import LordOfTheRings.Enemy.Cards.GoblinStalker
+import LordOfTheRings.Enemy.Cards.TrapdoorSpider
+import LordOfTheRings.Enemy.Cards.SentinelOfTheDeep
+import LordOfTheRings.Enemy.Cards.MithrilSeeker
+import LordOfTheRings.Enemy.Cards.GiantCaveCentipede
+import LordOfTheRings.Enemy.Cards.UnspeakableThing
+import LordOfTheRings.Enemy.Cards.PrimevalThing
+import LordOfTheRings.Enemy.Cards.ServantOfFlame
+import LordOfTheRings.Enemy.Cards.CaptainOfMordor
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -727,5 +746,24 @@ allEnemys =
         , SomeEnemyCard haradrimWarrior
         , SomeEnemyCard murderousTurncoat
         , SomeEnemyCard faithlessConspirator
+        , SomeEnemyCard wolfpeltGoblin
+        , SomeEnemyCard silvertineMarauder
+        , SomeEnemyCard snowGiant
+        , SomeEnemyCard urukElfStalker
+        , SomeEnemyCard goblinTrapper
+        , SomeEnemyCard raidingParty
+        , SomeEnemyCard viciousTrackers
+        , SomeEnemyCard theWatcherNightmare
+        , SomeEnemyCard writhingTentacle
+        , SomeEnemyCard chokingTentacle
+        , SomeEnemyCard goblinStalker
+        , SomeEnemyCard trapdoorSpider
+        , SomeEnemyCard sentinelOfTheDeep
+        , SomeEnemyCard mithrilSeeker
+        , SomeEnemyCard giantCaveCentipede
+        , SomeEnemyCard unspeakableThing
+        , SomeEnemyCard primevalThing
+        , SomeEnemyCard servantOfFlame
+        , SomeEnemyCard captainOfMordor
         ]
     ]

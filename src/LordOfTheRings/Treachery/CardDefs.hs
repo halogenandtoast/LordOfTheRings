@@ -304,6 +304,19 @@ allTreacheryCards =
       , overrunDefenses
       , pressedOnAllSides
       , falseAccusations
+      , blindingBlizzard
+      , caradhrasTheCruel
+      , tumultuousAssault
+      , pulledUnder
+      , ripplingFromBeneath
+      , dreadfulDeep
+      , lostAndHelpless
+      , chillOfTheRoots
+      , terribleStrength
+      , theDarkFire
+      , blazingGrip
+      , morgothsBidding
+      , flameOfUdun
       ]
 
 deepDeepDark :: CardDef
@@ -1923,5 +1936,89 @@ falseAccusations :: CardDef
 falseAccusations =
   (treachery "the-stewards-fear-nightmare-the-stewards-fear-009" "False Accusations" TheStewardsFearNightmare 2)
     { cdCardTraits = setFromList [Scheme]
+    }
+
+blindingBlizzard :: CardDef
+blindingBlizzard =
+  (treachery "the-redhorn-gate-nightmare-the-redhorn-gate-007" "Blinding Blizzard" TheRedhornGateNightmare 2)
+    { cdCardTraits = setFromList [Snow]
+    }
+
+caradhrasTheCruel :: CardDef
+caradhrasTheCruel = treachery "the-redhorn-gate-nightmare-the-redhorn-gate-008" "Caradhras the Cruel" TheRedhornGateNightmare 2
+
+tumultuousAssault :: CardDef
+tumultuousAssault = treachery "road-to-rivendell-nightmare-road-to-rivendell-009" "Tumultuous Assault" RoadToRivendellNightmare 2
+
+pulledUnder :: CardDef
+pulledUnder =
+  (treachery "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-007" "Pulled Under" TheWatcherInTheWaterNightmare 2)
+    { cdShadowEffect = True
+    }
+
+ripplingFromBeneath :: CardDef
+ripplingFromBeneath =
+  (treachery "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-008" "Rippling From Beneath" TheWatcherInTheWaterNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+dreadfulDeep :: CardDef
+dreadfulDeep =
+  (treachery "the-long-dark-nightmare-the-long-dark-007" "Dreadful Deep" TheLongDarkNightmare 3)
+    { cdShadowEffect = True
+    }
+
+lostAndHelpless :: CardDef
+lostAndHelpless =
+  (treachery "the-long-dark-nightmare-the-long-dark-008" "Lost and Helpless" TheLongDarkNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+chillOfTheRoots :: CardDef
+chillOfTheRoots =
+  (treachery "foundations-of-stone-nightmare-foundations-of-stone-008" "Chill of the Roots" FoundationsOfStoneNightmare 3)
+    { cdShadowEffect = True
+    }
+
+-- | The Attack cards make up Shadow and Flame's Balrog deck in nightmare mode: shadow
+-- effects only.
+terribleStrength :: CardDef
+terribleStrength =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-002" "Terrible Strength" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+theDarkFire :: CardDef
+theDarkFire =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-003" "The Dark Fire" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+blazingGrip :: CardDef
+blazingGrip =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-004" "Blazing Grip" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+morgothsBidding :: CardDef
+morgothsBidding =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-005" "Morgoth's Bidding" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+flameOfUdun :: CardDef
+flameOfUdun =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-006" "Flame of Udûn" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
     , cdShadowEffect = True
     }

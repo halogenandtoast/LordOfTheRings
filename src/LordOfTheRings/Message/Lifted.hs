@@ -923,6 +923,21 @@ dealShadowCardsDuringAttack
   :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> [Target] -> Int -> t m ()
 dealShadowCardsDuringAttack eid pid defenders n = do
   replicateM_ n $ dealShadowCard eid
+  resolveNewShadowCards eid pid defenders
+
+{- | As 'dealShadowCardsDuringAttack', the given cards from the encounter deck, as Flame of
+Udûn deals them there rather than from the Balrog deck.
+-}
+dealShadowCardsFromEncounterDeckDuringAttack
+  :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> [Target] -> [EncounterCard] -> t m ()
+dealShadowCardsFromEncounterDeckDuringAttack eid pid defenders cards = do
+  for_ cards \c -> push (RemoveFromEncounterDeck c) >> push (AttachShadowCard eid c)
+  resolveNewShadowCards eid pid defenders
+
+-- | The attacking enemy's shadow cards resolve again, the new ones with them.
+resolveNewShadowCards
+  :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> [Target] -> t m ()
+resolveNewShadowCards eid pid defenders = do
   cancelMatching \case
     RevealShadowCard eid' _ -> eid' == eid
     ResolveShadowCard _ eid' _ _ -> eid' == eid
