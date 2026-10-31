@@ -1612,5 +1612,8 @@
   },
   "washedAway": {
     "discardAlly": "Discard an ally until your allies' total cost is 6 or less"
+  },
+  "fieryDepths": {
+    "moveDamage": "Choose a hero to take 1 damage from Durin's Bane"
   }
 }

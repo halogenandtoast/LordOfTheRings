@@ -264,6 +264,8 @@ import LordOfTheRings.Enemy.Cards.MithrilSeeker
 import LordOfTheRings.Enemy.Cards.GiantCaveCentipede
 import LordOfTheRings.Enemy.Cards.UnspeakableThing
 import LordOfTheRings.Enemy.Cards.PrimevalThing
+import LordOfTheRings.Enemy.Cards.ServantOfFlame
+import LordOfTheRings.Enemy.Cards.CaptainOfMordor
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -553,5 +555,7 @@ allEnemys =
         , SomeEnemyCard giantCaveCentipede
         , SomeEnemyCard unspeakableThing
         , SomeEnemyCard primevalThing
+        , SomeEnemyCard servantOfFlame
+        , SomeEnemyCard captainOfMordor
         ]
     ]

@@ -219,6 +219,11 @@ import LordOfTheRings.Treachery.Cards.RipplingFromBeneath
 import LordOfTheRings.Treachery.Cards.DreadfulDeep
 import LordOfTheRings.Treachery.Cards.LostAndHelpless
 import LordOfTheRings.Treachery.Cards.ChillOfTheRoots
+import LordOfTheRings.Treachery.Cards.TerribleStrength
+import LordOfTheRings.Treachery.Cards.TheDarkFire
+import LordOfTheRings.Treachery.Cards.BlazingGrip
+import LordOfTheRings.Treachery.Cards.MorgothsBidding
+import LordOfTheRings.Treachery.Cards.FlameOfUdun
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -462,5 +467,10 @@ allTreacherys =
         , SomeTreacheryCard dreadfulDeep
         , SomeTreacheryCard lostAndHelpless
         , SomeTreacheryCard chillOfTheRoots
+        , SomeTreacheryCard terribleStrength
+        , SomeTreacheryCard theDarkFire
+        , SomeTreacheryCard blazingGrip
+        , SomeTreacheryCard morgothsBidding
+        , SomeTreacheryCard flameOfUdun
         ]
     ]

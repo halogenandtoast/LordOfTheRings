@@ -2,7 +2,7 @@ module LordOfTheRings.Dwarrowdelf.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyAttack, getEnemyDefense, getStagingThreat)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy)
@@ -10,7 +10,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
-import LordOfTheRings.Scenario (foundationsOfStone, roadToRivendell, theLongDark, theRedhornGate, theWatcherInTheWater)
+import LordOfTheRings.Scenario (foundationsOfStone, roadToRivendell, shadowAndFlame, theLongDark, theRedhornGate, theWatcherInTheWater)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck, scenarioSetAside), encounterDiscardL, modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -314,3 +314,38 @@ spec = describe "Dwarrowdelf nightmare decks" do
       run $ DoStep 2 (WhenRevealed stage)
       chooseTarget pid gandalf
       getsGame (length . (.entities.allies)) `shouldReturn` 2
+
+  describe "Shadow and Flame" do
+    it "builds the nightmare deck, the Attack cards in a Balrog deck of their own" . nightmare shadowAndFlame $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 49
+      map (`copies` deck) [Enemies.rangingGoblin, Treacheries.terribleStrength, Enemies.servantOfFlame]
+        `shouldBe` [0, 0, 3]
+
+    it "deals Durin's Bane its shadow cards from the Balrog deck, discarded apart" . nightmare shadowAndFlame $ \_ -> do
+      run $ DoStep 1 Setup
+      reveal Enemies.durinsBane []
+      bane <- enemyOf Enemies.durinsBane
+      run $ DealShadowCard bane
+      shadows <- (.shadowCards) <$> getEnemy bane
+      map toCardCode shadows `shouldSatisfy` all (`elem` map toCardCode [Treacheries.terribleStrength, Treacheries.theDarkFire, Treacheries.blazingGrip, Treacheries.morgothsBidding, Treacheries.flameOfUdun])
+      run $ DiscardShadowCards bane
+      getEncounterDiscard `shouldReturn` []
+
+    it "Captain of Mordor lowers each enemy's engagement cost by 20" . nightmare shadowAndFlame $ \_ -> do
+      reveal Enemies.captainOfMordor []
+      (getEngagementCost =<< enemyOf Enemies.captainOfMordor) `shouldReturn` 22
+
+    it "Servant of Flame is stronger while Durin's Bane is unharmed" . nightmare shadowAndFlame $ \_ -> do
+      reveal Enemies.durinsBane []
+      reveal Enemies.servantOfFlame []
+      servant <- enemyOf Enemies.servantOfFlame
+      getEnemyAttack servant `shouldReturn` 5
+      bane <- enemyOf Enemies.durinsBane
+      run $ PlaceTokens GameSource (toTarget bane) Damage 1
+      getEnemyAttack servant `shouldReturn` 3
+
+    it "Crumbling Stairs makes events cost 1 more" . nightmare shadowAndFlame $ \_ -> do
+      reveal Locations.crumblingStairs []
+      getModifiers GameTarget >>= (`shouldSatisfy` any (\case IncreaseCost _ 1 -> True; _ -> False))

@@ -402,6 +402,7 @@ library
       LordOfTheRings.Enemy.Cards.BoarsGuardian
       LordOfTheRings.Enemy.Cards.BrownWaterRats
       LordOfTheRings.Enemy.Cards.BrutalUruk
+      LordOfTheRings.Enemy.Cards.CaptainOfMordor
       LordOfTheRings.Enemy.Cards.CaptainSahir
       LordOfTheRings.Enemy.Cards.CaptainSahirTheCityOfCorsairs
       LordOfTheRings.Enemy.Cards.CarnDumGarrison
@@ -569,6 +570,7 @@ library
       LordOfTheRings.Enemy.Cards.SeaScorpion
       LordOfTheRings.Enemy.Cards.SentinelOfTheDeep
       LordOfTheRings.Enemy.Cards.SerpentsBlade
+      LordOfTheRings.Enemy.Cards.ServantOfFlame
       LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
       LordOfTheRings.Enemy.Cards.SiegeRaft
       LordOfTheRings.Enemy.Cards.SiegeShip
@@ -950,6 +952,7 @@ library
       LordOfTheRings.Location.Cards.ConcealedWoods
       LordOfTheRings.Location.Cards.CorsairWaters
       LordOfTheRings.Location.Cards.CrewQuarters
+      LordOfTheRings.Location.Cards.CrumblingStairs
       LordOfTheRings.Location.Cards.CursedCaverns
       LordOfTheRings.Location.Cards.CursedForest
       LordOfTheRings.Location.Cards.CursedTemple
@@ -983,6 +986,7 @@ library
       LordOfTheRings.Location.Cards.Fanuidhol
       LordOfTheRings.Location.Cards.FenOfReeds
       LordOfTheRings.Location.Cards.FensAndMires
+      LordOfTheRings.Location.Cards.FieryDepths
       LordOfTheRings.Location.Cards.FingerOfGlanduin
       LordOfTheRings.Location.Cards.FirstHall
       LordOfTheRings.Location.Cards.FloodedRuins
@@ -1583,6 +1587,7 @@ library
       LordOfTheRings.Treachery.Cards.BattleHardened
       LordOfTheRings.Treachery.Cards.BitingWind
       LordOfTheRings.Treachery.Cards.BitterWind
+      LordOfTheRings.Treachery.Cards.BlazingGrip
       LordOfTheRings.Treachery.Cards.BlindingBlizzard
       LordOfTheRings.Treachery.Cards.BlockingWargs
       LordOfTheRings.Treachery.Cards.BoardingParty
@@ -1639,6 +1644,7 @@ library
       LordOfTheRings.Treachery.Cards.FierceFolk
       LordOfTheRings.Treachery.Cards.FierySword
       LordOfTheRings.Treachery.Cards.FiresInTheDeep
+      LordOfTheRings.Treachery.Cards.FlameOfUdun
       LordOfTheRings.Treachery.Cards.Flooding
       LordOfTheRings.Treachery.Cards.FoesOfEcthelion
       LordOfTheRings.Treachery.Cards.FollowedByNight
@@ -1688,6 +1694,7 @@ library
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.MenInTheDark
       LordOfTheRings.Treachery.Cards.MordorLooms
+      LordOfTheRings.Treachery.Cards.MorgothsBidding
       LordOfTheRings.Treachery.Cards.MysteriousFog
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
@@ -1746,8 +1753,10 @@ library
       LordOfTheRings.Treachery.Cards.TakeCover
       LordOfTheRings.Treachery.Cards.TakingOnWater
       LordOfTheRings.Treachery.Cards.TanglingAndGrasping
+      LordOfTheRings.Treachery.Cards.TerribleStrength
       LordOfTheRings.Treachery.Cards.TerrorDrivesThem
       LordOfTheRings.Treachery.Cards.TerrorOfTheNorth
+      LordOfTheRings.Treachery.Cards.TheDarkFire
       LordOfTheRings.Treachery.Cards.TheDeadCityLooms
       LordOfTheRings.Treachery.Cards.TheFiresSpread
       LordOfTheRings.Treachery.Cards.TheForestsMalice
