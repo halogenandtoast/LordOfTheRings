@@ -1588,5 +1588,32 @@
   },
   "campaign": {
     "attachTo": "Choose a hero to attach it to"
+  },
+  "perilInPelargirNightmare": {
+    "attachScroll": "Choose the enemy with the highest defense to take Alcaron's Scroll"
+  },
+  "bedlamInTheStreets": {
+    "choose": "Remove a hero you control from the quest, or engage an enemy in the staging area (it attacks)"
+  },
+  "theThievesPloy": {
+    "enemy": "Choose the enemy engaged with you to take Alcaron's Scroll"
+  },
+  "theyreGettingAway": {
+    "choose": "They're Getting Away!",
+    "progress": "Place 1 progress on the enemy with Alcaron's Scroll",
+    "threat": "Each card in the staging area gets +2 threat until the end of the phase"
+  },
+  "savageFray": {
+    "choose": "Switch the current quest's keyword to",
+    "battle": "Battle",
+    "siege": "Siege"
+  },
+  "theSiegeOfCairAndrosNightmare": {
+    "battleground": "Choose a Battleground location"
+  },
+  "besiegedCourtyard": {
+    "choose": "Besieged Courtyard",
+    "attack": "The attacking enemy makes an additional attack after this one",
+    "damage": "Deal 10 damage to a Battleground location"
   }
 }

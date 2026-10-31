@@ -271,6 +271,14 @@ import LordOfTheRings.Location.Cards.AFloodedFord
 import LordOfTheRings.Location.Cards.GladdenMarshlands
 import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
+import LordOfTheRings.Location.Cards.DocksideStreet
+import LordOfTheRings.Location.Cards.PelargirAlley
+import LordOfTheRings.Location.Cards.IthilienOverlook
+import LordOfTheRings.Location.Cards.DenseThickets
+import LordOfTheRings.Location.Cards.CormallenFields
+import LordOfTheRings.Location.Cards.BesiegedCourtyard
+import LordOfTheRings.Location.Cards.WallsOfCairAndros
+import LordOfTheRings.Location.Cards.AnduinWharf
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -583,5 +591,13 @@ allLocations =
         , SomeLocationCard gladdenMarshlands
         , SomeLocationCard tortureChamber
         , SomeLocationCard dungeonLabyrinth
+        , SomeLocationCard docksideStreet
+        , SomeLocationCard pelargirAlley
+        , SomeLocationCard ithilienOverlook
+        , SomeLocationCard denseThickets
+        , SomeLocationCard cormallenFields
+        , SomeLocationCard besiegedCourtyard
+        , SomeLocationCard wallsOfCairAndros
+        , SomeLocationCard anduinWharf
         ]
     ]

@@ -1007,11 +1007,16 @@ runGameMessage msg g = case msg of
       if alliesOnly && notNull allies
         then pure allies
         else withHitPointsLeft assigned =<< selectCharacters AnyHero (AllyControlledBy AnyPlayer)
+    gameMods <- getModifiers GameTarget
+    let staying = case assigned of
+          c : _ | ArcheryDamageStaysOnCharacter `elem` gameMods, c `elem` characters -> [c]
+          _ -> characters
+        characters' = staying <> ordNub (filter (inPlay g) [t | ArcheryDamageMayGoTo t <- gameMods])
     push
-      $ if n > 0 && notNull characters
+      $ if n > 0 && notNull characters'
         then
           questionLabel (ikeyWith "label.assignArcheryDamage" [intVar "count" n]) lead
-            $ [targetLabel c [ArcheryDamage (n - 1) (c : assigned)] | c <- characters]
+            $ [targetLabel c [ArcheryDamage (n - 1) (c : assigned)] | c <- characters']
         else Run $ dealAssigned GameSource assigned
     pure g
   DealShadowCards -> do
@@ -3165,8 +3170,10 @@ attackDamage pid eid target n = do
       excessToLocation = ExcessDamageToActiveLocation `elem` mods
       excessToQuests = ExcessDamageRemovesQuestProgress `elem` mods
       excessToShip = ExcessDamageToShipObjective `elem` mods
+      -- a card it goes to, as Dense Thickets' shadow sends it to a Ranger objective
+      excessTo = [t | ExcessDamageTo t <- mods, t /= target]
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3193,6 +3200,7 @@ attackDamage pid eid target n = do
         <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
         <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
         <> toShip
+        <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

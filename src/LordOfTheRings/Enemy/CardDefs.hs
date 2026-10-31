@@ -14,6 +14,15 @@ allEnemyCards =
     map
       (\def -> (cdCardCode def, def))
       [ kingSpider
+      , cunningInformant
+      , harborBrute
+      , pelargirRingleader
+      , mumakElite
+      , haradrimMarksman
+      , haradrimCaptain
+      , southronMountedArcher
+      , orcSaboteur
+      , orcRavagerNightmare
       , ungoliantsSpawnNightmare
       , ungoliantsBrood
       , forestFlies
@@ -2037,5 +2046,62 @@ spiderOfDolGuldur :: CardDef
 spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
+    , cdShadowEffect = True
+    }
+
+-- Heirs of Númenor Nightmare Decks
+
+cunningInformant :: CardDef
+cunningInformant =
+  (enemy "heirs-of-numenor-nightmare-peril-in-pelargir-002" "Cunning Informant" PerilInPelargirNightmare 3 21 3 2 1 3) {cdCardTraits = setFromList [Brigand]}
+
+harborBrute :: CardDef
+harborBrute =
+  (enemy "heirs-of-numenor-nightmare-peril-in-pelargir-003" "Harbor Brute" PerilInPelargirNightmare 2 38 4 4 4 5)
+    { cdCardTraits = setFromList [Brigand, Thug]
+    , cdWhenRevealed = True
+    }
+
+pelargirRingleader :: CardDef
+pelargirRingleader =
+  (enemy "heirs-of-numenor-nightmare-peril-in-pelargir-004" "Pelargir Ringleader" PerilInPelargirNightmare 2 35 2 3 3 4)
+    { cdCardTraits = setFromList [Brigand]
+    , cdShadowEffect = True
+    }
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+mumakElite :: CardDef
+mumakElite =
+  (enemy "heirs-of-numenor-nightmare-into-ithilien-002" "Mumak Elite" IntoIthilienNightmare 2 38 5 7 5 12) {cdCardTraits = setFromList [Harad, Creature]}
+
+haradrimMarksman :: CardDef
+haradrimMarksman =
+  (enemy "heirs-of-numenor-nightmare-into-ithilien-003" "Haradrim Marksman" IntoIthilienNightmare 3 36 2 2 2 5) {cdCardTraits = setFromList [Harad]}
+
+haradrimCaptain :: CardDef
+haradrimCaptain =
+  (enemy "heirs-of-numenor-nightmare-into-ithilien-004" "Haradrim Captain" IntoIthilienNightmare 2 44 4 4 3 6)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+southronMountedArcher :: CardDef
+southronMountedArcher =
+  (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-002" "Southron Mounted Archer" TheSiegeOfCairAndrosNightmare 3 45 3 4 2 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Archery 5]
+    }
+
+orcSaboteur :: CardDef
+orcSaboteur =
+  (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-003" "Orc Saboteur" TheSiegeOfCairAndrosNightmare 3 21 2 5 2 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+orcRavagerNightmare :: CardDef
+orcRavagerNightmare =
+  (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-004" "Orc Ravager" TheSiegeOfCairAndrosNightmare 4 30 3 3 1 4)
+    { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
     }

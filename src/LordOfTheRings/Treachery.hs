@@ -211,6 +211,12 @@ import LordOfTheRings.Treachery.Cards.SmokingBlood
 import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
+import LordOfTheRings.Treachery.Cards.BedlamInTheStreets
+import LordOfTheRings.Treachery.Cards.TheThievesPloy
+import LordOfTheRings.Treachery.Cards.TheyreGettingAway
+import LordOfTheRings.Treachery.Cards.ObsidianArrows
+import LordOfTheRings.Treachery.Cards.SavageFray
+import LordOfTheRings.Treachery.Cards.RuinAndWroth
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -446,5 +452,11 @@ allTreacherys =
         , SomeTreacheryCard sentinelOfShadow
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
+        , SomeTreacheryCard bedlamInTheStreets
+        , SomeTreacheryCard theThievesPloy
+        , SomeTreacheryCard theyreGettingAway
+        , SomeTreacheryCard obsidianArrows
+        , SomeTreacheryCard savageFray
+        , SomeTreacheryCard ruinAndWroth
         ]
     ]

@@ -14,6 +14,12 @@ allTreacheryCards =
     map
       (\def -> (cdCardCode def, def))
       [ eyesOfTheForest
+      , bedlamInTheStreets
+      , theThievesPloy
+      , theyreGettingAway
+      , obsidianArrows
+      , savageFray
+      , ruinAndWroth
       , theSpidersWeb
       , backtrack
       , pursuitOnTheShore
@@ -1331,4 +1337,33 @@ darkInterrogation :: CardDef
 darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
+    }
+
+-- Heirs of Númenor Nightmare Decks
+
+bedlamInTheStreets :: CardDef
+bedlamInTheStreets =
+  (treachery "heirs-of-numenor-nightmare-peril-in-pelargir-007" "Bedlam in the Streets" PerilInPelargirNightmare 3) {cdShadowEffect = True}
+
+theThievesPloy :: CardDef
+theThievesPloy =
+  (treachery "heirs-of-numenor-nightmare-peril-in-pelargir-008" "The Thieves' Ploy" PerilInPelargirNightmare 2) {cdKeywords = setFromList [Surge]}
+
+theyreGettingAway :: CardDef
+theyreGettingAway =
+  (treachery "heirs-of-numenor-nightmare-peril-in-pelargir-009" "They're Getting Away!" PerilInPelargirNightmare 2) {cdKeywords = setFromList [Surge]}
+
+obsidianArrows :: CardDef
+obsidianArrows =
+  (treachery "heirs-of-numenor-nightmare-into-ithilien-008" "Obsidian Arrows" IntoIthilienNightmare 2) {cdShadowEffect = True}
+
+savageFray :: CardDef
+savageFray =
+  (treachery "heirs-of-numenor-nightmare-into-ithilien-009" "Savage Fray" IntoIthilienNightmare 2) {cdKeywords = setFromList [Doomed 2]}
+
+ruinAndWroth :: CardDef
+ruinAndWroth =
+  (treachery "heirs-of-numenor-nightmare-the-siege-of-cair-andros-008" "Ruin and Wroth" TheSiegeOfCairAndrosNightmare 3)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Doomed 2]
     }

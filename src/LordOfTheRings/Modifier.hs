@@ -504,6 +504,15 @@ data ModifierType
   | -- | on the active location on the Island Map: the players may travel from it to a
     -- location up to so many locations away, as Winding Caverns reads
     TravelRange Int
+  | -- | on the game: archery damage assigned to a character keeps going to it until it is
+    -- destroyed, as Ithilien Overlook reads
+    ArcheryDamageStaysOnCharacter
+  | -- | on the game: archery damage may be assigned to this card as well as to characters,
+    -- as Southron Mounted Archer gives Battleground locations
+    ArcheryDamageMayGoTo Target
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is dealt to this card, as Dense Thickets' shadow sends it to a Ranger objective
+    ExcessDamageTo Target
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

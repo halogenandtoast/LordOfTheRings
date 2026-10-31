@@ -16,6 +16,9 @@ allNightmareCards =
       [ passageThroughMirkwoodNightmare
       , journeyAlongTheAnduinNightmare
       , escapeFromDolGuldurNightmare
+      , perilInPelargirNightmare
+      , intoIthilienNightmare
+      , theSiegeOfCairAndrosNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -26,3 +29,12 @@ journeyAlongTheAnduinNightmare = nightmareSetup "core-set-nightmare-journey-alon
 
 escapeFromDolGuldurNightmare :: CardDef
 escapeFromDolGuldurNightmare = nightmareSetup "core-set-nightmare-escape-from-dol-guldur-001" "Escape from Dol Guldur" EscapeFromDolGuldurNightmare
+
+perilInPelargirNightmare :: CardDef
+perilInPelargirNightmare = nightmareSetup "heirs-of-numenor-nightmare-peril-in-pelargir-001" "Peril in Pelargir" PerilInPelargirNightmare
+
+intoIthilienNightmare :: CardDef
+intoIthilienNightmare = nightmareSetup "heirs-of-numenor-nightmare-into-ithilien-001" "Into Ithilien" IntoIthilienNightmare
+
+theSiegeOfCairAndrosNightmare :: CardDef
+theSiegeOfCairAndrosNightmare = nightmareSetup "heirs-of-numenor-nightmare-the-siege-of-cair-andros-001" "The Siege of Cair Andros" TheSiegeOfCairAndrosNightmare

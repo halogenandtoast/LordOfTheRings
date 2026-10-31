@@ -15,6 +15,14 @@ allLocationCards =
     map
       (\def -> (cdCardCode def, def))
       [ greatForestWeb
+      , docksideStreet
+      , pelargirAlley
+      , ithilienOverlook
+      , denseThickets
+      , cormallenFields
+      , besiegedCourtyard
+      , wallsOfCairAndros
+      , anduinWharf
       , abandonedCampNightmare
       , gladeOfTheSpawn
       , aFloodedFord
@@ -2111,4 +2119,53 @@ dungeonLabyrinth :: CardDef
 dungeonLabyrinth =
   (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
     { cdCardTraits = setFromList [DolGuldur]
+    }
+
+-- Heirs of Númenor Nightmare Decks
+
+docksideStreet :: CardDef
+docksideStreet = (location "heirs-of-numenor-nightmare-peril-in-pelargir-005" "Dockside Street" PerilInPelargirNightmare 3 2 6) {cdCardTraits = setFromList [City]}
+
+pelargirAlley :: CardDef
+pelargirAlley =
+  (location "heirs-of-numenor-nightmare-peril-in-pelargir-006" "Pelargir Alley" PerilInPelargirNightmare 2 2 5)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    }
+
+ithilienOverlook :: CardDef
+ithilienOverlook =
+  (location "heirs-of-numenor-nightmare-into-ithilien-005" "Ithilien Overlook" IntoIthilienNightmare 3 3 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdKeywords = setFromList [Archery 2]
+    }
+
+denseThickets :: CardDef
+denseThickets =
+  (location "heirs-of-numenor-nightmare-into-ithilien-006" "Dense Thickets" IntoIthilienNightmare 3 1 8)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+cormallenFields :: CardDef
+cormallenFields = (location "heirs-of-numenor-nightmare-into-ithilien-007" "Cormallen Fields" IntoIthilienNightmare 2 3 5) {cdCardTraits = setFromList [Plains, Riverland]}
+
+besiegedCourtyard :: CardDef
+besiegedCourtyard =
+  (location "heirs-of-numenor-nightmare-the-siege-of-cair-andros-005" "Besieged Courtyard" TheSiegeOfCairAndrosNightmare 2 2 5)
+    { cdCardTraits = setFromList [CairAndros, Battleground]
+    , cdShadowEffect = True
+    }
+
+wallsOfCairAndros :: CardDef
+wallsOfCairAndros =
+  (location "heirs-of-numenor-nightmare-the-siege-of-cair-andros-006" "Walls of Cair Andros" TheSiegeOfCairAndrosNightmare 2 4 4)
+    { cdCardTraits = setFromList [CairAndros, Battleground]
+    , cdShadowEffect = True
+    }
+
+anduinWharf :: CardDef
+anduinWharf =
+  (location "heirs-of-numenor-nightmare-the-siege-of-cair-andros-007" "Anduin Wharf" TheSiegeOfCairAndrosNightmare 2 3 6)
+    { cdCardTraits = setFromList [CairAndros, Battleground, Riverland]
     }
