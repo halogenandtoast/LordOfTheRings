@@ -276,6 +276,9 @@ import LordOfTheRings.Location.Cards.HuntersLookout
 import LordOfTheRings.Location.Cards.DarkPools
 import LordOfTheRings.Location.Cards.TrollLair
 import LordOfTheRings.Location.Cards.HivesAndHives
+import LordOfTheRings.Location.Cards.DarkWoodGrove
+import LordOfTheRings.Location.Cards.LabyrinthineWoods
+import LordOfTheRings.Location.Cards.PitchDarkThicket
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -593,5 +596,8 @@ allLocations =
         , SomeLocationCard darkPools
         , SomeLocationCard trollLair
         , SomeLocationCard hivesAndHives
+        , SomeLocationCard darkWoodGrove
+        , SomeLocationCard labyrinthineWoods
+        , SomeLocationCard pitchDarkThicket
         ]
     ]

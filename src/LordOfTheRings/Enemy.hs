@@ -255,6 +255,8 @@ import LordOfTheRings.Enemy.Cards.LouisNightmare
 import LordOfTheRings.Enemy.Cards.MorrisNightmare
 import LordOfTheRings.Enemy.Cards.RupertNightmare
 import LordOfTheRings.Enemy.Cards.StuartNightmare
+import LordOfTheRings.Enemy.Cards.GoblinEagleHunter
+import LordOfTheRings.Enemy.Cards.TreetopBirdEater
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -535,5 +537,7 @@ allEnemys =
         , SomeEnemyCard morrisNightmare
         , SomeEnemyCard rupertNightmare
         , SomeEnemyCard stuartNightmare
+        , SomeEnemyCard goblinEagleHunter
+        , SomeEnemyCard treetopBirdEater
         ]
     ]

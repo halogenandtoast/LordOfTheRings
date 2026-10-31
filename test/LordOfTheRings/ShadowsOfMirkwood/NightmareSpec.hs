@@ -8,7 +8,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase
-import LordOfTheRings.Scenario (conflictAtTheCarrock, theHuntForGollum)
+import LordOfTheRings.Scenario (aJourneyToRhosgobel, conflictAtTheCarrock, theHuntForGollum)
 import LordOfTheRings.Scenario.Types (GameMode (..), modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
@@ -117,3 +117,35 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run $ DealDamage GameSource (toTarget troll) 2
       reveal Treacheries.timeForSupper []
       getDamage (toTarget troll) `shouldReturn` 0
+
+  describe "A Journey to Rhosgobel" do
+    it "builds the nightmare deck" . nightmare aJourneyToRhosgobel $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 54
+      map (`copies` deck) [Locations.forestGrove, Enemies.goblinEagleHunter, Treacheries.noxiousSupplies]
+        `shouldBe` [0, 3, 3]
+
+    it "adds a Goblin Eagle-hunter to the staging area during setup" . nightmare aJourneyToRhosgobel $ \_ -> do
+      run $ DoStep 1 Setup
+      run $ DoStep 8 Setup
+      getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.goblinEagleHunter]
+
+    it "gives the first Creature revealed in the quest phase surge" . nightmare aJourneyToRhosgobel $ \_ -> do
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      reveal Enemies.treetopBirdEater [Locations.labyrinthineWoods, Locations.darkWoodGrove]
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+    it "Noxious Supplies heals Wilyador of 1 damage only, then is discarded" . nightmare aJourneyToRhosgobel $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Objectives.wilyador
+      w <- getsGame (toTarget . fromJustNote "no Wilyador" . find ((== toCardCode Objectives.wilyador) . toCardCode) . toList . (.entities.allies))
+      run $ DealDamage GameSource w 5
+      reveal Treacheries.noxiousSupplies [Locations.darkWoodGrove]
+      run $ HealDamage GameSource w 3
+      getDamage w `shouldReturn` 4
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+
+    it "Labyrinthine Woods gives Creatures +1 attack in the staging area" . nightmare aJourneyToRhosgobel $ \_ -> do
+      reveal Locations.labyrinthineWoods []
+      reveal Enemies.treetopBirdEater []
+      (getEnemyAttack =<< theEnemy) `shouldReturn` 5

@@ -1599,5 +1599,12 @@
   },
   "timeForSupper": {
     "remove": "Time for Supper: choose a hero in a discard pile to remove from the game"
+  },
+  "aJourneyToRhosgobelNightmare": {
+    "athelas": "An Athelas card was placed in the discard pile",
+    "shuffle": "Shuffle it into the encounter deck"
+  },
+  "shotFromTheSky": {
+    "attach": "Shot from the Sky: choose an Eagle character to attach it to"
   }
 }

@@ -465,6 +465,7 @@ library
       LordOfTheRings.Enemy.Cards.GiantMarshWorm
       LordOfTheRings.Enemy.Cards.GiantSwampAdder
       LordOfTheRings.Enemy.Cards.GoblinArcher
+      LordOfTheRings.Enemy.Cards.GoblinEagleHunter
       LordOfTheRings.Enemy.Cards.GoblinFollower
       LordOfTheRings.Enemy.Cards.GoblinPursuer
       LordOfTheRings.Enemy.Cards.GoblinScout
@@ -605,6 +606,7 @@ library
       LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
       LordOfTheRings.Enemy.Cards.TortureMaster
       LordOfTheRings.Enemy.Cards.TraitorousWight
+      LordOfTheRings.Enemy.Cards.TreetopBirdEater
       LordOfTheRings.Enemy.Cards.UmbarAssassin
       LordOfTheRings.Enemy.Cards.UmbarCaptain
       LordOfTheRings.Enemy.Cards.UmbarRaider
@@ -945,6 +947,7 @@ library
       LordOfTheRings.Location.Cards.DarkHalls
       LordOfTheRings.Location.Cards.DarkPit
       LordOfTheRings.Location.Cards.DarkPools
+      LordOfTheRings.Location.Cards.DarkWoodGrove
       LordOfTheRings.Location.Cards.DeadmensGate
       LordOfTheRings.Location.Cards.DecrepitRemains
       LordOfTheRings.Location.Cards.DecrepitRooftops
@@ -1018,6 +1021,7 @@ library
       LordOfTheRings.Location.Cards.JaggedReef
       LordOfTheRings.Location.Cards.JunglePath
       LordOfTheRings.Location.Cards.KneesOfTheMountain
+      LordOfTheRings.Location.Cards.LabyrinthineWoods
       LordOfTheRings.Location.Cards.LightlessPassage
       LordOfTheRings.Location.Cards.LostIsland
       LordOfTheRings.Location.Cards.LushJungle
@@ -1048,6 +1052,7 @@ library
       LordOfTheRings.Location.Cards.PelargirDocks
       LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PillagedShip
+      LordOfTheRings.Location.Cards.PitchDarkThicket
       LordOfTheRings.Location.Cards.PlainsOfEnedwaith
       LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.PrisonCell
@@ -1457,6 +1462,7 @@ library
       LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors
       LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors.Helpers
       LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel
+      LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel.Helpers
       LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath
       LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
       LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven
@@ -1673,6 +1679,7 @@ library
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
       LordOfTheRings.Treachery.Cards.NoRest
+      LordOfTheRings.Treachery.Cards.NoxiousSupplies
       LordOfTheRings.Treachery.Cards.OffTrack
       LordOfTheRings.Treachery.Cards.OldHatreds
       LordOfTheRings.Treachery.Cards.OldWivesTales
@@ -1705,6 +1712,7 @@ library
       LordOfTheRings.Treachery.Cards.SerpentsTail
       LordOfTheRings.Treachery.Cards.ShadowOfFear
       LordOfTheRings.Treachery.Cards.ShiftingMarshland
+      LordOfTheRings.Treachery.Cards.ShotFromTheSky
       LordOfTheRings.Treachery.Cards.SignsOfConflict
       LordOfTheRings.Treachery.Cards.SleepingSentry
       LordOfTheRings.Treachery.Cards.SleeplessMalice
