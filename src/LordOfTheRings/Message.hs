@@ -77,6 +77,11 @@ data Message
   | CheckEliminations
   | EliminatePlayer PlayerId
   | GameOver Outcome
+  | {- | the scenario has been won in campaign mode: its campaign card's resolution, then
+    what every campaign records, the score and the fallen heroes, written to the log the
+    scenario holds. The game is over, so nothing pushed here runs.
+    -}
+    ResolveCampaign
   | Discard Target
   | {- | a character leaves play now, the When window for its leaving having closed: the
     Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it

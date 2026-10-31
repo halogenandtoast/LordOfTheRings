@@ -8,6 +8,7 @@ import Data.Map.Strict qualified as Map
 import Data.UUID qualified as UUID
 import LordOfTheRings.Ally (createAlly)
 import LordOfTheRings.Ally.Types (AllyAttrs (allyHandAction))
+import LordOfTheRings.Campaign (campaignLogThreatPenalty)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -37,6 +38,7 @@ import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Player.Types as X
 import LordOfTheRings.Prelude hiding (swap)
 import LordOfTheRings.Queue (QueueT)
+import LordOfTheRings.Scenario.Types (scenarioCampaign)
 import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -81,7 +83,9 @@ runPlayer msg player = case msg of
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       -- a hero's threat cost may be lowered, as Mirlonde's
       threat <- sum <$> traverse (\h -> modifiedValue threatOf h h.threat) heroes
-      pure $ player & threatL .~ threat & startingThreatL .~ threat
+      -- in campaign mode, with the threat penalty the campaign log records
+      penalty <- getsGame (maybe 0 campaignLogThreatPenalty . scenarioCampaign . toAttrs . gameScenario)
+      pure $ player & threatL .~ threat + penalty & startingThreatL .~ threat + penalty
     DoStep 5 Setup -> do
       -- a response instead of a mulligan, as Galdor of the Havens', takes the question away
       push $ CheckWindows [mkAfter $ SetupHandDrawn player.id]

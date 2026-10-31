@@ -697,8 +697,13 @@ runGameMessage msg g = case msg of
     if cannotEnd && any (not . (.eliminated)) g.players
       then g <$ push (CreateEffect $ Effect GameSource GameTarget [GameEndsWith outcome] UntilSpent)
       else do
+        -- won in campaign mode, the campaign card's resolution is recorded in the log
+        g' <-
+          if outcome == Won && isJust (toAttrs g.scenario).campaign
+            then traverseOf scenarioL (runEach ResolveCampaign) g
+            else pure g
         clearQueue
-        pure $ g & outcomeL ?~ outcome
+        pure $ g' & outcomeL ?~ outcome
   -- an ally put into play by its card, as Emery is, discarded by its card
   Discard (CardIdTarget cid)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
