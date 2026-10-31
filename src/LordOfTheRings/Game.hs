@@ -604,6 +604,7 @@ runGameMessage msg g = case msg of
     let passToken = case drop 1 players of
           (next : _) | isNothing (gameSeparation g) -> [SetFirstPlayer next]
           _ -> []
+    raises <- for players \pid -> (pid,) . fromMaybe 1 . lastMay . (\ms -> [n | RefreshThreatRaise n <- ms]) <$> getModifiers (PlayerTarget pid)
     -- each character readied opens its own window, for responses to it readying
     readied <- for (filter (`notElem` held) characters) \c -> do
       traits <- characterTraits c
@@ -614,7 +615,7 @@ runGameMessage msg g = case msg of
       <> [RefreshUpTo pid n cs | (pid, n, cs) <- limited]
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
-      <> [RaiseThreat pid 1 | pid <- players]
+      <> [RaiseThreat pid n | (pid, n) <- raises, n > 0]
       <> passToken
       -- the phase ends with an action window, for Refresh Actions as Escape from Darkness gives
       <> map OptionalActionWindow players

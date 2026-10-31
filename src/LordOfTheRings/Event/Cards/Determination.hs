@@ -35,7 +35,7 @@ instance RunMessage Determination where
         causedBy attrs
         for_ characters \(t, code) -> targeting t do
           let marked = ordNub (determined <> [code])
-          push $ UpdateCampaignLog (Record Determined marked)
+          updateCampaignLog (Record Determined marked)
           for_ [t' | (t', c) <- characters, c `elem` marked] ready
       pure e
     _ -> Determination <$> runMessage msg attrs

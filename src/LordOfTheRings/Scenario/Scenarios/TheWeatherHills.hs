@@ -4,6 +4,7 @@ import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (earnAtSetup, protectTheInnocentSetup, recordProtectTheInnocent)
 import LordOfTheRings.Scenario.Scenarios.TheWeatherHills.Helpers
 
 newtype TheWeatherHills = TheWeatherHills ScenarioAttrs
@@ -43,6 +44,19 @@ instance RunMessage TheWeatherHills where
     ScenarioSpecific "orcDeck.shuffleIn" _ -> do
       deck <- shuffleM (meta.orcDeck <> attrs.encounterDeck)
       pure $ TheWeatherHills $ attrs & encounterDeckL .~ deck & metaL .~ toJSON (Meta [])
+    -- Campaign: Setup: Add the Mysterious Omens side quest to the Campaign Pool and shuffle
+    -- it into the encounter deck.
+    DoStep 2 Setup | isJust attrs.campaign -> TheWeatherHills <$> runMessage msg (earnAtSetup [Quests.mysteriousOmens] attrs)
+    -- Add the Protect the Innocent side quest to the staging area and place damage on it
+    -- equal to the amount of damage noted for it in the Campaign Log.
+    DoStep 9 Setup | Just l <- attrs.campaign -> do
+      protectTheInnocentSetup attrs l False
+      TheWeatherHills <$> runMessage msg attrs
+    -- Resolution: Note the amount of damage on Protect the Innocent in the Campaign Log
+    -- (replacing the previous number).
+    ResolveCampaign | Just l <- attrs.campaign -> do
+      l' <- recordProtectTheInnocent l
+      TheWeatherHills <$> runMessage msg (attrs {scenarioCampaign = Just l'})
     _ -> TheWeatherHills <$> runMessage msg attrs
    where
     meta = getMeta attrs

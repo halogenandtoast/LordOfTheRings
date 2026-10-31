@@ -7,6 +7,7 @@ module LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram (escapeFromMountGra
 
 import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Campaign (CampaignLogKey (LostInMountGram), record, recorded)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Keyword (Keyword (Capture))
@@ -14,6 +15,9 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Modifier (ModifierType (RefreshThreatRaise))
+import LordOfTheRings.Phase (Phase (CombatPhase))
+import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, attachPermanentBoons)
 import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers
 import LordOfTheRings.Window
 
@@ -43,6 +47,46 @@ instance RunMessage EscapeFromMountGram where
         & encounterDeckL .~ encounterDeck
         & setAsideL .~ setAsideCards
         & questDeckL .~ laterStages
+    -- Campaign: Setup: Set aside any permanent boon attachments on heroes that are added to
+    -- a player's captured deck (they leave with their heroes). Add the Loot the Dungeons
+    -- side quest to the staging area, capturing the bottom 5 cards of each player's
+    -- captured deck underneath it. Flip this card over.
+    DoStep 9 Setup | isJust attrs.campaign -> do
+      angmarSetup attrs
+      card <- genEncounterCard Quests.lootTheDungeons
+      addToStaging card
+      push $ ScenarioSpecific "mountGram.captureBottom" (toJSON (CardIdTarget card.id, 5 :: Int))
+      EscapeFromMountGram <$> runMessage msg (attrs {scenarioCampaignCardFlipped = True})
+    ScenarioSpecific "mountGram.captureBottom" (parseMaybe parseJSON -> Just (t, n)) ->
+      capturedTarget t >>= \case
+        Just (host, card) -> do
+          let fromBottom m = m {capturedDecks = Map.map reverse m.capturedDecks}
+          withMeta . fromBottom <$> captureTop host card n (fromBottom meta)
+        Nothing -> pure $ EscapeFromMountGram attrs
+    -- Forced: Instead of raising their threat by 1 during the refresh phase, each player
+    -- raises their threat by the number of completed quest cards plus the number of side
+    -- quests in the victory display: counted as combat begins, for the refresh phase.
+    BeginPhase CombatPhase | isJust attrs.campaign -> do
+      stage <- getMainStage
+      let sideQuests = length [c | c <- attrs.victoryDisplay, cdCardType (toCardDef c) == EncounterSideQuestType]
+      eachPlayer \p -> roundModifier attrs (PlayerTarget p) (RefreshThreatRaise $ max 0 (stage - 1) + sideQuests)
+      EscapeFromMountGram <$> runMessage msg attrs
+    -- Forced: After a hero enters play, attach to that hero each set-aside permanent boon
+    -- attachment assigned to that character in the Campaign Log: once it is in play.
+    PutHeroIntoPlay _ pc | isJust attrs.campaign -> do
+      push $ ScenarioSpecific "campaign.permanentBoons" (toJSON $ toCardCode pc)
+      EscapeFromMountGram <$> runMessage msg attrs
+    ScenarioSpecific "campaign.permanentBoons" (parseMaybe parseJSON -> Just code) -> do
+      attachPermanentBoons attrs code
+      pure $ EscapeFromMountGram attrs
+    -- Resolution: Each player must make note of which unique cards are still in their
+    -- captured deck and not in play at the end of the game. Those cards cannot be included
+    -- in that player's deck for the rest of the campaign. (A hero still captured is not in
+    -- play, and falls.)
+    ResolveCampaign | Just l <- attrs.campaign -> do
+      let lost = [toCardCode pc | pc <- concat (Map.elems meta.capturedDecks), cdUnique (toCardDef pc), cdCardType (toCardDef pc) /= HeroType]
+          l' = record LostInMountGram (ordNub $ recorded LostInMountGram l <> lost) l
+      EscapeFromMountGram <$> runMessage msg (attrs {scenarioCampaign = Just l'})
     -- the player shuffles his hand into his deck, and his allies and Item, Mount and
     -- Artifact attachments make up his captured deck
     ScenarioSpecific "mountGram.prepare" (parseMaybe parseJSON -> Just pid) -> do

@@ -30,7 +30,7 @@ instance RunMessage MysteriousOmens where
       eachPlayer \p -> discardRandomFromHand p 1
       MysteriousOmens <$> runMessage msg attrs
     CompleteQuest qid | qid == attrs.id -> do
-      push $ UpdateCampaignLog (RemoveFromPool $ toCardCode Cards.mysteriousOmens)
+      updateCampaignLog $ RemoveFromPool $ toCardCode Cards.mysteriousOmens
       eachPlayer \p -> do
         boons <- traverse (`genPlayerCard` Just p) [Attachments.cunning, Attachments.hardy, Attachments.resolute, Attachments.ruthless, Attachments.stalwart]
         heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p)
@@ -44,6 +44,6 @@ instance RunMessage MysteriousOmens where
               questionLabeled "campaign.attachTo"
               targets heroes \h -> do
                 attachOutOfPlay p boon h.id
-                push $ UpdateCampaignLog (AddToPool $ PoolCard (toCardCode boon) Nothing (Just $ toCardCode h))
+                updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) Nothing (Just $ toCardCode h)
       MysteriousOmens <$> runMessage msg attrs
     _ -> MysteriousOmens <$> runMessage msg attrs

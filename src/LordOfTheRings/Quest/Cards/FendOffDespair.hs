@@ -30,6 +30,6 @@ instance HasModifiersFor FendOffDespair where
 instance RunMessage FendOffDespair where
   runMessage msg (FendOffDespair attrs) = case msg of
     CompleteQuest qid | qid == attrs.id -> do
-      push $ UpdateCampaignLog (AdjustThreatPenalty (-2))
+      updateCampaignLog (AdjustThreatPenalty (-2))
       FendOffDespair <$> runMessage msg attrs
     _ -> FendOffDespair <$> runMessage msg attrs

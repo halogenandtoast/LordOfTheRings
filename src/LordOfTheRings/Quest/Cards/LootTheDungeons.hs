@@ -49,6 +49,6 @@ instance RunMessage LootTheDungeons where
           labeled "pass" $ pure ()
           for_ boons \boon -> targeting (CardIdTarget boon.id) do
             putInHand boon
-            push $ UpdateCampaignLog (AddToPool $ PoolCard (toCardCode boon) (elemIndex p order) Nothing)
+            updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) (elemIndex p order) Nothing
       LootTheDungeons <$> runMessage msg attrs
     _ -> LootTheDungeons <$> runMessage msg attrs

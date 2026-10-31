@@ -8,6 +8,7 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
+import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -1568,3 +1569,15 @@ attachOutOfPlay pid card = push . PlayAttachmentOn pid card . toTarget
 -- under the first player.
 putObjectiveAllyIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
 putObjectiveAllyIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
+
+-- | In campaign mode, write to the campaign log the scenario holds, as Mysterious Omens'
+-- boons join the Campaign Pool: kept if the scenario is won.
+updateCampaignLog :: ReverseQueue m => CampaignLogUpdate -> m ()
+updateCampaignLog = push . UpdateCampaignLog
+
+-- | The player card, from out of play, is shuffled into its owner's deck, as Iârion's
+-- Pendant once the players choose it.
+shuffleIntoDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+shuffleIntoDeck pid card = do
+  putInHand card
+  push $ ShuffleFromHandIntoOwnersDeck pid card.id

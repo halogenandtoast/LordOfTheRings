@@ -1478,6 +1478,7 @@ library
       LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors
       LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors.Helpers
       LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel
+      LordOfTheRings.Scenario.Scenarios.AngmarAwakened
       LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath
       LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
       LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven
@@ -1937,6 +1938,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Ally.LeavingAndThreatSpec
       LordOfTheRings.Ally.SnowbournScoutSpec
       LordOfTheRings.AngmarAwakened.AcrossTheEttenmoorsSpec
+      LordOfTheRings.AngmarAwakened.CampaignSpec
       LordOfTheRings.AngmarAwakened.CarnDumAndDreadRealmPlayerCardsSpec
       LordOfTheRings.AngmarAwakened.EscapeFromMountGramSpec
       LordOfTheRings.AngmarAwakened.PlayerCardsBSpec

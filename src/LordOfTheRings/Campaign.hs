@@ -260,11 +260,11 @@ recorded :: CampaignLogKey -> CampaignLog -> [CardCode]
 recorded key = Map.findWithDefault [] key . (.notes)
 
 -- | Note a number for a card, replacing the one noted before.
-count :: CampaignLogKey -> CardCode -> Int -> CampaignLog -> CampaignLog
-count key code n l = l {campaignLogCounts = Map.insertWith (<>) key (Map.singleton code n) l.counts}
+recordCount :: CampaignLogKey -> CardCode -> Int -> CampaignLog -> CampaignLog
+recordCount key code n l = l {campaignLogCounts = Map.insertWith (<>) key (Map.singleton code n) l.counts}
 
-counted :: CampaignLogKey -> CardCode -> CampaignLog -> Int
-counted key code = Map.findWithDefault 0 code . Map.findWithDefault mempty key . (.counts)
+recordedCount :: CampaignLogKey -> CardCode -> CampaignLog -> Int
+recordedCount key code = Map.findWithDefault 0 code . Map.findWithDefault mempty key . (.counts)
 
 -- | What a card writes to the log while its scenario is played, as Mysterious Omens' boons
 -- or Fend Off Despair's threat. Kept if the scenario is won, as the rest of its log.
@@ -273,6 +273,7 @@ data CampaignLogUpdate
   | RemoveFromPool CardCode
   | AdjustThreatPenalty Int
   | Record CampaignLogKey [CardCode]
+  | Unrecord CampaignLogKey
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -282,3 +283,4 @@ updateLog = \case
   RemoveFromPool code -> \l -> l {campaignLogPool = filter ((/= code) . (.code)) l.pool}
   AdjustThreatPenalty n -> \l -> l {campaignLogThreatPenalty = l.threatPenalty + n}
   Record key cards -> record key cards
+  Unrecord key -> \l -> l {campaignLogNotes = Map.delete key l.notes}
