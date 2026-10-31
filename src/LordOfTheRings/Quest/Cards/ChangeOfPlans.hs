@@ -2,7 +2,7 @@ module LordOfTheRings.Quest.Cards.ChangeOfPlans (changeOfPlans) where
 
 import LordOfTheRings.Card (cdEncounterSet, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.EncounterSet (EncounterSet (CorsairRaiders, TheThingInTheDepths))
+import LordOfTheRings.EncounterSet (EncounterSet (CorsairRaiders, TheThingInTheDepths, TheThingInTheDepthsNightmare))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Game.Base (gameScenario)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -33,15 +33,18 @@ instance RunMessage ChangeOfPlans where
       elite <- concatMapM (select . EnemyWithCardCode . toCardCode) [Enemies.captainSahir, Enemies.naasiyah]
       for_ elite (flipOver . EnemyTarget)
       let inSet set = (== Just set) . cdEncounterSet . toCardDef
+          -- Nightmare: Corsair Duelist is of the Corsair Raiders set too
+          raider c = inSet CorsairRaiders c || toCardCode c == toCardCode Enemies.corsairDuelist
       s <- getsGame (toAttrs . gameScenario)
-      for_ (filter (inSet CorsairRaiders) s.scenarioEncounterDeck) removeFromEncounterDeck
-      for_ (filter (inSet CorsairRaiders) s.scenarioEncounterDiscard) removeFromEncounterDiscard
-      raiders <- filterM (fmap (inSet CorsairRaiders) . getEnemy) =<< select AnyEnemy
+      for_ (filter raider s.scenarioEncounterDeck) removeFromEncounterDeck
+      for_ (filter raider s.scenarioEncounterDiscard) removeFromEncounterDiscard
+      raiders <- filterM (fmap raider . getEnemy) =<< select AnyEnemy
       for_ raiders (removeFromGame . EnemyTarget)
       addSetAsideToStaging (cardIs Enemies.theThingInTheDepths)
       shuffleEncounterDiscardIntoDeck AnyCard
       shuffleSetAsideIntoEncounterDeck
-        [c | c <- s.scenarioSetAside, inSet TheThingInTheDepths c, toCardCode c /= toCardCode Enemies.theThingInTheDepths]
+        [ c | c <- s.scenarioSetAside, inSet TheThingInTheDepths c || inSet TheThingInTheDepthsNightmare c, toCardCode c /= toCardCode Enemies.theThingInTheDepths
+        ]
       completeQuest attrs.id
       pure q
     _ -> ChangeOfPlans <$> runMessage msg attrs

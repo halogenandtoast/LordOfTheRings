@@ -36,7 +36,9 @@ instance RunMessage GornakhsDungeons where
       GornakhsDungeons <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      for_ (take 1 $ filter ((== toCardCode Locations.prisonCell) . toCardCode) deck) \cell -> do
+      -- the nightmare Prison Cell stands in for those the Nightmare Deck removes
+      let cells = map toCardCode [Locations.prisonCell, Locations.prisonCellNightmare]
+      for_ (take 1 $ filter ((`elem` cells) . toCardCode) deck) \cell -> do
         removeFromEncounterDeck cell
         addToStaging cell
         captureFromDeck (CardIdTarget cell.id) 2

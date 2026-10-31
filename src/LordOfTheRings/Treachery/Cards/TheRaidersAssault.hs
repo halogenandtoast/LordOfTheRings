@@ -2,7 +2,7 @@ module LordOfTheRings.Treachery.Cards.TheRaidersAssault (theRaidersAssault) wher
 
 import LordOfTheRings.Card (IsCard (toCard))
 import LordOfTheRings.Placement (Placement (StagingArea))
-import LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven.Helpers (notGuarding, unguardedObjectives)
+import LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven.Helpers (mayGuard, unguardedObjectives)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -20,7 +20,7 @@ theRaidersAssault = treachery TheRaidersAssault Cards.theRaidersAssault
 instance RunMessage TheRaidersAssault where
   runMessage msg t@(TheRaidersAssault attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      ships <- traverse (\e -> (e,) <$> getEnemy e) =<< notGuarding =<< select shipEnemy
+      ships <- traverse (\e -> (e,) <$> getEnemy e) =<< mayGuard =<< select shipEnemy
       objectives <- unguardedObjectives
       lead <- getLead
       if null ships || null objectives

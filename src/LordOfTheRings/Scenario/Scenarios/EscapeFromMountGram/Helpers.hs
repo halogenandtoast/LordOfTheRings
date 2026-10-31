@@ -30,6 +30,10 @@ module LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers (
   prepareCapturedDeck,
   chooseStartingHero,
   isCapturable,
+  captureFromHand,
+  captureHeroesFromDecks,
+  rescueCaptured,
+  heroCaptured,
 ) where
 
 import Data.Aeson.Types (parseMaybe)
@@ -143,3 +147,24 @@ putIntoPlayAtNoCost pc = for_ pc.owner \owner -> push case cdCardType (toCardDef
   HeroType -> PutHeroIntoPlay owner pc
   AttachmentType -> PutAttachmentIntoPlay owner pc
   _ -> PutAllyIntoPlayUnder owner pc
+
+-- | The cards in the player's hand are captured underneath the card, as Goblin Patrol's.
+captureFromHand :: (ReverseQueue m, Targetable host) => PlayerId -> host -> [PlayerCard] -> m ()
+captureFromHand pid host cards = unless (null cards) do
+  for_ cards \pc -> push $ RemoveFromHand pid pc.id
+  push $ PlaceUnderneath (toTarget host) (map PlayerCard cards)
+
+-- | Each player searches his captured deck for each hero and captures them underneath the
+-- card, as the nightmare Jailor Gornákh does.
+captureHeroesFromDecks :: (ReverseQueue m, Targetable host) => host -> m ()
+captureHeroesFromDecks host = push $ ScenarioSpecific "mountGram.captureHeroes" (toJSON (toTarget host))
+
+-- | The captured card is rescued from underneath the card, as Prison Guard's.
+rescueCaptured :: ReverseQueue m => CardId -> CardId -> m ()
+rescueCaptured host cid = push $ ScenarioSpecific "mountGram.rescueOne" (toJSON (host, cid))
+
+-- | A hero is captured: underneath an encounter card, or in a captured deck.
+heroCaptured :: HasGame m => m Bool
+heroCaptured = do
+  meta <- gameMeta
+  pure $ any ((== HeroType) . cdCardType . toCardDef) $ concat (Map.elems meta.capturedDecks) <> concat (Map.elems meta.captured)

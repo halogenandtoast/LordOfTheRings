@@ -4,6 +4,7 @@ import LordOfTheRings.Card (CardType (EnemyType, LocationType))
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheCityOfCorsairs.Helpers (stormcallerDestroyed)
@@ -27,7 +28,10 @@ instance RunMessage TheHavenOfUmbar where
       TheHavenOfUmbar <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      for_ [Locations.theShatteredMonument, Enemies.captainSahirTheCityOfCorsairs] \def ->
+      -- Nightmare: "also search the encounter deck for The Cursed Sword and attach it to
+      -- the set-aside Captain Sahír": set aside with him, it is attached as he enters play
+      nightmare <- inNightmareMode
+      for_ ([Locations.theShatteredMonument, Enemies.captainSahirTheCityOfCorsairs] <> [Objectives.theCursedSword | nightmare]) \def ->
         traverse_ setAside $ take 1 $ filter (cardMatches $ cardIs def) deck
       eachPlayer \p -> do
         searchEncounterDeckToStaging p (CardWithType EnemyType)

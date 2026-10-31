@@ -2,7 +2,7 @@ module LordOfTheRings.Enemy.Cards.GoblinWarlord (goblinWarlord) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers (triggerLostEffects)
+import LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers (triggerLostEffects, lostTriggered)
 
 newtype GoblinWarlord = GoblinWarlord EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities, HasModifiersFor)
@@ -15,7 +15,7 @@ goblinWarlord = enemy GoblinWarlord Cards.goblinWarlord
 -- Shadow: Trigger all "Lost:" effects in play.
 instance RunMessage GoblinWarlord where
   runMessage msg e@(GoblinWarlord attrs) = case msg of
-    TriggerLostEffects _ -> do
+    _ | lostTriggered attrs msg -> do
       eachPlayer \p -> chooseAndDiscard attrs p . map toTarget =<< select (AllyControlledBy $ PlayerWithId p)
       pure e
     ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do

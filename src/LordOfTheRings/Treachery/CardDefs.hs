@@ -15,6 +15,12 @@ allTreacheryCards =
       (\def -> (cdCardCode def, def))
       [ eyesOfTheForest
       , losingTime
+      , bedlamInTheStreets
+      , theThievesPloy
+      , theyreGettingAway
+      , obsidianArrows
+      , savageFray
+      , ruinAndWroth
       , theSpidersWeb
       , backtrack
       , pursuitOnTheShore
@@ -146,6 +152,19 @@ allTreacheryCards =
       , drivenBack
       , frenziedAttack
       , dunlendingAmbush
+      , boarClanAssault
+      , stalkedByDunlendings
+      , cursedBurden
+      , trialOfAncestors
+      , waylaidByAgents
+      , tharbadPatrol
+      , quicksand
+      , rottenStench
+      , hatefulSearch
+      , sauronsAgent
+      , closingIn
+      , ravenTalisman
+      , gatheringForces
       , constantTail
       , conspicuousLot
       , cornered
@@ -180,6 +199,11 @@ allTreacheryCards =
       , unnaturalFog
       , tragicDiscovery
       , restlessEvil
+      , aGreatHost
+      , killThem
+      , rainWashedTracks
+      , paralyzingFear
+      , curseOfAngmar
       , terrorOfTheNorth
       , darkSorcery
       , heavyCurse
@@ -219,6 +243,95 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , brutalAssault
+      , mugashsCunning
+      , patrollingOrcs
+      , mugashsRage
+      , stiflingWoods
+      , fangornsAnger
+      , rogueWave
+      , dreamsOfNumenor
+      , ragingSquallNightmare
+      , corruptedFlora
+      , calphonsFolly
+      , suddenAssaultNightmare
+      , infiltration
+      , shadowFall
+      , balinsDoom
+      , beatsAndEchoes
+      , dismayAndFear
+      , anEvilFortune
+      , darkAndStormy
+      , sahirsGettingAway
+      , tumultuousWaters
+      , deepMaelstrom
+      , deceitfulIsland
+      , callOfTheCurse
+      , suddenPrecipice
+      , pitIntoTheDepths
+      , sulfurCloud
+      , brokenRudder
+      , grappled
+      , inspiringFury
+      , raiseTheAlarm
+      , slaveTrade
+      , theEnemysTrail
+      , restlessHunters
+      , theTrailGoesCold
+      , timeForSupper
+      , shotFromTheSky
+      , noxiousSupplies
+      , aHurryingDarkness
+      , blastOfSavageWind
+      , hazardousTerrain
+      , retracedSteps
+      , candlesOfCorpses
+      , swarmingMosquitoes
+      , devilryOfTheDarkLand
+      , isolation
+      , befouledEquipment
+      , wickednessAndMischief
+      , theTowerBeckons
+      , noxiousFumes
+      , surroundedByShadow
+      , suddenOnslaught
+      , drumsOfTheWildMen
+      , poisonDarts
+      , trappedVillagers
+      , runForYourLives
+      , saveUs
+      , thoseNowSundered
+      , relentlessAttack
+      , overrunDefenses
+      , pressedOnAllSides
+      , falseAccusations
+      , blindingBlizzard
+      , caradhrasTheCruel
+      , tumultuousAssault
+      , pulledUnder
+      , ripplingFromBeneath
+      , dreadfulDeep
+      , lostAndHelpless
+      , chillOfTheRoots
+      , terribleStrength
+      , theDarkFire
+      , blazingGrip
+      , morgothsBidding
+      , flameOfUdun
+      , cunningWolves
+      , torrentOfHail
+      , cruelTorment
+      , goblinPatrolNightmare
+      , crashingThunder
+      , barrenAndDesolate
+      , malevolentForces
+      , lifeDrain
+      , deathAndDecay
+      , howlingOfWargs
+      , blackMare
+      , powerBeyondDeath
+      , daechanarsCurse
+      , allIsLost
       ]
 
 deepDeepDark :: CardDef
@@ -1174,6 +1287,7 @@ suddenStorms =
   (treachery "11055" "Sudden Storms" StormyWeather 3)
     { cdCardTraits = setFromList [Weather]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 windsOfWrath :: CardDef
@@ -1182,31 +1296,34 @@ windsOfWrath =
     { cdCardTraits = setFromList [Weather]
     , cdShadowEffect = True
     , cdSailingIcons = 1
+    , cdEasyModeQuantity = Just 1
     }
 
 boardingParty :: CardDef
 boardingParty =
   (treachery "11059" "Boarding Party" UmbarNavy 2)
     { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 battleHardened :: CardDef
 battleHardened =
   (treachery "11067" "Battle-Hardened" CorsairRaiders 2)
     { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }
 
 mysteriousFog :: CardDef
 mysteriousFog = (treachery "11033" "Mysterious Fog" TheFateOfNumenor 2) {cdShadowEffect = True}
 
 lingeringMalevolence :: CardDef
-lingeringMalevolence = (treachery "11034" "Lingering Malevolence" TheFateOfNumenor 2) {cdShadowEffect = True}
+lingeringMalevolence = (treachery "11034" "Lingering Malevolence" TheFateOfNumenor 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 ruinsOfAgesPast :: CardDef
-ruinsOfAgesPast = (treachery "11035" "Ruins of Ages Past" TheFateOfNumenor 2) {cdKeywords = setFromList [Doomed 2]}
+ruinsOfAgesPast = (treachery "11035" "Ruins of Ages Past" TheFateOfNumenor 2) {cdKeywords = setFromList [Doomed 2], cdEasyModeQuantity = Just 1}
 
 curseOfTheDownfallen :: CardDef
-curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 2) {cdShadowEffect = True}
+curseOfTheDownfallen = (treachery "11071" "Curse of the Downfallen" DrownedDead 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 aimlessWandering :: CardDef
 aimlessWandering = treachery "11075" "Aimless Wandering" RuinsOfNumenor 3
@@ -1227,19 +1344,19 @@ manOverboard :: CardDef
 manOverboard = (treachery "12028" "Man Overboard!" FlightOfTheStormcaller 2) {cdShadowEffect = True}
 
 ragingSquall :: CardDef
-ragingSquall = (treachery "12029" "Raging Squall" FlightOfTheStormcaller 2) {cdKeywords = setFromList [Doomed 2]}
+ragingSquall = (treachery "12029" "Raging Squall" FlightOfTheStormcaller 2) {cdKeywords = setFromList [Doomed 2], cdEasyModeQuantity = Just 1}
 
 holdSteady :: CardDef
-holdSteady = (treachery "12048" "Hold Steady!" TheStormcaller 2) {cdShadowEffect = True}
+holdSteady = (treachery "12048" "Hold Steady!" TheStormcaller 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 fromTheDepths :: CardDef
 fromTheDepths = (treachery "12055" "From the Depths" TheThingInTheDepths 3) {cdShadowEffect = True}
 
 lashingTentacles :: CardDef
-lashingTentacles = (treachery "12056" "Lashing Tentacles" TheThingInTheDepths 2) {cdShadowEffect = True}
+lashingTentacles = (treachery "12056" "Lashing Tentacles" TheThingInTheDepths 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 powerfulUndertow :: CardDef
-powerfulUndertow = (treachery "12105" "Powerful Undertow" TheDrownedRuins 3) {cdCardTraits = setFromList [Hazard]}
+powerfulUndertow = (treachery "12105" "Powerful Undertow" TheDrownedRuins 3) {cdCardTraits = setFromList [Hazard], cdEasyModeQuantity = Just 1}
 
 intoTheAbyss :: CardDef
 intoTheAbyss = (treachery "12106" "Into the Abyss" TheDrownedRuins 3) {cdShadowEffect = True}
@@ -1252,13 +1369,13 @@ tanglingAndGrasping =
     }
 
 ancientDepths :: CardDef
-ancientDepths = (treachery "12108" "Ancient Depths" TheDrownedRuins 3) {cdShadowEffect = True}
+ancientDepths = (treachery "12108" "Ancient Depths" TheDrownedRuins 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 deeperIntoTheRuins :: CardDef
 deeperIntoTheRuins = treachery "12078" "Deeper into the Ruins" TempleOfTheDeceived 4
 
 furiousRainstorm :: CardDef
-furiousRainstorm = (treachery "12079" "Furious Rainstorm" TempleOfTheDeceived 3) {cdShadowEffect = True}
+furiousRainstorm = (treachery "12079" "Furious Rainstorm" TempleOfTheDeceived 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
 
 dwindlingSupplies :: CardDef
 dwindlingSupplies = (treachery "12080" "Dwindling Supplies" TempleOfTheDeceived 3) {cdShadowEffect = True}
@@ -1272,7 +1389,7 @@ rammingSpeed :: CardDef
 rammingSpeed = (treachery "12131" "Ramming Speed!" AStormOnCobasHaven 2) {cdSailingIcons = 1}
 
 takingOnWater :: CardDef
-takingOnWater = (treachery "12132" "Taking on Water" AStormOnCobasHaven 2) {cdShadowEffect = True}
+takingOnWater = (treachery "12132" "Taking on Water" AStormOnCobasHaven 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 theRaidersAssault :: CardDef
 theRaidersAssault = (treachery "12133" "The Raiders' Assault" AStormOnCobasHaven 2) {cdSailingIcons = 1}
@@ -1283,13 +1400,104 @@ serpentsTail :: CardDef
 serpentsTail = treachery "12157" "Serpent's Tail" CoastOfUmbar 2
 
 foesOfEcthelion :: CardDef
-foesOfEcthelion = treachery "12163" "Foes of Ecthelion" TheCityOfCorsairs 2
+foesOfEcthelion = (treachery "12163" "Foes of Ecthelion" TheCityOfCorsairs 2) {cdEasyModeQuantity = Just 1}
 
 umbarPatrol :: CardDef
 umbarPatrol = treachery "12164" "Umbar Patrol" TheCityOfCorsairs 2
 
 furyAndMalice :: CardDef
-furyAndMalice = treachery "12165" "Fury and Malice" TheCityOfCorsairs 3
+furyAndMalice = (treachery "12165" "Fury and Malice" TheCityOfCorsairs 3) {cdEasyModeQuantity = Just 2}
+
+-- Dream-chaser Nightmare Decks
+
+darkAndStormy :: CardDef
+darkAndStormy =
+  (treachery "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-007" "Dark and Stormy" FlightOfTheStormcallerNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+sahirsGettingAway :: CardDef
+sahirsGettingAway =
+  (treachery "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-008" "Sahír's Getting Away!" FlightOfTheStormcallerNightmare 3)
+    { cdShadowEffect = True
+    }
+
+tumultuousWaters :: CardDef
+tumultuousWaters =
+  (treachery "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-004" "Tumultuous Waters" TheThingInTheDepthsNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+deepMaelstrom :: CardDef
+deepMaelstrom =
+  (treachery "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-008" "Deep Maelstrom" TheThingInTheDepthsNightmare 3)
+    { cdShadowEffect = True
+    }
+
+deceitfulIsland :: CardDef
+deceitfulIsland =
+  (treachery "temple-of-the-deceived-nightmare-temple-of-the-deceived-007" "Deceitful Island" TempleOfTheDeceivedNightmare 2)
+    { cdKeywords = setFromList [Doomed 3]
+    }
+
+callOfTheCurse :: CardDef
+callOfTheCurse =
+  (treachery "temple-of-the-deceived-nightmare-temple-of-the-deceived-008" "Call of the Curse" TempleOfTheDeceivedNightmare 3)
+    { cdShadowEffect = True
+    }
+
+suddenPrecipice :: CardDef
+suddenPrecipice =
+  (treachery "temple-of-the-deceived-nightmare-temple-of-the-deceived-009" "Sudden Precipice" TempleOfTheDeceivedNightmare 3)
+    { cdShadowEffect = True
+    }
+
+pitIntoTheDepths :: CardDef
+pitIntoTheDepths =
+  (treachery "the-drowned-ruins-nightmare-the-drowned-ruins-010" "Pit into the Depths" TheDrownedRuinsNightmare 3)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    }
+
+sulfurCloud :: CardDef
+sulfurCloud =
+  (treachery "the-drowned-ruins-nightmare-the-drowned-ruins-011" "Sulfur Cloud" TheDrownedRuinsNightmare 2)
+    { cdCardTraits = setFromList [Hazard]
+    }
+
+brokenRudder :: CardDef
+brokenRudder =
+  (treachery "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-009" "Broken Rudder" AStormOnCobasHavenNightmare 2)
+    { cdSailingIcons = 1
+    }
+
+grappled :: CardDef
+grappled =
+  (treachery "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-010" "Grappled!" AStormOnCobasHavenNightmare 2)
+    { cdShadowEffect = True
+    }
+
+inspiringFury :: CardDef
+inspiringFury =
+  (treachery "the-city-of-corsairs-nightmare-the-city-of-corsairs-006" "Inspiring Fury" CoastOfUmbarNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+raiseTheAlarm :: CardDef
+raiseTheAlarm =
+  (treachery "the-city-of-corsairs-nightmare-the-city-of-corsairs-009" "Raise the Alarm!" TheCityOfCorsairsNightmare 2)
+    { cdShadowEffect = True
+    }
+
+slaveTrade :: CardDef
+slaveTrade =
+  (treachery "the-city-of-corsairs-nightmare-the-city-of-corsairs-010" "Slave Trade" TheCityOfCorsairsNightmare 3)
+    { cdShadowEffect = True
+    }
 
 -- Core Set Nightmare Decks
 
@@ -1340,4 +1548,578 @@ losingTime =
     { cdCardTraits = setFromList [Burden]
     , cdKeywords = setFromList [Surge]
     , cdWhenRevealed = True
+    }
+
+-- Heirs of Númenor Nightmare Decks
+
+bedlamInTheStreets :: CardDef
+bedlamInTheStreets =
+  (treachery "heirs-of-numenor-nightmare-peril-in-pelargir-007" "Bedlam in the Streets" PerilInPelargirNightmare 3) {cdShadowEffect = True}
+
+theThievesPloy :: CardDef
+theThievesPloy =
+  (treachery "heirs-of-numenor-nightmare-peril-in-pelargir-008" "The Thieves' Ploy" PerilInPelargirNightmare 2) {cdKeywords = setFromList [Surge]}
+
+theyreGettingAway :: CardDef
+theyreGettingAway =
+  (treachery "heirs-of-numenor-nightmare-peril-in-pelargir-009" "They're Getting Away!" PerilInPelargirNightmare 2) {cdKeywords = setFromList [Surge]}
+
+obsidianArrows :: CardDef
+obsidianArrows =
+  (treachery "heirs-of-numenor-nightmare-into-ithilien-008" "Obsidian Arrows" IntoIthilienNightmare 2) {cdShadowEffect = True}
+
+savageFray :: CardDef
+savageFray =
+  (treachery "heirs-of-numenor-nightmare-into-ithilien-009" "Savage Fray" IntoIthilienNightmare 2) {cdKeywords = setFromList [Doomed 2]}
+
+ruinAndWroth :: CardDef
+ruinAndWroth =
+  (treachery "heirs-of-numenor-nightmare-the-siege-of-cair-andros-008" "Ruin and Wroth" TheSiegeOfCairAndrosNightmare 3)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Doomed 2]
+    }
+
+-- The Voice of Isengard Nightmare Decks
+
+brutalAssault :: CardDef
+brutalAssault =
+  (treachery "the-voice-of-isengard-nightmare-the-fords-of-isen-008" "Brutal Assault" TheFordsOfIsenNightmare 2)
+    { cdShadowEffect = True
+    }
+
+mugashsCunning :: CardDef
+mugashsCunning =
+  (treachery "the-voice-of-isengard-nightmare-to-catch-an-orc-007" "Mugash's Cunning" ToCatchAnOrcNightmare 2)
+    { cdShadowEffect = True
+    }
+
+patrollingOrcs :: CardDef
+patrollingOrcs =
+  (treachery "the-voice-of-isengard-nightmare-to-catch-an-orc-008" "Patrolling Orcs" ToCatchAnOrcNightmare 2)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+mugashsRage :: CardDef
+mugashsRage =
+  (treachery "the-voice-of-isengard-nightmare-to-catch-an-orc-009" "Mugash's Rage" ToCatchAnOrcNightmare 2)
+    { cdShadowEffect = True
+    }
+
+stiflingWoods :: CardDef
+stiflingWoods =
+  (treachery "the-voice-of-isengard-nightmare-into-fangorn-008" "Stifling Woods" IntoFangornNightmare 2)
+    { cdShadowEffect = True
+    }
+
+fangornsAnger :: CardDef
+fangornsAnger =
+  (treachery "the-voice-of-isengard-nightmare-into-fangorn-009" "Fangorn's Anger" IntoFangornNightmare 2)
+    { cdShadowEffect = True
+    }
+
+-- The Grey Havens Nightmare Decks
+
+rogueWave :: CardDef
+rogueWave =
+  (treachery "the-grey-havens-nightmare-voyage-across-belegaer-008" "Rogue Wave" VoyageAcrossBelegaerNightmare 3)
+
+-- The Lost Realm Nightmare Decks
+
+aGreatHost :: CardDef
+aGreatHost = treachery "the-lost-realm-nightmare-invaders-in-chetwood-007" "A Great Host" IntrudersInChetwoodNightmare 2
+
+killThem :: CardDef
+killThem = treachery "the-lost-realm-nightmare-invaders-in-chetwood-008" "Kill Them!" IntrudersInChetwoodNightmare 3
+
+rainWashedTracks :: CardDef
+rainWashedTracks =
+  (treachery "the-lost-realm-nightmare-the-weather-hills-017" "Rain-washed Tracks" TheWeatherHillsNightmare 3)
+
+-- The Wastes of Eriador Nightmare
+
+cunningWolves :: CardDef
+cunningWolves = (treachery "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-005" "Cunning Wolves" TheWastesOfEriadorNightmare 3) {cdShadowEffect = True}
+
+torrentOfHail :: CardDef
+torrentOfHail =
+  (treachery "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-006" "Torrent of Hail" TheWastesOfEriadorNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+dreamsOfNumenor :: CardDef
+dreamsOfNumenor =
+  (treachery "the-grey-havens-nightmare-voyage-across-belegaer-009" "Dreams of Númenor" VoyageAcrossBelegaerNightmare 2)
+    { cdSailingIcons = 1
+    , cdShadowEffect = True
+    }
+
+ragingSquallNightmare :: CardDef
+ragingSquallNightmare =
+  (treachery "the-grey-havens-nightmare-voyage-across-belegaer-010" "Raging Squall" VoyageAcrossBelegaerNightmare 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdSailingIcons = 1
+    , cdWhenRevealed = False
+    }
+
+corruptedFlora :: CardDef
+corruptedFlora =
+  (treachery "the-grey-havens-nightmare-the-fate-of-numenor-011" "Corrupted Flora" TheFateOfNumenorNightmare 3) {cdCardTraits = setFromList [Hazard]}
+
+calphonsFolly :: CardDef
+calphonsFolly =
+  (treachery "the-grey-havens-nightmare-the-fate-of-numenor-012" "Calphon's Folly" TheFateOfNumenorNightmare 2) {cdShadowEffect = True}
+
+suddenAssaultNightmare :: CardDef
+suddenAssaultNightmare =
+  (treachery "the-grey-havens-nightmare-raid-on-the-grey-havens-010" "Sudden Assault" RaidOnTheGreyHavensNightmare 3) {cdShadowEffect = True}
+
+infiltration :: CardDef
+infiltration =
+  (treachery "the-grey-havens-nightmare-raid-on-the-grey-havens-011" "Infiltration" RaidOnTheGreyHavensNightmare 2) {cdShadowEffect = True}
+
+paralyzingFear :: CardDef
+paralyzingFear =
+  (treachery "the-lost-realm-nightmare-deadmens-dike-025" "Paralyzing Fear" DeadmensDikeNightmare 3)
+
+-- Escape from Mount Gram Nightmare
+
+cruelTorment :: CardDef
+cruelTorment = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gram-006" "Cruel Torment" EscapeFromMountGramNightmare 3) {cdKeywords = setFromList [Surge]}
+
+goblinPatrolNightmare :: CardDef
+goblinPatrolNightmare = (treachery "escape-from-mount-gram-nightmare-escape-from-mount-gram-007" "Goblin Patrol" EscapeFromMountGramNightmare 2) {cdShadowEffect = True}
+
+-- Across the Ettenmoors Nightmare
+
+crashingThunder :: CardDef
+crashingThunder =
+  (treachery "across-the-ettenmoors-nightmare-across-the-ettenmoors-008" "Crashing Thunder" AcrossTheEttenmoorsNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+barrenAndDesolate :: CardDef
+barrenAndDesolate = (treachery "across-the-ettenmoors-nightmare-across-the-ettenmoors-009" "Barren and Desolate" AcrossTheEttenmoorsNightmare 3) {cdKeywords = setFromList [Surge]}
+
+-- The Treachery of Rhudaur Nightmare
+
+malevolentForces :: CardDef
+malevolentForces = (treachery "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-006" "Malevolent Forces" TheTreacheryOfRhudaurNightmare 2) {cdShadowEffect = True}
+
+-- | Of the Decipher Ancient Texts encounter set, as its icon shows.
+lifeDrain :: CardDef
+lifeDrain =
+  (treachery "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-009" "Life Drain" TheTreacheryOfRhudaurNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+deathAndDecay :: CardDef
+deathAndDecay = (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-006" "Death and Decay" TheBattleOfCarnDumNightmare 3) {cdCardTraits = setFromList [Sorcery]}
+
+howlingOfWargs :: CardDef
+howlingOfWargs = (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-007" "Howling of Wargs" TheBattleOfCarnDumNightmare 2) {cdShadowEffect = True}
+
+blackMare :: CardDef
+blackMare =
+  unique
+    (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-008" "Black Mare" TheBattleOfCarnDumNightmare 1)
+      { cdCardTraits = setFromList [Mount]
+      , cdShadowEffect = True
+      }
+
+-- The Dread Realm Nightmare
+
+powerBeyondDeath :: CardDef
+powerBeyondDeath =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-006" "Power Beyond Death" TheDreadRealmNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+daechanarsCurse :: CardDef
+daechanarsCurse =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-007" "Daechanar's Curse" TheDreadRealmNightmare 3)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Surge]
+    }
+
+curseOfAngmar :: CardDef
+curseOfAngmar =
+  (treachery "the-lost-realm-nightmare-deadmens-dike-026" "Curse of Angmar" DeadmensDikeNightmare 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 1]
+    }
+
+-- Khazad-dûm Nightmare Decks
+
+shadowFall :: CardDef
+shadowFall =
+  (treachery "khazad-dum-nightmare-into-the-pit-008" "Shadow-fall" IntoThePitNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+balinsDoom :: CardDef
+balinsDoom =
+  (treachery "khazad-dum-nightmare-the-seventh-level-009" "Balin's Doom" TheSeventhLevelNightmare 3)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    , cdShadowEffect = True
+    }
+
+beatsAndEchoes :: CardDef
+beatsAndEchoes = treachery "khazad-dum-nightmare-the-seventh-level-010" "Beats and Echoes" TheSeventhLevelNightmare 2
+
+dismayAndFear :: CardDef
+dismayAndFear = (treachery "khazad-dum-nightmare-flight-from-moria-008" "Dismay and Fear" FlightFromMoriaNightmare 3) {cdShadowEffect = True}
+
+anEvilFortune :: CardDef
+anEvilFortune =
+  (treachery "khazad-dum-nightmare-flight-from-moria-009" "An Evil Fortune" FlightFromMoriaNightmare 3)
+    { cdCardTraits = setFromList [Shadow, Flame]
+    , cdKeywords = setFromList [Surge, Doomed 1]
+    , cdShadowEffect = True
+    , cdVictoryPoints = Just 1
+    }
+
+-- The Ring-maker Nightmare Decks
+
+boarClanAssault :: CardDef
+boarClanAssault =
+  (treachery "the-dunland-trap-nightmare-the-dunland-trap-007" "Boar Clan Assault" TheDunlandTrapNightmare 2)
+    { cdShadowEffect = True
+    }
+
+stalkedByDunlendings :: CardDef
+stalkedByDunlendings =
+  (treachery "the-dunland-trap-nightmare-the-dunland-trap-008" "Stalked by Dunlendings" TheDunlandTrapNightmare 2)
+    { cdShadowEffect = True
+    }
+
+cursedBurden :: CardDef
+cursedBurden =
+  (treachery "the-three-trials-nightmare-the-three-trials-007" "Cursed Burden" TheThreeTrialsNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+trialOfAncestors :: CardDef
+trialOfAncestors =
+  (treachery "the-three-trials-nightmare-the-three-trials-008" "Trial of Ancestors" TheThreeTrialsNightmare 2)
+
+waylaidByAgents :: CardDef
+waylaidByAgents =
+  (treachery "trouble-in-tharbad-nightmare-trouble-in-tharbad-007" "Waylaid by Agents" TroubleInTharbadNightmare 2)
+    { cdShadowEffect = True
+    }
+
+tharbadPatrol :: CardDef
+tharbadPatrol =
+  (treachery "trouble-in-tharbad-nightmare-trouble-in-tharbad-008" "Tharbad Patrol" TroubleInTharbadNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+quicksand :: CardDef
+quicksand =
+  (treachery "the-nin-in-eilph-nightmare-the-nin-in-eilph-006" "Quicksand" TheNinInEilphNightmare 2)
+    { cdShadowEffect = True
+    }
+
+rottenStench :: CardDef
+rottenStench =
+  (treachery "the-nin-in-eilph-nightmare-the-nin-in-eilph-007" "Rotten Stench" TheNinInEilphNightmare 2)
+    { cdShadowEffect = True
+    }
+
+hatefulSearch :: CardDef
+hatefulSearch =
+  (treachery "celebrimbors-secret-nightmare-celebrimbors-secret-006" "Hateful Search" CelebrimborsSecretNightmare 3)
+    { cdShadowEffect = True
+    }
+
+sauronsAgent :: CardDef
+sauronsAgent =
+  (treachery "celebrimbors-secret-nightmare-celebrimbors-secret-007" "Sauron's Agent" CelebrimborsSecretNightmare 2)
+    { cdShadowEffect = True
+    }
+
+closingIn :: CardDef
+closingIn =
+  (treachery "celebrimbors-secret-nightmare-celebrimbors-secret-008" "Closing In" CelebrimborsSecretNightmare 2)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+ravenTalisman :: CardDef
+ravenTalisman =
+  (treachery "the-antlered-crown-nightmare-the-antlered-crown-007" "Raven Talisman" TheAntleredCrownNightmare 2)
+    { cdShadowEffect = True
+    }
+
+gatheringForces :: CardDef
+gatheringForces =
+  (treachery "the-antlered-crown-nightmare-the-antlered-crown-008" "Gathering Forces" TheAntleredCrownNightmare 2)
+    { cdShadowEffect = True
+    }
+
+-- Shadows of Mirkwood Nightmare Decks
+
+theEnemysTrail :: CardDef
+theEnemysTrail =
+  (treachery "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-007" "The Enemy's Trail" TheHuntForGollumNightmare 2)
+    { cdShadowEffect = True
+    }
+
+restlessHunters :: CardDef
+restlessHunters =
+  (treachery "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-008" "Restless Hunters" TheHuntForGollumNightmare 3)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+theTrailGoesCold :: CardDef
+theTrailGoesCold = treachery "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-009" "The Trail Goes Cold" TheHuntForGollumNightmare 2
+
+timeForSupper :: CardDef
+timeForSupper = treachery "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-010" "Time for Supper" ConflictAtTheCarrockNightmare 3
+
+shotFromTheSky :: CardDef
+shotFromTheSky =
+  (treachery "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-007" "Shot from the Sky" AJourneyToRhosgobelNightmare 3)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge]
+    }
+
+noxiousSupplies :: CardDef
+noxiousSupplies =
+  (treachery "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-008" "Noxious Supplies" AJourneyToRhosgobelNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+aHurryingDarkness :: CardDef
+aHurryingDarkness =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-006" "A Hurrying Darkness" TheHillsOfEmynMuilNightmare 2)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    }
+
+blastOfSavageWind :: CardDef
+blastOfSavageWind =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-007" "Blast of Savage Wind" TheHillsOfEmynMuilNightmare 3)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    , cdKeywords = setFromList [Doomed 2]
+    }
+
+hazardousTerrain :: CardDef
+hazardousTerrain =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-008" "Hazardous Terrain" TheHillsOfEmynMuilNightmare 2)
+    { cdShadowEffect = True
+    , cdKeywords = setFromList [Surge, Doomed 2]
+    }
+
+retracedSteps :: CardDef
+retracedSteps =
+  (treachery "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-009" "Retraced Steps" TheHillsOfEmynMuilNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    }
+
+candlesOfCorpses :: CardDef
+candlesOfCorpses =
+  (treachery "the-dead-marshes-nightmare-the-dead-marshes-008" "Candles of Corpses" TheDeadMarshesNightmare 1)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 5
+    }
+
+swarmingMosquitoes :: CardDef
+swarmingMosquitoes =
+  (treachery "the-dead-marshes-nightmare-the-dead-marshes-009" "Swarming Mosquitoes" TheDeadMarshesNightmare 2)
+    { cdCardTraits = setFromList [Escape]
+    , cdEscape = Just 3
+    }
+
+devilryOfTheDarkLand :: CardDef
+devilryOfTheDarkLand =
+  (treachery "the-dead-marshes-nightmare-the-dead-marshes-010" "Devilry of the Dark Land" TheDeadMarshesNightmare 1)
+    { cdCardTraits = setFromList [Corruption]
+    , cdEscape = Just 10
+    }
+
+isolation :: CardDef
+isolation =
+  (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-007" "Isolation" ReturnToMirkwoodNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    }
+
+befouledEquipment :: CardDef
+befouledEquipment =
+  (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-008" "Befouled Equipment" ReturnToMirkwoodNightmare 2)
+    { cdCardTraits = setFromList [Tantrum]
+    , cdShadowEffect = True
+    }
+
+wickednessAndMischief :: CardDef
+wickednessAndMischief =
+  (treachery "return-to-mirkwood-nightmare-return-to-mirkwood-009" "Wickedness and Mischief" ReturnToMirkwoodNightmare 2)
+    { cdCardTraits = setFromList [Tantrum]
+    }
+
+-- The Morgul Vale Nightmare
+
+theTowerBeckons :: CardDef
+theTowerBeckons = (treachery "the-morgul-vale-nightmare-the-morgul-vale-008" "The Tower Beckons" TheMorgulValeNightmare 2) {cdShadowEffect = True}
+
+noxiousFumes :: CardDef
+noxiousFumes = (treachery "the-morgul-vale-nightmare-the-morgul-vale-009" "Noxious Fumes" TheMorgulValeNightmare 2) {cdShadowEffect = True}
+
+-- The Blood of Gondor Nightmare
+
+surroundedByShadow :: CardDef
+surroundedByShadow = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gondor-007" "Surrounded by Shadow" TheBloodOfGondorNightmare 3) {cdKeywords = setFromList [Doomed 2]}
+
+suddenOnslaught :: CardDef
+suddenOnslaught = (treachery "the-blood-of-gondor-nightmare-the-blood-of-gondor-008" "Sudden Onslaught" TheBloodOfGondorNightmare 2) {cdShadowEffect = True}
+
+-- The Drúadan Forest Nightmare
+
+drumsOfTheWildMen :: CardDef
+drumsOfTheWildMen = treachery "the-druadan-forest-nightmare-the-druadan-forest-008" "Drums of the Wild Men" TheDruadanForestNightmare 2
+
+poisonDarts :: CardDef
+poisonDarts =
+  (treachery "the-druadan-forest-nightmare-the-druadan-forest-009" "Poison-darts" TheDruadanForestNightmare 3)
+    { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+trappedVillagers :: CardDef
+trappedVillagers = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-006" "Trapped Villagers" EncounterAtAmonDinNightmare 3) {cdShadowEffect = True}
+
+runForYourLives :: CardDef
+runForYourLives = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-007" "Run for your Lives!" EncounterAtAmonDinNightmare 2) {cdShadowEffect = True}
+
+saveUs :: CardDef
+saveUs = (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-008" "Save Us!" EncounterAtAmonDinNightmare 2) {cdShadowEffect = True}
+
+thoseNowSundered :: CardDef
+thoseNowSundered =
+  (treachery "encounter-at-amon-din-nightmare-encounter-at-amon-din-009" "Those Now Sundered" EncounterAtAmonDinNightmare 2)
+    { cdCardTraits = setFromList [Panic]
+    , cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+-- Assault on Osgiliath Nightmare
+
+relentlessAttack :: CardDef
+relentlessAttack = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-008" "Relentless Attack" AssaultOnOsgiliathNightmare 2) {cdKeywords = setFromList [Doomed 1]}
+
+overrunDefenses :: CardDef
+overrunDefenses = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-009" "Overrun Defenses" AssaultOnOsgiliathNightmare 2) {cdShadowEffect = True}
+
+pressedOnAllSides :: CardDef
+pressedOnAllSides = (treachery "assault-on-osgiliath-nightmare-assault-on-osgiliath-010" "Pressed on All Sides" AssaultOnOsgiliathNightmare 2) {cdShadowEffect = True}
+
+-- The Steward's Fear Nightmare
+
+falseAccusations :: CardDef
+falseAccusations =
+  (treachery "the-stewards-fear-nightmare-the-stewards-fear-009" "False Accusations" TheStewardsFearNightmare 2)
+    { cdCardTraits = setFromList [Scheme]
+    }
+
+blindingBlizzard :: CardDef
+blindingBlizzard =
+  (treachery "the-redhorn-gate-nightmare-the-redhorn-gate-007" "Blinding Blizzard" TheRedhornGateNightmare 2)
+    { cdCardTraits = setFromList [Snow]
+    }
+
+caradhrasTheCruel :: CardDef
+caradhrasTheCruel = treachery "the-redhorn-gate-nightmare-the-redhorn-gate-008" "Caradhras the Cruel" TheRedhornGateNightmare 2
+
+tumultuousAssault :: CardDef
+tumultuousAssault = treachery "road-to-rivendell-nightmare-road-to-rivendell-009" "Tumultuous Assault" RoadToRivendellNightmare 2
+
+pulledUnder :: CardDef
+pulledUnder =
+  (treachery "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-007" "Pulled Under" TheWatcherInTheWaterNightmare 2)
+    { cdShadowEffect = True
+    }
+
+ripplingFromBeneath :: CardDef
+ripplingFromBeneath =
+  (treachery "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-008" "Rippling From Beneath" TheWatcherInTheWaterNightmare 3)
+    { cdKeywords = setFromList [Surge]
+    }
+
+dreadfulDeep :: CardDef
+dreadfulDeep =
+  (treachery "the-long-dark-nightmare-the-long-dark-007" "Dreadful Deep" TheLongDarkNightmare 3)
+    { cdShadowEffect = True
+    }
+
+lostAndHelpless :: CardDef
+lostAndHelpless =
+  (treachery "the-long-dark-nightmare-the-long-dark-008" "Lost and Helpless" TheLongDarkNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+chillOfTheRoots :: CardDef
+chillOfTheRoots =
+  (treachery "foundations-of-stone-nightmare-foundations-of-stone-008" "Chill of the Roots" FoundationsOfStoneNightmare 3)
+    { cdShadowEffect = True
+    }
+
+-- | The Attack cards make up Shadow and Flame's Balrog deck in nightmare mode: shadow
+-- effects only.
+terribleStrength :: CardDef
+terribleStrength =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-002" "Terrible Strength" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+theDarkFire :: CardDef
+theDarkFire =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-003" "The Dark Fire" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+blazingGrip :: CardDef
+blazingGrip =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-004" "Blazing Grip" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+morgothsBidding :: CardDef
+morgothsBidding =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-005" "Morgoth's Bidding" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    , cdShadowEffect = True
+    }
+
+flameOfUdun :: CardDef
+flameOfUdun =
+  (treachery "shadow-and-flame-nightmare-shadow-and-flame-006" "Flame of Udûn" ShadowAndFlameNightmare 2)
+    { cdCardTraits = setFromList [Attack]
+    , cdWhenRevealed = False
+    }
+
+allIsLost :: CardDef
+allIsLost =
+  (treachery "the-dread-realm-nightmare-the-dread-realm-008" "All is Lost" TheDreadRealmNightmare 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdShadowEffect = True
     }

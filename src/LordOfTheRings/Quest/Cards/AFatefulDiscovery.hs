@@ -33,7 +33,7 @@ instance RunMessage AFatefulDiscovery where
       AFatefulDiscovery <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
       addFromUnchartedDeck 2
-      addSetAsideToStaging (cardIs Locations.shrineToMorgoth)
+      addSetAsideToStaging (CardMatchAny $ map cardIs Locations.fateOfNumenorShrines)
       shuffleUnchartedLocations
       pure q
     CheckWindows ws | attrs.flipped -> do
@@ -48,7 +48,7 @@ instance RunMessage AFatefulDiscovery where
       AFatefulDiscovery <$> runMessage msg attrs
     AddToVictoryDisplay (LocationTarget lid) | attrs.flipped -> do
       locations <- getsGame (entitiesLocations . gameEntities)
-      let shrine l = toCardCode (locationDeckCard $ toAttrs l) == toCardCode Locations.shrineToMorgoth
+      let shrine l = toCardCode (locationDeckCard $ toAttrs l) `elem` map toCardCode Locations.fateOfNumenorShrines
       when (maybe False shrine (Map.lookup lid locations)) winGame
       AFatefulDiscovery <$> runMessage msg attrs
     _ -> AFatefulDiscovery <$> runMessage msg attrs

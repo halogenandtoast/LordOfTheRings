@@ -15,6 +15,14 @@ allLocationCards =
     map
       (\def -> (cdCardCode def, def))
       [ greatForestWeb
+      , docksideStreet
+      , pelargirAlley
+      , ithilienOverlook
+      , denseThickets
+      , cormallenFields
+      , besiegedCourtyard
+      , wallsOfCairAndros
+      , anduinWharf
       , abandonedCampNightmare
       , gladeOfTheSpawn
       , aFloodedFord
@@ -165,6 +173,19 @@ allLocationCards =
       , hillsOfDunland
       , plainsOfEnedwaith
       , hithaeglirStream
+      , plainsOfDunland
+      , munuvDuvRiver
+      , hithaeglirWoods
+      , sacredForest
+      , hauntedPillars
+      , cityOfSpies
+      , darkPathway
+      , desolateMeadow
+      , peatBog
+      , bonesOfHollin
+      , dustyLabyrinth
+      , ravenStronghold
+      , highlandsOfDunland
       , theEmptyMug
       , theCrossingAtTharbad
       , streetsOfTharbad
@@ -222,6 +243,14 @@ allLocationCards =
       , deadmensGate
       , ruinsOfArnor
       , ancientCauseway
+      , northernChetwood
+      , outskirtsOfArchet
+      , greenwayPath
+      , weatherTornValley
+      , ruinedWatchTower
+      , palaceRuins
+      , fornostStreet
+      , decrepitCity
       , theGreatHall
       , forbiddenDescent
       , eerieHalls
@@ -283,6 +312,108 @@ allLocationCards =
       , streetsOfUmbar
       , cityOfCorsairs
       , umbarHarbor
+      , westernShore
+      , easternShore
+      , isenRiver
+      , methedrasPeak
+      , orcTrail
+      , tangledForest
+      , entwood
+      , darkCornerOfFangorn
+      , openWaters
+      , shatteredSea
+      , shrineToMorgothNightmare
+      , cursedTempleNightmare
+      , drownedGravesNightmare
+      , floodedRuinsNightmare
+      , lushJungleNightmare
+      , desecratedGrounds
+      , forsakenCity
+      , overgrownSteps
+      , narelenyaLocation
+      , dawnStarLocation
+      , silverWingLocation
+      , burningTower
+      , twistingShadows
+      , narrowFissure
+      , chamberOfRecords
+      , deepMines
+      , westernHall
+      , shadowedCorridor
+      , sharpJetties
+      , cliffsideInlet
+      , captainsQuarters
+      , aftCabin
+      , edgeOfTheTemple
+      , desecratedRuinsNightmare
+      , templeFoothills
+      , cursedTempleOfTheDeceived
+      , overgrownPassage
+      , sharpPrecipice
+      , jaggedCavern
+      , submergedCrawlway
+      , floodedCaverns
+      , cityUnderSiege
+      , seaWall
+      , warTornWaters
+      , wallsOfUmbar
+      , umbarBridge
+      , watchedPath
+      , huntersLookout
+      , darkPools
+      , trollLair
+      , hivesAndHives
+      , darkWoodGrove
+      , labyrinthineWoods
+      , pitchDarkThicket
+      , bramblesAndThorns
+      , sarnGebirRapids
+      , theMereOfDeadFaces
+      , stagnantQuagmire
+      , deceptivePath
+      , webWall
+      , banksOfMorgulduin
+      , ephelDuath
+      , whiteFloweredFields
+      , edgeOfIthilien
+      , mountainsOfShadow
+      , devilsMirk
+      , eilenach
+      , stonewainValley
+      , besiegedHomestead
+      , overrunVillage
+      , palaceRemains
+      , crumbledBattlements
+      , easternQuarter
+      , westernQuarter
+      , traitorsDen
+      , rathCelerdain
+      , archedTunnel
+      , icyCavern
+      , frozenSilverlode
+      , treacherousBluffs
+      , concealedWoods
+      , banksOfSirannon
+      , hideousDepths
+      , easternMines
+      , bottomlessChasm
+      , nestOfHorrors
+      , shiveringRiver
+      , fieryDepths
+      , crumblingStairs
+      , shroudedWilderness
+      , snowyBadlands
+      , prisonCellNightmare
+      , tortureChamberMountGram
+      , rockyFoothills
+      , vastTrollFells
+      , forgottenCourtyard
+      , charredCellar
+      , secretAntechamber
+      , strongholdTower
+      , gatesOfCarnDum
+      , innerSanctum
+      , cursedHalls
       ]
 
 drownedTreasury :: CardDef
@@ -1702,6 +1833,7 @@ rollingSeas =
     { cdCardTraits = setFromList [Ocean]
     , cdSailingIcons = 1
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 roughWaters :: CardDef
@@ -1716,6 +1848,7 @@ waterspout :: CardDef
 waterspout =
   (location "11054" "Waterspout" StormyWeather 2 2 4)
     { cdCardTraits = setFromList [Ocean]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The Lost Island side of The Fate of Númenor's and Ruins of Numenor's Uncharted
@@ -1739,6 +1872,11 @@ shrineToMorgoth =
         { cdCardTraits = setFromList [Ruins]
         , cdVictoryPoints = Just 5
         }
+
+-- | The Fate of Númenor's Shrine to Morgoth: the standard card, or the Nightmare Deck's
+-- reprint in its place.
+fateOfNumenorShrines :: [CardDef]
+fateOfNumenorShrines = [shrineToMorgoth, shrineToMorgothNightmare]
 
 lushJungle :: CardDef
 lushJungle = uncharted (location "11030" "Lush Jungle" TheFateOfNumenor 2 4 4) {cdCardTraits = setFromList [Forest]}
@@ -1779,6 +1917,7 @@ mithlondHarbor =
     { cdCardTraits = setFromList [GreyHavens]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 burningPiers :: CardDef
@@ -1803,6 +1942,7 @@ whiteShip =
   (location "11045" "White Ship" RaidOnTheGreyHavens 2 4 6)
     { cdCardTraits = setFromList [GreyHavens, Ship]
     , cdKeywords = setFromList [Aflame 4]
+    , cdEasyModeQuantity = Just 1
     }
 
 elvenWaveRunner :: CardDef
@@ -1819,6 +1959,7 @@ elvenCaravel =
   (location "11047" "Elven Caravel" RaidOnTheGreyHavens 2 3 5)
     { cdCardTraits = setFromList [GreyHavens, Ship]
     , cdKeywords = setFromList [Aflame 4]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * Flight of the Stormcaller
@@ -1840,6 +1981,7 @@ vastCoastland =
     , cdSailingIcons = 1
     , cdShadowEffect = True
     , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * The Stormcaller: the decks of the ship the players fight over (The Thing in the Depths)
@@ -1854,7 +1996,7 @@ helmOfTheStormcaller =
       }
 
 forecastleDeck :: CardDef
-forecastleDeck = (location "12043" "Forecastle Deck" TheStormcaller 2 3 5) {cdCardTraits = setFromList [Ship, Deck]}
+forecastleDeck = (location "12043" "Forecastle Deck" TheStormcaller 2 3 5) {cdCardTraits = setFromList [Ship, Deck], cdEasyModeQuantity = Just 1}
 
 weatherDeck :: CardDef
 weatherDeck =
@@ -1882,6 +2024,7 @@ quarterDeck =
   (location "12047" "Quarter Deck" TheStormcaller 2 4 3)
     { cdCardTraits = setFromList [Ship, Deck]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The Drowned Ruins' Shrine to Morgoth, Grotto side: set aside until Sahír's Betrayal.
@@ -2006,6 +2149,7 @@ coastOfAnfalas :: CardDef
 coastOfAnfalas =
   (location "12128" "Coast of Anfalas" AStormOnCobasHaven 3 3 3)
     { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * The City of Corsairs: Coast of Umbar and The City of Corsairs
@@ -2037,6 +2181,7 @@ corsairWaters =
     { cdCardTraits = setFromList [Ocean, Coastland]
     , cdSailingIcons = 1
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 watchTower :: CardDef
@@ -2044,6 +2189,7 @@ watchTower =
   (location "12156" "Watch Tower" CoastOfUmbar 2 2 3)
     { cdCardTraits = setFromList [Umbar, Coastland]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 theShatteredMonument :: CardDef
@@ -2063,13 +2209,141 @@ streetsOfUmbar =
 
 -- | Its threat is X, printed as 0: see its card.
 cityOfCorsairs :: CardDef
-cityOfCorsairs = (location "12161" "City of Corsairs" TheCityOfCorsairs 2 0 4) {cdCardTraits = setFromList [Umbar, City]}
+cityOfCorsairs = (location "12161" "City of Corsairs" TheCityOfCorsairs 2 0 4) {cdCardTraits = setFromList [Umbar, City], cdEasyModeQuantity = Just 1}
 
 umbarHarbor :: CardDef
 umbarHarbor =
   (location "12162" "Umbar Harbor" TheCityOfCorsairs 3 4 4)
     { cdCardTraits = setFromList [Umbar, City]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- Dream-chaser Nightmare Decks
+
+sharpJetties :: CardDef
+sharpJetties =
+  (location "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-005" "Sharp Jetties" FlightOfTheStormcallerNightmare 3 2 6)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdWhenRevealed = True
+    }
+
+cliffsideInlet :: CardDef
+cliffsideInlet =
+  (location "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-006" "Cliffside Inlet" FlightOfTheStormcallerNightmare 3 4 3)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdSailingIcons = 1
+    }
+
+captainsQuarters :: CardDef
+captainsQuarters =
+  unique
+    (location "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-002" "Captain's Quarters" TheThingInTheDepthsNightmare 1 5 5)
+      { cdCardTraits = setFromList [Ship]
+      }
+
+aftCabin :: CardDef
+aftCabin =
+  (location "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-003" "Aft Cabin" TheThingInTheDepthsNightmare 3 3 3)
+    { cdCardTraits = setFromList [Ship, Deck]
+    }
+
+edgeOfTheTemple :: CardDef
+edgeOfTheTemple =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple" "Edge of the Temple" TempleOfTheDeceivedNightmare 0 3 0)
+    { cdQuestPoints = Nothing
+    , cdKeywords = setFromList [Uncharted]
+    }
+
+desecratedRuinsNightmare :: CardDef
+desecratedRuinsNightmare =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-002" "Desecrated Ruins" TempleOfTheDeceivedNightmare 2 4 6)
+    { cdCardTraits = setFromList [Ruins]
+    , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"
+    }
+
+templeFoothills :: CardDef
+templeFoothills =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-003" "Temple Foothills" TempleOfTheDeceivedNightmare 2 2 5)
+    { cdCardTraits = setFromList [Ruins]
+    , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"
+    }
+
+cursedTempleOfTheDeceived :: CardDef
+cursedTempleOfTheDeceived =
+  (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-004" "Cursed Temple" TempleOfTheDeceivedNightmare 2 3 4)
+    { cdCardTraits = setFromList [Ruins]
+    , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"
+    }
+
+overgrownPassage :: CardDef
+overgrownPassage =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-002" "Overgrown Passage" TheDrownedRuinsNightmare 2 5 5)
+    { cdCardTraits = setFromList [Underground, Grotto]
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-004"
+    }
+
+sharpPrecipice :: CardDef
+sharpPrecipice =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-003" "Sharp Precipice" TheDrownedRuinsNightmare 2 2 3)
+    { cdCardTraits = setFromList [Underground, Grotto]
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-005"
+    }
+
+jaggedCavern :: CardDef
+jaggedCavern =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-004" "Jagged Cavern" TheDrownedRuinsNightmare 0 6 8)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    , cdVictoryPoints = Just 2
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-002"
+    }
+
+submergedCrawlway :: CardDef
+submergedCrawlway =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-005" "Submerged Crawlway" TheDrownedRuinsNightmare 0 2 16)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    , cdVictoryPoints = Just 2
+    , cdOtherSide = Just "the-drowned-ruins-nightmare-the-drowned-ruins-003"
+    }
+
+floodedCaverns :: CardDef
+floodedCaverns =
+  (location "the-drowned-ruins-nightmare-the-drowned-ruins-009" "Flooded Caverns" TheDrownedRuinsNightmare 2 2 6)
+    { cdCardTraits = setFromList [Underground, Underwater]
+    }
+
+cityUnderSiege :: CardDef
+cityUnderSiege =
+  (location "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-006" "City Under Siege" AStormOnCobasHavenNightmare 3 2 6)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdShadowEffect = True
+    }
+
+seaWall :: CardDef
+seaWall =
+  (location "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-007" "Sea-wall" AStormOnCobasHavenNightmare 3 2 2)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdShadowEffect = True
+    }
+
+warTornWaters :: CardDef
+warTornWaters =
+  (location "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-008" "War-torn Waters" AStormOnCobasHavenNightmare 2 3 5)
+    { cdCardTraits = setFromList [Coastland, Ocean]
+    }
+
+wallsOfUmbar :: CardDef
+wallsOfUmbar =
+  (location "the-city-of-corsairs-nightmare-the-city-of-corsairs-004" "Walls of Umbar" CoastOfUmbarNightmare 2 5 4)
+    { cdCardTraits = setFromList [Ocean, Coastland]
+    , cdSailingIcons = 1
+    }
+
+umbarBridge :: CardDef
+umbarBridge =
+  (location "the-city-of-corsairs-nightmare-the-city-of-corsairs-005" "Umbar Bridge" CoastOfUmbarNightmare 2 3 6)
+    { cdCardTraits = setFromList [Umbar, Coastland]
+    , cdSailingIcons = 1
     }
 
 -- Core Set Nightmare Decks
@@ -2111,4 +2385,771 @@ dungeonLabyrinth :: CardDef
 dungeonLabyrinth =
   (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
     { cdCardTraits = setFromList [DolGuldur]
+    }
+
+-- Heirs of Númenor Nightmare Decks
+
+docksideStreet :: CardDef
+docksideStreet = (location "heirs-of-numenor-nightmare-peril-in-pelargir-005" "Dockside Street" PerilInPelargirNightmare 3 2 6) {cdCardTraits = setFromList [City]}
+
+pelargirAlley :: CardDef
+pelargirAlley =
+  (location "heirs-of-numenor-nightmare-peril-in-pelargir-006" "Pelargir Alley" PerilInPelargirNightmare 2 2 5)
+
+-- The Ring-maker Nightmare Decks
+
+plainsOfDunland :: CardDef
+plainsOfDunland =
+  (location "the-dunland-trap-nightmare-the-dunland-trap-004" "Plains of Dunland" TheDunlandTrapNightmare 2 4 5)
+    { cdCardTraits = setFromList [Enedwaith, Plains]
+    }
+
+munuvDuvRiver :: CardDef
+munuvDuvRiver =
+  (location "the-dunland-trap-nightmare-the-dunland-trap-005" "Munuv Dûv River" TheDunlandTrapNightmare 3 2 3)
+    { cdCardTraits = setFromList [Enedwaith, Hills, River]
+    , cdShadowEffect = True
+    }
+
+hithaeglirWoods :: CardDef
+hithaeglirWoods =
+  (location "the-dunland-trap-nightmare-the-dunland-trap-006" "Hithaeglir Woods" TheDunlandTrapNightmare 3 3 4)
+    { cdCardTraits = setFromList [Enedwaith, Forest, Hills]
+    }
+
+sacredForest :: CardDef
+sacredForest =
+  (location "the-three-trials-nightmare-the-three-trials-005" "Sacred Forest" TheThreeTrialsNightmare 3 3 5)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+hauntedPillars :: CardDef
+hauntedPillars =
+  (location "the-three-trials-nightmare-the-three-trials-006" "Haunted Pillars" TheThreeTrialsNightmare 2 2 3)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdWhenRevealed = True
+    }
+
+cityOfSpies :: CardDef
+cityOfSpies =
+  (location "trouble-in-tharbad-nightmare-trouble-in-tharbad-005" "City of Spies" TroubleInTharbadNightmare 3 2 5)
+    { cdCardTraits = setFromList [City, Ruins]
+    }
+
+darkPathway :: CardDef
+darkPathway =
+  (location "trouble-in-tharbad-nightmare-trouble-in-tharbad-006" "Dark Pathway" TroubleInTharbadNightmare 3 5 4)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    }
+
+ithilienOverlook :: CardDef
+ithilienOverlook =
+  (location "heirs-of-numenor-nightmare-into-ithilien-005" "Ithilien Overlook" IntoIthilienNightmare 3 3 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdKeywords = setFromList [Archery 2]
+    }
+
+denseThickets :: CardDef
+denseThickets =
+  (location "heirs-of-numenor-nightmare-into-ithilien-006" "Dense Thickets" IntoIthilienNightmare 3 1 8)
+
+-- | X threat, the Snow cards in the staging area: see its card module.
+icyCavern :: CardDef
+icyCavern =
+  (location "the-redhorn-gate-nightmare-the-redhorn-gate-005" "Icy Cavern" TheRedhornGateNightmare 3 0 6)
+    { cdCardTraits = setFromList [Mountain, Snow]
+    , cdShadowEffect = True
+    }
+
+frozenSilverlode :: CardDef
+frozenSilverlode =
+  (location "the-redhorn-gate-nightmare-the-redhorn-gate-006" "Frozen Silverlode" TheRedhornGateNightmare 3 3 3)
+    { cdCardTraits = setFromList [Mountain, River]
+    , cdShadowEffect = True
+    }
+
+treacherousBluffs :: CardDef
+treacherousBluffs =
+  (location "road-to-rivendell-nightmare-road-to-rivendell-007" "Treacherous Bluffs" RoadToRivendellNightmare 3 1 7)
+    { cdCardTraits = setFromList [Hills]
+    , cdShadowEffect = True
+    }
+
+concealedWoods :: CardDef
+concealedWoods =
+  (location "road-to-rivendell-nightmare-road-to-rivendell-008" "Concealed Woods" RoadToRivendellNightmare 3 4 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+cormallenFields :: CardDef
+cormallenFields = (location "heirs-of-numenor-nightmare-into-ithilien-007" "Cormallen Fields" IntoIthilienNightmare 2 3 5) {cdCardTraits = setFromList [Plains, Riverland]}
+
+besiegedCourtyard :: CardDef
+besiegedCourtyard =
+  (location "heirs-of-numenor-nightmare-the-siege-of-cair-andros-005" "Besieged Courtyard" TheSiegeOfCairAndrosNightmare 2 2 5)
+    { cdCardTraits = setFromList [CairAndros, Battleground]
+    , cdShadowEffect = True
+    }
+
+wallsOfCairAndros :: CardDef
+wallsOfCairAndros =
+  (location "heirs-of-numenor-nightmare-the-siege-of-cair-andros-006" "Walls of Cair Andros" TheSiegeOfCairAndrosNightmare 2 4 4)
+    { cdCardTraits = setFromList [CairAndros, Battleground]
+    , cdShadowEffect = True
+    }
+
+anduinWharf :: CardDef
+anduinWharf =
+  (location "heirs-of-numenor-nightmare-the-siege-of-cair-andros-007" "Anduin Wharf" TheSiegeOfCairAndrosNightmare 2 3 6)
+    { cdCardTraits = setFromList [CairAndros, Battleground, Riverland]
+    }
+
+-- The Voice of Isengard Nightmare Decks
+
+westernShore :: CardDef
+westernShore =
+  (location "the-voice-of-isengard-nightmare-the-fords-of-isen-005" "Western Shore" TheFordsOfIsenNightmare 3 0 4)
+    { cdCardTraits = setFromList [River, Valley]
+    , cdShadowEffect = True
+    }
+
+easternShore :: CardDef
+easternShore =
+  (location "the-voice-of-isengard-nightmare-the-fords-of-isen-006" "Eastern Shore" TheFordsOfIsenNightmare 3 3 4)
+    { cdCardTraits = setFromList [River, Valley]
+    , cdShadowEffect = True
+    }
+
+isenRiver :: CardDef
+isenRiver =
+  (location "the-voice-of-isengard-nightmare-the-fords-of-isen-007" "Isen River" TheFordsOfIsenNightmare 3 2 5)
+    { cdCardTraits = setFromList [River]
+    }
+
+methedrasPeak :: CardDef
+methedrasPeak =
+  (location "the-voice-of-isengard-nightmare-to-catch-an-orc-005" "Methedras Peak" ToCatchAnOrcNightmare 2 0 5)
+    { cdCardTraits = setFromList [Mountain]
+    }
+
+orcTrail :: CardDef
+orcTrail =
+  (location "the-voice-of-isengard-nightmare-to-catch-an-orc-006" "Orc Trail" ToCatchAnOrcNightmare 2 4 2)
+    { cdCardTraits = setFromList [Mountain]
+    }
+
+tangledForest :: CardDef
+tangledForest =
+  (location "the-voice-of-isengard-nightmare-into-fangorn-005" "Tangled Forest" IntoFangornNightmare 3 2 6)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+entwood :: CardDef
+entwood =
+  (location "the-voice-of-isengard-nightmare-into-fangorn-006" "Entwood" IntoFangornNightmare 3 3 4)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+darkCornerOfFangorn :: CardDef
+darkCornerOfFangorn =
+  (location "the-voice-of-isengard-nightmare-into-fangorn-007" "Dark Corner of Fangorn" IntoFangornNightmare 2 3 5)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+-- The Grey Havens Nightmare Decks: The Fate of Númenor's reprinted Uncharted deck under the same Lost Island side
+
+openWaters :: CardDef
+openWaters =
+  (location "the-grey-havens-nightmare-voyage-across-belegaer-006" "Open Waters" VoyageAcrossBelegaerNightmare 2 2 6)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 1
+    }
+
+shatteredSea :: CardDef
+shatteredSea =
+  (location "the-grey-havens-nightmare-voyage-across-belegaer-007" "Shattered Sea" VoyageAcrossBelegaerNightmare 2 4 4)
+    { cdCardTraits = setFromList [Ocean]
+    , cdSailingIcons = 1
+    }
+
+shrineToMorgothNightmare :: CardDef
+shrineToMorgothNightmare =
+  uncharted
+    $ unique
+      (location "the-grey-havens-nightmare-the-fate-of-numenor-002" "Shrine to Morgoth" TheFateOfNumenorNightmare 1 5 8)
+        { cdCardTraits = setFromList [Ruins]
+        , cdVictoryPoints = Just 5
+        }
+
+cursedTempleNightmare :: CardDef
+cursedTempleNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-003" "Cursed Temple" TheFateOfNumenorNightmare 1 1 3) {cdCardTraits = setFromList [Ruins]}
+
+drownedGravesNightmare :: CardDef
+drownedGravesNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-004" "Drowned Graves" TheFateOfNumenorNightmare 2 2 2) {cdCardTraits = setFromList [Ruins]}
+
+floodedRuinsNightmare :: CardDef
+floodedRuinsNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-005" "Flooded Ruins" TheFateOfNumenorNightmare 1 3 5) {cdCardTraits = setFromList [Ruins]}
+
+lushJungleNightmare :: CardDef
+lushJungleNightmare =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-006" "Lush Jungle" TheFateOfNumenorNightmare 2 4 4) {cdCardTraits = setFromList [Forest]}
+
+desecratedGrounds :: CardDef
+desecratedGrounds =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-007" "Desecrated Grounds" TheFateOfNumenorNightmare 2 5 5) {cdCardTraits = setFromList [Ruins]}
+
+forsakenCity :: CardDef
+forsakenCity =
+  uncharted (location "the-grey-havens-nightmare-the-fate-of-numenor-008" "Forsaken City" TheFateOfNumenorNightmare 2 6 4) {cdCardTraits = setFromList [Ruins]}
+
+overgrownSteps :: CardDef
+overgrownSteps =
+  (location "the-grey-havens-nightmare-the-fate-of-numenor-010" "Overgrown Steps" TheFateOfNumenorNightmare 3 2 1) {cdCardTraits = setFromList [Forest, Ruins]}
+
+narelenyaLocation :: CardDef
+narelenyaLocation =
+  unique
+    (location "the-grey-havens-nightmare-raid-on-the-grey-havens-006" "Nárelenya" RaidOnTheGreyHavensNightmare 1 3 7)
+      { cdCardTraits = setFromList [GreyHavens, Ship]
+      , cdKeywords = setFromList [Aflame 10]
+      , cdVictoryPoints = Just 1
+      }
+
+dawnStarLocation :: CardDef
+dawnStarLocation =
+  unique
+    (location "the-grey-havens-nightmare-raid-on-the-grey-havens-007" "Dawn Star" RaidOnTheGreyHavensNightmare 1 3 6)
+      { cdCardTraits = setFromList [Gondor, Ship]
+      , cdKeywords = setFromList [Aflame 8]
+      , cdVictoryPoints = Just 1
+      }
+
+silverWingLocation :: CardDef
+silverWingLocation =
+  unique
+    (location "the-grey-havens-nightmare-raid-on-the-grey-havens-008" "Silver Wing" RaidOnTheGreyHavensNightmare 1 2 5)
+      { cdCardTraits = setFromList [Gondor, Ship]
+      , cdKeywords = setFromList [Aflame 6]
+      , cdVictoryPoints = Just 1
+      }
+
+burningTower :: CardDef
+burningTower =
+  (location "the-grey-havens-nightmare-raid-on-the-grey-havens-009" "Burning Tower" RaidOnTheGreyHavensNightmare 2 2 6)
+    { cdCardTraits = setFromList [GreyHavens]
+    , cdKeywords = setFromList [Aflame 5]
+    }
+
+-- The Lost Realm Nightmare Decks
+
+northernChetwood :: CardDef
+northernChetwood =
+  (location "the-lost-realm-nightmare-invaders-in-chetwood-004" "Northern Chetwood" IntrudersInChetwoodNightmare 3 4 6)
+    { cdCardTraits = setFromList [Arnor, Forest]
+    , cdShadowEffect = True
+    }
+
+outskirtsOfArchet :: CardDef
+outskirtsOfArchet =
+  (location "the-lost-realm-nightmare-invaders-in-chetwood-005" "Outskirts of Archet" IntrudersInChetwoodNightmare 2 5 3)
+
+-- The Wastes of Eriador Nightmare
+
+shroudedWilderness :: CardDef
+shroudedWilderness =
+  (location "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-003" "Shrouded Wilderness" TheWastesOfEriadorNightmare 3 6 4)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+greenwayPath :: CardDef
+greenwayPath =
+  (location "the-lost-realm-nightmare-invaders-in-chetwood-006" "Greenway Path" IntrudersInChetwoodNightmare 2 3 5)
+    { cdCardTraits = setFromList [Arnor]
+    , cdShadowEffect = True
+    }
+
+weatherTornValley :: CardDef
+weatherTornValley =
+  (location "the-lost-realm-nightmare-the-weather-hills-015" "Weather-torn Valley" TheWeatherHillsNightmare 2 5 5)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    }
+
+ruinedWatchTower :: CardDef
+ruinedWatchTower =
+  (location "the-lost-realm-nightmare-the-weather-hills-016" "Ruined Watch-tower" TheWeatherHillsNightmare 3 3 4)
+    { cdCardTraits = setFromList [Arnor, Ruins]
+    }
+
+palaceRuins :: CardDef
+palaceRuins =
+  (location "the-lost-realm-nightmare-deadmens-dike-022" "Palace Ruins" DeadmensDikeNightmare 2 9 9)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    }
+
+fornostStreet :: CardDef
+fornostStreet =
+  (location "the-lost-realm-nightmare-deadmens-dike-023" "Fornost Street" DeadmensDikeNightmare 4 1 6)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    , cdShadowEffect = True
+    }
+
+decrepitCity :: CardDef
+decrepitCity =
+  (location "the-lost-realm-nightmare-deadmens-dike-024" "Decrepit City" DeadmensDikeNightmare 3 5 5)
+    { cdCardTraits = setFromList [Fornost, Ruins]
+    }
+
+-- Khazad-dûm Nightmare Decks
+
+-- | X is the number of Dark locations in play.
+twistingShadows :: CardDef
+twistingShadows =
+  (location "khazad-dum-nightmare-into-the-pit-006" "Twisting Shadows" IntoThePitNightmare 3 0 0)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+narrowFissure :: CardDef
+narrowFissure =
+  (location "khazad-dum-nightmare-into-the-pit-007" "Narrow Fissure" IntoThePitNightmare 3 3 1)
+    { cdCardTraits = setFromList [Underground, Hazard]
+    , cdKeywords = setFromList [Doomed 1]
+    }
+
+chamberOfRecords :: CardDef
+chamberOfRecords =
+  (location "khazad-dum-nightmare-the-seventh-level-003" "Chamber of Records" TheSeventhLevelNightmare 1 5 8)
+    { cdCardTraits = setFromList [Underground]
+    , cdVictoryPoints = Just 5
+    }
+
+deepMines :: CardDef
+deepMines =
+  (location "khazad-dum-nightmare-the-seventh-level-007" "Deep-mines" TheSeventhLevelNightmare 3 2 6)
+
+banksOfSirannon :: CardDef
+banksOfSirannon =
+  (location "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-005" "Banks of Sirannon" TheWatcherInTheWaterNightmare 3 3 3)
+    { cdCardTraits = setFromList [Mountain, Swamp]
+    , cdShadowEffect = True
+    }
+
+hideousDepths :: CardDef
+hideousDepths =
+  (location "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-006" "Hideous Depths" TheWatcherInTheWaterNightmare 3 3 5)
+    { cdCardTraits = setFromList [Swamp]
+    }
+
+easternMines :: CardDef
+easternMines =
+  (location "the-long-dark-nightmare-the-long-dark-005" "Eastern Mines" TheLongDarkNightmare 2 5 4)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    }
+
+westernHall :: CardDef
+westernHall =
+  (location "khazad-dum-nightmare-the-seventh-level-008" "Western Hall" TheSeventhLevelNightmare 2 4 4)
+    { cdCardTraits = setFromList [Underground]
+    }
+
+shadowedCorridor :: CardDef
+shadowedCorridor =
+  (location "khazad-dum-nightmare-flight-from-moria-007" "Shadowed Corridor" FlightFromMoriaNightmare 4 4 6)
+
+bottomlessChasm :: CardDef
+bottomlessChasm =
+  (location "the-long-dark-nightmare-the-long-dark-006" "Bottomless Chasm" TheLongDarkNightmare 3 3 6)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdShadowEffect = True
+    }
+
+desolateMeadow :: CardDef
+desolateMeadow =
+  (location "the-nin-in-eilph-nightmare-the-nin-in-eilph-004" "Desolate Meadow" TheNinInEilphNightmare 3 2 5)
+    { cdCardTraits = setFromList [Marsh]
+    , cdShadowEffect = True
+    }
+
+peatBog :: CardDef
+peatBog =
+  (location "the-nin-in-eilph-nightmare-the-nin-in-eilph-005" "Peat Bog" TheNinInEilphNightmare 4 3 3)
+    { cdCardTraits = setFromList [Marsh]
+    }
+
+bonesOfHollin :: CardDef
+bonesOfHollin =
+  (location "celebrimbors-secret-nightmare-celebrimbors-secret-004" "Bones of Hollin" CelebrimborsSecretNightmare 3 3 4)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    }
+
+dustyLabyrinth :: CardDef
+dustyLabyrinth =
+  (location "celebrimbors-secret-nightmare-celebrimbors-secret-005" "Dusty Labyrinth" CelebrimborsSecretNightmare 3 2 5)
+    { cdCardTraits = setFromList [OstInEdhil, Ruins]
+    , cdKeywords = setFromList [Scour]
+    }
+
+ravenStronghold :: CardDef
+ravenStronghold =
+  (location "the-antlered-crown-nightmare-the-antlered-crown-005" "Raven Stronghold" TheAntleredCrownNightmare 4 2 5)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Time 3]
+    }
+
+highlandsOfDunland :: CardDef
+highlandsOfDunland =
+  (location "the-antlered-crown-nightmare-the-antlered-crown-006" "Highlands of Dunland" TheAntleredCrownNightmare 2 4 4)
+    { cdCardTraits = setFromList [Dunland]
+    , cdShadowEffect = True
+    , cdKeywords = setFromList [Time 2]
+    }
+
+-- Shadows of Mirkwood Nightmare Decks
+
+watchedPath :: CardDef
+watchedPath =
+  (location "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-004" "Watched Path" TheHuntForGollumNightmare 2 3 4)
+    { cdCardTraits = setFromList [Forest, Road]
+    , cdShadowEffect = True
+    }
+
+huntersLookout :: CardDef
+huntersLookout =
+  (location "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-005" "Hunter's Lookout" TheHuntForGollumNightmare 2 2 6)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
+    }
+
+darkPools :: CardDef
+darkPools =
+  (location "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-006" "Dark Pools" TheHuntForGollumNightmare 3 3 2)
+    { cdCardTraits = setFromList [Marshland]
+    }
+
+trollLair :: CardDef
+trollLair =
+  (location "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-008" "Troll Lair" ConflictAtTheCarrockNightmare 3 2 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+hivesAndHives :: CardDef
+hivesAndHives =
+  (location "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-009" "Hives and Hives" ConflictAtTheCarrockNightmare 3 3 3)
+    { cdCardTraits = setFromList [WilderlandsTrait]
+    , cdShadowEffect = True
+    }
+
+darkWoodGrove :: CardDef
+darkWoodGrove =
+  (location "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-004" "Dark-wood Grove" AJourneyToRhosgobelNightmare 3 3 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+labyrinthineWoods :: CardDef
+labyrinthineWoods =
+  (location "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-005" "Labyrinthine Woods" AJourneyToRhosgobelNightmare 3 2 5)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+pitchDarkThicket :: CardDef
+pitchDarkThicket =
+  (location "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-006" "Pitch-dark Thicket" AJourneyToRhosgobelNightmare 2 4 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+bramblesAndThorns :: CardDef
+bramblesAndThorns =
+  (location "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-004" "Brambles and Thorns" TheHillsOfEmynMuilNightmare 3 3 5)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 3
+    }
+
+sarnGebirRapids :: CardDef
+sarnGebirRapids =
+  (location "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-005" "Sarn Gebir Rapids" TheHillsOfEmynMuilNightmare 2 5 5)
+    { cdCardTraits = setFromList [EmynMuil]
+    , cdVictoryPoints = Just 2
+    }
+
+theMereOfDeadFaces :: CardDef
+theMereOfDeadFaces =
+  (unique (location "the-dead-marshes-nightmare-the-dead-marshes-002" "The Mere of Dead Faces" TheDeadMarshesNightmare 1 0 0))
+    { cdCardTraits = setFromList [DeadMarshes]
+    , cdQuestPoints = Nothing
+    }
+
+stagnantQuagmire :: CardDef
+stagnantQuagmire =
+  (location "the-dead-marshes-nightmare-the-dead-marshes-003" "Stagnant Quagmire" TheDeadMarshesNightmare 3 3 5)
+    { cdCardTraits = setFromList [DeadMarshes]
+    , cdEscape = Just 2
+    , cdShadowEffect = True
+    }
+
+deceptivePath :: CardDef
+deceptivePath =
+  (location "return-to-mirkwood-nightmare-return-to-mirkwood-005" "Deceptive Path" ReturnToMirkwoodNightmare 2 4 1)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+webWall :: CardDef
+webWall =
+  (location "return-to-mirkwood-nightmare-return-to-mirkwood-006" "Web-wall" ReturnToMirkwoodNightmare 3 3 6)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+-- The Morgul Vale Nightmare
+
+banksOfMorgulduin :: CardDef
+banksOfMorgulduin =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-005" "Banks of Morgulduin" TheMorgulValeNightmare 2 4 4)
+    { cdCardTraits = setFromList [River]
+    , cdShadowEffect = True
+    }
+
+ephelDuath :: CardDef
+ephelDuath =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-006" "Ephel Dúath" TheMorgulValeNightmare 3 2 5)
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+whiteFloweredFields :: CardDef
+whiteFloweredFields =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-007" "White-Flowered Fields" TheMorgulValeNightmare 2 3 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
+    }
+
+-- The Blood of Gondor Nightmare
+
+-- | Archery X, X the highest number of hidden cards in any player's play area.
+edgeOfIthilien :: CardDef
+edgeOfIthilien =
+  (location "the-blood-of-gondor-nightmare-the-blood-of-gondor-005" "Edge of Ithilien" TheBloodOfGondorNightmare 3 3 6)
+    { cdCardTraits = setFromList [Ithilien, Forest]
+    , cdShadowEffect = True
+    }
+
+mountainsOfShadow :: CardDef
+mountainsOfShadow =
+  (location "the-blood-of-gondor-nightmare-the-blood-of-gondor-006" "Mountains of Shadow" TheBloodOfGondorNightmare 3 4 4)
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+-- The Drúadan Forest Nightmare
+
+devilsMirk :: CardDef
+devilsMirk =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-005" "Devil's Mirk" TheDruadanForestNightmare 3 3 3)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+eilenach :: CardDef
+eilenach =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-006" "Eilenach" TheDruadanForestNightmare 2 5 4)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdShadowEffect = True
+    }
+
+stonewainValley :: CardDef
+stonewainValley =
+  (location "the-druadan-forest-nightmare-the-druadan-forest-007" "Stonewain Valley" TheDruadanForestNightmare 2 1 6)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+besiegedHomestead :: CardDef
+besiegedHomestead =
+  (location "encounter-at-amon-din-nightmare-encounter-at-amon-din-004" "Besieged Homestead" EncounterAtAmonDinNightmare 3 4 6)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+overrunVillage :: CardDef
+overrunVillage =
+  (location "encounter-at-amon-din-nightmare-encounter-at-amon-din-005" "Overrun Village" EncounterAtAmonDinNightmare 2 3 5)
+    { cdCardTraits = setFromList [Gondor]
+    , cdVictoryPoints = Just 1
+    }
+
+-- Assault on Osgiliath Nightmare
+
+-- | X threat, X the resource tokens on it.
+palaceRemains :: CardDef
+palaceRemains =
+  unique
+    (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-004" "Palace Remains" AssaultOnOsgiliathNightmare 1 0 5)
+      { cdCardTraits = setFromList [Osgiliath]
+      }
+
+crumbledBattlements :: CardDef
+crumbledBattlements =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-005" "Crumbled Battlements" AssaultOnOsgiliathNightmare 2 3 2)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+easternQuarter :: CardDef
+easternQuarter =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-006" "Eastern Quarter" AssaultOnOsgiliathNightmare 2 3 3)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+westernQuarter :: CardDef
+westernQuarter =
+  (location "assault-on-osgiliath-nightmare-assault-on-osgiliath-007" "Western Quarter" AssaultOnOsgiliathNightmare 2 2 4)
+    { cdCardTraits = setFromList [Osgiliath]
+    }
+
+-- The Steward's Fear Nightmare
+
+traitorsDen :: CardDef
+traitorsDen =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-006" "Traitors' Den" TheStewardsFearNightmare 2 3 6)
+    { cdCardTraits = setFromList [Underworld, City]
+    }
+
+rathCelerdain :: CardDef
+rathCelerdain =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-007" "Rath Celerdain" TheStewardsFearNightmare 2 2 5)
+    { cdCardTraits = setFromList [City]
+    }
+
+archedTunnel :: CardDef
+archedTunnel =
+  (location "the-stewards-fear-nightmare-the-stewards-fear-008" "Arched Tunnel" TheStewardsFearNightmare 2 4 3)
+    { cdCardTraits = setFromList [Underworld, City]
+    }
+
+nestOfHorrors :: CardDef
+nestOfHorrors =
+  (location "foundations-of-stone-nightmare-foundations-of-stone-006" "Nest of Horrors" FoundationsOfStoneNightmare 3 4 4)
+    { cdCardTraits = setFromList [Underground, Dark]
+    }
+
+shiveringRiver :: CardDef
+shiveringRiver =
+  (location "foundations-of-stone-nightmare-foundations-of-stone-007" "Shivering River" FoundationsOfStoneNightmare 3 3 7)
+    { cdCardTraits = setFromList [Underground, River]
+    , cdShadowEffect = True
+    }
+
+fieryDepths :: CardDef
+fieryDepths =
+  (location "shadow-and-flame-nightmare-shadow-and-flame-009" "Fiery Depths" ShadowAndFlameNightmare 2 5 2)
+    { cdCardTraits = setFromList [Underground]
+    }
+
+crumblingStairs :: CardDef
+crumblingStairs =
+  (location "shadow-and-flame-nightmare-shadow-and-flame-010" "Crumbling Stairs" ShadowAndFlameNightmare 2 2 7)
+    { cdCardTraits = setFromList [Underground]
+    }
+
+snowyBadlands :: CardDef
+snowyBadlands =
+  (location "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-004" "Snowy Badlands" TheWastesOfEriadorNightmare 3 3 5)
+    { cdCardTraits = setFromList [Arnor, Hills]
+    }
+
+-- Escape from Mount Gram Nightmare
+
+prisonCellNightmare :: CardDef
+prisonCellNightmare =
+  (location "escape-from-mount-gram-nightmare-escape-from-mount-gram-004" "Prison Cell" EscapeFromMountGramNightmare 4 2 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | X quest points, twice the cards captured underneath it.
+tortureChamberMountGram :: CardDef
+tortureChamberMountGram =
+  (location "escape-from-mount-gram-nightmare-escape-from-mount-gram-005" "Torture Chamber" EscapeFromMountGramNightmare 2 0 0)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Capture 1, Surge]
+    }
+
+-- Across the Ettenmoors Nightmare
+
+rockyFoothills :: CardDef
+rockyFoothills =
+  (location "across-the-ettenmoors-nightmare-across-the-ettenmoors-006" "Rocky Foothills" AcrossTheEttenmoorsNightmare 2 2 2)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdShadowEffect = True
+    }
+
+vastTrollFells :: CardDef
+vastTrollFells =
+  (location "across-the-ettenmoors-nightmare-across-the-ettenmoors-007" "Vast Troll-fells" AcrossTheEttenmoorsNightmare 2 3 4)
+    { cdCardTraits = setFromList [Ettenmoors]
+    , cdShadowEffect = True
+    }
+
+-- The Treachery of Rhudaur Nightmare
+
+forgottenCourtyard :: CardDef
+forgottenCourtyard =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-004" "Forgotten Courtyard" TheTreacheryOfRhudaurNightmare 2 1 6)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+charredCellar :: CardDef
+charredCellar =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-005" "Charred Cellar" TheTreacheryOfRhudaurNightmare 2 5 4)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+-- | Of the Sift through the Debris encounter set, as its icon shows (cards.json has it as
+-- a treachery; the card is a location).
+secretAntechamber :: CardDef
+secretAntechamber =
+  (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-008" "Secret Antechamber" TheTreacheryOfRhudaurNightmare 3 2 5)
+    { cdCardTraits = setFromList [Ruins]
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+strongholdTower :: CardDef
+strongholdTower =
+  (location "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-004" "Stronghold Tower" TheBattleOfCarnDumNightmare 3 3 4)
+    { cdCardTraits = setFromList [CarnDum]
+    }
+
+gatesOfCarnDum :: CardDef
+gatesOfCarnDum =
+  (location "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-005" "Gates of Carn Dûm" TheBattleOfCarnDumNightmare 2 5 2)
+    { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
+    }
+
+-- The Dread Realm Nightmare
+
+innerSanctum :: CardDef
+innerSanctum =
+  (location "the-dread-realm-nightmare-the-dread-realm-004" "Inner Sanctum" TheDreadRealmNightmare 2 6 4)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    }
+
+cursedHalls :: CardDef
+cursedHalls =
+  (location "the-dread-realm-nightmare-the-dread-realm-005" "Cursed Halls" TheDreadRealmNightmare 3 3 5)
+    { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
     }

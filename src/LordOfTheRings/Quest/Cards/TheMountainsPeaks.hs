@@ -1,5 +1,6 @@
 module LordOfTheRings.Quest.Cards.TheMountainsPeaks (theMountainsPeaks) where
 
+import LordOfTheRings.Card (Card (EncounterCard), CardDef (cdVictoryPoints), toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -32,4 +33,9 @@ instance RunMessage TheMountainsPeaks where
       pure q
     _ -> TheMountainsPeaks <$> runConditionalStage condition msg attrs
    where
-    condition = getsGame ((>= 5) . (.victoryPoints) . toAttrs . (.scenario))
+    -- Nightmare: "player cards in the victory display do not count their victory points"
+    condition = do
+      nightmare <- inNightmareMode
+      victory <- getsGame ((.victoryDisplay) . toAttrs . (.scenario))
+      let counted = if nightmare then [c | c@(EncounterCard _) <- victory] else victory
+      pure $ sum (mapMaybe (cdVictoryPoints . toCardDef) counted) >= 5

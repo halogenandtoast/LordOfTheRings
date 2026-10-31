@@ -14,6 +14,15 @@ allEnemyCards =
     map
       (\def -> (cdCardCode def, def))
       [ kingSpider
+      , cunningInformant
+      , harborBrute
+      , pelargirRingleader
+      , mumakElite
+      , haradrimMarksman
+      , haradrimCaptain
+      , southronMountedArcher
+      , orcSaboteur
+      , orcRavagerNightmare
       , ungoliantsSpawnNightmare
       , ungoliantsBrood
       , forestFlies
@@ -159,6 +168,21 @@ allEnemyCards =
       , chiefTurchTheDunlandTrap
       , boarClanStalker
       , boarClanWarrior
+      , boarClanAmbusher
+      , boarClanSkirmisher
+      , wolfSpirit
+      , boarSpirit
+      , ravenSpirit
+      , bellachsHunter
+      , orcSeeker
+      , bloodHound
+      , deadlyMarshAdder
+      , swarmsOfMosquitos
+      , bellachsBodyguard
+      , littleSnuffler
+      , dunlendingHorde
+      , ravenClanElite
+      , ravenClawDruid
       , bellachTroubleInTharbad
       , spyFromMordor
       , bellachsMarauder
@@ -202,6 +226,12 @@ allEnemyCards =
       , balefulShade
       , deadLord
       , cursedDead
+      , orcAbductor
+      , soldierOfAngmar
+      , rearguardAmbusher
+      , angmarRaider
+      , undeadHorde
+      , cursedDeadNightmare
       , daechanar
       , dwimmerlaik
       , witchOfAngmar
@@ -253,6 +283,113 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , dunlandAssassin
+      , vengefulHillman
+      , savageHillman
+      , vigilantOrc
+      , methedrasLookout
+      , guardWarg
+      , huornOfFangorn
+      , blockingHuorn
+      , wickedHuorn
+      , brashCorsair
+      , sahirsPursuer
+      , guardianOfTheGoldenKing
+      , corsairPillager
+      , corsairPyromaniac
+      , eliteMarauder
+      , patrolSentry
+      , goblinLurker
+      , shadowDweller
+      , overseerMaurul
+      , orcTaskmaster
+      , goblinSkirmisher
+      , pitGoblin
+      , swarmingGoblins
+      , coalBlackOrc
+      , raiderOfTheStorm
+      , tideRunner
+      , venomsBite
+      , corsairDuelist
+      , slitheringArm
+      , crashingArm
+      , kingsKnight
+      , cursedSoldier
+      , submergedDead
+      , greatShark
+      , underseaCaveTroll
+      , rammingShip
+      , fangOfSahir
+      , patrolShip
+      , corsairLoyalist
+      , umbarPatrolNightmare
+      , ravenousHawk
+      , huntingWarg
+      , savageHillTroll
+      , robAndBob
+      , louisNightmare
+      , morrisNightmare
+      , rupertNightmare
+      , stuartNightmare
+      , goblinEagleHunter
+      , treetopBirdEater
+      , tunnelingNamelessThing
+      , orcInterceptor
+      , thingsInThePools
+      , marshWight
+      , lostSoulOfLorien
+      , illFatedGuard
+      , ambushingOrcs
+      , pursuingWargRider
+      , webSpinner
+      , warriorOfNurn
+      , orcCaptor
+      , sentryOfTheWhiteBridge
+      , blackNumenoreanNightmare
+      , orcTrickster
+      , urukMarksman
+      , druBuriDruNightmare
+      , druadanWarrior
+      , druadanStalker
+      , orcRaidersNightmare
+      , pillagingOrc
+      , invadingOrc
+      , haradrimWarrior
+      , murderousTurncoat
+      , faithlessConspirator
+      , wolfpeltGoblin
+      , silvertineMarauder
+      , snowGiant
+      , urukElfStalker
+      , goblinTrapper
+      , raidingParty
+      , viciousTrackers
+      , theWatcherNightmare
+      , writhingTentacle
+      , chokingTentacle
+      , goblinStalker
+      , trapdoorSpider
+      , sentinelOfTheDeep
+      , mithrilSeeker
+      , giantCaveCentipede
+      , unspeakableThing
+      , primevalThing
+      , servantOfFlame
+      , captainOfMordor
+      , packHunters
+      , jailorGornakhNightmare
+      , prisonGuard
+      , orcOfThaurdir
+      , hoarwellRiverSerpent
+      , scavengingStoneTroll
+      , giantBeetle
+      , thaurdirsHunter
+      , undeadThrall
+      , apostateOfAngmar
+      , orcWight
+      , thaurdirsElite
+      , silentGuardian
+      , necromancerOfCarnDum
       ]
 
 namelessThing :: CardDef
@@ -1682,6 +1819,7 @@ corsairWarship =
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 3]
     , cdVictoryPoints = Just 6
+    , cdEasyModeQuantity = Just 0
     }
 
 southronSailor :: CardDef
@@ -1706,6 +1844,7 @@ umbarCaptain :: CardDef
 umbarCaptain =
   (enemy "11063" "Umbar Captain" CorsairPirates 2 40 4 5 3 5)
     { cdCardTraits = setFromList [Corsair]
+    , cdEasyModeQuantity = Just 0
     }
 
 umbarRaider :: CardDef
@@ -1724,10 +1863,11 @@ raidLeader :: CardDef
 raidLeader =
   (enemy "11066" "Raid Leader" CorsairRaiders 2 40 3 5 1 5)
     { cdCardTraits = setFromList [Corsair, Raider]
+    , cdEasyModeQuantity = Just 0
     }
 
 servantOfTheDeceiver :: CardDef
-servantOfTheDeceiver = (enemy "11029" "Servant of the Deceiver" TheFateOfNumenor 3 35 3 3 4 3) {cdCardTraits = setFromList [Undead]}
+servantOfTheDeceiver = (enemy "11029" "Servant of the Deceiver" TheFateOfNumenor 3 35 3 3 4 3) {cdCardTraits = setFromList [Undead], cdEasyModeQuantity = Just 2}
 
 drownedDead :: CardDef
 drownedDead =
@@ -1737,13 +1877,14 @@ drownedDead =
     }
 
 soullessCadaver :: CardDef
-soullessCadaver = (enemy "11069" "Soulless Cadaver" DrownedDead 2 38 3 3 2 4) {cdCardTraits = setFromList [Undead]}
+soullessCadaver = (enemy "11069" "Soulless Cadaver" DrownedDead 2 38 3 3 2 4) {cdCardTraits = setFromList [Undead], cdEasyModeQuantity = Just 1}
 
 throngsOfUnfaithful :: CardDef
 throngsOfUnfaithful =
   (enemy "11070" "Throngs of Unfaithful" DrownedDead 2 26 1 2 0 4)
     { cdCardTraits = setFromList [Undead]
     , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The enemy side of The Stormcaller Elite's Captain Sahír: never shuffled into the
@@ -1775,7 +1916,7 @@ corsairArsonist =
     }
 
 sahirsRavager :: CardDef
-sahirsRavager = (enemy "11041" "Sahír's Ravager" RaidOnTheGreyHavens 3 36 3 4 3 5) {cdCardTraits = setFromList [Corsair, Raider]}
+sahirsRavager = (enemy "11041" "Sahír's Ravager" RaidOnTheGreyHavens 3 36 3 4 3 5) {cdCardTraits = setFromList [Corsair, Raider], cdEasyModeQuantity = Just 1}
 
 -- * Flight of the Stormcaller
 
@@ -1795,6 +1936,7 @@ sahirsEscort =
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 1]
     , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
     }
 
 swiftRaider :: CardDef
@@ -1802,6 +1944,7 @@ swiftRaider =
   (enemy "12021" "Swift Raider" FlightOfTheStormcaller 2 38 3 5 4 8)
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 2]
+    , cdEasyModeQuantity = Just 1
     }
 
 corsairSkiff :: CardDef
@@ -1822,6 +1965,7 @@ serpentsBlade :: CardDef
 serpentsBlade =
   (enemy "12024" "Serpent's Blade" FlightOfTheStormcaller 2 10 3 3 3 4)
     { cdCardTraits = setFromList [Corsair]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | Immune to player card effects, and cannot be engaged: its module says so.
@@ -1878,7 +2022,7 @@ seaScorpion =
     }
 
 caveEel :: CardDef
-caveEel = (enemy "12097" "Cave Eel" TheDrownedRuins 3 20 3 3 4 2) {cdCardTraits = setFromList [Creature]}
+caveEel = (enemy "12097" "Cave Eel" TheDrownedRuins 3 20 3 3 4 2) {cdCardTraits = setFromList [Creature], cdEasyModeQuantity = Just 2}
 
 -- | X threat, X the number of players: its card gives itself the rest.
 templeGuardian :: CardDef
@@ -1897,7 +2041,7 @@ faithlessDesecrator =
     }
 
 islandWatcher :: CardDef
-islandWatcher = (enemy "12076" "Island Watcher" TempleOfTheDeceived 2 46 3 4 1 5) {cdCardTraits = setFromList [Undead]}
+islandWatcher = (enemy "12076" "Island Watcher" TempleOfTheDeceived 2 46 3 4 1 5) {cdCardTraits = setFromList [Undead], cdEasyModeQuantity = Just 0}
 
 profaneDead :: CardDef
 profaneDead = (enemy "12077" "Profane Dead" TempleOfTheDeceived 2 35 1 2 3 3) {cdCardTraits = setFromList [Undead]}
@@ -1927,6 +2071,7 @@ siegeShip =
   (enemy "12126" "Siege Ship" AStormOnCobasHaven 3 46 2 5 5 7)
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Archery 2]
+    , cdEasyModeQuantity = Just 2
     }
 
 heavyCruiser :: CardDef
@@ -1936,6 +2081,7 @@ heavyCruiser =
     , cdKeywords = setFromList [Boarding 2]
     , cdSailingIcons = 1
     , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
     }
 
 -- * The City of Corsairs: Coast of Umbar and The City of Corsairs
@@ -1955,16 +2101,135 @@ slaveShip =
   (enemy "12152" "Slave Ship" CoastOfUmbar 2 32 3 7 5 5)
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 1]
+    , cdEasyModeQuantity = Just 1
     }
 
 umbarSlaver :: CardDef
-umbarSlaver = (enemy "12153" "Umbar Slaver" CoastOfUmbar 3 28 2 2 3 5) {cdCardTraits = setFromList [Corsair, Raider]}
+umbarSlaver = (enemy "12153" "Umbar Slaver" CoastOfUmbar 3 28 2 2 3 5) {cdCardTraits = setFromList [Corsair, Raider], cdEasyModeQuantity = Just 1}
 
 -- | Not The Stormcaller Elite's Captain Sahír: this one is single-sided, and shuffled in
 -- with The City of Corsairs.
 captainSahirTheCityOfCorsairs :: CardDef
 captainSahirTheCityOfCorsairs =
   unique (enemy "12158" "Captain Sahír" TheCityOfCorsairs 1 4 6 6 2 8) {cdCardTraits = setFromList [Corsair, Raider, Corrupt]}
+
+-- Dream-chaser Nightmare Decks
+
+raiderOfTheStorm :: CardDef
+raiderOfTheStorm =
+  (enemy "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-002" "Raider of the Storm" FlightOfTheStormcallerNightmare 4 28 0 3 3 4)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+tideRunner :: CardDef
+tideRunner =
+  (enemy "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-003" "Tide-runner" FlightOfTheStormcallerNightmare 2 44 4 4 2 9)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    , cdWhenRevealed = True
+    }
+
+venomsBite :: CardDef
+venomsBite =
+  unique
+    (enemy "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-004" "Venom's Bite" FlightOfTheStormcallerNightmare 1 34 5 8 5 14)
+      { cdCardTraits = setFromList [Corsair, Ship]
+      , cdKeywords = setFromList [Boarding 2]
+      , cdVictoryPoints = Just 5
+      , cdSailingIcons = 1
+      }
+
+corsairDuelist :: CardDef
+corsairDuelist =
+  (enemy "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-005" "Corsair Duelist" TheThingInTheDepthsNightmare 3 36 3 3 1 3)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    , cdShadowEffect = True
+    }
+
+slitheringArm :: CardDef
+slitheringArm =
+  (enemy "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-006" "Slithering Arm" TheThingInTheDepthsNightmare 3 0 0 4 1 5)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Surge, Grapple MostEnemiesGrappled]
+    , cdShadowEffect = True
+    }
+
+crashingArm :: CardDef
+crashingArm =
+  (enemy "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-007" "Crashing Arm" TheThingInTheDepthsNightmare 3 27 2 6 1 7)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Grapple FewestEnemiesGrappled]
+    , cdShadowEffect = True
+    }
+
+kingsKnight :: CardDef
+kingsKnight =
+  (enemy "temple-of-the-deceived-nightmare-temple-of-the-deceived-005" "King's Knight" TempleOfTheDeceivedNightmare 2 23 4 4 4 6)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+cursedSoldier :: CardDef
+cursedSoldier =
+  (enemy "temple-of-the-deceived-nightmare-temple-of-the-deceived-006" "Cursed Soldier" TempleOfTheDeceivedNightmare 3 28 3 3 3 4)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+submergedDead :: CardDef
+submergedDead =
+  (enemy "the-drowned-ruins-nightmare-the-drowned-ruins-006" "Submerged Dead" TheDrownedRuinsNightmare 4 26 2 3 2 3)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+greatShark :: CardDef
+greatShark =
+  (enemy "the-drowned-ruins-nightmare-the-drowned-ruins-007" "Great Shark" TheDrownedRuinsNightmare 2 34 4 4 4 6)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+underseaCaveTroll :: CardDef
+underseaCaveTroll =
+  (enemy "the-drowned-ruins-nightmare-the-drowned-ruins-008" "Undersea Cave Troll" TheDrownedRuinsNightmare 2 36 3 7 1 10)
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 1
+    }
+
+rammingShip :: CardDef
+rammingShip =
+  (enemy "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-004" "Ramming Ship" AStormOnCobasHavenNightmare 2 28 4 4 3 8)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdShadowEffect = True
+    }
+
+fangOfSahir :: CardDef
+fangOfSahir =
+  (enemy "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-005" "Fang of Sahír" AStormOnCobasHavenNightmare 3 42 2 5 3 3)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+patrolShip :: CardDef
+patrolShip =
+  (enemy "the-city-of-corsairs-nightmare-the-city-of-corsairs-002" "Patrol Ship" CoastOfUmbarNightmare 2 41 2 5 2 7)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 2]
+    , cdSailingIcons = 1
+    }
+
+corsairLoyalist :: CardDef
+corsairLoyalist =
+  (enemy "the-city-of-corsairs-nightmare-the-city-of-corsairs-003" "Corsair Loyalist" CoastOfUmbarNightmare 2 28 4 4 2 4)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    , cdShadowEffect = True
+    }
+
+umbarPatrolNightmare :: CardDef
+umbarPatrolNightmare =
+  (enemy "the-city-of-corsairs-nightmare-the-city-of-corsairs-008" "Umbar Patrol" TheCityOfCorsairsNightmare 3 48 3 3 4 6)
+    { cdCardTraits = setFromList [Corsair]
+    , cdShadowEffect = True
+    }
 
 -- Core Set Nightmare Decks
 
@@ -2038,4 +2303,853 @@ spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
     , cdShadowEffect = True
+    }
+
+-- Heirs of Númenor Nightmare Decks
+
+cunningInformant :: CardDef
+cunningInformant =
+  (enemy "heirs-of-numenor-nightmare-peril-in-pelargir-002" "Cunning Informant" PerilInPelargirNightmare 3 21 3 2 1 3) {cdCardTraits = setFromList [Brigand]}
+
+harborBrute :: CardDef
+harborBrute =
+  (enemy "heirs-of-numenor-nightmare-peril-in-pelargir-003" "Harbor Brute" PerilInPelargirNightmare 2 38 4 4 4 5)
+    { cdCardTraits = setFromList [Brigand, Thug]
+    , cdWhenRevealed = True
+    }
+
+pelargirRingleader :: CardDef
+pelargirRingleader =
+  (enemy "heirs-of-numenor-nightmare-peril-in-pelargir-004" "Pelargir Ringleader" PerilInPelargirNightmare 2 35 2 3 3 4)
+    { cdCardTraits = setFromList [Brigand]
+    , cdShadowEffect = True
+    }
+
+-- | Archery X, X the number of players: gained from its own modifiers.
+mumakElite :: CardDef
+mumakElite =
+  (enemy "heirs-of-numenor-nightmare-into-ithilien-002" "Mumak Elite" IntoIthilienNightmare 2 38 5 7 5 12) {cdCardTraits = setFromList [Harad, Creature]}
+
+haradrimMarksman :: CardDef
+haradrimMarksman =
+  (enemy "heirs-of-numenor-nightmare-into-ithilien-003" "Haradrim Marksman" IntoIthilienNightmare 3 36 2 2 2 5) {cdCardTraits = setFromList [Harad]}
+
+haradrimCaptain :: CardDef
+haradrimCaptain =
+  (enemy "heirs-of-numenor-nightmare-into-ithilien-004" "Haradrim Captain" IntoIthilienNightmare 2 44 4 4 3 6)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+southronMountedArcher :: CardDef
+southronMountedArcher =
+  (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-002" "Southron Mounted Archer" TheSiegeOfCairAndrosNightmare 3 45 3 4 2 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Archery 5]
+    }
+
+orcSaboteur :: CardDef
+orcSaboteur =
+  (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-003" "Orc Saboteur" TheSiegeOfCairAndrosNightmare 3 21 2 5 2 5)
+
+-- The Voice of Isengard Nightmare Decks
+
+dunlandAssassin :: CardDef
+dunlandAssassin =
+  (enemy "the-voice-of-isengard-nightmare-the-fords-of-isen-002" "Dunland Assassin" TheFordsOfIsenNightmare 2 45 3 3 3 5)
+    { cdCardTraits = setFromList [Dunland]
+    }
+
+vengefulHillman :: CardDef
+vengefulHillman =
+  (enemy "the-voice-of-isengard-nightmare-the-fords-of-isen-003" "Vengeful Hillman" TheFordsOfIsenNightmare 3 27 2 4 2 4)
+    { cdCardTraits = setFromList [Dunland]
+    }
+
+savageHillman :: CardDef
+savageHillman =
+  (enemy "the-voice-of-isengard-nightmare-the-fords-of-isen-004" "Savage Hillman" TheFordsOfIsenNightmare 3 20 1 2 1 3)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Surge]
+    }
+
+vigilantOrc :: CardDef
+vigilantOrc =
+  (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-002" "Vigilant Orc" ToCatchAnOrcNightmare 4 1 2 4 3 4)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+methedrasLookout :: CardDef
+methedrasLookout =
+  (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-003" "Methedras Lookout" ToCatchAnOrcNightmare 3 44 3 5 4 5)
+
+-- The Lost Realm Nightmare Decks
+
+orcAbductor :: CardDef
+orcAbductor =
+  (enemy "the-lost-realm-nightmare-invaders-in-chetwood-002" "Orc Abductor" IntrudersInChetwoodNightmare 3 45 2 4 4 5)
+
+wolfpeltGoblin :: CardDef
+wolfpeltGoblin =
+  (enemy "the-redhorn-gate-nightmare-the-redhorn-gate-002" "Wolfpelt Goblin" TheRedhornGateNightmare 3 20 2 3 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc, Snow]
+    , cdKeywords = setFromList [Surge]
+    }
+
+silvertineMarauder :: CardDef
+silvertineMarauder =
+  (enemy "the-redhorn-gate-nightmare-the-redhorn-gate-003" "Silvertine Marauder" TheRedhornGateNightmare 4 28 2 3 3 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+orcRavagerNightmare :: CardDef
+orcRavagerNightmare =
+  (enemy "heirs-of-numenor-nightmare-the-siege-of-cair-andros-004" "Orc Ravager" TheSiegeOfCairAndrosNightmare 4 30 3 3 1 4)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+guardWarg :: CardDef
+guardWarg =
+  (enemy "the-voice-of-isengard-nightmare-to-catch-an-orc-004" "Guard Warg" ToCatchAnOrcNightmare 2 25 4 3 3 3)
+
+-- The Ring-maker Nightmare Decks
+
+boarClanAmbusher :: CardDef
+boarClanAmbusher =
+  (enemy "the-dunland-trap-nightmare-the-dunland-trap-002" "Boar Clan Ambusher" TheDunlandTrapNightmare 3 30 3 5 2 5)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdShadowEffect = True
+    }
+
+boarClanSkirmisher :: CardDef
+boarClanSkirmisher =
+  (enemy "the-dunland-trap-nightmare-the-dunland-trap-003" "Boar Clan Skirmisher" TheDunlandTrapNightmare 4 20 2 3 2 4)
+    { cdCardTraits = setFromList [Dunland, BoarClan]
+    , cdShadowEffect = True
+    }
+
+wolfSpirit :: CardDef
+wolfSpirit =
+  (enemy "the-three-trials-nightmare-the-three-trials-002" "Wolf Spirit" TheThreeTrialsNightmare 3 30 2 5 1 6)
+    { cdCardTraits = setFromList [Undead, SpiritTrait, Wolf]
+    }
+
+boarSpirit :: CardDef
+boarSpirit =
+  (enemy "the-three-trials-nightmare-the-three-trials-003" "Boar Spirit" TheThreeTrialsNightmare 3 20 1 4 2 5)
+    { cdCardTraits = setFromList [Undead, SpiritTrait, Boar]
+    }
+
+ravenSpirit :: CardDef
+ravenSpirit =
+  (enemy "the-three-trials-nightmare-the-three-trials-004" "Raven Spirit" TheThreeTrialsNightmare 3 40 3 3 3 4)
+    { cdCardTraits = setFromList [Undead, SpiritTrait, Raven]
+    }
+
+bellachsHunter :: CardDef
+bellachsHunter =
+  (enemy "trouble-in-tharbad-nightmare-trouble-in-tharbad-002" "Bellach's Hunter" TroubleInTharbadNightmare 2 50 3 6 4 6)
+    { cdCardTraits = setFromList [Orc, Spy]
+    }
+
+orcSeeker :: CardDef
+orcSeeker =
+  (enemy "trouble-in-tharbad-nightmare-trouble-in-tharbad-003" "Orc Seeker" TroubleInTharbadNightmare 3 20 2 4 3 4)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+bloodHound :: CardDef
+bloodHound =
+  (enemy "trouble-in-tharbad-nightmare-trouble-in-tharbad-004" "Blood Hound" TroubleInTharbadNightmare 3 0 2 2 2 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+huornOfFangorn :: CardDef
+huornOfFangorn =
+  (enemy "the-voice-of-isengard-nightmare-into-fangorn-002" "Huorn of Fangorn" IntoFangornNightmare 3 23 3 4 3 6)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdShadowEffect = True
+    }
+
+blockingHuorn :: CardDef
+blockingHuorn =
+  (enemy "the-voice-of-isengard-nightmare-into-fangorn-003" "Blocking Huorn" IntoFangornNightmare 2 28 2 3 3 8)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdShadowEffect = True
+    }
+
+wickedHuorn :: CardDef
+wickedHuorn =
+  (enemy "the-voice-of-isengard-nightmare-into-fangorn-004" "Wicked Huorn" IntoFangornNightmare 2 33 3 6 4 7)
+    { cdCardTraits = setFromList [Huorn]
+    , cdKeywords = setFromList [Hinder]
+    , cdShadowEffect = True
+    }
+
+-- The Grey Havens Nightmare Decks
+
+brashCorsair :: CardDef
+brashCorsair =
+  (enemy "the-grey-havens-nightmare-voyage-across-belegaer-004" "Brash Corsair" VoyageAcrossBelegaerNightmare 3 16 3 3 4 3)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+sahirsPursuer :: CardDef
+sahirsPursuer =
+  (enemy "the-grey-havens-nightmare-voyage-across-belegaer-005" "Sahír's Pursuer" VoyageAcrossBelegaerNightmare 2 40 3 7 3 8)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    }
+
+guardianOfTheGoldenKing :: CardDef
+guardianOfTheGoldenKing =
+  (enemy "the-grey-havens-nightmare-the-fate-of-numenor-009" "Guardian of the Golden King" TheFateOfNumenorNightmare 2 41 4 6 4 10)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+corsairPillager :: CardDef
+corsairPillager =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-003" "Corsair Pillager" RaidOnTheGreyHavensNightmare 3 16 3 2 3 3)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+corsairPyromaniac :: CardDef
+corsairPyromaniac =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-004" "Corsair Pyromaniac" RaidOnTheGreyHavensNightmare 3 44 2 2 2 4)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    }
+
+eliteMarauder :: CardDef
+eliteMarauder =
+  (enemy "the-grey-havens-nightmare-raid-on-the-grey-havens-005" "Elite Marauder" RaidOnTheGreyHavensNightmare 1 32 4 6 2 5)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+soldierOfAngmar :: CardDef
+soldierOfAngmar =
+  (enemy "the-lost-realm-nightmare-invaders-in-chetwood-003" "Soldier of Angmar" IntrudersInChetwoodNightmare 2 28 2 5 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+rearguardAmbusher :: CardDef
+rearguardAmbusher =
+  (enemy "the-lost-realm-nightmare-the-weather-hills-013" "Rearguard Ambusher" TheWeatherHillsNightmare 3 17 1 4 2 4)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+angmarRaider :: CardDef
+angmarRaider =
+  (enemy "the-lost-realm-nightmare-the-weather-hills-014" "Angmar Raider" TheWeatherHillsNightmare 4 44 3 5 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+undeadHorde :: CardDef
+undeadHorde =
+  (enemy "the-lost-realm-nightmare-deadmens-dike-020" "Undead Horde" DeadmensDikeNightmare 2 34 4 6 3 8)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+cursedDeadNightmare :: CardDef
+cursedDeadNightmare =
+  (enemy "the-lost-realm-nightmare-deadmens-dike-021" "Cursed Dead" DeadmensDikeNightmare 2 27 1 3 1 2)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+-- Khazad-dûm Nightmare Decks
+
+patrolSentry :: CardDef
+patrolSentry =
+  (enemy "khazad-dum-nightmare-into-the-pit-003" "Patrol Sentry" IntoThePitNightmare 4 20 1 4 3 5)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+goblinLurker :: CardDef
+goblinLurker =
+  (enemy "khazad-dum-nightmare-into-the-pit-004" "Goblin Lurker" IntoThePitNightmare 3 50 3 2 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+shadowDweller :: CardDef
+shadowDweller =
+  (enemy "khazad-dum-nightmare-into-the-pit-005" "Shadow Dweller" IntoThePitNightmare 2 0 1 7 7 8)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+overseerMaurul :: CardDef
+overseerMaurul =
+  (enemy "khazad-dum-nightmare-the-seventh-level-002" "Overseer Maurûl" TheSeventhLevelNightmare 1 20 3 3 3 12)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdUnique = True
+    , cdVictoryPoints = Just 5
+    }
+
+orcTaskmaster :: CardDef
+orcTaskmaster =
+  (enemy "khazad-dum-nightmare-the-seventh-level-004" "Orc Taskmaster" TheSeventhLevelNightmare 2 44 1 4 4 6)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdWhenRevealed = True
+    }
+
+goblinSkirmisher :: CardDef
+goblinSkirmisher =
+  (enemy "khazad-dum-nightmare-the-seventh-level-005" "Goblin Skirmisher" TheSeventhLevelNightmare 3 15 2 4 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+pitGoblin :: CardDef
+pitGoblin =
+  (enemy "khazad-dum-nightmare-the-seventh-level-006" "Pit Goblin" TheSeventhLevelNightmare 2 36 3 2 1 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+swarmingGoblins :: CardDef
+swarmingGoblins =
+  (enemy "khazad-dum-nightmare-flight-from-moria-005" "Swarming Goblins" FlightFromMoriaNightmare 3 10 1 3 1 6)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | X is the number of victory points in the victory display.
+coalBlackOrc :: CardDef
+coalBlackOrc =
+  (enemy "khazad-dum-nightmare-flight-from-moria-006" "Coal-Black Orc" FlightFromMoriaNightmare 3 34 0 0 3 5)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+deadlyMarshAdder :: CardDef
+deadlyMarshAdder =
+  (enemy "the-nin-in-eilph-nightmare-the-nin-in-eilph-002" "Deadly Marsh Adder" TheNinInEilphNightmare 3 30 3 4 2 5)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+swarmsOfMosquitos :: CardDef
+swarmsOfMosquitos =
+  (enemy "the-nin-in-eilph-nightmare-the-nin-in-eilph-003" "Swarms of Mosquitoes" TheNinInEilphNightmare 3 25 2 3 1 7)
+    { cdCardTraits = setFromList [Creature, Insect]
+    , cdVictoryPoints = Just 1
+    }
+
+bellachsBodyguard :: CardDef
+bellachsBodyguard =
+  (enemy "celebrimbors-secret-nightmare-celebrimbors-secret-002" "Bellach's Bodyguard" CelebrimborsSecretNightmare 3 45 4 4 3 6)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    , cdShadowEffect = True
+    , cdKeywords = setFromList [Scour]
+    }
+
+littleSnuffler :: CardDef
+littleSnuffler =
+  (enemy "celebrimbors-secret-nightmare-celebrimbors-secret-003" "Little Snuffler" CelebrimborsSecretNightmare 3 15 3 3 2 3)
+    { cdCardTraits = setFromList [Orc, Snaga]
+    , cdWhenRevealed = True
+    , cdKeywords = setFromList [Scour]
+    }
+
+dunlendingHorde :: CardDef
+dunlendingHorde =
+  (enemy "the-antlered-crown-nightmare-the-antlered-crown-002" "Dunlending Horde" TheAntleredCrownNightmare 2 32 4 6 3 8)
+    { cdCardTraits = setFromList [Dunland]
+    }
+
+ravenClanElite :: CardDef
+ravenClanElite =
+  (enemy "the-antlered-crown-nightmare-the-antlered-crown-003" "Raven Clan Elite" TheAntleredCrownNightmare 4 28 2 4 2 4)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdWhenRevealed = True
+    }
+
+ravenClawDruid :: CardDef
+ravenClawDruid =
+  (enemy "the-antlered-crown-nightmare-the-antlered-crown-004" "Raven Claw Druid" TheAntleredCrownNightmare 3 26 3 2 3 5)
+    { cdCardTraits = setFromList [Dunland, RavenClan]
+    , cdShadowEffect = True
+    }
+
+-- Shadows of Mirkwood Nightmare Decks
+
+ravenousHawk :: CardDef
+ravenousHawk =
+  (enemy "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-002" "Ravenous Hawk" TheHuntForGollumNightmare 3 42 2 3 3 3)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+huntingWarg :: CardDef
+huntingWarg =
+  (enemy "the-hunt-for-gollum-nightmare-the-hunt-for-gollum-003" "Hunting Warg" TheHuntForGollumNightmare 2 15 1 3 2 3)
+    { cdCardTraits = setFromList [Creature, Mordor]
+    }
+
+savageHillTroll :: CardDef
+savageHillTroll =
+  (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-002" "Savage Hill-troll" ConflictAtTheCarrockNightmare 4 21 1 3 2 6)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    , cdVictoryPoints = Just 1
+    }
+
+robAndBob :: CardDef
+robAndBob =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-003" "Rob & Bob" ConflictAtTheCarrockNightmare 1 34 4 5 4 10))
+    { cdCardTraits = setFromList [Troll]
+    }
+
+louisNightmare :: CardDef
+louisNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-004" "Louis" ConflictAtTheCarrockNightmare 1 34 4 4 2 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+morrisNightmare :: CardDef
+morrisNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-005" "Morris" ConflictAtTheCarrockNightmare 1 34 3 5 2 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+rupertNightmare :: CardDef
+rupertNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-006" "Rupert" ConflictAtTheCarrockNightmare 1 34 2 5 3 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+stuartNightmare :: CardDef
+stuartNightmare =
+  (unique (enemy "conflict-at-the-carrock-nightmare-conflict-at-the-carrock-007" "Stuart" ConflictAtTheCarrockNightmare 1 34 2 4 4 10))
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 2
+    }
+
+goblinEagleHunter :: CardDef
+goblinEagleHunter =
+  (enemy "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-002" "Goblin Eagle-hunter" AJourneyToRhosgobelNightmare 3 48 2 5 3 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+treetopBirdEater :: CardDef
+treetopBirdEater =
+  (enemy "a-journey-to-rhosgobel-nightmare-a-journey-to-rhosgobel-003" "Treetop Bird-eater" AJourneyToRhosgobelNightmare 2 11 2 4 3 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    }
+
+tunnelingNamelessThing :: CardDef
+tunnelingNamelessThing =
+  (enemy "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-002" "Tunneling Nameless Thing" TheHillsOfEmynMuilNightmare 3 50 4 6 4 10)
+    { cdCardTraits = setFromList [Nameless]
+    }
+
+orcInterceptor :: CardDef
+orcInterceptor =
+  (enemy "the-hills-of-emyn-muil-nightmare-the-hills-of-emyn-muil-003" "Orc Interceptor" TheHillsOfEmynMuilNightmare 2 39 2 2 3 5)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    }
+
+thingsInThePools :: CardDef
+thingsInThePools =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-004" "Things in the Pools" TheDeadMarshesNightmare 3 50 3 4 2 8)
+
+-- The Wastes of Eriador Nightmare
+
+packHunters :: CardDef
+packHunters =
+  (enemy "the-wastes-of-eriador-nightmare-the-wastes-of-eriador-002" "Pack Hunters" TheWastesOfEriadorNightmare 5 45 3 2 1 3)
+    { cdCardTraits = setFromList [Creature, Warg]
+    }
+
+-- Escape from Mount Gram Nightmare
+
+jailorGornakhNightmare :: CardDef
+jailorGornakhNightmare =
+  unique
+    (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-002" "Jailor Gornákh" EscapeFromMountGramNightmare 1 45 4 5 5 14)
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdVictoryPoints = Just 5
+      }
+
+prisonGuard :: CardDef
+prisonGuard =
+  (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-003" "Prison Guard" EscapeFromMountGramNightmare 3 26 2 2 1 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Capture 1]
+    }
+
+-- | Of the Angmar Orcs encounter set, as its icon shows: set aside with it.
+orcOfThaurdir :: CardDef
+orcOfThaurdir =
+  (enemy "escape-from-mount-gram-nightmare-escape-from-mount-gram-009" "Orc of Thaurdir" EscapeFromMountGramNightmare 3 35 3 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+-- Across the Ettenmoors Nightmare
+
+hoarwellRiverSerpent :: CardDef
+hoarwellRiverSerpent =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-003" "Hoarwell River Serpent" AcrossTheEttenmoorsNightmare 2 38 3 4 3 5)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+scavengingStoneTroll :: CardDef
+scavengingStoneTroll =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-004" "Scavenging Stone-troll" AcrossTheEttenmoorsNightmare 2 42 1 7 2 14)
+    { cdCardTraits = setFromList [Troll]
+    }
+
+giantBeetle :: CardDef
+giantBeetle =
+  (enemy "across-the-ettenmoors-nightmare-across-the-ettenmoors-005" "Giant Beetle" AcrossTheEttenmoorsNightmare 2 14 2 3 3 3)
+    { cdCardTraits = setFromList [Creature, Insect]
+    }
+
+-- The Treachery of Rhudaur Nightmare
+
+thaurdirsHunter :: CardDef
+thaurdirsHunter =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-002" "Thaurdir's Hunter" TheTreacheryOfRhudaurNightmare 2 16 2 2 1 6)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+marshWight :: CardDef
+marshWight =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-005" "Marsh-wight" TheDeadMarshesNightmare 2 40 4 3 2 5)
+    { cdCardTraits = setFromList [Undead, Wight]
+    }
+
+lostSoulOfLorien :: CardDef
+lostSoulOfLorien =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-006" "Lost Soul of Lórien" TheDeadMarshesNightmare 3 30 1 5 2 3)
+    { cdCardTraits = setFromList [SpiritTrait, Undead]
+    }
+
+illFatedGuard :: CardDef
+illFatedGuard =
+  (enemy "the-dead-marshes-nightmare-the-dead-marshes-007" "Ill-fated Guard" TheDeadMarshesNightmare 3 18 2 2 3 7)
+    { cdCardTraits = setFromList [SpiritTrait, Undead]
+    , cdShadowEffect = True
+    }
+
+ambushingOrcs :: CardDef
+ambushingOrcs =
+  (enemy "return-to-mirkwood-nightmare-return-to-mirkwood-002" "Ambushing Orcs" ReturnToMirkwoodNightmare 3 28 2 4 3 7)
+    { cdCardTraits = setFromList [Mordor, Orc]
+    }
+
+pursuingWargRider :: CardDef
+pursuingWargRider =
+  (enemy "return-to-mirkwood-nightmare-return-to-mirkwood-003" "Pursuing Warg-rider" ReturnToMirkwoodNightmare 2 48 3 4 2 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+webSpinner :: CardDef
+webSpinner =
+  (enemy "return-to-mirkwood-nightmare-return-to-mirkwood-004" "Web-spinner" ReturnToMirkwoodNightmare 3 33 3 3 2 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+-- The Morgul Vale Nightmare
+
+warriorOfNurn :: CardDef
+warriorOfNurn =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-002" "Warrior of Nurn" TheMorgulValeNightmare 3 18 2 4 3 5)
+    { cdCardTraits = setFromList [Traitor]
+    , cdShadowEffect = True
+    }
+
+orcCaptor :: CardDef
+orcCaptor =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-003" "Orc Captor" TheMorgulValeNightmare 3 50 4 3 3 4)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and X attack, X the progress on To the Tower.
+sentryOfTheWhiteBridge :: CardDef
+sentryOfTheWhiteBridge =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-004" "Sentry of the White Bridge" TheMorgulValeNightmare 2 37 0 0 4 5)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- The Blood of Gondor Nightmare
+
+-- | X threat, X the total number of hidden cards in the game.
+blackNumenoreanNightmare :: CardDef
+blackNumenoreanNightmare =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-002" "Black Númenórean" TheBloodOfGondorNightmare 1 35 0 5 4 9)
+    { cdCardTraits = setFromList [Mordor]
+    , cdVictoryPoints = Just 3
+    }
+
+orcTrickster :: CardDef
+orcTrickster =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-003" "Orc Trickster" TheBloodOfGondorNightmare 4 20 3 3 2 2)
+    { cdCardTraits = setFromList [Orc]
+    }
+
+urukMarksman :: CardDef
+urukMarksman =
+  (enemy "the-blood-of-gondor-nightmare-the-blood-of-gondor-004" "Uruk Marksman" TheBloodOfGondorNightmare 3 40 4 2 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk, Mordor]
+    , cdKeywords = setFromList [Archery 3]
+    }
+
+-- The Drúadan Forest Nightmare
+
+druBuriDruNightmare :: CardDef
+druBuriDruNightmare =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-002" "Drû-buri-Drû" TheDruadanForestNightmare 1 1 4 5 4 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdUnique = True
+    }
+
+druadanWarrior :: CardDef
+druadanWarrior =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-003" "Drúadan Warrior" TheDruadanForestNightmare 3 20 2 5 3 5)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Prowl 2]
+    }
+
+druadanStalker :: CardDef
+druadanStalker =
+  (enemy "the-druadan-forest-nightmare-the-druadan-forest-004" "Drúadan Stalker" TheDruadanForestNightmare 3 43 4 3 2 3)
+    { cdCardTraits = setFromList [Wose]
+    , cdKeywords = setFromList [Archery 3]
+    , cdShadowEffect = True
+    }
+
+-- Encounter at Amon Dîn Nightmare
+
+orcRaidersNightmare :: CardDef
+orcRaidersNightmare =
+  (enemy "encounter-at-amon-din-nightmare-encounter-at-amon-din-002" "Orc Raiders" EncounterAtAmonDinNightmare 2 32 4 5 2 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+pillagingOrc :: CardDef
+pillagingOrc =
+  (enemy "encounter-at-amon-din-nightmare-encounter-at-amon-din-003" "Pillaging Orc" EncounterAtAmonDinNightmare 3 34 2 4 3 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- Assault on Osgiliath Nightmare
+
+invadingOrc :: CardDef
+invadingOrc =
+  (enemy "assault-on-osgiliath-nightmare-assault-on-osgiliath-002" "Invading Orc" AssaultOnOsgiliathNightmare 3 20 2 5 3 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and archery X, X the number of locations the first player controls.
+haradrimWarrior :: CardDef
+haradrimWarrior =
+  (enemy "assault-on-osgiliath-nightmare-assault-on-osgiliath-003" "Haradrim Warrior" AssaultOnOsgiliathNightmare 3 30 0 3 3 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+-- The Steward's Fear Nightmare
+
+murderousTurncoat :: CardDef
+murderousTurncoat =
+  (enemy "the-stewards-fear-nightmare-the-stewards-fear-004" "Murderous Turncoat" TheStewardsFearNightmare 3 20 1 5 3 4)
+    { cdCardTraits = setFromList [Brigand]
+    , cdWhenRevealed = True
+    }
+
+faithlessConspirator :: CardDef
+faithlessConspirator =
+  (enemy "the-stewards-fear-nightmare-the-stewards-fear-005" "Faithless Conspirator" TheStewardsFearNightmare 3 40 4 4 2 4)
+    { cdCardTraits = setFromList [Brigand]
+    }
+
+snowGiant :: CardDef
+snowGiant =
+  (enemy "the-redhorn-gate-nightmare-the-redhorn-gate-004" "Snow-Giant" TheRedhornGateNightmare 2 42 4 6 4 10)
+    { cdCardTraits = setFromList [Giant, Snow]
+    , cdVictoryPoints = Just 1
+    }
+
+urukElfStalker :: CardDef
+urukElfStalker =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-003" "Uruk Elf-stalker" RoadToRivendellNightmare 3 5 3 5 3 5)
+    { cdCardTraits = setFromList [Uruk, Orc]
+    , cdKeywords = setFromList [Ambush]
+    , cdShadowEffect = True
+    }
+
+goblinTrapper :: CardDef
+goblinTrapper =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-004" "Goblin Trapper" RoadToRivendellNightmare 3 30 3 3 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Ambush]
+    , cdShadowEffect = True
+    }
+
+raidingParty :: CardDef
+raidingParty =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-005" "Raiding Party" RoadToRivendellNightmare 2 34 2 5 1 7)
+    { cdCardTraits = setFromList [Mountain, Orc]
+    , cdKeywords = setFromList [Ambush]
+    }
+
+viciousTrackers :: CardDef
+viciousTrackers =
+  (enemy "road-to-rivendell-nightmare-road-to-rivendell-006" "Vicious Trackers" RoadToRivendellNightmare 2 16 1 3 2 5)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdKeywords = setFromList [Surge]
+    }
+
+theWatcherNightmare :: CardDef
+theWatcherNightmare =
+  (enemy "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-002" "The Watcher" TheWatcherInTheWaterNightmare 1 50 4 7 7 21)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Tentacle]
+    , cdVictoryPoints = Just 3
+    }
+
+writhingTentacle :: CardDef
+writhingTentacle =
+  (enemy "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-003" "Writhing Tentacle" TheWatcherInTheWaterNightmare 3 46 4 4 0 3)
+    { cdCardTraits = setFromList [Tentacle]
+    }
+
+chokingTentacle :: CardDef
+chokingTentacle =
+  (enemy "the-watcher-in-the-water-nightmare-the-watcher-in-the-water-004" "Choking Tentacle" TheWatcherInTheWaterNightmare 4 10 2 5 1 4)
+    { cdCardTraits = setFromList [Tentacle]
+    }
+
+goblinStalker :: CardDef
+goblinStalker =
+  (enemy "the-long-dark-nightmare-the-long-dark-002" "Goblin Stalker" TheLongDarkNightmare 4 28 3 2 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+trapdoorSpider :: CardDef
+trapdoorSpider =
+  (enemy "the-long-dark-nightmare-the-long-dark-003" "Trapdoor Spider" TheLongDarkNightmare 3 42 4 5 3 6)
+    { cdCardTraits = setFromList [Creature, Spider]
+    }
+
+sentinelOfTheDeep :: CardDef
+sentinelOfTheDeep =
+  (enemy "the-long-dark-nightmare-the-long-dark-004" "Sentinel of the Deep" TheLongDarkNightmare 2 12 2 4 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+mithrilSeeker :: CardDef
+mithrilSeeker =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-002" "Mithril Seeker" FoundationsOfStoneNightmare 3 18 2 2 2 5)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+giantCaveCentipede :: CardDef
+giantCaveCentipede =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-003" "Giant Cave Centipede" FoundationsOfStoneNightmare 2 28 3 3 5 4)
+    { cdCardTraits = setFromList [Creature, Insect]
+    , cdWhenRevealed = True
+    }
+
+-- | X attack and hit points, 5 with nothing attached: see its card module.
+unspeakableThing :: CardDef
+unspeakableThing =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-004" "Unspeakable Thing" FoundationsOfStoneNightmare 3 15 5 0 5 0)
+    { cdCardTraits = setFromList [Nameless]
+    }
+
+-- | X attack and hit points, 6 with nothing attached: see its card module.
+primevalThing :: CardDef
+primevalThing =
+  (enemy "foundations-of-stone-nightmare-foundations-of-stone-005" "Primeval Thing" FoundationsOfStoneNightmare 2 45 6 0 6 0)
+    { cdCardTraits = setFromList [Nameless]
+    }
+
+servantOfFlame :: CardDef
+servantOfFlame =
+  (enemy "shadow-and-flame-nightmare-shadow-and-flame-007" "Servant of Flame" ShadowAndFlameNightmare 3 12 3 3 2 5)
+    { cdCardTraits = setFromList [Mordor, Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+captainOfMordor :: CardDef
+captainOfMordor =
+  (enemy "shadow-and-flame-nightmare-shadow-and-flame-008" "Captain of Mordor" ShadowAndFlameNightmare 2 42 4 4 3 7)
+    { cdCardTraits = setFromList [Mordor, Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+undeadThrall :: CardDef
+undeadThrall =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-003" "Undead Thrall" TheTreacheryOfRhudaurNightmare 2 1 2 2 2 2)
+    { cdCardTraits = setFromList [Undead]
+    , cdKeywords = setFromList [Indestructible, Surge]
+    , cdShadowEffect = True
+    }
+
+-- | Of the Quiet the Spirits encounter set, as its icon shows (cards.json has it as a
+-- treachery; the card is an enemy).
+apostateOfAngmar :: CardDef
+apostateOfAngmar =
+  (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-007" "Apostate of Angmar" TheTreacheryOfRhudaurNightmare 3 38 5 2 2 12)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+orcWight :: CardDef
+orcWight =
+  (enemy "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-002" "Orc Wight" TheBattleOfCarnDumNightmare 3 30 2 3 2 4)
+    { cdCardTraits = setFromList [Orc, Undead]
+    , cdShadowEffect = True
+    }
+
+thaurdirsElite :: CardDef
+thaurdirsElite =
+  (enemy "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-003" "Thaurdir's Elite" TheBattleOfCarnDumNightmare 2 45 2 5 4 6)
+    { cdCardTraits = setFromList [Orc]
+    , cdShadowEffect = True
+    }
+
+-- The Dread Realm Nightmare
+
+-- | 10 hit points, as the card shows (cards.json has 1).
+silentGuardian :: CardDef
+silentGuardian =
+  (enemy "the-dread-realm-nightmare-the-dread-realm-002" "Silent Guardian" TheDreadRealmNightmare 2 36 4 2 4 10)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+necromancerOfCarnDum :: CardDef
+necromancerOfCarnDum =
+  (enemy "the-dread-realm-nightmare-the-dread-realm-003" "Necromancer of Carn Dûm" TheDreadRealmNightmare 3 28 2 0 3 3)
+    { cdCardTraits = setFromList [Sorcerer]
     }

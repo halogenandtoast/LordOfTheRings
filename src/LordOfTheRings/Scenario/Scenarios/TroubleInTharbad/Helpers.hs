@@ -5,6 +5,8 @@ module LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (
   attackNalir,
   anyThreatAtMost20,
   lowerEliminationLevels,
+  lowerEliminationLevelsBy,
+  eliminationLowering,
   eliminationLevelsLowered,
   emptyMugAbility,
   removeCardThatReducedThreat,
@@ -58,20 +60,33 @@ anyThreatAtMost20 = anyM (fmap ((<= 20) . (.threat)) . getPlayer) =<< getRemaini
 -- | Double Dealings lowers each player's threat elimination level by 10 more, for the
 -- rest of the game.
 lowerEliminationLevels :: ReverseQueue m => m ()
-lowerEliminationLevels = push $ ScenarioSpecific "tharbad.lowerElimination" Null
+lowerEliminationLevels = lowerEliminationLevelsBy 10
 
--- | How many times the elimination level has been lowered, kept by the scenario.
-timesLowered :: HasGame m => m Int
-timesLowered = getsGame (fromMaybe 0 . parseMaybe parseJSON . scenarioMeta . toAttrs . gameScenario)
+-- | Lower each player's threat elimination level by this much more, for the rest of the
+-- game, as the nightmare cards do by 2 or 5.
+lowerEliminationLevelsBy :: ReverseQueue m => Int -> m ()
+lowerEliminationLevelsBy = push . ScenarioSpecific "tharbad.lowerElimination" . toJSON
+
+{- | How much the scenario's meta has each player's elimination level lowered by: an object
+of the amount, or, as a game saved before the nightmare cards keeps it, the times Double
+Dealings lowered it by 10.
+-}
+eliminationLowering :: Value -> Int
+eliminationLowering v =
+  fromMaybe 0 $ parseMaybe (withObject "lowered" (.: "lowered")) v <|> ((* 10) <$> parseMaybe parseJSON v)
+
+-- | How much each elimination level has been lowered, kept by the scenario.
+loweredBy :: HasGame m => m Int
+loweredBy = getsGame (eliminationLowering . scenarioMeta . toAttrs . gameScenario)
 
 {- | The elimination level each player has, as either stage gives it: the scenario keeps the
 count, the stage in play applies it.
 -}
 eliminationLevelsLowered :: (HasModifiersM m, Sourceable source) => source -> m ()
 eliminationLevelsLowered source = do
-  n <- timesLowered
+  n <- loweredBy
   players <- getRemainingPlayers
-  when (n > 0) $ for_ players \p -> modified source (PlayerTarget p) [EliminationThreatModifier (-10 * n)]
+  when (n > 0) $ for_ players \p -> modified source (PlayerTarget p) [EliminationThreatModifier (negate n)]
 
 {- | While The Empty Mug is in the victory display, the current quest gains: "Forced: After
 a player card effect reduces a player's threat, remove it from the game."

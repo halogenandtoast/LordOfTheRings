@@ -6,7 +6,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers (mugashOnHero, shuffleMugashIntoEncounterDeck)
+import LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers (canDefeatStage, shuffleMugashIntoEncounterDeck)
 
 newtype IntoTheWoods = IntoTheWoods QuestAttrs
   deriving anyclass (IsQuest, HasModifiersFor)
@@ -52,6 +52,6 @@ instance RunMessage IntoTheWoods where
       stage3 <- genEncounterCard Cards.theAngryForest
       resetToStage stage3 []
       pure q
-    _ -> IntoTheWoods <$> runConditionalStage mugashOnHero msg attrs
+    _ -> IntoTheWoods <$> runConditionalStage canDefeatStage msg attrs
    where
     copies def = getsGame (filter ((== toCardCode def) . toCardCode) . (.encounterDeck) . toAttrs . (.scenario))

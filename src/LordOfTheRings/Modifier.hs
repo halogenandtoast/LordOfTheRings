@@ -100,6 +100,9 @@ data ModifierType
   | -- | on an enemy: for each point of damage its attack deals past the character's remaining
     -- hit points, the player damages another character they control
     ExcessDamageToOtherCharacters
+  | -- | on an enemy: for each point of damage its attack deals past the character's remaining
+    -- hit points, the player discards the top card of their deck, as Undead Horde reads
+    ExcessDamageDiscardsFromDeck
   | CannotBeOptionallyEngagedWhileOthersInStaging
   | -- | on an enemy, or on the game for every enemy: matching players cannot optionally
     -- engage it
@@ -325,6 +328,9 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
     -- Seedy Inn's shadow reads
     AttackDamageRaisesThreatOf PlayerId
+  | -- | on an enemy: for each point of damage its attack deals, the player discards a card at
+    -- random from their hand, as Northern Chetwood's shadow reads
+    AttackDamageDiscardsRandomFromHandOf PlayerId
   | -- | on an enemy: each point of damage its attack deals removes 1 progress from each
     -- quest card in play, as Traitorous Wight's shadow reads
     AttackDamageRemovesProgress
@@ -462,6 +468,9 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is dealt to a Ship objective the defending player controls, as Sudden Storms' shadow
     ExcessDamageToShipObjective
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is placed on an Aflame location in the staging area, as Elite Marauder reads
+    ExcessDamageToAflameLocation
   | -- | on an enemy: the player's characters cannot attack it, as Umbar Captain reads for
     -- Ship enemies
     CannotBeAttackedByCharactersOf PlayerId
@@ -510,6 +519,80 @@ data ModifierType
   | -- | on the active location on the Island Map: the players may travel from it to a
     -- location up to so many locations away, as Winding Caverns reads
     TravelRange Int
+  | -- | on the game: archery damage assigned to a character keeps going to it until it is
+    -- destroyed, as Ithilien Overlook reads
+    ArcheryDamageStaysOnCharacter
+  | -- | on the game: archery damage may be assigned to this card as well as to characters,
+    -- as Southron Mounted Archer gives Battleground locations
+    ArcheryDamageMayGoTo Target
+  | -- | on an enemy: the damage its attack deals past the character's remaining hit points
+    -- is dealt to this card, as Dense Thickets' shadow sends it to a Ranger objective
+    ExcessDamageTo Target
+  | -- | on a player: they cannot discard cards from their hand, as Isen River reads
+    CannotDiscardFromHand
+  | -- | on a character: it cannot attack or defend against matching enemies, as Cursed
+    -- Burden reads
+    CannotFight EnemyMatcher
+  | -- | on a character: it cannot attack matching enemies, as Trial of Ancestors reads
+    CannotAttackMatching EnemyMatcher
+  | -- | on a card: its effect on "the first" card each phase has happened, as Dark Pathway reads
+    FirstEffectUsed
+  | -- | on a location: progress placed on it at once is reduced to this much, as Celebrimbor's
+    -- Secret's nightmare setup card reads for the staging area
+    ProgressReducedTo Int
+  | -- | on a location: player card effects cannot discard it from play, as The Antlered Crown's
+    -- nightmare setup card reads for locations with time counters
+    CannotBeDiscardedByPlayerCards
+  | -- | on an enemy: damage dealt to it other than by an attack is canceled, as Dunlending Horde
+    -- reads
+    CannotTakeNonCombatDamage
+  | -- | on an enemy: its defense cannot be reduced, as Rupert's in nightmare mode
+    CannotHaveDefenseReduced
+  | -- | on a character: it loses the trait, as Shot from the Sky takes the Eagle trait
+    LoseTrait Trait
+  | -- | on a character: an effect of any card but the one with this code heals it of no
+    -- more than this, as Noxious Supplies reads for Athelas
+    HealLimitExceptFrom Int CardCode
+  | -- | on an enemy: characters with the keyword cannot attack it, as Pitch-dark
+    -- Thicket's shadow reads for ranged
+    CannotBeAttackedByKeyword Keyword
+  | -- | on the game: each escape test's dealt cards come to this much more, once, as
+    -- Stagnant Quagmire adds its Escape value
+    EscapeTestBonus Int
+  | -- | on a player: he commits no more than this many characters to each escape test,
+    -- as Ill-fated Guard reads
+    EscapeTestCommitLimit Int
+  | -- | on the game: the players cannot win, a win waiting until nothing gives this, as
+    -- The Blood of Gondor's Nightmare setup card reads
+    PlayersCannotWin
+  | -- | on an enemy: a hero with no resources in its pool can neither attack nor defend
+    -- against it, as Drúadan Warrior reads
+    NotFoughtByHeroesWithoutResources
+  | -- | on an enemy: to optionally engage it, the player spends this many resources, as
+    -- Drúadan Stalker reads
+    OptionalEngagementCost Int
+  | -- | on the game: the progress questing makes beyond the active location's quest points
+    -- goes to this location, not the quest, as Assault on Osgiliath's Nightmare setup card
+    -- reads
+    ProgressBeyondActiveTo Target
+  | -- | on a card: progress that would be placed on it is placed on the target instead, as
+    -- Blinding Blizzard takes the quest's and Snow locations'
+    ProgressPlacedOnInstead Target
+  | -- | on the game: characters cannot gain willpower from player card effects, as Frozen
+    -- Silverlode reads
+    NoWillpowerFromPlayerCards
+  | -- | on an enemy: for each point of damage its attack deals, the player discards a random
+    -- card from his hand, as Banks of Sirannon's shadow reads
+    AttackDamageDiscardsRandomFrom PlayerId
+  | -- | on an enemy: each point of damage its attack deals heals 1 damage from the target, as
+    -- The Dark Fire heals Durin's Bane
+    AttackDamageHeals Target
+  | -- | on an enemy: each point of its attack's damage discards the top card of the player's
+    -- captured deck, as Orc of Thaurdir's shadow reads (Escape from Mount Gram)
+    AttackDamageDiscardsCaptured PlayerId
+  | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
+    -- Isolated reads
+    CannotDrawCardsFromCardEffects
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

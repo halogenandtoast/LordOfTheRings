@@ -212,6 +212,119 @@ import LordOfTheRings.Treachery.Cards.SmokingBlood
 import LordOfTheRings.Treachery.Cards.SentinelOfShadow
 import LordOfTheRings.Treachery.Cards.CatacombInspection
 import LordOfTheRings.Treachery.Cards.DarkInterrogation
+import LordOfTheRings.Treachery.Cards.BedlamInTheStreets
+import LordOfTheRings.Treachery.Cards.TheThievesPloy
+import LordOfTheRings.Treachery.Cards.TheyreGettingAway
+import LordOfTheRings.Treachery.Cards.ObsidianArrows
+import LordOfTheRings.Treachery.Cards.SavageFray
+import LordOfTheRings.Treachery.Cards.RuinAndWroth
+import LordOfTheRings.Treachery.Cards.BrutalAssault
+import LordOfTheRings.Treachery.Cards.MugashsCunning
+import LordOfTheRings.Treachery.Cards.PatrollingOrcs
+import LordOfTheRings.Treachery.Cards.MugashsRage
+import LordOfTheRings.Treachery.Cards.StiflingWoods
+import LordOfTheRings.Treachery.Cards.FangornsAnger
+import LordOfTheRings.Treachery.Cards.RogueWave
+import LordOfTheRings.Treachery.Cards.DreamsOfNumenor
+import LordOfTheRings.Treachery.Cards.RagingSquallNightmare
+import LordOfTheRings.Treachery.Cards.CorruptedFlora
+import LordOfTheRings.Treachery.Cards.CalphonsFolly
+import LordOfTheRings.Treachery.Cards.SuddenAssaultNightmare
+import LordOfTheRings.Treachery.Cards.Infiltration
+import LordOfTheRings.Treachery.Cards.AGreatHost
+import LordOfTheRings.Treachery.Cards.KillThem
+import LordOfTheRings.Treachery.Cards.RainWashedTracks
+import LordOfTheRings.Treachery.Cards.ParalyzingFear
+import LordOfTheRings.Treachery.Cards.CurseOfAngmar
+import LordOfTheRings.Treachery.Cards.ShadowFall
+import LordOfTheRings.Treachery.Cards.BalinsDoom
+import LordOfTheRings.Treachery.Cards.BeatsAndEchoes
+import LordOfTheRings.Treachery.Cards.DismayAndFear
+import LordOfTheRings.Treachery.Cards.AnEvilFortune
+import LordOfTheRings.Treachery.Cards.BoarClanAssault
+import LordOfTheRings.Treachery.Cards.StalkedByDunlendings
+import LordOfTheRings.Treachery.Cards.CursedBurden
+import LordOfTheRings.Treachery.Cards.TrialOfAncestors
+import LordOfTheRings.Treachery.Cards.WaylaidByAgents
+import LordOfTheRings.Treachery.Cards.TharbadPatrol
+import LordOfTheRings.Treachery.Cards.Quicksand
+import LordOfTheRings.Treachery.Cards.RottenStench
+import LordOfTheRings.Treachery.Cards.HatefulSearch
+import LordOfTheRings.Treachery.Cards.SauronsAgent
+import LordOfTheRings.Treachery.Cards.ClosingIn
+import LordOfTheRings.Treachery.Cards.RavenTalisman
+import LordOfTheRings.Treachery.Cards.GatheringForces
+import LordOfTheRings.Treachery.Cards.DarkAndStormy
+import LordOfTheRings.Treachery.Cards.SahirsGettingAway
+import LordOfTheRings.Treachery.Cards.TumultuousWaters
+import LordOfTheRings.Treachery.Cards.DeepMaelstrom
+import LordOfTheRings.Treachery.Cards.DeceitfulIsland
+import LordOfTheRings.Treachery.Cards.CallOfTheCurse
+import LordOfTheRings.Treachery.Cards.SuddenPrecipice
+import LordOfTheRings.Treachery.Cards.PitIntoTheDepths
+import LordOfTheRings.Treachery.Cards.SulfurCloud
+import LordOfTheRings.Treachery.Cards.BrokenRudder
+import LordOfTheRings.Treachery.Cards.Grappled
+import LordOfTheRings.Treachery.Cards.InspiringFury
+import LordOfTheRings.Treachery.Cards.RaiseTheAlarm
+import LordOfTheRings.Treachery.Cards.SlaveTrade
+import LordOfTheRings.Treachery.Cards.TheEnemysTrail
+import LordOfTheRings.Treachery.Cards.RestlessHunters
+import LordOfTheRings.Treachery.Cards.TheTrailGoesCold
+import LordOfTheRings.Treachery.Cards.TimeForSupper
+import LordOfTheRings.Treachery.Cards.ShotFromTheSky
+import LordOfTheRings.Treachery.Cards.NoxiousSupplies
+import LordOfTheRings.Treachery.Cards.AHurryingDarkness
+import LordOfTheRings.Treachery.Cards.BlastOfSavageWind
+import LordOfTheRings.Treachery.Cards.HazardousTerrain
+import LordOfTheRings.Treachery.Cards.RetracedSteps
+import LordOfTheRings.Treachery.Cards.CandlesOfCorpses
+import LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
+import LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
+import LordOfTheRings.Treachery.Cards.Isolation
+import LordOfTheRings.Treachery.Cards.BefouledEquipment
+import LordOfTheRings.Treachery.Cards.WickednessAndMischief
+import LordOfTheRings.Treachery.Cards.TheTowerBeckons
+import LordOfTheRings.Treachery.Cards.NoxiousFumes
+import LordOfTheRings.Treachery.Cards.SurroundedByShadow
+import LordOfTheRings.Treachery.Cards.SuddenOnslaught
+import LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
+import LordOfTheRings.Treachery.Cards.PoisonDarts
+import LordOfTheRings.Treachery.Cards.TrappedVillagers
+import LordOfTheRings.Treachery.Cards.RunForYourLives
+import LordOfTheRings.Treachery.Cards.SaveUs
+import LordOfTheRings.Treachery.Cards.ThoseNowSundered
+import LordOfTheRings.Treachery.Cards.RelentlessAttack
+import LordOfTheRings.Treachery.Cards.OverrunDefenses
+import LordOfTheRings.Treachery.Cards.PressedOnAllSides
+import LordOfTheRings.Treachery.Cards.FalseAccusations
+import LordOfTheRings.Treachery.Cards.BlindingBlizzard
+import LordOfTheRings.Treachery.Cards.CaradhrasTheCruel
+import LordOfTheRings.Treachery.Cards.TumultuousAssault
+import LordOfTheRings.Treachery.Cards.PulledUnder
+import LordOfTheRings.Treachery.Cards.RipplingFromBeneath
+import LordOfTheRings.Treachery.Cards.DreadfulDeep
+import LordOfTheRings.Treachery.Cards.LostAndHelpless
+import LordOfTheRings.Treachery.Cards.ChillOfTheRoots
+import LordOfTheRings.Treachery.Cards.TerribleStrength
+import LordOfTheRings.Treachery.Cards.TheDarkFire
+import LordOfTheRings.Treachery.Cards.BlazingGrip
+import LordOfTheRings.Treachery.Cards.MorgothsBidding
+import LordOfTheRings.Treachery.Cards.FlameOfUdun
+import LordOfTheRings.Treachery.Cards.CunningWolves
+import LordOfTheRings.Treachery.Cards.TorrentOfHail
+import LordOfTheRings.Treachery.Cards.CruelTorment
+import LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
+import LordOfTheRings.Treachery.Cards.CrashingThunder
+import LordOfTheRings.Treachery.Cards.BarrenAndDesolate
+import LordOfTheRings.Treachery.Cards.MalevolentForces
+import LordOfTheRings.Treachery.Cards.LifeDrain
+import LordOfTheRings.Treachery.Cards.DeathAndDecay
+import LordOfTheRings.Treachery.Cards.HowlingOfWargs
+import LordOfTheRings.Treachery.Cards.BlackMare
+import LordOfTheRings.Treachery.Cards.PowerBeyondDeath
+import LordOfTheRings.Treachery.Cards.DaechanarsCurse
+import LordOfTheRings.Treachery.Cards.AllIsLost
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -448,5 +561,118 @@ allTreacherys =
         , SomeTreacheryCard sentinelOfShadow
         , SomeTreacheryCard catacombInspection
         , SomeTreacheryCard darkInterrogation
+        , SomeTreacheryCard bedlamInTheStreets
+        , SomeTreacheryCard theThievesPloy
+        , SomeTreacheryCard theyreGettingAway
+        , SomeTreacheryCard obsidianArrows
+        , SomeTreacheryCard savageFray
+        , SomeTreacheryCard ruinAndWroth
+        , SomeTreacheryCard brutalAssault
+        , SomeTreacheryCard mugashsCunning
+        , SomeTreacheryCard patrollingOrcs
+        , SomeTreacheryCard mugashsRage
+        , SomeTreacheryCard stiflingWoods
+        , SomeTreacheryCard fangornsAnger
+        , SomeTreacheryCard rogueWave
+        , SomeTreacheryCard dreamsOfNumenor
+        , SomeTreacheryCard ragingSquallNightmare
+        , SomeTreacheryCard corruptedFlora
+        , SomeTreacheryCard calphonsFolly
+        , SomeTreacheryCard suddenAssaultNightmare
+        , SomeTreacheryCard infiltration
+        , SomeTreacheryCard aGreatHost
+        , SomeTreacheryCard killThem
+        , SomeTreacheryCard rainWashedTracks
+        , SomeTreacheryCard paralyzingFear
+        , SomeTreacheryCard curseOfAngmar
+        , SomeTreacheryCard shadowFall
+        , SomeTreacheryCard balinsDoom
+        , SomeTreacheryCard beatsAndEchoes
+        , SomeTreacheryCard dismayAndFear
+        , SomeTreacheryCard anEvilFortune
+        , SomeTreacheryCard boarClanAssault
+        , SomeTreacheryCard stalkedByDunlendings
+        , SomeTreacheryCard cursedBurden
+        , SomeTreacheryCard trialOfAncestors
+        , SomeTreacheryCard waylaidByAgents
+        , SomeTreacheryCard tharbadPatrol
+        , SomeTreacheryCard quicksand
+        , SomeTreacheryCard rottenStench
+        , SomeTreacheryCard hatefulSearch
+        , SomeTreacheryCard sauronsAgent
+        , SomeTreacheryCard closingIn
+        , SomeTreacheryCard ravenTalisman
+        , SomeTreacheryCard gatheringForces
+        , SomeTreacheryCard darkAndStormy
+        , SomeTreacheryCard sahirsGettingAway
+        , SomeTreacheryCard tumultuousWaters
+        , SomeTreacheryCard deepMaelstrom
+        , SomeTreacheryCard deceitfulIsland
+        , SomeTreacheryCard callOfTheCurse
+        , SomeTreacheryCard suddenPrecipice
+        , SomeTreacheryCard pitIntoTheDepths
+        , SomeTreacheryCard sulfurCloud
+        , SomeTreacheryCard brokenRudder
+        , SomeTreacheryCard grappled
+        , SomeTreacheryCard inspiringFury
+        , SomeTreacheryCard raiseTheAlarm
+        , SomeTreacheryCard slaveTrade
+        , SomeTreacheryCard theEnemysTrail
+        , SomeTreacheryCard restlessHunters
+        , SomeTreacheryCard theTrailGoesCold
+        , SomeTreacheryCard timeForSupper
+        , SomeTreacheryCard shotFromTheSky
+        , SomeTreacheryCard noxiousSupplies
+        , SomeTreacheryCard aHurryingDarkness
+        , SomeTreacheryCard blastOfSavageWind
+        , SomeTreacheryCard hazardousTerrain
+        , SomeTreacheryCard retracedSteps
+        , SomeTreacheryCard candlesOfCorpses
+        , SomeTreacheryCard swarmingMosquitoes
+        , SomeTreacheryCard devilryOfTheDarkLand
+        , SomeTreacheryCard isolation
+        , SomeTreacheryCard befouledEquipment
+        , SomeTreacheryCard wickednessAndMischief
+        , SomeTreacheryCard theTowerBeckons
+        , SomeTreacheryCard noxiousFumes
+        , SomeTreacheryCard surroundedByShadow
+        , SomeTreacheryCard suddenOnslaught
+        , SomeTreacheryCard drumsOfTheWildMen
+        , SomeTreacheryCard poisonDarts
+        , SomeTreacheryCard trappedVillagers
+        , SomeTreacheryCard runForYourLives
+        , SomeTreacheryCard saveUs
+        , SomeTreacheryCard thoseNowSundered
+        , SomeTreacheryCard relentlessAttack
+        , SomeTreacheryCard overrunDefenses
+        , SomeTreacheryCard pressedOnAllSides
+        , SomeTreacheryCard falseAccusations
+        , SomeTreacheryCard blindingBlizzard
+        , SomeTreacheryCard caradhrasTheCruel
+        , SomeTreacheryCard tumultuousAssault
+        , SomeTreacheryCard pulledUnder
+        , SomeTreacheryCard ripplingFromBeneath
+        , SomeTreacheryCard dreadfulDeep
+        , SomeTreacheryCard lostAndHelpless
+        , SomeTreacheryCard chillOfTheRoots
+        , SomeTreacheryCard terribleStrength
+        , SomeTreacheryCard theDarkFire
+        , SomeTreacheryCard blazingGrip
+        , SomeTreacheryCard morgothsBidding
+        , SomeTreacheryCard flameOfUdun
+        , SomeTreacheryCard cunningWolves
+        , SomeTreacheryCard torrentOfHail
+        , SomeTreacheryCard cruelTorment
+        , SomeTreacheryCard goblinPatrolNightmare
+        , SomeTreacheryCard crashingThunder
+        , SomeTreacheryCard barrenAndDesolate
+        , SomeTreacheryCard malevolentForces
+        , SomeTreacheryCard lifeDrain
+        , SomeTreacheryCard deathAndDecay
+        , SomeTreacheryCard howlingOfWargs
+        , SomeTreacheryCard blackMare
+        , SomeTreacheryCard powerBeyondDeath
+        , SomeTreacheryCard daechanarsCurse
+        , SomeTreacheryCard allIsLost
         ]
     ]

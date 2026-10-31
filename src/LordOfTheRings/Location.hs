@@ -271,6 +271,132 @@ import LordOfTheRings.Location.Cards.AFloodedFord
 import LordOfTheRings.Location.Cards.GladdenMarshlands
 import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
+import LordOfTheRings.Location.Cards.DocksideStreet
+import LordOfTheRings.Location.Cards.PelargirAlley
+import LordOfTheRings.Location.Cards.IthilienOverlook
+import LordOfTheRings.Location.Cards.DenseThickets
+import LordOfTheRings.Location.Cards.CormallenFields
+import LordOfTheRings.Location.Cards.BesiegedCourtyard
+import LordOfTheRings.Location.Cards.WallsOfCairAndros
+import LordOfTheRings.Location.Cards.AnduinWharf
+import LordOfTheRings.Location.Cards.WesternShore
+import LordOfTheRings.Location.Cards.EasternShore
+import LordOfTheRings.Location.Cards.IsenRiver
+import LordOfTheRings.Location.Cards.MethedrasPeak
+import LordOfTheRings.Location.Cards.OrcTrail
+import LordOfTheRings.Location.Cards.TangledForest
+import LordOfTheRings.Location.Cards.Entwood
+import LordOfTheRings.Location.Cards.DarkCornerOfFangorn
+import LordOfTheRings.Location.Cards.OpenWaters
+import LordOfTheRings.Location.Cards.ShatteredSea
+import LordOfTheRings.Location.Cards.DesecratedGrounds
+import LordOfTheRings.Location.Cards.ForsakenCity
+import LordOfTheRings.Location.Cards.OvergrownSteps
+import LordOfTheRings.Location.Cards.NarelenyaLocation
+import LordOfTheRings.Location.Cards.DawnStarLocation
+import LordOfTheRings.Location.Cards.SilverWingLocation
+import LordOfTheRings.Location.Cards.BurningTower
+import LordOfTheRings.Location.Cards.NorthernChetwood
+import LordOfTheRings.Location.Cards.OutskirtsOfArchet
+import LordOfTheRings.Location.Cards.GreenwayPath
+import LordOfTheRings.Location.Cards.WeatherTornValley
+import LordOfTheRings.Location.Cards.RuinedWatchTower
+import LordOfTheRings.Location.Cards.PalaceRuins
+import LordOfTheRings.Location.Cards.FornostStreet
+import LordOfTheRings.Location.Cards.DecrepitCity
+import LordOfTheRings.Location.Cards.TwistingShadows
+import LordOfTheRings.Location.Cards.NarrowFissure
+import LordOfTheRings.Location.Cards.ChamberOfRecords
+import LordOfTheRings.Location.Cards.DeepMines
+import LordOfTheRings.Location.Cards.WesternHall
+import LordOfTheRings.Location.Cards.ShadowedCorridor
+import LordOfTheRings.Location.Cards.PlainsOfDunland
+import LordOfTheRings.Location.Cards.MunuvDuvRiver
+import LordOfTheRings.Location.Cards.HithaeglirWoods
+import LordOfTheRings.Location.Cards.SacredForest
+import LordOfTheRings.Location.Cards.HauntedPillars
+import LordOfTheRings.Location.Cards.CityOfSpies
+import LordOfTheRings.Location.Cards.DarkPathway
+import LordOfTheRings.Location.Cards.DesolateMeadow
+import LordOfTheRings.Location.Cards.PeatBog
+import LordOfTheRings.Location.Cards.BonesOfHollin
+import LordOfTheRings.Location.Cards.DustyLabyrinth
+import LordOfTheRings.Location.Cards.RavenStronghold
+import LordOfTheRings.Location.Cards.HighlandsOfDunland
+import LordOfTheRings.Location.Cards.SharpJetties
+import LordOfTheRings.Location.Cards.CliffsideInlet
+import LordOfTheRings.Location.Cards.CaptainsQuarters
+import LordOfTheRings.Location.Cards.AftCabin
+import LordOfTheRings.Location.Cards.EdgeOfTheTemple
+import LordOfTheRings.Location.Cards.DesecratedRuinsNightmare
+import LordOfTheRings.Location.Cards.TempleFoothills
+import LordOfTheRings.Location.Cards.CursedTempleNightmare
+import LordOfTheRings.Location.Cards.OvergrownPassage
+import LordOfTheRings.Location.Cards.SharpPrecipice
+import LordOfTheRings.Location.Cards.JaggedCavern
+import LordOfTheRings.Location.Cards.SubmergedCrawlway
+import LordOfTheRings.Location.Cards.FloodedCaverns
+import LordOfTheRings.Location.Cards.CityUnderSiege
+import LordOfTheRings.Location.Cards.SeaWall
+import LordOfTheRings.Location.Cards.WarTornWaters
+import LordOfTheRings.Location.Cards.WallsOfUmbar
+import LordOfTheRings.Location.Cards.UmbarBridge
+import LordOfTheRings.Location.Cards.WatchedPath
+import LordOfTheRings.Location.Cards.HuntersLookout
+import LordOfTheRings.Location.Cards.DarkPools
+import LordOfTheRings.Location.Cards.TrollLair
+import LordOfTheRings.Location.Cards.HivesAndHives
+import LordOfTheRings.Location.Cards.DarkWoodGrove
+import LordOfTheRings.Location.Cards.LabyrinthineWoods
+import LordOfTheRings.Location.Cards.PitchDarkThicket
+import LordOfTheRings.Location.Cards.BramblesAndThorns
+import LordOfTheRings.Location.Cards.SarnGebirRapids
+import LordOfTheRings.Location.Cards.TheMereOfDeadFaces
+import LordOfTheRings.Location.Cards.StagnantQuagmire
+import LordOfTheRings.Location.Cards.DeceptivePath
+import LordOfTheRings.Location.Cards.WebWall
+import LordOfTheRings.Location.Cards.BanksOfMorgulduin
+import LordOfTheRings.Location.Cards.EphelDuath
+import LordOfTheRings.Location.Cards.WhiteFloweredFields
+import LordOfTheRings.Location.Cards.EdgeOfIthilien
+import LordOfTheRings.Location.Cards.MountainsOfShadow
+import LordOfTheRings.Location.Cards.DevilsMirk
+import LordOfTheRings.Location.Cards.Eilenach
+import LordOfTheRings.Location.Cards.StonewainValley
+import LordOfTheRings.Location.Cards.BesiegedHomestead
+import LordOfTheRings.Location.Cards.OverrunVillage
+import LordOfTheRings.Location.Cards.PalaceRemains
+import LordOfTheRings.Location.Cards.CrumbledBattlements
+import LordOfTheRings.Location.Cards.EasternQuarter
+import LordOfTheRings.Location.Cards.WesternQuarter
+import LordOfTheRings.Location.Cards.TraitorsDen
+import LordOfTheRings.Location.Cards.RathCelerdain
+import LordOfTheRings.Location.Cards.ArchedTunnel
+import LordOfTheRings.Location.Cards.IcyCavern
+import LordOfTheRings.Location.Cards.FrozenSilverlode
+import LordOfTheRings.Location.Cards.TreacherousBluffs
+import LordOfTheRings.Location.Cards.ConcealedWoods
+import LordOfTheRings.Location.Cards.BanksOfSirannon
+import LordOfTheRings.Location.Cards.HideousDepths
+import LordOfTheRings.Location.Cards.EasternMines
+import LordOfTheRings.Location.Cards.BottomlessChasm
+import LordOfTheRings.Location.Cards.NestOfHorrors
+import LordOfTheRings.Location.Cards.ShiveringRiver
+import LordOfTheRings.Location.Cards.FieryDepths
+import LordOfTheRings.Location.Cards.CrumblingStairs
+import LordOfTheRings.Location.Cards.ShroudedWilderness
+import LordOfTheRings.Location.Cards.SnowyBadlands
+import LordOfTheRings.Location.Cards.PrisonCellNightmare
+import LordOfTheRings.Location.Cards.TortureChamberMountGram
+import LordOfTheRings.Location.Cards.RockyFoothills
+import LordOfTheRings.Location.Cards.VastTrollFells
+import LordOfTheRings.Location.Cards.ForgottenCourtyard
+import LordOfTheRings.Location.Cards.CharredCellar
+import LordOfTheRings.Location.Cards.SecretAntechamber
+import LordOfTheRings.Location.Cards.StrongholdTower
+import LordOfTheRings.Location.Cards.GatesOfCarnDum
+import LordOfTheRings.Location.Cards.InnerSanctum
+import LordOfTheRings.Location.Cards.CursedHalls
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -583,5 +709,136 @@ allLocations =
         , SomeLocationCard gladdenMarshlands
         , SomeLocationCard tortureChamber
         , SomeLocationCard dungeonLabyrinth
+        , SomeLocationCard docksideStreet
+        , SomeLocationCard pelargirAlley
+        , SomeLocationCard ithilienOverlook
+        , SomeLocationCard denseThickets
+        , SomeLocationCard cormallenFields
+        , SomeLocationCard besiegedCourtyard
+        , SomeLocationCard wallsOfCairAndros
+        , SomeLocationCard anduinWharf
+        , SomeLocationCard westernShore
+        , SomeLocationCard easternShore
+        , SomeLocationCard isenRiver
+        , SomeLocationCard methedrasPeak
+        , SomeLocationCard orcTrail
+        , SomeLocationCard tangledForest
+        , SomeLocationCard entwood
+        , SomeLocationCard darkCornerOfFangorn
+        , SomeLocationCard openWaters
+        , SomeLocationCard shatteredSea
+        , SomeLocationCard desecratedGrounds
+        , SomeLocationCard forsakenCity
+        , SomeLocationCard overgrownSteps
+        , SomeLocationCard narelenyaLocation
+        , SomeLocationCard dawnStarLocation
+        , SomeLocationCard silverWingLocation
+        , SomeLocationCard burningTower
+        , SomeLocationCard shrineToMorgothNightmare
+        , SomeLocationCard cursedTempleNightmare
+        , SomeLocationCard drownedGravesNightmare
+        , SomeLocationCard floodedRuinsNightmare
+        , SomeLocationCard lushJungleNightmare
+        , SomeLocationCard northernChetwood
+        , SomeLocationCard outskirtsOfArchet
+        , SomeLocationCard greenwayPath
+        , SomeLocationCard weatherTornValley
+        , SomeLocationCard ruinedWatchTower
+        , SomeLocationCard palaceRuins
+        , SomeLocationCard fornostStreet
+        , SomeLocationCard decrepitCity
+        , SomeLocationCard twistingShadows
+        , SomeLocationCard narrowFissure
+        , SomeLocationCard chamberOfRecords
+        , SomeLocationCard deepMines
+        , SomeLocationCard westernHall
+        , SomeLocationCard shadowedCorridor
+        , SomeLocationCard plainsOfDunland
+        , SomeLocationCard munuvDuvRiver
+        , SomeLocationCard hithaeglirWoods
+        , SomeLocationCard sacredForest
+        , SomeLocationCard hauntedPillars
+        , SomeLocationCard cityOfSpies
+        , SomeLocationCard darkPathway
+        , SomeLocationCard desolateMeadow
+        , SomeLocationCard peatBog
+        , SomeLocationCard bonesOfHollin
+        , SomeLocationCard dustyLabyrinth
+        , SomeLocationCard ravenStronghold
+        , SomeLocationCard highlandsOfDunland
+        , SomeLocationCard sharpJetties
+        , SomeLocationCard cliffsideInlet
+        , SomeLocationCard captainsQuarters
+        , SomeLocationCard aftCabin
+        , SomeLocationCard edgeOfTheTemple
+        , SomeLocationCard desecratedRuinsNightmare
+        , SomeLocationCard templeFoothills
+        , SomeLocationCard cursedTempleOfTheDeceived
+        , SomeLocationCard overgrownPassage
+        , SomeLocationCard sharpPrecipice
+        , SomeLocationCard jaggedCavern
+        , SomeLocationCard submergedCrawlway
+        , SomeLocationCard floodedCaverns
+        , SomeLocationCard cityUnderSiege
+        , SomeLocationCard seaWall
+        , SomeLocationCard warTornWaters
+        , SomeLocationCard wallsOfUmbar
+        , SomeLocationCard umbarBridge
+        , SomeLocationCard watchedPath
+        , SomeLocationCard huntersLookout
+        , SomeLocationCard darkPools
+        , SomeLocationCard trollLair
+        , SomeLocationCard hivesAndHives
+        , SomeLocationCard darkWoodGrove
+        , SomeLocationCard labyrinthineWoods
+        , SomeLocationCard pitchDarkThicket
+        , SomeLocationCard bramblesAndThorns
+        , SomeLocationCard sarnGebirRapids
+        , SomeLocationCard theMereOfDeadFaces
+        , SomeLocationCard stagnantQuagmire
+        , SomeLocationCard deceptivePath
+        , SomeLocationCard webWall
+        , SomeLocationCard banksOfMorgulduin
+        , SomeLocationCard ephelDuath
+        , SomeLocationCard whiteFloweredFields
+        , SomeLocationCard edgeOfIthilien
+        , SomeLocationCard mountainsOfShadow
+        , SomeLocationCard devilsMirk
+        , SomeLocationCard eilenach
+        , SomeLocationCard stonewainValley
+        , SomeLocationCard besiegedHomestead
+        , SomeLocationCard overrunVillage
+        , SomeLocationCard palaceRemains
+        , SomeLocationCard crumbledBattlements
+        , SomeLocationCard easternQuarter
+        , SomeLocationCard westernQuarter
+        , SomeLocationCard traitorsDen
+        , SomeLocationCard rathCelerdain
+        , SomeLocationCard archedTunnel
+        , SomeLocationCard icyCavern
+        , SomeLocationCard frozenSilverlode
+        , SomeLocationCard treacherousBluffs
+        , SomeLocationCard concealedWoods
+        , SomeLocationCard banksOfSirannon
+        , SomeLocationCard hideousDepths
+        , SomeLocationCard easternMines
+        , SomeLocationCard bottomlessChasm
+        , SomeLocationCard nestOfHorrors
+        , SomeLocationCard shiveringRiver
+        , SomeLocationCard fieryDepths
+        , SomeLocationCard crumblingStairs
+        , SomeLocationCard shroudedWilderness
+        , SomeLocationCard snowyBadlands
+        , SomeLocationCard prisonCellNightmare
+        , SomeLocationCard tortureChamberMountGram
+        , SomeLocationCard rockyFoothills
+        , SomeLocationCard vastTrollFells
+        , SomeLocationCard forgottenCourtyard
+        , SomeLocationCard charredCellar
+        , SomeLocationCard secretAntechamber
+        , SomeLocationCard strongholdTower
+        , SomeLocationCard gatesOfCarnDum
+        , SomeLocationCard innerSanctum
+        , SomeLocationCard cursedHalls
         ]
     ]

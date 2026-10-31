@@ -7,6 +7,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers (heroCaptured)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 
 newtype FlightFromMountGram = FlightFromMountGram QuestAttrs
@@ -39,9 +40,13 @@ instance RunMessage FlightFromMountGram where
       FlightFromMountGram <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
       addSetAsideToStaging (cardIs Locations.southernGate)
-      addSetAsideToStaging (cardIs Enemies.jailorGornakh)
+      addSetAsideToStaging (CardMatchAny [cardIs Enemies.jailorGornakh, cardIs Enemies.jailorGornakhNightmare])
       aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
-      shuffleSetAsideIntoEncounterDeck [c | c <- aside, cdEncounterSet (toCardDef c) == Just AngmarOrcs]
+      shuffleSetAsideIntoEncounterDeck [c | c <- aside, cdEncounterSet (toCardDef c) == Just AngmarOrcs || cardMatches (cardIs Enemies.orcOfThaurdir) c]
       revealEncounterCards . length =<< getRemainingPlayers
       pure q
-    _ -> FlightFromMountGram <$> runConditionalStage (selectNone southernGate) msg attrs
+    -- Nightmare: "The players cannot win the game while a hero is captured (underneath an
+    -- encounter card, or in their captured deck)."
+    _ -> FlightFromMountGram <$> runConditionalStage won msg attrs
+   where
+    won = (&&) <$> selectNone southernGate <*> (not <$> ((&&) <$> inNightmareMode <*> heroCaptured))

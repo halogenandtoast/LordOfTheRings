@@ -81,6 +81,8 @@ runSailing msg attrs = case msg of
         found = sum $ map (cdSailingIcons . toCardDef) top
         canceled = if CancelFirstSailingIcon `elem` gameMods then min 1 found else 0
     push $ SailingTestResult top found canceled
+    for_ top \c -> push $ ResolveSailingDiscard c committed
+    push $ SailingTestEnded top committed
     pure $ attrs & encounterDeckL .~ rest & encounterDiscardL .~ discarded
   -- each success icon not canceled shifts the heading on-course, then the cards are
   -- discarded

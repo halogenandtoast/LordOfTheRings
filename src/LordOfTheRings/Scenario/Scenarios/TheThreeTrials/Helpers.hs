@@ -18,6 +18,9 @@ module LordOfTheRings.Scenario.Scenarios.TheThreeTrials.Helpers (
   keyAbilities,
   runKey,
   runTrial,
+  guardianAwake,
+  spiritEngages,
+  sharingClanTrait,
 ) where
 
 import Data.Aeson.Types (parseMaybe)
@@ -34,7 +37,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.Claim (claimObjective)
 import LordOfTheRings.Objective.Runner (Objective, ObjectiveAttrs (..))
-import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Placement (Placement (AttachedTo), placementController)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Runner (QuestAttrs (..))
 import LordOfTheRings.Queue (QueueT)
@@ -152,3 +155,26 @@ runTrial onDefeat msg attrs = case msg of
       completeQuest attrs.questId
     pure attrs
   _ -> runMessage msg attrs
+
+-- | "If <Guardian> is in play or in the victory display", as a nightmare Spirit reads.
+guardianAwake :: HasGame m => CardDef -> m Bool
+guardianAwake guardian = do
+  inPlay <- selectAny (EnemyWithCardCode $ toCardCode guardian)
+  won <- getsGame (any ((== toCardCode guardian) . toCardCode) . (.victoryDisplay) . toAttrs . (.scenario))
+  pure $ inPlay || won
+
+{- | "Forced: At the beginning of the encounter phase, <Spirit> engages the player who
+controls <its Key> or is engaged with <its Guardian>, if able."
+-}
+spiritEngages :: ReverseQueue m => EnemyId -> CardDef -> CardDef -> m ()
+spiritEngages eid spirit guardian = do
+  holder <- keyHolder spirit
+  guardians <- traverse getEnemy =<< select (EnemyWithCardCode $ toCardCode guardian)
+  spiritAt <- placementController . (.placement) <$> getEnemy eid
+  for_ (holder <|> headMay (mapMaybe (placementController . (.placement)) guardians)) \pid ->
+    unless (spiritAt == Just pid) $ engageEnemy pid eid
+
+-- | An enemy sharing a Boar, Wolf or Raven Trait with any of the cards.
+sharingClanTrait :: [CardDef] -> EnemyMatcher
+sharingClanTrait defs =
+  NotEnemy $ EnemyMatchAll [NotEnemy (EnemyWithTrait t) | t <- clanTraits, any (member t . cdCardTraits) defs]

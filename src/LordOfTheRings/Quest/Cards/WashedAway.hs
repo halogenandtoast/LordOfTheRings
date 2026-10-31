@@ -2,12 +2,12 @@ module LordOfTheRings.Quest.Cards.WashedAway (washedAway) where
 
 import LordOfTheRings.Card (CardDef (..), CardType (EnemyType, TreacheryType), genEncounterCard, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.EncounterSet (EncounterSet (FoundationsOfStone))
+import LordOfTheRings.EncounterSet (EncounterSet (FoundationsOfStone, FoundationsOfStoneNightmare))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers (stageFourRevealed, stageFours)
-import LordOfTheRings.Trait (Trait (Armor, Item, Light, Weapon))
+import LordOfTheRings.Trait (Trait (Armor, Artifact, Item, Light, Mount, Weapon))
 
 newtype WashedAway = WashedAway QuestAttrs
   deriving anyclass (IsQuest, HasAbilities, HasModifiersFor)
@@ -32,6 +32,16 @@ instance RunMessage WashedAway where
       askToResolveWhenRevealed attrs
       WashedAway <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
+      -- Nightmare: "Forced: When stage 3B is revealed, discard all Mount and Artifact cards
+      -- from play. Each player must also discard allies he controls until the total printed
+      -- cost of allies he controls is 6 or less."
+      nightmare <- inNightmareMode
+      when nightmare do
+        es <- getsGame (.entities)
+        let mounted c = any (`member` cdCardTraits (toCardDef c)) [Mount, Artifact]
+        for_ (filter mounted $ toList es.attachments) discard
+        for_ (filter mounted $ toList es.objectives) discard
+        doStep 2 msg
       entities <- getsGame (.entities)
       let washed c = any (`member` cdCardTraits (toCardDef c)) [Item, Armor, Weapon, Light]
       for_ (filter washed $ toList entities.attachments) discard
@@ -41,6 +51,19 @@ instance RunMessage WashedAway where
       for_ entities.objectives removeFromGame
       doStep 1 msg
       pure q
+    -- each player over 6 discards an ally of his choice, then it is counted again
+    DoStep 2 (WhenRevealed (isTarget attrs -> True)) -> do
+      players <- getRemainingPlayers
+      over <- flip filterM players \p -> do
+        allies <- traverse getAlly =<< select (AllyControlledBy $ PlayerWithId p)
+        pure $ sum (map printedCostOf allies) > 6
+      for_ (take 1 over) \p -> do
+        allies <- select (AllyControlledBy $ PlayerWithId p)
+        chooseOneM p do
+          questionLabeled "washedAway.discardAlly"
+          causedBy attrs
+          targets allies \a -> discard a >> doStep 2 msg
+      pure q
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       scenario <- getsGame (toAttrs . (.scenario))
       let kept c = cdCardType (toCardDef c) `elem` [EnemyType, TreacheryType]
@@ -48,7 +71,7 @@ instance RunMessage WashedAway where
       traverse_ removeFromEncounterDiscard (filter (not . kept) scenario.encounterDiscard)
       shuffleEncounterDiscardIntoDeck AnyCard
       shuffleSetAsideIntoEncounterDeck
-        [c | c <- scenarioSetAside scenario, cdEncounterSet (toCardDef c) == Just FoundationsOfStone]
+        [c | c <- scenarioSetAside scenario, cdEncounterSet (toCardDef c) `elem` map Just [FoundationsOfStone, FoundationsOfStoneNightmare]]
       players <- getRemainingPlayers
       drawn <- zip players <$> shuffleM stageFours
       -- each player creates his own staging area, and resolves his stage there

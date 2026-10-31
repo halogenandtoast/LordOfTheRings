@@ -13,6 +13,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (..))
 import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode)
 import LordOfTheRings.Scenario (acrossTheEttenmoors, deadmensDike, intrudersInChetwood, theBattleOfCarnDum, theDreadRealm, theTreacheryOfRhudaur, theWastesOfEriador, theWeatherHills)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -106,6 +107,12 @@ spec = describe "Angmar Awakened campaign" do
       damageOn Quests.protectTheInnocent `shouldReturn` 4
       run $ PlaceTokens GameSource (toTarget q) Damage 6
       getsGame (.outcome) `shouldReturn` Just Lost
+
+  describe "in nightmare mode" do
+    it "builds the nightmare deck and still shuffles the campaign's burdens in" . campaignTestIn (overAttrs (\a -> a {scenarioMode = NightmareMode}) theWeatherHills) angmar testDeck $ \_ -> do
+      run $ DoStep 1 Setup
+      run $ DoStep 2 Setup
+      map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` elem (toCardCode Quests.mysteriousOmens))
 
   describe "The Weather Hills" do
     it "shuffles Mysterious Omens into the encounter deck and the pool" . campaignTestIn theWeatherHills angmar testDeck $ \_ -> do

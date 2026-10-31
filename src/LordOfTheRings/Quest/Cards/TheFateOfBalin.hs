@@ -1,7 +1,8 @@
 module LordOfTheRings.Quest.Cards.TheFateOfBalin (theFateOfBalin) where
 
 import LordOfTheRings.Card (CardType (EnemyType), cdCardType, toCardCode, toCardDef)
-import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -20,7 +21,9 @@ instance HasAbilities TheFateOfBalin where
   getAbilities (TheFateOfBalin a) = [mkAbility a 1 $ forced StagingStepEndsWindow]
 
 -- | When Revealed: Remove Book of Mazarbul from the game.
--- If the players defeat this stage, they win the game.
+-- If the players defeat this stage, they win the game. In nightmare mode Overseer Maurûl
+-- reads: "The players cannot win the game unless Overseer Maurûl is in the victory
+-- display", so its progress piles up until he is.
 instance RunMessage TheFateOfBalin where
   runMessage msg q@(TheFateOfBalin attrs) = case msg of
     Flip (isTarget attrs -> True) -> do
@@ -37,4 +40,16 @@ instance RunMessage TheFateOfBalin where
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
       traverse_ addToStagingFromDiscard [c | c <- cards, cdCardType (toCardDef c) == EnemyType]
       pure q
-    _ -> TheFateOfBalin <$> runMessage msg attrs
+    -- a defeated enemy with victory points goes straight to the victory display
+    CheckWindows ws | any (\case Window After (EnemyDefeated _) -> True; _ -> False) ws -> do
+      checkStage attrs.id
+      stage
+    _ -> stage
+   where
+    stage = TheFateOfBalin <$> runConditionalStage mayWin msg attrs
+
+mayWin :: HasGame m => m Bool
+mayWin = do
+  nightmare <- inNightmareMode
+  overseer <- getsGame (any ((== toCardCode Enemies.overseerMaurul) . toCardCode) . (.victoryDisplay) . toAttrs . (.scenario))
+  pure $ not nightmare || overseer

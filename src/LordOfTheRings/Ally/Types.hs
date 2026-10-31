@@ -191,3 +191,9 @@ instance HasField "damage" AllyAttrs Int where
 
 instance HasField "damage" Ally Int where
   getField = (.damage) . toAttrs
+
+instance HasField "resources" AllyAttrs Int where
+  getField = countTokens Resource . allyTokens
+
+instance HasField "resources" Ally Int where
+  getField = (.resources) . toAttrs

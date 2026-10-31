@@ -5,6 +5,7 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Trait (Trait (Goblin))
+import LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers (lostTriggered)
 
 newtype AbandonedMine = AbandonedMine LocationAttrs
   deriving anyclass (IsLocation, HasAbilities, HasModifiersFor)
@@ -17,7 +18,7 @@ abandonedMine = location AbandonedMine Cards.abandonedMine
 -- area, if able.
 instance RunMessage AbandonedMine where
   runMessage msg l@(AbandonedMine attrs) = case msg of
-    TriggerLostEffects _ -> do
+    _ | lostTriggered attrs msg -> do
       pile <- getsGame ((.encounterDiscard) . toAttrs . (.scenario))
       let goblins = take 2 $ filter (cardMatches $ CardWithTrait Goblin <> CardWithType EnemyType) pile
       -- "if able": with fewer than 2 the effect is ignored (ruling 3.101)

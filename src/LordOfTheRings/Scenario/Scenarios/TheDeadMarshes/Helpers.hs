@@ -5,6 +5,8 @@ import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.Entity (toId)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Id (ObjectiveId)
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Prelude
@@ -14,6 +16,12 @@ import LordOfTheRings.Source (Sourceable)
 getGollum :: (HasGame m) => m (Maybe ObjectiveId)
 getGollum = getsGame (fmap toId . find ((== toCardCode Objectives.gollumTheDeadMarshes) . toCardCode) . toList . (.entities.objectives))
 
--- | Place resource tokens on Gollum, if he is in play.
+-- | Place resource tokens on Gollum, if he is in play; else on The Mere of Dead Faces, if
+-- it is, as its nightmare text reads.
 placeOnGollum :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
-placeOnGollum source n = getGollum >>= traverse_ \g -> placeResources source g n
+placeOnGollum source n =
+  getGollum >>= \case
+    Just g -> placeResources source g n
+    Nothing -> do
+      mere <- select (LocationWithCardCode $ toCardCode Locations.theMereOfDeadFaces)
+      for_ mere \m -> placeResources source m n

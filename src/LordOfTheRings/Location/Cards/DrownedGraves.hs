@@ -1,4 +1,4 @@
-module LordOfTheRings.Location.Cards.DrownedGraves (drownedGraves) where
+module LordOfTheRings.Location.Cards.DrownedGraves (drownedGraves, drownedGravesNightmare) where
 
 import LordOfTheRings.Card (CardType (EnemyType), cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Location.CardDefs qualified as Cards
@@ -12,6 +12,10 @@ newtype DrownedGraves = DrownedGraves LocationAttrs
 
 drownedGraves :: LocationCard DrownedGraves
 drownedGraves = location DrownedGraves Cards.drownedGraves
+
+-- | The Fate of Númenor Nightmare Deck's reprint, the same text.
+drownedGravesNightmare :: LocationCard DrownedGraves
+drownedGravesNightmare = location DrownedGraves Cards.drownedGravesNightmare
 
 -- | Forced: After Drowned Graves is flipped over while active, discard the top X cards of
 -- the encounter deck. Each player adds an Undead enemy discarded by this effect to the

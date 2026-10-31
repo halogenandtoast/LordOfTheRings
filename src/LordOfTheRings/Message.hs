@@ -41,7 +41,11 @@ data Drawing = Drawing
   deriving anyclass (FromJSON, ToJSON)
 
 -- | What characters count toward an escape test.
-data EscapeStat = EscapeWillpower | EscapeAttack
+data EscapeStat
+  = EscapeWillpower
+  | EscapeAttack
+  | -- | as Swarming Mosquitoes' test counts defense
+    EscapeDefense
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
@@ -262,6 +266,9 @@ data Message
   | PutObjectiveIntoPlay EncounterCard
   | -- | an objective card comes into play attached to the hero, as a setup attaches it
     PutObjectiveIntoPlayAttached EncounterCard Target
+  | -- | an objective card comes into the staging area guarded by the card, as The Enemy's
+    -- Trail attaches a Clue card to a Mordor enemy
+    PutObjectiveIntoPlayGuardedBy EncounterCard CardId
   | -- | the card leaves play for good; an objective, as Book of Mazarbul, or a location
     RemoveFromGame Target
   | -- | a stage leaves the quest deck unplayed, as exploring The Banks removes stage 2
@@ -354,6 +361,11 @@ data Message
     LocateTest Source [Message] [Message]
   | -- | every "Lost:" effect in play triggers (The Long Dark)
     TriggerLostEffects Source
+  | -- | the "Lost:" effect of one card in play triggers, the scenario's for its setup card's
+    TriggerLostEffectOf Source Target
+  | -- | each player in turn chooses and triggers a "Lost:" effect in play, one not among
+    -- those already chosen (The Long Dark)
+    ChooseLostEffects Source [PlayerId] [Target]
   | {- | the player switches a card in hand with one in their deck, each taking the other's
     place
     -}
@@ -572,6 +584,12 @@ data Message
     ResolveSailingTest [Target]
   | -- | the cards the Sailing test looked at: the success icons found, and those canceled
     SailingTestResult [EncounterCard] Int Int
+  | -- | a card the Sailing test discarded, with the characters committed to it: one with an
+    -- asterisk by its sailing icon has a Forced effect for it (The Grey Havens Nightmare)
+    ResolveSailingDiscard EncounterCard [Target]
+  | -- | the Sailing test is over: the cards it discarded and the characters committed to
+    -- it, for a card's "*Forced: After this Sailing test ends" (Dream-chaser Nightmare)
+    SailingTestEnded [EncounterCard] [Target]
   | -- | the non-Ship enemies leave the encounter deck for the Corsair deck, shuffled
     PrepareCorsairDeck
   | -- | the top card of the Corsair deck is revealed and put into play engaged with the
@@ -618,12 +636,18 @@ data Message
     AddUnderwaterFromGrottoDeck
   | -- | the location leaves play for the Grotto deck, Grotto side up, which is shuffled
     ShuffleIntoGrottoDeck LocationId
+  | -- | the card, out of play, goes to the bottom of the Grotto deck, Grotto side up, as
+    -- Flooded Caverns returns one from the victory display
+    PutOnBottomOfGrottoDeck EncounterCard
   | -- | the Uncharted location cards are laid out as the Island Map, each in its place, Lost
     -- Island or Temple side faceup (Temple of the Deceived)
     PrepareIslandMap [(Pos, EncounterCard)]
   | -- | the locations on the Island Map orthogonally adjacent to the active location are
     -- in the staging area, the others are not, as the active location changes or turns over
     ArrangeIslandMap
+  | -- | the two locations on the Island Map switch places, as Deceitful Island switches the
+    -- active location with one next to it
+    SwapIslandMapPositions LocationId LocationId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

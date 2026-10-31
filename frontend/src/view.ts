@@ -265,8 +265,9 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ...placed('objectives', isAt('StagingArea')).filter((o) => o.attachedTo === null),
     // a Trap waits in staging until an enemy walks into it
     ...placed('attachments', isAt('StagingArea')),
-    // a treachery shows in staging while it resolves, until it attaches or is discarded
-    ...placed('treacheries', isAt('Unplaced')),
+    // a treachery shows in staging while it resolves, until it attaches or is discarded,
+    // and stays there when it is added to it, as Blinding Blizzard
+    ...placed('treacheries', (e) => isAt('Unplaced')(e) || isAt('StagingArea')(e)),
     // a side quest waits in staging until it is defeated
     ...placed('quests', isSideQuest),
   ]

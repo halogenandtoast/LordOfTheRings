@@ -33,7 +33,7 @@ instance RunMessage Miruvor where
                 | pid == a.owner -> push $ PutDiscardOnTopOfDeck pid a.cardId
                 | otherwise -> do
                     removeFromDiscard a.owner a.cardId
-                    push $ PutOnTopOfDeck pid (toCard a)
+                    putOnTopOfDeck pid (toCard a)
             key :: Int -> Text
             key = \case
               1 -> "miruvor.ready"

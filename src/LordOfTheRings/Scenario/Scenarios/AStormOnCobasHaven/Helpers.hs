@@ -7,6 +7,7 @@ module LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven.Helpers (
   unguardedObjectives,
   guardingCards,
   notGuarding,
+  mayGuard,
   objectiveWithCardId,
   dolAmrothObjectivesToSearch,
   raiderFlagship,
@@ -68,6 +69,14 @@ notGuarding eids = do
   guards <- guardingCards
   es <- getsGame (entitiesEnemies . gameEntities)
   pure [eid | eid <- eids, maybe True ((`notElem` guards) . (.id) . toCard) (Map.lookup eid es)]
+
+-- | The enemies among these free to guard an objective: guarding none, and in nightmare
+-- mode not Raider Flagship ("Raider Flagship cannot guard objectives").
+mayGuard :: HasGame m => [EnemyId] -> m [EnemyId]
+mayGuard eids = do
+  nightmare <- inNightmareMode
+  flagships <- if nightmare then select raiderFlagship else pure []
+  filter (`notElem` flagships) <$> notGuarding eids
 
 objectiveWithCardId :: HasGame m => CardId -> m (Maybe ObjectiveId)
 objectiveWithCardId cid = fmap (.id) . find ((== cid) . objectiveCardId . toAttrs) <$> objectives

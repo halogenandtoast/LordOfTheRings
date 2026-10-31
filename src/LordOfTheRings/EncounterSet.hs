@@ -4,44 +4,61 @@ import LordOfTheRings.Prelude
 
 data EncounterSet
   = AJourneyToRhosgobel
+  | AJourneyToRhosgobelNightmare
   | AStormOnCobasHaven
+  | AStormOnCobasHavenNightmare
   | AcrossTheEttenmoors
+  | AcrossTheEttenmoorsNightmare
   | AncientForest
   | AngmarOrcs
   | AngmarAwakenedCampaign
   | AssaultOnOsgiliath
+  | AssaultOnOsgiliathNightmare
   | Brigands
   | BrokenLands
   | BroodingForest
   | CelebrimborsSecret
+  | CelebrimborsSecretNightmare
   | ConflictAtTheCarrock
+  | ConflictAtTheCarrockNightmare
   | CoastOfUmbar
+  | CoastOfUmbarNightmare
   | CorsairPirates
   | CorsairRaiders
   | CreaturesOfTheForest
   | CursedDead
   | DarkSorcery
   | DeadmensDike
+  | DeadmensDikeNightmare
   | DeepsOfMoria
   | DolGuldurOrcs
   | DrownedDead
   | DunlandRaiders
   | DunlandWarriors
   | EncounterAtAmonDin
+  | EncounterAtAmonDinNightmare
   | EriadorWilds
   | EscapeFromDolGuldur
   | EscapeFromDolGuldurNightmare
   | EscapeFromMountGram
+  | EscapeFromMountGramNightmare
   | FlightFromMoria
+  | FlightFromMoriaNightmare
   | FlightOfTheStormcaller
+  | FlightOfTheStormcallerNightmare
   | FoulWeather
   | FoundationsOfStone
+  | FoundationsOfStoneNightmare
   | GoblinsOfTheDeep
   | HazardsOfThePit
   | IntoFangorn
+  | IntoFangornNightmare
   | IntoIthilien
+  | IntoIthilienNightmare
   | IntoThePit
+  | IntoThePitNightmare
   | IntrudersInChetwood
+  | IntrudersInChetwoodNightmare
   | JourneyAlongTheAnduin
   | JourneyAlongTheAnduinNightmare
   | MistyMountainOrcs
@@ -52,58 +69,93 @@ data EncounterSet
   | JourneyAlongTheAnduinCampaign
   | PassageThroughMirkwoodNightmare
   | PerilInPelargir
+  | PerilInPelargirNightmare
   | PlunderingGoblins
   | RaidOnTheGreyHavens
+  | RaidOnTheGreyHavensNightmare
   | RavagingOrcs
   | ReturnToMirkwood
+  | ReturnToMirkwoodNightmare
   | RoadToRivendell
+  | RoadToRivendellNightmare
   | RuinsOfArnor
   | RuinsOfNumenor
   | SauronsReach
   | ShadowAndFlame
+  | ShadowAndFlameNightmare
   | Southrons
   | SpidersOfMirkwood
   | StormyWeather
   | StreetsOfGondor
   | TempleOfTheDeceived
+  | TempleOfTheDeceivedNightmare
   | TheAntleredCrown
+  | TheAntleredCrownNightmare
   | TheBattleOfCarnDum
+  | TheBattleOfCarnDumNightmare
   | TheBloodOfGondor
+  | TheBloodOfGondorNightmare
   | TheCityOfCorsairs
+  | TheCityOfCorsairsNightmare
   | TheDeadMarshes
+  | TheDeadMarshesNightmare
   | TheDreadRealm
+  | TheDreadRealmNightmare
   | TheDreamChasersFleet
   | TheDrownedRuins
+  | TheDrownedRuinsNightmare
   | TheDruadanForest
+  | TheDruadanForestNightmare
   | TheDunlandTrap
+  | TheDunlandTrapNightmare
   | TheFateOfNumenor
+  | TheFateOfNumenorNightmare
   | TheFordsOfIsen
+  | TheFordsOfIsenNightmare
   | TheHillsOfEmynMuil
+  | TheHillsOfEmynMuilNightmare
   | TheHuntForGollum
+  | TheHuntForGollumNightmare
   | TheLongDark
+  | TheLongDarkNightmare
   | TheLostRealm
   | TheMorgulVale
+  | TheMorgulValeNightmare
   | TheNinInEilph
+  | TheNinInEilphNightmare
   | TheRedhornGate
+  | TheRedhornGateNightmare
   | TheSeventhLevel
+  | TheSeventhLevelNightmare
   | TheSiegeOfCairAndros
+  | TheSiegeOfCairAndrosNightmare
   | TheStewardsFear
+  | TheStewardsFearNightmare
   | -- | Helm of the Stormcaller and the decks of the Stormcaller, which cards.json lumps
     -- under The Thing in the Depths
     TheStormcaller
   | TheStormcallerElite
   | TheThingInTheDepths
+  | TheThingInTheDepthsNightmare
   | TheThreeTrials
+  | TheThreeTrialsNightmare
   | TheTreacheryOfRhudaur
+  | TheTreacheryOfRhudaurNightmare
   | TheWastesOfEriador
+  | TheWastesOfEriadorNightmare
   | TheWatcherInTheWater
+  | TheWatcherInTheWaterNightmare
   | TheWeatherHills
+  | TheWeatherHillsNightmare
   | ToCatchAnOrc
+  | ToCatchAnOrcNightmare
   | TroubleInTharbad
+  | TroubleInTharbadNightmare
   | TwistsAndTurns
   | UmbarNavy
   | VastOceans
   | VoyageAcrossBelegaer
+  | VoyageAcrossBelegaerNightmare
   | WearyTravelers
   | Wilderlands
   deriving stock (Show, Eq, Ord, Generic)

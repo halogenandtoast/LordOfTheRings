@@ -4,18 +4,47 @@ import Data.Aeson.Types (parseMaybe)
 import Data.List (nubBy)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByPlayerCards))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheAntleredCrown.Helpers
 import LordOfTheRings.Source (Source, sourceTarget)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype TheAntleredCrown = TheAntleredCrown ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theAntleredCrown :: Scenario
-theAntleredCrown = Scenario $ scenario TheAntleredCrown "the-antlered-crown" "The Antlered Crown"
+theAntleredCrown =
+  Scenario
+    $ scenario (TheAntleredCrown . (nightmareDeckL ?~ nightmare)) "the-antlered-crown" "The Antlered Crown"
+ where
+  -- Dunlending Horde joins the Raven deck, as 'isRavenCard' reads
+  nightmare =
+    nightmareDeck
+      Nightmare.theAntleredCrownNightmare
+      EncounterSet.TheAntleredCrownNightmare
+      [ (Enemies.dunlandProwler, 1)
+      , (Enemies.dunlandBerserker, 1)
+      , (Enemies.dunlendingBandit, 2)
+      , (Enemies.ravenSkirmisher, 3)
+      , (Locations.ravenWarCamp, 3)
+      , (Treacheries.drivenBack, 2)
+      ]
+
+-- | Nightmare: "Locations with time counters on them cannot be discarded from play by player
+-- card effect."
+instance HasModifiersFor TheAntleredCrown where
+  getModifiersFor (TheAntleredCrown a) = when a.nightmare do
+    locations <- select AnyLocation
+    for_ locations \l -> do
+      counters <- getTimeCounters (toTarget l)
+      when (counters > 0) $ modified a l [CannotBeDiscardedByPlayerCards]
 
 {- | The Raven deck (rules insert): the enemies of Dunland Raiders and Dunland Warriors leave
 the encounter deck for a deck of their own. A card revealed from it is staged as if
@@ -27,8 +56,8 @@ instance RunMessage TheAntleredCrown where
   runMessage msg (TheAntleredCrown attrs') = case msg of
     DoStep 1 Setup -> do
       cards <-
-        concatMapM
-          (gatherEncounterSet attrs)
+        gatherEncounterSets
+          attrs
           [EncounterSet.TheAntleredCrown, EncounterSet.DunlandRaiders, EncounterSet.DunlandWarriors]
       let (raven, encounterDeck) = partition isRavenCard cards
       deck <- shuffleM raven

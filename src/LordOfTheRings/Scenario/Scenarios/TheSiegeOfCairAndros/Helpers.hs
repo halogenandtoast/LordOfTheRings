@@ -4,6 +4,8 @@ module LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros.Helpers (
   lowestThreatBattleground,
   besiegerShadow,
   runBattleground,
+  runNightmareBattleground,
+  chooseBattleground,
 ) where
 
 import LordOfTheRings.Card (CardDef, cdCardCode, cdQuestPoints, toCardDef)
@@ -65,3 +67,28 @@ runBattleground stage msg attrs = case msg of
         labeled "battleground.keep" $ pure ()
     runMessage msg attrs
   _ -> runMessage msg attrs
+
+{- | A nightmare Battleground: "If it has as much damage as its quest points, discard it
+and" the effect follows.
+-}
+runNightmareBattleground
+  :: QueueT Message GameT () -> Message -> LocationAttrs -> QueueT Message GameT LocationAttrs
+runNightmareBattleground effect msg attrs = case msg of
+  PlaceTokens _ (isTarget attrs -> True) Damage _ -> do
+    attrs' <- runMessage msg attrs
+    when (attrs'.damage >= fromMaybe 0 (cdQuestPoints $ toCardDef attrs)) do
+      discard attrs
+      effect
+    pure attrs'
+  _ -> runMessage msg attrs
+
+-- | The player chooses a Battleground location in play for the effect, if there is one.
+chooseBattleground
+  :: (ReverseQueue m, Targetable source)
+  => source -> PlayerId -> (LocationId -> QueueT Message m ()) -> m ()
+chooseBattleground source pid effect = do
+  battlegrounds <- select (LocationWithTrait Battleground)
+  chooseOrRunOneM pid do
+    questionLabeled "theSiegeOfCairAndrosNightmare.battleground"
+    causedBy source
+    targets battlegrounds effect

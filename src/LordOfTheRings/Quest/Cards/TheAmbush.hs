@@ -36,7 +36,7 @@ instance RunMessage TheAmbush where
       pure q
     PerformSetup (isTarget attrs -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      let setUp = map toCardCode [Locations.theCrossroads, Enemies.blackNumenorean, Objectives.faramirObjective, Objectives.lordAlcaronTheBloodOfGondor]
+      let setUp = map toCardCode [Locations.theCrossroads, Enemies.blackNumenorean, Enemies.blackNumenoreanNightmare, Objectives.faramirObjective, Objectives.lordAlcaronTheBloodOfGondor]
       -- the objective allies come under the first player's control as they are added
       for_ (filter ((`elem` setUp) . toCardCode) deck) \card -> do
         removeFromEncounterDeck card

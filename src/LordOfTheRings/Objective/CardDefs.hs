@@ -69,6 +69,7 @@ allObjectiveCards =
       , iarion
       , huntingTheOrcs
       , savageCounterattack
+      , captiveVillager
       , amarthiulAcrossTheEttenmoors
       , amarthiulTheTreacheryOfRhudaur
       , daechanarsBrand
@@ -84,11 +85,17 @@ allObjectiveCards =
       , theHavensBurn
       , gateKey
       , dolAmrothWarship
+      , aearlang
+      , docksOfDolAmroth
+      , theCursedSword
       , corsairSkirmisherShip
       , seaWardTower
       , towerOfTheGull
       , theBeacon
       , towerOfTheHeron
+      , riseToPower
+      , assassination
+      , theCabalsChampion
       ]
 
 durinsAxe :: CardDef
@@ -598,3 +605,55 @@ thaurdirsMajesty = (unique $ objective "AAC169" "Thaurdir's Majesty" AngmarAwake
 
 thaurdirsSpite :: CardDef
 thaurdirsSpite = (unique $ objective "AAC170" "Thaurdir's Spite" AngmarAwakenedCampaign 1) {cdCardTraits = setFromList [Burden]}
+-- The Lost Realm Nightmare Decks
+
+-- | Shuffled into the Orc deck in Nightmare mode, it comes into play guarded by the Orc
+-- deck's top card: free of encounters, the first player gains control of it.
+captiveVillager :: CardDef
+captiveVillager =
+  ((objective "the-lost-realm-nightmare-the-weather-hills-012" "Captive Villager" TheWeatherHillsNightmare 3)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 0, cdAttack = Just 0, cdDefense = Just 1, cdHitPoints = Just 2 })
+    { cdCardTraits = setFromList [Bree]
+    }
+
+-- Dream-chaser Nightmare Decks
+
+aearlang :: CardDef
+aearlang =
+  unique
+    (objective "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-002" "Aearlang" AStormOnCobasHavenNightmare 1)
+      { cdCardTraits = setFromList [DolAmroth, Besieged]
+      , cdKeywords = setFromList [Guarded]
+      , cdSailingIcons = 1
+      }
+
+docksOfDolAmroth :: CardDef
+docksOfDolAmroth =
+  unique
+    (objective "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-003" "Docks of Dol Amroth" AStormOnCobasHavenNightmare 1)
+      { cdCardTraits = setFromList [DolAmroth, Besieged]
+      , cdKeywords = setFromList [Guarded]
+      , cdSailingIcons = 1
+      }
+
+theCursedSword :: CardDef
+theCursedSword =
+  unique
+    (objective "the-city-of-corsairs-nightmare-the-city-of-corsairs-007" "The Cursed Sword" TheCityOfCorsairsNightmare 1)
+      { cdCardTraits = setFromList [Artifact, Item, Cursed]
+      }
+
+-- The Steward's Fear Nightmare
+
+riseToPower :: CardDef
+riseToPower = (objective "the-stewards-fear-nightmare-the-stewards-fear-002" "Rise to Power" TheStewardsFearNightmare 1) {cdCardTraits = setFromList [Plot]}
+
+assassination :: CardDef
+assassination = (objective "the-stewards-fear-nightmare-the-stewards-fear-003" "Assassination" TheStewardsFearNightmare 1) {cdCardTraits = setFromList [Plot]}
+
+theCabalsChampion :: CardDef
+theCabalsChampion =
+  (objective "the-stewards-fear-nightmare-the-stewards-fear-010" "The Cabal's Champion" TheStewardsFearNightmare 3)
+    { cdCardTraits = setFromList [Title]
+    , cdKeywords = setFromList [Surge, Doomed 1]
+    }
