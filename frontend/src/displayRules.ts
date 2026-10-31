@@ -1,12 +1,11 @@
 // What to show of content still being worked on, as in Arkham: alpha is playable by those
-// who have opened ?alpha once, beta by beta users, and both show to everyone else as
-// unplayable. Dev content shows only in a dev build with alpha on. Unimplemented content
+// who have opened ?alpha once, and shows to everyone else as unplayable. Beta is playable
+// by everyone, with a warning that it may have bugs. Dev content shows only in a dev build with alpha on. Unimplemented content
 // shows only in a dev build, and cannot be chosen.
 export type Gateable = { alpha?: boolean; beta?: boolean; dev?: boolean; unimplemented?: boolean }
 
 export type DisplayRuleOptions = {
   alpha: boolean
-  beta: boolean
   dev: boolean
 }
 
@@ -20,7 +19,6 @@ export const shouldDisplay = (item: Gateable, { alpha, dev }: DisplayRuleOptions
 
 export const canPlay = (item: Gateable, options: DisplayRuleOptions) => {
   if (item.unimplemented) return false
-  if (item.beta) return options.beta
   if (item.alpha) return options.alpha
   return shouldDisplay(item, options)
 }

@@ -74,6 +74,7 @@
   },
   "newGame": {
     "title": "New Game",
+    "betaWarning": "This scenario is in beta: expect bugs. Please report any you find.",
     "campaign": "Campaign",
     "scenarioCount": "{count} scenario | {count} scenarios",
     "playableCount": "{count} playable",

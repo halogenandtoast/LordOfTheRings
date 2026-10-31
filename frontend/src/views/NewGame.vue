@@ -16,7 +16,6 @@ const { t } = useI18n()
 const router = useRouter()
 const displayRules = {
   alpha: alphaEnabled(useRoute().query),
-  beta: currentUser.value?.beta === true,
   dev: isDevBuild(),
 }
 // the campaigns with something to show, and only what they have to show
@@ -196,6 +195,7 @@ const create = async () => {
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ $t('common.game') }}</h3>
+            <p v-if="selectedScenario.beta" class="beta-warning">{{ $t('newGame.betaWarning') }}</p>
             <p v-if="asCampaign && selectedCampaign" class="hint">{{ $t('campaignMode.startHint', { campaign: selectedCampaign.name }) }}</p>
             <label>
               {{ $t('newGame.gameName') }}
@@ -476,6 +476,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }
+.beta-warning { margin: 0; padding: 8px 12px; border-left: 4px solid darkgoldenrod; background: color-mix(in srgb, darkgoldenrod 15%, transparent); }
 
 
 
