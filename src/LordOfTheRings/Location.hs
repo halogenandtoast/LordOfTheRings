@@ -271,6 +271,9 @@ import LordOfTheRings.Location.Cards.AFloodedFord
 import LordOfTheRings.Location.Cards.GladdenMarshlands
 import LordOfTheRings.Location.Cards.TortureChamber
 import LordOfTheRings.Location.Cards.DungeonLabyrinth
+import LordOfTheRings.Location.Cards.PlainsOfDunland
+import LordOfTheRings.Location.Cards.MunuvDuvRiver
+import LordOfTheRings.Location.Cards.HithaeglirWoods
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -583,5 +586,8 @@ allLocations =
         , SomeLocationCard gladdenMarshlands
         , SomeLocationCard tortureChamber
         , SomeLocationCard dungeonLabyrinth
+        , SomeLocationCard plainsOfDunland
+        , SomeLocationCard munuvDuvRiver
+        , SomeLocationCard hithaeglirWoods
         ]
     ]

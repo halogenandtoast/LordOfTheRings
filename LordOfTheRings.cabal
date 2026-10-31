@@ -397,6 +397,8 @@ library
       LordOfTheRings.Enemy.Cards.BlackNumenorean
       LordOfTheRings.Enemy.Cards.BlackUruks
       LordOfTheRings.Enemy.Cards.BloodThirstyWarg
+      LordOfTheRings.Enemy.Cards.BoarClanAmbusher
+      LordOfTheRings.Enemy.Cards.BoarClanSkirmisher
       LordOfTheRings.Enemy.Cards.BoarClanStalker
       LordOfTheRings.Enemy.Cards.BoarClanWarrior
       LordOfTheRings.Enemy.Cards.BoarsGuardian
@@ -999,6 +1001,7 @@ library
       LordOfTheRings.Location.Cards.HillsOfDunland
       LordOfTheRings.Location.Cards.HithaeglirFoothills
       LordOfTheRings.Location.Cards.HithaeglirStream
+      LordOfTheRings.Location.Cards.HithaeglirWoods
       LordOfTheRings.Location.Cards.HousesOfTheDead
       LordOfTheRings.Location.Cards.ImpassableBog
       LordOfTheRings.Location.Cards.IthilienRoad
@@ -1021,6 +1024,7 @@ library
       LordOfTheRings.Location.Cards.MountainsOfMirkwood
       LordOfTheRings.Location.Cards.MugashsLair
       LordOfTheRings.Location.Cards.MunuvDuvRavine
+      LordOfTheRings.Location.Cards.MunuvDuvRiver
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.NorburyTombs
       LordOfTheRings.Location.Cards.NorthDowns
@@ -1037,6 +1041,7 @@ library
       LordOfTheRings.Location.Cards.PelargirDocks
       LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PillagedShip
+      LordOfTheRings.Location.Cards.PlainsOfDunland
       LordOfTheRings.Location.Cards.PlainsOfEnedwaith
       LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.PrisonCell
@@ -1555,6 +1560,7 @@ library
       LordOfTheRings.Treachery.Cards.BitingWind
       LordOfTheRings.Treachery.Cards.BitterWind
       LordOfTheRings.Treachery.Cards.BlockingWargs
+      LordOfTheRings.Treachery.Cards.BoarClanAssault
       LordOfTheRings.Treachery.Cards.BoardingParty
       LordOfTheRings.Treachery.Cards.BurningLow
       LordOfTheRings.Treachery.Cards.BurntHomestead
@@ -1698,6 +1704,7 @@ library
       LordOfTheRings.Treachery.Cards.SoundTheAlarm
       LordOfTheRings.Treachery.Cards.SouthronSupport
       LordOfTheRings.Treachery.Cards.SpiesFromMordor
+      LordOfTheRings.Treachery.Cards.StalkedByDunlendings
       LordOfTheRings.Treachery.Cards.StarsInSky
       LordOfTheRings.Treachery.Cards.StreetFighting
       LordOfTheRings.Treachery.Cards.SuddenAssault
@@ -1980,6 +1987,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ResourcePhaseSpec
       LordOfTheRings.RevealSpec
       LordOfTheRings.RingMaker.CelebrimborsSecretSpec
+      LordOfTheRings.RingMaker.NightmareSpec
       LordOfTheRings.RingMaker.PlayerCardsSpec
       LordOfTheRings.RingMaker.TheAntleredCrownSpec
       LordOfTheRings.RingMaker.TheDunlandTrapSpec
