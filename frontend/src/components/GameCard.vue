@@ -146,7 +146,7 @@ const toggleUnless = (attached: CardView) => {
         class="card"
         :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, prohibited: card.prohibited, flipping }"
         :style="{ viewTransitionName: `card-${card.id}` }"
-        :title="tr(card.name)"
+        :aria-label="tr(card.name)"
         :data-card-id="card.id"
         :draggable="draggable && active && overlay.canHover.value"
         @dragstart="dragStart"
