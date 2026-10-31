@@ -9,6 +9,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (raidOnTheGreyHavens, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
 import LordOfTheRings.Scenario.Types (scenarioCampaignCardFlipped, victoryDisplayL)
 import LordOfTheRings.Window (WindowType (..), mkAfter)
@@ -125,6 +126,15 @@ spec = describe "Dream-chaser campaign" do
       map (.seat) l.pool `shouldBe` [Just 0]
       length (recorded ChosenDuringSetup l) `shouldBe` 1
       encounterDeckCodes >>= (`shouldSatisfy` elem (toCardCode Enemies.graxar))
+
+    it "removes Calphon from the game once stage 2B is revealed, the game not lost" . campaignTestIn raidOnTheGreyHavens seated starterDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      chooseLabel "$label.dreamChaserCampaign.decline" pid
+      _ <- putQuestStage Quests.sahirsAdvance
+      run $ CheckWindows [mkAfter AdvancedToStage]
+      length <$> calphons `shouldReturn` 0
+      attachedTo Attachments.spyglass `shouldReturn` []
+      getsGame (.outcome) `shouldReturn` Nothing
 
     it "records Graxar defeated, for Parrying Cutlass or Throwing Axe after" . campaignTestIn raidOnTheGreyHavens seated starterDeck $ \_ -> do
       withVictory [Enemies.graxar]
