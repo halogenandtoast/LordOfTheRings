@@ -101,6 +101,8 @@ export interface ScenarioView {
   corsairDeck: number | null
   corsairDiscard: CardView[]
   /** The Stormcaller's quest stage, with its progress, and the cards in its area (Flight of the Stormcaller). */
+  /** In campaign mode, the campaign card next to the quest deck. */
+  campaignCard: CardView | null
   stormcallerStage: CardView | null
   stormcallerArea: CardView[]
 }
