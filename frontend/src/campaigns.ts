@@ -82,7 +82,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'the-dread-realm': {},
   'the-dunland-trap': { nightmare: true },
   'trouble-in-tharbad': { nightmare: true },
-  'celebrimbors-secret': {},
+  'celebrimbors-secret': { nightmare: true },
   'the-nin-in-eilph': { nightmare: true },
   'the-three-trials': { nightmare: true },
   'the-battle-of-carn-dum': {},

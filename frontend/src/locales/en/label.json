@@ -1105,7 +1105,8 @@
   },
   "celebrimborsSecret": {
     "scourOrder": "Choose the next Scour effect to resolve",
-    "assignDamage": "Place 1 damage on a location ({n} left to assign)"
+    "assignDamage": "Place 1 damage on a location ({n} left to assign)",
+    "nightmareScour": "Scour: choose a location in play to deal 1 damage to"
   },
   "celebrimborsMould": {
     "attach": "Attach Celebrimbor's Mould to a hero you control"
@@ -1637,5 +1638,14 @@
     "choose": "Quicksand: choose one",
     "removeTimeCounter": "Remove 1 time counter from the current quest",
     "removeFromQuest": "Remove each character with 3 or more willpower from the quest"
+  },
+  "littleSnuffler": {
+    "assign": "Place 1 damage on a location in the staging area ({n} left to assign)"
+  },
+  "bonesOfHollin": {
+    "damage": "Choose an Ost-in-Edhil location to place 2 damage on"
+  },
+  "dustyLabyrinth": {
+    "place": "Choose a card from your hand to place facedown underneath The Orcs' Search"
   }
 }

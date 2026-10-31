@@ -12,7 +12,8 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (EncounterPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (theDunlandTrap, theNinInEilph, theThreeTrials, troubleInTharbad)
+import LordOfTheRings.Scenario (celebrimborsSecret, theDunlandTrap, theNinInEilph, theThreeTrials, troubleInTharbad)
+import LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers (cardsUnderOrcsSearch)
 import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (eliminationLowering)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck), modeL, scenarioMeta, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -283,3 +284,53 @@ spec = describe "The Ring-maker Nightmare Decks" do
       answerAll pid
       took <- putAllyIntoPlay pid Allies.wanderingTook
       getsGame (fmap (allyExhausted . toAttrs) . find ((== took) . toTarget) . toList . (.entities.allies)) `shouldReturn` Just True
+
+  describe "Celebrimbor's Secret" do
+    it "builds the nightmare deck" . nightmare celebrimborsSecret $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.prowlingWolf, Locations.brokenLandsLocation, Locations.bonesOfHollin, Treacheries.closingIn]
+        `shouldBe` [0, 0, 3, 2]
+
+    it "reduces progress placed on a location in the staging area to 1" . nightmare celebrimborsSecret $ \_ -> do
+      staged Locations.dustyLabyrinth
+      lid <- locationOf Locations.dustyLabyrinth
+      run $ PlaceTokens GameSource (toTarget lid) Progress 3
+      (.progress) <$> getLocation lid `shouldReturn` 1
+
+    it "its setup card's Scour deals 1 damage to a location in play" . nightmare celebrimborsSecret $ \pid -> do
+      staged Locations.dustyLabyrinth
+      lid <- locationOf Locations.dustyLabyrinth
+      run $ ScenarioSpecific "scour" (toJSON ScenarioTarget)
+      answerAll pid
+      getDamage (toTarget lid) `shouldReturn` 1
+
+    it "Bellach's Bodyguard keeps damage off Bellach" . nightmare celebrimborsSecret $ \_ -> do
+      staged Enemies.bellachCelebrimborsSecret
+      staged Enemies.bellachsBodyguard
+      bellach <- enemyOf Enemies.bellachCelebrimborsSecret
+      getModifiers bellach >>= (`shouldSatisfy` elem CannotTakeDamage)
+
+    it "Bones of Hollin raises each threat by the damage placed on it" . nightmare celebrimborsSecret $ \pid -> do
+      staged Locations.bonesOfHollin
+      lid <- locationOf Locations.bonesOfHollin
+      was <- threat pid
+      run $ PlaceTokens GameSource (toTarget lid) Damage 2
+      threat pid `shouldReturn` was + 2
+
+    it "Dusty Labyrinth gets +1 threat for each damage on it" . nightmare celebrimborsSecret $ \_ -> do
+      staged Locations.dustyLabyrinth
+      lid <- locationOf Locations.dustyLabyrinth
+      run $ PlaceTokens GameSource (toTarget lid) Damage 2
+      getStagingThreat `shouldReturn` 4
+
+    it "Hateful Search damages each staged location, +1 threat each" . nightmare celebrimborsSecret $ \_ -> do
+      staged Locations.bonesOfHollin
+      reveal Treacheries.hatefulSearch []
+      getStagingThreat `shouldReturn` 4
+
+    it "Closing In goes underneath The Orcs' Search and surges" . nightmare celebrimborsSecret $ \_ -> do
+      run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.theOrcsSearch
+      reveal Treacheries.closingIn [Locations.bonesOfHollin]
+      cardsUnderOrcsSearch `shouldReturn` 1
+      getsGame (length . (.entities.locations)) `shouldReturn` 1

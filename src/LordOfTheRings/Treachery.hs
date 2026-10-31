@@ -219,6 +219,9 @@ import LordOfTheRings.Treachery.Cards.WaylaidByAgents
 import LordOfTheRings.Treachery.Cards.TharbadPatrol
 import LordOfTheRings.Treachery.Cards.Quicksand
 import LordOfTheRings.Treachery.Cards.RottenStench
+import LordOfTheRings.Treachery.Cards.HatefulSearch
+import LordOfTheRings.Treachery.Cards.SauronsAgent
+import LordOfTheRings.Treachery.Cards.ClosingIn
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -462,5 +465,8 @@ allTreacherys =
         , SomeTreacheryCard tharbadPatrol
         , SomeTreacheryCard quicksand
         , SomeTreacheryCard rottenStench
+        , SomeTreacheryCard hatefulSearch
+        , SomeTreacheryCard sauronsAgent
+        , SomeTreacheryCard closingIn
         ]
     ]
