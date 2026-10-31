@@ -7,7 +7,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (deadVillagerCount, rescuedVillagerCount)
 
 newtype EncounterAtAmonDin = EncounterAtAmonDin ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 encounterAtAmonDin :: Scenario

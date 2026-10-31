@@ -32,13 +32,30 @@ gatherEncounterSet :: MonadRandom m => ScenarioAttrs -> EncounterSet -> m [Encou
 gatherEncounterSet attrs encounterSet =
   concatMapM
     (\def -> replicateM (copies def) (genEncounterCard def))
-    -- quest stages share the set but make up the quest deck, never the encounter deck
+    -- quest stages share the set but make up the quest deck, never the encounter deck, and
+    -- a nightmare setup card goes beside the quest deck
     $ filter
-      (\def -> cdEncounterSet def == Just encounterSet && cdCardType def /= QuestType)
+      (\def -> cdEncounterSet def == Just encounterSet && cdCardType def `notElem` [QuestType, NightmareType])
       (toList allEncounterCards)
  where
   copies def =
     fromMaybe 1 $ (guard attrs.easyMode *> cdEasyModeQuantity def) <|> cdEncounterSetQuantity def
+
+-- | The scenario's encounter deck from its encounter sets. In nightmare mode the
+-- nightmare deck's removals come out and its nightmare set goes in.
+gatherEncounterSets :: MonadRandom m => ScenarioAttrs -> [EncounterSet] -> m [EncounterCard]
+gatherEncounterSets attrs sets = case attrs.nightmareDeck of
+  Just nd | attrs.nightmare -> do
+    deck <- concatMapM (gatherEncounterSet attrs) (sets <> [nightmareSet nd])
+    pure $ foldl' removeCopies deck (nightmareRemovals nd)
+  _ -> concatMapM (gatherEncounterSet attrs) sets
+ where
+  removeCopies deck (code, n) =
+    let (copies, rest) = partition ((== code) . toCardCode) deck in drop n copies <> rest
+
+-- | The nightmare set's replacement for a standard card, as a quest stage, in nightmare mode.
+nightmareOr :: ScenarioAttrs -> CardDef -> CardDef -> CardDef
+nightmareOr attrs standard replacement = if attrs.nightmare then replacement else standard
 
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = resetEmptyEncounterDeck =<< case msg of

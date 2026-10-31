@@ -8,7 +8,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Trait (Trait (Grotto))
 
 newtype TheDrownedRuins = TheDrownedRuins ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theDrownedRuins :: Scenario

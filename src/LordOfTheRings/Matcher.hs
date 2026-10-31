@@ -27,7 +27,7 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Quest.Types (QuestAttrs (questTokens), isEncounterSideQuest, isSideQuest)
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
-import LordOfTheRings.Scenario.Types ()
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode)
 import LordOfTheRings.Source (Source (EnemyAttackSource))
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Damage, Resource, TimeCounter), Tokens, countTokens)
@@ -520,6 +520,11 @@ getLocation lid =
 -- | The progress tokens on the active location, none when there is none.
 activeLocationProgress :: HasGame m => m Int
 activeLocationProgress = sum . map (.progress) <$> (traverse getLocation =<< select IsActiveLocation)
+
+-- | Whether the game is dealt in nightmare mode, for a card whose standard text the
+-- nightmare setup card changes.
+inNightmareMode :: HasGame m => m Bool
+inNightmareMode = getsGame ((== NightmareMode) . scenarioMode . toAttrs . gameScenario)
 
 getLead :: HasGame m => m PlayerId
 getLead = getsGame gameFirstPlayer

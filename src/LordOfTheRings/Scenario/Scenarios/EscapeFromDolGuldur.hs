@@ -6,7 +6,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
 
 newtype EscapeFromDolGuldur = EscapeFromDolGuldur ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 escapeFromDolGuldur :: Scenario

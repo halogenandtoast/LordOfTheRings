@@ -9,7 +9,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype ConflictAtTheCarrock = ConflictAtTheCarrock ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 conflictAtTheCarrock :: Scenario

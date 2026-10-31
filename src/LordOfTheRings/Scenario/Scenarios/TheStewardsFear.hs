@@ -17,7 +17,7 @@ import LordOfTheRings.Trait (Trait (Clue, Plot, Villain))
 import LordOfTheRings.Window
 
 newtype TheStewardsFear = TheStewardsFear ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theStewardsFear :: Scenario

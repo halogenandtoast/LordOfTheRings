@@ -13,7 +13,7 @@ import LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers (assignDamag
 import LordOfTheRings.Source (Source)
 
 newtype CelebrimborsSecret = CelebrimborsSecret ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 celebrimborsSecret :: Scenario

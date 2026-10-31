@@ -10,7 +10,7 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.ToCatchAnOrc.Helpers (getOutOfPlayDecks)
 
 newtype ToCatchAnOrc = ToCatchAnOrc ScenarioAttrs
-  deriving anyclass (IsScenario)
+  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 toCatchAnOrc :: Scenario
