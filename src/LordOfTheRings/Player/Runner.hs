@@ -355,7 +355,8 @@ runPlayer msg player = case msg of
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
-      let discarded = filter ((== cid) . (.id)) (discardableHand player)
+      barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
+      let discarded = if barred then [] else filter ((== cid) . (.id)) (discardableHand player)
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid cid]
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n

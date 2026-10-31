@@ -767,7 +767,8 @@ runGameMessage msg g = case msg of
     pure g
   ChooseAndDiscardFromHand pid source n | n > 0 -> do
     player <- getPlayer pid
-    unless (null $ discardableHand player)
+    barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
+    unless (barred || null (discardableHand player))
       $ push
       $ questionLabelWith
         (ikey "label.chooseCardToDiscardFromHand")
