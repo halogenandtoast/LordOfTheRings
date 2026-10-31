@@ -218,6 +218,8 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , theTowerBeckons
+      , noxiousFumes
       ]
 
 deepDeepDark :: CardDef
@@ -1332,3 +1334,11 @@ darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
     }
+
+-- The Morgul Vale Nightmare
+
+theTowerBeckons :: CardDef
+theTowerBeckons = (treachery "the-morgul-vale-nightmare-the-morgul-vale-008" "The Tower Beckons" TheMorgulValeNightmare 2) {cdShadowEffect = True}
+
+noxiousFumes :: CardDef
+noxiousFumes = (treachery "the-morgul-vale-nightmare-the-morgul-vale-009" "Noxious Fumes" TheMorgulValeNightmare 2) {cdShadowEffect = True}

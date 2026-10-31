@@ -283,6 +283,9 @@ allLocationCards =
       , streetsOfUmbar
       , cityOfCorsairs
       , umbarHarbor
+      , banksOfMorgulduin
+      , ephelDuath
+      , whiteFloweredFields
       ]
 
 drownedTreasury :: CardDef
@@ -2111,4 +2114,27 @@ dungeonLabyrinth :: CardDef
 dungeonLabyrinth =
   (location "core-set-nightmare-escape-from-dol-guldur-006" "Dungeon Labyrinth" EscapeFromDolGuldurNightmare 3 1 4)
     { cdCardTraits = setFromList [DolGuldur]
+    }
+
+-- The Morgul Vale Nightmare
+
+banksOfMorgulduin :: CardDef
+banksOfMorgulduin =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-005" "Banks of Morgulduin" TheMorgulValeNightmare 2 4 4)
+    { cdCardTraits = setFromList [River]
+    , cdShadowEffect = True
+    }
+
+ephelDuath :: CardDef
+ephelDuath =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-006" "Ephel Dúath" TheMorgulValeNightmare 3 2 5)
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+whiteFloweredFields :: CardDef
+whiteFloweredFields =
+  (location "the-morgul-vale-nightmare-the-morgul-vale-007" "White-Flowered Fields" TheMorgulValeNightmare 2 3 3)
+    { cdCardTraits = setFromList [Valley]
+    , cdShadowEffect = True
     }

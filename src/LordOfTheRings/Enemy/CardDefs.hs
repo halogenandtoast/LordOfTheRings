@@ -253,6 +253,9 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , warriorOfNurn
+      , orcCaptor
+      , sentryOfTheWhiteBridge
       ]
 
 namelessThing :: CardDef
@@ -2037,5 +2040,29 @@ spiderOfDolGuldur :: CardDef
 spiderOfDolGuldur =
   (enemy "core-set-nightmare-escape-from-dol-guldur-004" "Spider of Dol Guldur" EscapeFromDolGuldurNightmare 3 28 3 3 3 6)
     { cdCardTraits = setFromList [Creature, Spider, DolGuldur]
+    , cdShadowEffect = True
+    }
+
+-- The Morgul Vale Nightmare
+
+warriorOfNurn :: CardDef
+warriorOfNurn =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-002" "Warrior of Nurn" TheMorgulValeNightmare 3 18 2 4 3 5)
+    { cdCardTraits = setFromList [Traitor]
+    , cdShadowEffect = True
+    }
+
+orcCaptor :: CardDef
+orcCaptor =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-003" "Orc Captor" TheMorgulValeNightmare 3 50 4 3 3 4)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdShadowEffect = True
+    }
+
+-- | X threat and X attack, X the progress on To the Tower.
+sentryOfTheWhiteBridge :: CardDef
+sentryOfTheWhiteBridge =
+  (enemy "the-morgul-vale-nightmare-the-morgul-vale-004" "Sentry of the White Bridge" TheMorgulValeNightmare 2 37 0 0 4 5)
+    { cdCardTraits = setFromList [Orc, Mordor]
     , cdShadowEffect = True
     }

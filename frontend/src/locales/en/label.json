@@ -1585,5 +1585,15 @@
   },
   "smokingBlood": {
     "moveDamage": "Choose the character to take the enemy's damage"
+  },
+  "banksOfMorgulduin": {
+    "captain": "Choose the Captain enemy to deal Banks of Morgulduin to as a shadow card"
+  },
+  "ephelDuath": {
+    "choose": "Ephel Dúath: place 1 progress on To the Tower or take this attack undefended"
+  },
+  "whiteFloweredFields": {
+    "choose": "White-Flowered Fields: exhaust a hero you control or place 1 progress on To the Tower",
+    "progress": "Place 1 progress on To the Tower"
   }
 }

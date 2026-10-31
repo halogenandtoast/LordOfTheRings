@@ -524,6 +524,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcAmbusher
       LordOfTheRings.Enemy.Cards.OrcArbalesters
       LordOfTheRings.Enemy.Cards.OrcArsonist
+      LordOfTheRings.Enemy.Cards.OrcCaptor
       LordOfTheRings.Enemy.Cards.OrcDrummer
       LordOfTheRings.Enemy.Cards.OrcGrunts
       LordOfTheRings.Enemy.Cards.OrcGuard
@@ -560,6 +561,7 @@ library
       LordOfTheRings.Enemy.Cards.SavageTrollspawn
       LordOfTheRings.Enemy.Cards.ScoutingShip
       LordOfTheRings.Enemy.Cards.SeaScorpion
+      LordOfTheRings.Enemy.Cards.SentryOfTheWhiteBridge
       LordOfTheRings.Enemy.Cards.SerpentsBlade
       LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
       LordOfTheRings.Enemy.Cards.SiegeRaft
@@ -610,6 +612,7 @@ library
       LordOfTheRings.Enemy.Cards.UrukSoldier
       LordOfTheRings.Enemy.Cards.ViciousMarauder
       LordOfTheRings.Enemy.Cards.Wargs
+      LordOfTheRings.Enemy.Cards.WarriorOfNurn
       LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
       LordOfTheRings.Enemy.Cards.WhiteWarg
       LordOfTheRings.Enemy.Cards.WightOfRhudaur
@@ -902,6 +905,7 @@ library
       LordOfTheRings.Location.Cards.AncientForestLocation
       LordOfTheRings.Location.Cards.AncientFoundation
       LordOfTheRings.Location.Cards.AncientHarbor
+      LordOfTheRings.Location.Cards.BanksOfMorgulduin
       LordOfTheRings.Location.Cards.BanksOfTheAnduin
       LordOfTheRings.Location.Cards.BarrenHills
       LordOfTheRings.Location.Cards.BarrenMoorland
@@ -957,6 +961,7 @@ library
       LordOfTheRings.Location.Cards.ElvenWaveRunner
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
+      LordOfTheRings.Location.Cards.EphelDuath
       LordOfTheRings.Location.Cards.EriadorWastes
       LordOfTheRings.Location.Cards.ExposedRidge
       LordOfTheRings.Location.Cards.Fanuidhol
@@ -1148,6 +1153,7 @@ library
       LordOfTheRings.Location.Cards.WeatheredHilltop
       LordOfTheRings.Location.Cards.WestGate
       LordOfTheRings.Location.Cards.WestQuarter
+      LordOfTheRings.Location.Cards.WhiteFloweredFields
       LordOfTheRings.Location.Cards.WhiteShip
       LordOfTheRings.Location.Cards.WindingCaverns
       LordOfTheRings.Location.Cards.WoodElfPath
@@ -1658,6 +1664,7 @@ library
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
       LordOfTheRings.Treachery.Cards.NoRest
+      LordOfTheRings.Treachery.Cards.NoxiousFumes
       LordOfTheRings.Treachery.Cards.OffTrack
       LordOfTheRings.Treachery.Cards.OldHatreds
       LordOfTheRings.Treachery.Cards.OldWivesTales
@@ -1723,6 +1730,7 @@ library
       LordOfTheRings.Treachery.Cards.TheRaidersAssault
       LordOfTheRings.Treachery.Cards.TheSkyDarkens
       LordOfTheRings.Treachery.Cards.TheSpidersWeb
+      LordOfTheRings.Treachery.Cards.TheTowerBeckons
       LordOfTheRings.Treachery.Cards.ThroughTheMist
       LordOfTheRings.Treachery.Cards.ThrownOffCourse
       LordOfTheRings.Treachery.Cards.TragicDiscovery
@@ -1892,6 +1900,7 @@ test-suite LordOfTheRings-test
   other-modules:
       LordOfTheRings.AgainstTheShadow.AssaultOnOsgiliathSpec
       LordOfTheRings.AgainstTheShadow.EncounterAtAmonDinSpec
+      LordOfTheRings.AgainstTheShadow.NightmareSpec
       LordOfTheRings.AgainstTheShadow.PlayerCardsSpec
       LordOfTheRings.AgainstTheShadow.TheBloodOfGondorSpec
       LordOfTheRings.AgainstTheShadow.TheDruadanForestSpec

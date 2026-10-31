@@ -71,7 +71,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'peril-in-pelargir': {},
   'encounter-at-amon-din': {},
   'the-druadan-forest': {},
-  'the-morgul-vale': {},
+  'the-morgul-vale': { nightmare: true },
   'the-stewards-fear': {},
   'assault-on-osgiliath': {},
   'the-blood-of-gondor': {},
