@@ -161,7 +161,12 @@
     "notes": "Notes",
     "note": {
       "Prisoner": "Taken prisoner at the beginning of Escape from Dol Guldur: {cards}",
-      "MendorJoinsTheNextCampaign": "Mendor joins your next campaign: put him into play at the start of each scenario, and each player may include 1 copy of Mendor's Support."
+      "MendorJoinsTheNextCampaign": "Mendor joins your next campaign: put him into play at the start of each scenario, and each player may include 1 copy of Mendor's Support.",
+      "GraxarDefeated": "Graxar was defeated: choose Parrying Cutlass or Throwing Axe, and its hero, as the next scenario is set up.",
+      "ChosenDuringSetup": "Chosen during setup: {cards}",
+      "SahirKeyed": "Captain Sahír has his Black Key.",
+      "Secrets": "Secrets: {cards}",
+      "RevealedSecrets": "Secrets flipped: {cards}"
     },
     "scenarios": "Scenarios",
     "total": "Campaign total",
@@ -170,6 +175,10 @@
     "replay": "Play {scenario} again",
     "lost": "The scenario was lost: play it again to go on.",
     "finished": "The campaign is complete.",
-    "backToGame": "Back to {scenario}"
+    "backToGame": "Back to {scenario}",
+    "experience": "Experience",
+    "xpLeft": "{xp} XP to spend",
+    "spendBetween": "XP may be spent between scenarios, while the next one waits in the lobby.",
+    "spendXp": "Spend 1 XP"
   }
 }

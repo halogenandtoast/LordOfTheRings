@@ -125,6 +125,7 @@ mkYesod
   /campaigns CampaignsR POST
   /campaigns/#LotrCampaignId CampaignR GET DELETE
   /campaigns/#LotrCampaignId/next CampaignNextR POST
+  /campaigns/#LotrCampaignId/xp CampaignXpR POST
 |]
 
 -- | The API authenticates with tokens, so there is no cookie session.
@@ -1365,6 +1366,10 @@ data CampaignView = CampaignView
   , next :: Maybe ScenarioId
   , status :: Text
   -- ^ playing, won (the next scenario awaits), lost (play it again) or finished
+  , upgrades :: [XpCard]
+  -- ^ what XP may be spent on (the Dream-chaser campaign)
+  , canSpendXp :: Bool
+  -- ^ between scenarios: the next one waits in the lobby, not yet dealt
   }
   deriving stock Generic
   deriving anyclass ToJSON
@@ -1422,6 +1427,8 @@ getCampaignR cid = do
         , games = [CampaignGameView gid row.lotrGameScenario (outcomeOf row) | Entity gid row <- games]
         , next
         , status
+        , upgrades = xpCards l
+        , canSpendXp = maybe False (awaitingPlayers . entityVal) (headMay games)
         }
 
 deleteCampaignR :: LotrCampaignId -> Handler ()
@@ -1451,6 +1458,28 @@ postCampaignNextR cid = do
     update cid [LotrCampaignLog =. toJSON l, LotrCampaignUpdatedAt =. now]
     insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode row.lotrGameNightmare now
   pure $ object ["id" .= gid]
+
+newtype SpendXp = SpendXp {card :: CardCode}
+  deriving stock Generic
+  deriving anyclass FromJSON
+
+{- | Spend 1 XP to mark one of a card's checkboxes in the campaign log (Dream-chaser
+Campaign Rules: "The players can only spend XP before or after a scenario"): while the
+next scenario waits in the lobby, before it is dealt with the log.
+-}
+postCampaignXpR :: LotrCampaignId -> Handler Value
+postCampaignXpR cid = do
+  userId <- requireUserId
+  campaign <- runDB $ get404 cid
+  unless (campaign.lotrCampaignUserId == userId) notFound
+  games <- runDB $ selectList [LotrGameCampaignId ==. Just cid] [Desc LotrGameCreatedAt]
+  unless (maybe False (awaitingPlayers . entityVal) (headMay games)) $ sendResponseStatus status409 (ikey "error.campaignInProgress")
+  spend <- requireCheckJsonBody @_ @SpendXp
+  l <- decodeOrFail @CampaignLog "campaign log" campaign.lotrCampaignLog
+  l' <- maybe (sendResponseStatus status400 (ikey "error.cannotSpendXp")) pure $ spendXp spend.card l
+  now <- liftIO getCurrentTime
+  runDB $ update cid [LotrCampaignLog =. toJSON l', LotrCampaignUpdatedAt =. now]
+  pure $ toJSON l'
 
 main :: IO ()
 main = do

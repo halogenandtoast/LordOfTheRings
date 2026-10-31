@@ -29,5 +29,6 @@
   "fallenHeroes": "Fallen in this campaign, these heroes cannot be used again: {heroes}",
   "noSuchCampaign": "No such campaign.",
   "campaignInProgress": "Finish the scenario being played first.",
-  "campaignOver": "The campaign is over."
+  "campaignOver": "The campaign is over.",
+  "cannotSpendXp": "No XP is left to spend, or that card has no checkbox left."
 }
