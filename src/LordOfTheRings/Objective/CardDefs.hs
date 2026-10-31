@@ -20,6 +20,7 @@ allObjectiveCards =
       , dungeonTorch
       , shadowKey
       , mendor
+      , scarred
       , signsOfGollum
       , grimbeornTheOld
       , athelas
@@ -130,12 +131,20 @@ shadowKey =
     , cdKeywords = setFromList [Guarded, Restricted]
     }
 
+-- | A burden of the Revised Core campaign: Permanent, limit 1 per hero.
+scarred :: CardDef
+scarred =
+  (objective "RC008" "Scarred" JourneyAlongTheAnduinCampaign 4)
+    { cdCardTraits = setFromList [Burden]
+    , cdLimitOnePerHost = True
+    }
+
 mendor :: CardDef
 mendor =
   ((objective "RC002" "Mendor" PassageThroughMirkwoodCampaign 1)
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 1, cdDefense = Just 1, cdHitPoints = Just 3 })
     { cdUnique = True
-    , cdCardTraits = setFromList [Scout, Silvan]
+    , cdCardTraits = setFromList [Scout, Silvan, Boon]
     , cdKeywords = setFromList [Ranged]
     }
 

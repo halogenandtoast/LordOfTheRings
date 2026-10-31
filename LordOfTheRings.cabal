@@ -146,6 +146,7 @@ library
       LordOfTheRings.Ally.Cards.MasterIronsmith
       LordOfTheRings.Ally.Cards.MasterOfLore
       LordOfTheRings.Ally.Cards.MasterOfTheForge
+      LordOfTheRings.Ally.Cards.Mendor
       LordOfTheRings.Ally.Cards.MinasTirithLampwright
       LordOfTheRings.Ally.Cards.MinerOfTheIronHills
       LordOfTheRings.Ally.Cards.MirkwoodExplorer
@@ -224,6 +225,7 @@ library
       LordOfTheRings.Attachment.CardDefs
       LordOfTheRings.Attachment.Cards.ABurningBrand
       LordOfTheRings.Attachment.Cards.AncientMathom
+      LordOfTheRings.Attachment.Cards.AppointedByFate
       LordOfTheRings.Attachment.Cards.ArmoredDestrier
       LordOfTheRings.Attachment.Cards.Asfaloth
       LordOfTheRings.Attachment.Cards.Athelas
@@ -347,6 +349,7 @@ library
       LordOfTheRings.Attachment.Cards.ToTheSeaToTheSea
       LordOfTheRings.Attachment.Cards.UnexpectedCourage
       LordOfTheRings.Attachment.Cards.ValiantSword
+      LordOfTheRings.Attachment.Cards.Valor
       LordOfTheRings.Attachment.Cards.VigilantGuard
       LordOfTheRings.Attachment.Cards.Vilya
       LordOfTheRings.Attachment.Cards.VisionaryLeadership
@@ -359,6 +362,8 @@ library
       LordOfTheRings.Attachment.Record
       LordOfTheRings.Attachment.Runner
       LordOfTheRings.Attachment.Types
+      LordOfTheRings.Campaign
+      LordOfTheRings.Campaign.CardDefs
       LordOfTheRings.Card
       LordOfTheRings.Card.CardDef
       LordOfTheRings.Card.CardType
@@ -1204,6 +1209,7 @@ library
       LordOfTheRings.Objective.Cards.PoisonedCounsels
       LordOfTheRings.Objective.Cards.RescuedVillagers
       LordOfTheRings.Objective.Cards.SavageCounterattack
+      LordOfTheRings.Objective.Cards.Scarred
       LordOfTheRings.Objective.Cards.SeaWardTower
       LordOfTheRings.Objective.Cards.SecretMap
       LordOfTheRings.Objective.Cards.ShadowKey

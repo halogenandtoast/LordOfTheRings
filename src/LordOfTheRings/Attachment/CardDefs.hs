@@ -14,6 +14,8 @@ allAttachmentCards =
     map
       (\def -> (cdCardCode def, def))
       [ stewardOfGondor
+      , valor
+      , appointedByFate
       , celebriansStone
       , bladeOfGondolin
       , citadelPlate
@@ -147,6 +149,21 @@ allAttachmentCards =
       , rangerSpear
       , princeOfDolAmroth
       ]
+
+-- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
+valor :: CardDef
+valor =
+  (attachment "RC007" "Valor" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Condition, Boon]
+    , cdLimitOnePerHost = True
+    }
+
+-- | A boon of the Revised Core campaign, attached at Escape from Dol Guldur's setup.
+appointedByFate :: CardDef
+appointedByFate =
+  (attachment "RC010" "Appointed by Fate" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Condition, Boon]
+    }
 
 stewardOfGondor :: CardDef
 stewardOfGondor =
