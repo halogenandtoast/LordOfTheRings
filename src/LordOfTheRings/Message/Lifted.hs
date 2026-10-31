@@ -1314,6 +1314,12 @@ shiftHeadingOffCourse source = push $ ShiftHeading (toSource source) ShiftOffCou
 shiftHeadingOnCourse :: (ReverseQueue m, Sourceable source) => source -> m ()
 shiftHeadingOnCourse source = push $ ShiftHeading (toSource source) ShiftOnCourse
 
+-- | "Set your heading to the worst setting": shifted off-course until it is there.
+setHeadingToWorst :: (ReverseQueue m, Sourceable source) => source -> m ()
+setHeadingToWorst source = do
+  heading <- getHeading
+  for_ heading \h -> replicateM_ (fromEnum (maxBound :: Heading) - fromEnum h) (shiftHeadingOffCourse source)
+
 -- | "Prepare the Corsair deck": each non-Ship enemy leaves the encounter deck for it.
 prepareCorsairDeck :: ReverseQueue m => m ()
 prepareCorsairDeck = push PrepareCorsairDeck
