@@ -731,7 +731,7 @@ allLocations =
         , SomeLocationCard edgeOfTheTemple
         , SomeLocationCard desecratedRuinsNightmare
         , SomeLocationCard templeFoothills
-        , SomeLocationCard cursedTempleNightmare
+        , SomeLocationCard cursedTempleOfTheDeceived
         , SomeLocationCard overgrownPassage
         , SomeLocationCard sharpPrecipice
         , SomeLocationCard jaggedCavern

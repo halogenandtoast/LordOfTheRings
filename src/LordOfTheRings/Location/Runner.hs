@@ -8,9 +8,8 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedValue, questPointsOf)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit, ProgressReducedTo))
+import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedThisRound, ProgressReducedTo))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (NoProgressFromPlayerCards, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedThisRound))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -23,13 +22,12 @@ instance RunMessage LocationAttrs where
     -- tokens a player card would place or remove do not reach an immune location
     PlaceTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
     RemoveTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
-    PlaceTokens _ (isTarget attrs -> True) token n0 -> do
-      n <- if token == Progress then (\ms -> foldr min n0 [k | ProgressReducedTo k <- ms]) <$> getModifiers attrs else pure n0
     -- a location takes no more progress than it may this round, as The Hills of Emyn
     -- Muil's nightmare text limits the staging area's, and keeps count of what it took
-    PlaceTokens source (isTarget attrs -> True) Progress n | n > 0 -> do
+    PlaceTokens source (isTarget attrs -> True) Progress n0 | n0 > 0 -> do
       mods <- getModifiers attrs
-      let limits = [k | ProgressPerRoundLimit k <- mods]
+      let n = foldr min n0 [k | ProgressReducedTo k <- mods]
+          limits = [k | ProgressPerRoundLimit k <- mods]
           placed = sum [k | ProgressPlacedThisRound k <- mods]
           room = foldr (\k -> min (max 0 $ k - placed)) n limits
       if

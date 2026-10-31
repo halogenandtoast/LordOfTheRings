@@ -189,8 +189,7 @@ export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' |
       ? `/images/cards/${card.image}.avif`
       : !card.flipped && sharedSideA[card.code]
         ? `/images/cards/${sharedSideA[card.code]}.avif`
-        : `/images/cards/${errataImage(`${printedFace[card.code] ?? card.code}${card.flipped ? '-b' : ''}`, card.errata ?? true)}.avif`
-      : `/images/cards/${errataImage(card.flipped ? `${printedFace[card.code] ?? card.code}-b` : (sharedFront[card.code] ?? printedFace[card.code] ?? card.code), card.errata ?? true)}.avif`
+        : `/images/cards/${errataImage(card.flipped ? `${printedFace[card.code] ?? card.code}-b` : (sharedFront[card.code] ?? printedFace[card.code] ?? card.code), card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

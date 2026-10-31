@@ -347,7 +347,7 @@ allLocationCards =
       , edgeOfTheTemple
       , desecratedRuinsNightmare
       , templeFoothills
-      , cursedTempleNightmare
+      , cursedTempleOfTheDeceived
       , overgrownPassage
       , sharpPrecipice
       , jaggedCavern
@@ -2227,8 +2227,8 @@ templeFoothills =
     , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"
     }
 
-cursedTempleNightmare :: CardDef
-cursedTempleNightmare =
+cursedTempleOfTheDeceived :: CardDef
+cursedTempleOfTheDeceived =
   (location "temple-of-the-deceived-nightmare-temple-of-the-deceived-004" "Cursed Temple" TempleOfTheDeceivedNightmare 2 3 4)
     { cdCardTraits = setFromList [Ruins]
     , cdOtherSide = Just "temple-of-the-deceived-nightmare-temple-of-the-deceived-edge-of-the-temple"

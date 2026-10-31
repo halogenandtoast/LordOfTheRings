@@ -3295,8 +3295,6 @@ mayAttack' pid eid = do
   mods <- getModifiers eid
   others <- if engaged then filter (\p -> p /= pid && CannotBeAttackedByCharactersOf p `notElem` mods) <$> getPlayerOrder else pure []
   ranged <- filterM (canAttack eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
-  pure $ own <> ranged
-  ranged <- filterM (canFight eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
   -- none with a keyword it bars, as Pitch-dark Thicket's shadow bars ranged
   let barred = [k | CannotBeAttackedByKeyword k <- mods]
   filterM (\c -> characterCardDef c >>= \def -> not <$> anyM (\k -> hasKeyword k c def) barred) (own <> ranged)

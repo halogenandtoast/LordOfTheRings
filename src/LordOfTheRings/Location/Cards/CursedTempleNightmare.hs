@@ -1,4 +1,4 @@
-module LordOfTheRings.Location.Cards.CursedTempleNightmare (cursedTempleNightmare) where
+module LordOfTheRings.Location.Cards.CursedTempleNightmare (cursedTempleOfTheDeceived) where
 
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
@@ -9,8 +9,8 @@ newtype CursedTempleNightmare = CursedTempleNightmare LocationAttrs
   deriving anyclass IsLocation
   deriving newtype (Show, Eq, ToJSON, Entity)
 
-cursedTempleNightmare :: LocationCard CursedTempleNightmare
-cursedTempleNightmare = location CursedTempleNightmare Cards.cursedTempleNightmare
+cursedTempleOfTheDeceived :: LocationCard CursedTempleNightmare
+cursedTempleOfTheDeceived = location CursedTempleNightmare Cards.cursedTempleOfTheDeceived
 
 -- | While Cursed Temple is the active location, each player cannot draw cards by card
 -- effects.
