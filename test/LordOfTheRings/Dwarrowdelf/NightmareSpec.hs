@@ -1,13 +1,15 @@
 module LordOfTheRings.Dwarrowdelf.NightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getStagingThreat)
+import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (QuestPhase))
-import LordOfTheRings.Scenario (roadToRivendell, theRedhornGate)
+import LordOfTheRings.Scenario (roadToRivendell, theRedhornGate, theWatcherInTheWater)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck, scenarioSetAside), encounterDiscardL, modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -164,3 +166,61 @@ spec = describe "Dwarrowdelf nightmare decks" do
       party <- enemyOf Enemies.raidingParty
       run $ EngageEnemy pid party
       getStagingThreat `shouldReturn` 3
+
+  describe "The Watcher in the Water" do
+    it "builds the nightmare deck with the nightmare Watcher" . nightmare theWatcherInTheWater $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 52
+      map (`copies` deck) [Enemies.theWatcher, Enemies.theWatcherNightmare, Enemies.chokingTentacle]
+        `shouldBe` [0, 1, 4]
+
+    it "a Tentacle enemy destroyed deals 1 damage to The Watcher" . nightmare theWatcherInTheWater $ \_ -> do
+      reveal Enemies.theWatcherNightmare []
+      reveal Enemies.chokingTentacle []
+      watcher <- enemyOf Enemies.theWatcherNightmare
+      tentacle <- enemyOf Enemies.chokingTentacle
+      run $ DealDamage GameSource (toTarget tentacle) 4
+      getDamage (toTarget watcher) `shouldReturn` 1
+
+    it "The Watcher cannot be engaged while Doors of Durin is in play" . nightmare theWatcherInTheWater $ \pid -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.doorsOfDurin
+      reveal Enemies.theWatcherNightmare []
+      watcher <- enemyOf Enemies.theWatcherNightmare
+      getModifiers watcher >>= (`shouldSatisfy` elem (CannotEngagePlayer pid))
+
+    it "Writhing Tentacle attacks as it engages and takes hold of the defender" . nightmare theWatcherInTheWater $ \pid -> do
+      reveal Enemies.writhingTentacle [Treacheries.pulledUnder]
+      tentacle <- enemyOf Enemies.writhingTentacle
+      run $ EngageEnemy pid tentacle
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      passActions pid
+      chooseTarget pid beravor
+      passActions pid
+      resolveShadowsInOrder pid
+      passActions pid
+      (.placement) <$> getEnemy tentacle `shouldReturn` AttachedTo beravor
+      getModifiers beravor >>= (`shouldSatisfy` elem CannotCommitToQuest)
+
+    it "Pulled Under deals 3 damage to each character a Tentacle holds" . nightmare theWatcherInTheWater $ \_ -> do
+      reveal Enemies.chokingTentacle []
+      tentacle <- enemyOf Enemies.chokingTentacle
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      run $ PlaceEnemy tentacle (AttachedTo beravor)
+      reveal Treacheries.pulledUnder []
+      getCharacterDamage beravor `shouldReturn` 3
+
+    it "Rippling From Beneath shuffles a Tentacle back and heals The Watcher" . nightmare theWatcherInTheWater $ \_ -> do
+      reveal Enemies.theWatcherNightmare []
+      watcher <- enemyOf Enemies.theWatcherNightmare
+      run $ PlaceTokens GameSource (toTarget watcher) Damage 2
+      setEncounterDiscard [Enemies.chokingTentacle, Enemies.writhingTentacle]
+      reveal Treacheries.ripplingFromBeneath [Locations.banksOfSirannon]
+      discarded <- getEncounterDiscard
+      copies Enemies.chokingTentacle discarded + copies Enemies.writhingTentacle discarded `shouldBe` 1
+      getDamage (toTarget watcher) `shouldReturn` 1
+
+    it "Banks of Sirannon gives the Tentacles +2 defense" . nightmare theWatcherInTheWater $ \_ -> do
+      reveal Locations.banksOfSirannon []
+      reveal Enemies.chokingTentacle []
+      (getEnemyDefense =<< enemyOf Enemies.chokingTentacle) `shouldReturn` 3

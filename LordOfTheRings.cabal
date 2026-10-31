@@ -412,6 +412,7 @@ library
       LordOfTheRings.Enemy.Cards.ChieftainOfThePit
       LordOfTheRings.Enemy.Cards.ChieftanUfthak
       LordOfTheRings.Enemy.Cards.ChiefTurchTheDunlandTrap
+      LordOfTheRings.Enemy.Cards.ChokingTentacle
       LordOfTheRings.Enemy.Cards.ColdfellGiant
       LordOfTheRings.Enemy.Cards.CorneredOrc
       LordOfTheRings.Enemy.Cards.CorsairArsonist
@@ -596,6 +597,7 @@ library
       LordOfTheRings.Enemy.Cards.TheNamelessFear
       LordOfTheRings.Enemy.Cards.TheThingInTheDepths
       LordOfTheRings.Enemy.Cards.TheWatcher
+      LordOfTheRings.Enemy.Cards.TheWatcherNightmare
       LordOfTheRings.Enemy.Cards.ThrashingArm
       LordOfTheRings.Enemy.Cards.ThrashingTentacle
       LordOfTheRings.Enemy.Cards.ThrongsOfUnfaithful
@@ -626,6 +628,7 @@ library
       LordOfTheRings.Enemy.Cards.WolfRider
       LordOfTheRings.Enemy.Cards.WolfsGuardian
       LordOfTheRings.Enemy.Cards.WraithOfCarnDum
+      LordOfTheRings.Enemy.Cards.WrithingTentacle
       LordOfTheRings.Enemy.Cards.ZealousTraitor
       LordOfTheRings.Enemy.Import.Lifted
       LordOfTheRings.Enemy.Runner
@@ -909,6 +912,7 @@ library
       LordOfTheRings.Location.Cards.AncientForestLocation
       LordOfTheRings.Location.Cards.AncientFoundation
       LordOfTheRings.Location.Cards.AncientHarbor
+      LordOfTheRings.Location.Cards.BanksOfSirannon
       LordOfTheRings.Location.Cards.BanksOfTheAnduin
       LordOfTheRings.Location.Cards.BarrenHills
       LordOfTheRings.Location.Cards.BarrenMoorland
@@ -1004,6 +1008,7 @@ library
       LordOfTheRings.Location.Cards.HiddenAlleyway
       LordOfTheRings.Location.Cards.HiddenCove
       LordOfTheRings.Location.Cards.HiddenEyot
+      LordOfTheRings.Location.Cards.HideousDepths
       LordOfTheRings.Location.Cards.HillBarrow
       LordOfTheRings.Location.Cards.HillsOfDunland
       LordOfTheRings.Location.Cards.HithaeglirFoothills
@@ -1687,6 +1692,7 @@ library
       LordOfTheRings.Treachery.Cards.PowerfulUndertow
       LordOfTheRings.Treachery.Cards.PredatoryWolves
       LordOfTheRings.Treachery.Cards.PressingNeeds
+      LordOfTheRings.Treachery.Cards.PulledUnder
       LordOfTheRings.Treachery.Cards.PursuedByShadow
       LordOfTheRings.Treachery.Cards.PursuitOnTheShore
       LordOfTheRings.Treachery.Cards.PutToTheTorch
@@ -1695,6 +1701,7 @@ library
       LordOfTheRings.Treachery.Cards.RammingSpeed
       LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
       LordOfTheRings.Treachery.Cards.RestlessEvil
+      LordOfTheRings.Treachery.Cards.RipplingFromBeneath
       LordOfTheRings.Treachery.Cards.RoastedSlowly
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.RuinsOfAgesPast

@@ -28,7 +28,7 @@ instance RunMessage ToTheWestDoor where
     Flip (isTarget attrs -> True) | not attrs.flipped -> do
       send $ FlipCard attrs.cardId
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      traverse_ setAside $ filter (\c -> any (`cardMatches` c) [cardIs Enemies.theWatcher, cardIs Locations.doorsOfDurin]) deck
+      traverse_ setAside $ filter (\c -> any (`cardMatches` c) [cardIs Enemies.theWatcher, cardIs Enemies.theWatcherNightmare, cardIs Locations.doorsOfDurin]) deck
       doStep 1 msg
       pure $ ToTheWestDoor $ attrs {questFlipped = True}
     -- one card at a time, each resolving before the threat is counted again

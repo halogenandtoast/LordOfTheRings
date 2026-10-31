@@ -214,6 +214,8 @@ import LordOfTheRings.Treachery.Cards.DarkInterrogation
 import LordOfTheRings.Treachery.Cards.BlindingBlizzard
 import LordOfTheRings.Treachery.Cards.CaradhrasTheCruel
 import LordOfTheRings.Treachery.Cards.TumultuousAssault
+import LordOfTheRings.Treachery.Cards.PulledUnder
+import LordOfTheRings.Treachery.Cards.RipplingFromBeneath
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -452,5 +454,7 @@ allTreacherys =
         , SomeTreacheryCard blindingBlizzard
         , SomeTreacheryCard caradhrasTheCruel
         , SomeTreacheryCard tumultuousAssault
+        , SomeTreacheryCard pulledUnder
+        , SomeTreacheryCard ripplingFromBeneath
         ]
     ]

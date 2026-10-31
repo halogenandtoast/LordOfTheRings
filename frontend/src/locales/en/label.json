@@ -1588,5 +1588,8 @@
   },
   "snowGiant": {
     "discard": "Choose the ally with the highest willpower to discard for Snow-Giant"
+  },
+  "chokingTentacle": {
+    "attach": "Choose a character for Choking Tentacle to take hold of"
   }
 }

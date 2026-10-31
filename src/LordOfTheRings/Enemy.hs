@@ -254,6 +254,9 @@ import LordOfTheRings.Enemy.Cards.UrukElfStalker
 import LordOfTheRings.Enemy.Cards.GoblinTrapper
 import LordOfTheRings.Enemy.Cards.RaidingParty
 import LordOfTheRings.Enemy.Cards.ViciousTrackers
+import LordOfTheRings.Enemy.Cards.TheWatcherNightmare
+import LordOfTheRings.Enemy.Cards.WrithingTentacle
+import LordOfTheRings.Enemy.Cards.ChokingTentacle
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -533,5 +536,8 @@ allEnemys =
         , SomeEnemyCard goblinTrapper
         , SomeEnemyCard raidingParty
         , SomeEnemyCard viciousTrackers
+        , SomeEnemyCard theWatcherNightmare
+        , SomeEnemyCard writhingTentacle
+        , SomeEnemyCard chokingTentacle
         ]
     ]

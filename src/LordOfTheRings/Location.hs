@@ -275,6 +275,8 @@ import LordOfTheRings.Location.Cards.IcyCavern
 import LordOfTheRings.Location.Cards.FrozenSilverlode
 import LordOfTheRings.Location.Cards.TreacherousBluffs
 import LordOfTheRings.Location.Cards.ConcealedWoods
+import LordOfTheRings.Location.Cards.BanksOfSirannon
+import LordOfTheRings.Location.Cards.HideousDepths
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -591,5 +593,7 @@ allLocations =
         , SomeLocationCard frozenSilverlode
         , SomeLocationCard treacherousBluffs
         , SomeLocationCard concealedWoods
+        , SomeLocationCard banksOfSirannon
+        , SomeLocationCard hideousDepths
         ]
     ]
