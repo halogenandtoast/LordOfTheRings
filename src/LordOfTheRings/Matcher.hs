@@ -681,6 +681,8 @@ getDamage = \case
   AllyTarget aid -> maybe 0 (.damage) . Map.lookup aid <$> getsGame (entitiesAllies . gameEntities)
   EnemyTarget eid -> maybe 0 (.damage) . Map.lookup eid <$> getsGame (entitiesEnemies . gameEntities)
   LocationTarget lid -> maybe 0 ((.damage) . toAttrs) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
+  -- a side quest, as Protect the Innocent
+  QuestTarget qid -> maybe 0 (countTokens Damage . questTokens . toAttrs) . Map.lookup qid <$> getsGame (entitiesQuests . gameEntities)
   -- an objective ally the staging area commits, as Celador
   ObjectiveTarget oid ->
     maybe 0 (countTokens Damage . objectiveTokens . toAttrs) . Map.lookup oid <$> getsGame (entitiesObjectives . gameEntities)

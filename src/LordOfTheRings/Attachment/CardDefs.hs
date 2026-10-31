@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
@@ -14,6 +15,20 @@ allAttachmentCards =
     map
       (\def -> (cdCardCode def, def))
       [ stewardOfGondor
+      , iarionsPendant
+      , cunning
+      , hardy
+      , resolute
+      , ruthless
+      , stalwart
+      , amarthiulsCourage
+      , chieftainsBrooch
+      , mailOfEarnur
+      , silverthorn
+      , daechanarsBrand
+      , heirloomOfIarchon
+      , ordersFromAngmar
+      , raimentOfTheSecondAge
       , valor
       , appointedByFate
       , celebriansStone
@@ -1053,3 +1068,65 @@ princeOfDolAmroth =
     (attachment "12146" "Prince of Dol Amroth" Neutral (StaticCost 3))
       { cdCardTraits = setFromList [Title]
       }
+
+-- The Angmar Awakened campaign's boons
+
+iarionsPendant :: CardDef
+iarionsPendant =
+  (unique $ attachment "AAC157" "Iârion's Pendant" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Artifact, Item, Boon]
+    , cdVictoryPoints = Just 1
+    }
+
+-- | A Permanent condition boon Mysterious Omens offers, attached to a hero.
+omenBoon :: CardCode -> Name -> CardDef
+omenBoon code name = (attachment code name Neutral (StaticCost 0)) {cdCardTraits = setFromList [Condition, Boon]}
+
+cunning :: CardDef
+cunning = omenBoon "AAC161" "Cunning"
+
+hardy :: CardDef
+hardy = omenBoon "AAC162" "Hardy"
+
+resolute :: CardDef
+resolute = omenBoon "AAC163" "Resolute"
+
+ruthless :: CardDef
+ruthless = omenBoon "AAC164" "Ruthless"
+
+stalwart :: CardDef
+stalwart = omenBoon "AAC165" "Stalwart"
+
+amarthiulsCourage :: CardDef
+amarthiulsCourage =
+  (unique $ attachment "AAC167" "Amarthiúl's Courage" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Condition, Boon]
+    }
+
+restrictedBoon :: CardCode -> Name -> Int -> [Trait] -> CardDef
+restrictedBoon code name cost traits =
+  (unique $ attachment code name Neutral (StaticCost cost))
+    { cdCardTraits = setFromList (Boon : traits)
+    , cdKeywords = setFromList [Restricted]
+    }
+
+chieftainsBrooch :: CardDef
+chieftainsBrooch = restrictedBoon "AAC177" "Chieftain's Brooch" 2 [Artifact, Item]
+
+mailOfEarnur :: CardDef
+mailOfEarnur = restrictedBoon "AAC180" "Mail of Eärnur" 1 [Artifact, Armor, Item]
+
+silverthorn :: CardDef
+silverthorn = restrictedBoon "AAC181" "Silverthorn" 0 [Artifact, Weapon, Item]
+
+daechanarsBrand :: CardDef
+daechanarsBrand = restrictedBoon "AAC185" "Daechanar's Brand" 0 [Artifact, Item, Weapon]
+
+heirloomOfIarchon :: CardDef
+heirloomOfIarchon = restrictedBoon "AAC186" "Heirloom of Iârchon" 0 [Artifact, Item]
+
+ordersFromAngmar :: CardDef
+ordersFromAngmar = restrictedBoon "AAC187" "Orders from Angmar" 0 [Item]
+
+raimentOfTheSecondAge :: CardDef
+raimentOfTheSecondAge = (restrictedBoon "AAC191" "Raiment of the Second Age" 3 [Armor, Weapon, Item]) {cdUnique = False}

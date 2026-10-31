@@ -21,6 +21,7 @@ import LordOfTheRings.Treachery.Cards.EvilStorm
 import LordOfTheRings.Treachery.Cards.EyesOfTheForest
 import LordOfTheRings.Treachery.Cards.IronShackles
 import LordOfTheRings.Treachery.Cards.LingeringVenom
+import LordOfTheRings.Treachery.Cards.LosingTime
 import LordOfTheRings.Treachery.Cards.MassingAtNight
 import LordOfTheRings.Treachery.Cards.PursuedByShadow
 import LordOfTheRings.Treachery.Cards.TheNecromancersReach
@@ -374,6 +375,7 @@ allTreacherys =
         , SomeTreacheryCard pursuedByShadow
         , SomeTreacheryCard treacherousFog
         , SomeTreacheryCard lingeringVenom
+        , SomeTreacheryCard losingTime
         , SomeTreacheryCard falseLead
         , SomeTreacheryCard flooding
         , SomeTreacheryCard oldWivesTales

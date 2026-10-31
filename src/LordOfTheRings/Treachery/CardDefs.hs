@@ -14,6 +14,7 @@ allTreacheryCards =
     map
       (\def -> (cdCardCode def, def))
       [ eyesOfTheForest
+      , losingTime
       , bedlamInTheStreets
       , theThievesPloy
       , theyreGettingAway
@@ -1539,6 +1540,14 @@ darkInterrogation :: CardDef
 darkInterrogation =
   (treachery "core-set-nightmare-escape-from-dol-guldur-009" "Dark Interrogation" EscapeFromDolGuldurNightmare 2)
     { cdShadowEffect = True
+    }
+
+losingTime :: CardDef
+losingTime =
+  (treachery "AAC183" "Losing Time" AngmarAwakenedCampaign 5)
+    { cdCardTraits = setFromList [Burden]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
     }
 
 -- Heirs of Númenor Nightmare Decks

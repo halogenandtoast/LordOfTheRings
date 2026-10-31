@@ -8,6 +8,7 @@ import LordOfTheRings.Keyword (Keyword (Battle, Capture, Sailing, Siege, Surge, 
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
+import LordOfTheRings.Trait (Trait (Burden))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
@@ -55,6 +56,10 @@ allQuestCards =
     map
       (\def -> (cdCardCode def, def))
       [ fliesAndSpiders
+      , protectTheInnocent
+      , mysteriousOmens
+      , fendOffDespair
+      , lootTheDungeons
       , enteringTheMines
       , goblinPatrol
       , aWayUp
@@ -920,6 +925,26 @@ theHavenOfUmbar = quest "12149" "The Haven of Umbar" TheCityOfCorsairs 3 18
 finalConfrontation :: CardDef
 finalConfrontation = quest "12150" "Final Confrontation" TheCityOfCorsairs 4 0
 
+-- The Angmar Awakened campaign's side quests
+
+-- | No quest points: progress removes its damage instead, so it is never defeated. Its
+-- other side is Arnor Ravaged.
+protectTheInnocent :: CardDef
+protectTheInnocent = (encounterSideQuest "AAC158" "Protect the Innocent" AngmarAwakenedCampaign 0) {cdCardTraits = setFromList [Burden]}
+
+mysteriousOmens :: CardDef
+mysteriousOmens =
+  (encounterSideQuest "AAC160" "Mysterious Omens" AngmarAwakenedCampaign 9)
+    { cdVictoryPoints = Just 5
+    , cdKeywords = setFromList [Surge]
+    , cdCardTraits = setFromList [Burden]
+    }
+
+fendOffDespair :: CardDef
+fendOffDespair = (encounterSideQuest "AAC173" "Fend Off Despair" AngmarAwakenedCampaign 8) {cdVictoryPoints = Just 10, cdCardTraits = setFromList [Burden]}
+
+lootTheDungeons :: CardDef
+lootTheDungeons = (encounterSideQuest "AAC175" "Loot the Dungeons" AngmarAwakenedCampaign 4) {cdVictoryPoints = Just 10}
 -- The Grey Havens Nightmare Decks
 
 corsairConfrontation :: CardDef

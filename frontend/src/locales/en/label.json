@@ -1588,7 +1588,50 @@
     "moveDamage": "Choose the character to take the enemy's damage"
   },
   "campaign": {
-    "attachTo": "Choose a hero to attach it to"
+    "attachTo": "Choose a hero to attach it to",
+    "pendantOrCourage": "Deadmen's Dike: choose Iârion's Pendant or Amarthiúl's Courage for the Campaign Pool",
+    "iarionsPendant": "Iârion's Pendant, for a player's deck",
+    "amarthiulsCourage": "Amarthiúl's Courage, attached to Amarthiúl",
+    "chooseBoon": "You may choose a boon to add to your hand and the Campaign Pool",
+    "searchForBoon": "You may search your deck for a boon to add to your hand"
+  },
+  "protectTheInnocent": {
+    "resources": "Protect the Innocent: place 4 damage on it to add 1 resource to each of your heroes?",
+    "placeDamage": "Place 4 damage, take the resources"
+  },
+  "losingTime": {
+    "choose": "Losing Time: raise your threat by 3 or exhaust a hero",
+    "raiseThreat": "Raise your threat by 3"
+  },
+  "ruthless": {
+    "moveDamage": "Choose an enemy engaged with you to move the damage to"
+  },
+  "stalwart": {
+    "playAttachment": "Choose an attachment in your discard pile to play on the hero"
+  },
+  "daechanarsBrand": {
+    "choose": "Choose a Sorcery treachery to add to the victory display"
+  },
+  "ordersFromAngmar": {
+    "discard": "Choose a non-unique Undead enemy to discard"
+  },
+  "laermuin": {
+    "heal": "Choose a character to heal 1 damage from"
+  },
+  "determination": {
+    "attach": "Choose a unique character to attach Determination to"
+  },
+  "loreOfAncientArnor": {
+    "return": "Choose a card in your discard pile to return to your hand"
+  },
+  "mysteriousOmens": {
+    "chooseBoon": "Mysterious Omens: you may choose a boon to attach to a hero you control"
+  },
+  "lootTheDungeons": {
+    "chooseBoon": "Loot the Dungeons: you may choose a boon to add to your hand"
+  },
+  "thaurdirsBurden": {
+    "move": "Choose the hero Thaurdir's burden moves to"
   },
   "perilInPelargirNightmare": {
     "attachScroll": "Choose the enemy with the highest defense to take Alcaron's Scroll"

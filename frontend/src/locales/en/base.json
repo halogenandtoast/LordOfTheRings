@@ -161,7 +161,12 @@
     "notes": "Notes",
     "note": {
       "Prisoner": "Taken prisoner at the beginning of Escape from Dol Guldur: {cards}",
-      "MendorJoinsTheNextCampaign": "Mendor joins your next campaign: put him into play at the start of each scenario, and each player may include 1 copy of Mendor's Support."
+      "MendorJoinsTheNextCampaign": "Mendor joins your next campaign: put him into play at the start of each scenario, and each player may include 1 copy of Mendor's Support.",
+      "ProtectTheInnocentDamage": "Damage noted for Protect the Innocent, later Arnor Ravaged: {cards}",
+      "Determined": "Determined: {cards}",
+      "LostInMountGram": "Left captured in Mount Gram, barred from every deck for the rest of the campaign: {cards}",
+      "HeroDamage": "Damage on each hero at the end of The Battle of Carn Dûm, each beginning The Dread Realm with as much: {cards}",
+      "ChoosePendantOrCourage": "Choose Iârion's Pendant or Amarthiúl's Courage for the Campaign Pool as The Wastes of Eriador is set up."
     },
     "scenarios": "Scenarios",
     "total": "Campaign total",

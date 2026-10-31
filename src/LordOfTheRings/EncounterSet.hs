@@ -11,6 +11,7 @@ data EncounterSet
   | AcrossTheEttenmoorsNightmare
   | AncientForest
   | AngmarOrcs
+  | AngmarAwakenedCampaign
   | AssaultOnOsgiliath
   | AssaultOnOsgiliathNightmare
   | Brigands

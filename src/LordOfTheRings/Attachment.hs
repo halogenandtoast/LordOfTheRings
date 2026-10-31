@@ -78,6 +78,20 @@ import LordOfTheRings.Attachment.Cards.SwordThatWasBroken
 import LordOfTheRings.Attachment.Cards.RivendellBow
 import LordOfTheRings.Attachment.Cards.Resourceful
 import LordOfTheRings.Attachment.Cards.Valor
+import LordOfTheRings.Attachment.Cards.IarionsPendant
+import LordOfTheRings.Attachment.Cards.Cunning
+import LordOfTheRings.Attachment.Cards.Hardy
+import LordOfTheRings.Attachment.Cards.Resolute
+import LordOfTheRings.Attachment.Cards.Ruthless
+import LordOfTheRings.Attachment.Cards.Stalwart
+import LordOfTheRings.Attachment.Cards.AmarthiulsCourage
+import LordOfTheRings.Attachment.Cards.ChieftainsBrooch
+import LordOfTheRings.Attachment.Cards.MailOfEarnur
+import LordOfTheRings.Attachment.Cards.Silverthorn
+import LordOfTheRings.Attachment.Cards.DaechanarsBrand
+import LordOfTheRings.Attachment.Cards.HeirloomOfIarchon
+import LordOfTheRings.Attachment.Cards.OrdersFromAngmar
+import LordOfTheRings.Attachment.Cards.RaimentOfTheSecondAge
 import LordOfTheRings.Attachment.Cards.AppointedByFate
 import LordOfTheRings.Attachment.Cards.RingMail
 import LordOfTheRings.Attachment.Cards.EverMyHeartRises
@@ -245,6 +259,20 @@ allAttachments =
         , SomeAttachmentCard rivendellBow
         , SomeAttachmentCard resourceful
         , SomeAttachmentCard valor
+        , SomeAttachmentCard iarionsPendant
+        , SomeAttachmentCard cunning
+        , SomeAttachmentCard hardy
+        , SomeAttachmentCard resolute
+        , SomeAttachmentCard ruthless
+        , SomeAttachmentCard stalwart
+        , SomeAttachmentCard amarthiulsCourage
+        , SomeAttachmentCard chieftainsBrooch
+        , SomeAttachmentCard mailOfEarnur
+        , SomeAttachmentCard silverthorn
+        , SomeAttachmentCard daechanarsBrand
+        , SomeAttachmentCard heirloomOfIarchon
+        , SomeAttachmentCard ordersFromAngmar
+        , SomeAttachmentCard raimentOfTheSecondAge
         , SomeAttachmentCard appointedByFate
         , SomeAttachmentCard ringMail
         , SomeAttachmentCard everMyHeartRises

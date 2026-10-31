@@ -340,6 +340,12 @@ data ModifierType
   | -- | on a character: while defending against an enemy with the trait, its defense is
     -- raised by this much, as Orders from Angmar reads
     DefenseBonusAgainst Trait Int
+  | -- | on a character: while defending against a matching enemy, its defense is raised by
+    -- this much, as Silverthorn reads
+    DefenseBonusAgainstMatching EnemyMatcher Int
+  | -- | on a player: in the refresh phase they raise their threat by this much instead of 1,
+    -- as Escape from Mount Gram's campaign card reads
+    RefreshThreatRaise Int
   | -- | on the game: as the encounter discard pile is reset into the empty deck, its topmost
     -- matching card goes to the staging area first, as Ghostly Ruins reads
     ReturnBeforeEncounterDeckResets CardMatcher

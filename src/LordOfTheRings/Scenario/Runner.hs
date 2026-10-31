@@ -64,7 +64,8 @@ instance RunMessage ScenarioAttrs where
     -- the scenario gathers its encounter deck at step 1; shuffle it before any setup reveals
     -- in campaign mode the encounter cards of the Campaign Pool are shuffled in with it
     DoStep 2 Setup -> do
-      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, not (isPlayerCardDef def)]
+      -- (an objective, as Arnor Ravaged, comes into play as its own Setup text says)
+      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType]
       encounterDeck <- shuffleM (earned <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ encounterDeck
     DoStep 4 Setup -> do
@@ -85,6 +86,7 @@ instance RunMessage ScenarioAttrs where
     -- what every campaign records once a scenario is won: the score, and the heroes in
     -- their owners' discard piles fallen (Revised Core rulebook, "Scoring" and "The
     -- Fellowship of Heroes")
+    UpdateCampaignLog u -> pure $ attrs & campaignL %~ fmap (updateLog u)
     ResolveCampaign | Just l <- attrs.campaign -> do
       players <- getsGame (toList . allPlayers)
       heroes <- getsGame (toList . entitiesHeroes . gameEntities)

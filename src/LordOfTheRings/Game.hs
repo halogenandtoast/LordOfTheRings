@@ -545,9 +545,10 @@ runGameMessage msg g = case msg of
   ForgetLeftPlay aid -> pure $ g & leftPlayL %~ Map.delete aid
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   -- step 8 follows the quest's own setup: a nightmare setup card's instructions, as its
-  -- "the game is now ready to begin" reads
+  -- "the game is now ready to begin" reads; step 9 a campaign card's setup that needs what
+  -- the quest put into play, as Iârion
   Setup -> do
-    pushAll [DoStep n Setup | n <- [1 .. 8]]
+    pushAll [DoStep n Setup | n <- [1 .. 9]]
     pure g
   DoStep 3 Setup -> do
     firstPlayer <- uniform g.playerOrder
@@ -614,6 +615,7 @@ runGameMessage msg g = case msg of
     let passToken = case drop 1 players of
           (next : _) | isNothing (gameSeparation g) -> [SetFirstPlayer next]
           _ -> []
+    raises <- for players \pid -> (pid,) . fromMaybe 1 . lastMay . (\ms -> [n | RefreshThreatRaise n <- ms]) <$> getModifiers (PlayerTarget pid)
     -- each character readied opens its own window, for responses to it readying
     readied <- for (filter (`notElem` held) characters) \c -> do
       traits <- characterTraits c
@@ -624,7 +626,7 @@ runGameMessage msg g = case msg of
       <> [RefreshUpTo pid n cs | (pid, n, cs) <- limited]
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
-      <> [RaiseThreat pid 1 | pid <- players]
+      <> [RaiseThreat pid n | (pid, n) <- raises, n > 0]
       <> passToken
       -- the phase ends with an action window, for Refresh Actions as Escape from Darkness gives
       <> map OptionalActionWindow players

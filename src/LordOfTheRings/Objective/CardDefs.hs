@@ -16,6 +16,10 @@ allObjectiveCards =
     map
       (\def -> (cdCardCode def, def))
       [ gandalfsMap
+      , arnorRavaged
+      , thaurdirsLegacy
+      , thaurdirsMajesty
+      , thaurdirsSpite
       , caveTorch
       , dungeonTorch
       , shadowKey
@@ -587,6 +591,20 @@ theBeacon = dolAmrothTower "12136" "The Beacon"
 towerOfTheHeron :: CardDef
 towerOfTheHeron = dolAmrothTower "12137" "Tower of the Heron"
 
+-- The Angmar Awakened campaign's burdens
+
+-- | Protect the Innocent's other side.
+arnorRavaged :: CardDef
+arnorRavaged = (objective "AAC158b" "Arnor Ravaged" AngmarAwakenedCampaign 1) {cdCardTraits = setFromList [Burden]}
+
+thaurdirsLegacy :: CardDef
+thaurdirsLegacy = (unique $ objective "AAC168" "Thaurdir's Legacy" AngmarAwakenedCampaign 1) {cdCardTraits = setFromList [Burden]}
+
+thaurdirsMajesty :: CardDef
+thaurdirsMajesty = (unique $ objective "AAC169" "Thaurdir's Majesty" AngmarAwakenedCampaign 1) {cdCardTraits = setFromList [Burden]}
+
+thaurdirsSpite :: CardDef
+thaurdirsSpite = (unique $ objective "AAC170" "Thaurdir's Spite" AngmarAwakenedCampaign 1) {cdCardTraits = setFromList [Burden]}
 -- The Lost Realm Nightmare Decks
 
 -- | Shuffled into the Orc deck in Nightmare mode, it comes into play guarded by the Orc
