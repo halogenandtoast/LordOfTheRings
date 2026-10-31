@@ -1795,6 +1795,7 @@ sahirsEscort =
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 1]
     , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
     }
 
 swiftRaider :: CardDef
@@ -1802,6 +1803,7 @@ swiftRaider =
   (enemy "12021" "Swift Raider" FlightOfTheStormcaller 2 38 3 5 4 8)
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 2]
+    , cdEasyModeQuantity = Just 1
     }
 
 corsairSkiff :: CardDef
@@ -1822,6 +1824,7 @@ serpentsBlade :: CardDef
 serpentsBlade =
   (enemy "12024" "Serpent's Blade" FlightOfTheStormcaller 2 10 3 3 3 4)
     { cdCardTraits = setFromList [Corsair]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | Immune to player card effects, and cannot be engaged: its module says so.
@@ -1878,7 +1881,7 @@ seaScorpion =
     }
 
 caveEel :: CardDef
-caveEel = (enemy "12097" "Cave Eel" TheDrownedRuins 3 20 3 3 4 2) {cdCardTraits = setFromList [Creature]}
+caveEel = (enemy "12097" "Cave Eel" TheDrownedRuins 3 20 3 3 4 2) {cdCardTraits = setFromList [Creature], cdEasyModeQuantity = Just 2}
 
 -- | X threat, X the number of players: its card gives itself the rest.
 templeGuardian :: CardDef
@@ -1897,7 +1900,7 @@ faithlessDesecrator =
     }
 
 islandWatcher :: CardDef
-islandWatcher = (enemy "12076" "Island Watcher" TempleOfTheDeceived 2 46 3 4 1 5) {cdCardTraits = setFromList [Undead]}
+islandWatcher = (enemy "12076" "Island Watcher" TempleOfTheDeceived 2 46 3 4 1 5) {cdCardTraits = setFromList [Undead], cdEasyModeQuantity = Just 0}
 
 profaneDead :: CardDef
 profaneDead = (enemy "12077" "Profane Dead" TempleOfTheDeceived 2 35 1 2 3 3) {cdCardTraits = setFromList [Undead]}
@@ -1927,6 +1930,7 @@ siegeShip =
   (enemy "12126" "Siege Ship" AStormOnCobasHaven 3 46 2 5 5 7)
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Archery 2]
+    , cdEasyModeQuantity = Just 2
     }
 
 heavyCruiser :: CardDef
@@ -1936,6 +1940,7 @@ heavyCruiser =
     , cdKeywords = setFromList [Boarding 2]
     , cdSailingIcons = 1
     , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
     }
 
 -- * The City of Corsairs: Coast of Umbar and The City of Corsairs
@@ -1955,10 +1960,11 @@ slaveShip =
   (enemy "12152" "Slave Ship" CoastOfUmbar 2 32 3 7 5 5)
     { cdCardTraits = setFromList [Corsair, Ship]
     , cdKeywords = setFromList [Boarding 1]
+    , cdEasyModeQuantity = Just 1
     }
 
 umbarSlaver :: CardDef
-umbarSlaver = (enemy "12153" "Umbar Slaver" CoastOfUmbar 3 28 2 2 3 5) {cdCardTraits = setFromList [Corsair, Raider]}
+umbarSlaver = (enemy "12153" "Umbar Slaver" CoastOfUmbar 3 28 2 2 3 5) {cdCardTraits = setFromList [Corsair, Raider], cdEasyModeQuantity = Just 1}
 
 -- | Not The Stormcaller Elite's Captain Sahír: this one is single-sided, and shuffled in
 -- with The City of Corsairs.

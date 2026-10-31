@@ -1840,6 +1840,7 @@ vastCoastland =
     , cdSailingIcons = 1
     , cdShadowEffect = True
     , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * The Stormcaller: the decks of the ship the players fight over (The Thing in the Depths)
@@ -1854,7 +1855,7 @@ helmOfTheStormcaller =
       }
 
 forecastleDeck :: CardDef
-forecastleDeck = (location "12043" "Forecastle Deck" TheStormcaller 2 3 5) {cdCardTraits = setFromList [Ship, Deck]}
+forecastleDeck = (location "12043" "Forecastle Deck" TheStormcaller 2 3 5) {cdCardTraits = setFromList [Ship, Deck], cdEasyModeQuantity = Just 1}
 
 weatherDeck :: CardDef
 weatherDeck =
@@ -1882,6 +1883,7 @@ quarterDeck =
   (location "12047" "Quarter Deck" TheStormcaller 2 4 3)
     { cdCardTraits = setFromList [Ship, Deck]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 -- | The Drowned Ruins' Shrine to Morgoth, Grotto side: set aside until Sahír's Betrayal.
@@ -2006,6 +2008,7 @@ coastOfAnfalas :: CardDef
 coastOfAnfalas =
   (location "12128" "Coast of Anfalas" AStormOnCobasHaven 3 3 3)
     { cdCardTraits = setFromList [Coastland, Ocean]
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * The City of Corsairs: Coast of Umbar and The City of Corsairs
@@ -2037,6 +2040,7 @@ corsairWaters =
     { cdCardTraits = setFromList [Ocean, Coastland]
     , cdSailingIcons = 1
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 watchTower :: CardDef
@@ -2044,6 +2048,7 @@ watchTower =
   (location "12156" "Watch Tower" CoastOfUmbar 2 2 3)
     { cdCardTraits = setFromList [Umbar, Coastland]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 theShatteredMonument :: CardDef
@@ -2063,13 +2068,14 @@ streetsOfUmbar =
 
 -- | Its threat is X, printed as 0: see its card.
 cityOfCorsairs :: CardDef
-cityOfCorsairs = (location "12161" "City of Corsairs" TheCityOfCorsairs 2 0 4) {cdCardTraits = setFromList [Umbar, City]}
+cityOfCorsairs = (location "12161" "City of Corsairs" TheCityOfCorsairs 2 0 4) {cdCardTraits = setFromList [Umbar, City], cdEasyModeQuantity = Just 1}
 
 umbarHarbor :: CardDef
 umbarHarbor =
   (location "12162" "Umbar Harbor" TheCityOfCorsairs 3 4 4)
     { cdCardTraits = setFromList [Umbar, City]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 -- Core Set Nightmare Decks
