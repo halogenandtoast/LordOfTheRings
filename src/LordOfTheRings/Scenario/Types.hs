@@ -7,7 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.HasModifiersFor
-import LordOfTheRings.EncounterSet (EncounterSet)
+import LordOfTheRings.EncounterSet (EncounterSet (TheSiegeOfCairAndrosNightmare))
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Heading (Heading)
 import LordOfTheRings.Id
@@ -174,9 +174,17 @@ instance HasField "encounterDiscard" ScenarioAttrs [EncounterCard] where
 instance HasField "victoryDisplay" ScenarioAttrs [Card] where
   getField = scenarioVictoryDisplay
 
--- | The victory points of the cards in the victory display.
+-- | The victory points of the cards in the victory display. The Siege of Cair Andros'
+-- nightmare setup card: "player cards in the victory display do not contribute their
+-- victory points."
 instance HasField "victoryPoints" ScenarioAttrs Int where
-  getField = sum . mapMaybe (cdVictoryPoints . toCardDef) . scenarioVictoryDisplay
+  getField a = sum . mapMaybe (cdVictoryPoints . toCardDef) . filter counts $ scenarioVictoryDisplay a
+   where
+    -- ponytail: the one setup card that touches scoring is named here, not a modifier
+    noPlayerCards = a.nightmare && fmap nightmareSet a.nightmareDeck == Just TheSiegeOfCairAndrosNightmare
+    counts = \case
+      PlayerCard _ -> not noPlayerCards
+      _ -> True
 
 instance HasField "mode" ScenarioAttrs GameMode where
   getField = scenarioMode
