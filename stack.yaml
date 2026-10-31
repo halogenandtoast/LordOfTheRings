@@ -6,6 +6,9 @@ system-ghc: true
 install-ghc: false
 # Stack runs packages in parallel but GHC builds a package's modules one at a
 # time unless told -j. -A128M sizes each capability's nursery, -c compacts the
-# old generation to bound memory (as in ArkhamHorror).
+# old generation to bound memory (as in ArkhamHorror). Our own modules build at -O0, as
+# in ArkhamHorror: without it a plain `stack build` (the Docker image's) optimises all
+# ~2000 modules, which takes far longer than the game gains from it.
 ghc-options:
   "$targets": -j +RTS -A128M -n4m -c -RTS
+  "$locals": -O0 -fno-write-ide-info
