@@ -218,6 +218,20 @@ allTreacheryCards =
       , foesOfEcthelion
       , umbarPatrol
       , furyAndMalice
+      , darkAndStormy
+      , sahirsGettingAway
+      , tumultuousWaters
+      , deepMaelstrom
+      , deceitfulIsland
+      , callOfTheCurse
+      , suddenPrecipice
+      , pitIntoTheDepths
+      , sulfurCloud
+      , brokenRudder
+      , grappled
+      , inspiringFury
+      , raiseTheAlarm
+      , slaveTrade
       ]
 
 deepDeepDark :: CardDef
@@ -1289,6 +1303,97 @@ umbarPatrol = treachery "12164" "Umbar Patrol" TheCityOfCorsairs 2
 
 furyAndMalice :: CardDef
 furyAndMalice = (treachery "12165" "Fury and Malice" TheCityOfCorsairs 3) {cdEasyModeQuantity = Just 2}
+
+-- Dream-chaser Nightmare Decks
+
+darkAndStormy :: CardDef
+darkAndStormy =
+  (treachery "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-007" "Dark and Stormy" FlightOfTheStormcallerNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+sahirsGettingAway :: CardDef
+sahirsGettingAway =
+  (treachery "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-008" "Sahír's Getting Away!" FlightOfTheStormcallerNightmare 3)
+    { cdShadowEffect = True
+    }
+
+tumultuousWaters :: CardDef
+tumultuousWaters =
+  (treachery "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-004" "Tumultuous Waters" TheThingInTheDepthsNightmare 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    }
+
+deepMaelstrom :: CardDef
+deepMaelstrom =
+  (treachery "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-008" "Deep Maelstrom" TheThingInTheDepthsNightmare 3)
+    { cdShadowEffect = True
+    }
+
+deceitfulIsland :: CardDef
+deceitfulIsland =
+  (treachery "temple-of-the-deceived-nightmare-temple-of-the-deceived-007" "Deceitful Island" TempleOfTheDeceivedNightmare 2)
+    { cdKeywords = setFromList [Doomed 3]
+    }
+
+callOfTheCurse :: CardDef
+callOfTheCurse =
+  (treachery "temple-of-the-deceived-nightmare-temple-of-the-deceived-008" "Call of the Curse" TempleOfTheDeceivedNightmare 3)
+    { cdShadowEffect = True
+    }
+
+suddenPrecipice :: CardDef
+suddenPrecipice =
+  (treachery "temple-of-the-deceived-nightmare-temple-of-the-deceived-009" "Sudden Precipice" TempleOfTheDeceivedNightmare 3)
+    { cdShadowEffect = True
+    }
+
+pitIntoTheDepths :: CardDef
+pitIntoTheDepths =
+  (treachery "the-drowned-ruins-nightmare-the-drowned-ruins-010" "Pit into the Depths" TheDrownedRuinsNightmare 3)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    }
+
+sulfurCloud :: CardDef
+sulfurCloud =
+  (treachery "the-drowned-ruins-nightmare-the-drowned-ruins-011" "Sulfur Cloud" TheDrownedRuinsNightmare 2)
+    { cdCardTraits = setFromList [Hazard]
+    }
+
+brokenRudder :: CardDef
+brokenRudder =
+  (treachery "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-009" "Broken Rudder" AStormOnCobasHavenNightmare 2)
+    { cdSailingIcons = 1
+    }
+
+grappled :: CardDef
+grappled =
+  (treachery "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-010" "Grappled!" AStormOnCobasHavenNightmare 2)
+    { cdShadowEffect = True
+    }
+
+inspiringFury :: CardDef
+inspiringFury =
+  (treachery "the-city-of-corsairs-nightmare-the-city-of-corsairs-006" "Inspiring Fury" CoastOfUmbarNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+raiseTheAlarm :: CardDef
+raiseTheAlarm =
+  (treachery "the-city-of-corsairs-nightmare-the-city-of-corsairs-009" "Raise the Alarm!" TheCityOfCorsairsNightmare 2)
+    { cdShadowEffect = True
+    }
+
+slaveTrade :: CardDef
+slaveTrade =
+  (treachery "the-city-of-corsairs-nightmare-the-city-of-corsairs-010" "Slave Trade" TheCityOfCorsairsNightmare 3)
+    { cdShadowEffect = True
+    }
 
 -- Core Set Nightmare Decks
 

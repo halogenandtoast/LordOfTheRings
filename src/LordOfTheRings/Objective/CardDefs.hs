@@ -79,6 +79,9 @@ allObjectiveCards =
       , theHavensBurn
       , gateKey
       , dolAmrothWarship
+      , aearlang
+      , docksOfDolAmroth
+      , theCursedSword
       , corsairSkirmisherShip
       , seaWardTower
       , towerOfTheGull
@@ -570,3 +573,30 @@ theBeacon = dolAmrothTower "12136" "The Beacon"
 
 towerOfTheHeron :: CardDef
 towerOfTheHeron = dolAmrothTower "12137" "Tower of the Heron"
+
+-- Dream-chaser Nightmare Decks
+
+aearlang :: CardDef
+aearlang =
+  unique
+    (objective "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-002" "Aearlang" AStormOnCobasHavenNightmare 1)
+      { cdCardTraits = setFromList [DolAmroth, Besieged]
+      , cdKeywords = setFromList [Guarded]
+      , cdSailingIcons = 1
+      }
+
+docksOfDolAmroth :: CardDef
+docksOfDolAmroth =
+  unique
+    (objective "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-003" "Docks of Dol Amroth" AStormOnCobasHavenNightmare 1)
+      { cdCardTraits = setFromList [DolAmroth, Besieged]
+      , cdKeywords = setFromList [Guarded]
+      , cdSailingIcons = 1
+      }
+
+theCursedSword :: CardDef
+theCursedSword =
+  unique
+    (objective "the-city-of-corsairs-nightmare-the-city-of-corsairs-007" "The Cursed Sword" TheCityOfCorsairsNightmare 1)
+      { cdCardTraits = setFromList [Artifact, Item, Cursed]
+      }

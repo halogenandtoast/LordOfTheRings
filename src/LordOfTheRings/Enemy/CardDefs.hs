@@ -253,6 +253,22 @@ allEnemyCards =
       , slaveShip
       , umbarSlaver
       , captainSahirTheCityOfCorsairs
+      , raiderOfTheStorm
+      , tideRunner
+      , venomsBite
+      , corsairDuelist
+      , slitheringArm
+      , crashingArm
+      , kingsKnight
+      , cursedSoldier
+      , submergedDead
+      , greatShark
+      , underseaCaveTroll
+      , rammingShip
+      , fangOfSahir
+      , patrolShip
+      , corsairLoyalist
+      , umbarPatrolNightmare
       ]
 
 namelessThing :: CardDef
@@ -1971,6 +1987,124 @@ umbarSlaver = (enemy "12153" "Umbar Slaver" CoastOfUmbar 3 28 2 2 3 5) {cdCardTr
 captainSahirTheCityOfCorsairs :: CardDef
 captainSahirTheCityOfCorsairs =
   unique (enemy "12158" "Captain Sahír" TheCityOfCorsairs 1 4 6 6 2 8) {cdCardTraits = setFromList [Corsair, Raider, Corrupt]}
+
+-- Dream-chaser Nightmare Decks
+
+raiderOfTheStorm :: CardDef
+raiderOfTheStorm =
+  (enemy "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-002" "Raider of the Storm" FlightOfTheStormcallerNightmare 4 28 0 3 3 4)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+tideRunner :: CardDef
+tideRunner =
+  (enemy "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-003" "Tide-runner" FlightOfTheStormcallerNightmare 2 44 4 4 2 9)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 1]
+    , cdWhenRevealed = True
+    }
+
+venomsBite :: CardDef
+venomsBite =
+  unique
+    (enemy "flight-of-the-stormcaller-nightmare-flight-of-the-stormcaller-004" "Venom's Bite" FlightOfTheStormcallerNightmare 1 34 5 8 5 14)
+      { cdCardTraits = setFromList [Corsair, Ship]
+      , cdKeywords = setFromList [Boarding 2]
+      , cdVictoryPoints = Just 5
+      , cdSailingIcons = 1
+      }
+
+corsairDuelist :: CardDef
+corsairDuelist =
+  (enemy "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-005" "Corsair Duelist" TheThingInTheDepthsNightmare 3 36 3 3 1 3)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    , cdShadowEffect = True
+    }
+
+slitheringArm :: CardDef
+slitheringArm =
+  (enemy "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-006" "Slithering Arm" TheThingInTheDepthsNightmare 3 0 0 4 1 5)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Surge, Grapple MostEnemiesGrappled]
+    , cdShadowEffect = True
+    }
+
+crashingArm :: CardDef
+crashingArm =
+  (enemy "the-thing-in-the-depths-nightmare-the-thing-in-the-depths-007" "Crashing Arm" TheThingInTheDepthsNightmare 3 27 2 6 1 7)
+    { cdCardTraits = setFromList [Creature, Tentacle]
+    , cdKeywords = setFromList [Grapple FewestEnemiesGrappled]
+    , cdShadowEffect = True
+    }
+
+kingsKnight :: CardDef
+kingsKnight =
+  (enemy "temple-of-the-deceived-nightmare-temple-of-the-deceived-005" "King's Knight" TempleOfTheDeceivedNightmare 2 23 4 4 4 6)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+cursedSoldier :: CardDef
+cursedSoldier =
+  (enemy "temple-of-the-deceived-nightmare-temple-of-the-deceived-006" "Cursed Soldier" TempleOfTheDeceivedNightmare 3 28 3 3 3 4)
+    { cdCardTraits = setFromList [Undead]
+    }
+
+submergedDead :: CardDef
+submergedDead =
+  (enemy "the-drowned-ruins-nightmare-the-drowned-ruins-006" "Submerged Dead" TheDrownedRuinsNightmare 4 26 2 3 2 3)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+greatShark :: CardDef
+greatShark =
+  (enemy "the-drowned-ruins-nightmare-the-drowned-ruins-007" "Great Shark" TheDrownedRuinsNightmare 2 34 4 4 4 6)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+underseaCaveTroll :: CardDef
+underseaCaveTroll =
+  (enemy "the-drowned-ruins-nightmare-the-drowned-ruins-008" "Undersea Cave Troll" TheDrownedRuinsNightmare 2 36 3 7 1 10)
+    { cdCardTraits = setFromList [Troll]
+    , cdVictoryPoints = Just 1
+    }
+
+rammingShip :: CardDef
+rammingShip =
+  (enemy "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-004" "Ramming Ship" AStormOnCobasHavenNightmare 2 28 4 4 3 8)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdShadowEffect = True
+    }
+
+fangOfSahir :: CardDef
+fangOfSahir =
+  (enemy "a-storm-on-cobas-haven-nightmare-a-storm-on-cobas-haven-005" "Fang of Sahír" AStormOnCobasHavenNightmare 3 42 2 5 3 3)
+    { cdCardTraits = setFromList [Corsair]
+    }
+
+patrolShip :: CardDef
+patrolShip =
+  (enemy "the-city-of-corsairs-nightmare-the-city-of-corsairs-002" "Patrol Ship" CoastOfUmbarNightmare 2 41 2 5 2 7)
+    { cdCardTraits = setFromList [Corsair, Ship]
+    , cdKeywords = setFromList [Boarding 2]
+    , cdSailingIcons = 1
+    }
+
+corsairLoyalist :: CardDef
+corsairLoyalist =
+  (enemy "the-city-of-corsairs-nightmare-the-city-of-corsairs-003" "Corsair Loyalist" CoastOfUmbarNightmare 2 28 4 4 2 4)
+    { cdCardTraits = setFromList [Corsair, Raider]
+    , cdShadowEffect = True
+    }
+
+umbarPatrolNightmare :: CardDef
+umbarPatrolNightmare =
+  (enemy "the-city-of-corsairs-nightmare-the-city-of-corsairs-008" "Umbar Patrol" TheCityOfCorsairsNightmare 3 48 3 3 4 6)
+    { cdCardTraits = setFromList [Corsair]
+    , cdShadowEffect = True
+    }
 
 -- Core Set Nightmare Decks
 

@@ -5,6 +5,7 @@ import LordOfTheRings.Prelude
 data EncounterSet
   = AJourneyToRhosgobel
   | AStormOnCobasHaven
+  | AStormOnCobasHavenNightmare
   | AcrossTheEttenmoors
   | AncientForest
   | AngmarOrcs
@@ -15,6 +16,7 @@ data EncounterSet
   | CelebrimborsSecret
   | ConflictAtTheCarrock
   | CoastOfUmbar
+  | CoastOfUmbarNightmare
   | CorsairPirates
   | CorsairRaiders
   | CreaturesOfTheForest
@@ -33,6 +35,7 @@ data EncounterSet
   | EscapeFromMountGram
   | FlightFromMoria
   | FlightOfTheStormcaller
+  | FlightOfTheStormcallerNightmare
   | FoulWeather
   | FoundationsOfStone
   | GoblinsOfTheDeep
@@ -64,14 +67,17 @@ data EncounterSet
   | StormyWeather
   | StreetsOfGondor
   | TempleOfTheDeceived
+  | TempleOfTheDeceivedNightmare
   | TheAntleredCrown
   | TheBattleOfCarnDum
   | TheBloodOfGondor
   | TheCityOfCorsairs
+  | TheCityOfCorsairsNightmare
   | TheDeadMarshes
   | TheDreadRealm
   | TheDreamChasersFleet
   | TheDrownedRuins
+  | TheDrownedRuinsNightmare
   | TheDruadanForest
   | TheDunlandTrap
   | TheFateOfNumenor
@@ -91,6 +97,7 @@ data EncounterSet
     TheStormcaller
   | TheStormcallerElite
   | TheThingInTheDepths
+  | TheThingInTheDepthsNightmare
   | TheThreeTrials
   | TheTreacheryOfRhudaur
   | TheWastesOfEriador
