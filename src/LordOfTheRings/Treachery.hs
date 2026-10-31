@@ -219,6 +219,9 @@ import LordOfTheRings.Treachery.Cards.CrashingThunder
 import LordOfTheRings.Treachery.Cards.BarrenAndDesolate
 import LordOfTheRings.Treachery.Cards.MalevolentForces
 import LordOfTheRings.Treachery.Cards.LifeDrain
+import LordOfTheRings.Treachery.Cards.DeathAndDecay
+import LordOfTheRings.Treachery.Cards.HowlingOfWargs
+import LordOfTheRings.Treachery.Cards.BlackMare
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -462,5 +465,8 @@ allTreacherys =
         , SomeTreacheryCard barrenAndDesolate
         , SomeTreacheryCard malevolentForces
         , SomeTreacheryCard lifeDrain
+        , SomeTreacheryCard deathAndDecay
+        , SomeTreacheryCard howlingOfWargs
+        , SomeTreacheryCard blackMare
         ]
     ]

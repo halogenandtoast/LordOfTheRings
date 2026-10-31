@@ -13,13 +13,13 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase))
-import LordOfTheRings.Scenario (acrossTheEttenmoors, escapeFromMountGram, theTreacheryOfRhudaur, theWastesOfEriador)
+import LordOfTheRings.Scenario (acrossTheEttenmoors, escapeFromMountGram, theBattleOfCarnDum, theTreacheryOfRhudaur, theWastesOfEriador)
 import LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers (capturedDeck, capturedUnder)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheWastesOfEriador.Helpers (isNight)
 import LordOfTheRings.Scenario.Types (GameMode (..), encounterDeckL, modeL, scenarioSetAside)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, RoundEnds, ThreatRaisedByEncounter), mkAfter)
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, PhaseEnds, RoundEnds, ThreatRaisedByEncounter), mkAfter, mkWhen)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -420,3 +420,79 @@ spec = describe "Angmar Awakened Nightmare mode" do
       reveal [Treacheries.lifeDrain]
       resolveForced pid
       map toCardCode . (.shadowCards) <$> getEnemy thaurdir `shouldReturn` [toCardCode Treacheries.lifeDrain]
+
+  describe "The Battle of Carn Dûm" do
+    it "builds the nightmare deck" . nightmare theBattleOfCarnDum $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      map (`copies` deck) [Enemies.angmarMarauder, Treacheries.terrorOfTheNorth, Enemies.orcWight, Quests.severTheHead]
+        `shouldBe` [0, 0, 3, 1]
+
+    it "Orc Wight is dealt 2 shadow cards as it enters play" . nightmare theBattleOfCarnDum $ \pid -> do
+      _ <- setEncounterDeck [Locations.strongholdTower, Locations.strongholdTower]
+      wight <- staged Enemies.orcWight
+      resolveForced pid
+      length . (.shadowCards) <$> getEnemy wight `shouldReturn` 2
+
+    it "Thaurdir's Elite sheds its shadow cards at 3, each player discarding an ally" . nightmare theBattleOfCarnDum $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.silverlodeArcher
+      elite <- staged Enemies.thaurdirsElite
+      _ <- setEncounterDeck [Locations.strongholdTower, Locations.strongholdTower, Locations.strongholdTower]
+      replicateM_ 3 $ run $ DealShadowCard elite
+      length . (.shadowCards) <$> getEnemy elite `shouldReturn` 0
+      getsGame (length . (.entities.allies)) `shouldReturn` 0
+
+    it "Stronghold Tower deals each player 2 damage to travel there" . nightmare theBattleOfCarnDum $ \pid -> do
+      tower <- stagedLocation Locations.strongholdTower
+      getModifiers GameTarget >>= (`shouldSatisfy` elem CannotCancelEncounterEffects)
+      run $ TravelTo tower
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      chooseTarget pid eowyn
+      getCharacterDamage eowyn `shouldReturn` 2
+
+    it "Gates of Carn Dûm, explored, is dealt to the staged enemy with the lowest engagement cost" . nightmare theBattleOfCarnDum $ \pid -> do
+      gates <- stagedLocation Locations.gatesOfCarnDum
+      wight <- staged Enemies.orcWight
+      _ <- setEncounterDeck [Locations.strongholdTower, Locations.strongholdTower]
+      resolveForced pid
+      elite <- staged Enemies.thaurdirsElite
+      run $ PlaceLocation gates ActiveLocation
+      run $ PlaceTokens GameSource (toTarget gates) Progress 2
+      resolveForced pid
+      map toCardCode . (.shadowCards) <$> getEnemy wight >>= (`shouldSatisfy` elem (toCardCode Locations.gatesOfCarnDum))
+      length . (.shadowCards) <$> getEnemy elite `shouldReturn` 0
+
+    it "Death and Decay surges when it discards no attachment" . nightmare theBattleOfCarnDum $ \_ -> do
+      reveal [Treacheries.deathAndDecay, Locations.strongholdTower]
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+    it "Howling of Wargs can deal a shadow card to each enemy in the staging area" . nightmare theBattleOfCarnDum $ \pid -> do
+      elite <- staged Enemies.thaurdirsElite
+      reveal [Treacheries.howlingOfWargs, Locations.strongholdTower]
+      chooseLabel "$label.howlingOfWargs.shadow" pid
+      length . (.shadowCards) <$> getEnemy elite `shouldReturn` 1
+
+    it "Black Mare gives Thaurdir 3 hit points, and raises each threat as he flips" . nightmare theBattleOfCarnDum $ \pid -> do
+      thaurdir <- staged Enemies.thaurdirCaptain
+      reveal [Treacheries.blackMare]
+      getModifiers (toTarget thaurdir) >>= (`shouldSatisfy` elem (HitPointModifier 3))
+      threat <- threatOf pid
+      run $ Flip (toTarget thaurdir)
+      resolveForced pid
+      threatOf pid >>= (`shouldSatisfy` (>= threat + 1))
+
+    it "Sever the Head shields Thaurdir and strengthens him" . nightmare theBattleOfCarnDum $ \_ -> do
+      thaurdir <- staged Enemies.thaurdirCaptain
+      run . AddToStaging =<< genEncounterCard Quests.severTheHead
+      getModifiers (toTarget thaurdir) >>= (`shouldSatisfy` \ms -> all (`elem` ms) [ThreatModifier 2, AttackModifier 2, CannotTakeDamage])
+
+    it "Protect the Flanks deals damage per shadow card in the staging area at the end of combat" . nightmare theBattleOfCarnDum $ \pid -> do
+      elite <- staged Enemies.thaurdirsElite
+      _ <- setEncounterDeck [Locations.strongholdTower]
+      run $ DealShadowCard elite
+      run . AddToStaging =<< genEncounterCard Quests.protectTheFlanks
+      run $ CheckWindows [mkWhen $ PhaseEnds CombatPhase]
+      resolveForced pid
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      chooseTarget pid eowyn
+      getCharacterDamage eowyn `shouldReturn` 1

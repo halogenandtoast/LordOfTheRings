@@ -1623,5 +1623,19 @@
   },
   "malevolentForces": {
     "remove": "Choose the questing character with the highest willpower to remove from the quest"
+  },
+  "thaurdirsElite": {
+    "discardAlly": "Choose an ally you control to discard",
+    "choose": "Thaurdir's Elite: raise your threat by 4, or discard an ally you control",
+    "threat": "Raise your threat by 4",
+    "ally": "Discard an ally you control"
+  },
+  "gatesOfCarnDum": {
+    "enemy": "Choose the enemy to deal Gates of Carn Dûm to as a shadow card"
+  },
+  "howlingOfWargs": {
+    "choose": "Howling of Wargs",
+    "shadow": "Deal 1 shadow card to each enemy in the staging area",
+    "search": "Search the encounter deck and discard pile for a side quest"
   }
 }

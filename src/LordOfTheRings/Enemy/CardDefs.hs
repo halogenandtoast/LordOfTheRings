@@ -263,6 +263,8 @@ allEnemyCards =
       , thaurdirsHunter
       , undeadThrall
       , apostateOfAngmar
+      , orcWight
+      , thaurdirsElite
       ]
 
 namelessThing :: CardDef
@@ -2126,5 +2128,21 @@ apostateOfAngmar :: CardDef
 apostateOfAngmar =
   (enemy "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-007" "Apostate of Angmar" TheTreacheryOfRhudaurNightmare 3 38 5 2 2 12)
     { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+orcWight :: CardDef
+orcWight =
+  (enemy "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-002" "Orc Wight" TheBattleOfCarnDumNightmare 3 30 2 3 2 4)
+    { cdCardTraits = setFromList [Orc, Undead]
+    , cdShadowEffect = True
+    }
+
+thaurdirsElite :: CardDef
+thaurdirsElite =
+  (enemy "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-003" "Thaurdir's Elite" TheBattleOfCarnDumNightmare 2 45 2 5 4 6)
+    { cdCardTraits = setFromList [Orc]
     , cdShadowEffect = True
     }

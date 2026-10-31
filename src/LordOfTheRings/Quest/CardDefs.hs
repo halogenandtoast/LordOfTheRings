@@ -246,6 +246,9 @@ allQuestCards =
       , intoTheEttenmoorsNightmare
       , isolated
       , rescueFromTheTrolls
+      , protectTheFlanks
+      , rallyTheFighters
+      , severTheHead
       ]
 
 theDrippingWalls :: CardDef
@@ -945,4 +948,27 @@ rescueFromTheTrolls =
   (encounterSideQuest "across-the-ettenmoors-nightmare-across-the-ettenmoors-011" "Rescue from the Trolls" AcrossTheEttenmoorsNightmare 15)
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+protectTheFlanks :: CardDef
+protectTheFlanks =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-009" "Protect the Flanks" TheBattleOfCarnDumNightmare 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Siege]
+    }
+
+rallyTheFighters :: CardDef
+rallyTheFighters =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-010" "Rally the Fighters" TheBattleOfCarnDumNightmare 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+severTheHead :: CardDef
+severTheHead =
+  (encounterSideQuest "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-011" "Sever the Head" TheBattleOfCarnDumNightmare 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Battle]
     }

@@ -197,6 +197,9 @@ import LordOfTheRings.Quest.Cards.RaidGolfimbulsVault
 import LordOfTheRings.Quest.Cards.IntoTheEttenmoorsNightmare
 import LordOfTheRings.Quest.Cards.Isolated
 import LordOfTheRings.Quest.Cards.RescueFromTheTrolls
+import LordOfTheRings.Quest.Cards.ProtectTheFlanks
+import LordOfTheRings.Quest.Cards.RallyTheFighters
+import LordOfTheRings.Quest.Cards.SeverTheHead
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -426,5 +429,8 @@ allQuests =
         , SomeQuestCard intoTheEttenmoorsNightmare
         , SomeQuestCard isolated
         , SomeQuestCard rescueFromTheTrolls
+        , SomeQuestCard protectTheFlanks
+        , SomeQuestCard rallyTheFighters
+        , SomeQuestCard severTheHead
         ]
     ]

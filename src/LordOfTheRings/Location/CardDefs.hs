@@ -292,6 +292,8 @@ allLocationCards =
       , forgottenCourtyard
       , charredCellar
       , secretAntechamber
+      , strongholdTower
+      , gatesOfCarnDum
       ]
 
 drownedTreasury :: CardDef
@@ -2190,4 +2192,19 @@ secretAntechamber :: CardDef
 secretAntechamber =
   (location "the-treachery-of-rhudaur-nightmare-the-treachery-of-rhudaur-008" "Secret Antechamber" TheTreacheryOfRhudaurNightmare 3 2 5)
     { cdCardTraits = setFromList [Ruins]
+    }
+
+-- The Battle of Carn Dûm Nightmare
+
+strongholdTower :: CardDef
+strongholdTower =
+  (location "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-004" "Stronghold Tower" TheBattleOfCarnDumNightmare 3 3 4)
+    { cdCardTraits = setFromList [CarnDum]
+    }
+
+gatesOfCarnDum :: CardDef
+gatesOfCarnDum =
+  (location "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-005" "Gates of Carn Dûm" TheBattleOfCarnDumNightmare 2 5 2)
+    { cdCardTraits = setFromList [CarnDum]
+    , cdShadowEffect = True
     }

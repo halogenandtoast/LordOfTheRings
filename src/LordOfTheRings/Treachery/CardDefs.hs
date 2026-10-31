@@ -226,6 +226,9 @@ allTreacheryCards =
       , barrenAndDesolate
       , malevolentForces
       , lifeDrain
+      , deathAndDecay
+      , howlingOfWargs
+      , blackMare
       ]
 
 deepDeepDark :: CardDef
@@ -1385,3 +1388,19 @@ lifeDrain =
     { cdCardTraits = setFromList [Sorcery]
     , cdShadowEffect = True
     }
+
+-- The Battle of Carn Dûm Nightmare
+
+deathAndDecay :: CardDef
+deathAndDecay = (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-006" "Death and Decay" TheBattleOfCarnDumNightmare 3) {cdCardTraits = setFromList [Sorcery]}
+
+howlingOfWargs :: CardDef
+howlingOfWargs = (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-007" "Howling of Wargs" TheBattleOfCarnDumNightmare 2) {cdShadowEffect = True}
+
+blackMare :: CardDef
+blackMare =
+  unique
+    (treachery "the-battle-of-carn-dum-nightmare-the-battle-of-carn-dum-008" "Black Mare" TheBattleOfCarnDumNightmare 1)
+      { cdCardTraits = setFromList [Mount]
+      , cdShadowEffect = True
+      }

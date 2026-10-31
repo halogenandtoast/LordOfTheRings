@@ -257,6 +257,8 @@ import LordOfTheRings.Enemy.Cards.GiantBeetle
 import LordOfTheRings.Enemy.Cards.ThaurdirsHunter
 import LordOfTheRings.Enemy.Cards.UndeadThrall
 import LordOfTheRings.Enemy.Cards.ApostateOfAngmar
+import LordOfTheRings.Enemy.Cards.OrcWight
+import LordOfTheRings.Enemy.Cards.ThaurdirsElite
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -539,5 +541,7 @@ allEnemys =
         , SomeEnemyCard thaurdirsHunter
         , SomeEnemyCard undeadThrall
         , SomeEnemyCard apostateOfAngmar
+        , SomeEnemyCard orcWight
+        , SomeEnemyCard thaurdirsElite
         ]
     ]
