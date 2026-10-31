@@ -3183,14 +3183,10 @@ attackDamage pid eid target n = do
       excessToShip = ExcessDamageToShipObjective `elem` mods
       -- a card it goes to, as Dense Thickets' shadow sends it to a Ranger objective
       excessTo = [t | ExcessDamageTo t <- mods, t /= target]
-  excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo
       excessToAflame = ExcessDamageToAflameLocation `elem` mods
-  excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || excessToAflame
       excessToDeck = ExcessDamageDiscardsFromDeck `elem` mods
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || excessToDeck
+    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo || excessToAflame || excessToDeck
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
