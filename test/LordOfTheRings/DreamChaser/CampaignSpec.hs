@@ -1,0 +1,144 @@
+module LordOfTheRings.DreamChaser.CampaignSpec (spec) where
+
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Ally (Ally)
+import LordOfTheRings.Attachment (AttachmentAttrs (..))
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Campaign
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Outcome (Outcome (Won))
+import LordOfTheRings.Scenario (raidOnTheGreyHavens, theFateOfNumenor, voyageAcrossBelegaer)
+import LordOfTheRings.Scenario.Types (scenarioCampaignCardFlipped, victoryDisplayL)
+import LordOfTheRings.Window (WindowType (..), mkAfter)
+import Data.Aeson.Types (parseMaybe)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import TestImport
+
+dc :: CampaignLog
+dc = newCampaignLog "dream-chaser"
+
+seated :: CampaignLog
+seated = dc {campaignLogHeroes = [["01001", "01002", "01003"]]}
+
+withVictory :: [CardDef] -> GameT ()
+withVictory defs = do
+  cards <- traverse genEncounterCard defs
+  putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (map EncounterCard cards <>))) =<< getGame
+
+encounterDeckCodes :: GameT [CardCode]
+encounterDeckCodes = getsGame (map toCardCode . (.encounterDeck) . toAttrs . (.scenario))
+
+calphons :: GameT [Ally]
+calphons = getsGame (filter ((== toCardCode Objectives.calphon) . toCardCode) . toList . (.entities.allies))
+
+attachedTo :: CardDef -> GameT [Target]
+attachedTo def =
+  getsGame \g -> [t | a <- toList g.entities.attachments, toCardCode a == toCardCode def, AttachedTo t <- [attachmentPlacement (toAttrs a)]]
+
+-- | A test of pure values, in IO.
+pureIt :: String -> IO () -> Spec
+pureIt = it
+
+spec :: Spec
+spec = describe "Dream-chaser campaign" do
+  describe "the campaign log" do
+    pureIt "plays The Grey Havens' scenarios, then the cycle's" do
+      nextScenario dc `shouldBe` Just "voyage-across-belegaer"
+      nextScenario dc {campaignLogCompleted = [CompletedScenario s 0 | s <- ["voyage-across-belegaer", "the-fate-of-numenor", "raid-on-the-grey-havens"]]}
+        `shouldBe` Just "flight-of-the-stormcaller"
+      partNumber dc "the-city-of-corsairs" `shouldBe` 9
+
+    pureIt "spends 1 XP to mark a checkbox, and upgrades a card once each is marked" do
+      let l = dc {campaignLogXp = 2, campaignLogPool = [PoolCard "DCC189" Nothing (Just "01001")]}
+          spent = spendXp "DCC172" =<< spendXp "DCC172" l
+      (.xp) <$> spent `shouldBe` Just 0
+      isUpgraded "DCC172" <$> spent `shouldBe` Just True
+      upgradedCode <$> spent <*> pure "DCC172" `shouldBe` Just "DCC172U"
+      -- a Permanent boon in the pool turns to its Upgraded side as its last box is marked
+      let cutlass = foldM (flip spendXp) dc {campaignLogXp = 5, campaignLogPool = [PoolCard "DCC189" Nothing (Just "01001")]} (replicate 5 "DCC189" :: [CardCode])
+      map (.code) . (.pool) <$> cutlass `shouldBe` Just ["DCC189U"]
+
+    pureIt "spends no XP it does not have, nor past a card's checkboxes" do
+      spendXp "DCC172" dc `shouldBe` Nothing
+      (spendXp "DCC172" <=< spendXp "DCC172" <=< spendXp "DCC172") dc {campaignLogXp = 5} `shouldBe` Nothing
+
+    pureIt "offers Gavin once A Storm on Cobas Haven is won" do
+      map xpCard (xpCards dc) `shouldSatisfy` notElem "DCC210"
+      map xpCard (xpCards dc {campaignLogCompleted = [CompletedScenario "a-storm-on-cobas-haven" 0]}) `shouldSatisfy` elem "DCC210"
+
+    pureIt "reads a log kept before XP as having none" do
+      let old = object ["campaign" .= ("dream-chaser" :: Text), "heroes" .= ([] :: [[Text]]), "fallenHeroes" .= ([] :: [Text]), "threatPenalty" .= (0 :: Int), "pool" .= ([] :: [Value]), "notes" .= object [], "completed" .= ([] :: [Value])]
+      campaignLogXp <$> parseMaybe parseJSON old `shouldBe` Just 0
+
+  describe "Voyage Across Belegaer" do
+    it "shuffles Ominous Fate and Thunderstruck into the encounter deck" . campaignTestIn voyageAcrossBelegaer seated starterDeck $ \_ -> do
+      run $ DoStep 9 Setup
+      deck <- encounterDeckCodes
+      deck `shouldSatisfy` elem (toCardCode Treacheries.ominousFate)
+      deck `shouldSatisfy` elem (toCardCode Enemies.thunderstruck)
+
+    it "adds Ominous Fate to the Campaign Pool and gains XP" . campaignTestIn voyageAcrossBelegaer seated starterDeck $ \_ -> do
+      withVictory [Enemies.crowley, Enemies.thunderstruck]
+      run $ GameOver Won
+      l <- getCampaignLog
+      map (.code) l.pool `shouldBe` [toCardCode Treacheries.ominousFate]
+      -- 1 surviving player, no Ship enemy in play, Crowley 1 and Thunderstruck 2
+      l.xp `shouldBe` 5
+      getsGame (scenarioCampaignCardFlipped . toAttrs . (.scenario)) `shouldReturn` True
+
+    it "loses 1 XP for Ominous Fate in the victory display" . campaignTestIn voyageAcrossBelegaer seated starterDeck $ \_ -> do
+      withVictory [Treacheries.ominousFate]
+      run $ GameOver Won
+      (.xp) <$> getCampaignLog `shouldReturn` 1
+
+  describe "The Fate of Númenor" do
+    it "shuffles Revenant in, and gains XP for each resource on the campaign card" . campaignTestIn theFateOfNumenor seated starterDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      -- no character is damaged for threat
+      chooseLabel "$label.done" pid
+      encounterDeckCodes >>= (`shouldSatisfy` elem (toCardCode Enemies.revenant))
+      revenant <- genEncounterCard Enemies.revenant
+      run $ CheckWindows [mkAfter $ EnemyDestroyed (EncounterCard revenant)]
+      (.cardResources) <$> getCampaignLog `shouldReturn` 1
+      run $ GameOver Won
+      l <- getCampaignLog
+      -- 1 surviving player, 1 resource, threat 40 or less
+      l.xp `shouldBe` 3
+      l.cardResources `shouldBe` 0
+
+  describe "Raid on the Grey Havens" do
+    it "gives Calphon to the first player with Spyglass and Black Key, and a Galdor's Counsel to choose" . campaignTestIn raidOnTheGreyHavens seated starterDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      calphon <- fromJustNote "no Calphon" . headMay <$> calphons
+      calphon.placement `shouldBe` InPlayArea pid
+      attachedTo Attachments.spyglass `shouldReturn` [toTarget calphon.id]
+      attachedTo Attachments.blackKey `shouldReturn` [toTarget calphon.id]
+      chooseOptionMatching "choose a Galdor's Counsel" pid \case
+        TargetLabel (CardIdTarget _) _ -> True
+        _ -> False
+      hand <- map toCardCode . (.hand) <$> getPlayer pid
+      let galdors = map toCardCode [Events.galdorsCounselLeadership, Events.galdorsCounselTactics, Events.galdorsCounselSpirit, Events.galdorsCounselLore]
+      filter (`elem` galdors) hand `shouldSatisfy` ((== 1) . length)
+      l <- getCampaignLog
+      map (.seat) l.pool `shouldBe` [Just 0]
+      length (recorded ChosenDuringSetup l) `shouldBe` 1
+      encounterDeckCodes >>= (`shouldSatisfy` elem (toCardCode Enemies.graxar))
+
+    it "records Graxar defeated, for Parrying Cutlass or Throwing Axe after" . campaignTestIn raidOnTheGreyHavens seated starterDeck $ \_ -> do
+      withVictory [Enemies.graxar]
+      run $ GameOver Won
+      l <- getCampaignLog
+      recorded GraxarDefeated l `shouldBe` [toCardCode Enemies.graxar]
+      Map.member ChosenDuringSetup l.notes `shouldBe` False
+
+    it "attaches the chosen reward to a hero and records it in the pool" . campaignTestIn theFateOfNumenor seated {campaignLogNotes = Map.fromList [(GraxarDefeated, [toCardCode Enemies.graxar])]} starterDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      chooseLabel "$label.dreamChaserCampaign.throwingAxe" pid
+      theodred <- getHeroWithCode "01002"
+      chooseTarget pid theodred.id
+      attachedTo Attachments.throwingAxe `shouldReturn` [toTarget theodred.id]
+      l <- getCampaignLog
+      l.pool `shouldBe` [PoolCard (toCardCode Attachments.throwingAxe) Nothing (Just "01002")]
+      recorded GraxarDefeated l `shouldBe` []
