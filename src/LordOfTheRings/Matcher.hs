@@ -128,13 +128,11 @@ matchHero matcher hero = case matcher of
           . entitiesAttachments
           . gameEntities
       )
+  -- an objective attached counts, as a Scarred burden
   HeroWithAttachment code ->
-    getsGame
-      ( any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code)
-          . toList
-          . entitiesAttachments
-          . gameEntities
-      )
+    getsGame \g ->
+      any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code) (entitiesAttachments $ gameEntities g)
+        || any (\o -> o.placement == AttachedTo (toTarget hero) && toCardCode o == code) (entitiesObjectives $ gameEntities g)
   HeroWithResources -> pure $ hero.resources > 0
   HeroWithPrintedSphere sphere -> pure $ hero.sphere == sphere
   HeroWithResourcesAtLeast n -> pure $ hero.resources >= n

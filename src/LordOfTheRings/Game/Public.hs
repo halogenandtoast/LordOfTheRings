@@ -4,6 +4,7 @@ import Data.Aeson.Key qualified as Key
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Campaign (campaignCardFor)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities (entitiesObjectives, entitiesQuests)
@@ -87,6 +88,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
         $ adjust hideScenario "scenario" o
+        -- in campaign mode, the campaign card next to the quest deck
+        & KeyMap.insert "campaignCard" (toJSON campaignCard)
     v -> v
   -- the stats printed down a card's side, as they are now
   cardStats :: ReadGame (Map CardId [(Text, Int)])
@@ -178,6 +181,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     Object o -> Object $ adjust hideSearch "question" $ if KeyMap.member "cards" o then KeyMap.insert "cards" (Array mempty) o else o
     v -> v
   -- a scenario's own state holds what is facedown, as the underworld deck
+  campaignCard =
+    let a = toAttrs g.scenario
+     in (\code -> object ["code" .= code, "flipped" .= scenarioCampaignCardFlipped a]) <$> (flip campaignCardFor (scenarioId a) =<< scenarioCampaign a)
   hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o

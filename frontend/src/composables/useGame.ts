@@ -189,6 +189,7 @@ export const useGame = (gameId: string, spectate = false) => {
     players: computed(() => game.value?.players ?? []),
     table: computed(() => data.value?.table ?? null),
     outcome: computed(() => game.value?.outcome ?? null),
+    campaignId: computed(() => data.value?.campaignId ?? null),
     undo: (to?: 'phase' | 'round') => post(to ? `/undo?to=${to}` : '/undo'),
     // back to just before a log entry
     undoTo: (step: number) => post(`/undo?to=step&step=${step}`),

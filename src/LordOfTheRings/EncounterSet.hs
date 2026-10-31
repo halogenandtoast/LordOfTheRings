@@ -48,6 +48,7 @@ data EncounterSet
   | MordorElite
   | PassageThroughMirkwood
   | PassageThroughMirkwoodCampaign
+  | JourneyAlongTheAnduinCampaign
   | PassageThroughMirkwoodNightmare
   | PerilInPelargir
   | PlunderingGoblins

@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Scenario.Types (module LordOfTheRings.Scenario.Types) where
 
+import LordOfTheRings.Campaign (CampaignLog)
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -90,6 +91,11 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioGrottoDeck :: [EncounterCard]
   -- ^ the Grotto deck, top first (The Drowned Ruins): double-sided locations, Grotto side
   -- up, an explored Grotto side shuffled back into it
+  , scenarioCampaign :: Maybe CampaignLog
+  -- ^ in campaign mode, the campaign log as the scenario began, then as it is resolved
+  , scenarioCampaignCardFlipped :: Bool
+  -- ^ the campaign card turned over, as its resolution is read, or Escape from Dol
+  -- Guldur's when the prisoner is taken
   }
   deriving stock (Show, Eq, Generic)
 
@@ -99,7 +105,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard]))] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False)] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -128,6 +134,8 @@ scenario f sid name =
       , scenarioCorsairDiscard = []
       , scenarioUnchartedDeck = []
       , scenarioGrottoDeck = []
+      , scenarioCampaign = Nothing
+      , scenarioCampaignCardFlipped = False
       }
 
 instance Entity ScenarioAttrs where
@@ -209,3 +217,6 @@ instance HasField "unchartedDeck" ScenarioAttrs [EncounterCard] where
 
 instance HasField "grottoDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioGrottoDeck
+
+instance HasField "campaign" ScenarioAttrs (Maybe CampaignLog) where
+  getField = scenarioCampaign

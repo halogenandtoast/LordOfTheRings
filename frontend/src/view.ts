@@ -14,6 +14,7 @@ const cardTypes: Record<string, string> = {
   QuestType: 'Quest',
   ObjectiveType: 'Objective',
   ObjectiveAllyType: 'Objective Ally',
+  CampaignType: 'Campaign',
   PlayerSideQuestType: 'Player Side Quest',
   EncounterSideQuestType: 'Encounter Side Quest',
   NightmareType: 'Nightmare',
@@ -383,6 +384,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
           : null,
       corsairDeck: game.scenario.corsairDeckSize ?? null,
       corsairDiscard: (game.scenario.corsairDiscard ?? []).map((c) => card(c.cardCode, c.id)),
+      campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped }) : null,
       stormcallerStage: game.stormcallerStage
         ? card(game.stormcallerStage.cardCode, game.stormcallerStage.id, { flipped: true, image: `${game.stormcallerStage.cardCode}-d`, progress: game.stormcallerProgress ?? 0 })
         : null,

@@ -6,6 +6,7 @@ import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.CardDefs (allAllyCards)
 import LordOfTheRings.Attachment.CardDefs (allAttachmentCards)
+import LordOfTheRings.Campaign.CardDefs (allCampaignCards)
 import LordOfTheRings.Card.CardDef as X
 import LordOfTheRings.Card.CardType as X
 import LordOfTheRings.Card.Code as X
@@ -69,6 +70,7 @@ allEncounterCards =
     , allQuestCards
     , allObjectiveCards
     , syntheticCards
+    , allCampaignCards
     , allNightmareCards
     ]
 

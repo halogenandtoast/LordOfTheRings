@@ -23,6 +23,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           <RouterLink v-else class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
           <div v-if="game.easyMode" class="badge easy">{{ $t('home.easyMode') }}</div>
           <div v-if="game.nightmare" class="badge nightmare">{{ $t('home.nightmare') }}</div>
+          <RouterLink v-if="game.campaignId && !preview && !spectate" class="badge easy" :to="`/campaigns/${game.campaignId}`">{{ $t('campaignMode.log') }}</RouterLink>
           <div v-if="game.outcome" class="badge outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
             {{ $t(game.outcome === 'Won' ? 'home.won' : 'home.lost') }}
           </div>

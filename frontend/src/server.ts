@@ -15,6 +15,7 @@ export interface CardDef {
   questPoints: number | null
   victoryPoints?: number | null
   sphere?: string | null
+  cardTraits?: string[]
 }
 
 export type Target = { tag: string; contents?: string }
@@ -139,6 +140,8 @@ export interface ServerGame {
   captured?: Record<string, number>
   /** How many cards are in each player's captured deck, by player id (Escape from Mount Gram). */
   capturedDecks?: Record<string, number>
+  /** In campaign mode, the campaign card next to the quest deck, turned over once read. */
+  campaignCard?: { code: string; flipped: boolean } | null
   /** The Stormcaller's quest stage and the progress on it (Flight of the Stormcaller). */
   stormcallerStage?: Card | null
   stormcallerProgress?: number | null
@@ -155,6 +158,8 @@ export interface GameData {
   table: Table
   /** The log's latest entries, when the client should take them afresh. */
   log: LogEntry[] | null
+  /** The campaign the game is a scenario of. */
+  campaignId?: string | null
 }
 
 /** Who plays: with friends, who sits where (seat n plays the nth player); otherwise the owner plays every seat. */
@@ -184,6 +189,8 @@ export interface GameSummary {
   /** Waiting for friends to take the rest of the seats. */
   waiting: boolean
   easyMode: boolean
+  /** The campaign the game is a scenario of. */
+  campaignId?: string | null
   nightmare: boolean
   /** Who plays, in turn order, with their heroes; none until the game is dealt. */
   seats: { name: string; threat: number; eliminated: boolean; heroes: { code: string; sphere: string | null }[] }[]

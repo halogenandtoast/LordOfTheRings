@@ -66,6 +66,20 @@ LotrGame sql=lotr_games
   -- | the scenario's Nightmare Deck in place of its standard encounter deck; never with
   -- easy mode
   nightmare Bool default=false
+  -- | the campaign the game is a scenario of, in campaign mode
+  campaignId LotrCampaignId Maybe OnDeleteSetNull
+  createdAt UTCTime
+  updatedAt UTCTime
+  deriving Show
+
+-- | A campaign played scenario by scenario, each its own game (see "LordOfTheRings.Campaign").
+-- The log is as the scenario being played began; the game holds it as that scenario is
+-- resolved, and it comes back here as the next one is dealt.
+LotrCampaign sql=lotr_campaigns
+  Id UUID default=gen_random_uuid()
+  userId UserId OnDeleteCascade
+  name Text
+  log Value
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show

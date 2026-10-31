@@ -21,9 +21,11 @@ import Data.Time.Clock (addUTCTime, nominalDay)
 import Database.Persist.Postgresql
 import Decks
 import GameLog
+import LordOfTheRings.Campaign
 import LordOfTheRings.Card (
-  CardCode,
+  CardCode (..),
   CardDef (..),
+  Display (..),
   Sphere,
   allEncounterCards,
   allPlayerCards,
@@ -47,7 +49,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
-import LordOfTheRings.Scenario.Types (GameMode (..), modeL, scenarioName)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign), modeL, scenarioName)
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
@@ -120,6 +122,9 @@ mkYesod
   /authenticate AuthenticateR POST
   /whoami WhoAmIR GET
   /settings SettingsR PUT
+  /campaigns CampaignsR POST
+  /campaigns/#LotrCampaignId CampaignR GET DELETE
+  /campaigns/#LotrCampaignId/next CampaignNextR POST
 |]
 
 -- | The API authenticates with tokens, so there is no cookie session.
@@ -138,6 +143,8 @@ data GameData = GameData
   , table :: Table
   , log :: Maybe [LogEntry]
   -- ^ the log's latest entries, when the client should take them afresh
+  , campaignId :: Maybe LotrCampaignId
+  -- ^ the campaign the game is a scenario of
   }
   deriving stock Generic
   deriving anyclass ToJSON
@@ -157,6 +164,7 @@ data GameSummary = GameSummary
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
   , easyMode :: Bool
   , nightmare :: Bool
+  , campaignId :: Maybe LotrCampaignId
   , seats :: [SeatSummary]
   -- ^ who plays, in turn order, and with which heroes; none until the game is dealt
   }
@@ -442,6 +450,7 @@ gameData viewer row table g entries =
     (row.lotrGameStep > 0)
     table
     (filter (readsEntry $ seesHand table viewer (maybe [] (.playerOrder) g)) <$> entries)
+    row.lotrGameCampaignId
 
 -- | Whether a viewer sees a player's hand: with friends, only their own seat's.
 seesHand :: Table -> Maybe UserId -> [PlayerId] -> PlayerId -> Bool
@@ -503,6 +512,7 @@ summary _ (Entity gid row) | awaitingPlayers row = do
       , waiting = True
       , easyMode = row.lotrGameEasyMode
       , nightmare = row.lotrGameNightmare
+      , campaignId = row.lotrGameCampaignId
       , seats = []
       }
 summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
@@ -522,6 +532,7 @@ summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , waiting = False
         , easyMode = row.lotrGameEasyMode
         , nightmare = row.lotrGameNightmare
+        , campaignId = row.lotrGameCampaignId
         , seats =
             [ SeatSummary
                 p.name
@@ -724,6 +735,7 @@ postGamesR = do
           , lotrGameWithFriends = friends
           , lotrGameEasyMode = easyMode
           , lotrGameNightmare = nightmare
+          , lotrGameCampaignId = Nothing
           , lotrGameSeats = seatCount
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
@@ -762,6 +774,7 @@ postJoinR gid = do
     $ sendResponseStatus status409 (ikey "error.alreadySeated")
   refuseSharedHeroes . (fromMaybe starterDeck deckList :) . map snd =<< friendSeats gid
   refuseBarredHeroes row.lotrGameScenario [fromMaybe starterDeck deckList]
+  refuseFallenHeroes row [fromMaybe starterDeck deckList]
   case [0 .. row.lotrGameSeats - 1] \\ map ((.lotrSeatPosition) . entityVal) seated of
     [] -> sendResponseStatus status409 (ikey "error.noFreeSeat")
     (position : rest) -> do
@@ -797,10 +810,11 @@ postStartR gid = do
 
 -- | Deal the game again from the start, with a new seed.
 deal :: LotrGameId -> LotrGame -> NonEmpty (Text, DeckList) -> Handler ()
-deal gid row players = do
-  scenario <-
+deal gid row players' = do
+  scenario' <-
     maybe (sendResponseStatus status400 ("No such scenario: " <> row.lotrGameScenario)) pure
       $ lookupScenario (ScenarioId row.lotrGameScenario)
+  (scenario, players) <- inCampaign row scenario' players'
   ((g, queue, gen), said) <-
     liftIO . startGame scenario (gameMode row.lotrGameEasyMode row.lotrGameNightmare) players =<< liftIO randomIO
   now <- liftIO getCurrentTime
@@ -1203,6 +1217,7 @@ postImportR = do
           , lotrGameWithFriends = False
           , lotrGameEasyMode = (toAttrs imported.scenario).easyMode
           , lotrGameNightmare = (toAttrs imported.scenario).nightmare
+          , lotrGameCampaignId = Nothing
           , lotrGameSeats = length imported.playerOrder
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
@@ -1240,6 +1255,202 @@ gameIdsToUuids =
     , "  END IF;"
     , "END $$;"
     ]
+
+-- Campaign mode: a campaign is a row of its own holding the campaign log, and each of its
+-- scenarios a game with friends of its own, dealt in the lobby as any other. Dealing one
+-- hands it the log ('inCampaign'); once it is won the game holds the log as resolved, and
+-- the next scenario takes that log back here.
+
+{- | In campaign mode, the scenario takes the campaign log, the seats' heroes checked
+against it and recorded (a fallen hero refused, a changed one adding to the threat
+penalty), and each seat's deck takes its boons and burdens from the Campaign Pool.
+-}
+inCampaign :: LotrGame -> Scenario -> NonEmpty (Text, DeckList) -> Handler (Scenario, NonEmpty (Text, DeckList))
+inCampaign row scenario players = case row.lotrGameCampaignId of
+  Nothing -> pure (scenario, players)
+  Just cid -> do
+    l <- decodeOrFail @CampaignLog "campaign log" . (.lotrCampaignLog) =<< runDB (get404 cid)
+    l' <- either refuseFallen pure $ seatHeroes [dl.heroes | (_, dl) <- toList players] l
+    let withPool n (name, dl) = (name, dl {cards = dl.cards <> [(c, 1) | c <- seatPoolCards n l']})
+    pure (overAttrs (\a -> a {scenarioCampaign = Just l'}) scenario, NE.zipWith withPool (0 :| [1 ..]) players)
+
+-- | Refuse a deck bringing a hero the campaign log lists as fallen.
+refuseFallenHeroes :: LotrGame -> [DeckList] -> Handler ()
+refuseFallenHeroes row deckLists = for_ row.lotrGameCampaignId \cid -> do
+  l <- decodeOrFail @CampaignLog "campaign log" . (.lotrCampaignLog) =<< runDB (get404 cid)
+  case filter (`elem` l.fallenHeroes) (concatMap (.heroes) deckLists) of
+    [] -> pure ()
+    fallen -> refuseFallen fallen
+
+refuseFallen :: [CardCode] -> Handler a
+refuseFallen codes =
+  sendResponseStatus
+    status400
+    (ikeyWith "error.fallenHeroes" [textVar "heroes" (intercalate ", " [maybe (unCardCode c) (display . cdName) (Map.lookup c allPlayerCards) | c <- codes])])
+
+data NewCampaign = NewCampaign
+  { name :: Text
+  , campaign :: CampaignId
+  , seats :: Maybe Int
+  , allowSpectators :: Maybe Bool
+  , easyMode :: Maybe Bool
+  , nightmare :: Maybe Bool
+  }
+  deriving stock Generic
+  deriving anyclass FromJSON
+
+-- | A scenario of the campaign, its game waiting in the lobby for its seats.
+campaignGame :: UserId -> Text -> LotrCampaignId -> Text -> ScenarioId -> Int -> Bool -> Bool -> Bool -> UTCTime -> LotrGame
+campaignGame userId playerName cid campaignName sid seatCount spectators easy nightmare now =
+  LotrGame
+    { lotrGameUserId = userId
+    , lotrGameName = campaignName <> ": " <> maybe sid.unScenarioId (scenarioName . toAttrs) (lookupScenario sid)
+    , lotrGamePlayerName = playerName
+    , lotrGameCurrentData = Null
+    , lotrGameCurrentQueue = toJSON ([] :: [Message])
+    , lotrGameRandomGen = showGen (mkStdGen 0)
+    , lotrGameStep = 0
+    , lotrGameScenario = sid.unScenarioId
+    , lotrGameDeck = Nothing
+    , lotrGameAllowSpectators = spectators
+    , lotrGameWithFriends = True
+    , lotrGameSeats = seatCount
+    , lotrGameEasyMode = easy
+    , lotrGameNightmare = nightmare
+    , lotrGameCampaignId = Just cid
+    , lotrGameCreatedAt = now
+    , lotrGameUpdatedAt = now
+    }
+
+-- | Start a campaign: its log, and its first scenario's game, waiting for its seats.
+postCampaignsR :: Handler Value
+postCampaignsR = do
+  userId <- requireUserId
+  user <- runDB $ get404 userId
+  new <- requireCheckJsonBody @_ @NewCampaign
+  let l = newCampaignLog new.campaign
+      seatCount = fromMaybe 1 new.seats
+  sid <- maybe (sendResponseStatus status400 (ikey "error.noSuchCampaign")) pure $ nextScenario l
+  when (seatCount < 1 || seatCount > 4) $ sendResponseStatus status400 (ikey "error.seatCount")
+  -- a campaign in nightmare mode plays each of its scenarios with its Nightmare Deck
+  let easy = fromMaybe False new.easyMode
+      nightmare = fromMaybe False new.nightmare
+      scenarios = maybe [] (map fst . campaignDefScenarios) (lookupCampaign new.campaign)
+  when (nightmare && (easy || any (maybe True (isNothing . (.nightmareDeck) . toAttrs) . lookupScenario) scenarios))
+    $ sendResponseStatus status400 (ikey "error.noNightmareMode")
+  now <- liftIO getCurrentTime
+  (cid, gid) <- runDB do
+    cid <- insert $ LotrCampaign userId new.name (toJSON l) now now
+    gid <- insert $ campaignGame userId user.userUsername cid new.name sid seatCount (fromMaybe False new.allowSpectators) easy nightmare now
+    pure (cid, gid)
+  pure $ object ["id" .= gid, "campaignId" .= cid]
+
+data CampaignScenarioView = CampaignScenarioView {id :: ScenarioId, name :: Text, card :: CardCode}
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+data CampaignGameView = CampaignGameView {id :: LotrGameId, scenario :: Text, outcome :: Maybe Outcome}
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+data CampaignView = CampaignView
+  { id :: LotrCampaignId
+  , name :: Text
+  , campaignName :: Text
+  , log :: CampaignLog
+  -- ^ resolved by the scenario just won, if it was
+  , scenarios :: [CampaignScenarioView]
+  , games :: [CampaignGameView]
+  -- ^ newest first
+  , next :: Maybe ScenarioId
+  , status :: Text
+  -- ^ playing, won (the next scenario awaits), lost (play it again) or finished
+  }
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+{- | The campaign as it stands: its games, newest first, the last one's game, and the
+log, as resolved if that game was won.
+-}
+campaignState :: LotrCampaignId -> LotrCampaign -> Handler ([Entity LotrGame], Maybe Game, CampaignLog)
+campaignState cid campaign = do
+  games <- runDB $ selectList [LotrGameCampaignId ==. Just cid] [Desc LotrGameCreatedAt]
+  stored <- decodeOrFail "campaign log" campaign.lotrCampaignLog
+  latest <- maybe (pure Nothing) (storedGame . entityVal) (headMay games)
+  let resolved = do
+        g <- latest
+        guard (g.outcome == Just Won)
+        scenarioCampaign (toAttrs g.scenario)
+  pure (games, latest, fromMaybe stored resolved)
+
+-- | The campaign's owner, or someone seated at one of its games.
+requireCampaign :: LotrCampaignId -> Handler LotrCampaign
+requireCampaign cid = do
+  userId <- requireUserId
+  campaign <- runDB $ get404 cid
+  games <- runDB $ selectKeysList [LotrGameCampaignId ==. Just cid] []
+  seat <- runDB $ selectFirst [LotrSeatUserId ==. userId, LotrSeatGameId <-. games] []
+  unless (campaign.lotrCampaignUserId == userId || isJust seat) notFound
+  pure campaign
+
+getCampaignR :: LotrCampaignId -> Handler Value
+getCampaignR cid = do
+  campaign <- requireCampaign cid
+  (games, latest, l) <- campaignState cid campaign
+  def <- maybe (sendResponseStatus status400 (ikey "error.noSuchCampaign")) pure $ lookupCampaign l.campaign
+  let next = nextScenario l
+      outcomeOf row = case fromJSON @Game row.lotrGameCurrentData of
+        Success g -> g.outcome
+        Error _ -> Nothing
+      status :: Text
+      status = case (.outcome) =<< latest of
+        _ | isNothing next -> "finished"
+        Just Won -> "won"
+        Just Lost -> "lost"
+        Nothing -> "playing"
+  pure
+    $ toJSON
+      CampaignView
+        { id = cid
+        , name = campaign.lotrCampaignName
+        , campaignName = campaignDefName def
+        , log = l
+        , scenarios =
+            [ CampaignScenarioView sid (maybe sid.unScenarioId (scenarioName . toAttrs) (lookupScenario sid)) (cdCardCode card)
+            | (sid, card) <- campaignDefScenarios def
+            ]
+        , games = [CampaignGameView gid row.lotrGameScenario (outcomeOf row) | Entity gid row <- games]
+        , next
+        , status
+        }
+
+deleteCampaignR :: LotrCampaignId -> Handler ()
+deleteCampaignR cid = do
+  userId <- requireUserId
+  campaign <- runDB $ get404 cid
+  unless (campaign.lotrCampaignUserId == userId) notFound
+  runDB $ delete cid
+
+{- | Go on once the last scenario has ended: won, its resolved log is the campaign's and
+the next scenario is dealt; lost, the same scenario is played again (Revised Core
+rulebook: "they must play it again and defeat it before they can advance"). Its game
+waits in the lobby for its seats, as many as the last had.
+-}
+postCampaignNextR :: LotrCampaignId -> Handler Value
+postCampaignNextR cid = do
+  userId <- requireUserId
+  campaign <- runDB $ get404 cid
+  unless (campaign.lotrCampaignUserId == userId) notFound
+  (games, latest, l) <- campaignState cid campaign
+  row <- maybe (sendResponseStatus status409 (ikey "error.campaignInProgress")) (pure . entityVal) (headMay games)
+  when (isNothing $ (.outcome) =<< latest) $ sendResponseStatus status409 (ikey "error.campaignInProgress")
+  sid <- maybe (sendResponseStatus status409 (ikey "error.campaignOver")) pure $ nextScenario l
+  user <- runDB $ get404 userId
+  now <- liftIO getCurrentTime
+  gid <- runDB do
+    update cid [LotrCampaignLog =. toJSON l, LotrCampaignUpdatedAt =. now]
+    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode row.lotrGameNightmare now
+  pure $ object ["id" .= gid]
 
 main :: IO ()
 main = do

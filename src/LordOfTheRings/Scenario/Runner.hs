@@ -13,7 +13,9 @@ import LordOfTheRings.Keyword (Keyword (Guarded))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
-import LordOfTheRings.Game.Base (gamePhase, gamePlayers)
+import LordOfTheRings.Campaign
+import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayers, gameRound)
+import LordOfTheRings.Entities (entitiesHeroes)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
@@ -60,13 +62,43 @@ nightmareOr attrs standard replacement = if attrs.nightmare then replacement els
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = resetEmptyEncounterDeck =<< case msg of
     -- the scenario gathers its encounter deck at step 1; shuffle it before any setup reveals
+    -- in campaign mode the encounter cards of the Campaign Pool are shuffled in with it
     DoStep 2 Setup -> do
-      encounterDeck <- shuffleM attrs.encounterDeck
+      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, not (isPlayerCardDef def)]
+      encounterDeck <- shuffleM (earned <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ encounterDeck
-    DoStep 4 Setup | attrs.easyMode -> do
-      heroes <- select AnyHero
-      for_ heroes \hero -> placeResources attrs hero 1
+    DoStep 4 Setup -> do
+      heroes <- getsGame (toList . entitiesHeroes . gameEntities)
+      when attrs.easyMode $ for_ heroes \hero -> placeResources attrs hero.id 1
+      -- the Permanent boons and burdens go on the heroes the log records them on
+      for_ (foldMap (.pool) attrs.campaign) \p ->
+        for_ [h | Just code <- [p.attachedTo], h <- heroes, toCardCode h == code] \hero -> do
+          let def = toCardDef p.code
+          if isPlayerCardDef def
+            then do
+              card <- genPlayerCard def (Just hero.owner)
+              push $ PlayAttachmentOn hero.owner card (toTarget hero.id)
+            else do
+              card <- genEncounterCard def
+              push $ PutObjectiveIntoPlayAttached card (toTarget hero.id)
       pure attrs
+    -- what every campaign records once a scenario is won: the score, and the heroes in
+    -- their owners' discard piles fallen (Revised Core rulebook, "Scoring" and "The
+    -- Fellowship of Heroes")
+    ResolveCampaign | Just l <- attrs.campaign -> do
+      players <- getsGame (toList . allPlayers)
+      heroes <- getsGame (toList . entitiesHeroes . gameEntities)
+      rounds <- getsGame gameRound
+      let inPlay = map toCardCode heroes
+          fallen = [code | p <- players, code <- p.startingHeroes, code `notElem` inPlay]
+          score =
+            sum (map (.threat) players)
+              + sum [fromMaybe 0 (cdThreatCost $ toCardDef code) | code <- fallen]
+              + sum (map (.damage) heroes)
+              + 10 * rounds
+              - attrs.victoryPoints
+          l' = recordFallen fallen l {campaignLogCompleted = l.completed <> [CompletedScenario attrs.scenarioId score]}
+      pure $ attrs & campaignL ?~ l' & campaignCardFlippedL .~ True
     ShuffleDeck EncounterDeck -> do
       encounterDeck <- shuffleM attrs.encounterDeck
       pure $ attrs & encounterDeckL .~ encounterDeck

@@ -77,6 +77,8 @@ import LordOfTheRings.Attachment.Cards.SongOfEarendil
 import LordOfTheRings.Attachment.Cards.SwordThatWasBroken
 import LordOfTheRings.Attachment.Cards.RivendellBow
 import LordOfTheRings.Attachment.Cards.Resourceful
+import LordOfTheRings.Attachment.Cards.Valor
+import LordOfTheRings.Attachment.Cards.AppointedByFate
 import LordOfTheRings.Attachment.Cards.RingMail
 import LordOfTheRings.Attachment.Cards.EverMyHeartRises
 import LordOfTheRings.Attachment.Cards.LoveOfTales
@@ -242,6 +244,8 @@ allAttachments =
         , SomeAttachmentCard swordThatWasBroken
         , SomeAttachmentCard rivendellBow
         , SomeAttachmentCard resourceful
+        , SomeAttachmentCard valor
+        , SomeAttachmentCard appointedByFate
         , SomeAttachmentCard ringMail
         , SomeAttachmentCard everMyHeartRises
         , SomeAttachmentCard loveOfTales

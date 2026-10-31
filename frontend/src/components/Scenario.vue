@@ -47,6 +47,8 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
       </ol>
     </div>
     <GameCard v-if="scenario.nightmareCard" :card="scenario.nightmareCard" :choices="choices" @choose="emit('choose', $event)" />
+    <!-- in campaign mode, the campaign card next to the quest deck -->
+    <GameCard v-if="scenario.campaignCard" :card="scenario.campaignCard" :choices="choices" @choose="emit('choose', $event)" />
     <GameCard
       v-if="scenario.quest"
       :card="scenario.quest"

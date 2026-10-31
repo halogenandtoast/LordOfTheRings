@@ -11,6 +11,7 @@ export const router = createRouter({
     { path: '/watch', component: () => import('./views/Watch.vue'), meta: { title: 'nav.watch' } },
     { path: '/admin', component: () => import('./views/Admin.vue'), meta: { title: 'nav.admin', requiresAuth: true, requiresAdmin: true } },
     { path: '/games/:id', component: () => import('./views/Game.vue'), meta: { title: 'common.game', requiresAuth: true } },
+    { path: '/campaigns/:id', component: () => import('./views/Campaign.vue'), meta: { title: 'campaignMode.title', requiresAuth: true } },
     { path: '/cards', component: () => import('./browser/views/BrowseView.vue'), meta: { title: 'nav.cards' } },
     { path: '/cards/:code', component: () => import('./browser/views/CardDetailView.vue'), meta: { title: 'titles.card' } },
     { path: '/decks', name: 'decks', component: () => import('./browser/views/DecksView.vue'), meta: { title: 'nav.decks', requiresAuth: true } },
