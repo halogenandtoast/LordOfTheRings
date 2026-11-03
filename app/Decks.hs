@@ -33,6 +33,7 @@ import Data.ByteString.Char8 qualified as BS8
 import Data.Char (isDigit)
 import Data.Map.Strict qualified as Map
 import Data.Text qualified as T
+import Data.Time.Clock.POSIX (getPOSIXTime)
 import Database.Persist
 import Database.Persist.Sql (SqlBackend, fromSqlKey)
 import LordOfTheRings.Card (CardCode (..), allPlayerCards)
@@ -306,8 +307,12 @@ fetchRingsdbDeck manager kind ringsdbDeck = do
     fetch (ringsdbPage kind ringsdbDeck) "text/html" <&> \case
       Right response | statusCode (responseStatus response) == 200 -> embeddedDeck (BS.toStrict (responseBody response))
       _ -> Nothing
-  fromApi =
-    fetch (ringsdbApi kind ringsdbDeck) "application/json" <&> \case
+  fromApi = do
+    -- RingsDB caches by URI and ignores a request's Cache-Control, so a deck edited
+    -- there would come back as it was minutes ago (#37)
+    now <- getPOSIXTime
+    let fresh = "?_=" <> tshow (floor (now * 1000) :: Integer)
+    fetch (ringsdbApi kind ringsdbDeck <> fresh) "application/json" <&> \case
       Left err -> Left (FetchFailed (pack (takeWhile (/= '\n') (show err))))
       Right response -> case statusCode (responseStatus response) of
         404 -> Left (FetchFailed ("RingsDB has no public decklist " <> ringsdbDeck))
