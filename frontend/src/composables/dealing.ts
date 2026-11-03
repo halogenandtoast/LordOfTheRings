@@ -121,6 +121,17 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
     const wasInPlay = new Set(inPlay(before).map((card) => card.id))
     for (const card of inPlay(after)) {
       if (onScreen(card.id) || wasInPlay.has(card.id)) continue
+      // a player card fighting face down as an enemy (an Orc Guard, a Reanimated Dead) comes
+      // from its owner's discard or deck
+      if (card.facedown === 'player') {
+        const discarded = before.players.find((p) => p.discard.some((c) => c.id === card.id))
+        const owner =
+          after.players.find((p) => p.engaged.some((c) => c.id === card.id)) ??
+          after.players.find((p) => p.deckSize < (before.players.find((b) => b.playerId === p.playerId)?.deckSize ?? 0))
+        if (discarded) leaving.push(move(`discard-${discarded.playerId}`, card, false))
+        else if (owner) leaving.push(move(`deck-${owner.playerId}`, card, true))
+        continue
+      }
       leaving.push(wasDiscarded.has(card.id) ? move('discard-encounter', card, false) : move('deck-encounter', card, true))
     }
   }
