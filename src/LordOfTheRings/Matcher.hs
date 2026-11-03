@@ -723,6 +723,11 @@ getCurrentQuest = do
 getMainQuests :: HasGame m => m [Target]
 getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
 
+-- | The progress on the main quest, not a side quest's, as "if there are no progress
+-- tokens on the main quest" reads.
+getMainQuestProgress :: HasGame m => m Int
+getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+
 -- | The objectives in play no hero has claimed: those in the staging area.
 unclaimedObjectives :: HasGame m => m Int
 unclaimedObjectives = getsGame (length . filter ((== StagingArea) . (.placement)) . toList . entitiesObjectives . gameEntities)

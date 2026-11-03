@@ -39,6 +39,7 @@ import LordOfTheRings.Placement (
  )
 import LordOfTheRings.Prelude hiding (count)
 import LordOfTheRings.Queue
+import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Question (Question (QuestionLabel))
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
@@ -117,6 +118,18 @@ removeTimeCountersFromCurrentQuest source n = traverse_ (\q -> removeTimeCounter
 
 removeProgressFromQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromQuest source n = push $ RemoveProgressFromQuest (toSource source) n
+
+{- | Remove this much progress from the main quest, not a side quest the players quest
+against instead, as the Haradrim cycle's "remove 2 progress from the main quest" reads.
+-}
+removeProgressFromMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+removeProgressFromMainQuest source n = do
+  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress (min n q.progress)
+
+-- | Place progress on the main quest, bypassing the active location, as Umbar Square reads.
+placeProgressOnMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+placeProgressOnMainQuest source n = traverse_ (\q -> placeTokens source q Progress n) =<< getMainQuests
 
 -- | Remove this much progress from each quest card in play, the main quest and each side
 -- quest, as "remove 2 progress from each quest card in play" reads.

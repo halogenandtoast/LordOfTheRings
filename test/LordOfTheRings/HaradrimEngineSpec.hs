@@ -5,7 +5,7 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Matcher (AllyMatcher (..), EnemyMatcher (..), HeroMatcher (..), PlayerMatcher (..), charactersGuardedBy, select)
-import LordOfTheRings.Message.Lifted (ready)
+import LordOfTheRings.Message.Lifted (chooseOrRunOneM, placeProgressOnMainQuest, ready, removeMainQuestProgressLabeled, removeProgressFromMainQuest)
 import LordOfTheRings.Modifier (ModifierType (..))
 import TestImport
 
@@ -31,6 +31,20 @@ spec = describe "The Haradrim engine" do
     lasting quest (ProgressLimit 3)
     run $ PlaceTokens GameSource quest Progress 5
     (.progress) <$> getActiveQuest `shouldReturn` 3
+
+  it "places and removes progress on the main quest, offering a removal only in full" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    runQueueT $ placeProgressOnMainQuest GameSource 3
+    run $ Run []
+    runQueueT $ removeProgressFromMainQuest GameSource 1
+    run $ Run []
+    (.progress) <$> getActiveQuest `shouldReturn` 2
+    runQueueT $ chooseOrRunOneM pid $ removeMainQuestProgressLabeled GameSource 3
+    run $ Run []
+    (.progress) <$> getActiveQuest `shouldReturn` 2
+    runQueueT $ chooseOrRunOneM pid $ removeMainQuestProgressLabeled GameSource 2
+    run $ Run []
+    (.progress) <$> getActiveQuest `shouldReturn` 0
 
   it "keeps a stage that cannot be defeated, and defeats it once it can be" . gameTest $ \pid -> do
     flipFirstQuest pid

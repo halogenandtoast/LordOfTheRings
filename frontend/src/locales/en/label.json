@@ -4,6 +4,7 @@
   "questAgainstMainQuest": "The main quest",
   "chooseNewCurrentQuest": "Choose a new quest card to be the current quest",
   "valour": "Valour: resolve the Valour trigger instead",
+  "removeMainQuestProgress": "Remove {n} progress from the main quest",
   "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
   "discardAnyFromHand": "Discard a card from your hand?",
