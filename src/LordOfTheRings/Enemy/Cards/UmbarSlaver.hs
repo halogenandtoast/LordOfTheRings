@@ -19,8 +19,6 @@ instance HasModifiersFor UmbarSlaver where
 
 -- | Forced: After the engaged player spends any number of resources, place 1 of those
 -- resources on Umbar Slaver: as they leave a hero's pool.
--- ponytail: one resource for each hero paid from, not each payment; a "spent resources"
--- window would count a payment from two heroes once.
 instance RunMessage UmbarSlaver where
   runMessage msg (UmbarSlaver attrs) = case msg of
     RemoveTokens (PlayerSource pid) (HeroTarget _) Resource n | n > 0, EngagedWith pid == attrs.placement -> do

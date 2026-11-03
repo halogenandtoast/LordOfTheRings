@@ -33,8 +33,6 @@ instance HasAbilities Silverthorn where
   getAbilities (Silverthorn a) =
     [limited (GroupLimit PerGame 1) $ mkAbility a 1 $ response $ EnemyDestroyedByAttackWindow After (Just host) | AttachedTo host <- [a.placement]]
 
--- ponytail: the destroyed enemy is the enemy on top of the encounter discard pile, where it
--- has just gone
 instance RunMessage Silverthorn where
   runMessage msg s@(Silverthorn a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do

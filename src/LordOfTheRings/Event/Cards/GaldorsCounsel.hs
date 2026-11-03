@@ -70,7 +70,6 @@ instance RunMessage GaldorsCounsel where
           let x = halfUp lvl
               look cards =
                 chooseUpToM pid "galdorsCounsel.addToHand" (toTarget attrs) cards x [UpToTarget (CardIdTarget c.id) (takeFromDeck pid c) | c <- cards]
-          -- ponytail: the cards not taken stay where they were, in the order they were in
           chooseOneM pid do
             questionLabeled "galdorsCounsel.topOrBottom"
             causedBy attrs

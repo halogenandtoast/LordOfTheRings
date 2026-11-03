@@ -15,7 +15,6 @@ captiveVillager = ally CaptiveVillager Cards.captiveVillager
 
 -- | Its controller is considered to have +5 threat while making engagement checks: each
 -- enemy in the staging area costs 5 less to engage him.
--- ponytail: read by engagement checks, not by ambush's
 instance HasModifiersFor CaptiveVillager where
   getModifiersFor (CaptiveVillager a) = for_ [p | InPlayArea p <- [a.placement]] \pid -> do
     enemies <- select EnemyInStagingArea

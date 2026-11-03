@@ -21,7 +21,6 @@ instance HasAbilities CorsairConfrontation where
 
 -- | When Revealed: Search the encounter deck, discard pile, and victory display for 1 copy
 -- of Corsair Warship and add it to the staging area. Shuffle the encounter deck.
--- ponytail: the victory display only when the deck and discard pile have none
 instance RunMessage CorsairConfrontation where
   runMessage msg q@(CorsairConfrontation attrs) = case msg of
     Flip (isTarget attrs -> True) -> do

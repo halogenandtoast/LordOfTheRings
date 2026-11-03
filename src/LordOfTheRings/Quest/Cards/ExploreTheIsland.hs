@@ -17,8 +17,6 @@ exploreTheIsland = quest ExploreTheIsland Cards.exploreTheIsland
 -- location's printed quest points.
 -- Forced: When an Uncharted location becomes the active location, add 1 copy of Lost
 -- Island from the top of the Uncharted deck to the staging area.
--- ponytail: the first answers as the location is explored, while it is still in play to
--- read its quest points from
 instance HasAbilities ExploreTheIsland where
   getAbilities (ExploreTheIsland a) =
     [ ability

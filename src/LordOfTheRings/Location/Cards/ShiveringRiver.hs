@@ -12,8 +12,6 @@ shiveringRiver = location ShiveringRiver Cards.shiveringRiver
 
 -- | While Shivering River is in the staging area, it contributes its [Threat] to the total
 -- [Threat] in each other player's staging area.
--- ponytail: not scripted; it counts in its own staging area only, a cross-area threat
--- bonus when separated play needs it
 -- Shadow: Attacking enemy gets +1 [Attack]. (+3 [Attack] instead if there is more than one
 -- player at this staging area.)
 instance RunMessage ShiveringRiver where

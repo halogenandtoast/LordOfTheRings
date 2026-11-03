@@ -24,7 +24,6 @@ Stages 2C and 3C: If the players are off-course, the Stormcaller gets +2 threat.
 -- Campaign Mode only side (the Dream-chaser campaign): 7 attack, 20 hit points, no word
 -- against attachments, and: If you are at the Stormcaller's stage, no more than 9 progress
 -- can be placed on your quest each round.
--- ponytail: the campaign side is the printed side's modifiers, its card the same.
 instance HasModifiersFor Stormcaller where
   getModifiersFor (Stormcaller a) = do
     campaign <- isJust <$> getCampaignLog

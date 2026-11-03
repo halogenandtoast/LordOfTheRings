@@ -16,8 +16,6 @@ beatsAndEchoes = treachery BeatsAndEchoes Cards.beatsAndEchoes
 -- | When Revealed: Reveal the top X cards of the encounter deck, adding all enemies to the
 -- staging area. Discard the other revealed cards without resolving them. X is 2 plus the
 -- number of players not engaged with a Goblin enemy.
--- ponytail: as The Fate of Balin's Forced, the cards are discarded and the enemies taken
--- back out, so an enemy's When Revealed does not resolve; reveal them one by one if it must.
 instance RunMessage BeatsAndEchoes where
   runMessage msg t@(BeatsAndEchoes attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

@@ -14,8 +14,6 @@ snowGiant = enemy SnowGiant Cards.snowGiant
 
 -- | While Snow-Giant is in the staging area, it attacks the first player during the
 -- combat phase, as if it were engaged.
--- ponytail: counted as engaged with the first player, as Durin's Bane is with each, so he
--- may attack it there too; a modifier of its own if that matters.
 instance HasModifiersFor SnowGiant where
   getModifiersFor (SnowGiant a) = when (a.placement == StagingArea) $ modifySelf a [EngagedWithEachPlayer FirstPlayer]
 

@@ -11,8 +11,6 @@ shadowedCorridor :: LocationCard ShadowedCorridor
 shadowedCorridor = location ShadowedCorridor Cards.shadowedCorridor
 
 -- | As an additional cost to bypass a quest card, each player must raise his threat by 2.
--- ponytail: paid as the bypass resolves; raising threat can always be paid, so the cost
--- never stops a bypass.
 instance HasAbilities ShadowedCorridor where
   getAbilities (ShadowedCorridor a) = [mkAbility a 1 $ forced $ QuestBypassedWindow When]
 

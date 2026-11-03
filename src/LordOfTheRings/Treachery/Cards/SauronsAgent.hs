@@ -15,9 +15,6 @@ sauronsAgent = treachery SauronsAgent Cards.sauronsAgent
 -- Then, deal 1 damage to the active location for each character destroyed by this effect.
 -- Shadow: Deal 1 damage to the defending character.
 --
--- ponytail: the characters destroyed are counted as those gone from play once the attacks
--- are over, the count before carried in the step; read the attacks' windows if another
--- effect discards a character meanwhile
 instance RunMessage SauronsAgent where
   runMessage msg t@(SauronsAgent attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) ->

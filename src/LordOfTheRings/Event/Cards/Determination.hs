@@ -19,9 +19,6 @@ copy of Determination attached, as well as each character who is "determined" in
 Campaign Log. (Counts as a Condition attachment with the text: "Forced: If you win this
 scenario, mark in the Campaign Log that attached character is 'determined'.")
 
-ponytail: the character is marked "determined" as it is played, the log's marks kept only
-if the scenario is won; Determination goes to the discard pile rather than staying
-attached, so leaving play does not unmark it.
 -}
 instance RunMessage Determination where
   runMessage msg e@(Determination attrs) = case msg of

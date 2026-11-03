@@ -234,8 +234,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       // hidden cards lie facedown in the player's play area (The Blood of Gondor)
       inPlay: [
         ...withAttachments(characters),
-        // an attachment on the player's threat dial, as Favor of the Valar
-        ...placed('attachments', (a) => a.placement?.tag === 'AttachedTo' && (a.placement.contents as Target)?.tag === 'PlayerTarget' && (a.placement.contents as Target).contents === pid),
+        // an attachment on the player's threat dial, as Favor of the Valar, or a condition on
+        // top of their deck, as Iron Shackles
+        ...(['attachments', 'treacheries'] as const).flatMap((kind) =>
+          placed(kind, (a) => a.placement?.tag === 'AttachedTo' && (a.placement.contents as Target)?.tag === 'PlayerTarget' && (a.placement.contents as Target).contents === pid),
+        ),
         ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
       ],
       engaged: [

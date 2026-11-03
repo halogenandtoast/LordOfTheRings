@@ -24,8 +24,6 @@ dealsNoDamage eid defenders = do
 -- the staging area. Its damage is read as it is dealt to a defender.
 -- Shadow: If no damage is dealt by this attack, return attacking enemy to the staging area
 -- after this attack.
--- ponytail: the shadow reads the attack and defense as it resolves, before anything later
--- in the attack changes them
 instance RunMessage KingsKnight where
   runMessage msg e@(KingsKnight attrs) = case msg of
     AttackDamage eid defender@(isCharacter -> True) | eid == attrs.id -> do

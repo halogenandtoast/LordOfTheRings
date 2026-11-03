@@ -28,8 +28,6 @@ instance HasModifiersFor TakeTheShip where
 
 -- | Forced: At the end of the round, if Captain Sahír and Na'asiyah are not in play, add 1
 -- resource to each of them.
--- ponytail: the resources wait on this stage, each of them taking them all as he enters
--- play; they enter together, as Helm of the Stormcaller adds them
 instance HasAbilities TakeTheShip where
   getAbilities (TakeTheShip a) =
     [restricted a 1 (Criteria $ map (NotCriterion . EnemyExists) elite) $ forced RoundEndsWindow | a.flipped]
