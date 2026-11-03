@@ -298,6 +298,12 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       }
       q = q.question
     }
+    // a search wholly within discard piles on the board is chosen from the pile, which
+    // opens itself for the choice: no second picker (#36)
+    const piles = new Set(
+      [...Object.values(game.players).flatMap((p) => p.discard), ...game.scenario.encounterDiscard, ...(game.scenario.corsairDiscard ?? [])].map((c) => c.id),
+    )
+    if (searched?.every((c) => piles.has(c.id))) searched = null
     // Saved setup questions from before searches carried their cards still need a
     // picker: their targets are in the encounter deck, outside the visible board.
     if (searched === null && q.choices.length && q.choices.every((ui) => ui.tag === 'TargetLabel' && ui.target?.tag === 'CardIdTarget')) {
