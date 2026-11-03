@@ -114,6 +114,8 @@ export interface ServerGame {
     /** The scenario's Nightmare Deck, when it has one: its setup card is shown in nightmare mode. */
     nightmareDeck?: { setupCard: string } | null
   }
+  /** Where each card a question searches lies: a zone, and the player whose it is. */
+  searchZones?: Record<string, { zone: string; player?: string }>
   /** For each attachment in hand, what it could be attached to. */
   attachmentHosts: Record<string, Target[]>
   /** The cards in a hand an effect forbids playing, with what is forbidding them. */

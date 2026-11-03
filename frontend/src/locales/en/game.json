@@ -141,7 +141,18 @@
   },
   "search": {
     "label": "Search",
-    "searched": "({count} searched)"
+    "searched": "({count} searched)",
+    "zones": {
+      "deck": "{name}'s deck",
+      "hand": "{name}'s hand",
+      "discard": "{name}'s discard pile",
+      "encounterDeck": "Encounter deck",
+      "encounterDiscard": "Encounter discard pile",
+      "corsairDeck": "Corsair deck",
+      "corsairDiscard": "Corsair discard pile",
+      "victory": "Victory display",
+      "other": "Other"
+    }
   },
   "fileBug": {
     "title": "File a bug",

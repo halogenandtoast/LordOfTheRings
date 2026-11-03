@@ -62,6 +62,14 @@ export interface ChoiceView {
   card?: CardView
 }
 
+/** A search's cards from one zone: a player's deck, hand or discard pile (by name), the
+ * encounter deck or discard, the Corsair deck or discard, the victory display, or other. */
+export interface SearchGroup {
+  zone: string
+  player: string | null
+  cards: CardView[]
+}
+
 export interface QuestionView {
   askId: number
   playerId: string
@@ -71,8 +79,8 @@ export interface QuestionView {
   /** The cards the decision is aimed at. */
   targetIds: string[]
   choices: ChoiceView[]
-  /** The cards a search looked through, when the decision is choosing from them. */
-  searched: CardView[] | null
+  /** The cards a search looked through, by the zone they lie in, when the decision is choosing from them. */
+  searched: SearchGroup[] | null
   /** The amounts to pick from, when the decision is an amount: choice 0 is the least. */
   amount: { min: number; max: number } | null
 }

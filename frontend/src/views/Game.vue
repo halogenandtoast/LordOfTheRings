@@ -100,6 +100,12 @@ const undoToEntry = (step: number, label: string) => {
 }
 
 const choices = computed(() => question.value?.choices ?? [])
+// a search's cards are chosen in its panel, so the board, a discard pile holding some of
+// them included, leaves them be rather than opening a second picker (#36)
+const boardChoices = computed(() => {
+  const searched = new Set(question.value?.searched?.flatMap((g) => g.cards.map((c) => c.id)) ?? [])
+  return choices.value.filter((c) => c.targetId === null || !searched.has(c.targetId))
+})
 provideHighlights(() => question.value, () => dragging.value?.hosts ?? [])
 provideCombat(() => question.value, () => [
   ...players.value.flatMap((player) => [...player.inPlay, ...player.engaged]),
@@ -276,12 +282,12 @@ watch(question, (asked) => {
         <QuestTally v-if="game?.tally" :tally="game.tally" />
         <!-- the quest and location, the staging area beside them -->
         <div v-if="scenario" class="encounter">
-          <Scenario :scenario="scenario" :player-id="you?.playerId ?? null" :choices="choices" :flipping="flipping" @choose="choose" />
+          <Scenario :scenario="scenario" :player-id="you?.playerId ?? null" :choices="boardChoices" :flipping="flipping" @choose="choose" />
           <CardBand
             class="staging"
             :label="$t('game.bands.staging')"
             :cards="scenario.staging"
-            :choices="choices"
+            :choices="boardChoices"
             :flipping="flipping"
             @choose="choose"
           />
@@ -291,7 +297,7 @@ watch(question, (asked) => {
             class="staging"
             :label="$t('game.areaStaging', { players: area.players.join(', '), threat: area.threat })"
             :cards="[...(area.quest ? [area.quest] : []), ...(area.activeLocation ? [area.activeLocation] : []), ...area.staging]"
-            :choices="choices"
+            :choices="boardChoices"
             :flipping="flipping"
             @choose="choose"
           />
@@ -311,7 +317,7 @@ watch(question, (asked) => {
             <CardBand
               :label="threatSplit ? seat.name : $t('game.bands.threatArea')"
               :cards="seat.engaged"
-              :choices="choices"
+              :choices="boardChoices"
               :flipping="flipping"
               @choose="choose"
             />
@@ -340,7 +346,7 @@ watch(question, (asked) => {
               :style="{ '--heroes': seat.inPlay.filter((card) => card.type === 'Hero').length }"
               :label="playSplit ? seat.name : $t('game.bands.heroes')"
               :cards="heroes(seat)"
-              :choices="choices"
+              :choices="boardChoices"
               :flipping="flipping"
               align="bottom"
               @choose="choose"
@@ -349,7 +355,7 @@ watch(question, (asked) => {
               class="in-play"
               :label="$t('game.bands.playArea')"
               :cards="inPlay(seat)"
-              :choices="choices"
+              :choices="boardChoices"
               :flipping="flipping"
               align="bottom"
               @choose="choose"
@@ -371,7 +377,7 @@ watch(question, (asked) => {
             v-if="you"
             :player="you"
             :heroes="phone ? heroes(you) : []"
-            :choices="choices"
+            :choices="boardChoices"
             :flipping="flipping"
             :question="question"
             :outcome="outcome"

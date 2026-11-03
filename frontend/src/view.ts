@@ -1,6 +1,6 @@
 import { ikey } from './i18n'
 import type { Card, CardDef, Entity, GameData, Message, Question, ServerGame, Target, UI } from './server'
-import type { CardView, ChoiceView, GameView, PlayerView, QuestionView } from './types'
+import type { CardView, ChoiceView, GameView, PlayerView, QuestionView, SearchGroup } from './types'
 
 // ringsdb type names, as the board compares against them
 const cardTypes: Record<string, string> = {
@@ -298,12 +298,6 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       }
       q = q.question
     }
-    // a search wholly within discard piles on the board is chosen from the pile, which
-    // opens itself for the choice: no second picker (#36)
-    const piles = new Set(
-      [...Object.values(game.players).flatMap((p) => p.discard), ...game.scenario.encounterDiscard, ...(game.scenario.corsairDiscard ?? [])].map((c) => c.id),
-    )
-    if (searched?.every((c) => piles.has(c.id))) searched = null
     // Saved setup questions from before searches carried their cards still need a
     // picker: their targets are in the encounter deck, outside the visible board.
     if (searched === null && q.choices.length && q.choices.every((ui) => ui.tag === 'TargetLabel' && ui.target?.tag === 'CardIdTarget')) {
@@ -345,7 +339,16 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       }
     })
     const amount = q.tag === 'ChooseAmount' ? { min: q.minAmount, max: q.minAmount + q.choices.length - 1 } : null
-    return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched, amount }
+    // a search shows its cards by the zone each lies in, the zones in the order they first come
+    const zoned = searched?.reduce<SearchGroup[]>((groups, c) => {
+      const zone = game.searchZones?.[c.id] ?? { zone: 'other' }
+      const player = zone.player ? (game.players[zone.player]?.name ?? null) : null
+      const group = groups.find((g) => g.zone === zone.zone && g.player === player)
+      if (group) group.cards.push(c)
+      else groups.push({ zone: zone.zone, player, cards: [c] })
+      return groups
+    }, []) ?? null
+    return { askId: game.questionVersion, playerId: pid, prompt, sourceId, targetIds, choices, searched: zoned, amount }
   }
 
   const activeLocations = placed('locations', (e) => isAt('ActiveLocation')(e) && offMap(e))
