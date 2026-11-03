@@ -161,6 +161,8 @@ data GameSummary = GameSummary
   , threat :: Int
   , outcome :: Maybe Outcome
   , victoryPoints :: Int
+  , score :: Maybe Int
+  -- ^ the group's score, once won
   , waiting :: Bool
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
   , easyMode :: Bool
@@ -510,6 +512,7 @@ summary _ (Entity gid row) | awaitingPlayers row = do
       , threat = 0
       , outcome = Nothing
       , victoryPoints = 0
+      , score = Nothing
       , waiting = True
       , easyMode = row.lotrGameEasyMode
       , nightmare = row.lotrGameNightmare
@@ -530,6 +533,7 @@ summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , threat = sum [p.threat | p <- toList (allPlayers g)]
         , outcome = g.outcome
         , victoryPoints = (toAttrs g.scenario).victoryPoints
+        , score = (groupScore g).total <$ guard (g.outcome == Just Won)
         , waiting = False
         , easyMode = row.lotrGameEasyMode
         , nightmare = row.lotrGameNightmare

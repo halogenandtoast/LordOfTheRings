@@ -20,6 +20,7 @@ export const importPreview = (value: unknown, cards: Record<string, CardDef> = {
     threat: game.players[game.playerOrder[0] ?? '']?.threat ?? 0,
     outcome: game.outcome,
     victoryPoints: (game.scenario.victoryDisplay ?? []).reduce((total, card) => total + (cards[card.cardCode]?.victoryPoints ?? 0), 0),
+    score: game.outcome === 'Won' ? game.score?.total ?? null : null,
     waiting: false,
     easyMode: game.scenario.mode === 'EasyMode' || ((game.scenario as ServerGame['scenario'] & { easyMode?: boolean }).easyMode ?? false),
     nightmare: game.scenario.mode === 'NightmareMode',

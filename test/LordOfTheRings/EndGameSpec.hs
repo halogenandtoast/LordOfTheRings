@@ -1,7 +1,7 @@
 module LordOfTheRings.EndGameSpec (spec) where
 
 import Data.Aeson.KeyMap qualified as KeyMap
-import LordOfTheRings.Game.Public (publicGame)
+import LordOfTheRings.Game.Public (GroupScore (..), groupScore, publicGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Scenario.Types (victoryDisplayL)
 import LordOfTheRings.Outcome
@@ -67,6 +67,7 @@ spec = describe "End of the game" do
       , "victoryPoints" .= (5 :: Int)
       , "total" .= (52 :: Int)
       ])
+    getsGame ((.total) . groupScore) `shouldReturn` 52
 
   it "reports eliminated heroes as dead and their final threat as 50" . gameTest $ \pid -> do
     flipFirstQuest pid

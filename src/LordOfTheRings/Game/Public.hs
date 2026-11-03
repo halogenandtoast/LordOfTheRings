@@ -1,4 +1,7 @@
-module LordOfTheRings.Game.Public (publicGame, publicGameFor) where
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE NoFieldSelectors #-}
+
+module LordOfTheRings.Game.Public (GroupScore (..), groupScore, publicGame, publicGameFor) where
 
 import Data.Aeson.Key qualified as Key
 import Data.Aeson.KeyMap qualified as KeyMap
@@ -34,6 +37,27 @@ import LordOfTheRings.Prelude
 publicGame :: Game -> Value
 publicGame = publicGameFor (const True)
 
+-- | The group's score (Revised Core rulebook, "Scoring"); lower is better.
+data GroupScore = GroupScore {threat :: Int, deadHeroes :: Int, damage :: Int, victoryPoints :: Int, total :: Int}
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+groupScore :: Game -> GroupScore
+groupScore g = GroupScore finalThreat deadThreat damage victory (finalThreat + deadThreat + damage - victory)
+ where
+  merged = g {gamePlayers = allPlayers g, gameEntities = g.entities <> mconcat (heldEntities g)}
+  finalThreat = sum [p.threat | p <- toList merged.players]
+  -- Dead heroes remain in their owner's discard; eliminated players also lose
+  -- heroes outside play (for example a hero shuffled into their deck).
+  deadThreat = sum
+    [ fromMaybe 0 (cdThreatCost $ toCardDef c)
+    | p <- toList merged.players
+    , c <- p.discard <> (if p.eliminated then p.hand <> p.deck <> p.setAsideCards else [])
+    , cdCardType (toCardDef c) == HeroType
+    ]
+  damage = sum [h.damage | h <- toList merged.entities.heroes, maybe False (not . (.eliminated)) (Map.lookup h.owner merged.players)]
+  victory = (toAttrs g.scenario).victoryPoints
+
 -- | The game as someone sees it who may only look at the hands of the players given:
 -- the rest send only their sizes, and their questions do not show the cards searched.
 --
@@ -64,28 +88,10 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       <> map ((.id) . toCard) (toList es.objectives)
       <> map ((.id) . toCard) (toList es.attachments)
       <> map ((.id) . toCard) (toList es.treacheries)
-  -- Dead heroes remain in their owner's discard; eliminated players also lose
-  -- heroes outside play (for example a hero shuffled into their deck).
-  scoring = object
-    [ "threat" .= finalThreat
-    , "deadHeroes" .= deadThreat
-    , "damage" .= damage
-    , "victoryPoints" .= victory
-    , "total" .= (finalThreat + deadThreat + damage - victory)
-    ]
-  finalThreat = sum [p.threat | p <- toList merged.players]
-  deadThreat = sum
-    [ fromMaybe 0 (cdThreatCost $ toCardDef c)
-    | p <- toList merged.players
-    , c <- p.discard <> (if p.eliminated then p.hand <> p.deck <> p.setAsideCards else [])
-    , cdCardType (toCardDef c) == HeroType
-    ]
-  damage = sum [h.damage | h <- toList merged.entities.heroes, maybe False (not . (.eliminated)) (Map.lookup h.owner merged.players)]
-  victory = (toAttrs g.scenario).victoryPoints
   hideDecks = \case
     Object o ->
       Object
-        $ KeyMap.insert "score" scoring
+        $ KeyMap.insert "score" (toJSON $ groupScore g)
         $ KeyMap.delete "separation"
         $ KeyMap.insert "areas" (toJSON areas)
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)

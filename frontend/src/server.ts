@@ -187,6 +187,8 @@ export interface GameSummary {
   threat: number
   outcome: 'Won' | 'Lost' | null
   victoryPoints: number
+  /** The group's score, once won. */
+  score?: number | null
   /** Waiting for friends to take the rest of the seats. */
   waiting: boolean
   easyMode: boolean

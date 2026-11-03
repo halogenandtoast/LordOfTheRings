@@ -69,6 +69,8 @@
     "lost": "Lost",
     "victoryPoints": "{value} victory points",
     "vp": "{value} VP",
+    "score": "Score {value}",
+    "scoreTitle": "Group score: lower is better",
     "deleteGame": "Delete game",
     "confirmDelete": "Delete this game?"
   },
