@@ -365,7 +365,8 @@ const toggleUnless = (attached: CardView) => {
 .card.target img { outline: 2px solid var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
 .card.drop img { outline: 2px dashed var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
 /* with its stats strip under it, the card is highlighted whole, strip and all */
-.face { border-radius: 7px; }
+/* above its attachments, so the frame's top edge isn't covered by the stack */
+.face { position: relative; z-index: 2; border-radius: 7px; }
 .with-stats .face:has(> .card.active) { outline: 1px solid var(--interactive); box-shadow: 0 0 10px var(--interactive-glow); }
 .with-stats .face:has(> .card.source) { outline: 2px solid var(--source); outline-offset: 2px; box-shadow: 0 0 12px var(--source-glow); }
 .with-stats .face:has(> .card.target) { outline: 2px solid var(--target); outline-offset: 2px; box-shadow: 0 0 12px var(--target-glow); }
