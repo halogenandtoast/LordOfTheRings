@@ -33,7 +33,8 @@ export const refPreview = (ref: LogRef): CardView | null =>
         code: ref.cardCode,
         name: ref.name,
         flipped: ref.kind === 'RefQuest' && ref.faceDown,
-        facedown: ref.kind === 'RefHero' && ref.faceDown ? 'player' : undefined,
+        // a player card fighting face down as an enemy shows its back, as on the board
+        facedown: (ref.kind === 'RefHero' && ref.faceDown) || ref.cardCode === 'OrcGuard' || ref.cardCode === 'ReanimatedDead' ? 'player' : undefined,
       } as CardView)
     : null
 
