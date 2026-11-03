@@ -100,6 +100,18 @@ spec = describe "Conflict at the Carrock" do
     run $ SetFirstPlayer two
     placements `shouldReturn` [InPlayArea two]
 
+  it "feeds Grimbeorn the Old a Leadership resource, not a Lore one" . carrockTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Objectives.grimbeornTheOld
+    grimbeorn <- getsGame (fromJustNote "no Grimbeorn" . headMay . toList . (.entities.objectives))
+    theodred <- getHeroWithCode "01002"
+    beravor <- getHeroWithCode "01012"
+    for_ [theodred, beravor] \h -> run $ PlaceTokens GameSource (toTarget h) Resource 1
+    run $ ActionWindow pid
+    chooseAbilityOf pid grimbeorn
+    getsGame (map (.resources) . toList . (.entities.objectives)) `shouldReturn` [1]
+    getHeroResources (toId theodred) `shouldReturn` 0
+    getHeroResources (toId beravor) `shouldReturn` 1
+
   it "discards a character Muck Adder damages" . carrockTest $ \_ -> do
     _ <- setEncounterDeck [Enemies.muckAdder]
     run RevealEncounterCard

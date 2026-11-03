@@ -3,7 +3,7 @@ module LordOfTheRings.Objective.Cards.GrimbeornTheOld (grimbeornTheOld) where
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
-import LordOfTheRings.Sphere (Sphere (Lore))
+import LordOfTheRings.Sphere (Sphere (Leadership))
 
 newtype GrimbeornTheOld = GrimbeornTheOld ObjectiveAttrs
   deriving anyclass (IsObjective, HasModifiersFor)
@@ -12,17 +12,17 @@ newtype GrimbeornTheOld = GrimbeornTheOld ObjectiveAttrs
 grimbeornTheOld :: ObjectiveCard GrimbeornTheOld
 grimbeornTheOld = objective GrimbeornTheOld Cards.grimbeornTheOld
 
--- | Action: Spend 1 Lore resource to place that resource on Grimbeorn the Old.
+-- | Action: Spend 1 Leadership resource to place that resource on Grimbeorn the Old.
 instance HasAbilities GrimbeornTheOld where
   getAbilities (GrimbeornTheOld a) =
-    [anyPlayer $ restricted a 1 (ResourcesOfSphere ActivePlayer Lore 1) $ ActionAbility Free | a.placement == StagingArea]
+    [anyPlayer $ restricted a 1 (ResourcesOfSphere ActivePlayer Leadership 1) $ ActionAbility Free | a.placement == StagingArea]
 
 -- | If Grimbeorn the Old has 8 or more resource tokens on him, he joins the first player as
 -- an ally.
 instance RunMessage GrimbeornTheOld where
   runMessage msg o@(GrimbeornTheOld attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      spendResources pid Lore 1
+      spendResources pid Leadership 1
       placeResources attrs attrs 1
       pure o
     PlaceTokens _ (isTarget attrs -> True) Resource n | attrs.resources + n >= 8 -> do
