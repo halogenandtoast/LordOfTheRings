@@ -279,9 +279,12 @@ const toggleUnless = (attached: CardView) => {
 /* an exhausted card turns past its own width (height × 0.88 scale), so make room for it;
    heroes always keep that room, so exhausting one never moves the others */
 .card-slot.sideways, .heroes > .card-slot { margin-inline: calc((var(--card-width) / var(--card-aspect) * 0.88 - var(--card-width)) / 2); }
-.card-slot.hosting { padding-top: calc(var(--attachment-peek) * v-bind('attachments.length')); }
+.card-slot.hosting {
+  --attachment-step: var(--attachment-peek);
+  padding-top: calc(var(--attachment-step) * v-bind('attachments.length'));
+}
 .card-slot.hosting.expanded {
-  padding-top: calc(var(--card-width) / var(--card-aspect) * v-bind('attachments.length') * 0.55);
+  --attachment-step: calc(var(--card-width) / var(--card-aspect) * 0.55);
 }
 
 .attachments {
@@ -294,7 +297,8 @@ const toggleUnless = (attached: CardView) => {
   position: relative;
   grid-area: 1 / 1;
   cursor: pointer;
-  transform: translateY(calc(var(--depth) * var(--attachment-peek) * -1 + var(--attachment-peek)));
+  /* Lay the stack inside the space reserved above its host. */
+  transform: translateY(calc((v-bind('attachments.length') - var(--depth)) * var(--attachment-step)));
   transition: transform 0.2s ease;
   filter: drop-shadow(0 -1px 4px var(--shadow));
 }
@@ -324,10 +328,6 @@ const toggleUnless = (attached: CardView) => {
 /* Turning an attachment sideways would break the stack, so it dims instead. */
 .attached :deep(.card.exhausted) { transform: none; }
 .attached :deep(.card.exhausted img) { filter: brightness(0.6) saturate(0.6); }
-.card-slot.expanded .attached {
-  transform: translateY(calc(var(--depth) * (var(--card-width) / var(--card-aspect)) * -0.55
-    + (var(--card-width) / var(--card-aspect)) * 0.55));
-}
 
 .card {
   width: var(--card-width);

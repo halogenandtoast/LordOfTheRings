@@ -511,8 +511,8 @@ watch(question, (asked) => {
 /* a seat's share of the zone: all of it, or an even share when split, a bar between */
 .seat-part { display: flex; flex: 1 1 0; min-width: 0; }
 .seat-part + .seat-part { border-left: 2px solid var(--line-strong); }
-/* the play area takes the height the other rows leave */
-.game > .play-area { flex: 1 1 auto; }
+/* Fill spare space, but keep the full attachment stacks in the board's scroll flow. */
+.game > .play-area { flex: 1 0 auto; }
 /* the heroes and the rest of the play area as two zones side by side, as the scenario and
    staging are: the heroes as wide as they need, the play area taking the rest */
 .game > .play-area { background: none; border-color: transparent; }
