@@ -12,6 +12,7 @@ import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities (entitiesObjectives, entitiesQuests)
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Game.SearchZones (searchZones)
 import LordOfTheRings.Card
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Character
@@ -103,6 +104,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
         $ KeyMap.insert "playProhibitions" (toJSON prohibitions)
         $ KeyMap.insert "underneath" (toJSON underneath)
+        $ KeyMap.insert "searchZones" (toJSON $ searchZones g)
         $ KeyMap.insert "captured" (toJSON $ fmap length (fromMeta "captured" :: Map CardId [Value]))
         $ KeyMap.insert "capturedDecks" (toJSON $ fmap length (fromMeta "capturedDecks" :: Map PlayerId [Value]))
         -- the Stormcaller's quest stage and its progress (Flight of the Stormcaller)

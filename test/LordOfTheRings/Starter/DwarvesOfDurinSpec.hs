@@ -7,6 +7,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (PlayerCard (..))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Game.SearchZones (searchZones)
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
@@ -155,6 +156,13 @@ spec = describe "Dwarves of Durin" do
       chooseTarget pid (CardIdTarget (fromJustNote "no card" (headMay cards)).id)
       length <$> discardIds pid `shouldReturn` 2
       length <$> deckIds pid `shouldReturn` 1
+
+    it "shows the cards to choose from as in its player's discard pile" . dodTest $ \pid -> do
+      cards <- setDeck pid [Attachments.cram, Attachments.cram, Attachments.cram]
+      prospector <- putAllyIntoPlay pid Allies.eredNimraisProspector
+      chooseAbilityOf pid prospector
+      zones <- getsGame searchZones
+      zones `shouldBe` mapFromList [(c.id, object ["zone" .= ("discard" :: Text), "player" .= pid]) | c <- cards]
 
     it "shuffles nothing back when fewer than 3 cards were discarded (ruling)" . dodTest $ \pid -> do
       _ <- setDeck pid [Attachments.cram, Attachments.cram]

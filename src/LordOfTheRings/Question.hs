@@ -34,6 +34,14 @@ data Question msg
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+-- | The cards the question's searches show.
+searchedCards :: Question msg -> [Card]
+searchedCards = \case
+  SearchCards cs q -> cs <> searchedCards q
+  QuestionLabel _ _ _ q -> searchedCards q
+  PlayerWindow _ q -> searchedCards q
+  _ -> []
+
 questionChoices :: Question msg -> [UI msg]
 questionChoices = \case
   ChooseOne cs -> cs

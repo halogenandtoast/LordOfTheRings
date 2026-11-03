@@ -991,6 +991,7 @@ library
       LordOfTheRings.Game
       LordOfTheRings.Game.Base
       LordOfTheRings.Game.Public
+      LordOfTheRings.Game.SearchZones
       LordOfTheRings.GameT
       LordOfTheRings.Heading
       LordOfTheRings.Helpers.Attachment
