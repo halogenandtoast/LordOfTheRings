@@ -154,6 +154,7 @@ runNext =
       g <- runGame msg =<< getGame
       putGame g
       putGame =<< withHandModifiers =<< preloadModifiers g
+      checkUnblockedQuests g
       discardAtNoWillpower
       endWaitingGame
       pure True
@@ -175,6 +176,17 @@ gameCannotEndWith :: Outcome -> GameT Bool
 gameCannotEndWith outcome = do
   mods <- getModifiers GameTarget
   pure $ GameCannotEnd `elem` mods || (outcome == Won && PlayersCannotWin `elem` mods)
+
+{- | A quest card that could not be defeated, and now can, is checked again: one with
+enough progress is defeated. The game given has the modifiers from before the message.
+-}
+checkUnblockedQuests :: Game -> GameT ()
+checkUnblockedQuests before = do
+  let wasBlocked q = CannotBeDefeated `elem` map modifierType (Map.findWithDefault [] (toTarget q) (gameModifiers before))
+  quests <- getsGame (filter wasBlocked . toList . (.entities.quests))
+  for_ quests \q -> do
+    blocked <- elem CannotBeDefeated <$> getModifiers (toTarget q)
+    unless blocked $ push $ CheckStage (toId q)
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -382,7 +394,8 @@ runGame msg g = case msg of
         mods <- getModifiers target
         placed <- progressPlacedThisRound target
         let reduced = max 0 (n - sum [k | ProgressReducedBy k <- mods])
-            room = foldr min reduced [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
+            -- and no more than it may take now, as Stranded in Umbar's 15 tokens at most
+            room = foldr min reduced $ [max 0 (k - placed) | ProgressPerRoundLimit k <- mods] <> [max 0 k | ProgressLimit k <- mods]
         if room <= 0
           then pure g
           else do
@@ -427,6 +440,11 @@ runGame msg g = case msg of
   -- nor can a Grotto deck card: it returns to the Grotto deck (The Drowned Ruins)
   Discard (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
   ShuffleIntoEncounterDeck (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
+  -- a quest card that cannot be defeated now keeps its progress, to be checked again once
+  -- it can be (see 'checkUnblockedQuests')
+  CompleteQuest qid -> do
+    blocked <- elem CannotBeDefeated <$> getModifiers (QuestTarget qid)
+    if blocked then pure g else runGame'' msg g
   _ -> runGame'' msg g
  where
   unchartedCard lid = maybe False (isUnchartedCard . toAttrs) (Map.lookup lid g.entities.locations)

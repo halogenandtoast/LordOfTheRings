@@ -115,8 +115,12 @@ data ModifierType
     DoesNotCountAttack
   | -- | on an enemy: its attack is undefended, no character may defend against it
     CannotBeDefended
-  | -- | on a location: at most this much more progress can be placed on it now
+  | -- | on a location or quest card: at most this much more progress can be placed on it
+    -- now, as a stage that "cannot have more than 15 progress tokens on it" gives itself
     ProgressLimit Int
+  | -- | on a quest card: it is not defeated, whatever its progress; once nothing gives it
+    -- this, it is checked again, as "the players cannot defeat this stage while..." reads
+    CannotBeDefeated
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
   | -- | on a character: it is discarded from play once its willpower is 0, as The
