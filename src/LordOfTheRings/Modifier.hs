@@ -394,7 +394,9 @@ data ModifierType
     -- much by 'ProgressCanceled'
     QuestProgressCanceledBy Source
   | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
-    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play
+    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play. On
+    -- an enemy there: it is not engaged, moved or discarded, as The Black Serpent reads;
+    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it
     CannotLeaveStagingArea
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may

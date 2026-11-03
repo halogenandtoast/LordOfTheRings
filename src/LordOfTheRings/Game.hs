@@ -475,16 +475,31 @@ runGame msg g = case msg of
 
 runGame'' :: Message -> Game -> GameT Game
 runGame'' msg g = case removedEnemy msg of
-  -- an enemy that cannot leave play unless destroyed, as The Morgul Vale's Captains, stays
+  -- an enemy that cannot leave play unless destroyed, as The Morgul Vale's Captains, stays,
+  -- and so does one that cannot leave the staging area, as The Black Serpent
   Just eid -> do
-    stays <- elem CannotLeavePlay <$> getModifiers (EnemyTarget eid)
-    if stays then pure g else runGame' msg g
+    mods <- getModifiers (EnemyTarget eid)
+    if CannotLeavePlay `elem` mods || stuckInStaging eid mods then pure g else runGame' msg g
+  -- nor is such an enemy engaged or moved out of it
+  Nothing | Just eid <- movedEnemy msg -> do
+    mods <- getModifiers (EnemyTarget eid)
+    if stuckInStaging eid mods then pure g else runGame' msg g
   Nothing -> case movedLocation msg of
     -- a location that cannot leave the staging area, as The Crossing at Tharbad, stays
     Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement == StagingArea -> do
       stays <- elem CannotLeaveStagingArea <$> getModifiers (LocationTarget lid)
       if stays then pure g else runGame' msg g
     _ -> runGame' msg g
+ where
+  stuckInStaging eid mods =
+    CannotLeaveStagingArea `elem` mods && maybe False ((== StagingArea) . (.placement)) (Map.lookup eid g.entities.enemies)
+
+-- | The enemy a message moves out of where it is, without taking it out of play.
+movedEnemy :: Message -> Maybe EnemyId
+movedEnemy = \case
+  EngageEnemy _ eid -> Just eid
+  PlaceEnemy eid p | p /= StagingArea -> Just eid
+  _ -> Nothing
 
 -- | The location a message moves out of where it is, other than by exploring it.
 movedLocation :: Message -> Maybe LocationId

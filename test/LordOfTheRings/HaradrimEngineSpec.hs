@@ -83,6 +83,13 @@ spec = describe "The Haradrim engine" do
     lasting eowyn (CannotDefendAgainst (EnemyWithId eid))
     canDefend eid eowyn `shouldReturn` False
 
+  it "keeps an enemy that cannot leave the staging area there" . gameTest $ \pid -> do
+    (eid, _) <- stagedEnemy Enemies.forestSpider
+    lasting (EnemyTarget eid) CannotLeaveStagingArea
+    run $ EngageEnemy pid eid
+    run $ Discard (EnemyTarget eid)
+    getsGame (fmap (.placement) . lookup eid . (.entities.enemies)) `shouldReturn` Just StagingArea
+
   it "holds a captive ally and hero under its guard, rescuing them exhausted as it leaves play" . gameTest $ \pid -> do
     ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
     eowyn <- getHeroWithCode "01007"
