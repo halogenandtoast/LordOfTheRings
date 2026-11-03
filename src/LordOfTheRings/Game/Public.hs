@@ -39,12 +39,12 @@ publicGame :: Game -> Value
 publicGame = publicGameFor (const True)
 
 -- | The group's score (Revised Core rulebook, "Scoring"); lower is better.
-data GroupScore = GroupScore {threat :: Int, deadHeroes :: Int, damage :: Int, victoryPoints :: Int, total :: Int}
+data GroupScore = GroupScore {threat :: Int, deadHeroes :: Int, damage :: Int, rounds :: Int, victoryPoints :: Int, total :: Int}
   deriving stock Generic
   deriving anyclass ToJSON
 
 groupScore :: Game -> GroupScore
-groupScore g = GroupScore finalThreat deadThreat damage victory (finalThreat + deadThreat + damage - victory)
+groupScore g = GroupScore finalThreat deadThreat damage rounds victory (finalThreat + deadThreat + damage + rounds - victory)
  where
   merged = g {gamePlayers = allPlayers g, gameEntities = g.entities <> mconcat (heldEntities g)}
   finalThreat = sum [p.threat | p <- toList merged.players]
@@ -57,6 +57,8 @@ groupScore g = GroupScore finalThreat deadThreat damage victory (finalThreat + d
     , cdCardType (toCardDef c) == HeroType
     ]
   damage = sum [h.damage | h <- toList merged.entities.heroes, maybe False (not . (.eliminated)) (Map.lookup h.owner merged.players)]
+  -- 10 for each round, as the campaign log scores it (Scenario.Runner)
+  rounds = 10 * g.round
   victory = (toAttrs g.scenario).victoryPoints
 
 -- | The game as someone sees it who may only look at the hands of the players given:

@@ -105,6 +105,7 @@
     "threat": "Final threat",
     "deadHeroes": "Threat cost of dead heroes",
     "damage": "Damage on surviving heroes",
+    "rounds": "Rounds played (×10)",
     "victoryPoints": "Victory points earned",
     "total": "Group score",
     "lowerIsBetter": "Lower scores are better."

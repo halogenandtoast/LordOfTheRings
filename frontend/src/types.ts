@@ -159,6 +159,7 @@ export interface ScoreView {
   threat: number
   deadHeroes: number
   damage: number
+  rounds: number
   victoryPoints: number
   total: number
 }

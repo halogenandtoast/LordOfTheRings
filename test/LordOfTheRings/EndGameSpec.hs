@@ -64,6 +64,7 @@ spec = describe "End of the game" do
       [ "threat" .= (43 :: Int)
       , "deadHeroes" .= (8 :: Int)
       , "damage" .= (6 :: Int)
+      , "rounds" .= (0 :: Int)
       , "victoryPoints" .= (5 :: Int)
       , "total" .= (52 :: Int)
       ])
@@ -80,9 +81,19 @@ spec = describe "End of the game" do
       [ "threat" .= (50 :: Int)
       , "deadHeroes" .= (27 :: Int)
       , "damage" .= (0 :: Int)
+      , "rounds" .= (0 :: Int)
       , "victoryPoints" .= (0 :: Int)
       , "total" .= (77 :: Int)
       ])
+
+  it "adds 10 to the score for each round" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    unscored <- getsGame ((.total) . groupScore)
+    g <- getGame
+    putGame g {gameRound = 3}
+    score <- getsGame groupScore
+    score.rounds `shouldBe` 30
+    score.total `shouldBe` unscored + 30
 
   it "stops playing once the game is over" . gameTest $ \_ -> do
     run $ GameOver Lost

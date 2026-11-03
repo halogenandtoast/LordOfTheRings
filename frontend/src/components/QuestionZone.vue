@@ -50,7 +50,7 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
         &middot; {{ $t('game.prompt.victoryPoints', { value: victoryPoints }) }}
       </p>
       <dl v-if="outcome === 'WON' && score" class="score">
-        <template v-for="key in (['threat', 'deadHeroes', 'damage', 'victoryPoints', 'total'] as const)" :key="key">
+        <template v-for="key in (['threat', 'deadHeroes', 'damage', 'rounds', 'victoryPoints', 'total'] as const)" :key="key">
           <dt>{{ $t(`game.score.${key}`) }}</dt><dd>{{ key === 'victoryPoints' ? '−' : '' }}{{ score[key] }}</dd>
         </template>
       </dl>
