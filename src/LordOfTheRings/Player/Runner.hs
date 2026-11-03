@@ -139,15 +139,15 @@ runPlayer msg player = case msg of
               . gameEntities
           )
       pushAll [Discard (toTarget t) | t <- take 1 shackles]
+      unless (blocked || notNull shackles) $ push $ DoDrawCards drawing
+      pure player
+    DoDrawCards drawing | drawing.player == player.id -> do
       let (cards, deck) = splitAt drawing.count player.deck
           -- a hero in the deck was shuffled in by Lost and Alone, and is put into play as drawn
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
-      if blocked || notNull shackles
-        then pure player
-        else do
-          pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
-          pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
-          pure $ player & handL <>~ drawn & deckL .~ deck
+      pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+      pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
+      pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase)
         $ WithTarget (toTarget player) (DoPhase PlanningPhase)

@@ -476,6 +476,8 @@ data Message
     -- destroys a character" reads once the attack is over (see 'attackDestroyed')
     IfAttackDestroyed EnemyId [Message]
   | DrawCards Drawing
+  | -- | the draw itself, once nothing has stopped it, as Iron Shackles or Enchanted Stream
+    DoDrawCards Drawing
   | Mulligan PlayerId
   | -- | log only: what is narrated until the block closes is filed under it
     OpenLogBlock LogBlock

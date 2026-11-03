@@ -322,7 +322,7 @@ narrationFor = \case
   RemoveFromQuestDeck card -> Just $ one $ toned Good $ mechanic [ikeyPart "log.removedFromQuestDeck" ["card" ~> EncounterCard card]]
   AdvanceToQuest card -> Just $ one $ structure [ikeyPart "log.questStage" ["quest" ~> EncounterCard card]]
   -- \* Hands and decks
-  DrawCards drawing | drawing.count > 0 -> Just $ withPlayer drawing.player \player who -> do
+  DoDrawCards drawing | drawing.count > 0 -> Just $ withPlayer drawing.player \player who -> do
     let drawn = take drawing.count player.deck
     pure
       [ forPlayer player.id $ mechanic [ikeyPart "log.drawsCards" ["player" ~> who, "cards" ~> drawn]]
