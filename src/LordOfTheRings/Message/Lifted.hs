@@ -222,8 +222,17 @@ discard (toTarget -> t) = do
         push $ CheckWindows [Window After $ AllyDiscardedByCardEffect t (cdCardTraits def <> setFromList gained)]
     _ -> pure ()
 
+{- | A card effect readies the card, unless it is a character player card effects cannot
+ready, as Find Water reads.
+-}
 ready :: (ReverseQueue m, Targetable target) => target -> m ()
-ready = push . Ready . toTarget
+ready (toTarget -> t) = do
+  barred <- (CannotBeReadiedByPlayerCards `elem`) . concat <$> sequence [getModifiers GameTarget, getModifiers t]
+  let character = case t of
+        HeroTarget _ -> True
+        AllyTarget _ -> True
+        _ -> False
+  unless (character && barred) $ push (Ready t)
 
 exhaust :: (ReverseQueue m, Targetable target) => target -> m ()
 exhaust = push . Exhaust . toTarget

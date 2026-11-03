@@ -534,6 +534,15 @@ data ModifierType
     ExcessDamageTo Target
   | -- | on a player: they cannot discard cards from their hand, as Isen River reads
     CannotDiscardFromHand
+  | -- | on a player: he cannot have more than this many cards in hand, discarding down to
+    -- it at once, as In Enemy Territory reads
+    HandSizeLimit Int
+  | -- | on the game, or a character: player card effects cannot ready it, as Find Water
+    -- reads; the refresh phase still does
+    CannotBeReadiedByPlayerCards
+  | -- | on a character: it cannot defend against matching enemies, as Uruk of Mordor reads
+    -- for allies with less willpower than its threat
+    CannotDefendAgainst EnemyMatcher
   | -- | on a character: it cannot attack or defend against matching enemies, as Cursed
     -- Burden reads
     CannotFight EnemyMatcher

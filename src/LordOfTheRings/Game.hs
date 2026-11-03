@@ -156,6 +156,7 @@ runNext =
       putGame =<< withHandModifiers =<< preloadModifiers g
       checkUnblockedQuests g
       discardAtNoWillpower
+      discardDownToHandLimit
       endWaitingGame
       pure True
 
@@ -187,6 +188,28 @@ checkUnblockedQuests before = do
   for_ quests \q -> do
     blocked <- elem CannotBeDefeated <$> getModifiers (toTarget q)
     unless blocked $ push $ CheckStage (toId q)
+
+{- | A player with more cards in hand than he may have, as In Enemy Territory allows him
+5, chooses and discards cards down to it at once.
+-}
+discardDownToHandLimit :: GameT ()
+discardDownToHandLimit = do
+  over <- getsGame (isJust . (.outcome))
+  unless over do
+    queued <- peekQueue
+    players <- getPlayers
+    for_ players \p -> do
+      mods <- getModifiers (PlayerTarget p.id)
+      let excess = maybe 0 (length p.hand -) (minimumMay [k | HandSizeLimit k <- mods])
+          -- a discard already on its way, or being asked for
+          pending = flip any queued \case
+            ChooseAndDiscardFromHand pid _ _ -> pid == p.id
+            DiscardFromHand pid _ -> pid == p.id
+            Ask pid (QuestionLabel l _ _ _) -> pid == p.id && l == ikey "label.chooseCardToDiscardFromHand"
+            _ -> False
+      when (excess > 0 && not pending && CannotDiscardFromHand `notElem` mods && notNull (discardableHand p))
+        $ push
+        $ ChooseAndDiscardFromHand p.id GameSource excess
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -3407,7 +3430,9 @@ canDefend eid c = do
         _ -> False
   -- only a Ship objective defends against a Ship enemy (Dream-chaser rules)
   shipOnly <- andM [selectAny (EnemyWithId eid <> shipEnemy), not <$> isShipObjective c]
-  if (noAllies && isAlly) || exhausts || shipOnly then pure False else canFight eid c
+  -- nor one that cannot defend against it, as an ally against Uruk of Mordor
+  barred <- (\ms -> anyM (\m -> selectAny (EnemyWithId eid <> m)) [m | CannotDefendAgainst m <- ms]) =<< getModifiers c
+  if (noAllies && isAlly) || exhausts || shipOnly || barred then pure False else canFight eid c
 
 -- | Whether the character is a Ship objective (Dream-chaser rules).
 isShipObjective :: Target -> GameT Bool
