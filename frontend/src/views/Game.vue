@@ -69,7 +69,19 @@ const fileBugAbout = (description = '') => {
 // resolution once won, each shown once on its own and again from the menu
 const storyId = computed(() => (scenario.value ? slug(scenario.value.name) : ''))
 const storyKeys = (part: StoryPart) =>
-  part === 'intro' ? ['intro', 'setup', 'rules', 'tips'] : campaignId.value ? ['resolution', 'campaignResolution'] : ['resolution']
+  part === 'intro'
+    ? [
+        'intro',
+        'setup',
+        'rules',
+        'tips',
+        ...(campaignId.value ? ['campaignIntro'] : []),
+        ...(scenario.value?.mode === 'EasyMode' ? ['easy'] : []),
+        ...(scenario.value?.mode === 'NightmareMode' ? ['nightmare'] : []),
+      ]
+    : campaignId.value
+      ? ['resolution', 'campaignResolution']
+      : ['resolution']
 const hasStoryPart = (part: StoryPart) =>
   storyKeys(part).some((key) => Object.keys(tm(`story.${storyId.value}.${key}`)).length > 0)
 const storyPart = ref<StoryPart | null>(null)
