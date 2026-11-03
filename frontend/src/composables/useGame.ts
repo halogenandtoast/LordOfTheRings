@@ -133,7 +133,14 @@ export const useGame = (gameId: string, spectate = false) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }).catch(() => null)
-    error.value = response?.ok ? null : (await response?.text()) || t('game.errors.serverUnreachable')
+    const failed = response?.ok ? null : (await response?.text()) || t('game.errors.serverUnreachable')
+    // an answer to a question already moved past, as a second click, means this view is
+    // behind the game: catch up rather than show an error the player can do nothing about
+    if (response?.status === 409 && failed === 'stale answer') {
+      error.value = null
+      return refresh()
+    }
+    error.value = failed
   }
 
   const refresh = async () => {
