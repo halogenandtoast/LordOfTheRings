@@ -45,6 +45,8 @@ data HeroAttrs = HeroAttrs
   , heroAttacking :: Bool
   , heroPrisoner :: Bool
   -- ^ face down: it cannot be used, cannot be damaged and collects no resources
+  , heroGuardedBy :: Maybe CardId
+  -- ^ the encounter card it is a captive of, as a guarded objective (see 'GuardCharacter')
   }
   deriving stock (Show, Eq, Generic)
 
@@ -54,7 +56,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null)]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -72,6 +74,7 @@ hero f cardDef =
             , heroCommitted = False
             , heroAttacking = False
             , heroPrisoner = False
+            , heroGuardedBy = Nothing
             }
     }
 

@@ -47,7 +47,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, CharacterRescued, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
  )
 
 dealDamage
@@ -1222,6 +1222,18 @@ putLocationIntoPlay card = push . PutLocationIntoPlay card
 -- | The action's messages, unless the card has left play by the time they run.
 whileInPlay :: (ReverseQueue m, Targetable target) => target -> QueueT Message m () -> m ()
 whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture action
+
+{- | The character, a hero or an ally, becomes a captive guarded by the encounter card: a
+guarded objective under no player's control, out of every matcher's reach, until the card
+leaves play and it is rescued, exhausted, as "attach that ally to Prison Guard" reads. What
+it had on it stays: discard its tokens and attachments first where the card says to.
+-}
+guardCharacterWith :: (ReverseQueue m, Targetable character, IsCard captor) => character -> captor -> m ()
+guardCharacterWith c captor = push $ GuardCharacter (toTarget c) (toCard captor).id
+
+-- | The guarded character is rescued now, as the card guarding it would leave play.
+rescueCharacter :: (ReverseQueue m, Targetable character) => character -> m ()
+rescueCharacter (toTarget -> c) = pushAll [RescueCharacter c, CheckWindows [Window After $ CharacterRescued c]]
 
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()

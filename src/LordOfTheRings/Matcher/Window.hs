@@ -70,6 +70,8 @@ data WindowMatcher
     StagingStepEndsWindow
   | ProgressPlacedWindow Timing Target
   | QuestedUnsuccessfullyWindow Timing
+  | -- | a guarded character, or the given one, was rescued (see 'GuardCharacter')
+    CharacterRescuedWindow Timing (Maybe Target)
   | QuestedSuccessfullyWindow Timing
   | -- | after an attack the character, or any character, defended
     DefendedAttackWindow Timing (Maybe Target)
@@ -326,6 +328,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (StagingStepEndsWindow, StagingStepEnds) -> True
   (ProgressPlacedWindow t target, ProgressPlaced target' _) -> t == timing && target == target'
   (QuestedUnsuccessfullyWindow t, QuestedUnsuccessfully) -> t == timing
+  (CharacterRescuedWindow t mt, CharacterRescued c) -> t == timing && maybe True (== c) mt
   (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing
   (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'

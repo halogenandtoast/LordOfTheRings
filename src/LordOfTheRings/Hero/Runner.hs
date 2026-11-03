@@ -28,6 +28,8 @@ instance RunMessage HeroAttrs where
       push $ PlaceTokens GameSource (toTarget attrs) Damage 1
       pure $ attrs & prisonerL .~ False
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
+    GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & guardedByL ?~ cid & committedL .~ False & attackingL .~ False
+    RescueCharacter (isTarget attrs -> True) -> pure $ attrs & guardedByL .~ Nothing & exhaustedL .~ True
     -- the resource phase's resources come from the game, not a card effect
     PlaceTokens source (isTarget attrs -> True) Resource n | source /= GameSource -> do
       mods <- getModifiers attrs

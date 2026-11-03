@@ -3040,6 +3040,14 @@ freeGuarded g target =
   , l <- toList g.entities.locations
   , l.placement == AttachedTo (CardIdTarget cid)
   ]
+    -- and the characters it guards as captives are rescued
+    <> concat
+      [ [RescueCharacter c, CheckWindows [mkAfter $ CharacterRescued c]]
+      | Just cid <- [guardCard]
+      , c <-
+          [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
+            <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
+      ]
  where
   cardIdIn :: IsCard v => Ord k => Map k v -> k -> Maybe CardId
   cardIdIn m k = (.id) . toCard <$> Map.lookup k m

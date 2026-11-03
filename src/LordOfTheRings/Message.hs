@@ -275,6 +275,12 @@ data Message
     RemoveFromQuestDeck EncounterCard
   | TakePrisoner HeroId
   | RescuePrisoner HeroId
+  | -- | the character, a hero or an ally, goes to the encounter card with this id as its
+    -- captive: under no player's control and out of the game's reach, a guarded objective
+    -- until that card leaves play (The Long Arm of Mordor, The Dungeons of Cirith Gurat)
+    GuardCharacter Target CardId
+  | -- | the guarded character is free of encounters: its owner takes control of it, exhausted
+    RescueCharacter Target
   | SetAside EncounterCard
   | -- | a stage whose condition may have just been met checks whether it is defeated
     CheckStage QuestId
