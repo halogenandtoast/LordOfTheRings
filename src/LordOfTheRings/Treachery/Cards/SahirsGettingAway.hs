@@ -17,8 +17,6 @@ sahirsGettingAway = treachery SahirsGettingAway Cards.sahirsGettingAway
 -- the staging area until the end of the phase.
 -- Shadow: If this attack damages a Ship objective, place 1 progress on the Stormcaller's
 -- quest stage.
--- ponytail: a Ship objective defending, or the attack undefended by a Ship enemy, counts as
--- damaging one, whatever the damage comes to
 instance RunMessage SahirsGettingAway where
   runMessage msg t@(SahirsGettingAway attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

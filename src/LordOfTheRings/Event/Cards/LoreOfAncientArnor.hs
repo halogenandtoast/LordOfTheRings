@@ -21,7 +21,6 @@ instance RunMessage LoreOfAncientArnor where
       let n = if length players == 1 then 2 else 1
       for_ players \p -> do
         discarded <- (.discard) <$> getPlayer p
-        -- ponytail: two cards are two questions, the same card picked twice returning one
         replicateM_ n $ chooseOrRunOneM p do
           questionLabeled "loreOfAncientArnor.return"
           causedBy attrs

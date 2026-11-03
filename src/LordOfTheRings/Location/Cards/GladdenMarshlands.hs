@@ -19,7 +19,6 @@ instance HasAbilities GladdenMarshlands where
 -- the phase. (+2 attack instead if this attack is undefended.)
 instance RunMessage GladdenMarshlands where
   runMessage msg l@(GladdenMarshlands a) = case msg of
-    -- ponytail: the damage is dealt as the effect, not paid as a cost
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       heroes <- select (HeroControlledBy $ PlayerWithId pid)
       chooseOrRunOneM pid do

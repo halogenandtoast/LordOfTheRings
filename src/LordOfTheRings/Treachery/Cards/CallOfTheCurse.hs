@@ -24,7 +24,6 @@ curse source = do
 
 -- | When Revealed: the curse. If X is 0 or 1, Call of the Curse gains surge.
 -- Shadow: Resolve the 'when revealed' effect of Call of the Curse.
--- ponytail: as a shadow it gains no surge
 instance RunMessage CallOfTheCurse where
   runMessage msg t@(CallOfTheCurse attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

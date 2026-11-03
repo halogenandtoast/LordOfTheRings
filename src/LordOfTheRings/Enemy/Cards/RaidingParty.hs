@@ -26,9 +26,6 @@ instance RunMessage RaidingParty where
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       let discarded = zip players deck
       discardTopOfEncounterDeck attrs (length discarded)
-      -- ponytail: the engagement check is against that enemy alone: it comes out of the
-      -- discard pile engaged with him if his threat reaches its printed engagement cost,
-      -- else it stays discarded
       for_ discarded \(pid, card) -> do
         let def = toCardDef card
         threat <- getThreat pid

@@ -26,8 +26,6 @@ instance RunMessage SavageFray where
           if
             | battle -> roundModifiers attrs q [LoseKeyword Battle, GainKeyword Siege]
             | siege -> roundModifiers attrs q [LoseKeyword Siege, GainKeyword Battle]
-            -- ponytail: another keyword (archery, time) is kept; the quest gains the one
-            -- the first player picks
             | otherwise -> do
                 lead <- getLead
                 chooseOneM lead do

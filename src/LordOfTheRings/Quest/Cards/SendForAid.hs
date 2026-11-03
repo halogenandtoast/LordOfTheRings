@@ -14,7 +14,7 @@ sendForAid = quest SendForAid Cards.sendForAid
 
 -- | Response: When this stage is defeated, each player may search the top 10 cards of his
 -- deck for an ally and put it into play under his control. Each player who did shuffles
--- his deck. ponytail: each player shuffles, searching or not, as the search verb does.
+-- his deck.
 instance RunMessage SendForAid where
   runMessage msg (SendForAid attrs) = case msg of
     CompleteQuest qid | qid == attrs.id -> do

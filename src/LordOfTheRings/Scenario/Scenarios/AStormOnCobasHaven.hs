@@ -79,7 +79,6 @@ instance RunMessage AStormOnCobasHaven where
     -- Broken Rudder: "During sailing tests, for each success symbol found, cancel it unless
     -- you deal 1 damage to attached objective." The first player keeps as many as he deals
     -- damage for.
-    -- ponytail: a second Broken Rudder attached asks nothing more
     SailingTestResult top found canceled | attrs.nightmare, found > canceled -> do
       rudders <-
         getsGame \g ->
@@ -99,7 +98,6 @@ instance RunMessage AStormOnCobasHaven where
     DoStep 1 inner@(SailingTestResult {}) -> AStormOnCobasHaven <$> runMessage inner attrs
     -- Broken Rudder: "*Forced: After this Sailing test ends, attach Broken Rudder to a Ship
     -- objective committed to that test."
-    -- ponytail: it is revealed again, attaching to a Ship objective the first player picks
     SailingTestEnded top _ | attrs.nightmare -> do
       for_ [c | c <- top, cardMatches (cardIs Treacheries.brokenRudder) c, c `elem` attrs.encounterDiscard] revealFromEncounterDiscard
       AStormOnCobasHaven <$> runMessage msg attrs

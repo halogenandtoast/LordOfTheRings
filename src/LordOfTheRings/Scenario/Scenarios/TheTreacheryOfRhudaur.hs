@@ -89,7 +89,6 @@ instance RunMessage TheTreacheryOfRhudaur where
       TheTreacheryOfRhudaur <$> runMessage msg attrs
     -- Resolution: For each Clue a player controls, that player may add the book with the
     -- same name to the Campaign Pool and their deck.
-    -- ponytail: each book is added, a boon there being no reason to refuse
     ResolveCampaign | Just l <- attrs.campaign -> do
       objectives <- getsGame (toList . entitiesObjectives . gameEntities)
       heroes <- getsGame (entitiesHeroes . gameEntities)

@@ -12,8 +12,6 @@ hideousDepths :: LocationCard HideousDepths
 hideousDepths = location HideousDepths Cards.hideousDepths
 
 -- | With no Tentacle enemy in the encounter discard pile, its Travel cost cannot be paid.
--- ponytail: "Forced: After a player looks at one or more cards in the encounter deck,
--- shuffle the encounter deck." is not scripted: no window tells a look at the deck yet.
 instance HasModifiersFor HideousDepths where
   getModifiersFor (HideousDepths a) = do
     tentacles <- filter isTentacleEnemy <$> getEncounterDiscard

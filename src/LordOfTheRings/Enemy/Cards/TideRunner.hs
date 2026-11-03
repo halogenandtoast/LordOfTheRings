@@ -15,8 +15,6 @@ tideRunner = enemy TideRunner Cards.tideRunner
 -- | Boarding 1. Cannot have attachments.
 -- While you are off-course, Tide-runner is considered to be in the Stormcaller's area and
 -- the staging area, regardless of its current location.
--- ponytail: engaged and off-course, it adds its threat to the staging area; it is not also
--- treated as in the Stormcaller's area
 instance HasModifiersFor TideRunner where
   getModifiersFor (TideRunner a) = do
     modifySelf a [CannotHaveAttachments]

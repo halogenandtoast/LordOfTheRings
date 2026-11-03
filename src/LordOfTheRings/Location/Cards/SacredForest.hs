@@ -16,10 +16,8 @@ sacredForest = location SacredForest Cards.sacredForest
 -- any number of time counters are removed from this enemy, heal 2 damage on it for each
 -- time counter removed."
 -- Travel: Remove each time counter from an enemy in play to travel here.
--- ponytail: with no time counter on an enemy the players may still travel here
 instance RunMessage SacredForest where
   runMessage msg l@(SacredForest a) = case msg of
-    -- ponytail: the gained Forced resolves as the window opens, without a prompt
     CheckWindows ws | a.placement == StagingArea -> do
       guardians <- select (EnemyWithTrait Guardian)
       for_ [(eid, n) | Window After (TimeCountersRemoved (EnemyTarget eid) n) <- ws, eid `elem` guardians] \(eid, n) ->

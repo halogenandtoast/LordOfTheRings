@@ -30,8 +30,6 @@ instance RunMessage RestlessHunters where
         causedBy attrs
         targets (map toId clues) $ attachClueToMordorEnemy attrs lead
       pure t
-    -- ponytail: the damage goes to that hero as a redirect for the rest of the phase, from
-    -- the defenders or, undefended, from the enemy
     ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
       heroes <- select (HeroControlledBy (PlayerWithId pid) <> HeroWithAttached Clue)
       chooseOrRunOneM pid do

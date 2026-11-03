@@ -32,8 +32,6 @@ instance RunMessage TidesOfFate where
           spendGroupResources pid Tactics 2
           for_ defenders \d -> do
             ready d
-            -- ponytail: +3 for the rest of the phase, not only its next attack; a defender
-            -- seldom attacks twice in one phase
             phaseModifier attrs d (AttackModifier 3)
         labeled "tidesOfFate.done" (pure ())
       pure e

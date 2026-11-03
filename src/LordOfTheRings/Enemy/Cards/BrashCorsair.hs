@@ -13,7 +13,6 @@ brashCorsair = enemy BrashCorsair Cards.brashCorsair
 
 -- | Forced: When the engaged player exhausts a Ship objective, Brash Corsair makes an
 -- immediate attack.
--- ponytail: answered once the Ship objective has exhausted, the only window it opens
 instance RunMessage BrashCorsair where
   runMessage msg (BrashCorsair attrs) = case msg of
     CheckWindows ws | EngagedWith pid <- attrs.placement -> do

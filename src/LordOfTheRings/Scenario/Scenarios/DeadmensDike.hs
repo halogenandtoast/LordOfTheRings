@@ -20,8 +20,6 @@ deadmensDike =
   Scenario
     $ scenario (DeadmensDike . (nightmareDeckL ?~ nightmare)) "deadmens-dike" "Deadmen's Dike"
  where
-  -- ponytail: its "Each player's deck cannot include more than 50 total cards" is left to
-  -- the players, decks being built before the game
   nightmare =
     nightmareDeck
       Nightmare.deadmensDikeNightmare

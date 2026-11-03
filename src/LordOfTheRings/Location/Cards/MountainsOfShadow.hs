@@ -18,7 +18,6 @@ mountainsOfShadow = location MountainsOfShadow Cards.mountainsOfShadow
 -- undefended attack already is, so it asks nothing.
 instance RunMessage MountainsOfShadow where
   runMessage msg l@(MountainsOfShadow a) = case msg of
-    -- ponytail: answered for each hidden card turned, not once for each batch of them
     TurnHiddenCardFaceup pid _ _ | a.placement == ActiveLocation -> do
       takeHiddenCard pid
       MountainsOfShadow <$> runMessage msg a

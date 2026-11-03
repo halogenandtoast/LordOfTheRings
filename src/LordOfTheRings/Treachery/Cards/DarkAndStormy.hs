@@ -13,8 +13,6 @@ darkAndStormy = treachery DarkAndStormy Cards.darkAndStormy
 -- | Surge.
 -- When Revealed: Deal 1 shadow card to each Ship enemy in play. Until the end of the
 -- round, shadow effects cannot be canceled.
--- ponytail: no encounter card effect can be canceled until the end of the round, not only
--- shadow effects
 -- Shadow: Attacking enemy makes an additional attack after this one.
 instance RunMessage DarkAndStormy where
   runMessage msg t@(DarkAndStormy attrs) = case msg of

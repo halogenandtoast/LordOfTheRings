@@ -34,7 +34,6 @@ instance RunMessage NoxiousSupplies where
       NoxiousSupplies <$> runMessage msg attrs
     _ -> NoxiousSupplies <$> runMessage msg attrs
    where
-    -- ponytail: an objective's healing is taken for Athelas', the only one here that heals
     healedBesidesAthelas host = \case
       Healed c (ObjectiveSource _) | c == host -> False
       Healed c _ -> c == host

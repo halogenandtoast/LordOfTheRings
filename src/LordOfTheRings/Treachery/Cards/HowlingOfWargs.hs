@@ -16,7 +16,6 @@ howlingOfWargs = treachery HowlingOfWargs Cards.howlingOfWargs
 -- Shuffle the encounter deck if it is searched. The first player chooses.
 -- Shadow: Deal 1 shadow card to each enemy engaged with you that has not attacked this
 -- phase.
--- ponytail: each enemy engaged with you other than the attacking one.
 instance RunMessage HowlingOfWargs where
   runMessage msg t@(HowlingOfWargs attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

@@ -12,8 +12,6 @@ rallyTheFighters :: QuestCard RallyTheFighters
 rallyTheFighters = quest RallyTheFighters Cards.rallyTheFighters
 
 -- | Shadow cards are immune to player card effects.
--- ponytail: no encounter card effect can be canceled, which is what stops a player card
--- canceling a shadow effect.
 instance HasModifiersFor RallyTheFighters where
   getModifiersFor (RallyTheFighters a) = modified a GameTarget [CannotCancelEncounterEffects]
 

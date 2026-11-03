@@ -10,8 +10,6 @@ newtype Starla = Starla AllyAttrs
 
 -- | A scalable boon of the Dream-chaser campaign: a secret of Temple of the Deceived, then
 -- in its player's deck.
--- ponytail: "Response: After Starla is discarded from your hand or deck, play her" is not
--- offered, the engine answering no card's abilities from a discard pile.
 starla :: AllyCard Starla
 starla = ally Starla Cards.starla
 

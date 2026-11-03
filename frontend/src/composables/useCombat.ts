@@ -69,7 +69,6 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
       if (enemy) {
         const strength = enemy.attackStrength ?? 0
         const defense = stat(enemy, 'defense')
-        // ponytail: the hovered attacker's printed-side attack, without its bonuses against traits
         const withHovered = strength + stat(hovered, 'attack')
         const bar = (stat: 'defense' | 'hit-points', of: number, through: (attack: number) => number) => ({
           stat, of, done: through(strength), adding: through(withHovered) - through(strength),

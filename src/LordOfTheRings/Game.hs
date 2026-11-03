@@ -785,7 +785,6 @@ runGameMessage msg g = case msg of
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
     mods <- getModifiers target
-    -- ponytail: only an objective source is told apart by its card, as Athelas
     let from = case source of
           ObjectiveSource oid -> toCardCode <$> Map.lookup oid g.entities.objectives
           _ -> Nothing
@@ -2585,7 +2584,6 @@ runGameMessage msg g = case msg of
         lead <- getLead
         aid <- getRandom
         let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
-        -- ponytail: no window for it entering play, as the player it goes to is chosen as it resolves
         pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
           =<< revealing (toTarget thisAlly)
         pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
@@ -3268,7 +3266,6 @@ attackDamage pid eid target n = do
         , notNull ships
         ]
   burning <- if excessToAflame then filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea else pure []
-  -- ponytail: all of it on one Aflame location of the player's choice
   let toAflame =
         [ chooseOrRunOne pid [targetLabel l [DealDamage (EnemyAttackSource eid) (LocationTarget l) excess] | l <- burning]
         | excess > 0

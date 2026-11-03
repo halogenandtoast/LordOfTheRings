@@ -18,7 +18,6 @@ templeGuardian = enemy TempleGuardian Cards.templeGuardian
 -- optionally engaged.
 -- Temple Guardian gets -50 engagement cost while Cursed Temple is the active location.
 -- The Dream-chaser campaign uses its Campaign Mode only side.
--- ponytail: that side is the printed side's modifiers, its card the same.
 instance HasModifiersFor TempleGuardian where
   getModifiersFor (TempleGuardian a) = do
     players <- length <$> getRemainingPlayers

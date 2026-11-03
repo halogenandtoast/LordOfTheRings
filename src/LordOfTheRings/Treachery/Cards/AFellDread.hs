@@ -12,8 +12,6 @@ aFellDread = treachery AFellDread Cards.aFellDread
 
 {- | Counts as a Condition attachment with the text: "Attached hero's willpower is reduced
 to 0. During the quest phase, attached hero must commit to the quest, if able."
-ponytail: its willpower counts as 0 toward the quest only, the one place this scenario
-reads it; a "set to" stat modifier if another card reads it.
 -}
 instance HasModifiersFor AFellDread where
   getModifiersFor (AFellDread a) = withHost a \host -> modified a host [DoesNotCountWillpower, MustCommitToQuest]
