@@ -4,8 +4,8 @@ import LordOfTheRings.Card.CardType
 import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
-import LordOfTheRings.Modifier (ModifierType)
-import LordOfTheRings.Target (Target)
+import LordOfTheRings.Modifier (ModifierType (CannotCancelShadowEffects, CannotCancelWhenRevealedEffects))
+import LordOfTheRings.Target (Target (GameTarget))
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
@@ -37,6 +37,8 @@ data Criterion
     BeforeStaging
   | -- | nothing stops a player card cancelling an encounter card's effects
     EncounterEffectsCancelable
+  | -- | the treachery card being revealed is the first revealed this round
+    FirstTreacheryRevealedThisRound
   | NotCriterion Criterion
   | -- | the target has, or lacks, the modifier
     TargetHasModifier Target ModifierType
@@ -110,3 +112,11 @@ withoutErrata = NotCriterion . usesErrata
 -- | The player controls a matching ally, as a card that returns one to hand needs.
 controlsAlly :: PlayerId -> AllyMatcher -> Criterion
 controlsAlly pid m = AllyExists (AllyControlledBy (PlayerWithId pid) <> m)
+
+-- | Nothing stops a player card cancelling a shadow effect.
+shadowEffectsCancelable :: Criterion
+shadowEffectsCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelShadowEffects
+
+-- | Nothing stops a player card cancelling a When Revealed effect.
+whenRevealedCancelable :: Criterion
+whenRevealedCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelWhenRevealedEffects

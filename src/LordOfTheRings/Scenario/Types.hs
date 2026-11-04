@@ -96,6 +96,9 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioCampaignCardFlipped :: Bool
   -- ^ the campaign card turned over, as its resolution is read, or Escape from Dol
   -- Guldur's when the prisoner is taken
+  , scenarioOutOfPlayResources :: Map CardId Int
+  -- ^ resources added to a card while it is out of play, placed on it as it enters play,
+  -- as Captain's Quarters adds them to Captain Sahír
   }
   deriving stock (Show, Eq, Generic)
 
@@ -105,7 +108,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False)] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object [])] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -136,6 +139,7 @@ scenario f sid name =
       , scenarioGrottoDeck = []
       , scenarioCampaign = Nothing
       , scenarioCampaignCardFlipped = False
+      , scenarioOutOfPlayResources = mempty
       }
 
 instance Entity ScenarioAttrs where
@@ -188,7 +192,6 @@ instance HasField "victoryDisplay" ScenarioAttrs [Card] where
 instance HasField "victoryPoints" ScenarioAttrs Int where
   getField a = sum . mapMaybe (cdVictoryPoints . toCardDef) . filter counts $ scenarioVictoryDisplay a
    where
-    -- ponytail: the one setup card that touches scoring is named here, not a modifier
     noPlayerCards = a.nightmare && fmap nightmareSet a.nightmareDeck == Just TheSiegeOfCairAndrosNightmare
     counts = \case
       PlayerCard _ -> not noPlayerCards

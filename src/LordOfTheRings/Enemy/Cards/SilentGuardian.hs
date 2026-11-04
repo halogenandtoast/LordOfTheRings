@@ -17,7 +17,6 @@ silentGuardian = enemy SilentGuardian Cards.silentGuardian
 -- event card each round, instead of discarding that card after playing it, reanimate it."
 -- Read as the event lies in its player's discard pile, once it is played; a round effect on
 -- the player marks it used.
--- ponytail: the first event played while engaged with it, not the first of the round.
 instance RunMessage SilentGuardian where
   runMessage msg (SilentGuardian attrs) = case msg of
     CheckWindows ws | EngagedWith pid <- attrs.placement -> do

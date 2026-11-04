@@ -15,8 +15,6 @@ giantCaveCentipede = enemy GiantCaveCentipede Cards.giantCaveCentipede
 
 -- | Forced: At the end of the combat phase, if Giant Centipede is engaged with a player,
 -- that player chooses and adds it to a different player's staging area.
--- ponytail: to the staging area, with another player in the game; the players' own
--- staging areas at stage 4 are not told apart
 instance HasAbilities GiantCaveCentipede where
   getAbilities (GiantCaveCentipede a) = case a.placement of
     EngagedWith _ -> [mkAbility a 1 $ forced $ PhaseEndsWindow When CombatPhase]

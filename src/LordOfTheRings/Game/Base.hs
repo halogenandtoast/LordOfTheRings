@@ -6,6 +6,7 @@ import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
+import LordOfTheRings.Location.Types (Location)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
@@ -46,6 +47,9 @@ data Game = Game
   , gameLeftPlay :: Map AllyId Ally
   -- ^ Allies that just left play, kept until the window for their leaving closes so
   -- their own abilities can answer it.
+  , gameLeftPlayLocations :: Map LocationId Location
+  -- ^ Locations that left play this phase, so their own abilities can answer their
+  -- leaving, as "after X is explored" or "after X leaves play" reads.
   , gameAttackDestroyed :: [AttackDestroyed]
   -- ^ What attacks' damage destroyed: an enemy's attack's, kept until that enemy attacks
   -- again, and a player's attack's on an enemy, until the attack has resolved.
@@ -228,3 +232,14 @@ instance HasField "questionVersion" Game Int where
 
 instance HasField "outcome" Game (Maybe Outcome) where
   getField = gameOutcome
+
+-- | Whether no more allies can enter play this round: one has, while only one may, as
+-- Corsair Waters reads.
+allyEntryBarred :: Game -> Bool
+allyEntryBarred g =
+  OneAllyEntersPlayPerRound `elem` map modifierType (Map.findWithDefault [] GameTarget (gameModifiers g))
+    && any (\e -> isAlly (effectTarget e) && EnteredPlayThisRound `elem` effectModifiers e) (gameEffects g)
+ where
+  isAlly = \case
+    AllyTarget _ -> True
+    _ -> False

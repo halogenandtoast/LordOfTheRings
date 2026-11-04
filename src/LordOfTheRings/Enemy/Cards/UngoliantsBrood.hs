@@ -20,7 +20,6 @@ instance HasAbilities UngoliantsBrood where
 instance RunMessage UngoliantsBrood where
   runMessage msg e@(UngoliantsBrood attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      -- ponytail: the characters in play now; one entering play later this round may ready
       for_ [p | EngagedWith p <- [attrs.placement]] \pid ->
         traverse_ (\c -> roundModifier attrs c CannotReady) =<< charactersControlledBy pid
       pure e

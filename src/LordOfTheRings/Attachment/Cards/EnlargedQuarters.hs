@@ -17,8 +17,6 @@ enlargedQuartersUpgraded = attachment EnlargedQuarters Cards.enlargedQuartersUpg
 
 -- | Attached Ship gets +3 hit points and can be committed to any Sailing test. Upgraded,
 -- it counts as 1 additional character when committed to a Sailing test.
--- ponytail: "1 additional" counts the ship as 2 characters; on the Dream-chaser, which
--- already counts as more, it adds nothing.
 instance HasModifiersFor EnlargedQuarters where
   getModifiersFor (EnlargedQuarters a) =
     withHost a \host -> modified a host $ [HitPointModifier 3, CommittableToAnySailingTest] <> [CountsAsSailingCharacters 2 | isUpgradedSide a]

@@ -14,8 +14,6 @@ shrineToMorgothTheDrownedRuins :: LocationCard ShrineToMorgothTheDrownedRuins
 shrineToMorgothTheDrownedRuins = location ShrineToMorgothTheDrownedRuins Cards.shrineToMorgothTheDrownedRuins
 
 -- | Shrine to Morgoth cannot have attachments and cannot enter the staging area.
--- ponytail: no card of the scenario moves the active location to the staging area, so
--- only the attachments are barred
 instance HasModifiersFor ShrineToMorgothTheDrownedRuins where
   getModifiersFor (ShrineToMorgothTheDrownedRuins a) = modifySelf a [CannotHaveAttachments]
 

@@ -27,7 +27,7 @@ import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (sourceTarget)
 import LordOfTheRings.Target
-import LordOfTheRings.Window (WindowType (AdvancedToStage), mkAfter)
+import LordOfTheRings.Window (WindowType (AdvancedToStage, LookedAtEncounterDeck), mkAfter)
 
 -- | The copies of each card in the set, fewer of some in easy mode.
 gatherEncounterSet :: MonadRandom m => ScenarioAttrs -> EncounterSet -> m [EncounterCard]
@@ -134,7 +134,8 @@ instance RunMessage ScenarioAttrs where
       [] -> pure attrs
     LookAtTopOfEncounterDeck pid source canMove -> do
       for_ (headMay attrs.encounterDeck) \top ->
-        push
+        pushAll
+          $ (: [CheckWindows [mkAfter $ LookedAtEncounterDeck pid]])
           $ Ask pid
           $ QuestionLabel (ikey "label.topOfEncounterDeck") (sourceTarget source) []
           $ SearchCards [EncounterCard top]
@@ -150,7 +151,8 @@ instance RunMessage ScenarioAttrs where
       let (top, rest) = splitAt n attrs.encounterDeck
           others c = filter (/= c) top
       unless (null top)
-        $ push
+        $ pushAll
+        $ (: [CheckWindows [mkAfter $ LookedAtEncounterDeck pid]])
         $ Ask pid
         $ QuestionLabel (ikey $ if toBottom then "label.revealOneRestToBottom" else "label.revealOne") (sourceTarget source) []
         $ SearchCards (map EncounterCard top)
@@ -221,6 +223,7 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM (matching <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ rest
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
+    PlaceResourcesOutOfPlay cid n -> pure $ attrs & outOfPlayResourcesL %~ Map.insertWith (+) cid n
     -- a set-aside card revealed, as Cornered Animals reveals Orc Ambush
     RevealCard card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card added to the staging area, as Orc Trail adds one out-of-play Orc

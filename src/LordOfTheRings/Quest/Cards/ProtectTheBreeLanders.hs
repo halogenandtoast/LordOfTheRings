@@ -21,7 +21,6 @@ instance HasAbilities ProtectTheBreeLanders where
 instance RunMessage ProtectTheBreeLanders where
   runMessage msg q@(ProtectTheBreeLanders attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      -- ponytail: progress placed this round stands for this phase, as Lie Low reads it
       placed <- progressPlacedThisRound (toTarget attrs)
       when (placed == 0) $ placeResources attrs attrs 1
       let n = countTokens Resource attrs.questTokens + fromEnum (placed == 0)

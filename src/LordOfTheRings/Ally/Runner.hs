@@ -7,7 +7,7 @@ import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, CannotReadyFromCardEffects, ReadiedByRefresh, DoesNotExhaustToAttack))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
@@ -33,7 +33,9 @@ instance RunMessage AllyAttrs where
       pushWhen attrs.allyCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
-      blocked <- elem CannotReady <$> getModifiers attrs
+      mods <- getModifiers attrs
+      -- a card effect cannot ready one barred from it, the refresh phase still does
+      let blocked = CannotReady `elem` mods || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)

@@ -13,7 +13,6 @@ stuartNightmare = enemy StuartNightmare Cards.stuartNightmare
 -- | Cannot have player attachments.
 -- While Stuart is in the victory display, each Troll enemy gets +1 defense and gains
 -- "Cannot have player attachments." (Conflict at the Carrock reads the victory display.)
--- ponytail: no attachment at all, as no encounter card attaches to a Troll here
 instance HasModifiersFor StuartNightmare where
   getModifiersFor (StuartNightmare a) = modifySelf a [CannotHaveAttachments]
 

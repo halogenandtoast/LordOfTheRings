@@ -15,8 +15,6 @@ cruelTorment = treachery CruelTorment Cards.cruelTorment
 -- When Revealed: Attach to the current quest. Counts as a Condition attachment with the
 -- text: "Each player cannot have more than 6 cards in his hand. (Each player with more than
 -- 6 cards in his hand must immediately discard cards until he has 6 cards in his hand.)"
--- ponytail: the hands are checked as it attaches and as players draw cards, not as cards
--- return to hand in other ways.
 instance RunMessage CruelTorment where
   runMessage msg t@(CruelTorment attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

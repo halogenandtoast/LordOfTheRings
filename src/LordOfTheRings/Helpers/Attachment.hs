@@ -42,7 +42,7 @@ cardHosts code = do
   def = toCardDef code
 
 attachmentHosts :: (HasGame m) => AttachMatcher -> m [Target]
-attachmentHosts matcher = filterM (fmap (notElem CannotHaveAttachments) . getModifiers) =<< hosts matcher
+attachmentHosts matcher = filterM (fmap (\ms -> CannotHaveAttachments `notElem` ms && CannotHavePlayerCardAttachments `notElem` ms) . getModifiers) =<< hosts matcher
 
 hosts :: (HasGame m) => AttachMatcher -> m [Target]
 hosts = \case

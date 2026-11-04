@@ -8,7 +8,7 @@ import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotGainResourcesFromPlayerCardEffects, CannotReady, CollectsAdditionalResources, DoesNotExhaustToAttack, SpentResourcesThisRound))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotGainResourcesFromPlayerCardEffects, CannotReady, CannotReadyFromCardEffects, ReadiedByRefresh, CollectsAdditionalResources, DoesNotExhaustToAttack, SpentResourcesThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -48,7 +48,9 @@ instance RunMessage HeroAttrs where
       pushWhen attrs.heroCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
-      blocked <- elem CannotReady <$> getModifiers attrs
+      mods <- getModifiers attrs
+      -- a card effect cannot ready one barred from it, the refresh phase still does
+      let blocked = CannotReady `elem` mods || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)
       when (attrs.heroExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do

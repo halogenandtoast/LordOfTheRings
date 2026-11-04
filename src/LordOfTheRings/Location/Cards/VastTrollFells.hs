@@ -19,7 +19,6 @@ instance HasModifiersFor VastTrollFells where
     for_ heroes \h -> modified a h [CannotGainResourcesFromCardEffects]
 
 -- | As an additional cost to travel to a safe location, each player must spend 1 resource.
--- ponytail: paid as the players travel, by each player able to.
 -- Shadow: If no progress was placed on a side quest this round, attacking enemy gets +4
 -- attack.
 instance RunMessage VastTrollFells where
