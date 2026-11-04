@@ -397,6 +397,7 @@ allQuestCards =
       , findDurinsKey
       , urdugsGambit
       , warriorsOfTheEast
+      , anArduousJourney
       ]
 
 theDrippingWalls :: CardDef
@@ -1604,3 +1605,6 @@ warriorsOfTheEast =
     { cdKeywords = setFromList [Surge]
     , cdVictoryPoints = Just 10
     }
+
+anArduousJourney :: CardDef
+anArduousJourney = (encounterSideQuest "21029" "An Arduous Journey" RollingPlains 6) {cdVictoryPoints = Just 10}

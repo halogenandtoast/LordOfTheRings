@@ -390,6 +390,8 @@ import LordOfTheRings.Treachery.Cards.Stinker
 import LordOfTheRings.Treachery.Cards.EasterlingHorse
 import LordOfTheRings.Treachery.Cards.SwordOfRhun
 import LordOfTheRings.Treachery.Cards.RecurveBow
+import LordOfTheRings.Treachery.Cards.WearyLands
+import LordOfTheRings.Treachery.Cards.PainfulFatigue
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -807,5 +809,7 @@ allTreacherys =
         , SomeTreacheryCard easterlingHorse
         , SomeTreacheryCard swordOfRhun
         , SomeTreacheryCard recurveBow
+        , SomeTreacheryCard wearyLands
+        , SomeTreacheryCard painfulFatigue
         ]
     ]

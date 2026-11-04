@@ -400,6 +400,8 @@ allTreacheryCards =
       , easterlingHorse
       , swordOfRhun
       , recurveBow
+      , wearyLands
+      , painfulFatigue
       ]
 
 deepDeepDark :: CardDef
@@ -2542,3 +2544,14 @@ recurveBow =
     , cdKeywords = setFromList [Surge]
     , cdEasyModeQuantity = Just 1
     }
+
+wearyLands :: CardDef
+wearyLands =
+  (treachery "21027" "Weary Lands" RollingPlains 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+painfulFatigue :: CardDef
+painfulFatigue = (treachery "21028" "Painful Fatigue" RollingPlains 2) {cdShadowEffect = True}

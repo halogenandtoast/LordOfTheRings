@@ -506,6 +506,8 @@ allLocationCards =
       , forestClearingLostInMirkwood
       , twilightHall
       , theTowerOfBaradDur
+      , rollingPlains
+      , rockyOutcrop
       ]
 
 drownedTreasury :: CardDef
@@ -3781,3 +3783,16 @@ theTowerOfBaradDur =
       { cdCardTraits = setFromList [Mordor]
       , cdQuestPoints = Nothing
       }
+
+-- * A Shadow in the East's shared encounter sets
+
+rollingPlains :: CardDef
+rollingPlains =
+  (location "21025" "Rolling Plains" RollingPlains 4 2 4)
+    { cdCardTraits = setFromList [Plains]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+rockyOutcrop :: CardDef
+rockyOutcrop = (location "21026" "Rocky Outcrop" RollingPlains 2 3 3) {cdCardTraits = setFromList [Plains], cdEasyModeQuantity = Just 1}

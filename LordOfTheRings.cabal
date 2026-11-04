@@ -1613,6 +1613,8 @@ library
       LordOfTheRings.Location.Cards.RiverNinglor
       LordOfTheRings.Location.Cards.RockyCrags
       LordOfTheRings.Location.Cards.RockyFoothills
+      LordOfTheRings.Location.Cards.RockyOutcrop
+      LordOfTheRings.Location.Cards.RollingPlains
       LordOfTheRings.Location.Cards.RollingSeas
       LordOfTheRings.Location.Cards.RooflessTower
       LordOfTheRings.Location.Cards.RootsOfMindolluin
@@ -1926,6 +1928,7 @@ library
       LordOfTheRings.Quest.Cards.AmbushInTheNight
       LordOfTheRings.Quest.Cards.AmbushOnTheShore
       LordOfTheRings.Quest.Cards.AMiserableJourney
+      LordOfTheRings.Quest.Cards.AnArduousJourney
       LordOfTheRings.Quest.Cards.AnduinPassage
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
       LordOfTheRings.Quest.Cards.AngmarAwakened
@@ -2595,6 +2598,7 @@ library
       LordOfTheRings.Treachery.Cards.Overgrown
       LordOfTheRings.Treachery.Cards.OverrunByOrcs
       LordOfTheRings.Treachery.Cards.OverrunDefenses
+      LordOfTheRings.Treachery.Cards.PainfulFatigue
       LordOfTheRings.Treachery.Cards.Panicked
       LordOfTheRings.Treachery.Cards.ParalyzingFear
       LordOfTheRings.Treachery.Cards.PatrollingOrcs
@@ -2746,6 +2750,7 @@ library
       LordOfTheRings.Treachery.Cards.WatcherInTheWoods
       LordOfTheRings.Treachery.Cards.WatchfulEyes
       LordOfTheRings.Treachery.Cards.WaylaidByAgents
+      LordOfTheRings.Treachery.Cards.WearyLands
       LordOfTheRings.Treachery.Cards.WeighedDown
       LordOfTheRings.Treachery.Cards.WeightOfResponsibility
       LordOfTheRings.Treachery.Cards.WhipLash

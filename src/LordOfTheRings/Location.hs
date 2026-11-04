@@ -488,6 +488,8 @@ import LordOfTheRings.Location.Cards.GreyMoorland
 import LordOfTheRings.Location.Cards.DeepRavine
 import LordOfTheRings.Location.Cards.SlopesOfEredMithrin
 import LordOfTheRings.Location.Cards.TheTowerOfBaradDur
+import LordOfTheRings.Location.Cards.RollingPlains
+import LordOfTheRings.Location.Cards.RockyOutcrop
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1022,5 +1024,7 @@ allLocations =
         , SomeLocationCard deepRavine
         , SomeLocationCard slopesOfEredMithrin
         , SomeLocationCard theTowerOfBaradDur
+        , SomeLocationCard rollingPlains
+        , SomeLocationCard rockyOutcrop
         ]
     ]
