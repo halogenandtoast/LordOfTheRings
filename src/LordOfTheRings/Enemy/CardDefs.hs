@@ -409,6 +409,8 @@ allEnemyCards =
       , broodMother
       , hiveGuardian
       , spiderBroodling
+      , wereWorm
+      , carrionBird
       ]
 
 namelessThing :: CardDef
@@ -3328,4 +3330,22 @@ spiderBroodling =
   (enemy "17067" "Spider Broodling" BeneathTheSands 5 20 1 2 1 2)
     { cdCardTraits = setFromList [Creature, Spider]
     , cdShadowEffect = True
+    }
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+-- | X attack and X defense: the tens digit of the temperature, which the card adds.
+wereWorm :: CardDef
+wereWorm =
+  (enemy "16023" "Were-worm" DesertCrossing 4 22 0 0 0 5)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+carrionBird :: CardDef
+carrionBird =
+  (enemy "16024" "Carrion Bird" DesertCrossing 2 40 2 2 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 1
     }

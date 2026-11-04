@@ -346,6 +346,9 @@ allTreacheryCards =
       , fearOfMordor
       , forcedOffTrackBeneathTheSands
       , grabbedBySpiders
+      , mirage
+      , unbearableHeat
+      , scorchingSun
       ]
 
 deepDeepDark :: CardDef
@@ -2220,3 +2223,21 @@ forcedOffTrackBeneathTheSands = (treachery "17073" "Forced Off Track" BeneathThe
 
 grabbedBySpiders :: CardDef
 grabbedBySpiders = (treachery "17074" "Grabbed by Spiders" BeneathTheSands 3) {cdKeywords = setFromList [Surge, Doomed 1]}
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+mirage :: CardDef
+mirage = (treachery "16028" "Mirage" DesertCrossing 2) {cdCardTraits = setFromList [Weather]}
+
+unbearableHeat :: CardDef
+unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+
+scorchingSun :: CardDef
+scorchingSun =
+  (treachery "16030" "Scorching Sun" DesertCrossing 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }

@@ -2914,5 +2914,43 @@
       "“We will enter through the front gate,” said Kahliel gazing into the distance again. This time his eyes were focused on a distant caravan coming up the Harad road. “The Black Serpent brings his tribute to Mordor as we speak. We will ambush his caravan, and march into Cirith Gurat under his banner.”",
       "The story continues in “The Black Serpent,” the fourth Adventure Pack in “The Haradrim” cycle."
     ]
+  },
+  "desert-crossing": {
+    "intro": [
+      "The Harad sun beat down upon the heroes as they trudged across the burning desert sands. After they escaped from the Southrons in Umbar, the companions fled into the desert. A desperate will to live had overtaken them, and they ran without thinking. Like hunted animals they fled deeper and deeper into the desert. Forgetting themselves and their weariness, the heroes ran and ran until at last their bodies collapsed from exhaustion. Months at sea, many fierce battles, and the shipwreck finally caught up with them, and the companions passed out on the sands as night deepened.",
+      "When morning came, the harsh light of the sun wakened the heroes from their sleep, and they dragged their aching bodies to their feet. All around them was a vast desert. Sand dunes rolled away in every direction, like an endless arid sea.",
+      "“Which way do we go?” asked the woman with the bow strapped to her back.",
+      "“East,” replied their leader as he sheltered his eyes against the sun rising in that direction.",
+      "“But our nearest ally lies to the north, in Gondor,” said another hero in surprise, “Should we not take the speediest way there?”",
+      "“The speediest way would be to the west and the sea, but our ship has sunk and the Southrons still wait for us there,” said the leader. “North lies our destination, yet uncounted miles of harsh desert lie between us and there, and we have not the means to make such a journey. Our only hope is to travel the Harad Road, which lies to the east and runs north to Ithilien.”",
+      "“Will not the Southrons seek us there as well?” asked the woman.",
+      "“The Southrons must believe that the desert will defeat us, or they would have pursued us during the night while we slept. They clearly do not expect us to reach the other side.”",
+      "“That may prove true enough,” said the third hero gruffly. “We have precious few supplies and little water.”",
+      "“Then we will have to find more and be careful with what we have,” answered the leader, and with that he shouldered his gear and began walking east. The others followed after him."
+    ],
+    "setup": [
+      "“Desert Crossing” is played with an encounter deck built with all the cards from the following encounter sets: Desert Crossing, Desert Creatures, and Desert Sands."
+    ],
+    "rules": [
+      {
+        "title": "Heat Tracker",
+        "text": "When setting up Desert Crossing, the players are instructed to “place the heat tracker next to the quest deck and set the temperature to 10.” To do this, take an unused threat tracker and place it next to the quest deck. For the rest of the game, that threat tracker is the heat tracker and the value it displays is the “temperature.” If the temperature reaches 60, the players lose the game."
+      }
+    ],
+    "resolution": [
+      "Crossing the Harad desert was a harrowing ordeal. In addition to the blistering sun and dangerous heat, the heroes were attacked by enormous were-worms. It took every last ounce of their strength to fight off the ferocious beasts.",
+      "The scaled forms of the desert worms slithered and struck at the companions, yet the heroes’ tenacity proved stronger and the creatures retreated back into the desert sands, leaving the heroes with barely enough energy to finish their journey.",
+      "When they finally reached the Harad Road, the party was so exhausted that they collapsed on its sandy embankment. As they lay there, on the edge of death, one of the heroes remarked bitterly, “What did we hope to find when we reached this road? There’s naught here but more sand.”",
+      "“The people of Gondor built this road at the height of their power, at a time when they held sway in Harad,” replied the leader in a weak voice, his lips blistered and cracked. “It is the only thing friendly to us in all this land.”",
+      "“Then I’m afraid we have no friends in Harad,” said the woman gravely. She pointed north with her finger and her arm trembled from the effort. “Look what the road brings to us.”",
+      "With great effort, the leader propped himself up and strained his eyes northward. A caravan of Haradrim was travelling south along the road, drawing nearer. When he realized what he saw, the hero’s arms failed and he fell to the ground.",
+      "“I have not the strength to fight, nor even to lift my sword,” he muttered in despair.",
+      "“None of us do,” replied the woman, slumping onto the ground.",
+      "“Then have we come all this way only to end here?” growled the third hero with impotent anger.",
+      "“What will they do with us?” asked the woman.",
+      "“Either kill us or take us captive. Perhaps to take as thralls to Mordor,” answered the leader with a raspy voice.",
+      "“An inglorious end to our long adventure together,” grumbled the third.",
+      "Nobody made a reply. The heroes were each too weak to speak anymore. There was nothing for them to do but wait for the Haradrim coming toward them."
+    ]
   }
 }

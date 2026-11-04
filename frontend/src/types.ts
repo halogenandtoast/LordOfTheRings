@@ -119,6 +119,8 @@ export interface ScenarioView {
   campaignCard: CardView | null
   stormcallerStage: CardView | null
   stormcallerArea: CardView[]
+  /** The heat tracker's temperature (Desert Crossing). */
+  temperature?: number | null
 }
 
 export interface IslandMapCell {

@@ -140,6 +140,8 @@
   "jumpToLatest": "New messages · Jump to latest",
   "drawsIntoHand": "{player} draws {card} into their hand",
   "eliminationLevelLowered": "Each player's threat elimination level drops by {count}",
+  "temperatureRises": "The temperature rises by {count} to {temperature}",
+  "temperatureFalls": "The temperature falls by {count} to {temperature}",
   "becomesDay": "It becomes Day",
   "becomesNight": "It becomes Night",
   "flippedTo": "{card} is now faceup",

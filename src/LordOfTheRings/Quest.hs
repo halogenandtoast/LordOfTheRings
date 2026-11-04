@@ -232,6 +232,10 @@ import LordOfTheRings.Quest.Cards.LostUnderground
 import LordOfTheRings.Quest.Cards.SearchingTheCaves
 import LordOfTheRings.Quest.Cards.GettingCloser
 import LordOfTheRings.Quest.Cards.TheSpidersHive
+import LordOfTheRings.Quest.Cards.SeekShade
+import LordOfTheRings.Quest.Cards.TheDesertOfHarad
+import LordOfTheRings.Quest.Cards.UnderTheMercilessSun
+import LordOfTheRings.Quest.Cards.BeastsOfLegend
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -496,5 +500,9 @@ allQuests =
         , SomeQuestCard searchingTheCaves
         , SomeQuestCard gettingCloser
         , SomeQuestCard theSpidersHive
+        , SomeQuestCard seekShade
+        , SomeQuestCard theDesertOfHarad
+        , SomeQuestCard underTheMercilessSun
+        , SomeQuestCard beastsOfLegend
         ]
     ]

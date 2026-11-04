@@ -39,6 +39,7 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude hiding (say)
+import LordOfTheRings.Scenario.Scenarios.DesertCrossing.Helpers (getTemperature)
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -100,6 +101,10 @@ narrationFor = \case
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
   ScenarioSpecific "tharbad.lowerElimination" v ->
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> fromMaybe (10 :: Int) (parseMaybe parseJSON v)]]
+  -- \* The heat tracker (Desert Crossing): read before it moves, so the new temperature is worked out
+  ScenarioSpecific "desertCrossing.temperature" (parseMaybe parseJSON -> Just (n :: Int)) | n /= 0 -> Just do
+    t <- getTemperature
+    one $ toned (if n > 0 then Bad else Good) $ mechanic [ikeyPart (if n > 0 then "log.temperatureRises" else "log.temperatureFalls") ["count" ~> abs n, "temperature" ~> max 0 (t + n)]]
   -- \* Day and Night, as The Wastes of Eriador's Time objective flips
   CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
   -- a card turned over to its other side, as Beneath the Sands' Search objective: read

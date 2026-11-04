@@ -407,6 +407,9 @@ import LordOfTheRings.Location.Cards.PitchBlackTunnel
 import LordOfTheRings.Location.Cards.NestOfVermin
 import LordOfTheRings.Location.Cards.CobwebbedCavern
 import LordOfTheRings.Location.Cards.BlockedPassage
+import LordOfTheRings.Location.Cards.BurntSands
+import LordOfTheRings.Location.Cards.ScorchedHamada
+import LordOfTheRings.Location.Cards.ParchedWadi
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -860,5 +863,8 @@ allLocations =
         , SomeLocationCard nestOfVermin
         , SomeLocationCard cobwebbedCavern
         , SomeLocationCard blockedPassage
+        , SomeLocationCard burntSands
+        , SomeLocationCard scorchedHamada
+        , SomeLocationCard parchedWadi
         ]
     ]

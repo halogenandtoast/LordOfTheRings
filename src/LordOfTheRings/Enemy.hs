@@ -402,6 +402,8 @@ import LordOfTheRings.Enemy.Cards.MordorWarg
 import LordOfTheRings.Enemy.Cards.BroodMother
 import LordOfTheRings.Enemy.Cards.HiveGuardian
 import LordOfTheRings.Enemy.Cards.SpiderBroodling
+import LordOfTheRings.Enemy.Cards.WereWorm
+import LordOfTheRings.Enemy.Cards.CarrionBird
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -830,5 +832,7 @@ allEnemys =
         , SomeEnemyCard broodMother
         , SomeEnemyCard hiveGuardian
         , SomeEnemyCard spiderBroodling
+        , SomeEnemyCard wereWorm
+        , SomeEnemyCard carrionBird
         ]
     ]

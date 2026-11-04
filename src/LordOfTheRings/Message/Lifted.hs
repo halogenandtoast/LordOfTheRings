@@ -1067,6 +1067,11 @@ immediateAttack pid eid = do
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
 
+-- | The enemy makes an immediate attack against the player, dealt no shadow card for it,
+-- as "it makes an immediate attack (do not deal it a shadow card)" reads.
+immediateAttackWithoutShadow :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+immediateAttackWithoutShadow pid eid = push $ EnemyAttack pid eid
+
 {- | The enemy engages the player with the highest threat and makes an immediate attack,
 the first player choosing among players tied for it, as Prowling Orc's Scour and Jailor
 Gornákh read.
