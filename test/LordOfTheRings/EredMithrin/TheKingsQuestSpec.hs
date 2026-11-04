@@ -204,6 +204,7 @@ spec = describe "The King's Quest" do
       setQuestDeck [Quests.theFireWorm]
       _ <- activeLocation Locations.dragonHoard
       activeQuestCode `shouldReturn` toCardCode Quests.theFireWorm
+      getsGame (map toCardCode . toList . (.entities.quests)) `shouldReturn` [toCardCode Quests.theFireWorm]
 
   describe "stage 3" do
     it "attaches a Dragon treachery from the encounter deck to Fire-drake and ignores Deep" . kqTest $ \pid -> do

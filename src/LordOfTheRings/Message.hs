@@ -216,6 +216,9 @@ data Message
     -- the staging area, or the main quest, putting aside any side quest chosen before
     SetCurrentQuest Target
   | AdvanceQuest
+  | -- | the stage leaves play as the players advance from it without defeating it, what is
+    -- attached to it with it; nothing if it already left (see 'advanceQuest')
+    LeaveQuestStage QuestId
   | -- | a quest card, in play or in the victory display, is shuffled into the quest deck
     ShuffleIntoQuestDeck EncounterCard
   | -- | a quest card, in play, in the victory display or in the quest deck, goes to the

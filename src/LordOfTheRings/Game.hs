@@ -2695,6 +2695,9 @@ runGameMessage msg g = case msg of
     -- a stage with victory points goes to the victory display, as Search for an Exit's
     let won = [toCard q | q <- toList (Map.lookup qid g.entities.quests), isJust (cdVictoryPoints $ toCardDef q)]
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (won <>))
+  LeaveQuestStage qid | Map.member qid g.entities.quests -> do
+    pushAll $ discardAttachedToQuest g qid
+    pure $ g & entitiesL . questsL %~ Map.delete qid
   -- a stage added to the victory display leaves play; what comes next is the card's to say
   AddToVictoryDisplay (QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests ->
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))

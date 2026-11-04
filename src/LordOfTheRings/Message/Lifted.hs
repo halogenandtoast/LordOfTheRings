@@ -950,10 +950,15 @@ travelWithoutCost lid = do
 resetToStage :: ReverseQueue m => EncounterCard -> [EncounterCard] -> m ()
 resetToStage card = push . ResetToStage card
 
--- | Reveal the next stage of the quest deck, as a stage that leaves play without being
--- defeated calls for.
+{- | Advance to the next stage of the quest deck without defeating this one, as "Advance to
+stage 2A" reads: the main stage still in play leaves it, unless the card already moved it
+(to the bottom of the quest deck, the victory display), and the next is revealed.
+-}
 advanceQuest :: ReverseQueue m => m ()
-advanceQuest = push AdvanceQuest
+advanceQuest = do
+  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  for_ quests \q -> push $ LeaveQuestStage q.id
+  push AdvanceQuest
 
 -- | Shuffle the quest card, in play or in the victory display, into the quest deck.
 shuffleIntoQuestDeck :: (ReverseQueue m, IsCard a) => a -> m ()
