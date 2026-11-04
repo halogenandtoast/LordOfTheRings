@@ -457,6 +457,8 @@ allLocationCards =
       , lonelyLands
       , accursedForest
       , darkBlackWoods
+      , darkTunnel
+      , forkedPassage
       ]
 
 drownedTreasury :: CardDef
@@ -3450,3 +3452,9 @@ accursedForest = (location "18038" "Accursed Forest" DarkWoods 2 4 4) {cdCardTra
 
 darkBlackWoods :: CardDef
 darkBlackWoods = (location "18039" "Dark Black Woods" DarkWoods 3 3 3) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 2}
+
+darkTunnel :: CardDef
+darkTunnel = (location "18054" "Dark Tunnel" DeepUnderground 4 3 3) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep]}
+
+forkedPassage :: CardDef
+forkedPassage = (location "18055" "Forked Passage" DeepUnderground 2 2 2) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep]}

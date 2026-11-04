@@ -440,6 +440,8 @@ import LordOfTheRings.Location.Cards.HillsOfWilderland
 import LordOfTheRings.Location.Cards.LonelyLands
 import LordOfTheRings.Location.Cards.AccursedForest
 import LordOfTheRings.Location.Cards.DarkBlackWoods
+import LordOfTheRings.Location.Cards.DarkTunnel
+import LordOfTheRings.Location.Cards.ForkedPassage
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -926,5 +928,7 @@ allLocations =
         , SomeLocationCard lonelyLands
         , SomeLocationCard accursedForest
         , SomeLocationCard darkBlackWoods
+        , SomeLocationCard darkTunnel
+        , SomeLocationCard forkedPassage
         ]
     ]

@@ -371,6 +371,7 @@ allTreacheryCards =
       , gatheringGloom
       , swarmOfBats
       , afraidOfTheDark
+      , darkPlaces
       , eyesInTheDark
       ]
 
@@ -2372,6 +2373,9 @@ swarmOfBats = (treachery "18041" "Swarm of Bats" GatheringGloom 3) {cdShadowEffe
 
 afraidOfTheDark :: CardDef
 afraidOfTheDark = (treachery "18048" "Afraid of the Dark" AfraidOfTheDark 2) {cdEasyModeQuantity = Just 1}
+
+darkPlaces :: CardDef
+darkPlaces = (treachery "18056" "Dark Places" DeepUnderground 3) {cdShadowEffect = True}
 
 eyesInTheDark :: CardDef
 eyesInTheDark = (treachery "18057" "Eyes in the Dark" AfraidOfTheDark 3) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}

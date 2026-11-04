@@ -1259,6 +1259,7 @@ library
       LordOfTheRings.Location.Cards.DarkPathway
       LordOfTheRings.Location.Cards.DarkPit
       LordOfTheRings.Location.Cards.DarkPools
+      LordOfTheRings.Location.Cards.DarkTunnel
       LordOfTheRings.Location.Cards.DarkWoodGrove
       LordOfTheRings.Location.Cards.DawnStarLocation
       LordOfTheRings.Location.Cards.DeadmensGate
@@ -1326,6 +1327,7 @@ library
       LordOfTheRings.Location.Cards.ForestGate
       LordOfTheRings.Location.Cards.ForestGrove
       LordOfTheRings.Location.Cards.ForgottenCourtyard
+      LordOfTheRings.Location.Cards.ForkedPassage
       LordOfTheRings.Location.Cards.FornostSquare
       LordOfTheRings.Location.Cards.FornostStreet
       LordOfTheRings.Location.Cards.ForsakenCity
@@ -2202,6 +2204,7 @@ library
       LordOfTheRings.Treachery.Cards.DarkAndStormy
       LordOfTheRings.Treachery.Cards.DarkCovenant
       LordOfTheRings.Treachery.Cards.DarkInterrogation
+      LordOfTheRings.Treachery.Cards.DarkPlaces
       LordOfTheRings.Treachery.Cards.DarkSorcery
       LordOfTheRings.Treachery.Cards.DeathAndCalamity
       LordOfTheRings.Treachery.Cards.DeathAndDecay
