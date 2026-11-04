@@ -3013,5 +3013,48 @@
     "choose": "Cruelty of Mordor: choose one",
     "damage": "Deal 1 damage to each damaged character you control",
     "threat": "Raise your threat by {n}, 1 for each damaged character you control"
+  },
+  "theSearchingEye": {
+    "choose": "The Searching Eye: exhaust each hero you control, or reveal the top card of the encounter deck",
+    "exhaust": "Exhaust each hero you control",
+    "reveal": "Reveal the top card of the encounter deck"
+  },
+  "shiftingQuagmire": {
+    "spend": "Shifting Quagmire: choose a player to spend 1 Fellowship resource",
+    "choose": "Shifting Quagmire: choose one",
+    "return": "Return a random location from the victory display to the staging area",
+    "raiseThreat": "Raise each player's threat by 1 for each location in the victory display"
+  },
+  "hauntedMere": {
+    "search": "Haunted Mere: choose an Undead enemy to reveal"
+  },
+  "bitterReek": {
+    "choose": "Bitter Reek: choose one",
+    "raiseThreat": "Raise your threat by 1 for each character you control committed to the quest",
+    "damage": "Deal 1 damage to each character committed to the quest"
+  },
+  "callOfTheRing": {
+    "choose": "Call of the Ring: choose one",
+    "search": "Search the encounter deck, discard pile and victory display for a Nazgûl enemy and add it to the staging area",
+    "exhaust": "Exhaust The One Ring and reveal the top card of the encounter deck"
+  },
+  "weHatesThem": {
+    "cancel": "We Hates Them!: spend 1 Fellowship resource and exhaust The One Ring to cancel its effect?",
+    "cancelEffect": "Spend 1 Fellowship resource and exhaust The One Ring to cancel it",
+    "resolve": "Let it resolve",
+    "choose": "We Hates Them!: choose one",
+    "flip": "Flip Sméagol to Gollum",
+    "attack": "Gollum makes an immediate attack"
+  },
+  "theTamingOfSmeagol": {
+    "search": "The Taming of Sméagol: choose a location in the encounter deck to reveal"
+  },
+  "dontLookAtTheLights": {
+    "search": "Don't Look at the Lights!: choose an Undead enemy to put into play engaged with you"
+  },
+  "thePassageOfTheMarshes": {
+    "resolution": "The Passage of the Marshes: choose one",
+    "threatPenalty": "Take a permanent +2 starting threat penalty",
+    "searchingEye": "Earn 1 copy of The Searching Eye"
   }
 }
