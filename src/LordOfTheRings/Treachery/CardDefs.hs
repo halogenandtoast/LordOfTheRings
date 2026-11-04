@@ -338,6 +338,8 @@ allTreacheryCards =
       , daechanarsCurse
       , allIsLost
       , nowhereToHide
+      , injuredCompanion
+      , enfeebled
       ]
 
 deepDeepDark :: CardDef
@@ -2181,3 +2183,9 @@ allIsLost =
 
 nowhereToHide :: CardDef
 nowhereToHide = (treachery "16044" "Nowhere to Hide" HaradSoldiers 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+injuredCompanion :: CardDef
+injuredCompanion = (treachery "16046" "Injured Companion" HaradTerritory 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+enfeebled :: CardDef
+enfeebled = (treachery "16047" "Enfeebled" HaradTerritory 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

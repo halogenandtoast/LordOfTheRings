@@ -221,6 +221,7 @@ import LordOfTheRings.Quest.Cards.RallyTheFighters
 import LordOfTheRings.Quest.Cards.SeverTheHead
 import LordOfTheRings.Quest.Cards.TheWitchKingsGift
 import LordOfTheRings.Quest.Cards.SouthronChampion
+import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -474,5 +475,6 @@ allQuests =
         , SomeQuestCard severTheHead
         , SomeQuestCard theWitchKingsGift
         , SomeQuestCard southronChampion
+        , SomeQuestCard inEnemyTerritory
         ]
     ]

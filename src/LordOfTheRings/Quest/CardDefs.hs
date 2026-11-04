@@ -271,6 +271,7 @@ allQuestCards =
       , severTheHead
       , theWitchKingsGift
       , southronChampion
+      , inEnemyTerritory
       ]
 
 theDrippingWalls :: CardDef
@@ -1127,4 +1128,11 @@ southronChampion =
   (encounterSideQuest "16040" "Southron Champion" HaradSoldiers 4)
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
+    }
+
+inEnemyTerritory :: CardDef
+inEnemyTerritory =
+  (encounterSideQuest "16045" "In Enemy Territory" HaradTerritory 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
     }

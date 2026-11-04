@@ -2214,5 +2214,11 @@
     "choose": "Southron Archer: choose one",
     "discardAlly": "Discard an ally you control",
     "ally": "Southron Archer: choose an ally to discard"
+  },
+  "injuredCompanion": {
+    "choose": "Injured Companion: choose one",
+    "raiseThreat": "Raise your threat by {n}, 1 for each character you control",
+    "discard": "Discard a character you control",
+    "character": "Injured Companion: choose a character to discard"
   }
 }

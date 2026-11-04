@@ -1660,6 +1660,7 @@ library
       LordOfTheRings.Quest.Cards.HeadingUp
       LordOfTheRings.Quest.Cards.HoldTheFords
       LordOfTheRings.Quest.Cards.HowlingAtNight
+      LordOfTheRings.Quest.Cards.InEnemyTerritory
       LordOfTheRings.Quest.Cards.IntoTheEttenmoors
       LordOfTheRings.Quest.Cards.IntoTheEttenmoorsNightmare
       LordOfTheRings.Quest.Cards.IntoTheMarshes
@@ -2001,6 +2002,7 @@ library
       LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
       LordOfTheRings.Treachery.Cards.DunlendingAmbush
       LordOfTheRings.Treachery.Cards.DwindlingSupplies
+      LordOfTheRings.Treachery.Cards.Enfeebled
       LordOfTheRings.Treachery.Cards.EvilStorm
       LordOfTheRings.Treachery.Cards.Exhaustion
       LordOfTheRings.Treachery.Cards.EyesOfTheForest
@@ -2047,6 +2049,7 @@ library
       LordOfTheRings.Treachery.Cards.ImpassableChasm
       LordOfTheRings.Treachery.Cards.ImpenetrableFog
       LordOfTheRings.Treachery.Cards.Infiltration
+      LordOfTheRings.Treachery.Cards.InjuredCompanion
       LordOfTheRings.Treachery.Cards.InNeedOfRest
       LordOfTheRings.Treachery.Cards.InnerFlame
       LordOfTheRings.Treachery.Cards.InnerShadow
