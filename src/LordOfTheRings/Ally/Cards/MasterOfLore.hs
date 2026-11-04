@@ -14,7 +14,8 @@ masterOfLore = ally MasterOfLore Cards.masterOfLore
 
 -- | Action: Exhaust Master of Lore to name a card type. Lower the cost for you to play the
 -- next lore card of that type by 1 until the end of the phase (to a minimum of 1). (FAQ
--- 1.9 errata; as printed, every lore card of that type.)
+-- 1.4 errata.) The first printing reads "Lower the cost for you to play [lore] cards of
+-- that type by 1 until the end of the phase (to a minimum of 1)": every one, not the next.
 instance HasAbilities MasterOfLore where
   getAbilities (MasterOfLore a) = [mkAbility a 1 $ ActionAbility (ExhaustCost $ toTarget a)]
 
