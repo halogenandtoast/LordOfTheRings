@@ -365,6 +365,9 @@ import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
 import LordOfTheRings.Quest.Cards.ThreeIsCompany
 import LordOfTheRings.Quest.Cards.AShortcutToMushrooms
 import LordOfTheRings.Quest.Cards.EscapeToBuckland
+import LordOfTheRings.Quest.Cards.TroubleInBree
+import LordOfTheRings.Quest.Cards.IntoTheWild
+import LordOfTheRings.Quest.Cards.TheRingwraithsAttack
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -762,5 +765,8 @@ allQuests =
         , SomeQuestCard threeIsCompany
         , SomeQuestCard aShortcutToMushrooms
         , SomeQuestCard escapeToBuckland
+        , SomeQuestCard troubleInBree
+        , SomeQuestCard intoTheWild
+        , SomeQuestCard theRingwraithsAttack
         ]
     ]
