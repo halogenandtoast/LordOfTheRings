@@ -540,6 +540,10 @@ import LordOfTheRings.Location.Cards.TheSpidersGlade
 import LordOfTheRings.Location.Cards.GiantWeb
 import LordOfTheRings.Location.Cards.ForestStream
 import LordOfTheRings.Location.Cards.HiddenPath
+import LordOfTheRings.Location.Cards.NorthernSlopes
+import LordOfTheRings.Location.Cards.RuinsOfDale
+import LordOfTheRings.Location.Cards.Ravenhill
+import LordOfTheRings.Location.Cards.TheFrontGate
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1126,5 +1130,9 @@ allLocations =
         , SomeLocationCard giantWeb
         , SomeLocationCard forestStream
         , SomeLocationCard hiddenPath
+        , SomeLocationCard northernSlopes
+        , SomeLocationCard ruinsOfDale
+        , SomeLocationCard ravenhill
+        , SomeLocationCard theFrontGate
         ]
     ]

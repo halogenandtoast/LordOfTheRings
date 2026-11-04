@@ -514,6 +514,13 @@ import LordOfTheRings.Enemy.Cards.LazyLob
 import LordOfTheRings.Enemy.Cards.FatSpider
 import LordOfTheRings.Enemy.Cards.WickedSpider
 import LordOfTheRings.Enemy.Cards.DarkBats
+import LordOfTheRings.Enemy.Cards.Bolg
+import LordOfTheRings.Enemy.Cards.BodyguardOfBolg
+import LordOfTheRings.Enemy.Cards.GundabadWolfRider
+import LordOfTheRings.Enemy.Cards.GundabadClimber
+import LordOfTheRings.Enemy.Cards.VanguardOfBolg
+import LordOfTheRings.Enemy.Cards.GundabadArcher
+import LordOfTheRings.Enemy.Cards.RavenousWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1057,5 +1064,12 @@ allEnemys =
         , SomeEnemyCard fatSpider
         , SomeEnemyCard wickedSpider
         , SomeEnemyCard darkBats
+        , SomeEnemyCard bolg
+        , SomeEnemyCard bodyguardOfBolg
+        , SomeEnemyCard gundabadWolfRider
+        , SomeEnemyCard gundabadClimber
+        , SomeEnemyCard vanguardOfBolg
+        , SomeEnemyCard gundabadArcher
+        , SomeEnemyCard ravenousWarg
         ]
     ]
