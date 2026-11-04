@@ -15,14 +15,13 @@ tightenOurBelts :: EventCard TightenOurBelts
 tightenOurBelts =
   eventWith TightenOurBelts Cards.tightenOurBelts
     $ criteriaL
-    .~ (DuringPhase RefreshPhase <> TargetLacksModifier GameTarget (PlayedThisRound $ toCardCode Cards.tightenOurBelts))
+    .~ (DuringPhase RefreshPhase <> NotCriterion (CardPlayedThisRound $ toCardCode Cards.tightenOurBelts))
 
 -- | Refresh Action: Choose a player. Each hero that player controls that did not spend any
 -- resources this round gains 1 resource.
 instance RunMessage TightenOurBelts where
   runMessage msg e@(TightenOurBelts attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      roundModifier attrs GameTarget (PlayedThisRound $ toCardCode Cards.tightenOurBelts)
       choosePlayerM pid attrs \p -> do
         heroes <- select (HeroControlledBy $ PlayerWithId p)
         thrifty <- filterM (fmap (notElem SpentResourcesThisRound) . getModifiers) heroes

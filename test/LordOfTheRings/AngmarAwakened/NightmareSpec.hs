@@ -54,7 +54,7 @@ stagedLocation def = do
 
 -- | The player plays an event this round, as far as the round's count of them goes.
 playedEvent :: PlayerId -> GameT ()
-playedEvent pid = run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardTypeThisRound EventType] UntilEndOfRound
+playedEvent pid = run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardThisRound "event" EventType] UntilEndOfRound
 
 -- | Use every forced ability offered, one at a time, then pass the responses offered.
 resolveForced :: PlayerId -> GameT ()

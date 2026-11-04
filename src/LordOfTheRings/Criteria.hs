@@ -2,6 +2,7 @@ module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType
+import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
@@ -41,6 +42,9 @@ data Criterion
     EncounterEffectsCancelable
   | -- | the treachery card being revealed is the first revealed this round
     FirstTreacheryRevealedThisRound
+  | -- | a player played a copy of the card this round, as "Only 1 copy of Tighten Our Belts
+    -- can be played by the players each round" reads
+    CardPlayedThisRound CardCode
   | NotCriterion Criterion
   | -- | the target has, or lacks, the modifier
     TargetHasModifier Target ModifierType

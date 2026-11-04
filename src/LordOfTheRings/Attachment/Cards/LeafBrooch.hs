@@ -21,7 +21,7 @@ matching a = case a.placement of
   _ -> pure Nothing
 
 used :: AttachmentAttrs -> ModifierType
-used _ = PlayedThisRound (toCardCode Cards.leafBrooch)
+used _ = UsedThisRound (toCardCode Cards.leafBrooch)
 
 -- | The first event card you play each round that matches attached hero's printed sphere
 -- gains secrecy 1.

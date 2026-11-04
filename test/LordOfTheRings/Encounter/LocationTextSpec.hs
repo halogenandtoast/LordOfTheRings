@@ -161,7 +161,7 @@ spec = describe "Location card text" do
 
   it "Eastern Shore bars a second event only while it is in the staging area" . gameTest $ \pid -> do
     shore <- stagedLocation Locations.easternShore
-    effect (PlayerTarget pid) [PlayedEventThisRound]
+    effect (PlayerTarget pid) [PlayedCardThisRound "event" EventType]
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay $ CardWithType EventType))
     run $ PlaceLocation shore ActiveLocation
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` notElem (CannotPlay $ CardWithType EventType))

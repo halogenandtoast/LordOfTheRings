@@ -101,9 +101,9 @@ data ModifierType
   | SkipStagingStep
   | -- | on the game: the players, as a group, cannot play more than 1 ally each round
     OneAllyPerRound
-  | AllyPlayedThisRound
-  | -- | on the game: a copy of the card was played this round
-    PlayedThisRound CardCode
+  | -- | on the game or a card: a once-per-round effect keyed by the code was used, any
+    -- copy counting, as Steward of Orthanc reads. A card played is 'PlayedCardThisRound'
+    UsedThisRound CardCode
   | -- | on an ally: it entered play this round
     EnteredPlayThisRound
   | -- | damage an attack deals past the character's remaining hit points raises threat
@@ -449,14 +449,12 @@ data ModifierType
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
     CannotGainResourcesFromPlayerCardEffects
-  | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
-    PlayedACardThisRound
+  | -- | on a player: he played the card this round, from wherever, paid for or not; one
+    -- per card played. Read them with 'cardsPlayedThisRound'
+    PlayedCardThisRound CardCode CardType
   | -- | on a player: he played a card this phase, as "the first card each player plays each
     -- phase" counts (The Long Arm of Mordor)
     PlayedACardThisPhase
-  | -- | on a player: he played a card of the type this round, from wherever, as The Storm
-    -- Comes reads "the first ally played by each player each round"
-    PlayedCardTypeThisRound CardType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
@@ -684,10 +682,6 @@ data ModifierType
   | -- | on the game: no player card may cancel a shadow effect, as Stronghold Tower and
     -- Dark and Stormy read
     CannotCancelShadowEffects
-  | -- | on a player: he has played an event this round
-    PlayedEventThisRound
-  | -- | on the game: the players have played an ally this round
-    PlayedAnAllyThisRound
   | -- | on the game: the matching active location adds its threat to the staging area, as
     -- Flooded Ruins reads
     ActiveLocationsAddThreat LocationMatcher

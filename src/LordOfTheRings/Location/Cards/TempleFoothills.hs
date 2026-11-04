@@ -1,7 +1,6 @@
 module LordOfTheRings.Location.Cards.TempleFoothills (templeFoothills) where
 
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Game.Base (gameEffects)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (ActiveLocation))
@@ -19,7 +18,7 @@ templeFoothills = location TempleFoothills Cards.templeFoothills
 -- another.
 instance HasModifiersFor TempleFoothills where
   getModifiersFor (TempleFoothills a) = when (a.placement == ActiveLocation) do
-    played <- getsGame \g -> or [PlayedACardThisRound `elem` ms | Effect _ (PlayerTarget _) ms _ <- gameEffects g]
+    played <- notNull <$> cardsPlayedThisRound
     when played do
       players <- getRemainingPlayers
       for_ players \p -> modified a (PlayerTarget p) [CannotPlay AnyCard]

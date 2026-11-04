@@ -3,7 +3,7 @@
 module LordOfTheRings.Player.Runner (module LordOfTheRings.Player.Runner, module X) where
 
 import LordOfTheRings.Ability.Types
-import LordOfTheRings.ActiveCost (ActiveCost (..), playCard)
+import LordOfTheRings.ActiveCost (ActiveCost (..), markPlayed, playCard)
 import Data.Map.Strict qualified as Map
 import Data.UUID qualified as UUID
 import LordOfTheRings.Ally (createAlly)
@@ -212,12 +212,11 @@ runPlayer msg player = case msg of
       | pid == player.id
       , cdCardType (toCardDef card) == EventType
       , cdCost (toCardDef card) == Just DynamicCost -> do
-          push $ CheckWindows [mkAfter $ PlayedCard pid card]
+          pushAll $ markPlayed pid card <> [CheckWindows [mkAfter $ PlayedCard pid card]]
           pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
       -- played from wherever, it counts as one paid for does, as Silent Guardian reads
-      push $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardTypeThisRound (cdCardType $ toCardDef card)] UntilEndOfRound
-      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid card]]
+      pushAll $ markPlayed pid card <> playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid card]]
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do

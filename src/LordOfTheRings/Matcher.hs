@@ -15,6 +15,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -387,7 +388,8 @@ affordableAlliesInHand pid sphere reduction minimumCost = do
       cost c = maybe 0 costAsResources c.cost
       reducedCost c = min (cost c) $ max minimumCost (cost c - reduction)
   entryBarred <- getsGame allyEntryBarred
-  if (OneAllyPerRound `elem` gameMods && AllyPlayedThisRound `elem` gameMods) || entryBarred
+  allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
+  if (OneAllyPerRound `elem` gameMods && allyPlayed) || entryBarred
     then pure []
     else filterM passesUnique
       [ c

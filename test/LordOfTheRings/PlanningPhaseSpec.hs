@@ -6,7 +6,7 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Keyword (Keyword (Doomed))
 import LordOfTheRings.Matcher (CardMatcher (AnyCard, CardWithSphere), HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), select)
 import LordOfTheRings.Card (CardType (AllyType))
-import LordOfTheRings.Modifier (ModifierType (GainKeyword, GainResourceIconFor, LowerNextCostOf, NextCardGainsDoomed, PlayedACardThisPhase, PlayedACardThisRound, PlayedCardTypeThisRound))
+import LordOfTheRings.Modifier (ModifierType (GainKeyword, GainResourceIconFor, LowerNextCostOf, NextCardGainsDoomed, PlayedACardThisPhase, PlayedCardThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Sphere (Sphere (Tactics))
 import TestImport
@@ -78,4 +78,9 @@ spec = describe "Planning phase" do
       _ <- playWith pid "01002" 1 Allies.guardOfTheCitadel
       threat pid `shouldReturn` was + 1
       -- the spent effect is gone; what is left marks the card played
-      getsGame (map effectModifiers . filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` [[PlayedACardThisPhase], [PlayedACardThisRound, PlayedCardTypeThisRound AllyType]]
+      getsGame (map effectModifiers . filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` [[PlayedACardThisPhase], [PlayedCardThisRound (toCardCode Allies.guardOfTheCitadel) AllyType]]
+
+  it "marks a card played at no cost as played this round and this phase" . gameTest $ \pid -> do
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    run $ PlayAtNoCost pid card
+    getsGame (map effectModifiers . filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` [[PlayedACardThisPhase], [PlayedCardThisRound (toCardCode Allies.guardOfTheCitadel) AllyType]]

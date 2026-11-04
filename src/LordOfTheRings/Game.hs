@@ -2163,10 +2163,6 @@ runGameMessage msg g = case msg of
       & damageDealtL %~ filter (\(s, _, _) -> case s of EnemyAttackSource _ -> True; _ -> False)
   PlayAlly pid card -> do
     thisAlly <- entering =<< newAlly pid card
-    limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
-    pushWhen limited'
-      $ CreateEffect
-      $ Effect GameSource GameTarget [AllyPlayedThisRound] UntilEndOfRound
     push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly
     pure

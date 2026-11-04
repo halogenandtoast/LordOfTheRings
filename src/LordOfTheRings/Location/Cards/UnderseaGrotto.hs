@@ -1,8 +1,7 @@
 module LordOfTheRings.Location.Cards.UnderseaGrotto (underseaGrotto) where
 
 import LordOfTheRings.Card.CardType (CardType (AllyType))
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Game.Base (gameEffects)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (ActiveLocation))
@@ -19,7 +18,7 @@ underseaGrotto = location UnderseaGrotto Cards.underseaGrotto
 -- by the players each round by 1: until one has been played this round.
 instance HasModifiersFor UnderseaGrotto where
   getModifiersFor (UnderseaGrotto a) = when (a.placement == ActiveLocation) do
-    played <- getsGame (any (elem PlayedAnAllyThisRound . effectModifiers) . gameEffects)
+    played <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
     unless played do
       players <- getRemainingPlayers
       for_ players \p -> modified a (PlayerTarget p) [ReduceCostOf (CardWithType AllyType) 1]

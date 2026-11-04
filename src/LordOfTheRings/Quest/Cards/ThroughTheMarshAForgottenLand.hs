@@ -1,7 +1,6 @@
 module LordOfTheRings.Quest.Cards.ThroughTheMarshAForgottenLand (throughTheMarshAForgottenLand) where
 
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Game.Base (gameEffects)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers (runWanderingStage, wanderingStage)
@@ -20,7 +19,7 @@ instance HasAbilities ThroughTheMarshAForgottenLand where
 -- from wherever, before this stage too, counts.
 instance HasModifiersFor ThroughTheMarshAForgottenLand where
   getModifiersFor (ThroughTheMarshAForgottenLand a) = when a.flipped do
-    played <- getsGame \g -> [p | Effect _ (PlayerTarget p) ms _ <- gameEffects g, PlayedACardThisRound `elem` ms]
+    played <- map (\(p, _, _) -> p) <$> cardsPlayedThisRound
     for_ (nub played) \p -> modified a (PlayerTarget p) [CannotPlay AnyCard]
 
 -- | When Revealed: Raise each player's threat by 1.
