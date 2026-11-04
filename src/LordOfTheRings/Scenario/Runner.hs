@@ -9,7 +9,8 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.EncounterSet (EncounterSet (ThePowerOfMordor))
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy))
+import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy, Permanent))
+import LordOfTheRings.Trait (Trait (RingBearer))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (chooseOneM, placeResources, questionLabeled, removeFromDeck, showing, shuffleIntoDeck, targets)
@@ -97,12 +98,16 @@ instance RunMessage ScenarioAttrs where
               card <- genEncounterCard def
               push $ PutObjectiveIntoPlayAttached card (toTarget hero.id)
       -- a saga burden objective of the pool comes into play as its Setup reads: to the
-      -- staging area, as Gandalf's Delay, or onto the threat dial of the player the log
-      -- records it for, as Overcome by Fear
+      -- staging area, as Gandalf's Delay, onto the threat dial of the player the log
+      -- records it for, as Overcome by Fear, or, Permanent, attached to the Ring-bearer, as
+      -- A Heavy Burden ("Setup: Attach to the Ring-bearer"): not used without one in play
       order <- getsGame gamePlayerOrder
+      ringBearers <- select (HeroWithTrait RingBearer)
       for_ [p | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, isJust (cdSetIcon def), cdCardType def == ObjectiveType, keptBurden attrs def] \p -> do
-        card <- genEncounterCard (toCardDef p.code)
+        let def = toCardDef p.code
+        card <- genEncounterCard def
         case atMay order =<< p.seat of
+          _ | Permanent `member` cdKeywords def -> for_ (take 1 ringBearers) (push . PutObjectiveIntoPlayAttached card . toTarget)
           Just pid -> push $ PutObjectiveIntoPlayAttached card (PlayerTarget pid)
           Nothing -> push $ AddToStaging card
       -- a card of a player's deck reading "Setup: Attach to a hero in play" is attached to
