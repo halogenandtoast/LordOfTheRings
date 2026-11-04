@@ -52,6 +52,9 @@ instance RunMessage LocationAttrs where
             placeTokens Progress room'
     PlaceTokens _ (isTarget attrs -> True) token n -> placeTokens token n
     PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
+    -- a player card under it taken to its owner's hand or discard pile, as Truly Lost's
+    PutInHand card -> pure $ attrs & underneathL %~ filter ((/= card.id) . (.id))
+    PutInDiscard card -> pure $ attrs & underneathL %~ filter ((/= card.id) . (.id))
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs

@@ -11,7 +11,7 @@ import Data.Set qualified as Set
 import LordOfTheRings.Campaign (campaignCardFor)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
-import LordOfTheRings.Entities (entitiesObjectives, entitiesQuests)
+import LordOfTheRings.Entities (entitiesLocations, entitiesObjectives, entitiesQuests)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.SearchZones (searchZones)
 import LordOfTheRings.Card
@@ -22,7 +22,7 @@ import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
 import LordOfTheRings.Log.Entry (LogRef)
 import LordOfTheRings.Enemy.Types (EnemyAttrs (..))
-import LordOfTheRings.Location.Types (isUncharted)
+import LordOfTheRings.Location.Types (LocationAttrs (locationCardId, locationUnderneath), isUncharted)
 import LordOfTheRings.Log.Refs (sourceRefFor)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier (Modifier (..))
@@ -235,6 +235,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         ( mapFromList
             $ [(o.objectiveCardId, length o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)]
             <> [(q.questCardId, length q.questUnderneath) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
+            -- and the player cards under a location, as Truly Lost places each player's hand
+            -- (The Steward's Fear keeps its encounter cards there in its meta)
+            <> [(l.locationCardId, length [() | PlayerCard _ <- l.locationUnderneath]) | l <- map toAttrs (toList $ entitiesLocations merged.entities)]
         )
         (maybe mempty (fmap length) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [Value])))
   -- what the scenario keeps by this key in its meta, as Escape from Mount Gram's captured
