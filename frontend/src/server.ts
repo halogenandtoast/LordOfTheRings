@@ -131,7 +131,10 @@ export interface ServerGame {
   attachmentHosts: Record<string, Target[]>
   /** The cards in a hand an effect forbids playing, with what is forbidding them. */
   playProhibitions?: Record<string, LogRef[]>
-  entities: Record<'heroes' | 'allies' | 'enemies' | 'locations' | 'attachments' | 'quests' | 'treacheries' | 'objectives', Record<string, Entity>>
+  entities: Record<'heroes' | 'allies' | 'enemies' | 'locations' | 'attachments' | 'quests' | 'treacheries' | 'objectives', Record<string, Entity>> & {
+    // games saved before contracts have none
+    contracts?: Record<string, Entity>
+  }
   /** Allies that just left play, kept while their own responses to leaving are asked. */
   leftPlay?: Record<string, Entity>
   /** Cards being paid for, by cost id. */
