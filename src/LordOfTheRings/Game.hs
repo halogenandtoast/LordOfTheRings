@@ -476,7 +476,12 @@ runGame msg g = case msg of
               ]
                 <> [PlaceTokens source target Progress (n - k) | n > k]
             )
-      [] -> placeOnQuest
+      -- and all of it to one that takes progress before the quest, as Mines of Moria
+      [] -> do
+        befores <- filterM (fmap (elem TakesProgressBeforeQuest) . getModifiers . fst) =<< takingProgressFirst
+        if notNull befores
+          then g <$ (push =<< progressFirst source n befores \k -> [PlaceTokens source target Progress k | k > 0])
+          else placeOnQuest
    where
     placeOnQuest = do
         barred <- elem NoProgressOnQuestCards <$> getModifiers GameTarget
@@ -4451,12 +4456,13 @@ isQuestOrLocation = \case
   _ -> False
 
 -- | The locations in the staging area that take progress before the active location, as
--- Grim Foothills, with the progress each still takes.
+-- Grim Foothills (and Mines of Moria, before the quest too), with the progress each still
+-- takes.
 takingProgressFirst :: GameT [(LocationId, Int)]
 takingProgressFirst = do
   staged <- select LocationInStagingArea
   flip mapMaybeM staged \lid -> do
-    first <- elem TakesProgressBeforeActiveLocation <$> getModifiers lid
+    first <- any (`elem` [TakesProgressBeforeActiveLocation, TakesProgressBeforeQuest]) <$> getModifiers lid
     l <- getLocation lid
     room <- subtract l.progress <$> getLocationQuestPoints lid
     pure $ guard (first && room > 0) $> (lid, room)
