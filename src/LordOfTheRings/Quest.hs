@@ -355,6 +355,10 @@ import LordOfTheRings.Quest.Cards.StormTheCastleNoQuarter
 import LordOfTheRings.Quest.Cards.StormTheCastleStrongholdOfMordor
 import LordOfTheRings.Quest.Cards.SlavesOfTheDarkLord
 import LordOfTheRings.Quest.Cards.LeadTheRevolt
+import LordOfTheRings.Quest.Cards.IntoMirkwood
+import LordOfTheRings.Quest.Cards.LostInTheDarkFliesAndSpiders
+import LordOfTheRings.Quest.Cards.CapturedBySpiders
+import LordOfTheRings.Quest.Cards.BattleWithTheSpiders
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -742,5 +746,9 @@ allQuests =
         , SomeQuestCard stormTheCastleStrongholdOfMordor
         , SomeQuestCard slavesOfTheDarkLord
         , SomeQuestCard leadTheRevolt
+        , SomeQuestCard intoMirkwood
+        , SomeQuestCard lostInTheDarkFliesAndSpiders
+        , SomeQuestCard capturedBySpiders
+        , SomeQuestCard battleWithTheSpiders
         ]
     ]
