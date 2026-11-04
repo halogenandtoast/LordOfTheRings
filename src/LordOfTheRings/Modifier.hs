@@ -291,6 +291,9 @@ data ModifierType
   | -- | on an enemy: at most this much more damage can be placed on it now, as Mumak's
     -- 3 a round
     DamageLimit Int
+  | -- | on an enemy: the damage tokens on it cannot exceed this, as The Final Confrontation
+    -- caps Thane Ulchor's at the progress on it
+    DamageTokensLimit Int
   | -- | on an enemy: the damage placed on it this round that counts against a limit of its
     -- own, as Dagnir's "cannot take more than X damage from non-quest effects each round"
     DamageTakenThisRound Int
