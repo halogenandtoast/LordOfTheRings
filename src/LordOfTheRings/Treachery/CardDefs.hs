@@ -352,6 +352,11 @@ allTreacheryCards =
       , enemyPursuit
       , pursuersFromMordor
       , howlingAtTheirHeels
+      , boldAndGrim
+      , noQuarter
+      , chaosInTheNight
+      , takenPrisoner
+      , tormentedByOrcs
       ]
 
 deepDeepDark :: CardDef
@@ -2257,3 +2262,27 @@ pursuersFromMordor = (treachery "17045" "Pursuers from Mordor" RaceAcrossHarad 2
 
 howlingAtTheirHeels :: CardDef
 howlingAtTheirHeels = (treachery "17046" "Howling at their Heels" RaceAcrossHarad 3) {cdShadowEffect = True}
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+boldAndGrim :: CardDef
+boldAndGrim =
+  (treachery "17101" "Bold and Grim" TheBlackSerpent 3)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+noQuarter :: CardDef
+noQuarter = (treachery "17102" "No Quarter" TheBlackSerpent 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+chaosInTheNight :: CardDef
+chaosInTheNight = (treachery "17103" "Chaos in the Night" TheBlackSerpent 2) {cdShadowEffect = True}
+
+-- The Dungeons of Cirith Gurat (17129-17130)
+
+takenPrisoner :: CardDef
+takenPrisoner = (treachery "17129" "Taken Prisoner" TheDungeonsOfCirithGurat 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+tormentedByOrcs :: CardDef
+tormentedByOrcs = (treachery "17130" "Tormented by Orcs" TheDungeonsOfCirithGurat 3) {cdShadowEffect = True}

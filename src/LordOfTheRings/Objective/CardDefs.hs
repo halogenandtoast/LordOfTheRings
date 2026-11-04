@@ -111,6 +111,11 @@ allObjectiveCards =
       , onTrack
       , seizeThem
       , tamedMumak
+      , bannerOfTheSerpent
+      , theSerpentsGarb
+      , summonsFromMordor
+      , theCaptivesOfCirithGurat
+      , abaan
       ]
 
 durinsAxe :: CardDef
@@ -747,4 +752,40 @@ tamedMumak =
   ((objective "17038" "Tamed Mumak" RaceAcrossHarad 4)
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 5, cdDefense = Just 2, cdHitPoints = Just 8 })
     { cdCardTraits = setFromList [Creature]
+    }
+
+-- * The Black Serpent: the Harad objectives, each Guarded (X) (MEC59 rules)
+
+bannerOfTheSerpent :: CardDef
+bannerOfTheSerpent =
+  (objective "17091" "Banner of the Serpent" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+    }
+
+theSerpentsGarb :: CardDef
+theSerpentsGarb =
+  (objective "17092" "The Serpent's Garb" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [EnemyType]]
+    }
+
+summonsFromMordor :: CardDef
+summonsFromMordor =
+  (objective "17093" "Summons from Mordor" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [LocationType]]
+    }
+
+-- The Dungeons of Cirith Gurat (17119-17120). Abaan's stats from Hall of Beorn.
+
+theCaptivesOfCirithGurat :: CardDef
+theCaptivesOfCirithGurat = objective "17119" "The Captives of Cirith Gurat" TheDungeonsOfCirithGurat 1
+
+abaan :: CardDef
+abaan =
+  ((objective "17120" "Abaan" TheDungeonsOfCirithGurat 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 1, cdDefense = Just 1, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Harad]
     }

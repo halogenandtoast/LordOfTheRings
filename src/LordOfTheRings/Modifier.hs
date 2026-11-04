@@ -329,6 +329,9 @@ data ModifierType
     ResourcePhaseDraws Int
   | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
     CannotReduceThreat
+  | -- | on a player: a player card reduces their threat by at most this much, as Mines of
+    -- Cirith Gurat's "reduce that amount to 1" reads
+    PlayerCardThreatReductionLimit Int
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
     -- Double Dealings lowers it by 10
     EliminationThreatModifier Int
@@ -546,6 +549,10 @@ data ModifierType
   | -- | on a player: he cannot have more than this many cards in hand, discarding down to
     -- it at once, as In Enemy Territory reads
     HandSizeLimit Int
+  | -- | on an objective: the first player claims it as soon as nothing guards it, attaching
+    -- it to a hero he controls, as The Black Serpent's stages read of each Harad objective
+    -- that is not attached
+    FirstPlayerClaimsWhenFree
   | -- | on the game, or a character: player card effects cannot ready it, as Find Water
     -- reads; the refresh phase still does
     CannotBeReadiedByPlayerCards

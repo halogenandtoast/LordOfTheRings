@@ -328,6 +328,14 @@ allQuestCards =
       , racingNorthOrcs
       , huntedInHaradOrcs
       , theFordOfHarnenOrcs
+      , dontLetThemEscape
+      , theCrossroadsFort
+      , battleInTheCamp
+      , defeatTheSerpent
+      , capturedCirithGurat
+      , rescueThePrisoners
+      , sneakPastTheGuards
+      , fightYourWayOut
       ]
 
 theDrippingWalls :: CardDef
@@ -1277,3 +1285,36 @@ huntedInHaradOrcs = quest "17053" "Hunted in Harad" RaceAcrossHarad 3 20
 
 theFordOfHarnenOrcs :: CardDef
 theFordOfHarnenOrcs = quest "17054" "The Ford of Harnen" RaceAcrossHarad 4 20
+
+-- * The Black Serpent: its side quest and stages. Stage 1's B side is printed as 17106.
+
+dontLetThemEscape :: CardDef
+dontLetThemEscape = (encounterSideQuest "17104" "Don't Let Them Escape!" TheBlackSerpent 6) {cdVictoryPoints = Just 10}
+
+theCrossroadsFort :: CardDef
+theCrossroadsFort = quest "17105" "The Crossroads Fort" TheBlackSerpent 1 6
+
+battleInTheCamp :: CardDef
+battleInTheCamp = quest "17107" "Battle in the Camp" TheBlackSerpent 2 6
+
+defeatTheSerpent :: CardDef
+defeatTheSerpent = quest "17108" "Defeat the Serpent" TheBlackSerpent 3 6
+
+-- The Dungeons of Cirith Gurat (17131-17134)
+
+-- | "Captured!", the encounter side quest; The Blood of Gondor's stage is 'captured'.
+capturedCirithGurat :: CardDef
+capturedCirithGurat =
+  (encounterSideQuest "17131" "Captured!" TheDungeonsOfCirithGurat 5)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+rescueThePrisoners :: CardDef
+rescueThePrisoners = quest "17132" "Rescue the Prisoners" TheDungeonsOfCirithGurat 1 10
+
+sneakPastTheGuards :: CardDef
+sneakPastTheGuards = quest "17133" "Sneak Past the Guards" TheDungeonsOfCirithGurat 2 15
+
+fightYourWayOut :: CardDef
+fightYourWayOut = quest "17134" "Fight Your Way Out" TheDungeonsOfCirithGurat 3 10

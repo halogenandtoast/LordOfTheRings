@@ -242,6 +242,14 @@ import LordOfTheRings.Quest.Cards.SettingOut
 import LordOfTheRings.Quest.Cards.RacingNorth
 import LordOfTheRings.Quest.Cards.HuntedInHarad
 import LordOfTheRings.Quest.Cards.TheFordOfHarnen
+import LordOfTheRings.Quest.Cards.DontLetThemEscape
+import LordOfTheRings.Quest.Cards.TheCrossroadsFort
+import LordOfTheRings.Quest.Cards.BattleInTheCamp
+import LordOfTheRings.Quest.Cards.DefeatTheSerpent
+import LordOfTheRings.Quest.Cards.CapturedCirithGurat
+import LordOfTheRings.Quest.Cards.RescueThePrisoners
+import LordOfTheRings.Quest.Cards.SneakPastTheGuards
+import LordOfTheRings.Quest.Cards.FightYourWayOut
 import LordOfTheRings.Quest.Cards.KeepWatch
 import LordOfTheRings.Quest.Cards.RallyTheWest
 import LordOfTheRings.Quest.Runner ()
@@ -518,6 +526,14 @@ allQuests =
         , SomeQuestCard racingNorth
         , SomeQuestCard huntedInHarad
         , SomeQuestCard theFordOfHarnen
+        , SomeQuestCard dontLetThemEscape
+        , SomeQuestCard theCrossroadsFort
+        , SomeQuestCard battleInTheCamp
+        , SomeQuestCard defeatTheSerpent
+        , SomeQuestCard capturedCirithGurat
+        , SomeQuestCard rescueThePrisoners
+        , SomeQuestCard sneakPastTheGuards
+        , SomeQuestCard fightYourWayOut
         , SomeQuestCard keepWatch
         , SomeQuestCard rallyTheWest
         ]

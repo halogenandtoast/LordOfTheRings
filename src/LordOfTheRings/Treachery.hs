@@ -342,6 +342,11 @@ import LordOfTheRings.Treachery.Cards.ScorchingSun
 import LordOfTheRings.Treachery.Cards.EnemyPursuit
 import LordOfTheRings.Treachery.Cards.PursuersFromMordor
 import LordOfTheRings.Treachery.Cards.HowlingAtTheirHeels
+import LordOfTheRings.Treachery.Cards.BoldAndGrim
+import LordOfTheRings.Treachery.Cards.NoQuarter
+import LordOfTheRings.Treachery.Cards.ChaosInTheNight
+import LordOfTheRings.Treachery.Cards.TakenPrisoner
+import LordOfTheRings.Treachery.Cards.TormentedByOrcs
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -711,5 +716,10 @@ allTreacherys =
         , SomeTreacheryCard enemyPursuit
         , SomeTreacheryCard pursuersFromMordor
         , SomeTreacheryCard howlingAtTheirHeels
+        , SomeTreacheryCard boldAndGrim
+        , SomeTreacheryCard noQuarter
+        , SomeTreacheryCard chaosInTheNight
+        , SomeTreacheryCard takenPrisoner
+        , SomeTreacheryCard tormentedByOrcs
         ]
     ]

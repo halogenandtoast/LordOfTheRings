@@ -407,6 +407,11 @@ import LordOfTheRings.Enemy.Cards.CarrionBird
 import LordOfTheRings.Enemy.Cards.UmbarSentry
 import LordOfTheRings.Enemy.Cards.UrukPursuer
 import LordOfTheRings.Enemy.Cards.RacingWarg
+import LordOfTheRings.Enemy.Cards.TheBlackSerpent
+import LordOfTheRings.Enemy.Cards.SerpentGuard
+import LordOfTheRings.Enemy.Cards.JailerOfCirithGurat
+import LordOfTheRings.Enemy.Cards.PrisonGuardCirithGurat
+import LordOfTheRings.Enemy.Cards.DungeonWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -840,5 +845,10 @@ allEnemys =
         , SomeEnemyCard umbarSentry
         , SomeEnemyCard urukPursuer
         , SomeEnemyCard racingWarg
+        , SomeEnemyCard theBlackSerpent
+        , SomeEnemyCard serpentGuard
+        , SomeEnemyCard jailerOfCirithGurat
+        , SomeEnemyCard prisonGuardCirithGurat
+        , SomeEnemyCard dungeonWarg
         ]
     ]

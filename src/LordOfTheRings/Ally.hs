@@ -223,6 +223,7 @@ import LordOfTheRings.Ally.Cards.DunedainPathfinder
 import LordOfTheRings.Ally.Cards.ErynGalenSettler
 import LordOfTheRings.Ally.Cards.StewardOfOrthanc
 import LordOfTheRings.Ally.Cards.TamedMumak
+import LordOfTheRings.Ally.Cards.Abaan
 import LordOfTheRings.Ally.Cards.RiderOfRohan
 import LordOfTheRings.Ally.Cards.DunedainLookout
 import LordOfTheRings.Ally.Cards.DefenderOfCairAndros
@@ -487,6 +488,7 @@ allAllies =
         , SomeAllyCard erynGalenSettler
         , SomeAllyCard stewardOfOrthanc
         , SomeAllyCard tamedMumak
+        , SomeAllyCard abaan
         , SomeAllyCard riderOfRohan
         , SomeAllyCard dunedainLookout
         , SomeAllyCard defenderOfCairAndros

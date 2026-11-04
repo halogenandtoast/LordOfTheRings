@@ -185,8 +185,10 @@ lowerThreat pid n = do
 it does reduce it: The Empty Mug answers a player card's.
 -}
 lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
-lowerThreatBy source pid n = do
-  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+lowerThreatBy source pid n' = do
+  mods <- getModifiers (PlayerTarget pid)
+  let barred = CannotReduceThreat `elem` mods
+      n = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
   threat <- (.threat) <$> getPlayer pid
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
@@ -1265,6 +1267,14 @@ it had on it stays: discard its tokens and attachments first where the card says
 -}
 guardCharacterWith :: (ReverseQueue m, Targetable character, IsCard captor) => character -> captor -> m ()
 guardCharacterWith c captor = push $ GuardCharacter (toTarget c) (toCard captor).id
+
+{- | A card out of play becomes a captive guarded by the encounter card, as Torture Room's
+"discards cards from the top of his deck until he discards an ally. Attach that ally to
+Torture Room" reads: an ally card is taken from its owner's discard pile, an objective
+ally comes under the first player. Rescued, it is in play as 'guardCharacterWith's are.
+-}
+guardCardWith :: (ReverseQueue m, IsCard captor) => Card -> captor -> m ()
+guardCardWith card captor = push $ GuardCard card (toCard captor).id
 
 -- | The guarded character is rescued now, as the card guarding it would leave play.
 rescueCharacter :: (ReverseQueue m, Targetable character) => character -> m ()
