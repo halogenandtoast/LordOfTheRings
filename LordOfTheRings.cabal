@@ -317,6 +317,8 @@ library
       LordOfTheRings.Attachment.Cards.Asfaloth
       LordOfTheRings.Attachment.Cards.Athelas
       LordOfTheRings.Attachment.Cards.Ballista
+      LordOfTheRings.Attachment.Cards.BilbosMagicRing
+      LordOfTheRings.Attachment.Cards.BlackArrow
       LordOfTheRings.Attachment.Cards.BlackKey
       LordOfTheRings.Attachment.Cards.BladeOfGondolin
       LordOfTheRings.Attachment.Cards.BloodOfNumenor
@@ -357,6 +359,7 @@ library
       LordOfTheRings.Attachment.Cards.EnlargedQuarters
       LordOfTheRings.Attachment.Cards.EntanglingNets
       LordOfTheRings.Attachment.Cards.EverMyHeartRises
+      LordOfTheRings.Attachment.Cards.ExpertTreasureHunter
       LordOfTheRings.Attachment.Cards.ExplorersAlmanac
       LordOfTheRings.Attachment.Cards.ExtraSails
       LordOfTheRings.Attachment.Cards.FastHitch
@@ -367,11 +370,13 @@ library
       LordOfTheRings.Attachment.Cards.Followed
       LordOfTheRings.Attachment.Cards.ForestSnare
       LordOfTheRings.Attachment.Cards.Glamdring
+      LordOfTheRings.Attachment.Cards.GlamdringTreasure
       LordOfTheRings.Attachment.Cards.GoldenBelt
       LordOfTheRings.Attachment.Cards.GondorianFire
       LordOfTheRings.Attachment.Cards.GondorianShield
       LordOfTheRings.Attachment.Cards.GoodMeal
       LordOfTheRings.Attachment.Cards.GrapplingHook
+      LordOfTheRings.Attachment.Cards.GreatYewBow
       LordOfTheRings.Attachment.Cards.GreyCloak
       LordOfTheRings.Attachment.Cards.GuardedCeaselessly
       LordOfTheRings.Attachment.Cards.HaradrimSpear
@@ -415,6 +420,7 @@ library
       LordOfTheRings.Attachment.Cards.MirrorOfGaladriel
       LordOfTheRings.Attachment.Cards.Miruvor
       LordOfTheRings.Attachment.Cards.MithrilShirt
+      LordOfTheRings.Attachment.Cards.MithrilShirtTreasure
       LordOfTheRings.Attachment.Cards.NarvisBelt
       LordOfTheRings.Attachment.Cards.Narya
       LordOfTheRings.Attachment.Cards.NecklaceOfGirion
@@ -422,6 +428,7 @@ library
       LordOfTheRings.Attachment.Cards.NorAmIAStranger
       LordOfTheRings.Attachment.Cards.OLorien
       LordOfTheRings.Attachment.Cards.Orcrist
+      LordOfTheRings.Attachment.Cards.OrcristTreasure
       LordOfTheRings.Attachment.Cards.OrdersFromAngmar
       LordOfTheRings.Attachment.Cards.Outmatched
       LordOfTheRings.Attachment.Cards.Palantir
@@ -471,6 +478,7 @@ library
       LordOfTheRings.Attachment.Cards.SongOfMocking
       LordOfTheRings.Attachment.Cards.SongOfTravel
       LordOfTheRings.Attachment.Cards.SongOfWisdom
+      LordOfTheRings.Attachment.Cards.SpareHoodAndCloak
       LordOfTheRings.Attachment.Cards.SparePipe
       LordOfTheRings.Attachment.Cards.SpearOfTheCitadel
       LordOfTheRings.Attachment.Cards.SpearOfTheMark
@@ -483,6 +491,7 @@ library
       LordOfTheRings.Attachment.Cards.SteedOfTheNorth
       LordOfTheRings.Attachment.Cards.StewardOfGondor
       LordOfTheRings.Attachment.Cards.Sting
+      LordOfTheRings.Attachment.Cards.StingTreasure
       LordOfTheRings.Attachment.Cards.StoneOfElostirion
       LordOfTheRings.Attachment.Cards.StrengthAndCourage
       LordOfTheRings.Attachment.Cards.Strider
@@ -492,6 +501,7 @@ library
       LordOfTheRings.Attachment.Cards.SwordThain
       LordOfTheRings.Attachment.Cards.SwordThatWasBroken
       LordOfTheRings.Attachment.Cards.TheArkenstone
+      LordOfTheRings.Attachment.Cards.TheArkenstoneTreasure
       LordOfTheRings.Attachment.Cards.TheDaysRising
       LordOfTheRings.Attachment.Cards.TheElvenking
       LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
@@ -501,6 +511,10 @@ library
       LordOfTheRings.Attachment.Cards.TheRedArrow
       LordOfTheRings.Attachment.Cards.TheRoadGoesEverOn
       LordOfTheRings.Attachment.Cards.Thorongil
+      LordOfTheRings.Attachment.Cards.ThrorsBattleAxe
+      LordOfTheRings.Attachment.Cards.ThrorsGoldenCup
+      LordOfTheRings.Attachment.Cards.ThrorsHuntingBow
+      LordOfTheRings.Attachment.Cards.ThrorsKey
       LordOfTheRings.Attachment.Cards.ThrorsMap
       LordOfTheRings.Attachment.Cards.ThrowingAxe
       LordOfTheRings.Attachment.Cards.TirelessThoroughbred

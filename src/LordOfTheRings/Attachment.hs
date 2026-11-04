@@ -223,6 +223,20 @@ import LordOfTheRings.Attachment.Cards.SparePipe
 import LordOfTheRings.Attachment.Cards.ShiningShield
 import LordOfTheRings.Attachment.Cards.TirelessThoroughbred
 import LordOfTheRings.Attachment.Cards.Thorongil
+import LordOfTheRings.Attachment.Cards.SpareHoodAndCloak
+import LordOfTheRings.Attachment.Cards.GreatYewBow
+import LordOfTheRings.Attachment.Cards.BlackArrow
+import LordOfTheRings.Attachment.Cards.ThrorsKey
+import LordOfTheRings.Attachment.Cards.ExpertTreasureHunter
+import LordOfTheRings.Attachment.Cards.StingTreasure
+import LordOfTheRings.Attachment.Cards.OrcristTreasure
+import LordOfTheRings.Attachment.Cards.GlamdringTreasure
+import LordOfTheRings.Attachment.Cards.BilbosMagicRing
+import LordOfTheRings.Attachment.Cards.TheArkenstoneTreasure
+import LordOfTheRings.Attachment.Cards.MithrilShirtTreasure
+import LordOfTheRings.Attachment.Cards.ThrorsBattleAxe
+import LordOfTheRings.Attachment.Cards.ThrorsHuntingBow
+import LordOfTheRings.Attachment.Cards.ThrorsGoldenCup
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -483,5 +497,19 @@ allAttachments =
         , SomeAttachmentCard shiningShield
         , SomeAttachmentCard tirelessThoroughbred
         , SomeAttachmentCard thorongil
+        , SomeAttachmentCard spareHoodAndCloak
+        , SomeAttachmentCard greatYewBow
+        , SomeAttachmentCard blackArrow
+        , SomeAttachmentCard throrsKey
+        , SomeAttachmentCard expertTreasureHunter
+        , SomeAttachmentCard stingTreasure
+        , SomeAttachmentCard orcristTreasure
+        , SomeAttachmentCard glamdringTreasure
+        , SomeAttachmentCard bilbosMagicRing
+        , SomeAttachmentCard theArkenstoneTreasure
+        , SomeAttachmentCard mithrilShirtTreasure
+        , SomeAttachmentCard throrsBattleAxe
+        , SomeAttachmentCard throrsHuntingBow
+        , SomeAttachmentCard throrsGoldenCup
         ]
     ]

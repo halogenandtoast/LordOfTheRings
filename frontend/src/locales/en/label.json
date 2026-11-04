@@ -413,6 +413,19 @@
   "theLuckyNumber": {
     "chooseCharacter": "The Lucky Number: choose a character other than Bilbo Baggins"
   },
+  "spareHoodAndCloak": {
+    "chooseCharacter": "Spare Hood and Cloak: ready another character and move the cloak to it"
+  },
+  "expertTreasureHunter": {
+    "name": "Expert Treasure-hunter: name a card type",
+    "ally": "Ally",
+    "attachment": "Attachment",
+    "event": "Event",
+    "treasure": "Treasure"
+  },
+  "theArkenstone": {
+    "chooseX": "The Arkenstone: raise your threat by X to lower the cost of your next ally by X"
+  },
   "gandalfHobbit": {
     "discardOrStay": "Gandalf: discard him, or raise your threat by 2 to keep him",
     "raiseThreat": "Raise your threat by 2 to keep Gandalf",
