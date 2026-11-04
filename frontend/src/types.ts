@@ -119,6 +119,9 @@ export interface ScenarioView {
   campaignCard: CardView | null
   stormcallerStage: CardView | null
   stormcallerArea: CardView[]
+  /** The Orcs' quest stage, with its progress, and the cards in their area (Race Across Harad). */
+  orcsStage: CardView | null
+  orcsArea: CardView[]
 }
 
 export interface IslandMapCell {

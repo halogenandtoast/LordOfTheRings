@@ -104,6 +104,21 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
         />
       </div>
     </div>
+    <!-- the Orcs' area: their own quest stage, and the cards not in the staging area -->
+    <div v-if="scenario.orcsStage" class="stormcaller-area">
+      <span class="heading-label">{{ $t('log.orcsArea') }}</span>
+      <div class="stormcaller-cards">
+        <GameCard :card="scenario.orcsStage" rotated :choices="choices" @choose="emit('choose', $event)" />
+        <GameCard
+          v-for="c in scenario.orcsArea"
+          :key="c.id"
+          :card="c"
+          :choices="choices"
+          :flipping="isFlipping(c)"
+          @choose="emit('choose', $event)"
+        />
+      </div>
+    </div>
   </section>
 </template>
 
