@@ -14,6 +14,7 @@ module LordOfTheRings.Campaign (module LordOfTheRings.Campaign) where
 import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Campaign.CardDefs qualified as Cards
+import LordOfTheRings.Card (allPlayerCards)
 import LordOfTheRings.Card.CardDef (CardDef, cdCardCode)
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
@@ -27,8 +28,9 @@ newtype CampaignId = CampaignId {unCampaignId :: Text}
 
 -- | A boon or burden earned (Revised Core rulebook, "The Campaign Pool"). Whether it is a
 -- boon or a burden its card says, by its trait. A player card goes to its seat's deck, an
--- encounter card into the encounter deck; one with the Permanent keyword is attached to
--- the hero recorded with it instead.
+-- encounter card into the encounter deck, or with a seat into that seat's deck once its
+-- starting hand is drawn, as Recurring Nightmare; one with the Permanent keyword is
+-- attached to the hero recorded with it instead.
 data PoolCard = PoolCard
   { poolCardCode :: CardCode
   , poolCardSeat :: Maybe Int
@@ -63,6 +65,9 @@ data CampaignLogKey
     Secrets
   | -- | the secrets flipped over
     RevealedSecrets
+  | -- | the Recurring Nightmares Temple of the Deceived's resolution adds to the Campaign
+    -- Pool, each for a player the first player chooses as the next scenario is set up
+    RecurringNightmares
   | -- | Angmar Awakened: the damage on Protect the Innocent, later Arnor Ravaged, as its
     -- campaign cards note it ('counted')
     ProtectTheInnocentDamage
@@ -347,9 +352,9 @@ seatDeck :: Int -> CampaignLog -> [(CardCode, Int)] -> [(CardCode, Int)]
 seatDeck seat l cards = filter ((`notElem` recorded LostInMountGram l) . fst) cards <> [(c, 1) | c <- seatPoolCards seat l]
 
 -- | Each seat's boons and burdens that are player cards, to shuffle into its deck: those
--- not attached to a hero.
+-- not attached to a hero. (An encounter card for its deck the scenario shuffles in.)
 seatPoolCards :: Int -> CampaignLog -> [CardCode]
-seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo]
+seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo, Map.member p.code allPlayerCards]
 
 instance HasField "code" PoolCard CardCode where
   getField = poolCardCode
