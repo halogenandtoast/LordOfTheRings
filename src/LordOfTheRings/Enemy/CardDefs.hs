@@ -465,6 +465,7 @@ allEnemyCards =
       , mirkwoodPatrol
       , ravenousSpider
       , gollumASitE
+      , khamulTheEasterling
       ]
 
 namelessThing :: CardDef
@@ -3807,3 +3808,10 @@ gollumASitE =
       , cdOtherSide = Just "21072"
       }
 
+-- | The Power of Mordor deck's, not the encounter deck's.
+khamulTheEasterling :: CardDef
+khamulTheEasterling =
+  unique
+    (enemy "21066" "Khamûl the Easterling" ThePowerOfMordor 1 49 4 6 4 9)
+      { cdCardTraits = setFromList [Nazgul, Easterling, Mordor]
+      }

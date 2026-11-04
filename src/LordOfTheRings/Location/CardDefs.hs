@@ -505,6 +505,7 @@ allLocationCards =
       , bareHilltop
       , forestClearingLostInMirkwood
       , twilightHall
+      , theTowerOfBaradDur
       ]
 
 drownedTreasury :: CardDef
@@ -3769,3 +3770,14 @@ forestClearingLostInMirkwood = objectiveLocation "18032" "Forest Clearing" Enemy
 
 twilightHall :: CardDef
 twilightHall = (location "18033" "Twilight Hall" LostInMirkwood 3 2 6) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 2}
+
+-- * The Power of Mordor
+
+-- | The Power of Mordor deck's: its quest points are printed "-".
+theTowerOfBaradDur :: CardDef
+theTowerOfBaradDur =
+  unique
+    (location "21067" "The Tower of Barad-dûr" ThePowerOfMordor 1 5 0)
+      { cdCardTraits = setFromList [Mordor]
+      , cdQuestPoints = Nothing
+      }

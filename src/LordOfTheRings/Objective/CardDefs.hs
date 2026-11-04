@@ -140,6 +140,9 @@ allObjectiveCards =
       , urdug
       , tiny
       , searchingForAWayOut
+      , underTheWatchfulEye
+      , theArmiesOfMordor
+      , coveredInDarkness
       ]
 
 durinsAxe :: CardDef
@@ -977,3 +980,14 @@ tiny =
 -- in the encounter deck.
 searchingForAWayOut :: CardDef
 searchingForAWayOut = objective "18028" "Searching for a Way Out" LostInMirkwood 0
+
+-- * The Power of Mordor: the Power of Mordor deck's, not the encounter deck's
+
+underTheWatchfulEye :: CardDef
+underTheWatchfulEye = (objective "21068" "Under the Watchful Eye" ThePowerOfMordor 1) {cdCardTraits = setFromList [Mordor], cdWhenRevealed = True}
+
+theArmiesOfMordor :: CardDef
+theArmiesOfMordor = (objective "21069" "The Armies of Mordor" ThePowerOfMordor 1) {cdCardTraits = setFromList [Mordor]}
+
+coveredInDarkness :: CardDef
+coveredInDarkness = (objective "21070" "Covered in Darkness" ThePowerOfMordor 1) {cdCardTraits = setFromList [Mordor], cdKeywords = setFromList [Doomed 5]}
