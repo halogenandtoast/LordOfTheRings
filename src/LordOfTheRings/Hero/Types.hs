@@ -45,6 +45,10 @@ data HeroAttrs = HeroAttrs
   , heroAttacking :: Bool
   , heroPrisoner :: Bool
   -- ^ face down: it cannot be used, cannot be damaged and collects no resources
+  , heroGuardedBy :: Maybe CardId
+  -- ^ the encounter card it is a captive of, as a guarded objective (see 'GuardCharacter')
+  , heroInStagingArea :: Bool
+  -- ^ in play in the staging area under no player's control (The Long Arm of Mordor)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -54,7 +58,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False)]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -72,6 +76,8 @@ hero f cardDef =
             , heroCommitted = False
             , heroAttacking = False
             , heroPrisoner = False
+            , heroGuardedBy = Nothing
+            , heroInStagingArea = False
             }
     }
 
@@ -101,8 +107,11 @@ instance Show Hero where
 instance ToJSON Hero where
   toJSON (Hero a) = toJSON a
 
+-- | An objective-hero is an encounter card, and leaves play to the encounter discard pile.
 instance IsCard HeroAttrs where
-  toCard a = PlayerCard $ MkPlayerCard {pcId = heroCardId a, pcCardCode = heroCardCode a, pcOwner = Just (heroOwner a)}
+  toCard a
+    | cdCardType (toCardDef a) == ObjectiveHeroType = EncounterCard $ MkEncounterCard {ecId = heroCardId a, ecCardCode = heroCardCode a}
+    | otherwise = PlayerCard $ MkPlayerCard {pcId = heroCardId a, pcCardCode = heroCardCode a, pcOwner = Just (heroOwner a)}
 
 instance IsCard Hero where
   toCard = toCard . toAttrs

@@ -263,6 +263,19 @@ spec = describe "The Grey Havens Nightmare Decks" do
       run . CheckStage =<< getsGame (fromJustNote "no quest" . fmap toId . headMay . toList . (.entities.quests))
       getsGame (.outcome) `shouldReturn` Just Won
 
+    it "Elite Marauder's excess damage goes point by point to Aflame locations of the player's choice" . nightmare raidOnTheGreyHavens $ \pid -> do
+      white <- stagedLocation Locations.whiteShip
+      caravel <- stagedLocation Locations.elvenCaravel
+      eid <- stagedEnemy Enemies.eliteMarauder
+      run $ EngageEnemy pid eid
+      b <- beravor
+      -- 6 attack against Beravor's 2 defense and 2 hit points left: 2 excess
+      run $ DealDamage GameSource b 2
+      run $ AttackDamage eid b
+      chooseTarget pid white
+      chooseTarget pid caravel
+      map (.damage) <$> traverse locationAttrs [white, caravel] `shouldReturn` [1, 1]
+
     it "Corsair Pyromaniac takes a resource as a card goes underneath The Havens Burn" . nightmare raidOnTheGreyHavens $ \_ -> do
       run . AddToStaging =<< genEncounterCard Objectives.theHavensBurn
       havens <- getsGame (toTarget . fromJustNote "no Havens Burn" . headMay . toList . (.entities.objectives))

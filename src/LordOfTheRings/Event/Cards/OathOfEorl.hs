@@ -17,12 +17,7 @@ oathOfEorl =
   eventWith OathOfEorl Cards.oathOfEorl \a ->
     a
       & (windowL ?~ PhaseBeginsWindow After CombatPhase)
-      & (criteriaL .~ DistinctCharacters [unique Rohan a.owner, unique Gondor a.owner])
- where
-  unique trait pid =
-    ( HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait
-    , AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait <> UniqueAlly
-    )
+      & (criteriaL .~ uniqueCharactersWith a.owner [Rohan, Gondor])
 
 instance RunMessage OathOfEorl where
   runMessage msg e@(OathOfEorl attrs) = case msg of

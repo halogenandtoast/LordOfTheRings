@@ -77,6 +77,12 @@ allHeroCards =
       , argalad
       , naasiyah
       , princeImrahilTactics
+      , gimliLeadership
+      , legolasSpirit
+      , kahliel
+      , thurindir
+      , folcoBoffin
+      , quickbeam
       ]
 
 aragorn :: CardDef
@@ -474,4 +480,43 @@ princeImrahilTactics :: CardDef
 princeImrahilTactics =
   (hero "12138" "Prince Imrahil" Tactics 11 2 3 2 4)
     { cdCardTraits = setFromList [Gondor, Noble, Warrior]
+    }
+
+gimliLeadership :: CardDef
+gimliLeadership =
+  (hero "16001" "Gimli" Leadership 11 2 2 2 5)
+    { cdCardTraits = setFromList [Dwarf, Noble, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+legolasSpirit :: CardDef
+legolasSpirit =
+  (hero "16002" "Legolas" Spirit 9 1 3 1 4)
+    { cdCardTraits = setFromList [Silvan, Noble, Scout]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+kahliel :: CardDef
+kahliel =
+  (hero "17001" "Kahliel" Leadership 10 2 2 2 4)
+    { cdCardTraits = setFromList [Harad, Noble]
+    }
+
+thurindir :: CardDef
+thurindir =
+  (hero "17028" "Thurindir" Lore 8 2 2 0 4)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+folcoBoffin :: CardDef
+folcoBoffin =
+  (hero "17109" "Folco Boffin" Lore 7 2 2 0 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+-- | Unique as errata'd: the first printing left off the unique symbol.
+quickbeam :: CardDef
+quickbeam =
+  (hero "17135" "Quickbeam" Tactics 12 2 4 1 5)
+    { cdCardTraits = setFromList [Ent]
     }

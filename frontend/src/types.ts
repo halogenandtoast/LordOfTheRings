@@ -38,6 +38,8 @@ export interface CardView {
   counting: string[]
   /** While attackers are declared, the attack they would make on it, bonuses included. */
   attackStrength?: number
+  /** While it may be declared as an attacker, the attack it would add, bonuses against the enemy included. */
+  attackAdding?: number
   /** In hand, an effect forbids playing it: what is forbidding it, which may be unnamed. */
   prohibited?: LogRef[]
   /** Shown as the FAQ's errata reads: its owner plays with errata, or it is an encounter card. */
@@ -119,6 +121,11 @@ export interface ScenarioView {
   campaignCard: CardView | null
   stormcallerStage: CardView | null
   stormcallerArea: CardView[]
+  /** The heat tracker's temperature (Desert Crossing). */
+  temperature?: number | null
+  /** The Orcs' quest stage, with its progress, and the cards in their area (Race Across Harad). */
+  orcsStage: CardView | null
+  orcsArea: CardView[]
 }
 
 export interface IslandMapCell {
@@ -151,6 +158,8 @@ export interface PlayerView {
   discardSize: number
   hand: CardView[]
   discard: CardView[]
+  /** treacheries attached to the top of the deck, as Iron Shackles */
+  onDeck: CardView[]
   inPlay: CardView[]
   engaged: CardView[]
 }
@@ -189,6 +198,8 @@ export interface TallyView {
 // a card the engine plays as another kind of card under its own code, showing its printed
 // face: Corsair Skirmisher taken as a Ship objective
 const printedFace: Record<string, string> = { '12125-ship': '12125' }
+// a quest stage whose B side is printed under the next number, as The Crossroads Fort's 1B
+const printedBack: Record<string, string> = { '17105': '17106-b' }
 
 /** Cards whose side A is another card's: every Search for an Exit shares 03070's. */
 const sharedSideA: Record<string, string> = Object.fromEntries(
@@ -212,7 +223,7 @@ export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' |
       ? `/images/cards/${card.image}.avif`
       : !card.flipped && sharedSideA[card.code]
         ? `/images/cards/${sharedSideA[card.code]}.avif`
-        : `/images/cards/${errataImage(card.flipped ? `${printedFace[card.code] ?? card.code}-b` : (sharedFront[card.code] ?? printedFace[card.code] ?? card.code), card.errata ?? true)}.avif`
+        : `/images/cards/${errataImage(card.flipped ? (printedBack[card.code] ?? `${printedFace[card.code] ?? card.code}-b`) : (sharedFront[card.code] ?? printedFace[card.code] ?? card.code), card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

@@ -96,15 +96,19 @@ runPlayer msg player = case msg of
           [ Label (ikey "label.keepHand") []
           , Label (ikey "label.mulligan") [Mulligan player.id]
           ]
+      -- a card a hero's Setup put in hand stays there, as Thurindir's side quest (Caleb's
+      -- ruling: it is searched for before the setup hand, and kept through a mulligan)
       let (hand, deck) = splitAt startingHandSize player.deck
-      pure $ player & handL .~ hand & deckL .~ deck
+      pure $ player & handL <>~ hand & deckL .~ deck
     DiscardEventsFromHand pid | pid == player.id -> do
       let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
       pure $ player & handL .~ rest & discardL %~ (events <>)
     Mulligan pid | pid == player.id -> do
-      send $ ShuffleIntoDeck $ map (.id) player.hand
-      (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
-      pure $ player & handL .~ hand & deckL .~ deck
+      -- only the setup hand, the last cards in hand, goes back
+      let (kept, drawn) = splitAt (length player.hand - startingHandSize) player.hand
+      send $ ShuffleIntoDeck $ map (.id) drawn
+      (hand, deck) <- splitAt startingHandSize <$> shuffleM (drawn <> player.deck)
+      pure $ player & handL .~ kept <> hand & deckL .~ deck
     -- a raise opens a window before it, as Harbor Thug's Forced effect answers
     RaiseThreat pid n | pid == player.id, n > 0 -> do
       pushAll [CheckWindows [mkWhen $ ThreatRaised pid], DoRaiseThreat pid n]
@@ -139,15 +143,15 @@ runPlayer msg player = case msg of
               . gameEntities
           )
       pushAll [Discard (toTarget t) | t <- take 1 shackles]
+      unless (blocked || notNull shackles) $ push $ DoDrawCards drawing
+      pure player
+    DoDrawCards drawing | drawing.player == player.id -> do
       let (cards, deck) = splitAt drawing.count player.deck
           -- a hero in the deck was shuffled in by Lost and Alone, and is put into play as drawn
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
-      if blocked || notNull shackles
-        then pure player
-        else do
-          pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
-          pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
-          pure $ player & handL <>~ drawn & deckL .~ deck
+      pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+      pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
+      pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase)
         $ WithTarget (toTarget player) (DoPhase PlanningPhase)
@@ -208,10 +212,10 @@ runPlayer msg player = case msg of
       | pid == player.id
       , cdCardType (toCardDef card) == EventType
       , cdCost (toCardDef card) == Just DynamicCost -> do
-          push $ CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]
+          push $ CheckWindows [mkAfter $ PlayedCard pid card]
           pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
-      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]]
+      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid card]]
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do
@@ -263,6 +267,7 @@ runPlayer msg player = case msg of
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ kept & handL <>~ taken
     DebugSearchDeck pid | pid == player.id -> do
+      -- not shuffled after: a debug search leaves the rest of the deck in its order
       push
         $ Ask pid
         $ QuestionLabel (ikey "label.takeCardIntoHand") Nothing []
@@ -458,13 +463,16 @@ discardPlayers pid c = do
   pure [t | Modifier source (MayPlayFromDiscard m) <- mods, cardMatches m c, Just t <- [sourceTarget source]]
 
 canPlay :: HasGame m => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, pure (canPayAdditional p c), not <$> cannotPlay p.id c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, canPayAdditional p c, not <$> cannotPlay p.id c]
 
--- | Whether the player has what the card costs from hand besides its resources.
-canPayAdditional :: Player -> Card -> Bool
+-- | Whether the player has what the card costs from hand besides its resources, and may
+-- pay it: one who cannot discard from hand, as Isen River bars, cannot pay a discard.
+canPayAdditional :: HasGame m => Player -> Card -> m Bool
 canPayAdditional p c = case cdAdditionalCost (toCardDef c) of
-  Just (DiscardCardsFromHand n) | c.id `elem` map (.id) p.hand -> length [x | x <- discardableHand p, x.id /= c.id] >= n
-  _ -> True
+  Just (DiscardCardsFromHand n) | c.id `elem` map (.id) p.hand -> do
+    barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget p.id)
+    pure $ not barred && length [x | x <- discardableHand p, x.id /= c.id] >= n
+  _ -> pure True
 
 -- | Whether the game forbids playing the card.
 cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
@@ -527,7 +535,7 @@ payingHeroes sphere player = do
 
 hasHost :: HasGame m => Card -> m Bool
 hasHost c
-  | c.cardType == AttachmentType, PlayIntoStagingArea <- attachMatcherFor (toCardCode c) = pure True
+  | c.cardType == AttachmentType, attachMatcherFor (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea] = pure True
   -- an attachment's play criteria are checked here too, with its hosts
   | PlayerCard pc <- c
   , c.cardType == AttachmentType =

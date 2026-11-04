@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useMediaQuery } from '@vueuse/core'
@@ -8,6 +8,7 @@ import { isKey, useServerText } from '../i18n'
 import CardBand from '../components/CardBand.vue'
 import CardOverlay from '../components/CardOverlay.vue'
 import GameLog from '../components/GameLog.vue'
+import ConfirmDelete from '../components/ConfirmDelete.vue'
 import GameBar from '../components/GameBar.vue'
 import PlayerArea from '../components/PlayerArea.vue'
 import PhaseTracker from '../components/PhaseTracker.vue'
@@ -38,8 +39,11 @@ const spectate = route.meta.spectate === true
 const {
   error, game, log, hasOlder, loadOlder, say, undoTo, flipping,
   started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join, leave, start,
-  campaignId,
+  campaignId, leavingPublic, confirmLeavingPublic, cancelLeavingPublic,
 } = useGame(route.params.id as string, spectate)
+const leavePublicDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('leavePublicDialog')
+// the server held back a debug message or an undo: ask before it takes the deal out
+watch(leavingPublic, (held) => held && leavePublicDialog.value?.open())
 // With friends you play your own seats; otherwise every seat is yours.
 const withFriends = computed(() => table.value?.withFriends ?? false)
 const guest = computed(() => withFriends.value && table.value?.owner !== currentUser.value?.id)
@@ -275,6 +279,13 @@ watch(question, (asked) => {
     @toggle-debug="debugging = !debugging"
   />
   <StoryModal :scenario="storyId" :name="scenario?.name ?? ''" :part="storyPart" :campaign="!!campaignId" :mode="scenario?.mode" @close="storyPart = null" />
+  <ConfirmDelete
+    ref="leavePublicDialog"
+    :title="$t('game.leavePublic.title')"
+    :confirm-label="$t('game.leavePublic.confirm')"
+    @confirm="confirmLeavingPublic"
+    @close="cancelLeavingPublic"
+  >{{ $t('game.leavePublic.body') }}</ConfirmDelete>
   <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />

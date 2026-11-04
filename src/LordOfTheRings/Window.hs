@@ -1,6 +1,6 @@
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
-import LordOfTheRings.Card (Card)
+import LordOfTheRings.Card (Card, PlayerCard)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
@@ -58,6 +58,8 @@ data WindowType
   | ProgressPlaced Target Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully
+  | -- | the progress from questing successfully has been placed
+    PlacedProgressFromQuesting
   | -- | an attack the character made has resolved
     AttackedEnemy Target EnemyId
   | -- | an attack the character defended has resolved
@@ -100,6 +102,8 @@ data WindowType
     AttackDealtDamage EnemyId [Target] Int
   | -- | the enemy's attack dealt the character this much damage past what destroys it
     AttackDealtExcessDamage EnemyId Target Int
+  | -- | the enemy's attack dealt the card damage, as Dwarven Shield answers
+    DamagedByEnemyAttack Target EnemyId
   | -- | the player let the enemy's attack go undefended
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it
@@ -122,7 +126,7 @@ data WindowType
   | -- | an attack the character defended has resolved, and it took no damage defending it
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
-    PlayedCard PlayerId CardCode
+    PlayedCard PlayerId PlayerCard
   | -- | the player is about to be eliminated by reaching his threat elimination level
     EliminatedByThreat PlayerId
   | -- | a quest card was defeated, before what is attached to it is discarded
@@ -137,6 +141,9 @@ data WindowType
     BecameReady Target
   | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
     Became TimeOfDay
+  | -- | the card turned over to the side with this code, as Beneath the Sands' Search
+    -- objective flips to On Track
+    FlippedTo Target CardCode
   | -- | the When Revealed effects of the card just revealed were canceled
     WhenRevealedCanceled Target
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
@@ -167,6 +174,8 @@ data WindowType
     QuestBypassed Target
   | -- | the character was committed to an escape test, as Things in the Pools answers
     CommittedToEscapeTest Target
+  | -- | the guarded character went free of encounters, back under its owner's control
+    CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
     HiddenCardTurnedFaceup Target
   deriving stock (Show, Eq, Generic)

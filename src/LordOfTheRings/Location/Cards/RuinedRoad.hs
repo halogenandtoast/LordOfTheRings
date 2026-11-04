@@ -25,7 +25,7 @@ instance RunMessage RuinedRoad where
         questionLabeled "ruinedRoad.choose"
         causedBy a
         labeled "ruinedRoad.progress" $ placeProgress a a 2
-        targets exhausted ready
+        targets exhausted encounterReadies
       pure l
     ResolveShadowEffect cid eid _ _ | cid == a.cardId -> do
       returnToStagingAfterAttack eid
