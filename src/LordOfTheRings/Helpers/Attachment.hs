@@ -37,8 +37,11 @@ cardHosts owner code = do
   attached <- getsGame (toList . (.entities.attachments))
   let copyOn host = any (\a -> a.placement == AttachedTo host && cdName (toCardDef a) == cdName def) attached
   candidates <- attachmentHosts (attachMatcherFor owner code)
-  flip filterM [h | not blank, h <- candidates, not (cdLimitOnePerHost def && copyOn h)] \host ->
-    if Restricted `member` cdKeywords def then notElem CannotHaveRestrictedAttachments <$> getModifiers host else pure True
+  flip filterM [h | not blank, h <- candidates, not (cdLimitOnePerHost def && copyOn h)] \host -> do
+    mods <- getModifiers host
+    pure
+      $ (Restricted `notMember` cdKeywords def || CannotHaveRestrictedAttachments `notElem` mods)
+      && and [tr `member` cdCardTraits def | CannotHaveAttachmentsWithoutTrait tr <- mods]
  where
   def = toCardDef code
 

@@ -3,7 +3,8 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, cdSphere, toCardCode, toCardDef)
+import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -126,6 +127,11 @@ preloadModifiers g = do
       -- a card immune to player card effects keeps none of their modifiers, but its own, as
       -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
+      -- nor, immune to all but Fellowship sphere player cards, of theirs but those
+      fellowshipOnly t ms kept
+        | ImmuneToNonFellowshipPlayerCardEffects `elem` map modifierType ms =
+            filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m) || maybe False (fellowshipCard g) (sourceTarget m.modifierSource)) kept
+        | otherwise = kept
       -- Modification attachments are encounter cards (Dream-chaser rules, "Gaining XP"), so a
       -- ship-objective's immunity lets theirs through
       modifications = setFromList [toTarget x | x <- toList es.attachments, Modification `member` cdCardTraits (toCardDef x)] :: Set Target
@@ -133,7 +139,7 @@ preloadModifiers g = do
       unaffected t ms =
         let ms' = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m)) ms else ms
             types = map modifierType ms'
-         in onlyMaster t ms $ filter (\m -> sourceTarget (modifierSource m) == Just t || not (immuneToEncounterSource g types (modifierSource m))) ms'
+         in fellowshipOnly t ms $ onlyMaster t ms $ filter (\m -> sourceTarget (modifierSource m) == Just t || not (immuneToEncounterSource g types (modifierSource m))) ms'
       -- The One Ring keeps its own modifiers, the game's and Master cards' only
       onlyMaster t ms kept
         | ImmuneToNonMasterCardEffects `elem` map modifierType ms =
@@ -195,6 +201,7 @@ immuneToSource source a = do
     || (isPlayerEventSource source && ImmuneToPlayerEvents `elem` mods)
     || immuneToEncounterSource g mods source
     || (not master && ImmuneToNonMasterCardEffects `elem` mods)
+    || (isPlayerCardSource source && ImmuneToNonFellowshipPlayerCardEffects `elem` mods && not (maybe False (fellowshipCard g) (sourceTarget source)))
 
 {- | Whether the card is an objective ally: an encounter card under a player's control, not
 a player card, which has the player card back, so a card immune to player card effects is
@@ -211,7 +218,14 @@ isMasterCard :: HasGame m => Target -> m Bool
 isMasterCard t = getsGame (`masterCard` t)
 
 masterCard :: Game -> Target -> Bool
-masterCard g t = maybe False (member Master . cdCardTraits . toCardDef) code
+masterCard g t = maybe False (member Master . cdCardTraits . toCardDef) (cardCodeOf g t)
+
+-- | Whether the card is a Fellowship sphere card, in play or, an event, in a player's hand.
+fellowshipCard :: Game -> Target -> Bool
+fellowshipCard g t = maybe False ((== Just Fellowship) . cdSphere . toCardDef) (cardCodeOf g t)
+
+cardCodeOf :: Game -> Target -> Maybe CardCode
+cardCodeOf g t = code
  where
   es = g.entities
   code = case t of

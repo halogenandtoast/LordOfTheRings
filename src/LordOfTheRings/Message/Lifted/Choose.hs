@@ -13,9 +13,9 @@ import Control.Monad.Writer.Strict (WriterT, runWriterT, tell)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToEncounterCard, isMasterCard, objectiveAllyTarget)
+import LordOfTheRings.Helpers.Modifiers (fellowshipCard, getModifiers, immuneToEncounterCard, isMasterCard, objectiveAllyTarget)
 import LordOfTheRings.I18n
-import LordOfTheRings.Modifier (ModifierType (ImmuneToNonMasterCardEffects, ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
+import LordOfTheRings.Modifier (ModifierType (ImmuneToNonFellowshipPlayerCardEffects, ImmuneToNonMasterCardEffects, ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerWithThreatAtLeast), getMainQuestProgress, getMainQuests, selectAny)
 import LordOfTheRings.Message
@@ -168,6 +168,7 @@ targeting a action = do
           (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s && not (objectiveAllyTarget g s))
             || (ImmuneToPlayerEvents `elem` mods && isEvent s)
             || (ImmuneToNonMasterCardEffects `elem` mods && not master)
+            || (ImmuneToNonFellowshipPlayerCardEffects `elem` mods && isPlayerCardTarget s && not (fellowshipCard g s))
             || immuneToEncounterCard g mods s
         Nothing -> False
       isEvent = \case CardIdTarget _ -> True; _ -> False

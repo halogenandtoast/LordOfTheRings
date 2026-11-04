@@ -51,6 +51,9 @@ data ModifierType
     ImmuneToPlayerEvents
   | -- | on a card in play: only Master cards' effects touch it, as The One Ring reads
     ImmuneToNonMasterCardEffects
+  | -- | on a card in play: no player card's effect touches it but a Fellowship sphere
+    -- card's, as Gollum reads in The Land of Shadow
+    ImmuneToNonFellowshipPlayerCardEffects
   | -- | on a location: no card effect, player or encounter, places or removes its tokens
     ImmuneToCardEffects
   | -- | on a card in play: no encounter card's effect touches it but one with the trait, as
@@ -83,6 +86,12 @@ data ModifierType
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies
   | CannotHaveAttachments
+  | -- | no player attachment without the trait can be attached to it, as a Nazgûl's
+    -- "Cannot have non-Morgul attachments" reads
+    CannotHaveAttachmentsWithoutTrait Trait
+  | -- | on a player: he keeps the first player token as the refresh phase would pass it, as
+    -- Last of the Company reads
+    CannotLoseFirstPlayerToken
   | -- | no attachment with the restricted keyword can be attached to it
     CannotHaveRestrictedAttachments
   | -- | on a character: it can have this many more restricted attachments than 2, as
