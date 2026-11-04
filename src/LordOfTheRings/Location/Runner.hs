@@ -37,6 +37,7 @@ instance RunMessage LocationAttrs where
             push $ CreateEffect $ Effect source (toTarget attrs) [ProgressPlacedThisRound room] UntilEndOfRound
             placeTokens Progress room
     PlaceTokens _ (isTarget attrs -> True) token n -> placeTokens token n
+    PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs

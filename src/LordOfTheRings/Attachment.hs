@@ -164,6 +164,12 @@ import LordOfTheRings.Attachment.Cards.BlackKey
 import LordOfTheRings.Attachment.Cards.ParryingCutlass
 import LordOfTheRings.Attachment.Cards.ThrowingAxe
 import LordOfTheRings.Attachment.Cards.CirdansBlessing
+import LordOfTheRings.Attachment.Cards.DwarvenShield
+import LordOfTheRings.Attachment.Cards.MirkwoodLongKnife
+import LordOfTheRings.Attachment.Cards.TheRoadGoesEverOn
+import LordOfTheRings.Attachment.Cards.KahlielsHeaddress
+import LordOfTheRings.Attachment.Cards.SteedOfTheNorth
+import LordOfTheRings.Attachment.Cards.MightyWarrior
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -365,5 +371,11 @@ allAttachments =
         , SomeAttachmentCard cirdansBlessingTactics
         , SomeAttachmentCard cirdansBlessingSpirit
         , SomeAttachmentCard cirdansBlessingLore
+        , SomeAttachmentCard dwarvenShield
+        , SomeAttachmentCard mirkwoodLongKnife
+        , SomeAttachmentCard theRoadGoesEverOn
+        , SomeAttachmentCard kahlielsHeaddress
+        , SomeAttachmentCard steedOfTheNorth
+        , SomeAttachmentCard mightyWarrior
         ]
     ]

@@ -399,6 +399,19 @@ import LordOfTheRings.Enemy.Cards.UrukChieftain
 import LordOfTheRings.Enemy.Cards.UrukOfMordor
 import LordOfTheRings.Enemy.Cards.UrukWargRider
 import LordOfTheRings.Enemy.Cards.MordorWarg
+import LordOfTheRings.Enemy.Cards.BroodMother
+import LordOfTheRings.Enemy.Cards.HiveGuardian
+import LordOfTheRings.Enemy.Cards.SpiderBroodling
+import LordOfTheRings.Enemy.Cards.WereWorm
+import LordOfTheRings.Enemy.Cards.CarrionBird
+import LordOfTheRings.Enemy.Cards.UmbarSentry
+import LordOfTheRings.Enemy.Cards.UrukPursuer
+import LordOfTheRings.Enemy.Cards.RacingWarg
+import LordOfTheRings.Enemy.Cards.TheBlackSerpent
+import LordOfTheRings.Enemy.Cards.SerpentGuard
+import LordOfTheRings.Enemy.Cards.JailerOfCirithGurat
+import LordOfTheRings.Enemy.Cards.PrisonGuardCirithGurat
+import LordOfTheRings.Enemy.Cards.DungeonWarg
 import LordOfTheRings.Enemy.Cards.TheBlackSerpentCrossingsOfPoros
 import LordOfTheRings.Enemy.Cards.SouthronOutrider
 import LordOfTheRings.Enemy.Cards.UrukProwler
@@ -828,6 +841,19 @@ allEnemys =
         , SomeEnemyCard urukOfMordor
         , SomeEnemyCard urukWargRider
         , SomeEnemyCard mordorWarg
+        , SomeEnemyCard broodMother
+        , SomeEnemyCard hiveGuardian
+        , SomeEnemyCard spiderBroodling
+        , SomeEnemyCard wereWorm
+        , SomeEnemyCard carrionBird
+        , SomeEnemyCard umbarSentry
+        , SomeEnemyCard urukPursuer
+        , SomeEnemyCard racingWarg
+        , SomeEnemyCard theBlackSerpent
+        , SomeEnemyCard serpentGuard
+        , SomeEnemyCard jailerOfCirithGurat
+        , SomeEnemyCard prisonGuardCirithGurat
+        , SomeEnemyCard dungeonWarg
         , SomeEnemyCard theBlackSerpentCrossingsOfPoros
         , SomeEnemyCard southronOutrider
         , SomeEnemyCard urukProwler

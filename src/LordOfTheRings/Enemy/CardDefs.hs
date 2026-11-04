@@ -406,6 +406,19 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , broodMother
+      , hiveGuardian
+      , spiderBroodling
+      , wereWorm
+      , carrionBird
+      , umbarSentry
+      , urukPursuer
+      , racingWarg
+      , theBlackSerpent
+      , serpentGuard
+      , jailerOfCirithGurat
+      , prisonGuardCirithGurat
+      , dungeonWarg
       , theBlackSerpentCrossingsOfPoros
       , southronOutrider
       , urukProwler
@@ -3303,6 +3316,119 @@ mordorWarg =
   (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
+    }
+
+-- * Beneath the Sands
+
+broodMother :: CardDef
+broodMother =
+  (enemy "17065" "Brood Mother" BeneathTheSands 1 50 4 6 4 12)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Spider]
+    , cdVictoryPoints = Just 4
+    }
+
+-- | On Track printed in its lower right corner.
+hiveGuardian :: CardDef
+hiveGuardian =
+  (enemy "17066" "Hive Guardian" BeneathTheSands 3 40 3 3 2 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    }
+
+-- | On Track printed in its lower right corner.
+spiderBroodling :: CardDef
+spiderBroodling =
+  (enemy "17067" "Spider Broodling" BeneathTheSands 5 20 1 2 1 2)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    }
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+-- | X attack and X defense: the tens digit of the temperature, which the card adds.
+wereWorm :: CardDef
+wereWorm =
+  (enemy "16023" "Were-worm" DesertCrossing 4 22 0 0 0 5)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+carrionBird :: CardDef
+carrionBird =
+  (enemy "16024" "Carrion Bird" DesertCrossing 2 40 2 2 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Escape from Umbar. Easy mode copy counts from Hall of Beorn's scenario page.
+
+umbarSentry :: CardDef
+umbarSentry =
+  (enemy "16015" "Umbar Sentry" EscapeFromUmbar 5 28 1 2 1 3)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Surge, Archery 1]
+    , cdEasyModeQuantity = Just 4
+    }
+
+-- * Race Across Harad
+
+urukPursuer :: CardDef
+urukPursuer =
+  (enemy "17043" "Uruk Pursuer" RaceAcrossHarad 4 20 2 3 2 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+racingWarg :: CardDef
+racingWarg =
+  (enemy "17044" "Racing Warg" RaceAcrossHarad 3 10 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    }
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+-- | The Black Serpent's, not The Crossings of Poros'.
+theBlackSerpent :: CardDef
+theBlackSerpent = unique (enemy "17094" "The Black Serpent" TheBlackSerpent 1 50 0 2 1 8) {cdCardTraits = setFromList [Harad]}
+
+serpentGuard :: CardDef
+serpentGuard =
+  (enemy "17095" "Serpent Guard" TheBlackSerpent 4 28 2 3 1 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+-- The Dungeons of Cirith Gurat (17121-17123). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+jailerOfCirithGurat :: CardDef
+jailerOfCirithGurat =
+  (enemy "17121" "Jailer of Cirith Gurat" TheDungeonsOfCirithGurat 2 45 4 3 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | The Dungeons of Cirith Gurat's Prison Guard; Escape from Mount Gram's is 'prisonGuard'.
+prisonGuardCirithGurat :: CardDef
+prisonGuardCirithGurat =
+  (enemy "17122" "Prison Guard" TheDungeonsOfCirithGurat 3 30 3 4 1 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    }
+
+dungeonWarg :: CardDef
+dungeonWarg =
+  (enemy "17123" "Dungeon Warg" TheDungeonsOfCirithGurat 3 25 1 3 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 -- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of

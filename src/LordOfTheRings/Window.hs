@@ -92,6 +92,8 @@ data WindowType
     PlayingEvent PlayerId CardId
   | -- | an attack the characters made dealt the enemy this much damage
     AttackDealtDamage EnemyId [Target] Int
+  | -- | the enemy's attack dealt the card damage, as Dwarven Shield answers
+    DamagedByEnemyAttack Target EnemyId
   | -- | the player let the enemy's attack go undefended
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it
@@ -129,6 +131,9 @@ data WindowType
     BecameReady Target
   | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
     Became TimeOfDay
+  | -- | the card turned over to the side with this code, as Beneath the Sands' Search
+    -- objective flips to On Track
+    FlippedTo Target CardCode
   | -- | the When Revealed effects of the card just revealed were canceled
     WhenRevealedCanceled Target
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers

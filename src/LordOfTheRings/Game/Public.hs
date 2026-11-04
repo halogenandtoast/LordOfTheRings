@@ -1,12 +1,13 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
-module LordOfTheRings.Game.Public (GroupScore (..), groupScore, publicGame, publicGameFor) where
+module LordOfTheRings.Game.Public (GroupScore (..), groupScore, hiddenCards, publicGame, publicGameFor, revealsInformation) where
 
 import Data.Aeson.Key qualified as Key
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.Types (parseMaybe)
 import Data.Map.Strict qualified as Map
+import Data.Set qualified as Set
 import LordOfTheRings.Campaign (campaignCardFor)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
@@ -20,11 +21,14 @@ import LordOfTheRings.Helpers.Modifiers (playProhibitions)
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
 import LordOfTheRings.Log.Entry (LogRef)
+import LordOfTheRings.Enemy.Types (EnemyAttrs (..))
+import LordOfTheRings.Location.Types (isUncharted)
 import LordOfTheRings.Log.Refs (sourceRefFor)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier (Modifier (..))
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
 import LordOfTheRings.Quest.Types (QuestAttrs (..))
+import LordOfTheRings.Question (searchedCards)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Target
 import LordOfTheRings.Prelude
@@ -60,6 +64,30 @@ groupScore g = GroupScore finalThreat deadThreat damage rounds victory (finalThr
   -- 10 for each round, as the campaign log scores it (Scenario.Runner)
   rounds = 10 * g.round
   victory = (toAttrs g.scenario).victoryPoints
+
+-- | The cards no player can see, as 'publicGameFor' hides them: decks, facedown cards
+-- and shadows, Uncharted locations' other sides, less any a question is showing (a search,
+-- a look at the top of a deck).
+hiddenCards :: Game -> Set CardId
+hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
+ where
+  merged = g {gamePlayers = allPlayers g, gameEntities = g.entities <> mconcat (heldEntities g)}
+  s = toAttrs g.scenario
+  hidden =
+    concatMap (map (.id) . (.deck)) (toList merged.players)
+      <> map (.id) (s.encounterDeck <> s.questDeck <> fromMaybe [] s.scenarioCorsairDeck <> s.scenarioUnchartedDeck <> s.scenarioGrottoDeck <> concat (toList s.scenarioHiddenCards))
+      <> concat
+        [ [c.id | c <- a.shadowCards, c.id `notElem` a.enemyShadowRevealed] <> map (.id) a.enemyFacedown
+        | a <- map toAttrs (toList merged.entities.enemies)
+        ]
+      <> [(toCard l).id | l <- toList merged.entities.locations, isUncharted l]
+  shown = map (.id) $ concatMap searchedCards (toList g.question)
+
+{- | The answer that took the game from one to the other brought something hidden into
+view, so an undo back past it would let the players play on knowing it.
+-}
+revealsInformation :: Game -> Game -> Bool
+revealsInformation before after = not . null $ hiddenCards before `Set.difference` hiddenCards after
 
 -- | The game as someone sees it who may only look at the hands of the players given:
 -- the rest send only their sizes, and their questions do not show the cards searched.
@@ -112,7 +140,13 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the Stormcaller's quest stage and its progress (Flight of the Stormcaller)
         $ KeyMap.insert "stormcallerStage" (metaValue "stormcallerStage")
         $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
+        -- the heat tracker's temperature (Desert Crossing)
+        $ KeyMap.insert "temperature" (metaValue "temperature")
+        -- the Orcs' quest stage and its progress (Race Across Harad)
+        $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
+        $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
+        $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"

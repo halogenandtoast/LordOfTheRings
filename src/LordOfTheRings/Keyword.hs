@@ -36,8 +36,7 @@ data Keyword
   | Guarded
   | -- | on an objective: Guarded (X), as The Black Serpent's Harad objectives read. As it is
     -- revealed, cards are discarded from the encounter deck until one of these types is,
-    -- which goes to the staging area with the objective attached to it (its cards resolve
-    -- it; the engine does not, unlike 'Guarded')
+    -- which goes to the staging area with the objective attached to it (MEC59 rules)
     GuardedBy [CardType]
   | -- | an objective ally the last player gains control of as it enters play
     LastPlayerGainsControl

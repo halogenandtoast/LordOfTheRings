@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -23,7 +23,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotDiscardFromHand),
+  ModifierType (CannotDiscardFromHand, GainKeyword),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -290,6 +290,12 @@ passesCriteria = \case
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
   InNightmareMode -> inNightmareMode
+  MainQuestWithoutKeywords -> do
+    mains <- getMainQuests
+    flip allM mains \q -> do
+      mods <- getModifiers q
+      def <- getsGame (fmap toCardDef . find ((== q) . toTarget) . toList . entitiesQuests . gameEntities)
+      pure $ maybe True (null . cdKeywords) def && null [k | GainKeyword k <- mods]
   AnyCriteria cs -> anyM passesCriteria cs
 
 -- | Whether each list can give a character not taken by an earlier one.

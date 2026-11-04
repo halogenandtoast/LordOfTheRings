@@ -225,6 +225,31 @@ import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
 import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.TheStormComes
+import LordOfTheRings.Quest.Cards.PrepareForBattle
+import LordOfTheRings.Quest.Cards.ExploreSecretWays
+import LordOfTheRings.Quest.Cards.LostUnderground
+import LordOfTheRings.Quest.Cards.SearchingTheCaves
+import LordOfTheRings.Quest.Cards.GettingCloser
+import LordOfTheRings.Quest.Cards.TheSpidersHive
+import LordOfTheRings.Quest.Cards.SeekShade
+import LordOfTheRings.Quest.Cards.TheDesertOfHarad
+import LordOfTheRings.Quest.Cards.UnderTheMercilessSun
+import LordOfTheRings.Quest.Cards.BeastsOfLegend
+import LordOfTheRings.Quest.Cards.StrandedInUmbar
+import LordOfTheRings.Quest.Cards.FleeTheCity
+import LordOfTheRings.Quest.Cards.SettingOut
+import LordOfTheRings.Quest.Cards.RacingNorth
+import LordOfTheRings.Quest.Cards.HuntedInHarad
+import LordOfTheRings.Quest.Cards.TheFordOfHarnen
+import LordOfTheRings.Quest.Cards.DontLetThemEscape
+import LordOfTheRings.Quest.Cards.TheCrossroadsFort
+import LordOfTheRings.Quest.Cards.BattleInTheCamp
+import LordOfTheRings.Quest.Cards.DefeatTheSerpent
+import LordOfTheRings.Quest.Cards.CapturedCirithGurat
+import LordOfTheRings.Quest.Cards.RescueThePrisoners
+import LordOfTheRings.Quest.Cards.SneakPastTheGuards
+import LordOfTheRings.Quest.Cards.FightYourWayOut
 import LordOfTheRings.Quest.Cards.FindAWayDown
 import LordOfTheRings.Quest.Cards.FlightToGondor
 import LordOfTheRings.Quest.Cards.TheDesertPath
@@ -332,6 +357,9 @@ allQuests =
         , SomeQuestCard delayTheEnemy
         , SomeQuestCard sendForAid
         , SomeQuestCard scoutAhead
+        , SomeQuestCard exploreSecretWays
+        , SomeQuestCard prepareForBattle
+        , SomeQuestCard theStormComes
         , SomeQuestCard theDefense
         , SomeQuestCard reinforcingTheBanks
         , SomeQuestCard breakthroughAtTheApproach
@@ -490,6 +518,28 @@ allQuests =
         , SomeQuestCard findWater
         , SomeQuestCard craftRemedy
         , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard lostUnderground
+        , SomeQuestCard searchingTheCaves
+        , SomeQuestCard gettingCloser
+        , SomeQuestCard theSpidersHive
+        , SomeQuestCard seekShade
+        , SomeQuestCard theDesertOfHarad
+        , SomeQuestCard underTheMercilessSun
+        , SomeQuestCard beastsOfLegend
+        , SomeQuestCard strandedInUmbar
+        , SomeQuestCard fleeTheCity
+        , SomeQuestCard settingOut
+        , SomeQuestCard racingNorth
+        , SomeQuestCard huntedInHarad
+        , SomeQuestCard theFordOfHarnen
+        , SomeQuestCard dontLetThemEscape
+        , SomeQuestCard theCrossroadsFort
+        , SomeQuestCard battleInTheCamp
+        , SomeQuestCard defeatTheSerpent
+        , SomeQuestCard capturedCirithGurat
+        , SomeQuestCard rescueThePrisoners
+        , SomeQuestCard sneakPastTheGuards
+        , SomeQuestCard fightYourWayOut
         , SomeQuestCard findAWayDown
         , SomeQuestCard flightToGondor
         , SomeQuestCard theDesertPath
