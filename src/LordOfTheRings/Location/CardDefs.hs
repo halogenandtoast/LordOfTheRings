@@ -561,6 +561,10 @@ allLocationCards =
       , loneLands
       , caveEntranceWesternLands
       , theGoblinsCaves
+      , theWargsGlade
+      , lakeInTheCavern
+      , theWargsGlade
+      , lakeInTheCavern
       ]
 
 drownedTreasury :: CardDef
@@ -4108,3 +4112,16 @@ theGoblinsCaves =
     { cdCardTraits = setFromList [Cave]
     , cdShadowEffect = True
     }
+
+-- * Dungeons Deep and Caverns Dim
+
+theWargsGlade :: CardDef
+theWargsGlade =
+  (location "131077" "The Wargs' Glade" DungeonsDeepAndCavernsDim 3 2 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdRiddle = Just $ Riddle [RiddleSphere] 1
+    }
+
+-- | Its threat X is twice the number of players; it has no quest points to travel to.
+lakeInTheCavern :: CardDef
+lakeInTheCavern = unique (location "131078" "Lake in the Cavern" DungeonsDeepAndCavernsDim 1 0 0) {cdCardTraits = setFromList [Cave]}

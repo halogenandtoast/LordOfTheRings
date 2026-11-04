@@ -167,6 +167,7 @@ allObjectiveCards =
       , aDeepSack
       , aFoulSack
       , aWornSack
+      , bilbosMagicRing
       ]
 
 durinsAxe :: CardDef
@@ -1154,3 +1155,8 @@ aFoulSack = sackCard "131049" "A Foul Sack"
 
 aWornSack :: CardDef
 aWornSack = sackCard "131050" "A Worn Sack"
+
+-- * Dungeons Deep and Caverns Dim
+
+bilbosMagicRing :: CardDef
+bilbosMagicRing = unique (objective "131079" "Bilbo's Magic Ring" DungeonsDeepAndCavernsDim 1) {cdCardTraits = setFromList [Artifact, Ring]}

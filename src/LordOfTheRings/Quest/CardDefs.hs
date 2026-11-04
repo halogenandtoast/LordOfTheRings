@@ -449,6 +449,9 @@ allQuestCards =
       , anUnexpectedParty
       , roastMutton
       , dawnTakeYouAll
+      , outOfTheFryingPan
+      , riddlesInTheDark
+      , intoTheFire
       ]
 
 theDrippingWalls :: CardDef
@@ -1873,3 +1876,15 @@ roastMutton = quest "131024" "Roast Mutton" WeMustAwayEreBreakOfDay 2 1
 
 dawnTakeYouAll :: CardDef
 dawnTakeYouAll = quest "131025" "Dawn Take You All" WeMustAwayEreBreakOfDay 3 0
+
+-- * Dungeons Deep and Caverns Dim
+
+outOfTheFryingPan :: CardDef
+outOfTheFryingPan = quest "131029" "Out of the Frying Pan" DungeonsDeepAndCavernsDim 1 14
+
+-- | Stage 2, in the riddle area beside stage 1 the whole time the players are on it.
+riddlesInTheDark :: CardDef
+riddlesInTheDark = quest "131030" "Riddles in the Dark" DungeonsDeepAndCavernsDim 2 9
+
+intoTheFire :: CardDef
+intoTheFire = quest "131031" "Into the Fire" DungeonsDeepAndCavernsDim 3 16

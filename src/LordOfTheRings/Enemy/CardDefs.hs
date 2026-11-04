@@ -525,6 +525,9 @@ allEnemyCards =
       , goblinMiners
       , goblinRunners
       , goblinDriver
+      , gollumDungeonsDeep
+      , greatGrayWolf
+      , wildWargs
       ]
 
 namelessThing :: CardDef
@@ -4317,3 +4320,22 @@ goblinRunners = (goblin "131060" "Goblin Runners" 20 1 3 1 2) {cdKeywords = setF
 
 goblinDriver :: CardDef
 goblinDriver = (goblin "131061" "Goblin Driver" 30 3 2 2 3) {cdWhenRevealed = True}
+
+-- * Dungeons Deep and Caverns Dim
+
+gollumDungeonsDeep :: CardDef
+gollumDungeonsDeep = unique (enemy "131074" "Gollum" DungeonsDeepAndCavernsDim 1 50 0 2 3 5) {cdCardTraits = setFromList [Gollum]}
+
+greatGrayWolf :: CardDef
+greatGrayWolf =
+  (enemy "131075" "Great Gray Wolf" DungeonsDeepAndCavernsDim 1 30 4 5 2 5)
+    { cdCardTraits = setFromList [Creature]
+    , cdRiddle = Just $ Riddle [RiddleCardType, RiddleSphere, RiddleCost] 3
+    }
+
+wildWargs :: CardDef
+wildWargs =
+  (enemy "131076" "Wild Wargs" DungeonsDeepAndCavernsDim 4 25 3 3 2 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdRiddle = Just $ Riddle [RiddleCardType] 2
+    }
