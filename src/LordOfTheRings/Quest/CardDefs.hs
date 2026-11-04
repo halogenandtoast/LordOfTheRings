@@ -275,6 +275,10 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , dontLetThemEscape
+      , theCrossroadsFort
+      , battleInTheCamp
+      , defeatTheSerpent
       ]
 
 theDrippingWalls :: CardDef
@@ -1152,3 +1156,17 @@ uruksOfTheEye =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+-- * The Black Serpent: its side quest and stages. Stage 1's B side is printed as 17106.
+
+dontLetThemEscape :: CardDef
+dontLetThemEscape = (encounterSideQuest "17104" "Don't Let Them Escape!" TheBlackSerpent 6) {cdVictoryPoints = Just 10}
+
+theCrossroadsFort :: CardDef
+theCrossroadsFort = quest "17105" "The Crossroads Fort" TheBlackSerpent 1 6
+
+battleInTheCamp :: CardDef
+battleInTheCamp = quest "17107" "Battle in the Camp" TheBlackSerpent 2 6
+
+defeatTheSerpent :: CardDef
+defeatTheSerpent = quest "17108" "Defeat the Serpent" TheBlackSerpent 3 6

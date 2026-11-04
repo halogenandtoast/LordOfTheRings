@@ -191,6 +191,8 @@ export interface TallyView {
 // a card the engine plays as another kind of card under its own code, showing its printed
 // face: Corsair Skirmisher taken as a Ship objective
 const printedFace: Record<string, string> = { '12125-ship': '12125' }
+// a quest stage whose B side is printed under the next number, as The Crossroads Fort's 1B
+const printedBack: Record<string, string> = { '17105': '17106-b' }
 
 /** Cards whose side A is another card's: every Search for an Exit shares 03070's. */
 const sharedSideA: Record<string, string> = Object.fromEntries(
@@ -214,7 +216,7 @@ export const cardImage = (card: Pick<CardView, 'code' | 'flipped' | 'facedown' |
       ? `/images/cards/${card.image}.avif`
       : !card.flipped && sharedSideA[card.code]
         ? `/images/cards/${sharedSideA[card.code]}.avif`
-        : `/images/cards/${errataImage(card.flipped ? `${printedFace[card.code] ?? card.code}-b` : (sharedFront[card.code] ?? printedFace[card.code] ?? card.code), card.errata ?? true)}.avif`
+        : `/images/cards/${errataImage(card.flipped ? (printedBack[card.code] ?? `${printedFace[card.code] ?? card.code}-b`) : (sharedFront[card.code] ?? printedFace[card.code] ?? card.code), card.errata ?? true)}.avif`
 
 /** The drag data type carrying a hand card's id. */
 export const cardDrag = 'application/x-lotr-card'

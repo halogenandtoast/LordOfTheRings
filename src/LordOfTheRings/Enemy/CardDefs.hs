@@ -406,6 +406,8 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , theBlackSerpent
+      , serpentGuard
       ]
 
 namelessThing :: CardDef
@@ -3299,4 +3301,17 @@ mordorWarg =
   (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
+    }
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+-- | The Black Serpent's, not The Crossings of Poros'.
+theBlackSerpent :: CardDef
+theBlackSerpent = unique (enemy "17094" "The Black Serpent" TheBlackSerpent 1 50 0 2 1 8) {cdCardTraits = setFromList [Harad]}
+
+serpentGuard :: CardDef
+serpentGuard =
+  (enemy "17095" "Serpent Guard" TheBlackSerpent 4 28 2 3 1 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
     }

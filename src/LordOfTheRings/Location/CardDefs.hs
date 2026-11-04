@@ -419,6 +419,11 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , theSerpentsRedoubt
+      , rooflessTower
+      , desertBastion
+      , southronCamp
+      , brokenCourtyard
       ]
 
 drownedTreasury :: CardDef
@@ -3202,4 +3207,39 @@ denseJungle =
   (location "16058" "Dense Jungle" JungleForest 3 2 3)
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
+    }
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+theSerpentsRedoubt :: CardDef
+theSerpentsRedoubt =
+  (location "17096" "The Serpent's Redoubt" TheBlackSerpent 2 4 4)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdEasyModeQuantity = Just 1
+    }
+
+rooflessTower :: CardDef
+rooflessTower =
+  (location "17097" "Roofless Tower" TheBlackSerpent 2 2 4)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdEasyModeQuantity = Just 1
+    }
+
+desertBastion :: CardDef
+desertBastion =
+  (location "17098" "Desert Bastion" TheBlackSerpent 3 1 5)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdShadowEffect = True
+    }
+
+southronCamp :: CardDef
+southronCamp = (location "17099" "Southron Camp" TheBlackSerpent 3 3 3) {cdCardTraits = setFromList [Desert, Ruins]}
+
+brokenCourtyard :: CardDef
+brokenCourtyard =
+  (location "17100" "Broken Courtyard" TheBlackSerpent 3 1 3)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

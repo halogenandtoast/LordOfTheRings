@@ -334,6 +334,9 @@ import LordOfTheRings.Treachery.Cards.Sandstorm
 import LordOfTheRings.Treachery.Cards.HeatExhaustion
 import LordOfTheRings.Treachery.Cards.Overgrown
 import LordOfTheRings.Treachery.Cards.FearOfMordor
+import LordOfTheRings.Treachery.Cards.BoldAndGrim
+import LordOfTheRings.Treachery.Cards.NoQuarter
+import LordOfTheRings.Treachery.Cards.ChaosInTheNight
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -695,5 +698,8 @@ allTreacherys =
         , SomeTreacheryCard heatExhaustion
         , SomeTreacheryCard overgrown
         , SomeTreacheryCard fearOfMordor
+        , SomeTreacheryCard boldAndGrim
+        , SomeTreacheryCard noQuarter
+        , SomeTreacheryCard chaosInTheNight
         ]
     ]

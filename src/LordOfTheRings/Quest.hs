@@ -225,6 +225,10 @@ import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
 import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.DontLetThemEscape
+import LordOfTheRings.Quest.Cards.TheCrossroadsFort
+import LordOfTheRings.Quest.Cards.BattleInTheCamp
+import LordOfTheRings.Quest.Cards.DefeatTheSerpent
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -482,5 +486,9 @@ allQuests =
         , SomeQuestCard findWater
         , SomeQuestCard craftRemedy
         , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard dontLetThemEscape
+        , SomeQuestCard theCrossroadsFort
+        , SomeQuestCard battleInTheCamp
+        , SomeQuestCard defeatTheSerpent
         ]
     ]

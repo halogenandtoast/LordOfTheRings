@@ -2245,5 +2245,45 @@
   },
   "mordorWarg": {
     "attach": "Mordor Warg: choose the Orc enemy to attach it to"
+  },
+  "theBlackSerpent": {
+    "choose": "The Black Serpent: choose one",
+    "attack": "The Black Serpent makes an immediate attack against the first player"
+  },
+  "serpentGuard": {
+    "choose": "Serpent Guard: choose one",
+    "noDamage": "Enemies engaged with you cannot take damage until the end of the round",
+    "attackerNoDamage": "The attacking enemy cannot take damage this round"
+  },
+  "theSerpentsRedoubt": {
+    "choose": "The Serpent's Redoubt: choose one",
+    "exhaust": "Exhaust that ally"
+  },
+  "rooflessTower": {
+    "choose": "Roofless Tower: choose one",
+    "cancel": "Cancel the effects of that event",
+    "exhaustHero": "Roofless Tower: exhaust a hero to travel here"
+  },
+  "brokenCourtyard": {
+    "choose": "Broken Courtyard: choose one",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "boldAndGrim": {
+    "choose": "Bold and Grim: attach a Harad objective you control to the attacking enemy, or",
+    "attack": "The attacking enemy makes an additional attack after this one"
+  },
+  "noQuarter": {
+    "choose": "No Quarter: reveal 2 encounter cards, or choose a Harad objective to detach from its hero and reveal",
+    "reveal": "Reveal 2 encounter cards",
+    "objective": "No Quarter: choose a Harad objective you control",
+    "host": "No Quarter: choose a non-unique encounter card in the staging area to attach it to"
+  },
+  "chaosInTheNight": {
+    "choose": "Chaos in the Night: choose one",
+    "threat": "Raise each player's threat by 3",
+    "noProgress": "Progress cannot be placed on quest cards until the end of the round"
+  },
+  "theSerpentsGarb": {
+    "enemy": "The Serpent's Garb: choose a Harad enemy in the staging area"
   }
 }

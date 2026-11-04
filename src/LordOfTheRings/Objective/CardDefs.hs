@@ -107,6 +107,9 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , bannerOfTheSerpent
+      , theSerpentsGarb
+      , summonsFromMordor
       ]
 
 durinsAxe :: CardDef
@@ -718,4 +721,27 @@ theCabalsChampion =
   (objective "the-stewards-fear-nightmare-the-stewards-fear-010" "The Cabal's Champion" TheStewardsFearNightmare 3)
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+-- * The Black Serpent: the Harad objectives, each Guarded (X) (MEC59 rules)
+
+bannerOfTheSerpent :: CardDef
+bannerOfTheSerpent =
+  (objective "17091" "Banner of the Serpent" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+    }
+
+theSerpentsGarb :: CardDef
+theSerpentsGarb =
+  (objective "17092" "The Serpent's Garb" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [EnemyType]]
+    }
+
+summonsFromMordor :: CardDef
+summonsFromMordor =
+  (objective "17093" "Summons from Mordor" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [LocationType]]
     }
