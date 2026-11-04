@@ -2773,6 +2773,7 @@ runGameMessage msg g = case msg of
                   , heroExhausted = allyExhausted attrs
                   , heroCommitted = allyCommitted attrs
                   , heroAttacking = allyAttacking attrs
+                  , heroFacedown = allyFacedown attrs
                   }
             )
             $ lookupHero (toCardCode a) attrs.allyCardId hid controller
@@ -2789,6 +2790,7 @@ runGameMessage msg g = case msg of
                   , allyExhausted = heroExhausted attrs
                   , allyCommitted = heroCommitted attrs
                   , allyAttacking = heroAttacking attrs
+                  , allyFacedown = heroFacedown attrs
                   }
             )
             $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner

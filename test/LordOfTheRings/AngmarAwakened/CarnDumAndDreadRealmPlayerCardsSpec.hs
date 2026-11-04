@@ -389,6 +389,28 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
       passActions pid
       getDamage (toTarget spider) `shouldReturn` 3
       getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem (toCardCode Allies.riddermarkKnight))
+
+    it "keeps Eagles of the Misty Mountains' facedown Eagles under the hero, and as it becomes an ally again" . gameTest $ \pid -> do
+      eagles <- swordThained pid Allies.eaglesOfTheMistyMountains
+      was <- stat getAttack eagles
+      guardian <- putAllyIntoPlay pid Allies.wingedGuardian
+      passActions pid
+      run $ Discard guardian
+      chooseAbilityOf pid eagles
+      getsGame (fmap (length . heroFacedown . toAttrs) . find ((== eagles) . toTarget) . toList . (.entities.heroes)) `shouldReturn` Just 1
+      stat getAttack eagles `shouldReturn` (was + 1)
+      sword <- getsGame (toTarget . fromJustNote "sword" . find ((== toCardCode Attachments.swordThain) . toCardCode) . toList . (.entities.attachments))
+      run $ Discard sword
+      getsGame (map (length . allyFacedown . toAttrs) . toList . (.entities.allies)) `shouldReturn` [1]
+
+    it "discards the facedown Eagles under the hero as it leaves play" . gameTest $ \pid -> do
+      eagles <- swordThained pid Allies.eaglesOfTheMistyMountains
+      guardian <- putAllyIntoPlay pid Allies.wingedGuardian
+      passActions pid
+      run $ Discard guardian
+      chooseAbilityOf pid eagles
+      run $ Discard eagles
+      map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Allies.wingedGuardian))
  where
   -- the unique ally put into play, then made a hero by Sword-thain
   swordThained pid def = do

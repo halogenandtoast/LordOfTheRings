@@ -56,6 +56,9 @@ data HeroAttrs = HeroAttrs
   -- ^ the encounter card it is a captive of, as a guarded objective (see 'GuardCharacter')
   , heroInStagingArea :: Bool
   -- ^ in play in the staging area under no player's control (The Long Arm of Mordor)
+  , heroFacedown :: [PlayerCard]
+  -- ^ cards attached facedown, as an ally made a hero by Sword-thain keeps them (Eagles of
+  -- the Misty Mountains)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -65,7 +68,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard]))]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -85,6 +88,7 @@ hero f cardDef =
             , heroPrisoner = False
             , heroGuardedBy = Nothing
             , heroInStagingArea = False
+            , heroFacedown = []
             }
     }
 

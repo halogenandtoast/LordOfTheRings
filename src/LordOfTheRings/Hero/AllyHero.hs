@@ -44,6 +44,7 @@ asAlly h =
           , allyExhausted = h.heroExhausted
           , allyCommitted = h.heroCommitted
           , allyAttacking = h.heroAttacking
+          , allyFacedown = h.heroFacedown
           , allyAsHero = True
           }
     )
