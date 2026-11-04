@@ -1,6 +1,11 @@
 module LordOfTheRings.Objective.Cards.GateKey (gateKey, gateKeyUpgraded) where
 
 import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Campaign (CampaignLogKey (Secrets))
+import LordOfTheRings.Card (Card (EncounterCard, PlayerCard), genEncounterCard, genPlayerCard)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Campaign (getTempleSecrets)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted
@@ -15,7 +20,8 @@ newtype GateKey = GateKey ObjectiveAttrs
 gateKey :: ObjectiveCard GateKey
 gateKey = objective GateKey Cards.gateKey
 
--- | Its Upgraded side (the Dream-chaser campaign): looking costs no resources.
+-- | Its Upgraded side (the Dream-chaser campaign): "Action: Exhaust Gate Key and attached
+-- hero to look at the facedown side of a Temple of the Deceived location or secret."
 gateKeyUpgraded :: ObjectiveCard GateKey
 gateKeyUpgraded = objective GateKey Cards.gateKeyUpgraded
 
@@ -36,7 +42,7 @@ instance HasAbilities GateKey where
               a
               2
               ( exists (HeroWithId hid <> HeroControlledBy ActivePlayer <> ReadyHero <> HeroWithResourcesAtLeast (if upgraded a then 0 else 3))
-                  <> exists (LocationWithCardCode $ toCardCode Locations.templeOfTheDeceived)
+                  <> AnyCriteria (exists (LocationWithCardCode $ toCardCode Locations.templeOfTheDeceived) : [CampaignRecorded Secrets | upgraded a])
               )
             $ ActionAbility Free
          | AttachedTo (HeroTarget hid) <- [a.placement]
@@ -60,9 +66,25 @@ instance RunMessage GateKey where
         exhaust h
         unless (upgraded attrs) $ removeTokens attrs h Resource 3
         temples <- select (LocationWithCardCode $ toCardCode Locations.templeOfTheDeceived)
+        secrets <- if upgraded attrs then getTempleSecrets else pure []
+        under <- concat <$> for secrets \(pos, code) -> map (,code) <$> select (LocationAtPosition pos)
+        -- a secret is picked by the location it lies under
         chooseOneM pid do
           questionLabeled "gateKey.look"
           causedBy attrs
-          targets temples \l -> lookAtFacedownSide pid l
+          targets (ordNub $ temples <> map fst under) \l -> chooseOrRunOneM pid do
+            questionLabeled "gateKey.lookAt"
+            causedBy attrs
+            when (l `elem` temples) $ labeled "gateKey.facedownSide" $ lookAtFacedownSide pid l
+            for_ (lookup l under) \code -> labeled "gateKey.secret" do
+              secret <-
+                if code == toCardCode Allies.starla
+                  then PlayerCard <$> genPlayerCard Allies.starla (Just pid)
+                  else EncounterCard <$> genEncounterCard Enemies.recurringNightmare
+              chooseOneM pid do
+                questionLabeled "gateKey.secretIs"
+                causedBy attrs
+                showing [secret]
+                labeled "continue" $ pure ()
       pure o
     _ -> GateKey <$> runMessage msg attrs

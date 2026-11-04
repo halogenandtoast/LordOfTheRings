@@ -1,11 +1,16 @@
 module LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived (templeOfTheDeceived) where
 
+import LordOfTheRings.Ability (anyPlayer, restricted)
+import LordOfTheRings.Ability.Types (AbilityCost (Free), AbilityType (ActionAbility))
 import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Criteria (Criterion (AnyCriteria, DuringPhase, LocationExists))
+import LordOfTheRings.Phase (Phase (TravelPhase))
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Grid (Pos (..))
-import LordOfTheRings.Matcher (LocationMatcher (IsActiveLocation, LocationWithId), selectAny)
+import LordOfTheRings.Helpers.Campaign (templeSecrets)
+import LordOfTheRings.Matcher (LocationMatcher (IsActiveLocation, LocationAtPosition, LocationWithId), selectAny)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
@@ -16,7 +21,7 @@ import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Window (..), WindowType (Explored))
 
 newtype TempleOfTheDeceived = TempleOfTheDeceived ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 -- | The removals are the setup card's; Hall of Beorn keeps 2 Faithless Desecrators, the
@@ -39,6 +44,16 @@ templeOfTheDeceived =
       , (Treacheries.dwindlingSupplies, 1)
       , (Enemies.faithlessDesecrator, 3)
       ]
+
+-- | Campaign: "Travel Action: Flip over a secret at your location." The players' location
+-- is the active location.
+instance HasAbilities TempleOfTheDeceived where
+  getAbilities (TempleOfTheDeceived a) =
+    [ anyPlayer
+        $ restricted a 1 (DuringPhase TravelPhase <> AnyCriteria [LocationExists (IsActiveLocation <> LocationAtPosition pos) | (pos, _) <- templeSecrets a])
+        $ ActionAbility Free
+    | isJust a.campaign
+    ]
 
 {- | The encounter deck is built from Temple of the Deceived, Ruins of Numenor and Drowned
 Dead; The Stormcaller Elite's Captain Sahír and Na'asiyah come into play under the players,

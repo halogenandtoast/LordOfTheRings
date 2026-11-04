@@ -1498,7 +1498,11 @@
   },
   "gateKey": {
     "claim": "Gate Key: choose a hero to exhaust to claim Gate Key and attach it to that hero",
-    "look": "Gate Key: choose a Temple of the Deceived to look at its facedown side"
+    "look": "Gate Key: choose a Temple of the Deceived to look at its facedown side, or the location a secret lies under",
+    "lookAt": "Gate Key: look at",
+    "facedownSide": "Its facedown side",
+    "secret": "The secret under it",
+    "secretIs": "Gate Key: the secret is"
   },
   "junglePath": {
     "exhaust": "Jungle Path: exhaust a character with at least 2 attack"
