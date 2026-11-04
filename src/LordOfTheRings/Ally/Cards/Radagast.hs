@@ -35,7 +35,7 @@ instance RunMessage Radagast where
           questionLabeled "chooseX"
           causedBy a
           for_ [1 .. countTokens Resource a.allyTokens] \x -> labeledWith "xEquals" [intVar "x" x] do
-            removeTokens a a Resource x
+            spendResourcesFrom pid a x
             healDamage a c x
       pure s
     _ -> Radagast <$> runMessage msg a

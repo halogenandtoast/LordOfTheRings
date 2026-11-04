@@ -20,6 +20,7 @@ instance RunMessage AllyAttrs where
     Exhaust (isTarget attrs -> True) -> do
       blocked <- elem CannotExhaust <$> getModifiers attrs
       exhausting (not blocked) attrs
+    Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
     AttackWith (isTarget attrs -> True) -> do
       spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
       (attackingL .~ True) <$> exhausting (not spared) attrs
@@ -70,10 +71,8 @@ instance RunMessage AllyAttrs where
       pushAll $ map PutInDiscard attrs.allyFacedown
       pure $ attrs & facedownL .~ []
 
--- | The character exhausts, when it does, opening the window for responses to it exhausting.
+-- | The character exhausts, its When and After windows framing it.
 exhausting :: HasQueue Message m => Bool -> AllyAttrs -> m AllyAttrs
-exhausting exhausts attrs
-  | exhausts && not attrs.allyExhausted = do
-      push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
-      pure $ attrs & exhaustedL .~ True
-  | otherwise = pure attrs
+exhausting exhausts attrs = do
+  when (exhausts && not attrs.allyExhausted) $ pushAll $ doFrame (Exhaust $ toTarget attrs) (Exhausted $ toTarget attrs)
+  pure attrs

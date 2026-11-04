@@ -1817,14 +1817,14 @@ runGameMessage msg g = case msg of
   SpendResourcesChosen pid True sphere n chosen -> do
     heroes <- traverse getHero =<< select AnyHero
     payers <- filterM (heroPaysFor sphere) heroes
-    push $ spendChosen (PlayerSource pid) pid True sphere n chosen [(h.id, h.resources) | h <- payers]
+    push $ spendChosen pid True sphere n chosen [(h.id, h.resources) | h <- payers]
     pure g
   DiscardGroupResources pid n | n > 0 -> do
     heroes <- filter ((> 0) . (.resources)) <$> (traverse getHero =<< select AnyHero)
     unless (null heroes)
       $ push
       $ questionLabel (ikeyWith "label.discardMore" [intVar "count" n]) pid
-      $ [ targetLabel h [RemoveTokens (PlayerSource pid) (toTarget h) Resource 1, DiscardGroupResources pid (n - 1)]
+      $ [ targetLabel h [RemoveTokens GameSource (toTarget h) Resource 1, DiscardGroupResources pid (n - 1)]
         | h <- heroes
         ]
     pure g
@@ -3894,7 +3894,7 @@ payFor g pid card fromHand windows host discount = do
             questionLabel (ikey "label.payFromAlly") pid
               $ [ targetLabel
                     aid
-                    [ RemoveTokens (PlayerSource pid) (toTarget aid) Resource k
+                    [ SpendResourcesFrom pid [(toTarget aid, k)]
                     , ReduceActiveCost costId k
                     , PayCost costId
                     ]

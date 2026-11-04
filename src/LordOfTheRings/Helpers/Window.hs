@@ -404,7 +404,9 @@ costMessages :: Source -> AbilityCost -> [Message]
 costMessages source = \case
   Free -> []
   ExhaustCost target -> [Exhaust target]
-  ResourceCost target n -> [RemoveTokens source target Resource n]
+  ResourceCost target n -> case source of
+    PlayerSource pid -> [SpendResourcesFrom pid [(target, n)]]
+    _ -> [RemoveTokens source target Resource n]
   DiscardFromHandCost pid n -> [ChooseAndDiscardFromHand pid source n]
   RaiseThreatCost n -> case source of
     PlayerSource pid -> [RaiseThreat pid n]

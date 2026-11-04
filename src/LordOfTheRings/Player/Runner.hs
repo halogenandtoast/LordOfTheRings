@@ -46,7 +46,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
   Window (Window),
-  WindowType (CardsDrawn, DiscardedFromDeck, DrewForResourcePhase, SetupHandDrawn, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  WindowType (CardsDrawn, DiscardedFromDeck, DrewForResourcePhase, SetupHandDrawn, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ResourcesSpent, ThreatRaised),
   Timing (After),
   mkAfter,
   mkWhen,
@@ -408,36 +408,44 @@ runPlayer msg player = case msg of
     CheckWindows ws | notNull [() | Window After (EnemyAttacking _ _) <- ws] ->
       pure $ player & usedAbilitiesL %~ filter ((/= PerAttack) . (.usedAbilityLimitType))
     EndRound -> pure $ player & usedAbilitiesL %~ filter ((/= PerRound) . (.usedAbilityLimitType))
-    SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id && n > 0 -> do
+    -- the heroes are picked one by one, then pay together, as one payment
+    SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id -> do
       payers <- filter ((`notElem` used) . (.id)) <$> payingHeroes sphere player
       push
-        $ questionLabel
-          (ikeyWith "label.payFromDifferentHero" [intVar "count" n])
-          pid
-          [ targetLabel
-              x
-              [ RemoveTokens (toSource player) (toTarget x) Resource 1
-              , SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)
-              ]
-          | x <- payers
-          ]
+        $ if n <= 0 || null payers
+          then SpendResourcesFrom pid [(HeroTarget h, 1) | h <- reverse used]
+          else
+            questionLabel
+              (ikeyWith "label.payFromDifferentHero" [intVar "count" n])
+              pid
+              [targetLabel x [SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)] | x <- payers]
       pure player
     SpendResourcesFromOneHero pid sphere n | pid == player.id && n > 0 -> do
       payers <- filter ((>= n) . (.resources)) <$> payingHeroes sphere player
       push
-        $ chooseOrRunOne pid [targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource n] | x <- payers]
+        $ chooseOrRunOne pid [targetLabel x [SpendResourcesFrom pid [(toTarget x, n)]] | x <- payers]
+      pure player
+    SpendResourcesFrom pid pools | pid == player.id -> do
+      let paid = [(t, k) | (t, k) <- pools, k > 0]
+      pushAll [RemoveTokens (toSource player) t Resource k | (t, k) <- paid]
+      -- a card's cost opens the window once it is paid, as 'PaidCost'
+      payingForCard <- any ((== pid) . (.activeCostPlayer)) <$> getsGame gameActiveCosts
+      unless payingForCard do
+        spent <- for paid \(t, k) -> (,k) . fromMaybe pid <$> characterController t
+        pushWhen (notNull spent)
+          $ CheckWindows [mkAfter $ ResourcesSpent p (sum ks) | (p, ks) <- Map.toList (Map.fromListWith (<>) [(p, [k]) | (p, k) <- spent])]
       pure player
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
       push $ case filter ((> 0) . (.resources)) payers of
-        [x] -> RemoveTokens (toSource player) (toTarget x) Resource n
+        [x] -> SpendResourcesFrom pid [(toTarget x, n)]
         _ -> SpendResourcesChosen pid False sphere n []
       pure player
     SpendResourcesChosen pid False sphere n chosen | pid == player.id -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
-      push $ spendChosen (toSource player) pid False sphere n chosen [(h.id, h.resources) | h <- payers]
+      push $ spendChosen pid False sphere n chosen [(h.id, h.resources) | h <- payers]
       pure player
     _ -> pure player
    where

@@ -1753,13 +1753,17 @@ discardEventsFromHand = push . DiscardEventsFromHand
 
 -- | The player spends 1 resource, of any sphere, from a hero he controls, as "Spend 1
 -- resource from a hero you control" reads.
-spendResourceFromAHero :: (ReverseQueue m, Sourceable source, Targetable source) => PlayerId -> source -> m ()
+spendResourceFromAHero :: (ReverseQueue m, Targetable source) => PlayerId -> source -> m ()
 spendResourceFromAHero pid source = do
   heroes <- filterM (heroCanSpend <=< getHero) =<< select (HeroControlledBy (PlayerWithId pid) <> HeroWithResources)
   chooseOrRunOneM pid do
     questionLabeled "spendResourceFromAHero"
     causedBy source
-    targets heroes \h -> removeTokens source h Resource 1
+    targets heroes \h -> spendResourcesFrom pid h 1
+
+-- | The player spends resources from the pool of a character he controls, as one payment.
+spendResourcesFrom :: (ReverseQueue m, Targetable target) => PlayerId -> target -> Int -> m ()
+spendResourcesFrom pid target n = push $ SpendResourcesFrom pid [(toTarget target, n)]
 {- | The players as a group may spend resources of the sphere for what follows, the player
 asked; without enough among them, they cannot.
 -}

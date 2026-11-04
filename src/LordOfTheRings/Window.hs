@@ -171,6 +171,9 @@ data WindowType
     BecameActiveLocation LocationId
   | -- | the shadow card's effect raised its enemy's attack
     ShadowIncreasedAttack CardId EnemyId
+  | -- | the player spent this many resources from the pools of characters he controls, as
+    -- one payment, however many pools it was paid from
+    ResourcesSpent PlayerId Int
   | -- | the card was paid for from these heroes' and allies' pools, as Master Ironsmith reads
     PaidFrom Target [Target]
   | -- | the attachment was attached to the host, as it entered play or moved: its traits
