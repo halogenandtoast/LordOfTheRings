@@ -1,21 +1,15 @@
 -- | What The Tower of Cirith Ungol's cards share: the Orcs fighting among themselves, as
--- Torch-lit Hall and stage 2B discard for an enemy, and the stage the players are at.
+-- Torch-lit Hall and stage 2B discard for an enemy.
 module LordOfTheRings.Scenario.Scenarios.TheTowerOfCirithUngol.Helpers (
   orcsFight,
   resolveOrcsFight,
-  atStage,
 ) where
 
 import LordOfTheRings.Card (CardType (EnemyType), EncounterCard, cdName, toCardDef)
-import LordOfTheRings.Classes.HasGame
-import LordOfTheRings.Classes.Entity (toAttrs)
-import LordOfTheRings.Entities (entitiesQuests)
-import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Card.CardDef (cdStage)
 import LordOfTheRings.Source (Sourceable)
 import LordOfTheRings.Target (Targetable)
 
@@ -42,12 +36,3 @@ resolveOrcsFight cards = for_ (find (cardMatches $ CardWithType EnemyType) cards
         questionLabeled "orcsFight.discardCopy"
         targets copies discard
 
--- | The main quest is at that stage, on its B side, with at least that much progress, as
--- Topmost Chamber reads "at least 18 progress on stage 2B".
-atStage :: HasGame m => Int -> Int -> m Bool
-atStage n progress =
-  getsGame
-    $ any (\q -> let a = toAttrs q in cdStage (toCardDef a) == Just n && a.flipped && a.progress >= progress)
-    . toList
-    . entitiesQuests
-    . gameEntities
