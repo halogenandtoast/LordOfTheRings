@@ -113,6 +113,10 @@ spec = describe "The Ghost of Framsburg" do
     hall <- staged Locations.hauntedHall
     _ <- setEncounterDeck [Objectives.cryptKey, filler, Enemies.evilSpectre, Treacheries.afraidOfTheDark, Treacheries.eyesInTheDark]
     run $ TravelTo hall
+    -- with no Loot to choose between, the player is shown the cards he looked at
+    q <- fromJustNote "no cards shown" <$> getQuestion pid
+    map toCardCode (searchedCards q) `shouldBe` map toCardCode [Objectives.cryptKey, filler, Enemies.evilSpectre, Treacheries.afraidOfTheDark]
+    chooseLabel "$label.continue" pid
     hallCard <- (.cardId) <$> locationOf Locations.hauntedHall
     key <- objectiveOf Objectives.cryptKey
     key.placement `shouldBe` StagingArea
@@ -134,11 +138,12 @@ spec = describe "The Ghost of Framsburg" do
     map objectiveCardCode <$> objectives `shouldReturn` [toCardCode Objectives.oldLantern]
     codes <$> getEncounterDiscard `shouldReturn` [toCardCode Objectives.cryptKey]
 
-  it "shuffles the discard pile in when the deck runs short of the Discover value" . framsburgTest $ \_ -> do
+  it "shuffles the discard pile in when the deck runs short of the Discover value" . framsburgTest $ \pid -> do
     passage <- staged Locations.moonlitPassage
     _ <- setEncounterDeck [filler]
     setDiscard [Objectives.scathasTeeth]
     run $ TravelTo passage
+    chooseLabel "$label.continue" pid
     map objectiveCardCode <$> objectives `shouldReturn` [toCardCode Objectives.scathasTeeth]
     codes <$> getEncounterDiscard `shouldReturn` [toCardCode filler]
     getEncounterDeck `shouldReturn` []
@@ -230,6 +235,7 @@ spec = describe "The Ghost of Framsburg" do
     getLocationThreat stairs `shouldReturn` 2
     _ <- setEncounterDeck [filler, Enemies.werewolf, Enemies.blackBats]
     run $ TravelTo stairs
+    chooseLabel "$label.continue" pid
     codes <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.blackBats]
     getThreat pid `shouldReturn` 25
 
@@ -237,6 +243,7 @@ spec = describe "The Ghost of Framsburg" do
     stairs <- staged Locations.hiddenStaircase
     _ <- setEncounterDeck [Enemies.evilSpectre, filler]
     run $ TravelTo stairs
+    chooseLabel "$label.continue" pid
     (.placement) <$> enemyOf Enemies.evilSpectre `shouldReturn` StagingArea
     getThreat pid `shouldReturn` 27
 

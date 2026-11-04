@@ -136,6 +136,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
         $ KeyMap.insert "playProhibitions" (toJSON prohibitions)
         $ KeyMap.insert "underneath" (toJSON underneath)
+        $ KeyMap.insert "underneathPlayer" (toJSON underneathPlayer)
         $ KeyMap.insert "searchZones" (toJSON $ searchZones g)
         $ KeyMap.insert "captured" (toJSON $ fmap length (fromMeta "captured" :: Map CardId [Value]))
         $ KeyMap.insert "capturedDecks" (toJSON $ fmap length (fromMeta "capturedDecks" :: Map PlayerId [Value]))
@@ -147,6 +148,10 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the Orcs' quest stage and its progress (Race Across Harad)
         $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
         $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")
+        -- the side quest deck's size, its cards kept hidden (Fire in the Night)
+        $ KeyMap.insert "sideQuestDeck" (toJSON $ length (fromMeta "sideQuestDeck" :: [Value]))
+        -- the damage a set-aside card keeps, as Cold-Drake's (The Withered Heath)
+        $ KeyMap.insert "setAsideDamage" (toJSON (fromMeta "setAsideDamage" :: Map CardId Int))
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
@@ -224,22 +229,28 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       , let mods = runReadGame (playProhibitions p.id c) v
       , notNull mods
       ]
-  -- the cards facedown under each card, counted, by its card id: those under an
-  -- objective, as The Orcs' Search, and those a scenario keeps under its cards in its
+  -- the encounter cards facedown under each card, counted, by its card id: those under
+  -- an objective, as The Orcs' Search, and those a scenario keeps under its cards in its
   -- meta's "underneath", as The Steward's Fear's underworld cards under its locations
   underneath :: Map CardId Int
   underneath =
     Map.filter (> 0)
       $ Map.unionWith
         (+)
-        ( mapFromList
-            $ [(o.objectiveCardId, length o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)]
-            <> [(q.questCardId, length q.questUnderneath) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
-            -- and the player cards under a location, as Truly Lost places each player's hand
-            -- (The Steward's Fear keeps its encounter cards there in its meta)
-            <> [(l.locationCardId, length [() | PlayerCard _ <- l.locationUnderneath]) | l <- map toAttrs (toList $ entitiesLocations merged.entities)]
-        )
+        (under \c -> length [() | EncounterCard _ <- c])
         (maybe mempty (fmap length) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [Value])))
+  -- and the player cards, shown with a player card back, as the hands Truly Lost places
+  -- under locations
+  underneathPlayer :: Map CardId Int
+  underneathPlayer = Map.filter (> 0) $ under players <> mapFromList [(l.locationCardId, players l.locationUnderneath) | l <- map toAttrs (toList $ entitiesLocations merged.entities)]
+  players c = length [() | PlayerCard _ <- c]
+  -- what lies under objectives and quests (the encounter cards under a location are
+  -- counted from the meta, where The Steward's Fear keeps them)
+  under :: ([Card] -> Int) -> Map CardId Int
+  under n =
+    mapFromList
+      $ [(o.objectiveCardId, n o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)]
+      <> [(q.questCardId, n q.questUnderneath) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
   -- what the scenario keeps by this key in its meta, as Escape from Mount Gram's captured
   -- cards, under each card and in each player's captured deck
   fromMeta :: FromJSON a => Monoid a => Key.Key -> a

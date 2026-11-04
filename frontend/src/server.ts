@@ -152,6 +152,8 @@ export interface ServerGame {
   attackAdding?: Record<string, number>
   /** How many cards lie facedown under each card, by its card id, as underworld cards under a location. */
   underneath?: Record<string, number>
+  /** How many player cards lie facedown under each card, by its card id, as the hands Truly Lost places under locations. */
+  underneathPlayer?: Record<string, number>
   /** How many captured cards lie under each card, by its card id (Escape from Mount Gram). */
   captured?: Record<string, number>
   /** How many cards are in each player's captured deck, by player id (Escape from Mount Gram). */
@@ -163,6 +165,10 @@ export interface ServerGame {
   stormcallerProgress?: number | null
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
+  /** The side quest deck's size (Fire in the Night). */
+  sideQuestDeck?: number
+  /** The damage each set-aside card keeps, by its card id, as Cold-Drake set aside by The Withered Heath's stage 3A. */
+  setAsideDamage?: Record<string, number>
   /** The Orcs' quest stage and the progress on it (Race Across Harad). */
   orcsStage?: Card | null
   orcsProgress?: number | null

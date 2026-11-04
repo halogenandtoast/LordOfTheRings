@@ -369,6 +369,7 @@
   "searchPutIntoPlay": "Put allies into play",
   "revealOne": "Reveal 1 of these cards; the rest are discarded",
   "discoverChooseLoot": "Discover: choose a Loot objective to attach to the location",
+  "discoverLooked": "Discover: the cards looked at",
   "revealOneRestToBottom": "Reveal 1 of these cards; the rest go to the bottom of the encounter deck",
   "payOrDiscard": "Pay 1 resource or discard the card",
   "payResource": "Pay 1 resource",

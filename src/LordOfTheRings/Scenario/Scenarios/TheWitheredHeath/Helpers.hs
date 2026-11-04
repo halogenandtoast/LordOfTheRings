@@ -9,16 +9,17 @@ module LordOfTheRings.Scenario.Scenarios.TheWitheredHeath.Helpers (
   setAsideColdDrake,
   healSetAsideColdDrake,
   returnColdDrake,
+  setAsideDamageOf,
 ) where
 
 import Data.Aeson.Types (parseMaybe)
-import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Card (toCard, toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Game.Base (gameScenario)
-import LordOfTheRings.Id (EnemyId)
+import LordOfTheRings.Id (CardId, EnemyId)
 import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithCardCode), cardIs, cardMatches, getEnemy, select)
 import LordOfTheRings.Message (Message (..))
 import LordOfTheRings.Message.Lifted (ReverseQueue, addSetAsideToStaging, setAsideEnemy)
@@ -38,10 +39,15 @@ getColdDrake :: HasGame m => m (Maybe EnemyId)
 getColdDrake = headMay <$> select coldDrake
 
 {- | The damage set-aside Cold-Drake keeps (stage 3A: "Do not remove damage tokens from
-it."), held in the scenario's meta from stage 3A until stage 4A brings it back.
+it."), held in the scenario's meta from stage 3A until stage 4A brings it back, by the
+set-aside card's id under "setAsideDamage", as the board shows it.
 -}
 setAsideDrakeDamage :: HasGame m => m Int
-setAsideDrakeDamage = getsGame (fromMaybe 0 . parseMaybe parseJSON . scenarioMeta . toAttrs . gameScenario)
+setAsideDrakeDamage = getsGame (sum . setAsideDamageOf . scenarioMeta . toAttrs . gameScenario)
+
+-- | The damage the scenario's meta keeps on each set-aside card, by its card id.
+setAsideDamageOf :: Value -> Map CardId Int
+setAsideDamageOf = fromMaybe mempty . parseMaybe (withObject "meta" (.: "setAsideDamage"))
 
 {- | Stage 3A: "Set Cold-Drake aside, out of play. (Do not remove damage tokens from it.)" It
 leaves play, and the scenario keeps its damage.
@@ -49,8 +55,8 @@ leaves play, and the scenario keeps its damage.
 setAsideColdDrake :: ReverseQueue m => m ()
 setAsideColdDrake =
   getColdDrake >>= traverse_ \eid -> do
-    damage <- (.damage) <$> getEnemy eid
-    push $ ScenarioSpecific "witheredHeath.drakeSetAside" (toJSON damage)
+    e <- getEnemy eid
+    push $ ScenarioSpecific "witheredHeath.drakeSetAside" (object ["setAsideDamage" .= (singletonMap (toCard e).id e.damage :: Map CardId Int)])
     setAsideEnemy eid
 
 -- | Stage 3B: "remove 3 damage tokens from the set-aside Cold-Drake."

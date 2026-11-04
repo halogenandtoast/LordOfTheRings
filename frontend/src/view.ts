@@ -184,10 +184,13 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   // cards under a location (The Steward's Fear) and those under The Orcs' Search
   const stackUnder = (host: CardView) => {
     const count = game.underneath?.[host.id] ?? 0
+    // the player cards under it, as the hands Truly Lost places under locations
+    const players = game.underneathPlayer?.[host.id] ?? 0
     // and the player cards captured under it (Escape from Mount Gram)
     const captured = game.captured?.[host.id] ?? 0
     return [
       ...(count ? [card('', `underneath-${host.id}`, { facedown: 'encounter', name: ikey('log.cardsUnderneath', { count }), attachedTo: host.id })] : []),
+      ...(players ? [card('', `underneath-player-${host.id}`, { facedown: 'player', name: ikey('log.cardsUnderneath', { count: players }), attachedTo: host.id })] : []),
       ...(captured ? [card('', `captured-${host.id}`, { facedown: 'player', name: ikey('log.capturedUnderneath', { count: captured }), attachedTo: host.id })] : []),
     ]
   }
@@ -418,7 +421,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       encounterDiscard: game.scenario.encounterDiscard.length,
       discard: game.scenario.encounterDiscard.map((c) => card(c.cardCode, c.id)),
       victory: game.scenario.victoryDisplay.map((c) => card(c.cardCode, c.id)),
-      setAside: game.scenario.setAside.map((c) => card(c.cardCode, c.id)),
+      setAside: game.scenario.setAside.map((c) => card(c.cardCode, c.id, { damage: game.setAsideDamage?.[c.id] ?? 0 })),
       victoryPoints: game.scenario.victoryDisplay.reduce((total, c) => total + (def(c.cardCode).victoryPoints ?? 0), 0),
       heading: game.scenario.heading?.toLowerCase() ?? null,
       mode: game.scenario.mode ?? 'NormalMode',
@@ -430,6 +433,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       corsairDeck: game.scenario.corsairDeckSize ?? null,
       corsairDiscard: (game.scenario.corsairDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       cavesDeck: game.scenario.cavesDeckSize ?? 0,
+      sideQuestDeck: game.sideQuestDeck ?? 0,
       evilCreaturesDeck: game.scenario.evilCreaturesDeckSize ?? null,
       evilCreaturesDiscard: (game.scenario.evilCreaturesDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped }) : null,

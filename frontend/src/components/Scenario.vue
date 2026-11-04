@@ -42,6 +42,8 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
     </template>
     <!-- the Caves deck beside the encounter deck (Ered Mithrin) -->
     <CardBack v-if="scenario.cavesDeck > 0" :count="scenario.cavesDeck" back="encounter" :title="$t('log.cavesDeck', { count: scenario.cavesDeck })" data-pile="deck-caves" />
+    <!-- the side quest deck (Fire in the Night) -->
+    <CardBack v-if="scenario.sideQuestDeck > 0" :count="scenario.sideQuestDeck" back="encounter" :title="$t('log.sideQuestDeck', { count: scenario.sideQuestDeck })" data-pile="deck-side-quest" />
     <!-- the Evil Creatures deck, with its own discard pile (Journey Up the Anduin) -->
     <template v-if="scenario.evilCreaturesDeck !== null">
       <DiscardPile :cards="scenario.evilCreaturesDiscard" back="encounter" :choices="choices" @choose="emit('choose', $event)" data-pile="discard-evil-creatures" />
