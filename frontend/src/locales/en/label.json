@@ -2220,5 +2220,21 @@
     "raiseThreat": "Raise your threat by {n}, 1 for each character you control",
     "discard": "Discard a character you control",
     "character": "Injured Companion: choose a character to discard"
+  },
+  "findWater": {
+    "ready": "Find Water: choose a hero to ready"
+  },
+  "desertOasis": {
+    "heal": "Desert Oasis: heal 1 damage from a character ({count} left)"
+  },
+  "sandstorm": {
+    "choose": "Sandstorm: choose one",
+    "discardHand": "Discard your hand",
+    "damage": "Assign {n} damage among characters you control",
+    "discardAttachment": "Discard the highest cost attachment you control",
+    "attachment": "Sandstorm: choose the attachment to discard"
+  },
+  "heatExhaustion": {
+    "exhaust": "Heat Exhaustion: choose a character to exhaust and deal 1 damage to"
   }
 }

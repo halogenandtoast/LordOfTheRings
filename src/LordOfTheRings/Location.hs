@@ -397,6 +397,8 @@ import LordOfTheRings.Location.Cards.StrongholdTower
 import LordOfTheRings.Location.Cards.GatesOfCarnDum
 import LordOfTheRings.Location.Cards.InnerSanctum
 import LordOfTheRings.Location.Cards.CursedHalls
+import LordOfTheRings.Location.Cards.ToweringDunes
+import LordOfTheRings.Location.Cards.DesertOasis
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -840,5 +842,7 @@ allLocations =
         , SomeLocationCard gatesOfCarnDum
         , SomeLocationCard innerSanctum
         , SomeLocationCard cursedHalls
+        , SomeLocationCard toweringDunes
+        , SomeLocationCard desertOasis
         ]
     ]

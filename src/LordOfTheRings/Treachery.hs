@@ -330,6 +330,8 @@ import LordOfTheRings.Treachery.Cards.AllIsLost
 import LordOfTheRings.Treachery.Cards.NowhereToHide
 import LordOfTheRings.Treachery.Cards.InjuredCompanion
 import LordOfTheRings.Treachery.Cards.Enfeebled
+import LordOfTheRings.Treachery.Cards.Sandstorm
+import LordOfTheRings.Treachery.Cards.HeatExhaustion
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -687,5 +689,7 @@ allTreacherys =
         , SomeTreacheryCard nowhereToHide
         , SomeTreacheryCard injuredCompanion
         , SomeTreacheryCard enfeebled
+        , SomeTreacheryCard sandstorm
+        , SomeTreacheryCard heatExhaustion
         ]
     ]

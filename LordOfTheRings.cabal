@@ -1164,6 +1164,7 @@ library
       LordOfTheRings.Location.Cards.DenseThickets
       LordOfTheRings.Location.Cards.DesecratedGrounds
       LordOfTheRings.Location.Cards.DesecratedRuinsNightmare
+      LordOfTheRings.Location.Cards.DesertOasis
       LordOfTheRings.Location.Cards.DesolateMeadow
       LordOfTheRings.Location.Cards.DevilsMirk
       LordOfTheRings.Location.Cards.DocksideStreet
@@ -1430,6 +1431,7 @@ library
       LordOfTheRings.Location.Cards.TortureChamber
       LordOfTheRings.Location.Cards.TortureChamberMountGram
       LordOfTheRings.Location.Cards.TowerGate
+      LordOfTheRings.Location.Cards.ToweringDunes
       LordOfTheRings.Location.Cards.TraitorsDen
       LordOfTheRings.Location.Cards.TreacherousBluffs
       LordOfTheRings.Location.Cards.TrollFells
@@ -1640,6 +1642,7 @@ library
       LordOfTheRings.Quest.Cards.FightingInTheStreets
       LordOfTheRings.Quest.Cards.FinalConfrontation
       LordOfTheRings.Quest.Cards.FindShelter
+      LordOfTheRings.Quest.Cards.FindWater
       LordOfTheRings.Quest.Cards.FleeingFromTharbad
       LordOfTheRings.Quest.Cards.FliesAndSpiders
       LordOfTheRings.Quest.Cards.FlightFromMountGram
@@ -2039,6 +2042,7 @@ library
       LordOfTheRings.Treachery.Cards.HatefulSearch
       LordOfTheRings.Treachery.Cards.HauntingFog
       LordOfTheRings.Treachery.Cards.HazardousTerrain
+      LordOfTheRings.Treachery.Cards.HeatExhaustion
       LordOfTheRings.Treachery.Cards.HeavyCurse
       LordOfTheRings.Treachery.Cards.HiddenThreat
       LordOfTheRings.Treachery.Cards.HoldSteady
@@ -2142,6 +2146,7 @@ library
       LordOfTheRings.Treachery.Cards.RunForYourLives
       LordOfTheRings.Treachery.Cards.Sacked
       LordOfTheRings.Treachery.Cards.SahirsGettingAway
+      LordOfTheRings.Treachery.Cards.Sandstorm
       LordOfTheRings.Treachery.Cards.SauronsAgent
       LordOfTheRings.Treachery.Cards.SavageFray
       LordOfTheRings.Treachery.Cards.SaveUs

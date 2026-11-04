@@ -414,6 +414,8 @@ allLocationCards =
       , gatesOfCarnDum
       , innerSanctum
       , cursedHalls
+      , toweringDunes
+      , desertOasis
       ]
 
 drownedTreasury :: CardDef
@@ -3171,3 +3173,12 @@ cursedHalls =
     { cdCardTraits = setFromList [CarnDum, Underground]
     , cdShadowEffect = True
     }
+
+-- * The Sands of Harad: the shared encounter sets (Desert Sands, Jungle Forest). Easy mode
+-- copy counts from Hall of Beorn's scenario pages.
+
+toweringDunes :: CardDef
+toweringDunes = (location "16049" "Towering Dunes" DesertSands 3 3 4) {cdCardTraits = setFromList [Desert], cdEasyModeQuantity = Just 2}
+
+desertOasis :: CardDef
+desertOasis = (location "16050" "Desert Oasis" DesertSands 2 2 2) {cdCardTraits = setFromList [Desert]}

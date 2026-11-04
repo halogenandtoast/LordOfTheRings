@@ -340,6 +340,8 @@ allTreacheryCards =
       , nowhereToHide
       , injuredCompanion
       , enfeebled
+      , sandstorm
+      , heatExhaustion
       ]
 
 deepDeepDark :: CardDef
@@ -2189,3 +2191,14 @@ injuredCompanion = (treachery "16046" "Injured Companion" HaradTerritory 3) {cdS
 
 enfeebled :: CardDef
 enfeebled = (treachery "16047" "Enfeebled" HaradTerritory 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+sandstorm :: CardDef
+sandstorm =
+  (treachery "16051" "Sandstorm" DesertSands 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+heatExhaustion :: CardDef
+heatExhaustion = (treachery "16052" "Heat Exhaustion" DesertSands 2) {cdShadowEffect = True}

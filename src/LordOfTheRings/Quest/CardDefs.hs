@@ -272,6 +272,7 @@ allQuestCards =
       , theWitchKingsGift
       , southronChampion
       , inEnemyTerritory
+      , findWater
       ]
 
 theDrippingWalls :: CardDef
@@ -1136,3 +1137,6 @@ inEnemyTerritory =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+findWater :: CardDef
+findWater = (encounterSideQuest "16048" "Find Water" DesertSands 6) {cdVictoryPoints = Just 10}
