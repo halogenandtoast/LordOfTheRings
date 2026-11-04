@@ -22,7 +22,7 @@ instance RunMessage MasterOfLore where
   runMessage msg s@(MasterOfLore a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       errata <- playsWithErrata a.owner
-      let lower t = phaseModifier a (PlayerTarget pid) $ (if errata then ReduceNextCostOf else ReduceCostOf) (CardWithType t <> CardWithSphere Lore) 1
+      let lower t = phaseModifier a (PlayerTarget pid) $ (if errata then ReduceNextCostOf else ReduceCostOfToMinimumOne) (CardWithType t <> CardWithSphere Lore) 1
       chooseOneM pid do
         questionLabeled "masterOfLore.name"
         causedBy a
