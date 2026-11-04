@@ -72,6 +72,8 @@ data HeroMatcher
     HeroWithResourcesAtLeast Int
   | -- | a hero with a copy of the card attached
     HeroWithAttachment CardCode
+  | -- | a hero with a player card attached, as "with a player attachment" reads
+    HeroWithPlayerAttachment
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]
@@ -115,6 +117,8 @@ data AllyMatcher
     AllyEnteredPlayThisRound
   | -- | an ally with an attachment of the trait attached
     AllyWithAttached Trait
+  | -- | an ally with a player card attached, as "with a player attachment" reads
+    AllyWithPlayerAttachment
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]
