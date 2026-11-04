@@ -418,13 +418,14 @@ seatHeroes seats l
     | otherwise = min (length (filter (`notElem` newTitles) oldTitles)) (length (filter (`notElem` oldTitles) newTitles))
 
 -- | The scenarios whose campaign card reads "Each player may change hero cards without
--- incurring the +1 threat penalty".
+-- incurring the +1 threat penalty", The Passage of the Marshes' as the FAQ's errata has it.
 freeHeroChange :: [ScenarioId]
 freeHeroChange =
   [ "the-wastes-of-eriador"
   , "the-battle-of-carn-dum"
   , "the-ring-goes-south"
   , "helms-deep"
+  , "the-passage-of-the-marshes"
   , "the-passing-of-the-grey-company"
   , "the-tower-of-cirith-ungol"
   , "the-black-gate-opens"
