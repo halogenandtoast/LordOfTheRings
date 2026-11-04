@@ -7,6 +7,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Character (getDefense, getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -145,6 +146,17 @@ spec = describe "Mount Gundabad player cards" do
           drawn `shouldSatisfy` all (`notElem` inHand)
     it "shuffles the hand away for as many new cards" $ sing (deckList [eowynCode, theodredCode, "01012"] testDeck.cards) 0
     it "draws 1 more for a unique Hobbit" $ sing (deckList [bilboCode, "01012", theodredCode] testDeck.cards) 1
+    it "shuffles an encounter card held in hand into the deck with the rest" . gameTest $ \pid -> do
+      _ <- putCardIntoHand pid Allies.greenwoodDefender
+      lost <- genEncounterCard Treacheries.lostInTheWild
+      putGame . (playersL . ix pid . handL <>~ [EncounterCard lost]) =<< getGame
+      song <- putCardIntoHand pid Events.drinkingSong
+      run $ ActionWindow pid
+      chooseTarget pid (CardIdTarget song.id)
+      hand <- map (.id) . (.hand) <$> getPlayer pid
+      length hand `shouldBe` 2
+      deck <- map (.id) . (.deck) <$> getPlayer pid
+      (lost.id `elem` deck || lost.id `elem` hand) `shouldBe` True
 
   describe "Sting" do
     it "is guarded by an enemy as it is played" . gameTestWith bilboDeck $ \pid -> do

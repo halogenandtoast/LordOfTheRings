@@ -2466,6 +2466,12 @@ runGameMessage msg g = case msg of
           PlayerCard pc | Just owner <- pc.owner -> do
             deck <- shuffleM (c : maybe [] (.deck) (Map.lookup owner acc.players))
             pure $ acc & playersL . ix owner . deckL .~ deck
+          -- an encounter card held in hand, as Lost in the Wild, goes into the holder's
+          -- deck: nothing keeps an encounter card out of a player's deck, as Recurring
+          -- Nightmare is shuffled into one
+          EncounterCard _ -> do
+            deck <- shuffleM (c : maybe [] (.deck) (Map.lookup holder acc.players))
+            pure $ acc & playersL . ix holder . deckL .~ deck
           _ -> pure acc
       )
       g'

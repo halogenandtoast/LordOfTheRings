@@ -629,7 +629,8 @@ data Message
     TurnShadowCardFaceUp EnemyId CardId
   | -- | a card in the first player's hand goes to the second player's hand
     GiveFromHand PlayerId CardId PlayerId
-  | -- | a card in the player's hand is shuffled into its owner's deck
+  | -- | a card in the player's hand is shuffled into its owner's deck, an encounter card
+    -- into the holder's
     ShuffleFromHandIntoOwnersDeck PlayerId CardId
   | {- | the card, from out of play, is shuffled into the player's deck, as Arkham's
     ShuffleCardsIntoDeck: an encounter card too, as Recurring Nightmare
