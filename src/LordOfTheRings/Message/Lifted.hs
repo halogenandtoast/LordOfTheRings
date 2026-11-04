@@ -250,6 +250,11 @@ drawCards source pid n = do
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard
 
+-- | The player reveals an encounter card, as "each other player reveals an encounter card"
+-- reads in The Lord of the Rings saga: he is its "you", and its surge stays with him.
+revealEncounterCardAs :: ReverseQueue m => PlayerId -> m ()
+revealEncounterCardAs pid = pushAll [SetRevealer (Just pid), RevealEncounterCard, SetRevealer Nothing]
+
 -- | The card, taken from the encounter deck, is revealed; an enemy is put into play engaged
 -- with the player, as Murzag reads.
 revealEncounterCardEngaged :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
@@ -1655,6 +1660,14 @@ putObjectiveHeroIntoPlayUnder pid = push . PutObjectiveHeroIntoPlayUnder pid
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+-- | The ally card, taken from where it was, comes into play in the staging area under no
+-- player's control, as Retreat from Osgiliath reads: the ally it becomes.
+putAllyIntoStagingArea :: ReverseQueue m => PlayerCard -> m AllyId
+putAllyIntoStagingArea card = do
+  aid <- getRandom
+  push $ PutAllyIntoStagingArea aid card
+  pure aid
 
 -- | The shadow card just dealt to the enemy is dealt face up, as Silver Lamp reads.
 turnShadowCardFaceUp :: ReverseQueue m => EnemyId -> CardId -> m ()
