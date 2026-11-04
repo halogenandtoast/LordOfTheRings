@@ -1053,12 +1053,16 @@ runGameMessage msg g = case msg of
   DoStep 1 (Destroy source target@(EnemyTarget eid)) | Map.member eid g.entities.enemies -> do
     enemy <- getEnemy eid
     stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
-    let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
+    let ec = MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
+        card = EncounterCard ec
         -- what a player's attack destroyed, for the attack to read as it resolves
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card Nothing | PlayerAttackSource _ <- [source]])
+        -- one of the Evil Creatures deck goes to its discard pile, even with victory
+        -- points (Journey Up the Anduin rules)
+        victory = cdVictoryPoints (toCardDef enemy) <* guard (not $ isEvilCreaturesCard (toAttrs g.scenario) ec)
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     -- one that stays in play for its own effect was still destroyed by the attack
-    if stays then pure (recorded g) else recorded <$> case cdVictoryPoints (toCardDef enemy) of
+    if stays then pure (recorded g) else recorded <$> case victory of
       Just _ -> do
         -- what is attached to it is discarded, an objective it guarded as a Key of The Three
         -- Trials, and a Mount, as Mordor Warg, goes to the staging area

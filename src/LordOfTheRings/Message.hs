@@ -318,6 +318,11 @@ data Message
   | -- | the card leaves the Caves deck, as a search takes it
     TakeFromCavesDeck EncounterCard
   | ShuffleCavesDeck
+  | -- | the top card of the Evil Creatures deck enters play for the source: added to the
+    -- staging area, or put into play engaged with the player (Journey Up the Anduin)
+    AddFromEvilCreaturesDeck Source (Maybe PlayerId)
+  | -- | the card the source took from the Evil Creatures deck, now in play, for it to act on
+    AddedFromEvilCreaturesDeck Source EncounterCard
   | -- | an encounter card in the player's hand is discarded, to the encounter discard pile,
     -- by an encounter card's effect, as Lost in the Wild's
     DiscardEncounterCardFromHand PlayerId CardId

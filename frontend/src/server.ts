@@ -115,6 +115,9 @@ export interface ServerGame {
     corsairDiscard?: Card[]
     /** The Caves deck's size (Ered Mithrin): Deep locations are replaced from it. */
     cavesDeckSize?: number
+    /** The Evil Creatures deck's size, while there is one, and its own discard pile (Journey Up the Anduin). */
+    evilCreaturesDeckSize?: number
+    evilCreaturesDiscard?: Card[]
     /** The player cards each encounter card, by its card id, guards: a Guarded (X) attachment, or Hobgoblin's card. */
     guardedPlayerCards?: Record<string, [string, Card][]>
     /** NormalMode, EasyMode or NightmareMode; older games carry only easyMode. */

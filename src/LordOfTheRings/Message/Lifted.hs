@@ -1495,6 +1495,15 @@ takeFromCavesDeck = push . TakeFromCavesDeck
 shuffleCavesDeck :: ReverseQueue m => m ()
 shuffleCavesDeck = push ShuffleCavesDeck
 
+-- | The top card of the Evil Creatures deck is added to the staging area, the source told
+-- of it with 'AddedFromEvilCreaturesDeck' (Journey Up the Anduin).
+addFromEvilCreaturesDeck :: (ReverseQueue m, Sourceable source) => source -> m ()
+addFromEvilCreaturesDeck source = push $ AddFromEvilCreaturesDeck (toSource source) Nothing
+
+-- | As 'addFromEvilCreaturesDeck', the card put into play engaged with the player.
+putFromEvilCreaturesDeckEngaged :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+putFromEvilCreaturesDeckEngaged source = push . AddFromEvilCreaturesDeck (toSource source) . Just
+
 -- | The Caves deck, top first.
 getCavesDeck :: HasGame m => m [EncounterCard]
 getCavesDeck = getsGame ((.cavesDeck) . toAttrs . (.scenario))

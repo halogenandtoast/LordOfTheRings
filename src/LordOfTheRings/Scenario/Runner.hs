@@ -262,6 +262,18 @@ instance RunMessage ScenarioAttrs where
     ShuffleCavesDeck -> do
       deck <- shuffleM attrs.cavesDeck
       pure $ attrs & cavesDeckL .~ deck
+    -- the Evil Creatures discard pile is shuffled back in once the deck is empty, as the
+    -- last card leaves it (Journey Up the Anduin rules)
+    AddFromEvilCreaturesDeck source engaging -> case attrs.evilCreaturesDeck of
+      Just (top : rest) -> do
+        push $ maybe (AddToStaging top) (`PutEnemyIntoPlayEngaged` top) engaging
+        push $ AddedFromEvilCreaturesDeck source top
+        if null rest
+          then do
+            deck <- shuffleM attrs.scenarioEvilCreaturesDiscard
+            pure $ attrs & evilCreaturesDeckL ?~ deck & evilCreaturesDiscardL .~ []
+          else pure $ attrs & evilCreaturesDeckL ?~ rest
+      _ -> pure attrs
     -- the next encounter card guards the location, attached to it as it is revealed so its
     -- own effects see it guarding (Troll-fells); any other card is only revealed
     GuardLocation lid -> case attrs.encounterDeck of

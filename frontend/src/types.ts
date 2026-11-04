@@ -118,6 +118,9 @@ export interface ScenarioView {
   corsairDiscard: CardView[]
   /** The Caves deck's size, in a scenario that has one (Ered Mithrin). */
   cavesDeck: number
+  /** The Evil Creatures deck's size, while there is one, and its discard pile (Journey Up the Anduin). */
+  evilCreaturesDeck: number | null
+  evilCreaturesDiscard: CardView[]
   /** The Stormcaller's quest stage, with its progress, and the cards in its area (Flight of the Stormcaller). */
   /** In campaign mode, the campaign card next to the quest deck. */
   campaignCard: CardView | null

@@ -42,6 +42,11 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
     </template>
     <!-- the Caves deck beside the encounter deck (Ered Mithrin) -->
     <CardBack v-if="scenario.cavesDeck > 0" :count="scenario.cavesDeck" back="encounter" :title="$t('log.cavesDeck', { count: scenario.cavesDeck })" data-pile="deck-caves" />
+    <!-- the Evil Creatures deck, with its own discard pile (Journey Up the Anduin) -->
+    <template v-if="scenario.evilCreaturesDeck !== null">
+      <DiscardPile :cards="scenario.evilCreaturesDiscard" back="encounter" :choices="choices" @choose="emit('choose', $event)" data-pile="discard-evil-creatures" />
+      <CardBack :count="scenario.evilCreaturesDeck" back="encounter" :title="$t('log.evilCreaturesDeck', { count: scenario.evilCreaturesDeck })" data-pile="deck-evil-creatures" />
+    </template>
     <div v-if="scenario.heading" class="heading" :title="$t(`log.heading.${scenario.heading}`)">
       <span class="heading-label">{{ $t('game.heading') }}</span>
       <ol class="heading-track">

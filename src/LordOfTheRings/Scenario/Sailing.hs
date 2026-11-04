@@ -32,10 +32,16 @@ isCorsairDeckCard card = cdCardType def == EnemyType && Ship `notMember` cdCardT
   def = toCardDef card
 
 -- | The encounter card goes to the encounter discard pile, or, a card of the Corsair deck
--- while there is one, to the Corsair discard pile.
+-- while there is one, to the Corsair discard pile, and one of the Evil Creatures deck to
+-- its own: an empty Evil Creatures deck takes it back at once, as its discard pile is
+-- shuffled into it whenever it is empty (Journey Up the Anduin rules).
 discardEncounterCard :: EncounterCard -> ScenarioAttrs -> ScenarioAttrs
 discardEncounterCard card attrs
   | isJust attrs.corsairDeck && isCorsairDeckCard card = attrs & corsairDiscardL %~ (card :)
+  | isEvilCreaturesCard attrs card =
+      if attrs.evilCreaturesDeck == Just []
+        then attrs & evilCreaturesDeckL ?~ [card]
+        else attrs & evilCreaturesDiscardL %~ (card :)
   | otherwise = attrs & encounterDiscardL %~ (card :)
 
 -- | The Ship objectives of The Dream-chaser's Fleet, the Dream-chaser first.

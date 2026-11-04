@@ -430,6 +430,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       corsairDeck: game.scenario.corsairDeckSize ?? null,
       corsairDiscard: (game.scenario.corsairDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       cavesDeck: game.scenario.cavesDeckSize ?? 0,
+      evilCreaturesDeck: game.scenario.evilCreaturesDeckSize ?? null,
+      evilCreaturesDiscard: (game.scenario.evilCreaturesDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped }) : null,
       stormcallerStage: game.stormcallerStage
         ? card(game.stormcallerStage.cardCode, game.stormcallerStage.id, { flipped: true, image: `${game.stormcallerStage.cardCode}-d`, progress: game.stormcallerProgress ?? 0 })
