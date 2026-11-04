@@ -98,6 +98,10 @@ import LordOfTheRings.Attachment.Cards.DaechanarsBrand
 import LordOfTheRings.Attachment.Cards.HeirloomOfIarchon
 import LordOfTheRings.Attachment.Cards.OrdersFromAngmar
 import LordOfTheRings.Attachment.Cards.RaimentOfTheSecondAge
+import LordOfTheRings.Attachment.Cards.StingTheRoadDarkens
+import LordOfTheRings.Attachment.Cards.MithrilShirtTheRoadDarkens
+import LordOfTheRings.Attachment.Cards.GlamdringTheRoadDarkens
+import LordOfTheRings.Attachment.Cards.AndurilTheRoadDarkens
 import LordOfTheRings.Attachment.Cards.AppointedByFate
 import LordOfTheRings.Attachment.Cards.RingMail
 import LordOfTheRings.Attachment.Cards.EverMyHeartRises
@@ -347,6 +351,10 @@ allAttachments =
         , SomeAttachmentCard heirloomOfIarchon
         , SomeAttachmentCard ordersFromAngmar
         , SomeAttachmentCard raimentOfTheSecondAge
+        , SomeAttachmentCard stingTheRoadDarkens
+        , SomeAttachmentCard mithrilShirtTheRoadDarkens
+        , SomeAttachmentCard glamdringTheRoadDarkens
+        , SomeAttachmentCard andurilTheRoadDarkens
         , SomeAttachmentCard appointedByFate
         , SomeAttachmentCard ringMail
         , SomeAttachmentCard everMyHeartRises

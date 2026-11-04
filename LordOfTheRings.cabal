@@ -306,6 +306,7 @@ library
       LordOfTheRings.Attachment.Cards.AmarthiulsCourage
       LordOfTheRings.Attachment.Cards.AncestralArmor
       LordOfTheRings.Attachment.Cards.AncientMathom
+      LordOfTheRings.Attachment.Cards.AndurilTheRoadDarkens
       LordOfTheRings.Attachment.Cards.AppointedByFate
       LordOfTheRings.Attachment.Cards.ArmoredDestrier
       LordOfTheRings.Attachment.Cards.ArmorOfErebor
@@ -363,6 +364,7 @@ library
       LordOfTheRings.Attachment.Cards.Followed
       LordOfTheRings.Attachment.Cards.ForestSnare
       LordOfTheRings.Attachment.Cards.Glamdring
+      LordOfTheRings.Attachment.Cards.GlamdringTheRoadDarkens
       LordOfTheRings.Attachment.Cards.GoldenBelt
       LordOfTheRings.Attachment.Cards.GondorianFire
       LordOfTheRings.Attachment.Cards.GondorianShield
@@ -411,6 +413,7 @@ library
       LordOfTheRings.Attachment.Cards.MirrorOfGaladriel
       LordOfTheRings.Attachment.Cards.Miruvor
       LordOfTheRings.Attachment.Cards.MithrilShirt
+      LordOfTheRings.Attachment.Cards.MithrilShirtTheRoadDarkens
       LordOfTheRings.Attachment.Cards.NarvisBelt
       LordOfTheRings.Attachment.Cards.Narya
       LordOfTheRings.Attachment.Cards.NecklaceOfGirion
@@ -479,6 +482,7 @@ library
       LordOfTheRings.Attachment.Cards.SteedOfTheNorth
       LordOfTheRings.Attachment.Cards.StewardOfGondor
       LordOfTheRings.Attachment.Cards.Sting
+      LordOfTheRings.Attachment.Cards.StingTheRoadDarkens
       LordOfTheRings.Attachment.Cards.StoneOfElostirion
       LordOfTheRings.Attachment.Cards.StrengthAndCourage
       LordOfTheRings.Attachment.Cards.Strider
