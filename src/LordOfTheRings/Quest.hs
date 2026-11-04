@@ -358,6 +358,13 @@ import LordOfTheRings.Quest.Cards.TheCouncilOfElrond
 import LordOfTheRings.Quest.Cards.TheNineWalkers
 import LordOfTheRings.Quest.Cards.TheHuntIsUp
 import LordOfTheRings.Quest.Cards.TheGatesOfMoria
+import LordOfTheRings.Quest.Cards.TheGreatRiver
+import LordOfTheRings.Quest.Cards.TheCompanyDivided
+import LordOfTheRings.Quest.Cards.SearchingTheWoods
+import LordOfTheRings.Quest.Cards.GuardTheHobbits
+import LordOfTheRings.Quest.Cards.TheSeatOfAmonHen
+import LordOfTheRings.Quest.Cards.OrcHunting
+import LordOfTheRings.Quest.Cards.TheRingBearerSetsOut
 import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Cards.TheForbiddenDoor (theForbiddenDoor)
 import LordOfTheRings.Quest.Cards.ThePathsOfTheDead (thePathsOfTheDead)
@@ -752,6 +759,13 @@ allQuests =
         , SomeQuestCard theNineWalkers
         , SomeQuestCard theHuntIsUp
         , SomeQuestCard theGatesOfMoria
+        , SomeQuestCard theGreatRiver
+        , SomeQuestCard theCompanyDivided
+        , SomeQuestCard searchingTheWoods
+        , SomeQuestCard guardTheHobbits
+        , SomeQuestCard theSeatOfAmonHen
+        , SomeQuestCard orcHunting
+        , SomeQuestCard theRingBearerSetsOut
         , SomeQuestCard leadTheRevolt
         , SomeQuestCard theForbiddenDoor
         , SomeQuestCard thePathsOfTheDead
