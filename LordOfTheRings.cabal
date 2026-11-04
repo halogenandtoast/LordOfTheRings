@@ -2452,6 +2452,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
+      LordOfTheRings.Haradrim.BeneathTheSandsPlayerCardsSpec
       LordOfTheRings.HaradrimEngineSpec
       LordOfTheRings.HeirsOfNumenor.IntoIthilienSpec
       LordOfTheRings.HeirsOfNumenor.NightmareSpec
