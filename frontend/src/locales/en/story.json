@@ -4269,5 +4269,13 @@
         "text": "A dire main quest raises elimination to 99 threat and moves Valour to 80. Non-boon player cards can lower a player's threat by only 1 a round."
       }
     ]
+  },
+  "journey-in-the-dark": {
+    "intro": [
+      "Turned back by the snows of the Redhorn Pass and driven by Wargs, the Company has gone under the mountains into Moria. They find no trace of Balin's Dwarves, only darkness and the sense that something below has noticed the Ring. Their one hope is to cross the mines in secret and reach the eastern gate."
+    ],
+    "setup": [
+      "The encounter deck is built from the Journey in the Dark encounter set."
+    ]
   }
 }

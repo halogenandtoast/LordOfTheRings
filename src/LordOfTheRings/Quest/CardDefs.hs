@@ -494,6 +494,9 @@ allQuestCards =
       , theRoadToIsenmouthe
       , theLastGasp
       , theCrackOfDoom
+      , theLongDarkOfMoria
+      , drumsInTheDeep
+      , theBridgeOfKhazadDum
       ]
 
 theDrippingWalls :: CardDef
@@ -2103,3 +2106,14 @@ theLastGasp = (quest "146077" "The Last Gasp" MountDoom 3 20) {cdKeywords = setF
 
 theCrackOfDoom :: CardDef
 theCrackOfDoom = (quest "146078" "The Crack of Doom" MountDoom 4 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Dire]}
+
+-- * Journey in the Dark
+
+theLongDarkOfMoria :: CardDef
+theLongDarkOfMoria = quest "142040" "The Long Dark of Moria" JourneyInTheDark 1 14
+
+drumsInTheDeep :: CardDef
+drumsInTheDeep = quest "142041" "Drums in the Deep" JourneyInTheDark 2 9
+
+theBridgeOfKhazadDum :: CardDef
+theBridgeOfKhazadDum = quest "142042" "The Bridge of Khazad-dûm" JourneyInTheDark 3 15

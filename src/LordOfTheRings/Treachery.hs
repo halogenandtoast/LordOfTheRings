@@ -506,6 +506,12 @@ import LordOfTheRings.Treachery.Cards.WickedMaster
 import LordOfTheRings.Treachery.Cards.TheLidlessEye
 import LordOfTheRings.Treachery.Cards.FoulFumes
 import LordOfTheRings.Treachery.Cards.HeavyAndTired
+import LordOfTheRings.Treachery.Cards.TheyAreComing
+import LordOfTheRings.Treachery.Cards.WeCannotGetOut
+import LordOfTheRings.Treachery.Cards.DeepFissure
+import LordOfTheRings.Treachery.Cards.FoolOfATook
+import LordOfTheRings.Treachery.Cards.ShadowOfFearJourneyInTheDark
+import LordOfTheRings.Treachery.Cards.PursuedByTheEnemy
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -1039,5 +1045,11 @@ allTreacherys =
         , SomeTreacheryCard theLidlessEye
         , SomeTreacheryCard foulFumes
         , SomeTreacheryCard heavyAndTired
+        , SomeTreacheryCard theyAreComing
+        , SomeTreacheryCard weCannotGetOut
+        , SomeTreacheryCard deepFissure
+        , SomeTreacheryCard foolOfATook
+        , SomeTreacheryCard shadowOfFearJourneyInTheDark
+        , SomeTreacheryCard pursuedByTheEnemy
         ]
     ]

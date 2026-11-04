@@ -616,6 +616,12 @@ import LordOfTheRings.Location.Cards.MordorRoad
 import LordOfTheRings.Location.Cards.PlainOfGorgoroth
 import LordOfTheRings.Location.Cards.BrakeOfThorns
 import LordOfTheRings.Location.Cards.OldWaterCourse
+import LordOfTheRings.Location.Cards.TheGreatBridge
+import LordOfTheRings.Location.Cards.ChamberOfMazarbul
+import LordOfTheRings.Location.Cards.MinesOfMoria
+import LordOfTheRings.Location.Cards.ManyPillaredHall
+import LordOfTheRings.Location.Cards.DarkenedStairway
+import LordOfTheRings.Location.Cards.AncientGuardroom
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1278,5 +1284,11 @@ allLocations =
         , SomeLocationCard plainOfGorgoroth
         , SomeLocationCard brakeOfThorns
         , SomeLocationCard oldWaterCourse
+        , SomeLocationCard theGreatBridge
+        , SomeLocationCard chamberOfMazarbul
+        , SomeLocationCard minesOfMoria
+        , SomeLocationCard manyPillaredHall
+        , SomeLocationCard darkenedStairway
+        , SomeLocationCard ancientGuardroom
         ]
     ]

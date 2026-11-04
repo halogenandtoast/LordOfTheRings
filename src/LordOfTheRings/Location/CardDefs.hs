@@ -634,6 +634,12 @@ allLocationCards =
       , plainOfGorgoroth
       , brakeOfThorns
       , oldWaterCourse
+      , theGreatBridge
+      , chamberOfMazarbul
+      , minesOfMoria
+      , manyPillaredHall
+      , darkenedStairway
+      , ancientGuardroom
       ]
 
 drownedTreasury :: CardDef
@@ -4534,3 +4540,35 @@ brakeOfThorns = (location "146047" "Brake of Thorns" MountDoom 3 3 3) {cdCardTra
 
 oldWaterCourse :: CardDef
 oldWaterCourse = (location "146048" "Old Water-course" MountDoom 1 2 5) {cdCardTraits = setFromList [Mordor], cdVictoryPoints = Just 2}
+
+-- * Journey in the Dark
+
+-- | Immune to player card effects (its card gives it the modifier).
+theGreatBridge :: CardDef
+theGreatBridge =
+  unique
+    (location "142050" "The Great Bridge" JourneyInTheDark 1 5 5)
+      { cdCardTraits = setFromList [Underground, Bridge]
+      , cdVictoryPoints = Just 5
+      }
+
+-- | Immune to player card effects (its card gives it the modifier).
+chamberOfMazarbul :: CardDef
+chamberOfMazarbul =
+  unique
+    (location "142051" "Chamber of Mazarbul" JourneyInTheDark 1 4 4)
+      { cdCardTraits = setFromList [Underground]
+      , cdVictoryPoints = Just 4
+      }
+
+minesOfMoria :: CardDef
+minesOfMoria = (location "142052" "Mines of Moria" JourneyInTheDark 4 2 4) {cdCardTraits = setFromList [Underground], cdShadowEffect = True}
+
+manyPillaredHall :: CardDef
+manyPillaredHall = (location "142053" "Many-pillared Hall" JourneyInTheDark 4 1 6) {cdCardTraits = setFromList [Underground], cdShadowEffect = True, cdEasyModeQuantity = Just 3}
+
+darkenedStairway :: CardDef
+darkenedStairway = (location "142054" "Darkened Stairway" JourneyInTheDark 2 4 2) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 1}
+
+ancientGuardroom :: CardDef
+ancientGuardroom = (location "142055" "Ancient Guardroom" JourneyInTheDark 2 3 3) {cdCardTraits = setFromList [Underground]}

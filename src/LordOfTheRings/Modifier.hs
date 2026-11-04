@@ -646,6 +646,9 @@ data ModifierType
   | -- | on a location in the staging area: progress is placed on it before it can be placed
     -- on the active location, as Grim Foothills reads
     TakesProgressBeforeActiveLocation
+  | -- | on a location in the staging area: progress is placed on it before it can be placed
+    -- on the active location or the current quest, as Mines of Moria reads
+    TakesProgressBeforeQuest
   | -- | on an active location: progress is placed on each other active location before it
     -- can be placed here, as Doors of Durin reads; questing progress fills the others first
     TakesProgressAfterOtherActiveLocations

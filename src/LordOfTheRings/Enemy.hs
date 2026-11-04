@@ -581,6 +581,12 @@ import LordOfTheRings.Enemy.Cards.RingwraithOfSauron
 import LordOfTheRings.Enemy.Cards.OrcCaptain
 import LordOfTheRings.Enemy.Cards.BigUruk
 import LordOfTheRings.Enemy.Cards.LittleSnufflerMountDoom
+import LordOfTheRings.Enemy.Cards.TheBalrog
+import LordOfTheRings.Enemy.Cards.OrcChieftain
+import LordOfTheRings.Enemy.Cards.GreatCaveTrollJourneyInTheDark
+import LordOfTheRings.Enemy.Cards.UrukFromMordor
+import LordOfTheRings.Enemy.Cards.MoriaOrc
+import LordOfTheRings.Enemy.Cards.MoriaArcher
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1192,5 +1198,11 @@ allEnemys =
         , SomeEnemyCard orcCaptain
         , SomeEnemyCard bigUruk
         , SomeEnemyCard littleSnufflerMountDoom
+        , SomeEnemyCard theBalrog
+        , SomeEnemyCard orcChieftain
+        , SomeEnemyCard greatCaveTrollJourneyInTheDark
+        , SomeEnemyCard urukFromMordor
+        , SomeEnemyCard moriaOrc
+        , SomeEnemyCard moriaArcher
         ]
     ]

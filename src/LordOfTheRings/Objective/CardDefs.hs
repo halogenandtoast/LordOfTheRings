@@ -183,6 +183,9 @@ allObjectiveCards =
       , aHeavyBurden
       , gwaihirTheBlackGateOpens
       , theTowerOfBaradDurMountDoom
+      , doomDoomDoom
+      , overcomeByGrief
+      , grievousWound
       ]
 
 durinsAxe :: CardDef
@@ -1305,3 +1308,30 @@ gwaihirTheBlackGateOpens =
 
 theTowerOfBaradDurMountDoom :: CardDef
 theTowerOfBaradDurMountDoom = unique (objective "146042" "The Tower of Barad-dûr" MountDoom 1) {cdCardTraits = setFromList [Mordor]}
+
+-- * Journey in the Dark
+
+doomDoomDoom :: CardDef
+doomDoomDoom = (objective "142043" "Doom, Doom, Doom" JourneyInTheDark 1) {cdCardTraits = setFromList [Shadow, Flame]}
+
+-- | A burden of Journey in the Dark's burden set: never in an encounter deck. The campaign
+-- card adds it to the staging area; earned, the Campaign Pool does as each later scenario
+-- is set up.
+overcomeByGrief :: CardDef
+overcomeByGrief =
+  (objective "142087" "Overcome by Grief" JourneyInTheDark 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just JourneyInTheDark
+    , cdCardTraits = setFromList [Despair]
+    }
+
+-- | A burden of Journey in the Dark's burden set, as Overcome by Grief.
+grievousWound :: CardDef
+grievousWound =
+  (objective "142088" "Grievous Wound" JourneyInTheDark 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just JourneyInTheDark
+    , cdCardTraits = setFromList [Wound]
+    }

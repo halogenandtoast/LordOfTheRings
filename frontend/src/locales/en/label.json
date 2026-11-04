@@ -3206,6 +3206,36 @@
     "shuffleLust": "Shuffle Lust for the Ring into the encounter deck",
     "raiseThreat": "Raise each player’s threat by 5"
   },
+  "journeyInTheDark": {
+    "earnTreachery": "Journey in the Dark: choose a burden treachery to add to the Campaign Pool",
+    "earnObjective": "Journey in the Dark: choose a burden objective to add to the Campaign Pool",
+    "pursuedByTheEnemy": "Pursued by the Enemy",
+    "shadowOfFear": "Shadow of Fear",
+    "grievousWound": "Grievous Wound",
+    "overcomeByGrief": "Overcome by Grief"
+  },
+  "moriaOrc": {
+    "choose": "Moria Orc: choose one",
+    "removeDamage": "Remove 1 damage from Doom, Doom, Doom",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "theGreatBridge": {
+    "discardHero": "The Great Bridge: choose a hero to discard, dealing damage equal to its threat cost to The Balrog"
+  },
+  "deepFissure": {
+    "remove": "Deep Fissure: choose a character you control to remove from the quest"
+  },
+  "foolOfATook": {
+    "choose": "Fool of a Took!: choose one",
+    "removeDamage": "Remove 1 damage token from Doom, Doom, Doom",
+    "balrogAttacks": "The Balrog makes an attack"
+  },
+  "grievousWound": {
+    "attach": "Grievous Wound: choose the damaged hero to attach it to"
+  },
+  "overcomeByGrief": {
+    "attach": "Overcome by Grief: choose a hero to attach it to"
+  },
   "merryTheBlackRiders": {
     "ready": "Merry: choose another character that took part in the attack to ready"
   },
