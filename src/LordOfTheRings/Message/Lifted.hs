@@ -1337,14 +1337,19 @@ playOnFromHandAtNoCost pid card host = push $ PlayFromHandOnAtNoCost pid card.id
 playFromDeckAtNoCost :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 playFromDeckAtNoCost pid card = do
   removeFromDeck pid card.id
-  pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
+  playAtNoCost pid card
+
+-- | The card, already taken from where it was, is played by the player without paying its
+-- cost, as The Council of Elrond plays one of the cards faceup in front of the players.
+playAtNoCost :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+playAtNoCost pid card = pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
 
 -- | The card leaves its owner's discard pile and the player plays it without paying its
 -- cost, as Reforged plays an attachment from any player's.
 playFromDiscardAtNoCost :: ReverseQueue m => PlayerId -> PlayerId -> PlayerCard -> m ()
 playFromDiscardAtNoCost owner pid card = do
   removeFromDiscard owner card.id
-  pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
+  playAtNoCost pid card
 
 {- | The character attacks the enemy, wherever it is, as an effect declares it an
 attacker; its attack raised by the bonus for that attack alone.
