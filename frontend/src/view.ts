@@ -210,6 +210,11 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ids.has(guard) ? held.map(([, c]) => card(c.cardCode, c.id, { attachedTo: guard })) : [],
       ),
       ...cards.flatMap(stackUnder),
+      // the hero card attached to Thorongil, faceup, sits with it on its hero
+      ...Object.values(entities.attachments).flatMap((a) => {
+        const host = a.placement?.tag === 'AttachedTo' ? targetCardId(a.placement.contents as Target) : null
+        return host !== null && ids.has(host) ? (a.underneath ?? []).map((c) => card(c.cardCode, c.id, { attachedTo: host })) : []
+      }),
     ]
   }
 

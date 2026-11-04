@@ -47,6 +47,8 @@ export interface Entity {
   otherSide?: string | null
   /** A location's place on the Island Map (Temple of the Deceived). */
   position?: { column: number; row: number } | null
+  /** The cards attached to an attachment out of play, as the hero card Thorongil takes. */
+  underneath?: Card[]
 }
 
 export interface Card {

@@ -3,9 +3,18 @@
 module LordOfTheRings.Hero (module LordOfTheRings.Hero, module X) where
 
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Ability.Types (Ability (..))
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
+import LordOfTheRings.Classes.HasAbilities (getAbilities)
+import LordOfTheRings.Classes.HasGame (HasGame)
+import LordOfTheRings.Classes.HasQueue (captureWith, pushAll)
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Message (Message (DoStep, UseCardAbility))
+import LordOfTheRings.Modifier (ModifierType (GainGameTextOf))
+import LordOfTheRings.Source (Source (HeroSource))
+import LordOfTheRings.Target (Target (HeroTarget))
 import LordOfTheRings.Hero.Cards.Eomer
 import LordOfTheRings.Hero.Cards.Hirgon
 import LordOfTheRings.Hero.Cards.Fastred
@@ -94,6 +103,8 @@ import LordOfTheRings.Hero.Cards.SarumanLore
 import LordOfTheRings.Hero.Cards.GildorInglorionLeadership
 import LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
 import LordOfTheRings.Hero.Cards.ThorinStonehelm
+import LordOfTheRings.Hero.Cards.GwaihirTheLandOfSorrow
+import LordOfTheRings.Hero.Cards.AragornSpirit
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -105,8 +116,52 @@ instance FromJSON Hero where
     attrs <- parseJSON @HeroAttrs v
     pure $ overAttrs (const attrs) $ lookupHero (heroCardCode attrs) (heroCardId attrs) (heroId attrs) (heroOwner attrs)
 
+{- | A hero gains the game text of a hero card through 'GainGameTextOf' (Thorongil). The
+abilities it gains are its own, numbered past 'gainedTextIndex' (see 'withGainedAbilities');
+using one, that card, built as the hero, resolves it, and the later steps it pushes for it
+come back numbered so again.
+-}
 instance RunMessage Hero where
-  runMessage msg (Hero a) = Hero <$> runMessage msg a
+  runMessage msg h@(Hero a) = do
+    gained <- gainedTextOf h
+    let mine = HeroSource (toId h)
+        viaGained code m = do
+          (card, msgs) <- lift $ captureWith $ runMessage m (asGainedText code h)
+          pushAll $ map (renumber mine) msgs
+          pure $ overAttrs (\x -> (toAttrs card) {heroGainedAbilities = heroGainedAbilities x}) h
+    case (gained, msg) of
+      (code : _, UseCardAbility pid s n ws)
+        | s == mine, n > gainedTextIndex -> viaGained code (UseCardAbility pid s (n - gainedTextIndex) ws)
+      (code : _, DoStep k (UseCardAbility pid s n ws))
+        | s == mine, n > gainedTextIndex -> viaGained code (DoStep k (UseCardAbility pid s (n - gainedTextIndex) ws))
+      _ -> Hero <$> runMessage msg a
+   where
+    renumber mine = \case
+      DoStep k (UseCardAbility pid s n ws) | s == mine, n <= gainedTextIndex -> DoStep k (UseCardAbility pid s (gainedTextIndex + n) ws)
+      m -> m
+
+-- | The hero's gained abilities, as the hero cards whose game text it gains give them,
+-- numbered past 'gainedTextIndex'.
+withGainedAbilities :: [CardCode] -> Hero -> Hero
+withGainedAbilities codes h =
+  overAttrs
+    (\x -> x {heroGainedAbilities = [ab {abilityIndex = gainedTextIndex + ab.abilityIndex} | code <- codes, ab <- getAbilities (asGainedText code h)]})
+    h
+
+-- | The abilities of a hero card whose text a hero gains are numbered past this.
+gainedTextIndex :: Int
+gainedTextIndex = 100
+
+-- | The codes of the hero cards whose game text the hero gains.
+gainedTextOf :: HasGame m => Hero -> m [CardCode]
+gainedTextOf h = mapMaybe (\case GainGameTextOf code -> Just code; _ -> Nothing) <$> getModifiers (HeroTarget $ toId h)
+
+-- | The hero card, built as the hero: its text, the hero's state, but none of the text the
+-- hero gains.
+asGainedText :: CardCode -> Hero -> Hero
+asGainedText code h = overAttrs (const attrs) $ lookupHero code attrs.heroCardId attrs.heroId attrs.heroOwner
+ where
+  attrs = (toAttrs h) {heroGainedAbilities = []}
 
 createHero :: PlayerCard -> HeroId -> PlayerId -> Hero
 createHero card hid pid = lookupHero (toCardCode card) (pcId card) hid pid
@@ -215,5 +270,7 @@ allHeroes =
         , SomeHeroCard gildorInglorionLeadership
         , SomeHeroCard frodoBagginsLeadership
         , SomeHeroCard thorinStonehelm
+        , SomeHeroCard gwaihirTheLandOfSorrow
+        , SomeHeroCard aragornSpirit
         ]
     ]

@@ -316,6 +316,13 @@ data ModifierType
   | -- | on a player: no matching card can be put into play under his control, as
     -- Fellowship reads "put non-unique allies into play"
     CannotPutIntoPlay CardMatcher
+  | -- | on a hero: it gains the game text of the hero card with this code, as Thorongil
+    -- gives it; that card, built as the hero, gives its constant abilities and resolves the
+    -- abilities the hero gains (see 'LordOfTheRings.Hero')
+    GainGameTextOf CardCode
+  | -- | on a card in hand, as its card id: it cannot be played from there, as Misty
+    -- Mountain Journeyman reads "unless you are engaged with an enemy"
+    CannotBePlayedFromHand
   | -- | on the game: attachments' printed text boxes are treated as blank
     BlankAttachments
   | -- | on the game: the Deep keyword is ignored, as The Fire Worm reads

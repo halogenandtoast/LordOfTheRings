@@ -96,6 +96,8 @@ allHeroCards =
       , smeagol
       , frodoBagginsLeadership
       , thorinStonehelm
+      , gwaihirTheLandOfSorrow
+      , aragornSpirit
       ]
 
 aragorn :: CardDef
@@ -613,4 +615,18 @@ thorinStonehelm :: CardDef
 thorinStonehelm =
   (hero "22001" "Thorin Stonehelm" Tactics 9 1 3 1 4)
     { cdCardTraits = setFromList [Dwarf, Noble, Warrior]
+    }
+
+gwaihirTheLandOfSorrow :: CardDef
+gwaihirTheLandOfSorrow =
+  (hero "22108" "Gwaihir" Tactics 13 2 4 3 4)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    , cdKeywords = setFromList [Ranged, Sentinel]
+    }
+
+aragornSpirit :: CardDef
+aragornSpirit =
+  (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
+    , cdKeywords = setFromList [Sentinel]
     }

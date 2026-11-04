@@ -164,7 +164,7 @@ runNext =
       -- store the result first, so the constant abilities read the game as it now is
       g <- runGame msg =<< getGame
       putGame g
-      putGame =<< withHandModifiers =<< preloadModifiers g
+      putGame . gainedAbilities =<< withHandModifiers =<< preloadModifiers g
       checkUnblockedQuests g
       discardAtNoWillpower
       discardDownToHandLimit
@@ -266,6 +266,11 @@ discardAtNoWillpower = do
     queued <- peekQueue
     pushAll [Discard c | c <- doomed, Discard c `notElem` queued, LeavePlay (Discard c) `notElem` queued]
 
+-- | Each hero's gained abilities, kept in step with its 'GainGameTextOf' modifiers.
+gainedAbilities :: Game -> Game
+gainedAbilities g = g & entitiesL . heroesL %~ fmap \h ->
+  withGainedAbilities [code | Modifier _ (GainGameTextOf code) <- Map.findWithDefault [] (HeroTarget $ toId h) (gameModifiers g)] h
+
 {- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
 event in a hand, or being paid for, is built from its card to be asked. A player side quest
 in the victory display is built from its card too, for what it gives while there, as The
@@ -280,6 +285,10 @@ withHandModifiers g = do
       PlayerCard pc | cdCardType (toCardDef pc) == PlayerSideQuestType, Just owner <- pc.owner ->
         getModifiersFor $ overAttrs (\a -> a {questOwner = Just owner}) $ lookupQuest (toCardCode pc) pc.id (QuestId UUID.nil)
       _ -> pure ()
+    -- the constant abilities of a hero card whose game text a hero gains (Thorongil)
+    for_ g.entities.heroes \h ->
+      for_ [code | Modifier _ (GainGameTextOf code) <- Map.findWithDefault [] (HeroTarget $ toId h) (gameModifiers g)] \code ->
+        getModifiersFor (asGainedText code h)
   pure
     $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
 

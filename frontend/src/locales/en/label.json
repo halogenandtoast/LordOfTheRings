@@ -2885,5 +2885,16 @@
   },
   "knightOfBelfalas": {
     "return": "Knight of Belfalas: choose a Gondor ally in your discard pile to return to your hand"
+  },
+  "groupMaySpendAny": "The players as a group may spend {count} resources",
+  "bilbosPlan": {
+    "location": "Bilbo's Plan: add the enemy to the staging area to discard a location",
+    "skip": "Leave the enemy in the discard pile"
+  },
+  "thorongil": {
+    "chooseVersion": "Thorongil: choose a version of the hero to attach"
+  },
+  "woodmanLore": {
+    "ready": "Woodman Lore: ready up to X Woodman characters"
   }
 }

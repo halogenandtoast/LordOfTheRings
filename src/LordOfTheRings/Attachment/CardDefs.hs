@@ -235,6 +235,12 @@ allAttachmentCards =
       , durinsAxeTactics
       , silverCirclet
       , keenLongbow
+      , redBookOfWestmarch
+      , songOfHealing
+      , sparePipe
+      , shiningShield
+      , tirelessThoroughbred
+      , thorongil
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1639,6 +1645,35 @@ silverCirclet =
     , cdLimitOnePerHost = True
     }
 
+redBookOfWestmarch :: CardDef
+redBookOfWestmarch =
+  unique
+    (attachment "22110" "Red Book of Westmarch" Leadership (StaticCost 3))
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+songOfHealing :: CardDef
+songOfHealing =
+  (attachment "22112" "Song of Healing" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    , cdLimitOnePerHost = True
+    }
+
+sparePipe :: CardDef
+sparePipe =
+  (attachment "22115" "Spare Pipe" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Pipe]
+    }
+
+shiningShield :: CardDef
+shiningShield =
+  (attachment "22138" "Shining Shield" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Armor, Item]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
 keenLongbow :: CardDef
 keenLongbow =
   (attachment "22031" "Keen Longbow" Lore (StaticCost 2))
@@ -1646,3 +1681,16 @@ keenLongbow =
     , cdKeywords = setFromList [Restricted]
     , cdLimitOnePerHost = True
     }
+tirelessThoroughbred :: CardDef
+tirelessThoroughbred =
+  (attachment "22143" "Tireless Thoroughbred" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+thorongil :: CardDef
+thorongil =
+  unique
+    (attachment "22146" "Thorongil" Neutral (StaticCost 3))
+      { cdCardTraits = setFromList [Title]
+      }

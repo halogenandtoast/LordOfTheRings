@@ -242,6 +242,11 @@ allEventCards =
       , theGatheringStorm
       , tomBombadillo
       , chargeIntoBattle
+      , bilbosPlan
+      , smokeAndThink
+      , knowledgeOfTheEnemy
+      , woodmanLore
+      , aDesperatePath
       ]
 
 everVigilant :: CardDef
@@ -983,3 +988,22 @@ tomBombadillo =
 
 chargeIntoBattle :: CardDef
 chargeIntoBattle = event "22007" "Charge into Battle" Tactics (StaticCost 5)
+bilbosPlan :: CardDef
+bilbosPlan =
+  event "22114" "Bilbo's Plan" Tactics (StaticCost 0)
+
+smokeAndThink :: CardDef
+smokeAndThink =
+  event "22116" "Smoke and Think" Spirit (StaticCost 0)
+
+knowledgeOfTheEnemy :: CardDef
+knowledgeOfTheEnemy =
+  event "22139" "Knowledge of the Enemy" Leadership (StaticCost 0)
+
+woodmanLore :: CardDef
+woodmanLore =
+  event "22141" "Woodman Lore" Lore (StaticCost 1)
+
+aDesperatePath :: CardDef
+aDesperatePath =
+  event "22145" "A Desperate Path" Spirit (StaticCost 2)

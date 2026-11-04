@@ -217,6 +217,12 @@ import LordOfTheRings.Attachment.Cards.PutOffPursuit
 import LordOfTheRings.Attachment.Cards.DurinsAxeTactics
 import LordOfTheRings.Attachment.Cards.SilverCirclet
 import LordOfTheRings.Attachment.Cards.KeenLongbow
+import LordOfTheRings.Attachment.Cards.RedBookOfWestmarch
+import LordOfTheRings.Attachment.Cards.SongOfHealing
+import LordOfTheRings.Attachment.Cards.SparePipe
+import LordOfTheRings.Attachment.Cards.ShiningShield
+import LordOfTheRings.Attachment.Cards.TirelessThoroughbred
+import LordOfTheRings.Attachment.Cards.Thorongil
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -471,5 +477,11 @@ allAttachments =
         , SomeAttachmentCard durinsAxeTactics
         , SomeAttachmentCard silverCirclet
         , SomeAttachmentCard keenLongbow
+        , SomeAttachmentCard redBookOfWestmarch
+        , SomeAttachmentCard songOfHealing
+        , SomeAttachmentCard sparePipe
+        , SomeAttachmentCard shiningShield
+        , SomeAttachmentCard tirelessThoroughbred
+        , SomeAttachmentCard thorongil
         ]
     ]

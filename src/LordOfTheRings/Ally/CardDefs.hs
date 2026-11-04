@@ -247,6 +247,12 @@ allAllyCards =
       , tomBombadil
       , woodlandSentry
       , knightOfBelfalas
+      , hobbitArcher
+      , daleMessenger
+      , eagleEmissary
+      , wilyadorTheLandOfSorrow
+      , haleth
+      , mistyMountainJourneyman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1752,4 +1758,44 @@ knightOfBelfalas :: CardDef
 knightOfBelfalas =
   (ally "22034" "Knight of Belfalas" Spirit (StaticCost 2) 1 2 0 2)
     { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+hobbitArcher :: CardDef
+hobbitArcher =
+  (ally "22109" "Hobbit Archer" Leadership (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Hobbit, Archer]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+daleMessenger :: CardDef
+daleMessenger =
+  (ally "22111" "Dale Messenger" Lore (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Dale]
+    }
+
+eagleEmissary :: CardDef
+eagleEmissary =
+  (ally "22113" "Eagle Emissary" Tactics (StaticCost 2) 2 1 0 2)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    }
+
+wilyadorTheLandOfSorrow :: CardDef
+wilyadorTheLandOfSorrow =
+  unique
+    (ally "22117" "Wilyador" Neutral (StaticCost 1) 1 3 2 3)
+      { cdCardTraits = setFromList [Creature, Eagle]
+      , cdKeywords = setFromList [Ranged, Sentinel]
+      }
+
+haleth :: CardDef
+haleth =
+  unique
+    (ally "22140" "Haleth" Lore (StaticCost 4) 2 2 1 3)
+      { cdCardTraits = setFromList [Woodman, Scout]
+      }
+
+mistyMountainJourneyman :: CardDef
+mistyMountainJourneyman =
+  (ally "22144" "Misty Mountain Journeyman" Spirit (StaticCost 1) 2 0 0 1)
+    { cdCardTraits = setFromList [Dunedain, Scout]
     }
