@@ -13,8 +13,8 @@ slammedShut = treachery SlammedShut Cards.slammedShut
 -- | Doomed 1.
 -- When Revealed: Each player chooses and exhausts a character he controls. Until the end of
 -- the round, characters cannot be readied by player card effects.
--- Hall of Beorn prints "character cannot be readied", with no word naming one; the
--- community card list reads "characters", so it is every character.
+-- The printed card (Hall of Beorn's scan of TGoF 108) reads "characters cannot be readied
+-- by player card effects": every character, not only the one exhausted.
 instance RunMessage SlammedShut where
   runMessage msg t@(SlammedShut attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
