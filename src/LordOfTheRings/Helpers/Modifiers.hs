@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardCode, CardType (AllyType), cdCardTraits, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -186,10 +186,19 @@ immuneToSource source a = do
   master <- maybe (pure False) isMasterCard (sourceTarget source)
   pure
     $ ImmuneToCardEffects `elem` mods
-    || (isPlayerCardSource source && ImmuneToPlayerCardEffects `elem` mods)
+    || (isPlayerCardSource source && not (maybe False (objectiveAllyTarget g) (sourceTarget source)) && ImmuneToPlayerCardEffects `elem` mods)
     || (isPlayerEventSource source && ImmuneToPlayerEvents `elem` mods)
     || immuneToEncounterSource g mods source
     || (not master && ImmuneToNonMasterCardEffects `elem` mods)
+
+{- | Whether the card is an objective ally: an encounter card under a player's control, not
+a player card, which has the player card back, so a card immune to player card effects is
+not immune to its effects, as Farin's damage reaches a Warden (The Land of Sorrow).
+-}
+objectiveAllyTarget :: Game -> Target -> Bool
+objectiveAllyTarget g = \case
+  AllyTarget aid -> maybe False ((== ObjectiveAllyType) . cdCardType . toCardDef) (Map.lookup aid g.entities.allies)
+  _ -> False
 
 -- | Whether the card is one of those whose effects The One Ring is not immune to: a Master
 -- card in play, or a Master event, known by its card id, wherever its owner holds it.

@@ -13,7 +13,7 @@ import Control.Monad.Writer.Strict (WriterT, runWriterT, tell)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToEncounterCard, isMasterCard)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToEncounterCard, isMasterCard, objectiveAllyTarget)
 import LordOfTheRings.I18n
 import LordOfTheRings.Modifier (ModifierType (ImmuneToNonMasterCardEffects, ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
 import LordOfTheRings.Id
@@ -153,7 +153,8 @@ removeMainQuestProgressLabeled source n = do
     $ for_ quests \q -> push (RemoveTokens (toSource source) q Progress n)
 
 -- | A choice made by clicking the target. A card immune to player card effects is not
--- offered when a player card, the one 'causedBy' names, is causing the question, nor one
+-- offered when a player card, the one 'causedBy' names, is causing the question (an
+-- objective ally is no player card), nor one
 -- immune to player events when an event (its card id) is, nor The One Ring when any but a
 -- Master card is.
 targeting :: (ReverseQueue m, Targetable a) => a -> QueueT Message m () -> ChooseT m ()
@@ -164,7 +165,7 @@ targeting a action = do
   master <- lift $ maybe (pure False) isMasterCard source
   let immune = case source of
         Just s ->
-          (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s)
+          (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s && not (objectiveAllyTarget g s))
             || (ImmuneToPlayerEvents `elem` mods && isEvent s)
             || (ImmuneToNonMasterCardEffects `elem` mods && not master)
             || immuneToEncounterCard g mods s
