@@ -19,7 +19,7 @@ instance HasModifiersFor ForgottenCourtyard where
 
 -- | Forced: After an Undead enemy enters play, place 1 resource on Forgotten Courtyard.
 instance HasAbilities ForgottenCourtyard where
-  getAbilities (ForgottenCourtyard a) = [mkAbility a 1 $ forced $ EnemyWithTraitEntersStagingAreaWindow After Undead]
+  getAbilities (ForgottenCourtyard a) = [mkAbility a 1 $ forced $ MatchingEnemyEntersPlayWindow After (EnemyWithTrait Undead)]
 
 instance RunMessage ForgottenCourtyard where
   runMessage msg l@(ForgottenCourtyard a) = case msg of

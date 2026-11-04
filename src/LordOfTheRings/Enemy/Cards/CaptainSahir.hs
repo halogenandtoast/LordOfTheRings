@@ -40,9 +40,9 @@ instance RunMessage CaptainSahir where
           -- first.
           sharing <- getsGame (any ((== toCardCode Quests.sahirsAdvanceNightmare) . toCardCode) . toList . (.entities.quests))
           naasiyah <- if sharing then select (EnemyWithCardCode $ toCardCode Cards.naasiyah) else pure []
-          theirs <- for naasiyah \eid -> (eid,) . countTokens Resource . enemyTokens . toAttrs <$> getEnemy eid
-          let own = resources attrs
-              k = min n (own + sum (map snd theirs))
+          theirs <- for naasiyah \eid -> fmap (eid,) . resourcesHeld eid . countTokens Resource . enemyTokens . toAttrs =<< getEnemy eid
+          own <- resourcesHeld attrs (resources attrs)
+          let k = min n (own + sum (map snd theirs))
           when (k > 0) do
             cancelSomeDamage attrs k
             removeTokens attrs attrs Resource (min k own)

@@ -17,8 +17,15 @@ elvenWaveRunner = location ElvenWaveRunner Cards.elvenWaveRunner
 -- place 1 resource on attacking enemy.
 instance RunMessage ElvenWaveRunner where
   runMessage msg l@(ElvenWaveRunner a) = case msg of
+    -- the first player answers an encounter card's response, as it is in the victory
+    -- display by then
     AddToVictoryDisplay (isTarget a -> True) -> do
-      eachPlayer \p -> drawCards a p 1
+      lead <- getLead
+      chooseOneM lead do
+        questionLabeled "elvenWaveRunner.respond"
+        causedBy a
+        labeled "elvenWaveRunner.draw" $ eachPlayer \p -> drawCards a p 1
+        labeled "elvenWaveRunner.decline" $ pure ()
       ElvenWaveRunner <$> runMessage msg a
     ResolveShadowEffect cid eid pid _ | cid == a.cardId -> do
       whenM (selectAny $ EnemyWithId eid <> EnemyWithTrait Raider) do

@@ -740,6 +740,23 @@ shuffleEncounterDeck :: ReverseQueue m => m ()
 shuffleEncounterDeck = push $ ShuffleDeck EncounterDeck
 
 -- | Set an encounter card aside, out of play.
+-- | Resources added to a card out of play, placed on it as it enters play, as Captain's
+-- Quarters adds them to Captain Sahír.
+placeResourcesOutOfPlay :: ReverseQueue m => CardId -> Int -> m ()
+placeResourcesOutOfPlay cid = push . PlaceResourcesOutOfPlay cid
+
+-- | The set-aside encounter cards that match, out of play.
+getSetAside :: HasGame m => CardMatcher -> m [EncounterCard]
+getSetAside m = getsGame (filter (cardMatches m) . scenarioSetAside . toAttrs . (.scenario))
+
+-- | The damage moves from one card to another: it is not dealt, so nothing answers it as
+-- damage dealt, but it can destroy what it moves to.
+moveDamage :: (ReverseQueue m, Sourceable source, Targetable from, Targetable to) => source -> from -> to -> Int -> m ()
+moveDamage source from onto n = when (n > 0) do
+  push $ RemoveTokens (toSource source) (toTarget from) Damage n
+  push $ PlaceTokens (toSource source) (toTarget onto) Damage n
+  push $ CheckDefeated (toSource source) (toTarget onto)
+
 setAside :: ReverseQueue m => EncounterCard -> m ()
 setAside = push . SetAside
 

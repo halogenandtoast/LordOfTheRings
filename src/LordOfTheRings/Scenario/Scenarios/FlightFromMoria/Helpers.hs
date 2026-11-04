@@ -18,7 +18,9 @@ import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.GameT (GameT)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat)
+import LordOfTheRings.Modifier (ModifierType (BypassCostRaisesThreat))
 import LordOfTheRings.Id (EnemyId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -68,6 +70,9 @@ runSearchForAnExit msg attrs = case msg of
   -- Nightmare: "When a quest card is bypassed, shuffle it into the quest deck instead of
   -- placing it on the bottom."
   UseCardAbility _ (isSource attrs -> True) 102 _ -> do
+    -- the additional cost to bypass it is paid first, as Shadowed Corridor's
+    raise <- sum . map (\case BypassCostRaisesThreat n -> n; _ -> 0) <$> getModifiers GameTarget
+    when (raise > 0) $ eachPlayer \p -> raiseThreat p raise
     push $ CheckWindows [mkWhen $ QuestBypassed (toTarget attrs)]
     nightmare <- inNightmareMode
     if nightmare then shuffleIntoQuestDeck attrs else putOnBottomOfQuestDeck attrs

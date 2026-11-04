@@ -225,6 +225,8 @@ data LocationMatcher
     LocationWithActiveLocationTitle
   | -- | a location player card effects may discard from play
     LocationDiscardableByPlayerCards
+  | -- | a location that can enter the staging area, as Shrine to Morgoth cannot
+    LocationCanEnterStagingArea
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

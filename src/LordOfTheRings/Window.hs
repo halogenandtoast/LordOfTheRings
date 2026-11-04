@@ -42,6 +42,14 @@ data WindowType
     Revealed Target
   | -- | a location about to leave play as an explored location
     Explored LocationId
+  | -- | a location has left play, however it did
+    LocationLeftPlay LocationId
+  | -- | an enemy entered play, however it did: revealed, put into play or turned faceup
+    EnemyEnteredPlay EnemyId
+  | -- | the player looked at one or more cards in the encounter deck
+    LookedAtEncounterDeck PlayerId
+  | -- | the player turned 1 or more hidden cards faceup, at once (The Blood of Gondor)
+    TurnedHiddenCardsFaceup PlayerId
   | EnemyAttacking EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds

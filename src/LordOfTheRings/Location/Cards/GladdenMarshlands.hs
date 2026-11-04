@@ -13,20 +13,15 @@ gladdenMarshlands = location GladdenMarshlands Cards.gladdenMarshlands
 -- | Action: Deal 1 damage to a hero you control to reduce Gladden Marshlands' threat by 1
 -- until the end of the phase. Any player may trigger this effect.
 instance HasAbilities GladdenMarshlands where
-  getAbilities (GladdenMarshlands a) = [anyPlayer $ mkAbility a 1 $ ActionAbility Free]
+  getAbilities (GladdenMarshlands a) = [anyPlayer $ mkAbility a 1 $ ActionAbility (DamageHeroCost (HeroControlledBy ActivePlayer) 1)]
 
 -- | Shadow: Each enemy engaged with the defending character gets +1 attack until the end of
 -- the phase. (+2 attack instead if this attack is undefended.)
 instance RunMessage GladdenMarshlands where
   runMessage msg l@(GladdenMarshlands a) = case msg of
-    UseCardAbility pid (isSource a -> True) 1 _ -> do
-      heroes <- select (HeroControlledBy $ PlayerWithId pid)
-      chooseOrRunOneM pid do
-        questionLabeled "gladdenMarshlands.damage"
-        causedBy a
-        targets heroes \h -> do
-          dealDamage a h 1
-          phaseModifier a a (ThreatModifier (-1))
+    -- the damage is its cost, paid as it is triggered
+    UseCardAbility _ (isSource a -> True) 1 _ -> do
+      phaseModifier a a (ThreatModifier (-1))
       pure l
     ResolveShadowEffect cid _ pid defender | cid == a.cardId -> do
       engaged <- select (EnemyEngagedWith $ PlayerWithId pid)

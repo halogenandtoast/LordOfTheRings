@@ -6,7 +6,7 @@ import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Trait (Trait (Guardian))
 
 newtype SacredForest = SacredForest LocationAttrs
-  deriving anyclass (IsLocation, HasAbilities, HasModifiersFor)
+  deriving anyclass IsLocation
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 sacredForest :: LocationCard SacredForest
@@ -14,15 +14,25 @@ sacredForest = location SacredForest Cards.sacredForest
 
 -- | While Sacred Forest is in the staging area, each Guardian enemy gains: "Forced: After
 -- any number of time counters are removed from this enemy, heal 2 damage on it for each
--- time counter removed."
--- Travel: Remove each time counter from an enemy in play to travel here.
+-- time counter removed." Sacred Forest gives it, a forced ability as any other.
+instance HasAbilities SacredForest where
+  getAbilities (SacredForest a) =
+    [mkAbility a 1 $ forced $ TimeCountersRemovedFromEnemyWindow After (EnemyWithTrait Guardian) | a.placement == StagingArea]
+
+-- | With no time counter on an enemy in play, its Travel cost cannot be paid.
+instance HasModifiersFor SacredForest where
+  getModifiersFor (SacredForest a) = do
+    timed <- anyM (\e -> (> 0) <$> getTimeCounters (toTarget e)) =<< select AnyEnemy
+    unless timed $ modifySelf a [CannotBeTraveledTo]
+
+-- | Travel: Remove each time counter from an enemy in play to travel here.
 instance RunMessage SacredForest where
   runMessage msg l@(SacredForest a) = case msg of
-    CheckWindows ws | a.placement == StagingArea -> do
+    UseCardAbility _ (isSource a -> True) 1 ws -> do
       guardians <- select (EnemyWithTrait Guardian)
       for_ [(eid, n) | Window After (TimeCountersRemoved (EnemyTarget eid) n) <- ws, eid `elem` guardians] \(eid, n) ->
         healDamage a eid (2 * n)
-      SacredForest <$> runMessage msg a
+      pure l
     TravelTo lid | lid == a.id -> do
       timed <- filterM (\e -> (> 0) <$> getTimeCounters (toTarget e)) =<< select AnyEnemy
       lead <- getLead

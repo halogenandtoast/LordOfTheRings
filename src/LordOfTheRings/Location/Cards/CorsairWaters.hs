@@ -13,8 +13,9 @@ corsairWaters = location CorsairWaters Cards.corsairWaters
 
 -- | While Corsair Waters is the active location, no more than 1 ally can enter play each
 -- round.
+-- Played or put into play, each counts, and once one has none other can.
 instance HasModifiersFor CorsairWaters where
-  getModifiersFor (CorsairWaters a) = when (a.placement == ActiveLocation) $ modified a GameTarget [OneAllyPerRound]
+  getModifiersFor (CorsairWaters a) = when (a.placement == ActiveLocation) $ modified a GameTarget [OneAllyEntersPlayPerRound]
 
 -- | Shadow: Either shift your heading off-course, or treat this attack as undefended. An
 -- undefended attack already is, so it asks nothing.

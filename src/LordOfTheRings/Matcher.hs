@@ -254,6 +254,7 @@ matchLocation matcher location = case matcher of
     active <- getsGame (filter ((== ActiveLocation) . (.placement)) . toList . entitiesLocations . gameEntities)
     pure $ any ((== title location) . title) active
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
+  LocationCanEnterStagingArea -> notElem CannotEnterStagingArea . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -384,7 +385,8 @@ affordableAlliesInHand pid sphere reduction minimumCost = do
       forbidden c = any (\case CannotPlay m -> cardMatches m c; _ -> False) (gameMods <> on (PlayerTarget pid))
       cost c = maybe 0 costAsResources c.cost
       reducedCost c = min (cost c) $ max minimumCost (cost c - reduction)
-  if OneAllyPerRound `elem` gameMods && AllyPlayedThisRound `elem` gameMods
+  entryBarred <- getsGame allyEntryBarred
+  if (OneAllyPerRound `elem` gameMods && AllyPlayedThisRound `elem` gameMods) || entryBarred
     then pure []
     else filterM passesUnique
       [ c
@@ -915,6 +917,13 @@ unchartedLocation = LocationWithKeyword Uncharted
 -- counts as 0.
 printedCostOf :: HasCardDef a => a -> Int
 printedCostOf = maybe 0 costAsResources . cdCost . toCardDef
+
+-- | The resources on a card, as it is considered to have them: none while it is
+-- considered to have no resources, as Captain's Quarters reads of Raider characters.
+resourcesHeld :: (HasGame m, Targetable a) => a -> Int -> m Int
+resourcesHeld a n = do
+  mods <- map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
+  pure $ if HasNoResources `elem` mods then 0 else n
 
 -- | The characters the encounter card guards as captives (see 'GuardCharacter').
 charactersGuardedBy :: HasGame m => CardId -> m [Target]

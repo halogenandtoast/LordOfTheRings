@@ -17,7 +17,9 @@ corsairDuelist = enemy (CorsairDuelist . \a -> a {enemyTokens = addTokens Resour
 -- instead. While it has a resource, damage does not destroy it; once the damage reaches its
 -- hit points, the resource and the damage go.
 instance HasModifiersFor CorsairDuelist where
-  getModifiersFor (CorsairDuelist a) = when (a.resources > 0) $ modifySelf a [GainKeyword Indestructible]
+  getModifiersFor (CorsairDuelist a) = do
+    n <- resourcesHeld a a.resources
+    when (n > 0) $ modifySelf a [GainKeyword Indestructible]
 
 instance HasAbilities CorsairDuelist where
   getAbilities (CorsairDuelist a) = [mkAbility a 1 $ silent $ DealtDamageWindow After (toTarget a) | a.resources > 0]
@@ -27,12 +29,13 @@ instance RunMessage CorsairDuelist where
   runMessage msg e@(CorsairDuelist attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       hp <- getEnemyHitPoints attrs.id
-      when (attrs.damage >= hp) do
+      held <- resourcesHeld attrs attrs.resources
+      when (held > 0 && attrs.damage >= hp) do
         removeTokens attrs attrs.id Resource 1
         healAllDamage attrs attrs.id
       pure e
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
-      n <- (.resources) <$> getEnemy eid
+      n <- resourcesHeld eid . (.resources) =<< getEnemy eid
       when (n > 0) $ enemyGetsAttack (CardIdSource cid) eid n
       pure e
     _ -> CorsairDuelist <$> runMessage msg attrs

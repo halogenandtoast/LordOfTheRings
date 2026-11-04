@@ -53,5 +53,6 @@ instance RunMessage Naasiyah where
     _ -> Naasiyah <$> runMessage msg attrs
    where
     strengthen = do
-      attackModifier attrs attrs (AttackModifier $ resources attrs)
-      attackModifier attrs attrs (DefenseModifier $ resources attrs)
+      n <- resourcesHeld attrs (resources attrs)
+      attackModifier attrs attrs (AttackModifier n)
+      attackModifier attrs attrs (DefenseModifier n)
