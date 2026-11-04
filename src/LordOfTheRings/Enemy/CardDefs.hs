@@ -3600,7 +3600,7 @@ hobgoblin =
     }
 
 werewolf :: CardDef
-werewolf = (enemy "18051" "Werewolf" WildCreatures 2 33 3 2 1 8) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+werewolf = (enemy "18051" "Werewolf" WildCreatures 2 33 3 2 1 8) {cdCardTraits = setFromList [Creature], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 giantSpider :: CardDef
 giantSpider = (enemy "18052" "Giant Spider" WildCreatures 3 28 2 3 2 3) {cdCardTraits = setFromList [Creature, Spider], cdShadowEffect = True}
@@ -3611,6 +3611,7 @@ blackBats =
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 -- * The Fate of Wilderland

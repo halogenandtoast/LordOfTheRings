@@ -3500,7 +3500,7 @@ darkBlackWoods :: CardDef
 darkBlackWoods = (location "18039" "Dark Black Woods" DarkWoods 3 3 3) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 2}
 
 darkTunnel :: CardDef
-darkTunnel = (location "18054" "Dark Tunnel" DeepUnderground 4 3 3) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep]}
+darkTunnel = (location "18054" "Dark Tunnel" DeepUnderground 4 3 3) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep], cdEasyModeQuantity = Just 3}
 
 forkedPassage :: CardDef
 forkedPassage = (location "18055" "Forked Passage" DeepUnderground 2 2 2) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep]}
@@ -3530,10 +3530,11 @@ undergroundLake = (location "18065" "Underground Lake" LostCaves 1 0 0) {cdCardT
 -- out of play, until stage 2A adds it to the staging area.
 woodmenVillage :: CardDef
 woodmenVillage =
-  (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
-    { cdCardTraits = setFromList [Riverland]
-    , cdOtherSide = Just "18069B"
-    }
+  unique
+    $ (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
+      { cdCardTraits = setFromList [Riverland]
+      , cdOtherSide = Just "18069B"
+      }
 
 -- * The Fate of Wilderland
 
@@ -3578,10 +3579,10 @@ greyMoorland =
 -- stage 3A adds it to the staging area.
 theOldFordJourneyUpTheAnduin :: CardDef
 theOldFordJourneyUpTheAnduin =
-  (location "18016" "The Old Ford" JourneyUpTheAnduin 1 5 5)
-    { cdCardTraits = setFromList [Riverland]
-    , cdVictoryPoints = Just 5
-    }
+  unique
+    $ (location "18016" "The Old Ford" JourneyUpTheAnduin 1 5 5)
+      { cdCardTraits = setFromList [Riverland]
+      }
 
 woodedRiverbank :: CardDef
 woodedRiverbank =
@@ -3746,12 +3747,13 @@ slopesOfEredMithrin =
 -- scenario's Searching for a Way Out makes it immune to player card effects.
 objectiveLocation :: CardCode -> Name -> CardType -> CardDef
 objectiveLocation code name guardType =
-  (location code name LostInMirkwood 1 0 4)
-    { cdCardTraits = setFromList [Forest]
-    , cdKeywords = setFromList [GuardedBy [guardType]]
-    , cdVictoryPoints = Just 4
-    , cdThreat = Nothing
-    }
+  unique
+    $ (location code name LostInMirkwood 1 0 4)
+      { cdCardTraits = setFromList [Forest]
+      , cdKeywords = setFromList [GuardedBy [guardType]]
+      , cdVictoryPoints = Just 4
+      , cdThreat = Nothing
+      }
 
 overgrownPath :: CardDef
 overgrownPath = objectiveLocation "18029" "Overgrown Path" LocationType

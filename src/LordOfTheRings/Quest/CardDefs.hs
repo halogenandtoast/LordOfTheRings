@@ -1311,7 +1311,7 @@ theForestOfGreatFear :: CardDef
 theForestOfGreatFear = quest "18076" "The Forest of Great Fear" LostInMirkwood 4 8
 
 escapeFromTaurNuFuin :: CardDef
-escapeFromTaurNuFuin = quest "18077" "Escape from Taur-nu-Fuin" LostInMirkwood 4 16
+escapeFromTaurNuFuin = quest "18077" "Escape from Taur-nu-fuin" LostInMirkwood 4 16
 -- * Beneath the Sands
 
 lostUnderground :: CardDef
