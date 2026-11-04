@@ -25,7 +25,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhib
 import LordOfTheRings.Helpers.Window (exhaustableCharacters, getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Doomed, Secrecy))
+import LordOfTheRings.Keyword (Keyword (Doomed, GuardedBy, Secrecy))
 import LordOfTheRings.Id (AllyId (..), PlayerId (..))
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
@@ -228,6 +228,22 @@ runPlayer msg player = case msg of
             , CheckWindows
                 [mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]
             ]
+        pure $ player & handL %~ filter ((/= cid) . (.id))
+      _ -> pure player
+    -- a Guarded (X) attachment is guarded first, as one played is (MEC65 rules)
+    PlayFromHandOnAtNoCost pid cid host | pid == player.id -> case find ((== cid) . (.id)) player.hand of
+      Just card@(PlayerCard pc) -> do
+        raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef pc)]
+        let attach = maybe (PlayAttachmentOn pid pc host) (ResolveGuardedPlayerCard pid pc) $ headMay [ts | GuardedBy ts <- toList (cdKeywords $ toCardDef pc)]
+        pushAll
+          =<< inLogBlock
+            (PlayBlock pid card)
+            ( markPlayed pid pc
+                <> [ attach
+                   , CheckWindows
+                       [mkAfter $ PlayedCard pid pc, mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]
+                   ]
+            )
         pure $ player & handL %~ filter ((/= cid) . (.id))
       _ -> pure player
     PlayTopOfDeckAtNoCostOrBottom pid source | pid == player.id -> do

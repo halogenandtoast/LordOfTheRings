@@ -1124,6 +1124,11 @@ from hand.
 playFromHandAtNoCost :: ReverseQueue m => PlayerId -> CardId -> m ()
 playFromHandAtNoCost pid cid = push $ PlayFromHandAtNoCost pid cid
 
+-- | Play an attachment from the player's hand on the host without paying its cost, as
+-- Wiglaf plays an Item attachment on himself.
+playOnFromHandAtNoCost :: (ReverseQueue m, HasField "id" card CardId, Targetable host) => PlayerId -> card -> host -> m ()
+playOnFromHandAtNoCost pid card host = push $ PlayFromHandOnAtNoCost pid card.id (toTarget host)
+
 -- | The card leaves the player's deck and is played without paying its cost, as Send for
 -- Help's search lets one be.
 playFromDeckAtNoCost :: ReverseQueue m => PlayerId -> PlayerCard -> m ()

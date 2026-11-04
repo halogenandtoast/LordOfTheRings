@@ -176,6 +176,9 @@ data Message
     PlayAtNoCost PlayerId PlayerCard
   | -- | the card is played from its owner's hand without paying its cost
     PlayFromHandAtNoCost PlayerId CardId
+  | -- | an attachment in its owner's hand is played on the host without paying its cost,
+    -- as Wiglaf plays an Item attachment on himself
+    PlayFromHandOnAtNoCost PlayerId CardId Target
   | {- | the top card of the player's deck is revealed: they may play it at no cost, if
     able, or else it goes to the bottom of their deck
     -}
