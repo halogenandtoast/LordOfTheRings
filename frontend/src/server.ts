@@ -39,6 +39,10 @@ export interface Entity {
   shadowRevealed?: string[]
   /** The encounter card guarding an objective. */
   guard?: string | null
+  /** The encounter card holding a hero captive. */
+  guardedBy?: string | null
+  /** A hero in the staging area, under no player's control. */
+  inStagingArea?: boolean
   /** A location's facedown side, as an Uncharted location hides it: sent only to the players who have looked at it. */
   otherSide?: string | null
   /** A location's place on the Island Map (Temple of the Deceived). */
@@ -137,6 +141,8 @@ export interface ServerGame {
   hitPoints?: Record<string, number>
   /** While attackers are declared, the attack they would make on each enemy, by card id. */
   attackStrength?: Record<string, number>
+  /** While attackers are asked for, the attack each one choosable would add, bonuses against the enemy included, by card id. */
+  attackAdding?: Record<string, number>
   /** How many cards lie facedown under each card, by its card id, as underworld cards under a location. */
   underneath?: Record<string, number>
   /** How many captured cards lie under each card, by its card id (Escape from Mount Gram). */
@@ -148,6 +154,11 @@ export interface ServerGame {
   /** The Stormcaller's quest stage and the progress on it (Flight of the Stormcaller). */
   stormcallerStage?: Card | null
   stormcallerProgress?: number | null
+  /** The heat tracker's temperature (Desert Crossing). */
+  temperature?: number | null
+  /** The Orcs' quest stage and the progress on it (Race Across Harad). */
+  orcsStage?: Card | null
+  orcsProgress?: number | null
   lastCommittedWillpower: number | null
   /** What each target is modified by, as [target, modifiers] pairs. */
   modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]

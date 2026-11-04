@@ -7,8 +7,9 @@ import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, CannotReadyFromCardEffects, ReadiedByRefresh, DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, CannotReadyFromCardEffects, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh))
 import LordOfTheRings.Phase
+import LordOfTheRings.Placement (Placement (AttachedTo, InPlayArea), placementController)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -33,13 +34,18 @@ instance RunMessage AllyAttrs where
       pushWhen attrs.allyCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
+      -- on the game, no character readies, as Enfeebled's "exhausted characters cannot ready";
+      -- nor one whose controller's cards cannot, as Ungoliant's Brood's; a card effect cannot
+      -- ready one barred from it, the refresh phase still does
+      held <- maybe (pure False) (fmap (elem ControlledCardsCannotReady) . getModifiers . PlayerTarget) (placementController attrs.placement)
       mods <- getModifiers attrs
-      -- a card effect cannot ready one barred from it, the refresh phase still does
-      let blocked = CannotReady `elem` mods || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)
+      blocked <- (|| held || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)) . elem CannotReady . (mods <>) <$> getModifiers GameTarget
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
     PlaceAlly aid placement | aid == attrs.allyId -> pure $ attrs & placementL .~ placement
+    GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & placementL .~ AttachedTo (CardIdTarget cid) & committedL .~ False
+    RescueCharacter (isTarget attrs -> True) -> pure $ attrs & placementL .~ InPlayArea attrs.allyOwner & exhaustedL .~ True
     -- the response of an ally in hand, as Brok Ironfist's, puts it into play
     UseHandAction pid cid | cid == attrs.allyCardId, isJust attrs.allyHandWindow -> do
       push $ PutAllyIntoPlay pid cid

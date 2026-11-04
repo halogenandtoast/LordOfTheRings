@@ -36,7 +36,13 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
     <div class="piles">
       <DiscardPile :cards="player.discard" back="player" :choices="choices" @choose="emit('choose', $event)" :data-pile="`discard-${player.playerId}`" />
       <div class="deck">
-        <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
+        <!-- a condition on top of the deck peeks out above it, as an attachment does on its host -->
+        <div class="deck-top" :style="{ '--on-deck': player.onDeck.length }">
+          <div v-for="(card, index) in player.onDeck" :key="card.id" class="on-deck" :style="{ '--depth': index }">
+            <GameCard :card="card" :choices="choices" banner @choose="emit('choose', $event)" />
+          </div>
+          <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
+        </div>
         <!-- the captured deck (Escape from Mount Gram) -->
         <CardBack v-if="player.capturedDeckSize" :count="player.capturedDeckSize" back="player" :title="$t('log.capturedDeck', { count: player.capturedDeckSize })" />
         <div v-if="debugging" class="deck-debug">
@@ -81,6 +87,11 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 .player.eliminated { opacity: 0.45; }
 .hand, .piles { display: flex; gap: var(--gap); }
 .deck { display: flex; flex-direction: column; gap: 4px; }
+/* the discard keeps level with the deck, not with a condition peeking above it */
+.piles { align-items: flex-end; }
+.deck-top { position: relative; padding-top: calc(var(--attachment-peek) * var(--on-deck)); }
+.on-deck { position: absolute; inset: calc(var(--attachment-peek) * var(--depth)) 0 auto 0; filter: drop-shadow(0 -1px 4px var(--shadow)); }
+.deck-top > :deep(.pile-stack) { position: relative; z-index: 1; }
 /* tops level with the deck and discard, whose count pills hang below them */
 .heroes { flex: 0 1 auto; min-width: 0; padding: 0; align-self: flex-start; }
 .threat-box { display: flex; flex-direction: column; align-items: center; align-self: center; gap: var(--gap); }

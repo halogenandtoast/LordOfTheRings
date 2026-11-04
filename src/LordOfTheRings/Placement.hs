@@ -21,6 +21,9 @@ data Placement
   | -- | in the Stormcaller's area (Flight of the Stormcaller): neither in the staging area
     -- nor engaged, until the players reach the Stormcaller's stage
     StormcallerArea
+  | -- | in the Orcs' area (Race Across Harad): neither in the staging area nor engaged,
+    -- while the players are not at the Orcs' stage
+    OrcsArea
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

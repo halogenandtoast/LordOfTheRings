@@ -14,7 +14,7 @@ edgeOfTheTemple = location EdgeOfTheTemple Cards.edgeOfTheTemple
 
 -- | Cannot have player card attachments.
 instance HasModifiersFor EdgeOfTheTemple where
-  getModifiersFor (EdgeOfTheTemple a) = modifySelf a [CannotHavePlayerCardAttachments]
+  getModifiersFor (EdgeOfTheTemple a) = modifySelf a [CannotHavePlayerAttachments]
 
 -- | Forced: After Edge of the Temple becomes the active location, flip it over.
 -- Action: Remove 8 progress from Edge of the Temple to look at its facedown side.

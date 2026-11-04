@@ -1,9 +1,11 @@
 module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Ranged))
-import LordOfTheRings.Modifier (ModifierType (CannotReduceThreat, LoseKeyword))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, LoseKeyword))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -127,6 +129,11 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       reveal Treacheries.timeForSupper []
       getDamage (toTarget troll) `shouldReturn` 0
 
+    it "Stuart bars only player attachments" . nightmare conflictAtTheCarrock $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Enemies.stuartNightmare
+      stuart <- theEnemy
+      getModifiers stuart >>= (`shouldSatisfy` \ms -> CannotHavePlayerAttachments `elem` ms && CannotHaveAttachments `notElem` ms)
+
   describe "A Journey to Rhosgobel" do
     it "builds the nightmare deck" . nightmare aJourneyToRhosgobel $ \_ -> do
       run $ DoStep 1 Setup
@@ -153,6 +160,16 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run $ HealDamage GameSource w 3
       getDamage w `shouldReturn` 4
       getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+
+    it "Noxious Supplies does not limit healing by the player card Athelas" . nightmare aJourneyToRhosgobel $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Objectives.wilyador
+      w <- getsGame (toTarget . fromJustNote "no Wilyador" . find ((== toCardCode Objectives.wilyador) . toCardCode) . toList . (.entities.allies))
+      run $ DealDamage GameSource w 5
+      reveal Treacheries.noxiousSupplies [Locations.darkWoodGrove]
+      hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
+      AttachmentTarget athelas <- putAttachmentOn pid Attachments.athelas hero
+      run $ HealDamage (AbilitySource (AttachmentSource athelas) 1) w 3
+      getDamage w `shouldReturn` 2
 
     it "Labyrinthine Woods gives Creatures +1 attack in the staging area" . nightmare aJourneyToRhosgobel $ \_ -> do
       reveal Locations.labyrinthineWoods []
@@ -242,6 +259,15 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.marshWight
       reveal Treacheries.devilryOfTheDarkLand []
       getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.marshWight]
+
+    it "Lost Soul of Lórien destroyed attaches to a hero as a condition, its willpower 0" . nightmare theDeadMarshes $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.lostSoulOfLorien
+      soul <- theEnemy
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DealDamage GameSource (EnemyTarget soul) 3
+      chooseTarget pid eowyn
+      getsGame (fmap (.placement) . find ((== soul) . toId) . toList . (.entities.enemies)) `shouldReturn` Just (AttachedTo eowyn)
+      getWillpower eowyn `shouldReturn` 0
 
   describe "Return to Mirkwood" do
     it "builds the nightmare deck" . nightmare returnToMirkwood $ \_ -> do

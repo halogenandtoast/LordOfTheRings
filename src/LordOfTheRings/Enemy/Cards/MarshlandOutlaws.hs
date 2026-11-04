@@ -17,7 +17,7 @@ marshlandOutlaws = enemy MarshlandOutlaws Cards.marshlandOutlaws
 instance HasModifiersFor MarshlandOutlaws where
   getModifiersFor (MarshlandOutlaws a) = for_ [p | EngagedWith p <- [a.placement]] \pid -> do
     others <- select (NotEnemy $ EnemyWithCardCode $ toCardCode Cards.marshlandOutlaws)
-    for_ others \e -> modified a e [CannotBeAttackedByCharactersOf pid]
+    for_ others \e -> modified a e [CannotBeAttackedByCharactersOf pid, CannotBeDamagedByEffectsOf pid]
 
 -- | Shadow: Raise your threat by X. X is the amount of damage dealt by this attack.
 instance RunMessage MarshlandOutlaws where

@@ -18,7 +18,7 @@ lostIslandTempleOfTheDeceived = location LostIsland Cards.lostIslandTempleOfTheD
 
 -- | Cannot have player card attachments (The Grey Havens rules insert, Uncharted).
 instance HasModifiersFor LostIsland where
-  getModifiersFor (LostIsland a) = modifySelf a [CannotHavePlayerCardAttachments]
+  getModifiersFor (LostIsland a) = modifySelf a [CannotHavePlayerAttachments]
 
 -- | Forced: After Lost Island becomes the active location, flip it over.
 -- Action: Remove 4 progress from Lost Island to look at its facedown side.

@@ -2,9 +2,10 @@ module LordOfTheRings.AngmarAwakened.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card.Synthetic qualified as Synthetic
-import LordOfTheRings.Card (CardDef (cdKeywords), CardType (HeroType), cdCardType, toCard, toCardDef)
+import LordOfTheRings.Card (CardDef (cdKeywords), CardType (EventType, HeroType), cdCardType, toCard, toCardDef)
 import LordOfTheRings.Keyword (Keyword (Safe))
 import LordOfTheRings.Quest.Types (isSideQuest)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
@@ -49,6 +50,10 @@ stagedLocation :: CardDef -> GameT LocationId
 stagedLocation def = do
   run . AddToStaging =<< genEncounterCard def
   locationOf def
+
+-- | The player plays an event this round, as far as the round's count of them goes.
+playedEvent :: PlayerId -> GameT ()
+playedEvent pid = run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardTypeThisRound EventType] UntilEndOfRound
 
 -- | Use every forced ability offered, one at a time, then pass the responses offered.
 resolveForced :: PlayerId -> GameT ()
@@ -306,6 +311,22 @@ spec = describe "Angmar Awakened Nightmare mode" do
       resolveForced pid
       getCharacterDamage eowyn `shouldReturn` 2
 
+    it "Hoarwell River Serpent engaged with a lone player bars travel to safe locations" . nightmare acrossTheEttenmoors $ \pid -> do
+      cave <- stagedLocation Locations.secludedCave
+      serpent <- staged Enemies.hoarwellRiverSerpent
+      run $ EngageEnemy pid serpent
+      resolveForced pid
+      getModifiers (toTarget cave) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+
+    it "Giant Beetle attacks before the safe location traveled to becomes active" . nightmare acrossTheEttenmoors $ \pid -> do
+      cave <- stagedLocation Locations.secludedCave
+      beetle <- staged Enemies.giantBeetle
+      run $ EngageEnemy pid beetle
+      run $ TravelTo cave
+      passActions pid
+      getQuestion pid >>= (`shouldSatisfy` \case Just (QuestionLabel l _ _ _) -> "$label.declareDefender" `isPrefixOf` l; _ -> False)
+      (.placement) <$> getLocation cave `shouldReturn` StagingArea
+
     it "Rocky Foothills must be traveled to, with 2 quest points per quest" . nightmare acrossTheEttenmoors $ \_ -> do
       _ <- putQuestStage Quests.aMiserableJourney
       foothills <- stagedLocation Locations.rockyFoothills
@@ -521,13 +542,24 @@ spec = describe "Angmar Awakened Nightmare mode" do
     it "Silent Guardian reanimates the first event its player plays" . nightmare theDreadRealm $ \pid -> do
       guardian <- staged Enemies.silentGuardian
       run $ EngageEnemy pid guardian
-      -- played, the event lies in its player's discard pile
+      -- played, the event lies in its player's discard pile, counted for the round
       event <- inDiscard pid Events.everVigilant
+      playedEvent pid
       run $ CheckWindows [mkAfter $ PlayedFromHand (CardIdTarget event.id)]
       length <$> reanimated `shouldReturn` 1
       other <- inDiscard pid Events.everVigilant
+      playedEvent pid
       run $ CheckWindows [mkAfter $ PlayedFromHand (CardIdTarget other.id)]
       length <$> reanimated `shouldReturn` 1
+
+    it "Silent Guardian counts the events played before its player engaged it" . nightmare theDreadRealm $ \pid -> do
+      playedEvent pid
+      guardian <- staged Enemies.silentGuardian
+      run $ EngageEnemy pid guardian
+      event <- inDiscard pid Events.everVigilant
+      playedEvent pid
+      run $ CheckWindows [mkAfter $ PlayedFromHand (CardIdTarget event.id)]
+      length <$> reanimated `shouldReturn` 0
 
     it "Necromancer of Carn Dûm reanimates the top of the deck in place of its attack" . nightmare theDreadRealm $ \pid -> do
       necro <- staged Enemies.necromancerOfCarnDum
@@ -536,6 +568,16 @@ spec = describe "Angmar Awakened Nightmare mode" do
       run $ EnemyAttack pid necro
       resolveForced pid
       length <$> reanimated `shouldReturn` 1
+
+    it "Necromancer of Carn Dûm, its attack canceled, has not attacked for Blight of Carn Dûm" . nightmare theDreadRealm $ \pid -> do
+      _ <- stagedLocation Locations.blightOfCarnDum
+      necro <- staged Enemies.necromancerOfCarnDum
+      run $ EngageEnemy pid necro
+      run $ DealDamage GameSource (toTarget necro) 1
+      _ <- onTop pid Allies.silverlodeArcher
+      run $ EnemyAttack pid necro
+      resolveForced pid
+      getDamage (toTarget necro) `shouldReturn` 1
 
     it "Inner Sanctum takes no progress in the staging area, and resolves the Sorcery it discards" . nightmare theDreadRealm $ \_ -> do
       _ <- putQuestStage Quests.theCatacombsOfCarnDum

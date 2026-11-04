@@ -47,7 +47,7 @@ instance RunMessage ParalyzingFear where
           labeled "paralyzingFear.discard" do
             discardTopOfDeck pid 1
             placeResources attrs attrs 1
-            ready host
+            encounterReadies host
             removeTokens attrs attrs Resource 1
           labeled "paralyzingFear.stayExhausted" $ pure ()
       ParalyzingFear <$> runMessage msg attrs

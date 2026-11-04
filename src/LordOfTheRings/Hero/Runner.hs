@@ -8,7 +8,7 @@ import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotGainResourcesFromPlayerCardEffects, CannotReady, CannotReadyFromCardEffects, ReadiedByRefresh, CollectsAdditionalResources, DoesNotExhaustToAttack, SpentResourcesThisRound))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotGainResourcesFromPlayerCardEffects, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -21,13 +21,18 @@ instance RunMessage HeroAttrs where
     DoPhase ResourcePhase -> do
       mods <- getModifiers attrs
       let collected = 1 + sum [n | CollectsAdditionalResources n <- mods]
-      unless (attrs.heroPrisoner || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
+      unless (attrs.heroPrisoner || attrs.heroInStagingArea || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
       pure attrs
     TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
     RescuePrisoner hid | hid == attrs.heroId -> do
       push $ PlaceTokens GameSource (toTarget attrs) Damage 1
       pure $ attrs & prisonerL .~ False
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
+    -- a captive is attached to its guard, out of the staging area
+    GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & guardedByL ?~ cid & committedL .~ False & attackingL .~ False & inStagingAreaL .~ False
+    RescueCharacter (isTarget attrs -> True) -> pure $ attrs & guardedByL .~ Nothing & exhaustedL .~ True
+    MoveHeroToStagingArea hid | hid == attrs.heroId -> pure $ attrs & inStagingAreaL .~ True & committedL .~ False & attackingL .~ False
+    TakeControlOfHero hid | hid == attrs.heroId -> pure $ attrs & inStagingAreaL .~ False & exhaustedL .~ True
     -- the resource phase's resources come from the game, not a card effect
     PlaceTokens source (isTarget attrs -> True) Resource n | source /= GameSource -> do
       mods <- getModifiers attrs
@@ -48,9 +53,12 @@ instance RunMessage HeroAttrs where
       pushWhen attrs.heroCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
+      -- on the game, no character readies, as Enfeebled's "exhausted characters cannot ready";
+      -- nor one whose controller's cards cannot, as Ungoliant's Brood's; a card effect cannot
+      -- ready one barred from it, the refresh phase still does
       mods <- getModifiers attrs
-      -- a card effect cannot ready one barred from it, the refresh phase still does
-      let blocked = CannotReady `elem` mods || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)
+      held <- elem ControlledCardsCannotReady <$> getModifiers (PlayerTarget attrs.owner)
+      blocked <- (|| held || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)) . elem CannotReady . (mods <>) <$> getModifiers GameTarget
       when (attrs.heroExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do

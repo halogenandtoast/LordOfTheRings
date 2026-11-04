@@ -4,7 +4,6 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Placement (Placement (StormcallerArea))
 import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers
 
@@ -24,6 +23,8 @@ Stages 2C and 3C: If the players are off-course, the Stormcaller gets +2 threat.
 -- Campaign Mode only side (the Dream-chaser campaign): 7 attack, 20 hit points, no word
 -- against attachments, and: If you are at the Stormcaller's stage, no more than 9 progress
 -- can be placed on your quest each round.
+-- That side is played as the printed side's card with modifiers bringing it to those
+-- values: the board still shows the printed face, as no card def holds the other side.
 instance HasModifiersFor Stormcaller where
   getModifiersFor (Stormcaller a) = do
     campaign <- isJust <$> getCampaignLog
@@ -43,17 +44,9 @@ instance HasModifiersFor Stormcaller where
 
 {- | When the Stormcaller advances to the next quest stage, return it to the Stormcaller's
 area. If the Stormcaller leaves play, the players win the game.
-Damage past the round's limit is lost, as Mumak's is.
 -}
 instance RunMessage Stormcaller where
   runMessage msg e@(Stormcaller attrs) = case msg of
-    PlaceTokens source (isTarget attrs -> True) Damage n | n > 0 -> do
-      left <- foldr min maxBound . (\ms -> [k | DamageLimit k <- ms]) <$> getModifiers attrs
-      let placed = min n left
-      when (left < maxBound) $ roundModifier attrs attrs (DamageLimit (left - placed))
-      if placed > 0
-        then Stormcaller <$> runMessage (PlaceTokens source (toTarget attrs) Damage placed) attrs
-        else pure e
     ScenarioSpecific "stormcaller.advanced" _ -> do
       when (attrs.placement /= StormcallerArea) $ placeEnemy attrs.id StormcallerArea
       pure e

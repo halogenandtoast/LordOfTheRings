@@ -220,6 +220,9 @@ data Message
   | UseAbility PlayerId Ability [Window]
   | UseCardAbility PlayerId Source Int [Window]
   | CreateEffect Effect
+  | -- | the lasting effects of that duration end, as the round's do once the round's end
+    -- has resolved
+    EndEffects EffectDuration
   | AttachCard AttachmentId Target
   | -- | the character's restricted cards are counted again, after one is discarded
     CheckRestricted Target
@@ -243,6 +246,15 @@ data Message
     PayExhaustHeroCost PlayerId HeroMatcher [Message]
   | -- | the player deals 1 damage to a character they control other than the one given
     DamageAnotherCharacter Source PlayerId Target
+  | -- | the player deals 1 damage to an Aflame location in the staging area of their
+    -- choice, chosen as it resolves, as Elite Marauder's excess damage reads point by point
+    DamageAflameLocation Source PlayerId
+  | -- | the windows for an ally having entered play, under whoever controls it as this
+    -- resolves: one revealed from the encounter deck, given a player as it resolves
+    AllyEnteredPlayUnderController AllyId
+  | -- | the enemy's attack is over without it having attacked, as a canceled attack: what
+    -- lasted for that attack ends, and no "after it attacks" window opens
+    AttackEndedUnresolved EnemyId
   | -- | the player divides the damage among characters they control, a point at a time,
     -- the points assigned so far kept; it is dealt once all are assigned
     DealDamageDivided Source PlayerId Int [Target]
@@ -259,6 +271,9 @@ data Message
     staging area to guard it, any other card is revealed
     -}
     GuardObjective ObjectiveId
+  | -- | the first player claims the objective, which nothing guards (see
+    -- 'FirstPlayerClaimsWhenFree')
+    ClaimFreeObjective ObjectiveId
   | -- | a guarded location revealed, as Across the Ettenmoors' objective-locations: the next
     -- encounter card is revealed guarding it, the location attached to that card until it
     -- leaves play
@@ -275,6 +290,22 @@ data Message
     RemoveFromQuestDeck EncounterCard
   | TakePrisoner HeroId
   | RescuePrisoner HeroId
+  | -- | the character, a hero or an ally, goes to the encounter card with this id as its
+    -- captive: under no player's control and out of the game's reach, a guarded objective
+    -- until that card leaves play (The Long Arm of Mordor, The Dungeons of Cirith Gurat)
+    GuardCharacter Target CardId
+  | -- | the guarded character is free of encounters: its owner takes control of it, exhausted
+    RescueCharacter Target
+  | -- | the hero goes to the staging area, in play under no player's control (The Long Arm
+    -- of Mordor)
+    MoveHeroToStagingArea HeroId
+  | -- | the hero in the staging area returns to its owner's control, exhausted
+    TakeControlOfHero HeroId
+  | -- | an objective-hero comes into play under the player's control
+    PutObjectiveHeroIntoPlayUnder PlayerId EncounterCard
+  | -- | a card out of play, an ally card from its owner's discard pile or an objective ally,
+    -- comes into play as the captive of the encounter card with this id (see 'GuardCharacter')
+    GuardCard Card CardId
   | SetAside EncounterCard
   | -- | a stage whose condition may have just been met checks whether it is defeated
     CheckStage QuestId
@@ -339,6 +370,8 @@ data Message
   | ShuffleEncounterDiscardIntoDeck CardMatcher
   | -- | set-aside cards are shuffled into the encounter deck
     ShuffleSetAsideIntoEncounterDeck [EncounterCard]
+  | -- | set-aside cards are removed from the game, as an encounter set a scenario stops using
+    RemoveSetAsideFromGame [EncounterCard]
   | -- | matching encounter cards in the victory display are shuffled into the encounter deck
     ShuffleVictoryDisplayIntoEncounterDeck CardMatcher
   | -- | an objective ally in play joins the player as an ally
@@ -482,7 +515,11 @@ data Message
     PlaceResourcesOutOfPlay CardId Int
   | -- | the player deals the damage to a hero the matcher picks out to pay a cost
     PayDamageHeroCost PlayerId HeroMatcher Int [Message]
+  | -- | the messages, if the enemy's last attack dealt no damage, as King's Knight reads
+    IfAttackDealtNoDamage EnemyId [Message]
   | DrawCards Drawing
+  | -- | the draw itself, once nothing has stopped it, as Iron Shackles or Enchanted Stream
+    DoDrawCards Drawing
   | Mulligan PlayerId
   | -- | log only: what is narrated until the block closes is filed under it
     OpenLogBlock LogBlock
@@ -602,6 +639,14 @@ data Message
   | -- | the top card of the Corsair deck is revealed and put into play engaged with the
     -- player, for the source, its discard pile reshuffled first if it has run out
     RevealFromCorsairDeck Source PlayerId
+  | -- | as 'RevealFromCorsairDeck', the enemy put into play dealt a shadow card, as Ramming
+    -- Ship's shadow reads
+    RevealFromCorsairDeckWithShadow Source PlayerId
+  | -- | deal a shadow card to the enemy whose card this is, once it has entered play
+    DealShadowCardToCard CardId
+  | -- | the enemy goes to the staging area of the player's area, as Giant Cave Centipede
+    -- moves to a different player's while the players are separated
+    PlaceInStagingAreaOf PlayerId EnemyId
   | -- | the card the source revealed from the Corsair deck, as Light Cruiser reads it
     RevealedFromCorsairDeck Source PlayerId EncounterCard
   | -- | the Ship enemy engaged the player from the staging area: its Boarding X resolves
@@ -695,3 +740,16 @@ inLogBlock :: MonadRandom m => LogBlockKind -> [Message] -> m [Message]
 inLogBlock kind msgs = do
   block <- LogBlock <$> getRandom <*> pure kind
   pure $ OpenLogBlock block : msgs <> [CloseLogBlock block.id]
+
+{- | The enemy the message takes out of play other than by destroying it, as an effect
+that discards it, returns it to the encounter deck or adds it to the victory display.
+-}
+removedEnemy :: Message -> Maybe EnemyId
+removedEnemy = \case
+  Discard (EnemyTarget eid) -> Just eid
+  ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ReturnToBottomOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ShuffleIntoEncounterDeck (EnemyTarget eid) -> Just eid
+  RemoveFromGame (EnemyTarget eid) -> Just eid
+  AddToVictoryDisplay (EnemyTarget eid) -> Just eid
+  _ -> Nothing

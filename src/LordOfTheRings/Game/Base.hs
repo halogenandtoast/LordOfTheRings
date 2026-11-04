@@ -95,13 +95,16 @@ data AreaStatus = AreaWaiting | AreaStarted | AreaDone
 {- | A card an attack's damage destroyed, as "if this attack destroys a character" reads:
 the attack, as its damage's source ('EnemyAttackSource', or 'PlayerAttackSource' for an
 attack on an enemy), the card destroyed and who controlled it, and the card itself, for
-what reads it once it has left play (Desecrated Ruins, the ally's cost).
+what reads it once it has left play (Desecrated Ruins, the ally's cost). An enemy's attack
+keeps the enemy's card too, for what reads the attacker once it may have left play (Battle
+at the Crossings, its printed threat).
 -}
 data AttackDestroyed = AttackDestroyed
   { attackDestroyedBy :: Source
   , attackDestroyedTarget :: Target
   , attackDestroyedController :: Maybe PlayerId
   , attackDestroyedCard :: Card
+  , attackDestroyedAttacker :: Maybe Card
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

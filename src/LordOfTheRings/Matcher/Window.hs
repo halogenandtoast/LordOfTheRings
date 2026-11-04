@@ -82,9 +82,15 @@ data WindowMatcher
     StagingStepEndsWindow
   | ProgressPlacedWindow Timing Target
   | QuestedUnsuccessfullyWindow Timing
+  | -- | a guarded character, or the given one, was rescued (see 'GuardCharacter')
+    CharacterRescuedWindow Timing (Maybe Target)
   | QuestedSuccessfullyWindow Timing
+  | -- | after the progress from questing successfully is placed, as Surprise Attack reads
+    PlacedProgressFromQuestingWindow Timing
   | -- | after an attack the character, or any character, defended
     DefendedAttackWindow Timing (Maybe Target)
+  | -- | after an attack by the enemy was defended, as Noose of Vines reads
+    DefendedAttackAgainstWindow Timing EnemyId
   | PlayedFromHandWindow Timing Target
   | LocationRevealedWindow Timing
   | ShadowEffectAgainstWindow Timing Target
@@ -102,6 +108,8 @@ data WindowMatcher
   | -- | an encounter card revealed from the encounter deck with a When Revealed effect
     -- that can be canceled
     CardRevealedWindow Timing
+  | -- | as 'CardRevealedWindow', an enemy, as Dúnedain Lookout answers
+    EnemyCardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
     DefenderDeclaredWindow Timing (Maybe Target)
   | -- | a character declared as a defender against the enemy, as Snow Warg reads
@@ -147,6 +155,10 @@ data WindowMatcher
   | ChangedControlWindow Timing Target
   | -- | any player plays an event
     EventPlayedWindow Timing
+  | -- | the player plays an event, as Steward of Orthanc answers "when you play an event"
+    PlayerPlayingEventWindow Timing PlayerId
+  | -- | an enemy's attack dealt the card damage, as Dwarven Shield's attached hero
+    DamagedByEnemyAttackWindow Timing Target
   | -- | an attack with a character of the trait among its attackers dealt damage
     AttackDealtDamageWithTraitWindow Timing Trait
   | -- | a location entered play, in the staging area
@@ -241,6 +253,9 @@ data WindowMatcher
     RevealedTitleInVictoryDisplayWindow Timing
   | -- | it became Day or Night, as "when it becomes Night" reads
     BecomesWindow TimeOfDay
+  | -- | a card turned over to the side with this code, as "after the Search objective is
+    -- flipped to Off Track" reads
+    FlippedToWindow Timing CardCode
   | -- | any captured cards rescued (Escape from Mount Gram)
     CapturedCardsRescuedWindow Timing
   | -- | the player drew cards at the beginning of the resource phase, as Círdan the
@@ -298,6 +313,8 @@ data WindowMatcher
   | -- | a matching enemy revealed from the encounter deck, as Concealed Woods reads one with
     -- ambush
     MatchingEnemyRevealedWindow Timing EnemyMatcher
+  | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
+    AttackersDeclaredWindow Timing EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -316,6 +333,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (ExhaustedWindow t target, Exhausted target') -> t == timing && target == target'
+  (AttackersDeclaredWindow t eid, AttackersDeclared eid') -> t == timing && eid == eid'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (DefenderDeclaredAgainstWindow t eid, DeclaredAsDefender _ eid') -> t == timing && eid == eid'
@@ -343,8 +361,11 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (StagingStepEndsWindow, StagingStepEnds) -> True
   (ProgressPlacedWindow t target, ProgressPlaced target' _) -> t == timing && target == target'
   (QuestedUnsuccessfullyWindow t, QuestedUnsuccessfully) -> t == timing
+  (CharacterRescuedWindow t mt, CharacterRescued c) -> t == timing && maybe True (== c) mt
   (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing
+  (PlacedProgressFromQuestingWindow t, PlacedProgressFromQuesting) -> t == timing
   (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
+  (DefendedAttackAgainstWindow t eid, DefendedAttack _ eid') -> t == timing && eid == eid'
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'
   (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
   (ShadowEffectAgainstWindow t target, ShadowEffectAgainst target') -> t == timing && target == target'
@@ -373,8 +394,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (OtherPlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid /= pid'
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
+  (PlayerPlayingEventWindow t pid, PlayingEvent pid' _) -> t == timing && pid == pid'
+  (DamagedByEnemyAttackWindow t target, DamagedByEnemyAttack target' _) -> t == timing && target == target'
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
-  (CardPlayedWindow t m, PlayedCard _ code) -> t == timing && cardMatches m code
+  (CardPlayedWindow t m, PlayedCard _ card) -> t == timing && cardMatches m card
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
@@ -403,6 +426,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   (BecomesWindow time, Became time') -> time == time'
+  (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
@@ -426,6 +450,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
+  (EnemyCardRevealedWindow {}, _) -> False
   (AttackDealtDamageWithTraitWindow {}, _) -> False
   (TraveledToWindow {}, _) -> False
   (AttachmentPlayedOnHeroWindow {}, _) -> False

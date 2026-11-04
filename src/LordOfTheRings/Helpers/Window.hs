@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -23,7 +23,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotDiscardFromHand, CannotTakeDamage, TreacheryRevealedThisRound),
+  ModifierType (CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -105,10 +105,12 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (TreacheryWithTraitRevealedWindow t trait, Revealed target@(TreacheryTarget tid)) | t == timing ->
     maybe (pure False) (hasTrait trait target . toCardDef) . Map.lookup tid . (.treacheries) =<< getsGame gameEntities
   (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
+  (EnemyCardRevealedWindow t, Revealed (EnemyTarget _)) -> windowMatchesM (CardRevealedWindow t) w
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
-    cancelable <- notElem WhenRevealedCannotBeCanceled <$> getModifiers target
+    -- on the game, no card's can be, as while Foothills of Mordor is in the staging area
+    cancelable <- notElem WhenRevealedCannotBeCanceled . concat <$> traverse getModifiers [target, GameTarget]
     pure $ cancelable && maybe False cdWhenRevealed case target of
       EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
@@ -303,7 +305,16 @@ passesCriteria = \case
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
   InNightmareMode -> inNightmareMode
+  MainQuestWithoutKeywords -> do
+    mains <- getMainQuests
+    flip allM mains \q -> do
+      mods <- getModifiers q
+      def <- getsGame (fmap toCardDef . find ((== q) . toTarget) . toList . entitiesQuests . gameEntities)
+      pure $ maybe True (null . cdKeywords) def && null [k | GainKeyword k <- mods]
   AnyCriteria cs -> anyM passesCriteria cs
+  DifferentTraitsAtLeast pid n -> (>= n) . length . mconcat <$> (traverse characterTraits =<< charactersControlledBy pid)
+  ConditionAttachmentExists -> notNull <$> getConditionAttachments
+  CardInHandToDiscard pid matcher -> anyM (matchCard matcher) . (.hand) =<< getPlayer pid
 
 -- | Whether each list can give a character not taken by an earlier one.
 distinct :: [Target] -> [[Target]] -> Bool
@@ -389,7 +400,12 @@ costMessages source = \case
 
 -- | The player who controls an ability's source, if anyone does.
 abilityController :: HasGame m => Ability -> m (Maybe PlayerId)
-abilityController ab = go ab.abilitySource
+abilityController ab = sourceController ab.abilitySource
+
+-- | The player who controls the source, if anyone does: an encounter card's, the first
+-- player.
+sourceController :: HasGame m => Source -> m (Maybe PlayerId)
+sourceController = go
  where
   go = \case
     AbilitySource s _ -> go s
@@ -414,6 +430,17 @@ abilityController ab = go ab.abilitySource
     Just (AttachedTo host@(HeroTarget _)) -> characterController host
     Just (AttachedTo host@(AllyTarget _)) -> characterController host
     _ -> Just <$> getLead
+
+{- | The player whose player card the source is: who controls the hero, ally or attachment,
+or who holds the event, as its card id, in hand, deck or discard pile.
+-}
+playerCardController :: HasGame m => Source -> m (Maybe PlayerId)
+playerCardController = \case
+  AbilitySource s _ -> playerCardController s
+  CardIdSource cid ->
+    fmap (.id) . find (\p -> any ((== cid) . (.id)) (p.hand <> p.deck <> p.discard)) . toList <$> getsGame gamePlayers
+  source | isPlayerCardSource source -> sourceController source
+  _ -> pure Nothing
 
 -- | The Action abilities a player can use right now.
 getActionAbilities :: HasGame m => PlayerId -> m [Ability]

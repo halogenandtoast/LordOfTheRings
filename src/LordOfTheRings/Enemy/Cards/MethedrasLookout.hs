@@ -32,6 +32,8 @@ instance RunMessage MethedrasLookout where
         questionLabeled "methedrasLookout.choose"
         causedBy attrs
         unless (null characters) $ labeled "methedrasLookout.exhaust" $ chooseAndExhaust attrs pid 1
-        labeled "methedrasLookout.return" $ returnToStagingAfterAttack eid
+        -- returned now, the attack under way still resolving: only step 1 of combat needs
+        -- the enemy engaged (FAQ, A Light in the Dark played mid-attack)
+        labeled "methedrasLookout.return" $ placeEnemy eid StagingArea
       pure e
     _ -> MethedrasLookout <$> runMessage msg attrs

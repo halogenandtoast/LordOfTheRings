@@ -19,4 +19,6 @@ spec = describe "Resource phase" do
 
   it "opens one window for a draw, with the cards drawn" . gameTest $ \pid -> do
     runOnly $ DrawCards $ Drawing pid 2
+    peekQueue `shouldReturn` [DoDrawCards $ Drawing pid 2]
+    void runNext
     peekQueue `shouldReturn` [CheckWindows [mkAfter $ CardsDrawn pid 2]]

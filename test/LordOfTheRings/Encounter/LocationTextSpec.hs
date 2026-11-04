@@ -170,7 +170,7 @@ spec = describe "Location card text" do
     island <- stagedLocation Locations.lostIsland
     edge <- stagedLocation Locations.edgeOfTheTemple
     for_ [island, edge] \l ->
-      getModifiers (LocationTarget l) >>= (`shouldSatisfy` \ms -> CannotHavePlayerCardAttachments `elem` ms && CannotHaveAttachments `notElem` ms)
+      getModifiers (LocationTarget l) >>= (`shouldSatisfy` \ms -> CannotHavePlayerAttachments `elem` ms && CannotHaveAttachments `notElem` ms)
 
   it "Elven Wave-runner's draw may be declined" . gameTest $ \pid -> do
     runner <- stagedLocation Locations.elvenWaveRunner

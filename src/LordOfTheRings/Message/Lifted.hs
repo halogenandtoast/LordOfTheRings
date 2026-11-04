@@ -39,6 +39,7 @@ import LordOfTheRings.Placement (
  )
 import LordOfTheRings.Prelude hiding (count)
 import LordOfTheRings.Queue
+import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Question (Question (QuestionLabel))
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
@@ -47,7 +48,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, CharacterRescued, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
  )
 
 dealDamage
@@ -118,6 +119,18 @@ removeTimeCountersFromCurrentQuest source n = traverse_ (\q -> removeTimeCounter
 removeProgressFromQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromQuest source n = push $ RemoveProgressFromQuest (toSource source) n
 
+{- | Remove this much progress from the main quest, not a side quest the players quest
+against instead, as the Haradrim cycle's "remove 2 progress from the main quest" reads.
+-}
+removeProgressFromMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+removeProgressFromMainQuest source n = do
+  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress (min n q.progress)
+
+-- | Place progress on the main quest, bypassing the active location, as Umbar Square reads.
+placeProgressOnMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+placeProgressOnMainQuest source n = traverse_ (\q -> placeTokens source q Progress n) =<< getMainQuests
+
 -- | Remove this much progress from each quest card in play, the main quest and each side
 -- quest, as "remove 2 progress from each quest card in play" reads.
 removeProgressFromEachQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
@@ -172,8 +185,10 @@ lowerThreat pid n = do
 it does reduce it: The Empty Mug answers a player card's.
 -}
 lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
-lowerThreatBy source pid n = do
-  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+lowerThreatBy source pid n' = do
+  mods <- getModifiers (PlayerTarget pid)
+  let barred = CannotReduceThreat `elem` mods
+      n = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
   threat <- (.threat) <$> getPlayer pid
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
@@ -222,8 +237,22 @@ discard (toTarget -> t) = do
         push $ CheckWindows [Window After $ AllyDiscardedByCardEffect t (cdCardTraits def <> setFromList gained)]
     _ -> pure ()
 
+{- | A player card's effect readies the card, unless it is a character player card effects
+cannot ready, as Find Water reads. An encounter card's effect readies with
+'encounterReadies'.
+-}
 ready :: (ReverseQueue m, Targetable target) => target -> m ()
-ready = push . Ready . toTarget
+ready (toTarget -> t) = do
+  barred <- (CannotBeReadiedByPlayerCards `elem`) . concat <$> sequence [getModifiers GameTarget, getModifiers t]
+  let character = case t of
+        HeroTarget _ -> True
+        AllyTarget _ -> True
+        _ -> False
+  unless (character && barred) $ push (Ready t)
+
+-- | An encounter or quest card's effect readies the card, as Find Water's own Response.
+encounterReadies :: (ReverseQueue m, Targetable target) => target -> m ()
+encounterReadies = push . Ready . toTarget
 
 exhaust :: (ReverseQueue m, Targetable target) => target -> m ()
 exhaust = push . Exhaust . toTarget
@@ -544,9 +573,26 @@ discardTopOfEncounterDeckFor source target n = push $ DiscardTopOfEncounterDeck 
 the source reads them back from 'DiscardedTopOfEncounterDeck'.
 -}
 discardEncounterCardsUntil :: (ReverseQueue m, Sourceable a, Targetable a) => a -> CardMatcher -> m ()
-discardEncounterCardsUntil a matcher = do
+discardEncounterCardsUntil a = discardEncounterCardsUntilCount a 1
+
+{- | As 'discardEncounterCardsUntil', until N matching cards are, as "discard cards from the
+top of the encounter deck until X locations are discarded" reads. The deck is read now: a
+card that shuffles it first reads it back in a later step.
+-}
+discardEncounterCardsUntilCount :: (ReverseQueue m, Sourceable a, Targetable a) => a -> Int -> CardMatcher -> m ()
+discardEncounterCardsUntilCount a n matcher = when (n > 0) do
   deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-  discardTopOfEncounterDeck a $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
+  let matching = [i | (i, c) <- zip [0 ..] deck, cardMatches matcher c]
+  discardTopOfEncounterDeck a $ maybe (length deck) (+ 1) (headMay $ drop (n - 1) matching)
+
+{- | As 'discardEncounterCardsUntil', read back on behalf of the target, as "each player
+discards cards ... until he discards an enemy" reads with each player (Flee the City).
+-}
+discardEncounterCardsUntilFor
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> CardMatcher -> m ()
+discardEncounterCardsUntilFor source target matcher = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  discardTopOfEncounterDeckFor source target $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
 
 -- | An encounter card, taken from where it was, becomes the active location, as a setup puts one.
 putIntoPlayAsActiveLocation :: ReverseQueue m => EncounterCard -> m ()
@@ -594,6 +640,14 @@ doesNotRaiseThreat pid = lift $ withQueue_ \q -> case break (\case RaiseThreat p
 afterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
 afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
+  _ -> False
+
+{- | Messages to run once the characters' attack on the enemy has resolved, as "after this
+attack" reads for an enemy defending: after what the attack's damage step pushes.
+-}
+afterAttackOn :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
+afterAttackOn eid msgs = lift $ insertAfterMatching msgs \case
+  DoStep 1 (ResolveAttack _ eid') -> eid == eid'
   _ -> False
 
 {- | "If this attack destroys a character": the shadow's next step, 'DoStep' 1 of its
@@ -1054,6 +1108,11 @@ immediateAttack pid eid = do
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
 
+-- | The enemy makes an immediate attack against the player, dealt no shadow card for it,
+-- as "it makes an immediate attack (do not deal it a shadow card)" reads.
+immediateAttackWithoutShadow :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+immediateAttackWithoutShadow pid eid = push $ EnemyAttack pid eid
+
 {- | The enemy engages the player with the highest threat and makes an immediate attack,
 the first player choosing among players tied for it, as Prowling Orc's Scour and Jailor
 Gornákh read.
@@ -1114,6 +1173,21 @@ revealSetAsideMatching :: ReverseQueue m => CardMatcher -> m ()
 revealSetAsideMatching matcher = do
   setAside' <- getsGame ((.scenarioSetAside) . toAttrs . (.scenario))
   traverse_ (push . RevealCard) $ filter (cardMatches matcher) setAside'
+
+-- | The set-aside card is revealed as if it were the top card of the encounter deck, as
+-- Danger Close Behind reveals a random one.
+revealSetAsideCard :: ReverseQueue m => EncounterCard -> m ()
+revealSetAsideCard = push . RevealCard
+
+-- | The set-aside cards go to the encounter discard pile, part of the encounter deck from
+-- then on, as Harondor Waste places a random one there.
+discardSetAside :: ReverseQueue m => [EncounterCard] -> m ()
+discardSetAside = push . AddToEncounterDiscard
+
+-- | The set-aside cards are removed from the game, as an encounter set the scenario stops
+-- using (The Crossings of Poros' stage 2A).
+removeSetAsideFromGame :: ReverseQueue m => [EncounterCard] -> m ()
+removeSetAsideFromGame = push . RemoveSetAsideFromGame
 
 {- | Take the first matching card from the encounter deck, discard pile or victory display,
 then shuffle the encounter deck, as "search the encounter deck, discard pile and victory
@@ -1231,6 +1305,39 @@ putLocationIntoPlay card = push . PutLocationIntoPlay card
 whileInPlay :: (ReverseQueue m, Targetable target) => target -> QueueT Message m () -> m ()
 whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture action
 
+{- | The character, a hero or an ally, becomes a captive guarded by the encounter card: a
+guarded objective under no player's control, out of every matcher's reach, until the card
+leaves play and it is rescued, exhausted, as "attach that ally to Prison Guard" reads. What
+it had on it stays: discard its tokens and attachments first where the card says to.
+-}
+guardCharacterWith :: (ReverseQueue m, Targetable character, IsCard captor) => character -> captor -> m ()
+guardCharacterWith c captor = push $ GuardCharacter (toTarget c) (toCard captor).id
+
+{- | A card out of play becomes a captive guarded by the encounter card, as Torture Room's
+"discards cards from the top of his deck until he discards an ally. Attach that ally to
+Torture Room" reads: an ally card is taken from its owner's discard pile, an objective
+ally comes under the first player. Rescued, it is in play as 'guardCharacterWith's are.
+-}
+guardCardWith :: (ReverseQueue m, IsCard captor) => Card -> captor -> m ()
+guardCardWith card captor = push $ GuardCard card (toCard captor).id
+
+-- | The guarded character is rescued now, as the card guarding it would leave play.
+rescueCharacter :: (ReverseQueue m, Targetable character) => character -> m ()
+rescueCharacter (toTarget -> c) = pushAll [RescueCharacter c, CheckWindows [Window After $ CharacterRescued c]]
+
+-- | The hero goes to the staging area, in play under no player's control (The Long Arm of
+-- Mordor).
+moveHeroToStagingArea :: ReverseQueue m => HeroId -> m ()
+moveHeroToStagingArea = push . MoveHeroToStagingArea
+
+-- | The hero in the staging area returns to its owner's control, exhausted.
+takeControlOfHero :: ReverseQueue m => HeroId -> m ()
+takeControlOfHero = push . TakeControlOfHero
+
+-- | The objective-hero comes into play under the player's control.
+putObjectiveHeroIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+putObjectiveHeroIntoPlayUnder pid = push . PutObjectiveHeroIntoPlayUnder pid
+
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
@@ -1273,6 +1380,14 @@ shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
 -- | The players make engagement checks, from the first player, as in the encounter phase.
 makeEngagementChecks :: ReverseQueue m => m ()
 makeEngagementChecks = getLead >>= \lead -> push (EngagementCheck lead 0)
+
+-- | Engagement checks made with the modifiers in effect only while they are made, as Fight
+-- Your Way Out lowers the engagement costs "during these engagement checks".
+makeEngagementChecksWith :: ReverseQueue m => [Effect] -> m ()
+makeEngagementChecksWith effects = do
+  pushAll $ map CreateEffect effects
+  makeEngagementChecks
+  push $ EndEffects UntilEndOfEngagementChecks
 {- | The player card behind the source leaves play, or its owner's discard pile, for good,
 as "remove that card from the game" reads of the card behind an effect.
 -}
@@ -1408,6 +1523,15 @@ putShipIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 -- | The player reveals the top card of the Corsair deck and engages it, for the source.
 revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
 revealFromCorsairDeck source pid = push $ RevealFromCorsairDeck (toSource source) pid
+
+-- | As 'revealFromCorsairDeck', the enemy put into play dealt a shadow card.
+revealFromCorsairDeckWithShadow :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+revealFromCorsairDeckWithShadow source pid = push $ RevealFromCorsairDeckWithShadow (toSource source) pid
+
+-- | The enemy goes to the staging area the player shares, his area's while the players are
+-- separated.
+placeInStagingAreaOf :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+placeInStagingAreaOf pid eid = push $ PlaceInStagingAreaOf pid eid
 
 -- | The player moves 1 resource from one of his heroes' pools to the card, as Umbar Raider
 -- takes it; nothing, with no resources to move.
@@ -1595,7 +1719,11 @@ cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
   UndefendedAttack _ e | e == eid -> Nothing
   UndefendedDamage _ e | e == eid -> Nothing
   AttackDefended _ e _ | e == eid -> Nothing
-  CheckWindows ws | any ending ws -> Just $ CheckWindows (filter (not . defended) ws)
+  -- the enemy has not attacked, so no "after it attacks" window opens, but its "for this
+  -- attack" effects still end
+  CheckWindows ws | any ending ws -> Just $ case filter (\w -> not (ending w || defended w)) ws of
+    [] -> AttackEndedUnresolved eid
+    rest -> Run [CheckWindows rest, AttackEndedUnresolved eid]
   m -> Just m
  where
   ending = \case
