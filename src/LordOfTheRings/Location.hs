@@ -525,6 +525,15 @@ import LordOfTheRings.Location.Cards.SlaveQuarters
 import LordOfTheRings.Location.Cards.TheStorehouse
 import LordOfTheRings.Location.Cards.WorkingFields
 import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
+import LordOfTheRings.Location.Cards.BagEnd
+import LordOfTheRings.Location.Cards.WoodyEnd
+import LordOfTheRings.Location.Cards.StockBrook
+import LordOfTheRings.Location.Cards.Bamfurlong
+import LordOfTheRings.Location.Cards.BuckleburyFerry
+import LordOfTheRings.Location.Cards.GreenHillCountry
+import LordOfTheRings.Location.Cards.StockRoad
+import LordOfTheRings.Location.Cards.TheMarish
+import LordOfTheRings.Location.Cards.PathlessCountryHunted
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1096,5 +1105,14 @@ allLocations =
         , SomeLocationCard theStorehouse
         , SomeLocationCard workingFields
         , SomeLocationCard watchTowerTheLandOfSorrow
+        , SomeLocationCard bagEnd
+        , SomeLocationCard woodyEnd
+        , SomeLocationCard stockBrook
+        , SomeLocationCard bamfurlong
+        , SomeLocationCard buckleburyFerry
+        , SomeLocationCard greenHillCountry
+        , SomeLocationCard stockRoad
+        , SomeLocationCard theMarish
+        , SomeLocationCard pathlessCountryHunted
         ]
     ]
