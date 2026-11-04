@@ -1309,11 +1309,14 @@ library
       LordOfTheRings.Hero.Cards.AragornLore
       LordOfTheRings.Hero.Cards.AragornSpirit
       LordOfTheRings.Hero.Cards.AragornTactics
+      LordOfTheRings.Hero.Cards.AragornTheFlameOfTheWest
+      LordOfTheRings.Hero.Cards.AragornTheMountainOfFire
       LordOfTheRings.Hero.Cards.Argalad
       LordOfTheRings.Hero.Cards.ArwenUndomiel
       LordOfTheRings.Hero.Cards.BardSonOfBrand
       LordOfTheRings.Hero.Cards.Beravor
       LordOfTheRings.Hero.Cards.Beregond
+      LordOfTheRings.Hero.Cards.BeregondSpirit
       LordOfTheRings.Hero.Cards.Bifur
       LordOfTheRings.Hero.Cards.BilboBaggins
       LordOfTheRings.Hero.Cards.BilboBagginsTactics
@@ -1326,6 +1329,7 @@ library
       LordOfTheRings.Hero.Cards.CirdanTheShipwright
       LordOfTheRings.Hero.Cards.DainIronfoot
       LordOfTheRings.Hero.Cards.DainIronfootSpirit
+      LordOfTheRings.Hero.Cards.DamrodLore
       LordOfTheRings.Hero.Cards.Denethor
       LordOfTheRings.Hero.Cards.DenethorLeadership
       LordOfTheRings.Hero.Cards.Dori
@@ -1337,16 +1341,20 @@ library
       LordOfTheRings.Hero.Cards.Elrohir
       LordOfTheRings.Hero.Cards.Elrond
       LordOfTheRings.Hero.Cards.Eomer
+      LordOfTheRings.Hero.Cards.EomerLeadership
       LordOfTheRings.Hero.Cards.Eowyn
       LordOfTheRings.Hero.Cards.EowynTactics
       LordOfTheRings.Hero.Cards.Erestor
       LordOfTheRings.Hero.Cards.Erkenbrand
       LordOfTheRings.Hero.Cards.Faramir
+      LordOfTheRings.Hero.Cards.FaramirLeadership
       LordOfTheRings.Hero.Cards.Fastred
       LordOfTheRings.Hero.Cards.Firyal
       LordOfTheRings.Hero.Cards.FolcoBoffin
       LordOfTheRings.Hero.Cards.FrodoBaggins
       LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
+      LordOfTheRings.Hero.Cards.FrodoBagginsTheLandOfShadow
+      LordOfTheRings.Hero.Cards.FrodoBagginsTheMountainOfFire
       LordOfTheRings.Hero.Cards.Galadriel
       LordOfTheRings.Hero.Cards.GaldorOfTheHavensHero
       LordOfTheRings.Hero.Cards.GildorInglorionLeadership
@@ -1392,6 +1400,7 @@ library
       LordOfTheRings.Hero.Cards.ThorinStonehelm
       LordOfTheRings.Hero.Cards.Thranduil
       LordOfTheRings.Hero.Cards.Thurindir
+      LordOfTheRings.Hero.Cards.TomCotton
       LordOfTheRings.Hero.Cards.Yazan
       LordOfTheRings.Hero.Import.Lifted
       LordOfTheRings.Hero.Runner
