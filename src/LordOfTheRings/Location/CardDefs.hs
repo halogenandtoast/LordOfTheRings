@@ -558,6 +558,11 @@ allLocationCards =
       , giantWeb
       , forestStream
       , hiddenPath
+      , theLonelyMountain
+      , greatHall
+      , secretEntrance
+      , desolationOfSmaug
+      , westernSlopes
       ]
 
 drownedTreasury :: CardDef
@@ -4083,3 +4088,26 @@ forestStream = (location "132027" "Forest Stream" FliesAndSpiders 2 2 4) {cdCard
 
 hiddenPath :: CardDef
 hiddenPath = (location "132035" "Hidden Path" Wilderland 3 3 1) {cdCardTraits = setFromList [Forest, Mountain]}
+
+-- * The Lonely Mountain
+
+theLonelyMountain :: CardDef
+theLonelyMountain =
+  unique
+    (location "132043" "The Lonely Mountain" TheLonelyMountain 1 12 4)
+      { cdCardTraits = setFromList [Mountain]
+      , cdVictoryPoints = Just 10
+      }
+
+greatHall :: CardDef
+greatHall = (location "132044" "Great Hall" TheLonelyMountain 3 4 4) {cdCardTraits = setFromList [Underground]}
+
+-- | Of The Lonely Mountain's set, as its icon and the card database have it.
+secretEntrance :: CardDef
+secretEntrance = (location "132045" "Secret Entrance" TheLonelyMountain 2 1 1) {cdCardTraits = setFromList [Mountain]}
+
+desolationOfSmaug :: CardDef
+desolationOfSmaug = (location "132046" "Desolation of Smaug" TheLonelyMountain 3 3 3) {cdCardTraits = setFromList [Wasteland]}
+
+westernSlopes :: CardDef
+westernSlopes = (location "132047" "Western Slopes" TheLonelyMountain 3 2 5) {cdCardTraits = setFromList [Mountain]}

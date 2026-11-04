@@ -443,6 +443,10 @@ allTreacheryCards =
       , poisonedBySpiders
       , fightingAmongFriends
       , weighedDownWilderland
+      , pretendingToSleep
+      , knownToAnOunce
+      , belchingFire
+      , dragonSpell
       ]
 
 deepDeepDark :: CardDef
@@ -2792,3 +2796,17 @@ fightingAmongFriends = (treachery "132037" "Fighting Among Friends" Wilderland 2
 
 weighedDownWilderland :: CardDef
 weighedDownWilderland = (treachery "132038" "Weighed Down" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Lonely Mountain
+
+pretendingToSleep :: CardDef
+pretendingToSleep = (treachery "132048" "Pretending to Sleep" TheLonelyMountain 3) {cdKeywords = setFromList [Surge]}
+
+knownToAnOunce :: CardDef
+knownToAnOunce = treachery "132049" "Known to an Ounce" TheLonelyMountain 2
+
+belchingFire :: CardDef
+belchingFire = treachery "132050" "Belching Fire" TheLonelyMountain 4
+
+dragonSpell :: CardDef
+dragonSpell = (treachery "132051" "Dragon-Spell" TheLonelyMountain 2) {cdCardTraits = setFromList [Enchantment]}

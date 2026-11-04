@@ -158,6 +158,7 @@ allObjectiveCards =
       , theOneRingTheLandOfShadow
       , theOneRingTheMountainOfFire
       , theOneRingTheRoadDarkens
+      , aBarePatch
       ]
 
 durinsAxe :: CardDef
@@ -1113,3 +1114,7 @@ theOneRingTheRoadDarkens =
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Item, Ring]
     }
+
+-- | Set aside by stage 1A, until stage 3A adds it to the staging area.
+aBarePatch :: CardDef
+aBarePatch = (objective "132039" "A Bare Patch" TheLonelyMountain 1) {cdCardTraits = setFromList [Information]}

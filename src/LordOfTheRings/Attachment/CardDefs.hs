@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
-import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders))
+import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders, TheLonelyMountain))
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
@@ -259,6 +259,11 @@ allAttachmentCards =
       , guthwine
       , friendOfFriends
       , bilbosMagicRing
+      , theArkenstoneTreasure
+      , mithrilShirtTreasure
+      , throrsBattleAxe
+      , throrsHuntingBow
+      , throrsGoldenCup
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1832,4 +1837,31 @@ bilbosMagicRing =
       { cdCardTraits = setFromList [Artifact, Item, Ring]
       , cdTreasure = True
       , cdSetIcon = Just FliesAndSpiders
+      }
+
+-- | The five Erebor treasures, stacked under The Lonely Mountain until a burgle takes one.
+-- Their cards and where they attach; their game text is the Hobbit player cards' to write.
+theArkenstoneTreasure :: CardDef
+theArkenstoneTreasure = lonelyMountainTreasure "132020" "The Arkenstone" []
+
+mithrilShirtTreasure :: CardDef
+mithrilShirtTreasure = lonelyMountainTreasure "132021" "Mithril Shirt" []
+
+throrsBattleAxe :: CardDef
+throrsBattleAxe = lonelyMountainTreasure "132022" "Thrór's Battle Axe" [Restricted]
+
+throrsHuntingBow :: CardDef
+throrsHuntingBow = lonelyMountainTreasure "132023" "Thrór's Hunting Bow" [Restricted]
+
+throrsGoldenCup :: CardDef
+throrsGoldenCup = (lonelyMountainTreasure "132024" "Thrór's Golden Cup" []) {cdVictoryPoints = Just 3}
+
+lonelyMountainTreasure :: CardCode -> Name -> [Keyword] -> CardDef
+lonelyMountainTreasure code name keywords =
+  unique
+    (attachment code name Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Artifact, Erebor, Item]
+      , cdKeywords = setFromList keywords
+      , cdTreasure = True
+      , cdSetIcon = Just TheLonelyMountain
       }

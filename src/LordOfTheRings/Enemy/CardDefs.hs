@@ -523,6 +523,9 @@ allEnemyCards =
       , fatSpider
       , wickedSpider
       , darkBats
+      , smaugTheGolden
+      , smaugTheMagnificent
+      , croakingCrows
       ]
 
 namelessThing :: CardDef
@@ -4295,3 +4298,29 @@ wickedSpider = (mirkwoodSpider "132032" "Wicked Spider" 5 25 1 4 1 3) {cdShadowE
 
 darkBats :: CardDef
 darkBats = (enemy "132036" "Dark Bats" Wilderland 3 15 2 2 0 1) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+-- * The Lonely Mountain
+
+-- | Its threat is X, the non-Burglar characters committed to the quest (see its card).
+smaugTheGolden :: CardDef
+smaugTheGolden =
+  unique
+    (enemy "132040" "Smaug the Golden" TheLonelyMountain 1 50 0 6 9 20)
+      { cdCardTraits = setFromList [Dragon]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+smaugTheMagnificent :: CardDef
+smaugTheMagnificent =
+  unique
+    (enemy "132041" "Smaug the Magnificent" TheLonelyMountain 1 50 6 8 8 20)
+      { cdCardTraits = setFromList [Dragon]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+croakingCrows :: CardDef
+croakingCrows =
+  (enemy "132042" "Croaking Crows" TheLonelyMountain 3 33 1 1 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    }
