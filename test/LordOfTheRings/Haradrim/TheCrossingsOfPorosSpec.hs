@@ -19,7 +19,7 @@ import LordOfTheRings.Quest.Runner (getQuestPoints)
 import LordOfTheRings.Scenario (lookupScenario, theCrossingsOfPoros)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), encounterDiscardL, questDeckL, setAsideL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (WindowType (CharacterDestroyedByAttack, PhaseEnds), mkAfter, mkWhen)
+import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
 import TestImport
 
 porosTest :: (PlayerId -> GameT ()) -> IO ()
@@ -232,12 +232,22 @@ spec = describe "The Crossings of Poros" do
     run $ CheckWindows [mkWhen $ PhaseEnds CombatPhase]
     getsGame (.outcome) `shouldReturn` Just Won
 
-  it "loses progress equal to the printed threat of an enemy whose attack destroys a character" . porosTest $ \pid -> do
+  it "loses progress equal to the printed threat of an enemy whose attack destroys a character" . porosTest $ \_ -> do
     q <- stageB Quests.battleAtTheCrossings
     run $ PlaceTokens GameSource q Progress 5
     eid <- stage Enemies.southronSoldier
     beravor <- hero "01012"
-    run $ CheckWindows [mkAfter $ CharacterDestroyedByAttack eid beravor pid]
+    run $ Destroy (EnemyAttackSource eid) beravor
+    (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 2
+
+  it "reads the printed threat of an attacker that left play before its Forced effect resolves" . porosTest $ \_ -> do
+    q <- stageB Quests.battleAtTheCrossings
+    run $ PlaceTokens GameSource q Progress 5
+    eid <- stage Enemies.southronSoldier
+    beravor <- hero "01012"
+    runOnly $ Destroy (EnemyAttackSource eid) beravor
+    run $ Discard (EnemyTarget eid)
+    enemyCodes `shouldReturn` []
     (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 2
 
   it "loses the game as Poros Garrison leaves play" . porosTest $ \pid -> do

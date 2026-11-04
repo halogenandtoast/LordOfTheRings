@@ -2,6 +2,7 @@ module LordOfTheRings.Quest.Cards.BattleAtTheCrossings (battleAtTheCrossings) wh
 
 import LordOfTheRings.Card (CardDef (..), CardType (EnemyType), toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Game.Base (AttackDestroyed (..), gameAttackDestroyed)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (CombatPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -49,8 +50,12 @@ instance RunMessage BattleAtTheCrossings where
     PlaceTokens _ (isTarget attrs -> True) Progress n -> pure $ BattleAtTheCrossings $ attrs & tokensL %~ addTokens Progress n
     CheckStage qid | qid == attrs.id -> pure q
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
-      xs <- for [eid | Window _ (CharacterDestroyedByAttack eid _ _) <- ws] \eid ->
-        maybe 0 (fromMaybe 0 . cdThreat . toCardDef) <$> getsGame (lookup eid . (.entities.enemies))
+      -- the attacker's printed threat, read off its card as the attack destroyed the
+      -- character, should it have left play since
+      destroyed <- getsGame gameAttackDestroyed
+      let printedThreat eid t =
+            sum $ take 1 [fromMaybe 0 (cdThreat $ toCardDef c) | d <- destroyed, d.attackDestroyedBy == EnemyAttackSource eid, d.target == t, Just c <- [d.attackDestroyedAttacker]]
+          xs = [printedThreat eid t | Window _ (CharacterDestroyedByAttack eid t _) <- ws]
       let n = min attrs.progress (sum xs)
       when (n > 0) $ removeTokens attrs attrs Progress n
       pure q

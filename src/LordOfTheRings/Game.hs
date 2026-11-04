@@ -939,7 +939,7 @@ runGameMessage msg g = case msg of
     stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
     let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
         -- what a player's attack destroyed, for the attack to read as it resolves
-        recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card | PlayerAttackSource _ <- [source]])
+        recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card Nothing | PlayerAttackSource _ <- [source]])
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
@@ -974,7 +974,8 @@ runGameMessage msg g = case msg of
              : [mkAfter $ CharacterDestroyedByAttack eid target pid | (eid, _, pid) <- byAttack]
          | Just c <- [card]
          ]
-    pure $ g & attackDestroyedL %~ (<> [AttackDestroyed (EnemyAttackSource eid) target (Just pid) c | (eid, c, pid) <- byAttack])
+    let attacker eid = toCard <$> Map.lookup eid g.entities.enemies
+    pure $ g & attackDestroyedL %~ (<> [AttackDestroyed (EnemyAttackSource eid) target (Just pid) c (attacker eid) | (eid, c, pid) <- byAttack])
   -- the heroes collect and the players draw, then each player has an action window, for
   -- Resource Actions as Captain's Wisdom's
   BeginPhase ResourcePhase -> do
