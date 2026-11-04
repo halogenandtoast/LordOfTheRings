@@ -231,8 +231,10 @@ spec = describe "Mount Gundabad" do
     run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
     (.damage) <$> getEnemy dagnir `shouldReturn` 7
 
-  it "lets each player play only 1 card each phase on Foreboding Darkness, and flips the top stage over as it is defeated" . gundabadTest $ \pid -> do
+  it "lets each player play only 1 card each phase on Foreboding Darkness, and flips the top stage over in the quest deck as it is defeated, its side 2A never revealed" . gundabadTest $ \pid -> do
     [a, b] <- setQuestDeck [Quests.theLowerDeeps, Quests.frenziedWarrens]
+    dagnir <- stage Enemies.dagnirMountGundabad
+    run $ EngageEnemy pid dagnir
     q <- stageB Quests.forebodingDarkness
     run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedACardThisPhase] UntilEndOfPhase
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
@@ -240,6 +242,9 @@ spec = describe "Mount Gundabad" do
     chooseTarget pid (CardIdTarget a.id)
     activeQuestCode `shouldReturn` toCardCode b
     activeQuestFlipped `shouldReturn` True
+    map (.id) . (.questDeck) <$> scenarioAttrs `shouldReturn` [a.id]
+    -- no "When Revealed: Return Dagnir to the staging area"
+    (.placement) <$> getEnemy dagnir `shouldReturn` EngagedWith pid
 
   it "deals 2 damage to a questing character of each player on Imminent Pursuit, and discards a non-unique enemy as it is defeated" . gundabadTest $ \_ -> do
     _ <- setQuestDeck [Quests.theLowerDeeps]
