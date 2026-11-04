@@ -199,5 +199,14 @@
   "coldDrakeHealed": "{count} damage is removed from the set-aside Cold-Drake",
   "startingThreatRaised": "{player}'s starting threat rises by {count}, to {total}",
   "contractFlipsToA": "{contract} flips back to side A",
-  "contractFlipsToB": "{contract} flips to side B"
+  "contractFlipsToB": "{contract} flips to side B",
+  "challengersAdvance": "The Challengers advance to {quest}",
+  "wainridersAdvance": "The Wainriders advance to {quest}",
+  "wainridersDamage": "{count} damage is placed on The Wainriders' stage",
+  "wainridersDamageRemoved": "{count} damage is removed from The Wainriders' stage",
+  "racingTestPassed": "The players pass the racing test: {found} matching results, {required} required",
+  "racingTestFailed": "The players fail the racing test: {found} matching results, {required} required",
+  "circuit": "The circuit",
+  "theChallengers": "The Challengers",
+  "theWainriders": "The Wainriders"
 }

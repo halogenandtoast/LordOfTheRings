@@ -151,6 +151,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the Orcs' quest stage and its progress (Race Across Harad)
         $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
         $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")
+        -- the circuit, where The Challengers and The Wainriders are on it, and the damage on
+        -- The Wainriders' stage (Challenge of the Wainriders)
+        $ KeyMap.insert "circuit" circuit
         -- the side quest deck's size, its cards kept hidden (Fire in the Night)
         $ KeyMap.insert "sideQuestDeck" (toJSON $ length (fromMeta "sideQuestDeck" :: [Value]))
         -- the damage a set-aside card keeps, as Cold-Drake's (The Withered Heath)
@@ -261,6 +264,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   -- cards, under each card and in each player's captured deck
   fromMeta :: FromJSON a => Monoid a => Key.Key -> a
   fromMeta k = fromMaybe mempty $ parseMaybe (withObject "meta" (.: k)) (scenarioMeta $ toAttrs g.scenario)
+  circuit = case metaValue "circuit" of
+    Null -> Null
+    stages -> object ["stages" .= stages, "challengers" .= metaValue "challengers", "wainriders" .= metaValue "wainriders", "damage" .= metaValue "wainridersDamage"]
   metaValue :: Key.Key -> Value
   metaValue k = fromMaybe Null $ parseMaybe (withObject "meta" (.: k)) (scenarioMeta $ toAttrs g.scenario)
   -- a location's facedown side is sent only to those who have looked at it

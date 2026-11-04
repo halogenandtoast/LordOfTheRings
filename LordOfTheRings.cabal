@@ -2337,6 +2337,7 @@ library
       LordOfTheRings.Scenario.Scenarios.BeneathTheSands.Helpers
       LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret
       LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers
+      LordOfTheRings.Scenario.Scenarios.ChallengeOfTheWainriders
       LordOfTheRings.Scenario.Scenarios.ChallengeOfTheWainriders.Helpers
       LordOfTheRings.Scenario.Scenarios.ConflictAtTheCarrock
       LordOfTheRings.Scenario.Scenarios.DeadmensDike
