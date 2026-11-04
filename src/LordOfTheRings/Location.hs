@@ -525,6 +525,11 @@ import LordOfTheRings.Location.Cards.SlaveQuarters
 import LordOfTheRings.Location.Cards.TheStorehouse
 import LordOfTheRings.Location.Cards.WorkingFields
 import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
+import LordOfTheRings.Location.Cards.TheStoneOfErech (theStoneOfErech)
+import LordOfTheRings.Location.Cards.DarkDoor (darkDoor)
+import LordOfTheRings.Location.Cards.TrystingPlace (trystingPlace)
+import LordOfTheRings.Location.Cards.DeadlyRoad (deadlyRoad)
+import LordOfTheRings.Location.Cards.HauntedPath (hauntedPath)
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1096,5 +1101,10 @@ allLocations =
         , SomeLocationCard theStorehouse
         , SomeLocationCard workingFields
         , SomeLocationCard watchTowerTheLandOfSorrow
+        , SomeLocationCard theStoneOfErech
+        , SomeLocationCard darkDoor
+        , SomeLocationCard trystingPlace
+        , SomeLocationCard deadlyRoad
+        , SomeLocationCard hauntedPath
         ]
     ]

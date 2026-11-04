@@ -507,6 +507,11 @@ allEnemyCards =
       , borlach
       , easterlingGuard
       , nurnSlaver
+      , deadManOfDunharrow
+      , faithlessDead
+      , ghostsOfMen
+      , shadowHost
+      , armyOfTheDead
       ]
 
 namelessThing :: CardDef
@@ -4161,3 +4166,52 @@ nurnSlaver =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
     }
+
+-- * The Passing of the Grey Company
+
+deadManOfDunharrow :: CardDef
+deadManOfDunharrow =
+  (enemy "145022" "Dead Man of Dunharrow" ThePassingOfTheGreyCompany 4 30 2 2 1 3)
+    { cdCardTraits = setFromList [Undead, Oathbreaker]
+    , cdKeywords = setFromList [Phantom]
+    , cdShadowEffect = True
+    }
+
+faithlessDead :: CardDef
+faithlessDead =
+  (enemy "145023" "Faithless Dead" ThePassingOfTheGreyCompany 3 35 2 3 1 4)
+    { cdCardTraits = setFromList [Undead, Oathbreaker]
+    , cdKeywords = setFromList [Peril, Phantom]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+ghostsOfMen :: CardDef
+ghostsOfMen =
+  (enemy "145024" "Ghosts of Men" ThePassingOfTheGreyCompany 2 40 3 3 1 5)
+    { cdCardTraits = setFromList [Undead, Oathbreaker]
+    , cdKeywords = setFromList [Peril, Phantom]
+    , cdWhenRevealed = True
+    }
+
+shadowHost :: CardDef
+shadowHost =
+  (enemy "145025" "Shadow Host" ThePassingOfTheGreyCompany 2 45 4 4 2 6)
+    { cdCardTraits = setFromList [Undead, Oathbreaker]
+    , cdKeywords = setFromList [Phantom]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | X threat, twice the number of players: given by its own modifiers. Set aside by stage
+-- 1A, added to the staging area by stage 3A; its other side is the boon
+-- 'LordOfTheRings.Objective.CardDefs.armyOfTheDeadBoon'.
+armyOfTheDead :: CardDef
+armyOfTheDead =
+  unique
+    (enemy "145067" "Army of the Dead" ThePassingOfTheGreyCompany 1 50 0 6 2 8)
+      { cdCardTraits = setFromList [Undead, Oathbreaker]
+      , cdKeywords = setFromList [Phantom]
+      , cdVictoryPoints = Just 6
+      , cdOtherSide = Just "145068"
+      }

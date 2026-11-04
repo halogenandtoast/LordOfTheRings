@@ -430,6 +430,10 @@ allTreacheryCards =
       , overseersWhip
       , crueltyOfMordor
       , brokenCaptives
+      , bloodRunsChill
+      , theWayIsShut
+      , whispersInTheDark
+      , noTurningBack
       ]
 
 deepDeepDark :: CardDef
@@ -2718,3 +2722,22 @@ crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdS
 
 brokenCaptives :: CardDef
 brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Passing of the Grey Company
+
+bloodRunsChill :: CardDef
+bloodRunsChill =
+  (treachery "145026" "Blood Runs Chill" ThePassingOfTheGreyCompany 3)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+theWayIsShut :: CardDef
+theWayIsShut = (treachery "145027" "The Way is Shut" ThePassingOfTheGreyCompany 2) {cdKeywords = setFromList [Peril, Surge]}
+
+whispersInTheDark :: CardDef
+whispersInTheDark = (treachery "145028" "Whispers in the Dark" ThePassingOfTheGreyCompany 3) {cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+noTurningBack :: CardDef
+noTurningBack = (treachery "145029" "No Turning Back" ThePassingOfTheGreyCompany 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

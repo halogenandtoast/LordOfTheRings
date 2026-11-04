@@ -142,6 +142,10 @@ removedBurdenSets = \case
   "the-road-to-isengard" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth]
   "the-passage-of-the-marshes" -> [HelmsDeep, TheRoadToIsengard]
   "journey-to-the-cross-roads" -> [HelmsDeep, TheRoadToIsengard]
+  -- the five icons printed on each of The Flame of the West's campaign cards
+  "the-passing-of-the-grey-company" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth, ThePassageOfTheMarshes, ShelobsLair]
+  "the-siege-of-gondor" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth, ThePassageOfTheMarshes, ShelobsLair]
+  "the-battle-of-the-pelennor-fields" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth, ThePassageOfTheMarshes, ShelobsLair]
   "the-tower-of-cirith-ungol" -> [HelmsDeep, TheRoadToIsengard, ThePassingOfTheGreyCompany]
   "the-black-gate-opens" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth, ThePassageOfTheMarshes, ShelobsLair]
   "mount-doom" -> [HelmsDeep, TheRoadToIsengard, ThePassingOfTheGreyCompany]

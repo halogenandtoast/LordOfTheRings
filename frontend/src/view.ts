@@ -268,6 +268,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ...withAttachments(characters),
         // an attachment on the player's threat dial, as Favor of the Valar
         ...placed('attachments', onPlayer),
+        // and an objective there, as Overcome by Fear
+        ...placed('objectives', onPlayer),
         // the player's contract, on the side it shows, unless it is attached to a character
         ...withAttachments(placed('contracts', isAt('InPlayArea', pid))),
         ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
