@@ -2236,5 +2236,8 @@
   },
   "heatExhaustion": {
     "exhaust": "Heat Exhaustion: choose a character to exhaust and deal 1 damage to"
+  },
+  "overgrown": {
+    "attach": "Overgrown: choose the location to attach it to"
   }
 }

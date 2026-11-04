@@ -416,6 +416,9 @@ allLocationCards =
       , cursedHalls
       , toweringDunes
       , desertOasis
+      , jungleTrail
+      , forestClearing
+      , denseJungle
       ]
 
 drownedTreasury :: CardDef
@@ -3182,3 +3185,21 @@ toweringDunes = (location "16049" "Towering Dunes" DesertSands 3 3 4) {cdCardTra
 
 desertOasis :: CardDef
 desertOasis = (location "16050" "Desert Oasis" DesertSands 2 2 2) {cdCardTraits = setFromList [Desert]}
+
+jungleTrail :: CardDef
+jungleTrail = (location "16056" "Jungle Trail" JungleForest 2 4 4) {cdCardTraits = setFromList [Forest], cdEasyModeQuantity = Just 1}
+
+forestClearing :: CardDef
+forestClearing =
+  (location "16057" "Forest Clearing" JungleForest 3 3 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+denseJungle :: CardDef
+denseJungle =
+  (location "16058" "Dense Jungle" JungleForest 3 2 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }

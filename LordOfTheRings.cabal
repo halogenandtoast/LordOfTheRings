@@ -1163,6 +1163,7 @@ library
       LordOfTheRings.Location.Cards.DecrepitRemains
       LordOfTheRings.Location.Cards.DecrepitRooftops
       LordOfTheRings.Location.Cards.DeepMines
+      LordOfTheRings.Location.Cards.DenseJungle
       LordOfTheRings.Location.Cards.DenseThickets
       LordOfTheRings.Location.Cards.DesecratedGrounds
       LordOfTheRings.Location.Cards.DesecratedRuinsNightmare
@@ -1212,6 +1213,7 @@ library
       LordOfTheRings.Location.Cards.ForbiddenDescent
       LordOfTheRings.Location.Cards.FordsOfIsen
       LordOfTheRings.Location.Cards.ForecastleDeck
+      LordOfTheRings.Location.Cards.ForestClearing
       LordOfTheRings.Location.Cards.ForestGate
       LordOfTheRings.Location.Cards.ForestGrove
       LordOfTheRings.Location.Cards.ForgottenCourtyard
@@ -1265,6 +1267,7 @@ library
       LordOfTheRings.Location.Cards.JaggedCliffs
       LordOfTheRings.Location.Cards.JaggedReef
       LordOfTheRings.Location.Cards.JunglePath
+      LordOfTheRings.Location.Cards.JungleTrail
       LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LabyrinthineWoods
       LordOfTheRings.Location.Cards.LightlessPassage
@@ -2108,6 +2111,7 @@ library
       LordOfTheRings.Treachery.Cards.OrcAssault
       LordOfTheRings.Treachery.Cards.OrcHuntingParty
       LordOfTheRings.Treachery.Cards.OrcTerritory
+      LordOfTheRings.Treachery.Cards.Overgrown
       LordOfTheRings.Treachery.Cards.OverrunDefenses
       LordOfTheRings.Treachery.Cards.Panicked
       LordOfTheRings.Treachery.Cards.ParalyzingFear
