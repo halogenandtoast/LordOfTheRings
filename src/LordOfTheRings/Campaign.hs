@@ -510,6 +510,10 @@ data CampaignLogUpdate
     RemoveFallenHero CardCode
   | -- | a permanent starting threat penalty for the seat alone
     AdjustSeatThreatPenalty Int Int
+  | -- | the seat's recorded heroes: the first taken off, if one is given, the second put on,
+    -- the change at no threat penalty, as a hero Beyond All Hope brings back from the
+    -- fallen joins its player (The Uruk-hai's resolution)
+    ReplaceSeatHero Int (Maybe CardCode) CardCode
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -523,3 +527,4 @@ updateLog = \case
   AddFallenHero code -> recordFallen [code]
   RemoveFallenHero code -> \l -> l {campaignLogFallenHeroes = filter (/= code) l.fallenHeroes}
   AdjustSeatThreatPenalty seat n -> \l -> l {campaignLogSeatThreatPenalty = Map.insertWith (+) seat n l.seatThreatPenalty}
+  ReplaceSeatHero seat old new -> \l -> l {campaignLogHeroes = [if i == seat then filter ((/= old) . Just) hs <> [new] else hs | (i, hs) <- zip [0 ..] l.heroes]}

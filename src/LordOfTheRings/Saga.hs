@@ -138,6 +138,7 @@ deck and each player's deck: those of the Campaign Pool are left out as it is se
 -}
 removedBurdenSets :: ScenarioId -> [EncounterSet]
 removedBurdenSets = \case
+  "the-uruk-hai" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth]
   "helms-deep" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth]
   "the-road-to-isengard" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth]
   "the-passage-of-the-marshes" -> [HelmsDeep, TheRoadToIsengard]
