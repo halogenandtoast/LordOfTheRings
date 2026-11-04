@@ -149,8 +149,14 @@ instance Query AllyMatcher where
   select matcher = do
     -- a captive guarded by an encounter card is a guarded objective, not an ally
     allies <- getsGame (filter (not . guardedAlly) . toList . entitiesAllies . gameEntities)
-    map toId <$> filterM (matchAlly matcher) allies
+    -- an ally that has become a hero is still found by its id, as its own text asks after it
+    asHeroes <- getsGame (filter (pins matcher . toId) . mapMaybe (.asAlly) . toList . entitiesHeroes . gameEntities)
+    map toId <$> filterM (matchAlly matcher) (allies <> asHeroes)
    where
+    pins m aid = case m of
+      AllyWithId i -> i == aid
+      AllyMatchAll ms -> any (`pins` aid) ms
+      _ -> False
     guardedAlly a = case a.placement of
       AttachedTo (CardIdTarget _) -> True
       _ -> False

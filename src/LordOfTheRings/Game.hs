@@ -2760,9 +2760,10 @@ runGameMessage msg g = case msg of
         $ if toTarget new `elem` hosts then AttachCard (toId a) (toTarget new) else Discard (toTarget a)
     pushAll $ moves <> [CheckWindows [mkAfter $ EntersPlay $ toTarget new]]
     getGame
+  -- the card keeps its id under the other card type, as its own text finds it by
   AllyBecomesHero aid | Just a <- Map.lookup aid g.entities.allies -> do
-    hid <- getRandom
-    let attrs = toAttrs a
+    let hid = HeroId (unAllyId aid)
+        attrs = toAttrs a
         controller = fromMaybe attrs.allyOwner (placementController a.placement)
         new =
           overAttrs
@@ -2777,8 +2778,8 @@ runGameMessage msg g = case msg of
             $ lookupHero (toCardCode a) attrs.allyCardId hid controller
     pure $ retargetCharacter (toTarget a) (toTarget new) $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . heroesL %~ insertEntity new
   HeroBecomesAlly hid | Just h <- Map.lookup hid g.entities.heroes, cdCardType (toCardDef h) == AllyType -> do
-    aid <- getRandom
-    let attrs = toAttrs h
+    let aid = AllyId (unHeroId hid)
+        attrs = toAttrs h
         new =
           overAttrs
             ( \a ->

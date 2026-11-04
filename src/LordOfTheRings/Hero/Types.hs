@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Hero.Types (module LordOfTheRings.Hero.Types) where
 
+import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
@@ -27,6 +28,12 @@ class
   , EntityAttrs a ~ HeroAttrs
   )
   => IsHero a
+  where
+  -- | The ally a hero's text is read through, as an ally given the hero card type by
+  -- Sword-thain: what is asked of the ally by its id, as its own text's "exists (AllyWithId
+  -- a.id <> ExhaustedAlly)", is asked of it.
+  heroAsAlly :: a -> Maybe Ally
+  heroAsAlly _ = Nothing
 
 type HeroCard a = CardBuilder (HeroId, PlayerId) a
 
@@ -94,6 +101,9 @@ instance Entity Hero where
   toId = toId . toAttrs
   toAttrs (Hero a) = toAttrs a
   overAttrs f (Hero a) = Hero $ overAttrs f a
+
+instance HasField "asAlly" Hero (Maybe Ally) where
+  getField (Hero a) = heroAsAlly a
 
 instance HasModifiersFor Hero where
   getModifiersFor (Hero a) = getModifiersFor a
