@@ -22,6 +22,8 @@ data WindowMatcher
   | -- | any enemy engaged with the player
     PlayerEngagedEnemyWindow Timing PlayerId
   | OptionallyEngagedWindow Timing PlayerId
+  | -- | any player optionally engaged an enemy, as The Long Dark of Moria reads
+    AnyOptionallyEngagedWindow Timing
   | EnemyEntersStagingAreaWindow Timing
   | -- | an enemy with the trait added to the staging area, as Amon Forn reads
     EnemyWithTraitEntersStagingAreaWindow Timing Trait
@@ -405,6 +407,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AnyEnemyEngagedWindow t, EnemyEngaged _ _) -> t == timing
   (PlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid == pid'
   (OptionallyEngagedWindow t pid, OptionallyEngaged _ pid') -> t == timing && pid == pid'
+  (AnyOptionallyEngagedWindow t, OptionallyEngaged _ _) -> t == timing
   (EnemyEntersStagingAreaWindow t, EntersStagingArea (EnemyTarget _)) -> t == timing
   (GainedResourcesWindow t target, GainedResources target') -> t == timing && target == target'
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
