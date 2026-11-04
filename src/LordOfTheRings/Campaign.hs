@@ -91,6 +91,14 @@ data CampaignLogKey
     -- add for a Clue they control, by the seat of that player ('counted'), offered as the
     -- next scenario is set up
     BooksEarned
+  | -- | The Lord of the Rings: the name and quantity of each Harad enemy underneath The
+    -- Black Gate at the end of Journey to the Cross-roads ('counted', by card code), which
+    -- The Battle of the Pelennor Fields sets aside
+    HaradEnemies
+  | -- | The Lord of the Rings: the resources on The Corsair Fleet at the end of The Siege of
+    -- Gondor ('counted', under the Corsair Fleet's card code), which The Battle of the
+    -- Pelennor Fields places on it
+    CorsairFleetResources
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
