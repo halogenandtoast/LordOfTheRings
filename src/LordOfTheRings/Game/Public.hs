@@ -148,6 +148,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
         -- the heat tracker's temperature (Desert Crossing)
         $ KeyMap.insert "temperature" (metaValue "temperature")
+        -- the pursuit tracker's value (The Uruk-hai)
+        $ KeyMap.insert "pursuit" (metaValue "pursuit")
         -- the Orcs' quest stage and its progress (Race Across Harad)
         $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
         $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")

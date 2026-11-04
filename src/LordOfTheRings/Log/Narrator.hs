@@ -40,6 +40,7 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude hiding (say)
 import LordOfTheRings.Scenario.Scenarios.DesertCrossing.Helpers (getTemperature)
+import LordOfTheRings.Scenario.Scenarios.TheUrukHai.Helpers (getPursuit)
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -107,6 +108,12 @@ narrationFor = \case
   ScenarioSpecific "desertCrossing.temperature" (parseMaybe parseJSON -> Just (n :: Int)) | n /= 0 -> Just do
     t <- getTemperature
     one $ toned (if n > 0 then Bad else Good) $ mechanic [ikeyPart (if n > 0 then "log.temperatureRises" else "log.temperatureFalls") ["count" ~> abs n, "temperature" ~> max 0 (t + n)]]
+  -- \* The pursuit tracker (The Uruk-hai): read before it moves, so the new value is worked out
+  ScenarioSpecific "urukHai.pursuit" (parseMaybe parseJSON -> Just (n :: Int)) | n /= 0 -> Just do
+    p <- getPursuit
+    one $ toned (if n > 0 then Bad else Good) $ mechanic [ikeyPart (if n > 0 then "log.pursuitRises" else "log.pursuitFalls") ["count" ~> abs n, "pursuit" ~> max 0 (p + n)]]
+  ScenarioSpecific "urukHai.setPursuit" (parseMaybe parseJSON -> Just (n :: Int)) ->
+    Just $ one $ mechanic [ikeyPart "log.pursuitSet" ["pursuit" ~> n]]
   -- \* Day and Night, as The Wastes of Eriador's Time objective flips
   CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
   -- a card turned over to its other side, as Beneath the Sands' Search objective: read

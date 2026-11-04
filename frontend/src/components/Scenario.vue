@@ -61,6 +61,10 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
       <span class="heading-label">{{ $t('game.temperature') }}</span>
       <span class="temperature">{{ scenario.temperature }}</span>
     </div>
+    <div v-if="scenario.pursuit != null" class="heading" data-tracker="pursuit">
+      <span class="heading-label">{{ $t('game.pursuit') }}</span>
+      <span class="temperature">{{ scenario.pursuit }}</span>
+    </div>
     <GameCard v-if="scenario.nightmareCard" :card="scenario.nightmareCard" :choices="choices" @choose="emit('choose', $event)" />
     <!-- in campaign mode, the campaign card next to the quest deck -->
     <GameCard v-if="scenario.campaignCard" :card="scenario.campaignCard" :choices="choices" @choose="emit('choose', $event)" />

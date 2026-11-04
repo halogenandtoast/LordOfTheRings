@@ -2556,6 +2556,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheThreeTrials.Helpers
       LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur
       LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheUrukHai.Helpers
       LordOfTheRings.Scenario.Scenarios.TheWastesOfEriador
       LordOfTheRings.Scenario.Scenarios.TheWastesOfEriador.Helpers
       LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater

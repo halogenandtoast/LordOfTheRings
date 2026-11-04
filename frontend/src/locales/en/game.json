@@ -94,6 +94,7 @@
   "noActiveLocation": "No active location",
   "heading": "Heading",
   "temperature": "Temperature",
+  "pursuit": "Pursuit",
   "bands": {
     "scenario": "scenario",
     "staging": "staging",
