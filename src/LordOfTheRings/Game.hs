@@ -318,10 +318,10 @@ instance FromJSON Game where
       . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null)]
 
 instance FromJSON Separation where
-  parseJSON = genericParseJSON (aesonOptions $ Just "separation")
+  parseJSON = genericParseJSON (aesonOptions $ Just "separation") . withDefaults [("shared", toJSON False)]
 
 instance FromJSON Area where
-  parseJSON = genericParseJSON (aesonOptions $ Just "area") . withDefaults [("heldModifiers", toJSON (mempty :: Map Target [Modifier]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "area") . withDefaults [("heldModifiers", toJSON (mempty :: Map Target [Modifier])), ("inFocus", toJSON False)]
 
 {- | The players split into areas, one for each group: each player takes his cards in
 play, those engaged with him and those attached to them, and the encounter cards no
@@ -338,7 +338,7 @@ separate groups g
           { gamePlayers = mempty
           , gameEntities = mempty
           , gameEffects = []
-          , gameSeparation = Just $ Separation g.firstPlayer (zipWith area [0 ..] groups)
+          , gameSeparation = Just $ Separation g.firstPlayer (zipWith area [0 ..] groups) False
           }
  where
   es = g.entities
@@ -363,6 +363,7 @@ separate groups g
       , areaHeldModifiers = gameModifiers g
       , areaStatus = AreaStarted
       , areaJoining = False
+      , areaInFocus = False
       }
    where
     inGroup t = groupOf t == i
@@ -390,6 +391,36 @@ separate groups g
     AttachedTo t -> holderOf t
     p -> placementController p
 
+{- | The players split into areas sharing the game, one for each group: the first player's
+group takes the stage in play, each other group's starts empty. See 'Separation'.
+-}
+separateStages :: [[PlayerId]] -> Game -> Game
+separateStages groups g
+  | isJust (gameSeparation g) || length groups < 2 = g
+  | otherwise = g {gameSeparation = Just $ Separation g.firstPlayer (map area groups) True}
+ where
+  area pids =
+    Area
+      { areaPlayers = pids
+      , areaHeldPlayers = mempty
+      , areaHeldEntities = mempty
+      , areaHeldEffects = []
+      , areaHeldModifiers = mempty
+      , areaStatus = AreaStarted
+      , areaJoining = False
+      , areaInFocus = g.firstPlayer `elem` pids
+      }
+
+{- | Sharing the game split between staging areas, each area's first player and its
+players, in turn order: see 'Separation'.
+-}
+stageGroups :: Game -> Maybe [(PlayerId, [PlayerId])]
+stageGroups g = case gameSeparation g of
+  Just s | separationShared s -> Just [(areaLead g s a, filter (`elem` areaPlayers a) seats) | a <- areasInTurnOrder g s]
+   where
+    seats = seatsFrom (separationFirstPlayer s) g.playerOrder
+  _ -> Nothing
+
 {- | While the players are separated each area resolves the step in turn, in turn order:
 what follows the step in the area in focus is the step again in the next area still to
 resolve it (the messages given, from how far that area is), and once every area has,
@@ -397,14 +428,15 @@ what follows it, back with the first player.
 -}
 eachAreaThen :: (AreaStatus -> [Message]) -> (Separation -> Separation) -> Message -> Game -> (Message, Game)
 eachAreaThen again finish next g = case gameSeparation g of
-  Nothing -> (next, g)
-  Just s0 ->
+  Just s0 | not (separationShared s0) ->
     let s = s0 {separationAreas = [if isFocusedArea g a then a {areaStatus = AreaDone} else a | a <- separationAreas s0]}
      in case [a | a <- areasInTurnOrder g s, areaStatus a /= AreaDone] of
           (a : _) -> (Run (FocusArea (areaLead g s a) : again (areaStatus a)), g {gameSeparation = Just s})
           [] ->
             let s' = finish s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]}
              in (Run [FocusArea (separationFirstPlayer s'), next], g {gameSeparation = Just s'})
+  -- sharing the game, the areas resolve their stages in turn within the phase
+  _ -> (next, g)
 
 {- | Run the message on one thing in play, putting what it pushes on the queue once it is
 done.
@@ -679,6 +711,8 @@ runInPlay msg g =
             FocusArea _ -> True
             JoinArea {} -> True
             SeparatePlayers _ -> True
+            SeparateStagingAreas _ -> True
+            PlaceInStagingAreaOf {} -> True
             _ -> False
           -- a location leaving play is kept aside for its own abilities to answer it
           departed = if movingAreas then mempty else Map.difference g.entities.locations g'.entities.locations
@@ -831,7 +865,7 @@ runGameMessage msg g = case msg of
     -- separated, the token passes once every area has refreshed: see 'eachAreaThen'
     keeps <- elem CannotLoseFirstPlayerToken <$> getModifiers (PlayerTarget g.firstPlayer)
     let passToken = case drop 1 players of
-          (next : _) | isNothing (gameSeparation g), not keeps -> [SetFirstPlayer next]
+          (next : _) | not (isolated g), not keeps -> [SetFirstPlayer next]
           _ -> []
     raises <- for players \pid -> (pid,) . fromMaybe 1 . lastMay . (\ms -> [n | RefreshThreatRaise n <- ms]) <$> getModifiers (PlayerTarget pid)
     -- each character readied opens its own window, for responses to it readying
@@ -868,25 +902,36 @@ runGameMessage msg g = case msg of
       & entitiesL . heroesL . ix hid %~ overAttrs (\a -> a {heroOwner = pid})
       & entitiesL . attachmentsL . traverse %~ (\a -> if onHero a then overAttrs (\x -> x {attachmentController = Just pid}) a else a)
   SeparatePlayers groups -> pure $ separate groups g
+  SeparateStagingAreas groups -> pure $ separateStages groups g
   FocusArea pid -> pure $ focusArea pid g
-  -- while the players are separated, an enemy sent to another area's staging area leaves
-  -- this one, what is attached to it going with it
-  PlaceInStagingAreaOf pid eid
-    | Map.member pid g.players -> g <$ push (PlaceEnemy eid StagingArea)
+  -- while the players are separated, a card sent to another area's staging area leaves
+  -- its own, what is attached to it going with it; sharing the game, one may come from
+  -- any area's stage, or from a player's
+  PlaceInStagingAreaOf pid target
     | Just s <- gameSeparation g
-    , any (elem pid . areaPlayers) (separationAreas s)
-    , Just e <- Map.lookup eid g.entities.enemies -> do
-        pushAll $ discardShadowsOf g (EnemyTarget eid)
-        let on' :: HasField "placement" a Placement => a -> Bool
-            on' a = a.placement == AttachedTo (EnemyTarget eid)
-            moving = mempty {entitiesEnemies = Map.singleton eid (overAttrs (\a -> a {enemyPlacement = StagingArea, enemyShadowCards = []}) e), entitiesAttachments = Map.filter on' g.entities.attachments, entitiesTreacheries = Map.filter on' g.entities.treacheries}
-            arrive a = if elem pid (areaPlayers a) then a {areaHeldEntities = areaHeldEntities a <> moving} else a
+    , Just dest <- find (elem pid . areaPlayers) (separationAreas s)
+    , held <- [a | a <- separationAreas s, not (isFocusedArea g a)]
+    , Just from <- find (holds target . snd) ((Nothing, g.entities) : [(Just (areaPlayers a), areaHeldEntities a) | a <- held])
+    , not (isFocusedArea g dest && isNothing (fst from)) -> do
+        pushAll $ discardShadowsOf g target
+        let (moving, staying) = splitCards [target] (snd from)
+            moved = toStagingArea target moving
+            fromHere a = Just (areaPlayers a) == fst from
+            toHere a = areaPlayers a == areaPlayers dest && not (isFocusedArea g a)
+            leave a = if fromHere a then a {areaHeldEntities = staying} else a
+            arrive a = if toHere a then a {areaHeldEntities = areaHeldEntities a <> moved} else a
+            here = if isNothing (fst from) then staying else g.entities
         pure
           $ g
-          & entitiesL . enemiesL %~ Map.delete eid
-          & entitiesL . attachmentsL %~ Map.filter (not . on')
-          & entitiesL . treacheriesL %~ Map.filter (not . on')
-          & separationL ?~ s {separationAreas = map arrive (separationAreas s)}
+          & entitiesL .~ (if isFocusedArea g dest then here <> moved else here)
+          & separationL ?~ s {separationAreas = map (arrive . leave) (separationAreas s)}
+  PlaceInStagingAreaOf _ target -> do
+    case target of
+      EnemyTarget eid -> push $ PlaceEnemy eid StagingArea
+      LocationTarget lid -> push $ PlaceLocation lid StagingArea
+      ObjectiveTarget oid -> push $ PlaceObjective oid StagingArea
+      _ -> pure ()
+    pure g
   -- a shadow card for an enemy known by its card, as one just put into play
   DealShadowCardToCard cid -> do
     for_ (find ((== cid) . enemyCardId . toAttrs) (toList g.entities.enemies)) \e -> push $ DealShadowCard (toId e)
@@ -960,7 +1005,9 @@ runGameMessage msg g = case msg of
     let remaining = [p | p <- toList (allPlayers g), p.id /= pid, not p.eliminated]
         -- a separated player alone in his area takes it out of the game with him: the
         -- encounter cards there are discarded (ALeP 3.030), and it joins another area
-        alone = isJust (gameSeparation g) && null [p | p <- toList g.players, p.id /= pid, not p.eliminated]
+        alone = case gameSeparation g of
+          Just s | Just a <- find (elem pid . areaPlayers) (separationAreas s) -> null [p | p <- areaPlayers a, p /= pid, maybe False (not . (.eliminated)) (Map.lookup p (allPlayers g))]
+          _ -> False
         others = [areaLead g s a | Just s <- [gameSeparation g], a <- areasInTurnOrder g s, not (isFocusedArea g a)]
         encounter =
           [toTarget e | e <- toList g.entities.enemies, e.placement == StagingArea]
@@ -974,10 +1021,25 @@ runGameMessage msg g = case msg of
       <> map (Discard . toTarget) allies
       <> map (Discard . toTarget) owned
       <> ( if alone
-             then map (Discard . toTarget) engaged <> map Discard encounter <> [JoinArea pid other | other <- take 1 others]
+             then
+               map (Discard . toTarget) engaged
+                 <> if isJust (stageGroups g)
+                   then [FocusArea pid, DoStep 1 (EliminatePlayer pid)]
+                   else map Discard encounter <> [JoinArea pid other | other <- take 1 others]
              else [PlaceEnemy eid StagingArea | eid <- engaged]
          )
       <> [GameOver Lost | null remaining]
+    pure g
+  -- sharing the game, the stage of a player eliminated alone at it is discarded along
+  -- with all the encounter cards there (The Road Darkens rules insert, "Multiple Staging
+  -- Areas"), the stage in focus now
+  DoStep 1 (EliminatePlayer pid) | Just s <- gameSeparation g -> do
+    let encounter =
+          [toTarget e | e <- toList g.entities.enemies, e.placement == StagingArea]
+            <> [toTarget l | l <- toList g.entities.locations, l.placement `elem` [StagingArea, ActiveLocation]]
+            <> [toTarget t | t <- toList g.entities.treacheries, t.placement == StagingArea]
+        others = [areaLead g s a | a <- areasInTurnOrder g s, not (isFocusedArea g a)]
+    pushAll $ map Discard encounter <> [JoinArea pid other | other <- take 1 others]
     pure g
   GameOver outcome -> do
     cannotEnd <- gameCannotEndWith outcome
@@ -1210,8 +1272,15 @@ runGameMessage msg g = case msg of
     players <- getPlayers
     pushAll [WithTarget (toTarget player) (DoPhase PlanningPhase) | player <- players]
     pure $ g & phaseL .~ PlanningPhase
+  -- sharing the game split between staging areas, each area quests at its stage in turn
   BeginPhase QuestPhase -> do
-    order <- getPlayerOrder
+    case stageGroups g of
+      Just groups -> pushAll $ concat [[FocusArea lead, DoStep 1 (BeginPhase QuestPhase)] | (lead, _) <- groups] <> [FocusArea g.firstPlayer]
+      Nothing -> push $ DoStep 1 (BeginPhase QuestPhase)
+    pure $ g & phaseL .~ QuestPhase
+  DoStep 1 (BeginPhase QuestPhase) -> do
+    order <- getStagePlayers
+    everyone <- getPlayerOrder
     -- the first player may choose a side quest in the staging area to quest against, but
     -- not a quest card that cannot be the current quest, as Secrets of Rhudaur
     let choosable = filterM (fmap (notElem CannotBeCurrentQuest) . getModifiers)
@@ -1228,15 +1297,21 @@ runGameMessage msg g = case msg of
     -- a stage with the Sailing keyword has the first player make a Sailing test before
     -- characters commit (Dream-chaser rules)
     let sailing = [SailingTest | any (\q -> not (isSideQuest q) && Sailing `member` cdKeywords (toCardDef q)) g.entities.quests]
-    unless skipped $ pushAll $ sailing <> chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow order <> [QuestResolution]
-    pure $ g & phaseL .~ QuestPhase
+    unless skipped $ pushAll $ sailing <> chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow everyone <> [QuestResolution]
+    pure g
   BeginPhase TravelPhase -> do
     -- the players' actions come first, as Thrór's Map's, then the lead may travel
-    pushAll [TravelActions, DoStep 1 (BeginPhase TravelPhase)]
+    -- sharing the game split between staging areas, each area may travel at its stage
+    pushAll
+      $ TravelActions
+      : maybe
+        [DoStep 1 (BeginPhase TravelPhase)]
+        (\groups -> concat [[FocusArea lead, DoStep 1 (BeginPhase TravelPhase)] | (lead, _) <- groups] <> [FocusArea g.firstPlayer])
+        (stageGroups g)
     pure $ g & phaseL .~ TravelPhase
   DoStep 1 (BeginPhase TravelPhase) -> do
     locations <- travelableLocations
-    lead <- getLead
+    lead <- getStageLead
     forced <- filterM (fmap (elem MustBeTraveledTo) . getModifiers) locations
     unless (null locations)
       $ push
@@ -1324,11 +1399,22 @@ runGameMessage msg g = case msg of
     [] -> pure g
   BeginPhase EncounterPhase -> do
     order <- getPlayerOrder
-    -- players may act after the optional engagements and after the engagement checks
+    -- players may act after the optional engagements and after the engagement checks;
+    -- sharing the game split between staging areas, each area's players engage the enemies
+    -- in its staging area in turn
     pushAll
-      $ map OptionalEngagement order
-      <> map OptionalActionWindow order
-      <> [EngagementCheck pid 0 | pid <- take 1 order]
+      $ ( case stageGroups g of
+            Nothing ->
+              map OptionalEngagement order
+                <> map OptionalActionWindow order
+                <> [EngagementCheck pid 0 | pid <- take 1 order]
+            Just groups ->
+              concat
+                [ FocusArea lead : map OptionalEngagement players <> map OptionalActionWindow order <> [EngagementCheck lead 0]
+                | (lead, players) <- groups
+                ]
+                <> [FocusArea g.firstPlayer]
+        )
       <> [CreateEffect $ Effect GameSource GameTarget [AfterEngagementChecks] UntilEndOfPhase]
       <> map OptionalActionWindow order
     pure $ g & phaseL .~ EncounterPhase
@@ -1365,7 +1451,7 @@ runGameMessage msg g = case msg of
     pure g
   EngagementCheck pid seatsPassed -> do
     skip <- elem NoEngagementChecks <$> getModifiers GameTarget
-    order <- getPlayerOrder
+    order <- getStagePlayers
     let next = seatAfter order pid
     threat <- getEngagementThreat pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< engageableFromStaging
@@ -1389,7 +1475,7 @@ runGameMessage msg g = case msg of
       cost <- getEngagementCost eid
       -- its cost against each player, as for an engagement check
       let costFor p = cost + sum [n | EngagementCostAgainst p' n <- mods, p' == p]
-      players <- traverse (\p -> (p,) <$> getEngagementThreat p) =<< getPlayerOrder
+      players <- traverse (\p -> (p,) <$> getEngagementThreat p) =<< getStagePlayers
       for_ (find (\(p, threat) -> threat >= costFor p && all (`notElem` mods) [CannotEngagePlayer p, NoEngagementChecksAgainst p]) players) \(p, _) -> push (EngageEnemy p eid)
     pure g
   EngageEnemy pid eid -> do
@@ -1408,8 +1494,10 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    pushAll $ ResolveArchery : ResolveHinder : DealShadowCards
-      : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order
+    -- sharing the game split between staging areas, archery is resolved at each stage
+    let archery = maybe [ResolveArchery] (\groups -> concat [[FocusArea lead, ResolveArchery] | (lead, _) <- groups] <> [FocusArea g.firstPlayer]) (stageGroups g)
+    pushAll $ archery <> (ResolveHinder : DealShadowCards
+      : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order)
     pure $ g & phaseL .~ CombatPhase
   ResolveArchery -> do
     total <- getArcheryTotal
@@ -1428,15 +1516,18 @@ runGameMessage msg g = case msg of
     pure g
   -- the players divide it as they see fit, the first player having the final say, so the
   -- first player assigns it; it is all assigned, then dealt at once (ALeP 3.088)
+  -- sharing the game split between staging areas, only the players at the stage assign
+  -- it, to characters they control
   ArcheryDamage n assigned -> do
-    lead <- getLead
+    lead <- getStageLead
     alliesOnly <- elem ArcheryDamageToAllies <$> getModifiers GameTarget
+    let heroes = if isJust (stageGroups g) then HeroControlledBy PlayerAtThisStage else AnyHero
     -- the players deal it to characters they control, not to one no one does, as captured
-    allies <- withHitPointsLeft assigned . map toTarget =<< select (AllyControlledBy AnyPlayer)
+    allies <- withHitPointsLeft assigned . map toTarget =<< select (AllyControlledBy PlayerAtThisStage)
     characters <-
       if alliesOnly && notNull allies
         then pure allies
-        else withHitPointsLeft assigned =<< selectCharacters AnyHero (AllyControlledBy AnyPlayer)
+        else withHitPointsLeft assigned =<< selectCharacters heroes (AllyControlledBy PlayerAtThisStage)
     gameMods <- getModifiers GameTarget
     -- Ship objectives take it all while they can, as City Under Siege reads
     ships <-
@@ -2153,9 +2244,9 @@ runGameMessage msg g = case msg of
     mods <- getModifiers GameTarget
     let extra = sum [n | AdditionalStagingReveals n <- mods]
         fewer = sum [n | FewerStagingReveals n <- mods]
-        players = length [() | player <- toList g.players, not player.eliminated]
+    order <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getStagePlayers
+    let players = length order
         reveals = max 0 $ max 1 (players + extra) - fewer
-    order <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
     -- in The Lord of the Rings saga each player reveals his own card in turn order, the
     -- first player any more the step reveals
     let revealing
@@ -2180,7 +2271,7 @@ runGameMessage msg g = case msg of
   QuestResolution -> do
     willpower <- getCommittedWillpower
     threat <- getStagingThreat
-    players <- getPlayerOrder
+    players <- getStagePlayers
     if
       | willpower > threat -> do
           -- a delayed effect resolves before the reactions to its moment, whether or not
@@ -2374,7 +2465,10 @@ runGameMessage msg g = case msg of
       push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase $ fromMaybe phase (gameResumeAfter g))
       pure $ g & resumeAfterL .~ Nothing
   EndPhase phase -> do
-    push $ CheckWindows [mkWhen $ PhaseEnds phase]
+    -- sharing the game split between staging areas, the cards at each stage see it end
+    push $ case stageGroups g of
+      Just groups -> Run $ concat [[FocusArea lead, CheckWindows [mkWhen $ PhaseEnds phase]] | (lead, _) <- groups] <> [FocusArea g.firstPlayer]
+      Nothing -> CheckWindows [mkWhen $ PhaseEnds phase]
     -- an enemy still in play raises a player's threat, as Crazed Captive's shadow reads
     raising <- for (toList g.entities.enemies) \e -> (\ms -> [(p, n) | RaisesThreatAtEndOfPhase p n <- ms]) <$> getModifiers e
     pushAll $ concat [[RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n]] | (p, n) <- concat raising]
@@ -3782,6 +3876,24 @@ freeGuarded g target =
     _ -> Nothing
 
 -- | The shadow cards dealt to an enemy leaving play, discarded with it.
+-- | Whether the card is among these.
+holds :: Target -> Entities -> Bool
+holds target es = case target of
+  EnemyTarget k -> Map.member k es.enemies
+  LocationTarget k -> Map.member k es.locations
+  TreacheryTarget k -> Map.member k es.treacheries
+  ObjectiveTarget k -> Map.member k es.objectives
+  _ -> False
+
+-- | The card among these placed in the staging area, an enemy without its shadow cards.
+toStagingArea :: Target -> Entities -> Entities
+toStagingArea target es = case target of
+  EnemyTarget k -> es & enemiesL . ix k %~ overAttrs (\a -> a {enemyPlacement = StagingArea, enemyShadowCards = []})
+  LocationTarget k -> es & locationsL . ix k %~ overAttrs (\a -> a {locationPlacement = StagingArea})
+  TreacheryTarget k -> es & treacheriesL . ix k %~ overAttrs (\a -> a {treacheryPlacement = StagingArea})
+  ObjectiveTarget k -> es & objectivesL . ix k %~ overAttrs (\a -> a {objectivePlacement = StagingArea})
+  _ -> es
+
 discardShadowsOf :: Game -> Target -> [Message]
 discardShadowsOf g = \case
   EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies, notNull e.shadowCards -> [AddToEncounterDiscard e.shadowCards]

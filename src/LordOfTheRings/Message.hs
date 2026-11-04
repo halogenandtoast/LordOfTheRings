@@ -736,6 +736,9 @@ data Message
     player holds stay with the first group.
     -}
     SeparatePlayers [[PlayerId]]
+  | -- | as 'SeparatePlayers', the players still interacting: each group has a stage of its
+    -- own, the first player's taking the one in play (Breaking of the Fellowship)
+    SeparateStagingAreas [[PlayerId]]
   | -- | the area holding the player comes into focus, to resolve what follows
     FocusArea PlayerId
   | -- | the area in focus is to join another at the beginning of the travel phase
@@ -789,9 +792,10 @@ data Message
     RevealFromCorsairDeckWithShadow Source PlayerId
   | -- | deal a shadow card to the enemy whose card this is, once it has entered play
     DealShadowCardToCard CardId
-  | -- | the enemy goes to the staging area of the player's area, as Giant Cave Centipede
-    -- moves to a different player's while the players are separated
-    PlaceInStagingAreaOf PlayerId EnemyId
+  | -- | the card goes to the staging area of the player's area, as Giant Cave Centipede
+    -- moves to a different player's while the players are separated, from wherever it is:
+    -- an enemy, a location, a treachery or an objective, and what is attached to it
+    PlaceInStagingAreaOf PlayerId Target
   | -- | the card the source revealed from the Corsair deck, as Light Cruiser reads it
     RevealedFromCorsairDeck Source PlayerId EncounterCard
   | -- | the Ship enemy engaged the player from the staging area: its Boarding X resolves

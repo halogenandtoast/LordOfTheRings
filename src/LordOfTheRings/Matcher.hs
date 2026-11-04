@@ -56,6 +56,7 @@ matchPlayer matcher player = case matcher of
   PlayerWithThreatAtLeastEngagementCostOf eid -> getsGame (Map.lookup eid . (.enemies) . gameEntities) >>= \case
     Nothing -> pure False
     Just e -> (<=) <$> modifiedValue engagementCostOf (toTarget eid) e.engagementCost <*> getThreat player.id
+  PlayerAtThisStage -> elem player.id <$> getStagePlayers
   PlayerWithHiddenCards -> getsGame (notNull . Map.findWithDefault [] player.id . (.hiddenCards) . toAttrs . gameScenario)
 
 data Character = HeroCharacter Hero | AllyCharacter Ally
@@ -574,7 +575,13 @@ getTimeX t =
 getArcheryTotal :: (HasGame m) => m Int
 getArcheryTotal = do
   let inPlay p = p `notElem` [InVictoryDisplay, Unplaced]
-  enemies <- getsGame (filter (inPlay . (.placement)) . toList . entitiesEnemies . gameEntities)
+  -- sharing the game split between staging areas, an enemy engaged with a player at
+  -- another stage adds to that stage's
+  atStage <- getStagePlayers
+  let here = \case
+        EngagedWith p -> p `elem` atStage
+        p -> inPlay p
+  enemies <- getsGame (filter (here . (.placement)) . toList . entitiesEnemies . gameEntities)
   locations <- getsGame (filter (inPlay . (.placement)) . toList . entitiesLocations . gameEntities)
   fromEnemies <- for enemies \e -> getArchery (toTarget e) (toCardDef e)
   fromLocations <- for locations \l -> getArchery (toTarget l) (toCardDef l)
@@ -708,6 +715,22 @@ getPlayerOrder = do
   firstPlayer <- getsGame gameFirstPlayer
   let (before, after) = break (== firstPlayer) order
   pure $ after <> before
+
+{- | The players at the stage in focus, in turn order: while the players share the game
+split between staging areas (Breaking of the Fellowship), those of the area in focus,
+otherwise every player, as 'getPlayerOrder'.
+-}
+getStagePlayers :: HasGame m => m [PlayerId]
+getStagePlayers = do
+  order <- getPlayerOrder
+  sep <- getsGame gameSeparation
+  pure $ case sep of
+    Just s | separationShared s, Just a <- find areaInFocus (separationAreas s) -> filter (`elem` areaPlayers a) order
+    _ -> order
+
+-- | The first of the players at the stage in focus: see 'getStagePlayers'.
+getStageLead :: HasGame m => m PlayerId
+getStageLead = maybe getLead pure . headMay =<< getStagePlayers
 
 -- | Heroes and allies matching the given matchers, as targets.
 -- | Whether the player's cards follow the FAQ's errata, as a card reads it as it resolves.

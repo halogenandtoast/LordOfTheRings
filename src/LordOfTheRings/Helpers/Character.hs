@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Character (module LordOfTheRings.Helpers.Character
 import LordOfTheRings.Card hiding (enemy)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Entities (entitiesObjectives)
-import LordOfTheRings.Game.Base (gameEntities, gameScenario)
+import LordOfTheRings.Game.Base (Separation (separationShared), gameEntities, gameScenario, gameSeparation)
 import LordOfTheRings.Message (EscapeStat (..), EscapeTest (..))
 import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
 import LordOfTheRings.Classes.HasGame
@@ -107,7 +107,12 @@ getCommittedWillpower = do
 -- | The characters committed to the quest, objective allies the staging area commits too.
 getCommittedCharacters :: (HasGame m) => m [Target]
 getCommittedCharacters = do
-  characters <- selectCharacters CommittedHero CommittedAlly
+  -- sharing the game split between staging areas, those of the players at the stage
+  shared <- getsGame (maybe False separationShared . gameSeparation)
+  characters <-
+    if shared
+      then selectCharacters (CommittedHero <> HeroControlledBy PlayerAtThisStage) (CommittedAlly <> AllyControlledBy PlayerAtThisStage)
+      else selectCharacters CommittedHero CommittedAlly
   objectives <- getsGame (map toTarget . toList . entitiesObjectives . gameEntities)
   (characters <>) <$> filterM (fmap (elem CountsAsCommitted) . getModifiers) objectives
 
