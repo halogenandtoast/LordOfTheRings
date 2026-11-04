@@ -217,5 +217,47 @@ data EncounterSet
   | UnderGuard
   | UnderTheAshMountains
   | WrathAndRuin
+  -- The Hobbit saga's
+  | WeMustAwayEreBreakOfDay
+  | WesternLands
+  | OverTheMistyMountainsGrim
+  | MistyMountainGoblins
+  | TheGreatGoblin
+  | DungeonsDeepAndCavernsDim
+  | FliesAndSpiders
+  | Wilderland
+  | TheLonelyMountain
+  | TheBattleOfFiveArmies
+  -- The Lord of the Rings saga's; a scenario's set names its burden set too, though no
+  -- burden is gathered with it (see 'cdSetIcon')
+  | AShadowOfThePast
+  | AKnifeInTheDark
+  | FlightToTheFord
+  | Hunted
+  | TheBlackRiders
+  | TheNazgul
+  | TheRingGoesSouth
+  | JourneyInTheDark
+  | BreakingOfTheFellowship
+  | TheUrukHai
+  | HelmsDeep
+  | TheRoadToIsengard
+  | OrcsOfTheWhiteHand
+  | SnagaOrcs
+  | ThePassageOfTheMarshes
+  | JourneyToTheCrossRoads
+  | ShelobsLair
+  | TheGreatSpider
+  | GollumSaga
+  | HaradSaga
+  | NazgulSaga
+  | ThePassingOfTheGreyCompany
+  | TheSiegeOfGondor
+  | TheBattleOfThePelennorFields
+  | TheTowerOfCirithUngol
+  | TheBlackGateOpens
+  | MountDoom
+  | DeepShadows
+  | OrcsOfMordor
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)

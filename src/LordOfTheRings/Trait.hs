@@ -205,6 +205,40 @@ data Trait
   | Woodman
   | Wose
   | Wraith
+  -- the Saga Expansions'
+  | CirithUngol
+  | Despair
+  | Doom
+  | DoomedTrait
+  | Enchantment
+  | Erebor
+  | Favor
+  | Fear
+  | FellowshipTrait
+  | Gift
+  | HelmsDeep
+  | Hill
+  | Information
+  | Lawn
+  | Mearas
+  | MinasTirith
+  | Morgul
+  | Oathbreaker
+  | Pelennor
+  | PerilTrait
+  | Pony
+  | Refuge
+  | RingBearer
+  | Sack
+  | Shire
+  | SiegeTrait
+  | Stream
+  | SurgeTrait
+  | Trollshaws
+  | UrukHai
+  | Vale
+  | WesternLandsTrait
+  | Wound
   deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -212,4 +246,13 @@ data Trait
 traitName :: Trait -> Text
 traitName = \case
   WilderlandsTrait -> "Wilderlands"
+  DoomedTrait -> "Doomed"
+  FellowshipTrait -> "Fellowship"
+  HelmsDeep -> "Helm's Deep"
+  PerilTrait -> "Peril"
+  RingBearer -> "Ring-bearer"
+  SiegeTrait -> "Siege"
+  SurgeTrait -> "Surge"
+  UrukHai -> "Uruk-hai"
+  WesternLandsTrait -> "Western Lands"
   t -> pack $ unwords $ words $ concatMap (\c -> if isUpper c then [' ', c] else [c]) (show t)
