@@ -724,7 +724,7 @@ runGameMessage msg g = case msg of
     push $ SetFirstPlayer firstPlayer
     pure g
   BeginRound -> do
-    pushAll [BeginPhase minBound, EndPhase minBound]
+    pushAll [CheckWindows [mkWhen RoundBegins], BeginPhase minBound, EndPhase minBound]
     -- no area has begun the round's first phase, those separated before the first round
     -- too, as at Unexpected Rescue
     pure $ g & roundL +~ 1 & separationL %~ fmap (\s -> s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]})

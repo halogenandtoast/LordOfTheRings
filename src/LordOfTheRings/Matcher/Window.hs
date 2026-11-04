@@ -75,6 +75,8 @@ data WindowMatcher
   | PhaseEndsWindow Timing Phase
   | -- | at the end of the round
     RoundEndsWindow
+  | -- | at the beginning of the round
+    RoundBeginsWindow
   | -- | at the beginning of the staging step, as Search for an Exit flips
     StagingStepBeginsWindow
   | -- | at the end of the staging step, as The Fate of Balin reads
@@ -398,6 +400,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TimeCountersRemovedFromEnemyWindow {}, _) -> False
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
   (RoundEndsWindow, RoundEnds) -> True
+  (RoundBeginsWindow, RoundBegins) -> True
   (StagingStepBeginsWindow, StagingStepBegins) -> True
   (StagingStepEndsWindow, StagingStepEnds) -> True
   (ProgressPlacedWindow t target, ProgressPlaced target' _) -> t == timing && target == target'

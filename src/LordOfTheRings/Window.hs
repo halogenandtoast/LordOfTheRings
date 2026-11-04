@@ -59,6 +59,8 @@ data WindowType
   | EnemyAttacking EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
+  | -- | the round begins, before its resource phase, as Well Preserved reads
+    RoundBegins
   | -- | the staging step begins, before its cards are revealed
     StagingStepBegins
   | -- | the staging step ends, its cards revealed
