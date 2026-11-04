@@ -111,6 +111,9 @@ allObjectiveCards =
       , onTrack
       , seizeThem
       , tamedMumak
+      , bannerOfTheSerpent
+      , theSerpentsGarb
+      , summonsFromMordor
       ]
 
 durinsAxe :: CardDef
@@ -747,4 +750,27 @@ tamedMumak =
   ((objective "17038" "Tamed Mumak" RaceAcrossHarad 4)
       { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 5, cdDefense = Just 2, cdHitPoints = Just 8 })
     { cdCardTraits = setFromList [Creature]
+    }
+
+-- * The Black Serpent: the Harad objectives, each Guarded (X) (MEC59 rules)
+
+bannerOfTheSerpent :: CardDef
+bannerOfTheSerpent =
+  (objective "17091" "Banner of the Serpent" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+    }
+
+theSerpentsGarb :: CardDef
+theSerpentsGarb =
+  (objective "17092" "The Serpent's Garb" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [EnemyType]]
+    }
+
+summonsFromMordor :: CardDef
+summonsFromMordor =
+  (objective "17093" "Summons from Mordor" TheBlackSerpent 1)
+    { cdCardTraits = setFromList [Item, Harad]
+    , cdKeywords = setFromList [GuardedBy [LocationType]]
     }

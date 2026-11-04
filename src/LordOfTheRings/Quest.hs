@@ -242,6 +242,10 @@ import LordOfTheRings.Quest.Cards.SettingOut
 import LordOfTheRings.Quest.Cards.RacingNorth
 import LordOfTheRings.Quest.Cards.HuntedInHarad
 import LordOfTheRings.Quest.Cards.TheFordOfHarnen
+import LordOfTheRings.Quest.Cards.DontLetThemEscape
+import LordOfTheRings.Quest.Cards.TheCrossroadsFort
+import LordOfTheRings.Quest.Cards.BattleInTheCamp
+import LordOfTheRings.Quest.Cards.DefeatTheSerpent
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -516,5 +520,9 @@ allQuests =
         , SomeQuestCard racingNorth
         , SomeQuestCard huntedInHarad
         , SomeQuestCard theFordOfHarnen
+        , SomeQuestCard dontLetThemEscape
+        , SomeQuestCard theCrossroadsFort
+        , SomeQuestCard battleInTheCamp
+        , SomeQuestCard defeatTheSerpent
         ]
     ]

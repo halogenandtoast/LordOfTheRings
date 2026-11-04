@@ -546,6 +546,10 @@ data ModifierType
   | -- | on a player: he cannot have more than this many cards in hand, discarding down to
     -- it at once, as In Enemy Territory reads
     HandSizeLimit Int
+  | -- | on an objective: the first player claims it as soon as nothing guards it, attaching
+    -- it to a hero he controls, as The Black Serpent's stages read of each Harad objective
+    -- that is not attached
+    FirstPlayerClaimsWhenFree
   | -- | on the game, or a character: player card effects cannot ready it, as Find Water
     -- reads; the refresh phase still does
     CannotBeReadiedByPlayerCards

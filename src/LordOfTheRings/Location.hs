@@ -419,6 +419,11 @@ import LordOfTheRings.Location.Cards.RiverHarnen
 import LordOfTheRings.Location.Cards.ExpanseOfHarad
 import LordOfTheRings.Location.Cards.BlisteringErg
 import LordOfTheRings.Location.Cards.HaradRoad
+import LordOfTheRings.Location.Cards.TheSerpentsRedoubt
+import LordOfTheRings.Location.Cards.RooflessTower
+import LordOfTheRings.Location.Cards.DesertBastion
+import LordOfTheRings.Location.Cards.SouthronCamp
+import LordOfTheRings.Location.Cards.BrokenCourtyard
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -884,5 +889,10 @@ allLocations =
         , SomeLocationCard expanseOfHarad
         , SomeLocationCard blisteringErg
         , SomeLocationCard haradRoad
+        , SomeLocationCard theSerpentsRedoubt
+        , SomeLocationCard rooflessTower
+        , SomeLocationCard desertBastion
+        , SomeLocationCard southronCamp
+        , SomeLocationCard brokenCourtyard
         ]
     ]

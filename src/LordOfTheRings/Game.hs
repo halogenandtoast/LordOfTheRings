@@ -157,6 +157,7 @@ runNext =
       checkUnblockedQuests g
       discardAtNoWillpower
       discardDownToHandLimit
+      claimFreeObjectives
       endWaitingGame
       pure True
 
@@ -210,6 +211,35 @@ discardDownToHandLimit = do
       when (excess > 0 && not pending && CannotDiscardFromHand `notElem` mods && notNull (discardableHand p))
         $ push
         $ ChooseAndDiscardFromHand p.id GameSource excess
+
+{- | An objective the first player claims once nothing guards it ('FirstPlayerClaimsWhenFree'):
+one in the staging area whose guard has left play, or that never found one, unless it is
+still being guarded, or claimed, by what is queued.
+-}
+claimFreeObjectives :: GameT ()
+claimFreeObjectives = do
+  g <- getGame
+  unless (isJust g.outcome) do
+    queued <- peekQueue
+    let guards = map ((.id) . toCard) (toList g.entities.enemies) <> map ((.id) . toCard) (toList g.entities.locations)
+        free o = o.placement == StagingArea && maybe True (`notElem` guards) (objectiveGuard $ toAttrs o)
+        claiming = flip any queued \case
+          ClaimFreeObjective _ -> True
+          ClaimObjective {} -> True
+          Ask _ (QuestionLabel l _ _ _) -> l == ikey "label.claimObjective"
+          _ -> False
+        guarding oid = flip any queued \case
+          GuardObjective o -> o == oid
+          SetObjectiveGuard o _ -> o == oid
+          DiscardTopOfEncounterDeck s _ _ -> s == ObjectiveSource oid
+          DiscardedTopOfEncounterDeck s _ _ -> s == ObjectiveSource oid
+          _ -> False
+    candidates <- flip filterM (filter free $ toList g.entities.objectives) \o ->
+      if guarding (toId o) then pure False else elem FirstPlayerClaimsWhenFree <$> getModifiers (toTarget o)
+    unless (claiming || null candidates) do
+      lead <- getLead
+      hasHero <- selectAny (HeroControlledBy $ PlayerWithId lead)
+      when hasHero $ for_ (take 1 candidates) $ push . ClaimFreeObjective . toId
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -2315,7 +2345,11 @@ runGameMessage msg g = case msg of
       & entitiesL . attachmentsL %~ Map.filter (not . under)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
-    pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
+    let guarded = \case
+          Guarded -> True
+          GuardedBy _ -> True
+          _ -> False
+    pushWhen (any guarded $ cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]
     -- an objective's When Revealed, as Durin's Greaves attaching itself, after the window
     -- that can cancel it, as an enemy's
