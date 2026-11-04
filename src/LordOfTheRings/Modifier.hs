@@ -274,6 +274,9 @@ data ModifierType
   | -- | on a location: its Discover value moves by this much, as Hidden Staircase's X and
     -- Crypt Key's 1 read
     DiscoverValueModifier Int
+  | -- | on an enemy with no victory points printed: it has this many, and goes to the
+    -- victory display as it is defeated, as The Cursed Shade gives Fram's Shade victory 6
+    GainVictory Int
   | -- | on an enemy: it is dealt this many shadow cards whenever it is dealt one, as Fram's
     -- Shade reads
     ShadowCardsDealt Int

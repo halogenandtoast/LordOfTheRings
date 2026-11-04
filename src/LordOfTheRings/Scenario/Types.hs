@@ -4,6 +4,7 @@ module LordOfTheRings.Scenario.Types (module LordOfTheRings.Scenario.Types) wher
 
 import LordOfTheRings.Campaign (CampaignLog)
 import Data.Aeson.KeyMap qualified as KeyMap
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
@@ -106,6 +107,9 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioCavesDeck :: [EncounterCard]
   -- ^ the Caves deck, top first (Ered Mithrin): a Deep location traveled to is replaced
   -- by its top card
+  , scenarioGainedVictoryPoints :: Map CardId Int
+  -- ^ the victory points a card in the victory display gained as it went there, printed
+  -- nowhere, as Fram's Shade's victory 6 (The Ghost of Framsburg)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -115,7 +119,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard]))] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("gainedVictoryPoints", object [])] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -149,6 +153,7 @@ scenario f sid name =
       , scenarioOutOfPlayResources = mempty
       , scenarioGuardedPlayerCards = mempty
       , scenarioCavesDeck = []
+      , scenarioGainedVictoryPoints = mempty
       }
 
 instance Entity ScenarioAttrs where
@@ -202,7 +207,7 @@ instance HasField "victoryDisplay" ScenarioAttrs [Card] where
 -- nightmare setup card: "player cards in the victory display do not contribute their
 -- victory points."
 instance HasField "victoryPoints" ScenarioAttrs Int where
-  getField a = sum . mapMaybe (cdVictoryPoints . toCardDef) . filter counts $ scenarioVictoryDisplay a
+  getField a = sum . mapMaybe points . filter counts $ scenarioVictoryDisplay a
    where
     -- The one setup card that touches scoring is named here: the score is read from the
     -- scenario alone, where no modifier can be seen.
@@ -210,6 +215,7 @@ instance HasField "victoryPoints" ScenarioAttrs Int where
     counts = \case
       PlayerCard _ -> not noPlayerCards
       _ -> True
+    points c = cdVictoryPoints (toCardDef c) <|> Map.lookup c.id (scenarioGainedVictoryPoints a)
 
 instance HasField "mode" ScenarioAttrs GameMode where
   getField = scenarioMode

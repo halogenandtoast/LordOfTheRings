@@ -1510,6 +1510,11 @@ getCavesDeck = getsGame ((.cavesDeck) . toAttrs . (.scenario))
 replaceWithTopOfCavesDeck :: ReverseQueue m => LocationId -> m ()
 replaceWithTopOfCavesDeck = push . ReplaceWithTopOfCavesDeck
 
+-- | The player resolves the Discover keyword of the location, as Abandoned Ruins reads; a
+-- location without it does nothing (MEC69 rules).
+resolveDiscover :: ReverseQueue m => PlayerId -> LocationId -> m ()
+resolveDiscover pid = push . ResolveDiscover pid
+
 {- | The player looks at the top 2 cards of the Caves deck and puts 1 on top and the other
 on the bottom, as Forked Passage and The Lower Depths read.
 -}

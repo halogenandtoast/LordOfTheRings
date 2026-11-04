@@ -1063,7 +1063,10 @@ runGameMessage msg g = case msg of
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card Nothing | PlayerAttackSource _ <- [source]])
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     -- one that stays in play for its own effect was still destroyed by the attack
-    if stays then pure (recorded g) else recorded <$> case cdVictoryPoints (toCardDef enemy) of
+    gained <- headMay . (\ms -> [n | GainVictory n <- ms]) <$> getModifiers target
+    let victory = cdVictoryPoints (toCardDef enemy) <|> gained
+        gainedL = maybe id (\n -> gainedVictoryPointsL %~ Map.insert card.id n) (guard (isNothing $ cdVictoryPoints $ toCardDef enemy) *> gained)
+    if stays then pure (recorded g) else recorded <$> case victory of
       Just _ -> do
         -- what is attached to it is discarded, an objective it guarded as a Key of The Three
         -- Trials, and a Mount, as Mordor Warg, goes to the staging area
@@ -1074,7 +1077,7 @@ runGameMessage msg g = case msg of
           . enemiesL
           %~ Map.delete eid
           & scenarioL
-          %~ overAttrs (victoryDisplayL %~ (card :))
+          %~ overAttrs (gainedL . (victoryDisplayL %~ (card :)))
       Nothing -> discardTarget target g
   -- an objective ally destroyed in the staging area goes to the encounter discard pile
   Destroy _ (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
