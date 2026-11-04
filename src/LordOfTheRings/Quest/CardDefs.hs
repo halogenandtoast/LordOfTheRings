@@ -439,6 +439,9 @@ allQuestCards =
       , stormTheCastleStrongholdOfMordor
       , slavesOfTheDarkLord
       , leadTheRevolt
+      , theForbiddenDoor
+      , thePathsOfTheDead
+      , theDeadAreFollowing
       ]
 
 theDrippingWalls :: CardDef
@@ -1821,3 +1824,17 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 -- | 10 quest points, and 10 more per player from its own modifiers.
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
+
+-- * The Passing of the Grey Company
+
+-- | Its quest points are "-": it advances at the end of the planning phase.
+theForbiddenDoor :: CardDef
+theForbiddenDoor = (quest "145063" "The Forbidden Door" ThePassingOfTheGreyCompany 1 0) {cdQuestPoints = Nothing}
+
+-- | X quest points, X the highest threat among the players: given by its own modifiers.
+thePathsOfTheDead :: CardDef
+thePathsOfTheDead = quest "145064" "The Paths of the Dead" ThePassingOfTheGreyCompany 2 0
+
+-- | The players win as The Stone of Erech leaves play explored, not by defeating it.
+theDeadAreFollowing :: CardDef
+theDeadAreFollowing = quest "145065" "The Dead are Following" ThePassingOfTheGreyCompany 3 5

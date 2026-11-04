@@ -543,6 +543,11 @@ allLocationCards =
       , theStorehouse
       , workingFields
       , watchTowerTheLandOfSorrow
+      , theStoneOfErech
+      , darkDoor
+      , trystingPlace
+      , deadlyRoad
+      , hauntedPath
       ]
 
 drownedTreasury :: CardDef
@@ -4001,3 +4006,21 @@ watchTowerTheLandOfSorrow =
     { cdCardTraits = setFromList [Plains]
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The Passing of the Grey Company
+
+-- | Set aside by stage 1A, added to the staging area by stage 3A.
+theStoneOfErech :: CardDef
+theStoneOfErech = unique (location "145017" "The Stone of Erech" ThePassingOfTheGreyCompany 1 5 5) {cdCardTraits = setFromList [Hill]}
+
+darkDoor :: CardDef
+darkDoor = (location "145018" "Dark Door" ThePassingOfTheGreyCompany 2 4 4) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 1}
+
+trystingPlace :: CardDef
+trystingPlace = (location "145019" "Trysting Place" ThePassingOfTheGreyCompany 3 3 3) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 2}
+
+deadlyRoad :: CardDef
+deadlyRoad = (location "145020" "Deadly Road" ThePassingOfTheGreyCompany 3 2 3) {cdCardTraits = setFromList [Underground]}
+
+hauntedPath :: CardDef
+hauntedPath = (location "145021" "Haunted Path" ThePassingOfTheGreyCompany 3 1 4) {cdCardTraits = setFromList [Underground], cdShadowEffect = True}

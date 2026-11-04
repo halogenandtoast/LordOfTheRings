@@ -153,6 +153,8 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , overcomeByFear
+      , armyOfTheDeadBoon
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1055,31 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- * The Passing of the Grey Company
+
+-- | A burden of The Passing of the Grey Company's burden set: never in an encounter
+-- deck. Stage 1A attaches a copy to each player's threat dial; won with copies still
+-- attached, the campaign pool records them for those players, whose dials they go onto as
+-- each later scenario is set up. Limit 1 per threat dial.
+overcomeByFear :: CardDef
+overcomeByFear =
+  (objective "145016" "Overcome by Fear" ThePassingOfTheGreyCompany 4)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just ThePassingOfTheGreyCompany
+    , cdCardTraits = setFromList [Fear, Burden]
+    }
+
+-- | The boon side of Army of the Dead, earned by defeating its enemy side in campaign mode
+-- (The Flame of the West rules insert, "Army of the Dead").
+armyOfTheDeadBoon :: CardDef
+armyOfTheDeadBoon =
+  ((objective "145068" "Army of the Dead" ThePassingOfTheGreyCompany 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 4, cdAttack = Just 6, cdDefense = Just 2, cdHitPoints = Just 8 })
+    { cdUnique = True
+    , cdEncounterSet = Nothing
+    , cdSetIcon = Just ThePassingOfTheGreyCompany
+    , cdCardTraits = setFromList [Undead, Boon]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    , cdOtherSide = Just "145067"
+    }
