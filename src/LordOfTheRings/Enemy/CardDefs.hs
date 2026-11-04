@@ -532,6 +532,19 @@ allEnemyCards =
       , orcOfMordor
       , snagaArcher
       , urukSoldierOrcsOfMordor
+      , oldTomnoddy
+      , crazyCob
+      , lazyLob
+      , fatSpider
+      , wickedSpider
+      , darkBats
+      , bolg
+      , bodyguardOfBolg
+      , gundabadWolfRider
+      , gundabadClimber
+      , vanguardOfBolg
+      , gundabadArcher
+      , ravenousWarg
       ]
 
 namelessThing :: CardDef
@@ -4333,6 +4346,7 @@ howlingWarg :: CardDef
 howlingWarg =
   (enemy "142027" "Howling Warg" TheRingGoesSouth 4 38 2 3 2 4)
     { cdCardTraits = setFromList [Creature, Warg]
+    , cdShadowEffect = True
     }
 
 crebainFromDunland :: CardDef
@@ -4340,7 +4354,9 @@ crebainFromDunland =
   (enemy "142028" "Crebain from Dunland" TheRingGoesSouth 2 28 3 1 1 2)
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
     }
+
 -- * The Passage of the Marshes
 
 gropingDead :: CardDef
@@ -4386,6 +4402,72 @@ gollumTheLandOfShadow =
       { cdCardTraits = setFromList [Gollum]
       , cdOtherSide = Just "144076"
       }
+
+-- * Flies and Spiders
+
+-- | A Spider of Mirkwood, with venom (The Hobbit: On the Doorstep rules insert).
+mirkwoodSpider :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> Int -> CardDef
+mirkwoodSpider code name quantity engagementCost threat attack defense hitPoints =
+  (enemy code name FliesAndSpiders quantity engagementCost threat attack defense hitPoints)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdKeywords = setFromList [Venom]
+    }
+
+oldTomnoddy :: CardDef
+oldTomnoddy = (mirkwoodSpider "132028" "Old Tomnoddy" 3 37 3 5 2 4) {cdEasyModeQuantity = Just 1}
+
+crazyCob :: CardDef
+crazyCob = (mirkwoodSpider "132029" "Crazy Cob" 3 30 2 3 2 2) {cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+lazyLob :: CardDef
+lazyLob = (mirkwoodSpider "132030" "Lazy Lob" 3 33 3 3 0 3) {cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+fatSpider :: CardDef
+fatSpider = (mirkwoodSpider "132031" "Fat Spider" 4 28 2 1 1 6) {cdShadowEffect = True, cdEasyModeQuantity = Just 3}
+
+wickedSpider :: CardDef
+wickedSpider = (mirkwoodSpider "132032" "Wicked Spider" 5 25 1 4 1 3) {cdShadowEffect = True}
+
+-- * Wilderland
+
+darkBats :: CardDef
+darkBats = (enemy "132036" "Dark Bats" Wilderland 3 15 2 2 0 1) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+-- * The Battle of Five Armies
+
+-- | A Goblin Orc of Bolg's army.
+bolgsGoblin :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> Int -> CardDef
+bolgsGoblin code name quantity engagementCost threat attack defense hitPoints =
+  (enemy code name TheBattleOfFiveArmies quantity engagementCost threat attack defense hitPoints)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+-- | His threat, X, is the number of players: the card adds it.
+bolg :: CardDef
+bolg = unique $ bolgsGoblin "132053" "Bolg" 1 50 0 6 3 8
+
+bodyguardOfBolg :: CardDef
+bodyguardOfBolg = bolgsGoblin "132054" "Bodyguard of Bolg" 4 35 2 4 2 5
+
+gundabadWolfRider :: CardDef
+gundabadWolfRider = (bolgsGoblin "132055" "Gundabad Wolf Rider" 3 15 1 3 0 3) {cdShadowEffect = True}
+
+gundabadClimber :: CardDef
+gundabadClimber = (bolgsGoblin "132056" "Gundabad Climber" 4 33 1 2 2 2) {cdWhenRevealed = True}
+
+vanguardOfBolg :: CardDef
+vanguardOfBolg = (bolgsGoblin "132057" "Vanguard of Bolg" 4 20 1 1 1 4) {cdShadowEffect = True, cdEasyModeQuantity = Just 3}
+
+gundabadArcher :: CardDef
+gundabadArcher = (bolgsGoblin "132058" "Gundabad Archer" 2 40 2 2 1 3) {cdWhenRevealed = True, cdShadowEffect = True}
+
+ravenousWarg :: CardDef
+ravenousWarg =
+  (enemy "132059" "Ravenous Warg" TheBattleOfFiveArmies 3 30 2 3 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
 
 -- * Shelob's Lair
 

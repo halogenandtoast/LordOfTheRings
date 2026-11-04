@@ -371,6 +371,15 @@ import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
 import LordOfTheRings.Quest.Cards.TheStairsOfCirithUngol
 import LordOfTheRings.Quest.Cards.TheSpidersPass
 import LordOfTheRings.Quest.Cards.GollumsBetrayal
+import LordOfTheRings.Quest.Cards.IntoMirkwood
+import LordOfTheRings.Quest.Cards.LostInTheDarkFliesAndSpiders
+import LordOfTheRings.Quest.Cards.CapturedBySpiders
+import LordOfTheRings.Quest.Cards.BattleWithTheSpiders
+import LordOfTheRings.Quest.Cards.TheGatheringOfTheClouds
+import LordOfTheRings.Quest.Cards.TheEasternSpur
+import LordOfTheRings.Quest.Cards.BattleInTheDale
+import LordOfTheRings.Quest.Cards.TheDefenseOfRavenhill
+import LordOfTheRings.Quest.Cards.TheCloudsBurst
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -774,5 +783,14 @@ allQuests =
         , SomeQuestCard theStairsOfCirithUngol
         , SomeQuestCard theSpidersPass
         , SomeQuestCard gollumsBetrayal
+        , SomeQuestCard intoMirkwood
+        , SomeQuestCard lostInTheDarkFliesAndSpiders
+        , SomeQuestCard capturedBySpiders
+        , SomeQuestCard battleWithTheSpiders
+        , SomeQuestCard theGatheringOfTheClouds
+        , SomeQuestCard theEasternSpur
+        , SomeQuestCard battleInTheDale
+        , SomeQuestCard theDefenseOfRavenhill
+        , SomeQuestCard theCloudsBurst
         ]
     ]

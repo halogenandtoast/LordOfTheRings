@@ -444,6 +444,13 @@ import LordOfTheRings.Treachery.Cards.ManyOpenings
 import LordOfTheRings.Treachery.Cards.ShelobsPoison
 import LordOfTheRings.Treachery.Cards.LurkingMalice
 import LordOfTheRings.Treachery.Cards.RageAndHunger
+import LordOfTheRings.Treachery.Cards.CaughtInWebs
+import LordOfTheRings.Treachery.Cards.PoisonedBySpiders
+import LordOfTheRings.Treachery.Cards.FightingAmongFriends
+import LordOfTheRings.Treachery.Cards.WeighedDownWilderland
+import LordOfTheRings.Treachery.Cards.HatredRekindledTheBattleOfFiveArmies
+import LordOfTheRings.Treachery.Cards.GoblinsAreUponYou
+import LordOfTheRings.Treachery.Cards.HeedlessOfOrder
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -915,5 +922,12 @@ allTreacherys =
         , SomeTreacheryCard shelobsPoison
         , SomeTreacheryCard lurkingMalice
         , SomeTreacheryCard rageAndHunger
+        , SomeTreacheryCard caughtInWebs
+        , SomeTreacheryCard poisonedBySpiders
+        , SomeTreacheryCard fightingAmongFriends
+        , SomeTreacheryCard weighedDownWilderland
+        , SomeTreacheryCard hatredRekindledTheBattleOfFiveArmies
+        , SomeTreacheryCard goblinsAreUponYou
+        , SomeTreacheryCard heedlessOfOrder
         ]
     ]

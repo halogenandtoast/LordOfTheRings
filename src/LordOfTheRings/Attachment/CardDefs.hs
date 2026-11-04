@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
+import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders))
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
@@ -283,6 +284,7 @@ allAttachmentCards =
       , leaderOfMen
       , beyondAllHope
       , palantirOfOrthanc
+      , bilbosMagicRing
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1852,18 +1854,21 @@ hobbitCloak :: CardDef
 hobbitCloak =
   (attachment "141013" "Hobbit Cloak" Leadership (StaticCost 1))
     { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
     }
 
 daggerOfWesternesse :: CardDef
 daggerOfWesternesse =
   (attachment "141014" "Dagger of Westernesse" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Artifact, Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
     }
 
 hobbitPipe :: CardDef
 hobbitPipe =
   (attachment "141015" "Hobbit Pipe" Spirit (StaticCost 0))
     { cdCardTraits = setFromList [Item, Pipe]
+    , cdLimitOnePerHost = True
     }
 
 elfStone :: CardDef
@@ -1878,6 +1883,7 @@ mrUnderhill =
   unique
     (attachment "141017" "Mr. Underhill" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Title, Boon]
+      , cdKeywords = setFromList [Permanent]
       , cdVictoryPoints = Just 1
       }
 
@@ -1886,6 +1892,7 @@ tirelessRanger =
   unique
     (attachment "141018" "Tireless Ranger" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Title, Boon]
+      , cdKeywords = setFromList [Permanent]
       }
 
 skilledHealer :: CardDef
@@ -1893,6 +1900,7 @@ skilledHealer =
   unique
     (attachment "141019" "Skilled Healer" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Title, Boon]
+      , cdKeywords = setFromList [Permanent]
       }
 
 valiantWarrior :: CardDef
@@ -1900,6 +1908,7 @@ valiantWarrior =
   unique
     (attachment "141020" "Valiant Warrior" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Title, Boon]
+      , cdKeywords = setFromList [Permanent]
       }
 
 nobleHero :: CardDef
@@ -1907,6 +1916,7 @@ nobleHero =
   unique
     (attachment "141021" "Noble Hero" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Title, Boon]
+      , cdKeywords = setFromList [Permanent]
       }
 
 gandalfsStaff :: CardDef
@@ -1914,12 +1924,14 @@ gandalfsStaff =
   unique
     (attachment "142008" "Gandalf's Staff" Neutral (StaticCost 2))
       { cdCardTraits = setFromList [Artifact, Item, Staff]
+      , cdKeywords = setFromList [Restricted]
       }
 
 wizardPipe :: CardDef
 wizardPipe =
   (attachment "142009" "Wizard Pipe" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Item, Pipe]
+    , cdLimitOnePerHost = True
     }
 
 fellowshipOfTheRing :: CardDef
@@ -1939,6 +1951,7 @@ phialOfGaladriel =
     (attachment "142015" "Phial of Galadriel" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Item, Gift, Boon]
       , cdVictoryPoints = Just 3
+      , cdSetupAttach = True
       }
 
 threeGoldenHairs :: CardDef
@@ -1947,6 +1960,7 @@ threeGoldenHairs =
     (attachment "142016" "Three Golden Hairs" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Item, Gift, Boon]
       , cdVictoryPoints = Just 3
+      , cdSetupAttach = True
       }
 
 lorienRope :: CardDef
@@ -1955,6 +1969,7 @@ lorienRope =
     (attachment "142017" "Lórien Rope" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Item, Gift, Boon]
       , cdVictoryPoints = Just 3
+      , cdSetupAttach = True
       }
 
 leafWrappedLembas :: CardDef
@@ -1963,6 +1978,7 @@ leafWrappedLembas =
     (attachment "142018" "Leaf-wrapped Lembas" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Item, Gift, Boon]
       , cdVictoryPoints = Just 3
+      , cdSetupAttach = True
       }
 
 arod :: CardDef
@@ -1976,6 +1992,7 @@ entDraught :: CardDef
 entDraught =
   (attachment "143009" "Ent Draught" Lore (StaticCost 1))
     { cdCardTraits = setFromList [Item, Ent]
+    , cdLimitOnePerHost = True
     }
 
 herugrim :: CardDef
@@ -1983,6 +2000,7 @@ herugrim =
   unique
     (attachment "143010" "Herugrim" Spirit (StaticCost 3))
       { cdCardTraits = setFromList [Item, Weapon]
+      , cdKeywords = setFromList [Restricted]
       }
 
 shadowfax :: CardDef
@@ -2033,4 +2051,14 @@ palantirOfOrthanc =
     (attachment "143020" "Palantír of Orthanc" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Artifact, Item, Boon]
       , cdVictoryPoints = Just 5
+      }
+
+-- | A treasure, discovered in Flies and Spiders.
+bilbosMagicRing :: CardDef
+bilbosMagicRing =
+  unique
+    (attachment "132019" "Bilbo's Magic Ring" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Artifact, Item, Ring]
+      , cdTreasure = True
+      , cdSetIcon = Just FliesAndSpiders
       }

@@ -455,6 +455,15 @@ allQuestCards =
       , passTheTwoWatchers
       , fightingInTheTower
       , escapeFromCirithUngol
+      , intoMirkwood
+      , lostInTheDarkFliesAndSpiders
+      , capturedBySpiders
+      , battleWithTheSpiders
+      , theGatheringOfTheClouds
+      , theEasternSpur
+      , battleInTheDale
+      , theDefenseOfRavenhill
+      , theCloudsBurst
       ]
 
 theDrippingWalls :: CardDef
@@ -1878,6 +1887,7 @@ theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
 -- | No quest points: the players win as Doors of Durin is explored.
 theGatesOfMoria :: CardDef
 theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0
+
 -- * The Passage of the Marshes
 
 theTamingOfSmeagol :: CardDef
@@ -1889,6 +1899,40 @@ acrossTheMarshes = quest "144065" "Across the Marshes" ThePassageOfTheMarshes 2 
 
 dontLookAtTheLights :: CardDef
 dontLookAtTheLights = quest "144066" "Don't Look at the Lights!" ThePassageOfTheMarshes 3 24
+
+-- * Flies and Spiders
+
+intoMirkwood :: CardDef
+intoMirkwood = quest "132067" "Into Mirkwood" FliesAndSpiders 1 9
+
+-- | No quest points: its When Revealed moves the players on at once.
+lostInTheDarkFliesAndSpiders :: CardDef
+lostInTheDarkFliesAndSpiders = quest "132068" "Lost in the Dark" FliesAndSpiders 2 0
+
+capturedBySpiders :: CardDef
+capturedBySpiders = quest "132069" "Captured by Spiders" FliesAndSpiders 3 11
+
+battleWithTheSpiders :: CardDef
+battleWithTheSpiders = quest "132070" "Battle with the Spiders" FliesAndSpiders 4 3
+
+-- * The Battle of Five Armies
+
+-- | No quest points on side B: its When Revealed puts stages 2 to 4 in its place.
+theGatheringOfTheClouds :: CardDef
+theGatheringOfTheClouds = (quest "132075" "The Gathering of the Clouds" TheBattleOfFiveArmies 1 0) {cdQuestPoints = Nothing}
+
+theEasternSpur :: CardDef
+theEasternSpur = quest "132076" "The Eastern Spur" TheBattleOfFiveArmies 2 8
+
+battleInTheDale :: CardDef
+battleInTheDale = (quest "132077" "Battle in the Dale" TheBattleOfFiveArmies 3 8) {cdKeywords = setFromList [Battle]}
+
+theDefenseOfRavenhill :: CardDef
+theDefenseOfRavenhill = (quest "132078" "The Defense of Ravenhill" TheBattleOfFiveArmies 4 8) {cdKeywords = setFromList [Siege]}
+
+-- | Progress cannot be placed on it: Bolg's destruction wins the game.
+theCloudsBurst :: CardDef
+theCloudsBurst = (quest "132079" "The Clouds Burst" TheBattleOfFiveArmies 5 0) {cdQuestPoints = Nothing}
 
 -- * Shelob's Lair
 

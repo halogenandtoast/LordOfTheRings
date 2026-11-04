@@ -124,6 +124,7 @@ import LordOfTheRings.Hero.Cards.AragornTheTreasonOfSaruman
 import LordOfTheRings.Hero.Cards.TheodenTheTreasonOfSaruman
 import LordOfTheRings.Hero.Cards.TreebeardTheTreasonOfSaruman
 import LordOfTheRings.Hero.Cards.GandalfTheRoadDarkens
+import LordOfTheRings.Hero.Cards.BilboBagginsOnTheDoorstep
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -310,5 +311,6 @@ allHeroes =
         , SomeHeroCard theodenTheTreasonOfSaruman
         , SomeHeroCard treebeardTheTreasonOfSaruman
         , SomeHeroCard gandalfTheRoadDarkens
+        , SomeHeroCard bilboBagginsOnTheDoorstep
         ]
     ]

@@ -118,6 +118,7 @@ allHeroCards =
       , aragornTheTreasonOfSaruman
       , theodenTheTreasonOfSaruman
       , treebeardTheTreasonOfSaruman
+      , bilboBagginsOnTheDoorstep
       ]
 
 aragorn :: CardDef
@@ -685,6 +686,7 @@ aragornTheFlameOfTheWest :: CardDef
 aragornTheFlameOfTheWest =
   (fellowshipHero "145001" "Aragorn" 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
 
 beregondSpirit :: CardDef
@@ -772,10 +774,20 @@ theodenTheTreasonOfSaruman :: CardDef
 theodenTheTreasonOfSaruman =
   (hero "143002" "Théoden" Spirit 12 2 3 2 4)
     { cdCardTraits = setFromList [Rohan, Noble, Warrior]
+    , cdKeywords = setFromList [Sentinel]
     }
 
 treebeardTheTreasonOfSaruman :: CardDef
 treebeardTheTreasonOfSaruman =
   (hero "143003" "Treebeard" Lore 13 2 3 3 5)
     { cdCardTraits = setFromList [Ent]
+    }
+
+-- | The Baggins sphere Bilbo Baggins of On the Doorstep, whom the first player takes
+-- control of as its scenarios are set up (rules insert, "Setting Up the Game").
+bilboBagginsOnTheDoorstep :: CardDef
+bilboBagginsOnTheDoorstep =
+  (hero "132001" "Bilbo Baggins" Baggins 0 1 1 1 3)
+    { cdCardTraits = setFromList [Hobbit, Burglar]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

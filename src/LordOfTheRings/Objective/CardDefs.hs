@@ -163,6 +163,8 @@ allObjectiveCards =
       , lastOfTheCompany
       , aHeavyBurden
       , theOneRingTheMountainOfFire
+      , theOneRingTheRoadDarkens
+      , mistyMountainEagle
       ]
 
 durinsAxe :: CardDef
@@ -1151,3 +1153,14 @@ smeagolTheLandOfShadow =
     , cdOtherSide = Just "144075"
     }
 
+
+-- * The Battle of Five Armies
+
+mistyMountainEagle :: CardDef
+mistyMountainEagle =
+  ( (objective "132052" "Misty Mountain Eagle" TheBattleOfFiveArmies 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 2 }
+  )
+    { cdCardTraits = setFromList [Creature, Eagle]
+    , cdShadowEffect = True
+    }

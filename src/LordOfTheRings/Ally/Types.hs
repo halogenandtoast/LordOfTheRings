@@ -57,6 +57,11 @@ data AllyAttrs = AllyAttrs
   -- the ally answers 'UseHandAction'
   , allyFacedown :: [PlayerCard]
   -- ^ cards attached facedown, as Eagles of the Misty Mountains takes them
+  , allyPoison :: [PlayerCard]
+  -- ^ poison: cards from its controller's deck attached facedown, as Condition attachments
+  -- (The Hobbit: On the Doorstep rules insert, "Venom, Poison, and Poisoned")
+  , allyUnconscious :: Bool
+  -- ^ rotated 180 degrees by poison, until an effect readies it as an unconscious character
   , allyDiscardWindow :: Maybe WindowMatcher
   -- ^ a window in which the ally can be put into play from its owner's discard pile
   , allyAsHero :: Bool
@@ -72,7 +77,7 @@ instance ToJSON AllyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "ally")
 
 instance FromJSON AllyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard])), ("handAction", toJSON (Nothing :: Maybe Criterion)), ("handCriteria", toJSON NoCriteria), ("asHero", Bool False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard])), ("poison", toJSON ([] :: [PlayerCard])), ("unconscious", Bool False), ("handAction", toJSON (Nothing :: Maybe Criterion)), ("handCriteria", toJSON NoCriteria), ("asHero", Bool False)]
 
 ally :: (AllyAttrs -> a) -> CardDef -> AllyCard a
 ally f cardDef =
@@ -94,6 +99,8 @@ ally f cardDef =
             , allyHandCriteria = NoCriteria
             , allyHandAction = Nothing
             , allyFacedown = []
+            , allyPoison = []
+            , allyUnconscious = False
             , allyDiscardWindow = Nothing
             , allyAsHero = False
             }

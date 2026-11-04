@@ -454,6 +454,13 @@ allTreacheryCards =
       , drawnToTheRing
       , deepShadows
       , evilVigilance
+      , caughtInWebs
+      , poisonedBySpiders
+      , fightingAmongFriends
+      , weighedDownWilderland
+      , hatredRekindledTheBattleOfFiveArmies
+      , goblinsAreUponYou
+      , heedlessOfOrder
       ]
 
 deepDeepDark :: CardDef
@@ -2860,6 +2867,33 @@ weHatesThem =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Flies and Spiders
+
+caughtInWebs :: CardDef
+caughtInWebs = treachery "132033" "Caught in Webs" FliesAndSpiders 2
+
+poisonedBySpiders :: CardDef
+poisonedBySpiders = (treachery "132034" "Poisoned by Spiders" FliesAndSpiders 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
+
+-- * Wilderland
+
+fightingAmongFriends :: CardDef
+fightingAmongFriends = (treachery "132037" "Fighting Among Friends" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
+
+weighedDownWilderland :: CardDef
+weighedDownWilderland = (treachery "132038" "Weighed Down" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Battle of Five Armies
+
+hatredRekindledTheBattleOfFiveArmies :: CardDef
+hatredRekindledTheBattleOfFiveArmies = (treachery "132064" "Hatred Rekindled" TheBattleOfFiveArmies 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+goblinsAreUponYou :: CardDef
+goblinsAreUponYou = (treachery "132065" "Goblins are Upon You!" TheBattleOfFiveArmies 2) {cdShadowEffect = True}
+
+heedlessOfOrder :: CardDef
+heedlessOfOrder = (treachery "132066" "Heedless of Order" TheBattleOfFiveArmies 2) {cdKeywords = setFromList [Surge]}
 
 -- * Shelob's Lair
 

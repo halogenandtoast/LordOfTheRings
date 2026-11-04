@@ -31,6 +31,7 @@ import LordOfTheRings.Ally.Cards.RivendellMinstrel
 import LordOfTheRings.Ally.Cards.BeorningBeekeeper
 import LordOfTheRings.Ally.Cards.LongbeardMapMaker
 import LordOfTheRings.Ally.Cards.GrimbeornTheOld
+import LordOfTheRings.Ally.Cards.MistyMountainEagle
 import LordOfTheRings.Ally.Cards.Landroval
 import LordOfTheRings.Ally.Cards.HaldirOfLorien
 import LordOfTheRings.Ally.Cards.Radagast
@@ -366,6 +367,7 @@ allAllies =
         , SomeAllyCard beorningBeekeeper
         , SomeAllyCard longbeardMapMaker
         , SomeAllyCard grimbeornTheOld
+        , SomeAllyCard mistyMountainEagle
         , SomeAllyCard landroval
         , SomeAllyCard haldirOfLorien
         , SomeAllyCard radagast

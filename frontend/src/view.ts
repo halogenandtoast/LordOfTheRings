@@ -153,6 +153,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       damage: e.tokens.Damage ?? 0,
       progress: e.tokens.Progress ?? null,
       exhausted: e.exhausted ?? false,
+      unconscious: e.unconscious ?? false,
       committed: e.committed ?? false,
       outOfPlay: heldOutOfPlay(target),
       flipped: e.flipped ?? false,
@@ -210,6 +211,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ids.has(guard) ? held.map(([, c]) => card(c.cardCode, c.id, { attachedTo: guard })) : [],
       ),
       ...cards.flatMap(stackUnder),
+      // poison lies facedown on the character it is attached to (Flies and Spiders)
+      ...[...Object.values(entities.heroes), ...Object.values(entities.allies)].flatMap((c) =>
+        ids.has(c.cardId) ? (c.poison ?? []).map((id) => card('', id, { facedown: 'player', name: ikey('log.poison'), attachedTo: c.cardId })) : [],
+      ),
       // the hero card attached to Thorongil, faceup, sits with it on its hero
       ...Object.values(entities.attachments).flatMap((a) => {
         const host = a.placement?.tag === 'AttachedTo' ? targetCardId(a.placement.contents as Target) : null
