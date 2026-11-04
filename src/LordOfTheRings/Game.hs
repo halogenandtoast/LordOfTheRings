@@ -925,11 +925,12 @@ runGameMessage msg g = case msg of
           $ g
           & entitiesL .~ (if isFocusedArea g dest then here <> moved else here)
           & separationL ?~ s {separationAreas = map (arrive . leave) (separationAreas s)}
+  -- one already in that staging area stays there
   PlaceInStagingAreaOf _ target -> do
     case target of
-      EnemyTarget eid -> push $ PlaceEnemy eid StagingArea
-      LocationTarget lid -> push $ PlaceLocation lid StagingArea
-      ObjectiveTarget oid -> push $ PlaceObjective oid StagingArea
+      EnemyTarget eid | any ((/= StagingArea) . (.placement)) (Map.lookup eid g.entities.enemies) -> push $ PlaceEnemy eid StagingArea
+      LocationTarget lid | any ((/= StagingArea) . (.placement)) (Map.lookup lid g.entities.locations) -> push $ PlaceLocation lid StagingArea
+      ObjectiveTarget oid | any ((/= StagingArea) . (.placement)) (Map.lookup oid g.entities.objectives) -> push $ PlaceObjective oid StagingArea
       _ -> pure ()
     pure g
   -- a shadow card for an enemy known by its card, as one just put into play
@@ -2914,9 +2915,10 @@ runGameMessage msg g = case msg of
     pushWhen (any guarded $ cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]
     -- an objective's When Revealed, as Durin's Greaves attaching itself, after the window
-    -- that can cancel it, as an enemy's
+    -- that can cancel it, as an enemy's, and the window after it, as "after Frodo's Choice
+    -- is revealed" reads
     when (cdWhenRevealed (toCardDef card))
-      $ pushAll [CheckWindows [mkWhen $ Revealed (toTarget thisObjective)], WhenRevealed (toTarget thisObjective)]
+      $ pushAll [CheckWindows [mkWhen $ Revealed (toTarget thisObjective)], WhenRevealed (toTarget thisObjective), CheckWindows [mkAfter $ Revealed (toTarget thisObjective)]]
     pure
       $ g
       & entitiesL
