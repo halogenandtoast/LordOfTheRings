@@ -43,7 +43,7 @@ import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (TimeOfDay (..), Window (..), WindowType (Became))
+import LordOfTheRings.Window (TimeOfDay (..), Window (..), WindowType (Became, FlippedTo))
 
 {- | What a message adds to the log, if anything. The match is pure, so a message that
 says nothing costs nothing; only a narrating one reads the game.
@@ -102,6 +102,9 @@ narrationFor = \case
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> fromMaybe (10 :: Int) (parseMaybe parseJSON v)]]
   -- \* Day and Night, as The Wastes of Eriador's Time objective flips
   CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
+  -- a card turned over to its other side, as Beneath the Sands' Search objective: read
+  -- once it has, so the side named is the one now faceup
+  CheckWindows [Window _ (FlippedTo t _)] -> Just $ whenRef t \c -> one $ mechanic [ikeyPart "log.flippedTo" ["card" ~> c]]
   -- \* The heading and the Sailing test (Dream-chaser rules)
   ShiftHeading _ shift -> Just do
     heading <- getsGame ((.heading) . toAttrs . gameScenario)

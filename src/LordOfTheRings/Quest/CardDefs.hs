@@ -296,6 +296,10 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , lostUnderground
+      , searchingTheCaves
+      , gettingCloser
+      , theSpidersHive
       ]
 
 theDrippingWalls :: CardDef
@@ -1173,3 +1177,21 @@ uruksOfTheEye =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+-- * Beneath the Sands
+
+lostUnderground :: CardDef
+lostUnderground =
+  (encounterSideQuest "17075" "Lost Underground" BeneathTheSands 5)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+searchingTheCaves :: CardDef
+searchingTheCaves = quest "17076" "Searching the Caves" BeneathTheSands 1 5
+
+gettingCloser :: CardDef
+gettingCloser = quest "17077" "Getting Closer" BeneathTheSands 2 5
+
+theSpidersHive :: CardDef
+theSpidersHive = quest "17078" "The Spiders' Hive" BeneathTheSands 3 5

@@ -402,6 +402,11 @@ import LordOfTheRings.Location.Cards.DesertOasis
 import LordOfTheRings.Location.Cards.JungleTrail
 import LordOfTheRings.Location.Cards.ForestClearing
 import LordOfTheRings.Location.Cards.DenseJungle
+import LordOfTheRings.Location.Cards.SpiderBurrow
+import LordOfTheRings.Location.Cards.PitchBlackTunnel
+import LordOfTheRings.Location.Cards.NestOfVermin
+import LordOfTheRings.Location.Cards.CobwebbedCavern
+import LordOfTheRings.Location.Cards.BlockedPassage
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -850,5 +855,10 @@ allLocations =
         , SomeLocationCard jungleTrail
         , SomeLocationCard forestClearing
         , SomeLocationCard denseJungle
+        , SomeLocationCard spiderBurrow
+        , SomeLocationCard pitchBlackTunnel
+        , SomeLocationCard nestOfVermin
+        , SomeLocationCard cobwebbedCavern
+        , SomeLocationCard blockedPassage
         ]
     ]

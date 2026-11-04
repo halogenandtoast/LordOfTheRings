@@ -406,6 +406,9 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , broodMother
+      , hiveGuardian
+      , spiderBroodling
       ]
 
 namelessThing :: CardDef
@@ -3299,4 +3302,30 @@ mordorWarg =
   (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
+    }
+
+-- * Beneath the Sands
+
+broodMother :: CardDef
+broodMother =
+  (enemy "17065" "Brood Mother" BeneathTheSands 1 50 4 6 4 12)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Spider]
+    , cdVictoryPoints = Just 4
+    }
+
+-- | On Track printed in its lower right corner.
+hiveGuardian :: CardDef
+hiveGuardian =
+  (enemy "17066" "Hive Guardian" BeneathTheSands 3 40 3 3 2 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    }
+
+-- | On Track printed in its lower right corner.
+spiderBroodling :: CardDef
+spiderBroodling =
+  (enemy "17067" "Spider Broodling" BeneathTheSands 5 20 1 2 1 2)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
     }

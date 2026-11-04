@@ -131,6 +131,9 @@ data WindowType
     BecameReady Target
   | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
     Became TimeOfDay
+  | -- | the card turned over to the side with this code, as Beneath the Sands' Search
+    -- objective flips to On Track
+    FlippedTo Target CardCode
   | -- | the When Revealed effects of the card just revealed were canceled
     WhenRevealedCanceled Target
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
