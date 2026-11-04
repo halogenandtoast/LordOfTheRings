@@ -28,7 +28,8 @@ instance RunMessage HeroAttrs where
       push $ PlaceTokens GameSource (toTarget attrs) Damage 1
       pure $ attrs & prisonerL .~ False
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
-    GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & guardedByL ?~ cid & committedL .~ False & attackingL .~ False
+    -- a captive is attached to its guard, out of the staging area
+    GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & guardedByL ?~ cid & committedL .~ False & attackingL .~ False & inStagingAreaL .~ False
     RescueCharacter (isTarget attrs -> True) -> pure $ attrs & guardedByL .~ Nothing & exhaustedL .~ True
     MoveHeroToStagingArea hid | hid == attrs.heroId -> pure $ attrs & inStagingAreaL .~ True & committedL .~ False & attackingL .~ False
     TakeControlOfHero hid | hid == attrs.heroId -> pure $ attrs & inStagingAreaL .~ False & exhaustedL .~ True
