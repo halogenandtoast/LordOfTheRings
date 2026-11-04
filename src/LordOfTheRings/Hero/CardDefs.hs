@@ -98,6 +98,7 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , aragornTheFlameOfTheWest
       ]
 
 aragorn :: CardDef
@@ -629,4 +630,13 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Fellowship sphere Aragorn of The Flame of the West, threat cost 0: the first player
+-- takes control of him as its scenarios are set up.
+aragornTheFlameOfTheWest :: CardDef
+aragornTheFlameOfTheWest =
+  (hero "145001" "Aragorn" Fellowship 0 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
