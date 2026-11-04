@@ -59,6 +59,10 @@ instance RunMessage LocationAttrs where
     placeTokens token n = do
       let attrs' = attrs & tokensL %~ addTokens token n
       questPoints <- modifiedValue questPointsOf attrs attrs'.questPoints
+      -- who placed it, as Haunted Hall reads "a player places any amount of progress"
+      case msg of
+        PlaceTokens source _ Progress _ | token == Progress && n > 0 -> push $ CheckWindows [mkAfter $ ProgressPlacedOnLocationBy source attrs.id]
+        _ -> pure ()
       -- a location with as much progress as its quest points is explored, but one on the
       -- Island Map stays in its place (Temple of the Deceived)
       when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints && isNothing attrs.position)

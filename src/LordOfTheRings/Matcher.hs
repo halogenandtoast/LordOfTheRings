@@ -258,6 +258,7 @@ matchLocation matcher location = case matcher of
   IsActiveLocation -> pure $ location.placement == ActiveLocation
   LocationWithTrait trait -> hasTrait trait (toTarget location) (toCardDef location)
   LocationWithKeyword k -> hasKeyword k (toTarget location) (toCardDef location)
+  LocationWithDiscover -> isJust <$> discoverValue (toTarget location) (toCardDef location)
   LocationWithCardCode code -> pure $ toCardCode location == code
   LocationNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget location)
   AnyLocation -> pure True
@@ -437,6 +438,22 @@ hasKeyword k target def = do
   -- a blank text box has no printed keywords; losing a keyword wins over gaining it, as
   -- Arkham applies removes after adds
   pure $ LoseKeyword k `notElem` mods && (GainKeyword k `elem` mods || (k `member` cdKeywords def && Blank `notElem` mods))
+
+{- | The card's Discover value, if it has the keyword, printed or gained: moved by its
+modifiers, as Hidden Staircase's X and Crypt Key's 1, and never below 0 (MEC69 rules).
+-}
+discoverValue :: HasGame m => Target -> CardDef -> m (Maybe Int)
+discoverValue target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  let values = [n | Blank `notElem` mods, Discover n <- toList (cdKeywords def)] <> [n | GainKeyword (Discover n) <- mods]
+  pure $ if null values then Nothing else Just $ max 0 $ sum values + sum [k | DiscoverValueModifier k <- mods]
+
+-- | The Discover value of the location in play, if it has the keyword.
+getDiscoverValue :: HasGame m => LocationId -> m (Maybe Int)
+getDiscoverValue lid =
+  getsGame (Map.lookup lid . entitiesLocations . gameEntities) >>= \case
+    Just l -> discoverValue (toTarget l) (toCardDef l)
+    Nothing -> pure Nothing
 
 -- | A keyword's value on the card, printed or gained, as an X a card computes reads.
 keywordValue :: HasGame m => (Keyword -> Maybe Int) -> Target -> CardDef -> m Int

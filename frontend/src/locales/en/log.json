@@ -192,5 +192,7 @@
   "orcsLeftBehind": "The players leave the Orcs' stage behind: the cards of the Orcs' area go back to it",
   "orcsArea": "The Orcs' area",
   "guardsObjective": "{guard} guards {objective}",
+  "resolvesDiscover": "{player} resolves Discover {count} on {location}",
+  "lootDiscarded": "{card} has Loot: it is discarded and another card is revealed",
   "secondEncounterDeckActive": "The second encounter deck becomes the active encounter deck, the first set aside"
 }

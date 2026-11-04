@@ -17,7 +17,7 @@ import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets))
+import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
@@ -140,11 +140,12 @@ instance RunMessage ScenarioAttrs where
         push $ RevealCard card
         pure $ attrs & encounterDeckL .~ rest
       [] -> pure attrs
-    DealShadowCard eid -> case attrs.encounterDeck of
-      (card : rest) -> do
-        push $ AttachShadowCard eid card
-        pure $ attrs & encounterDeckL .~ rest
-      [] -> pure attrs
+    -- an enemy dealt more than one whenever it is dealt one, as Fram's Shade
+    DealShadowCard eid -> do
+      n <- fromMaybe 1 . maximumMay . (\ms -> [k | ShadowCardsDealt k <- ms]) <$> getModifiers (EnemyTarget eid)
+      let (dealt, rest) = splitAt n attrs.encounterDeck
+      pushAll $ map (AttachShadowCard eid) dealt
+      pure $ attrs & encounterDeckL .~ rest
     LookAtTopOfEncounterDeck pid source canMove -> do
       for_ (headMay attrs.encounterDeck) \top ->
         pushAll

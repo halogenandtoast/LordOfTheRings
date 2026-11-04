@@ -215,6 +215,8 @@ data LocationMatcher
   | IsActiveLocation
   | LocationWithTrait Trait
   | LocationWithKeyword Keyword
+  | -- | a location with the Discover keyword, whatever its value (MEC69 rules)
+    LocationWithDiscover
   | LocationWithCardCode CardCode
   | -- | a location player card effects can reach
     LocationNotImmuneToPlayerCards
