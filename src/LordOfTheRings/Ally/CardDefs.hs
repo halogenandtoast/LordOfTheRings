@@ -1488,7 +1488,7 @@ beorningGuardian =
 greenwoodDefender :: CardDef
 greenwoodDefender =
   (ally "19113" "Greenwood Defender" Leadership (StaticCost 3) 0 0 2 3)
-    { cdCardTraits = setFromList [Silvan]
+    { cdCardTraits = setFromList [Silvan, Warrior]
     }
 
 gafferGamgee :: CardDef
@@ -1561,6 +1561,9 @@ beorningSkinChanger =
 longLakeFisherman :: CardDef
 longLakeFisherman =
   (ally "19008" "Long Lake Fisherman" Spirit (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Dale]
+    }
+
 wiglaf :: CardDef
 wiglaf =
   unique

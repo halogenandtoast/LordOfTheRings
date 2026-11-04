@@ -1078,6 +1078,10 @@ resolveGuarded = push . GuardObjective
 attachFacedown :: (ReverseQueue m, Targetable target) => target -> PlayerCard -> m ()
 attachFacedown target = push . AttachFacedown (toTarget target)
 
+-- | The card facedown on the character goes to its owner's hand.
+returnFacedownToHand :: (ReverseQueue m, Targetable target) => target -> PlayerCard -> m ()
+returnFacedownToHand target = push . ReturnFacedownToHand (toTarget target) . (.id)
+
 -- | Discard a shadow card dealt to the enemy, unresolved.
 discardShadowCard :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
 discardShadowCard eid card = do

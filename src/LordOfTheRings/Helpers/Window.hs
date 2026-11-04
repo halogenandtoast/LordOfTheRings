@@ -200,7 +200,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       Just a | AttachedTo host <- a.placement -> andM [characterMatches hm am host, (== [toTarget a]) <$> getAllAttachmentsOn host]
       _ -> pure False
   -- still in play, as "when a character leaves play" reads
-  (CharacterWithAttachmentsLeftPlayWindow t, LeftPlay c _ _) | t == timing -> notNull <$> playerAttachmentsOn c
+  (CharacterWithAttachmentsLeftPlayWindow t, LeftPlay c _ _) | t == timing -> orM [notNull <$> playerAttachmentsOn c, notNull <$> facedownAttachmentsOn c]
   (RevealedTitleInVictoryDisplayWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
     shown <- getsGame (map (title . toCardDef) . (.victoryDisplay) . toAttrs . gameScenario)
@@ -456,7 +456,8 @@ sourceController = go
  where
   go = \case
     AbilitySource s _ -> go s
-    HeroSource hid -> Just . (.owner) <$> getHero hid
+    -- one gone from play, as Bilbo Baggins (Tactics) may be as his damage resolves, has none
+    HeroSource hid -> fmap (.owner) . Map.lookup hid <$> getsGame (entitiesHeroes . gameEntities)
     -- one that just left play is still asked of its controller
     AllySource aid -> do
       g <- getGame

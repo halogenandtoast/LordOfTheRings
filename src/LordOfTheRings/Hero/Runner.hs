@@ -25,6 +25,9 @@ instance RunMessage HeroAttrs where
       pure attrs
     TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
+    ReturnFacedownToHand (isTarget attrs -> True) cid -> do
+      pushAll [PutInHand c | c <- attrs.heroFacedown, c.id == cid]
+      pure $ attrs & facedownL %~ filter ((/= cid) . (.id))
     -- the cards facedown under it go to their owners' discard piles as it leaves play
     Discard (isTarget attrs -> True) -> leaving
     ReturnToHand (isTarget attrs -> True) -> leaving

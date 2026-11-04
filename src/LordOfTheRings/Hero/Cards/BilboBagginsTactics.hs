@@ -1,8 +1,5 @@
 module LordOfTheRings.Hero.Cards.BilboBagginsTactics (bilboBagginsTactics) where
 
-import Data.Map.Strict qualified as Map
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Game.Base (gameModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyThreat)
 import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
@@ -20,12 +17,12 @@ bilboBagginsTactics = hero BilboBagginsTactics Cards.bilboBagginsTactics
 -- instead if it is guarding a card).
 --
 -- X is counted as the response resolves: a player card's lasting effect is not
--- recalculated (FAQ 1.55). The enemy is marked until the end of the phase for the damage.
+-- recalculated (FAQ 1.55). The damage is a delayed effect the game resolves: it is dealt
+-- even if Bilbo has left play by then (Rules Reference, Lasting Effects: "whether or not
+-- the card that created the lasting effect is or remains in play").
 instance HasAbilities BilboBagginsTactics where
   getAbilities (BilboBagginsTactics a) =
-    [ restricted a 1 (exists EnemyInStagingArea) $ response $ CommittedToQuestWindow After (toTarget a)
-    , restricted a 2 (ModifierFrom (toSource a) ChosenByEffect) $ silent $ QuestedSuccessfullyWindow After
-    ]
+    [restricted a 1 (exists EnemyInStagingArea) $ response $ CommittedToQuestWindow After (toTarget a)]
 
 instance RunMessage BilboBagginsTactics where
   runMessage msg h@(BilboBagginsTactics attrs) = case msg of
@@ -37,13 +34,6 @@ instance RunMessage BilboBagginsTactics where
         targets enemies \eid -> do
           x <- getEnemyThreat eid
           phaseModifier attrs attrs (WillpowerModifier x)
-          phaseModifier attrs eid ChosenByEffect
-      pure h
-    UseCardAbility _ (isSource attrs -> True) 2 _ -> do
-      let chosen ms = any (\m -> modifierSource m == toSource attrs && modifierType m == ChosenByEffect) ms
-      marked <- getsGame (Map.keys . Map.filter chosen . gameModifiers)
-      for_ [eid | EnemyTarget eid <- marked] \eid -> do
-        guarding <- selectAny (EnemyWithId eid <> EnemyGuardingACard)
-        dealDamage attrs eid (if guarding then 2 else 1)
+          phaseModifier attrs eid (DamageIfQuestSuccessful 1 2)
       pure h
     _ -> BilboBagginsTactics <$> runMessage msg attrs

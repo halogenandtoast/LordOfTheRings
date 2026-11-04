@@ -2070,15 +2070,24 @@ runGameMessage msg g = case msg of
     threat <- getStagingThreat
     players <- getPlayerOrder
     if
-      | willpower > threat ->
+      | willpower > threat -> do
+          -- a delayed effect resolves before the reactions to its moment, whether or not
+          -- the card that made it is still in play (Rules Reference: Delayed Effects,
+          -- Lasting Effects), as Bilbo Baggins's damage
+          delayed <- for [(e, n, m) | e <- gameEffects g, DamageIfQuestSuccessful n m <- effectModifiers e] \(e, n, m) -> do
+            guarding <- case effectTarget e of
+              EnemyTarget eid -> selectAny (EnemyWithId eid <> EnemyGuardingACard)
+              _ -> pure False
+            pure $ DealDamage (effectSource e) (effectTarget e) (if guarding then m else n)
           -- what questing successfully triggers resolves before the progress is placed
           -- (FAQ 1.24), as The Hunt Begins' Forced effect
           pushAll
-            [ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
-            , CheckWindows [mkAfter QuestedSuccessfully]
-            , PlaceProgressOnQuest (willpower - threat)
-            , CheckWindows [mkAfter PlacedProgressFromQuesting]
-            ]
+            $ CreateEffect (Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase)
+            : delayed
+            <> [ CheckWindows [mkAfter QuestedSuccessfully]
+               , PlaceProgressOnQuest (willpower - threat)
+               , CheckWindows [mkAfter PlacedProgressFromQuesting]
+               ]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
@@ -2463,6 +2472,12 @@ runGameMessage msg g = case msg of
           PlayerCard pc | Just owner <- pc.owner -> do
             deck <- shuffleM (c : maybe [] (.deck) (Map.lookup owner acc.players))
             pure $ acc & playersL . ix owner . deckL .~ deck
+          -- an encounter card held in hand, as Lost in the Wild, goes into the holder's
+          -- deck: nothing keeps an encounter card out of a player's deck, as Recurring
+          -- Nightmare is shuffled into one
+          EncounterCard _ -> do
+            deck <- shuffleM (c : maybe [] (.deck) (Map.lookup holder acc.players))
+            pure $ acc & playersL . ix holder . deckL .~ deck
           _ -> pure acc
       )
       g'

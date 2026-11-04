@@ -109,7 +109,7 @@ spec = describe "The Ghost of Framsburg player cards" do
   describe "Man the Walls" do
     it "lowers the cost of the first ally played this phase, which cannot quest this round" . gameTest $ \pid -> do
       theodred <- hero theodredCode
-      run $ PlaceTokens GameSource theodred Resource 2
+      run $ PlaceTokens GameSource theodred Resource 1
       guard' <- putCardIntoHand pid Allies.guardOfTheCitadel
       another <- putCardIntoHand pid Events.manTheWalls
       _ <- playWith pid theodredCode 0 Events.manTheWalls

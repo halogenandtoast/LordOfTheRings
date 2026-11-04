@@ -1,6 +1,5 @@
 module LordOfTheRings.Event.Cards.DrinkingSong (drinkingSong) where
 
-import LordOfTheRings.Card (Card (PlayerCard))
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Trait (Trait (Hobbit))
@@ -16,12 +15,15 @@ drinkingSong = event DrinkingSong Cards.drinkingSong
 -- Then, draw an equal number of cards. Draw 1 additional card if you control a unique
 -- Hobbit character.
 --
--- An encounter card held in hand is counted, but stays: it is no card of the player's deck.
+-- An encounter card held in hand, as Lost in the Wild, is shuffled in with the rest: the
+-- card shuffles the whole hand, and Lost in the Wild only bars being discarded by player
+-- card effects. No rule keeps an encounter card out of a player's deck (Rules Reference,
+-- Ownership and Control); Recurring Nightmare is shuffled into one.
 instance RunMessage DrinkingSong where
   runMessage msg e@(DrinkingSong attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
       hand <- (.hand) <$> getPlayer pid
-      for_ [pc | PlayerCard pc <- hand] (shuffleFromHandIntoOwnersDeck pid)
+      for_ hand (shuffleFromHandIntoOwnersDeck pid)
       hobbit <-
         orM
           [ selectAny (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait Hobbit)

@@ -22,6 +22,9 @@ instance HasModifiersFor BardSonOfBrand where
 
 -- | Response: When a character leaves play, return each attachment attached to that
 -- character to its owner's hand. (Limit once per phase.)
+--
+-- The cards facedown on a character, as Eagles of the Misty Mountains holds them, are
+-- attachments and go too. A Mount ally attached as Wild Stallion is an attachment entity.
 instance HasAbilities BardSonOfBrand where
   getAbilities (BardSonOfBrand a) =
     [limited (PlayerLimit PerPhase 1) $ mkAbility a 1 $ response $ CharacterWithAttachmentsLeftPlayWindow When]
@@ -29,7 +32,8 @@ instance HasAbilities BardSonOfBrand where
 instance RunMessage BardSonOfBrand where
   runMessage msg h@(BardSonOfBrand attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
-      for_ (take 1 [c | Window When (LeftPlay c _ _) <- windows]) \c ->
+      for_ (take 1 [c | Window When (LeftPlay c _ _) <- windows]) \c -> do
         traverse_ returnToHand =<< playerAttachmentsOn c
+        traverse_ (returnFacedownToHand c) =<< facedownAttachmentsOn c
       pure h
     _ -> BardSonOfBrand <$> runMessage msg attrs

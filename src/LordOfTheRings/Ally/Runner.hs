@@ -44,6 +44,9 @@ instance RunMessage AllyAttrs where
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
+    ReturnFacedownToHand (isTarget attrs -> True) cid -> do
+      pushAll [PutInHand c | c <- attrs.allyFacedown, c.id == cid]
+      pure $ attrs & facedownL %~ filter ((/= cid) . (.id))
     PlaceAlly aid placement | aid == attrs.allyId -> pure $ attrs & placementL .~ placement
     GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & placementL .~ AttachedTo (CardIdTarget cid) & committedL .~ False
     RescueCharacter (isTarget attrs -> True) -> pure $ attrs & placementL .~ InPlayArea attrs.allyOwner & exhaustedL .~ True

@@ -709,6 +709,14 @@ exhaustedCharactersOf pid =
 playerAttachmentsOn :: HasGame m => Target -> m [Attachment]
 playerAttachmentsOn host = getsGame \g -> [a | a <- toList (entitiesAttachments $ gameEntities g), a.placement == AttachedTo host]
 
+-- | The player cards attached facedown to the character, as Eagles of the Misty Mountains
+-- holds them; they count as attachments.
+facedownAttachmentsOn :: HasGame m => Target -> m [PlayerCard]
+facedownAttachmentsOn host = getsGame \g -> case host of
+  AllyTarget aid -> maybe [] (allyFacedown . toAttrs) (Map.lookup aid g.entities.allies)
+  HeroTarget hid -> maybe [] (heroFacedown . toAttrs) (Map.lookup hid g.entities.heroes)
+  _ -> []
+
 -- | Every card attached to the host: player attachments, and encounter cards attached as
 -- conditions or claimed objectives too, as "discard 1 attachment" may take them (Driven by
 -- Shadow, Black Uruks rulings).
