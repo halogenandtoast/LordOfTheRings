@@ -9,6 +9,7 @@ export const router = createRouter({
     { path: '/new-game', component: () => import('./views/NewGame.vue'), meta: { title: 'newGame.title', requiresAuth: true } },
     { path: '/games/:id/spectate', component: () => import('./views/Game.vue'), meta: { title: 'common.game', spectate: true } },
     { path: '/watch', component: () => import('./views/Watch.vue'), meta: { title: 'nav.watch' } },
+    { path: '/stats', component: () => import('./views/Stats.vue'), meta: { title: 'nav.stats' } },
     { path: '/admin', component: () => import('./views/Admin.vue'), meta: { title: 'nav.admin', requiresAuth: true, requiresAdmin: true } },
     { path: '/games/:id', component: () => import('./views/Game.vue'), meta: { title: 'common.game', requiresAuth: true } },
     { path: '/campaigns/:id', component: () => import('./views/Campaign.vue'), meta: { title: 'campaignMode.title', requiresAuth: true } },

@@ -50,6 +50,11 @@
     "continue": "Continue"
   },
   "waitingOn": "Waiting for {name}…",
+  "leavePublic": {
+    "title": "Leave public statistics?",
+    "body": "This game counts toward public statistics. Debugging, or undoing back past a card being drawn, revealed or looked at, takes it out until the game is reset.",
+    "confirm": "Continue"
+  },
   "lobby": {
     "waiting": "Waiting for players",
     "you": "you",
