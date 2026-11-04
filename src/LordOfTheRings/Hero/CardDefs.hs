@@ -85,6 +85,9 @@ allHeroCards =
       , quickbeam
       , bilboBagginsTactics
       , radagast
+      , brandSonOfBainLeadership
+      , bardSonOfBrand
+      , grimbeornTheOld
       ]
 
 aragorn :: CardDef
@@ -533,4 +536,23 @@ radagast :: CardDef
 radagast =
   (hero "19145" "Radagast" Lore 11 2 2 3 4)
     { cdCardTraits = setFromList [Istari]
+    }
+
+brandSonOfBainLeadership :: CardDef
+brandSonOfBainLeadership =
+  (hero "18001" "Brand son of Bain" Leadership 10 2 3 2 3)
+    { cdCardTraits = setFromList [Dale, Noble]
+    }
+
+bardSonOfBrand :: CardDef
+bardSonOfBrand =
+  (hero "18002" "Bard son of Brand" Spirit 9 2 2 2 3)
+    { cdCardTraits = setFromList [Dale, Noble]
+    }
+
+grimbeornTheOld :: CardDef
+grimbeornTheOld =
+  (hero "19001" "Grimbeorn the Old" Tactics 11 0 3 3 5)
+    { cdCardTraits = setFromList [Beorning, Warrior]
+    , cdKeywords = setFromList [Sentinel]
     }

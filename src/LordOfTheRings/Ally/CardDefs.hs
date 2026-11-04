@@ -215,6 +215,13 @@ allAllyCards =
       , messengerRaven
       , loyalHound
       , bywaterShirriff
+      , redwaterSentry
+      , northRealmLookout
+      , warriorOfDale
+      , longLakeTrader
+      , guardianOfEsgaroth
+      , beorningSkinChanger
+      , longLakeFisherman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1501,4 +1508,46 @@ bywaterShirriff :: CardDef
 bywaterShirriff =
   (ally "19150" "Bywater Shirriff" Tactics (StaticCost 2) 1 1 1 2)
     { cdCardTraits = setFromList [Hobbit, Shirriff]
+    }
+
+redwaterSentry :: CardDef
+redwaterSentry =
+  (ally "18003" "Redwater Sentry" Leadership (StaticCost 3) 0 1 2 3)
+    { cdCardTraits = setFromList [Dale, Warrior]
+    }
+
+northRealmLookout :: CardDef
+northRealmLookout =
+  (ally "18004" "North Realm Lookout" Spirit (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Dale, Scout]
+    }
+
+warriorOfDale :: CardDef
+warriorOfDale =
+  (ally "18005" "Warrior of Dale" Tactics (StaticCost 3) 0 2 1 3)
+    { cdCardTraits = setFromList [Dale, Warrior]
+    }
+
+longLakeTrader :: CardDef
+longLakeTrader =
+  (ally "18006" "Long Lake Trader" Lore (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Dale]
+    }
+
+guardianOfEsgaroth :: CardDef
+guardianOfEsgaroth =
+  (ally "19002" "Guardian of Esgaroth" Leadership (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Dale]
+    }
+
+beorningSkinChanger :: CardDef
+beorningSkinChanger =
+  (ally "19004" "Beorning Skin-changer" Tactics (StaticCost 2) 1 1 1 3)
+    { cdCardTraits = setFromList [Beorning]
+    }
+
+longLakeFisherman :: CardDef
+longLakeFisherman =
+  (ally "19008" "Long Lake Fisherman" Spirit (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Dale]
     }

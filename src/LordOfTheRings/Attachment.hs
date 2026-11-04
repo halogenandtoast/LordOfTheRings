@@ -185,6 +185,15 @@ import LordOfTheRings.Attachment.Cards.RoundShield
 import LordOfTheRings.Attachment.Cards.ArmorOfErebor
 import LordOfTheRings.Attachment.Cards.MithrilShirt
 import LordOfTheRings.Attachment.Cards.RadagastsStaff
+import LordOfTheRings.Attachment.Cards.HauberkOfMail
+import LordOfTheRings.Attachment.Cards.KingOfDale
+import LordOfTheRings.Attachment.Cards.BowOfYew
+import LordOfTheRings.Attachment.Cards.MapOfRhovanion
+import LordOfTheRings.Attachment.Cards.NecklaceOfGirion
+import LordOfTheRings.Attachment.Cards.SquiresHelm
+import LordOfTheRings.Attachment.Cards.WoodmensClearing
+import LordOfTheRings.Attachment.Cards.GreyCloak
+import LordOfTheRings.Attachment.Cards.TheArkenstone
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -407,5 +416,14 @@ allAttachments =
         , SomeAttachmentCard armorOfErebor
         , SomeAttachmentCard mithrilShirt
         , SomeAttachmentCard radagastsStaff
+        , SomeAttachmentCard hauberkOfMail
+        , SomeAttachmentCard kingOfDale
+        , SomeAttachmentCard bowOfYew
+        , SomeAttachmentCard mapOfRhovanion
+        , SomeAttachmentCard necklaceOfGirion
+        , SomeAttachmentCard squiresHelm
+        , SomeAttachmentCard woodmensClearing
+        , SomeAttachmentCard greyCloak
+        , SomeAttachmentCard theArkenstone
         ]
     ]

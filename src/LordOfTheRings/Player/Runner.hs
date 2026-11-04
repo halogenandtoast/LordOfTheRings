@@ -524,15 +524,19 @@ canAfford p c = do
 -- it is to go on lowers it.
 canAffordWith :: HasGame m => Int -> Player -> Card -> m Bool
 canAffordWith discount p c = case (c.cost, c.sphere) of
-  (Just cost, Just sphere) -> do
+  (Just cost, Just printed) -> do
+    -- one that does not require a resource match is paid for as a neutral card
+    free <- any (\case NextIgnoresResourceMatch m -> cardMatches m c; _ -> False) <$> getModifiers (PlayerTarget p.id)
+    let sphere = if free then Neutral else printed
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
       filterM (\h -> andM [heroCanSpend h, not <$> barredFrom c h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
     fromAllies <- sum . map snd <$> allyPayersFor p.id c
     -- a card that costs 0 still needs a resource match (FAQ 2.39, 2.61): a hero with its
-    -- resource icon, which paying with resources of another sphere (A Good Harvest) isn't
-    matched <- (sphere == Neutral ||) <$> anyM (matchesSphere sphere) heroes
+    -- resource icon, which paying with resources of another sphere (A Good Harvest) isn't;
+    -- a printed icon the hero has while paying for the card is, as Bard son of Brand's
+    matched <- (sphere == Neutral ||) <$> anyM (\h -> orM [matchesSphere sphere h, printedIconFor c sphere h]) heroes
     let needed = costAsResources cost + extra
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
@@ -645,7 +649,16 @@ barredFrom c h = any (\case CannotPayFor m -> cardMatches m c; _ -> False) <$> g
 -- | Whether the hero has the sphere's resource icon while paying for the card.
 iconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
 iconFor c sphere h =
-  any (\case GainResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
+  orM
+    [ any (\case GainResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
+    , printedIconFor c sphere h
+    ]
+
+-- | Whether the hero is considered to have the sphere's printed resource icon while paying
+-- for the card.
+printedIconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
+printedIconFor c sphere h =
+  any (\case PrintedResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
 
 startingHandSize :: Int
 startingHandSize = 6

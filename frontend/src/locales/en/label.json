@@ -2580,5 +2580,41 @@
   "slopesOfGundabad": {
     "choose": "Slopes of Gundabad: choose one",
     "reveal": "Reveal an additional encounter card"
+  },
+  "longLakeTrader": {
+    "attachment": "Long Lake Trader: choose an Item attachment to move",
+    "host": "Long Lake Trader: choose the character to move it to"
+  },
+  "beorningSkinChanger": {
+    "ally": "Beorning Skin-changer: choose a Beorning ally to put into play"
+  },
+  "longLakeFisherman": {
+    "nameNumber": "Long Lake Fisherman: name a number",
+    "number": "{number}"
+  },
+  "greyCloak": {
+    "enemy": "Grey Cloak: choose a non-unique enemy in the staging area"
+  },
+  "theArkenstone": {
+    "hero": "The Arkenstone: choose a hero controlled by another player to attach it to"
+  },
+  "trafficFromDale": {
+    "hero": "Traffic from Dale: choose a Dale hero to add the resources to"
+  },
+  "toArms": {
+    "ally": "To Arms!: choose an ally with a player attachment to ready"
+  },
+  "valourOfTheNorth": {
+    "character": "Valour of the North: choose the character to get +3 attack and +3 defense"
+  },
+  "bartering": {
+    "attachment": "Bartering: choose a ready player attachment to return to its owner's hand"
+  },
+  "beornsRage": {
+    "enemy": "Beorn's Rage: choose the enemy to get -2 attack and -2 defense"
+  },
+  "theHiddenWay": {
+    "location": "The Hidden Way: choose a location from the top 5 cards of the encounter deck to make active",
+    "none": "No location to make active"
   }
 }

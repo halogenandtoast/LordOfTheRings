@@ -331,6 +331,14 @@ data WindowMatcher
     MatchingEnemyRevealedWindow Timing EnemyMatcher
   | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
     AttackersDeclaredWindow Timing EnemyId
+  | -- | the player played an attachment on a matching character that had no other
+    -- attachment, as Brand son of Bain reads "a Dale character without an attachment"
+    AttachmentPlayedOnBareCharacterWindow Timing PlayerId HeroMatcher AllyMatcher
+  | -- | a character with a player attachment left play, as Bard son of Brand answers
+    CharacterWithAttachmentsLeftPlayWindow Timing
+  | -- | a matching character declared as an attacker against a matching enemy, as Valour
+    -- of the North answers one against an enemy with an attachment
+    CharacterAttackerDeclaredWindow Timing HeroMatcher AllyMatcher EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -502,6 +510,9 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (MatchingEnemyEngagedWindow {}, _) -> False
   (MatchingEnemyDealtDamageWindow {}, _) -> False
   (MatchingHeroDealtDamageWindow {}, _) -> False
+  (AttachmentPlayedOnBareCharacterWindow {}, _) -> False
+  (CharacterWithAttachmentsLeftPlayWindow {}, _) -> False
+  (CharacterAttackerDeclaredWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)

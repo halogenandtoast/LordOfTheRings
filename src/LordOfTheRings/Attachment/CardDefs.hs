@@ -204,6 +204,15 @@ allAttachmentCards =
       , armorOfErebor
       , mithrilShirt
       , radagastsStaff
+      , hauberkOfMail
+      , kingOfDale
+      , bowOfYew
+      , mapOfRhovanion
+      , necklaceOfGirion
+      , squiresHelm
+      , woodmensClearing
+      , greyCloak
+      , theArkenstone
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1384,4 +1393,70 @@ radagastsStaff =
   unique
     (attachment "19154" "Radagast's Staff" Neutral (StaticCost 2))
       { cdCardTraits = setFromList [Artifact, Item, Staff]
+      }
+
+hauberkOfMail :: CardDef
+hauberkOfMail =
+  (attachment "18007" "Hauberk of Mail" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdLimitOnePerHost = True
+    }
+
+kingOfDale :: CardDef
+kingOfDale =
+  unique
+    (attachment "18008" "King of Dale" Spirit (StaticCost 2))
+      { cdCardTraits = setFromList [Title]
+      }
+
+bowOfYew :: CardDef
+bowOfYew =
+  (attachment "18009" "Bow of Yew" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mapOfRhovanion :: CardDef
+mapOfRhovanion =
+  (attachment "18010" "Map of Rhovanion" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+necklaceOfGirion :: CardDef
+necklaceOfGirion =
+  unique
+    (attachment "18011" "Necklace of Girion" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+      }
+
+squiresHelm :: CardDef
+squiresHelm =
+  (attachment "19003" "Squire's Helm" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+woodmensClearing :: CardDef
+woodmensClearing =
+  (attachment "19006" "Woodmen's Clearing" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+greyCloak :: CardDef
+greyCloak =
+  (attachment "19009" "Grey Cloak" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+theArkenstone :: CardDef
+theArkenstone =
+  unique
+    (attachment "19010" "The Arkenstone" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
       }

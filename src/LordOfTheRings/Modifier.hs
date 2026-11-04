@@ -100,6 +100,9 @@ data ModifierType
   | -- | on the game: reveal fewer encounter cards, allowing staging to reveal none
     FewerStagingReveals Int
   | NoEngagementChecks
+  | -- | on an enemy: it makes no engagement checks against the player, though he may still
+    -- engage it, as Grey Cloak reads
+    NoEngagementChecksAgainst PlayerId
   | -- | on the game: enemies with ambush make no engagement check as they enter play
     IgnoreAmbush
   | SkipStagingStep
@@ -209,6 +212,10 @@ data ModifierType
     ChoosesUpToOptions Int
   | -- | on a hero: while paying for a matching card it has the sphere's resource icon
     GainResourceIconFor CardMatcher Sphere
+  | -- | on a hero: while paying for a matching card it is considered to have the sphere's
+    -- printed resource icon, which gives a 0-cost card its resource match too, as Bard son
+    -- of Brand has for an Item attachment
+    PrintedResourceIconFor CardMatcher Sphere
   | -- | on a player: they may declare any number of defenders against each attack
     MayDeclareMultipleDefenders
   | -- | on a player
@@ -302,6 +309,9 @@ data ModifierType
     ReduceNextCostOf CardMatcher Int
   | -- | as 'ReduceNextCostOf', to no less than 0
     LowerNextCostOf CardMatcher Int
+  | -- | on a player: the next matching card he plays does not require a resource match,
+    -- as King of Dale's ally; spent with it
+    NextIgnoresResourceMatch CardMatcher
   | -- | on a character: it is defending the attack being resolved
     Defending
   | -- | on a card in hand, as its card id: its player may discard this many cards from

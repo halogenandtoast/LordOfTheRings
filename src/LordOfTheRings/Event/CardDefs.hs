@@ -220,6 +220,12 @@ allEventCards =
       , theGreatHunt
       , gwaihirsDebt
       , reforged
+      , trafficFromDale
+      , toArms
+      , valourOfTheNorth
+      , bartering
+      , beornsRage
+      , theHiddenWay
       ]
 
 everVigilant :: CardDef
@@ -888,3 +894,20 @@ gwaihirsDebt = event "19151" "Gwaihir's Debt" Tactics (StaticCost 1)
 
 reforged :: CardDef
 reforged = event "19153" "Reforged" Spirit DynamicCost
+trafficFromDale :: CardDef
+trafficFromDale = event "18012" "Traffic from Dale" Leadership (StaticCost 1)
+
+toArms :: CardDef
+toArms = event "18013" "To Arms!" Spirit (StaticCost 0)
+
+valourOfTheNorth :: CardDef
+valourOfTheNorth = event "18014" "Valour of the North" Tactics (StaticCost 0)
+
+bartering :: CardDef
+bartering = event "18015" "Bartering" Lore (StaticCost 0)
+
+beornsRage :: CardDef
+beornsRage = event "19005" "Beorn's Rage" Tactics (StaticCost 1)
+
+theHiddenWay :: CardDef
+theHiddenWay = event "19007" "The Hidden Way" Lore (StaticCost 2)

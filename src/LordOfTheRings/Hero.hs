@@ -80,6 +80,9 @@ import LordOfTheRings.Hero.Cards.Kahliel
 import LordOfTheRings.Hero.Cards.Thurindir
 import LordOfTheRings.Hero.Cards.FolcoBoffin
 import LordOfTheRings.Hero.Cards.Quickbeam
+import LordOfTheRings.Hero.Cards.BrandSonOfBainLeadership
+import LordOfTheRings.Hero.Cards.BardSonOfBrand
+import LordOfTheRings.Hero.Cards.GrimbeornTheOld
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Cards.BilboBagginsTactics
 import LordOfTheRings.Hero.Cards.Radagast
@@ -193,5 +196,8 @@ allHeroes =
         , SomeHeroCard quickbeam
         , SomeHeroCard bilboBagginsTactics
         , SomeHeroCard radagast
+        , SomeHeroCard brandSonOfBainLeadership
+        , SomeHeroCard bardSonOfBrand
+        , SomeHeroCard grimbeornTheOld
         ]
     ]

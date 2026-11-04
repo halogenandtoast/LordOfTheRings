@@ -1216,7 +1216,7 @@ runGameMessage msg g = case msg of
     threat <- getEngagementThreat pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< engageableFromStaging
     -- an enemy can be spared engagement checks against it, as a trap does
-    checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
+    checked <- filterM (fmap (\ms -> all (`notElem` ms) [NoEngagementChecks, CannotEngagePlayer pid, NoEngagementChecksAgainst pid]) . getModifiers . fst) candidates
     -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
     costed <- for checked \(eid, cost) -> (\ms -> (eid, cost + sum [n | EngagementCostAgainst p n <- ms, p == pid])) <$> getModifiers eid
     case sortOn (Down . snd) [c | not skip, c@(_, cost) <- costed, cost <= threat] of
@@ -1236,7 +1236,7 @@ runGameMessage msg g = case msg of
       -- its cost against each player, as for an engagement check
       let costFor p = cost + sum [n | EngagementCostAgainst p' n <- mods, p' == p]
       players <- traverse (\p -> (p,) <$> getEngagementThreat p) =<< getPlayerOrder
-      for_ (find (\(p, threat) -> threat >= costFor p && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
+      for_ (find (\(p, threat) -> threat >= costFor p && all (`notElem` mods) [CannotEngagePlayer p, NoEngagementChecksAgainst p]) players) \(p, _) -> push (EngageEnemy p eid)
     pure g
   EngageEnemy pid eid -> do
     -- a Ship enemy engaging from the staging area resolves its Boarding X (Dream-chaser rules)
@@ -2357,6 +2357,10 @@ runGameMessage msg g = case msg of
     pushAll
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL %~ (<> [toCard a])
+  -- an attachment returned to its owner's hand, as Bard son of Brand and Bartering return them
+  ReturnToHand (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
+    let owner = (toAttrs a).owner
+    pure $ g & entitiesL . attachmentsL %~ Map.delete aid & playersL . ix owner . handL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
     let owner = (toAttrs a).owner
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer owner
@@ -3942,13 +3946,19 @@ payFor g pid card fromHand windows host discount = do
           && or
             ( [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
                 <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e]
+                <> [cardMatches m card | NextIgnoresResourceMatch m <- effectModifiers e]
                 <> [fromHand | NextCardGainsDoomed _ <- effectModifiers e]
             )
       spentEffects = filter spent (gameEffects g)
+      -- one that does not require a resource match, as King of Dale's ally, is paid as neutral
+      unmatched = or [cardMatches m card | e <- spentEffects, NextIgnoresResourceMatch m <- effectModifiers e]
+      asPaid = \case
+        LordOfTheRings.ActiveCost.ResourceCost _ c | unmatched -> LordOfTheRings.ActiveCost.ResourceCost Neutral c
+        c -> c
   let activeCost =
         ActiveCost
           { activeCostId = costId
-          , activeCostCost = raiseCost extra (cardCost card)
+          , activeCostCost = raiseCost extra (asPaid $ cardCost card)
           , activeCostCard = card
           , activeCostPlayer = pid
           , activeCostWindows = windows

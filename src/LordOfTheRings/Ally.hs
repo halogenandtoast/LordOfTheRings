@@ -234,6 +234,13 @@ import LordOfTheRings.Ally.Cards.EregionSurvivor
 import LordOfTheRings.Ally.Cards.Leaflock
 import LordOfTheRings.Ally.Cards.HalfastGamgee
 import LordOfTheRings.Ally.Cards.BeorningGuardian
+import LordOfTheRings.Ally.Cards.RedwaterSentry
+import LordOfTheRings.Ally.Cards.NorthRealmLookout
+import LordOfTheRings.Ally.Cards.WarriorOfDale
+import LordOfTheRings.Ally.Cards.LongLakeTrader
+import LordOfTheRings.Ally.Cards.GuardianOfEsgaroth
+import LordOfTheRings.Ally.Cards.BeorningSkinChanger
+import LordOfTheRings.Ally.Cards.LongLakeFisherman
 import LordOfTheRings.Ally.Cards.PorosGarrison
 import LordOfTheRings.Ally.Cards.GreenwoodDefender
 import LordOfTheRings.Ally.Cards.GafferGamgee
@@ -507,6 +514,13 @@ allAllies =
         , SomeAllyCard leaflock
         , SomeAllyCard halfastGamgee
         , SomeAllyCard beorningGuardian
+        , SomeAllyCard redwaterSentry
+        , SomeAllyCard northRealmLookout
+        , SomeAllyCard warriorOfDale
+        , SomeAllyCard longLakeTrader
+        , SomeAllyCard guardianOfEsgaroth
+        , SomeAllyCard beorningSkinChanger
+        , SomeAllyCard longLakeFisherman
         , SomeAllyCard porosGarrison
         , SomeAllyCard greenwoodDefender
         , SomeAllyCard gafferGamgee

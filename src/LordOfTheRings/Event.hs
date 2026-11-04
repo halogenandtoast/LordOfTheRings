@@ -203,6 +203,12 @@ import LordOfTheRings.Event.Cards.TheKingsReturn
 import LordOfTheRings.Event.Cards.TheGreatHunt
 import LordOfTheRings.Event.Cards.GwaihirsDebt
 import LordOfTheRings.Event.Cards.Reforged
+import LordOfTheRings.Event.Cards.TrafficFromDale
+import LordOfTheRings.Event.Cards.ToArms
+import LordOfTheRings.Event.Cards.ValourOfTheNorth
+import LordOfTheRings.Event.Cards.Bartering
+import LordOfTheRings.Event.Cards.BeornsRage
+import LordOfTheRings.Event.Cards.TheHiddenWay
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -425,5 +431,11 @@ allEvents =
         , SomeEventCard theGreatHunt
         , SomeEventCard gwaihirsDebt
         , SomeEventCard reforged
+        , SomeEventCard trafficFromDale
+        , SomeEventCard toArms
+        , SomeEventCard valourOfTheNorth
+        , SomeEventCard bartering
+        , SomeEventCard beornsRage
+        , SomeEventCard theHiddenWay
         ]
     ]
