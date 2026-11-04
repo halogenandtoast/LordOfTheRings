@@ -60,6 +60,11 @@ data HeroAttrs = HeroAttrs
   , heroFacedown :: [PlayerCard]
   -- ^ cards attached facedown, as an ally made a hero by Sword-thain keeps them (Eagles of
   -- the Misty Mountains)
+  , heroPoison :: [PlayerCard]
+  -- ^ poison: cards from its controller's deck attached facedown, as Condition attachments
+  -- (The Hobbit: On the Doorstep rules insert, "Venom, Poison, and Poisoned")
+  , heroUnconscious :: Bool
+  -- ^ rotated 180 degrees by poison, until an effect readies it as an unconscious character
   , heroGainedAbilities :: [Ability]
   -- ^ the abilities of a hero card whose game text the hero gains, as Thorongil gives it,
   -- kept in step with that by 'LordOfTheRings.Hero'
@@ -72,7 +77,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard])), ("gainedAbilities", toJSON ([] :: [Ability]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard])), ("poison", toJSON ([] :: [PlayerCard])), ("unconscious", Bool False), ("gainedAbilities", toJSON ([] :: [Ability]))]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -93,6 +98,8 @@ hero f cardDef =
             , heroGuardedBy = Nothing
             , heroInStagingArea = False
             , heroFacedown = []
+            , heroPoison = []
+            , heroUnconscious = False
             , heroGainedAbilities = []
             }
     }

@@ -918,7 +918,13 @@ getConditionAttachments = do
   es <- getsGame gameEntities
   conditions <- filterM (\a -> hasTrait Condition (toTarget a) (toCardDef a)) (toList es.attachments)
   enemies <- filterM (\e -> hasTrait Condition (toTarget e) (toCardDef e)) [e | e <- toList es.enemies, isAttached e.placement]
-  pure $ map toTarget conditions <> [toTarget t | t <- toList es.treacheries, isAttached t.placement] <> map toTarget enemies
+  pure
+    $ map toTarget conditions
+    <> [toTarget t | t <- toList es.treacheries, isAttached t.placement]
+    <> map toTarget enemies
+    -- poison, facedown on characters (The Hobbit: On the Doorstep rules insert)
+    <> [CardIdTarget c.id | h <- toList es.heroes, c <- heroPoison (toAttrs h)]
+    <> [CardIdTarget c.id | a <- toList es.allies, c <- allyPoison (toAttrs a)]
  where
   isAttached = \case
     AttachedTo _ -> True

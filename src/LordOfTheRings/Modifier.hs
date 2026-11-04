@@ -273,6 +273,9 @@ data ModifierType
     MustCommitToQuest
   | -- | on a card in play: its abilities cannot be used, nor its Forced effects trigger
     CannotTriggerAbilities
+  | -- | on a character: it cannot be given poison, as an unconscious character in Flies and
+    -- Spiders
+    CannotBePoisoned
   | -- | on a card in play: its printed text box is treated as blank, as Arkham's: it has no
     -- abilities or keywords, and its constant effects give no modifiers
     Blank
