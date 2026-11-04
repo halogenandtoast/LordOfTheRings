@@ -1448,6 +1448,10 @@ setAsideHero = push . SetAsideHero
 setAsideEnemy :: ReverseQueue m => EnemyId -> m ()
 setAsideEnemy = push . SetAsideEnemy
 
+-- | The objective leaves play, its card set aside out of play.
+setAsideObjective :: ReverseQueue m => ObjectiveId -> m ()
+setAsideObjective = push . SetAsideObjective
+
 -- | The player divides the damage among characters they control, as "that player must deal
 -- X damage divided among characters he controls" reads; it is dealt once all is assigned.
 dealDamageDivided :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()

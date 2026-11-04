@@ -2750,6 +2750,9 @@ runGameMessage msg g = case msg of
   SetAsideEnemy eid | Just e <- Map.lookup eid g.entities.enemies -> do
     g' <- runGameMessage (RemoveFromGame $ EnemyTarget eid) g
     pure $ g' & scenarioL %~ overAttrs (setAsideL %~ (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) :))
+  SetAsideObjective oid | Just o <- Map.lookup oid g.entities.objectives -> do
+    g' <- runGameMessage (RemoveFromGame $ ObjectiveTarget oid) g
+    pure $ g' & scenarioL %~ overAttrs (setAsideL %~ (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o) :))
   RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
     g' <- leftPlay g target
     pushAll $ discardAttached g target

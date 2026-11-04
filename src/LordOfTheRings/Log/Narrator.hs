@@ -229,6 +229,7 @@ narrationFor = \case
   RemoveSetAsideFromGame cards | notNull cards -> Just $ one $ mechanic [ikeyPart "log.setAsideRemovedFromGame" ["cards" ~> map EncounterCard cards]]
   SetAsideHero hid -> Just $ simply "log.setAsideOutOfPlay" (HeroTarget hid)
   SetAsideEnemy eid -> Just $ simply "log.setAsideOutOfPlay" (EnemyTarget eid)
+  SetAsideObjective oid -> Just $ simply "log.setAsideOutOfPlay" (ObjectiveTarget oid)
   PutIntoPlayAsActiveLocation card -> Just $ one $ mechanic [ikeyPart "log.becomesActive" ["location" ~> EncounterCard card]]
   DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
     top <- getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)

@@ -750,6 +750,9 @@ data Message
   | -- | the enemy leaves play, its card set aside out of play, as stage 3A of The Withered
     -- Heath sets Cold-Drake aside
     SetAsideEnemy EnemyId
+  | -- | the objective leaves play, its card set aside out of play, as Overcome by Fear is
+    -- detached from a threat dial
+    SetAsideObjective ObjectiveId
   | {- | a card declares the character as a defender of the enemy's attack on the player,
     exhausted or not, from the window after the enemy is declared as an attacker, as
     Anchor Watch reads: it defends in place of the player's own declaration, alongside
