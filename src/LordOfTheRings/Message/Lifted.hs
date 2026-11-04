@@ -1413,6 +1413,10 @@ eachPlayerMayDiscardFromHand source = do
 discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
 discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n
 
+-- | The player takes the first player token, as Follow Me reads.
+setFirstPlayer :: ReverseQueue m => PlayerId -> m ()
+setFirstPlayer = push . SetFirstPlayer
+
 -- | The player discards 1 resource from one of their heroes' resource pools, if able.
 discardResourceFromAHero :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> m ()
 discardResourceFromAHero source pid = do
