@@ -600,6 +600,7 @@ library
       LordOfTheRings.Enemy.Cards.CavernGuardian
       LordOfTheRings.Enemy.Cards.CaveSpider
       LordOfTheRings.Enemy.Cards.CaveTroll
+      LordOfTheRings.Enemy.Cards.ChampionOfRhun
       LordOfTheRings.Enemy.Cards.ChieftainOfThePit
       LordOfTheRings.Enemy.Cards.ChieftanUfthak
       LordOfTheRings.Enemy.Cards.ChiefTurchTheDunlandTrap
@@ -671,6 +672,7 @@ library
       LordOfTheRings.Enemy.Cards.EastBightPatrol
       LordOfTheRings.Enemy.Cards.EasterlingCaptain
       LordOfTheRings.Enemy.Cards.EasterlingRaider
+      LordOfTheRings.Enemy.Cards.EasterlingSkirmisher
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ElderNamelessThing
       LordOfTheRings.Enemy.Cards.EliteMarauder
@@ -931,6 +933,7 @@ library
       LordOfTheRings.Enemy.Cards.TelemnarsBane
       LordOfTheRings.Enemy.Cards.TempleGuardian
       LordOfTheRings.Enemy.Cards.TerritorialApe
+      LordOfTheRings.Enemy.Cards.ThaneUlchorWrathAndRuin
       LordOfTheRings.Enemy.Cards.Thaurdir
       LordOfTheRings.Enemy.Cards.ThaurdirDeadmensDike
       LordOfTheRings.Enemy.Cards.ThaurdirsDamned
