@@ -314,6 +314,7 @@ passesCriteria = \case
   NotCriterion c -> not <$> passesCriteria c
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
+  ProgressPlacedThisPhaseOn t -> (> 0) <$> progressPlacedThisPhase t
   CardPlayedThisRound code -> any (\(_, c, _) -> c == code) <$> cardsPlayedThisRound
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs
