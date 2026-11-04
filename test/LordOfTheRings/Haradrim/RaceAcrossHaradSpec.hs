@@ -2,6 +2,7 @@ module LordOfTheRings.Haradrim.RaceAcrossHaradSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Entities (questsL)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyThreat, getLocationThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -303,6 +304,13 @@ spec = describe "Race Across Harad" do
       _ <- playersAt Quests.racingNorth []
       reveal [Treacheries.howlingAtTheirHeels]
       getStagingThreat `shouldReturn` 4
+
+    it "Howling at their Heels reads the Orcs' area's threat as it changes this phase" . raceTest $ \_ -> do
+      chieftain <- prepare
+      _ <- playersAt Quests.racingNorth []
+      reveal [Treacheries.howlingAtTheirHeels]
+      run $ CreateEffect $ Effect GameSource (EnemyTarget chieftain) [ThreatModifier 2] UntilEndOfPhase
+      getStagingThreat `shouldReturn` 6
 
     it "Racing Warg attaches to an Orc enemy, as a Mount" . raceTest $ \_ -> do
       orc <- stage Enemies.urukOfMordor
