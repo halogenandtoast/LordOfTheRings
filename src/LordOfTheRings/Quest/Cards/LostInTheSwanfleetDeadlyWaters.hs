@@ -17,7 +17,6 @@ instance HasAbilities LostInTheSwanfleetDeadlyWaters where
 
 -- | The Nightmare Deck's B side of Lost in the Swanfleet.
 -- Treachery card effects cannot be canceled.
--- ponytail: their When Revealed effects; a treachery's shadow effect can still be canceled
 instance HasModifiersFor LostInTheSwanfleetDeadlyWaters where
   getModifiersFor (LostInTheSwanfleetDeadlyWaters a) = when a.flipped do
     treacheries <- getsGame (toList . (.entities.treacheries))

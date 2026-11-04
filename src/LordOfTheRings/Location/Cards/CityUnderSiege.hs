@@ -16,7 +16,6 @@ cityUnderSiege = location CityUnderSiege Cards.cityUnderSiege
 
 -- | While City Under Siege is in the staging area, it gains archery 2, and damage from the
 -- archery keyword must be applied to Ship objectives.
--- ponytail: the archery damage is dealt as any other
 instance HasModifiersFor CityUnderSiege where
   getModifiersFor (CityUnderSiege a) = when (a.placement == StagingArea) $ modifySelf a [GainKeyword (Archery 2)]
 

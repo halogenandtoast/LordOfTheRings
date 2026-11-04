@@ -13,7 +13,6 @@ chieftainsBrooch :: AttachmentCard ChieftainsBrooch
 chieftainsBrooch = attachment ChieftainsBrooch Cards.chieftainsBrooch
 
 -- | Each ally that shares a Trait with attached hero gets +1 willpower.
--- ponytail: the hero's printed traits
 instance HasModifiersFor ChieftainsBrooch where
   getModifiersFor (ChieftainsBrooch a) = case a.placement of
     AttachedTo (HeroTarget hid) -> do

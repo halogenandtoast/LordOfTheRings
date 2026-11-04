@@ -10,7 +10,6 @@ newtype TheHousesOfHealing = TheHousesOfHealing EventAttrs
   deriving anyclass IsEvent
   deriving newtype (Show, Eq, Entity)
 
--- | ponytail: playable in any refresh phase, a hero in a discard pile or not
 theHousesOfHealing :: EventCard TheHousesOfHealing
 theHousesOfHealing = eventWith TheHousesOfHealing Cards.theHousesOfHealing (criteriaL .~ DuringPhase RefreshPhase)
 

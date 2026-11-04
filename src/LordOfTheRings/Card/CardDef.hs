@@ -53,6 +53,8 @@ data CardDef = CardDef
   -- ^ the copies kept in easy mode, when it keeps fewer than all of them
   , cdDoubleSided :: Bool
   , cdShadowEffect :: Bool
+  , -- | its shadow effect cannot be canceled, as Blazing Grip's reads
+    cdShadowCannotBeCanceled :: Bool
   , -- | revealing it has a When Revealed effect, which the lead resolves by clicking it
     cdWhenRevealed :: Bool
   -- ^ an encounter card with a shadow effect, as opposed to a blank shadow card
@@ -122,6 +124,7 @@ emptyCardDef cCode name cType =
     , cdEasyModeQuantity = Nothing
     , cdDoubleSided = False
     , cdShadowEffect = False
+    , cdShadowCannotBeCanceled = False
     , cdWhenRevealed = False
     , cdDistinctPayers = Nothing
     , cdSinglePayer = False

@@ -26,8 +26,6 @@ instance HasModifiersFor LifeDrain where
 -- | When Revealed: Deal Life Drain to Thaurdir, as a shadow card.
 -- Shadow: If attacking enemy is Thaurdir, he gets +3 attack. If this attack destroys a
 -- character, attach Life Drain to Thaurdir.
--- ponytail: Thaurdir of The Treachery of Rhudaur cannot have attachments, so it stays a
--- shadow card.
 instance RunMessage LifeDrain where
   runMessage msg t@(LifeDrain attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

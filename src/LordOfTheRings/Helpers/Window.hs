@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdCardTraits, cdShadowCannotBeCanceled, ecId, cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -23,7 +23,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotDiscardFromHand),
+  ModifierType (CannotDiscardFromHand, ShadowEffectsCannotBeCanceled),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -105,6 +105,9 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       ObjectiveTarget i -> toCardDef <$> Map.lookup i es.objectives
       QuestTarget i -> toCardDef <$> Map.lookup i es.quests
       _ -> Nothing
+  -- the shadow effect about to resolve is there to cancel unless it cannot be canceled
+  (ShadowEffectWindow t, ShadowEffectTriggered cid _) | t == timing -> shadowEffectCancelable cid
+  (ShadowEffectAgainstWindow t target, ShadowEffectAgainst cid target') | t == timing && target == target' -> shadowEffectCancelable cid
   -- only while the enemy is still in play, to be dealt more
   (AttackDealtDamageWithTraitWindow t trait, AttackDealtDamage eid attackers _) | t == timing ->
     andM
@@ -198,6 +201,15 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     HeroTarget hid -> toCardDef <$> getHero hid
     AllyTarget aid -> toCardDef <$> getAlly aid
     _ -> error "not a character"
+
+{- | Whether the shadow card's effect can be canceled: not one whose text says it cannot,
+as Blazing Grip's, nor while an effect bars it, as Dark and Stormy's.
+-}
+shadowEffectCancelable :: HasGame m => CardId -> m Bool
+shadowEffectCancelable cid = do
+  barred <- elem ShadowEffectsCannotBeCanceled <$> getModifiers GameTarget
+  shadows <- getsGame (concatMap (.shadowCards) . toList . (.enemies) . gameEntities)
+  pure $ not barred && not (any (\c -> ecId c == cid && cdShadowCannotBeCanceled (toCardDef c)) shadows)
 
 {- | Whether an ability's limit leaves it a use: its controller's uses for a player
 limit, everyone's for a group limit.

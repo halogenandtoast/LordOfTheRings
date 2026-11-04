@@ -28,8 +28,6 @@ instance HasModifiersFor ThrowingAxe where
 -- | Upgraded: Action: Either deal 1 damage to an enemy, or toss Throwing Axe. If it travels
 -- at least two feet across the playing area and stops on any enemies, deal 4 damage to
 -- one of them. Reattach Throwing Axe to its hero. (Limit once per game.)
--- ponytail: the toss is not thrown across a table: it lands, 4 damage to an enemy of the
--- player's choice.
 instance HasAbilities ThrowingAxe where
   getAbilities (ThrowingAxe a) =
     [ limited (PlayerLimit PerGame 1) $ restricted a 1 (exists EnemyNotImmuneToPlayerCards) $ ActionAbility Free

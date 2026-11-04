@@ -13,7 +13,6 @@ steepPlateau = location SteepPlateau Cards.steepPlateau
 
 -- | Response: After Steep Plateau is explored, look at the facedown side of an Uncharted
 -- location in the staging area.
--- ponytail: answered as it is explored, while it is still in play to offer it
 instance HasAbilities SteepPlateau where
   getAbilities (SteepPlateau a) =
     [restricted a 1 (exists $ LocationInStagingArea <> unchartedLocation) $ response $ ExploredWindow When a.id]

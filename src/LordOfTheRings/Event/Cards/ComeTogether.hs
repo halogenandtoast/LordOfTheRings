@@ -20,7 +20,6 @@ victory display. Until the end of the round, each of those characters...
 ...gets +2 attack if you control a Tactics hero.
 ...gets +2 willpower if you control a Spirit hero.
 ...gains a Trait of your choice and heals 2 damage if you control a Lore hero.
-ponytail: the Trait is not chosen; the damage is healed.
 -}
 instance RunMessage ComeTogether where
   runMessage msg e@(ComeTogether attrs) = case msg of

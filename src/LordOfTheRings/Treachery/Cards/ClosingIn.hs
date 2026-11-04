@@ -16,8 +16,6 @@ closingIn = treachery ClosingIn Cards.closingIn
 -- When Revealed: Place Closing In facedown underneath The Orcs' Search.
 -- Shadow: Attacking enemy gets +1 attack for each card underneath The Orcs' Search.
 --
--- ponytail: it leaves play as removed from the game, which the log tells, before it goes
--- underneath
 instance RunMessage ClosingIn where
   runMessage msg t@(ClosingIn attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

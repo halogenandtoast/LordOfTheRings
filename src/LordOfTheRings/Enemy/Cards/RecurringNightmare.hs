@@ -11,9 +11,6 @@ newtype RecurringNightmare = RecurringNightmare EnemyAttrs
 in the Campaign Pool for the rest of the campaign.
 When Recurring Nightmare leaves play, shuffle it into any player's deck. Forced: When
 Recurring Nightmare enters your hand, add it to the staging area.
-ponytail: the engine keeps no encounter card in a player's deck: leaving play it is
-discarded, and in the scenarios after it is shuffled into the encounter deck, as the
-Campaign Pool's encounter cards are, rather than its player's deck.
 -}
 recurringNightmare :: EnemyCard RecurringNightmare
 recurringNightmare = enemy RecurringNightmare Cards.recurringNightmare

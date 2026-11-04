@@ -20,7 +20,6 @@ instance HasAbilities RammingShip where
 
 -- | Shadow: Put the top card of the Corsair deck into play engaged with you and deal it a
 -- shadow card.
--- ponytail: it is dealt no shadow card
 instance RunMessage RammingShip where
   runMessage msg e@(RammingShip attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do

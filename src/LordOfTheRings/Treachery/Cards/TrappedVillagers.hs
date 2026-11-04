@@ -21,7 +21,6 @@ instance RunMessage TrappedVillagers where
       replicateM_ 3 $ villagerDies attrs
       doStep 1 msg
       pure t
-    -- ponytail: counted once the 3 are placed, not kept up with Dead Villagers this round
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       dead <- deadVillagerCount
       when (dead > 0) $ roundModifier attrs GameTarget (StagingThreatBonus dead)

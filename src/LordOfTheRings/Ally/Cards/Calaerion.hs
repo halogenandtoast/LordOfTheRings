@@ -25,8 +25,6 @@ upgraded a = toCardCode a == toCardCode Cards.calaerionUpgraded
 +1 willpower, +1 attack, and +1 defense until the end of the phase.
 Upgraded: Action: Spend 2 resources and exhaust Calaerion to ready another ally and give it
 +1 willpower, +1 attack, and +1 defense until the end of the round.
-ponytail: the Upgraded side's Response, shuffling a card discarded from the encounter deck
-back into it, is not offered.
 -}
 instance HasAbilities Calaerion where
   getAbilities (Calaerion a) =

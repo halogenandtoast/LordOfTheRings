@@ -29,7 +29,6 @@ instance RunMessage TheFiresSpread where
       pure t
     _ -> TheFiresSpread <$> runMessage msg attrs
    where
-    -- ponytail: 1 damage counted for each Aflame location, none of them preventing it
     spread = do
       burning <- map fst <$> getAflameLocations
       for_ burning \l -> dealDamage attrs l 1
