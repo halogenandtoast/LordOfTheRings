@@ -4039,5 +4039,23 @@
     "setup": [
       "“The Tower of Cirith Ungol” is played with an encounter deck built with all the cards from the following encounter sets: The Tower of Cirith Ungol, Orcs of Mordor, and Deep Shadows. Aragorn cannot be used while playing The Tower of Cirith Ungol."
     ]
+  },
+  "mount-doom": {
+    "intro": [
+      "While the armies of the West draw Sauron's gaze to the Black Gate, Frodo and Sam struggle across the ash and fumes of Gorgoroth toward the fiery mountain. Every step is watched for, and the Ring grows heavier with each one."
+    ],
+    "setup": [
+      "The encounter deck is built from the Mount Doom and Deep Shadows encounter sets. The first player takes control of a Fellowship sphere Ring-bearer with The One Ring attached. Aragorn cannot be used in this scenario."
+    ],
+    "rules": [
+      {
+        "title": "Fortitude Tests",
+        "text": "A player making a Fortitude test may exhaust any number of heroes he controls to commit them. He then discards the top X cards of the encounter deck, where X is the tens digit of his threat. He passes if the committed willpower is greater than the Eye of Sauron icons on the discarded cards; a tie fails. Once the icons are known the players may take actions before the test resolves. If the encounter deck runs out, the discard pile is shuffled back in."
+      },
+      {
+        "title": "Dire",
+        "text": "While the main quest has the Dire keyword, each player's threat elimination level is 99, non-boon player card effects cannot reduce a player's threat by more than 1 each round, and Valour triggers at 80 threat instead of 40."
+      }
+    ]
   }
 }
