@@ -688,6 +688,18 @@ discardEncounterCardsUntilFor source target matcher = do
   deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
   discardTopOfEncounterDeckFor source target $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
 
+{- | As 'discardEncounterCardsUntil', then what follows is done with the matching card, read
+from the deck now, as an event, which hears no 'DiscardedTopOfEncounterDeck', resolves
+"discard cards ... until you discard a treachery. Resolve its 'when revealed' effects"
+(A Desperate Path). Nothing follows when no card matches.
+-}
+discardEncounterCardsUntilThen
+  :: (ReverseQueue m, Sourceable a, Targetable a) => a -> CardMatcher -> (EncounterCard -> m ()) -> m ()
+discardEncounterCardsUntilThen a matcher f = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  discardEncounterCardsUntil a matcher
+  for_ (find (cardMatches matcher) deck) f
+
 -- | An encounter card, taken from where it was, becomes the active location, as a setup puts one.
 putIntoPlayAsActiveLocation :: ReverseQueue m => EncounterCard -> m ()
 putIntoPlayAsActiveLocation = push . PutIntoPlayAsActiveLocation
