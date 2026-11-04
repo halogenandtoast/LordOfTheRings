@@ -355,6 +355,40 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
       run $ Discard faramir
       getsGame (length . (.entities.heroes)) `shouldReturn` 3
       map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Allies.faramir))
+
+    it "keeps Beechbone's response, reading the damage on the hero" . gameTest $ \pid -> do
+      beechbone <- swordThained pid Allies.beechbone
+      eid <- engagedEnemy pid Enemies.hillTroll
+      run $ DealDamage GameSource beechbone 1
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker beechbone eid]
+      chooseAbilityOf pid beechbone
+      getDamage beechbone `shouldReturn` 2
+      getDamage (toTarget eid) `shouldReturn` 2
+
+    it "keeps Éothain's response while the hero is exhausted, as its text asks of it by its id" . gameTest $ \pid -> do
+      eothain <- swordThained pid Allies.eothain
+      finest <- putAllyIntoPlay pid Allies.theRiddermarksFinest
+      run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+      run $ Exhaust eothain
+      run $ ActionWindow pid
+      chooseAbilityOf pid finest
+      chooseAbilityOf pid eothain
+      exhausted eothain `shouldReturn` False
+
+    it "keeps Riddermark Knight's response, discarding the hero after its attack" . gameTest $ \pid -> do
+      spider <- engagedEnemy pid Enemies.forestSpider
+      AllyTarget knight <- putAllyIntoPlay pid Allies.riddermarkKnight
+      -- the knight is not unique, so made a hero as Sword-thain makes one
+      run $ AllyBecomesHero knight
+      asHero <- toTarget <$> getHeroWithCode (toCardCode Allies.riddermarkKnight)
+      run $ PlayerAttacks pid
+      chooseTarget pid asHero
+      chooseAbilityOf pid asHero
+      chooseLabel "$label.doneAttacking" pid
+      passResponses pid
+      passActions pid
+      getDamage (toTarget spider) `shouldReturn` 3
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem (toCardCode Allies.riddermarkKnight))
  where
   -- the unique ally put into play, then made a hero by Sword-thain
   swordThained pid def = do
@@ -362,6 +396,10 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
     card <- genPlayerCard Attachments.swordThain (Just pid)
     run $ PlayAttachmentOn pid card ally'
     toTarget <$> getHeroWithCode (toCardCode def)
+  passResponses pid =
+    getQuestion pid >>= \case
+      Just (QuestionLabel "$label.useResponse" _ _ _) -> chooseLabel "$label.pass" pid >> passResponses pid
+      _ -> pure ()
   exhausted t = getsGame (maybe False (heroExhausted . toAttrs) . find ((== t) . toTarget) . toList . (.entities.heroes))
   longDefeat = getsGame (toTarget . fromJustNote "The Long Defeat" . find ((== toCardCode Attachments.theLongDefeat) . toCardCode) . toList . (.entities.attachments))
   questIdOf = \case

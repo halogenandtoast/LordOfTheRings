@@ -39,7 +39,7 @@ sendsForHelp = map toCardCode [Treacheries.sendForHelpLeadership, Treacheries.se
 instance RunMessage Gavin where
   runMessage msg s@(Gavin a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a.id
+      discard a
       putOnTopOfEncounterDeck =<< genEncounterCard Cards.gavin
       helps <- getsGame (filter ((`elem` sendsForHelp) . toCardCode) . scenarioSetAside . toAttrs . gameScenario)
       unless (null helps) do
@@ -49,7 +49,7 @@ instance RunMessage Gavin where
       pure s
     UseCardAbility _ (isSource a -> True) 2 _ -> do
       phase <- getsGame gamePhase
-      when (phase == QuestPhase) $ commitToQuest a.id
+      when (phase == QuestPhase) $ commitToQuest a
       lanwyns <- select (HeroWithTitle "Lanwyn")
       for_ lanwyns \h -> placeResources a h 1
       pure s

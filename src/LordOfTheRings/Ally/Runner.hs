@@ -16,7 +16,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (WindowType (BecameReady, Exhausted, RemovedFromQuest), mkAfter)
 
 instance RunMessage AllyAttrs where
-  runMessage msg attrs = case msg of
+  runMessage msg attrs = if attrs.allyAsHero then pure attrs else case msg of
     Exhaust (isTarget attrs -> True) -> do
       blocked <- elem CannotExhaust <$> getModifiers attrs
       exhausting (not blocked) attrs
