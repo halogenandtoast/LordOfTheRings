@@ -3664,6 +3664,7 @@ dagnir =
   unique
     $ (enemy "19074" "Dagnir" FireInTheNight 1 50 0 7 5 20)
       { cdCardTraits = setFromList [Dragon]
+      , cdVictoryPoints = Just 5
       }
 
 theDragonsThrall :: CardDef
