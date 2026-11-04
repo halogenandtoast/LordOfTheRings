@@ -2859,5 +2859,54 @@
       "The knight knew he wouldn’t be able to make it to the ships in time. So, he decided on another course of action. Running back into the chamber where the black chest first lay, he placed the key upon the pedestal and prayed to the Valar with all of his heart: “Let none discover this key save for one of the Faithful, of true Númenorean blood. Let its whereabouts be forever shrouded from the servants of Morgoth.”",
       "Hoping the Valar would hear his plea, he sealed the entrance to the chamber and watched as Elendil’s ships sailed to safety in the east."
     ]
+  },
+  "the-black-serpent": {
+    "intro": [
+      "“There is an old fortress at the crossroads yonder,” Kahliel pointed towards a rise in the distance, “on the other side of that ridge, where the Harad road meets the road to Cirith Gurat. The Black Serpent will camp there tonight.”",
+      "“How do you know he will stay there?” asked one of the heroes with him. They were crouched next to each other atop a low hill in the desert watching the Serpent’s caravan as it followed the northward road and disappeared from sight behind the opposite ridge.",
+      "“That is where we camp when we take our tribute to Mordor. All Haradrim do this,” answered Kahliel. His eyes were focused keenly on the caravan. The sun was lowering in the sky behind them, but there was enough light for him to count silhouettes. He wanted to know how many warriors were in the Serpent’s entourage before planning his raid.",
+      "“Should we not attack them before they reach the safety of the fortress?” the hero asked.",
+      "“No,” said Kahliel, “If we attack them on the open plain, they will scatter and we will not catch them. If we wait until they are inside the fort, then they cannot flee.”",
+      "“But how will we enter the fort?” asked the hero.",
+      "“The crossroads fort is a ruin: it has walls but no gate. The Haradrim camp there for the well.”",
+      "“Then we attack through the gate and leave them nowhere to run,” the hero voiced his ally’s plan.",
+      "“Just so,” said Kahliel.",
+      "The two warriors shared an understanding glance. Since making the decision to travel north together, Kahliel and the heroes had hunted Mûmakil together in the jungle, fought side-by-side against the Orcs upon the desert plain, and rescued their friends from the spiders’ den. Each one of these encounters built trust between them and respect for each other’s abilities.",
+      "But this ambush would be different; The Black Serpent and his men were Haradrim. The hero couldn’t help but wonder how that would change things in battle, so he spoke with Kahliel as they descended from their lookout: “The men in that caravan are not Orcs or spiders, Kahliel. Are you certain that you can go through with this?”",
+      "Kahliel stopped on the hillside to face the hero. “They are worse than Orcs. Worse than spiders!” he replied sternly. His eyes were furious, but he kept his voice level. “The spider is a mindless beast. It kills only to eat. There is no malice in this. The Orc is a slave, bound to the will of The Dark One. It has no choice but to do its Master’s work. But The Black Serpent is worse than both because he is free to choose, and he chooses to serve Mordor. He worships The Dark One and dishonors his people by making them his thralls. I will not hesitate to strike him, nor will any who follow me.”",
+      "The hero nodded and they resumed their quiet descent back to camp. Whatever happened after their raid began, the hero was confident that he could trust his Haradrim allies in battle."
+    ],
+    "setup": [
+      "“The Black Serpent” is played with an encounter deck built with all the cards from the following encounter sets: The Black Serpent and Harad Soldiers. (Harad Soldiers can be found in The Sands of Harad deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Guarded (X)",
+        "text": "Guarded (X) is a new version of the Guarded keyword. When a card with Guarded (X) is revealed, instead of revealing the next card from the encounter deck, discard cards from the encounter deck until an encounter card with the matching type is discarded. Then, add it to the staging area and attach the just revealed objective to it. Once attached, an objective with Guarded (X) works just like an objective with the Guarded keyword."
+      },
+      {
+        "title": "Guarded (X)",
+        "text": "Example: Matt is setting up “The Black Serpent” and the Setup on stage 1A instructs him to reveal a random, set aside Harad objective. He randomly selects Banner of the Serpent which reads: “Guarded (enemy or location).” Matt places Banner of the Serpent in the staging area and begins discarding cards from the top of the encounter deck. The first card is a treachery card, so he continues discarding. The second card is an enemy, Southron Archer. Since enemy is a type listed after the Guarded keyword on Banner of the Serpent, Matt takes Southron Archer from the encounter discard pile, adds it to the staging area, and attaches Banner of the Serpent to it."
+      },
+      {
+        "title": "Valour",
+        "text": "Valour is a trigger that appears on some player cards in the Haradrim cycle. Actions and Responses with the Valour trigger, presented as “Valour Action” or “Valour Response,” can only be triggered by a player whose threat is 40 or higher."
+      },
+      {
+        "title": "Valour",
+        "text": "If an event card has two effects, one with the Valour trigger and one without, you may only choose one of these two effects to trigger when you play the card. You may still only choose the effect with the Valour trigger if your threat is 40 or higher."
+      }
+    ],
+    "resolution": [
+      "“The Black Serpent has escaped,” one of the heroes informed Kahliel in the aftermath of the skirmish.",
+      "“Then he is gone,” replied Kahliel. “We have no means to pursue. Still we have his banner and his caravan, so we proceed to Cirith Gurat.”",
+      "“He may ride to the fortress and alert the Orcs,” cautioned the hero.",
+      "“No,” said Kahliel. “He is too proud to embarrass himself in front of his Master’s slaves that way. He will ride to his city, gather such soldiers as he has, and he will return here in wrath.”",
+      "“Then we must be far from here when he comes,” said the hero.",
+      "“Just so,” said Kahliel. “Let us move quickly to gather the Serpent’s things. Have each man strip one of the fallen and don his armor. I will wear the Serpent’s garb and deliver the tribute to Cirith Gurat.”",
+      "There were not enough disguises for all of the fighters in their company. Furthermore, there were many who were injured or otherwise unable to fight. So the heroes counseled Kahliel that he should appoint some of his warriors to take their camp further north and wait for them there.",
+      "The chieftain agreed and gave orders for his people to abandon the cross-roads fort and seek shelter further north. Kahliel told his people that if he did not return from the Orc fortress in two nights, they should continue north to Gondor without them. And with that, Kahliel and the heroes raised the banner of The Black Serpent and drove the stolen caravan along the road to Cirith Gurat.",
+      "The story continues in “The Dungeons of Cirith Gurat,” the fifth Adventure Pack in “The Haradrim” cycle."
+    ]
   }
 }
