@@ -2493,5 +2493,21 @@
     "choose": "The Ephel Dúath: choose one for the ally you played",
     "exhaust": "Exhaust the ally",
     "threat": "Raise your threat by 1"
+  },
+  "longLakeTrader": {
+    "attachment": "Long Lake Trader: choose an Item attachment to move",
+    "host": "Long Lake Trader: choose the character to move it to"
+  },
+  "trafficFromDale": {
+    "hero": "Traffic from Dale: choose a Dale hero to add the resources to"
+  },
+  "toArms": {
+    "ally": "To Arms!: choose an ally with a player attachment to ready"
+  },
+  "valourOfTheNorth": {
+    "character": "Valour of the North: choose the character to get +3 attack and +3 defense"
+  },
+  "bartering": {
+    "attachment": "Bartering: choose a ready player attachment to return to its owner's hand"
   }
 }

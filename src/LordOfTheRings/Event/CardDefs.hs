@@ -213,6 +213,10 @@ allEventCards =
       , flightToTheSea
       , theDamBursts
       , windFromTheSea
+      , trafficFromDale
+      , toArms
+      , valourOfTheNorth
+      , bartering
       ]
 
 everVigilant :: CardDef
@@ -860,3 +864,15 @@ windFromTheSea =
     , cdKeywords = setFromList [Encounter]
     , cdShadowEffect = True
     }
+
+trafficFromDale :: CardDef
+trafficFromDale = event "18012" "Traffic from Dale" Leadership (StaticCost 1)
+
+toArms :: CardDef
+toArms = event "18013" "To Arms!" Spirit (StaticCost 0)
+
+valourOfTheNorth :: CardDef
+valourOfTheNorth = event "18014" "Valour of the North" Tactics (StaticCost 0)
+
+bartering :: CardDef
+bartering = event "18015" "Bartering" Lore (StaticCost 0)

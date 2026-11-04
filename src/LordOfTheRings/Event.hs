@@ -196,6 +196,10 @@ import LordOfTheRings.Event.Cards.BulwarkOfTheWest
 import LordOfTheRings.Event.Cards.FlightToTheSea
 import LordOfTheRings.Event.Cards.TheDamBursts
 import LordOfTheRings.Event.Cards.WindFromTheSea
+import LordOfTheRings.Event.Cards.TrafficFromDale
+import LordOfTheRings.Event.Cards.ToArms
+import LordOfTheRings.Event.Cards.ValourOfTheNorth
+import LordOfTheRings.Event.Cards.Bartering
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -411,5 +415,9 @@ allEvents =
         , SomeEventCard flightToTheSea
         , SomeEventCard theDamBursts
         , SomeEventCard windFromTheSea
+        , SomeEventCard trafficFromDale
+        , SomeEventCard toArms
+        , SomeEventCard valourOfTheNorth
+        , SomeEventCard bartering
         ]
     ]

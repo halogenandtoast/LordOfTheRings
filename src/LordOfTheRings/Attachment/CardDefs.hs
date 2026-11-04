@@ -2,6 +2,7 @@ module LordOfTheRings.Attachment.CardDefs (module LordOfTheRings.Attachment.Card
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
+import LordOfTheRings.Card.CardType (CardType (EnemyType, LocationType))
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
@@ -198,6 +199,11 @@ allAttachmentCards =
       , diligentNoble
       , legacyBlade
       , followed
+      , hauberkOfMail
+      , kingOfDale
+      , bowOfYew
+      , mapOfRhovanion
+      , necklaceOfGirion
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1342,3 +1348,39 @@ followed =
   (attachment "17139" "Followed" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Condition, Trap]
     }
+
+hauberkOfMail :: CardDef
+hauberkOfMail =
+  (attachment "18007" "Hauberk of Mail" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdLimitOnePerHost = True
+    }
+
+kingOfDale :: CardDef
+kingOfDale =
+  unique
+    (attachment "18008" "King of Dale" Spirit (StaticCost 2))
+      { cdCardTraits = setFromList [Title]
+      }
+
+bowOfYew :: CardDef
+bowOfYew =
+  (attachment "18009" "Bow of Yew" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mapOfRhovanion :: CardDef
+mapOfRhovanion =
+  (attachment "18010" "Map of Rhovanion" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+necklaceOfGirion :: CardDef
+necklaceOfGirion =
+  unique
+    (attachment "18011" "Necklace of Girion" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+      }

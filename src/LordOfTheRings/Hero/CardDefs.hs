@@ -83,6 +83,8 @@ allHeroCards =
       , thurindir
       , folcoBoffin
       , quickbeam
+      , brandSonOfBainLeadership
+      , bardSonOfBrand
       ]
 
 aragorn :: CardDef
@@ -519,4 +521,16 @@ quickbeam :: CardDef
 quickbeam =
   (hero "17135" "Quickbeam" Tactics 12 2 4 1 5)
     { cdCardTraits = setFromList [Ent]
+    }
+
+brandSonOfBainLeadership :: CardDef
+brandSonOfBainLeadership =
+  (hero "18001" "Brand son of Bain" Leadership 10 2 3 2 3)
+    { cdCardTraits = setFromList [Dale, Noble]
+    }
+
+bardSonOfBrand :: CardDef
+bardSonOfBrand =
+  (hero "18002" "Bard son of Brand" Spirit 9 2 2 2 3)
+    { cdCardTraits = setFromList [Dale, Noble]
     }

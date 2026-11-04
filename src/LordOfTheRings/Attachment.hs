@@ -180,6 +180,11 @@ import LordOfTheRings.Attachment.Cards.DunedainPipe
 import LordOfTheRings.Attachment.Cards.DiligentNoble
 import LordOfTheRings.Attachment.Cards.LegacyBlade
 import LordOfTheRings.Attachment.Cards.Followed
+import LordOfTheRings.Attachment.Cards.HauberkOfMail
+import LordOfTheRings.Attachment.Cards.KingOfDale
+import LordOfTheRings.Attachment.Cards.BowOfYew
+import LordOfTheRings.Attachment.Cards.MapOfRhovanion
+import LordOfTheRings.Attachment.Cards.NecklaceOfGirion
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -397,5 +402,10 @@ allAttachments =
         , SomeAttachmentCard diligentNoble
         , SomeAttachmentCard legacyBlade
         , SomeAttachmentCard followed
+        , SomeAttachmentCard hauberkOfMail
+        , SomeAttachmentCard kingOfDale
+        , SomeAttachmentCard bowOfYew
+        , SomeAttachmentCard mapOfRhovanion
+        , SomeAttachmentCard necklaceOfGirion
         ]
     ]

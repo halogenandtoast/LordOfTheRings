@@ -209,6 +209,10 @@ allAllyCards =
       , leaflock
       , halfastGamgee
       , beorningGuardian
+      , redwaterSentry
+      , northRealmLookout
+      , warriorOfDale
+      , longLakeTrader
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1458,4 +1462,28 @@ beorningGuardian :: CardDef
 beorningGuardian =
   (ally "17138" "Beorning Guardian" Tactics (StaticCost 3) 0 3 1 3)
     { cdCardTraits = setFromList [Beorning]
+    }
+
+redwaterSentry :: CardDef
+redwaterSentry =
+  (ally "18003" "Redwater Sentry" Leadership (StaticCost 3) 0 1 2 3)
+    { cdCardTraits = setFromList [Dale, Warrior]
+    }
+
+northRealmLookout :: CardDef
+northRealmLookout =
+  (ally "18004" "North Realm Lookout" Spirit (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Dale, Scout]
+    }
+
+warriorOfDale :: CardDef
+warriorOfDale =
+  (ally "18005" "Warrior of Dale" Tactics (StaticCost 3) 0 2 1 3)
+    { cdCardTraits = setFromList [Dale, Warrior]
+    }
+
+longLakeTrader :: CardDef
+longLakeTrader =
+  (ally "18006" "Long Lake Trader" Lore (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Dale]
     }
