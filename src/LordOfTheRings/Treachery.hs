@@ -439,6 +439,8 @@ import LordOfTheRings.Treachery.Cards.BlackSteed
 import LordOfTheRings.Treachery.Cards.RodeLikeAGale
 import LordOfTheRings.Treachery.Cards.LureOfTheRing
 import LordOfTheRings.Treachery.Cards.TheRingDrawsThem
+import LordOfTheRings.Treachery.Cards.UnwantedAttention
+import LordOfTheRings.Treachery.Cards.BlackBreath
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -905,5 +907,7 @@ allTreacherys =
         , SomeTreacheryCard rodeLikeAGale
         , SomeTreacheryCard lureOfTheRing
         , SomeTreacheryCard theRingDrawsThem
+        , SomeTreacheryCard unwantedAttention
+        , SomeTreacheryCard blackBreath
         ]
     ]
