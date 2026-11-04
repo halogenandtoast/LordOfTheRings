@@ -77,10 +77,13 @@ questingStat :: (HasGame m) => m (Text, Target -> m Int)
 questingStat = do
   battle <- currentQuestHas Battle
   siege <- currentQuestHas Siege
+  -- a quest with both, as East Quarter's battle on a siege quest, uses siege: the FAQ's
+  -- errata settle it so each time, Trained for War's "if the current quest does not have
+  -- siege, it gains battle" and The Cross-roads' "gains siege (and loses battle)"
   pure
     $ if
-      | battle -> ("attack", getAttack)
       | siege -> ("defense", getDefense)
+      | battle -> ("attack", getAttack)
       | otherwise -> ("willpower", getWillpower)
 
 -- | The total strength every character committed to the quest quests with.

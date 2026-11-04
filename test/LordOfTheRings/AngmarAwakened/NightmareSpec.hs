@@ -537,6 +537,16 @@ spec = describe "Angmar Awakened Nightmare mode" do
       resolveForced pid
       length <$> reanimated `shouldReturn` 1
 
+    it "Necromancer of Carn Dûm, its attack canceled, has not attacked for Blight of Carn Dûm" . nightmare theDreadRealm $ \pid -> do
+      _ <- stagedLocation Locations.blightOfCarnDum
+      necro <- staged Enemies.necromancerOfCarnDum
+      run $ EngageEnemy pid necro
+      run $ DealDamage GameSource (toTarget necro) 1
+      _ <- onTop pid Allies.silverlodeArcher
+      run $ EnemyAttack pid necro
+      resolveForced pid
+      getDamage (toTarget necro) `shouldReturn` 1
+
     it "Inner Sanctum takes no progress in the staging area, and resolves the Sorcery it discards" . nightmare theDreadRealm $ \_ -> do
       _ <- putQuestStage Quests.theCatacombsOfCarnDum
       sanctum <- stagedLocation Locations.innerSanctum

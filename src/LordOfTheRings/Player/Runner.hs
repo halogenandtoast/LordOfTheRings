@@ -267,6 +267,7 @@ runPlayer msg player = case msg of
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ kept & handL <>~ taken
     DebugSearchDeck pid | pid == player.id -> do
+      -- not shuffled after: a debug search leaves the rest of the deck in its order
       push
         $ Ask pid
         $ QuestionLabel (ikey "label.takeCardIntoHand") Nothing []
@@ -466,13 +467,16 @@ discardPlayers pid c = do
   pure [t | Modifier source (MayPlayFromDiscard m) <- mods, cardMatches m c, Just t <- [sourceTarget source]]
 
 canPlay :: HasGame m => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, pure (canPayAdditional p c), not <$> cannotPlay p.id c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, canPayAdditional p c, not <$> cannotPlay p.id c]
 
--- | Whether the player has what the card costs from hand besides its resources.
-canPayAdditional :: Player -> Card -> Bool
+-- | Whether the player has what the card costs from hand besides its resources, and may
+-- pay it: one who cannot discard from hand, as Isen River bars, cannot pay a discard.
+canPayAdditional :: HasGame m => Player -> Card -> m Bool
 canPayAdditional p c = case cdAdditionalCost (toCardDef c) of
-  Just (DiscardCardsFromHand n) | c.id `elem` map (.id) p.hand -> length [x | x <- discardableHand p, x.id /= c.id] >= n
-  _ -> True
+  Just (DiscardCardsFromHand n) | c.id `elem` map (.id) p.hand -> do
+    barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget p.id)
+    pure $ not barred && length [x | x <- discardableHand p, x.id /= c.id] >= n
+  _ -> pure True
 
 -- | Whether the game forbids playing the card.
 cannotPlay :: HasGame m => PlayerId -> Card -> m Bool

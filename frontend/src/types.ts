@@ -38,6 +38,8 @@ export interface CardView {
   counting: string[]
   /** While attackers are declared, the attack they would make on it, bonuses included. */
   attackStrength?: number
+  /** While it may be declared as an attacker, the attack it would add, bonuses against the enemy included. */
+  attackAdding?: number
   /** In hand, an effect forbids playing it: what is forbidding it, which may be unnamed. */
   prohibited?: LogRef[]
   /** Shown as the FAQ's errata reads: its owner plays with errata, or it is an encounter card. */
