@@ -18,10 +18,10 @@ instance HasModifiersFor UmbarSlaver where
     when (n > 0) $ modifySelf a [AttackModifier n, ThreatModifier n]
 
 -- | Forced: After the engaged player spends any number of resources, place 1 of those
--- resources on Umbar Slaver: as they leave a hero's pool.
+-- resources on Umbar Slaver: once for each payment, however many heroes it came from.
 instance RunMessage UmbarSlaver where
   runMessage msg (UmbarSlaver attrs) = case msg of
-    RemoveTokens (PlayerSource pid) (HeroTarget _) Resource n | n > 0, EngagedWith pid == attrs.placement -> do
-      placeResources attrs attrs 1
+    CheckWindows ws | EngagedWith pid <- attrs.placement -> do
+      for_ (take 1 [() | Window After (ResourcesSpent p _) <- ws, p == pid]) \_ -> placeResources attrs attrs 1
       UmbarSlaver <$> runMessage msg attrs
     _ -> UmbarSlaver <$> runMessage msg attrs
