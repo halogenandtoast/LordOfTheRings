@@ -2528,6 +2528,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.QuestPhaseSpec
       LordOfTheRings.RefreshPhaseSpec
       LordOfTheRings.ResourcePhaseSpec
+      LordOfTheRings.RevealsInformationSpec
       LordOfTheRings.RevealSpec
       LordOfTheRings.RingMaker.CelebrimborsSecretSpec
       LordOfTheRings.RingMaker.NightmareSpec
