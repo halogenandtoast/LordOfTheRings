@@ -18,7 +18,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
-import LordOfTheRings.Quest.Types (isSideQuest)
+import LordOfTheRings.Quest.Types (inEachStagingArea, isSideQuest)
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source (Source)
@@ -150,13 +150,16 @@ focusArea pid g = case gameSeparation g of
   Just s
     | not (Map.member pid (gamePlayers g))
     , Just t <- find (elem pid . areaPlayers) (separationAreas s) ->
-        let hold a
-              | isFocusedArea g a = a {areaHeldPlayers = gamePlayers g, areaHeldEntities = gameEntities g, areaHeldEffects = gameEffects g}
+        let es = gameEntities g
+            -- a quest card in each staging area comes along into focus
+            shared = Map.filter inEachStagingArea (entitiesQuests es)
+            hold a
+              | isFocusedArea g a = a {areaHeldPlayers = gamePlayers g, areaHeldEntities = es {entitiesQuests = Map.difference (entitiesQuests es) shared}, areaHeldEffects = gameEffects g}
               | elem pid (areaPlayers a) = a {areaHeldPlayers = mempty, areaHeldEntities = mempty, areaHeldEffects = []}
               | otherwise = a
          in g
               { gamePlayers = areaHeldPlayers t
-              , gameEntities = areaHeldEntities t
+              , gameEntities = (areaHeldEntities t) {entitiesQuests = entitiesQuests (areaHeldEntities t) <> shared}
               , gameEffects = areaHeldEffects t
               , gameFirstPlayer = areaLead g s t
               , gameSeparation = Just s {separationAreas = map hold (separationAreas s)}
