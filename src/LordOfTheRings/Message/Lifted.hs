@@ -325,6 +325,25 @@ engageEnemy pid eid = push $ EngageEnemy pid eid
 gameOver :: ReverseQueue m => Outcome -> m ()
 gameOver = push . GameOver
 
+{- | Whether the message takes the card out of play: destroyed or discarded, returned to its
+owner's hand or deck, to the encounter deck or the victory display, or removed from the
+game. A card reading "If this leaves play" watches for it, as The One Ring and The Hobbit's
+Bilbo Baggins (its rules inserts) do.
+-}
+leavesPlay :: Targetable target => target -> Message -> Bool
+leavesPlay (toTarget -> t) = \case
+  Destroy _ t' -> t' == t
+  Discard t' -> t' == t
+  AddToVictoryDisplay t' -> t' == t
+  ShuffleIntoEncounterDeck t' -> t' == t
+  ReturnToTopOfEncounterDeck t' -> t' == t
+  ReturnToBottomOfEncounterDeck t' -> t' == t
+  ReturnToHand t' -> t' == t
+  ShuffleIntoOwnersDeck t' -> t' == t
+  PutOnBottomOfOwnersDeck t' -> t' == t
+  RemoveFromGame t' -> t' == t
+  _ -> False
+
 -- | The players win the game.
 winGame :: ReverseQueue m => m ()
 winGame = gameOver Won
