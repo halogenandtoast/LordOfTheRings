@@ -19,7 +19,7 @@ import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Location.Grid (distance)
 import LordOfTheRings.Id
-import LordOfTheRings.Keyword (Keyword (Surge))
+import LordOfTheRings.Keyword (Keyword (Doomed, Surge))
 import LordOfTheRings.Location.Types (locationCardId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -213,6 +213,10 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       QuestTarget i -> toCardDef <$> Map.lookup i es.quests
       _ -> Nothing
   (ThreatRaisedWindow t m, ThreatRaised pid) | t == timing -> selectAny (PlayerWithId pid <> m)
+  (MatchingThreatRaisedByDoomedWindow t m, ThreatRaisedByDoomed pid) | t == timing -> selectAny (PlayerWithId pid <> m)
+  -- Doomed it gained is on the card for the round, as Gríma's
+  (PlayedCardWithDoomedWindow t pid, PlayedCard pid' card) | t == timing && pid == pid' ->
+    (> 0) <$> keywordValue (\case Doomed n -> Just n; _ -> Nothing) (CardIdTarget card.id) (toCardDef card)
   -- the character is gone: it was defending as the attack's effects still say, and its
   -- traits are its card's, read from what the attack destroyed
   (DefenderWithTraitDestroyedWindow t trait, CharacterDestroyedByAttack _ target _) | t == timing -> do
