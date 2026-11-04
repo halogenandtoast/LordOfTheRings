@@ -862,7 +862,10 @@ runGameMessage msg g = case msg of
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
       level <- getEliminationLevel player.id
       -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
-      let noHeroes = null heroes && not (any ((== HeroType) . (.cardType)) player.deck)
+      -- a hero guarded by an encounter card is in play still, under no player's control, as
+      -- Carried Away's: its owner is not eliminated for it
+      let guarded = any (\h -> h.owner == player.id && isJust (heroGuardedBy $ toAttrs h)) g.entities.heroes
+          noHeroes = null heroes && not guarded && not (any ((== HeroType) . (.cardType)) player.deck)
           byThreat = player.threat >= level
           -- Deadmen's Dike eliminates a player whose deck runs out
           byEmptyDeck = emptyDeck && null player.deck
