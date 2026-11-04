@@ -670,6 +670,7 @@ library
       LordOfTheRings.Enemy.Cards.Dwimmerlaik
       LordOfTheRings.Enemy.Cards.EastBightPatrol
       LordOfTheRings.Enemy.Cards.EasterlingCaptain
+      LordOfTheRings.Enemy.Cards.EasterlingOutrider
       LordOfTheRings.Enemy.Cards.EasterlingRaider
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ElderNamelessThing
@@ -1515,6 +1516,7 @@ library
       LordOfTheRings.Location.Cards.EriadorWastes
       LordOfTheRings.Location.Cards.ExpanseOfHarad
       LordOfTheRings.Location.Cards.ExposedRidge
+      LordOfTheRings.Location.Cards.ExposedRiverbank
       LordOfTheRings.Location.Cards.Fanuidhol
       LordOfTheRings.Location.Cards.FenOfReeds
       LordOfTheRings.Location.Cards.FensAndMires
@@ -1683,6 +1685,7 @@ library
       LordOfTheRings.Location.Cards.RiverHarnen
       LordOfTheRings.Location.Cards.RiverLangflood
       LordOfTheRings.Location.Cards.RiverNinglor
+      LordOfTheRings.Location.Cards.RiverRunning
       LordOfTheRings.Location.Cards.RockyCrags
       LordOfTheRings.Location.Cards.RockyFoothills
       LordOfTheRings.Location.Cards.RockyOutcrop
@@ -1912,6 +1915,7 @@ library
       LordOfTheRings.Objective.Cards.DurinsGreaves
       LordOfTheRings.Objective.Cards.DurinsHelm
       LordOfTheRings.Objective.Cards.DurinsKey
+      LordOfTheRings.Objective.Cards.EasterlingPursuit
       LordOfTheRings.Objective.Cards.FaramirObjective
       LordOfTheRings.Objective.Cards.GandalfsMap
       LordOfTheRings.Objective.Cards.GateKey
@@ -2420,6 +2424,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRedhornGate
+      LordOfTheRings.Scenario.Scenarios.TheRiverRunning.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros
@@ -2559,6 +2564,7 @@ library
       LordOfTheRings.Treachery.Cards.DunlendingAmbush
       LordOfTheRings.Treachery.Cards.DwindlingSupplies
       LordOfTheRings.Treachery.Cards.EasterlingHorse
+      LordOfTheRings.Treachery.Cards.EnemiesCloseBehind
       LordOfTheRings.Treachery.Cards.EnemyPursuit
       LordOfTheRings.Treachery.Cards.Enfeebled
       LordOfTheRings.Treachery.Cards.EvilStorm
