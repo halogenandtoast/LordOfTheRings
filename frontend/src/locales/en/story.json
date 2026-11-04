@@ -4039,5 +4039,19 @@
     "setup": [
       "Flies and Spiders is played with an encounter deck built from the Flies and Spiders and Wilderland encounter sets. Players may add previously discovered treasures from the scenarios of Over Hill and Under Hill."
     ]
+  },
+  "the-battle-of-five-armies": {
+    "intro": [
+      "With the dragon dead, Men, Elves and Dwarves gather before the Lonely Mountain to argue over its treasure, until an army of Goblins and Wargs led by Bolg sweeps down from the north and forces them to fight side by side."
+    ],
+    "setup": [
+      "The encounter deck is built from The Battle of Five Armies and Wilderland encounter sets. The first player takes control of the Baggins sphere Bilbo Baggins."
+    ],
+    "rules": [
+      {
+        "title": "Current Quest Stage",
+        "text": "Stages 2, 3 and 4 are in play at the same time. At the beginning of each round, before resources are collected, the first player chooses which of them is the current quest for the round. Progress can only be placed on the current quest stage."
+      }
+    ]
   }
 }
