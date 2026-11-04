@@ -596,6 +596,14 @@ afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
   _ -> False
 
+{- | Messages to run once the characters' attack on the enemy has resolved, as "after this
+attack" reads for an enemy defending: after what the attack's damage step pushes.
+-}
+afterAttackOn :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
+afterAttackOn eid msgs = lift $ insertAfterMatching msgs \case
+  DoStep 1 (ResolveAttack _ eid') -> eid == eid'
+  _ -> False
+
 {- | "If this attack destroys a character": the shadow's next step, 'DoStep' 1 of its
 'ResolveShadowEffect', once the enemy's attack is over, if its damage destroyed one. The
 shadow card, built again, resolves it then, and may read what was destroyed with
