@@ -3680,7 +3680,8 @@ isRestricted :: HasCardDef a => a -> Bool
 isRestricted = member Restricted . cdKeywords . toCardDef
 
 {- | With more than 2 restricted cards on the character, its controller discards one of
-them, and again until 2 are left; a card may count as 2, as Raiment of War.
+them, and again until 2 are left; a card may count as 2, as Raiment of War, and a
+character may have more, as Golden Belt's.
 -}
 checkRestricted :: Game -> Target -> GameT ()
 checkRestricted g host = do
@@ -3692,8 +3693,10 @@ checkRestricted g host = do
       -- an attachment given Restricted with its text, as Wild Stallion's Mount text
       gainsRestricted x = GainKeyword Restricted `elem` map modifierType (Map.findWithDefault [] (toTarget x) (gameModifiers g))
   controller <- characterController host
+  -- a character may have more, as Golden Belt's hero
+  let limit = 2 + sum [n | AdditionalRestrictedAttachments n <- map modifierType (Map.findWithDefault [] host (gameModifiers g))]
   for_ controller \pid ->
-    when (sum (map snd restrictedOn) > 2)
+    when (sum (map snd restrictedOn) > limit)
       $ push
       $ questionLabelWith
         (ikey "label.discardRestricted")

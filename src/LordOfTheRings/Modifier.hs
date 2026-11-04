@@ -82,6 +82,9 @@ data ModifierType
   | CannotHaveAttachments
   | -- | no attachment with the restricted keyword can be attached to it
     CannotHaveRestrictedAttachments
+  | -- | on a character: it may have this many more restricted attachments than 2, as Golden
+    -- Belt gives its hero
+    AdditionalRestrictedAttachments Int
   | -- | on the game: the total threat in the staging area is raised by this much
     StagingThreatBonus Int
   | -- | on the game: the archery total is raised by this much, as Pinned Down reads
