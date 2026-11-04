@@ -1101,9 +1101,11 @@ library
       LordOfTheRings.Event.Cards.BilbosPlan
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.BoomedAndTrumpeted
+      LordOfTheRings.Event.Cards.BraceOfConeys
       LordOfTheRings.Event.Cards.BulwarkOfTheWest
       LordOfTheRings.Event.Cards.BurstIntoSong
       LordOfTheRings.Event.Cards.CampfireTales
+      LordOfTheRings.Event.Cards.CaptainsOfTheWest
       LordOfTheRings.Event.Cards.CaptainsWisdom
       LordOfTheRings.Event.Cards.ChargeIntoBattle
       LordOfTheRings.Event.Cards.ChargeOfTheRohirrim
@@ -1119,6 +1121,7 @@ library
       LordOfTheRings.Event.Cards.DeepKnowledge
       LordOfTheRings.Event.Cards.DefiantChallenge
       LordOfTheRings.Event.Cards.DescendantsOfKings
+      LordOfTheRings.Event.Cards.DesperateDefense
       LordOfTheRings.Event.Cards.Determination
       LordOfTheRings.Event.Cards.DistantStars
       LordOfTheRings.Event.Cards.DontBeHasty
@@ -1180,6 +1183,7 @@ library
       LordOfTheRings.Event.Cards.Infighting
       LordOfTheRings.Event.Cards.InspiringPresence
       LordOfTheRings.Event.Cards.Interrogation
+      LordOfTheRings.Event.Cards.InTheShadows
       LordOfTheRings.Event.Cards.IslandAmidPerils
       LordOfTheRings.Event.Cards.JusticeShallBeDone
       LordOfTheRings.Event.Cards.KeenAsLances
@@ -1224,6 +1228,7 @@ library
       LordOfTheRings.Event.Cards.QuickStrike
       LordOfTheRings.Event.Cards.RadagastsCunning
       LordOfTheRings.Event.Cards.RainOfArrows
+      LordOfTheRings.Event.Cards.RaiseTheShire
       LordOfTheRings.Event.Cards.RallyingCry
       LordOfTheRings.Event.Cards.RangerSummons
       LordOfTheRings.Event.Cards.RearGuard
@@ -1247,8 +1252,10 @@ library
       LordOfTheRings.Event.Cards.SmokeAndThink
       LordOfTheRings.Event.Cards.SneakAttack
       LordOfTheRings.Event.Cards.SouthAway
+      LordOfTheRings.Event.Cards.SpeakYourPromise
       LordOfTheRings.Event.Cards.StandAndFight
       LordOfTheRings.Event.Cards.StandTogether
+      LordOfTheRings.Event.Cards.SternerThanSteel
       LordOfTheRings.Event.Cards.StrengthOfArms
       LordOfTheRings.Event.Cards.StrengthOfWill
       LordOfTheRings.Event.Cards.StridersPath
@@ -1257,6 +1264,7 @@ library
       LordOfTheRings.Event.Cards.SwiftStrike
       LordOfTheRings.Event.Cards.TakingInitiative
       LordOfTheRings.Event.Cards.TaleOfTinuviel
+      LordOfTheRings.Event.Cards.TasteItAgain
       LordOfTheRings.Event.Cards.TerribleToBehold
       LordOfTheRings.Event.Cards.TheDamBursts
       LordOfTheRings.Event.Cards.TheDoorIsClosed

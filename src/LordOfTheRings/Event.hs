@@ -230,6 +230,14 @@ import LordOfTheRings.Event.Cards.SmokeAndThink
 import LordOfTheRings.Event.Cards.KnowledgeOfTheEnemy
 import LordOfTheRings.Event.Cards.WoodmanLore
 import LordOfTheRings.Event.Cards.ADesperatePath
+import LordOfTheRings.Event.Cards.TasteItAgain
+import LordOfTheRings.Event.Cards.InTheShadows
+import LordOfTheRings.Event.Cards.SpeakYourPromise
+import LordOfTheRings.Event.Cards.BraceOfConeys
+import LordOfTheRings.Event.Cards.SternerThanSteel
+import LordOfTheRings.Event.Cards.DesperateDefense
+import LordOfTheRings.Event.Cards.CaptainsOfTheWest
+import LordOfTheRings.Event.Cards.RaiseTheShire
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -479,5 +487,13 @@ allEvents =
         , SomeEventCard knowledgeOfTheEnemy
         , SomeEventCard woodmanLore
         , SomeEventCard aDesperatePath
+        , SomeEventCard tasteItAgain
+        , SomeEventCard inTheShadows
+        , SomeEventCard speakYourPromise
+        , SomeEventCard braceOfConeys
+        , SomeEventCard sternerThanSteel
+        , SomeEventCard desperateDefense
+        , SomeEventCard captainsOfTheWest
+        , SomeEventCard raiseTheShire
         ]
     ]

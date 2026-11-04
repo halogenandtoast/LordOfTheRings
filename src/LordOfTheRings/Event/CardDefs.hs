@@ -247,6 +247,14 @@ allEventCards =
       , knowledgeOfTheEnemy
       , woodmanLore
       , aDesperatePath
+      , tasteItAgain
+      , inTheShadows
+      , speakYourPromise
+      , braceOfConeys
+      , sternerThanSteel
+      , desperateDefense
+      , captainsOfTheWest
+      , raiseTheShire
       ]
 
 everVigilant :: CardDef
@@ -1007,3 +1015,38 @@ woodmanLore =
 aDesperatePath :: CardDef
 aDesperatePath =
   event "22145" "A Desperate Path" Spirit (StaticCost 2)
+
+-- * The Lord of the Rings saga: The Land of Shadow, The Flame of the West and The Mountain
+-- of Fire
+
+tasteItAgain :: CardDef
+tasteItAgain = event "144011" "Taste it Again!" Leadership (StaticCost 1)
+
+inTheShadows :: CardDef
+inTheShadows = event "144012" "In the Shadows" Lore (StaticCost 3)
+
+speakYourPromise :: CardDef
+speakYourPromise = event "144013" "Speak Your Promise!" Fellowship (StaticCost 1)
+
+{- | A Gift boon of The Land of Shadow: never in a deck built by its player, the campaign
+shuffles it into his deck (Journey to the Cross-roads).
+-}
+braceOfConeys :: CardDef
+braceOfConeys =
+  (event "144014" "Brace of Coneys" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Gift, Boon]
+    , cdVictoryPoints = Just 1
+    , cdDeckLimit = 4
+    }
+
+sternerThanSteel :: CardDef
+sternerThanSteel = event "145008" "Sterner than Steel" Tactics (StaticCost 0)
+
+desperateDefense :: CardDef
+desperateDefense = event "145009" "Desperate Defense" Spirit (StaticCost 1)
+
+captainsOfTheWest :: CardDef
+captainsOfTheWest = event "146010" "Captains of the West" Leadership (StaticCost 3)
+
+raiseTheShire :: CardDef
+raiseTheShire = event "146013" "Raise the Shire" Tactics (StaticCost 1)

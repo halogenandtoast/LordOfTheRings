@@ -389,6 +389,9 @@ data WindowMatcher
     PlayerEngagedMatchingEnemyWindow Timing PlayerId EnemyMatcher
   | -- | the player optionally engaged a matching enemy, as Elladan answers an Orc
     PlayerOptionallyEngagedMatchingWindow Timing PlayerId EnemyMatcher
+  | -- | an attack by a matching enemy that a matching hero defended has resolved, as Taste
+    -- it Again! answers
+    HeroDefendedAttackWindow Timing HeroMatcher EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -580,6 +583,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AllyWithTraitDiscardedFromPlayWindow {}, _) -> False
   (PlayerEngagedMatchingEnemyWindow {}, _) -> False
   (PlayerOptionallyEngagedMatchingWindow {}, _) -> False
+  (HeroDefendedAttackWindow {}, _) -> False
   (MatchingEnemyDefeatedWindow {}, _) -> False
   (MatchingAttackersDeclaredWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
