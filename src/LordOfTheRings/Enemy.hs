@@ -390,6 +390,15 @@ import LordOfTheRings.Enemy.Cards.OrcWight
 import LordOfTheRings.Enemy.Cards.ThaurdirsElite
 import LordOfTheRings.Enemy.Cards.SilentGuardian
 import LordOfTheRings.Enemy.Cards.NecromancerOfCarnDum
+import LordOfTheRings.Enemy.Cards.SouthronCaptain
+import LordOfTheRings.Enemy.Cards.SouthronSoldier
+import LordOfTheRings.Enemy.Cards.SouthronArcher
+import LordOfTheRings.Enemy.Cards.SandViper
+import LordOfTheRings.Enemy.Cards.GiantScorpion
+import LordOfTheRings.Enemy.Cards.UrukChieftain
+import LordOfTheRings.Enemy.Cards.UrukOfMordor
+import LordOfTheRings.Enemy.Cards.UrukWargRider
+import LordOfTheRings.Enemy.Cards.MordorWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -806,5 +815,14 @@ allEnemys =
         , SomeEnemyCard thaurdirsElite
         , SomeEnemyCard silentGuardian
         , SomeEnemyCard necromancerOfCarnDum
+        , SomeEnemyCard southronCaptain
+        , SomeEnemyCard southronSoldier
+        , SomeEnemyCard southronArcher
+        , SomeEnemyCard sandViper
+        , SomeEnemyCard giantScorpion
+        , SomeEnemyCard urukChieftain
+        , SomeEnemyCard urukOfMordor
+        , SomeEnemyCard urukWargRider
+        , SomeEnemyCard mordorWarg
         ]
     ]

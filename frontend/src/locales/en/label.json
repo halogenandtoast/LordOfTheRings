@@ -2204,5 +2204,46 @@
     "parryingCutlass": "Parrying Cutlass",
     "throwingAxe": "Throwing Axe",
     "attachTo": "Campaign: choose the hero to attach it to"
+  },
+  "southronSoldier": {
+    "choose": "Southron Soldier: choose one",
+    "attack": "Southron Soldier makes an immediate attack",
+    "engage": "Southron Soldier: choose an enemy in the staging area to engage and deal a shadow card"
+  },
+  "southronArcher": {
+    "choose": "Southron Archer: choose one",
+    "discardAlly": "Discard an ally you control",
+    "ally": "Southron Archer: choose an ally to discard"
+  },
+  "injuredCompanion": {
+    "choose": "Injured Companion: choose one",
+    "raiseThreat": "Raise your threat by {n}, 1 for each character you control",
+    "discard": "Discard a character you control",
+    "character": "Injured Companion: choose a character to discard"
+  },
+  "findWater": {
+    "ready": "Find Water: choose a hero to ready"
+  },
+  "desertOasis": {
+    "heal": "Desert Oasis: heal 1 damage from a character ({count} left)"
+  },
+  "sandstorm": {
+    "choose": "Sandstorm: choose one",
+    "discardHand": "Discard your hand",
+    "damage": "Assign {n} damage among characters you control",
+    "discardAttachment": "Discard the highest cost attachment you control",
+    "attachment": "Sandstorm: choose the attachment to discard"
+  },
+  "heatExhaustion": {
+    "exhaust": "Heat Exhaustion: choose a character to exhaust and deal 1 damage to"
+  },
+  "overgrown": {
+    "attach": "Overgrown: choose the location to attach it to"
+  },
+  "urukChieftain": {
+    "engage": "Uruk Chieftain: choose the player it engages"
+  },
+  "mordorWarg": {
+    "attach": "Mordor Warg: choose the Orc enemy to attach it to"
   }
 }

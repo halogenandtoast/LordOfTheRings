@@ -284,6 +284,12 @@ titles es =
 isDefending :: HasGame m => Target -> m Bool
 isDefending target = elem Defending . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
 
+-- | The characters defending the enemy's attack, as "while attacking a character with less
+-- willpower" reads of Uruk Warg-Rider's.
+getDefendersAgainst :: HasGame m => EnemyId -> m [Target]
+getDefendersAgainst eid = getsGame \g ->
+  [t | (t, ms) <- Map.toList (gameModifiers g), any (\m -> m.modifierType == Defending && m.modifierSource == EnemyAttackSource eid) ms]
+
 -- | A printed trait, or one a modifier grants.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
 hasTrait trait target def = do

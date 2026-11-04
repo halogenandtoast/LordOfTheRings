@@ -50,7 +50,8 @@ instance RunMessage HeroAttrs where
       pushWhen attrs.heroCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
-      blocked <- elem CannotReady <$> getModifiers attrs
+      -- on the game, no character readies, as Enfeebled's "exhausted characters cannot ready"
+      blocked <- elem CannotReady . concat <$> sequence [getModifiers attrs, getModifiers GameTarget]
       when (attrs.heroExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do

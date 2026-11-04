@@ -414,6 +414,11 @@ allLocationCards =
       , gatesOfCarnDum
       , innerSanctum
       , cursedHalls
+      , toweringDunes
+      , desertOasis
+      , jungleTrail
+      , forestClearing
+      , denseJungle
       ]
 
 drownedTreasury :: CardDef
@@ -3169,5 +3174,32 @@ cursedHalls :: CardDef
 cursedHalls =
   (location "the-dread-realm-nightmare-the-dread-realm-005" "Cursed Halls" TheDreadRealmNightmare 3 3 5)
     { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }
+
+-- * The Sands of Harad: the shared encounter sets (Desert Sands, Jungle Forest). Easy mode
+-- copy counts from Hall of Beorn's scenario pages.
+
+toweringDunes :: CardDef
+toweringDunes = (location "16049" "Towering Dunes" DesertSands 3 3 4) {cdCardTraits = setFromList [Desert], cdEasyModeQuantity = Just 2}
+
+desertOasis :: CardDef
+desertOasis = (location "16050" "Desert Oasis" DesertSands 2 2 2) {cdCardTraits = setFromList [Desert]}
+
+jungleTrail :: CardDef
+jungleTrail = (location "16056" "Jungle Trail" JungleForest 2 4 4) {cdCardTraits = setFromList [Forest], cdEasyModeQuantity = Just 1}
+
+forestClearing :: CardDef
+forestClearing =
+  (location "16057" "Forest Clearing" JungleForest 3 3 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+denseJungle :: CardDef
+denseJungle =
+  (location "16058" "Dense Jungle" JungleForest 3 2 3)
+    { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }

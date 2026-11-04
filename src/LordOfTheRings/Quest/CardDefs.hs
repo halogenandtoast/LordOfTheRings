@@ -270,6 +270,11 @@ allQuestCards =
       , rallyTheFighters
       , severTheHead
       , theWitchKingsGift
+      , southronChampion
+      , inEnemyTerritory
+      , findWater
+      , craftRemedy
+      , uruksOfTheEye
       ]
 
 theDrippingWalls :: CardDef
@@ -1117,4 +1122,33 @@ theWitchKingsGift :: CardDef
 theWitchKingsGift =
   (encounterSideQuest "the-dread-realm-nightmare-the-dread-realm-009" "The Witch-king's Gift" TheDreadRealmNightmare 8)
     { cdKeywords = setFromList [Time 5]
+    }
+
+-- * The Sands of Harad: the shared encounter sets' side quests
+
+southronChampion :: CardDef
+southronChampion =
+  (encounterSideQuest "16040" "Southron Champion" HaradSoldiers 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+inEnemyTerritory :: CardDef
+inEnemyTerritory =
+  (encounterSideQuest "16045" "In Enemy Territory" HaradTerritory 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+findWater :: CardDef
+findWater = (encounterSideQuest "16048" "Find Water" DesertSands 6) {cdVictoryPoints = Just 10}
+
+craftRemedy :: CardDef
+craftRemedy = (encounterSideQuest "16053" "Craft Remedy" DesertCreatures 6) {cdVictoryPoints = Just 10}
+
+uruksOfTheEye :: CardDef
+uruksOfTheEye =
+  (encounterSideQuest "16060" "Uruks of the Eye" MordorOrcs 5)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
     }

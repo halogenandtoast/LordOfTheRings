@@ -220,6 +220,11 @@ import LordOfTheRings.Quest.Cards.ProtectTheFlanks
 import LordOfTheRings.Quest.Cards.RallyTheFighters
 import LordOfTheRings.Quest.Cards.SeverTheHead
 import LordOfTheRings.Quest.Cards.TheWitchKingsGift
+import LordOfTheRings.Quest.Cards.SouthronChampion
+import LordOfTheRings.Quest.Cards.InEnemyTerritory
+import LordOfTheRings.Quest.Cards.FindWater
+import LordOfTheRings.Quest.Cards.CraftRemedy
+import LordOfTheRings.Quest.Cards.UruksOfTheEye
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -472,5 +477,10 @@ allQuests =
         , SomeQuestCard rallyTheFighters
         , SomeQuestCard severTheHead
         , SomeQuestCard theWitchKingsGift
+        , SomeQuestCard southronChampion
+        , SomeQuestCard inEnemyTerritory
+        , SomeQuestCard findWater
+        , SomeQuestCard craftRemedy
+        , SomeQuestCard uruksOfTheEye
         ]
     ]

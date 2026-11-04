@@ -397,6 +397,15 @@ allEnemyCards =
       , thaurdirsElite
       , silentGuardian
       , necromancerOfCarnDum
+      , southronCaptain
+      , southronSoldier
+      , southronArcher
+      , sandViper
+      , giantScorpion
+      , urukChieftain
+      , urukOfMordor
+      , urukWargRider
+      , mordorWarg
       ]
 
 namelessThing :: CardDef
@@ -3223,4 +3232,71 @@ necromancerOfCarnDum :: CardDef
 necromancerOfCarnDum =
   (enemy "the-dread-realm-nightmare-the-dread-realm-003" "Necromancer of Carn Dûm" TheDreadRealmNightmare 3 28 2 0 3 3)
     { cdCardTraits = setFromList [Sorcerer]
+    }
+
+-- * The Sands of Harad: the shared encounter sets (Harad Soldiers, Desert Creatures, Mordor
+-- Orcs). Easy mode copy counts from Hall of Beorn's scenario pages.
+
+southronCaptain :: CardDef
+southronCaptain = unique (enemy "16041" "Southron Captain" HaradSoldiers 1 40 2 5 3 6) {cdCardTraits = setFromList [Harad]}
+
+southronSoldier :: CardDef
+southronSoldier =
+  (enemy "16042" "Southron Soldier" HaradSoldiers 3 32 3 3 2 5)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+southronArcher :: CardDef
+southronArcher =
+  (enemy "16043" "Southron Archer" HaradSoldiers 4 36 2 4 3 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Archery 2]
+    , cdEasyModeQuantity = Just 3
+    }
+
+sandViper :: CardDef
+sandViper =
+  (enemy "16054" "Sand Viper" DesertCreatures 2 44 4 1 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 1
+    }
+
+giantScorpion :: CardDef
+giantScorpion =
+  (enemy "16055" "Giant Scorpion" DesertCreatures 3 33 3 3 2 4)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+urukChieftain :: CardDef
+urukChieftain =
+  unique
+    (enemy "16061" "Uruk Chieftain" MordorOrcs 1 50 4 5 3 6)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 3
+      }
+
+urukOfMordor :: CardDef
+urukOfMordor =
+  (enemy "16062" "Uruk of Mordor" MordorOrcs 3 35 2 4 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+urukWargRider :: CardDef
+urukWargRider =
+  (enemy "16063" "Uruk Warg-Rider" MordorOrcs 2 40 3 3 1 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | "Mordor Warg" as printed, and as the card names itself; cards.json has "Mordor Wargs".
+mordorWarg :: CardDef
+mordorWarg =
+  (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
     }

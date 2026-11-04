@@ -906,8 +906,9 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
-        -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
-        pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target <> freeGuarded g target
+        -- what is attached to it is discarded, an objective it guarded as a Key of The Three
+        -- Trials, and a Mount, as Mordor Warg, goes to the staging area
+        pushAll $ discardAttached g target
         pure
           $ g
           & entitiesL
@@ -1061,6 +1062,7 @@ runGameMessage msg g = case msg of
         ]
       <> [ResolveBoarding pid eid | fromStaging]
       <> [ CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
+         , CreateEffect $ Effect GameSource (EnemyTarget eid) [EngagedThisRound] UntilEndOfRound
          , CreateEffect $ Effect GameSource GameTarget [EnemyEngagedThisPhase] UntilEndOfPhase
          , CheckWindows [mkAfter $ EnemyEngaged eid pid]
          ]
@@ -1150,7 +1152,7 @@ runGameMessage msg g = case msg of
   DefendWith pid eid defender -> do
     windows <- actionWindows
     pushAll
-      $ [ defendingEffect defender
+      $ [ defendingEffect eid defender
         , CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
         ]
       <> windows
@@ -1182,7 +1184,7 @@ runGameMessage msg g = case msg of
           questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
             $ [ targetLabel d
                   $ exhaust' d
-                  <> [ defendingEffect d
+                  <> [ defendingEffect eid d
                      , CheckWindows [mkAfter $ DeclaredAsDefender d eid]
                      , DeclareDefenders pid eid (chosen <> [d])
                      ]
@@ -1202,7 +1204,7 @@ runGameMessage msg g = case msg of
     undefendable <- elem CannotBeDefended <$> getModifiers eid
     able <- canFight eid d
     unless (undefendable || not able) do
-      pushAll [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid]]
+      pushAll [defendingEffect eid d, CheckWindows [mkAfter $ DeclaredAsDefender d eid]]
       -- the declaration still to come is the card's instead
       withQueue_ \q -> case break pending q of
         (before, DeclareDefenders _ _ chosen : after) -> before <> (DeclareSentinels pid eid (chosen <> [d]) [] : after)
@@ -1244,7 +1246,7 @@ runGameMessage msg g = case msg of
         defend d
           | many =
               exhaust' d
-                <> [ defendingEffect d
+                <> [ defendingEffect eid d
                    , CheckWindows [mkAfter $ DeclaredAsDefender d eid]
                    , DeclareSentinels pid eid (chosen <> [d]) (other : rest)
                    ]
@@ -1970,7 +1972,7 @@ runGameMessage msg g = case msg of
             g
         passToken s = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
     pushEnd step
-    pure $ g' & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
+    pure $ g' & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration)
   PlayAlly pid card -> do
     thisAlly <- newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
@@ -2378,6 +2380,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target
     pure
@@ -2841,6 +2844,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target
     deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
@@ -2914,7 +2918,7 @@ returnToEncounterDeck place target g = do
   case target of
     EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
       withAttached
-      pushAll $ discardShadowsOf g target
+      pushAll $ discardShadowsOf g target <> attachedEnemies g target
       pure
         $ g
         & entitiesL
@@ -3041,9 +3045,23 @@ discardAttached g target =
   [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
     <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
     <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
-    <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
+    <> attachedEnemies g target
     <> discardShadowsOf g target
     <> freeGuarded g target
+
+{- | An enemy attached to the host, as Grasping Tentacle to a character, is discarded as its
+host leaves play. One attached to an enemy is a Mount, as Mordor Warg and Racing Warg are,
+whose "Forced: When attached enemy leaves play, add it to the staging area" is resolved
+here: it goes to the staging area instead.
+-}
+attachedEnemies :: Game -> Target -> [Message]
+attachedEnemies g target =
+  [ case target of
+      EnemyTarget _ -> PlaceEnemy (toId e) StagingArea
+      _ -> Discard (toTarget e)
+  | e <- toList g.entities.enemies
+  , e.placement == AttachedTo target
+  ]
 
 {- | The locations the card guards go free to the staging area as it leaves play, as an
 objective-location of Across the Ettenmoors returns once its guard is dealt with.
@@ -3110,8 +3128,10 @@ leftPlayWindows g target = case target of
     pure [LeftPlay target pid (cdCardTraits def <> gained), CharacterLeftPlay card]
 
 -- | The character is defending the attack being resolved.
-defendingEffect :: Target -> Message
-defendingEffect d = CreateEffect $ Effect GameSource d [Defending] UntilEndOfAttack
+-- | The character defends the enemy's attack, the effect's source the attack, for what
+-- reads the defender of one enemy's attack (see 'getDefendersAgainst').
+defendingEffect :: EnemyId -> Target -> Message
+defendingEffect eid d = CreateEffect $ Effect (EnemyAttackSource eid) d [Defending] UntilEndOfAttack
 
 gainedTraits :: Target -> GameT (Set Trait)
 gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
