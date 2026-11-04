@@ -75,6 +75,8 @@ data WindowMatcher
   | QuestedSuccessfullyWindow Timing
   | -- | after an attack the character, or any character, defended
     DefendedAttackWindow Timing (Maybe Target)
+  | -- | after an attack by the enemy was defended, as Noose of Vines reads
+    DefendedAttackAgainstWindow Timing EnemyId
   | PlayedFromHandWindow Timing Target
   | LocationRevealedWindow Timing
   | ShadowEffectAgainstWindow Timing Target
@@ -331,6 +333,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterRescuedWindow t mt, CharacterRescued c) -> t == timing && maybe True (== c) mt
   (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing
   (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
+  (DefendedAttackAgainstWindow t eid, DefendedAttack _ eid') -> t == timing && eid == eid'
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'
   (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
   (ShadowEffectAgainstWindow t target, ShadowEffectAgainst target') -> t == timing && target == target'
