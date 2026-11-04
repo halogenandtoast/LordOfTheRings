@@ -322,6 +322,20 @@ spec = describe "Roam Across Rhovanion" do
     (.placement) <$> getEnemy u `shouldReturn` StagingArea
     (.placement) <$> getEnemy t `shouldReturn` StagingArea
 
+  it "keeps Urdug engaged after another of his attacks in the quest phase deals damage" . rarTest $ \pid -> do
+    u <- stage Enemies.urdugEnemy
+    _ <- stage Enemies.tinyEnemy
+    run $ EngageEnemy pid u
+    _ <- setEncounterDeck [Locations.deepRavine]
+    inPhase QuestPhase
+    run $ EnemyAttack pid u
+    passActions pid
+    chooseLabel "$label.takeAttackUndefended" pid
+    passActions pid
+    chooseTarget pid =<< hero "01012"
+    passActions pid
+    (.placement) <$> getEnemy u `shouldReturn` EngagedWith pid
+
   -- \* Urdug and Tiny
 
   it "loses the game as Urdug or Tiny, objective-ally side, is destroyed" . rarTest $ \pid -> do

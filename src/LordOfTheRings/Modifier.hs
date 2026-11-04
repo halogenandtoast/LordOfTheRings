@@ -156,6 +156,9 @@ data ModifierType
   | -- | on a card: it gets this much threat while it has a token of the kind on it, counted
     -- as they change, as Vastness of Mirkwood's "+2 instead if it has at least 1 progress"
     ThreatWithToken Token Int
+  | -- | on an enemy, for an attack: it is the attack its own ability made, as Urdug's
+    -- "If this attack deals damage" reads of the immediate attack Tiny gives him
+    AttackMadeByOwnAbility
   | -- | on the game: the total threat in the staging area is raised by 1 for each token of
     -- the kind on the card, counted as they change, as The Tower Beckons reads
     StagingThreatPerToken Target Token
