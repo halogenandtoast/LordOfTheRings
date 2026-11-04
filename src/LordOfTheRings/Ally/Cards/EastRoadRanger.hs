@@ -18,5 +18,6 @@ eastRoadRanger = ally EastRoadRanger Cards.eastRoadRanger
 -- so, not the modifiers being gathered alongside this one.
 instance HasModifiersFor EastRoadRanger where
   getModifiersFor (EastRoadRanger a) = do
-    side <- getsGame (any ((CurrentQuest `elem`) . effectModifiers) . gameEffects)
+    sideQuests <- getSideQuests
+    side <- getsGame (any (\e -> CurrentQuest `elem` effectModifiers e && effectTarget e `elem` sideQuests) . gameEffects)
     when (a.allyCommitted && side) $ modifySelf a [WillpowerModifier 2]

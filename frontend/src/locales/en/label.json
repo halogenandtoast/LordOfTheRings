@@ -3315,5 +3315,15 @@
     "magicRing": "Shuffle 1 copy of Bilbo's Magic Ring into your deck?",
     "shuffleIn": "Shuffle it in",
     "leaveOut": "Leave it out"
+  },
+  "theBattleOfFiveArmies": {
+    "currentQuest": "Choose the quest stage to be the current quest this round"
+  },
+  "ravenousWarg": {
+    "defender": "Ravenous Warg: declare the character you control with the most damage as the defender"
+  },
+  "mistyMountainEagle": {
+    "choose": "Misty Mountain Eagle: take control of it, or discard it to discard a non-unique enemy in the staging area",
+    "takeControl": "Take control of Misty Mountain Eagle"
   }
 }
