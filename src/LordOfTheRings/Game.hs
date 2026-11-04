@@ -1054,12 +1054,16 @@ runGameMessage msg g = case msg of
   DoStep 1 (Destroy source target@(EnemyTarget eid)) | Map.member eid g.entities.enemies -> do
     enemy <- getEnemy eid
     stays <- elem StaysInPlayWhenDefeated <$> getModifiers target
-    let card = EncounterCard $ MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
+    let ec = MkEncounterCard (enemyCardId $ toAttrs enemy) (toCardCode enemy)
+        card = EncounterCard ec
         -- what a player's attack destroyed, for the attack to read as it resolves
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card Nothing | PlayerAttackSource _ <- [source]])
+        -- one of the Evil Creatures deck goes to its discard pile, even with victory
+        -- points (Journey Up the Anduin rules)
+        victory = cdVictoryPoints (toCardDef enemy) <* guard (not $ isEvilCreaturesCard (toAttrs g.scenario) ec)
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     -- one that stays in play for its own effect was still destroyed by the attack
-    if stays then pure (recorded g) else recorded <$> case cdVictoryPoints (toCardDef enemy) of
+    if stays then pure (recorded g) else recorded <$> case victory of
       Just _ -> do
         -- what is attached to it is discarded, an objective it guarded as a Key of The Three
         -- Trials, and a Mount, as Mordor Warg, goes to the staging area
@@ -3042,6 +3046,15 @@ runGameMessage msg g = case msg of
         pushAll $ discardAttached g (AllyTarget aid)
         let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard a).id (EnemyId $ unAllyId aid)
         pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
+  -- a location whose other side is an objective ally, as Woodmen Village's Haldan, turns
+  -- over out of the locations: the effect turning it puts that side where it says, under
+  -- the location's card id
+  Flip target@(LocationTarget lid)
+    | Just l <- Map.lookup lid g.entities.locations
+    , Just other <- cdOtherSide (toCardDef l)
+    , cdCardType (toCardDef other) == ObjectiveAllyType -> do
+        pushAll $ discardAttached g target
+        pure $ g & entitiesL . locationsL %~ Map.delete lid
   -- a double-sided location turns over, as an Uncharted location does
   Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
     pushAll $ [ArrangeIslandMap | isJust l.position] <> [CheckWindows [mkAfter $ LocationFlipped lid]]

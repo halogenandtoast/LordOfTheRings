@@ -8,7 +8,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
 import LordOfTheRings.Classes.HasModifiersFor
-import LordOfTheRings.EncounterSet (EncounterSet (TheSiegeOfCairAndrosNightmare))
+import LordOfTheRings.EncounterSet (EncounterSet (TheSiegeOfCairAndrosNightmare, Wilderlands))
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Heading (Heading)
 import LordOfTheRings.Id
@@ -106,6 +106,11 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioCavesDeck :: [EncounterCard]
   -- ^ the Caves deck, top first (Ered Mithrin): a Deep location traveled to is replaced
   -- by its top card
+  , scenarioEvilCreaturesDeck :: Maybe [EncounterCard]
+  -- ^ the Evil Creatures deck, top first, while there is one: Wilderlands' enemies, taken
+  -- out of the encounter deck (Journey Up the Anduin)
+  , scenarioEvilCreaturesDiscard :: [EncounterCard]
+  -- ^ the Evil Creatures deck's own discard pile
   }
   deriving stock (Show, Eq, Generic)
 
@@ -115,7 +120,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard]))] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("evilCreaturesDeck", Null), ("evilCreaturesDiscard", toJSON ([] :: [EncounterCard]))] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -149,6 +154,8 @@ scenario f sid name =
       , scenarioOutOfPlayResources = mempty
       , scenarioGuardedPlayerCards = mempty
       , scenarioCavesDeck = []
+      , scenarioEvilCreaturesDeck = Nothing
+      , scenarioEvilCreaturesDiscard = []
       }
 
 instance Entity ScenarioAttrs where
@@ -188,6 +195,16 @@ instance HasField "encounterDeck" ScenarioAttrs [EncounterCard] where
 
 instance HasField "cavesDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioCavesDeck
+
+instance HasField "evilCreaturesDeck" ScenarioAttrs (Maybe [EncounterCard]) where
+  getField = scenarioEvilCreaturesDeck
+
+-- | A card of the Evil Creatures deck, while there is one: an enemy of the Wilderlands
+-- encounter set (Journey Up the Anduin rules).
+isEvilCreaturesCard :: ScenarioAttrs -> EncounterCard -> Bool
+isEvilCreaturesCard a card = isJust a.evilCreaturesDeck && cdEncounterSet def == Just Wilderlands && cdCardType def == EnemyType
+ where
+  def = toCardDef card
 
 instance HasField "questDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioQuestDeck

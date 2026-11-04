@@ -314,6 +314,9 @@ allQuestCards =
       , findTheOthers
       , freeTheCaptives
       , escapeIntoTheJungle
+      , travelingNorth
+      , woodmenUnderAttack
+      , thePassageOfTheFord
       , lostUnderground
       , searchingTheCaves
       , gettingCloser
@@ -1404,3 +1407,13 @@ outflanked = (quest "19169" "Outflanked" TheFateOfWilderland 2 0) {cdQuestPoints
 
 theFinalPush :: CardDef
 theFinalPush = (quest "19170" "The Final Push" TheFateOfWilderland 3 0) {cdQuestPoints = Nothing}
+-- * Journey Up the Anduin
+
+travelingNorth :: CardDef
+travelingNorth = quest "18066" "Traveling North" JourneyUpTheAnduin 1 10
+
+woodmenUnderAttack :: CardDef
+woodmenUnderAttack = quest "18067" "Woodmen Under Attack" JourneyUpTheAnduin 2 5
+
+thePassageOfTheFord :: CardDef
+thePassageOfTheFord = quest "18068" "The Passage of the Ford" JourneyUpTheAnduin 3 5

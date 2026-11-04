@@ -368,6 +368,8 @@ import LordOfTheRings.Treachery.Cards.DragonScales
 import LordOfTheRings.Treachery.Cards.FierceAttack
 import LordOfTheRings.Treachery.Cards.UrdugsCommand
 import LordOfTheRings.Treachery.Cards.DarkClouds
+import LordOfTheRings.Treachery.Cards.FrenziedCreature
+import LordOfTheRings.Treachery.Cards.DangerousCrossing
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -763,5 +765,7 @@ allTreacherys =
         , SomeTreacheryCard fierceAttack
         , SomeTreacheryCard urdugsCommand
         , SomeTreacheryCard darkClouds
+        , SomeTreacheryCard frenziedCreature
+        , SomeTreacheryCard dangerousCrossing
         ]
     ]

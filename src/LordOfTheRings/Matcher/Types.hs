@@ -178,6 +178,8 @@ data EnemyMatcher
     EnemyInStormcallerArea
   | EnemyWithTrait Trait
   | EnemyWithCardCode CardCode
+  | -- | the enemy whose card this is, as a card taken from a deck is found once in play
+    EnemyWithCardId CardId
   | EnemyEngagedWith PlayerMatcher
   | -- | an enemy dealt a shadow card still face down
     EnemyWithFacedownShadow

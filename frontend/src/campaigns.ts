@@ -103,6 +103,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'a-storm-on-cobas-haven': { beta: true, nightmare: true },
   'the-city-of-corsairs': { beta: true, nightmare: true },
   'the-long-arm-of-mordor': { beta: true },
+  'journey-up-the-anduin': { beta: true },
   'beneath-the-sands': { beta: true },
   'desert-crossing': { beta: true },
   'escape-from-umbar': { beta: true },

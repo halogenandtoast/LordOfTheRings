@@ -3277,5 +3277,36 @@
       "“My friends,” said King Brand, “You have journeyed far and done much. Wilderland is in your debt. These deeds of yours will live forever in the songs of Dale.”",
       "Then, to the lasting delight of the heroes, a minstrel was called forth to sing their tale. As they listened to the bard’s account of their deeds, they wondered at all they had accomplished."
     ]
+  },
+  "journey-up-the-anduin": {
+    "intro": [
+      "The sun shone brightly on the wide green pastures of the Anduin river valley. The tall grass swayed with a gentle breeze. Summer was already giving way to fall in the Misty Mountains to the west, but the air was still warm in the Vales of Anduin. It was pleasant travel weather for a small band of adventurers who were making their way north along the western shore of the mighty Anduin. They had already come a long way. The tale of their journey spanned from the cold of Angmar to the coasts of Andrast, and from the desert of Harad to the high walls of Minas Tirith.",
+      "It was a hero’s tale: This company of adventurers had brought with them from the far south of Middle-earth the remnant of a Haradrim tribe whose village was destroyed when they defied Mordor. They had depended upon one another over a long and perilous journey from Far Harad to Pelargir, but they were not permitted to remain in Gondor. The steward of that land remained suspicious of the Haradrim even after the heroes’ account of their bravery, but the Lord Denethor had granted them safe passage north. They were escorted to the city of Edoras in Rohan where they sought an audience with King Theoden, but it was the king’s advisor, Gríma, who heard their plight and denied them refuge.",
+      "Once again the heroes and their Haradrim allies were forced to continue north. Their hope now was to seek asylum for their friends with King Brand in Dale, but it was still a long and dangerous journey across Wilderland and winter was nigh. The Haradrim, unaccustomed to the harsh cold of a Rhovanion winter, would be ill-suited to such a journey, so the heroes had left them on the northern border of Lothlórien in the care of the Galadhrim. The Lord and Lady of the Golden Wood would not allow strangers into their realm, but they agreed to shelter the refugees through the winter while the heroes traveled to see King Brand on their behalf.",
+      "So it was that the heroes now traveled north through the Vales of Anduin on their way to the Old Ford. The Beornings safe-guarded the passage of the river there and many small Woodmen villages dotted the west river bank along the way. It would be an easy journey through pleasant country. Or so they thought.",
+      "Their troubles began when they saw a Warg-rider atop a low foothill of the mountains to the west. As soon as they spotted the Goblin, he turned his mount and rode out of sight down the other side of the hill. They did not see him again that day or the next, but it left them ill at ease and they took turns keeping watch at night. It was a good thing they did because on the third night the lookout saw a Mountain-troll descend from the hills and walk within a stone’s throw from their camp. The lookout had fitted an arrow to her bow and was ready to wake her companions when she realized that it had not seen them and was heading south. When she shared this news with the rest of the company the next morning, it caused a stir.",
+      "“A stray Warg-rider is one thing, but Trolls are another!” exclaimed one of the adventurers.",
+      "“We do not know the Goblin was a stray,” countered his companion. “I still say it was a scout and a sign that there are more nearby.”",
+      "“It is unusual to see these creatures this far south and on the west side of the river,” agreed the first.",
+      "“I believe some evil is afoot. We must stay alert now; this land is no longer safe for us,” offered a third companion.",
+      "All nodded their heads in agreement. They made no more conversation as they broke camp that morning, and they remained silent and alert as they resumed their journey north."
+    ],
+    "setup": [
+      "“Journey Up the Anduin” is played with an encounter deck built with all the cards from the following encounter sets: Journey Up the Anduin, Grey Mountain Goblins, Hills of Wilderland, Lost in Wilderland, Journey Along the Anduin, and Wilderlands (these last two sets can be found in The Lord of the Rings: The Card Game core set)."
+    ],
+    "rules": [
+      {
+        "title": "Evil Creatures Deck",
+        "text": "To create the Evil Creatures deck, take each enemy card from the Wilderlands encounter set and shuffle them together. This is the Evil Creatures deck. Remove each location and treachery card from the Wilderlands encounter set from the game.\n\nWhen an enemy from the Evil Creatures deck leaves play, place it in a separate Evil Creatures discard pile, even if it has victory points. If the Evil Creatures deck is ever empty, shuffle the Evil Creatures discard pile back into the Evil Creatures deck."
+      }
+    ],
+    "resolution": [
+      "“I’m glad that’s over,” said the Woodman, Haldan, as he leaned wearily on his axe after the fight at the Old Ford.",
+      "“That’s the most fun I’ve had in years!” laughed Grimbeorn. The huge Beorning gave Haldan a clap on the back that nearly toppled the Woodman. “Scraps like that make me feel young again,” he added with a giant grin.",
+      "Haldan offered a tired smile in return and massaged his shoulder where Grimbeorn had slapped him. “That may be,” he said, “but doesn’t it worry you? It isn’t like the Goblins to venture so far south, or to attack those who can fight back.”",
+      "“Aye,” said Grimbeorn thinking about it now. “It didn’t feel like one of their raids. It was more like an act of desperation than an attack. There’ve been a fair few of these Goblins and other creatures trying to sneak across the Ford recently. It’s as if they’re trying to get away from something up north.”",
+      "“But what could be driving Goblins and Trolls from their holes in the mountains?” asked Haldan.",
+      "Grimbeorn and the companions all looked at each other, but no one offered any guesses as the weight of the question sank in. They all felt it though: the foreboding of worse to come."
+    ]
   }
 }

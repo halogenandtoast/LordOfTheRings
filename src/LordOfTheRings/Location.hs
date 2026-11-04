@@ -452,6 +452,9 @@ import LordOfTheRings.Location.Cards.GateOfGundabad
 import LordOfTheRings.Location.Cards.HilltopBattlements
 import LordOfTheRings.Location.Cards.DwarvenWatchtower
 import LordOfTheRings.Location.Cards.SlopesOfGundabad
+import LordOfTheRings.Location.Cards.WoodmenVillage
+import LordOfTheRings.Location.Cards.TheOldFordJourneyUpTheAnduin
+import LordOfTheRings.Location.Cards.WoodedRiverbank
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -950,5 +953,8 @@ allLocations =
         , SomeLocationCard hilltopBattlements
         , SomeLocationCard dwarvenWatchtower
         , SomeLocationCard slopesOfGundabad
+        , SomeLocationCard woodmenVillage
+        , SomeLocationCard theOldFordJourneyUpTheAnduin
+        , SomeLocationCard woodedRiverbank
         ]
     ]

@@ -76,7 +76,7 @@ hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
   s = toAttrs g.scenario
   hidden =
     concatMap (map (.id) . (.deck)) (toList merged.players)
-      <> map (.id) (s.encounterDeck <> s.questDeck <> fromMaybe [] s.scenarioCorsairDeck <> s.scenarioUnchartedDeck <> s.scenarioGrottoDeck <> concat (toList s.scenarioHiddenCards))
+      <> map (.id) (s.encounterDeck <> s.questDeck <> fromMaybe [] s.scenarioCorsairDeck <> fromMaybe [] s.evilCreaturesDeck <> s.scenarioUnchartedDeck <> s.scenarioGrottoDeck <> concat (toList s.scenarioHiddenCards))
       <> concat
         [ [c.id | c <- a.shadowCards, c.id `notElem` a.enemyShadowRevealed] <> map (.id) a.enemyFacedown
         | a <- map toAttrs (toList merged.entities.enemies)
@@ -262,7 +262,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   campaignCard =
     let a = toAttrs g.scenario
      in (\code -> object ["code" .= code, "flipped" .= scenarioCampaignCardFlipped a]) <$> (flip campaignCardFor (scenarioId a) =<< scenarioCampaign a)
-  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o
     v -> v

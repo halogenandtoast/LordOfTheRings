@@ -378,6 +378,8 @@ allTreacheryCards =
       , fierceAttack
       , urdugsCommand
       , darkClouds
+      , frenziedCreature
+      , dangerousCrossing
       ]
 
 deepDeepDark :: CardDef
@@ -2357,6 +2359,14 @@ ruinedSupplies =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Journey Up the Anduin
+
+frenziedCreature :: CardDef
+frenziedCreature = (treachery "18018" "Frenzied Creature" JourneyUpTheAnduin 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+dangerousCrossing :: CardDef
+dangerousCrossing = (treachery "18019" "Dangerous Crossing" JourneyUpTheAnduin 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 lostInTheWild :: CardDef
 lostInTheWild = (treachery "18026" "Lost in the Wild" LostInWilderland 2) {cdEasyModeQuantity = Just 1}

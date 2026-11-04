@@ -470,6 +470,8 @@ allLocationCards =
       , hilltopBattlements
       , dwarvenWatchtower
       , slopesOfGundabad
+      , theOldFordJourneyUpTheAnduin
+      , woodedRiverbank
       ]
 
 drownedTreasury :: CardDef
@@ -3491,8 +3493,8 @@ crumblingCavern = (location "18064" "Crumbling Cavern" LostCaves 1 6 6) {cdCardT
 undergroundLake :: CardDef
 undergroundLake = (location "18065" "Underground Lake" LostCaves 1 0 0) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
 
--- | Journey Up the Anduin's Woodmen Village, whose other side is Haldan (18069B). What it
--- does is the scenario's.
+-- | Journey Up the Anduin's Woodmen Village, whose other side is Haldan (18069B): set aside,
+-- out of play, until stage 2A adds it to the staging area.
 woodmenVillage :: CardDef
 woodmenVillage =
   (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
@@ -3527,4 +3529,21 @@ slopesOfGundabad =
     , cdWhenRevealed = True
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+-- | Journey Up the Anduin's, not The Hunt for Gollum's: set aside, out of play, until
+-- stage 3A adds it to the staging area.
+theOldFordJourneyUpTheAnduin :: CardDef
+theOldFordJourneyUpTheAnduin =
+  (location "18016" "The Old Ford" JourneyUpTheAnduin 1 5 5)
+    { cdCardTraits = setFromList [Riverland]
+    , cdVictoryPoints = Just 5
+    }
+
+woodedRiverbank :: CardDef
+woodedRiverbank =
+  (location "18017" "Wooded Riverbank" JourneyUpTheAnduin 3 3 1)
+    { cdCardTraits = setFromList [Riverland]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
