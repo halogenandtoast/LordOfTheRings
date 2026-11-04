@@ -930,7 +930,7 @@ quickerThanSight :: CardDef
 quickerThanSight = event "19064" "Quicker Than Sight" Spirit (StaticCost 0)
 
 manTheWalls :: CardDef
-manTheWalls = event "19086" "Man the Walls" Leadership (StaticCost 1)
+manTheWalls = event "19086" "Man the Walls" Leadership (StaticCost 0)
 
 familiarLands :: CardDef
 familiarLands = event "19088" "Familiar Lands" Lore (StaticCost 1)
