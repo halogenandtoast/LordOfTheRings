@@ -438,6 +438,11 @@ narrationFor = \case
   ScenarioSpecific "stormcaller.advanced" (parseMaybe parseJSON -> Just card) ->
     Just $ one $ toned Bad $ structure [ikeyPart "log.stormcallerAdvances" ["quest" ~> EncounterCard card]]
   ScenarioSpecific "stormcaller.join" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.stormcallerCaughtUp" []]
+  -- \* Burgle attempts (The Lonely Mountain)
+  ScenarioSpecific "burgle.revealed" (parseMaybe parseJSON -> Just (card :: Card)) ->
+    Just $ one $ mechanic [ikeyPart "log.burgleReveals" ["card" ~> card]]
+  ScenarioSpecific "burgle.result" (parseMaybe parseJSON -> Just (_ :: Target, ok)) ->
+    Just $ one $ toned (if ok then Good else Bad) $ mechanic [ikeyPart (if ok then "log.burgleSucceeds" else "log.burgleFails") []]
   -- \* Cold-Drake set aside with its damage (The Withered Heath)
   ScenarioSpecific "witheredHeath.drakeHealed" (parseMaybe parseJSON -> Just (n :: Int)) ->
     Just $ one $ toned Good $ mechanic [ikeyPart "log.coldDrakeHealed" ["count" ~> n]]
@@ -582,6 +587,9 @@ openBlock block = do
           ]
     WhenRevealedBlock card ->
       header $ mechanic [ikeyPart "log.resolvedWhenRevealed" ["card" ~> EncounterCard card]]
+    BurgleBlock pid -> do
+      who <- playerRefFor pid
+      header $ action [ikeyPart "log.burgleAttempt" ["player" ~> who]]
     EnemyAttackBlock pid eid -> whenRef (toTarget eid) \e -> do
       who <- playerRefFor pid
       attack <- getEnemyAttack eid
