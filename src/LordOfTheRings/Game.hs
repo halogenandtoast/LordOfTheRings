@@ -906,8 +906,9 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
-        -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
-        pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target <> freeGuarded g target
+        -- what is attached to it is discarded, an objective it guarded as a Key of The Three
+        -- Trials, and a Mount, as Mordor Warg, goes to the staging area
+        pushAll $ discardAttached g target
         pure
           $ g
           & entitiesL
@@ -2378,6 +2379,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target
     pure
@@ -2841,6 +2843,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target
     deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
@@ -2914,7 +2917,7 @@ returnToEncounterDeck place target g = do
   case target of
     EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
       withAttached
-      pushAll $ discardShadowsOf g target
+      pushAll $ discardShadowsOf g target <> attachedEnemies g target
       pure
         $ g
         & entitiesL
@@ -3041,9 +3044,23 @@ discardAttached g target =
   [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
     <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
     <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
-    <> [Discard (toTarget e) | e <- toList g.entities.enemies, e.placement == AttachedTo target]
+    <> attachedEnemies g target
     <> discardShadowsOf g target
     <> freeGuarded g target
+
+{- | An enemy attached to the host, as Grasping Tentacle to a character, is discarded as its
+host leaves play. One attached to an enemy is a Mount, as Mordor Warg and Racing Warg are,
+whose "Forced: When attached enemy leaves play, add it to the staging area" is resolved
+here: it goes to the staging area instead.
+-}
+attachedEnemies :: Game -> Target -> [Message]
+attachedEnemies g target =
+  [ case target of
+      EnemyTarget _ -> PlaceEnemy (toId e) StagingArea
+      _ -> Discard (toTarget e)
+  | e <- toList g.entities.enemies
+  , e.placement == AttachedTo target
+  ]
 
 {- | The locations the card guards go free to the staging area as it leaves play, as an
 objective-location of Across the Ettenmoors returns once its guard is dealt with.
