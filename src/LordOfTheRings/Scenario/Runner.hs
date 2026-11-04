@@ -275,6 +275,11 @@ instance RunMessage ScenarioAttrs where
         push $ RevealCard top
         pure $ attrs & powerOfMordorDeckL .~ rest
       [] -> pure attrs
+    PlaceTopOfPowerOfMordorDeckUnderneath target -> case attrs.powerOfMordorDeck of
+      top : rest -> do
+        push $ PlaceUnderneath target [EncounterCard top]
+        pure $ attrs & powerOfMordorDeckL .~ rest
+      [] -> pure attrs
     -- the Evil Creatures discard pile is shuffled back in once the deck is empty, as the
     -- last card leaves it (Journey Up the Anduin rules)
     AddFromEvilCreaturesDeck source engaging -> case attrs.evilCreaturesDeck of

@@ -357,6 +357,9 @@ data Message
     CreatePowerOfMordorDeck
   | -- | the top card of the Power of Mordor deck is revealed, as an encounter card is
     RevealTopOfPowerOfMordorDeck
+  | -- | the top card of the Power of Mordor deck is placed faceup under the card, out of play,
+    -- as The Fortress of Nurn's setup places one under each side quest
+    PlaceTopOfPowerOfMordorDeckUnderneath Target
   | -- | the top card of the Evil Creatures deck enters play for the source: added to the
     -- staging area, or put into play engaged with the player (Journey Up the Anduin)
     AddFromEvilCreaturesDeck Source (Maybe PlayerId)

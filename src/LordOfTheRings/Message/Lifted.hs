@@ -1714,6 +1714,11 @@ revealTopOfPowerOfMordorDeck = do
   unless (null deck) $ push RevealTopOfPowerOfMordorDeck
   pure $ notNull deck
 
+-- | The top card of the Power of Mordor deck is placed faceup under the card, out of play,
+-- as The Fortress of Nurn's setup places one under each side quest; nothing if it is empty.
+placeTopOfPowerOfMordorDeckUnderneath :: (ReverseQueue m, Targetable target) => target -> m ()
+placeTopOfPowerOfMordorDeckUnderneath = push . PlaceTopOfPowerOfMordorDeckUnderneath . toTarget
+
 -- | The top card of the Evil Creatures deck is added to the staging area, the source told
 -- of it with 'AddedFromEvilCreaturesDeck' (Journey Up the Anduin).
 addFromEvilCreaturesDeck :: (ReverseQueue m, Sourceable source) => source -> m ()
