@@ -1097,6 +1097,12 @@ getAflame lid = do
   l <- getLocation lid
   keywordValue (\case Aflame n -> Just n; _ -> Nothing) (toTarget lid) (toCardDef l)
 
+-- | The location's Mire X, 0 when it has none (The Land of Shadow rules insert).
+getMire :: HasGame m => LocationId -> m Int
+getMire lid = do
+  l <- getLocation lid
+  keywordValue (\case Mire n -> Just n; _ -> Nothing) (toTarget lid) (toCardDef l)
+
 -- | Each location in play with the Aflame keyword, with its Aflame X.
 getAflameLocations :: HasGame m => m [(LocationId, Int)]
 getAflameLocations = filter ((> 0) . snd) <$> (traverse (\lid -> (lid,) <$> getAflame lid) =<< select AnyLocation)

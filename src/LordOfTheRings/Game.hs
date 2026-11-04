@@ -2370,6 +2370,10 @@ runGameMessage msg g = case msg of
       -- not a card Saruman holds out of play
       timed <- flip filterM cards \t -> andM [notOutOfPlay t, (&& timeCountersIn es t > 0) . (> 0) <$> getTimeX t]
       pushAll [RemoveTokens GameSource t TimeCounter 1 | t <- timed]
+      -- and each location with Mire X in the staging area takes 1 mire token (The Land of
+      -- Shadow rules insert; the revised Two Towers rulebook, p. 9)
+      miring <- filterM (fmap (> 0) . getMire) =<< select LocationInStagingArea
+      pushAll [PlaceTokens GameSource (LocationTarget lid) Resource 1 | lid <- miring]
     when (phase == CombatPhase) do
       returning <-
         filterM

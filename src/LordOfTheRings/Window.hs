@@ -169,6 +169,8 @@ data WindowType
     CommittedToSailingTest PlayerId [Target]
   | -- | a location was turned over to its other side, as an Uncharted location is
     LocationFlipped LocationId
+  | -- | a location is discarded by the Mire keyword, having as many mire tokens as its X
+    DiscardedByMire LocationId
   | -- | a location became the active location, however it did
     BecameActiveLocation LocationId
   | -- | the Discover keyword of the location resolved: whether it revealed a Hazard card
