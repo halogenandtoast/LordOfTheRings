@@ -473,12 +473,14 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       sideQuestDeck: game.sideQuestDeck ?? 0,
       evilCreaturesDeck: game.scenario.evilCreaturesDeckSize ?? null,
       powerOfMordorDeck: game.scenario.powerOfMordorDeckSize ?? 0,
+      burdenDeck: game.scenario.burdenDeckSize ?? 0,
       evilCreaturesDiscard: (game.scenario.evilCreaturesDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped }) : null,
       stormcallerStage: game.stormcallerStage
         ? card(game.stormcallerStage.cardCode, game.stormcallerStage.id, { flipped: true, image: `${game.stormcallerStage.cardCode}-d`, progress: game.stormcallerProgress ?? 0 })
         : null,
       temperature: game.temperature ?? null,
+      ringBearersLife: game.ringBearersLife ?? null,
       stormcallerArea: withAttachments([...placed('enemies', isAt('StormcallerArea')), ...placed('locations', isAt('StormcallerArea'))]),
       orcsStage: game.orcsStage
         ? card(game.orcsStage.cardCode, game.orcsStage.id, { flipped: true, image: `${game.orcsStage.cardCode}-d`, progress: game.orcsProgress ?? 0 })

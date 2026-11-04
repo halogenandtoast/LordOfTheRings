@@ -148,6 +148,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
         -- the heat tracker's temperature (Desert Crossing)
         $ KeyMap.insert "temperature" (metaValue "temperature")
+        -- the Ring-bearer's life on the life tracker (Flight to the Ford)
+        $ KeyMap.insert "ringBearersLife" (metaValue "ringBearersLife")
         -- the Orcs' quest stage and its progress (Race Across Harad)
         $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
         $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")
@@ -296,7 +298,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   campaignCard =
     let a = toAttrs g.scenario
      in (\code -> object ["code" .= code, "flipped" .= scenarioCampaignCardFlipped a]) <$> (flip campaignCardFor (scenarioId a) =<< scenarioCampaign a)
-  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "powerOfMordorDeck" "powerOfMordorDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "powerOfMordorDeck" "powerOfMordorDeckSize" . withSize "burdenDeck" "burdenDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o
     v -> v

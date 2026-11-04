@@ -40,6 +40,7 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude hiding (say)
 import LordOfTheRings.Scenario.Scenarios.DesertCrossing.Helpers (getTemperature)
+import LordOfTheRings.Scenario.Scenarios.FlightToTheFord.Helpers (getRingBearersLife)
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -107,6 +108,12 @@ narrationFor = \case
   ScenarioSpecific "desertCrossing.temperature" (parseMaybe parseJSON -> Just (n :: Int)) | n /= 0 -> Just do
     t <- getTemperature
     one $ toned (if n > 0 then Bad else Good) $ mechanic [ikeyPart (if n > 0 then "log.temperatureRises" else "log.temperatureFalls") ["count" ~> abs n, "temperature" ~> max 0 (t + n)]]
+  -- \* The Ring-bearer's life (Flight to the Ford): read before it falls
+  ScenarioSpecific "flightToTheFord.setLife" (parseMaybe parseJSON -> Just (n :: Int)) ->
+    Just $ one $ mechanic [ikeyPart "log.ringBearersLifeSet" ["life" ~> n]]
+  ScenarioSpecific "flightToTheFord.reduceLife" (parseMaybe parseJSON -> Just (n :: Int)) | n > 0 -> Just do
+    life <- getRingBearersLife
+    one $ toned Bad $ mechanic [ikeyPart "log.ringBearersLifeReduced" ["count" ~> n, "life" ~> max 0 (life - n)]]
   -- \* Day and Night, as The Wastes of Eriador's Time objective flips
   CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
   -- a card turned over to its other side, as Beneath the Sands' Search objective: read
@@ -284,6 +291,10 @@ narrationFor = \case
       _ -> pure []
   CreatePowerOfMordorDeck -> Just $ one $ mechanic [ikeyPart "log.powerOfMordorDeckCreated" []]
   RevealTopOfPowerOfMordorDeck -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.powerOfMordorReveals" []]
+  CreateBurdenDeck _ -> Just $ one $ mechanic [ikeyPart "log.burdenDeckCreated" []]
+  RevealTopOfBurdenDeck -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.burdenDeckReveals" []]
+  ShuffleTopOfBurdenDeckIntoEncounterDeck -> Just $ one $ mechanic [ikeyPart "log.burdenShuffledIntoEncounterDeck" []]
+  PlaceTopOfBurdenDeckOnEncounterDeck -> Just $ one $ mechanic [ikeyPart "log.burdenPlacedOnEncounterDeck" []]
   -- an objective ally turning to its enemy side, as Captain Sahír's
   Flip (AllyTarget aid) -> Just $ whenRef (toTarget aid) \a -> one $ mechanic [ikeyPart "log.allyFlips" ["ally" ~> a]]
   -- Secret Cultist turns an ally into an enemy engaged with its owner
