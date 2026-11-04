@@ -3192,6 +3192,36 @@ runGameMessage msg g = case msg of
       & effectsL
       . traverse
       %~ (\e -> if effectTarget e == toTarget a then e {effectTarget = toTarget new} else e)
+  -- it does not leave play: the same card under the enemy card type, its owner's still,
+  -- its damage kept; what was attached to it as a hero is discarded (Fallen into Evil)
+  HeroBecomesEnemy hid | Just h <- Map.lookup hid g.entities.heroes -> do
+    let attrs = toAttrs h
+        eid = EnemyId (unHeroId hid)
+        new =
+          overAttrs (\e -> e {enemyTokens = heroTokens attrs, enemyOwner = Just attrs.heroOwner})
+            $ lookupEnemy (toCardCode h) attrs.heroCardId eid
+    pushAll $ discardAttached g (toTarget h) <> [CheckEliminations]
+    pure
+      $ g
+      & entitiesL . heroesL %~ Map.delete hid
+      & entitiesL . enemiesL %~ insertEntity new
+      & effectsL . traverse %~ (\e -> if effectTarget e == toTarget h then e {effectTarget = toTarget new} else e)
+  -- back under its owner's control, its damage kept; what was attached to it as an enemy is
+  -- discarded
+  EnemyBecomesHero eid
+    | Just e <- Map.lookup eid g.entities.enemies
+    , Just owner <- enemyOwner (toAttrs e)
+    , cdCardType (toCardDef e) == HeroType -> do
+        let attrs = toAttrs e
+            new =
+              overAttrs (\h -> h {heroTokens = enemyTokens attrs})
+                $ lookupHero (toCardCode e) attrs.enemyCardId (HeroId $ unEnemyId eid) owner
+        pushAll $ discardAttached g (toTarget e)
+        pure
+          $ g
+          & entitiesL . enemiesL %~ Map.delete eid
+          & entitiesL . heroesL %~ insertEntity new
+          & effectsL . traverse %~ (\x -> if effectTarget x == toTarget e then x {effectTarget = toTarget new} else x)
   -- it does not leave play: it keeps its id, and whether it is exhausted, as the card it is
   AllyBecomesAttachment aid host | Just a <- Map.lookup aid g.entities.allies -> do
     let attrs = toAttrs a

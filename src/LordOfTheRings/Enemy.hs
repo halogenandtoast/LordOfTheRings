@@ -528,8 +528,8 @@ createEnemy card = lookupEnemy (toCardCode card) (ecId card)
 lookupEnemy :: (HasCallStack) => CardCode -> CardId -> EnemyId -> Enemy
 lookupEnemy cardCode cardId ident = case Map.lookup cardCode allEnemys of
   Just (SomeEnemyCard builder) -> Enemy $ cbCardBuilder builder cardId ident
-  -- an ally turned enemy, as Secret Cultist turns it
-  Nothing | cdCardType (toCardDef cardCode) == AllyType -> Enemy $ cbCardBuilder (turnedAlly cardCode) cardId ident
+  -- an ally turned enemy, as Secret Cultist turns it, or a hero, as Fallen into Evil does
+  Nothing | cdCardType (toCardDef cardCode) `elem` [AllyType, HeroType] -> Enemy $ cbCardBuilder (turnedAlly cardCode) cardId ident
   Nothing -> error $ "Unknown enemy: " <> show cardCode
 
 newEnemy :: (MonadRandom m) => EncounterCard -> m Enemy

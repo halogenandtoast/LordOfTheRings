@@ -284,6 +284,13 @@ data Message
     -- blank, and engages its owner, as Secret Cultist turns it: its owner's card still,
     -- keeping its id and its damage
     AllyBecomesEnemy AllyId
+  | -- | the hero loses the hero card type and gains the enemy card type, its owner's card
+    -- still, keeping its id and its damage, what was attached to it discarded, as Fallen
+    -- into Evil turns it: its threat and engagement cost are its attachment's to give
+    HeroBecomesEnemy HeroId
+  | -- | the hero turned enemy returns to its owner's control as a hero, as it does once
+    -- Fallen into Evil is discarded
+    EnemyBecomesHero EnemyId
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then

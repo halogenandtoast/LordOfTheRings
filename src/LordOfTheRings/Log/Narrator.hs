@@ -135,6 +135,7 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ toned Bad $ mechanic [ikeyPart "log.eliminated" ["player" ~> who]]
   SeparatePlayers (_ : _ : _) -> Just $ one $ mechanic [ikeyPart "log.separated" []]
+  SeparateStagingAreas (_ : _ : _) -> Just $ one $ mechanic [ikeyPart "log.stagingAreasSeparated" []]
   -- an eliminated player's area leaves with him, joining no one
   JoinArea joining target -> Just do
     eliminated <- getsGame (maybe True (.eliminated) . Map.lookup joining . allPlayers)
@@ -288,6 +289,9 @@ narrationFor = \case
   Flip (AllyTarget aid) -> Just $ whenRef (toTarget aid) \a -> one $ mechanic [ikeyPart "log.allyFlips" ["ally" ~> a]]
   -- Secret Cultist turns an ally into an enemy engaged with its owner
   AllyBecomesEnemy aid -> Just $ whenRef (toTarget aid) \a -> one $ toned Bad $ mechanic [ikeyPart "log.allyBecomesEnemy" ["ally" ~> a]]
+  -- Fallen into Evil turns a hero into an enemy, and gives him back
+  HeroBecomesEnemy hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.heroBecomesEnemy" ["hero" ~> h]]
+  EnemyBecomesHero eid -> Just $ whenRef (toTarget eid) \h -> one $ toned Good $ mechanic [ikeyPart "log.enemyBecomesHero" ["hero" ~> h]]
   -- a contract turns over: read before it does, so the side it turns to is the other one
   Flip (ContractTarget cid) -> Just do
     cs <- getsGame (entitiesContracts . gameEntities)

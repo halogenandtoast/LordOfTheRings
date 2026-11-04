@@ -1309,6 +1309,15 @@ allyBecomesHero a = push $ AllyBecomesHero a.id
 allyBecomesEnemy :: ReverseQueue m => AllyId -> m ()
 allyBecomesEnemy = push . AllyBecomesEnemy
 
+-- | The hero loses the hero card type and gains the enemy card type, as Fallen into Evil
+-- turns it.
+heroBecomesEnemy :: ReverseQueue m => HeroId -> m ()
+heroBecomesEnemy = push . HeroBecomesEnemy
+
+-- | The hero turned enemy returns to its owner's control, a hero again.
+enemyBecomesHero :: ReverseQueue m => EnemyId -> m ()
+enemyBecomesHero = push . EnemyBecomesHero
+
 -- | The hero an ally became is an ally again, given as the ally its own text reads.
 heroBecomesAlly :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
 heroBecomesAlly a = push $ HeroBecomesAlly (HeroId $ unAllyId a.id)
