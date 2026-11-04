@@ -112,6 +112,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       stats: game.stats?.[id] ?? [],
       counting: [],
       attackStrength: game.attackStrength?.[id],
+      attackAdding: game.attackAdding?.[id],
       errata: !printed.has(id),
       ...extra,
     }
