@@ -204,8 +204,8 @@ data ModifierType
     DiscardAtEndOfRound
   | -- | on a hero, or its card: it is removed from the game at the end of the round
     RemoveFromGameAtEndOfRound
-  | -- | on a hero, or its card: leaving play by any means, it is removed from the game
-    -- instead, as Arkham's RemoveFromGameInsteadOfDiscard
+  | -- | on a character, or its card: leaving play by any means, it is removed from the
+    -- game instead, as Arkham's RemoveFromGameInsteadOfDiscard
     RemoveFromGameIfLeavesPlay
   | -- | on a card whose effect lets its controller choose 1 of its options: they choose up
     -- to this many instead, as Gandalf put into play by an upgraded Send for Help

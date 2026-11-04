@@ -9,7 +9,7 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Guarded, GuardedBy))
+import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources, shuffleIntoDeck)
@@ -308,11 +308,12 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM ([c | EncounterCard c <- matching] <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & victoryDisplayL .~ rest
     PutOnTopOfEncounterDeck card -> pure $ attrs & encounterDeckL %~ (card :)
-    -- a player card with the Encounter keyword goes to its owner's discard pile instead,
-    -- but an event, as Wind from the Sea after it was a shadow card, is treated like an
-    -- encounter card (MEC61 rules)
+    -- a player card with the Encounter keyword is treated like an encounter card, as Wind
+    -- from the Sea or Eagle of the North after it was a shadow card (MEC61, MEC67 rules),
+    -- but Ranger of the North goes to its owner's discard pile instead
     AddToEncounterDiscard cards -> do
-      owned <- for cards \c -> (c,) <$> if cdCardType (toCardDef c) == EventType then pure Nothing else setAsideOwner c.id
+      let asEncounterCard c = Encounter `member` cdKeywords (toCardDef c) && not (cdEncounterToOwnersDiscard $ toCardDef c)
+      owned <- for cards \c -> (c,) <$> if asEncounterCard c then pure Nothing else setAsideOwner c.id
       pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
       -- a card of the Corsair deck goes to its own discard pile, while there is one; a
       -- set-aside card discarded is part of the encounter deck from then on (MEC61 rules)

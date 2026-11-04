@@ -1153,6 +1153,7 @@ rangerOfTheNorth =
     , cdCardTraits = setFromList [Dunedain, Ranger]
     , cdKeywords = setFromList [Encounter, Surge, Ranged, Sentinel]
     , cdWhenRevealed = True
+    , cdEncounterToOwnersDiscard = True
     }
 
 ingold :: CardDef

@@ -83,6 +83,10 @@ data CardDef = CardDef
   , cdRestrictedSlots :: Int
   -- ^ how many of a character's 2 restricted attachments a restricted card counts as, as
   -- Raiment of War counts as 2
+  , cdEncounterToOwnersDiscard :: Bool
+  -- ^ a player card with the Encounter keyword that goes to its owner's discard pile, not
+  -- the encounter discard pile, as Ranger of the North (The Lost Realm rules); one without
+  -- is treated as an encounter card there (MEC61, MEC67 rules)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -140,6 +144,7 @@ emptyCardDef cCode name cType =
     , cdOtherSide = Nothing
     , cdAdditionalCost = Nothing
     , cdRestrictedSlots = 1
+    , cdEncounterToOwnersDiscard = False
     }
 
 unique :: CardDef -> CardDef

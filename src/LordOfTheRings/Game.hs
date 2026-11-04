@@ -576,10 +576,11 @@ runGame' msg g = case leavingCharacter g msg of
   -- a character leaving play opens the When window first, while it is still in play
   Just target -> do
     windows <- leftPlayWindows g target
-    -- a hero to be removed from the game if it leaves play is, however it leaves
-    removed <- case target of
-      HeroTarget _ -> elem RemoveFromGameIfLeavesPlay <$> getModifiers target
-      _ -> pure False
+    -- a character to be removed from the game if it leaves play is, however it leaves, as
+    -- a player card with the Encounter keyword (MEC67 rules)
+    removed <- case msg of
+      RemoveFromGame _ -> pure False
+      _ -> elem RemoveFromGameIfLeavesPlay <$> getModifiers target
     pushAll [CheckWindows (map mkWhen windows), LeavePlay $ if removed then RemoveFromGame target else msg]
     pure g
   Nothing -> case msg of
@@ -593,7 +594,7 @@ leavingCharacter g = \case
   ReturnToHand t | character t -> Just t
   ShuffleIntoOwnersDeck t | character t -> Just t
   PutOnBottomOfOwnersDeck t | character t -> Just t
-  RemoveFromGame t@(HeroTarget _) | character t -> Just t
+  RemoveFromGame t | character t -> Just t
   _ -> Nothing
  where
   character = \case
@@ -2528,6 +2529,11 @@ runGameMessage msg g = case msg of
     g' <- leftPlay g target
     pushAll $ discardAttached g target
     pure $ g' & entitiesL . heroesL %~ Map.delete hid
+  -- an ally leaves play for good, as Eagle of the North does however it leaves
+  RemoveFromGame target@(AllyTarget aid) | Map.member aid g.entities.allies -> do
+    g' <- leftPlay g target
+    pushAll $ discardAttached g target
+    pure $ g' & entitiesL . alliesL %~ Map.delete aid
   -- what is attached to it leaves play with it, as it would were it discarded
   RemoveFromGame target@(LocationTarget lid) -> do
     pushAll $ discardAttached g target

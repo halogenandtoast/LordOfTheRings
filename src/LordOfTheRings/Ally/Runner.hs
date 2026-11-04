@@ -61,6 +61,7 @@ instance RunMessage AllyAttrs where
     ReturnToHand (isTarget attrs -> True) -> leaving
     ShuffleIntoOwnersDeck (isTarget attrs -> True) -> leaving
     PutOnBottomOfOwnersDeck (isTarget attrs -> True) -> leaving
+    RemoveFromGame (isTarget attrs -> True) -> leaving
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
