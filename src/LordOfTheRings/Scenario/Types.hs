@@ -103,6 +103,9 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioGuardedPlayerCards :: Map CardId [(GuardRelease, PlayerCard)]
   -- ^ the player cards each encounter card, by its card id, guards: a Guarded (X)
   -- attachment, or a card Hobgoblin holds (The Wilds of Rhovanion)
+  , scenarioCavesDeck :: [EncounterCard]
+  -- ^ the Caves deck, top first (Ered Mithrin): a Deep location traveled to is replaced
+  -- by its top card
   }
   deriving stock (Show, Eq, Generic)
 
@@ -112,7 +115,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object [])] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard]))] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -145,6 +148,7 @@ scenario f sid name =
       , scenarioCampaignCardFlipped = False
       , scenarioOutOfPlayResources = mempty
       , scenarioGuardedPlayerCards = mempty
+      , scenarioCavesDeck = []
       }
 
 instance Entity ScenarioAttrs where
@@ -181,6 +185,9 @@ instance Sourceable ScenarioAttrs where
 
 instance HasField "encounterDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioEncounterDeck
+
+instance HasField "cavesDeck" ScenarioAttrs [EncounterCard] where
+  getField = scenarioCavesDeck
 
 instance HasField "questDeck" ScenarioAttrs [EncounterCard] where
   getField = scenarioQuestDeck

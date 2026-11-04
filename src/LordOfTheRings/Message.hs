@@ -307,6 +307,17 @@ data Message
   | -- | a Guarded (X) attachment free of encounters: its owner attaches it to an eligible
     -- card, its guarded keyword not resolved again
     AttachFreedCard PlayerId PlayerCard
+  | -- | the Deep keyword, after the players travel to the location (Ered Mithrin)
+    ResolveDeep LocationId
+  | -- | the location is discarded and the top card of the Caves deck takes its place
+    ReplaceWithTopOfCavesDeck LocationId
+  | -- | the card, taken from where it was, is shuffled into the Caves deck
+    ShuffleIntoCavesDeck EncounterCard
+  | -- | the card goes to the bottom of the Caves deck, from it or from where it was
+    PutOnBottomOfCavesDeck EncounterCard
+  | -- | the card leaves the Caves deck, as a search takes it
+    TakeFromCavesDeck EncounterCard
+  | ShuffleCavesDeck
   | -- | the card leaves play for good; an objective, as Book of Mazarbul, or a location
     RemoveFromGame Target
   | -- | a stage leaves the quest deck unplayed, as exploring The Banks removes stage 2

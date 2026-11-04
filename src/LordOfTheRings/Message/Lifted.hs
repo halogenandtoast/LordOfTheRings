@@ -1467,6 +1467,45 @@ hand, as Hobgoblin's (ReturnToHandWhenFree).
 guardPlayerCard :: ReverseQueue m => CardId -> GuardRelease -> PlayerCard -> m ()
 guardPlayerCard cid release = push . GuardPlayerCard cid release
 
+-- | The card, taken from where it was, is shuffled into the Caves deck.
+shuffleIntoCavesDeck :: ReverseQueue m => EncounterCard -> m ()
+shuffleIntoCavesDeck = push . ShuffleIntoCavesDeck
+
+-- | The card goes to the bottom of the Caves deck, as The Lower Depths places Dragon Hoard.
+putOnBottomOfCavesDeck :: ReverseQueue m => EncounterCard -> m ()
+putOnBottomOfCavesDeck = push . PutOnBottomOfCavesDeck
+
+-- | The card leaves the Caves deck, as a search takes it; shuffle it after with 'shuffleCavesDeck'.
+takeFromCavesDeck :: ReverseQueue m => EncounterCard -> m ()
+takeFromCavesDeck = push . TakeFromCavesDeck
+
+shuffleCavesDeck :: ReverseQueue m => m ()
+shuffleCavesDeck = push ShuffleCavesDeck
+
+-- | The Caves deck, top first.
+getCavesDeck :: HasGame m => m [EncounterCard]
+getCavesDeck = getsGame ((.cavesDeck) . toAttrs . (.scenario))
+
+-- | The location is discarded and the top card of the Caves deck takes its place, as
+-- Contested Depths reads; with the deck empty nothing happens.
+replaceWithTopOfCavesDeck :: ReverseQueue m => LocationId -> m ()
+replaceWithTopOfCavesDeck = push . ReplaceWithTopOfCavesDeck
+
+{- | The player looks at the top 2 cards of the Caves deck and puts 1 on top and the other
+on the bottom, as Forked Passage and The Lower Depths read.
+-}
+arrangeTopOfCavesDeck :: (ReverseQueue m, Targetable source) => PlayerId -> source -> m ()
+arrangeTopOfCavesDeck pid source = do
+  top <- take 2 <$> getCavesDeck
+  case top of
+    [a, b] -> chooseOneM pid do
+      questionLabeled "cavesDeck.keepOnTop"
+      causedBy source
+      showing [EncounterCard a, EncounterCard b]
+      targeting (CardIdTarget a.id) $ putOnBottomOfCavesDeck b
+      targeting (CardIdTarget b.id) $ putOnBottomOfCavesDeck a
+    _ -> pure ()
+
 -- | The treachery leaves play for the player's hand, where it stays, as Ill Tidings reads.
 drawTreacheryIntoHand :: ReverseQueue m => PlayerId -> TreacheryId -> m ()
 drawTreacheryIntoHand pid = push . DrawTreacheryIntoHand pid

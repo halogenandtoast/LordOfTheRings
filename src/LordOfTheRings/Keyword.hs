@@ -78,6 +78,9 @@ data Keyword
     -- in the combat phase; as that phase begins, its player removes 1 progress from the
     -- current quest, or from the active location once the quest has none
     Hinder
+  | -- | on a location: after the players travel to it, it is discarded and the top card of
+    -- the Caves deck takes its place as the active location (Ered Mithrin rules)
+    Deep
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

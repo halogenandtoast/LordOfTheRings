@@ -178,6 +178,7 @@
   "sailingIconCanceled": "the first is canceled",
   "corsairDeckPrepared": "The Corsair deck is prepared",
   "corsairDeck": "Corsair deck: {count} cards",
+  "cavesDeck": "Caves deck: {count} cards",
   "corsairDiscard": "Corsair discard pile",
   "toStormcallerArea": "{card} goes to the Stormcaller's area",
   "stormcallerProgress": "The Stormcaller places {count} progress on its quest stage",

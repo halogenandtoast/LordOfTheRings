@@ -254,6 +254,14 @@ instance RunMessage ScenarioAttrs where
         | (release, card) <- Map.findWithDefault [] cid attrs.scenarioGuardedPlayerCards
         ]
       pure $ attrs & guardedPlayerCardsL %~ Map.delete cid
+    ShuffleIntoCavesDeck card -> do
+      deck <- shuffleM (card : filter (/= card) attrs.cavesDeck)
+      pure $ attrs & cavesDeckL .~ deck & setAsideL %~ filter (/= card)
+    PutOnBottomOfCavesDeck card -> pure $ attrs & cavesDeckL %~ ((<> [card]) . filter (/= card)) & setAsideL %~ filter (/= card)
+    TakeFromCavesDeck card -> pure $ attrs & cavesDeckL %~ filter (/= card)
+    ShuffleCavesDeck -> do
+      deck <- shuffleM attrs.cavesDeck
+      pure $ attrs & cavesDeckL .~ deck
     -- the next encounter card guards the location, attached to it as it is revealed so its
     -- own effects see it guarding (Troll-fells); any other card is only revealed
     GuardLocation lid -> case attrs.encounterDeck of

@@ -113,6 +113,8 @@ export interface ServerGame {
     /** The Corsair deck's size, once prepared, and its own discard pile (Dream-chaser rules). */
     corsairDeckSize?: number
     corsairDiscard?: Card[]
+    /** The Caves deck's size (Ered Mithrin): Deep locations are replaced from it. */
+    cavesDeckSize?: number
     /** The player cards each encounter card, by its card id, guards: a Guarded (X) attachment, or Hobgoblin's card. */
     guardedPlayerCards?: Record<string, [string, Card][]>
     /** NormalMode, EasyMode or NightmareMode; older games carry only easyMode. */

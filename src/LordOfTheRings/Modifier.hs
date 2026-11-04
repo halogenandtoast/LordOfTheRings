@@ -269,6 +269,8 @@ data ModifierType
     CannotPlay CardMatcher
   | -- | on the game: attachments' printed text boxes are treated as blank
     BlankAttachments
+  | -- | on the game: the Deep keyword is ignored, as The Fire Worm reads
+    IgnoreDeep
   | -- | on the game: every character must commit to the quest
     MustCommitAll
   | -- | on the game: each card dealt for an escape test adds this much more

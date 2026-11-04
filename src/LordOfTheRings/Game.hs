@@ -1131,8 +1131,31 @@ runGameMessage msg g = case msg of
         else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
     pure g
   DoStep 1 (TravelTo lid) -> do
-    pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid]]
+    pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid], ResolveDeep lid]
     pure g
+  -- a Deep location, still the active location after the windows of traveling to it, is
+  -- replaced by the top card of the Caves deck, unless that deck is empty (MEC65 rules)
+  ResolveDeep lid | Just l <- Map.lookup lid g.entities.locations -> do
+    deep <- hasKeyword Deep (toTarget l) (toCardDef l)
+    ignored <- elem IgnoreDeep <$> getModifiers GameTarget
+    pushWhen (deep && not ignored && l.placement == ActiveLocation && notNull (toAttrs g.scenario).cavesDeck)
+      $ ReplaceWithTopOfCavesDeck lid
+    pure g
+  ResolveDeep _ -> pure g
+  -- a location becomes the active location, opening its windows; a Dragon Sign, or another
+  -- objective, goes to the staging area and resolves its guarded keyword (MEC66 rules)
+  ReplaceWithTopOfCavesDeck lid -> case (toAttrs g.scenario).cavesDeck of
+    card : rest -> do
+      push $ Discard (LocationTarget lid)
+      let g' = g & scenarioL %~ overAttrs (cavesDeckL .~ rest)
+      case cdCardType (toCardDef card) of
+        LocationType -> do
+          thisLocation <- newLocation card
+          push $ PlaceLocation (toId thisLocation) ActiveLocation
+          pure $ g' & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = Unplaced}) thisLocation)
+        t | t `elem` [ObjectiveType, ObjectiveAllyType] -> g' <$ push (PutObjectiveIntoPlay card)
+        _ -> g' <$ push (AddToStaging card)
+    [] -> pure g
   BeginPhase EncounterPhase -> do
     order <- getPlayerOrder
     -- players may act after the optional engagements and after the engagement checks
