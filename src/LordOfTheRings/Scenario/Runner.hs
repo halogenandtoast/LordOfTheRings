@@ -236,9 +236,11 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM ([c | EncounterCard c <- matching] <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & victoryDisplayL .~ rest
     PutOnTopOfEncounterDeck card -> pure $ attrs & encounterDeckL %~ (card :)
-    -- a player card with the Encounter keyword goes to its owner's discard pile instead
+    -- a player card with the Encounter keyword goes to its owner's discard pile instead,
+    -- but an event, as Wind from the Sea after it was a shadow card, is treated like an
+    -- encounter card (MEC61 rules)
     AddToEncounterDiscard cards -> do
-      owned <- for cards \c -> (c,) <$> setAsideOwner c.id
+      owned <- for cards \c -> (c,) <$> if cdCardType (toCardDef c) == EventType then pure Nothing else setAsideOwner c.id
       pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
       -- a card of the Corsair deck goes to its own discard pile, while there is one
       pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned]
