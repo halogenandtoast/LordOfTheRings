@@ -1409,7 +1409,11 @@ runGameMessage msg g = case msg of
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
     pushAll $ ResolveArchery : ResolveHinder : DealShadowCards
-      : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order
+      : map ActionWindow order
+        <> map EnemyAttacks order
+        -- the resolving enemy attacks step is complete, as Helm! Helm! reads
+        <> [CreateEffect $ Effect GameSource GameTarget [EnemyAttacksStepComplete] UntilEndOfPhase]
+        <> map PlayerAttacks order
     pure $ g & phaseL .~ CombatPhase
   ResolveArchery -> do
     total <- getArcheryTotal
@@ -2149,16 +2153,23 @@ runGameMessage msg g = case msg of
         players = length [() | player <- toList g.players, not player.eliminated]
         reveals = max 0 $ max 1 (players + extra) - fewer
     order <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
+    -- a player revealing fewer, as Palantír of Orthanc has one
+    playerFewer <- for order \pid -> (pid,) . (\ms -> sum [n | FewerStagingReveals n <- ms]) <$> getModifiers (PlayerTarget pid)
     -- in The Lord of the Rings saga each player reveals his own card in turn order, the
     -- first player any more the step reveals
-    let revealing
+    let withoutFewer = \case
+          [] -> const []
+          pid : rest -> \counts -> case lookup pid counts of
+            Just n | n > 0 -> withoutFewer rest [(p, if p == pid then n - 1 else k) | (p, k) <- counts]
+            _ -> pid : withoutFewer rest counts
+        revealing
           | revealsIndividually (scenarioId $ toAttrs g.scenario) =
               concat
                 [ [SetRevealer (Just pid), RevealEncounterCard]
-                | pid <- take reveals (order <> replicate reveals (fromMaybe g.firstPlayer $ headMay order))
+                | pid <- withoutFewer (take reveals (order <> replicate reveals (fromMaybe g.firstPlayer $ headMay order))) playerFewer
                 ]
                 <> [SetRevealer Nothing]
-          | otherwise = replicate reveals RevealEncounterCard
+          | otherwise = replicate (max 0 $ reveals - sum (map snd playerFewer)) RevealEncounterCard
     -- what is played "after the staging step", as Elevenses, waits for its end
     pushAll
       $ ( if SkipStagingStep `elem` mods
@@ -3873,13 +3884,16 @@ allyEntersPlay pid a =
     ]
 
 {- | Cards in a player's hand that can be played or put into play in response to the
-windows: response events, and allies like Brok Ironfist.
+windows: response events, and allies like Brok Ironfist. A response event on top of his
+deck too, while he may play that card as if it was in his hand, as Gandalf lets him.
 -}
 handResponses :: PlayerId -> [Window] -> Message -> GameT [UI Message]
 handResponses pid windows continue = do
   player <- getPlayer pid
+  fromTop <- elem MayPlayTopOfDeck <$> getModifiers (PlayerTarget pid)
   let matches = maybe (pure False) (\w -> anyM (windowMatchesM w) windows)
-  fmap catMaybes $ for player.hand \case
+      deckTop = [c | fromTop, c@(PlayerCard pc) <- take 1 player.deck, cdCardType (toCardDef pc) == EventType]
+  fmap catMaybes $ for (player.hand <> deckTop) \case
     card@(PlayerCard pc) -> case cdCardType (toCardDef pc) of
       EventType
         | Just e <- lookupEvent (toCardCode pc) pc.id pid -> do

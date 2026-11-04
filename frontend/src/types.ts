@@ -183,6 +183,8 @@ export interface PlayerView {
   discard: CardView[]
   /** treacheries attached to the top of the deck, as Iron Shackles */
   onDeck: CardView[]
+  /** the top card of the deck, played faceup, as Gandalf (The Road Darkens) has it */
+  deckTop: CardView | null
   inPlay: CardView[]
   engaged: CardView[]
 }
