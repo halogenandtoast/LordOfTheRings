@@ -475,6 +475,10 @@ allEnemyCards =
       , rhunBackstabber
       , treacherousEasterling
       , ulchorsGuard
+      , wainriderChampion
+      , aggressiveRacer
+      , chariotDriver
+      , veteranWainrider
       ]
 
 namelessThing :: CardDef
@@ -3888,4 +3892,43 @@ ulchorsGuard =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
+    }
+
+-- * Challenge of the Wainriders
+
+-- | X is 2 per player: its threat and defense are raised by its card.
+wainriderChampion :: CardDef
+wainriderChampion =
+  unique
+    (enemy "22066" "Wainrider Champion" ChallengeOfTheWainriders 1 50 0 4 0 5)
+      { cdCardTraits = setFromList [Easterling]
+      , cdKeywords = setFromList [Indestructible]
+      , cdVictoryPoints = Just 4
+      }
+
+aggressiveRacer :: CardDef
+aggressiveRacer =
+  (enemy "22067" "Aggressive Racer" ChallengeOfTheWainriders 4 28 1 4 2 3)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Archery 1]
+    , cdEasyModeQuantity = Just 3
+    , cdRacingResult = Just Turn
+    }
+
+chariotDriver :: CardDef
+chariotDriver =
+  (enemy "22068" "Chariot Driver" ChallengeOfTheWainriders 3 38 3 5 1 6)
+    { cdCardTraits = setFromList [Easterling]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    , cdRacingResult = Just Straight
+    }
+
+veteranWainrider :: CardDef
+veteranWainrider =
+  (enemy "22069" "Veteran Wainrider" ChallengeOfTheWainriders 3 45 2 3 1 4)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdRacingResult = Just Straight
     }

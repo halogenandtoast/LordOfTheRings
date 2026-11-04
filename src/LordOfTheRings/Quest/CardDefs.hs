@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Capture, Sailing, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, Race, Sailing, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
@@ -401,6 +401,12 @@ allQuestCards =
       , shadowOfFearASitE
       , unwelcomeTravelers
       , lostInTheDark
+      , wainriderCamp
+      , firstSprint
+      , theTurnaround
+      , theFarthestEdge
+      , lastClimb
+      , homeStretch
       ]
 
 theDrippingWalls :: CardDef
@@ -1629,3 +1635,27 @@ lostInTheDark =
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
     }
+
+-- * Challenge of the Wainriders
+
+-- | A stage of the circuit: it gets +4 quest points per player, read by its card.
+raceStage :: CardCode -> Name -> Int -> CardDef
+raceStage code name stage = (quest code name ChallengeOfTheWainriders stage 0) {cdKeywords = setFromList [Race]}
+
+wainriderCamp :: CardDef
+wainriderCamp = raceStage "22075" "Wainrider Camp" 1
+
+firstSprint :: CardDef
+firstSprint = raceStage "22076" "First Sprint" 2
+
+theTurnaround :: CardDef
+theTurnaround = raceStage "22077" "The Turnaround" 3
+
+theFarthestEdge :: CardDef
+theFarthestEdge = raceStage "22078" "The Farthest Edge" 4
+
+lastClimb :: CardDef
+lastClimb = raceStage "22079" "Last Climb" 5
+
+homeStretch :: CardDef
+homeStretch = raceStage "22080" "Home Stretch" 6

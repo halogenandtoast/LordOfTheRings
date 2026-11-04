@@ -317,6 +317,12 @@ import LordOfTheRings.Quest.Cards.AnArduousJourney
 import LordOfTheRings.Quest.Cards.ShadowOfFearASitE
 import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
 import LordOfTheRings.Quest.Cards.LostInTheDark
+import LordOfTheRings.Quest.Cards.WainriderCamp
+import LordOfTheRings.Quest.Cards.FirstSprint
+import LordOfTheRings.Quest.Cards.TheTurnaround
+import LordOfTheRings.Quest.Cards.TheFarthestEdge
+import LordOfTheRings.Quest.Cards.LastClimb
+import LordOfTheRings.Quest.Cards.HomeStretch
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -666,5 +672,11 @@ allQuests =
         , SomeQuestCard shadowOfFearASitE
         , SomeQuestCard unwelcomeTravelers
         , SomeQuestCard lostInTheDark
+        , SomeQuestCard wainriderCamp
+        , SomeQuestCard firstSprint
+        , SomeQuestCard theTurnaround
+        , SomeQuestCard theFarthestEdge
+        , SomeQuestCard lastClimb
+        , SomeQuestCard homeStretch
         ]
     ]

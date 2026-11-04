@@ -143,6 +143,8 @@ allObjectiveCards =
       , underTheWatchfulEye
       , theArmiesOfMordor
       , coveredInDarkness
+      , theWainriders
+      , theChallengers
       ]
 
 durinsAxe :: CardDef
@@ -991,3 +993,11 @@ theArmiesOfMordor = (objective "21069" "The Armies of Mordor" ThePowerOfMordor 1
 
 coveredInDarkness :: CardDef
 coveredInDarkness = (objective "21070" "Covered in Darkness" ThePowerOfMordor 1) {cdCardTraits = setFromList [Mordor], cdKeywords = setFromList [Doomed 5]}
+
+-- * Challenge of the Wainriders
+
+theWainriders :: CardDef
+theWainriders = objective "22064" "The Wainriders" ChallengeOfTheWainriders 1
+
+theChallengers :: CardDef
+theChallengers = objective "22065" "The Challengers" ChallengeOfTheWainriders 1

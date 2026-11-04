@@ -408,6 +408,8 @@ allTreacheryCards =
       , ulchorsRage
       , fanaticism
       , fearfulShadows
+      , wainriderChariot
+      , theChampionsCunning
       ]
 
 deepDeepDark :: CardDef
@@ -2588,4 +2590,25 @@ fearfulShadows =
     { cdKeywords = setFromList [Doomed 1]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+-- * Challenge of the Wainriders
+
+-- | Both cards are printed number 73: The Champion's Cunning keeps the code, as the card
+-- images name them.
+wainriderChariot :: CardDef
+wainriderChariot =
+  (treachery "22073-chariot" "Wainrider Chariot" ChallengeOfTheWainriders 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    , cdRacingResult = Just Straight
+    }
+
+theChampionsCunning :: CardDef
+theChampionsCunning =
+  (treachery "22073" "The Champion's Cunning" ChallengeOfTheWainriders 3)
+    { cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    , cdRacingResult = Just Wild
     }

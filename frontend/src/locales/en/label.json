@@ -2896,5 +2896,18 @@
   },
   "woodmanLore": {
     "ready": "Woodman Lore: ready up to X Woodman characters"
+  },
+  "racingTest": {
+    "willpower": "Racing Willpower test: exhaust a character to commit it ({required} matching results required)",
+    "attack": "Racing Attack test: exhaust a character to commit it ({required} matching results required)",
+    "defense": "Racing Defense test: exhaust a character to commit it ({required} matching results required)"
+  },
+  "theTurnaround": {
+    "discardAlly": "The Turnaround: choose an ally you control to discard"
+  },
+  "chariotDriver": {
+    "choose": "Chariot Driver: choose one",
+    "damage": "Place 3 damage on The Wainriders' stage",
+    "attack": "Chariot Driver attacks the first player"
   }
 }

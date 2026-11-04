@@ -515,6 +515,9 @@ allLocationCards =
       , twistedTunnel
       , narrowOpening
       , crumblingPassage
+      , narrowPass
+      , crowdedTrack
+      , ravineLedge
       ]
 
 drownedTreasury :: CardDef
@@ -3833,4 +3836,29 @@ crumblingPassage =
     { cdCardTraits = setFromList [Underground]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
+    }
+
+-- * Challenge of the Wainriders
+
+narrowPass :: CardDef
+narrowPass =
+  (location "22070" "Narrow Pass" ChallengeOfTheWainriders 3 3 5)
+    { cdCardTraits = setFromList [Plains]
+    , cdRacingResult = Just Straight
+    }
+
+crowdedTrack :: CardDef
+crowdedTrack =
+  (location "22071" "Crowded Track" ChallengeOfTheWainriders 2 0 6)
+    { cdCardTraits = setFromList [Plains]
+    , cdEasyModeQuantity = Just 1
+    , cdRacingResult = Just Straight
+    }
+
+ravineLedge :: CardDef
+ravineLedge =
+  (location "22072" "Ravine Ledge" ChallengeOfTheWainriders 2 4 4)
+    { cdCardTraits = setFromList [Plains]
+    , cdEasyModeQuantity = Just 1
+    , cdRacingResult = Just Turn
     }

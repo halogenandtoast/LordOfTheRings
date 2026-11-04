@@ -398,6 +398,8 @@ import LordOfTheRings.Treachery.Cards.UnderGuard
 import LordOfTheRings.Treachery.Cards.UlchorsRage
 import LordOfTheRings.Treachery.Cards.Fanaticism
 import LordOfTheRings.Treachery.Cards.FearfulShadows
+import LordOfTheRings.Treachery.Cards.WainriderChariot
+import LordOfTheRings.Treachery.Cards.TheChampionsCunning
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -823,5 +825,7 @@ allTreacherys =
         , SomeTreacheryCard ulchorsRage
         , SomeTreacheryCard fanaticism
         , SomeTreacheryCard fearfulShadows
+        , SomeTreacheryCard wainriderChariot
+        , SomeTreacheryCard theChampionsCunning
         ]
     ]

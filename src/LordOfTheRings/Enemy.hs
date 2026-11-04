@@ -466,6 +466,10 @@ import LordOfTheRings.Enemy.Cards.ServantOfSauron
 import LordOfTheRings.Enemy.Cards.RhunBackstabber
 import LordOfTheRings.Enemy.Cards.TreacherousEasterling
 import LordOfTheRings.Enemy.Cards.UlchorsGuard
+import LordOfTheRings.Enemy.Cards.WainriderChampion
+import LordOfTheRings.Enemy.Cards.AggressiveRacer
+import LordOfTheRings.Enemy.Cards.ChariotDriver
+import LordOfTheRings.Enemy.Cards.VeteranWainrider
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -960,5 +964,9 @@ allEnemys =
         , SomeEnemyCard rhunBackstabber
         , SomeEnemyCard treacherousEasterling
         , SomeEnemyCard ulchorsGuard
+        , SomeEnemyCard wainriderChampion
+        , SomeEnemyCard aggressiveRacer
+        , SomeEnemyCard chariotDriver
+        , SomeEnemyCard veteranWainrider
         ]
     ]
