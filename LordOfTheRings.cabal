@@ -3410,6 +3410,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.LostRealmEngineSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.OnTheDoorstep.FliesAndSpidersSpec
+      LordOfTheRings.OnTheDoorstep.TheLonelyMountainSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.PlayerCardTextSpec
       LordOfTheRings.PlayerChoicesSpec
