@@ -265,6 +265,8 @@ import LordOfTheRings.Ally.Cards.MerryLeadership
 import LordOfTheRings.Ally.Cards.PippinTactics
 import LordOfTheRings.Ally.Cards.FaramirLore
 import LordOfTheRings.Ally.Cards.Derufin
+import LordOfTheRings.Ally.Cards.CautiousHalfling
+import LordOfTheRings.Ally.Cards.TomBombadil
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -562,5 +564,7 @@ allAllies =
         , SomeAllyCard pippinTactics
         , SomeAllyCard faramirLore
         , SomeAllyCard derufin
+        , SomeAllyCard cautiousHalfling
+        , SomeAllyCard tomBombadil
         ]
     ]

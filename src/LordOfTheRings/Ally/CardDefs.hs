@@ -237,6 +237,8 @@ allAllyCards =
       , pippinTactics
       , faramirLore
       , derufin
+      , cautiousHalfling
+      , tomBombadil
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1673,4 +1675,21 @@ derufin =
     (ally "21006" "Derufin" Spirit (StaticCost 3) 1 2 1 2)
       { cdCardTraits = setFromList [Gondor, Warrior]
       , cdKeywords = setFromList [Ranged]
+      }
+
+cautiousHalfling :: CardDef
+cautiousHalfling =
+  (ally "22004" "Cautious Halfling" Lore (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+-- | Encounter: set aside out of the deck, shuffled in by Tom Bombadillo!.
+tomBombadil :: CardDef
+tomBombadil =
+  unique
+    (ally "22010" "Tom Bombadil" Neutral (StaticCost 0) 3 3 3 6)
+      { cdCost = Nothing
+      , cdCardTraits = setFromList [Legend]
+      , cdKeywords = setFromList [Encounter]
+      , cdWhenRevealed = True
       }

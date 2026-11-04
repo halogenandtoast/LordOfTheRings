@@ -211,6 +211,8 @@ import LordOfTheRings.Attachment.Cards.WarriorSword
 import LordOfTheRings.Attachment.Cards.ValiantDetermination
 import LordOfTheRings.Attachment.Cards.RingOfThror
 import LordOfTheRings.Attachment.Cards.PutOffPursuit
+import LordOfTheRings.Attachment.Cards.DurinsAxeTactics
+import LordOfTheRings.Attachment.Cards.SilverCirclet
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -459,5 +461,7 @@ allAttachments =
         , SomeAttachmentCard valiantDetermination
         , SomeAttachmentCard ringOfThror
         , SomeAttachmentCard putOffPursuit
+        , SomeAttachmentCard durinsAxeTactics
+        , SomeAttachmentCard silverCirclet
         ]
     ]
