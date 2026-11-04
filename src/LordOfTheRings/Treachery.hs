@@ -437,6 +437,11 @@ import LordOfTheRings.Treachery.Cards.NoCampfire
 import LordOfTheRings.Treachery.Cards.WindWhippedRain
 import LordOfTheRings.Treachery.Cards.MoreLikeAGrocer
 import LordOfTheRings.Treachery.Cards.GripGrabPinchNab
+import LordOfTheRings.Treachery.Cards.ComeDownLittleBird
+import LordOfTheRings.Treachery.Cards.ItLikesRiddles
+import LordOfTheRings.Treachery.Cards.HidingInTheTrees
+import LordOfTheRings.Treachery.Cards.WhatsInMyPocket
+import LordOfTheRings.Treachery.Cards.NotFairNotFair
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -901,5 +906,10 @@ allTreacherys =
         , SomeTreacheryCard windWhippedRain
         , SomeTreacheryCard moreLikeAGrocer
         , SomeTreacheryCard gripGrabPinchNab
+        , SomeTreacheryCard comeDownLittleBird
+        , SomeTreacheryCard itLikesRiddles
+        , SomeTreacheryCard hidingInTheTrees
+        , SomeTreacheryCard whatsInMyPocket
+        , SomeTreacheryCard notFairNotFair
         ]
     ]

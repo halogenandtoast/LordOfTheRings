@@ -365,6 +365,9 @@ import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
 import LordOfTheRings.Quest.Cards.AnUnexpectedParty
 import LordOfTheRings.Quest.Cards.RoastMutton
 import LordOfTheRings.Quest.Cards.DawnTakeYouAll
+import LordOfTheRings.Quest.Cards.OutOfTheFryingPan
+import LordOfTheRings.Quest.Cards.RiddlesInTheDark
+import LordOfTheRings.Quest.Cards.IntoTheFire
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -762,5 +765,8 @@ allQuests =
         , SomeQuestCard anUnexpectedParty
         , SomeQuestCard roastMutton
         , SomeQuestCard dawnTakeYouAll
+        , SomeQuestCard outOfTheFryingPan
+        , SomeQuestCard riddlesInTheDark
+        , SomeQuestCard intoTheFire
         ]
     ]

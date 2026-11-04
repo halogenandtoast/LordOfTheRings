@@ -3205,5 +3205,29 @@
   },
   "dawnTakeYouAllQuest": {
     "treasure": "Choose the player who discovers {treasure}"
+  },
+  "riddle": {
+    "choose": "{card} has a riddle: resolve the card, or answer its riddle?",
+    "resolve": "Resolve it",
+    "answer": "Answer its riddle",
+    "nameCardType": "Name a card type",
+    "ally": "Ally",
+    "event": "Event",
+    "attachment": "Attachment",
+    "treasure": "Treasure",
+    "nameSphere": "Name a sphere",
+    "leadership": "Leadership",
+    "spirit": "Spirit",
+    "lore": "Lore",
+    "tactics": "Tactics",
+    "baggins": "Baggins",
+    "nameCost": "Name a cost"
+  },
+  "notFairNotFair": {
+    "name": "Not fair! Not fair!: name a card type",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery",
+    "objective": "Objective"
   }
 }

@@ -543,6 +543,8 @@ import LordOfTheRings.Location.Cards.DrearyHills
 import LordOfTheRings.Location.Cards.LoneLands
 import LordOfTheRings.Location.Cards.CaveEntranceWesternLands
 import LordOfTheRings.Location.Cards.TheGoblinsCaves
+import LordOfTheRings.Location.Cards.TheWargsGlade
+import LordOfTheRings.Location.Cards.LakeInTheCavern
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1132,5 +1134,7 @@ allLocations =
         , SomeLocationCard loneLands
         , SomeLocationCard caveEntranceWesternLands
         , SomeLocationCard theGoblinsCaves
+        , SomeLocationCard theWargsGlade
+        , SomeLocationCard lakeInTheCavern
         ]
     ]
