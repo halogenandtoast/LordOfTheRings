@@ -186,6 +186,14 @@ spec = describe "Dream-chaser Nightmare mode" do
       run $ DealDamage GameSource (EnemyTarget shark) 2
       (.damage) <$> getEnemy shark `shouldReturn` 0
 
+    it "Undersea Cave Troll's excess damage may discard an objective-ally's resource" . nightmare theDrownedRuins $ \pid -> do
+      troll <- engaged pid Enemies.underseaCaveTroll
+      calphon <- ship pid Objectives.calphon
+      run $ PlaceTokens GameSource calphon Resource 2
+      b <- beravor
+      run $ AttackDamage troll b
+      getsGame (fmap (.resources) . find ((== toCardCode Objectives.calphon) . toCardCode) . toList . (.entities.allies)) `shouldReturn` Just 1
+
     it "Sulfur Cloud gains surge when the active location is not Underwater" . nightmare theDrownedRuins $ \_ -> do
       reveal Treacheries.sulfurCloud [Enemies.greatShark]
       enemyPlacement Enemies.greatShark `shouldReturn` Just StagingArea
