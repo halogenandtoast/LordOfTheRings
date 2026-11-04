@@ -11,6 +11,10 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Quest.Runner (getQuestPoints)
 import LordOfTheRings.Scenario (ScenarioAttrs (scenarioSetAside), lookupScenario, theTreacheryOfRhudaur)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithId))
+import LordOfTheRings.Modifier (ModifierType (CurrentQuest, EngagedEnemiesAddThreat))
 import TestImport
 
 rhudaurTest :: (PlayerId -> GameT ()) -> IO ()
@@ -58,6 +62,17 @@ defeat def = do
 
 spec :: Spec
 spec = describe "The Treachery of Rhudaur" do
+  it "Quiet the Spirits has an Undead enemy put into play engaged count its threat in the staging area" . rhudaurTest $ \pid -> do
+    staged Quests.quietTheSpirits
+    q <- questTarget Quests.quietTheSpirits
+    run $ CreateEffect $ Effect GameSource q [CurrentQuest] UntilEndOfPhase
+    run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.thaurdirsDamned
+    -- its own engaging damage dealt first
+    let answer = getQuestion pid >>= traverse_ (const $ chooseOptionMatching "first" pid (const True) >> answer)
+    answer
+    eid <- enemyOf Enemies.thaurdirsDamned
+    getModifiers GameTarget >>= (`shouldSatisfy` elem (EngagedEnemiesAddThreat (EnemyWithId eid)))
+
   it "is a scenario the game can be dealt" . rhudaurTest $ \_ ->
     isJust (lookupScenario "the-treachery-of-rhudaur") `shouldBe` True
 
