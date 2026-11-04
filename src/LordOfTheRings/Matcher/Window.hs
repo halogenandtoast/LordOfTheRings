@@ -109,6 +109,8 @@ data WindowMatcher
   | -- | a shadow card dealt to an enemy engaged with the player
     ShadowCardDealtWindow Timing PlayerId
   | EnemyAttacksWindow Timing EnemyId
+  | -- | any enemy declared as an attacker
+    EnemyDeclaredAsAttackerWindow Timing
   | -- | the enemy's attack dealt excess damage, as The Cursed Sword reads
     EnemyDealtExcessDamageWindow Timing EnemyId
   | -- | characters attack the enemy, as "when it is attacked" reads
@@ -459,6 +461,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AnyShadowEffectResolvedWindow t, ShadowEffectResolved _ _) -> t == timing
   (ShadowCardDealtWindow t pid, ShadowCardDealt _ _ pid') -> t == timing && pid == pid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
+  (EnemyDeclaredAsAttackerWindow t, EnemyDeclaredAsAttacker _ _) -> t == timing
   (EnemyDealtExcessDamageWindow t eid, AttackDealtExcessDamage eid' _ _) -> t == timing && eid == eid'
   (EnemyAttackedWindow t eid, EnemyAttacked eid') -> t == timing && eid == eid'
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
