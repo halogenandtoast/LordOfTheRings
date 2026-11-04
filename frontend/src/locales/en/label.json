@@ -3013,5 +3013,61 @@
     "choose": "Cruelty of Mordor: choose one",
     "damage": "Deal 1 damage to each damaged character you control",
     "threat": "Raise your threat by {n}, 1 for each damaged character you control"
+  },
+  "frodoBaggins": {
+    "chooseHeroForResource": "Choose a hero to add 1 resource to"
+  },
+  "faramir": {
+    "chooseAllyToReady": "Choose an ally you control to ready"
+  },
+  "eomer": {
+    "chooseEnemy": "Choose an enemy in the staging area for Éomer to attack"
+  },
+  "mablung": {
+    "chooseEnemy": "Choose an enemy to get +5 engagement cost until the end of the round",
+    "engageOrReturn": "Mablung: you may engage that enemy, or return it to the staging area",
+    "engage": "Engage that enemy",
+    "returnToStaging": "Return that enemy to the staging area",
+    "neither": "Do neither"
+  },
+  "grimbold": {
+    "chooseEnemy": "Choose an enemy engaged with a player: it cannot attack that player this phase"
+  },
+  "ghanBuriGhan": {
+    "chooseLocation": "Choose a location to travel to without resolving its Travel effect"
+  },
+  "rosieCotton": {
+    "chooseHero": "Choose a Hobbit hero",
+    "chooseAttribute": "Choose the attribute to add Rosie Cotton's willpower to",
+    "willpower": "Willpower",
+    "attack": "Attack",
+    "defense": "Defense"
+  },
+  "elfhelm": {
+    "chooseHero": "Choose a Rohan hero to spend 1 resource from"
+  },
+  "staffOfLebethron": {
+    "shadow": "Choose a shadow card to discard from that enemy"
+  },
+  "liveryOfTheTower": {
+    "chooseX": "Livery of the Tower: choose how much damage to cancel",
+    "cancel": "Spend {count} resources to cancel {count} damage"
+  },
+  "guthwine": {
+    "chooseAlly": "Choose a Rohan ally in your discard pile to return to your hand"
+  },
+  "speakYourPromise": {
+    "chooseRingBearer": "Choose the Ring-bearer to ready",
+    "chooseEnemy": "Choose an enemy engaged with you"
+  },
+  "braceOfConeys": {
+    "choose": "Brace of Coneys: choose one",
+    "heal": "Heal up to 2 damage from a hero",
+    "resources": "Add 2 resources to a hero's pool",
+    "draw": "Choose a player to draw 2 cards",
+    "threat": "Reduce a player's threat by 2"
+  },
+  "sternerThanSteel": {
+    "exhaust": "Choose a Weapon or Armor card attached to the defending character to exhaust"
   }
 }
