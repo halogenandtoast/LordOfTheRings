@@ -409,6 +409,9 @@ allTreacheryCards =
       , fanaticism
       , fearfulShadows
       , enemiesCloseBehind
+      , overseersWhip
+      , crueltyOfMordor
+      , brokenCaptives
       ]
 
 deepDeepDark :: CardDef
@@ -2595,3 +2598,19 @@ fearfulShadows =
 
 enemiesCloseBehind :: CardDef
 enemiesCloseBehind = (treachery "21016" "Enemies Close Behind" TheRiverRunning 2) {cdShadowEffect = True}
+
+-- * The Land of Sorrow
+
+overseersWhip :: CardDef
+overseersWhip =
+  (treachery "22131" "Overseer's Whip" TheLandOfSorrow 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+crueltyOfMordor :: CardDef
+crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+brokenCaptives :: CardDef
+brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

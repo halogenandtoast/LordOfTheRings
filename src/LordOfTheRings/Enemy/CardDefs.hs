@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Trait
 
@@ -476,6 +477,11 @@ allEnemyCards =
       , treacherousEasterling
       , ulchorsGuard
       , easterlingOutrider
+      , ulwarth
+      , lorgan
+      , borlach
+      , easterlingGuard
+      , nurnSlaver
       ]
 
 namelessThing :: CardDef
@@ -3900,4 +3906,42 @@ easterlingOutrider =
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
+    }
+
+-- * The Land of Sorrow
+
+-- | A Warden: set up faceup, but not in play, under a Camp location (stage 1A).
+warden :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> CardDef
+warden code name engagementCost threat attack defense hitPoints =
+  unique
+    (enemy code name TheLandOfSorrow 1 engagementCost threat attack defense hitPoints)
+      { cdCardTraits = setFromList [Easterling, Warden]
+      , cdVictoryPoints = Just 1
+      }
+
+ulwarth :: CardDef
+ulwarth = warden "22118" "Ulwarth" 34 3 4 1 6
+
+lorgan :: CardDef
+lorgan = warden "22119" "Lorgan" 29 1 5 3 8
+
+borlach :: CardDef
+borlach = warden "22120" "Borlach" 33 2 6 2 9
+
+easterlingGuard :: CardDef
+easterlingGuard =
+  (enemy "22127" "Easterling Guard" TheLandOfSorrow 3 32 3 4 2 5)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Archery 2]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+nurnSlaver :: CardDef
+nurnSlaver =
+  (enemy "22128" "Nurn Slaver" TheLandOfSorrow 4 23 2 3 2 6)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
     }
