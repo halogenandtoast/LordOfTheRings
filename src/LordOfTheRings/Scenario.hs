@@ -62,6 +62,7 @@ import LordOfTheRings.Scenario.Scenarios.EscapeFromUmbar as X
 import LordOfTheRings.Scenario.Scenarios.RaceAcrossHarad as X
 import LordOfTheRings.Scenario.Scenarios.TheMumakil as X
 import LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros as X
+import LordOfTheRings.Scenario.Scenarios.MountGundabad as X
 import LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived as X
 import LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven as X
 import LordOfTheRings.Scenario.Scenarios.TheCityOfCorsairs as X
@@ -74,7 +75,7 @@ import LordOfTheRings.Scenario.Types as X
 
 -- | The scenarios a game can be dealt, by id.
 allScenarios :: [Scenario]
-allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel, theLongDark, roadToRivendell, theRedhornGate, foundationsOfStone, shadowAndFlame, theWatcherInTheWater, theSiegeOfCairAndros, intoIthilien, perilInPelargir, encounterAtAmonDin, theDruadanForest, theMorgulVale, theStewardsFear, assaultOnOsgiliath, theBloodOfGondor, toCatchAnOrc, intoFangorn, theFordsOfIsen, theAntleredCrown, theDunlandTrap, troubleInTharbad, celebrimborsSecret, theNinInEilph, theThreeTrials, theBattleOfCarnDum, intrudersInChetwood, theWeatherHills, theWastesOfEriador, acrossTheEttenmoors, deadmensDike, theDreadRealm, theTreacheryOfRhudaur, escapeFromMountGram, voyageAcrossBelegaer, theFateOfNumenor, raidOnTheGreyHavens, flightOfTheStormcaller, theThingInTheDepths, theDrownedRuins, templeOfTheDeceived, aStormOnCobasHaven, theCityOfCorsairs, beneathTheSands, desertCrossing, escapeFromUmbar, raceAcrossHarad, theBlackSerpent, theDungeonsOfCirithGurat, theMumakil, theCrossingsOfPoros, theLongArmOfMordor]
+allScenarios = [passageThroughMirkwood, journeyAlongTheAnduin, escapeFromDolGuldur, theHuntForGollum, conflictAtTheCarrock, aJourneyToRhosgobel, theHillsOfEmynMuil, theDeadMarshes, returnToMirkwood, intoThePit, flightFromMoria, theSeventhLevel, theLongDark, roadToRivendell, theRedhornGate, foundationsOfStone, shadowAndFlame, theWatcherInTheWater, theSiegeOfCairAndros, intoIthilien, perilInPelargir, encounterAtAmonDin, theDruadanForest, theMorgulVale, theStewardsFear, assaultOnOsgiliath, theBloodOfGondor, toCatchAnOrc, intoFangorn, theFordsOfIsen, theAntleredCrown, theDunlandTrap, troubleInTharbad, celebrimborsSecret, theNinInEilph, theThreeTrials, theBattleOfCarnDum, intrudersInChetwood, theWeatherHills, theWastesOfEriador, acrossTheEttenmoors, deadmensDike, theDreadRealm, theTreacheryOfRhudaur, escapeFromMountGram, voyageAcrossBelegaer, theFateOfNumenor, raidOnTheGreyHavens, flightOfTheStormcaller, theThingInTheDepths, theDrownedRuins, templeOfTheDeceived, aStormOnCobasHaven, theCityOfCorsairs, beneathTheSands, desertCrossing, escapeFromUmbar, raceAcrossHarad, theBlackSerpent, theDungeonsOfCirithGurat, theMumakil, theCrossingsOfPoros, theLongArmOfMordor, mountGundabad]
 
 lookupScenario :: ScenarioId -> Maybe Scenario
 lookupScenario sid = find ((== sid) . toId) allScenarios

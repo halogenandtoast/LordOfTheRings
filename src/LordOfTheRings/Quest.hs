@@ -261,6 +261,14 @@ import LordOfTheRings.Quest.Cards.WelcomeToTheJungle
 import LordOfTheRings.Quest.Cards.CaptureTheOliphaunts
 import LordOfTheRings.Quest.Cards.FindAWayDown
 import LordOfTheRings.Quest.Cards.FlightToGondor
+import LordOfTheRings.Quest.Cards.TheSideDoor
+import LordOfTheRings.Quest.Cards.TheUpperLevels
+import LordOfTheRings.Quest.Cards.TheLowerDeeps
+import LordOfTheRings.Quest.Cards.FrenziedWarrens
+import LordOfTheRings.Quest.Cards.DagnirsWrath
+import LordOfTheRings.Quest.Cards.ForebodingDarkness
+import LordOfTheRings.Quest.Cards.ImminentPursuit
+import LordOfTheRings.Quest.Cards.TheGreatWorm
 import LordOfTheRings.Quest.Cards.TheDesertPath
 import LordOfTheRings.Quest.Cards.TheEphelDuath
 import LordOfTheRings.Quest.Cards.DeadlyCreatures
@@ -560,6 +568,14 @@ allQuests =
         , SomeQuestCard captureTheOliphaunts
         , SomeQuestCard findAWayDown
         , SomeQuestCard flightToGondor
+        , SomeQuestCard theSideDoor
+        , SomeQuestCard theUpperLevels
+        , SomeQuestCard theLowerDeeps
+        , SomeQuestCard frenziedWarrens
+        , SomeQuestCard dagnirsWrath
+        , SomeQuestCard forebodingDarkness
+        , SomeQuestCard imminentPursuit
+        , SomeQuestCard theGreatWorm
         , SomeQuestCard theDesertPath
         , SomeQuestCard theEphelDuath
         , SomeQuestCard deadlyCreatures

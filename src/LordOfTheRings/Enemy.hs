@@ -427,6 +427,10 @@ import LordOfTheRings.Enemy.Cards.StrayGoblinGreyMountains
 import LordOfTheRings.Enemy.Cards.PackOfWargs
 import LordOfTheRings.Enemy.Cards.StoneTroll
 import LordOfTheRings.Enemy.Cards.Hobgoblin
+import LordOfTheRings.Enemy.Cards.Dagnir
+import LordOfTheRings.Enemy.Cards.GuardianOfGundabad
+import LordOfTheRings.Enemy.Cards.DagnirsSlave
+import LordOfTheRings.Enemy.Cards.DeepDweller
 import LordOfTheRings.Enemy.Cards.Werewolf
 import LordOfTheRings.Enemy.Cards.GiantSpider
 import LordOfTheRings.Enemy.Cards.BlackBats
@@ -885,6 +889,10 @@ allEnemys =
         , SomeEnemyCard packOfWargs
         , SomeEnemyCard stoneTroll
         , SomeEnemyCard hobgoblin
+        , SomeEnemyCard dagnir
+        , SomeEnemyCard guardianOfGundabad
+        , SomeEnemyCard dagnirsSlave
+        , SomeEnemyCard deepDweller
         , SomeEnemyCard werewolf
         , SomeEnemyCard giantSpider
         , SomeEnemyCard blackBats

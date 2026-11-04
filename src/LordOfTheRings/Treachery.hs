@@ -363,6 +363,8 @@ import LordOfTheRings.Treachery.Cards.SwarmOfBats
 import LordOfTheRings.Treachery.Cards.AfraidOfTheDark
 import LordOfTheRings.Treachery.Cards.DarkPlaces
 import LordOfTheRings.Treachery.Cards.EyesInTheDark
+import LordOfTheRings.Treachery.Cards.WilderlandsBane
+import LordOfTheRings.Treachery.Cards.SuffocatingShadows
 import LordOfTheRings.Treachery.Cards.DragonBreath
 import LordOfTheRings.Treachery.Cards.DragonScales
 import LordOfTheRings.Treachery.Runner ()
@@ -755,6 +757,8 @@ allTreacherys =
         , SomeTreacheryCard afraidOfTheDark
         , SomeTreacheryCard darkPlaces
         , SomeTreacheryCard eyesInTheDark
+        , SomeTreacheryCard wilderlandsBane
+        , SomeTreacheryCard suffocatingShadows
         , SomeTreacheryCard dragonBreath
         , SomeTreacheryCard dragonScales
         ]

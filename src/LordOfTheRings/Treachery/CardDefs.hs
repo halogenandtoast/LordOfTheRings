@@ -375,6 +375,8 @@ allTreacheryCards =
       , eyesInTheDark
       , dragonBreath
       , dragonScales
+      , wilderlandsBane
+      , suffocatingShadows
       ]
 
 deepDeepDark :: CardDef
@@ -2387,3 +2389,11 @@ dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits =
 
 dragonScales :: CardDef
 dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+-- * Mount Gundabad
+
+wilderlandsBane :: CardDef
+wilderlandsBane = (treachery "19132" "Wilderland's Bane" MountGundabad 2) {cdShadowEffect = True}
+
+suffocatingShadows :: CardDef
+suffocatingShadows = (treachery "19133" "Suffocating Shadows" MountGundabad 2) {cdShadowEffect = True}
