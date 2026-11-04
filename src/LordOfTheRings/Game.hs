@@ -1062,6 +1062,7 @@ runGameMessage msg g = case msg of
         ]
       <> [ResolveBoarding pid eid | fromStaging]
       <> [ CreateEffect $ Effect GameSource (PlayerTarget pid) [EngagedAnEnemyThisRound] UntilEndOfRound
+         , CreateEffect $ Effect GameSource (EnemyTarget eid) [EngagedThisRound] UntilEndOfRound
          , CreateEffect $ Effect GameSource GameTarget [EnemyEngagedThisPhase] UntilEndOfPhase
          , CheckWindows [mkAfter $ EnemyEngaged eid pid]
          ]

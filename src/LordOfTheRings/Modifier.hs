@@ -253,6 +253,8 @@ data ModifierType
     IgnoresDefenseWhenAttackingAlone
   | -- | on a player: an enemy engaged them this round
     EngagedAnEnemyThisRound
+  | -- | on an enemy: it engaged a player this round, as Nowhere to Hide's shadow reads
+    EngagedThisRound
   | -- | on a player: they played a copy of the card this phase
     PlayedThisPhase CardCode
   | -- | on a card: the card type its controller named
