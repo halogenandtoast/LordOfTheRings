@@ -153,6 +153,8 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , theOneRingTheBlackRiders
+      , theOneRingTheRoadDarkens
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1055,18 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- | The Lord of the Rings saga's One Ring: no encounter set, never gathered, as the scenario
+-- puts it into play on its Ring-bearer (see 'LordOfTheRings.Saga.fellowshipSetup').
+sagaOneRing :: CardCode -> CardDef
+sagaOneRing code =
+  unique
+    (emptyCardDef code "The One Ring" ObjectiveType)
+      { cdCardTraits = setFromList [Artifact, Item, Ring]
+      }
+
+theOneRingTheBlackRiders :: CardDef
+theOneRingTheBlackRiders = sagaOneRing "141085"
+
+theOneRingTheRoadDarkens :: CardDef
+theOneRingTheRoadDarkens = sagaOneRing "142091"
