@@ -358,6 +358,8 @@ import LordOfTheRings.Treachery.Cards.MountainsOfShadow
 import LordOfTheRings.Treachery.Cards.RuinedSupplies
 import LordOfTheRings.Treachery.Cards.LostInTheWild
 import LordOfTheRings.Treachery.Cards.WeighedDown
+import LordOfTheRings.Treachery.Cards.GatheringGloom
+import LordOfTheRings.Treachery.Cards.SwarmOfBats
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -743,5 +745,7 @@ allTreacherys =
         , SomeTreacheryCard ruinedSupplies
         , SomeTreacheryCard lostInTheWild
         , SomeTreacheryCard weighedDown
+        , SomeTreacheryCard gatheringGloom
+        , SomeTreacheryCard swarmOfBats
         ]
     ]

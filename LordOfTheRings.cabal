@@ -2248,6 +2248,7 @@ library
       LordOfTheRings.Treachery.Cards.FuriousRainstorm
       LordOfTheRings.Treachery.Cards.FuryAndMalice
       LordOfTheRings.Treachery.Cards.GatheringForces
+      LordOfTheRings.Treachery.Cards.GatheringGloom
       LordOfTheRings.Treachery.Cards.GatheringGround
       LordOfTheRings.Treachery.Cards.GetThatDwarf
       LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
@@ -2413,6 +2414,7 @@ library
       LordOfTheRings.Treachery.Cards.SurroundedByShadow
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
+      LordOfTheRings.Treachery.Cards.SwarmOfBats
       LordOfTheRings.Treachery.Cards.TakeCover
       LordOfTheRings.Treachery.Cards.TakenPrisoner
       LordOfTheRings.Treachery.Cards.TakingOnWater

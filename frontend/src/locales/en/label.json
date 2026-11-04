@@ -2505,5 +2505,11 @@
   "weighedDown": {
     "attach": "Choose a tied hero to attach Weighed Down to",
     "discard": "Weighed Down: choose an attachment to discard"
+  },
+  "gatheringGloom": {
+    "choose": "Gathering Gloom: choose one",
+    "raiseThreat": "Raise your threat by {n}, 1 for each ally you control",
+    "reveal": "Reveal an encounter card",
+    "discardAlly": "Gathering Gloom: choose an ally to discard"
   }
 }

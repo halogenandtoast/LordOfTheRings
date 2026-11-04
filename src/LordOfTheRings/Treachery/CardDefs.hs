@@ -368,6 +368,8 @@ allTreacheryCards =
       , ruinedSupplies
       , lostInTheWild
       , weighedDown
+      , gatheringGloom
+      , swarmOfBats
       ]
 
 deepDeepDark :: CardDef
@@ -2353,3 +2355,15 @@ lostInTheWild = (treachery "18026" "Lost in the Wild" LostInWilderland 2) {cdEas
 
 weighedDown :: CardDef
 weighedDown = (treachery "18027" "Weighed Down" LostInWilderland 2) {cdEasyModeQuantity = Just 1}
+
+gatheringGloom :: CardDef
+gatheringGloom =
+  (treachery "18040" "Gathering Gloom" GatheringGloom 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Printed "Swarm of Bats", as its own text names it.
+swarmOfBats :: CardDef
+swarmOfBats = (treachery "18041" "Swarm of Bats" GatheringGloom 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
