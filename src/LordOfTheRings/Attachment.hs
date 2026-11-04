@@ -240,6 +240,11 @@ import LordOfTheRings.Attachment.Cards.OrcDisguise
 import LordOfTheRings.Attachment.Cards.Guthwine
 import LordOfTheRings.Attachment.Cards.FriendOfFriends
 import LordOfTheRings.Attachment.Cards.BilbosMagicRing
+import LordOfTheRings.Attachment.Cards.TheArkenstoneTreasure (theArkenstoneTreasure)
+import LordOfTheRings.Attachment.Cards.MithrilShirtTreasure (mithrilShirtTreasure)
+import LordOfTheRings.Attachment.Cards.ThrorsBattleAxe (throrsBattleAxe)
+import LordOfTheRings.Attachment.Cards.ThrorsHuntingBow (throrsHuntingBow)
+import LordOfTheRings.Attachment.Cards.ThrorsGoldenCup (throrsGoldenCup)
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -517,5 +522,10 @@ allAttachments =
         , SomeAttachmentCard guthwine
         , SomeAttachmentCard friendOfFriends
         , SomeAttachmentCard bilbosMagicRing
+        , SomeAttachmentCard theArkenstoneTreasure
+        , SomeAttachmentCard mithrilShirtTreasure
+        , SomeAttachmentCard throrsBattleAxe
+        , SomeAttachmentCard throrsHuntingBow
+        , SomeAttachmentCard throrsGoldenCup
         ]
     ]

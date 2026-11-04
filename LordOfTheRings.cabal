@@ -436,6 +436,7 @@ library
       LordOfTheRings.Attachment.Cards.Miruvor
       LordOfTheRings.Attachment.Cards.MithrilShirt
       LordOfTheRings.Attachment.Cards.MithrilShirtTheRoadDarkens
+      LordOfTheRings.Attachment.Cards.MithrilShirtTreasure
       LordOfTheRings.Attachment.Cards.NarvisBelt
       LordOfTheRings.Attachment.Cards.Narya
       LordOfTheRings.Attachment.Cards.NecklaceOfGirion
@@ -518,6 +519,7 @@ library
       LordOfTheRings.Attachment.Cards.SwordThain
       LordOfTheRings.Attachment.Cards.SwordThatWasBroken
       LordOfTheRings.Attachment.Cards.TheArkenstone
+      LordOfTheRings.Attachment.Cards.TheArkenstoneTreasure
       LordOfTheRings.Attachment.Cards.TheDaysRising
       LordOfTheRings.Attachment.Cards.TheElvenking
       LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
@@ -527,6 +529,9 @@ library
       LordOfTheRings.Attachment.Cards.TheRedArrow
       LordOfTheRings.Attachment.Cards.TheRoadGoesEverOn
       LordOfTheRings.Attachment.Cards.Thorongil
+      LordOfTheRings.Attachment.Cards.ThrorsBattleAxe
+      LordOfTheRings.Attachment.Cards.ThrorsGoldenCup
+      LordOfTheRings.Attachment.Cards.ThrorsHuntingBow
       LordOfTheRings.Attachment.Cards.ThrorsMap
       LordOfTheRings.Attachment.Cards.ThrowingAxe
       LordOfTheRings.Attachment.Cards.TirelessThoroughbred
