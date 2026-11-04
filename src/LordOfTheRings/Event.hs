@@ -183,6 +183,8 @@ import LordOfTheRings.Event.Cards.Command
 import LordOfTheRings.Event.Cards.UnlikelyFriendship
 import LordOfTheRings.Event.Cards.WellWarned
 import LordOfTheRings.Event.Cards.DourHanded
+import LordOfTheRings.Event.Cards.ProudHunters
+import LordOfTheRings.Event.Cards.Backtrack
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -385,5 +387,7 @@ allEvents =
         , SomeEventCard unlikelyFriendship
         , SomeEventCard wellWarned
         , SomeEventCard dourHanded
+        , SomeEventCard proudHunters
+        , SomeEventCard backtrack
         ]
     ]

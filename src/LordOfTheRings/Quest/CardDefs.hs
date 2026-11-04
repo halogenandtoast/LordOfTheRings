@@ -12,7 +12,7 @@ import LordOfTheRings.Trait (Trait (Burden))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle, exploreSecretWays]
 
 scoutAhead :: CardDef
 scoutAhead =
@@ -60,6 +60,13 @@ theStormComes =
 prepareForBattle :: CardDef
 prepareForBattle =
   (playerSideQuest "17003" "Prepare for Battle" Leadership (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+exploreSecretWays :: CardDef
+exploreSecretWays =
+  (playerSideQuest "17036" "Explore Secret Ways" Lore (StaticCost 1) 6)
     { cdVictoryPoints = Just 1
     , cdLimitOneInVictoryDisplay = True
     }

@@ -196,6 +196,10 @@ allAllyCards =
       , halflingBounder
       , vigilantDunadan
       , andrathGuardsman
+      , kahlielsTribesman
+      , dunedainPathfinder
+      , erynGalenSettler
+      , stewardOfOrthanc
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1367,3 +1371,26 @@ andrathGuardsman =
     { cdCardTraits = setFromList [Dunedain, Ranger]
     }
 
+kahlielsTribesman :: CardDef
+kahlielsTribesman =
+  (ally "17029" "Kahliel's Tribesman" Leadership (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Harad]
+    }
+
+dunedainPathfinder :: CardDef
+dunedainPathfinder =
+  (ally "17033" "Dúnedain Pathfinder" Spirit (StaticCost 0) 2 1 0 2)
+    { cdCardTraits = setFromList [Dunedain, Scout]
+    }
+
+erynGalenSettler :: CardDef
+erynGalenSettler =
+  (ally "17035" "Eryn Galen Settler" Lore (StaticCost 2) 1 2 0 2)
+    { cdCardTraits = setFromList [Woodman]
+    }
+
+stewardOfOrthanc :: CardDef
+stewardOfOrthanc =
+  (ally "17037" "Steward of Orthanc" Neutral (StaticCost 3) 2 0 0 2)
+    { cdCardTraits = setFromList [Isengard]
+    }

@@ -200,6 +200,8 @@ allEventCards =
       , unlikelyFriendship
       , wellWarned
       , dourHanded
+      , proudHunters
+      , backtrack
       ]
 
 everVigilant :: CardDef
@@ -796,3 +798,9 @@ wellWarned = event "16008" "Well Warned" Spirit (StaticCost 0)
 
 dourHanded :: CardDef
 dourHanded = event "16009" "Dour-handed" Tactics (StaticCost 1)
+
+proudHunters :: CardDef
+proudHunters = event "17032" "Proud Hunters" Tactics (StaticCost 0)
+
+backtrack :: CardDef
+backtrack = event "17034" "Backtrack" Spirit (StaticCost 1)

@@ -187,6 +187,8 @@ allAttachmentCards =
       , mirkwoodLongKnife
       , theRoadGoesEverOn
       , kahlielsHeaddress
+      , steedOfTheNorth
+      , mightyWarrior
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1256,3 +1258,16 @@ kahlielsHeaddress =
     , cdKeywords = setFromList [Restricted]
     }
 
+steedOfTheNorth :: CardDef
+steedOfTheNorth =
+  (attachment "17030" "Steed of the North" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mightyWarrior :: CardDef
+mightyWarrior =
+  (attachment "17031" "Mighty Warrior" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }

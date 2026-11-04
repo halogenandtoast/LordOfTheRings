@@ -80,6 +80,7 @@ allHeroCards =
       , gimliLeadership
       , legolasSpirit
       , kahliel
+      , thurindir
       ]
 
 aragorn :: CardDef
@@ -499,3 +500,8 @@ kahliel =
     { cdCardTraits = setFromList [Harad, Noble]
     }
 
+thurindir :: CardDef
+thurindir =
+  (hero "17028" "Thurindir" Lore 8 2 2 0 4)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }

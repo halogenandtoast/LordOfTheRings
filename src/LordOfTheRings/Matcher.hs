@@ -798,6 +798,10 @@ getEncounterDiscard :: HasGame m => m [EncounterCard]
 getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . gameScenario)
 
 -- | The top card of the encounter deck, if there is one.
+-- | The top N cards of the encounter deck, as "search the top 5 cards" reads.
+getTopOfEncounterDeckN :: HasGame m => Int -> m [EncounterCard]
+getTopOfEncounterDeckN n = getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
+
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)
 getTopOfEncounterDeck = getsGame (headMay . (.encounterDeck) . toAttrs . gameScenario)
 
