@@ -2462,7 +2462,12 @@ runGameMessage msg g = case msg of
       push $ Run [BeginPhase extra, EndPhase extra]
       pure $ g & additionalPhasesL .~ rest & resumeAfterL %~ (<|> Just phase)
     [] -> do
-      push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase $ fromMaybe phase (gameResumeAfter g))
+      -- a phase skipped, as The Great River skips the encounter phase, does not begin
+      mods <- getModifiers GameTarget
+      let following p = case nextPhase p of
+            Just n | SkipPhase n `elem` mods -> following n
+            n -> n
+      push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (following $ fromMaybe phase (gameResumeAfter g))
       pure $ g & resumeAfterL .~ Nothing
   EndPhase phase -> do
     -- sharing the game split between staging areas, the cards at each stage see it end
