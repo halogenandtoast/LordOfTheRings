@@ -89,8 +89,10 @@ sideACodes = map toCardCode [Quests.spidersOfMirkwoodStage, Quests.carriedAway, 
 {- | The stage of the quest deck the players advance to from the stage: one numbered 1
 higher, of the side. "Next" is the stage numbered 1 higher, whichever version the players
 are on, as the players read it (FFG forum, "Did I play Lost in Mirkwood right?" and "Lost
-in 'Lost in Mirkwood'"; no designer ruling): from 2A an objective-location saying C goes
-to 3C.
+in 'Lost in Mirkwood'"; RingsDB's community notes say the same): from 2A an
+objective-location saying C goes to 3C. No designer ruling exists: the FFG forum's
+"Unofficial Official Rulings thread" has Caleb's Lost in Mirkwood ruling only on Guarded
+(location).
 -}
 nextStage :: Bool -> Int -> [EncounterCard] -> Maybe EncounterCard
 nextStage sideA current =
