@@ -181,7 +181,8 @@ data EnemyMatcher
   | -- | the enemy whose card this is, as a card taken from a deck is found once in play
     EnemyWithCardId CardId
   | EnemyEngagedWith PlayerMatcher
-  | -- | an enemy dealt a shadow card still face down
+  | -- | an enemy dealt a shadow card still face down, one player card effects can choose
+    -- (see 'shadowsPlayerCardsCanAffect'): only player cards look for one
     EnemyWithFacedownShadow
   | -- | an enemy whose shadow card has turned face up, as its attack resolves
     EnemyWithRevealedShadow
@@ -207,6 +208,8 @@ data EnemyMatcher
   | -- | an enemy guarding a card: an objective, a captive, a location or a player card, as
     -- "an enemy guarding a card" reads (Unseen Danger)
     EnemyGuardingACard
+  | -- | an enemy guarding a hero as its captive, as Carried Away reads
+    EnemyGuardingAHero
   | -- | an enemy with as much damage as its hit points, as an Indestructible enemy may have
     -- (The Great Worm)
     EnemyWithNoHitPointsRemaining

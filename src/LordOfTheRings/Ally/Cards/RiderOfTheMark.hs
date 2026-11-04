@@ -46,9 +46,10 @@ instance RunMessage RiderOfTheMark where
       pure s
     UseCardAbility pid (isSource a -> True) 2 _ -> do
       enemies <- traverse getEnemy =<< select (EnemyEngagedWith $ PlayerWithId pid)
+      shadowed <- for enemies \e -> (e,) <$> shadowsPlayerCardsCanAffect e
       chooseOneM pid do
         questionLabeled "riderOfTheMark.discardShadow"
         causedBy a
-        for_ enemies \e -> targets e.shadowCards \c -> discardShadowCard e.id c
+        for_ shadowed \(e, shadows) -> targets shadows \c -> discardShadowCard e.id c
       pure s
     _ -> RiderOfTheMark <$> runMessage msg a

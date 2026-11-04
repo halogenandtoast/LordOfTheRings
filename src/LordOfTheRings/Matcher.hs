@@ -236,7 +236,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
   EnemyWithCardCode code -> pure $ toCardCode enemy == code
   EnemyWithCardId cid -> pure $ (toCard enemy).id == cid
-  EnemyWithFacedownShadow -> pure $ any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) enemy.shadowCards
+  EnemyWithFacedownShadow -> any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) <$> shadowsPlayerCardsCanAffect enemy
   EnemyWithRevealedShadow -> pure $ notNull (toAttrs enemy).enemyShadowRevealed
   EnemyEngagedWith pm -> case enemy.placement of
     EngagedWith pid -> elem pid <$> select pm
@@ -252,6 +252,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithAnyAttachment -> notNull <$> getAttachmentsOn (toTarget enemy)
   EnemyWithResources -> pure $ countTokens Resource (toAttrs enemy).enemyTokens > 0
   EnemyGuardingACard -> guardingACard (toCard enemy).id (toTarget enemy)
+  EnemyGuardingAHero -> any (\case HeroTarget _ -> True; _ -> False) <$> charactersGuardedBy (toCard enemy).id
   EnemyWithNoHitPointsRemaining -> (enemy.damage >=) <$> modifiedValue hitPointsOf (toTarget enemy) enemy.hitPoints
   EnemyGrappledWith lm -> case enemy.placement of
     AttachedTo (LocationTarget lid) -> elem lid <$> select lm
@@ -306,6 +307,13 @@ matchLocation matcher location = case matcher of
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
 notOutOfPlay t = notElem ConsideredOutOfPlay . map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+
+{- | The shadow cards dealt to the enemy that a player card can choose or affect: not one
+immune to player card effects, as Draw Her Fire makes those dealt to Dagnir. Immunity
+protects the shadow card itself, whatever the enemy is (Rules Reference, "Immune").
+-}
+shadowsPlayerCardsCanAffect :: HasGame m => Enemy -> m [EncounterCard]
+shadowsPlayerCardsCanAffect enemy = filterM (fmap not . immuneToPlayerCards . CardIdTarget . (.id)) enemy.shadowCards
 
 immuneToPlayerCards :: HasGame m => Target -> m Bool
 immuneToPlayerCards t =

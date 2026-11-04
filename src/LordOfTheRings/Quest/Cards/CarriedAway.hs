@@ -9,7 +9,7 @@ import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.LostInMirkwood.Helpers (advancingFromStage)
 
 newtype CarriedAway = CarriedAway QuestAttrs
-  deriving anyclass (IsQuest, HasAbilities)
+  deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 -- | Stage 3A of Lost in Mirkwood. No quest points.
@@ -28,12 +28,22 @@ instance HasModifiersFor CarriedAway where
       HeroTarget _ -> True
       _ -> False
 
+{- | Forced: When an enemy guarding a hero is defeated, return that hero to its owner's
+control exhausted: exhausted now, it is rescued as its guard leaves play.
+
+A guard that leaves play another way, discarded or shuffled away, frees the hero too: an
+enemy guarding an objective is dealt with as it "leaves play, either by being defeated or
+as the result of a card effect" (Rules Reference, "Guarded"). The hero is then no longer a
+guarded hero, so no longer under no player's control, and its owner has it back; only
+defeat exhausts it, as this Forced effect says.
+-}
+instance HasAbilities CarriedAway where
+  getAbilities (CarriedAway a) = [mkAbility a 1 $ forced $ MatchingEnemyDefeatedWindow When EnemyGuardingAHero | a.flipped]
+
 {- | When Revealed: Each player chooses a hero he controls, discards each token and
 attachment from that hero, and places it in the staging area. Each player discards cards
 from the top of the encounter deck until an enemy is discarded and attaches that enemy to
 the hero he owns in the staging area, guarding it.
-Forced: When an enemy guarding a hero is defeated, return that hero to its owner's control
-exhausted: a captive is rescued, exhausted, as its guard leaves play.
 When the players advance from this stage, discard each guarded hero.
 -}
 instance RunMessage CarriedAway where
@@ -64,6 +74,12 @@ instance RunMessage CarriedAway where
       for_ (find isEnemy cards) \e -> do
         addToStagingFromDiscard e
         guardCharacterWith h e
+      pure q
+    UseCardAbility _ (isSource attrs -> True) 1 ws -> do
+      for_ [eid | Window _ (EnemyDefeated eid) <- ws] \eid -> do
+        captor <- getEnemy eid
+        heroes <- charactersGuardedBy (toCard captor).id
+        for_ [h | h@(HeroTarget _) <- heroes] exhaust
       pure q
     _ | advancingFromStage msg -> do
       guarded <- getsGame (filter (isJust . heroGuardedBy . toAttrs) . toList . (.entities.heroes))

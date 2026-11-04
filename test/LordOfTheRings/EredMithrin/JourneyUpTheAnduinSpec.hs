@@ -13,7 +13,7 @@ import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Phase (Phase (EncounterPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (journeyUpTheAnduin, lookupScenario)
-import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), evilCreaturesDeckL, setAsideL)
+import LordOfTheRings.Scenario.Types (GameMode (EasyMode), ScenarioAttrs (..), evilCreaturesDeckL, modeL, setAsideL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import TestImport
@@ -86,6 +86,12 @@ spec = describe "Journey Up the Anduin" do
       staged <- getsGame (map (.placement) . toList . (.entities.locations))
       staged `shouldBe` [StagingArea]
       toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.travelingNorth
+
+    it "leaves the Wilderlands enemies easy mode removes out of the Evil Creatures deck" . gameTestIn (overAttrs (modeL .~ EasyMode) journeyUpTheAnduin) testDeck $ \pid -> do
+      flipFirstQuest pid
+      evil <- map toCardCode . fromMaybe [] . (.evilCreaturesDeck) <$> scenarioAttrs
+      length evil `shouldBe` 6
+      map (\d -> length (filter (== toCardCode d) evil)) [Enemies.hillTroll, Enemies.marshAdder] `shouldBe` [1, 0]
 
   describe "the Evil Creatures deck" do
     it "takes its defeated enemies, victory points and all, into its own discard pile" . anduinTest $ \_ -> do

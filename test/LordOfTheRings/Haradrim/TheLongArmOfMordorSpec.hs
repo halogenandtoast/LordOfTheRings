@@ -194,6 +194,8 @@ spec = describe "The Long Arm of Mordor" do
       h <- heroIn "01007"
       (heroInStagingArea h, heroExhausted h) `shouldBe` (False, True)
       activeQuestCode `shouldReturn` toCardCode Quests.findTheOthers
+      -- stage 1 left play as the players advanced from it
+      getsGame (map toCardCode . toList . (.entities.quests)) `shouldReturn` [toCardCode Quests.findTheOthers]
 
     it "has stage 2B give each player a hero back before stage 3A is revealed" . longArmTest $ \pid -> do
       q <- putQuestStage Quests.findTheOthers

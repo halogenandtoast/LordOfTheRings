@@ -32,7 +32,7 @@ instance RunMessage TirelessHunters where
         causedBy attrs
         targets enemies \eid -> do
           engageEnemy pid eid
-          shadows <- (.shadowCards) <$> getEnemy eid
+          shadows <- shadowsPlayerCardsCanAffect =<< getEnemy eid
           for_ (take 1 shadows) (discardShadowCard eid)
       pure e
     _ -> TirelessHunters <$> runMessage msg attrs

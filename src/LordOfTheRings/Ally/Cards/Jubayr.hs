@@ -27,11 +27,12 @@ instance RunMessage Jubayr where
   runMessage msg s@(Jubayr a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       enemies <- traverse getEnemy =<< select (not_ UniqueEnemy <> EnemyWithFacedownShadow)
+      shadowed <- for enemies \e -> (e,) <$> shadowsPlayerCardsCanAffect e
       chooseOneM pid do
         questionLabeled "jubayr.discardShadow"
         causedBy a
-        for_ enemies \e ->
-          targets [c | c <- e.shadowCards, c.id `notElem` enemyShadowRevealed (toAttrs e)] \c ->
+        for_ shadowed \(e, shadows) ->
+          targets [c | c <- shadows, c.id `notElem` enemyShadowRevealed (toAttrs e)] \c ->
             discardShadowCard e.id c
       pure s
     _ -> Jubayr <$> runMessage msg a

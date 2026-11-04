@@ -228,6 +228,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (MatchingHeroDealtDamageWindow t m, DealtDamage (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
   (MatchingEnemyAttackResolvedWindow t hm m, AttackedEnemy (HeroTarget hid) eid) | t == timing ->
     andM [selectAny (HeroWithId hid <> hm), selectAny (EnemyWithId eid <> m)]
+  (MatchingEnemyDefeatedWindow t m, EnemyDefeated eid) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingAttackersDeclaredWindow t m, AttackersDeclared eid) | t == timing -> selectAny (EnemyWithId eid <> m)
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
@@ -338,7 +340,6 @@ passesCriteria = \case
   TargetLacksModifier t m -> notElem m <$> getModifiers t
   ModifierFrom source m ->
     getsGame (any (any \x -> modifierSource x == source && modifierType x == m) . toList . gameModifiers)
-  ProgressPlacedThisPhaseOn t -> (> 0) <$> progressPlacedThisPhase t
   CardPlayedThisRound code -> any (\(_, c, _) -> c == code) <$> cardsPlayedThisRound
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs

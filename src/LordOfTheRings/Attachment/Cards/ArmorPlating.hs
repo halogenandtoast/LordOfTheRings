@@ -33,10 +33,11 @@ instance RunMessage ArmorPlating where
     UseCardAbility pid (isSource a -> True) 1 windows -> do
       let attackers = [eid | Window _ (DefendedAttack _ eid) <- windows]
       enemies <- traverse getEnemy =<< select EnemyWithFacedownShadow
+      shadowed <- for [e | e <- enemies, toId e `notElem` attackers] \e -> (e,) <$> shadowsPlayerCardsCanAffect e
       chooseOneM pid do
         questionLabeled "armorPlating.discardShadow"
         causedBy a
-        for_ [e | e <- enemies, toId e `notElem` attackers] \e ->
-          targeting (toId e) $ for_ (take 1 e.shadowCards) (discardShadowCard (toId e))
+        for_ shadowed \(e, shadows) ->
+          targeting (toId e) $ for_ (take 1 shadows) (discardShadowCard (toId e))
       pure s
     _ -> ArmorPlating <$> removedAsItLeaves msg a

@@ -2178,10 +2178,14 @@ runGameMessage msg g = case msg of
                 onto = filter (inPlay g) [t | ProgressBeyondActiveTo t <- gameMods]
                 canceledBy q = find ((== Just q) . sourceTarget) [s | QuestProgressCanceledBy s <- gameMods]
                 onQuests k =
-                  [ maybe (PlaceTokens GameSource q Progress k) (`ProgressCanceled` k) (canceledBy q)
-                  | q <- quests
-                  , k > 0
-                  ]
+                  concat
+                    [ maybe
+                        [CreateEffect $ Effect GameSource q [ProgressFromQuestingThisPhase] UntilEndOfPhase, PlaceTokens GameSource q Progress k]
+                        (\s -> [ProgressCanceled s k])
+                        (canceledBy q)
+                    | q <- quests
+                    , k > 0
+                    ]
             -- a location in the staging area may take it before the quest, as Explorer's
             -- Almanac's, the first player choosing
             almanacs <- if overflow > 0 && null instead then mayTakeQuestingProgress else pure []
@@ -2712,6 +2716,9 @@ runGameMessage msg g = case msg of
     -- a stage with victory points goes to the victory display, as Search for an Exit's
     let won = [toCard q | q <- toList (Map.lookup qid g.entities.quests), isJust (cdVictoryPoints $ toCardDef q)]
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (won <>))
+  LeaveQuestStage qid | Map.member qid g.entities.quests -> do
+    pushAll $ discardAttachedToQuest g qid
+    pure $ g & entitiesL . questsL %~ Map.delete qid
   -- a stage added to the victory display leaves play; what comes next is the card's to say
   AddToVictoryDisplay (QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests ->
     pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))

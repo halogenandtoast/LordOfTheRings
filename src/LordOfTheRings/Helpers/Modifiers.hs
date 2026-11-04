@@ -93,9 +93,10 @@ preloadModifiers g = do
           (<>)
           [ (toTarget (toId l), [Modifier (effectSource e) m])
           | e <- gameEffects g
-          , EachLocationInStagingArea m <- effectModifiers e
+          , (matches, m) <- [(const True, m) | EachLocationInStagingArea m <- effectModifiers e] <> [(cardMatches cm, m) | EachMatchingLocationInStagingArea cm m <- effectModifiers e]
           , l <- toList es.locations
           , l.placement == StagingArea
+          , matches l
           ]
       -- a lasting effect on each ally reaches one that enters play after it began
       allied =
@@ -111,6 +112,7 @@ preloadModifiers g = do
       -- change (FAQ 1.55): each such modifier adds its count as the plain modifier
       counted t = \case
         Modifier source (ThreatPerToken token) -> [Modifier source (ThreatModifier $ tokensOn t token)]
+        Modifier source (ThreatWithToken token n) -> [Modifier source (ThreatModifier n) | tokensOn t token > 0]
         Modifier source (StagingThreatPerToken on token) -> [Modifier source (StagingThreatBonus $ tokensOn on token)]
         _ -> []
       all' = Map.mapWithKey (\t ms -> ms <> concatMap (counted t) ms) all0

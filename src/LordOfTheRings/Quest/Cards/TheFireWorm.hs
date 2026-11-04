@@ -8,7 +8,7 @@ import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Trait (Trait (Dragon))
 
 newtype TheFireWorm = TheFireWorm QuestAttrs
-  deriving anyclass (IsQuest, HasAbilities)
+  deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theFireWorm :: QuestCard TheFireWorm
@@ -24,14 +24,18 @@ instance HasModifiersFor TheFireWorm where
     drakes <- fireDrakes
     unless (null drakes) $ modifySelf a [CannotBeDefeated]
 
+{- | Forced: After a player declares X attackers against Fire-drake, he must remove X
+progress tokens from the main quest or cancel the attack. Cancelled, the attackers stay
+exhausted. The player is the one who controls the first attacker declared; with fewer
+than X progress on the main quest the attack is cancelled.
+-}
+instance HasAbilities TheFireWorm where
+  getAbilities (TheFireWorm a) =
+    [mkAbility a 1 $ forced $ MatchingAttackersDeclaredWindow After (EnemyWithCardCode $ toCardCode Enemies.fireDrake) | a.flipped]
+
 {- | When Revealed: Search the encounter deck and discard pile for a Dragon treachery and
 attach it to Fire-drake, if able. Shuffle the encounter deck. The first player chooses
 which: one Fire-drake has no copy of already, as Dragon Might's are limit 1 per enemy.
-
-Forced: After a player declares X attackers against Fire-drake, he must remove X progress
-tokens from the main quest or cancel the attack. Cancelled, the attackers stay exhausted.
-The player is the one who controls the first attacker declared; with fewer than X
-progress on the main quest the attack is cancelled.
 
 If Fire-drake is defeated, the players win the game.
 -}
@@ -57,18 +61,16 @@ instance RunMessage TheFireWorm where
             for_ (find ((== t) . CardIdTarget . (.id)) found) (`attachFromEncounterDiscard` drake)
       shuffleEncounterDeck
       pure q
-    CheckWindows ws | attrs.flipped -> do
-      drakes <- fireDrakes
-      for_ [eid | Window After (AttackersDeclared eid) <- ws, eid `elem` drakes] \_ -> do
-        attackers <- selectCharacters AttackingHero AttackingAlly
-        controller <- join <$> traverse characterController (headMay attackers)
-        pid <- maybe getLead pure controller
-        chooseOrRunOneM pid do
-          questionLabeled "theFireWorm.attackers"
-          causedBy attrs
-          removeMainQuestProgressLabeled attrs (length attackers)
-          labeled "theFireWorm.cancel" $ for_ attackers stopAttacking
-      TheFireWorm <$> runMessage msg attrs
+    UseCardAbility _ (isSource attrs -> True) 1 _ -> do
+      attackers <- selectCharacters AttackingHero AttackingAlly
+      controller <- join <$> traverse characterController (headMay attackers)
+      pid <- maybe getLead pure controller
+      chooseOrRunOneM pid do
+        questionLabeled "theFireWorm.attackers"
+        causedBy attrs
+        removeMainQuestProgressLabeled attrs (length attackers)
+        labeled "theFireWorm.cancel" $ for_ attackers stopAttacking
+      pure q
     Destroy _ (EnemyTarget eid) -> do
       drakes <- fireDrakes
       when (eid `elem` drakes) winGame

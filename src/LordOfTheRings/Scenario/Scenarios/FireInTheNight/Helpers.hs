@@ -54,6 +54,10 @@ attack. The first player may declare a defender for this attack. Excess damage m
 dealt to Hrogar's Hill." As Trouble in Tharbad's attacks on Nalir, it is made against the
 first player: undefended, its damage goes to Hrogar's Hill, and no other player's
 character, a sentinel among them, defends it, for it is not made against a player.
+"May declare a defender" is the combat rules' own wording ("may choose one ready
+character ... to declare as a defender", Rules Reference 6.4.1), which a card allowing
+multiple defenders changes ("Multiple Defenders"); the card grants the first player that
+step, so such a card, as Stand Together, still applies. No ruling says otherwise.
 -}
 dagnirAttacksHrogarsHill :: (ReverseQueue m, Sourceable source) => source -> m ()
 dagnirAttacksHrogarsHill source = do

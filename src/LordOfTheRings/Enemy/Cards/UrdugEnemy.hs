@@ -1,10 +1,9 @@
 module LordOfTheRings.Enemy.Cards.UrdugEnemy (urdugEnemy) where
 
 import LordOfTheRings.Card (toCardCode)
-import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Game.Base (gamePhase)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (Placement (EngagedWith, StagingArea))
 
@@ -27,16 +26,19 @@ instance HasModifiersFor UrdugEnemy where
 instance HasAbilities UrdugEnemy where
   getAbilities (UrdugEnemy a) = [mkAbility a 1 $ forced $ PhaseBeginsWindow After QuestPhase | EngagedWith _ <- [a.placement]]
 
--- | His attack in the quest phase is this one: its damage sends him and Tiny back once it
--- resolves.
+-- | "This attack" is the immediate attack the ability makes, marked for as long as it
+-- lasts: its damage sends him and Tiny back once it resolves. Another attack of his in
+-- the quest phase, as a treachery's, does not.
 instance RunMessage UrdugEnemy where
   runMessage msg e@(UrdugEnemy attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      for_ [pid | EngagedWith pid <- [attrs.placement]] \pid -> immediateAttack pid attrs.id
+      for_ [pid | EngagedWith pid <- [attrs.placement]] \pid -> do
+        attackModifier attrs attrs.id AttackMadeByOwnAbility
+        immediateAttack pid attrs.id
       pure e
     CheckWindows ws | notNull [() | Window After (DamagedByEnemyAttack _ eid) <- ws, eid == attrs.id] -> do
-      questing <- getsGame ((== QuestPhase) . gamePhase)
-      when questing do
+      ownAttack <- elem AttackMadeByOwnAbility <$> getModifiers attrs.id
+      when ownAttack do
         tiny <- select (EnemyWithCardCode $ toCardCode Cards.tinyEnemy)
         afterAttack attrs.id $ map (`PlaceEnemy` StagingArea) (attrs.id : tiny)
       UrdugEnemy <$> runMessage msg attrs

@@ -153,6 +153,12 @@ data ModifierType
   | -- | on an enemy: it gets +1 threat for each token of the kind on it, counted as they
     -- change, as Foes of Ecthelion reads for resources
     ThreatPerToken Token
+  | -- | on a card: it gets this much threat while it has a token of the kind on it, counted
+    -- as they change, as Vastness of Mirkwood's "+2 instead if it has at least 1 progress"
+    ThreatWithToken Token Int
+  | -- | on an enemy, for an attack: it is the attack its own ability made, as Urdug's
+    -- "If this attack deals damage" reads of the immediate attack Tiny gives him
+    AttackMadeByOwnAbility
   | -- | on the game: the total threat in the staging area is raised by 1 for each token of
     -- the kind on the card, counted as they change, as The Tower Beckons reads
     StagingThreatPerToken Target Token
@@ -376,6 +382,10 @@ data ModifierType
   | -- | on a quest card, by an effect until the end of the phase: this much progress was
     -- placed on it this phase (see 'progressPlacedThisPhase')
     ProgressPlacedThisPhase Int
+  | -- | on a quest card, by an effect until the end of the phase: progress from questing
+    -- successfully was placed on it, as The Lower Depths' "after placing progress here
+    -- from questing successfully" reads
+    ProgressFromQuestingThisPhase
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
@@ -530,6 +540,9 @@ data ModifierType
   | -- | on the game: each location in the staging area takes the modifier, one that
     -- enters it later too, for as long as the effect lasts, as Treacherous Fog reads
     EachLocationInStagingArea ModifierType
+  | -- | on the game: as 'EachLocationInStagingArea', each matching one, as Vastness of
+    -- Mirkwood's "each non-objective location in the staging area"
+    EachMatchingLocationInStagingArea CardMatcher ModifierType
   | -- | on the game: a hero committed to the quest this round, as The Rear Guard reads
     HeroCommittedThisRound
   | -- | on the game: the players quested successfully this phase, as Bofur reads

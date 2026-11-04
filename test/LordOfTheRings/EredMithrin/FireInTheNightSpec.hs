@@ -2,12 +2,13 @@ module LordOfTheRings.EredMithrin.FireInTheNightSpec (spec) where
 
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getDefenseAgainst)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithCardCode), PlayerMatcher (AnyPlayer), getEnemy)
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithCardCode, EnemyWithFacedownShadow), PlayerMatcher (AnyPlayer), getEnemy, select, shadowsPlayerCardsCanAffect)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Phase (Phase (EncounterPhase, PlanningPhase, QuestPhase))
@@ -153,6 +154,16 @@ spec = describe "Fire in the Night" do
     -- 7 attack against Beravor's 2 defense and 4 hit points
     getDamage hill `shouldReturn` 1
 
+  it "lets the first player declare several defenders against Dagnir's attack on the hill, with a card that allows it" . fireTest $ \pid -> do
+    _ <- atTheHill
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [MayDeclareMultipleDefenders] UntilEndOfPhase
+    phaseEnds PlanningPhase
+    passActions pid
+    chooseTarget pid =<< hero "01012"
+    eowyn <- hero "01007"
+    Just question <- getQuestion pid
+    [t | TargetLabel t _ <- questionChoices question] `shouldSatisfy` elem eowyn
+
   it "loses the game as Hrogar's Hill has damage equal to its quest points" . fireTest $ \_ -> do
     (hill, _) <- atTheHill
     run $ DealDamage GameSource hill 49
@@ -198,6 +209,15 @@ spec = describe "Fire in the Night" do
     passActions pid
     getQuestion pid >>= (`shouldSatisfy` isJust)
     chooseLabel "$label.takeAttackUndefended" pid
+
+  it "keeps the shadow cards dealt to Dagnir from player cards that discard or look at shadows for Draw Her Fire" . fireTest $ \_ -> do
+    (_, dagnir) <- atTheHill
+    _ <- setEncounterDeck [Treacheries.theDragonsFury]
+    run $ DealShadowCard dagnir
+    select EnemyWithFacedownShadow `shouldReturn` [dagnir]
+    _ <- sideQuest Quests.drawHerFire
+    select EnemyWithFacedownShadow `shouldReturn` []
+    (shadowsPlayerCardsCanAffect =<< getEnemy dagnir) `shouldReturn` []
 
   it "has characters not count their defense against Dagnir for Fortify the Defense, and lets each player draw 3 as it is defeated" . fireTest $ \pid -> do
     (_, dagnir) <- atTheHill
