@@ -2239,5 +2239,11 @@
   },
   "overgrown": {
     "attach": "Overgrown: choose the location to attach it to"
+  },
+  "urukChieftain": {
+    "engage": "Uruk Chieftain: choose the player it engages"
+  },
+  "mordorWarg": {
+    "attach": "Mordor Warg: choose the Orc enemy to attach it to"
   }
 }

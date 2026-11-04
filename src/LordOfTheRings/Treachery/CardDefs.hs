@@ -343,6 +343,7 @@ allTreacheryCards =
       , sandstorm
       , heatExhaustion
       , overgrown
+      , fearOfMordor
       ]
 
 deepDeepDark :: CardDef
@@ -2206,3 +2207,6 @@ heatExhaustion = (treachery "16052" "Heat Exhaustion" DesertSands 2) {cdShadowEf
 
 overgrown :: CardDef
 overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFromList [Surge], cdEasyModeQuantity = Just 1}
+
+fearOfMordor :: CardDef
+fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

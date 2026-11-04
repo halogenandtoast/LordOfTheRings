@@ -402,6 +402,10 @@ allEnemyCards =
       , southronArcher
       , sandViper
       , giantScorpion
+      , urukChieftain
+      , urukOfMordor
+      , urukWargRider
+      , mordorWarg
       ]
 
 namelessThing :: CardDef
@@ -3264,4 +3268,35 @@ giantScorpion =
   (enemy "16055" "Giant Scorpion" DesertCreatures 3 33 3 3 2 4)
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
+    }
+
+urukChieftain :: CardDef
+urukChieftain =
+  unique
+    (enemy "16061" "Uruk Chieftain" MordorOrcs 1 50 4 5 3 6)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 3
+      }
+
+urukOfMordor :: CardDef
+urukOfMordor =
+  (enemy "16062" "Uruk of Mordor" MordorOrcs 3 35 2 4 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+urukWargRider :: CardDef
+urukWargRider =
+  (enemy "16063" "Uruk Warg-Rider" MordorOrcs 2 40 3 3 1 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | "Mordor Warg" as printed, and as the card names itself; cards.json has "Mordor Wargs".
+mordorWarg :: CardDef
+mordorWarg =
+  (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
     }

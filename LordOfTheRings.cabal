@@ -601,6 +601,7 @@ library
       LordOfTheRings.Enemy.Cards.MirkwoodFlock
       LordOfTheRings.Enemy.Cards.MistyMountainGoblins
       LordOfTheRings.Enemy.Cards.MithrilSeeker
+      LordOfTheRings.Enemy.Cards.MordorWarg
       LordOfTheRings.Enemy.Cards.MorgulBodyguard
       LordOfTheRings.Enemy.Cards.MorgulSorcerer
       LordOfTheRings.Enemy.Cards.MorgulSpider
@@ -780,10 +781,13 @@ library
       LordOfTheRings.Enemy.Cards.UngoliantsSpawnNightmare
       LordOfTheRings.Enemy.Cards.UngoliantsSwarm
       LordOfTheRings.Enemy.Cards.UnspeakableThing
+      LordOfTheRings.Enemy.Cards.UrukChieftain
       LordOfTheRings.Enemy.Cards.UrukElfStalker
       LordOfTheRings.Enemy.Cards.UrukLieutenant
       LordOfTheRings.Enemy.Cards.UrukMarksman
+      LordOfTheRings.Enemy.Cards.UrukOfMordor
       LordOfTheRings.Enemy.Cards.UrukSoldier
+      LordOfTheRings.Enemy.Cards.UrukWargRider
       LordOfTheRings.Enemy.Cards.VengefulHillman
       LordOfTheRings.Enemy.Cards.VenomsBite
       LordOfTheRings.Enemy.Cards.ViciousMarauder
@@ -1802,6 +1806,7 @@ library
       LordOfTheRings.Quest.Cards.TrackTheOrcs
       LordOfTheRings.Quest.Cards.UnexpectedRescue
       LordOfTheRings.Quest.Cards.UpThePass
+      LordOfTheRings.Quest.Cards.UruksOfTheEye
       LordOfTheRings.Quest.Cards.WashedAway
       LordOfTheRings.Quest.Import.Lifted
       LordOfTheRings.Quest.Runner
@@ -2021,6 +2026,7 @@ library
       LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
       LordOfTheRings.Treachery.Cards.FangornsAnger
       LordOfTheRings.Treachery.Cards.Fatigue
+      LordOfTheRings.Treachery.Cards.FearOfMordor
       LordOfTheRings.Treachery.Cards.FeebleAndWeary
       LordOfTheRings.Treachery.Cards.FellVoices
       LordOfTheRings.Treachery.Cards.FesteringWounds

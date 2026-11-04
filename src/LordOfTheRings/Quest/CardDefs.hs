@@ -274,6 +274,7 @@ allQuestCards =
       , inEnemyTerritory
       , findWater
       , craftRemedy
+      , uruksOfTheEye
       ]
 
 theDrippingWalls :: CardDef
@@ -1144,3 +1145,10 @@ findWater = (encounterSideQuest "16048" "Find Water" DesertSands 6) {cdVictoryPo
 
 craftRemedy :: CardDef
 craftRemedy = (encounterSideQuest "16053" "Craft Remedy" DesertCreatures 6) {cdVictoryPoints = Just 10}
+
+uruksOfTheEye :: CardDef
+uruksOfTheEye =
+  (encounterSideQuest "16060" "Uruks of the Eye" MordorOrcs 5)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
