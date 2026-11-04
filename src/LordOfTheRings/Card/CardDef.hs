@@ -23,6 +23,12 @@ data AdditionalCost = DiscardCardsFromHand Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+-- | The racing test result printed in an encounter card's lower right corner (MEC80
+-- rules, "Racing X Tests"): a WILD result counts as both a STRAIGHT and a TURN result.
+data RacingResult = Straight | Turn | Wild
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 -- | Where a player card may be played from.
 data PlayableFrom = FromHand | FromHandOrDiscard | FromDiscardOnly
   deriving stock (Show, Eq, Generic)
@@ -66,6 +72,8 @@ data CardDef = CardDef
   -- ^ what the card adds to an escape test it is dealt for
   , cdSailingIcons :: Int
   -- ^ the sailing success icons printed on the encounter card, found by a Sailing test
+  , cdRacingResult :: Maybe RacingResult
+  -- ^ the racing test result printed on the encounter card, found by a racing test
   , cdDeckLimit :: Int
   -- ^ the copies of its title a deck may hold
   , cdLimitOnePerHost :: Bool
@@ -137,6 +145,7 @@ emptyCardDef cCode name cType =
     , cdSinglePayer = False
     , cdEscape = Nothing
     , cdSailingIcons = 0
+    , cdRacingResult = Nothing
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
     , cdLimitOneInVictoryDisplay = False

@@ -45,6 +45,10 @@ data Keyword
   | -- | as the card is revealed from the encounter deck, the players as a group discard
     -- this many resources from their heroes' pools, as many as they can
     Prowl Int
+  | -- | on a quest stage: it cannot be defeated outside of the quest phase, player card
+    -- effects cannot place progress on it, and defeated it stays in play (MEC80 rules,
+    -- "Race Keyword"; Challenge of the Wainriders resolves it)
+    Race
   | Ranged
   | -- | on an enemy: it heals this much damage as the refresh phase begins
     Regenerate Int

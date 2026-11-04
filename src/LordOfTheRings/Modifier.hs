@@ -60,6 +60,9 @@ data ModifierType
   | -- | on a location: player card effects cannot place progress on it, as Retake the City
     -- reads for the staging area
     NoProgressFromPlayerCards
+  | -- | on the game: each racing test requires this many more matching results, as Ravine
+    -- Ledge reads while in the staging area
+    RacingTestAdditionalResults Int
   | -- | on a location: its quest points are raised by this much, as an X reads
     QuestPointModifier Int
   | -- | on a location: its quest points are at most this, after the others, as Woodmen's
