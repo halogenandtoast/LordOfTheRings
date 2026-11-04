@@ -430,6 +430,10 @@ allTreacheryCards =
       , overseersWhip
       , crueltyOfMordor
       , brokenCaptives
+      , caughtInWebs
+      , poisonedBySpiders
+      , fightingAmongFriends
+      , weighedDownWilderland
       ]
 
 deepDeepDark :: CardDef
@@ -2718,3 +2722,19 @@ crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdS
 
 brokenCaptives :: CardDef
 brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Flies and Spiders
+
+caughtInWebs :: CardDef
+caughtInWebs = treachery "132033" "Caught in Webs" FliesAndSpiders 2
+
+poisonedBySpiders :: CardDef
+poisonedBySpiders = (treachery "132034" "Poisoned by Spiders" FliesAndSpiders 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
+
+-- * Wilderland
+
+fightingAmongFriends :: CardDef
+fightingAmongFriends = (treachery "132037" "Fighting Among Friends" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
+
+weighedDownWilderland :: CardDef
+weighedDownWilderland = (treachery "132038" "Weighed Down" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
