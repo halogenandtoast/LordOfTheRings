@@ -214,6 +214,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       ...placed('allies', isAt('InPlayArea', pid)),
       // and the locations they control, as Osgiliath's
       ...placed('locations', isAt('InPlayArea', pid)),
+      // and an attachment waiting there unattached, as Followed
+      ...placed('attachments', isAt('InPlayArea', pid)),
     ]
     return {
       playerId: pid,

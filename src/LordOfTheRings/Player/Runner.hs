@@ -531,7 +531,7 @@ payingHeroes sphere player = do
 
 hasHost :: HasGame m => Card -> m Bool
 hasHost c
-  | c.cardType == AttachmentType, PlayIntoStagingArea <- attachMatcherFor (toCardCode c) = pure True
+  | c.cardType == AttachmentType, attachMatcherFor (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea] = pure True
   -- an attachment's play criteria are checked here too, with its hosts
   | PlayerCard pc <- c
   , c.cardType == AttachmentType =

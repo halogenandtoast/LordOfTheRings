@@ -94,6 +94,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (TreacheryWithTraitRevealedWindow t trait, Revealed target@(TreacheryTarget tid)) | t == timing ->
     maybe (pure False) (hasTrait trait target . toCardDef) . Map.lookup tid . (.treacheries) =<< getsGame gameEntities
   (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
+  (EnemyCardRevealedWindow t, Revealed (EnemyTarget _)) -> windowMatchesM (CardRevealedWindow t) w
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
@@ -290,6 +291,7 @@ passesCriteria = \case
   HeadingMatches m -> headingMatches m
   InNightmareMode -> inNightmareMode
   AnyCriteria cs -> anyM passesCriteria cs
+  DifferentTraitsAtLeast pid n -> (>= n) . length . mconcat <$> (traverse characterTraits =<< charactersControlledBy pid)
 
 -- | Whether each list can give a character not taken by an earlier one.
 distinct :: [Target] -> [[Target]] -> Bool

@@ -26,7 +26,8 @@ getStagingThreat :: (HasGame m) => m Int
 getStagingThreat = do
   cards <- getStagingThreats
   bonus <- sum . mapMaybe (\case StagingThreatBonus n -> Just n; _ -> Nothing) <$> getModifiers GameTarget
-  pure $ sum (map snd cards) + bonus
+  -- a reduction, as Followed's, takes it no lower than 0
+  pure $ max 0 (sum (map snd cards) + bonus)
 
 -- | What each card in the staging area adds to its threat, modifiers included.
 getStagingThreats :: (HasGame m) => m [(CardId, Int)]

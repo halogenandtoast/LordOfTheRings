@@ -291,6 +291,17 @@ hasTrait trait target def = do
   -- one it lost, as Shot from the Sky takes the Eagle trait, it no longer has
   pure $ LoseTrait trait `notElem` mods && (trait `member` cdCardTraits def || GainTrait trait `elem` mods)
 
+-- | The character's traits: its printed ones and those a modifier grants, less those it
+-- lost.
+characterTraits :: HasGame m => Target -> m (Set Trait)
+characterTraits target = do
+  printed <- case target of
+    HeroTarget hid -> cdCardTraits . toCardDef <$> getHero hid
+    AllyTarget aid -> cdCardTraits . toCardDef <$> getAlly aid
+    _ -> pure mempty
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  pure $ (printed <> setFromList [t | GainTrait t <- mods]) `difference` setFromList [t | LoseTrait t <- mods]
+
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be
 spent as that sphere's.
@@ -753,6 +764,12 @@ getCurrentSideQuest = do
 -- | The side quests in the staging area, the players' and the encounter deck's.
 getSideQuests :: HasGame m => m [Target]
 getSideQuests = getsGame (map toTarget . filter isSideQuest . toList . entitiesQuests . gameEntities)
+
+-- | The side quests in the victory display, the players' and the encounter deck's, as "X
+-- is the number of side quests in the victory display" reads.
+sideQuestsInVictoryDisplay :: HasGame m => m Int
+sideQuestsInVictoryDisplay =
+  getsGame (length . filter (isSideQuestType . (.cardType)) . (.victoryDisplay) . toAttrs . gameScenario)
 
 -- | The encounter side quests in play, as "if there are no encounter side quests in play"
 -- reads.

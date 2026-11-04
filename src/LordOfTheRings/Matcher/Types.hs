@@ -150,6 +150,8 @@ data AttachMatcher
     AttachToPlayer
   | -- | played into the staging area unattached, as a Trap
     PlayIntoStagingArea
+  | -- | played into its owner's play area unattached, as Followed
+    PlayIntoPlayArea
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

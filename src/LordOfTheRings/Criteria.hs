@@ -61,6 +61,9 @@ data Criterion
     HeadingMatches HeadingMatcher
   | -- | the game is dealt in nightmare mode, as a setup card changes a stage's ability
     InNightmareMode
+  | -- | the characters the player controls have at least this many different traits
+    -- between them, as The Free Peoples reads
+    DifferentTraitsAtLeast PlayerId Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

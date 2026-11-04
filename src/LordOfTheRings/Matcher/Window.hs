@@ -92,6 +92,8 @@ data WindowMatcher
   | -- | an encounter card revealed from the encounter deck with a When Revealed effect
     -- that can be canceled
     CardRevealedWindow Timing
+  | -- | as 'CardRevealedWindow', an enemy, as Dúnedain Lookout answers
+    EnemyCardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
     DefenderDeclaredWindow Timing (Maybe Target)
   | -- | a character declared as a defender against the enemy, as Snow Warg reads
@@ -412,6 +414,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
+  (EnemyCardRevealedWindow {}, _) -> False
   (AttackDealtDamageWithTraitWindow {}, _) -> False
   (TraveledToWindow {}, _) -> False
   (AttachmentPlayedOnHeroWindow {}, _) -> False

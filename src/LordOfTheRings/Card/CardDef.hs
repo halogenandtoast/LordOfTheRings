@@ -68,6 +68,9 @@ data CardDef = CardDef
   -- ^ the copies of its title a deck may hold
   , cdLimitOnePerHost :: Bool
   -- ^ an attachment limited to 1 per character: no host takes a second copy of its title
+  , cdLimitOneInVictoryDisplay :: Bool
+  -- ^ a side quest's "Limit 1 copy in the victory display": a copy defeated while one is
+  -- there goes to its owner's discard pile instead (MEC55 rules)
   , cdPlayableFrom :: PlayableFrom
   -- ^ where its owner may play it from, as Glorfindel can be played from the discard pile
   , cdOtherSide :: Maybe CardCode
@@ -129,6 +132,7 @@ emptyCardDef cCode name cType =
     , cdSailingIcons = 0
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
+    , cdLimitOneInVictoryDisplay = False
     , cdPlayableFrom = FromHand
     , cdOtherSide = Nothing
     , cdAdditionalCost = Nothing

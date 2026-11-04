@@ -224,13 +224,19 @@ discardAtNoWillpower = do
     pushAll [Discard c | c <- doomed, Discard c `notElem` queued, LeavePlay (Discard c) `notElem` queued]
 
 {- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
-event in a hand, or being paid for, is built from its card to be asked.
+event in a hand, or being paid for, is built from its card to be asked. So is each side
+quest in the victory display.
 -}
 withHandModifiers :: Game -> GameT Game
 withHandModifiers g = do
   MonoidalMap fromHands <- execWriterT do
     for_ g.players \player -> for_ player.hand (handCardModifiers player.id)
     for_ (gameActiveCosts g) \ac -> handCardModifiers ac.activeCostPlayer ac.activeCostCard
+    -- a side quest in the victory display, as Keep Watch, has effects there: it is built
+    -- from its card with no quest id, as 'questInVictoryDisplay' reads
+    for_ (toAttrs g.scenario).victoryDisplay \c ->
+      when (isSideQuestType c.cardType && Map.member (toCardCode c) allQuests)
+        $ getModifiersFor (lookupQuest (toCardCode c) c.id (QuestId UUID.nil))
   pure
     $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
 
@@ -2327,8 +2333,16 @@ runGameMessage msg g = case msg of
     let chosen = [Effect GameSource t [CurrentQuest] UntilEndOfPhase | t `elem` sideQuests]
     pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
-    pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid
-    pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
+    -- "Limit 1 copy in the victory display": a copy defeated while one is there goes to
+    -- its owner's discard pile (MEC55 rules)
+    let copyThere =
+          cdLimitOneInVictoryDisplay (toCardDef q)
+            && any ((== toCardCode q) . toCardCode) (toAttrs g.scenario).victoryDisplay
+        (won, discarded) = case toCard q of
+          PlayerCard pc | copyThere -> ([], [PutInDiscard pc])
+          c -> ([c], [])
+    pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid <> discarded
+    pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (won <>))
   CompleteQuest qid -> do
     pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid <> [AdvanceQuest]
     -- a stage with victory points goes to the victory display, as Search for an Exit's
@@ -2483,6 +2497,13 @@ runGameMessage msg g = case msg of
           & entitiesL
           . attachmentsL
           %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = StagingArea}) attachment)
+      PlayIntoPlayArea -> do
+        push entered
+        pure
+          $ g
+          & entitiesL
+          . attachmentsL
+          %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = InPlayArea pid}) attachment)
       _ -> do
         hosts <- cardHosts (toCardCode card)
         push $ case hosts of
@@ -3115,10 +3136,6 @@ defendingEffect d = CreateEffect $ Effect GameSource d [Defending] UntilEndOfAtt
 
 gainedTraits :: Target -> GameT (Set Trait)
 gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
-
--- | A character's traits, printed and gained.
-characterTraits :: Target -> GameT (Set Trait)
-characterTraits target = (<>) . cdCardTraits <$> characterCardDef target <*> gainedTraits target
 
 -- | The characters with the keyword, printed or gained.
 withKeyword :: Keyword -> [Target] -> GameT [Target]
