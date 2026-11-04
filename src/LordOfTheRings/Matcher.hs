@@ -52,6 +52,7 @@ matchPlayer matcher player = case matcher of
   PlayerAtValourThreat -> do
     dire <- direInEffect
     (>= if dire then 80 else 40) <$> getThreat player.id
+  ControllerOfHero hid -> selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId player.id))
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
