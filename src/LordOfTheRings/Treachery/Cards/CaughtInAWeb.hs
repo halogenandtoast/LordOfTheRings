@@ -54,6 +54,6 @@ instance RunMessage CaughtInAWeb where
       withHost attrs \host -> do
         copies <- treacheriesOn attrs.treacheryCardCode host
         paid <- allM (\c -> abilityUsed (TreacherySource c) 1) copies
-        when paid $ ready host
+        when paid $ encounterReadies host
       pure t
     _ -> CaughtInAWeb <$> runMessage msg attrs

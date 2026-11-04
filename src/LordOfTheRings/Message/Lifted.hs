@@ -237,8 +237,9 @@ discard (toTarget -> t) = do
         push $ CheckWindows [Window After $ AllyDiscardedByCardEffect t (cdCardTraits def <> setFromList gained)]
     _ -> pure ()
 
-{- | A card effect readies the card, unless it is a character player card effects cannot
-ready, as Find Water reads.
+{- | A player card's effect readies the card, unless it is a character player card effects
+cannot ready, as Find Water reads. An encounter card's effect readies with
+'encounterReadies'.
 -}
 ready :: (ReverseQueue m, Targetable target) => target -> m ()
 ready (toTarget -> t) = do
@@ -248,6 +249,10 @@ ready (toTarget -> t) = do
         AllyTarget _ -> True
         _ -> False
   unless (character && barred) $ push (Ready t)
+
+-- | An encounter or quest card's effect readies the card, as Find Water's own Response.
+encounterReadies :: (ReverseQueue m, Targetable target) => target -> m ()
+encounterReadies = push . Ready . toTarget
 
 exhaust :: (ReverseQueue m, Targetable target) => target -> m ()
 exhaust = push . Exhaust . toTarget

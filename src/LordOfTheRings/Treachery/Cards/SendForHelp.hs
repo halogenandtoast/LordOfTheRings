@@ -95,7 +95,7 @@ instance RunMessage SendForHelp where
                 drawCards attrs pid 1
             labeled "sendForHelp.refresh" do
               characters <- selectCharacters ExhaustedHero ExhaustedAlly
-              traverse_ ready characters
+              traverse_ encounterReadies characters
         _ -> choosePlayerM lead attrs \pid -> do
           card <- genPlayerCard Allies.gandalf (Just pid)
           putAllyIntoPlayUnder pid card
