@@ -83,6 +83,7 @@ import LordOfTheRings.Attachment.Cards.Cunning
 import LordOfTheRings.Attachment.Cards.Hardy
 import LordOfTheRings.Attachment.Cards.Resolute
 import LordOfTheRings.Attachment.Cards.Ruthless
+import LordOfTheRings.Attachment.Cards.DeterminationAttachment
 import LordOfTheRings.Attachment.Cards.Stalwart
 import LordOfTheRings.Attachment.Cards.AmarthiulsCourage
 import LordOfTheRings.Attachment.Cards.ChieftainsBrooch
@@ -273,6 +274,7 @@ allAttachments =
         , SomeAttachmentCard hardy
         , SomeAttachmentCard resolute
         , SomeAttachmentCard ruthless
+        , SomeAttachmentCard determinationAttachment
         , SomeAttachmentCard stalwart
         , SomeAttachmentCard amarthiulsCourage
         , SomeAttachmentCard chieftainsBrooch

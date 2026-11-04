@@ -260,6 +260,7 @@ library
       LordOfTheRings.Attachment.Cards.DaechanarsBrand
       LordOfTheRings.Attachment.Cards.DarkKnowledge
       LordOfTheRings.Attachment.Cards.DefenderOfTheWest
+      LordOfTheRings.Attachment.Cards.DeterminationAttachment
       LordOfTheRings.Attachment.Cards.DunedainCache
       LordOfTheRings.Attachment.Cards.DunedainMark
       LordOfTheRings.Attachment.Cards.DunedainQuest
@@ -2467,6 +2468,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.LostRealmEngineSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.PlanningPhaseSpec
+      LordOfTheRings.PlayerCardTextSpec
       LordOfTheRings.PlayerChoicesSpec
       LordOfTheRings.QuestAdvancementSpec
       LordOfTheRings.QuestPhaseSpec
