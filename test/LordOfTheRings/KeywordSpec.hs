@@ -69,7 +69,7 @@ spec = describe "Keywords and limits" do
     it "keeps them off Winged Guardian" . gameTestWith (coreDeck "tactics") $ \pid -> do
       guardian <- putAllyIntoPlay pid Allies.wingedGuardian
       legolas <- toTarget <$> getHeroWithCode "01005"
-      hosts <- cardHosts (toCardCode Attachments.warAxe)
+      hosts <- cardHosts pid (toCardCode Attachments.warAxe)
       hosts `shouldSatisfy` elem legolas
       hosts `shouldSatisfy` notElem guardian
 
@@ -77,7 +77,7 @@ spec = describe "Keywords and limits" do
     legolas <- toTarget <$> getHeroWithCode "01005"
     thalin <- toTarget <$> getHeroWithCode "01004"
     _ <- putAttachmentOn pid Attachments.warAxe legolas
-    hosts <- cardHosts (toCardCode Attachments.warAxe)
+    hosts <- cardHosts pid (toCardCode Attachments.warAxe)
     hosts `shouldSatisfy` notElem legolas
     hosts `shouldSatisfy` elem thalin
 

@@ -2083,7 +2083,7 @@ runGameMessage msg g = case msg of
   PayForCard pid card fromHand windows
     | card.cardType == AttachmentType -> do
         -- a host that lowers the cost is chosen before paying
-        hosts <- cardHosts (toCardCode card)
+        hosts <- cardHosts pid (toCardCode card)
         discounts <- traverse (attachDiscount card) hosts
         if any (> 0) discounts
           then
@@ -2723,7 +2723,7 @@ runGameMessage msg g = case msg of
           . attachmentsL
           %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = InPlayArea pid}) attachment)
       _ -> do
-        hosts <- cardHosts (toCardCode card)
+        hosts <- cardHosts pid (toCardCode card)
         push $ case hosts of
           [host] -> uiToRun (attachTo host)
           _ ->

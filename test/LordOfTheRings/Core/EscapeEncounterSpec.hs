@@ -37,7 +37,7 @@ spec = do
     it "cannot have attachments played on it" . escapeTest $ \pid -> do
       reveal Enemies.nazgulOfDolGuldur []
       run . EngageEnemy pid =<< theEnemy Enemies.nazgulOfDolGuldur
-      attachmentHosts (attachMatcherFor $ toCardCode Attachments.forestSnare) `shouldReturn` []
+      attachmentHosts (attachMatcherFor pid $ toCardCode Attachments.forestSnare) `shouldReturn` []
 
     it "makes the engaged player discard a character after its shadow effect resolves" . escapeTest $ \pid -> do
       reveal Enemies.nazgulOfDolGuldur []

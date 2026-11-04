@@ -21,7 +21,7 @@ import LordOfTheRings.Matcher.Types (EnemyMatcher (EnemyWithEngagementCostAboveT
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore))
 import LordOfTheRings.Message.Lifted (cancelEvent)
 import LordOfTheRings.Modifier (ModifierType (..))
-import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase, RefreshPhase, ResourcePhase))
+import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase, QuestPhase, RefreshPhase, ResourcePhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioVictoryDisplay))
 import LordOfTheRings.Window
@@ -443,6 +443,16 @@ spec = describe "Dwarrowdelf player cards" do
     _ <- putAttachmentOn pid Attachments.resourceful b
     run $ BeginPhase ResourcePhase
     resourcesOf b `shouldReturn` 2
+
+  it "Resourceful is played from hand onto a hero its owner controls" . gameTest $ \pid -> do
+    card <- putCardIntoHand pid Attachments.resourceful
+    t <- hero theodred
+    run $ PlaceTokens GameSource t Resource 4
+    run $ BeginPhase PlanningPhase
+    chooseTarget pid card
+    chooseTarget pid t
+    placed <- getsGame (map (attachmentPlacement . toAttrs) . toList . (.entities.attachments))
+    placed `shouldBe` [AttachedTo t]
 
   it "Háma returns a tactics event from the discard pile, then a card is discarded" . gameTest $ \pid -> do
     hama <- putHero pid Heroes.hama

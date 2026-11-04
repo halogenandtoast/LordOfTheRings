@@ -204,7 +204,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   attachHosts :: Map CardId [Target]
   attachHosts =
     mapFromList
-      [ (c.id, runReadGame (cardHosts $ toCardCode c) v)
+      [ (c.id, runReadGame (cardHosts p.id $ toCardCode c) v)
       | v <- areaViews
       , p <- toList v.players
       , seesHand p.id

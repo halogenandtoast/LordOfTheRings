@@ -24,7 +24,7 @@ instance RunMessage WellEquipped where
       -- asked once they are in the discard pile
       attachable <- forMaybeM [pc | PlayerCard pc <- top, cardMatches (CardWithType AttachmentType) pc] \pc -> do
         unique <- passesUnique (PlayerCard pc)
-        hosts <- filter (`elem` dwarves) <$> cardHosts (toCardCode pc)
+        hosts <- filter (`elem` dwarves) <$> cardHosts pid (toCardCode pc)
         pure $ guard (unique && notNull hosts) $> (pc, hosts)
       discardTopOfDeck pid 2
       unless (null attachable) $ chooseOneM pid do

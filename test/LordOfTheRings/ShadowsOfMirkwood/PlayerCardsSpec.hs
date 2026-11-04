@@ -67,9 +67,9 @@ spec = describe "Shadows of Mirkwood player cards" do
 
     it "can go on a hero Song of Wisdom gives a lore icon" . gameTest $ \pid -> do
       e <- eowyn
-      (e `elem`) <$> cardHosts (toCardCode Attachments.aBurningBrand) `shouldReturn` False
+      (e `elem`) <$> cardHosts pid (toCardCode Attachments.aBurningBrand) `shouldReturn` False
       _ <- putAttachmentOn pid Attachments.songOfWisdom e
-      (e `elem`) <$> cardHosts (toCardCode Attachments.aBurningBrand) `shouldReturn` True
+      (e `elem`) <$> cardHosts pid (toCardCode Attachments.aBurningBrand) `shouldReturn` True
 
   describe "Landroval" do
     it "is limited once per game for each player across every copy" . gameTest $ \pid -> do

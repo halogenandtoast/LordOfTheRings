@@ -25,7 +25,7 @@ instance RunMessage MasterIronsmith where
       for_ (take 1 [h | Window _ (PaidFrom _ (h : _)) <- windows]) \h -> do
         player <- getPlayer pid
         let gear = CardWithType AttachmentType <> CardMatchAny [CardWithTrait Weapon, CardWithTrait Armor]
-            fits c = andM [passesUnique c, elem h <$> cardHosts (toCardCode c)]
+            fits c = andM [passesUnique c, elem h <$> cardHosts pid (toCardCode c)]
         fromHand <- filterM fits [c | c <- player.hand, cardMatches gear c]
         fromDiscard <- filterM (fits . PlayerCard) [pc | PlayerCard pc <- player.discard, cardMatches gear pc]
         chooseOneM pid do

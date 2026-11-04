@@ -15,10 +15,11 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 
--- | What an attachment card can be attached to, read from its builder.
-attachMatcherFor :: CardCode -> AttachMatcher
-attachMatcherFor code =
-  (toAttrs $ lookupAttachment code (CardId UUID.nil) (AttachmentId UUID.nil) (PlayerId UUID.nil)).attachTo
+-- | What an attachment card can be attached to, read from its builder, for its owner, as
+-- Resourceful's "a hero you control" reads.
+attachMatcherFor :: PlayerId -> CardCode -> AttachMatcher
+attachMatcherFor owner code =
+  (toAttrs $ lookupAttachment code (CardId UUID.nil) (AttachmentId UUID.nil) owner).attachTo
 
 -- | What must be true for the player card, an attachment, to be played by its owner.
 attachmentCriteriaFor :: PlayerCard -> Criterion
@@ -28,14 +29,14 @@ attachmentCriteriaFor card =
 -- | Where the attachment card can go: its matcher's hosts, less those already carrying
 -- a copy of a card limited to 1 per character, and, for a restricted card, those that
 -- cannot have restricted attachments.
-cardHosts :: (HasGame m) => CardCode -> m [Target]
-cardHosts code = do
+cardHosts :: (HasGame m) => PlayerId -> CardCode -> m [Target]
+cardHosts owner code = do
   -- with its text blank, an attachment has no "Attach to" to be attached by, as Amon Lhaw
   -- blanks them
   blank <- elem BlankAttachments <$> getModifiers GameTarget
   attached <- getsGame (toList . (.entities.attachments))
   let copyOn host = any (\a -> a.placement == AttachedTo host && cdName (toCardDef a) == cdName def) attached
-  candidates <- attachmentHosts (attachMatcherFor code)
+  candidates <- attachmentHosts (attachMatcherFor owner code)
   flip filterM [h | not blank, h <- candidates, not (cdLimitOnePerHost def && copyOn h)] \host ->
     if Restricted `member` cdKeywords def then notElem CannotHaveRestrictedAttachments <$> getModifiers host else pure True
  where

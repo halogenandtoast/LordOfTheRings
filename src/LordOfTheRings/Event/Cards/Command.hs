@@ -134,7 +134,7 @@ instance RunMessage Command where
                         HeroTarget _ -> True
                         AllyTarget _ -> True
                         _ -> False
-                  hosts <- filter (\h -> isCharacter h && AttachedTo h /= att.placement) <$> cardHosts (toCardCode att)
+                  hosts <- filter (\h -> isCharacter h && AttachedTo h /= att.placement) <$> cardHosts (toAttrs att).controller (toCardCode att)
                   chooseOneM pid do
                     questionLabeled "command.moveAttachment"
                     causedBy attrs

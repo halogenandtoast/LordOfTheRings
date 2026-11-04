@@ -45,11 +45,11 @@ spec = describe "The Hills of Emyn Muil" do
     chooseAbilityOf pid mathom
     length . (.hand) <$> getPlayer pid `shouldReturn` hand + 3
 
-  it "has no attachment played while Amon Lhaw is the active location" . emynMuilTest $ \_ -> do
+  it "has no attachment played while Amon Lhaw is the active location" . emynMuilTest $ \pid -> do
     lid <- revealLocation Locations.amonLhaw
-    notNull <$> cardHosts (toCardCode Attachments.ancientMathom) `shouldReturn` True
+    notNull <$> cardHosts pid (toCardCode Attachments.ancientMathom) `shouldReturn` True
     run $ PlaceLocation lid ActiveLocation
-    cardHosts (toCardCode Attachments.ancientMathom) `shouldReturn` []
+    cardHosts pid (toCardCode Attachments.ancientMathom) `shouldReturn` []
 
   it "cannot be defeated without 20 victory points" . emynMuilTest $ \_ -> do
     stage <- putQuestStage Quests.theHillsOfEmynMuil

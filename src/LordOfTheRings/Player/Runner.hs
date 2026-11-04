@@ -26,7 +26,7 @@ import LordOfTheRings.Helpers.Window (exhaustableCharacters, getActionAbilities,
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Doomed, Secrecy))
-import LordOfTheRings.Id (AllyId (..), PlayerId)
+import LordOfTheRings.Id (AllyId (..), PlayerId (..))
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
@@ -263,7 +263,7 @@ runPlayer msg player = case msg of
       playable <- flip filterM [pc | PlayerCard pc <- player.discard, cdCardType (toCardDef pc) == AttachmentType] \pc -> do
         let card = PlayerCard pc
         discount <- attachDiscount card host
-        andM [elem host <$> cardHosts (toCardCode pc), passesUnique card, not <$> cannotPlay pid card, canAffordWith discount player card]
+        andM [elem host <$> cardHosts pid (toCardCode pc), passesUnique card, not <$> cannotPlay pid card, canAffordWith discount player card]
       choices <- for playable \pc ->
         targetLabel (CardIdTarget pc.id)
           <$> inLogBlock (PlayBlock pid (PlayerCard pc)) [RemoveFromDiscard pid pc.id, PayToAttach pid (PlayerCard pc) False [] host]
@@ -574,18 +574,22 @@ payingHeroes sphere player = do
 
 hasHost :: HasGame m => Card -> m Bool
 hasHost c
-  | c.cardType == AttachmentType, attachMatcherFor (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea] = pure True
-  -- an attachment's play criteria are checked here too, with its hosts
   | PlayerCard pc <- c
   , c.cardType == AttachmentType =
-      andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> attachableHosts c]
+      if attachMatcherFor (cardOwner pc) (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
+        then pure True
+        -- an attachment's play criteria are checked here too, with its hosts
+        else andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> attachableHosts c]
   | otherwise = pure True
 
--- | Where an attachment card could go, none for any other card.
+-- | Where an attachment card could go, for its owner, none for any other card.
 attachableHosts :: HasGame m => Card -> m [Target]
-attachableHosts c
-  | c.cardType == AttachmentType = cardHosts (toCardCode c)
-  | otherwise = pure []
+attachableHosts = \case
+  c@(PlayerCard pc) | c.cardType == AttachmentType -> cardHosts (cardOwner pc) (toCardCode c)
+  _ -> pure []
+
+cardOwner :: PlayerCard -> PlayerId
+cardOwner = fromMaybe (PlayerId UUID.nil) . (.owner)
 
 correctPhase :: HasGame m => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of

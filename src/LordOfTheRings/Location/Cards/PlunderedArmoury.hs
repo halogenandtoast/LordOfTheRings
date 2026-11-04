@@ -38,7 +38,7 @@ instance RunMessage PlunderedArmoury where
           questionLabeled "plunderedArmoury.attach"
           causedBy a
           targets cards \c -> do
-            hosts <- filter (`elem` mine) <$> cardHosts (toCardCode c)
+            hosts <- filter (`elem` mine) <$> cardHosts pid (toCardCode c)
             chooseOneM pid do
               questionLabeled "plunderedArmoury.host"
               causedBy a

@@ -29,7 +29,7 @@ instance RunMessage OpenTheArmory where
           top <- take 5 . (.deck) <$> getPlayer pid
           attachable <- forMaybeM [pc | PlayerCard pc <- top, cardMatches gear pc] \pc -> do
             unique <- passesUnique (PlayerCard pc)
-            hosts <- cardHosts (toCardCode pc)
+            hosts <- cardHosts pid (toCardCode pc)
             pure $ guard (unique && notNull hosts) $> (pc, hosts)
           chooseOneM pid do
             questionLabeled "openTheArmory.intoPlay"
