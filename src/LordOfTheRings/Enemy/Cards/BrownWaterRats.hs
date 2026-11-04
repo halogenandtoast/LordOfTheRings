@@ -19,8 +19,6 @@ instance HasModifiersFor BrownWaterRats where
 -- | Forced: If the players are on stage 3 and all remaining enemies have the printed Rat
 -- trait, discard Brown Water Rats from play.
 instance HasAbilities BrownWaterRats where
-  -- ponytail: checked as an enemy is defeated and as a stage is reached, the only times it
-  -- can come true
   getAbilities (BrownWaterRats a) =
     [ mkAbility a 1 $ silent $ EnemyDefeatedWindow After
     , mkAbility a 2 $ silent $ AdvancedToStageWindow After

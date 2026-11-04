@@ -12,7 +12,6 @@ strongholdTower :: LocationCard StrongholdTower
 strongholdTower = location StrongholdTower Cards.strongholdTower
 
 -- | While Stronghold Tower is in the staging area, shadow effects cannot be canceled.
--- ponytail: no encounter card effect can be canceled, shadow or not.
 instance HasModifiersFor StrongholdTower where
   getModifiersFor (StrongholdTower a) = when (a.placement == StagingArea) $ modified a GameTarget [CannotCancelEncounterEffects]
 

@@ -506,6 +506,15 @@ data Message
     GiveFromHand PlayerId CardId PlayerId
   | -- | a card in the player's hand is shuffled into its owner's deck
     ShuffleFromHandIntoOwnersDeck PlayerId CardId
+  | {- | the card, from out of play, is shuffled into the player's deck, as Arkham's
+    ShuffleCardsIntoDeck: an encounter card too, as Recurring Nightmare
+    -}
+    ShuffleCardIntoDeck PlayerId Card
+  | {- | the encounter card has entered the player's hand from their deck: its card, out of
+    play, answers it, as Recurring Nightmare's Forced effect (as Arkham's drawn encounter
+    cards resolve their revelations)
+    -}
+    EncounterCardEnteredHand PlayerId EncounterCard
   | -- | the enemy's attack on the player has resolved, defended by these: a window for each
     -- that took no damage defending it, before the attack's own After windows
     AttackDefended PlayerId EnemyId [Target]

@@ -127,6 +127,9 @@ data ModifierType
     MustBeTraveledTo
   | LeavesPlayToTopOfEncounterDeck
   | ShuffledIntoEncounterDeckWhenDefeated
+  | -- | on an encounter card: as it leaves play the first player shuffles it into any
+    -- player's deck, as Recurring Nightmare reads
+    LeavesPlayToAnyPlayersDeck
   | ReturnToTopOfEncounterDeckAfterCombat
   | -- | on a location: the players cannot travel there now (its travel cost cannot be paid)
     CannotBeTraveledTo

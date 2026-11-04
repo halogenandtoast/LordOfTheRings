@@ -146,6 +146,7 @@ runPlayer msg player = case msg of
         then pure player
         else do
           pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+          pushAll [EncounterCardEnteredHand player.id ec | EncounterCard ec <- drawn]
           pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
           pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
@@ -261,9 +262,9 @@ runPlayer msg player = case msg of
       pure $ player & deckL .~ deck & discardL .~ []
     TakeFromDeck pid cid | pid == player.id -> do
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
+      pushAll [EncounterCardEnteredHand pid ec | EncounterCard ec <- taken]
       pure $ player & deckL .~ kept & handL <>~ taken
     DebugSearchDeck pid | pid == player.id -> do
-      -- ponytail: no shuffle after, debug searches leave the deck order alone
       push
         $ Ask pid
         $ QuestionLabel (ikey "label.takeCardIntoHand") Nothing []
@@ -320,7 +321,10 @@ runPlayer msg player = case msg of
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromDeck pid c.id | c <- discarded]
-      pure $ player & deckL .~ deck & discardL %~ (discarded <>)
+      -- an encounter card in the deck goes to the encounter discard pile
+      let encounter = [ec | EncounterCard ec <- discarded]
+      pushWhen (notNull encounter) $ AddToEncounterDiscard encounter
+      pure $ player & deckL .~ deck & discardL %~ ([c | c@(PlayerCard _) <- discarded] <>)
     SwapHandWithDeck pid fromHand fromDeck | pid == player.id -> do
       let swap c
             | c.id == fromHand = fromMaybe c $ find ((== fromDeck) . (.id)) player.deck
@@ -341,6 +345,9 @@ runPlayer msg player = case msg of
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)
       pure $ player & discardL .~ kept & deckL .~ deck
+    ShuffleCardIntoDeck pid card | pid == player.id -> do
+      deck <- shuffleM (card : player.deck)
+      pure $ player & deckL .~ deck
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -360,8 +367,6 @@ runPlayer msg player = case msg of
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
-      -- ponytail: a card whose additional cost is a hand discard (cdAdditionalCost) can still be
-      -- played, the discard skipped; bar it in playProhibitions if that matters
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       let discarded = if barred then [] else filter ((== cid) . (.id)) (discardableHand player)
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid cid]

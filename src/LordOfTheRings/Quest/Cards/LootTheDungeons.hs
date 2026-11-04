@@ -19,8 +19,6 @@ lootTheDungeons = quest LootTheDungeons Cards.lootTheDungeons
 
 -- | Loot the Dungeons is considered to be in each player's staging area and gets +4 quest
 -- points for each player in the game at every staging area.
--- ponytail: one card, in the staging area it was added to, with the quest points of all
--- the players' staging areas together
 instance HasModifiersFor LootTheDungeons where
   getModifiersFor (LootTheDungeons a) = do
     players <- length <$> getPlayerOrder
@@ -31,7 +29,6 @@ choose one of the following boons and add it to their hand: Berelind, Chieftain'
 Coruhaer, Laermuin, Mail of Eärnur, or Silverthorn. Add the chosen cards to the Campaign
 Pool, for the decks of the players who chose them.
 
-ponytail: the players choose at once, so two may pick the same boon, of which the box has 1
 -}
 instance RunMessage LootTheDungeons where
   runMessage msg (LootTheDungeons attrs) = case msg of

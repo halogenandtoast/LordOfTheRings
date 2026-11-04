@@ -16,8 +16,6 @@ newtype HelmOfSecrecy = HelmOfSecrecy EventAttrs
 -- tokens to the hero from your collection. (Errata; its damage was discarded with its tokens,
 -- so the hero swapped in comes in fully healed, ready or exhausted as the one it replaces.)
 --
--- ponytail: your collection is every hero the engine knows that the unique rule lets into
--- play; there are no fellowship or baggins heroes yet to leave out.
 helmOfSecrecy :: EventCard HelmOfSecrecy
 helmOfSecrecy = event HelmOfSecrecy Cards.helmOfSecrecy
 

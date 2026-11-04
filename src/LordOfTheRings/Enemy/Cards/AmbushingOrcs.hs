@@ -13,7 +13,6 @@ ambushingOrcs = enemy AmbushingOrcs Cards.ambushingOrcs
 
 -- | When Ambushing Orcs is dealt a shadow card that targets the player guarding Gollum,
 -- that shadow card also targets each other player.
--- ponytail: the effect resolves again against each other player, as an undefended attack
 instance RunMessage AmbushingOrcs where
   runMessage msg (AmbushingOrcs attrs) = case msg of
     ResolveShadowCard cid eid pid _ | eid == attrs.id -> do

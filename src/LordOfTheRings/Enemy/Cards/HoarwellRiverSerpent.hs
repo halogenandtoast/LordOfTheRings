@@ -19,8 +19,6 @@ instance HasAbilities HoarwellRiverSerpent where
 
 -- | As an additional cost to travel to a safe location, one player must engage Hoarwell
 -- River Serpent.
--- ponytail: paid as the players travel, by the first player, while it is in the staging
--- area.
 instance RunMessage HoarwellRiverSerpent where
   runMessage msg e@(HoarwellRiverSerpent attrs) = case msg of
     TravelTo lid -> do

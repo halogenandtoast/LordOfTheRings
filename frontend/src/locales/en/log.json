@@ -61,6 +61,7 @@
   "putOnBottomOfQuestDeck": "{card} goes to the bottom of the quest deck",
   "returnsToHand": "{target} returns to its owner's hand",
   "shuffledIntoOwnersDeck": "{target} is shuffled into its owner's deck",
+  "shuffledIntoPlayersDeck": "{card} is shuffled into {player}'s deck",
   "putOnBottomOfOwnersDeck": "{target} goes to the bottom of its owner's deck",
   "shuffledIntoEncounterDeck": "{target} is shuffled into the encounter deck",
   "returnedToTopOfEncounterDeck": "{target} goes back on top of the encounter deck",

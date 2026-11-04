@@ -25,7 +25,6 @@ instance RunMessage StonewainValley where
     RemoveTokens _ (HeroTarget hid) Resource n | n > 0 && a.placement == StagingArea -> do
       lead <- getLead
       owner <- (.owner) <$> getHero hid
-      -- ponytail: the n removed, as the callers remove no more than the pool holds
       when (owner == lead) $ placeResources a a n
       StonewainValley <$> runMessage msg a
     _ -> StonewainValley <$> runMessage msg a

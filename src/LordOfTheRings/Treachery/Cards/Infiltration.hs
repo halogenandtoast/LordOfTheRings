@@ -15,8 +15,6 @@ infiltration = treachery Infiltration Cards.infiltration
 evenly as possible among Raider enemies in play or set aside.
 Shadow: Damage from this attack is dealt to an Aflame location in play instead of the
 defending character.
-ponytail: only Raider enemies in play take them, a set-aside card holding no tokens; the
-odd ones go to the first of them
 -}
 instance RunMessage Infiltration where
   runMessage msg t@(Infiltration attrs) = case msg of

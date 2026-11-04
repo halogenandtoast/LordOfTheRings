@@ -23,8 +23,6 @@ instance HasModifiersFor TheGrotto where
 
 -- | Forced: After a double-sided location is explored, add the top location from the
 -- Grotto deck to the staging area, Grotto side faceup.
--- ponytail: answered as it is explored, while it is in play to be read, so an explored
--- Grotto side is not yet back in the Grotto deck to be drawn again
 instance HasAbilities TheGrotto where
   getAbilities (TheGrotto a) = [mkAbility a 1 $ forced $ ExploredMatchingWindow When doubleSided | a.flipped]
    where

@@ -33,6 +33,12 @@ class IsCard a where
 instance IsCard Card where
   toCard = id
 
+instance IsCard PlayerCard where
+  toCard = PlayerCard
+
+instance IsCard EncounterCard where
+  toCard = EncounterCard
+
 class Display a where
   display :: a -> Text
 

@@ -19,8 +19,6 @@ quietTheSpirits = quest QuietTheSpirits Cards.quietTheSpirits
 -- from this effect contribute their threat to the total threat in the staging area until
 -- the end of the phase.
 -- Forced: After an enemy is destroyed, place 2 progress on Quiet the Spirits.
--- ponytail: an enemy enters play in the staging area here; one put into play engaged is
--- engaged already.
 instance HasAbilities QuietTheSpirits where
   getAbilities (QuietTheSpirits a) =
     [ restricted a 1 (TargetHasModifier (toTarget a) CurrentQuest) $ forced $ EnemyEntersStagingAreaWindow After

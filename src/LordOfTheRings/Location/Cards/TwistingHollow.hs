@@ -18,8 +18,6 @@ twistingHollow = location TwistingHollow Cards.twistingHollow
 
 -- | While Twisting Hollow is the active location, characters cannot ready from card
 -- effects.
--- ponytail: barred outside the refresh phase, where the game readies them; a card readying
--- one in the refresh phase is let by
 instance HasModifiersFor TwistingHollow where
   getModifiersFor (TwistingHollow a) = do
     phase <- getsGame gamePhase

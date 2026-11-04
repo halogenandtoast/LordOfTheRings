@@ -13,7 +13,6 @@ berelind = ally Berelind Cards.berelind
 
 -- | Response: After Berelind attacks and destroys an enemy, place 1 progress on a quest
 -- card in play.
--- ponytail: on the current quest
 instance HasAbilities Berelind where
   getAbilities (Berelind a) = [mkAbility a 1 $ response $ EnemyDestroyedByAttackWindow After (Just $ toTarget a)]
 

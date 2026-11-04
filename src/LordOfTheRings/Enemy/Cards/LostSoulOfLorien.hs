@@ -17,8 +17,6 @@ lostSoulOfLorien = enemy LostSoulOfLorien Cards.lostSoulOfLorien
 -- | Forced: After Lost Soul of Lórien is destroyed, attach it to a hero with 1 or more
 -- willpower, if able. (Counts as a condition attachment with the text: "Limit 1 per hero.
 -- Attached hero's willpower is reduced to 0.")
--- ponytail: the card goes to the discard pile; its condition lasts on the hero as an
--- effect from the card's code that is never spent
 instance RunMessage LostSoulOfLorien where
   runMessage msg (LostSoulOfLorien attrs) = case msg of
     Destroy _ (isTarget attrs -> True) -> do

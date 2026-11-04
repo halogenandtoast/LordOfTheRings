@@ -25,7 +25,6 @@ instance HasAbilities Stalwart where
   getAbilities (Stalwart a) =
     [limited (GroupLimit PerGame 1) $ restricted a 1 (DuringPhase PlanningPhase) $ ActionAbility Free | AttachedTo _ <- [a.placement]]
 
--- ponytail: played at no cost, as attaching from the discard pile does
 instance RunMessage Stalwart where
   runMessage msg s@(Stalwart a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
