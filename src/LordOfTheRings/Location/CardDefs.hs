@@ -512,6 +512,9 @@ allLocationCards =
       , seedyTavern
       , sideStreet
       , catacombs
+      , twistedTunnel
+      , narrowOpening
+      , crumblingPassage
       ]
 
 drownedTreasury :: CardDef
@@ -3812,3 +3815,22 @@ sideStreet = (location "21049" "Side Street" UnderGuard 2 3 3) {cdCardTraits = s
 
 catacombs :: CardDef
 catacombs = (location "21050" "Catacombs" UnderGuard 2 4 4) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 1}
+
+twistedTunnel :: CardDef
+twistedTunnel =
+  (location "21061" "Twisted Tunnel" TwistedTunnels 2 2 2)
+    { cdCardTraits = setFromList [Underground]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+narrowOpening :: CardDef
+narrowOpening = (location "21062" "Narrow Opening" TwistedTunnels 2 3 3) {cdCardTraits = setFromList [Underground]}
+
+crumblingPassage :: CardDef
+crumblingPassage =
+  (location "21063" "Crumbling Passage" TwistedTunnels 2 5 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }

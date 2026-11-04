@@ -1380,6 +1380,7 @@ library
       LordOfTheRings.Location.Cards.CrewQuarters
       LordOfTheRings.Location.Cards.CrumbledBattlements
       LordOfTheRings.Location.Cards.CrumblingCavern
+      LordOfTheRings.Location.Cards.CrumblingPassage
       LordOfTheRings.Location.Cards.CrumblingStairs
       LordOfTheRings.Location.Cards.CursedCaverns
       LordOfTheRings.Location.Cards.CursedForest
@@ -1566,6 +1567,7 @@ library
       LordOfTheRings.Location.Cards.NarelenyaLocation
       LordOfTheRings.Location.Cards.NarrowAlleyway
       LordOfTheRings.Location.Cards.NarrowFissure
+      LordOfTheRings.Location.Cards.NarrowOpening
       LordOfTheRings.Location.Cards.NarrowStair
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.NestOfHorrors
@@ -1748,6 +1750,7 @@ library
       LordOfTheRings.Location.Cards.TunnelsOfMountGram
       LordOfTheRings.Location.Cards.TurbulentWaters
       LordOfTheRings.Location.Cards.TwilightHall
+      LordOfTheRings.Location.Cards.TwistedTunnel
       LordOfTheRings.Location.Cards.TwistingHollow
       LordOfTheRings.Location.Cards.TwistingPassage
       LordOfTheRings.Location.Cards.TwistingShadows
@@ -2058,6 +2061,7 @@ library
       LordOfTheRings.Quest.Cards.LieLow
       LordOfTheRings.Quest.Cards.LootTheDungeons
       LordOfTheRings.Quest.Cards.LostAtSea
+      LordOfTheRings.Quest.Cards.LostInTheDark
       LordOfTheRings.Quest.Cards.LostInTheSwanfleetATreacherousSwamp
       LordOfTheRings.Quest.Cards.LostInTheSwanfleetCreaturesOfAForgottenAge
       LordOfTheRings.Quest.Cards.LostInTheSwanfleetDeadlyWaters
@@ -2505,6 +2509,7 @@ library
       LordOfTheRings.Treachery.Cards.Fanaticism
       LordOfTheRings.Treachery.Cards.FangornsAnger
       LordOfTheRings.Treachery.Cards.Fatigue
+      LordOfTheRings.Treachery.Cards.FearfulShadows
       LordOfTheRings.Treachery.Cards.FearOfMordor
       LordOfTheRings.Treachery.Cards.FeebleAndWeary
       LordOfTheRings.Treachery.Cards.FellVoices

@@ -407,6 +407,7 @@ allTreacheryCards =
       , underGuard
       , ulchorsRage
       , fanaticism
+      , fearfulShadows
       ]
 
 deepDeepDark :: CardDef
@@ -2580,3 +2581,11 @@ ulchorsRage = (treachery "21059" "Ulchor's Rage" UlchorsGuard 3) {cdShadowEffect
 
 fanaticism :: CardDef
 fanaticism = (treachery "21060" "Fanaticism" UlchorsGuard 2) {cdCardTraits = setFromList [Easterling]}
+
+fearfulShadows :: CardDef
+fearfulShadows =
+  (treachery "21064" "Fearful Shadows" TwistedTunnels 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }

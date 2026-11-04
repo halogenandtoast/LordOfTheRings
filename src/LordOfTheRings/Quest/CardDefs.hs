@@ -400,6 +400,7 @@ allQuestCards =
       , anArduousJourney
       , shadowOfFearASitE
       , unwelcomeTravelers
+      , lostInTheDark
       ]
 
 theDrippingWalls :: CardDef
@@ -1621,3 +1622,10 @@ shadowOfFearASitE =
 
 unwelcomeTravelers :: CardDef
 unwelcomeTravelers = (encounterSideQuest "21052" "Unwelcome Travelers" UnderGuard 5) {cdVictoryPoints = Just 10}
+
+lostInTheDark :: CardDef
+lostInTheDark =
+  (encounterSideQuest "21065" "Lost in the Dark" TwistedTunnels 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
