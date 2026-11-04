@@ -283,6 +283,10 @@ data CardMatcher
   | -- | a card printed with the guarded keyword, Guarded (X) among them, as "a Guarded
     -- attachment" reads (The King's Return)
     CardWithGuarded
+  | -- | a card printed with exactly this cost, as Long Lake Fisherman names
+    CardWithPrintedCost Int
+  | -- | a card printed with at least this cost, as "printed cost 3 or more" reads
+    CardWithPrintedCostAtLeast Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -320,6 +324,10 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   UniqueCard -> cdUnique def
   CardWithTitle title -> let Name t _ = cdName def in t == title
   CardWithGuarded -> any (\case Guarded -> True; GuardedBy _ -> True; _ -> False) (cdKeywords def)
+  CardWithPrintedCost n -> cdCost def == Just (StaticCost n)
+  CardWithPrintedCostAtLeast n -> case cdCost def of
+    Just (StaticCost c) -> c >= n
+    _ -> False
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]
