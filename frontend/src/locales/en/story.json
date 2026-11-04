@@ -3600,5 +3600,37 @@
       "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
       "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
     ]
+  },
+  "under-the-ash-mountains": {
+    "intro": [
+      "It had been two days since the heroes left the Wainrider camp and headed south toward Mordor. The first day of their journey was spent trading stories with their guides as they followed them across the plains. They learned much about the Wainriders and how they had come to roam the open lands of Rhûn.",
+      "The second day was different. As they drew nearer to the northern fences of Mordor, the ground became hard and the sky above them grew dark. A dreadful stillness was on the land. They rode in silence, looking anxiously about them like hunted beasts that fear an attack. But they saw nothing in that barren waste except the black wall of the Ash Mountains looming ever higher before them.",
+      "When they reached the foothills of those mountains, they stopped next to a wide, washed-out basin. The Wainriders refused to go any further. The heroes were dismayed by this, but there was nothing they could say that would convince their guides to climb with them.",
+      "“How will we find the tunnel entrance without your help?” asked one of the heroes.",
+      "“Follow this river-bed,” answered the Wainriders. “It winds up a narrow ravine. The cave entrance is at the top.” Then, they turned their horses and galloped north as if the host of Mordor were after them.",
+      "The heroes looked at each other doubtfully. They dismounted, shouldered their bags, and began to climb. When they came out of the ravine, midway up the northern face of the Ash Mountains, they found the cave entrance just as the Wainriders described it.",
+      "“This must be it,” said one of the companions.",
+      "“I don’t like the look of it,” added another, trying to peer into the darkness.",
+      "“I don’t like the smell of it,” said a third, wrinkling his nose. A foul air wafted out of the cavern entrance.",
+      "“This is an evil place, but our quest lies beyond it,” said the first. “Will any of us shrink back now?”",
+      "The others shook their heads.",
+      "“Very well. Safeguard your rations. We are unlikely to find any provisions within, and who knows what waits for us on the other side!”",
+      "Once again, the heroes shouldered their packs. Then they lit torches and entered the dark passage beneath the Ered Lithui."
+    ],
+    "setup": [
+      "“Under the Ash Mountains” is played with an encounter deck built with all the cards from the following encounter sets: Under the Ash Mountains and Twisting Tunnels. (Twisting Tunnels can be found in A Shadow in the East deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Strategy Tip",
+        "text": "In this adventure the heroes are sneaking into Mordor by way of the tunnels of Torech Gorgor - a labyrinthian cave system under the Ash Mountains. There is little chance of finding food or water during the passage, so the heroes must move quickly to reach the other side before their supplies run out.\n\nTo represent the theme of dwindling supplies, the quest stages and encounter deck will discard cards from the top of your player deck. If you have no cards in your deck at the end of the round, your characters starve to death and you’re eliminated from the game.\n\nIn order to avoid that horrible fate, players will need to be more judicious than normal when it comes to triggering various card-drawing abilities. Think carefully before you use these abilities as each card that you take into your hand is one less card in your deck, and one step closer to being eliminated."
+      }
+    ],
+    "resolution": [
+      "It was late afternoon when the heroes emerged from the dark tunnels of Torech Gorgor on the southern slopes of the Ash Mountains. They squinted and blinked as their eyes grew accustomed to the light. It had been days since they had seen the sun. Indeed, deep within the gloomy bowels of the Ered Lithui, they had doubted if they would ever see the sky again, but they had soldiered on until at last they found their way into the land of Mordor.",
+      "It was hardly what they expected. Before them lay a wide green land of rolling hills and grassy fields; a far cry from the smoke and ash that they had expected. Each of the heroes had heard stories of The Black Land and the Mountain of Fire, so they expected that all of Mordor would fit that description. Yet, if they had thought about it, Sauron could not feed his soldiers with ash or give them fire to drink - even Orcs need food and water. It was necessary that part of the Enemy’s domain should be fertile for producing those things, and it was here in the province of Nurn that The Dark Lord harvested what he needed to provision his armies.",
+      "This was also the province ruled over by Thane Ulchor. He it was that the heroes had journeyed into this land to find. As their eyes adjusted to the light, the companions began to make their way down the foothills of the Ash Mountains. They moved as quietly and carefully as they could, unwilling to let the scenic landscape lull them into a false sense of safety. They knew that regardless if the land was black or green, this was Mordor. They were in the Enemy’s territory now.",
+      "The story continues in “The Land of Sorrow” the fifth Adventure Pack in “The Vengeance of Mordor” cycle."
+    ]
   }
 }
