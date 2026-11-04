@@ -139,6 +139,12 @@ data ModifierType
     EachAlly ModifierType
   | -- | on an enemy: it has attacked this phase, as Howling of Wargs reads
     AttackedThisPhase
+  | -- | on the game: no more than this much progress may be placed on locations with the
+    -- trait this phase, all of them together, as Sulfur Cloud reads for Underwater
+    PhaseProgressLimitOnTrait Trait Int
+  | -- | on the game, by an effect until the end of the phase: this much progress was placed
+    -- on locations with the trait (see 'PhaseProgressLimitOnTrait')
+    ProgressPlacedOnTraitThisPhase Trait Int
   | -- | on an enemy: each character its excess damage goes to, as
     -- 'ExcessDamageToOtherCharacters' sends it, is exhausted, as Terrible Strength reads
     ExhaustsCharactersDamagedByExcess
