@@ -52,6 +52,8 @@ data Criterion
     -- can be played by the players each round" reads
     CardPlayedThisRound CardCode
   | NotCriterion Criterion
+  | -- | the sagas' The One Ring objective is exhausted, as Ringwraith reads
+    TheOneRingExhausted
   | -- | the target has, or lacks, the modifier
     TargetHasModifier Target ModifierType
   | TargetLacksModifier Target ModifierType

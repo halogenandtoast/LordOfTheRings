@@ -536,6 +536,15 @@ import LordOfTheRings.Location.Cards.TreeCrownedHill
 import LordOfTheRings.Location.Cards.HillsOfHollin
 import LordOfTheRings.Location.Cards.RedhornFoothills
 import LordOfTheRings.Location.Cards.Eregion
+import LordOfTheRings.Location.Cards.BagEnd
+import LordOfTheRings.Location.Cards.WoodyEnd
+import LordOfTheRings.Location.Cards.StockBrook
+import LordOfTheRings.Location.Cards.Bamfurlong
+import LordOfTheRings.Location.Cards.BuckleburyFerry
+import LordOfTheRings.Location.Cards.GreenHillCountry
+import LordOfTheRings.Location.Cards.StockRoad
+import LordOfTheRings.Location.Cards.TheMarish
+import LordOfTheRings.Location.Cards.PathlessCountryHunted
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1127,14 @@ allLocations =
         , SomeLocationCard hillsOfHollin
         , SomeLocationCard redhornFoothills
         , SomeLocationCard eregion
+        , SomeLocationCard bagEnd
+        , SomeLocationCard woodyEnd
+        , SomeLocationCard stockBrook
+        , SomeLocationCard bamfurlong
+        , SomeLocationCard buckleburyFerry
+        , SomeLocationCard greenHillCountry
+        , SomeLocationCard stockRoad
+        , SomeLocationCard theMarish
+        , SomeLocationCard pathlessCountryHunted
         ]
     ]
