@@ -485,6 +485,9 @@ allQuestCards =
       , theWhiteCityBesieged
       , rohanHasCome
       , fightingInTheFields
+      , passTheTwoWatchers
+      , fightingInTheTower
+      , escapeFromCirithUngol
       ]
 
 theDrippingWalls :: CardDef
@@ -2058,3 +2061,14 @@ rohanHasCome = (quest "145076" "Rohan has Come!" TheBattleOfThePelennorFields 4 
 
 fightingInTheFields :: CardDef
 fightingInTheFields = quest "145077" "Fighting in the Fields" TheBattleOfThePelennorFields 5 20
+
+-- * The Tower of Cirith Ungol
+
+passTheTwoWatchers :: CardDef
+passTheTwoWatchers = quest "146066" "Pass the Two Watchers" TheTowerOfCirithUngol 1 0
+
+fightingInTheTower :: CardDef
+fightingInTheTower = quest "146067" "Fighting in the Tower" TheTowerOfCirithUngol 2 18
+
+escapeFromCirithUngol :: CardDef
+escapeFromCirithUngol = quest "146068" "Escape from Cirith Ungol" TheTowerOfCirithUngol 3 12

@@ -597,6 +597,12 @@ import LordOfTheRings.Location.Cards.UmbarWarGalley (umbarWarGalley)
 import LordOfTheRings.Location.Cards.CorsairDromon (corsairDromon)
 import LordOfTheRings.Location.Cards.PortOfPelargir (portOfPelargir)
 import LordOfTheRings.Location.Cards.PelargirQuays (pelargirQuays)
+import LordOfTheRings.Location.Cards.TopmostChamber
+import LordOfTheRings.Location.Cards.EchoingPassage
+import LordOfTheRings.Location.Cards.BloodiedCourtyard
+import LordOfTheRings.Location.Cards.WindingStairs
+import LordOfTheRings.Location.Cards.TorchLitHall
+import LordOfTheRings.Location.Cards.TheTwoWatchers
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1240,5 +1246,11 @@ allLocations =
         , SomeLocationCard corsairDromon
         , SomeLocationCard portOfPelargir
         , SomeLocationCard pelargirQuays
+        , SomeLocationCard topmostChamber
+        , SomeLocationCard echoingPassage
+        , SomeLocationCard bloodiedCourtyard
+        , SomeLocationCard windingStairs
+        , SomeLocationCard torchLitHall
+        , SomeLocationCard theTwoWatchers
         ]
     ]

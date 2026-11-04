@@ -59,6 +59,10 @@ getSagaOneRing = getsGame (find isInPlayRing . toList . entitiesObjectives . gam
  where
   isInPlayRing o = toCardCode o `elem` oneRings && o.placement /= Unplaced
 
+-- | The saga's One Ring in play and ready, as "exhaust The One Ring" needs it.
+getReadySagaOneRing :: HasGame m => m (Maybe ObjectiveId)
+getReadySagaOneRing = (>>= \o -> toId o <$ guard (not o.exhausted)) <$> getSagaOneRing
+
 -- | Whether The One Ring is in play and exhausted, as Morgul Wraith reads.
 theOneRingExhausted :: HasGame m => m Bool
 theOneRingExhausted = maybe False (.exhausted) <$> getSagaOneRing

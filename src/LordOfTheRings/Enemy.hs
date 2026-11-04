@@ -564,6 +564,13 @@ import LordOfTheRings.Enemy.Cards.CorsairCaptain (corsairCaptain)
 import LordOfTheRings.Enemy.Cards.CorsairOfUmbar (corsairOfUmbar)
 import LordOfTheRings.Enemy.Cards.UmbarPirateCrew (umbarPirateCrew)
 import LordOfTheRings.Enemy.Cards.HaradrimPirate (haradrimPirate)
+import LordOfTheRings.Enemy.Cards.OrcOfMordor
+import LordOfTheRings.Enemy.Cards.SnagaArcher
+import LordOfTheRings.Enemy.Cards.UrukSoldierOrcsOfMordor
+import LordOfTheRings.Enemy.Cards.Shagrat
+import LordOfTheRings.Enemy.Cards.Gorbag
+import LordOfTheRings.Enemy.Cards.WoundedUruk
+import LordOfTheRings.Enemy.Cards.TheTwoWatchersEnemy
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1158,5 +1165,12 @@ allEnemys =
         , SomeEnemyCard corsairOfUmbar
         , SomeEnemyCard umbarPirateCrew
         , SomeEnemyCard haradrimPirate
+        , SomeEnemyCard shagrat
+        , SomeEnemyCard gorbag
+        , SomeEnemyCard woundedUruk
+        , SomeEnemyCard theTwoWatchersEnemy
+        , SomeEnemyCard orcOfMordor
+        , SomeEnemyCard snagaArcher
+        , SomeEnemyCard urukSoldierOrcsOfMordor
         ]
     ]

@@ -493,6 +493,10 @@ import LordOfTheRings.Treachery.Cards.FellFolkOfUmbar (fellFolkOfUmbar)
 import LordOfTheRings.Treachery.Cards.BlackSails (blackSails)
 import LordOfTheRings.Treachery.Cards.RaidingTheCoasts (raidingTheCoasts)
 import LordOfTheRings.Treachery.Cards.DrivenToTheBrink (drivenToTheBrink)
+import LordOfTheRings.Treachery.Cards.DrawnToTheRing
+import LordOfTheRings.Treachery.Cards.DeepShadows
+import LordOfTheRings.Treachery.Cards.EvilVigilance
+import LordOfTheRings.Treachery.Cards.OrcishHowls
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -1013,5 +1017,9 @@ allTreacherys =
         , SomeTreacheryCard blackSails
         , SomeTreacheryCard raidingTheCoasts
         , SomeTreacheryCard drivenToTheBrink
+        , SomeTreacheryCard orcishHowls
+        , SomeTreacheryCard drawnToTheRing
+        , SomeTreacheryCard deepShadows
+        , SomeTreacheryCard evilVigilance
         ]
     ]

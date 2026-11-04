@@ -9,7 +9,8 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.EncounterSet (EncounterSet (ThePowerOfMordor))
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy, LastPlayerGainsControl))
+import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy, LastPlayerGainsControl, Permanent))
+import LordOfTheRings.Trait (Trait (RingBearer))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (chooseOneM, placeResources, questionLabeled, removeFromDeck, showing, shuffleIntoDeck, targets)
@@ -104,10 +105,13 @@ instance RunMessage ScenarioAttrs where
               card <- genEncounterCard def
               push $ PutObjectiveIntoPlayAttached card (toTarget hero.id)
       -- a saga burden of the pool comes into play as its Setup reads: to the staging area,
-      -- as Gandalf's Delay and Wraith on Wings, or onto the threat dial of the player the log
-      -- records it for, as Overcome by Fear; a saga objective-ally boon under the control
-      -- its text gives, as Army of the Dead's "Setup: The first player takes control"
+      -- as Gandalf's Delay and Wraith on Wings, onto the threat dial of the player the log
+      -- records it for, as Overcome by Fear, or, a Permanent objective, attached to the
+      -- Ring-bearer, as A Heavy Burden ("Setup: Attach to the Ring-bearer"): not used without
+      -- one in play; a saga objective-ally boon under the control its text gives, as Army of
+      -- the Dead's "Setup: The first player takes control"
       order <- getsGame gamePlayerOrder
+      ringBearers <- select (HeroWithTrait RingBearer)
       for_ [p | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, isJust (cdSetIcon def), entersPlayAtSetup def, keptBurden attrs def] \p -> do
         card <- genEncounterCard (toCardDef p.code)
         let def = toCardDef p.code
@@ -116,6 +120,7 @@ instance RunMessage ScenarioAttrs where
             controller <- if LastPlayerGainsControl `member` cdKeywords def then getLastPlayer else getLead
             push $ PutObjectiveAllyIntoPlayUnder controller card
           else case atMay order =<< p.seat of
+            _ | cdCardType def == ObjectiveType, Permanent `member` cdKeywords def -> for_ (take 1 ringBearers) (push . PutObjectiveIntoPlayAttached card . toTarget)
             Just pid -> push $ PutObjectiveIntoPlayAttached card (PlayerTarget pid)
             Nothing -> push $ AddToStaging card
       -- a card of a player's deck reading "Setup: Attach to a hero in play" is attached to

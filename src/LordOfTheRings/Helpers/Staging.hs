@@ -15,7 +15,9 @@ getEnemyThreat :: (HasGame m) => EnemyId -> m Int
 getEnemyThreat eid = do
   enemy <- getEnemy eid
   blank <- elem DoesNotContributeThreat <$> getModifiers eid
-  if blank then pure 0 else modifiedValue threatOf (toTarget eid) enemy.threat
+  -- each enemy +1 threat for each damage on it, as Orcish Howls gives them for the phase
+  perDamage <- length . filter (== EnemiesGetThreatPerDamage) <$> getModifiers GameTarget
+  if blank then pure 0 else (+ perDamage * enemy.damage) <$> modifiedValue threatOf (toTarget eid) enemy.threat
 
 getLocationThreat :: (HasGame m) => LocationId -> m Int
 getLocationThreat lid = do

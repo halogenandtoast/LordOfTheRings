@@ -178,6 +178,8 @@ allObjectiveCards =
       , theCorsairFleet
       , minasTirith
       , theCorsairFleetGondor
+      , lastOfTheCompany
+      , aHeavyBurden
       ]
 
 durinsAxe :: CardDef
@@ -1256,4 +1258,23 @@ theCorsairFleetGondor =
     { cdCardTraits = setFromList [Gondor]
     , cdEncounterSet = Nothing
     , cdOtherSide = Just "145071"
+    }
+
+-- * The Tower of Cirith Ungol
+
+-- | Attached by stage 1A to a hero the first player controls, The One Ring with it.
+lastOfTheCompany :: CardDef
+lastOfTheCompany = (objective "146014" "Last of the Company" TheTowerOfCirithUngol 1) {cdCardTraits = setFromList [FellowshipTrait]}
+
+-- | A burden of the Shelob's Lair burden set: Permanent. "Setup: Attach to the
+-- Ring-bearer": the Campaign Pool's copy is attached to the Ring-bearer as the game is set
+-- up (see "LordOfTheRings.Scenario.Runner").
+aHeavyBurden :: CardDef
+aHeavyBurden =
+  (objective "144052" "A Heavy Burden" ShelobsLair 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just ShelobsLair
+    , cdCardTraits = setFromList [Burden, Condition]
+    , cdKeywords = setFromList [Permanent]
     }
