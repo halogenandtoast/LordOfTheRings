@@ -159,5 +159,22 @@ data EncounterSet
   | VoyageAcrossBelegaerNightmare
   | WearyTravelers
   | Wilderlands
+  -- the Haradrim cycle's
+  | BeneathTheSands
+  | DesertCreatures
+  | DesertCrossing
+  | DesertSands
+  | EscapeFromUmbar
+  | HaradSoldiers
+  | HaradTerritory
+  | JungleForest
+  | MordorOrcs
+  | MountainsOfShadow
+  | RaceAcrossHarad
+  | TheBlackSerpent
+  | TheCrossingsOfPoros
+  | TheDungeonsOfCirithGurat
+  | TheLongArmOfMordor
+  | TheMumakil
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
