@@ -1662,6 +1662,7 @@ library
       LordOfTheRings.Location.Cards.FortressWallsTheFortressOfNurn
       LordOfTheRings.Location.Cards.FouledWell
       LordOfTheRings.Location.Cards.FrightfulDen
+      LordOfTheRings.Location.Cards.FrontPorch
       LordOfTheRings.Location.Cards.FrozenSilverlode
       LordOfTheRings.Location.Cards.GapOfRohan
       LordOfTheRings.Location.Cards.GardenOfPoisons
@@ -1677,6 +1678,7 @@ library
       LordOfTheRings.Location.Cards.GoblinGate
       LordOfTheRings.Location.Cards.GoblinTunnels
       LordOfTheRings.Location.Cards.GondorianHamlet
+      LordOfTheRings.Location.Cards.GreatCavernRoom
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.GreenwayPath
       LordOfTheRings.Location.Cards.GreyMoorland
@@ -1784,6 +1786,7 @@ library
       LordOfTheRings.Location.Cards.OvergrownPath
       LordOfTheRings.Location.Cards.OvergrownSteps
       LordOfTheRings.Location.Cards.OvergrownTrail
+      LordOfTheRings.Location.Cards.OverhangingRock
       LordOfTheRings.Location.Cards.OverrunVillage
       LordOfTheRings.Location.Cards.PalaceRemains
       LordOfTheRings.Location.Cards.PalaceRuins
@@ -1922,6 +1925,7 @@ library
       LordOfTheRings.Location.Cards.TheGrottosEntrance
       LordOfTheRings.Location.Cards.TheHeartOfTheMarshes
       LordOfTheRings.Location.Cards.TheHighlands
+      LordOfTheRings.Location.Cards.TheHighPass
       LordOfTheRings.Location.Cards.TheHoarwell
       LordOfTheRings.Location.Cards.TheIslet
       LordOfTheRings.Location.Cards.TheKingsLawn

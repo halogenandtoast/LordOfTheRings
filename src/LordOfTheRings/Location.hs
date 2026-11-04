@@ -543,6 +543,10 @@ import LordOfTheRings.Location.Cards.DrearyHills
 import LordOfTheRings.Location.Cards.LoneLands
 import LordOfTheRings.Location.Cards.CaveEntranceWesternLands
 import LordOfTheRings.Location.Cards.TheGoblinsCaves
+import LordOfTheRings.Location.Cards.OverhangingRock
+import LordOfTheRings.Location.Cards.TheHighPass
+import LordOfTheRings.Location.Cards.FrontPorch
+import LordOfTheRings.Location.Cards.GreatCavernRoom
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1132,5 +1136,9 @@ allLocations =
         , SomeLocationCard loneLands
         , SomeLocationCard caveEntranceWesternLands
         , SomeLocationCard theGoblinsCaves
+        , SomeLocationCard overhangingRock
+        , SomeLocationCard theHighPass
+        , SomeLocationCard frontPorch
+        , SomeLocationCard greatCavernRoom
         ]
     ]
