@@ -9,7 +9,9 @@ import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Keyword (Keyword (Encounter))
 import LordOfTheRings.I18n (ikey, ikeyWith, intVar, textVar)
 import LordOfTheRings.Name (Name (..))
+import LordOfTheRings.Id (ScenarioId (..))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Saga (sagaBarredTitles)
 
 data DeckList = DeckList
   { heroes :: [CardCode]
@@ -87,9 +89,13 @@ sharedHeroes deckLists = [title | (title, n) <- mapToList counts, n > (1 :: Int)
 
 -- | Hero titles the decks bring that the scenario's rules keep out of play: The Fords of
 -- Isen's Gríma objective-ally is unique, so no player can use the Gríma hero there.
-barredHeroes :: Text -> [DeckList] -> [Text]
-barredHeroes scenarioId deckLists = [t | t <- barred, t `elem` titles]
+barredHeroes :: Text -> Bool -> [DeckList] -> [Text]
+barredHeroes scenarioId inCampaign deckLists =
+  ordNub $ [t | t <- barred, t `elem` titles] <> [t | t <- sagaBarredTitles (ScenarioId scenarioId) inCampaign, t `elem` (titles <> cardTitles)] <> sagaHeroes
  where
+  -- a Baggins or Fellowship sphere hero comes from the scenario, never from a deck
+  sagaHeroes = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) dl.heroes, cdSphere d `elem` [Just Fellowship, Just Baggins], let Name title _ = d.cdName]
+  cardTitles = [title | dl <- deckLists, (code, _) <- dl.cards, Just d <- [Map.lookup code allPlayerCards], let Name title _ = d.cdName]
   barred = case scenarioId of
     "the-fords-of-isen" -> ["Gríma"]
     -- nor Sméagol in the Shadows of Mirkwood cycle (MEC77 rules), nor in the sagas

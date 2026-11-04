@@ -74,8 +74,8 @@ spec = describe "The Fords of Isen" do
     isJust (lookupScenario "the-fords-of-isen") `shouldBe` True
 
   it "bars the Gríma hero, as its Gríma objective-ally is unique" . fordsTest $ \_ -> do
-    barredHeroes "the-fords-of-isen" [deckList ["07002", "01012", "01007"] []] `shouldBe` ["Gríma"]
-    barredHeroes "to-catch-an-orc" [deckList ["07002", "01012", "01007"] []] `shouldBe` []
+    barredHeroes "the-fords-of-isen" False [deckList ["07002", "01012", "01007"] []] `shouldBe` ["Gríma"]
+    barredHeroes "to-catch-an-orc" False [deckList ["07002", "01012", "01007"] []] `shouldBe` []
 
   it "stages The Islet with Gríma attached, and gives the stage 5 time counters" . fordsTest $ \pid -> do
     setup pid

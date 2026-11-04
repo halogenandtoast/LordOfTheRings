@@ -36,6 +36,24 @@ allCampaignCards =
       , theTreacheryOfRhudaurCampaign
       , theBattleOfCarnDumCampaign
       , theDreadRealmCampaign
+      , aShadowOfThePastCampaign
+      , aKnifeInTheDarkCampaign
+      , flightToTheFordCampaign
+      , theRingGoesSouthCampaign
+      , journeyInTheDarkCampaign
+      , breakingOfTheFellowshipCampaign
+      , theUrukHaiCampaign
+      , helmsDeepCampaign
+      , theRoadToIsengardCampaign
+      , thePassageOfTheMarshesCampaign
+      , journeyToTheCrossRoadsCampaign
+      , shelobsLairCampaign
+      , thePassingOfTheGreyCompanyCampaign
+      , theSiegeOfGondorCampaign
+      , theBattleOfThePelennorFieldsCampaign
+      , theTowerOfCirithUngolCampaign
+      , theBlackGateOpensCampaign
+      , mountDoomCampaign
       ]
 
 -- | Double-sided, in no encounter set, so no encounter deck gathers it.
@@ -107,3 +125,59 @@ theBattleOfCarnDumCampaign = campaignCard "AAC188" "The Battle of Carn Dûm"
 
 theDreadRealmCampaign :: CardDef
 theDreadRealmCampaign = campaignCard "AAC193" "The Dread Realm"
+
+-- * The Lord of the Rings Saga Expansions
+
+aShadowOfThePastCampaign :: CardDef
+aShadowOfThePastCampaign = campaignCard "141030" "A Shadow of the Past"
+
+aKnifeInTheDarkCampaign :: CardDef
+aKnifeInTheDarkCampaign = campaignCard "141044" "A Knife in the Dark"
+
+flightToTheFordCampaign :: CardDef
+flightToTheFordCampaign = campaignCard "141056" "Flight to the Ford"
+
+theRingGoesSouthCampaign :: CardDef
+theRingGoesSouthCampaign = campaignCard "142019" "The Ring Goes South"
+
+journeyInTheDarkCampaign :: CardDef
+journeyInTheDarkCampaign = campaignCard "142039" "Journey in the Dark"
+
+breakingOfTheFellowshipCampaign :: CardDef
+breakingOfTheFellowshipCampaign = campaignCard "142060" "Breaking of the Fellowship"
+
+theUrukHaiCampaign :: CardDef
+theUrukHaiCampaign = campaignCard "143071" "The Uruk-hai"
+
+helmsDeepCampaign :: CardDef
+helmsDeepCampaign = campaignCard "143077" "Helm's Deep"
+
+theRoadToIsengardCampaign :: CardDef
+theRoadToIsengardCampaign = campaignCard "143081" "The Road to Isengard"
+
+thePassageOfTheMarshesCampaign :: CardDef
+thePassageOfTheMarshesCampaign = campaignCard "144067" "The Passage of the Marshes"
+
+journeyToTheCrossRoadsCampaign :: CardDef
+journeyToTheCrossRoadsCampaign = campaignCard "144069" "Journey to the Cross-roads"
+
+shelobsLairCampaign :: CardDef
+shelobsLairCampaign = campaignCard "144073" "Shelob's Lair"
+
+thePassingOfTheGreyCompanyCampaign :: CardDef
+thePassingOfTheGreyCompanyCampaign = campaignCard "145066" "The Passing of the Grey Company"
+
+theSiegeOfGondorCampaign :: CardDef
+theSiegeOfGondorCampaign = campaignCard "145070" "The Siege of Gondor"
+
+theBattleOfThePelennorFieldsCampaign :: CardDef
+theBattleOfThePelennorFieldsCampaign = campaignCard "145078" "The Battle of the Pelennor Fields"
+
+theTowerOfCirithUngolCampaign :: CardDef
+theTowerOfCirithUngolCampaign = campaignCard "146069" "The Tower of Cirith Ungol"
+
+theBlackGateOpensCampaign :: CardDef
+theBlackGateOpensCampaign = campaignCard "146074" "The Black Gate Opens"
+
+mountDoomCampaign :: CardDef
+mountDoomCampaign = campaignCard "146079" "Mount Doom"

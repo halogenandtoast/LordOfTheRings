@@ -655,8 +655,8 @@ refuseOversizedDecks :: Text -> [DeckList] -> Handler ()
 refuseOversizedDecks scenarioId deckLists = for_ (oversizedDecks scenarioId deckLists) \(limit, size) ->
   sendResponseStatus status400 (ikeyWith "error.scenarioDeckSize" [intVar "n" limit, intVar "count" size])
 
-refuseBarredHeroes :: Text -> [DeckList] -> Handler ()
-refuseBarredHeroes scenarioId deckLists = case barredHeroes scenarioId deckLists of
+refuseBarredHeroes :: Text -> Bool -> [DeckList] -> Handler ()
+refuseBarredHeroes scenarioId campaignMode deckLists = case barredHeroes scenarioId campaignMode deckLists of
   [] -> pure ()
   titles ->
     sendResponseStatus
@@ -731,7 +731,7 @@ postGamesR = do
   let choices = fromMaybe [new.deck] new.decks
   deckLists <- traverse (resolveDeck userId) choices
   refuseSharedHeroes $ fromMaybe starterDeck <$> deckLists
-  refuseBarredHeroes scenarioId $ fromMaybe starterDeck <$> deckLists
+  refuseBarredHeroes scenarioId False $ fromMaybe starterDeck <$> deckLists
   refuseOversizedDecks scenarioId $ fromMaybe starterDeck <$> deckLists
   let easyMode = fromMaybe False new.easyMode
       nightmare = fromMaybe False new.nightmare
@@ -803,7 +803,7 @@ postJoinR gid = do
   when (row.lotrGameUserId /= userId && any ((== userId) . (.lotrSeatUserId) . entityVal) seated)
     $ sendResponseStatus status409 (ikey "error.alreadySeated")
   refuseSharedHeroes . (fromMaybe starterDeck deckList :) . map snd =<< friendSeats gid
-  refuseBarredHeroes row.lotrGameScenario [fromMaybe starterDeck deckList]
+  refuseBarredHeroes row.lotrGameScenario (isJust row.lotrGameCampaignId) [fromMaybe starterDeck deckList]
   refuseOversizedDecks row.lotrGameScenario [fromMaybe starterDeck deckList]
   refuseFallenHeroes row [fromMaybe starterDeck deckList]
   case [0 .. row.lotrGameSeats - 1] \\ map ((.lotrSeatPosition) . entityVal) seated of
@@ -1509,7 +1509,7 @@ postCampaignsR = do
     pure (cid, gid)
   pure $ object ["id" .= gid, "campaignId" .= cid]
 
-data CampaignScenarioView = CampaignScenarioView {id :: ScenarioId, name :: Text, card :: CardCode}
+data CampaignScenarioView = CampaignScenarioView {id :: ScenarioId, name :: Text, card :: Maybe CardCode}
   deriving stock Generic
   deriving anyclass ToJSON
 
@@ -1584,7 +1584,7 @@ getCampaignR cid = do
         , campaignName = campaignDefName def
         , log = l
         , scenarios =
-            [ CampaignScenarioView sid (maybe sid.unScenarioId (scenarioName . toAttrs) (lookupScenario sid)) (cdCardCode card)
+            [ CampaignScenarioView sid (maybe sid.unScenarioId (scenarioName . toAttrs) (lookupScenario sid)) (cdCardCode <$> card)
             | (sid, card) <- campaignDefScenarios def
             ]
         , games = [CampaignGameView gid row.lotrGameScenario (outcomeOf row) | Entity gid row <- games]

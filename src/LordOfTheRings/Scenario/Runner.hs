@@ -12,7 +12,7 @@ import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (placeResources, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted (chooseOneM, placeResources, questionLabeled, removeFromDeck, showing, shuffleIntoDeck, targets)
 import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
@@ -24,6 +24,7 @@ import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
+import LordOfTheRings.Saga (removedBurdenSets)
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (Source (ObjectiveSource), sourceTarget)
 import LordOfTheRings.Target
@@ -42,6 +43,11 @@ gatherEncounterSet attrs encounterSet =
  where
   copies def =
     fromMaybe 1 $ (guard attrs.easyMode *> cdEasyModeQuantity def) <|> cdEncounterSetQuantity def
+
+-- | Whether a boon or burden of the Campaign Pool goes into the scenario: not one of a burden
+-- set its campaign card removes (see 'removedBurdenSets').
+keptBurden :: ScenarioAttrs -> CardDef -> Bool
+keptBurden attrs def = maybe True (`notElem` removedBurdenSets attrs.scenarioId) (cdSetIcon def)
 
 -- | The scenario's encounter deck from its encounter sets. In nightmare mode the
 -- nightmare deck's removals come out and its nightmare set goes in.
@@ -65,7 +71,7 @@ instance RunMessage ScenarioAttrs where
     -- in campaign mode the encounter cards of the Campaign Pool are shuffled in with it
     DoStep 2 Setup -> do
       -- (an objective, as Arnor Ravaged, comes into play as its own Setup text says)
-      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, isNothing p.seat, let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType]
+      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, isNothing p.seat, let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType, keptBurden attrs def]
       encounterDeck <- shuffleM (earned <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ encounterDeck
     -- once the starting hands are drawn, an encounter card of the pool with a seat goes
@@ -73,7 +79,7 @@ instance RunMessage ScenarioAttrs where
     -- Nightmare shuffled in
     DoStep 6 Setup -> do
       order <- getsGame gamePlayerOrder
-      for_ [(pid, def) | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, Just pid <- [atMay order =<< p.seat], let def = toCardDef p.code, not (isPlayerCardDef def)] \(pid, def) ->
+      for_ [(pid, def) | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, Just pid <- [atMay order =<< p.seat], let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType, keptBurden attrs def] \(pid, def) ->
         shuffleIntoDeck pid =<< genEncounterCard def
       pure attrs
     DoStep 4 Setup -> do
@@ -90,6 +96,25 @@ instance RunMessage ScenarioAttrs where
             else do
               card <- genEncounterCard def
               push $ PutObjectiveIntoPlayAttached card (toTarget hero.id)
+      -- a saga burden objective of the pool comes into play as its Setup reads: to the
+      -- staging area, as Gandalf's Delay, or onto the threat dial of the player the log
+      -- records it for, as Overcome by Fear
+      order <- getsGame gamePlayerOrder
+      for_ [p | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, isJust (cdSetIcon def), cdCardType def == ObjectiveType, keptBurden attrs def] \p -> do
+        card <- genEncounterCard (toCardDef p.code)
+        case atMay order =<< p.seat of
+          Just pid -> push $ PutObjectiveIntoPlayAttached card (PlayerTarget pid)
+          Nothing -> push $ AddToStaging card
+      -- a card of a player's deck reading "Setup: Attach to a hero in play" is attached to
+      -- the hero its owner chooses
+      for_ order \pid -> do
+        player <- getPlayer pid
+        for_ [pc | PlayerCard pc <- player.deck, cdSetupAttach (toCardDef pc)] \pc -> do
+          removeFromDeck pid pc.id
+          chooseOneM pid do
+            questionLabeled "setupAttach"
+            showing [PlayerCard pc]
+            targets heroes \hero -> push $ PlayAttachmentOn pid pc (toTarget hero.id)
       pure attrs
     -- what every campaign records once a scenario is won: the score, and the heroes in
     -- their owners' discard piles fallen (Revised Core rulebook, "Scoring" and "The

@@ -147,6 +147,8 @@ export const campaignModes: Record<string, string> = {
   'core-set': 'revised-core',
   'angmar-awakened': 'angmar-awakened',
   'dream-chaser': 'dream-chaser',
+  'the-hobbit': 'the-hobbit',
+  'the-lord-of-the-rings': 'the-lord-of-the-rings',
 }
 
 export const campaigns: Campaign[] = [

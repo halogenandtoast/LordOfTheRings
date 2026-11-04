@@ -15,12 +15,14 @@ import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Campaign.CardDefs qualified as Cards
 import LordOfTheRings.Card (allPlayerCards)
-import LordOfTheRings.Card.CardDef (CardDef, cdCardCode)
+import LordOfTheRings.Card.CardDef (CardDef, cdCardCode, cdName, cdSetIcon, cdTreasure)
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Id (ScenarioId (..))
 import LordOfTheRings.Json
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup, hobbitScenarios, treasureSetsFor)
 
 newtype CampaignId = CampaignId {unCampaignId :: Text}
   deriving stock (Show, Eq, Ord, Generic)
@@ -82,6 +84,9 @@ data CampaignLogKey
   | -- | Angmar Awakened: Deadmen's Dike's resolution has the players choose Iârion's
     -- Pendant or Amarthiúl's Courage, which they do as the next scenario is set up
     ChoosePendantOrCourage
+  | -- | the players have lost the campaign, as Mount Doom's resolution may have them: no
+    -- scenario follows
+    CampaignLost
   | -- | Angmar Awakened: the books The Treachery of Rhudaur's resolution lets each player
     -- add for a Clue they control, by the seat of that player ('counted'), offered as the
     -- next scenario is set up
@@ -121,6 +126,9 @@ data CampaignLog = CampaignLog
   -- XP as it is resolved, none carried to the next
   , campaignLogCounts :: Map CampaignLogKey (Map CardCode Int)
   -- ^ numbers noted for cards, as the damage on Protect the Innocent
+  , campaignLogSeatThreatPenalty :: Map Int Int
+  -- ^ a starting threat penalty of one seat's alone, as The Passage of the Marshes'
+  -- resolution gives a player who chooses it
   }
   deriving stock (Show, Eq, Generic)
 
@@ -141,7 +149,7 @@ instance ToJSON CampaignLog where
 
 -- | A log kept before XP was recorded has none.
 instance FromJSON CampaignLog where
-  parseJSON = genericParseJSON (aesonOptions $ Just "campaignLog") . withDefaults [("xp", Number 0), ("marked", object []), ("cardResources", Number 0), ("counts", object [])]
+  parseJSON = genericParseJSON (aesonOptions $ Just "campaignLog") . withDefaults [("xp", Number 0), ("marked", object []), ("cardResources", Number 0), ("counts", object []), ("seatThreatPenalty", object [])]
 
 instance HasField "campaign" CampaignLog CampaignId where
   getField = campaignLogCampaign
@@ -176,11 +184,19 @@ instance HasField "cardResources" CampaignLog Int where
 instance HasField "counts" CampaignLog (Map CampaignLogKey (Map CardCode Int)) where
   getField = campaignLogCounts
 
--- | A campaign: its scenarios in order, each with its campaign card.
+instance HasField "seatThreatPenalty" CampaignLog (Map Int Int) where
+  getField = campaignLogSeatThreatPenalty
+
+-- | The seat's starting threat penalty: the campaign's and its own.
+seatThreatPenalty :: Int -> CampaignLog -> Int
+seatThreatPenalty seat l = l.threatPenalty + Map.findWithDefault 0 seat l.seatThreatPenalty
+
+-- | A campaign: its scenarios in order, each with its campaign card, The Hobbit's having
+-- none.
 data CampaignDef = CampaignDef
   { campaignDefId :: CampaignId
   , campaignDefName :: Text
-  , campaignDefScenarios :: [(ScenarioId, CardDef)]
+  , campaignDefScenarios :: [(ScenarioId, Maybe CardDef)]
   }
 
 -- | The Revised Core Set's campaign, Mirkwood Paths.
@@ -189,9 +205,9 @@ revisedCore =
   CampaignDef
     "revised-core"
     "Mirkwood Paths"
-    [ ("passage-through-mirkwood", Cards.passageThroughMirkwoodCampaign)
-    , ("journey-along-the-anduin", Cards.journeyAlongTheAnduinCampaign)
-    , ("escape-from-dol-guldur", Cards.escapeFromDolGuldurCampaign)
+    [ ("passage-through-mirkwood", Just Cards.passageThroughMirkwoodCampaign)
+    , ("journey-along-the-anduin", Just Cards.journeyAlongTheAnduinCampaign)
+    , ("escape-from-dol-guldur", Just Cards.escapeFromDolGuldurCampaign)
     ]
 
 -- | The Dream-chaser Campaign Expansion: The Grey Havens' three scenarios and the
@@ -201,15 +217,15 @@ dreamChaser =
   CampaignDef
     "dream-chaser"
     "The Dream-chaser Campaign"
-    [ ("voyage-across-belegaer", Cards.voyageAcrossBelegaerCampaign)
-    , ("the-fate-of-numenor", Cards.theFateOfNumenorCampaign)
-    , ("raid-on-the-grey-havens", Cards.raidOnTheGreyHavensCampaign)
-    , ("flight-of-the-stormcaller", Cards.flightOfTheStormcallerCampaign)
-    , ("the-thing-in-the-depths", Cards.theThingInTheDepthsCampaign)
-    , ("temple-of-the-deceived", Cards.templeOfTheDeceivedCampaign)
-    , ("the-drowned-ruins", Cards.theDrownedRuinsCampaign)
-    , ("a-storm-on-cobas-haven", Cards.aStormOnCobasHavenCampaign)
-    , ("the-city-of-corsairs", Cards.theCityOfCorsairsCampaign)
+    [ ("voyage-across-belegaer", Just Cards.voyageAcrossBelegaerCampaign)
+    , ("the-fate-of-numenor", Just Cards.theFateOfNumenorCampaign)
+    , ("raid-on-the-grey-havens", Just Cards.raidOnTheGreyHavensCampaign)
+    , ("flight-of-the-stormcaller", Just Cards.flightOfTheStormcallerCampaign)
+    , ("the-thing-in-the-depths", Just Cards.theThingInTheDepthsCampaign)
+    , ("temple-of-the-deceived", Just Cards.templeOfTheDeceivedCampaign)
+    , ("the-drowned-ruins", Just Cards.theDrownedRuinsCampaign)
+    , ("a-storm-on-cobas-haven", Just Cards.aStormOnCobasHavenCampaign)
+    , ("the-city-of-corsairs", Just Cards.theCityOfCorsairsCampaign)
     ]
 
 
@@ -220,25 +236,58 @@ angmarAwakened =
   CampaignDef
     "angmar-awakened"
     "Angmar Awakened"
-    [ ("intruders-in-chetwood", Cards.intrudersInChetwoodCampaign)
-    , ("the-weather-hills", Cards.theWeatherHillsCampaign)
-    , ("deadmens-dike", Cards.deadmensDikeCampaign)
-    , ("the-wastes-of-eriador", Cards.theWastesOfEriadorCampaign)
-    , ("escape-from-mount-gram", Cards.escapeFromMountGramCampaign)
-    , ("across-the-ettenmoors", Cards.acrossTheEttenmoorsCampaign)
-    , ("the-treachery-of-rhudaur", Cards.theTreacheryOfRhudaurCampaign)
-    , ("the-battle-of-carn-dum", Cards.theBattleOfCarnDumCampaign)
-    , ("the-dread-realm", Cards.theDreadRealmCampaign)
+    [ ("intruders-in-chetwood", Just Cards.intrudersInChetwoodCampaign)
+    , ("the-weather-hills", Just Cards.theWeatherHillsCampaign)
+    , ("deadmens-dike", Just Cards.deadmensDikeCampaign)
+    , ("the-wastes-of-eriador", Just Cards.theWastesOfEriadorCampaign)
+    , ("escape-from-mount-gram", Just Cards.escapeFromMountGramCampaign)
+    , ("across-the-ettenmoors", Just Cards.acrossTheEttenmoorsCampaign)
+    , ("the-treachery-of-rhudaur", Just Cards.theTreacheryOfRhudaurCampaign)
+    , ("the-battle-of-carn-dum", Just Cards.theBattleOfCarnDumCampaign)
+    , ("the-dread-realm", Just Cards.theDreadRealmCampaign)
+    ]
+
+-- | The Hobbit Saga Expansions' six scenarios, played in order with the same heroes, the
+-- treasures each player discovers carried to the later ones (The Hobbit: Over Hill and
+-- Under Hill rules insert, "Treasure").
+theHobbit :: CampaignDef
+theHobbit = CampaignDef "the-hobbit" "The Hobbit" [(sid, Nothing) | sid <- hobbitScenarios]
+
+-- | The Lord of the Rings Saga Expansions' eighteen scenarios, one campaign (The Black
+-- Riders rules insert, "Campaign Mode").
+theLordOfTheRings :: CampaignDef
+theLordOfTheRings =
+  CampaignDef
+    "the-lord-of-the-rings"
+    "The Lord of the Rings"
+    [ ("a-shadow-of-the-past", Just Cards.aShadowOfThePastCampaign)
+    , ("a-knife-in-the-dark", Just Cards.aKnifeInTheDarkCampaign)
+    , ("flight-to-the-ford", Just Cards.flightToTheFordCampaign)
+    , ("the-ring-goes-south", Just Cards.theRingGoesSouthCampaign)
+    , ("journey-in-the-dark", Just Cards.journeyInTheDarkCampaign)
+    , ("breaking-of-the-fellowship", Just Cards.breakingOfTheFellowshipCampaign)
+    , ("the-uruk-hai", Just Cards.theUrukHaiCampaign)
+    , ("helms-deep", Just Cards.helmsDeepCampaign)
+    , ("the-road-to-isengard", Just Cards.theRoadToIsengardCampaign)
+    , ("the-passage-of-the-marshes", Just Cards.thePassageOfTheMarshesCampaign)
+    , ("journey-to-the-cross-roads", Just Cards.journeyToTheCrossRoadsCampaign)
+    , ("shelobs-lair", Just Cards.shelobsLairCampaign)
+    , ("the-passing-of-the-grey-company", Just Cards.thePassingOfTheGreyCompanyCampaign)
+    , ("the-siege-of-gondor", Just Cards.theSiegeOfGondorCampaign)
+    , ("the-battle-of-the-pelennor-fields", Just Cards.theBattleOfThePelennorFieldsCampaign)
+    , ("the-tower-of-cirith-ungol", Just Cards.theTowerOfCirithUngolCampaign)
+    , ("the-black-gate-opens", Just Cards.theBlackGateOpensCampaign)
+    , ("mount-doom", Just Cards.mountDoomCampaign)
     ]
 
 allCampaigns :: [CampaignDef]
-allCampaigns = [revisedCore, angmarAwakened, dreamChaser]
+allCampaigns = [revisedCore, angmarAwakened, dreamChaser, theHobbit, theLordOfTheRings]
 
 lookupCampaign :: CampaignId -> Maybe CampaignDef
 lookupCampaign cid = find ((== cid) . campaignDefId) allCampaigns
 
 newCampaignLog :: CampaignId -> CampaignLog
-newCampaignLog cid = CampaignLog cid [] [] 0 [] mempty [] 0 mempty 0 mempty
+newCampaignLog cid = CampaignLog cid [] [] 0 [] mempty [] 0 mempty 0 mempty mempty
 
 -- | The scenario's part number in its campaign, from 1, as Ominous Fate's X reads it.
 partNumber :: CampaignLog -> ScenarioId -> Int
@@ -316,35 +365,71 @@ gainXp n l = l {campaignLogXp = max 0 (l.xp + n)}
 -- | The scenario to play next: the first not yet won. Nothing once the campaign is over.
 nextScenario :: CampaignLog -> Maybe ScenarioId
 nextScenario l = do
+  guard $ not (Map.member CampaignLost l.notes)
   def <- lookupCampaign l.campaign
   headMay [sid | (sid, _) <- campaignDefScenarios def, sid `notElem` map completedScenario l.completed]
 
 -- | The campaign card set next to the quest deck while the scenario is played.
 campaignCardFor :: CampaignLog -> ScenarioId -> Maybe CardCode
-campaignCardFor l sid = cdCardCode <$> (lookup sid . campaignDefScenarios =<< lookupCampaign l.campaign)
+campaignCardFor l sid = cdCardCode <$> (join . lookup sid . campaignDefScenarios =<< lookupCampaign l.campaign)
 
 {- | The heroes each seat brings to the next scenario, checked against the log: none
-fallen, and each hero not the one the seat had before a permanent +1 to the threat
-penalty, a fallen hero replaced or one traded for another (Revised Core rulebook, "The
-Fellowship of Heroes"). The first scenario records them. Gives back the names of any
-fallen heroes brought.
+fallen, and each hero traded for one of another title, or a fallen hero replaced, a
+permanent +1 to the threat penalty (Revised Core rulebook, "The Fellowship of Heroes").
+Heroes are told by title: another version of the same hero, a trade within the group or a
+hero added where none left costs nothing, and no version of a fallen hero may come back
+(The Road Darkens rules insert, FAQ). The first scenario records them. Gives back the
+names of any fallen heroes brought.
+
+Where the first player takes control of the Fellowship sphere Aragorn, the Aragorn a seat
+recorded leaves it, replaced for free, his Permanent cards going to the Fellowship
+Aragorn; a fallen Aragorn comes off the list of fallen heroes, at a +1 penalty (The
+Treason of Saruman rules insert, "Campaign Mode Rules - Aragorn").
 -}
 seatHeroes :: [[CardCode]] -> CampaignLog -> Either [CardCode] CampaignLog
 seatHeroes seats l
   | notNull refused = Left refused
-  | otherwise = Right l {campaignLogHeroes = seats, campaignLogThreatPenalty = l.threatPenalty + changed}
+  | otherwise =
+      Right
+        l
+          { campaignLogHeroes = seats
+          , campaignLogThreatPenalty = l.threatPenalty + changed + (if restored then 1 else 0)
+          , campaignLogFallenHeroes = filter (\c -> not (restored && title c == "Aragorn")) l.fallenHeroes
+          , campaignLogPool = [maybe p (\a -> p {poolCardAttachedTo = Just a}) (guard (maybe False ((== "Aragorn") . title) p.attachedTo) *> fellowshipAragorn) | p <- l.pool]
+          }
  where
-  refused = filter (\c -> c `elem` l.fallenHeroes || c `elem` lockedHeroes l) (concat seats)
-  -- the first scenario, with no heroes recorded yet, changes none; nor does a seat the
-  -- log did not have; nor a scenario whose campaign card lets heroes change freely
+  title code = maybe "" (\d -> let Name t _ = cdName d in t) (Map.lookup code allPlayerCards)
+  next = nextScenario l
+  fellowshipAragorn = do
+    fs <- fellowshipSetup =<< next
+    code <- headMay fs.fellowshipHeroes
+    guard $ title code == "Aragorn"
+    pure code
+  swapsAragorn = isJust fellowshipAragorn
+  restored = swapsAragorn && "Aragorn" `elem` map title l.fallenHeroes
+  fallenTitles = map title l.fallenHeroes
+  refused = filter (\c -> title c `elem` fallenTitles || c `elem` lockedHeroes l) (concat seats)
+  oldTitles = ordNub [t | t <- map title (concat l.heroes), not (swapsAragorn && t == "Aragorn")]
+  newTitles = ordNub $ map title (concat seats)
+  -- the first scenario, with no heroes recorded yet, changes none; nor does a scenario
+  -- whose campaign card lets heroes change freely
   changed
-    | maybe False (`elem` freeHeroChange) (nextScenario l) = 0
-    | otherwise = sum [length (filter (`notElem` old) new) | (old, new) <- zip l.heroes seats]
+    | maybe False (`elem` freeHeroChange) next = 0
+    | otherwise = min (length (filter (`notElem` newTitles) oldTitles)) (length (filter (`notElem` oldTitles) newTitles))
 
 -- | The scenarios whose campaign card reads "Each player may change hero cards without
--- incurring the +1 threat penalty" (The Wastes of Eriador, The Battle of Carn Dûm).
+-- incurring the +1 threat penalty".
 freeHeroChange :: [ScenarioId]
-freeHeroChange = ["the-wastes-of-eriador", "the-battle-of-carn-dum"]
+freeHeroChange =
+  [ "the-wastes-of-eriador"
+  , "the-battle-of-carn-dum"
+  , "the-ring-goes-south"
+  , "helms-deep"
+  , "the-passing-of-the-grey-company"
+  , "the-tower-of-cirith-ungol"
+  , "the-black-gate-opens"
+  , "mount-doom"
+  ]
 
 -- | Heroes the campaign does not allow yet: the Amarthiúl hero, in Angmar Awakened, until
 -- The Battle of Carn Dûm's campaign card lets him in.
@@ -359,12 +444,21 @@ lockedHeroes l
 -- | A seat's deck as the campaign deals it: its boons and burdens that are player cards
 -- added, and the cards the log bars from every deck left out.
 seatDeck :: Int -> CampaignLog -> [(CardCode, Int)] -> [(CardCode, Int)]
-seatDeck seat l cards = filter ((`notElem` recorded LostInMountGram l) . fst) cards <> [(c, 1) | c <- seatPoolCards seat l]
+seatDeck seat l cards = filter (keeps . fst) cards <> [(c, 1) | c <- seatPoolCards seat l]
+ where
+  -- no version of a fallen hero may be used, its ally versions included (The Road Darkens
+  -- rules insert, FAQ)
+  fallenTitles = mapMaybe titleOf l.fallenHeroes
+  titleOf code = (\d -> let Name t _ = cdName d in t) <$> Map.lookup code allPlayerCards
+  keeps code = code `notElem` recorded LostInMountGram l && maybe True (`notElem` fallenTitles) (titleOf code)
 
 -- | Each seat's boons and burdens that are player cards, to shuffle into its deck: those
 -- not attached to a hero. (An encounter card for its deck the scenario shuffles in.)
 seatPoolCards :: Int -> CampaignLog -> [CardCode]
-seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo, Map.member p.code allPlayerCards]
+seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo, Just def <- [Map.lookup p.code allPlayerCards], allowed def]
+ where
+  -- a treasure only in a scenario whose setup lists its set
+  allowed def = not (cdTreasure def) || maybe False (\sid -> maybe False (`elem` treasureSetsFor sid) (cdSetIcon def)) (nextScenario l)
 
 instance HasField "code" PoolCard CardCode where
   getField = poolCardCode
@@ -409,6 +503,13 @@ data CampaignLogUpdate
   | AdjustThreatPenalty Int
   | Record CampaignLogKey [CardCode]
   | Unrecord CampaignLogKey
+  | -- | the hero goes on the list of fallen heroes, as Fallen into Evil's does
+    AddFallenHero CardCode
+  | -- | the hero comes off it, as Beyond All Hope's, or The Black Gate Opens' resolution
+    -- keeps a hero off it
+    RemoveFallenHero CardCode
+  | -- | a permanent starting threat penalty for the seat alone
+    AdjustSeatThreatPenalty Int Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -419,3 +520,6 @@ updateLog = \case
   AdjustThreatPenalty n -> \l -> l {campaignLogThreatPenalty = l.threatPenalty + n}
   Record key cards -> record key cards
   Unrecord key -> \l -> l {campaignLogNotes = Map.delete key l.notes, campaignLogCounts = Map.delete key l.counts}
+  AddFallenHero code -> recordFallen [code]
+  RemoveFallenHero code -> \l -> l {campaignLogFallenHeroes = filter (/= code) l.fallenHeroes}
+  AdjustSeatThreatPenalty seat n -> \l -> l {campaignLogSeatThreatPenalty = Map.insertWith (+) seat n l.seatThreatPenalty}
