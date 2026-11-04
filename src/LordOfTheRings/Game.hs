@@ -44,7 +44,7 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, lowerThreatBy, raiseThreatFromDoomed, setUpTheOneRing, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, lowerThreatBy, raiseThreatFromDoomed, setUpFellowship, setUpTheOneRing, shuffleIntoDeck)
 import LordOfTheRings.Message.Lifted.Queue (capture)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
@@ -58,6 +58,7 @@ import LordOfTheRings.Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
+import LordOfTheRings.Saga (revealsIndividually)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -103,6 +104,8 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameSeparation = Nothing
     , gameAdditionalPhases = []
     , gameResumeAfter = Nothing
+    , gameRevealer = Nothing
+    , gamePeril = Nothing
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -312,7 +315,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null)]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null)]
 
 instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
@@ -556,6 +559,8 @@ runGame msg g = case msg of
   CheckWindows ws | explored@(_ : _) <- [lid | Window When (Explored lid) <- ws] -> do
     pushAll $ concatMap (letGoOf g) explored
     runGame'' msg g
+  -- a Permanent boon or burden cannot be discarded from its hero while the hero is in play
+  Discard t | permanentOnHero g t -> pure g
   -- an Uncharted location's card cannot enter the discard pile or the encounter deck: it
   -- returns to the Uncharted deck (The Grey Havens rules insert)
   Discard (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
@@ -759,6 +764,8 @@ runGameMessage msg g = case msg of
     runQueueT do
       push $ SetFirstPlayer firstPlayer
       setUpTheOneRing firstPlayer
+      -- in a saga, the first player takes control of Bilbo Baggins or a Fellowship hero
+      setUpFellowship firstPlayer
     pure g
   BeginRound -> do
     pushAll [CheckWindows [mkWhen RoundBegins], BeginPhase minBound, EndPhase minBound]
@@ -822,8 +829,9 @@ runGameMessage msg g = case msg of
           ]
         held = concat [cs | (_, _, cs) <- limited]
     -- separated, the token passes once every area has refreshed: see 'eachAreaThen'
+    keeps <- elem CannotLoseFirstPlayerToken <$> getModifiers (PlayerTarget g.firstPlayer)
     let passToken = case drop 1 players of
-          (next : _) | isNothing (gameSeparation g) -> [SetFirstPlayer next]
+          (next : _) | isNothing (gameSeparation g), not keeps -> [SetFirstPlayer next]
           _ -> []
     raises <- for players \pid -> (pid,) . fromMaybe 1 . lastMay . (\ms -> [n | RefreshThreatRaise n <- ms]) <$> getModifiers (PlayerTarget pid)
     -- each character readied opens its own window, for responses to it readying
@@ -842,7 +850,23 @@ runGameMessage msg g = case msg of
       -- the phase ends with an action window, for Refresh Actions as Escape from Darkness gives
       <> map OptionalActionWindow players
     pure $ g & phaseL .~ RefreshPhase
-  SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid & separationL %~ fmap (\s -> s {separationFirstPlayer = pid})
+  SetFirstPlayer pid -> do
+    -- the first player gains control of Bilbo Baggins, or the Ring-bearer, as the token passes
+    following <- filterM (\h -> hasKeyword FirstPlayerGainsControl (toTarget h) (toCardDef h)) (toList g.entities.heroes)
+    pushAll [ChangeHeroController h.id pid | h <- following, h.owner /= pid]
+    pure $ g & firstPlayerL .~ pid & separationL %~ fmap (\s -> s {separationFirstPlayer = pid})
+  SetRevealer revealer -> pure $ g & revealerL .~ revealer
+  SetPeril peril -> pure $ g & perilL .~ peril
+  ChangeHeroController hid pid | Just h <- Map.lookup hid g.entities.heroes -> do
+    let old = h.owner
+        onHero a = a.placement == AttachedTo (toTarget hid)
+    -- the player left with no hero, his last one gone to another, is eliminated
+    let othersLeft = any (\h' -> h'.owner == old && h'.id /= hid) (toList g.entities.heroes)
+    pushWhen (not othersLeft) $ EliminatePlayer old
+    pure
+      $ g
+      & entitiesL . heroesL . ix hid %~ overAttrs (\a -> a {heroOwner = pid})
+      & entitiesL . attachmentsL . traverse %~ (\a -> if onHero a then overAttrs (\x -> x {attachmentController = Just pid}) a else a)
   SeparatePlayers groups -> pure $ separate groups g
   FocusArea pid -> pure $ focusArea pid g
   -- while the players are separated, an enemy sent to another area's staging area leaves
@@ -1002,7 +1026,13 @@ runGameMessage msg g = case msg of
           damage <- getDamage t
           -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1, and none past
           -- what the card can have, as City Guard's
-          let n' = foldr min n $ [k | DamageReducedTo k <- mods'] <> [max 0 (k - damage) | MaxDamage k <- mods']
+          -- an enemy with toughness takes that much less each time it is assigned damage
+          let toughness = case t of
+                EnemyTarget eid
+                  | Just e <- Map.lookup eid g.entities.enemies ->
+                      sum $ [k | Blank `notElem` mods', Toughness k <- toList (cdKeywords $ toCardDef e)] <> [k | GainKeyword (Toughness k) <- mods']
+                _ -> 0
+              n' = foldr min (n - toughness) $ [k | DamageReducedTo k <- mods'] <> [max 0 (k - damage) | MaxDamage k <- mods']
               combat = case source of
                 PlayerAttackSource _ -> True
                 _ -> False
@@ -2115,13 +2145,24 @@ runGameMessage msg g = case msg of
         fewer = sum [n | FewerStagingReveals n <- mods]
         players = length [() | player <- toList g.players, not player.eliminated]
         reveals = max 0 $ max 1 (players + extra) - fewer
+    order <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
+    -- in The Lord of the Rings saga each player reveals his own card in turn order, the
+    -- first player any more the step reveals
+    let revealing
+          | revealsIndividually (scenarioId $ toAttrs g.scenario) =
+              concat
+                [ [SetRevealer (Just pid), RevealEncounterCard]
+                | pid <- take reveals (order <> replicate reveals (fromMaybe g.firstPlayer $ headMay order))
+                ]
+                <> [SetRevealer Nothing]
+          | otherwise = replicate reveals RevealEncounterCard
     -- what is played "after the staging step", as Elevenses, waits for its end
     pushAll
       $ ( if SkipStagingStep `elem` mods
             then []
             else
               CheckWindows [mkAfter StagingStepBegins]
-                : replicate reveals RevealEncounterCard
+                : revealing
                 <> [CheckWindows [mkWhen StagingStepEnds]]
         )
       <> [CreateEffect $ Effect GameSource GameTarget [AfterStagingStep] UntilEndOfPhase]
@@ -2411,6 +2452,10 @@ runGameMessage msg g = case msg of
     thisHero <- newHero pid card
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
+  PutHeroIntoPlayAs hid pid card -> do
+    let thisHero = lookupHero (toCardCode card) card.id hid pid
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
+    pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   PutObjectiveHeroIntoPlayUnder pid card -> do
     thisHero <- lookupHero (toCardCode card) card.id <$> getRandom <*> pure pid
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
@@ -2419,7 +2464,8 @@ runGameMessage msg g = case msg of
     abilities <- getWindowAbilities windows
     let forcedAbilities = filter isForcedAbility abilities
     lead <- getLead
-    order <- getPlayerOrder
+    -- while a Peril card's staging resolves, its player alone may respond
+    order <- maybe getPlayerOrder (pure . pure) (gamePeril g)
     forcedMsgs <- case forcedAbilities of
       [] -> pure []
       [ab] -> do
@@ -3040,6 +3086,12 @@ runGameMessage msg g = case msg of
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
+  -- a card with the Peril keyword: the player who revealed it resolves its staging on his
+  -- own, the other players taking no actions and triggering no responses until it has
+  Do inner@(revealedCard -> Just _) -> runGameMessage inner g
+  (revealedCard -> Just (engaging, card)) | Peril `member` cdKeywords (toCardDef card), isNothing (gamePeril g) -> do
+    revealer <- maybe getLead pure (engaging <|> gameRevealer g)
+    g <$ pushAll [SetPeril (Just revealer), Do msg, SetPeril Nothing]
   (revealedCard -> Just (_, card)) | Loot `member` cdKeywords (toCardDef card) -> g <$ push (DiscardLoot card)
   -- the next card revealed is discarded unresolved if it is of the type named, as Minas
   -- Tirith Lampwright reads; either way the effect is spent
@@ -3640,12 +3692,29 @@ lowest = (`elem` [LowestPrintedThreat, LowestPrintedQuestPoints, FewestEnemiesGr
 -- and an enemy's shadow cards are discarded with it (ALeP 3.068).
 discardAttached :: Game -> Target -> [Message]
 discardAttached g target =
-  [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
-    <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
-    <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+  [leaves a | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+    <> [leaves t | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+    <> [leaves o | o <- toList g.entities.objectives, o.placement == AttachedTo target]
     <> attachedEnemies g target
     <> discardShadowsOf g target
     <> freeGuarded g target
+ where
+  -- a Permanent boon or burden is removed from the game as its hero leaves play
+  leaves :: (HasCardDef c, Targetable c) => c -> Message
+  leaves c = if Permanent `member` cdKeywords (toCardDef c) then RemoveFromGame (toTarget c) else Discard (toTarget c)
+
+-- | Whether the card is a Permanent boon or burden on a hero in play, which cannot be
+-- discarded from it.
+permanentOnHero :: Game -> Target -> Bool
+permanentOnHero g t = fromMaybe False do
+  (def, placement) <- case t of
+    AttachmentTarget aid -> (\a -> (toCardDef a, a.placement)) <$> Map.lookup aid g.entities.attachments
+    ObjectiveTarget oid -> (\o -> (toCardDef o, o.placement)) <$> Map.lookup oid g.entities.objectives
+    TreacheryTarget tid -> (\x -> (toCardDef x, x.placement)) <$> Map.lookup tid g.entities.treacheries
+    _ -> Nothing
+  pure $ Permanent `member` cdKeywords def && case placement of
+    AttachedTo (HeroTarget hid) -> Map.member hid g.entities.heroes
+    _ -> False
 
 {- | An enemy attached to the host, as Grasping Tentacle to a character, is discarded as its
 host leaves play. One attached to an enemy is a Mount, as Mordor Warg and Racing Warg are,

@@ -484,6 +484,10 @@
   "theOneRing": {
     "choosePlayer": "Choose the player whose copy of The One Ring goes into play"
   },
+  "saga": {
+    "chooseFellowshipHero": "Choose the hero you take control of"
+  },
+  "setupAttach": "Setup: Attach it to a hero in play",
   "aLightInTheDark": {
     "return": "Return an engaged enemy to the staging area"
   },

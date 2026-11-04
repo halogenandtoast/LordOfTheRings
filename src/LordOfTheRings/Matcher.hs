@@ -690,6 +690,11 @@ inNightmareMode = getsGame ((== NightmareMode) . scenarioMode . toAttrs . gameSc
 getLead :: HasGame m => m PlayerId
 getLead = getsGame gameFirstPlayer
 
+-- | The "you" of an encounter card being revealed: in The Lord of the Rings saga's staging
+-- step the player revealing it, otherwise the first player.
+getRevealer :: HasGame m => m PlayerId
+getRevealer = getsGame \g -> fromMaybe (gameFirstPlayer g) (gameRevealer g)
+
 -- | The last player: the last still in the game in turn order from the first player.
 getLastPlayer :: HasGame m => m PlayerId
 getLastPlayer = maybe getLead pure . lastMay =<< getRemainingPlayers

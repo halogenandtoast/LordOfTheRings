@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
-import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genPlayerCard, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, toCardDef)
 import LordOfTheRings.Trait (Trait (Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -20,7 +20,9 @@ import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
-import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase)
+import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase, gameScenario)
+import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup)
+import LordOfTheRings.Scenario.Types (scenarioId)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource, onlyMasterCardsAffect)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -2247,6 +2249,27 @@ revealFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
 revealFromEncounterDeck card = do
   removeFromEncounterDeck card
   push $ RevealCard card
+
+{- | A saga's setup: the first player takes control of the scenario's Baggins or
+Fellowship sphere hero, his choice among them if it may be one of several Ring-bearers,
+and attaches The One Ring to it when the scenario has one (see 'fellowshipSetup').
+-}
+setUpFellowship :: ReverseQueue m => PlayerId -> m ()
+setUpFellowship lead = do
+  sid <- getsGame (scenarioId . toAttrs . gameScenario)
+  for_ (fellowshipSetup sid) \fs -> do
+    heroes <- for fs.fellowshipHeroes \code -> genPlayerCard (toCardDef code) (Just lead)
+    let takeFellowshipHero :: ReverseQueue n => PlayerCard -> n ()
+        takeFellowshipHero card = do
+          hid <- getRandom
+          push $ PutHeroIntoPlayAs hid lead card
+          for_ fs.fellowshipRing \code -> do
+            ring <- genEncounterCard (toCardDef code)
+            putObjectiveIntoPlayAttached ring (HeroTarget hid)
+    chooseOrRunOneM lead do
+      questionLabeled "saga.chooseFellowshipHero"
+      showing (map PlayerCard heroes)
+      for_ heroes \card -> targeting (CardIdTarget card.id) (takeFellowshipHero card)
 
 {- | The One Ring's Setup, done once the starting heroes are placed and the first player is
 known: the player with it in his deck attaches it to a hero he controls, then searches his

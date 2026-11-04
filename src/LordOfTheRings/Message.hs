@@ -159,6 +159,8 @@ data Message
   | -- | an ally card put into play under the player's control, keeping its owner
     PutAllyIntoPlayUnder PlayerId PlayerCard
   | PutHeroIntoPlay PlayerId PlayerCard
+  | -- | as 'PutHeroIntoPlay', the hero taking the id given, for what is attached to it next
+    PutHeroIntoPlayAs HeroId PlayerId PlayerCard
   | -- | an attachment card, already taken from where it was, put into play by the player
     PutAttachmentIntoPlay PlayerId PlayerCard
   | -- | a player side quest, played, goes to the staging area
@@ -208,6 +210,12 @@ data Message
   | Search PlayerId DeckSignifier CardMatcher CardHandler DeckHandler
   | AddToStaging EncounterCard
   | RevealEncounterCard
+  | -- | the player reveals the encounter cards that follow, as each player reveals his own
+    -- in the Saga Expansions' staging step; Nothing once the step is over
+    SetRevealer (Maybe PlayerId)
+  | -- | the player resolves the staging of a card with the Peril keyword on his own; Nothing
+    -- once it has resolved
+    SetPeril (Maybe PlayerId)
   | RevealCard EncounterCard
   | -- | the card is revealed, and an enemy put into play engaged with the player, as
     -- Murzag reads; any other card resolves as 'RevealCard'
@@ -389,6 +397,10 @@ data Message
     MoveHeroToStagingArea HeroId
   | -- | the hero in the staging area returns to its owner's control, exhausted
     TakeControlOfHero HeroId
+  | -- | the player gains control of the hero, the resources in its pool and the cards
+    -- attached to it, as the first player does of Bilbo Baggins or the Ring-bearer when the
+    -- first player token passes
+    ChangeHeroController HeroId PlayerId
   | -- | an objective-hero comes into play under the player's control
     PutObjectiveHeroIntoPlayUnder PlayerId EncounterCard
   | -- | a card out of play, an ally card from its owner's discard pile or an objective ally,

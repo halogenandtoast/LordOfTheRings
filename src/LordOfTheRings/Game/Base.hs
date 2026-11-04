@@ -66,6 +66,13 @@ data Game = Game
   , gameResumeAfter :: Maybe Phase
   -- ^ While additional phases run, the round's own phase they followed: its next phase
   -- comes after them.
+  , gameRevealer :: Maybe PlayerId
+  -- ^ The player revealing encounter cards in the staging step, when each player reveals
+  -- his own (The Black Riders rules insert, "New Staging Rules"): the "you" of the cards
+  -- he reveals.
+  , gamePeril :: Maybe PlayerId
+  -- ^ The player resolving the staging of a card with the Peril keyword on his own: no
+  -- other player may respond until it has resolved.
   }
   deriving stock (Show, Generic)
 

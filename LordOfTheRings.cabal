@@ -2413,6 +2413,7 @@ library
       LordOfTheRings.Quest.Types
       LordOfTheRings.Question
       LordOfTheRings.Queue
+      LordOfTheRings.Saga
       LordOfTheRings.Scenario
       LordOfTheRings.Scenario.CardDefs
       LordOfTheRings.Scenario.Import.Lifted
