@@ -115,6 +115,9 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioGainedVictoryPoints :: Map CardId Int
   -- ^ the victory points a card in the victory display gained as it went there, printed
   -- nowhere, as Fram's Shade's victory 6 (The Ghost of Framsburg)
+  , scenarioPowerOfMordorDeck :: [EncounterCard]
+  -- ^ the Power of Mordor deck, top first (The Temple of Doom, The Fortress of Nurn): The
+  -- Power of Mordor encounter set, its cards revealed when a card says to
   }
   deriving stock (Show, Eq, Generic)
 
@@ -124,7 +127,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("evilCreaturesDeck", Null), ("evilCreaturesDiscard", toJSON ([] :: [EncounterCard])), ("gainedVictoryPoints", object [])] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("evilCreaturesDeck", Null), ("evilCreaturesDiscard", toJSON ([] :: [EncounterCard])), ("gainedVictoryPoints", object []), ("powerOfMordorDeck", toJSON ([] :: [EncounterCard]))] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -161,6 +164,7 @@ scenario f sid name =
       , scenarioEvilCreaturesDeck = Nothing
       , scenarioEvilCreaturesDiscard = []
       , scenarioGainedVictoryPoints = mempty
+      , scenarioPowerOfMordorDeck = []
       }
 
 instance Entity ScenarioAttrs where
@@ -203,6 +207,9 @@ instance HasField "cavesDeck" ScenarioAttrs [EncounterCard] where
 
 instance HasField "evilCreaturesDeck" ScenarioAttrs (Maybe [EncounterCard]) where
   getField = scenarioEvilCreaturesDeck
+
+instance HasField "powerOfMordorDeck" ScenarioAttrs [EncounterCard] where
+  getField = scenarioPowerOfMordorDeck
 
 -- | A card of the Evil Creatures deck, while there is one: an enemy of the Wilderlands
 -- encounter set (Journey Up the Anduin rules).

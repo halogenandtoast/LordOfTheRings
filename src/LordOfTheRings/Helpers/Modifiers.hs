@@ -22,7 +22,7 @@ import LordOfTheRings.Matcher.Types (cardMatches)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Source (Source (GameSource), isPlayerCardSource, isPlayerEventSource, sourceTarget)
+import LordOfTheRings.Source (Source (..), isPlayerCardSource, isPlayerEventSource, sourceTarget)
 import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (Modification))
 
@@ -129,7 +129,10 @@ preloadModifiers g = do
       -- ship-objective's immunity lets theirs through
       modifications = setFromList [toTarget x | x <- toList es.attachments, Modification `member` cdCardTraits (toCardDef x)] :: Set Target
       fromPlayerCard m = isPlayerCardSource (modifierSource m) && maybe True (`notMember` modifications) (sourceTarget $ modifierSource m)
-      unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m)) ms else ms
+      unaffected t ms =
+        let ms' = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m)) ms else ms
+            types = map modifierType ms'
+         in filter (\m -> sourceTarget (modifierSource m) == Just t || not (immuneToEncounterSource g types (modifierSource m))) ms'
       -- no willpower from player cards, as Frozen Silverlode forbids
       frozen = NoWillpowerFromPlayerCards `elem` map modifierType (Map.findWithDefault [] GameTarget all')
       gained m = case m.modifierType of
@@ -173,10 +176,12 @@ immuneToSource :: (HasGame m, Targetable a) => Source -> a -> m Bool
 immuneToSource GameSource _ = pure False
 immuneToSource source a = do
   mods <- getModifiers a
+  g <- getGame
   pure
     $ ImmuneToCardEffects `elem` mods
     || (isPlayerCardSource source && ImmuneToPlayerCardEffects `elem` mods)
     || (isPlayerEventSource source && ImmuneToPlayerEvents `elem` mods)
+    || immuneToEncounterSource g mods source
 
 -- | A printed value with the target's modifiers applied, floored at 0.
 modifiedValue :: (HasGame m, Targetable a) => (ModifierType -> Maybe Int) -> a -> Int -> m Int
@@ -209,3 +214,33 @@ hostInPlay es = \case
   AttachedTo (EnemyTarget i) -> Map.member i es.enemies
   AttachedTo (LocationTarget i) -> Map.member i es.locations
   _ -> True
+
+{- | Whether a card is immune to what the source does as an encounter card without the
+trait its 'ImmuneToEncounterCardEffectsWithout' names, as Gollum is to non-Gollum card
+effects. An attack's damage and the game's rules are no card's effect.
+-}
+immuneToEncounterSource :: Game -> [ModifierType] -> Source -> Bool
+immuneToEncounterSource g mods = \case
+  EnemyAttackSource _ -> False
+  source -> maybe False (immuneToEncounterCard g mods) (sourceTarget source)
+
+{- | Whether a card is immune to the encounter card, the target the source is, as
+'immuneToEncounterSource'. One that has left play, as a shadow card whose effect lasts, is
+known by no trait: no card with one of these traits lasts that way (Stinker, the only
+Gollum card Gollum meets, leaves none).
+-}
+immuneToEncounterCard :: Game -> [ModifierType] -> Target -> Bool
+immuneToEncounterCard g mods source = case [t | ImmuneToEncounterCardEffectsWithout t <- mods] of
+  [] -> False
+  traits -> case encounterDef of
+    Nothing -> False
+    Just def -> maybe True (\d -> not $ any (`member` cdCardTraits d) traits) def
+ where
+  es = g.entities
+  encounterDef = case source of
+    EnemyTarget i -> Just $ toCardDef <$> Map.lookup i es.enemies
+    LocationTarget i -> Just $ toCardDef <$> Map.lookup i es.locations
+    TreacheryTarget i -> Just $ toCardDef <$> Map.lookup i es.treacheries
+    ObjectiveTarget i -> Just $ toCardDef <$> Map.lookup i es.objectives
+    QuestTarget i -> Just $ toCardDef <$> Map.lookup i es.quests
+    _ -> Nothing

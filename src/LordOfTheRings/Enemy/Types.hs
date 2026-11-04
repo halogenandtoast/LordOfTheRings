@@ -49,6 +49,8 @@ data EnemyAttrs = EnemyAttrs
   -- ^ player cards attached facedown, as a Nameless Thing takes them
   , enemyShadowFaceUp :: [CardId]
   -- ^ shadow cards dealt face up, as Silver Lamp deals them, that are still to resolve
+  , enemyOwner :: Maybe PlayerId
+  -- ^ the player whose card it is, as a hero turned to its enemy side: Sméagol's Gollum
   }
   deriving stock (Show, Eq, Generic)
 
@@ -58,7 +60,7 @@ instance ToJSON EnemyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "enemy")
 
 instance FromJSON EnemyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "enemy") . withDefaults [("shadowRevealed", toJSON ([] :: [CardId])), ("facedown", toJSON ([] :: [PlayerCard])), ("shadowFaceUp", toJSON ([] :: [CardId]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "enemy") . withDefaults [("shadowRevealed", toJSON ([] :: [CardId])), ("facedown", toJSON ([] :: [PlayerCard])), ("shadowFaceUp", toJSON ([] :: [CardId])), ("owner", Null)]
 
 enemy :: (EnemyAttrs -> a) -> CardDef -> EnemyCard a
 enemy f cardDef =
@@ -76,6 +78,7 @@ enemy f cardDef =
             , enemyShadowRevealed = []
             , enemyFacedown = []
             , enemyShadowFaceUp = []
+            , enemyOwner = Nothing
             }
     }
 
@@ -113,8 +116,11 @@ instance Show Enemy where
 instance ToJSON Enemy where
   toJSON (Enemy a) = toJSON a
 
+-- | A player's card, as Gollum, leaves play to its owner's discard pile.
 instance IsCard EnemyAttrs where
-  toCard a = EncounterCard $ MkEncounterCard {ecId = enemyCardId a, ecCardCode = enemyCardCode a}
+  toCard a = case enemyOwner a of
+    Just owner -> PlayerCard $ MkPlayerCard {pcId = enemyCardId a, pcCardCode = enemyCardCode a, pcOwner = Just owner}
+    Nothing -> EncounterCard $ MkEncounterCard {ecId = enemyCardId a, ecCardCode = enemyCardCode a}
 
 instance IsCard Enemy where
   toCard = toCard . toAttrs

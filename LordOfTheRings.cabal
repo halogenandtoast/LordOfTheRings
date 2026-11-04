@@ -661,6 +661,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinTrapper
       LordOfTheRings.Enemy.Cards.GoblinTroop
       LordOfTheRings.Enemy.Cards.GoblinWarlord
+      LordOfTheRings.Enemy.Cards.GollumASitE
       LordOfTheRings.Enemy.Cards.GraspingArm
       LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.Graxar
@@ -694,6 +695,7 @@ library
       LordOfTheRings.Enemy.Cards.JailerOfCirithGurat
       LordOfTheRings.Enemy.Cards.JailorGornakh
       LordOfTheRings.Enemy.Cards.JailorGornakhNightmare
+      LordOfTheRings.Enemy.Cards.KhamulTheEasterling
       LordOfTheRings.Enemy.Cards.KingsKnight
       LordOfTheRings.Enemy.Cards.KingSpider
       LordOfTheRings.Enemy.Cards.LieutenantOfMordor
@@ -1267,6 +1269,7 @@ library
       LordOfTheRings.Hero.Cards.Quickbeam
       LordOfTheRings.Hero.Cards.Radagast
       LordOfTheRings.Hero.Cards.Rossiel
+      LordOfTheRings.Hero.Cards.Smeagol
       LordOfTheRings.Hero.Cards.Thalin
       LordOfTheRings.Hero.Cards.Theoden
       LordOfTheRings.Hero.Cards.Theodred
@@ -1704,6 +1707,7 @@ library
       LordOfTheRings.Location.Cards.TheShatteredMonument
       LordOfTheRings.Location.Cards.TheShoresOfNenHithoel
       LordOfTheRings.Location.Cards.TheSpidersRing
+      LordOfTheRings.Location.Cards.TheTowerOfBaradDur
       LordOfTheRings.Location.Cards.TheWestBank
       LordOfTheRings.Location.Cards.TheWhiteBridge
       LordOfTheRings.Location.Cards.ThroatOfTheMountain
@@ -1807,6 +1811,7 @@ library
       LordOfTheRings.Objective.Cards.Celador
       LordOfTheRings.Objective.Cards.CelebrimborsMould
       LordOfTheRings.Objective.Cards.ChiefTurchTheAntleredCrown
+      LordOfTheRings.Objective.Cards.CoveredInDarkness
       LordOfTheRings.Objective.Cards.CryptKey
       LordOfTheRings.Objective.Cards.DaechanarsBrand
       LordOfTheRings.Objective.Cards.Daybreak
@@ -1862,6 +1867,7 @@ library
       LordOfTheRings.Objective.Cards.ThaurdirsLegacy
       LordOfTheRings.Objective.Cards.ThaurdirsMajesty
       LordOfTheRings.Objective.Cards.ThaurdirsSpite
+      LordOfTheRings.Objective.Cards.TheArmiesOfMordor
       LordOfTheRings.Objective.Cards.TheBeacon
       LordOfTheRings.Objective.Cards.TheBlackSword
       LordOfTheRings.Objective.Cards.TheCabalsChampion
@@ -1875,6 +1881,7 @@ library
       LordOfTheRings.Objective.Cards.ToTheTower
       LordOfTheRings.Objective.Cards.TowerOfTheGull
       LordOfTheRings.Objective.Cards.TowerOfTheHeron
+      LordOfTheRings.Objective.Cards.UnderTheWatchfulEye
       LordOfTheRings.Objective.Cards.UnholyAlliance
       LordOfTheRings.Objective.Cards.UpInFlames
       LordOfTheRings.Objective.Cards.UrdugsHorn
@@ -2647,6 +2654,7 @@ library
       LordOfTheRings.Treachery.Cards.StampedingOliphaunt
       LordOfTheRings.Treachery.Cards.StarsInSky
       LordOfTheRings.Treachery.Cards.StiflingWoods
+      LordOfTheRings.Treachery.Cards.Stinker
       LordOfTheRings.Treachery.Cards.StreetFighting
       LordOfTheRings.Treachery.Cards.SuddenAssault
       LordOfTheRings.Treachery.Cards.SuddenAssaultNightmare
@@ -3040,6 +3048,8 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.VengeanceOfMordor.PowerOfMordorSpec
+      LordOfTheRings.VengeanceOfMordor.SmeagolSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
       LordOfTheRings.VoiceOfIsengard.NightmareSpec
       LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec

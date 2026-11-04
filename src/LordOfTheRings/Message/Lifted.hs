@@ -18,7 +18,7 @@ import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
-import LordOfTheRings.Game.Base (gameEntities, gamePhase)
+import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -216,6 +216,13 @@ lowerThreatBy source pid n' = do
       $ CreateEffect
       $ Effect (toSource source) (PlayerTarget pid) [ThreatReducedByPlayerCardsThisRound (min n threat)] UntilEndOfRound
     push $ CheckWindows [Window After $ ThreatReduced pid (toSource source)]
+
+-- | How much player cards have reduced the player's threat this round, as Moonlit Passage
+-- and Covered in Darkness limit it.
+getThreatReducedByPlayerCardsThisRound :: HasGame m => PlayerId -> m Int
+getThreatReducedByPlayerCardsThisRound pid = do
+  effects <- getsGame gameEffects
+  pure $ sum [n | e <- effects, effectTarget e == PlayerTarget pid, ThreatReducedByPlayerCardsThisRound n <- effectModifiers e]
 
 -- | The player draws N cards by the source's effect, unless player card effects cannot
 -- make him draw and it is a player card.
@@ -1595,6 +1602,23 @@ takeFromCavesDeck = push . TakeFromCavesDeck
 shuffleCavesDeck :: ReverseQueue m => m ()
 shuffleCavesDeck = push ShuffleCavesDeck
 
+-- | Build the Power of Mordor deck from The Power of Mordor encounter set, shuffled, as The
+-- Forgotten Temple's setup reads; the scenario leaves the set out of its encounter deck.
+createPowerOfMordorDeck :: ReverseQueue m => m ()
+createPowerOfMordorDeck = push CreatePowerOfMordorDeck
+
+-- | The Power of Mordor deck, top first.
+getPowerOfMordorDeck :: HasGame m => m [EncounterCard]
+getPowerOfMordorDeck = getsGame ((.powerOfMordorDeck) . toAttrs . (.scenario))
+
+-- | Reveal the top card of the Power of Mordor deck, and whether there was one to reveal,
+-- as Tribute to Mordor loses the game when there is not.
+revealTopOfPowerOfMordorDeck :: ReverseQueue m => m Bool
+revealTopOfPowerOfMordorDeck = do
+  deck <- getPowerOfMordorDeck
+  unless (null deck) $ push RevealTopOfPowerOfMordorDeck
+  pure $ notNull deck
+
 -- | The top card of the Evil Creatures deck is added to the staging area, the source told
 -- of it with 'AddedFromEvilCreaturesDeck' (Journey Up the Anduin).
 addFromEvilCreaturesDeck :: (ReverseQueue m, Sourceable source) => source -> m ()
@@ -1843,8 +1867,8 @@ addShadowCardToStaging eid card = do
 
 {- | Turn the card over to its other side: a location, as an Uncharted one is flipped, or a
 card whose other side is another kind of card, as Captain Sahír turns from enemy to
-objective-ally and back (under the player his objective-ally side names), all tokens
-removed.
+objective-ally and back (under the player his objective-ally side names), or Sméagol from
+hero to enemy and back (see 'Flip'), all tokens removed.
 -}
 flipOver :: (ReverseQueue m, Targetable target) => target -> m ()
 flipOver target = unlessM (elem CannotBeFlipped <$> getModifiers (toTarget target)) $ push $ Flip (toTarget target)

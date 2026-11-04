@@ -51,6 +51,10 @@ data ModifierType
     ImmuneToPlayerEvents
   | -- | on a location: no card effect, player or encounter, places or removes its tokens
     ImmuneToCardEffects
+  | -- | on a card in play: no encounter card's effect touches it but one with the trait, as
+    -- Gollum is immune to non-Gollum card effects ('ImmuneToPlayerCardEffects' for the
+    -- player cards' effects)
+    ImmuneToEncounterCardEffectsWithout Trait
   | -- | on a location: player card effects cannot place progress on it, as Retake the City
     -- reads for the staging area
     NoProgressFromPlayerCards
@@ -291,6 +295,10 @@ data ModifierType
   | -- | on an enemy: only characters with the keyword can attack it or defend against it,
     -- as Moria Bats reads for ranged
     OnlyFoughtByKeyword Keyword
+  | -- | on an enemy: only the player it is engaged with declares attackers or defenders
+    -- against it, no other player's ranged or sentinel character, as Khamûl the Easterling
+    -- reads
+    OnlyEngagedPlayerFights
   | -- | on an enemy: damage from its undefended attacks is dealt to this character
     UndefendedDamageTo Target
   | -- | on an ally: the resources on it can pay for matching cards its controller plays

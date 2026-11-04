@@ -873,7 +873,12 @@ runGameMessage msg g = case msg of
       -- a hero guarded by an encounter card is in play still, under no player's control, as
       -- Carried Away's: its owner is not eliminated for it
       let guarded = any (\h -> h.owner == player.id && isJust (heroGuardedBy $ toAttrs h)) g.entities.heroes
-          noHeroes = null heroes && not guarded && not (any ((== HeroType) . (.cardType)) player.deck)
+          -- nor for a hero turned to its enemy side, as Sméagol to Gollum: he is not killed,
+          -- and the game goes on, as Lost and Alone's (The Lord of the Rings LCG Quest
+          -- Companion FAQ, reported on the FFG forum, "Controlling No Heroes - When Do You
+          -- Lose?")
+          turned = any ((== Just player.id) . enemyOwner . toAttrs) g.entities.enemies
+          noHeroes = null heroes && not guarded && not turned && not (any ((== HeroType) . (.cardType)) player.deck)
           byThreat = player.threat >= level
           -- Deadmen's Dike eliminates a player whose deck runs out
           byEmptyDeck = emptyDeck && null player.deck
@@ -885,7 +890,10 @@ runGameMessage msg g = case msg of
   EliminatePlayer pid -> do
     heroes <- select (HeroControlledBy $ PlayerWithId pid)
     allies <- select (AllyControlledBy $ PlayerWithId pid)
-    engaged <- select (EnemyEngagedWith $ PlayerWithId pid)
+    -- his cards leave play with him as his heroes and allies do, Gollum though engaged
+    -- with another player
+    let owned = [toId e | e <- toList g.entities.enemies, enemyOwner (toAttrs e) == Just pid]
+    engaged <- filter (`notElem` owned) <$> select (EnemyEngagedWith $ PlayerWithId pid)
     let remaining = [p | p <- toList (allPlayers g), p.id /= pid, not p.eliminated]
         -- a separated player alone in his area takes it out of the game with him: the
         -- encounter cards there are discarded (ALeP 3.030), and it joins another area
@@ -897,6 +905,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ map (Discard . toTarget) heroes
       <> map (Discard . toTarget) allies
+      <> map (Discard . toTarget) owned
       <> ( if alone
              then map (Discard . toTarget) engaged <> map Discard encounter <> [JoinArea pid other | other <- take 1 others]
              else [PlaceEnemy eid StagingArea | eid <- engaged]
@@ -1437,7 +1446,9 @@ runGameMessage msg g = case msg of
     let limit = minimumMay [n | MayDeclareUpToDefenders n <- playerMods]
         many = MayDeclareMultipleDefenders `elem` playerMods || isJust limit
         full = maybe False (length chosen >=) limit
-    others <- filter (/= pid) <$> getPlayerOrder
+    -- no other player's sentinel defends against one only its player fights
+    alone <- elem OnlyEngagedPlayerFights <$> getModifiers eid
+    others <- if alone then pure [] else filter (/= pid) <$> getPlayerOrder
     defenders <- if full then pure [] else filter (`notElem` chosen) <$> (filterM (canDefend eid) =<< readyCharacters pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
@@ -1628,7 +1639,8 @@ runGameMessage msg g = case msg of
   DeclareAttackers pid eid -> do
     -- then other players' ranged characters may join an attack on an enemy engaged with them
     engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
-    others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
+    alone <- elem OnlyEngagedPlayerFights <$> getModifiers eid
+    others <- if engaged && not alone then filter (/= pid) <$> getPlayerOrder else pure []
     attackers <- ownAttackers pid eid
     push
       $ if null attackers
@@ -3035,8 +3047,9 @@ runGameMessage msg g = case msg of
       EventType | any (any ((== card.id) . (.id)) . (.setAsideCards)) (toList g.players) -> do
         pushAll =<< revealing (CardIdTarget card.id)
         pure g
+      -- its doomed keyword resolves too, as Covered in Darkness's
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
-        pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
+        pushAll . (<> doomed <> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
       -- an encounter side quest goes to the staging area, where the players may quest
       -- against it
@@ -3144,6 +3157,31 @@ runGameMessage msg g = case msg of
         pushAll $ discardAttached g (AllyTarget aid)
         let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard a).id (EnemyId $ unAllyId aid)
         pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
+  -- a hero whose other side is an enemy turns over, as Sméagol to Gollum: the hero leaves
+  -- play, and the enemy enters play engaged with its owner, ready, still its owner's card
+  -- (MEC77 rules, "Sméagol / Gollum")
+  Flip target@(HeroTarget hid)
+    | Just h <- Map.lookup hid g.entities.heroes
+    , Just other <- cdOtherSide (toCardDef h)
+    , cdCardType (toCardDef other) == EnemyType -> do
+        g' <- leftPlay g target
+        pushAll $ discardAttached g target
+        eid <- getRandom
+        let thisEnemy = overAttrs (\e -> e {enemyPlacement = EngagedWith h.owner, enemyOwner = Just h.owner}) $ lookupEnemy other (toCard h).id eid
+        push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisEnemy]
+        pure $ g' & entitiesL . heroesL %~ Map.delete hid & entitiesL . enemiesL %~ insertEntity thisEnemy
+  -- and back: the enemy leaves play, and the hero enters play under its owner's control,
+  -- exhausted (MEC77 rules)
+  Flip target@(EnemyTarget eid)
+    | Just e <- Map.lookup eid g.entities.enemies
+    , Just other <- cdOtherSide (toCardDef e)
+    , cdCardType (toCardDef other) == HeroType
+    , Just owner <- enemyOwner (toAttrs e) -> do
+        pushAll $ discardAttached g target
+        hid <- getRandom
+        let thisHero = overAttrs (\a -> a {heroExhausted = True}) $ lookupHero other (toCard e).id hid owner
+        push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
+        pure $ g & entitiesL . enemiesL %~ Map.delete eid & entitiesL . heroesL %~ insertEntity thisHero
   -- a location whose other side is an objective ally, as Woodmen Village's Haldan, turns
   -- over out of the locations: the effect turning it puts that side where it says, under
   -- the location's card id

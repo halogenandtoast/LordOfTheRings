@@ -396,6 +396,7 @@ allTreacheryCards =
       , wildCreatures
       , unseenDanger
       , vastnessOfMirkwood
+      , stinker
       ]
 
 deepDeepDark :: CardDef
@@ -2506,3 +2507,14 @@ unseenDanger = (treachery "18036" "Unseen Danger" LostInMirkwood 2) {cdShadowEff
 
 vastnessOfMirkwood :: CardDef
 vastnessOfMirkwood = (treachery "18037" "Vastness of Mirkwood" LostInMirkwood 3)
+
+-- * A Shadow in the East
+
+-- | Shuffled into the encounter deck by Sméagol's Setup, from outside any player's deck.
+stinker :: CardDef
+stinker =
+  (treachery "21071" "Stinker" GollumAndSmeagol 2)
+    { cdCardTraits = setFromList [Gollum]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
