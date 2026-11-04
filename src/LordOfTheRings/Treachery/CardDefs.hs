@@ -445,6 +445,10 @@ allTreacheryCards =
       , aFellLight
       , callOfTheRing
       , weHatesThem
+      , theDarkLordsSummons
+      , marchingUpTheRoad
+      , fierceSouthrons
+      , arrowsThickInTheAir
       ]
 
 deepDeepDark :: CardDef
@@ -2830,3 +2834,17 @@ weHatesThem =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Journey to the Cross-roads
+
+theDarkLordsSummons :: CardDef
+theDarkLordsSummons = (treachery "144036" "The Dark Lord's Summons" JourneyToTheCrossRoads 3) {cdKeywords = setFromList [Peril]}
+
+marchingUpTheRoad :: CardDef
+marchingUpTheRoad = (treachery "144037" "Marching Up the Road" JourneyToTheCrossRoads 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+fierceSouthrons :: CardDef
+fierceSouthrons = (treachery "144038" "Fierce Southrons" JourneyToTheCrossRoads 2) {cdKeywords = setFromList [Peril], cdEasyModeQuantity = Just 1}
+
+arrowsThickInTheAir :: CardDef
+arrowsThickInTheAir = (treachery "144039" "Arrows Thick in the Air" JourneyToTheCrossRoads 3) {cdShadowEffect = True}

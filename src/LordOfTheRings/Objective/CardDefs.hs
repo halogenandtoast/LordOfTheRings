@@ -158,6 +158,7 @@ allObjectiveCards =
       , theOneRingTheBlackRiders
       , theOneRingTheRoadDarkens
       , theOneRingTheLandOfShadow
+      , theBlackGate
       , theOneRingTheMountainOfFire
       , smeagolTheLandOfShadow
       ]
@@ -1128,3 +1129,7 @@ smeagolTheLandOfShadow =
     , cdOtherSide = Just "144075"
     }
 
+-- * Journey to the Cross-roads
+
+theBlackGate :: CardDef
+theBlackGate = unique (objective "144027" "The Black Gate" JourneyToTheCrossRoads 1)

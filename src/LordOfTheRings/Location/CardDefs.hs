@@ -559,6 +559,12 @@ allLocationCards =
       , hauntedMere
       , stagnantPools
       , softMires
+      , theCrossRoadsTheLandOfShadow
+      , hennethAnnun
+      , southwardRoad
+      , foothillsOfEphelDuath
+      , ithilienWoods
+      , hillsOfIthilien
       ]
 
 drownedTreasury :: CardDef
@@ -4091,3 +4097,47 @@ stagnantPools = marsh "144022" "Stagnant Pools" 2 3 7 5 3
 
 softMires :: CardDef
 softMires = (marsh "144023" "Soft Mires" 4 2 4 1 2) {cdEasyModeQuantity = Just 3}
+
+-- * Journey to the Cross-roads
+
+theCrossRoadsTheLandOfShadow :: CardDef
+theCrossRoadsTheLandOfShadow =
+  unique
+    (location "144030" "The Cross-roads" JourneyToTheCrossRoads 1 9 9)
+      { cdCardTraits = setFromList [Road]
+      , cdVictoryPoints = Just 9
+      }
+
+hennethAnnun :: CardDef
+hennethAnnun =
+  unique
+    (location "144031" "Henneth Annûn" JourneyToTheCrossRoads 1 1 1)
+      { cdCardTraits = setFromList [Refuge]
+      , cdVictoryPoints = Just 1
+      }
+
+southwardRoad :: CardDef
+southwardRoad =
+  (location "144032" "Southward Road" JourneyToTheCrossRoads 2 4 5)
+    { cdCardTraits = setFromList [Forest, Road]
+    , cdEasyModeQuantity = Just 1
+    }
+
+foothillsOfEphelDuath :: CardDef
+foothillsOfEphelDuath =
+  (location "144033" "Foothills of Ephel Dúath" JourneyToTheCrossRoads 3 3 6)
+    { cdCardTraits = setFromList [Forest, Hills]
+    }
+
+ithilienWoods :: CardDef
+ithilienWoods =
+  (location "144034" "Ithilien Woods" JourneyToTheCrossRoads 2 2 3)
+    { cdCardTraits = setFromList [Forest]
+    }
+
+hillsOfIthilien :: CardDef
+hillsOfIthilien =
+  (location "144035" "Hills of Ithilien" JourneyToTheCrossRoads 4 2 4)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdShadowEffect = True
+    }
