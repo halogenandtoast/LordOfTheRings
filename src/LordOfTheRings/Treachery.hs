@@ -423,6 +423,7 @@ import LordOfTheRings.Treachery.Cards.BrokenCaptives
 import LordOfTheRings.Treachery.Cards.DrawnToTheRing
 import LordOfTheRings.Treachery.Cards.DeepShadows
 import LordOfTheRings.Treachery.Cards.EvilVigilance
+import LordOfTheRings.Treachery.Cards.OrcishHowls
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -870,6 +871,7 @@ allTreacherys =
         , SomeTreacheryCard overseersWhip
         , SomeTreacheryCard crueltyOfMordor
         , SomeTreacheryCard brokenCaptives
+        , SomeTreacheryCard orcishHowls
         , SomeTreacheryCard drawnToTheRing
         , SomeTreacheryCard deepShadows
         , SomeTreacheryCard evilVigilance

@@ -501,6 +501,10 @@ import LordOfTheRings.Enemy.Cards.NurnSlaver
 import LordOfTheRings.Enemy.Cards.OrcOfMordor
 import LordOfTheRings.Enemy.Cards.SnagaArcher
 import LordOfTheRings.Enemy.Cards.UrukSoldierOrcsOfMordor
+import LordOfTheRings.Enemy.Cards.Shagrat
+import LordOfTheRings.Enemy.Cards.Gorbag
+import LordOfTheRings.Enemy.Cards.WoundedUruk
+import LordOfTheRings.Enemy.Cards.TheTwoWatchersEnemy
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1028,6 +1032,10 @@ allEnemys =
         , SomeEnemyCard borlach
         , SomeEnemyCard easterlingGuard
         , SomeEnemyCard nurnSlaver
+        , SomeEnemyCard shagrat
+        , SomeEnemyCard gorbag
+        , SomeEnemyCard woundedUruk
+        , SomeEnemyCard theTwoWatchersEnemy
         , SomeEnemyCard orcOfMordor
         , SomeEnemyCard snagaArcher
         , SomeEnemyCard urukSoldierOrcsOfMordor

@@ -525,6 +525,12 @@ import LordOfTheRings.Location.Cards.SlaveQuarters
 import LordOfTheRings.Location.Cards.TheStorehouse
 import LordOfTheRings.Location.Cards.WorkingFields
 import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
+import LordOfTheRings.Location.Cards.TopmostChamber
+import LordOfTheRings.Location.Cards.EchoingPassage
+import LordOfTheRings.Location.Cards.BloodiedCourtyard
+import LordOfTheRings.Location.Cards.WindingStairs
+import LordOfTheRings.Location.Cards.TorchLitHall
+import LordOfTheRings.Location.Cards.TheTwoWatchers
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1096,5 +1102,11 @@ allLocations =
         , SomeLocationCard theStorehouse
         , SomeLocationCard workingFields
         , SomeLocationCard watchTowerTheLandOfSorrow
+        , SomeLocationCard topmostChamber
+        , SomeLocationCard echoingPassage
+        , SomeLocationCard bloodiedCourtyard
+        , SomeLocationCard windingStairs
+        , SomeLocationCard torchLitHall
+        , SomeLocationCard theTwoWatchers
         ]
     ]
