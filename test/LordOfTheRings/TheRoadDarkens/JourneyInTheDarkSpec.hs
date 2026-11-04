@@ -99,21 +99,18 @@ useForcedAbilities pid =
 chooseFirstTarget :: HasCallStack => PlayerId -> GameT ()
 chooseFirstTarget pid = chooseOptionMatching "choose a target" pid \case TargetLabel {} -> True; _ -> False
 
--- | Setup, with stage 1 in play and flipped, the player's location chosen: the Ring-bearer
--- is the first offered, The Road Darkens' Frodo Baggins, when there is a choice.
+-- | Setup, with The Road Darkens' Frodo Baggins as the Ring-bearer, stage 1 in play and
+-- flipped, the player's location chosen.
 setUp :: PlayerId -> GameT ()
 setUp pid = do
   run Setup
-  chooseRingBearer
+  chooseRingBearer pid "142001"
   chooseLabel "$label.keepHand" pid
   chooseOptionMatching "flip the quest" pid (const True)
   -- the player's search for a location, when there is a choice
-  chooseRingBearer
- where
-  chooseRingBearer =
-    getQuestion pid >>= \case
-      Just q | all (\case TargetLabel {} -> True; _ -> False) (questionChoices q) -> chooseFirstTarget pid
-      _ -> pure ()
+  getQuestion pid >>= \case
+    Just q | all (\case TargetLabel {} -> True; _ -> False) (questionChoices q) -> chooseFirstTarget pid
+    _ -> pure ()
 
 -- | Advance from the stage in play to the stage given, its When Revealed resolved.
 atStage :: PlayerId -> CardDef -> GameT ()
