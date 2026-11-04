@@ -247,6 +247,8 @@ data LocationMatcher
     LocationWithPlayerCardAttachment
   | -- | a location with any card attached to it, as Haldan draws for each
     LocationWithAttachment
+  | -- | a location with no progress tokens on it, as Woodmen's Path attaches to
+    LocationWithoutProgress
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -290,6 +290,7 @@ matchLocation matcher location = case matcher of
   LocationCanEnterStagingArea -> notElem CannotEnterStagingArea . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationGuardingACard -> guardingACard (toCard location).id (toTarget location)
   LocationWithAttachment -> notNull <$> getAttachmentsOn (toTarget location)
+  LocationWithoutProgress -> pure $ location.progress == 0
   LocationWithPlayerCardAttachment ->
     getsGame (any ((== AttachedTo (toTarget location)) . (.placement)) . toList . entitiesAttachments . gameEntities)
 
