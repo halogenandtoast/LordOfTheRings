@@ -481,30 +481,30 @@ runGame'' msg g = case removedEnemy msg of
     mods <- getModifiers (EnemyTarget eid)
     if CannotLeavePlay `elem` mods || stuckInStaging eid mods then pure g else runGame' msg g
   -- nor is such an enemy engaged or moved out of it
-  Nothing | Just eid <- movedEnemy msg -> do
+  Nothing | Just eid <- movedEnemy g msg -> do
     mods <- getModifiers (EnemyTarget eid)
     if stuckInStaging eid mods then pure g else runGame' msg g
-  Nothing -> case movedLocation msg of
+  Nothing -> case movedLocation g msg of
     -- a location that cannot leave the staging area, as The Crossing at Tharbad, stays
-    Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement == StagingArea -> do
+    Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement `elem` [StagingArea, OrcsArea] -> do
       stays <- elem CannotLeaveStagingArea <$> getModifiers (LocationTarget lid)
       if stays then pure g else runGame' msg g
     _ -> runGame' msg g
  where
   stuckInStaging eid mods =
-    CannotLeaveStagingArea `elem` mods && maybe False ((== StagingArea) . (.placement)) (Map.lookup eid g.entities.enemies)
+    CannotLeaveStagingArea `elem` mods && maybe False ((`elem` [StagingArea, OrcsArea]) . (.placement)) (Map.lookup eid g.entities.enemies)
 
 -- | The enemy a message moves out of where it is, without taking it out of play.
-movedEnemy :: Message -> Maybe EnemyId
-movedEnemy = \case
+movedEnemy :: Game -> Message -> Maybe EnemyId
+movedEnemy g = \case
   EngageEnemy _ eid -> Just eid
-  PlaceEnemy eid p | p /= StagingArea -> Just eid
+  PlaceEnemy eid p | maybe False ((/= p) . (.placement)) (Map.lookup eid g.entities.enemies) -> Just eid
   _ -> Nothing
 
 -- | The location a message moves out of where it is, other than by exploring it.
-movedLocation :: Message -> Maybe LocationId
-movedLocation = \case
-  PlaceLocation lid p | p /= StagingArea -> Just lid
+movedLocation :: Game -> Message -> Maybe LocationId
+movedLocation g = \case
+  PlaceLocation lid p | maybe False ((/= p) . (.placement)) (Map.lookup lid g.entities.locations) -> Just lid
   ReturnToTopOfEncounterDeck (LocationTarget lid) -> Just lid
   ReturnToBottomOfEncounterDeck (LocationTarget lid) -> Just lid
   ShuffleIntoEncounterDeck (LocationTarget lid) -> Just lid
