@@ -508,6 +508,12 @@ import LordOfTheRings.Enemy.Cards.GreatWargChief
 import LordOfTheRings.Enemy.Cards.HoundOfSauron
 import LordOfTheRings.Enemy.Cards.HowlingWarg
 import LordOfTheRings.Enemy.Cards.CrebainFromDunland
+import LordOfTheRings.Enemy.Cards.TheBalrog
+import LordOfTheRings.Enemy.Cards.OrcChieftain
+import LordOfTheRings.Enemy.Cards.GreatCaveTrollJourneyInTheDark
+import LordOfTheRings.Enemy.Cards.UrukFromMordor
+import LordOfTheRings.Enemy.Cards.MoriaOrc
+import LordOfTheRings.Enemy.Cards.MoriaArcher
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1045,5 +1051,11 @@ allEnemys =
         , SomeEnemyCard houndOfSauron
         , SomeEnemyCard howlingWarg
         , SomeEnemyCard crebainFromDunland
+        , SomeEnemyCard theBalrog
+        , SomeEnemyCard orcChieftain
+        , SomeEnemyCard greatCaveTrollJourneyInTheDark
+        , SomeEnemyCard urukFromMordor
+        , SomeEnemyCard moriaOrc
+        , SomeEnemyCard moriaArcher
         ]
     ]

@@ -429,6 +429,12 @@ import LordOfTheRings.Treachery.Cards.Snowdrifts
 import LordOfTheRings.Treachery.Cards.BitterCold
 import LordOfTheRings.Treachery.Cards.StormOfHowls
 import LordOfTheRings.Treachery.Cards.LustForTheRing
+import LordOfTheRings.Treachery.Cards.TheyAreComing
+import LordOfTheRings.Treachery.Cards.WeCannotGetOut
+import LordOfTheRings.Treachery.Cards.DeepFissure
+import LordOfTheRings.Treachery.Cards.FoolOfATook
+import LordOfTheRings.Treachery.Cards.ShadowOfFearJourneyInTheDark
+import LordOfTheRings.Treachery.Cards.PursuedByTheEnemy
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -885,5 +891,11 @@ allTreacherys =
         , SomeTreacheryCard bitterCold
         , SomeTreacheryCard stormOfHowls
         , SomeTreacheryCard lustForTheRing
+        , SomeTreacheryCard theyAreComing
+        , SomeTreacheryCard weCannotGetOut
+        , SomeTreacheryCard deepFissure
+        , SomeTreacheryCard foolOfATook
+        , SomeTreacheryCard shadowOfFearJourneyInTheDark
+        , SomeTreacheryCard pursuedByTheEnemy
         ]
     ]

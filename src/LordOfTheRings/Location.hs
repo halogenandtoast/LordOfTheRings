@@ -536,6 +536,12 @@ import LordOfTheRings.Location.Cards.TreeCrownedHill
 import LordOfTheRings.Location.Cards.HillsOfHollin
 import LordOfTheRings.Location.Cards.RedhornFoothills
 import LordOfTheRings.Location.Cards.Eregion
+import LordOfTheRings.Location.Cards.TheGreatBridge
+import LordOfTheRings.Location.Cards.ChamberOfMazarbul
+import LordOfTheRings.Location.Cards.MinesOfMoria
+import LordOfTheRings.Location.Cards.ManyPillaredHall
+import LordOfTheRings.Location.Cards.DarkenedStairway
+import LordOfTheRings.Location.Cards.AncientGuardroom
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1124,11 @@ allLocations =
         , SomeLocationCard hillsOfHollin
         , SomeLocationCard redhornFoothills
         , SomeLocationCard eregion
+        , SomeLocationCard theGreatBridge
+        , SomeLocationCard chamberOfMazarbul
+        , SomeLocationCard minesOfMoria
+        , SomeLocationCard manyPillaredHall
+        , SomeLocationCard darkenedStairway
+        , SomeLocationCard ancientGuardroom
         ]
     ]

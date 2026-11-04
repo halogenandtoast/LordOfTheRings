@@ -3168,5 +3168,27 @@
     "choose": "The Council of Elrond: choose one",
     "shuffleLust": "Shuffle Lust for the Ring into the encounter deck",
     "raiseThreat": "Raise each player’s threat by 5"
+  },
+  "moriaOrc": {
+    "choose": "Moria Orc: choose one",
+    "removeDamage": "Remove 1 damage from Doom, Doom, Doom",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "theGreatBridge": {
+    "discardHero": "The Great Bridge: choose a hero to discard, dealing damage equal to its threat cost to The Balrog"
+  },
+  "deepFissure": {
+    "remove": "Deep Fissure: choose a character you control to remove from the quest"
+  },
+  "foolOfATook": {
+    "choose": "Fool of a Took!: choose one",
+    "removeDamage": "Remove 1 damage token from Doom, Doom, Doom",
+    "balrogAttacks": "The Balrog makes an attack"
+  },
+  "grievousWound": {
+    "attach": "Grievous Wound: choose the damaged hero to attach it to"
+  },
+  "overcomeByGrief": {
+    "attach": "Overcome by Grief: choose a hero to attach it to"
   }
 }
