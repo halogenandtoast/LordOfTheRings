@@ -314,6 +314,13 @@ allQuestCards =
       , findTheOthers
       , freeTheCaptives
       , escapeIntoTheJungle
+      , ambushedAtNight
+      , spidersOfMirkwoodStage
+      , dolGuldurOrcsStage
+      , carriedAway
+      , trulyLost
+      , theForestOfGreatFear
+      , escapeFromTaurNuFuin
       , lostUnderground
       , searchingTheCaves
       , gettingCloser
@@ -1243,6 +1250,30 @@ freeTheCaptives = quest "16073" "Free the Captives" TheLongArmOfMordor 3 10
 
 escapeIntoTheJungle :: CardDef
 escapeIntoTheJungle = quest "16074" "Escape into the Jungle" TheLongArmOfMordor 4 15
+
+-- * Lost in Mirkwood: stages 1-3 have no quest points, an objective-location advances them;
+-- stages 2-4 come in two versions, A and C (18073, 18075 and 18077 print sides C and D)
+
+ambushedAtNight :: CardDef
+ambushedAtNight = (quest "18071" "Ambushed at Night" LostInMirkwood 1 0) {cdQuestPoints = Nothing}
+
+spidersOfMirkwoodStage :: CardDef
+spidersOfMirkwoodStage = (quest "18072" "Spiders of Mirkwood" LostInMirkwood 2 0) {cdQuestPoints = Nothing}
+
+dolGuldurOrcsStage :: CardDef
+dolGuldurOrcsStage = (quest "18073" "Dol Guldur Orcs" LostInMirkwood 2 0) {cdQuestPoints = Nothing}
+
+carriedAway :: CardDef
+carriedAway = (quest "18074" "Carried Away" LostInMirkwood 3 0) {cdQuestPoints = Nothing}
+
+trulyLost :: CardDef
+trulyLost = (quest "18075" "Truly Lost" LostInMirkwood 3 0) {cdQuestPoints = Nothing}
+
+theForestOfGreatFear :: CardDef
+theForestOfGreatFear = quest "18076" "The Forest of Great Fear" LostInMirkwood 4 8
+
+escapeFromTaurNuFuin :: CardDef
+escapeFromTaurNuFuin = quest "18077" "Escape from Taur-nu-Fuin" LostInMirkwood 4 16
 -- * Beneath the Sands
 
 lostUnderground :: CardDef

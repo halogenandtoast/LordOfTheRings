@@ -127,6 +127,7 @@ allObjectiveCards =
       , nooseOfVines
       , porosGarrison
       , haldan
+      , searchingForAWayOut
       ]
 
 durinsAxe :: CardDef
@@ -868,3 +869,8 @@ haldan =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "18069A"
     }
+
+-- | Lost in Mirkwood's objective, added to the staging area as stage 1A is set up: never
+-- in the encounter deck.
+searchingForAWayOut :: CardDef
+searchingForAWayOut = objective "18028" "Searching for a Way Out" LostInMirkwood 0

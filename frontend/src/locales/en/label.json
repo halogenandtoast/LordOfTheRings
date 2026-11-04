@@ -2534,5 +2534,17 @@
     "draw": "Draw 2 cards",
     "resource": "Add 1 resource to a hero's resource pool",
     "hero": "Ancient Treasury: choose a hero to gain 1 resource"
+  },
+  "mirkwoodPatrol": {
+    "guard": "Mirkwood Patrol: choose the objective-location it guards"
+  },
+  "unseenDanger": {
+    "remove": "Unseen Danger: choose a character you control to remove from the quest"
+  },
+  "carriedAway": {
+    "hero": "Carried Away: choose a hero you control to place in the staging area"
+  },
+  "trulyLost": {
+    "location": "Truly Lost: choose the location to place your hand facedown under"
   }
 }

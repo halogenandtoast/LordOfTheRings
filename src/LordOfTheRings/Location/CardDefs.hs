@@ -2,6 +2,7 @@ module LordOfTheRings.Location.CardDefs (module LordOfTheRings.Location.CardDefs
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
+import LordOfTheRings.Card.CardType (CardType (EnemyType, LocationType))
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
@@ -466,6 +467,11 @@ allLocationCards =
       , crumblingCavern
       , undergroundLake
       , woodmenVillage
+      , overgrownPath
+      , abandonedVillage
+      , bareHilltop
+      , forestClearingLostInMirkwood
+      , twilightHall
       ]
 
 drownedTreasury :: CardDef
@@ -3495,3 +3501,29 @@ woodmenVillage =
     { cdCardTraits = setFromList [Riverland]
     , cdOtherSide = Just "18069B"
     }
+
+-- | An objective-location of Lost in Mirkwood: Guarded (X), worth 4 victory points. The
+-- scenario's Searching for a Way Out makes it immune to player card effects.
+objectiveLocation :: CardCode -> Name -> CardType -> CardDef
+objectiveLocation code name guardType =
+  (location code name LostInMirkwood 1 0 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdKeywords = setFromList [GuardedBy [guardType]]
+    , cdVictoryPoints = Just 4
+    , cdThreat = Nothing
+    }
+
+overgrownPath :: CardDef
+overgrownPath = objectiveLocation "18029" "Overgrown Path" LocationType
+
+abandonedVillage :: CardDef
+abandonedVillage = objectiveLocation "18030" "Abandoned Village" LocationType
+
+bareHilltop :: CardDef
+bareHilltop = objectiveLocation "18031" "Bare Hilltop" EnemyType
+
+forestClearingLostInMirkwood :: CardDef
+forestClearingLostInMirkwood = objectiveLocation "18032" "Forest Clearing" EnemyType
+
+twilightHall :: CardDef
+twilightHall = (location "18033" "Twilight Hall" LostInMirkwood 3 2 6) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 2}

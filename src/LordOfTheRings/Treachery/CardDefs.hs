@@ -375,6 +375,8 @@ allTreacheryCards =
       , eyesInTheDark
       , dragonBreath
       , dragonScales
+      , unseenDanger
+      , vastnessOfMirkwood
       ]
 
 deepDeepDark :: CardDef
@@ -2387,3 +2389,9 @@ dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits =
 
 dragonScales :: CardDef
 dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+unseenDanger :: CardDef
+unseenDanger = (treachery "18036" "Unseen Danger" LostInMirkwood 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+vastnessOfMirkwood :: CardDef
+vastnessOfMirkwood = (treachery "18037" "Vastness of Mirkwood" LostInMirkwood 3) {cdEasyModeQuantity = Just 0}

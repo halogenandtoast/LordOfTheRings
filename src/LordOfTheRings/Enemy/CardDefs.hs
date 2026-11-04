@@ -439,6 +439,8 @@ allEnemyCards =
       , werewolf
       , giantSpider
       , blackBats
+      , mirkwoodPatrol
+      , ravenousSpider
       ]
 
 namelessThing :: CardDef
@@ -3587,3 +3589,9 @@ blackBats =
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
     }
+
+mirkwoodPatrol :: CardDef
+mirkwoodPatrol = (enemy "18034" "Mirkwood Patrol" LostInMirkwood 2 40 4 5 3 6) {cdCardTraits = setFromList [Orc], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+ravenousSpider :: CardDef
+ravenousSpider = (enemy "18035" "Ravenous Spider" LostInMirkwood 2 36 3 4 3 5) {cdCardTraits = setFromList [Creature, Spider], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
