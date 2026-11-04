@@ -3450,6 +3450,10 @@ runGameMessage msg g = case msg of
   EncounterCardEnteredHand _ card | cdCardType (toCardDef card) == EnemyType -> do
     _ <- runEach msg . createEnemy card =<< getRandom
     pure g
+  -- and a treachery's, as The Searching Eye's "After you draw this card"
+  EncounterCardEnteredHand _ card | cdCardType (toCardDef card) == TreacheryType -> do
+    _ <- runEach msg . createTreachery card =<< getRandom
+    pure g
   AddToStaging card | gainsController (toCardDef card) -> do
     thisObjective <- newObjective card
     controller <- objectiveAllyController (toCardDef card)

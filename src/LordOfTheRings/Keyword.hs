@@ -110,6 +110,11 @@ data Keyword
     -- Shadow rules insert; the revised Two Towers rulebook, p. 9, places them on locations
     -- with the keyword alone)
     Mire Int
+  | -- | on an encounter card with a player card back, shuffled into a player's deck: drawn,
+    -- it stays in his hand, it can be discarded from his hand or deck to his discard pile,
+    -- and it cannot be played, as The Searching Eye reads "functions like a player card"
+    -- (The Land of Shadow rules insert; the revised Two Towers rulebook, p. 5)
+    FunctionsLikeAPlayerCard
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
