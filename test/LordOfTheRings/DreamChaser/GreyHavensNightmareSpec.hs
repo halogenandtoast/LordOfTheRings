@@ -9,6 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getLocationThreat)
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher (HeroMatcher (AttackingHero), selectAny)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
@@ -174,6 +175,26 @@ spec = describe "The Grey Havens Nightmare Decks" do
       heading `shouldReturn` Just Stormy
 
   describe "The Fate of Númenor" do
+    it "Guardian of the Golden King removes attackers as soon as they are declared" . nightmare theFateOfNumenor $ \pid -> do
+      guardian <- stagedEnemy Enemies.guardianOfTheGoldenKing
+      run $ EngageEnemy pid guardian
+      -- nothing at the bottom of the deck: X is 0
+      g <- getGame
+      putGame $ g & playersL . ix pid . deckL .~ []
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DeclareAttackers pid guardian
+      chooseTarget pid eowyn
+      chooseLabel "$label.doneAttacking" pid
+      selectAny AttackingHero `shouldReturn` False
+
+    it "lets no more than 1 character attack Graxar each round" . nightmare theFateOfNumenor $ \pid -> do
+      graxar <- stagedEnemy Enemies.graxar
+      run $ EngageEnemy pid graxar
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DeclareAttackers pid graxar
+      chooseTarget pid eowyn
+      getQuestion pid >>= (`shouldSatisfy` \case Just (QuestionLabel l _ _ _) -> not ("$label.declareAttackers" `isPrefixOf` l); _ -> True)
+
     it "replaces the Uncharted deck with the Nightmare Deck's, Overgrown Steps staying in the encounter deck" . nightmare theFateOfNumenor $ \_ -> do
       run $ DoStep 1 Setup
       s <- scenarioAttrs
