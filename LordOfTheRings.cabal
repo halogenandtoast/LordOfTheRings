@@ -1296,6 +1296,7 @@ library
       LordOfTheRings.Helpers.Campaign
       LordOfTheRings.Helpers.Character
       LordOfTheRings.Helpers.ControlledLocation
+      LordOfTheRings.Helpers.Fellowship
       LordOfTheRings.Helpers.IslandMap
       LordOfTheRings.Helpers.Modifiers
       LordOfTheRings.Helpers.Staging
