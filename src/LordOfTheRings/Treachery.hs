@@ -333,6 +333,10 @@ import LordOfTheRings.Treachery.Cards.Enfeebled
 import LordOfTheRings.Treachery.Cards.Sandstorm
 import LordOfTheRings.Treachery.Cards.HeatExhaustion
 import LordOfTheRings.Treachery.Cards.Overgrown
+import LordOfTheRings.Treachery.Cards.StampedingOliphaunt
+import LordOfTheRings.Treachery.Cards.TheSavageSouth
+import LordOfTheRings.Treachery.Cards.TerribleFever
+import LordOfTheRings.Treachery.Cards.BitingInsects
 import LordOfTheRings.Treachery.Cards.FearOfMordor
 import LordOfTheRings.Treachery.Cards.ForcedOffTrackBeneathTheSands
 import LordOfTheRings.Treachery.Cards.GrabbedBySpiders
@@ -707,6 +711,10 @@ allTreacherys =
         , SomeTreacheryCard sandstorm
         , SomeTreacheryCard heatExhaustion
         , SomeTreacheryCard overgrown
+        , SomeTreacheryCard stampedingOliphaunt
+        , SomeTreacheryCard theSavageSouth
+        , SomeTreacheryCard terribleFever
+        , SomeTreacheryCard bitingInsects
         , SomeTreacheryCard fearOfMordor
         , SomeTreacheryCard forcedOffTrackBeneathTheSands
         , SomeTreacheryCard grabbedBySpiders

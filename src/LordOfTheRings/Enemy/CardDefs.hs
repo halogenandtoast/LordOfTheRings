@@ -419,6 +419,11 @@ allEnemyCards =
       , jailerOfCirithGurat
       , prisonGuardCirithGurat
       , dungeonWarg
+      , wildMumak
+      , haradTiger
+      , territorialApe
+      , stranglingPython
+      , giantCentipede
       ]
 
 namelessThing :: CardDef
@@ -3426,3 +3431,32 @@ dungeonWarg =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+
+-- The Mûmakil
+
+-- | Indestructible. Immune to player card effects. Cannot take more than 3 damage each
+-- round.
+wildMumak :: CardDef
+wildMumak =
+  (enemy "17015" "Wild Mûmak" TheMumakil 4 40 3 6 3 9)
+    { cdCardTraits = setFromList [Creature, Mumak]
+    , cdKeywords = setFromList [Indestructible]
+    , cdVictoryPoints = Just 3
+    }
+
+haradTiger :: CardDef
+haradTiger = (enemy "17016" "Harad Tiger" TheMumakil 1 0 4 4 3 5) {cdCardTraits = setFromList [Creature], cdEasyModeQuantity = Just 0}
+
+territorialApe :: CardDef
+territorialApe = (enemy "17017" "Territorial Ape" TheMumakil 4 35 2 2 2 4) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+stranglingPython :: CardDef
+stranglingPython =
+  (enemy "17018" "Strangling Python" TheMumakil 2 25 1 3 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+giantCentipede :: CardDef
+giantCentipede = (enemy "17019" "Giant Centipede" TheMumakil 2 30 3 3 1 2) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}

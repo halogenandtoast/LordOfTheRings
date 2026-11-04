@@ -429,6 +429,7 @@ import LordOfTheRings.Location.Cards.DungeonCell
 import LordOfTheRings.Location.Cards.UrukGuardroom
 import LordOfTheRings.Location.Cards.MinesOfCirithGurat
 import LordOfTheRings.Location.Cards.TortureRoom
+import LordOfTheRings.Location.Cards.MumakTrail
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -904,5 +905,6 @@ allLocations =
         , SomeLocationCard urukGuardroom
         , SomeLocationCard minesOfCirithGurat
         , SomeLocationCard tortureRoom
+        , SomeLocationCard mumakTrail
         ]
     ]

@@ -357,6 +357,10 @@ allTreacheryCards =
       , chaosInTheNight
       , takenPrisoner
       , tormentedByOrcs
+      , stampedingOliphaunt
+      , theSavageSouth
+      , terribleFever
+      , bitingInsects
       ]
 
 deepDeepDark :: CardDef
@@ -2286,3 +2290,23 @@ takenPrisoner = (treachery "17129" "Taken Prisoner" TheDungeonsOfCirithGurat 2) 
 
 tormentedByOrcs :: CardDef
 tormentedByOrcs = (treachery "17130" "Tormented by Orcs" TheDungeonsOfCirithGurat 3) {cdShadowEffect = True}
+
+-- The Mûmakil
+
+stampedingOliphaunt :: CardDef
+stampedingOliphaunt = (treachery "17021" "Stampeding Oliphaunt" TheMumakil 2) {cdKeywords = setFromList [Doomed 1]}
+
+theSavageSouth :: CardDef
+theSavageSouth = (treachery "17022" "The Savage South" TheMumakil 2) {cdShadowEffect = True}
+
+-- | Counts as a Condition attachment.
+terribleFever :: CardDef
+terribleFever =
+  (treachery "17023" "Terrible Fever" TheMumakil 2)
+    { cdCardTraits = setFromList [Condition]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+bitingInsects :: CardDef
+bitingInsects = (treachery "17024" "Biting Insects" TheMumakil 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

@@ -412,6 +412,11 @@ import LordOfTheRings.Enemy.Cards.SerpentGuard
 import LordOfTheRings.Enemy.Cards.JailerOfCirithGurat
 import LordOfTheRings.Enemy.Cards.PrisonGuardCirithGurat
 import LordOfTheRings.Enemy.Cards.DungeonWarg
+import LordOfTheRings.Enemy.Cards.WildMumak
+import LordOfTheRings.Enemy.Cards.HaradTiger
+import LordOfTheRings.Enemy.Cards.TerritorialApe
+import LordOfTheRings.Enemy.Cards.StranglingPython
+import LordOfTheRings.Enemy.Cards.GiantCentipede
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -850,5 +855,10 @@ allEnemys =
         , SomeEnemyCard jailerOfCirithGurat
         , SomeEnemyCard prisonGuardCirithGurat
         , SomeEnemyCard dungeonWarg
+        , SomeEnemyCard wildMumak
+        , SomeEnemyCard haradTiger
+        , SomeEnemyCard territorialApe
+        , SomeEnemyCard stranglingPython
+        , SomeEnemyCard giantCentipede
         ]
     ]

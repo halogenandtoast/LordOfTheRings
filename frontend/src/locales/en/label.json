@@ -2387,5 +2387,14 @@
   },
   "flightToTheSea": {
     "shuffle": "Flight to the Sea: shuffle a Wind from the Sea into the encounter deck"
+  },
+  "stampedingOliphaunt": {
+    "attack": "Stampeding Oliphaunt: choose the Wild Mûmak to attack the first player"
+  },
+  "terribleFever": {
+    "attach": "Terrible Fever: choose the hero to remove from the quest and attach it to"
+  },
+  "captureTheOliphaunts": {
+    "attach": "Capture the Oliphaunts: choose the Wild Mûmak to attach this Capture objective to"
   }
 }

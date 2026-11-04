@@ -252,6 +252,9 @@ import LordOfTheRings.Quest.Cards.SneakPastTheGuards
 import LordOfTheRings.Quest.Cards.FightYourWayOut
 import LordOfTheRings.Quest.Cards.KeepWatch
 import LordOfTheRings.Quest.Cards.RallyTheWest
+import LordOfTheRings.Quest.Cards.GuardiansOfTheJungle
+import LordOfTheRings.Quest.Cards.WelcomeToTheJungle
+import LordOfTheRings.Quest.Cards.CaptureTheOliphaunts
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -536,5 +539,8 @@ allQuests =
         , SomeQuestCard fightYourWayOut
         , SomeQuestCard keepWatch
         , SomeQuestCard rallyTheWest
+        , SomeQuestCard guardiansOfTheJungle
+        , SomeQuestCard welcomeToTheJungle
+        , SomeQuestCard captureTheOliphaunts
         ]
     ]

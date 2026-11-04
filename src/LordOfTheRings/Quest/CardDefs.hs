@@ -336,6 +336,9 @@ allQuestCards =
       , rescueThePrisoners
       , sneakPastTheGuards
       , fightYourWayOut
+      , guardiansOfTheJungle
+      , welcomeToTheJungle
+      , captureTheOliphaunts
       ]
 
 theDrippingWalls :: CardDef
@@ -1318,3 +1321,14 @@ sneakPastTheGuards = quest "17133" "Sneak Past the Guards" TheDungeonsOfCirithGu
 
 fightYourWayOut :: CardDef
 fightYourWayOut = quest "17134" "Fight Your Way Out" TheDungeonsOfCirithGurat 3 10
+
+-- The Mûmakil
+
+guardiansOfTheJungle :: CardDef
+guardiansOfTheJungle = (encounterSideQuest "17025" "Guardians of the Jungle" TheMumakil 6) {cdVictoryPoints = Just 10}
+
+welcomeToTheJungle :: CardDef
+welcomeToTheJungle = quest "17026" "Welcome to the Jungle" TheMumakil 1 12
+
+captureTheOliphaunts :: CardDef
+captureTheOliphaunts = quest "17027" "Capture the Oliphaunts" TheMumakil 2 8

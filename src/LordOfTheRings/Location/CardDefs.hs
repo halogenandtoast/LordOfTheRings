@@ -446,6 +446,7 @@ allLocationCards =
       , urukGuardroom
       , minesOfCirithGurat
       , tortureRoom
+      , mumakTrail
       ]
 
 drownedTreasury :: CardDef
@@ -3393,3 +3394,8 @@ tortureRoom =
     { cdCardTraits = setFromList [Dungeon]
     , cdWhenRevealed = True
     }
+
+-- The Mûmakil
+
+mumakTrail :: CardDef
+mumakTrail = (location "17020" "Mûmak Trail" TheMumakil 4 2 3) {cdCardTraits = setFromList [Forest]}
