@@ -365,6 +365,10 @@ import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
 import LordOfTheRings.Quest.Cards.PassTheTwoWatchers
 import LordOfTheRings.Quest.Cards.FightingInTheTower
 import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
+import LordOfTheRings.Quest.Cards.TheLandOfMordor
+import LordOfTheRings.Quest.Cards.TheRoadToIsenmouthe
+import LordOfTheRings.Quest.Cards.TheLastGasp
+import LordOfTheRings.Quest.Cards.TheCrackOfDoom
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -762,5 +766,9 @@ allQuests =
         , SomeQuestCard passTheTwoWatchers
         , SomeQuestCard fightingInTheTower
         , SomeQuestCard escapeFromCirithUngol
+        , SomeQuestCard theLandOfMordor
+        , SomeQuestCard theRoadToIsenmouthe
+        , SomeQuestCard theLastGasp
+        , SomeQuestCard theCrackOfDoom
         ]
     ]
