@@ -401,6 +401,9 @@ allQuestCards =
       , shadowOfFearASitE
       , unwelcomeTravelers
       , lostInTheDark
+      , aCityInTurmoil
+      , theShadowOfMordor
+      , leaderOfTheCult
       ]
 
 theDrippingWalls :: CardDef
@@ -1629,3 +1632,14 @@ lostInTheDark =
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
     }
+
+-- * Danger in Dorwinion
+
+aCityInTurmoil :: CardDef
+aCityInTurmoil = quest "21077" "A City in Turmoil" DangerInDorwinion 1 5
+
+theShadowOfMordor :: CardDef
+theShadowOfMordor = quest "21078" "The Shadow of Mordor" DangerInDorwinion 2 0
+
+leaderOfTheCult :: CardDef
+leaderOfTheCult = (quest "21079" "Leader of the Cult" DangerInDorwinion 3 0) {cdQuestPoints = Nothing}

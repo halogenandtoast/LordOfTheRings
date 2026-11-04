@@ -408,6 +408,8 @@ allTreacheryCards =
       , ulchorsRage
       , fanaticism
       , fearfulShadows
+      , disappearances
+      , secretCultist
       ]
 
 deepDeepDark :: CardDef
@@ -2589,3 +2591,11 @@ fearfulShadows =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Danger in Dorwinion
+
+disappearances :: CardDef
+disappearances = (treachery "21038" "Disappearances" DangerInDorwinion 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+secretCultist :: CardDef
+secretCultist = (treachery "21039" "Secret Cultist" DangerInDorwinion 2) {cdEasyModeQuantity = Just 1}

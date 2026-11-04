@@ -467,6 +467,9 @@ import LordOfTheRings.Enemy.Cards.RhunBackstabber
 import LordOfTheRings.Enemy.Cards.TreacherousEasterling
 import LordOfTheRings.Enemy.Cards.UlchorsGuard
 import LordOfTheRings.Enemy.Cards.TurnedAlly
+import LordOfTheRings.Enemy.Cards.PriestOfSauron
+import LordOfTheRings.Enemy.Cards.TheGovernor
+import LordOfTheRings.Enemy.Cards.BlackNumenoreanASitE
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -963,5 +966,8 @@ allEnemys =
         , SomeEnemyCard rhunBackstabber
         , SomeEnemyCard treacherousEasterling
         , SomeEnemyCard ulchorsGuard
+        , SomeEnemyCard priestOfSauron
+        , SomeEnemyCard theGovernor
+        , SomeEnemyCard blackNumenoreanASitE
         ]
     ]

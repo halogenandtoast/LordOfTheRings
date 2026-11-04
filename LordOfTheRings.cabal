@@ -576,6 +576,7 @@ library
       LordOfTheRings.Enemy.Cards.BlackForestBats
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
       LordOfTheRings.Enemy.Cards.BlackNumenorean
+      LordOfTheRings.Enemy.Cards.BlackNumenoreanASitE
       LordOfTheRings.Enemy.Cards.BlackNumenoreanNightmare
       LordOfTheRings.Enemy.Cards.BlackUruks
       LordOfTheRings.Enemy.Cards.BlockingHuorn
@@ -835,6 +836,7 @@ library
       LordOfTheRings.Enemy.Cards.Pickpocket
       LordOfTheRings.Enemy.Cards.PillagingOrc
       LordOfTheRings.Enemy.Cards.PitGoblin
+      LordOfTheRings.Enemy.Cards.PriestOfSauron
       LordOfTheRings.Enemy.Cards.PrimevalThing
       LordOfTheRings.Enemy.Cards.PrisonGuard
       LordOfTheRings.Enemy.Cards.PrisonGuardCirithGurat
@@ -940,6 +942,7 @@ library
       LordOfTheRings.Enemy.Cards.TheBlackSerpent
       LordOfTheRings.Enemy.Cards.TheBlackSerpentCrossingsOfPoros
       LordOfTheRings.Enemy.Cards.TheDragonsThrall
+      LordOfTheRings.Enemy.Cards.TheGovernor
       LordOfTheRings.Enemy.Cards.TheHandOfCastamir
       LordOfTheRings.Enemy.Cards.TheNamelessFear
       LordOfTheRings.Enemy.Cards.TheThingInTheDepths
@@ -1579,6 +1582,7 @@ library
       LordOfTheRings.Location.Cards.HighFalls
       LordOfTheRings.Location.Cards.HighlandsOfDunland
       LordOfTheRings.Location.Cards.HillBarrow
+      LordOfTheRings.Location.Cards.HillsideManor
       LordOfTheRings.Location.Cards.HillsOfDunland
       LordOfTheRings.Location.Cards.HillsOfWilderland
       LordOfTheRings.Location.Cards.HilltopBattlements
@@ -1894,6 +1898,7 @@ library
       LordOfTheRings.Objective.Cards.BannerOfTheSerpent
       LordOfTheRings.Objective.Cards.BlackKeyBurden
       LordOfTheRings.Objective.Cards.BookOfMazarbul
+      LordOfTheRings.Objective.Cards.Bribes
       LordOfTheRings.Objective.Cards.Calphon
       LordOfTheRings.Objective.Cards.CaptainSahirObjective
       LordOfTheRings.Objective.Cards.CaptiveVillager
@@ -1913,6 +1918,7 @@ library
       LordOfTheRings.Objective.Cards.DurinsGreaves
       LordOfTheRings.Objective.Cards.DurinsHelm
       LordOfTheRings.Objective.Cards.DurinsKey
+      LordOfTheRings.Objective.Cards.EvidenceOfTheCult
       LordOfTheRings.Objective.Cards.FaramirObjective
       LordOfTheRings.Objective.Cards.GandalfsMap
       LordOfTheRings.Objective.Cards.GateKey
@@ -1944,6 +1950,7 @@ library
       LordOfTheRings.Objective.Cards.PoisonedSpear
       LordOfTheRings.Objective.Cards.RescuedVillagers
       LordOfTheRings.Objective.Cards.RiseToPower
+      LordOfTheRings.Objective.Cards.SauronWorship
       LordOfTheRings.Objective.Cards.SavageCounterattack
       LordOfTheRings.Objective.Cards.Scarred
       LordOfTheRings.Objective.Cards.ScathasTeeth
@@ -1953,6 +1960,7 @@ library
       LordOfTheRings.Objective.Cards.SeizeThem
       LordOfTheRings.Objective.Cards.ShadowKey
       LordOfTheRings.Objective.Cards.SignsOfGollum
+      LordOfTheRings.Objective.Cards.SubmitOrDie
       LordOfTheRings.Objective.Cards.SummonsFromMordor
       LordOfTheRings.Objective.Cards.ThaurdirsLegacy
       LordOfTheRings.Objective.Cards.ThaurdirsMajesty
@@ -1991,6 +1999,7 @@ library
       LordOfTheRings.Quest.CardDefs
       LordOfTheRings.Quest.Cards.AChosenPathBeornsPath
       LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
+      LordOfTheRings.Quest.Cards.ACityInTurmoil
       LordOfTheRings.Quest.Cards.ACorneredDragon
       LordOfTheRings.Quest.Cards.AcrossTheWastes
       LordOfTheRings.Quest.Cards.AFatefulDiscovery
@@ -2122,6 +2131,7 @@ library
       LordOfTheRings.Quest.Cards.JourneysEnd
       LordOfTheRings.Quest.Cards.KeepWatch
       LordOfTheRings.Quest.Cards.LastLordOfMoria
+      LordOfTheRings.Quest.Cards.LeaderOfTheCult
       LordOfTheRings.Quest.Cards.LieLow
       LordOfTheRings.Quest.Cards.LootTheDungeons
       LordOfTheRings.Quest.Cards.LostAtSea
@@ -2262,6 +2272,7 @@ library
       LordOfTheRings.Quest.Cards.TheRuinsOfOstInEdhil
       LordOfTheRings.Quest.Cards.TheSeethingLake
       LordOfTheRings.Quest.Cards.TheShadesOfAngmar
+      LordOfTheRings.Quest.Cards.TheShadowOfMordor
       LordOfTheRings.Quest.Cards.TheShadowWorld
       LordOfTheRings.Quest.Cards.TheSideDoor
       LordOfTheRings.Quest.Cards.TheSpidersHive
@@ -2324,6 +2335,8 @@ library
       LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret
       LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers
       LordOfTheRings.Scenario.Scenarios.ConflictAtTheCarrock
+      LordOfTheRings.Scenario.Scenarios.DangerInDorwinion
+      LordOfTheRings.Scenario.Scenarios.DangerInDorwinion.Helpers
       LordOfTheRings.Scenario.Scenarios.DeadmensDike
       LordOfTheRings.Scenario.Scenarios.DeadmensDike.Helpers
       LordOfTheRings.Scenario.Scenarios.DesertCrossing
@@ -2546,6 +2559,7 @@ library
       LordOfTheRings.Treachery.Cards.DesecratedRuins
       LordOfTheRings.Treachery.Cards.Despair
       LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
+      LordOfTheRings.Treachery.Cards.Disappearances
       LordOfTheRings.Treachery.Cards.Discovered
       LordOfTheRings.Treachery.Cards.DismayAndFear
       LordOfTheRings.Treachery.Cards.DisturbedWaters
@@ -2733,6 +2747,7 @@ library
       LordOfTheRings.Treachery.Cards.SaveUs
       LordOfTheRings.Treachery.Cards.ScorchingSun
       LordOfTheRings.Treachery.Cards.ScourgeOfMordor
+      LordOfTheRings.Treachery.Cards.SecretCultist
       LordOfTheRings.Treachery.Cards.SendForHelp
       LordOfTheRings.Treachery.Cards.SentinelOfShadow
       LordOfTheRings.Treachery.Cards.SerpentsTail

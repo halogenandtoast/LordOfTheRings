@@ -475,6 +475,9 @@ allEnemyCards =
       , rhunBackstabber
       , treacherousEasterling
       , ulchorsGuard
+      , priestOfSauron
+      , theGovernor
+      , blackNumenoreanASitE
       ]
 
 namelessThing :: CardDef
@@ -3889,3 +3892,29 @@ ulchorsGuard =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
     }
+
+-- * Danger in Dorwinion
+
+priestOfSauron :: CardDef
+priestOfSauron =
+  unique
+    (enemy "21030" "Priest of Sauron" DangerInDorwinion 1 38 3 6 2 8)
+      { cdCardTraits = setFromList [Cultist]
+      , cdVictoryPoints = Just 6
+      }
+
+theGovernor :: CardDef
+theGovernor =
+  unique
+    (enemy "21031" "The Governor" DangerInDorwinion 1 44 3 4 3 8)
+      { cdCardTraits = setFromList [Cultist]
+      , cdVictoryPoints = Just 6
+      }
+
+blackNumenoreanASitE :: CardDef
+blackNumenoreanASitE =
+  unique
+    (enemy "21032" "Black Númenórean" DangerInDorwinion 1 40 3 5 1 9)
+      { cdCardTraits = setFromList [Cultist]
+      , cdVictoryPoints = Just 6
+      }

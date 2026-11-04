@@ -515,6 +515,7 @@ allLocationCards =
       , twistedTunnel
       , narrowOpening
       , crumblingPassage
+      , hillsideManor
       ]
 
 drownedTreasury :: CardDef
@@ -3834,3 +3835,8 @@ crumblingPassage =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Danger in Dorwinion
+
+hillsideManor :: CardDef
+hillsideManor = (location "21037" "Hillside Manor" DangerInDorwinion 3 2 4) {cdCardTraits = setFromList [City]}

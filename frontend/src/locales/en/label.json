@@ -2864,6 +2864,9 @@
   "seedyTavern": {
     "placeUnderneath": "Seedy Tavern: choose a card to put facedown under it; the rest are shuffled back"
   },
+  "secretCultist": {
+    "ally": "Secret Cultist: choose the ally with the highest attack to turn into an enemy"
+  },
   "frodoBagginsLeadership": {
     "ready": "Frodo Baggins: choose another unique character committed to the quest to ready"
   },
