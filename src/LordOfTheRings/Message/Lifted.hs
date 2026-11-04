@@ -54,7 +54,8 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, CharacterRescued, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  mkAfter,
  )
 
 dealDamage
@@ -336,6 +337,27 @@ engageEnemy pid eid = push $ EngageEnemy pid eid
 
 gameOver :: ReverseQueue m => Outcome -> m ()
 gameOver = push . GameOver
+
+{- | Whether the message takes the card out of play: an enemy destroyed (a character
+destroyed is discarded, so 'Discard' reads it), discarded, returned to its owner's hand or
+deck, to the encounter deck or the victory display, removed from the game, or a hero set
+aside. A card reading "If this leaves play" watches for it, as The One Ring, The Hobbit's
+Bilbo Baggins and the saga's Fellowship heroes (their rules inserts) do.
+-}
+leavesPlay :: Targetable target => target -> Message -> Bool
+leavesPlay (toTarget -> t) = \case
+  Destroy _ t'@(EnemyTarget _) -> t' == t
+  Discard t' -> t' == t
+  AddToVictoryDisplay t' -> t' == t
+  ShuffleIntoEncounterDeck t' -> t' == t
+  ReturnToTopOfEncounterDeck t' -> t' == t
+  ReturnToBottomOfEncounterDeck t' -> t' == t
+  ReturnToHand t' -> t' == t
+  ShuffleIntoOwnersDeck t' -> t' == t
+  PutOnBottomOfOwnersDeck t' -> t' == t
+  RemoveFromGame t' -> t' == t
+  SetAsideHero hid -> HeroTarget hid == t
+  _ -> False
 
 -- | The players win the game.
 winGame :: ReverseQueue m => m ()
@@ -1418,6 +1440,21 @@ playFromDiscardAtNoCost owner pid card = do
   removeFromDiscard owner card.id
   playAtNoCost pid card
 
+-- | What declaring the character as an attacker against the enemy opens: the enemy is one
+-- an attacker was declared against this round, and the window after it.
+declaredAttacker :: Target -> EnemyId -> [Message]
+declaredAttacker a eid =
+  [ CreateEffect $ Effect GameSource (EnemyTarget eid) [DeclaredAttackerThisRound] UntilEndOfRound
+  , CheckWindows [mkAfter $ DeclaredAsAttacker a eid]
+  ]
+
+{- | The character is declared as the only attacker against the enemy, wherever it is, and
+the attack resolves, as Great Yew Bow's ranged attack on an enemy in the staging area.
+-}
+declareSoleAttacker :: (ReverseQueue m, Targetable attacker) => PlayerId -> attacker -> EnemyId -> m ()
+declareSoleAttacker pid (toTarget -> attacker) eid =
+  pushAll $ AttackWith attacker : declaredAttacker attacker eid <> [CheckWindows [mkAfter $ AttackersDeclared eid], ResolveAttack pid eid]
+
 {- | The character attacks the enemy, wherever it is, as an effect declares it an
 attacker; its attack raised by the bonus for that attack alone.
 -}
@@ -1722,6 +1759,11 @@ rescueCharacter (toTarget -> c) = pushAll [RescueCharacter c, CheckWindows [Wind
 -- Mordor).
 moveHeroToStagingArea :: ReverseQueue m => HeroId -> m ()
 moveHeroToStagingArea = push . MoveHeroToStagingArea
+
+-- | Another player takes control of the hero, the resources in its pool with it, as
+-- Desperate Alliance gives one.
+giveHeroTo :: ReverseQueue m => HeroId -> PlayerId -> m ()
+giveHeroTo hid = push . ChangeHeroController hid
 
 -- | The hero in the staging area returns to its owner's control, exhausted.
 takeControlOfHero :: ReverseQueue m => HeroId -> m ()

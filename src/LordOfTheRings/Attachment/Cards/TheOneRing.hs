@@ -27,13 +27,7 @@ instance HasModifiersFor TheOneRing where
 -- the hero's third restricted attachment, it is the game that takes it, not a card effect.
 instance RunMessage TheOneRing where
   runMessage msg r@(TheOneRing a) = case msg of
-    Discard (isTarget a -> True) -> lose
-    ReturnToHand (isTarget a -> True) -> lose
-    ShuffleIntoOwnersDeck (isTarget a -> True) -> lose
-    PutOnBottomOfOwnersDeck (isTarget a -> True) -> lose
-    RemoveFromGame (isTarget a -> True) -> lose
-    _ -> TheOneRing <$> runMessage msg a
-   where
-    lose = do
+    _ | leavesPlay a msg -> do
       gameOver Lost
       pure r
+    _ -> TheOneRing <$> runMessage msg a

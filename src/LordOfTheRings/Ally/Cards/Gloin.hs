@@ -2,7 +2,6 @@ module LordOfTheRings.Ally.Cards.Gloin (gloin) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Cards
 import LordOfTheRings.Ally.Import.Lifted
-import LordOfTheRings.Trait (Trait (Dwarf))
 
 newtype Gloin = Gloin AllyAttrs
   deriving anyclass (IsAlly, HasModifiersFor)
@@ -16,12 +15,10 @@ gloin = ally Gloin Cards.gloin
 -- pool."
 instance HasAbilities Gloin where
   getAbilities (Gloin a) =
-    [ restricted a 1 (CharactersAtLeast 5 (HeroControlledBy you <> HeroWithTrait Dwarf) (AllyControlledBy you <> AllyWithTrait Dwarf))
+    [ restricted a 1 (DwarvesAtLeast a.owner 5)
         $ response
         $ PlayedFromHandWindow After (CardIdTarget a.allyCardId)
     ]
-   where
-    you = PlayerWithId a.owner
 
 instance RunMessage Gloin where
   runMessage msg s@(Gloin a) = case msg of

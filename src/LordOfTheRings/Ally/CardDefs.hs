@@ -276,6 +276,10 @@ allAllyCards =
       , elfhelmTactics
       , elladanLore
       , elrohirSpirit
+      , bofurTactics
+      , gandalfHobbit
+      , bifur
+      , dwalin
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1990,3 +1994,33 @@ hamaTheTreasonOfSaruman =
     (ally "143007" "Háma" Spirit (StaticCost 3) 1 2 2 2)
       { cdCardTraits = setFromList [Rohan, Warrior]
       }
+
+bofurTactics :: CardDef
+bofurTactics =
+  (ally "131008" "Bofur" Tactics (StaticCost 3) 2 2 0 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+-- | The Gandalf of Over Hill and Under Hill.
+gandalfHobbit :: CardDef
+gandalfHobbit =
+  (ally "131010" "Gandalf" Neutral (StaticCost 5) 4 4 4 4)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Istari]
+    }
+
+bifur :: CardDef
+bifur =
+  (ally "132007" "Bifur" Lore (StaticCost 3) 1 2 1 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+dwalin :: CardDef
+dwalin =
+  (ally "132008" "Dwalin" Spirit (StaticCost 3) 1 1 2 3)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    , cdKeywords = setFromList [Sentinel]
+    }

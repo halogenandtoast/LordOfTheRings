@@ -1,6 +1,5 @@
 {- | What The Lord of the Rings saga's Fellowship cards share: The One Ring objective of
-each box ('LordOfTheRings.Saga.oneRings'), the Ring-bearer, and the cards whose leaving
-play loses the game.
+each box ('LordOfTheRings.Saga.oneRings'), and the Ring-bearer.
 -}
 module LordOfTheRings.Helpers.Fellowship (module LordOfTheRings.Helpers.Fellowship) where
 
@@ -12,7 +11,6 @@ import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
-import LordOfTheRings.Message (Message (..))
 import LordOfTheRings.Message.Lifted (exhaust)
 import LordOfTheRings.Message.Lifted.Queue (ReverseQueue)
 import LordOfTheRings.Objective.Types (Objective)
@@ -67,20 +65,3 @@ theOneRingExhausted = maybe False (.exhausted) <$> getSagaOneRing
 
 isReadyRing :: Objective -> Bool
 isReadyRing o = toCardCode o `elem` oneRings && not o.exhausted
-
-{- | Whether the message takes the card out of play, however it goes: discarded, as a hero
-destroyed is, removed from the game, returned to a hand, shuffled or put into a deck, or set
-aside. "If X leaves play, the players lose the game" reads each of these.
--}
-leavesPlay :: Target -> Message -> Bool
-leavesPlay t = \case
-  Discard t' -> t == t'
-  RemoveFromGame t' -> t == t'
-  ReturnToHand t' -> t == t'
-  ShuffleIntoOwnersDeck t' -> t == t'
-  PutOnBottomOfOwnersDeck t' -> t == t'
-  ShuffleIntoEncounterDeck t' -> t == t'
-  ReturnToTopOfEncounterDeck t' -> t == t'
-  ReturnToBottomOfEncounterDeck t' -> t == t'
-  SetAsideHero hid -> t == HeroTarget hid
-  _ -> False

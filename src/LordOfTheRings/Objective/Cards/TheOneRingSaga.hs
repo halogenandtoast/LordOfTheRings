@@ -5,7 +5,6 @@ module LordOfTheRings.Objective.Cards.TheOneRingSaga (
   theOneRingTheMountainOfFire,
 ) where
 
-import LordOfTheRings.Helpers.Fellowship (leavesPlay)
 import LordOfTheRings.Keyword (Keyword (FirstPlayerGainsControl))
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted

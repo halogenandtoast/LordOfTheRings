@@ -48,17 +48,7 @@ instance RunMessage Stormcaller where
     ScenarioSpecific "stormcaller.advanced" _ -> do
       when (attrs.placement /= StormcallerArea) $ placeEnemy attrs.id StormcallerArea
       pure e
-    _ | leavesPlay -> do
+    _ | leavesPlay attrs msg -> do
       winGame
       Stormcaller <$> runMessage msg attrs
     _ -> Stormcaller <$> runMessage msg attrs
-   where
-    leavesPlay = case msg of
-      Destroy _ t -> isTarget attrs t
-      Discard t -> isTarget attrs t
-      AddToVictoryDisplay t -> isTarget attrs t
-      ShuffleIntoEncounterDeck t -> isTarget attrs t
-      ReturnToTopOfEncounterDeck t -> isTarget attrs t
-      ReturnToBottomOfEncounterDeck t -> isTarget attrs t
-      RemoveFromGame t -> isTarget attrs t
-      _ -> False

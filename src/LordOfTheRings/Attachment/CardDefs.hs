@@ -4,8 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
-import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders))
-import LordOfTheRings.EncounterSet (EncounterSet (WeMustAwayEreBreakOfDay))
+import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders, TheLonelyMountain, WeMustAwayEreBreakOfDay))
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
@@ -287,6 +286,18 @@ allAttachmentCards =
       , palantirOfOrthanc
       , bilbosMagicRing
       , stingTreasure
+      , spareHoodAndCloak
+      , greatYewBow
+      , blackArrow
+      , throrsKey
+      , expertTreasureHunter
+      , orcristTreasure
+      , glamdringTreasure
+      , theArkenstoneTreasure
+      , mithrilShirtTreasure
+      , throrsBattleAxe
+      , throrsHuntingBow
+      , throrsGoldenCup
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -2055,24 +2066,101 @@ palantirOfOrthanc =
       , cdVictoryPoints = Just 5
       }
 
--- | A treasure, discovered in Flies and Spiders.
-bilbosMagicRing :: CardDef
-bilbosMagicRing =
-  unique
-    (attachment "132019" "Bilbo's Magic Ring" Neutral (StaticCost 0))
-      { cdCardTraits = setFromList [Artifact, Item, Ring]
-      , cdTreasure = True
-      , cdSetIcon = Just FliesAndSpiders
-      }
+spareHoodAndCloak :: CardDef
+spareHoodAndCloak =
+  (attachment "131012" "Spare Hood and Cloak" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    }
 
--- * The Hobbit: Over Hill and Under Hill treasures
+greatYewBow :: CardDef
+greatYewBow =
+  (attachment "132014" "Great Yew Bow" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
 
--- | A treasure of We Must Away, Ere Break of Day's set: its card, without its game text.
+blackArrow :: CardDef
+blackArrow =
+  (attachment "132015" "Black Arrow" Tactics (StaticCost 0))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    , cdVictoryPoints = Just 1
+    , cdDeckLimit = 1
+    }
+
+throrsKey :: CardDef
+throrsKey =
+  (attachment "132016" "Thrór's Key" Spirit (StaticCost 1))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    }
+
+expertTreasureHunter :: CardDef
+expertTreasureHunter =
+  (attachment "132017" "Expert Treasure-hunter" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+-- * The Hobbit saga's treasures
+
+{- | A treasure: a player card discovered in the scenario its set icon names, then added to
+its discoverer's deck, 1 copy, in a later scenario whose setup lists that set (The Hobbit:
+Over Hill and Under Hill rules insert, "Treasure"). No deck is built with one: the campaign
+adds those discovered (see 'LordOfTheRings.Campaign.seatPoolCards'). Each reads "Attach to".
+-}
+treasure :: CardCode -> Name -> EncounterSet -> [Trait] -> CardDef
+treasure code name set traits =
+  (attachment code name Neutral (StaticCost 0))
+    { cdUnique = True
+    , cdCardTraits = setFromList traits
+    , cdTreasure = True
+    , cdSetIcon = Just set
+    , cdDeckLimit = 1
+    }
+
 stingTreasure :: CardDef
 stingTreasure =
-  (unique $ attachment "131020" "Sting" Neutral (StaticCost 0))
-    { cdCardTraits = setFromList [Artifact, Item, Weapon]
-    , cdKeywords = setFromList [Restricted]
-    , cdTreasure = True
-    , cdSetIcon = Just WeMustAwayEreBreakOfDay
+  (treasure "131020" "Sting" WeMustAwayEreBreakOfDay [Artifact, Item, Weapon])
+    { cdKeywords = setFromList [Restricted]
+    }
+
+orcristTreasure :: CardDef
+orcristTreasure =
+  (treasure "131021" "Orcrist" WeMustAwayEreBreakOfDay [Artifact, Item, Weapon])
+    { cdKeywords = setFromList [Restricted]
+    }
+
+glamdringTreasure :: CardDef
+glamdringTreasure =
+  (treasure "131022" "Glamdring" WeMustAwayEreBreakOfDay [Artifact, Item, Weapon])
+    { cdKeywords = setFromList [Restricted]
+    }
+
+-- | Discovered in Flies and Spiders, whose setup also lets each player shuffle a copy in.
+bilbosMagicRing :: CardDef
+bilbosMagicRing = treasure "132019" "Bilbo's Magic Ring" FliesAndSpiders [Artifact, Item, Ring]
+
+theArkenstoneTreasure :: CardDef
+theArkenstoneTreasure = treasure "132020" "The Arkenstone" TheLonelyMountain [Artifact, Erebor, Item]
+
+mithrilShirtTreasure :: CardDef
+mithrilShirtTreasure = treasure "132021" "Mithril Shirt" TheLonelyMountain [Artifact, Erebor, Item]
+
+throrsBattleAxe :: CardDef
+throrsBattleAxe =
+  (treasure "132022" "Thrór's Battle Axe" TheLonelyMountain [Artifact, Erebor, Item])
+    { cdKeywords = setFromList [Restricted]
+    }
+
+throrsHuntingBow :: CardDef
+throrsHuntingBow =
+  (treasure "132023" "Thrór's Hunting Bow" TheLonelyMountain [Artifact, Erebor, Item])
+    { cdKeywords = setFromList [Restricted]
+    }
+
+throrsGoldenCup :: CardDef
+throrsGoldenCup =
+  (treasure "132024" "Thrór's Golden Cup" TheLonelyMountain [Artifact, Erebor, Item])
+    { cdVictoryPoints = Just 3
     }

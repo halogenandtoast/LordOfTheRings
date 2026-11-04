@@ -52,13 +52,13 @@ instance RunMessage CorsairPursuit where
       none <- not <$> selectAny shipEnemy
       when none winGame
       pure q
-    _ | attrs.flipped, leavesPlay -> do
+    _ | attrs.flipped, shipLeaves -> do
       checkStage attrs.id
       CorsairPursuit <$> runMessage msg attrs
     _ -> CorsairPursuit <$> runMessage msg attrs
    where
     -- a Ship enemy leaving play may leave none behind
-    leavesPlay = case msg of
+    shipLeaves = case msg of
       Destroy _ (EnemyTarget _) -> True
       Discard (EnemyTarget _) -> True
       AddToVictoryDisplay (EnemyTarget _) -> True

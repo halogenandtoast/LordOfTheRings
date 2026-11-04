@@ -1,6 +1,5 @@
 module LordOfTheRings.Hero.Cards.AragornTheFlameOfTheWest (aragornTheFlameOfTheWest) where
 
-import LordOfTheRings.Helpers.Fellowship (leavesPlay)
 import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
 import LordOfTheRings.Keyword (Keyword (Sentinel))

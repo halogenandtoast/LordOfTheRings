@@ -246,6 +246,15 @@ import LordOfTheRings.Event.Cards.FlameOfAnor
 import LordOfTheRings.Event.Cards.Entmoot
 import LordOfTheRings.Event.Cards.HelmHelm
 import LordOfTheRings.Event.Cards.TheThreeHunters
+import LordOfTheRings.Event.Cards.GoblinCleaver
+import LordOfTheRings.Event.Cards.LateAdventurer
+import LordOfTheRings.Event.Cards.ExpectingMischief
+import LordOfTheRings.Event.Cards.BurglarBaggins
+import LordOfTheRings.Event.Cards.StraightShot
+import LordOfTheRings.Event.Cards.DesperateAlliance
+import LordOfTheRings.Event.Cards.RavensOfTheMountain
+import LordOfTheRings.Event.Cards.ToMeOMyKinsfolk
+import LordOfTheRings.Event.Cards.TheLuckyNumber
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -511,5 +520,14 @@ allEvents =
         , SomeEventCard entmoot
         , SomeEventCard helmHelm
         , SomeEventCard theThreeHunters
+        , SomeEventCard goblinCleaver
+        , SomeEventCard lateAdventurer
+        , SomeEventCard expectingMischief
+        , SomeEventCard burglarBaggins
+        , SomeEventCard straightShot
+        , SomeEventCard desperateAlliance
+        , SomeEventCard ravensOfTheMountain
+        , SomeEventCard toMeOMyKinsfolk
+        , SomeEventCard theLuckyNumber
         ]
     ]

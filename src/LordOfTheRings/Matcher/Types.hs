@@ -57,6 +57,8 @@ data HeroMatcher
   | HeroWithTrait Trait
   | HeroWithSphere Sphere
   | HeroWithKeyword Keyword
+  | -- | a hero with the keyword printed on its card, as Great Yew Bow attaches to
+    HeroWithPrintedKeyword Keyword
   | ReadyHero
   | ExhaustedHero
   | -- | with poison attached (Flies and Spiders)
@@ -231,6 +233,8 @@ data EnemyMatcher
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]
+  | -- | an enemy whose defense is this, as Straight Shot's "with 0 [defense]"
+    EnemyWithDefense Int
   | -- | an enemy with the keyword, printed or gained, as "with the ambush keyword" reads
     EnemyWithKeyword Keyword
   | -- | an enemy guarding a card: an objective, a captive, a location or a player card, as

@@ -481,14 +481,14 @@ runPlayer msg player = case msg of
           $ CheckWindows [mkAfter $ ResourcesSpent p (sum ks) | (p, ks) <- Map.toList (Map.fromListWith (<>) [(p, [k]) | (p, k) <- spent])]
       pure player
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
-      heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
+      heroes <- payerHeroes player.id =<< payingFor player.id
       payers <- filterM (paysFor sphere) heroes
       push $ case filter ((> 0) . (.resources)) payers of
         [x] -> SpendResourcesFrom pid [(toTarget x, n)]
         _ -> SpendResourcesChosen pid False sphere n []
       pure player
     SpendResourcesChosen pid False sphere n chosen | pid == player.id -> do
-      heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
+      heroes <- payerHeroes player.id =<< payingFor player.id
       payers <- filterM (paysFor sphere) heroes
       push $ spendChosen pid False sphere n chosen [(h.id, h.resources) | h <- payers]
       pure player
@@ -592,7 +592,7 @@ canAffordWith discount p c = case (c.cost, c.sphere) of
     free <- any (\case NextIgnoresResourceMatch m -> cardMatches m c; _ -> False) <$> getModifiers (PlayerTarget p.id)
     let sphere = if free then Neutral else printed
     extra <- subtract discount <$> costModifier p.id c
-    heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
+    heroes <- payerHeroes p.id [c]
     payers <-
       filterM (\h -> andM [heroCanSpend h, not <$> barredFrom c h, orM [paysFor sphere h, iconFor c sphere h, noMatchNeeded c]]) [h | h <- heroes, h.resources > 0]
     fromAllies <- sum . map snd <$> allyPayersFor p.id c
@@ -641,8 +641,22 @@ costModifier pid c = do
 -- | Heroes with a resource that could pay for a card of the sphere.
 payingHeroes :: HasGame m => Sphere -> Player -> m [Hero]
 payingHeroes sphere player = do
-  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
+  heroes <- payerHeroes player.id =<< payingFor player.id
   filterM (paysFor sphere) [h | h <- heroes, h.resources > 0]
+
+-- | The cards the player is paying for.
+payingFor :: HasGame m => PlayerId -> m [Card]
+payingFor pid = getsGame (map (.activeCostCard) . filter ((== pid) . (.activeCostPlayer)) . toList . gameActiveCosts)
+
+-- | The heroes whose resources can pay for the cards: those the player controls, and those
+-- a card's 'PayableFromHeroes' names, as Burglar Baggins may be paid for from Bilbo
+-- Baggins' pool by a player who does not control him.
+payerHeroes :: HasGame m => PlayerId -> [Card] -> m [Hero]
+payerHeroes pid cards = do
+  mods <- concatMapM (getModifiers . CardIdTarget . (.id)) cards
+  own <- select (HeroControlledBy $ PlayerWithId pid)
+  others <- concatMapM select [m | PayableFromHeroes m <- mods]
+  traverse getHero (nub $ own <> others)
 
 hasHost :: HasGame m => Card -> m Bool
 hasHost c

@@ -125,7 +125,13 @@ import LordOfTheRings.Hero.Cards.TheodenTheTreasonOfSaruman
 import LordOfTheRings.Hero.Cards.TreebeardTheTreasonOfSaruman
 import LordOfTheRings.Hero.Cards.GandalfTheRoadDarkens
 import LordOfTheRings.Hero.Cards.BilboBagginsOnTheDoorstep
-import LordOfTheRings.Hero.Cards.BilboBagginsBaggins
+import LordOfTheRings.Hero.Cards.BilboBagginsOverHillAndUnderHill
+import LordOfTheRings.Hero.Cards.ThorinOakenshield
+import LordOfTheRings.Hero.Cards.Beorn
+import LordOfTheRings.Hero.Cards.Balin
+import LordOfTheRings.Hero.Cards.BardTheBowman
+import LordOfTheRings.Hero.Cards.Oin
+import LordOfTheRings.Hero.Cards.Bombur
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -313,6 +319,12 @@ allHeroes =
         , SomeHeroCard treebeardTheTreasonOfSaruman
         , SomeHeroCard gandalfTheRoadDarkens
         , SomeHeroCard bilboBagginsOnTheDoorstep
-        , SomeHeroCard bilboBagginsBaggins
+        , SomeHeroCard bilboBagginsOverHillAndUnderHill
+        , SomeHeroCard thorinOakenshield
+        , SomeHeroCard beorn
+        , SomeHeroCard balin
+        , SomeHeroCard bardTheBowman
+        , SomeHeroCard oin
+        , SomeHeroCard bombur
         ]
     ]

@@ -1,4 +1,4 @@
-module LordOfTheRings.Helpers.Staging (module LordOfTheRings.Helpers.Staging) where
+module LordOfTheRings.Helpers.Staging (module LordOfTheRings.Helpers.Staging, getEnemyDefense) where
 
 import LordOfTheRings.Card (IsCard (..))
 import LordOfTheRings.Classes.HasGame
@@ -76,10 +76,3 @@ getEnemyAttack :: (HasGame m) => EnemyId -> m Int
 getEnemyAttack eid = do
   enemy <- getEnemy eid
   modifiedValue attackOf (toTarget eid) enemy.attack
-
-getEnemyDefense :: (HasGame m) => EnemyId -> m Int
-getEnemyDefense eid = do
-  enemy <- getEnemy eid
-  -- one whose defense cannot be reduced, as Rupert, ignores what would
-  floored <- elem CannotHaveDefenseReduced <$> getModifiers eid
-  modifiedValue (if floored then \m -> defenseOf m >>= \n -> n <$ guard (n > 0) else defenseOf) (toTarget eid) enemy.defense

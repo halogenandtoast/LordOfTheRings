@@ -310,6 +310,10 @@ import LordOfTheRings.Ally.Cards.LegolasTheTreasonOfSaruman
 import LordOfTheRings.Ally.Cards.QuickbeamTheTreasonOfSaruman
 import LordOfTheRings.Ally.Cards.HamaTheTreasonOfSaruman
 import LordOfTheRings.Ally.Cards.SmeagolTheLandOfShadow
+import LordOfTheRings.Ally.Cards.BofurTactics
+import LordOfTheRings.Ally.Cards.GandalfHobbit
+import LordOfTheRings.Ally.Cards.Bifur
+import LordOfTheRings.Ally.Cards.Dwalin
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -652,5 +656,9 @@ allAllies =
         , SomeAllyCard quickbeamTheTreasonOfSaruman
         , SomeAllyCard hamaTheTreasonOfSaruman
         , SomeAllyCard smeagolTheLandOfShadow
+        , SomeAllyCard bofurTactics
+        , SomeAllyCard gandalfHobbit
+        , SomeAllyCard bifur
+        , SomeAllyCard dwalin
         ]
     ]
