@@ -2471,6 +2471,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Haradrim.BeneathTheSandsPlayerCardsSpec
       LordOfTheRings.Haradrim.TheBlackSerpentPlayerCardsSpec
+      LordOfTheRings.Haradrim.TheDungeonsOfCirithGuratPlayerCardsSpec
       LordOfTheRings.HaradrimEngineSpec
       LordOfTheRings.HeirsOfNumenor.IntoIthilienSpec
       LordOfTheRings.HeirsOfNumenor.NightmareSpec
