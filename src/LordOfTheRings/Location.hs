@@ -540,6 +540,11 @@ import LordOfTheRings.Location.Cards.TheSpidersGlade
 import LordOfTheRings.Location.Cards.GiantWeb
 import LordOfTheRings.Location.Cards.ForestStream
 import LordOfTheRings.Location.Cards.HiddenPath
+import LordOfTheRings.Location.Cards.TheLonelyMountain (theLonelyMountain)
+import LordOfTheRings.Location.Cards.GreatHall (greatHall)
+import LordOfTheRings.Location.Cards.SecretEntrance (secretEntrance)
+import LordOfTheRings.Location.Cards.DesolationOfSmaug (desolationOfSmaug)
+import LordOfTheRings.Location.Cards.WesternSlopes (westernSlopes)
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1126,5 +1131,10 @@ allLocations =
         , SomeLocationCard giantWeb
         , SomeLocationCard forestStream
         , SomeLocationCard hiddenPath
+        , SomeLocationCard theLonelyMountain
+        , SomeLocationCard greatHall
+        , SomeLocationCard secretEntrance
+        , SomeLocationCard desolationOfSmaug
+        , SomeLocationCard westernSlopes
         ]
     ]

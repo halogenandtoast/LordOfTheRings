@@ -514,6 +514,9 @@ import LordOfTheRings.Enemy.Cards.LazyLob
 import LordOfTheRings.Enemy.Cards.FatSpider
 import LordOfTheRings.Enemy.Cards.WickedSpider
 import LordOfTheRings.Enemy.Cards.DarkBats
+import LordOfTheRings.Enemy.Cards.SmaugTheGolden (smaugTheGolden)
+import LordOfTheRings.Enemy.Cards.SmaugTheMagnificent (smaugTheMagnificent)
+import LordOfTheRings.Enemy.Cards.CroakingCrows (croakingCrows)
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1057,5 +1060,8 @@ allEnemys =
         , SomeEnemyCard fatSpider
         , SomeEnemyCard wickedSpider
         , SomeEnemyCard darkBats
+        , SomeEnemyCard smaugTheGolden
+        , SomeEnemyCard smaugTheMagnificent
+        , SomeEnemyCard croakingCrows
         ]
     ]
