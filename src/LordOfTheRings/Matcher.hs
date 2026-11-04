@@ -417,6 +417,26 @@ affordableAlliesInHand pid sphere reduction minimumCost = do
       , not $ forbidden c
       ]
 
+-- | Allies in hand matching the matcher that the player's heroes could pay for with
+-- resources of any sphere, as Thranduil plays a Silvan ally needing no resource match.
+affordableAlliesInHandWithoutMatch :: HasGame m => PlayerId -> CardMatcher -> m [Card]
+affordableAlliesInHandWithoutMatch pid matcher = do
+  player <- getPlayer pid
+  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
+  resources <- sum . map (.resources) <$> filterM heroCanSpend heroes
+  mods <- getsGame gameModifiers
+  let on t = map modifierType $ Map.findWithDefault [] t mods
+      gameMods = on GameTarget
+      forbidden c = any (\case CannotPlay m -> cardMatches m c; _ -> False) (gameMods <> on (PlayerTarget pid))
+      cost c = maybe 0 costAsResources c.cost
+  entryBarred <- getsGame allyEntryBarred
+  allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
+  if (OneAllyPerRound `elem` gameMods && allyPlayed) || entryBarred
+    then pure []
+    else
+      filterM passesUnique
+        [c | c <- player.hand, c.cardType == AllyType, cardMatches matcher c, resources >= cost c, not $ forbidden c]
+
 -- | The player's allies whose resources can pay for the card, with the resources on each.
 allyPayersFor :: HasGame m => PlayerId -> Card -> m [(AllyId, Int)]
 allyPayersFor pid card = do

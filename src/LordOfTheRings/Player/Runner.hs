@@ -528,11 +528,11 @@ canAffordWith discount p c = case (c.cost, c.sphere) of
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
-      filterM (\h -> andM [heroCanSpend h, not <$> barredFrom c h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
+      filterM (\h -> andM [heroCanSpend h, not <$> barredFrom c h, orM [paysFor sphere h, iconFor c sphere h, noMatchNeeded c]]) [h | h <- heroes, h.resources > 0]
     fromAllies <- sum . map snd <$> allyPayersFor p.id c
     -- a card that costs 0 still needs a resource match (FAQ 2.39, 2.61): a hero with its
     -- resource icon, which paying with resources of another sphere (A Good Harvest) isn't
-    matched <- (sphere == Neutral ||) <$> anyM (matchesSphere sphere) heroes
+    matched <- orM [pure (sphere == Neutral), noMatchNeeded c, anyM (matchesSphere sphere) heroes]
     let needed = costAsResources cost + extra
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
@@ -636,7 +636,7 @@ a resource icon it has gained gives it.
 paysFor :: HasGame m => Sphere -> Hero -> m Bool
 paysFor sphere h = do
   cards <- getsGame (map (.activeCostCard) . toList . gameActiveCosts)
-  andM [not <$> anyM (`barredFrom` h) cards, orM [heroPaysFor sphere h, andM [heroCanSpend h, orM [iconFor c sphere h | c <- cards]]]]
+  andM [not <$> anyM (`barredFrom` h) cards, orM [heroPaysFor sphere h, andM [heroCanSpend h, orM ([iconFor c sphere h | c <- cards] <> map noMatchNeeded cards)]]]
 
 -- | Whether the hero's resources cannot pay for the card, as Na'asiyah's for allies.
 barredFrom :: HasGame m => Card -> Hero -> m Bool
@@ -646,6 +646,10 @@ barredFrom c h = any (\case CannotPayFor m -> cardMatches m c; _ -> False) <$> g
 iconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
 iconFor c sphere h =
   any (\case GainResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
+
+-- | Whether the card's cost may be paid with resources of any sphere.
+noMatchNeeded :: HasGame m => Card -> m Bool
+noMatchNeeded c = elem NoResourceMatchNeeded <$> getModifiers (CardIdTarget c.id)
 
 startingHandSize :: Int
 startingHandSize = 6

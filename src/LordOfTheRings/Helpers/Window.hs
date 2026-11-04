@@ -305,6 +305,7 @@ passesCriteria = \case
   ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
   AffordableAllyInDiscard pid sphere -> notNull <$> affordableDiscardedAllies pid sphere
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
+  AffordableAllyInHandWithoutMatch pid matcher -> notNull <$> affordableAlliesInHandWithoutMatch pid matcher
   BeforeCommitting ->
     andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
   BeforeStaging ->

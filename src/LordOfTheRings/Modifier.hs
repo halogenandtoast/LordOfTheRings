@@ -212,6 +212,9 @@ data ModifierType
     ChoosesUpToOptions Int
   | -- | on a hero: while paying for a matching card it has the sphere's resource icon
     GainResourceIconFor CardMatcher Sphere
+  | -- | on a card, as its card id: it needs no resource match, its cost paid with
+    -- resources of any sphere, as Thranduil plays a Silvan ally
+    NoResourceMatchNeeded
   | -- | on a player: they may declare any number of defenders against each attack
     MayDeclareMultipleDefenders
   | -- | on a player

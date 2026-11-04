@@ -34,6 +34,8 @@ data Criterion
     AffordableAllyInDiscard PlayerId Sphere
   | -- | an ally in hand affordable after a reduction, with a minimum cost
     AffordableAllyInHand PlayerId Sphere Int Int
+  | -- | a matching ally in hand affordable with resources of any sphere
+    AffordableAllyInHandWithoutMatch PlayerId CardMatcher
   | -- | in the quest phase, before any character is committed
     BeforeCommitting
   | -- | in the quest phase, before its staging step, as "Play only before the staging step"
