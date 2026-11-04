@@ -2534,5 +2534,26 @@
     "draw": "Draw 2 cards",
     "resource": "Add 1 resource to a hero's resource pool",
     "hero": "Ancient Treasury: choose a hero to gain 1 resource"
+  },
+  "theDragonsThrall": {
+    "choose": "The Dragon's Thrall: deal 3 damage to Hrogar's Hill, or it attacks you",
+    "damage": "Deal 3 damage to Hrogar's Hill",
+    "attack": "It makes an immediate attack against you"
+  },
+  "orcOfTheFlame": {
+    "choose": "Orc of the Flame: deal 2 damage to a hero you control, or 3 damage to Hrogar's Hill",
+    "hero": "Deal 2 damage to a hero you control",
+    "hill": "Deal 3 damage to Hrogar's Hill"
+  },
+  "woodenPalisade": {
+    "ready": "Wooden Palisade: ready a hero you control"
+  },
+  "fortifyTheDefense": {
+    "choose": "Fortify the Defense: draw 3 cards, or each hero you control gains 1 resource",
+    "draw": "Draw 3 cards",
+    "resources": "Each hero you control gains 1 resource"
+  },
+  "routTheGoblins": {
+    "choose": "Rout the Goblins: choose a Goblin enemy to put into play engaged with you"
   }
 }

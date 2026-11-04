@@ -267,6 +267,15 @@ import LordOfTheRings.Quest.Cards.DeadlyCreatures
 import LordOfTheRings.Quest.Cards.SouthronPursuit
 import LordOfTheRings.Quest.Cards.OrcPatrols
 import LordOfTheRings.Quest.Cards.BattleAtTheCrossings
+import LordOfTheRings.Quest.Cards.DrawHerFire
+import LordOfTheRings.Quest.Cards.FortifyTheDefense
+import LordOfTheRings.Quest.Cards.RallyTheWoodmen
+import LordOfTheRings.Quest.Cards.DouseTheFlames
+import LordOfTheRings.Quest.Cards.HoldTheDoor
+import LordOfTheRings.Quest.Cards.DefendTheTown
+import LordOfTheRings.Quest.Cards.RoutTheGoblins
+import LordOfTheRings.Quest.Cards.FaceTheDragon
+import LordOfTheRings.Quest.Cards.HrogarsHill
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -566,5 +575,14 @@ allQuests =
         , SomeQuestCard southronPursuit
         , SomeQuestCard orcPatrols
         , SomeQuestCard battleAtTheCrossings
+        , SomeQuestCard drawHerFire
+        , SomeQuestCard fortifyTheDefense
+        , SomeQuestCard rallyTheWoodmen
+        , SomeQuestCard douseTheFlames
+        , SomeQuestCard holdTheDoor
+        , SomeQuestCard defendTheTown
+        , SomeQuestCard routTheGoblins
+        , SomeQuestCard faceTheDragon
+        , SomeQuestCard hrogarsHill
         ]
     ]

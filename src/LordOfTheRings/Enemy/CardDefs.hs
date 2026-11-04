@@ -439,6 +439,9 @@ allEnemyCards =
       , werewolf
       , giantSpider
       , blackBats
+      , dagnir
+      , theDragonsThrall
+      , orcOfTheFlame
       ]
 
 namelessThing :: CardDef
@@ -3586,4 +3589,31 @@ blackBats =
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    }
+
+-- * Fire in the Night
+
+-- | The first player takes it from the encounter deck to the staging area at setup.
+dagnir :: CardDef
+dagnir =
+  unique
+    $ (enemy "19074" "Dagnir" FireInTheNight 1 50 0 7 5 20)
+      { cdCardTraits = setFromList [Dragon]
+      }
+
+theDragonsThrall :: CardDef
+theDragonsThrall =
+  (enemy "19075" "The Dragon's Thrall" FireInTheNight 3 30 3 3 3 4)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+orcOfTheFlame :: CardDef
+orcOfTheFlame =
+  (enemy "19076" "Orc of the Flame" FireInTheNight 4 25 2 2 2 3)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
     }

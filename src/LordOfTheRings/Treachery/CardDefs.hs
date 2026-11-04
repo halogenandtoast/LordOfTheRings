@@ -375,6 +375,9 @@ allTreacheryCards =
       , eyesInTheDark
       , dragonBreath
       , dragonScales
+      , powerfulInWrath
+      , theDragonsFury
+      , brightFlames
       ]
 
 deepDeepDark :: CardDef
@@ -2387,3 +2390,19 @@ dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits =
 
 dragonScales :: CardDef
 dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+-- * Fire in the Night
+
+powerfulInWrath :: CardDef
+powerfulInWrath =
+  (treachery "19080" "Powerful in Wrath" FireInTheNight 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+theDragonsFury :: CardDef
+theDragonsFury = (treachery "19081" "The Dragon's Fury" FireInTheNight 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+brightFlames :: CardDef
+brightFlames = (treachery "19082" "Bright Flames" FireInTheNight 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

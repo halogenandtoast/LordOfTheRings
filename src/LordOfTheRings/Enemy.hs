@@ -430,6 +430,9 @@ import LordOfTheRings.Enemy.Cards.Hobgoblin
 import LordOfTheRings.Enemy.Cards.Werewolf
 import LordOfTheRings.Enemy.Cards.GiantSpider
 import LordOfTheRings.Enemy.Cards.BlackBats
+import LordOfTheRings.Enemy.Cards.Dagnir
+import LordOfTheRings.Enemy.Cards.TheDragonsThrall
+import LordOfTheRings.Enemy.Cards.OrcOfTheFlame
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -888,5 +891,8 @@ allEnemys =
         , SomeEnemyCard werewolf
         , SomeEnemyCard giantSpider
         , SomeEnemyCard blackBats
+        , SomeEnemyCard dagnir
+        , SomeEnemyCard theDragonsThrall
+        , SomeEnemyCard orcOfTheFlame
         ]
     ]

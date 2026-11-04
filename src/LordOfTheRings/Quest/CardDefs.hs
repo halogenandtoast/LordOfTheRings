@@ -351,6 +351,15 @@ allQuestCards =
       , southronPursuit
       , orcPatrols
       , battleAtTheCrossings
+      , drawHerFire
+      , fortifyTheDefense
+      , rallyTheWoodmen
+      , douseTheFlames
+      , holdTheDoor
+      , defendTheTown
+      , routTheGoblins
+      , faceTheDragon
+      , hrogarsHill
       ]
 
 theDrippingWalls :: CardDef
@@ -1390,3 +1399,32 @@ orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
 
 battleAtTheCrossings :: CardDef
 battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20
+
+-- * Fire in the Night: its encounter side quests make the side quest deck
+
+drawHerFire :: CardDef
+drawHerFire = encounterSideQuest "19066" "Draw Her Fire" FireInTheNight 10
+
+fortifyTheDefense :: CardDef
+fortifyTheDefense = encounterSideQuest "19067" "Fortify the Defense" FireInTheNight 10
+
+rallyTheWoodmen :: CardDef
+rallyTheWoodmen = encounterSideQuest "19068" "Rally the Woodmen" FireInTheNight 10
+
+douseTheFlames :: CardDef
+douseTheFlames = encounterSideQuest "19069" "Douse the Flames" FireInTheNight 10
+
+holdTheDoor :: CardDef
+holdTheDoor = encounterSideQuest "19070" "Hold the Door" FireInTheNight 10
+
+defendTheTown :: CardDef
+defendTheTown = encounterSideQuest "19071" "Defend the Town" FireInTheNight 10
+
+routTheGoblins :: CardDef
+routTheGoblins = (encounterSideQuest "19072" "Rout the Goblins" FireInTheNight 10) {cdWhenRevealed = True}
+
+faceTheDragon :: CardDef
+faceTheDragon = encounterSideQuest "19073" "Face the Dragon" FireInTheNight 10
+
+hrogarsHill :: CardDef
+hrogarsHill = quest "19083" "Hrogar's Hill" FireInTheNight 1 50

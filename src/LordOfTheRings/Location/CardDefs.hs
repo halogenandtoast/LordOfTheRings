@@ -466,6 +466,9 @@ allLocationCards =
       , crumblingCavern
       , undergroundLake
       , woodmenVillage
+      , townGate
+      , woodenPalisade
+      , burningWatchtower
       ]
 
 drownedTreasury :: CardDef
@@ -3495,3 +3498,14 @@ woodmenVillage =
     { cdCardTraits = setFromList [Riverland]
     , cdOtherSide = Just "18069B"
     }
+
+-- * Fire in the Night
+
+townGate :: CardDef
+townGate = (location "19077" "Town Gate" FireInTheNight 2 3 4) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 1}
+
+woodenPalisade :: CardDef
+woodenPalisade = (location "19078" "Wooden Palisade" FireInTheNight 3 2 3) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 0}
+
+burningWatchtower :: CardDef
+burningWatchtower = (location "19079" "Burning Watchtower" FireInTheNight 3 0 5) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 1}
