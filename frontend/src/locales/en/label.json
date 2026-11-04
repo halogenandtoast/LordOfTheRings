@@ -3134,5 +3134,39 @@
   },
   "sternerThanSteel": {
     "exhaust": "Choose a Weapon or Armor card attached to the defending character to exhaust"
+  },
+  "theRingGoesSouth": {
+    "activeLocation": "Choose the active location",
+    "exhaustCharacter": "Choose a character to exhaust, for the group",
+    "discardAlly": "Choose an ally to discard, for the group",
+    "chooseBoon": "The Ring Goes South: choose a boon to add to your hand"
+  },
+  "crebainFromDunland": {
+    "choose": "Crebain from Dunland: choose one",
+    "exhaust": "Exhaust a hero you control",
+    "engage": "Engage Crebain from Dunland"
+  },
+  "bitterCold": {
+    "choose": "Bitter Cold: choose one",
+    "discard": "Discard each ally you control",
+    "raise": "Raise your threat by 1 for each ally you control"
+  },
+  "stormOfHowls": {
+    "choose": "Storm of Howls: choose one",
+    "attack": "The Warg enemy in the staging area with the highest engagement cost attacks you",
+    "chooseWarg": "Storm of Howls: choose the Warg enemy that attacks you",
+    "engagementCost": "Each Warg enemy gets -20 engagement cost until the end of the round"
+  },
+  "lustForTheRing": {
+    "attach": "Lust for the Ring: choose a non-Fellowship hero to attach it to"
+  },
+  "theCouncilOfElrond": {
+    "play": "The Council of Elrond: choose the faceup card to play for 0 cost",
+    "hand": "The Council of Elrond: choose the faceup card to add to its owner’s hand",
+    "discard": "The Council of Elrond: choose the faceup card to discard",
+    "shuffle": "The Council of Elrond: choose the faceup card to shuffle into its owner’s deck",
+    "choose": "The Council of Elrond: choose one",
+    "shuffleLust": "Shuffle Lust for the Ring into the encounter deck",
+    "raiseThreat": "Raise each player’s threat by 5"
   }
 }

@@ -434,6 +434,11 @@ allTreacheryCards =
       , theWayIsShut
       , whispersInTheDark
       , noTurningBack
+      , regimentsOfCrows
+      , snowdrifts
+      , bitterCold
+      , stormOfHowls
+      , lustForTheRing
       ]
 
 deepDeepDark :: CardDef
@@ -2741,3 +2746,29 @@ whispersInTheDark = (treachery "145028" "Whispers in the Dark" ThePassingOfTheGr
 
 noTurningBack :: CardDef
 noTurningBack = (treachery "145029" "No Turning Back" ThePassingOfTheGreyCompany 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Ring Goes South
+
+regimentsOfCrows :: CardDef
+regimentsOfCrows = (treachery "142035" "Regiments of Crows" TheRingGoesSouth 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+snowdrifts :: CardDef
+snowdrifts = (treachery "142036" "Snowdrifts" TheRingGoesSouth 2) {cdCardTraits = setFromList [Weather]}
+
+bitterCold :: CardDef
+bitterCold = (treachery "142037" "Bitter Cold" TheRingGoesSouth 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+stormOfHowls :: CardDef
+stormOfHowls = (treachery "142038" "Storm of Howls" TheRingGoesSouth 3) {cdKeywords = setFromList [Peril], cdEasyModeQuantity = Just 2}
+
+-- | A burden of The Ring Goes South's burden set: in no encounter set, so never gathered;
+-- stage 1B shuffles it in, and earned, the Campaign Pool does.
+lustForTheRing :: CardDef
+lustForTheRing =
+  (treachery "142084" "Lust for the Ring" TheRingGoesSouth 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just TheRingGoesSouth
+    , cdCardTraits = setFromList [Corruption]
+    , cdKeywords = setFromList [Peril, Surge]
+    }

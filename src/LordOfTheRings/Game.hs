@@ -2261,18 +2261,23 @@ runGameMessage msg g = case msg of
       else do
         -- what each active location still takes; one that takes only so much, as Perilous
         -- Swamp, is not explored by the rest, which is lost
-        rooms <- for actives \lid -> do
+        -- one that takes progress only after the others, as Doors of Durin, takes what
+        -- they leave, the first player dividing nothing
+        ranked <- for actives \lid -> do
           l <- getLocation lid
           remaining <- subtract l.progress <$> getLocationQuestPoints lid
-          limits <- (\ms -> [k | ProgressLimit k <- ms]) <$> getModifiers lid
-          pure (lid, remaining, max 0 $ foldr min remaining limits)
+          mods <- getModifiers lid
+          let limits = [k | ProgressLimit k <- mods]
+          pure (TakesProgressAfterOtherActiveLocations `elem` mods, (lid, remaining, max 0 $ foldr min remaining limits))
+        let rooms = map snd (sortOn fst ranked)
+            after = any fst ranked
         -- the rest goes to the side quest quested against, else to the quest cards
         quests <- maybe getMainQuests (pure . pure) =<< getCurrentSideQuest
         let place lid k = [PlaceTokens GameSource (toTarget lid) Progress k | k > 0]
         case rooms of
           -- with two active locations the first player divides the progress between them
           -- (FAQ 1.34); none passes on to the quest until both are explored
-          [(a, _, roomA), (b, _, roomB)] | n < roomA + roomB -> do
+          [(a, _, roomA), (b, _, roomB)] | n < roomA + roomB, not after -> do
             lead <- getLead
             first <- getLocation a
             let lo = max 0 (n - roomB)

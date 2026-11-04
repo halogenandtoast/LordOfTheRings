@@ -30,6 +30,10 @@ allAttachmentCards =
       , heirloomOfIarchon
       , ordersFromAngmar
       , raimentOfTheSecondAge
+      , stingTheRoadDarkens
+      , mithrilShirtTheRoadDarkens
+      , glamdringTheRoadDarkens
+      , andurilTheRoadDarkens
       , valor
       , appointedByFate
       , celebriansStone
@@ -1799,3 +1803,21 @@ friendOfFriends =
   (attachment "146012" "Friend of Friends" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Condition]
     }
+
+-- * The Road Darkens' boons, earned at The Ring Goes South's setup: stats only
+
+stingTheRoadDarkens :: CardDef
+stingTheRoadDarkens = restrictedBoon "142011" "Sting" 2 [Artifact, Item, Weapon]
+
+mithrilShirtTheRoadDarkens :: CardDef
+mithrilShirtTheRoadDarkens =
+  unique
+    (attachment "142012" "Mithril Shirt" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Boon, Artifact, Item, Armor]
+      }
+
+glamdringTheRoadDarkens :: CardDef
+glamdringTheRoadDarkens = restrictedBoon "142013" "Glamdring" 2 [Artifact, Item, Weapon]
+
+andurilTheRoadDarkens :: CardDef
+andurilTheRoadDarkens = restrictedBoon "142014" "Andúril" 3 [Artifact, Item, Weapon]

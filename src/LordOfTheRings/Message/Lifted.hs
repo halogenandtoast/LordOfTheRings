@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
-import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
 import LordOfTheRings.Trait (Trait (Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -1339,14 +1339,19 @@ playOnFromHandAtNoCost pid card host = push $ PlayFromHandOnAtNoCost pid card.id
 playFromDeckAtNoCost :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 playFromDeckAtNoCost pid card = do
   removeFromDeck pid card.id
-  pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
+  playAtNoCost pid card
+
+-- | The card, already taken from where it was, is played by the player without paying its
+-- cost, as The Council of Elrond plays one of the cards faceup in front of the players.
+playAtNoCost :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+playAtNoCost pid card = pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
 
 -- | The card leaves its owner's discard pile and the player plays it without paying its
 -- cost, as Reforged plays an attachment from any player's.
 playFromDiscardAtNoCost :: ReverseQueue m => PlayerId -> PlayerId -> PlayerCard -> m ()
 playFromDiscardAtNoCost owner pid card = do
   removeFromDiscard owner card.id
-  pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
+  playAtNoCost pid card
 
 {- | The character attacks the enemy, wherever it is, as an effect declares it an
 attacker; its attack raised by the bonus for that attack alone.
@@ -2264,7 +2269,8 @@ setUpFellowship :: ReverseQueue m => PlayerId -> m ()
 setUpFellowship lead = do
   sid <- getsGame (scenarioId . toAttrs . gameScenario)
   for_ (fellowshipSetup sid) \fs -> do
-    heroes <- for fs.fellowshipHeroes \code -> genPlayerCard (toCardDef code) (Just lead)
+    -- of the Ring-bearers the scenario allows, those the game has cards for
+    heroes <- for (filter (isJust . lookupCardDef) fs.fellowshipHeroes) \code -> genPlayerCard (toCardDef code) (Just lead)
     let takeFellowshipHero :: ReverseQueue n => PlayerCard -> n ()
         takeFellowshipHero card = do
           hid <- getRandom

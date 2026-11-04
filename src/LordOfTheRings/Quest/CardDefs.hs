@@ -442,6 +442,10 @@ allQuestCards =
       , theForbiddenDoor
       , thePathsOfTheDead
       , theDeadAreFollowing
+      , theCouncilOfElrond
+      , theNineWalkers
+      , theHuntIsUp
+      , theGatesOfMoria
       ]
 
 theDrippingWalls :: CardDef
@@ -1838,3 +1842,19 @@ thePathsOfTheDead = quest "145064" "The Paths of the Dead" ThePassingOfTheGreyCo
 -- | The players win as The Stone of Erech leaves play explored, not by defeating it.
 theDeadAreFollowing :: CardDef
 theDeadAreFollowing = quest "145065" "The Dead are Following" ThePassingOfTheGreyCompany 3 5
+
+-- * The Ring Goes South
+
+-- | No quest points: its Forced effect advances it at the end of the planning phase.
+theCouncilOfElrond :: CardDef
+theCouncilOfElrond = quest "142020" "The Council of Elrond" TheRingGoesSouth 1 0
+
+theNineWalkers :: CardDef
+theNineWalkers = quest "142021" "The Nine Walkers" TheRingGoesSouth 2 8
+
+theHuntIsUp :: CardDef
+theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
+
+-- | No quest points: the players win as Doors of Durin is explored.
+theGatesOfMoria :: CardDef
+theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0

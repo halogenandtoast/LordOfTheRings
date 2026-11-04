@@ -108,6 +108,7 @@ allHeroCards =
       , beregondSpirit
       , eomerLeadership
       , tomCotton
+      , frodoBagginsTheRoadDarkens
       ]
 
 aragorn :: CardDef
@@ -706,4 +707,12 @@ tomCotton :: CardDef
 tomCotton =
   (hero "146004" "Tom Cotton" Tactics 8 1 1 3 3)
     { cdCardTraits = setFromList [Hobbit]
+    }
+
+-- | The Road Darkens' Ring-bearer, a Fellowship sphere hero with no threat cost: the game
+-- gives him to the first player at setup (see 'LordOfTheRings.Saga.fellowshipSetup').
+frodoBagginsTheRoadDarkens :: CardDef
+frodoBagginsTheRoadDarkens =
+  (hero "142001" "Frodo Baggins" Fellowship 0 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
     }

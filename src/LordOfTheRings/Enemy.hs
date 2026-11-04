@@ -503,6 +503,11 @@ import LordOfTheRings.Enemy.Cards.FaithlessDead (faithlessDead)
 import LordOfTheRings.Enemy.Cards.GhostsOfMen (ghostsOfMen)
 import LordOfTheRings.Enemy.Cards.ShadowHost (shadowHost)
 import LordOfTheRings.Enemy.Cards.ArmyOfTheDead (armyOfTheDead)
+import LordOfTheRings.Enemy.Cards.WatcherInTheWater
+import LordOfTheRings.Enemy.Cards.GreatWargChief
+import LordOfTheRings.Enemy.Cards.HoundOfSauron
+import LordOfTheRings.Enemy.Cards.HowlingWarg
+import LordOfTheRings.Enemy.Cards.CrebainFromDunland
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1035,5 +1040,10 @@ allEnemys =
         , SomeEnemyCard ghostsOfMen
         , SomeEnemyCard shadowHost
         , SomeEnemyCard armyOfTheDead
+        , SomeEnemyCard watcherInTheWater
+        , SomeEnemyCard greatWargChief
+        , SomeEnemyCard houndOfSauron
+        , SomeEnemyCard howlingWarg
+        , SomeEnemyCard crebainFromDunland
         ]
     ]

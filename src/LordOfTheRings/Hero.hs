@@ -114,6 +114,7 @@ import LordOfTheRings.Hero.Cards.DamrodLore
 import LordOfTheRings.Hero.Cards.BeregondSpirit
 import LordOfTheRings.Hero.Cards.EomerLeadership
 import LordOfTheRings.Hero.Cards.TomCotton
+import LordOfTheRings.Hero.Cards.FrodoBagginsTheRoadDarkens
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -290,5 +291,6 @@ allHeroes =
         , SomeHeroCard beregondSpirit
         , SomeHeroCard eomerLeadership
         , SomeHeroCard tomCotton
+        , SomeHeroCard frodoBagginsTheRoadDarkens
         ]
     ]

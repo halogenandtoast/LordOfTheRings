@@ -424,6 +424,11 @@ import LordOfTheRings.Treachery.Cards.BloodRunsChill (bloodRunsChill)
 import LordOfTheRings.Treachery.Cards.TheWayIsShut (theWayIsShut)
 import LordOfTheRings.Treachery.Cards.WhispersInTheDark (whispersInTheDark)
 import LordOfTheRings.Treachery.Cards.NoTurningBack (noTurningBack)
+import LordOfTheRings.Treachery.Cards.RegimentsOfCrows
+import LordOfTheRings.Treachery.Cards.Snowdrifts
+import LordOfTheRings.Treachery.Cards.BitterCold
+import LordOfTheRings.Treachery.Cards.StormOfHowls
+import LordOfTheRings.Treachery.Cards.LustForTheRing
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -875,5 +880,10 @@ allTreacherys =
         , SomeTreacheryCard theWayIsShut
         , SomeTreacheryCard whispersInTheDark
         , SomeTreacheryCard noTurningBack
+        , SomeTreacheryCard regimentsOfCrows
+        , SomeTreacheryCard snowdrifts
+        , SomeTreacheryCard bitterCold
+        , SomeTreacheryCard stormOfHowls
+        , SomeTreacheryCard lustForTheRing
         ]
     ]

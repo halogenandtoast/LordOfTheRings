@@ -4017,5 +4017,19 @@
         "text": "Army of the Dead has an enemy side and an objective-ally side. The enemy enters the staging area at stage 3A. In campaign mode, defeating it earns its objective-ally side as a boon."
       }
     ]
+  },
+  "the-ring-goes-south": {
+    "intro": [
+      "Having escaped the Nine at the Ford of Bruinen and rested in Rivendell, Frodo and his companions set out from the House of Elrond, bound for Mordor to unmake the Ring. Their road south runs along the Misty Mountains, through snow, Wargs and spying crows."
+    ],
+    "setup": [
+      "The encounter deck is built from The Ring Goes South encounter set."
+    ],
+    "rules": [
+      {
+        "title": "Stage 4",
+        "text": "Stage 4A makes Doors of Durin the active location, adds Watcher in the Water to the staging area and puts the Ring-bearer, with all his attachments and no tokens, facedown under the Watcher. He stays in play, but no player controls him or his attachments until he is freed.\n\nOn stage 4B there can be 2 active locations: with Doors of Durin the only active one and a location in the staging area, the players must travel to it, making it active alongside the Doors.\n\nDoors of Durin is immune to player card effects, so a player card effect on the active location can only reach the other active location."
+      }
+    ]
   }
 }

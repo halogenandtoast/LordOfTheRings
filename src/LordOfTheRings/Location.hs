@@ -530,6 +530,12 @@ import LordOfTheRings.Location.Cards.DarkDoor (darkDoor)
 import LordOfTheRings.Location.Cards.TrystingPlace (trystingPlace)
 import LordOfTheRings.Location.Cards.DeadlyRoad (deadlyRoad)
 import LordOfTheRings.Location.Cards.HauntedPath (hauntedPath)
+import LordOfTheRings.Location.Cards.RedhornPass
+import LordOfTheRings.Location.Cards.DoorsOfDurinTheRingGoesSouth
+import LordOfTheRings.Location.Cards.TreeCrownedHill
+import LordOfTheRings.Location.Cards.HillsOfHollin
+import LordOfTheRings.Location.Cards.RedhornFoothills
+import LordOfTheRings.Location.Cards.Eregion
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1106,5 +1112,11 @@ allLocations =
         , SomeLocationCard trystingPlace
         , SomeLocationCard deadlyRoad
         , SomeLocationCard hauntedPath
+        , SomeLocationCard redhornPass
+        , SomeLocationCard doorsOfDurinTheRingGoesSouth
+        , SomeLocationCard treeCrownedHill
+        , SomeLocationCard hillsOfHollin
+        , SomeLocationCard redhornFoothills
+        , SomeLocationCard eregion
         ]
     ]

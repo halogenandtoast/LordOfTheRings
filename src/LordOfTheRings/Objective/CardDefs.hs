@@ -157,6 +157,7 @@ allObjectiveCards =
       , armyOfTheDeadBoon
       , theOneRingTheLandOfShadow
       , theOneRingTheMountainOfFire
+      , theOneRingTheRoadDarkens
       ]
 
 durinsAxe :: CardDef
@@ -1103,3 +1104,12 @@ theOneRingTheLandOfShadow = sagaOneRing "144063"
 
 theOneRingTheMountainOfFire :: CardDef
 theOneRingTheMountainOfFire = sagaOneRing "146065"
+
+-- | The Road Darkens' The One Ring: in no encounter set, the game attaches it to the
+-- Ring-bearer at setup (see 'LordOfTheRings.Saga.fellowshipSetup').
+theOneRingTheRoadDarkens :: CardDef
+theOneRingTheRoadDarkens =
+  (emptyCardDef "142091" "The One Ring" ObjectiveType)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item, Ring]
+    }

@@ -568,6 +568,9 @@ data ModifierType
   | -- | on a location in the staging area: progress is placed on it before it can be placed
     -- on the active location, as Grim Foothills reads
     TakesProgressBeforeActiveLocation
+  | -- | on an active location: progress is placed on each other active location before it
+    -- can be placed here, as Doors of Durin reads; questing progress fills the others first
+    TakesProgressAfterOtherActiveLocations
   | -- | on the game: progress questing successfully would place on the quest is dealt as
     -- damage to the enemy instead, as Ride Them Down reads
     ProgressAsDamageTo Target
