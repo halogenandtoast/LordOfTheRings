@@ -507,6 +507,11 @@ allEnemyCards =
       , borlach
       , easterlingGuard
       , nurnSlaver
+      , watcherInTheWater
+      , greatWargChief
+      , houndOfSauron
+      , howlingWarg
+      , crebainFromDunland
       ]
 
 namelessThing :: CardDef
@@ -940,6 +945,7 @@ crebain =
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 wildBear :: CardDef
@@ -4160,4 +4166,46 @@ nurnSlaver =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
+    }
+
+-- * The Ring Goes South
+
+-- | Indestructible. Immune to player card effects (its card gives it the modifier).
+watcherInTheWater :: CardDef
+watcherInTheWater =
+  unique
+    (enemy "142024" "Watcher in the Water" TheRingGoesSouth 1 50 5 6 5 12)
+      { cdCardTraits = setFromList [Creature]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+-- | Cannot have attachments (its card gives it the modifier).
+greatWargChief :: CardDef
+greatWargChief =
+  unique
+    (enemy "142025" "Great Warg Chief" TheRingGoesSouth 1 30 4 5 3 6)
+      { cdCardTraits = setFromList [Creature, Warg]
+      }
+
+houndOfSauron :: CardDef
+houndOfSauron =
+  (enemy "142026" "Hound of Sauron" TheRingGoesSouth 4 50 1 4 1 3)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    }
+
+howlingWarg :: CardDef
+howlingWarg =
+  (enemy "142027" "Howling Warg" TheRingGoesSouth 4 38 2 3 2 4)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdShadowEffect = True
+    }
+
+crebainFromDunland :: CardDef
+crebainFromDunland =
+  (enemy "142028" "Crebain from Dunland" TheRingGoesSouth 2 28 3 1 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
     }

@@ -439,6 +439,10 @@ allQuestCards =
       , stormTheCastleStrongholdOfMordor
       , slavesOfTheDarkLord
       , leadTheRevolt
+      , theCouncilOfElrond
+      , theNineWalkers
+      , theHuntIsUp
+      , theGatesOfMoria
       ]
 
 theDrippingWalls :: CardDef
@@ -1821,3 +1825,19 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 -- | 10 quest points, and 10 more per player from its own modifiers.
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
+
+-- * The Ring Goes South
+
+-- | No quest points: its Forced effect advances it at the end of the planning phase.
+theCouncilOfElrond :: CardDef
+theCouncilOfElrond = quest "142020" "The Council of Elrond" TheRingGoesSouth 1 0
+
+theNineWalkers :: CardDef
+theNineWalkers = quest "142021" "The Nine Walkers" TheRingGoesSouth 2 8
+
+theHuntIsUp :: CardDef
+theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
+
+-- | No quest points: the players win as Doors of Durin is explored.
+theGatesOfMoria :: CardDef
+theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0

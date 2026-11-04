@@ -543,6 +543,12 @@ allLocationCards =
       , theStorehouse
       , workingFields
       , watchTowerTheLandOfSorrow
+      , redhornPass
+      , doorsOfDurinTheRingGoesSouth
+      , treeCrownedHill
+      , hillsOfHollin
+      , redhornFoothills
+      , eregion
       ]
 
 drownedTreasury :: CardDef
@@ -4001,3 +4007,35 @@ watchTowerTheLandOfSorrow =
     { cdCardTraits = setFromList [Plains]
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The Ring Goes South
+
+-- | Immune to player card effects (its card gives it the modifier).
+redhornPass :: CardDef
+redhornPass =
+  unique
+    (location "142029" "Redhorn Pass" TheRingGoesSouth 1 4 6)
+      { cdCardTraits = setFromList [Mountain]
+      , cdVictoryPoints = Just 1
+      }
+
+-- | Immune to player card effects (its card gives it the modifier).
+doorsOfDurinTheRingGoesSouth :: CardDef
+doorsOfDurinTheRingGoesSouth =
+  unique
+    (location "142030" "Doors of Durin" TheRingGoesSouth 1 1 9)
+      { cdCardTraits = setFromList [Gate]
+      , cdVictoryPoints = Just 1
+      }
+
+treeCrownedHill :: CardDef
+treeCrownedHill = (location "142031" "Tree-crowned Hill" TheRingGoesSouth 1 3 6) {cdCardTraits = setFromList [Hills]}
+
+hillsOfHollin :: CardDef
+hillsOfHollin = (location "142032" "Hills of Hollin" TheRingGoesSouth 3 2 4) {cdCardTraits = setFromList [Hills]}
+
+redhornFoothills :: CardDef
+redhornFoothills = (location "142033" "Redhorn Foothills" TheRingGoesSouth 3 4 5) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 2}
+
+eregion :: CardDef
+eregion = (location "142034" "Eregion" TheRingGoesSouth 3 3 4) {cdCardTraits = setFromList [Hills], cdShadowEffect = True, cdEasyModeQuantity = Just 2}

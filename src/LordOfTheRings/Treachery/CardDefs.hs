@@ -430,6 +430,11 @@ allTreacheryCards =
       , overseersWhip
       , crueltyOfMordor
       , brokenCaptives
+      , regimentsOfCrows
+      , snowdrifts
+      , bitterCold
+      , stormOfHowls
+      , lustForTheRing
       ]
 
 deepDeepDark :: CardDef
@@ -2318,7 +2323,7 @@ mirage :: CardDef
 mirage = (treachery "16028" "Mirage" DesertCrossing 2) {cdCardTraits = setFromList [Weather]}
 
 unbearableHeat :: CardDef
-unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 scorchingSun :: CardDef
 scorchingSun =
@@ -2718,3 +2723,29 @@ crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdS
 
 brokenCaptives :: CardDef
 brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Ring Goes South
+
+regimentsOfCrows :: CardDef
+regimentsOfCrows = (treachery "142035" "Regiments of Crows" TheRingGoesSouth 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+snowdrifts :: CardDef
+snowdrifts = (treachery "142036" "Snowdrifts" TheRingGoesSouth 2) {cdCardTraits = setFromList [Weather]}
+
+bitterCold :: CardDef
+bitterCold = (treachery "142037" "Bitter Cold" TheRingGoesSouth 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+
+stormOfHowls :: CardDef
+stormOfHowls = (treachery "142038" "Storm of Howls" TheRingGoesSouth 3) {cdKeywords = setFromList [Peril], cdEasyModeQuantity = Just 2}
+
+-- | A burden of The Ring Goes South's burden set: in no encounter set, so never gathered;
+-- stage 1B shuffles it in, and earned, the Campaign Pool does.
+lustForTheRing :: CardDef
+lustForTheRing =
+  (treachery "142084" "Lust for the Ring" TheRingGoesSouth 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just TheRingGoesSouth
+    , cdCardTraits = setFromList [Corruption]
+    , cdKeywords = setFromList [Peril, Surge]
+    }
