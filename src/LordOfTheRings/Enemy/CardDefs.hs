@@ -400,6 +400,8 @@ allEnemyCards =
       , southronCaptain
       , southronSoldier
       , southronArcher
+      , sandViper
+      , giantScorpion
       ]
 
 namelessThing :: CardDef
@@ -3248,4 +3250,18 @@ southronArcher =
     { cdCardTraits = setFromList [Harad]
     , cdKeywords = setFromList [Archery 2]
     , cdEasyModeQuantity = Just 3
+    }
+
+sandViper :: CardDef
+sandViper =
+  (enemy "16054" "Sand Viper" DesertCreatures 2 44 4 1 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 1
+    }
+
+giantScorpion :: CardDef
+giantScorpion =
+  (enemy "16055" "Giant Scorpion" DesertCreatures 3 33 3 3 2 4)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
     }

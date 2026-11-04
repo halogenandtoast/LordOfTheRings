@@ -393,6 +393,8 @@ import LordOfTheRings.Enemy.Cards.NecromancerOfCarnDum
 import LordOfTheRings.Enemy.Cards.SouthronCaptain
 import LordOfTheRings.Enemy.Cards.SouthronSoldier
 import LordOfTheRings.Enemy.Cards.SouthronArcher
+import LordOfTheRings.Enemy.Cards.SandViper
+import LordOfTheRings.Enemy.Cards.GiantScorpion
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -812,5 +814,7 @@ allEnemys =
         , SomeEnemyCard southronCaptain
         , SomeEnemyCard southronSoldier
         , SomeEnemyCard southronArcher
+        , SomeEnemyCard sandViper
+        , SomeEnemyCard giantScorpion
         ]
     ]

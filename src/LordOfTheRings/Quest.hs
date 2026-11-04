@@ -223,6 +223,7 @@ import LordOfTheRings.Quest.Cards.TheWitchKingsGift
 import LordOfTheRings.Quest.Cards.SouthronChampion
 import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
+import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -478,5 +479,6 @@ allQuests =
         , SomeQuestCard southronChampion
         , SomeQuestCard inEnemyTerritory
         , SomeQuestCard findWater
+        , SomeQuestCard craftRemedy
         ]
     ]

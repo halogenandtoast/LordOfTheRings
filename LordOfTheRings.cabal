@@ -536,6 +536,7 @@ library
       LordOfTheRings.Enemy.Cards.GiantBeetle
       LordOfTheRings.Enemy.Cards.GiantCaveCentipede
       LordOfTheRings.Enemy.Cards.GiantMarshWorm
+      LordOfTheRings.Enemy.Cards.GiantScorpion
       LordOfTheRings.Enemy.Cards.GiantSwampAdder
       LordOfTheRings.Enemy.Cards.GoblinArcher
       LordOfTheRings.Enemy.Cards.GoblinEagleHunter
@@ -694,6 +695,7 @@ library
       LordOfTheRings.Enemy.Cards.SahirsEscort
       LordOfTheRings.Enemy.Cards.SahirsPursuer
       LordOfTheRings.Enemy.Cards.SahirsRavager
+      LordOfTheRings.Enemy.Cards.SandViper
       LordOfTheRings.Enemy.Cards.SavageHillman
       LordOfTheRings.Enemy.Cards.SavageHillTroll
       LordOfTheRings.Enemy.Cards.SavageTrollspawn
@@ -1620,6 +1622,7 @@ library
       LordOfTheRings.Quest.Cards.CorneredAnimals
       LordOfTheRings.Quest.Cards.CorsairConfrontation
       LordOfTheRings.Quest.Cards.CorsairPursuit
+      LordOfTheRings.Quest.Cards.CraftRemedy
       LordOfTheRings.Quest.Cards.CursedMists
       LordOfTheRings.Quest.Cards.DaechanarsFall
       LordOfTheRings.Quest.Cards.DecipherAncientTexts

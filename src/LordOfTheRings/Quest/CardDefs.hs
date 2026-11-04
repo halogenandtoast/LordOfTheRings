@@ -273,6 +273,7 @@ allQuestCards =
       , southronChampion
       , inEnemyTerritory
       , findWater
+      , craftRemedy
       ]
 
 theDrippingWalls :: CardDef
@@ -1140,3 +1141,6 @@ inEnemyTerritory =
 
 findWater :: CardDef
 findWater = (encounterSideQuest "16048" "Find Water" DesertSands 6) {cdVictoryPoints = Just 10}
+
+craftRemedy :: CardDef
+craftRemedy = (encounterSideQuest "16053" "Craft Remedy" DesertCreatures 6) {cdVictoryPoints = Just 10}
