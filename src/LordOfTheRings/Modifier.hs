@@ -307,6 +307,9 @@ data ModifierType
     ResourcesPayFor CardMatcher
   | -- | on the game: players cannot play matching cards
     CannotPlay CardMatcher
+  | -- | on a card in hand, as its card id: it cannot be played from there, as Misty
+    -- Mountain Journeyman reads "unless you are engaged with an enemy"
+    CannotBePlayedFromHand
   | -- | on the game: attachments' printed text boxes are treated as blank
     BlankAttachments
   | -- | on the game: the Deep keyword is ignored, as The Fire Worm reads
