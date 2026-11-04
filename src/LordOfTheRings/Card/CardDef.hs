@@ -69,8 +69,8 @@ data CardDef = CardDef
   , cdLimitOnePerHost :: Bool
   -- ^ an attachment limited to 1 per character: no host takes a second copy of its title
   , cdLimitOneInVictoryDisplay :: Bool
-  -- ^ a side quest's "Limit 1 copy in the victory display": a copy defeated while one is
-  -- there goes to its owner's discard pile instead (MEC55 rules)
+  -- ^ a side quest of which only 1 copy enters the victory display: another copy defeated
+  -- goes to its owner's discard pile (The Sands of Harad rules)
   , cdPlayableFrom :: PlayableFrom
   -- ^ where its owner may play it from, as Glorfindel can be played from the discard pile
   , cdOtherSide :: Maybe CardCode

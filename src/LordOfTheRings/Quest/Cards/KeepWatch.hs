@@ -14,6 +14,6 @@ keepWatch = quest KeepWatch Cards.keepWatch
 -- | While Keep Watch is in the victory display, each non-unique enemy engaged with a
 -- player gets -1 attack.
 instance HasModifiersFor KeepWatch where
-  getModifiersFor (KeepWatch a) = when (questInVictoryDisplay a) do
+  getModifiersFor (KeepWatch a) = whenM (inVictoryDisplay a.cardId) do
     enemies <- select (EnemyEngagedWith AnyPlayer <> not_ UniqueEnemy)
     for_ enemies \e -> modified a e [AttackModifier (-1)]

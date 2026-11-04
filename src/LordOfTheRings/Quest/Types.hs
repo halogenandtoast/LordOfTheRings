@@ -2,7 +2,6 @@
 
 module LordOfTheRings.Quest.Types (module LordOfTheRings.Quest.Types) where
 
-import Data.UUID qualified as UUID
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
@@ -73,11 +72,6 @@ quest f cardDef =
             , questUnderneath = []
             }
     }
-
--- | A side quest built from its card in the victory display, to give the constant effects
--- it has there, as Keep Watch's: it has no quest id.
-questInVictoryDisplay :: QuestAttrs -> Bool
-questInVictoryDisplay a = unQuestId (questId a) == UUID.nil
 
 instance Entity QuestAttrs where
   type EntityId QuestAttrs = QuestId

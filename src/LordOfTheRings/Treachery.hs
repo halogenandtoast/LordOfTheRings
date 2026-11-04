@@ -327,6 +327,21 @@ import LordOfTheRings.Treachery.Cards.BlackMare
 import LordOfTheRings.Treachery.Cards.PowerBeyondDeath
 import LordOfTheRings.Treachery.Cards.DaechanarsCurse
 import LordOfTheRings.Treachery.Cards.AllIsLost
+import LordOfTheRings.Treachery.Cards.NowhereToHide
+import LordOfTheRings.Treachery.Cards.InjuredCompanion
+import LordOfTheRings.Treachery.Cards.Enfeebled
+import LordOfTheRings.Treachery.Cards.Sandstorm
+import LordOfTheRings.Treachery.Cards.HeatExhaustion
+import LordOfTheRings.Treachery.Cards.Overgrown
+import LordOfTheRings.Treachery.Cards.FearOfMordor
+import LordOfTheRings.Treachery.Cards.ForcedOffTrackBeneathTheSands
+import LordOfTheRings.Treachery.Cards.GrabbedBySpiders
+import LordOfTheRings.Treachery.Cards.Mirage
+import LordOfTheRings.Treachery.Cards.UnbearableHeat
+import LordOfTheRings.Treachery.Cards.ScorchingSun
+import LordOfTheRings.Treachery.Cards.EnemyPursuit
+import LordOfTheRings.Treachery.Cards.PursuersFromMordor
+import LordOfTheRings.Treachery.Cards.HowlingAtTheirHeels
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -681,5 +696,20 @@ allTreacherys =
         , SomeTreacheryCard powerBeyondDeath
         , SomeTreacheryCard daechanarsCurse
         , SomeTreacheryCard allIsLost
+        , SomeTreacheryCard nowhereToHide
+        , SomeTreacheryCard injuredCompanion
+        , SomeTreacheryCard enfeebled
+        , SomeTreacheryCard sandstorm
+        , SomeTreacheryCard heatExhaustion
+        , SomeTreacheryCard overgrown
+        , SomeTreacheryCard fearOfMordor
+        , SomeTreacheryCard forcedOffTrackBeneathTheSands
+        , SomeTreacheryCard grabbedBySpiders
+        , SomeTreacheryCard mirage
+        , SomeTreacheryCard unbearableHeat
+        , SomeTreacheryCard scorchingSun
+        , SomeTreacheryCard enemyPursuit
+        , SomeTreacheryCard pursuersFromMordor
+        , SomeTreacheryCard howlingAtTheirHeels
         ]
     ]

@@ -15,5 +15,5 @@ legacyBlade = attachment LegacyBlade Cards.legacyBlade
 -- attack.)
 instance HasModifiersFor LegacyBlade where
   getModifiersFor (LegacyBlade a) = withHost a \host -> do
-    x <- min 3 <$> sideQuestsInVictoryDisplay
+    x <- min 3 <$> getSideQuestsInVictoryDisplay
     when (x > 0) $ modified a host [AttackModifier x]

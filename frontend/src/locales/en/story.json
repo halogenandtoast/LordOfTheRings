@@ -2859,5 +2859,157 @@
       "The knight knew he wouldn’t be able to make it to the ships in time. So, he decided on another course of action. Running back into the chamber where the black chest first lay, he placed the key upon the pedestal and prayed to the Valar with all of his heart: “Let none discover this key save for one of the Faithful, of true Númenorean blood. Let its whereabouts be forever shrouded from the servants of Morgoth.”",
       "Hoping the Valar would hear his plea, he sealed the entrance to the chamber and watched as Elendil’s ships sailed to safety in the east."
     ]
+  },
+  "beneath-the-sands": {
+    "intro": [
+      "There had been a commotion in the night: something had startled the Oliphaunts and their trumpet calls awakened the heroes. They heard screams and the sound of scuffling, but they could see nothing in the utter darkness of the night. Kahliel called to his men to organize them, but his shouts were drowned out by the loud braying of the Mûmakil. That soon faded as the frightened beasts tore their harnesses and stampeded away into the desert.",
+      "When the morning came, the heroes searched the ground for signs of what had transpired in the night. They found strange animal tracks at the edge of their camp, and heavy lines in the sand indicating that some of their company had been dragged away.",
+      "“I don’t recognize these markings,” said one of the heroes, lightly touching one of the animal tracks.",
+      "“There’s no blood on the sand,” observed another. “What kind of animal takes its prey without spilling any blood?” he asked.",
+      "“The great spiders of the desert,” answered Firyal. “They use their poison to paralyze their victims, then drag them back to their den to eat them.”",
+      "“Then we must follow the trail to their lair and rescue our friends!” exclaimed the first hero, standing up and shaking the sand from his hands.",
+      "“Just so,” said Firyal. “What say you Kahliel: Do we pursue the Mûmakil that fled in the night? Or do we seek the spiders in their den?”",
+      "The Haradrim chief narrowed his eyes and gazed into the desert, then he looked at the tracks at his feet. “The Mûmakil have fled beyond our reach, but even if there was hope to recapture them, we could not abandon our friends,” he said. “Gather your weapons. We follow the spiders.”"
+    ],
+    "setup": [
+      "“Beneath the Sands” is played with an encounter deck built with all the cards from the following encounter sets: Beneath the Sands, Desert Creatures, and Harad Territory. (Desert Creatures and Harad Territory can be found in The Sands of Harad deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "On Track / Off Track",
+        "text": "Included in Beneath the Sands is a double-sided Search objective: On Track / Off Track. This objective represents whether or not the heroes are heading in the right direction to find their missing companions. When setting up the scenario at the beginning of the game, the players are instructed to add the Search objective to the staging area with the Off Track side faceup. While Off Track is in play, players cannot place progress on the main quest because they are searching in the wrong direction. While On Track is in play, progress can be placed on the main quest, but the scenario becomes more challenging because the spiders grow more vicious as the heroes draw closer to their lair."
+      },
+      {
+        "title": "Track",
+        "text": "Track is a new keyword in the scenario Beneath the Sands that represents the heroes’ efforts to locate their missing companions somewhere in the spiders’ labyrinth. After the players travel to a location, if they are off track, they discard X cards from the encounter deck, where X is the active location’s Track value. If any of the discarded cards has On Track printed in the lower right corner, then the players flip the Search objective to On Track. If the encounter deck is ever empty while the players are resolving the Track keyword, shuffle the encounter discard pile into the encounter deck and continue resolving the Track keyword. When the Search objective is flipped from Off Track to On Track, discard all resources on it."
+      },
+      {
+        "title": "Valour",
+        "text": "Valour is a trigger that appears on some player cards in The Haradrim cycle. Actions and Responses with the Valour trigger, presented as “Valour Action” or “Valour Response,” can only be triggered by a player whose threat is 40 or higher. If an event card has two effects, one with the Valour trigger and one without, you may only choose one of these two effects to trigger when you play the card. You may still only choose the effect with the Valour trigger if your threat is 40 or higher."
+      }
+    ],
+    "resolution": [
+      "The heroes found their friends bound by giant webs to the walls of the spiders’ cavern lair, but there were others there too.",
+      "“Kahliel?” cried one. “My chief, is that you?”",
+      "Kahliel turned to see who it was that called his name. “Lorgan?” he exclaimed in astonishment.",
+      "“Yes! It’s me!” answered a Haradrim man bound with spider cords. “And Hadid is here too! Look Hadid, our chieftain has come to rescue us.”",
+      "“We thought you were dead,” said Hadid with wonder at seeing her chieftain alive, and in the spiders’ den.",
+      "“We thought the same of you. How did you come to be here?” Kahliel asked as he cut them loose.",
+      "“After the Orcs attacked the village, they took some of us captive,” answered Lorgan. “They put us in wagons and brought us to their tower in the Ephel Duath.”",
+      "“Cirith Gurat?” asked Kahliel.",
+      "“Yes,” said Lorgan. “They put us to work in the mines below the fortress, but we found a way out: a narrow passage that opened into the mountains. We climbed down and fled into the desert. The spiders must have captured us in our sleep because we woke up here.”",
+      "“Then there are others of our tribe still in Cirith Gurat?” asked Kahliel.",
+      "“Yes, my chief,” said Hadid. “Your son is there too.”",
+      "Kahliel froze. His heart dropped into his stomach. “Abaan?” he whispered, eyes wide with fear.",
+      "The Haradrim chieftain staggered out of the spider’s cavern and braced himself against the entrance. “My son is alive, and a captive of the Orcs,” he groaned and stared across the desert plain towards the Mountains of Shadow. Turning to face his companions, he continued: “I must rescue him.”",
+      "“Is this possible?” asked one of the heroes. “He is a captive of Cirith Gurat.”",
+      "“My chief, we do not have the strength to assault the fortress,” added Jubayr.",
+      "“I am his father!” Kahliel shouted, and the others were silent.",
+      "“I must at least try,” he stammered. “But the burden is mine alone. I do not ask any of you to come with me.”",
+      "“You shame me, Kahliel,” said Jubayr. “I only meant to say that we need a plan.”",
+      "“Quite right,” added the hero. “You rescued us from the desert and saved our lives. It is our duty to help you in your time of need, but we need a way into the fortress.”",
+      "“Can we not enter in through the opening Lorgan and Hadid used to escape?” asked Firyal.",
+      "“Perhaps,” answered the hero. “But the Orcs are certain to have noticed their escape by now, and their patrols will be doubled. If we are discovered, there will be no hope of rescue or escape,” he added thoughtfully.",
+      "“Then we must find another way in,” said Firyal, “but how?”",
+      "“We will enter through the front gate,” said Kahliel gazing into the distance again. This time his eyes were focused on a distant caravan coming up the Harad road. “The Black Serpent brings his tribute to Mordor as we speak. We will ambush his caravan, and march into Cirith Gurat under his banner.”",
+      "The story continues in “The Black Serpent,” the fourth Adventure Pack in “The Haradrim” cycle."
+    ]
+  },
+  "desert-crossing": {
+    "intro": [
+      "The Harad sun beat down upon the heroes as they trudged across the burning desert sands. After they escaped from the Southrons in Umbar, the companions fled into the desert. A desperate will to live had overtaken them, and they ran without thinking. Like hunted animals they fled deeper and deeper into the desert. Forgetting themselves and their weariness, the heroes ran and ran until at last their bodies collapsed from exhaustion. Months at sea, many fierce battles, and the shipwreck finally caught up with them, and the companions passed out on the sands as night deepened.",
+      "When morning came, the harsh light of the sun wakened the heroes from their sleep, and they dragged their aching bodies to their feet. All around them was a vast desert. Sand dunes rolled away in every direction, like an endless arid sea.",
+      "“Which way do we go?” asked the woman with the bow strapped to her back.",
+      "“East,” replied their leader as he sheltered his eyes against the sun rising in that direction.",
+      "“But our nearest ally lies to the north, in Gondor,” said another hero in surprise, “Should we not take the speediest way there?”",
+      "“The speediest way would be to the west and the sea, but our ship has sunk and the Southrons still wait for us there,” said the leader. “North lies our destination, yet uncounted miles of harsh desert lie between us and there, and we have not the means to make such a journey. Our only hope is to travel the Harad Road, which lies to the east and runs north to Ithilien.”",
+      "“Will not the Southrons seek us there as well?” asked the woman.",
+      "“The Southrons must believe that the desert will defeat us, or they would have pursued us during the night while we slept. They clearly do not expect us to reach the other side.”",
+      "“That may prove true enough,” said the third hero gruffly. “We have precious few supplies and little water.”",
+      "“Then we will have to find more and be careful with what we have,” answered the leader, and with that he shouldered his gear and began walking east. The others followed after him."
+    ],
+    "setup": [
+      "“Desert Crossing” is played with an encounter deck built with all the cards from the following encounter sets: Desert Crossing, Desert Creatures, and Desert Sands."
+    ],
+    "rules": [
+      {
+        "title": "Heat Tracker",
+        "text": "When setting up Desert Crossing, the players are instructed to “place the heat tracker next to the quest deck and set the temperature to 10.” To do this, take an unused threat tracker and place it next to the quest deck. For the rest of the game, that threat tracker is the heat tracker and the value it displays is the “temperature.” If the temperature reaches 60, the players lose the game."
+      }
+    ],
+    "resolution": [
+      "Crossing the Harad desert was a harrowing ordeal. In addition to the blistering sun and dangerous heat, the heroes were attacked by enormous were-worms. It took every last ounce of their strength to fight off the ferocious beasts.",
+      "The scaled forms of the desert worms slithered and struck at the companions, yet the heroes’ tenacity proved stronger and the creatures retreated back into the desert sands, leaving the heroes with barely enough energy to finish their journey.",
+      "When they finally reached the Harad Road, the party was so exhausted that they collapsed on its sandy embankment. As they lay there, on the edge of death, one of the heroes remarked bitterly, “What did we hope to find when we reached this road? There’s naught here but more sand.”",
+      "“The people of Gondor built this road at the height of their power, at a time when they held sway in Harad,” replied the leader in a weak voice, his lips blistered and cracked. “It is the only thing friendly to us in all this land.”",
+      "“Then I’m afraid we have no friends in Harad,” said the woman gravely. She pointed north with her finger and her arm trembled from the effort. “Look what the road brings to us.”",
+      "With great effort, the leader propped himself up and strained his eyes northward. A caravan of Haradrim was travelling south along the road, drawing nearer. When he realized what he saw, the hero’s arms failed and he fell to the ground.",
+      "“I have not the strength to fight, nor even to lift my sword,” he muttered in despair.",
+      "“None of us do,” replied the woman, slumping onto the ground.",
+      "“Then have we come all this way only to end here?” growled the third hero with impotent anger.",
+      "“What will they do with us?” asked the woman.",
+      "“Either kill us or take us captive. Perhaps to take as thralls to Mordor,” answered the leader with a raspy voice.",
+      "“An inglorious end to our long adventure together,” grumbled the third.",
+      "Nobody made a reply. The heroes were each too weak to speak anymore. There was nothing for them to do but wait for the Haradrim coming toward them."
+    ]
+  },
+  "escape-from-umbar": {
+    "intro": [
+      "The heroes stood atop the high sea-wall of Umbar looking down at the waves that crashed below. Their ship had been wrecked in the bay, and they survived by swimming to shore.",
+      "“Thus ends the voyage of the Dream-chaser and Lord Calphon’s quest,” said one of the heroes. Looking up towards the city he said, “Come! We must leave this place, and swiftly. All of Umbar will soon be astir.”",
+      "“Where can we go?” said another, his eyes still downcast. He leaned heavily on his battle-axe as he spoke, “Even if we escape the city, this land is a barren desert and we will find no help.”",
+      "The first hero, their leader, placed his hand on his friend’s shoulder and replied, “Then we must help each other.”",
+      "The downcast hero lifted his eyes to meet his leader’s and a fire was rekindled in his spirit. “Yes,” he said. “If these Southrons want our lives, they will pay a steep price.”",
+      "A bell rang from a high watchtower, and in the streets below it was echoed by the harsh shouts of Haradrim warriors.",
+      "“They are coming!” shouted a third hero. She bent her bow to fit a new string and said, “There are too many to fight. We must flee.”",
+      "“We will not escape this city without a fight,” said the leader grimly. “But let us speak no more of selling our lives. Let us find a way out of this trap!”",
+      "With that, the party lifted their weapons and started to run."
+    ],
+    "setup": [
+      "“Escape from Umbar” is played with an encounter deck built with all the cards from the following encounter sets: Escape from Umbar, Harad Soldiers, and Harad Territory."
+    ],
+    "resolution": [
+      "The people of Umbar were no friends to the West, and they chased the heroes through the streets. The companions ran like hunted animals. Arrows whistled past them and rattled off the stones they raced on. When they reached the city gate, the guards scattered in panic, so fierce were the heroes in their desperation to escape.",
+      "The harsh cries of the Haradrim chased them into the desert, yet their pursuers did not. Too weary and afraid to wonder at this, the heroes ran up and down the rolling dunes well into the night."
+    ]
+  },
+  "race-across-harad": {
+    "intro": [
+      "Riding atop an Oliphaunt was a new experience for the heroes. It almost reminded them of sailing. They swayed from side to side with each lumbering step of their mount like on the deck of a ship, and the dunes below them rolled into the horizon like the waves of the sea. Overhead, the stars shone bright and the white light of the moon illuminated the desert around them.",
+      "They traveled mostly by night and rested by day to avoid the heat. They were amazed at how docile these giant creatures were once Kahliel and his men had fitted them each with a harness. The Mûmak responded to the rider’s every command. It was so simple, that Kahliel insisted the heroes try it for themselves. Their attempts provided some amusement for Kahliel’s men, but after a short while the heroes were driving the Oliphaunts with confidence.",
+      "“Good,” said Kahliel clapping his hand on the hero’s back. “You drive well. Almost as good as my son,” he started to laugh, but it stuck in his throat and his voice trailed off.",
+      "The hero turned to look at him, but the chieftain would not meet his gaze. He stared into the distance, grief etched into his face. The hero chose not to say anything but turned his attention back to the task at hand. From his vantage point atop the Mûmak he had an impressive view of the desert. It seemed to go on forever. The ancient road beneath them stretched off into the distance where it was obscured in the darkness.",
+      "As the hero’s mind wandered over the endless sand, he felt the hairs on the back of his neck stand on end. He wasn’t sure what it was, but he turned around to see that Kahliel was also alert and looking behind them. Had he heard something? Then the sound came unmistakable: the eerie howl of a Warg. He couldn’t tell for certain what direction it came from; sound could travel for miles over this open ground.",
+      "The Warg’s cry was answered by another. The cry came from a different direction. Then, there was another louder howl. Nearer to them but still hidden from view. Soon the whole desert was alive with the sound of Wargs. Though he could not see them yet, the hero knew: they were being hunted.",
+      "Even from atop his towering Mûmak, the hero felt afraid. Out here in the shelterless desert, there was nowhere to hide. And where the Warg howls, there the Orc prowls. The hero gave the reigns a shake and urged his mount faster: it would be a race to the river Harnen."
+    ],
+    "setup": [
+      "“Race Across Harad” is played with an encounter deck built with all the cards from the following encounter sets: Race Across Harad, Desert Sands, and Mordor Orcs. (Desert Sands and Mordor Orcs can be found in The Sands of Harad deluxe expansion to The Lord of the Rings: The Card Game.)",
+      "The setup for this scenario instructs the players to “Prepare the Orcs’ area.” To prepare the Orcs’ area, the players must prepare a second quest deck consisting of stage 1C, stage 2C, stage 3C, and stage 4C, in that order. (The quest stages labeled stage 1A, 2A, 3A, and 4A are used in the player’s quest deck, as normal.)"
+    ],
+    "rules": [
+      {
+        "title": "Player Cards with Doomed X",
+        "text": "If a player card with the Doomed X keyword is played or put into play, each player must raise his threat level by the specified value."
+      },
+      {
+        "title": "The Orcs’ Area",
+        "text": "The Orcs’ area is a new play area, separate from the staging area, that represents the Orcs’ pursuit as they try to overtake the players on their journey through Harad. As the players advance through their quest deck, the Orcs also advance through their quest deck, attempting to reach the same stage as the players and defeat it before they do. The quest stage on top of the Orcs’ quest deck is called “the Orcs’ stage.” Each of these quest stages has the following text: “Forced: At the end of the quest phase, discard the top card of the encounter deck. Place X progress on this stage, where X is the discarded card’s threat plus the total threat in the Orcs’ area.” Every round, this effect causes the Orcs to make progress on their stage, just as the players try to make progress on their quest stage. If the Orcs’ quest stage has progress on it equal to or above its quest points, they advance to the next quest stage in the same way players would, first advancing to the “C” side of the next stage, resolving its effects, and then advancing to the “D” side."
+      },
+      {
+        "title": "The Orcs’ Area",
+        "text": "While the Orcs are at a different quest stage than the players, cards in the Orcs’ area are immune to player card effects, cannot leave the Orcs’ area, and are not considered to be in the staging area (and thus do not contribute their threat to the total threat in the staging area). Players are considered to be at “the same stage” as the Orcs if their main quest stage’s name and number match the Orcs’ quest stage (“2B-Racing North” and “2D-Racing North,” for example)."
+      },
+      {
+        "title": "The Orcs’ Area",
+        "text": "When the players and the Orcs are at the same quest stage, cards in the Orcs’ area are no longer immune to player card effects, can leave the Orcs’ area, and are considered to be in the staging area (and thus do contribute their threat to the total threat in the staging area). Thus, when the Orcs catch up to the players, the players can engage enemies in the Orcs’ area and travel to locations in the Orcs’ area."
+      }
+    ],
+    "resolution": [
+      "The Oliphaunts crossed the river with ease. The brown water of the River Harnen flowed around their giant legs and their riders stayed dry upon their backs. Angry shouts and howls pursued them from the southern shore. The Wargs paced to and fro along the edge of the water and Orcs shot arrows from recurved bows. The black-feathered arrows fell in the water around the heroes. A few stuck harmlessly in the thick hide of the Mûmakil.",
+      "And so the heroes crossed safely to the north side of the river and into the land of Harondor. The servants of Mordor on the further shore hated and feared the water and would not dare to swim. Instead, their pursuers would be forced to travel many miles to the Ford of Harnen. By the time the Wargs were able to pick up their trail again, the heroes would be far away.",
+      "But their journey was not yet finished. They had escaped the servants of Mordor that pursued them across Harad, but now they drew nearer to the Black Land itself. The heroes would have to travel many leagues within sight of the Mountains of Shadow in order to reach Gondor. Many foul creatures long ago descended from those dark heights to dwell in Harondor. At night they crawled out from dark pits to prey upon the unwary, and as the sky darkened around the heroes and their allies, hundreds of hungry eyes watched.",
+      "The story continues in “Beneath the Sands,” the third Adventure Pack in “The Haradrim” cycle."
+    ]
   }
 }

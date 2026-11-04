@@ -183,6 +183,12 @@ allAttachmentCards =
       , cirdansBlessingTactics
       , cirdansBlessingSpirit
       , cirdansBlessingLore
+      , dwarvenShield
+      , mirkwoodLongKnife
+      , theRoadGoesEverOn
+      , kahlielsHeaddress
+      , steedOfTheNorth
+      , mightyWarrior
       , haradrimSpear
       , firesideSong
       , doughtyRanger
@@ -1232,6 +1238,48 @@ ordersFromAngmar = restrictedBoon "AAC187" "Orders from Angmar" 0 [Item]
 
 raimentOfTheSecondAge :: CardDef
 raimentOfTheSecondAge = (restrictedBoon "AAC191" "Raiment of the Second Age" 3 [Armor, Weapon, Item]) {cdUnique = False}
+
+dwarvenShield :: CardDef
+dwarvenShield =
+  (attachment "16010" "Dwarven Shield" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mirkwoodLongKnife :: CardDef
+mirkwoodLongKnife =
+  (attachment "16011" "Mirkwood Long-knife" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+theRoadGoesEverOn :: CardDef
+theRoadGoesEverOn =
+  (attachment "16012" "The Road Goes Ever On" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    }
+
+kahlielsHeaddress :: CardDef
+kahlielsHeaddress =
+  (attachment "17010" "Kahliel's Headdress" Neutral (StaticCost 3))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+steedOfTheNorth :: CardDef
+steedOfTheNorth =
+  (attachment "17030" "Steed of the North" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mightyWarrior :: CardDef
+mightyWarrior =
+  (attachment "17031" "Mighty Warrior" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
 
 haradrimSpear :: CardDef
 haradrimSpear =

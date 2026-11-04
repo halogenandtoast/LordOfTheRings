@@ -414,6 +414,28 @@ allLocationCards =
       , gatesOfCarnDum
       , innerSanctum
       , cursedHalls
+      , toweringDunes
+      , desertOasis
+      , jungleTrail
+      , forestClearing
+      , denseJungle
+      , spiderBurrow
+      , pitchBlackTunnel
+      , nestOfVermin
+      , cobwebbedCavern
+      , blockedPassage
+      , burntSands
+      , scorchedHamada
+      , parchedWadi
+      , narrowAlleyway
+      , umbarStreet
+      , umbarSquare
+      , portOfHarad
+      , haradrimEstate
+      , riverHarnen
+      , expanseOfHarad
+      , blisteringErg
+      , haradRoad
       ]
 
 drownedTreasury :: CardDef
@@ -3169,5 +3191,134 @@ cursedHalls :: CardDef
 cursedHalls =
   (location "the-dread-realm-nightmare-the-dread-realm-005" "Cursed Halls" TheDreadRealmNightmare 3 3 5)
     { cdCardTraits = setFromList [CarnDum, Underground]
+    , cdShadowEffect = True
+    }
+
+-- * The Sands of Harad: the shared encounter sets (Desert Sands, Jungle Forest). Easy mode
+-- copy counts from Hall of Beorn's scenario pages.
+
+toweringDunes :: CardDef
+toweringDunes = (location "16049" "Towering Dunes" DesertSands 3 3 4) {cdCardTraits = setFromList [Desert], cdEasyModeQuantity = Just 2}
+
+desertOasis :: CardDef
+desertOasis = (location "16050" "Desert Oasis" DesertSands 2 2 2) {cdCardTraits = setFromList [Desert]}
+
+jungleTrail :: CardDef
+jungleTrail = (location "16056" "Jungle Trail" JungleForest 2 4 4) {cdCardTraits = setFromList [Forest], cdEasyModeQuantity = Just 1}
+
+forestClearing :: CardDef
+forestClearing =
+  (location "16057" "Forest Clearing" JungleForest 3 3 2)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+denseJungle :: CardDef
+denseJungle =
+  (location "16058" "Dense Jungle" JungleForest 3 2 3)
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+-- * Beneath the Sands
+
+spiderBurrow :: CardDef
+spiderBurrow = (location "17068" "Spider Burrow" BeneathTheSands 2 3 2) {cdCardTraits = setFromList [Underground]}
+
+-- | X threat, from its own modifiers. On Track printed in its lower right corner.
+pitchBlackTunnel :: CardDef
+pitchBlackTunnel =
+  (location "17069" "Pitch Black Tunnel" BeneathTheSands 2 0 5)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 4]
+    }
+
+-- | On Track printed in its lower right corner.
+nestOfVermin :: CardDef
+nestOfVermin =
+  (location "17070" "Nest of Vermin" BeneathTheSands 2 3 4)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 3]
+    }
+
+cobwebbedCavern :: CardDef
+cobwebbedCavern =
+  (location "17071" "Cobwebbed Cavern" BeneathTheSands 3 2 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 2]
+    , cdShadowEffect = True
+    }
+
+-- | On Track printed in its lower right corner.
+blockedPassage :: CardDef
+blockedPassage =
+  (location "17072" "Blocked Passage" BeneathTheSands 3 2 6)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 2]
+    , cdShadowEffect = True
+    }
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+burntSands :: CardDef
+burntSands = (location "16025" "Burnt Sands" DesertCrossing 4 2 3) {cdCardTraits = setFromList [Desert]}
+
+scorchedHamada :: CardDef
+scorchedHamada =
+  (location "16026" "Scorched Hamada" DesertCrossing 2 0 4)
+    { cdCardTraits = setFromList [Desert]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+parchedWadi :: CardDef
+parchedWadi = (location "16027" "Parched Wadi" DesertCrossing 2 3 3) {cdCardTraits = setFromList [Desert]}
+
+-- * Escape from Umbar. Easy mode copy counts from Hall of Beorn's scenario page.
+
+narrowAlleyway :: CardDef
+narrowAlleyway = (location "16016" "Narrow Alleyway" EscapeFromUmbar 2 2 2) {cdCardTraits = setFromList [City]}
+
+umbarStreet :: CardDef
+umbarStreet =
+  (location "16017" "Umbar Street" EscapeFromUmbar 2 3 3)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+umbarSquare :: CardDef
+umbarSquare = (location "16018" "Umbar Square" EscapeFromUmbar 3 2 3) {cdCardTraits = setFromList [City]}
+
+-- | Its threat is X, the number of engaged enemies.
+portOfHarad :: CardDef
+portOfHarad = (location "16019" "Port of Harad" EscapeFromUmbar 2 0 4) {cdCardTraits = setFromList [City]}
+
+haradrimEstate :: CardDef
+haradrimEstate = (location "16020" "Haradrim Estate" EscapeFromUmbar 2 3 1) {cdCardTraits = setFromList [City]}
+
+-- * Race Across Harad
+
+riverHarnen :: CardDef
+riverHarnen =
+  unique
+    (location "17039" "River Harnen" RaceAcrossHarad 1 4 10)
+      { cdCardTraits = setFromList [Desert, River]
+      , cdVictoryPoints = Just 4
+      }
+
+expanseOfHarad :: CardDef
+expanseOfHarad = (location "17040" "Expanse of Harad" RaceAcrossHarad 2 2 5) {cdCardTraits = setFromList [Desert]}
+
+blisteringErg :: CardDef
+blisteringErg = (location "17041" "Blistering Erg" RaceAcrossHarad 3 0 4) {cdCardTraits = setFromList [Desert]}
+
+haradRoad :: CardDef
+haradRoad =
+  (location "17042" "Harad Road" RaceAcrossHarad 2 5 5)
+    { cdCardTraits = setFromList [Desert, Road]
+    , cdWhenRevealed = True
     , cdShadowEffect = True
     }

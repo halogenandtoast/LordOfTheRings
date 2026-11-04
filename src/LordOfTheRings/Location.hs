@@ -397,6 +397,28 @@ import LordOfTheRings.Location.Cards.StrongholdTower
 import LordOfTheRings.Location.Cards.GatesOfCarnDum
 import LordOfTheRings.Location.Cards.InnerSanctum
 import LordOfTheRings.Location.Cards.CursedHalls
+import LordOfTheRings.Location.Cards.ToweringDunes
+import LordOfTheRings.Location.Cards.DesertOasis
+import LordOfTheRings.Location.Cards.JungleTrail
+import LordOfTheRings.Location.Cards.ForestClearing
+import LordOfTheRings.Location.Cards.DenseJungle
+import LordOfTheRings.Location.Cards.SpiderBurrow
+import LordOfTheRings.Location.Cards.PitchBlackTunnel
+import LordOfTheRings.Location.Cards.NestOfVermin
+import LordOfTheRings.Location.Cards.CobwebbedCavern
+import LordOfTheRings.Location.Cards.BlockedPassage
+import LordOfTheRings.Location.Cards.BurntSands
+import LordOfTheRings.Location.Cards.ScorchedHamada
+import LordOfTheRings.Location.Cards.ParchedWadi
+import LordOfTheRings.Location.Cards.NarrowAlleyway
+import LordOfTheRings.Location.Cards.UmbarStreet
+import LordOfTheRings.Location.Cards.UmbarSquare
+import LordOfTheRings.Location.Cards.PortOfHarad
+import LordOfTheRings.Location.Cards.HaradrimEstate
+import LordOfTheRings.Location.Cards.RiverHarnen
+import LordOfTheRings.Location.Cards.ExpanseOfHarad
+import LordOfTheRings.Location.Cards.BlisteringErg
+import LordOfTheRings.Location.Cards.HaradRoad
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -840,5 +862,27 @@ allLocations =
         , SomeLocationCard gatesOfCarnDum
         , SomeLocationCard innerSanctum
         , SomeLocationCard cursedHalls
+        , SomeLocationCard toweringDunes
+        , SomeLocationCard desertOasis
+        , SomeLocationCard jungleTrail
+        , SomeLocationCard forestClearing
+        , SomeLocationCard denseJungle
+        , SomeLocationCard spiderBurrow
+        , SomeLocationCard pitchBlackTunnel
+        , SomeLocationCard nestOfVermin
+        , SomeLocationCard cobwebbedCavern
+        , SomeLocationCard blockedPassage
+        , SomeLocationCard burntSands
+        , SomeLocationCard scorchedHamada
+        , SomeLocationCard parchedWadi
+        , SomeLocationCard narrowAlleyway
+        , SomeLocationCard umbarStreet
+        , SomeLocationCard umbarSquare
+        , SomeLocationCard portOfHarad
+        , SomeLocationCard haradrimEstate
+        , SomeLocationCard riverHarnen
+        , SomeLocationCard expanseOfHarad
+        , SomeLocationCard blisteringErg
+        , SomeLocationCard haradRoad
         ]
     ]

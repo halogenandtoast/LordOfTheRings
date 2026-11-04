@@ -12,7 +12,7 @@ import LordOfTheRings.Trait (Trait (Burden))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, keepWatch, rallyTheWest]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle, exploreSecretWays, keepWatch, rallyTheWest]
 
 scoutAhead :: CardDef
 scoutAhead =
@@ -48,6 +48,27 @@ sendForAid =
   (playerSideQuest "10086" "Send for Aid" Leadership (StaticCost 1) 6)
     { cdVictoryPoints = Just 1
     , cdDeckLimit = 1
+    }
+
+theStormComes :: CardDef
+theStormComes =
+  (playerSideQuest "16013" "The Storm Comes" Neutral (StaticCost 0) 5)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+prepareForBattle :: CardDef
+prepareForBattle =
+  (playerSideQuest "17003" "Prepare for Battle" Leadership (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+exploreSecretWays :: CardDef
+exploreSecretWays =
+  (playerSideQuest "17036" "Explore Secret Ways" Lore (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
     }
 
 keepWatch :: CardDef
@@ -284,6 +305,29 @@ allQuestCards =
       , rallyTheFighters
       , severTheHead
       , theWitchKingsGift
+      , southronChampion
+      , inEnemyTerritory
+      , findWater
+      , craftRemedy
+      , uruksOfTheEye
+      , lostUnderground
+      , searchingTheCaves
+      , gettingCloser
+      , theSpidersHive
+      , seekShade
+      , theDesertOfHarad
+      , underTheMercilessSun
+      , beastsOfLegend
+      , strandedInUmbar
+      , fleeTheCity
+      , settingOut
+      , racingNorth
+      , huntedInHarad
+      , theFordOfHarnen
+      , settingOutOrcs
+      , racingNorthOrcs
+      , huntedInHaradOrcs
+      , theFordOfHarnenOrcs
       ]
 
 theDrippingWalls :: CardDef
@@ -1132,3 +1176,104 @@ theWitchKingsGift =
   (encounterSideQuest "the-dread-realm-nightmare-the-dread-realm-009" "The Witch-king's Gift" TheDreadRealmNightmare 8)
     { cdKeywords = setFromList [Time 5]
     }
+
+-- * The Sands of Harad: the shared encounter sets' side quests
+
+southronChampion :: CardDef
+southronChampion =
+  (encounterSideQuest "16040" "Southron Champion" HaradSoldiers 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+inEnemyTerritory :: CardDef
+inEnemyTerritory =
+  (encounterSideQuest "16045" "In Enemy Territory" HaradTerritory 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+findWater :: CardDef
+findWater = (encounterSideQuest "16048" "Find Water" DesertSands 6) {cdVictoryPoints = Just 10}
+
+craftRemedy :: CardDef
+craftRemedy = (encounterSideQuest "16053" "Craft Remedy" DesertCreatures 6) {cdVictoryPoints = Just 10}
+
+uruksOfTheEye :: CardDef
+uruksOfTheEye =
+  (encounterSideQuest "16060" "Uruks of the Eye" MordorOrcs 5)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- * Beneath the Sands
+
+lostUnderground :: CardDef
+lostUnderground =
+  (encounterSideQuest "17075" "Lost Underground" BeneathTheSands 5)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+searchingTheCaves :: CardDef
+searchingTheCaves = quest "17076" "Searching the Caves" BeneathTheSands 1 5
+
+gettingCloser :: CardDef
+gettingCloser = quest "17077" "Getting Closer" BeneathTheSands 2 5
+
+theSpidersHive :: CardDef
+theSpidersHive = quest "17078" "The Spiders' Hive" BeneathTheSands 3 5
+
+-- * Desert Crossing (The Sands of Harad)
+
+seekShade :: CardDef
+seekShade =
+  (encounterSideQuest "16022" "Seek Shade" DesertCrossing 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+theDesertOfHarad :: CardDef
+theDesertOfHarad = quest "16068" "The Desert of Harad" DesertCrossing 1 8
+
+underTheMercilessSun :: CardDef
+underTheMercilessSun = quest "16069" "Under the Merciless Sun" DesertCrossing 2 14
+
+beastsOfLegend :: CardDef
+beastsOfLegend = quest "16070" "Beasts of Legend" DesertCrossing 3 16
+
+-- * Escape from Umbar
+
+strandedInUmbar :: CardDef
+strandedInUmbar = quest "16066" "Stranded in Umbar" EscapeFromUmbar 1 15
+
+fleeTheCity :: CardDef
+fleeTheCity = quest "16067" "Flee the City" EscapeFromUmbar 2 15
+
+-- * Race Across Harad
+
+-- | No quest points: its When Revealed effect advances to stage 2A.
+settingOut :: CardDef
+settingOut = quest "17047" "Setting Out" RaceAcrossHarad 1 0
+
+racingNorth :: CardDef
+racingNorth = quest "17048" "Racing North" RaceAcrossHarad 2 15
+
+huntedInHarad :: CardDef
+huntedInHarad = quest "17049" "Hunted in Harad" RaceAcrossHarad 3 20
+
+theFordOfHarnen :: CardDef
+theFordOfHarnen = quest "17050" "The Ford of Harnen" RaceAcrossHarad 4 20
+
+-- | The Orcs' quest deck, stages 1C to 4C: the scenario plays their text.
+settingOutOrcs :: CardDef
+settingOutOrcs = quest "17051" "Setting Out" RaceAcrossHarad 1 10
+
+racingNorthOrcs :: CardDef
+racingNorthOrcs = quest "17052" "Racing North" RaceAcrossHarad 2 15
+
+huntedInHaradOrcs :: CardDef
+huntedInHaradOrcs = quest "17053" "Hunted in Harad" RaceAcrossHarad 3 20
+
+theFordOfHarnenOrcs :: CardDef
+theFordOfHarnenOrcs = quest "17054" "The Ford of Harnen" RaceAcrossHarad 4 20

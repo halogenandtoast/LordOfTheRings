@@ -96,15 +96,19 @@ runPlayer msg player = case msg of
           [ Label (ikey "label.keepHand") []
           , Label (ikey "label.mulligan") [Mulligan player.id]
           ]
+      -- a card a hero's Setup put in hand stays there, as Thurindir's side quest (Caleb's
+      -- ruling: it is searched for before the setup hand, and kept through a mulligan)
       let (hand, deck) = splitAt startingHandSize player.deck
-      pure $ player & handL .~ hand & deckL .~ deck
+      pure $ player & handL <>~ hand & deckL .~ deck
     DiscardEventsFromHand pid | pid == player.id -> do
       let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
       pure $ player & handL .~ rest & discardL %~ (events <>)
     Mulligan pid | pid == player.id -> do
-      send $ ShuffleIntoDeck $ map (.id) player.hand
-      (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
-      pure $ player & handL .~ hand & deckL .~ deck
+      -- only the setup hand, the last cards in hand, goes back
+      let (kept, drawn) = splitAt (length player.hand - startingHandSize) player.hand
+      send $ ShuffleIntoDeck $ map (.id) drawn
+      (hand, deck) <- splitAt startingHandSize <$> shuffleM (drawn <> player.deck)
+      pure $ player & handL .~ kept <> hand & deckL .~ deck
     -- a raise opens a window before it, as Harbor Thug's Forced effect answers
     RaiseThreat pid n | pid == player.id, n > 0 -> do
       pushAll [CheckWindows [mkWhen $ ThreatRaised pid], DoRaiseThreat pid n]

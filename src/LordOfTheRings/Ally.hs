@@ -215,6 +215,14 @@ import LordOfTheRings.Ally.Cards.Calaerion
 import LordOfTheRings.Ally.Cards.Gavin
 import LordOfTheRings.Ally.Cards.Starla
 import LordOfTheRings.Ally.Cards.CaptiveVillager
+import LordOfTheRings.Ally.Cards.HalflingBounder
+import LordOfTheRings.Ally.Cards.VigilantDunadan
+import LordOfTheRings.Ally.Cards.AndrathGuardsman
+import LordOfTheRings.Ally.Cards.KahlielsTribesman
+import LordOfTheRings.Ally.Cards.DunedainPathfinder
+import LordOfTheRings.Ally.Cards.ErynGalenSettler
+import LordOfTheRings.Ally.Cards.StewardOfOrthanc
+import LordOfTheRings.Ally.Cards.TamedMumak
 import LordOfTheRings.Ally.Cards.RiderOfRohan
 import LordOfTheRings.Ally.Cards.DunedainLookout
 import LordOfTheRings.Ally.Cards.DefenderOfCairAndros
@@ -471,6 +479,14 @@ allAllies =
         , SomeAllyCard silverWingUpgraded
         , SomeAllyCard narelenyaUpgraded
         , SomeAllyCard captiveVillager
+        , SomeAllyCard halflingBounder
+        , SomeAllyCard vigilantDunadan
+        , SomeAllyCard andrathGuardsman
+        , SomeAllyCard kahlielsTribesman
+        , SomeAllyCard dunedainPathfinder
+        , SomeAllyCard erynGalenSettler
+        , SomeAllyCard stewardOfOrthanc
+        , SomeAllyCard tamedMumak
         , SomeAllyCard riderOfRohan
         , SomeAllyCard dunedainLookout
         , SomeAllyCard defenderOfCairAndros

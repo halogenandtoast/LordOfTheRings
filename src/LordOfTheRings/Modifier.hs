@@ -47,7 +47,8 @@ data ModifierType
     CannotAttack
   | -- | on a character: it does not exhaust, so cannot commit, attack or defend
     CannotExhaust
-  | CannotReady
+  | -- | on a character; on the game, no character readies, as Enfeebled reads
+    CannotReady
   | -- | on an enemy: characters with ranged may attack it in the staging area
     AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others
@@ -253,6 +254,8 @@ data ModifierType
     IgnoresDefenseWhenAttackingAlone
   | -- | on a player: an enemy engaged them this round
     EngagedAnEnemyThisRound
+  | -- | on an enemy: it engaged a player this round, as Nowhere to Hide's shadow reads
+    EngagedThisRound
   | -- | on a player: they played a copy of the card this phase
     PlayedThisPhase CardCode
   | -- | on a card: the card type its controller named
@@ -396,13 +399,17 @@ data ModifierType
   | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
     -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play. On
     -- an enemy there: it is not engaged, moved or discarded, as The Black Serpent reads;
-    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it
+    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it.
+    -- On a card in the Orcs' area, the same holds of that area (Race Across Harad)
     CannotLeaveStagingArea
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
     CannotGainResourcesFromPlayerCardEffects
   | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
     PlayedACardThisRound
+  | -- | on a player: he played a card of the type this round, from wherever, as The Storm
+    -- Comes reads "the first ally played by each player each round"
+    PlayedCardTypeThisRound CardType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int

@@ -247,6 +247,10 @@ matchLocation matcher location = case matcher of
     _ -> pure False
   LocationWithIdBelow lid -> pure $ location.id < lid
   UniqueLocation -> pure $ cdUnique (toCardDef location)
+  LocationWithActiveLocationTitle -> do
+    let title l = case cdName (toCardDef l) of Name t _ -> t
+    active <- getsGame (filter ((== ActiveLocation) . (.placement)) . toList . entitiesLocations . gameEntities)
+    pure $ any ((== title location) . title) active
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
@@ -283,6 +287,12 @@ titles es =
 -- | Whether the character is defending the attack being resolved.
 isDefending :: HasGame m => Target -> m Bool
 isDefending target = elem Defending . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+
+-- | The characters defending the enemy's attack, as "while attacking a character with less
+-- willpower" reads of Uruk Warg-Rider's.
+getDefendersAgainst :: HasGame m => EnemyId -> m [Target]
+getDefendersAgainst eid = getsGame \g ->
+  [t | (t, ms) <- Map.toList (gameModifiers g), any (\m -> m.modifierType == Defending && m.modifierSource == EnemyAttackSource eid) ms]
 
 -- | A printed trait, or one a modifier grants.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
@@ -739,6 +749,16 @@ getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . e
 getMainQuestProgress :: HasGame m => m Int
 getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
 
+-- | The card is in the victory display, as a player side quest's "while this quest is in
+-- the victory display" reads: built from its card there, it gives its modifiers.
+inVictoryDisplay :: HasGame m => CardId -> m Bool
+inVictoryDisplay cid = getsGame (any ((== cid) . (.id)) . (.victoryDisplay) . toAttrs . gameScenario)
+
+-- | The side quests in the victory display, as "X is the number of side quests in the
+-- victory display" reads.
+getSideQuestsInVictoryDisplay :: HasGame m => m Int
+getSideQuestsInVictoryDisplay = getsGame (length . filter (cardMatches sideQuestCard) . (.victoryDisplay) . toAttrs . gameScenario)
+
 -- | The objectives in play no hero has claimed: those in the staging area.
 unclaimedObjectives :: HasGame m => m Int
 unclaimedObjectives = getsGame (length . filter ((== StagingArea) . (.placement)) . toList . entitiesObjectives . gameEntities)
@@ -764,12 +784,6 @@ getCurrentSideQuest = do
 -- | The side quests in the staging area, the players' and the encounter deck's.
 getSideQuests :: HasGame m => m [Target]
 getSideQuests = getsGame (map toTarget . filter isSideQuest . toList . entitiesQuests . gameEntities)
-
--- | The side quests in the victory display, the players' and the encounter deck's, as "X
--- is the number of side quests in the victory display" reads.
-sideQuestsInVictoryDisplay :: HasGame m => m Int
-sideQuestsInVictoryDisplay =
-  getsGame (length . filter (isSideQuestType . (.cardType)) . (.victoryDisplay) . toAttrs . gameScenario)
 
 -- | The encounter side quests in play, as "if there are no encounter side quests in play"
 -- reads.
@@ -801,6 +815,10 @@ getEncounterDiscard :: HasGame m => m [EncounterCard]
 getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . gameScenario)
 
 -- | The top card of the encounter deck, if there is one.
+-- | The top N cards of the encounter deck, as "search the top 5 cards" reads.
+getTopOfEncounterDeckN :: HasGame m => Int -> m [EncounterCard]
+getTopOfEncounterDeckN n = getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
+
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)
 getTopOfEncounterDeck = getsGame (headMay . (.encounterDeck) . toAttrs . gameScenario)
 

@@ -13,6 +13,6 @@ rallyTheWest = quest RallyTheWest Cards.rallyTheWest
 
 -- | While this side quest is in the victory display, each hero gets +1 willpower.
 instance HasModifiersFor RallyTheWest where
-  getModifiersFor (RallyTheWest a) = when (questInVictoryDisplay a) do
+  getModifiersFor (RallyTheWest a) = whenM (inVictoryDisplay a.cardId) do
     heroes <- select AnyHero
     for_ heroes \h -> modified a h [WillpowerModifier 1]

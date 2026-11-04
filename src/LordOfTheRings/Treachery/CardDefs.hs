@@ -337,6 +337,21 @@ allTreacheryCards =
       , powerBeyondDeath
       , daechanarsCurse
       , allIsLost
+      , nowhereToHide
+      , injuredCompanion
+      , enfeebled
+      , sandstorm
+      , heatExhaustion
+      , overgrown
+      , fearOfMordor
+      , forcedOffTrackBeneathTheSands
+      , grabbedBySpiders
+      , mirage
+      , unbearableHeat
+      , scorchingSun
+      , enemyPursuit
+      , pursuersFromMordor
+      , howlingAtTheirHeels
       ]
 
 deepDeepDark :: CardDef
@@ -2173,3 +2188,72 @@ allIsLost =
     { cdCardTraits = setFromList [Sorcery]
     , cdShadowEffect = True
     }
+
+-- * The Sands of Harad: the shared encounter sets (Harad Soldiers, Harad Territory, Desert
+-- Sands, Jungle Forest, Mordor Orcs). Easy mode copy counts from Hall of Beorn's scenario
+-- pages.
+
+nowhereToHide :: CardDef
+nowhereToHide = (treachery "16044" "Nowhere to Hide" HaradSoldiers 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+injuredCompanion :: CardDef
+injuredCompanion = (treachery "16046" "Injured Companion" HaradTerritory 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+enfeebled :: CardDef
+enfeebled = (treachery "16047" "Enfeebled" HaradTerritory 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+sandstorm :: CardDef
+sandstorm =
+  (treachery "16051" "Sandstorm" DesertSands 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+heatExhaustion :: CardDef
+heatExhaustion = (treachery "16052" "Heat Exhaustion" DesertSands 2) {cdShadowEffect = True}
+
+overgrown :: CardDef
+overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFromList [Surge], cdEasyModeQuantity = Just 1}
+
+fearOfMordor :: CardDef
+fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Beneath the Sands
+
+forcedOffTrackBeneathTheSands :: CardDef
+forcedOffTrackBeneathTheSands = (treachery "17073" "Forced Off Track" BeneathTheSands 3) {cdShadowEffect = True}
+
+grabbedBySpiders :: CardDef
+grabbedBySpiders = (treachery "17074" "Grabbed by Spiders" BeneathTheSands 3) {cdKeywords = setFromList [Surge, Doomed 1]}
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+mirage :: CardDef
+mirage = (treachery "16028" "Mirage" DesertCrossing 2) {cdCardTraits = setFromList [Weather]}
+
+unbearableHeat :: CardDef
+unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+
+scorchingSun :: CardDef
+scorchingSun =
+  (treachery "16030" "Scorching Sun" DesertCrossing 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Escape from Umbar
+
+enemyPursuit :: CardDef
+enemyPursuit = (treachery "16021" "Enemy Pursuit" EscapeFromUmbar 2) {cdShadowEffect = True}
+
+-- * Race Across Harad
+
+pursuersFromMordor :: CardDef
+pursuersFromMordor = (treachery "17045" "Pursuers from Mordor" RaceAcrossHarad 2) {cdKeywords = setFromList [Doomed 2], cdShadowEffect = True}
+
+howlingAtTheirHeels :: CardDef
+howlingAtTheirHeels = (treachery "17046" "Howling at their Heels" RaceAcrossHarad 3) {cdShadowEffect = True}

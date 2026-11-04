@@ -113,6 +113,7 @@ mkYesod
   /games/#LotrGameId/export ExportR GET
   /games/#LotrGameId/file-bug BugR POST
   /spectatable SpectatableR GET
+  /stats StatsR GET
   /admin AdminR GET
   /import ImportR POST
   /cards CardsR GET
@@ -600,6 +601,8 @@ data NewGame = NewGame
   , easyMode :: Maybe Bool
   , nightmare :: Maybe Bool
   -- ^ only for a scenario with a Nightmare Deck, and never with easy mode
+  , publicScoring :: Maybe Bool
+  -- ^ counted toward everyone's statistics, as it is unless turned off; never with a seed
   }
   deriving stock Generic
   deriving anyclass FromJSON
@@ -725,7 +728,8 @@ postGamesR = do
   when (seatCount < max 1 (length deckLists) || seatCount > 4)
     $ sendResponseStatus status400 (ikey "error.seatCount")
   now <- liftIO getCurrentTime
-  let newGame' g queue gen =
+  let public = fromMaybe True new.publicScoring && isNothing new.seed
+      newGame' g queue gen =
         LotrGame
           { lotrGameUserId = userId
           , lotrGameName = new.name
@@ -742,6 +746,10 @@ postGamesR = do
           , lotrGameNightmare = nightmare
           , lotrGameCampaignId = Nothing
           , lotrGameSeats = seatCount
+          , -- a seed given knows the decks' order
+            lotrGamePublicScoring = public
+          , lotrGameCountsPublicly = public
+          , lotrGameRevealedStep = 0
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
@@ -752,8 +760,10 @@ postGamesR = do
           . startGame scenario (gameMode easyMode nightmare) (soloSeats playerName $ fromMaybe starterDeck <$> dealt)
           =<< maybe (liftIO randomIO) pure new.seed
       runDB do
-        gid <- insert $ newGame' (toJSON g) (toJSON queue) gen
+        let row = newGame' (toJSON g) (toJSON queue) gen
+        gid <- insert row
         void $ storeLog gid (-1) now said
+        recordStart gid row (fromMaybe starterDeck <$> dealt) now
         pure gid
     _ ->
       -- dealt once the rest of the seats are taken
@@ -827,6 +837,7 @@ deal gid row players' = do
     deleteWhere [LotrStepGameId ==. gid]
     clearLog gid
     void $ storeLog gid (-1) now said
+    recordStart gid row (snd <$> players) now
     (,)
       <$> updateGet
         gid
@@ -834,6 +845,9 @@ deal gid row players' = do
         , LotrGameCurrentQueue =. toJSON queue
         , LotrGameRandomGen =. showGen gen
         , LotrGameStep =. 0
+        , -- a new deal counts again, as the game was made to
+          LotrGameCountsPublicly =. row.lotrGamePublicScoring
+        , LotrGameRevealedStep =. 0
         , LotrGameUpdatedAt =. now
         ]
       <*> logTail gid
@@ -877,6 +891,64 @@ getSpectatableR = do
         ((LotrGameAllowSpectators ==. True) : maybe [] (\u -> [LotrGameUserId !=. u]) userId)
         [Desc LotrGameUpdatedAt, LimitTo 50]
   pure $ toJSON $ filter (isNothing . (.outcome)) games
+
+-- | How the plays of a scenario went: how many were dealt, won and lost, the scores of
+-- the victories, and the rounds of the games that ended.
+data StatLine = StatLine {started :: Int, won :: Int, lost :: Int, score :: Maybe Spread, rounds :: Maybe Spread}
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+data Spread = Spread {lowest :: Int, highest :: Int, average :: Double}
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+data ScenarioStats = ScenarioStats
+  { scenario :: Text
+  , name :: Text
+  , mode :: Text
+  , total :: StatLine
+  , decks :: [DeckStats]
+  -- ^ the same, for each set of heroes the scenario was played with
+  }
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+data DeckStats = DeckStats {heroes :: [CardCode], stats :: StatLine}
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+{- | Statistics of every play of each scenario at each difficulty, or with @?mine@ only
+the signed-in user's.
+-}
+getStatsR :: Handler Value
+getStatsR = do
+  mine <- isJust <$> lookupGetParam "mine"
+  owner <- if mine then Just <$> requireUserId else pure Nothing
+  plays <- map entityVal <$> runDB (selectList (maybe [LotrPlayPublic ==. True] (\u -> [LotrPlayUserId ==. u]) owner) [])
+  pure
+    $ toJSON
+      [ ScenarioStats sid (maybe sid (scenarioName . toAttrs) $ lookupScenario (ScenarioId sid)) mode (statLine ps)
+          $ map (uncurry DeckStats . fmap statLine) (groupOn heroesOf ps)
+      | ((sid, mode), ps) <- groupOn (\p -> (p.lotrPlayScenario, p.lotrPlayMode)) plays
+      ]
+ where
+  groupOn :: Ord k => (LotrPlay -> k) -> [LotrPlay] -> [(k, [LotrPlay])]
+  groupOn f ps = Map.toList $ Map.fromListWith (flip (<>)) [(f p, [p]) | p <- ps]
+  heroesOf p = case fromJSON @[DeckList] p.lotrPlayDecks of
+    Success ds -> sort $ concatMap (.heroes) ds
+    Error _ -> []
+  statLine ps =
+    StatLine
+      { started = length ps
+      , won = outcomes "Won"
+      , lost = outcomes "Lost"
+      , score = spread $ mapMaybe (.lotrPlayScore) ps
+      , rounds = spread $ mapMaybe (.lotrPlayRounds) ps
+      }
+   where
+    outcomes o = length $ filter ((== Just o) . (.lotrPlayOutcome)) ps
+  spread [] = Nothing
+  spread xs = Just $ Spread (minimumEx xs) (maximumEx xs) (fromIntegral (sum xs) / fromIntegral (length xs))
 
 data AdminDashboard = AdminDashboard
   { users :: Int
@@ -940,6 +1012,7 @@ postDebugR :: LotrGameId -> Handler ()
 postDebugR gid = do
   row <- requireOwnedGame gid
   msg <- requireCheckJsonBody @_ @Message
+  leavingPublicScoring gid row True
   advance gid row \_ -> pure $ runDebug msg
 
 -- | Play a stored game on from where it stands, keeping the move as an undoable step.
@@ -965,17 +1038,63 @@ advance gid row prepare = do
         , lotrStepPhase = tshow before.phase
         , lotrStepCreatedAt = now
         }
+    when (before.outcome /= after.outcome) $ recordOutcome gid after now
     updateGet
       gid
       [ LotrGameCurrentData =. toJSON after
       , LotrGameCurrentQueue =. toJSON queue'
       , LotrGameRandomGen =. showGen gen'
       , LotrGameStep =. step
+      , LotrGameRevealedStep =. if revealsInformation before after then step else row.lotrGameRevealedStep
       , LotrGameUpdatedAt =. now
       ]
       <&> (,stored)
   publish gid row' after.playerOrder stored
   broadcast gid row' (Just after) Nothing
+
+{- | Before a debug message or an undo past something revealed, which take the deal out of
+everyone's statistics: unless the request says @?confirm@, refuse it so the players are
+warned first. Once out, the deal stays out and nothing asks again.
+-}
+leavingPublicScoring :: LotrGameId -> LotrGame -> Bool -> Handler ()
+leavingPublicScoring gid row disqualifies = when (row.lotrGameCountsPublicly && disqualifies) do
+  confirmed <- isJust <$> lookupGetParam "confirm"
+  unless confirmed $ sendResponseStatus status409 ("leaves public scoring" :: Text)
+  runDB do
+    update gid [LotrGameCountsPublicly =. False]
+    selectFirst [LotrPlayGameId ==. Just gid] [Desc LotrPlayStartedAt] >>= traverse_ \(Entity pid _) ->
+      update pid [LotrPlayPublic =. False]
+
+-- | Count a deal of the game as a play, with the decks it was dealt.
+recordStart :: MonadIO m => LotrGameId -> LotrGame -> NonEmpty DeckList -> UTCTime -> ReaderT SqlBackend m ()
+recordStart gid row decks now =
+  insert_
+    LotrPlay
+      { lotrPlayGameId = Just gid
+      , lotrPlayUserId = row.lotrGameUserId
+      , lotrPlayScenario = row.lotrGameScenario
+      , lotrPlayMode = tshow $ gameMode row.lotrGameEasyMode row.lotrGameNightmare
+      , lotrPlayCampaign = isJust row.lotrGameCampaignId
+      , lotrPlayPublic = row.lotrGamePublicScoring
+      , lotrPlayDecks = toJSON decks
+      , lotrPlayOutcome = Nothing
+      , lotrPlayScore = Nothing
+      , lotrPlayRounds = Nothing
+      , lotrPlayStartedAt = now
+      , lotrPlayEndedAt = Nothing
+      }
+
+-- | Put how the game ended on its latest deal's play, or take it off when it has not.
+recordOutcome :: MonadIO m => LotrGameId -> Game -> UTCTime -> ReaderT SqlBackend m ()
+recordOutcome gid g now =
+  selectFirst [LotrPlayGameId ==. Just gid] [Desc LotrPlayStartedAt] >>= traverse_ \(Entity pid _) ->
+    update
+      pid
+      [ LotrPlayOutcome =. tshow <$> g.outcome
+      , LotrPlayScore =. (groupScore g).total <$ guard (g.outcome == Just Won)
+      , LotrPlayRounds =. g.round <$ g.outcome
+      , LotrPlayEndedAt =. now <$ g.outcome
+      ]
 
 deleteGameR :: LotrGameId -> Handler ()
 deleteGameR gid = requireOwnedGame gid >> runDB (delete gid)
@@ -1083,9 +1202,11 @@ postUndoR gid = do
     g <- decodeOrFail "game" previous
     now <- liftIO getCurrentTime
     let step = row.lotrGameStep - length undone
+    leavingPublicScoring gid row (step < row.lotrGameRevealedStep)
     (row', entries) <- runDB do
       deleteWhere [LotrStepId <-. map entityKey undone]
       trimLog gid step
+      recordOutcome gid g now
       (,)
         <$> updateGet
           gid
@@ -1224,6 +1345,9 @@ postImportR = do
           , lotrGameNightmare = (toAttrs imported.scenario).nightmare
           , lotrGameCampaignId = Nothing
           , lotrGameSeats = length imported.playerOrder
+          , lotrGamePublicScoring = False
+          , lotrGameCountsPublicly = False
+          , lotrGameRevealedStep = 0
           , lotrGameCreatedAt = now
           , lotrGameUpdatedAt = now
           }
@@ -1300,13 +1424,14 @@ data NewCampaign = NewCampaign
   , allowSpectators :: Maybe Bool
   , easyMode :: Maybe Bool
   , nightmare :: Maybe Bool
+  , publicScoring :: Maybe Bool
   }
   deriving stock Generic
   deriving anyclass FromJSON
 
 -- | A scenario of the campaign, its game waiting in the lobby for its seats.
-campaignGame :: UserId -> Text -> LotrCampaignId -> Text -> ScenarioId -> Int -> Bool -> Bool -> Bool -> UTCTime -> LotrGame
-campaignGame userId playerName cid campaignName sid seatCount spectators easy nightmare now =
+campaignGame :: UserId -> Text -> LotrCampaignId -> Text -> ScenarioId -> Int -> Bool -> Bool -> Bool -> Bool -> UTCTime -> LotrGame
+campaignGame userId playerName cid campaignName sid seatCount spectators easy nightmare public now =
   LotrGame
     { lotrGameUserId = userId
     , lotrGameName = campaignName <> ": " <> maybe sid.unScenarioId (scenarioName . toAttrs) (lookupScenario sid)
@@ -1323,6 +1448,9 @@ campaignGame userId playerName cid campaignName sid seatCount spectators easy ni
     , lotrGameEasyMode = easy
     , lotrGameNightmare = nightmare
     , lotrGameCampaignId = Just cid
+    , lotrGamePublicScoring = public
+    , lotrGameCountsPublicly = public
+    , lotrGameRevealedStep = 0
     , lotrGameCreatedAt = now
     , lotrGameUpdatedAt = now
     }
@@ -1345,8 +1473,9 @@ postCampaignsR = do
     $ sendResponseStatus status400 (ikey "error.noNightmareMode")
   now <- liftIO getCurrentTime
   (cid, gid) <- runDB do
-    cid <- insert $ LotrCampaign userId new.name (toJSON l) now now
-    gid <- insert $ campaignGame userId user.userUsername cid new.name sid seatCount (fromMaybe False new.allowSpectators) easy nightmare now
+    let public = fromMaybe True new.publicScoring
+    cid <- insert $ LotrCampaign userId new.name (toJSON l) public now now
+    gid <- insert $ campaignGame userId user.userUsername cid new.name sid seatCount (fromMaybe False new.allowSpectators) easy nightmare public now
     pure (cid, gid)
   pure $ object ["id" .= gid, "campaignId" .= cid]
 
@@ -1460,7 +1589,7 @@ postCampaignNextR cid = do
   now <- liftIO getCurrentTime
   gid <- runDB do
     update cid [LotrCampaignLog =. toJSON l, LotrCampaignUpdatedAt =. now]
-    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode row.lotrGameNightmare now
+    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode row.lotrGameNightmare campaign.lotrCampaignPublicScoring now
   pure $ object ["id" .= gid]
 
 newtype SpendXp = SpendXp {card :: CardCode}

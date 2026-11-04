@@ -220,6 +220,28 @@ import LordOfTheRings.Quest.Cards.ProtectTheFlanks
 import LordOfTheRings.Quest.Cards.RallyTheFighters
 import LordOfTheRings.Quest.Cards.SeverTheHead
 import LordOfTheRings.Quest.Cards.TheWitchKingsGift
+import LordOfTheRings.Quest.Cards.SouthronChampion
+import LordOfTheRings.Quest.Cards.InEnemyTerritory
+import LordOfTheRings.Quest.Cards.FindWater
+import LordOfTheRings.Quest.Cards.CraftRemedy
+import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.TheStormComes
+import LordOfTheRings.Quest.Cards.PrepareForBattle
+import LordOfTheRings.Quest.Cards.ExploreSecretWays
+import LordOfTheRings.Quest.Cards.LostUnderground
+import LordOfTheRings.Quest.Cards.SearchingTheCaves
+import LordOfTheRings.Quest.Cards.GettingCloser
+import LordOfTheRings.Quest.Cards.TheSpidersHive
+import LordOfTheRings.Quest.Cards.SeekShade
+import LordOfTheRings.Quest.Cards.TheDesertOfHarad
+import LordOfTheRings.Quest.Cards.UnderTheMercilessSun
+import LordOfTheRings.Quest.Cards.BeastsOfLegend
+import LordOfTheRings.Quest.Cards.StrandedInUmbar
+import LordOfTheRings.Quest.Cards.FleeTheCity
+import LordOfTheRings.Quest.Cards.SettingOut
+import LordOfTheRings.Quest.Cards.RacingNorth
+import LordOfTheRings.Quest.Cards.HuntedInHarad
+import LordOfTheRings.Quest.Cards.TheFordOfHarnen
 import LordOfTheRings.Quest.Cards.KeepWatch
 import LordOfTheRings.Quest.Cards.RallyTheWest
 import LordOfTheRings.Quest.Runner ()
@@ -321,6 +343,9 @@ allQuests =
         , SomeQuestCard delayTheEnemy
         , SomeQuestCard sendForAid
         , SomeQuestCard scoutAhead
+        , SomeQuestCard exploreSecretWays
+        , SomeQuestCard prepareForBattle
+        , SomeQuestCard theStormComes
         , SomeQuestCard theDefense
         , SomeQuestCard reinforcingTheBanks
         , SomeQuestCard breakthroughAtTheApproach
@@ -474,6 +499,25 @@ allQuests =
         , SomeQuestCard rallyTheFighters
         , SomeQuestCard severTheHead
         , SomeQuestCard theWitchKingsGift
+        , SomeQuestCard southronChampion
+        , SomeQuestCard inEnemyTerritory
+        , SomeQuestCard findWater
+        , SomeQuestCard craftRemedy
+        , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard lostUnderground
+        , SomeQuestCard searchingTheCaves
+        , SomeQuestCard gettingCloser
+        , SomeQuestCard theSpidersHive
+        , SomeQuestCard seekShade
+        , SomeQuestCard theDesertOfHarad
+        , SomeQuestCard underTheMercilessSun
+        , SomeQuestCard beastsOfLegend
+        , SomeQuestCard strandedInUmbar
+        , SomeQuestCard fleeTheCity
+        , SomeQuestCard settingOut
+        , SomeQuestCard racingNorth
+        , SomeQuestCard huntedInHarad
+        , SomeQuestCard theFordOfHarnen
         , SomeQuestCard keepWatch
         , SomeQuestCard rallyTheWest
         ]

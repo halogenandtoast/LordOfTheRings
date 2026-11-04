@@ -107,6 +107,10 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , offTrack
+      , onTrack
+      , seizeThem
+      , tamedMumak
       ]
 
 durinsAxe :: CardDef
@@ -718,4 +722,29 @@ theCabalsChampion =
   (objective "the-stewards-fear-nightmare-the-stewards-fear-010" "The Cabal's Champion" TheStewardsFearNightmare 3)
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+-- * Beneath the Sands
+
+-- | The Search objective, Off Track faceup as it is set up: one card, On Track on its other
+-- side, the side faceup kept as its card code.
+offTrack :: CardDef
+offTrack = (objective "17079" "Off Track" BeneathTheSands 1) {cdCardTraits = setFromList [SearchTrait]}
+
+-- | The Search objective's other side: no copy of it is gathered, Off Track turns into it.
+onTrack :: CardDef
+onTrack = (objective "17080" "On Track" BeneathTheSands 0) {cdCardTraits = setFromList [SearchTrait]}
+
+-- * Escape from Umbar
+
+seizeThem :: CardDef
+seizeThem = objective "16014" "Seize Them!" EscapeFromUmbar 1
+
+-- * Race Across Harad
+
+tamedMumak :: CardDef
+tamedMumak =
+  ((objective "17038" "Tamed Mumak" RaceAcrossHarad 4)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 5, cdDefense = Just 2, cdHitPoints = Just 8 })
+    { cdCardTraits = setFromList [Creature]
     }

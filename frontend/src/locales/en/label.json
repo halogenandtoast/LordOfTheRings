@@ -547,6 +547,7 @@
   "chooseEnemy": "Choose an enemy",
   "returnFromDiscard": "Choose a card to return from your discard pile to your hand",
   "chooseHeroToReady": "Choose a hero to ready",
+  "chooseLocation": "Choose a location",
   "chooseEnemyToAttack": "Choose an enemy to attack",
   "treebeard": {
     "ready": "Ready an Ent character"
@@ -2204,6 +2205,92 @@
     "parryingCutlass": "Parrying Cutlass",
     "throwingAxe": "Throwing Axe",
     "attachTo": "Campaign: choose the hero to attach it to"
+  },
+  "southronSoldier": {
+    "choose": "Southron Soldier: choose one",
+    "attack": "Southron Soldier makes an immediate attack",
+    "engage": "Southron Soldier: choose an enemy in the staging area to engage and deal a shadow card"
+  },
+  "southronArcher": {
+    "choose": "Southron Archer: choose one",
+    "discardAlly": "Discard an ally you control",
+    "ally": "Southron Archer: choose an ally to discard"
+  },
+  "injuredCompanion": {
+    "choose": "Injured Companion: choose one",
+    "raiseThreat": "Raise your threat by {n}, 1 for each character you control",
+    "discard": "Discard a character you control",
+    "character": "Injured Companion: choose a character to discard"
+  },
+  "findWater": {
+    "ready": "Find Water: choose a hero to ready"
+  },
+  "desertOasis": {
+    "heal": "Desert Oasis: heal 1 damage from a character ({count} left)"
+  },
+  "sandstorm": {
+    "choose": "Sandstorm: choose one",
+    "discardHand": "Discard your hand",
+    "damage": "Assign {n} damage among characters you control",
+    "discardAttachment": "Discard the highest cost attachment you control",
+    "attachment": "Sandstorm: choose the attachment to discard"
+  },
+  "heatExhaustion": {
+    "exhaust": "Heat Exhaustion: choose a character to exhaust and deal 1 damage to"
+  },
+  "overgrown": {
+    "attach": "Overgrown: choose the location to attach it to"
+  },
+  "urukChieftain": {
+    "engage": "Uruk Chieftain: choose the player it engages"
+  },
+  "mordorWarg": {
+    "attach": "Mordor Warg: choose the Orc enemy to attach it to"
+  },
+  "offTrack": {
+    "choose": "Off Track: return the topmost location in the encounter discard pile to the staging area, or raise each player's threat",
+    "raiseThreat": "Raise each player's threat by 1 for each resource on Off Track"
+  },
+  "onTrack": {
+    "add": "On Track: choose the card with On Track to add to the staging area"
+  },
+  "forcedOffTrack": {
+    "choose": "Forced Off Track: flip the Search objective to Off Track, or deal 1 damage to each questing character",
+    "flip": "Flip the Search objective to Off Track",
+    "damage": "Deal 1 damage to each questing character"
+  },
+  "carrionBird": {
+    "discard": "Carrion Bird: choose a damaged character you control to discard"
+  },
+  "scorchingSun": {
+    "choose": "Scorching Sun: choose one",
+    "temperature": "Raise the temperature by 2",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "theDesertOfHarad": {
+    "choose": "The Desert of Harad: exhaust the ally or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
+  },
+  "umbarSentry": {
+    "choose": "Umbar Sentry: choose one",
+    "attack": "Umbar Sentry gets +2 attack for this attack"
+  },
+  "narrowAlleyway": {
+    "choose": "Narrow Alleyway: choose a non-unique engaged enemy to place under it"
+  },
+  "enemyPursuit": {
+    "choose": "Enemy Pursuit: choose one",
+    "removeProgress": "Remove all progress from the main quest",
+    "damage": "Assign 1 damage among characters in play for each progress on the main quest"
+  },
+  "racingNorth": {
+    "choose": "Racing North: choose where Uruk Warg-rider goes",
+    "staging": "The staging area",
+    "orcsArea": "The Orcs' area"
+  },
+  "racingWarg": {
+    "attach": "Racing Warg: choose the Orc enemy to attach it to"
   },
   "huntingParty": {
     "discard": "Hunting Party: discard a non-unique enemy in the staging area"

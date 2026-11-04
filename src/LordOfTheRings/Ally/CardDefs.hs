@@ -193,6 +193,13 @@ allAllyCards =
       , sulien
       , guardianOfIthilien
       , starla
+      , halflingBounder
+      , vigilantDunadan
+      , andrathGuardsman
+      , kahlielsTribesman
+      , dunedainPathfinder
+      , erynGalenSettler
+      , stewardOfOrthanc
       , riderOfRohan
       , dunedainLookout
       , defenderOfCairAndros
@@ -1354,6 +1361,48 @@ elrondsChampion = (ally "AAC189" "Elrond's Champion" Neutral (StaticCost 3) 2 3 
 
 rivendellSkirmishers :: CardDef
 rivendellSkirmishers = (ally "AAC192" "Rivendell Skirmishers" Neutral (StaticCost 3) 2 2 3 3) {cdCardTraits = setFromList [Noldor, Warrior, Boon]}
+
+halflingBounder :: CardDef
+halflingBounder =
+  (ally "16005" "Halfling Bounder" Lore (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+vigilantDunadan :: CardDef
+vigilantDunadan =
+  (ally "16006" "Vigilant Dúnadan" Tactics (StaticCost 4) 1 3 2 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+andrathGuardsman :: CardDef
+andrathGuardsman =
+  (ally "17002" "Andrath Guardsman" Leadership (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+
+kahlielsTribesman :: CardDef
+kahlielsTribesman =
+  (ally "17029" "Kahliel's Tribesman" Leadership (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Harad]
+    }
+
+dunedainPathfinder :: CardDef
+dunedainPathfinder =
+  (ally "17033" "Dúnedain Pathfinder" Spirit (StaticCost 0) 2 1 0 2)
+    { cdCardTraits = setFromList [Dunedain, Scout]
+    }
+
+erynGalenSettler :: CardDef
+erynGalenSettler =
+  (ally "17035" "Eryn Galen Settler" Lore (StaticCost 2) 1 2 0 2)
+    { cdCardTraits = setFromList [Woodman]
+    }
+
+stewardOfOrthanc :: CardDef
+stewardOfOrthanc =
+  (ally "17037" "Steward of Orthanc" Neutral (StaticCost 3) 2 0 0 2)
+    { cdCardTraits = setFromList [Isengard]
+    }
 
 riderOfRohan :: CardDef
 riderOfRohan =
