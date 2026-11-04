@@ -40,7 +40,8 @@ import LordOfTheRings.Location hiding (location)
 import LordOfTheRings.Location.Grid (adjacentPositions)
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Narrator
-import LordOfTheRings.Log.Refs (sendLogInOpenBlock)
+import LordOfTheRings.Log.Refs (findCard, sendLogInOpenBlock)
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
@@ -877,10 +878,24 @@ runGameMessage msg g = case msg of
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
     mods <- getModifiers target
-    let from = case source of
-          ObjectiveSource oid -> toCardCode <$> Map.lookup oid g.entities.objectives
+    -- a card is named by its title (rules reference), so "other than Athelas" spares the
+    -- player attachment Athelas too
+    let es = g.entities
+        sourceCode = \case
+          AbilitySource s _ -> sourceCode s
+          HeroSource i -> toCardCode <$> Map.lookup i es.heroes
+          AllySource i -> toCardCode <$> Map.lookup i es.allies
+          AttachmentSource i -> toCardCode <$> Map.lookup i es.attachments
+          ObjectiveSource i -> toCardCode <$> Map.lookup i es.objectives
+          LocationSource i -> toCardCode <$> Map.lookup i es.locations
+          TreacherySource i -> toCardCode <$> Map.lookup i es.treacheries
+          QuestSource i -> toCardCode <$> Map.lookup i es.quests
+          CardIdSource cid -> toCardCode <$> findCard cid g
+          CardCodeSource code -> Just code
           _ -> Nothing
-        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= Just code]
+        title code = (\(Name t _) -> t) . cdName <$> lookupCardDef code
+        from = title =<< sourceCode source
+        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= title code]
     when (healed > 0 && CannotBeHealed `notElem` mods)
       $ pushAll [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
     pure g
