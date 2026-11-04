@@ -13,7 +13,7 @@ import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Matcher (AllyMatcher (AllyWithTitle), EnemyMatcher (AnyEnemy), dwarfCount, getEnemyDefense, select, selectAny)
 import LordOfTheRings.Modifier (ModifierType (StagingStepBegun))
 import LordOfTheRings.Outcome (Outcome (Lost))
-import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase, QuestPhase, ResourcePhase))
+import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase, QuestPhase, RefreshPhase, ResourcePhase))
 import LordOfTheRings.Sphere (Sphere (Spirit))
 import TestImport
 
@@ -200,6 +200,40 @@ spec = describe "The Hobbit player cards" do
       run $ EndPhase PlanningPhase
       selectAny (AllyWithTitle "Dwalin") `shouldReturn` False
       fmap (.id) . lastMay . (.deck) <$> getPlayer pid `shouldReturn` Just dwalin.id
+
+  describe "Balin" do
+    it "pays a resource to cancel a shadow effect, and the enemy is dealt another" . gameTestWith (with [Heroes.balin]) $ \pid -> do
+      balin <- hero (code Heroes.balin)
+      give (code Heroes.balin) 1
+      eid <- stagedEnemy Enemies.blackForestBats
+      run $ EngageEnemy pid eid
+      _ <- setEncounterDeck [Enemies.dolGuldurOrcs, Enemies.forestSpider]
+      run $ DealShadowCard eid
+      run $ DefendWith pid eid balin
+      passActions pid
+      chooseAbilityOf pid balin
+      passActions pid
+      resources (code Heroes.balin) `shouldReturn` 0
+      -- the enemy holds both shadow cards, the second dealt as the first was canceled
+      getsGame (maybe [] (map toCardCode . enemyShadowCards . toAttrs) . Map.lookup eid . (.entities.enemies))
+        >>= (`shouldSatisfy` ((== sort (map code [Enemies.dolGuldurOrcs, Enemies.forestSpider])) . sort))
+
+  describe "Gandalf (Over Hill and Under Hill)" do
+    it "stays at the end of the refresh phase for 2 threat" . gameTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.gandalfHobbit
+      threat <- (.threat) <$> getPlayer pid
+      atPhase RefreshPhase
+      run $ EndPhase RefreshPhase
+      chooseLabel "$label.gandalfHobbit.raiseThreat" pid
+      (.threat) <$> getPlayer pid `shouldReturn` threat + 2
+      selectAny (AllyWithTitle "Gandalf") `shouldReturn` True
+
+    it "is discarded otherwise" . gameTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.gandalfHobbit
+      atPhase RefreshPhase
+      run $ EndPhase RefreshPhase
+      chooseLabel "$label.gandalfHobbit.discard" pid
+      selectAny (AllyWithTitle "Gandalf") `shouldReturn` False
 
   describe "Spare Hood and Cloak" do
     it "exhausts with its character to ready another, then moves to it" . gameTest $ \pid -> do
