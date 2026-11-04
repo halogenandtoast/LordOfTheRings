@@ -433,6 +433,7 @@ allEnemyCards =
       , desertWarg
       , goblinTroop
       , strayGoblinGreyMountains
+      , packOfWargs
       ]
 
 namelessThing :: CardDef
@@ -3542,4 +3543,12 @@ strayGoblinGreyMountains =
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+packOfWargs :: CardDef
+packOfWargs =
+  (enemy "18022" "Pack of Wargs" HillsOfWilderland 2 40 4 4 3 5)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

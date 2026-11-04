@@ -424,6 +424,7 @@ import LordOfTheRings.Enemy.Cards.UrukProwler
 import LordOfTheRings.Enemy.Cards.DesertWarg
 import LordOfTheRings.Enemy.Cards.GoblinTroop
 import LordOfTheRings.Enemy.Cards.StrayGoblinGreyMountains
+import LordOfTheRings.Enemy.Cards.PackOfWargs
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -876,5 +877,6 @@ allEnemys =
         , SomeEnemyCard desertWarg
         , SomeEnemyCard goblinTroop
         , SomeEnemyCard strayGoblinGreyMountains
+        , SomeEnemyCard packOfWargs
         ]
     ]

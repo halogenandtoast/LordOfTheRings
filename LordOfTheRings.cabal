@@ -701,6 +701,7 @@ library
       LordOfTheRings.Enemy.Cards.OverseerMaurul
       LordOfTheRings.Enemy.Cards.PackHunters
       LordOfTheRings.Enemy.Cards.PackLeader
+      LordOfTheRings.Enemy.Cards.PackOfWargs
       LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.PatrolSentry
       LordOfTheRings.Enemy.Cards.PatrolShip
@@ -1355,6 +1356,7 @@ library
       LordOfTheRings.Location.Cards.HighlandsOfDunland
       LordOfTheRings.Location.Cards.HillBarrow
       LordOfTheRings.Location.Cards.HillsOfDunland
+      LordOfTheRings.Location.Cards.HillsOfWilderland
       LordOfTheRings.Location.Cards.HithaeglirFoothills
       LordOfTheRings.Location.Cards.HithaeglirStream
       LordOfTheRings.Location.Cards.HithaeglirWoods
@@ -1376,6 +1378,7 @@ library
       LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LabyrinthineWoods
       LordOfTheRings.Location.Cards.LightlessPassage
+      LordOfTheRings.Location.Cards.LonelyLands
       LordOfTheRings.Location.Cards.LostIsland
       LordOfTheRings.Location.Cards.LushJungle
       LordOfTheRings.Location.Cards.MakeshiftPassage

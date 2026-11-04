@@ -453,6 +453,8 @@ allLocationCards =
       , harondorWaste
       , foothillsOfMordor
       , shadowyVale
+      , hillsOfWilderland
+      , lonelyLands
       ]
 
 drownedTreasury :: CardDef
@@ -3431,3 +3433,12 @@ foothillsOfMordor = (location "17153" "Foothills of Mordor" MountainsOfShadow 3 
 
 shadowyVale :: CardDef
 shadowyVale = (location "17154" "Shadowy Vale" MountainsOfShadow 2 2 5) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 1}
+
+-- * The Wilds of Rhovanion's shared encounter sets
+
+-- | X threat and X quest points: see "LordOfTheRings.Location.Cards.HillsOfWilderland".
+hillsOfWilderland :: CardDef
+hillsOfWilderland = (location "18023" "Hills of Wilderland" HillsOfWilderland 2 0 0) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 1}
+
+lonelyLands :: CardDef
+lonelyLands = (location "18024" "Lonely Lands" HillsOfWilderland 3 2 5) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 2}
