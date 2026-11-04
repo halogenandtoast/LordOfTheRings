@@ -522,6 +522,9 @@ allEnemyCards =
       , candleBearer
       , morgulWraith
       , gollumTheLandOfShadow
+      , shelob
+      , morgulOrc
+      , orcOfCirithUngol
       , shagrat
       , gorbag
       , woundedUruk
@@ -4383,3 +4386,34 @@ gollumTheLandOfShadow =
       { cdCardTraits = setFromList [Gollum]
       , cdOtherSide = Just "144076"
       }
+
+-- * Shelob's Lair
+
+-- | Set aside by stage 1A, added to the staging area by stage 2A.
+shelob :: CardDef
+shelob =
+  unique
+    (enemy "144040" "Shelob" ShelobsLair 1 50 4 4 4 8)
+      { cdCardTraits = setFromList [Creature, Spider]
+      , cdKeywords = setFromList [Indestructible]
+      , cdVictoryPoints = Just 8
+      }
+
+morgulOrc :: CardDef
+morgulOrc =
+  (enemy "144041" "Morgul Orc" ShelobsLair 4 35 1 3 2 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+orcOfCirithUngol :: CardDef
+orcOfCirithUngol =
+  (enemy "144042" "Orc of Cirith Ungol" ShelobsLair 3 40 2 4 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
+    }

@@ -443,6 +443,11 @@ allTreacheryCards =
       , creepingMarshes
       , bitterReek
       , aFellLight
+      , exhalationOfDecay
+      , manyOpenings
+      , shelobsPoison
+      , lurkingMalice
+      , rageAndHunger
       , callOfTheRing
       , weHatesThem
       , orcishHowls
@@ -2855,3 +2860,27 @@ weHatesThem =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Shelob's Lair
+
+exhalationOfDecay :: CardDef
+exhalationOfDecay = (treachery "144050" "Exhalation of Decay" ShelobsLair 2) {cdShadowEffect = True}
+
+manyOpenings :: CardDef
+manyOpenings = (treachery "144051" "Many Openings" ShelobsLair 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Great Spider
+
+shelobsPoison :: CardDef
+shelobsPoison = (treachery "144060" "Shelob's Poison" TheGreatSpider 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+lurkingMalice :: CardDef
+lurkingMalice =
+  (treachery "144061" "Lurking Malice" TheGreatSpider 3)
+    { cdKeywords = setFromList [Peril, Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+rageAndHunger :: CardDef
+rageAndHunger = (treachery "144062" "Rage and Hunger" TheGreatSpider 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}

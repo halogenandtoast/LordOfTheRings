@@ -449,6 +449,9 @@ allQuestCards =
       , theTamingOfSmeagol
       , acrossTheMarshes
       , dontLookAtTheLights
+      , theStairsOfCirithUngol
+      , theSpidersPass
+      , gollumsBetrayal
       , passTheTwoWatchers
       , fightingInTheTower
       , escapeFromCirithUngol
@@ -1886,3 +1889,16 @@ acrossTheMarshes = quest "144065" "Across the Marshes" ThePassageOfTheMarshes 2 
 
 dontLookAtTheLights :: CardDef
 dontLookAtTheLights = quest "144066" "Don't Look at the Lights!" ThePassageOfTheMarshes 3 24
+
+-- * Shelob's Lair
+
+-- | No quest points: a Forced effect advances it once Sméagol's Secret Way is in the
+-- victory display.
+theStairsOfCirithUngol :: CardDef
+theStairsOfCirithUngol = (quest "144070" "The Stairs of Cirith Ungol" ShelobsLair 1 0) {cdQuestPoints = Nothing}
+
+theSpidersPass :: CardDef
+theSpidersPass = quest "144071" "The Spider's Pass" ShelobsLair 2 16
+
+gollumsBetrayal :: CardDef
+gollumsBetrayal = quest "144072" "Gollum's Betrayal" ShelobsLair 3 8

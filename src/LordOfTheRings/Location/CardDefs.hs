@@ -559,6 +559,14 @@ allLocationCards =
       , hauntedMere
       , stagnantPools
       , softMires
+      , morgulValeShelobsLair
+      , smeagolsSecretWay
+      , cleftOfCirithUngol
+      , theSpidersLair
+      , theUnderWay
+      , deepDarkPassage
+      , denOfNight
+      , blockedTunnel
       , topmostChamber
       , echoingPassage
       , bloodiedCourtyard
@@ -4135,3 +4143,39 @@ stagnantPools = marsh "144022" "Stagnant Pools" 2 3 7 5 3
 
 softMires :: CardDef
 softMires = (marsh "144023" "Soft Mires" 4 2 4 1 2) {cdEasyModeQuantity = Just 3}
+
+-- * Shelob's Lair
+
+-- | Made the active location by stage 1A.
+morgulValeShelobsLair :: CardDef
+morgulValeShelobsLair = unique (location "144043" "Morgul Vale" ShelobsLair 1 4 2) {cdCardTraits = setFromList [Vale], cdVictoryPoints = Just 4}
+
+-- | Added to the staging area by stage 1A.
+smeagolsSecretWay :: CardDef
+smeagolsSecretWay = unique (location "144044" "Sméagol's Secret Way" ShelobsLair 1 2 2) {cdCardTraits = setFromList [Mountain], cdVictoryPoints = Just 2}
+
+-- | Set aside by stage 1A, added to the staging area by stage 3A.
+cleftOfCirithUngol :: CardDef
+cleftOfCirithUngol = unique (location "144045" "Cleft of Cirith Ungol" ShelobsLair 1 4 4) {cdCardTraits = setFromList [Mountain], cdVictoryPoints = Just 4}
+
+theSpidersLair :: CardDef
+theSpidersLair = (location "144046" "The Spider's Lair" ShelobsLair 2 3 4) {cdCardTraits = setFromList [Underground]}
+
+theUnderWay :: CardDef
+theUnderWay = (location "144047" "The Under-way" ShelobsLair 2 2 3) {cdCardTraits = setFromList [Underground], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+deepDarkPassage :: CardDef
+deepDarkPassage = (location "144048" "Deep Dark Passage" ShelobsLair 3 2 5) {cdCardTraits = setFromList [Underground]}
+
+denOfNight :: CardDef
+denOfNight = (location "144049" "Den of Night" ShelobsLair 3 1 4) {cdCardTraits = setFromList [Underground]}
+
+-- * The Great Spider
+
+blockedTunnel :: CardDef
+blockedTunnel =
+  (location "144059" "Blocked Tunnel" TheGreatSpider 2 3 9)
+    { cdCardTraits = setFromList [Underground]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
