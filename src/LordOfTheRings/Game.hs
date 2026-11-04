@@ -2262,7 +2262,7 @@ runGameMessage msg g = case msg of
   -- an enemy leaves play for good, as Captain Sahír after his betrayal: what is on it is
   -- discarded
   RemoveFromGame target@(EnemyTarget eid) | Map.member eid g.entities.enemies -> do
-    pushAll $ discardAttached g target <> discardShadowsOf g target <> freeGuarded g target
+    pushAll $ discardAttached g target
     pure $ g & entitiesL . enemiesL %~ Map.delete eid
   -- a side quest removed from the game, as Stop the Executioners! removes itself
   RemoveFromGame target@(QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
@@ -2299,7 +2299,7 @@ runGameMessage msg g = case msg of
       <> concatMap (discardAttached g) characters
       <> [CheckEliminations | notNull heroes]
       -- an enemy placed underneath a location leaves play, as Murderous Turncoat
-      <> concat [discardAttached g t <> discardShadowsOf g t <> freeGuarded g t | t <- map toTarget enemies]
+      <> concatMap (discardAttached g . toTarget) enemies
     pure
       $ g'
       & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
@@ -3073,15 +3073,18 @@ freeGuarded g target =
   , l <- toList g.entities.locations
   , l.placement == AttachedTo (CardIdTarget cid)
   ]
-    -- and the characters it guards as captives are rescued
-    <> concat
-      [ [RescueCharacter c, CheckWindows [mkAfter $ CharacterRescued c]]
-      | Just cid <- [guardCard]
-      , c <-
-          [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
-            <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
-      ]
+    -- and the characters it guards as captives are rescued, in one window, as "after any
+    -- number of characters are rescued" reads (Rescue the Prisoners)
+    <> map RescueCharacter captives
+    <> [CheckWindows [mkAfter $ CharacterRescued c | c <- captives] | notNull captives]
  where
+  captives =
+    [ c
+    | Just cid <- [guardCard]
+    , c <-
+        [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
+          <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
+    ]
   cardIdIn :: IsCard v => Ord k => Map k v -> k -> Maybe CardId
   cardIdIn m k = (.id) . toCard <$> Map.lookup k m
   guardCard = case target of
