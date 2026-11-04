@@ -277,6 +277,9 @@ spec = describe "Mount Gundabad" do
     run $ ResolveAttack pid dagnir
     chooseAbilityOf pid =<< getActiveQuest
     getsGame (.outcome) `shouldReturn` Just Won
+    -- though with 5 quest cards in the victory display she cannot leave the staging area
+    enemyCodes `shouldReturn` []
+    victoryCodes >>= (`shouldSatisfy` elem (toCardCode Enemies.dagnirMountGundabad))
 
   it "offers The Great Worm's response only to the player whose attack it was, with Reforged Wormsbane among its attackers" . twoPlayerTestIn mountGundabad testDeck $ \p1 p2 -> do
     questsInVictory 5

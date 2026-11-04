@@ -50,12 +50,15 @@ instance HasAbilities TheGreatWorm where
 
 {- | Offered only to the player whose attack it was, and only with his hero wielding Reforged
 Wormsbane among its attackers: the window reads the attack's attackers as that player's.
+Dagnir goes to the victory display though with 5 quest cards there she "cannot leave the
+staging area": the card names her and the move, and the win follows from it ("Then, the
+players win the game"; FAQ 1.15, "then" needs what precedes it to resolve).
 -}
 instance RunMessage TheGreatWorm where
   runMessage msg q@(TheGreatWorm attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       getWormsbane >>= traverse_ (discard . ObjectiveTarget)
-      getDagnir >>= traverse_ (addToVictoryDisplay . EnemyTarget)
+      getDagnir >>= traverse_ (addToVictoryDisplayOverriding . EnemyTarget)
       winGame
       pure q
     _ -> TheGreatWorm <$> runExploringGundabad (pure ()) msg attrs

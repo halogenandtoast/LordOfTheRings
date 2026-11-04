@@ -797,6 +797,11 @@ putInDiscard = push . PutInDiscard
 addToVictoryDisplay :: (ReverseQueue m, Targetable target) => target -> m ()
 addToVictoryDisplay = push . AddToVictoryDisplay . toTarget
 
+-- | Add it to the victory display though it cannot leave play or the staging area: the
+-- card that says to overrides that, as The Great Worm adds Dagnir.
+addToVictoryDisplayOverriding :: (ReverseQueue m, Targetable target) => target -> m ()
+addToVictoryDisplayOverriding = push . LeavePlay . AddToVictoryDisplay . toTarget
+
 removeFromVictoryDisplay :: ReverseQueue m => Card -> m ()
 removeFromVictoryDisplay = push . RemoveFromVictoryDisplay
 
