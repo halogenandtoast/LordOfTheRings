@@ -138,6 +138,8 @@ export interface ScenarioView {
   temperature?: number | null
   /** The Ring-bearer's life on the life tracker (Flight to the Ford). */
   ringBearersLife?: number | null
+  /** The pursuit tracker's value (The Uruk-hai). */
+  pursuit?: number | null
   /** The Orcs' quest stage, with its progress, and the cards in their area (Race Across Harad). */
   orcsStage: CardView | null
   orcsArea: CardView[]

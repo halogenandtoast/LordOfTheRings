@@ -508,6 +508,8 @@ allQuestCards =
       , theSeatOfAmonHen
       , orcHunting
       , theRingBearerSetsOut
+      , followTheOrcs
+      , rescueTheCaptives
       ]
 
 theDrippingWalls :: CardDef
@@ -2168,3 +2170,14 @@ theSpidersPass = quest "144071" "The Spider's Pass" ShelobsLair 2 16
 
 gollumsBetrayal :: CardDef
 gollumsBetrayal = quest "144072" "Gollum's Betrayal" ShelobsLair 3 8
+
+-- * The Uruk-hai
+
+-- | X quest points, X the pursuit value: 1 printed, the rest from its own modifiers, so a
+-- stage with as much progress as the pursuit value is defeated (see 'hasEnoughProgress').
+followTheOrcs :: CardDef
+followTheOrcs = quest "143069" "Follow the Orcs" TheUrukHai 1 1
+
+-- | X quest points, X the pursuit value, as 'followTheOrcs'.
+rescueTheCaptives :: CardDef
+rescueTheCaptives = quest "143070" "Rescue the Captives" TheUrukHai 2 1

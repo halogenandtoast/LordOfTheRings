@@ -643,6 +643,10 @@ import LordOfTheRings.Location.Cards.SarnGebir
 import LordOfTheRings.Location.Cards.RiverAnduin
 import LordOfTheRings.Location.Cards.WoodedShoreline
 import LordOfTheRings.Location.Cards.SlopesOfAmonHen
+import LordOfTheRings.Location.Cards.TheWold
+import LordOfTheRings.Location.Cards.Eastemnet
+import LordOfTheRings.Location.Cards.PlainsOfRohan
+import LordOfTheRings.Location.Cards.BanksOfEntwash
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1332,5 +1336,9 @@ allLocations =
         , SomeLocationCard riverAnduin
         , SomeLocationCard woodedShoreline
         , SomeLocationCard slopesOfAmonHen
+        , SomeLocationCard theWold
+        , SomeLocationCard eastemnet
+        , SomeLocationCard plainsOfRohan
+        , SomeLocationCard banksOfEntwash
         ]
     ]

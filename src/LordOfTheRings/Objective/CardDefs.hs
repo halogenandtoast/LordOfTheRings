@@ -188,6 +188,7 @@ allObjectiveCards =
       , overcomeByGrief
       , grievousWound
       , frodosChoice
+      , toIsengard
       ]
 
 durinsAxe :: CardDef
@@ -1347,3 +1348,9 @@ frodosChoice =
 
 theBlackGate :: CardDef
 theBlackGate = unique (objective "144027" "The Black Gate" JourneyToTheCrossRoads 1)
+
+-- * The Uruk-hai
+
+-- | Added to the staging area as stage 1A is set up, the Captives faceup under it.
+toIsengard :: CardDef
+toIsengard = objective "143022" "To Isengard!" TheUrukHai 1

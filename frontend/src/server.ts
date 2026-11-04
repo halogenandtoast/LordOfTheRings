@@ -185,6 +185,8 @@ export interface ServerGame {
   temperature?: number | null
   /** The Ring-bearer's life on the life tracker (Flight to the Ford). */
   ringBearersLife?: number | null
+  /** The pursuit tracker's value (The Uruk-hai). */
+  pursuit?: number | null
   /** The side quest deck's size (Fire in the Night). */
   sideQuestDeck?: number
   /** The damage each set-aside card keeps, by its card id, as Cold-Drake set aside by The Withered Heath's stage 3A. */

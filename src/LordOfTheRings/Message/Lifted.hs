@@ -1053,6 +1053,12 @@ searchEncounterDeckAndDiscardToReveal
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
 searchEncounterDeckAndDiscardToReveal pid source = push . SearchEncounterDeckAndDiscardToReveal pid (toTarget source)
 
+-- | As 'searchEncounterDeckAndDiscard', the enemy found revealed and put into play engaged
+-- with the player, as Fighting Uruk-hai reads.
+searchEncounterDeckAndDiscardToRevealEngaged
+  :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
+searchEncounterDeckAndDiscardToRevealEngaged pid source = push . SearchEncounterDeckAndDiscardToRevealEngaged pid (toTarget source)
+
 -- | As 'searchEncounterDeckAndDiscard', the enemy found put into play engaged with the player.
 searchEncounterDeckAndDiscardToEngage
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
@@ -2546,6 +2552,17 @@ revealFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
 revealFromEncounterDeck card = do
   removeFromEncounterDeck card
   push $ RevealCard card
+
+{- | What the player does, he does as the revealer: "you" on an encounter card he reveals
+is he (The Black Riders rules insert, "New Staging Rules"), as when a card has each
+player reveal an encounter card. The player revealing before is the revealer again after.
+-}
+asRevealer :: ReverseQueue m => PlayerId -> m () -> m ()
+asRevealer pid body = do
+  before <- getsGame gameRevealer
+  push $ SetRevealer (Just pid)
+  body
+  push $ SetRevealer before
 
 {- | A saga's setup: the first player takes control of the scenario's Baggins or
 Fellowship sphere hero, his choice among them if it may be one of several Ring-bearers,

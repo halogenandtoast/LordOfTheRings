@@ -169,6 +169,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "temperature" (metaValue "temperature")
         -- the Ring-bearer's life on the life tracker (Flight to the Ford)
         $ KeyMap.insert "ringBearersLife" (metaValue "ringBearersLife")
+        -- the pursuit tracker's value (The Uruk-hai)
+        $ KeyMap.insert "pursuit" (metaValue "pursuit")
         -- the Orcs' quest stage and its progress (Race Across Harad)
         $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
         $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")

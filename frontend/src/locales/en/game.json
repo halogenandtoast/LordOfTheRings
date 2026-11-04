@@ -188,5 +188,6 @@
     "serverUnreachable": "the server could not be reached",
     "cardData": "could not load card data"
   },
-  "areaStaging": "staging: {players} ({threat} threat)"
+  "areaStaging": "staging: {players} ({threat} threat)",
+  "pursuit": "Pursuit"
 }

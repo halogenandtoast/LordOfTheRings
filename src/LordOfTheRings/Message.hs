@@ -815,6 +815,9 @@ data Message
     SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
   | -- | as 'SearchEncounterDeckAndDiscard', the card found revealed, as Forecastle Deck reads
     SearchEncounterDeckAndDiscardToReveal PlayerId Target CardMatcher
+  | -- | as 'SearchEncounterDeckAndDiscard', the enemy found revealed and put into play
+    -- engaged with the player, as Fighting Uruk-hai reads
+    SearchEncounterDeckAndDiscardToRevealEngaged PlayerId Target CardMatcher
   | -- | as 'SearchEncounterDeckAndDiscard', the victory display searched too, as Corsair
     -- Confrontation reads
     SearchEncounterCardsAndVictoryDisplay PlayerId Target CardMatcher

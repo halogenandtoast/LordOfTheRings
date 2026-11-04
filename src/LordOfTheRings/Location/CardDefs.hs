@@ -661,6 +661,10 @@ allLocationCards =
       , riverAnduin
       , woodedShoreline
       , slopesOfAmonHen
+      , theWold
+      , eastemnet
+      , plainsOfRohan
+      , banksOfEntwash
       ]
 
 drownedTreasury :: CardDef
@@ -4724,3 +4728,23 @@ blockedTunnel =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The Uruk-hai
+
+theWold :: CardDef
+theWold = (location "143026" "The Wold" TheUrukHai 3 2 2) {cdCardTraits = setFromList [Plains, Hills]}
+
+eastemnet :: CardDef
+eastemnet = (location "143027" "Eastemnet" TheUrukHai 3 2 3) {cdCardTraits = setFromList [Plains]}
+
+-- | X threat, the number of locations in the staging area: given by its own modifiers.
+plainsOfRohan :: CardDef
+plainsOfRohan =
+  (location "143028" "Plains of Rohan" TheUrukHai 4 0 4)
+    { cdCardTraits = setFromList [Plains]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+banksOfEntwash :: CardDef
+banksOfEntwash = (location "143029" "Banks of Entwash" TheUrukHai 2 3 5) {cdCardTraits = setFromList [Plains, River], cdShadowEffect = True}

@@ -424,6 +424,8 @@ import LordOfTheRings.Quest.Cards.TheLandOfMordor
 import LordOfTheRings.Quest.Cards.TheRoadToIsenmouthe
 import LordOfTheRings.Quest.Cards.TheLastGasp
 import LordOfTheRings.Quest.Cards.TheCrackOfDoom
+import LordOfTheRings.Quest.Cards.FollowTheOrcs
+import LordOfTheRings.Quest.Cards.RescueTheCaptives
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -880,5 +882,7 @@ allQuests =
         , SomeQuestCard theRoadToIsenmouthe
         , SomeQuestCard theLastGasp
         , SomeQuestCard theCrackOfDoom
+        , SomeQuestCard followTheOrcs
+        , SomeQuestCard rescueTheCaptives
         ]
     ]

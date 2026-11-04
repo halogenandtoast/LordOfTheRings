@@ -3884,5 +3884,49 @@
     "choose": "Lurking Malice: place 1 resource on Shelob, or she attacks you",
     "resource": "Place 1 resource on Shelob",
     "attack": "Shelob makes an immediate attack against you"
+  },
+  "grishnakh": {
+    "captive": "Grishnákh: choose a Captive to attach to him"
+  },
+  "ugluksUrukHai": {
+    "choose": "Uglúk's Uruk-hai: increase the pursuit value by 3, or reveal an additional encounter card",
+    "pursuit": "Increase the pursuit value by 3",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "isengardUruk": {
+    "choose": "Isengard Uruk: assign 3 damage among characters you control, or reveal an additional encounter card",
+    "damage": "Assign 3 damage among characters you control",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "banksOfEntwash": {
+    "choose": "Banks of Entwash: increase the pursuit value by 1, or this attack is considered undefended",
+    "pursuit": "Increase the pursuit value by 1",
+    "undefended": "This attack is considered undefended"
+  },
+  "restByNight": {
+    "choose": "Rest by Night: end the quest phase and increase the pursuit value by 3, or deal 1 damage to each character committed to the quest",
+    "endQuestPhase": "End the quest phase and increase the pursuit value by 3",
+    "damage": "Deal 1 damage to each character committed to the quest"
+  },
+  "sarumansOrders": {
+    "choose": "Saruman's Orders: return an enemy engaged with you to the staging area, or reveal an encounter card",
+    "reveal": "Reveal an encounter card"
+  },
+  "followTheOrcs": {
+    "captive": "Choose a non-Fellowship hero you control to be a Captive"
+  },
+  "theUrukHai": {
+    "resolution": "The Uruk-hai: choose the players' reward",
+    "skillBoons": "Each player earns a Skill boon and attaches it to a hero he controls",
+    "beyondAllHope": "One player earns Beyond All Hope and brings back a fallen hero",
+    "chooseSkill": "Choose the Skill boon you earn",
+    "intimidation": "Intimidation (a Warrior hero)",
+    "handsOfAHealer": "Hands of a Healer (a Healer hero)",
+    "forewarned": "Forewarned (a Ranger hero)",
+    "leaderOfMen": "Leader of Men (a Noble hero)",
+    "attachTo": "Choose the hero to attach it to",
+    "chooseFallen": "Choose a fallen hero to take control of",
+    "fallenHero": "{hero}",
+    "removeHero": "You control more than 3 heroes: choose a hero to remove from the Campaign Log"
   }
 }

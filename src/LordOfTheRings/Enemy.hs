@@ -599,6 +599,12 @@ import LordOfTheRings.Enemy.Cards.UrukHaiCaptain
 import LordOfTheRings.Enemy.Cards.UrukHaiArcher
 import LordOfTheRings.Enemy.Cards.UrukHaiTracker
 import LordOfTheRings.Enemy.Cards.UrukHaiHunter
+import LordOfTheRings.Enemy.Cards.Ugluk
+import LordOfTheRings.Enemy.Cards.Grishnakh
+import LordOfTheRings.Enemy.Cards.UgluksUrukHai
+import LordOfTheRings.Enemy.Cards.IsengardUruk
+import LordOfTheRings.Enemy.Cards.UrukHaiFighter
+import LordOfTheRings.Enemy.Cards.Snaga
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1228,5 +1234,11 @@ allEnemys =
         , SomeEnemyCard urukHaiArcher
         , SomeEnemyCard urukHaiTracker
         , SomeEnemyCard urukHaiHunter
+        , SomeEnemyCard ugluk
+        , SomeEnemyCard grishnakh
+        , SomeEnemyCard ugluksUrukHai
+        , SomeEnemyCard isengardUruk
+        , SomeEnemyCard urukHaiFighter
+        , SomeEnemyCard snaga
         ]
     ]

@@ -527,6 +527,11 @@ import LordOfTheRings.Treachery.Cards.BlackFeatheredArrows
 import LordOfTheRings.Treachery.Cards.FallenIntoEvil
 import LordOfTheRings.Treachery.Cards.FollowedByNightTheRoadDarkens
 import LordOfTheRings.Treachery.Cards.IllFate
+import LordOfTheRings.Treachery.Cards.RestByNight
+import LordOfTheRings.Treachery.Cards.StrangeWeariness
+import LordOfTheRings.Treachery.Cards.UnseenBarrier
+import LordOfTheRings.Treachery.Cards.FightingUrukHai
+import LordOfTheRings.Treachery.Cards.SarumansOrders
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -1081,5 +1086,10 @@ allTreacherys =
         , SomeTreacheryCard fallenIntoEvil
         , SomeTreacheryCard followedByNightTheRoadDarkens
         , SomeTreacheryCard illFate
+        , SomeTreacheryCard restByNight
+        , SomeTreacheryCard strangeWeariness
+        , SomeTreacheryCard unseenBarrier
+        , SomeTreacheryCard fightingUrukHai
+        , SomeTreacheryCard sarumansOrders
         ]
     ]
