@@ -88,6 +88,9 @@ allHeroCards =
       , brandSonOfBainLeadership
       , bardSonOfBrand
       , grimbeornTheOld
+      , haldan
+      , thranduil
+      , dainIronfootSpirit
       ]
 
 aragorn :: CardDef
@@ -555,4 +558,22 @@ grimbeornTheOld =
   (hero "19001" "Grimbeorn the Old" Tactics 11 0 3 3 5)
     { cdCardTraits = setFromList [Beorning, Warrior]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+haldan :: CardDef
+haldan =
+  (hero "19026" "Haldan" Lore 10 2 3 1 4)
+    { cdCardTraits = setFromList [Woodman, Scout]
+    }
+
+thranduil :: CardDef
+thranduil =
+  (hero "19056" "Thranduil" Leadership 9 1 1 3 4)
+    { cdCardTraits = setFromList [Silvan, Noble]
+    }
+
+dainIronfootSpirit :: CardDef
+dainIronfootSpirit =
+  (hero "19084" "Dáin Ironfoot" Spirit 11 1 2 3 5)
+    { cdCardTraits = setFromList [Dwarf, Noble, Warrior]
     }

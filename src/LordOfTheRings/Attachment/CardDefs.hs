@@ -213,6 +213,16 @@ allAttachmentCards =
       , woodmensClearing
       , greyCloak
       , theArkenstone
+      , ancestralArmor
+      , glamdring
+      , woodmensPath
+      , theElvenking
+      , orcrist
+      , leatherBoots
+      , outmatched
+      , warriorSword
+      , valiantDetermination
+      , ringOfThror
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1458,5 +1468,77 @@ theArkenstone =
   unique
     (attachment "19010" "The Arkenstone" Neutral (StaticCost 1))
       { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+      }
+
+ancestralArmor :: CardDef
+ancestralArmor =
+  (attachment "19028" "Ancestral Armor" Leadership (StaticCost 4))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+glamdring :: CardDef
+glamdring =
+  unique
+    (attachment "19029" "Glamdring" Lore (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item, Weapon]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType], Restricted]
+      }
+
+woodmensPath :: CardDef
+woodmensPath =
+  (attachment "19030" "Woodmen's Path" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+theElvenking :: CardDef
+theElvenking =
+  unique
+    (attachment "19057" "The Elvenking" Leadership (StaticCost 1))
+      { cdCardTraits = setFromList [Title]
+      }
+
+orcrist :: CardDef
+orcrist =
+  unique
+    (attachment "19058" "Orcrist" Leadership (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item, Weapon]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType], Restricted]
+      }
+
+leatherBoots :: CardDef
+leatherBoots =
+  (attachment "19060" "Leather Boots" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+outmatched :: CardDef
+outmatched =
+  (attachment "19062" "Outmatched" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Condition, Trap]
+    }
+
+warriorSword :: CardDef
+warriorSword =
+  (attachment "19089" "Warrior Sword" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+valiantDetermination :: CardDef
+valiantDetermination =
+  (attachment "19092" "Valiant Determination" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+ringOfThror :: CardDef
+ringOfThror =
+  unique
+    (attachment "19093" "Ring of Thrór" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Ring]
       , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
       }

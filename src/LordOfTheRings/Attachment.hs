@@ -194,6 +194,17 @@ import LordOfTheRings.Attachment.Cards.SquiresHelm
 import LordOfTheRings.Attachment.Cards.WoodmensClearing
 import LordOfTheRings.Attachment.Cards.GreyCloak
 import LordOfTheRings.Attachment.Cards.TheArkenstone
+import LordOfTheRings.Attachment.Cards.AncestralArmor
+import LordOfTheRings.Attachment.Cards.Glamdring
+import LordOfTheRings.Attachment.Cards.WoodmensPath
+import LordOfTheRings.Attachment.Cards.WildStallion
+import LordOfTheRings.Attachment.Cards.TheElvenking
+import LordOfTheRings.Attachment.Cards.Orcrist
+import LordOfTheRings.Attachment.Cards.LeatherBoots
+import LordOfTheRings.Attachment.Cards.Outmatched
+import LordOfTheRings.Attachment.Cards.WarriorSword
+import LordOfTheRings.Attachment.Cards.ValiantDetermination
+import LordOfTheRings.Attachment.Cards.RingOfThror
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -425,5 +436,16 @@ allAttachments =
         , SomeAttachmentCard woodmensClearing
         , SomeAttachmentCard greyCloak
         , SomeAttachmentCard theArkenstone
+        , SomeAttachmentCard ancestralArmor
+        , SomeAttachmentCard glamdring
+        , SomeAttachmentCard woodmensPath
+        , SomeAttachmentCard wildStallion
+        , SomeAttachmentCard theElvenking
+        , SomeAttachmentCard orcrist
+        , SomeAttachmentCard leatherBoots
+        , SomeAttachmentCard outmatched
+        , SomeAttachmentCard warriorSword
+        , SomeAttachmentCard valiantDetermination
+        , SomeAttachmentCard ringOfThror
         ]
     ]

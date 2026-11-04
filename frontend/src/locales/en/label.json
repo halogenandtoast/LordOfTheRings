@@ -2616,5 +2616,31 @@
   "theHiddenWay": {
     "location": "The Hidden Way: choose a location from the top 5 cards of the encounter deck to make active",
     "none": "No location to make active"
+  },
+  "wiglaf": {
+    "item": "Wiglaf: play an Item attachment on him for no cost",
+    "exhaust": "Wiglaf: exhaust an attachment on him to ready him"
+  },
+  "meneldor": {
+    "location": "Meneldor: place 2 progress on a location"
+  },
+  "flightOfTheEagles": {
+    "shuffle": "Flight of the Eagles: shuffle an Eagle of the North into the encounter deck"
+  },
+  "wildStallion": {
+    "ally": "Wild Stallion: attach it to an ally you control"
+  },
+  "southAway": {
+    "location": "South Away!: choose a location to make active"
+  },
+  "eagleOfTheNorth": {
+    "discard": "Eagle of the North: you may discard a non-unique enemy in the staging area",
+    "none": "Discard none"
+  },
+  "thranduil": {
+    "ally": "Thranduil: play a Silvan ally from your hand"
+  },
+  "swiftAndStrong": {
+    "weapon": "Swift and Strong: exhaust a Weapon to ready its character"
   }
 }

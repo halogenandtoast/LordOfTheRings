@@ -226,6 +226,12 @@ allEventCards =
       , bartering
       , beornsRage
       , theHiddenWay
+      , flightOfTheEagles
+      , southAway
+      , quickerThanSight
+      , manTheWalls
+      , familiarLands
+      , swiftAndStrong
       ]
 
 everVigilant :: CardDef
@@ -911,3 +917,26 @@ beornsRage = event "19005" "Beorn's Rage" Tactics (StaticCost 1)
 
 theHiddenWay :: CardDef
 theHiddenWay = event "19007" "The Hidden Way" Lore (StaticCost 2)
+flightOfTheEagles :: CardDef
+flightOfTheEagles = event "19032" "Flight of the Eagles" Tactics (StaticCost 0)
+
+southAway :: CardDef
+southAway =
+  (event "19034" "South Away!" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    }
+
+quickerThanSight :: CardDef
+quickerThanSight = event "19064" "Quicker Than Sight" Spirit (StaticCost 0)
+
+manTheWalls :: CardDef
+manTheWalls = event "19086" "Man the Walls" Leadership (StaticCost 1)
+
+familiarLands :: CardDef
+familiarLands = event "19088" "Familiar Lands" Lore (StaticCost 1)
+
+swiftAndStrong :: CardDef
+swiftAndStrong =
+  (event "19090" "Swift and Strong" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }

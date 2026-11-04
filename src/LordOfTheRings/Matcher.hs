@@ -189,6 +189,20 @@ matchAlly matcher ally = case matcher of
   AllyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget ally)
   AllyWithPlayerAttachment -> notNull <$> playerAttachmentsOn (toTarget ally)
   AllyWithReadyPlayerAttachment -> any (not . attachmentExhausted . toAttrs) <$> playerAttachmentsOn (toTarget ally)
+  AllyWithAttachment code ->
+    getsGame (any (\a -> a.placement == AttachedTo (toTarget ally) && toCardCode a == code) . entitiesAttachments . gameEntities)
+  AllyWithReadyAttached trait ->
+    getsGame
+      ( any
+          ( \a ->
+              a.placement == AttachedTo (toTarget ally)
+                && maybe True (`member` cdCardTraits (toCardDef a)) trait
+                && not (attachmentExhausted $ toAttrs a)
+          )
+          . toList
+          . entitiesAttachments
+          . gameEntities
+      )
   AnyAlly -> pure True
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms
@@ -281,6 +295,10 @@ matchLocation matcher location = case matcher of
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationCanEnterStagingArea -> notElem CannotEnterStagingArea . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationGuardingACard -> guardingACard (toCard location).id (toTarget location)
+  LocationWithAttachment -> notNull <$> getAttachmentsOn (toTarget location)
+  LocationWithoutProgress -> pure $ location.progress == 0
+  LocationWithPlayerCardAttachment ->
+    getsGame (any ((== AttachedTo (toTarget location)) . (.placement)) . toList . entitiesAttachments . gameEntities)
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -425,6 +443,26 @@ affordableAlliesInHand pid sphere reduction minimumCost = do
       , resources >= reducedCost c
       , not $ forbidden c
       ]
+
+-- | Allies in hand matching the matcher that the player's heroes could pay for with
+-- resources of any sphere, as Thranduil plays a Silvan ally needing no resource match.
+affordableAlliesInHandWithoutMatch :: HasGame m => PlayerId -> CardMatcher -> m [Card]
+affordableAlliesInHandWithoutMatch pid matcher = do
+  player <- getPlayer pid
+  heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
+  resources <- sum . map (.resources) <$> filterM heroCanSpend heroes
+  mods <- getsGame gameModifiers
+  let on t = map modifierType $ Map.findWithDefault [] t mods
+      gameMods = on GameTarget
+      forbidden c = any (\case CannotPlay m -> cardMatches m c; _ -> False) (gameMods <> on (PlayerTarget pid))
+      cost c = maybe 0 costAsResources c.cost
+  entryBarred <- getsGame allyEntryBarred
+  allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
+  if (OneAllyPerRound `elem` gameMods && allyPlayed) || entryBarred
+    then pure []
+    else
+      filterM passesUnique
+        [c | c <- player.hand, c.cardType == AllyType, cardMatches matcher c, resources >= cost c, not $ forbidden c]
 
 -- | The player's allies whose resources can pay for the card, with the resources on each.
 allyPayersFor :: HasGame m => PlayerId -> Card -> m [(AllyId, Int)]
@@ -600,6 +638,11 @@ getLocation lid =
 -- | The progress tokens on the active location, none when there is none.
 activeLocationProgress :: HasGame m => m Int
 activeLocationProgress = sum . map (.progress) <$> (traverse getLocation =<< select IsActiveLocation)
+
+-- | The attachments on the active location, as "for each attachment on the active
+-- location" reads: none without one.
+activeLocationAttachments :: HasGame m => m Int
+activeLocationAttachments = sum <$> (traverse (fmap length . getAttachmentsOn . toTarget) =<< select IsActiveLocation)
 
 -- | Whether the game is dealt in nightmare mode, for a card whose standard text the
 -- nightmare setup card changes.

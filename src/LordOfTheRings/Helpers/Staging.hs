@@ -60,7 +60,7 @@ getStagingThreats = do
 getLocationQuestPoints :: (HasGame m) => LocationId -> m Int
 getLocationQuestPoints lid = do
   location <- getLocation lid
-  modifiedValue questPointsOf (toTarget lid) location.questPoints
+  modifiedQuestPoints (toTarget lid) location.questPoints
 
 getEngagementCost :: (HasGame m) => EnemyId -> m Int
 getEngagementCost eid = do

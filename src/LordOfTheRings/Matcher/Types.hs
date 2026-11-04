@@ -123,6 +123,11 @@ data AllyMatcher
     AllyWithPlayerAttachment
   | -- | an ally with a ready player card attached, as Bartering chooses one
     AllyWithReadyPlayerAttachment
+  | -- | an ally with a ready attachment of the trait attached, as Swift and Strong
+    -- exhausts a Weapon; any attachment without one, as Wiglaf exhausts one
+    AllyWithReadyAttached (Maybe Trait)
+  | -- | an ally with an attachment of the card code attached, as "Limit 1 per ally" reads
+    AllyWithAttachment CardCode
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]
@@ -248,6 +253,12 @@ data LocationMatcher
     LocationCanEnterStagingArea
   | -- | a location guarding a card, as 'EnemyGuardingACard' (Find Durin's Key)
     LocationGuardingACard
+  | -- | a location with a player card attached to it, as South Away! reads
+    LocationWithPlayerCardAttachment
+  | -- | a location with any card attached to it, as Haldan draws for each
+    LocationWithAttachment
+  | -- | a location with no progress tokens on it, as Woodmen's Path attaches to
+    LocationWithoutProgress
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

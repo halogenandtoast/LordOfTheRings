@@ -149,6 +149,9 @@ data WindowMatcher
     AttackedAloneWithExcessWindow Timing Target
   | -- | an enemy destroyed by an attack a matching hero made
     EnemyDestroyedByHeroWindow Timing HeroMatcher
+  | -- | an enemy destroyed by an attack a matching hero or ally made, as Swift and Strong
+    -- answers
+    EnemyDestroyedByCharacterWindow Timing HeroMatcher AllyMatcher
   | -- | an encounter or quest card's effect raised the player's threat
     ThreatRaisedByEncounterWindow Timing PlayerId
   | -- | a player other than the given one raised his threat
@@ -477,6 +480,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False
+  (EnemyDestroyedByCharacterWindow {}, _) -> False
   (EnemyWithTraitRevealedWindow {}, _) -> False
   (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False

@@ -209,6 +209,12 @@ import LordOfTheRings.Event.Cards.ValourOfTheNorth
 import LordOfTheRings.Event.Cards.Bartering
 import LordOfTheRings.Event.Cards.BeornsRage
 import LordOfTheRings.Event.Cards.TheHiddenWay
+import LordOfTheRings.Event.Cards.FlightOfTheEagles
+import LordOfTheRings.Event.Cards.SouthAway
+import LordOfTheRings.Event.Cards.QuickerThanSight
+import LordOfTheRings.Event.Cards.ManTheWalls
+import LordOfTheRings.Event.Cards.FamiliarLands
+import LordOfTheRings.Event.Cards.SwiftAndStrong
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -437,5 +443,11 @@ allEvents =
         , SomeEventCard bartering
         , SomeEventCard beornsRage
         , SomeEventCard theHiddenWay
+        , SomeEventCard flightOfTheEagles
+        , SomeEventCard southAway
+        , SomeEventCard quickerThanSight
+        , SomeEventCard manTheWalls
+        , SomeEventCard familiarLands
+        , SomeEventCard swiftAndStrong
         ]
     ]

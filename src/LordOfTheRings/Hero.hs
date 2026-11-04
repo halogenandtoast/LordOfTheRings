@@ -83,6 +83,9 @@ import LordOfTheRings.Hero.Cards.Quickbeam
 import LordOfTheRings.Hero.Cards.BrandSonOfBainLeadership
 import LordOfTheRings.Hero.Cards.BardSonOfBrand
 import LordOfTheRings.Hero.Cards.GrimbeornTheOld
+import LordOfTheRings.Hero.Cards.Haldan
+import LordOfTheRings.Hero.Cards.Thranduil
+import LordOfTheRings.Hero.Cards.DainIronfootSpirit
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Cards.BilboBagginsTactics
 import LordOfTheRings.Hero.Cards.Radagast
@@ -199,5 +202,8 @@ allHeroes =
         , SomeHeroCard brandSonOfBainLeadership
         , SomeHeroCard bardSonOfBrand
         , SomeHeroCard grimbeornTheOld
+        , SomeHeroCard haldan
+        , SomeHeroCard thranduil
+        , SomeHeroCard dainIronfootSpirit
         ]
     ]

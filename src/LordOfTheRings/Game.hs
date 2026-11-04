@@ -576,10 +576,11 @@ runGame' msg g = case leavingCharacter g msg of
   -- a character leaving play opens the When window first, while it is still in play
   Just target -> do
     windows <- leftPlayWindows g target
-    -- a hero to be removed from the game if it leaves play is, however it leaves
-    removed <- case target of
-      HeroTarget _ -> elem RemoveFromGameIfLeavesPlay <$> getModifiers target
-      _ -> pure False
+    -- a character to be removed from the game if it leaves play is, however it leaves, as
+    -- a player card with the Encounter keyword (MEC67 rules)
+    removed <- case msg of
+      RemoveFromGame _ -> pure False
+      _ -> elem RemoveFromGameIfLeavesPlay <$> getModifiers target
     pushAll [CheckWindows (map mkWhen windows), LeavePlay $ if removed then RemoveFromGame target else msg]
     pure g
   Nothing -> case msg of
@@ -593,7 +594,7 @@ leavingCharacter g = \case
   ReturnToHand t | character t -> Just t
   ShuffleIntoOwnersDeck t | character t -> Just t
   PutOnBottomOfOwnersDeck t | character t -> Just t
-  RemoveFromGame t@(HeroTarget _) | character t -> Just t
+  RemoveFromGame t | character t -> Just t
   _ -> Nothing
  where
   character = \case
@@ -2241,9 +2242,13 @@ runGameMessage msg g = case msg of
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   -- attached as one played is, but not played
+  -- with nothing it may attach to, it goes to its owner's discard pile, as an attachment
+  -- freed of its guard does
   PutAttachmentIntoPlay pid card -> do
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
-    push $ PlayAttachment pid card
+    hosts <- cardHosts pid (toCardCode card)
+    let unattached = attachMatcherFor pid (toCardCode card) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
+    push $ if null hosts && not unattached && isNothing (guardedTypes card) then PutInDiscard card else PlayAttachment pid card
     pure g
   PutSideQuestIntoPlay pid card -> do
     sideQuest <- newSideQuest pid card
@@ -2534,6 +2539,11 @@ runGameMessage msg g = case msg of
     g' <- leftPlay g target
     pushAll $ discardAttached g target
     pure $ g' & entitiesL . heroesL %~ Map.delete hid
+  -- an ally leaves play for good, as Eagle of the North does however it leaves
+  RemoveFromGame target@(AllyTarget aid) | Map.member aid g.entities.allies -> do
+    g' <- leftPlay g target
+    pushAll $ discardAttached g target
+    pure $ g' & entitiesL . alliesL %~ Map.delete aid
   -- what is attached to it leaves play with it, as it would were it discarded
   RemoveFromGame target@(LocationTarget lid) -> do
     pushAll $ discardAttached g target
@@ -2830,6 +2840,14 @@ runGameMessage msg g = case msg of
             )
             $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner
     pure $ retargetCharacter (toTarget h) (toTarget new) $ g & entitiesL . heroesL %~ Map.delete hid & entitiesL . alliesL %~ insertEntity new
+  -- it does not leave play: it keeps its id, and whether it is exhausted, as the card it is
+  AllyBecomesAttachment aid host | Just a <- Map.lookup aid g.entities.allies -> do
+    let attrs = toAttrs a
+        new =
+          overAttrs (\x -> x {attachmentExhausted = allyExhausted attrs})
+            $ lookupAttachment (toCardCode a) attrs.allyCardId (AttachmentId $ unAllyId aid) attrs.allyOwner
+    pushAll $ discardAttached g (toTarget a) <> [AttachCard (toId new) host, CheckRestricted host]
+    pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . attachmentsL %~ insertEntity new
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
@@ -3508,8 +3526,10 @@ checkRestricted g host = do
   let slots :: HasCardDef a => a -> Int
       slots = cdRestrictedSlots . toCardDef
       restrictedOn =
-        [(toTarget x, slots x) | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
+        [(toTarget x, slots x) | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x || gainsRestricted x]
           <> [(toTarget o, slots o) | o <- toList g.entities.objectives, o.placement == AttachedTo host, isRestricted o]
+      -- an attachment given Restricted with its text, as Wild Stallion's Mount text
+      gainsRestricted x = GainKeyword Restricted `elem` map modifierType (Map.findWithDefault [] (toTarget x) (gameModifiers g))
   controller <- characterController host
   for_ controller \pid ->
     when (sum (map snd restrictedOn) > 2)
@@ -4019,6 +4039,11 @@ payFor g pid card fromHand windows host discount = do
             [CreateEffect $ Effect (CardIdSource card.id) (CardIdTarget card.id) [GainKeyword (Doomed k)] UntilEndOfRound]
         , Label (ikey "label.doNotGiveDoomed") []
         ]
+  pushAll
+    [ CreateEffect $ Effect (effectSource e) (CardIdTarget card.id) ms UntilEndOfRound
+    | e <- spentEffects
+    , SpentOnCardGives ms <- effectModifiers e
+    ]
   let gained e = effectSource e == CardIdSource card.id && effectTarget e == CardIdTarget card.id
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (\e -> not (spent e || gained e))
 

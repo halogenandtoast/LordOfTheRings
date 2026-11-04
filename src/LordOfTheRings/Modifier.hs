@@ -56,6 +56,9 @@ data ModifierType
     NoProgressFromPlayerCards
   | -- | on a location: its quest points are raised by this much, as an X reads
     QuestPointModifier Int
+  | -- | on a location: its quest points are at most this, after the others, as Woodmen's
+    -- Path reduces them to 1
+    QuestPointsReducedTo Int
   | -- | on an enemy, or a character; on a player, none of their characters may attack,
     -- as Hobbit-sense reads
     CannotAttack
@@ -204,8 +207,8 @@ data ModifierType
     DiscardAtEndOfRound
   | -- | on a hero, or its card: it is removed from the game at the end of the round
     RemoveFromGameAtEndOfRound
-  | -- | on a hero, or its card: leaving play by any means, it is removed from the game
-    -- instead, as Arkham's RemoveFromGameInsteadOfDiscard
+  | -- | on a character, or its card: leaving play by any means, it is removed from the
+    -- game instead, as Arkham's RemoveFromGameInsteadOfDiscard
     RemoveFromGameIfLeavesPlay
   | -- | on a card whose effect lets its controller choose 1 of its options: they choose up
     -- to this many instead, as Gandalf put into play by an upgraded Send for Help
@@ -216,6 +219,9 @@ data ModifierType
     -- printed resource icon, which gives a 0-cost card its resource match too, as Bard son
     -- of Brand has for an Item attachment
     PrintedResourceIconFor CardMatcher Sphere
+  | -- | on a card, as its card id: it needs no resource match, its cost paid with
+    -- resources of any sphere, as Thranduil plays a Silvan ally
+    NoResourceMatchNeeded
   | -- | on a player: they may declare any number of defenders against each attack
     MayDeclareMultipleDefenders
   | -- | on a player
@@ -381,6 +387,10 @@ data ModifierType
   | -- | on a player, or on the game for every player: the next card played from hand
     -- gains Doomed N, as Gríma's Action reads; spent with it
     NextCardGainsDoomed Int
+  | -- | alongside a reduction of the next matching card's cost, on the same effect: the
+    -- card that spends it gets these modifiers until the end of the round, as the allies
+    -- Man the Walls lowers cannot quest
+    SpentOnCardGives [ModifierType]
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int

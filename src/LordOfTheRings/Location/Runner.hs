@@ -5,7 +5,7 @@ module LordOfTheRings.Location.Runner (module X) where
 import LordOfTheRings.Card (CardDef (..), toCard, toCardDef)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedValue, questPointsOf)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedQuestPoints)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (ActiveLocation))
@@ -58,7 +58,7 @@ instance RunMessage LocationAttrs where
    where
     placeTokens token n = do
       let attrs' = attrs & tokensL %~ addTokens token n
-      questPoints <- modifiedValue questPointsOf attrs attrs'.questPoints
+      questPoints <- modifiedQuestPoints attrs attrs'.questPoints
       -- a location with as much progress as its quest points is explored, but one on the
       -- Island Map stays in its place (Temple of the Deceived)
       when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints && isNothing attrs.position)

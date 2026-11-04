@@ -1141,6 +1141,36 @@ from hand.
 playFromHandAtNoCost :: ReverseQueue m => PlayerId -> CardId -> m ()
 playFromHandAtNoCost pid cid = push $ PlayFromHandAtNoCost pid cid
 
+-- | The ally loses the ally card type and gains the hero card type, as Thalion does with
+-- 3 side quests in the victory display.
+allyBecomesHero :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
+allyBecomesHero a = push $ AllyBecomesHero a.id
+
+-- | The hero an ally became is an ally again, given as the ally its own text reads.
+heroBecomesAlly :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
+heroBecomesAlly a = push $ HeroBecomesAlly (HeroId $ unAllyId a.id)
+
+-- | The ally becomes an attachment on the host, as Wild Stallion attaches itself as a
+-- Mount.
+attachAllyTo :: (ReverseQueue m, HasField "id" ally AllyId, Targetable host) => ally -> host -> m ()
+attachAllyTo a host = push $ AllyBecomesAttachment a.id (toTarget host)
+
+-- | An attachment card, already taken from where it was, is put into play by the player,
+-- not played: a Guarded (X) one is guarded first. As Ring of Thrór puts in the one it
+-- discards, and The King's Return the one it finds.
+putAttachmentIntoPlay :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+putAttachmentIntoPlay pid = push . PutAttachmentIntoPlay pid
+
+-- | Play a card from the player's hand outside its usual timing, paying for it, as
+-- Hirgon and Thranduil play an ally.
+playFromHand :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
+playFromHand pid card = push $ PlayCardInWindow pid card.id []
+
+-- | Play an attachment from the player's hand on the host without paying its cost, as
+-- Wiglaf plays an Item attachment on himself.
+playOnFromHandAtNoCost :: (ReverseQueue m, HasField "id" card CardId, Targetable host) => PlayerId -> card -> host -> m ()
+playOnFromHandAtNoCost pid card host = push $ PlayFromHandOnAtNoCost pid card.id (toTarget host)
+
 -- | The card leaves the player's deck and is played without paying its cost, as Send for
 -- Help's search lets one be.
 playFromDeckAtNoCost :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
@@ -1974,11 +2004,6 @@ shuffleIntoDeck pid = push . ShuffleCardIntoDeck pid . toCard
 -- shuffles a hand.
 shuffleFromHandIntoOwnersDeck :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
 shuffleFromHandIntoOwnersDeck pid card = push $ ShuffleFromHandIntoOwnersDeck pid card.id
-
--- | The attachment card, from out of play, is put into play under the player, not played:
--- a Guarded (X) one is guarded first, as The King's Return puts one into play.
-putAttachmentIntoPlay :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
-putAttachmentIntoPlay pid = push . PutAttachmentIntoPlay pid
 
 -- | The card leaves the player's hand for out of play, as Recurring Nightmare does for
 -- the staging area.

@@ -176,6 +176,9 @@ data Message
     PlayAtNoCost PlayerId PlayerCard
   | -- | the card is played from its owner's hand without paying its cost
     PlayFromHandAtNoCost PlayerId CardId
+  | -- | an attachment in its owner's hand is played on the host without paying its cost,
+    -- as Wiglaf plays an Item attachment on himself
+    PlayFromHandOnAtNoCost PlayerId CardId Target
   | {- | the top card of the player's deck is revealed: they may play it at no cost, if
     able, or else it goes to the bottom of their deck
     -}
@@ -250,6 +253,10 @@ data Message
     AllyBecomesHero AllyId
   | -- | the hero an ally became goes back to being an ally
     HeroBecomesAlly HeroId
+  | -- | the ally loses the ally card type and becomes an attachment on the host, as Wild
+    -- Stallion attaches itself as a Mount: its card's attachment builder, under the same
+    -- code, gives it its attachment text
+    AllyBecomesAttachment AllyId Target
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then

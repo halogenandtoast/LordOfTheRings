@@ -106,6 +106,12 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (EnemyDestroyedByHeroWindow t m, EnemyDestroyedByAttack _ attackers _)
     | t == timing ->
         anyM (\case HeroTarget hid -> selectAny (HeroWithId hid <> m); _ -> pure False) attackers
+  (EnemyDestroyedByCharacterWindow t hm am, EnemyDestroyedByAttack _ attackers _)
+    | t == timing ->
+        flip anyM attackers \case
+          HeroTarget hid -> selectAny (HeroWithId hid <> hm)
+          AllyTarget aid -> selectAny (AllyWithId aid <> am)
+          _ -> pure False
   (EnemyWithTraitRevealedWindow t trait, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
   (EnemyWithTraitEntersStagingAreaWindow t trait, EntersStagingArea (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
   (TreacheryWithTraitRevealedWindow t trait, Revealed target@(TreacheryTarget tid)) | t == timing ->
@@ -316,6 +322,7 @@ passesCriteria = \case
   AffordableAttachmentInDiscard pid sphere ->
     anyM (\(_, pc, _) -> notNull <$> cardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid sphere
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
+  AffordableAllyInHandWithoutMatch pid matcher -> notNull <$> affordableAlliesInHandWithoutMatch pid matcher
   BeforeCommitting ->
     andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
   BeforeStaging ->

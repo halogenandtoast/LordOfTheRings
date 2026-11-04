@@ -25,7 +25,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhib
 import LordOfTheRings.Helpers.Window (exhaustableCharacters, getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Doomed, Secrecy))
+import LordOfTheRings.Keyword (Keyword (Doomed, GuardedBy, Secrecy))
 import LordOfTheRings.Id (AllyId (..), PlayerId (..))
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
@@ -228,6 +228,22 @@ runPlayer msg player = case msg of
             , CheckWindows
                 [mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]
             ]
+        pure $ player & handL %~ filter ((/= cid) . (.id))
+      _ -> pure player
+    -- a Guarded (X) attachment is guarded first, as one played is (MEC65 rules)
+    PlayFromHandOnAtNoCost pid cid host | pid == player.id -> case find ((== cid) . (.id)) player.hand of
+      Just card@(PlayerCard pc) -> do
+        raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef pc)]
+        let attach = maybe (PlayAttachmentOn pid pc host) (ResolveGuardedPlayerCard pid pc) $ headMay [ts | GuardedBy ts <- toList (cdKeywords $ toCardDef pc)]
+        pushAll
+          =<< inLogBlock
+            (PlayBlock pid card)
+            ( markPlayed pid pc
+                <> [ attach
+                   , CheckWindows
+                       [mkAfter $ PlayedCard pid pc, mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]
+                   ]
+            )
         pure $ player & handL %~ filter ((/= cid) . (.id))
       _ -> pure player
     PlayTopOfDeckAtNoCostOrBottom pid source | pid == player.id -> do
@@ -531,12 +547,13 @@ canAffordWith discount p c = case (c.cost, c.sphere) of
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
-      filterM (\h -> andM [heroCanSpend h, not <$> barredFrom c h, orM [paysFor sphere h, iconFor c sphere h]]) [h | h <- heroes, h.resources > 0]
+      filterM (\h -> andM [heroCanSpend h, not <$> barredFrom c h, orM [paysFor sphere h, iconFor c sphere h, noMatchNeeded c]]) [h | h <- heroes, h.resources > 0]
     fromAllies <- sum . map snd <$> allyPayersFor p.id c
     -- a card that costs 0 still needs a resource match (FAQ 2.39, 2.61): a hero with its
     -- resource icon, which paying with resources of another sphere (A Good Harvest) isn't;
     -- a printed icon the hero has while paying for the card is, as Bard son of Brand's
-    matched <- (sphere == Neutral ||) <$> anyM (\h -> orM [matchesSphere sphere h, printedIconFor c sphere h]) heroes
+    -- and so is a card that needs no resource match (Radagast's Creature allies)
+    matched <- orM [pure (sphere == Neutral), noMatchNeeded c, anyM (\h -> orM [matchesSphere sphere h, printedIconFor c sphere h]) heroes]
     let needed = costAsResources cost + extra
     case cdDistinctPayers (toCardDef c) of
       Just n -> pure $ length payers >= n + extra
@@ -640,7 +657,7 @@ a resource icon it has gained gives it.
 paysFor :: HasGame m => Sphere -> Hero -> m Bool
 paysFor sphere h = do
   cards <- getsGame (map (.activeCostCard) . toList . gameActiveCosts)
-  andM [not <$> anyM (`barredFrom` h) cards, orM [heroPaysFor sphere h, andM [heroCanSpend h, orM [iconFor c sphere h | c <- cards]]]]
+  andM [not <$> anyM (`barredFrom` h) cards, orM [heroPaysFor sphere h, andM [heroCanSpend h, orM ([iconFor c sphere h | c <- cards] <> map noMatchNeeded cards)]]]
 
 -- | Whether the hero's resources cannot pay for the card, as Na'asiyah's for allies.
 barredFrom :: HasGame m => Card -> Hero -> m Bool
@@ -659,6 +676,10 @@ iconFor c sphere h =
 printedIconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
 printedIconFor c sphere h =
   any (\case PrintedResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
+
+-- | Whether the card's cost may be paid with resources of any sphere.
+noMatchNeeded :: HasGame m => Card -> m Bool
+noMatchNeeded c = elem NoResourceMatchNeeded <$> getModifiers (CardIdTarget c.id)
 
 startingHandSize :: Int
 startingHandSize = 6

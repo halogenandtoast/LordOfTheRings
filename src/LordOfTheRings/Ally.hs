@@ -248,6 +248,17 @@ import LordOfTheRings.Ally.Cards.EreborToymaker
 import LordOfTheRings.Ally.Cards.MessengerRaven
 import LordOfTheRings.Ally.Cards.LoyalHound
 import LordOfTheRings.Ally.Cards.BywaterShirriff
+import LordOfTheRings.Ally.Cards.Wiglaf
+import LordOfTheRings.Ally.Cards.Meneldor
+import LordOfTheRings.Ally.Cards.WildStallion
+import LordOfTheRings.Ally.Cards.EagleOfTheNorth
+import LordOfTheRings.Ally.Cards.ForestRoadTraveler
+import LordOfTheRings.Ally.Cards.GiantBear
+import LordOfTheRings.Ally.Cards.Galion
+import LordOfTheRings.Ally.Cards.Thalion
+import LordOfTheRings.Ally.Cards.SoldierOfErebor
+import LordOfTheRings.Ally.Cards.MirkwoodHunter
+import LordOfTheRings.Ally.Cards.DescendantOfGirion
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -528,5 +539,16 @@ allAllies =
         , SomeAllyCard messengerRaven
         , SomeAllyCard loyalHound
         , SomeAllyCard bywaterShirriff
+        , SomeAllyCard wiglaf
+        , SomeAllyCard meneldor
+        , SomeAllyCard wildStallion
+        , SomeAllyCard eagleOfTheNorth
+        , SomeAllyCard forestRoadTraveler
+        , SomeAllyCard giantBear
+        , SomeAllyCard galion
+        , SomeAllyCard thalion
+        , SomeAllyCard soldierOfErebor
+        , SomeAllyCard mirkwoodHunter
+        , SomeAllyCard descendantOfGirion
         ]
     ]
