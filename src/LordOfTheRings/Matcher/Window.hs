@@ -142,6 +142,8 @@ data WindowMatcher
     PlayerDiscardedFromDeckWindow Timing PlayerMatcher
   | -- | the When Revealed effects of a treachery canceled, as Ruins of Arnor reads
     TreacheryWhenRevealedCanceledWindow Timing
+  | -- | the When Revealed effects of any card canceled, as Exposed Riverbank reads
+    WhenRevealedCanceledWindow Timing
   | -- | the player played a matching card from their hand
     PlayedCardFromHandWindow Timing PlayerId CardMatcher
   | -- | any hero dealt damage
@@ -494,6 +496,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (BecomesWindow time, Became time') -> time == time'
   (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
+  (WhenRevealedCanceledWindow t, WhenRevealedCanceled _) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
   (SetupHandDrawnWindow t pid, SetupHandDrawn pid') -> t == timing && pid == pid'
