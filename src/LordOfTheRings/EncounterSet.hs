@@ -197,5 +197,25 @@ data EncounterSet
   | TheKingsQuest
   | TheWitheredHeath
   | WildCreatures
+  -- the Vengeance of Mordor cycle's
+  | ChallengeOfTheWainriders
+  | CityOfRhun
+  | DangerInDorwinion
+  | EasterlingRaiders
+  | GollumAndSmeagol
+  | RidersOfRhun
+  | RollingPlains
+  | ServantsOfSauron
+  | TheCityOfUlfast
+  | TheFortressOfNurn
+  | TheLandOfSorrow
+  | ThePowerOfMordor
+  | TheRiverRunning
+  | TheTempleOfDoom
+  | TwistedTunnels
+  | UlchorsGuard
+  | UnderGuard
+  | UnderTheAshMountains
+  | WrathAndRuin
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
