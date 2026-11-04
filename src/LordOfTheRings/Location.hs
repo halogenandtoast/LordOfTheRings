@@ -402,6 +402,9 @@ import LordOfTheRings.Location.Cards.DesertOasis
 import LordOfTheRings.Location.Cards.JungleTrail
 import LordOfTheRings.Location.Cards.ForestClearing
 import LordOfTheRings.Location.Cards.DenseJungle
+import LordOfTheRings.Location.Cards.BurntSands
+import LordOfTheRings.Location.Cards.ScorchedHamada
+import LordOfTheRings.Location.Cards.ParchedWadi
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -850,5 +853,8 @@ allLocations =
         , SomeLocationCard jungleTrail
         , SomeLocationCard forestClearing
         , SomeLocationCard denseJungle
+        , SomeLocationCard burntSands
+        , SomeLocationCard scorchedHamada
+        , SomeLocationCard parchedWadi
         ]
     ]

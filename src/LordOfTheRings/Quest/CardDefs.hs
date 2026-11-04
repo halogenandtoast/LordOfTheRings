@@ -275,6 +275,10 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , seekShade
+      , theDesertOfHarad
+      , underTheMercilessSun
+      , beastsOfLegend
       ]
 
 theDrippingWalls :: CardDef
@@ -1152,3 +1156,21 @@ uruksOfTheEye =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+-- * Desert Crossing (The Sands of Harad)
+
+seekShade :: CardDef
+seekShade =
+  (encounterSideQuest "16022" "Seek Shade" DesertCrossing 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+theDesertOfHarad :: CardDef
+theDesertOfHarad = quest "16068" "The Desert of Harad" DesertCrossing 1 8
+
+underTheMercilessSun :: CardDef
+underTheMercilessSun = quest "16069" "Under the Merciless Sun" DesertCrossing 2 14
+
+beastsOfLegend :: CardDef
+beastsOfLegend = quest "16070" "Beasts of Legend" DesertCrossing 3 16

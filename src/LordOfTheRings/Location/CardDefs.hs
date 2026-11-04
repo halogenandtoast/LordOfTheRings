@@ -419,6 +419,9 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , burntSands
+      , scorchedHamada
+      , parchedWadi
       ]
 
 drownedTreasury :: CardDef
@@ -3203,3 +3206,20 @@ denseJungle =
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+burntSands :: CardDef
+burntSands = (location "16025" "Burnt Sands" DesertCrossing 4 2 3) {cdCardTraits = setFromList [Desert]}
+
+scorchedHamada :: CardDef
+scorchedHamada =
+  (location "16026" "Scorched Hamada" DesertCrossing 2 0 4)
+    { cdCardTraits = setFromList [Desert]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+parchedWadi :: CardDef
+parchedWadi = (location "16027" "Parched Wadi" DesertCrossing 2 3 3) {cdCardTraits = setFromList [Desert]}

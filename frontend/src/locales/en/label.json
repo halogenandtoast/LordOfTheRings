@@ -2245,5 +2245,18 @@
   },
   "mordorWarg": {
     "attach": "Mordor Warg: choose the Orc enemy to attach it to"
+  },
+  "carrionBird": {
+    "discard": "Carrion Bird: choose a damaged character you control to discard"
+  },
+  "scorchingSun": {
+    "choose": "Scorching Sun: choose one",
+    "temperature": "Raise the temperature by 2",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "theDesertOfHarad": {
+    "choose": "The Desert of Harad: exhaust the ally or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
   }
 }

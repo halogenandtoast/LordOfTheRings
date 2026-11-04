@@ -406,6 +406,8 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , wereWorm
+      , carrionBird
       ]
 
 namelessThing :: CardDef
@@ -3299,4 +3301,22 @@ mordorWarg =
   (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
+    }
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+-- | X attack and X defense: the tens digit of the temperature, which the card adds.
+wereWorm :: CardDef
+wereWorm =
+  (enemy "16023" "Were-worm" DesertCrossing 4 22 0 0 0 5)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+carrionBird :: CardDef
+carrionBird =
+  (enemy "16024" "Carrion Bird" DesertCrossing 2 40 2 2 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 1
     }

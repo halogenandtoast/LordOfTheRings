@@ -344,6 +344,9 @@ allTreacheryCards =
       , heatExhaustion
       , overgrown
       , fearOfMordor
+      , mirage
+      , unbearableHeat
+      , scorchingSun
       ]
 
 deepDeepDark :: CardDef
@@ -2210,3 +2213,21 @@ overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFrom
 
 fearOfMordor :: CardDef
 fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+mirage :: CardDef
+mirage = (treachery "16028" "Mirage" DesertCrossing 2) {cdCardTraits = setFromList [Weather]}
+
+unbearableHeat :: CardDef
+unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+
+scorchingSun :: CardDef
+scorchingSun =
+  (treachery "16030" "Scorching Sun" DesertCrossing 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }

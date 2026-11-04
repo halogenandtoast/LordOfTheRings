@@ -225,6 +225,10 @@ import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
 import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.SeekShade
+import LordOfTheRings.Quest.Cards.TheDesertOfHarad
+import LordOfTheRings.Quest.Cards.UnderTheMercilessSun
+import LordOfTheRings.Quest.Cards.BeastsOfLegend
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -482,5 +486,9 @@ allQuests =
         , SomeQuestCard findWater
         , SomeQuestCard craftRemedy
         , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard seekShade
+        , SomeQuestCard theDesertOfHarad
+        , SomeQuestCard underTheMercilessSun
+        , SomeQuestCard beastsOfLegend
         ]
     ]
