@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.TheCapeOfAndrast (theCapeOfAndrast) where
 
 import LordOfTheRings.Card (CardType (TreacheryType), cdCardTraits, cdCardType, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Placement (Placement (StormcallerArea))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Trait (Trait (Weather))
@@ -39,8 +38,8 @@ instance RunMessage TheCapeOfAndrast where
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       ships <- select shipObjective
       for_ ships \s -> dealDamage attrs (AllyTarget s) 1
-      enemies <- traverse getEnemy =<< select shipEnemy
-      for_ [e | e <- enemies, e.placement /= StormcallerArea] \e -> dealDamage attrs (toTarget e) 1
+      enemies <- select (shipEnemy <> not_ EnemyInStormcallerArea)
+      for_ enemies \e -> dealDamage attrs e 1
       pure q
     _ -> TheCapeOfAndrast <$> runMessage msg attrs
    where

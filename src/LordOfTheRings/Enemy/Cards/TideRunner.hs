@@ -2,7 +2,7 @@ module LordOfTheRings.Enemy.Cards.TideRunner (tideRunner) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Placement (Placement (EngagedWith))
+import LordOfTheRings.Placement (Placement (StagingArea, StormcallerArea))
 import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers (addToStormcallerArea)
 
 newtype TideRunner = TideRunner EnemyAttrs
@@ -18,9 +18,7 @@ tideRunner = enemy TideRunner Cards.tideRunner
 instance HasModifiersFor TideRunner where
   getModifiersFor (TideRunner a) = do
     modifySelf a [CannotHaveAttachments]
-    case a.placement of
-      EngagedWith _ -> whenM isOffCourse $ modified a GameTarget [EngagedEnemiesAddThreat (EnemyWithId a.id)]
-      _ -> pure ()
+    whenM isOffCourse $ modifySelf a [ConsideredIn StagingArea, ConsideredIn StormcallerArea]
 
 -- | When Revealed: Either choose a player to engage Tide-runner, or add Tide-runner to the
 -- Stormcaller's area and it gains surge.
