@@ -91,6 +91,10 @@ data CampaignLogKey
     -- add for a Clue they control, by the seat of that player ('counted'), offered as the
     -- next scenario is set up
     BooksEarned
+  | -- | The Lord of the Rings: the resource tokens on The Black Gate as The Black Gate
+    -- Opens is won ('counted', by The Black Gate's code), Mount Doom's campaign card
+    -- starting with as many
+    BlackGateResources
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
