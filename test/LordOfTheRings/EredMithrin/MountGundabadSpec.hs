@@ -10,7 +10,7 @@ import LordOfTheRings.Entities (enemiesL, questsL)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyThreat, getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (CardMatcher (AnyCard), EnemyMatcher (..), PlayerMatcher (..), getEnemy, select)
+import LordOfTheRings.Matcher (CardMatcher (AnyCard), EnemyMatcher (..), HeroMatcher (HeroControlledBy), PlayerMatcher (..), getEnemy, select)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
@@ -277,6 +277,28 @@ spec = describe "Mount Gundabad" do
     run $ ResolveAttack pid dagnir
     chooseAbilityOf pid =<< getActiveQuest
     getsGame (.outcome) `shouldReturn` Just Won
+
+  it "offers The Great Worm's response only to the player whose attack it was, with Reforged Wormsbane among its attackers" . twoPlayerTestIn mountGundabad testDeck $ \p1 p2 -> do
+    questsInVictory 5
+    dagnir <- stage Enemies.dagnirMountGundabad
+    _ <- stageB Quests.theGreatWorm
+    [wielder, other, _] <- select (HeroControlledBy $ PlayerWithId p1)
+    attacker : _ <- select (HeroControlledBy $ PlayerWithId p2)
+    sword <- genEncounterCard Objectives.wormsbaneReforged
+    run $ PutObjectiveIntoPlayAttached sword (HeroTarget wielder)
+    g <- getGame
+    putGame $ g & entitiesL . enemiesL . ix dagnir %~ overAttrs (\a -> a {enemyTokens = addTokens Damage 20 a.enemyTokens})
+    inPhase CombatPhase
+    -- another player's attack
+    run $ AttackWith (HeroTarget attacker)
+    run $ ResolveAttack p2 dagnir
+    getQuestion p1 `shouldReturn` Nothing
+    getQuestion p2 `shouldReturn` Nothing
+    -- his own attack, without the hero that wields Wormsbane
+    run $ AttackWith (HeroTarget other)
+    run $ ResolveAttack p1 dagnir
+    getQuestion p1 `shouldReturn` Nothing
+    getsGame (.outcome) `shouldReturn` Nothing
 
   -- \* Dagnir
 

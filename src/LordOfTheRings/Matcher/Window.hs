@@ -347,8 +347,9 @@ data WindowMatcher
   | -- | a matching character declared as an attacker against a matching enemy, as Valour
     -- of the North answers one against an enemy with an attachment
     CharacterAttackerDeclaredWindow Timing HeroMatcher AllyMatcher EnemyMatcher
-  | -- | a player's attack against a matching enemy resolved, as The Great Worm answers
-    MatchingEnemyAttackResolvedWindow Timing EnemyMatcher
+  | -- | a player's attack against a matching enemy resolved, a matching hero among its
+    -- attackers, as The Great Worm answers one with Reforged Wormsbane
+    MatchingEnemyAttackResolvedWindow Timing HeroMatcher EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
