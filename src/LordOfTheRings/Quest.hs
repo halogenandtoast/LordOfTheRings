@@ -365,6 +365,7 @@ import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
 import LordOfTheRings.Quest.Cards.TheTamingOfSmeagol
 import LordOfTheRings.Quest.Cards.AcrossTheMarshes
 import LordOfTheRings.Quest.Cards.DontLookAtTheLights
+import LordOfTheRings.Quest.Cards.AmbushTheMenOfHarad
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -762,5 +763,6 @@ allQuests =
         , SomeQuestCard theTamingOfSmeagol
         , SomeQuestCard acrossTheMarshes
         , SomeQuestCard dontLookAtTheLights
+        , SomeQuestCard ambushTheMenOfHarad
         ]
     ]
