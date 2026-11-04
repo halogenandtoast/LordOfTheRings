@@ -508,6 +508,14 @@ import LordOfTheRings.Enemy.Cards.GreatWargChief
 import LordOfTheRings.Enemy.Cards.HoundOfSauron
 import LordOfTheRings.Enemy.Cards.HowlingWarg
 import LordOfTheRings.Enemy.Cards.CrebainFromDunland
+import LordOfTheRings.Enemy.Cards.William
+import LordOfTheRings.Enemy.Cards.Bert
+import LordOfTheRings.Enemy.Cards.Tom
+import LordOfTheRings.Enemy.Cards.ASuspiciousCrow
+import LordOfTheRings.Enemy.Cards.GoblinAxeman
+import LordOfTheRings.Enemy.Cards.GoblinMiners
+import LordOfTheRings.Enemy.Cards.GoblinRunners
+import LordOfTheRings.Enemy.Cards.GoblinDriver
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1045,5 +1053,13 @@ allEnemys =
         , SomeEnemyCard houndOfSauron
         , SomeEnemyCard howlingWarg
         , SomeEnemyCard crebainFromDunland
+        , SomeEnemyCard william
+        , SomeEnemyCard bert
+        , SomeEnemyCard tom
+        , SomeEnemyCard aSuspiciousCrow
+        , SomeEnemyCard goblinAxeman
+        , SomeEnemyCard goblinMiners
+        , SomeEnemyCard goblinRunners
+        , SomeEnemyCard goblinDriver
         ]
     ]

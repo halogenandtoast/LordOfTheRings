@@ -4031,5 +4031,15 @@
         "text": "Stage 4A makes Doors of Durin the active location, adds Watcher in the Water to the staging area and puts the Ring-bearer, with all his attachments and no tokens, facedown under the Watcher. He stays in play, but no player controls him or his attachments until he is freed.\n\nOn stage 4B there can be 2 active locations: with Doors of Durin the only active one and a location in the staging area, the players must travel to it, making it active alongside the Doors.\n\nDoors of Durin is immune to player card effects, so a player card effect on the active location can only reach the other active location."
       }
     ]
+  },
+  "we-must-away-ere-break-of-day": {
+    "intro": [
+      "Bilbo has left the Shire with Gandalf, Thorin and the dwarves, bound for the Lonely Mountain. Not far into the wild, the company stumbles upon a camp of three hungry trolls."
+    ],
+    "setup": [
+      "Build the encounter deck from the We Must Away, Ere Break of Day and Western Lands encounter sets. The seven Sack objectives form a separate sack deck.",
+      "Sack X: the first player draws the top X cards of the sack deck, one at a time, and resolves their When Sacked effects. With the sack deck empty, Sack X is ignored. A Sack card that leaves play, or has no eligible target, is shuffled back into the sack deck.",
+      "The first player takes control of Bilbo Baggins. If he leaves play, the players lose."
+    ]
   }
 }

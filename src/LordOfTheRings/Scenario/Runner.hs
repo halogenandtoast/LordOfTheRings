@@ -17,7 +17,7 @@ import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
+import LordOfTheRings.Modifier (ModifierType (EncounterDeckDoesNotReset, EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
@@ -305,6 +305,16 @@ instance RunMessage ScenarioAttrs where
         push $ PlaceUnderneath target [EncounterCard top]
         pure $ attrs & powerOfMordorDeckL .~ rest
       [] -> pure attrs
+    -- the cards are drawn and resolved one at a time; with the deck empty the rest is
+    -- ignored (We Must Away, Ere Break of Day rules)
+    DrawFromSackDeck n | n > 0 -> case attrs.sackDeck of
+      top : rest -> do
+        pushAll $ DrawSackCard top : [DrawFromSackDeck (n - 1) | n > 1]
+        pure $ attrs & sackDeckL .~ rest
+      [] -> pure attrs
+    ShuffleIntoSackDeck card -> do
+      deck <- shuffleM (card : filter (/= card) attrs.sackDeck)
+      pure $ attrs & sackDeckL .~ deck
     -- the Evil Creatures discard pile is shuffled back in once the deck is empty, as the
     -- last card leaves it (Journey Up the Anduin rules)
     AddFromEvilCreaturesDeck source engaging -> case attrs.evilCreaturesDeck of
@@ -470,7 +480,8 @@ instance RunMessage ScenarioAttrs where
       phase <- getsGame gamePhase
       gameMods <- getModifiers GameTarget
       let anyPhase = EncounterDeckResetsWheneverEmpty `elem` gameMods
-      if (phase == QuestPhase || anyPhase) && null a.encounterDeck && notNull a.encounterDiscard
+          kept = EncounterDeckDoesNotReset `elem` gameMods
+      if (phase == QuestPhase || anyPhase) && not kept && null a.encounterDeck && notNull a.encounterDiscard
         then do
           -- the topmost matching card goes to the staging area first, as Ghostly Ruins reads
           let matchers = [m | ReturnBeforeEncounterDeckResets m <- gameMods]

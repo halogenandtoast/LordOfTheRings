@@ -109,6 +109,7 @@ allHeroCards =
       , eomerLeadership
       , tomCotton
       , frodoBagginsTheRoadDarkens
+      , bilboBagginsBaggins
       ]
 
 aragorn :: CardDef
@@ -716,3 +717,14 @@ frodoBagginsTheRoadDarkens =
   (hero "142001" "Frodo Baggins" Fellowship 0 2 1 2 2)
     { cdCardTraits = setFromList [Hobbit, RingBearer]
     }
+-- * The Hobbit: Over Hill and Under Hill
+
+-- | The Baggins sphere Bilbo Baggins the first player takes control of in this box's
+-- scenarios: threat 0, beyond the starting heroes (rules insert, "Bilbo Baggins").
+bilboBagginsBaggins :: CardDef
+bilboBagginsBaggins =
+  unique
+    (hero "131001" "Bilbo Baggins" Baggins 0 1 1 1 3)
+      { cdCardTraits = setFromList [Hobbit]
+      , cdKeywords = setFromList [FirstPlayerGainsControl]
+      }

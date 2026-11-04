@@ -429,6 +429,14 @@ import LordOfTheRings.Treachery.Cards.Snowdrifts
 import LordOfTheRings.Treachery.Cards.BitterCold
 import LordOfTheRings.Treachery.Cards.StormOfHowls
 import LordOfTheRings.Treachery.Cards.LustForTheRing
+import LordOfTheRings.Treachery.Cards.LotsOrNoneAtAll
+import LordOfTheRings.Treachery.Cards.ANicePickle
+import LordOfTheRings.Treachery.Cards.RoastEmOrBoilEm
+import LordOfTheRings.Treachery.Cards.HungryTroll
+import LordOfTheRings.Treachery.Cards.NoCampfire
+import LordOfTheRings.Treachery.Cards.WindWhippedRain
+import LordOfTheRings.Treachery.Cards.MoreLikeAGrocer
+import LordOfTheRings.Treachery.Cards.GripGrabPinchNab
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -885,5 +893,13 @@ allTreacherys =
         , SomeTreacheryCard bitterCold
         , SomeTreacheryCard stormOfHowls
         , SomeTreacheryCard lustForTheRing
+        , SomeTreacheryCard lotsOrNoneAtAll
+        , SomeTreacheryCard aNicePickle
+        , SomeTreacheryCard roastEmOrBoilEm
+        , SomeTreacheryCard hungryTroll
+        , SomeTreacheryCard noCampfire
+        , SomeTreacheryCard windWhippedRain
+        , SomeTreacheryCard moreLikeAGrocer
+        , SomeTreacheryCard gripGrabPinchNab
         ]
     ]
