@@ -3077,6 +3077,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.VengeanceOfMordor.PowerOfMordorSpec
       LordOfTheRings.VengeanceOfMordor.SmeagolSpec
+      LordOfTheRings.VengeanceOfMordor.TheFortressOfNurnPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.TheLandOfSorrowPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
