@@ -3281,13 +3281,15 @@ runGameMessage msg g = case msg of
         pushAll $ discardAttached g (EnemyTarget eid)
         let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly other (toCard e).id (AllyId $ unEnemyId eid) pid
         pure $ g & entitiesL . enemiesL %~ Map.delete eid & entitiesL . alliesL %~ insertEntity thisAlly
-  -- and back to its enemy side, in the staging area
+  -- and back to its enemy side, in the staging area, entering play, as Gollum does to
+  -- engage the first player (The Land of Shadow rules insert)
   Flip (AllyTarget aid)
     | Just a <- Map.lookup aid g.entities.allies
     , Just other <- cdOtherSide (toCardDef a)
     , cdCardType (toCardDef other) == EnemyType -> do
         pushAll $ discardAttached g (AllyTarget aid)
         let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard a).id (EnemyId $ unAllyId aid)
+        push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisEnemy]
         pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
   -- a hero whose other side is an enemy turns over, as Sméagol to Gollum: the hero leaves
   -- play, and the enemy enters play engaged with its owner, ready, still its owner's card
