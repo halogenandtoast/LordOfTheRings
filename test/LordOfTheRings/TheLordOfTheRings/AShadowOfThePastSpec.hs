@@ -50,7 +50,7 @@ hero :: CardCode -> GameT Target
 hero code = toTarget <$> getHeroWithCode code
 
 frodo :: GameT Target
-frodo = hero (toCardCode Heroes.frodoBagginsFellowship)
+frodo = hero (toCardCode Heroes.frodoBagginsTheBlackRiders)
 
 stage :: CardDef -> GameT EnemyId
 stage def = do
@@ -307,7 +307,7 @@ spec = describe "A Shadow of the Past" do
       getsGame (.outcome) `shouldReturn` Just Won
       l <- getCampaignLog
       [(p.code, p.attachedTo) | p <- l.pool]
-        `shouldBe` [(toCardCode Treacheries.theRingDrawsThem, Nothing), (toCardCode Attachments.mrUnderhill, Just $ toCardCode Heroes.frodoBagginsFellowship)]
+        `shouldBe` [(toCardCode Treacheries.theRingDrawsThem, Nothing), (toCardCode Attachments.mrUnderhill, Just $ toCardCode Heroes.frodoBagginsTheBlackRiders)]
 
   describe "Stock-brook" do
     it "is traveled to as it is revealed, the active location returned to the staging area" . shadowTest $ \pid -> do

@@ -124,6 +124,12 @@ flipFirstQuest pid = do
   chooseLabel "$label.keepHand" pid
   chooseOptionMatching "flip the quest" pid (const True)
 
+-- | At a saga's setup, take the Ring-bearer with the code, of those the game offers.
+chooseRingBearer :: (HasCallStack) => PlayerId -> CardCode -> GameT ()
+chooseRingBearer pid code = chooseOptionMatching ("choose Ring-bearer " <> tshow code) pid \case
+  TargetLabel _ msgs -> or [toCardCode card == code | PutHeroIntoPlayAs _ _ card <- msgs]
+  _ -> False
+
 -- | Click the active stage to resolve its When Revealed effect.
 resolveWhenRevealed :: (HasCallStack) => PlayerId -> GameT ()
 resolveWhenRevealed pid = chooseTarget pid =<< getActiveQuest

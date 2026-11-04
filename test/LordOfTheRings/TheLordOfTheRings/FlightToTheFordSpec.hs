@@ -48,7 +48,7 @@ hero :: CardCode -> GameT Target
 hero code = toTarget <$> getHeroWithCode code
 
 frodo :: GameT Target
-frodo = hero (toCardCode Heroes.frodoBagginsFellowship)
+frodo = hero (toCardCode Heroes.frodoBagginsTheBlackRiders)
 
 stage :: CardDef -> GameT EnemyId
 stage def = do
@@ -404,7 +404,7 @@ spec = describe "Flight to the Ford" do
       reveal [Treacheries.fearOfDiscovery, Treacheries.theEnemyIsUponUs, Treacheries.theEnemyIsUponUs]
       chooseLabel "$label.fearOfDiscovery.exhaust" pid
       resolveRevealed
-      heroExhausted . toAttrs <$> getHeroWithCode (toCardCode Heroes.frodoBagginsFellowship) `shouldReturn` True
+      heroExhausted . toAttrs <$> getHeroWithCode (toCardCode Heroes.frodoBagginsTheBlackRiders) `shouldReturn` True
 
   describe "Eaten Alive!" do
     it "deals X damage divided among the first player's heroes" . fordTest $ \pid -> do

@@ -41,7 +41,12 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
           <div v-for="(card, index) in player.onDeck" :key="card.id" class="on-deck" :style="{ '--depth': index }">
             <GameCard :card="card" :choices="choices" banner @choose="emit('choose', $event)" />
           </div>
-          <CardBack :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
+          <!-- played faceup, as Gandalf (The Road Darkens) has it, its count still shown -->
+          <div v-if="player.deckTop" class="pile-stack" :data-pile="`deck-${player.playerId}`">
+            <GameCard :card="player.deckTop" :choices="choices" @choose="emit('choose', $event)" />
+            <span class="pile-count">{{ player.deckSize }}</span>
+          </div>
+          <CardBack v-else :count="player.deckSize" back="player" :data-pile="`deck-${player.playerId}`" />
         </div>
         <!-- the captured deck (Escape from Mount Gram) -->
         <CardBack v-if="player.capturedDeckSize" :count="player.capturedDeckSize" back="player" :title="$t('log.capturedDeck', { count: player.capturedDeckSize })" />

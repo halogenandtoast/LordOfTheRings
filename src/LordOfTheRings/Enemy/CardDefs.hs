@@ -4250,6 +4250,8 @@ houndOfSauron =
   (enemy "142026" "Hound of Sauron" TheRingGoesSouth 4 50 1 4 1 3)
     { cdCardTraits = setFromList [Creature, Warg]
     , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 howlingWarg :: CardDef
