@@ -1972,7 +1972,7 @@ runGameMessage msg g = case msg of
             g
         passToken s = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
     pushEnd step
-    pure $ g' & effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)
+    pure $ g' & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration)
   PlayAlly pid card -> do
     thisAlly <- newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget

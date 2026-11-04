@@ -34,7 +34,8 @@ instance RunMessage AllyAttrs where
       pushWhen attrs.allyCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
-      blocked <- elem CannotReady <$> getModifiers attrs
+      -- on the game, no character readies, as Enfeebled's "exhausted characters cannot ready"
+      blocked <- elem CannotReady . concat <$> sequence [getModifiers attrs, getModifiers GameTarget]
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)

@@ -47,7 +47,8 @@ data ModifierType
     CannotAttack
   | -- | on a character: it does not exhaust, so cannot commit, attack or defend
     CannotExhaust
-  | CannotReady
+  | -- | on a character; on the game, no character readies, as Enfeebled reads
+    CannotReady
   | -- | on an enemy: characters with ranged may attack it in the staging area
     AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others
