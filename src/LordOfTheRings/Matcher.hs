@@ -306,23 +306,18 @@ getDefendersAgainst :: HasGame m => EnemyId -> m [Target]
 getDefendersAgainst eid = getsGame \g ->
   [t | (t, ms) <- Map.toList (gameModifiers g), any (\m -> m.modifierType == Defending && m.modifierSource == EnemyAttackSource eid) ms]
 
--- | A printed trait, or one a modifier grants.
+-- | A printed trait, or one a modifier grants, unless it lost it, as Shot from the Sky
+-- takes the Eagle trait.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
-hasTrait trait target def = do
-  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  -- one it lost, as Shot from the Sky takes the Eagle trait, it no longer has
-  pure $ LoseTrait trait `notElem` mods && (trait `member` cdCardTraits def || GainTrait trait `elem` mods)
+hasTrait trait target def = member trait <$> getTraits target def
 
 -- | The character's traits: its printed ones and those a modifier grants, less those it
 -- lost.
 characterTraits :: HasGame m => Target -> m (Set Trait)
-characterTraits target = do
-  printed <- case target of
-    HeroTarget hid -> cdCardTraits . toCardDef <$> getHero hid
-    AllyTarget aid -> cdCardTraits . toCardDef <$> getAlly aid
-    _ -> pure mempty
-  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  pure $ (printed <> setFromList [t | GainTrait t <- mods]) `difference` setFromList [t | LoseTrait t <- mods]
+characterTraits target = case target of
+  HeroTarget hid -> getTraits target . toCardDef =<< getHero hid
+  AllyTarget aid -> getTraits target . toCardDef =<< getAlly aid
+  _ -> pure mempty
 
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be
