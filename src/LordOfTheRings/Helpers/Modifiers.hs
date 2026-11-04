@@ -185,6 +185,7 @@ playProhibitions pid c = do
         CannotPlay matcher -> cardMatches matcher c
         OneAllyPerRound -> allyPlayed && c.cardType == AllyType
         OneAllyEntersPlayPerRound -> entryBarred && c.cardType == AllyType
+        AlliesCannotEnterPlay -> c.cardType == AllyType
         _ -> False
     ]
 

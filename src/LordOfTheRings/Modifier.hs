@@ -849,6 +849,8 @@ data ModifierType
   | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
     -- Corsair Waters reads
     OneAllyEntersPlayPerRound
+  | -- | on the game: no ally can enter play, however it enters, as The Crack of Doom reads
+    AlliesCannotEnterPlay
   | -- | on the game: the matching active location adds its threat to the staging area, as
     -- Flooded Ruins reads
     ActiveLocationsAddThreat LocationMatcher
