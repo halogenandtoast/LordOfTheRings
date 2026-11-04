@@ -3600,5 +3600,55 @@
       "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
       "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
     ]
+  },
+  "the-fortress-of-nurn": {
+    "intro": [
+      "The heroes were huddled behind a low hill less than a mile from the gate of Dol Rhugar. Gathered about them were the prisoners they had rescued from the slave-fields that surrounded the fortress. They were waiting under the cover of night for the signal to attack. The Gondorian, Arador, had come up with a plan to infiltrate the city. He took with him Edrahil the Elf and Farin the Dwarf. The three of them were going to rally the captives inside the city in order to open the gate. A single, long horn blast would be their signal to begin the full attack.",
+      "As the heroes waited for the signal, they reflected on the string of chances that had led them to this moment. “I feel as if some fate has brought us to this place,” said one of the heroes looking at his companions. “How else could we possibly have gathered an army just outside Ulchor’s fortress, deep in Mordor, ready to launch a surprise attack?”",
+      "“It is a wondrous turn of events,” replied another hero. “Perhaps it is the Valar who have guided us here?”",
+      "“I cannot say what is the will of the Valar, though I welcome their aid,” said another. “What I know is this: Ulchor is a traitor and a murderer. He should have been dealt with years ago in The Morgul Vale, but it seems the evil that is in that land has also the power to restore the flesh.”",
+      "“No doubt the process caused him great agony,” murmured another. “The ways of the Dark Lord are never kind, and powerful sorcery comes at a price. Ulchor has indeed grown more powerful, but madness seems to have nearly taken him as a result. How else could he have acted so brashly in the court of King Ulfast? He had but to mask his contempt for a minute, and victory might have been his.”",
+      "“The wrath of the Enemy has often been our unwitting ally through the long years,” agreed one of the companions. “The desire for vengeance has often overruled wiser counsel.”",
+      "There was a short pause as each of the heroes considered their own motives, and then one of them spoke, “After Dorwinion was attacked, I swore an oath of vengeance to channel my grief and focus my rage. That oath nearly led me to overlook those who are gathered with us now.” He bowed his head with shame.",
+      "“We all swore the same oath,” said another, placing her hand on his shoulder. “We are all in this together, but let us now amend our oath to seek justice rather than revenge.”",
+      "The man looked up at her and answered, “Aye, I swear by the Valar that when gate of Dol Rhugar opens, I will bring justice to Ulchor or die in the attempt.”",
+      "All the heroes swore likewise. Then there came a change in the wind, and a breeze coming up from the south carrying the salty tang of the sea. Their spirits were lifted by the smell, and their limbs strengthened. They looked up and saw the stars piercing the darkness like bright lances.",
+      "There was another breeze, and this time it carried the sound of a long horn-cry."
+    ],
+    "setup": [
+      "“The Fortress of Nurn” is played with an encounter deck built with all the cards from the following encounter sets: The Fortress of Nurn, Ulchor’s Guard, Under Guard, and The Power of Mordor. (Ulchor’s Guard, Under Guard, and The Power of Mordor can be found in A Shadow in the East deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "The Power of Mordor Deck",
+        "text": "The Power of Mordor deck represents The Dark Lord’s influence over his dominion. To build The Power of Mordor deck when setting up The Fortress of Nurn, take each card from “The Power of Mordor” encounter set and shuffle them together. This is The Power of Mordor deck."
+      },
+      {
+        "title": "Storm the Castle",
+        "text": "While setting up The Fortress of Nurn, the players are instructed to add all 4 copies of the “Storm the Castle” side quest to the staging area. Each of these side quests is double-sided, with “Storm the Castle” on one side, and a different side quest on the reverse side. These should be randomized before adding them to the staging area so that the players do not know which side quest is on the reverse side.\n\nWhen a copy of Storm the Castle is chosen as the current quest at the beginning of the quest phase, two things happen: First, the players reveal the faceup encounter card under that side quest and resolve its staging. Second, the players flip Storm the Castle over and make the side quest on the reverse side the current quest until the end of the phase. That side quest will remain in play until it is defeated."
+      }
+    ],
+    "resolution": [
+      "Ulchor winced in pain as he fell back onto his throne. His sword clattered onto the floor when it fell from his hand. He groaned and clutched his side. “Ahhhhh, curse you interlopers! Curse you to death and darkness!”",
+      "The heroes looked at their defeated foe with grim faces, and their hands gripped the hilts of their weapons with white knuckles. Yet none of them moved.",
+      "“What is justice for this fiend?” asked one of the heroes, pointing at Ulchor with his sword. “Death he has earned – and worse. Yet I hesitate to strike a defeated foe.”",
+      "“Ha, ha, ha, ha!” laughed Ulchor, and he spat blood at the hero. “You followed me all this way, only to waver at the end.”",
+      "Ulchor looked at the heroes gathered around him with the wild eyes of a cornered animal, and he shouted, “You’re all cowards! Run back to whatever lands you crawled out of and cower. The Dark Lord will find you!”",
+      "One hero sheathed his sword and leaned close to Ulchor to say, “Each of us knows that Sauron seeks dominion over all Middle-earth, but he will come for you long before he finds us.”",
+      "Ulchor’s eyes went wide and he shook violently even as he glared at the hero.",
+      "“Yes,” said another hero sheathing her blade as well, “I imagine your Dark Lord looks unfavorably upon defeat.” She smiled and said to Ulchor, “What do you think your Master will do when He learns that you lost your fortress and allowed your slaves to escape?”",
+      "Ulchor moved his mouth, but no sound came out. The once-proud sorcerer was now reduced to a feeble man slumped on his chair. One by one, each of the heroes sheathed their weapons and turned to leave.",
+      "Outside the throne room, the sounds of battle had quieted. News of Ulchor’s defeat spread quickly through Dol Rhugar, and his servants lost their will to fight, throwing down their weapons and fleeing into the night.",
+      "But there was no time for the heroes or their companions to celebrate; they reasoned it would only be one day before The Dark Tower was alerted to the fall of Dol Rhugar. It would take perhaps two more days after that for the soldiers of Mordor to arrive and retake the fortress. By that time, the heroes planned to be in Rhûn.",
+      "They disguised themselves in the armor of the soldiers of Nurn, and they loaded the rescued captives into the caged wagons used by the Easterlings to trade slaves. So it was that after several days of hard riding, they finally arrived at the City of Ulfast with news of Ulchor’s defeat.",
+      "The King bellowed with laughter when he heard of all that happened. “With an army of slaves you bested the Thane of Nurn in his own castle? What a triumph!” He clapped his hands and roared to his servants, “Prepare a table for my guests. We must celebrate!”",
+      "That evening at the King’s table, the King of Ulfast raised his glass in a toast to the heroes: “To our intrepid guests! For helping us to cast off the yoke of Mordor, you have earned the friendship of Ulfast. May songs of your deeds be sung in every corner of Middle-earth!”",
+      "The heroes lifted their glasses to salute the King, and they all drank together in friendship.",
+      "Thane Ulchor awoke chained to a wall in the dungeons of Barad-dûr. His wounds had been tended, but his body ached. His eyes winced when the door was opened and bright torch-light shone into his cell.",
+      "A tall figure in sable armor strode in. His armored footfalls echoed sharply off the walls until he stood over Ulchor and spoke: “Greetings, Ulchor, Thane of Nurn. I am The Mouth of Sauron.”",
+      "Ulchor struggled to turn his head and look up to see that it was him. The helmeted man smiled at him mockingly.",
+      "“Our Master is ill pleased to learn you have failed him a second time,” the Mouth said in a cold voice. “You were nearly dead when I found you in Nurn. Your castle in tatters, and your captives escaped. You have much to answer for. It will be a small comfort to The Dark Lord to know that you survived; He is looking forward to questioning you Himself.”",
+      "Ulchor wept."
+    ]
   }
 }
