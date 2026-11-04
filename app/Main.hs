@@ -924,6 +924,9 @@ getStatsR :: Handler Value
 getStatsR = do
   mine <- isJust <$> lookupGetParam "mine"
   owner <- if mine then Just <$> requireUserId else pure Nothing
+  -- every play is loaded and grouped here, as the heroes a deck is grouped by live in the
+  -- decks' JSON; grouping in SQL would need them in a column of their own
+  -- everyone's are only the deals that still count; your own are all of them
   plays <- map entityVal <$> runDB (selectList (maybe [LotrPlayPublic ==. True] (\u -> [LotrPlayUserId ==. u]) owner) [])
   pure
     $ toJSON

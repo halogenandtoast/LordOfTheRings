@@ -267,6 +267,7 @@ runPlayer msg player = case msg of
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ kept & handL <>~ taken
     DebugSearchDeck pid | pid == player.id -> do
+      -- not shuffled after: a debug search leaves the rest of the deck in its order
       push
         $ Ask pid
         $ QuestionLabel (ikey "label.takeCardIntoHand") Nothing []
