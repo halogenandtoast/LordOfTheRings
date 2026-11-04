@@ -1211,7 +1211,13 @@ runGameMessage msg g = case msg of
               $ QuestionLabel (ikey "label.discoverChooseLoot") (Just $ toTarget lid) []
               $ SearchCards (map EncounterCard looked)
               $ ChooseOne [targetLabel c (resolve $ Just c) | c <- loot]
-          _ -> Run $ resolve (headMay loot)
+          [] | null looked -> Run $ resolve Nothing
+          -- with no Loot to choose between, the player is still shown what he looked at
+          _ ->
+            Ask pid
+              $ QuestionLabel (ikey "label.discoverLooked") (Just $ toTarget lid) []
+              $ SearchCards (map EncounterCard looked)
+              $ ChooseOne [Label (ikey "label.continue") (resolve $ headMay loot)]
         pure $ g' & scenarioL %~ overAttrs (\a -> a & encounterDeckL .~ deck & encounterDiscardL .~ discarded)
   ResolveDiscover _ _ -> pure g
   -- a Loot objective revealed from the encounter deck is discarded, and another card
