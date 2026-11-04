@@ -17,8 +17,13 @@ considered to be engaged with each player: attacked there, and attacking each pl
 the combat phase, as Durin's Bane.
 -}
 instance HasModifiersFor WatcherInTheWater where
-  getModifiersFor (WatcherInTheWater a) =
+  getModifiersFor (WatcherInTheWater a) = do
     modifySelf a [ImmuneToPlayerCardEffects, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy AnyPlayer, EngagedWithEachPlayer AnyPlayer]
+    -- the Ring-bearer facedown under it: no player controls the cards attached to him, so
+    -- their text is not there to use (The Road Darkens rules insert, "Stage 4")
+    captives <- charactersGuardedBy a.cardId
+    attached <- concatMapM getAttachmentsOn captives
+    for_ attached \t -> modified a t [Blank]
 
 {- | Forced: After placing the 6th damage here, the first player takes control of the
 Ring-bearer, exhausted with 1 damage on it. The Ring-bearer is facedown under it, its
