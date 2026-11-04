@@ -87,6 +87,20 @@ spec = describe "Mount Gundabad player cards" do
       passActions pid
       enemyDamage eid `shouldReturn` 2
 
+    it "still damages the enemy if Bilbo has left play by the time the players quest successfully" . gameTestWith bilboDeck $ \pid -> do
+      bilbo <- hero bilboCode
+      eowyn <- hero eowynCode
+      (eid, _) <- stagedEnemy Enemies.forestSpider
+      run $ BeginPhase QuestPhase
+      chooseTarget pid bilbo
+      chooseTarget pid eowyn
+      chooseLabel "$label.doneCommitting" pid
+      chooseAbilityOf pid bilbo
+      run $ RemoveFromGame bilbo
+      -- Éowyn's 4 willpower against the spider's 2 threat
+      passActions pid
+      enemyDamage eid `shouldReturn` 1
+
   describe "Greenwood Defender" do
     it "does not exhaust to defend the round it enters play" . gameTest $ \pid -> do
       defender <- putAllyIntoPlay pid Allies.greenwoodDefender

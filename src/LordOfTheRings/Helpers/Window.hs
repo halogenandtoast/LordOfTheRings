@@ -456,7 +456,8 @@ sourceController = go
  where
   go = \case
     AbilitySource s _ -> go s
-    HeroSource hid -> Just . (.owner) <$> getHero hid
+    -- one gone from play, as Bilbo Baggins (Tactics) may be as his damage resolves, has none
+    HeroSource hid -> fmap (.owner) . Map.lookup hid <$> getsGame (entitiesHeroes . gameEntities)
     -- one that just left play is still asked of its controller
     AllySource aid -> do
       g <- getGame
