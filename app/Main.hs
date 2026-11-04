@@ -41,7 +41,7 @@ import LordOfTheRings.Frontend (FrontendMessage (..))
 import LordOfTheRings.Game
 import LordOfTheRings.Game.Public
 import LordOfTheRings.GameT
-import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
+import LordOfTheRings.I18n (ikey, ikeyWith, intVar, textVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Log (chat)
 import LordOfTheRings.Log.Entry
@@ -651,6 +651,10 @@ refuseSharedHeroes deckLists = case sharedHeroes deckLists of
       status400
       (ikeyWith "error.sharedHeroes" [textVar "heroes" (intercalate ", " titles)])
 
+refuseOversizedDecks :: Text -> [DeckList] -> Handler ()
+refuseOversizedDecks scenarioId deckLists = for_ (oversizedDecks scenarioId deckLists) \(limit, size) ->
+  sendResponseStatus status400 (ikeyWith "error.scenarioDeckSize" [intVar "n" limit, intVar "count" size])
+
 refuseBarredHeroes :: Text -> [DeckList] -> Handler ()
 refuseBarredHeroes scenarioId deckLists = case barredHeroes scenarioId deckLists of
   [] -> pure ()
@@ -728,6 +732,7 @@ postGamesR = do
   deckLists <- traverse (resolveDeck userId) choices
   refuseSharedHeroes $ fromMaybe starterDeck <$> deckLists
   refuseBarredHeroes scenarioId $ fromMaybe starterDeck <$> deckLists
+  refuseOversizedDecks scenarioId $ fromMaybe starterDeck <$> deckLists
   let easyMode = fromMaybe False new.easyMode
       nightmare = fromMaybe False new.nightmare
       seatCount = fromMaybe (length deckLists) new.seats
@@ -799,6 +804,7 @@ postJoinR gid = do
     $ sendResponseStatus status409 (ikey "error.alreadySeated")
   refuseSharedHeroes . (fromMaybe starterDeck deckList :) . map snd =<< friendSeats gid
   refuseBarredHeroes row.lotrGameScenario [fromMaybe starterDeck deckList]
+  refuseOversizedDecks row.lotrGameScenario [fromMaybe starterDeck deckList]
   refuseFallenHeroes row [fromMaybe starterDeck deckList]
   case [0 .. row.lotrGameSeats - 1] \\ map ((.lotrSeatPosition) . entityVal) seated of
     [] -> sendResponseStatus status409 (ikey "error.noFreeSeat")
