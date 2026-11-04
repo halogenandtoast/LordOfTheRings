@@ -1352,6 +1352,7 @@ library
       LordOfTheRings.Location.Cards.CaptainsQuarters
       LordOfTheRings.Location.Cards.Caradhras
       LordOfTheRings.Location.Cards.CargoHold
+      LordOfTheRings.Location.Cards.Catacombs
       LordOfTheRings.Location.Cards.CaveBarrow
       LordOfTheRings.Location.Cards.CaveEntrance
       LordOfTheRings.Location.Cards.Celebdil
@@ -1657,6 +1658,7 @@ library
       LordOfTheRings.Location.Cards.ShrineToMorgothUnderwater
       LordOfTheRings.Location.Cards.ShroudedHills
       LordOfTheRings.Location.Cards.ShroudedWilderness
+      LordOfTheRings.Location.Cards.SideStreet
       LordOfTheRings.Location.Cards.SilentCaverns
       LordOfTheRings.Location.Cards.SilverWingLocation
       LordOfTheRings.Location.Cards.SinisterDungeon
@@ -2220,6 +2222,7 @@ library
       LordOfTheRings.Quest.Cards.TrulyLost
       LordOfTheRings.Quest.Cards.UnderTheMercilessSun
       LordOfTheRings.Quest.Cards.UnexpectedRescue
+      LordOfTheRings.Quest.Cards.UnwelcomeTravelers
       LordOfTheRings.Quest.Cards.UpThePass
       LordOfTheRings.Quest.Cards.UrdugsAssault
       LordOfTheRings.Quest.Cards.UrdugsGambit
@@ -2746,6 +2749,7 @@ library
       LordOfTheRings.Treachery.Cards.TurnedAround
       LordOfTheRings.Treachery.Cards.UmbarPatrol
       LordOfTheRings.Treachery.Cards.UnbearableHeat
+      LordOfTheRings.Treachery.Cards.UnderGuard
       LordOfTheRings.Treachery.Cards.UnderTheShadow
       LordOfTheRings.Treachery.Cards.UndisturbedBones
       LordOfTheRings.Treachery.Cards.UnnaturalFog

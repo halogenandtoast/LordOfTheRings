@@ -399,6 +399,7 @@ allQuestCards =
       , warriorsOfTheEast
       , anArduousJourney
       , shadowOfFearASitE
+      , unwelcomeTravelers
       ]
 
 theDrippingWalls :: CardDef
@@ -1617,3 +1618,6 @@ shadowOfFearASitE =
     { cdKeywords = setFromList [Surge]
     , cdVictoryPoints = Just 10
     }
+
+unwelcomeTravelers :: CardDef
+unwelcomeTravelers = (encounterSideQuest "21052" "Unwelcome Travelers" UnderGuard 5) {cdVictoryPoints = Just 10}

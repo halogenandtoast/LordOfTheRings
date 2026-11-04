@@ -404,6 +404,7 @@ allTreacheryCards =
       , painfulFatigue
       , overwhelmed
       , darknessInTheEast
+      , underGuard
       ]
 
 deepDeepDark :: CardDef
@@ -2568,3 +2569,6 @@ overwhelmed =
 
 darknessInTheEast :: CardDef
 darknessInTheEast = (treachery "21048" "Darkness in the East" CityOfRhun 2) {cdShadowEffect = True}
+
+underGuard :: CardDef
+underGuard = (treachery "21051" "Under Guard" UnderGuard 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}

@@ -492,6 +492,8 @@ import LordOfTheRings.Location.Cards.RollingPlains
 import LordOfTheRings.Location.Cards.RockyOutcrop
 import LordOfTheRings.Location.Cards.CityForum
 import LordOfTheRings.Location.Cards.SeedyTavern
+import LordOfTheRings.Location.Cards.SideStreet
+import LordOfTheRings.Location.Cards.Catacombs
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1030,5 +1032,7 @@ allLocations =
         , SomeLocationCard rockyOutcrop
         , SomeLocationCard cityForum
         , SomeLocationCard seedyTavern
+        , SomeLocationCard sideStreet
+        , SomeLocationCard catacombs
         ]
     ]

@@ -315,6 +315,7 @@ import LordOfTheRings.Quest.Cards.UrdugsGambit
 import LordOfTheRings.Quest.Cards.WarriorsOfTheEast
 import LordOfTheRings.Quest.Cards.AnArduousJourney
 import LordOfTheRings.Quest.Cards.ShadowOfFearASitE
+import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -662,5 +663,6 @@ allQuests =
         , SomeQuestCard warriorsOfTheEast
         , SomeQuestCard anArduousJourney
         , SomeQuestCard shadowOfFearASitE
+        , SomeQuestCard unwelcomeTravelers
         ]
     ]

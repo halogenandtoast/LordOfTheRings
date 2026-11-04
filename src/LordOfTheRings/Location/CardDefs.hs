@@ -510,6 +510,8 @@ allLocationCards =
       , rockyOutcrop
       , cityForum
       , seedyTavern
+      , sideStreet
+      , catacombs
       ]
 
 drownedTreasury :: CardDef
@@ -3804,3 +3806,9 @@ cityForum = (location "21046" "City Forum" CityOfRhun 2 1 5) {cdCardTraits = set
 
 seedyTavern :: CardDef
 seedyTavern = (location "21047" "Seedy Tavern" CityOfRhun 2 2 5) {cdCardTraits = setFromList [City], cdVictoryPoints = Just 2}
+
+sideStreet :: CardDef
+sideStreet = (location "21049" "Side Street" UnderGuard 2 3 3) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 1}
+
+catacombs :: CardDef
+catacombs = (location "21050" "Catacombs" UnderGuard 2 4 4) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 1}
