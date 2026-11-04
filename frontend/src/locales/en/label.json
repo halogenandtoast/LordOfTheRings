@@ -2513,5 +2513,8 @@
   "eagleOfTheNorth": {
     "discard": "Eagle of the North: you may discard a non-unique enemy in the staging area",
     "none": "Discard none"
+  },
+  "thranduil": {
+    "ally": "Thranduil: play a Silvan ally from your hand"
   }
 }

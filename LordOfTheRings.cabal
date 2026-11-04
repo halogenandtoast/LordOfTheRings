@@ -97,6 +97,7 @@ library
       LordOfTheRings.Ally.Cards.FaramirObjective
       LordOfTheRings.Ally.Cards.Fili
       LordOfTheRings.Ally.Cards.Firyal
+      LordOfTheRings.Ally.Cards.ForestRoadTraveler
       LordOfTheRings.Ally.Cards.Forlong
       LordOfTheRings.Ally.Cards.FornostBowman
       LordOfTheRings.Ally.Cards.GaladhonArcher
@@ -105,8 +106,10 @@ library
       LordOfTheRings.Ally.Cards.GaladhrimWeaver
       LordOfTheRings.Ally.Cards.GaladrielsHandmaiden
       LordOfTheRings.Ally.Cards.GaldorOfTheHavens
+      LordOfTheRings.Ally.Cards.Galion
       LordOfTheRings.Ally.Cards.Gandalf
       LordOfTheRings.Ally.Cards.Gavin
+      LordOfTheRings.Ally.Cards.GiantBear
       LordOfTheRings.Ally.Cards.GildorInglorion
       LordOfTheRings.Ally.Cards.Gleowine
       LordOfTheRings.Ally.Cards.Gloin
@@ -217,6 +220,7 @@ library
       LordOfTheRings.Ally.Cards.StewardOfOrthanc
       LordOfTheRings.Ally.Cards.Sulien
       LordOfTheRings.Ally.Cards.TamedMumak
+      LordOfTheRings.Ally.Cards.Thalion
       LordOfTheRings.Ally.Cards.TheRiddermarksFinest
       LordOfTheRings.Ally.Cards.Treebeard
       LordOfTheRings.Ally.Cards.TrollshawScout
@@ -338,6 +342,7 @@ library
       LordOfTheRings.Attachment.Cards.KeysOfOrthanc
       LordOfTheRings.Attachment.Cards.KingUnderTheMountain
       LordOfTheRings.Attachment.Cards.LeafBrooch
+      LordOfTheRings.Attachment.Cards.LeatherBoots
       LordOfTheRings.Attachment.Cards.LegacyBlade
       LordOfTheRings.Attachment.Cards.LegacyOfDurin
       LordOfTheRings.Attachment.Cards.Lembas
@@ -358,7 +363,9 @@ library
       LordOfTheRings.Attachment.Cards.Nenya
       LordOfTheRings.Attachment.Cards.NorAmIAStranger
       LordOfTheRings.Attachment.Cards.OLorien
+      LordOfTheRings.Attachment.Cards.Orcrist
       LordOfTheRings.Attachment.Cards.OrdersFromAngmar
+      LordOfTheRings.Attachment.Cards.Outmatched
       LordOfTheRings.Attachment.Cards.Palantir
       LordOfTheRings.Attachment.Cards.ParryingCutlass
       LordOfTheRings.Attachment.Cards.PathOfNeed
@@ -412,6 +419,7 @@ library
       LordOfTheRings.Attachment.Cards.SwordThain
       LordOfTheRings.Attachment.Cards.SwordThatWasBroken
       LordOfTheRings.Attachment.Cards.TheDaysRising
+      LordOfTheRings.Attachment.Cards.TheElvenking
       LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
       LordOfTheRings.Attachment.Cards.TheLongDefeat
@@ -1009,6 +1017,7 @@ library
       LordOfTheRings.Event.Cards.ProudHunters
       LordOfTheRings.Event.Cards.PursuingTheEnemy
       LordOfTheRings.Event.Cards.QuickEars
+      LordOfTheRings.Event.Cards.QuickerThanSight
       LordOfTheRings.Event.Cards.QuickStrike
       LordOfTheRings.Event.Cards.RadagastsCunning
       LordOfTheRings.Event.Cards.RainOfArrows
@@ -1170,6 +1179,7 @@ library
       LordOfTheRings.Hero.Cards.Thalin
       LordOfTheRings.Hero.Cards.Theoden
       LordOfTheRings.Hero.Cards.Theodred
+      LordOfTheRings.Hero.Cards.Thranduil
       LordOfTheRings.Hero.Cards.Thurindir
       LordOfTheRings.Hero.Cards.Yazan
       LordOfTheRings.Hero.Import.Lifted

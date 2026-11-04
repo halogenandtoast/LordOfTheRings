@@ -213,6 +213,10 @@ allAllyCards =
       , meneldor
       , wildStallion
       , eagleOfTheNorth
+      , forestRoadTraveler
+      , giantBear
+      , galion
+      , thalion
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1497,3 +1501,29 @@ eagleOfTheNorth =
     , cdKeywords = setFromList [Encounter, Surge]
     , cdWhenRevealed = True
     }
+
+forestRoadTraveler :: CardDef
+forestRoadTraveler =
+  (ally "19059" "Forest Road Traveler" Lore (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Woodman, Scout]
+    }
+
+giantBear :: CardDef
+giantBear =
+  (ally "19061" "Giant Bear" Tactics (StaticCost 5) 0 4 3 4)
+    { cdCardTraits = setFromList [Creature, Beorning]
+    }
+
+galion :: CardDef
+galion =
+  unique
+    (ally "19063" "Galion" Spirit (StaticCost 0) 0 0 0 1)
+      { cdCardTraits = setFromList [Silvan]
+      }
+
+thalion :: CardDef
+thalion =
+  unique
+    (ally "19065" "Thalion" Neutral (StaticCost 4) 2 2 2 3)
+      { cdCardTraits = setFromList [Dunedain, Ranger]
+      }

@@ -202,6 +202,10 @@ allAttachmentCards =
       , ancestralArmor
       , glamdring
       , woodmensPath
+      , theElvenking
+      , orcrist
+      , leatherBoots
+      , outmatched
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1367,4 +1371,32 @@ woodmensPath :: CardDef
 woodmensPath =
   (attachment "19030" "Woodmen's Path" Lore (StaticCost 1))
     { cdCardTraits = setFromList [Condition]
+    }
+
+theElvenking :: CardDef
+theElvenking =
+  unique
+    (attachment "19057" "The Elvenking" Leadership (StaticCost 1))
+      { cdCardTraits = setFromList [Title]
+      }
+
+orcrist :: CardDef
+orcrist =
+  unique
+    (attachment "19058" "Orcrist" Leadership (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item, Weapon]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType], Restricted]
+      }
+
+leatherBoots :: CardDef
+leatherBoots =
+  (attachment "19060" "Leather Boots" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+outmatched :: CardDef
+outmatched =
+  (attachment "19062" "Outmatched" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Condition, Trap]
     }

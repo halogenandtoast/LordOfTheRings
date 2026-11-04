@@ -184,6 +184,10 @@ import LordOfTheRings.Attachment.Cards.AncestralArmor
 import LordOfTheRings.Attachment.Cards.Glamdring
 import LordOfTheRings.Attachment.Cards.WoodmensPath
 import LordOfTheRings.Attachment.Cards.WildStallion
+import LordOfTheRings.Attachment.Cards.TheElvenking
+import LordOfTheRings.Attachment.Cards.Orcrist
+import LordOfTheRings.Attachment.Cards.LeatherBoots
+import LordOfTheRings.Attachment.Cards.Outmatched
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -405,5 +409,9 @@ allAttachments =
         , SomeAttachmentCard glamdring
         , SomeAttachmentCard woodmensPath
         , SomeAttachmentCard wildStallion
+        , SomeAttachmentCard theElvenking
+        , SomeAttachmentCard orcrist
+        , SomeAttachmentCard leatherBoots
+        , SomeAttachmentCard outmatched
         ]
     ]

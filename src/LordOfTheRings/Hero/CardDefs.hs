@@ -84,6 +84,7 @@ allHeroCards =
       , folcoBoffin
       , quickbeam
       , haldan
+      , thranduil
       ]
 
 aragorn :: CardDef
@@ -526,4 +527,10 @@ haldan :: CardDef
 haldan =
   (hero "19026" "Haldan" Lore 10 2 3 1 4)
     { cdCardTraits = setFromList [Woodman, Scout]
+    }
+
+thranduil :: CardDef
+thranduil =
+  (hero "19056" "Thranduil" Leadership 9 1 1 3 4)
+    { cdCardTraits = setFromList [Silvan, Noble]
     }

@@ -238,6 +238,10 @@ import LordOfTheRings.Ally.Cards.Wiglaf
 import LordOfTheRings.Ally.Cards.Meneldor
 import LordOfTheRings.Ally.Cards.WildStallion
 import LordOfTheRings.Ally.Cards.EagleOfTheNorth
+import LordOfTheRings.Ally.Cards.ForestRoadTraveler
+import LordOfTheRings.Ally.Cards.GiantBear
+import LordOfTheRings.Ally.Cards.Galion
+import LordOfTheRings.Ally.Cards.Thalion
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -508,5 +512,9 @@ allAllies =
         , SomeAllyCard meneldor
         , SomeAllyCard wildStallion
         , SomeAllyCard eagleOfTheNorth
+        , SomeAllyCard forestRoadTraveler
+        , SomeAllyCard giantBear
+        , SomeAllyCard galion
+        , SomeAllyCard thalion
         ]
     ]

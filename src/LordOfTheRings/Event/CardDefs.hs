@@ -215,6 +215,7 @@ allEventCards =
       , windFromTheSea
       , flightOfTheEagles
       , southAway
+      , quickerThanSight
       ]
 
 everVigilant :: CardDef
@@ -871,3 +872,6 @@ southAway =
   (event "19034" "South Away!" Spirit (StaticCost 0))
     { cdCardTraits = setFromList [Song]
     }
+
+quickerThanSight :: CardDef
+quickerThanSight = event "19064" "Quicker Than Sight" Spirit (StaticCost 0)

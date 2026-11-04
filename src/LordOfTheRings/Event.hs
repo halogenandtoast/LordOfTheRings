@@ -198,6 +198,7 @@ import LordOfTheRings.Event.Cards.TheDamBursts
 import LordOfTheRings.Event.Cards.WindFromTheSea
 import LordOfTheRings.Event.Cards.FlightOfTheEagles
 import LordOfTheRings.Event.Cards.SouthAway
+import LordOfTheRings.Event.Cards.QuickerThanSight
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -415,5 +416,6 @@ allEvents =
         , SomeEventCard windFromTheSea
         , SomeEventCard flightOfTheEagles
         , SomeEventCard southAway
+        , SomeEventCard quickerThanSight
         ]
     ]

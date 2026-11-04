@@ -81,6 +81,7 @@ import LordOfTheRings.Hero.Cards.Thurindir
 import LordOfTheRings.Hero.Cards.FolcoBoffin
 import LordOfTheRings.Hero.Cards.Quickbeam
 import LordOfTheRings.Hero.Cards.Haldan
+import LordOfTheRings.Hero.Cards.Thranduil
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
@@ -191,5 +192,6 @@ allHeroes =
         , SomeHeroCard folcoBoffin
         , SomeHeroCard quickbeam
         , SomeHeroCard haldan
+        , SomeHeroCard thranduil
         ]
     ]
