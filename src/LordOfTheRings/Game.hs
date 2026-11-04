@@ -3215,7 +3215,9 @@ runGameMessage msg g = case msg of
         pure g
       -- its doomed keyword resolves too, as Covered in Darkness's
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
-        pushAll . (<> doomed <> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
+        -- an objective ally a player gains control of, as Gildor Inglorion, goes to him
+        let comesOut = if gainsController def then AddToStaging card else PutObjectiveIntoPlay card
+        pushAll . (<> doomed <> surge) =<< inLogBlock (RevealBlock card) [comesOut]
         pure g
       -- an encounter side quest goes to the staging area, where the players may quest
       -- against it
