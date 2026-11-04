@@ -431,6 +431,8 @@ allEnemyCards =
       , southronOutrider
       , urukProwler
       , desertWarg
+      , goblinTroop
+      , strayGoblinGreyMountains
       ]
 
 namelessThing :: CardDef
@@ -3520,4 +3522,24 @@ desertWarg =
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
     , cdWhenRevealed = True
+    }
+
+-- * The Wilds of Rhovanion's shared encounter sets
+
+goblinTroop :: CardDef
+goblinTroop =
+  (enemy "18020" "Goblin Troop" GreyMountainGoblins 2 35 3 5 4 6)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Grey Mountain Goblins' Stray Goblin; Shadow and Flame's is 'strayGoblin'.
+strayGoblinGreyMountains :: CardDef
+strayGoblinGreyMountains =
+  (enemy "18021" "Stray Goblin" GreyMountainGoblins 3 50 1 2 0 3)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

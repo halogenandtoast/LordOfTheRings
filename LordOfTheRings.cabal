@@ -594,6 +594,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinTormentor
       LordOfTheRings.Enemy.Cards.GoblintownScavengers
       LordOfTheRings.Enemy.Cards.GoblinTrapper
+      LordOfTheRings.Enemy.Cards.GoblinTroop
       LordOfTheRings.Enemy.Cards.GoblinWarlord
       LordOfTheRings.Enemy.Cards.GraspingArm
       LordOfTheRings.Enemy.Cards.GraspingTentacle
@@ -786,6 +787,7 @@ library
       LordOfTheRings.Enemy.Cards.StormcallerTheCityOfCorsairs
       LordOfTheRings.Enemy.Cards.StranglingPython
       LordOfTheRings.Enemy.Cards.StrayGoblin
+      LordOfTheRings.Enemy.Cards.StrayGoblinGreyMountains
       LordOfTheRings.Enemy.Cards.StrikingTentacle
       LordOfTheRings.Enemy.Cards.Stuart
       LordOfTheRings.Enemy.Cards.StuartNightmare
