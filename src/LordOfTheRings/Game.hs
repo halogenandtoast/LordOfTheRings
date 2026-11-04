@@ -2349,6 +2349,7 @@ runGameMessage msg g = case msg of
     pure g
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndEffects duration -> pure $ g & effectsL %~ filter ((/= duration) . effectDuration)
+  EndEffectsFrom source -> pure $ g & effectsL %~ filter ((/= source) . effectSource)
   AdditionalPhases phases -> pure $ g & additionalPhasesL %~ (phases <>)
   -- the round goes on from its own phase once the additional instances after it are done
   NextPhase phase -> case gameAdditionalPhases g of

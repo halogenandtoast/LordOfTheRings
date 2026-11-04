@@ -275,6 +275,8 @@ data Message
   | -- | the lasting effects of that duration end, as the round's do once the round's end
     -- has resolved
     EndEffects EffectDuration
+  | -- | the lasting effects the source created end, as one held while a card resolves
+    EndEffectsFrom Source
   | AttachCard AttachmentId Target
   | -- | the character's restricted cards are counted again, after one is discarded
     CheckRestricted Target

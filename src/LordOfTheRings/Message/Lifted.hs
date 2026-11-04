@@ -1175,6 +1175,14 @@ escapeTest pid source n stat onFail onPass = do
   passed <- capture onPass
   push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed []
 
+-- | Encounter card effects cannot be canceled while what the body pushes resolves, as
+-- "reveals it (cannot be canceled)" reads.
+cannotBeCanceled :: (ReverseQueue m, Sourceable source) => source -> m () -> m ()
+cannotBeCanceled source body = do
+  push $ CreateEffect $ Effect (toSource source) GameTarget [CannotCancelEncounterEffects] UntilSpent
+  body
+  push $ EndEffectsFrom (toSource source)
+
 -- | The player makes a Hide test against this many encounter cards, as a Travel cost or
 -- Hunting for the Ring has him (The Black Riders rules insert, "Hide Tests").
 hideTest :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
