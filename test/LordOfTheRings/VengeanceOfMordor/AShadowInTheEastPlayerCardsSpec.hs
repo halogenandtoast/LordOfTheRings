@@ -120,6 +120,10 @@ spec = describe "A Shadow in the East player cards" do
       getWillpower merry `shouldReturn` 3
       getWillpower spearman `shouldReturn` 0
 
+    it "can be the Rohan hero or Merry Horn of the Mark attaches to" . gameTest $ \pid -> do
+      merry <- putAllyIntoPlay pid Allies.merryLeadership
+      cardHosts pid (toCardCode Attachments.hornOfTheMark) >>= (`shouldSatisfy` elem merry)
+
   describe "Pippin" do
     it "readies after you engage an enemy with engagement cost above your threat" . gameTest $ \pid -> do
       pippin <- putAllyIntoPlay pid Allies.pippinTactics
