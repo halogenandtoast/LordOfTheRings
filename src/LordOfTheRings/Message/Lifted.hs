@@ -8,8 +8,10 @@ module LordOfTheRings.Message.Lifted (
   module X,
 ) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genPlayerCard, toCardDef)
+import LordOfTheRings.Trait (Trait (Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
@@ -2097,3 +2099,28 @@ revealFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
 revealFromEncounterDeck card = do
   removeFromEncounterDeck card
   push $ RevealCard card
+
+{- | The One Ring's Setup, done once the starting heroes are placed and the first player is
+known: the player with it in his deck attaches it to a hero he controls, then searches his
+deck for a Master card, adds it to his hand and shuffles. With two or more players having
+it, the first player decides whose goes into play, and each other copy is removed from the
+game (A Shadow in the East rules, "The One Ring & The Master Trait").
+-}
+setUpTheOneRing :: ReverseQueue m => PlayerId -> m ()
+setUpTheOneRing lead = do
+  players <- getPlayerOrder
+  rings <- fmap concat $ for players \pid ->
+    map (pid,) . filter ((== toCardCode Attachments.theOneRing) . toCardCode) . (.deck) <$> getPlayer pid
+  let holders = [pid | pid <- players, any ((== pid) . fst) rings]
+      setUp :: ReverseQueue n => PlayerId -> n ()
+      setUp pid = do
+        for_ rings \(p, c) -> removeFromDeck p c.id
+        for_ (take 1 [pc | (p, PlayerCard pc) <- rings, p == pid]) \pc -> do
+          putAttachmentIntoPlay pid pc
+          searchDeck pid (CardIdSource pc.id) maxBound (CardWithTrait Master) False
+  case holders of
+    [] -> pure ()
+    [pid] -> setUp pid
+    _ -> chooseOneM lead do
+      questionLabeled "theOneRing.choosePlayer"
+      for_ holders \pid -> targeting (PlayerTarget pid) (setUp pid)

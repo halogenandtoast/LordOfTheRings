@@ -44,7 +44,7 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, setUpTheOneRing, shuffleIntoDeck)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Outcome
@@ -721,7 +721,11 @@ runGameMessage msg g = case msg of
     pure g
   DoStep 3 Setup -> do
     firstPlayer <- uniform g.playerOrder
-    push $ SetFirstPlayer firstPlayer
+    -- The One Ring's Setup follows the placing of the starting heroes, its first player's
+    -- choice once there is one (A Shadow in the East rules), and comes before the setup hand
+    runQueueT do
+      push $ SetFirstPlayer firstPlayer
+      setUpTheOneRing firstPlayer
     pure g
   BeginRound -> do
     pushAll [CheckWindows [mkWhen RoundBegins], BeginPhase minBound, EndPhase minBound]
