@@ -1,19 +1,36 @@
 module LordOfTheRings.Contract.Cards.TheGreyWanderer (theGreyWanderer) where
 
 import LordOfTheRings.Card (Card (PlayerCard), CardType (AttachmentType), toCardCode)
-import LordOfTheRings.Classes.HasGame (HasGame)
+import Data.Aeson.Types (parseMaybe)
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
+import LordOfTheRings.Game.Base (gamePhase, gameRound)
 import LordOfTheRings.Contract.CardDefs qualified as Cards
 import LordOfTheRings.Contract.Import.Lifted
 import LordOfTheRings.Phase (Phase (PlanningPhase))
 
 newtype TheGreyWanderer = TheGreyWanderer ContractAttrs
-  deriving anyclass (IsContract, HasModifiersFor)
+  deriving anyclass IsContract
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 -- | Side A: You cannot choose more than 1 starting hero (checked as the deck is chosen,
 -- 'LordOfTheRings.Decklist').
 theGreyWanderer :: ContractCard TheGreyWanderer
 theGreyWanderer = contract TheGreyWanderer Cards.theGreyWanderer
+
+-- | The round whose planning phase saw the player's first non-unique card played, in the
+-- meta.
+spentIn :: ContractAttrs -> Maybe Int
+spentIn a = parseMaybe parseJSON a.meta
+
+{- | Side B: The first non-unique card you play each planning phase does not require a
+resource match. Only during the planning phase, and only until a non-unique card has been
+played in it, however it was paid for or played at no cost: that card is the first.
+-}
+instance HasModifiersFor TheGreyWanderer where
+  getModifiersFor (TheGreyWanderer a) = when a.flipped do
+    (phase, round') <- getsGame \g -> (gamePhase g, gameRound g)
+    when (phase == PlanningPhase && spentIn a /= Just round') $
+      modified a (PlayerTarget a.owner) [NextIgnoresResourceMatch $ NotCard UniqueCard]
 
 -- | Side B: Action: Exhaust this card and raise your threat by 1 to (choose two): Ready
 -- your starting hero, add 2 resources to your starting hero's resource pool, or heal 3
@@ -50,11 +67,12 @@ instance RunMessage TheGreyWanderer where
       shufflePlayerDeck pid
       flipOver attrs
       pure c
-    -- Side B: The first non-unique card you play each planning phase does not require a
-    -- resource match. (As the phase begins, before its action window.)
-    CheckWindows ws | attrs.flipped, Window After (PhaseBegins PlanningPhase) `elem` ws -> do
-      phaseModifier attrs (PlayerTarget attrs.owner) (NextIgnoresResourceMatch $ NotCard UniqueCard)
-      pure c
+    -- the first non-unique card played this planning phase, by any means, spends it
+    CheckWindows ws
+      | attrs.flipped
+      , notNull [() | Window After (PlayedCard pid card) <- ws, pid == attrs.owner, not (cardMatches UniqueCard card)] -> do
+          (phase, round') <- getsGame \g -> (gamePhase g, gameRound g)
+          pure $ if phase == PlanningPhase then TheGreyWanderer attrs {contractMeta = toJSON round'} else c
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       startingHero pid >>= traverse_ \hero -> do
         let key :: Int -> Text

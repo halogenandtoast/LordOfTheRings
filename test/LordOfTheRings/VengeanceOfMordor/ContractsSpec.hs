@@ -18,7 +18,7 @@ import LordOfTheRings.Keyword (Keyword (Restricted))
 import LordOfTheRings.Matcher (CardMatcher (..), playerCardsGuardedBy)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Name (Name (..))
-import LordOfTheRings.Phase (Phase (RefreshPhase))
+import LordOfTheRings.Phase (Phase (PlanningPhase, RefreshPhase))
 import LordOfTheRings.Trait (Trait (Artifact, Item))
 import LordOfTheRings.Window (WindowType (Explored, PlayedCardFromHand), mkAfter, mkWhen)
 import TestImport
@@ -84,6 +84,10 @@ logKeys logged = mapMaybe key . reverse <$> readIORef logged
 -- | A test that reads no game.
 check :: IO () -> IO ()
 check = id
+
+-- | Whether The Grey Wanderer now lets the player's next non-unique card off its match.
+lets :: PlayerId -> GameT Bool
+lets pid = elem (NextIgnoresResourceMatch (NotCard UniqueCard)) <$> getModifiers (PlayerTarget pid)
 
 spec :: Spec
 spec = describe "Contracts" do
@@ -250,6 +254,25 @@ spec = describe "Contracts" do
       -- Northern Tracker is Spirit, Gimli Tactics
       card <- playWith pid gimli 4 Allies.northernTracker
       getsGame (any ((== card.id) . allyCardId . toAttrs) . toList . (.entities.allies)) `shouldReturn` True
+      -- spent: the next one needs its match again
+      lets pid `shouldReturn` False
+
+    it "side B: only in the planning phase, spent by a non-unique card played at no cost too" . gameTestWith deck $ \pid -> do
+      c <- getContract
+      run $ Flip (toTarget c)
+      lets pid `shouldReturn` False
+      -- in the planning phase, outside its action window
+      g <- getGame
+      putGame g {gamePhase = PlanningPhase}
+      putGame =<< preloadModifiers =<< getGame
+      lets pid `shouldReturn` True
+      -- a unique card leaves it
+      faramir <- genPlayerCard Allies.faramir (Just pid)
+      run $ PlayAtNoCost pid faramir
+      lets pid `shouldReturn` True
+      tracker <- genPlayerCard Allies.northernTracker (Just pid)
+      run $ PlayAtNoCost pid tracker
+      lets pid `shouldReturn` False
 
     it "side B: exhausts and raises threat to resolve two of its options on the starting hero" . gameTestWith deck $ \pid -> do
       c <- getContract

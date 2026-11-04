@@ -4113,8 +4113,12 @@ payFor g pid card fromHand windows host discount = do
                 <> [fromHand | NextCardGainsDoomed _ <- effectModifiers e]
             )
       spentEffects = filter spent (gameEffects g)
-      -- one that does not require a resource match, as King of Dale's ally, is paid as neutral
-      unmatched = or [cardMatches m card | e <- spentEffects, NextIgnoresResourceMatch m <- effectModifiers e]
+      -- one that does not require a resource match, as King of Dale's ally, is paid as neutral;
+      -- so is one a constant ability lets off it, as The Grey Wanderer's side B, which keeps
+      -- count of its own use
+      unmatched =
+        or [cardMatches m card | e <- spentEffects, NextIgnoresResourceMatch m <- effectModifiers e]
+          || or [cardMatches m card | Modifier _ (NextIgnoresResourceMatch m) <- Map.findWithDefault [] (PlayerTarget pid) (gameModifiers g)]
       asPaid = \case
         LordOfTheRings.ActiveCost.ResourceCost _ c | unmatched -> LordOfTheRings.ActiveCost.ResourceCost Neutral c
         c -> c
