@@ -206,6 +206,9 @@ allAttachmentCards =
       , orcrist
       , leatherBoots
       , outmatched
+      , warriorSword
+      , valiantDetermination
+      , ringOfThror
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1400,3 +1403,25 @@ outmatched =
   (attachment "19062" "Outmatched" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Condition, Trap]
     }
+
+warriorSword :: CardDef
+warriorSword =
+  (attachment "19089" "Warrior Sword" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+valiantDetermination :: CardDef
+valiantDetermination =
+  (attachment "19092" "Valiant Determination" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Condition]
+    }
+
+ringOfThror :: CardDef
+ringOfThror =
+  unique
+    (attachment "19093" "Ring of Thrór" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Ring]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+      }

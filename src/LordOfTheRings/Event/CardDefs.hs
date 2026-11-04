@@ -216,6 +216,9 @@ allEventCards =
       , flightOfTheEagles
       , southAway
       , quickerThanSight
+      , manTheWalls
+      , familiarLands
+      , swiftAndStrong
       ]
 
 everVigilant :: CardDef
@@ -875,3 +878,15 @@ southAway =
 
 quickerThanSight :: CardDef
 quickerThanSight = event "19064" "Quicker Than Sight" Spirit (StaticCost 0)
+
+manTheWalls :: CardDef
+manTheWalls = event "19086" "Man the Walls" Leadership (StaticCost 1)
+
+familiarLands :: CardDef
+familiarLands = event "19088" "Familiar Lands" Lore (StaticCost 1)
+
+swiftAndStrong :: CardDef
+swiftAndStrong =
+  (event "19090" "Swift and Strong" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Song]
+    }

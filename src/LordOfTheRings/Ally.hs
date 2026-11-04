@@ -242,6 +242,9 @@ import LordOfTheRings.Ally.Cards.ForestRoadTraveler
 import LordOfTheRings.Ally.Cards.GiantBear
 import LordOfTheRings.Ally.Cards.Galion
 import LordOfTheRings.Ally.Cards.Thalion
+import LordOfTheRings.Ally.Cards.SoldierOfErebor
+import LordOfTheRings.Ally.Cards.MirkwoodHunter
+import LordOfTheRings.Ally.Cards.DescendantOfGirion
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -516,5 +519,8 @@ allAllies =
         , SomeAllyCard giantBear
         , SomeAllyCard galion
         , SomeAllyCard thalion
+        , SomeAllyCard soldierOfErebor
+        , SomeAllyCard mirkwoodHunter
+        , SomeAllyCard descendantOfGirion
         ]
     ]

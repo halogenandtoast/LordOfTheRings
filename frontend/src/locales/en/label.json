@@ -2516,5 +2516,8 @@
   },
   "thranduil": {
     "ally": "Thranduil: play a Silvan ally from your hand"
+  },
+  "swiftAndStrong": {
+    "weapon": "Swift and Strong: exhaust a Weapon to ready its character"
   }
 }

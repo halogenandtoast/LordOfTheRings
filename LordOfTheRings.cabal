@@ -59,6 +59,7 @@ library
       LordOfTheRings.Ally.Cards.Denethor
       LordOfTheRings.Ally.Cards.Deorwine
       LordOfTheRings.Ally.Cards.DerndingleWarrior
+      LordOfTheRings.Ally.Cards.DescendantOfGirion
       LordOfTheRings.Ally.Cards.DescendantOfThorondor
       LordOfTheRings.Ally.Cards.DolAmrothWarship
       LordOfTheRings.Ally.Cards.Dori
@@ -175,6 +176,7 @@ library
       LordOfTheRings.Ally.Cards.MinasTirithLampwright
       LordOfTheRings.Ally.Cards.MinerOfTheIronHills
       LordOfTheRings.Ally.Cards.MirkwoodExplorer
+      LordOfTheRings.Ally.Cards.MirkwoodHunter
       LordOfTheRings.Ally.Cards.MirkwoodPioneer
       LordOfTheRings.Ally.Cards.MirkwoodRunner
       LordOfTheRings.Ally.Cards.MithlondSeaWatcher
@@ -212,6 +214,7 @@ library
       LordOfTheRings.Ally.Cards.SilverWing
       LordOfTheRings.Ally.Cards.SnowbournScout
       LordOfTheRings.Ally.Cards.SoldierOfDolAmroth
+      LordOfTheRings.Ally.Cards.SoldierOfErebor
       LordOfTheRings.Ally.Cards.SoldierOfGondor
       LordOfTheRings.Ally.Cards.SonOfArnor
       LordOfTheRings.Ally.Cards.SouthronRefugee
@@ -384,6 +387,7 @@ library
       LordOfTheRings.Attachment.Cards.Resourceful
       LordOfTheRings.Attachment.Cards.RingMail
       LordOfTheRings.Attachment.Cards.RingOfBarahir
+      LordOfTheRings.Attachment.Cards.RingOfThror
       LordOfTheRings.Attachment.Cards.RivendellBlade
       LordOfTheRings.Attachment.Cards.RivendellBow
       LordOfTheRings.Attachment.Cards.RodOfTheSteward
@@ -430,6 +434,7 @@ library
       LordOfTheRings.Attachment.Cards.TomeOfAtanatar
       LordOfTheRings.Attachment.Cards.ToTheSeaToTheSea
       LordOfTheRings.Attachment.Cards.UnexpectedCourage
+      LordOfTheRings.Attachment.Cards.ValiantDetermination
       LordOfTheRings.Attachment.Cards.ValiantSword
       LordOfTheRings.Attachment.Cards.Valor
       LordOfTheRings.Attachment.Cards.VigilantGuard
@@ -437,6 +442,7 @@ library
       LordOfTheRings.Attachment.Cards.VisionaryLeadership
       LordOfTheRings.Attachment.Cards.WarAxe
       LordOfTheRings.Attachment.Cards.WardenOfArnor
+      LordOfTheRings.Attachment.Cards.WarriorSword
       LordOfTheRings.Attachment.Cards.WeatherStainedCloak
       LordOfTheRings.Attachment.Cards.WildStallion
       LordOfTheRings.Attachment.Cards.Windfola
@@ -940,6 +946,7 @@ library
       LordOfTheRings.Event.Cards.EverVigilant
       LordOfTheRings.Event.Cards.ExpertTrackers
       LordOfTheRings.Event.Cards.FairAndPerilous
+      LordOfTheRings.Event.Cards.FamiliarLands
       LordOfTheRings.Event.Cards.FeignedVoices
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.FierceDefense
@@ -994,6 +1001,7 @@ library
       LordOfTheRings.Event.Cards.LoreOfImladris
       LordOfTheRings.Event.Cards.LoriensWealth
       LordOfTheRings.Event.Cards.LureOfMoria
+      LordOfTheRings.Event.Cards.ManTheWalls
       LordOfTheRings.Event.Cards.MendorsSupport
       LordOfTheRings.Event.Cards.MeneldorsFlight
       LordOfTheRings.Event.Cards.MenOfTheWest
@@ -1047,6 +1055,7 @@ library
       LordOfTheRings.Event.Cards.StrengthOfWill
       LordOfTheRings.Event.Cards.StridersPath
       LordOfTheRings.Event.Cards.SwiftAndSilent
+      LordOfTheRings.Event.Cards.SwiftAndStrong
       LordOfTheRings.Event.Cards.SwiftStrike
       LordOfTheRings.Event.Cards.TakingInitiative
       LordOfTheRings.Event.Cards.TaleOfTinuviel
@@ -1123,6 +1132,7 @@ library
       LordOfTheRings.Hero.Cards.Celeborn
       LordOfTheRings.Hero.Cards.CirdanTheShipwright
       LordOfTheRings.Hero.Cards.DainIronfoot
+      LordOfTheRings.Hero.Cards.DainIronfootSpirit
       LordOfTheRings.Hero.Cards.Denethor
       LordOfTheRings.Hero.Cards.DenethorLeadership
       LordOfTheRings.Hero.Cards.Dori

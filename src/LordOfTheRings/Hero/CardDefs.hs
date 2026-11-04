@@ -85,6 +85,7 @@ allHeroCards =
       , quickbeam
       , haldan
       , thranduil
+      , dainIronfootSpirit
       ]
 
 aragorn :: CardDef
@@ -533,4 +534,10 @@ thranduil :: CardDef
 thranduil =
   (hero "19056" "Thranduil" Leadership 9 1 1 3 4)
     { cdCardTraits = setFromList [Silvan, Noble]
+    }
+
+dainIronfootSpirit :: CardDef
+dainIronfootSpirit =
+  (hero "19084" "Dáin Ironfoot" Spirit 11 1 2 3 5)
+    { cdCardTraits = setFromList [Dwarf, Noble, Warrior]
     }

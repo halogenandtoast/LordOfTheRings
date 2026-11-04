@@ -188,6 +188,9 @@ import LordOfTheRings.Attachment.Cards.TheElvenking
 import LordOfTheRings.Attachment.Cards.Orcrist
 import LordOfTheRings.Attachment.Cards.LeatherBoots
 import LordOfTheRings.Attachment.Cards.Outmatched
+import LordOfTheRings.Attachment.Cards.WarriorSword
+import LordOfTheRings.Attachment.Cards.ValiantDetermination
+import LordOfTheRings.Attachment.Cards.RingOfThror
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -413,5 +416,8 @@ allAttachments =
         , SomeAttachmentCard orcrist
         , SomeAttachmentCard leatherBoots
         , SomeAttachmentCard outmatched
+        , SomeAttachmentCard warriorSword
+        , SomeAttachmentCard valiantDetermination
+        , SomeAttachmentCard ringOfThror
         ]
     ]

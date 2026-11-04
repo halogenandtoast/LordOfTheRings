@@ -217,6 +217,9 @@ allAllyCards =
       , giantBear
       , galion
       , thalion
+      , soldierOfErebor
+      , mirkwoodHunter
+      , descendantOfGirion
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1527,3 +1530,22 @@ thalion =
     (ally "19065" "Thalion" Neutral (StaticCost 4) 2 2 2 3)
       { cdCardTraits = setFromList [Dunedain, Ranger]
       }
+
+soldierOfErebor :: CardDef
+soldierOfErebor =
+  (ally "19085" "Soldier of Erebor" Leadership (StaticCost 5) 0 3 3 3)
+    { cdCardTraits = setFromList [Dwarf, Warrior]
+    }
+
+mirkwoodHunter :: CardDef
+mirkwoodHunter =
+  (ally "19087" "Mirkwood Hunter" Lore (StaticCost 4) 2 2 2 3)
+    { cdCardTraits = setFromList [Woodman, Ranger]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+descendantOfGirion :: CardDef
+descendantOfGirion =
+  (ally "19091" "Descendant of Girion" Spirit (StaticCost 4) 2 2 2 2)
+    { cdCardTraits = setFromList [Dale]
+    }

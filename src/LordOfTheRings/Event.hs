@@ -199,6 +199,9 @@ import LordOfTheRings.Event.Cards.WindFromTheSea
 import LordOfTheRings.Event.Cards.FlightOfTheEagles
 import LordOfTheRings.Event.Cards.SouthAway
 import LordOfTheRings.Event.Cards.QuickerThanSight
+import LordOfTheRings.Event.Cards.ManTheWalls
+import LordOfTheRings.Event.Cards.FamiliarLands
+import LordOfTheRings.Event.Cards.SwiftAndStrong
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -417,5 +420,8 @@ allEvents =
         , SomeEventCard flightOfTheEagles
         , SomeEventCard southAway
         , SomeEventCard quickerThanSight
+        , SomeEventCard manTheWalls
+        , SomeEventCard familiarLands
+        , SomeEventCard swiftAndStrong
         ]
     ]
