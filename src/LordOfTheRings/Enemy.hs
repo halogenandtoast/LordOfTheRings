@@ -498,6 +498,12 @@ import LordOfTheRings.Enemy.Cards.Lorgan
 import LordOfTheRings.Enemy.Cards.Borlach
 import LordOfTheRings.Enemy.Cards.EasterlingGuard
 import LordOfTheRings.Enemy.Cards.NurnSlaver
+import LordOfTheRings.Enemy.Cards.OldTomnoddy
+import LordOfTheRings.Enemy.Cards.CrazyCob
+import LordOfTheRings.Enemy.Cards.LazyLob
+import LordOfTheRings.Enemy.Cards.FatSpider
+import LordOfTheRings.Enemy.Cards.WickedSpider
+import LordOfTheRings.Enemy.Cards.DarkBats
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1025,5 +1031,11 @@ allEnemys =
         , SomeEnemyCard borlach
         , SomeEnemyCard easterlingGuard
         , SomeEnemyCard nurnSlaver
+        , SomeEnemyCard oldTomnoddy
+        , SomeEnemyCard crazyCob
+        , SomeEnemyCard lazyLob
+        , SomeEnemyCard fatSpider
+        , SomeEnemyCard wickedSpider
+        , SomeEnemyCard darkBats
         ]
     ]

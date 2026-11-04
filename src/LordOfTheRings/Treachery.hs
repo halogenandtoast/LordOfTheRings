@@ -420,6 +420,10 @@ import LordOfTheRings.Treachery.Cards.TheDarkLordsReach
 import LordOfTheRings.Treachery.Cards.OverseersWhip
 import LordOfTheRings.Treachery.Cards.CrueltyOfMordor
 import LordOfTheRings.Treachery.Cards.BrokenCaptives
+import LordOfTheRings.Treachery.Cards.CaughtInWebs
+import LordOfTheRings.Treachery.Cards.PoisonedBySpiders
+import LordOfTheRings.Treachery.Cards.FightingAmongFriends
+import LordOfTheRings.Treachery.Cards.WeighedDownWilderland
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -867,5 +871,9 @@ allTreacherys =
         , SomeTreacheryCard overseersWhip
         , SomeTreacheryCard crueltyOfMordor
         , SomeTreacheryCard brokenCaptives
+        , SomeTreacheryCard caughtInWebs
+        , SomeTreacheryCard poisonedBySpiders
+        , SomeTreacheryCard fightingAmongFriends
+        , SomeTreacheryCard weighedDownWilderland
         ]
     ]
