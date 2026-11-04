@@ -3169,6 +3169,14 @@
     "shuffleLust": "Shuffle Lust for the Ring into the encounter deck",
     "raiseThreat": "Raise each player’s threat by 5"
   },
+  "journeyInTheDark": {
+    "earnTreachery": "Journey in the Dark: choose a burden treachery to add to the Campaign Pool",
+    "earnObjective": "Journey in the Dark: choose a burden objective to add to the Campaign Pool",
+    "pursuedByTheEnemy": "Pursued by the Enemy",
+    "shadowOfFear": "Shadow of Fear",
+    "grievousWound": "Grievous Wound",
+    "overcomeByGrief": "Overcome by Grief"
+  },
   "moriaOrc": {
     "choose": "Moria Orc: choose one",
     "removeDamage": "Remove 1 damage from Doom, Doom, Doom",

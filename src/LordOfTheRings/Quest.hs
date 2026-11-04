@@ -358,6 +358,9 @@ import LordOfTheRings.Quest.Cards.TheCouncilOfElrond
 import LordOfTheRings.Quest.Cards.TheNineWalkers
 import LordOfTheRings.Quest.Cards.TheHuntIsUp
 import LordOfTheRings.Quest.Cards.TheGatesOfMoria
+import LordOfTheRings.Quest.Cards.TheLongDarkOfMoria
+import LordOfTheRings.Quest.Cards.DrumsInTheDeep
+import LordOfTheRings.Quest.Cards.TheBridgeOfKhazadDum
 import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Cards.TheForbiddenDoor (theForbiddenDoor)
 import LordOfTheRings.Quest.Cards.ThePathsOfTheDead (thePathsOfTheDead)
@@ -752,6 +755,9 @@ allQuests =
         , SomeQuestCard theNineWalkers
         , SomeQuestCard theHuntIsUp
         , SomeQuestCard theGatesOfMoria
+        , SomeQuestCard theLongDarkOfMoria
+        , SomeQuestCard drumsInTheDeep
+        , SomeQuestCard theBridgeOfKhazadDum
         , SomeQuestCard leadTheRevolt
         , SomeQuestCard theForbiddenDoor
         , SomeQuestCard thePathsOfTheDead

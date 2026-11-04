@@ -2220,6 +2220,7 @@ library
       LordOfTheRings.Quest.Cards.DrawHerFire
       LordOfTheRings.Quest.Cards.DrawingAttention
       LordOfTheRings.Quest.Cards.DriveThemOut
+      LordOfTheRings.Quest.Cards.DrumsInTheDeep
       LordOfTheRings.Quest.Cards.DunlendingAttack
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
@@ -2393,6 +2394,7 @@ library
       LordOfTheRings.Quest.Cards.TheAngryForest
       LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
       LordOfTheRings.Quest.Cards.TheBetrayal
+      LordOfTheRings.Quest.Cards.TheBridgeOfKhazadDum
       LordOfTheRings.Quest.Cards.TheCapeOfAndrast
       LordOfTheRings.Quest.Cards.TheCapture
       LordOfTheRings.Quest.Cards.TheCatacombsOfCarnDum
@@ -2438,6 +2440,7 @@ library
       LordOfTheRings.Quest.Cards.TheLastStage
       LordOfTheRings.Quest.Cards.TheLeapingFishQuest
       LordOfTheRings.Quest.Cards.TheLegacyOfMordor
+      LordOfTheRings.Quest.Cards.TheLongDarkOfMoria
       LordOfTheRings.Quest.Cards.TheLordOfMiddleEarth
       LordOfTheRings.Quest.Cards.TheLowerDeeps
       LordOfTheRings.Quest.Cards.TheLowerDepths
@@ -2558,6 +2561,7 @@ library
       LordOfTheRings.Scenario.Scenarios.IntoThePit.Helpers
       LordOfTheRings.Scenario.Scenarios.IntrudersInChetwood
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
+      LordOfTheRings.Scenario.Scenarios.JourneyInTheDark
       LordOfTheRings.Scenario.Scenarios.JourneyInTheDark.Helpers
       LordOfTheRings.Scenario.Scenarios.JourneyUpTheAnduin
       LordOfTheRings.Scenario.Scenarios.JourneyUpTheAnduin.Helpers
