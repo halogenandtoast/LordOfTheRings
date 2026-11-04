@@ -1124,10 +1124,24 @@ from hand.
 playFromHandAtNoCost :: ReverseQueue m => PlayerId -> CardId -> m ()
 playFromHandAtNoCost pid cid = push $ PlayFromHandAtNoCost pid cid
 
+-- | The ally loses the ally card type and gains the hero card type, as Thalion does with
+-- 3 side quests in the victory display.
+allyBecomesHero :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
+allyBecomesHero a = push $ AllyBecomesHero a.id
+
+-- | The hero an ally became is an ally again, given as the ally its own text reads.
+heroBecomesAlly :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
+heroBecomesAlly a = push $ HeroBecomesAlly (HeroId $ unAllyId a.id)
+
 -- | The ally becomes an attachment on the host, as Wild Stallion attaches itself as a
 -- Mount.
 attachAllyTo :: (ReverseQueue m, HasField "id" ally AllyId, Targetable host) => ally -> host -> m ()
 attachAllyTo a host = push $ AllyBecomesAttachment a.id (toTarget host)
+
+-- | Play a card from the player's hand outside its usual timing, paying for it, as
+-- Hirgon and Thranduil play an ally.
+playFromHand :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
+playFromHand pid card = push $ PlayCardInWindow pid card.id []
 
 -- | Play an attachment from the player's hand on the host without paying its cost, as
 -- Wiglaf plays an Item attachment on himself.

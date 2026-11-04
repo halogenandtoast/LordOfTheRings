@@ -35,7 +35,7 @@ instance RunMessage Hirgon where
         targets allies \c -> do
           when (reduction c > 0)
             $ phaseModifier attrs (CardIdTarget c.id) (CostModifier $ negate $ reduction c)
-          push $ PlayCardInWindow pid c.id []
+          playFromHand pid c
           chooseOneM pid do
             questionLabeled "hirgon.boost"
             causedBy attrs
