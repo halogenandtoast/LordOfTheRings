@@ -503,6 +503,14 @@ import LordOfTheRings.Enemy.Cards.FaithlessDead (faithlessDead)
 import LordOfTheRings.Enemy.Cards.GhostsOfMen (ghostsOfMen)
 import LordOfTheRings.Enemy.Cards.ShadowHost (shadowHost)
 import LordOfTheRings.Enemy.Cards.ArmyOfTheDead (armyOfTheDead)
+import LordOfTheRings.Enemy.Cards.TheBlackSerpentPelennor (theBlackSerpentPelennor)
+import LordOfTheRings.Enemy.Cards.WarMumak (warMumak)
+import LordOfTheRings.Enemy.Cards.SouthronChampion (southronChampion)
+import LordOfTheRings.Enemy.Cards.MorgulCaptain (morgulCaptain)
+import LordOfTheRings.Enemy.Cards.OrcOfTheEye (orcOfTheEye)
+import LordOfTheRings.Enemy.Cards.MordorOrc (mordorOrc)
+import LordOfTheRings.Enemy.Cards.WraithOnWings (wraithOnWings)
+import LordOfTheRings.Enemy.Cards.TheWitchKing (theWitchKing, theWitchKingSorcerer)
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1035,5 +1043,14 @@ allEnemys =
         , SomeEnemyCard ghostsOfMen
         , SomeEnemyCard shadowHost
         , SomeEnemyCard armyOfTheDead
+        , SomeEnemyCard theBlackSerpentPelennor
+        , SomeEnemyCard warMumak
+        , SomeEnemyCard southronChampion
+        , SomeEnemyCard morgulCaptain
+        , SomeEnemyCard orcOfTheEye
+        , SomeEnemyCard mordorOrc
+        , SomeEnemyCard wraithOnWings
+        , SomeEnemyCard theWitchKing
+        , SomeEnemyCard theWitchKingSorcerer
         ]
     ]

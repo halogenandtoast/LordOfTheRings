@@ -530,6 +530,12 @@ import LordOfTheRings.Location.Cards.DarkDoor (darkDoor)
 import LordOfTheRings.Location.Cards.TrystingPlace (trystingPlace)
 import LordOfTheRings.Location.Cards.DeadlyRoad (deadlyRoad)
 import LordOfTheRings.Location.Cards.HauntedPath (hauntedPath)
+import LordOfTheRings.Location.Cards.Grond (grond)
+import LordOfTheRings.Location.Cards.GateOfGondor (gateOfGondor)
+import LordOfTheRings.Location.Cards.CityWall (cityWall)
+import LordOfTheRings.Location.Cards.PelennorField (pelennorField)
+import LordOfTheRings.Location.Cards.FireFilledTrench (fireFilledTrench)
+import LordOfTheRings.Location.Cards.SiegeTower (siegeTower)
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1106,5 +1112,11 @@ allLocations =
         , SomeLocationCard trystingPlace
         , SomeLocationCard deadlyRoad
         , SomeLocationCard hauntedPath
+        , SomeLocationCard grond
+        , SomeLocationCard gateOfGondor
+        , SomeLocationCard cityWall
+        , SomeLocationCard pelennorField
+        , SomeLocationCard fireFilledTrench
+        , SomeLocationCard siegeTower
         ]
     ]

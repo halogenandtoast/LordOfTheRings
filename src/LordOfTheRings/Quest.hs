@@ -358,6 +358,11 @@ import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Cards.TheForbiddenDoor (theForbiddenDoor)
 import LordOfTheRings.Quest.Cards.ThePathsOfTheDead (thePathsOfTheDead)
 import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
+import LordOfTheRings.Quest.Cards.TheGarrisonOfGondor (theGarrisonOfGondor)
+import LordOfTheRings.Quest.Cards.RetreatFromOsgiliath (retreatFromOsgiliath)
+import LordOfTheRings.Quest.Cards.TheWhiteCityBesieged (theWhiteCityBesieged)
+import LordOfTheRings.Quest.Cards.RohanHasCome (rohanHasCome)
+import LordOfTheRings.Quest.Cards.FightingInTheFields (fightingInTheFields)
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -748,5 +753,10 @@ allQuests =
         , SomeQuestCard theForbiddenDoor
         , SomeQuestCard thePathsOfTheDead
         , SomeQuestCard theDeadAreFollowing
+        , SomeQuestCard theGarrisonOfGondor
+        , SomeQuestCard retreatFromOsgiliath
+        , SomeQuestCard theWhiteCityBesieged
+        , SomeQuestCard rohanHasCome
+        , SomeQuestCard fightingInTheFields
         ]
     ]

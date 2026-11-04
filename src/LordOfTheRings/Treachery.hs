@@ -424,6 +424,12 @@ import LordOfTheRings.Treachery.Cards.BloodRunsChill (bloodRunsChill)
 import LordOfTheRings.Treachery.Cards.TheWayIsShut (theWayIsShut)
 import LordOfTheRings.Treachery.Cards.WhispersInTheDark (whispersInTheDark)
 import LordOfTheRings.Treachery.Cards.NoTurningBack (noTurningBack)
+import LordOfTheRings.Treachery.Cards.TheRammasIsBreached (theRammasIsBreached)
+import LordOfTheRings.Treachery.Cards.FellBeast (fellBeast)
+import LordOfTheRings.Treachery.Cards.BlackDart (blackDart)
+import LordOfTheRings.Treachery.Cards.SpellsOfRuin (spellsOfRuin)
+import LordOfTheRings.Treachery.Cards.DreadAndDespair (dreadAndDespair)
+import LordOfTheRings.Treachery.Cards.ShadowOfMordor (shadowOfMordor)
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -875,5 +881,11 @@ allTreacherys =
         , SomeTreacheryCard theWayIsShut
         , SomeTreacheryCard whispersInTheDark
         , SomeTreacheryCard noTurningBack
+        , SomeTreacheryCard theRammasIsBreached
+        , SomeTreacheryCard fellBeast
+        , SomeTreacheryCard blackDart
+        , SomeTreacheryCard spellsOfRuin
+        , SomeTreacheryCard dreadAndDespair
+        , SomeTreacheryCard shadowOfMordor
         ]
     ]
