@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module LordOfTheRings.Enemy.Runner (module X) where
+module LordOfTheRings.Enemy.Runner (module X, placeDamageWithinRoundLimit) where
 
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Card (Card (EncounterCard))
@@ -10,9 +10,11 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Message
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (DamageLimit, KeepUnresolvedShadowCards))
+import LordOfTheRings.GameT (GameT)
+import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageTakenThisRound, KeepUnresolvedShadowCards))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (placementController)
+import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Question
 import LordOfTheRings.Source (sourceTarget, toSource)
 import LordOfTheRings.Prelude
@@ -81,3 +83,17 @@ instance RunMessage EnemyAttrs where
     discardShadows = do
       push $ AddToEncounterDiscard attrs.shadowCards
       pure $ attrs & shadowCardsL .~ [] & shadowRevealedL .~ [] & shadowFaceUpL .~ []
+
+{- | Damage placed on an enemy that cannot take more than X damage each round, X counted
+from the board, as Dagnir's: what it has taken this round is kept as a round effect, and X
+is read as the damage is placed, so an X that rises during the round lets it take more.
+Damage past what X leaves is lost.
+-}
+placeDamageWithinRoundLimit :: Int -> Int -> EnemyAttrs -> QueueT Message GameT EnemyAttrs
+placeDamageWithinRoundLimit x n attrs = do
+  taken <- sum . (\ms -> [k | DamageTakenThisRound k <- ms]) <$> getModifiers attrs
+  let placed = max 0 (min n (x - taken))
+  pushWhen (placed > 0)
+    $ CreateEffect
+    $ Effect (toSource attrs) (toTarget attrs) [DamageTakenThisRound placed] UntilEndOfRound
+  pure $ attrs & tokensL %~ addTokens Damage placed

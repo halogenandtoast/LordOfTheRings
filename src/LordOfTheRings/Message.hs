@@ -99,7 +99,9 @@ data Message
     UpdateCampaignLog CampaignLogUpdate
   | Discard Target
   | {- | a character leaves play now, the When window for its leaving having closed: the
-    Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it
+    Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it. Or a card leaves play
+    past what would keep it there, the card that moves it naming the move, as The Great
+    Worm adds Dagnir to the victory display though she cannot leave the staging area.
     -}
     LeavePlay Message
   | -- | the window for the ally's leaving play has closed: its abilities answer no more

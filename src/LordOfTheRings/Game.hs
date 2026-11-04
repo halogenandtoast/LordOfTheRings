@@ -3437,8 +3437,13 @@ discardFromPlay target g = case target of
   QuestTarget qid | maybe False isSideQuest (Map.lookup qid g.entities.quests) -> fromEntity questsL qid
   -- an objective that leaves its hero, or is discarded, goes back to the staging area
   ObjectiveTarget oid -> do
-    toTop <- elem LeavesPlayToTopOfEncounterDeck <$> getModifiers target
-    g <$ push (if toTop then ReturnToTopOfEncounterDeck target else PlaceObjective oid StagingArea)
+    mods <- getModifiers target
+    case Map.lookup oid g.entities.objectives of
+      Just o | LeavesPlayToEncounterDiscard `elem` mods -> do
+        push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
+        pure $ g & entitiesL . objectivesL %~ Map.delete oid
+      _ ->
+        g <$ push (if LeavesPlayToTopOfEncounterDeck `elem` mods then ReturnToTopOfEncounterDeck target else PlaceObjective oid StagingArea)
   _ -> pure g
  where
   fromEntity :: (Ord k, IsCard v) => Lens' Entities (Map k v) -> k -> GameT Game

@@ -226,7 +226,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (MatchingEnemyEngagedWindow t m, EnemyEngaged eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyDealtDamageWindow t m, DealtDamage (EnemyTarget eid) _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingHeroDealtDamageWindow t m, DealtDamage (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
-  (MatchingEnemyAttackResolvedWindow t m, AttackedEnemy _ eid) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingEnemyAttackResolvedWindow t hm m, AttackedEnemy (HeroTarget hid) eid) | t == timing ->
+    andM [selectAny (HeroWithId hid <> hm), selectAny (EnemyWithId eid <> m)]
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w

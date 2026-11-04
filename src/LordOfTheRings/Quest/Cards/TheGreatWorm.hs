@@ -37,11 +37,9 @@ instance HasAbilities TheGreatWorm where
                  $ restricted
                    a
                    1
-                   ( exists (dagnir <> EnemyWithNoHitPointsRemaining)
-                       <> exists (HeroControlledBy ActivePlayer <> HeroWithAttached Reforged)
-                   )
+                   (exists (dagnir <> EnemyWithNoHitPointsRemaining))
                  $ response
-                 $ MatchingEnemyAttackResolvedWindow After dagnir
+                 $ MatchingEnemyAttackResolvedWindow After (HeroControlledBy ActivePlayer <> HeroWithAttached Reforged) dagnir
              , restricted a 102 (FewerInVictoryDisplay 5 quests) $ forced $ PhaseEndsWindow When CombatPhase
              , restricted a 102 (NotCriterion $ FewerInVictoryDisplay 5 quests) $ response $ PhaseEndsWindow When CombatPhase
              ]
@@ -50,15 +48,17 @@ instance HasAbilities TheGreatWorm where
     dagnir = EnemyWithCardCode (toCardCode Enemies.dagnirMountGundabad)
     quests = CardWithType QuestType
 
--- | Only the player whose attack it was may discard his Wormsbane.
+{- | Offered only to the player whose attack it was, and only with his hero wielding Reforged
+Wormsbane among its attackers: the window reads the attack's attackers as that player's.
+Dagnir goes to the victory display though with 5 quest cards there she "cannot leave the
+staging area": the card names her and the move, and the win follows from it ("Then, the
+players win the game"; FAQ 1.15, "then" needs what precedes it to resolve).
+-}
 instance RunMessage TheGreatWorm where
   runMessage msg q@(TheGreatWorm attrs) = case msg of
-    UseCardAbility pid (isSource attrs -> True) 1 ws -> do
-      attacking <- catMaybes <$> traverse characterController [c | Window _ (AttackedEnemy c _) <- ws]
-      wielding <- selectAny (HeroControlledBy (PlayerWithId pid) <> HeroWithAttached Reforged)
-      when (pid `elem` attacking && wielding) do
-        getWormsbane >>= traverse_ (discard . ObjectiveTarget)
-        getDagnir >>= traverse_ (addToVictoryDisplay . EnemyTarget)
-        winGame
+    UseCardAbility _ (isSource attrs -> True) 1 _ -> do
+      getWormsbane >>= traverse_ (discard . ObjectiveTarget)
+      getDagnir >>= traverse_ (addToVictoryDisplayOverriding . EnemyTarget)
+      winGame
       pure q
     _ -> TheGreatWorm <$> runExploringGundabad (pure ()) msg attrs

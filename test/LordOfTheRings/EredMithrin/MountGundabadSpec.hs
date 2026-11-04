@@ -10,7 +10,7 @@ import LordOfTheRings.Entities (enemiesL, questsL)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyThreat, getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (CardMatcher (AnyCard), EnemyMatcher (..), PlayerMatcher (..), getEnemy, select)
+import LordOfTheRings.Matcher (CardMatcher (AnyCard), EnemyMatcher (..), HeroMatcher (HeroControlledBy), PlayerMatcher (..), getEnemy, select)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
@@ -227,9 +227,14 @@ spec = describe "Mount Gundabad" do
     q <- stageB Quests.dagnirsWrath
     run $ PlaceTokens GameSource q Progress 7
     (.damage) <$> getEnemy dagnir `shouldReturn` 6
+    -- X is now 2 (Dagnir's Wrath in the victory display), and her 5 do not count toward it
+    run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
+    (.damage) <$> getEnemy dagnir `shouldReturn` 7
 
-  it "lets each player play only 1 card each phase on Foreboding Darkness, and flips the top stage over as it is defeated" . gundabadTest $ \pid -> do
+  it "lets each player play only 1 card each phase on Foreboding Darkness, and flips the top stage over in the quest deck as it is defeated, its side 2A never revealed" . gundabadTest $ \pid -> do
     [a, b] <- setQuestDeck [Quests.theLowerDeeps, Quests.frenziedWarrens]
+    dagnir <- stage Enemies.dagnirMountGundabad
+    run $ EngageEnemy pid dagnir
     q <- stageB Quests.forebodingDarkness
     run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedACardThisPhase] UntilEndOfPhase
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
@@ -237,6 +242,9 @@ spec = describe "Mount Gundabad" do
     chooseTarget pid (CardIdTarget a.id)
     activeQuestCode `shouldReturn` toCardCode b
     activeQuestFlipped `shouldReturn` True
+    map (.id) . (.questDeck) <$> scenarioAttrs `shouldReturn` [a.id]
+    -- no "When Revealed: Return Dagnir to the staging area"
+    (.placement) <$> getEnemy dagnir `shouldReturn` EngagedWith pid
 
   it "deals 2 damage to a questing character of each player on Imminent Pursuit, and discards a non-unique enemy as it is defeated" . gundabadTest $ \_ -> do
     _ <- setQuestDeck [Quests.theLowerDeeps]
@@ -274,6 +282,31 @@ spec = describe "Mount Gundabad" do
     run $ ResolveAttack pid dagnir
     chooseAbilityOf pid =<< getActiveQuest
     getsGame (.outcome) `shouldReturn` Just Won
+    -- though with 5 quest cards in the victory display she cannot leave the staging area
+    enemyCodes `shouldReturn` []
+    victoryCodes >>= (`shouldSatisfy` elem (toCardCode Enemies.dagnirMountGundabad))
+
+  it "offers The Great Worm's response only to the player whose attack it was, with Reforged Wormsbane among its attackers" . twoPlayerTestIn mountGundabad testDeck $ \p1 p2 -> do
+    questsInVictory 5
+    dagnir <- stage Enemies.dagnirMountGundabad
+    _ <- stageB Quests.theGreatWorm
+    [wielder, other, _] <- select (HeroControlledBy $ PlayerWithId p1)
+    attacker : _ <- select (HeroControlledBy $ PlayerWithId p2)
+    sword <- genEncounterCard Objectives.wormsbaneReforged
+    run $ PutObjectiveIntoPlayAttached sword (HeroTarget wielder)
+    g <- getGame
+    putGame $ g & entitiesL . enemiesL . ix dagnir %~ overAttrs (\a -> a {enemyTokens = addTokens Damage 20 a.enemyTokens})
+    inPhase CombatPhase
+    -- another player's attack
+    run $ AttackWith (HeroTarget attacker)
+    run $ ResolveAttack p2 dagnir
+    getQuestion p1 `shouldReturn` Nothing
+    getQuestion p2 `shouldReturn` Nothing
+    -- his own attack, without the hero that wields Wormsbane
+    run $ AttackWith (HeroTarget other)
+    run $ ResolveAttack p1 dagnir
+    getQuestion p1 `shouldReturn` Nothing
+    getsGame (.outcome) `shouldReturn` Nothing
 
   -- \* Dagnir
 
@@ -283,6 +316,22 @@ spec = describe "Mount Gundabad" do
     getEnemyThreat dagnir `shouldReturn` 3
     run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
     (.damage) <$> getEnemy dagnir `shouldReturn` 3
+
+  it "lets Dagnir take more damage the same round as X rises" . gundabadTest $ \_ -> do
+    dagnir <- stage Enemies.dagnirMountGundabad
+    run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
+    (.damage) <$> getEnemy dagnir `shouldReturn` 1
+    questsInVictory 2
+    run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
+    (.damage) <$> getEnemy dagnir `shouldReturn` 3
+
+  it "leaves Dagnir in play with as much damage as her hit points, as she is Indestructible" . gundabadTest $ \_ -> do
+    dagnir <- stage Enemies.dagnirMountGundabad
+    g <- getGame
+    putGame $ g & entitiesL . enemiesL . ix dagnir %~ overAttrs (\a -> a {enemyTokens = addTokens Damage 19 a.enemyTokens})
+    run $ DealDamage GameSource (EnemyTarget dagnir) 1
+    (.damage) <$> getEnemy dagnir `shouldReturn` 20
+    enemyCodes `shouldReturn` [toCardCode Enemies.dagnirMountGundabad]
 
   it "keeps Dagnir in the staging area, engaged with each player, with 5 quest cards in the victory display" . gundabadTest $ \pid -> do
     dagnir <- stage Enemies.dagnirMountGundabad
@@ -377,6 +426,16 @@ spec = describe "Mount Gundabad" do
     activeQuestCode `shouldReturn` toCardCode Quests.dagnirsWrath
     activeQuestFlipped `shouldReturn` True
     sort . map toCardCode . (.questDeck) <$> scenarioAttrs `shouldReturn` sort (map toCardCode [Quests.theLowerDeeps, Quests.frenziedWarrens])
+    -- Throat of the Mountain's own victory point, but not the stage it replaced
+    victoryCodes `shouldReturn` [toCardCode Locations.throatOfTheMountain]
+
+  it "puts Wormsbane discarded from a hero still in play in the encounter discard pile, the game not lost" . gundabadTest $ \pid -> do
+    setUp pid
+    w <- getsGame (fromJustNote "no Wormsbane" . fmap toId . headMay . toList . (.entities.objectives))
+    run $ Discard (ObjectiveTarget w)
+    getsGame (.outcome) `shouldReturn` Nothing
+    wormsbaneOn `shouldReturn` []
+    map toCardCode . scenarioEncounterDiscard <$> scenarioAttrs `shouldReturn` [toCardCode Objectives.wormsbane]
 
   it "loses the game as the hero with Wormsbane leaves play" . gundabadTest $ \pid -> do
     setUp pid

@@ -1,6 +1,8 @@
 module LordOfTheRings.Scenario.Scenarios.MountGundabad (mountGundabad) where
 
+import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Id (CardId)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (CardMatcher (CardMatchAny), cardIs, cardMatches)
@@ -66,6 +68,13 @@ instance RunMessage MountGundabad where
         & cavesDeckL .~ cavesDeck
         & setAsideL .~ aside
         & questDeckL .~ laterStages
+    -- the top card of the quest deck turned over in the deck, as Foreboding Darkness does,
+    -- comes out on its B side, its side 2A not revealed
+    Flip (CardIdTarget cid) | any ((== cid) . (.id)) attrs.questDeck -> pure $ MountGundabad $ attrs & metaL .~ toJSON (Just cid)
+    AdvanceToQuest card | flippedInDeck == Just card.id -> do
+      putQuestIntoPlayFlipped card
+      push $ CheckWindows [mkAfter AdvancedToStage]
+      pure $ MountGundabad $ attrs & metaL .~ Null
     -- a stage 2 is revealed side 2A faceup, and flips itself at the beginning of the quest
     -- phase. Each side 2A reads "When Revealed: Return Dagnir to the staging area."
     AdvanceToQuest card -> do
@@ -74,3 +83,5 @@ instance RunMessage MountGundabad where
       push $ CheckWindows [mkAfter AdvancedToStage]
       pure $ MountGundabad attrs
     _ -> MountGundabad <$> runMessage msg attrs
+   where
+    flippedInDeck = join (parseMaybe parseJSON attrs.meta) :: Maybe CardId
