@@ -387,6 +387,7 @@ import LordOfTheRings.Treachery.Cards.WildCreatures
 import LordOfTheRings.Treachery.Cards.UnseenDanger
 import LordOfTheRings.Treachery.Cards.VastnessOfMirkwood
 import LordOfTheRings.Treachery.Cards.Stinker
+import LordOfTheRings.Treachery.Cards.EasterlingHorse
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -801,5 +802,6 @@ allTreacherys =
         , SomeTreacheryCard unseenDanger
         , SomeTreacheryCard vastnessOfMirkwood
         , SomeTreacheryCard stinker
+        , SomeTreacheryCard easterlingHorse
         ]
     ]

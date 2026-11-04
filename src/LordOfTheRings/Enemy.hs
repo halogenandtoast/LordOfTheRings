@@ -457,6 +457,8 @@ import LordOfTheRings.Enemy.Cards.MirkwoodPatrol
 import LordOfTheRings.Enemy.Cards.RavenousSpider
 import LordOfTheRings.Enemy.Cards.GollumASitE
 import LordOfTheRings.Enemy.Cards.KhamulTheEasterling
+import LordOfTheRings.Enemy.Cards.EasterlingCaptain
+import LordOfTheRings.Enemy.Cards.RiderOfRhun
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -942,5 +944,7 @@ allEnemys =
         , SomeEnemyCard ravenousSpider
         , SomeEnemyCard gollumASitE
         , SomeEnemyCard khamulTheEasterling
+        , SomeEnemyCard easterlingCaptain
+        , SomeEnemyCard riderOfRhun
         ]
     ]

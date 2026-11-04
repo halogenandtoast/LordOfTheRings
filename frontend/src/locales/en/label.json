@@ -2783,5 +2783,8 @@
   },
   "trulyLost": {
     "location": "Truly Lost: choose the location to place your hand facedown under"
+  },
+  "easterlingCaptain": {
+    "discard": "Easterling Captain: choose an Easterling attachment to discard from him"
   }
 }

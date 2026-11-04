@@ -466,6 +466,8 @@ allEnemyCards =
       , ravenousSpider
       , gollumASitE
       , khamulTheEasterling
+      , easterlingCaptain
+      , riderOfRhun
       ]
 
 namelessThing :: CardDef
@@ -3815,3 +3817,22 @@ khamulTheEasterling =
     (enemy "21066" "Khamûl the Easterling" ThePowerOfMordor 1 49 4 6 4 9)
       { cdCardTraits = setFromList [Nazgul, Easterling, Mordor]
       }
+
+-- * A Shadow in the East's shared encounter sets
+
+easterlingCaptain :: CardDef
+easterlingCaptain =
+  unique
+    (enemy "21017" "Easterling Captain" RidersOfRhun 1 36 3 6 3 6)
+      { cdCardTraits = setFromList [Easterling]
+      , cdVictoryPoints = Just 6
+      }
+
+riderOfRhun :: CardDef
+riderOfRhun =
+  (enemy "21018" "Rider of Rhûn" RidersOfRhun 2 40 2 5 2 5)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Archery 2]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }

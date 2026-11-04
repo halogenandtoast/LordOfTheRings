@@ -397,6 +397,7 @@ allTreacheryCards =
       , unseenDanger
       , vastnessOfMirkwood
       , stinker
+      , easterlingHorse
       ]
 
 deepDeepDark :: CardDef
@@ -2518,3 +2519,8 @@ stinker =
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
     }
+
+-- * A Shadow in the East's shared encounter sets
+
+easterlingHorse :: CardDef
+easterlingHorse = (treachery "21019" "Easterling Horse" RidersOfRhun 3) {cdCardTraits = setFromList [Easterling]}

@@ -624,6 +624,7 @@ library
       LordOfTheRings.Enemy.Cards.DurinsBane
       LordOfTheRings.Enemy.Cards.Dwimmerlaik
       LordOfTheRings.Enemy.Cards.EastBightPatrol
+      LordOfTheRings.Enemy.Cards.EasterlingCaptain
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ElderNamelessThing
       LordOfTheRings.Enemy.Cards.EliteMarauder
@@ -814,6 +815,7 @@ library
       LordOfTheRings.Enemy.Cards.RearguardAmbusher
       LordOfTheRings.Enemy.Cards.RecurringNightmare
       LordOfTheRings.Enemy.Cards.Revenant
+      LordOfTheRings.Enemy.Cards.RiderOfRhun
       LordOfTheRings.Enemy.Cards.RobAndBob
       LordOfTheRings.Enemy.Cards.RockAdder
       LordOfTheRings.Enemy.Cards.Rupert
@@ -2471,6 +2473,7 @@ library
       LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
       LordOfTheRings.Treachery.Cards.DunlendingAmbush
       LordOfTheRings.Treachery.Cards.DwindlingSupplies
+      LordOfTheRings.Treachery.Cards.EasterlingHorse
       LordOfTheRings.Treachery.Cards.EnemyPursuit
       LordOfTheRings.Treachery.Cards.Enfeebled
       LordOfTheRings.Treachery.Cards.EvilStorm
