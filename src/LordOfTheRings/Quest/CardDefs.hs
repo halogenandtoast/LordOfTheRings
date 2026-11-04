@@ -275,6 +275,14 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , settingOut
+      , racingNorth
+      , huntedInHarad
+      , theFordOfHarnen
+      , settingOutOrcs
+      , racingNorthOrcs
+      , huntedInHaradOrcs
+      , theFordOfHarnenOrcs
       ]
 
 theDrippingWalls :: CardDef
@@ -1152,3 +1160,31 @@ uruksOfTheEye =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+-- * Race Across Harad
+
+-- | No quest points: its When Revealed effect advances to stage 2A.
+settingOut :: CardDef
+settingOut = quest "17047" "Setting Out" RaceAcrossHarad 1 0
+
+racingNorth :: CardDef
+racingNorth = quest "17048" "Racing North" RaceAcrossHarad 2 15
+
+huntedInHarad :: CardDef
+huntedInHarad = quest "17049" "Hunted in Harad" RaceAcrossHarad 3 20
+
+theFordOfHarnen :: CardDef
+theFordOfHarnen = quest "17050" "The Ford of Harnen" RaceAcrossHarad 4 20
+
+-- | The Orcs' quest deck, stages 1C to 4C: the scenario plays their text.
+settingOutOrcs :: CardDef
+settingOutOrcs = quest "17051" "Setting Out" RaceAcrossHarad 1 10
+
+racingNorthOrcs :: CardDef
+racingNorthOrcs = quest "17052" "Racing North" RaceAcrossHarad 2 15
+
+huntedInHaradOrcs :: CardDef
+huntedInHaradOrcs = quest "17053" "Hunted in Harad" RaceAcrossHarad 3 20
+
+theFordOfHarnenOrcs :: CardDef
+theFordOfHarnenOrcs = quest "17054" "The Ford of Harnen" RaceAcrossHarad 4 20

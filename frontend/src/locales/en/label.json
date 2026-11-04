@@ -2245,5 +2245,13 @@
   },
   "mordorWarg": {
     "attach": "Mordor Warg: choose the Orc enemy to attach it to"
+  },
+  "racingNorth": {
+    "choose": "Racing North: choose where Uruk Warg-rider goes",
+    "staging": "The staging area",
+    "orcsArea": "The Orcs' area"
+  },
+  "racingWarg": {
+    "attach": "Racing Warg: choose the Orc enemy to attach it to"
   }
 }

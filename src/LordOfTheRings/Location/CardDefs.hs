@@ -419,6 +419,10 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , riverHarnen
+      , expanseOfHarad
+      , blisteringErg
+      , haradRoad
       ]
 
 drownedTreasury :: CardDef
@@ -3201,5 +3205,29 @@ denseJungle :: CardDef
 denseJungle =
   (location "16058" "Dense Jungle" JungleForest 3 2 3)
     { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+-- * Race Across Harad
+
+riverHarnen :: CardDef
+riverHarnen =
+  unique
+    (location "17039" "River Harnen" RaceAcrossHarad 1 4 10)
+      { cdCardTraits = setFromList [Desert, River]
+      , cdVictoryPoints = Just 4
+      }
+
+expanseOfHarad :: CardDef
+expanseOfHarad = (location "17040" "Expanse of Harad" RaceAcrossHarad 2 2 5) {cdCardTraits = setFromList [Desert]}
+
+blisteringErg :: CardDef
+blisteringErg = (location "17041" "Blistering Erg" RaceAcrossHarad 3 0 4) {cdCardTraits = setFromList [Desert]}
+
+haradRoad :: CardDef
+haradRoad =
+  (location "17042" "Harad Road" RaceAcrossHarad 2 5 5)
+    { cdCardTraits = setFromList [Desert, Road]
+    , cdWhenRevealed = True
     , cdShadowEffect = True
     }

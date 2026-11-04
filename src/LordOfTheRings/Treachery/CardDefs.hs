@@ -344,6 +344,8 @@ allTreacheryCards =
       , heatExhaustion
       , overgrown
       , fearOfMordor
+      , pursuersFromMordor
+      , howlingAtTheirHeels
       ]
 
 deepDeepDark :: CardDef
@@ -2210,3 +2212,11 @@ overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFrom
 
 fearOfMordor :: CardDef
 fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Race Across Harad
+
+pursuersFromMordor :: CardDef
+pursuersFromMordor = (treachery "17045" "Pursuers from Mordor" RaceAcrossHarad 2) {cdKeywords = setFromList [Doomed 2], cdShadowEffect = True}
+
+howlingAtTheirHeels :: CardDef
+howlingAtTheirHeels = (treachery "17046" "Howling at their Heels" RaceAcrossHarad 3) {cdShadowEffect = True}

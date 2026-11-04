@@ -107,6 +107,7 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , tamedMumak
       ]
 
 durinsAxe :: CardDef
@@ -718,4 +719,13 @@ theCabalsChampion =
   (objective "the-stewards-fear-nightmare-the-stewards-fear-010" "The Cabal's Champion" TheStewardsFearNightmare 3)
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+-- * Race Across Harad
+
+tamedMumak :: CardDef
+tamedMumak =
+  ((objective "17038" "Tamed Mumak" RaceAcrossHarad 4)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 5, cdDefense = Just 2, cdHitPoints = Just 8 })
+    { cdCardTraits = setFromList [Creature]
     }
