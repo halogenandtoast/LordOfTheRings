@@ -177,8 +177,6 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     | t == timing && who `elem` attackers -> do
         destroyed <- getsGame gameAttackDestroyed
         pure $ any (\d -> d.target == EnemyTarget eid && maybe False (>= n) (cdHitPoints $ toCardDef d.card)) destroyed
-  -- a shadow effect that cannot be canceled leaves nothing to cancel
-  (ShadowEffectWindow t, ShadowEffectTriggered cid _) | t == timing -> notElem ShadowCannotBeCanceled <$> getModifiers (CardIdTarget cid)
   (ExploredMatchingWindow t m, Explored lid) | t == timing -> maybe False (cardMatches m . toCardDef) . Map.lookup lid . (.locations) <$> getsGame gameEntities
   (HeroDeclaredAsDefenderWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
   (CharacterDefenderDeclaredWindow t hm am em, DeclaredAsDefender c eid) | t == timing -> do
@@ -224,13 +222,15 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     _ -> error "not a character"
 
 {- | Whether this shadow card's effect can be canceled: not one whose own text says it
-cannot, as Blazing Grip's. An effect barring every shadow cancel, as Dark and Stormy's, is
-the 'shadowEffectsCancelable' criterion's.
+cannot, as Blazing Grip's, nor one a card has made so ('ShadowCannotBeCanceled', as Lost in
+the Swanfleet's Deadly Waters does a treachery's). An effect barring every shadow cancel, as
+Dark and Stormy's, is the 'shadowEffectsCancelable' criterion's.
 -}
 shadowCardCancelable :: HasGame m => CardId -> m Bool
 shadowCardCancelable cid = do
   shadows <- getsGame (concatMap (.shadowCards) . toList . (.enemies) . gameEntities)
-  pure $ not (any (\c -> ecId c == cid && cdShadowCannotBeCanceled (toCardDef c)) shadows)
+  barred <- elem ShadowCannotBeCanceled <$> getModifiers (CardIdTarget cid)
+  pure $ not barred && not (any (\c -> ecId c == cid && cdShadowCannotBeCanceled (toCardDef c)) shadows)
 
 {- | Whether an ability's limit leaves it a use: its controller's uses for a player
 limit, everyone's for a group limit.
