@@ -100,6 +100,7 @@ import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Cards.BilboBagginsTactics
 import LordOfTheRings.Hero.Cards.Radagast
 import LordOfTheRings.Hero.Cards.GwaihirTheLandOfSorrow
+import LordOfTheRings.Hero.Cards.AragornSpirit
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -262,5 +263,6 @@ allHeroes =
         , SomeHeroCard dainIronfootSpirit
         , SomeHeroCard smeagol
         , SomeHeroCard gwaihirTheLandOfSorrow
+        , SomeHeroCard aragornSpirit
         ]
     ]

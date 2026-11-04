@@ -213,6 +213,9 @@ import LordOfTheRings.Attachment.Cards.RingOfThror
 import LordOfTheRings.Attachment.Cards.RedBookOfWestmarch
 import LordOfTheRings.Attachment.Cards.SongOfHealing
 import LordOfTheRings.Attachment.Cards.SparePipe
+import LordOfTheRings.Attachment.Cards.ShiningShield
+import LordOfTheRings.Attachment.Cards.TirelessThoroughbred
+import LordOfTheRings.Attachment.Cards.Thorongil
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -463,5 +466,8 @@ allAttachments =
         , SomeAttachmentCard redBookOfWestmarch
         , SomeAttachmentCard songOfHealing
         , SomeAttachmentCard sparePipe
+        , SomeAttachmentCard shiningShield
+        , SomeAttachmentCard tirelessThoroughbred
+        , SomeAttachmentCard thorongil
         ]
     ]

@@ -93,6 +93,7 @@ allHeroCards =
       , dainIronfootSpirit
       , smeagol
       , gwaihirTheLandOfSorrow
+      , aragornSpirit
       ]
 
 aragorn :: CardDef
@@ -593,4 +594,11 @@ gwaihirTheLandOfSorrow =
   (hero "22108" "Gwaihir" Tactics 13 2 4 3 4)
     { cdCardTraits = setFromList [Creature, Eagle]
     , cdKeywords = setFromList [Ranged, Sentinel]
+    }
+
+aragornSpirit :: CardDef
+aragornSpirit =
+  (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
+    , cdKeywords = setFromList [Sentinel]
     }

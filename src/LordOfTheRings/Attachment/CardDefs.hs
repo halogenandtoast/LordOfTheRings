@@ -231,6 +231,9 @@ allAttachmentCards =
       , redBookOfWestmarch
       , songOfHealing
       , sparePipe
+      , shiningShield
+      , tirelessThoroughbred
+      , thorongil
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1609,3 +1612,25 @@ sparePipe =
   (attachment "22115" "Spare Pipe" Spirit (StaticCost 1))
     { cdCardTraits = setFromList [Item, Pipe]
     }
+
+shiningShield :: CardDef
+shiningShield =
+  (attachment "22138" "Shining Shield" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Armor, Item]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+tirelessThoroughbred :: CardDef
+tirelessThoroughbred =
+  (attachment "22143" "Tireless Thoroughbred" Tactics (StaticCost 2))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+thorongil :: CardDef
+thorongil =
+  unique
+    (attachment "22146" "Thorongil" Neutral (StaticCost 3))
+      { cdCardTraits = setFromList [Title]
+      }

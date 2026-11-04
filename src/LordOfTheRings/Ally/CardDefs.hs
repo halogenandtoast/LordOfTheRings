@@ -237,6 +237,8 @@ allAllyCards =
       , daleMessenger
       , eagleEmissary
       , wilyadorTheLandOfSorrow
+      , haleth
+      , mistyMountainJourneyman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1672,3 +1674,16 @@ wilyadorTheLandOfSorrow =
       { cdCardTraits = setFromList [Creature, Eagle]
       , cdKeywords = setFromList [Ranged, Sentinel]
       }
+
+haleth :: CardDef
+haleth =
+  unique
+    (ally "22140" "Haleth" Lore (StaticCost 4) 2 2 1 3)
+      { cdCardTraits = setFromList [Woodman, Scout]
+      }
+
+mistyMountainJourneyman :: CardDef
+mistyMountainJourneyman =
+  (ally "22144" "Misty Mountain Journeyman" Spirit (StaticCost 1) 2 0 0 1)
+    { cdCardTraits = setFromList [Dunedain, Scout]
+    }

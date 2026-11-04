@@ -265,6 +265,8 @@ import LordOfTheRings.Ally.Cards.HobbitArcher
 import LordOfTheRings.Ally.Cards.DaleMessenger
 import LordOfTheRings.Ally.Cards.EagleEmissary
 import LordOfTheRings.Ally.Cards.WilyadorTheLandOfSorrow
+import LordOfTheRings.Ally.Cards.Haleth
+import LordOfTheRings.Ally.Cards.MistyMountainJourneyman
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -562,5 +564,7 @@ allAllies =
         , SomeAllyCard daleMessenger
         , SomeAllyCard eagleEmissary
         , SomeAllyCard wilyadorTheLandOfSorrow
+        , SomeAllyCard haleth
+        , SomeAllyCard mistyMountainJourneyman
         ]
     ]

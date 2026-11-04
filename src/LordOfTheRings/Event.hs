@@ -220,6 +220,9 @@ import LordOfTheRings.Event.Cards.FamiliarLands
 import LordOfTheRings.Event.Cards.SwiftAndStrong
 import LordOfTheRings.Event.Cards.BilbosPlan
 import LordOfTheRings.Event.Cards.SmokeAndThink
+import LordOfTheRings.Event.Cards.KnowledgeOfTheEnemy
+import LordOfTheRings.Event.Cards.WoodmanLore
+import LordOfTheRings.Event.Cards.ADesperatePath
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -459,5 +462,8 @@ allEvents =
         , SomeEventCard swiftAndStrong
         , SomeEventCard bilbosPlan
         , SomeEventCard smokeAndThink
+        , SomeEventCard knowledgeOfTheEnemy
+        , SomeEventCard woodmanLore
+        , SomeEventCard aDesperatePath
         ]
     ]
