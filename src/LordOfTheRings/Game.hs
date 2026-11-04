@@ -873,6 +873,7 @@ runGameMessage msg g = case msg of
       <> [CreateEffect $ Effect source GameTarget [StagingThreatBonus n] UntilEndOfPhase | AttackDamageAddsStagingThreat `elem` attackMods]
       <> [DiscardRandomFromHand pid n | AttackDamageDiscardsRandomFrom pid <- attackMods]
       <> [HealDamage source t n | AttackDamageHeals t <- attackMods]
+      <> [CreateEffect $ Effect source t [m] UntilEndOfRound | n > 0, AttackDamageModifiesUntilEndOfRound t m <- attackMods]
     pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target

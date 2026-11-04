@@ -1,6 +1,7 @@
 module LordOfTheRings.Haradrim.SharedEncounterSetsSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower, getAttack)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -75,6 +76,17 @@ mainQuest n = do
   q <- putQuestStage Quests.fliesAndSpiders
   when (n > 0) $ run $ PlaceTokens GameSource q Progress n
   pure q
+
+-- | The enemy attacks the defender with Giant Scorpion dealt to it as its shadow card.
+scorpionShadowAttack :: PlayerId -> EnemyId -> Target -> GameT ()
+scorpionShadowAttack pid eid defender = do
+  _ <- setEncounterDeck [Enemies.giantScorpion]
+  run $ DealShadowCard eid
+  putGame . (phaseL .~ CombatPhase) =<< getGame
+  run $ EnemyAttacks pid
+  passActions pid
+  chooseTarget pid defender
+  passActions pid
 
 spec :: Spec
 spec = describe "The Sands of Harad's shared encounter sets" do
@@ -244,6 +256,20 @@ spec = describe "The Sands of Harad's shared encounter sets" do
       eowyn <- hero "01007"
       run $ DealDamage (EnemyAttackSource scorpion) eowyn 1
       getModifiers eowyn >>= (`shouldSatisfy` elem CannotReady)
+
+    it "bars the defender from readying this round if the attack Giant Scorpion's shadow is dealt to damages it" . gameTest $ \pid -> do
+      spider <- engaged pid Enemies.forestSpider
+      eowyn <- hero "01007"
+      scorpionShadowAttack pid spider eowyn
+      getCharacterDamage eowyn >>= (`shouldSatisfy` (> 0))
+      getModifiers eowyn >>= (`shouldSatisfy` elem CannotReady)
+
+    it "leaves the defender free to ready if the attack Giant Scorpion's shadow is dealt to deals it no damage" . gameTest $ \pid -> do
+      spider <- engaged pid Enemies.forestSpider
+      eowyn <- hero "01007"
+      run $ CreateEffect $ Effect GameSource eowyn [CannotTakeDamage] UntilEndOfRound
+      scorpionShadowAttack pid spider eowyn
+      getModifiers eowyn >>= (`shouldSatisfy` notElem CannotReady)
 
   describe "Jungle Forest" do
     it "lowers the staging area's locations' threat while Jungle Trail is active, revealing a card to travel there" . gameTest $ \_ -> do

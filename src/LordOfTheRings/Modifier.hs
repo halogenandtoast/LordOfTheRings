@@ -626,6 +626,9 @@ data ModifierType
   | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
     -- Isolated reads
     CannotDrawCardsFromCardEffects
+  | -- | on an enemy: if its attack deals damage, the target gets the modifier until the end
+    -- of the round, as Giant Scorpion's shadow bars the defender from readying
+    AttackDamageModifiesUntilEndOfRound Target ModifierType
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
