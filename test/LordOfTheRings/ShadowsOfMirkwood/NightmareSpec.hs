@@ -6,7 +6,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Ranged))
-import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, HitPointModifier, LoseKeyword, UndefendedDamageTo))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, HitPointModifier, LoseKeyword, UndefendedDamageTo, WillpowerModifier))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -302,6 +302,9 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run $ DealDamage GameSource (EnemyTarget soul) 3
       chooseTarget pid eowyn
       getsGame (fmap (.placement) . find ((== soul) . toId) . toList . (.entities.enemies)) `shouldReturn` Just (AttachedTo eowyn)
+      getWillpower eowyn `shouldReturn` 0
+      -- reduced to 0, not lowered: no boost brings it back
+      run $ CreateEffect $ Effect GameSource eowyn [WillpowerModifier 100] UntilEndOfPhase
       getWillpower eowyn `shouldReturn` 0
 
   describe "Return to Mirkwood" do
