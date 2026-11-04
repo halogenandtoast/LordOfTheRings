@@ -4002,23 +4002,19 @@
   },
   "the-passing-of-the-grey-company": {
     "intro": [
-      "While Frodo, Sam and Gollum journeyed through the glades of Ithilien, Aragorn and his companions fought the battle of Helm’s Deep and rode to the wreck of Isengard to deal with the traitor, Saruman. During their parley, the Wizard’s servant, Gríma, hurled a Palantír from a high balcony, narrowly missing them. Aragorn left Saruman and his servant in the care of the Ents who guarded the tower of Orthanc, but the orb he took with him back to Helm’s Deep, and in the high tower of the Hornburg he looked into the Seeing Stone and learned much of the Enemy’s movements.",
-      "In the Palantír he saw a fleet of Corsairs drawing near to the coast of Gondor just as the army of Minas Morgul marched to war against Minas Tirith. Seeing how the White City would fall if help could not reach the coast in time, the Heir of Isildur resolved to take the most direct route through the mountains to Pelargir: The Paths of the Dead.",
-      "A name of dread among those who dwell near to its entrance, The Paths of the Dead were said to be haunted by the ghosts of men from the second age of Middle-earth; Oathbreakers who refused to join Isildur when he summoned them to war against Mordor. Isildur cursed them for their unfaithfulness and doomed them to linger in the shadowy hills until their oath was fulfilled.",
-      "It was uncertain whether they would help or hinder Isildur’s Heir, but Aragorn was determined to reach the coast by the speediest way..."
+      "Having seen in the Palantír that the Corsairs threaten Gondor's coast, Aragorn leads the Grey Company on the quickest road south: the haunted Paths of the Dead, where the cursed Oathbreakers linger."
     ],
     "setup": [
-      "“The Passing of the Grey Company” is played with an encounter deck built with all the cards from the following encounter set: The Passing of the Grey Company.",
-      "When setting up any scenario in The Flame of the West expansion, the first player must take control of the Fellowship sphere Aragorn included with this expansion."
+      "The encounter deck is built from The Passing of the Grey Company encounter set. The first player takes control of the Fellowship sphere Aragorn."
     ],
     "rules": [
       {
         "title": "Phantom",
-        "text": "Phantom is a new keyword that appears on the Undead enemies in The Passing of the Grey Company. The Phantom keyword represents the mysterious and terrifying nature of the Undead oathbreakers that the Grey Company encountered on their journey through the Paths of the Dead.\n\nDuring the ‘determine combat damage’ step of an attack made by an enemy with Phantom, if any damage would be dealt by the attack it is canceled and the defending player raises his threat by an equal amount instead.\n\nFor example: Matt is engaged with Shadow Host, a 4 attack enemy with the Phantom keyword. During the combat phase, he chooses to defend Shadow Host’s attack with Gimli, who has a defense of 2. The attack would deal 2 damage to Gimli, but the damage is canceled and Matt raises his threat by 2 instead."
+        "text": "When an enemy with Phantom attacks, any damage its attack would deal is canceled, and the defending player raises his threat by that amount instead."
       },
       {
         "title": "Army of the Dead",
-        "text": "Army of the Dead is a double-sided card with an enemy version on one side and an objective-ally version on the other side. When playing The Passing of the Grey Company, the Army of the Dead enemy is added to the staging area when the players advance to stage 3A. The Army of the Dead objective-ally is a boon card that can only be earned by defeating the Army of the Dead enemy while playing in campaign mode."
+        "text": "Army of the Dead has an enemy side and an objective-ally side. The enemy enters the staging area at stage 3A. In campaign mode, defeating it earns its objective-ally side as a boon."
       }
     ]
   }
