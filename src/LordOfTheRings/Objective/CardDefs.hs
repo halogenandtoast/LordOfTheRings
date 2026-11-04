@@ -7,6 +7,7 @@ import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
 import LordOfTheRings.Prelude
+import LordOfTheRings.Sphere (Sphere (Neutral))
 import LordOfTheRings.Trait
 import LordOfTheRings.Name (Name)
 
@@ -107,6 +108,10 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , kahliel
+      , firyal
+      , yazan
+      , jubayr
       ]
 
 durinsAxe :: CardDef
@@ -719,3 +724,30 @@ theCabalsChampion =
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
     }
+
+-- The Long Arm of Mordor
+
+-- | An objective-hero of Kahliel's tribe: a neutral hero with no threat cost.
+objectiveHero :: CardCode -> Name -> Int -> Int -> Int -> Int -> CardDef
+objectiveHero code name willpower attack defense hitPoints =
+  unique
+    (objective code name TheLongArmOfMordor 1)
+      { cdCardType = ObjectiveHeroType
+      , cdSphere = Just Neutral
+      , cdWillpower = Just willpower
+      , cdAttack = Just attack
+      , cdDefense = Just defense
+      , cdHitPoints = Just hitPoints
+      }
+
+kahliel :: CardDef
+kahliel = (objectiveHero "16031" "Kahliel" 2 2 2 3) {cdCardTraits = setFromList [Harad, Noble]}
+
+firyal :: CardDef
+firyal = (objectiveHero "16032" "Firyal" 3 1 2 3) {cdCardTraits = setFromList [Harad, Scout]}
+
+yazan :: CardDef
+yazan = (objectiveHero "16033" "Yazan" 2 3 1 3) {cdCardTraits = setFromList [Harad, Ranger], cdKeywords = setFromList [Ranged]}
+
+jubayr :: CardDef
+jubayr = (objectiveHero "16034" "Jubayr" 1 2 3 3) {cdCardTraits = setFromList [Harad, Warrior], cdKeywords = setFromList [Sentinel]}

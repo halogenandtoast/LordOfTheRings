@@ -2859,5 +2859,76 @@
       "The knight knew he wouldn’t be able to make it to the ships in time. So, he decided on another course of action. Running back into the chamber where the black chest first lay, he placed the key upon the pedestal and prayed to the Valar with all of his heart: “Let none discover this key save for one of the Faithful, of true Númenorean blood. Let its whereabouts be forever shrouded from the servants of Morgoth.”",
       "Hoping the Valar would hear his plea, he sealed the entrance to the chamber and watched as Elendil’s ships sailed to safety in the east."
     ]
+  },
+  "the-long-arm-of-mordor": {
+    "intro": [
+      "The leader of the heroes awoke alone inside a large hut. The walls were made of dried mud and the roof was thatched straw, but it was no crude hovel he found himself in. A thick, woven curtain covered the doorway, and a beautifully crafted rug covered the dirt floor. From outside, he could hear the bleating of goats and the laughter of children.",
+      "On a wooden table by the hero’s bed was a loaf of bread and a cup of water. He tried to sit up to reach the water, but a wave of dizziness washed over him, and he slumped back down clutching his head.",
+      "A tall, dark-skinned man dressed in red and gold pulled aside the curtain and entered the room; a Haradrim warrior holding a long, broad-headed spear.",
+      "The warrior leaned the spear against the wall by the door and held up his palm in a sign of peace. To the hero’s surprise, the Harad man spoke in the common tongue, “You are awake. Good. My son was afraid that you would die.”",
+      "“Who are you?” asked the hero.",
+      "“I am Kahliel,” he answered with a deep voice, “And this is my village. We brought you here after we found you in the desert.”",
+      "“Then I am your prisoner,” said the hero warily.",
+      "Kahliel laughed, “It is not my custom to keep prisoners in my home, or give them my son’s bed to sleep in! I am chieftain of this tribe. You are my guest.”",
+      "The hero was confused. He was confident they would find no help in all Harad, and yet this man had rescued him from certain death.",
+      "“Where are my friends?” the tired hero asked, forcing himself upright in the bed.",
+      "Kahliel handed him the cup of water and said, “They are safe. Each of your friends is with a member of my tribe as you are here with me. They are resting as you are.”",
+      "The hero accepted the drink, and after he had taken a little, he asked, “Why are you helping us?”",
+      "Kahliel pulled a chair next to the bed, sat down, and let out a long breath. When he looked at the hero the warmth in his eyes was gone and his face was grave.",
+      "“We were returning from Mordor when we found you,” he said. The hero’s hand clenched the cup tight at the naming of Mordor, but he said nothing and Kahliel continued: “Every year we pay tribute to the Dark Tower. Food and lumber that we must carry from our village here in the great forest, across the wide desert, to the fortress of Cirith Gurat in the Mountains of Shadow. It is a long journey and a heavy burden for my people. But if we refuse, the Dark Lord will send his Orcs and destroy us.”",
+      "“Then the Haradrim serve Mordor only out of fear?” asked the hero, amazed by this revelation.",
+      "“This is true for my tribe, but many others are eager to serve. Some worship the Dark Lord and seek his favor. They even turn against their own people and sell their children to Mordor,” he said with disgust.",
+      "“Then you have taken a great risk by helping us, Kahliel. For we are enemies of Mordor,” replied the hero with both wonder and concern.",
+      "“I have done more than that already,” said Kahliel, his head bowed as under a great weight. “I have defied the Orcs and endangered my people.”",
+      "The hero watched him with great interest, wondering what he had done. When Kahliel looked up, pain and anger were written in his furled brow.",
+      "“They wanted my son,” he growled. “Those filthy mongrels demanded I give them my child with our next tribute, but I refused! I drew my sword and swore to sever the hand that reaches for my child.”",
+      "“Then they will come for all of you,” said the hero in amazement.",
+      "“Yes,” sighed Kahliel. “Very soon no place in all Harad will be safe for my tribe. That is why you are here. We need your help. For it is said among our people that Gondor still defies the Dark Lord, and keeps the lands behind them safe from his Orcs.”",
+      "There was a look of desperation in his eyes as he spoke. “Is this true?” he asked.",
+      "“It is true,” answered the hero. “The men of Gondor hold the passages of the great river against the Enemy, and the lands to the west have peace.”",
+      "“Then I think we can help each other,” said Kahliel with real hope returning to his face. He held out his hand as he continued, “If you will guide us to those lands, we will help you and your friends to return to your homes.”",
+      "The hero clasped the Haradrim’s hand and answered, “We will get there together.”",
+      "The heroes would not be ready to travel for several days, so Kahliel left them to rest while he and his people prepared for the journey. His village was built on the edge of the great southern jungle where the Mûmakil roamed and the hunters of Kahliel’s tribe went at times to hunt.",
+      "It was into the jungle that Kahliel took his three closest companions, members of his tribe, to gather food on the eve of their departure. They were following a forest trail back to the village with enough meat to last for a long journey when they heard the howling of Wargs and the shouting of Orcs.",
+      "“They have come!” the chieftain shouted to his companions. “Hurry! Orcs are attacking our village!”",
+      "The hunters dropped their game, drew their weapons, and charged into the fray."
+    ],
+    "setup": [
+      "“The Long Arm of Mordor” is played with an encounter deck built with all the cards from the following encounter sets: The Long Arm of Mordor, Mordor Orcs, and Jungle Forest."
+    ],
+    "rules": [
+      {
+        "title": "Objective-Heroes",
+        "text": "Objective-hero is a new card type in The Long Arm of Mordor. The four objective-heroes in this scenario represent the brave Haradrim of Kahliel’s tribe who are fighting against Sauron’s Orcs in order to save the heroes and escape from the oppressive rule of Mordor. An objective-hero is both an objective and a neutral hero. An objective-hero functions the same as a regular hero with the following exceptions: an objective-hero has no threat cost and does not count towards the hero limit of 3.\n\nAs a neutral hero, each objective-hero collects 1 resource at the beginning of the resource phase, and resources from its resource pool may be spent to pay for neutral player cards.\n\nWhen setting up The Long Arm of Mordor, each player is instructed to take control of an objective-hero. Starting with the first player, each player should choose 1 of the available objective-heroes in turn order. Then, any unused objective-heroes are removed from the game.\n\nEach objective-hero in The Long Arm of Mordor has the text: “If (this hero) leaves play, you are eliminated from the game.” This text cannot be modified in any way."
+      },
+      {
+        "title": "Heroes in the Staging Area",
+        "text": "At the beginning of The Long Arm of Mordor, the heroes are still recovering from their difficult desert crossing. To represent this in the scenario, the players are instructed to place their heroes in the staging area during setup. Stage 1A reads: “For the remainder of the game, heroes in the staging area are in play but under no player’s control, immune to player card effects, and their text boxes are considered to be blank.” This creates a lasting effect that applies to heroes while they are in the staging area.\n\nWhen an effect causes a player to take control of a hero in the staging area, that player moves that hero from the staging area to his play area. Once that hero is no longer in the staging area, the lasting effect created by stage 1A no longer applies to it.\n\nWhile a hero is under no player’s control, it does not collect resources during the resource phase.\n\nWhen a card effect refers to ownership of a hero, the player who ‘owns’ that hero is the player who selected that hero as one of his starting heroes during the game’s setup. If a hero in the staging area has its hit points reduced to 0, it is destroyed and placed in its owner’s discard pile."
+      },
+      {
+        "title": "Guarded Heroes",
+        "text": "When the players advance to stage 3A, they are instructed to attach each hero in the staging area to a different Orc enemy in the staging area. Each hero attached to an Orc enemy is guarded by that enemy. While a hero is guarded by an enemy, it is treated like a guarded objective."
+      },
+      {
+        "title": "Stage Number",
+        "text": "When a card refers to the “stage number” of a quest card, it is referencing the numerical value of the sequence in the upper left hand corner of that quest card."
+      }
+    ],
+    "resolution": [
+      "From deep in the forest, the heroes watched the village burn. Bright red flames leapt up into the night sky as thatched roofs collapsed into ruined huts. They could hear the Orcs laughing as the flames spread across the boma. It was a horrible reminder of what fate awaited the enemies of Mordor if the defenders of the West should fail as they had this night.",
+      "The heroes had not yet recovered from their desert crossing and were forced to flee into the dense jungle. The Haradrim survivors were gathered around them, but their chieftain sat apart. He had incited the wrath of Mordor by refusing to surrender his child, and now he was certain his son was dead. There were many who were not able to escape the village before it was overrun.",
+      "“What do we do now, Kahliel?” asked one of the fighters, Firyal was her name.",
+      "“Find a new chieftain,” said Kahliel despondently, “I have shamed my fathers and brought ruin to our tribe.”",
+      "“Mordor brought ruin to our tribe, not Kahliel,” replied Yazan, another of his warriors. “You were right not to give them your son. How could you do otherwise?”",
+      "“Yazan is right,” echoed Jubayr, Kahliel’s trusted friend. “The Dark Lord would make us all his slaves whether we fight or not, so I say fight.”",
+      "“Aye! And I say you are still our chieftain, Kahliel,” said Firyal proudly. “I have hunted beside you many times, and you never led us after the wrong trail. Lead us now!”",
+      "Kahliel lifted his head and the distant fires were reflected in his eyes. His face was pained yet determined. “Very well,” he said, “I will travel to Gondor with the northerners and any who will follow.”",
+      "There followed a silence as the members of Kahliel’s tribe considered the weight of their chieftain’s choice. The fires that burned their village roared in the distance.",
+      "“I will go,” said Yazan, “But how shall we make such a journey without the supplies we had packed in the village?”",
+      "“And how can we outrun the wolves of Mordor if they hunt for us on the road?” added Firyal.",
+      "“The leagues that lie between us and Gondor are many and barren,” said Jubayr. “We cannot walk there.”",
+      "Kahliel lifted his hand and his companions fell silent. “We will ride to Gondor,” he said, “The Mûmakil dwell in this forest, along with the supplies we need. We will capture the beasts we need and ride them to Gondor.”",
+      "To be continued in “The Mûmakil,” the first Adventure Pack in “The Haradrim” cycle."
+    ]
   }
 }

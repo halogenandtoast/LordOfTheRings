@@ -406,6 +406,7 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , sauronsEnforcers
       ]
 
 namelessThing :: CardDef
@@ -3299,4 +3300,11 @@ mordorWarg =
   (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
+    }
+
+-- | X attack, defense and threat, X the main quest's stage number: its card gives them.
+sauronsEnforcers :: CardDef
+sauronsEnforcers =
+  (enemy "16035" "Sauron's Enforcers" TheLongArmOfMordor 4 30 0 0 0 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
     }

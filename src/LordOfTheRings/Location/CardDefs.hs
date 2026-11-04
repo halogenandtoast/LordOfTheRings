@@ -419,6 +419,8 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , southronBoma
+      , villageHut
       ]
 
 drownedTreasury :: CardDef
@@ -3203,3 +3205,14 @@ denseJungle =
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }
+
+-- | X threat, X the main quest's stage number: its card gives it.
+southronBoma :: CardDef
+southronBoma =
+  (location "16036" "Southron Boma" TheLongArmOfMordor 2 0 4)
+    { cdCardTraits = setFromList [Forest, Village]
+    , cdShadowEffect = True
+    }
+
+villageHut :: CardDef
+villageHut = (location "16037" "Village Hut" TheLongArmOfMordor 2 2 2) {cdCardTraits = setFromList [Forest, Village]}
