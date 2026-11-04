@@ -449,6 +449,8 @@ allTreacheryCards =
       , rodeLikeAGale
       , lureOfTheRing
       , theRingDrawsThem
+      , unwantedAttention
+      , blackBreath
       ]
 
 deepDeepDark :: CardDef
@@ -2850,3 +2852,11 @@ rodeLikeAGale = (treachery "141075" "Rode Like a Gale" TheBlackRiders 2) {cdShad
 
 lureOfTheRing :: CardDef
 lureOfTheRing = (treachery "141076" "Lure of the Ring" TheRing 3) {cdKeywords = setFromList [Surge], cdShadowEffect = True}
+
+-- * A Knife in the Dark
+
+unwantedAttention :: CardDef
+unwantedAttention = (treachery "141054" "Unwanted Attention" AKnifeInTheDark 3) {cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+blackBreath :: CardDef
+blackBreath = (treachery "141055" "Black Breath" AKnifeInTheDark 2) {cdCardTraits = setFromList [Condition], cdKeywords = setFromList [Peril]}

@@ -449,6 +449,9 @@ allQuestCards =
       , threeIsCompany
       , aShortcutToMushrooms
       , escapeToBuckland
+      , troubleInBree
+      , intoTheWild
+      , theRingwraithsAttack
       ]
 
 theDrippingWalls :: CardDef
@@ -1873,3 +1876,15 @@ aShortcutToMushrooms = quest "141023" "A Shortcut to Mushrooms" AShadowOfThePast
 -- | No quest points: the players win as Bucklebury Ferry is explored.
 escapeToBuckland :: CardDef
 escapeToBuckland = quest "141024" "Escape to Buckland" AShadowOfThePast 3 0
+
+-- * A Knife in the Dark
+
+troubleInBree :: CardDef
+troubleInBree = quest "141025" "Trouble in Bree" AKnifeInTheDark 1 8
+
+intoTheWild :: CardDef
+intoTheWild = quest "141026" "Into the Wild" AKnifeInTheDark 2 6
+
+-- | No quest points: the players win once no Nazgûl enemy is in play.
+theRingwraithsAttack :: CardDef
+theRingwraithsAttack = quest "141027" "The Ringwraiths Attack" AKnifeInTheDark 3 0
