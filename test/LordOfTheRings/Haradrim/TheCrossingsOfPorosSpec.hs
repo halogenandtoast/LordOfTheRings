@@ -19,7 +19,7 @@ import LordOfTheRings.Quest.Runner (getQuestPoints)
 import LordOfTheRings.Scenario (lookupScenario, theCrossingsOfPoros)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), encounterDiscardL, questDeckL, setAsideL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
+import LordOfTheRings.Window (WindowType (PhaseEnds, PlayedCard), mkAfter, mkWhen)
 import TestImport
 
 porosTest :: (PlayerId -> GameT ()) -> IO ()
@@ -151,6 +151,17 @@ spec = describe "The Crossings of Poros" do
   it "has a player who plays an ally on The Desert Path exhaust it or deal it 1 damage" . porosTest $ \pid -> do
     _ <- stageB Quests.theDesertPath
     _ <- playWith pid "01002" 2 Allies.guardOfTheCitadel
+    chooseLabel "$label.theDesertPath.damage" pid
+    al <- fromJustNote "no ally" <$> allyOf Allies.guardOfTheCitadel
+    getDamage (toTarget $ allyId al) `shouldReturn` 1
+
+  it "has The Desert Path answer an ally played from anywhere, not from hand alone" . porosTest $ \pid -> do
+    _ <- stageB Quests.theDesertPath
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    run $ PutAllyIntoPlayUnder pid card
+    -- put into play, it was not played
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    run $ CheckWindows [mkAfter $ PlayedCard pid card]
     chooseLabel "$label.theDesertPath.damage" pid
     al <- fromJustNote "no ally" <$> allyOf Allies.guardOfTheCitadel
     getDamage (toTarget $ allyId al) `shouldReturn` 1

@@ -13,8 +13,7 @@ module LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros.Helpers (
 import LordOfTheRings.Ally.Types (AllyAttrs (..))
 import LordOfTheRings.Id (AllyId, PlayerId)
 import LordOfTheRings.Placement (placementController)
-import LordOfTheRings.Target (Target (CardIdTarget))
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (PlayedFromHand))
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (PlayedCard))
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card (CardDef (..), CardType (EnemyType), EncounterCard, toCardDef)
@@ -82,10 +81,11 @@ runStage3A set = do
   revealEncounterCards . length =<< getRemainingPlayers
 
 {- | The allies just played, as "after a player plays an ally" reads: each, the player who
-controls it, and whether it is ready.
+controls it, and whether it is ready. Played from anywhere, hand or discard pile; one put
+into play is not played.
 -}
 playedAllies :: HasGame m => [Window] -> m [(AllyId, PlayerId, Bool)]
 playedAllies ws = do
-  let played = [cid | Window After (PlayedFromHand (CardIdTarget cid)) <- ws]
+  let played = [card.id | Window After (PlayedCard _ card) <- ws]
   allies <- getsGame (map toAttrs . toList . (.entities.allies))
   pure [(allyId a, pid, not (allyExhausted a)) | a <- allies, allyCardId a `elem` played, Just pid <- [placementController (allyPlacement a)]]
