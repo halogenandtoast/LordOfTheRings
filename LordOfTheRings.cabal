@@ -35,8 +35,10 @@ library
       LordOfTheRings.Ally.Cards.BeorningGuardian
       LordOfTheRings.Ally.Cards.BeorningSkinChanger
       LordOfTheRings.Ally.Cards.Berelind
+      LordOfTheRings.Ally.Cards.Bifur
       LordOfTheRings.Ally.Cards.BlueMountainTrader
       LordOfTheRings.Ally.Cards.Bofur
+      LordOfTheRings.Ally.Cards.BofurTactics
       LordOfTheRings.Ally.Cards.Bombur
       LordOfTheRings.Ally.Cards.BoomingEnt
       LordOfTheRings.Ally.Cards.BrokIronfist
@@ -75,6 +77,7 @@ library
       LordOfTheRings.Ally.Cards.DunedainPathfinder
       LordOfTheRings.Ally.Cards.DunedainWanderer
       LordOfTheRings.Ally.Cards.DunedainWatcher
+      LordOfTheRings.Ally.Cards.Dwalin
       LordOfTheRings.Ally.Cards.DwarvenSellsword
       LordOfTheRings.Ally.Cards.EagleEmissary
       LordOfTheRings.Ally.Cards.EagleOfTheNorth
@@ -121,6 +124,7 @@ library
       LordOfTheRings.Ally.Cards.GaldorOfTheHavens
       LordOfTheRings.Ally.Cards.Galion
       LordOfTheRings.Ally.Cards.Gandalf
+      LordOfTheRings.Ally.Cards.GandalfHobbit
       LordOfTheRings.Ally.Cards.Gavin
       LordOfTheRings.Ally.Cards.GiantBear
       LordOfTheRings.Ally.Cards.GildorInglorion
