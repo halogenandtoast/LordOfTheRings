@@ -4017,5 +4017,13 @@
         "text": "Army of the Dead has an enemy side and an objective-ally side. The enemy enters the staging area at stage 3A. In campaign mode, defeating it earns its objective-ally side as a boon."
       }
     ]
+  },
+  "the-siege-of-gondor": {
+    "intro": [
+      "Out of the mountains, Aragorn rides hard for Pelargir with the Dead at his back, racing to break the Corsair fleet of Umbar before it can sail up the Anduin to join Mordor's assault on Gondor."
+    ],
+    "setup": [
+      "The encounter deck is built from The Siege of Gondor encounter set. The first player takes control of the Fellowship sphere Aragorn."
+    ]
   }
 }
