@@ -1083,8 +1083,13 @@ stage 2A" reads: the main stage still in play leaves it, unless the card already
 advanceQuest :: ReverseQueue m => m ()
 advanceQuest = do
   quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
-  for_ quests \q -> push $ LeaveQuestStage q.id
+  for_ quests \q -> removeStageFromPlay q.id
   push AdvanceQuest
+
+-- | The stage leaves play and nothing takes its place, as "remove this stage from play"
+-- reads.
+removeStageFromPlay :: ReverseQueue m => QuestId -> m ()
+removeStageFromPlay = push . LeaveQuestStage
 
 -- | Shuffle the quest card, in play or in the victory display, into the quest deck.
 shuffleIntoQuestDeck :: (ReverseQueue m, IsCard a) => a -> m ()
@@ -1424,6 +1429,15 @@ eachPlayerMayDiscardFromHand source = do
 -- | The player discards N cards at random from their hand.
 discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
 discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n
+
+-- | Each hero's resource pool is emptied, as "remove all resources from each hero's
+-- resource pool" reads.
+removeAllResourcesFromEachHero :: (ReverseQueue m, Sourceable source) => source -> m ()
+removeAllResourcesFromEachHero source = do
+  heroes <- select HeroWithResources
+  for_ heroes \h -> do
+    n <- (.resources) <$> getHero h
+    removeTokens source h Resource n
 
 -- | The player discards 1 resource from one of their heroes' resource pools, if able.
 discardResourceFromAHero :: (ReverseQueue m, Sourceable source, Targetable source) => source -> PlayerId -> m ()

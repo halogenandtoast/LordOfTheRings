@@ -44,10 +44,7 @@ instance RunMessage CapturedBySpiders where
       askToResolveWhenRevealed attrs
       CapturedBySpiders <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
-      heroes <- select (HeroWithResources)
-      for_ heroes \h -> do
-        n <- (.resources) <$> getHero h
-        removeTokens attrs h Resource n
+      removeAllResourcesFromEachHero attrs
       lead <- getLead
       bilbo <- map toTarget <$> select (HeroWithTitle "Bilbo Baggins")
       characters <- filter (`notElem` bilbo) <$> charactersControlledBy lead
