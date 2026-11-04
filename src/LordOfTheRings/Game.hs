@@ -2240,9 +2240,13 @@ runGameMessage msg g = case msg of
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   -- attached as one played is, but not played
+  -- with nothing it may attach to, it goes to its owner's discard pile, as an attachment
+  -- freed of its guard does
   PutAttachmentIntoPlay pid card -> do
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
-    push $ PlayAttachment pid card
+    hosts <- cardHosts pid (toCardCode card)
+    let unattached = attachMatcherFor pid (toCardCode card) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
+    push $ if null hosts && not unattached && isNothing (guardedTypes card) then PutInDiscard card else PlayAttachment pid card
     pure g
   PutSideQuestIntoPlay pid card -> do
     sideQuest <- newSideQuest pid card

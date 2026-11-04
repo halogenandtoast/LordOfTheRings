@@ -1138,6 +1138,11 @@ heroBecomesAlly a = push $ HeroBecomesAlly (HeroId $ unAllyId a.id)
 attachAllyTo :: (ReverseQueue m, HasField "id" ally AllyId, Targetable host) => ally -> host -> m ()
 attachAllyTo a host = push $ AllyBecomesAttachment a.id (toTarget host)
 
+-- | An attachment card, already taken from where it was, is put into play by the player,
+-- as Ring of Thrór puts in the one it discards.
+putAttachmentIntoPlay :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+putAttachmentIntoPlay pid = push . PutAttachmentIntoPlay pid
+
 -- | Play a card from the player's hand outside its usual timing, paying for it, as
 -- Hirgon and Thranduil play an ally.
 playFromHand :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
