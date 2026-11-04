@@ -339,6 +339,8 @@ data CardMatcher
     CardWithPrintedCostAtLeast Int
   | -- | a card printed with the keyword, as "a restricted attachment" reads
     CardWithKeyword Keyword
+  | -- | a Hobbit treasure card, as "search his deck for 1 treasure card" reads
+    TreasureCard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -387,6 +389,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
     Just (StaticCost c) -> c >= n
     _ -> False
   CardWithKeyword k -> k `member` cdKeywords def
+  TreasureCard -> cdTreasure def
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]
