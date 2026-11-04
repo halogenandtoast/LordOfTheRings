@@ -193,6 +193,8 @@ allAllyCards =
       , sulien
       , guardianOfIthilien
       , starla
+      , halflingBounder
+      , vigilantDunadan
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1345,3 +1347,15 @@ elrondsChampion = (ally "AAC189" "Elrond's Champion" Neutral (StaticCost 3) 2 3 
 
 rivendellSkirmishers :: CardDef
 rivendellSkirmishers = (ally "AAC192" "Rivendell Skirmishers" Neutral (StaticCost 3) 2 2 3 3) {cdCardTraits = setFromList [Noldor, Warrior, Boon]}
+
+halflingBounder :: CardDef
+halflingBounder =
+  (ally "16005" "Halfling Bounder" Lore (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+vigilantDunadan :: CardDef
+vigilantDunadan =
+  (ally "16006" "Vigilant Dúnadan" Tactics (StaticCost 4) 1 3 2 3)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }

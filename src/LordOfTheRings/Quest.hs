@@ -220,6 +220,7 @@ import LordOfTheRings.Quest.Cards.ProtectTheFlanks
 import LordOfTheRings.Quest.Cards.RallyTheFighters
 import LordOfTheRings.Quest.Cards.SeverTheHead
 import LordOfTheRings.Quest.Cards.TheWitchKingsGift
+import LordOfTheRings.Quest.Cards.TheStormComes
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -319,6 +320,7 @@ allQuests =
         , SomeQuestCard delayTheEnemy
         , SomeQuestCard sendForAid
         , SomeQuestCard scoutAhead
+        , SomeQuestCard theStormComes
         , SomeQuestCard theDefense
         , SomeQuestCard reinforcingTheBanks
         , SomeQuestCard breakthroughAtTheApproach

@@ -197,6 +197,9 @@ allEventCards =
       , commandLore
       , commandSpirit
       , commandTactics
+      , unlikelyFriendship
+      , wellWarned
+      , dourHanded
       ]
 
 everVigilant :: CardDef
@@ -784,3 +787,12 @@ determination = (event "AAC172" "Determination" Neutral (StaticCost 1)) {cdCardT
 
 loreOfAncientArnor :: CardDef
 loreOfAncientArnor = (event "AAC190" "Lore of Ancient Arnor" Neutral (StaticCost 3)) {cdCardTraits = setFromList [Boon]}
+
+unlikelyFriendship :: CardDef
+unlikelyFriendship = event "16007" "Unlikely Friendship" Leadership (StaticCost 0)
+
+wellWarned :: CardDef
+wellWarned = event "16008" "Well Warned" Spirit (StaticCost 0)
+
+dourHanded :: CardDef
+dourHanded = event "16009" "Dour-handed" Tactics (StaticCost 1)

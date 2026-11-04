@@ -183,6 +183,9 @@ allAttachmentCards =
       , cirdansBlessingTactics
       , cirdansBlessingSpirit
       , cirdansBlessingLore
+      , dwarvenShield
+      , mirkwoodLongKnife
+      , theRoadGoesEverOn
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1223,3 +1226,23 @@ ordersFromAngmar = restrictedBoon "AAC187" "Orders from Angmar" 0 [Item]
 
 raimentOfTheSecondAge :: CardDef
 raimentOfTheSecondAge = (restrictedBoon "AAC191" "Raiment of the Second Age" 3 [Armor, Weapon, Item]) {cdUnique = False}
+
+dwarvenShield :: CardDef
+dwarvenShield =
+  (attachment "16010" "Dwarven Shield" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mirkwoodLongKnife :: CardDef
+mirkwoodLongKnife =
+  (attachment "16011" "Mirkwood Long-knife" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+theRoadGoesEverOn :: CardDef
+theRoadGoesEverOn =
+  (attachment "16012" "The Road Goes Ever On" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    }
