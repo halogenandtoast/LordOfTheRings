@@ -436,6 +436,9 @@ allEnemyCards =
       , packOfWargs
       , stoneTroll
       , hobgoblin
+      , werewolf
+      , giantSpider
+      , blackBats
       ]
 
 namelessThing :: CardDef
@@ -3569,4 +3572,18 @@ hobgoblin =
   (enemy "18050" "Hobgoblin" FellBeasts 2 38 1 1 1 5)
     { cdCardTraits = setFromList [Orc]
     , cdEasyModeQuantity = Just 1
+    }
+
+werewolf :: CardDef
+werewolf = (enemy "18051" "Werewolf" WildCreatures 2 33 3 2 1 8) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+giantSpider :: CardDef
+giantSpider = (enemy "18052" "Giant Spider" WildCreatures 3 28 2 3 2 3) {cdCardTraits = setFromList [Creature, Spider], cdShadowEffect = True}
+
+blackBats :: CardDef
+blackBats =
+  (enemy "18053" "Black Bats" WildCreatures 3 18 1 2 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
     }

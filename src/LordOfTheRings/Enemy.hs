@@ -427,6 +427,9 @@ import LordOfTheRings.Enemy.Cards.StrayGoblinGreyMountains
 import LordOfTheRings.Enemy.Cards.PackOfWargs
 import LordOfTheRings.Enemy.Cards.StoneTroll
 import LordOfTheRings.Enemy.Cards.Hobgoblin
+import LordOfTheRings.Enemy.Cards.Werewolf
+import LordOfTheRings.Enemy.Cards.GiantSpider
+import LordOfTheRings.Enemy.Cards.BlackBats
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -882,5 +885,8 @@ allEnemys =
         , SomeEnemyCard packOfWargs
         , SomeEnemyCard stoneTroll
         , SomeEnemyCard hobgoblin
+        , SomeEnemyCard werewolf
+        , SomeEnemyCard giantSpider
+        , SomeEnemyCard blackBats
         ]
     ]
