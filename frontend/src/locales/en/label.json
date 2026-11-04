@@ -3013,5 +3013,42 @@
     "choose": "Cruelty of Mordor: choose one",
     "damage": "Deal 1 damage to each damaged character you control",
     "threat": "Raise your threat by {n}, 1 for each damaged character you control"
+  },
+  "sack": {
+    "attach": "Choose a character to put in the sack"
+  },
+  "trollTreasure": {
+    "attach": "Choose a Troll to carry it"
+  },
+  "trollPurse": {
+    "claim": "Troll Purse: spend 1 Baggins resource to claim it for Bilbo Baggins?",
+    "spend": "Spend 1 Baggins resource and claim it"
+  },
+  "troll": {
+    "returnToStaging": "The Troll returns to the staging area unless you raise your threat by 1",
+    "raiseThreat": "Raise your threat by 1 to keep it engaged",
+    "return": "Return it to the staging area"
+  },
+  "baggins": {
+    "cancel": "Spend {count} Baggins resources to cancel this effect?",
+    "spendToCancel": "Spend {count} Baggins resources to cancel it",
+    "doNotCancel": "Let it resolve"
+  },
+  "trollCamp": {
+    "removeSack": "Choose a Sack card to remove"
+  },
+  "hungryTroll": {
+    "engage": "Choose a Troll to engage"
+  },
+  "noCampfire": {
+    "choose": "No Campfire: choose one",
+    "threat": "Raise your threat by 4",
+    "reveal": "Reveal an encounter card"
+  },
+  "gripGrabPinchNab": {
+    "choose": "Choose a Goblin enemy in the discard pile to add to the staging area"
+  },
+  "dawnTakeYouAllQuest": {
+    "treasure": "Choose the player who discovers {treasure}"
   }
 }

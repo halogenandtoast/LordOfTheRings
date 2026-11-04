@@ -2106,6 +2106,7 @@ library
       LordOfTheRings.Quest.Cards.AnEvilPlace
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
       LordOfTheRings.Quest.Cards.AngmarAwakened
+      LordOfTheRings.Quest.Cards.AnUnexpectedParty
       LordOfTheRings.Quest.Cards.AnUntimelyEnd
       LordOfTheRings.Quest.Cards.ApproachingCairAndros
       LordOfTheRings.Quest.Cards.ApproachingRivendell
@@ -2143,6 +2144,7 @@ library
       LordOfTheRings.Quest.Cards.CursedMists
       LordOfTheRings.Quest.Cards.DaechanarsFall
       LordOfTheRings.Quest.Cards.DagnirsWrath
+      LordOfTheRings.Quest.Cards.DawnTakeYouAll
       LordOfTheRings.Quest.Cards.DeadlyCreatures
       LordOfTheRings.Quest.Cards.DecipherAncientTexts
       LordOfTheRings.Quest.Cards.DefeatTheSerpent
@@ -2283,6 +2285,7 @@ library
       LordOfTheRings.Quest.Cards.RetakeTheCity
       LordOfTheRings.Quest.Cards.RetrieveUrdugsHorn
       LordOfTheRings.Quest.Cards.ReturnToRhosgobel
+      LordOfTheRings.Quest.Cards.RoastMutton
       LordOfTheRings.Quest.Cards.RoutTheGoblins
       LordOfTheRings.Quest.Cards.SahirsAdvance
       LordOfTheRings.Quest.Cards.SahirsAdvanceNightmare
@@ -2595,6 +2598,7 @@ library
       LordOfTheRings.Scenario.Scenarios.UnderTheAshMountains
       LordOfTheRings.Scenario.Scenarios.UnderTheAshMountains.Helpers
       LordOfTheRings.Scenario.Scenarios.VoyageAcrossBelegaer
+      LordOfTheRings.Scenario.Scenarios.WeMustAwayEreBreakOfDay
       LordOfTheRings.Scenario.Scenarios.WeMustAwayEreBreakOfDay.Helpers
       LordOfTheRings.Scenario.Scenarios.WrathAndRuin
       LordOfTheRings.Scenario.Types
