@@ -160,7 +160,7 @@ runPlayer msg player = case msg of
           -- a hero in the deck was shuffled in by Lost and Alone, and is put into play as drawn
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
       pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
-      pushAll [EncounterCardEnteredHand player.id ec | EncounterCard ec <- drawn]
+      pushAll $ concat [[EncounterCardEnteredHand player.id ec, EncounterCardDrawn player.id ec] | EncounterCard ec <- drawn]
       pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
       pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
@@ -383,10 +383,11 @@ runPlayer msg player = case msg of
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromDeck pid c.id | c <- discarded]
-      -- an encounter card in the deck goes to the encounter discard pile
-      let encounter = [ec | EncounterCard ec <- discarded]
-      pushWhen (notNull encounter) $ AddToEncounterDiscard encounter
-      pure $ player & deckL .~ deck & discardL %~ ([c | c@(PlayerCard _) <- discarded] <>)
+      -- an encounter card in the deck goes to the encounter discard pile, unless it
+      -- functions like a player card
+      let (own, encounter) = partition functionsLikeAPlayerCard discarded
+      pushWhen (notNull encounter) $ AddToEncounterDiscard [ec | EncounterCard ec <- encounter]
+      pure $ player & deckL .~ deck & discardL %~ (own <>)
     SwapHandWithDeck pid fromHand fromDeck | pid == player.id -> do
       let swap c
             | c.id == fromHand = fromMaybe c $ find ((== fromDeck) . (.id)) player.deck

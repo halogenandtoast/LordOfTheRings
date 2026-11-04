@@ -306,6 +306,9 @@ data WindowMatcher
   | -- | a matching location was turned over to its other side: read as it now is, as
     -- "after X is flipped over while active" reads
     LocationFlippedWindow Timing LocationMatcher
+  | -- | the location is discarded by the Mire keyword, as "When X is discarded by the
+    -- Mire keyword" reads
+    DiscardedByMireWindow Timing LocationId
   | -- | a matching location became the active location
     LocationBecameActiveWindow Timing LocationMatcher
   | -- | the Discover keyword of the location resolved, as Hidden Staircase reads
@@ -536,6 +539,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AnotherCharacterDealtDamageWindow t other, DealtDamage c@(AllyTarget _) _) -> t == timing && c /= other
   (ControlledCharacterLeftPlayWindow t pid, LeftPlay _ pid' _) -> t == timing && pid == pid'
   (CharacterEnteredPlayUnderWindow t pid, AllyEnteredPlay _ pid' _) -> t == timing && pid == pid'
+  (DiscardedByMireWindow t lid, DiscardedByMire lid') -> t == timing && lid == lid'
+  (DiscardedByMireWindow {}, _) -> False
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

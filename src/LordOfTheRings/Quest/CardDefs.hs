@@ -446,6 +446,9 @@ allQuestCards =
       , theNineWalkers
       , theHuntIsUp
       , theGatesOfMoria
+      , theTamingOfSmeagol
+      , acrossTheMarshes
+      , dontLookAtTheLights
       ]
 
 theDrippingWalls :: CardDef
@@ -1858,3 +1861,14 @@ theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
 -- | No quest points: the players win as Doors of Durin is explored.
 theGatesOfMoria :: CardDef
 theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0
+-- * The Passage of the Marshes
+
+theTamingOfSmeagol :: CardDef
+theTamingOfSmeagol = quest "144064" "The Taming of Sméagol" ThePassageOfTheMarshes 1 6
+
+-- | Its side B is "Across the Dead Marshes".
+acrossTheMarshes :: CardDef
+acrossTheMarshes = quest "144065" "Across the Marshes" ThePassageOfTheMarshes 2 12
+
+dontLookAtTheLights :: CardDef
+dontLookAtTheLights = quest "144066" "Don't Look at the Lights!" ThePassageOfTheMarshes 3 24

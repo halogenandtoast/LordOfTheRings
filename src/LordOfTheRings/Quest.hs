@@ -362,6 +362,9 @@ import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Cards.TheForbiddenDoor (theForbiddenDoor)
 import LordOfTheRings.Quest.Cards.ThePathsOfTheDead (thePathsOfTheDead)
 import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
+import LordOfTheRings.Quest.Cards.TheTamingOfSmeagol
+import LordOfTheRings.Quest.Cards.AcrossTheMarshes
+import LordOfTheRings.Quest.Cards.DontLookAtTheLights
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -756,5 +759,8 @@ allQuests =
         , SomeQuestCard theForbiddenDoor
         , SomeQuestCard thePathsOfTheDead
         , SomeQuestCard theDeadAreFollowing
+        , SomeQuestCard theTamingOfSmeagol
+        , SomeQuestCard acrossTheMarshes
+        , SomeQuestCard dontLookAtTheLights
         ]
     ]

@@ -159,6 +159,7 @@ allObjectiveCards =
       , theOneRingTheRoadDarkens
       , theOneRingTheLandOfShadow
       , theOneRingTheMountainOfFire
+      , smeagolTheLandOfShadow
       ]
 
 durinsAxe :: CardDef
@@ -1112,3 +1113,18 @@ theOneRingTheBlackRiders = sagaOneRing "141085"
 
 theOneRingTheRoadDarkens :: CardDef
 theOneRingTheRoadDarkens = sagaOneRing "142091"
+
+-- * Gollum (The Land of Shadow)
+
+-- | Gollum's objective-ally side: no copy is gathered, his enemy side turns into it, or his
+-- scenarios put him into play this side faceup.
+smeagolTheLandOfShadow :: CardDef
+smeagolTheLandOfShadow =
+  ((objective "144076" "Sméagol" GollumSaga 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 5 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gollum]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    , cdOtherSide = Just "144075"
+    }
+

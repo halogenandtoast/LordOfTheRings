@@ -20,7 +20,7 @@ import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
-import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase, gameScenario)
+import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase, gameRevealer, gameScenario)
 import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup)
 import LordOfTheRings.Scenario.Types (scenarioId)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource, onlyMasterCardsAffect)
@@ -249,6 +249,16 @@ drawCards source pid n = do
 
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard
+
+-- | The player reveals the top card of the encounter deck: the "you" of the card is he,
+-- as The Searching Eye's drawer reveals one (The Land of Shadow rules insert, "New
+-- Staging Rules").
+revealEncounterCardAs :: ReverseQueue m => PlayerId -> m ()
+revealEncounterCardAs pid = do
+  revealer <- getsGame gameRevealer
+  push $ SetRevealer (Just pid)
+  push RevealEncounterCard
+  push $ SetRevealer revealer
 
 -- | The card, taken from the encounter deck, is revealed; an enemy is put into play engaged
 -- with the player, as Murzag reads.

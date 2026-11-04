@@ -9,7 +9,8 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedQ
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (ActiveLocation))
-import LordOfTheRings.Modifier (ModifierType (GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedTo))
+import LordOfTheRings.Keyword (Keyword (Mire))
+import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedTo))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -63,6 +64,14 @@ instance RunMessage LocationAttrs where
     placeTokens source token n = do
       let attrs' = attrs & tokensL %~ addTokens token n
       questPoints <- modifiedQuestPoints attrs attrs'.questPoints
+      -- a location with Mire X is discarded as it has X mire tokens, its Forced effect for
+      -- that answering first (The Land of Shadow rules insert)
+      mods <- getModifiers attrs
+      let mire = [k | Blank `notElem` mods, Mire k <- toList (cdKeywords $ toCardDef attrs)] <> [k | GainKeyword (Mire k) <- mods]
+          mireTokens = countTokens Resource . locationTokens
+      for_ (take 1 mire) \x ->
+        when (token == Resource && mireTokens attrs < x && mireTokens attrs' >= x)
+          $ pushAll [CheckWindows [mkWhen $ DiscardedByMire attrs.id], Discard (toTarget attrs)]
       -- who placed it, as Haunted Hall reads "a player places any amount of progress"
       when (token == Progress && n > 0) $ push $ CheckWindows [mkAfter $ ProgressPlacedOnLocationBy source attrs.id]
       -- a location with as much progress as its quest points is explored, but one on the

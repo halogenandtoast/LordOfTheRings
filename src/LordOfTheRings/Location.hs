@@ -536,6 +536,11 @@ import LordOfTheRings.Location.Cards.TreeCrownedHill
 import LordOfTheRings.Location.Cards.HillsOfHollin
 import LordOfTheRings.Location.Cards.RedhornFoothills
 import LordOfTheRings.Location.Cards.Eregion
+import LordOfTheRings.Location.Cards.EvilSmellingFens
+import LordOfTheRings.Location.Cards.ShiftingQuagmire
+import LordOfTheRings.Location.Cards.HauntedMere
+import LordOfTheRings.Location.Cards.StagnantPools
+import LordOfTheRings.Location.Cards.SoftMires
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1123,10 @@ allLocations =
         , SomeLocationCard hillsOfHollin
         , SomeLocationCard redhornFoothills
         , SomeLocationCard eregion
+        , SomeLocationCard evilSmellingFens
+        , SomeLocationCard shiftingQuagmire
+        , SomeLocationCard hauntedMere
+        , SomeLocationCard stagnantPools
+        , SomeLocationCard softMires
         ]
     ]

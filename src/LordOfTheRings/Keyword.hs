@@ -107,6 +107,17 @@ data Keyword
   | -- | on an objective: one revealed from the encounter deck is discarded and another card
     -- revealed; it enters play only by the Discover keyword (MEC69 rules)
     Loot
+  | -- | on a location: at the end of each refresh phase it takes 1 resource, a "mire
+    -- token", while in the staging area, and it is discarded as soon as it has this many,
+    -- its Forced effect for being discarded by the Mire keyword answering (The Land of
+    -- Shadow rules insert; the revised Two Towers rulebook, p. 9, places them on locations
+    -- with the keyword alone)
+    Mire Int
+  | -- | on an encounter card with a player card back, shuffled into a player's deck: drawn,
+    -- it stays in his hand, it can be discarded from his hand or deck to his discard pile,
+    -- and it cannot be played, as The Searching Eye reads "functions like a player card"
+    -- (The Land of Shadow rules insert; the revised Two Towers rulebook, p. 5)
+    FunctionsLikeAPlayerCard
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -16,7 +16,7 @@ import LordOfTheRings.Message (Message (..))
 import LordOfTheRings.Message.Lifted (exhaust)
 import LordOfTheRings.Message.Lifted.Queue (ReverseQueue)
 import LordOfTheRings.Objective.Types (Objective)
-import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Placement (Placement (AttachedTo, Unplaced))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Saga (oneRings)
 import LordOfTheRings.Target
@@ -54,6 +54,16 @@ readySagaOneRing pid = do
   fmap (fmap toId . headMay) $ flip filterM rings \o -> case o.placement of
     AttachedTo (HeroTarget hid) -> selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
     _ -> pure False
+
+-- | The saga's One Ring in play, whichever box it is from, as "exhaust The One Ring" reads.
+getSagaOneRing :: HasGame m => m (Maybe Objective)
+getSagaOneRing = getsGame (find isInPlayRing . toList . entitiesObjectives . gameEntities)
+ where
+  isInPlayRing o = toCardCode o `elem` oneRings && o.placement /= Unplaced
+
+-- | Whether The One Ring is in play and exhausted, as Morgul Wraith reads.
+theOneRingExhausted :: HasGame m => m Bool
+theOneRingExhausted = maybe False (.exhausted) <$> getSagaOneRing
 
 isReadyRing :: Objective -> Bool
 isReadyRing o = toCardCode o `elem` oneRings && not o.exhausted

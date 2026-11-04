@@ -429,6 +429,12 @@ import LordOfTheRings.Treachery.Cards.Snowdrifts
 import LordOfTheRings.Treachery.Cards.BitterCold
 import LordOfTheRings.Treachery.Cards.StormOfHowls
 import LordOfTheRings.Treachery.Cards.LustForTheRing
+import LordOfTheRings.Treachery.Cards.TheSearchingEye
+import LordOfTheRings.Treachery.Cards.CreepingMarshes
+import LordOfTheRings.Treachery.Cards.BitterReek
+import LordOfTheRings.Treachery.Cards.AFellLight
+import LordOfTheRings.Treachery.Cards.CallOfTheRing
+import LordOfTheRings.Treachery.Cards.WeHatesThem
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -885,5 +891,11 @@ allTreacherys =
         , SomeTreacheryCard bitterCold
         , SomeTreacheryCard stormOfHowls
         , SomeTreacheryCard lustForTheRing
+        , SomeTreacheryCard theSearchingEye
+        , SomeTreacheryCard creepingMarshes
+        , SomeTreacheryCard bitterReek
+        , SomeTreacheryCard aFellLight
+        , SomeTreacheryCard callOfTheRing
+        , SomeTreacheryCard weHatesThem
         ]
     ]

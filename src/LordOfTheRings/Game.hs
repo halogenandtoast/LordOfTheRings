@@ -2399,6 +2399,10 @@ runGameMessage msg g = case msg of
       -- not a card Saruman holds out of play
       timed <- flip filterM cards \t -> andM [notOutOfPlay t, (&& timeCountersIn es t > 0) . (> 0) <$> getTimeX t]
       pushAll [RemoveTokens GameSource t TimeCounter 1 | t <- timed]
+      -- and each location with Mire X in the staging area takes 1 mire token (The Land of
+      -- Shadow rules insert; the revised Two Towers rulebook, p. 9)
+      miring <- filterM (fmap (> 0) . getMire) =<< select LocationInStagingArea
+      pushAll [PlaceTokens GameSource (LocationTarget lid) Resource 1 | lid <- miring]
     when (phase == CombatPhase) do
       returning <-
         filterM
@@ -3309,13 +3313,15 @@ runGameMessage msg g = case msg of
         pushAll $ discardAttached g (EnemyTarget eid)
         let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly other (toCard e).id (AllyId $ unEnemyId eid) pid
         pure $ g & entitiesL . enemiesL %~ Map.delete eid & entitiesL . alliesL %~ insertEntity thisAlly
-  -- and back to its enemy side, in the staging area
+  -- and back to its enemy side, in the staging area, entering play, as Gollum does to
+  -- engage the first player (The Land of Shadow rules insert)
   Flip (AllyTarget aid)
     | Just a <- Map.lookup aid g.entities.allies
     , Just other <- cdOtherSide (toCardDef a)
     , cdCardType (toCardDef other) == EnemyType -> do
         pushAll $ discardAttached g (AllyTarget aid)
         let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard a).id (EnemyId $ unAllyId aid)
+        push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisEnemy]
         pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
   -- a hero whose other side is an enemy turns over, as Sméagol to Gollum: the hero leaves
   -- play, and the enemy enters play engaged with its owner, ready, still its owner's card
@@ -3477,6 +3483,10 @@ runGameMessage msg g = case msg of
   -- Nightmare's Forced effect (as Arkham's drawn encounter cards resolve their revelations)
   EncounterCardEnteredHand _ card | cdCardType (toCardDef card) == EnemyType -> do
     _ <- runEach msg . createEnemy card =<< getRandom
+    pure g
+  -- and a treachery drawn, as The Searching Eye's "After you draw this card"
+  EncounterCardDrawn _ card | cdCardType (toCardDef card) == TreacheryType -> do
+    _ <- runEach msg . createTreachery card =<< getRandom
     pure g
   AddToStaging card | gainsController (toCardDef card) -> do
     thisObjective <- newObjective card

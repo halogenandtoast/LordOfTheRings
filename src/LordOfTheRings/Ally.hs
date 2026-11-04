@@ -308,6 +308,7 @@ import LordOfTheRings.Ally.Cards.GimliTheTreasonOfSaruman
 import LordOfTheRings.Ally.Cards.LegolasTheTreasonOfSaruman
 import LordOfTheRings.Ally.Cards.QuickbeamTheTreasonOfSaruman
 import LordOfTheRings.Ally.Cards.HamaTheTreasonOfSaruman
+import LordOfTheRings.Ally.Cards.SmeagolTheLandOfShadow
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -648,5 +649,6 @@ allAllies =
         , SomeAllyCard legolasTheTreasonOfSaruman
         , SomeAllyCard quickbeamTheTreasonOfSaruman
         , SomeAllyCard hamaTheTreasonOfSaruman
+        , SomeAllyCard smeagolTheLandOfShadow
         ]
     ]

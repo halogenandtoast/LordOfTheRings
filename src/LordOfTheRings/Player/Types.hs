@@ -7,6 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import LordOfTheRings.Keyword (Keyword (FunctionsLikeAPlayerCard))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -122,7 +123,14 @@ instance HasField "contract" Player (Maybe PlayerCard) where
   getField = playerContract
 
 {- | The cards in the player's hand that can leave it: an encounter card drawn into it, as
-Ill Tidings, cannot.
+Ill Tidings, cannot, unless it functions like a player card, as The Searching Eye.
 -}
 discardableHand :: Player -> [Card]
-discardableHand p = [c | c@(PlayerCard _) <- p.hand]
+discardableHand p = filter functionsLikeAPlayerCard p.hand
+
+-- | A player card, or an encounter card that functions like one (see
+-- 'FunctionsLikeAPlayerCard'): it goes to its player's discard pile.
+functionsLikeAPlayerCard :: Card -> Bool
+functionsLikeAPlayerCard = \case
+  PlayerCard _ -> True
+  EncounterCard ec -> FunctionsLikeAPlayerCard `member` cdKeywords (toCardDef ec)
