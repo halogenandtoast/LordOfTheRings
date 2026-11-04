@@ -14,7 +14,7 @@ stuartNightmare = enemy StuartNightmare Cards.stuartNightmare
 -- While Stuart is in the victory display, each Troll enemy gets +1 defense and gains
 -- "Cannot have player attachments." (Conflict at the Carrock reads the victory display.)
 instance HasModifiersFor StuartNightmare where
-  getModifiersFor (StuartNightmare a) = modifySelf a [CannotHaveAttachments]
+  getModifiersFor (StuartNightmare a) = modifySelf a [CannotHavePlayerAttachments]
 
 instance RunMessage StuartNightmare where
   runMessage msg (StuartNightmare attrs) = StuartNightmare <$> runMessage msg attrs

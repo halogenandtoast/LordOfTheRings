@@ -232,6 +232,14 @@ data WindowMatcher
     ExploredMatchingWindow Timing CardMatcher
   | -- | a card discarded from the player's hand, as Silver Harp answers
     DiscardedFromHandWindow Timing PlayerId
+  | -- | the card discarded from the player's hand, as Starla answers her own discard
+    CardDiscardedFromHandWindow Timing PlayerId CardId
+  | -- | a card discarded from the encounter deck, as Calaerion answers
+    DiscardedFromEncounterDeckWindow Timing
+  | -- | any player's threat reduced, by anything, as Mail of Earnur answers
+    ThreatReducedWindow Timing
+  | -- | any of the windows, as "discarded from your hand or deck" reads
+    AnyWindowOf [WindowMatcher]
   | -- | the card readied, by anything, as Wellinghall Preserver answers
     BecameReadyWindow Timing Target
   | -- | a matching hero declared as a defender, as Dori answers another hero
@@ -301,6 +309,8 @@ data WindowMatcher
   | -- | a matching enemy revealed from the encounter deck, as Concealed Woods reads one with
     -- ambush
     MatchingEnemyRevealedWindow Timing EnemyMatcher
+  | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
+    AttackersDeclaredWindow Timing EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -319,6 +329,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (ExhaustedWindow t target, Exhausted target') -> t == timing && target == target'
+  (AttackersDeclaredWindow t eid, AttackersDeclared eid') -> t == timing && eid == eid'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (DefenderDeclaredAgainstWindow t eid, DeclaredAsDefender _ eid') -> t == timing && eid == eid'
@@ -404,6 +415,11 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
   (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
+  (CardDiscardedFromHandWindow t pid cid, DiscardedFromHand pid' cid') -> t == timing && pid == pid' && cid == cid'
+  (DiscardedFromEncounterDeckWindow t, DiscardedFromEncounterDeck _) -> t == timing
+  (ThreatReducedWindow t, ThreatReduced _ _) -> t == timing
+  (ActiveLocationExploredWindow t, ActiveLocationExplored _) -> t == timing
+  (AnyWindowOf ms, _) -> any (\m -> windowMatches m (Window timing wType)) ms
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   (BecomesWindow time, Became time') -> time == time'
   (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
@@ -436,7 +452,6 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttachmentPlayedOnHeroWindow {}, _) -> False
   (EnemyAttacksPlayerWindow {}, _) -> False
   (ExploredWithoutVictoryWindow {}, _) -> False
-  (ActiveLocationExploredWindow {}, _) -> False
   (CharacterWithTraitDealtDamageWindow {}, _) -> False
   (HeroGainedResourcesWindow {}, _) -> False
   (SurgeCardRevealedWindow {}, _) -> False

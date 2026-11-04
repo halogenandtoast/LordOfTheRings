@@ -232,6 +232,18 @@ spec = describe "Heirs of Númenor nightmare decks" do
       run $ UndefendedDamage pid eid
       getDamage (toTarget lid) `shouldReturn` 5
 
+    it "Orc Saboteur's attack damage goes to a Battleground, other damage to the defender" . nightmare theSiegeOfCairAndros $ \pid -> do
+      lid <- stagedLocation Locations.anduinWharf
+      eid <- staged Enemies.orcSaboteur
+      run $ EngageEnemy pid eid
+      beravor <- toTarget <$> getHeroWithCode "01012"
+      run $ CheckWindows [mkAfter (DeclaredAsDefender beravor eid)]
+      run $ DealDamage (EnemySource eid) beravor 1
+      getDamage beravor `shouldReturn` 1
+      run $ AttackDamage eid beravor
+      getDamage (toTarget lid) `shouldReturn` 3
+      getDamage beravor `shouldReturn` 1
+
     it "Southron Mounted Archer lets archery damage go to a Battleground" . nightmare theSiegeOfCairAndros $ \pid -> do
       lid <- stagedLocation Locations.anduinWharf
       _ <- staged Enemies.southronMountedArcher

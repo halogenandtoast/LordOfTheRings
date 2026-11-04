@@ -1,5 +1,6 @@
 module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
+import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id (PlayerId)
@@ -29,6 +30,14 @@ data ModifierType
   | GainTrait Trait
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
+  | -- | on an ally, or its card id: it is discarded at the end of the phase, as Command's
+    DiscardAtEndOfPhase
+  | -- | on a character, until the end of the phase: the modifier applies to its next attack
+    -- only, as Tides of Fate's "+3 attack for its next attack this phase"
+    ForNextAttack ModifierType
+  | -- | on the game: if the players win the scenario, the card is recorded under the key in
+    -- the campaign log, as Determination marks its character "determined"
+    RecordedIfWon CampaignLogKey CardCode
   | ShuffleIntoDeckAtEndOfPhase
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
@@ -264,6 +273,8 @@ data ModifierType
     IncreaseCost CardMatcher Int
   | -- | on a player: matching cards they play from hand cost this much less
     ReduceCostOf CardMatcher Int
+  | -- | as 'ReduceCostOf', to no less than 1, as Master of Lore's
+    ReduceCostOfToMinimumOne CardMatcher Int
   | -- | on a card in hand, as its card id: it costs this much more to play (less, when
     -- negative)
     CostModifier Int
@@ -508,6 +519,9 @@ data ModifierType
   | -- | on a character: committed to a Sailing test it counts as this many characters, as
     -- the Dream-chaser counts as 2
     CountsAsSailingCharacters Int
+  | -- | on a character: committed to a Sailing test it counts as this many characters more,
+    -- as Enlarged Quarters' "1 additional character"
+    AdditionalSailingCharacters Int
   | -- | on a Ship enemy: its Boarding X is raised (lowered, when negative) by this much,
     -- as Cobas Haven reduces it
     BoardingModifier Int
@@ -652,6 +666,31 @@ data ModifierType
   | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
     -- Isolated reads
     CannotDrawCardsFromCardEffects
+  | -- | on a card in play: player card effects cannot damage it, as The Watcher's in the
+    -- staging area; its other effects still reach it
+    CannotBeDamagedByPlayerCardEffects
+  | -- | on an enemy: the player's card effects cannot damage it, as Marshland Outlaws bars
+    -- them from other enemies
+    CannotBeDamagedByEffectsOf PlayerId
+  | -- | on an enemy: the damage its attacks deal goes to one of these instead, as Orc
+    -- Saboteur's goes to a Battleground location
+    AttackDamageRedirectedTo Target
+  | -- | on a card in play: no player attachment can be attached to it; encounter cards
+    -- still may, as Stuart's Trolls
+    CannotHavePlayerAttachments
+  | -- | on an enemy in the staging area: it attacks matching players during the combat
+    -- phase, as if engaged with them, without counting as engaged, as Snow-Giant
+    AttacksAsIfEngagedWith PlayerMatcher
+  | -- | on a player: no card he controls can ready, as Ungoliant's Brood reads
+    ControlledCardsCannotReady
+  | -- | on an enemy: no more than this many characters can attack it each round, as Graxar
+    AttackersPerRoundLimit Int
+  | -- | on an enemy, by an effect until the end of the round: a character was declared as
+    -- an attacker against it, for 'AttackersPerRoundLimit' to count
+    DeclaredAttackerThisRound
+  | -- | on an enemy, until its next attack: its attack dealt damage, as King's Knight reads,
+    -- given it by 'AttackDamageModifiesUntilEndOfRound'
+    DealtAttackDamage
   | -- | on an enemy: if its attack deals damage, the target gets the modifier until the end
     -- of the round, as Giant Scorpion's shadow bars the defender from readying
     AttackDamageModifiesUntilEndOfRound Target ModifierType
@@ -674,3 +713,8 @@ data Modifier = Modifier
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | How many characters a character committed to a Sailing test counts as, by its
+-- modifiers: 1, or as many as it counts as, plus any additional.
+sailingCharacters :: [ModifierType] -> Int
+sailingCharacters ms = fromMaybe 1 (headMay [n | CountsAsSailingCharacters n <- ms]) + sum [n | AdditionalSailingCharacters n <- ms]

@@ -134,7 +134,6 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
         selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
       _ -> pure False
   (ExploredWithoutVictoryWindow t, Explored lid) | t == timing -> isNothing . cdVictoryPoints . toCardDef <$> getLocation lid
-  (ActiveLocationExploredWindow t, Explored lid) | t == timing -> selectAny (LocationWithId lid <> IsActiveLocation)
   (CharacterWithTraitDealtDamageWindow t trait, DealtDamage target _) | t == timing -> case target of
     HeroTarget hid -> selectAny (HeroWithId hid <> HeroWithTrait trait)
     AllyTarget aid -> selectAny (AllyWithId aid <> AllyWithTrait trait)
@@ -196,6 +195,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
+  (AnyWindowOf ms, _) -> anyM (`windowMatchesM` w) ms
   _ -> pure $ windowMatches matcher w
  where
   title def = case cdName def of Name t _ -> t
@@ -299,6 +299,7 @@ passesCriteria = \case
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   FewerInVictoryDisplay n m -> getsGame ((< n) . length . filter (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
+  CardInAnyDiscard m -> anyM (fmap (any (cardMatches m) . (.discard)) . getPlayer) =<< getRemainingPlayers
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
@@ -391,7 +392,12 @@ costMessages source = \case
 
 -- | The player who controls an ability's source, if anyone does.
 abilityController :: HasGame m => Ability -> m (Maybe PlayerId)
-abilityController ab = go ab.abilitySource
+abilityController ab = sourceController ab.abilitySource
+
+-- | The player who controls the source, if anyone does: an encounter card's, the first
+-- player.
+sourceController :: HasGame m => Source -> m (Maybe PlayerId)
+sourceController = go
  where
   go = \case
     AbilitySource s _ -> go s
@@ -416,6 +422,17 @@ abilityController ab = go ab.abilitySource
     Just (AttachedTo host@(HeroTarget _)) -> characterController host
     Just (AttachedTo host@(AllyTarget _)) -> characterController host
     _ -> Just <$> getLead
+
+{- | The player whose player card the source is: who controls the hero, ally or attachment,
+or who holds the event, as its card id, in hand, deck or discard pile.
+-}
+playerCardController :: HasGame m => Source -> m (Maybe PlayerId)
+playerCardController = \case
+  AbilitySource s _ -> playerCardController s
+  CardIdSource cid ->
+    fmap (.id) . find (\p -> any ((== cid) . (.id)) (p.hand <> p.deck <> p.discard)) . toList <$> getsGame gamePlayers
+  source | isPlayerCardSource source -> sourceController source
+  _ -> pure Nothing
 
 -- | The Action abilities a player can use right now.
 getActionAbilities :: HasGame m => PlayerId -> m [Ability]

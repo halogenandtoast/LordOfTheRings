@@ -5,7 +5,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyAttack, getEnemyDefense, getStagingThreat)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (getEnemy)
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyEngagedWith, EnemyWithId), PlayerMatcher (PlayerWithId), getEnemy, selectAny)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (QuestPhase))
@@ -95,6 +95,14 @@ spec = describe "Dwarrowdelf nightmare decks" do
       theodred <- toTarget <$> getHeroWithCode "01002"
       shadow pid eid Enemies.silvertineMarauder [theodred]
       getEnemyAttack eid `shouldReturn` 5
+
+    it "Snow-Giant in the staging area attacks the first player, not attackable as if engaged" . nightmare theRedhornGate $ \pid -> do
+      reveal Enemies.snowGiant []
+      giant <- enemyOf Enemies.snowGiant
+      selectAny (EnemyWithId giant <> EnemyEngagedWith (PlayerWithId pid)) `shouldReturn` False
+      run $ EnemyAttacks pid
+      passActions pid
+      getQuestion pid >>= (`shouldSatisfy` \case Just (QuestionLabel l _ _ _) -> "$label.declareDefender" `isPrefixOf` l; _ -> False)
 
     it "Icy Cavern's threat is the Snow cards in the staging area" . nightmare theRedhornGate $ \_ -> do
       reveal Locations.icyCavern []
@@ -190,6 +198,16 @@ spec = describe "Dwarrowdelf nightmare decks" do
       run $ DealDamage GameSource (toTarget tentacle) 4
       getDamage (toTarget watcher) `shouldReturn` 1
 
+    it "The Watcher in the staging area takes no damage from player cards, only that" . nightmare theWatcherInTheWater $ \_ -> do
+      reveal Enemies.theWatcherNightmare []
+      watcher <- enemyOf Enemies.theWatcherNightmare
+      eowyn <- getHeroWithCode "01007"
+      run $ DealDamage (HeroSource eowyn.id) (toTarget watcher) 2
+      getDamage (toTarget watcher) `shouldReturn` 0
+      getModifiers watcher >>= (`shouldSatisfy` notElem ImmuneToPlayerCardEffects)
+      run $ DealDamage GameSource (toTarget watcher) 2
+      getDamage (toTarget watcher) `shouldReturn` 2
+
     it "The Watcher cannot be engaged while Doors of Durin is in play" . nightmare theWatcherInTheWater $ \pid -> do
       run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.doorsOfDurin
       reveal Enemies.theWatcherNightmare []
@@ -260,6 +278,12 @@ spec = describe "Dwarrowdelf nightmare decks" do
       run $ EngageEnemy pid eid
       run . AttachShadowCard eid =<< genEncounterCard Locations.dwarvenForge
       getEnemyAttack eid `shouldReturn` 4
+
+    it "Sentinel of the Deep stops its player drawing from any card effect" . nightmare theLongDark $ \pid -> do
+      reveal Enemies.sentinelOfTheDeep []
+      eid <- enemyOf Enemies.sentinelOfTheDeep
+      run $ EngageEnemy pid eid
+      getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotDrawCardsFromCardEffects)
 
     it "Trapdoor Spider discards the character it damages" . nightmare theLongDark $ \_ -> do
       reveal Enemies.trapdoorSpider []

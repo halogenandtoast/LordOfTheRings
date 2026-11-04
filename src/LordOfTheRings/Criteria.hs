@@ -54,6 +54,9 @@ data Criterion
     FewerInVictoryDisplay Int CardMatcher
   | -- | a matching card is in the player's discard pile
     CardInDiscard PlayerId CardMatcher
+  | -- | a matching card is in any player's discard pile, as The Houses of Healing needs a
+    -- hero there
+    CardInAnyDiscard CardMatcher
   | -- | the main quest has no keywords, printed or gained, as Backtrack reads
     MainQuestWithoutKeywords
   | Criteria [Criterion]

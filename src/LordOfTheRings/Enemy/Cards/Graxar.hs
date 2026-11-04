@@ -15,7 +15,7 @@ graxar = enemy Graxar Cards.graxar
 -- Graxar gets +1 attack for each damage on him and +1 defense for each resource on him.
 instance HasModifiersFor Graxar where
   getModifiersFor (Graxar a) =
-    modifySelf a $ ImmuneToPlayerCardEffects : [AttackModifier a.damage | a.damage > 0] <> [DefenseModifier r | let r = countTokens Resource (enemyTokens a), r > 0]
+    modifySelf a $ ImmuneToPlayerCardEffects : AttackersPerRoundLimit 1 : [AttackModifier a.damage | a.damage > 0] <> [DefenseModifier r | let r = countTokens Resource (enemyTokens a), r > 0]
 
 -- | Forced: When Graxar is dealt a shadow card, place 1 resource on him.
 instance RunMessage Graxar where

@@ -2,9 +2,10 @@ module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Ranged))
-import LordOfTheRings.Modifier (ModifierType (CannotReduceThreat, LoseKeyword, UndefendedDamageTo))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, LoseKeyword, UndefendedDamageTo))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -142,6 +143,11 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       reveal Treacheries.timeForSupper []
       getDamage (toTarget troll) `shouldReturn` 0
 
+    it "Stuart bars only player attachments" . nightmare conflictAtTheCarrock $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Enemies.stuartNightmare
+      stuart <- theEnemy
+      getModifiers stuart >>= (`shouldSatisfy` \ms -> CannotHavePlayerAttachments `elem` ms && CannotHaveAttachments `notElem` ms)
+
   describe "A Journey to Rhosgobel" do
     it "builds the nightmare deck" . nightmare aJourneyToRhosgobel $ \_ -> do
       run $ DoStep 1 Setup
@@ -268,6 +274,15 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.marshWight
       reveal Treacheries.devilryOfTheDarkLand []
       getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.marshWight]
+
+    it "Lost Soul of Lórien destroyed attaches to a hero as a condition, its willpower 0" . nightmare theDeadMarshes $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.lostSoulOfLorien
+      soul <- theEnemy
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DealDamage GameSource (EnemyTarget soul) 3
+      chooseTarget pid eowyn
+      getsGame (fmap (.placement) . find ((== soul) . toId) . toList . (.entities.enemies)) `shouldReturn` Just (AttachedTo eowyn)
+      getWillpower eowyn `shouldReturn` 0
 
   describe "Return to Mirkwood" do
     it "builds the nightmare deck" . nightmare returnToMirkwood $ \_ -> do

@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardType (AllyType), toCardCode)
+import LordOfTheRings.Card (Card, CardType (AllyType), cdCardTraits, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -23,6 +23,7 @@ import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source (Source (GameSource), isPlayerCardSource, isPlayerEventSource, sourceTarget)
 import LordOfTheRings.Target
+import LordOfTheRings.Trait (Trait (Modification))
 
 -- | Collect every constant ability and lasting effect into the modifier cache.
 preloadModifiers :: (HasGame m) => Game -> m Game
@@ -121,7 +122,11 @@ preloadModifiers g = do
       -- a card immune to player card effects keeps none of their modifiers, but its own, as
       -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
-      unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (isPlayerCardSource $ modifierSource m)) ms else ms
+      -- Modification attachments are encounter cards (Dream-chaser rules, "Gaining XP"), so a
+      -- ship-objective's immunity lets theirs through
+      modifications = setFromList [toTarget x | x <- toList es.attachments, Modification `member` cdCardTraits (toCardDef x)] :: Set Target
+      fromPlayerCard m = isPlayerCardSource (modifierSource m) && maybe True (`notMember` modifications) (sourceTarget $ modifierSource m)
+      unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m)) ms else ms
       -- no willpower from player cards, as Frozen Silverlode forbids
       frozen = NoWillpowerFromPlayerCards `elem` map modifierType (Map.findWithDefault [] GameTarget all')
       gained m = case m.modifierType of

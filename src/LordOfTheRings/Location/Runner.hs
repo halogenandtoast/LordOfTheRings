@@ -8,6 +8,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedValue, questPointsOf)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
+import LordOfTheRings.Placement (Placement (ActiveLocation))
 import LordOfTheRings.Modifier (ModifierType (GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedTo))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Prelude
@@ -62,15 +63,17 @@ instance RunMessage LocationAttrs where
       -- Island Map stays in its place (Temple of the Deceived)
       when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints && isNothing attrs.position)
         $ pushAll
-          [ CheckWindows [mkWhen $ Explored attrs.id]
+          [ CheckWindows $ map mkWhen explored
           , -- a location with victory points goes to the victory display
             if isJust (cdVictoryPoints $ toCardDef attrs)
               then AddToVictoryDisplay (toTarget attrs)
               else Discard (toTarget attrs)
-          , -- after it is explored, as Idraen answers
-            CheckWindows [mkAfter $ Explored attrs.id]
+          , -- after it is explored, as Idraen answers; whether it was the active location
+            -- is told now, as it is gone by then
+            CheckWindows $ map mkAfter explored
           ]
       pure attrs'
+    explored = Explored attrs.id : [ActiveLocationExplored attrs.id | attrs.placement == ActiveLocation]
     unlessImmune source = do
       mods <- getModifiers attrs
       let barred = case msg of

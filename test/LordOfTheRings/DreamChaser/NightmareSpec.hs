@@ -1,6 +1,7 @@
 module LordOfTheRings.DreamChaser.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack, UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Heading (Heading (..))
@@ -182,6 +183,28 @@ spec = describe "Dream-chaser Nightmare mode" do
       soldier <- staged Enemies.cursedSoldier
       getEnemyAttack soldier `shouldReturn` 6
 
+    it "King's Knight's shadow reads the attack's damage once it is over" . nightmare templeOfTheDeceived $ \pid -> do
+      wargs <- engaged pid Enemies.wargs
+      run . AttachShadowCard wargs =<< genEncounterCard Enemies.kingsKnight
+      b <- beravor
+      run $ EnemyAttack pid wargs
+      passActions pid
+      chooseTarget pid b
+      -- its attack raised once the shadow has resolved, it deals damage after all
+      run $ CreateEffect $ Effect GameSource (EnemyTarget wargs) [AttackModifier 2] UntilEndOfAttack
+      passActions pid
+      enemyPlacement Enemies.wargs `shouldReturn` Just (EngagedWith pid)
+
+    it "King's Knight returns to the staging area after an attack that dealt no damage" . nightmare templeOfTheDeceived $ \pid -> do
+      knight <- engaged pid Enemies.kingsKnight
+      run $ CreateEffect $ Effect GameSource (EnemyTarget knight) [AttackModifier (-2)] UntilEndOfRound
+      b <- beravor
+      run $ EnemyAttack pid knight
+      passActions pid
+      chooseTarget pid b
+      passActions pid
+      enemyPlacement Enemies.kingsKnight `shouldReturn` Just StagingArea
+
   describe "The Drowned Ruins" do
     it "builds the nightmare deck and Grotto deck" . nightmare theDrownedRuins $ \_ -> do
       run $ DoStep 1 Setup
@@ -211,6 +234,14 @@ spec = describe "Dream-chaser Nightmare mode" do
       later <- putAllyIntoPlay pid Allies.wanderingTook
       getWillpower later `shouldReturn` base - 1
 
+    it "Undersea Cave Troll's excess damage may discard an objective-ally's resource" . nightmare theDrownedRuins $ \pid -> do
+      troll <- engaged pid Enemies.underseaCaveTroll
+      calphon <- ship pid Objectives.calphon
+      run $ PlaceTokens GameSource calphon Resource 2
+      b <- beravor
+      run $ AttackDamage troll b
+      getsGame (fmap (.resources) . find ((== toCardCode Objectives.calphon) . toCardCode) . toList . (.entities.allies)) `shouldReturn` Just 1
+
     it "Sulfur Cloud gains surge when the active location is not Underwater" . nightmare theDrownedRuins $ \_ -> do
       reveal Treacheries.sulfurCloud [Enemies.greatShark]
       enemyPlacement Enemies.greatShark `shouldReturn` Just StagingArea
@@ -233,6 +264,15 @@ spec = describe "Dream-chaser Nightmare mode" do
       map (`copies` deck)
         [Objectives.aearlang, Objectives.docksOfDolAmroth, Locations.belfalasIslet, Locations.cobasHaven, Enemies.umbarRaider, Enemies.rammingShip, Treacheries.rammingSpeed]
         `shouldBe` [1, 1, 0, 0, 2, 2, 1]
+
+    it "Ramming Ship's shadow deals the Corsair it brings out a shadow card" . nightmare aStormOnCobasHaven $ \pid -> do
+      _ <- setEncounterDeck [Enemies.southronSailor, Treacheries.rammingSpeed]
+      run PrepareCorsairDeck
+      wargs <- engaged pid Enemies.wargs
+      run . AttachShadowCard wargs =<< genEncounterCard Enemies.rammingShip
+      run $ ResolveShadow wargs pid []
+      sailor <- enemyOf Enemies.southronSailor
+      length . (.shadowCards) <$> getEnemy sailor `shouldReturn` 1
 
     it "Grappled! keeps its Ship objective from readying" . nightmare aStormOnCobasHaven $ \pid -> do
       dreamChaser <- ship pid Objectives.dreamChaser

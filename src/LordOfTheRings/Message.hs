@@ -140,6 +140,9 @@ data Message
     PutOnBottomOfOwnersDeck Target
   | TakeControl AllyId PlayerId
   | RemoveFromDiscard PlayerId CardId
+  | -- | the player plays an attachment of their choice from their discard pile on the host,
+    -- paying for it, as Stalwart lets them
+    PlayAttachmentFromDiscardOn PlayerId Source Target
   | -- | an ally card put into play under the player's control, keeping its owner
     PutAllyIntoPlayUnder PlayerId PlayerCard
   | PutHeroIntoPlay PlayerId PlayerCard
@@ -512,6 +515,8 @@ data Message
   | -- | the messages, if the enemy's attack has destroyed a character, as "if this attack
     -- destroys a character" reads once the attack is over (see 'attackDestroyed')
     IfAttackDestroyed EnemyId [Message]
+  | -- | the messages, if the enemy's last attack dealt no damage, as King's Knight reads
+    IfAttackDealtNoDamage EnemyId [Message]
   | DrawCards Drawing
   | -- | the draw itself, once nothing has stopped it, as Iron Shackles or Enchanted Stream
     DoDrawCards Drawing
@@ -634,6 +639,14 @@ data Message
   | -- | the top card of the Corsair deck is revealed and put into play engaged with the
     -- player, for the source, its discard pile reshuffled first if it has run out
     RevealFromCorsairDeck Source PlayerId
+  | -- | as 'RevealFromCorsairDeck', the enemy put into play dealt a shadow card, as Ramming
+    -- Ship's shadow reads
+    RevealFromCorsairDeckWithShadow Source PlayerId
+  | -- | deal a shadow card to the enemy whose card this is, once it has entered play
+    DealShadowCardToCard CardId
+  | -- | the enemy goes to the staging area of the player's area, as Giant Cave Centipede
+    -- moves to a different player's while the players are separated
+    PlaceInStagingAreaOf PlayerId EnemyId
   | -- | the card the source revealed from the Corsair deck, as Light Cruiser reads it
     RevealedFromCorsairDeck Source PlayerId EncounterCard
   | -- | the Ship enemy engaged the player from the staging area: its Boarding X resolves
@@ -727,3 +740,16 @@ inLogBlock :: MonadRandom m => LogBlockKind -> [Message] -> m [Message]
 inLogBlock kind msgs = do
   block <- LogBlock <$> getRandom <*> pure kind
   pure $ OpenLogBlock block : msgs <> [CloseLogBlock block.id]
+
+{- | The enemy the message takes out of play other than by destroying it, as an effect
+that discards it, returns it to the encounter deck or adds it to the victory display.
+-}
+removedEnemy :: Message -> Maybe EnemyId
+removedEnemy = \case
+  Discard (EnemyTarget eid) -> Just eid
+  ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ReturnToBottomOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ShuffleIntoEncounterDeck (EnemyTarget eid) -> Just eid
+  RemoveFromGame (EnemyTarget eid) -> Just eid
+  AddToVictoryDisplay (EnemyTarget eid) -> Just eid
+  _ -> Nothing

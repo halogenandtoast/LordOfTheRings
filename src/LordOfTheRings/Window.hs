@@ -171,6 +171,14 @@ data WindowType
     CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
     HiddenCardTurnedFaceup Target
+  | -- | the attackers against the enemy are declared, before the attack resolves
+    AttackersDeclared EnemyId
+  | -- | a card was discarded from the encounter deck, as Calaerion answers
+    DiscardedFromEncounterDeck CardId
+  | -- | the active location was explored, read as it leaves play, alongside 'Explored'
+    ActiveLocationExplored LocationId
+  | -- | the card of the enemy an attack destroyed, alongside 'EnemyDestroyedByAttack'
+    EnemyCardDestroyedByAttack EnemyId CardId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
