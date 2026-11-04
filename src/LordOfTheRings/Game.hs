@@ -1727,6 +1727,11 @@ runGameMessage msg g = case msg of
     burning <- filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea
     pushWhen (notNull burning) $ chooseOrRunOne pid [targetLabel l [DealDamage source (LocationTarget l) 1] | l <- burning]
     pure g
+  AllyEnteredPlayUnderController aid -> do
+    for_ (Map.lookup aid g.entities.allies) \a -> case (toAttrs a).allyPlacement of
+      InPlayArea pid -> push $ allyEntersPlay pid a
+      _ -> pure ()
+    pure g
   AttackEndedUnresolved _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
@@ -2722,7 +2727,11 @@ runGameMessage msg g = case msg of
         lead <- getLead
         aid <- getRandom
         let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
-        pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
+        -- it enters play as it is revealed, but whose it is is chosen as its When Revealed
+        -- resolves, so the windows for it entering play open once that is done
+        pushAll
+          . (enteredPlayThisRound thisAlly :)
+          . (<> [WhileInPlay (toTarget thisAlly) [AllyEnteredPlayUnderController aid, ResolveSurge (toTarget thisAlly) card]])
           =<< revealing (toTarget thisAlly)
         pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
       -- a player event with the Encounter keyword, as Wind from the Sea: its When Revealed,

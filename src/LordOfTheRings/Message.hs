@@ -246,6 +246,9 @@ data Message
   | -- | the player deals 1 damage to an Aflame location in the staging area of their
     -- choice, chosen as it resolves, as Elite Marauder's excess damage reads point by point
     DamageAflameLocation Source PlayerId
+  | -- | the windows for an ally having entered play, under whoever controls it as this
+    -- resolves: one revealed from the encounter deck, given a player as it resolves
+    AllyEnteredPlayUnderController AllyId
   | -- | the enemy's attack is over without it having attacked, as a canceled attack: what
     -- lasted for that attack ends, and no "after it attacks" window opens
     AttackEndedUnresolved EnemyId
