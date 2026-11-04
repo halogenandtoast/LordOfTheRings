@@ -614,6 +614,9 @@ data ModifierType
   | -- | on the game: player card effects cannot take a card out of a player's discard
     -- pile, as The Power of Angmar reads
     DiscardPilesLocked
+  | -- | on the game: event cards cannot shuffle cards from a player's discard pile into his
+    -- deck, as Passage into Mordor reads
+    EventsCannotShuffleDiscardIntoDeck
   | -- | on a player: he may optionally engage 1 additional enemy in the encounter phase,
     -- as Halbarad reads
     OptionallyEngagesAdditionalEnemy

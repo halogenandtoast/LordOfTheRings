@@ -4,6 +4,7 @@ import Data.Bits (setBit, testBit)
 import LordOfTheRings.Card (Card (PlayerCard))
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
+import LordOfTheRings.Helpers.Modifiers (eventsMayShuffleDiscardIntoDeck)
 
 newtype TheWhiteCouncil = TheWhiteCouncil EventAttrs
   deriving anyclass IsEvent
@@ -20,7 +21,8 @@ instance HasModifiersFor TheWhiteCouncil where
 
 -- | Action: Starting with the first player, each player chooses 1 different option: ready a
 -- hero he controls, add 1 resource to the resource pool of a hero he controls, draw 1
--- card, or shuffle 1 card from his discard pile into his deck.
+-- card, or shuffle 1 card from his discard pile into his deck. That option is not there
+-- while event cards cannot shuffle from a discard pile, as Passage into Mordor reads.
 --
 -- Each step is the player's seat times 16, with a bit for each option already chosen.
 instance RunMessage TheWhiteCouncil where
@@ -33,6 +35,7 @@ instance RunMessage TheWhiteCouncil where
           open bit = not (testBit chosen bit)
           next bit = doStep ((seat + 1) * 16 + setBit chosen bit) inner
       players <- getRemainingPlayers
+      shuffles <- eventsMayShuffleDiscardIntoDeck
       for_ (headMay $ drop seat players) \p -> do
         heroes <- select (HeroControlledBy $ PlayerWithId p)
         discardPile <- (.discard) <$> getPlayer p
@@ -54,7 +57,7 @@ instance RunMessage TheWhiteCouncil where
           when (open 2) $ labeled "theWhiteCouncil.draw" do
             drawCards attrs p 1
             next 2
-          when (open 3 && notNull discardPile) $ labeled "theWhiteCouncil.shuffle" do
+          when (open 3 && shuffles && notNull discardPile) $ labeled "theWhiteCouncil.shuffle" do
             chooseOrRunOneM p do
               questionLabeled "theWhiteCouncil.chooseCard"
               causedBy attrs
