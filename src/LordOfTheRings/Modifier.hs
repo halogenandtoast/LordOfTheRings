@@ -7,6 +7,7 @@ import LordOfTheRings.Id (CardId, PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
+import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -657,6 +658,9 @@ data ModifierType
     NoThreatFromQuestingUnsuccessfully
   | -- | on the game: the quest phase is skipped, as Doom Hangs Still reads
     SkipQuestPhase
+  | -- | on the game: the round passes over the phase, which does not begin or end, as
+    -- Henneth Annûn skips the encounter and combat phases
+    SkipPhase Phase
   | -- | on the game: a player with no cards in his deck is eliminated, as Deadmen's Dike's
     -- stages read
     EliminatedWithEmptyDeck

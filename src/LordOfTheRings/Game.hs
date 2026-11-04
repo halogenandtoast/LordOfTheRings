@@ -2385,7 +2385,10 @@ runGameMessage msg g = case msg of
       push $ Run [BeginPhase extra, EndPhase extra]
       pure $ g & additionalPhasesL .~ rest & resumeAfterL %~ (<|> Just phase)
     [] -> do
-      push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase $ fromMaybe phase (gameResumeAfter g))
+      -- a phase skipped, as Henneth Annûn skips the encounter and combat phases, is passed over
+      skipped <- (\ms -> [s | SkipPhase s <- ms]) <$> getModifiers GameTarget
+      let upcoming from = nextPhase from >>= \next -> if next `elem` skipped then upcoming next else Just next
+      push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (upcoming $ fromMaybe phase (gameResumeAfter g))
       pure $ g & resumeAfterL .~ Nothing
   EndPhase phase -> do
     push $ CheckWindows [mkWhen $ PhaseEnds phase]
