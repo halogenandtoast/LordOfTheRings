@@ -519,6 +519,8 @@ data Message
   | -- | the card, revealed or turned to its B side, gets its Time X in time counters
     PlaceTimeCounters Target
   | Run [Message]
+  | -- | the message's effect itself, framed by its windows: see 'doFrame'
+    Do Message
   | -- | the messages, unless the card has left play by the time they run
     WhileInPlay Target [Message]
   | -- | the messages, if the enemy's attack has destroyed a character, as "if this attack
@@ -727,6 +729,11 @@ uiToRun = \case
   Label _ msgs -> Run msgs
   TargetLabel _ msgs -> Run msgs
   AbilityLabel pid ability windows msgs -> Run $ UseAbility pid ability windows : msgs
+
+-- | The message framed by its window, as Arkham's: the When window opens, the effect is
+-- done, then the After window opens.
+doFrame :: Message -> WindowType -> [Message]
+doFrame msg w = [CheckWindows [mkWhen w], Do msg, CheckWindows [mkAfter w]]
 
 chooseOne :: HasCallStack => PlayerId -> [UI Message] -> Message
 chooseOne _ [] = error "chooseOne: no choices"

@@ -41,6 +41,7 @@ instance RunMessage HeroAttrs where
     Exhaust (isTarget attrs -> True) -> do
       blocked <- elem CannotExhaust <$> getModifiers attrs
       exhausting (not blocked) attrs
+    Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
     AttackWith (isTarget attrs -> True) -> do
       spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
       (attackingL .~ True) <$> exhausting (not spared) attrs
@@ -71,10 +72,8 @@ instance RunMessage HeroAttrs where
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
 
--- | The character exhausts, when it does, opening the window for responses to it exhausting.
+-- | The character exhausts, its When and After windows framing it.
 exhausting :: HasQueue Message m => Bool -> HeroAttrs -> m HeroAttrs
-exhausting exhausts attrs
-  | exhausts && not attrs.heroExhausted = do
-      push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
-      pure $ attrs & exhaustedL .~ True
-  | otherwise = pure attrs
+exhausting exhausts attrs = do
+  when (exhausts && not attrs.heroExhausted) $ pushAll $ doFrame (Exhaust $ toTarget attrs) (Exhausted $ toTarget attrs)
+  pure attrs
