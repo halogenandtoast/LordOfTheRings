@@ -76,6 +76,11 @@ data Message
   | BeginPhase Phase
   | DoPhase Phase
   | EndPhase Phase
+  | -- | the round goes on after the phase: an additional instance of a phase, if one is to
+    -- come, or else the round's next phase
+    NextPhase Phase
+  | -- | after the current phase there is an additional instance of each phase, in order
+    AdditionalPhases [Phase]
   | BeginRound
   | RaiseThreat PlayerId Int
   | -- | the threat raise itself, once the window before it has closed

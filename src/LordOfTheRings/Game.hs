@@ -94,6 +94,8 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameAttackDestroyed = []
     , gameDamageDealt = []
     , gameSeparation = Nothing
+    , gameAdditionalPhases = []
+    , gameResumeAfter = Nothing
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -292,7 +294,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null)]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null)]
 
 instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
@@ -574,7 +576,11 @@ runGame' msg g = case leavingCharacter g msg of
   -- a character leaving play opens the When window first, while it is still in play
   Just target -> do
     windows <- leftPlayWindows g target
-    pushAll [CheckWindows (map mkWhen windows), LeavePlay msg]
+    -- a hero to be removed from the game if it leaves play is, however it leaves
+    removed <- case target of
+      HeroTarget _ -> elem RemoveFromGameIfLeavesPlay <$> getModifiers target
+      _ -> pure False
+    pushAll [CheckWindows (map mkWhen windows), LeavePlay $ if removed then RemoveFromGame target else msg]
     pure g
   Nothing -> case msg of
     LeavePlay inner -> runInPlay inner g
@@ -711,6 +717,8 @@ runGameMessage msg g = case msg of
       pushAll $ map EliminatePlayer eliminated
       leaving <- filterM (fmap (elem DiscardAtEndOfRound) . getModifiers) (toList g.entities.allies)
       pushAll [Discard (toTarget a) | a <- leaving]
+      removed <- filterM (fmap (elem RemoveFromGameAtEndOfRound) . getModifiers) (toList g.entities.heroes)
+      pushAll [RemoveFromGame (toTarget h) | h <- removed]
       returning <- filterM (fmap (elem ReturnToHandAtEndOfRound) . getModifiers) (toList g.entities.allies)
       pushAll [ReturnToHand (toTarget a) | a <- returning, toId a `notElem` map toId leaving]
       -- a card passed by Message from Elrond, in a hand or in play
@@ -2103,6 +2111,15 @@ runGameMessage msg g = case msg of
     pure g
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndEffects duration -> pure $ g & effectsL %~ filter ((/= duration) . effectDuration)
+  AdditionalPhases phases -> pure $ g & additionalPhasesL %~ (phases <>)
+  -- the round goes on from its own phase once the additional instances after it are done
+  NextPhase phase -> case gameAdditionalPhases g of
+    extra : rest -> do
+      push $ Run [BeginPhase extra, EndPhase extra]
+      pure $ g & additionalPhasesL .~ rest & resumeAfterL %~ (<|> Just phase)
+    [] -> do
+      push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase $ fromMaybe phase (gameResumeAfter g))
+      pure $ g & resumeAfterL .~ Nothing
   EndPhase phase -> do
     push $ CheckWindows [mkWhen $ PhaseEnds phase]
     -- an enemy still in play raises a player's threat, as Crazed Captive's shadow reads
@@ -2148,7 +2165,7 @@ runGameMessage msg g = case msg of
     -- separated, each area resolves the phase in turn before the next phase begins; the
     -- areas to join another do so at the beginning of the travel phase, and the token
     -- passes once every area has refreshed
-    let following = maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (nextPhase phase)
+    let following = NextPhase phase
         (step, g') =
           eachAreaThen
             (\status -> [BeginPhase phase | status == AreaWaiting] <> [EndPhase phase])

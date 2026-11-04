@@ -7,6 +7,7 @@ import LordOfTheRings.Card (Card, CardType (AllyType), cdCardTraits, toCardCode,
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
+import LordOfTheRings.Hero.Types (heroCardId)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
 import LordOfTheRings.Enemy.Types (enemyTokens)
@@ -62,11 +63,11 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           [(effectTarget e, map (Modifier (effectSource e)) (effectModifiers e)) | e <- gameEffects g, lasting e]
-      -- an effect on a card follows it into play as an ally
+      -- an effect on a card follows it into play as an ally or a hero
       followed =
-        Map.fromListWith
-          (<>)
-          [(AllyTarget (toId a), ms) | a <- toList es.allies, Just ms <- [Map.lookup (CardIdTarget $ allyCardId $ toAttrs a) fromEffects]]
+        Map.fromListWith (<>)
+          $ [(AllyTarget (toId a), ms) | a <- toList es.allies, Just ms <- [Map.lookup (CardIdTarget $ allyCardId $ toAttrs a) fromEffects]]
+          <> [(HeroTarget (toId h), ms) | h <- toList es.heroes, Just ms <- [Map.lookup (CardIdTarget $ heroCardId $ toAttrs h) fromEffects]]
       -- each card attached to a card considered out of play is too (FAQ 2.75), as Saruman's
       -- chosen enemy's guarded objective
       outOfPlay = Map.filter notNull $ Map.map (filter ((`elem` [ConsideredOutOfPlay, Blank]) . modifierType)) fromEffects

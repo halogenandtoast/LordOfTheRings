@@ -22,11 +22,16 @@ spec = describe "Refresh phase" do
 
   it "moves on to the next phase when a phase ends" . gameTest $ \_ -> do
     runOnly $ EndPhase CombatPhase
-    filter (not . isWindow) <$> peekQueue `shouldReturn` [Run [BeginPhase RefreshPhase, EndPhase RefreshPhase]]
+    filter (not . isWindow) <$> peekQueue `shouldReturn` [NextPhase CombatPhase]
+    let step = peekMessage >>= \case
+          Just (NextPhase _) -> void runNext
+          _ -> runNext >> step
+    step
+    peekQueue `shouldReturn` [Run [BeginPhase RefreshPhase, EndPhase RefreshPhase]]
 
   it "ends the round after the refresh phase and starts the next" . gameTest $ \_ -> do
     runOnly $ EndPhase RefreshPhase
-    filter (not . isWindow) <$> peekQueue `shouldReturn` [EndRound]
+    filter (not . isWindow) <$> peekQueue `shouldReturn` [NextPhase RefreshPhase]
     -- through the window and the end of the round, up to the next round's first phase
     let step = peekMessage >>= \case
           Just (BeginPhase _) -> pure ()

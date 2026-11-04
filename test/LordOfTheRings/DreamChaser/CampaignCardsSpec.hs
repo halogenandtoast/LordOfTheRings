@@ -1,5 +1,7 @@
 module LordOfTheRings.DreamChaser.CampaignCardsSpec (spec) where
 
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -10,6 +12,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Phase (Phase (..))
 import LordOfTheRings.Scenario (raidOnTheGreyHavens, voyageAcrossBelegaer)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -95,6 +98,84 @@ spec = describe "Dream-chaser campaign cards" do
       (`shouldSatisfy` elem (DefenseModifier 1)) =<< getModifiers gloin.id
       run $ PlaceTokens GameSource (toTarget gloin.id) Resource 2
       (`shouldSatisfy` elem (DefenseModifier 2)) =<< getModifiers gloin.id
+
+  describe "Send for Help" do
+    let reveal def = do
+          _ <- setEncounterDeck []
+          run . RevealCard =<< genEncounterCard def
+          resolveRevealed
+        upgraded def = dc {campaignLogMarked = mapFromList [(toCardCode def, 4)]}
+        alliesIn = getsGame (map toCardCode . toList . (.entities.allies))
+    it "plays a card from the top 10 of the deck at no cost (Leadership)" . campaignTestIn voyageAcrossBelegaer dc starterDeck $ \pid -> do
+      archer <- PlayerCard <$> genPlayerCard Allies.silverlodeArcher (Just pid)
+      run $ PutOnTopOfDeck pid archer
+      resources <- sum . map (.resources) . toList <$> getsGame (.entities.heroes)
+      reveal Treacheries.sendForHelpLeadership
+      chooseTarget pid (CardIdTarget archer.id)
+      chooseLabel "$label.sendForHelp.play" pid
+      alliesIn `shouldReturn` [toCardCode Allies.silverlodeArcher]
+      (sum . map (.resources) . toList <$> getsGame (.entities.heroes)) `shouldReturn` resources
+      ((.deck) <$> getPlayer pid) >>= (`shouldSatisfy` notElem archer.id . map (.id))
+
+    it "puts a hero from the collection into play, removed from the game as it leaves play (Tactics)" . campaignTestIn voyageAcrossBelegaer dc starterDeck $ \pid -> do
+      reveal Treacheries.sendForHelpTactics
+      chooseOptionMatching "choose a hero" pid \case
+        TargetLabel (CardIdTarget _) _ -> True
+        _ -> False
+      hero <- getsGame (fromJustNote "no hero from the collection" . find ((`notElem` ["01001", "01002", "01003"]) . toCardCode) . toList . (.entities.heroes))
+      run $ Discard (toTarget hero)
+      getsGame (Map.member (toId hero) . (.entities.heroes)) `shouldReturn` False
+      ((.discard) <$> getPlayer pid) >>= (`shouldSatisfy` notElem (toCardCode hero) . map toCardCode)
+
+    it "removes the hero from the game at the end of the round (Tactics)" . campaignTestIn voyageAcrossBelegaer dc starterDeck $ \pid -> do
+      heroCount <- getsGame (length . (.entities.heroes))
+      reveal Treacheries.sendForHelpTactics
+      chooseOptionMatching "choose a hero" pid \case
+        TargetLabel (CardIdTarget _) _ -> True
+        _ -> False
+      getsGame (length . (.entities.heroes)) `shouldReturn` heroCount + 1
+      run EndRound
+      getsGame (length . (.entities.heroes)) `shouldReturn` heroCount
+      ((.discard) <$> getPlayer pid) `shouldReturn` []
+
+    it "adds an instance of the chosen phase after the current one (Spirit)" . campaignTestIn voyageAcrossBelegaer dc starterDeck $ \pid -> do
+      reveal Treacheries.sendForHelpSpirit
+      chooseLabel "$label.sendForHelp.resource" pid
+      resources <- sum . map (.resources) . toList <$> getsGame (.entities.heroes)
+      hand <- length . (.hand) <$> getPlayer pid
+      -- the resource phase asks nothing, and the round goes on to its travel phase
+      run $ EndPhase QuestPhase
+      (sum . map (.resources) . toList <$> getsGame (.entities.heroes)) `shouldReturn` resources + 3
+      length . (.hand) <$> getPlayer pid `shouldReturn` hand + 1
+      getsGame (.phase) `shouldReturn` TravelPhase
+
+    it "adds two phases, in the order chosen, when upgraded (Spirit)" . campaignTestIn voyageAcrossBelegaer (upgraded Treacheries.sendForHelpSpirit) starterDeck $ \pid -> do
+      reveal Treacheries.sendForHelpSpirit
+      chooseLabel "$label.sendForHelp.planning" pid
+      chooseOptionMatching "no second planning" pid \case
+        Label "$label.sendForHelp.planning" _ -> error "planning offered twice"
+        Label "$label.sendForHelp.resource" _ -> True
+        _ -> False
+      resources <- sum . map (.resources) . toList <$> getsGame (.entities.heroes)
+      run $ EndPhase QuestPhase
+      getsGame (.phase) `shouldReturn` PlanningPhase
+      (sum . map (.resources) . toList <$> getsGame (.entities.heroes)) `shouldReturn` resources
+      chooseOptionMatching "end the planning phase" pid \case
+        Label l _ -> l `elem` ["$label.pass", "$label.donePlanning"] || "$label.proceedTo." `isPrefixOf` l
+        _ -> False
+      (sum . map (.resources) . toList <$> getsGame (.entities.heroes)) `shouldReturn` resources + 3
+      getsGame (.phase) `shouldReturn` TravelPhase
+
+    it "lets Gandalf choose up to 3 of his options when upgraded (Lore)" . campaignTestIn voyageAcrossBelegaer (upgraded Treacheries.sendForHelpLore) starterDeck $ \pid -> do
+      run $ RaiseThreat pid 10
+      threat <- (.threat) <$> getPlayer pid
+      hand <- length . (.hand) <$> getPlayer pid
+      reveal Treacheries.sendForHelpLore
+      chooseAbility pid
+      chooseLabel "$label.gandalf.draw" pid
+      chooseLabel "$label.gandalf.threat" pid
+      length . (.hand) <$> getPlayer pid `shouldReturn` hand + 3
+      (.threat) <$> getPlayer pid `shouldReturn` threat - 5
 
   describe "Upgraded sides" do
     it "has each upgradable card's Upgraded side among the cards" $ (id :: IO () -> IO ()) $

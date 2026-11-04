@@ -59,6 +59,12 @@ data Game = Game
   -- enemy attacks again, the rest until the end of the phase.
   , gameSeparation :: Maybe Separation
   -- ^ While the players are split between staging areas: see 'Separation'.
+  , gameAdditionalPhases :: [Phase]
+  -- ^ Additional instances of phases to come after the current one, ahead of the round's
+  -- own next phase, as Send for Help adds.
+  , gameResumeAfter :: Maybe Phase
+  -- ^ While additional phases run, the round's own phase they followed: its next phase
+  -- comes after them.
   }
   deriving stock (Show, Generic)
 
