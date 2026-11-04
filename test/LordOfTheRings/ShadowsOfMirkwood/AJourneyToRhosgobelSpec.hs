@@ -79,7 +79,7 @@ spec = describe "A Journey to Rhosgobel" do
     run $ BeginPhase PlanningPhase
     chooseTarget pid guardian
     chooseOptionMatching "pay 2 from Radagast" pid \case
-      TargetLabel _ msgs -> any (\case RemoveTokens _ _ Resource 2 -> True; _ -> False) msgs
+      TargetLabel _ msgs -> any (\case SpendResourcesFrom _ [(_, 2)] -> True; _ -> False) msgs
       _ -> False
     getsGame (any ((== toCardCode Allies.wingedGuardian) . toCardCode) . toList . (.entities.allies)) `shouldReturn` True
 

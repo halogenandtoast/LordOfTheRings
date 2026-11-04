@@ -107,6 +107,7 @@ instance RunMessage ActiveCost where
             <> [mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card) | ac.activeCostFromHand]
             <> [mkAfter $ PlayedCard ac.activeCostPlayer card]
             <> [mkAfter $ PaidFrom (toTarget card) ac.activeCostPaidFrom]
+            <> [mkAfter $ ResourcesSpent ac.activeCostPlayer (length ac.activeCostPaidFrom) | notNull ac.activeCostPaidFrom]
         EncounterCard _ -> pure ()
       pure ac
     _ -> pure ac

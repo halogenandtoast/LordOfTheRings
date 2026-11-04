@@ -477,6 +477,12 @@ data Message
   | -- | the players as a group discard resources from any of their heroes' pools, as
     -- many as they can up to the number, as prowl reads: not spent, so any hero's go
     DiscardGroupResources PlayerId Int
+  | {- | every payment ends here: the player spends these resources from these pools, a
+    hero's or an ally's, as one payment, then the spent-resources window opens once for
+    each player whose characters paid. A card's cost opens its own as it is paid instead
+    ('PaidCost'), its payment spanning heroes and allies.
+    -}
+    SpendResourcesFrom PlayerId [(Target, Int)]
   | -- | spend resources of a sphere, all of them from a single hero's pool
     SpendResourcesFromOneHero PlayerId Sphere Int
   | {- | the player may exhaust a ready character he controls with the trait to lower the
@@ -743,14 +749,14 @@ chooseOne pid choices = Ask pid $ ChooseOne choices
 of those paying, or, once all are picked (or none is left to pick), each hero's resources
 are spent at once.
 -}
-spendChosen :: Source -> PlayerId -> Bool -> Sphere -> Int -> [HeroId] -> [(HeroId, Int)] -> Message
-spendChosen source pid isGroup sphere n chosen payers = case [h | (h, k) <- payers, k > paid h] of
+spendChosen :: PlayerId -> Bool -> Sphere -> Int -> [HeroId] -> [(HeroId, Int)] -> Message
+spendChosen pid isGroup sphere n chosen payers = case [h | (h, k) <- payers, k > paid h] of
   -- the last hero left to pay pays the rest, unasked, as a player's own spend does
   [h] | n > 0, not isGroup -> SpendResourcesChosen pid isGroup sphere (n - 1) (h : chosen)
   hs@(_ : _) | n > 0 ->
     questionLabel (ikeyWith "label.payMore" [intVar "count" n]) pid
       [targetLabel h [SpendResourcesChosen pid isGroup sphere (n - 1) (h : chosen)] | h <- hs]
-  _ -> Run [RemoveTokens source (HeroTarget h) Resource (paid h) | h <- ordNub (reverse chosen)]
+  _ -> SpendResourcesFrom pid [(HeroTarget h, paid h) | h <- ordNub (reverse chosen)]
  where
   paid h = length (filter (== h) chosen)
 
