@@ -160,6 +160,7 @@ allObjectiveCards =
       , theOneRingTheRoadDarkens
       , lastOfTheCompany
       , aHeavyBurden
+      , theTowerOfBaradDurMountDoom
       ]
 
 durinsAxe :: CardDef
@@ -1135,3 +1136,8 @@ aHeavyBurden =
     , cdKeywords = setFromList [Permanent]
     }
 
+
+-- * Mount Doom
+
+theTowerOfBaradDurMountDoom :: CardDef
+theTowerOfBaradDurMountDoom = unique (objective "146042" "The Tower of Barad-dûr" MountDoom 1) {cdCardTraits = setFromList [Mordor]}

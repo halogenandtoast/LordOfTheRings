@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Capture, Race, Sailing, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, Dire, Race, Sailing, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
@@ -449,6 +449,10 @@ allQuestCards =
       , passTheTwoWatchers
       , fightingInTheTower
       , escapeFromCirithUngol
+      , theLandOfMordor
+      , theRoadToIsenmouthe
+      , theLastGasp
+      , theCrackOfDoom
       ]
 
 theDrippingWalls :: CardDef
@@ -1872,3 +1876,17 @@ fightingInTheTower = quest "146067" "Fighting in the Tower" TheTowerOfCirithUngo
 
 escapeFromCirithUngol :: CardDef
 escapeFromCirithUngol = quest "146068" "Escape from Cirith Ungol" TheTowerOfCirithUngol 3 12
+
+-- * Mount Doom
+
+theLandOfMordor :: CardDef
+theLandOfMordor = (quest "146075" "The Land of Mordor" MountDoom 1 4) {cdKeywords = setFromList [Dire]}
+
+theRoadToIsenmouthe :: CardDef
+theRoadToIsenmouthe = (quest "146076" "The Road to Isenmouthe" MountDoom 2 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Dire]}
+
+theLastGasp :: CardDef
+theLastGasp = (quest "146077" "The Last Gasp" MountDoom 3 20) {cdKeywords = setFromList [Dire]}
+
+theCrackOfDoom :: CardDef
+theCrackOfDoom = (quest "146078" "The Crack of Doom" MountDoom 4 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Dire]}

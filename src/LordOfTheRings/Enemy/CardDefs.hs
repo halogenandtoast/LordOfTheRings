@@ -524,6 +524,11 @@ allEnemyCards =
       , orcOfMordor
       , snagaArcher
       , urukSoldierOrcsOfMordor
+      , gollumMountDoom
+      , ringwraithOfSauron
+      , orcCaptain
+      , bigUruk
+      , littleSnufflerMountDoom
       ]
 
 namelessThing :: CardDef
@@ -4330,4 +4335,51 @@ urukSoldierOrcsOfMordor =
   (enemy "146060" "Uruk Soldier" OrcsOfMordor 3 38 3 5 2 5)
     { cdCardTraits = setFromList [Orc, Uruk]
     , cdShadowEffect = True
+    }
+
+-- * Mount Doom
+
+-- | Its Eye icon is printed "*": Gollum's Forced effect stands for it.
+gollumMountDoom :: CardDef
+gollumMountDoom =
+  unique
+    (enemy "146049" "Gollum" MountDoom 1 99 2 2 2 5)
+      { cdCardTraits = setFromList [Gollum]
+      , cdKeywords = setFromList [Surge]
+      }
+
+ringwraithOfSauron :: CardDef
+ringwraithOfSauron =
+  (enemy "146050" "Ringwraith of Sauron" MountDoom 2 88 3 6 3 10)
+    { cdCardTraits = setFromList [Nazgul]
+    , cdEasyModeQuantity = Just 1
+    , cdEyeIcons = 2
+    }
+
+orcCaptain :: CardDef
+orcCaptain =
+  (enemy "146051" "Orc Captain" MountDoom 2 55 3 5 4 6)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    , cdEyeIcons = 2
+    }
+
+bigUruk :: CardDef
+bigUruk =
+  (enemy "146052" "Big Uruk" MountDoom 3 44 2 4 3 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEyeIcons = 1
+    }
+
+littleSnufflerMountDoom :: CardDef
+littleSnufflerMountDoom =
+  (enemy "146053" "Little Snuffler" MountDoom 4 33 1 3 2 3)
+    { cdCardTraits = setFromList [Orc, Snaga]
+    , cdKeywords = setFromList [Peril, Surge]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    , cdEyeIcons = 1
     }
