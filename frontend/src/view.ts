@@ -208,6 +208,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
 
   const players: PlayerView[] = game.playerOrder.map((pid) => {
     const p = game.players[pid]
+    const onPlayer = (e: Entity) => e.placement?.tag === 'AttachedTo' && (e.placement.contents as Target)?.tag === 'PlayerTarget' && (e.placement.contents as Target).contents === pid
     const characters = [
       ...placed('heroes', (h) => h.owner === pid),
       ...placed('allies', isAt('InPlayArea', pid)),
@@ -231,14 +232,13 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ...Object.values(entities.attachments).filter((a) => a.owner === pid && a.placement?.tag === 'Unplaced').map((a) => card(a.cardCode, a.cardId, { playing: true })),
       ]),
       discard: p.discard.map((c) => card(c.cardCode, c.id)),
+      // a condition on top of their deck, as Iron Shackles
+      onDeck: placed('treacheries', onPlayer),
       // hidden cards lie facedown in the player's play area (The Blood of Gondor)
       inPlay: [
         ...withAttachments(characters),
-        // an attachment on the player's threat dial, as Favor of the Valar, or a condition on
-        // top of their deck, as Iron Shackles
-        ...(['attachments', 'treacheries'] as const).flatMap((kind) =>
-          placed(kind, (a) => a.placement?.tag === 'AttachedTo' && (a.placement.contents as Target)?.tag === 'PlayerTarget' && (a.placement.contents as Target).contents === pid),
-        ),
+        // an attachment on the player's threat dial, as Favor of the Valar
+        ...placed('attachments', onPlayer),
         ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
       ],
       engaged: [

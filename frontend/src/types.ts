@@ -151,6 +151,8 @@ export interface PlayerView {
   discardSize: number
   hand: CardView[]
   discard: CardView[]
+  /** treacheries attached to the top of the deck, as Iron Shackles */
+  onDeck: CardView[]
   inPlay: CardView[]
   engaged: CardView[]
 }
