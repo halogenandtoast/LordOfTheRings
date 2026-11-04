@@ -31,8 +31,10 @@ characterStat printed mods target = do
 getWillpower, getAttack, getDefense, getHitPoints :: (HasGame m) => Target -> m Int
 getWillpower target = do
   -- one that cannot have its willpower reduced, as Star Brooch's hero, ignores what would
-  floored <- elem CannotHaveWillpowerReduced <$> getModifiers target
-  characterStat cdWillpower (if floored then (\m -> willpowerOf m >>= \n -> n <$ guard (n > 0)) else willpowerOf) target
+  mods <- getModifiers target
+  let floored = CannotHaveWillpowerReduced `elem` mods
+  -- reduced to 0, as A Fell Dread reads, unless it cannot be reduced
+  if WillpowerReducedToZero `elem` mods && not floored then pure 0 else characterStat cdWillpower (if floored then (\m -> willpowerOf m >>= \n -> n <$ guard (n > 0)) else willpowerOf) target
 getAttack target = do
   blank <- elem DoesNotCountAttack <$> getModifiers target
   if blank then pure 0 else characterStat cdAttack attackOf target

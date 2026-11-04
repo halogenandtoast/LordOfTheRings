@@ -28,7 +28,7 @@ import LordOfTheRings.Quest.Types (QuestAttrs (questTokens), isEncounterSideQues
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode)
-import LordOfTheRings.Source (Source (EnemyAttackSource))
+import LordOfTheRings.Source (Source (EnemyAttackSource), Sourceable (..))
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Damage, Resource, TimeCounter), Tokens, countTokens)
 import LordOfTheRings.Trait
@@ -481,14 +481,18 @@ currentQuestHas k =
 -- | Whether the current quest has any keyword, printed or gained, as "if the current quest
 -- card has a keyword" reads.
 currentQuestHasAKeyword :: HasGame m => m Bool
-currentQuestHasAKeyword =
+currentQuestHasAKeyword = notNull <$> currentQuestKeywords
+
+-- | The keywords the current quest has, printed and not lost, or gained.
+currentQuestKeywords :: HasGame m => m [Keyword]
+currentQuestKeywords =
   getCurrentQuest >>= \case
     Just t@(QuestTarget qid) -> do
       mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
       printed <- maybe [] (toList . cdKeywords . toCardDef) . Map.lookup qid <$> getsGame (entitiesQuests . gameEntities)
       let kept = [k | Blank `notElem` mods, k <- printed] <> [k | GainKeyword k <- mods]
-      pure $ any (\k -> LoseKeyword k `notElem` mods) kept
-    _ -> pure False
+      pure $ ordNub $ filter (\k -> LoseKeyword k `notElem` mods) kept
+    _ -> pure []
 
 getPlayer :: (HasCallStack, HasGame m) => PlayerId -> m Player
 getPlayer pid = fromJustNote ("missing player " <> show pid) . Map.lookup pid <$> getsGame gamePlayers
@@ -607,6 +611,16 @@ one that left play another way during the attack.
 -}
 attackDestroyed :: HasGame m => EnemyId -> m [AttackDestroyed]
 attackDestroyed eid = getsGame (filter ((== EnemyAttackSource eid) . attackDestroyedBy) . gameAttackDestroyed)
+
+-- | The damage the enemy's last attack dealt, and to what, as "each damage dealt by this
+-- attack" reads: kept until it attacks again.
+attackDamaged :: HasGame m => EnemyId -> m [(Target, Int)]
+attackDamaged = damageDealtBy . EnemyAttackSource
+
+-- | The damage the source has dealt this phase, and to what, as "each character damaged by
+-- this effect" reads.
+damageDealtBy :: (HasGame m, Sourceable source) => source -> m [(Target, Int)]
+damageDealtBy source = getsGame (\g -> [(t, n) | (s, t, n) <- gameDamageDealt g, s == toSource source])
 
 -- | Whether the enemy's attack destroyed a character: see 'attackDestroyed'.
 attackDestroyedACharacter :: HasGame m => EnemyId -> m Bool

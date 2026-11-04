@@ -435,6 +435,10 @@ data Message
   | -- | an enemy with ambush entering play: the first player in turn order whose threat
     -- reaches its engagement cost engages it
     AmbushEngagementCheck EnemyId
+  | -- | the enemy in the staging area makes engagement checks against each player, as
+    -- ambush has it do: the first in turn order whose threat reaches its engagement cost
+    -- engages it, as False Accusations reads
+    EnemyEngagementChecks EnemyId
   | EngageEnemy PlayerId EnemyId
   | -- | the combat phase begins: the archery in play is dealt among the characters
     ResolveArchery

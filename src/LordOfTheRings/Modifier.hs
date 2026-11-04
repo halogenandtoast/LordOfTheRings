@@ -10,6 +10,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
 import LordOfTheRings.Target (Target)
+import LordOfTheRings.Token (Token)
 import LordOfTheRings.Trait
 
 data ModifierType
@@ -124,6 +125,23 @@ data ModifierType
     CannotBeDefeated
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
+  | -- | on a character: its willpower is reduced to 0, whatever else modifies it, as A Fell
+    -- Dread reads; one whose willpower cannot be reduced keeps it
+    WillpowerReducedToZero
+  | -- | on an enemy: it gets +1 threat for each token of the kind on it, counted as they
+    -- change, as Foes of Ecthelion reads for resources
+    ThreatPerToken Token
+  | -- | on the game: the total threat in the staging area is raised by 1 for each token of
+    -- the kind on the card, counted as they change, as The Tower Beckons reads
+    StagingThreatPerToken Target Token
+  | -- | on the game: each ally in play takes the modifier, one that enters play later too,
+    -- for as long as the effect lasts, as Pit into the Depths reads
+    EachAlly ModifierType
+  | -- | on an enemy: it has attacked this phase, as Howling of Wargs reads
+    AttackedThisPhase
+  | -- | on an enemy: each character its excess damage goes to, as
+    -- 'ExcessDamageToOtherCharacters' sends it, is exhausted, as Terrible Strength reads
+    ExhaustsCharactersDamagedByExcess
   | -- | on a character: it is discarded from play once its willpower is 0, as The
     -- Mountains' Peaks reads
     DiscardedAtNoWillpower

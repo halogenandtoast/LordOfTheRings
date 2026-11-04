@@ -637,6 +637,16 @@ afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
   _ -> False
 
+{- | Messages resolved with the enemy's attack's damage, right after it is dealt, as Troll
+Attack's "resolve this attack against each player" deals its damage to the others.
+-}
+withAttackDamage :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
+withAttackDamage eid msgs = lift $ insertAfterMatching msgs \case
+  AttackDamage eid' _ -> eid == eid'
+  DefendedByMany _ eid' _ -> eid == eid'
+  UndefendedDamage _ eid' -> eid == eid'
+  _ -> False
+
 {- | "If this attack destroys a character": the shadow's next step, 'DoStep' 1 of its
 'ResolveShadowEffect', once the enemy's attack is over, if its damage destroyed one. The
 shadow card, built again, resolves it then, and may read what was destroyed with
@@ -1348,6 +1358,11 @@ shuffleDiscardIntoDeck :: ReverseQueue m => PlayerId -> m ()
 shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
 
 -- | The players make engagement checks, from the first player, as in the encounter phase.
+-- | The enemy in the staging area makes engagement checks against each player, as "it
+-- makes engagement checks against each player" reads.
+enemyMakesEngagementChecks :: ReverseQueue m => EnemyId -> m ()
+enemyMakesEngagementChecks = push . EnemyEngagementChecks
+
 makeEngagementChecks :: ReverseQueue m => m ()
 makeEngagementChecks = getLead >>= \lead -> push (EngagementCheck lead 0)
 {- | The player card behind the source leaves play, or its owner's discard pile, for good,

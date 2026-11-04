@@ -49,6 +49,10 @@ data Game = Game
   , gameAttackDestroyed :: [AttackDestroyed]
   -- ^ What attacks' damage destroyed: an enemy's attack's, kept until that enemy attacks
   -- again, and a player's attack's on an enemy, until the attack has resolved.
+  , gameDamageDealt :: [(Source, Target, Int)]
+  -- ^ The damage each source dealt, and to what, as "each damage dealt by this attack" and
+  -- "each character damaged by this effect" read: an enemy's attack's kept until that
+  -- enemy attacks again, the rest until the end of the phase.
   , gameSeparation :: Maybe Separation
   -- ^ While the players are split between staging areas: see 'Separation'.
   }
