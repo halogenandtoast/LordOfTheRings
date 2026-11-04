@@ -50,7 +50,8 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
-import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign), modeL, scenarioName)
+import LordOfTheRings.Saga (campaignResolvesOn)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign, scenarioId), modeL, scenarioName)
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
@@ -1547,7 +1548,7 @@ campaignState cid campaign = do
   latest <- maybe (pure Nothing) (storedGame . entityVal) (headMay games)
   let resolved = do
         g <- latest
-        guard (g.outcome == Just Won)
+        guard (maybe False (campaignResolvesOn (scenarioId $ toAttrs g.scenario)) g.outcome)
         scenarioCampaign (toAttrs g.scenario)
   pure (games, latest, fromMaybe stored resolved)
 
@@ -1571,11 +1572,10 @@ getCampaignR cid = do
         Success g -> g.outcome
         Error _ -> Nothing
       status :: Text
-      status = case (.outcome) =<< latest of
+      status = case latest of
         _ | isNothing next -> "finished"
-        Just Won -> "won"
-        Just Lost -> "lost"
-        Nothing -> "playing"
+        Just g | Just o <- g.outcome -> if campaignResolvesOn (scenarioId $ toAttrs g.scenario) o then "won" else "lost"
+        _ -> "playing"
   pure
     $ toJSON
       CampaignView

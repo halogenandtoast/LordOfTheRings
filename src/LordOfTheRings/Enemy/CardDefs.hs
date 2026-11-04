@@ -581,6 +581,11 @@ allEnemyCards =
       , orcOfMordor
       , snagaArcher
       , urukSoldierOrcsOfMordor
+      , theMouthOfSauron
+      , nazgulOfMordor
+      , gorgorothHillTroll
+      , easterlingBowman
+      , warriorOfRhunTheBlackGateOpens
       ]
 
 namelessThing :: CardDef
@@ -4787,3 +4792,51 @@ urukSoldierOrcsOfMordor =
     { cdCardTraits = setFromList [Orc, Uruk]
     , cdShadowEffect = True
     }
+
+-- * The Tower of Cirith Ungol
+
+-- * Orcs of Mordor
+
+-- * The Black Gate Opens
+
+-- | Set aside by stage 1A's setup, then added to the staging area with The Black Gate.
+theMouthOfSauron :: CardDef
+theMouthOfSauron =
+  unique
+    (enemy "146031" "The Mouth of Sauron" TheBlackGateOpens 1 99 4 6 5 11)
+      { cdCardTraits = setFromList [Mordor]
+      }
+
+nazgulOfMordor :: CardDef
+nazgulOfMordor =
+  (enemy "146032" "Nazgûl of Mordor" TheBlackGateOpens 3 66 4 6 4 9)
+    { cdCardTraits = setFromList [Nazgul]
+    , cdEasyModeQuantity = Just 2
+    }
+
+gorgorothHillTroll :: CardDef
+gorgorothHillTroll =
+  (enemy "146033" "Gorgoroth Hill-troll" TheBlackGateOpens 2 56 3 7 3 8)
+    { cdCardTraits = setFromList [Troll]
+    , cdEasyModeQuantity = Just 1
+    }
+
+easterlingBowman :: CardDef
+easterlingBowman =
+  (enemy "146034" "Easterling Bowman" TheBlackGateOpens 3 54 2 3 1 4)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Peril, Archery 1]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+warriorOfRhunTheBlackGateOpens :: CardDef
+warriorOfRhunTheBlackGateOpens =
+  (enemy "146035" "Warrior of Rhûn" TheBlackGateOpens 3 34 1 4 3 4)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- * The Battle of the Pelennor Fields

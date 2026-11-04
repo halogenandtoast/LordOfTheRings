@@ -70,7 +70,11 @@ findCard cid g = find ((== cid) . (.id)) everywhere
 -- | The title of the card behind a source, in play or not, as "a card effect other than
 -- Athelas" reads it.
 sourceCardTitle :: Game -> Source -> Maybe Text
-sourceCardTitle g = fmap cardTitle . (lookupCardDef <=< code)
+sourceCardTitle g = fmap cardTitle . (lookupCardDef <=< sourceCardCode g)
+
+-- | The code of the card behind a source, in play or not.
+sourceCardCode :: Game -> Source -> Maybe CardCode
+sourceCardCode g = code
  where
   es = g.entities
   code = \case

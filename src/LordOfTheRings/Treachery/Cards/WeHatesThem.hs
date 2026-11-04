@@ -40,7 +40,7 @@ instance RunMessage WeHatesThem where
             labeled "weHatesThem.cancelEffect" do
               spendResources lead Fellowship 1
               exhaust (toTarget r)
-              push $ CheckWindows [Window After $ WhenRevealedCanceled (toTarget attrs)]
+              push $ CheckWindows [Window After $ WhenRevealedCanceled lead (toTarget attrs)]
             labeled "weHatesThem.resolve" $ doStep 1 msg
         _ -> doStep 1 msg
       pure t

@@ -375,7 +375,7 @@ spec = describe "The Passing of the Grey Company" do
       road <- stageLocation Locations.deadlyRoad
       getModifiers (LocationTarget road) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
       threat <- threatOf pid
-      run $ CheckWindows [mkAfter $ WhenRevealedCanceled (LocationTarget road)]
+      run $ CheckWindows [mkAfter $ WhenRevealedCanceled pid (LocationTarget road)]
       threatOf pid `shouldReturn` (threat + 1)
       fellowship <- getResourcesOfSphere pid Fellowship
       fellowship `shouldBe` 0

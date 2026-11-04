@@ -58,7 +58,7 @@ import LordOfTheRings.Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
-import LordOfTheRings.Saga (revealsIndividually)
+import LordOfTheRings.Saga (campaignResolvesOn, revealsIndividually)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -752,6 +752,14 @@ runGameMessage msg g = case msg of
   UseCardAbility _ (LocationSource lid) _ _ | Just l <- Map.lookup lid (gameLeftPlayLocations g), not (Map.member lid g.entities.locations) -> do
     l' <- runEach msg l
     pure $ g & leftPlayLocationsL . ix lid .~ l'
+  -- and to what its answer reads back in later steps, as Slopes of Cirith Gorgor's
+  -- discards once the encounter deck is shuffled
+  DoStep _ (UseCardAbility _ (LocationSource lid) _ _) | Just l <- Map.lookup lid (gameLeftPlayLocations g), not (Map.member lid g.entities.locations) -> do
+    l' <- runEach msg l
+    pure $ g & leftPlayLocationsL . ix lid .~ l'
+  DiscardedTopOfEncounterDeck (LocationSource lid) _ _ | Just l <- Map.lookup lid (gameLeftPlayLocations g), not (Map.member lid g.entities.locations) -> do
+    l' <- runEach msg l
+    pure $ g & leftPlayLocationsL . ix lid .~ l'
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   -- step 8 follows the quest's own setup: a nightmare setup card's instructions, as its
   -- "the game is now ready to begin" reads; step 9 a campaign card's setup that needs what
@@ -996,7 +1004,7 @@ runGameMessage msg g = case msg of
       else do
         -- won in campaign mode, the campaign card's resolution is recorded in the log
         g' <-
-          if outcome == Won && isJust (toAttrs g.scenario).campaign
+          if campaignResolvesOn (scenarioId $ toAttrs g.scenario) outcome && isJust (toAttrs g.scenario).campaign
             then traverseOf scenarioL (runEach ResolveCampaign) g
             else pure g
         clearQueue
@@ -2214,7 +2222,12 @@ runGameMessage msg g = case msg of
     let extra = sum [n | AdditionalStagingReveals n <- mods]
         fewer = sum [n | FewerStagingReveals n <- mods]
         players = length [() | player <- toList g.players, not player.eliminated]
-        reveals = max 0 $ max 1 (players + extra) - fewer
+        -- the first player alone reveals so many instead, as The Battle of the Morannon
+        -- has him reveal 1 for each resource on The Black Gate
+        instead = headMay [n | FirstPlayerRevealsForStaging n <- mods]
+        reveals = case instead of
+          Just n -> max 0 $ n + extra - fewer
+          Nothing -> max 0 $ max 1 (players + extra) - fewer
     order <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
     -- a player revealing fewer, as Palantír of Orthanc has one
     playerFewer <- for order \pid -> (pid,) . (\ms -> sum [n | FewerStagingReveals n <- ms]) <$> getModifiers (PlayerTarget pid)
@@ -2225,11 +2238,15 @@ runGameMessage msg g = case msg of
           pid : rest -> \counts -> case lookup pid counts of
             Just n | n > 0 -> withoutFewer rest [(p, if p == pid then n - 1 else k) | (p, k) <- counts]
             _ -> pid : withoutFewer rest counts
+        lead = fromMaybe g.firstPlayer $ headMay order
+        revealers = case instead of
+          Just _ -> replicate reveals lead
+          Nothing -> withoutFewer (take reveals (order <> replicate reveals lead)) playerFewer
         revealing
           | revealsIndividually (scenarioId $ toAttrs g.scenario) =
               concat
                 [ [SetRevealer (Just pid), RevealEncounterCard]
-                | pid <- withoutFewer (take reveals (order <> replicate reveals (fromMaybe g.firstPlayer $ headMay order))) playerFewer
+                | pid <- revealers
                 ]
                 <> [SetRevealer Nothing]
           | otherwise = replicate (max 0 $ reveals - sum (map snd playerFewer)) RevealEncounterCard

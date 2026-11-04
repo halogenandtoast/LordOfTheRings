@@ -404,6 +404,8 @@ import LordOfTheRings.Quest.Cards.AttackOnPelargir (attackOnPelargir)
 import LordOfTheRings.Quest.Cards.PassTheTwoWatchers
 import LordOfTheRings.Quest.Cards.FightingInTheTower
 import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
+import LordOfTheRings.Quest.Cards.EmbassyFromTheDarkTower
+import LordOfTheRings.Quest.Cards.TheBattleOfTheMorannon
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -840,5 +842,7 @@ allQuests =
         , SomeQuestCard passTheTwoWatchers
         , SomeQuestCard fightingInTheTower
         , SomeQuestCard escapeFromCirithUngol
+        , SomeQuestCard embassyFromTheDarkTower
+        , SomeQuestCard theBattleOfTheMorannon
         ]
     ]

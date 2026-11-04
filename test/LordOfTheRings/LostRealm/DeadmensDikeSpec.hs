@@ -273,7 +273,7 @@ spec = describe "Deadmen's Dike" do
     runOnly RevealEncounterCard
     void runNext
     tid <- getsGame (fromJustNote "no treachery" . fmap toTarget . headMay . toList . (.entities.treacheries))
-    runQueueT $ cancelWhenRevealed tid
+    runQueueT $ cancelWhenRevealed pid tid
     void mainLoop
     threatOf pid `shouldReturn` threat + 2
 

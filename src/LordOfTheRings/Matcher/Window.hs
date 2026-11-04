@@ -531,8 +531,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   (BecomesWindow time, Became time') -> time == time'
   (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
-  (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
-  (WhenRevealedCanceledWindow t, WhenRevealedCanceled _) -> t == timing
+  (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled _ (TreacheryTarget _)) -> t == timing
+  (WhenRevealedCanceledWindow t, WhenRevealedCanceled _ _) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
   (SetupHandDrawnWindow t pid, SetupHandDrawn pid') -> t == timing && pid == pid'

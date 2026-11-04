@@ -24,10 +24,10 @@ instance HasAbilities FrodoBagginsTheBlackRiders where
 
 instance RunMessage FrodoBagginsTheBlackRiders where
   runMessage msg h@(FrodoBagginsTheBlackRiders attrs) = case msg of
-    UseCardAbility _ (isSource attrs -> True) 1 windows -> do
+    UseCardAbility pid (isSource attrs -> True) 1 windows -> do
       exhaustTheOneRing
       for_ (take 1 [t | Window _ (Revealed t) <- windows]) \t -> do
-        cancelWhenRevealed t
+        cancelWhenRevealed pid t
         -- what it keeps in play, its surge and doomed, goes with it into the deck
         cancelMatching \case
           FinishRevelation tid -> TreacheryTarget tid == t

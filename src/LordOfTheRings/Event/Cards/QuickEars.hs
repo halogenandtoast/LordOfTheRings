@@ -32,7 +32,7 @@ instance RunMessage QuickEars where
           exhaust h
           -- what is left of its revelation waits on it being in play
           for_ (take 1 [t | Window _ (Revealed t@(EnemyTarget _)) <- windows]) \t -> do
-            cancelWhenRevealed t
+            cancelWhenRevealed pid t
             shuffleIntoEncounterDeck t
             revealEncounterCard
       pure e

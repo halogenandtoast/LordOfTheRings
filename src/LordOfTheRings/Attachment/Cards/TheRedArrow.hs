@@ -20,7 +20,7 @@ instance HasModifiersFor TheRedArrow where
 -- victory display to search the top 5 cards of your deck for an ally and put it into play.
 instance HasAbilities TheRedArrow where
   getAbilities (TheRedArrow a) =
-    [ restricted a 1 (exists (HeroWithId hid <> CommittedHero) <> PlayerExists (PlayerWithId a.controller <> PlayerWithThreatAtLeast 40))
+    [ restricted a 1 (exists (HeroWithId hid <> CommittedHero) <> valour a.controller)
         $ response $ QuestedSuccessfullyWindow After
     | AttachedTo (HeroTarget hid) <- [a.placement]
     ]

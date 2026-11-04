@@ -3661,5 +3661,51 @@
   },
   "theTowerOfCirithUngol": {
     "setAsideBoon": "The Tower of Cirith Ungol: choose an Item boon to set aside"
+  },
+  "beleagueredHills": {
+    "engage": "Beleaguered Hills: choose a non-unique enemy in the staging area to engage"
+  },
+  "reekingMoat": {
+    "choose": "Reeking Moat: choose a non-unique, non-Nazgûl enemy in the staging area to place facedown under it"
+  },
+  "nazgulOfMordor": {
+    "choose": "Nazgûl of Mordor: choose one",
+    "threat": "Raise your threat by 4",
+    "return": "Return Nazgûl of Mordor to the staging area"
+  },
+  "easterlingBowman": {
+    "damage": "Easterling Bowman: choose a questing character you control to deal 1 damage to"
+  },
+  "warriorOfRhunTheBlackGateOpens": {
+    "remove": "Warrior of Rhûn: choose a questing character you control to remove from the quest"
+  },
+  "hellHawk": {
+    "choose": "Hell-hawk: search for a Nazgûl enemy, or attach Hell-hawk to a Nazgûl enemy in play",
+    "search": "Search the encounter deck, discard pile and victory display for a Nazgûl enemy and add it to the staging area"
+  },
+  "theHourOfDoom": {
+    "choose": "The Hour of Doom: choose one",
+    "threat": "Raise your threat by {n}, 1 for each character you control",
+    "discard": "Discard the highest cost ally you control",
+    "discardAlly": "Choose the highest cost ally you control to discard"
+  },
+  "onslaughtOfMordor": {
+    "damage": "Onslaught of Mordor: choose a questing character you control to deal 1 damage to",
+    "engage": "Onslaught of Mordor: choose a non-unique enemy in the staging area to engage and deal a shadow card"
+  },
+  "gwaihirTheBlackGateOpens": {
+    "choose": "Gwaihir: choose one",
+    "control": "Take control of Gwaihir",
+    "discard": "Spend 1 Fellowship resource and discard Gwaihir to discard a non-unique enemy in the staging area",
+    "discardEnemy": "Choose a non-unique enemy in the staging area to discard"
+  },
+  "embassyFromTheDarkTower": {
+    "tied": "Embassy from the Dark Tower: choose which tied card to pair next",
+    "pair": "Embassy from the Dark Tower: discard both cards, or reveal the encounter card to play the player card at no cost",
+    "discard": "Discard both cards",
+    "reveal": "Reveal the encounter card and play the player card at no cost"
+  },
+  "theBattleOfTheMorannon": {
+    "search": "The Battle of the Morannon: choose an Orc, Troll or Nazgûl enemy of a title no other player chose to add to the staging area"
   }
 }

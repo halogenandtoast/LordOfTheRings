@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Capture, Race, Sailing, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, Dire, Race, Sailing, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
@@ -488,6 +488,8 @@ allQuestCards =
       , passTheTwoWatchers
       , fightingInTheTower
       , escapeFromCirithUngol
+      , embassyFromTheDarkTower
+      , theBattleOfTheMorannon
       ]
 
 theDrippingWalls :: CardDef
@@ -2072,3 +2074,14 @@ fightingInTheTower = quest "146067" "Fighting in the Tower" TheTowerOfCirithUngo
 
 escapeFromCirithUngol :: CardDef
 escapeFromCirithUngol = quest "146068" "Escape from Cirith Ungol" TheTowerOfCirithUngol 3 12
+
+-- * The Tower of Cirith Ungol
+
+-- * The Black Gate Opens
+
+embassyFromTheDarkTower :: CardDef
+embassyFromTheDarkTower = (quest "146072" "Embassy from the Dark Tower" TheBlackGateOpens 1 0) {cdKeywords = setFromList [Dire]}
+
+-- | No quest points: it cannot be defeated.
+theBattleOfTheMorannon :: CardDef
+theBattleOfTheMorannon = (quest "146073" "The Battle of the Morannon" TheBlackGateOpens 2 0) {cdKeywords = setFromList [Dire]}

@@ -18,9 +18,9 @@ instance HasAbilities Eleanor where
 
 instance RunMessage Eleanor where
   runMessage msg h@(Eleanor attrs) = case msg of
-    UseCardAbility _ (isSource attrs -> True) 1 windows -> do
+    UseCardAbility pid (isSource attrs -> True) 1 windows -> do
       for_ [(t, tid) | Window _ (Revealed t@(TreacheryTarget tid)) <- windows] \(t, tid) -> do
-        cancelWhenRevealed t
+        cancelWhenRevealed pid t
         cancelMatching (== FinishRevelation tid)
         discard t
         -- its surge and doomed resolve before the replacement is revealed (FAQ)

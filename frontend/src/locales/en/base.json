@@ -199,7 +199,8 @@
       "Secrets": "Secrets: {cards}",
       "RevealedSecrets": "Secrets flipped: {cards}",
       "RecurringNightmares": "Choose a player for each Recurring Nightmare as the next scenario is set up: it joins the Campaign Pool, shuffled into their deck after their starting hand: {cards}",
-      "HaradEnemies": "Harad enemies underneath The Black Gate, set aside in The Battle of the Pelennor Fields: {cards}"
+      "HaradEnemies": "Harad enemies underneath The Black Gate, set aside in The Battle of the Pelennor Fields: {cards}",
+      "BlackGateResources": "Resources on The Black Gate as The Black Gate Opens ended, placed on Mount Doom's campaign card: {cards}"
     },
     "scenarios": "Scenarios",
     "total": "Campaign total",

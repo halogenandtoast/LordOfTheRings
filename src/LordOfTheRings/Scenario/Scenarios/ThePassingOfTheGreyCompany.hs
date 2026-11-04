@@ -9,7 +9,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.ThePassingOfTheGreyCompany.Helpers (mayRaiseThreatToSearchForAnduril, overcomeByFearOn)
+import LordOfTheRings.Scenario.Scenarios.ThePassingOfTheGreyCompany.Helpers (overcomeByFearOn)
 
 newtype ThePassingOfTheGreyCompany = ThePassingOfTheGreyCompany ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)

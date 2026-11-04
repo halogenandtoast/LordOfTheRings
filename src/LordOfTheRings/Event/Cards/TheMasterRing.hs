@@ -23,7 +23,7 @@ instance RunMessage TheMasterRing where
     PlayEvent pid card windows | card.id == toId attrs -> do
       payTheOneRing pid
       for_ (take 1 [t | Window _ (Revealed t) <- windows]) \t -> do
-        cancelWhenRevealed t
+        cancelWhenRevealed pid t
         -- what it keeps in play, its surge and doomed, goes with it as it is discarded
         cancelMatching \case
           FinishRevelation tid -> TreacheryTarget tid == t

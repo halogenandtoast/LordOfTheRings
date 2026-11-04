@@ -9,6 +9,7 @@ module LordOfTheRings.Saga (module LordOfTheRings.Saga) where
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.EncounterSet (EncounterSet (..))
 import LordOfTheRings.Id (ScenarioId)
+import LordOfTheRings.Outcome (Outcome (..))
 import LordOfTheRings.Prelude
 
 data Saga = TheHobbit | TheLordOfTheRings
@@ -137,6 +138,16 @@ treasureSetsFor sid = take (length (takeWhile (/= sid) hobbitScenarios)) hobbitT
     , TheLonelyMountain
     , TheBattleOfFiveArmies
     ]
+
+{- | Whether the game's end resolves the scenario's campaign card in campaign mode, the
+campaign going on: once won, or for The Black Gate Opens, which cannot be won (its stage 2B
+cannot be defeated), once lost. Its resolution records how long the players held the
+Black Gate, and the players go on to Mount Doom.
+-}
+campaignResolvesOn :: ScenarioId -> Outcome -> Bool
+campaignResolvesOn sid = \case
+  Won -> True
+  Lost -> sid == "the-black-gate-opens"
 
 {- | The burden sets whose burdens the scenario's campaign card removes from the encounter
 deck and each player's deck: those of the Campaign Pool are left out as it is set up.

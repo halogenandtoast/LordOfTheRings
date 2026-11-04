@@ -14,7 +14,7 @@ aTestOfWill = eventWith ATestOfWill Cards.aTestOfWill ((windowL ?~ CardRevealedW
 
 instance RunMessage ATestOfWill where
   runMessage msg e@(ATestOfWill attrs) = case msg of
-    PlayEvent _ card windows | card.id == toId attrs -> do
-      for_ [t | Window _ (Revealed t) <- windows] cancelWhenRevealed
+    PlayEvent pid card windows | card.id == toId attrs -> do
+      for_ [t | Window _ (Revealed t) <- windows] (cancelWhenRevealed pid)
       pure e
     _ -> ATestOfWill <$> runMessage msg attrs

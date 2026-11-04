@@ -6,7 +6,6 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.ThePassingOfTheGreyCompany.Helpers (mayRaiseThreatToSearchForAnduril)
 import LordOfTheRings.Scenario.Scenarios.TheSiegeOfGondor.Helpers (corsairFleetResources, runSiegeOfGondorStep)
 
 newtype TheSiegeOfGondor = TheSiegeOfGondor ScenarioAttrs

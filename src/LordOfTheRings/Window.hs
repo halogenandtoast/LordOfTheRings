@@ -162,7 +162,7 @@ data WindowType
     -- objective flips to On Track
     FlippedTo Target CardCode
   | -- | the When Revealed effects of the card just revealed were canceled
-    WhenRevealedCanceled Target
+    WhenRevealedCanceled PlayerId Target
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
     -- (Escape from Mount Gram)
     CapturedCardsRescued Card [Card]
