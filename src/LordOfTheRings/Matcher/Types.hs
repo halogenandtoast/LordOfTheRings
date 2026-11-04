@@ -242,6 +242,8 @@ data LocationMatcher
     LocationGuardingACard
   | -- | a location with a player card attached to it, as South Away! reads
     LocationWithPlayerCardAttachment
+  | -- | a location with any card attached to it, as Haldan draws for each
+    LocationWithAttachment
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

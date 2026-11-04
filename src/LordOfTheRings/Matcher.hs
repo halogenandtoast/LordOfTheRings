@@ -277,6 +277,7 @@ matchLocation matcher location = case matcher of
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationCanEnterStagingArea -> notElem CannotEnterStagingArea . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationGuardingACard -> guardingACard (toCard location).id (toTarget location)
+  LocationWithAttachment -> notNull <$> getAttachmentsOn (toTarget location)
   LocationWithPlayerCardAttachment ->
     getsGame (any ((== AttachedTo (toTarget location)) . (.placement)) . toList . entitiesAttachments . gameEntities)
 
