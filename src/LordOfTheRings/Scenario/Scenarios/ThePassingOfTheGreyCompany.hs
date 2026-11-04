@@ -6,7 +6,6 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (CardMatcher (CardWithTitle), cardMatches, getLead, getPlayer)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
@@ -48,15 +47,7 @@ instance RunMessage ThePassingOfTheGreyCompany where
     -- each burden with the following burden set icons from the encounter deck (see
     -- 'LordOfTheRings.Saga.removedBurdenSets').
     DoStep 9 Setup | isJust attrs.campaign -> do
-      lead <- getLead
-      deck <- (.deck) <$> getPlayer lead
-      when (any (cardMatches anduril) deck) do
-        chooseOneM lead do
-          questionLabeled "thePassingOfTheGreyCompany.anduril"
-          labeled "thePassingOfTheGreyCompany.searchForAnduril" do
-            eachPlayer (`raiseThreat` 1)
-            searchDeck lead attrs maxBound anduril False
-          labeled "pass" $ pure ()
+      mayRaiseThreatToSearchForAnduril attrs
       ThePassingOfTheGreyCompany <$> runMessage msg attrs
     -- Resolution: Add each copy of Overcome by Fear attached to a player's threat dial to
     -- the campaign pool and record the name of each player it was attached to. If Army of
@@ -70,5 +61,3 @@ instance RunMessage ThePassingOfTheGreyCompany where
           l' = foldl' (flip addToPool) l (fears <> army)
       ThePassingOfTheGreyCompany <$> runMessage msg (attrs {scenarioCampaign = Just l'})
     _ -> ThePassingOfTheGreyCompany <$> runMessage msg attrs
-   where
-    anduril = CardWithTitle "Andúril"

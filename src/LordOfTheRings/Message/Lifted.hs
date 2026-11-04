@@ -606,6 +606,24 @@ chooseAndExhaust source pid n = push $ ChooseAndExhaust (toSource source) pid n
 chooseAndExhaustHero :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
 chooseAndExhaustHero source = push . ChooseAndExhaustHero (toSource source)
 
+{- | The first player may raise each player's threat by 1 to search his deck for Andúril and
+add it to his hand, as the campaign cards of The Passing of the Grey Company and The Black
+Gate Opens have him at setup. Not offered without an Andúril in his deck.
+-}
+mayRaiseThreatToSearchForAnduril :: (ReverseQueue m, Sourceable source) => source -> m ()
+mayRaiseThreatToSearchForAnduril source = do
+  lead <- getLead
+  deck <- (.deck) <$> getPlayer lead
+  when (any (cardMatches anduril) deck) do
+    chooseOneM lead do
+      questionLabeled "searchForAnduril.choose"
+      labeled "searchForAnduril.search" do
+        eachPlayer (`raiseThreat` 1)
+        searchDeck lead source maxBound anduril False
+      labeled "pass" $ pure ()
+ where
+  anduril = CardWithTitle "Andúril"
+
 {- | The player searches the top N cards of their deck for matching cards to take into
 hand, any number of them or only 1, then shuffles their deck.
 -}
