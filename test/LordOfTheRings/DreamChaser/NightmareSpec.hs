@@ -1,9 +1,8 @@
 module LordOfTheRings.DreamChaser.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack, UntilEndOfRound))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack, UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Heading (Heading (..))
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Helpers.Character (getWillpower)

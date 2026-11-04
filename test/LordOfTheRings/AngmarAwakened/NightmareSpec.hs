@@ -6,14 +6,13 @@ import LordOfTheRings.Card.Synthetic qualified as Synthetic
 import LordOfTheRings.Card (CardDef (cdKeywords), CardType (EventType, HeroType), cdCardType, toCard, toCardDef)
 import LordOfTheRings.Keyword (Keyword (Safe))
 import LordOfTheRings.Quest.Types (isSideQuest)
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (PlayerMatcher (AnyPlayer), getEnemy)
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests

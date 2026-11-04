@@ -1,11 +1,12 @@
 module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Ranged))
-import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, LoseKeyword, UndefendedDamageTo))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, HitPointModifier, LoseKeyword, UndefendedDamageTo))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -57,6 +58,8 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
     it "Restless Hunters' shadow sends this attack's damage to the hero with a Clue, not later ones" . nightmare theHuntForGollum $ \pid -> do
       hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
       run . (`PutObjectiveIntoPlayAttached` hero) =<< genEncounterCard Objectives.signsOfGollum
+      -- kept standing, its damage to be read
+      run $ CreateEffect $ Effect GameSource hero [HitPointModifier 20] UntilEndOfPhase
       run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.huntingWarg
       warg <- theEnemy
       _ <- setEncounterDeck [Treacheries.restlessHunters]
