@@ -25,11 +25,14 @@ upgraded a = toCardCode a == toCardCode Cards.calaerionUpgraded
 +1 willpower, +1 attack, and +1 defense until the end of the phase.
 Upgraded: Action: Spend 2 resources and exhaust Calaerion to ready another ally and give it
 +1 willpower, +1 attack, and +1 defense until the end of the round.
+Upgraded: Response: After a card is discarded from the encounter deck, shuffle it into that
+deck. (Limit once per round.)
 -}
 instance HasAbilities Calaerion where
   getAbilities (Calaerion a) =
     [ restricted a 1 (ResourcesOfSphere ActivePlayer Neutral cost) $ ActionAbility (exhaustCost a)
     ]
+      <> [limited (PlayerLimit PerRound 1) $ mkAbility a 2 $ response $ DiscardedFromEncounterDeckWindow After | upgraded a]
    where
     cost = if upgraded a then 2 else 3
 
@@ -46,5 +49,13 @@ instance RunMessage Calaerion where
         targets targets' \t -> do
           ready t
           (if up then roundModifiers else phaseModifiers) a t [WillpowerModifier 1, AttackModifier 1, DefenseModifier 1]
+      pure s
+    UseCardAbility pid (isSource a -> True) 2 windows -> do
+      discarded <- map (.id) <$> getEncounterDiscard
+      let cards = [c | Window _ (DiscardedFromEncounterDeck c) <- windows, c `elem` discarded]
+      chooseOrRunOneM pid do
+        questionLabeled "calaerion.shuffle"
+        causedBy a
+        targets (map CardIdTarget cards) shuffleIntoEncounterDeck
       pure s
     _ -> Calaerion <$> runShip (pure ()) msg a

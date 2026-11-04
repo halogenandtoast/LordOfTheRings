@@ -18,6 +18,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Game.Base (gameEntities, gameScenario)
 import LordOfTheRings.Attachment.Types (attachmentExhausted)
 import LordOfTheRings.Entities (entitiesAttachments)
+import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Campaign (campaignLevel, campaignUpgraded)
 import LordOfTheRings.Message.Lifted.UpTo
 
@@ -81,7 +82,7 @@ instance RunMessage Command where
             , option "command.allyFromDiscard" (map (CardIdTarget . (.id)) allies) \case
                 CardIdTarget cid -> for_ (find ((== cid) . (.id)) allies) \c -> do
                   removeFromDiscard pid c.id
-                  roundModifier attrs (CardIdTarget c.id) DiscardAtEndOfRound
+                  phaseModifier attrs (CardIdTarget c.id) DiscardAtEndOfPhase
                   putAllyIntoPlayUnder pid c
                 _ -> pure ()
             ]
@@ -95,9 +96,7 @@ instance RunMessage Command where
             , UpToLabel "command.bottomCard" $ for_ (lastMay player.deck) \c -> takeFromDeck pid c
             , UpToLabel "command.encounterDeck" do
                 chooseUpToM pid "command.discardEncounter" (toTarget attrs) (map EncounterCard top10) 10
-                  [ UpToTarget (CardIdTarget c.id) do
-                      removeFromEncounterDeck c
-                      push $ AddToEncounterDiscard [c]
+                  [ UpToTarget (CardIdTarget c.id) (discardFromEncounterDeck c)
                   | c <- top10
                   ]
                 shuffleEncounterDeck
@@ -128,7 +127,19 @@ instance RunMessage Command where
                   causedBy attrs
                   labeled "command.engageIt" $ engageEnemy pid en
                   labeled "command.dontEngage" $ pure ()
-            , option "command.readyAttachment" (map toId readyable) ready
+            , option "command.readyAttachment" (map toId readyable) \aid -> do
+                ready aid
+                for_ (find ((== aid) . toId) readyable) \att -> do
+                  let isCharacter = \case
+                        HeroTarget _ -> True
+                        AllyTarget _ -> True
+                        _ -> False
+                  hosts <- filter (\h -> isCharacter h && AttachedTo h /= att.placement) <$> cardHosts (toCardCode att)
+                  chooseOneM pid do
+                    questionLabeled "command.moveAttachment"
+                    causedBy attrs
+                    labeled "command.dontMove" $ pure ()
+                    targets hosts (moveAttachment aid)
             ]
       chooseUpToM pid "command.choose" (toTarget attrs) [] x options
       pure e

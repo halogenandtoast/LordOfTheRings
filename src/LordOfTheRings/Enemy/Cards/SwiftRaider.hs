@@ -29,7 +29,7 @@ instance RunMessage SwiftRaider where
   runMessage msg e@(SwiftRaider attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
       counted <- for [(p, cs) | Window _ (CommittedToSailingTest p cs) <- ws] \(p, cs) -> do
-        counts <- for cs \c -> (\ms -> fromMaybe 1 $ headMay [n | CountsAsSailingCharacters n <- ms]) <$> getModifiers c
+        counts <- for cs $ fmap sailingCharacters . getModifiers
         pure (p, sum counts)
       engageFirst [p | (p, n) <- counted, n >= 4]
       pure e

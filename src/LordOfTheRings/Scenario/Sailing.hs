@@ -23,7 +23,7 @@ import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (Ship))
-import LordOfTheRings.Window (WindowType (CommittedToSailingTest), mkAfter)
+import LordOfTheRings.Window (WindowType (CommittedToSailingTest, DiscardedFromEncounterDeck), mkAfter)
 
 -- | A card of the Corsair deck: an enemy without the Ship trait.
 isCorsairDeckCard :: EncounterCard -> Bool
@@ -71,7 +71,7 @@ runSailing msg attrs = case msg of
   -- as many cards as characters committed are looked at, the encounter discard pile
   -- shuffled in beneath the deck should it run short
   DoStep 1 (ResolveSailingTest committed) -> do
-    counts <- for committed \c -> (\ms -> fromMaybe 1 $ headMay [n | CountsAsSailingCharacters n <- ms]) <$> getModifiers c
+    counts <- for committed $ fmap sailingCharacters . getModifiers
     gameMods <- getModifiers GameTarget
     let n = sum counts + sum [k | SailingTestAdditionalCards k <- gameMods]
     (deck, discarded) <-
@@ -95,6 +95,7 @@ runSailing msg attrs = case msg of
       labeled "continue" do
         replicateM_ (found - canceled) $ shiftHeadingOnCourse GameSource
         push $ AddToEncounterDiscard top
+        push $ CheckWindows [mkAfter $ DiscardedFromEncounterDeck c.id | c <- top]
     pure attrs
   PrepareCorsairDeck -> do
     let (corsairs, rest) = partition isCorsairDeckCard attrs.encounterDeck

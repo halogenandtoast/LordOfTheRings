@@ -258,6 +258,21 @@ runPlayer msg player = case msg of
       let (moved, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ moved <> kept
     RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
+    -- of the attachments it may go on, those the player can afford to play there
+    PlayAttachmentFromDiscardOn pid source host | pid == player.id -> do
+      playable <- flip filterM [pc | PlayerCard pc <- player.discard, cdCardType (toCardDef pc) == AttachmentType] \pc -> do
+        let card = PlayerCard pc
+        discount <- attachDiscount card host
+        andM [elem host <$> cardHosts (toCardCode pc), passesUnique card, not <$> cannotPlay pid card, canAffordWith discount player card]
+      choices <- for playable \pc ->
+        targetLabel (CardIdTarget pc.id)
+          <$> inLogBlock (PlayBlock pid (PlayerCard pc)) [RemoveFromDiscard pid pc.id, PayToAttach pid (PlayerCard pc) False [] host]
+      pushWhen (notNull choices)
+        $ Ask pid
+        $ QuestionLabel (ikey "label.playAttachmentFromDiscard") (sourceTarget source) [host]
+        $ SearchCards (map PlayerCard playable)
+        $ ChooseOne choices
+      pure player
     -- a card placed underneath another leaves wherever its owner had it
     PlaceUnderneath _ cards -> do
       let gone c = c.id `elem` map (.id) cards
@@ -485,10 +500,16 @@ cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
 cannotPlay pid c = notNull <$> playProhibitions pid c
 
 canAfford :: HasGame m => Player -> Card -> m Bool
-canAfford p c = case (c.cost, c.sphere) of
+canAfford p c = do
+  -- an attachment costs what the host that lowers it most leaves
+  discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts c)
+  canAffordWith discount p c
+
+-- | Whether the player can afford the card with its cost lowered by so much, as the host
+-- it is to go on lowers it.
+canAffordWith :: HasGame m => Int -> Player -> Card -> m Bool
+canAffordWith discount p c = case (c.cost, c.sphere) of
   (Just cost, Just sphere) -> do
-    -- an attachment costs what the host that lowers it most leaves
-    discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts c)
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
@@ -526,6 +547,7 @@ costModifier pid c = do
   pure $ subtract (secrecy + sum exhaustable) $ sum $ flip mapMaybe mods \case
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
+    ReduceCostOfToMinimumOne m n | cardMatches m c -> Just (negate $ min n $ maybe 0 (max 0 . subtract 1 . costAsResources) c.cost)
     CostModifier n -> Just n
     -- an optional reduction counts toward whether the card can be afforded
     ReducedByDiscardingFromDeck n -> Just (negate n)

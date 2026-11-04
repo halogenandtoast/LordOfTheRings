@@ -1,5 +1,6 @@
 module LordOfTheRings.Event.Cards.LoreOfAncientArnor (loreOfAncientArnor) where
 
+import LordOfTheRings.Card (Card)
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
@@ -21,11 +22,17 @@ instance RunMessage LoreOfAncientArnor where
       let n = if length players == 1 then 2 else 1
       for_ players \p -> do
         discarded <- (.discard) <$> getPlayer p
-        replicateM_ n $ chooseOrRunOneM p do
-          questionLabeled "loreOfAncientArnor.return"
-          causedBy attrs
-          for_ [c | c <- discarded, c.id /= card.id] \c -> targeting (CardIdTarget c.id) $ returnFromDiscardToHand p c.id
+        returnCards p n [c | c <- discarded, c.id /= card.id]
         shuffleDiscardIntoDeck p
       removeSourceCardFromGame (toSource attrs)
       pure e
     _ -> LoreOfAncientArnor <$> runMessage msg attrs
+
+-- | The player returns so many different cards from their discard pile to their hand, one
+-- at a time.
+returnCards :: ReverseQueue m => PlayerId -> Int -> [Card] -> m ()
+returnCards p n cards = when (n > 0) $ chooseOrRunOneM p do
+  questionLabeled "loreOfAncientArnor.return"
+  for_ cards \c -> targeting (CardIdTarget c.id) do
+    returnFromDiscardToHand p c.id
+    returnCards p (n - 1) (filter ((/= c.id) . (.id)) cards)

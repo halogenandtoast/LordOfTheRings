@@ -140,6 +140,9 @@ data Message
     PutOnBottomOfOwnersDeck Target
   | TakeControl AllyId PlayerId
   | RemoveFromDiscard PlayerId CardId
+  | -- | the player plays an attachment of their choice from their discard pile on the host,
+    -- paying for it, as Stalwart lets them
+    PlayAttachmentFromDiscardOn PlayerId Source Target
   | -- | an ally card put into play under the player's control, keeping its owner
     PutAllyIntoPlayUnder PlayerId PlayerCard
   | PutHeroIntoPlay PlayerId PlayerCard

@@ -35,8 +35,9 @@ instance HasAbilities Silverthorn where
 
 instance RunMessage Silverthorn where
   runMessage msg s@(Silverthorn a) = case msg of
-    UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discarded <- getsGame ((.encounterDiscard) . toAttrs . (.scenario))
-      for_ (take 1 [c | c <- discarded, cdCardType (toCardDef c) == EnemyType]) \c -> addToVictoryDisplay (CardIdTarget c.id)
+    UseCardAbility _ (isSource a -> True) 1 windows -> do
+      let destroyed = [eid | AttachedTo host <- [a.placement], Window _ (EnemyDestroyedByAttack eid attackers _) <- windows, host `elem` attackers]
+      for_ (take 1 [cid | Window _ (EnemyCardDestroyedByAttack eid cid) <- windows, eid `elem` destroyed]) \cid ->
+        addToVictoryDisplay (CardIdTarget cid)
       pure s
     _ -> Silverthorn <$> runMessage msg a
