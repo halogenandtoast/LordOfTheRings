@@ -11,7 +11,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.GameT (GameT)
-import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageTakenThisRound, KeepUnresolvedShadowCards))
+import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageTakenThisRound, KeepUnresolvedShadowCards, MaxDamage))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Queue (QueueT)
@@ -64,8 +64,11 @@ instance RunMessage EnemyAttrs where
     -- one that cannot take more than N damage each round, as Mumak: damage past what the
     -- round has left is lost, and what it has left is kept as a round effect
     PlaceTokens _ (isTarget attrs -> True) Damage n | n > 0 -> do
-      left <- foldr min maxBound . (\ms -> [k | DamageLimit k <- ms]) <$> getModifiers attrs
-      let placed = min n left
+      mods <- getModifiers attrs
+      let left = foldr min maxBound [k | DamageLimit k <- mods]
+          -- one that cannot have more than N damage, as City Guard
+          room = foldr min maxBound [max 0 (k - attrs.damage) | MaxDamage k <- mods]
+          placed = min room (min n left)
       when (left < maxBound)
         $ push
         $ CreateEffect

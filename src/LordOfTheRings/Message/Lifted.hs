@@ -152,6 +152,11 @@ removeProgressFromMainQuest source n = do
 placeProgressOnMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 placeProgressOnMainQuest source n = traverse_ (\q -> placeTokens source q Progress n) =<< getMainQuests
 
+-- | Place resources on the main quest, as The City of Ulfast's "place 1 resource on the main
+-- quest" reads.
+placeResourcesOnMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+placeResourcesOnMainQuest source n = traverse_ (\q -> placeResources source q n) =<< getMainQuests
+
 -- | Remove this much progress from each quest card in play, the main quest and each side
 -- quest, as "remove 2 progress from each quest card in play" reads.
 removeProgressFromEachQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()

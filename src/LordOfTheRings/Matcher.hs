@@ -16,7 +16,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
-import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, hitPointsOf, modifiedValue)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, engagementCostOf, hitPointsOf, modifiedValue)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -53,6 +53,9 @@ matchPlayer matcher player = case matcher of
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
   PlayerUsingErrata -> pure player.errata
+  PlayerWithThreatAtLeastEngagementCostOf eid -> getsGame (Map.lookup eid . (.enemies) . gameEntities) >>= \case
+    Nothing -> pure False
+    Just e -> (<=) <$> modifiedValue engagementCostOf (toTarget eid) e.engagementCost <*> getThreat player.id
   PlayerWithHiddenCards -> getsGame (notNull . Map.findWithDefault [] player.id . (.hiddenCards) . toAttrs . gameScenario)
 
 data Character = HeroCharacter Hero | AllyCharacter Ally
@@ -932,6 +935,11 @@ getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . e
 -- tokens on the main quest" reads.
 getMainQuestProgress :: HasGame m => m Int
 getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+
+-- | The resources on the main quest, as The City of Ulfast's "X is 1 more than the number of
+-- resources on the main quest" reads.
+getMainQuestResources :: HasGame m => m Int
+getMainQuestResources = getsGame (sum . map (countTokens Resource . questTokens . toAttrs) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
 
 -- | The card is in the victory display, as a player side quest's "while this quest is in
 -- the victory display" reads: built from its card there, it gives its modifiers.

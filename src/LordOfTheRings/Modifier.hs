@@ -294,6 +294,9 @@ data ModifierType
   | -- | on an enemy: the damage placed on it this round that counts against a limit of its
     -- own, as Dagnir's "cannot take more than X damage from non-quest effects each round"
     DamageTakenThisRound Int
+  | -- | on an enemy: it cannot have more than this much damage on it; damage past that is not
+    -- dealt, as The City of Ulfast's stages read of City Guard
+    MaxDamage Int
   | -- | on an objective ally in the staging area: it is committed to the current quest, as
     -- Celador reads
     CountsAsCommitted
