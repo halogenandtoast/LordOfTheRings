@@ -3243,5 +3243,50 @@
       "Kahliel lifted his hand and his companions fell silent. “We will ride to Gondor,” he said, “The Mûmakil dwell in this forest, along with the supplies we need. We will capture the beasts we need and ride them to Gondor.”",
       "To be continued in “The Mûmakil,” the first Adventure Pack in “The Haradrim” cycle."
     ]
+  },
+  "the-ghost-of-framsburg": {
+    "intro": [
+      "Thousands of years ago, Scatha the Worm attacked the Dwarves of Ered Mithrin and amassed a great hoard from their treasuries. He was one of the greatest Dragons in the Third Age of Middle-earth and the scourge of Wilderland, but even more renowned was Fram son of Frumgar, for he it was that slew the worm with his sword and claimed its treasure for his own.",
+      "Fram was lord of the Eotheod, and he used his wealth to improve the capital city of his people, which they afterward named Framsburg in his honor. It was rumored that the Dwarves demanded Fram return the treasure Scatha stole from them, but he refused. Instead, he made a necklace from the Dragon’s teeth and gave it to them with these words: “Jewels such as these you will not find in your treasuries, for they are hard to come by.” It is said that the Dwarves were so angered by this rebuke that they slew Fram in revenge.",
+      "In the years that followed, Eorl the Young would come to lead the Éothéod and bring them south to Rohan, whereafter they were known as the Rohirrim. Their old capital of Framsburg was abandoned and fell into ruin, and the tomb of their hero, Fram, lay hidden for millennia.",
+      "It was in Fram’s tomb that the heroes now hoped to find his legendary sword, Wormsbane. After their battle with Dagnir at Hrogar’s Hill, the adventurers learned their weapons were not sufficient to kill the Dragon. They hoped that the enchanted blade of Fram would be able to slay the beast. So they had traveled west from Hrogar’s Hill until they reached the river Anduin, then they followed the river north to Framsburg.",
+      "The ruins of the old city lay at the meeting of the Greylin and Langwell rivers. The Greylin ran down from the Grey Mountains to the north, and the Langwell flowed from the Misty Mountains to the west. When they joined, they formed the headwaters for the mighty Anduin that flowed far south where it served as a wide barrier between Gondor and Mordor, but here in the north the heroes were able to ford the river without too much trouble.",
+      "Once across, the adventurers made straight for the old keep. Age had taken its splendor and given it a haunted look, and in the failing light of the setting sun, the keep stood above the decayed remains of the dead city like a dark sentry, foreboding an evil fate for any who disturbed the memories of those long past. For a moment it seemed to the heroes that a faint blue light could be seen from a high window, but when they looked again the window was a black hole.",
+      "A hush fell on the company as they walked along the ancient road that led to the keep. They neither saw nor heard any sign of danger, yet their hands rested anxiously on their weapons as a feeling of dread grew with each step they took towards the dark hold. They walked in silence, their eyes darting this way and that as if expecting some sudden assault, until at last they reached the gate. Its empty archway stood open like the black mouth of some horrible beast, but they could see nothing inside.",
+      "They lingered there for a moment until one of the companions spoke: “I like not this place. There is some evil afoot here.”",
+      "“I feel it too,” said another, “Yet the sword we seek lies within.”",
+      "“I fear what else we will find,” answered the first.",
+      "“As do I. Let’s find out together,” came the reply. “Come. Follow me.”",
+      "Together the heroes entered in the dark keep in search of Fram’s tomb."
+    ],
+    "setup": [
+      "“The Ghost of Framsburg” is played with an encounter deck built with all the cards from the following encounter sets: The Ghost of Framsburg, Wild Creatures, and Afraid of the Dark (Wild Creatures and Afraid of the Dark can be found in The Wilds of Rhovanion deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Discover X",
+        "text": "Discover is a keyword in The Ghost of Framsburg. The discover keyword represents the heroes’ search for Fram’s tomb, as well as the unexpected dangers they encounter as they travel to the different locations in Framsburg. When a location with the discover keyword becomes the active location, the first player resolves the following steps in order: 1. Look at the top X cards of the encounter deck, where X is the active location’s discover value. 2. Choose 1 looked at objective with the Loot keyword and attach it to the active location as a guarded objective. 3. Randomly select 1 looked at card with the Hazard trait, reveal it and add it to the staging area. 4. Place any remaining looked at cards in the encounter discard pile. If there are less than X cards remaining in the encounter deck when resolving the discover keyword, shuffle the encounter discard pile into the encounter deck and continue resolving the discover keyword."
+      },
+      {
+        "title": "Loot",
+        "text": "Loot is a keyword that appears on some objective cards in The Ghost of Framsburg. Objectives with the loot keyword are valuable treasures that can only be discovered by exploring the different locations in Framsburg. A loot card can only enter play by resolving the discover keyword on a location. If a card with the loot keyword is revealed from the encounter deck, discard it and reveal another card from the top of the encounter deck."
+      }
+    ],
+    "resolution": [
+      "Beneath the haunted keep of Framsburg, in the dark of Fram’s tomb, the heroes were confronted by the shade of Fram himself. He regarded the heroes with lifeless eyes and the walls shook when he spoke: “Why do you come here? Have you come to steal my treasure? You cannot have it!” Such power and terror was in his voice that the heroes staggered and could not at first respond. The dead man howled with rage, and again the cave trembled. It seemed that he would attack when one of the companions managed to speak: “Wait! We don’t want your treasure! It is a sword we seek. Wilderland is again threatened by a mighty Dragon, and we need your sword to defeat it.”",
+      "“Lies!” shouted Fram. “You want the gold from Scatha’s hoard, but I won’t let you take it!”",
+      "“No my lord!” answered the hero. “There is no treasure left in Framsburg. It has been abandoned for millennia.”",
+      "“What? What trickery is this?” asked the shade, its voice losing some of its terror. “Where is my gold?”",
+      "“I know not,” replied the hero. “We found naught but this as we explored the keep,” he said holding up the Dragon-tooth necklace.",
+      "“Ahh!” cried the shade as if pained by the sight. “The necklace! I remember!” His lifeless eyes were fixed on the necklace as he spoke: “When the Dwarves heard Scatha was dead, they sent emissaries to demand their gold be returned, but they were haughty and I disliked their manner, so I gave them the necklace and naught else. With mocking words I threw it at their feet, thinking little of their wrath.”",
+      "“Then it was your pride that doomed you to this fate,” spoke the hero.",
+      "The shade seemed to contemplate this before it continued to speak: “Pride? Perhaps so. I thought that I had nothing to fear from the Dwarves. I had just slain the great worm, and they were guests in my house. But I underestimated the fire that burned within them. I thought them only a stunted people, but they set upon my guards in the night and slew me in my own keep.”",
+      "“It was an evil death, my lord,” the hero said, “but it would seem that you brought this curse on yourself by provoking them.”",
+      "Fram’s ghost appeared to diminish further with its reply, “You are right; it was pride and greed that doomed me to this fate. I will bear it no longer.”",
+      "Fram lifted his eyes from the necklace to regard the heroes, and as they looked back at him they no longer saw a powerful shade, but instead it seemed to them that an old, wizened man stood before them.",
+      "“You may have my sword. It lies within,” he said, pointing to the sarcophagus at the center of the tomb. “I repent of my arrogance. Forgive me.”",
+      "With those words, the shade of Fram closed his eyes and a peace washed over his face before he disappeared. The companions stood silently for a moment before opening his sarcophagus. Inside was the dusty skeleton of the fifth lord of the Éothéod. Chain mail hang from rotted bones, a crown rested atop its skull, and across its chest laid Wormsbane - broken in two pieces.",
+      "The story continues in “Mount Gundabad,” the fifth Adventure Pack in the Ered Mithrin cycle."
+    ]
   }
 }
