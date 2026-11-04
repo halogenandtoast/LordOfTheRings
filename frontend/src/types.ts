@@ -204,21 +204,47 @@ export interface TallyView {
 
 // a card the engine plays as another kind of card under its own code, showing its printed
 // face: Corsair Skirmisher taken as a Ship objective
-// and a quest stage printed as sides C and D, as Lost in Mirkwood's 2C, 3C and 4C
-const printedFace: Record<string, string> = { '12125-ship': '12125', '18073': '18073-c', '18075': '18075-c', '18077': '18077-c' }
+// and a quest stage printed as sides C and D, as Lost in Mirkwood's 2C, 3C and 4C, and
+// Woodmen Village and Haldan, and Wormsbane's Broken and Reforged sides, each printed under
+// its own number
+const printedFace: Record<string, string> = {
+  '12125-ship': '12125',
+  '18073': '18073-c',
+  '18075': '18075-c',
+  '18077': '18077-c',
+  '18069A': '18069',
+  '18069B': '18070',
+  '19143A': '19143',
+  '19143B': '19144',
+}
 // a quest stage whose B side is printed under the next number, as The Crossroads Fort's 1B,
-// or whose other side is D
-const printedBack: Record<string, string> = { '17105': '17106-b', '18073': '18073-d', '18075': '18075-d', '18077': '18077-d' }
+// or whose other side is D, or lettered C to H, as Mount Gundabad's stage 2 cards
+const printedBack: Record<string, string> = {
+  '17105': '17106-b',
+  '18073': '18073-d',
+  '18075': '18075-d',
+  '18077': '18077-d',
+  '19137': '19137-c',
+  '19138': '19138-d',
+  '19139': '19139-e',
+  '19140': '19140-f',
+  '19141': '19141-g',
+  '19142': '19142-h',
+}
 
-/** Cards whose side A is another card's: every Search for an Exit shares 03070's. */
-const sharedSideA: Record<string, string> = Object.fromEntries(
-  [
+/**
+ * Cards whose side A is another card's: every Search for an Exit shares 03070's, and every
+ * Mount Gundabad stage 2 the Exploring Gundabad side, 19135.
+ */
+const sharedSideA: Record<string, string> = Object.fromEntries([
+  ...[
     '03071', '03072', '03073', '03074', '03075', '03076',
     'khazad-dum-nightmare-flight-from-moria-002',
     'khazad-dum-nightmare-flight-from-moria-003',
     'khazad-dum-nightmare-flight-from-moria-004',
   ].map((code) => [code, '03070']),
-)
+  ...['19136', '19137', '19138', '19139', '19140', '19141', '19142'].map((code) => [code, '19135']),
+])
 // a nightmare quest stage printed only as its B side, its A side the standard stage's
 const sharedFront: Record<string, string> = {
   'the-nin-in-eilph-nightmare-the-nin-in-eilph-008': '08096',
