@@ -4,7 +4,7 @@ import LordOfTheRings.Card (CardType (EnemyType))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
+import LordOfTheRings.Helpers.ControlledLocation (firstPlayerTakesControl)
 import LordOfTheRings.Trait (Trait (Osgiliath))
 
 newtype RetakeTheCity = RetakeTheCity QuestAttrs
@@ -50,17 +50,7 @@ instance RunMessage RetakeTheCity where
       pure q
     CheckWindows ws | attrs.flipped -> do
       for_ [lid | Window When (Explored lid) <- ws] \lid ->
-        whenM (selectAny $ LocationWithId lid <> LocationWithTrait Osgiliath) do
-          cancelMatching \case
-            Discard (LocationTarget l) -> l == lid
-            AddToVictoryDisplay (LocationTarget l) -> l == lid
-            _ -> False
-          lead <- getLead
-          takeControlOfLocation lead lid
-      RetakeTheCity <$> runMessage msg attrs
-    -- an eliminated player's Osgiliath locations return to the staging area (rules sheet)
-    EliminatePlayer pid -> do
-      traverse_ returnToStaging =<< controlledLocations pid
+        whenM (selectAny $ LocationWithId lid <> LocationWithTrait Osgiliath) $ firstPlayerTakesControl lid
       RetakeTheCity <$> runMessage msg attrs
     _ -> RetakeTheCity <$> runMessage msg attrs
    where

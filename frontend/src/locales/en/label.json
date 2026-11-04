@@ -956,7 +956,7 @@
     "damage": "Deal {n} damage to one of your heroes"
   },
   "divideProgress": "Divide the progress between the active locations: how much goes on {location}?",
-  "osgiliath": {
+  "controlledLocation": {
     "returnHighest": "Return a location you control with the highest threat to the staging area",
     "returnLocation": "Return a location you control to the staging area"
   },

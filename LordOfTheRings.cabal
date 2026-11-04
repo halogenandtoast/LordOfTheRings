@@ -1263,6 +1263,7 @@ library
       LordOfTheRings.Helpers.IslandMap
       LordOfTheRings.Helpers.Modifiers
       LordOfTheRings.Helpers.Staging
+      LordOfTheRings.Helpers.ControlledLocation
       LordOfTheRings.Helpers.Window
       LordOfTheRings.Hero
       LordOfTheRings.Hero.AllyHero
