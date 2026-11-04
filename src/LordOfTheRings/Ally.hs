@@ -234,6 +234,10 @@ import LordOfTheRings.Ally.Cards.Leaflock
 import LordOfTheRings.Ally.Cards.HalfastGamgee
 import LordOfTheRings.Ally.Cards.BeorningGuardian
 import LordOfTheRings.Ally.Cards.PorosGarrison
+import LordOfTheRings.Ally.Cards.Wiglaf
+import LordOfTheRings.Ally.Cards.Meneldor
+import LordOfTheRings.Ally.Cards.WildStallion
+import LordOfTheRings.Ally.Cards.EagleOfTheNorth
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -500,5 +504,9 @@ allAllies =
         , SomeAllyCard halfastGamgee
         , SomeAllyCard beorningGuardian
         , SomeAllyCard porosGarrison
+        , SomeAllyCard wiglaf
+        , SomeAllyCard meneldor
+        , SomeAllyCard wildStallion
+        , SomeAllyCard eagleOfTheNorth
         ]
     ]

@@ -80,6 +80,7 @@ import LordOfTheRings.Hero.Cards.Kahliel
 import LordOfTheRings.Hero.Cards.Thurindir
 import LordOfTheRings.Hero.Cards.FolcoBoffin
 import LordOfTheRings.Hero.Cards.Quickbeam
+import LordOfTheRings.Hero.Cards.Haldan
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
@@ -189,5 +190,6 @@ allHeroes =
         , SomeHeroCard thurindir
         , SomeHeroCard folcoBoffin
         , SomeHeroCard quickbeam
+        , SomeHeroCard haldan
         ]
     ]

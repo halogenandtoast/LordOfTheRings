@@ -180,6 +180,10 @@ import LordOfTheRings.Attachment.Cards.DunedainPipe
 import LordOfTheRings.Attachment.Cards.DiligentNoble
 import LordOfTheRings.Attachment.Cards.LegacyBlade
 import LordOfTheRings.Attachment.Cards.Followed
+import LordOfTheRings.Attachment.Cards.AncestralArmor
+import LordOfTheRings.Attachment.Cards.Glamdring
+import LordOfTheRings.Attachment.Cards.WoodmensPath
+import LordOfTheRings.Attachment.Cards.WildStallion
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -397,5 +401,9 @@ allAttachments =
         , SomeAttachmentCard diligentNoble
         , SomeAttachmentCard legacyBlade
         , SomeAttachmentCard followed
+        , SomeAttachmentCard ancestralArmor
+        , SomeAttachmentCard glamdring
+        , SomeAttachmentCard woodmensPath
+        , SomeAttachmentCard wildStallion
         ]
     ]

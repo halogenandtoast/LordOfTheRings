@@ -83,6 +83,7 @@ allHeroCards =
       , thurindir
       , folcoBoffin
       , quickbeam
+      , haldan
       ]
 
 aragorn :: CardDef
@@ -519,4 +520,10 @@ quickbeam :: CardDef
 quickbeam =
   (hero "17135" "Quickbeam" Tactics 12 2 4 1 5)
     { cdCardTraits = setFromList [Ent]
+    }
+
+haldan :: CardDef
+haldan =
+  (hero "19026" "Haldan" Lore 10 2 3 1 4)
+    { cdCardTraits = setFromList [Woodman, Scout]
     }

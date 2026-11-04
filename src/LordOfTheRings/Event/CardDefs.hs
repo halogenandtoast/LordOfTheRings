@@ -213,6 +213,8 @@ allEventCards =
       , flightToTheSea
       , theDamBursts
       , windFromTheSea
+      , flightOfTheEagles
+      , southAway
       ]
 
 everVigilant :: CardDef
@@ -859,4 +861,13 @@ windFromTheSea =
     { cdCost = Nothing
     , cdKeywords = setFromList [Encounter]
     , cdShadowEffect = True
+    }
+
+flightOfTheEagles :: CardDef
+flightOfTheEagles = event "19032" "Flight of the Eagles" Tactics (StaticCost 0)
+
+southAway :: CardDef
+southAway =
+  (event "19034" "South Away!" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
     }

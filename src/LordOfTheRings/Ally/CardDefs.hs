@@ -209,6 +209,10 @@ allAllyCards =
       , leaflock
       , halfastGamgee
       , beorningGuardian
+      , wiglaf
+      , meneldor
+      , wildStallion
+      , eagleOfTheNorth
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1459,4 +1463,37 @@ beorningGuardian :: CardDef
 beorningGuardian =
   (ally "17138" "Beorning Guardian" Tactics (StaticCost 3) 0 3 1 3)
     { cdCardTraits = setFromList [Beorning]
+    }
+
+wiglaf :: CardDef
+wiglaf =
+  unique
+    (ally "19027" "Wiglaf" Leadership (StaticCost 5) 2 2 1 3)
+      { cdCardTraits = setFromList [Dale, Scout, Warrior]
+      }
+
+meneldor :: CardDef
+meneldor =
+  unique
+    (ally "19031" "Meneldor" Tactics (StaticCost 3) 2 2 1 2)
+      { cdCardTraits = setFromList [Creature, Eagle]
+      }
+
+-- | It attaches itself as a Mount: the Wild Stallion attachment builds it from this card.
+wildStallion :: CardDef
+wildStallion =
+  (ally "19033" "Wild Stallion" Spirit (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+-- | Encounter: set aside from its owner's deck, it enters play only as Flight of the
+-- Eagles shuffles it into the encounter deck and it is revealed. It has no cost. In the
+-- encounter discard pile it is treated as an encounter card (MEC67 rules).
+eagleOfTheNorth :: CardDef
+eagleOfTheNorth =
+  (ally "19035" "Eagle of the North" Neutral (StaticCost 0) 2 3 1 3)
+    { cdCost = Nothing
+    , cdCardTraits = setFromList [Creature, Eagle]
+    , cdKeywords = setFromList [Encounter, Surge]
+    , cdWhenRevealed = True
     }

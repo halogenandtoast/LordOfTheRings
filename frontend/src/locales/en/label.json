@@ -2493,5 +2493,25 @@
     "choose": "The Ephel Dúath: choose one for the ally you played",
     "exhaust": "Exhaust the ally",
     "threat": "Raise your threat by 1"
+  },
+  "wiglaf": {
+    "item": "Wiglaf: play an Item attachment on him for no cost",
+    "exhaust": "Wiglaf: exhaust an attachment on him to ready him"
+  },
+  "meneldor": {
+    "location": "Meneldor: place 2 progress on a location"
+  },
+  "flightOfTheEagles": {
+    "shuffle": "Flight of the Eagles: shuffle an Eagle of the North into the encounter deck"
+  },
+  "wildStallion": {
+    "ally": "Wild Stallion: attach it to an ally you control"
+  },
+  "southAway": {
+    "location": "South Away!: choose a location to make active"
+  },
+  "eagleOfTheNorth": {
+    "discard": "Eagle of the North: you may discard a non-unique enemy in the staging area",
+    "none": "Discard none"
   }
 }

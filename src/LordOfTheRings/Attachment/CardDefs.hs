@@ -2,6 +2,7 @@ module LordOfTheRings.Attachment.CardDefs (module LordOfTheRings.Attachment.Card
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
+import LordOfTheRings.Card.CardType (CardType (EnemyType, LocationType))
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
@@ -198,6 +199,9 @@ allAttachmentCards =
       , diligentNoble
       , legacyBlade
       , followed
+      , ancestralArmor
+      , glamdring
+      , woodmensPath
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1341,4 +1345,26 @@ followed :: CardDef
 followed =
   (attachment "17139" "Followed" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Condition, Trap]
+    }
+
+ancestralArmor :: CardDef
+ancestralArmor =
+  (attachment "19028" "Ancestral Armor" Leadership (StaticCost 4))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+glamdring :: CardDef
+glamdring =
+  unique
+    (attachment "19029" "Glamdring" Lore (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item, Weapon]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType], Restricted]
+      }
+
+woodmensPath :: CardDef
+woodmensPath =
+  (attachment "19030" "Woodmen's Path" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
     }
