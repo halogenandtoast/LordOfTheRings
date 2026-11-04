@@ -153,6 +153,8 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , theOneRingTheLandOfShadow
+      , theOneRingTheMountainOfFire
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1055,22 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- * The Lord of the Rings saga
+
+{- | A box's One Ring: put into play attached to the Ring-bearer as the scenario is set up
+(see 'LordOfTheRings.Message.Lifted.setUpFellowship'), never gathered with an encounter
+set.
+-}
+sagaOneRing :: CardCode -> CardDef
+sagaOneRing code =
+  unique
+    (emptyCardDef code "The One Ring" ObjectiveType)
+      { cdCardTraits = setFromList [Artifact, Item, Ring]
+      }
+
+theOneRingTheLandOfShadow :: CardDef
+theOneRingTheLandOfShadow = sagaOneRing "144063"
+
+theOneRingTheMountainOfFire :: CardDef
+theOneRingTheMountainOfFire = sagaOneRing "146065"
