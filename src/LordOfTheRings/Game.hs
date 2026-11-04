@@ -224,13 +224,19 @@ discardAtNoWillpower = do
     pushAll [Discard c | c <- doomed, Discard c `notElem` queued, LeavePlay (Discard c) `notElem` queued]
 
 {- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
-event in a hand, or being paid for, is built from its card to be asked.
+event in a hand, or being paid for, is built from its card to be asked. A player side quest
+in the victory display is built from its card too, for what it gives while there, as The
+Storm Comes reads "while this quest is in the victory display" (see 'inVictoryDisplay').
 -}
 withHandModifiers :: Game -> GameT Game
 withHandModifiers g = do
   MonoidalMap fromHands <- execWriterT do
     for_ g.players \player -> for_ player.hand (handCardModifiers player.id)
     for_ (gameActiveCosts g) \ac -> handCardModifiers ac.activeCostPlayer ac.activeCostCard
+    for_ (toAttrs g.scenario).victoryDisplay \case
+      PlayerCard pc | cdCardType (toCardDef pc) == PlayerSideQuestType, Just owner <- pc.owner ->
+        getModifiersFor $ overAttrs (\a -> a {questOwner = Just owner}) $ lookupQuest (toCardCode pc) pc.id (QuestId UUID.nil)
+      _ -> pure ()
   pure
     $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
 
@@ -825,7 +831,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
       <> [ PlaceTokens source target Damage n
-         , CheckWindows [mkAfter $ DealtDamage target n]
+         , CheckWindows $ mkAfter (DealtDamage target n) : [mkAfter $ DamagedByEnemyAttack target eid | EnemyAttackSource eid <- [source]]
          , CheckDefeated source target
          ]
       -- a hero it leaves standing is taken prisoner, as Torture Master's shadow reads
@@ -2330,7 +2336,14 @@ runGameMessage msg g = case msg of
     pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid
-    pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
+    -- "Limit 1 copy in the victory display": a copy defeated while one is there goes to its
+    -- owner's discard pile (The Sands of Harad rules)
+    let shown = any ((== toCardCode q) . toCardCode) (toAttrs g.scenario).victoryDisplay
+    case toCard q of
+      PlayerCard pc | shown && cdLimitOneInVictoryDisplay (toCardDef q) -> do
+        push $ PutInDiscard pc
+        pure $ g & entitiesL . questsL %~ Map.delete qid
+      card -> pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (card :))
   CompleteQuest qid -> do
     pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid <> [AdvanceQuest]
     -- a stage with victory points goes to the victory display, as Search for an Exit's

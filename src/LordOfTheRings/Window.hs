@@ -92,6 +92,8 @@ data WindowType
     PlayingEvent PlayerId CardId
   | -- | an attack the characters made dealt the enemy this much damage
     AttackDealtDamage EnemyId [Target] Int
+  | -- | the enemy's attack dealt the card damage, as Dwarven Shield answers
+    DamagedByEnemyAttack Target EnemyId
   | -- | the player let the enemy's attack go undefended
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it
