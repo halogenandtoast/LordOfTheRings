@@ -267,7 +267,9 @@ data ModifierType
   | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
     -- no encounter card's can be
     WhenRevealedCannotBeCanceled
-  | -- | on a shadow card: its shadow effect cannot be canceled
+  | -- | on a shadow card: its shadow effect cannot be canceled, as Deadly Waters makes a
+    -- treachery's; on the game: no shadow card's can be, as Stronghold Tower reads. A card
+    -- whose own text says so has 'cdShadowCannotBeCanceled', as Blazing Grip
     ShadowCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
@@ -676,12 +678,6 @@ data ModifierType
   | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
     -- Corsair Waters reads
     OneAllyEntersPlayPerRound
-  | -- | on the game: no player card may cancel a When Revealed effect, as Decrepit City
-    -- reads
-    CannotCancelWhenRevealedEffects
-  | -- | on the game: no player card may cancel a shadow effect, as Stronghold Tower and
-    -- Dark and Stormy read
-    CannotCancelShadowEffects
   | -- | on the game: the matching active location adds its threat to the staging area, as
     -- Flooded Ruins reads
     ActiveLocationsAddThreat LocationMatcher

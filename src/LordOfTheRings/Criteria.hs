@@ -6,7 +6,7 @@ import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
-import LordOfTheRings.Modifier (ModifierType (CannotCancelShadowEffects, CannotCancelWhenRevealedEffects))
+import LordOfTheRings.Modifier (ModifierType (ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled))
 import LordOfTheRings.Target (Target (GameTarget))
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
@@ -145,8 +145,8 @@ controlsAlly pid m = AllyExists (AllyControlledBy (PlayerWithId pid) <> m)
 
 -- | Nothing stops a player card cancelling a shadow effect.
 shadowEffectsCancelable :: Criterion
-shadowEffectsCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelShadowEffects
+shadowEffectsCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget ShadowCannotBeCanceled
 
 -- | Nothing stops a player card cancelling a When Revealed effect.
 whenRevealedCancelable :: Criterion
-whenRevealedCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelWhenRevealedEffects
+whenRevealedCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget WhenRevealedCannotBeCanceled

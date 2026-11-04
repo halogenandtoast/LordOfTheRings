@@ -4,6 +4,7 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Window (getWindowAbilities)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy)
@@ -17,7 +18,7 @@ import LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers (cardsUnderO
 import LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers (eliminationLowering)
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioQuestDeck), modeL, scenarioMeta, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, PhaseBegins))
+import LordOfTheRings.Window (Timing (After), Window (..), WindowType (AdvancedToStage, PhaseBegins, ShadowEffectTriggered), mkWhen)
 import TestImport
 
 nightmare :: Scenario -> (PlayerId -> GameT ()) -> IO ()
@@ -287,6 +288,21 @@ spec = describe "The Ring-maker Nightmare Decks" do
       card <- genEncounterCard Treacheries.quicksand
       run $ AttachShadowCard eid card
       getModifiers (CardIdTarget card.id) >>= (`shouldSatisfy` elem ShadowCannotBeCanceled)
+
+    it "Deadly Waters bars canceling a treachery's shadow effect, not an enemy's" . nightmare theNinInEilph $ \pid -> do
+      quest <- putQuestStage Quests.lostInTheSwanfleetDeadlyWaters
+      run $ Flip quest
+      answerAll pid
+      _ <- putAllyIntoPlay pid Allies.dunedainWatcher
+      eid <- engaged pid Enemies.deadlyMarshAdder
+      answerAll pid
+      treachery <- genEncounterCard Treacheries.quicksand
+      enemy <- genEncounterCard Enemies.kingSpider
+      run $ AttachShadowCard eid treachery
+      run $ AttachShadowCard eid enemy
+      let watcherFor c = not . null <$> getWindowAbilities [mkWhen $ ShadowEffectTriggered c.id eid]
+      watcherFor treachery `shouldReturn` False
+      watcherFor enemy `shouldReturn` True
 
     it "An Arduous Journey has allies enter play exhausted" . nightmare theNinInEilph $ \pid -> do
       quest <- putQuestStage Quests.throughTheMarshAnArduousJourney
