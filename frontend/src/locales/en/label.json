@@ -2032,7 +2032,8 @@
     "triggerLost": "Choose a Lost: effect in play to trigger"
   },
   "giantCaveCentipede": {
-    "shuffle": "Choose the card of highest cost in your hand to shuffle into your deck"
+    "shuffle": "Choose the card of highest cost in your hand to shuffle into your deck",
+    "player": "Choose the player whose staging area Giant Cave Centipede goes to"
   },
   "chillOfTheRoots": {
     "choose": "Chill of the Roots: discard your hand, or raise your threat by its size",
