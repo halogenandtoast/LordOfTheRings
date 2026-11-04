@@ -338,6 +338,8 @@ import LordOfTheRings.Quest.Cards.AHauntForBeasts
 import LordOfTheRings.Quest.Cards.OverwhelmingDarkness
 import LordOfTheRings.Quest.Cards.PassageIntoMordor
 import LordOfTheRings.Quest.Cards.AnEvilPlace
+import LordOfTheRings.Quest.Cards.InsideTheWalls
+import LordOfTheRings.Quest.Cards.DriveThemOut
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -708,5 +710,7 @@ allQuests =
         , SomeQuestCard overwhelmingDarkness
         , SomeQuestCard passageIntoMordor
         , SomeQuestCard anEvilPlace
+        , SomeQuestCard insideTheWalls
+        , SomeQuestCard driveThemOut
         ]
     ]

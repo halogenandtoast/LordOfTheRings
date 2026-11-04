@@ -509,6 +509,11 @@ import LordOfTheRings.Location.Cards.FieryChasm
 import LordOfTheRings.Location.Cards.HideousDeeps
 import LordOfTheRings.Location.Cards.OrcPassage
 import LordOfTheRings.Location.Cards.HillsideManor
+import LordOfTheRings.Location.Cards.GateOfDorwinion
+import LordOfTheRings.Location.Cards.ContestedSquare
+import LordOfTheRings.Location.Cards.RansackedHouse
+import LordOfTheRings.Location.Cards.MakeshiftFortification
+import LordOfTheRings.Location.Cards.CapturedTower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1064,5 +1069,10 @@ allLocations =
         , SomeLocationCard hideousDeeps
         , SomeLocationCard orcPassage
         , SomeLocationCard hillsideManor
+        , SomeLocationCard gateOfDorwinion
+        , SomeLocationCard contestedSquare
+        , SomeLocationCard ransackedHouse
+        , SomeLocationCard makeshiftFortification
+        , SomeLocationCard capturedTower
         ]
     ]

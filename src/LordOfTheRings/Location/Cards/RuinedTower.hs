@@ -3,7 +3,7 @@ module LordOfTheRings.Location.Cards.RuinedTower (ruinedTower) where
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (InPlayArea, StagingArea))
-import LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
+import LordOfTheRings.Helpers.ControlledLocation (losesControlOfAnother, returnToStaging)
 
 newtype RuinedTower = RuinedTower LocationAttrs
   deriving anyclass (IsLocation, HasAbilities)
@@ -22,8 +22,6 @@ instance HasModifiersFor RuinedTower where
 
 -- | Forced: After the player who controls Ruined Tower loses control of a location, return
 -- Ruined Tower to the staging area.
--- Read off the location moving out of its play area or being discarded from it; no window
--- opens for losing control.
 instance RunMessage RuinedTower where
   runMessage msg (RuinedTower a) = case msg of
     -- the players pay the travel cost together, so the first player, who decides to travel,
@@ -38,12 +36,7 @@ instance RunMessage RuinedTower where
           causedBy a
           targets able exhaust
       RuinedTower <$> runMessage msg a
-    PlaceLocation lid placement | lid /= a.id, controller@(InPlayArea _) <- a.placement -> do
-      from <- (.placement) <$> getLocation lid
-      when (from == controller && placement /= controller) $ returnToStaging a.id
-      RuinedTower <$> runMessage msg a
-    Discard (LocationTarget lid) | lid /= a.id, controller@(InPlayArea _) <- a.placement -> do
-      from <- (.placement) <$> getLocation lid
-      when (from == controller) $ returnToStaging a.id
+    _ | InPlayArea _ <- a.placement -> do
+      whenM (losesControlOfAnother a msg) $ returnToStaging a.id
       RuinedTower <$> runMessage msg a
     _ -> RuinedTower <$> runMessage msg a

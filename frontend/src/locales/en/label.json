@@ -956,7 +956,7 @@
     "damage": "Deal {n} damage to one of your heroes"
   },
   "divideProgress": "Divide the progress between the active locations: how much goes on {location}?",
-  "osgiliath": {
+  "controlledLocation": {
     "returnHighest": "Return a location you control with the highest threat to the staging area",
     "returnLocation": "Return a location you control to the staging area"
   },
@@ -2835,6 +2835,19 @@
   },
   "warriorsOfTheEast": {
     "attack": "Warriors of the East: choose a tied enemy to attack the first player"
+  },
+  "thaneUlchorWrathAndRuin": {
+    "choose": "Thane Ulchor: choose one",
+    "location": "Discard cards from the encounter deck until a location is discarded, and add it to the staging area",
+    "attack": "Thane Ulchor attacks you"
+  },
+  "championOfRhun": {
+    "choose": "Champion of Rhûn: return a location you control to the staging area, or he makes an attack",
+    "attack": "Champion of Rhûn makes an attack"
+  },
+  "caughtOffGuard": {
+    "choose": "Caught Off Guard: return a location you control to the staging area, or discard until an enemy",
+    "discard": "Discard cards from the encounter deck until an enemy is discarded, and put it into play engaged with you"
   },
   "painfulFatigue": {
     "exhaust": "Painful Fatigue: choose a character to exhaust and deal 1 damage to",

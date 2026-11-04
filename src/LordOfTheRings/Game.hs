@@ -941,8 +941,12 @@ runGameMessage msg g = case msg of
         encounter =
           [toTarget e | e <- toList g.entities.enemies, e.placement == StagingArea]
             <> [toTarget l | l <- toList g.entities.locations, l.placement `elem` [StagingArea, ActiveLocation]]
+        -- each location he controls returns to the staging area, its progress removed
+        -- (Assault on Osgiliath and Wrath and Ruin rules sheets)
+        controlled = [l | l <- toList g.entities.locations, l.placement == InPlayArea pid]
     pushAll
-      $ map (Discard . toTarget) heroes
+      $ concat [[RemoveTokens GameSource (toTarget l) Progress l.progress | l.progress > 0] <> [PlaceLocation (toId l) StagingArea] | l <- controlled]
+      <> map (Discard . toTarget) heroes
       <> map (Discard . toTarget) allies
       <> map (Discard . toTarget) owned
       <> ( if alone

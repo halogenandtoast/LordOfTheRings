@@ -527,6 +527,11 @@ allLocationCards =
       , hideousDeeps
       , orcPassage
       , hillsideManor
+      , gateOfDorwinion
+      , contestedSquare
+      , ransackedHouse
+      , makeshiftFortification
+      , capturedTower
       ]
 
 drownedTreasury :: CardDef
@@ -3899,3 +3904,23 @@ orcPassage = (location "22102" "Orc Passage" UnderTheAshMountains 2 4 4) {cdCard
 
 hillsideManor :: CardDef
 hillsideManor = (location "21037" "Hillside Manor" DangerInDorwinion 3 2 4) {cdCardTraits = setFromList [City]}
+-- | Its threat is X, 1 more than the number of locations the players control.
+gateOfDorwinion :: CardDef
+gateOfDorwinion = unique $ (location "22014" "Gate of Dorwinion" WrathAndRuin 1 0 5) {cdCardTraits = setFromList [City], cdVictoryPoints = Just 5}
+
+contestedSquare :: CardDef
+contestedSquare =
+  (location "22015" "Contested Square" WrathAndRuin 3 1 3)
+    { cdCardTraits = setFromList [City]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 2
+    }
+
+ransackedHouse :: CardDef
+ransackedHouse = (location "22016" "Ransacked House" WrathAndRuin 3 2 4) {cdCardTraits = setFromList [City]}
+
+makeshiftFortification :: CardDef
+makeshiftFortification = (location "22017" "Makeshift Fortification" WrathAndRuin 3 3 3) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 2}
+
+capturedTower :: CardDef
+capturedTower = (location "22018" "Captured Tower" WrathAndRuin 2 4 4) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 1}

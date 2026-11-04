@@ -489,6 +489,9 @@ allEnemyCards =
       , priestOfSauron
       , theGovernor
       , blackNumenoreanASitE
+      , thaneUlchorWrathAndRuin
+      , championOfRhun
+      , easterlingSkirmisher
       ]
 
 namelessThing :: CardDef
@@ -4006,3 +4009,22 @@ blackNumenoreanASitE =
       { cdCardTraits = setFromList [Cultist]
       , cdVictoryPoints = Just 6
       }
+-- | Wrath and Ruin's Thane Ulchor: the other versions of him have names of their own.
+thaneUlchorWrathAndRuin :: CardDef
+thaneUlchorWrathAndRuin =
+  unique
+    $ (enemy "22011" "Thane Ulchor" WrathAndRuin 1 50 1 6 4 9)
+      { cdCardTraits = setFromList [Mordor]
+      , cdVictoryPoints = Just 6
+      }
+
+championOfRhun :: CardDef
+championOfRhun = (enemy "22012" "Champion of Rhûn" WrathAndRuin 2 36 2 5 2 5) {cdCardTraits = setFromList [Easterling], cdShadowEffect = True}
+
+easterlingSkirmisher :: CardDef
+easterlingSkirmisher =
+  (enemy "22013" "Easterling Skirmisher" WrathAndRuin 4 30 1 4 1 3)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge, Archery 1]
+    , cdEasyModeQuantity = Just 2
+    }

@@ -408,6 +408,11 @@ import LordOfTheRings.Treachery.Cards.BurningReek
 import LordOfTheRings.Treachery.Cards.WrithingShadows
 import LordOfTheRings.Treachery.Cards.Disappearances
 import LordOfTheRings.Treachery.Cards.SecretCultist
+import LordOfTheRings.Treachery.Cards.Fury
+import LordOfTheRings.Treachery.Cards.CaughtOffGuard
+import LordOfTheRings.Treachery.Cards.StreetFightingWrathAndRuin
+import LordOfTheRings.Treachery.Cards.UnderSiege
+import LordOfTheRings.Treachery.Cards.UlchorsRevenge
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -843,5 +848,10 @@ allTreacherys =
         , SomeTreacheryCard writhingShadows
         , SomeTreacheryCard disappearances
         , SomeTreacheryCard secretCultist
+        , SomeTreacheryCard fury
+        , SomeTreacheryCard caughtOffGuard
+        , SomeTreacheryCard streetFightingWrathAndRuin
+        , SomeTreacheryCard underSiege
+        , SomeTreacheryCard ulchorsRevenge
         ]
     ]

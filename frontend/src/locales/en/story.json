@@ -3818,5 +3818,46 @@
       "“So, our defeated foe was himself a servant,” remarked the hero’s companion. “Then the real danger is in the Hills of Rhûn, and our work in Dorwinion remains unfinished.”",
       "“Indeed,” agreed the hero as she wiped the blood from her sword. “Let us hand this cultist over to the local authorities and go ourselves in search of this temple.”"
     ]
+  },
+  "wrath-and-ruin": {
+    "intro": [
+      "The land of Dorwinion seemed both bright and beautiful now that the shadow of Mordor had been driven back. A light breeze tickled the leaves on the trees, and sunlight danced on the waves that rolled in from the Sea of Rhûn as the heroes strolled through the land that they had rescued from darkness.",
+      "It had been a month since the heroes returned to Dorwinion with the captives they had rescued from the Temple of Sauron. They had not planned to stay for so long, but the people of Dorwinion insisted that the heroes rest and enjoy their hospitality after doing so much for their country. They stayed in the home of Niena and her husband, Torwald, whose life they had saved in that hideous temple.",
+      "The heroes insisted that they should pay their hosts for their lodging, but Niena would hear none of it. “My husband would have died if not for you,” she said. “It is the same for every family in the city, so it is our honor to have you here.” The heroes relented and expressed their thanks for her generosity.",
+      "In their hearts, the companions were glad that they were able to bring peace to Dorwinion after her people had endured such hardship, but in their thoughts there lingered still a shadow that disturbed their peace: Ulchor. Deadly servant of Sauron and the one responsible for the recent suffering of Dorwinion, whom the heroes thought died at their hands several years ago. At that time, they knew him as Lord Alcaron, a Gondorian nobleman. But he was revealed to be a Black Númenórean and a traitor, whose machinations nearly led to their deaths in the Morgul Vale.",
+      "It was believed that Lord Alcaron had died in that evil place; the heroes had just defeated him when he revealed his true name and allegiance to Mordor.",
+      "They were shocked to discover him in the Temple of Sauron, alive and empowered. Ulchor had used their momentary confusion to make his escape, and had promised dark vengeance upon them. This, the heroes knew, was not idle talk, so they had resolved to pursue him when they were rested.",
+      "“Then it is agreed,” spoke one of the heroes. “Tomorrow we begin the hunt for Thane Ulchor.”",
+      "“Aye,” said another. “I fear we have already waited overlong to begin the chase, but I doubt not that we will find him in time.”",
+      "“Very well. Then let us enjoy the hospitality of Dorwinion one more night before setting out in the morning.”",
+      "The heroes were soon comfortably asleep in the house of Niena, but in the dark of night they were woken by shouts and the frantic ringing of bells. From outside the house, they heard the ring of steel and the sound of fighting in the streets. They rushed outside to find an army of Easterlings invading the city, and at its head was a familiar man. Ulchor had come to them."
+    ],
+    "setup": [
+      "“Wrath and Ruin” is played with an encounter deck built with all the cards from the following encounter sets: Wrath and Ruin, Easterling Raiders, and City of Rhûn. (Easterling Raiders and City of Rhûn can be found in A Shadow in the East deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Controlling Locations",
+        "text": "Wrath and Ruin is a battle to liberate the ancient capital of Gondor from the forces of Mordor. To represent Gondor’s struggle to drive the enemy from every last corner of the ruined city, the players are instructed to take control of locations when they leave play.\n\nStage 1B and 2B both read: “Forced: When a location is explored, the first player takes control of it.” To take control of a location, the first player removes all progress from the just-explored location and places it in front of him in his play area, instead of discarding it. Locations under any player’s control are still in play. Their game text is active and they can be affected by card effects."
+      },
+      {
+        "title": "Losing Control of a Location",
+        "text": "There are many encounter card effects that force players to return locations they control to the staging area. Additionally, some of the locations have triggered effects that will cause players to return them to the staging area.\n\nWhen a player returns a location he controls to the staging area, he loses control of that location and removes all progress from it. If a player is eliminated from the game, each location controlled by that player is returned to the staging area."
+      },
+      {
+        "title": "Encounter Keyword",
+        "text": "Encounter is a new keyword that appears on player cards with an encounter card back, and it has the following rules:\n\n• Player cards with the encounter keyword cannot be included in any player’s deck because they have encounter card backs. Instead, when setting up a scenario, each player may set up to 3 cards with the encounter keyword aside, out of play. These cards do not count toward the player’s deck minimum of 50 cards.\n\n• Player cards with the encounter keyword have a dash (-) instead of a cost because they are never played from a player’s hand. Instead, player cards with the encounter keyword are meant to be shuffled into the encounter deck. In order to shuffle one of the set aside player cards into the encounter deck, a card effect must instruct a player to do so.\n\n• The “when revealed” effect on player cards with the encounter keyword cannot be canceled.\n\n• If a player card with the encounter keyword is dealt as a shadow card to an enemy, it is treated like an encounter card: place it in the encounter discard pile after resolving that enemy’s attack.\n\n• If a player card with the encounter keyword leaves play, it is removed from the game. Do not place it in a player’s discard pile or in the encounter deck discard pile."
+      }
+    ],
+    "resolution": [
+      "As the sun rose over the city of Dorwinion the next morning, black smoke rose to meet it. Many hands still struggled to put out fires, while others tended to the wounded. The weary heroes rested near the burned out ruins of Niena’s house. They had returned too late to save her and Torwald from the invading Easterlings.",
+      "It had been a devastating battle. Several of Ulchor’s spies still hiding in Dorwinion had slain the city guards and opened the gate to let his army inside the walls. It wasn’t until after the city was nearly overrun that the heroes knew they were under attack. Against all odds, they were able to rally the Dorwinions and beat back Ulchor’s army, driving them from the city. There was great loss on both sides, and as the rising sun revealed the extent of the devastation, the heroes felt it was a pyrrhic victory at best.",
+      "At first, they sat in silence; either too tired, or too grieved to speak. Many of the people they had saved from the Temple of Sauron now lay dead in the streets, or in the blackened ruins of their homes. The companions sat there brooding about the cruelty of it all until one of them finally spoke:",
+      "“Vengeance,” he said. “Vengeance I swear upon Ulchor. Vengeance for the people of Dorwinion. I will not rest until I find him and avenge the people he has slain.”",
+      "The others looked up to see the grim determination on their companion’s face. He rose to his feet and extended his hand, “Are you with me?”",
+      "One by one, they took his hand and rose to their feet, and with oaths they swore vengeance upon Ulchor.",
+      "“Oaths ye have sworn,” said their leader. “Let us leave now to fulfill them. Pack quickly! Our enemy flies East toward the city of Ulfast.”",
+      "The story continues in “The City of Ulfast,” the second Adventure Pack in “The Vengeance of Mordor” cycle."
+    ]
   }
 }

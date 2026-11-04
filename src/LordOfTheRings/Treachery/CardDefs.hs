@@ -418,6 +418,11 @@ allTreacheryCards =
       , writhingShadows
       , disappearances
       , secretCultist
+      , fury
+      , caughtOffGuard
+      , streetFightingWrathAndRuin
+      , underSiege
+      , ulchorsRevenge
       ]
 
 deepDeepDark :: CardDef
@@ -2624,6 +2629,27 @@ ransackedSupplies = (treachery "22103" "Ransacked Supplies" UnderTheAshMountains
 burningReek :: CardDef
 burningReek =
   (treachery "22104" "Burning Reek" UnderTheAshMountains 2)
+fury :: CardDef
+fury =
+  (treachery "22019" "Fury" WrathAndRuin 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+caughtOffGuard :: CardDef
+caughtOffGuard = (treachery "22020" "Caught Off Guard" WrathAndRuin 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- | Wrath and Ruin's, not Assault on Osgiliath's.
+streetFightingWrathAndRuin :: CardDef
+streetFightingWrathAndRuin = (treachery "22021" "Street Fighting" WrathAndRuin 2) {cdShadowEffect = True}
+
+underSiege :: CardDef
+underSiege = (treachery "22022" "Under Siege" WrathAndRuin 2) {cdShadowEffect = True}
+
+ulchorsRevenge :: CardDef
+ulchorsRevenge =
+  (treachery "22023" "Ulchor's Revenge" WrathAndRuin 2)
     { cdKeywords = setFromList [Doomed 1]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
