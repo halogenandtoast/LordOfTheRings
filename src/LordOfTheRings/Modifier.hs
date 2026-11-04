@@ -51,6 +51,10 @@ data ModifierType
     ImmuneToPlayerEvents
   | -- | on a location: no card effect, player or encounter, places or removes its tokens
     ImmuneToCardEffects
+  | -- | on a card in play: no encounter card's effect touches it but one with the trait, as
+    -- Gollum is immune to non-Gollum card effects ('ImmuneToPlayerCardEffects' for the
+    -- player cards' effects)
+    ImmuneToEncounterCardEffectsWithout Trait
   | -- | on a location: player card effects cannot place progress on it, as Retake the City
     -- reads for the staging area
     NoProgressFromPlayerCards

@@ -13,7 +13,7 @@ import Control.Monad.Writer.Strict (WriterT, runWriterT, tell)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToEncounterCard)
 import LordOfTheRings.I18n
 import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
 import LordOfTheRings.Id
@@ -159,8 +159,9 @@ targeting :: (ReverseQueue m, Targetable a) => a -> QueueT Message m () -> Choos
 targeting a action = do
   source <- ChooseT $ gets (.chooseSource)
   mods <- lift $ getModifiers a
+  g <- lift getGame
   let immune = case source of
-        Just s -> (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s) || (ImmuneToPlayerEvents `elem` mods && isEvent s)
+        Just s -> (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s) || (ImmuneToPlayerEvents `elem` mods && isEvent s) || immuneToEncounterCard g mods s
         Nothing -> False
       isEvent = \case CardIdTarget _ -> True; _ -> False
   unless immune do
