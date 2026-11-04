@@ -4067,6 +4067,7 @@ redhornFoothills = (location "142033" "Redhorn Foothills" TheRingGoesSouth 3 4 5
 
 eregion :: CardDef
 eregion = (location "142034" "Eregion" TheRingGoesSouth 3 3 4) {cdCardTraits = setFromList [Hills], cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
 -- * The Passage of the Marshes
 
 marsh :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> CardDef

@@ -4258,6 +4258,7 @@ howlingWarg :: CardDef
 howlingWarg =
   (enemy "142027" "Howling Warg" TheRingGoesSouth 4 38 2 3 2 4)
     { cdCardTraits = setFromList [Creature, Warg]
+    , cdShadowEffect = True
     }
 
 crebainFromDunland :: CardDef
@@ -4265,7 +4266,9 @@ crebainFromDunland =
   (enemy "142028" "Crebain from Dunland" TheRingGoesSouth 2 28 3 1 1 2)
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
     }
+
 -- * The Passage of the Marshes
 
 gropingDead :: CardDef

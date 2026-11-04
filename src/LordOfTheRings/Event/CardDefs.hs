@@ -1075,6 +1075,7 @@ flameOfAnor :: CardDef
 flameOfAnor =
   (event "142007" "Flame of Anor" Neutral (StaticCost 1))
     { cdCardTraits = setFromList [Spell]
+    , cdVictoryPoints = Just 1
     }
 
 entmoot :: CardDef

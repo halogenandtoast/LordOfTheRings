@@ -1861,6 +1861,7 @@ theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
 -- | No quest points: the players win as Doors of Durin is explored.
 theGatesOfMoria :: CardDef
 theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0
+
 -- * The Passage of the Marshes
 
 theTamingOfSmeagol :: CardDef

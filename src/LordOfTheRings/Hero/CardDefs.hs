@@ -684,6 +684,7 @@ aragornTheFlameOfTheWest :: CardDef
 aragornTheFlameOfTheWest =
   (fellowshipHero "145001" "Aragorn" 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
 
 beregondSpirit :: CardDef
@@ -771,6 +772,7 @@ theodenTheTreasonOfSaruman :: CardDef
 theodenTheTreasonOfSaruman =
   (hero "143002" "Théoden" Spirit 12 2 3 2 4)
     { cdCardTraits = setFromList [Rohan, Noble, Warrior]
+    , cdKeywords = setFromList [Sentinel]
     }
 
 treebeardTheTreasonOfSaruman :: CardDef
