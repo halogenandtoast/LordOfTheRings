@@ -432,6 +432,19 @@ spec = describe "The Uruk-hai" do
       -- the next scenario's heroes, the fallen one among them, cost nothing
       fmap (.threatPenalty) (seatHeroes [["01012", "01002", "01003"]] l) `shouldBe` Right l.threatPenalty
 
+    -- The card names no exception, so a hero Helm's Deep bars (Gríma) is still offered.
+    it "offers any fallen hero to Beyond All Hope, even one the next scenario bars" . campaignTestIn theUrukHai lotr {campaignLogFallenHeroes = ["07002"]} testDeck $ \pid -> do
+      setUp pid
+      toStageTwo pid
+      setPursuitTo 12
+      stage2 <- toTarget <$> getActiveQuest
+      run $ PlaceTokens GameSource stage2 Progress 12
+      chooseLabel "$label.theUrukHai.beyondAllHope" pid
+      chooseLabelStarting "$label.theUrukHai.fallenHero" pid
+      chooseTarget pid =<< hero "01007"
+      outcome `shouldReturn` Just Won
+      (.pool) <$> getCampaignLog `shouldReturn` [PoolCard "143019" Nothing (Just "07002")]
+
     it "earns nothing with the pursuit value above 25" . campaignTestIn theUrukHai lotr testDeck $ \pid -> do
       setUp pid
       toStageTwo pid

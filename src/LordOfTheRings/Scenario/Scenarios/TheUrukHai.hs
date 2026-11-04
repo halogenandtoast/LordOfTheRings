@@ -8,7 +8,6 @@ import LordOfTheRings.Hero.Types (Hero)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Matcher (getHero, getLead, getRemainingPlayers)
 import LordOfTheRings.Name (Name (..))
-import LordOfTheRings.Saga (sagaBarredTitles)
 import LordOfTheRings.Trait (Trait (Healer, Noble, Ranger, Warrior))
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -103,12 +102,11 @@ resolution l = do
     when (notNull fallen) $ labeled "theUrukHai.beyondAllHope" do
       choosePlayerM lead ScenarioTarget \pid -> beyondAllHope pid fallen
  where
-  -- the titles no player may use in Helm's Deep, and those of the heroes the players have
+  -- Any fallen hero, save one sharing a title with a hero in play (the uniqueness rule).
   restorable = do
     heroes <- getsGame (toList . (.entities.heroes))
     let taken = map (title . toCardCode) heroes
-        barred = sagaBarredTitles "helms-deep" True
-    pure [c | c <- l.fallenHeroes, title c `notElem` taken, title c `notElem` barred]
+    pure [c | c <- l.fallenHeroes, title c `notElem` taken]
 
 -- | Intimidation, Hands of a Healer, Forewarned and Leader of Men, each with the trait its
 -- Setup asks of its hero.
