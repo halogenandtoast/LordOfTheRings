@@ -214,5 +214,17 @@
   "racingTestFailed": "The players fail the racing test: {found} matching results, {required} required",
   "circuit": "The circuit",
   "theChallengers": "The Challengers",
-  "theWainriders": "The Wainriders"
+  "theWainriders": "The Wainriders",
+  "riddleArea": "The riddle area",
+  "toRiddleArea": "{card} goes to the riddle area",
+  "answersRiddle": "{player} answers the riddle on {card}",
+  "namesRiddle": "{player} names {item}",
+  "riddleMatches": "The riddle finds no match | The riddle finds 1 match | The riddle finds {count} matches",
+  "riddleItem": {
+    "ally": "ally",
+    "event": "event",
+    "attachment": "attachment",
+    "treasure": "treasure",
+    "cost": "cost {n}"
+  }
 }
