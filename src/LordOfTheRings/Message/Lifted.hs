@@ -1657,6 +1657,11 @@ rescueCharacter (toTarget -> c) = pushAll [RescueCharacter c, CheckWindows [Wind
 moveHeroToStagingArea :: ReverseQueue m => HeroId -> m ()
 moveHeroToStagingArea = push . MoveHeroToStagingArea
 
+-- | Another player takes control of the hero, the resources in its pool with it, as
+-- Desperate Alliance gives one.
+giveHeroTo :: ReverseQueue m => HeroId -> PlayerId -> m ()
+giveHeroTo hid = push . ChangeHeroController hid
+
 -- | The hero in the staging area returns to its owner's control, exhausted.
 takeControlOfHero :: ReverseQueue m => HeroId -> m ()
 takeControlOfHero = push . TakeControlOfHero

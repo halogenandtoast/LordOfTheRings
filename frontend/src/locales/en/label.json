@@ -394,6 +394,25 @@
     "damage": "Deal 4 damage to 1 enemy in play",
     "threat": "Reduce your threat by 5"
   },
+  "goblinCleaver": {
+    "chooseWeapon": "Goblin-cleaver: exhaust a Weapon attached to a hero you control"
+  },
+  "lateAdventurer": {
+    "chooseCharacter": "Late Adventurer: exhaust a character to commit it to the quest"
+  },
+  "straightShot": {
+    "chooseWeapon": "Straight Shot: exhaust a Weapon attachment"
+  },
+  "desperateAlliance": {
+    "chooseHero": "Desperate Alliance: choose a hero you control",
+    "choosePlayer": "Desperate Alliance: give that hero to which player until the end of the phase?"
+  },
+  "ravensOfTheMountain": {
+    "chooseHero": "Ravens of the Mountain: exhaust a hero you control"
+  },
+  "theLuckyNumber": {
+    "chooseCharacter": "The Lucky Number: choose a character other than Bilbo Baggins"
+  },
   "gandalfHobbit": {
     "discardOrStay": "Gandalf: discard him, or raise your threat by 2 to keep him",
     "raiseThreat": "Raise your threat by 2 to keep Gandalf",

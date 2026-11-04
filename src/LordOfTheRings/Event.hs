@@ -230,6 +230,15 @@ import LordOfTheRings.Event.Cards.SmokeAndThink
 import LordOfTheRings.Event.Cards.KnowledgeOfTheEnemy
 import LordOfTheRings.Event.Cards.WoodmanLore
 import LordOfTheRings.Event.Cards.ADesperatePath
+import LordOfTheRings.Event.Cards.GoblinCleaver
+import LordOfTheRings.Event.Cards.LateAdventurer
+import LordOfTheRings.Event.Cards.ExpectingMischief
+import LordOfTheRings.Event.Cards.BurglarBaggins
+import LordOfTheRings.Event.Cards.StraightShot
+import LordOfTheRings.Event.Cards.DesperateAlliance
+import LordOfTheRings.Event.Cards.RavensOfTheMountain
+import LordOfTheRings.Event.Cards.ToMeOMyKinsfolk
+import LordOfTheRings.Event.Cards.TheLuckyNumber
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -479,5 +488,14 @@ allEvents =
         , SomeEventCard knowledgeOfTheEnemy
         , SomeEventCard woodmanLore
         , SomeEventCard aDesperatePath
+        , SomeEventCard goblinCleaver
+        , SomeEventCard lateAdventurer
+        , SomeEventCard expectingMischief
+        , SomeEventCard burglarBaggins
+        , SomeEventCard straightShot
+        , SomeEventCard desperateAlliance
+        , SomeEventCard ravensOfTheMountain
+        , SomeEventCard toMeOMyKinsfolk
+        , SomeEventCard theLuckyNumber
         ]
     ]

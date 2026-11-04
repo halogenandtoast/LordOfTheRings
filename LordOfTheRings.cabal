@@ -1082,6 +1082,7 @@ library
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.BoomedAndTrumpeted
       LordOfTheRings.Event.Cards.BulwarkOfTheWest
+      LordOfTheRings.Event.Cards.BurglarBaggins
       LordOfTheRings.Event.Cards.BurstIntoSong
       LordOfTheRings.Event.Cards.CampfireTales
       LordOfTheRings.Event.Cards.CaptainsWisdom
@@ -1099,6 +1100,7 @@ library
       LordOfTheRings.Event.Cards.DeepKnowledge
       LordOfTheRings.Event.Cards.DefiantChallenge
       LordOfTheRings.Event.Cards.DescendantsOfKings
+      LordOfTheRings.Event.Cards.DesperateAlliance
       LordOfTheRings.Event.Cards.Determination
       LordOfTheRings.Event.Cards.DistantStars
       LordOfTheRings.Event.Cards.DontBeHasty
@@ -1115,6 +1117,7 @@ library
       LordOfTheRings.Event.Cards.ElwingsFlight
       LordOfTheRings.Event.Cards.EverOnward
       LordOfTheRings.Event.Cards.EverVigilant
+      LordOfTheRings.Event.Cards.ExpectingMischief
       LordOfTheRings.Event.Cards.ExpertTrackers
       LordOfTheRings.Event.Cards.FairAndPerilous
       LordOfTheRings.Event.Cards.FamiliarLands
@@ -1136,6 +1139,7 @@ library
       LordOfTheRings.Event.Cards.GaldorsCounsel
       LordOfTheRings.Event.Cards.GandalfsSearch
       LordOfTheRings.Event.Cards.GildorsCounsel
+      LordOfTheRings.Event.Cards.GoblinCleaver
       LordOfTheRings.Event.Cards.GondorianDiscipline
       LordOfTheRings.Event.Cards.GraveCairn
       LordOfTheRings.Event.Cards.GrimResolve
@@ -1167,6 +1171,7 @@ library
       LordOfTheRings.Event.Cards.KnifeWork
       LordOfTheRings.Event.Cards.KnowledgeOfTheEnemy
       LordOfTheRings.Event.Cards.LastStand
+      LordOfTheRings.Event.Cards.LateAdventurer
       LordOfTheRings.Event.Cards.LayOfNimrodel
       LordOfTheRings.Event.Cards.LeaveNoTrace
       LordOfTheRings.Event.Cards.LegacyOfNumenor
@@ -1206,6 +1211,7 @@ library
       LordOfTheRings.Event.Cards.RainOfArrows
       LordOfTheRings.Event.Cards.RallyingCry
       LordOfTheRings.Event.Cards.RangerSummons
+      LordOfTheRings.Event.Cards.RavensOfTheMountain
       LordOfTheRings.Event.Cards.RearGuard
       LordOfTheRings.Event.Cards.RecklessAttack
       LordOfTheRings.Event.Cards.Reforged
@@ -1229,6 +1235,7 @@ library
       LordOfTheRings.Event.Cards.SouthAway
       LordOfTheRings.Event.Cards.StandAndFight
       LordOfTheRings.Event.Cards.StandTogether
+      LordOfTheRings.Event.Cards.StraightShot
       LordOfTheRings.Event.Cards.StrengthOfArms
       LordOfTheRings.Event.Cards.StrengthOfWill
       LordOfTheRings.Event.Cards.StridersPath
@@ -1251,6 +1258,7 @@ library
       LordOfTheRings.Event.Cards.TheHiddenWay
       LordOfTheRings.Event.Cards.TheHousesOfHealing
       LordOfTheRings.Event.Cards.TheKingsReturn
+      LordOfTheRings.Event.Cards.TheLuckyNumber
       LordOfTheRings.Event.Cards.TheMasterRing
       LordOfTheRings.Event.Cards.TheMusterOfRohan
       LordOfTheRings.Event.Cards.TheRingOfPower
@@ -1267,6 +1275,7 @@ library
       LordOfTheRings.Event.Cards.TirelessHunters
       LordOfTheRings.Event.Cards.ToArms
       LordOfTheRings.Event.Cards.TomBombadillo
+      LordOfTheRings.Event.Cards.ToMeOMyKinsfolk
       LordOfTheRings.Event.Cards.ToTheEyrie
       LordOfTheRings.Event.Cards.TrafficFromDale
       LordOfTheRings.Event.Cards.TrainedForWar
