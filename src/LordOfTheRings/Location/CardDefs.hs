@@ -466,6 +466,10 @@ allLocationCards =
       , crumblingCavern
       , undergroundLake
       , woodmenVillage
+      , gateOfGundabad
+      , hilltopBattlements
+      , dwarvenWatchtower
+      , slopesOfGundabad
       ]
 
 drownedTreasury :: CardDef
@@ -3494,4 +3498,33 @@ woodmenVillage =
   (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
     { cdCardTraits = setFromList [Riverland]
     , cdOtherSide = Just "18069B"
+    }
+
+-- * The Fate of Wilderland
+
+gateOfGundabad :: CardDef
+gateOfGundabad =
+  unique
+    (location "19161" "Gate of Gundabad" TheFateOfWilderland 1 4 4)
+      { cdCardTraits = setFromList [Mountain, Gate]
+      , cdVictoryPoints = Just 1
+      }
+
+hilltopBattlements :: CardDef
+hilltopBattlements = (location "19162" "Hilltop Battlements" TheFateOfWilderland 3 3 3) {cdCardTraits = setFromList [Mountain, Fortification]}
+
+dwarvenWatchtower :: CardDef
+dwarvenWatchtower =
+  (location "19163" "Dwarven Watchtower" TheFateOfWilderland 3 2 5)
+    { cdCardTraits = setFromList [Mountain, Fortification]
+    , cdVictoryPoints = Just 2
+    }
+
+slopesOfGundabad :: CardDef
+slopesOfGundabad =
+  (location "19164" "Slopes of Gundabad" TheFateOfWilderland 3 2 4)
+    { cdCardTraits = setFromList [Mountain]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

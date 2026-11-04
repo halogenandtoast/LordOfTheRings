@@ -2532,5 +2532,28 @@
     "draw": "Draw 2 cards",
     "resource": "Add 1 resource to a hero's resource pool",
     "hero": "Ancient Treasury: choose a hero to gain 1 resource"
+  },
+  "theFateOfWilderland": {
+    "placeProgress": "Place 1 progress on The Goblins' Assault"
+  },
+  "urdugsElite": {
+    "choose": "Urdug's Elite: exhaust a character you control, or place 1 progress on The Goblins' Assault"
+  },
+  "fierceVanguard": {
+    "choose": "Fierce Vanguard: choose one",
+    "attack": "Fierce Vanguard gets +2 attack until the end of the round"
+  },
+  "wargRider": {
+    "choose": "Warg-rider: choose one",
+    "return": "Return Warg-rider to the staging area"
+  },
+  "dwarvenWatchtower": {
+    "choose": "Dwarven Watchtower: choose one",
+    "resource": "Place 1 resource on The Heroes' Defense",
+    "progress": "Remove 1 progress from The Goblins' Assault"
+  },
+  "slopesOfGundabad": {
+    "choose": "Slopes of Gundabad: choose one",
+    "reveal": "Reveal an additional encounter card"
   }
 }

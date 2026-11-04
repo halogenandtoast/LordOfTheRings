@@ -351,6 +351,9 @@ allQuestCards =
       , southronPursuit
       , orcPatrols
       , battleAtTheCrossings
+      , urdugsAssault
+      , outflanked
+      , theFinalPush
       ]
 
 theDrippingWalls :: CardDef
@@ -1390,3 +1393,14 @@ orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
 
 battleAtTheCrossings :: CardDef
 battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20
+
+-- * The Fate of Wilderland: no stage has quest points; the players win as Urdug is destroyed
+
+urdugsAssault :: CardDef
+urdugsAssault = (quest "19168" "Urdug's Assault" TheFateOfWilderland 1 0) {cdQuestPoints = Nothing}
+
+outflanked :: CardDef
+outflanked = (quest "19169" "Outflanked" TheFateOfWilderland 2 0) {cdQuestPoints = Nothing}
+
+theFinalPush :: CardDef
+theFinalPush = (quest "19170" "The Final Push" TheFateOfWilderland 3 0) {cdQuestPoints = Nothing}

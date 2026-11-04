@@ -267,6 +267,9 @@ import LordOfTheRings.Quest.Cards.DeadlyCreatures
 import LordOfTheRings.Quest.Cards.SouthronPursuit
 import LordOfTheRings.Quest.Cards.OrcPatrols
 import LordOfTheRings.Quest.Cards.BattleAtTheCrossings
+import LordOfTheRings.Quest.Cards.UrdugsAssault
+import LordOfTheRings.Quest.Cards.Outflanked
+import LordOfTheRings.Quest.Cards.TheFinalPush
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -566,5 +569,8 @@ allQuests =
         , SomeQuestCard southronPursuit
         , SomeQuestCard orcPatrols
         , SomeQuestCard battleAtTheCrossings
+        , SomeQuestCard urdugsAssault
+        , SomeQuestCard outflanked
+        , SomeQuestCard theFinalPush
         ]
     ]
