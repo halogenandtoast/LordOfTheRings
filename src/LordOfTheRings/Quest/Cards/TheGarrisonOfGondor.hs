@@ -4,7 +4,7 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase))
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -19,7 +19,7 @@ theGarrisonOfGondor = quest TheGarrisonOfGondor Cards.theGarrisonOfGondor
 
 -- | Skip the quest phase and combat phase.
 instance HasModifiersFor TheGarrisonOfGondor where
-  getModifiersFor (TheGarrisonOfGondor a) = when a.flipped $ modified a GameTarget [SkipQuestPhase, SkipCombatPhase]
+  getModifiersFor (TheGarrisonOfGondor a) = when a.flipped $ modified a GameTarget [SkipQuestPhase, SkipPhase CombatPhase]
 
 -- | Forced: At the end of the planning phase, place 1 progress here.
 instance HasAbilities TheGarrisonOfGondor where

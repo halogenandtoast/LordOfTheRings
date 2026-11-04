@@ -1551,11 +1551,9 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    skipped <- elem SkipCombatPhase <$> getModifiers GameTarget
     -- sharing the game split between staging areas, archery is resolved at each stage
     let archery = maybe [ResolveArchery] (\groups -> concat [[FocusArea lead, ResolveArchery] | (lead, _) <- groups] <> [FocusArea g.firstPlayer]) (stageGroups g)
-    unless skipped
-      $ pushAll
+    pushAll
       $ archery
       <> ( ResolveHinder
              : DealShadowCards

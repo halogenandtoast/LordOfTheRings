@@ -449,6 +449,7 @@ allQuestCards =
       , theTamingOfSmeagol
       , acrossTheMarshes
       , dontLookAtTheLights
+      , ambushTheMenOfHarad
       , intoMirkwood
       , lostInTheDarkFliesAndSpiders
       , capturedBySpiders
@@ -1929,6 +1930,10 @@ acrossTheMarshes = quest "144065" "Across the Marshes" ThePassageOfTheMarshes 2 
 dontLookAtTheLights :: CardDef
 dontLookAtTheLights = quest "144066" "Don't Look at the Lights!" ThePassageOfTheMarshes 3 24
 
+-- * Journey to the Cross-roads
+
+ambushTheMenOfHarad :: CardDef
+ambushTheMenOfHarad = quest "144068" "Ambush the Men of Harad" JourneyToTheCrossRoads 1 20
 -- * Flies and Spiders
 
 intoMirkwood :: CardDef

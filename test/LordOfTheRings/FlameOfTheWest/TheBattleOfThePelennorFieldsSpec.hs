@@ -16,7 +16,7 @@ import LordOfTheRings.Matcher (AllyMatcher (AllyControlledBy), LocationMatcher (
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost, Won))
-import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
+import LordOfTheRings.Phase (Phase (CombatPhase, PlanningPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theBattleOfThePelennorFields)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), setAsideL)
@@ -92,7 +92,7 @@ spec = describe "The Battle of the Pelennor Fields" do
       all ((== Just TheBattleOfThePelennorFields) . cdEncounterSet . toCardDef) attrs.encounterDeck `shouldBe` True
       copies Locations.pelennorField attrs.encounterDeck `shouldBe` 3
       map toCardCode attrs.questDeck `shouldBe` map toCardCode [Quests.retreatFromOsgiliath, Quests.theWhiteCityBesieged, Quests.rohanHasCome, Quests.fightingInTheFields]
-      getModifiers GameTarget >>= (`shouldSatisfy` \ms -> SkipQuestPhase `elem` ms && SkipCombatPhase `elem` ms)
+      getModifiers GameTarget >>= (`shouldSatisfy` \ms -> SkipQuestPhase `elem` ms && SkipPhase CombatPhase `elem` ms)
       (.owner) <$> getHeroWithCode (toCardCode Heroes.aragornTheFlameOfTheWest) `shouldReturn` pid
 
     it "lets the players attach the Esquires to different heroes" . pelennorTest $ \pid -> do

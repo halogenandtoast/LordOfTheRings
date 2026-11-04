@@ -734,13 +734,12 @@ data ModifierType
     NoThreatFromQuestingUnsuccessfully
   | -- | on the game: the quest phase is skipped, as Doom Hangs Still reads
     SkipQuestPhase
-  | -- | on the game: the combat phase is skipped, as The Garrison of Gondor reads
-    SkipCombatPhase
   | -- | on the game: questing unsuccessfully deals the difference as damage to the card
     -- instead of raising each player's threat, as the Assault keyword reads (MEC54 rules)
     QuestFailureDamagesInstead Target
-  | -- | on the game: the round goes on from the phase before to the one after, as The Great
-    -- River skips the encounter phase
+  | -- | on the game: the round goes on from the phase before to the one after, which does
+    -- not begin or end, as The Great River skips the encounter phase, Henneth Annûn the
+    -- encounter and combat phases, and The Garrison of Gondor the combat phase
     SkipPhase Phase
   | -- | on the game: a player with no cards in his deck is eliminated, as Deadmen's Dike's
     -- stages read

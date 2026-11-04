@@ -3346,6 +3346,44 @@
     "threatPenalty": "Take a permanent +2 starting threat penalty",
     "searchingEye": "Earn 1 copy of The Searching Eye"
   },
+  "foothillsOfEphelDuath": {
+    "engage": "Foothills of Ephel Dúath: choose an enemy in the staging area to engage"
+  },
+  "ithilienWoods": {
+    "ready": "Ithilien Woods: choose a character you control to ready"
+  },
+  "theDarkLordsSummons": {
+    "choose": "The Dark Lord's Summons: choose one",
+    "blackGate": "Place the lowest attack Harad enemy engaged with you facedown under The Black Gate",
+    "enemy": "The Dark Lord's Summons: choose the Harad enemy to place under The Black Gate",
+    "crossRoads": "Reveal the top card under The Cross-roads and put it into play engaged with you"
+  },
+  "fierceSouthrons": {
+    "choose": "Fierce Southrons: choose one",
+    "blackGate": "Place the lowest threat Harad enemy in the staging area facedown under The Black Gate and reveal an additional encounter card",
+    "enemy": "Fierce Southrons: choose the Harad enemy to place under The Black Gate",
+    "attack": "Each enemy in the staging area makes an immediate attack against you"
+  },
+  "marchingUpTheRoad": {
+    "choose": "Marching Up the Road: choose one",
+    "return": "Return an enemy engaged with you to the staging area",
+    "enemy": "Marching Up the Road: choose an enemy to return to the staging area",
+    "search": "Search the encounter deck and discard pile for a Harad enemy and put it into play engaged with you",
+    "searchFor": "Marching Up the Road: choose a Harad enemy to put into play engaged with you"
+  },
+  "arrowsThickInTheAir": {
+    "choose": "Arrows Thick in the Air: choose one",
+    "blackGate": "Place the attacking enemy facedown under The Black Gate after this attack",
+    "attack": "The attacking enemy makes an additional attack against you after this one"
+  },
+  "ambushTheMenOfHarad": {
+    "search": "Ambush the Men of Harad: choose a non-unique location to add to the staging area"
+  },
+  "journeyToTheCrossRoads": {
+    "setup": "Journey to the Cross-roads: choose one",
+    "resources": "Add 1 resource to each of your heroes' pools",
+    "braceOfConeys": "Shuffle 1 copy of Brace of Coneys into your deck"
+  },
   "fliesAndSpiders": {
     "givePoison": "Choose a character you control to give the poison to",
     "readyUnconscious": "Choose an unconscious character you control to ready"

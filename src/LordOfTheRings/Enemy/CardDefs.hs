@@ -522,6 +522,11 @@ allEnemyCards =
       , candleBearer
       , morgulWraith
       , gollumTheLandOfShadow
+      , manOfHarad
+      , captainOfHarad
+      , oliphaunt
+      , haradrimSoldier
+      , haradrimArcher
       , oldTomnoddy
       , crazyCob
       , lazyLob
@@ -4394,6 +4399,47 @@ gollumTheLandOfShadow =
       , cdOtherSide = Just "144076"
       }
 
+-- * Journey to the Cross-roads
+
+manOfHarad :: CardDef
+manOfHarad =
+  (enemy "144028" "Man of Harad" JourneyToTheCrossRoads 4 36 1 3 1 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Surge, Archery 1]
+    , cdShadowEffect = True
+    }
+
+captainOfHarad :: CardDef
+captainOfHarad =
+  (enemy "144029" "Captain of Harad" JourneyToTheCrossRoads 3 38 4 4 3 5)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- * Men of Harad (The Land of Shadow)
+
+oliphaunt :: CardDef
+oliphaunt =
+  (enemy "144056" "Oliphaunt" HaradSaga 3 44 3 6 2 9)
+    { cdCardTraits = setFromList [Harad, Creature]
+    , cdShadowEffect = True
+    }
+
+haradrimSoldier :: CardDef
+haradrimSoldier =
+  (enemy "144057" "Haradrim Soldier" HaradSaga 3 40 2 4 3 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+-- | Threat X and Archery X, X the number of players: gained from its own modifiers.
+haradrimArcher :: CardDef
+haradrimArcher =
+  (enemy "144058" "Haradrim Archer" HaradSaga 3 42 0 3 1 5)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
 -- * Flies and Spiders
 
 -- | A Spider of Mirkwood, with venom (The Hobbit: On the Doorstep rules insert).

@@ -375,6 +375,7 @@ import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
 import LordOfTheRings.Quest.Cards.TheTamingOfSmeagol
 import LordOfTheRings.Quest.Cards.AcrossTheMarshes
 import LordOfTheRings.Quest.Cards.DontLookAtTheLights
+import LordOfTheRings.Quest.Cards.AmbushTheMenOfHarad
 import LordOfTheRings.Quest.Cards.IntoMirkwood
 import LordOfTheRings.Quest.Cards.LostInTheDarkFliesAndSpiders
 import LordOfTheRings.Quest.Cards.CapturedBySpiders
@@ -827,6 +828,7 @@ allQuests =
         , SomeQuestCard theTamingOfSmeagol
         , SomeQuestCard acrossTheMarshes
         , SomeQuestCard dontLookAtTheLights
+        , SomeQuestCard ambushTheMenOfHarad
         , SomeQuestCard intoMirkwood
         , SomeQuestCard lostInTheDarkFliesAndSpiders
         , SomeQuestCard capturedBySpiders

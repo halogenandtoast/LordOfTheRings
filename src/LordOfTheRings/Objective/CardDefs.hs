@@ -158,6 +158,7 @@ allObjectiveCards =
       , theOneRingTheBlackRiders
       , theOneRingTheRoadDarkens
       , theOneRingTheLandOfShadow
+      , theBlackGate
       , theOneRingTheMountainOfFire
       , smeagolTheLandOfShadow
       , mistyMountainEagle
@@ -1345,3 +1346,7 @@ frodosChoice =
     { cdCardTraits = setFromList [Doom]
     , cdWhenRevealed = True
     }
+-- * Journey to the Cross-roads
+
+theBlackGate :: CardDef
+theBlackGate = unique (objective "144027" "The Black Gate" JourneyToTheCrossRoads 1)
