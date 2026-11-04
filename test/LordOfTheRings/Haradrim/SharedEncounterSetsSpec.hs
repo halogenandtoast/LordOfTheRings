@@ -111,6 +111,15 @@ spec = describe "The Sands of Harad's shared encounter sets" do
       victoryDisplay >>= (`shouldSatisfy` elem (toCardCode Quests.southronChampion))
       getModifiers main >>= (`shouldSatisfy` notElem CannotBeDefeated)
 
+    it "takes for the Champion only the enemy Southron Champion marked, not another Harad enemy with a resource" . gameTest $ \_ -> do
+      _ <- mainQuest 0
+      archer <- stage Enemies.southronArcher
+      run $ PlaceTokens GameSource (toTarget archer) Resource 1
+      threat <- getEnemyThreat archer
+      reveal [Quests.southronChampion, Enemies.southronSoldier]
+      getEnemyThreat archer `shouldReturn` threat
+      getModifiers archer >>= (`shouldSatisfy` notElem ImmuneToPlayerCardEffects)
+
     it "gives other Harad enemies +1 threat while Southron Captain is in the staging area" . gameTest $ \_ -> do
       archer <- stage Enemies.southronArcher
       _ <- stage Enemies.southronCaptain
