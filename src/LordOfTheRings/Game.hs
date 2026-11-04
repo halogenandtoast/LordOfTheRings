@@ -1715,9 +1715,13 @@ runGameMessage msg g = case msg of
   DeclareAttackers pid eid -> do
     -- then other players' ranged characters may join an attack on an enemy engaged with them
     engaged <- engagedForAttack pid eid
-    alone <- elem OnlyEngagedPlayerFights <$> getModifiers eid
-    others <- if engaged && not alone then filter (/= pid) <$> getPlayerOrder else pure []
-    attackers <- ownAttackers pid eid
+    mods <- getModifiers eid
+    let alone = OnlyEngagedPlayerFights `elem` mods
+        -- one attacker only: once he is declared, no other joins him
+        single = AttackedByOneCharacterAtATime `elem` mods
+    declared <- notNull <$> selectCharacters AttackingHero AttackingAlly
+    others <- if engaged && not alone && not single then filter (/= pid) <$> getPlayerOrder else pure []
+    attackers <- if single && declared then pure [] else ownAttackers pid eid
     push
       $ if null attackers
         then DeclareRangedAttackers pid eid others

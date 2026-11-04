@@ -290,6 +290,9 @@ data ModifierType
   | CannotBeHealed
   | -- | on an enemy: no character may attack it
     CannotBeAttacked
+  | -- | on an enemy: it can only be attacked by one character at a time, as Tom makes the
+    -- Troll enemies
+    AttackedByOneCharacterAtATime
   | -- | on an enemy: it has dealt damage this round, as Rock Adder reads
     DealtDamageThisRound
   | -- | on a character or enemy: damage dealt to it is canceled
