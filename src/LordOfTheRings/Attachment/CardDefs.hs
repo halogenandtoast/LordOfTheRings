@@ -258,6 +258,10 @@ allAttachmentCards =
       , guthwine
       , friendOfFriends
       , mrUnderhill
+      , tirelessRanger
+      , skilledHealer
+      , valiantWarrior
+      , nobleHero
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1832,3 +1836,24 @@ mrUnderhill =
     , cdKeywords = setFromList [Permanent]
     , cdVictoryPoints = Just 1
     }
+
+-- | A boon A Knife in the Dark's resolution hands out: "Setup: Attach to a hero." Its
+-- text is The Black Riders' player cards' to give.
+blackRidersTitle :: CardCode -> Name -> CardDef
+blackRidersTitle code name =
+  (unique $ attachment code name Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Title, Boon]
+    , cdKeywords = setFromList [Permanent]
+    }
+
+tirelessRanger :: CardDef
+tirelessRanger = blackRidersTitle "141018" "Tireless Ranger"
+
+skilledHealer :: CardDef
+skilledHealer = blackRidersTitle "141019" "Skilled Healer"
+
+valiantWarrior :: CardDef
+valiantWarrior = blackRidersTitle "141020" "Valiant Warrior"
+
+nobleHero :: CardDef
+nobleHero = blackRidersTitle "141021" "Noble Hero"
