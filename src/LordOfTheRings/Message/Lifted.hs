@@ -1459,6 +1459,19 @@ lookAtTopOfEncounterDeckMayDiscard pid source cType =
     when (cdCardType (toCardDef top) == cType) $ labeled "discardIt" $ discardTopOfEncounterDeck source 1
     labeled "leaveOnTop" (pure ())
 
+-- | An encounter card's effect discards each card in the player's hand, the encounter
+-- cards there among them, to the encounter discard pile, as Lost in the Wild's.
+discardEachCardInHand :: ReverseQueue m => PlayerId -> m ()
+discardEachCardInHand pid = do
+  player <- getPlayer pid
+  for_ player.hand \case
+    PlayerCard c -> push $ DiscardFromHand pid c.id
+    EncounterCard ec -> push $ DiscardEncounterCardFromHand pid ec.id
+
+-- | The encounter card leaves the player's hand for the encounter discard pile.
+discardEncounterCardFromHand :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+discardEncounterCardFromHand pid = push . DiscardEncounterCardFromHand pid . (.id)
+
 {- | The encounter card, by its card id, guards the player card, already taken from where it
 was, until it leaves play: a Guarded (X) attachment then attaches to an eligible card, as
 Dragon Hoard guards an Artifact (AttachWhenFree); a held card goes back to its owner's

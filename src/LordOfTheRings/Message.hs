@@ -318,6 +318,9 @@ data Message
   | -- | the card leaves the Caves deck, as a search takes it
     TakeFromCavesDeck EncounterCard
   | ShuffleCavesDeck
+  | -- | an encounter card in the player's hand is discarded, to the encounter discard pile,
+    -- by an encounter card's effect, as Lost in the Wild's
+    DiscardEncounterCardFromHand PlayerId CardId
   | -- | the card leaves play for good; an objective, as Book of Mazarbul, or a location
     RemoveFromGame Target
   | -- | a stage leaves the quest deck unplayed, as exploring The Banks removes stage 2

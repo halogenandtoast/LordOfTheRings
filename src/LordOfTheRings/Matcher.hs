@@ -993,6 +993,10 @@ guardingACard cid target = do
 playerCardsGuardedBy :: HasGame m => CardId -> m [PlayerCard]
 playerCardsGuardedBy cid = getsGame (map snd . Map.findWithDefault [] cid . scenarioGuardedPlayerCards . toAttrs . gameScenario)
 
+-- | The player whose hand holds the card, as a treachery there reads it (Lost in the Wild).
+handHolding :: HasGame m => CardId -> m (Maybe PlayerId)
+handHolding cid = getsGame (fmap toId . find (any ((== cid) . (.id)) . (.hand)) . toList . gamePlayers)
+
 -- | The characters the encounter card guards as captives (see 'GuardCharacter').
 charactersGuardedBy :: HasGame m => CardId -> m [Target]
 charactersGuardedBy cid = do

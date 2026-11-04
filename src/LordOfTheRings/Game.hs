@@ -601,12 +601,24 @@ leavingCharacter g = \case
     AllyTarget aid -> Map.member aid g.entities.allies
     _ -> False
 
+{- | A treachery in a player's hand is out of play, but its Forced effects there answer the
+windows, as Lost in the Wild's: its card's module runs through a temporary instance of it,
+as a shadow card's does.
+-}
+runInHand :: Message -> Game -> GameT ()
+runInHand msg g = case msg of
+  CheckWindows _ ->
+    for_ [ec | p <- toList g.players, EncounterCard ec <- p.hand, cdCardType (toCardDef ec) == TreacheryType] \ec ->
+      void . runEach msg . createTreachery ec =<< getRandom
+  _ -> pure ()
+
 runInPlay :: Message -> Game -> GameT Game
 runInPlay msg g =
   announce msg
     >> traverseOf (playersL . traverse) (runEach msg) g
     >>= traverseOf (activeCostsL . traverse) (runEach msg)
     >>= traverseOf entitiesL (runEntities msg)
+    >>= (\g' -> g' <$ runInHand msg g')
     >>= traverseOf scenarioL (runEach msg)
     >>= runGameMessage msg
     >>= \g' -> do

@@ -387,6 +387,10 @@ runPlayer msg player = case msg of
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :) & setAsideCardsL %~ filter ((/= card.id) . (.id))
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
+    DiscardEncounterCardFromHand pid cid | pid == player.id -> do
+      let discarded = [ec | EncounterCard ec <- player.hand, ec.id == cid]
+      pushWhen (notNull discarded) $ AddToEncounterDiscard discarded
+      pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardFromHand pid cid | pid == player.id -> do
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       let discarded = if barred then [] else filter ((== cid) . (.id)) (discardableHand player)

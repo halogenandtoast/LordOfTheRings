@@ -10,10 +10,11 @@ import LordOfTheRings.Keyword (Keyword (Deep))
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (EnemyMatcher (..), playerCardsGuardedBy, select)
-import LordOfTheRings.Message.Lifted (arrangeTopOfCavesDeck)
+import LordOfTheRings.Message.Lifted (arrangeTopOfCavesDeck, discardEachCardInHand)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Placement (GuardRelease (..))
 import LordOfTheRings.Scenario.Types (cavesDeckL)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
 -- | An enemy in the staging area, and its card.
@@ -103,3 +104,14 @@ spec = describe "The Ered Mithrin engine" do
     run $ Run []
     chooseTarget pid (CardIdTarget b.id)
     map (.id) <$> getCavesDeck `shouldReturn` map (.id) [b, c, a]
+
+  it "keeps an encounter card in hand from a player's discards, but an encounter effect discards it" . gameTest $ \pid -> do
+    ec <- genEncounterCard Treacheries.caughtInAWeb
+    g <- getGame
+    putGame $ g & playersL . ix pid . handL %~ (EncounterCard ec :)
+    run $ ChooseAndDiscardFromHand pid GameSource 1
+    length . (.hand) <$> getPlayer pid `shouldReturn` 1
+    runQueueT $ discardEachCardInHand pid
+    run $ Run []
+    length . (.hand) <$> getPlayer pid `shouldReturn` 0
+    map (.id) <$> getEncounterDiscard `shouldReturn` [ec.id]
