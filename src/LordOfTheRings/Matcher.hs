@@ -376,7 +376,14 @@ player has the sphere's resources to pay for and the unique rule lets into play,
 Stand and Fight puts into play.
 -}
 affordableDiscardedAllies :: HasGame m => PlayerId -> Sphere -> m [(PlayerId, PlayerCard, Int)]
-affordableDiscardedAllies pid sphere = do
+affordableDiscardedAllies = affordableDiscarded AllyType
+
+-- | As 'affordableDiscardedAllies', attachments, as Reforged plays one.
+affordableDiscardedAttachments :: HasGame m => PlayerId -> Sphere -> m [(PlayerId, PlayerCard, Int)]
+affordableDiscardedAttachments = affordableDiscarded AttachmentType
+
+affordableDiscarded :: HasGame m => CardType -> PlayerId -> Sphere -> m [(PlayerId, PlayerCard, Int)]
+affordableDiscarded cType pid sphere = do
   spend <- getResourcesOfSphere pid sphere
   order <- getPlayerOrder
   fmap concat $ for order \owner -> do
@@ -384,7 +391,7 @@ affordableDiscardedAllies pid sphere = do
     pure
       [ (owner, pc, x)
       | PlayerCard pc <- discarded
-      , cdCardType (toCardDef pc) == AllyType
+      , cdCardType (toCardDef pc) == cType
       , -- neutral cards belong to no sphere, so "any sphere" leaves them out (FAQ)
       cdSphere (toCardDef pc) /= Just Neutral
       , Just (StaticCost x) <- [cdCost (toCardDef pc)]

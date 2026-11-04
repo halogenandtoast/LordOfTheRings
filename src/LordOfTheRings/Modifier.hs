@@ -317,6 +317,9 @@ data ModifierType
     PlayedThisPhase CardCode
   | -- | on a card: the card type its controller named
     NamedCardType CardType
+  | -- | on a card: an effect chose it, its source reading it back later, as the enemy Bilbo
+    -- Baggins chose to damage if the players quest successfully
+    ChosenByEffect
   | -- | on an ally, as its card id: it returns to its owner's hand once the players quest
     -- successfully this phase, as Bofur's
     ReturnToHandIfQuestedSuccessfully

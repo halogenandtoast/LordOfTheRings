@@ -209,6 +209,12 @@ allAllyCards =
       , leaflock
       , halfastGamgee
       , beorningGuardian
+      , greenwoodDefender
+      , gafferGamgee
+      , ereborToymaker
+      , messengerRaven
+      , loyalHound
+      , bywaterShirriff
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1458,4 +1464,41 @@ beorningGuardian :: CardDef
 beorningGuardian =
   (ally "17138" "Beorning Guardian" Tactics (StaticCost 3) 0 3 1 3)
     { cdCardTraits = setFromList [Beorning]
+    }
+
+greenwoodDefender :: CardDef
+greenwoodDefender =
+  (ally "19113" "Greenwood Defender" Leadership (StaticCost 3) 0 0 2 3)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+gafferGamgee :: CardDef
+gafferGamgee =
+  unique
+    (ally "19115" "Gaffer Gamgee" Lore (StaticCost 2) 1 1 0 1)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+ereborToymaker :: CardDef
+ereborToymaker =
+  (ally "19119" "Erebor Toymaker" Spirit (StaticCost 3) 2 0 0 2)
+    { cdCardTraits = setFromList [Dwarf, Craftsman]
+    }
+
+messengerRaven :: CardDef
+messengerRaven =
+  (ally "19146" "Messenger Raven" Leadership (StaticCost 1) 1 0 0 1)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+loyalHound :: CardDef
+loyalHound =
+  (ally "19148" "Loyal Hound" Lore (StaticCost 2) 1 2 0 2)
+    { cdCardTraits = setFromList [Creature]
+    }
+
+bywaterShirriff :: CardDef
+bywaterShirriff =
+  (ally "19150" "Bywater Shirriff" Tactics (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Hobbit, Shirriff]
     }

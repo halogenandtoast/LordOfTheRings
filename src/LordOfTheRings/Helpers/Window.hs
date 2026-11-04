@@ -12,6 +12,7 @@ import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Campaign (recorded)
+import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
@@ -26,6 +27,7 @@ import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
   ModifierType (CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
+  Modifier (..),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -209,6 +211,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     maybe False ((== code) . toCardCode) . Map.lookup oid . (.objectives) <$> getsGame gameEntities
   (MatchingEnemyEngagedWindow t m, EnemyEngaged eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyDealtDamageWindow t m, DealtDamage (EnemyTarget eid) _) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingHeroDealtDamageWindow t m, DealtDamage (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
@@ -304,6 +307,8 @@ passesCriteria = \case
     anyM passesUnique cards
   ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
   AffordableAllyInDiscard pid sphere -> notNull <$> affordableDiscardedAllies pid sphere
+  AffordableAttachmentInDiscard pid sphere ->
+    anyM (\(_, pc, _) -> notNull <$> cardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid sphere
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
   BeforeCommitting ->
     andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]
@@ -314,6 +319,8 @@ passesCriteria = \case
   NotCriterion c -> not <$> passesCriteria c
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
+  ModifierFrom source m ->
+    getsGame (any (any \x -> modifierSource x == source && modifierType x == m) . toList . gameModifiers)
   CardPlayedThisRound code -> any (\(_, c, _) -> c == code) <$> cardsPlayedThisRound
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs

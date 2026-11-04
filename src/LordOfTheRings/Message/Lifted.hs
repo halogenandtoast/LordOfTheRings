@@ -1131,6 +1131,13 @@ playFromDeckAtNoCost pid card = do
   removeFromDeck pid card.id
   pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
 
+-- | The card leaves its owner's discard pile and the player plays it without paying its
+-- cost, as Reforged plays an attachment from any player's.
+playFromDiscardAtNoCost :: ReverseQueue m => PlayerId -> PlayerId -> PlayerCard -> m ()
+playFromDiscardAtNoCost owner pid card = do
+  removeFromDiscard owner card.id
+  pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
+
 {- | The character attacks the enemy, wherever it is, as an effect declares it an
 attacker; its attack raised by the bonus for that attack alone.
 -}
@@ -1945,6 +1952,16 @@ updateCampaignLog = push . UpdateCampaignLog
 -- once the players choose it, or Recurring Nightmare.
 shuffleIntoDeck :: (ReverseQueue m, IsCard card) => PlayerId -> card -> m ()
 shuffleIntoDeck pid = push . ShuffleCardIntoDeck pid . toCard
+
+-- | A player card in the player's hand is shuffled into its owner's deck, as Drinking Song
+-- shuffles a hand.
+shuffleFromHandIntoOwnersDeck :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
+shuffleFromHandIntoOwnersDeck pid card = push $ ShuffleFromHandIntoOwnersDeck pid card.id
+
+-- | The attachment card, from out of play, is put into play under the player, not played:
+-- a Guarded (X) one is guarded first, as The King's Return puts one into play.
+putAttachmentIntoPlay :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+putAttachmentIntoPlay pid = push . PutAttachmentIntoPlay pid
 
 -- | The card leaves the player's hand for out of play, as Recurring Nightmare does for
 -- the staging area.

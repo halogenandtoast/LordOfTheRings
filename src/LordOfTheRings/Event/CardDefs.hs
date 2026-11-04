@@ -213,6 +213,13 @@ allEventCards =
       , flightToTheSea
       , theDamBursts
       , windFromTheSea
+      , elfGuide
+      , drinkingSong
+      , theShirefolk
+      , theKingsReturn
+      , theGreatHunt
+      , gwaihirsDebt
+      , reforged
       ]
 
 everVigilant :: CardDef
@@ -860,3 +867,24 @@ windFromTheSea =
     , cdKeywords = setFromList [Encounter]
     , cdShadowEffect = True
     }
+
+elfGuide :: CardDef
+elfGuide = event "19114" "Elf Guide" Leadership (StaticCost 0)
+
+drinkingSong :: CardDef
+drinkingSong = (event "19116" "Drinking Song" Lore (StaticCost 0)) {cdCardTraits = setFromList [Song]}
+
+theShirefolk :: CardDef
+theShirefolk = event "19121" "The Shirefolk" Neutral (StaticCost 0)
+
+theKingsReturn :: CardDef
+theKingsReturn = (event "19147" "The King's Return" Leadership (StaticCost 1)) {cdCardTraits = setFromList [Song]}
+
+theGreatHunt :: CardDef
+theGreatHunt = (event "19149" "The Great Hunt" Lore (StaticCost 3)) {cdDistinctPayers = Just 3}
+
+gwaihirsDebt :: CardDef
+gwaihirsDebt = event "19151" "Gwaihir's Debt" Tactics (StaticCost 1)
+
+reforged :: CardDef
+reforged = event "19153" "Reforged" Spirit DynamicCost
