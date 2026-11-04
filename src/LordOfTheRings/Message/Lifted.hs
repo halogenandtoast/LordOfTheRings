@@ -975,6 +975,11 @@ travelWithoutCost lid = do
   makeActive lid
   push $ CheckWindows [Window After (Traveled lid)]
 
+-- | The location's Travel effect resolves, though the players do not travel there, as
+-- Under Guard reads "resolve the Travel effect on the active location".
+resolveTravelEffect :: ReverseQueue m => LocationId -> m ()
+resolveTravelEffect = push . ResolveTravelEffect
+
 -- | The quest deck goes back to the stage, followed by the stages given.
 resetToStage :: ReverseQueue m => EncounterCard -> [EncounterCard] -> m ()
 resetToStage card = push . ResetToStage card

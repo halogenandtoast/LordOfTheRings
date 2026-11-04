@@ -479,6 +479,10 @@ runGame msg g = case msg of
   TravelTo _ -> do
     push $ DoStep 1 msg
     runGame'' msg g
+  -- the location's Travel effect without traveling, as Under Guard resolves the active
+  -- location's: only its own card reads the 'TravelTo' its effect answers, and no one
+  -- travels, so nothing else that answers traveling does
+  ResolveTravelEffect lid -> traverseOf (entitiesL . locationsL . ix lid) (runEach (TravelTo lid)) g
   -- an enemy that engages only one player, as Chief Turch the first player, engages him
   -- whoever it would have engaged
   EngageEnemy pid eid -> do

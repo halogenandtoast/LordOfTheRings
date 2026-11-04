@@ -514,6 +514,9 @@ data Message
   | QuestResolution
   | PlaceProgressOnQuest Int
   | TravelTo LocationId
+  | -- | the location's Travel effect resolves without the players traveling there, as
+    -- Under Guard resolves the active location's: its card reads it as 'TravelTo'
+    ResolveTravelEffect LocationId
   | OptionalEngagement PlayerId
   | EngagementCheck PlayerId Int
   | -- | an enemy with ambush entering play: the first player in turn order whose threat
