@@ -46,7 +46,7 @@ import LordOfTheRings.Queue
 import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Question (Question (QuestionLabel))
 import LordOfTheRings.Source
-import LordOfTheRings.Sphere (Sphere)
+import LordOfTheRings.Sphere (Sphere (Neutral))
 import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Window (
@@ -2020,7 +2020,10 @@ groupMaySpendOr pid source sphere n onSpend onDecline = do
   total <- sum <$> (traverse (`getResourcesOfSphere` sphere) =<< getRemainingPlayers)
   if total >= n
     then chooseOneM pid do
-      questionLabeledWith "groupMaySpend" [intVar "count" n, textVar "sphere" (toLower $ tshow sphere)]
+      -- resources of any sphere, as Wilyador asks, name no sphere
+      if sphere == Neutral
+        then questionLabeledWith "groupMaySpendAny" [intVar "count" n]
+        else questionLabeledWith "groupMaySpend" [intVar "count" n, textVar "sphere" (toLower $ tshow sphere)]
       causedBy source
       labeled "groupSpend" do
         spendGroupResources pid sphere n

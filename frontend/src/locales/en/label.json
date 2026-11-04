@@ -329,6 +329,7 @@
   "exhaustToReduceCost": "Exhaust a character to lower the cost by 1 ({count} left)",
   "payRemainingCost": "Pay the rest",
   "groupMaySpend": "The players as a group may spend {count} {sphere} resources",
+  "groupMaySpendAny": "The players as a group may spend {count} resources",
   "groupSpend": "Spend them",
   "groupDoNotSpend": "Don't spend",
   "giveDoomed": "Give it Doomed {count} as you play it?",
