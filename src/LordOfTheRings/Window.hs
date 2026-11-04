@@ -76,6 +76,9 @@ data WindowType
   | QuestedSuccessfully
   | -- | the progress from questing successfully has been placed
     PlacedProgressFromQuesting
+  | -- | the quest has been resolved, whatever its result, as "after resolving the quest"
+    -- reads
+    QuestResolved
   | -- | an attack the character made has resolved
     AttackedEnemy Target EnemyId
   | -- | an attack the character defended has resolved

@@ -27,11 +27,12 @@ import LordOfTheRings.Heading
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
+import LordOfTheRings.Keyword (Keyword (DefenseKeyword))
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
-import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters)
+import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters)
 import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
@@ -387,9 +388,13 @@ narrationFor = \case
     willpower <- getCommittedWillpower
     (name, _) <- questingStat
     threat <- getStagingThreat
+    -- on a stage with the Defense keyword the encounter deck places the progress
+    defense <- currentQuestHas DefenseKeyword
     let versus =
           ikeyPart "log.versus" ["willpower" ~> stat name willpower, "threat" ~> stat "threat" threat]
     one $ case compare willpower threat of
+      GT | defense -> toned Good $ test [ikeyPart "log.questDefended" [], versus]
+      LT | defense -> toned Bad $ test [ikeyPart "log.questOverrun" ["progress" ~> stat "progress" (threat - willpower)], versus]
       GT ->
         toned Good
           $ test [ikeyPart "log.questSucceeds" ["progress" ~> stat "progress" (willpower - threat)], versus]

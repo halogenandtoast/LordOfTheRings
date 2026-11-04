@@ -25,6 +25,11 @@ data Keyword
     -- be reduced by more than 1 each round by non-boon player card effects, and Valour
     -- triggers at 80 threat, not 40 (The Mountain of Fire rules insert, "Dire")
     Dire
+  | -- | on a quest stage: questing successfully places no progress, and questing
+    -- unsuccessfully raises no threat: the first player places the difference as progress
+    -- on the current quest instead, the active location taking it first (The Treason of
+    -- Saruman rules insert, "Defense")
+    DefenseKeyword
   | Doomed Int
   | -- | on a player card: it is shuffled into the encounter deck, not a player's deck, and
     -- resolves as an encounter card when revealed, as Ranger of the North (its cards
