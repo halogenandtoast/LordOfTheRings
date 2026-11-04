@@ -41,8 +41,10 @@ instance RunMessage RoastMutton where
       askToResolveWhenRevealed attrs
       RoastMutton <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
-      addSetAsideToStaging (CardMatchAny [CardWithTrait Troll, cardIs Locations.trollCave])
+      -- the discard pile is shuffled in first, that the deck not be counted empty as the
+      -- Trolls arrive: the two effects do not depend on one another
       shuffleEncounterDiscardIntoDeck AnyCard
+      addSetAsideToStaging (CardMatchAny [CardWithTrait Troll, cardIs Locations.trollCave])
       pure q
     PlaceTokens _ (isTarget attrs -> True) Progress n | attrs.flipped -> do
       discardTopOfEncounterDeck attrs n
