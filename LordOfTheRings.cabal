@@ -1310,12 +1310,18 @@ library
       LordOfTheRings.Hero.Cards.AragornTactics
       LordOfTheRings.Hero.Cards.Argalad
       LordOfTheRings.Hero.Cards.ArwenUndomiel
+      LordOfTheRings.Hero.Cards.Balin
       LordOfTheRings.Hero.Cards.BardSonOfBrand
+      LordOfTheRings.Hero.Cards.BardTheBowman
+      LordOfTheRings.Hero.Cards.Beorn
       LordOfTheRings.Hero.Cards.Beravor
       LordOfTheRings.Hero.Cards.Beregond
       LordOfTheRings.Hero.Cards.Bifur
       LordOfTheRings.Hero.Cards.BilboBaggins
+      LordOfTheRings.Hero.Cards.BilboBagginsOnTheDoorstep
+      LordOfTheRings.Hero.Cards.BilboBagginsOverHillAndUnderHill
       LordOfTheRings.Hero.Cards.BilboBagginsTactics
+      LordOfTheRings.Hero.Cards.Bombur
       LordOfTheRings.Hero.Cards.Boromir
       LordOfTheRings.Hero.Cards.BoromirTactics
       LordOfTheRings.Hero.Cards.BrandSonOfBain
@@ -1376,6 +1382,7 @@ library
       LordOfTheRings.Hero.Cards.Mirlonde
       LordOfTheRings.Hero.Cards.Naasiyah
       LordOfTheRings.Hero.Cards.Nori
+      LordOfTheRings.Hero.Cards.Oin
       LordOfTheRings.Hero.Cards.Ori
       LordOfTheRings.Hero.Cards.Pippin
       LordOfTheRings.Hero.Cards.PrinceImrahil
@@ -1388,6 +1395,7 @@ library
       LordOfTheRings.Hero.Cards.Thalin
       LordOfTheRings.Hero.Cards.Theoden
       LordOfTheRings.Hero.Cards.Theodred
+      LordOfTheRings.Hero.Cards.ThorinOakenshield
       LordOfTheRings.Hero.Cards.ThorinStonehelm
       LordOfTheRings.Hero.Cards.Thranduil
       LordOfTheRings.Hero.Cards.Thurindir

@@ -105,6 +105,14 @@ import LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
 import LordOfTheRings.Hero.Cards.ThorinStonehelm
 import LordOfTheRings.Hero.Cards.GwaihirTheLandOfSorrow
 import LordOfTheRings.Hero.Cards.AragornSpirit
+import LordOfTheRings.Hero.Cards.BilboBagginsOverHillAndUnderHill
+import LordOfTheRings.Hero.Cards.ThorinOakenshield
+import LordOfTheRings.Hero.Cards.Beorn
+import LordOfTheRings.Hero.Cards.BilboBagginsOnTheDoorstep
+import LordOfTheRings.Hero.Cards.Balin
+import LordOfTheRings.Hero.Cards.BardTheBowman
+import LordOfTheRings.Hero.Cards.Oin
+import LordOfTheRings.Hero.Cards.Bombur
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -272,5 +280,13 @@ allHeroes =
         , SomeHeroCard thorinStonehelm
         , SomeHeroCard gwaihirTheLandOfSorrow
         , SomeHeroCard aragornSpirit
+        , SomeHeroCard bilboBagginsOverHillAndUnderHill
+        , SomeHeroCard thorinOakenshield
+        , SomeHeroCard beorn
+        , SomeHeroCard bilboBagginsOnTheDoorstep
+        , SomeHeroCard balin
+        , SomeHeroCard bardTheBowman
+        , SomeHeroCard oin
+        , SomeHeroCard bombur
         ]
     ]

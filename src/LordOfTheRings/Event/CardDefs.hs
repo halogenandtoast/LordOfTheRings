@@ -247,6 +247,15 @@ allEventCards =
       , knowledgeOfTheEnemy
       , woodmanLore
       , aDesperatePath
+      , goblinCleaver
+      , lateAdventurer
+      , expectingMischief
+      , burglarBaggins
+      , straightShot
+      , desperateAlliance
+      , ravensOfTheMountain
+      , toMeOMyKinsfolk
+      , theLuckyNumber
       ]
 
 everVigilant :: CardDef
@@ -1007,3 +1016,30 @@ woodmanLore =
 aDesperatePath :: CardDef
 aDesperatePath =
   event "22145" "A Desperate Path" Spirit (StaticCost 2)
+
+goblinCleaver :: CardDef
+goblinCleaver = event "131016" "Goblin-cleaver" Tactics (StaticCost 0)
+
+lateAdventurer :: CardDef
+lateAdventurer = event "131017" "Late Adventurer" Spirit (StaticCost 0)
+
+expectingMischief :: CardDef
+expectingMischief = event "131018" "Expecting Mischief" Lore (StaticCost 1)
+
+burglarBaggins :: CardDef
+burglarBaggins = event "131019" "Burglar Baggins" Baggins (StaticCost 1)
+
+straightShot :: CardDef
+straightShot = event "132009" "Straight Shot" Tactics (StaticCost 0)
+
+desperateAlliance :: CardDef
+desperateAlliance = event "132010" "Desperate Alliance" Spirit (StaticCost 0)
+
+ravensOfTheMountain :: CardDef
+ravensOfTheMountain = event "132011" "Ravens of the Mountain" Lore (StaticCost 1)
+
+toMeOMyKinsfolk :: CardDef
+toMeOMyKinsfolk = event "132012" "To me! O my kinsfolk!" Leadership (StaticCost 1)
+
+theLuckyNumber :: CardDef
+theLuckyNumber = event "132013" "The Lucky Number" Baggins (StaticCost 1)

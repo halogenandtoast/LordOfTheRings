@@ -98,6 +98,14 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , bilboBagginsOverHillAndUnderHill
+      , thorinOakenshield
+      , beorn
+      , bilboBagginsOnTheDoorstep
+      , balin
+      , bardTheBowman
+      , oin
+      , bombur
       ]
 
 aragorn :: CardDef
@@ -629,4 +637,61 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- * The Hobbit saga
+
+-- | The Baggins sphere Bilbo Baggins of Over Hill and Under Hill: the first player's in its
+-- scenarios, beyond his deck's heroes (see 'LordOfTheRings.Saga.fellowshipSetup').
+bilboBagginsOverHillAndUnderHill :: CardDef
+bilboBagginsOverHillAndUnderHill =
+  (hero "131001" "Bilbo Baggins" Baggins 0 1 1 1 3)
+    { cdCardTraits = setFromList [Hobbit]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+thorinOakenshield :: CardDef
+thorinOakenshield =
+  (hero "131002" "Thorin Oakenshield" Leadership 12 3 3 1 5)
+    { cdCardTraits = setFromList [Dwarf, Noble, Warrior]
+    }
+
+beorn :: CardDef
+beorn =
+  (hero "131005" "Beorn" Tactics 12 0 5 1 10)
+    { cdCardTraits = setFromList [Beorning, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Baggins sphere Bilbo Baggins of On the Doorstep, as 'bilboBagginsOverHillAndUnderHill'.
+bilboBagginsOnTheDoorstep :: CardDef
+bilboBagginsOnTheDoorstep =
+  (hero "132001" "Bilbo Baggins" Baggins 0 1 1 1 3)
+    { cdCardTraits = setFromList [Hobbit, Burglar]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+balin :: CardDef
+balin =
+  (hero "132002" "Balin" Leadership 9 2 1 2 4)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+bardTheBowman :: CardDef
+bardTheBowman =
+  (hero "132003" "Bard the Bowman" Tactics 11 2 3 2 4)
+    { cdCardTraits = setFromList [Esgaroth, Warrior]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+oin :: CardDef
+oin =
+  (hero "132004" "Óin" Spirit 8 2 1 1 4)
+    { cdCardTraits = setFromList [Dwarf]
+    }
+
+bombur :: CardDef
+bombur =
+  (hero "132005" "Bombur" Lore 8 0 1 2 5)
+    { cdCardTraits = setFromList [Dwarf]
     }
