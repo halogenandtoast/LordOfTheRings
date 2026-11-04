@@ -915,7 +915,8 @@ runGameMessage msg g = case msg of
           -- and the game goes on, as Lost and Alone's (The Lord of the Rings LCG Quest
           -- Companion FAQ, reported on the FFG forum, "Controlling No Heroes - When Do You
           -- Lose?")
-          turned = any ((== Just player.id) . enemyOwner . toAttrs) g.entities.enemies
+          -- an ally turned enemy, as Secret Cultist's, is not a hero side
+          turned = any (\e -> enemyOwner (toAttrs e) == Just player.id && cdCardType (toCardDef e) == EnemyType) g.entities.enemies
           noHeroes = null heroes && not guarded && not turned && not (any ((== HeroType) . (.cardType)) player.deck)
           byThreat = player.threat >= level
           -- Deadmen's Dike eliminates a player whose deck runs out
@@ -2997,6 +2998,28 @@ runGameMessage msg g = case msg of
             )
             $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner
     pure $ retargetCharacter (toTarget h) (toTarget new) $ g & entitiesL . heroesL %~ Map.delete hid & entitiesL . alliesL %~ insertEntity new
+  -- it does not leave play: the same card under the enemy card type, its owner's still, its
+  -- damage kept. What was attached to it as an ally, a character, is discarded, and it
+  -- engages its owner (Secret Cultist).
+  AllyBecomesEnemy aid | Just a <- Map.lookup aid g.entities.allies -> do
+    let attrs = toAttrs a
+        eid = EnemyId (unAllyId aid)
+        new =
+          overAttrs
+            (\e -> e {enemyTokens = allyTokens attrs, enemyFacedown = allyFacedown attrs, enemyOwner = Just attrs.allyOwner})
+            $ lookupEnemy (toCardCode a) attrs.allyCardId eid
+    pushAll $ discardAttached g (toTarget a) <> [EngageEnemy attrs.allyOwner eid]
+    pure
+      $ g
+      & entitiesL
+      . alliesL
+      %~ Map.delete aid
+      & entitiesL
+      . enemiesL
+      %~ insertEntity new
+      & effectsL
+      . traverse
+      %~ (\e -> if effectTarget e == toTarget a then e {effectTarget = toTarget new} else e)
   -- it does not leave play: it keeps its id, and whether it is exhausted, as the card it is
   AllyBecomesAttachment aid host | Just a <- Map.lookup aid g.entities.allies -> do
     let attrs = toAttrs a

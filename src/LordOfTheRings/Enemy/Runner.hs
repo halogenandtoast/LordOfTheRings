@@ -11,7 +11,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.GameT (GameT)
-import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageTakenThisRound, KeepUnresolvedShadowCards))
+import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageLimitEachRound, DamageTakenThisRound, KeepUnresolvedShadowCards))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Queue (QueueT)
@@ -62,15 +62,20 @@ instance RunMessage EnemyAttrs where
     ShuffleIntoEncounterDeck (isTarget attrs -> True) -> leaving
     RemoveFromGame (isTarget attrs -> True) -> leaving
     -- one that cannot take more than N damage each round, as Mumak: damage past what the
-    -- round has left is lost, and what it has left is kept as a round effect
+    -- round has left is lost, and what it has left is kept as a round effect. One whose
+    -- limit is read from the board, as Leader of the Cult's, counts what it has taken.
     PlaceTokens _ (isTarget attrs -> True) Damage n | n > 0 -> do
-      left <- foldr min maxBound . (\ms -> [k | DamageLimit k <- ms]) <$> getModifiers attrs
-      let placed = min n left
-      when (left < maxBound)
-        $ push
-        $ CreateEffect
-        $ Effect (toSource attrs) (toTarget attrs) [DamageLimit (left - placed)] UntilEndOfRound
-      pure $ attrs & tokensL %~ addTokens Damage placed
+      limits <- (\ms -> [k | DamageLimitEachRound k <- ms]) <$> getModifiers attrs
+      case limits of
+        k : ks -> placeDamageWithinRoundLimit (foldr min k ks) n attrs
+        [] -> do
+          left <- foldr min maxBound . (\ms -> [k | DamageLimit k <- ms]) <$> getModifiers attrs
+          let placed = min n left
+          when (left < maxBound)
+            $ push
+            $ CreateEffect
+            $ Effect (toSource attrs) (toTarget attrs) [DamageLimit (left - placed)] UntilEndOfRound
+          pure $ attrs & tokensL %~ addTokens Damage placed
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

@@ -294,6 +294,10 @@ data ModifierType
   | -- | on an enemy: the damage placed on it this round that counts against a limit of its
     -- own, as Dagnir's "cannot take more than X damage from non-quest effects each round"
     DamageTakenThisRound Int
+  | -- | on an enemy: it cannot take more than this much damage each round, X read as the
+    -- damage is placed, as Leader of the Cult's "X is the printed quest points of the active
+    -- location" reads (see 'placeDamageWithinRoundLimit')
+    DamageLimitEachRound Int
   | -- | on an objective ally in the staging area: it is committed to the current quest, as
     -- Celador reads
     CountsAsCommitted

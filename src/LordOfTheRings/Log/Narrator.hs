@@ -285,6 +285,8 @@ narrationFor = \case
   RevealTopOfPowerOfMordorDeck -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.powerOfMordorReveals" []]
   -- an objective ally turning to its enemy side, as Captain Sahír's
   Flip (AllyTarget aid) -> Just $ whenRef (toTarget aid) \a -> one $ mechanic [ikeyPart "log.allyFlips" ["ally" ~> a]]
+  -- Secret Cultist turns an ally into an enemy engaged with its owner
+  AllyBecomesEnemy aid -> Just $ whenRef (toTarget aid) \a -> one $ toned Bad $ mechanic [ikeyPart "log.allyBecomesEnemy" ["ally" ~> a]]
   -- a contract turns over: read before it does, so the side it turns to is the other one
   Flip (ContractTarget cid) -> Just do
     cs <- getsGame (entitiesContracts . gameEntities)

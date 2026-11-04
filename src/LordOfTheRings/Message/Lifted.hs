@@ -1280,6 +1280,11 @@ playFromHandAtNoCost pid cid = push $ PlayFromHandAtNoCost pid cid
 allyBecomesHero :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
 allyBecomesHero a = push $ AllyBecomesHero a.id
 
+-- | The ally loses the ally card type, gains the enemy card type with its text box blank,
+-- and engages its owner, as Secret Cultist turns it.
+allyBecomesEnemy :: ReverseQueue m => AllyId -> m ()
+allyBecomesEnemy = push . AllyBecomesEnemy
+
 -- | The hero an ally became is an ally again, given as the ally its own text reads.
 heroBecomesAlly :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
 heroBecomesAlly a = push $ HeroBecomesAlly (HeroId $ unAllyId a.id)
