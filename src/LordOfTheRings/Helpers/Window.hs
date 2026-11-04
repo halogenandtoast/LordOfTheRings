@@ -355,6 +355,7 @@ passesCriteria = \case
   CardPlayedThisRound code -> any (\(_, c, _) -> c == code) <$> cardsPlayedThisRound
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DwarvesAtLeast pid n -> (>= n) <$> dwarfCount pid
+  ReadyAttachmentWithTrait pid trait -> notNull <$> readyControlledAttachmentsWithTrait pid trait
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   FewerInVictoryDisplay n m -> getsGame ((< n) . length . filter (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)

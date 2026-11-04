@@ -1,6 +1,5 @@
 module LordOfTheRings.Treachery.Cards.Fanaticism (fanaticism) where
 
-import LordOfTheRings.Helpers.Staging (getEnemyDefense)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Trait (Trait (Condition, Easterling))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards

@@ -61,6 +61,9 @@ data Criterion
     CharactersAtLeast Int HeroMatcher AllyMatcher
   | -- | the player controls at least this many Dwarf characters, as 'dwarfCount' counts
     DwarvesAtLeast PlayerId Int
+  | -- | the player controls a ready attachment with the trait, as "exhaust a Weapon
+    -- attachment" needs
+    ReadyAttachmentWithTrait PlayerId Trait
   | -- | a different character for each pair of matchers, heroes and allies: "a Rohan
     -- character and another Gondor character"
     DistinctCharacters [(HeroMatcher, AllyMatcher)]

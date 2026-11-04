@@ -1,8 +1,6 @@
 module LordOfTheRings.Event.Cards.FoeHammer (foeHammer) where
 
 import LordOfTheRings.Event.CardDefs qualified as Cards
-import LordOfTheRings.Attachment.Types (attachmentExhausted)
-import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Trait (Trait (Weapon))
 
@@ -22,10 +20,7 @@ instance RunMessage FoeHammer where
     PlayEvent pid card windows | card.id == toId attrs -> do
       mine <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
       let heroes = [h | Window _ (EnemyDestroyedByAttack _ attackers _) <- windows, h <- attackers, h `elem` mine]
-      weapons <- concatMapM (attachedWithTrait Weapon) heroes
-      readyWeapons <- flip filterM weapons \case
-        AttachmentTarget aid -> not . attachmentExhausted . toAttrs <$> getsGame (fromJustNote "no attachment" . lookup aid . (.entities.attachments))
-        _ -> pure False
+      readyWeapons <- concatMapM (readyAttachedWithTrait Weapon) heroes
       chooseOrRunOneM pid do
         questionLabeled "foeHammer.choose"
         causedBy attrs

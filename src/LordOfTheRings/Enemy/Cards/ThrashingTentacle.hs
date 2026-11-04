@@ -4,7 +4,6 @@ import LordOfTheRings.Card (toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Helpers.Character (getAttackStrength)
-import LordOfTheRings.Helpers.Staging (getEnemyDefense)
 import LordOfTheRings.Scenario.Scenarios.TheWatcherInTheWater.Helpers (tentacleStrikes)
 
 newtype ThrashingTentacle = ThrashingTentacle EnemyAttrs

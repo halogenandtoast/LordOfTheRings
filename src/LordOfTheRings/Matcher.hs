@@ -16,7 +16,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
-import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, engagementCostOf, getModifiers, hitPointsOf, modifiedValue)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, defenseOf, engagementCostOf, getModifiers, hitPointsOf, modifiedValue)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -277,6 +277,7 @@ matchEnemy matcher enemy = case matcher of
   NotEnemy m -> not <$> matchEnemy m enemy
   EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms
   EnemyWithKeyword k -> hasKeyword k (toTarget enemy) (toCardDef enemy)
+  EnemyWithDefense n -> (== n) <$> getEnemyDefense (toId enemy)
 
 instance Query LocationMatcher where
   type QueryElement LocationMatcher = LocationId
@@ -834,6 +835,24 @@ attachedWithTrait trait host = do
       , with (filter on $ toList es.enemies)
       ]
 
+-- | The ready attachments with the trait on the host, as "exhaust a Weapon card attached to
+-- that hero" reads.
+readyAttachedWithTrait :: HasGame m => Trait -> Target -> m [Target]
+readyAttachedWithTrait trait host = do
+  attached <- attachedWithTrait trait host
+  es <- getsGame gameEntities
+  pure [t | t@(AttachmentTarget aid) <- attached, maybe False (not . attachmentExhausted . toAttrs) (Map.lookup aid es.attachments)]
+
+-- | The ready attachments with the trait the player controls, wherever they are attached,
+-- as "exhaust a Weapon attachment" reads.
+readyControlledAttachmentsWithTrait :: HasGame m => PlayerId -> Trait -> m [Target]
+readyControlledAttachmentsWithTrait pid trait = do
+  es <- getsGame gameEntities
+  map toTarget
+    <$> filterM
+      (\a -> hasTrait trait (toTarget a) (toCardDef a))
+      [a | a <- toList es.attachments, (toAttrs a).controller == pid, not (attachmentExhausted $ toAttrs a)]
+
 {- | Every card attached to the host: attachments, objectives and encounter cards attached
 as conditions.
 -}
@@ -1048,6 +1067,13 @@ getNextPlayer pid = do
 controlledCharactersWithTrait :: HasGame m => PlayerId -> Trait -> m [Target]
 controlledCharactersWithTrait pid trait =
   selectCharacters (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait) (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait)
+
+getEnemyDefense :: (HasGame m) => EnemyId -> m Int
+getEnemyDefense eid = do
+  enemy <- getEnemy eid
+  -- one whose defense cannot be reduced, as Rupert, ignores what would
+  floored <- elem CannotHaveDefenseReduced <$> getModifiers eid
+  modifiedValue (if floored then \m -> defenseOf m >>= \n -> n <$ guard (n > 0) else defenseOf) (toTarget eid) enemy.defense
 
 -- | The Dwarf characters the player controls, as "if you control at least 5 Dwarf
 -- characters" counts them: Bombur counts as two.
