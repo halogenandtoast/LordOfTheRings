@@ -439,6 +439,14 @@ allTreacheryCards =
       , bitterCold
       , stormOfHowls
       , lustForTheRing
+      , lotsOrNoneAtAll
+      , aNicePickle
+      , roastEmOrBoilEm
+      , hungryTroll
+      , noCampfire
+      , windWhippedRain
+      , moreLikeAGrocer
+      , gripGrabPinchNab
       ]
 
 deepDeepDark :: CardDef
@@ -2772,3 +2780,32 @@ lustForTheRing =
     , cdCardTraits = setFromList [Corruption]
     , cdKeywords = setFromList [Peril, Surge]
     }
+-- * We Must Away, Ere Break of Day
+
+lotsOrNoneAtAll :: CardDef
+lotsOrNoneAtAll = (treachery "131051" "Lots or None at All" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True}
+
+aNicePickle :: CardDef
+aNicePickle = (treachery "131052" "A Nice Pickle" WeMustAwayEreBreakOfDay 2) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
+
+roastEmOrBoilEm :: CardDef
+roastEmOrBoilEm = (treachery "131053" "Roast 'Em or Boil 'Em?" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True}
+
+hungryTroll :: CardDef
+hungryTroll = (treachery "131054" "Hungry Troll" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True}
+
+-- * Western Lands
+
+noCampfire :: CardDef
+noCampfire = (treachery "131055" "No Campfire" WesternLands 2) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
+
+windWhippedRain :: CardDef
+windWhippedRain = (treachery "131056" "Wind-whipped Rain" WesternLands 2) {cdShadowEffect = True}
+
+moreLikeAGrocer :: CardDef
+moreLikeAGrocer = (treachery "131057" "More Like a Grocer" WesternLands 1) {cdShadowEffect = True}
+
+-- * Misty Mountain Goblins
+
+gripGrabPinchNab :: CardDef
+gripGrabPinchNab = (treachery "131070" "Grip, grab! Pinch, nab!" MistyMountainGoblins 3) {cdShadowEffect = True}

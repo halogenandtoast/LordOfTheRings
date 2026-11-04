@@ -473,6 +473,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       sideQuestDeck: game.sideQuestDeck ?? 0,
       evilCreaturesDeck: game.scenario.evilCreaturesDeckSize ?? null,
       powerOfMordorDeck: game.scenario.powerOfMordorDeckSize ?? 0,
+      sackDeck: game.scenario.sackDeckSize ?? 0,
       evilCreaturesDiscard: (game.scenario.evilCreaturesDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped }) : null,
       stormcallerStage: game.stormcallerStage

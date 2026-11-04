@@ -554,6 +554,13 @@ allLocationCards =
       , hillsOfHollin
       , redhornFoothills
       , eregion
+      , trollCamp
+      , trollCave
+      , hobbitLands
+      , drearyHills
+      , loneLands
+      , caveEntranceWesternLands
+      , theGoblinsCaves
       ]
 
 drownedTreasury :: CardDef
@@ -4062,3 +4069,42 @@ redhornFoothills = (location "142033" "Redhorn Foothills" TheRingGoesSouth 3 4 5
 
 eregion :: CardDef
 eregion = (location "142034" "Eregion" TheRingGoesSouth 3 3 4) {cdCardTraits = setFromList [Hills], cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+-- * We Must Away, Ere Break of Day
+
+trollCamp :: CardDef
+trollCamp = (location "131036" "Troll Camp" WeMustAwayEreBreakOfDay 3 3 3) {cdCardTraits = setFromList [Forest, Trollshaws]}
+
+-- | Set aside by stage 1A, added to the staging area by stage 2A.
+trollCave :: CardDef
+trollCave =
+  (location "131037" "Troll Cave" WeMustAwayEreBreakOfDay 1 2 4)
+    { cdCardTraits = setFromList [Cave, Trollshaws]
+    , cdVictoryPoints = Just 2
+    }
+
+hobbitLands :: CardDef
+hobbitLands =
+  (location "131038" "Hobbit-lands" WeMustAwayEreBreakOfDay 2 1 1)
+    { cdCardTraits = setFromList [WesternLandsTrait]
+    , cdShadowEffect = True
+    }
+
+-- * Western Lands
+
+drearyHills :: CardDef
+drearyHills = (location "131039" "Dreary Hills" WesternLands 2 3 2) {cdCardTraits = setFromList [WesternLandsTrait]}
+
+loneLands :: CardDef
+loneLands = (location "131040" "Lone-Lands" WesternLands 2 2 3) {cdCardTraits = setFromList [WesternLandsTrait]}
+
+caveEntranceWesternLands :: CardDef
+caveEntranceWesternLands = (location "131041" "Cave Entrance" WesternLands 2 1 3) {cdCardTraits = setFromList [WesternLandsTrait]}
+
+-- * Misty Mountain Goblins
+
+theGoblinsCaves :: CardDef
+theGoblinsCaves =
+  (location "131065" "The Goblins' Caves" MistyMountainGoblins 3 3 3)
+    { cdCardTraits = setFromList [Cave]
+    , cdShadowEffect = True
+    }

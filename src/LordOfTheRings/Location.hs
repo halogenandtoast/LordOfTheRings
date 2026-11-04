@@ -536,6 +536,13 @@ import LordOfTheRings.Location.Cards.TreeCrownedHill
 import LordOfTheRings.Location.Cards.HillsOfHollin
 import LordOfTheRings.Location.Cards.RedhornFoothills
 import LordOfTheRings.Location.Cards.Eregion
+import LordOfTheRings.Location.Cards.TrollCamp
+import LordOfTheRings.Location.Cards.TrollCave
+import LordOfTheRings.Location.Cards.HobbitLands
+import LordOfTheRings.Location.Cards.DrearyHills
+import LordOfTheRings.Location.Cards.LoneLands
+import LordOfTheRings.Location.Cards.CaveEntranceWesternLands
+import LordOfTheRings.Location.Cards.TheGoblinsCaves
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1125,12 @@ allLocations =
         , SomeLocationCard hillsOfHollin
         , SomeLocationCard redhornFoothills
         , SomeLocationCard eregion
+        , SomeLocationCard trollCamp
+        , SomeLocationCard trollCave
+        , SomeLocationCard hobbitLands
+        , SomeLocationCard drearyHills
+        , SomeLocationCard loneLands
+        , SomeLocationCard caveEntranceWesternLands
+        , SomeLocationCard theGoblinsCaves
         ]
     ]

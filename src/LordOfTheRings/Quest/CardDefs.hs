@@ -446,6 +446,9 @@ allQuestCards =
       , theNineWalkers
       , theHuntIsUp
       , theGatesOfMoria
+      , anUnexpectedParty
+      , roastMutton
+      , dawnTakeYouAll
       ]
 
 theDrippingWalls :: CardDef
@@ -1858,3 +1861,15 @@ theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
 -- | No quest points: the players win as Doors of Durin is explored.
 theGatesOfMoria :: CardDef
 theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0
+-- * We Must Away, Ere Break of Day
+
+anUnexpectedParty :: CardDef
+anUnexpectedParty = quest "131023" "An Unexpected Party" WeMustAwayEreBreakOfDay 1 7
+
+-- | 1 quest point, though progress never goes on it: cards are discarded from the
+-- encounter deck instead.
+roastMutton :: CardDef
+roastMutton = quest "131024" "Roast Mutton" WeMustAwayEreBreakOfDay 2 1
+
+dawnTakeYouAll :: CardDef
+dawnTakeYouAll = quest "131025" "Dawn Take You All" WeMustAwayEreBreakOfDay 3 0
