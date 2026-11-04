@@ -153,6 +153,8 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , smeagolTheLandOfShadow
+      , theOneRingTheLandOfShadow
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1055,29 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- * Gollum (The Land of Shadow)
+
+-- | Gollum's objective-ally side: no copy is gathered, his enemy side turns into it, or his
+-- scenarios put him into play this side faceup.
+smeagolTheLandOfShadow :: CardDef
+smeagolTheLandOfShadow =
+  ((objective "144076" "Sméagol" GollumSaga 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 5 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gollum]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    , cdOtherSide = Just "144075"
+    }
+
+-- * The Land of Shadow
+
+-- | The box's One Ring, which the first player attaches to the Ring-bearer as the scenario
+-- is set up ('LordOfTheRings.Saga.fellowshipSetup'): in no encounter set.
+theOneRingTheLandOfShadow :: CardDef
+theOneRingTheLandOfShadow =
+  (objective "144063" "The One Ring" TheGreatSpider 0)
+    { cdEncounterSet = Nothing
+    , cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item, Ring]
+    }

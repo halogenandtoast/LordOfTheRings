@@ -439,6 +439,9 @@ allQuestCards =
       , stormTheCastleStrongholdOfMordor
       , slavesOfTheDarkLord
       , leadTheRevolt
+      , theTamingOfSmeagol
+      , acrossTheMarshes
+      , dontLookAtTheLights
       ]
 
 theDrippingWalls :: CardDef
@@ -1821,3 +1824,15 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 -- | 10 quest points, and 10 more per player from its own modifiers.
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
+
+-- * The Passage of the Marshes
+
+theTamingOfSmeagol :: CardDef
+theTamingOfSmeagol = quest "144064" "The Taming of Sméagol" ThePassageOfTheMarshes 1 6
+
+-- | Its side B is "Across the Dead Marshes".
+acrossTheMarshes :: CardDef
+acrossTheMarshes = quest "144065" "Across the Marshes" ThePassageOfTheMarshes 2 12
+
+dontLookAtTheLights :: CardDef
+dontLookAtTheLights = quest "144066" "Don't Look at the Lights!" ThePassageOfTheMarshes 3 24

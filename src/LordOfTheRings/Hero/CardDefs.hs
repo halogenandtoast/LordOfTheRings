@@ -98,6 +98,7 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , frodoBagginsTheLandOfShadow
       ]
 
 aragorn :: CardDef
@@ -629,4 +630,11 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Land of Shadow's Ring-bearer.
+frodoBagginsTheLandOfShadow :: CardDef
+frodoBagginsTheLandOfShadow =
+  (hero "144001" "Frodo Baggins" Fellowship 0 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
     }

@@ -430,6 +430,12 @@ allTreacheryCards =
       , overseersWhip
       , crueltyOfMordor
       , brokenCaptives
+      , theSearchingEye
+      , creepingMarshes
+      , bitterReek
+      , aFellLight
+      , callOfTheRing
+      , weHatesThem
       ]
 
 deepDeepDark :: CardDef
@@ -2718,3 +2724,55 @@ crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdS
 
 brokenCaptives :: CardDef
 brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Passage of the Marshes
+
+-- | A burden of The Passage of the Marshes' burden set, with a player card back: shuffled
+-- into a player's deck, never gathered, and never revealed.
+theSearchingEye :: CardDef
+theSearchingEye =
+  (treachery "144015" "The Searching Eye" ThePassageOfTheMarshes 1)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just ThePassageOfTheMarshes
+    , cdCardTraits = setFromList [Burden]
+    , cdKeywords = setFromList [FunctionsLikeAPlayerCard]
+    , cdWhenRevealed = False
+    }
+
+creepingMarshes :: CardDef
+creepingMarshes =
+  (treachery "144024" "Creeping Marshes" ThePassageOfTheMarshes 2)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    , cdEasyModeQuantity = Just 1
+    }
+
+bitterReek :: CardDef
+bitterReek =
+  (treachery "144025" "Bitter Reek" ThePassageOfTheMarshes 3)
+    { cdKeywords = setFromList [Peril]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+aFellLight :: CardDef
+aFellLight =
+  (treachery "144026" "A Fell Light" ThePassageOfTheMarshes 2)
+    { cdKeywords = setFromList [Peril]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Morgul Nazgûl (The Land of Shadow)
+
+callOfTheRing :: CardDef
+callOfTheRing = (treachery "144054" "Call of the Ring" NazgulSaga 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Gollum (The Land of Shadow)
+
+weHatesThem :: CardDef
+weHatesThem =
+  (treachery "144055" "We Hates Them!" GollumSaga 2)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }

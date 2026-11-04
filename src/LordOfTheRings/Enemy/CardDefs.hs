@@ -507,6 +507,11 @@ allEnemyCards =
       , borlach
       , easterlingGuard
       , nurnSlaver
+      , gropingDead
+      , deadThings
+      , candleBearer
+      , morgulWraith
+      , gollumTheLandOfShadow
       ]
 
 namelessThing :: CardDef
@@ -4161,3 +4166,49 @@ nurnSlaver =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
     }
+
+-- * The Passage of the Marshes
+
+gropingDead :: CardDef
+gropingDead =
+  (enemy "144016" "Groping Dead" ThePassageOfTheMarshes 3 24 2 3 1 4)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+deadThings :: CardDef
+deadThings =
+  (enemy "144017" "Dead Things" ThePassageOfTheMarshes 3 32 3 4 2 5)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    }
+
+candleBearer :: CardDef
+candleBearer =
+  (enemy "144018" "Candle-bearer" ThePassageOfTheMarshes 3 36 3 5 2 6)
+    { cdCardTraits = setFromList [Undead]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Morgul Nazgûl (The Land of Shadow)
+
+morgulWraith :: CardDef
+morgulWraith =
+  (enemy "144053" "Morgul Wraith" NazgulSaga 2 45 4 5 4 9)
+    { cdCardTraits = setFromList [Nazgul]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Gollum (The Land of Shadow)
+
+-- | Gollum's enemy side: with no encounter card back, he is never gathered; his scenarios
+-- put him into play (The Land of Shadow rules insert). Flipped, he is
+-- 'LordOfTheRings.Objective.CardDefs.smeagolTheLandOfShadow'.
+gollumTheLandOfShadow :: CardDef
+gollumTheLandOfShadow =
+  unique
+    (enemy "144075" "Gollum" GollumSaga 0 30 2 2 2 5)
+      { cdCardTraits = setFromList [Gollum]
+      , cdOtherSide = Just "144076"
+      }

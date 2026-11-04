@@ -543,6 +543,11 @@ allLocationCards =
       , theStorehouse
       , workingFields
       , watchTowerTheLandOfSorrow
+      , evilSmellingFens
+      , shiftingQuagmire
+      , hauntedMere
+      , stagnantPools
+      , softMires
       ]
 
 drownedTreasury :: CardDef
@@ -4001,3 +4006,28 @@ watchTowerTheLandOfSorrow =
     { cdCardTraits = setFromList [Plains]
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The Passage of the Marshes
+
+marsh :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> CardDef
+marsh code name quantity threat questPoints mire victory =
+  (location code name ThePassageOfTheMarshes quantity threat questPoints)
+    { cdCardTraits = setFromList [Marsh]
+    , cdKeywords = setFromList [Mire mire]
+    , cdVictoryPoints = Just victory
+    }
+
+evilSmellingFens :: CardDef
+evilSmellingFens = (marsh "144019" "Evil-smelling Fens" 3 3 4 3 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+shiftingQuagmire :: CardDef
+shiftingQuagmire = (marsh "144020" "Shifting Quagmire" 2 1 3 1 1) {cdKeywords = setFromList [Surge, Mire 1]}
+
+hauntedMere :: CardDef
+hauntedMere = marsh "144021" "Haunted Mere" 3 4 5 2 4
+
+stagnantPools :: CardDef
+stagnantPools = marsh "144022" "Stagnant Pools" 2 3 7 5 3
+
+softMires :: CardDef
+softMires = (marsh "144023" "Soft Mires" 4 2 4 1 2) {cdEasyModeQuantity = Just 3}
