@@ -483,6 +483,12 @@ import LordOfTheRings.Treachery.Cards.PanickedFlightToTheFord
 import LordOfTheRings.Treachery.Cards.OvercomeByTerror
 import LordOfTheRings.Treachery.Cards.UnwantedAttention
 import LordOfTheRings.Treachery.Cards.BlackBreath
+import LordOfTheRings.Treachery.Cards.TheRammasIsBreached (theRammasIsBreached)
+import LordOfTheRings.Treachery.Cards.FellBeast (fellBeast)
+import LordOfTheRings.Treachery.Cards.BlackDart (blackDart)
+import LordOfTheRings.Treachery.Cards.SpellsOfRuin (spellsOfRuin)
+import LordOfTheRings.Treachery.Cards.DreadAndDespair (dreadAndDespair)
+import LordOfTheRings.Treachery.Cards.ShadowOfMordor (shadowOfMordor)
 import LordOfTheRings.Treachery.Cards.FellFolkOfUmbar (fellFolkOfUmbar)
 import LordOfTheRings.Treachery.Cards.BlackSails (blackSails)
 import LordOfTheRings.Treachery.Cards.RaidingTheCoasts (raidingTheCoasts)
@@ -997,6 +1003,12 @@ allTreacherys =
         , SomeTreacheryCard overcomeByTerror
         , SomeTreacheryCard unwantedAttention
         , SomeTreacheryCard blackBreath
+        , SomeTreacheryCard theRammasIsBreached
+        , SomeTreacheryCard fellBeast
+        , SomeTreacheryCard blackDart
+        , SomeTreacheryCard spellsOfRuin
+        , SomeTreacheryCard dreadAndDespair
+        , SomeTreacheryCard shadowOfMordor
         , SomeTreacheryCard fellFolkOfUmbar
         , SomeTreacheryCard blackSails
         , SomeTreacheryCard raidingTheCoasts

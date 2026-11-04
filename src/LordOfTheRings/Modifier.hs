@@ -104,6 +104,9 @@ data ModifierType
     AdditionalRestrictedSlots Int
   | -- | on the game: the total threat in the staging area is raised by this much
     StagingThreatBonus Int
+  | -- | on the game: the total threat in the staging area is raised by 1 for each ally in
+    -- the player's discard pile, as Dread and Despair reads
+    StagingThreatPerAllyInDiscardOf PlayerId
   | -- | on the game: the archery total is raised by this much, as Pinned Down reads
     ArcheryBonus Int
   | -- | on the game: archery damage must be assigned to allies, if able, as An Untimely
@@ -396,6 +399,10 @@ data ModifierType
     EscapeBonus Int
   | -- | on a character: damage dealt to it is dealt to the given character instead
     DamageRedirectedTo Target
+  | -- | on a card: damage that would be placed on it is placed on the given card first, as
+    -- much as that card still takes, the rest on this one, as City Wall takes Minas
+    -- Tirith's
+    DamagePlacedFirstOn Target Int
   | -- | on a character: it commits to the quest without exhausting
     DoesNotExhaustToCommit
   | -- | on the game: no player card may cancel an encounter card's effects
@@ -708,6 +715,11 @@ data ModifierType
     NoThreatFromQuestingUnsuccessfully
   | -- | on the game: the quest phase is skipped, as Doom Hangs Still reads
     SkipQuestPhase
+  | -- | on the game: the combat phase is skipped, as The Garrison of Gondor reads
+    SkipCombatPhase
+  | -- | on the game: questing unsuccessfully deals the difference as damage to the card
+    -- instead of raising each player's threat, as the Assault keyword reads (MEC54 rules)
+    QuestFailureDamagesInstead Target
   | -- | on the game: a player with no cards in his deck is eliminated, as Deadmen's Dike's
     -- stages read
     EliminatedWithEmptyDeck
@@ -963,6 +975,9 @@ data ModifierType
     ControlledCardsCannotReady
   | -- | on an enemy: no more than this many characters can attack it each round, as Graxar
     AttackersPerRoundLimit Int
+  | -- | on an enemy: no more than this many characters can attack it at a time, as The
+    -- Black Serpent of The Battle of the Pelennor Fields
+    AttackersPerAttackLimit Int
   | -- | on an enemy, by an effect until the end of the round: a character was declared as
     -- an attacker against it, for 'AttackersPerRoundLimit' to count
     DeclaredAttackerThisRound

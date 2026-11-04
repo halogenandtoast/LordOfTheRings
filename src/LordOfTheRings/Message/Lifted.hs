@@ -340,9 +340,14 @@ gameOver = push . GameOver
 
 {- | Whether the message takes the card out of play: an enemy destroyed (a character
 destroyed is discarded, so 'Discard' reads it), discarded, returned to its owner's hand or
-deck, to the encounter deck or the victory display, removed from the game, or a hero set
-aside. A card reading "If this leaves play" watches for it, as The One Ring, The Hobbit's
-Bilbo Baggins and the saga's Fellowship heroes (their rules inserts) do.
+deck, to the encounter deck or the victory display, or removed from the game. A card
+reading "If this leaves play" watches for it, as The One Ring, The Hobbit's Bilbo Baggins
+and the saga's Fellowship heroes (their rules inserts) do.
+
+A hero a setup instruction sets aside ('SetAsideHero') has not left play in that sense:
+The Battle of the Pelennor Fields' campaign card sets Aragorn aside until The Corsair Fleet
+brings him back, and his "If Aragorn leaves play, the players lose" cannot end the game
+before it begins.
 -}
 leavesPlay :: Targetable target => target -> Message -> Bool
 leavesPlay (toTarget -> t) = \case
@@ -356,7 +361,6 @@ leavesPlay (toTarget -> t) = \case
   ShuffleIntoOwnersDeck t' -> t' == t
   PutOnBottomOfOwnersDeck t' -> t' == t
   RemoveFromGame t' -> t' == t
-  SetAsideHero hid -> HeroTarget hid == t
   _ -> False
 
 -- | The players win the game.
@@ -1807,6 +1811,14 @@ putObjectiveHeroIntoPlayUnder pid = push . PutObjectiveHeroIntoPlayUnder pid
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid
+
+-- | The ally card, taken from where it was, comes into play in the staging area under no
+-- player's control, as Retreat from Osgiliath reads: the ally it becomes.
+putAllyIntoStagingArea :: ReverseQueue m => PlayerCard -> m AllyId
+putAllyIntoStagingArea card = do
+  aid <- getRandom
+  push $ PutAllyIntoStagingArea aid card
+  pure aid
 
 -- | The shadow card just dealt to the enemy is dealt face up, as Silver Lamp reads.
 turnShadowCardFaceUp :: ReverseQueue m => EnemyId -> CardId -> m ()

@@ -1010,6 +1010,14 @@ runGameMessage msg g = case msg of
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
         g <$ push (Discard $ toTarget a)
   Discard target -> discardTarget target g
+  -- damage that would be placed on the card goes first to another, as much as it still
+  -- takes, the rest to this one, as City Wall takes Minas Tirith's
+  DealDamage source target n
+    | n > 0
+    , (first, room) : _ <- [(t, k) | DamagePlacedFirstOn t k <- map modifierType (Map.findWithDefault [] target (gameModifiers g)), k > 0, inPlay g t] -> do
+        let k = min n room
+        pushAll $ DealDamage source first k : [DealDamage source target (n - k) | n > k]
+        pure g
   DealDamage source target n | n > 0 -> do
     mods <- getModifiers target
     -- an enemy's attack's damage may go elsewhere, as Orc Saboteur's to a Battleground,
@@ -1442,7 +1450,8 @@ runGameMessage msg g = case msg of
     pure g
   BeginPhase CombatPhase -> do
     order <- getPlayerOrder
-    pushAll $ ResolveArchery : ResolveHinder : DealShadowCards
+    skipped <- elem SkipCombatPhase <$> getModifiers GameTarget
+    unless skipped $ pushAll $ ResolveArchery : ResolveHinder : DealShadowCards
       : map ActionWindow order
         <> map EnemyAttacks order
         -- the resolving enemy attacks step is complete, as Helm! Helm! reads
@@ -2266,12 +2275,17 @@ runGameMessage msg g = case msg of
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
           do
-            spared <- elem NoThreatFromQuestingUnsuccessfully <$> getModifiers GameTarget
-            let delayed = [PlaceTokens (effectSource e) t Progress n | e <- gameEffects g, ProgressIfQuestUnsuccessful t n <- effectModifiers e]
+            gameMods <- getModifiers GameTarget
+            let spared = NoThreatFromQuestingUnsuccessfully `elem` gameMods
+                -- the Assault keyword deals the difference to a card once for the group
+                -- instead (MEC54 rules)
+                damaged = [t | QuestFailureDamagesInstead t <- gameMods]
+                delayed = [PlaceTokens (effectSource e) t Progress n | e <- gameEffects g, ProgressIfQuestUnsuccessful t n <- effectModifiers e]
             pushAll
               $ CheckWindows [mkWhen QuestedUnsuccessfully]
               : delayed
-              <> [RaiseThreat pid (threat - willpower) | not spared, pid <- players]
+              <> [RaiseThreat pid (threat - willpower) | not spared, null damaged, pid <- players]
+              <> take 1 [DealDamage GameSource t (threat - willpower) | t <- damaged, inPlay g t]
               <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower
@@ -2531,6 +2545,11 @@ runGameMessage msg g = case msg of
       & entitiesL
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  -- an ally in the staging area is under no player's control (Retreat from Osgiliath)
+  PutAllyIntoStagingArea aid card -> do
+    let thisAlly = overAttrs (\a -> a {allyPlacement = StagingArea}) $ createAlly card aid (fromMaybe g.firstPlayer card.owner)
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
+    pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- entering =<< newAlly (fromMaybe pid card.owner) card
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
@@ -4379,11 +4398,15 @@ canAttack eid c = do
   full <- (<= 0) . fromMaybe 1 <$> attackerRoom eid
   if barred || full then pure False else canFight eid c
 
--- | How many more characters may attack the enemy this round, when it is limited, as Graxar.
+-- | How many more characters may attack the enemy this round or in this attack, when it is
+-- limited, as Graxar.
 attackerRoom :: EnemyId -> GameT (Maybe Int)
 attackerRoom eid = do
   mods <- getModifiers eid
-  pure $ subtract (length [() | DeclaredAttackerThisRound <- mods]) <$> minimumMay [n | AttackersPerRoundLimit n <- mods]
+  -- and at a time, as The Black Serpent of The Battle of the Pelennor Fields
+  attacking <- length <$> selectCharacters AttackingHero AttackingAlly
+  let declared = length [() | DeclaredAttackerThisRound <- mods]
+  pure $ minimumMay $ [n - declared | AttackersPerRoundLimit n <- mods] <> [n - attacking | AttackersPerAttackLimit n <- mods]
 
 -- | Whether the character may defend against the enemy's attack: one that cannot exhaust
 -- only if it defends without exhausting.

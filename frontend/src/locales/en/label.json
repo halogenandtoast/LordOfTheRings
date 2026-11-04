@@ -3590,5 +3590,40 @@
     "choose": "The Corsair Fleet ({n} resources): choose one",
     "reveal": "Reveal an encounter card",
     "damage": "Assign {n} damage among characters you control"
+  },
+  "minasTirith": {
+    "damage": "Deal {n} damage to Minas Tirith"
+  },
+  "southronChampion": {
+    "choose": "Southron Champion: deal 3 damage to Minas Tirith, or it makes an additional attack",
+    "other": "Southron Champion makes an additional attack after this one"
+  },
+  "orcOfTheEye": {
+    "choose": "Orc of the Eye: deal 2 damage to a hero you control, or to Minas Tirith",
+    "other": "Deal 2 damage to a hero you control"
+  },
+  "theRammasIsBreached": {
+    "choose": "The Rammas is Breached: deal 3 damage to Minas Tirith, or the attacking enemy makes an additional attack",
+    "other": "The attacking enemy makes an additional attack after this one"
+  },
+  "spellsOfRuin": {
+    "choose": "Spells of Ruin: choose one",
+    "other": "Deal 1 damage to each exhausted character"
+  },
+  "fellBeast": {
+    "attach": "Choose a Nazgûl enemy to attach Fell Beast to"
+  },
+  "blackDart": {
+    "attach": "Choose a hero to attach Black Dart to"
+  },
+  "dreadAndDespair": {
+    "discardAlly": "Dread and Despair: choose an ally you control to discard"
+  },
+  "theGarrisonOfGondor": {
+    "esquireOfRohan": "You may attach Esquire of Rohan to a hero",
+    "esquireOfGondor": "You may attach Esquire of Gondor to a different hero"
+  },
+  "theWhiteCityBesieged": {
+    "search": "The White City Besieged: choose a different enemy to add to the staging area"
   }
 }

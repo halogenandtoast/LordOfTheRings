@@ -498,6 +498,12 @@ allTreacheryCards =
       , blackSails
       , raidingTheCoasts
       , drivenToTheBrink
+      , theRammasIsBreached
+      , fellBeast
+      , blackDart
+      , spellsOfRuin
+      , dreadAndDespair
+      , shadowOfMordor
       ]
 
 deepDeepDark :: CardDef
@@ -3131,5 +3137,46 @@ drivenToTheBrink =
   (treachery "145042" "Driven to the Brink" TheSiegeOfGondor 2)
     { cdKeywords = setFromList [Peril]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * The Battle of the Pelennor Fields
+
+theRammasIsBreached :: CardDef
+theRammasIsBreached = (treachery "145056" "The Rammas is Breached" TheBattleOfThePelennorFields 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+fellBeast :: CardDef
+fellBeast =
+  (treachery "145057" "Fell Beast" TheBattleOfThePelennorFields 2)
+    { cdCardTraits = setFromList [Morgul]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+blackDart :: CardDef
+blackDart =
+  (treachery "145058" "Black Dart" TheBattleOfThePelennorFields 2)
+    { cdCardTraits = setFromList [Morgul]
+    , cdKeywords = setFromList [Peril]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+spellsOfRuin :: CardDef
+spellsOfRuin = (treachery "145059" "Spells of Ruin" TheBattleOfThePelennorFields 2) {cdCardTraits = setFromList [Sorcery], cdShadowEffect = True}
+
+dreadAndDespair :: CardDef
+dreadAndDespair =
+  (treachery "145060" "Dread and Despair" TheBattleOfThePelennorFields 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Peril, Doomed 1]
+    , cdShadowEffect = True
+    }
+
+shadowOfMordor :: CardDef
+shadowOfMordor =
+  (treachery "145061" "Shadow of Mordor" TheBattleOfThePelennorFields 2)
+    { cdCardTraits = setFromList [Sorcery]
+    , cdKeywords = setFromList [Doomed 1]
     , cdEasyModeQuantity = Just 1
     }

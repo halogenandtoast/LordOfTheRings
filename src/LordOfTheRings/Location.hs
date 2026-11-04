@@ -586,6 +586,12 @@ import LordOfTheRings.Location.Cards.FordOfBruinen
 import LordOfTheRings.Location.Cards.TheTrollsCamp
 import LordOfTheRings.Location.Cards.Ettenmoors
 import LordOfTheRings.Location.Cards.TheOldRoad
+import LordOfTheRings.Location.Cards.Grond (grond)
+import LordOfTheRings.Location.Cards.GateOfGondor (gateOfGondor)
+import LordOfTheRings.Location.Cards.CityWall (cityWall)
+import LordOfTheRings.Location.Cards.PelennorField (pelennorField)
+import LordOfTheRings.Location.Cards.FireFilledTrench (fireFilledTrench)
+import LordOfTheRings.Location.Cards.SiegeTower (siegeTower)
 import LordOfTheRings.Location.Cards.GreatCorsairShip (greatCorsairShip)
 import LordOfTheRings.Location.Cards.UmbarWarGalley (umbarWarGalley)
 import LordOfTheRings.Location.Cards.CorsairDromon (corsairDromon)
@@ -1223,6 +1229,12 @@ allLocations =
         , SomeLocationCard theTrollsCamp
         , SomeLocationCard ettenmoors
         , SomeLocationCard theOldRoad
+        , SomeLocationCard grond
+        , SomeLocationCard gateOfGondor
+        , SomeLocationCard cityWall
+        , SomeLocationCard pelennorField
+        , SomeLocationCard fireFilledTrench
+        , SomeLocationCard siegeTower
         , SomeLocationCard greatCorsairShip
         , SomeLocationCard umbarWarGalley
         , SomeLocationCard corsairDromon

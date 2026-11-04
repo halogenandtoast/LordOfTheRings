@@ -552,6 +552,14 @@ import LordOfTheRings.Enemy.Cards.RiderOfMordor
 import LordOfTheRings.Enemy.Cards.BillFerny
 import LordOfTheRings.Enemy.Cards.ShadyBreeLander
 import LordOfTheRings.Enemy.Cards.SquintEyedSoutherner
+import LordOfTheRings.Enemy.Cards.TheBlackSerpentPelennor (theBlackSerpentPelennor)
+import LordOfTheRings.Enemy.Cards.WarMumak (warMumak)
+import LordOfTheRings.Enemy.Cards.SouthronChampion (southronChampion)
+import LordOfTheRings.Enemy.Cards.MorgulCaptain (morgulCaptain)
+import LordOfTheRings.Enemy.Cards.OrcOfTheEye (orcOfTheEye)
+import LordOfTheRings.Enemy.Cards.MordorOrc (mordorOrc)
+import LordOfTheRings.Enemy.Cards.WraithOnWings (wraithOnWings)
+import LordOfTheRings.Enemy.Cards.TheWitchKingCaptain (theWitchKingCaptain, theWitchKingSorcerer)
 import LordOfTheRings.Enemy.Cards.CorsairCaptain (corsairCaptain)
 import LordOfTheRings.Enemy.Cards.CorsairOfUmbar (corsairOfUmbar)
 import LordOfTheRings.Enemy.Cards.UmbarPirateCrew (umbarPirateCrew)
@@ -1137,6 +1145,15 @@ allEnemys =
         , SomeEnemyCard billFerny
         , SomeEnemyCard shadyBreeLander
         , SomeEnemyCard squintEyedSoutherner
+        , SomeEnemyCard theBlackSerpentPelennor
+        , SomeEnemyCard warMumak
+        , SomeEnemyCard southronChampion
+        , SomeEnemyCard morgulCaptain
+        , SomeEnemyCard orcOfTheEye
+        , SomeEnemyCard mordorOrc
+        , SomeEnemyCard wraithOnWings
+        , SomeEnemyCard theWitchKingCaptain
+        , SomeEnemyCard theWitchKingSorcerer
         , SomeEnemyCard corsairCaptain
         , SomeEnemyCard corsairOfUmbar
         , SomeEnemyCard umbarPirateCrew

@@ -565,6 +565,15 @@ allEnemyCards =
       , corsairOfUmbar
       , umbarPirateCrew
       , haradrimPirate
+      , theBlackSerpentPelennor
+      , warMumak
+      , southronChampion
+      , morgulCaptain
+      , orcOfTheEye
+      , mordorOrc
+      , wraithOnWings
+      , theWitchKingCaptain
+      , theWitchKingSorcerer
       ]
 
 namelessThing :: CardDef
@@ -4617,3 +4626,91 @@ umbarPirateCrew =
 
 haradrimPirate :: CardDef
 haradrimPirate = (enemy "145038" "Haradrim Pirate" TheSiegeOfGondor 3 34 2 3 2 4) {cdCardTraits = setFromList [Corsair], cdShadowEffect = True}
+
+-- * The Battle of the Pelennor Fields
+
+theBlackSerpentPelennor :: CardDef
+theBlackSerpentPelennor =
+  unique
+    (enemy "145050" "The Black Serpent" TheBattleOfThePelennorFields 1 38 4 5 2 5)
+      { cdCardTraits = setFromList [Harad]
+      , cdVictoryPoints = Just 4
+      , cdWhenRevealed = True
+      }
+
+warMumak :: CardDef
+warMumak =
+  (enemy "145051" "War Mûmak" TheBattleOfThePelennorFields 2 46 4 6 2 9)
+    { cdCardTraits = setFromList [Harad, Creature]
+    , cdKeywords = setFromList [Archery 2]
+    , cdVictoryPoints = Just 4
+    , cdEasyModeQuantity = Just 1
+    }
+
+southronChampion :: CardDef
+southronChampion =
+  (enemy "145052" "Southron Champion" TheBattleOfThePelennorFields 2 34 2 4 2 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+morgulCaptain :: CardDef
+morgulCaptain =
+  (enemy "145053" "Morgul Captain" TheBattleOfThePelennorFields 2 35 3 3 1 4)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+orcOfTheEye :: CardDef
+orcOfTheEye =
+  (enemy "145054" "Orc of the Eye" TheBattleOfThePelennorFields 3 40 2 3 1 3)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdKeywords = setFromList [Peril, Archery 1]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+mordorOrc :: CardDef
+mordorOrc =
+  (enemy "145055" "Mordor Orc" TheBattleOfThePelennorFields 5 30 1 2 1 2)
+    { cdCardTraits = setFromList [Orc, Mordor]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 4
+    }
+
+-- | A burden with a set icon: never gathered. The scenario sets its 4 copies aside for
+-- stage 1A; its resolution adds 1 per player to the campaign pool. Its "Setup: Add Wraith
+-- on Wings to the staging area" is for the scenarios that follow.
+wraithOnWings :: CardDef
+wraithOnWings =
+  (enemy "145062" "Wraith on Wings" TheBattleOfThePelennorFields 4 45 0 6 4 12)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just TheBattleOfThePelennorFields
+    , cdCardTraits = setFromList [Nazgul, Burden]
+    , cdVictoryPoints = Just 5
+    }
+
+-- | Its Captain side; its Sorcerer side is 'theWitchKingSorcerer'. Set aside by stage 1A.
+theWitchKingCaptain :: CardDef
+theWitchKingCaptain =
+  unique
+    (enemy "145079" "The Witch-king" TheBattleOfThePelennorFields 1 50 6 6 6 14)
+      { cdCardTraits = setFromList [Nazgul, Captain]
+      , cdOtherSide = Just "145080"
+      }
+
+-- | The Witch-king's Sorcerer side, which stage 5A adds to the staging area: the other side
+-- of his one card, never gathered.
+theWitchKingSorcerer :: CardDef
+theWitchKingSorcerer =
+  unique
+    (enemy "145080" "The Witch-king" TheBattleOfThePelennorFields 1 50 6 6 6 14)
+      { cdCardTraits = setFromList [Nazgul, Sorcerer]
+      , cdEncounterSet = Nothing
+      , cdVictoryPoints = Just 6
+      , cdOtherSide = Just "145079"
+      }

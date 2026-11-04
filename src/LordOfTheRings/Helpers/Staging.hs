@@ -1,6 +1,6 @@
 module LordOfTheRings.Helpers.Staging (module LordOfTheRings.Helpers.Staging, getEnemyDefense) where
 
-import LordOfTheRings.Card (IsCard (..))
+import LordOfTheRings.Card (CardType (AllyType), IsCard (..), cdCardType, toCardDef)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Matcher
@@ -43,8 +43,11 @@ getStagingThreat = do
         locations <- getsGame (map toId . filter ((== OrcsArea) . (.placement)) . toList . (.entities.locations))
         (+) <$> (sum <$> traverse getEnemyThreat enemies) <*> (sum <$> traverse getLocationThreat locations)
       else pure 0
+  -- each ally in a player's discard pile, as Dread and Despair counts them
+  allies <- for [pid | StagingThreatPerAllyInDiscardOf pid <- gameMods] \pid ->
+    length . filter ((== AllyType) . cdCardType . toCardDef) . (.discard) <$> getPlayer pid
   -- a reduction, as Followed's, takes it no lower than 0
-  pure $ max 0 (sum (map snd cards) + bonus + orcs)
+  pure $ max 0 (sum (map snd cards) + bonus + orcs + sum allies)
 
 -- | What each card in the staging area adds to its threat, modifiers included.
 getStagingThreats :: (HasGame m) => m [(CardId, Int)]
