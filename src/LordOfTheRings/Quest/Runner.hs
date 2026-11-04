@@ -35,6 +35,11 @@ instance RunMessage QuestAttrs where
     -- a stage put into play unflipped is clicked by its card, before it has an id to show
     Flip (CardIdTarget cid) | cid == attrs.questCardId -> pure $ attrs & flippedL .~ True
     PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
+    -- a player card taken from underneath it, as The Dungeons of Dol Rhugar adds one to its
+    -- owner's hand, leaves it
+    PutInHand pc -> pure $ attrs & underneathL %~ filter ((/= pc.id) . (.id))
+    PutInDiscard pc -> pure $ attrs & underneathL %~ filter ((/= pc.id) . (.id))
+    ShuffleCardIntoDeck _ card -> pure $ attrs & underneathL %~ filter ((/= card.id) . (.id))
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     -- a stage with enough progress is defeated as it is checked, as once nothing stops it
