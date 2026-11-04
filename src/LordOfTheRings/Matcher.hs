@@ -901,3 +901,19 @@ charactersGuardedBy cid = do
   pure
     $ [toTarget h | h <- toList (entitiesHeroes es), heroGuardedBy (toAttrs h) == Just cid]
     <> [toTarget a | a <- toList (entitiesAllies es), a.placement == AttachedTo (CardIdTarget cid)]
+
+-- | Every captive an encounter card guards, with the player who owns it: none for an
+-- objective ally, an encounter card (see 'GuardCharacter').
+guardedCharacters :: HasGame m => m [(Target, Maybe PlayerId)]
+guardedCharacters = do
+  es <- getsGame gameEntities
+  pure
+    $ [(toTarget h, Just h.owner) | h <- toList (entitiesHeroes es), isJust (heroGuardedBy (toAttrs h))]
+    <> [ (toTarget a, owner (toCard a))
+       | a <- toList (entitiesAllies es)
+       , AttachedTo (CardIdTarget _) <- [a.placement]
+       ]
+ where
+  owner = \case
+    PlayerCard pc -> pc.owner
+    EncounterCard _ -> Nothing

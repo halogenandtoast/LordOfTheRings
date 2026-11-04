@@ -2298,7 +2298,7 @@ runGameMessage msg g = case msg of
   -- an enemy leaves play for good, as Captain Sahír after his betrayal: what is on it is
   -- discarded
   RemoveFromGame target@(EnemyTarget eid) | Map.member eid g.entities.enemies -> do
-    pushAll $ discardAttached g target <> discardShadowsOf g target <> freeGuarded g target
+    pushAll $ discardAttached g target
     pure $ g & entitiesL . enemiesL %~ Map.delete eid
   -- a side quest removed from the game, as Stop the Executioners! removes itself
   RemoveFromGame target@(QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
@@ -2335,7 +2335,7 @@ runGameMessage msg g = case msg of
       <> concatMap (discardAttached g) characters
       <> [CheckEliminations | notNull heroes]
       -- an enemy placed underneath a location leaves play, as Murderous Turncoat
-      <> concat [discardAttached g t <> discardShadowsOf g t <> freeGuarded g t | t <- map toTarget enemies]
+      <> concatMap (discardAttached g . toTarget) enemies
     pure
       $ g'
       & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
@@ -2755,6 +2755,22 @@ runGameMessage msg g = case msg of
       . objectivesL
       . traverse
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
+  -- a card out of play comes into play as a captive: see 'GuardCard'
+  -- an ally card no longer in its owner's discard pile, taken already, stays where it is
+  GuardCard card cid -> do
+    aid <- getRandom
+    lead <- getLead
+    let (owner, available) = case card of
+          PlayerCard pc -> case pc.owner of
+            Just o -> (o, maybe False (any ((== pc.id) . (.id)) . (.discard)) (Map.lookup o g.players))
+            Nothing -> (lead, False)
+          EncounterCard _ -> (lead, True)
+        captive = overAttrs (\a -> a {allyPlacement = AttachedTo (CardIdTarget cid)}) $ lookupAlly (toCardCode card) card.id aid owner
+    if available
+      then do
+        pushAll [RemoveFromDiscard owner card.id | PlayerCard _ <- [card]]
+        pure $ g & entitiesL . alliesL %~ insertEntity captive
+      else pure g
   -- as a Ship objective of the fleet comes into play (Dream-chaser rules)
   PutObjectiveAllyIntoPlayUnder pid card -> do
     aid <- getRandom
@@ -3120,15 +3136,18 @@ freeGuarded g target =
   , l <- toList g.entities.locations
   , l.placement == AttachedTo (CardIdTarget cid)
   ]
-    -- and the characters it guards as captives are rescued
-    <> concat
-      [ [RescueCharacter c, CheckWindows [mkAfter $ CharacterRescued c]]
-      | Just cid <- [guardCard]
-      , c <-
-          [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
-            <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
-      ]
+    -- and the characters it guards as captives are rescued, in one window, as "after any
+    -- number of characters are rescued" reads (Rescue the Prisoners)
+    <> map RescueCharacter captives
+    <> [CheckWindows [mkAfter $ CharacterRescued c | c <- captives] | notNull captives]
  where
+  captives =
+    [ c
+    | Just cid <- [guardCard]
+    , c <-
+        [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
+          <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
+    ]
   cardIdIn :: IsCard v => Ord k => Map k v -> k -> Maybe CardId
   cardIdIn m k = (.id) . toCard <$> Map.lookup k m
   guardCard = case target of

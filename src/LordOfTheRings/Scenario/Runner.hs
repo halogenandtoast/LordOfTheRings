@@ -275,6 +275,7 @@ instance RunMessage ScenarioAttrs where
     PutObjectiveIntoPlayAttached card _ -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside Ship objective put into play, as The Beacon gives a Dol Amroth Warship
     PutObjectiveAllyIntoPlayUnder _ card -> pure $ attrs & setAsideL %~ filter (/= card)
+    GuardCard (EncounterCard card) _ -> pure $ attrs & setAsideL %~ filter (/= card)
     DebugSearchEncounterDeck pid -> do
       push
         $ Ask pid

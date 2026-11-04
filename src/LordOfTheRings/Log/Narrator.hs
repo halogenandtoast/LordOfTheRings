@@ -297,6 +297,7 @@ narrationFor = \case
   TakePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.takenPrisoner" ["hero" ~> h]]
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
   GuardCharacter c cid -> Just $ attached c (CardIdTarget cid)
+  GuardCard card cid -> Just $ whenRef (CardIdTarget cid) \h -> one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> card, "target" ~> h]]
   RescueCharacter c -> Just $ whenRef c \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
   -- an enemy taking an objective, as Alcaron's Scroll goes to the enemy that damaged its hero
   ClaimObjective oid target@(EnemyTarget _) -> Just $ attached (toTarget oid) target

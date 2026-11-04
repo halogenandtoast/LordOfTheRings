@@ -355,6 +355,8 @@ allTreacheryCards =
       , boldAndGrim
       , noQuarter
       , chaosInTheNight
+      , takenPrisoner
+      , tormentedByOrcs
       ]
 
 deepDeepDark :: CardDef
@@ -2276,3 +2278,11 @@ noQuarter = (treachery "17102" "No Quarter" TheBlackSerpent 2) {cdShadowEffect =
 
 chaosInTheNight :: CardDef
 chaosInTheNight = (treachery "17103" "Chaos in the Night" TheBlackSerpent 2) {cdShadowEffect = True}
+
+-- The Dungeons of Cirith Gurat (17129-17130)
+
+takenPrisoner :: CardDef
+takenPrisoner = (treachery "17129" "Taken Prisoner" TheDungeonsOfCirithGurat 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+tormentedByOrcs :: CardDef
+tormentedByOrcs = (treachery "17130" "Tormented by Orcs" TheDungeonsOfCirithGurat 3) {cdShadowEffect = True}

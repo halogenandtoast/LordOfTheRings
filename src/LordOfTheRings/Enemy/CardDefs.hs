@@ -416,6 +416,9 @@ allEnemyCards =
       , racingWarg
       , theBlackSerpent
       , serpentGuard
+      , jailerOfCirithGurat
+      , prisonGuardCirithGurat
+      , dungeonWarg
       ]
 
 namelessThing :: CardDef
@@ -3394,4 +3397,32 @@ serpentGuard =
   (enemy "17095" "Serpent Guard" TheBlackSerpent 4 28 2 3 1 4)
     { cdCardTraits = setFromList [Harad]
     , cdShadowEffect = True
+    }
+
+-- The Dungeons of Cirith Gurat (17121-17123). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+jailerOfCirithGurat :: CardDef
+jailerOfCirithGurat =
+  (enemy "17121" "Jailer of Cirith Gurat" TheDungeonsOfCirithGurat 2 45 4 3 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | The Dungeons of Cirith Gurat's Prison Guard; Escape from Mount Gram's is 'prisonGuard'.
+prisonGuardCirithGurat :: CardDef
+prisonGuardCirithGurat =
+  (enemy "17122" "Prison Guard" TheDungeonsOfCirithGurat 3 30 3 4 1 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    }
+
+dungeonWarg :: CardDef
+dungeonWarg =
+  (enemy "17123" "Dungeon Warg" TheDungeonsOfCirithGurat 3 25 1 3 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

@@ -114,6 +114,8 @@ allObjectiveCards =
       , bannerOfTheSerpent
       , theSerpentsGarb
       , summonsFromMordor
+      , theCaptivesOfCirithGurat
+      , abaan
       ]
 
 durinsAxe :: CardDef
@@ -773,4 +775,17 @@ summonsFromMordor =
   (objective "17093" "Summons from Mordor" TheBlackSerpent 1)
     { cdCardTraits = setFromList [Item, Harad]
     , cdKeywords = setFromList [GuardedBy [LocationType]]
+    }
+
+-- The Dungeons of Cirith Gurat (17119-17120). Abaan's stats from Hall of Beorn.
+
+theCaptivesOfCirithGurat :: CardDef
+theCaptivesOfCirithGurat = objective "17119" "The Captives of Cirith Gurat" TheDungeonsOfCirithGurat 1
+
+abaan :: CardDef
+abaan =
+  ((objective "17120" "Abaan" TheDungeonsOfCirithGurat 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 1, cdDefense = Just 1, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Harad]
     }
