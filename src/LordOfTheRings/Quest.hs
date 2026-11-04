@@ -354,6 +354,10 @@ import LordOfTheRings.Quest.Cards.StormTheCastleLethalCounterattack
 import LordOfTheRings.Quest.Cards.StormTheCastleNoQuarter
 import LordOfTheRings.Quest.Cards.StormTheCastleStrongholdOfMordor
 import LordOfTheRings.Quest.Cards.SlavesOfTheDarkLord
+import LordOfTheRings.Quest.Cards.TheCouncilOfElrond
+import LordOfTheRings.Quest.Cards.TheNineWalkers
+import LordOfTheRings.Quest.Cards.TheHuntIsUp
+import LordOfTheRings.Quest.Cards.TheGatesOfMoria
 import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
@@ -741,6 +745,10 @@ allQuests =
         , SomeQuestCard stormTheCastleNoQuarter
         , SomeQuestCard stormTheCastleStrongholdOfMordor
         , SomeQuestCard slavesOfTheDarkLord
+        , SomeQuestCard theCouncilOfElrond
+        , SomeQuestCard theNineWalkers
+        , SomeQuestCard theHuntIsUp
+        , SomeQuestCard theGatesOfMoria
         , SomeQuestCard leadTheRevolt
         ]
     ]

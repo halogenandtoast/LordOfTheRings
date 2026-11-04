@@ -2331,6 +2331,7 @@ library
       LordOfTheRings.Quest.Cards.TheColdDrakeAttacks
       LordOfTheRings.Quest.Cards.TheConfrontation
       LordOfTheRings.Quest.Cards.TheCorsairsAssault
+      LordOfTheRings.Quest.Cards.TheCouncilOfElrond
       LordOfTheRings.Quest.Cards.TheCrossingOfAraw
       LordOfTheRings.Quest.Cards.TheCrossroadsFort
       LordOfTheRings.Quest.Cards.TheCursedShade
@@ -2349,6 +2350,7 @@ library
       LordOfTheRings.Quest.Cards.TheFordOfHarnen
       LordOfTheRings.Quest.Cards.TheForestOfGreatFear
       LordOfTheRings.Quest.Cards.TheForgottenTemple
+      LordOfTheRings.Quest.Cards.TheGatesOfMoria
       LordOfTheRings.Quest.Cards.TheGoblinsTask
       LordOfTheRings.Quest.Cards.TheGrandDesign
       LordOfTheRings.Quest.Cards.TheGreatWorm
@@ -2358,6 +2360,7 @@ library
       LordOfTheRings.Quest.Cards.TheHiddenWay
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
       LordOfTheRings.Quest.Cards.TheHuntBegins
+      LordOfTheRings.Quest.Cards.TheHuntIsUp
       LordOfTheRings.Quest.Cards.TheIronHills
       LordOfTheRings.Quest.Cards.TheLastBattle
       LordOfTheRings.Quest.Cards.TheLastStage
@@ -2369,6 +2372,7 @@ library
       LordOfTheRings.Quest.Cards.TheMorgulRider
       LordOfTheRings.Quest.Cards.TheMountainsPeaks
       LordOfTheRings.Quest.Cards.TheNecromancersTower
+      LordOfTheRings.Quest.Cards.TheNineWalkers
       LordOfTheRings.Quest.Cards.ThePassageOfTheFord
       LordOfTheRings.Quest.Cards.ThePassageOut
       LordOfTheRings.Quest.Cards.ThePowerOfAngmar
@@ -2557,6 +2561,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRedhornGate
+      LordOfTheRings.Scenario.Scenarios.TheRingGoesSouth
       LordOfTheRings.Scenario.Scenarios.TheRingGoesSouth.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRiverRunning
       LordOfTheRings.Scenario.Scenarios.TheRiverRunning.Helpers

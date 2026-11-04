@@ -3017,7 +3017,8 @@
   "theRingGoesSouth": {
     "activeLocation": "Choose the active location",
     "exhaustCharacter": "Choose a character to exhaust, for the group",
-    "discardAlly": "Choose an ally to discard, for the group"
+    "discardAlly": "Choose an ally to discard, for the group",
+    "chooseBoon": "The Ring Goes South: choose a boon to add to your hand"
   },
   "crebainFromDunland": {
     "choose": "Crebain from Dunland: choose one",
@@ -3037,5 +3038,14 @@
   },
   "lustForTheRing": {
     "attach": "Lust for the Ring: choose a non-Fellowship hero to attach it to"
+  },
+  "theCouncilOfElrond": {
+    "play": "The Council of Elrond: choose the faceup card to play for 0 cost",
+    "hand": "The Council of Elrond: choose the faceup card to add to its owner’s hand",
+    "discard": "The Council of Elrond: choose the faceup card to discard",
+    "shuffle": "The Council of Elrond: choose the faceup card to shuffle into its owner’s deck",
+    "choose": "The Council of Elrond: choose one",
+    "shuffleLust": "Shuffle Lust for the Ring into the encounter deck",
+    "raiseThreat": "Raise each player’s threat by 5"
   }
 }
