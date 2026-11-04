@@ -439,6 +439,10 @@ allTreacheryCards =
       , bitterCold
       , stormOfHowls
       , lustForTheRing
+      , orcishHowls
+      , drawnToTheRing
+      , deepShadows
+      , evilVigilance
       ]
 
 deepDeepDark :: CardDef
@@ -2772,3 +2776,24 @@ lustForTheRing =
     , cdCardTraits = setFromList [Corruption]
     , cdKeywords = setFromList [Peril, Surge]
     }
+
+-- * The Tower of Cirith Ungol
+
+orcishHowls :: CardDef
+orcishHowls = (treachery "146023" "Orcish Howls" TheTowerOfCirithUngol 3) {cdShadowEffect = True}
+
+-- * Deep Shadows
+
+drawnToTheRing :: CardDef
+drawnToTheRing = (treachery "146061" "Drawn to the Ring" DeepShadows 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+deepShadows :: CardDef
+deepShadows =
+  (treachery "146062" "Deep Shadows" DeepShadows 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+evilVigilance :: CardDef
+evilVigilance = (treachery "146063" "Evil Vigilance" DeepShadows 3) {cdShadowEffect = True}

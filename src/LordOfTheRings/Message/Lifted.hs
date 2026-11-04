@@ -250,6 +250,11 @@ drawCards source pid n = do
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard
 
+-- | The player reveals an encounter card, as "each other player reveals an encounter card"
+-- reads: the "you" of the card and its surge are his (see 'getRevealer').
+playerRevealsEncounterCard :: ReverseQueue m => PlayerId -> m ()
+playerRevealsEncounterCard pid = pushAll [SetRevealer (Just pid), RevealEncounterCard, SetRevealer Nothing]
+
 -- | The card, taken from the encounter deck, is revealed; an enemy is put into play engaged
 -- with the player, as Murzag reads.
 revealEncounterCardEngaged :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
