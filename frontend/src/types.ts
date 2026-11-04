@@ -199,9 +199,11 @@ export interface TallyView {
 
 // a card the engine plays as another kind of card under its own code, showing its printed
 // face: Corsair Skirmisher taken as a Ship objective
-const printedFace: Record<string, string> = { '12125-ship': '12125' }
-// a quest stage whose B side is printed under the next number, as The Crossroads Fort's 1B
-const printedBack: Record<string, string> = { '17105': '17106-b' }
+// and a quest stage printed as sides C and D, as Lost in Mirkwood's 2C, 3C and 4C
+const printedFace: Record<string, string> = { '12125-ship': '12125', '18073': '18073-c', '18075': '18075-c', '18077': '18077-c' }
+// a quest stage whose B side is printed under the next number, as The Crossroads Fort's 1B,
+// or whose other side is D
+const printedBack: Record<string, string> = { '17105': '17106-b', '18073': '18073-d', '18075': '18075-d', '18077': '18077-d' }
 
 /** Cards whose side A is another card's: every Search for an Exit shares 03070's. */
 const sharedSideA: Record<string, string> = Object.fromEntries(
