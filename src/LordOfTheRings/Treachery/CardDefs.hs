@@ -443,6 +443,11 @@ allTreacheryCards =
       , drawnToTheRing
       , deepShadows
       , evilVigilance
+      , hellHawk
+      , theHourOfDoom
+      , jawsOfSteel
+      , rageFilledHim
+      , onslaughtOfMordor
       ]
 
 deepDeepDark :: CardDef
@@ -2797,3 +2802,21 @@ deepShadows =
 
 evilVigilance :: CardDef
 evilVigilance = (treachery "146063" "Evil Vigilance" DeepShadows 3) {cdShadowEffect = True}
+
+-- * The Black Gate Opens
+
+-- | Attached to a Nazgûl enemy, it counts as a Mount attachment.
+hellHawk :: CardDef
+hellHawk = (treachery "146036" "Hell-hawk" TheBlackGateOpens 2) {cdCardTraits = setFromList [Morgul], cdKeywords = setFromList [Peril], cdEasyModeQuantity = Just 1}
+
+theHourOfDoom :: CardDef
+theHourOfDoom = (treachery "146037" "The Hour of Doom" TheBlackGateOpens 3) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
+
+jawsOfSteel :: CardDef
+jawsOfSteel = (treachery "146038" "Jaws of Steel" TheBlackGateOpens 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+rageFilledHim :: CardDef
+rageFilledHim = (treachery "146039" "Rage Filled Him" TheBlackGateOpens 3) {cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+onslaughtOfMordor :: CardDef
+onslaughtOfMordor = (treachery "146040" "Onslaught of Mordor" TheBlackGateOpens 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}

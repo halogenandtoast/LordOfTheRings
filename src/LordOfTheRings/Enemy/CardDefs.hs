@@ -524,6 +524,12 @@ allEnemyCards =
       , orcOfMordor
       , snagaArcher
       , urukSoldierOrcsOfMordor
+      , theMouthOfSauron
+      , nazgulOfMordor
+      , gorgorothHillTroll
+      , easterlingBowman
+      , warriorOfRhunTheBlackGateOpens
+      , wraithOnWings
       ]
 
 namelessThing :: CardDef
@@ -4330,4 +4336,58 @@ urukSoldierOrcsOfMordor =
   (enemy "146060" "Uruk Soldier" OrcsOfMordor 3 38 3 5 2 5)
     { cdCardTraits = setFromList [Orc, Uruk]
     , cdShadowEffect = True
+    }
+
+-- * The Black Gate Opens
+
+-- | Set aside by stage 1A's setup, then added to the staging area with The Black Gate.
+theMouthOfSauron :: CardDef
+theMouthOfSauron =
+  unique
+    (enemy "146031" "The Mouth of Sauron" TheBlackGateOpens 1 99 4 6 5 11)
+      { cdCardTraits = setFromList [Mordor]
+      }
+
+nazgulOfMordor :: CardDef
+nazgulOfMordor =
+  (enemy "146032" "Nazgûl of Mordor" TheBlackGateOpens 3 66 4 6 4 9)
+    { cdCardTraits = setFromList [Nazgul]
+    , cdEasyModeQuantity = Just 2
+    }
+
+gorgorothHillTroll :: CardDef
+gorgorothHillTroll =
+  (enemy "146033" "Gorgoroth Hill-troll" TheBlackGateOpens 2 56 3 7 3 8)
+    { cdCardTraits = setFromList [Troll]
+    , cdEasyModeQuantity = Just 1
+    }
+
+easterlingBowman :: CardDef
+easterlingBowman =
+  (enemy "146034" "Easterling Bowman" TheBlackGateOpens 3 54 2 3 1 4)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Peril, Archery 1]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+warriorOfRhunTheBlackGateOpens :: CardDef
+warriorOfRhunTheBlackGateOpens =
+  (enemy "146035" "Warrior of Rhûn" TheBlackGateOpens 3 34 1 4 3 4)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- * The Battle of the Pelennor Fields
+
+-- | The smallest Wraith on Wings, as The Black Gate Opens' resolution reads it from the
+-- victory display: its abilities and its place as a burden are The Battle of the Pelennor
+-- Fields' to give it.
+wraithOnWings :: CardDef
+wraithOnWings =
+  (enemy "145062" "Wraith on Wings" TheBattleOfThePelennorFields 4 45 0 6 4 12)
+    { cdCardTraits = setFromList [Nazgul, Mordor]
+    , cdVictoryPoints = Just 5
     }

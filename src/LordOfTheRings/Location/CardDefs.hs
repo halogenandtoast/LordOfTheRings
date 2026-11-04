@@ -560,6 +560,13 @@ allLocationCards =
       , windingStairs
       , torchLitHall
       , theTwoWatchers
+      , theBlackGate
+      , towersOfTheTeeth
+      , beleagueredHills
+      , wasteOfDagorlad
+      , slopesOfCirithGorgor
+      , reekingMoat
+      , wallOfMorannon
       ]
 
 drownedTreasury :: CardDef
@@ -4106,3 +4113,34 @@ theTwoWatchers =
       , cdQuestPoints = Nothing
       , cdOtherSide = Just "146071"
       }
+
+-- * The Black Gate Opens
+
+-- | No quest points: the players cannot travel here. Added to the staging area by stage
+-- 1A's setup.
+theBlackGate :: CardDef
+theBlackGate =
+  unique
+    (location "146024" "The Black Gate" TheBlackGateOpens 1 0 0)
+      { cdCardTraits = setFromList [Mordor]
+      , cdQuestPoints = Nothing
+      }
+
+-- | X threat, given by its own modifiers.
+towersOfTheTeeth :: CardDef
+towersOfTheTeeth = (location "146025" "Towers of the Teeth" TheBlackGateOpens 2 0 8) {cdCardTraits = setFromList [Plains], cdEasyModeQuantity = Just 1}
+
+beleagueredHills :: CardDef
+beleagueredHills = (location "146026" "Beleaguered Hills" TheBlackGateOpens 2 2 3) {cdCardTraits = setFromList [Hills]}
+
+wasteOfDagorlad :: CardDef
+wasteOfDagorlad = (location "146027" "Waste of Dagorlad" TheBlackGateOpens 3 3 6) {cdCardTraits = setFromList [Plains]}
+
+slopesOfCirithGorgor :: CardDef
+slopesOfCirithGorgor = (location "146028" "Slopes of Cirith Gorgor" TheBlackGateOpens 2 4 1) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 1}
+
+reekingMoat :: CardDef
+reekingMoat = (location "146029" "Reeking Moat" TheBlackGateOpens 3 2 4) {cdCardTraits = setFromList [Plains]}
+
+wallOfMorannon :: CardDef
+wallOfMorannon = (location "146030" "Wall of Morannon" TheBlackGateOpens 2 5 5) {cdCardTraits = setFromList [Plains], cdEasyModeQuantity = Just 1}

@@ -433,6 +433,11 @@ import LordOfTheRings.Treachery.Cards.DrawnToTheRing
 import LordOfTheRings.Treachery.Cards.DeepShadows
 import LordOfTheRings.Treachery.Cards.EvilVigilance
 import LordOfTheRings.Treachery.Cards.OrcishHowls
+import LordOfTheRings.Treachery.Cards.HellHawk
+import LordOfTheRings.Treachery.Cards.TheHourOfDoom
+import LordOfTheRings.Treachery.Cards.JawsOfSteel
+import LordOfTheRings.Treachery.Cards.RageFilledHim
+import LordOfTheRings.Treachery.Cards.OnslaughtOfMordor
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -890,6 +895,11 @@ allTreacherys =
         , SomeTreacheryCard stormOfHowls
         , SomeTreacheryCard lustForTheRing
         , SomeTreacheryCard orcishHowls
+        , SomeTreacheryCard hellHawk
+        , SomeTreacheryCard theHourOfDoom
+        , SomeTreacheryCard jawsOfSteel
+        , SomeTreacheryCard rageFilledHim
+        , SomeTreacheryCard onslaughtOfMordor
         , SomeTreacheryCard drawnToTheRing
         , SomeTreacheryCard deepShadows
         , SomeTreacheryCard evilVigilance

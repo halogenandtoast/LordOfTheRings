@@ -160,6 +160,7 @@ allObjectiveCards =
       , theOneRingTheRoadDarkens
       , lastOfTheCompany
       , aHeavyBurden
+      , gwaihirTheBlackGateOpens
       ]
 
 durinsAxe :: CardDef
@@ -1133,4 +1134,21 @@ aHeavyBurden =
     , cdSetIcon = Just ShelobsLair
     , cdCardTraits = setFromList [Burden, Condition]
     , cdKeywords = setFromList [Permanent]
+    }
+
+-- * The Black Gate Opens
+
+-- | An objective ally and a boon: set aside by stage 1A, shuffled into the encounter deck
+-- by stage 2A. The first player controlling him as the game ends, the campaign card's
+-- resolution adds him to the Campaign Pool, from which he is shuffled into the encounter
+-- deck of each later scenario.
+gwaihirTheBlackGateOpens :: CardDef
+gwaihirTheBlackGateOpens =
+  ((objective "146041" "Gwaihir" TheBlackGateOpens 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 5 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Eagle, Boon]
+    , cdKeywords = setFromList [Ranged, Sentinel]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
     }

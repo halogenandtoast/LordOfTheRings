@@ -285,6 +285,7 @@ import LordOfTheRings.Ally.Cards.Edrahil
 import LordOfTheRings.Ally.Cards.Arador
 import LordOfTheRings.Ally.Cards.Farin
 import LordOfTheRings.Ally.Cards.ArmyOfTheDead (armyOfTheDead)
+import LordOfTheRings.Ally.Cards.GwaihirTheBlackGateOpens
 import LordOfTheRings.Ally.Cards.AnbornLeadership
 import LordOfTheRings.Ally.Cards.MablungLore
 import LordOfTheRings.Ally.Cards.Skinbark
@@ -614,6 +615,7 @@ allAllies =
         , SomeAllyCard arador
         , SomeAllyCard farin
         , SomeAllyCard armyOfTheDead
+        , SomeAllyCard gwaihirTheBlackGateOpens
         , SomeAllyCard anbornLeadership
         , SomeAllyCard mablungLore
         , SomeAllyCard skinbark

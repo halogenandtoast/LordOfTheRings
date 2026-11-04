@@ -542,6 +542,13 @@ import LordOfTheRings.Location.Cards.BloodiedCourtyard
 import LordOfTheRings.Location.Cards.WindingStairs
 import LordOfTheRings.Location.Cards.TorchLitHall
 import LordOfTheRings.Location.Cards.TheTwoWatchers
+import LordOfTheRings.Location.Cards.TheBlackGate
+import LordOfTheRings.Location.Cards.TowersOfTheTeeth
+import LordOfTheRings.Location.Cards.BeleagueredHills
+import LordOfTheRings.Location.Cards.WasteOfDagorlad
+import LordOfTheRings.Location.Cards.SlopesOfCirithGorgor
+import LordOfTheRings.Location.Cards.ReekingMoat
+import LordOfTheRings.Location.Cards.WallOfMorannon
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1130,5 +1137,12 @@ allLocations =
         , SomeLocationCard windingStairs
         , SomeLocationCard torchLitHall
         , SomeLocationCard theTwoWatchers
+        , SomeLocationCard theBlackGate
+        , SomeLocationCard towersOfTheTeeth
+        , SomeLocationCard beleagueredHills
+        , SomeLocationCard wasteOfDagorlad
+        , SomeLocationCard slopesOfCirithGorgor
+        , SomeLocationCard reekingMoat
+        , SomeLocationCard wallOfMorannon
         ]
     ]

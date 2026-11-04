@@ -511,6 +511,11 @@ import LordOfTheRings.Enemy.Cards.CrebainFromDunland
 import LordOfTheRings.Enemy.Cards.OrcOfMordor
 import LordOfTheRings.Enemy.Cards.SnagaArcher
 import LordOfTheRings.Enemy.Cards.UrukSoldierOrcsOfMordor
+import LordOfTheRings.Enemy.Cards.TheMouthOfSauron
+import LordOfTheRings.Enemy.Cards.NazgulOfMordor
+import LordOfTheRings.Enemy.Cards.GorgorothHillTroll
+import LordOfTheRings.Enemy.Cards.EasterlingBowman
+import LordOfTheRings.Enemy.Cards.WarriorOfRhunTheBlackGateOpens
 import LordOfTheRings.Enemy.Cards.Shagrat
 import LordOfTheRings.Enemy.Cards.Gorbag
 import LordOfTheRings.Enemy.Cards.WoundedUruk
@@ -1059,5 +1064,10 @@ allEnemys =
         , SomeEnemyCard orcOfMordor
         , SomeEnemyCard snagaArcher
         , SomeEnemyCard urukSoldierOrcsOfMordor
+        , SomeEnemyCard theMouthOfSauron
+        , SomeEnemyCard nazgulOfMordor
+        , SomeEnemyCard gorgorothHillTroll
+        , SomeEnemyCard easterlingBowman
+        , SomeEnemyCard warriorOfRhunTheBlackGateOpens
         ]
     ]
