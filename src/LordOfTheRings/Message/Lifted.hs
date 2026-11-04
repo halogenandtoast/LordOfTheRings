@@ -35,6 +35,7 @@ import LordOfTheRings.Outcome
 import LordOfTheRings.Player.Types (discardableHand)
 import LordOfTheRings.Phase (Phase (CombatPhase, QuestPhase))
 import LordOfTheRings.Placement (
+  GuardRelease,
   Placement (ActiveLocation, AttachedTo, StagingArea),
   placementController,
  )
@@ -1457,6 +1458,14 @@ lookAtTopOfEncounterDeckMayDiscard pid source cType =
     showing [EncounterCard top]
     when (cdCardType (toCardDef top) == cType) $ labeled "discardIt" $ discardTopOfEncounterDeck source 1
     labeled "leaveOnTop" (pure ())
+
+{- | The encounter card, by its card id, guards the player card, already taken from where it
+was, until it leaves play: a Guarded (X) attachment then attaches to an eligible card, as
+Dragon Hoard guards an Artifact (AttachWhenFree); a held card goes back to its owner's
+hand, as Hobgoblin's (ReturnToHandWhenFree).
+-}
+guardPlayerCard :: ReverseQueue m => CardId -> GuardRelease -> PlayerCard -> m ()
+guardPlayerCard cid release = push . GuardPlayerCard cid release
 
 -- | The treachery leaves play for the player's hand, where it stays, as Ill Tidings reads.
 drawTreacheryIntoHand :: ReverseQueue m => PlayerId -> TreacheryId -> m ()

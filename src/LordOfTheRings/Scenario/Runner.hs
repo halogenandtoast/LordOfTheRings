@@ -20,7 +20,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
-import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
@@ -224,6 +224,36 @@ instance RunMessage ScenarioAttrs where
                 deck <- shuffleM attrs.encounterDiscard
                 push $ GuardObjective oid
                 pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+    -- Guarded (X) on a player attachment: the first card of its types discarded goes to
+    -- the staging area guarding it; the discard pile is shuffled in if the deck runs out
+    -- before one is (MEC65 rules), and with none anywhere it is free at once
+    ResolveGuardedPlayerCard pid card types -> do
+      let matching c = cdCardType (toCardDef c) `elem` types
+      case break matching attrs.encounterDeck of
+        (before, found : after) -> do
+          pushAll
+            $ [AddToEncounterDiscard before | notNull before]
+            <> [CheckWindows [mkAfter $ DiscardedFromEncounterDeck c.id | c <- before <> [found]]]
+            <> [GuardPlayerCard found.id AttachWhenFree card, AddToStaging found]
+          pure $ attrs & encounterDeckL .~ after
+        (_, [])
+          | any matching attrs.encounterDiscard -> do
+              deck <- shuffleM (attrs.encounterDiscard <> attrs.encounterDeck)
+              push msg
+              pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+          | otherwise -> do
+              push $ AttachFreedCard pid card
+              pure attrs
+    GuardPlayerCard cid release card -> pure $ attrs & guardedPlayerCardsL %~ Map.insertWith (flip (<>)) cid [(release, card)]
+    ReleaseGuardedPlayerCards cid -> do
+      lead <- getLead
+      pushAll
+        [ case release of
+            AttachWhenFree -> AttachFreedCard (fromMaybe lead card.owner) card
+            ReturnToHandWhenFree -> PutInHand card
+        | (release, card) <- Map.findWithDefault [] cid attrs.scenarioGuardedPlayerCards
+        ]
+      pure $ attrs & guardedPlayerCardsL %~ Map.delete cid
     -- the next encounter card guards the location, attached to it as it is revealed so its
     -- own effects see it guarding (Troll-fells); any other card is only revealed
     GuardLocation lid -> case attrs.encounterDeck of

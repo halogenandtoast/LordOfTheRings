@@ -13,6 +13,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Heading (Heading)
 import LordOfTheRings.Id
 import LordOfTheRings.Json
+import LordOfTheRings.Placement (GuardRelease)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -99,6 +100,9 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioOutOfPlayResources :: Map CardId Int
   -- ^ resources added to a card while it is out of play, placed on it as it enters play,
   -- as Captain's Quarters adds them to Captain Sahír
+  , scenarioGuardedPlayerCards :: Map CardId [(GuardRelease, PlayerCard)]
+  -- ^ the player cards each encounter card, by its card id, guards: a Guarded (X)
+  -- attachment, or a card Hobgoblin holds (The Wilds of Rhovanion)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -108,7 +112,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object [])] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object [])] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -140,6 +144,7 @@ scenario f sid name =
       , scenarioCampaign = Nothing
       , scenarioCampaignCardFlipped = False
       , scenarioOutOfPlayResources = mempty
+      , scenarioGuardedPlayerCards = mempty
       }
 
 instance Entity ScenarioAttrs where

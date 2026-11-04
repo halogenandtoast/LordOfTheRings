@@ -2081,7 +2081,9 @@ runGameMessage msg g = case msg of
                       ]
         pure g
   PayForCard pid card fromHand windows
-    | card.cardType == AttachmentType -> do
+    -- a Guarded (X) attachment is not attached until it is free of encounters
+    | card.cardType == AttachmentType
+    , not (any (\case GuardedBy _ -> True; _ -> False) (cdKeywords $ toCardDef card)) -> do
         -- a host that lowers the cost is chosen before paying
         hosts <- cardHosts pid (toCardCode card)
         discounts <- traverse (attachDiscount card) hosts
@@ -2703,37 +2705,13 @@ runGameMessage msg g = case msg of
   ResetToStage card _ -> do
     pushAll [PutQuestIntoPlay card, Flip (toTarget card)]
     pure $ g & entitiesL . questsL %~ Map.filter isSideQuest
-  PlayAttachment pid card -> do
-    attachment <- newAttachment pid card
-    let entered = CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]
-        attachTo host = targetLabel host [AttachCard (toId attachment) host, entered]
-    case (toAttrs attachment).attachTo of
-      PlayIntoStagingArea -> do
-        push entered
-        pure
-          $ g
-          & entitiesL
-          . attachmentsL
-          %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = StagingArea}) attachment)
-      PlayIntoPlayArea -> do
-        push entered
-        pure
-          $ g
-          & entitiesL
-          . attachmentsL
-          %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = InPlayArea pid}) attachment)
-      _ -> do
-        hosts <- cardHosts pid (toCardCode card)
-        push $ case hosts of
-          [host] -> uiToRun (attachTo host)
-          _ ->
-            questionLabelWith
-              (ikey "label.attachTo")
-              (Just $ toTarget attachment)
-              hosts
-              pid
-              (map attachTo hosts)
-        pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
+  -- a Guarded (X) attachment is guarded before it is attached (MEC65 rules)
+  PlayAttachment pid card | Just types <- guardedTypes card -> g <$ push (ResolveGuardedPlayerCard pid card types)
+  PlayAttachment pid card -> playAttachment pid card g
+  -- free of encounters, it attaches to an eligible card, or with none is discarded
+  AttachFreedCard pid card -> do
+    hosts <- cardHosts pid (toCardCode card)
+    if null hosts then g <$ push (PutInDiscard card) else playAttachment pid card g
   -- a character can have at most 2 restricted attachments, claimed objectives among
   -- them: with a third, its controller discards one of them
   AttachCard aid host
@@ -3239,6 +3217,44 @@ announce = \case
         $ FlipCard attrs.questCardId
   _ -> pure ()
 
+-- | The Guarded (X) keyword's types on a player card, as Necklace of Girion's.
+guardedTypes :: PlayerCard -> Maybe [CardType]
+guardedTypes card = headMay [ts | GuardedBy ts <- toList (cdKeywords $ toCardDef card)]
+
+-- | The attachment card enters play and attaches to a host its player chooses.
+playAttachment :: PlayerId -> PlayerCard -> Game -> GameT Game
+playAttachment pid card g = do
+  attachment <- newAttachment pid card
+  let entered = CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]
+      attachTo host = targetLabel host [AttachCard (toId attachment) host, entered]
+  case (toAttrs attachment).attachTo of
+    PlayIntoStagingArea -> do
+      push entered
+      pure
+        $ g
+        & entitiesL
+        . attachmentsL
+        %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = StagingArea}) attachment)
+    PlayIntoPlayArea -> do
+      push entered
+      pure
+        $ g
+        & entitiesL
+        . attachmentsL
+        %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = InPlayArea pid}) attachment)
+    _ -> do
+      hosts <- cardHosts pid (toCardCode card)
+      push $ case hosts of
+        [host] -> uiToRun (attachTo host)
+        _ ->
+          questionLabelWith
+            (ikey "label.attachTo")
+            (Just $ toTarget attachment)
+            hosts
+            pid
+            (map attachTo hosts)
+      pure $ g & entitiesL . attachmentsL %~ insertEntity attachment
+
 -- | Remove an entity from play and put its card in the right discard pile.
 discardTarget :: Target -> Game -> GameT Game
 discardTarget target = discardFromPlay target <=< (`leftPlay` target)
@@ -3363,6 +3379,8 @@ freeGuarded g target =
   , l <- toList g.entities.locations
   , l.placement == AttachedTo (CardIdTarget cid)
   ]
+    -- and the player cards it guards go free (MEC65 rules)
+    <> [ReleaseGuardedPlayerCards cid | Just cid <- [guardCard], Map.member cid (toAttrs g.scenario).scenarioGuardedPlayerCards]
     -- and the characters it guards as captives are rescued, in one window, as "after any
     -- number of characters are rescued" reads (Rescue the Prisoners)
     <> map RescueCharacter captives

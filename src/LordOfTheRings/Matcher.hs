@@ -23,12 +23,12 @@ import LordOfTheRings.Location.Types hiding (location)
 import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Name
-import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveTokens))
+import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveGuard, objectiveTokens))
 import LordOfTheRings.Placement
 import LordOfTheRings.Quest.Types (QuestAttrs (questTokens), isEncounterSideQuest, isSideQuest)
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
-import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioGuardedPlayerCards, scenarioMode)
 import LordOfTheRings.Source (Source (EnemyAttackSource), Sourceable (..))
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Damage, Resource, TimeCounter), Tokens, countTokens)
@@ -232,6 +232,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget enemy)
   EnemyWithAnyAttachment -> notNull <$> getAttachmentsOn (toTarget enemy)
   EnemyWithResources -> pure $ countTokens Resource (toAttrs enemy).enemyTokens > 0
+  EnemyGuardingACard -> guardingACard (toCard enemy).id (toTarget enemy)
   EnemyGrappledWith lm -> case enemy.placement of
     AttachedTo (LocationTarget lid) -> elem lid <$> select lm
     _ -> pure False
@@ -275,6 +276,7 @@ matchLocation matcher location = case matcher of
     pure $ any ((== title location) . title) active
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationCanEnterStagingArea -> notElem CannotEnterStagingArea . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
+  LocationGuardingACard -> guardingACard (toCard location).id (toTarget location)
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -970,6 +972,26 @@ resourcesHeld :: (HasGame m, Targetable a) => a -> Int -> m Int
 resourcesHeld a n = do
   mods <- map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
   pure $ if HasNoResources `elem` mods then 0 else n
+
+{- | Whether the encounter card, by its card id and as in play, guards a card: an objective
+guarding it or attached to it, a location or a captive attached to it, or a player card it
+holds (see 'GuardPlayerCard').
+-}
+guardingACard :: HasGame m => CardId -> Target -> m Bool
+guardingACard cid target = do
+  g <- getGame
+  let es = gameEntities g
+  captives <- charactersGuardedBy cid
+  pure
+    $ notNull captives
+    || any (\o -> objectiveGuard (toAttrs o) == Just cid || o.placement == AttachedTo target) (entitiesObjectives es)
+    || any ((== AttachedTo (CardIdTarget cid)) . (.placement)) (entitiesLocations es)
+    || Map.member cid (scenarioGuardedPlayerCards $ toAttrs $ gameScenario g)
+
+-- | The player cards the encounter card, by its card id, guards (see 'GuardPlayerCard'), as
+-- Hobgoblin reads the cost of the one it holds.
+playerCardsGuardedBy :: HasGame m => CardId -> m [PlayerCard]
+playerCardsGuardedBy cid = getsGame (map snd . Map.findWithDefault [] cid . scenarioGuardedPlayerCards . toAttrs . gameScenario)
 
 -- | The characters the encounter card guards as captives (see 'GuardCharacter').
 charactersGuardedBy :: HasGame m => CardId -> m [Target]

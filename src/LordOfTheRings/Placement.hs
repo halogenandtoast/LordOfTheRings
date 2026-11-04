@@ -27,6 +27,13 @@ data Placement
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+-- | What becomes of a player card an encounter card guards once its guard leaves play:
+-- a Guarded (X) attachment attaches to an eligible card, a card Hobgoblin holds goes back
+-- to its owner's hand (The Wilds of Rhovanion).
+data GuardRelease = AttachWhenFree | ReturnToHandWhenFree
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 placementController :: Placement -> Maybe PlayerId
 placementController = \case
   InPlayArea pid -> Just pid

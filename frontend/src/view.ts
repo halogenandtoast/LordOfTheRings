@@ -200,6 +200,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true), ...placed('heroes', (h) => !!h.guardedBy), ...placed('locations', isAt('AttachedTo'))].filter(
         (a) => a.attachedTo !== null && ids.has(a.attachedTo),
       ),
+      // the player cards an encounter card guards sit on it, as a Guarded (X) attachment does
+      ...Object.entries(game.scenario.guardedPlayerCards ?? {}).flatMap(([guard, held]) =>
+        ids.has(guard) ? held.map(([, c]) => card(c.cardCode, c.id, { attachedTo: guard })) : [],
+      ),
       ...cards.flatMap(stackUnder),
     ]
   }

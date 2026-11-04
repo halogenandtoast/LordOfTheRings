@@ -295,6 +295,18 @@ data Message
   | -- | an objective card comes into the staging area guarded by the card, as The Enemy's
     -- Trail attaches a Clue card to a Mordor enemy
     PutObjectiveIntoPlayGuardedBy EncounterCard CardId
+  | -- | Guarded (X) on a player attachment as it enters play: cards are discarded from the
+    -- encounter deck until one of the types is, which goes to the staging area guarding it
+    -- (MEC65 rules)
+    ResolveGuardedPlayerCard PlayerId PlayerCard [CardType]
+  | -- | the encounter card, by its card id, guards the player card, out of play, until it
+    -- leaves play
+    GuardPlayerCard CardId GuardRelease PlayerCard
+  | -- | the encounter card has left play: the player cards it guarded go free
+    ReleaseGuardedPlayerCards CardId
+  | -- | a Guarded (X) attachment free of encounters: its owner attaches it to an eligible
+    -- card, its guarded keyword not resolved again
+    AttachFreedCard PlayerId PlayerCard
   | -- | the card leaves play for good; an objective, as Book of Mazarbul, or a location
     RemoveFromGame Target
   | -- | a stage leaves the quest deck unplayed, as exploring The Banks removes stage 2

@@ -4,7 +4,7 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
-import LordOfTheRings.Keyword (Keyword (Doomed))
+import LordOfTheRings.Keyword (Keyword (Doomed, Guarded, GuardedBy))
 import LordOfTheRings.Location.Grid (Pos)
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
@@ -189,6 +189,9 @@ data EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]
   | -- | an enemy with the keyword, printed or gained, as "with the ambush keyword" reads
     EnemyWithKeyword Keyword
+  | -- | an enemy guarding a card: an objective, a captive, a location or a player card, as
+    -- "an enemy guarding a card" reads (Unseen Danger)
+    EnemyGuardingACard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -235,6 +238,8 @@ data LocationMatcher
     LocationAtPosition Pos
   | -- | a location that can enter the staging area, as Shrine to Morgoth cannot
     LocationCanEnterStagingArea
+  | -- | a location guarding a card, as 'EnemyGuardingACard' (Find Durin's Key)
+    LocationGuardingACard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -271,6 +276,9 @@ data CardMatcher
     UniqueCard
   | -- | a card of the title, whatever its subtitle: a copy, as Heavy Curse reads
     CardWithTitle Text
+  | -- | a card printed with the guarded keyword, Guarded (X) among them, as "a Guarded
+    -- attachment" reads (The King's Return)
+    CardWithGuarded
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -307,6 +315,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardWithValour -> cdCardCode def `elem` valourCards
   UniqueCard -> cdUnique def
   CardWithTitle title -> let Name t _ = cdName def in t == title
+  CardWithGuarded -> any (\case Guarded -> True; GuardedBy _ -> True; _ -> False) (cdKeywords def)
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]
