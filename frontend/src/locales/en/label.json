@@ -3168,5 +3168,53 @@
     "choose": "The Council of Elrond: choose one",
     "shuffleLust": "Shuffle Lust for the Ring into the encounter deck",
     "raiseThreat": "Raise each player’s threat by 5"
+  },
+  "breakingOfTheFellowship": {
+    "chooseGift": "Breaking of the Fellowship: choose a Gift to attach to a hero you control",
+    "attachGift": "Choose a hero you control to attach the Gift to",
+    "chooseStage": "The Company Divided: choose your stage 3A",
+    "moveCard": "The Company Divided: choose an encounter card to move to your staging area",
+    "chooseBurden": "Breaking of the Fellowship: choose the burden added to the Campaign Pool",
+    "chooseCaptive": "Breaking of the Fellowship: choose a hero you control to be taken captive"
+  },
+  "urukHaiArcher": {
+    "discardAlly": "Uruk-hai Archer: discard an ally you control"
+  },
+  "urukHaiHunter": {
+    "choose": "Uruk-hai Hunter: choose one",
+    "reveal": "Choose a player to reveal an encounter card",
+    "attack": "Uruk-hai Hunter makes an immediate attack against you",
+    "choosePlayer": "Uruk-hai Hunter: choose a player to reveal an encounter card"
+  },
+  "slopesOfAmonHen": {
+    "choosePlayer": "Slopes of Amon Hen: choose a player at this stage to engage an enemy",
+    "engage": "Slopes of Amon Hen: choose an enemy in any staging area to engage"
+  },
+  "seatOfSeeing": {
+    "removeBurden": "Seat of Seeing: choose a burden to remove from the game"
+  },
+  "growingThreat": {
+    "choose": "Growing Threat: choose one",
+    "move": "Move an enemy engaged with you to the first player's staging area",
+    "chooseEnemy": "Growing Threat: choose an enemy engaged with you",
+    "doomed": "Growing Threat gains doomed 2 and surge"
+  },
+  "fallenIntoEvil": {
+    "attach": "Fallen into Evil: choose a hero to fall into evil"
+  },
+  "illFate": {
+    "attach": "Ill Fate: choose a hero you control to attach it to"
+  },
+  "searchingTheWoods": {
+    "discardLocation": "Searching the Woods: discard a non-unique location in any staging area"
+  },
+  "guardTheHobbits": {
+    "choosePlayer": "Guard the Hobbits: choose a player whose heroes ready"
+  },
+  "theSeatOfAmonHen": {
+    "choosePlayer": "The Seat of Amon Hen: choose a player to draw 2 cards and lower his threat by 2"
+  },
+  "orcHunting": {
+    "discardEnemy": "Orc Hunting: discard an enemy engaged with a player"
   }
 }
