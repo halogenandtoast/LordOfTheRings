@@ -3491,6 +3491,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.ElvesOfLorienSpec
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
+      LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsSpec
       LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesSpec
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthSpec
       LordOfTheRings.TravelPhaseSpec
