@@ -3999,5 +3999,15 @@
       "Farin laughed and said, “Then let’s get moving. It will be dark soon.”",
       "The story continues in “The Fortress of Nurn,” the sixth Adventure Pack in “The Vengeance of Mordor” cycle."
     ]
+  },
+  "we-must-away-ere-break-of-day": {
+    "intro": [
+      "Bilbo has left the Shire with Gandalf, Thorin and the dwarves, bound for the Lonely Mountain. Not far into the wild, the company stumbles upon a camp of three hungry trolls."
+    ],
+    "setup": [
+      "Build the encounter deck from the We Must Away, Ere Break of Day and Western Lands encounter sets. The seven Sack objectives form a separate sack deck.",
+      "Sack X: the first player draws the top X cards of the sack deck, one at a time, and resolves their When Sacked effects. With the sack deck empty, Sack X is ignored. A Sack card that leaves play, or has no eligible target, is shuffled back into the sack deck.",
+      "The first player takes control of Bilbo Baggins. If he leaves play, the players lose."
+    ]
   }
 }
