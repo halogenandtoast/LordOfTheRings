@@ -7,8 +7,8 @@ import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyTyp
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
-import LordOfTheRings.Ally.Types (allyCardId)
-import LordOfTheRings.Hero.Types (heroCardId)
+import LordOfTheRings.Ally.Types (allyCardId, allyExhausted)
+import LordOfTheRings.Hero.Types (heroCardId, heroExhausted)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
 import LordOfTheRings.Enemy.Types (enemyTokens)
@@ -109,7 +109,23 @@ preloadModifiers g = do
           , EachAlly m <- effectModifiers e
           , a <- toList es.allies
           ]
-      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, allied, attachedOut]
+      -- and on each character while it is exhausted
+      wearied =
+        Map.fromListWith
+          (<>)
+          $ [ (toTarget (toId h), [Modifier (effectSource e) m])
+            | e <- gameEffects g
+            , EachExhaustedCharacter m <- effectModifiers e
+            , h <- toList es.heroes
+            , heroExhausted (toAttrs h)
+            ]
+          <> [ (toTarget (toId a), [Modifier (effectSource e) m])
+             | e <- gameEffects g
+             , EachExhaustedCharacter m <- effectModifiers e
+             , a <- toList es.allies
+             , allyExhausted (toAttrs a)
+             ]
+      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, allied, wearied, attachedOut]
       -- an encounter card's lasting effect counted from tokens is recalculated as they
       -- change (FAQ 1.55): each such modifier adds its count as the plain modifier
       counted t = \case

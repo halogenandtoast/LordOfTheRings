@@ -115,6 +115,7 @@ import LordOfTheRings.Hero.Cards.BeregondSpirit
 import LordOfTheRings.Hero.Cards.EomerLeadership
 import LordOfTheRings.Hero.Cards.TomCotton
 import LordOfTheRings.Hero.Cards.FrodoBagginsTheRoadDarkens
+import LordOfTheRings.Hero.Cards.BilboBagginsOnTheDoorstep
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -292,5 +293,6 @@ allHeroes =
         , SomeHeroCard eomerLeadership
         , SomeHeroCard tomCotton
         , SomeHeroCard frodoBagginsTheRoadDarkens
+        , SomeHeroCard bilboBagginsOnTheDoorstep
         ]
     ]

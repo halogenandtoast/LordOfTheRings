@@ -517,6 +517,12 @@ allEnemyCards =
       , houndOfSauron
       , howlingWarg
       , crebainFromDunland
+      , oldTomnoddy
+      , crazyCob
+      , lazyLob
+      , fatSpider
+      , wickedSpider
+      , darkBats
       ]
 
 namelessThing :: CardDef
@@ -4259,3 +4265,33 @@ crebainFromDunland =
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Peril]
     }
+
+-- * Flies and Spiders
+
+-- | A Spider of Mirkwood, with venom (The Hobbit: On the Doorstep rules insert).
+mirkwoodSpider :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> Int -> CardDef
+mirkwoodSpider code name quantity engagementCost threat attack defense hitPoints =
+  (enemy code name FliesAndSpiders quantity engagementCost threat attack defense hitPoints)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdKeywords = setFromList [Venom]
+    }
+
+oldTomnoddy :: CardDef
+oldTomnoddy = (mirkwoodSpider "132028" "Old Tomnoddy" 3 37 3 5 2 4) {cdEasyModeQuantity = Just 1}
+
+crazyCob :: CardDef
+crazyCob = (mirkwoodSpider "132029" "Crazy Cob" 3 30 2 3 2 2) {cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+lazyLob :: CardDef
+lazyLob = (mirkwoodSpider "132030" "Lazy Lob" 3 33 3 3 0 3) {cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+fatSpider :: CardDef
+fatSpider = (mirkwoodSpider "132031" "Fat Spider" 4 28 2 1 1 6) {cdShadowEffect = True, cdEasyModeQuantity = Just 3}
+
+wickedSpider :: CardDef
+wickedSpider = (mirkwoodSpider "132032" "Wicked Spider" 5 25 1 4 1 3) {cdShadowEffect = True}
+
+-- * Wilderland
+
+darkBats :: CardDef
+darkBats = (enemy "132036" "Dark Bats" Wilderland 3 15 2 2 0 1) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
