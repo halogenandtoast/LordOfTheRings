@@ -2245,5 +2245,17 @@
   },
   "mordorWarg": {
     "attach": "Mordor Warg: choose the Orc enemy to attach it to"
+  },
+  "offTrack": {
+    "choose": "Off Track: return the topmost location in the encounter discard pile to the staging area, or raise each player's threat",
+    "raiseThreat": "Raise each player's threat by 1 for each resource on Off Track"
+  },
+  "onTrack": {
+    "add": "On Track: choose the card with On Track to add to the staging area"
+  },
+  "forcedOffTrack": {
+    "choose": "Forced Off Track: flip the Search objective to Off Track, or deal 1 damage to each questing character",
+    "flip": "Flip the Search objective to Off Track",
+    "damage": "Deal 1 damage to each questing character"
   }
 }

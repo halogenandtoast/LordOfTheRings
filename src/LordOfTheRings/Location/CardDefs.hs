@@ -419,6 +419,11 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , spiderBurrow
+      , pitchBlackTunnel
+      , nestOfVermin
+      , cobwebbedCavern
+      , blockedPassage
       ]
 
 drownedTreasury :: CardDef
@@ -3201,5 +3206,43 @@ denseJungle :: CardDef
 denseJungle =
   (location "16058" "Dense Jungle" JungleForest 3 2 3)
     { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+-- * Beneath the Sands
+
+spiderBurrow :: CardDef
+spiderBurrow = (location "17068" "Spider Burrow" BeneathTheSands 2 3 2) {cdCardTraits = setFromList [Underground]}
+
+-- | X threat, from its own modifiers. On Track printed in its lower right corner.
+pitchBlackTunnel :: CardDef
+pitchBlackTunnel =
+  (location "17069" "Pitch Black Tunnel" BeneathTheSands 2 0 5)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 4]
+    }
+
+-- | On Track printed in its lower right corner.
+nestOfVermin :: CardDef
+nestOfVermin =
+  (location "17070" "Nest of Vermin" BeneathTheSands 2 3 4)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 3]
+    }
+
+cobwebbedCavern :: CardDef
+cobwebbedCavern =
+  (location "17071" "Cobwebbed Cavern" BeneathTheSands 3 2 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 2]
+    , cdShadowEffect = True
+    }
+
+-- | On Track printed in its lower right corner.
+blockedPassage :: CardDef
+blockedPassage =
+  (location "17072" "Blocked Passage" BeneathTheSands 3 2 6)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 2]
     , cdShadowEffect = True
     }

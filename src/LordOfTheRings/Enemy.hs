@@ -399,6 +399,9 @@ import LordOfTheRings.Enemy.Cards.UrukChieftain
 import LordOfTheRings.Enemy.Cards.UrukOfMordor
 import LordOfTheRings.Enemy.Cards.UrukWargRider
 import LordOfTheRings.Enemy.Cards.MordorWarg
+import LordOfTheRings.Enemy.Cards.BroodMother
+import LordOfTheRings.Enemy.Cards.HiveGuardian
+import LordOfTheRings.Enemy.Cards.SpiderBroodling
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -824,5 +827,8 @@ allEnemys =
         , SomeEnemyCard urukOfMordor
         , SomeEnemyCard urukWargRider
         , SomeEnemyCard mordorWarg
+        , SomeEnemyCard broodMother
+        , SomeEnemyCard hiveGuardian
+        , SomeEnemyCard spiderBroodling
         ]
     ]

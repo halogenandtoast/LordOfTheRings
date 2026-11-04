@@ -107,6 +107,8 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , offTrack
+      , onTrack
       ]
 
 durinsAxe :: CardDef
@@ -719,3 +721,14 @@ theCabalsChampion =
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
     }
+
+-- * Beneath the Sands
+
+-- | The Search objective, Off Track faceup as it is set up: one card, On Track on its other
+-- side, the side faceup kept as its card code.
+offTrack :: CardDef
+offTrack = (objective "17079" "Off Track" BeneathTheSands 1) {cdCardTraits = setFromList [SearchTrait]}
+
+-- | The Search objective's other side: no copy of it is gathered, Off Track turns into it.
+onTrack :: CardDef
+onTrack = (objective "17080" "On Track" BeneathTheSands 0) {cdCardTraits = setFromList [SearchTrait]}

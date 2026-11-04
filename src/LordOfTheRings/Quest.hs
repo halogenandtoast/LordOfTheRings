@@ -225,6 +225,10 @@ import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
 import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.LostUnderground
+import LordOfTheRings.Quest.Cards.SearchingTheCaves
+import LordOfTheRings.Quest.Cards.GettingCloser
+import LordOfTheRings.Quest.Cards.TheSpidersHive
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -482,5 +486,9 @@ allQuests =
         , SomeQuestCard findWater
         , SomeQuestCard craftRemedy
         , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard lostUnderground
+        , SomeQuestCard searchingTheCaves
+        , SomeQuestCard gettingCloser
+        , SomeQuestCard theSpidersHive
         ]
     ]

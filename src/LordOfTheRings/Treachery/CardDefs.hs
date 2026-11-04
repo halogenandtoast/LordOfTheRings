@@ -344,6 +344,8 @@ allTreacheryCards =
       , heatExhaustion
       , overgrown
       , fearOfMordor
+      , forcedOffTrackBeneathTheSands
+      , grabbedBySpiders
       ]
 
 deepDeepDark :: CardDef
@@ -2210,3 +2212,11 @@ overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFrom
 
 fearOfMordor :: CardDef
 fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Beneath the Sands
+
+forcedOffTrackBeneathTheSands :: CardDef
+forcedOffTrackBeneathTheSands = (treachery "17073" "Forced Off Track" BeneathTheSands 3) {cdShadowEffect = True}
+
+grabbedBySpiders :: CardDef
+grabbedBySpiders = (treachery "17074" "Grabbed by Spiders" BeneathTheSands 3) {cdKeywords = setFromList [Surge, Doomed 1]}
