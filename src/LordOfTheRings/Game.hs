@@ -1039,6 +1039,7 @@ runGameMessage msg g = case msg of
               barred =
                 (CannotBeDamagedByPlayerCardEffects `elem` mods' && isPlayerCardSource source)
                   || maybe False (\p -> CannotBeDamagedByEffectsOf p `elem` mods') controller
+                  || any (\s -> sourceTarget s /= sourceTarget source || isNothing (sourceTarget s)) [s | CannotTakeDamageExceptFrom s <- mods']
           pure
             $ if CannotTakeDamage `elem` mods'
               || n' <= 0
@@ -2395,6 +2396,10 @@ runGameMessage msg g = case msg of
           (fmap (elem ReturnToTopOfEncounterDeckAfterCombat) . getModifiers)
           (toList g.entities.enemies)
       pushAll [ReturnToTopOfEncounterDeck (toTarget e) | e <- returning]
+      -- the enemies an effect returns to the staging area then, as Great Gray Wolf's
+      matchers <- (\ms -> [m | ReturnToStagingAtEndOfCombat m <- ms]) <$> getModifiers GameTarget
+      returningToStaging <- ordNub . concat <$> traverse select matchers
+      pushAll [PlaceEnemy e StagingArea | e <- returningToStaging]
     -- an ally put into play until the end of the phase, as Command's, is discarded
     discarding <- flip filterM (toList g.entities.allies) \a ->
       elem DiscardAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
