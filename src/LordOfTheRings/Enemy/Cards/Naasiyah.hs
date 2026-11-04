@@ -48,7 +48,7 @@ instance RunMessage Naasiyah where
       pure e
     UseCardAbility _ (isSource attrs -> True) 3 _ -> do
       strengthen
-      removeTokens attrs attrs Resource 1
+      afterAttackOn attrs.id [RemoveTokens (toSource attrs) (toTarget attrs) Resource 1]
       pure e
     _ -> Naasiyah <$> runMessage msg attrs
    where
