@@ -77,6 +77,9 @@ import LordOfTheRings.Event.Cards.ConeyInATrap
 import LordOfTheRings.Event.Cards.PillarsOfTheKings
 import LordOfTheRings.Event.Cards.NeedDrivesThem
 import LordOfTheRings.Event.Cards.HelmOfSecrecy
+import LordOfTheRings.Event.Cards.TheMasterRing
+import LordOfTheRings.Event.Cards.TheRulingRing
+import LordOfTheRings.Event.Cards.TheRingOfPower
 import LordOfTheRings.Event.Cards.EverOnward
 import LordOfTheRings.Event.Cards.KhazadKhazad
 import LordOfTheRings.Event.Cards.UntroubledByDarkness
@@ -305,6 +308,9 @@ allEvents =
         , SomeEventCard pillarsOfTheKings
         , SomeEventCard needDrivesThem
         , SomeEventCard helmOfSecrecy
+        , SomeEventCard theMasterRing
+        , SomeEventCard theRulingRing
+        , SomeEventCard theRingOfPower
         , SomeEventCard everOnward
         , SomeEventCard khazadKhazad
         , SomeEventCard untroubledByDarkness

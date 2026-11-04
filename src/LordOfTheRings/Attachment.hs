@@ -65,6 +65,11 @@ import LordOfTheRings.Attachment.Cards.SpearOfTheCitadel
 import LordOfTheRings.Attachment.Cards.IthilienPit
 import LordOfTheRings.Attachment.Cards.GondorianShield
 import LordOfTheRings.Attachment.Cards.ValiantSword
+import LordOfTheRings.Attachment.Cards.TheOneRing
+import LordOfTheRings.Attachment.Cards.InnerStrength
+import LordOfTheRings.Attachment.Cards.StrengthAndCourage
+import LordOfTheRings.Attachment.Cards.PowerOfCommand
+import LordOfTheRings.Attachment.Cards.WellPreserved
 import LordOfTheRings.Attachment.Cards.VisionaryLeadership
 import LordOfTheRings.Attachment.Cards.HeirOfMardil
 import LordOfTheRings.Attachment.Cards.CaptainOfGondor
@@ -296,6 +301,11 @@ allAttachments =
         , SomeAttachmentCard ithilienPit
         , SomeAttachmentCard gondorianShield
         , SomeAttachmentCard valiantSword
+        , SomeAttachmentCard theOneRing
+        , SomeAttachmentCard innerStrength
+        , SomeAttachmentCard strengthAndCourage
+        , SomeAttachmentCard powerOfCommand
+        , SomeAttachmentCard wellPreserved
         , SomeAttachmentCard visionaryLeadership
         , SomeAttachmentCard heirOfMardil
         , SomeAttachmentCard captainOfGondor
