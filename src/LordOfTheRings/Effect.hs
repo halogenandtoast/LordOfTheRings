@@ -17,6 +17,9 @@ data EffectDuration
   | -- | until the end of the next such phase, this one if it is the phase now, as
     -- Enfeebled's "until the end of the combat phase"
     UntilEndOfPhaseOf Phase
+  | -- | until the engagement checks being made are over, as Fight Your Way Out's lowered
+    -- engagement costs
+    UntilEndOfEngagementChecks
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

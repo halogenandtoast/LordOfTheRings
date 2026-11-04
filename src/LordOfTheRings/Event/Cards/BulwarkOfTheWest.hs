@@ -7,9 +7,10 @@ newtype BulwarkOfTheWest = BulwarkOfTheWest EventAttrs
   deriving anyclass (IsEvent, HasModifiersFor)
   deriving newtype (Show, Eq, Entity)
 
+-- | Playable with an ally to discard and a Condition attachment to choose.
 bulwarkOfTheWest :: EventCard BulwarkOfTheWest
 bulwarkOfTheWest =
-  eventWith BulwarkOfTheWest Cards.bulwarkOfTheWest \a -> a & criteriaL .~ exists (AllyControlledBy $ PlayerWithId a.owner)
+  eventWith BulwarkOfTheWest Cards.bulwarkOfTheWest \a -> a & criteriaL .~ (exists (AllyControlledBy $ PlayerWithId a.owner) <> ConditionAttachmentExists)
 
 -- | Action: Discard an ally you control to choose and discard a Condition attachment.
 instance RunMessage BulwarkOfTheWest where

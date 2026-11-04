@@ -105,6 +105,23 @@ spec = describe "The Crossings of Poros player cards" do
       getsGame (length . (.entities.allies)) `shouldReturn` 0
       attachmentPlacement Attachments.followed `shouldReturn` Nothing
 
+    it "cannot be played while no Condition attachment is in play" . gameTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.beorningGuardian
+      bulwark <- putCardIntoHand pid Events.bulwarkOfTheWest
+      run $ ActionWindow pid
+      let offered = any \case TargetLabel (CardIdTarget c) _ -> c == bulwark.id; _ -> False
+      maybe False (offered . questionChoices) <$> getQuestion pid `shouldReturn` False
+
+    it "discards a Strangling Python attached to a character as a Condition attachment" . gameTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.beorningGuardian
+      python <- stagedEnemy Enemies.stranglingPython
+      eowyn <- hero eowynCode
+      run $ PlaceEnemy python (AttachedTo eowyn)
+      bulwark <- putCardIntoHand pid Events.bulwarkOfTheWest
+      run $ ActionWindow pid
+      chooseTarget pid (CardIdTarget bulwark.id)
+      enemyIds `shouldReturn` []
+
   describe "Beorning Guardian" do
     it "is discarded after an attack it joined destroys an enemy, placing its printed threat as progress" . gameTest $ \pid -> do
       lid <- stagedLocation Locations.mountainsOfMirkwood

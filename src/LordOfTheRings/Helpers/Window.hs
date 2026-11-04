@@ -300,6 +300,8 @@ passesCriteria = \case
       pure $ maybe True (null . cdKeywords) def && null [k | GainKeyword k <- mods]
   AnyCriteria cs -> anyM passesCriteria cs
   DifferentTraitsAtLeast pid n -> (>= n) . length . mconcat <$> (traverse characterTraits =<< charactersControlledBy pid)
+  ConditionAttachmentExists -> notNull <$> getConditionAttachments
+  CardInHandToDiscard pid matcher -> anyM (matchCard matcher) . (.hand) =<< getPlayer pid
 
 -- | Whether each list can give a character not taken by an earlier one.
 distinct :: [Target] -> [[Target]] -> Bool

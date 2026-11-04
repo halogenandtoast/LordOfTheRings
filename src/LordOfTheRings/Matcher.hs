@@ -728,14 +728,16 @@ getDamage = \case
 damagedCharacters :: HasGame m => HeroMatcher -> AllyMatcher -> m [Target]
 damagedCharacters heroes allies = filterM (fmap (> 0) . getDamage) =<< selectCharacters heroes allies
 
-{- | Condition attachments in play: attachments with the Condition trait, and encounter
-cards attached to something, which in the core set all count as Conditions.
+{- | Condition attachments in play: attachments with the Condition trait, encounter cards
+attached to something, which in the core set all count as Conditions, and an enemy
+attached as one, as Strangling Python counts as a Condition attachment.
 -}
 getConditionAttachments :: HasGame m => m [Target]
 getConditionAttachments = do
   es <- getsGame gameEntities
   conditions <- filterM (\a -> hasTrait Condition (toTarget a) (toCardDef a)) (toList es.attachments)
-  pure $ map toTarget conditions <> [toTarget t | t <- toList es.treacheries, isAttached t.placement]
+  enemies <- filterM (\e -> hasTrait Condition (toTarget e) (toCardDef e)) [e | e <- toList es.enemies, isAttached e.placement]
+  pure $ map toTarget conditions <> [toTarget t | t <- toList es.treacheries, isAttached t.placement] <> map toTarget enemies
  where
   isAttached = \case
     AttachedTo _ -> True

@@ -324,7 +324,13 @@ spec = describe "The Black Serpent" do
     run RevealEncounterCard
     resolveRevealed
     chooseLabel "$label.chaosInTheNight.noProgress" pid
-    getModifiers q >>= (`shouldSatisfy` elem (ProgressLimit 0))
+    run $ PlaceTokens GameSource q Progress 2
+    progressOn q `shouldReturn` 0
+    -- a quest card entering play after it resolves takes none either
+    stage Quests.dontLetThemEscape
+    side <- getsGame (toTarget . fromJustNote "side quest" . find ((== toCardCode Quests.dontLetThemEscape) . toCardCode) . toList . (.entities.quests))
+    run $ PlaceTokens GameSource side Progress 2
+    progressOn side `shouldReturn` 0
 
   it "has Don't Let Them Escape! discard the main quest's progress at the end of the round" . serpentTest $ \_ -> do
     q <- mainQuest Quests.theCrossroadsFort 4

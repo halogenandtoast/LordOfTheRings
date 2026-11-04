@@ -19,7 +19,7 @@ import LordOfTheRings.Quest.Runner (getQuestPoints)
 import LordOfTheRings.Scenario (lookupScenario, theCrossingsOfPoros)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), encounterDiscardL, questDeckL, setAsideL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (WindowType (CharacterDestroyedByAttack, PhaseEnds), mkAfter, mkWhen)
+import LordOfTheRings.Window (WindowType (PhaseEnds, PlayedCard), mkAfter, mkWhen)
 import TestImport
 
 porosTest :: (PlayerId -> GameT ()) -> IO ()
@@ -124,6 +124,12 @@ spec = describe "The Crossings of Poros" do
     _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
     fmap allyExhausted <$> allyOf Allies.guardOfTheCitadel `shouldReturn` Just True
 
+  it "has an ally enter play on stage 1B exhausted already, before its entering windows open" . porosTest $ \pid -> do
+    flipFirstQuest pid
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    runOnly $ PutAllyIntoPlayUnder pid card
+    fmap allyExhausted <$> allyOf Allies.guardOfTheCitadel `shouldReturn` Just True
+
   it "advances to a random stage 2 at the end of the planning phase, which shuffles in its set and removes the other" . porosTest $ \pid -> do
     flipFirstQuest pid
     run $ CheckWindows [mkWhen $ PhaseEnds PlanningPhase]
@@ -145,6 +151,17 @@ spec = describe "The Crossings of Poros" do
   it "has a player who plays an ally on The Desert Path exhaust it or deal it 1 damage" . porosTest $ \pid -> do
     _ <- stageB Quests.theDesertPath
     _ <- playWith pid "01002" 2 Allies.guardOfTheCitadel
+    chooseLabel "$label.theDesertPath.damage" pid
+    al <- fromJustNote "no ally" <$> allyOf Allies.guardOfTheCitadel
+    getDamage (toTarget $ allyId al) `shouldReturn` 1
+
+  it "has The Desert Path answer an ally played from anywhere, not from hand alone" . porosTest $ \pid -> do
+    _ <- stageB Quests.theDesertPath
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    run $ PutAllyIntoPlayUnder pid card
+    -- put into play, it was not played
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    run $ CheckWindows [mkAfter $ PlayedCard pid card]
     chooseLabel "$label.theDesertPath.damage" pid
     al <- fromJustNote "no ally" <$> allyOf Allies.guardOfTheCitadel
     getDamage (toTarget $ allyId al) `shouldReturn` 1
@@ -232,12 +249,22 @@ spec = describe "The Crossings of Poros" do
     run $ CheckWindows [mkWhen $ PhaseEnds CombatPhase]
     getsGame (.outcome) `shouldReturn` Just Won
 
-  it "loses progress equal to the printed threat of an enemy whose attack destroys a character" . porosTest $ \pid -> do
+  it "loses progress equal to the printed threat of an enemy whose attack destroys a character" . porosTest $ \_ -> do
     q <- stageB Quests.battleAtTheCrossings
     run $ PlaceTokens GameSource q Progress 5
     eid <- stage Enemies.southronSoldier
     beravor <- hero "01012"
-    run $ CheckWindows [mkAfter $ CharacterDestroyedByAttack eid beravor pid]
+    run $ Destroy (EnemyAttackSource eid) beravor
+    (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 2
+
+  it "reads the printed threat of an attacker that left play before its Forced effect resolves" . porosTest $ \_ -> do
+    q <- stageB Quests.battleAtTheCrossings
+    run $ PlaceTokens GameSource q Progress 5
+    eid <- stage Enemies.southronSoldier
+    beravor <- hero "01012"
+    runOnly $ Destroy (EnemyAttackSource eid) beravor
+    run $ Discard (EnemyTarget eid)
+    enemyCodes `shouldReturn` []
     (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 2
 
   it "loses the game as Poros Garrison leaves play" . porosTest $ \pid -> do
@@ -285,6 +312,13 @@ spec = describe "The Crossings of Poros" do
     setAsideCodes >>= (`shouldSatisfy` elem (toCardCode Enemies.giantScorpion))
     length <$> setAsideCodes `shouldReturn` 2
     map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` \d -> length d == 1 && all (`elem` map toCardCode [Enemies.southronSoldier, Enemies.southronArcher]) d)
+
+  it "has the first player choose between set aside sets tied for the most cards" . porosTest $ \pid -> do
+    _ <- setSetAside [Enemies.giantScorpion, Enemies.southronSoldier]
+    reveal [Treacheries.dangerCloseBehind]
+    chooseLabel "$label.theCrossingsOfPoros.set.DesertCreatures" pid
+    enemyCodes `shouldReturn` [toCardCode Enemies.giantScorpion]
+    setAsideCodes `shouldReturn` [toCardCode Enemies.southronSoldier]
 
   it "has Danger Close Behind reveal a card of the largest set aside set" . porosTest $ \_ -> do
     _ <- setSetAside [Enemies.giantScorpion]

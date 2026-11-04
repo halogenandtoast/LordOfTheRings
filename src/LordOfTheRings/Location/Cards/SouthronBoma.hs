@@ -32,7 +32,7 @@ instance RunMessage SouthronBoma where
       defenders <- getDefendersAgainst eid
       objectiveHeroes <- filterM isObjectiveHero defenders
       unless (null objectiveHeroes) do
-        for_ objectiveHeroes ready
+        for_ objectiveHeroes encounterReadies
         cancelMatching \case
           AttackDamage e _ -> e == eid
           _ -> False

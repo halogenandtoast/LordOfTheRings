@@ -3,6 +3,7 @@ module LordOfTheRings.Enemy.Cards.StranglingPython (stranglingPython) where
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Trait (Trait (Condition))
 
 newtype StranglingPython = StranglingPython EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities)
@@ -12,9 +13,12 @@ newtype StranglingPython = StranglingPython EnemyAttrs
 stranglingPython :: EnemyCard StranglingPython
 stranglingPython = enemy StranglingPython Cards.stranglingPython
 
--- | As a Condition attachment: "Attached character cannot ready."
+-- | As a Condition attachment: "Attached character cannot ready." Attached, it has the
+-- Condition trait, for what discards a Condition attachment to find.
 instance HasModifiersFor StranglingPython where
-  getModifiersFor (StranglingPython a) = withHost a \host -> modified a host [CannotReady]
+  getModifiersFor (StranglingPython a) = withHost a \host -> do
+    modified a host [CannotReady]
+    modifySelf a [GainTrait Condition]
 
 {- | Forced: After Strangling Python damages a character, attach it to that character. It
 attaches once its attack has resolved, as Writhing Tentacle does, if the character is

@@ -70,6 +70,11 @@ data Criterion
   | -- | the characters the player controls have at least this many different traits
     -- between them, as The Free Peoples reads
     DifferentTraitsAtLeast PlayerId Int
+  | -- | a Condition attachment is in play, as Bulwark of the West discards
+    ConditionAttachmentExists
+  | -- | a matching card is in the player's hand, whether or not it could be played, as
+    -- Kahliel discards a Harad ally
+    CardInHandToDiscard PlayerId CardMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

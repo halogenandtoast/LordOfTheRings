@@ -640,6 +640,19 @@ data ModifierType
   | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
     -- Isolated reads
     CannotDrawCardsFromCardEffects
+  | -- | on an enemy: if its attack deals damage, the target gets the modifier until the end
+    -- of the round, as Giant Scorpion's shadow bars the defender from readying
+    AttackDamageModifiesUntilEndOfRound Target ModifierType
+  | -- | on the game: allies enter play exhausted, as Flight to Gondor reads
+    AlliesEnterPlayExhausted
+  | -- | in a lasting effect: its modifiers apply only while the card shows the side of this
+    -- code, as Lost Underground blanks On Track's Forced effects and not Off Track's
+    WhileShowing CardCode
+  | -- | on the game: progress cannot be placed on quest cards, as Chaos in the Night reads
+    NoProgressOnQuestCards
+  | -- | on the game: the total threat of the cards in the Orcs' area is added to the staging
+    -- area's, as Howling at their Heels reads (Race Across Harad)
+    OrcsAreaThreatAddsToStaging
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -105,7 +105,7 @@ instance RunMessage ActiveCost where
             $ CheckWindows
             $ [mkAfter $ PlayedFromHand (toTarget card) | ac.activeCostFromHand]
             <> [mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card) | ac.activeCostFromHand]
-            <> [mkAfter $ PlayedCard ac.activeCostPlayer (toCardCode card)]
+            <> [mkAfter $ PlayedCard ac.activeCostPlayer card]
             <> [mkAfter $ PaidFrom (toTarget card) ac.activeCostPaidFrom]
         EncounterCard _ -> pure ()
       pure ac

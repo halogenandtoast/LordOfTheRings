@@ -18,12 +18,13 @@ welcomeToTheJungle :: QuestCard WelcomeToTheJungle
 welcomeToTheJungle = quest WelcomeToTheJungle Cards.welcomeToTheJungle
 
 -- | The players cannot advance unless the number of Wild Mûmak in play is equal to the
--- number of players.
+-- number of players: neither fewer nor more, as when a player is eliminated with his
+-- Mûmak still in play, until one is destroyed.
 instance HasModifiersFor WelcomeToTheJungle where
   getModifiersFor (WelcomeToTheJungle a) = when a.flipped do
     mumaks <- length <$> select wildMumak
     players <- length <$> getRemainingPlayers
-    when (mumaks < players) $ modifySelf a [CannotBeDefeated]
+    when (mumaks /= players) $ modifySelf a [CannotBeDefeated]
 
 -- | Forced: After the active location leaves play as an explored location, shuffle 1 set
 -- aside Wild Mûmak into the encounter deck.

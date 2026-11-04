@@ -64,11 +64,11 @@ instance RunMessage FightYourWayOut where
           doStep (n + 1) inner
         [] -> do
           staged <- select EnemyInStagingArea
-          for_ staged \e -> do
+          lowered <- fmap catMaybes $ for staged \e -> do
             guarding <- guardingAnObjective =<< getEnemy e
             cost <- getEngagementCost e
-            unless (guarding || cost <= 0) $ phaseModifier attrs e (EngagementCostModifier (negate cost))
-          makeEngagementChecks
+            pure $ guard (not guarding && cost > 0) $> Effect (toSource attrs) (toTarget e) [EngagementCostModifier (negate cost)] UntilEndOfEngagementChecks
+          makeEngagementChecksWith lowered
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       discardEncounterCardsUntil attrs (CardWithType EnemyType)

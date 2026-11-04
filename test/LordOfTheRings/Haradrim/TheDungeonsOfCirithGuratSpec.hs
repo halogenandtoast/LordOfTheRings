@@ -3,6 +3,7 @@ module LordOfTheRings.Haradrim.TheDungeonsOfCirithGuratSpec (spec) where
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card (CardType (AllyType), IsCard (toCard))
 import LordOfTheRings.Matcher (CardMatcher (CardWithType))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -212,7 +213,13 @@ spec = describe "The Dungeons of Cirith Gurat" do
       guard' <- engaged pid Enemies.prisonGuardCirithGurat
       getEnemyDefense guard' `shouldReturn` 1
       guardian <- putAllyIntoPlay pid Allies.guardOfTheCitadel
-      run $ DealDamage (EnemyAttackSource guard') guardian 1
+      -- its 4 attack deals the ally 1 damage, once the attack has resolved it takes it
+      run $ CreateEffect $ Effect GameSource guardian [DefenseModifier 3] UntilEndOfRound
+      putGame . (phaseL .~ CombatPhase) =<< getGame
+      run $ EnemyAttacks pid
+      passActions pid
+      chooseTarget pid guardian
+      passActions pid
       cid <- cardIdOfEnemy guard'
       placementOfAlly guardian `shouldReturn` Just (AttachedTo (CardIdTarget cid))
       getEnemyDefense guard' `shouldReturn` 3
@@ -368,6 +375,20 @@ spec = describe "The Dungeons of Cirith Gurat" do
       getsGame (fmap (countTokens Resource . questTokens . toAttrs) . find ((== toCardCode Quests.sneakPastTheGuards) . toCardCode) . toList . (.entities.quests))
         `shouldReturn` Just 1
 
+    it "places no resource on Sneak Past the Guards at the end of a round an enemy was engaged in" . dungeonTest $ \pid -> do
+      q <- putQuestStage Quests.sneakPastTheGuards
+      _ <- setEncounterDeck []
+      run $ Flip q
+      resolveWhenRevealed pid
+      uruk <- stage Enemies.urukOfMordor
+      run $ EngageEnemy pid uruk
+      _ <- setEncounterDeck [Locations.gateOfIron, Locations.gateOfIron]
+      runOnly EndRound
+      void mainLoop
+      _ <- locationOf Locations.gateOfIron
+      getsGame (fmap (countTokens Resource . questTokens . toAttrs) . find ((== toCardCode Quests.sneakPastTheGuards) . toCardCode) . toList . (.entities.quests))
+        `shouldReturn` Just 0
+
     it "cannot defeat Sneak Past the Guards until it has 2 resources" . dungeonTest $ \pid -> do
       q <- putQuestStage Quests.sneakPastTheGuards
       _ <- setEncounterDeck []
@@ -396,6 +417,8 @@ spec = describe "The Dungeons of Cirith Gurat" do
       heroGuardedBy (toAttrs h) `shouldBe` Just cid
       placementOfEnemy uruk `shouldReturn` Just (EngagedWith pid)
       placementOfEnemy chieftain `shouldReturn` Just StagingArea
+      -- lowered only during those engagement checks
+      getEngagementCost uruk `shouldReturn` 35
 
     it "adds an enemy at the beginning of the quest phase, and wins once no captive is left" . dungeonTest $ \pid -> do
       q <- putQuestStage Quests.fightYourWayOut

@@ -1,6 +1,6 @@
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
-import LordOfTheRings.Card (Card)
+import LordOfTheRings.Card (Card, PlayerCard)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
@@ -118,7 +118,7 @@ data WindowType
   | -- | an attack the character defended has resolved, and it took no damage defending it
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
-    PlayedCard PlayerId CardCode
+    PlayedCard PlayerId PlayerCard
   | -- | the player is about to be eliminated by reaching his threat elimination level
     EliminatedByThreat PlayerId
   | -- | a quest card was defeated, before what is attached to it is discarded

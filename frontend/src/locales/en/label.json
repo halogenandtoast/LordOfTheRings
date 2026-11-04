@@ -2452,6 +2452,16 @@
     "discard": "Place a random set-aside Desert Creatures enemy in the encounter discard pile",
     "surge": "Desert Warg gains surge"
   },
+  "theCrossingsOfPoros": {
+    "largestSet": "Choose a set aside encounter set with the most cards remaining",
+    "set": {
+      "DesertCreatures": "Desert Creatures",
+      "DesertSands": "Desert Sands",
+      "HaradSoldiers": "Harad Soldiers",
+      "MordorOrcs": "Mordor Orcs",
+      "MountainsOfShadow": "Mountains of Shadow"
+    }
+  },
   "theDesertPath": {
     "choose": "The Desert Path: choose one for the ally you played",
     "exhaust": "Exhaust the ally",
