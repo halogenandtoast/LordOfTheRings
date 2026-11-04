@@ -451,6 +451,9 @@ narrationFor = \case
       $ if inPlay
         then mechanic [ikeyPart "log.enemyPlacedUnderneath" ["enemy" ~> card, "target" ~> t]]
         else toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> (1 :: Int)]]
+  -- a hero card attached faceup to an attachment, as Thorongil takes one
+  PlaceUnderneath target@(AttachmentTarget _) [card] | cdCardType (toCardDef card) == HeroType -> Just $ whenRef target \t ->
+    one $ mechanic [ikeyPart "log.heroCardAttachedTo" ["card" ~> card, "target" ~> t]]
   PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing

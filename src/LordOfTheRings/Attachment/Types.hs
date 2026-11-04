@@ -50,6 +50,8 @@ data AttachmentAttrs = AttachmentAttrs
   , attachmentAttachTo :: AttachMatcher
   , attachmentCriteria :: Criterion
   -- ^ what must be true for the attachment to be played
+  , attachmentUnderneath :: [Card]
+  -- ^ cards attached to it out of play, as the hero card Thorongil takes
   }
   deriving stock (Show, Eq, Generic)
 
@@ -59,7 +61,7 @@ instance ToJSON AttachmentAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "attachment")
 
 instance FromJSON AttachmentAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "attachment") . withDefaults [("criteria", toJSON NoCriteria), ("controller", toJSON (Nothing :: Maybe PlayerId))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "attachment") . withDefaults [("criteria", toJSON NoCriteria), ("controller", toJSON (Nothing :: Maybe PlayerId)), ("underneath", toJSON ([] :: [Card]))]
 
 attachment :: (AttachmentAttrs -> a) -> CardDef -> AttachmentCard a
 attachment f cardDef =
@@ -78,6 +80,7 @@ attachment f cardDef =
             , attachmentExhausted = False
             , attachmentAttachTo = AttachToHero AnyHero
             , attachmentCriteria = NoCriteria
+            , attachmentUnderneath = []
             }
     }
 
@@ -177,3 +180,6 @@ instance HasField "controller" AttachmentAttrs PlayerId where
 
 instance HasField "cardId" AttachmentAttrs CardId where
   getField = attachmentCardId
+
+instance HasField "underneath" AttachmentAttrs [Card] where
+  getField = attachmentUnderneath

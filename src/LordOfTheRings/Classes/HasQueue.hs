@@ -30,6 +30,13 @@ evalQueueT body = do
   _ <- runReaderT (unQueueT body) (Queue inbox)
   reverse <$> readIORef inbox
 
+-- | As 'evalQueueT', keeping what the action returns.
+captureWith :: (MonadIO m) => QueueT msg m a -> m (a, [msg])
+captureWith body = do
+  inbox <- newIORef []
+  a <- runReaderT (unQueueT body) (Queue inbox)
+  (a,) . reverse <$> readIORef inbox
+
 newQueue :: (MonadIO m) => [msg] -> m (Queue msg)
 newQueue msgs = Queue <$> newIORef msgs
 

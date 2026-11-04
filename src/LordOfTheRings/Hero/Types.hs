@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Hero.Types (module LordOfTheRings.Hero.Types) where
 
+import LordOfTheRings.Ability.Types (Ability)
 import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -59,6 +60,9 @@ data HeroAttrs = HeroAttrs
   , heroFacedown :: [PlayerCard]
   -- ^ cards attached facedown, as an ally made a hero by Sword-thain keeps them (Eagles of
   -- the Misty Mountains)
+  , heroGainedAbilities :: [Ability]
+  -- ^ the abilities of a hero card whose game text the hero gains, as Thorongil gives it,
+  -- kept in step with that by 'LordOfTheRings.Hero'
   }
   deriving stock (Show, Eq, Generic)
 
@@ -68,7 +72,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard])), ("gainedAbilities", toJSON ([] :: [Ability]))]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -89,6 +93,7 @@ hero f cardDef =
             , heroGuardedBy = Nothing
             , heroInStagingArea = False
             , heroFacedown = []
+            , heroGainedAbilities = []
             }
     }
 
@@ -113,7 +118,7 @@ instance HasModifiersFor Hero where
   getModifiersFor (Hero a) = getModifiersFor a
 
 instance HasAbilities Hero where
-  getAbilities (Hero a) = if heroPrisoner (toAttrs a) then [] else getAbilities a
+  getAbilities (Hero a) = if heroPrisoner (toAttrs a) then [] else getAbilities a <> heroGainedAbilities (toAttrs a)
 
 instance Show Hero where
   show (Hero a) = show a

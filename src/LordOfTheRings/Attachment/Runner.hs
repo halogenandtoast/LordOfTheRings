@@ -52,4 +52,5 @@ instance RunMessage AttachmentAttrs where
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
+    PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
     _ -> pure attrs

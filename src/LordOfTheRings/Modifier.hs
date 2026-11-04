@@ -307,6 +307,10 @@ data ModifierType
     ResourcesPayFor CardMatcher
   | -- | on the game: players cannot play matching cards
     CannotPlay CardMatcher
+  | -- | on a hero: it gains the game text of the hero card with this code, as Thorongil
+    -- gives it; that card, built as the hero, gives its constant abilities and resolves the
+    -- abilities the hero gains (see 'LordOfTheRings.Hero')
+    GainGameTextOf CardCode
   | -- | on a card in hand, as its card id: it cannot be played from there, as Misty
     -- Mountain Journeyman reads "unless you are engaged with an enemy"
     CannotBePlayedFromHand
