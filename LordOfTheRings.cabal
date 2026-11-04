@@ -22,6 +22,7 @@ library
       LordOfTheRings.Ally.Cards.AmarthiulAcrossTheEttenmoors
       LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
       LordOfTheRings.Ally.Cards.Anborn
+      LordOfTheRings.Ally.Cards.AnbornLeadership
       LordOfTheRings.Ally.Cards.AndrathGuardsman
       LordOfTheRings.Ally.Cards.AnfalasHerdsman
       LordOfTheRings.Ally.Cards.AngborTheFearless
@@ -83,6 +84,9 @@ library
       LordOfTheRings.Ally.Cards.Edrahil
       LordOfTheRings.Ally.Cards.Eldahir
       LordOfTheRings.Ally.Cards.Elfhelm
+      LordOfTheRings.Ally.Cards.ElfhelmTactics
+      LordOfTheRings.Ally.Cards.ElladanLore
+      LordOfTheRings.Ally.Cards.ElrohirSpirit
       LordOfTheRings.Ally.Cards.ElrondsChampion
       LordOfTheRings.Ally.Cards.ElvenJeweler
       LordOfTheRings.Ally.Cards.Emery
@@ -120,8 +124,10 @@ library
       LordOfTheRings.Ally.Cards.GaladrielsHandmaiden
       LordOfTheRings.Ally.Cards.GaldorOfTheHavens
       LordOfTheRings.Ally.Cards.Galion
+      LordOfTheRings.Ally.Cards.Gamling
       LordOfTheRings.Ally.Cards.Gandalf
       LordOfTheRings.Ally.Cards.Gavin
+      LordOfTheRings.Ally.Cards.GhanBuriGhan
       LordOfTheRings.Ally.Cards.GiantBear
       LordOfTheRings.Ally.Cards.GildorInglorion
       LordOfTheRings.Ally.Cards.Gleowine
@@ -133,6 +139,7 @@ library
       LordOfTheRings.Ally.Cards.GreyfloodWanderer
       LordOfTheRings.Ally.Cards.GrimaTheFordsOfIsen
       LordOfTheRings.Ally.Cards.GrimbeornTheOld
+      LordOfTheRings.Ally.Cards.Grimbold
       LordOfTheRings.Ally.Cards.GuardianOfArnor
       LordOfTheRings.Ally.Cards.GuardianOfEsgaroth
       LordOfTheRings.Ally.Cards.GuardianOfIthilien
@@ -140,6 +147,7 @@ library
       LordOfTheRings.Ally.Cards.GuardOfTheCitadel
       LordOfTheRings.Ally.Cards.Guthlaf
       LordOfTheRings.Ally.Cards.Gwaihir
+      LordOfTheRings.Ally.Cards.HalbaradLeadership
       LordOfTheRings.Ally.Cards.Haldan
       LordOfTheRings.Ally.Cards.HaldirOfLorien
       LordOfTheRings.Ally.Cards.Haleth
@@ -188,6 +196,7 @@ library
       LordOfTheRings.Ally.Cards.LordAlcaronTheBloodOfGondor
       LordOfTheRings.Ally.Cards.LorienGuide
       LordOfTheRings.Ally.Cards.LoyalHound
+      LordOfTheRings.Ally.Cards.MablungLore
       LordOfTheRings.Ally.Cards.MarksmanOfLorien
       LordOfTheRings.Ally.Cards.MasterIronsmith
       LordOfTheRings.Ally.Cards.MasterOfLore
@@ -220,6 +229,7 @@ library
       LordOfTheRings.Ally.Cards.PelargirShipwright
       LordOfTheRings.Ally.Cards.PippinTactics
       LordOfTheRings.Ally.Cards.PorosGarrison
+      LordOfTheRings.Ally.Cards.PrinceImrahilSpirit
       LordOfTheRings.Ally.Cards.Radagast
       LordOfTheRings.Ally.Cards.RangerOfCardolan
       LordOfTheRings.Ally.Cards.RangerOfTheNorth
@@ -234,6 +244,7 @@ library
       LordOfTheRings.Ally.Cards.RivendellSkirmishers
       LordOfTheRings.Ally.Cards.RobinSmallburrow
       LordOfTheRings.Ally.Cards.RohirrimScout
+      LordOfTheRings.Ally.Cards.RosieCotton
       LordOfTheRings.Ally.Cards.Rumil
       LordOfTheRings.Ally.Cards.SailorOfLune
       LordOfTheRings.Ally.Cards.SamGamgee
@@ -243,6 +254,7 @@ library
       LordOfTheRings.Ally.Cards.SilvanTracker
       LordOfTheRings.Ally.Cards.SilverlodeArcher
       LordOfTheRings.Ally.Cards.SilverWing
+      LordOfTheRings.Ally.Cards.Skinbark
       LordOfTheRings.Ally.Cards.SnowbournScout
       LordOfTheRings.Ally.Cards.SoldierOfDolAmroth
       LordOfTheRings.Ally.Cards.SoldierOfErebor

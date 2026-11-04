@@ -284,6 +284,18 @@ import LordOfTheRings.Ally.Cards.MistyMountainJourneyman
 import LordOfTheRings.Ally.Cards.Edrahil
 import LordOfTheRings.Ally.Cards.Arador
 import LordOfTheRings.Ally.Cards.Farin
+import LordOfTheRings.Ally.Cards.AnbornLeadership
+import LordOfTheRings.Ally.Cards.MablungLore
+import LordOfTheRings.Ally.Cards.Skinbark
+import LordOfTheRings.Ally.Cards.Gamling
+import LordOfTheRings.Ally.Cards.Grimbold
+import LordOfTheRings.Ally.Cards.PrinceImrahilSpirit
+import LordOfTheRings.Ally.Cards.HalbaradLeadership
+import LordOfTheRings.Ally.Cards.GhanBuriGhan
+import LordOfTheRings.Ally.Cards.RosieCotton
+import LordOfTheRings.Ally.Cards.ElfhelmTactics
+import LordOfTheRings.Ally.Cards.ElladanLore
+import LordOfTheRings.Ally.Cards.ElrohirSpirit
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -600,5 +612,17 @@ allAllies =
         , SomeAllyCard edrahil
         , SomeAllyCard arador
         , SomeAllyCard farin
+        , SomeAllyCard anbornLeadership
+        , SomeAllyCard mablungLore
+        , SomeAllyCard skinbark
+        , SomeAllyCard gamling
+        , SomeAllyCard grimbold
+        , SomeAllyCard princeImrahilSpirit
+        , SomeAllyCard halbaradLeadership
+        , SomeAllyCard ghanBuriGhan
+        , SomeAllyCard rosieCotton
+        , SomeAllyCard elfhelmTactics
+        , SomeAllyCard elladanLore
+        , SomeAllyCard elrohirSpirit
         ]
     ]
