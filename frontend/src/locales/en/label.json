@@ -1259,7 +1259,7 @@
   "hornsCry": {
     "allEnemies": "All enemies get -1 attack until the end of the phase"
   },
-  "abandonedCamp": {
+  "returnFromDiscard": {
     "return": "Return a card from your discard pile to your hand?",
     "none": "Return nothing"
   },

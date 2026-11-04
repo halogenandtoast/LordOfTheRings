@@ -23,14 +23,7 @@ instance HasAbilities AbandonedCamp where
 instance RunMessage AbandonedCamp where
   runMessage msg l@(AbandonedCamp a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      eachPlayer \pid -> do
-        discarded <- (.discard) <$> getPlayer pid
-        unless (null discarded) $ chooseOneM pid do
-          questionLabeled "abandonedCamp.return"
-          causedBy a
-          showing discarded
-          targets discarded \c -> returnFromDiscardToHand pid c.id
-          labeled "abandonedCamp.none" (pure ())
+      eachPlayer $ mayReturnFromDiscardToHand a
       pure l
     _ -> do
       runSafe msg a
