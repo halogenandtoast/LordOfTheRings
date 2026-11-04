@@ -273,6 +273,15 @@ import LordOfTheRings.Quest.Cards.BattleAtTheCrossings
 import LordOfTheRings.Quest.Cards.UrdugsAssault
 import LordOfTheRings.Quest.Cards.Outflanked
 import LordOfTheRings.Quest.Cards.TheFinalPush
+import LordOfTheRings.Quest.Cards.DrawHerFire
+import LordOfTheRings.Quest.Cards.FortifyTheDefense
+import LordOfTheRings.Quest.Cards.RallyTheWoodmen
+import LordOfTheRings.Quest.Cards.DouseTheFlames
+import LordOfTheRings.Quest.Cards.HoldTheDoor
+import LordOfTheRings.Quest.Cards.DefendTheTown
+import LordOfTheRings.Quest.Cards.RoutTheGoblins
+import LordOfTheRings.Quest.Cards.FaceTheDragon
+import LordOfTheRings.Quest.Cards.HrogarsHill
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -578,5 +587,14 @@ allQuests =
         , SomeQuestCard urdugsAssault
         , SomeQuestCard outflanked
         , SomeQuestCard theFinalPush
+        , SomeQuestCard drawHerFire
+        , SomeQuestCard fortifyTheDefense
+        , SomeQuestCard rallyTheWoodmen
+        , SomeQuestCard douseTheFlames
+        , SomeQuestCard holdTheDoor
+        , SomeQuestCard defendTheTown
+        , SomeQuestCard routTheGoblins
+        , SomeQuestCard faceTheDragon
+        , SomeQuestCard hrogarsHill
         ]
     ]

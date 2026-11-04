@@ -3308,5 +3308,51 @@
       "“But what could be driving Goblins and Trolls from their holes in the mountains?” asked Haldan.",
       "Grimbeorn and the companions all looked at each other, but no one offered any guesses as the weight of the question sank in. They all felt it though: the foreboding of worse to come."
     ]
+  },
+  "fire-in-the-night": {
+    "intro": [
+      "Hrogar’s Hill was a Woodmen settlement with a tall, wooden palisade that encircled it. The wall was built upon an earthen rampart and surrounded by a deep moat. A single, wooden draw-bridge connected the town to the road that led to its gate. Watch-towers were built on either side of the gate and guards kept their vigil there day and night.",
+      "At the far end of town opposite the gate, was the hill from which the settlement took it’s name: a tall, steep slope ascended by a fortified stair, and upon its summit was built Hrogar’s Hall. The Woodmen gathered there for important meetings and celebrations. If the town were to be overrun, they could take shelter there and long withstand a siege, for the Woodmen always kept supplies stored within.",
+      "During the day, the Woodmen worked in the pastures and gardens that surrounded the town, or felled trees at the edge of Mirkwood forest nearby. But at night, they withdrew inside their walls and raised the draw-bridge as protection from dangerous forest-dwellers and Goblin raids. So it was that the heroes found the entrance barred when they arrived a few hours past sunfall on a dark night.",
+      "“Who goes there?” called a guard from one of the watchtowers.",
+      "“Travelers on an errand from King Brand in Dale,” answered one of the heroes. “We seek food and shelter for the night, and we have gold to trade for supplies.”",
+      "“That is good,” replied the guard. “The servants of King Brand are welcome in our town, though it is long since any have visited. But what is that you bring with you?” He pointed to the Goblin whose wrists that had bound with rope.",
+      "“This is our captive,” answered the hero pulling Urdug into the light with a tug of his rope.",
+      "“The Master will not like that,” said the guard. “We have had many battles with the Goblins, but we are not accustomed to taking prisoners. For what purpose do you bring him here?”",
+      "“That should not be answered in the open. Let us in, and we can speak more plainly.” said the hero.",
+      "“Very well,” replied the guard, “I will summon the Master. Wait there.”",
+      "After a little while, the draw-bridge was lowered and a small troop of armed guards ushered the companions through the gate where they were greeted by the Master; a big man with a bushy, white beard and keen eyes. He regarded the heroes with a friendly smile and said, “Welcome friends! What brings you to Hrogar’s Hill?”",
+      "“We are on an urgent errand to Mount Gundabad with this Goblin as our guide,” answered one of the heroes.",
+      "“Strange tidings!” exclaimed the Master. “Gundabad is a name of ill omen, and to follow a Goblin there seems folly. Your errand must be urgent indeed to travel there in such a manner. Tell me friends, what need drives you thither?”",
+      "“We hunt a great Dragon: Dagnir the Terrible. This Goblin claims she drove his people from their homes in Mount Gundabad,” answered the hero.",
+      "“A Dragon?” laughed the Master, appearing relieved. “My friends, this Goblin has deceived you. There has not been a Dragon seen in this part of the world since time out of legend.”",
+      "“Deceived we may be,” answered the hero, “but the Dragon we seek is real. Two of its spawn we have killed already, and we fear what their mother may do when she learns what has befallen her children.”",
+      "“Two Dragons?” said the Master with a fresh regard for his guests. His eyes were wide with wonder. Then, he collected himself and said, “I must hear the tale of these deeds. Come, you will be guests at my table tonight and tell me your story. My guards will keep watch over your prisoner.”",
+      "Two Woodmen escorted a sullen Urdug away as the Master led the adventurers up the steep hill to Hrogar’s Hall. There the heroes were seated at a long table and food was brought to them. The Master sat at the head of the table and listened to all they had to tell until their meal was suddenly cut short by the sound of alarm from outside.",
+      "The heroes followed the Master out of the hall where they saw in the distance a terrifying red-orange glow that cut a swath through the black night as it moved toward the town below. Dagnir had come."
+    ],
+    "setup": [
+      "“Fire in the Night” is played with an encounter deck built with all the cards from the following encounter sets: Fire in the Night, Grey Mountain Goblins, Dark Woods, and Gathering Gloom. (Grey Mountain Goblins, Dark Woods, and Gathering Gloom can be found in The Wilds of Rhovanion deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Side Quests",
+        "text": "Side quests represent secondary adventures that the heroes may undertake while pursuing the main goals of the quest deck. Side quests are never considered to be a part of the quest deck. The top card of the quest deck is called the “main quest.” A side quest with an encounter card back is called an “encounter side quest.” An encounter side quest is both a quest card and an encounter card. When an encounter side quest is revealed, it is added to the staging area. Because side quests are quest cards as well as encounter cards, the “when revealed” effects of side quests cannot be canceled by player card effects."
+      },
+      {
+        "title": "Side Quests in Play",
+        "text": "While any side quest is in the staging area, it functions like a quest card with the following exception: when a side quest is defeated, the players do not advance to the next stage of the quest deck. Instead, the side quest is added the victory display. At the beginning of each quest phase, if there are one or more side quests in the staging area, the first player may choose one to be the “current quest” until the end of the phase instead of the quest card that is currently active via the quest deck. While a side quest is the current quest, any progress that the players make is placed onto that side quest and any card effects that target the “current quest” target that side quest. Progress must still be placed on the active location before it can be placed on a side quest. Any progress that is made beyond the current quest’s total quest points is discarded; do not place progress on any other quest card in play."
+      }
+    ],
+    "resolution": [
+      "As the first cold light of dawn climbed over Hrogar’s Hill, it revealed the smoldering remains of the Woodmen town. The city gate was smashed, and the watch-towers on either side were burnt to the ground. Inside the blackened walls, houses were still burning or already collapsed into scorched ruins. Yet atop the steep hill, Hrogar’s Hall still stood. The women and children had taken refuge inside during the attack, and a large part of the people survived thanks to the gallantry of the defenders.",
+      "The heroes had driven back the Dragon, but only after she had grown tired of hundreds of stinging arrows and sword strokes. No weapon had been able to pierce Dagnir’s thick armor enough to do her any real harm. When she reatreated into the night, it was only because she had grown tired of smashing homes, and her fires burned low.",
+      "The companions were not surprised when the Master emerged from Hrogar’s Hall and asked them to leave at once. Even if he knew better, many of his people accused the heroes of bringing the Dragon to their town. Some noted that there were Goblins who joined Dagnir in her attack and suspected that they were trying to rescue Urdug.",
+      "As it happened, their captive was nowhere to be found. At first they suspected that his guards left him to fight the Dragon. That was until they found their bodies in an alley. One had a dagger in his back, and the other a slash across his throat. Without their Goblin guide and without the means to defeat Dagnir, the heroes had to rethink their plan. Here the Master provided them with a parting gift, a bit of lore to help them on their journey.",
+      "“Until last night I thought Dragons were merely legend, but now that I know they are not, I am reminded of another story: the tale of a mighty warrior who slew the great worm, Scatha. It was rumored that he wielded an enchanted blade powerful enough to pierce the Dragon’s hide, and it was afterwards called ‘Wormsbane.’”",
+      "“Such a weapon would surely aid us in our quest. Tell us: where can we find it?” asked one of the companions.",
+      "“That’s easy,” answered the Master. “The man who wielded the sword was named Fram, and he won such great renown that his people named their city after him. Search for his resting place in Framsburg.”",
+      "The story continues in “The Ghost of Framsburg,” the forth Adventure Pack in the Ered Mithrin cycle."
+    ]
   }
 }

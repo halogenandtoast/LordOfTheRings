@@ -380,6 +380,9 @@ allTreacheryCards =
       , darkClouds
       , frenziedCreature
       , dangerousCrossing
+      , powerfulInWrath
+      , theDragonsFury
+      , brightFlames
       ]
 
 deepDeepDark :: CardDef
@@ -2416,3 +2419,18 @@ urdugsCommand = (treachery "19166" "Urdug's Command" TheFateOfWilderland 3) {cdS
 
 darkClouds :: CardDef
 darkClouds = (treachery "19167" "Dark Clouds" TheFateOfWilderland 2) {cdShadowEffect = True}
+-- * Fire in the Night
+
+powerfulInWrath :: CardDef
+powerfulInWrath =
+  (treachery "19080" "Powerful in Wrath" FireInTheNight 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+theDragonsFury :: CardDef
+theDragonsFury = (treachery "19081" "The Dragon's Fury" FireInTheNight 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+brightFlames :: CardDef
+brightFlames = (treachery "19082" "Bright Flames" FireInTheNight 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

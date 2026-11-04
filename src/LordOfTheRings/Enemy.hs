@@ -434,6 +434,9 @@ import LordOfTheRings.Enemy.Cards.Urdug
 import LordOfTheRings.Enemy.Cards.UrdugsElite
 import LordOfTheRings.Enemy.Cards.FierceVanguard
 import LordOfTheRings.Enemy.Cards.WargRider
+import LordOfTheRings.Enemy.Cards.Dagnir
+import LordOfTheRings.Enemy.Cards.TheDragonsThrall
+import LordOfTheRings.Enemy.Cards.OrcOfTheFlame
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -896,5 +899,8 @@ allEnemys =
         , SomeEnemyCard urdugsElite
         , SomeEnemyCard fierceVanguard
         , SomeEnemyCard wargRider
+        , SomeEnemyCard dagnir
+        , SomeEnemyCard theDragonsThrall
+        , SomeEnemyCard orcOfTheFlame
         ]
     ]

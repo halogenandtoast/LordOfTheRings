@@ -472,6 +472,9 @@ allLocationCards =
       , slopesOfGundabad
       , theOldFordJourneyUpTheAnduin
       , woodedRiverbank
+      , townGate
+      , woodenPalisade
+      , burningWatchtower
       ]
 
 drownedTreasury :: CardDef
@@ -3547,3 +3550,13 @@ woodedRiverbank =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+-- * Fire in the Night
+
+townGate :: CardDef
+townGate = (location "19077" "Town Gate" FireInTheNight 2 3 4) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 1}
+
+woodenPalisade :: CardDef
+woodenPalisade = (location "19078" "Wooden Palisade" FireInTheNight 3 2 3) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 0}
+
+burningWatchtower :: CardDef
+burningWatchtower = (location "19079" "Burning Watchtower" FireInTheNight 3 0 5) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 1}

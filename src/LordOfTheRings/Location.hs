@@ -455,6 +455,9 @@ import LordOfTheRings.Location.Cards.SlopesOfGundabad
 import LordOfTheRings.Location.Cards.WoodmenVillage
 import LordOfTheRings.Location.Cards.TheOldFordJourneyUpTheAnduin
 import LordOfTheRings.Location.Cards.WoodedRiverbank
+import LordOfTheRings.Location.Cards.TownGate
+import LordOfTheRings.Location.Cards.WoodenPalisade
+import LordOfTheRings.Location.Cards.BurningWatchtower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -956,5 +959,8 @@ allLocations =
         , SomeLocationCard woodmenVillage
         , SomeLocationCard theOldFordJourneyUpTheAnduin
         , SomeLocationCard woodedRiverbank
+        , SomeLocationCard townGate
+        , SomeLocationCard woodenPalisade
+        , SomeLocationCard burningWatchtower
         ]
     ]

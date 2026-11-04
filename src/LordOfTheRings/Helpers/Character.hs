@@ -56,7 +56,9 @@ getDefenseAgainst eid defender = do
   enemy <- toCardDef <$> getEnemy eid
   bonus <- sum <$> for [(trait, n) | DefenseBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
   byMatcher <- sum <$> for [(m, n) | DefenseBonusAgainstMatching m n <- mods] \(m, n) -> bool 0 n <$> selectAny (EnemyWithId eid <> m)
-  pure $ defense + bonus + byMatcher
+  -- none of it counts against an enemy whose defenders do not count their defense
+  uncounted <- elem DefendersDoNotCountDefense <$> getModifiers (EnemyTarget eid)
+  pure $ if uncounted then 0 else defense + bonus + byMatcher
 
 -- | The attack the characters given make together against an enemy, with their bonuses
 -- against its traits.

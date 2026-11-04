@@ -136,6 +136,9 @@ data ModifierType
     DoesNotCountAttack
   | -- | on an enemy: its attack is undefended, no character may defend against it
     CannotBeDefended
+  | -- | on an enemy: characters defending against it do not count their defense, as Fortify
+    -- the Defense reads of Dagnir
+    DefendersDoNotCountDefense
   | -- | on a location or quest card: at most this much more progress can be placed on it
     -- now, as a stage that "cannot have more than 15 progress tokens on it" gives itself
     ProgressLimit Int
@@ -265,6 +268,9 @@ data ModifierType
   | -- | on an enemy: at most this much more damage can be placed on it now, as Mumak's
     -- 3 a round
     DamageLimit Int
+  | -- | on an enemy: the damage placed on it this round that counts against a limit of its
+    -- own, as Dagnir's "cannot take more than X damage from non-quest effects each round"
+    DamageTakenThisRound Int
   | -- | on an objective ally in the staging area: it is committed to the current quest, as
     -- Celador reads
     CountsAsCommitted

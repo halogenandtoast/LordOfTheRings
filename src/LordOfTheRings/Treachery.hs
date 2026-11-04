@@ -370,6 +370,9 @@ import LordOfTheRings.Treachery.Cards.UrdugsCommand
 import LordOfTheRings.Treachery.Cards.DarkClouds
 import LordOfTheRings.Treachery.Cards.FrenziedCreature
 import LordOfTheRings.Treachery.Cards.DangerousCrossing
+import LordOfTheRings.Treachery.Cards.PowerfulInWrath
+import LordOfTheRings.Treachery.Cards.TheDragonsFury
+import LordOfTheRings.Treachery.Cards.BrightFlames
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -767,5 +770,8 @@ allTreacherys =
         , SomeTreacheryCard darkClouds
         , SomeTreacheryCard frenziedCreature
         , SomeTreacheryCard dangerousCrossing
+        , SomeTreacheryCard powerfulInWrath
+        , SomeTreacheryCard theDragonsFury
+        , SomeTreacheryCard brightFlames
         ]
     ]
