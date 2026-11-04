@@ -222,6 +222,8 @@ import LordOfTheRings.Ally.Cards.SouthronRefugee
 import LordOfTheRings.Ally.Cards.KnightOfDale
 import LordOfTheRings.Ally.Cards.EregionSurvivor
 import LordOfTheRings.Ally.Cards.Leaflock
+import LordOfTheRings.Ally.Cards.HalfastGamgee
+import LordOfTheRings.Ally.Cards.BeorningGuardian
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -476,5 +478,7 @@ allAllies =
         , SomeAllyCard knightOfDale
         , SomeAllyCard eregionSurvivor
         , SomeAllyCard leaflock
+        , SomeAllyCard halfastGamgee
+        , SomeAllyCard beorningGuardian
         ]
     ]

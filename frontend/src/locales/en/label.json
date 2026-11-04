@@ -2223,5 +2223,18 @@
     "intoPlay": "Open the Armory: choose a Weapon or Armor to put into play",
     "host": "Open the Armory: choose where to attach it",
     "none": "Put none into play"
+  },
+  "halfastGamgee": {
+    "hero": "Halfast Gamgee: add 1 resource to a hero's pool"
+  },
+  "beorningGuardian": {
+    "location": "Beorning Guardian: place progress on a location"
+  },
+  "bulwarkOfTheWest": {
+    "ally": "Bulwark of the West: discard an ally you control",
+    "condition": "Bulwark of the West: choose a Condition attachment to discard"
+  },
+  "flightToTheSea": {
+    "shuffle": "Flight to the Sea: shuffle a Wind from the Sea into the encounter deck"
   }
 }

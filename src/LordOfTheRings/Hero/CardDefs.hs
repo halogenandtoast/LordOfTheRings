@@ -78,6 +78,7 @@ allHeroCards =
       , naasiyah
       , princeImrahilTactics
       , folcoBoffin
+      , quickbeam
       ]
 
 aragorn :: CardDef
@@ -481,4 +482,11 @@ folcoBoffin :: CardDef
 folcoBoffin =
   (hero "17109" "Folco Boffin" Lore 7 2 2 0 2)
     { cdCardTraits = setFromList [Hobbit]
+    }
+
+-- | Unique as errata'd: the first printing left off the unique symbol.
+quickbeam :: CardDef
+quickbeam =
+  (hero "17135" "Quickbeam" Tactics 12 2 4 1 5)
+    { cdCardTraits = setFromList [Ent]
     }

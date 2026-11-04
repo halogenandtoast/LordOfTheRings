@@ -200,6 +200,8 @@ allAllyCards =
       , knightOfDale
       , eregionSurvivor
       , leaflock
+      , halfastGamgee
+      , beorningGuardian
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1395,3 +1397,16 @@ leaflock =
     (ally "17116" "Leaflock" Lore (StaticCost 3) 0 2 2 3)
       { cdCardTraits = setFromList [Ent]
       }
+
+halfastGamgee :: CardDef
+halfastGamgee =
+  unique
+    (ally "17136" "Halfast Gamgee" Leadership (StaticCost 3) 2 1 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+beorningGuardian :: CardDef
+beorningGuardian =
+  (ally "17138" "Beorning Guardian" Tactics (StaticCost 3) 0 3 1 3)
+    { cdCardTraits = setFromList [Beorning]
+    }

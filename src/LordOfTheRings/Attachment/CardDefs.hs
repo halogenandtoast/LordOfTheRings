@@ -191,6 +191,7 @@ allAttachmentCards =
       , dunedainPipe
       , diligentNoble
       , legacyBlade
+      , followed
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1286,4 +1287,10 @@ legacyBlade =
   (attachment "17117" "Legacy Blade" Lore (StaticCost 0))
     { cdCardTraits = setFromList [Item, Weapon]
     , cdKeywords = setFromList [Restricted]
+    }
+
+followed :: CardDef
+followed =
+  (attachment "17139" "Followed" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Condition, Trap]
     }

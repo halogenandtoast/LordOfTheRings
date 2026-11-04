@@ -204,6 +204,9 @@ allEventCards =
       , fierceDefense
       , heirsOfEarendil
       , openTheArmory
+      , bulwarkOfTheWest
+      , flightToTheSea
+      , theDamBursts
       ]
 
 everVigilant :: CardDef
@@ -815,3 +818,12 @@ heirsOfEarendil = event "17115" "Heirs of Eärendil" Spirit (StaticCost 1)
 
 openTheArmory :: CardDef
 openTheArmory = event "17118" "Open the Armory" Neutral (StaticCost 1)
+
+bulwarkOfTheWest :: CardDef
+bulwarkOfTheWest = event "17137" "Bulwark of the West" Leadership (StaticCost 0)
+
+flightToTheSea :: CardDef
+flightToTheSea = event "17140" "Flight to the Sea" Spirit (StaticCost 2)
+
+theDamBursts :: CardDef
+theDamBursts = event "17142" "The Dam Bursts" Lore (StaticCost 2)

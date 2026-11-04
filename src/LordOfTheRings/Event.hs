@@ -187,6 +187,9 @@ import LordOfTheRings.Event.Cards.OldToby
 import LordOfTheRings.Event.Cards.FierceDefense
 import LordOfTheRings.Event.Cards.HeirsOfEarendil
 import LordOfTheRings.Event.Cards.OpenTheArmory
+import LordOfTheRings.Event.Cards.BulwarkOfTheWest
+import LordOfTheRings.Event.Cards.FlightToTheSea
+import LordOfTheRings.Event.Cards.TheDamBursts
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -393,5 +396,8 @@ allEvents =
         , SomeEventCard fierceDefense
         , SomeEventCard heirsOfEarendil
         , SomeEventCard openTheArmory
+        , SomeEventCard bulwarkOfTheWest
+        , SomeEventCard flightToTheSea
+        , SomeEventCard theDamBursts
         ]
     ]

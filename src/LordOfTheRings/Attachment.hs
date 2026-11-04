@@ -172,6 +172,7 @@ import LordOfTheRings.Attachment.Cards.FearlessScout
 import LordOfTheRings.Attachment.Cards.DunedainPipe
 import LordOfTheRings.Attachment.Cards.DiligentNoble
 import LordOfTheRings.Attachment.Cards.LegacyBlade
+import LordOfTheRings.Attachment.Cards.Followed
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -381,5 +382,6 @@ allAttachments =
         , SomeAttachmentCard dunedainPipe
         , SomeAttachmentCard diligentNoble
         , SomeAttachmentCard legacyBlade
+        , SomeAttachmentCard followed
         ]
     ]

@@ -73,6 +73,7 @@ import LordOfTheRings.Hero.Cards.Argalad
 import LordOfTheRings.Hero.Cards.Naasiyah
 import LordOfTheRings.Hero.Cards.PrinceImrahilTactics
 import LordOfTheRings.Hero.Cards.FolcoBoffin
+import LordOfTheRings.Hero.Cards.Quickbeam
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Hero.Types qualified as HeroTypes
@@ -183,5 +184,6 @@ allHeroes =
         , SomeHeroCard naasiyah
         , SomeHeroCard princeImrahilTactics
         , SomeHeroCard folcoBoffin
+        , SomeHeroCard quickbeam
         ]
     ]

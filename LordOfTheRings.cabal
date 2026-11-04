@@ -29,6 +29,7 @@ library
       LordOfTheRings.Ally.Cards.Beechbone
       LordOfTheRings.Ally.Cards.Beorn
       LordOfTheRings.Ally.Cards.BeorningBeekeeper
+      LordOfTheRings.Ally.Cards.BeorningGuardian
       LordOfTheRings.Ally.Cards.Berelind
       LordOfTheRings.Ally.Cards.BlueMountainTrader
       LordOfTheRings.Ally.Cards.Bofur
@@ -117,6 +118,7 @@ library
       LordOfTheRings.Ally.Cards.Guthlaf
       LordOfTheRings.Ally.Cards.Gwaihir
       LordOfTheRings.Ally.Cards.HaldirOfLorien
+      LordOfTheRings.Ally.Cards.HalfastGamgee
       LordOfTheRings.Ally.Cards.HarborMaster
       LordOfTheRings.Ally.Cards.HenamarthRiversong
       LordOfTheRings.Ally.Cards.HennethAnnunGuard
@@ -292,6 +294,7 @@ library
       LordOfTheRings.Attachment.Cards.FearlessScout
       LordOfTheRings.Attachment.Cards.Firefoot
       LordOfTheRings.Attachment.Cards.FiresideSong
+      LordOfTheRings.Attachment.Cards.Followed
       LordOfTheRings.Attachment.Cards.ForestSnare
       LordOfTheRings.Attachment.Cards.GondorianFire
       LordOfTheRings.Attachment.Cards.GondorianShield
@@ -839,6 +842,7 @@ library
       LordOfTheRings.Event.Cards.BeornsHospitality
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.BoomedAndTrumpeted
+      LordOfTheRings.Event.Cards.BulwarkOfTheWest
       LordOfTheRings.Event.Cards.BurstIntoSong
       LordOfTheRings.Event.Cards.CampfireTales
       LordOfTheRings.Event.Cards.CaptainsWisdom
@@ -872,6 +876,7 @@ library
       LordOfTheRings.Event.Cards.FeignedVoices
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.FierceDefense
+      LordOfTheRings.Event.Cards.FlightToTheSea
       LordOfTheRings.Event.Cards.FoeHammer
       LordOfTheRings.Event.Cards.FollowMe
       LordOfTheRings.Event.Cards.ForestPatrol
@@ -975,6 +980,7 @@ library
       LordOfTheRings.Event.Cards.TakingInitiative
       LordOfTheRings.Event.Cards.TaleOfTinuviel
       LordOfTheRings.Event.Cards.TerribleToBehold
+      LordOfTheRings.Event.Cards.TheDamBursts
       LordOfTheRings.Event.Cards.TheDoorIsClosed
       LordOfTheRings.Event.Cards.TheEaglesAreComing
       LordOfTheRings.Event.Cards.TheEndComes
@@ -1086,6 +1092,7 @@ library
       LordOfTheRings.Hero.Cards.Pippin
       LordOfTheRings.Hero.Cards.PrinceImrahil
       LordOfTheRings.Hero.Cards.PrinceImrahilTactics
+      LordOfTheRings.Hero.Cards.Quickbeam
       LordOfTheRings.Hero.Cards.Rossiel
       LordOfTheRings.Hero.Cards.Thalin
       LordOfTheRings.Hero.Cards.Theoden
