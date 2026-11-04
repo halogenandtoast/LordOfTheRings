@@ -44,9 +44,9 @@ instance RunMessage TheGarrisonOfGondor where
       shuffleEncounterDeck
       doStep 1 msg
       TheGarrisonOfGondor <$> runMessage msg attrs
-    DoStep 1 (PerformSetup (isTarget attrs -> True)) -> do
+    DoStep 1 setup@(PerformSetup (isTarget attrs -> True)) -> do
       esquire "esquireOfRohan" Attachments.esquireOfRohan
-      doStep 2 msg
+      doStep 2 setup
       pure q
     DoStep 2 (PerformSetup (isTarget attrs -> True)) -> do
       esquire "esquireOfGondor" Attachments.esquireOfGondor

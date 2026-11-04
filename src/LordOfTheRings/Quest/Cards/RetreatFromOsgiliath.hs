@@ -57,18 +57,18 @@ instance RunMessage RetreatFromOsgiliath where
     WhenRevealed (isTarget attrs -> True) -> do
       doStep 1 msg
       pure q
-    DoStep n (WhenRevealed (isTarget attrs -> True)) | n < allyStep -> do
+    DoStep n revealed@(WhenRevealed (isTarget attrs -> True)) | n < allyStep -> do
       players <- getRemainingPlayers
       case atMay players (n - 1) of
         Just p -> do
           wraiths <- getSetAside (CardWithCode $ toCardCode Enemies.wraithOnWings)
           for_ (headMay wraiths) addToStaging
           revealEncounterCardAs p
-          doStep (n + 1) msg
-        Nothing -> doStep allyStep msg
+          doStep (n + 1) revealed
+        Nothing -> doStep allyStep revealed
       pure q
     -- then the allies, starting with the first player
-    DoStep n (WhenRevealed (isTarget attrs -> True)) -> do
+    DoStep n revealed@(WhenRevealed (isTarget attrs -> True)) -> do
       players <- getRemainingPlayers
       for_ (atMay players (n - allyStep)) \p -> do
         deck <- (.deck) <$> getPlayer p
@@ -85,7 +85,7 @@ instance RunMessage RetreatFromOsgiliath where
             aid <- putAllyIntoStagingArea ally
             phaseModifier attrs (AllyTarget aid) Blank
           _ -> discardTopOfDeck p (length deck)
-        doStep (n + 1) msg
+        doStep (n + 1) revealed
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       allies <- map (.id) <$> stagedAllies
