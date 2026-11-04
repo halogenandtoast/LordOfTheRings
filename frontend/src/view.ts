@@ -215,6 +215,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         const host = a.placement?.tag === 'AttachedTo' ? targetCardId(a.placement.contents as Target) : null
         return host !== null && ids.has(host) ? (a.underneath ?? []).map((c) => card(c.cardCode, c.id, { attachedTo: host })) : []
       }),
+      // the encounter card faceup under a side quest, out of play, as the Power of Mordor card under each Storm the Castle
+      ...Object.values(entities.quests ?? {}).flatMap((q) =>
+        ids.has(q.cardId) ? (q.underneath ?? []).map((c) => card(c.cardCode, c.id, { attachedTo: q.cardId })) : [],
+      ),
     ]
   }
 

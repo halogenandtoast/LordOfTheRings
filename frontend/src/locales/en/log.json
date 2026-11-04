@@ -145,6 +145,7 @@
   "becomesDay": "It becomes Day",
   "becomesNight": "It becomes Night",
   "flippedTo": "{card} is now faceup",
+  "placedFaceupUnderneath": "{card} is placed faceup underneath {target}",
   "placedUnderneath": "A card is placed facedown underneath {target} | {count} cards are placed facedown underneath {target}",
   "damagePlaced": "{count} damage is placed on {target}",
   "damageRemoved": "{count} damage is removed from {target}",

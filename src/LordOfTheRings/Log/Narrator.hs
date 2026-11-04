@@ -468,6 +468,10 @@ narrationFor = \case
   -- Escape from Mount Gram's captured cards, rescued from underneath the card
   ScenarioSpecific "mountGram.rescue" (parseMaybe parseJSON -> Just (host :: Card, cards :: [PlayerCard])) ->
     Just $ one $ toned Good $ mechanic [ikeyPart "log.capturedRescued" ["card" ~> host, "count" ~> length cards]]
+  -- an encounter card placed faceup under a side quest, out of play, as The Fortress of
+  -- Nurn's setup places one from the Power of Mordor deck under each
+  PlaceUnderneath target@(QuestTarget _) [card@(EncounterCard _)] -> Just $ whenRef target \t ->
+    one $ mechanic [ikeyPart "log.placedFaceupUnderneath" ["card" ~> card, "target" ~> t]]
   -- a location leaving play for underneath a card, as one Aflame burns down under The
   -- Havens Burn
   PlaceUnderneath target [card] | cdCardType (toCardDef card) == LocationType -> Just $ whenRef target \t ->

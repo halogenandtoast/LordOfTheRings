@@ -425,6 +425,8 @@ allTreacheryCards =
       , ulchorsRevenge
       , wainriderChariot
       , theChampionsCunning
+      , determinedDefense
+      , theDarkLordsReach
       ]
 
 deepDeepDark :: CardDef
@@ -2686,3 +2688,10 @@ theChampionsCunning =
     , cdEasyModeQuantity = Just 2
     , cdRacingResult = Just Wild
     }
+-- * The Fortress of Nurn
+
+determinedDefense :: CardDef
+determinedDefense = (treachery "22156" "Determined Defense" TheFortressOfNurn 3) {cdShadowEffect = True}
+
+theDarkLordsReach :: CardDef
+theDarkLordsReach = (treachery "22157" "The Dark Lord's Reach" TheFortressOfNurn 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

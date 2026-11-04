@@ -102,6 +102,20 @@ barredHeroes scenarioId deckLists = [t | t <- barred, t `elem` titles]
     _ -> []
   titles = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) dl.heroes, let Name title _ = d.cdName]
 
+-- | The most cards a deck may have in the scenario, its rules setting one: "Player decks
+-- cannot exceed 50 cards" (Assault on Dol Rhugar, The Fortress of Nurn's setup).
+scenarioDeckLimit :: Text -> Maybe Int
+scenarioDeckLimit = \case
+  "the-fortress-of-nurn" -> Just 50
+  _ -> Nothing
+
+-- | The decks over the scenario's limit, by their size.
+oversizedDecks :: Text -> [DeckList] -> Maybe (Int, Int)
+oversizedDecks scenarioId deckLists = do
+  limit <- scenarioDeckLimit scenarioId
+  size <- headMay [n | dl <- deckLists, let n = sum (map snd dl.cards), n > limit]
+  pure (limit, size)
+
 -- | Why the deck breaks the deckbuilding rules, if it does: 1 to 3 heroes with no two
 -- sharing a title, and no more copies of a title than its deck limit, 3 for most cards
 -- and 1 for those limited to 1 per deck. Cards the game does not know are not counted.

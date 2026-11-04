@@ -415,6 +415,8 @@ import LordOfTheRings.Treachery.Cards.UnderSiege
 import LordOfTheRings.Treachery.Cards.UlchorsRevenge
 import LordOfTheRings.Treachery.Cards.WainriderChariot
 import LordOfTheRings.Treachery.Cards.TheChampionsCunning
+import LordOfTheRings.Treachery.Cards.DeterminedDefense
+import LordOfTheRings.Treachery.Cards.TheDarkLordsReach
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -857,5 +859,7 @@ allTreacherys =
         , SomeTreacheryCard ulchorsRevenge
         , SomeTreacheryCard wainriderChariot
         , SomeTreacheryCard theChampionsCunning
+        , SomeTreacheryCard determinedDefense
+        , SomeTreacheryCard theDarkLordsReach
         ]
     ]

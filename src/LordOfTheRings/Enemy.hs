@@ -488,6 +488,11 @@ import LordOfTheRings.Enemy.Cards.WainriderChampion
 import LordOfTheRings.Enemy.Cards.AggressiveRacer
 import LordOfTheRings.Enemy.Cards.ChariotDriver
 import LordOfTheRings.Enemy.Cards.VeteranWainrider
+import LordOfTheRings.Enemy.Cards.ThaneUlchorTheFortressOfNurn
+import LordOfTheRings.Enemy.Cards.SoldierOfNurn
+import LordOfTheRings.Enemy.Cards.EasterlingMercenary
+import LordOfTheRings.Enemy.Cards.MordorOlogHai
+import LordOfTheRings.Enemy.Cards.GuardDogs
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1005,5 +1010,10 @@ allEnemys =
         , SomeEnemyCard aggressiveRacer
         , SomeEnemyCard chariotDriver
         , SomeEnemyCard veteranWainrider
+        , SomeEnemyCard thaneUlchorTheFortressOfNurn
+        , SomeEnemyCard soldierOfNurn
+        , SomeEnemyCard easterlingMercenary
+        , SomeEnemyCard mordorOlogHai
+        , SomeEnemyCard guardDogs
         ]
     ]

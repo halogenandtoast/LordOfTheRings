@@ -346,6 +346,13 @@ import LordOfTheRings.Quest.Cards.TheTurnaround
 import LordOfTheRings.Quest.Cards.TheFarthestEdge
 import LordOfTheRings.Quest.Cards.LastClimb
 import LordOfTheRings.Quest.Cards.HomeStretch
+import LordOfTheRings.Quest.Cards.TheDungeonsOfDolRhugar
+import LordOfTheRings.Quest.Cards.AssaultOnDolRhugar
+import LordOfTheRings.Quest.Cards.TheFinalConfrontation
+import LordOfTheRings.Quest.Cards.StormTheCastleCastleGarrison
+import LordOfTheRings.Quest.Cards.StormTheCastleLethalCounterattack
+import LordOfTheRings.Quest.Cards.StormTheCastleNoQuarter
+import LordOfTheRings.Quest.Cards.StormTheCastleStrongholdOfMordor
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -724,5 +731,12 @@ allQuests =
         , SomeQuestCard theFarthestEdge
         , SomeQuestCard lastClimb
         , SomeQuestCard homeStretch
+        , SomeQuestCard theDungeonsOfDolRhugar
+        , SomeQuestCard assaultOnDolRhugar
+        , SomeQuestCard theFinalConfrontation
+        , SomeQuestCard stormTheCastleCastleGarrison
+        , SomeQuestCard stormTheCastleLethalCounterattack
+        , SomeQuestCard stormTheCastleNoQuarter
+        , SomeQuestCard stormTheCastleStrongholdOfMordor
         ]
     ]

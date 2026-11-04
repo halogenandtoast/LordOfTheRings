@@ -298,7 +298,7 @@ data ModifierType
     -- own, as Dagnir's "cannot take more than X damage from non-quest effects each round"
     DamageTakenThisRound Int
   | -- | on an enemy: it cannot have more than this much damage on it; damage past that is not
-    -- dealt, as The City of Ulfast's stages read of City Guard
+    -- dealt, as The City of Ulfast's stages read of City Guard and The Final Confrontation of Thane Ulchor
     MaxDamage Int
   | -- | on an enemy: it cannot take more than this much damage each round, counted against
     -- 'DamageTakenThisRound' and read as the damage is placed, so the limit ends with the card

@@ -517,6 +517,9 @@ import LordOfTheRings.Location.Cards.CapturedTower
 import LordOfTheRings.Location.Cards.NarrowPass
 import LordOfTheRings.Location.Cards.CrowdedTrack
 import LordOfTheRings.Location.Cards.RavineLedge
+import LordOfTheRings.Location.Cards.FortressWallsTheFortressOfNurn
+import LordOfTheRings.Location.Cards.GuardTower
+import LordOfTheRings.Location.Cards.PlazaOfNurn
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1080,5 +1083,8 @@ allLocations =
         , SomeLocationCard narrowPass
         , SomeLocationCard crowdedTrack
         , SomeLocationCard ravineLedge
+        , SomeLocationCard fortressWallsTheFortressOfNurn
+        , SomeLocationCard guardTower
+        , SomeLocationCard plazaOfNurn
         ]
     ]

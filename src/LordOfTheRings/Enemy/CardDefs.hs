@@ -496,6 +496,11 @@ allEnemyCards =
       , aggressiveRacer
       , chariotDriver
       , veteranWainrider
+      , thaneUlchorTheFortressOfNurn
+      , soldierOfNurn
+      , easterlingMercenary
+      , mordorOlogHai
+      , guardDogs
       ]
 
 namelessThing :: CardDef
@@ -4018,6 +4023,13 @@ thaneUlchorWrathAndRuin :: CardDef
 thaneUlchorWrathAndRuin =
   unique
     $ (enemy "22011" "Thane Ulchor" WrathAndRuin 1 50 1 6 4 9)
+-- * The Fortress of Nurn
+
+-- | His threat is X, 1 more than the Castle side quests in the victory display.
+thaneUlchorTheFortressOfNurn :: CardDef
+thaneUlchorTheFortressOfNurn =
+  unique
+    (enemy "22148" "Thane Ulchor" TheFortressOfNurn 1 0 0 6 4 12)
       { cdCardTraits = setFromList [Mordor]
       , cdVictoryPoints = Just 6
       }
@@ -4070,4 +4082,33 @@ veteranWainrider =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdRacingResult = Just Straight
+    }
+
+soldierOfNurn :: CardDef
+soldierOfNurn = (enemy "22149" "Soldier of Nurn" TheFortressOfNurn 3 28 2 3 1 4) {cdCardTraits = setFromList [Mordor], cdShadowEffect = True}
+
+easterlingMercenary :: CardDef
+easterlingMercenary =
+  (enemy "22150" "Easterling Mercenary" TheFortressOfNurn 2 32 3 4 2 3)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+mordorOlogHai :: CardDef
+mordorOlogHai =
+  (enemy "22151" "Mordor Olog-hai" TheFortressOfNurn 2 34 4 6 3 9)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+guardDogs :: CardDef
+guardDogs =
+  (enemy "22152" "Guard Dogs" TheFortressOfNurn 3 12 1 2 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
