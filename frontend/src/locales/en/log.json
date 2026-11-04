@@ -169,6 +169,7 @@
   "corsairDeckPrepared": "The Corsair deck is prepared",
   "corsairDeck": "Corsair deck: {count} cards",
   "cavesDeck": "Caves deck: {count} cards",
+  "sideQuestDeck": "Side quest deck: {count} cards",
   "evilCreaturesDeck": "Evil Creatures deck: {count} cards",
   "corsairDiscard": "Corsair discard pile",
   "toStormcallerArea": "{card} goes to the Stormcaller's area",

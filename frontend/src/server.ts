@@ -163,6 +163,8 @@ export interface ServerGame {
   stormcallerProgress?: number | null
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
+  /** The side quest deck's size (Fire in the Night). */
+  sideQuestDeck?: number
   /** The Orcs' quest stage and the progress on it (Race Across Harad). */
   orcsStage?: Card | null
   orcsProgress?: number | null

@@ -118,6 +118,8 @@ export interface ScenarioView {
   corsairDiscard: CardView[]
   /** The Caves deck's size, in a scenario that has one (Ered Mithrin). */
   cavesDeck: number
+  /** The side quest deck's size, in a scenario that has one (Fire in the Night). */
+  sideQuestDeck: number
   /** The Evil Creatures deck's size, while there is one, and its discard pile (Journey Up the Anduin). */
   evilCreaturesDeck: number | null
   evilCreaturesDiscard: CardView[]

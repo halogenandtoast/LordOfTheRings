@@ -147,6 +147,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the Orcs' quest stage and its progress (Race Across Harad)
         $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
         $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")
+        -- the side quest deck's size, its cards kept hidden (Fire in the Night)
+        $ KeyMap.insert "sideQuestDeck" (toJSON $ length (fromMeta "sideQuestDeck" :: [Value]))
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"

@@ -1,5 +1,6 @@
 module LordOfTheRings.EredMithrin.FireInTheNightSpec (spec) where
 
+import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getDefenseAgainst)
@@ -16,6 +17,7 @@ import LordOfTheRings.Scenario.Scenarios.FireInTheNight.Helpers (sideQuestDeckOf
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), metaL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
+import LordOfTheRings.Game.Public (publicGameFor)
 import TestImport
 
 fireTest :: (PlayerId -> GameT ()) -> IO ()
@@ -87,6 +89,10 @@ questSource = \case
 outcome :: GameT (Maybe Outcome)
 outcome = getsGame (.outcome)
 
+-- | What the board is sent under this key.
+shown :: FromJSON a => PlayerId -> Key -> GameT (Maybe a)
+shown pid k = getsGame (parseMaybe (withObject "game" (.: k)) . publicGameFor (== pid))
+
 spec :: Spec
 spec = describe "Fire in the Night" do
   it "is a scenario the game can be dealt" . fireTest $ \_ ->
@@ -126,6 +132,8 @@ spec = describe "Fire in the Night" do
     sideQuestCard <- genEncounterCard Quests.douseTheFlames
     g <- getGame
     putGame $ g & scenarioL %~ overAttrs (metaL .~ object ["sideQuestDeck" .= [sideQuestCard]])
+    -- the board shows how many cards the side quest deck holds
+    shown pid "sideQuestDeck" `shouldReturn` Just (1 :: Int)
     phaseEnds PlanningPhase
     passActions pid
     chooseLabel "$label.takeAttackUndefended" pid
@@ -133,6 +141,7 @@ spec = describe "Fire in the Night" do
     getDamage hill `shouldReturn` 7
     questCodes >>= (`shouldSatisfy` elem (toCardCode Quests.douseTheFlames))
     getsGame (sideQuestDeckOf . scenarioMeta . toAttrs . (.scenario)) `shouldReturn` []
+    shown pid "sideQuestDeck" `shouldReturn` Just (0 :: Int)
 
   it "deals the excess damage of Dagnir's attack on the hill to Hrogar's Hill" . fireTest $ \pid -> do
     (hill, _) <- atTheHill
