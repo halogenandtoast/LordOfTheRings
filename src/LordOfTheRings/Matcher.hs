@@ -24,7 +24,7 @@ import LordOfTheRings.Location.Types hiding (location)
 import LordOfTheRings.Matcher.Types as X
 import LordOfTheRings.Modifier
 import LordOfTheRings.Name
-import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveGuard, objectiveTokens))
+import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveExhausted, objectiveGuard, objectiveTokens))
 import LordOfTheRings.Placement
 import LordOfTheRings.Quest.Types (QuestAttrs (questTokens), isEncounterSideQuest, isSideQuest)
 import LordOfTheRings.Player.Types
@@ -660,6 +660,17 @@ getObjective oid =
   fromJustNote ("missing objective " <> show oid)
     . Map.lookup oid
     <$> getsGame (entitiesObjectives . gameEntities)
+
+-- | The One Ring objective in play, the saga's version of it whichever box it is from, as
+-- "exhaust The One Ring" reads.
+getSagaOneRing :: HasGame m => m (Maybe Objective)
+getSagaOneRing = getsGame (find isTheOneRing . toList . entitiesObjectives . gameEntities)
+ where
+  isTheOneRing o = let Name title _ = cdName (toCardDef o) in title == "The One Ring" && o.placement /= Unplaced
+
+-- | Whether The One Ring is in play and exhausted, as Morgul Wraith reads.
+theOneRingExhausted :: HasGame m => m Bool
+theOneRingExhausted = maybe False (objectiveExhausted . toAttrs) <$> getSagaOneRing
 
 getEnemy :: (HasCallStack, HasGame m) => EnemyId -> m Enemy
 getEnemy eid =
