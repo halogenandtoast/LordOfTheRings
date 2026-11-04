@@ -445,6 +445,9 @@ import LordOfTheRings.Enemy.Cards.FireDrake
 import LordOfTheRings.Enemy.Cards.FramsShade
 import LordOfTheRings.Enemy.Cards.CryptStalker
 import LordOfTheRings.Enemy.Cards.EvilSpectre
+import LordOfTheRings.Enemy.Cards.ColdDrake
+import LordOfTheRings.Enemy.Cards.SnowTroll
+import LordOfTheRings.Enemy.Cards.DragonHatchling
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -918,5 +921,8 @@ allEnemys =
         , SomeEnemyCard framsShade
         , SomeEnemyCard cryptStalker
         , SomeEnemyCard evilSpectre
+        , SomeEnemyCard coldDrake
+        , SomeEnemyCard snowTroll
+        , SomeEnemyCard dragonHatchling
         ]
     ]

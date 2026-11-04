@@ -227,6 +227,7 @@ narrationFor = \case
   RemoveFromGame target -> Just $ simply "log.removedFromGame" target
   RemoveSetAsideFromGame cards | notNull cards -> Just $ one $ mechanic [ikeyPart "log.setAsideRemovedFromGame" ["cards" ~> map EncounterCard cards]]
   SetAsideHero hid -> Just $ simply "log.setAsideOutOfPlay" (HeroTarget hid)
+  SetAsideEnemy eid -> Just $ simply "log.setAsideOutOfPlay" (EnemyTarget eid)
   PutIntoPlayAsActiveLocation card -> Just $ one $ mechanic [ikeyPart "log.becomesActive" ["location" ~> EncounterCard card]]
   DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
     top <- getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
@@ -404,6 +405,9 @@ narrationFor = \case
   ScenarioSpecific "stormcaller.advanced" (parseMaybe parseJSON -> Just card) ->
     Just $ one $ toned Bad $ structure [ikeyPart "log.stormcallerAdvances" ["quest" ~> EncounterCard card]]
   ScenarioSpecific "stormcaller.join" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.stormcallerCaughtUp" []]
+  -- \* Cold-Drake set aside with its damage (The Withered Heath)
+  ScenarioSpecific "witheredHeath.drakeHealed" (parseMaybe parseJSON -> Just (n :: Int)) ->
+    Just $ one $ toned Good $ mechanic [ikeyPart "log.coldDrakeHealed" ["count" ~> n]]
   -- \* The Orcs' area and their quest stage (Race Across Harad)
   PlaceEnemy eid OrcsArea -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> e]]
   PlaceLocation lid OrcsArea -> Just $ whenRef (toTarget lid) \l -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> l]]

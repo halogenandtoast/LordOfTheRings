@@ -3489,5 +3489,50 @@
       "They drew their weapons and rushed to the gate. A full moon was overhead, and below them they saw Urdug astride a mighty Warg blowing his horn. About him was a large force of Goblins making their way up the mountainside. Mount Gundabad was under siege.",
       "The story continues in “The Fate of Wilderland,” the sixth Adventure Pack in the Ered Mithrin cycle."
     ]
+  },
+  "the-withered-heath": {
+    "intro": [
+      "The heroes had already been traveling for days when they reached the first foothills of the Grey Mountains. Their journey across the barren lands between the Iron Hills and the Ered Mithrin had been uneventful except for the weather. It had rained in torrents, soaking the travelers’ heavy cloaks and leaving them wet and miserable.",
+      "As they began to climb the rising slopes of the Grey Mountains, the rain turned to snow; a welcome change if not for the cold that came with it. The early frost had only just descended on Wilderland below, but already in the stony heights of the Ered Mithrin the chill winds of winter were blowing and biting at the heroes’ faces.",
+      "Nevertheless, the adventurers climbed on. The fate of Rhovanion depended on them. Somewhere in this wide mountain range lurked a terrible danger: an ancient Dragon whose scion they had cut down in the Dwarven mines beneath the Iron Hills. The dying beast warned them his mother would seek revenge when she learned of his death, and the heroes feared that all Wilderland would suffer if they did not find her first.",
+      "So they climbed in search of the Withered Heath, a long valley that lay amid the eastern arms of the Grey Mountains, where the Dragons were said to breed. After several days of navigating steep cliffs and narrow paths, the heroes reached the summit and looked down on the vale they sought: an ashen plain of charred, lifeless rock. There were no Dragons to be seen, but plenty of Dragon sign. As they descended into the burnt valley, they could see that the vast majority of tracks were those of hatchlings - small prints, about the size of a bear’s, leading this way and that from the scattered remains of large eggs. But after some searching they found one large set of tracks that led west and up back into the mountains.",
+      "After a short rest in a low dale among the charred rocks of the Withered Heath, the heroes resumed their hunt and followed the larger Dragon tracks they had found. They were each happy to leave the scorched vale behind them, but they all knew that greater danger still waited for them amid the cold heights surrounding the Withered Heath..."
+    ],
+    "setup": [
+      "“The Withered Heath” is played with an encounter deck built with all the cards from the following encounter sets: The Withered Heath, Lost Caves, Wild Creatures, and Lost in Wilderland. (Lost Caves, Wild Creatures, and Lost in Wilderland can be found in The Wilds of Rhovanion deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "The Caves Deck",
+        "text": "To create the Caves deck, take each card from the Lost Caves encounter set and shuffle them together. This is the Caves deck."
+      },
+      {
+        "title": "Deep Keyword",
+        "text": "Deep is a keyword that appears on some locations in the The Withered Heath. After the players travel to a deep location, they discard it and replace it with the top card of the Caves deck. That location then becomes the active location. If there are no cards remaining in the Caves deck, the deep keyword is ignored.\n\nIf a Dragon Sign replaces the active location via the deep keyword, add the Dragon Sign to the staging area and resolve its guarded keyword."
+      }
+    ],
+    "resolution": [
+      "Once again the heroes gathered around the body of a dead Dragon, but this time they knew it could not be the one they sought.",
+      "“This one’s smaller than the first,” said one of the companions.",
+      "“Aye, I’d imagine the mother we’re after would be much bigger,” agreed another.",
+      "“But where do we find her?” asked the first. “The tracks that led us here were the only ones we found large enough to be an adult’s. All the others were but hatchlings.”",
+      "There was a brief silence as the adventurers contemplated this question when, from a dark corner of the Dragon’s lair, there came a shuffling noise. The heroes wheeled around with their weapons ready, to see a large Goblin stepping forward from the shadows with his arms held outward in token of surrender.",
+      "“Yrch!” shouted one of the heroes, and he drew an arrow back with his bow, ready to fire.",
+      "“Hold!” cried the Orc in a hoarse voice, “I can tell you where to find the Dragon you seek!”",
+      "The archer aimed at the Goblin’s chest and ordered him to speak: “Tell us what you know of this Dragon, and how you know it.”",
+      "The Goblin laughed bitterly and said, “Sure, sure. And while I’m at it, why don’t I tell you where I buried my loot after I raided the Woodmen so you can have all my secrets and be done with me? Garn! Urdug’s not stupid! I know yer gonna kill me once I tell you what I know.”",
+      "The bowman relaxed his draw, lowered his bow, and said, “Very well. I promise no harm will come to you if you speak truthfully, though it would be the first time I’ve heard an Orc do so.”",
+      "“Well, that’s better!” said Urdug. He sat down on the Dragon’s corpse and gave it a pat. “You make short work of Dragons it seems, and that’s good cause I know one that needs killin’. The same one as you want dead I’ll wager: a great-big, fire-breather. Calls herself Dagnir the Terrible. She ran me and my boys out of our home in Gundabad months ago when she came on us in the early morning.”",
+      "“Gundabad!” exclaimed one of the adventurers. “The Goblins stole Gundabad from the Dwarves ages ago. Serves you right!”",
+      "“Pah! If the those long-beards wanted it, they should have fought harder to keep it,” laughed Urdug. “It belongs to the Goblins now.”",
+      "“From your own account, it sounds like it belongs to Dagnir,” replied the hero sharply.",
+      "Urdug stopped laughing and glared at her. “For the moment,” he said coldly. There was a tense pause before he laughed bitterly and continued, “I imagine she’s made herself a nice bed of treasure in the great hall by now. Probably made the Goblins drag it all up from the deeps for her.”",
+      "“Goblins yet live there with the Dragon?” asked one of the companions with bewilderment.",
+      "“Cowardly maggots!” Urdug exclaimed. “Lost their nerve at the first sound of her roar. Some fled south while others threw down their weapons and begged for mercy. Pah!” he spat. “I let out with the few who stayed loyal, but they’re mostly dead now. We fled out the secret door. The rising sun burnt our eyes, but we kept on. We came this way looking for a new home, but all we found was more Dragons.”",
+      "Urdug regarded the Dragon carcass under him. “This one ate five of my boys after we stumbled into her cave.”",
+      "One of the heroes turned to her friends and said, “If all this is true, then we need to journey to Gundabad and find this Dagnir before she grows restless of her new home.”",
+      "Then, turning back to Urdug she added, “And you, Urdug, will be our guide.”",
+      "The story continues in “Roam Across Rhovanion,” the second Adventure Pack in the Ered Mithrin cycle."
+    ]
   }
 }

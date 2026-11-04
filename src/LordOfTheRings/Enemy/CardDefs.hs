@@ -454,6 +454,9 @@ allEnemyCards =
       , guardianOfGundabad
       , dagnirsSlave
       , deepDweller
+      , coldDrake
+      , snowTroll
+      , dragonHatchling
       ]
 
 namelessThing :: CardDef
@@ -3649,6 +3652,24 @@ theDragonsThrall =
     , cdEasyModeQuantity = Just 1
     }
 
+-- * The Withered Heath
+
+coldDrake :: CardDef
+coldDrake =
+  unique
+    (enemy "19011" "Cold-Drake" TheWitheredHeath 1 10 1 6 1 18)
+      { cdCardTraits = setFromList [Dragon]
+      , cdVictoryPoints = Just 6
+      }
+
+snowTroll :: CardDef
+snowTroll =
+  (enemy "19013" "Snow-troll" TheWitheredHeath 2 35 3 5 3 9)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
 -- * The Ghost of Framsburg (19094-19111)
 
 framsShade :: CardDef
@@ -3711,3 +3732,10 @@ dagnirsSlave =
 
 deepDweller :: CardDef
 deepDweller = (enemy "19128" "Deep-dweller" MountGundabad 2 32 2 3 1 4) {cdCardTraits = setFromList [Creature, Spider], cdEasyModeQuantity = Just 1}
+dragonHatchling :: CardDef
+dragonHatchling =
+  (enemy "19014" "Dragon Hatchling" TheWitheredHeath 3 20 2 2 0 4)
+    { cdCardTraits = setFromList [Dragon]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }

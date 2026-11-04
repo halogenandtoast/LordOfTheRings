@@ -379,6 +379,8 @@ import LordOfTheRings.Treachery.Cards.DenizenOfTheDeep
 import LordOfTheRings.Treachery.Cards.AbandonedRuins
 import LordOfTheRings.Treachery.Cards.TerribleShadows
 import LordOfTheRings.Treachery.Cards.SlammedShut
+import LordOfTheRings.Treachery.Cards.HeavySnow
+import LordOfTheRings.Treachery.Cards.DeadlyCold
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -785,5 +787,7 @@ allTreacherys =
         , SomeTreacheryCard abandonedRuins
         , SomeTreacheryCard terribleShadows
         , SomeTreacheryCard slammedShut
+        , SomeTreacheryCard heavySnow
+        , SomeTreacheryCard deadlyCold
         ]
     ]

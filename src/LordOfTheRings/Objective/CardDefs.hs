@@ -134,6 +134,7 @@ allObjectiveCards =
       , scathasTeeth
       , wormsbane
       , wormsbaneReforged
+      , dragonSign
       ]
 
 durinsAxe :: CardDef
@@ -929,3 +930,12 @@ wormsbaneReforged =
       , cdKeywords = setFromList [Restricted]
       , cdOtherSide = Just "19143A"
       }
+-- * The Withered Heath
+
+dragonSign :: CardDef
+dragonSign =
+  (objective "19012" "Dragon Sign" TheWitheredHeath 4)
+    { cdCardTraits = setFromList [Clue]
+    , cdKeywords = setFromList [GuardedBy [EnemyType]]
+    , cdVictoryPoints = Just 1
+    }

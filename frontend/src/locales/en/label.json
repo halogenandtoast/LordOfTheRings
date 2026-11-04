@@ -572,7 +572,10 @@
   "returnAllyToHand": "Return an ally you control to your hand",
   "chooseHero": "Choose a hero",
   "chooseEnemy": "Choose an enemy",
-  "returnFromDiscard": "Choose a card to return from your discard pile to your hand",
+  "returnFromDiscard": {
+    "return": "Return a card from your discard pile to your hand?",
+    "none": "Return nothing"
+  },
   "chooseHeroToReady": "Choose a hero to ready",
   "chooseLocation": "Choose a location",
   "chooseEnemyToAttack": "Choose an enemy to attack",
@@ -1277,10 +1280,6 @@
   },
   "hornsCry": {
     "allEnemies": "All enemies get -1 attack until the end of the phase"
-  },
-  "returnFromDiscard": {
-    "return": "Return a card from your discard pile to your hand?",
-    "none": "Return nothing"
   },
   "barrenMoorland": {
     "choose": "Exhaust the ally or deal 1 damage to it",
@@ -2731,5 +2730,13 @@
     "choose": "Searching the Ruins: choose one",
     "raiseThreat": "Raise each player's threat by 2",
     "location": "Discard cards from the encounter deck until a location is discarded, and add it to the staging area"
+  },
+  "heavySnow": {
+    "exhaust": "Heavy Snow: choose a character to exhaust"
+  },
+  "deadlyCold": {
+    "choose": "Deadly Cold: exhaust this character, or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
   }
 }

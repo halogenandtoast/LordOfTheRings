@@ -474,6 +474,11 @@ import LordOfTheRings.Location.Cards.HauntedHall
 import LordOfTheRings.Location.Cards.HiddenStaircase
 import LordOfTheRings.Location.Cards.MoonlitPassage
 import LordOfTheRings.Location.Cards.CursedTower
+import LordOfTheRings.Location.Cards.MountainPass
+import LordOfTheRings.Location.Cards.DwarvenDoor
+import LordOfTheRings.Location.Cards.CaveEntrance
+import LordOfTheRings.Location.Cards.CreatureDen
+import LordOfTheRings.Location.Cards.HighFalls
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -994,5 +999,10 @@ allLocations =
         , SomeLocationCard hiddenStaircase
         , SomeLocationCard moonlitPassage
         , SomeLocationCard cursedTower
+        , SomeLocationCard mountainPass
+        , SomeLocationCard dwarvenDoor
+        , SomeLocationCard caveEntrance
+        , SomeLocationCard creatureDen
+        , SomeLocationCard highFalls
         ]
     ]

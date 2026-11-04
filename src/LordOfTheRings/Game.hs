@@ -230,6 +230,8 @@ claimFreeObjectives = do
         claiming = flip any queued \case
           ClaimFreeObjective _ -> True
           ClaimObjective {} -> True
+          -- one claimed into the victory display, as a free Dragon Sign
+          AddToVictoryDisplay (ObjectiveTarget _) -> True
           Ask _ (QuestionLabel l _ _ _) -> l == ikey "label.claimObjective"
           _ -> False
         guarding oid = flip any queued \case
@@ -2599,6 +2601,10 @@ runGameMessage msg g = case msg of
   -- a hero leaves play for good, not for its owner's discard pile, its attachments
   -- discarded as they would be were it discarded
   SetAsideHero hid -> runGameMessage (RemoveFromGame $ HeroTarget hid) g
+  -- an enemy set aside leaves play as one removed from the game would, its card kept aside
+  SetAsideEnemy eid | Just e <- Map.lookup eid g.entities.enemies -> do
+    g' <- runGameMessage (RemoveFromGame $ EnemyTarget eid) g
+    pure $ g' & scenarioL %~ overAttrs (setAsideL %~ (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) :))
   RemoveFromGame target@(HeroTarget hid) | Map.member hid g.entities.heroes -> do
     g' <- leftPlay g target
     pushAll $ discardAttached g target

@@ -15,7 +15,6 @@
     "lost": "The players lose",
     "surrendered": "The players surrender"
   },
-
   "plays": "{player} plays {card}",
   "usesAbility": "{player} uses {card}",
   "forced": "Forced: {card}",
@@ -31,11 +30,9 @@
   "undefended": "{player} takes the attack undefended",
   "attackRedirected": "{enemy}'s attack is resolved against {target}",
   "mulligan": "{player} takes a mulligan",
-
   "threatRaised": "{player}'s threat rises by {count}, to {total}",
   "threatLowered": "{player}'s threat drops by {count}, to {total}",
   "eliminated": "{player} is eliminated",
-
   "takesDamage": "{target} takes {count} damage",
   "takesDamageFrom": "{target} takes {count} damage from {source}",
   "heals": "{target} heals {count} damage",
@@ -48,10 +45,8 @@
   "villagersRemoved": "A villager leaves {target} | {count} villagers leave {target}",
   "timeCountersPlaced": "A time counter is placed on {target} | {count} time counters are placed on {target}",
   "timeCountersRemoved": "A time counter is removed from {target} | {count} time counters are removed from {target}",
-
   "readies": "{target} readies",
   "exhausts": "{target} exhausts",
-
   "destroyed": "{target} is destroyed",
   "discarded": "{target} is discarded",
   "removedFromGame": "{target} is removed from the game",
@@ -70,7 +65,6 @@
   "removedFromQuest": "{target} is removed from the quest",
   "addedToVictoryDisplay": "{target} is added to the victory display",
   "returnedToBottomOfEncounterDeck": "{target} goes to the bottom of the encounter deck",
-
   "revealed": "Revealed {card}",
   "revealedThreat": "Revealed {card} ({threat})",
   "resolvedWhenRevealed": "Resolved the When Revealed effect of {card}",
@@ -106,12 +100,10 @@
   "heroToStagingArea": "{hero} is moved to the staging area",
   "takesControlOfHero": "{player} takes control of {hero}",
   "claims": "{target} claims {card}",
-
   "enemyAttacks": "{enemy} attacks {player} ({attack})",
   "attacks": "{attackers} attack {enemy} ({attack} against {defense})",
   "attackDestroys": "Destroyed",
   "attackDamages": "{enemy} survives with {damage} of {hitPoints} damage",
-
   "archery": "Archery: {count} damage is dealt among the characters",
   "questSucceeds": "The quest succeeds: {progress}",
   "questFails": "The quest fails: threat rises by {count}",
@@ -124,7 +116,6 @@
   "questComplete": "{quest} is complete",
   "currentQuest": "{quest} is the current quest",
   "questStage": "{quest}",
-
   "drawsCards": "{player} draws {cards}",
   "drawsCount": "{player} draws a card | {player} draws {count} cards",
   "takesIntoHand": "{player} takes {card} into hand",
@@ -134,7 +125,6 @@
   "returnsFromDiscard": "{player} returns {card} to hand",
   "shufflesDiscardIntoDeck": "{player} shuffles their discard pile into their deck",
   "shufflesTopOfDiscardIntoDeck": "{player} shuffles the top {count} cards of their discard pile into their deck",
-
   "stat": "{value}{icon}",
   "listSeparator": ", ",
   "listLast": " and ",
@@ -195,5 +185,6 @@
   "guardsObjective": "{guard} guards {objective}",
   "resolvesDiscover": "{player} resolves Discover {count} on {location}",
   "lootDiscarded": "{card} has Loot: it is discarded and another card is revealed",
-  "secondEncounterDeckActive": "The second encounter deck becomes the active encounter deck, the first set aside"
+  "secondEncounterDeckActive": "The second encounter deck becomes the active encounter deck, the first set aside",
+  "coldDrakeHealed": "{count} damage is removed from the set-aside Cold-Drake"
 }

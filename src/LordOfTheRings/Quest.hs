@@ -296,6 +296,10 @@ import LordOfTheRings.Quest.Cards.TheFireWorm
 import LordOfTheRings.Quest.Cards.TheHauntedKeep
 import LordOfTheRings.Quest.Cards.SearchingTheRuins
 import LordOfTheRings.Quest.Cards.TheCursedShade
+import LordOfTheRings.Quest.Cards.SearchingForDragonSign
+import LordOfTheRings.Quest.Cards.TheColdDrakeAttacks
+import LordOfTheRings.Quest.Cards.HuntingTheBeast
+import LordOfTheRings.Quest.Cards.ACorneredDragon
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -624,5 +628,9 @@ allQuests =
         , SomeQuestCard theHauntedKeep
         , SomeQuestCard searchingTheRuins
         , SomeQuestCard theCursedShade
+        , SomeQuestCard searchingForDragonSign
+        , SomeQuestCard theColdDrakeAttacks
+        , SomeQuestCard huntingTheBeast
+        , SomeQuestCard aCorneredDragon
         ]
     ]

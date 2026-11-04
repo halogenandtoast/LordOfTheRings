@@ -389,6 +389,8 @@ allTreacheryCards =
       , slammedShut
       , wilderlandsBane
       , suffocatingShadows
+      , heavySnow
+      , deadlyCold
       ]
 
 deepDeepDark :: CardDef
@@ -2469,3 +2471,16 @@ wilderlandsBane = (treachery "19132" "Wilderland's Bane" MountGundabad 2) {cdSha
 
 suffocatingShadows :: CardDef
 suffocatingShadows = (treachery "19133" "Suffocating Shadows" MountGundabad 2) {cdShadowEffect = True}
+-- * The Withered Heath
+
+heavySnow :: CardDef
+heavySnow =
+  (treachery "19020" "Heavy Snow" TheWitheredHeath 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+deadlyCold :: CardDef
+deadlyCold = (treachery "19021" "Deadly Cold" TheWitheredHeath 3) {cdCardTraits = setFromList [Weather], cdShadowEffect = True, cdEasyModeQuantity = Just 2}

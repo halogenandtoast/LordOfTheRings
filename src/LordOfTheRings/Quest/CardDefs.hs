@@ -380,6 +380,10 @@ allQuestCards =
       , forebodingDarkness
       , imminentPursuit
       , theGreatWorm
+      , searchingForDragonSign
+      , theColdDrakeAttacks
+      , huntingTheBeast
+      , aCorneredDragon
       ]
 
 theDrippingWalls :: CardDef
@@ -1523,3 +1527,17 @@ imminentPursuit = exploringGundabad "19141" "Imminent Pursuit" 6
 -- | No quest points: the players win by killing Dagnir.
 theGreatWorm :: CardDef
 theGreatWorm = (exploringGundabad "19142" "The Great Worm" 0) {cdQuestPoints = Nothing}
+-- * The Withered Heath
+
+searchingForDragonSign :: CardDef
+searchingForDragonSign = quest "19022" "Searching for Dragon Sign" TheWitheredHeath 1 6
+
+theColdDrakeAttacks :: CardDef
+theColdDrakeAttacks = quest "19023" "The Cold-Drake Attacks!" TheWitheredHeath 2 3
+
+huntingTheBeast :: CardDef
+huntingTheBeast = quest "19024" "Hunting the Beast" TheWitheredHeath 3 9
+
+-- | No progress defeats it: the players win as Cold-Drake is defeated.
+aCorneredDragon :: CardDef
+aCorneredDragon = quest "19025" "A Cornered Dragon" TheWitheredHeath 4 0
