@@ -17,7 +17,7 @@ deorwine = ally Deorwine Cards.deorwine
 instance HasAbilities Deorwine where
   getAbilities (Deorwine a) =
     [ anyPlayer
-        $ restricted a 1 EncounterEffectsCancelable
+        $ restricted a 1 shadowEffectsCancelable
         $ ResponseAbility (ShadowEffectAgainstWindow When (toTarget a)) (SpendResourcesCost Leadership 1)
     ]
 

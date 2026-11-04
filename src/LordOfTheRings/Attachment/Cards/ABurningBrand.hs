@@ -20,7 +20,7 @@ aBurningBrand =
 instance HasAbilities ABurningBrand where
   getAbilities (ABurningBrand a) = case a.placement of
     AttachedTo host ->
-      let shadow = restricted a 1 EncounterEffectsCancelable
+      let shadow = restricted a 1 shadowEffectsCancelable
        in errataOr
             a.owner
             (shadow $ ResponseAbility (ShadowEffectAgainstWindow When host) (exhaustCost a))
