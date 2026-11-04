@@ -498,6 +498,9 @@ import LordOfTheRings.Enemy.Cards.Lorgan
 import LordOfTheRings.Enemy.Cards.Borlach
 import LordOfTheRings.Enemy.Cards.EasterlingGuard
 import LordOfTheRings.Enemy.Cards.NurnSlaver
+import LordOfTheRings.Enemy.Cards.GropingDead
+import LordOfTheRings.Enemy.Cards.DeadThings
+import LordOfTheRings.Enemy.Cards.CandleBearer
 import LordOfTheRings.Enemy.Cards.MorgulWraith
 import LordOfTheRings.Enemy.Cards.GollumTheLandOfShadow
 import LordOfTheRings.Enemy.Runner ()
@@ -1027,6 +1030,9 @@ allEnemys =
         , SomeEnemyCard borlach
         , SomeEnemyCard easterlingGuard
         , SomeEnemyCard nurnSlaver
+        , SomeEnemyCard gropingDead
+        , SomeEnemyCard deadThings
+        , SomeEnemyCard candleBearer
         , SomeEnemyCard morgulWraith
         , SomeEnemyCard gollumTheLandOfShadow
         ]

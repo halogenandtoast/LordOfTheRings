@@ -420,6 +420,10 @@ import LordOfTheRings.Treachery.Cards.TheDarkLordsReach
 import LordOfTheRings.Treachery.Cards.OverseersWhip
 import LordOfTheRings.Treachery.Cards.CrueltyOfMordor
 import LordOfTheRings.Treachery.Cards.BrokenCaptives
+import LordOfTheRings.Treachery.Cards.TheSearchingEye
+import LordOfTheRings.Treachery.Cards.CreepingMarshes
+import LordOfTheRings.Treachery.Cards.BitterReek
+import LordOfTheRings.Treachery.Cards.AFellLight
 import LordOfTheRings.Treachery.Cards.CallOfTheRing
 import LordOfTheRings.Treachery.Cards.WeHatesThem
 import LordOfTheRings.Treachery.Runner ()
@@ -869,6 +873,10 @@ allTreacherys =
         , SomeTreacheryCard overseersWhip
         , SomeTreacheryCard crueltyOfMordor
         , SomeTreacheryCard brokenCaptives
+        , SomeTreacheryCard theSearchingEye
+        , SomeTreacheryCard creepingMarshes
+        , SomeTreacheryCard bitterReek
+        , SomeTreacheryCard aFellLight
         , SomeTreacheryCard callOfTheRing
         , SomeTreacheryCard weHatesThem
         ]

@@ -599,6 +599,7 @@ library
       LordOfTheRings.Enemy.Cards.BroodMother
       LordOfTheRings.Enemy.Cards.BrownWaterRats
       LordOfTheRings.Enemy.Cards.BrutalUruk
+      LordOfTheRings.Enemy.Cards.CandleBearer
       LordOfTheRings.Enemy.Cards.CaptainOfMordor
       LordOfTheRings.Enemy.Cards.CaptainSahir
       LordOfTheRings.Enemy.Cards.CaptainSahirTheCityOfCorsairs
@@ -652,6 +653,7 @@ library
       LordOfTheRings.Enemy.Cards.DeadLord
       LordOfTheRings.Enemy.Cards.DeadlyHuorn
       LordOfTheRings.Enemy.Cards.DeadlyMarshAdder
+      LordOfTheRings.Enemy.Cards.DeadThings
       LordOfTheRings.Enemy.Cards.DeepDweller
       LordOfTheRings.Enemy.Cards.DesertWarg
       LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
@@ -736,6 +738,7 @@ library
       LordOfTheRings.Enemy.Cards.GreatCaveTroll
       LordOfTheRings.Enemy.Cards.GreatShark
       LordOfTheRings.Enemy.Cards.GreyMountainGiant
+      LordOfTheRings.Enemy.Cards.GropingDead
       LordOfTheRings.Enemy.Cards.GuardDogs
       LordOfTheRings.Enemy.Cards.GuardianOfGundabad
       LordOfTheRings.Enemy.Cards.GuardianOfTheGoldenKing
@@ -1557,6 +1560,7 @@ library
       LordOfTheRings.Location.Cards.Entwood
       LordOfTheRings.Location.Cards.EphelDuath
       LordOfTheRings.Location.Cards.EriadorWastes
+      LordOfTheRings.Location.Cards.EvilSmellingFens
       LordOfTheRings.Location.Cards.ExpanseOfHarad
       LordOfTheRings.Location.Cards.ExposedRidge
       LordOfTheRings.Location.Cards.ExposedRiverbank
@@ -1618,6 +1622,7 @@ library
       LordOfTheRings.Location.Cards.HarondorWaste
       LordOfTheRings.Location.Cards.HauntedHall
       LordOfTheRings.Location.Cards.HauntedKeep
+      LordOfTheRings.Location.Cards.HauntedMere
       LordOfTheRings.Location.Cards.HauntedPillars
       LordOfTheRings.Location.Cards.HeartOfFangorn
       LordOfTheRings.Location.Cards.HelmOfTheStormcaller
@@ -1778,6 +1783,7 @@ library
       LordOfTheRings.Location.Cards.SharpPrecipice
       LordOfTheRings.Location.Cards.ShatteredSea
       LordOfTheRings.Location.Cards.ShelteredValley
+      LordOfTheRings.Location.Cards.ShiftingQuagmire
       LordOfTheRings.Location.Cards.ShiveringRiver
       LordOfTheRings.Location.Cards.ShrineToMorgoth
       LordOfTheRings.Location.Cards.ShrineToMorgothTheDrownedRuins
@@ -1793,12 +1799,14 @@ library
       LordOfTheRings.Location.Cards.SlopesOfEredMithrin
       LordOfTheRings.Location.Cards.SlopesOfGundabad
       LordOfTheRings.Location.Cards.SnowyBadlands
+      LordOfTheRings.Location.Cards.SoftMires
       LordOfTheRings.Location.Cards.SouthernBelfalas
       LordOfTheRings.Location.Cards.SouthernGate
       LordOfTheRings.Location.Cards.SouthronBoma
       LordOfTheRings.Location.Cards.SouthronCamp
       LordOfTheRings.Location.Cards.SpiderBurrow
       LordOfTheRings.Location.Cards.StagnantCreek
+      LordOfTheRings.Location.Cards.StagnantPools
       LordOfTheRings.Location.Cards.StagnantQuagmire
       LordOfTheRings.Location.Cards.StairFalls
       LordOfTheRings.Location.Cards.StairsOfNain
@@ -2588,6 +2596,7 @@ library
       LordOfTheRings.Treachery.CardDefs
       LordOfTheRings.Treachery.Cards.AbandonedRuins
       LordOfTheRings.Treachery.Cards.AFellDread
+      LordOfTheRings.Treachery.Cards.AFellLight
       LordOfTheRings.Treachery.Cards.AFoeBeyond
       LordOfTheRings.Treachery.Cards.AfraidOfTheDark
       LordOfTheRings.Treachery.Cards.AFrightenedBeast
@@ -2610,6 +2619,7 @@ library
       LordOfTheRings.Treachery.Cards.BefouledEquipment
       LordOfTheRings.Treachery.Cards.BitingInsects
       LordOfTheRings.Treachery.Cards.BitingWind
+      LordOfTheRings.Treachery.Cards.BitterReek
       LordOfTheRings.Treachery.Cards.BitterWind
       LordOfTheRings.Treachery.Cards.BlackMare
       LordOfTheRings.Treachery.Cards.BlastOfSavageWind
@@ -2651,6 +2661,7 @@ library
       LordOfTheRings.Treachery.Cards.CounterAttack
       LordOfTheRings.Treachery.Cards.CounterSpell
       LordOfTheRings.Treachery.Cards.CrashingThunder
+      LordOfTheRings.Treachery.Cards.CreepingMarshes
       LordOfTheRings.Treachery.Cards.CruelTorment
       LordOfTheRings.Treachery.Cards.CrueltyOfMordor
       LordOfTheRings.Treachery.Cards.CrumblingRuin
@@ -2947,6 +2958,7 @@ library
       LordOfTheRings.Treachery.Cards.ThePowerOfMordor
       LordOfTheRings.Treachery.Cards.TheRaidersAssault
       LordOfTheRings.Treachery.Cards.TheSavageSouth
+      LordOfTheRings.Treachery.Cards.TheSearchingEye
       LordOfTheRings.Treachery.Cards.TheSkyDarkens
       LordOfTheRings.Treachery.Cards.TheSpidersWeb
       LordOfTheRings.Treachery.Cards.TheThievesPloy

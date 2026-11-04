@@ -525,6 +525,11 @@ import LordOfTheRings.Location.Cards.SlaveQuarters
 import LordOfTheRings.Location.Cards.TheStorehouse
 import LordOfTheRings.Location.Cards.WorkingFields
 import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
+import LordOfTheRings.Location.Cards.EvilSmellingFens
+import LordOfTheRings.Location.Cards.ShiftingQuagmire
+import LordOfTheRings.Location.Cards.HauntedMere
+import LordOfTheRings.Location.Cards.StagnantPools
+import LordOfTheRings.Location.Cards.SoftMires
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1096,5 +1101,10 @@ allLocations =
         , SomeLocationCard theStorehouse
         , SomeLocationCard workingFields
         , SomeLocationCard watchTowerTheLandOfSorrow
+        , SomeLocationCard evilSmellingFens
+        , SomeLocationCard shiftingQuagmire
+        , SomeLocationCard hauntedMere
+        , SomeLocationCard stagnantPools
+        , SomeLocationCard softMires
         ]
     ]
