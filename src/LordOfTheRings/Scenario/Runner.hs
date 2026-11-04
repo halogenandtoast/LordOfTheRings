@@ -9,13 +9,13 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.EncounterSet (EncounterSet)
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Guarded))
+import LordOfTheRings.Keyword (Keyword (Guarded, GuardedBy))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (placeResources)
 import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayers, gameRound)
-import LordOfTheRings.Entities (entitiesHeroes)
+import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
@@ -25,7 +25,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
 import LordOfTheRings.Scenario.Types as X
-import LordOfTheRings.Source (sourceTarget)
+import LordOfTheRings.Source (Source (ObjectiveSource), sourceTarget)
 import LordOfTheRings.Target
 import LordOfTheRings.Window (WindowType (AdvancedToStage), mkAfter)
 
@@ -178,25 +178,36 @@ instance RunMessage ScenarioAttrs where
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
       top : rest -> pure $ attrs & encounterDeckL .~ rest <> [top]
       [] -> pure attrs
-    GuardObjective oid -> case attrs.encounterDeck of
-      card : rest -> do
-        let def = toCardDef card
-        push
-          $ if
-            -- it guards before it resolves, so before its surge; a treachery only until its
-            -- effects resolve or are canceled
-            | cdCardType def `elem` [EnemyType, LocationType, TreacheryType] ->
-                Run [SetObjectiveGuard oid card.id, RevealCard card]
-            -- the next card guards this objective, then the revealed one is guarded in turn
-            | Guarded `member` cdKeywords def -> Run [GuardObjective oid, RevealCard card]
-            | otherwise -> RevealCard card
-        pure $ attrs & encounterDeckL .~ rest
-      []
-        | null attrs.encounterDiscard -> pure attrs
-        | otherwise -> do
-            deck <- shuffleM attrs.encounterDiscard
-            push $ GuardObjective oid
-            pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+    GuardObjective oid -> do
+      objectiveDef <- getsGame (fmap toCardDef . Map.lookup oid . entitiesObjectives . gameEntities)
+      case [ts | Just d <- [objectiveDef], GuardedBy ts <- toList (cdKeywords d)] of
+        -- Guarded (X): cards are discarded until one of those types is, which the
+        -- objective reads back to guard it (MEC59 rules)
+        types : _ -> do
+          let matching c = cdCardType (toCardDef c) `elem` types
+          push
+            $ DiscardTopOfEncounterDeck (ObjectiveSource oid) (ObjectiveTarget oid)
+            $ maybe (length attrs.encounterDeck) (+ 1) (findIndex matching attrs.encounterDeck)
+          pure attrs
+        [] -> case attrs.encounterDeck of
+          card : rest -> do
+            let def = toCardDef card
+            push
+              $ if
+                -- it guards before it resolves, so before its surge; a treachery only until its
+                -- effects resolve or are canceled
+                | cdCardType def `elem` [EnemyType, LocationType, TreacheryType] ->
+                    Run [SetObjectiveGuard oid card.id, RevealCard card]
+                -- the next card guards this objective, then the revealed one is guarded in turn
+                | Guarded `member` cdKeywords def -> Run [GuardObjective oid, RevealCard card]
+                | otherwise -> RevealCard card
+            pure $ attrs & encounterDeckL .~ rest
+          []
+            | null attrs.encounterDiscard -> pure attrs
+            | otherwise -> do
+                deck <- shuffleM attrs.encounterDiscard
+                push $ GuardObjective oid
+                pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
     -- the next encounter card guards the location, attached to it as it is revealed so its
     -- own effects see it guarding (Troll-fells); any other card is only revealed
     GuardLocation lid -> case attrs.encounterDeck of
@@ -225,8 +236,14 @@ instance RunMessage ScenarioAttrs where
     RevealCard card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card added to the staging area, as Orc Trail adds one out-of-play Orc
     AddToStaging card -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- or made an enemy where its card puts it, as Racing North adds Uruk Warg-rider to the
+    -- Orcs' area
+    CreateEnemy _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card put into play, as The Seething Lake makes Doors of Durin active
     PutIntoPlayAsActiveLocation card -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- a set-aside objective attached to an encounter card, as Defeat the Serpent attaches
+    -- one to The Black Serpent
+    PutObjectiveIntoPlayGuardedBy card _ -> pure $ attrs & setAsideL %~ filter (/= card)
     ShuffleSetAsideIntoEncounterDeck cards -> do
       let shuffled = filter (`elem` cards) attrs.scenarioSetAside
       deck <- shuffleM (shuffled <> attrs.encounterDeck)
@@ -236,12 +253,16 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM ([c | EncounterCard c <- matching] <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & victoryDisplayL .~ rest
     PutOnTopOfEncounterDeck card -> pure $ attrs & encounterDeckL %~ (card :)
-    -- a player card with the Encounter keyword goes to its owner's discard pile instead
+    -- a player card with the Encounter keyword goes to its owner's discard pile instead,
+    -- but an event, as Wind from the Sea after it was a shadow card, is treated like an
+    -- encounter card (MEC61 rules)
     AddToEncounterDiscard cards -> do
-      owned <- for cards \c -> (c,) <$> setAsideOwner c.id
+      owned <- for cards \c -> (c,) <$> if cdCardType (toCardDef c) == EventType then pure Nothing else setAsideOwner c.id
       pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
-      -- a card of the Corsair deck goes to its own discard pile, while there is one
-      pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned]
+      -- a card of the Corsair deck goes to its own discard pile, while there is one; a
+      -- set-aside card discarded is part of the encounter deck from then on (MEC61 rules)
+      pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned] & setAsideL %~ filter (`notElem` cards)
+    RemoveSetAsideFromGame cards -> pure $ attrs & setAsideL %~ filter (`notElem` cards)
     -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in
     ShuffleIntoEncounterDeck (CardIdTarget cid) -> do
       owned <- getsGame (concatMap (.setAsideCards) . toList . gamePlayers)
@@ -258,6 +279,10 @@ instance RunMessage ScenarioAttrs where
     PutObjectiveIntoPlayAttached card _ -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside Ship objective put into play, as The Beacon gives a Dol Amroth Warship
     PutObjectiveAllyIntoPlayUnder _ card -> pure $ attrs & setAsideL %~ filter (/= card)
+    PutObjectiveHeroIntoPlayUnder _ card -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- a set-aside card removed from the game, as the objective-heroes no player chose
+    RemoveFromGame (CardIdTarget cid) -> pure $ attrs & setAsideL %~ filter ((/= cid) . (.id))
+    GuardCard (EncounterCard card) _ -> pure $ attrs & setAsideL %~ filter (/= card)
     DebugSearchEncounterDeck pid -> do
       push
         $ Ask pid

@@ -186,6 +186,23 @@ spec = describe "The Lost Realm player cards" do
       -- its surge revealed the Old Forest Road
       getsGame (length . (.entities.locations)) `shouldReturn` 1
 
+    it "revealed, the Ranger of the North enters play under the player it joins" . gameTestWith deck $ \pid -> do
+      Just chosen <- headMay . (.setAsideCards) <$> getPlayer pid
+      _ <- setEncounterDeck []
+      run $ ShuffleIntoEncounterDeck (CardIdTarget chosen.id)
+      [ranger] <- getEncounterDeck
+      spider <- stagedEnemy Enemies.forestSpider
+      run . AddToStaging =<< genEncounterCard Locations.barrenMoorland
+      road <- genEncounterCard Locations.oldForestRoad
+      putGame . (scenarioL %~ overAttrs (encounterDeckL .~ [ranger, road])) =<< getGame
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget pid spider
+      -- Barren Moorland's forced effect on an ally entering play
+      chooseLabel "$label.barrenMoorland.damage" pid
+      Just r <- allyWithCard ranger.id
+      getCharacterDamage r `shouldReturn` 1
+
     it "goes to its owner's discard pile when discarded from the encounter deck" . gameTestWith deck $ \pid -> do
       Just ranger <- headMay . (.setAsideCards) <$> getPlayer pid
       run $ ShuffleIntoEncounterDeck (CardIdTarget ranger.id)

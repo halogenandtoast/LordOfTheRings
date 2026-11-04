@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdCardTraits, cdShadowCannotBeCanceled, ecId, cdHitPoints, cdName, cdVictoryPoints, cdWhenRevealed, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -23,7 +23,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotDiscardFromHand, ShadowEffectsCannotBeCanceled),
+  ModifierType (CannotDiscardFromHand, GainKeyword, ShadowEffectsCannotBeCanceled),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -94,10 +94,12 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (TreacheryWithTraitRevealedWindow t trait, Revealed target@(TreacheryTarget tid)) | t == timing ->
     maybe (pure False) (hasTrait trait target . toCardDef) . Map.lookup tid . (.treacheries) =<< getsGame gameEntities
   (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
+  (EnemyCardRevealedWindow t, Revealed (EnemyTarget _)) -> windowMatchesM (CardRevealedWindow t) w
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
-    cancelable <- notElem WhenRevealedCannotBeCanceled <$> getModifiers target
+    -- on the game, no card's can be, as while Foothills of Mordor is in the staging area
+    cancelable <- notElem WhenRevealedCannotBeCanceled . concat <$> traverse getModifiers [target, GameTarget]
     pure $ cancelable && maybe False cdWhenRevealed case target of
       EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations
@@ -301,7 +303,14 @@ passesCriteria = \case
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
   InNightmareMode -> inNightmareMode
+  MainQuestWithoutKeywords -> do
+    mains <- getMainQuests
+    flip allM mains \q -> do
+      mods <- getModifiers q
+      def <- getsGame (fmap toCardDef . find ((== q) . toTarget) . toList . entitiesQuests . gameEntities)
+      pure $ maybe True (null . cdKeywords) def && null [k | GainKeyword k <- mods]
   AnyCriteria cs -> anyM passesCriteria cs
+  DifferentTraitsAtLeast pid n -> (>= n) . length . mconcat <$> (traverse characterTraits =<< charactersControlledBy pid)
 
 -- | Whether each list can give a character not taken by an earlier one.
 distinct :: [Target] -> [[Target]] -> Bool

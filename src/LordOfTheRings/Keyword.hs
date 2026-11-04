@@ -1,5 +1,6 @@
 module LordOfTheRings.Keyword (module LordOfTheRings.Keyword) where
 
+import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Prelude
 
 data Keyword
@@ -33,6 +34,10 @@ data Keyword
     -- is explored (The Thing in the Depths)
     Grapple GrappleLocation
   | Guarded
+  | -- | on an objective: Guarded (X), as The Black Serpent's Harad objectives read. As it is
+    -- revealed, cards are discarded from the encounter deck until one of these types is,
+    -- which goes to the staging area with the objective attached to it (MEC59 rules)
+    GuardedBy [CardType]
   | -- | an objective ally the last player gains control of as it enters play
     LastPlayerGainsControl
   | -- | on an enemy: damage never destroys it, as Durin's Bane
@@ -62,6 +67,10 @@ data Keyword
   | -- | on a location: it enters play with this side faceup, its other side facedown, and
     -- is flipped to it (The Grey Havens rules insert)
     Uncharted
+  | -- | on a location: after the players travel to it while the Search objective is Off
+    -- Track, they discard this many encounter cards, flipping it On Track if one has On
+    -- Track printed (Beneath the Sands resolves it)
+    Track Int
   | -- | on a quest, location or enemy: it gets this many time counters as it is revealed,
     -- and loses 1 at the end of each refresh phase
     Time Int

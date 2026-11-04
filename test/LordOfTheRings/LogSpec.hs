@@ -65,6 +65,15 @@ spec = describe "Game log" do
       LogEntry {logEntryBody = [LogI18n _ vars]} : _ -> (Map.lookup "cards" vars <&> \case LogList cs -> length cs; _ -> 0) `shouldBe` Just 2
       _ -> liftIO (expectationFailure "no draw logged")
 
+  it "says nothing is drawn when Iron Shackles is discarded instead" . loggedTest $ \logged pid -> do
+    _ <- setEncounterDeck [Treacheries.ironShackles]
+    run RevealEncounterCard
+    resolveRevealed
+    writeIORef logged []
+    run $ DrawCards (Drawing pid 1)
+    logKeys <- mapMaybe keyOf <$> entries logged
+    logKeys `shouldSatisfy` all (`notElem` ["log.drawsCards", "log.drawsCount"])
+
   it "says a location immune to the card keeps its progress, as East-gate against Cave In" . loggedTest $ \logged _ -> do
     _ <- putQuestStage Quests.enteringTheMines
     run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.eastGate

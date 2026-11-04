@@ -337,6 +337,34 @@ allTreacheryCards =
       , powerBeyondDeath
       , daechanarsCurse
       , allIsLost
+      , nowhereToHide
+      , injuredCompanion
+      , enfeebled
+      , sandstorm
+      , heatExhaustion
+      , overgrown
+      , fearOfMordor
+      , savageAttack
+      , overrunByOrcs
+      , forcedOffTrackBeneathTheSands
+      , grabbedBySpiders
+      , mirage
+      , unbearableHeat
+      , scorchingSun
+      , enemyPursuit
+      , pursuersFromMordor
+      , howlingAtTheirHeels
+      , boldAndGrim
+      , noQuarter
+      , chaosInTheNight
+      , takenPrisoner
+      , tormentedByOrcs
+      , stampedingOliphaunt
+      , theSavageSouth
+      , terribleFever
+      , bitingInsects
+      , dangerCloseBehind
+      , mountainsOfShadow
       ]
 
 deepDeepDark :: CardDef
@@ -2174,3 +2202,135 @@ allIsLost =
     { cdCardTraits = setFromList [Sorcery]
     , cdShadowEffect = True
     }
+
+-- * The Sands of Harad: the shared encounter sets (Harad Soldiers, Harad Territory, Desert
+-- Sands, Jungle Forest, Mordor Orcs). Easy mode copy counts from Hall of Beorn's scenario
+-- pages.
+
+nowhereToHide :: CardDef
+nowhereToHide = (treachery "16044" "Nowhere to Hide" HaradSoldiers 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+injuredCompanion :: CardDef
+injuredCompanion = (treachery "16046" "Injured Companion" HaradTerritory 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+enfeebled :: CardDef
+enfeebled = (treachery "16047" "Enfeebled" HaradTerritory 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+sandstorm :: CardDef
+sandstorm =
+  (treachery "16051" "Sandstorm" DesertSands 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+heatExhaustion :: CardDef
+heatExhaustion = (treachery "16052" "Heat Exhaustion" DesertSands 2) {cdShadowEffect = True}
+
+overgrown :: CardDef
+overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFromList [Surge], cdEasyModeQuantity = Just 1}
+
+fearOfMordor :: CardDef
+fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+savageAttack :: CardDef
+savageAttack = (treachery "16038" "Savage Attack" TheLongArmOfMordor 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+overrunByOrcs :: CardDef
+overrunByOrcs = (treachery "16039" "Overrun by Orcs" TheLongArmOfMordor 3) {cdShadowEffect = True}
+-- * Beneath the Sands
+
+forcedOffTrackBeneathTheSands :: CardDef
+forcedOffTrackBeneathTheSands = (treachery "17073" "Forced Off Track" BeneathTheSands 3) {cdShadowEffect = True}
+
+grabbedBySpiders :: CardDef
+grabbedBySpiders = (treachery "17074" "Grabbed by Spiders" BeneathTheSands 3) {cdKeywords = setFromList [Surge, Doomed 1]}
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+mirage :: CardDef
+mirage = (treachery "16028" "Mirage" DesertCrossing 2) {cdCardTraits = setFromList [Weather]}
+
+unbearableHeat :: CardDef
+unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+
+scorchingSun :: CardDef
+scorchingSun =
+  (treachery "16030" "Scorching Sun" DesertCrossing 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Escape from Umbar
+
+enemyPursuit :: CardDef
+enemyPursuit = (treachery "16021" "Enemy Pursuit" EscapeFromUmbar 2) {cdShadowEffect = True}
+
+-- * Race Across Harad
+
+pursuersFromMordor :: CardDef
+pursuersFromMordor = (treachery "17045" "Pursuers from Mordor" RaceAcrossHarad 2) {cdKeywords = setFromList [Doomed 2], cdShadowEffect = True}
+
+howlingAtTheirHeels :: CardDef
+howlingAtTheirHeels = (treachery "17046" "Howling at their Heels" RaceAcrossHarad 3) {cdShadowEffect = True}
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+boldAndGrim :: CardDef
+boldAndGrim =
+  (treachery "17101" "Bold and Grim" TheBlackSerpent 3)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+noQuarter :: CardDef
+noQuarter = (treachery "17102" "No Quarter" TheBlackSerpent 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+chaosInTheNight :: CardDef
+chaosInTheNight = (treachery "17103" "Chaos in the Night" TheBlackSerpent 2) {cdShadowEffect = True}
+
+-- The Dungeons of Cirith Gurat (17129-17130)
+
+takenPrisoner :: CardDef
+takenPrisoner = (treachery "17129" "Taken Prisoner" TheDungeonsOfCirithGurat 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+tormentedByOrcs :: CardDef
+tormentedByOrcs = (treachery "17130" "Tormented by Orcs" TheDungeonsOfCirithGurat 3) {cdShadowEffect = True}
+
+-- The Mûmakil
+
+stampedingOliphaunt :: CardDef
+stampedingOliphaunt = (treachery "17021" "Stampeding Oliphaunt" TheMumakil 2) {cdKeywords = setFromList [Doomed 1]}
+
+theSavageSouth :: CardDef
+theSavageSouth = (treachery "17022" "The Savage South" TheMumakil 2) {cdShadowEffect = True}
+
+-- | Counts as a Condition attachment.
+terribleFever :: CardDef
+terribleFever =
+  (treachery "17023" "Terrible Fever" TheMumakil 2)
+    { cdCardTraits = setFromList [Condition]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+bitingInsects :: CardDef
+bitingInsects = (treachery "17024" "Biting Insects" TheMumakil 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+dangerCloseBehind :: CardDef
+dangerCloseBehind =
+  (treachery "17152" "Danger Close Behind" TheCrossingsOfPoros 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+mountainsOfShadow :: CardDef
+mountainsOfShadow = (treachery "17155" "Mountains of Shadow" MountainsOfShadow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

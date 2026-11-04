@@ -72,6 +72,16 @@ import LordOfTheRings.Hero.Cards.ElfhelmLeadership
 import LordOfTheRings.Hero.Cards.Argalad
 import LordOfTheRings.Hero.Cards.Naasiyah
 import LordOfTheRings.Hero.Cards.PrinceImrahilTactics
+import LordOfTheRings.Hero.Cards.KahlielObjective
+import LordOfTheRings.Hero.Cards.Firyal
+import LordOfTheRings.Hero.Cards.Yazan
+import LordOfTheRings.Hero.Cards.Jubayr
+import LordOfTheRings.Hero.Cards.GimliLeadership
+import LordOfTheRings.Hero.Cards.LegolasSpirit
+import LordOfTheRings.Hero.Cards.Kahliel
+import LordOfTheRings.Hero.Cards.Thurindir
+import LordOfTheRings.Hero.Cards.FolcoBoffin
+import LordOfTheRings.Hero.Cards.Quickbeam
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Hero.Types qualified as HeroTypes
@@ -181,5 +191,15 @@ allHeroes =
         , SomeHeroCard argalad
         , SomeHeroCard naasiyah
         , SomeHeroCard princeImrahilTactics
+        , SomeHeroCard kahlielObjective
+        , SomeHeroCard firyal
+        , SomeHeroCard yazan
+        , SomeHeroCard jubayr
+        , SomeHeroCard gimliLeadership
+        , SomeHeroCard legolasSpirit
+        , SomeHeroCard kahliel
+        , SomeHeroCard thurindir
+        , SomeHeroCard folcoBoffin
+        , SomeHeroCard quickbeam
         ]
     ]

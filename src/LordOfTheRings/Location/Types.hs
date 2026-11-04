@@ -51,6 +51,8 @@ data LocationAttrs = LocationAttrs
   -- ^ the players who have looked at its facedown side since it was last turned over
   , locationPosition :: Maybe Pos
   -- ^ where it lies on the Island Map (Temple of the Deceived)
+  , locationUnderneath :: [Card]
+  -- ^ the cards underneath it, out of play, as the enemies Narrow Alleyway hides
   }
   deriving stock (Show, Eq, Generic)
 
@@ -60,7 +62,7 @@ instance ToJSON LocationAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "location")
 
 instance FromJSON LocationAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "location") . withDefaults [("otherSide", Null), ("lookedAt", toJSON ([] :: [PlayerId])), ("position", Null)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "location") . withDefaults [("otherSide", Null), ("lookedAt", toJSON ([] :: [PlayerId])), ("position", Null), ("underneath", toJSON ([] :: [Card]))]
 
 location :: (LocationAttrs -> a) -> CardDef -> LocationCard a
 location f cardDef =
@@ -77,6 +79,7 @@ location f cardDef =
             , locationOtherSide = Nothing
             , locationLookedAt = []
             , locationPosition = Nothing
+            , locationUnderneath = []
             }
     }
 
@@ -144,6 +147,9 @@ instance HasField "id" LocationAttrs LocationId where
 
 instance HasField "id" Location LocationId where
   getField = toId
+
+instance HasField "underneath" LocationAttrs [Card] where
+  getField = locationUnderneath
 
 instance HasField "placement" LocationAttrs Placement where
   getField = locationPlacement

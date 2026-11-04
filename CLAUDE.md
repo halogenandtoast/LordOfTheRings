@@ -34,6 +34,20 @@ game puts what it pushed on the front of the game's queue once the card is done.
   game's queue, use `cancelMatching` or `cancelWhenRevealed`. `popMessagesMatching` won't
   reach the game's queue.
 
+## Rules questions
+
+Settle them from the scenario's rule sheet, then the FAQ, then a search online. An FFG
+designer ruling (Caleb's, as reported on the FFG forum) wins over a later player reading.
+Cite the source in a comment where the ruling matters.
+
+Implement what the card says. Don't mark a known shortcut with a comment and move on: do
+it fully, or ask.
+
+## Adding a scenario
+
+Open a new scenario as `{ beta: true }` in `frontend/src/campaigns.ts`. There's no alpha
+status any more.
+
 ## Commits
 
 Make small, focused commits with no Co-Authored-By or other AI trailer. Other sessions
