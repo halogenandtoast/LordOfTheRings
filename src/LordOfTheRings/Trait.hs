@@ -1,5 +1,6 @@
 module LordOfTheRings.Trait (module LordOfTheRings.Trait) where
 
+import Data.Char (isUpper)
 import LordOfTheRings.Prelude
 
 data Trait
@@ -178,5 +179,11 @@ data Trait
   | Woodman
   | Wose
   | Wraith
-  deriving stock (Show, Eq, Ord, Generic)
+  deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | The trait as a player reads it, its words apart: "Carn Dûm"'s accents aside.
+traitName :: Trait -> Text
+traitName = \case
+  WilderlandsTrait -> "Wilderlands"
+  t -> pack $ unwords $ words $ concatMap (\c -> if isUpper c then [' ', c] else [c]) (show t)

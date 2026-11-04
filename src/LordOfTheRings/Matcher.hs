@@ -278,6 +278,13 @@ titles es =
 isDefending :: HasGame m => Target -> m Bool
 isDefending target = elem Defending . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
 
+-- | The card's traits as they are now: its printed traits, those it gained, less those it
+-- lost, as Chieftain's Brooch reads its hero's.
+getTraits :: HasGame m => Target -> CardDef -> m (Set Trait)
+getTraits target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  pure $ setFromList [t | t <- toList (cdCardTraits def) <> [t' | GainTrait t' <- mods], LoseTrait t `notElem` mods]
+
 -- | A printed trait, or one a modifier grants.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
 hasTrait trait target def = do

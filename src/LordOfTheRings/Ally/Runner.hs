@@ -42,6 +42,11 @@ instance RunMessage AllyAttrs where
     UseHandAction pid cid | cid == attrs.allyCardId, isJust attrs.allyHandWindow -> do
       push $ PutAllyIntoPlay pid cid
       pure attrs
+    -- answering its discard window, it is put into play from the discard pile
+    RespondFromDiscard pid card _ | card.id == attrs.allyCardId, isJust attrs.allyDiscardWindow -> do
+      push $ RemoveFromDiscard pid card.id
+      push $ PutAllyIntoPlayUnder pid card
+      pure attrs
     -- the cards facedown under it go to their owners' discard piles as it leaves play
     Discard (isTarget attrs -> True) -> leaving
     ReturnToHand (isTarget attrs -> True) -> leaving

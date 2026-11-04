@@ -129,7 +129,6 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
         selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
       _ -> pure False
   (ExploredWithoutVictoryWindow t, Explored lid) | t == timing -> isNothing . cdVictoryPoints . toCardDef <$> getLocation lid
-  (ActiveLocationExploredWindow t, Explored lid) | t == timing -> selectAny (LocationWithId lid <> IsActiveLocation)
   (CharacterWithTraitDealtDamageWindow t trait, DealtDamage target _) | t == timing -> case target of
     HeroTarget hid -> selectAny (HeroWithId hid <> HeroWithTrait trait)
     AllyTarget aid -> selectAny (AllyWithId aid <> AllyWithTrait trait)
@@ -191,6 +190,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
+  (AnyWindowOf ms, _) -> anyM (`windowMatchesM` w) ms
   _ -> pure $ windowMatches matcher w
  where
   title def = case cdName def of Name t _ -> t
@@ -285,6 +285,7 @@ passesCriteria = \case
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   FewerInVictoryDisplay n m -> getsGame ((< n) . length . filter (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
+  CardInAnyDiscard m -> anyM (fmap (any (cardMatches m) . (.discard)) . getPlayer) =<< getRemainingPlayers
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m

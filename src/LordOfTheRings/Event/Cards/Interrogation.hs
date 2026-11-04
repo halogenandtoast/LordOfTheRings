@@ -32,9 +32,7 @@ instance RunMessage Interrogation where
             questionLabeled "interrogation.discard"
             causedBy attrs
             showing (map EncounterCard top)
-            targets top \c -> do
-              removeFromEncounterDeck c
-              push $ AddToEncounterDiscard [c]
+            targets top discardFromEncounterDeck
             labeled "interrogation.keep" $ pure ()
       pure e
     _ -> Interrogation <$> runMessage msg attrs

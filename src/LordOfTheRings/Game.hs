@@ -993,8 +993,11 @@ runGameMessage msg g = case msg of
     let checked = ambush && IgnoreAmbush `notElem` gameMods && NoEngagementChecks `notElem` (gameMods <> mods)
     when checked do
       cost <- getEngagementCost eid
+      -- its cost against each player, as for an engagement check, as Captive Villager's
+      -- controller is considered to have more threat
+      let costFor p = cost + sum [n | EngagementCostAgainst p' n <- mods, p' == p]
       players <- traverse (\p -> (p,) <$> getThreat p) =<< getPlayerOrder
-      for_ (find (\(p, threat) -> threat >= cost && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
+      for_ (find (\(p, threat) -> threat >= costFor p && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
     pure g
   EngageEnemy pid eid -> do
     -- a Ship enemy engaging from the staging area resolves its Boarding X (Dream-chaser rules)
@@ -1414,6 +1417,7 @@ runGameMessage msg g = case msg of
         destroyed = any byThisAttack $ gameAttackDestroyed g
     pushWhen destroyed $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
       : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
+      <> take 1 [mkAfter $ EnemyCardDestroyedByAttack eid (attackDestroyedCard d).id | d <- gameAttackDestroyed g, byThisAttack d]
     -- the attacking player draws for it, as Knife-work lets
     when destroyed do
       attacking <- ordNub . catMaybes <$> traverse characterController attackers
@@ -1882,7 +1886,11 @@ runGameMessage msg g = case msg of
           (fmap (elem ReturnToTopOfEncounterDeckAfterCombat) . getModifiers)
           (toList g.entities.enemies)
       pushAll [ReturnToTopOfEncounterDeck (toTarget e) | e <- returning]
-    returning <- flip filterM (toList g.entities.allies) \a ->
+    -- an ally put into play until the end of the phase, as Command's, is discarded
+    discarding <- flip filterM (toList g.entities.allies) \a ->
+      elem DiscardAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
+    pushAll [Discard (toTarget a) | a <- discarding]
+    returning <- flip filterM (filter ((`notElem` map toId discarding) . toId) $ toList g.entities.allies) \a ->
       elem ReturnToHandAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
     shuffling <- flip filterM (toList g.entities.allies) \a -> elem ShuffleIntoDeckAtEndOfPhase <$> getModifiers a
     -- an ally under both, as Beorn put into play by Sneak Attack, goes where the first
@@ -1965,11 +1973,17 @@ runGameMessage msg g = case msg of
     -- after an enemy's attack has resolved, what lasted for that attack ends
     let attackOver = any (\case Window After (EnemyAttacking _ _) -> True; _ -> False) windows
         -- an effect waiting for the next enemy in the staging area passes to it
-        passed = case [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- windows] of
+        passed = nextAttack . case [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- windows] of
           eid : _ -> map \e -> case [m | NextEnemyInStaging m <- effectModifiers e] of
             [] -> e
             ms -> e {effectTarget = EnemyTarget eid, effectModifiers = ms}
           [] -> id
+        -- an effect waiting for the character's next attack lasts for that attack once it is
+        -- declared as an attacker
+        attackers = [t | Window After (DeclaredAsAttacker t _) <- windows]
+        nextAttack = map \e -> case [m | ForNextAttack m <- effectModifiers e] of
+          ms@(_ : _) | effectTarget e `elem` attackers -> e {effectModifiers = ms, effectDuration = UntilEndOfAttack}
+          _ -> e
     pure $ g & effectsL %~ passed . (if attackOver then filter ((/= UntilEndOfAttack) . effectDuration) else id)
   ResponseWindow windows order used passes
     | passes < length order
@@ -2023,6 +2037,7 @@ runGameMessage msg g = case msg of
     pure g
   RespondFromDiscard pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
+    when (cdCardType (toCardDef card) == AllyType) $ void $ runEach msg $ createAlly card (AllyId UUID.nil) pid
     pure g
   TravelActions -> do
     order <- getPlayerOrder
@@ -3138,7 +3153,8 @@ playsBeforeCommitting pid = \case
     _ -> False
 
 {- | Cards in a player's discard pile that respond to the windows from there: allies like
-Ered Luin Miner, put into play, and events like Hidden Cache, which resolve it. The
+Ered Luin Miner, put into play unless their card says otherwise, as Starla is played,
+and events like Hidden Cache, which resolve it. The
 continuation gets the card id, to mark the card as used.
 -}
 discardResponses
@@ -3151,11 +3167,7 @@ discardResponses pid windows used continue = do
       AllyType
         | matches (allyDiscardWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid) -> do
             ok <- passesUnique (PlayerCard pc)
-            pure
-              $ guard ok
-              $> targetLabel
-                (CardIdTarget pc.id)
-                [RemoveFromDiscard pid pc.id, PutAllyIntoPlayUnder pid pc, continue pc.id]
+            pure $ guard ok $> targetLabel (CardIdTarget pc.id) [RespondFromDiscard pid pc windows, continue pc.id]
       EventType
         | Just e <- lookupEvent (toCardCode pc) pc.id pid
         , matches (toAttrs e).eventDiscardWindow ->

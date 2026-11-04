@@ -53,6 +53,9 @@ data Criterion
     FewerInVictoryDisplay Int CardMatcher
   | -- | a matching card is in the player's discard pile
     CardInDiscard PlayerId CardMatcher
+  | -- | a matching card is in any player's discard pile, as The Houses of Healing needs a
+    -- hero there
+    CardInAnyDiscard CardMatcher
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   | -- | at least this many enemies match
