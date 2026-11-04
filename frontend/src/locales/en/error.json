@@ -5,6 +5,7 @@
   "alreadySeated": "You already have a seat at this game.",
   "noFreeSeat": "Every seat at this game is taken.",
   "notDealtYet": "The game has not been dealt yet.",
+  "gameOver": "This game is already over.",
   "seatCount": "A game has from 1 to 4 players.",
   "noNightmareMode": "This scenario has no Nightmare Deck, and nightmare mode cannot be played with easy mode.",
   "noDeckSource": "Give a RingsDB link or a deck JSON file.",

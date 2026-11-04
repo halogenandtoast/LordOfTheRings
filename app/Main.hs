@@ -109,6 +109,7 @@ mkYesod
   /games/#LotrGameId/log LogR GET
   /games/#LotrGameId/chat ChatR POST
   /games/#LotrGameId/reset ResetR POST
+  /games/#LotrGameId/surrender SurrenderR POST
   /games/#LotrGameId/debug DebugR POST
   /games/#LotrGameId/export ExportR GET
   /games/#LotrGameId/file-bug BugR POST
@@ -1239,6 +1240,17 @@ postResetR gid = do
         soloSeats row.lotrGamePlayerName
           <$> maybe (pure $ starterDeck :| []) (decodeOrFail "deck" . seatDecks) row.lotrGameDeck
   deal gid row players
+
+{- | End the game as lost, so a game gone wrong counts as a loss instead of being
+deleted. It stays in public scoring: it is a loss like any other.
+-}
+postSurrenderR :: LotrGameId -> Handler ()
+postSurrenderR gid = do
+  row <- requireOwnedGame gid
+  when (awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notDealtYet")
+  advance gid row \before -> do
+    when (isJust before.outcome) $ sendResponseStatus status409 (ikey "error.gameOver")
+    pure $ runDebug Surrender
 
 -- | Everything needed to carry a game elsewhere, undo history included.
 data ExportedGame = ExportedGame
