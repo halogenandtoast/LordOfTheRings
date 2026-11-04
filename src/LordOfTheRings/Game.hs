@@ -2222,7 +2222,8 @@ runGameMessage msg g = case msg of
     pushAll $ discardAttached g target
     pure $ g & entitiesL . locationsL %~ Map.delete lid
   -- a location placed underneath a card leaves play, its tokens and attachments discarded;
-  -- so does a character or an attachment captured from play (Escape from Mount Gram)
+  -- so does a character or an attachment captured from play (Escape from Mount Gram), and
+  -- a treachery placed there as it resolves, as Closing In
   PlaceUnderneath _ cards -> do
     let under :: IsCard a => a -> Bool
         under c = (toCard c).id `elem` map (.id) cards
@@ -2249,6 +2250,7 @@ runGameMessage msg g = case msg of
       & entitiesL . heroesL %~ Map.filter (not . under)
       & entitiesL . alliesL %~ Map.filter (not . under)
       & entitiesL . attachmentsL %~ Map.filter (not . under)
+      & entitiesL . treacheriesL %~ Map.filter (not . under)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
