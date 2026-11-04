@@ -7,6 +7,7 @@ module LordOfTheRings.Scenario.Scenarios.ThePassingOfTheGreyCompany.Helpers (
   hasThreatAtLeast35,
   theDeadAreFollowing,
   oathbreakerEnemy,
+  mayRaiseThreatToSearchForAnduril,
 ) where
 
 import LordOfTheRings.Card (CardType (EnemyType), EncounterCard, toCardCode)
@@ -25,6 +26,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Message (Message)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
+import LordOfTheRings.Source (Sourceable)
 import LordOfTheRings.Target
 
 -- | The copy of Overcome by Fear on the player's threat dial, if he has one (Limit 1 per
@@ -94,3 +96,21 @@ theDeadAreFollowing =
 -- | An Oathbreaker enemy card, as The Stone of Erech and Trysting Place search for.
 oathbreakerEnemy :: CardMatcher
 oathbreakerEnemy = CardMatchAll [CardWithType EnemyType, CardWithTrait Oathbreaker]
+
+{- | "The first player may raise each player's threat by 1 to search his deck for Andúril
+and add it to his hand", as the campaign cards of The Flame of the West's scenarios read
+in their Setup. Nothing is asked when his deck holds no Andúril.
+-}
+mayRaiseThreatToSearchForAnduril :: (ReverseQueue m, Sourceable source) => source -> m ()
+mayRaiseThreatToSearchForAnduril source = do
+  lead <- getLead
+  deck <- (.deck) <$> getPlayer lead
+  when (any (cardMatches anduril) deck) do
+    chooseOneM lead do
+      questionLabeled "campaign.anduril"
+      labeled "campaign.searchForAnduril" do
+        eachPlayer (`raiseThreat` 1)
+        searchDeck lead source maxBound anduril False
+      labeled "pass" $ pure ()
+ where
+  anduril = CardWithTitle "Andúril"

@@ -1662,7 +1662,9 @@
     "iarionsPendant": "Iârion's Pendant, for a player's deck",
     "amarthiulsCourage": "Amarthiúl's Courage, attached to Amarthiúl",
     "chooseBoon": "You may choose a boon to add to your hand and the Campaign Pool",
-    "searchForBoon": "You may search your deck for a boon to add to your hand"
+    "searchForBoon": "You may search your deck for a boon to add to your hand",
+    "anduril": "Raise each player's threat by 1 to search your deck for Andúril?",
+    "searchForAnduril": "Raise each player's threat by 1 and search your deck for Andúril"
   },
   "protectTheInnocent": {
     "resources": "Protect the Innocent: place 4 damage on it to add 1 resource to each of your heroes?",
@@ -3072,9 +3074,5 @@
   "theDeadAreFollowing": {
     "choose": "The Dead are Following: raise your threat by 3 to detach Overcome by Fear?",
     "detach": "Raise your threat by 3 to detach Overcome by Fear and set it aside"
-  },
-  "thePassingOfTheGreyCompany": {
-    "anduril": "The Passing of the Grey Company: raise each player's threat by 1 to search your deck for Andúril?",
-    "searchForAnduril": "Raise each player's threat by 1 and search your deck for Andúril"
   }
 }
