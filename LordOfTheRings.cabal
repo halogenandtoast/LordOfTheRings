@@ -3191,6 +3191,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.VengeanceOfMordor.TheCityOfUlfastPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.TheFortressOfNurnPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.TheLandOfSorrowPlayerCardsSpec
+      LordOfTheRings.VengeanceOfMordor.TheLandOfSorrowSpec
       LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
       LordOfTheRings.VengeanceOfMordor.TheRiverRunningSpec
       LordOfTheRings.VengeanceOfMordor.UnderTheAshMountainsPlayerCardsSpec
