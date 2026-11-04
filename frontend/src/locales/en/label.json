@@ -2779,5 +2779,28 @@
   },
   "trulyLost": {
     "location": "Truly Lost: choose the location to place your hand facedown under"
+  },
+  "councilOfTheWise": {
+    "chooseOne": "Council of the Wise: choose one",
+    "threat": "Reduce your threat by 1",
+    "draw": "Draw 1 card",
+    "resource": "Add 1 resource to a hero's resource pool",
+    "chooseHero": "Council of the Wise: choose the hero to add 1 resource to"
+  },
+  "theGreyWanderer": {
+    "search": "The Grey Wanderer: choose an attachment with a printed cost of 1 to put into play",
+    "chooseTwo": "The Grey Wanderer: choose an option for your starting hero",
+    "ready": "Ready your starting hero",
+    "resources": "Add 2 resources to your starting hero's resource pool",
+    "heal": "Heal 3 damage from your starting hero"
+  },
+  "messengerOfTheKing": {
+    "chooseAlly": "Messenger of the King: choose a non-neutral unique ally to put into play"
+  },
+  "theBurglarsTurn": {
+    "chooseLoot": "The Burglar's Turn: choose loot attachment {n} of {total}",
+    "loot": "The Burglar's Turn: put this guarded attachment into play at no cost, or add it to your hand",
+    "intoPlay": "Put it into play",
+    "toHand": "Add it to your hand"
   }
 }
