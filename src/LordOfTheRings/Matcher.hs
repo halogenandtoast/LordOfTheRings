@@ -252,6 +252,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithAnyAttachment -> notNull <$> getAttachmentsOn (toTarget enemy)
   EnemyWithResources -> pure $ countTokens Resource (toAttrs enemy).enemyTokens > 0
   EnemyGuardingACard -> guardingACard (toCard enemy).id (toTarget enemy)
+  EnemyGuardingAHero -> any (\case HeroTarget _ -> True; _ -> False) <$> charactersGuardedBy (toCard enemy).id
   EnemyWithNoHitPointsRemaining -> (enemy.damage >=) <$> modifiedValue hitPointsOf (toTarget enemy) enemy.hitPoints
   EnemyGrappledWith lm -> case enemy.placement of
     AttachedTo (LocationTarget lid) -> elem lid <$> select lm

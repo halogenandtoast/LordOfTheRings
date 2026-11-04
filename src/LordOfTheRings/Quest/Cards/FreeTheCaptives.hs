@@ -7,7 +7,7 @@ import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Trait (Trait (Orc))
 
 newtype FreeTheCaptives = FreeTheCaptives QuestAttrs
-  deriving anyclass (IsQuest, HasAbilities)
+  deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 freeTheCaptives :: QuestCard FreeTheCaptives
@@ -16,15 +16,19 @@ freeTheCaptives = quest FreeTheCaptives Cards.freeTheCaptives
 {- | While an enemy is guarding a hero it gets +1 threat, +1 attack, +1 defense and is
 immune to player card effects.
 This stage cannot be defeated while an enemy is guarding a hero.
-Forced: When the enemy guarding a hero is defeated, that hero's owner takes control of
-that hero and exhausts it: the game rescues a captive, exhausted, as its guard leaves
-play (see 'guardCharacterWith').
 -}
 instance HasModifiersFor FreeTheCaptives where
   getModifiersFor (FreeTheCaptives a) = when a.flipped do
     enemies <- filterM (fmap notNull . charactersGuardedBy . (.id) . toCard) =<< getsGame (toList . (.entities.enemies))
     for_ enemies \e -> modified a e [ThreatModifier 1, AttackModifier 1, DefenseModifier 1, ImmuneToPlayerCardEffects]
     unless (null enemies) $ modifySelf a [CannotBeDefeated]
+
+{- | Forced: When the enemy guarding a hero is defeated, that hero's owner takes control of
+that hero and exhausts it: exhausted now, it is rescued as its guard leaves play (see
+'guardCharacterWith').
+-}
+instance HasAbilities FreeTheCaptives where
+  getAbilities (FreeTheCaptives a) = [mkAbility a 1 $ forced $ MatchingEnemyDefeatedWindow When EnemyGuardingAHero | a.flipped]
 
 {- | When Revealed: Each player searches the encounter deck and discard pile for an Orc
 enemy and adds it to the staging area. Shuffle the encounter deck. Attach each hero in the
@@ -49,6 +53,12 @@ instance RunMessage FreeTheCaptives where
       orcs <- select (EnemyInStagingArea <> EnemyWithTrait Orc)
       lead <- getLead
       guardEach lead heroes orcs
+      pure q
+    UseCardAbility _ (isSource attrs -> True) 1 ws -> do
+      for_ [eid | Window _ (EnemyDefeated eid) <- ws] \eid -> do
+        captor <- getEnemy eid
+        heroes <- charactersGuardedBy (toCard captor).id
+        for_ [h | h@(HeroTarget _) <- heroes] exhaust
       pure q
     _ -> FreeTheCaptives <$> runMessage msg attrs
    where

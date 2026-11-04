@@ -280,6 +280,18 @@ spec = describe "Lost in Mirkwood" do
       hero' <- toAttrs <$> getHeroWithCode "01002"
       (isJust hero'.heroGuardedBy, hero'.heroExhausted) `shouldBe` (False, True)
 
+    it "frees a hero, ready, whose guard leaves play without being defeated" . mirkwoodTest $ \pid -> do
+      q <- putQuestStage Quests.carriedAway
+      _ <- setEncounterDeck [Enemies.forestSpider]
+      run $ Flip q
+      resolveWhenRevealed pid
+      h <- heroOf pid "01002"
+      chooseTarget pid h
+      spider <- getsGame (fromJustNote "no spider" . headMay . toList . (.entities.enemies))
+      run $ ShuffleIntoEncounterDeck (toTarget spider)
+      hero <- toAttrs <$> getHeroWithCode "01002"
+      (isJust hero.heroGuardedBy, hero.heroExhausted) `shouldBe` (False, False)
+
     it "discards each guarded hero as the players advance from it" . mirkwoodTest $ \pid -> do
       q <- putQuestStage Quests.carriedAway
       _ <- setEncounterDeck [Enemies.forestSpider]

@@ -207,6 +207,8 @@ data EnemyMatcher
   | -- | an enemy guarding a card: an objective, a captive, a location or a player card, as
     -- "an enemy guarding a card" reads (Unseen Danger)
     EnemyGuardingACard
+  | -- | an enemy guarding a hero as its captive, as Carried Away reads
+    EnemyGuardingAHero
   | -- | an enemy with as much damage as its hit points, as an Indestructible enemy may have
     -- (The Great Worm)
     EnemyWithNoHitPointsRemaining

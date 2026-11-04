@@ -188,6 +188,9 @@ data WindowMatcher
   | EnemyDefeatedWindow Timing
   | -- | the enemy was defeated, as "when attached enemy is destroyed" reads
     ThisEnemyDefeatedWindow Timing EnemyId
+  | -- | a matching enemy was defeated, as Carried Away's "when an enemy guarding a hero is
+    -- defeated" reads
+    MatchingEnemyDefeatedWindow Timing EnemyMatcher
   | -- | any character dealt damage, as Honour Guard reads
     CharacterDealtDamageWindow Timing
   | -- | the enemy's attack, or any enemy's, destroyed a character
@@ -527,6 +530,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterWithAttachmentsLeftPlayWindow {}, _) -> False
   (CharacterAttackerDeclaredWindow {}, _) -> False
   (MatchingEnemyAttackResolvedWindow {}, _) -> False
+  (MatchingEnemyDefeatedWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)

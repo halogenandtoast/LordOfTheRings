@@ -103,7 +103,7 @@ spec = describe "The Haradrim engine" do
     run $ Discard (EnemyTarget eid)
     getsGame (fmap (.placement) . lookup eid . (.entities.enemies)) `shouldReturn` Just StagingArea
 
-  it "holds a captive ally and hero under its guard, rescuing them exhausted as it leaves play" . gameTest $ \pid -> do
+  it "holds a captive ally and hero under its guard, rescuing them as it leaves play, the ally exhausted" . gameTest $ \pid -> do
     ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
     eowyn <- getHeroWithCode "01007"
     (eid, card) <- stagedEnemy Enemies.forestSpider
@@ -117,4 +117,6 @@ spec = describe "The Haradrim engine" do
     a <- getsGame (fromJustNote "no ally" . headMay . toList . (.entities.allies))
     (toAttrs a).allyPlacement `shouldBe` InPlayArea pid
     (toAttrs a).allyExhausted `shouldBe` True
-    heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` True
+    -- a hero is exhausted only by the card that frees it saying so (Carried Away, The
+    -- Captives of Cirith Gurat)
+    heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False

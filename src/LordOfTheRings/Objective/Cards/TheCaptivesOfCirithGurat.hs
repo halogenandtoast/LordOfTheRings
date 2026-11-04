@@ -10,7 +10,8 @@ newtype TheCaptivesOfCirithGurat = TheCaptivesOfCirithGurat ObjectiveAttrs
 {- | While a character is attached to an encounter card, it is considered to be a guarded
 objective with a blank text box: 'GuardCharacter' makes it one. Forced: When an objective
 is free of encounters, it is 'rescued' and that character's owner takes control of it,
-exhausted: the engine rescues a card's captives as it leaves play.
+exhausted: the engine rescues a card's captives as it leaves play, an ally exhausted; a
+hero this card exhausts.
 -}
 theCaptivesOfCirithGurat :: ObjectiveCard TheCaptivesOfCirithGurat
 theCaptivesOfCirithGurat = objective TheCaptivesOfCirithGurat Cards.theCaptivesOfCirithGurat
@@ -27,5 +28,8 @@ instance RunMessage TheCaptivesOfCirithGurat where
       for_ [hid | HeroTarget hid <- [c]] \hid -> do
         resources <- (.resources) <$> getHero hid
         when (resources > 0) $ removeTokens attrs c Resource resources
+      pure o
+    RescueCharacter c@(HeroTarget _) -> do
+      exhaust c
       pure o
     _ -> TheCaptivesOfCirithGurat <$> runMessage msg attrs
