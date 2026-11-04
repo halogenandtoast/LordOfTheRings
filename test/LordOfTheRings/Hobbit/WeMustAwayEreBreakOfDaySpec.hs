@@ -5,7 +5,7 @@ import LordOfTheRings.Card (CardDef (cdEncounterSet), HasCardCode, toCardDef)
 import LordOfTheRings.EncounterSet (EncounterSet (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Staging (getEnemyThreat)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -16,7 +16,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, weMustAwayEreBreakOfDay)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), sackDeckL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Window (WindowType (..), mkWhen)
+import LordOfTheRings.Window (WindowType (..), mkAfter, mkWhen)
 import TestImport
 
 wmTest :: (PlayerId -> GameT ()) -> IO ()
@@ -281,6 +281,25 @@ spec = describe "We Must Away, Ere Break of Day" do
       -- the Forced discard, then the Response as it leaves play explored
       useForcedAbilities pid
       getHeroResources (case bilbo of HeroTarget h -> h; _ -> error "hero") `shouldReturn` 1
+
+  describe "the shared sets" do
+    it "gives Goblin Axeman +1 attack and Goblin Miners +1 defense for each Cave location in play" . wmTest $ \_ -> do
+      axeman <- stage Enemies.goblinAxeman
+      miners <- stage Enemies.goblinMiners
+      getEnemyAttack axeman `shouldReturn` 1
+      _ <- stageLocation Locations.theGoblinsCaves
+      _ <- stageLocation Locations.trollCave
+      getEnemyAttack axeman `shouldReturn` 3
+      getEnemyDefense miners `shouldReturn` 2
+
+    it "has Cave Entrance in the staging area put the top of the discard pile on the bottom of the deck at the end of the round" . wmTest $ \pid -> do
+      _ <- stageLocation Locations.caveEntranceWesternLands
+      _ <- setEncounterDeck [Locations.hobbitLands]
+      run $ DiscardTopOfEncounterDeck GameSource GameTarget 1
+      run $ CheckWindows [mkAfter RoundEnds]
+      useForcedAbilities pid
+      map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.hobbitLands]
+      getEncounterDiscard `shouldReturn` []
 
   describe "the stages" do
     it "Roast Mutton brings the Trolls and discards from the encounter deck for its progress, advancing once it is empty" . wmTest $ \pid -> do
