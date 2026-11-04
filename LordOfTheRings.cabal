@@ -2490,6 +2490,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Haradrim.SharedEncounterSetsSpec
+      LordOfTheRings.Haradrim.TheDungeonsOfCirithGuratSpec
       LordOfTheRings.HaradrimEngineSpec
       LordOfTheRings.HeirsOfNumenor.IntoIthilienSpec
       LordOfTheRings.HeirsOfNumenor.NightmareSpec
