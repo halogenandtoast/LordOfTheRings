@@ -424,6 +424,10 @@ import LordOfTheRings.Treachery.Cards.BloodRunsChill (bloodRunsChill)
 import LordOfTheRings.Treachery.Cards.TheWayIsShut (theWayIsShut)
 import LordOfTheRings.Treachery.Cards.WhispersInTheDark (whispersInTheDark)
 import LordOfTheRings.Treachery.Cards.NoTurningBack (noTurningBack)
+import LordOfTheRings.Treachery.Cards.FellFolkOfUmbar (fellFolkOfUmbar)
+import LordOfTheRings.Treachery.Cards.BlackSails (blackSails)
+import LordOfTheRings.Treachery.Cards.RaidingTheCoasts (raidingTheCoasts)
+import LordOfTheRings.Treachery.Cards.DrivenToTheBrink (drivenToTheBrink)
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -875,5 +879,9 @@ allTreacherys =
         , SomeTreacheryCard theWayIsShut
         , SomeTreacheryCard whispersInTheDark
         , SomeTreacheryCard noTurningBack
+        , SomeTreacheryCard fellFolkOfUmbar
+        , SomeTreacheryCard blackSails
+        , SomeTreacheryCard raidingTheCoasts
+        , SomeTreacheryCard drivenToTheBrink
         ]
     ]

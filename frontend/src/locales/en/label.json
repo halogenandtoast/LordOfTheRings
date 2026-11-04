@@ -3074,5 +3074,25 @@
   "theDeadAreFollowing": {
     "choose": "The Dead are Following: raise your threat by 3 to detach Overcome by Fear?",
     "detach": "Raise your threat by 3 to detach Overcome by Fear and set it aside"
+  },
+  "fellFolkOfUmbar": {
+    "choose": "Fell Folk of Umbar: choose one",
+    "return": "Return each Corsair enemy engaged with you to the staging area",
+    "discard": "Discard from the encounter deck until a Corsair enemy is discarded, and engage it"
+  },
+  "raidingTheCoasts": {
+    "choose": "Raiding the Coasts: choose one",
+    "threat": "Add 3 to the total threat in the staging area this phase",
+    "discard": "Discard the highest cost attachment you control"
+  },
+  "drivenToTheBrink": {
+    "choose": "Driven to the Brink: choose one",
+    "endQuestPhase": "End the quest phase without resolving the quest",
+    "damage": "Assign damage equal to the resources on The Corsair Fleet among your questing characters"
+  },
+  "theCorsairFleet": {
+    "choose": "The Corsair Fleet ({n} resources): choose one",
+    "reveal": "Reveal an encounter card",
+    "damage": "Assign {n} damage among characters you control"
   }
 }

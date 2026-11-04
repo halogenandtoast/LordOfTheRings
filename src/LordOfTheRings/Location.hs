@@ -530,6 +530,11 @@ import LordOfTheRings.Location.Cards.DarkDoor (darkDoor)
 import LordOfTheRings.Location.Cards.TrystingPlace (trystingPlace)
 import LordOfTheRings.Location.Cards.DeadlyRoad (deadlyRoad)
 import LordOfTheRings.Location.Cards.HauntedPath (hauntedPath)
+import LordOfTheRings.Location.Cards.GreatCorsairShip (greatCorsairShip)
+import LordOfTheRings.Location.Cards.UmbarWarGalley (umbarWarGalley)
+import LordOfTheRings.Location.Cards.CorsairDromon (corsairDromon)
+import LordOfTheRings.Location.Cards.PortOfPelargir (portOfPelargir)
+import LordOfTheRings.Location.Cards.PelargirQuays (pelargirQuays)
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1106,5 +1111,10 @@ allLocations =
         , SomeLocationCard trystingPlace
         , SomeLocationCard deadlyRoad
         , SomeLocationCard hauntedPath
+        , SomeLocationCard greatCorsairShip
+        , SomeLocationCard umbarWarGalley
+        , SomeLocationCard corsairDromon
+        , SomeLocationCard portOfPelargir
+        , SomeLocationCard pelargirQuays
         ]
     ]

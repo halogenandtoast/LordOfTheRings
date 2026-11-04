@@ -621,9 +621,11 @@ library
       LordOfTheRings.Enemy.Cards.ColdfellGiant
       LordOfTheRings.Enemy.Cards.CorneredOrc
       LordOfTheRings.Enemy.Cards.CorsairArsonist
+      LordOfTheRings.Enemy.Cards.CorsairCaptain
       LordOfTheRings.Enemy.Cards.CorsairDuelist
       LordOfTheRings.Enemy.Cards.CorsairInfiltrator
       LordOfTheRings.Enemy.Cards.CorsairLoyalist
+      LordOfTheRings.Enemy.Cards.CorsairOfUmbar
       LordOfTheRings.Enemy.Cards.CorsairPillager
       LordOfTheRings.Enemy.Cards.CorsairPyromaniac
       LordOfTheRings.Enemy.Cards.CorsairSeafarer
@@ -746,6 +748,7 @@ library
       LordOfTheRings.Enemy.Cards.HaradrimCaptain
       LordOfTheRings.Enemy.Cards.HaradrimElite
       LordOfTheRings.Enemy.Cards.HaradrimMarksman
+      LordOfTheRings.Enemy.Cards.HaradrimPirate
       LordOfTheRings.Enemy.Cards.HaradrimWarrior
       LordOfTheRings.Enemy.Cards.HaradTiger
       LordOfTheRings.Enemy.Cards.HarborBrute
@@ -1001,6 +1004,7 @@ library
       LordOfTheRings.Enemy.Cards.UmbarAssassin
       LordOfTheRings.Enemy.Cards.UmbarCaptain
       LordOfTheRings.Enemy.Cards.UmbarPatrolNightmare
+      LordOfTheRings.Enemy.Cards.UmbarPirateCrew
       LordOfTheRings.Enemy.Cards.UmbarRaider
       LordOfTheRings.Enemy.Cards.UmbarSentry
       LordOfTheRings.Enemy.Cards.UmbarSlaver
@@ -1483,6 +1487,7 @@ library
       LordOfTheRings.Location.Cards.ContestedDepths
       LordOfTheRings.Location.Cards.ContestedSquare
       LordOfTheRings.Location.Cards.CormallenFields
+      LordOfTheRings.Location.Cards.CorsairDromon
       LordOfTheRings.Location.Cards.CorsairWaters
       LordOfTheRings.Location.Cards.CreatureDen
       LordOfTheRings.Location.Cards.CrewQuarters
@@ -1609,6 +1614,7 @@ library
       LordOfTheRings.Location.Cards.GoblinGate
       LordOfTheRings.Location.Cards.GoblinTunnels
       LordOfTheRings.Location.Cards.GondorianHamlet
+      LordOfTheRings.Location.Cards.GreatCorsairShip
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.GreenwayPath
       LordOfTheRings.Location.Cards.GreyMoorland
@@ -1723,6 +1729,7 @@ library
       LordOfTheRings.Location.Cards.PeatBog
       LordOfTheRings.Location.Cards.PelargirAlley
       LordOfTheRings.Location.Cards.PelargirDocks
+      LordOfTheRings.Location.Cards.PelargirQuays
       LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PillagedShip
       LordOfTheRings.Location.Cards.PitchBlackTunnel
@@ -1732,6 +1739,7 @@ library
       LordOfTheRings.Location.Cards.PlazaOfNurn
       LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.PortOfHarad
+      LordOfTheRings.Location.Cards.PortOfPelargir
       LordOfTheRings.Location.Cards.PrisonCell
       LordOfTheRings.Location.Cards.PrisonCellNightmare
       LordOfTheRings.Location.Cards.QuarterDeck
@@ -1895,6 +1903,7 @@ library
       LordOfTheRings.Location.Cards.UmbarHarbor
       LordOfTheRings.Location.Cards.UmbarSquare
       LordOfTheRings.Location.Cards.UmbarStreet
+      LordOfTheRings.Location.Cards.UmbarWarGalley
       LordOfTheRings.Location.Cards.UndergroundLake
       LordOfTheRings.Location.Cards.UnderseaGrotto
       LordOfTheRings.Location.Cards.UnholyCrypt
@@ -2044,6 +2053,7 @@ library
       LordOfTheRings.Objective.Cards.TheCabalsChampion
       LordOfTheRings.Objective.Cards.TheCaptivesOfCirithGurat
       LordOfTheRings.Objective.Cards.TheChallengers
+      LordOfTheRings.Objective.Cards.TheCorsairFleet
       LordOfTheRings.Objective.Cards.TheCursedSword
       LordOfTheRings.Objective.Cards.TheGoblinsAssault
       LordOfTheRings.Objective.Cards.TheHavensBurn
@@ -2099,6 +2109,7 @@ library
       LordOfTheRings.Quest.Cards.ApproachingRivendell
       LordOfTheRings.Quest.Cards.APresenceInTheDark
       LordOfTheRings.Quest.Cards.AssaultOnDolRhugar
+      LordOfTheRings.Quest.Cards.AttackOnPelargir
       LordOfTheRings.Quest.Cards.AWayUp
       LordOfTheRings.Quest.Cards.AWellLaidTrap
       LordOfTheRings.Quest.Cards.AWrongTurn
@@ -2564,6 +2575,8 @@ library
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheSiegeOfGondor
+      LordOfTheRings.Scenario.Scenarios.TheSiegeOfGondor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
       LordOfTheRings.Scenario.Scenarios.TheTempleOfDoom
@@ -2624,6 +2637,7 @@ library
       LordOfTheRings.Treachery.Cards.BitingWind
       LordOfTheRings.Treachery.Cards.BitterWind
       LordOfTheRings.Treachery.Cards.BlackMare
+      LordOfTheRings.Treachery.Cards.BlackSails
       LordOfTheRings.Treachery.Cards.BlastOfSavageWind
       LordOfTheRings.Treachery.Cards.BlazingGrip
       LordOfTheRings.Treachery.Cards.BlindingBlizzard
@@ -2707,6 +2721,7 @@ library
       LordOfTheRings.Treachery.Cards.DreamsOfNumenor
       LordOfTheRings.Treachery.Cards.DrivenBack
       LordOfTheRings.Treachery.Cards.DrivenByShadow
+      LordOfTheRings.Treachery.Cards.DrivenToTheBrink
       LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
       LordOfTheRings.Treachery.Cards.DunlendingAmbush
       LordOfTheRings.Treachery.Cards.DwindlingSupplies
@@ -2729,6 +2744,7 @@ library
       LordOfTheRings.Treachery.Cards.FearfulShadows
       LordOfTheRings.Treachery.Cards.FearOfMordor
       LordOfTheRings.Treachery.Cards.FeebleAndWeary
+      LordOfTheRings.Treachery.Cards.FellFolkOfUmbar
       LordOfTheRings.Treachery.Cards.FellVoices
       LordOfTheRings.Treachery.Cards.FesteringWounds
       LordOfTheRings.Treachery.Cards.FierceAttack
@@ -2862,6 +2878,7 @@ library
       LordOfTheRings.Treachery.Cards.Quicksand
       LordOfTheRings.Treachery.Cards.RagingSquall
       LordOfTheRings.Treachery.Cards.RagingSquallNightmare
+      LordOfTheRings.Treachery.Cards.RaidingTheCoasts
       LordOfTheRings.Treachery.Cards.RainWashedTracks
       LordOfTheRings.Treachery.Cards.RaiseTheAlarm
       LordOfTheRings.Treachery.Cards.RaisingTheCry
