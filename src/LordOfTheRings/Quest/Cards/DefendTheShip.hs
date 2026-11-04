@@ -8,7 +8,7 @@ import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Keyword (isGrapple)
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase, TravelPhase))
-import LordOfTheRings.Placement (Placement (AttachedTo, StagingArea))
+import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
@@ -76,7 +76,7 @@ instance RunMessage DefendTheShip where
       -- Nightmare: "Forced: At the end of the refresh phase, resolve the grapple keyword on
       -- each Tentacle enemy in play." Those grappled already hold on.
       when (nightmare && Window When (PhaseEnds RefreshPhase) `elem` ws) do
-        tentacles <- filterM (fmap (not . grappled . (.placement)) . getEnemy) =<< select (EnemyWithTrait Tentacle)
+        tentacles <- select (EnemyWithTrait Tentacle <> NotEnemy (EnemyGrappledWith AnyLocation))
         for_ tentacles resolveGrapple
       when (any ((== RoundEnds) . windowType) ws) do
         threats <- traverse getLocationThreat =<< select (LocationWithTrait Ship)
@@ -86,7 +86,4 @@ instance RunMessage DefendTheShip where
       DefendTheShip <$> runMessage msg attrs
     _ -> DefendTheShip <$> runMessage msg attrs
    where
-    grappled = \case
-      AttachedTo (LocationTarget _) -> True
-      _ -> False
     tentacle c = cdCardType (toCardDef c) == EnemyType && Tentacle `member` cdCardTraits (toCardDef c)

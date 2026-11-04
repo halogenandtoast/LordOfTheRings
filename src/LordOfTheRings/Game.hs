@@ -298,7 +298,7 @@ instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
 
 instance FromJSON Area where
-  parseJSON = genericParseJSON (aesonOptions $ Just "area")
+  parseJSON = genericParseJSON (aesonOptions $ Just "area") . withDefaults [("heldModifiers", toJSON (mempty :: Map Target [Modifier]))]
 
 {- | The players split into areas, one for each group: each player takes his cards in
 play, those engaged with him and those attached to them, and the encounter cards no
@@ -336,6 +336,7 @@ separate groups g
             , entitiesObjectives = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.objectives
             }
       , areaHeldEffects = filter (\e -> maybe True (== i) (effectGroup e)) (gameEffects g)
+      , areaHeldModifiers = gameModifiers g
       , areaStatus = AreaStarted
       , areaJoining = False
       }
@@ -1133,7 +1134,7 @@ runGameMessage msg g = case msg of
   -- a player who may engage an additional enemy, as Halbarad lets, is asked again once
   (optionalEngagement -> Just (pid, first)) -> do
     again <- (first &&) . elem OptionallyEngagesAdditionalEnemy <$> getModifiers (PlayerTarget pid)
-    staged <- select EnemyInStagingArea
+    staged <- engageableFromStaging
     -- some enemies may only be engaged once they are alone in the staging area
     barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
     resources <- getResourcesOfSphere pid Neutral
@@ -1166,7 +1167,7 @@ runGameMessage msg g = case msg of
     order <- getPlayerOrder
     let next = seatAfter order pid
     threat <- getThreat pid
-    candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
+    candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< engageableFromStaging
     -- an enemy can be spared engagement checks against it, as a trap does
     checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
     -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
@@ -3567,6 +3568,11 @@ byCost enemies = do
 -- engaged with him, and those in the staging area that attack him as if engaged.
 attacksOf :: PlayerId -> GameT [EnemyId]
 attacksOf pid = byCost . ordNub =<< (<>) <$> select (EnemyEngagedWith $ PlayerWithId pid) <*> attacksAsIfEngaged pid
+
+-- | The enemies the players may engage from the staging area: those there, not one only
+-- considered to be, as Tide-runner engaged or in the Stormcaller's area.
+engageableFromStaging :: GameT [EnemyId]
+engageableFromStaging = filterM (fmap ((== StagingArea) . (.placement)) . getEnemy) =<< select EnemyInStagingArea
 
 -- | The enemies in the staging area that attack the player as if engaged, as Snow-Giant.
 attacksAsIfEngaged :: PlayerId -> GameT [EnemyId]

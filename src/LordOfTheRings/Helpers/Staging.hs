@@ -51,7 +51,8 @@ getStagingThreats = do
   -- an active location adding its threat, as Flooded Ruins reads
   activeMatchers <- mapMaybe (\case ActiveLocationsAddThreat m -> Just m; _ -> Nothing) <$> getModifiers GameTarget
   actives <- concatMapM (\m -> for' (IsActiveLocation <> m) getLocation getLocationThreat) activeMatchers
-  pure $ enemies <> ordNub engaged <> locations <> ordNub actives
+  -- an enemy engaged and considered in the staging area too, as Tide-runner, adds it once
+  pure $ ordNub (enemies <> engaged) <> locations <> ordNub actives
  where
   for' matcher get threat = select matcher >>= traverse \i -> (,) <$> ((.id) . toCard <$> get i) <*> threat i
 

@@ -85,6 +85,14 @@ fromSource (toTarget -> t) = filter ((== Just t) . sourceTarget . (.abilitySourc
 
 spec :: Spec
 spec = describe "Location card text" do
+  it "Aft Cabin has each enemy grappled with a Deck location add 3 threat to it" . gameTest $ \_ -> do
+    _ <- stagedLocation Locations.aftCabin
+    deck <- stagedLocation Locations.quarterDeck
+    spider <- staged Enemies.forestSpider
+    run $ PlaceEnemy spider (AttachedTo (LocationTarget deck))
+    run $ Run []
+    getLocationThreat deck `shouldReturn` 7
+
   it "Abandoned Camp damages each exhausted character as it leaves play, explored or not" . gameTest $ \_ -> do
     camp <- stagedLocation Locations.abandonedCampNightmare
     b <- beravor
@@ -288,6 +296,19 @@ spec = describe "Location card text" do
       getStagingThreat `shouldReturn` 3
       run $ FocusArea one
       getStagingThreat `shouldReturn` 3
+
+  it "Shivering River adds its threat as its own area has it modified" $ do
+    seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", testDeck)])
+    env <- newGameEnv (newTableIn foundationsOfStone seats) (const $ pure ()) 1
+    runGameT env do
+      [one, two] <- getsGame (.playerOrder)
+      run $ SeparatePlayers [[one], [two]]
+      run $ FocusArea two
+      river <- stagedLocation Locations.shiveringRiver
+      effect (LocationTarget river) [ThreatModifier 2]
+      getStagingThreat `shouldReturn` 5
+      run $ FocusArea one
+      getStagingThreat `shouldReturn` 5
 
   it "Shrine to Morgoth cannot enter the staging area" . gameTest $ \_ -> do
     shrine <- activeLocation Locations.shrineToMorgothTheDrownedRuins

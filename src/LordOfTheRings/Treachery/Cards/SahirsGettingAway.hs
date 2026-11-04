@@ -1,7 +1,6 @@
 module LordOfTheRings.Treachery.Cards.SahirsGettingAway (sahirsGettingAway) where
 
 import LordOfTheRings.Card (CardType (ObjectiveAllyType), cdCardTraits, cdCardType, toCardDef)
-import LordOfTheRings.Placement (Placement (StormcallerArea))
 import LordOfTheRings.Trait (Trait (Ship))
 import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers (placeStormcallerProgress)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
@@ -22,8 +21,7 @@ sahirsGettingAway = treachery SahirsGettingAway Cards.sahirsGettingAway
 instance RunMessage SahirsGettingAway where
   runMessage msg t@(SahirsGettingAway attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      ships <- traverse getEnemy =<< select shipEnemy
-      placeStormcallerProgress $ length $ filter ((== StormcallerArea) . (.placement)) ships
+      placeStormcallerProgress =<< selectCount (shipEnemy <> EnemyInStormcallerArea)
       lead <- getLead
       chooseOneM lead do
         questionLabeled "sahirsGettingAway.choose"

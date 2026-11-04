@@ -11,7 +11,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Grid (Pos (..))
-import LordOfTheRings.Matcher (getEnemy)
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyInStagingArea, EnemyInStormcallerArea), getEnemy, select)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Scenario (aStormOnCobasHaven, flightOfTheStormcaller, templeOfTheDeceived, theCityOfCorsairs, theDrownedRuins, theThingInTheDepths)
@@ -134,6 +134,21 @@ spec = describe "Dream-chaser Nightmare mode" do
       getEnemyAttack tide `shouldReturn` 5
       getStagingThreat `shouldReturn` 5
 
+    it "Tide-runner off-course is in the staging area and the Stormcaller's area, wherever it is" . nightmare flightOfTheStormcaller $ \pid -> do
+      setHeading Rainy
+      tide <- engaged pid Enemies.tideRunner
+      run $ Run []
+      select EnemyInStagingArea `shouldReturn` [tide]
+      select EnemyInStormcallerArea `shouldReturn` [tide]
+      getStagingThreat `shouldReturn` 4
+      -- Raider of the Storm has it add its threat too: it adds it once
+      _ <- engaged pid Enemies.raiderOfTheStorm
+      getStagingThreat `shouldReturn` 5
+      setHeading Sunny
+      run $ Run []
+      select EnemyInStagingArea `shouldReturn` []
+      select EnemyInStormcallerArea `shouldReturn` []
+
     it "Cliffside Inlet's travel puts the first Ship enemy discarded into the Stormcaller's area" . nightmare flightOfTheStormcaller $ \_ -> do
       run . AddToStaging =<< genEncounterCard Locations.cliffsideInlet
       inlet <- getsGame (fromJustNote "no inlet" . fmap toId . headMay . toList . (.entities.locations))
@@ -157,6 +172,15 @@ spec = describe "Dream-chaser Nightmare mode" do
       was <- threat pid
       reveal Treacheries.deepMaelstrom []
       threat pid `shouldReturn` was + 5
+
+    it "Deep Maelstrom reveals a card for each location not grappled" . nightmare theThingInTheDepths $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Locations.quarterDeck
+      run . AddToStaging =<< genEncounterCard Locations.cargoHold
+      quarter <- getsGame (fromJustNote "no Quarter Deck" . fmap toId . find ((== toCardCode Locations.quarterDeck) . toCardCode) . toList . (.entities.locations))
+      spider <- staged Enemies.forestSpider
+      run $ PlaceEnemy spider (AttachedTo (LocationTarget quarter))
+      reveal Treacheries.deepMaelstrom [Locations.crewQuarters, Locations.forecastleDeck]
+      map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.forecastleDeck]
 
     it "Corsair Duelist trades a resource for its damage instead of being defeated" . nightmare theThingInTheDepths $ \pid -> do
       duelist <- engaged pid Enemies.corsairDuelist
