@@ -8,7 +8,7 @@ import LordOfTheRings.Keyword (Keyword (Battle, Capture, Sailing, Siege, Surge, 
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
-import LordOfTheRings.Trait (Trait (Burden))
+import LordOfTheRings.Trait (Trait (Burden, Castle))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
@@ -401,6 +401,13 @@ allQuestCards =
       , shadowOfFearASitE
       , unwelcomeTravelers
       , lostInTheDark
+      , theDungeonsOfDolRhugar
+      , assaultOnDolRhugar
+      , theFinalConfrontation
+      , stormTheCastleCastleGarrison
+      , stormTheCastleLethalCounterattack
+      , stormTheCastleNoQuarter
+      , stormTheCastleStrongholdOfMordor
       ]
 
 theDrippingWalls :: CardDef
@@ -1629,3 +1636,51 @@ lostInTheDark =
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
     }
+
+-- * The Fortress of Nurn
+
+-- | Its 4 quest points are printed on the card (Vision of the Palantir, "The Fortress of
+-- Nurn"); Hall of Beorn leaves them out.
+theDungeonsOfDolRhugar :: CardDef
+theDungeonsOfDolRhugar =
+  (encounterSideQuest "22158" "The Dungeons of Dol Rhugar" TheFortressOfNurn 4)
+    { cdKeywords = setFromList [Surge]
+    , cdVictoryPoints = Just 10
+    }
+
+assaultOnDolRhugar :: CardDef
+assaultOnDolRhugar = quest "22159" "Assault on Dol Rhugar" TheFortressOfNurn 1 3
+
+theFinalConfrontation :: CardDef
+theFinalConfrontation = quest "22160" "The Final Confrontation" TheFortressOfNurn 2 12
+
+{- | A Storm the Castle side quest: Castle, Victory 10, on both sides, and no quest points
+on its Storm the Castle side. The side quest on its other side has the quest points, a When
+Revealed effect resolved as it turns over, and Castle and Victory 10 again. Each is named
+Storm the Castle, as the players see it, whichever side quest is on its other side: the
+rule sheet has them randomized so that the players do not know. They are set aside for the
+setup, out of the encounter deck.
+-}
+stormTheCastle :: CardCode -> Int -> CardDef
+stormTheCastle code questPoints =
+  (encounterSideQuest code "Storm the Castle" TheFortressOfNurn questPoints)
+    { cdCardTraits = setFromList [Castle]
+    , cdVictoryPoints = Just 10
+    , cdDoubleSided = True
+    }
+
+-- | Castle Garrison on its other side.
+stormTheCastleCastleGarrison :: CardDef
+stormTheCastleCastleGarrison = stormTheCastle "22161" 6
+
+-- | Lethal Counterattack on its other side.
+stormTheCastleLethalCounterattack :: CardDef
+stormTheCastleLethalCounterattack = stormTheCastle "22162" 10
+
+-- | No Quarter on its other side.
+stormTheCastleNoQuarter :: CardDef
+stormTheCastleNoQuarter = stormTheCastle "22163" 12
+
+-- | Stronghold of Mordor on its other side.
+stormTheCastleStrongholdOfMordor :: CardDef
+stormTheCastleStrongholdOfMordor = stormTheCastle "22164" 8

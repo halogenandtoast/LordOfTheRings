@@ -408,6 +408,8 @@ allTreacheryCards =
       , ulchorsRage
       , fanaticism
       , fearfulShadows
+      , determinedDefense
+      , theDarkLordsReach
       ]
 
 deepDeepDark :: CardDef
@@ -2589,3 +2591,11 @@ fearfulShadows =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The Fortress of Nurn
+
+determinedDefense :: CardDef
+determinedDefense = (treachery "22156" "Determined Defense" TheFortressOfNurn 3) {cdShadowEffect = True}
+
+theDarkLordsReach :: CardDef
+theDarkLordsReach = (treachery "22157" "The Dark Lord's Reach" TheFortressOfNurn 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

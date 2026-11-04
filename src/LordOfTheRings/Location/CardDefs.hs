@@ -515,6 +515,9 @@ allLocationCards =
       , twistedTunnel
       , narrowOpening
       , crumblingPassage
+      , fortressWallsTheFortressOfNurn
+      , guardTower
+      , plazaOfNurn
       ]
 
 drownedTreasury :: CardDef
@@ -3834,3 +3837,15 @@ crumblingPassage =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The Fortress of Nurn
+
+fortressWallsTheFortressOfNurn :: CardDef
+fortressWallsTheFortressOfNurn = (location "22153" "Fortress Walls" TheFortressOfNurn 2 3 6) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 1}
+
+guardTower :: CardDef
+guardTower = (location "22154" "Guard Tower" TheFortressOfNurn 3 2 4) {cdCardTraits = setFromList [City]}
+
+-- | Its threat is X, 1 more than the Castle side quests in the victory display.
+plazaOfNurn :: CardDef
+plazaOfNurn = (location "22155" "Plaza of Nurn" TheFortressOfNurn 3 0 5) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 2}

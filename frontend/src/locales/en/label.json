@@ -2896,5 +2896,21 @@
   },
   "woodmanLore": {
     "ready": "Woodman Lore: ready up to X Woodman characters"
+  },
+  "theFortressOfNurn": {
+    "cardFromHand": "Choose a card from your hand to place facedown under a Castle side quest",
+    "castleSideQuest": "Choose the Castle side quest to place the card under"
+  },
+  "easterlingMercenary": {
+    "choose": "Easterling Mercenary: reveal an additional encounter card, or no progress can be placed on the current quest this phase",
+    "reveal": "Reveal an additional encounter card",
+    "noProgress": "No progress can be placed on the current quest this phase"
+  },
+  "theDarkLordsReach": {
+    "discard": "The Dark Lord's Reach: choose an attachment to discard from the damaged character"
+  },
+  "theDungeonsOfDolRhugar": {
+    "castle": "The Dungeons of Dol Rhugar: choose a Castle side quest",
+    "take": "The Dungeons of Dol Rhugar: choose 1 of your cards under the side quest to add to your hand"
   }
 }

@@ -317,6 +317,13 @@ import LordOfTheRings.Quest.Cards.AnArduousJourney
 import LordOfTheRings.Quest.Cards.ShadowOfFearASitE
 import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
 import LordOfTheRings.Quest.Cards.LostInTheDark
+import LordOfTheRings.Quest.Cards.TheDungeonsOfDolRhugar
+import LordOfTheRings.Quest.Cards.AssaultOnDolRhugar
+import LordOfTheRings.Quest.Cards.TheFinalConfrontation
+import LordOfTheRings.Quest.Cards.StormTheCastleCastleGarrison
+import LordOfTheRings.Quest.Cards.StormTheCastleLethalCounterattack
+import LordOfTheRings.Quest.Cards.StormTheCastleNoQuarter
+import LordOfTheRings.Quest.Cards.StormTheCastleStrongholdOfMordor
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -666,5 +673,12 @@ allQuests =
         , SomeQuestCard shadowOfFearASitE
         , SomeQuestCard unwelcomeTravelers
         , SomeQuestCard lostInTheDark
+        , SomeQuestCard theDungeonsOfDolRhugar
+        , SomeQuestCard assaultOnDolRhugar
+        , SomeQuestCard theFinalConfrontation
+        , SomeQuestCard stormTheCastleCastleGarrison
+        , SomeQuestCard stormTheCastleLethalCounterattack
+        , SomeQuestCard stormTheCastleNoQuarter
+        , SomeQuestCard stormTheCastleStrongholdOfMordor
         ]
     ]

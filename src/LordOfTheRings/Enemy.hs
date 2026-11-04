@@ -466,6 +466,11 @@ import LordOfTheRings.Enemy.Cards.ServantOfSauron
 import LordOfTheRings.Enemy.Cards.RhunBackstabber
 import LordOfTheRings.Enemy.Cards.TreacherousEasterling
 import LordOfTheRings.Enemy.Cards.UlchorsGuard
+import LordOfTheRings.Enemy.Cards.ThaneUlchorTheFortressOfNurn
+import LordOfTheRings.Enemy.Cards.SoldierOfNurn
+import LordOfTheRings.Enemy.Cards.EasterlingMercenary
+import LordOfTheRings.Enemy.Cards.MordorOlogHai
+import LordOfTheRings.Enemy.Cards.GuardDogs
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -960,5 +965,10 @@ allEnemys =
         , SomeEnemyCard rhunBackstabber
         , SomeEnemyCard treacherousEasterling
         , SomeEnemyCard ulchorsGuard
+        , SomeEnemyCard thaneUlchorTheFortressOfNurn
+        , SomeEnemyCard soldierOfNurn
+        , SomeEnemyCard easterlingMercenary
+        , SomeEnemyCard mordorOlogHai
+        , SomeEnemyCard guardDogs
         ]
     ]
