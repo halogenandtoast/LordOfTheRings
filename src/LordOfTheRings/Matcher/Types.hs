@@ -59,6 +59,10 @@ data HeroMatcher
   | HeroWithKeyword Keyword
   | ReadyHero
   | ExhaustedHero
+  | -- | with poison attached (Flies and Spiders)
+    PoisonedHero
+  | -- | made unconscious by poison (Flies and Spiders)
+    UnconsciousHero
   | CommittedHero
   | AttackingHero
   | -- | a hero defending the attack being resolved
@@ -127,6 +131,10 @@ data AllyMatcher
   | AllyWithKeyword Keyword
   | ReadyAlly
   | ExhaustedAlly
+  | -- | with poison attached (Flies and Spiders)
+    PoisonedAlly
+  | -- | made unconscious by poison (Flies and Spiders)
+    UnconsciousAlly
   | CommittedAlly
   | AttackingAlly
   | -- | an ally defending the attack being resolved

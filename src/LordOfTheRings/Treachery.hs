@@ -435,6 +435,10 @@ import LordOfTheRings.Treachery.Cards.BitterReek
 import LordOfTheRings.Treachery.Cards.AFellLight
 import LordOfTheRings.Treachery.Cards.CallOfTheRing
 import LordOfTheRings.Treachery.Cards.WeHatesThem
+import LordOfTheRings.Treachery.Cards.CaughtInWebs
+import LordOfTheRings.Treachery.Cards.PoisonedBySpiders
+import LordOfTheRings.Treachery.Cards.FightingAmongFriends
+import LordOfTheRings.Treachery.Cards.WeighedDownWilderland
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -897,5 +901,9 @@ allTreacherys =
         , SomeTreacheryCard aFellLight
         , SomeTreacheryCard callOfTheRing
         , SomeTreacheryCard weHatesThem
+        , SomeTreacheryCard caughtInWebs
+        , SomeTreacheryCard poisonedBySpiders
+        , SomeTreacheryCard fightingAmongFriends
+        , SomeTreacheryCard weighedDownWilderland
         ]
     ]

@@ -559,6 +559,10 @@ allLocationCards =
       , hauntedMere
       , stagnantPools
       , softMires
+      , theSpidersGlade
+      , giantWeb
+      , forestStream
+      , hiddenPath
       ]
 
 drownedTreasury :: CardDef
@@ -4092,3 +4096,20 @@ stagnantPools = marsh "144022" "Stagnant Pools" 2 3 7 5 3
 
 softMires :: CardDef
 softMires = (marsh "144023" "Soft Mires" 4 2 4 1 2) {cdEasyModeQuantity = Just 3}
+
+-- * Flies and Spiders
+
+-- | Set aside by stage 1A, until stage 4A adds it to the staging area.
+theSpidersGlade :: CardDef
+theSpidersGlade = unique $ (location "132025" "The Spider's Glade" FliesAndSpiders 1 1 9) {cdCardTraits = setFromList [Forest]}
+
+giantWeb :: CardDef
+giantWeb = (location "132026" "Giant Web" FliesAndSpiders 4 3 3) {cdCardTraits = setFromList [Forest], cdEasyModeQuantity = Just 3}
+
+forestStream :: CardDef
+forestStream = (location "132027" "Forest Stream" FliesAndSpiders 2 2 4) {cdCardTraits = setFromList [Forest, River]}
+
+-- * Wilderland
+
+hiddenPath :: CardDef
+hiddenPath = (location "132035" "Hidden Path" Wilderland 3 3 1) {cdCardTraits = setFromList [Forest, Mountain]}

@@ -1070,7 +1070,18 @@ runGameMessage msg g = case msg of
           , q.progress > 0
           ]
     defending <- elem Defending <$> getModifiers target
+    -- a character an enemy with venom damages is given 1 poison (The Hobbit: On the
+    -- Doorstep rules insert, "Venom, Poison, and Poisoned")
+    venom <- case source of
+      EnemyAttackSource eid | Just e <- Map.lookup eid g.entities.enemies -> hasKeyword Venom (toTarget eid) (toCardDef e)
+      EnemySource eid | Just e <- Map.lookup eid g.entities.enemies -> hasKeyword Venom (toTarget eid) (toCardDef e)
+      _ -> pure False
     let recorded = damageDealtL %~ (<> [(source, target, n)])
+        character = case target of
+          HeroTarget _ -> True
+          AllyTarget _ -> True
+          _ -> False
+        poisoned = [GivePoison target 1 | venom, n > 0, character]
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
       -- kept until the enemy attacks again, as what its attack destroyed is
@@ -1078,6 +1089,7 @@ runGameMessage msg g = case msg of
          , CheckWindows $ mkAfter (DealtDamage target n) : [mkAfter $ DamagedByEnemyAttack target eid | EnemyAttackSource eid <- [source]]
          , CheckDefeated source target
          ]
+      <> poisoned
       -- a hero it leaves standing is taken prisoner, as Torture Master's shadow reads
       <> [TakePrisoner hid | AttackDamageTakesPrisoner `elem` attackMods, HeroTarget hid <- [target]]
       <> concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- raising]
@@ -1089,6 +1101,13 @@ runGameMessage msg g = case msg of
       <> [HealDamage source t n | AttackDamageHeals t <- attackMods]
       <> [CreateEffect $ Effect source t [m] UntilEndOfRound | n > 0, AttackDamageModifiesUntilEndOfRound t m <- attackMods]
     pure $ recorded g
+  GivePoison target n -> do
+    barred <- elem CannotBePoisoned <$> getModifiers target
+    controller <- if inPlay g target && not barred then characterController target else pure Nothing
+    for_ (controller >>= \pid -> Map.lookup pid g.players) \p -> do
+      let cards = [pc | PlayerCard pc <- take n p.deck]
+      pushAll $ [RemoveFromDeck p.id pc.id | pc <- cards] <> [AttachPoison target cards | notNull cards]
+    pure g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
     mods <- getModifiers target
@@ -1974,9 +1993,15 @@ runGameMessage msg g = case msg of
   PutShadowTreacheryIntoPlay host cid placement -> do
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . ecId) hostEnemy.shadowCards) \card -> do
-        thisTreachery <- overAttrs (\a -> a {treacheryPlacement = placement}) <$> newTreachery card
         pushAll [RemoveShadowCard host cid]
-        putGame $ g & entitiesL . treacheriesL %~ insertEntity thisTreachery
+        -- an enemy card dealt as a shadow card attaches as itself, as Dark Bats' shadow
+        if cdCardType (toCardDef card) == EnemyType
+          then do
+            thisEnemy <- overAttrs (\a -> a {enemyPlacement = placement}) <$> newEnemy card
+            putGame $ g & entitiesL . enemiesL %~ insertEntity thisEnemy
+          else do
+            thisTreachery <- overAttrs (\a -> a {treacheryPlacement = placement}) <$> newTreachery card
+            putGame $ g & entitiesL . treacheriesL %~ insertEntity thisTreachery
     getGame
   ChooseAndExhaust source pid n | n > 0 -> do
     ready <-
@@ -2443,7 +2468,17 @@ runGameMessage msg g = case msg of
             (if phase == RefreshPhase then passToken else id)
             (if phase == QuestPhase then Run [JoinAreas, FocusArea (maybe g.firstPlayer separationFirstPlayer $ gameSeparation g), following] else following)
             g
-        passToken s = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
+        passToken s
+          | keepsToken s = s
+          | otherwise = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
+        -- unless he keeps it, as Captured by Spiders has the first player in his own area
+        keepsToken s =
+          or
+            [ CannotLoseFirstPlayerToken `elem` map modifierType (Map.findWithDefault [] (PlayerTarget s.separationFirstPlayer) mods)
+            | a <- separationAreas s
+            , s.separationFirstPlayer `elem` areaPlayers a
+            , let mods = if isFocusedArea g a then gameModifiers g else areaHeldModifiers a
+            ]
     pushEnd step
     pure
       $ g'
@@ -3068,6 +3103,8 @@ runGameMessage msg g = case msg of
                   , heroCommitted = allyCommitted attrs
                   , heroAttacking = allyAttacking attrs
                   , heroFacedown = allyFacedown attrs
+                  , heroPoison = allyPoison attrs
+                  , heroUnconscious = allyUnconscious attrs
                   }
             )
             $ lookupHero (toCardCode a) attrs.allyCardId hid controller
@@ -3085,6 +3122,8 @@ runGameMessage msg g = case msg of
                   , allyCommitted = heroCommitted attrs
                   , allyAttacking = heroAttacking attrs
                   , allyFacedown = heroFacedown attrs
+                  , allyPoison = heroPoison attrs
+                  , allyUnconscious = heroUnconscious attrs
                   }
             )
             $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner

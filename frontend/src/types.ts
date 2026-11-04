@@ -20,6 +20,8 @@ export interface CardView {
   time?: number | null
   damage: number
   exhausted: boolean
+  /** Turned upside down by poison (Flies and Spiders). */
+  unconscious?: boolean
   committed: boolean
   /** Considered out of play though on the table, as the card Saruman chooses. */
   outOfPlay?: boolean

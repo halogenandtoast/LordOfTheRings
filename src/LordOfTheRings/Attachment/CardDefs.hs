@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
+import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders))
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
@@ -283,6 +284,7 @@ allAttachmentCards =
       , leaderOfMen
       , beyondAllHope
       , palantirOfOrthanc
+      , bilbosMagicRing
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -2049,4 +2051,14 @@ palantirOfOrthanc =
     (attachment "143020" "Palantír of Orthanc" Neutral (StaticCost 0))
       { cdCardTraits = setFromList [Artifact, Item, Boon]
       , cdVictoryPoints = Just 5
+      }
+
+-- | A treasure, discovered in Flies and Spiders.
+bilbosMagicRing :: CardDef
+bilbosMagicRing =
+  unique
+    (attachment "132019" "Bilbo's Magic Ring" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Artifact, Item, Ring]
+      , cdTreasure = True
+      , cdSetIcon = Just FliesAndSpiders
       }

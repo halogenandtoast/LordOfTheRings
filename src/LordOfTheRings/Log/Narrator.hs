@@ -329,6 +329,11 @@ narrationFor = \case
   PlaceAlly aid (AttachedTo target) -> Just $ attached (toTarget aid) target
   AttachCard aid target -> Just $ attached (toTarget aid) target
   TakePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.takenPrisoner" ["hero" ~> h]]
+  -- poison, and the unconscious characters it makes (The Hobbit: On the Doorstep)
+  AttachPoison target cards | notNull cards -> Just $ whenRef target \t -> one $ toned Bad $ mechanic [ikeyPart "log.poisoned" ["target" ~> t, "count" ~> length cards]]
+  DiscardPoison target n | n > 0 -> Just $ whenRef target \t -> one $ toned Good $ mechanic [ikeyPart "log.poisonDiscarded" ["target" ~> t, "count" ~> n]]
+  MakeUnconscious target -> Just $ whenRef target \t -> one $ toned Bad $ mechanic [ikeyPart "log.madeUnconscious" ["target" ~> t]]
+  ReadyUnconscious target -> Just $ whenRef target \t -> one $ toned Good $ mechanic [ikeyPart "log.readiedUnconscious" ["target" ~> t]]
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
   GuardCharacter c cid -> Just $ attached c (CardIdTarget cid)
   GuardCard card cid -> Just $ whenRef (CardIdTarget cid) \h -> one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> card, "target" ~> h]]

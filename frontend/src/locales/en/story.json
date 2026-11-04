@@ -4053,5 +4053,13 @@
         "text": "The Searching Eye is an encounter card shuffled into a player's deck. It is drawn, held and discarded like a player card, to its player's discard pile, but it cannot be played."
       }
     ]
+  },
+  "flies-and-spiders": {
+    "intro": [
+      "Rested after their stay with Beorn, Bilbo and the dwarves press on toward the Lonely Mountain. Their road leads through the dark eaves of Mirkwood, where giant spiders lie in wait for any traveler who strays from the path."
+    ],
+    "setup": [
+      "Flies and Spiders is played with an encounter deck built from the Flies and Spiders and Wilderland encounter sets. Players may add previously discovered treasures from the scenarios of Over Hill and Under Hill."
+    ]
   }
 }

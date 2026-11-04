@@ -541,6 +541,10 @@ import LordOfTheRings.Location.Cards.ShiftingQuagmire
 import LordOfTheRings.Location.Cards.HauntedMere
 import LordOfTheRings.Location.Cards.StagnantPools
 import LordOfTheRings.Location.Cards.SoftMires
+import LordOfTheRings.Location.Cards.TheSpidersGlade
+import LordOfTheRings.Location.Cards.GiantWeb
+import LordOfTheRings.Location.Cards.ForestStream
+import LordOfTheRings.Location.Cards.HiddenPath
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1128,5 +1132,9 @@ allLocations =
         , SomeLocationCard hauntedMere
         , SomeLocationCard stagnantPools
         , SomeLocationCard softMires
+        , SomeLocationCard theSpidersGlade
+        , SomeLocationCard giantWeb
+        , SomeLocationCard forestStream
+        , SomeLocationCard hiddenPath
         ]
     ]

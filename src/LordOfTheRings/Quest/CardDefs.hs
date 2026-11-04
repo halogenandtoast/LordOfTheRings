@@ -449,6 +449,10 @@ allQuestCards =
       , theTamingOfSmeagol
       , acrossTheMarshes
       , dontLookAtTheLights
+      , intoMirkwood
+      , lostInTheDarkFliesAndSpiders
+      , capturedBySpiders
+      , battleWithTheSpiders
       ]
 
 theDrippingWalls :: CardDef
@@ -1873,3 +1877,18 @@ acrossTheMarshes = quest "144065" "Across the Marshes" ThePassageOfTheMarshes 2 
 
 dontLookAtTheLights :: CardDef
 dontLookAtTheLights = quest "144066" "Don't Look at the Lights!" ThePassageOfTheMarshes 3 24
+
+-- * Flies and Spiders
+
+intoMirkwood :: CardDef
+intoMirkwood = quest "132067" "Into Mirkwood" FliesAndSpiders 1 9
+
+-- | No quest points: its When Revealed moves the players on at once.
+lostInTheDarkFliesAndSpiders :: CardDef
+lostInTheDarkFliesAndSpiders = quest "132068" "Lost in the Dark" FliesAndSpiders 2 0
+
+capturedBySpiders :: CardDef
+capturedBySpiders = quest "132069" "Captured by Spiders" FliesAndSpiders 3 11
+
+battleWithTheSpiders :: CardDef
+battleWithTheSpiders = quest "132070" "Battle with the Spiders" FliesAndSpiders 4 3

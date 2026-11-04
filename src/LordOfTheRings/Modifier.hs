@@ -190,6 +190,9 @@ data ModifierType
   | -- | on the game: each ally in play takes the modifier, one that enters play later too,
     -- for as long as the effect lasts, as Pit into the Depths reads
     EachAlly ModifierType
+  | -- | on the game: each character takes the modifier while it is exhausted, as Weighed
+    -- Down's "until the end of the round, exhausted characters get -1 willpower" reads
+    EachExhaustedCharacter ModifierType
   | -- | on an enemy: it has attacked this phase, as Howling of Wargs reads
     AttackedThisPhase
   | -- | on the game: no more than this much progress may be placed on locations with the
@@ -277,6 +280,9 @@ data ModifierType
     MustCommitToQuest
   | -- | on a card in play: its abilities cannot be used, nor its Forced effects trigger
     CannotTriggerAbilities
+  | -- | on a character: it cannot be given poison, as an unconscious character in Flies and
+    -- Spiders
+    CannotBePoisoned
   | -- | on a card in play: its printed text box is treated as blank, as Arkham's: it has no
     -- abilities or keywords, and its constant effects give no modifiers
     Blank

@@ -41,6 +41,10 @@ export interface Entity {
   guard?: string | null
   /** The encounter card holding a hero captive. */
   guardedBy?: string | null
+  /** The ids of the poison cards attached facedown to a character (Flies and Spiders). */
+  poison?: string[]
+  /** A character rotated 180 degrees by poison (Flies and Spiders). */
+  unconscious?: boolean
   /** A hero in the staging area, under no player's control. */
   inStagingArea?: boolean
   /** A location's facedown side, as an Uncharted location hides it: sent only to the players who have looked at it. */
