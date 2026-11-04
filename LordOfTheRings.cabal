@@ -2139,6 +2139,7 @@ library
       LordOfTheRings.Quest.Cards.JourneysEnd
       LordOfTheRings.Quest.Cards.KeepWatch
       LordOfTheRings.Quest.Cards.LastLordOfMoria
+      LordOfTheRings.Quest.Cards.LeadTheRevolt
       LordOfTheRings.Quest.Cards.LieLow
       LordOfTheRings.Quest.Cards.LootTheDungeons
       LordOfTheRings.Quest.Cards.LostAtSea
@@ -2212,6 +2213,7 @@ library
       LordOfTheRings.Quest.Cards.ShadowOfFearASitE
       LordOfTheRings.Quest.Cards.ShadowTheWarParty
       LordOfTheRings.Quest.Cards.SiftThroughTheDebris
+      LordOfTheRings.Quest.Cards.SlavesOfTheDarkLord
       LordOfTheRings.Quest.Cards.SneakPastTheGuards
       LordOfTheRings.Quest.Cards.Snowdrifts
       LordOfTheRings.Quest.Cards.SouthronChampion
@@ -2428,6 +2430,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheHuntForGollum.Helpers
       LordOfTheRings.Scenario.Scenarios.TheKingsQuest
       LordOfTheRings.Scenario.Scenarios.TheKingsQuest.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheLandOfSorrow
       LordOfTheRings.Scenario.Scenarios.TheLandOfSorrow.Helpers
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor.Helpers

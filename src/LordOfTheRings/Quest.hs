@@ -319,6 +319,8 @@ import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
 import LordOfTheRings.Quest.Cards.LostInTheDark
 import LordOfTheRings.Quest.Cards.ChasedByEasterlings
 import LordOfTheRings.Quest.Cards.TheCrossingOfAraw
+import LordOfTheRings.Quest.Cards.SlavesOfTheDarkLord
+import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -670,5 +672,7 @@ allQuests =
         , SomeQuestCard lostInTheDark
         , SomeQuestCard chasedByEasterlings
         , SomeQuestCard theCrossingOfAraw
+        , SomeQuestCard slavesOfTheDarkLord
+        , SomeQuestCard leadTheRevolt
         ]
     ]
