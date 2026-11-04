@@ -756,6 +756,14 @@ discardFromEncounterDeck c = do
 removeFromEncounterDiscard :: ReverseQueue m => EncounterCard -> m ()
 removeFromEncounterDiscard = push . RemoveFromEncounterDiscard
 
+-- | The enemy leaves the encounter discard pile, put into play engaged with the player, as
+-- "discard cards ... until an enemy is discarded and put it into play engaged with him"
+-- reads.
+putEnemyIntoPlayEngagedFromDiscard :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+putEnemyIntoPlayEngagedFromDiscard pid card = do
+  removeFromEncounterDiscard card
+  putEnemyIntoPlayEngaged pid card
+
 {- | The player pays 1 resource of the sphere or discards the card; with nothing to pay,
 the card is discarded.
 -}
@@ -1214,6 +1222,11 @@ fortitudeTestWith pid source f onFail onPass = do
   failed <- capture onFail
   passed <- capture onPass
   push $ MakeFortitudeTest $ f $ FortitudeTest pid (toSource source) [] 0 0 [] [] failed passed
+
+-- | The discarded card's Eye icons are ignored for the Fortitude test under way, as
+-- Gollum's Forced effect reads.
+ignoreFortitudeEyeIcons :: ReverseQueue m => CardId -> m ()
+ignoreFortitudeEyeIcons = push . IgnoreFortitudeEyeIcons
 
 -- | The player failed a Fortitude test this round, as Plain of Gorgoroth reads.
 failedFortitudeTestThisRound :: HasGame m => PlayerId -> m Bool
