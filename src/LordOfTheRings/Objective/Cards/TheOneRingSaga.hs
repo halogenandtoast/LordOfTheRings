@@ -1,4 +1,9 @@
-module LordOfTheRings.Objective.Cards.TheOneRingSaga (theOneRingTheLandOfShadow, theOneRingTheMountainOfFire) where
+module LordOfTheRings.Objective.Cards.TheOneRingSaga (
+  theOneRingTheBlackRiders,
+  theOneRingTheRoadDarkens,
+  theOneRingTheLandOfShadow,
+  theOneRingTheMountainOfFire,
+) where
 
 import LordOfTheRings.Helpers.Fellowship (leavesPlay)
 import LordOfTheRings.Keyword (Keyword (FirstPlayerGainsControl))
@@ -6,14 +11,21 @@ import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted
 import LordOfTheRings.Outcome (Outcome (Lost))
 
-{- | The One Ring of The Land of Shadow and The Mountain of Fire. Setup: The first player
-claims The One Ring and attaches it to the Ring-bearer: the game does it as the scenario is
-set up (see 'setUpFellowship'). Attached hero does not count against the hero limit, which
-only deckbuilding counts here: the scenario supplies the hero, apart from the deck.
+{- | The One Ring of The Black Riders, The Road Darkens, The Land of Shadow and The Mountain
+of Fire. Setup: The first player claims The One Ring and attaches it to the Ring-bearer: the
+game does it as the scenario is set up (see 'setUpFellowship'). Attached hero does not
+count against the hero limit, which only deckbuilding counts here: the scenario supplies
+the hero, apart from the deck.
 -}
 newtype TheOneRingSaga = TheOneRingSaga ObjectiveAttrs
   deriving anyclass (IsObjective, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
+
+theOneRingTheBlackRiders :: ObjectiveCard TheOneRingSaga
+theOneRingTheBlackRiders = objective TheOneRingSaga Cards.theOneRingTheBlackRiders
+
+theOneRingTheRoadDarkens :: ObjectiveCard TheOneRingSaga
+theOneRingTheRoadDarkens = objective TheOneRingSaga Cards.theOneRingTheRoadDarkens
 
 theOneRingTheLandOfShadow :: ObjectiveCard TheOneRingSaga
 theOneRingTheLandOfShadow = objective TheOneRingSaga Cards.theOneRingTheLandOfShadow

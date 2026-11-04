@@ -251,6 +251,17 @@ allAllyCards =
       , daleMessenger
       , eagleEmissary
       , wilyadorTheLandOfSorrow
+      , billThePony
+      , barlimanButterbur
+      , farmerMaggot
+      , galadrielTheRoadDarkens
+      , boromirTheRoadDarkens
+      , elrondTheRoadDarkens
+      , bilboBagginsTheRoadDarkens
+      , gimliTheTreasonOfSaruman
+      , legolasTheTreasonOfSaruman
+      , quickbeamTheTreasonOfSaruman
+      , hamaTheTreasonOfSaruman
       , haleth
       , mistyMountainJourneyman
       , anbornLeadership
@@ -1899,4 +1910,83 @@ elrohirSpirit =
   unique
     (ally "146008" "Elrohir" Spirit (StaticCost 3) 2 1 1 3)
       { cdCardTraits = setFromList [Noldor, Ranger]
+      }
+
+billThePony :: CardDef
+billThePony =
+  unique
+    (ally "141006" "Bill the Pony" Leadership (StaticCost 2) 1 1 0 2)
+      { cdCardTraits = setFromList [Creature, Pony]
+      }
+
+barlimanButterbur :: CardDef
+barlimanButterbur =
+  unique
+    (ally "141007" "Barliman Butterbur" Lore (StaticCost 2) 1 0 1 3)
+      { cdCardTraits = setFromList [Bree]
+      }
+
+farmerMaggot :: CardDef
+farmerMaggot =
+  unique
+    (ally "141008" "Farmer Maggot" Tactics (StaticCost 3) 1 2 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+galadrielTheRoadDarkens :: CardDef
+galadrielTheRoadDarkens =
+  unique
+    (ally "142003" "Galadriel" Leadership (StaticCost 3) 3 0 0 3)
+      { cdCardTraits = setFromList [Noldor, Noble]
+      }
+
+boromirTheRoadDarkens :: CardDef
+boromirTheRoadDarkens =
+  unique
+    (ally "142004" "Boromir" Tactics (StaticCost 4) 1 3 1 4)
+      { cdCardTraits = setFromList [Gondor, Warrior]
+      }
+
+elrondTheRoadDarkens :: CardDef
+elrondTheRoadDarkens =
+  unique
+    (ally "142005" "Elrond" Lore (StaticCost 3) 3 2 3 3)
+      { cdCardTraits = setFromList [Noldor, Noble]
+      }
+
+bilboBagginsTheRoadDarkens :: CardDef
+bilboBagginsTheRoadDarkens =
+  unique
+    (ally "142006" "Bilbo Baggins" Spirit (StaticCost 2) 2 0 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+gimliTheTreasonOfSaruman :: CardDef
+gimliTheTreasonOfSaruman =
+  unique
+    (ally "143004" "Gimli" Leadership (StaticCost 4) 2 2 2 3)
+      { cdCardTraits = setFromList [Dwarf, Warrior]
+      , cdKeywords = setFromList [Sentinel]
+      }
+
+legolasTheTreasonOfSaruman :: CardDef
+legolasTheTreasonOfSaruman =
+  unique
+    (ally "143005" "Legolas" Tactics (StaticCost 4) 1 3 1 3)
+      { cdCardTraits = setFromList [Silvan, Warrior]
+      , cdKeywords = setFromList [Ranged]
+      }
+
+quickbeamTheTreasonOfSaruman :: CardDef
+quickbeamTheTreasonOfSaruman =
+  unique
+    (ally "143006" "Quickbeam" Lore (StaticCost 2) 2 3 1 3)
+      { cdCardTraits = setFromList [Ent]
+      }
+
+hamaTheTreasonOfSaruman :: CardDef
+hamaTheTreasonOfSaruman =
+  unique
+    (ally "143007" "Háma" Spirit (StaticCost 3) 1 2 2 2)
+      { cdCardTraits = setFromList [Rohan, Warrior]
       }
