@@ -682,6 +682,7 @@ runInPlay msg g =
             _ -> False
           -- a location leaving play is kept aside for its own abilities to answer it
           departed = if movingAreas then mempty else Map.difference g.entities.locations g'.entities.locations
+          departedEnemies = if movingAreas then [] else Map.keys (Map.difference g.entities.enemies g'.entities.enemies)
       unless movingAreas
         $ pushAll
         $ map (PlaceTimeCounters . EnemyTarget) (entered g.entities.enemies g'.entities.enemies)
@@ -689,6 +690,7 @@ runInPlay msg g =
         <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, q.flipped, not (wasFlipped $ toId q)]
         <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, enteredSideQuest q]
         <> [CheckWindows [mkAfter $ LocationLeftPlay lid] | lid <- Map.keys departed]
+        <> [CheckWindows [mkAfter $ EnemyLeftPlay eid] | eid <- departedEnemies]
       -- an enemy entering play, not one turned over from its other side, which stays in play;
       -- the resources placed on its card while it was out of play come with it
       let arrived = if movingAreas || isFlip then [] else entered g.entities.enemies g'.entities.enemies

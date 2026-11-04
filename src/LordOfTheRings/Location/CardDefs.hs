@@ -593,6 +593,11 @@ allLocationCards =
       , greenHillCountry
       , stockRoad
       , theMarish
+      , thePrancingPony
+      , weathertop
+      , chetwood
+      , midgewater
+      , weatherHills
       , pathlessCountryHunted
       , theLastBridge
       , fordOfBruinen
@@ -4330,3 +4335,22 @@ ettenmoors = (location "141061" "Ettenmoors" FlightToTheFord 3 2 3) {cdCardTrait
 
 theOldRoad :: CardDef
 theOldRoad = (location "141062" "The Old Road" FlightToTheFord 3 3 4) {cdCardTraits = setFromList [Road]}
+
+-- * A Knife in the Dark
+
+thePrancingPony :: CardDef
+thePrancingPony = unique (location "141045" "The Prancing Pony" AKnifeInTheDark 1 2 4) {cdCardTraits = setFromList [Bree], cdVictoryPoints = Just 1}
+
+-- | Set aside by stage 1A, added to the staging area by stage 3A.
+weathertop :: CardDef
+weathertop = unique (location "141046" "Weathertop" AKnifeInTheDark 1 4 4) {cdCardTraits = setFromList [Hills, Ruins], cdVictoryPoints = Just 4}
+
+chetwood :: CardDef
+chetwood = (location "141047" "Chetwood" AKnifeInTheDark 3 2 2) {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
+
+-- | Set aside by stage 1A, added to the staging area by stage 2B.
+midgewater :: CardDef
+midgewater = unique (location "141048" "Midgewater" AKnifeInTheDark 1 3 6) {cdCardTraits = setFromList [Marshland], cdVictoryPoints = Just 1}
+
+weatherHills :: CardDef
+weatherHills = (location "141049" "Weather Hills" AKnifeInTheDark 3 3 2) {cdCardTraits = setFromList [Forest, Hills]}

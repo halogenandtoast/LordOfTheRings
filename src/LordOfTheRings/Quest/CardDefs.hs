@@ -476,6 +476,9 @@ allQuestCards =
       , escapeToBuckland
       , pursuedByTheEnemy
       , raceToRivendell
+      , troubleInBree
+      , intoTheWild
+      , theRingwraithsAttack
       ]
 
 theDrippingWalls :: CardDef
@@ -2010,3 +2013,15 @@ pursuedByTheEnemy = quest "141028" "Pursued by the Enemy" FlightToTheFord 1 15
 -- | +15 quest points while a Nazgûl enemy is in play: its card gives them.
 raceToRivendell :: CardDef
 raceToRivendell = quest "141029" "Race to Rivendell" FlightToTheFord 2 15
+
+-- * A Knife in the Dark
+
+troubleInBree :: CardDef
+troubleInBree = quest "141025" "Trouble in Bree" AKnifeInTheDark 1 8
+
+intoTheWild :: CardDef
+intoTheWild = quest "141026" "Into the Wild" AKnifeInTheDark 2 6
+
+-- | No quest points: the players win once no Nazgûl enemy is in play.
+theRingwraithsAttack :: CardDef
+theRingwraithsAttack = quest "141027" "The Ringwraiths Attack" AKnifeInTheDark 3 0

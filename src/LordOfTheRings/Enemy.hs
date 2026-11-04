@@ -548,6 +548,10 @@ import LordOfTheRings.Enemy.Cards.EvilCrowAShadowOfThePast
 import LordOfTheRings.Enemy.Cards.TheWitchKing
 import LordOfTheRings.Enemy.Cards.Ringwraith
 import LordOfTheRings.Enemy.Cards.FellRider
+import LordOfTheRings.Enemy.Cards.RiderOfMordor
+import LordOfTheRings.Enemy.Cards.BillFerny
+import LordOfTheRings.Enemy.Cards.ShadyBreeLander
+import LordOfTheRings.Enemy.Cards.SquintEyedSoutherner
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1125,5 +1129,9 @@ allEnemys =
         , SomeEnemyCard theWitchKing
         , SomeEnemyCard ringwraith
         , SomeEnemyCard fellRider
+        , SomeEnemyCard riderOfMordor
+        , SomeEnemyCard billFerny
+        , SomeEnemyCard shadyBreeLander
+        , SomeEnemyCard squintEyedSoutherner
         ]
     ]

@@ -557,6 +557,10 @@ allEnemyCards =
       , theWitchKing
       , ringwraith
       , fellRider
+      , riderOfMordor
+      , billFerny
+      , shadyBreeLander
+      , squintEyedSoutherner
       ]
 
 namelessThing :: CardDef
@@ -4567,3 +4571,22 @@ ringwraith =
 
 fellRider :: CardDef
 fellRider = (enemy "141063" "Fell Rider" FlightToTheFord 4 30 2 4 3 6) {cdCardTraits = setFromList [Nazgul]}
+
+-- * A Knife in the Dark
+
+riderOfMordor :: CardDef
+riderOfMordor = (enemy "141050" "Rider of Mordor" AKnifeInTheDark 2 35 4 4 3 5) {cdCardTraits = setFromList [Nazgul]}
+
+billFerny :: CardDef
+billFerny = unique (enemy "141051" "Bill Ferny" AKnifeInTheDark 1 38 3 1 3 5) {cdCardTraits = setFromList [Bree, Spy], cdVictoryPoints = Just 1}
+
+shadyBreeLander :: CardDef
+shadyBreeLander = (enemy "141052" "Shady Bree-lander" AKnifeInTheDark 4 28 2 3 1 4) {cdCardTraits = setFromList [Bree, Spy], cdShadowEffect = True}
+
+squintEyedSoutherner :: CardDef
+squintEyedSoutherner =
+  (enemy "141053" "Squint-eyed Southerner" AKnifeInTheDark 3 33 2 2 2 3)
+    { cdCardTraits = setFromList [Spy]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
+    }

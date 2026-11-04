@@ -481,6 +481,8 @@ import LordOfTheRings.Treachery.Cards.FearOfDiscovery
 import LordOfTheRings.Treachery.Cards.EatenAlive
 import LordOfTheRings.Treachery.Cards.PanickedFlightToTheFord
 import LordOfTheRings.Treachery.Cards.OvercomeByTerror
+import LordOfTheRings.Treachery.Cards.UnwantedAttention
+import LordOfTheRings.Treachery.Cards.BlackBreath
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -989,5 +991,7 @@ allTreacherys =
         , SomeTreacheryCard eatenAlive
         , SomeTreacheryCard panickedFlightToTheFord
         , SomeTreacheryCard overcomeByTerror
+        , SomeTreacheryCard unwantedAttention
+        , SomeTreacheryCard blackBreath
         ]
     ]

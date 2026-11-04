@@ -492,6 +492,8 @@ allTreacheryCards =
       , eatenAlive
       , panickedFlightToTheFord
       , overcomeByTerror
+      , unwantedAttention
+      , blackBreath
       ]
 
 deepDeepDark :: CardDef
@@ -3100,3 +3102,11 @@ panickedFlightToTheFord = (flightToTheFordBurden "141083" "Panicked") {cdShadowE
 
 overcomeByTerror :: CardDef
 overcomeByTerror = (flightToTheFordBurden "141084" "Overcome by Terror") {cdShadowEffect = True}
+
+-- * A Knife in the Dark
+
+unwantedAttention :: CardDef
+unwantedAttention = (treachery "141054" "Unwanted Attention" AKnifeInTheDark 3) {cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+blackBreath :: CardDef
+blackBreath = (treachery "141055" "Black Breath" AKnifeInTheDark 2) {cdCardTraits = setFromList [Condition], cdKeywords = setFromList [Peril]}

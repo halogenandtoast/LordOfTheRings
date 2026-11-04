@@ -52,6 +52,9 @@ data WindowType
     LocationLeftPlay LocationId
   | -- | an enemy entered play, however it did: revealed, put into play or turned faceup
     EnemyEnteredPlay EnemyId
+  | -- | an enemy left play, however it did: defeated, discarded, placed under a card or
+    -- shuffled away, as "if there are no Nazgûl enemies in play" is read after it
+    EnemyLeftPlay EnemyId
   | -- | the player looked at one or more cards in the encounter deck
     LookedAtEncounterDeck PlayerId
   | -- | the player turned 1 or more hidden cards faceup, at once (The Blood of Gondor)

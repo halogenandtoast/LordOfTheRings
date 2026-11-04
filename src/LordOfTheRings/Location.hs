@@ -575,6 +575,11 @@ import LordOfTheRings.Location.Cards.BuckleburyFerry
 import LordOfTheRings.Location.Cards.GreenHillCountry
 import LordOfTheRings.Location.Cards.StockRoad
 import LordOfTheRings.Location.Cards.TheMarish
+import LordOfTheRings.Location.Cards.ThePrancingPony
+import LordOfTheRings.Location.Cards.Weathertop
+import LordOfTheRings.Location.Cards.Chetwood
+import LordOfTheRings.Location.Cards.Midgewater
+import LordOfTheRings.Location.Cards.WeatherHills
 import LordOfTheRings.Location.Cards.PathlessCountryHunted
 import LordOfTheRings.Location.Cards.TheLastBridge
 import LordOfTheRings.Location.Cards.FordOfBruinen
@@ -1202,6 +1207,11 @@ allLocations =
         , SomeLocationCard greenHillCountry
         , SomeLocationCard stockRoad
         , SomeLocationCard theMarish
+        , SomeLocationCard thePrancingPony
+        , SomeLocationCard weathertop
+        , SomeLocationCard chetwood
+        , SomeLocationCard midgewater
+        , SomeLocationCard weatherHills
         , SomeLocationCard pathlessCountryHunted
         , SomeLocationCard theLastBridge
         , SomeLocationCard fordOfBruinen

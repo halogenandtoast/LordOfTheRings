@@ -392,6 +392,9 @@ import LordOfTheRings.Quest.Cards.AShortcutToMushrooms
 import LordOfTheRings.Quest.Cards.EscapeToBuckland
 import LordOfTheRings.Quest.Cards.PursuedByTheEnemy
 import LordOfTheRings.Quest.Cards.RaceToRivendell
+import LordOfTheRings.Quest.Cards.TroubleInBree
+import LordOfTheRings.Quest.Cards.IntoTheWild
+import LordOfTheRings.Quest.Cards.TheRingwraithsAttack
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -816,5 +819,8 @@ allQuests =
         , SomeQuestCard escapeToBuckland
         , SomeQuestCard pursuedByTheEnemy
         , SomeQuestCard raceToRivendell
+        , SomeQuestCard troubleInBree
+        , SomeQuestCard intoTheWild
+        , SomeQuestCard theRingwraithsAttack
         ]
     ]

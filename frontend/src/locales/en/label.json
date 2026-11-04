@@ -3540,5 +3540,32 @@
     "choose": "Fear of Discovery: choose one",
     "exhaust": "Exhaust the Ring-bearer",
     "reveal": "Reveal an additional encounter card"
+  },
+  "aKnifeInTheDark": {
+    "shuffleRingwraith": "Shuffle 1 out of play Ringwraith into the encounter deck",
+    "chooseBoon": "A Knife in the Dark: choose a boon to attach to a hero you control"
+  },
+  "intoTheWild": {
+    "choose": "Into the Wild: the round ends",
+    "removeProgress": "Remove progress equal to the number of players from the current quest"
+  },
+  "billFerny": {
+    "choose": "Bill Ferny: the staging step begins",
+    "raiseThreat": "Each player raises his threat by 1 for each non-Fellowship hero he committed"
+  },
+  "squintEyedSoutherner": {
+    "choose": "Squint-eyed Southerner was revealed",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "unwantedAttention": {
+    "choose": "Unwanted Attention was revealed",
+    "remove": "Remove 2 heroes you control from the quest",
+    "removeHero": "Unwanted Attention: choose a hero to remove from the quest"
+  },
+  "blackBreath": {
+    "attach": "Black Breath: choose a hero to attach it to"
+  },
+  "weatherHills": {
+    "choose": "Weather Hills: choose a non-unique enemy to place under it"
   }
 }
